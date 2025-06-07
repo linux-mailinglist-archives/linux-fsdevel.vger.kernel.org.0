@@ -1,87 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-50896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FD3AD0B7D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 08:41:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90ECDAD0B7E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 08:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 256357A6696
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 06:39:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21CA27A8BD1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 06:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E797A25A322;
-	Sat,  7 Jun 2025 06:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C47325A327;
+	Sat,  7 Jun 2025 06:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="XlSgTddv"
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="GeQQw7Dg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0b-00364e01.pphosted.com (mx0b-00364e01.pphosted.com [148.163.139.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD0F23F41A
-	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Jun 2025 06:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA00F258CC2
+	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Jun 2025 06:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749278420; cv=none; b=odBnWqaNslPQuCqeG9Gx4rpQtc0fuY/5kN5C84NM0s9IVbzd8YIY9HlUX7VKOEdpUFBymNy2dEE0xphbgFBa3aUfJXWR+Pbz9C9ttPGvERzQsTlvepEzrlTb2viHRyjvL6uHyT5obV+NYULXDtsMItV2pqSFP5XRhcYM8zt900o=
+	t=1749278420; cv=none; b=RfwAfqPV4sIr+kzDlb9UtPbyVhDwirDq0lNp7KrbhUmn+WC4Bx1nb1eHu7k5xXa6lhSD1wft4ms2LcSFapneLSkHkfDUarhCciZ4jwkUCCbTHhbu1sZ0NKt5vUBVSM1N1KpSF9rq4u/P3ilW8YwdD5OEeJ6NQilhH8k14j8+pjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749278420; c=relaxed/simple;
-	bh=8xK9cYLtkyMChjhj6zDEoAbzPlavCj2F/8VVwgmH0dc=;
+	bh=ZV6IvBG9rODNxyRdIe9D1A/OZu56meo0GhXdqsXp4+g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BaCT1fgbeMy6kDyagxLKg+FEp14Gi3qrLPk8S6105CsPazuxrfZb5T+U7e1bAAjQG1ju63zipRUHwFa/mMJQLsPiO9XQH41r9IE7YwtRHEuL59DnlEggXEpC94/MfkCmB7k0kydol78Eev9kRZlfqh/7DG/Bi4h0oCKpOaKA83g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=XlSgTddv; arc=none smtp.client-ip=148.163.139.74
+	 In-Reply-To:To:Cc; b=jFEORtPijgtyB/ZjspTdYKc+Tsv6QA1cbF+31xd1nlsJQJzF+HJskLBikAnxzP+CUMX8YcgJFr0c0uA/1DkvZC5pNyW66CzA8anDFT3gatOiSFMrfAdDZtsV7jCX3hqSTX/tfY85ae+x1r8tz1xVTHhWYV0jgk/sjwLkk157KrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=GeQQw7Dg; arc=none smtp.client-ip=148.163.139.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167075.ppops.net [127.0.0.1])
-	by mx0b-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5574hP4W027576
-	for <linux-fsdevel@vger.kernel.org>; Sat, 7 Jun 2025 02:40:11 -0400
+Received: from pps.filterd (m0167077.ppops.net [127.0.0.1])
+	by mx0b-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55758J5s018356
+	for <linux-fsdevel@vger.kernel.org>; Sat, 7 Jun 2025 02:40:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
  content-transfer-encoding : content-type : date : from : in-reply-to :
  message-id : mime-version : references : subject : to; s=pps01;
- bh=AsCYG8CkIIPZbMRBimL2n8U8A9q+7pGknJ/irwioCr4=;
- b=XlSgTddvA0Q4Gv1nwjggTtrLVvK4UOBDaL6hYkxLNrNc2JfxL9xK13KJUOsfdizihaMS
- hvePSAfJ+DdfkwHZiXPnDvFHEQTJs+RHfSMYXtd34fh7kaUlxZ52WQAxOOfsKFGuNEcP
- i86YKjNQPklHiIgXAhpTC1R37IAXG7GI0BW5AtfPwlgoHcHaKjJfcbIHvdKH1kmsc07l
- wYzoeetg2LRvLaMTqf2b9HSay/h04s1Kct6tLAxXRyPkri+/4l/uo1ZUObxOMXkLiXuc
- vtPP6zvtRvdHTKQiuwiXfq5uIVaHUahA8U0WFFB02PZcdnI9AyBVPhNpTwaZiUF9hLnZ yw== 
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 4743n0mb0j-1
+ bh=O3hRpBEKykTos0eYdysg7Qljwq5u2yLqFXW9AcwF/YQ=;
+ b=GeQQw7DgwSo8C5AIrIb3odSN5wUmysiIVlawRTjxm4i0/HUJAiZfKx+wIGq0ludDH0ji
+ KR01EwmQf3b/m4cTxErPkmml76GEY1TexpZNZAOzvwvOuI10phmbD2jon2fGe7j22rYN
+ nyyQfou7Gae9i3pcaRgVV3NJ/KeLCFuiP9ctIDIZx1RtagnFeHeqstmgh+aMZ1UJ+F6O
+ PyT8M8nBxEZAiFgCaw/fD/lp/6IHt7TCGisCkMQGdbsWyycw96+k4vMOzJJCaFLvqglb
+ 4nWiw24sKQfJAA0HvHhJog71aodH0h/YtQVEtmTTH7cDj3Zs7TdlQP+Rlj5VBJyn8lBG uw== 
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 474f0wr5x1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Sat, 07 Jun 2025 02:40:10 -0400
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5750ca8b2so396307085a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 23:40:10 -0700 (PDT)
+	for <linux-fsdevel@vger.kernel.org>; Sat, 07 Jun 2025 02:40:12 -0400
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fab979413fso53366216d6.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 23:40:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749278410; x=1749883210;
+        d=1e100.net; s=20230601; t=1749278411; x=1749883211;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AsCYG8CkIIPZbMRBimL2n8U8A9q+7pGknJ/irwioCr4=;
-        b=v9XeTfwHmwi60JSgPKwTTl5LFsExcaQTCriV0amT4nJaiDXICWojOSiXxnFekvN2RC
-         lg6ypJmewfy0IuOv3YjQHQl20O97PGCmIVoCikNSLg/WW5SraNqqmD8NcDsu0yanSbq7
-         B7YkQjSlj8iT+ir0pUKFrhxd7NVsdtdCA6m8KWCELGejK0j9+wy4pihdmohKQggc/Uz4
-         DKWpBmwIN1jvMbBu/g4kCi00vIlad5DIy1H40mkeab+WUMlQATjkkw3Cw3+NgVeNaeTL
-         P3InB9oREfLwkx3wKC4k2WevsU8jluG6NchzOgfc4Uh9u1vgQV4tNNWva8UaC2Z0FtMy
-         hEOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyy8mNClr6bLm3SOhSQg0oisDiYjOYJOaaxXkFuAB59ObBhOmNBEr1M5yEt7TiLIOlM0P0d580j3NxwSj4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvsNmNAXI8tGS6KZwso0yW5tKoVK1f04MMO4S2b64cTXpqaOnm
-	lHDQub9WSjlbHmCvMX0Ib1w8fiT7UyZKZUGXiHs2wB5ogqVBPOcl/YKeBsTjdsvuLma2yRQq4iJ
-	k7RDPzC9jZl7x9fWHRsYgC3mRXUkku0vnc0guBGIQ8eJcPrpyUQvjssHuAXnMB0eAbdGhGVg=
-X-Gm-Gg: ASbGncvGm7d9Xfm2z9ImT6g3VuKbxwG3SOWb+2O0NbGpFYa/BqNyC5Rx5UTxhAgTPpf
-	p/Z5pnB3cK/X+jDVcXZXIWD9RTtmxcIlTPnZUzt7FsNYVDghB7XNqL6kJ+b8puypyz6/waMQEAW
-	D3fU6S0ihgzbXFQiD6Ow/lQXIQ2I7vSYej8HRvNEzt6/+y9fko9aNf8kjL6+ukRUQyuR8CFWdDH
-	gOq4MFRVFCT++2gtE+KRV/kqkv9GNwZok6TDxMFtdWbRkBQ9TPvDcwNGpA5qaMEyiLyjbCiuJzZ
-	b0M2lyPUVfKx9hDH/bRoYorcwg9ZyVUVQmYsOuvV99NURmpqamvPWgAXtz7bf7Vw83oZ
-X-Received: by 2002:a05:620a:4406:b0:7c5:4711:dc56 with SMTP id af79cd13be357-7d2298fb49amr1059098985a.48.1749278409885;
-        Fri, 06 Jun 2025 23:40:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2auxeh6j8sDgORgohwuvlEu1znKeOCk52yB8TwnyaKsXohV1V87jQgHvUs+w5vQE4vIOb1g==
-X-Received: by 2002:a05:620a:4406:b0:7c5:4711:dc56 with SMTP id af79cd13be357-7d2298fb49amr1059095785a.48.1749278409369;
-        Fri, 06 Jun 2025 23:40:09 -0700 (PDT)
+        bh=O3hRpBEKykTos0eYdysg7Qljwq5u2yLqFXW9AcwF/YQ=;
+        b=n8mOp7RXrlQjA+5S1hZbzQdQ/VOK08mwl+GYJ4Chiv+xha21ZJAZf0gwFh469UZips
+         kFYLftDRVppiuGOuOjPiaoMh2r8jr9xWZv2TQLPPg4z0+jiZ5ojBWzLNpNWRj85zU5iy
+         ad8xcfr1pjWnx2e+Q0piqxlmveBvGkugoxVD1EvabDZZUTR0awjfKCl0k0q8SuF5gktx
+         FSaS/75Ks9TdzKDjHpHB8mcoL+L8+964yLLRoihzTshZB4oS8cQ4iCm8gkSyhid19WCk
+         NsUcCkzNldp6taT5vfrQg/e3IxeWtvpmvm+RM08b1JY8OkswYnLfoHyFAnsDNkHU5T1o
+         FDKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcOXI6nKT8pRZP93gLrdvvVehpaTtPMShl91w3SYECdftCodMlNn7dT6Evpxl88USdy8epSYemnU+85KRY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwY7Lomcn2hvfzjKoaNsv0HfG3UWfvp2n4ePVZWjAJIufpfPfu
+	qYfv6PDaGgcM/UQYFLWDhweB3OKbtccA0KsR94lqANILB6cR7yepROHJmVXcY33zIty/XVc5WxL
+	TZctQ2xBJ8EeeIrH9/OFuzqQbPfHsqxyYUXAt6OMOXXVdHffbo8TSGOHUZzd2mCI=
+X-Gm-Gg: ASbGncsyOWL67bYpyaAG6pdKQ3MI5QSSRz3ysGMI2l5WOfxVExzJwyol1KxYZZo0Q/+
+	ao0DCwl1NrI8y7UMvXt0n3bCFcVOeiG/q1QZiJf6eBCxK2DG8kq0r+kuCOdtNa7OOea0e4jdWGZ
+	HwFUfTV5ncztxl3w2z7FgtQxSD3JWrzKbFVwafXevFvw7xF9jlSOXyWYwqMQyOhvg04N1VLcSPj
+	H2Lfjo3UvcFoi9P5ZqsZtiId9DiwVUnXdkMz/NDAnze5PtYuU3yHkcr3pW6bKsC+/e33sEjx6u+
+	oz6knRWmCk49ZNGhPzL8GS/lrWO9jTh+6FhEMcgarJ/8g1cxHFyfK/h+/x/lhY/yxOM9
+X-Received: by 2002:a05:6214:c29:b0:6f5:3a79:a4b2 with SMTP id 6a1803df08f44-6fb08f5a53bmr101411546d6.14.1749278411227;
+        Fri, 06 Jun 2025 23:40:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmVrk/VdZ4ByYAP6ObydcI2V+4WHKHTrNByFsQ6SroU2GDeGkFxy7AqxcuptII4nzRfd/vNg==
+X-Received: by 2002:a05:6214:c29:b0:6f5:3a79:a4b2 with SMTP id 6a1803df08f44-6fb08f5a53bmr101411316d6.14.1749278410836;
+        Fri, 06 Jun 2025 23:40:10 -0700 (PDT)
 Received: from [127.0.1.1] (dyn-160-39-33-242.dyn.columbia.edu. [160.39.33.242])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09ac95e5sm24461256d6.43.2025.06.06.23.40.08
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09ac95e5sm24461256d6.43.2025.06.06.23.40.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 23:40:08 -0700 (PDT)
+        Fri, 06 Jun 2025 23:40:09 -0700 (PDT)
 From: Tal Zussman <tz2294@columbia.edu>
-Date: Sat, 07 Jun 2025 02:40:01 -0400
-Subject: [PATCH v2 2/4] userfaultfd: remove (VM_)BUG_ON()s
+Date: Sat, 07 Jun 2025 02:40:02 -0400
+Subject: [PATCH v2 3/4] userfaultfd: prevent unregistering VMAs through a
+ different userfaultfd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,7 +91,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250607-uffd-fixes-v2-2-339dafe9a2fe@columbia.edu>
+Message-Id: <20250607-uffd-fixes-v2-3-339dafe9a2fe@columbia.edu>
 References: <20250607-uffd-fixes-v2-0-339dafe9a2fe@columbia.edu>
 In-Reply-To: <20250607-uffd-fixes-v2-0-339dafe9a2fe@columbia.edu>
 To: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
@@ -102,395 +103,96 @@ To: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Tal Zussman <tz2294@columbia.edu>
 X-Mailer: b4 0.14.3-dev-d7477
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749278406; l=12862;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749278406; l=2794;
  i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
- bh=8xK9cYLtkyMChjhj6zDEoAbzPlavCj2F/8VVwgmH0dc=;
- b=S+N7HEkuX1EXoPaYFwQEbrEidF/LHDXVIh0PjyFqrHyCQ7+XyLIIN+W4PRgPVwS7zx5ao/6Nq
- 2qTTxiB7gZCC0wWB3XOuTAoBcOGOEbzdJ6UnChfrt2PylWcXxKiDuIX
+ bh=ZV6IvBG9rODNxyRdIe9D1A/OZu56meo0GhXdqsXp4+g=;
+ b=cbRiuPYOlDNC85xvdOnlaqM/TKAJAmMIkwYerXoRYFE+4o6gzxXLjI8Dj43tZLoBroYGTs5dk
+ 1vFeBnd/qJIBrk2shfUuxz4u8JfXfa2uUChkESjNV74hDtToHHfWXG+
 X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
  pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA3MDA0NyBTYWx0ZWRfX5afOJ5QiCfXe BtcXU6Lr5kTXzHAWxMGM1po8j9UnzPTw1fo5ASIl1/bnMKT4vpzMOTfVLwOszsSYW0xTpeoLqQy LYVwtiYsZRFV/sQnXHuxv0fWSu2qg4Lpvb9yJ0/v08Ave07ZxdaBpEiZDrX9h6gy5PkVDrks5Oj
- AdLydZS8EO+lmNZIgK2hsvACRS6rSQcOUER7ZhOmVjR191R5vqMy44zJ8t35b44V8a+vZZWfNk/ xVl91BU/4b8F4VETSkDGPT94h6tQ3Y7qkz7y6N7e5E9pyEKH/bojjIsV5ftSkGBomJh1f9XtFlL NzsYfwu6nunZ4knwAh7/yE4QFytL6RTVLHN6HauGQOeFA9s9+ExrfZuTprl1eej9+jdMiCag3u7 lKIJRxpv
-X-Proofpoint-ORIG-GUID: -hqRpIvAexIpDtJKx5pFmLxjH06PoyYs
-X-Proofpoint-GUID: -hqRpIvAexIpDtJKx5pFmLxjH06PoyYs
+X-Proofpoint-ORIG-GUID: d98gqQVEpe4nTkbwK5Zzzo3p5GZ9ymYa
+X-Proofpoint-GUID: d98gqQVEpe4nTkbwK5Zzzo3p5GZ9ymYa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA3MDA0NyBTYWx0ZWRfX47Zq6mVSB11J bzfkKZCwxIntDkEBkSboeNtnS27+YtedIqA6597sVidMCGOMcoHClECynwQ1Wknf9q+R1P+QRtD kfbMImxiQFpJnS1q5ARBawKTP8vump2RlqBcIUy/GDa9OCGlMS0cS5Ms/Jd4Vx06Ek31wJP4O8B
+ w4O2JdnGpK5M0XtQC2FJ7eirvnh13j6y9yk1Fhz5vzQao0Dsy33VRUlZzaebEr0gz0qupIpvlhi flKv52COX2k43HOTGbMDYaSL21/GaF6MnmAUgLNYjgoUO3ecEXfuTVHqzc0gF/JrfbrMvjNN2QK gYn+f7FMqSfcEowke2ZMOE4rNgXnhP/ekkmqHpXcqWk+G0v4fVG4a9XzqXT9S+um0M1A/+WlIq/ 749VDuLu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-07_03,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- suspectscore=0 impostorscore=0 bulkscore=10 mlxscore=0 lowpriorityscore=10
- mlxlogscore=999 spamscore=0 adultscore=0 clxscore=1015 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506070047
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=10 spamscore=0
+ mlxlogscore=830 phishscore=0 adultscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=10
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506070047
 
-BUG_ON() is deprecated [1]. Convert all the BUG_ON()s and VM_BUG_ON()s
-to use VM_WARN_ON_ONCE().
+Currently, a VMA registered with a uffd can be unregistered through a
+different uffd associated with the same mm_struct.
 
-While at it, also convert the WARN_ON_ONCE()s in move_pages() to use
-VM_WARN_ON_ONCE(), as the relevant conditions are already checked in
-validate_range() in move_pages()'s caller.
+The existing behavior is slightly broken and may incorrectly reject
+unregistering some VMAs due to the following check:
 
-[1] https://www.kernel.org/doc/html/v6.15/process/coding-style.html#use-warn-rather-than-bug
+	if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
+		goto out_unlock;
 
+where wp_async is derived from ctx, not from cur. For example, a file-backed
+VMA registered with wp_async enabled and UFFD_WP mode cannot be unregistered
+through a uffd that does not have wp_async enabled.
+
+Rather than fix this and maintain this odd behavior, make unregistration
+stricter by requiring VMAs to be unregistered through the same uffd they
+were registered with. Additionally, reorder the WARN() checks to avoid
+the aforementioned wp_async issue in the WARN()s.
+
+This change slightly modifies the ABI. It should not be backported to
+-stable.
+
+While at it, correct the comment for the no userfaultfd case. This seems to
+be a copy-paste artifact from the analogous userfaultfd_register() check.
+
+Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
 Signed-off-by: Tal Zussman <tz2294@columbia.edu>
 ---
- fs/userfaultfd.c | 59 +++++++++++++++++++++++++-------------------------
- mm/userfaultfd.c | 66 +++++++++++++++++++++++++++-----------------------------
- 2 files changed, 61 insertions(+), 64 deletions(-)
+ fs/userfaultfd.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 22f4bf956ba1..80c95c712266 100644
+index 80c95c712266..10e8037f5216 100644
 --- a/fs/userfaultfd.c
 +++ b/fs/userfaultfd.c
-@@ -165,14 +165,14 @@ static void userfaultfd_ctx_get(struct userfaultfd_ctx *ctx)
- static void userfaultfd_ctx_put(struct userfaultfd_ctx *ctx)
- {
- 	if (refcount_dec_and_test(&ctx->refcount)) {
--		VM_BUG_ON(spin_is_locked(&ctx->fault_pending_wqh.lock));
--		VM_BUG_ON(waitqueue_active(&ctx->fault_pending_wqh));
--		VM_BUG_ON(spin_is_locked(&ctx->fault_wqh.lock));
--		VM_BUG_ON(waitqueue_active(&ctx->fault_wqh));
--		VM_BUG_ON(spin_is_locked(&ctx->event_wqh.lock));
--		VM_BUG_ON(waitqueue_active(&ctx->event_wqh));
--		VM_BUG_ON(spin_is_locked(&ctx->fd_wqh.lock));
--		VM_BUG_ON(waitqueue_active(&ctx->fd_wqh));
-+		VM_WARN_ON_ONCE(spin_is_locked(&ctx->fault_pending_wqh.lock));
-+		VM_WARN_ON_ONCE(waitqueue_active(&ctx->fault_pending_wqh));
-+		VM_WARN_ON_ONCE(spin_is_locked(&ctx->fault_wqh.lock));
-+		VM_WARN_ON_ONCE(waitqueue_active(&ctx->fault_wqh));
-+		VM_WARN_ON_ONCE(spin_is_locked(&ctx->event_wqh.lock));
-+		VM_WARN_ON_ONCE(waitqueue_active(&ctx->event_wqh));
-+		VM_WARN_ON_ONCE(spin_is_locked(&ctx->fd_wqh.lock));
-+		VM_WARN_ON_ONCE(waitqueue_active(&ctx->fd_wqh));
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
- 	}
-@@ -383,12 +383,12 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	if (!ctx)
- 		goto out;
+@@ -1466,6 +1466,16 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+ 		VM_WARN_ON_ONCE(!!cur->vm_userfaultfd_ctx.ctx ^
+ 				!!(cur->vm_flags & __VM_UFFD_FLAGS));
  
--	BUG_ON(ctx->mm != mm);
-+	VM_WARN_ON_ONCE(ctx->mm != mm);
- 
- 	/* Any unrecognized flag is a bug. */
--	VM_BUG_ON(reason & ~__VM_UFFD_FLAGS);
-+	VM_WARN_ON_ONCE(reason & ~__VM_UFFD_FLAGS);
- 	/* 0 or > 1 flags set is a bug; we expect exactly 1. */
--	VM_BUG_ON(!reason || (reason & (reason - 1)));
-+	VM_WARN_ON_ONCE(!reason || (reason & (reason - 1)));
- 
- 	if (ctx->features & UFFD_FEATURE_SIGBUS)
- 		goto out;
-@@ -411,12 +411,11 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 		 * to be sure not to return SIGBUS erroneously on
- 		 * nowait invocations.
- 		 */
--		BUG_ON(vmf->flags & FAULT_FLAG_RETRY_NOWAIT);
-+		VM_WARN_ON_ONCE(vmf->flags & FAULT_FLAG_RETRY_NOWAIT);
- #ifdef CONFIG_DEBUG_VM
- 		if (printk_ratelimit()) {
--			printk(KERN_WARNING
--			       "FAULT_FLAG_ALLOW_RETRY missing %x\n",
--			       vmf->flags);
-+			pr_warn("FAULT_FLAG_ALLOW_RETRY missing %x\n",
-+				vmf->flags);
- 			dump_stack();
- 		}
- #endif
-@@ -602,7 +601,7 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
- 	 */
- out:
- 	atomic_dec(&ctx->mmap_changing);
--	VM_BUG_ON(atomic_read(&ctx->mmap_changing) < 0);
-+	VM_WARN_ON_ONCE(atomic_read(&ctx->mmap_changing) < 0);
- 	userfaultfd_ctx_put(ctx);
- }
- 
-@@ -710,7 +709,7 @@ void dup_userfaultfd_fail(struct list_head *fcs)
- 		struct userfaultfd_ctx *ctx = fctx->new;
- 
- 		atomic_dec(&octx->mmap_changing);
--		VM_BUG_ON(atomic_read(&octx->mmap_changing) < 0);
-+		VM_WARN_ON_ONCE(atomic_read(&octx->mmap_changing) < 0);
- 		userfaultfd_ctx_put(octx);
- 		userfaultfd_ctx_put(ctx);
- 
-@@ -1317,8 +1316,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
- 	do {
- 		cond_resched();
- 
--		BUG_ON(!!cur->vm_userfaultfd_ctx.ctx ^
--		       !!(cur->vm_flags & __VM_UFFD_FLAGS));
-+		VM_WARN_ON_ONCE(!!cur->vm_userfaultfd_ctx.ctx ^
-+				!!(cur->vm_flags & __VM_UFFD_FLAGS));
- 
- 		/* check not compatible vmas */
- 		ret = -EINVAL;
-@@ -1372,7 +1371,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
- 
- 		found = true;
- 	} for_each_vma_range(vmi, cur, end);
--	BUG_ON(!found);
-+	VM_WARN_ON_ONCE(!found);
- 
- 	ret = userfaultfd_register_range(ctx, vma, vm_flags, start, end,
- 					 wp_async);
-@@ -1464,8 +1463,8 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
- 	do {
- 		cond_resched();
- 
--		BUG_ON(!!cur->vm_userfaultfd_ctx.ctx ^
--		       !!(cur->vm_flags & __VM_UFFD_FLAGS));
-+		VM_WARN_ON_ONCE(!!cur->vm_userfaultfd_ctx.ctx ^
-+				!!(cur->vm_flags & __VM_UFFD_FLAGS));
- 
++		/*
++		 * Check that this VMA isn't already owned by a different
++		 * userfaultfd. This provides for more strict behavior by
++		 * preventing a VMA registered with a userfaultfd from being
++		 * unregistered through a different userfaultfd.
++		 */
++		if (cur->vm_userfaultfd_ctx.ctx &&
++		    cur->vm_userfaultfd_ctx.ctx != ctx)
++			goto out_unlock;
++
  		/*
  		 * Check not compatible vmas, not strictly required
-@@ -1479,7 +1478,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
- 
- 		found = true;
- 	} for_each_vma_range(vmi, cur, end);
--	BUG_ON(!found);
-+	VM_WARN_ON_ONCE(!found);
- 
- 	vma_iter_set(&vmi, start);
- 	prev = vma_prev(&vmi);
-@@ -1490,7 +1489,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+ 		 * here as not compatible vmas cannot have an
+@@ -1489,15 +1499,14 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
  	for_each_vma_range(vmi, vma, end) {
  		cond_resched();
  
--		BUG_ON(!vma_can_userfault(vma, vma->vm_flags, wp_async));
+-		VM_WARN_ON_ONCE(!vma_can_userfault(vma, vma->vm_flags, wp_async));
+-
+ 		/*
+-		 * Nothing to do: this vma is already registered into this
+-		 * userfaultfd and with the right tracking mode too.
++		 * Nothing to do: this vma is not registered with userfaultfd.
+ 		 */
+ 		if (!vma->vm_userfaultfd_ctx.ctx)
+ 			goto skip;
+ 
++		VM_WARN_ON_ONCE(vma->vm_userfaultfd_ctx.ctx != ctx);
 +		VM_WARN_ON_ONCE(!vma_can_userfault(vma, vma->vm_flags, wp_async));
- 
- 		/*
- 		 * Nothing to do: this vma is already registered into this
-@@ -1564,7 +1563,7 @@ static int userfaultfd_wake(struct userfaultfd_ctx *ctx,
- 	 * len == 0 means wake all and we don't want to wake all here,
- 	 * so check it again to be sure.
- 	 */
--	VM_BUG_ON(!range.len);
-+	VM_WARN_ON_ONCE(!range.len);
- 
- 	wake_userfault(ctx, &range);
- 	ret = 0;
-@@ -1621,7 +1620,7 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
- 		return -EFAULT;
- 	if (ret < 0)
- 		goto out;
--	BUG_ON(!ret);
-+	VM_WARN_ON_ONCE(!ret);
- 	/* len == 0 would wake all */
- 	range.len = ret;
- 	if (!(uffdio_copy.mode & UFFDIO_COPY_MODE_DONTWAKE)) {
-@@ -1676,7 +1675,7 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
- 	if (ret < 0)
- 		goto out;
- 	/* len == 0 would wake all */
--	BUG_ON(!ret);
-+	VM_WARN_ON_ONCE(!ret);
- 	range.len = ret;
- 	if (!(uffdio_zeropage.mode & UFFDIO_ZEROPAGE_MODE_DONTWAKE)) {
- 		range.start = uffdio_zeropage.range.start;
-@@ -1788,7 +1787,7 @@ static int userfaultfd_continue(struct userfaultfd_ctx *ctx, unsigned long arg)
- 		goto out;
- 
- 	/* len == 0 would wake all */
--	BUG_ON(!ret);
-+	VM_WARN_ON_ONCE(!ret);
- 	range.len = ret;
- 	if (!(uffdio_continue.mode & UFFDIO_CONTINUE_MODE_DONTWAKE)) {
- 		range.start = uffdio_continue.range.start;
-@@ -1845,7 +1844,7 @@ static inline int userfaultfd_poison(struct userfaultfd_ctx *ctx, unsigned long
- 		goto out;
- 
- 	/* len == 0 would wake all */
--	BUG_ON(!ret);
-+	VM_WARN_ON_ONCE(!ret);
- 	range.len = ret;
- 	if (!(uffdio_poison.mode & UFFDIO_POISON_MODE_DONTWAKE)) {
- 		range.start = uffdio_poison.range.start;
-@@ -2106,7 +2105,7 @@ static int new_userfaultfd(int flags)
- 	struct file *file;
- 	int fd;
- 
--	BUG_ON(!current->mm);
-+	VM_WARN_ON_ONCE(!current->mm);
- 
- 	/* Check the UFFD_* constants for consistency.  */
- 	BUILD_BUG_ON(UFFD_USER_MODE_ONLY & UFFD_SHARED_FCNTL_FLAGS);
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index bc473ad21202..41e67ded5a6e 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -561,7 +561,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
- 	}
- 
- 	while (src_addr < src_start + len) {
--		BUG_ON(dst_addr >= dst_start + len);
-+		VM_WARN_ON_ONCE(dst_addr >= dst_start + len);
- 
- 		/*
- 		 * Serialize via vma_lock and hugetlb_fault_mutex.
-@@ -602,7 +602,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
- 		if (unlikely(err == -ENOENT)) {
- 			up_read(&ctx->map_changing_lock);
- 			uffd_mfill_unlock(dst_vma);
--			BUG_ON(!folio);
-+			VM_WARN_ON_ONCE(!folio);
- 
- 			err = copy_folio_from_user(folio,
- 						   (const void __user *)src_addr, true);
-@@ -614,7 +614,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
- 			dst_vma = NULL;
- 			goto retry;
- 		} else
--			BUG_ON(folio);
-+			VM_WARN_ON_ONCE(folio);
- 
- 		if (!err) {
- 			dst_addr += vma_hpagesize;
-@@ -635,9 +635,9 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
- out:
- 	if (folio)
- 		folio_put(folio);
--	BUG_ON(copied < 0);
--	BUG_ON(err > 0);
--	BUG_ON(!copied && !err);
-+	VM_WARN_ON_ONCE(copied < 0);
-+	VM_WARN_ON_ONCE(err > 0);
-+	VM_WARN_ON_ONCE(!copied && !err);
- 	return copied ? copied : err;
- }
- #else /* !CONFIG_HUGETLB_PAGE */
-@@ -711,12 +711,12 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
- 	/*
- 	 * Sanitize the command parameters:
- 	 */
--	BUG_ON(dst_start & ~PAGE_MASK);
--	BUG_ON(len & ~PAGE_MASK);
-+	VM_WARN_ON_ONCE(dst_start & ~PAGE_MASK);
-+	VM_WARN_ON_ONCE(len & ~PAGE_MASK);
- 
- 	/* Does the address range wrap, or is the span zero-sized? */
--	BUG_ON(src_start + len <= src_start);
--	BUG_ON(dst_start + len <= dst_start);
-+	VM_WARN_ON_ONCE(src_start + len <= src_start);
-+	VM_WARN_ON_ONCE(dst_start + len <= dst_start);
- 
- 	src_addr = src_start;
- 	dst_addr = dst_start;
-@@ -775,7 +775,7 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
- 	while (src_addr < src_start + len) {
- 		pmd_t dst_pmdval;
- 
--		BUG_ON(dst_addr >= dst_start + len);
-+		VM_WARN_ON_ONCE(dst_addr >= dst_start + len);
- 
- 		dst_pmd = mm_alloc_pmd(dst_mm, dst_addr);
- 		if (unlikely(!dst_pmd)) {
-@@ -818,7 +818,7 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
- 
- 			up_read(&ctx->map_changing_lock);
- 			uffd_mfill_unlock(dst_vma);
--			BUG_ON(!folio);
-+			VM_WARN_ON_ONCE(!folio);
- 
- 			kaddr = kmap_local_folio(folio, 0);
- 			err = copy_from_user(kaddr,
-@@ -832,7 +832,7 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
- 			flush_dcache_folio(folio);
- 			goto retry;
- 		} else
--			BUG_ON(folio);
-+			VM_WARN_ON_ONCE(folio);
- 
- 		if (!err) {
- 			dst_addr += PAGE_SIZE;
-@@ -852,9 +852,9 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
- out:
- 	if (folio)
- 		folio_put(folio);
--	BUG_ON(copied < 0);
--	BUG_ON(err > 0);
--	BUG_ON(!copied && !err);
-+	VM_WARN_ON_ONCE(copied < 0);
-+	VM_WARN_ON_ONCE(err > 0);
-+	VM_WARN_ON_ONCE(!copied && !err);
- 	return copied ? copied : err;
- }
- 
-@@ -940,11 +940,11 @@ int mwriteprotect_range(struct userfaultfd_ctx *ctx, unsigned long start,
- 	/*
- 	 * Sanitize the command parameters:
- 	 */
--	BUG_ON(start & ~PAGE_MASK);
--	BUG_ON(len & ~PAGE_MASK);
-+	VM_WARN_ON_ONCE(start & ~PAGE_MASK);
-+	VM_WARN_ON_ONCE(len & ~PAGE_MASK);
- 
- 	/* Does the address range wrap, or is the span zero-sized? */
--	BUG_ON(start + len <= start);
-+	VM_WARN_ON_ONCE(start + len <= start);
- 
- 	mmap_read_lock(dst_mm);
- 
-@@ -1709,15 +1709,13 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- 	ssize_t moved = 0;
- 
- 	/* Sanitize the command parameters. */
--	if (WARN_ON_ONCE(src_start & ~PAGE_MASK) ||
--	    WARN_ON_ONCE(dst_start & ~PAGE_MASK) ||
--	    WARN_ON_ONCE(len & ~PAGE_MASK))
--		goto out;
-+	VM_WARN_ON_ONCE(src_start & ~PAGE_MASK);
-+	VM_WARN_ON_ONCE(dst_start & ~PAGE_MASK);
-+	VM_WARN_ON_ONCE(len & ~PAGE_MASK);
- 
- 	/* Does the address range wrap, or is the span zero-sized? */
--	if (WARN_ON_ONCE(src_start + len <= src_start) ||
--	    WARN_ON_ONCE(dst_start + len <= dst_start))
--		goto out;
-+	VM_WARN_ON_ONCE(src_start + len < src_start);
-+	VM_WARN_ON_ONCE(dst_start + len < dst_start);
- 
- 	err = uffd_move_lock(mm, dst_start, src_start, &dst_vma, &src_vma);
- 	if (err)
-@@ -1867,9 +1865,9 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- 	up_read(&ctx->map_changing_lock);
- 	uffd_move_unlock(dst_vma, src_vma);
- out:
--	VM_WARN_ON(moved < 0);
--	VM_WARN_ON(err > 0);
--	VM_WARN_ON(!moved && !err);
-+	VM_WARN_ON_ONCE(moved < 0);
-+	VM_WARN_ON_ONCE(err > 0);
-+	VM_WARN_ON_ONCE(!moved && !err);
- 	return moved ? moved : err;
- }
- 
-@@ -1956,9 +1954,9 @@ int userfaultfd_register_range(struct userfaultfd_ctx *ctx,
- 	for_each_vma_range(vmi, vma, end) {
- 		cond_resched();
- 
--		BUG_ON(!vma_can_userfault(vma, vm_flags, wp_async));
--		BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
--		       vma->vm_userfaultfd_ctx.ctx != ctx);
-+		VM_WARN_ON_ONCE(!vma_can_userfault(vma, vm_flags, wp_async));
-+		VM_WARN_ON_ONCE(vma->vm_userfaultfd_ctx.ctx &&
-+				vma->vm_userfaultfd_ctx.ctx != ctx);
  		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
  
- 		/*
-@@ -2035,8 +2033,8 @@ void userfaultfd_release_all(struct mm_struct *mm,
- 	prev = NULL;
- 	for_each_vma(vmi, vma) {
- 		cond_resched();
--		BUG_ON(!!vma->vm_userfaultfd_ctx.ctx ^
--		       !!(vma->vm_flags & __VM_UFFD_FLAGS));
-+		VM_WARN_ON_ONCE(!!vma->vm_userfaultfd_ctx.ctx ^
-+				!!(vma->vm_flags & __VM_UFFD_FLAGS));
- 		if (vma->vm_userfaultfd_ctx.ctx != ctx) {
- 			prev = vma;
- 			continue;
+ 		if (vma->vm_start > start)
 
 -- 
 2.39.5
