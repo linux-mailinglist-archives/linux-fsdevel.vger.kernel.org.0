@@ -1,196 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-50889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E11AD0B30
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 05:54:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1A5AD0B44
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 07:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D620F7A4D4A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 03:53:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3AA81891C81
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 05:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D15258CE8;
-	Sat,  7 Jun 2025 03:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CD41CEACB;
+	Sat,  7 Jun 2025 05:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nsx8AXTC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAC71C4A0A;
-	Sat,  7 Jun 2025 03:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24B6A55
+	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Jun 2025 05:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749268465; cv=none; b=olO0sDyOA2AP0pINGtY8yHu8j3mNer6yLcWp5KBFTH004bZ+NITPyCTbASMttFXMWwfl52WODeAiZT3PdjLxkKlC64wAvHJgHZv1Ze7SnL2Y8SvTH2Ntp07VZ6zA+78u6Pgc+Tthp/lKcj9wmvxTKcbI7WkyNg1IE8e46IyhsY0=
+	t=1749273653; cv=none; b=oVSaCj0qRZFpTddER/6Q4gbXIJctdBxzCodSF/U12sTLG+eFVfRcnkSdTBudabYWoi/u3aQMN1XWhIIMAJQ/2gnzXXR4CZMfTj5Gyh7IaHrucNCzicbMn+Wt7iFjhc5qjb530yJQ3KQ5FnN3iYFa5Y4gdvbZxuTtvFFeLmpeebk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749268465; c=relaxed/simple;
-	bh=qbEiQkOsHUJ965c1iALiOT25uBXyJzl3QjH7l1SqTNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fNEWGe3RTK6CjfHdbERo9aYeLm7ISsDuiqS+siHwZKVLOQZ/MjUZZRwo1RmBABVbsp7OQtGu4e/hiadO6YYeV1+JeAnduUQM1rlXcRlPl3MCcBqwLBBj9UoNCPiQsjfprE8u6y47+T/H4RqwqnbseA2ewl3PzzmU5U6GeMoba34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bDkp30L7NzYQvXP;
-	Sat,  7 Jun 2025 11:54:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 13AB51A0F22;
-	Sat,  7 Jun 2025 11:54:18 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBXvGDot0No5YoBOw--.1118S3;
-	Sat, 07 Jun 2025 11:54:17 +0800 (CST)
-Message-ID: <42dfc5f6-8574-4dbd-b067-b1a4e40ffe91@huaweicloud.com>
-Date: Sat, 7 Jun 2025 11:54:16 +0800
+	s=arc-20240116; t=1749273653; c=relaxed/simple;
+	bh=vtgdXbTw4KU7FaACdvS2GYPLKp8klMnXlwZyyS03+NI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1gmNEXmpeWJWHGwmFia5oUaEgTSsca5YuKXGuTZbj/tDsHZONIC+iIAPHHCHATSu8Y+GC40DdcCMGLsuZvR5VsERfuchRqVUSzT3zLlaETQg3N49jIN41mn8x1VKQo55sNvskNXe7WNy2NMdCkdkW2Wv75Tj4h3vsc2BoVnkJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nsx8AXTC; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wZelpZGLTzYNWGN5Ju594A7hkSUmcpw1wJmuochOtIQ=; b=nsx8AXTCPWrh+lI5Rd0uqNaclI
+	8BrISZW7q47m2IQKyKaBfbMwvqTju3yKn+O+BnhOI2D1Ol9eyXSZg5/Yvcb8Qj2YWe00is21oknZm
+	xArXpe+bRlr3E5dFOwHM5hoCkYg6kAgujc6bDwsscfOKNtr3/AoXxjZFMrEo72UZT1xGGjyDga7fA
+	CxhVyj5vUTqtF9gefla6TlPIqP88xOIrnOgqZanPWs7LC840hIS05Uz6Ie7Z574YxNFF1zTkbwI3+
+	lZ7jxJn5CI3LZr5/r3JzdHslUYBZdNPLguri8s8olDwR9ktER9Ycd8wBR+s7IEmP2Jgivs8+SW/yO
+	xodVozzA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uNlz6-00000005vBy-0R9c;
+	Sat, 07 Jun 2025 05:20:48 +0000
+Date: Sat, 7 Jun 2025 06:20:48 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	Jan Kara <jack@suse.cz>, Allison Karlitskaya <lis@redhat.com>
+Subject: Re: [PATCH 1/2] mount: fix detached mount regression
+Message-ID: <20250607052048.GZ299672@ZenIV>
+References: <20250605-work-mount-regression-v1-0-60c89f4f4cf5@kernel.org>
+ <20250605-work-mount-regression-v1-1-60c89f4f4cf5@kernel.org>
+ <20250606045441.GS299672@ZenIV>
+ <20250606051428.GT299672@ZenIV>
+ <20250606070127.GU299672@ZenIV>
+ <20250606-neuformulierung-flohmarkt-42efdaa4bac5@brauner>
+ <20250606174502.GY299672@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] ext4: restart handle if credits are insufficient
- during writepages
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ojaswin@linux.ibm.com, yi.zhang@huawei.com, libaokun1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250530062858.458039-1-yi.zhang@huaweicloud.com>
- <20250530062858.458039-2-yi.zhang@huaweicloud.com>
- <byiax3ykefdvmu47xrgrndguxabwvakescnkanbhwwqoec7yky@dvzzkic5uzf3>
- <3aafd643-3655-420e-93fa-25d0d0ff4f32@huaweicloud.com>
- <uruplwi35qaajr3cqyozq7dpbwgqehuzstxpobx44retpek6cb@gplmkhlsaofk>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <uruplwi35qaajr3cqyozq7dpbwgqehuzstxpobx44retpek6cb@gplmkhlsaofk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBXvGDot0No5YoBOw--.1118S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWrWUJFW3AF1kXr1rXrWrXwb_yoWrKF4rpF
-	ZF93Z8GF4kXa4Yvr12qa1UArnay345Ar43Ja13KFW3ZFn8u3Z7KF1ftayY9ayUur4xXa4I
-	vr4jkr97GFy5ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250606174502.GY299672@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2025/6/6 21:16, Jan Kara wrote:
-> On Fri 06-06-25 14:54:21, Zhang Yi wrote:
->> On 2025/6/5 22:04, Jan Kara wrote:
->>>> +		/*
->>>> +		 * The credits for the current handle and transaction have
->>>> +		 * reached their upper limit, stop the handle and initiate a
->>>> +		 * new transaction. Note that some blocks in this folio may
->>>> +		 * have been allocated, and these allocated extents are
->>>> +		 * submitted through the current transaction, but the folio
->>>> +		 * itself is not submitted. To prevent stale data and
->>>> +		 * potential deadlock in ordered mode, only the
->>>> +		 * dioread_nolock mode supports this.
->>>> +		 */
->>>> +		if (err > 0) {
->>>> +			WARN_ON_ONCE(!ext4_should_dioread_nolock(inode));
->>>> +			mpd->continue_map = 1;
->>>> +			err = 0;
->>>> +			goto update_disksize;
->>>> +		}
->>>>  	} while (map->m_len);
->>>>  
->>>>  update_disksize:
->>>> @@ -2467,6 +2501,9 @@ static int mpage_map_and_submit_extent(handle_t *handle,
->>>>  		if (!err)
->>>>  			err = err2;
->>>>  	}
->>>> +	if (!err && mpd->continue_map)
->>>> +		ext4_get_io_end(io_end);
->>>> +
->>>
->>> IMHO it would be more logical to not call ext4_put_io_end[_deferred]() in
->>> ext4_do_writepages() if we see we need to continue doing mapping for the
->>> current io_end.
->>>
->>> That way it would be also more obvious that you've just reintroduced
->>> deadlock fixed by 646caa9c8e196 ("ext4: fix deadlock during page
->>> writeback"). This is actually a fundamental thing because for
->>> ext4_journal_stop() to complete, we may need IO on the folio to finish
->>> which means we need io_end to be processed. Even if we avoided the awkward
->>> case with sync handle described in 646caa9c8e196, to be able to start a new
->>> handle we may need to complete a previous transaction commit to be able to
->>> make space in the journal.
->>
->> Yeah, you are right, I missed the full folios that were attached to the
->> same io_end in the previous rounds. If we continue to use this solution,
->> I think we should split the io_end and submit the previous one which
->> includes those full folios before the previous transaction is
->> committed.
+On Fri, Jun 06, 2025 at 06:45:02PM +0100, Al Viro wrote:
+> On Fri, Jun 06, 2025 at 09:58:26AM +0200, Christian Brauner wrote:
 > 
-> Yes, fully mapped folios definitely need to be submitted. But I think that
-> should be handled by ext4_io_submit() call in ext4_do_writepages() loop?
-
-Sorry, my previous description may not have been clear enough. The
-deadlock issue in this solution should be:
-
-1. In the latest round of ext4_do_writepages(),
-   mpage_prepare_extent_to_map() may add some contiguous fully mapped
-   folios and an unmapped folio(A) to the current processing io_end.
-2. mpage_map_and_submit_extent() mapped some bhs in folio A and bail out
-   due to the insufficient journal credits, it acquires one more
-   refcount of io_end to prevent ext4_put_io_end() convert the extent
-   written status of the newly allcoated extents, since we don't submit
-   this partial folio now.
-3. ext4_io_submit() in ext4_do_writepages() submits the fully mapped
-   folios, but the endio process cannot be invoked properly since the
-   above extra refcount, so the writeback state of the folio cannot be
-   cleared.
-4. Finally, it stops the current handle and waits for the transaction to
-   be committed. However, the commit process also waits for those fully
-   mapped folios to complete, which can lead to a deadlock.
-
-Therefore, if the io_end contains both fully mapped folios and a partial
-folio, we need to split the io_end, the first one contains those mapped
-folios, and the second one only contain the partial folio. We only hold
-the refcount of the second io_end, the first one can be finished properly,
-this can break the deadlock.
-
-However, the solution of submitting the partial folio sounds more simple
-to me.
-
-[..]
-
->>> Then once IO completes
->>> mpage_prepare_extent_to_map() is able to start working on the folio again.
->>> Since we cleared dirty bits in the buffers we should not be repeating the
->>> work we already did...
->>>
->>
->> Hmm, it looks like this solution should work. We should introduce a
->> partial folio version of mpage_submit_folio(), call it and redirty
->> the folio once we need to bail out of the loop since insufficient
->> space or journal credits. But ext4_bio_write_folio() will handle the
->> the logic of fscrypt case, I'm not familiar with fscrypt, so I'm not
->> sure it could handle the partial page properly. I'll give it a try.
+> > Fwiw, check_mnt() is a useless name for this function that's been
+> > bothering me forever.
 > 
-> As far as I can tell it should work fine. The logic in
-> ext4_bio_write_folio() is already prepared for handling partial folio
-> writeouts, redirtying of the page etc. (because it needs to handle writeout
-> from transaction commit where we can writeout only parts of folios with
-> underlying blocks allocated). We just need to teach mpage_submit_folio() to
-> substract only written-out number of pages from nr_to_write.
-> 
+> Point, but let's keep the renaming (s/check_mnt/our_mount/, for
+> example) separate.
 
-Yes, indeed. I will try this solution.
+Modified and force-pushed.
 
-Thanks,
-Yi.
+It does pass xfstests without regressions.  kselftests... AFAICS,
+no regressions either, but the damn thing is a mess.  Example:
 
+# # set_layers_via_fds.c:711:set_layers_via_detached_mount_fds:Expected layers_found[i] (0) == true (1)
+# # set_layers_via_fds.c:39:set_layers_via_detached_mount_fds:Expected rmdir("/set_layers_via_fds") (-1) == 0 (0)
+# # set_layers_via_detached_mount_fds: Test terminated by assertion
+# #          FAIL  set_layers_via_fds.set_layers_via_detached_mount_fds
 
+Not a regression, AFAICT; the underlying problem is that mount options
+are shown incorrectly in the tested case.  Still present after overlayfs
+merge.  mount does succeed, but... in options we see this:
+rw,relatime,lowerdir+=/,lowerdir+=/,lowerdir+=/,lowerdir+=/,datadir+=/,datadir+=/,datadir+=/,upperdir=/upper,workdir=/work,redirect_dir=on,uuid=on,metacopy=on
 
+And it's a perfectly expected result - you are giving fsconfig(2) empty
+path on a detached tree, created with OPEN_TREE_CLONE.  I.e. it *is*
+an empty path in the mount tree the sucker's in.  What could d_path()
+produce other than "/"?
+
+Note, BTW that it really does create set_layers_via_fds in root (WTF?) and
+running that sucker again yields a predictable fun result - mkdir() failing
+with EEXIST...
+
+IMO that kind of stuff should be dealt with by creating a temporary directory
+somewhere in /tmp, mounting tmpfs on it, then doing all creations, etc.
+inside that.  Then umount -l /tmp/<whatever>; rmdir /tmp/<whatever> will
+clean the things up.
 
