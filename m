@@ -1,222 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-50900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39119AD0CD7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 12:29:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170E1AD0CE4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 12:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677DC3A88D2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 10:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2B0217051F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 10:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8898F21B185;
-	Sat,  7 Jun 2025 10:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D910021C182;
+	Sat,  7 Jun 2025 10:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FsZSWq4m"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DiQ2Ns8u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F7E1E8338;
-	Sat,  7 Jun 2025 10:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A172D13AD38;
+	Sat,  7 Jun 2025 10:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749292184; cv=none; b=WcsQofITzE+9/8Aigf3sTC06I+dcTOD6aa9XbRLjLU+4mpBTXv0FOZ+AWm06tYRw4W9TVxX91yzj+4c1nspGj3VlZNBTEvc+aqDGPUxfxZG1ME8vVyLicq02ARXdrR8tKvGEjvmO4kSUWiWA3GNB8edvKKiK+yMuGwq0tBbo4Hs=
+	t=1749292879; cv=none; b=P4+bsQNDzaQTF8N+SZ0sfeIqC0mqmK40JNX/ZPVTT/THD1StmV7VJRNceqLyTlBys1g9m8BmKGVrqDdnq2UqAXy331pJ2x7H5GX6fqAHlcAhw/3+gwXMNnU0EpWsfQI3OIXgFKVwQBnxyv1HZsFcUqt7Vcb7zP0kvp7rzHbr9YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749292184; c=relaxed/simple;
-	bh=HUErItk+IykV8jb9k+DxC8wOGdpP83t+IkeVHoy1mbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBxfk3C1cTRrV3dRMziOLo7fIUYSD08Aal9YDqq85jQYjhZfeFvyXu3JnwM7vaWBV/TeGLUKVRJ2WTrKHU0MjAhZvXsoXgQyMKuiidqbnNSyc2+n8IhIRObiToKMMsC/RD8cCy7rdhReiz2qS3lXhZcQXUOnVGljkJyD0aQ5FP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FsZSWq4m; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749292182; x=1780828182;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HUErItk+IykV8jb9k+DxC8wOGdpP83t+IkeVHoy1mbE=;
-  b=FsZSWq4mn3Up4nOpSt3PSFYWW0a7Fv14gYkTWQ5Qcb3sY7nHY88cpL5Y
-   YJQU/3YSPNKW3l5LoTfAsTojNU/HQey9xRHVPvAz/J11aA1hLAMixdrAR
-   b4pCM1vT40wspJWMQ8DP+c6dEDaggdb95YmRMIIzKybueIVDE7xNPUQxK
-   V8l2OpTWFYDMzNxxtiUK/OcMCqi31wOrvYY5On5l5LBkJ/hOyYq21hopi
-   7RJ9sNG1TYGAzpbOEeN5Aku79xFSFWCn0oinya+ySXJ3imfnlHmSx48ua
-   eQMQaXKdNspkpbPGw4lRx/74GQhJO7C1NrznK1EMBn2NDKES5hGTYShHO
-   w==;
-X-CSE-ConnectionGUID: XDGHLUpcT6C41EGMVAkmwA==
-X-CSE-MsgGUID: JQVDAluKSpaLhwbIWysq4Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="51430862"
-X-IronPort-AV: E=Sophos;i="6.16,217,1744095600"; 
-   d="scan'208";a="51430862"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2025 03:29:41 -0700
-X-CSE-ConnectionGUID: //5h4T4EQHy8JqBmwILrZg==
-X-CSE-MsgGUID: cSCGMFoJQxaOHhvnzWtjPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,217,1744095600"; 
-   d="scan'208";a="146401279"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 07 Jun 2025 03:29:38 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uNqnv-0005in-2o;
-	Sat, 07 Jun 2025 10:29:35 +0000
-Date: Sat, 7 Jun 2025 18:29:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: wangfushuai <wangfushuai@baidu.com>, akpm@linux-foundation.org,
-	david@redhat.com, andrii@kernel.org, osalvador@suse.de,
-	Liam.Howlett@oracle.com, christophe.leroy@csgroup.eu
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	wangfushuai <wangfushuai@baidu.com>
-Subject: Re: [PATCH] fs/proc/task_mmu: add VM_SHADOW_STACK for arm64 when
- support GCS
-Message-ID: <202506071806.mshFK42h-lkp@intel.com>
-References: <20250607060741.69902-1-wangfushuai@baidu.com>
+	s=arc-20240116; t=1749292879; c=relaxed/simple;
+	bh=Jn2nwtxhrD0LiVtEA05ZWEGUVk8dP/GC/5zmOhse/KM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HOE2E/AbpW1haE8wgtm8V4iD+We1VTjgUoWHj1TgQ+0RT6KlcIug0aHoMDVsRgMdMEIfI/ex9Ghr2kDGZcNxh4gBtD1q/gcmE+iymAnAnuYISOhKU7j+QZ3mIkCPHwtATDgvoUqcxqaCTOnGf70i8uxYnv0TfUlBJ8NXU+k4vSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DiQ2Ns8u; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad88d77314bso554988466b.1;
+        Sat, 07 Jun 2025 03:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749292875; x=1749897675; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LCc2AL+8GYTHWfaJdKFHyFfLcbynW+S8GO3AirZCWOg=;
+        b=DiQ2Ns8uchRY1v4BGuyu8aMjJjW0m3g2oeLWR/Fvze6nVUyR2tIMIc2T/KXzPltn7h
+         TsNFVOw4WjNXhv8AuWng7HxbRt/NP1fElC5kRV4GO4cyEGT9W8iwGz6wRP2nATLTnzIx
+         0WLWLiV0OoqQPo+DLN0XL78uNtQHGDw6GK5Xsu9jbuSDekFUM8z47fP1ytHzjQjdaedy
+         ApPLw6G3w2oVfUp+MOjkJlRTo81naC6z9RUHBLif2tGdtYJBjtAHIQIT71exNafUkF6n
+         gawdd3fyqAE8FmBwGrMXdmuWGZ/xL2aJr9QdF4D2xc2L8CaH+/rgWxM5/UyWhmBTXpqU
+         Qinw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749292875; x=1749897675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LCc2AL+8GYTHWfaJdKFHyFfLcbynW+S8GO3AirZCWOg=;
+        b=mjd5PJ9sQ3pOdDK+hPjrro4xUDNcrLrqzngH6OevKrnUEpG5yfceaUei9UNPOKjj9L
+         1UCaHKmkMneYySagf0QUguuW0We6KXv8veroUruAzHHAwWV6Q1tz1o6BFJGltvKXwnqw
+         +43d0zbFT6lE9ATlxdqZ21BCgjUHNJPQGLl9GyrSKRY6OLJ03vp3k3AsJYM+XHBzBtZB
+         8tL/hrX4XsRTaBaQNZRVZaxQoC76/dwNU++FsnqccHwbVIayhsMD8mmdEdNZBMJTgyWT
+         KylRQHjjAt74+ehydwFjW1OiGg5kxxQb1E0vQweI8ou+lPkZeOfOFjWklk4g5t7xusJm
+         k11w==
+X-Forwarded-Encrypted: i=1; AJvYcCVD9KZYV0PHJ5POXDwBFlTdzuFeDR80TR0Fley98CT7bGhrbTpiytZyyC14bgemPH18ASEbY7nScSra3pgOwg==@vger.kernel.org, AJvYcCW+DP1c64G/gi4RV4u67CuHBAC26fVI/xq44DQwES9u2WUOiKcFQkat0YTDDH9jkCC3rM7w3BfRtVam9yUD@vger.kernel.org, AJvYcCW+WFgCkX190h7VZqhhtek3TsK5G5tZOzOZnYg/ad5t6BLd1hufrTFwk0JNPKl+VL76lSbTEI3oprhqlrBX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/x0xL6W7PQ93KdGxuzCieSaOfurm9osqOuTaGlBpb4kw4lv5g
+	lge5pEXgD/N7XCpw6t2+n/AQC+sfNKLWLKod1DkMAJCPlZ3pyBAWd5S9hCtFC2ofLe4bCXo0eEX
+	MfC4a1fVvNg1aQt9XmKTWNG0jjGes+yM=
+X-Gm-Gg: ASbGncsN24Ca9/hr80e0NVw+z4KsQuj4B0OyinjcffnqOPALnlmEz7LebpEatiy76yi
+	tVZpkJ+0um9Nu7TGZBD2ZKyDUfE9nKNjW8FY2PxKfwjDgpR5iPAiZEayOQdVj9Bt8V5XRDFpLuJ
+	MiOVc7oWEO76ATITJEb0D6iymZaubgI0s1
+X-Google-Smtp-Source: AGHT+IGmGeCn46P5NspVOPkS27vYcSGjcKxmfhGr6FFoxv5+mZNtdASAwSMv/beOFpW7j2ByyNuxapTB32Jp/PXLSW0=
+X-Received: by 2002:a17:906:915:b0:ade:422d:3167 with SMTP id
+ a640c23a62f3a-ade422d3425mr99608166b.49.1749292874588; Sat, 07 Jun 2025
+ 03:41:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250607060741.69902-1-wangfushuai@baidu.com>
+References: <CAJfpegvB3At5Mm54eDuNVspuNtkhoJwPH+HcOCWm7j-CSQ1jbw@mail.gmail.com>
+ <CAHk-=wgH174aR4HnpmV7yVYVjS7VmSRC31md5di7_Cr_v0Afqg@mail.gmail.com>
+ <CAOQ4uxjXvcj8Vf3y81KJCbn6W5CSm9fFofV8P5ihtcZ=zYSREA@mail.gmail.com>
+ <CAJfpegutprdJ8LPsKGG-yNi9neC65Phhf67nLuL+5a4xGhpkZA@mail.gmail.com> <CAJfpegu1BAVsW5duT-HoMGiSXNvj2VsLNfTuzvF1-RLyVLDdTA@mail.gmail.com>
+In-Reply-To: <CAJfpegu1BAVsW5duT-HoMGiSXNvj2VsLNfTuzvF1-RLyVLDdTA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 7 Jun 2025 12:41:03 +0200
+X-Gm-Features: AX0GCFuOS-cNCbhYtnI1GPftVgZkMlWkuSQkk5a56vkarkoJju9FdW0Wtthagqc
+Message-ID: <CAOQ4uxgFJCikAi4o4e9vzXTH=cUQGyvoo+cpdtfmBwJzutSCzw@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs update for 6.16
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi wangfushuai,
+On Fri, Jun 6, 2025 at 11:33=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Fri, 6 Jun 2025 at 08:36, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > I'll redo the PR with your patch.
+>
+> Pushed to #overlayfs-next.
+>
+> I'll drop this from the PR, since it's just a cleanup.  It still won't
+> break anything (and that's what I meant by "trivial"), but it can wait
+> a cycle or at least a few rc's.
+>
 
-kernel test robot noticed the following build warnings:
+I'll send the cleanup patch to Christian.
+It's best if it goes in via the vfs tree anyway.
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on akpm-mm/mm-everything linus/master v6.15 next-20250606]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/wangfushuai/fs-proc-task_mmu-add-VM_SHADOW_STACK-for-arm64-when-support-GCS/20250607-141047
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250607060741.69902-1-wangfushuai%40baidu.com
-patch subject: [PATCH] fs/proc/task_mmu: add VM_SHADOW_STACK for arm64 when support GCS
-config: x86_64-buildonly-randconfig-001-20250607 (https://download.01.org/0day-ci/archive/20250607/202506071806.mshFK42h-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250607/202506071806.mshFK42h-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506071806.mshFK42h-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> fs/proc/task_mmu.c:994:42: warning: extra tokens at end of #ifdef directive [-Wextra-tokens]
-     994 | #ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK || defined(CONFIG_ARM64_GCS)
-         |                                          ^
-         |                                          //
-   1 warning generated.
-
-
-vim +994 fs/proc/task_mmu.c
-
-   920	
-   921	static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-   922	{
-   923		/*
-   924		 * Don't forget to update Documentation/ on changes.
-   925		 *
-   926		 * The length of the second argument of mnemonics[]
-   927		 * needs to be 3 instead of previously set 2
-   928		 * (i.e. from [BITS_PER_LONG][2] to [BITS_PER_LONG][3])
-   929		 * to avoid spurious
-   930		 * -Werror=unterminated-string-initialization warning
-   931		 *  with GCC 15
-   932		 */
-   933		static const char mnemonics[BITS_PER_LONG][3] = {
-   934			/*
-   935			 * In case if we meet a flag we don't know about.
-   936			 */
-   937			[0 ... (BITS_PER_LONG-1)] = "??",
-   938	
-   939			[ilog2(VM_READ)]	= "rd",
-   940			[ilog2(VM_WRITE)]	= "wr",
-   941			[ilog2(VM_EXEC)]	= "ex",
-   942			[ilog2(VM_SHARED)]	= "sh",
-   943			[ilog2(VM_MAYREAD)]	= "mr",
-   944			[ilog2(VM_MAYWRITE)]	= "mw",
-   945			[ilog2(VM_MAYEXEC)]	= "me",
-   946			[ilog2(VM_MAYSHARE)]	= "ms",
-   947			[ilog2(VM_GROWSDOWN)]	= "gd",
-   948			[ilog2(VM_PFNMAP)]	= "pf",
-   949			[ilog2(VM_LOCKED)]	= "lo",
-   950			[ilog2(VM_IO)]		= "io",
-   951			[ilog2(VM_SEQ_READ)]	= "sr",
-   952			[ilog2(VM_RAND_READ)]	= "rr",
-   953			[ilog2(VM_DONTCOPY)]	= "dc",
-   954			[ilog2(VM_DONTEXPAND)]	= "de",
-   955			[ilog2(VM_LOCKONFAULT)]	= "lf",
-   956			[ilog2(VM_ACCOUNT)]	= "ac",
-   957			[ilog2(VM_NORESERVE)]	= "nr",
-   958			[ilog2(VM_HUGETLB)]	= "ht",
-   959			[ilog2(VM_SYNC)]	= "sf",
-   960			[ilog2(VM_ARCH_1)]	= "ar",
-   961			[ilog2(VM_WIPEONFORK)]	= "wf",
-   962			[ilog2(VM_DONTDUMP)]	= "dd",
-   963	#ifdef CONFIG_ARM64_BTI
-   964			[ilog2(VM_ARM64_BTI)]	= "bt",
-   965	#endif
-   966	#ifdef CONFIG_MEM_SOFT_DIRTY
-   967			[ilog2(VM_SOFTDIRTY)]	= "sd",
-   968	#endif
-   969			[ilog2(VM_MIXEDMAP)]	= "mm",
-   970			[ilog2(VM_HUGEPAGE)]	= "hg",
-   971			[ilog2(VM_NOHUGEPAGE)]	= "nh",
-   972			[ilog2(VM_MERGEABLE)]	= "mg",
-   973			[ilog2(VM_UFFD_MISSING)]= "um",
-   974			[ilog2(VM_UFFD_WP)]	= "uw",
-   975	#ifdef CONFIG_ARM64_MTE
-   976			[ilog2(VM_MTE)]		= "mt",
-   977			[ilog2(VM_MTE_ALLOWED)]	= "",
-   978	#endif
-   979	#ifdef CONFIG_ARCH_HAS_PKEYS
-   980			/* These come out via ProtectionKey: */
-   981			[ilog2(VM_PKEY_BIT0)]	= "",
-   982			[ilog2(VM_PKEY_BIT1)]	= "",
-   983			[ilog2(VM_PKEY_BIT2)]	= "",
-   984	#if VM_PKEY_BIT3
-   985			[ilog2(VM_PKEY_BIT3)]	= "",
-   986	#endif
-   987	#if VM_PKEY_BIT4
-   988			[ilog2(VM_PKEY_BIT4)]	= "",
-   989	#endif
-   990	#endif /* CONFIG_ARCH_HAS_PKEYS */
-   991	#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
-   992			[ilog2(VM_UFFD_MINOR)]	= "ui",
-   993	#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
- > 994	#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK || defined(CONFIG_ARM64_GCS)
-   995			[ilog2(VM_SHADOW_STACK)] = "ss",
-   996	#endif
-   997	#if defined(CONFIG_64BIT) || defined(CONFIG_PPC32)
-   998			[ilog2(VM_DROPPABLE)] = "dp",
-   999	#endif
-  1000	#ifdef CONFIG_64BIT
-  1001			[ilog2(VM_SEALED)] = "sl",
-  1002	#endif
-  1003		};
-  1004		size_t i;
-  1005	
-  1006		seq_puts(m, "VmFlags: ");
-  1007		for (i = 0; i < BITS_PER_LONG; i++) {
-  1008			if (!mnemonics[i][0])
-  1009				continue;
-  1010			if (vma->vm_flags & (1UL << i))
-  1011				seq_printf(m, "%s ", mnemonics[i]);
-  1012		}
-  1013		seq_putc(m, '\n');
-  1014	}
-  1015	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Amir.
 
