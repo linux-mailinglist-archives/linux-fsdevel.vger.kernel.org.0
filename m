@@ -1,76 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-50919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E672BAD1054
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 00:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C6EAD105E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 00:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402CE188BFA3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 22:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4D3B3ACA7C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 22:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D566720D4E7;
-	Sat,  7 Jun 2025 22:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ruGeQyzH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7234C219A95;
+	Sat,  7 Jun 2025 22:42:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049952CA6;
-	Sat,  7 Jun 2025 22:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612342192F5
+	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Jun 2025 22:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749333880; cv=none; b=t2eHtLVLCYlpdP8Ln87DZHfODRHWN0yniOgEMXgIr00/fGhJOzw2+Uz7Hzt/noliV03q+W++MdyVtZZ6ZQMIhCt8ZdXjOEpg6+QeK3Y/qUp6DltsFwttiZadf+mE8pTz/8fF6zQAha/frlgnPUYC8HjXkclJi0TEvMQY9wz/Fd8=
+	t=1749336137; cv=none; b=qzybn7eP4I5OQZ4rfcckGFwRNZBen5O50HnG8MNpTqSWNR6r6cJr1ZrymYtg+tAU4E8vHb0IW1uuUd953cRC1p3BDxVzFVq7rFBS2gYpc7jSo/oTp1qXdbtkWwOGilQzXagXDKsg11bqLgN+WcHeK1+6cAZJ/MpOGTxjIypCrkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749333880; c=relaxed/simple;
-	bh=G2MnUUs0U0Le3lcVdNFBvTiIpbN1wuNWqN27lqPTBjQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GXn4H1ay29F/3xV2Lsk7qNpjnatmM1xnY90fA+l28QbsddXFErVk7D4CFRlYhdfSSD8HOmstYnGK8f3E7B7INaqkYjlivZs/BA0BMxN3i7QZPlxnzthz6dyjnshPpEzOoWB//AglS4p+/pbSAI0oYMoe1PZLmZ5lA6QBPJciRQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ruGeQyzH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17520C4CEE4;
-	Sat,  7 Jun 2025 22:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749333879;
-	bh=G2MnUUs0U0Le3lcVdNFBvTiIpbN1wuNWqN27lqPTBjQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ruGeQyzHsQaq+X78VMgpY1ZDQhm6RtkyZ/6OzWx+SzJLHT7TGoSti4hTJhed5JsZW
-	 NgZ1cktkluKeCfwXe20k5km8AtpJAfUia4b7p5DuphZl6gOedbeEzTuv1jSXDDErR+
-	 K+MI3jkdS9ZFCTdiTXDTfe71bXKkP3iBxegHhizA=
-Date: Sat, 7 Jun 2025 15:04:38 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Tal Zussman <tz2294@columbia.edu>
-Cc: Peter Xu <peterx@redhat.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
- David Hildenbrand <david@redhat.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] userfaultfd: correctly prevent registering
- VM_DROPPABLE regions
-Message-Id: <20250607150438.4439e19f74693445212d93df@linux-foundation.org>
-In-Reply-To: <20250607-uffd-fixes-v2-1-339dafe9a2fe@columbia.edu>
-References: <20250607-uffd-fixes-v2-0-339dafe9a2fe@columbia.edu>
-	<20250607-uffd-fixes-v2-1-339dafe9a2fe@columbia.edu>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749336137; c=relaxed/simple;
+	bh=UICUz5YX72r/XkIsMj4aX1ErXA7hv+ZrwCsoAHGsB8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eKtlEbhoo0qmIgU9jJuQxyIPbHaig8b4fHB87ltGbR4zCEBMhR02/Zu0Cb+OLKPOsON9i/TOZlVRhFdeX3fgUn2855YmdcasyPPs+HbeLB893a8IYkWiuySOsCEjCaoPz7q6UHm75UfvtDwIGPoMguHvaJJXkHj9fecAtvc8cmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (unn-37-19-198-134.datapacket.com [37.19.198.134] (may be forged))
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 557MdraD014364
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 7 Jun 2025 18:39:55 -0400
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 7B116346B89; Sat, 07 Jun 2025 18:39:51 -0400 (EDT)
+Date: Sat, 7 Jun 2025 22:39:51 +0000
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Cedric Blancher <cedric.blancher@gmail.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: LInux NFSv4.1 client and server- case insensitive filesystems
+ supported?
+Message-ID: <20250607223951.GB784455@mit.edu>
+References: <CALXu0Ufzm66Ors3aBBrua0-8bvwqo-=RCmiK1yof9mMUxyEmCQ@mail.gmail.com>
+ <CALXu0Ufgv7RK7gDOK53MJsD+7x4f0+BYYwo2xNXidigxLDeuMg@mail.gmail.com>
+ <44250631-2b70-4ce8-b513-a632e70704ed@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <44250631-2b70-4ce8-b513-a632e70704ed@oracle.com>
 
-On Sat, 07 Jun 2025 02:40:00 -0400 Tal Zussman <tz2294@columbia.edu> wrote:
-
-> vma_can_userfault() masks off non-userfaultfd VM flags from vm_flags.
-> The vm_flags & VM_DROPPABLE test will then always be false, incorrectly
-> allowing VM_DROPPABLE regions to be registered with userfaultfd.
+On Sat, Jun 07, 2025 at 02:30:37PM -0400, Chuck Lever wrote:
 > 
-> Additionally, vm_flags is not guaranteed to correspond to the actual
-> VMA's flags. Fix this test by checking the VMA's flags directly.
+> My impression is that real case-insensitivity has been added to the
+> dentry cache in support of FAT on Android devices (or something like
+> that). That clears the path a bit for NFSD, but it needs to be
+> researched to see if that new support is adequate for NFS to use.
 
-Wondering if we should backport this.  afaict we don't know the
-userspace impact of this because nobody has tried it!
+Case insensitivty was added in Linux in 2019, with the primary coding
+work being done by Gabriel Krisman Bertazi of Collabora, and design
+work being done being done by Gabriel, Michael Halcrow, and myself.
+(Michael Halcrow in particular was responsible for devising how to
+make case-insensitivity work with filename encryption and indexed
+directories.)
+
+The initial file systems that had case-insensitivty implemented was
+ext4 and f2fs.  The initial use cases was Android devices (which had
+used this horible wrapfs stacking file system thing which was trivial
+to deadlock under stress, and its original reason for existing was
+bug-for-bug compatibility with FAT), and for Steam so that Windows
+games could have their expected case insensitivity.  (Collabora's work
+was underwritten by Steam.)
+
+There is an interesting write-up about NFS and case-insensitivity in a
+relatively recent Internet-Draft[1], dated 2025-May-16.  In this I-D,
+it points out that one of the primary concerns is that if the client
+caches negative lookups under one case (say, MaDNeSS), and then the
+file is created using a different case (say "madness"), then the
+negative dentry cache indicating that MaDNeSS does not exist needs to
+be removed when "madness" is created.  I'm not sure how Linux's NFS
+client handles negative dentries, since even without
+case-insensitivity, a file name that previously didn't exist could
+have subsequently been created by another client on a different host.
+So does Linux's NFS client simply does not use negative dentries, or
+does it have some kind of cache invalidation scheme when the directory
+has a new mtime, or some such?
+
+[1] https://www.ietf.org/id/draft-ietf-nfsv4-internationalization-12.html#name-handling-of-string-equivale
+
+Anyway, case sensitivity is one of those "interesting" problems which
+has caused many headaches, including a potential security issue, and a
+botched attempt to fix that security issue interacting poorly with
+some of the more subtle design requirements so that file systems can
+use tree-indexed directory lookups, even with case-insensitivty file
+names and encrypted directory entries.  So in general, unless you have
+strong financial backing where someone is willing to pay $$$ to
+address a business-critical use case, my personal advice is to stay
+far, far, away.  And I say this as a someone (with apologies to Linus)
+who was partially responsible for Linux having case insensitivty
+lookups in the first place.  :-)
+
+Cheers,
+
+						- Ted
 
