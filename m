@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-50913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0FCAD0ECE
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 19:59:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5424AD0ED9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 20:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A99188D671
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 17:59:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E37216D73A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 18:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C92A20C037;
-	Sat,  7 Jun 2025 17:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A9720F08E;
+	Sat,  7 Jun 2025 18:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L5frffjp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dOz+glVS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAC02F3E
-	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Jun 2025 17:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025C518DB03
+	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Jun 2025 18:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749319147; cv=none; b=OkuMjxaU6UjB3qTUDSzPfnHWbXYzcJqeLk5sk8PeI4okq++YtkJOk+VUp4FSUxE/NP2768q4C1yuzAI8lnQBN4ZJAaagQvrU8Z9t99KIeepdSM9Np5Tf26vBPTAOA35E3m7KK/yMhAaXNSBiWqF+FdxGGak4h67Ua+go3vtMwQE=
+	t=1749320231; cv=none; b=TRWvfS3H4cmLnrLNcdX7F6g1vKxS/sHl0GDgEeLvy79uiWud+gExEYrilod7G+8w9PDSzX+ddv3TYN59RxHj7PjP9KiuTB2nr3VKzUH/8zDmEUYTHOkwiwnmkk5LPRzPibMW+OSKMvvSL22vOnt1/TpduF+iJkQtQ203HO6m5WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749319147; c=relaxed/simple;
-	bh=c3OLCpcLRs9jPKX6YL/P3U5btA76bYODG0jomrnpKow=;
+	s=arc-20240116; t=1749320231; c=relaxed/simple;
+	bh=YqZZguyaQZnHAF6KrLbVEz7cRXJTVlsD5fx5dH4me3o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JD0zlcDm/fMMzetzI6nitkdkJaUU5HU+OzXUsk1BWYYt+FtSrDKnB+MdR7Jddo26vHSVTTLxcOLmxdzXR9D42KPtB0DrNkrtTHTUhsVPBxeo2pV20BmIm8ZHJqjz/p1zO6GJC6z4d91lCTRjS849rDzXhJcz55ouyevZL7dw6JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L5frffjp; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=NL/pvuXUYFZGgpHyBuQwzRzsUhgu2K5d5S4hR7UHfJxS68YkCLgDXgZ3+U1IKl48Rbsnu7jRbKFrnzf+UDP6KsMFk/v+EFsoUchYKSFYbRVKNH0beeZNzY3/+1aRwF6qJGGTfUu4PUYhpGnrAuUC2BwI90n3MBCmv8tY/5DKrKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dOz+glVS; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749319144;
+	s=mimecast20190719; t=1749320228;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zCyitC2uUhJtc07ZYGkM5rqqD+R23R8ZG1MZEso9NGU=;
-	b=L5frffjpjPbCwjUAAgUk9l4jT3oeXCh3WKQuOXjrojf/RLquiVjzx+ZP8kYrmYqHSydJnk
-	CSBKzyZ9oruLUi7s8XrJfwTZWSXsWen3nYAR0NDTXrOZ6orhAdBFJiaPmB4MLP1H7QzoVs
-	EKGUfqHc4OF3KYXZVwZFDWw5+RnWLjg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=v2CwoiOcZ5Lm7ZChShu0UdyCOIaiIaGNbqSuftFNKIc=;
+	b=dOz+glVSZ0G964woQI9H295UTVBstUZT9MyrZFVg8zKoonBEeXMmmyg9Ze50FUIBtk2gGc
+	2QG53lw2tNJQ8oHZcbazkNFcn724db8TC61v4kvbZhRlGxME3qpITScjEy2DeTJ+NABc8o
+	v3HozQhZkz8yretjfQ5D6fsfEpUug3Y=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-ds-WhW_0M4Gme3GDnxt-JA-1; Sat, 07 Jun 2025 13:59:02 -0400
-X-MC-Unique: ds-WhW_0M4Gme3GDnxt-JA-1
-X-Mimecast-MFC-AGG-ID: ds-WhW_0M4Gme3GDnxt-JA_1749319141
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-450d244bfabso24521595e9.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Jun 2025 10:59:02 -0700 (PDT)
+ us-mta-295-Q__0eHvRMZW9ZGNLyaIRLg-1; Sat, 07 Jun 2025 14:17:06 -0400
+X-MC-Unique: Q__0eHvRMZW9ZGNLyaIRLg-1
+X-Mimecast-MFC-AGG-ID: Q__0eHvRMZW9ZGNLyaIRLg_1749320225
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a37a0d1005so2056299f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Jun 2025 11:17:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749319141; x=1749923941;
+        d=1e100.net; s=20230601; t=1749320225; x=1749925025;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=zCyitC2uUhJtc07ZYGkM5rqqD+R23R8ZG1MZEso9NGU=;
-        b=KCk8IFt8XqtWS4VPPnKU/rHO6s0stJR3qJuROiDa1VquxsgvG1eKRmnlC5OfQFLf85
-         0w+98ZvKf98SsOn4A3tkAXKE8b66gmXbrDEVUVjY1mL2EoPoa0H9I8jA4uiMgqbLfTuT
-         Zhmb2F98s/AjAOts9Z9YPKISfxnFWQt7eCl7cwV82eVWAs7M+9C/0C3SFhUKGAxqkGDi
-         4NO1iGViuNMDVxIACc9Iwhbdm5hLyXaeGDBTMXsBwntN5PkT6wd+39uFKvpixj7fgrXa
-         kyx5fs2WqdbDcTJT5bS7ikaOlZxgl55DrHEeTBTHzoUavoFynGuA55equ3Lku7ij09ex
-         VJ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCW1uVMybba6mF92qy29t3ETX5gubSossU4mY1ErzScSMA4CKIAKEhdQKPqPSiunwg76Ss0tR0wvUxiurUde@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2gTspo/JgErz8xO01kzrHpHaTkr1tlZxAMb6DXMGqd8T4AS/l
-	+T3vFd2mf4V+ZumILTemY40rA7+nWknwMA/kQB3ooT6fXm7ZA4q0fiYVsy44wIxMMjy/roWgmd7
-	5KyCx7rMBEd5x/6TTA1HudSqymcm5ylHkO8XtKBnmULJLeVflJY77KS5DZon0mpKeGkw=
-X-Gm-Gg: ASbGnctkJioglOmyi+rD4Zs36geQdhyWftXYHA6h4G0PfdA4tvWSNq9WlUaCftABHyi
-	OelxrrQHcajskrXIcnQppmJW2OjzV/dwYaRYNBLF5mPdt4xKJYU9TitNQfNBssBAsa83VhmfORa
-	kOgoD4rA6MdxA23WhtOx4ZfVCCCw62tQxzZZ72zZds6sOoDuV/GJ+uH78YnWJWdUy9i/4Sc5/pb
-	vvp64/ymcW2ERJ4gJlwr693nbnB6v4Q+7rVAdd1gM62HTyokpiL0gLSFaIiGX5T74brgcFekdhv
-	ZnlCxpzhmhN4XZoZZ3ytNjo1ohwrAlO4U4yodCPQBngOqI+pp3UIyourpVK3KC0oU38Hbx6gLII
-	VCO4d3UfGTwmK7K9VeY7/Qh5m6iSOoTw26y+oIdlEESgw
-X-Received: by 2002:a05:600c:1986:b0:442:e9ec:4654 with SMTP id 5b1f17b1804b1-4520135618bmr66669585e9.8.1749319141330;
-        Sat, 07 Jun 2025 10:59:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IES2jinM7KszDyipSIbZ9eFBb1F0Ocbr6OW9GFOiirbLBd9I0uI7j50qo6ztekZX9O40Pe3Mg==
-X-Received: by 2002:a05:600c:1986:b0:442:e9ec:4654 with SMTP id 5b1f17b1804b1-4520135618bmr66669455e9.8.1749319140905;
-        Sat, 07 Jun 2025 10:59:00 -0700 (PDT)
+        bh=v2CwoiOcZ5Lm7ZChShu0UdyCOIaiIaGNbqSuftFNKIc=;
+        b=GeQX1oPDOLM6VF5jEnM/D0GVxb2wcbtjfLNunFKRuiqLwcj4SEbFjxJOdhqSQl2Muu
+         1GphPzPYlt2BxvvBkstHuzhLpw+8yvex66MluWq/ecTm4ZYCZzgGxEzSF/1PL52mzoPT
+         lVL7EUZ+3ngw8ulZ4CROz9XDSRFq3L1gy7HDqEGdP2aVpGqMIbNBtMFYAKVF2eRoABvo
+         1VwFuYCW2099U6bYynzkraAjBODXx/Y5evpNATGlqsKyRPLrlbARWt08jIV8iaUFrQOx
+         jVi23klEW8K7bo7SzVpqJ5SEzQ45b9FQGQUpkfYY2gEuRdRp9HiFKRVEWU9I7i7CVZ0U
+         +w0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU5O/MhlFypkJGjZY03bCvuw2cSLOgf3nReDkHSjnRaQr2CdfcKjZAwtXzCDkLiLaJvl0psaU7ea0J3LBEK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhDI3aXBDTEET9xmqAfTJretltiS+El69cweeuTrKQrhPtVwDX
+	+FPOCiU4+iyIPJLzNOWmx3a2yeSEAcDqC2S9DqmvPU4C5JS9EaLalQXWgCylI1fPsWu5TaN8hsL
+	Rq0y/mydG9G9mL3naUBUMO/nCbtUeCZjnYHu934aUWTDLdpkkWpx4MjuMXOkXL1aatQM=
+X-Gm-Gg: ASbGncujS5kElO67u8oSkhCsE9//XMvYQUFG9NJTpYWFV8z4kBNzTTGQEV+RspSPvp2
+	okD/9zwCWEO94XlRf3l0LLr0BqWfHBtzY3Y4d7hXT9IIREcwqnDg5Bi+I3w+kgV1SpQN8U6hc2H
+	gI4WIGLpqRaQO1GrsWjhMEuoY/a7Sdq3azYrym4RP7jA0BL2ZgfO+mR3Iy+FPM0YC78BBWUKQA0
+	ASHbcC2uDumS/gMWXsCJK2xydd3iIY9nnc/3ZzA6DCCxKlZaJDzX57VJREcZbE5H2UcYRi9umvP
+	ONa847FYp6pVsYP3y7tji6MIwJHSES5nNsNgqpZgOvSz8f3WjeiOanFWtcb2+g12wjEBFhuLK1S
+	wFWzFkck2I6zQRA9W3s4gcutRFuvKFqMTah52lK8XjFI8
+X-Received: by 2002:a05:6000:2411:b0:3a5:2e59:833a with SMTP id ffacd0b85a97d-3a5319b173emr6412394f8f.1.1749320224868;
+        Sat, 07 Jun 2025 11:17:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4Pkfa8eynAY3tDB8x72AOlK0O1TnmMmYBTx1UHVpYpetN22WOwBXdABTxLCISotP2ZkVMqA==
+X-Received: by 2002:a05:6000:2411:b0:3a5:2e59:833a with SMTP id ffacd0b85a97d-3a5319b173emr6412384f8f.1.1749320224465;
+        Sat, 07 Jun 2025 11:17:04 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4d:9f00:3bce:123:c78a:cc8? (p200300d82f4d9f003bce0123c78a0cc8.dip0.t-ipconnect.de. [2003:d8:2f4d:9f00:3bce:123:c78a:cc8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532436668sm5194505f8f.54.2025.06.07.10.58.59
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323b653dsm5207399f8f.39.2025.06.07.11.17.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Jun 2025 10:58:59 -0700 (PDT)
-Message-ID: <e4d9e46d-37c7-478d-b543-07ac91413e5b@redhat.com>
-Date: Sat, 7 Jun 2025 19:58:58 +0200
+        Sat, 07 Jun 2025 11:17:03 -0700 (PDT)
+Message-ID: <ebaa1561-eb42-43f6-ba33-e59982f6b359@redhat.com>
+Date: Sat, 7 Jun 2025 20:17:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,12 +90,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] /proc/pid/smaps: add mo info for vma in NOMMU system
+Subject: Re: [PATCH v2] fs/proc/task_mmu: add VM_SHADOW_STACK for arm64 when
+ support GCS
 To: wangfushuai <wangfushuai@baidu.com>, akpm@linux-foundation.org,
  andrii@kernel.org, osalvador@suse.de, Liam.Howlett@Oracle.com,
  christophe.leroy@csgroup.eu
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250607165335.87054-1-wangfushuai@baidu.com>
+References: <20250607131525.76746-1-wangfushuai@baidu.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -143,52 +144,40 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250607165335.87054-1-wangfushuai@baidu.com>
+In-Reply-To: <20250607131525.76746-1-wangfushuai@baidu.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 07.06.25 18:53, wangfushuai wrote:
-> Add mo in /proc/[pid]/smaps to indicate vma is marked VM_MAYOVERLAY,
-> which means the file mapping may overlay in NOMMU system.
+On 07.06.25 15:15, wangfushuai wrote:
+> The recent commit adding VM_SHADOW_STACK for arm64 GCS did not update
+> the /proc/[pid]/smaps display logic to show the "ss" flag for GCS pages.
+> This patch adds the necessary condition to display "ss" flag.
 > 
-> Fixes: b6b7a8faf05c ("mm/nommu: don't use VM_MAYSHARE for MAP_PRIVATE mappings")
+> Fixes: ae80e1629aea ("mm: Define VM_SHADOW_STACK for arm64 when we support GCS")
 > Signed-off-by: wangfushuai <wangfushuai@baidu.com>
 > ---
->   Documentation/filesystems/proc.rst | 1 +
->   fs/proc/task_mmu.c                 | 4 ++++
->   2 files changed, 5 insertions(+)
+>   fs/proc/task_mmu.c | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 2a17865dfe39..d280594656a3 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -609,6 +609,7 @@ encoded manner. The codes are the following:
->       uw    userfaultfd wr-protect tracking
->       ss    shadow/guarded control stack page
->       sl    sealed
-> +    mo    may overlay file mapping
->       ==    =======================================
->   
->   Note that there is no guarantee that every flag and associated mnemonic will
 > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 27972c0749e7..ad08807847de 100644
+> index 27972c0749e7..2c2ee893a797 100644
 > --- a/fs/proc/task_mmu.c
 > +++ b/fs/proc/task_mmu.c
-> @@ -970,7 +970,11 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->   		[ilog2(VM_HUGEPAGE)]	= "hg",
->   		[ilog2(VM_NOHUGEPAGE)]	= "nh",
->   		[ilog2(VM_MERGEABLE)]	= "mg",
-> +#ifdef CONFIG_MMU
->   		[ilog2(VM_UFFD_MISSING)]= "um",
-> +#else
-> +		[ilog2(VM_MAYOVERLAY)]	= "mo",
+> @@ -994,6 +994,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+>   #ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
+>   		[ilog2(VM_SHADOW_STACK)] = "ss",
+>   #endif
+> +#if defined(CONFIG_ARM64_GCS)
+> +		[ilog2(VM_SHADOW_STACK)] = "ss",
 > +#endif
->   		[ilog2(VM_UFFD_WP)]	= "uw",
->   #ifdef CONFIG_ARM64_MTE
->   		[ilog2(VM_MTE)]		= "mt",
 
-That is mostly an internal-only flag. Why would we want to expose that 
-to user space?
+Which makes me wonder why we don't select 
+CONFIG_ARCH_HAS_USER_SHADOW_STACK for CONFIG_ARM64_GCS?
+
+>   #if defined(CONFIG_64BIT) || defined(CONFIG_PPC32)
+>   		[ilog2(VM_DROPPABLE)] = "dp",
+>   #endif
+
 
 -- 
 Cheers,
