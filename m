@@ -1,79 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-50936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D2CAD13E2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 20:53:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419A7AD13F5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 21:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4793C3AA6FC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 18:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1CA3188A03C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 19:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E7E1D5AB7;
-	Sun,  8 Jun 2025 18:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4851DDA09;
+	Sun,  8 Jun 2025 19:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TS6l0sXp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxW/U1v6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E1C1A314D
-	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Jun 2025 18:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A25C176242;
+	Sun,  8 Jun 2025 19:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749408777; cv=none; b=h6efNw43EGKiDEQBGC1f7KCcd+y/LRxyFnPAyjRzxOaa+n01KsNBs7msqsLzPZ8qiTMVu+yImVJGb+ugYaBpqy4yAghqbN4gn0t4lQNmN17/PkjjYB9kEj2EdJhLDr7b5cI66HIGmtHqHVmhLfkfltHaOLpyDO2qt/b2cn9mMnc=
+	t=1749409989; cv=none; b=B8T1F6+8dhQDTwXcJcj4rJDivjize0WUzrwi3JQlsgPNz+1hgZ4kO0nCfjWQCpvLFBDGqlOa9tws3hYbAVsJG+JyRjBlLpS45Q6z6NhFk+d4g0YO3CRhTvTI0VtRGz37gP2JTgxMX43gmUu/2/D36H8mlaAIflkFAOClM0GTBwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749408777; c=relaxed/simple;
-	bh=5xxfUWv2pYd0pUg/YpJmqlBzmk/b2kA6tD7WAbftdxY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Ag9CZW7ICANYucMEUF4kivL4bsvtGLop8MDSSLB20UVNsFB0McuMN88StqOHD3/EzmWjAae5nbIOYIPy1qt/mnSRv9pZ+xI9H/tj1IH7ykG73XjDm6XCeW8HsHawOafr8Z3JSlNbpNZutCWJPC4R2nHoNDua8XlWw8ksdt8jT1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TS6l0sXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01DDFC4CEEE;
-	Sun,  8 Jun 2025 18:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749408777;
-	bh=5xxfUWv2pYd0pUg/YpJmqlBzmk/b2kA6tD7WAbftdxY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=TS6l0sXpjCFEJyaicWx2KSZlIbCgl21KJG80Axy+rMfzMUIJgxgxqjlcd9sRYNywh
-	 Wu3Ej1jttp4wlyt3ZeVrEWZKR4UaukZTyslAizTdNZ/FklyeCsuqtgKl7O7SxXs6Cd
-	 IE0giARoqzbN8tr/aXEL58mHcMZW4qb+FrkLEkUyXop9DUK+5j0DKPhmFAxQibGe1k
-	 JXn0AbNzMOilpcFyRaO9LajvJDw2NysglOGXIEMcA7lG2G2ebi5Hq73PxbhimNmcYz
-	 V87bxXpWbE9oArwl/bVtG+uD0IHA6NahoIR3zdRwsi0QN9tTyRu9X0+akAZegosKqQ
-	 R1K3YbxUvHSxw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B75380AAE2;
-	Sun,  8 Jun 2025 18:53:29 +0000 (UTC)
-Subject: Re: [git pull] mount fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250608172409.GA299672@ZenIV>
-References: <20250608172409.GA299672@ZenIV>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250608172409.GA299672@ZenIV>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
-X-PR-Tracked-Commit-Id: 12f147ddd6de7382dad54812e65f3f08d05809fc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 35b574a6c2279fe47d13ffafb8389f1adc87a1d1
-Message-Id: <174940880779.385950.5612221110759217903.pr-tracker-bot@kernel.org>
-Date: Sun, 08 Jun 2025 18:53:27 +0000
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+	s=arc-20240116; t=1749409989; c=relaxed/simple;
+	bh=J1LCM0a/uMaN4jrc00hrqJKVQzgIO9i3MzBc5sonchA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EpxmkcRs21dGrn97zbYgOyz3Ie/2jBRk5tyzvxCkDLsrh3ilM2/4Y5Vqve8APC6DZPrmI/UTirgRd1ilifyzVi289PkGXpqGwlujd197ZDnNg+F79S1a4l/Bv9sfatgRJyGlGw8xS07djhdcxUCrYe326erLtw/ELkxR7UOqbbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HxW/U1v6; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ade58ef47c0so79200566b.1;
+        Sun, 08 Jun 2025 12:13:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749409986; x=1750014786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+lLrm60rBkCVc7LQ6+3woFQ80YL0visFy66/hf73vE4=;
+        b=HxW/U1v61ABxMwG0luCpR7x7TL7dcGolqk9bTtzdCa6a4tdCvUSgk53WdoItS02o5K
+         iYTiLYlltJh0Ho3Svp+GTAuNZy4jyYYqa6owjKkOhSw7A6fNOzaTX63iQHDFXyWV2o7q
+         DL7NPa3EmbpIvHmFTn9tEpdHEocsrps0kW/rCdm9DXl1Fu2idzqH7vDhAXA4HkIXwojv
+         9qebeYgDwDQSqZbmSgF6Zes53aGrUyuvaFx7nFIksfPKcxNjbDvhYg0Kg32nsdqXA3zy
+         pU53DhPx1NX/y2wk5qeScMYJJTcIT5FVUuVtV+Hk39to+tnl17wppuoiYk/hFEaPFn4l
+         uH7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749409986; x=1750014786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+lLrm60rBkCVc7LQ6+3woFQ80YL0visFy66/hf73vE4=;
+        b=e29exf5eL14KqmInsjz60lYVyXaszcMeAXRjmCihQwmUKt1+Gsdyj8wleVmNYyiKOQ
+         IB22eIcPV7RaVPnzqFiQweNO5YAdz+pGWUj2vrMPeFyhXikD0Wh9jBsjoVtg8VtzF6GZ
+         UqPalo5vt0wxMcBVyngDXCkE69MwZfHWxem0jAhuFqxWfHHC89rHDRfeD0zQt0pKl0vQ
+         DIlTdVe+5oJNtV8lZxmjs9NWcxl9UPeStTi4IEu3xkgSBd61VPH+fXN0wniYS80BIjBc
+         CZs2nQd1IE2jVBKdOFmvAAtSHZSg7x+f/wj9IgNOVSBtuqR8CNnkkZ9GaSpH7+fAAUc3
+         YjXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiMzD/arM+yewI4L9z/YHX1ZRymp/gIm6nv645taR1tpjB98FcrugXg0l78m8xp3pseIppxox4UVt/@vger.kernel.org, AJvYcCV1xWklEuZkCUg4lzgV1QrOicltKSMav1qrdRNpqk5jnmFcBcPZsxmyGGfsF39+xJrnZ2cfTUJOSmc0GGgx@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmgiIZcKK+cz89Rh1wkoIfvYdCdNl3JYNnuCRsU2Gv86cmG9li
+	nZrjNo8JNdvTgPBstl2luNaVn9KASefjgIUqhp7miufgsR3El39qFknMpXEIwQ40dgymEVNaiam
+	xhZi+EIgUQs/MKTThB78ua3Yyd3cg2Q==
+X-Gm-Gg: ASbGncsQOG+2hYvWGPMAvw4XXiIrVzcLyu0okbCZRiY/wCKDFswZuNr9JZ0UBnCwlQ6
+	Dmohkouef51uru7jsFlDkDIXW0GBvkJcFzAcRuxBuEHHpWNWdKYN2075rxu8nOzzpgmcczMQuKa
+	LaqmXNQ4iwRocs/k/+ourv8HR6tmdXXNf4xzZwELsN6VZBgalD2XxLEjsUab5TS/HUP2n7cxn4e
+	g==
+X-Google-Smtp-Source: AGHT+IH4FK3pxXyj6yK9+A0fTBrhkqanZClwwPaVmKPyBQncRhwuV4Hf2ZFWDJwr3ZXNBIZOOJ4YxnDliIBX3IsuAsI=
+X-Received: by 2002:a17:907:9308:b0:ad5:6174:f947 with SMTP id
+ a640c23a62f3a-ade0782b7b0mr1189196866b.22.1749409986049; Sun, 08 Jun 2025
+ 12:13:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250606233803.1421259-1-joannelkoong@gmail.com>
+In-Reply-To: <20250606233803.1421259-1-joannelkoong@gmail.com>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Mon, 9 Jun 2025 00:42:28 +0530
+X-Gm-Features: AX0GCFtmVHzRbzGV6hiAVP0_doQZRtyBwh-AtH02y_h_0siWOhav7AK91K6lDH4
+Message-ID: <CACzX3As_tiO3c0ko9WJKTOt10dj0q9gNqPym3zFdUbLxib=YNw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/8] fuse: use iomap for buffered writes + writeback
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, djwong@kernel.org, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, kernel-team@meta.com, 
+	Anuj Gupta <anuj20.g@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sun, 8 Jun 2025 18:24:09 +0100:
+On Sat, Jun 7, 2025 at 5:12=E2=80=AFAM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
+>
+> This series adds fuse iomap support for buffered writes and dirty folio
+> writeback. This is needed so that granular dirty tracking can be used in
+> fuse when large folios are enabled so that if only a few bytes in a large
+> folio are dirty, only a smaller portion is written out instead of the ent=
+ire
+> folio.
+>
+> In order to do so, a new iomap type, IOMAP_IN_MEM, is added that is more
+> generic and does not depend on the block layer. The parts of iomap buffer=
+ io
+> that depend on bios and CONFIG_BLOCK is moved to a separate file,
+> buffered-io-bio.c, in order to allow filesystems that do not have CONFIG_=
+BLOCK
+> set to use IOMAP_IN_MEM buffered io.
+>
+> This series was run through fstests with large folios enabled and through
+> some quick sanity checks on passthrough_hp with a) writing 1 GB in 1 MB c=
+hunks
+> and then going back and dirtying a few bytes in each chunk and b) writing=
+ 50 MB
+> in 1 MB chunks and going through dirtying the entire chunk for several ru=
+ns.
+> a) showed about a 40% speedup increase with iomap support added and b) sh=
+owed
+> roughly the same performance.
+>
+> This patchset does not enable large folios yet. That will be sent out in =
+a
+> separate future patchset.
+>
+>
+> Thanks,
+> Joanne
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
+Hi Joanne,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/35b574a6c2279fe47d13ffafb8389f1adc87a1d1
+I tried experimenting with your patch series to evaluate its impact. To
+measure the improvement, I enabled large folios for FUSE. In my setup,
+I observed a ~43% reduction in writeback time.
 
-Thank you!
+Here=E2=80=99s the script[1] I used to benchmark FUSE writeback performance
+based on the details you shared: It formats and mounts an XFS volume,
+runs the passthrough_hp FUSE daemon, writes 1MB chunks to populate the
+file, and then issues 4-byte overwrites to test fine-grained writeback
+behavior.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+If I=E2=80=99ve missed anything or there=E2=80=99s a better way to evaluate=
+ this, I=E2=80=99d
+really appreciate your input =E2=80=94 I=E2=80=99m still getting up to spee=
+d with FUSE
+internals.
+
+[1]
+
+#!/bin/bash
+set -e
+
+DEVICE=3D"/dev/nvme0n1"
+BACKING_MNT=3D"/mnt"
+FUSE_MNT=3D"/tmp/fusefs"
+CHUNK_MB=3D1
+TOTAL_MB=3D1024
+DIRTY_BYTES=3D4
+REPEATS=3D5
+LOGFILE=3D"fuse_test_results.csv"
+DIR=3D$(date +"%H-%M-%S-%d-%m-%y")
+
+mkdir $DIR
+echo "$DIR created"
+
+mkdir -p "$BACKING_MNT" "$FUSE_MNT"
+
+echo "run,duration_seconds" > "$LOGFILE"
+
+for run in $(seq 1 $REPEATS); do
+    echo "[Run $run] Formatting $DEVICE with XFS..."
+    mkfs.xfs -f "$DEVICE"
+
+    echo "[Run $run] Mounting XFS to $BACKING_MNT..."
+    mount "$DEVICE" "$BACKING_MNT"
+
+    echo "[Run $run] Starting passthrough_hp on $FUSE_MNT..."
+    ./passthrough_hp --nopassthrough "$BACKING_MNT" "$FUSE_MNT" &
+    sleep 2
+
+    echo "[Run $run] Dropping caches and syncing..."
+    sync
+    echo 3 > /proc/sys/vm/drop_caches
+
+    TEST_FILE=3D"$FUSE_MNT/testfile_run${run}"
+
+    for ((i=3D0; i<$TOTAL_MB; i++)); do
+        dd if=3D/dev/urandom bs=3D1M count=3D1 oflag=3Ddirect seek=3D$i
+of=3D$TEST_FILE status=3Dnone
+    done
+
+    START=3D$(date +%s.%N)
+    for ((i=3D0; i<$TOTAL_MB; i++)); do
+        offset=3D$((i * 1048576 + 1048572))
+        #offset=3D$((i * 1048576))
+        dd if=3D/dev/urandom bs=3D1 count=3D$DIRTY_BYTES of=3D$TEST_FILE
+seek=3D$offset status=3Dnone
+    done
+
+    fusermount -u "$FUSE_MNT"
+    umount "$BACKING_MNT"
+
+    END=3D$(date +%s.%N)
+    DURATION=3D$(echo "$END - $START" | bc)
+    echo "$run,$DURATION" >> $DIR/"$LOGFILE"
+    echo "[Run $run] Duration: ${DURATION}s"
+done
+
+echo "All runs complete. Results saved to $DIR/$LOGFILE."
 
