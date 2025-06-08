@@ -1,38 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-50948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1753FAD160B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 01:49:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B696AAD1612
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 01:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6737D188B56D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 23:49:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBBF87A58FF
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 23:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9681267AFD;
-	Sun,  8 Jun 2025 23:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8730A2690CC;
+	Sun,  8 Jun 2025 23:48:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9354220E6EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D464266EE6;
 	Sun,  8 Jun 2025 23:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749426529; cv=none; b=b9M6m+DQ5S3TFx+2cdlCLcJEf07Zw64jIdTbwEOTErNqnz1bsiu9iJKay2j+C9c5JccxpGASwxslsNcUuAitkLSxkDCpXCaGEsgkqETX0iT22RoqTZmJetrORmCZRAkio+TSM02Bpjtp4h9nmpQ/W8OI+lM/a6HPkWy9wLMZRQk=
+	t=1749426530; cv=none; b=LxUK5CTFV7J2Mfwq/urlgIumy2YhaXXs+TKFO6mTVUsi/UfpmUULHDz97UtgOnL7qqfpCUV4yHL1u9/bRz9Vo7RDsn1VERgwlp2+JgBGnbttXcUjlzycrvFDGo/MSvcBpUdS7xGhJBtMVPGlYc/BtPyfCAHDBj51lxPDa2ujFj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749426529; c=relaxed/simple;
-	bh=9/DdTCyKYZE+kM6yV5SFSUmqNwarhro5a9t+8xRTfak=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sDIf6m5IWjZO0J4Y9HXb/6H19BTXL2aHxai1Gj8GDFk+a6k3i6X7eIlBu/YKe2lOc0VFxbfPigSK4FuuKZbX37mWtBGulDzdFNPmVbs9/9kXzO9a1rFFflO+4UNOJBJYmARnMn3H3IJylUCN6CF8gpItCcxt3RA2J1z3PhUIfGM=
+	s=arc-20240116; t=1749426530; c=relaxed/simple;
+	bh=3YBoOnsttTwfK6d2mEgMl66pTUTeYKILYQXcOnY05wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X16IeF3mnW4muxNhCZIf3hXqUAS3hHXJ8+s11DxRxpTXdvP5cpe1Tgjzx9q3+02dCKbfaClzQibXT500IjToe/RGbBZxut7BCub+IPCJQDmk2GeXq6LmVjILrClX6v/n107rnZ/3bwhQH9B+dNv1lrTjsPwpIggVWbvu5ZE/93o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1uOPko-005xqi-CE;
-	Sun, 08 Jun 2025 23:48:42 +0000
+	id 1uOPko-005xqq-Vj;
+	Sun, 08 Jun 2025 23:48:43 +0000
 From: NeilBrown <neil@brown.name>
 To: Namjae Jeon <linkinjeon@kernel.org>,
 	Steve French <smfrench@gmail.com>,
@@ -44,10 +45,12 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org,
 	linux-cifs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] smb/server: various clean-ups
-Date: Mon,  9 Jun 2025 09:35:06 +1000
-Message-ID: <20250608234108.30250-1-neil@brown.name>
+Subject: [PATCH 1/4] smb/server: use lookup_one_unlocked()
+Date: Mon,  9 Jun 2025 09:35:07 +1000
+Message-ID: <20250608234108.30250-2-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250608234108.30250-1-neil@brown.name>
+References: <20250608234108.30250-1-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,24 +59,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I am working towards making some changes to how locking is managed for
-directory operations.  Prior to attempting to land these changes I am
-reviewing code that requests directory operations and cleaning up things
-that might cause me problems later.
+In process_query_dir_entries(), instead of locking the directory,
+performing a lookup, then unlocking, we can simply call
+lookup_one_unlocked().  That takes locks the directory only when needed.
 
-These 4 patches are the result of my review of smb/server.  Note that
-patch 3 fixes what appears to be a real deadlock that should be trivial
-to hit if the client can actually set the flag which, as mentioned in
-the patch, can trigger the deadlock.
+This removes the only users of lock_dir() and unlock_dir() so they can
+be removed.
 
-Patch 1 is trivial but the others deserve careful review by someone who
-knows the code.  I think they are correct, but I've been wrong before.
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/smb/server/smb2pdu.c | 24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
-Thanks,
-NeilBrown
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 1a308171b599..0013052f5d98 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -4107,20 +4107,6 @@ struct smb2_query_dir_private {
+ 	int			info_level;
+ };
+ 
+-static void lock_dir(struct ksmbd_file *dir_fp)
+-{
+-	struct dentry *dir = dir_fp->filp->f_path.dentry;
+-
+-	inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
+-}
+-
+-static void unlock_dir(struct ksmbd_file *dir_fp)
+-{
+-	struct dentry *dir = dir_fp->filp->f_path.dentry;
+-
+-	inode_unlock(d_inode(dir));
+-}
+-
+ static int process_query_dir_entries(struct smb2_query_dir_private *priv)
+ {
+ 	struct mnt_idmap	*idmap = file_mnt_idmap(priv->dir_fp->filp);
+@@ -4135,12 +4121,10 @@ static int process_query_dir_entries(struct smb2_query_dir_private *priv)
+ 		if (dentry_name(priv->d_info, priv->info_level))
+ 			return -EINVAL;
+ 
+-		lock_dir(priv->dir_fp);
+-		dent = lookup_one(idmap,
+-				  &QSTR_LEN(priv->d_info->name,
+-					    priv->d_info->name_len),
+-				  priv->dir_fp->filp->f_path.dentry);
+-		unlock_dir(priv->dir_fp);
++		dent = lookup_one_unlocked(idmap,
++					   &QSTR_LEN(priv->d_info->name,
++						     priv->d_info->name_len),
++					   priv->dir_fp->filp->f_path.dentry);
+ 
+ 		if (IS_ERR(dent)) {
+ 			ksmbd_debug(SMB, "Cannot lookup `%s' [%ld]\n",
+-- 
+2.49.0
 
- [PATCH 1/4] smb/server: use lookup_one_unlocked()
- [PATCH 2/4] smb/server: simplify ksmbd_vfs_kern_path_locked()
- [PATCH 3/4] smb/server: avoid deadlock when linking with
- [PATCH 4/4] smb/server: add ksmbd_vfs_kern_path()
 
