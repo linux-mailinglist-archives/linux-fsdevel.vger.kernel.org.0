@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-50947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0731BAD159A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 01:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0B0AD1585
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 01:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0157169D6F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 23:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6963AA777
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 23:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9606E25E44B;
-	Sun,  8 Jun 2025 23:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3B625D1FC;
+	Sun,  8 Jun 2025 23:10:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2247F20D51A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2242620ADEE;
 	Sun,  8 Jun 2025 23:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749424214; cv=none; b=o4uBTa++TdKB6wzUJYMoM4CLdhqSgO81liPzQ8tvyeJhSZTPHbQCg5eO5zGT/Cxvj7J0/gEEvjRoJFRlsgkVpU4cpo5oFFD0LrodAEwsAlvXbhaYGXqLaMjyNgGzuzIM6HnFbQPodGI991Qtpo7MFEBC6F6lPtqRaw6Yedp99dk=
+	t=1749424212; cv=none; b=Byh7ZMa2TzJIB+vI2DJxj0ymp/caVFHHNSNEhLsHbgegaKzxr9qccuSlP789jeN8pkxIojLbuEnfNF9xqFMrcypwaL4yC2hRS77S+SjYaL48fVKSBB7qZyJkN543YYUoLpmqYpzL4zE0xZayr4B5rsdYS2ycl/dKMqlUjD2VEvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749424214; c=relaxed/simple;
-	bh=tDrDSkgyv7n05q8wyjyILqPPZkOWST8lnIMApMSdLYw=;
+	s=arc-20240116; t=1749424212; c=relaxed/simple;
+	bh=nYuk6jE4ZVNIYydUqLS4Mqn8tWDzVCXZkSneP/JlYX0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E0LxE62/yWFWnhvmYuaEVzsCt2FRaBrLt89Ey0UY+swMopcud1Ke4/gJvf4lqYF5ntniH6jA6So3d6GqaubBQutRRct4stccjHl3m8vXerZ0Ytc7s6ElndIzhSRW26HD/uiGNcaW+7ym8Ky+U0LjpE2ebyTRz2zEFQ6qdgpEICE=
+	 MIME-Version; b=IIYGuXJP7jszk6/pes4zNAwom2MgUqZzxW+u344e2vABXWchVixO0mF/gyoRJ2+1VflXXbwERH6+aqdRlkEjhFLU6BZxa4+l8VpvNGZ45GkbFDiDg2P0mFG0yDZYiL3TvN8rgdvUgh0F3O53dbj3UDfN/knGKMRQjtc/Q+49Xs8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1uOP9P-005ves-FB;
-	Sun, 08 Jun 2025 23:10:03 +0000
+	id 1uOP9Q-005veu-3M;
+	Sun, 08 Jun 2025 23:10:04 +0000
 From: NeilBrown <neil@brown.name>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -55,9 +55,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] VFS: Minor fixes for porting.rst
-Date: Mon,  9 Jun 2025 09:09:34 +1000
-Message-ID: <20250608230952.20539-3-neil@brown.name>
+Subject: [PATCH 3/5] coda: use iterate_dir() in coda_readdir()
+Date: Mon,  9 Jun 2025 09:09:35 +1000
+Message-ID: <20250608230952.20539-4-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250608230952.20539-1-neil@brown.name>
 References: <20250608230952.20539-1-neil@brown.name>
@@ -69,29 +69,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This paragraph was relevant for an earlier version of the code which
-passed the qstr as a struct instead of a point.  The version that landed
-passed the pointer in all cases so this para is now pointless.
+The code in coda_readdir() is nearly identical to iterate_dir().
+Differences are:
+ - iterate_dir() is killable
+ - iterate_dir() adds permission checking and accessing notifications
+
+I believe these are not harmful for coda so it is best to use
+iterate_dir() directly.  This will allow locking changes without
+touching the code in coda.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- Documentation/filesystems/porting.rst | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/coda/dir.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 3616d7161dab..e8c9f21582d1 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1224,9 +1224,6 @@ lookup_noperm_unlocked(), lookup_noperm_positive_unlocked().  They now
- take a qstr instead of separate name and length.  QSTR() can be used
- when strlen() is needed for the length.
+diff --git a/fs/coda/dir.c b/fs/coda/dir.c
+index ab69d8f0cec2..ca9990017265 100644
+--- a/fs/coda/dir.c
++++ b/fs/coda/dir.c
+@@ -429,17 +429,9 @@ static int coda_readdir(struct file *coda_file, struct dir_context *ctx)
+ 	cfi = coda_ftoc(coda_file);
+ 	host_file = cfi->cfi_container;
  
--For try_lookup_noperm() a reference to the qstr is passed in case the
--hash might subsequently be needed.
--
- These function no longer do any permission checking - they previously
- checked that the caller has 'X' permission on the parent.  They must
- ONLY be used internally by a filesystem on itself when it knows that
+-	if (host_file->f_op->iterate_shared) {
+-		struct inode *host_inode = file_inode(host_file);
+-		ret = -ENOENT;
+-		if (!IS_DEADDIR(host_inode)) {
+-			inode_lock_shared(host_inode);
+-			ret = host_file->f_op->iterate_shared(host_file, ctx);
+-			file_accessed(host_file);
+-			inode_unlock_shared(host_inode);
+-		}
++	ret = iterate_dir(host_file, ctx);
++	if (ret != -ENOTDIR)
+ 		return ret;
+-	}
+ 	/* Venus: we must read Venus dirents from a file */
+ 	return coda_venus_readdir(coda_file, ctx);
+ }
 -- 
 2.49.0
 
