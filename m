@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-50943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0B0AD1585
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 01:10:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0D5AD159C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 01:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6963AA777
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 23:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93753188B7B4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jun 2025 23:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3B625D1FC;
-	Sun,  8 Jun 2025 23:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D87025E449;
+	Sun,  8 Jun 2025 23:10:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2242620ADEE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223CC204F73;
 	Sun,  8 Jun 2025 23:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749424212; cv=none; b=Byh7ZMa2TzJIB+vI2DJxj0ymp/caVFHHNSNEhLsHbgegaKzxr9qccuSlP789jeN8pkxIojLbuEnfNF9xqFMrcypwaL4yC2hRS77S+SjYaL48fVKSBB7qZyJkN543YYUoLpmqYpzL4zE0xZayr4B5rsdYS2ycl/dKMqlUjD2VEvg=
+	t=1749424214; cv=none; b=Tod7PjKnpofcZOdlJg+wKjLvkW4CeDsMKtBQhHkl7oGYnFKf5xhSsxVfQl5lIVo9pVOCgf+YniwSNAyVPnRjB/zS9J6KkMyisKGa0SnirhBZrLcR6bbZKQGjZ3cKuh7/BSuPBO7xvbHd938CFGCa4Au3eEY0Dh2XszGJ6+oLtX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749424212; c=relaxed/simple;
-	bh=nYuk6jE4ZVNIYydUqLS4Mqn8tWDzVCXZkSneP/JlYX0=;
+	s=arc-20240116; t=1749424214; c=relaxed/simple;
+	bh=ObvnvO3+t12hpNayz3l7yHkc7YCHVilu1hZ99j0WSs0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IIYGuXJP7jszk6/pes4zNAwom2MgUqZzxW+u344e2vABXWchVixO0mF/gyoRJ2+1VflXXbwERH6+aqdRlkEjhFLU6BZxa4+l8VpvNGZ45GkbFDiDg2P0mFG0yDZYiL3TvN8rgdvUgh0F3O53dbj3UDfN/knGKMRQjtc/Q+49Xs8=
+	 MIME-Version; b=ZYrQw/IiqY145xppo+Fjjva7t61RrvlrUZ1hwx2c+TQJReY8+DYo1+MCRwsTZa+oC330HxltOW8YCDCArHimDwj4lzKZyt7UcjdTzg1dqkUzQYeqRuSeKpxwbJgNd1tMNfBu+aOL6d/CHUE+32XCVHYD8Zg8pP7iDCxOIiHnraQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1uOP9Q-005veu-3M;
+	id 1uOP9Q-005vf1-O1;
 	Sun, 08 Jun 2025 23:10:04 +0000
 From: NeilBrown <neil@brown.name>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -55,9 +55,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] coda: use iterate_dir() in coda_readdir()
-Date: Mon,  9 Jun 2025 09:09:35 +1000
-Message-ID: <20250608230952.20539-4-neil@brown.name>
+Subject: [PATCH 4/5] exportfs: use lookup_one_unlocked()
+Date: Mon,  9 Jun 2025 09:09:36 +1000
+Message-ID: <20250608230952.20539-5-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250608230952.20539-1-neil@brown.name>
 References: <20250608230952.20539-1-neil@brown.name>
@@ -69,44 +69,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The code in coda_readdir() is nearly identical to iterate_dir().
-Differences are:
- - iterate_dir() is killable
- - iterate_dir() adds permission checking and accessing notifications
-
-I believe these are not harmful for coda so it is best to use
-iterate_dir() directly.  This will allow locking changes without
-touching the code in coda.
+rather than locking the directory and using lookup_one(), just use
+lookup_one_unlocked().  This keeps locking code centralised.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/coda/dir.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ fs/exportfs/expfs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/coda/dir.c b/fs/coda/dir.c
-index ab69d8f0cec2..ca9990017265 100644
---- a/fs/coda/dir.c
-+++ b/fs/coda/dir.c
-@@ -429,17 +429,9 @@ static int coda_readdir(struct file *coda_file, struct dir_context *ctx)
- 	cfi = coda_ftoc(coda_file);
- 	host_file = cfi->cfi_container;
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index cdefea17986a..d3e55de4a2a2 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -549,15 +549,13 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
+ 			goto err_result;
+ 		}
  
--	if (host_file->f_op->iterate_shared) {
--		struct inode *host_inode = file_inode(host_file);
--		ret = -ENOENT;
--		if (!IS_DEADDIR(host_inode)) {
--			inode_lock_shared(host_inode);
--			ret = host_file->f_op->iterate_shared(host_file, ctx);
--			file_accessed(host_file);
--			inode_unlock_shared(host_inode);
--		}
-+	ret = iterate_dir(host_file, ctx);
-+	if (ret != -ENOTDIR)
- 		return ret;
--	}
- 	/* Venus: we must read Venus dirents from a file */
- 	return coda_venus_readdir(coda_file, ctx);
- }
+-		inode_lock(target_dir->d_inode);
+-		nresult = lookup_one(mnt_idmap(mnt), &QSTR(nbuf), target_dir);
++		nresult = lookup_one_unlocked(mnt_idmap(mnt), &QSTR(nbuf), target_dir);
+ 		if (!IS_ERR(nresult)) {
+ 			if (unlikely(nresult->d_inode != result->d_inode)) {
+ 				dput(nresult);
+ 				nresult = ERR_PTR(-ESTALE);
+ 			}
+ 		}
+-		inode_unlock(target_dir->d_inode);
+ 		/*
+ 		 * At this point we are done with the parent, but it's pinned
+ 		 * by the child dentry anyway.
 -- 
 2.49.0
 
