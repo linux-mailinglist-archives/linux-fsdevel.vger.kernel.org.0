@@ -1,124 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-50996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BC2AD19ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 10:39:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C6BAD1A0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 10:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D8FE7A3706
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 08:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6C93A2074
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 08:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9C820110B;
-	Mon,  9 Jun 2025 08:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D510A24E4B4;
+	Mon,  9 Jun 2025 08:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihj191Ke"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0BjHCyEH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="U/kMv1nz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HWGQ3IT2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cGqP0nJH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A47F1DC9B1;
-	Mon,  9 Jun 2025 08:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97D720F093
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 08:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749458369; cv=none; b=iRXjHOGAcLkM9PoDwRQaFOQDTTpIia1mCZTJsyMmQqjwIJwpW0KygMOKjuOLaV7k0LpEgOoeM2V0hU5Mgw0aQHjCWBujUJrhlA2UmfVSASg2uF646P13YvixXP+U9RZoyo/A8OuJiCtwy77uGl2tIs3+btbV1z/jmODjg2Hc4xM=
+	t=1749459101; cv=none; b=TdH64oxVUH+7Z+GPYQKof9mkS60v0UoK95BzWa6KGNzzCKsAuB+njbPC65mYx+VYRthcjKiwfXwKvRVyqSE7xD/hQJE0NB0GhqUJvGsdlhuTHLeiaf32nPPCM8S+eNHePLpymuyEtnb7XXm54sB5BZ1DBSXpSRgdlw5OTlzgrCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749458369; c=relaxed/simple;
-	bh=/UsCaKNq9xr/ZV75tgrXJEv56dnt1bMUFHh4Hlcfoik=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=MJcoLizfGjGtmPTQo69sAV45hxMU+BhuC1h7aBRtmQviJYSk0atl//suWDdXISFGm5HPtX2yiyaZmEhkUFJ1Rl19PNlCVhPO2FZr9BAapnKMqQ16jBAUc2UQjErd1PaO0yOKc0WvPPxzYt+o2uQ2t9GeGckONEpg0GiUcdjkLUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihj191Ke; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-87ec4ec218fso436552241.3;
-        Mon, 09 Jun 2025 01:39:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749458367; x=1750063167; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/UsCaKNq9xr/ZV75tgrXJEv56dnt1bMUFHh4Hlcfoik=;
-        b=ihj191KeFm6w6aj+FE0LSBPosSmetHHB3MKrgzRZZN2hwWZUvlHtWfxUgW/afOXkHl
-         pifeMvbMlaN/7dET7zCa2DZncAQ82cYLUwdeRR0YfzcUlZLpP1HNgWOvfAaeVl3S+5pj
-         JQrE3imU3LjFGCKVEVzzvsARruGWb8jrdX8uSdXtX8wsAAS9kaqAJP1Ehu9ESF9FIl5L
-         wGlVq1G2bsVidH5uplZpHX88V9xitKeB9VkXdf/cSXj0jBjqwNKzkuroCjAS7y6u6qpi
-         dsuLe4CuY1YvDeTaqcW3wirHu/Q32V/xznv/ECEFrRQSKdoUmKdLJBvCXwBOrf97ER1k
-         b1Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749458367; x=1750063167;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/UsCaKNq9xr/ZV75tgrXJEv56dnt1bMUFHh4Hlcfoik=;
-        b=YCeP1oJquv1gYfC0yNM6JpdqaSh/Z5n8O0cGpwNrIdKfHB59RKfInJjjxYSUNek14y
-         6XbFlWLPt7M5VUbJVPmM1cuGurhEPUz9XjQ0LwuqeNS9yHKxWNgrDNEsufYQeTRlaPKk
-         J+/IiofuCpxc7sr6NGDkaKxYo6AYjsG0aMhH2AFVmiLRelGMoH4WtIgsuy7VacBnUmce
-         0etBRIDD60y1QlFf1kTos9+jmptR2ijfHfanx2AKeE6S4+klo8RUaLEtdDVrmKbikQvA
-         kJJMU2b8I+U3YEO9siiE6w4Y2Pkg8/ySqtVAYxAezD+Q232RTKtU1BYM85LvOb/f6c4t
-         CwKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhlNIhQ7ttsXuI0Lm//fPc7QDCohs6hD8td498rwNirB0BBuMRn2xi7Vh5uiyqNLnam0VEmqKjYqxw2+bO@vger.kernel.org, AJvYcCXV8uhS96NWxglWV7Y/NNB2c16x/J4FBPvdS18r8hFSxj78PG59WZmcC0ABinZKWJ2lFrrHVJooopdtlh67@vger.kernel.org
-X-Gm-Message-State: AOJu0YywEZL/cTjlwkyqPQXLrWI9J9EZ+hztPyIsTHDiOBN1i/j94c+Q
-	XxzTvHrnY1Z44S2JKC5FjIdPXIuW/MNkmH/tYQ5pjY6gNfTZFPoxWXDxec4BKOisqZepSvHDdXr
-	8Sc3rMMvYi98psTbIrFeY0ykPOTk/pgI=
-X-Gm-Gg: ASbGncu7Pw1khCi+IU+XDr0qlh9ogk++cyJihnM4BvO41hA7PbUVXet67CP/6njrBRa
-	4nYKNbSbRx7IIIBEix5foWbxTJ66IevwJZjZ5l0CPI5MCi5nocIODeovpUE1FzkeAQfz+waXEcw
-	A0JKBu/EuQa0tXmt+h0BlTLY0SzZCGe394wnXpIx1nd/oC
-X-Google-Smtp-Source: AGHT+IHZ+RmLpJDZTbVTVwoTCs1bK4jc+HO9jPbYukLPZZYG9zdYTxniq9Niz2zidvAHAcEe3SUAHquojh2Mu26SuA4=
-X-Received: by 2002:a05:6102:1624:b0:4e5:97e3:a97 with SMTP id
- ada2fe7eead31-4e77290bbcemr8896811137.15.1749458366852; Mon, 09 Jun 2025
- 01:39:26 -0700 (PDT)
+	s=arc-20240116; t=1749459101; c=relaxed/simple;
+	bh=BSgUDmJHtvbnj7e/USJVPC50HyAIZQPsIFsKd/DGRrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XpEgtXMMKVBr+BDcH5VccmzbajUx8I3ixQyiQ4J/IEm311rqrzLlUN6cIrc8AwEACEFql2Afb7Bi0ur1qJeEZWw160b82nJ6UePM52h2MAoKOShVXiuBCB8GTMBGPK7yto5HqnY6XcA8tePGmWLrXMCD81/pvcjBn19t/25kogA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0BjHCyEH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=U/kMv1nz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HWGQ3IT2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cGqP0nJH; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D7EE01F38F;
+	Mon,  9 Jun 2025 08:51:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749459098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jgR2BzCbct66ZHEIawKMv8NgM12xLoogIKYqWadljGQ=;
+	b=0BjHCyEHWe9OphSDAUw3zUMcCQhODaUpjZRbQLJ7R6VHHb9CYmSeCQ69vW/GnaCYPV8ChU
+	3Z6hd2SLY+PaF4SL95wp6p83fiCqOMtfw0MxY3tN8SGJ4bWtcGWabDcOME7pwRXG7SkBo5
+	L6XsMgpfwHDuzV7H25iTlcugX3RAReU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749459098;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jgR2BzCbct66ZHEIawKMv8NgM12xLoogIKYqWadljGQ=;
+	b=U/kMv1nzhTVmWT1NWjxIKr4qzABlwt2g22K43X3St5430+8BzM43mMZZB1ngSfcAHSTr65
+	vuTvToK4FJJxPZCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749459097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jgR2BzCbct66ZHEIawKMv8NgM12xLoogIKYqWadljGQ=;
+	b=HWGQ3IT2OCeR+46Hax1CirA8yPt6lNr0WdYuwYqbX5wZsiuUvVrejoBgLqpVCob9Kj9fRr
+	HYUspybKxESUC7NAYmSIo0ssmgyNHn6/VV4W6fUxDxV56MGQ7uRiXv5Ec0S4Sxssz9N4UL
+	g/KVFT50LUnXQZXSkXhp2N1Xhf+aDx0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749459097;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jgR2BzCbct66ZHEIawKMv8NgM12xLoogIKYqWadljGQ=;
+	b=cGqP0nJHBvx3bgozqQtTnF7pYQtDMGpN3zhgVg6aJI0LEsOBju18B+57KsS8bv9MvnH2/W
+	7alVDx/pOB0pAXAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A6BFC137FE;
+	Mon,  9 Jun 2025 08:51:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id x0kdKJmgRmieEAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 09 Jun 2025 08:51:37 +0000
+Message-ID: <4c113d58-c858-4ef8-a7f1-bae05c293edf@suse.cz>
+Date: Mon, 9 Jun 2025 10:52:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xianying Wang <wangxianying546@gmail.com>
-Date: Mon, 9 Jun 2025 16:39:15 +0800
-X-Gm-Features: AX0GCFtNYI-b3kfkcuPR5qDCZr7Uh9Bc8u-dvALgXtAxekpV1d89-_tR1kKiX9A
-Message-ID: <CAOU40uAjmLO9f0LOGqPdVd5wpiFK6QaT+UwiNvRoBXhVnKcDbw@mail.gmail.com>
-Subject: [BUG] WARNING in bdev_getblk
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: fix the inaccurate memory statistics issue for
+ users
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Michal Hocko <mhocko@suse.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, shakeel.butt@linux.dev,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
+ surenb@google.com, donettom@linux.ibm.com, aboorvad@linux.ibm.com,
+ sj@kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <f4586b17f66f97c174f7fd1f8647374fdb53de1c.1749119050.git.baolin.wang@linux.alibaba.com>
+ <87bjqx4h82.fsf@gmail.com> <aEaOzpQElnG2I3Tz@tiehlicka>
+ <890b825e-b3b1-4d32-83ec-662495e35023@linux.alibaba.com>
+ <87a56h48ow.fsf@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Content-Language: en-US
+In-Reply-To: <87a56h48ow.fsf@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com,linux.alibaba.com,suse.com];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,alibaba.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-Hi,
+On 6/9/25 10:31 AM, Ritesh Harjani (IBM) wrote:
+> Baolin Wang <baolin.wang@linux.alibaba.com> writes:
+> 
+>> On 2025/6/9 15:35, Michal Hocko wrote:
+>>> On Mon 09-06-25 10:57:41, Ritesh Harjani wrote:
+>>>>
+>>>> Any reason why we dropped the Fixes tag? I see there were a series of
+>>>> discussion on v1 and it got concluded that the fix was correct, then why
+>>>> drop the fixes tag?
+>>>
+>>> This seems more like an improvement than a bug fix.
+>>
+>> Yes. I don't have a strong opinion on this, but we (Alibaba) will 
+>> backport it manually,
+>>
+>> because some of user-space monitoring tools depend 
+>> on these statistics.
+> 
+> That sounds like a regression then, isn't it?
 
-I encountered a kernel WARNING in the function bdev_getblk() when
-fuzzing the Linux 6.12 kernel using Syzkaller. The crash occurs during
-a block buffer allocation path, where __alloc_pages_noprof() fails
-under memory pressure, and triggers a WARNING due to an internal
-allocation failure.
+Hm if counters were accurate before f1a7941243c1 and not afterwards, and
+this is making them accurate again, and some userspace depends on it,
+then Fixes: and stable is probably warranted then. If this was just a
+perf improvement, then not. But AFAIU f1a7941243c1 was the perf
+improvement...
 
-Root Cause:
+> -ritesh
 
-Code Path: The failure originates from the function bdev_getblk() in
-fs/buffer.c, which attempts to allocate a new buffer via
-grow_buffers() =E2=86=92 grow_dev_folio() =E2=86=92 __filemap_get_folio().
-Memory Allocation Failure: Under specific memory pressure and
-vm.zone_reclaim_mode settings, the internal call to alloc_pages() in
-__alloc_pages_noprof() fails, resulting in the observed warning.
-
-I recommend reviewing the block buffer allocation path in
-bdev_getblk(), particularly how it handles allocation failures under
-memory pressure.
-
-This can be reproduced on:
-
-HEAD commit:
-
-commit adc218676eef25575469234709c2d87185ca223a
-
-report: https://pastebin.com/raw/wqAeZJxF
-
-console output : https://pastebin.com/raw/aLaVQpzR
-
-kernel config : https://pastebin.com/x48ijkN8
-
-C reproducer : https://pastebin.com/raw/whJgYnHk
-
-Best regards,
-
-Xianying
 
