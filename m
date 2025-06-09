@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-50989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778B0AD197B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 10:00:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A68AD197C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 10:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7133B7A489B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 07:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D103AA3F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 08:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A589283125;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D6C2820A8;
 	Mon,  9 Jun 2025 08:00:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025C612E7E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 08:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEC22820A5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 08:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749456010; cv=none; b=lD3/Z5AyBjGpVYQT4iKsmL1xUVP516FecnNPiidjuLhtUR7r1b2yA40f0HNWj4l51T4uXnq0kZzbJMIiHZIB0wfoQHqpiPVd0e+06jh58AnKKT7I8OxhdshIm5G1HS1s7HxAwAP9hpCZoUYup4FAsGYVfE02iKAeonXO9X/idPQ=
+	t=1749456010; cv=none; b=bqGpOZkK7qDZqeK5P3jPSp1A2gSvGtaxYzD4iigodZkAsWENG+CS3g9dAdpdkL+unojB8EKwfNP6aJfG96sBRB+PUT3HXXHz1GKYnEQsEZFL4/1XfGADmdwkt/joucrPqnlIjXqHao0r0UTOeyw44uuzFUrwwWunvf6s5UPpPHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749456010; c=relaxed/simple;
-	bh=23EZATkXXX8QZ8KT685e73ZsKmsfbISblAVAfzMf1Kc=;
+	bh=8mzvmF3/dXUhgeORYVFi+lJppKcpzmmfZX9SmDy53jA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nwm83msEMqwYmsNIN3Up0DnBc65K4LdARoNNIfIxVV62fdcLZUmZOpSchHkSp9u9m1B/gyDNZSC3q2wjHpHYQEmc4ml60y+/EvqjtEabz5wYVp4gMmUt/7ZKKHTIEGIaPTL2ZdyuLh/c+BzZurofjk+JWMKOvnCzm9sIsqaObG8=
+	 MIME-Version; b=AnUZKsNPSYapA8ArtcqDE2HzHaVjzZLo+Wt4OaDw4VfhiIrVMCIChf7uU8bnhWe4lfdJS79uOQUPg70ns3+PPgvS6Jbfd75fZe2DxDJExPyNKdIt+tDLXMrKK+wHl0hTl44qZfqeOdxbZPTRPCHKoPo9g+SKKSSQNahJw95XsTI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1uOXQL-006HU2-R0;
-	Mon, 09 Jun 2025 08:00:05 +0000
+	id 1uOXQM-006HUD-Bk;
+	Mon, 09 Jun 2025 08:00:06 +0000
 From: NeilBrown <neil@brown.name>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
 Cc: linux-fsdevel@vger.kernel.org
-Subject: [PATCH 6/8] VFS: provide alternative to s_vfs_rename_mutex
-Date: Mon,  9 Jun 2025 17:34:11 +1000
-Message-ID: <20250609075950.159417-7-neil@brown.name>
+Subject: [PATCH 7/8] VFS: use new dentry locking for create/remove/rename
+Date: Mon,  9 Jun 2025 17:34:12 +1000
+Message-ID: <20250609075950.159417-8-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250609075950.159417-1-neil@brown.name>
 References: <20250609075950.159417-1-neil@brown.name>
@@ -53,311 +53,368 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-s_vfs_rename_mutex plays a few different roles in managing renames.
+After taking the directory lock (or locks) we now lock the target
+dentries.  This is pointless at present but will allow us to remove the
+taking of the directory lock in a future patch.
 
-1/ It stablises all ->d_parent pointers in the filesystem so that
-   ancestral relationships between the source and target directories
-   can be determined.
-2/ It prevents any other cross-directory rename so that if the
-   source and target directories do not have an ancestral relationship
-   then they can be locked in any order without risk if AB-BA deadlock
-   with another rename
-3/ It prevents any other cross-directory rename so that the validation
-   of ancestral relationship between the source and target which ensures
-   no loop is created remains in effect until the rename has completed
-   in the filesystem.
-
-A future patch will introduce a new locking mechanism that will allow
-filesystems to support concurrent directory operations where they do not
-directly conflict.  The use of s_vfs_rename_mutex reduces the
-opportunity for concurrency so this patch introduces a new mechanism.
-The exist mechanism will remain but only be used for filesystems that
-haven't advertised support for concurrent operations.
-
-The new mechanism depends on rename_lock and locks against rename only
-the ancestors of the two targets that are different.
-
-A/ rename_lock is used to stablise all ->d_parent pointers.  While it is
-   held the nearest common ancestor to both targets is found.  If this
-   either the source or destination dentry an error is reported.
-B/ While still holding rename_lock, DCACHE_RENAME_LOCK is set on all
-   dentries from the two targets up to, but not including, the common
-   ancestor.  If any already have DCACHE_RENAME_LOCK set, we abort
-   before setting the flag anywhere, wait for that dentry to lose
-   DCACHE_RENAME_LOCK, then try again.
-
-   DCACHE_RENAME_LOCK ensures that the name and parent of the dentry is
-   not changed.  DCACHE_RENAME_LOCK of the whole path up to the common
-   ancestor ensures that these paths don't change so the ancestral
-   relationship between the two targets don't change.  This ensures that
-   no other rename can cause this one to create a path loop.
-
-Waiting for DCACHE_RENAME_LOCK to be cleared uses a single
-per-filesystem wait_queue_head.  This is signalled once all
-DCACHE_RENAME_LOCK flags have been cleared.  This ensures waiters aren't
-woken prematurely if they were only waiting on one other rename.
-
-An important consideration when clearing the DCACHE_RENAME_LOCK flag is that
-we do this from child to parent.  As we walk up we need to be sure we
-have a valid reference to each dentry.  We will because we have a
-counted reference to old_dir and new_dentry.  As none of these
-directories are empty they cannot be removed and they cannot be moved
-away as long as we continue to hold rename_lock.  So as long as we hold
-rename_lock while clearing all the DCACHE_RENAME_LOCK flags we will have a
-usable reference through the chain of ->d_parent links.  As soon as
-rename_lock is dropped the ancestor and everything below that we do not
-have an explicit counted reference on will become inaccessible.
+MORE WORDS
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/namei.c             | 160 ++++++++++++++++++++++++++++++++++++++++-
+ fs/afs/dir.c           |   3 +-
+ fs/afs/dir_silly.c     |   2 +-
+ fs/namei.c             | 140 ++++++++++++++++++++++++++++++++++++-----
+ fs/nfs/unlink.c        |   2 +-
  include/linux/dcache.h |   3 +
- include/linux/fs.h     |   8 ++-
- 3 files changed, 168 insertions(+), 3 deletions(-)
+ include/linux/namei.h  |   4 +-
+ 6 files changed, 133 insertions(+), 21 deletions(-)
 
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 421bd044f8c9..da30700c0106 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -943,7 +943,8 @@ static struct dentry *afs_lookup_atsys(struct inode *dir, struct dentry *dentry)
+ 		}
+ 
+ 		strcpy(p, name);
+-		ret = lookup_and_lock_noperm_locked(&QSTR(buf), dentry->d_parent);
++		ret = lookup_and_lock_noperm_locked(&QSTR(buf), dentry->d_parent, 0,
++						    DLOCK_SUB_LOOKUP);
+ 		if (!IS_ERR(ret) && d_is_positive(ret))
+ 			dget(ret);
+ 		dentry_unlock(ret);
+diff --git a/fs/afs/dir_silly.c b/fs/afs/dir_silly.c
+index 68e38429cf49..d25353fab18c 100644
+--- a/fs/afs/dir_silly.c
++++ b/fs/afs/dir_silly.c
+@@ -120,7 +120,7 @@ int afs_sillyrename(struct afs_vnode *dvnode, struct afs_vnode *vnode,
+ 		scnprintf(silly, sizeof(silly), ".__afs%04X", sillycounter);
+ 		sdentry = lookup_and_lock_noperm_locked(
+ 			&QSTR(silly), dentry->d_parent,
+-			LOOKUP_CREATE | LOOKUP_EXCL);
++			LOOKUP_CREATE | LOOKUP_EXCL, DLOCK_SUB_LOOKUP);
+ 
+ 		/* N.B. Better to return EBUSY here ... it could be dangerous
+ 		 * to delete the file while it's in use.
 diff --git a/fs/namei.c b/fs/namei.c
-index c590f25d0d49..da9ba37f8a93 100644
+index da9ba37f8a93..5c9279657b32 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3722,6 +3722,151 @@ static void unlock_rename(struct dentry *p1, struct dentry *p2)
+@@ -1723,6 +1723,7 @@ static struct dentry *lookup_one_qstr(const struct qstr *name,
  	}
+ 	return dentry;
+ }
++
+ /*
+  * dentry locking for updates.
+  * When modifying a directory the target dentry will be locked by
+@@ -1856,7 +1857,6 @@ static bool dentry_lock(struct dentry *dentry,
+ 	return __dentry_lock(dentry, base, last, DLOCK_NORMAL, state);
  }
  
-+static void wait_not_renaming(struct dentry *d)
-+{
-+	spin_lock(&d->d_lock);
-+	wait_event_cmd(d->d_sb->s_vfs_rename_wq, !(d->d_flags & DCACHE_RENAME_LOCK),
-+		       spin_unlock(&d->d_lock), spin_lock(&d->d_lock));
-+	spin_unlock(&d->d_lock);
-+}
-+
-+static void renaming_unlock_one(struct dentry *d)
-+{
-+	spin_lock(&d->d_lock);
-+	WARN_ON_ONCE(!(d->d_flags & DCACHE_RENAME_LOCK));
-+	d->d_flags &= ~DCACHE_RENAME_LOCK;
-+	spin_unlock(&d->d_lock);
-+}
-+
-+static void renaming_unlock(struct dentry *dir1, struct dentry *dir2,
-+			    struct dentry *ancestor,
-+			    struct dentry *d1, struct dentry *d2)
-+{
-+	struct dentry *d;
-+
-+	if (!ancestor)
-+		return;
-+
-+	read_seqlock_excl(&rename_lock);
-+	for (d = dir1; d != ancestor; d = d->d_parent)
-+		renaming_unlock_one(d);
-+	for (d = dir2; d != ancestor; d = d->d_parent)
-+		renaming_unlock_one(d);
-+	renaming_unlock_one(d1);
-+	renaming_unlock_one(d2);
-+	read_sequnlock_excl(&rename_lock);
-+	/* We don't send any wakeup until all dentries have been unlocked */
-+	wake_up(&dir1->d_sb->s_vfs_rename_wq);
-+}
-+
-+/*
-+ * Find the nearest common ancestor of d1 and d2, and report
-+ * if any of the children of the ancestor which are in the line
-+ * to d1 and d2 are locked for rename - have DCACHE_RENAME_LOCK set.
-+ */
-+static struct dentry *common_ancestor(struct dentry *d1, struct dentry *d2,
-+				      struct dentry **locked)
-+{
-+	struct dentry *p, *q;
-+	int depth1 = 0, depth2 = 0;
-+
-+	*locked = NULL;
-+	/* Find depth of each and compare ancestors of equal depth */
-+	for (p = d1; !IS_ROOT(p); p = p->d_parent)
-+		depth1 += 1;
-+	for (q = d2; !IS_ROOT(q); q = q->d_parent)
-+		depth2 += 1;
-+	if (p != q)
-+		/* Different root! */
-+		return NULL;
-+	while (depth1 > depth2) {
-+		if (d1->d_flags & DCACHE_RENAME_LOCK)
-+			*locked = d1;
-+		d1 = d1->d_parent;
-+		depth1 -= 1;
+-__maybe_unused /* will be used for rename */
+ static bool dentry_lock_nested(struct dentry *dentry,
+ 			       struct dentry *base, const struct qstr *last,
+ 			       int state)
+@@ -2003,7 +2003,14 @@ struct dentry *lookup_and_lock_hashed(struct qstr *last,
+ 
+ 	inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
+ 
++retry:
+ 	dentry = lookup_one_qstr(last, base, lookup_flags);
++	if (!IS_ERR(dentry) &&
++	    !dentry_lock(dentry, base, last, TASK_UNINTERRUPTIBLE)) {
++		dput(dentry);
++		goto retry;
 +	}
-+	while (depth2 > depth1) {
-+		if (d2->d_flags & DCACHE_RENAME_LOCK)
-+			*locked = d2;
-+		d2 = d2->d_parent;
-+		depth2 -= 1;
-+	}
-+	while (d1 != d2) {
-+		if (d1->d_flags & DCACHE_RENAME_LOCK)
-+			*locked = d1;
-+		if (d2->d_flags & DCACHE_RENAME_LOCK)
-+			*locked = d2;
-+		d1 = d1->d_parent;
-+		d2 = d2->d_parent;
-+	}
-+	return d1;
-+}
 +
-+/*
-+ * Lock all ancestors below nearest common ancestor for rename
-+ * Returns:
-+ *    -EXDEV if there is no common ancestor
-+ *    -EINVAL if the first dentry is the common ancestor -
-+ *		you cannot move a directory into a descendent
-+ *    -ENOTEMPTY if the second dentry is the common ancestor -
-+ *		the target directory must usually be empty.
-+ * Note that these errors might be adjusted for RENAME_EXCHANGE
+ 	if (IS_ERR(dentry))
+ 		inode_unlock(base->d_inode);
+ 	return dentry;
+@@ -2015,15 +2022,25 @@ static int lookup_one_common(struct mnt_idmap *idmap,
+ 			     struct qstr *qname, struct dentry *base);
+ struct dentry *lookup_and_lock_noperm_locked(struct qstr *last,
+ 					     struct dentry *base,
+-					     unsigned int lookup_flags)
++					     unsigned int lookup_flags,
++					     unsigned int class)
+ {
++	struct dentry *dentry;
+ 	int err;
+ 
+ 	err = lookup_noperm_common(last, base);
+ 	if (err < 0)
+ 		return ERR_PTR(err);
+ 
+-	return lookup_one_qstr(last, base, lookup_flags);
++retry:
++	dentry = lookup_one_qstr(last, base, lookup_flags);
++	if (!IS_ERR(dentry) &&
++	    !__dentry_lock(dentry, base, last, class,
++			   TASK_UNINTERRUPTIBLE)) {
++		dput(dentry);
++		goto retry;
++	}
++	return dentry;
+ }
+ EXPORT_SYMBOL(lookup_and_lock_noperm_locked);
+ 
+@@ -2051,13 +2068,43 @@ struct dentry *lookup_and_lock_noperm(struct qstr *last,
+ 
+ 	inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
+ 
+-	dentry = lookup_and_lock_noperm_locked(last, base, lookup_flags);
++	dentry = lookup_and_lock_noperm_locked(last, base, lookup_flags,
++					       DLOCK_NORMAL);
+ 	if (IS_ERR(dentry))
+ 		inode_unlock(base->d_inode);
+ 	return dentry;
+ }
+ EXPORT_SYMBOL(lookup_and_lock_noperm);
+ 
++/**
++ * lookup_and_lock_nested_noperm - lookup and lock a name prior to dir ops
++ * @last: the name in the given directory
++ * @base: the directory in which the name is to be found
++ * @lookup_flags: %LOOKUP_xxx flags
++ * @class: locking subclass for lock on dentry
 + *
-+ * The ancestors will be locked against rename, and no directory between
-+ * either target and the ancestor will be the ancestor of an active
-+ * rename.  This ensures that the common ancestor will continue to be
-+ * the common ancestor, and that there will be no concurrent rename with
-+ * the same ancestor.
++ * The name is looked up and necessary locks are taken so that
++ * the name can be created or removed.
++ * The "necessary locks" are currently the inode node lock on @base.
++ * The name @last is NOT expected to have the hash calculated.
++ * No permission checks are performed.
++ * Returns: the dentry, suitably locked, or an ERR_PTR().
 + */
-+static struct dentry *lock_ancestors(struct dentry *d1, struct dentry *d2)
++struct dentry *lookup_and_lock_noperm_nested(struct qstr *last,
++					     struct dentry *base,
++					     unsigned int lookup_flags,
++					     unsigned int class)
 +{
-+	struct dentry *locked, *ancestor;
++	struct dentry *dentry;
 +
-+	if (d1->d_parent == d2->d_parent)
-+		/* Nothing to lock */
-+		return NULL;
-+again:
-+	read_seqlock_excl(&rename_lock);
-+	ancestor = common_ancestor(d1, d2, &locked);
-+	if (!ancestor) {
-+		read_sequnlock_excl(&rename_lock);
-+		return ERR_PTR(-EXDEV);
-+	}
-+	if (ancestor == d1) {
-+		read_sequnlock_excl(&rename_lock);
-+		return ERR_PTR(-EINVAL);
-+	}
-+	if (ancestor == d2) {
-+		read_sequnlock_excl(&rename_lock);
-+		return ERR_PTR(-ENOTEMPTY);
-+	}
-+	if (locked) {
-+		dget(locked);
-+		read_sequnlock_excl(&rename_lock);
-+		wait_not_renaming(locked);
-+		dput(locked);
-+		goto again;
-+	}
-+	/*
-+	 * Nothing from d1,d2 up to ancestor can have DCACHE_RENAME_LOCK
-+	 * as we hold rename_lock and nothing was reported in "locked".
-+	 */
-+	while (d1 != ancestor) {
-+		spin_lock(&d1->d_lock);
-+		d1->d_flags |= DCACHE_RENAME_LOCK;
-+		spin_unlock(&d1->d_lock);
-+		d1 = d1->d_parent;
-+	}
-+	while (d2 != ancestor) {
-+		spin_lock(&d2->d_lock);
-+		d2->d_flags |= DCACHE_RENAME_LOCK;
-+		spin_unlock(&d2->d_lock);
-+		d2 = d2->d_parent;
-+	}
-+	read_sequnlock_excl(&rename_lock);
-+	return ancestor;
++	inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
++	dentry = lookup_and_lock_noperm_locked(last, base, lookup_flags, class);
++	if (IS_ERR(dentry))
++		inode_unlock(base->d_inode);
++	return dentry;
 +}
++EXPORT_SYMBOL(lookup_and_lock_noperm_nested);
 +
  /**
-  * lookup_and_lock_rename_hashed - lookup and lock names for rename
-  * @rd:           rename data containing relevant details
-@@ -3753,7 +3898,7 @@ static void unlock_rename(struct dentry *p1, struct dentry *p2)
- int
- lookup_and_lock_rename_hashed(struct renamedata *rd, int lookup_flags)
+  * lookup_and_lock - lookup and lock a name prior to dir ops
+  * @last: the name in the given directory
+@@ -2120,7 +2167,15 @@ struct dentry *lookup_and_lock_killable(struct mnt_idmap *idmap,
+ 	if (err < 0)
+ 		return ERR_PTR(err);
+ 
++retry:
+ 	dentry = lookup_one_qstr(last, base, lookup_flags);
++	if (!IS_ERR(dentry) &&
++	    !dentry_lock(dentry, base, last, TASK_KILLABLE)) {
++		dput(dentry);
++		if (fatal_signal_pending(current))
++			return ERR_PTR(-ERESTARTSYS);
++		goto retry;
++	}
+ 	if (IS_ERR(dentry))
+ 		inode_unlock(base->d_inode);
+ 	return dentry;
+@@ -2142,20 +2197,23 @@ EXPORT_SYMBOL(lookup_and_lock_killable);
+  */
+ bool lock_and_check_dentry(struct dentry *child, struct dentry *parent)
  {
--	struct dentry *p;
-+	struct dentry *p, *ancestor;
+-	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+-	if (child->d_parent == parent) {
+-		/* get the child to balance with dentry_unlock which puts it. */
+-		dget(child);
+-		return true;
++	if (!dentry_lock(child, NULL, NULL, TASK_UNINTERRUPTIBLE))
++		return false;
++	if (child->d_parent != parent) {
++		__dentry_unlock(child);
++		return false;
+ 	}
+-	inode_unlock(d_inode(parent));
+-	return false;
++	/* get the child to balance with dentry_unlock() which puts it. */
++	dget(child);
++	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
++	return true;
+ }
+ EXPORT_SYMBOL(lock_and_check_dentry);
+ 
+ void dentry_unlock_dir_locked(struct dentry *dentry)
+ {
+ 	d_lookup_done(dentry);
++	__dentry_unlock(dentry);
+ 	dput(dentry);
+ }
+ EXPORT_SYMBOL(dentry_unlock_dir_locked);
+@@ -3900,7 +3958,10 @@ lookup_and_lock_rename_hashed(struct renamedata *rd, int lookup_flags)
+ {
+ 	struct dentry *p, *ancestor;
  	struct dentry *d1, *d2;
++	struct dentry *old_dir;
++	struct qstr *old_last = NULL, *new_last = NULL;
  	int target_flags = LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
++	bool ok1, ok2;
  	int err;
-@@ -3811,8 +3956,17 @@ lookup_and_lock_rename_hashed(struct renamedata *rd, int lookup_flags)
+ 
+ 	if (rd->flags & RENAME_EXCHANGE)
+@@ -3908,6 +3969,7 @@ lookup_and_lock_rename_hashed(struct renamedata *rd, int lookup_flags)
+ 	if (rd->flags & RENAME_NOREPLACE)
+ 		target_flags |= LOOKUP_EXCL;
+ 
++retry:
+ 	if (rd->old_dentry) {
+ 		/* Already have the dentry - need to be sure to lock the correct parent */
+ 		p = lock_rename_child(rd->old_dentry, rd->new_dir);
+@@ -3926,19 +3988,17 @@ lookup_and_lock_rename_hashed(struct renamedata *rd, int lookup_flags)
+ 		d1 = lookup_one_qstr(&rd->old_last, rd->old_dir, lookup_flags);
+ 		if (IS_ERR(d1))
+ 			goto out_unlock_1;
++		old_last = &rd->old_last;
+ 	}
++
+ 	if (rd->new_dentry) {
+-		if (d_unhashed(rd->new_dentry) ||
+-		    rd->new_dentry->d_parent != rd->new_dir) {
+-			/* new_dentry was moved or removed! */
+-			goto out_unlock_2;
+-		}
+ 		d2 = dget(rd->new_dentry);
+ 	} else {
+ 		d2 = lookup_one_qstr(&rd->new_last, rd->new_dir,
+ 				     lookup_flags | target_flags);
+ 		if (IS_ERR(d2))
+ 			goto out_unlock_2;
++		new_last = &rd->new_last;
+ 	}
+ 
+ 	if (d1 == p) {
+@@ -3964,6 +4024,44 @@ lookup_and_lock_rename_hashed(struct renamedata *rd, int lookup_flags)
  		goto out_unlock_3;
  	}
  
-+	ancestor = lock_ancestors(d1, d2);
-+	if (IS_ERR(ancestor)) {
-+		err = PTR_ERR(ancestor);
-+		if (err == -ENOTEMPTY && (rd->flags & RENAME_EXCHANGE))
-+			err = -EINVAL;
-+		goto out_unlock_3;
++	if (!old_dir)
++		old_dir = dget(d1->d_parent);
++
++	/*
++	 * Time to lock the dentrys.  Only validate the name if a lookup
++	 * was performed.  i.e.  if old_last or new_last is not NULL.
++	 */
++	if (d1 < d2) {
++		ok1 = dentry_lock(d1, rd->old_dir, old_last,
++				  TASK_UNINTERRUPTIBLE);
++		ok2 = dentry_lock_nested(d2, rd->new_dir, new_last,
++					 TASK_UNINTERRUPTIBLE);
++	} else if (d1 > d2) {
++		ok2 = dentry_lock(d2, rd->new_dir, new_last,
++				  TASK_UNINTERRUPTIBLE);
++		ok1 = dentry_lock_nested(d1, rd->old_dir, old_last,
++					 TASK_UNINTERRUPTIBLE);
++	} else {
++		ok1 = ok2 = dentry_lock(d1, NULL, NULL, TASK_UNINTERRUPTIBLE);
 +	}
 +
++	if (!ok1 || !ok2) {
++		if (ok1)
++			__dentry_unlock(d1);
++		if (ok2)
++			__dentry_unlock(d2);
++		d_lookup_done(d1);
++		d_lookup_done(d2);
++		renaming_unlock(old_dir, rd->new_dir, ancestor,
++				d1, d2);
++		unlock_rename(rd->old_dir, rd->new_dir);
++		dput(d1);
++		dput(d2);
++		dput(old_dir);
++		goto retry;
++	}
++
++	rd->old_dir = old_dir;
  	rd->old_dentry = d1;
  	rd->new_dentry = d2;
-+	rd->ancestor = ancestor;
- 	return 0;
+ 	rd->ancestor = ancestor;
+@@ -3971,15 +4069,19 @@ lookup_and_lock_rename_hashed(struct renamedata *rd, int lookup_flags)
  
  out_unlock_3:
-@@ -3934,6 +4088,10 @@ void dentry_unlock_rename(struct renamedata *rd)
- {
- 	d_lookup_done(rd->old_dentry);
- 	d_lookup_done(rd->new_dentry);
-+
-+	renaming_unlock(rd->old_dir, rd->new_dir, rd->ancestor,
-+			rd->old_dentry, rd->new_dentry);
-+
+ 	d_lookup_done(d2);
++	if (d2 != d1)
++		__dentry_unlock(d2);
+ 	dput(d2);
+ 	d2 = ERR_PTR(err);
++	d_lookup_done(d1);
++	__dentry_unlock(d1);
+ out_unlock_2:
+ 	d_lookup_done(d1);
+ 	dput(d1);
+ 	d1 = d2;
+ out_unlock_1:
  	unlock_rename(rd->old_dir, rd->new_dir);
+-	dput(rd->old_dir);
++	dput(old_dir);
+ 	return PTR_ERR(d1);
+ }
+ EXPORT_SYMBOL(lookup_and_lock_rename_hashed);
+@@ -4093,8 +4195,12 @@ void dentry_unlock_rename(struct renamedata *rd)
+ 			rd->old_dentry, rd->new_dentry);
+ 
+ 	unlock_rename(rd->old_dir, rd->new_dir);
++
  	dput(rd->old_dir);
++	__dentry_unlock(rd->old_dentry);
  	dput(rd->old_dentry);
++	if (rd->old_dentry != rd->new_dentry)
++		__dentry_unlock(rd->new_dentry);
+ 	dput(rd->new_dentry);
+ }
+ EXPORT_SYMBOL(dentry_unlock_rename);
+diff --git a/fs/nfs/unlink.c b/fs/nfs/unlink.c
+index a67df3ae74ab..4ac3e3195a45 100644
+--- a/fs/nfs/unlink.c
++++ b/fs/nfs/unlink.c
+@@ -476,7 +476,7 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
+ 		 */
+ 		sdentry = lookup_and_lock_noperm_locked(
+ 			&QSTR(silly), dentry->d_parent,
+-			LOOKUP_CREATE);
++			LOOKUP_CREATE, DLOCK_SUB_LOOKUP);
+ 		if (!IS_ERR(sdentry) && d_is_positive(dentry)) {
+ 			dput(sdentry);
+ 			sdentry = ERR_PTR(-EEXIST);
 diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 2c7a2326367b..27e645d290b1 100644
+index 27e645d290b1..ea1c37df7f00 100644
 --- a/include/linux/dcache.h
 +++ b/include/linux/dcache.h
-@@ -226,6 +226,9 @@ enum dentry_flags {
- 	DCACHE_PAR_LOOKUP		= BIT(24),	/* being looked up (with parent locked shared) */
- 	DCACHE_DENTRY_CURSOR		= BIT(25),
- 	DCACHE_NORCU			= BIT(26),	/* No RCU delay for freeing */
-+	DCACHE_RENAME_LOCK		= BIT(27),	/* A directory is being renamed
-+							 * into or out-of this tree
-+							 */
+@@ -242,6 +242,9 @@ enum {
+ 	DLOCK_NORMAL,
+ 	DLOCK_RENAME,		/* dentry with higher address in rename */
+ 	DLOCK_DYING_WAIT,	/* child of a locked parent that is dying */
++	DLOCK_SUB_LOOKUP,	/* lock on target for silly-rename or other
++				 * subordinate lookup
++				 */
  };
  
- #define DCACHE_MANAGED_DENTRY \
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7fa38668987..6b4a1a1f4786 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1402,10 +1402,11 @@ struct super_block {
- 	unsigned int		s_max_links;
- 
- 	/*
--	 * The next field is for VFS *only*. No filesystems have any business
--	 * even looking at it. You had been warned.
-+	 * The next two fields are for VFS *only*. No filesystems have any business
-+	 * even looking at them. You had been warned.
- 	 */
- 	struct mutex s_vfs_rename_mutex;	/* Kludge */
-+	struct wait_queue_head s_vfs_rename_wq;	/* waiting for DCACHE_RENAME_LOCK to clear */
- 
- 	/*
- 	 * Filesystem subtype.  If non-empty the filesystem type field
-@@ -2012,6 +2013,8 @@ int vfs_unlink(struct mnt_idmap *, struct inode *, struct dentry *,
-  * @new_dentry:                destination
-  * @new_last:          name for new_dentry in new_dir, if new_dentry not given
-  * @delegated_inode:   returns an inode needing a delegation break
-+ * @ancestor:          Closest common ancestor of @old_dir and @new_dir if those
-+ *                     two are differernt.
-  * @flags:             rename flags
-  */
- struct renamedata {
-@@ -2024,6 +2027,7 @@ struct renamedata {
- 	struct dentry *new_dentry;
- 	struct qstr new_last;
- 	struct inode **delegated_inode;
-+	struct dentry *ancestor;
- 	unsigned int flags;
- } __randomize_layout;
- 
+ extern seqlock_t rename_lock;
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 6c9b545c60ce..1cbaa392fa21 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -83,8 +83,10 @@ struct dentry *lookup_and_lock_killable(struct mnt_idmap *idmap,
+ 					unsigned int lookup_flags);
+ struct dentry *lookup_and_lock_noperm(struct qstr *name, struct dentry *base,
+ 				      unsigned int lookup_flags);
++struct dentry *lookup_and_lock_noperm_nested(struct qstr *name, struct dentry *base,
++					     unsigned int lookup_flags, unsigned int class);
+ struct dentry *lookup_and_lock_noperm_locked(struct qstr *name, struct dentry *base,
+-					     unsigned int lookup_flags);
++					     unsigned int lookup_flags, unsigned int class);
+ struct dentry *lookup_and_lock_hashed(struct qstr *last, struct dentry *base,
+ 				      unsigned int lookup_flags);
+ void dentry_unlock(struct dentry *dentry);
 -- 
 2.49.0
 
