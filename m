@@ -1,60 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-50976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A91AD1859
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 07:32:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37CDAD185E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 07:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F4E7A42B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 05:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DDCB1685B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 05:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A86F280031;
-	Mon,  9 Jun 2025 05:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5559280333;
+	Mon,  9 Jun 2025 05:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QaxT3ZLT"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Gpi8SoMr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D7938DEC;
-	Mon,  9 Jun 2025 05:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4DC17BD3;
+	Mon,  9 Jun 2025 05:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749447142; cv=none; b=HPh3dw+2b6Ys7TyqETLPN5tSQzad51Vadaskr6UMfkpm1WEJF9tJhlS+vKaAJrwJw1Ojgg8q0pbFgdO+sp7Qo8tNDHVOmzv+sr3Xti4EGIdrPDohe7S/XH9qeaF22UtWbqpIGzI4zpPp3wCaJCvl/ZPCYAusLL3EwcfBAuwjxcM=
+	t=1749447294; cv=none; b=mZ977pmNzMBUgriYI8/WVnYzOaxFIKNpROQB58ZwDBe6Cg0rHZDil4m/id1cOtZ1g8j0BNcA/NiwKPtpEBnbt0LMxZPIw1+8l6KXyyOhY5Ki1ak9Gh22M4qSqTVaF8LSkogBeJXoRhSinwYcFeWbq0Tei6kAHTcVwM4MVmVWWYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749447142; c=relaxed/simple;
-	bh=yiRwVAHSm7T3WpcW56K/RUAYsFLGCjjv7NTZekJU/uo=;
+	s=arc-20240116; t=1749447294; c=relaxed/simple;
+	bh=uwxa5npzdokndbCpN5yU7uplXOuCnvLiH5v8BmUtBz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b43ACTd2HLeu8dXIMKlYWjQQY8WAIabYrDtdoW9Dc7NvgXmvaMV+jzK4Wjn9r34A8fQmBVSepaW90qdeFLjVNkLM0kQvUdPwvmHrqcdSwdIwnMTZawvA+FvGBRAjPJcJ/GiMu3J4jWtvYORY/Arb+vhHNV+PaGdpMQldc4gl1SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QaxT3ZLT; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLiiCgVoOii1WySFKTB/qOy3/p7HKWn+8VdAJ2q+ie56r63h1BVbtfjTPwvI9RNFFwKPZzXM1caYrvQXeQtOa99jXO+X+3QP685W6sHtUzCIzev169+a8jMzSuZS6aDGcbImGqCV8C6p5V3RArs4ayjXwfA8eD75xZUcgktppMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Gpi8SoMr; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tudyN5Ef8ssqxd5U7eJL1wZMX3F3BrWh0oBOEfA+N6Y=; b=QaxT3ZLTfdc9JSE313TQaz7Jqb
-	oQ6ZeeCS03lVq59Rht2Q5t4p/avWQwenubcir+OUtCAu1gywLM35LhWdc9KnwIwVrTv8S1B1TR9O0
-	wMZV4d/g83fPyIF7SdGRn1uZgQK144Z3DVVTs4TqwDauEB4MUZ5MadjMnaTvjgzD7OkgForrf+JAW
-	R6jxuqzLliSA807I24JeBQrPlI9hIYwYzXW07vvts97AjOZx5sXWcV5kNx4ufLsusApctZCgiU+hd
-	4SXPrY/wmKabdC3Nb5w+POFyEUUfMyax0E2giY70MSVJ0HTO/Dq7NGZgaxy1LeN8ACJAc4lqxDV54
-	fn9Dpyiw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uOV7M-00000003T6u-1MIe;
-	Mon, 09 Jun 2025 05:32:20 +0000
-Date: Sun, 8 Jun 2025 22:32:20 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, djwong@kernel.org, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Subject: Re: [PATCH v1 4/8] iomap: add writepages support for IOMAP_IN_MEM
- iomaps
-Message-ID: <aEZx5FKK13v36wRv@infradead.org>
-References: <20250606233803.1421259-1-joannelkoong@gmail.com>
- <20250606233803.1421259-5-joannelkoong@gmail.com>
+	bh=dkLL/eLFQ+sNI47KAXAvlP2XsLUmCy2MqXXx7+2KD6I=; b=Gpi8SoMrJAabIz21fHEErY778Y
+	1XnDwty0mXeTZmvRbqate1rLoP8K9aaYl4ZgGfTZasMRHyJwzdVFKqx/OSj3D8r5w2xHaR3/v3CDP
+	Wzf84eJ4XASt8QVP65M/0cEtArCvO27ap2Jbx73sjTEEKGOZNbx60WrMMtqNN9glE7LP8LqrMUDsu
+	mIXK9TEJn3RNquJBBfjDjp+aULXXwDebU1Xjub6J3ON8LN/uJSr5lbwRO9xeDmbosyKb1y9SIapdQ
+	COUWwVMFrAohO8ls9FQAeRhy54fPYrls/pxkbo1fdxN8ztPQyGQIki/7WwF/JUsRagCgLCDpoTs4s
+	ze6p+h3g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uOV9e-00000008Whi-3LPI;
+	Mon, 09 Jun 2025 05:34:42 +0000
+Date: Mon, 9 Jun 2025 06:34:42 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jan Harkes <jaharkes@cs.cmu.edu>,
+	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+	coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
+	linux-nfs@vger.kernel.org, netfs@lists.linux.dev,
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] Change vfs_mkdir() to unlock on failure.
+Message-ID: <20250609053442.GC299672@ZenIV>
+References: <>
+ <20250609005009.GB299672@ZenIV>
+ <174944652013.608730.3439111222517126345@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,111 +72,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250606233803.1421259-5-joannelkoong@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <174944652013.608730.3439111222517126345@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Jun 06, 2025 at 04:37:59PM -0700, Joanne Koong wrote:
-> This allows IOMAP_IN_MEM iomaps to use iomap_writepages() for handling
-> writeback. This lets IOMAP_IN_MEM iomaps use some of the internal
-> features in iomaps such as granular dirty tracking for large folios.
+On Mon, Jun 09, 2025 at 03:22:00PM +1000, NeilBrown wrote:
+> On Mon, 09 Jun 2025, Al Viro wrote:
+> > On Mon, Jun 09, 2025 at 09:09:37AM +1000, NeilBrown wrote:
+> > > Proposed changes to directory-op locking will lock the dentry rather
+> > > than the whole directory.  So the dentry will need to be unlocked.
+> > 
+> > Please, repost your current proposal _before_ that one goes anywhere.
+> > 
 > 
-> This introduces a new iomap_writeback_ops callback, writeback_folio(),
-> callers may pass in which hands off folio writeback logic to the caller
-> for writing back dirty pages instead of relying on mapping blocks.
+> I've posted my proposal for the new API.  This makes the value of the
+> vfs_mkdir() change clear (I hope).
 > 
-> This exposes two apis, iomap_start_folio_write() and
-> iomap_finish_folio_write(), which callers may find useful in their
-> writeback_folio() callback implementation.
+> Would you also like me to post the patches which introduce the new
+> locking scheme?
 
-It might also be worth stating what you don't use.  One big thing
-that springs to mind is ioends.  Which are really useful if you
-need more than one request to handle a folio, something that is
-pretty common in network file systems.  I guess you don't need
-that for fuse?
+Yes, seeing that the rest does not make much sense without that.
 
-> +	if (wpc->iomap.type == IOMAP_IN_MEM) {
-> +		if (wpc->ops->submit_ioend)
-> +			error = wpc->ops->submit_ioend(wpc, error);
-> +		return error;
-> +	}
+I would really like a description of that locking scheme as well,
+TBH, but if you prefer to start with the patches, then so be it.
 
-Given that the patch that moved things around already wrapped the
-error propagation to the bio into a helpr, how does this differ
-from the main path in the function now?
-
-> +	/*
-> +	 * If error is non-zero, it means that we have a situation where some part of
-> +	 * the submission process has failed after we've marked pages for writeback.
-> +	 * We cannot cancel ioend directly in that case, so call the bio end I/O handler
-> +	 * with the error status here to run the normal I/O completion handler to clear
-> +	 * the writeback bit and let the file system process the errors.
-> +	 */
-
-Please add the comment in a separate preparation patch.
-
-> +		if (wpc->ops->writeback_folio) {
-> +			WARN_ON_ONCE(wpc->ops->map_blocks);
-> +			error = wpc->ops->writeback_folio(wpc, folio, inode,
-> +							  offset_in_folio(folio, pos),
-> +							  rlen);
-> +		} else {
-> +			WARN_ON_ONCE(wpc->iomap.type == IOMAP_IN_MEM);
-> +			error = iomap_writepage_map_blocks(wpc, wbc, folio,
-> +							   inode, pos, end_pos,
-> +							   rlen, &count);
-> +		}
-
-So instead of having two entirely different methods, can we
-refactor the block based code to also use
-->writeback_folio?
-
-Basically move all of the code inside the do { } while loop after
-the call into ->map_blocks into a helper, and then let the caller
-loop and also directly discard the folio if needed.  I can give that
-a spin if you want.
-
-Note that writeback_folio is misnamed, as it doesn't write back an
-entire folio, but just a dirty range.
-
->  	} else {
-> -		if (!count)
-> +		/*
-> +		 * If wpc->ops->writeback_folio is set, then it is responsible
-> +		 * for ending the writeback itself.
-> +		 */
-> +		if (!count && !wpc->ops->writeback_folio)
->  			folio_end_writeback(folio);
-
-This fails to explain why writeback_folio does the unlocking itself.
-I also don't see how that would work in case of multiple dirty ranges.
-
->  	}
->  	mapping_set_error(inode->i_mapping, error);
-> @@ -1693,3 +1713,25 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
->  	return iomap_submit_ioend(wpc, error);
->  }
->  EXPORT_SYMBOL_GPL(iomap_writepages);
-> +
-> +void iomap_start_folio_write(struct inode *inode, struct folio *folio, size_t len)
-> +{
-> +	struct iomap_folio_state *ifs = folio->private;
-> +
-> +	WARN_ON_ONCE(i_blocks_per_folio(inode, folio) > 1 && !ifs);
-> +	if (ifs)
-> +		atomic_add(len, &ifs->write_bytes_pending);
-> +}
-> +EXPORT_SYMBOL_GPL(iomap_start_folio_write);
-> +
-> +void iomap_finish_folio_write(struct inode *inode, struct folio *folio, size_t len)
-> +{
-> +	struct iomap_folio_state *ifs = folio->private;
-> +
-> +	WARN_ON_ONCE(i_blocks_per_folio(inode, folio) > 1 && !ifs);
-> +	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) <= 0);
-> +
-> +	if (!ifs || atomic_sub_and_test(len, &ifs->write_bytes_pending))
-> +		folio_end_writeback(folio);
-
-Please also use these helpers in the block based code.
-
+I can't promise a response tonight - going down in an hour or so
+and I'd like to do enough reordering of #work.mount to be able
+to post the initial variant of at least some of that in the
+morning...
 
