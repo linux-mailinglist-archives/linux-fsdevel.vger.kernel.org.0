@@ -1,124 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-50963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47FAAD1808
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 06:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 062BFAD180D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 06:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A835B3A5370
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 04:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E2E3A3D0D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 04:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EE1280A52;
-	Mon,  9 Jun 2025 04:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1262227FB1C;
+	Mon,  9 Jun 2025 04:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rHP7I9UU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L244MnqP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F589254AFE;
-	Mon,  9 Jun 2025 04:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2548A248F65;
+	Mon,  9 Jun 2025 04:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749443736; cv=none; b=knVOHvctV/sDsYiHkQVmi4J4bKJfIS7HqYTY2n3CyB68bkGRVEZT/N0dF29TlKT/3GmLhnp7e2h6n75Sxayo/slwlhLGK6mPl9mzjT6Gz4qogAzkBfp1ARam3Pf3XgmbQfzMgHUq3l9WLH3LR9S2Ic50IMZ9ZyQJfFS8w/TDXAo=
+	t=1749444046; cv=none; b=QTywr52LE6GJJ0mAuuM6nIk3mtsUjyLJ/x8M2Zf/+nHqmL6yZxQw+bGcXvA8hjSBY/NuaNXgwWKx8F4H7KJID2O4gnPTQie6Imsw2oBtfiE1pSqWerdZO3iUALTJDZpJjXGZDRUlti9cHGI4u4NdzkuLtVOza1aPsBBdPtCSKds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749443736; c=relaxed/simple;
-	bh=AgURGmBZPaSkRmiRoqHFlFPIJprX/0ieU7uX6Ixit90=;
+	s=arc-20240116; t=1749444046; c=relaxed/simple;
+	bh=XNm6w/NcQT6xQFrLY0xHOuOd8Ekg1brzlA1HuRcBfXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQT6+OKEZkfqxEplIFE8HVlaWXSANjMvf8nRW51a84JdNP2QNYllQ4b/dpxA44PTrWbTY+k/LRb6/EztudAGBeNW+TPl+G48n0dDRJz70AwpcZ/rR4HLzW4CJQSNI0Q640rRkG5a07/l2hCmyU2m85TMxeqp0pMa1Hy/GpczE3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rHP7I9UU; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6CWF4TGiazqk/KvgOm6ZQWiFshLBqF7ipFZKR3WWzVnxxh18CbQxWKZD3V5SXIKtsdnO/36/iosJCJ2ZGvdStzJ7ZWHJDdjdxJhq4iGXpzDDRmvLahQDkw9n16IwbkmXtlO6eV3nqzUABhawX+JkQDhjBE/JPvFsuqbA4ErNmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L244MnqP; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=oeT73a0Hi9cOPyGYRSLUMdSjrVNXI7sw9Uk+bmyEzn8=; b=rHP7I9UUuAQAw0byw2iIpo1lFJ
-	zvbVPtfIVNEnDvZ9E1i3kI/uUWfH3Lg4IFfJamPPveKy03Ptn8AT5+IuiPsJ7Gyj1eLYvV75kkky/
-	KwEenybj6HmEa1IyjFVizqFwSAnml8QPm1xdo5gomYU6y2sIPE3yqFTe86Dt5WnAL4OmASNCKIv+1
-	NlmPjRydtMGYf+nz6hNKwgJbXio3bde8bWS1ewqdobg5JeCyxqwY3UhWGBuSBlgamJ98mC3IyE4eX
-	gvBIUrrc3DfdJkX6pLBCFDhVX3Fftro4JvRfYYVf73aJ8wi9Jo0li4WYB/42oSfqwWDkVP2Xm571M
-	rMrSru6w==;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XNm6w/NcQT6xQFrLY0xHOuOd8Ekg1brzlA1HuRcBfXk=; b=L244MnqPgv/NklFPWGlVBhaw/K
+	tkO0grteVRYAC3609a4LP3ddNuss+1QUH/OOMFed+JkiF1heDGEcjLfnhZOWkZBbI+P0qLx2pUcY2
+	uQBZZR0+g87OiMy0XDtaNBtKlrtYxd0oBLd9x40pDQnnLl6zpGu84WdxBsBW5tC0oYa/Hs7qDah0j
+	FdhKGDFvtiP2SDJSKz0gCY1Iihxga+d3yBy/suiZ16g/pUrf8YOt0fN9VcIRgrwiIK+FWAkQrbIxC
+	8WRtPjs85Gm47Ojn/l6ezPisDhObEv6anxDmI0QBDzJf2MYwQ9wn2ard5tte3dFJiBq8uz2QN4PWp
+	z3bE+R+g==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uOUEG-00000003PoK-2Bfw;
-	Mon, 09 Jun 2025 04:35:24 +0000
-Date: Sun, 8 Jun 2025 21:35:24 -0700
+	id 1uOUJP-00000003QKd-3ZjM;
+	Mon, 09 Jun 2025 04:40:43 +0000
+Date: Sun, 8 Jun 2025 21:40:43 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: wangtao <tao.wangtao@honor.com>, Christoph Hellwig <hch@infradead.org>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"kraxel@redhat.com" <kraxel@redhat.com>,
-	"vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"hughd@google.com" <hughd@google.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"amir73il@gmail.com" <amir73il@gmail.com>,
-	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
-	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>,
-	"jstultz@google.com" <jstultz@google.com>,
-	"tjmercier@google.com" <tjmercier@google.com>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"wangbintian(BintianWang)" <bintian.wang@honor.com>,
-	yipengxiang <yipengxiang@honor.com>,
-	liulu 00013167 <liulu.liu@honor.com>,
-	hanfeng 00012985 <feng.han@honor.com>
-Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
-Message-ID: <aEZkjA1L-dP_Qt3U@infradead.org>
-References: <20250603095245.17478-1-tao.wangtao@honor.com>
- <aD7x_b0hVyvZDUsl@infradead.org>
- <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
- <aD72alIxu718uri4@infradead.org>
- <5d36abace6bf492aadd847f0fabc38be@honor.com>
- <a766fbf4-6cda-43a5-a1c7-61a3838f93f9@amd.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, djwong@kernel.org, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	bernd.schubert@fastmail.fm, kernel-team@meta.com
+Subject: Re: [PATCH v1 0/8] fuse: use iomap for buffered writes + writeback
+Message-ID: <aEZly7K9Uok5KBtq@infradead.org>
+References: <20250606233803.1421259-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a766fbf4-6cda-43a5-a1c7-61a3838f93f9@amd.com>
+In-Reply-To: <20250606233803.1421259-1-joannelkoong@gmail.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Jun 06, 2025 at 01:20:48PM +0200, Christian König wrote:
-> > dmabuf acts as a driver and shouldn't be handled by VFS, so I made
-> > dmabuf implement copy_file_range callbacks to support direct I/O
-> > zero-copy. I'm open to both approaches. What's the preference of
-> > VFS experts?
-> 
-> That would probably be illegal. Using the sg_table in the DMA-buf
-> implementation turned out to be a mistake.
+Can you also point to a branch or at least tell the baseline?
+The patches won't apply against Linus' 6.16-rc tree.
 
-Two thing here that should not be directly conflated.  Using the
-sg_table was a huge mistake, and we should try to move dmabuf to
-switch that to a pure dma_addr_t/len array now that the new DMA API
-supporting that has been merged.  Is there any chance the dma-buf
-maintainers could start to kick this off?  I'm of course happy to
-assist.
+As for the concept: I've always wanted the highlevel fuse code to
+support more than just block I/O, so using it for fuse seems fine.
 
-But that notwithstanding, dma-buf is THE buffer sharing mechanism in
-the kernel, and we should promote it instead of reinventing it badly.
-And there is a use case for having a fully DMA mapped buffer in the
-block layer and I/O path, especially on systems with an IOMMU.
-So having an iov_iter backed by a dma-buf would be extremely helpful.
-That's mostly lib/iov_iter.c code, not VFS, though.
-
-> The question Christoph raised was rather why is your CPU so slow
-> that walking the page tables has a significant overhead compared to
-> the actual I/O?
-
-Yes, that's really puzzling and should be addressed first.
+A lot of the details don't make me entirely happy, I hope I can
+come up with good ideas for improvement.
 
 
