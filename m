@@ -1,107 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-51057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328D0AD24B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 19:06:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA8EAD24E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 19:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBF2116D46A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 17:06:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537783B05A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 17:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB9121B9D6;
-	Mon,  9 Jun 2025 17:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3984D21C9F6;
+	Mon,  9 Jun 2025 17:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLNzjMer"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgWlWSYc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D7A21B8EC;
-	Mon,  9 Jun 2025 17:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981968633F;
+	Mon,  9 Jun 2025 17:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749488799; cv=none; b=GqwCKqeQiKDkRFUA6eA441JzXOwXKZ8ePoVOrBuOi/PLxWpQBbifEZeH1GuEVCgwWEfgB29EoCLCw6jiTFeCV4Ub9nHbDBHL/WTTqB/LZix3sEHpQqWka/77FNQWkkn7X1ewz/zm6gbdQa/5NFzcElyEpGYF8BQDw61xrJOf6NM=
+	t=1749489285; cv=none; b=SjrmcQdutTNkwYT2Z7pJ4Ou3j3ExVEDcFHF9hKaIEjOLx1ywuts++fjKXonSYjVCCrCRtx1BwCvk9mMI4o32PVlx8qCNpVrnm6C467c7IWz8/TdDkpK+8TnZOVwYWfygk75Bjg3ZROuNW7ooL3Id0po3UlS9zdFTnsgrLaziJI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749488799; c=relaxed/simple;
-	bh=xj2K0Hn1KyDlFCEgp/1ceXvAVXo0W7st5XQzYhwKR9I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CnxxmDJxSwdxJVO982rTo1Ue8+XmFMovcIpQzWt+/PTdDM5DXADKosCDomChdsCXPWC2xRTsECPLQeeVboA/SFU7nMxbu9qATo/kLAeiZEw2B5cpdGJh7SOrYCupxIEnEBXARBt2nJWAk1JBPNMyAotUWm/JsuMfzNZuIXuxlVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLNzjMer; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32a72cb7e4dso41897251fa.0;
-        Mon, 09 Jun 2025 10:06:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749488795; x=1750093595; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1B9jz9bzgcDaYUJYbUm/nwrrVlRYLDHkUIDUm7vm5gA=;
-        b=hLNzjMermV94bnjLDJWzFAkJeDRFiEbkvtoBWR9ReOLFuccxI3nJIJabYAWY7xYHKg
-         iDsw5JoY2BtQpzobdMOycFhhBvcYaLcAahWcc1rEvAJ3LfhvEOlsNFDN+O8hj0bL3lhr
-         HE920a38VZqO0TAvzHrql2lWA3OybBPAlYVBP34ir5iLJz+UFz/nl1Al4xFlOVlc6IEZ
-         STUChNJM/mSAUZaVw0QJ+cvmx9NWAwoPVyLi60RNp1QRsfsTBrmZbgxxUgljbc77KCKN
-         VF/7VrTR1uufdf9NTwTneGWdgIsipNy+O1ScD024x1tnoO9Dr1gW021BgkHZ7bZewhoy
-         K3ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749488795; x=1750093595;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1B9jz9bzgcDaYUJYbUm/nwrrVlRYLDHkUIDUm7vm5gA=;
-        b=b3Xax8+PLimCKAjH1hlgexxHDONMaL5iLZG3k06bGg5gVWSD8UM7X2HVwgqZA8BFEa
-         z/s7G02bjiKzHaAlk/158AWe5mb0c09vBvx8LsE4UwubIweVh0Yd8mPmMjbR3nxfiqhw
-         oEeR5GfEbCPW0mBjXLoMyiAZCMXJykbv5C6AbJUM0VwlPSjYdZ4z2CrHM+zeLyZFqTyU
-         UOOgVesgeAnNYg7mtHSNdUMCIDetxC1OqsdUNfCoGnoBuwG7BmvtIU/22Z8OAfrdiUuZ
-         QgK4m0KjnP7Vb0JrCdwL4c7UiW8fIdW7hUSVVvxQmY+aIerSV2qfCGwAnoAJ2CcLnr34
-         gKMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV90mtvXjiGzsaBNLcs/fjI751r1g+q8zRlbXHUPpOCYzughP68jBPduKSrFRspLbpGX2M3OWlruascxMJXsQ==@vger.kernel.org, AJvYcCVHPmDerc4bCUmd8ffcpDJ4lhwuPjj3CZ/acwLmUgDmmhUqkTJ4c1h/ryBluEhNMnCjFydNJF/CsOmm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJgHUA4BoSDj3u4M5EDBfTzwnAh6BVfsFin9SRlDDwUE5Q77R7
-	EasSz/LFHsnNWobXFhJfY7Fzzq/Vd3Qh5ppUYp+3PWxdE/wCHNQOdxqd7BFtu0MOq+Ku0+ZyhVR
-	FZ5dKYpyFqyk4nuLkp06xKDQJzQanf90=
-X-Gm-Gg: ASbGnct0t5XWrT/HB/ByrKWVwwx1AKXNi1MVk/4BBWX9y2bpJ9XlrG9BlkAgl0BOQsk
-	tPs29DRpaQKvQXdIHm+f3SfcA64h8NcRCCVSpJ+jCbORfysrIeQrXYSN0WuNrYVGbzCjjTg7nCH
-	8kg1xJJjDeshtphoXUnr/DqhjMqnUKeNGj2DxXqx0PJh0NcVRbY0SW7WXOjqXirJUnkQ8=
-X-Google-Smtp-Source: AGHT+IHs3x7MiIxf+cWKc7abiJCC9IsvRO7Ev/Vbmo9eLh43sdlNK0JojZJXE291FuxIFOvUsBhv2t2laasYz3xT+VM=
-X-Received: by 2002:a05:651c:b12:b0:30b:f469:47ef with SMTP id
- 38308e7fff4ca-32adfd207bbmr39463521fa.23.1749488795292; Mon, 09 Jun 2025
- 10:06:35 -0700 (PDT)
+	s=arc-20240116; t=1749489285; c=relaxed/simple;
+	bh=ncxhRXYy2cXLfo0Pcrv9QpJlmCAgF3C8xXX8iU0kCz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNnBQZ3Nox1Luoke0dZcGEXRjb0g2XiVqvnfBd9/6LFhsZLT7nkJMTeSskdLF0cz6DnXamvrU1AvWMd07i58Kf5hgcy6loRxfTIN7VbsSWS3scHkksYce+HwfQKfZXSnZIvmkvTrFPN6ntaWSu8MII8KGYG9a6GPfShjhZNC9/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgWlWSYc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 179F7C4CEEB;
+	Mon,  9 Jun 2025 17:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749489285;
+	bh=ncxhRXYy2cXLfo0Pcrv9QpJlmCAgF3C8xXX8iU0kCz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BgWlWSYcc9RL3502YwU/6gNmtqSOtOiQpevsLOvnKVlqauliAoMT99hcE6Lz56WZx
+	 SBF1DBj1UHjd4nKlHJhYPGNgFmGttGqplcchj/3rjQX2ywFu8gLJIuUp1FbkWdpsJx
+	 /kNy43SgPv3Qt4rvyhzy2GrQ4gKtIm4ewK9hEPepizIYbku/oR8C0/XL1aQH6AHGXy
+	 +Hmu4VV3Xat+Ko42ap0i/A23Hu8s7UbutKXUuu9DqLBC9YipJhHV+AEnut/trS9caO
+	 2P3SylKAXc2rCO9MFPezGh72An/oT598h74q75fdVt1jJL4N03WEPUCflhkUD1vXf7
+	 alAH3KWl1e0wg==
+Date: Mon, 9 Jun 2025 10:14:44 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, bernd.schubert@fastmail.fm,
+	kernel-team@meta.com
+Subject: Re: [PATCH v1 5/8] iomap: add iomap_writeback_dirty_folio()
+Message-ID: <20250609171444.GL6156@frogsfrogsfrogs>
+References: <20250606233803.1421259-1-joannelkoong@gmail.com>
+ <20250606233803.1421259-6-joannelkoong@gmail.com>
+ <aEZoau3AuwoeqQgu@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 9 Jun 2025 12:06:23 -0500
-X-Gm-Features: AX0GCFsrRONFJpE2z-GNlrMZuis3d387b0I5W2Mqd7Xzluc394ppvLGirmBiFtE
-Message-ID: <CAH2r5mu5SfBrdc2CFHwzft8=n9koPMk+Jzwpy-oUMx-wCRCesQ@mail.gmail.com>
-Subject: Perf regression in 6.16-rc1 in generic/676 (readdir related)
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	NeilBrown <neil@brown.name>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	Bharath S M <bharathsm@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEZoau3AuwoeqQgu@infradead.org>
 
-Instead of the usual 10 to 12 minutes to run generic/676 (on all
-kernels up to 6.15), we are now seeing 23-30 minutes to run
-generic/676, much more than twice as slow.   It looks like this is due
-to unnecessary revalidates now being sent to the fs (starting with
-6.16-rc1 kernels) on every file in a directory, and is caused by
-readdir.   Bharath was trying to isolate the commit that caused this,
-but this recently merged series could be related:
+On Sun, Jun 08, 2025 at 09:51:54PM -0700, Christoph Hellwig wrote:
+> On Fri, Jun 06, 2025 at 04:38:00PM -0700, Joanne Koong wrote:
+> > Add iomap_writeback_dirty_folio() for writing back a dirty folio.
+> > One use case of this is for folio laundering.
+> 
+> Where "folio laundering" means calling ->launder_folio, right?
 
-06c567403ae5 Use try_lookup_noperm() instead of d_hash_and_lookup()
-outside of VFS
-fa6fe07d1536 VFS: rename lookup_one_len family to lookup_noperm and
-remove permission check
+What does fuse use folio laundering for, anyway?  It looks to me like
+the primary users are invalidate_inode_pages*.  Either the caller cares
+about flushing dirty data and has called filemap_write_and_wait_range;
+or it doesn't and wants to tear down the pagecache ahead of some other
+operation that's going to change the file contents and doesn't care.
 
-Has anyone else noticed this perf regression?
+I suppose it could be useful as a last-chance operation on a dirty folio
+that was dirtied after a filemap_write_and_wait_range but before
+invalidate_inode_pages*?  Though for xfs we just return EBUSY and let
+the caller try again (or not).  Is there a subtlety to fuse here that I
+don't know about?
 
-For the case of cifs.ko mounts, it is easy to repro with generic/676.
-And also could be reproduced with simple "ls" of large directories.
+(Both of those questions are directed at hch or joanne or anyone else
+who knows ;))
 
--- 
-Thanks,
+--D
 
-Steve
+> > @@ -1675,7 +1677,8 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> >  	 * already at this point.  In that case we need to clear the writeback
+> >  	 * bit ourselves right after unlocking the page.
+> >  	 */
+> > -	folio_unlock(folio);
+> > +	if (unlock_folio)
+> > +		folio_unlock(folio);
+> >  	if (ifs) {
+> >  		if (atomic_dec_and_test(&ifs->write_bytes_pending))
+> >  			folio_end_writeback(folio);
+> 
+> When writing this code I was under the impression that
+> folio_end_writeback needs to be called after unlocking the page.
+> 
+> If that is not actually the case we can just move the unlocking into the
+> caller and make things a lot cleaner than the conditional locking
+> argument.
+> 
+> > +int iomap_writeback_dirty_folio(struct folio *folio, struct writeback_control *wbc,
+> > +				struct iomap_writepage_ctx *wpc,
+> > +				const struct iomap_writeback_ops *ops)
+> 
+> Please stick to the usual iomap coding style:  80 character lines,
+> two-tab indent for multiline function declarations.  (Also in a few
+> other places).
+> 
+> 
 
