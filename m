@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-51033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9D0AD20BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 16:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FA7AD20C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 16:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70EEF7A677A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 14:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3810A167171
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 14:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40F7253F31;
-	Mon,  9 Jun 2025 14:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603DF258CFF;
+	Mon,  9 Jun 2025 14:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXb7M9Bb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikQBWx5B"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F868253933
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 14:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C343F137C2A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 14:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749478648; cv=none; b=MXjVH2lkzuh44p2U5x7YsJS2Sqzy7ntwQUxEZ7wrDxO5u0USdx8oOQVpEtfPD2giO6UDHtYuaaKh56JtMUm6nFm9VqGvb9poeSaLmtj7u0ZOFEZSDVY92Rsh2ed2M0k7Mj1RXQE6McuQxmIqaylM+nRzl36sDy9dElerkAIPDDY=
+	t=1749478797; cv=none; b=t27uu9yPeBKDTkYWB+/VApi+xi0QaX3yVnNIbkmsY6SJ+H7YNJSAclo1u21UXQlSomjhgUerTsoCIkGT/TTXRA1q985WLL4UapMgTYN8QnYeHuLrBGnRmduoW2raw6xTTT7VGteQd2aZMn1qM5Ex/9Jj826UgH3sEotG7uBgQnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749478648; c=relaxed/simple;
-	bh=J5qpxaxX0Z9D8jwQcV7Jphj88CgSJy5mE1KDGiZb3LQ=;
+	s=arc-20240116; t=1749478797; c=relaxed/simple;
+	bh=b81AfwXaf46GRTobWZLbomRep2f5INjfuyWjwl8yklI=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g0TDouf/v2dum2DmDqtzWDb90tb35L43txQMij44DUyFh/pL1PrUUjy+S8K8QnPdx/v2kfITRe7fPjxJZ5CvspWojFdmo8ghOGxEt+7qzOi5PBQZ9btnUEtqe7bXh+9TRGI1Qie7og16aN9WExjQiIa71ravywFBbtoELnzUMuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PXb7M9Bb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2814C4CEEB;
-	Mon,  9 Jun 2025 14:17:26 +0000 (UTC)
+	 Content-Type:MIME-Version; b=ohN9PDb6AGVz2hYm9OtQf4w0GyySSRu+XYmHR0l4H1t8FRx23sPySpt7hOVzMMtJJK/LFY++FhEKYU5FlCOhdkIYcy2N7dKrAR3uwzjuOP69eq+Pqt+bPbFdMlUOt0v9t1BmYWOWvApqp3qpF5bhREH2gvx7NaHan6I/ptOtvAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikQBWx5B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EEBEC4CEEB;
+	Mon,  9 Jun 2025 14:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749478647;
-	bh=J5qpxaxX0Z9D8jwQcV7Jphj88CgSJy5mE1KDGiZb3LQ=;
+	s=k20201202; t=1749478797;
+	bh=b81AfwXaf46GRTobWZLbomRep2f5INjfuyWjwl8yklI=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=PXb7M9Bb+7UzP6b7FETUrgtf0dnRYwszqvD722rUQ2Gh96eWuQd5AawY4uoH7cOGG
-	 +pEexgTl57+ouepNKxH/+Ec72zObZI9IWDTn2fhfYsc+JFeIWMtipnR66FKPZ1ROeB
-	 jXRkaNwrdlqcDPADVr/+YObfo6sqmnGOpNjwSNzCXOV1UoABHVIY6W1KtQqao5MExn
-	 JQ2svas4C93P6Z1czyhpoFMAurKiRQYMBiCgVHoHJWfWiDHUZYobVpOEiP13fnN6E/
-	 h9JsYcvoawMO5c9qLXk180pRCBqf7uSWi3h2FId4+OXQFpLl6qpitqrb+yOEh4WaYr
-	 wZVzuG61dom4w==
-Message-ID: <4352cf30f1a599b67b550c0eaac443231cf28c54.camel@kernel.org>
-Subject: Re: [PATCH 2/5] selftests/coredump: fix build
+	b=ikQBWx5BhH6GUMrdiCgsWpSbZskDvxbRVsPOcpC0rMVN13l7WAPqp30cQs5wAyDqR
+	 hU+GL8T4tYDhhoRsmDsBWTa6MOKHnD7Y4BFepxExmd3Oh6UOHxYbzkYenPR/ndQmCW
+	 T4CiOe4x5wkzLiZgGdctpvoEEMIx1F0bYzbWfHusYZjVsFU9iH4GlGC/GsS8lUaj0I
+	 GW9ubClh4nlu+5zcm2fkxIGk7+deZcTm7LGjdEZkwzFVxwZ399WFkaJkjWGNXIBK4V
+	 lCkjfQVsvACo7qb3J5yKpf6nbBDnCz24+/kwX2byHIeIbB6tgNy/2dmcIGhTDz8/um
+	 BAFMN4HGZY7mA==
+Message-ID: <a020a7a3ca4493f663ff883f42a2a60d4a4debca.camel@kernel.org>
+Subject: Re: [PATCH 0/5] coredump: allow for flexible coredump handling
 From: Jeff Layton <jlayton@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
  Jann Horn <jannh@google.com>
@@ -51,11 +51,10 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Alexander Viro
  Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>,  Mike
  Yuan <me@yhndnzj.com>, Zbigniew =?UTF-8?Q?J=C4=99drzejewski-Szmek?=
  <zbyszek@in.waw.pl>,  Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Mon, 09 Jun 2025 10:17:25 -0400
-In-Reply-To: <20250530-work-coredump-socket-protocol-v1-2-20bde1cd4faa@kernel.org>
+Date: Mon, 09 Jun 2025 10:19:55 -0400
+In-Reply-To: <20250530-work-coredump-socket-protocol-v1-0-20bde1cd4faa@kernel.org>
 References: 
 	<20250530-work-coredump-socket-protocol-v1-0-20bde1cd4faa@kernel.org>
-	 <20250530-work-coredump-socket-protocol-v1-2-20bde1cd4faa@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -140,126 +139,107 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2025-05-30 at 13:10 +0200, Christian Brauner wrote:
-> Fix various warnings in the selftest build.
+On Fri, 2025-05-30 at 13:09 +0200, Christian Brauner wrote:
+> In addition to the extensive selftests I've already written a
+> (non-production ready) simple Rust coredump server for this in
+> userspace:
+>=20
+> https://github.com/brauner/dumdum.git
+>=20
+> Extend the coredump socket to allow the coredump server to tell the
+> kernel how to process individual coredumps. This allows for fine-grained
+> coredump management allowing choose how to process individual coredump
+> requests. Userspace can decide to just let the kernel write out the
+> coredump, or generate the coredump itself, or just reject it.
+>=20
+> When the crashing task connects to the coredump socket the kernel will
+> send a struct coredump_req to the coredump server. The kernel will set
+> the size member of struct coredump_req allowing the coredump server how
+> much data can be read.
+>=20
+> The coredump server uses MSG_PEEK to peek the size of struct
+> coredump_req. If the kernel uses a newer struct coredump_req the
+> coredump server just reads the size it knows and discard any remaining
+> bytes in the buffer. If the kernel uses an older struct coredump_req
+> the coredump server just reads the size the kernel knows.
+>=20
+> The returned struct coredump_req will inform the coredump server what
+> features the kernel supports. The coredump_req->mask member is set to
+> the currently know features.
+>=20
+> The coredump server may only use features whose bits were raised by the
+> kernel in coredump_req->mask.
+>=20
+> In response to a coredump_req from the kernel the coredump server sends
+> a struct coredump_ack to the kernel. The kernel informs the coredump
+> server what version of struct coredump_ack it supports by setting struct
+> coredump_req->size_ack to the size it knows about. The coredump server
+> may only send as many bytes as coredump_req->size_ack indicates (a
+> smaller size is fine of course). The coredump server must set
+> coredump_ack->size accordingly.
+>=20
+> The coredump server sets the features it wants to use in struct
+> coredump_ack->mask. Only bits returned in struct coredump_req->mask may
+> be used.
+>=20
+> In case an invalid struct coredump_ack is sent to the kernel an
+> out-of-band byte will be sent by the kernel indicating the reason why
+> the coredump_ack was rejected.
+>=20
+> If the coredump server sent a valid struct coredump_ack the kernel will
+> place an out-of-band byte indicating that the request was successful. If
+> the kernel is generating the coredump and sending the coredump data on
+> the socket the success out-of-band marker can be used as an indicator
+> when coredump data starts.
+>=20
+> The out-of-band markers allow advanced userspace to infer failure. They
+> are optional and can be ignored by not listening for POLLPRI events and
+> aren't necessary for the coredump server to function correctly.
+>=20
+> In the initial version the following features are supported in
+> coredump_{req,ack}->mask:
+>=20
+> * COREDUMP_KERNEL
+>   The kernel will write the coredump data to the socket after the
+>   req-ack sequence has concluded successfully.
+>=20
+> * COREDUMP_USERSPACE
+>   The kernel will not write coredump data but will indicate to the
+>   parent that a coredump has been generated. This is used when userspace
+>   generates its own coredumps.
+>=20
+> * COREDUMP_REJECT
+>   The kernel will skip generating a coredump for this task.
+>=20
+> * COREDUMP_WAIT
+>   The kernel will prevent the task from exiting until the coredump
+>   server has shutdown the socket connection.
 >=20
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  tools/testing/selftests/coredump/Makefile         |  2 +-
->  tools/testing/selftests/coredump/stackdump_test.c | 17 +++++------------
->  2 files changed, 6 insertions(+), 13 deletions(-)
+> Christian Brauner (5):
+>       coredump: allow for flexible coredump handling
+>       selftests/coredump: fix build
+>       selftests/coredump: cleanup coredump tests
+>       tools: add coredump.h header
+>       selftests/coredump: add coredump server selftests
 >=20
-> diff --git a/tools/testing/selftests/coredump/Makefile b/tools/testing/se=
-lftests/coredump/Makefile
-> index ed210037b29d..bc287a85b825 100644
-> --- a/tools/testing/selftests/coredump/Makefile
-> +++ b/tools/testing/selftests/coredump/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -CFLAGS =3D $(KHDR_INCLUDES)
-> +CFLAGS =3D -Wall -O0 $(KHDR_INCLUDES)
-> =20
->  TEST_GEN_PROGS :=3D stackdump_test
->  TEST_FILES :=3D stackdump
-> diff --git a/tools/testing/selftests/coredump/stackdump_test.c b/tools/te=
-sting/selftests/coredump/stackdump_test.c
-> index 9984413be9f0..aa366e6f13a7 100644
-> --- a/tools/testing/selftests/coredump/stackdump_test.c
-> +++ b/tools/testing/selftests/coredump/stackdump_test.c
-> @@ -24,6 +24,8 @@ static void *do_nothing(void *)
->  {
->  	while (1)
->  		pause();
-> +
-> +	return NULL;
->  }
-> =20
->  static void crashing_child(void)
-> @@ -46,9 +48,7 @@ FIXTURE(coredump)
-> =20
->  FIXTURE_SETUP(coredump)
->  {
-> -	char buf[PATH_MAX];
->  	FILE *file;
-> -	char *dir;
->  	int ret;
-> =20
->  	self->pid_coredump_server =3D -ESRCH;
-> @@ -106,7 +106,6 @@ FIXTURE_TEARDOWN(coredump)
-> =20
->  TEST_F_TIMEOUT(coredump, stackdump, 120)
->  {
-> -	struct sigaction action =3D {};
->  	unsigned long long stack;
->  	char *test_dir, *line;
->  	size_t line_length;
-> @@ -171,11 +170,10 @@ TEST_F_TIMEOUT(coredump, stackdump, 120)
-> =20
->  TEST_F(coredump, socket)
->  {
-> -	int fd, pidfd, ret, status;
-> +	int pidfd, ret, status;
->  	FILE *file;
->  	pid_t pid, pid_coredump_server;
->  	struct stat st;
-> -	char core_file[PATH_MAX];
->  	struct pidfd_info info =3D {};
->  	int ipc_sockets[2];
->  	char c;
-> @@ -356,11 +354,10 @@ TEST_F(coredump, socket)
-> =20
->  TEST_F(coredump, socket_detect_userspace_client)
->  {
-> -	int fd, pidfd, ret, status;
-> +	int pidfd, ret, status;
->  	FILE *file;
->  	pid_t pid, pid_coredump_server;
->  	struct stat st;
-> -	char core_file[PATH_MAX];
->  	struct pidfd_info info =3D {};
->  	int ipc_sockets[2];
->  	char c;
-> @@ -384,7 +381,7 @@ TEST_F(coredump, socket_detect_userspace_client)
->  	pid_coredump_server =3D fork();
->  	ASSERT_GE(pid_coredump_server, 0);
->  	if (pid_coredump_server =3D=3D 0) {
-> -		int fd_server, fd_coredump, fd_peer_pidfd, fd_core_file;
-> +		int fd_server, fd_coredump, fd_peer_pidfd;
->  		socklen_t fd_peer_pidfd_len;
-> =20
->  		close(ipc_sockets[0]);
-> @@ -464,7 +461,6 @@ TEST_F(coredump, socket_detect_userspace_client)
->  		close(fd_coredump);
->  		close(fd_server);
->  		close(fd_peer_pidfd);
-> -		close(fd_core_file);
->  		_exit(EXIT_SUCCESS);
->  	}
->  	self->pid_coredump_server =3D pid_coredump_server;
-> @@ -488,7 +484,6 @@ TEST_F(coredump, socket_detect_userspace_client)
->  		if (ret < 0)
->  			_exit(EXIT_FAILURE);
-> =20
-> -		(void *)write(fd_socket, &(char){ 0 }, 1);
->  		close(fd_socket);
->  		_exit(EXIT_SUCCESS);
->  	}
-> @@ -519,7 +514,6 @@ TEST_F(coredump, socket_enoent)
->  	int pidfd, ret, status;
->  	FILE *file;
->  	pid_t pid;
-> -	char core_file[PATH_MAX];
-> =20
->  	file =3D fopen("/proc/sys/kernel/core_pattern", "w");
->  	ASSERT_NE(file, NULL);
-> @@ -569,7 +563,6 @@ TEST_F(coredump, socket_no_listener)
->  	ASSERT_GE(pid_coredump_server, 0);
->  	if (pid_coredump_server =3D=3D 0) {
->  		int fd_server;
-> -		socklen_t fd_peer_pidfd_len;
-> =20
->  		close(ipc_sockets[0]);
-> =20
+>  fs/coredump.c                                     |  151 +-
+>  include/uapi/linux/coredump.h                     |  104 ++
+>  tools/include/uapi/linux/coredump.h               |  104 ++
+>  tools/testing/selftests/coredump/Makefile         |    2 +-
+>  tools/testing/selftests/coredump/config           |    4 +
+>  tools/testing/selftests/coredump/stackdump_test.c | 1524 +++++++++++++++=
+++----
+>  6 files changed, 1639 insertions(+), 250 deletions(-)
+> ---
+> base-commit: 3e406741b19890c3d8a2ed126aa7c23b106ca9e1
+> change-id: 20250520-work-coredump-socket-protocol-6980d1f54c2f
+
+Has anyone discussed adding this support to abrt? I imagine they'd like
+to plumb this support in.
+
+In any case, this all looks good.=C2=A0You can add this to all 5:
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
