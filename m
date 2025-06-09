@@ -1,204 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-51023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCFCAD1E46
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 15:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2C5AD1E64
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 15:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A661F16BC21
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 13:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D73D188B0F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 13:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32ED2528EF;
-	Mon,  9 Jun 2025 13:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ACshVvNF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ENhJaAes";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ACshVvNF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ENhJaAes"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35216257AFB;
+	Mon,  9 Jun 2025 13:01:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE3D2571A2
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 13:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B729258CF0;
+	Mon,  9 Jun 2025 13:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749474036; cv=none; b=ngbXMkvAHvdluShJcJ/vJRmO7cL6mK5vffeNKtosKBTr55NnsP2GZ4nT6JmJe9QAxaye7A2vVWoSuPTXCUkOGghoYyc14h05ENiMSyihEVi4t0EyIoZ2TIa8ErsQ82/aVFUXTPnNxhLJHIROCEI2orSgQ4y9GbFELmN7zMgPMHQ=
+	t=1749474114; cv=none; b=G6wf2vxUl3UYODwidw9M22fP04rUGlmE/yjgzCoG9BA5aba2avi53FDKrHvJeKLM4IRZo+Xennyc7zFESdK41gEBmGNyWLp40phPjJWLWirK6iXKZQ+yOHGhATcueI3CkPAlfhME68Rdt38T5DrHJaiQQtiGvjDq+NlVmd/17Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749474036; c=relaxed/simple;
-	bh=3xhl2LNu/wRAF+quPDBiV6VhMbSKSQbC+rt012wC4vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBp6mHN4XezEG0EetuOTMAtGwEfUnlcVxIOpBNH9yjAAFKuF9+vAmcnTaIKM5oDlWcoZn6nt0dSizlRIC7c7IEiTg9cv1tKvmicNHRgbDnc0izHe7UIz2y8G6qnJeXxb1EKHE6/fRbXzoyT1f1iqnqN9sN6Xi4al0SSGM+h1IwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ACshVvNF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ENhJaAes; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ACshVvNF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ENhJaAes; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BB95B2117D;
-	Mon,  9 Jun 2025 13:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749474031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3pP6nhn7jj2JVMUX408uMm7p8lqzIg3XBb7vL5PGrM4=;
-	b=ACshVvNFzhGot4hSZC0pUBKX5bxt3ChAyMUPqAFM1Bd4IFfZz7P3Kc9ElYTuUavil0SMD8
-	vKe72D4KU8q0z0oUZTy4H7NANXo0EE6ridw7pVEUUgnfTKNuuzDt90EAwUUWJFE551BlnB
-	BG4sgjTrb9IJ5TeA7OVMSxRPzb4gEts=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749474031;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3pP6nhn7jj2JVMUX408uMm7p8lqzIg3XBb7vL5PGrM4=;
-	b=ENhJaAesi/jyHTO5LdDX5uZ0VQZWkh4bZe57XzkuKVfj0C/ppnWMyVfaNECyd0PX6rH56V
-	E8aqA/u23Idu3TCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ACshVvNF;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ENhJaAes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749474031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3pP6nhn7jj2JVMUX408uMm7p8lqzIg3XBb7vL5PGrM4=;
-	b=ACshVvNFzhGot4hSZC0pUBKX5bxt3ChAyMUPqAFM1Bd4IFfZz7P3Kc9ElYTuUavil0SMD8
-	vKe72D4KU8q0z0oUZTy4H7NANXo0EE6ridw7pVEUUgnfTKNuuzDt90EAwUUWJFE551BlnB
-	BG4sgjTrb9IJ5TeA7OVMSxRPzb4gEts=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749474031;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3pP6nhn7jj2JVMUX408uMm7p8lqzIg3XBb7vL5PGrM4=;
-	b=ENhJaAesi/jyHTO5LdDX5uZ0VQZWkh4bZe57XzkuKVfj0C/ppnWMyVfaNECyd0PX6rH56V
-	E8aqA/u23Idu3TCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA505137FE;
-	Mon,  9 Jun 2025 13:00:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JCWJKe/aRmisVgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Jun 2025 13:00:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 39E20A094C; Mon,  9 Jun 2025 15:00:31 +0200 (CEST)
-Date: Mon, 9 Jun 2025 15:00:31 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>, 
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	coda@cs.cmu.edu, codalist@coda.cs.cmu.edu, linux-nfs@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] coda: use iterate_dir() in coda_readdir()
-Message-ID: <6zirxkpkdrtpcoewopaaotmw4jpjvjmqq4tijudvrpeo4227pi@hyljuie6ngem>
-References: <20250608230952.20539-1-neil@brown.name>
- <20250608230952.20539-4-neil@brown.name>
- <8f2bf3aed5d7bd005adcdeaa51c02c7aa9ca14ba.camel@kernel.org>
+	s=arc-20240116; t=1749474114; c=relaxed/simple;
+	bh=6O2oFoq7/tNbsOXuXUHwAhsSFeAgO9v70mNYRx8wUjA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HoOHXOpF5KqdfYmgdpovbsYmCVK4B7favgDHySQiBf1n6zYKlnRlyczLNXBTvgJc4ZMcA3+UB52k33UviLS4SGlxqpDfUJpfWguxxQLkE6N/wb5uPTCiHIEJofcw9o5ggRV5HrfrxzwFoACpZ+FetpkScQjh4Ha2RYLs/ea5kC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bGBrS5fysz6M4tN;
+	Mon,  9 Jun 2025 21:01:28 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2095A1404D8;
+	Mon,  9 Jun 2025 21:01:50 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 9 Jun
+ 2025 15:01:48 +0200
+Date: Mon, 9 Jun 2025 14:01:47 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
+	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
+ Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
+ Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>,
+	Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
+	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
+	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Ying
+ Huang <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
+	"Peter Zijlstra" <peterz@infradead.org>, Greg KH
+	<gregkh@linuxfoundation.org>, Nathan Fontenot <nathan.fontenot@amd.com>,
+	Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
+	"Benjamin Cheatham" <benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
+	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
+Subject: Re: [PATCH v4 7/7] cxl/dax: Defer DAX consumption of SOFT RESERVED
+ resources until after CXL region creation
+Message-ID: <20250609140147.00000a1e@huawei.com>
+In-Reply-To: <20250603221949.53272-8-Smita.KoralahalliChannabasappa@amd.com>
+References: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
+	<20250603221949.53272-8-Smita.KoralahalliChannabasappa@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f2bf3aed5d7bd005adcdeaa51c02c7aa9ca14ba.camel@kernel.org>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[brown.name,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,cs.cmu.edu,redhat.com,tyhicks.com,szeredi.hu,vger.kernel.org,coda.cs.cmu.edu,lists.linux.dev];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: BB95B2117D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon 09-06-25 08:17:15, Jeff Layton wrote:
-> On Mon, 2025-06-09 at 09:09 +1000, NeilBrown wrote:
-> > The code in coda_readdir() is nearly identical to iterate_dir().
-> > Differences are:
-> >  - iterate_dir() is killable
-> >  - iterate_dir() adds permission checking and accessing notifications
-> > 
-> > I believe these are not harmful for coda so it is best to use
-> > iterate_dir() directly.  This will allow locking changes without
-> > touching the code in coda.
-> > 
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> > ---
-> >  fs/coda/dir.c | 12 ++----------
-> >  1 file changed, 2 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/fs/coda/dir.c b/fs/coda/dir.c
-> > index ab69d8f0cec2..ca9990017265 100644
-> > --- a/fs/coda/dir.c
-> > +++ b/fs/coda/dir.c
-> > @@ -429,17 +429,9 @@ static int coda_readdir(struct file *coda_file, struct dir_context *ctx)
-> >  	cfi = coda_ftoc(coda_file);
-> >  	host_file = cfi->cfi_container;
-> >  
-> > -	if (host_file->f_op->iterate_shared) {
-> > -		struct inode *host_inode = file_inode(host_file);
-> > -		ret = -ENOENT;
-> > -		if (!IS_DEADDIR(host_inode)) {
-> > -			inode_lock_shared(host_inode);
-> > -			ret = host_file->f_op->iterate_shared(host_file, ctx);
-> > -			file_accessed(host_file);
-> > -			inode_unlock_shared(host_inode);
-> > -		}
-> > +	ret = iterate_dir(host_file, ctx);
-> > +	if (ret != -ENOTDIR)
-> >  		return ret;
-> > -	}
-> >  	/* Venus: we must read Venus dirents from a file */
-> >  	return coda_venus_readdir(coda_file, ctx);
-> >  }
-> 
-> 
-> Is it already time for my annual ask of "Who the heck is using coda
-> these days?" Anyway, this patch looks fine to me.
-> 
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+On Tue, 3 Jun 2025 22:19:49 +0000
+Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
 
-Send a patch proposing deprecating it and we might learn that :) Searching
-the web seems to suggest it is indeed pretty close to dead.
+> From: Nathan Fontenot <nathan.fontenot@amd.com>
+>=20
+> The DAX HMEM driver currently consumes all SOFT RESERVED iomem resources
+> during initialization. This interferes with the CXL driver=E2=80=99s abil=
+ity to
+> create regions and trim overlapping SOFT RESERVED ranges before DAX uses
+> them.
+>=20
+> To resolve this, defer the DAX driver's resource consumption if the
+> cxl_acpi driver is enabled. The DAX HMEM initialization skips walking the
+> iomem resource tree in this case. After CXL region creation completes,
+> any remaining SOFT RESERVED resources are explicitly registered with the
+> DAX driver by the CXL driver.
+>=20
+> This sequencing ensures proper handling of overlaps and fixes hotplug
+> failures.
+>=20
+> Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+> Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+> Co-developed-by: Terry Bowman <terry.bowman@amd.com>
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> ---
+>  drivers/cxl/core/region.c | 10 +++++++++
+>  drivers/dax/hmem/device.c | 43 ++++++++++++++++++++-------------------
+>  drivers/dax/hmem/hmem.c   |  3 ++-
+>  include/linux/dax.h       |  6 ++++++
+>  4 files changed, 40 insertions(+), 22 deletions(-)
+>=20
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 3a5ca44d65f3..c6c0c7ba3b20 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/sort.h>
+>  #include <linux/idr.h>
+>  #include <linux/memory-tiers.h>
+> +#include <linux/dax.h>
+>  #include <cxlmem.h>
+>  #include <cxl.h>
+>  #include "core.h"
+> @@ -3553,6 +3554,11 @@ static struct resource *normalize_resource(struct =
+resource *res)
+>  	return NULL;
+>  }
+> =20
+> +static int cxl_softreserv_mem_register(struct resource *res, void *unuse=
+d)
+> +{
+> +	return hmem_register_device(phys_to_target_node(res->start), res);
+> +}
+> +
+>  static int __cxl_region_softreserv_update(struct resource *soft,
+>  					  void *_cxlr)
+>  {
+> @@ -3590,6 +3596,10 @@ int cxl_region_softreserv_update(void)
+>  				    __cxl_region_softreserv_update);
+>  	}
+> =20
+> +	/* Now register any remaining SOFT RESERVES with DAX */
+> +	walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED, IORESOURCE_MEM,
+> +			    0, -1, NULL, cxl_softreserv_mem_register);
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_region_softreserv_update, "CXL");
+> diff --git a/drivers/dax/hmem/device.c b/drivers/dax/hmem/device.c
+> index 59ad44761191..cc1ed7bbdb1a 100644
+> --- a/drivers/dax/hmem/device.c
+> +++ b/drivers/dax/hmem/device.c
+> @@ -8,7 +8,6 @@
+>  static bool nohmem;
+>  module_param_named(disable, nohmem, bool, 0444);
+> =20
+> -static bool platform_initialized;
+>  static DEFINE_MUTEX(hmem_resource_lock);
+>  static struct resource hmem_active =3D {
+>  	.name =3D "HMEM devices",
+> @@ -35,9 +34,7 @@ EXPORT_SYMBOL_GPL(walk_hmem_resources);
+> =20
+>  static void __hmem_register_resource(int target_nid, struct resource *re=
+s)
+>  {
+> -	struct platform_device *pdev;
+>  	struct resource *new;
+> -	int rc;
+> =20
+>  	new =3D __request_region(&hmem_active, res->start, resource_size(res), =
+"",
+>  			       0);
+> @@ -47,21 +44,6 @@ static void __hmem_register_resource(int target_nid, s=
+truct resource *res)
+>  	}
+> =20
+>  	new->desc =3D target_nid;
+> -
+> -	if (platform_initialized)
+> -		return;
+> -
+> -	pdev =3D platform_device_alloc("hmem_platform", 0);
+> -	if (!pdev) {
+> -		pr_err_once("failed to register device-dax hmem_platform device\n");
+> -		return;
+> -	}
+> -
+> -	rc =3D platform_device_add(pdev);
+> -	if (rc)
+> -		platform_device_put(pdev);
+> -	else
+> -		platform_initialized =3D true;
+>  }
+> =20
+>  void hmem_register_resource(int target_nid, struct resource *res)
+> @@ -83,9 +65,28 @@ static __init int hmem_register_one(struct resource *r=
+es, void *data)
+> =20
+>  static __init int hmem_init(void)
+>  {
+> -	walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED,
+> -			IORESOURCE_MEM, 0, -1, NULL, hmem_register_one);
+> -	return 0;
+> +	struct platform_device *pdev;
+> +	int rc;
+> +
+> +	if (!IS_ENABLED(CONFIG_CXL_ACPI)) {
+> +		walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED,
+> +				    IORESOURCE_MEM, 0, -1, NULL,
+> +				    hmem_register_one);
+> +	}
+> +
+> +	pdev =3D platform_device_alloc("hmem_platform", 0);
+> +	if (!pdev) {
+> +		pr_err("failed to register device-dax hmem_platform device\n");
+> +		return -1;
+> +	}
+> +
+> +	rc =3D platform_device_add(pdev);
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+platform_device_register_simple("hmem_platform", -1, NULL, 0); or something=
+ like
+that?  There are quite a few variants of platform_device_register to cover
+simple cases.
+
+
+> +	if (rc) {
+> +		pr_err("failed to add device-dax hmem_platform device\n");
+> +		platform_device_put(pdev);
+> +	}
+> +
+> +	return rc;
+>  }
+> =20
+>  /*
+
 
