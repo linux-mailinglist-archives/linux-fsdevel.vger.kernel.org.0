@@ -1,73 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-50957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A5CAD173E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 05:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E834AD175A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 05:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E61C3A9C3D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 03:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC1B1889500
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 03:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C111F22ACD3;
-	Mon,  9 Jun 2025 03:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B9F248F63;
+	Mon,  9 Jun 2025 03:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wse6I/X9"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iIs9s9nS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F76146A60
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 03:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60DD248F5A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 03:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749438504; cv=none; b=cL/PV9GEeBRJqnL08EXBJQydjqBF/UwNCwFRVMqDqlrccNPOp9FcpW6mOCuUb4/ewysi6hHSBNrxghqM9cD0D2HC//Jl2lAjbnpby82AQiVUZVUFmfhoi23zAa/b9w2z6KHq4785hbLE0P7ZVddAQEYkq2/37rxLqqLxjmCPheE=
+	t=1749438556; cv=none; b=nFltp/2FOmdHlE1lSSoHYw68A4LOg2ZziVmYF39CLZPE+XEtEMLVxlp7mMeUeQGwliBH3dyEc2mpMVolEj3YuRC9ZKnVFovCcNWb+p7Wn07bNtSgHP/m30I0SjM/6R9WnTo2cvc7lfo1EFpiDEqgfC0XdyEoxli5Z1Sr+rITIB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749438504; c=relaxed/simple;
-	bh=Dz4BZOwoG735qXr2NNfV+1SB9IWMabweHe1jjafLKJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k1tdmk+kYXYPhWg0CAm0dtQCu4/WLSkcdRR6jE30uxdRuEitCNpAD0QfV3bWDOLiaLkBe1Fq3sMHlEUdospn5NdmDiZ5ucUmI5myxiw4dzwLHj6ZrM1h/Oqn0mVnoxBXpx8Wghyi7oxv362CUxecgb1TRUxwnGHzMjZHA9x4ObA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wse6I/X9; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1749438556; c=relaxed/simple;
+	bh=+aCBd2ghwW/klUL9zxXGFrDo3NyzpBmQuv2HbBfHcbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lr1n3K5+QDCaEwKeT6xJ+BrbW+Fy+Spsp3VgarUD3kizjbQPOIfXJhfxLTdpPQKTt6iFM4ImbRfYTzIDMwDBCMBAnC7DUtHzm1YrjCPQ0a20upIzM0+qDQb0u9QK/A6bJMXvLHS1R7jTtLbL/xUO4aHA4VuF6KoYGE4vXBWX+CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iIs9s9nS; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-231e8553248so38013785ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Jun 2025 20:08:22 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-234c5b57557so34423665ad.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Jun 2025 20:09:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749438502; x=1750043302; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yJ5ljUqUtBgUphPBwqwQSdecLwZyYNnXtwMirJ7OhPU=;
-        b=Wse6I/X9xYMqeixoJ4K8q+Iay7y9BU/jgq7klubxhKbW9OLhyTehUqB0Fqj8EDKK2c
-         DQi8RxDnU0dA7GJcOFcIANKwzs2upQLVW89jSZvazsjZEzFdZ7sbObBIJKJysPouR7f7
-         qkF0bX0PHuva7GYu/+dLuUDTsoFIYqHXfkHIw=
+        d=chromium.org; s=google; t=1749438554; x=1750043354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D7CXEUIqwkwbaC9WL4kfbAYO9r9qnWAQ32Tn1bWOs0k=;
+        b=iIs9s9nS4Eya2LU6cU9CgPrVN7L97Ys7O2xg+SJJPoySvOIkSVVuWeTLsdXTt7sAqi
+         DLXA3shE1t9BYZDCDYZY7lz+JfJ3yBLZmeyTpwH9LluEJTeaAZIaZKBmrTorUZ2eJCm3
+         CteWo6POVViKTNuTZBoXxMTh4fWO+pK6kdKM0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749438502; x=1750043302;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yJ5ljUqUtBgUphPBwqwQSdecLwZyYNnXtwMirJ7OhPU=;
-        b=wziBGjlGqXp8d4kl8t0pvyR8xmh745dXnwp6jVEn9+KFpXjFsm91oOXVcCjg/k9Hku
-         wZS7BEMqKu7TJe+da9bl70AiJccRh8xScuqSC+p1wLQpKmA8JhoyP1M6yPgGlYjpqAlP
-         DfIEy4LA6gZwPoT4b0z37iEUevHSW5HtJvwUX1/az/+yu6GzOiXpzyrB/pg5EOM7Bv4W
-         G5UwFwHu/S9XbJvuOIhY+pilh2zC2CIKsGDWzITzjVPF27KqAjgyuueYGcZLe5CXa/W9
-         m63vAUbuMAwhjGd8YCniO+SVHNeq1yjr45wcMQpkpXzeRrTECXjOnDX2CtjHhxVI10cS
-         Hmlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxIJaM3r9+Yn7W1/iRIAYME0aFZaDUS8/z1wGrOGM1oNd6RIJkicm2d4VsrxOHnLXy8Ak4xpjVyfCMvgLs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNBhXwSWXQBcombi/LyDm37iQAGKs9qUVp9uhvNsS6w169MFR/
-	NSzqX7BkP2gJXGhchGM/gDgoCUnrguc3aP21PYYPMIXGAqxos2gehQUZLQyh7W6czg==
-X-Gm-Gg: ASbGnctFxI5kO1NjorEi0GzcUDPLaz5roMgj7jisPy6Wf4lTW49OVzAdV2jAMRV5H4x
-	4yCgBq8hxgEsNvyQpAi+d/Elq5RU1ZJLsu3BGi/fmDINdNdDUugNLI1I3vdtDnnsqFqvnrqhoRm
-	TL2D3ctiKB6G6vd5ttgydGweVG7VrMKqaA2Hn1CCX3eBnU1kGWA81Q0t5asjRhEJ6DRHtLUSga+
-	fh2dX4/gjoPPxycgdESNXpv3ng9s3LHsiUIpEx1M4ysEtt7ND+e8BQn0B5N/sxs0ZiBLtc5lAhd
-	WSyzJh9dffjYXPFrGhhbgn4BZJIGUPc+QSCIu+yk8KRJtNWISUeSW31JXGD4aaVSnfMw3pI5quM
-	dpA==
-X-Google-Smtp-Source: AGHT+IEZ/QggHpe+SjR545m8B1DjwJ23ZRKmlr+YvhhI7qVFUYft9GGSA1OnQ2N5skZa75gmHXfC2w==
-X-Received: by 2002:a17:902:db07:b0:234:a139:1203 with SMTP id d9443c01a7336-23601d82d1bmr183050245ad.32.1749438502124;
-        Sun, 08 Jun 2025 20:08:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749438554; x=1750043354;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D7CXEUIqwkwbaC9WL4kfbAYO9r9qnWAQ32Tn1bWOs0k=;
+        b=EOT1H/sdUaiQ9MUpFYXGo4tjUpYksHzywlOeqZil+c8NtqxfhvgirWwbf/fJkYhStY
+         7jBUX/2yJBnBbnEQqCSoYPxaRv2r5cMR5jopdNSPzX6QDeXRbja6gC0RMS8WfO5oRKR3
+         a/zp0iCj6egzrVgylpEGnpB50ltIAo5822e2cOJhmP3XPEqipxGnvVoOqiS+WS+2qFQe
+         QCcZq7bYwg87kJ6Asyvj7xlLBs7Gk5u++fI9MBXiyb/S5cX02lvWIwXNxsqOLq3J3t0V
+         6nT2+/XPQW+cnZWnvc23LchzoDDtVBHrnjynzN9gp8jkla60qb1FPRr+8/KOEISGZdfk
+         49nA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJvQtzTzAV9aVsvEyLu66KjRWEdb0wP8/9QprWNSSyJl9VhF5L8IX4vut1kraQBUwOWJSRV/tJ+SKj/7i9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjngyFC+L/fli4bBWiRCQz1XMk4voDq4cfCYp29nufYSrCClvD
+	ZnqJP5tZRkoCFXxt1+Cn/m+pPwOzIXCipIpKwLjcgRKqQEE/E27YbynKs8+Tis0sdw==
+X-Gm-Gg: ASbGncsPCG0UgdPJ1OVrWNrdI/v6ey3r/kyk4WzFD5mE/WFMROKSh/aYNPUay5HHtVE
+	cyxDccHBHIZysVFFR01WQII2JxXyP4jV7MlGkLKNyprHv1uAeA7G7THO1fGA9C+9ibjxN6dWJoK
+	q4gp71wV+4dUEpVntkzp52D+h3nNmiUd+cdzJtIRg5NFQhMpCYmGlud0EGIMruTxsHHysFx3n55
+	ddW3u65mvJxnAnFaMLqZgrYRp/AYAe9VWCpUDfoZOgnHa0mNWQUMSBrLrclmQ+ecyDW9rDsQKTm
+	JRbWrJWGPlxXI5oAs81eB7rxHg+u+8XWZHBd55EmZXD5l7ZhpgLw+j6IwHWH85Rqvbv9ZBOEwoB
+	FqdsirdpNT42v
+X-Google-Smtp-Source: AGHT+IF9SqoM0enwHHeEeJDm6HNEPI1J9jfQ2jOvh5ECV8YfsU6gawfWVryQ79XsWdg7P2+sC2CUgA==
+X-Received: by 2002:a17:902:d48d:b0:234:a139:120d with SMTP id d9443c01a7336-23601cf1e13mr147061665ad.7.1749438554311;
+        Sun, 08 Jun 2025 20:09:14 -0700 (PDT)
 Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:eb64:2cdb:5573:f6f1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603410716sm44649645ad.199.2025.06.08.20.08.19
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603410716sm44649645ad.199.2025.06.08.20.09.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 20:08:21 -0700 (PDT)
+        Sun, 08 Jun 2025 20:09:13 -0700 (PDT)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Peter Zijlstra <peterz@infradead.org>
@@ -81,10 +83,12 @@ Cc: Ingo Molnar <mingo@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH 1/2] wait: add wait_event_freezable_killable_exclusive
-Date: Mon,  9 Jun 2025 12:07:36 +0900
-Message-ID: <20250609030759.3576335-1-senozhatsky@chromium.org>
+Subject: [PATCH 2/2] fuse: use freezable wait in fuse_get_req()
+Date: Mon,  9 Jun 2025 12:07:39 +0900
+Message-ID: <20250609030759.3576335-4-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
+In-Reply-To: <20250609030759.3576335-1-senozhatsky@chromium.org>
+References: <20250609030759.3576335-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,40 +97,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a freezable variant of exclusive wait.  This can be useful
-in, for example, FUSE when system suspend occurs while FUSE is
-blocked on requests (which prevents system suspend.)
+Use freezable wait in fuse_get_req() so that it won't block
+the system from entering suspend in some situations:
+
+ Freezing user space processes failed after 20.009 seconds
+ Call trace:
+  __switch_to+0xcc/0x168
+  schedule+0x57c/0x1138
+  fuse_get_req+0xd0/0x2b0
+  fuse_simple_request+0x120/0x620
+  fuse_getxattr+0xe4/0x158
+  fuse_xattr_get+0x2c/0x48
+  __vfs_getxattr+0x160/0x1d8
+  get_vfs_caps_from_disk+0x74/0x1a8
+  __audit_inode+0x244/0x4d8
+  user_path_at_empty+0x2e0/0x390
+  __arm64_sys_faccessat+0xdc/0x260
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- include/linux/wait.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/fuse/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/wait.h b/include/linux/wait.h
-index 327894f022cf..b98cfd094543 100644
---- a/include/linux/wait.h
-+++ b/include/linux/wait.h
-@@ -657,6 +657,20 @@ do {										\
- 	__ret;									\
- })
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e80cd8f2c049..3792ca26c42f 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -207,7 +207,7 @@ static struct fuse_req *fuse_get_req(struct mnt_idmap *idmap,
  
-+#define __wait_event_freezable_killable_exclusive(wq, condition)		\
-+	___wait_event(wq, condition, (TASK_KILLABLE|TASK_FREEZABLE), 1, 0,	\
-+		      schedule())
-+
-+#define wait_event_freezable_killable_exclusive(wq, condition)			\
-+({										\
-+	int __ret = 0;								\
-+	might_sleep();								\
-+	if (!(condition))							\
-+		__ret = __wait_event_freezable_killable_exclusive(wq,		\
-+								  condition);	\
-+	__ret;									\
-+})
-+
- /**
-  * wait_event_idle - wait for a condition without contributing to system load
-  * @wq_head: the waitqueue to wait on
+ 	if (fuse_block_alloc(fc, for_background)) {
+ 		err = -EINTR;
+-		if (wait_event_killable_exclusive(fc->blocked_waitq,
++		if (wait_event_freezable_killable_exclusive(fc->blocked_waitq,
+ 				!fuse_block_alloc(fc, for_background)))
+ 			goto out;
+ 	}
 -- 
 2.50.0.rc1.591.g9c95f17f64-goog
 
