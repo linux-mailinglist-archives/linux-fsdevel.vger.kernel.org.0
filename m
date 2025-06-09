@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-51017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58EEAD1D02
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 14:17:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81CDAD1D09
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 14:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCC173A29AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 12:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89CBD188DC85
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 12:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45CF255F3C;
-	Mon,  9 Jun 2025 12:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDDC2566E9;
+	Mon,  9 Jun 2025 12:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsbG24QB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laeVHIdQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EB21CA84;
-	Mon,  9 Jun 2025 12:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4530DF9CB;
+	Mon,  9 Jun 2025 12:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749471440; cv=none; b=Sy+rJXTUmVUdQ0tpnEwFVraaR3hLO/W18O+HYn2AU2dLcy7L8euJq3allQt6IufYlEAtDHs0/1jSsKxBQgjYVoPAOXR4I3FmdDmokh9y3XpzBpdXrK/VcAm3sXwwB4JfTEE17j5fYos0Y5lE5B91Pnqxzq7xyibVs5TLRnoVHmc=
+	t=1749471493; cv=none; b=sKGbm2ZxZGZoP3+/MXC2FJewK0VBuZ0Aicd5PWp7bEzj+bvYc6tIHdf2fYIBaPHda+nbPeTDRqKJSRtdXibgeWRrt3jDjRX0pURG9qgeX6F5MAOKB0y3cxT9kELsOMpCe4uKkFqsIDgMY46QM+F5/VP4suBdC9Z/diOBBO3fRR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749471440; c=relaxed/simple;
-	bh=t4Ns67I0l9BtCEC5Z+RlqtdiVKUzKYkJXEsOKVCKcSA=;
+	s=arc-20240116; t=1749471493; c=relaxed/simple;
+	bh=Vpi64tI7bVDvVGIp/RMQNqf7g3+Aq7Vx/dN0DKcvyxo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hJE1L+ImElk9KBuDJ8NnNn1WGt5/cox9WaRcYARk2YSIutbdeQZXZMQ1sfFx7ddJfYuuVgtu4cp5VwUupk0CUZ4DpY5x8djJsDeLxAAz9ZkyKCOdd9Zac/eJyToC6XavLqAf1Uc1XsP/cYRLgfPc87xP1RLWgO5Q7Di5uUSHQ3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsbG24QB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D77C4CEEB;
-	Mon,  9 Jun 2025 12:17:16 +0000 (UTC)
+	 Content-Type:MIME-Version; b=dMbn5RK+hBcj9qd+XeJ6qepxtvfxVU88Q1SVGA4wy10cji2/yNoRikMqWXoYlcgQTmTUbLJiQCEJZAPg+J/9c/+g/XlM4aOzqdhQ1g3QCO2cSopYHXxFPgrYKVufHpXR37a5a0qV5I+VUTjW94y5TPDqLYzDLrHOmtz2QwgobfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laeVHIdQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B8A9C4CEEB;
+	Mon,  9 Jun 2025 12:18:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749471438;
-	bh=t4Ns67I0l9BtCEC5Z+RlqtdiVKUzKYkJXEsOKVCKcSA=;
+	s=k20201202; t=1749471493;
+	bh=Vpi64tI7bVDvVGIp/RMQNqf7g3+Aq7Vx/dN0DKcvyxo=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HsbG24QBfXBTuMr8lpsMJuG4uQ0xCMCoQUtehIirPQ2QTlH54wiWjK6wC75m8K/ou
-	 ODZNYj+CIMgfO4+cvXersD6q2CxWhkJf+MZmTZ+IQ937I4ZG9sPGR6TF+sOTJQUKPB
-	 2C50zvZXfWzXxHlLNfEvbk5ggLKiHMAli8lcIEyEeG1bke55E9HLCRRZS+VryhzUyi
-	 n5S8N4cfIAm3AxBQIMelp9PpcyQZuda1bSjHmnQlpOu1qiBfJs2dc6+5/RTrBWx0fY
-	 mlRezWRKeibHRNqEQARHgB4M8QRbgn2UUdgq8gpcFp5zrmAyg4MR/m/9TrfwrhvDAc
-	 c0UMe3kkW4vjw==
-Message-ID: <8f2bf3aed5d7bd005adcdeaa51c02c7aa9ca14ba.camel@kernel.org>
-Subject: Re: [PATCH 3/5] coda: use iterate_dir() in coda_readdir()
+	b=laeVHIdQVWR15th5iCjUqgLarBkSUY3YfFQf4RLSS7ZO0oYulQAQ8/1kw20nPgLB4
+	 m6SXyWAIBlx4Ev6G/D3omArEJenJQDIU7nyh48evJ0LwTP6/YEsBf60jglFta2z0nv
+	 Iys08Lmk8iU7G0Y+VCH5G6/FNR33QO+0Kv294TX4DIruTY0/e5w+sKFqipy+5eokkk
+	 HYV4FTROsnwiQXRJG+TfQClDssLQP62odhbnDVnWP+uvW/Exx57VVqCVqZUXSy7Krf
+	 yptaXe5LjqfKFA7u9ZEllE0xWU80dsPrxOTjh9bjKLL21IUBykz7zuvf77EMY1TWgt
+	 a5fP6HNy86m7g==
+Message-ID: <46da6a5c5eeff9d7cf16ec19c4a6ea545a77d69e.camel@kernel.org>
+Subject: Re: [PATCH 4/5] exportfs: use lookup_one_unlocked()
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner
@@ -56,10 +56,10 @@ Cc: linux-fsdevel@vger.kernel.org, coda@cs.cmu.edu,
  netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Date: Mon, 09 Jun 2025 08:17:15 -0400
-In-Reply-To: <20250608230952.20539-4-neil@brown.name>
+Date: Mon, 09 Jun 2025 08:18:10 -0400
+In-Reply-To: <20250608230952.20539-5-neil@brown.name>
 References: <20250608230952.20539-1-neil@brown.name>
-	 <20250608230952.20539-4-neil@brown.name>
+	 <20250608230952.20539-5-neil@brown.name>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -145,49 +145,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Mon, 2025-06-09 at 09:09 +1000, NeilBrown wrote:
-> The code in coda_readdir() is nearly identical to iterate_dir().
-> Differences are:
->  - iterate_dir() is killable
->  - iterate_dir() adds permission checking and accessing notifications
->=20
-> I believe these are not harmful for coda so it is best to use
-> iterate_dir() directly.  This will allow locking changes without
-> touching the code in coda.
+> rather than locking the directory and using lookup_one(), just use
+> lookup_one_unlocked().  This keeps locking code centralised.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/coda/dir.c | 12 ++----------
->  1 file changed, 2 insertions(+), 10 deletions(-)
+>  fs/exportfs/expfs.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >=20
-> diff --git a/fs/coda/dir.c b/fs/coda/dir.c
-> index ab69d8f0cec2..ca9990017265 100644
-> --- a/fs/coda/dir.c
-> +++ b/fs/coda/dir.c
-> @@ -429,17 +429,9 @@ static int coda_readdir(struct file *coda_file, stru=
-ct dir_context *ctx)
->  	cfi =3D coda_ftoc(coda_file);
->  	host_file =3D cfi->cfi_container;
+> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> index cdefea17986a..d3e55de4a2a2 100644
+> --- a/fs/exportfs/expfs.c
+> +++ b/fs/exportfs/expfs.c
+> @@ -549,15 +549,13 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct=
+ fid *fid, int fh_len,
+>  			goto err_result;
+>  		}
 > =20
-> -	if (host_file->f_op->iterate_shared) {
-> -		struct inode *host_inode =3D file_inode(host_file);
-> -		ret =3D -ENOENT;
-> -		if (!IS_DEADDIR(host_inode)) {
-> -			inode_lock_shared(host_inode);
-> -			ret =3D host_file->f_op->iterate_shared(host_file, ctx);
-> -			file_accessed(host_file);
-> -			inode_unlock_shared(host_inode);
-> -		}
-> +	ret =3D iterate_dir(host_file, ctx);
-> +	if (ret !=3D -ENOTDIR)
->  		return ret;
-> -	}
->  	/* Venus: we must read Venus dirents from a file */
->  	return coda_venus_readdir(coda_file, ctx);
->  }
-
-
-Is it already time for my annual ask of "Who the heck is using coda
-these days?" Anyway, this patch looks fine to me.
+> -		inode_lock(target_dir->d_inode);
+> -		nresult =3D lookup_one(mnt_idmap(mnt), &QSTR(nbuf), target_dir);
+> +		nresult =3D lookup_one_unlocked(mnt_idmap(mnt), &QSTR(nbuf), target_di=
+r);
+>  		if (!IS_ERR(nresult)) {
+>  			if (unlikely(nresult->d_inode !=3D result->d_inode)) {
+>  				dput(nresult);
+>  				nresult =3D ERR_PTR(-ESTALE);
+>  			}
+>  		}
+> -		inode_unlock(target_dir->d_inode);
+>  		/*
+>  		 * At this point we are done with the parent, but it's pinned
+>  		 * by the child dentry anyway.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
