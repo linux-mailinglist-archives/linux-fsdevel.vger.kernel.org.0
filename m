@@ -1,83 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-51048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF155AD2380
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 18:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA29AD2387
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 18:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6399B18831D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 16:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292D1188803F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 16:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11717218821;
-	Mon,  9 Jun 2025 16:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CD32192FA;
+	Mon,  9 Jun 2025 16:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JiFkgMYR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aze4D2TO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB77218589;
-	Mon,  9 Jun 2025 16:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF92B1C6FE1;
+	Mon,  9 Jun 2025 16:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749485631; cv=none; b=mIF6uV8g8niizrWk1JSkOk58YHZtJ+8F4xS435XNThZNdfE3U34mLGHSmcQGiSdIlJL36OQ7Rpsnn+NjB2oZ1pE8GgZw4nZjlJaXzwChuUuPgfkytMGki1/DlRTXsQhNxbfsVV/ms/KqAgNpDUH6GjvgVRcmw8rVJtP2r0diiU4=
+	t=1749485810; cv=none; b=cvwIIwUTbOhYJ7ylbqCkf3TcuTtLXDlEv6nx2PbDJwUzjjqCipw0Ahz9nqvM7O2LeFrPG7aZ9j3UphdVeyvpH+HGdoMZk77NpJTAPPYIFk3mE2x8/LlrFgbktVtC+suTgxFFmB1FJTliGmYcgSvf+ZMdO6K49RzD+A7jFABT3xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749485631; c=relaxed/simple;
-	bh=rR5X4MhdvIVyHHfn1QvZMTSQHbXFh8cct9zLuRjGhQ8=;
+	s=arc-20240116; t=1749485810; c=relaxed/simple;
+	bh=a5yNf70th7PfRA6xSLN9zz87BrnzItNsGibksd2xWXI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJge7Ay8E01q10NzeGOoy9RWNfNBfxdSMSlgyOR6bD/VW5MweYiyGSiFC9A+ev7bhkl0C32+Yg4EhPAHMil46sJxJJ1JxiB55E7RAEUATrQc/zuEzhGQsGmKqwhQi26a8Dl5p4Tzf8jq2RMTbVayQ4zD6GIBV3ZBs2grCB03c+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JiFkgMYR; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749485630; x=1781021630;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rR5X4MhdvIVyHHfn1QvZMTSQHbXFh8cct9zLuRjGhQ8=;
-  b=JiFkgMYR1jjV2hfbnwl/dWixPI+2HZrZKPcoM2+EFLPyNiOYMY8TlPUl
-   ss7mvRZOvbdLdnScf3ohFX+U6ZpLIUt8Q2lyQHkmTpvVD+gWwB+Xhg/uS
-   lY3lWAVVLp9CsO6kEtFSGUJc0J320HK4twUeh3eMWK9dRfYGDFJMDvOJx
-   If722hfJGNaqvKQ8fv4VxOQGg9Vo9rWyvWGTdS14hN65R2ryG5Yi43fBO
-   zSJU58Gd7Dzknqv3DvH8Sik3cn43HQvFkLlmPXVgmQIuktkpvNUbOG1pE
-   OTgTSG5nqM+zND1/PbkIyfv7cKgOcQJTPwQYTh/SNSg4dl2yi9lTREBVY
-   g==;
-X-CSE-ConnectionGUID: a+NtoKvSS6K6+8EyrzhngA==
-X-CSE-MsgGUID: 4DCK3rRWQwKIyhRSpdrPpQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="69016323"
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
-   d="scan'208";a="69016323"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 09:13:21 -0700
-X-CSE-ConnectionGUID: /cCuLQ/jTAaOqFSimUqDtw==
-X-CSE-MsgGUID: ixdbVnAARwS6dpIYTG0jBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
-   d="scan'208";a="147519132"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 09 Jun 2025 09:13:19 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uOf7b-0007BH-2c;
-	Mon, 09 Jun 2025 16:13:15 +0000
-Date: Tue, 10 Jun 2025 00:13:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: add mmap_prepare() compatibility layer for nested
- file systems
-Message-ID: <202506100000.34KZcoZ5-lkp@intel.com>
-References: <20250609092413.45435-1-lorenzo.stoakes@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zti7RQIY+7n0tKXnyZsf86RSO/ntwD1WdUn52HY2jy/Uq5CM6IVMyWR2wQbDH5gAO4NVXv02lOMnx5R3KXvc1be5FNjzkerihopxajil3heWImfTZTnR+n3UFI2cnjFtFQRD0tp2BCHz+nmeIqkRBXTtmk8QbFvi3+2tGA3YWIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aze4D2TO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF23C4CEEB;
+	Mon,  9 Jun 2025 16:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749485810;
+	bh=a5yNf70th7PfRA6xSLN9zz87BrnzItNsGibksd2xWXI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aze4D2TOOl1hFddI/gLa5cdCvzXcKO/8m4ISRTbckDQjO8MJhUMdV0RoHk/FqZLn3
+	 3NDBPL9MKmwhFp0nfw0yXf/nSS0vof/VCO9swjxquxbWzKkNlqfVuIPbhgkd5x4B8g
+	 oPYuE8p8nErm/LC6Co9nEVRXs7pExrC+DBv8F898q7CJA52FutgPdTvCv4ZAtoooZ5
+	 LTyd8uir2CkLuL6hi1d2Ul0fHfkQSsuzh8tMFV8SnxqwcGdZwuo4BJPjfa2qEV93MJ
+	 sFBuWrxUHo3aWgWKOxN6qY4hKWgDD8cv4wjytlPMxnXTltLBSmdE6Bpxd3GPFh+K9z
+	 VWCIMDDJxWz3A==
+Date: Mon, 9 Jun 2025 09:16:49 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/7] iomap: move pos+len BUG_ON() to after folio lookup
+Message-ID: <20250609161649.GF6156@frogsfrogsfrogs>
+References: <20250605173357.579720-1-bfoster@redhat.com>
+ <20250605173357.579720-2-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,39 +58,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250609092413.45435-1-lorenzo.stoakes@oracle.com>
+In-Reply-To: <20250605173357.579720-2-bfoster@redhat.com>
 
-Hi Lorenzo,
+On Thu, Jun 05, 2025 at 01:33:51PM -0400, Brian Foster wrote:
+> The bug checks at the top of iomap_write_begin() assume the pos/len
+> reflect exactly the next range to process. This may no longer be the
+> case once the get folio path is able to process a folio batch from
+> the filesystem. Move the check a bit further down after the folio
+> lookup and range trim to verify everything lines up with the current
+> iomap.
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> ---
+>  fs/iomap/buffered-io.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 3729391a18f3..16499655e7b0 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -805,15 +805,12 @@ static int iomap_write_begin(struct iomap_iter *iter, struct folio **foliop,
+>  {
+>  	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
+>  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> -	loff_t pos = iter->pos;
+> +	loff_t pos;
+>  	u64 len = min_t(u64, SIZE_MAX, iomap_length(iter));
+>  	struct folio *folio;
+>  	int status = 0;
+>  
+>  	len = min_not_zero(len, *plen);
+> -	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
+> -	if (srcmap != &iter->iomap)
+> -		BUG_ON(pos + len > srcmap->offset + srcmap->length);
 
-kernel test robot noticed the following build errors:
+Hmm.  Do we even /need/ these checks?
 
-[auto build test ERROR on akpm-mm/mm-everything]
+len is already basically just min(SIZE_MAX, iter->len,
+iomap->offset + iomap->length, srcmap->offset + srcmap->length)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Stoakes/mm-add-mmap_prepare-compatibility-layer-for-nested-file-systems/20250609-172628
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250609092413.45435-1-lorenzo.stoakes%40oracle.com
-patch subject: [PATCH] mm: add mmap_prepare() compatibility layer for nested file systems
-config: arm-randconfig-002-20250609 (https://download.01.org/0day-ci/archive/20250610/202506100000.34KZcoZ5-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250610/202506100000.34KZcoZ5-lkp@intel.com/reproduce)
+So by definition they should never trigger, right?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506100000.34KZcoZ5-lkp@intel.com/
+--D
 
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: compat_vma_mmap_prepare
-   >>> referenced by shm.c
-   >>>               ipc/shm.o:(shm_mmap) in archive vmlinux.a
-   >>> referenced by backing-file.c
-   >>>               fs/backing-file.o:(backing_file_mmap) in archive vmlinux.a
-   >>> referenced by nommu.c
-   >>>               mm/nommu.o:(do_mmap) in archive vmlinux.a
-   >>> referenced 2 more times
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  
+>  	if (fatal_signal_pending(current))
+>  		return -EINTR;
+> @@ -843,6 +840,9 @@ static int iomap_write_begin(struct iomap_iter *iter, struct folio **foliop,
+>  	}
+>  
+>  	pos = iomap_trim_folio_range(iter, folio, poffset, &len);
+> +	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
+> +	if (srcmap != &iter->iomap)
+> +		BUG_ON(pos + len > srcmap->offset + srcmap->length);
+>  
+>  	if (srcmap->type == IOMAP_INLINE)
+>  		status = iomap_write_begin_inline(iter, folio);
+> -- 
+> 2.49.0
+> 
+> 
 
