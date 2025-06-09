@@ -1,153 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-50981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D60AD189A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 08:34:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49736AD1976
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 10:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44B827A5999
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 06:33:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9FB3AA4C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 07:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ADF280017;
-	Mon,  9 Jun 2025 06:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cGk+E0Qb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4859A2820AD;
+	Mon,  9 Jun 2025 08:00:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA29C14A82
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 06:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5E228151A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 08:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749450860; cv=none; b=aC1Iba6XxlBhS4sUOk2Ff0dX3yaSMfZiz8Y3s2FCpVWDD31QApqzBj3lzLhGeMvnR4Jpmr/IVKrCuFOJl858JP+Rv0PQbIneWm2QYMIFj68NTcylLBva//xnPHET9mdwjd3rV2sytSRLV3QeJITfgETcIJP8UuhzcpUQqla/Yi4=
+	t=1749456007; cv=none; b=qhRjkXEmXXLn0bHigHemGREUuTdNATDb8i17TGSaLgUQRY6kakK9GBEkhOjkj1pG1lcX3zVW7QzKF5yHxaC4A3Hg6aPe/I189SX55l/ZZWpqedzQ90DCwoYwJ6kLjtwpBbczSwT8NxoZtxlVPBxkkCVIdw4JJCIzN2YqgaD9P1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749450860; c=relaxed/simple;
-	bh=V1MvQecxBbsavQOuQL/+VWXWI79oj6KeM3sdM+7ZXso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IC+16zs0xnfPw6sPgO1saL5JCKPDpVn7q0n73PoytiZmp3H2BTtPNcOCVs6QS8hRgPF0Xi8Tbacb1Pe7oqL9SyuZ8A61xRz1ewKnf7YTnN8hQglHRlCpQ/T3wCKNv7KWBo3qM7bJj/H6luLX+Z6tPxjikbQpD8l0uttwE69EgTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cGk+E0Qb; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-742caef5896so3228933b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Jun 2025 23:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749450858; x=1750055658; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3kw8UwXF8nhjHGY10czvDoV0t7L/vYXrP4PDYhL4cNY=;
-        b=cGk+E0Qb0kslps4aLhesm1wmHl0j6yhJig/KaMmEeHfqRbRgTUEOsoyq9pWcOID/dG
-         +O/Vum17Qt1t8YEK/kmF6gkDis5owyk5P45MnYWQewIx79pzUJjpNLAyG1gAEUgidQ5X
-         RB3udox2uCM9wu3Rg4kS1G4J8xm0mV0pMcXPc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749450858; x=1750055658;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3kw8UwXF8nhjHGY10czvDoV0t7L/vYXrP4PDYhL4cNY=;
-        b=kMIvKzMxZVO3Q3ft9DdKE/uLJblv7XVq5sgckUJRBOK4JHvOtJcxYsMS/BEMqcsTJd
-         IEN5p+umO8DoRyc6dDbyyR4H71UhTSJfRz5JlO9s+du9MJgzM4Px1dnXl1JO7WUBaTbk
-         2DrdV4YsKvFhVSwdCIjOpN0DkCJftMd54kmnxdhe+kaWp2V7odgXKarfL/2wI0F680I0
-         juwq+RIc8wDBGW85otGerxT4JAG3AL6t0oiItCWZ4X4ZmEZfXeX4cmx5mvGAu2CrX35R
-         jTMZhyBD2kcz0Lpe+zoonhKTDFpczbhmMywb8Cs7TvlacOZlEF08rvTciU60Pxq9ZSVA
-         pnfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjALSDoA5NNWmH/21IfdbKHhr6GaFtWVmQemUGyFFOtvIMAWs4DfuCz1uxIBL3e2xDzOiTQ+4EdhXIBluJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRRbSJdyaHw5O0QIWb4WdTMeJlOYM4vOlvF9k7Cxy2K7Z4E3Fb
-	QTzd5R4Ea+pdXCceHotnc2Y5ASunASH2UhU5yEGSZaysCL6W6f3rFrGePO8vMzOKPg==
-X-Gm-Gg: ASbGncuCczwO/4JDxsC1Zsf0gWqCTydC4P7KSCJfTiLPaIeDFyAGawkkEX8oWJd8iO8
-	frzpTYodji75IG9a2iI/IJ/HbDwDdzC/bI8FUc/vyYHS1UY3QvlBNrFC4PVEOxcLpcipDD1FyPX
-	w5QqCWmvxM6bAZnJ0LOWVjkkKqtX2raJTiUL8J8RGx23YWfEbi7i4SIgFI8XopXjTL0Km8y+7Bn
-	3vOtUG0OChnARSA4af8IO/djFzv3gj8M9D3kuIoD/h1IeYO14hnXxmh8SY64AgjcNzZi9ya8Dv1
-	BzzK9YKnC/H3RwaeA4hO3gYKY3nBO3ttt++/KeZVJ/n6o9uFxWdmenk=
-X-Google-Smtp-Source: AGHT+IGVMJMWeDkYNbKUWivodOVr3uS6WQKwvY28M+3/tgEEyS48Au7YaNU7yzcFV4tmbn8HKPfFAA==
-X-Received: by 2002:a05:6a00:4612:b0:736:a8db:93bb with SMTP id d2e1a72fcca58-74827fa2840mr14544040b3a.5.1749450858092;
-        Sun, 08 Jun 2025 23:34:18 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:eb64:2cdb:5573:f6f1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0f28a2sm5185966b3a.174.2025.06.08.23.34.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 23:34:17 -0700 (PDT)
-Date: Mon, 9 Jun 2025 15:34:12 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Tomasz Figa <tfiga@chromium.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] wait: add wait_event_freezable_killable_exclusive
-Message-ID: <fyx2kxtef3fha4timgtwrcwyacarb6g6tz66qjiehoi7ierslw@hkbdq5aguxnz>
-References: <20250609030759.3576335-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1749456007; c=relaxed/simple;
+	bh=i/IHnyFaXyP66RZ6PnM+/wYICE/rMSw3+CGrwHMiDnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X3VEbvxXoJWrhu6lgg3FioviOH7LZ6Vuf9oyj14spsyxeDqdDQsrwTQYNTGFmJvS1xw43M///t2zCo8xj+kyHsnD3pURD6tF8ivn5/ak2k7sPpLl/cx9lFnhN8jJM0L0lF7+p+sjPx++Fpuw7hmYKOLGrmqIWM8Y0FRNn+qEF1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uOXQI-006HTU-Ae;
+	Mon, 09 Jun 2025 08:00:02 +0000
+From: NeilBrown <neil@brown.name>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/8 preview] demonstrate proposed new locking strategy for directories
+Date: Mon,  9 Jun 2025 17:34:05 +1000
+Message-ID: <20250609075950.159417-1-neil@brown.name>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609030759.3576335-1-senozhatsky@chromium.org>
+Content-Transfer-Encoding: 8bit
 
-On (25/06/09 12:07), Sergey Senozhatsky wrote:
-> Add a freezable variant of exclusive wait.  This can be useful
-> in, for example, FUSE when system suspend occurs while FUSE is
-> blocked on requests (which prevents system suspend.)
-> 
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->  include/linux/wait.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/include/linux/wait.h b/include/linux/wait.h
-> index 327894f022cf..b98cfd094543 100644
-> --- a/include/linux/wait.h
-> +++ b/include/linux/wait.h
-> @@ -657,6 +657,20 @@ do {										\
->  	__ret;									\
->  })
->  
-> +#define __wait_event_freezable_killable_exclusive(wq, condition)		\
-> +	___wait_event(wq, condition, (TASK_KILLABLE|TASK_FREEZABLE), 1, 0,	\
-> +		      schedule())
-> +
-> +#define wait_event_freezable_killable_exclusive(wq, condition)			\
-> +({										\
-> +	int __ret = 0;								\
-> +	might_sleep();								\
-> +	if (!(condition))							\
-> +		__ret = __wait_event_freezable_killable_exclusive(wq,		\
-> +								  condition);	\
-> +	__ret;									\
-> +})
+This patches are still under development.  In particular some proper
+documentation is needed.  They are sufficient to demonstrate my design.
 
-Or I can do something like:
+They add an alternate mechanism for providing the locking that the VFS
+needs for directory operations.  This includes:
+ - only one operation per name at a time
+ - no operations in a directory being removed
+ - no concurrent cross-directory renames which might result in an
+    ancestor loop
 
-+#define __wait_event_state_exclusive(wq, condition, state)			\
-+	___wait_event(wq, condition, state, 1, 0, schedule())
-+
-+#define wait_event_state_exclusive(wq, condition, state)			\
-+({										\
-+	int __ret = 0;								\
-+	might_sleep();								\
-+	if (!(condition))							\
-+		__ret = __wait_event_state_exclusive(wq, condition, state);	\
-+	__ret;									\
-+})
+I had originally hoped to push the locking of i_rw_sem down into the
+filesystems and have the new locking on top of that.  This turned out to
+be impractical.  This series leave the i_rw_sem locking where it is,
+introduces new locking that happens while the directory is locked, and
+gives the filesystem the option of disabling (most of) the i_rw_sem
+locking.  Once all filesystems are converted the i_rw_sem locking can be
+removed.
+
+Shared lock on i_rw_sem is still used for readdir and simple lookup, to
+exclude it while rmdir is happening.
+
+The problem with pushing i_rw_sem down is that I still want to use it to
+exclude readdir while rmdir is happening.  Some readdir implementations
+use the result to prime the dcache which means creating d_in_lookup()
+dentries in the directory.  If we can do this while holding i_rw_sem,
+then it is not safe to take i_rw_sem while holding a d_in_lookup()
+dentry.  So i_rw_sem CANNOT be taken after a lookup has been performed -
+it must be before, or never.
+
+Another issue is that after taking i_rw_sem in rmdir() I need to wait
+for any dentries that are still locked.  Waiting for the dentry lock
+while holding i_rw_sem means we cannot take i_rw_sem after getting a
+dentry lock.
+
+So we take i_rw_sem for filesystems that still require it (initially
+all) but still do the other locking which will be uncontended.  This
+exercises the code to help ensure it is ready when we remove the
+i_rw_sem requirement for any given filesystem.
+
+The central feature is a per-dentry lock implemented with a couple of
+d_flags and wait_var_event/wake_up_var.  A single thread can take 1,
+sometimes 2, occasionally 3 locks on different dentries.
+
+A second lock is needed for rename - we lock the two dentries in
+address-order after confirming there is no hierarchical relationship.
+It is also needed for silly-rename as part of unlink.  In this case the
+plan is for the second dentry to always be a d_in_lookup dentry so the
+lock is guaranteed to be uncontented.  I'm not sure I got that finished
+yet.
+
+The three-dentry case is a rename which results in a silly-rename of the
+target.
+
+For rmdir we introduce S_DYING so that marking a directory a S_DEAD is
+two-stage.  We mark is S_DYING which will prevent more dentry locks
+being taken, then we wait for the locks that were already taken, then
+set S_DEAD.
+
+For rename ...  maybe just read the patch.  I tried to explain it
+thoroughly.
+
+The goal is to perform create/remove/rename without any mutex/semaphore
+held by the VFS.  This will allow concurrent operations in a directory
+and prepare the way for async operation so that e.g.  io_uring could be
+given a list of many names in a directory to unlink and it could unlink
+them in parallel.  We probably need to make changes to the locking on
+the inode being removed before this can be fully achieved - I haven't
+explored that in detail yet.
+
+Thanks,
+NeilBrown
 
 
-And then in fuse something like this:
-
-@@ -207,8 +207,9 @@ static struct fuse_req *fuse_get_req(struct mnt_idmap *idmap,
- 
- 	if (fuse_block_alloc(fc, for_background)) {
- 		err = -EINTR;
--		if (wait_event_killable_exclusive(fc->blocked_waitq,
--				!fuse_block_alloc(fc, for_background)))
-+		if (wait_event_state_exclusive(fc->blocked_waitq,
-+				!fuse_block_alloc(fc, for_background),
-+				(TASK_KILLABLE|TASK_FREEZABLE)))
- 			goto out;
- 	}
 
