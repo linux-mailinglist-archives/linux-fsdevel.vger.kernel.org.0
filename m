@@ -1,226 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-50993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122B1AD1992
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 10:08:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE95AD19D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 10:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDAFB167D90
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 08:08:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747711887244
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 08:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E062820A4;
-	Mon,  9 Jun 2025 08:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666191E5701;
+	Mon,  9 Jun 2025 08:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="FgvQOX0S";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BfGuOVVq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jg+36JnZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E383B28030D;
-	Mon,  9 Jun 2025 08:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68581881E;
+	Mon,  9 Jun 2025 08:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749456524; cv=none; b=A+57WBkxsjvcUpoVRUVFeDoVbSS8iOH39U/gMHw9dLXy838L5gJmjLg1z2CWpXBG7K5nOyLb6hZlx18UXIlosHwbsGMuLt8jfJVn9R3F+f9Xx9AdS+/8dF128Dc2TDHR4kSlHVLysNdz4pLCUUUZfS/S375YelDEoAdiKdrTK0M=
+	t=1749457973; cv=none; b=pONmohWy0Au2VbVVC3FciwXEtbNFWwAgPJSV3KekxLgk443JwjZK+iHR6T1sQO6wCMMYmxnax8dM50VPKA5gzSmhyiabqCs/dmueSuyMArpByPpN38JrQhrvtf6TEHyS13Mt7oDfcnvlCnR5dzsNWc6ynOln3nBrwS7Rl6YDsB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749456524; c=relaxed/simple;
-	bh=Kq3FV9iptETXrme4JGWRHJSwuOei6uZwyUiHPKjDJlc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rv2qoBzLtY5thf7jmPlOcQW+VGbwioOyhGWMXmyRQHCC8UNGpjYQLEPUmg8VIb7kgLNwG+kcE7C196aVPZD6eT9ELFM+2ica7dYgtvmTVkg5FNZ4N09T2yC38l+sCfMw0lXEO/e03Q1Zaxpkk+IAig+dfUyKrMkE2/be8QRULOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=FgvQOX0S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BfGuOVVq; arc=none smtp.client-ip=202.12.124.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailflow.stl.internal (Postfix) with ESMTP id 272B41D406F0;
-	Mon,  9 Jun 2025 04:08:40 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 09 Jun 2025 04:08:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1749456519;
-	 x=1749463719; bh=7ENdChkKgKNI9Bj63mK2Sh0VQmIZu8fz9OgqfYcb2LE=; b=
-	FgvQOX0SXVeFhGEyWSP5j/YhoCwZoylqorpQ+trljlK9ymL5XMFLXgN3gNMRsqfa
-	MUwfQlcakRj3TmUSZktJeNQ4mqGqlZ9HX1T1+IGPTpfWbImefK0g6gYDVC1WLar4
-	a7OaaZ8xq36W10U2iiMZX5nx5IFCJ0W3WbQT3IREWaXIBpgTyrdf5i4nKArzWeEd
-	Ww/zLmgwTVbx6fgsDwhIY8gGlCRQywlh7muSLG+jPe9695ELwehyH1kkkFNzok2c
-	Kr+BJ75LLO2SWV9DtsAa2Tik5QFDhNbuWoKBUxqi6Yc/8SsdJrmgPxc2RrEKA7I9
-	zrMoTlqzMDC24lyrEiFfpA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749456519; x=
-	1749463719; bh=7ENdChkKgKNI9Bj63mK2Sh0VQmIZu8fz9OgqfYcb2LE=; b=B
-	fGuOVVqmMW0cvVH6oAv3lPT/F+loL+yDqVv03f+DZj8hnrVjgfAw91EKNGhhFSB8
-	GiQ4AMpsPPCDa3nbJ2NfLZ0LmmrG4hw1sZgpdO6xnSCWMzUot+qDwatlgYmN/jBy
-	QDJ4pXsUSLppAfcwui+/YusPrqHtjBzvyKAXKwDrzrPPRHBnDZHtYPXUlGrY536z
-	nZrnf32FDiqq+zYPYPI5GAwv0mpnWYun22wEDzCPosw1SiIqphoO1SiJMgBxDmKS
-	H0zOUWgE+271kU17xe1koUXY8jmYIwLmdrEXs8qMsv54sgkAOoVFmYLR1ZYLcBE5
-	TZHwJRZj9AenSXKXBv7mg==
-X-ME-Sender: <xms:h5ZGaHUS6VkH2iVFTc8E9kgPNk6C5JxWgWYBKDIzmOemixR6lBu41A>
-    <xme:h5ZGaPkVpHDW6Sz2oepgtrp9oAuZh81ZTOd51x9ys9TXYZSRBEy9NyIl9PFfmxoTh
-    yu0h9H3fV29pS7xxWc>
-X-ME-Received: <xmr:h5ZGaDZph4h706P4Fsg2T5fwZmgOlApvz1EbpIudP20oRTttSgoR2urkV5ZATBNQUSS6Bkeag-OTucPZ7reDILpx>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdeltdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepudekvefhgeevvdevieehvddvgefhgeelgfdugeeftedvkeei
-    gfeltdehgeeghffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopedvvddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepvhhirhhoseiivghn
-    ihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgt
-    phhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvth
-X-ME-Proxy: <xmx:h5ZGaCW82eBbK-bukAY6jCQSwAe7sOEJjKUwvl2BC9HptXBn5LkdsQ>
-    <xmx:h5ZGaBkeHiBoV9cfPqYq-gBJCAdujZTgLkmdnYb21ibcgkBSCWZU6g>
-    <xmx:h5ZGaPfiz6miyOnVHhlODwDyw7VWcEHhfnknfpyElHRNkvLrgBBIsg>
-    <xmx:h5ZGaLEev_OE9OmfucnS7s_c0m3BPrP5H5Z7qDFkjWyuDILIWY451A>
-    <xmx:h5ZGaOWHKxUII7DII2q6ALhcOQWfvPSiGlAIlPAuWLYccusj2sj6TsL->
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 9 Jun 2025 04:08:36 -0400 (EDT)
-Message-ID: <97cdb6c5-0b46-4442-b19f-9980e33450c0@maowtm.org>
-Date: Mon, 9 Jun 2025 09:08:34 +0100
+	s=arc-20240116; t=1749457973; c=relaxed/simple;
+	bh=P9S9F1SGnmKUUFQ0IRiNJpckQiZOkArH66z7nM/LnRk=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Umcqq7MSEGvQke9hTbful884/xJmlYbdx2CL/9ilMDHZq26bU73D+YuWeUM1lcQ3DzoUMcGwZn614wrxy5YWgzOY48MzttAo2EHOYyhcYYpMQpPwO4MIui2ux8+RZ812NE7t5Y/Aen0wFP+5GZ16XQYnwB2vTtOPYIZnHSNY/fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jg+36JnZ; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b2f11866376so2569304a12.3;
+        Mon, 09 Jun 2025 01:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749457970; x=1750062770; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xJhRuEPgl8IUTnHZOTdmxme0PwZqVTJX6cZfIyFLqhk=;
+        b=jg+36JnZyzD8WOIFIjp7PO9JOUQDynhT2VLeMJ1+QeG9VtWLIBQ9loO6WT8NIN0iKf
+         tFnDDxRNVCDMwaADXt6Ae4Vt6tK9FMYjn5k0nXA8QJ10Efcw3/HJN8Gi/DYtK6i04aE8
+         laQTU1kUifQEWaGziVxikNqrah+ZFRZKXPDkOTSQ8use+xs4crbw3Yy0qsuhYNVwsTAx
+         t2Z9g6dFAatbDhitw1xqnY9Uq7z+bkhQZkXsW8A6ucrxLAZZa77GpO4lUSaQiVQ2+n5C
+         //OaM9yufiyr5t51qnlAmshzjD7I5GCKRjk/m+HwXpT3LIOXArHZsgYl0spsRphMVSGd
+         umQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749457970; x=1750062770;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xJhRuEPgl8IUTnHZOTdmxme0PwZqVTJX6cZfIyFLqhk=;
+        b=srTipp4RcrJSimhNMDjKGW2kPj01iY5Ds8nv0Cabab5GW8YG3mCmrwwVyH4yPsQLeb
+         a2LG3ZiFLJrKIVyBBgeCgdnSYkfWaKCYGnbsIHGR0HHoXMyRa9YmUnarI2Odfo+RZMkN
+         Rxac2A1sIh4SX777CK60iouZckQ7sMcNSq3mibwPqlIfyDjlOoJ0BdqL6KX5DeTERW9v
+         1yrz/v/69rRwCvu8gFNR8R10wjuSZj8CKd5csdtddyHrgnJyO0l7vleNxbDFBlbirCdn
+         w0W0hDFihz84+crEL+Jk3YrX8Snz5O5GfN1HrvUpr0kUFgBXt2mNGiMCydpl1ycCRVkM
+         qlXw==
+X-Forwarded-Encrypted: i=1; AJvYcCU34XiJwtts0mDy4xJAsZFzwAdZNReiXH++WzY3P5tF8JBM1HTZwZGXX/dRUNPXEwv7e2DuMuMqTMHheY5h@vger.kernel.org, AJvYcCUWx/Utq5KtZr44jUuSOvufBj0JDdwandwxAnh1qlWy1k8IsgsN8um/S9V/ab+Z6neKIb/Mky2uxQx2fsdt@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuO3EMSNkhWD7eC5/7yOUoCGffcg8tLVNmRni3CopAA+PC7JsL
+	ba2hyRcy+NJuKPUs73uDM9F1xwrjjBHlgQ4JIOYHpH4VWtfqs25NgjnkjnjsOw==
+X-Gm-Gg: ASbGncuDmlQNJCEMoX8Jp1VI6K1i3+1kNdmOtpMM9wEI+TfpJuYsC219w66KqFrHuGK
+	dTXmRbnCdzn491qw5LK27u0lrOliv0IXkjyZ5DiXyAKuwrmnFWMCDFxFEY1cb0tGGIqnsZ9JVo6
+	++7w+uGmR7dn5Tp662FhvZBM1J6i9c8XToPzS3dH4/a+7ir7hVsfrc2L5XnAeNKErx0GVYvy56o
+	/duFvP2OxEpLNhQ72MMQ4Q3z3XvGpmYH3FP8UxLhKfo17PL28LygI4GzubmfVMkbA4kKPKXQQlj
+	8TOSYbgP2XweIUQcVF8NYTvRsqInIUIGMIWUw4fDR60=
+X-Google-Smtp-Source: AGHT+IH/jLthttFZGwChlmYVWIdc0ZdbjjsyQOWl1xOhRZ8sMoj8FC6nMVI4aXzgdM/DNifxv+HT0Q==
+X-Received: by 2002:a17:90b:390e:b0:312:ec:412f with SMTP id 98e67ed59e1d1-31346b3fc52mr21701565a91.14.1749457970144;
+        Mon, 09 Jun 2025 01:32:50 -0700 (PDT)
+Received: from dw-tp ([171.76.83.10])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31349f17be8sm5273606a91.3.2025.06.09.01.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 01:32:49 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, Michal Hocko <mhocko@suse.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, shakeel.butt@linux.dev, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, donettom@linux.ibm.com, aboorvad@linux.ibm.com, sj@kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: fix the inaccurate memory statistics issue for users
+In-Reply-To: <890b825e-b3b1-4d32-83ec-662495e35023@linux.alibaba.com>
+Date: Mon, 09 Jun 2025 14:01:59 +0530
+Message-ID: <87a56h48ow.fsf@gmail.com>
+References: <f4586b17f66f97c174f7fd1f8647374fdb53de1c.1749119050.git.baolin.wang@linux.alibaba.com> <87bjqx4h82.fsf@gmail.com> <aEaOzpQElnG2I3Tz@tiehlicka> <890b825e-b3b1-4d32-83ec-662495e35023@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 bpf-next 0/5] bpf path iterator
-To: Song Liu <song@kernel.org>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- amir73il@gmail.com, andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, gnoack@google.com, jack@suse.cz,
- jlayton@kernel.org, josef@toxicpanda.com, kernel-team@meta.com,
- kpsingh@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- martin.lau@linux.dev, mattbobrowski@google.com, repnop@google.com
-References: <20250606213015.255134-1-song@kernel.org>
- <dbc7ee0f1f483b7bc2ec9757672a38d99015e9ae.1749402769@maowtm.org>
- <CAPhsuW7n_+u-M7bnUwX4Go0D+jj7oZZVopE1Bj5S_nHM1+8PZg@mail.gmail.com>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <CAPhsuW7n_+u-M7bnUwX4Go0D+jj7oZZVopE1Bj5S_nHM1+8PZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 6/9/25 07:23, Song Liu wrote:
-> On Sun, Jun 8, 2025 at 10:34 AM Tingmao Wang <m@maowtm.org> wrote:
-> [...]
->> Hi Song, Christian, Al and others,
->>
->> Previously I proposed in [1] to add ability to do a reference-less parent
->> walk for Landlock.  However, as Christian pointed out and I do agree in
->> hindsight, it is not a good idea to do things like this in non-VFS code.
->>
->> However, I still think this is valuable to consider given the performance
->> improvement, and after some discussion with Mickaël, I would like to
->> propose extending Song's helper to support such usage.  While I recognize
->> that this patch series is already in its v3, and I do not want to delay it
->> by too much, putting this proposal out now is still better than after this
->> has merged, so that we may consider signature changes.
->>
->> I've created a proof-of-concept and did some brief testing.  The
->> performance improvement attained here is the same as in [1] (with a "git
->> status" workload, median landlock overhead 35% -> 28%, median time in
->> landlock decreases by 26.6%).
->>
->> If this idea is accepted, I'm happy to work on it further, split out this
->> patch, update the comments and do more testing etc, potentially in
->> collaboration with Song.
->>
->> An alternative to this is perhaps to add a new helper
->> path_walk_parent_rcu, also living in namei.c, that will be used directly
->> by Landlock.  I'm happy to do it either way, but with some experimentation
->> I personally think that the code in this patch is still clean enough, and
->> can avoid some duplication.
->>
->> Patch title: path_walk_parent: support reference-less walk
->>
->> A later commit will update the BPF path iterator to use this.
->>
->> Signed-off-by: Tingmao Wang <m@maowtm.org>
-> [...]
->>
->> -bool path_walk_parent(struct path *path, const struct path *root);
->> +struct parent_iterator {
->> +       struct path path;
->> +       struct path root;
->> +       bool rcu;
->> +       /* expected seq of path->dentry */
->> +       unsigned next_seq;
->> +       unsigned m_seq, r_seq;
-> 
-> Most of parent_iterator is not really used by reference walk.
-> So it is probably just separate the two APIs?
+Baolin Wang <baolin.wang@linux.alibaba.com> writes:
 
-I don't mind either way, but I feel like it might be nice to just have one
-style of APIs (i.e. an iterator with start / end / next vs just one
-function), even though this is not totally necessary for the ref-taking
-walk.  After all, the BPF use case is iterator-based.  This also means
-that the code at the user's side (mostly thinking of Landlock here) is
-slightly simpler.
+> On 2025/6/9 15:35, Michal Hocko wrote:
+>> On Mon 09-06-25 10:57:41, Ritesh Harjani wrote:
+>>> Baolin Wang <baolin.wang@linux.alibaba.com> writes:
+>>>
+>>>> On some large machines with a high number of CPUs running a 64K pagesize
+>>>> kernel, we found that the 'RES' field is always 0 displayed by the top
+>>>> command for some processes, which will cause a lot of confusion for users.
+>>>>
+>>>>      PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>>>>   875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
+>>>>        1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
+>>>>
+>>>> The main reason is that the batch size of the percpu counter is quite large
+>>>> on these machines, caching a significant percpu value, since converting mm's
+>>>> rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
+>>>> stats into percpu_counter"). Intuitively, the batch number should be optimized,
+>>>> but on some paths, performance may take precedence over statistical accuracy.
+>>>> Therefore, introducing a new interface to add the percpu statistical count
+>>>> and display it to users, which can remove the confusion. In addition, this
+>>>> change is not expected to be on a performance-critical path, so the modification
+>>>> should be acceptable.
+>>>>
+>>>> In addition, the 'mm->rss_stat' is updated by using add_mm_counter() and
+>>>> dec/inc_mm_counter(), which are all wrappers around percpu_counter_add_batch().
+>>>> In percpu_counter_add_batch(), there is percpu batch caching to avoid 'fbc->lock'
+>>>> contention. This patch changes task_mem() and task_statm() to get the accurate
+>>>> mm counters under the 'fbc->lock', but this should not exacerbate kernel
+>>>> 'mm->rss_stat' lock contention due to the percpu batch caching of the mm
+>>>> counters. The following test also confirm the theoretical analysis.
+>>>>
+>>>> I run the stress-ng that stresses anon page faults in 32 threads on my 32 cores
+>>>> machine, while simultaneously running a script that starts 32 threads to
+>>>> busy-loop pread each stress-ng thread's /proc/pid/status interface. From the
+>>>> following data, I did not observe any obvious impact of this patch on the
+>>>> stress-ng tests.
+>>>>
+>>>> w/o patch:
+>>>> stress-ng: info:  [6848]          4,399,219,085,152 CPU Cycles          67.327 B/sec
+>>>> stress-ng: info:  [6848]          1,616,524,844,832 Instructions          24.740 B/sec (0.367 instr. per cycle)
+>>>> stress-ng: info:  [6848]          39,529,792 Page Faults Total           0.605 M/sec
+>>>> stress-ng: info:  [6848]          39,529,792 Page Faults Minor           0.605 M/sec
+>>>>
+>>>> w/patch:
+>>>> stress-ng: info:  [2485]          4,462,440,381,856 CPU Cycles          68.382 B/sec
+>>>> stress-ng: info:  [2485]          1,615,101,503,296 Instructions          24.750 B/sec (0.362 instr. per cycle)
+>>>> stress-ng: info:  [2485]          39,439,232 Page Faults Total           0.604 M/sec
+>>>> stress-ng: info:  [2485]          39,439,232 Page Faults Minor           0.604 M/sec
+>>>>
+>>>> Tested-by Donet Tom <donettom@linux.ibm.com>
+>>>> Reviewed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>>>> Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>>>> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>>> Acked-by: SeongJae Park <sj@kernel.org>
+>>>> Acked-by: Michal Hocko <mhocko@suse.com>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> ---
+>>>> Changes from v1:
+>>>>   - Update the commit message to add some measurements.
+>>>>   - Add acked tag from Michal. Thanks.
+>>>>   - Drop the Fixes tag.
+>>>
+>>> Any reason why we dropped the Fixes tag? I see there were a series of
+>>> discussion on v1 and it got concluded that the fix was correct, then why
+>>> drop the fixes tag?
+>> 
+>> This seems more like an improvement than a bug fix.
+>
+> Yes. I don't have a strong opinion on this, but we (Alibaba) will 
+> backport it manually,
+>
+> because some of user-space monitoring tools depend 
+> on these statistics.
 
-But I've not experimented with the other way.  I'm open to both, and I'm
-happy to send a patch later for a separate API (in that case that would
-not depend on this and I might just start a new series).
+That sounds like a regression then, isn't it?
 
-Would like to hear what VFS folks thinks of this first tho, and whether
-there's any preference in one or two APIs.
-
-> 
-> Also, is it ok to make m_seq and r_seq available out of fs/?
-
-The struct is not intended to be used directly by code outside.  Not sure
-what is the standard way to do this but we can make it private by e.g.
-putting the seq values in another struct, if needed.  Alternatively I
-think we can hide the entire struct behind an opaque pointer by doing the
-allocation ourselves.
-
-> 
->> +};
->> +
->> +#define PATH_WALK_PARENT_UPDATED               0
->> +#define PATH_WALK_PARENT_ALREADY_ROOT  -1
->> +#define PATH_WALK_PARENT_RETRY                 -2
->> +
->> +void path_walk_parent_start(struct parent_iterator *pit,
->> +                           const struct path *path, const struct path *root,
->> +                           bool ref_less);
->> +int path_walk_parent(struct parent_iterator *pit, struct path *next_parent);
->> +int path_walk_parent_end(struct parent_iterator *pit);
-> 
-> I think it is better to make this rcu walk a separate set of APIs.
-> IOW, we will have:
-> 
-> int path_walk_parent(struct path *path, struct path *root);
-> 
-> and
-> 
-> void path_walk_parent_rcu_start(struct parent_iterator *pit,
->                            const struct path *path, const struct path *root);
-> int path_walk_parent_rcu_next(struct parent_iterator *pit, struct path
-> *next_parent);
-> int path_walk_parent_rcu_end(struct parent_iterator *pit);
-
-(replied above)
-
-> 
-> Thanks,
-> Song
-> 
-> [...]
-
+-ritesh
 
