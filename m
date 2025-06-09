@@ -1,277 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-50991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5FDAD197D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 10:00:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2170FAD1916
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 09:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57E547A4806
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 07:59:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2BEB166A9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 07:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1B228313A;
-	Mon,  9 Jun 2025 08:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0444E280CFC;
+	Mon,  9 Jun 2025 07:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gSpZqNtm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85222820C6
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 08:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9071D63D3
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 07:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749456010; cv=none; b=cuXMkIPE4O3zdiZhIH5WIvSe1s56HW8wnqD6rQaWPMEk8ocDelkKjFHsGbG4H2sx0UHoer30UqjmKaZE0PTaSS1RnSWlfhZhINhZUW3Vbkk8zcA3n62o7G5VsxXtiExVrP9jthaYhdG6LhZ8VxMyHDpopCCiHOifcS6n7uR8oMQ=
+	t=1749454548; cv=none; b=TXxtp989njDO/vm0Z6rMxr/1fL7pa9c+mV4vtIau4CX8VEVvquT2b2a+F7IHv4gN17XWdy/yxLuWUHrazwilFGORD5LcAoq72lxjbqg2ozacX+xC3Z2qsNbffbO8jM1LCrYwTUWU1zygVgV5hOk4Zy6z6oK0F9IE9PiWIKN5S4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749456010; c=relaxed/simple;
-	bh=JV7unuyDjiWrdNMrRhC5Mv/zXIzHNxtgSoH+D67dfrw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l7HAkz3rwAJyZl7V0bfZwAO1cq3mGPpgjf//97d35IoPrS/QzcJJFa3lf56vNFRGSZiZWAh/E/s63PxgjhKDpVckCACANUsF2Gj5yQhPORX5uESyuww7RB4bY2sUlEgi/bPJjEoWsZ9o7KDsU61Bm3szj5jeyn08b0JiU54O4JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uOXQM-006HUJ-Rs;
-	Mon, 09 Jun 2025 08:00:06 +0000
-From: NeilBrown <neil@brown.name>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [PATCH 8/8] VFS: allow a filesystem to opt out of directory locking.
-Date: Mon,  9 Jun 2025 17:34:13 +1000
-Message-ID: <20250609075950.159417-9-neil@brown.name>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250609075950.159417-1-neil@brown.name>
-References: <20250609075950.159417-1-neil@brown.name>
+	s=arc-20240116; t=1749454548; c=relaxed/simple;
+	bh=6voCWdZWcG4RRH+vYohcvQyoOOny8z1Oe8Y1Z2MemY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mKU38N05qUqbxbRmuj5ruVNtLNkFXwfbyzmKP75PBZ5jHWnAXvOuRoq4CKGPQC6JZlcT0WfQXGZnOX871AQPdZBIdeecEtHcPV8Y9mT8TFYI+pJ0k3bgysv9epPg1rsr3OYEX3AsmiNQDUWJgoe5HY5nmqfnu73A78rqucu10Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gSpZqNtm; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-451d54214adso33155265e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jun 2025 00:35:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749454544; x=1750059344; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8RuWRqP0d99Xv1WKhTslXLfzi2R4jCLF5zn4rM3x2gk=;
+        b=gSpZqNtmgwPQ232q6nNNnR26rS8Vt0d5cztD3XHkpbQSFh/hr9pkl4EKugNIXqWLLu
+         Fb9/CzzuMgE+wqcTK8nwmS2n/ft6bqZ1ddGR5lzAUvR7JsR3tcObu/LXDLsRaxSFhem+
+         gTskFd3nQn8qbizWxhi/lBGi4wB2tEwE67PeHB56voHO9AYm62Ui8Mi16MKJBo+0idJg
+         xizuYBokQ++Sgxv3XVBViVelRefM4JljaLXWvXAbYsPCzHqr24Hw9B0FGB06NIcMbiFh
+         Eg/ddnB+BaSkpryRtaJ8RDQHIt45+FQ99oqbYV13W3B64Lon36xJPjH6oRZxpYy3nFSf
+         J9RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749454544; x=1750059344;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8RuWRqP0d99Xv1WKhTslXLfzi2R4jCLF5zn4rM3x2gk=;
+        b=RqKjbjR3O0S2Q1ZpIDjrW7hJRfvGCjydhIVOFXRuW2THZKrgeGMVwEl3K4H3Mi7eS4
+         hv9plpYSBgHddgEh7je3toEfgpmuwpUK9EWgyK39h7uCPWvezoq+RNOZQVeyGYvLMZUQ
+         01WqkPyenfW6seAS9q9fM/PDNXtemyFWgVu74PGUEXoaXWVp/7mau/vXtFDCfZ3RjJVH
+         trJCk0JFmb39bxuTsObECOgxPlNAnF1++SM8AbCHTp8nFY7VCPZfcXpy/snLnW3ajmf6
+         DE6sPR54gvDXuVQvd7UeMkCh20WdZthYcivosrC7nYxOAkOuI1PCtarO/TmaDYvKItbG
+         o7/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUyf97V49itZFjHNxjVgyO+3SbvSKVXDtwaRQVk/GuBWhLqXmi4HkEl54zkmX7XDXTnBB0M7zQcqgDpPlGn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMi/SQNOZT7FfZOZ1z3P96D+UPtZVnF974Id7oxCV9f/8xQqnx
+	zpYEXPKyKKAeZrwjh6aFu9pzQvc03wMU5V1Yze30IHnR+y0WKRLwoF31nvwpna0/xHM=
+X-Gm-Gg: ASbGncv5h/ThvCI1kbj93jKCuW2G5FuQa1ncxnkh5YjDNIKj/WHriyPNEst6F1xSYg9
+	4uQDFbgEWC9kq4h5HGzAhczuc7BAyTn5Q7iREvVpjykm2Hcq8HU+nCS2A8EzlDTExEG5i18RdKt
+	kWulXxfqmE13hv1ewGRrRgxMTBxf9aGdmYejN0ubdntikRkm7kgQMUjdOid8JON3gjLwFxcXfIW
+	315Bqt6rkmqUaz2TG8lyce8KVJcmirSDDlOaxJoY50OE7P72vgEmWfsVO6xPw3OKSNnUncnVcDs
+	Oh9vOQXql+6lzTExSzhtRsN5li9W/DvhVWfqeoqWbBcbk9qvYXEu4ebVFOosFZpOIuM8FZ0MI/g
+	=
+X-Google-Smtp-Source: AGHT+IF6DM1q4q8CPakAyqZNCbPDwJpamBu3whbTRqn03tXemtCu5+RQvYP709FhwnPjbnmjHYqPmA==
+X-Received: by 2002:a05:600c:37cd:b0:442:d9f2:ded8 with SMTP id 5b1f17b1804b1-45201368cfcmr113234485e9.15.1749454543908;
+        Mon, 09 Jun 2025 00:35:43 -0700 (PDT)
+Received: from localhost (109-81-91-146.rct.o2.cz. [109.81.91.146])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-452f8f011c8sm97794095e9.3.2025.06.09.00.35.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 00:35:43 -0700 (PDT)
+Date: Mon, 9 Jun 2025 09:35:42 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+	david@redhat.com, shakeel.butt@linux.dev,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, donettom@linux.ibm.com,
+	aboorvad@linux.ibm.com, sj@kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: fix the inaccurate memory statistics issue for
+ users
+Message-ID: <aEaOzpQElnG2I3Tz@tiehlicka>
+References: <f4586b17f66f97c174f7fd1f8647374fdb53de1c.1749119050.git.baolin.wang@linux.alibaba.com>
+ <87bjqx4h82.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87bjqx4h82.fsf@gmail.com>
 
-The VFS no longer needs the directory to be locked when performing
-updates in the directory (create/remove/rename).  We only lock
-directories during these ops because the filesystem might expect that.
-Some filesystems may not need it.  Allow the filesystem to opt out by
-setting no_dir_lock in inode_operations.
+On Mon 09-06-25 10:57:41, Ritesh Harjani wrote:
+> Baolin Wang <baolin.wang@linux.alibaba.com> writes:
+> 
+> > On some large machines with a high number of CPUs running a 64K pagesize
+> > kernel, we found that the 'RES' field is always 0 displayed by the top
+> > command for some processes, which will cause a lot of confusion for users.
+> >
+> >     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+> >  875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
+> >       1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
+> >
+> > The main reason is that the batch size of the percpu counter is quite large
+> > on these machines, caching a significant percpu value, since converting mm's
+> > rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
+> > stats into percpu_counter"). Intuitively, the batch number should be optimized,
+> > but on some paths, performance may take precedence over statistical accuracy.
+> > Therefore, introducing a new interface to add the percpu statistical count
+> > and display it to users, which can remove the confusion. In addition, this
+> > change is not expected to be on a performance-critical path, so the modification
+> > should be acceptable.
+> >
+> > In addition, the 'mm->rss_stat' is updated by using add_mm_counter() and
+> > dec/inc_mm_counter(), which are all wrappers around percpu_counter_add_batch().
+> > In percpu_counter_add_batch(), there is percpu batch caching to avoid 'fbc->lock'
+> > contention. This patch changes task_mem() and task_statm() to get the accurate
+> > mm counters under the 'fbc->lock', but this should not exacerbate kernel
+> > 'mm->rss_stat' lock contention due to the percpu batch caching of the mm
+> > counters. The following test also confirm the theoretical analysis.
+> >
+> > I run the stress-ng that stresses anon page faults in 32 threads on my 32 cores
+> > machine, while simultaneously running a script that starts 32 threads to
+> > busy-loop pread each stress-ng thread's /proc/pid/status interface. From the
+> > following data, I did not observe any obvious impact of this patch on the
+> > stress-ng tests.
+> >
+> > w/o patch:
+> > stress-ng: info:  [6848]          4,399,219,085,152 CPU Cycles          67.327 B/sec
+> > stress-ng: info:  [6848]          1,616,524,844,832 Instructions          24.740 B/sec (0.367 instr. per cycle)
+> > stress-ng: info:  [6848]          39,529,792 Page Faults Total           0.605 M/sec
+> > stress-ng: info:  [6848]          39,529,792 Page Faults Minor           0.605 M/sec
+> >
+> > w/patch:
+> > stress-ng: info:  [2485]          4,462,440,381,856 CPU Cycles          68.382 B/sec
+> > stress-ng: info:  [2485]          1,615,101,503,296 Instructions          24.750 B/sec (0.362 instr. per cycle)
+> > stress-ng: info:  [2485]          39,439,232 Page Faults Total           0.604 M/sec
+> > stress-ng: info:  [2485]          39,439,232 Page Faults Minor           0.604 M/sec
+> >
+> > Tested-by Donet Tom <donettom@linux.ibm.com>
+> > Reviewed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> > Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> > Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > Acked-by: SeongJae Park <sj@kernel.org>
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > ---
+> > Changes from v1:
+> >  - Update the commit message to add some measurements.
+> >  - Add acked tag from Michal. Thanks.
+> >  - Drop the Fixes tag.
+> 
+> Any reason why we dropped the Fixes tag? I see there were a series of
+> discussion on v1 and it got concluded that the fix was correct, then why
+> drop the fixes tag? 
 
-Signed-off-by: NeilBrown <neil@brown.name>
----
- fs/namei.c         | 75 ++++++++++++++++++++++++++++++++--------------
- include/linux/fs.h |  1 +
- 2 files changed, 54 insertions(+), 22 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 5c9279657b32..55ea67b4f891 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2001,7 +2001,8 @@ struct dentry *lookup_and_lock_hashed(struct qstr *last,
- {
- 	struct dentry *dentry;
- 
--	inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
-+	if (!d_inode(base)->i_op->no_dir_lock)
-+		inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
- 
- retry:
- 	dentry = lookup_one_qstr(last, base, lookup_flags);
-@@ -2011,7 +2012,8 @@ struct dentry *lookup_and_lock_hashed(struct qstr *last,
- 		goto retry;
- 	}
- 
--	if (IS_ERR(dentry))
-+	if (IS_ERR(dentry) &&
-+	    !d_inode(base)->i_op->no_dir_lock)
- 		inode_unlock(base->d_inode);
- 	return dentry;
- }
-@@ -2066,11 +2068,13 @@ struct dentry *lookup_and_lock_noperm(struct qstr *last,
- {
- 	struct dentry *dentry;
- 
--	inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
-+	if (!d_inode(base)->i_op->no_dir_lock)
-+		inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
- 
- 	dentry = lookup_and_lock_noperm_locked(last, base, lookup_flags,
- 					       DLOCK_NORMAL);
--	if (IS_ERR(dentry))
-+	if (IS_ERR(dentry) &&
-+	    !d_inode(base)->i_op->no_dir_lock)
- 		inode_unlock(base->d_inode);
- 	return dentry;
- }
-@@ -2097,9 +2101,11 @@ struct dentry *lookup_and_lock_noperm_nested(struct qstr *last,
- {
- 	struct dentry *dentry;
- 
--	inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
-+	if (!d_inode(base)->i_op->no_dir_lock)
-+		inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
- 	dentry = lookup_and_lock_noperm_locked(last, base, lookup_flags, class);
--	if (IS_ERR(dentry))
-+	if (IS_ERR(dentry) &&
-+	    !d_inode(base)->i_op->no_dir_lock)
- 		inode_unlock(base->d_inode);
- 	return dentry;
- }
-@@ -2160,9 +2166,12 @@ struct dentry *lookup_and_lock_killable(struct mnt_idmap *idmap,
- 	struct dentry *dentry;
- 	int err;
- 
--	err = down_write_killable_nested(&base->d_inode->i_rwsem, I_MUTEX_PARENT);
--	if (err)
--		return ERR_PTR(err);
-+	if (!d_inode(base)->i_op->no_dir_lock) {
-+		err = down_write_killable_nested(&base->d_inode->i_rwsem,
-+						 I_MUTEX_PARENT);
-+		if (err)
-+			return ERR_PTR(err);
-+	}
- 	err = lookup_one_common(idmap, last, base);
- 	if (err < 0)
- 		return ERR_PTR(err);
-@@ -2176,7 +2185,8 @@ struct dentry *lookup_and_lock_killable(struct mnt_idmap *idmap,
- 			return ERR_PTR(-ERESTARTSYS);
- 		goto retry;
- 	}
--	if (IS_ERR(dentry))
-+	if (IS_ERR(dentry) &&
-+	    !d_inode(base)->i_op->no_dir_lock)
- 		inode_unlock(base->d_inode);
- 	return dentry;
- }
-@@ -2205,7 +2215,8 @@ bool lock_and_check_dentry(struct dentry *child, struct dentry *parent)
- 	}
- 	/* get the child to balance with dentry_unlock() which puts it. */
- 	dget(child);
--	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
-+	if (!d_inode(parent)->i_op->no_dir_lock)
-+		inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
- 	return true;
- }
- EXPORT_SYMBOL(lock_and_check_dentry);
-@@ -2230,7 +2241,8 @@ void dentry_unlock(struct dentry *dentry)
- {
- 	if (!IS_ERR(dentry)) {
- 		d_lookup_done(dentry);
--		inode_unlock(dentry->d_parent->d_inode);
-+		if (!dentry->d_parent->d_inode->i_op->no_dir_lock)
-+			inode_unlock(dentry->d_parent->d_inode);
- 		dentry_unlock_dir_locked(dentry);
- 	}
- }
-@@ -2342,9 +2354,11 @@ static struct dentry *lookup_slow(const struct qstr *name,
- {
- 	struct inode *inode = dir->d_inode;
- 	struct dentry *res;
--	inode_lock_shared(inode);
-+	if (!inode->i_op->no_dir_lock)
-+		inode_lock_shared(inode);
- 	res = __lookup_slow(name, dir, flags);
--	inode_unlock_shared(inode);
-+	if (!inode->i_op->no_dir_lock)
-+		inode_unlock_shared(inode);
- 	return res;
- }
- 
-@@ -3721,6 +3735,9 @@ static struct dentry *lock_two_directories(struct dentry *p1, struct dentry *p2)
-  */
- static struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
- {
-+	if (d_inode(p1)->i_op->no_dir_lock)
-+		return NULL;
-+
- 	if (p1 == p2) {
- 		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
- 		return NULL;
-@@ -3735,6 +3752,9 @@ static struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
-  */
- static struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
- {
-+	if (d_inode(c1)->i_op->no_dir_lock)
-+		return NULL;
-+
- 	if (READ_ONCE(c1->d_parent) == p2) {
- 		/*
- 		 * hopefully won't need to touch ->s_vfs_rename_mutex at all.
-@@ -3773,6 +3793,8 @@ static struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
- 
- static void unlock_rename(struct dentry *p1, struct dentry *p2)
- {
-+	if (d_inode(p1)->i_op->no_dir_lock)
-+		return;
- 	inode_unlock(p1->d_inode);
- 	if (p1 != p2) {
- 		inode_unlock(p2->d_inode);
-@@ -3880,6 +3902,10 @@ static struct dentry *lock_ancestors(struct dentry *d1, struct dentry *d2)
- {
- 	struct dentry *locked, *ancestor;
- 
-+	if (!d_inode(d1)->i_op->no_dir_lock)
-+		/* s_vfs_rename_mutex is being used, so skip this locking */
-+		return NULL;
-+
- 	if (d1->d_parent == d2->d_parent)
- 		/* Nothing to lock */
- 		return NULL;
-@@ -4194,6 +4220,7 @@ void dentry_unlock_rename(struct renamedata *rd)
- 	renaming_unlock(rd->old_dir, rd->new_dir, rd->ancestor,
- 			rd->old_dentry, rd->new_dentry);
- 
-+	if (!d_inode(rd->old_dir)->i_op->no_dir_lock)
- 	unlock_rename(rd->old_dir, rd->new_dir);
- 
- 	dput(rd->old_dir);
-@@ -4697,19 +4724,23 @@ static const char *open_last_lookups(struct nameidata *nd,
- 		 * dropping this one anyway.
- 		 */
- 	}
--	if (open_flag & O_CREAT)
--		inode_lock(dir->d_inode);
--	else
--		inode_lock_shared(dir->d_inode);
-+	if (!d_inode(dir)->i_op->no_dir_lock) {
-+		if (open_flag & O_CREAT)
-+			inode_lock(dir->d_inode);
-+		else
-+			inode_lock_shared(dir->d_inode);
-+	}
- 	dentry = lookup_open(nd, file, op, got_write);
- 	if (!IS_ERR(dentry)) {
- 		if (file->f_mode & FMODE_OPENED)
- 			fsnotify_open(file);
- 	}
--	if (open_flag & O_CREAT)
--		inode_unlock(dir->d_inode);
--	else
--		inode_unlock_shared(dir->d_inode);
-+	if (!d_inode(dir)->i_op->no_dir_lock) {
-+		if (open_flag & O_CREAT)
-+			inode_unlock(dir->d_inode);
-+		else
-+			inode_unlock_shared(dir->d_inode);
-+	}
- 
- 	if (got_write)
- 		mnt_drop_write(nd->path.mnt);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6b4a1a1f4786..b213993c486a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2225,6 +2225,7 @@ int wrap_directory_iterator(struct file *, struct dir_context *,
- 	{ return wrap_directory_iterator(file, ctx, x); }
- 
- struct inode_operations {
-+	bool no_dir_lock:1;
- 	struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
- 	const char * (*get_link) (struct dentry *, struct inode *, struct delayed_call *);
- 	int (*permission) (struct mnt_idmap *, struct inode *, int);
+This seems more like an improvement than a bug fix.
 -- 
-2.49.0
-
+Michal Hocko
+SUSE Labs
 
