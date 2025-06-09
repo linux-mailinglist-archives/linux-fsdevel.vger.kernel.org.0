@@ -1,268 +1,577 @@
-Return-Path: <linux-fsdevel+bounces-51031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8E5AD20B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 16:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E286AD20B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 16:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9638F169875
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 14:17:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5057D1697C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 14:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E37425CC73;
-	Mon,  9 Jun 2025 14:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8131D25C83C;
+	Mon,  9 Jun 2025 14:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iz883pqz";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="V/pBWf/E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csEytVx3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7748137C2A;
-	Mon,  9 Jun 2025 14:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749478599; cv=fail; b=bDLDED+VKVIj/yJNCazDcPbYAZf1bGEujJUgM7JcP3mYZKu6qtPVyp9oXMyPKeLepiFqwvXTC54uTWcn5NeShpXp3Ja4I5etWOcyzIF74J4YKQ2PyJ9cyaGaaMtCCA9ae6+wN9DEMSTzNxL1eFu/nQR+wwYujx1fhCbCjWUwPCQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749478599; c=relaxed/simple;
-	bh=XZUVLKUi1+P9vgsM89HjdJ/CgpNjNtR4Vtk5NqWute4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Sur9+D89i6tybRHTLRc92edNnDoIjouuIO7NdROZ2YVdjHQkr7OXcLuIqLgLdp9gu7cVVMvt20kbmE2dfPGDeGDAJ1wwrPyU6lwZGT54FBh3rg9s2QnoiBJgBHOl9ZviSL8qrnP6soR5LTfvJJSE2RbYb/yWMgEmh7XG9nRIns4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=iz883pqz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=V/pBWf/E; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5593fcQW005864;
-	Mon, 9 Jun 2025 14:16:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=2L3vhKlWZUV4X6BWVG1AAUT2Fq4NdQl4lOEZCUBwyaE=; b=
-	iz883pqzr2HaFfMBIVSxvdb+FaUBLzmtEzpY3WXENA27uZLe2o537Til/vmT/614
-	nVgAGZj+DHOF9F4+/uLHBH8hLSUmK4TTZ73Gk69Mq27DuLdai99wH9lwVBl8Pncr
-	Zmdh+2XQVne4UIJ0YoWXxXAwoKu+mGjMXwb9WF2mRhv4R4f4MYxkhVZ4TGla370f
-	my9/iRN+5InoXoZEkHvOSs7cqyWue1OAXIqgf/O/EHPwggCrpYUIKd9aeK+ERxZY
-	SM5yFWJpUhov3HNHjCZuUp4GHVxBcvFmYFizlVKNAkre7LIiliYub4Hj0fkGm2NS
-	V9iXk1ZW6BrNkWvNqk7z8Q==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 474dad26dj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Jun 2025 14:16:32 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 559Dx6Tu011796;
-	Mon, 9 Jun 2025 14:16:31 GMT
-Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazon11012021.outbound.protection.outlook.com [40.107.200.21])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 474bv8g6n9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Jun 2025 14:16:31 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gljP17KE9gKW4QDZp+5SF0XCE+HKwJ5s+t99JiTu2i/PCpDow8efTGTWX/dkhlabpnGSU+xdU6+zZ8DKtxg878JBz36MZfblDqknPcmJrg26d+3bRxbZvX5iaRk3wtxEvlkTQxilE/Zc8mVkAYUbYSLVQxCC6urnWgAs+kF8edFthPPaTVAfz9Qe76uIfdkJEvJELfZ1CVgU9lKiNU0r4Rg8MT/rWeArbkQd57YazaTqo7l+LE8ykAQ1AypQd0+w4WwMmGiarcJaTS4P+v2fcjEP46jIpv7VcPH4JxKJ5JRTpApCKEqAfMJhveChsXhnzeHzNDsqy8Z752CqKn0/Lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2L3vhKlWZUV4X6BWVG1AAUT2Fq4NdQl4lOEZCUBwyaE=;
- b=Ii92aolN1rAi4+QF2H6ckB0GGRnvxvZv0d7Dgr2nm5Y+0GxV+v2pNIzOc/oKUAJe+KYosgiLZQN0GjvTm0jUUZUb3WqxzPX4AZjyMauyxaREwnJpDHXtfdWQMQx0ijWGjlRMurNCMoe33SRRhNg3zc6osx9mzwgDn0g0Gu4fA2hbTqIGxNHRze6NkrkaS5sSadevPh6jtE+x5lhMrIRQCiqv48o6/Rm1Zr7v6Fxv3PdZVAIeusdGaqIzkMU4pZbXFIdCkKCk7BGk+WeAmCX3jLI2EIkLRcS0bCHbZULjygho0UkMBt5132F9j3veP+xJ9wveZDCcYFxxWqrKEHD6lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2L3vhKlWZUV4X6BWVG1AAUT2Fq4NdQl4lOEZCUBwyaE=;
- b=V/pBWf/EG9g+DCOxh2UsSEIr2zV4E/65lwUq/dFLfNlS75SVYcdKamF4A7Ap0vKMrpkegfo/RChuZtO8AG9TJHauwqPVfEpOj27e3gYLum76odrofXPnoTpXtrVz0iGEfk9VelvKQwWfR2dDZfwircQi1XDZ4x80l1Y5lfSdH1g=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by BN0PR10MB4822.namprd10.prod.outlook.com (2603:10b6:408:124::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.25; Mon, 9 Jun
- 2025 14:16:25 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
- 14:16:25 +0000
-Message-ID: <e5e385fd-d58a-41c7-93d9-95ff727425dd@oracle.com>
-Date: Mon, 9 Jun 2025 10:16:24 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: LInux NFSv4.1 client and server- case insensitive filesystems
- supported?
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Cedric Blancher <cedric.blancher@gmail.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <CALXu0Ufzm66Ors3aBBrua0-8bvwqo-=RCmiK1yof9mMUxyEmCQ@mail.gmail.com>
- <CALXu0Ufgv7RK7gDOK53MJsD+7x4f0+BYYwo2xNXidigxLDeuMg@mail.gmail.com>
- <44250631-2b70-4ce8-b513-a632e70704ed@oracle.com>
- <aEZ3zza0AsDgjUKq@infradead.org>
-Content-Language: en-US
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <aEZ3zza0AsDgjUKq@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR03CA0033.namprd03.prod.outlook.com
- (2603:10b6:610:b3::8) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE51137C2A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 14:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749478620; cv=none; b=UjgmeNMXUGOyiQ1LYokyMLIBoMu8mgOCyyOq5aL8PJasT9flw2PurfnucBybGbztVRegOBCw3RCMQKvwdEk7Gzo+V7h8Ner5YULOuNoRyJ61IEVUU6M13B1GZ+ukr+Yv/2b1m1S9dAz1x/Y5OFeADg+XZydrtGAnD4+pLDWHv6Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749478620; c=relaxed/simple;
+	bh=q9IKG9OSknaGm/VRrHxllgcC+t508o6lCaTwhLiSc2g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bnR8mxHsrs6oXP6UUfIWTmMVqtS8ieQt47Fy6XVEJAt9sTnoumbnGqj7ADtvsldgRcf9Sq5/59BJPZ1Mg2qgYfgkk1ly/e+W49gWbzDUHBBu+IBs0y+tE7M0ygiOWgF/4Ne5EYxGnl73GA0XTNdVJe0MbCZF3q9/TnNse+OCF2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csEytVx3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A3AC4CEEB;
+	Mon,  9 Jun 2025 14:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749478618;
+	bh=q9IKG9OSknaGm/VRrHxllgcC+t508o6lCaTwhLiSc2g=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=csEytVx3+OV1jdhNH01ohTbkTXfjewyHe8bK9tEoX68ysDyGjouV8upUHOLV2m9RO
+	 XgzfUKJDjq8uYnu2px55Ro99nP8hYDAx1bMdEhcR4JACnfi1d2ElADm/uP/8HoC7Q8
+	 aff2XorNa0g1VnxVswBuPBEjccT0CqYMRmMoauT/VvlIoJO6ETWA0Q66+11rlLRmXI
+	 CNp+I7uFot7PhLfQkZUuTBEgLHT4+IMC0uIMmjjAM/Hra19yjzTyRDFSSV/f1yPov6
+	 Msq6rky2ecScLPgEI60RCNl2YauOe65Bi7US00aFpC4vTmnmql3Z6AK9d5QAG2npcL
+	 uW7w3V+00QQ+w==
+Message-ID: <beb4cecea02a0c595c432c431944106744d2926a.camel@kernel.org>
+Subject: Re: [PATCH v2 1/5] coredump: allow for flexible coredump handling
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Daan De Meyer <daan.j.demeyer@gmail.com>, Jan
+ Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>,  Mike
+ Yuan <me@yhndnzj.com>, Zbigniew =?UTF-8?Q?J=C4=99drzejewski-Szmek?=
+ <zbyszek@in.waw.pl>,  Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Mon, 09 Jun 2025 10:16:56 -0400
+In-Reply-To: <20250603-work-coredump-socket-protocol-v2-1-05a5f0c18ecc@kernel.org>
+References: 
+	<20250603-work-coredump-socket-protocol-v2-0-05a5f0c18ecc@kernel.org>
+	 <20250603-work-coredump-socket-protocol-v2-1-05a5f0c18ecc@kernel.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|BN0PR10MB4822:EE_
-X-MS-Office365-Filtering-Correlation-Id: 00aca645-aae2-4106-0250-08dda7603826
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Vzc0QmJHcURjSHpLaTNCWEZjdFM3K2VGU3pDQzRXOENFc3NhUjdNUWtYRUdh?=
- =?utf-8?B?UjRSTmpXYnRkKzZLZ2xJNW5HRUhxRlM1Y2hGZWgxZ1g5QjVMZTJNMTBaT3Zp?=
- =?utf-8?B?MWl4b29VSDJWRVRMcy8rRTVrN3dnTzNTN3Z3U2FXTno0TkFyaW51MHJPVTIy?=
- =?utf-8?B?QzdYdW1XS2l5STRsZGRDUEx5cTY0Mkk0bkFnYzQ3QWJqaXdtTFlEZlVPUEFr?=
- =?utf-8?B?VjZUczNPaFpSaytGUEpHWEgzd0V5eHprN2x5MDJMZUdCVGFsMDlBOHphWHFU?=
- =?utf-8?B?U082MzJ0SnVidzlCSXZsU1hHdWZ5dXByVzZ5bzBzRzRuYjZneDByL1dYVVlp?=
- =?utf-8?B?SEw1Ym9SbGdOSW9wMFFOdWM3TEVydlZIdzRDL3Z0WmlmMXFSb1Nydi8vUmov?=
- =?utf-8?B?aW8zWHdOcnB3SkR3aFBibDZPdUFiNms0Sy9HUjVOTlNZc0NGRGJ2aTFmb0FT?=
- =?utf-8?B?Yk5TVGJUWitwZXdvdUcyYVpDTVJkTmZXelpPNlIwL1M0dm9VbGY1clFNdEN0?=
- =?utf-8?B?ZEZkSEphLy9JS2dOUGZqYWVYVHVsVGkxNlZTb2UyUytzZWlwdFlSeXVJR0pB?=
- =?utf-8?B?WUxkOXNSSXNCSkx4U3h6Zkp6elFKcmF5QVpDQ1czeUo1dlVPc25tTjQzNndm?=
- =?utf-8?B?Z21jRkM2eE5rQ0ZpY09pVjRLOW9rNVNGRjVsTkhNb3JJTnpJRnBUMmc2RTdJ?=
- =?utf-8?B?WGd4NjB4UGNGOG95ZDZGakkzTEU3S1ZIMFlKMnpFNTRzMzAxUzlRUlNOVTdT?=
- =?utf-8?B?b1k2bU1meDdMem9YeHJDRzJlWjExYUdLWGhzclBXRmJSQmlUU0hzUDd1MG56?=
- =?utf-8?B?SkdXUElDQzBVRG96dSsvSmJMUFFCUjFveENLMTNDYmZCVFNtMWlwL216SGV5?=
- =?utf-8?B?QmlCaGUzU3hwNEV4eTREME4ya0x4cjRLZENFSmx5dFZ6N0xTRlBsTkZEODVV?=
- =?utf-8?B?NGFLbDVUWnNsamRoK1AwSmZUSVp3cTBDa1kydlBpUHNhTkdJY295c3B4V2xG?=
- =?utf-8?B?THNBT2d5bTJRZlNoYWN0TTNoVlEwc1d2QXpKekJJeGJWY2RKbytqMG9HKzg2?=
- =?utf-8?B?Y3NPcDBwbzlJOTBiNFpaUXFyclBRSk9ETHdCNXFydUxIZlE3VEErTW5QRkRX?=
- =?utf-8?B?Yzk2dlBTdnl3MjlUSDJHMUZKYndUdEpMTFhtSGJCa1Nid0lCYlVBUytvT1d4?=
- =?utf-8?B?SUdMMDFQUlAvSUNNOC9kSEx1U1ltTVpiTjFlU2pEVkEyZDZTS3pSVmlkQjY2?=
- =?utf-8?B?UWtXeUdmME5UZGx6RGxLNVVidjFlUFpmRy9iNGs5RUU0c2dITWZJUThxSUo1?=
- =?utf-8?B?Q2pZRGdYQUMxOU10QnhaVEhzeU5ZeVdHaUU3ZDZIdWQxSytTRUdqd2JTK1Ev?=
- =?utf-8?B?eU5jYjlKY25zb3VRN1VTdEw1akYzUnd1WEUrc2NnRzlscDAraVhQZU45azg5?=
- =?utf-8?B?cnFwd1ZyektGS3lES3hlTExBNzRwd0cvTCs0S2RBSFZjdmgrK202ZllVd09U?=
- =?utf-8?B?Y0hRV29veEMwd3dqOVdDcDV4Zk5LZ25IbTlJK29nd0wrQ1FmVFlkYkIzRkdl?=
- =?utf-8?B?ZVhUUEZIalFFSnM4KzJyU1VSSjFTQyt2TnZrR0ZQMWZ3cGYrZW1oODRaQ2tl?=
- =?utf-8?B?STFVRFdHUzVJSzAxSHZzQ1FCQUZJRmpxMXFyWVFnOVFXUVk1dDIzSkJkRTRi?=
- =?utf-8?B?eUdCbWtlaEovQ0VXQlhVbXV3S0lhTHgzTmZIR01MWENxaHhOa3lpMHYwYWdS?=
- =?utf-8?B?a1hsYTRLcXFGbXIyR2d1aGpVYk1NSC9pdmkzS1JIU1NkdVZpdVg1WTVPcFl0?=
- =?utf-8?B?REdKbmtycVRLN01jWXpMNHE4V3ltQmsydWlDeE4vemlCcnBqZWZxREk1SW8v?=
- =?utf-8?B?TEhZVDZqMHEvdEI2ZkkwcGpJaFlYMDRjeU5RbEFaUlhJV2hCNzNHZGdQZUlt?=
- =?utf-8?Q?Lw6qhDY8M+4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TzBvVTZYekRIeXJjQVVmZmd0YlZ6Z20wR1J0QklRSVZ4QTdjb3FmcWhObllJ?=
- =?utf-8?B?Sk9rOHFQUC9NSWdnVis2ZmVqRStvMHJFNkFpSUQ2UVdmbFFhV2lzNlFBMitw?=
- =?utf-8?B?SDExNTRReUs0UWJqK1hZM0l5RksrQ1g4MXJKOXZlOXNEa054L3dTK0dMSVh1?=
- =?utf-8?B?S3NudTVwa0FpUy9VK3A1VGk3RCtZaC9PNUZkK3BJTEtQTGNjMW9DMHJwSDZq?=
- =?utf-8?B?bTVPOTB6UWtvblBVWjNrWGt0VHhRcDZ0VUQzSGxvQXlMVXQ4QXlFa2xUQ2xU?=
- =?utf-8?B?MElPRGxLVExWRkNVZW5hQXU4TUxCQ3hNTGsxMUhoUC9sRURwdUNkeUwvVE5s?=
- =?utf-8?B?UldIdm0zK1NOc0pBZm56elAwNldPU1RocFcxV2hHRDJaazdkbU10bVpLZXJC?=
- =?utf-8?B?UnFXdSsyUE56SVRDL2I1ODQ2TUFrVXNzM1hFeWMydVk5djIyZXlhWUJsRDUv?=
- =?utf-8?B?ZTJOc3lETjBsT1dBdS9LQXRtNWRrV2RrdTFQcTRlcndGSVR4TjF3bzRWcjBp?=
- =?utf-8?B?R25aTENaQWlIVno0OVNrbCtpc0N4Y2prbzUvMzhITlhraHpOd08zdXdTWUNQ?=
- =?utf-8?B?WXJRdEFwekdUY3NDbnVnSXUvUzRPVDlEa0JkT0k0RU91b2lYanlTZmd6bVBj?=
- =?utf-8?B?aWg3ZE1sTnI5WG5vYU1ESjdmNmJudlNmUk1ZV0s0Wnp3SFU1OUFtOTlzd0h5?=
- =?utf-8?B?cWlIempvNldyZ3RETWV3aEF1OXcwSkNWWW9wQTd2dVZ2bWEvOW1Hb0NidFNq?=
- =?utf-8?B?ZUtNR0gvVjIrVzZYZFhvSkJia29DK0FqTmR5K1kvMlNBVFhuZGN5VHlTaGd1?=
- =?utf-8?B?akg5cENwOFp1eVlLc01HeENlbWgxMExCSjduTzdwOEVpdk9VaHpTODRWQnJW?=
- =?utf-8?B?Y2txT2ZKWk1nZGh5eHlYdTFUdTNBYk9EWDBIeVBhWG9tRWVPdHpjUnBERDBM?=
- =?utf-8?B?K0l1dk5PaXpZcThaMW5VMHp0TkRDWE00U0pNQmc0WHdpayt0SytvUGxGSXIz?=
- =?utf-8?B?QzZLaWg1TWJ4c2M3V3NROFBCbEVJaHlGdTVkNzd0OVk2VVZQU0s2NW83ek9T?=
- =?utf-8?B?S2FBYi9CUS9lRC9PUjY3emNETnhTRkY2a3JhMitvYTZjdTl1WmhmOThrTzJF?=
- =?utf-8?B?UUxrMkJaNStvaVk2bUlqZXo1WHR5RkY5QjFBSXEzZzA3ZWxaV1hGLy93Zm4x?=
- =?utf-8?B?SzdvNkRjc0didi9QNUQ3VGFCaDBITTdZMERLM2pLdVVLbjVmdU5KMHU0OGZF?=
- =?utf-8?B?NkJiU1UxQWt3YWhCY3JtakYxTS9yeU8xUDJ5STdsaE1JSlUvcXBlRlFQcW5L?=
- =?utf-8?B?NjRrUVhWQ0hiQWZwMUZselR5TXRZWmJDbXpVa1RORVAxcEhxemQ3WDgzdFRC?=
- =?utf-8?B?bVg4NGlnNWxRQjhtSUh4cCsyTm9GZGtHK3BudURvYktUZUFPYVVUa3Ezckts?=
- =?utf-8?B?VGZhRTZVa0NtZ25EM2JmR0l6SXlMYnZhejVvdkVWNFFFUzJXeWVNYmNQa0pH?=
- =?utf-8?B?bTd4ZGZsY0QxZmordkNFelJ2WEthMnRhYzZrTmh3ZUZNWE5UN25WTkhIT2pO?=
- =?utf-8?B?WENHSk9CYnEvdStlK2tscDBVMEJ5OHQwdU5jc0xyUTg2Y3FaWmxtYkR2a1dJ?=
- =?utf-8?B?T2loN0FaZUVPcEF1NmttZ09VZy9BaXpXeTJoclZRQS84M2p6elpqTWYzQ203?=
- =?utf-8?B?aUJIdEFVRDc5QWowVlNXMkUwRW9LZzgveWtOSUs3VEN1TFFxbE82Zkw5NmJC?=
- =?utf-8?B?NGI0YStWTUZXYXlpMDkxREZ1ODZzd0IyREJ0THY3WHlDK29ocHBmZkxoL0RG?=
- =?utf-8?B?dDl5bU13MFVOaGU4eUNpeVRxa2lUNWUxQlBtbDh3WC90M0RjKzMxbm44T0Zp?=
- =?utf-8?B?VXFCM1l6em5kRmQvbmkxcWRSQVZRYmFEaXNZa1lEZ0I5dHo1SjdWQmF2VVlH?=
- =?utf-8?B?T3IwWUdxTWcxbk9hUHhhaGxkcDlnWCtVSzNrQXY2Y1hSQUtQK3ppSnlTZS82?=
- =?utf-8?B?Y3BFbkRlSkhMSjhoSmpkV3Azb2pwYjl4NllRaFVYUW5kOVRobWVaYkZHWVpT?=
- =?utf-8?B?ZHNpY216TE9BelY0MlJwNHlWMmplMngveDFNbitXdEh1VzdqZ0xOcENjRGQv?=
- =?utf-8?B?RllIS2laOWt4RXdsUW5mSWV0NURoOVRPYk5DcnRMZGhVS0tmdTZOL1NqWUt6?=
- =?utf-8?B?NlE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	1Gw2f9+/wq6XzfLFJyzETjsgJFYLKgLdpKAnXzEaVcDg6nU4NXRxmyKIddyY3BjuvAg3VQeoWBVCfIzGZFqFWlM5N/G+NKAqLUPHopyJxA1YXdxAwApaHTG5gE+60Ce7MX+jyvlUCdVwJeNnmCiRIOssKdwpOI5kbYe/9s2PU38MvaFceMwEGsRT3cFK0kCsRw3BbZ+hRcOyqqM2UobLx3XmZcGt/1RR8AikkHhpPLMllVM3cfkeXOAticUyzcDoj6FRbZYTy8cXI2oqodoiWsfCQV/ohRElnyi5v4yCGZnNMXUzkzRrteyAADhmfNcjA3E88yRYKznkwTBpgsY86Xc6gu9fAQqWk2GzGcNiDyuX90mrD4GRFaP4bmuPi3VVNcXLAE/Xm5f64vFSJ6bKJiHBbGkVwXimT4U2saOuiuBgjSr7mIxQrL4LLMPg1C6T9BZSoAxdXVaWvIITx7XRYpBPvtByBGg/nj5/Nh0F6NPltz041MbS3auWqqrvy6eU6CrPfzv7wnq62a/K1VDfTQ+7qw1IMK5ARViPjGe0mF75A81x9EJWg1Xxl030PRqtzh2zvMZ+0zWbULCgbrR6mjc3PHI3dqYEOUBKr+IBNLY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00aca645-aae2-4106-0250-08dda7603826
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 14:16:25.8865
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W+EqaYUTZxIM3AY1IW4DXmtcsTfXOkEJyuC++BCNEWUzXbQZ4VgWHaXeuvsq1EypPAhBu9BqCJ4ekaBNHa7NyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4822
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_05,2025-06-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506090104
-X-Proofpoint-ORIG-GUID: m5iKk_3dqOxJZ2sPdN16kEviEu8EAdQ_
-X-Authority-Analysis: v=2.4 cv=EJwG00ZC c=1 sm=1 tr=0 ts=6846ecc0 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=eJfxgxciAAAA:8 a=QJxrZSrV5E6HhGdoJ0cA:9 a=QEXdDO2ut3YA:10 a=xM9caqqi1sUkTy8OJ5Uh:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDEwNCBTYWx0ZWRfX6ZJYpV7+ylmP J234pSszecogxCXz21O+IWpg771u1vXGN9E1I8Fty0w8vnTpWMGCeUMlCaO/gPt5AuoeKSNeva4 wgLoqr1rqcOgABCJ2V9wAh1pM9wSRLmqbCokGTftQIhVwqC0Ilwe+zPS7n8yKZOJO7481bFVOIz
- cudiAgZyP5v8pEi0+cDIfR5hiuj611t9iFiRqp8veqZVVzgvYLNx0uo1OOK5MD1daFLHIew9SaP G1jAibESRzwM5U5jQrt7K9WywQG8B8eKwtogDJ4N9syyorE2dC/beexDV90woihMOzeHrBBjt6d AQGH77zLBDaRlvLItxvIKFKuMnf+xirZVmLImlmh1AeqGfICoFIvvqwoamJDydqVV0J69LLTizp
- g8+JVRgjRXYkg/Z/sr43W7B/JoLMVGuQvUoensmbdx+dPrmSF83TPMTgZlAPvuopN7BTasF0
-X-Proofpoint-GUID: m5iKk_3dqOxJZ2sPdN16kEviEu8EAdQ_
 
-On 6/9/25 1:57 AM, Christoph Hellwig wrote:
-> On Sat, Jun 07, 2025 at 02:30:37PM -0400, Chuck Lever wrote:
->> Until very recently, the Linux dentry cache supported only case-
->> sensitive file name lookups, and all of the file systems that NFSD is
->> regularly tested with are case-preserving.
-> 
-> Linux has supported case insensitive file system since 1992 when Werner
-> added the original msdos FAT support, i.e. it exists much longer than
-> the dcache or knfsd.
-> 
-> Specific support for dealing with case insensitive in the dcache instead
-> working around it was added in 2008 for the case insensitive XFS
-> directories in 2008:
-> 
-> commit 9403540c0653122ca34884a180439ddbfcbcb524
-> Author: Barry Naujok <bnaujok@sgi.com>
-> Date:   Wed May 21 16:50:46 2008 +1000
-> 
->     dcache: Add case-insensitive support d_ci_add() routine
+On Tue, 2025-06-03 at 15:31 +0200, Christian Brauner wrote:
+> Extend the coredump socket to allow the coredump server to tell the
+> kernel how to process individual coredumps.
+>=20
+> When the crashing task connects to the coredump socket the kernel will
+> send a struct coredump_req to the coredump server. The kernel will set
+> the size member of struct coredump_req allowing the coredump server how
+> much data can be read.
+>=20
+> The coredump server uses MSG_PEEK to peek the size of struct
+> coredump_req. If the kernel uses a newer struct coredump_req the
+> coredump server just reads the size it knows and discard any remaining
+> bytes in the buffer. If the kernel uses an older struct coredump_req
+> the coredump server just reads the size the kernel knows.
+>=20
+> The returned struct coredump_req will inform the coredump server what
+> features the kernel supports. The coredump_req->mask member is set to
+> the currently know features.
+>=20
+> The coredump server may only use features whose bits were raised by the
+> kernel in coredump_req->mask.
+>=20
+> In response to a coredump_req from the kernel the coredump server sends
+> a struct coredump_ack to the kernel. The kernel informs the coredump
+> server what version of struct coredump_ack it supports by setting struct
+> coredump_req->size_ack to the size it knows about. The coredump server
+> may only send as many bytes as coredump_req->size_ack indicates (a
+> smaller size is fine of course). The coredump server must set
+> coredump_ack->size accordingly.
+>=20
+> The coredump server sets the features it wants to use in struct
+> coredump_ack->mask. Only bits returned in struct coredump_req->mask may
+> be used.
+>=20
+> In case an invalid struct coredump_ack is sent to the kernel an
+> out-of-band byte will be sent by the kernel indicating the reason why
+> the coredump_ack was rejected.
+>=20
+> The out-of-band markers allow advanced userspace to infer failure. They
+> are optional and can be ignored by not listening for POLLPRI events and
+> aren't necessary for the coredump server to function correctly.
+>=20
+> In the initial version the following features are supported in
+> coredump_{req,ack}->mask:
+>=20
+> * COREDUMP_KERNEL
+>   The kernel will write the coredump data to the socket.
+>=20
+> * COREDUMP_USERSPACE
+>   The kernel will not write coredump data but will indicate to the
+>   parent that a coredump has been generated. This is used when userspace
+>   generates its own coredumps.
+>=20
+> * COREDUMP_REJECT
+>   The kernel will skip generating a coredump for this task.
+>=20
+> * COREDUMP_WAIT
+>   The kernel will prevent the task from exiting until the coredump
+>   server has shutdown the socket connection.
+>=20
+> The flexible coredump socket can be enabled by using the "@@" prefix
+> instead of the single "@" prefix for the regular coredump socket:
+>=20
+>   @@/run/systemd/coredump.socket
+>=20
+> will enable flexible coredump handling. Current kernels already enforce
+> that "@" must be followed by "/" and will reject anything else. So
+> extending this is backward and forward compatible.
+>=20
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/coredump.c                 | 130 ++++++++++++++++++++++++++++++++++++=
++++---
+>  include/uapi/linux/coredump.h | 104 +++++++++++++++++++++++++++++++++
+>  2 files changed, 227 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index f217ebf2b3b6..e79f37d3eefb 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -51,6 +51,7 @@
+>  #include <net/sock.h>
+>  #include <uapi/linux/pidfd.h>
+>  #include <uapi/linux/un.h>
+> +#include <uapi/linux/coredump.h>
+> =20
+>  #include <linux/uaccess.h>
+>  #include <asm/mmu_context.h>
+> @@ -83,15 +84,17 @@ static int core_name_size =3D CORENAME_MAX_SIZE;
+>  unsigned int core_file_note_size_limit =3D CORE_FILE_NOTE_SIZE_DEFAULT;
+> =20
+>  enum coredump_type_t {
+> -	COREDUMP_FILE =3D 1,
+> -	COREDUMP_PIPE =3D 2,
+> -	COREDUMP_SOCK =3D 3,
+> +	COREDUMP_FILE		=3D 1,
+> +	COREDUMP_PIPE		=3D 2,
+> +	COREDUMP_SOCK		=3D 3,
+> +	COREDUMP_SOCK_REQ	=3D 4,
+>  };
+> =20
+>  struct core_name {
+>  	char *corename;
+>  	int used, size;
+>  	enum coredump_type_t core_type;
+> +	u64 mask;
+>  };
+> =20
+>  static int expand_corename(struct core_name *cn, int size)
+> @@ -235,6 +238,9 @@ static int format_corename(struct core_name *cn, stru=
+ct coredump_params *cprm,
+>  	int pid_in_pattern =3D 0;
+>  	int err =3D 0;
+> =20
+> +	cn->mask =3D COREDUMP_KERNEL;
+> +	if (core_pipe_limit)
+> +		cn->mask |=3D COREDUMP_WAIT;
+>  	cn->used =3D 0;
+>  	cn->corename =3D NULL;
+>  	if (*pat_ptr =3D=3D '|')
+> @@ -264,6 +270,13 @@ static int format_corename(struct core_name *cn, str=
+uct coredump_params *cprm,
+>  		pat_ptr++;
+>  		if (!(*pat_ptr))
+>  			return -ENOMEM;
+> +		if (*pat_ptr =3D=3D '@') {
+> +			pat_ptr++;
+> +			if (!(*pat_ptr))
+> +				return -ENOMEM;
+> +
+> +			cn->core_type =3D COREDUMP_SOCK_REQ;
+> +		}
+> =20
+>  		err =3D cn_printf(cn, "%s", pat_ptr);
+>  		if (err)
+> @@ -632,6 +645,93 @@ static int umh_coredump_setup(struct subprocess_info=
+ *info, struct cred *new)
+>  	return 0;
+>  }
+> =20
+> +#ifdef CONFIG_UNIX
+> +static inline bool coredump_sock_recv(struct file *file, struct coredump=
+_ack *ack, size_t size, int flags)
+> +{
+> +	struct msghdr msg =3D {};
+> +	struct kvec iov =3D { .iov_base =3D ack, .iov_len =3D size };
+> +	ssize_t ret;
+> +
+> +	memset(ack, 0, size);
+> +	ret =3D kernel_recvmsg(sock_from_file(file), &msg, &iov, 1, size, flags=
+);
+> +	return ret =3D=3D size;
+> +}
+> +
+> +static inline bool coredump_sock_send(struct file *file, struct coredump=
+_req *req)
+> +{
+> +	struct msghdr msg =3D { .msg_flags =3D MSG_NOSIGNAL };
+> +	struct kvec iov =3D { .iov_base =3D req, .iov_len =3D sizeof(*req) };
+> +	ssize_t ret;
+> +
+> +	ret =3D kernel_sendmsg(sock_from_file(file), &msg, &iov, 1, sizeof(*req=
+));
+> +	return ret =3D=3D sizeof(*req);
+> +}
+> +
+> +static_assert(sizeof(enum coredump_oob) =3D=3D sizeof(__u8));
+> +
+> +static inline bool coredump_sock_oob(struct file *file, enum coredump_oo=
+b oob)
+> +{
+> +#ifdef CONFIG_AF_UNIX_OOB
+> +	struct msghdr msg =3D { .msg_flags =3D MSG_NOSIGNAL | MSG_OOB };
+> +	struct kvec iov =3D { .iov_base =3D &oob, .iov_len =3D sizeof(oob) };
+> +
+> +	kernel_sendmsg(sock_from_file(file), &msg, &iov, 1, sizeof(oob));
+> +#endif
+> +	coredump_report_failure("Coredump socket ack failed %u", oob);
+> +	return false;
+> +}
+> +
+> +static bool coredump_request(struct core_name *cn, struct coredump_param=
+s *cprm)
+> +{
+> +	struct coredump_req req =3D {
+> +		.size		=3D sizeof(struct coredump_req),
+> +		.mask		=3D COREDUMP_KERNEL | COREDUMP_USERSPACE |
+> +				  COREDUMP_REJECT | COREDUMP_WAIT,
+> +		.size_ack	=3D sizeof(struct coredump_ack),
+> +	};
+> +	struct coredump_ack ack =3D {};
+> +	ssize_t usize;
+> +
+> +	if (cn->core_type !=3D COREDUMP_SOCK_REQ)
+> +		return true;
+> +
+> +	/* Let userspace know what we support. */
+> +	if (!coredump_sock_send(cprm->file, &req))
+> +		return false;
+> +
+> +	/* Peek the size of the coredump_ack. */
+> +	if (!coredump_sock_recv(cprm->file, &ack, sizeof(ack.size),
+> +				MSG_PEEK | MSG_WAITALL))
+> +		return false;
+> +
+> +	/* Refuse unknown coredump_ack sizes. */
+> +	usize =3D ack.size;
+> +	if (usize < COREDUMP_ACK_SIZE_VER0 || usize > sizeof(ack))
+> +		return coredump_sock_oob(cprm->file, COREDUMP_OOB_INVALIDSIZE);
+> +
+> +	/* Now retrieve the coredump_ack. */
+> +	if (!coredump_sock_recv(cprm->file, &ack, usize, MSG_WAITALL))
+> +		return false;
+> +	if (ack.size !=3D usize)
+> +		return false;
+> +
+> +	/* Refuse unknown coredump_ack flags. */
+> +	if (ack.mask & ~req.mask)
+> +		return coredump_sock_oob(cprm->file, COREDUMP_OOB_UNSUPPORTED);
+> +
+> +	/* Refuse mutually exclusive options. */
+> +	if (hweight64(ack.mask & (COREDUMP_USERSPACE | COREDUMP_KERNEL |
+> +				  COREDUMP_REJECT)) !=3D 1)
+> +		return coredump_sock_oob(cprm->file, COREDUMP_OOB_CONFLICTING);
+> +
+> +	if (ack.spare)
+> +		return coredump_sock_oob(cprm->file, COREDUMP_OOB_UNSUPPORTED);
+> +
+> +	cn->mask =3D ack.mask;
+> +	return true;
+> +}
+> +#endif
+> +
+>  void do_coredump(const kernel_siginfo_t *siginfo)
+>  {
+>  	struct core_state core_state;
+> @@ -850,6 +950,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  		}
+>  		break;
+>  	}
+> +	case COREDUMP_SOCK_REQ:
+> +		fallthrough;
 
-My memory must be quite faulty then. I remember there being significant
-controversy at the Park City LSF around some patches adding support for
-case insensitivity. But so be it -- I must not have paid terribly close
-attention due to lack of oxygen.
+nit: you can omit the "fallthrough;" line here.
 
+>  	case COREDUMP_SOCK: {
+>  #ifdef CONFIG_UNIX
+>  		struct file *file __free(fput) =3D NULL;
+> @@ -918,6 +1020,9 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+> =20
+>  		cprm.limit =3D RLIM_INFINITY;
+>  		cprm.file =3D no_free_ptr(file);
+> +
+> +		if (!coredump_request(&cn, &cprm))
+> +			goto close_fail;
+>  #else
+>  		coredump_report_failure("Core dump socket support %s disabled", cn.cor=
+ename);
+>  		goto close_fail;
+> @@ -929,12 +1034,17 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  		goto close_fail;
+>  	}
+> =20
+> +	/* Don't even generate the coredump. */
+> +	if (cn.mask & COREDUMP_REJECT)
+> +		goto close_fail;
+> +
+>  	/* get us an unshared descriptor table; almost always a no-op */
+>  	/* The cell spufs coredump code reads the file descriptor tables */
+>  	retval =3D unshare_files();
+>  	if (retval)
+>  		goto close_fail;
+> -	if (!dump_interrupted()) {
+> +
+> +	if ((cn.mask & COREDUMP_KERNEL) && !dump_interrupted()) {
+>  		/*
+>  		 * umh disabled with CONFIG_STATIC_USERMODEHELPER_PATH=3D"" would
+>  		 * have this set to NULL.
+> @@ -968,17 +1078,23 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  		kernel_sock_shutdown(sock_from_file(cprm.file), SHUT_WR);
+>  #endif
+> =20
+> +	/* Let the parent know that a coredump was generated. */
+> +	if (cn.mask & COREDUMP_USERSPACE)
+> +		core_dumped =3D true;
+> +
+>  	/*
+>  	 * When core_pipe_limit is set we wait for the coredump server
+>  	 * or usermodehelper to finish before exiting so it can e.g.,
+>  	 * inspect /proc/<pid>.
+>  	 */
 
-> That being said no one ever intended any of these to be exported over
-> NFS, and I also question the sanity of anyone wanting to use case
-> insensitive file systems over NFS.
+You can ignore my earlier question. The comment above clarifies it.
 
-My sense is that case insensitivity for NFS exports is for Windows-based
-clients and/or compatibility with Samba / SMB clients. But it does open
-up a whole bunch of twisty little corner cases that I'm not terribly
-anxious to bite off and chew on (See the i18n Internet Draft that Ted
-cited earlier just as a start).
+> -	if (core_pipe_limit) {
+> +	if (cn.mask & COREDUMP_WAIT) {
+>  		switch (cn.core_type) {
+>  		case COREDUMP_PIPE:
+>  			wait_for_dump_helpers(cprm.file);
+>  			break;
+>  #ifdef CONFIG_UNIX
+> +		case COREDUMP_SOCK_REQ:
+> +			fallthrough;
+>  		case COREDUMP_SOCK: {
+>  			ssize_t n;
+> =20
+> @@ -1249,8 +1365,8 @@ static inline bool check_coredump_socket(void)
+>  	if (current->nsproxy->mnt_ns !=3D init_task.nsproxy->mnt_ns)
+>  		return false;
+> =20
+> -	/* Must be an absolute path. */
+> -	if (*(core_pattern + 1) !=3D '/')
+> +	/* Must be an absolute path or the socket request. */
+> +	if (*(core_pattern + 1) !=3D '/' && *(core_pattern + 1) !=3D '@')
+>  		return false;
+> =20
+>  	return true;
+> diff --git a/include/uapi/linux/coredump.h b/include/uapi/linux/coredump.=
+h
+> new file mode 100644
+> index 000000000000..4fa7d1f9d062
+> --- /dev/null
+> +++ b/include/uapi/linux/coredump.h
+> @@ -0,0 +1,104 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +
+> +#ifndef _UAPI_LINUX_COREDUMP_H
+> +#define _UAPI_LINUX_COREDUMP_H
+> +
+> +#include <linux/types.h>
+> +
+> +/**
+> + * coredump_{req,ack} flags
+> + * @COREDUMP_KERNEL: kernel writes coredump
+> + * @COREDUMP_USERSPACE: userspace writes coredump
+> + * @COREDUMP_REJECT: don't generate coredump
+> + * @COREDUMP_WAIT: wait for coredump server
+> + */
+> +enum {
+> +	COREDUMP_KERNEL		=3D (1ULL << 0),
+> +	COREDUMP_USERSPACE	=3D (1ULL << 1),
+> +	COREDUMP_REJECT		=3D (1ULL << 2),
+> +	COREDUMP_WAIT		=3D (1ULL << 3),
+> +};
+> +
+> +/**
+> + * struct coredump_req - message kernel sends to userspace
+> + * @size: size of struct coredump_req
+> + * @size_ack: known size of struct coredump_ack on this kernel
+> + * @mask: supported features
+> + *
+> + * When a coredump happens the kernel will connect to the coredump
+> + * socket and send a coredump request to the coredump server. The @size
+> + * member is set to the size of struct coredump_req and provides a hint
+> + * to userspace how much data can be read. Userspace may use MSG_PEEK to
+> + * peek the size of struct coredump_req and then choose to consume it in
+> + * one go. Userspace may also simply read a COREDUMP_ACK_SIZE_VER0
+> + * request. If the size the kernel sends is larger userspace simply
+> + * discards any remaining data.
+> + *
+> + * The coredump_req->mask member is set to the currently know features.
+> + * Userspace may only set coredump_ack->mask to the bits raised by the
+> + * kernel in coredump_req->mask.
+> + *
+> + * The coredump_req->size_ack member is set by the kernel to the size of
+> + * struct coredump_ack the kernel knows. Userspace may only send up to
+> + * coredump_req->size_ack bytes to the kernel and must set
+> + * coredump_ack->size accordingly.
+> + */
+> +struct coredump_req {
+> +	__u32 size;
+> +	__u32 size_ack;
+> +	__u64 mask;
+> +};
+> +
+> +enum {
+> +	COREDUMP_REQ_SIZE_VER0 =3D 16U, /* size of first published struct */
+> +};
+> +
+> +/**
+> + * struct coredump_ack - message userspace sends to kernel
+> + * @size: size of the struct
+> + * @spare: unused
+> + * @mask: features kernel is supposed to use
+> + *
+> + * The @size member must be set to the size of struct coredump_ack. It
+> + * may never exceed what the kernel returned in coredump_req->size_ack
+> + * but it may of course be smaller (>=3D COREDUMP_ACK_SIZE_VER0 and <=3D
+> + * coredump_req->size_ack).
+> + *
+> + * The @mask member must be set to the features the coredump server
+> + * wants the kernel to use. Only bits the kernel returned in
+> + * coredump_req->mask may be set.
+> + */
+> +struct coredump_ack {
+> +	__u32 size;
+> +	__u32 spare;
+> +	__u64 mask;
+> +};
+> +
+> +enum {
+> +	COREDUMP_ACK_SIZE_VER0 =3D 16U, /* size of first published struct */
+> +};
+> +
+> +/**
+> + * enum coredump_oob - Out-of-band markers for the coredump socket
+> + *
+> + * The kernel will place a single byte coredump_oob marker on the
+> + * coredump socket. An interested coredump server can listen for POLLPRI
+> + * and figure out why the provided coredump_ack was invalid.
+> + *
+> + * The out-of-band markers allow advanced userspace to infer more detail=
+s
+> + * about a coredump ack. They are optional and can be ignored. They
+> + * aren't necessary for the coredump server to function correctly.
+> + *
+> + * @COREDUMP_OOB_INVALIDSIZE: the provided coredump_ack size was invalid
+> + * @COREDUMP_OOB_UNSUPPORTED: the provided coredump_ack mask was invalid
+> + * @COREDUMP_OOB_CONFLICTING: the provided coredump_ack mask has conflic=
+ting options
+> + * @__COREDUMP_OOB_MAX: the maximum value for coredump_oob
+> + */
+> +enum coredump_oob {
+> +	COREDUMP_OOB_INVALIDSIZE =3D 1U,
+> +	COREDUMP_OOB_UNSUPPORTED =3D 2U,
+> +	COREDUMP_OOB_CONFLICTING =3D 3U,
+> +	__COREDUMP_OOB_MAX       =3D 255U,
+> +} __attribute__ ((__packed__));
+> +
+> +#endif /* _UAPI_LINUX_COREDUMP_H */
 
-Perhaps if we can narrow down the requirements and deployment
-environments, some limited form of case-insensitivity support for NFS
-might start to make sense.
+Looks good!
 
-Does it, for example, make sense for NFSD to query the file system
-on its case sensitivity when it prepares an NFSv3 PATHCONF response?
-Or perhaps only for NFSv4, since NFSv4 pretends to have some recognition
-of internationalized file names?
-
-
--- 
-Chuck Lever
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
