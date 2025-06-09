@@ -1,235 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-51024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2C5AD1E64
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 15:03:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33547AD1EAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 15:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D73D188B0F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 13:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20DC516C324
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 13:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35216257AFB;
-	Mon,  9 Jun 2025 13:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B548D259CAF;
+	Mon,  9 Jun 2025 13:19:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from tempest.elijah.cs.cmu.edu (tempest.elijah.cs.cmu.edu [128.2.210.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B729258CF0;
-	Mon,  9 Jun 2025 13:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2872A25744D;
+	Mon,  9 Jun 2025 13:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.2.210.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749474114; cv=none; b=G6wf2vxUl3UYODwidw9M22fP04rUGlmE/yjgzCoG9BA5aba2avi53FDKrHvJeKLM4IRZo+Xennyc7zFESdK41gEBmGNyWLp40phPjJWLWirK6iXKZQ+yOHGhATcueI3CkPAlfhME68Rdt38T5DrHJaiQQtiGvjDq+NlVmd/17Ng=
+	t=1749475161; cv=none; b=Sn9KxEuS/vgZV1nqYs2hy3IiHict2YSEJai2f81/3rnlg1HFQvrySPO0gxGfriL65jsNpy/+8PYTBoiMfSqB1dqU8nt76dddpA2JteR6Le+Bq8ZWzX7c/x2qBMKPhJb8fYuCuDdjjKx58QeznuOcy2ccoUtRaJuxiNWvFlFSMGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749474114; c=relaxed/simple;
-	bh=6O2oFoq7/tNbsOXuXUHwAhsSFeAgO9v70mNYRx8wUjA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HoOHXOpF5KqdfYmgdpovbsYmCVK4B7favgDHySQiBf1n6zYKlnRlyczLNXBTvgJc4ZMcA3+UB52k33UviLS4SGlxqpDfUJpfWguxxQLkE6N/wb5uPTCiHIEJofcw9o5ggRV5HrfrxzwFoACpZ+FetpkScQjh4Ha2RYLs/ea5kC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bGBrS5fysz6M4tN;
-	Mon,  9 Jun 2025 21:01:28 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2095A1404D8;
-	Mon,  9 Jun 2025 21:01:50 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 9 Jun
- 2025 15:01:48 +0200
-Date: Mon, 9 Jun 2025 14:01:47 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
-	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
- Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
-	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
-	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Ying
- Huang <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	"Peter Zijlstra" <peterz@infradead.org>, Greg KH
-	<gregkh@linuxfoundation.org>, Nathan Fontenot <nathan.fontenot@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
-	"Benjamin Cheatham" <benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
-	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
-Subject: Re: [PATCH v4 7/7] cxl/dax: Defer DAX consumption of SOFT RESERVED
- resources until after CXL region creation
-Message-ID: <20250609140147.00000a1e@huawei.com>
-In-Reply-To: <20250603221949.53272-8-Smita.KoralahalliChannabasappa@amd.com>
-References: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
-	<20250603221949.53272-8-Smita.KoralahalliChannabasappa@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1749475161; c=relaxed/simple;
+	bh=C00bQTTFvRHrMtoYrSdahrvXI5CmM0CiXHHdd4rWmes=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=knV0C7yMwWTOxv8eHUbJJokMTvs29XYfLXEroQ7s3PSsDDWhs1Yv9Ql3INS7TdqOma1BVFH2v5wymoh5ftanimtHG/aJwSXvRSz4LXeyqQ/raJrdW9KgqOMVVNA+tyrKl1knBeyAgysGQRAyZ1H+FJgAiL/hEPh7YNkx41gVKaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.cmu.edu; spf=pass smtp.mailfrom=cs.cmu.edu; arc=none smtp.client-ip=128.2.210.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.cmu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.cmu.edu
+Received: from [127.0.0.1] (pool-74-98-214-249.pitbpa.fios.verizon.net [74.98.214.249])
+	by tempest.elijah.cs.cmu.edu (Postfix) with ESMTPSA id BBA041800244;
+	Mon,  9 Jun 2025 09:12:05 -0400 (EDT)
+Date: Mon, 09 Jun 2025 09:12:02 -0400
+From: Jan Harkes <jaharkes@cs.cmu.edu>
+To: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>
+CC: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Amir Goldstein <amir73il@gmail.com>, David Howells <dhowells@redhat.com>,
+ Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+ coda@cs.cmu.edu, linux-nfs@vger.kernel.org, netfs@lists.linux.dev,
+ ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] coda: use iterate_dir() in coda_readdir()
+In-Reply-To: <6zirxkpkdrtpcoewopaaotmw4jpjvjmqq4tijudvrpeo4227pi@hyljuie6ngem>
+References: <20250608230952.20539-1-neil@brown.name> <20250608230952.20539-4-neil@brown.name> <8f2bf3aed5d7bd005adcdeaa51c02c7aa9ca14ba.camel@kernel.org> <6zirxkpkdrtpcoewopaaotmw4jpjvjmqq4tijudvrpeo4227pi@hyljuie6ngem>
+Message-ID: <A70CCC08-E8BE-4655-9158-81754F4F6B35@cs.cmu.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 3 Jun 2025 22:19:49 +0000
-Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
+There are definitely still users of Coda at CMU, I don't track who else use=
+s it, but it cannot be too many for sure=2E
 
-> From: Nathan Fontenot <nathan.fontenot@amd.com>
->=20
-> The DAX HMEM driver currently consumes all SOFT RESERVED iomem resources
-> during initialization. This interferes with the CXL driver=E2=80=99s abil=
-ity to
-> create regions and trim overlapping SOFT RESERVED ranges before DAX uses
-> them.
->=20
-> To resolve this, defer the DAX driver's resource consumption if the
-> cxl_acpi driver is enabled. The DAX HMEM initialization skips walking the
-> iomem resource tree in this case. After CXL region creation completes,
-> any remaining SOFT RESERVED resources are explicitly registered with the
-> DAX driver by the CXL driver.
->=20
-> This sequencing ensures proper handling of overlaps and fixes hotplug
-> failures.
->=20
-> Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> Co-developed-by: Terry Bowman <terry.bowman@amd.com>
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> ---
->  drivers/cxl/core/region.c | 10 +++++++++
->  drivers/dax/hmem/device.c | 43 ++++++++++++++++++++-------------------
->  drivers/dax/hmem/hmem.c   |  3 ++-
->  include/linux/dax.h       |  6 ++++++
->  4 files changed, 40 insertions(+), 22 deletions(-)
->=20
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 3a5ca44d65f3..c6c0c7ba3b20 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -10,6 +10,7 @@
->  #include <linux/sort.h>
->  #include <linux/idr.h>
->  #include <linux/memory-tiers.h>
-> +#include <linux/dax.h>
->  #include <cxlmem.h>
->  #include <cxl.h>
->  #include "core.h"
-> @@ -3553,6 +3554,11 @@ static struct resource *normalize_resource(struct =
-resource *res)
->  	return NULL;
->  }
-> =20
-> +static int cxl_softreserv_mem_register(struct resource *res, void *unuse=
-d)
-> +{
-> +	return hmem_register_device(phys_to_target_node(res->start), res);
-> +}
-> +
->  static int __cxl_region_softreserv_update(struct resource *soft,
->  					  void *_cxlr)
->  {
-> @@ -3590,6 +3596,10 @@ int cxl_region_softreserv_update(void)
->  				    __cxl_region_softreserv_update);
->  	}
-> =20
-> +	/* Now register any remaining SOFT RESERVES with DAX */
-> +	walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED, IORESOURCE_MEM,
-> +			    0, -1, NULL, cxl_softreserv_mem_register);
-> +
->  	return 0;
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_region_softreserv_update, "CXL");
-> diff --git a/drivers/dax/hmem/device.c b/drivers/dax/hmem/device.c
-> index 59ad44761191..cc1ed7bbdb1a 100644
-> --- a/drivers/dax/hmem/device.c
-> +++ b/drivers/dax/hmem/device.c
-> @@ -8,7 +8,6 @@
->  static bool nohmem;
->  module_param_named(disable, nohmem, bool, 0444);
-> =20
-> -static bool platform_initialized;
->  static DEFINE_MUTEX(hmem_resource_lock);
->  static struct resource hmem_active =3D {
->  	.name =3D "HMEM devices",
-> @@ -35,9 +34,7 @@ EXPORT_SYMBOL_GPL(walk_hmem_resources);
-> =20
->  static void __hmem_register_resource(int target_nid, struct resource *re=
-s)
->  {
-> -	struct platform_device *pdev;
->  	struct resource *new;
-> -	int rc;
-> =20
->  	new =3D __request_region(&hmem_active, res->start, resource_size(res), =
-"",
->  			       0);
-> @@ -47,21 +44,6 @@ static void __hmem_register_resource(int target_nid, s=
-truct resource *res)
->  	}
-> =20
->  	new->desc =3D target_nid;
-> -
-> -	if (platform_initialized)
-> -		return;
-> -
-> -	pdev =3D platform_device_alloc("hmem_platform", 0);
-> -	if (!pdev) {
-> -		pr_err_once("failed to register device-dax hmem_platform device\n");
-> -		return;
-> -	}
-> -
-> -	rc =3D platform_device_add(pdev);
-> -	if (rc)
-> -		platform_device_put(pdev);
-> -	else
-> -		platform_initialized =3D true;
->  }
-> =20
->  void hmem_register_resource(int target_nid, struct resource *res)
-> @@ -83,9 +65,28 @@ static __init int hmem_register_one(struct resource *r=
-es, void *data)
-> =20
->  static __init int hmem_init(void)
->  {
-> -	walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED,
-> -			IORESOURCE_MEM, 0, -1, NULL, hmem_register_one);
-> -	return 0;
-> +	struct platform_device *pdev;
-> +	int rc;
-> +
-> +	if (!IS_ENABLED(CONFIG_CXL_ACPI)) {
-> +		walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED,
-> +				    IORESOURCE_MEM, 0, -1, NULL,
-> +				    hmem_register_one);
-> +	}
-> +
-> +	pdev =3D platform_device_alloc("hmem_platform", 0);
-> +	if (!pdev) {
-> +		pr_err("failed to register device-dax hmem_platform device\n");
-> +		return -1;
-> +	}
-> +
-> +	rc =3D platform_device_add(pdev);
+At this point it mostly keeps you honest about little locking details in t=
+he vfs=2E There are some tricky details in how the inode mappings are acces=
+sed and such=2E I think that  is helpful for overlay and user filesystems l=
+ike fuse, overlayfs, etc=2E but Coda is quite small so it is easy to reason=
+ about how it uses these features=2E
 
-platform_device_register_simple("hmem_platform", -1, NULL, 0); or something=
- like
-that?  There are quite a few variants of platform_device_register to cover
-simple cases.
+Jan
 
-
-> +	if (rc) {
-> +		pr_err("failed to add device-dax hmem_platform device\n");
-> +		platform_device_put(pdev);
-> +	}
-> +
-> +	return rc;
->  }
-> =20
->  /*
-
+On June 9, 2025 9:00:31 AM EDT, Jan Kara <jack@suse=2Ecz> wrote:
+>On Mon 09-06-25 08:17:15, Jeff Layton wrote:
+>> On Mon, 2025-06-09 at 09:09 +1000, NeilBrown wrote:
+>> > The code in coda_readdir() is nearly identical to iterate_dir()=2E
+>> > Differences are:
+>> >  - iterate_dir() is killable
+>> >  - iterate_dir() adds permission checking and accessing notifications
+>> >=20
+>> > I believe these are not harmful for coda so it is best to use
+>> > iterate_dir() directly=2E  This will allow locking changes without
+>> > touching the code in coda=2E
+>> >=20
+>> > Signed-off-by: NeilBrown <neil@brown=2Ename>
+>> > ---
+>> >  fs/coda/dir=2Ec | 12 ++----------
+>> >  1 file changed, 2 insertions(+), 10 deletions(-)
+>> >=20
+>> > diff --git a/fs/coda/dir=2Ec b/fs/coda/dir=2Ec
+>> > index ab69d8f0cec2=2E=2Eca9990017265 100644
+>> > --- a/fs/coda/dir=2Ec
+>> > +++ b/fs/coda/dir=2Ec
+>> > @@ -429,17 +429,9 @@ static int coda_readdir(struct file *coda_file, =
+struct dir_context *ctx)
+>> >  	cfi =3D coda_ftoc(coda_file);
+>> >  	host_file =3D cfi->cfi_container;
+>> > =20
+>> > -	if (host_file->f_op->iterate_shared) {
+>> > -		struct inode *host_inode =3D file_inode(host_file);
+>> > -		ret =3D -ENOENT;
+>> > -		if (!IS_DEADDIR(host_inode)) {
+>> > -			inode_lock_shared(host_inode);
+>> > -			ret =3D host_file->f_op->iterate_shared(host_file, ctx);
+>> > -			file_accessed(host_file);
+>> > -			inode_unlock_shared(host_inode);
+>> > -		}
+>> > +	ret =3D iterate_dir(host_file, ctx);
+>> > +	if (ret !=3D -ENOTDIR)
+>> >  		return ret;
+>> > -	}
+>> >  	/* Venus: we must read Venus dirents from a file */
+>> >  	return coda_venus_readdir(coda_file, ctx);
+>> >  }
+>>=20
+>>=20
+>> Is it already time for my annual ask of "Who the heck is using coda
+>> these days?" Anyway, this patch looks fine to me=2E
+>>=20
+>> Reviewed-by: Jeff Layton <jlayton@kernel=2Eorg>
+>
+>Send a patch proposing deprecating it and we might learn that :) Searchin=
+g
+>the web seems to suggest it is indeed pretty close to dead=2E
+>
+>								Honza
 
