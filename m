@@ -1,49 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-51015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82304AD1CE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 14:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97069AD1CF4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 14:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1597167267
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 12:13:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1B6216C748
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 12:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9971D257423;
-	Mon,  9 Jun 2025 12:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AD1257427;
+	Mon,  9 Jun 2025 12:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWgw2b4B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6pHVFlW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5AF2550B3;
-	Mon,  9 Jun 2025 12:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924CB255F3B;
+	Mon,  9 Jun 2025 12:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749471195; cv=none; b=F9Wng6gHPviIEHYZ4UJoQYcTiigXbQdtpyaE1aQY0YidkCeDNn0Y9cET3eMgUgaS+3xoosQ+1GOflmqSH7bSOstO/iG3yTetou0yZanNa5ooFaMhdQhHIruC74ARPnARNFUgONYNBTsZ9EjvKL1VQ1Wn/1REMMX1WqRuYe8mcns=
+	t=1749471217; cv=none; b=lWHcbFlBSAhIBQWGI3TarXIz6F0D8WQOpzz4WVm5RUpq+FWxAR+dfLJll2sZDtNqM/QDSjaSRdjaonmqTsds7pfBv/7g8R1Rpx0uPkLgsq8eZ0EfT9vRSAHMu829YGqLWMc+aHpOTQN0XotkzvywHVRdBloe5w6o2wwjxXep5YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749471195; c=relaxed/simple;
-	bh=AyX05glyqV/dgIcnwQlqCx9urPfpuJ1+TEu5urURXBQ=;
+	s=arc-20240116; t=1749471217; c=relaxed/simple;
+	bh=rcdw3v3cNwENPY6ptsfCS7VnGmSSvAacJWPl85TNJ2Q=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=E1sHeFXNSwzFF6JTSBkuVuuzdh5Ni8V5D4Ke8/uvjvSJmKq8sIxlRJV//yUCSZTzNfo2u0ryPwGFGbz9jJIVUQnvMxdUVLPKIFXt/0heP9xP7KPZIyGgvTaKCH/HZCdvt3SJTBt+ST7eLvMbQZXhKXRTqWzIVmV21RYuq5ZWmfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWgw2b4B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED873C4CEED;
-	Mon,  9 Jun 2025 12:13:12 +0000 (UTC)
+	 Content-Type:MIME-Version; b=bidZ/RI92hir7fu61sre8C8eU5J0mHto5ky9U9WGtd/29fur/3SdIiA9gtmkcXw2YwyVePxV85/7bIetmoVgqiWR6lgJJAN/1jfwv06Yf2pFJNcsoTatJg2TmtWMHMr9DKtIX9DslrqHCPJAMxHz96MkXQkEB3Jy6A4S+5UbHcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6pHVFlW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80183C4CEEB;
+	Mon,  9 Jun 2025 12:13:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749471194;
-	bh=AyX05glyqV/dgIcnwQlqCx9urPfpuJ1+TEu5urURXBQ=;
+	s=k20201202; t=1749471216;
+	bh=rcdw3v3cNwENPY6ptsfCS7VnGmSSvAacJWPl85TNJ2Q=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=bWgw2b4BjVk442hXU8QOGSj6iaFA/kAnV6b+3A1ffZVahgnh8bAF+YoHr8yg5VqDj
-	 Xv1JvrOASRkHOMcrHHMXYvuG7+MdppMlsiJimBuXYZqhXv/sBaxc4lWw+riXPZQ8O0
-	 cgF6DSBsLPwZQk1OILj9uCA3qZWlERgrjPXgSl6OQ9IhtVRMBQh7QWbixCBdt8mJ6S
-	 IXWkZZpzB4nRUju/Zf7GMxvJQAMP7kW65+T8yM12BQZEcGI6DcnJ69AlLP//xBGE3a
-	 Vf58Tb3+i/0tNJH/ZKEUWDkDNoy/MnEPcu2dQR4vfNnhqnNflTRZ3LlP/jVqViYmWI
-	 I0j3xkkOgoCpw==
-Message-ID: <ac0855c4fa222bf68452d8154ea52dcdbb99f39f.camel@kernel.org>
-Subject: Re: [PATCH 1/5] VFS: merge lookup_one_qstr_excl_raw() back into
- lookup_one_qstr_excl()
+	b=B6pHVFlW2txWOffZI7uRpPj0LHFZrpOjOBq7Ax3K87XZtSv5yMSgRtty/7XIU9V2O
+	 vza8dR5/skuv6WDU2UDOFcXsv62D8OBHYoD+nkLT/x/qGB+wkIbGh6+EhMQsp0vbWW
+	 AdlC3aY5YBuJx+mg2mWQ6RmAXpaWrKNPpJ53/A2gZ6TyQUAf8bo1CFBK/4xXVjYKNa
+	 wTQpTltGa6zlrxysiNF/xrAmfGRv4UjDwUi3IuWeWvIMASlJaer4o4RAEam6VEyYZI
+	 YVJfibbpi5IYVMYYOCbYUKum1yjEpCsEiT0hMEaEuiAcvKZ+uVLu5jQgxYnIJUjAGY
+	 yGja0hqKm3NOA==
+Message-ID: <e4e40b77cc3a1434df7e65bd10a0eaaa9276a4d6.camel@kernel.org>
+Subject: Re: [PATCH 2/5] VFS: Minor fixes for porting.rst
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner
@@ -57,10 +56,10 @@ Cc: linux-fsdevel@vger.kernel.org, coda@cs.cmu.edu,
  netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Date: Mon, 09 Jun 2025 08:13:11 -0400
-In-Reply-To: <20250608230952.20539-2-neil@brown.name>
+Date: Mon, 09 Jun 2025 08:13:33 -0400
+In-Reply-To: <20250608230952.20539-3-neil@brown.name>
 References: <20250608230952.20539-1-neil@brown.name>
-	 <20250608230952.20539-2-neil@brown.name>
+	 <20250608230952.20539-3-neil@brown.name>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -146,92 +145,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Mon, 2025-06-09 at 09:09 +1000, NeilBrown wrote:
-> The effect of lookup_one_qstr_excl_raw() can be achieved by passing
-> LOOKUP_CREATE() to lookup_one_qstr_excl() - we don't need a separate
-> function.
+> This paragraph was relevant for an earlier version of the code which
+> passed the qstr as a struct instead of a point.  The version that landed
+> passed the pointer in all cases so this para is now pointless.
 >=20
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/namei.c | 37 ++++++++++++++-----------------------
->  1 file changed, 14 insertions(+), 23 deletions(-)
+>  Documentation/filesystems/porting.rst | 3 ---
+>  1 file changed, 3 deletions(-)
 >=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4bb889fc980b..dc42bfac5c57 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1665,9 +1665,17 @@ static struct dentry *lookup_dcache(const struct q=
-str *name,
->  	return dentry;
->  }
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
+stems/porting.rst
+> index 3616d7161dab..e8c9f21582d1 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1224,9 +1224,6 @@ lookup_noperm_unlocked(), lookup_noperm_positive_un=
+locked().  They now
+>  take a qstr instead of separate name and length.  QSTR() can be used
+>  when strlen() is needed for the length.
 > =20
-> -static struct dentry *lookup_one_qstr_excl_raw(const struct qstr *name,
-> -					       struct dentry *base,
-> -					       unsigned int flags)
-> +/*
-> + * Parent directory has inode locked exclusive.  This is one
-> + * and only case when ->lookup() gets called on non in-lookup
-> + * dentries - as the matter of fact, this only gets called
-> + * when directory is guaranteed to have no in-lookup children
-> + * at all.
-> + * Will return -ENOENT if name isn't found and LOOKUP_CREATE wasn't pass=
-ed.
-> + * Will return -EEXIST if name is found and LOOKUP_EXCL was passed.
-> + */
-> +struct dentry *lookup_one_qstr_excl(const struct qstr *name,
-> +				    struct dentry *base, unsigned int flags)
->  {
->  	struct dentry *dentry;
->  	struct dentry *old;
-> @@ -1675,7 +1683,7 @@ static struct dentry *lookup_one_qstr_excl_raw(cons=
-t struct qstr *name,
-> =20
->  	dentry =3D lookup_dcache(name, base, flags);
->  	if (dentry)
-> -		return dentry;
-> +		goto found;
-> =20
->  	/* Don't create child dentry for a dead directory. */
->  	dir =3D base->d_inode;
-> @@ -1691,24 +1699,7 @@ static struct dentry *lookup_one_qstr_excl_raw(con=
-st struct qstr *name,
->  		dput(dentry);
->  		dentry =3D old;
->  	}
-> -	return dentry;
-> -}
+> -For try_lookup_noperm() a reference to the qstr is passed in case the
+> -hash might subsequently be needed.
 > -
-> -/*
-> - * Parent directory has inode locked exclusive.  This is one
-> - * and only case when ->lookup() gets called on non in-lookup
-> - * dentries - as the matter of fact, this only gets called
-> - * when directory is guaranteed to have no in-lookup children
-> - * at all.
-> - * Will return -ENOENT if name isn't found and LOOKUP_CREATE wasn't pass=
-ed.
-> - * Will return -EEXIST if name is found and LOOKUP_EXCL was passed.
-> - */
-> -struct dentry *lookup_one_qstr_excl(const struct qstr *name,
-> -				    struct dentry *base, unsigned int flags)
-> -{
-> -	struct dentry *dentry;
-> -
-> -	dentry =3D lookup_one_qstr_excl_raw(name, base, flags);
-> +found:
->  	if (IS_ERR(dentry))
->  		return dentry;
->  	if (d_is_negative(dentry) && !(flags & LOOKUP_CREATE)) {
-> @@ -2790,7 +2781,7 @@ struct dentry *kern_path_locked_negative(const char=
- *name, struct path *path)
->  	if (unlikely(type !=3D LAST_NORM))
->  		return ERR_PTR(-EINVAL);
->  	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
-> -	d =3D lookup_one_qstr_excl_raw(&last, parent_path.dentry, 0);
-> +	d =3D lookup_one_qstr_excl(&last, parent_path.dentry, LOOKUP_CREATE);
->  	if (IS_ERR(d)) {
->  		inode_unlock(parent_path.dentry->d_inode);
->  		return d;
-
-Nice little cleanup.
+>  These function no longer do any permission checking - they previously
+>  checked that the caller has 'X' permission on the parent.  They must
+>  ONLY be used internally by a filesystem on itself when it knows that
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
