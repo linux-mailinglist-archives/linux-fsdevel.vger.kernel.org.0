@@ -1,192 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-51011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66218AD1C14
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 13:02:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23680AD1C62
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 13:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5C83A493E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 11:02:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AA83ACD7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jun 2025 11:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666B6254867;
-	Mon,  9 Jun 2025 11:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678FA2566F5;
+	Mon,  9 Jun 2025 11:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SHBQQjq0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VoLZ4iyh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SHBQQjq0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VoLZ4iyh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6EC49625;
-	Mon,  9 Jun 2025 11:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C012550C2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jun 2025 11:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749466964; cv=none; b=DZr9PXWWtN1N2zSuaWWhEAs8ofCH2Vhq8VaXbKcumQijN+OuIQXUGS+w71r3JEkhq6l/VkDAxIQUZLhdL8k3TxnHY5m45WUMvxv9ibQHOUo7AsG1mkfYYMAg9Y7xgzulvD6EJg/0l0/njsOWB1j+mUB3HvjuICr5VWEeYmn+hr0=
+	t=1749468322; cv=none; b=gPdwvUV6nTaBOcUNqely4Ka9H1IOhOk/C9BC/1+drr49QiAXQStgECmeX1V35lI2HldrhbHIEn61+dnSNQQk4Kg8/OYLHe8iA8kOC3MHBzJNxfEZ8MGMTxCQTgTKE3pcLPXFM0fM9LYY+pBbUMvC3tUsnLxtA4epgJJfRIDv4cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749466964; c=relaxed/simple;
-	bh=jx7hLp3tvLBH/1SEAlmcqZmnyK/DYmmzfMarvdWgi04=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=flLRARb6U2/Ud0+YJS8jrZbNDY68yQ/NBKihjfDZAlORynFialA2lh+7l4U2eR2081OP279BGqTYmsV7l0Q32T+wTJRLNdfPlbrOQfSbau4bdcblVKY+IYMpURiqk3k+oeERv7RFdo2JmJAHGXGURWYueLGTjnExuPCOPHWX8TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bG86W59Lzz6L59Z;
-	Mon,  9 Jun 2025 18:58:27 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 716C514038F;
-	Mon,  9 Jun 2025 19:02:39 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 9 Jun
- 2025 13:02:38 +0200
-Date: Mon, 9 Jun 2025 12:02:37 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
-	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
- Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
-	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
-	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Ying
- Huang <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	"Peter Zijlstra" <peterz@infradead.org>, Greg KH
-	<gregkh@linuxfoundation.org>, Nathan Fontenot <nathan.fontenot@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
-	"Benjamin Cheatham" <benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
-	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
-Subject: Re: [PATCH v4 2/7] cxl/core: Remove CONFIG_CXL_SUSPEND and always
- build suspend.o
-Message-ID: <20250609120237.00002eef@huawei.com>
-In-Reply-To: <20250603221949.53272-3-Smita.KoralahalliChannabasappa@amd.com>
-References: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
-	<20250603221949.53272-3-Smita.KoralahalliChannabasappa@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1749468322; c=relaxed/simple;
+	bh=PAtdEJ9v9jfzk9L7TyadJUNVA2PMKdNcs1u9d3LhNWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l23oPYY+7+010oOadzzYlNq2b7CIyW+J1Pm/Ifox1PWjTTTvbAiGvo9ZFOQXLNAqyWgL815LHlV/zy+fpiGM9wJaECE7LIbtpfVQfJcO7YCwxROwDXO6oYT2NLuJ3kCuq1fpfcvFKY1egsRReeCPVsURbHIK+1g8FEt9YkN9ThU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SHBQQjq0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VoLZ4iyh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SHBQQjq0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VoLZ4iyh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 021A721182;
+	Mon,  9 Jun 2025 11:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749468318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hsBQltkCVe5D2i0wiUV1DVAyAaiF31Q0/ZQK/fFHigE=;
+	b=SHBQQjq0Xd/pKI4LTO6+4uuqxy4pMrq1JxxfGlhBzcvE4WlBFlkUpz+WXuv/fNE8MC4Zku
+	+UrT1+04+4HLjSijs028c/igQ398jYXydf78Wl1KHKXZj8NPTr0O/MUhQd604jIBvO7SZG
+	E4eh2S34IKKWGEZo8IiB0rCDTzKaBPc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749468318;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hsBQltkCVe5D2i0wiUV1DVAyAaiF31Q0/ZQK/fFHigE=;
+	b=VoLZ4iyh6N6pIX+VgRHdtXvf+a08nglTf6SQ4S11geiXHgyExZKl9DAr/gcMkvklvh8Fov
+	twVHak2Trn6e1dCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SHBQQjq0;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=VoLZ4iyh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749468318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hsBQltkCVe5D2i0wiUV1DVAyAaiF31Q0/ZQK/fFHigE=;
+	b=SHBQQjq0Xd/pKI4LTO6+4uuqxy4pMrq1JxxfGlhBzcvE4WlBFlkUpz+WXuv/fNE8MC4Zku
+	+UrT1+04+4HLjSijs028c/igQ398jYXydf78Wl1KHKXZj8NPTr0O/MUhQd604jIBvO7SZG
+	E4eh2S34IKKWGEZo8IiB0rCDTzKaBPc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749468318;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hsBQltkCVe5D2i0wiUV1DVAyAaiF31Q0/ZQK/fFHigE=;
+	b=VoLZ4iyh6N6pIX+VgRHdtXvf+a08nglTf6SQ4S11geiXHgyExZKl9DAr/gcMkvklvh8Fov
+	twVHak2Trn6e1dCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E79A0137FE;
+	Mon,  9 Jun 2025 11:25:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5pY5OJ3ERmg0OwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 09 Jun 2025 11:25:17 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A046DA094C; Mon,  9 Jun 2025 13:25:17 +0200 (CEST)
+Date: Mon, 9 Jun 2025 13:25:17 +0200
+From: Jan Kara <jack@suse.cz>
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	kees@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] binfmt_elf: use check_mul_overflow() for size calc
+Message-ID: <j7qo6dmmx2hu34453zfdp6rjrtlsyckjilm6qufe2qyj4dc6ei@su6omrup5rli>
+References: <20250607082844.8779-1-pranav.tyagi03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250607082844.8779-1-pranav.tyagi03@gmail.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 021A721182
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -2.51
+X-Spam-Level: 
 
-On Tue, 3 Jun 2025 22:19:44 +0000
-Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
-
-> In preparation for soft-reserved resource handling, make the suspend
-> infrastructure always available by removing the CONFIG_CXL_SUSPEND
-> Kconfig option.
+On Sat 07-06-25 13:58:44, Pranav Tyagi wrote:
+> Use check_mul_overflow() to safely compute the total size of ELF program
+> headers instead of relying on direct multiplication.
 > 
-> This ensures cxl_mem_active_inc()/dec() and cxl_mem_active() are
-> unconditionally available, enabling coordination between cxl_pci and
-> cxl_mem drivers during region setup and hotplug operations.
-
-If these are no longer just being used for suspend, given there
-is nothing else in the file, maybe move them to somewhere else?
-
-
+> Directly multiplying sizeof(struct elf_phdr) with e_phnum risks integer
+> overflow, especially on 32-bit systems or with malformed ELF binaries
+> crafted to trigger wrap-around. If an overflow occurs, kmalloc() could
+> allocate insufficient memory, potentially leading to out-of-bound
+> accesses, memory corruption or security vulnerabilities.
 > 
-> Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> Co-developed-by: Terry Bowman <terry.bowman@amd.com>
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> Using check_mul_overflow() ensures the multiplication is performed
+> safely and detects overflows before memory allocation. This change makes
+> the function more robust when handling untrusted or corrupted binaries.
+> 
+> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> Link: https://github.com/KSPP/linux/issues/92
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  drivers/cxl/Kconfig        | 4 ----
->  drivers/cxl/core/Makefile  | 2 +-
->  drivers/cxl/core/suspend.c | 5 ++++-
->  drivers/cxl/cxlmem.h       | 9 ---------
->  include/linux/pm.h         | 7 -------
->  5 files changed, 5 insertions(+), 22 deletions(-)
+>  fs/binfmt_elf.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> index cf1ba673b8c2..d09144c2002e 100644
-> --- a/drivers/cxl/Kconfig
-> +++ b/drivers/cxl/Kconfig
-> @@ -118,10 +118,6 @@ config CXL_PORT
->  	default CXL_BUS
->  	tristate
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index a43363d593e5..774e705798b8 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -518,7 +518,10 @@ static struct elf_phdr *load_elf_phdrs(const struct elfhdr *elf_ex,
 >  
-> -config CXL_SUSPEND
-> -	def_bool y
-> -	depends on SUSPEND && CXL_MEM
-> -
->  config CXL_REGION
->  	bool "CXL: Region Support"
->  	default CXL_BUS
-> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-> index 086df97a0fcf..035864db8a32 100644
-> --- a/drivers/cxl/core/Makefile
-> +++ b/drivers/cxl/core/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_CXL_BUS) += cxl_core.o
-> -obj-$(CONFIG_CXL_SUSPEND) += suspend.o
-> +obj-y += suspend.o
->  
->  ccflags-y += -I$(srctree)/drivers/cxl
->  CFLAGS_trace.o = -DTRACE_INCLUDE_PATH=. -I$(src)
-> diff --git a/drivers/cxl/core/suspend.c b/drivers/cxl/core/suspend.c
-> index 29aa5cc5e565..5ba4b4de0e33 100644
-> --- a/drivers/cxl/core/suspend.c
-> +++ b/drivers/cxl/core/suspend.c
-> @@ -8,7 +8,10 @@ static atomic_t mem_active;
->  
->  bool cxl_mem_active(void)
->  {
-> -	return atomic_read(&mem_active) != 0;
-> +	if (IS_ENABLED(CONFIG_CXL_MEM))
-> +		return atomic_read(&mem_active) != 0;
+>  	/* Sanity check the number of program headers... */
+>  	/* ...and their total size. */
+> -	size = sizeof(struct elf_phdr) * elf_ex->e_phnum;
+> +	
+> +	if (check_mul_overflow(sizeof(struct elf_phdr), elf_ex->e_phnum, &size))
+> +		goto out;
 > +
-> +	return false;
->  }
+>  	if (size == 0 || size > 65536 || size > ELF_MIN_ALIGN)
+>  		goto out;
 >  
->  void cxl_mem_active_inc(void)
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index 3ec6b906371b..1bd1e88c4cc0 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-> @@ -853,17 +853,8 @@ int cxl_trigger_poison_list(struct cxl_memdev *cxlmd);
->  int cxl_inject_poison(struct cxl_memdev *cxlmd, u64 dpa);
->  int cxl_clear_poison(struct cxl_memdev *cxlmd, u64 dpa);
->  
-> -#ifdef CONFIG_CXL_SUSPEND
->  void cxl_mem_active_inc(void);
->  void cxl_mem_active_dec(void);
-> -#else
-> -static inline void cxl_mem_active_inc(void)
-> -{
-> -}
-> -static inline void cxl_mem_active_dec(void)
-> -{
-> -}
-> -#endif
->  
->  int cxl_mem_sanitize(struct cxl_memdev *cxlmd, u16 cmd);
->  
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index f0bd8fbae4f2..415928e0b6ca 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -35,14 +35,7 @@ static inline void pm_vt_switch_unregister(struct device *dev)
->  }
->  #endif /* CONFIG_VT_CONSOLE_SLEEP */
->  
-> -#ifdef CONFIG_CXL_SUSPEND
->  bool cxl_mem_active(void);
-> -#else
-> -static inline bool cxl_mem_active(void)
-> -{
-> -	return false;
-> -}
-> -#endif
->  
->  /*
->   * Device power management
-
+> -- 
+> 2.49.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
