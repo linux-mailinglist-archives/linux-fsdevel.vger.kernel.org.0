@@ -1,88 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-51096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7668AD2C63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 06:04:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794F5AD2C64
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 06:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4915188C5B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 04:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53EF83A9019
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 04:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06DF25D20D;
-	Tue, 10 Jun 2025 04:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331AC25D546;
+	Tue, 10 Jun 2025 04:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ij0pXANl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wq0ePe08"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDEC11712;
-	Tue, 10 Jun 2025 04:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8349A184F;
+	Tue, 10 Jun 2025 04:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749528252; cv=none; b=bASVnEQUtXl/hfv4P9B9H9pmd4VfX3lT5vyKT042b2oR8kxK5Y4T7C3p/KBZiPFtfNLu1epb7jivHXR4R9CKgTnetaHahM97gIjOT5qruCZl11cvpgtobE+RukGbHKPCN3QOo11AiBAwCUvthQ8DSdM3qOEA4mlzNYu1GmEVGzo=
+	t=1749528279; cv=none; b=thFCFOyVXFBce0lhLYNDW+WsnCCNzqtzS8ME0Pw01P2rBKiI4w2dqFD+DIFzBQWF75aFsphbgjbO4fcOVH1i5HJ397ZowYD8a7h0OyFR+VvMOIt3kI0RbXZ4a7h8iRHEetc4k4oKB3hL+duoo1g9sSISpdorJNmaLrgv7yWnM9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749528252; c=relaxed/simple;
-	bh=BmGJS6I+NChOcdJFw7W+Bo5Kv0YTfLtr6VVrpHJQZh4=;
+	s=arc-20240116; t=1749528279; c=relaxed/simple;
+	bh=aVnJbC3z4nwrmfypL0Oi6Gf1QoMq9GB7sy1Q0NerLR8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uzhwT/lg/uX97WvKinp5XQGsxoSObIFdic8awipAUMhgZ0eaN0cbu8WAGf2n8mBcKbCyYEPvVIa6C5780LITnJi4uh00U6bDarOMGiRpAl+YTyWT7E3/9Tsl5HNybBreAJIXbImTzyIRN49pF+ok8/U9xtO54afRI6J3B5YKwls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ij0pXANl; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=4JY/GXvKvuSF+Gv+dyI6WEbQbn/XNxNx/VjsNZPP8rY=; b=Ij0pXANlfvLd1MbZZNmNWCijzy
-	6uvsJ/TOgAkEwFIYLnVQ8jqUQX0VUAc/HpI9ZmCSz7jgO69M1cPmcKYy0Tppu/hHfqrlveimlkpvl
-	dBaWB6xFleaK6AP6/CvuyfFGGOq+P3ret2+bAqvP0iEoULNiW8+Vkh3DwOkLSDkP5LccnEWaDtcMf
-	H6v6KKe2jF6Fh6vDeq50LKoZVz/AnmvtpB4WMFRUalDm/ynPtjimZByeQClmPZ20PONCNceADn4k4
-	GeZ8MNYORbMevS/Q47US6tGSMZKqvOxjuvpMptBuiCY8/e/AvtTcC372MnwewZAcMb5UhXSWDAMSu
-	enpsCL7g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uOqDa-00000005isc-1zmj;
-	Tue, 10 Jun 2025 04:04:10 +0000
-Date: Mon, 9 Jun 2025 21:04:10 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Anuj gupta <anuj1072538@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
-	djwong@kernel.org, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Subject: Re: [PATCH v1 0/8] fuse: use iomap for buffered writes + writeback
-Message-ID: <aEeuuvdJWGEuFKX3@infradead.org>
-References: <20250606233803.1421259-1-joannelkoong@gmail.com>
- <aEZly7K9Uok5KBtq@infradead.org>
- <CACzX3AsfbJjNUaXEX6-497x+uzHptrxM=wTUnDwy_tH6jAEMTQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XceUegN4JjqY+i2TvS/8HK23MZPCxmjr+L5QKFBrYXJlp+RJILQxrizOcCYHNpWFyY2qc1e6BeYRVm+sIi0A4F7GgeUNNJqHsPfxp6PA8Q0lgsfjQ8lVVN2wm6ePkehRuy90NKdFE2dWi/+8kRTCrQzb6kprokfT/ktZHFl8qqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wq0ePe08; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 002EEC4CEEF;
+	Tue, 10 Jun 2025 04:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749528277;
+	bh=aVnJbC3z4nwrmfypL0Oi6Gf1QoMq9GB7sy1Q0NerLR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wq0ePe08BqT+ES0gpcmY92ykXFtKKa+HuUt26Kfn0ERlyV9OUGnJ2OQwKuqgxwF91
+	 svtoihBgrR41xsCAkR6Dvec7dFKveCKHQN7PLYbhSFYXwu5DVXvnyjBU+8QlUJaOwP
+	 YIdeFa5fUJe6aYmS1+i3bHM4TwB14sbrJj4fhZ6oKvjIleGvkgQW5ExV2OcncGpAMw
+	 5rqkgEvOYu2joguoZgODKd85X3+DZmMQ8r3GtVopJ4zK5H46iOSqambHDDZFkPHl8s
+	 IrPDeI4ygHtfTmEflaXVkKxDvnAJe6DnSDAH0KxNNnJwKoiSMy65z73dBQu5GtSO08
+	 W2jLe8TPrOReg==
+Date: Mon, 9 Jun 2025 21:04:36 -0700
+From: Kees Cook <kees@kernel.org>
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] binfmt_elf: use check_mul_overflow() for size calc
+Message-ID: <202506092053.827AD89DC5@keescook>
+References: <20250607082844.8779-1-pranav.tyagi03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACzX3AsfbJjNUaXEX6-497x+uzHptrxM=wTUnDwy_tH6jAEMTQ@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250607082844.8779-1-pranav.tyagi03@gmail.com>
 
-On Mon, Jun 09, 2025 at 06:08:30PM +0530, Anuj gupta wrote:
-> On Mon, Jun 9, 2025 at 10:10 AM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > Can you also point to a branch or at least tell the baseline?
-> > The patches won't apply against Linus' 6.16-rc tree.
-> >
-> Yes I had a hard time too, figuring that out. FWIW, it applies fine on
-> top of this branch [1]. It would be a great, if base commit can shared
-> in the next iterations.
+On Sat, Jun 07, 2025 at 01:58:44PM +0530, Pranav Tyagi wrote:
+> Use check_mul_overflow() to safely compute the total size of ELF program
+> headers instead of relying on direct multiplication.
 > 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git/log/?h=for-next
+> Directly multiplying sizeof(struct elf_phdr) with e_phnum risks integer
+> overflow, especially on 32-bit systems or with malformed ELF binaries
+> crafted to trigger wrap-around. If an overflow occurs, kmalloc() could
+> allocate insufficient memory, potentially leading to out-of-bound
+> accesses, memory corruption or security vulnerabilities.
+> 
+> Using check_mul_overflow() ensures the multiplication is performed
+> safely and detects overflows before memory allocation. This change makes
+> the function more robust when handling untrusted or corrupted binaries.
+> 
+> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> Link: https://github.com/KSPP/linux/issues/92
+> ---
+>  fs/binfmt_elf.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index a43363d593e5..774e705798b8 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -518,7 +518,10 @@ static struct elf_phdr *load_elf_phdrs(const struct elfhdr *elf_ex,
+>  
+>  	/* Sanity check the number of program headers... */
+>  	/* ...and their total size. */
+> -	size = sizeof(struct elf_phdr) * elf_ex->e_phnum;
 
-Looks like this is still behind on mainline as even applying to
-linux-next doesn't work.  Hope the merge window has settled a bit more
-before the next version.
+size is unsigned int, which has a maximum value of 4,294,967,295.
 
+elf_ex->e_phnum is a u16 (2 bytes) and will not be changing:
+
+$ pahole -C elf64_hdr */fs/binfmt_elf.o
+struct elf64_hdr {
+	...
+        Elf64_Half                 e_phnum;              /*    56     2 */
+	...
+$ pahole -C Elf64_Half */fs/binfmt_elf.o
+typedef __u16 Elf64_Half;
+
+So it has a maximum value of 65,535.
+
+sizeof(struct elf_phdr) is a fixed value, 56:
+
+$ pahole -C elf64_phdr */fs/binfmt_elf.o
+struct elf64_phdr {
+	...
+        /* size: 56, cachelines: 1, members: 8 */
+        /* last cacheline: 56 bytes */
+};
+
+So the maximum product of the two is 3,669,960.
+
+It is not possible for this calculation to overflow.
+
+> +	
+> +	if (check_mul_overflow(sizeof(struct elf_phdr), elf_ex->e_phnum, &size))
+> +		goto out;
+> +
+
+You can even see that the entire check would be elided by the compiler:
+
+#include <elf.h>
+
+unsigned int unchecked(Elf64_Ehdr *elf_ex)
+{
+    unsigned int size;
+
+    size = sizeof(Elf64_Phdr) * elf_ex->e_phnum;
+
+    return size;
+}
+
+unsigned int checked(Elf64_Ehdr *elf_ex)
+{
+    unsigned int size;
+
+    if (__builtin_mul_overflow(sizeof(Elf64_Phdr), elf_ex->e_phnum, &size))
+        return 0;
+
+    return size;
+}
+
+...produces this assembler, identical for both functions:
+
+unchecked:
+        movzx   eax, WORD PTR [rdi+56]
+        imul    eax, eax, 56
+        ret
+checked:
+        movzx   eax, WORD PTR [rdi+56]
+        imul    eax, eax, 56
+        ret
+
+
+https://godbolt.org/z/hTEef8cT9
+
+-Kees
+
+-- 
+Kees Cook
 
