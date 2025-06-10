@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-51148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669BCAD323F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 11:37:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7C1AD3245
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 11:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4130F1882865
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 09:37:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 512CE7A16B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 09:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D2928B4E2;
-	Tue, 10 Jun 2025 09:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D508E28B50A;
+	Tue, 10 Jun 2025 09:38:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BB821CFEC;
-	Tue, 10 Jun 2025 09:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBA528AB03;
+	Tue, 10 Jun 2025 09:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749548231; cv=none; b=AW08Vl1KzisZr05bA4qH2OuBYG2S2+ppxZmDDpem1ZP2rFycgonHzmBF/cuoZb1ApxC082NoNeOJs8YzVwXW8TD8NMB3kc2NIJohw6FlF/PwTX8D7IfAM/pBkCCTqhiwoJ1fVBfJz1ncbAZo8AEzUlALZJgG2n9HKUF37bdmEOo=
+	t=1749548289; cv=none; b=PbL1udtNqnad21mcWINg2Zw/xOKuMhdjZrJtBToRAKWD+DGSggXY2oPP0bbs2r2lp/sNYJSVEFBJv5iltPb+vLIISRvc2ggu4sock+dliw1cYcP3pYR+TsDxDgBVrrRuO0gzWl+zyXrzZWXLcrKnpX/h0QWOhSzUW/CsaxnmpJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749548231; c=relaxed/simple;
-	bh=F6ncpGupYU2VphrbmEqVC1lkKwUVvG5DdDUf7ZEhLRY=;
+	s=arc-20240116; t=1749548289; c=relaxed/simple;
+	bh=7VUpOKqstykfHqwFcxqAxihgk8EigUO4kuTzgEAooz4=;
 	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J334T800np1sBdM662tuKstu6A8UMtTlce/NWnepuvTfcXelMveGJTHmTp+OUGRw7i0QVZCV6Q3LMZd5Z5zsIMuGj31hcgjM2ZjJMAIk/ZKVkvz0eQchPwGooL56GxEBd7s7IbN1zBKSlz03Is3/s0PX+Bb+BhFrzETBH3q074Q=
+	 MIME-Version:Content-Type; b=CCF+DgXF3MlSPlXCTCMxT/J5gkVvdv1zdhcTrF0qhZYv/JBNAqyH2lIch+49T4uFOeiMDiLdPVJ4TtIUahKE0+pgSP23WZsw7NygB50B6pg9mbZDUb4Hsq+R42aauSoi92IZBPTIgITOoVst3asEuTVRNn/4qABSZAIiOU6vxO8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bGkFm2Xqmz6LCsb;
-	Tue, 10 Jun 2025 17:36:44 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bGkBP30cjz67KX2;
+	Tue, 10 Jun 2025 17:33:49 +0800 (CST)
 Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id EB30D140558;
-	Tue, 10 Jun 2025 17:37:06 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 273A01402FE;
+	Tue, 10 Jun 2025 17:38:04 +0800 (CST)
 Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
  (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 10 Jun
- 2025 11:37:05 +0200
-Date: Tue, 10 Jun 2025 10:37:04 +0100
+ 2025 11:38:03 +0200
+Date: Tue, 10 Jun 2025 10:38:01 +0100
 From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 To: "Koralahalli Channabasappa, Smita"
 	<Smita.KoralahalliChannabasappa@amd.com>
@@ -58,14 +58,14 @@ CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
 	<benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
 	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
-Subject: Re: [PATCH v4 5/7] cxl/region: Introduce SOFT RESERVED resource
- removal on region teardown
-Message-ID: <20250610103704.000023c4@huawei.com>
-In-Reply-To: <f157ff2c-0849-4446-9870-19d4df9d29c5@amd.com>
+Subject: Re: [PATCH v4 2/7] cxl/core: Remove CONFIG_CXL_SUSPEND and always
+ build suspend.o
+Message-ID: <20250610103801.0000121b@huawei.com>
+In-Reply-To: <8e445a49-7209-402f-96ab-5285560a08a1@amd.com>
 References: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
-	<20250603221949.53272-6-Smita.KoralahalliChannabasappa@amd.com>
-	<20250609135444.0000703f@huawei.com>
-	<f157ff2c-0849-4446-9870-19d4df9d29c5@amd.com>
+	<20250603221949.53272-3-Smita.KoralahalliChannabasappa@amd.com>
+	<20250609120237.00002eef@huawei.com>
+	<8e445a49-7209-402f-96ab-5285560a08a1@amd.com>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -78,26 +78,135 @@ Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
  frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Smita,
+On Mon, 9 Jun 2025 16:25:49 -0700
+"Koralahalli Channabasappa, Smita" <Smita.KoralahalliChannabasappa@amd.com> wrote:
 
-> >> +/*
-> >> + * normalize_resource
-> >> + *
-> >> + * The walk_iomem_res_desc() returns a copy of a resource, not a reference
-> >> + * to the actual resource in the iomem_resource tree. As a result,
-> >> + * __release_resource() which relies on pointer equality will fail.  
+> On 6/9/2025 4:02 AM, Jonathan Cameron wrote:
+> > On Tue, 3 Jun 2025 22:19:44 +0000
+> > Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
+> >   
+> >> In preparation for soft-reserved resource handling, make the suspend
+> >> infrastructure always available by removing the CONFIG_CXL_SUSPEND
+> >> Kconfig option.
+> >>
+> >> This ensures cxl_mem_active_inc()/dec() and cxl_mem_active() are
+> >> unconditionally available, enabling coordination between cxl_pci and
+> >> cxl_mem drivers during region setup and hotplug operations.  
 > > 
-> > Probably want some statement on why nothing can race with this give
-> > the resource_lock is not being held.  
+> > If these are no longer just being used for suspend, given there
+> > is nothing else in the file, maybe move them to somewhere else?  
 > 
-> Hmm, probably you are right that normalize_resource() is accessing the 
-> resource tree without holding resource_lock, which could lead to races.
+> There was recommendation to move the wait queue declaration and its
+> related changes to acpi.c. I was considering that. Let me know if there 
+> is any other best place for this.
 > 
-> I will update the function to take a read_lock(&resource_lock) before 
-> walking res->parent->child..
+I wasn't sure on the best location (which is why I was lazy an didn't
+suggest one ;)  Dan, Dave etc anyone have strong mental model for where
+this should be?
+
+> Thanks
+> Smita
+> > 
+> >   
+> >>
+> >> Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+> >> Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+> >> Co-developed-by: Terry Bowman <terry.bowman@amd.com>
+> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> >> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> >> ---
+> >>   drivers/cxl/Kconfig        | 4 ----
+> >>   drivers/cxl/core/Makefile  | 2 +-
+> >>   drivers/cxl/core/suspend.c | 5 ++++-
+> >>   drivers/cxl/cxlmem.h       | 9 ---------
+> >>   include/linux/pm.h         | 7 -------
+> >>   5 files changed, 5 insertions(+), 22 deletions(-)
+> >>
+> >> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
+> >> index cf1ba673b8c2..d09144c2002e 100644
+> >> --- a/drivers/cxl/Kconfig
+> >> +++ b/drivers/cxl/Kconfig
+> >> @@ -118,10 +118,6 @@ config CXL_PORT
+> >>   	default CXL_BUS
+> >>   	tristate
+> >>   
+> >> -config CXL_SUSPEND
+> >> -	def_bool y
+> >> -	depends on SUSPEND && CXL_MEM
+> >> -
+> >>   config CXL_REGION
+> >>   	bool "CXL: Region Support"
+> >>   	default CXL_BUS
+> >> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
+> >> index 086df97a0fcf..035864db8a32 100644
+> >> --- a/drivers/cxl/core/Makefile
+> >> +++ b/drivers/cxl/core/Makefile
+> >> @@ -1,6 +1,6 @@
+> >>   # SPDX-License-Identifier: GPL-2.0
+> >>   obj-$(CONFIG_CXL_BUS) += cxl_core.o
+> >> -obj-$(CONFIG_CXL_SUSPEND) += suspend.o
+> >> +obj-y += suspend.o
+> >>   
+> >>   ccflags-y += -I$(srctree)/drivers/cxl
+> >>   CFLAGS_trace.o = -DTRACE_INCLUDE_PATH=. -I$(src)
+> >> diff --git a/drivers/cxl/core/suspend.c b/drivers/cxl/core/suspend.c
+> >> index 29aa5cc5e565..5ba4b4de0e33 100644
+> >> --- a/drivers/cxl/core/suspend.c
+> >> +++ b/drivers/cxl/core/suspend.c
+> >> @@ -8,7 +8,10 @@ static atomic_t mem_active;
+> >>   
+> >>   bool cxl_mem_active(void)
+> >>   {
+> >> -	return atomic_read(&mem_active) != 0;
+> >> +	if (IS_ENABLED(CONFIG_CXL_MEM))
+> >> +		return atomic_read(&mem_active) != 0;
+> >> +
+> >> +	return false;
+> >>   }
+> >>   
+> >>   void cxl_mem_active_inc(void)
+> >> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> >> index 3ec6b906371b..1bd1e88c4cc0 100644
+> >> --- a/drivers/cxl/cxlmem.h
+> >> +++ b/drivers/cxl/cxlmem.h
+> >> @@ -853,17 +853,8 @@ int cxl_trigger_poison_list(struct cxl_memdev *cxlmd);
+> >>   int cxl_inject_poison(struct cxl_memdev *cxlmd, u64 dpa);
+> >>   int cxl_clear_poison(struct cxl_memdev *cxlmd, u64 dpa);
+> >>   
+> >> -#ifdef CONFIG_CXL_SUSPEND
+> >>   void cxl_mem_active_inc(void);
+> >>   void cxl_mem_active_dec(void);
+> >> -#else
+> >> -static inline void cxl_mem_active_inc(void)
+> >> -{
+> >> -}
+> >> -static inline void cxl_mem_active_dec(void)
+> >> -{
+> >> -}
+> >> -#endif
+> >>   
+> >>   int cxl_mem_sanitize(struct cxl_memdev *cxlmd, u16 cmd);
+> >>   
+> >> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> >> index f0bd8fbae4f2..415928e0b6ca 100644
+> >> --- a/include/linux/pm.h
+> >> +++ b/include/linux/pm.h
+> >> @@ -35,14 +35,7 @@ static inline void pm_vt_switch_unregister(struct device *dev)
+> >>   }
+> >>   #endif /* CONFIG_VT_CONSOLE_SLEEP */
+> >>   
+> >> -#ifdef CONFIG_CXL_SUSPEND
+> >>   bool cxl_mem_active(void);
+> >> -#else
+> >> -static inline bool cxl_mem_active(void)
+> >> -{
+> >> -	return false;
+> >> -}
+> >> -#endif
+> >>   
+> >>   /*
+> >>    * Device power management  
+> >   
 > 
-> Let me know if you'd prefer this locking be handled before calling 
-> normalize_resource() instead..
-I don't mind either way - see what looks better to you.
 
 
