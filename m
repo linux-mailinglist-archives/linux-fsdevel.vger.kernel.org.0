@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-51165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0075AD3965
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 15:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E082AD3966
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 15:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6890D1893D47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 13:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCBA01883EB4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 13:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCFE29B8CF;
-	Tue, 10 Jun 2025 13:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC02D23ABA8;
+	Tue, 10 Jun 2025 13:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cl9Bf2kH"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rerNKwhY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F26829B78B;
-	Tue, 10 Jun 2025 13:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C4223AB98;
+	Tue, 10 Jun 2025 13:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749562152; cv=none; b=jeGyQRPsVo2GFLPSJUYCZV7P1yXnCYzbZtFWd1/qAnwCCSmwreq6UP9i/p1jI7DlyXVhOuOFsgfp99610l1Ijwdf/Byel0dU2G1yzTyKFPQglXdAGTJga0y6xqXTVoBxpFuQukp+VT5cKJHFrnuQIIPYOiQYGNn+CelB3JOAyMw=
+	t=1749562231; cv=none; b=Wq/81jPWN+XAfb7qDHXHzgx+65o3Noo8fgQKNF4xbjad0xER64sEoQZiOeJjZgaCKCg7mcmOm14u9kBVwzefQm8NrgQvV/w0RhoIoj1DlF1+PebJ1bBRSnHq2WeSqzfUVxyFsic6mGHgHdq7/VjJJue7+jF4CdA6ccIJRrUXRzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749562152; c=relaxed/simple;
-	bh=domkUHVehPfx76IBEd/l63OBFvXJh517vLAmlk842T0=;
+	s=arc-20240116; t=1749562231; c=relaxed/simple;
+	bh=j72cNm8s8BmJR2yvP9N6+eHhMx4qyILJpk302T4ObgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPL130Aw6Y8dsGGOQoiM1FmxEgD8y4Termp8tT0P6YY5dF5KBMbkJdE9ujdN55/9inaB8FfyWetiR6IIf+hd5oqezms0KEICXMCrfEfK/DMlDFOfa0jdopCed/dImBLtgC1J+CDySl48m8/VF20bX0/vLl4xa6h5QANVjBAZvT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Cl9Bf2kH; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=AeLxsvIV/Qjz71E9uSka6TcipQWrd0wLMf7TY6iUz3l4VdLk7StU1zHSoaUT8GiVwvnb+vdRikqLpTtPI4ZF8I1oT70sKKniUZNfR/h9uVxXAUfN2xutjGB0Fzz+qRsyZldNBzBbzOh97G4SPwPqLMBEWEdlXBcu1KO/l/nixVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rerNKwhY; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=domkUHVehPfx76IBEd/l63OBFvXJh517vLAmlk842T0=; b=Cl9Bf2kHC7aUQRw4B05gV6P7R0
-	1BXN3hWGUcPJb+K+LzQ5vkM3XY1/s65aVKRlscQMkJRrBlIe6X1PKQu6ObwUYyUGW7wyLFiaDogwf
-	q1QbJD8A62XPkw8vcS6cU8+fFu7VIk8ENZNvG/cWxc12DI7QMZHcGyWwTTLW9SaVUgPIuEo7EYIKU
-	jWKBZNCrQSv3X6TkBJLOswm0C3QMMxF03XmpsNfXJlnmzoAoAWLp3Ygr2/bsHhqV/8yqS74018x3v
-	siZOx/Pkh7PQ+bXiI0xdiDqUdFWGrY3Gwj1OtPEuqj79LkkVbZPW5yR2U5icJYFolMZczuEqS04ep
-	SdYtj2Ig==;
+	bh=GcbjZKDHfWzF4Hztsbds8tFXOAXOwUhPwJriLCPNAsA=; b=rerNKwhY6cYVBgVq/mcdEaviHF
+	T9VsFX+uRspOI7OnRjqZgfBd7m4bKGvsbou3oaDt+D/0AaycXXsIkRa9KXeXjunGpQqyrMQtI5ZYS
+	116OQpYPMbfiBB4CMqR9FWiP+pdMPQQi7VR8e7jb6VwYwV1TkSBXrCG0+1EHom6o0kw6zI9z8bPbW
+	47vTBzs6vNbvM+Vju65uUPUMEEOK75kYSxXox+V8nXWy5bB7ki/GGUkIom76kW46SEUQFZ0RkhpbS
+	gPiHlQGjnLygStCc1PKNEeiKQDjob7VrrAVOwuaO2OzfnStz3IEUqE2n+4gM1a0qpSPzWaGF2/xGC
+	ZLFrdfOg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uOz2M-00000006yAI-2cTh;
-	Tue, 10 Jun 2025 13:29:10 +0000
-Date: Tue, 10 Jun 2025 06:29:10 -0700
+	id 1uOz3d-00000006ySA-1UMn;
+	Tue, 10 Jun 2025 13:30:29 +0000
+Date: Tue, 10 Jun 2025 06:30:29 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: Brian Foster <bfoster@redhat.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 3/7] iomap: optional zero range dirty folio processing
-Message-ID: <aEgzJgwRDsvlfhA1@infradead.org>
+Subject: Re: [PATCH RFC 7/7] xfs: error tag to force zeroing on debug kernels
+Message-ID: <aEgzdZKtL2Sp5RRa@infradead.org>
 References: <20250605173357.579720-1-bfoster@redhat.com>
- <20250605173357.579720-4-bfoster@redhat.com>
- <20250609160420.GC6156@frogsfrogsfrogs>
- <aEgjMtAONSHz6yJT@bfoster>
+ <20250605173357.579720-8-bfoster@redhat.com>
+ <aEe1oR3qRXz-QB67@infradead.org>
+ <aEgkhYne8EenhJfI@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,23 +63,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aEgjMtAONSHz6yJT@bfoster>
+In-Reply-To: <aEgkhYne8EenhJfI@bfoster>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Jun 10, 2025 at 08:21:06AM -0400, Brian Foster wrote:
-> Yes.. but I'm not totally sure wrt impact on the fbatch checks quite
-> yet. The next thing I wanted to look at is addressing the same unwritten
-> mapping vs. dirty folios issue in the seek data/hole path. It's been a
-> little while since I last investigated there (and that was also before
-> the whole granular advance approach was devised), but IIRC it would look
-> rather similar to what this is doing for zero range. That may or may
-> not justify just making the batch required for both operations and
-> potentially simplifying this logic further. I'll keep that in mind when
-> I get to it..
+On Tue, Jun 10, 2025 at 08:26:45AM -0400, Brian Foster wrote:
+> Well that is kind of the question.. ;) My preference was to either add
+> something to fstests to enable select errortags by default on every
+> mount (or do the same in-kernel via XFS_DEBUG[_ERRTAGS] or some such)
+> over just creating a one-off test that runs fsx or whatever with this
+> error tag turned on. [1].
+> 
+> That said, I wouldn't be opposed to just doing both if folks prefer
+> that. It just bugs me to add yet another test that only runs a specific
+> fsx test when we get much more coverage by running the full suite of
+> tests. IOW, whenever somebody is testing a kernel that would actually
+> run a custom test (XFS_DEBUG plus specific errortag support), we could
+> in theory be running the whole suite with the same errortag turned on
+> (albeit perhaps at a lesser frequency than a custom test would use). So
+> from that perspective I'm not sure it makes a whole lot of sense to do
+> both.
+> 
+> So any thoughts from anyone on a custom test vs. enabling errortag
+> defaults (via fstests or kernel) vs. some combination of both?
 
-On thing that the batch would be extremely useful for is making
-iomap_file_unshare not totally suck by reading in all folios for a
-range (not just the dirty ones) similar to the filemap_read path
-instead of synchronously reading one block at a time.
+I definitively like a targeted test to exercise it.  If you want
+additional knows to turn on error tags that's probably fine if it
+works out.  I'm worried about adding more flags to xfstests because
+it makes it really hard to figure out what runs are need for good
+test coverage.
 
 
