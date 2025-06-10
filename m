@@ -1,251 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-51210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BABAD46CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 01:35:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA88BAD4703
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 01:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC49A7AC3C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 23:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3800B189C660
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 23:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEB828BA88;
-	Tue, 10 Jun 2025 23:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20A728C2CB;
+	Tue, 10 Jun 2025 23:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FTOoNxL+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1322248AB;
-	Tue, 10 Jun 2025 23:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC9E2874EA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 23:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749598490; cv=none; b=WKOq1khTUIZvIsch9BmHR7YNCfQIinhoAkA++VFUJg7plkRiyBRuzw/QQrVElED0ZGTxBBo02YrFe6ZQ2IF5SVLXWJ8gLGcGpQBn2Gglhx3/8v9oO+4nejCOBlReZ/91Y+tULf/KzATGvw4TvUfA+GnO9Ih2JJ4OKXlHb0HWgSY=
+	t=1749599424; cv=none; b=QJB0mdHfMjrPWF2hG43ZkhR+F6XxilqLSVd6m6pvOWXoc3d2OUde9XZyijGI1oXveMTxf6KQij3KvAlRdJGb/XXLyeBuFow/w7wYvo0nzpoQOYF8SzyuSZzBocYDj2IyxHuHRgJ+vHUDpftH624KqG8gefrVvONYf+rd3owdszI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749598490; c=relaxed/simple;
-	bh=nAjYQX+TSMsZ9bA78ZfRAkX5IYz9wrbImSKD6ErItyQ=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=pBQyxuUh8kbj+uERSQL5RNuklCgRmT0aPUWPdqIF0xod3g8zwUJogulwtshYX41ceKEINOAn7LoRifPWDzjV0NFqhxfoP3EABle4B0eRZ/SkgyePXNMONe6aAbd64VmP+IVnoBFJD8k2T1qahZeGiyXQt7YvDe47vWvj+4floZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uP8UH-007smc-Po;
-	Tue, 10 Jun 2025 23:34:37 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1749599424; c=relaxed/simple;
+	bh=5zpmeUIFplYcd16FCJTHwlcr+3eWOrvix0typRp9sog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XNCGL0ZpvXNYA+RFsL+AYzelxnVJRIG5Hgno+xTUc8PrePxQpQihMAeX9P9JHS5cPmoiJ2an7OmduCTjmsjkFPmd+9V8mYRw2tRb4yOu9CE1YcLxwBgN4XO5xEYYAMgKhULlK/NZEBEDSLLInGUjr/fUsOGTGVfNUIRbKs13ROU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FTOoNxL+; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso5456816276.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 16:50:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1749599421; x=1750204221; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p9Qgp5oHl/0P+qqYYVFIyIBvDmKn+BX8RyiafClKsvk=;
+        b=FTOoNxL+0vvlydxtSO2mI5yc5X1tjb179p+F0GAsrKx4xgmGahTCldcYS00Z3ViLIJ
+         g0Y+/KMfpS/uwp//Kk5giFqvVPes7d1RHKOvnGNhAKNQiS3Zpi9aLKZH+WVdKR9v8pKk
+         iP5Z/yMT64NpQZtKsEeF5dYsY2c6BfyLExb/jp4KkKkflgeqNk1ulDEGmNpOoruuNh4s
+         PtB57wiRRix46OR4HDub/HRfv7VXBDVTzTgHgEUHk37pBFwzZgSUSmbqOJ07T2rAAUcd
+         xlogZ+m14/YVu0Kq+f3U9z98WdBd48fUqjtkqASQPHLX2xgeTDAgHqdH3SrkzUdOpVeY
+         eY6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749599421; x=1750204221;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p9Qgp5oHl/0P+qqYYVFIyIBvDmKn+BX8RyiafClKsvk=;
+        b=jbnHIDIW1peml24UhPUTTUxGyFvdJo55h86iY/tB01Ki5W1A4brO1GiL9BKGVLp4ea
+         Qoz6twihlMYVqA1ygreQ+R+qu1i/EGT0/OVKZjchGnY3acbUiiu78O4wTE1PRv86RRuT
+         Lyt6YneSILalhvUQSorFQqRkxlBqjO0zHd3snp3iZUdWnUMxZCKUNfnn6fKBt64jdOo/
+         XBn7IKsIRHhZl64T0L9n9Rmka0ZnB/b7EVYUJSSFjWCQaGTvLzn4WVWx4NLhHANcgYwf
+         RO2oTtPpT8h4FS7i6tyxDsyIu0bqF8xgSLHZmT0ODPev+kLFXyz0PN4Sw4hxNAlvW9m4
+         6lnw==
+X-Gm-Message-State: AOJu0Yy0uDWIwX4fOyZs4oqUMprh/j0qgSPVefdwJ6zCxCgp2Uw44vId
+	Eas4tB296ZDxbFVlvoByMo2Vx1c7N8qE6Uhbvz4iKf27LeETrN48fBAG1ly4EOsERRiwB3MfkCq
+	dtjz3RyRIbf8pf/40XsYXfswzIeeJgvrb4LPS2HzS1mnnxOAwOQI=
+X-Gm-Gg: ASbGncuP/CsTLk0edgwbATeeVcJAbgTTcNMx0vJ6rsfE0JrKme+Cp5cigV+1s3+mhS0
+	aBDnwm3R9EUZtJE+P8szH1pqumQdbqoe3MxXbsOjPBNCSrL7zccs1ZizxpFK7p5nCSX8g78afXl
+	xtK39Li2yoerMKJf7KpXTtDlqwfIT0etAfS5UWtHq4y9M=
+X-Google-Smtp-Source: AGHT+IEvtteku/P1uiXxT4gbHUj7G2QQ+RMoFTyCSCZ3iBdan2K1TBvoDyo+Adyk8sCdrfVIToKGxMKUgGG3OtxF/+0=
+X-Received: by 2002:a05:6902:72e:b0:e81:78f7:5521 with SMTP id
+ 3f1490d57ef6-e81fd92a3f2mr2148616276.6.1749599421291; Tue, 10 Jun 2025
+ 16:50:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Song Liu" <song@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
- mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
- jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
- m@maowtm.org, "Song Liu" <song@kernel.org>
-Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-In-reply-to: <20250606213015.255134-2-song@kernel.org>
-References: <20250606213015.255134-1-song@kernel.org>,
- <20250606213015.255134-2-song@kernel.org>
-Date: Wed, 11 Jun 2025 09:34:36 +1000
-Message-id: <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+References: <20250605164852.2016-1-stephen.smalley.work@gmail.com>
+ <CAHC9VhQ-f-n+0g29MpBB3_om-e=vDqSC3h+Vn_XzpK2zpqamdQ@mail.gmail.com>
+ <CAHC9VhRUqpubkuFFVCfiMN4jDiEhXQvJ91vHjrM5d9e4bEopaw@mail.gmail.com> <87plfhsa2r.fsf@gmail.com>
+In-Reply-To: <87plfhsa2r.fsf@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 10 Jun 2025 19:50:10 -0400
+X-Gm-Features: AX0GCFt95pxw11ngH9ypXcXXgINCY4mIRN7SWpVrAA3u5KTm4VBIfux35kFrlG4
+Message-ID: <CAHC9VhRSAaENMnEYXrPTY4Z4sPO_s4fSXF=rEUFuEEUg6Lz21Q@mail.gmail.com>
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list()
+To: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	brauner@kernel.org
+Cc: Collin Funk <collin.funk1@gmail.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, 
+	selinux@vger.kernel.org, eggert@cs.ucla.edu, bug-gnulib@gnu.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 07 Jun 2025, Song Liu wrote:
-> This helper walks an input path to its parent. Logic are added to handle
-> walking across mount tree.
->=20
-> This will be used by landlock, and BPF LSM.
->=20
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  fs/namei.c            | 51 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/namei.h |  2 ++
->  2 files changed, 53 insertions(+)
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4bb889fc980b..f02183e9c073 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1424,6 +1424,57 @@ static bool choose_mountpoint(struct mount *m, const=
- struct path *root,
->  	return found;
->  }
-> =20
-> +/**
-> + * path_walk_parent - Walk to the parent of path
-> + * @path: input and output path.
-> + * @root: root of the path walk, do not go beyond this root. If @root is
-> + *        zero'ed, walk all the way to real root.
-> + *
-> + * Given a path, find the parent path. Replace @path with the parent path.
-> + * If we were already at the real root or a disconnected root, @path is
-> + * not changed.
-> + *
-> + * The logic of path_walk_parent() is similar to follow_dotdot(), except
-> + * that path_walk_parent() will continue walking for !path_connected case.
-> + * This effectively means we are walking from disconnected bind mount to
-> + * the original mount. If this behavior is not desired, the caller can add
-> + * a check like:
-> + *
-> + *   if (path_walk_parent(&path) && !path_connected(path.mnt, path.dentry)
-> + *           // continue walking
-> + *   else
-> + *           // stop walking
-> + *
-> + * Returns:
-> + *  true  - if @path is updated to its parent.
-> + *  false - if @path is already the root (real root or @root).
-> + */
-> +bool path_walk_parent(struct path *path, const struct path *root)
-> +{
-> +	struct dentry *parent;
-> +
-> +	if (path_equal(path, root))
-> +		return false;
-> +
-> +	if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-> +		struct path p;
-> +
-> +		if (!choose_mountpoint(real_mount(path->mnt), root, &p))
-> +			return false;
-> +		path_put(path);
-> +		*path =3D p;
-> +	}
-> +
-> +	if (unlikely(IS_ROOT(path->dentry)))
-> +		return false;
-> +
-> +	parent =3D dget_parent(path->dentry);
-> +	dput(path->dentry);
-> +	path->dentry =3D parent;
-> +	return true;
-> +}
-> +EXPORT_SYMBOL_GPL(path_walk_parent);
+On Fri, Jun 6, 2025 at 1:39=E2=80=AFAM Collin Funk <collin.funk1@gmail.com>=
+ wrote:
+> Paul Moore <paul@paul-moore.com> writes:
+> >> <stephen.smalley.work@gmail.com> wrote:
+> >> >
+> >> > commit 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always
+> >> > include security.* xattrs") failed to reset err after the call to
+> >> > security_inode_listsecurity(), which returns the length of the
+> >> > returned xattr name. This results in simple_xattr_list() incorrectly
+> >> > returning this length even if a POSIX acl is also set on the inode.
+> >> >
+> >> > Reported-by: Collin Funk <collin.funk1@gmail.com>
+> >> > Closes: https://lore.kernel.org/selinux/8734ceal7q.fsf@gmail.com/
+> >> > Reported-by: Paul Eggert <eggert@cs.ucla.edu>
+> >> > Closes: https://bugzilla.redhat.com/show_bug.cgi?id=3D2369561
+> >> > Fixes: 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always in=
+clude security.* xattrs")
+> >> >
+> >> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> >> > ---
+> >> >  fs/xattr.c | 1 +
+> >> >  1 file changed, 1 insertion(+)
+> >>
+> >> Reviewed-by: Paul Moore <paul@paul-moore.com>
+> >
+> > Resending this as it appears that Stephen's original posting had a
+> > typo in the VFS mailing list.  The original post can be found in the
+> > SELinux archives:
+> >
+> > https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.w=
+ork@gmail.com/
+>
+> Hi, responding to this message since it has the correct lists.
+>
+> I just booted into a kernel with this patch applied and confirm that it
+> fixes the Gnulib tests that were failing.
+>
+> Reviewed-by: Collin Funk <collin.funk1@gmail.com>
+> Tested-by: Collin Funk <collin.funk1@gmail.com>
+>
+> Thanks for the fix.
 
-The above looks a lot like follow_dotdot().  This is good because it
-means that it is likely correct.  But it is bad because it means there
-are two copies of essentially the same code - making maintenance harder.
+Al, Christian, are either of you going to pick up this fix to send to
+Linus?  If not, any objection if I send this up?
 
-I think it would be good to split the part that you want out of
-follow_dotdot() and use that.  Something like the following.
-
-You might need a small wrapper in landlock which would, for example,
-pass LOOKUP_BENEATH and replace path->dentry with the parent on success.
-
-NeilBrown
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 4bb889fc980b..b81d07b4417b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2048,36 +2048,65 @@ static struct dentry *follow_dotdot_rcu(struct nameid=
-ata *nd)
- 	return nd->path.dentry;
- }
-=20
--static struct dentry *follow_dotdot(struct nameidata *nd)
-+/**
-+ * path_walk_parent - Find the parent of the given struct path
-+ * @path  - The struct path to start from
-+ * @root  - A struct path which serves as a boundary not to be crosses
-+ * @flags - Some LOOKUP_ flags
-+ *
-+ * Find and return the dentry for the parent of the given path (mount/dentry=
-).
-+ * If the given path is the root of a mounted tree, it is first updated to
-+ * the mount point on which that tree is mounted.
-+ *
-+ * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new mo=
-unt,
-+ * the error EXDEV is returned.
-+ * If no parent can be found, either because the tree is not mounted or beca=
-use
-+ * the @path matches the @root, then @path->dentry is returned unless @flags
-+ * contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
-+ *
-+ * Returns: either an ERR_PTR() or the chosen parent which will have had the
-+ * refcount incremented.
-+ */
-+struct dentry *path_walk_parent(struct path *path, struct path *root, int fl=
-ags)
- {
- 	struct dentry *parent;
-=20
--	if (path_equal(&nd->path, &nd->root))
-+	if (path_equal(path, root))
- 		goto in_root;
--	if (unlikely(nd->path.dentry =3D=3D nd->path.mnt->mnt_root)) {
--		struct path path;
-+	if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-+		struct path new_path;
-=20
--		if (!choose_mountpoint(real_mount(nd->path.mnt),
--				       &nd->root, &path))
-+		if (!choose_mountpoint(real_mount(path->mnt),
-+				       root, &new_path))
- 			goto in_root;
--		path_put(&nd->path);
--		nd->path =3D path;
--		nd->inode =3D path.dentry->d_inode;
--		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
-+		path_put(path);
-+		*path =3D new_path;
-+		if (unlikely(flags & LOOKUP_NO_XDEV))
- 			return ERR_PTR(-EXDEV);
- 	}
- 	/* rare case of legitimate dget_parent()... */
--	parent =3D dget_parent(nd->path.dentry);
-+	parent =3D dget_parent(path->dentry);
-+	return parent;
-+
-+in_root:
-+	if (unlikely(flags & LOOKUP_BENEATH))
-+		return ERR_PTR(-EXDEV);
-+	return dget(path->dentry);
-+}
-+EXPORT_SYMBOL(path_walk_parent);
-+
-+static struct dentry *follow_dotdot(struct nameidata *nd)
-+{
-+	struct dentry *parent =3D path_walk_parent(&nd->path, &nd->root, nd->flags);
-+
-+	if (IS_ERR(parent))
-+		return parent;
- 	if (unlikely(!path_connected(nd->path.mnt, parent))) {
- 		dput(parent);
- 		return ERR_PTR(-ENOENT);
- 	}
-+	nd->inode =3D nd->path.dentry->d_inode;
- 	return parent;
--
--in_root:
--	if (unlikely(nd->flags & LOOKUP_BENEATH))
--		return ERR_PTR(-EXDEV);
--	return dget(nd->path.dentry);
- }
-=20
- static const char *handle_dots(struct nameidata *nd, int type)
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 5d085428e471..4cc15a58d900 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -80,6 +80,7 @@ struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap,
- struct dentry *lookup_one_positive_unlocked(struct mnt_idmap *idmap,
- 					    struct qstr *name,
- 					    struct dentry *base);
-+struct dentry *path_walk_parent(struct path *path, struct path *root, int fl=
-ags);
-=20
- extern int follow_down_one(struct path *);
- extern int follow_down(struct path *path, unsigned int flags);
+--=20
+paul-moore.com
 
