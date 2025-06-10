@@ -1,363 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-51176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE6AAD3D61
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 17:36:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2016EAD400E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 19:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A9E1700BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 15:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA24F189DD16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 17:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A94244667;
-	Tue, 10 Jun 2025 15:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E99224336D;
+	Tue, 10 Jun 2025 17:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0u+b6vS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLEobg4z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B68238157
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 15:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1E224293F;
+	Tue, 10 Jun 2025 17:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569164; cv=none; b=YHvCEOHX84KVVGsyWLMrMUYBSwXw9N78GGnBxRAJWEEYqcM9v5a8KG+4JKqmSS1XrqYSEz0NtqxKSukob+0AdYJYdi8je6AKNRYBtVvQbh/7MJsluHuV3dUWv+7hhuugJsati6nHkcMa3O08MXDgaQYmP0YvDQX1KKU5o/AaifU=
+	t=1749575232; cv=none; b=H+ZSw6qNjlPJYBOfkw5HTwyIZ1WrTyqjzB7ttPsNXV3TrpFG9hqLIMC6V3FTIYEYllpNIy5XMWHoFK8qSFzRwK5paDgpZjJRUt1hLNnhZk+1RTyppwqob4nY1UG+6vb+JxY2x2m2glF4iMF0VPJplhX1yaE3b19BmKJ0mvcbqYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569164; c=relaxed/simple;
-	bh=iLu+kkeQqixnz4JKdnfpu70RrgbXIUt2SA3LZXoNvCU=;
+	s=arc-20240116; t=1749575232; c=relaxed/simple;
+	bh=46zR+ZR50XcleClVyr4cP8nJe5FVa5UX1au6OYPIudw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GNwc+LoZhGqEwqzhtLOf1NukKYSJQjuxDSRBHREOdat5ofjh0cd+YA77Ie0LsrTjryrmjRx5No23Vp8XjL8/D2IhVdq7I2Q4aJKu3C69UOqBVZC/c56hMqCNrj4IAb/dWTQv8QLAey58lI9SFOWd6rj35BmQgPFzwxaY76Q3jFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0u+b6vS; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=uKlbxR24LcG1T8CZhpEzXwbFc0A9ftVLppqxcom598RCnNaIuS0hm1te5sdoTDsOtridZkTjpC5NU6IW/HpfdWfJqyC8tOZlCf2Htl0+DX8hmxsMCzviJqJGPwPQRu6rcp87evRb0MmoZZ9lnnJKCoEj1FyP6JroiR0zyRgosdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLEobg4z; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-acbb85ce788so924751266b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 08:26:01 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32a81344ae9so59736801fa.0;
+        Tue, 10 Jun 2025 10:07:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749569160; x=1750173960; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749575229; x=1750180029; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x6ntSLzzkgDcKiYD+pdoSgRnvQrKh+X3UPoOJZiFgNQ=;
-        b=f0u+b6vS0Nnx0GZGo3bNankvCQZTmOXn6lYYSJSbEKCoOc9UgYdVHCMucOri4IYkVq
-         CNFb7f+UIdIeE09GQQmEhe+Tlk9a5sakwqLxJpdt54Olz3jso03KKkYMg71r3hBe2WIq
-         fgK2IyKmoLIg9TcMKj/rpnXH/NHf+Q2DGC7cmKNi0+gOmtXjQQBRPRHHtlCBKbAWZp5j
-         CafD375nkfX+cFkbf52QJw5POwu9sq5ud5PVTNcOIYkd6rrxQVAd67fH1YUxKwaQv8g0
-         AL3DaE4nUxRA3/u9N3K5ApbYLFezA7RnCxJlUGXV+pNOiitmclkMZFvOCmUXVXrrCJgF
-         89cA==
+        bh=E3WVKJVLsC72+25+NT9c5Ak83GPqKH0nfsEur1vtPag=;
+        b=eLEobg4zdQx1X/9v+tFozZOPPZfsCZPfVO6YGwTBL+gjmdSlo0jB3tvDi+A9/b4Emo
+         9L2oh0MYdBsErXnSyuVfgwHxCoMDDo4+CpJrj5lKd2qq1uCfXiwFHAFhSXRmUXCWXUEH
+         L12sEhgjzr5QzCybd86d6x4DVADRiiynnh7TxpXFrM3v1Jy5PnIwf7E6kc2lJb05oH8a
+         0SnPJ5FgfvH6rH7c3RAP9stfzCxefijUpHHQPO/qDNBZ9lOZ2aqWZV8ECL2SS2W1ciAa
+         gEdSq12Wt3WE9mDhw2DrgNimQdDnVpg/AEAdVuqFpQ2YjoNVsYEzF2Bi86FR+OEwJVtN
+         D+qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749569160; x=1750173960;
+        d=1e100.net; s=20230601; t=1749575229; x=1750180029;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x6ntSLzzkgDcKiYD+pdoSgRnvQrKh+X3UPoOJZiFgNQ=;
-        b=BHExREEPjq0spR5VGhJNn86g5S79ZPBw/aouZGW5WBZFYTSwR/W/YYPWMHD0qNA9Dn
-         KGTfe5l8zUkrrS7JZQmvYiaXX9xe3xiE+QMgiNjGE5D8ATgeXJpBhzTzC8bKnPhS0X2/
-         HNTkkJeb4WTjTycopUgv9ww9QeljOlM4A1eRlPs+TbczqjBr3Ho9ZLLJEe5ylxFvoRn9
-         JCRycli539qwUGT0s73rNvehDxf2R5T6dWfF4fiqu+PL/tSagmfjKyHheXW4ZMnMGuwH
-         nt7Aqc7kZ1cMCyjjmKeXbcKI43fF4dCP2afq89yEE31vFiC2fknX8QYeNUe39DexcNWa
-         Y2Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVFnt/WjK0ckUVLxdt+RhC4Fk5B3jwgtL9mBOZ4VYW/fVoC2qawrKkbESpwUO7Mx3Fpfxu1ks1k1lw0S4o@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfkh4f2Jiy5XowXgWC7Hm7oN9uwGKJ2S9l5UUovm1lhKwAyyRs
-	2TfZ7fx26HBNvXdqUWRgVmIZYqMI1Jb57+OEstbTbaypRDzCUeCcFrlpuPVNj6+WreWdwpNntYB
-	VKEG7xByGsPmv+LUlmtsnOwQkxJV8BmE=
-X-Gm-Gg: ASbGncsLSEbycHbiEimdihBVRaQZXXMVCTq9rRw9tBjOazASAcwXiyQCtfHmSP9aHbp
-	fgC0fU4EJEb891KjDBT4KbeDWV7kUgyOXO+UzJGf+TopqQzDCXYzcNWpXfZ1N5PT03nkOV1UFa3
-	5f7LHPApGDdfiai5nwYzualp3Ku9TvYsIx3aU1KTJXaX8=
-X-Google-Smtp-Source: AGHT+IGRIG8NIP0MeV4UVGTzTJ/1Cjuu/fhf55nBqJSEMwFxWqhgag6b6SfSBmjBaCIGSxYiY7cOaZ9ILonOoL1oyjE=
-X-Received: by 2002:a17:906:6a03:b0:ace:d710:a8d1 with SMTP id
- a640c23a62f3a-ade7ac756e4mr288338866b.24.1749569159675; Tue, 10 Jun 2025
- 08:25:59 -0700 (PDT)
+        bh=E3WVKJVLsC72+25+NT9c5Ak83GPqKH0nfsEur1vtPag=;
+        b=rpaB290k3elqeTibBzyBRfy9DNb6a7HZSFUwhwiIng+a4X95umI5js7paEr+9DQfiI
+         8bak6LmnIZHv1KmPSvNXqjUGd0ygIISP0hIcYnkZJQpzZUO6ya1Shz1q/t0bKF7Abky7
+         L7EEe2L5SmJkthzl/9wsmPb327tG318lWmhzXCUGS3hDuq7zhEWHE5eOPO1TSMe3SzfM
+         +8uyifvdC4xFsfPzm8v8EsUKiNNCZxSbCgxzxepz2Y/cPI/Xw53k6WDZ7Iw2AwpQ46al
+         aVXY6Gps8O4gOIyjAOChXvjVldCpX6L1yLVT5Q3oe54fonldwgFbwEJFHu6NV9r087ly
+         nsjg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3ign3nj1b7CPLIFaXPh4RBEcR+A0fSJlsjf2t1RITnnH7DDJzmpprVwimubswPLgfs0YrlFJinNauC+nG@vger.kernel.org, AJvYcCW5GCy6NRWWPhYAB8fHBOt/D7TKhkHZnoyiuJJbOrhAU6Fa8GCbmAXjcLmF65F91OmWZYeUPT56ocEo@vger.kernel.org, AJvYcCXqyfF3H8I+swyA43tji5ATnYepvaKew+aUlWctT49fGJniPPYX2UsoHeMG+6dvrIZKH/UwP4qBY6BF6fjC9A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjBsuQeLp0V5RpC7j5RnuAcXI/F4JCMxQqWXdov2ecpOpVCo/I
+	KVkXvWkqH6GbepSzn1EVaA64OeWkLPZd8KoS/x+71qz42Smbb3qlxR7iSzRLtq7MZ+9LqQnDq/x
+	TrZA8F6MrDJaN/aYBV8/wAgP3rnp60xFvGALW
+X-Gm-Gg: ASbGncv5W9NYzIVJTqVndpTiwb5PvfUxGxZD2/dhi0zx6IrNwWfa0Uw2zwgeT9NNskZ
+	97NJHgRIjzyHQEr14K65gocTMQpqZPB082LaysL7acU20336Ui0PShIBi29UwnEVZBRBGoPRSVD
+	/puiC0rgJoGHET2SOft57K34pnAjG/LyFp+rq4eAlLvlZaN7XwBi17RKHNJXaOxlR6N9YYfalM/
+	2UDTA==
+X-Google-Smtp-Source: AGHT+IHj14OlWbkJdXRqC0T1Ze5gzdUiLPGZS7cDMtXasmwQwA1hhSMY2Ega9w6NMi0lya9r+ehXQRq7EAQ2VhZfklU=
+X-Received: by 2002:a05:651c:19a7:b0:30b:f52d:148f with SMTP id
+ 38308e7fff4ca-32b202588a2mr2097211fa.18.1749575228385; Tue, 10 Jun 2025
+ 10:07:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604160918.2170961-1-amir73il@gmail.com> <e2rcmelzasy6q4vgggukdjb2s2qkczcgapknmnjb33advglc6y@jvi3haw7irxy>
-In-Reply-To: <e2rcmelzasy6q4vgggukdjb2s2qkczcgapknmnjb33advglc6y@jvi3haw7irxy>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 10 Jun 2025 17:25:48 +0200
-X-Gm-Features: AX0GCFuoAGzGVEa4pw80frVW6k5in0KClsoyidxtcGF_-dcTQXIuHj8g9NA-bfg
-Message-ID: <CAOQ4uxg1k7DZazPDRuRfhnHmps_Oc8mmb1cy55eH-gzB9zwyjw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/3] fanotify HSM events for directories
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+References: <174951744454.608730.18354002683881684261@noble.neil.brown.name>
+In-Reply-To: <174951744454.608730.18354002683881684261@noble.neil.brown.name>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 10 Jun 2025 12:06:56 -0500
+X-Gm-Features: AX0GCFtIGiwQTKeGFcZKlbCtKzdoo3Qt-Wx67IUVp1GdHgRsejHkKeWgnEhS2to
+Message-ID: <CAH2r5mvJdA4hcnnWinNThWFUTEWHOt9wMa2-PVHDVAjM02fAzQ@mail.gmail.com>
+Subject: Re: [PATCH] VFS: change try_lookup_noperm() to skip revalidation
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	Bharath S M <bharathsm@microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 3:49=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+Tested-by: Steve French <stfrench@microsoft.com>
+
+I verified that it fixed the performance regression in generic/676
+(see e.g. a full test run this morning with the patch on 6.16-rc1
+http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/3/=
+builds/497),
+the test took 10:48 vs. 23 to 30 minutes without the patch.
+
+I also saw similar performance yesterday with 6.16-rc1 with reverting
+the patch ("Use try_lookup_noperm() instead of d_hash_and_lookup()
+outside of VFS"
+) For that run test generic/676 took 9:32.
+
+On Mon, Jun 9, 2025 at 8:04=E2=80=AFPM NeilBrown <neil@brown.name> wrote:
 >
-> Hi Amir!
 >
-
-Hi Jan!
-
-Thanks for taking the time to read my long email ;)
-
-> On Wed 04-06-25 18:09:15, Amir Goldstein wrote:
-> > In v1 there was only patch 1 [1] to allow FAN_PRE_ACCESS events
-> > on readdir (with FAN_ONDIR).
-> >
-> > Following your feedback on v1, v2 adds support for FAN_PATH_ACCESS
-> > event so that a non-populated directory could be populted either on
-> > first readdir or on first lookup.
+> The recent change from using d_hash_and_lookup() to using
+> try_lookup_noperm() inadvertently introduce a d_revalidate() call when
+> the lookup was successful.  Steven French reports that this resulted in
+> worse than halving of performance in some cases.
 >
-> OK, it's good that now we have a bit more wider context for the discussio=
-n
-> :). First, when reading this I've started wondering whether we need both
-> FAN_PRE_ACCESS on directories and FAN_PATH_ACCESS (only on directories).
-> Firstly, I don't love adding more use to the FAN_ONDIR flag when creating
-> marks because you can only specify you want FAN_PRE_ACCESS on files,
-> FAN_PRE_ACCESS on files & dirs but there's no way to tell you care only
-> about FAN_PRE_ACCESS on dirs. You have to filter that when receiving
-> events. Secondly, the distinction between FAN_PRE_ACCESS and
-> FAN_PATH_ACCESS is somewhat weak - it's kind of similar to the situation
-> with regular files when we notify about access to the whole file vs only =
-to
-> a specific range.  So what if we had an event like FAN_PRE_DIR_ACCESS tha=
-t
-> would report looked up name on lookup and nothing on readdir meaning you
-> need to fetch everything?
+> Prior to the offending patch the only caller of try_lookup_noperm() was
+> autofs which does not need the d_revalidate().  So it is safe to remove
+> the d_revalidate() call providing we stop using try_lookup_noperm() to
+> implement lookup_noperm().
 >
-
-This makes a lot of  sense to me. and I also like the suggested event name.
-Another advantage is that FAN_PRE_ACCESS can always expect a range
-(as documented)
-
-> > I am still tagging this as RFC for two semi-related reasons:
-> >
-> > 1) In my original draft of man-page for FAN_PATH_ACCESS [2],
-> > I had introduced a new class FAN_CLASS_PRE_PATH, which FAN_PATH_ACCESS
-> > requires and is defined as:
-> > "Unlike FAN_CLASS_PRE_CONTENT, this class can be used along with
-> >  FAN_REPORT_DFID_NAME to report the names of the looked up files along
-> >  with O_PATH file descriptos in the new path lookup events."
-> >
-> > I am not sure if we really need FAN_CLASS_PRE_PATH, so wanted to ask
-> > your opinion.
-> >
-> > The basic HSM (as implemented in my POC) does not need to get the looku=
-p
-> > name in the event - it populates dir on first readdir or lookup access.
-> > So I think that support for (FAN_CLASS_PRE_CONTENT | FAN_REPORT_DFID_NA=
-ME)
-> > could be added later per demand.
+> The "try_" in the name is strongly suggestive that the caller isn't
+> expecting much effort, so it seems reasonable to avoid the effort of
+> d_revalidate().
 >
-> The question here is what a real user is going to do? I know Meta guys
-> don't care about directory events for their usecase. You seem to care abo=
-ut
-> them so I presume you have some production use in mind?
-
-Yes we have had it in production for a long time -
-You can instantaneously create a lazy clone of the entire "cloud fs" locall=
-y.
-Directories get populated with sparse files on first access.
-Sparse files get populated with data on first IO access.
-It is essentially the same use case as Meta and many other similar users.
-The need for directory populate is just a question of scale -
-How much does it take to create a "metadata clone" or the remote fs copy
-and create all the sparse files.
-At some point, it becomes too heavy to not do it lazily.
-
-> How's that going to
-> work? Because if I should guess I'd think that someone asks for the name
-> being looked up sooner rather than later because for large dirs not havin=
-g
-> to fetch everything on lookup would be a noticeable win...
-
-Populating a single sparse file on lookup would be a large win, but also pr=
-etty
-hard to implement this "partially populated dir" state correctly. For
-that reason,
-We have not implemented this so far, but one can imagine (as you wrote) tha=
-t
-someone else may want to make use of that in the future.
-
-> And if that's
-> the case then IMHO we should design (but not necessarily fully implement)
-> API that's the simplest and most logical when this is added.
+> Fixes: 06c567403ae5 ("Use try_lookup_noperm() instead of d_hash_and_looku=
+p() outside of VFS")
+> Reported-by: Steve French <smfrench@gmail.com>
+> Link: https://lore.kernel.org/all/CAH2r5mu5SfBrdc2CFHwzft8=3Dn9koPMk+Jzwp=
+y-oUMx-wCRCesQ@mail.gmail.com/
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/namei.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
 >
-> This ties to the discussion how the FAN_PATH_ACCESS / FAN_PRE_DIR_ACCESS
-> event is going to report the name.
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4bb889fc980b..f761cafaeaad 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2917,7 +2917,8 @@ static int lookup_one_common(struct mnt_idmap *idma=
+p,
+>   * @base:      base directory to lookup from
+>   *
+>   * Look up a dentry by name in the dcache, returning NULL if it does not
+> - * currently exist.  The function does not try to create a dentry.
+> + * currently exist.  The function does not try to create a dentry and if=
+ one
+> + * is found it doesn't try to revalidate it.
+>   *
+>   * Note that this routine is purely a helper for filesystem usage and sh=
+ould
+>   * not be called by generic code.  It does no permission checking.
+> @@ -2933,7 +2934,7 @@ struct dentry *try_lookup_noperm(struct qstr *name,=
+ struct dentry *base)
+>         if (err)
+>                 return ERR_PTR(err);
 >
-
-Absolutely. The FAN_PRE_DIR_ACCESS should support reporting name info
-in the future. Naturally, this could be an opt-in with FAN_REPORT_NAME,
-because for most implementations (like ours) the name will not be needed.
-
-I do not see an immediate reason to implement FAN_REPORT_NAME from
-the start, but OTOH, if we do want to implement FAN_REPORT_DIR_FID from
-the start, implementing FAN_REPORT_NAME would be a no-brainer.
-
-> > 2) Current code does not generate FAN_PRE_ACCESS from vfs internal
-> > lookup helpers such as  lookup_one*() helpers from overalyfs and nfsd.
-> > This is related to the API of reporting an O_PATH event->fd for
-> > FAN_PATH_ACCESS event, which requires a mount.
+> -       return lookup_dcache(name, base, 0);
+> +       return d_lookup(base, name);
+>  }
+>  EXPORT_SYMBOL(try_lookup_noperm);
 >
-> AFAIU this means that you could not NFS export a filesystem that is HSM
-> managed and you could not use HSM managed filesystem to compose overlayfs=
-.
-> I don't find either of those a critical feature but OTOH it would be nice
-> if the API didn't restrict us from somehow implementing this in the futur=
-e.
+> @@ -3057,14 +3058,22 @@ EXPORT_SYMBOL(lookup_one_positive_unlocked);
+>   * Note that this routine is purely a helper for filesystem usage and sh=
+ould
+>   * not be called by generic code. It does no permission checking.
+>   *
+> - * Unlike lookup_noperm, it should be called without the parent
+> + * Unlike lookup_noperm(), it should be called without the parent
+>   * i_rwsem held, and will take the i_rwsem itself if necessary.
+> + *
+> + * Unlike try_lookup_noperm() it *does* revalidate the dentry if it alre=
+ady
+> + * existed.
+>   */
+>  struct dentry *lookup_noperm_unlocked(struct qstr *name, struct dentry *=
+base)
+>  {
+>         struct dentry *ret;
+> +       int err;
+>
+> -       ret =3D try_lookup_noperm(name, base);
+> +       err =3D lookup_noperm_common(name, base);
+> +       if (err)
+> +               return ERR_PTR(err);
+> +
+> +       ret =3D lookup_dcache(name, base, 0);
+>         if (!ret)
+>                 ret =3D lookup_slow(name, base, 0);
+>         return ret;
+> --
+> 2.49.0
 >
 
-Right.
-There are a few ways to address this.
-FAN_REPORT_DFID_NAME is one of them.
 
-Actually, the two cases, overlayfs and nfsd are different
-in the aspect that the overlayfs layer uses a private mount clone
-while nfsd actually exports a specific user visible mount.
-So at least in theory nfsd could report lookup events with a path
-as demonstrated with commit from my WIP FAN_PRE_MODIFY patches
-https://github.com/amir73il/linux/commit/4a8b6401e64d8dbe0721e5aaa496f0ad59=
-208560
-
-Another way is to say that event->fd does not need to indicate the
-mount where the event happened.
-Especially if event->fd is O_PATH fd, then it could simply refer to a
-directory dentry using some arbitrary mount that the listener has access to=
-.
-For example, we can allow an opt-in flag to say that the listener keeps
-an O_PATH fd for the path provided in fanotify_mark() (i.e. for an sb mark)
-and let fanotify report event->fd based on the listener's mount regardless
-of the event generator's mount.
-
-There is no real concern about the listener keeping the fs mount busy becau=
-se:
-1. lsof will show this reference to the mount
-2. A proper listener with FAN_REPORT_DFID_NAME has to keep open
-   mount_fd mapped to fsid anyway to be able to repose paths from events
-   (for example: fsnotifywatch implementation in inotify-tools)
-
-Then functionally, FAN_REPORT_DIR_FID and FAN_REPORT_DIR_FD
-would be similar, except that the latter keeps a reference to the object wh=
-ile
-in the event queue and the former does not.
-
-> > If we decide that we want to support FAN_PATH_ACCESS from all the
-> > path-less lookup_one*() helpers, then we need to support reporting
-> > FAN_PATH_ACCESS event with directory fid.
-> >
-> > If we allow FAN_PATH_ACCESS event from path-less vfs helpers, we still
-> > have to allow setting FAN_PATH_ACCESS in a mount mark/ignore mask, beca=
-use
-> > we need to provide a way for HSM to opt-out of FAN_PATH_ACCESS events
-> > on its "work" mount - the path via which directories are populated.
-> >
-> > There may be a middle ground:
-> > - Pass optional path arg to __lookup_slow() (i.e. from walk_component()=
-)
-> > - Move fsnotify hook into __lookup_slow()
-> > - fsnotify_lookup_perm() passes optional path data to fsnotify()
-> > - fanotify_handle_event() returns -EPERM for FAN_PATH_ACCESS without
-> >   path data
-> >
-> > This way, if HSM is enabled on an sb and not ignored on specific dir
-> > after it was populated, path lookup from syscall will trigger
-> > FAN_PATH_ACCESS events and overalyfs/nfsd will fail to lookup inside
-> > non-populated directories.
->
-> OK, but how will this manifest from the user POV? If we have say nfs
-> exported filesystem that is HSM managed then there would have to be some
-> knowledge in nfsd to know how to access needed files so that HSM can pull
-> them? I guess I'm missing the advantage of this middle-ground solution...
->
-
-The advantage is that an admin is able to set up a "lazy populated fs"
-with the guarantee that:
-1. Non-populated objects can never be accessed
-2. If the remote fetch service is up and the objects are accessed
-    from a supported path (i.e. not overlayfs layer) then the objects
-    will be populated on access
-
-This is stronger and more useful than silently serving invalid content IMO.
-
-This is related to the discussion about persistent marks and how to protect
-against access to non-populated objects while service is down, but since
-we have at least one case that can result in an EIO error (service down)
-then another case (access from overlayfs) maybe is not a game changer(?)
-
-> > Supporting populate events from overalyfs/nfsd could be implemented
-> > later per demand by reporting directory fid instead of O_PATH fd.
-> >
-> > If you think that is worth checking, I can prepare a patch for the abov=
-e
-> > so we can expose it to performance regression bots.
-> >
-> > Better yet, if you have no issues with the implementation in this
-> > patch set, maybe let it soak in for_next/for_testing as is to make
-> > sure that it does not already introduce any performance regressions.
-> >
-> > Thoughts?
->
-> If I should summarize the API situation: If we ever want to support HSM +
-> NFS export / overlayfs, we must implement support for pre-content events
-> with FID (DFID + name to be precise).
-
-Yes, but there may be alternatives to FID.
-
-> If we want to support HSM events on
-> lookup with looked up name, we don't have to go for full DFID + name but =
-we
-> must at least add additional info with the name to the event.
-
-Yes, reporting name is really a feature that could be opt-in.
-And if we report name, it is no effort to also report FID,
-regardless if we also report event->fd or not.
-
-> Also if we go
-> for reporting directory pre-content events with standard events, you want
-> to add support for returning O_PATH fds for better efficiency and the cod=
-e
-> to handle FMODE_NONOTIFY directory fds in path lookup.
->
-
-Yes. technically, O_PATH fd itself could be used to perform the populate of
-dir in a kin way to event->fd being used to populate a file, so it is
-elegant IMO.
-
-> Frankly seeing all this I think that going for DFID + name events for
-> directory HSM events from the start may be the cleanest choice long term
-> because then we'll have one way how to access the directory HSM
-> functionality with possibility of extensions without having to add
-> different APIs for it.
-
-I see the appeal in that.
-I definitely considered that when we planned the API
-just wanted to consult with you before going forward with implementation.
-
-> We'd just have to implement replying to FID events
-> because we won't have fd to identify event we reply to so that will need
-> some thought.
-
-I keep forgetting about that :-D
-
-My suggestion for FAN_REPORT_DIR_FD could work around this
-problem ellegantly.
-
->
-> What are your thoughts? Am I missing something?
->
-
-My thoughts are that FAN_REPORT_DIR_FD and
-FAN_REPORT_DFID_NAME may both be valid solutions and
-they are not even conflicting.
-In fact, there is no clear reason to deny mixing them together.
-
-If you do not have any objection to the FAN_REPORT_DIR_FD
-solution, then we need to decide if we want to do them both?
-one at a time? both from the start?
-
-My gut feeling is that FAN_REPORT_DIR_FD is going to be
-more easy to implement and to users to use for first version
-and then whether or not we need to extend to report name
-we can deal with later.
-
-WDYT?
-
+--=20
 Thanks,
-Amir.
+
+Steve
 
