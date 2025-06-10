@@ -1,164 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-51083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FDDAD2AFF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 02:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3728DAD2B18
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 03:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1750167F5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 00:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E66BB3ADD06
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 01:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B68118E02A;
-	Tue, 10 Jun 2025 00:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="uMIybKf1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A46188596;
+	Tue, 10 Jun 2025 01:02:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0251A18785D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 00:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9607112B71;
+	Tue, 10 Jun 2025 01:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749516464; cv=none; b=MHey9Z8E4jrWEQ4EK3VSMLihQRKHzy0LAaNkaR5wLkft6BeV903t7OVC9whPOSWAQYbhF0UzQg1qJyJ25vfFya+YlnekN6Gm9NpRsDNj7VY+2upTn+HsQ8mLPsScU8312Q65DA20KoLgHw5XfZWHkpjuBfOgL10iSPQr45VfCd0=
+	t=1749517329; cv=none; b=oA7B+jJTvap9d3UTNUmt2TUUQdQpMlAAwS0EN1Ss0oFAaB4YLZ1zZYHp9ZeIHDL9SRCq+oor6n06IjnsaxtSao9R7a+q9aktSYXiAh8pDK1Pp1AHyO8j4KM3K5GOwL73WHHe85wOjzDac4eVN9wrv0kJmJJkqvjwpf3+SquelIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749516464; c=relaxed/simple;
-	bh=wzCk96ikWwU44bte0lQ98/7tlYNX7MGlFlWnTbV3Q3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X0DVoE9TgXyfBWLeoCxMYjeruYp0fANu2eo7+EajMpaN4rETD260E1OER0zGLo3oDMUI/Le19ltqUmO0ZWSHhic8BBE5OBMIHVqbcyyXgbC3NuoVC+6hZZrX7wLGhqTTWAzzUnNO0CIncREd53RhF4/GiK0YpDzpjg7uUo+TPW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=uMIybKf1; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-af51596da56so3375487a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jun 2025 17:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1749516462; x=1750121262; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3HFQjv+s6bpttilWu2xjAJePsr0RPP9RK118a+zBXU=;
-        b=uMIybKf1b//Z5997zuzeoGNpGaNsTam+DaY+5pDAPutrDYI+enowiFpR6bUi4QUWDY
-         K/zQGdKcwdhV6FjeJOpJWhbgI9Y0kIjZcCMP/nsdu90G8wbq/BtHvi75t5OnaXVhD/zm
-         1xbn1tw6uitcP/yNju6laDVve3ZBg7vIMav4KGUYw7LDi/+Ge+x8uk8MKGUOrfUL+GFq
-         QDIBCWfE/ig4qvbYEJTBigz0T9vOKbem1ynktoTiKa+/I9DGKklebYQLEKRMvAOSA0ne
-         c4sl0QlJA18L5yE6+uISuW+y0dDXXak9nC4RsAvWQysjAk02nEUBeItLm7Z9fQ1lo2YO
-         LcIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749516462; x=1750121262;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z3HFQjv+s6bpttilWu2xjAJePsr0RPP9RK118a+zBXU=;
-        b=D9yltkUdxbphcK5Gq9dvRHO2GFPlwyWL8xcd9ejEqPc4TwD4CjlOjFFKJLFAqDsvVo
-         ZpOTFIfczOvd9u2DE/vyM+qIwPgJ+xUIKgZ8/hraXlh0purvvuZzIPacw6A5lK8kOgqv
-         CtYq/yfRDwRU5VQW1cdXJ+jbkSNP3jJJZuLz39zr9t9HyseBvt560+GGOM5ILZM4DhFT
-         xia1niRbjsHiP8lj91l3TBPBpYA23JqZ7w7UJWpWEVJElX2hntds5i3YaI+HvyyuOe9L
-         /c+gTdQjfUzLfhuPsaS2CwMziuaR+Z1OR4T+RJJmMv9QR/56IJ87htZkPTGOcninFMI9
-         s1Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkWW1tJpn3sOH94+4+uzDJJdSGy7xfEOumdkfCS6rp/Uy+bx8J61rslSxSTcm9TU3U+kLAgYWjWHqNj957@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyShKVhVzngoCE4enTsWIhbk/5AfYpF6V5STnLEjC6q+8ph3E7
-	zke4KLj46WwOk6imRRDZfSafXnqclD+i31b+AIavPD/+TpQNv43zT1vV9c1CCbkW5gU=
-X-Gm-Gg: ASbGnctLjqa4mOCH4vLLbsnPZyroqTkXLngOkIyuFigsrR9+gUUqHbAkf6LnhwJv08F
-	+1djo1Yyhg1MQm2VbA5dv3YQqOWO9m+UQzQ+oJSsZi0VxXKrHgaAK/0zDuhYWJRIwWphz31CS+K
-	iu/ZCkO0XK7nehxqj4YIwdGPZhizD8DEnCwLRc/6cLdGw8Vs9q3WXa3MP6wcIh2E1m4i0Kdz/S7
-	a5/tcyXK+eNR1e3+dYcrrqDwbczHZxIcZd7mGYYRknQhQdP5vaAd6FVqWIkA1KKugV7MRgHEmtK
-	EZkOhvAduF15zMl8wE6fUXYkITnxZvgiRau5gEAQGzo/L/T90tTJn10t+F/cvkTc3B6vN4GtYb2
-	iamAdsXpKbtjf6dRa9/p1FBH/B7OzZLGWLfPpFQ==
-X-Google-Smtp-Source: AGHT+IF+GE/zQiGzNIgbWcPCTdnSM7Z+WH7gcF6pxHsgZod9kavZI1l2guNjvkN7v2RhFEDFr+ZVDA==
-X-Received: by 2002:a17:90b:540c:b0:311:c1ec:7d0a with SMTP id 98e67ed59e1d1-3134768fa6emr21220493a91.25.1749516462202;
-        Mon, 09 Jun 2025 17:47:42 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3134b13b45dsm6829912a91.37.2025.06.09.17.47.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 17:47:41 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uOn9P-0000000ERff-0bxu;
-	Tue, 10 Jun 2025 10:47:39 +1000
-Date: Tue, 10 Jun 2025 10:47:39 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, djwong@kernel.org, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Subject: Re: [PATCH v1 0/8] fuse: use iomap for buffered writes + writeback
-Message-ID: <aEeAqxUfFxepmQle@dread.disaster.area>
-References: <20250606233803.1421259-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1749517329; c=relaxed/simple;
+	bh=EbuBy0E5ZafugyjYTKvCcXhyucSCaS/HtXQs04B82hc=;
+	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Uc7MFpXusDtjfQwtD+5KF9OAQFDrrEpMsf94761y53b8+XRUQnFXRa63+jqKmpeGAuWhsRTLMkgVOTlUOv3GxdmAOc2mpyAoM9oXS5t1IQ/icArr68OcZXfHyXwk9kA2RS3tyGdlN3CdjJCePHu3WbBOgGZCl9NB646QJkD2QEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bGVqv6QGPzYQvLT;
+	Tue, 10 Jun 2025 09:02:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E26351A0DF9;
+	Tue, 10 Jun 2025 09:02:02 +0800 (CST)
+Received: from [10.174.99.169] (unknown [10.174.99.169])
+	by APP4 (Coremail) with SMTP id gCh0CgDnSF0JhEdo4IIqPA--.56772S2;
+	Tue, 10 Jun 2025 09:02:02 +0800 (CST)
+Subject: Re: [PATCH 1/7] mm: shmem: correctly pass alloced parameter to
+ shmem_recalc_inode() to avoid WARN_ON()
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, hughd@google.com,
+ willy@infradead.org, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250605221037.7872-1-shikemeng@huaweicloud.com>
+ <20250605221037.7872-2-shikemeng@huaweicloud.com>
+ <3d07c68f-da11-43d8-a2da-6b200b2fa40a@linux.alibaba.com>
+ <994283d9-2dc4-6887-5d46-247b834879b5@huaweicloud.com>
+Message-ID: <9e59f1f0-db3b-2182-4485-887ac7036bfd@huaweicloud.com>
+Date: Tue, 10 Jun 2025 09:02:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250606233803.1421259-1-joannelkoong@gmail.com>
+In-Reply-To: <994283d9-2dc4-6887-5d46-247b834879b5@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnSF0JhEdo4IIqPA--.56772S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw4xuw4rWw1kWw45uw1Utrb_yoWrKF1rpr
+	n5GFyDGr48JrZ7GF1xtr4kXry0qF4fAa1UJrnxAFyxKF47Gw18Kr13JrnFgr1DA34kAry7
+	tw1kK34IvayDCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
+	tUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Fri, Jun 06, 2025 at 04:37:55PM -0700, Joanne Koong wrote:
-> This series adds fuse iomap support for buffered writes and dirty folio
-> writeback. This is needed so that granular dirty tracking can be used in
-> fuse when large folios are enabled so that if only a few bytes in a large
-> folio are dirty, only a smaller portion is written out instead of the entire
-> folio.
+
+
+on 6/9/2025 8:46 AM, Kemeng Shi wrote:
 > 
-> In order to do so, a new iomap type, IOMAP_IN_MEM, is added that is more
-> generic and does not depend on the block layer. The parts of iomap buffer io
-> that depend on bios and CONFIG_BLOCK is moved to a separate file,
-> buffered-io-bio.c, in order to allow filesystems that do not have CONFIG_BLOCK
-> set to use IOMAP_IN_MEM buffered io.
 > 
-> This series was run through fstests with large folios enabled and through
-> some quick sanity checks on passthrough_hp with a) writing 1 GB in 1 MB chunks
-> and then going back and dirtying a few bytes in each chunk and b) writing 50 MB
-> in 1 MB chunks and going through dirtying the entire chunk for several runs.
-> a) showed about a 40% speedup increase with iomap support added and b) showed
-> roughly the same performance.
-> 
-> This patchset does not enable large folios yet. That will be sent out in a
-> separate future patchset.
-> 
-> 
-> Thanks,
-> Joanne
-> 
-> Joanne Koong (8):
->   iomap: move buffered io bio logic into separate file
->   iomap: add IOMAP_IN_MEM iomap type
->   iomap: add buffered write support for IOMAP_IN_MEM iomaps
->   iomap: add writepages support for IOMAP_IN_MEM iomaps
+> on 6/7/2025 2:11 PM, Baolin Wang wrote:
+>>
+>>
+>> On 2025/6/6 06:10, Kemeng Shi wrote:
+>>> As noted in the comments, we need to release block usage for swap entry
+>>> which was replaced with poisoned swap entry. However, no block usage is
+>>> actually freed by calling shmem_recalc_inode(inode, -nr_pages, -nr_pages).
+>>> Instead, call shmem_recalc_inode(inode, 0, -nr_pages) can correctly release
+>>> the block usage.
+>>>
+>>> Fixes: 6cec2b95dadf7 ("mm/shmem: fix infinite loop when swap in shmem error at swapoff time")
+>>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+>>> ---
+>>>   mm/shmem.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/shmem.c b/mm/shmem.c
+>>> index 4b42419ce6b2..e27d19867e03 100644
+>>> --- a/mm/shmem.c
+>>> +++ b/mm/shmem.c
+>>> @@ -2145,7 +2145,7 @@ static void shmem_set_folio_swapin_error(struct inode *inode, pgoff_t index,
+>>>        * won't be 0 when inode is released and thus trigger WARN_ON(i_blocks)
+>>>        * in shmem_evict_inode().
+>>>        */
+>>> -    shmem_recalc_inode(inode, -nr_pages, -nr_pages);
+>>> +    shmem_recalc_inode(inode, 0, -nr_pages);
+>>>       swap_free_nr(swap, nr_pages);
+>>>   }
+>>
+>> Have you tested your patch? When I inject an error to test your patch, the following issue will be triggered:As all issues are hard to trigger, I only run some simple test to ensure normal
+> process is fine. Could you share how to inject the error to trigger following
+> issue. I will have a deep look. Thanks
+Sorry that the message is truncated. I mean I only test normal process is fine.
+Besides, I think there is another long-standing issue which could trigger the
+following issue. Here is the issue which is possible to blame:
+When swap entry is replaced with error entry in shmem_set_folio_swapin_error(),
+we will reduce info->swapped. Afterwards, error entry could be deleted in
+shmem_undo_range() and the info->swapped is reduced again. As a result, we
+reduce info->swapped twice for a single swap entry.
+A simple way to confirm this is injecting error to original code. Could you
+share how to trigger the issue or could you do the same test to original code?
+Thanks.
 
-AFAICT, this is just adding a synchronous "read folio" and "write
-folio" hooks into iomapi that bypass the existing "map and pack"
-bio-based infrastructure. i.e. there is no actual "iomapping" being
-done, it's adding special case IO hooks into the IO back end
-iomap bio interfaces.
+>>
+>> [  127.173330] ------------[ cut here ]------------
+>> [  127.173331] WARNING: CPU: 13 PID: 6860 at mm/shmem.c:1388 shmem_evict_inode+0xf0/0x348
+>> [  127.173920] CPU: 13 UID: 0 PID: 6860 Comm: shmem_swapin_er Kdump: loaded Tainted: G            E       6.15.0-rc6+ #54 VOLUNTARY
+>> [  127.173925] pstate: 63401005 (nZCv daif +PAN -UAO +TCO +DIT +SSBS BTYPE=--)
+>> [  127.173927] pc : shmem_evict_inode+0xf0/0x348
+>> [  127.173929] lr : shmem_evict_inode+0x68/0x348
+>> [  127.173931] sp : ffff8000895639e0
+>> [  127.173932] x29: ffff8000895639e0 x28: 0000000000000006 x27: ffff00013754bfc0
+>> [  127.173935] x26: ffff800080d8f160 x25: 0000000000000006 x24: ffff0000c0aab440
+>> [  127.173937] x23: ffff00013754b780 x22: ffff00013754b780 x21: ffff0000cbc9c6b0
+>> [  127.173940] x20: ffff0000c0aab440 x19: ffff0000cbc9c700 x18: 0000000000000030
+>> [  127.173942] x17: 0000ffffa1f4cfff x16: 0000000000000003 x15: 0000000000001000
+>> [  127.173945] x14: 00000000ffffffff x13: 0000000000000004 x12: ffff800089563108
+>> [  127.173947] x11: 0000000000000000 x10: 0000000000000002 x9 : ffff800080352080
+>> [  127.173949] x8 : fffffffffffffffe x7 : ffff800089563700 x6 : 0000000000000001
+>> [  127.173952] x5 : 0000000000000004 x4 : 0000000000000002 x3 : 0000000000000002
+>> [  127.173954] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffffffffffffff80
+>> [  127.173957] Call trace:
+>> [  127.173958]  shmem_evict_inode+0xf0/0x348 (P)
+>> [  127.173961]  evict+0x1c8/0x2c8
+>> [  127.173964]  iput_final+0x84/0x1a0
+>> [  127.173966]  iput.part.0+0xd0/0xf0
+>> [  127.173968]  iput+0x20/0x38
+>> [  127.173971]  dentry_unlink_inode+0xc0/0x158
+>> [  127.173973]  __dentry_kill+0x80/0x248
+>> [  127.173974]  dput+0xf0/0x240
+>> [  127.173976]  __fput+0x120/0x2f0
+>> [  127.173978]  ____fput+0x18/0x28
+>> [  127.173980]  task_work_run+0x88/0x120
+>> [  127.173983]  do_exit+0x198/0x3c0
+>> [  127.173986]  do_group_exit+0x38/0xa0
+>> [  127.173987]  get_signal+0x6ac/0x6b8
+>> [  127.173990]  do_signal+0x100/0x208
+>> [  127.173991]  do_notify_resume+0xc8/0x158
+>> [  127.173994]  el0_da+0xbc/0xc0
+>> [  127.173997]  el0t_64_sync_handler+0x70/0xc8
+>> [  127.173999]  el0t_64_sync+0x154/0x158
+>> [  127.174001] ---[ end trace 0000000000000000 ]---
+>>
 
-Is that a fair summary of what this is doing?
-
-If so, given that FUSE is actually a request/response protocol,
-why wasn't netfs chosen as the back end infrastructure to support
-large folios in the FUSE pagecache?
-
-It's specifically designed for request/response IO interfaces that
-are not block IO based, and it has infrastructure such as local file
-caching built into it for optimising performance on high latency/low
-bandwidth network based filesystems.
-
-Hence it seems like this patchset is trying to duplicate
-functionality that netfs already provides request/response
-protocol-based filesystems, but with much less generic functionality
-than netfs already provides....
-
-Hence I'm not seeing why this IO patch was chosen for FUSE. Was
-netfs considered as a candidate infrastructure large folio support
-for FUSE? If so, why was iomap chosen over netfs? If not, would FUSE
-be better suited to netfs integration than hacking fuse specific "no
-block mapping" IO paths into infrastructure specifically optimised
-for block based filesystems?
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
