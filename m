@@ -1,72 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-51160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EACAD35FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 14:21:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF02AD3611
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 14:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A723B906F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 12:20:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC99C175804
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 12:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3F828FFDD;
-	Tue, 10 Jun 2025 12:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80AD290DAA;
+	Tue, 10 Jun 2025 12:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kq6WHHfd"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="erC1vSIi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4117328FAA6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 12:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB8822578E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 12:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749558031; cv=none; b=K0IV0QrMY79nHTx+Vr6woJxKPzRiqCdLiZxdxF+dwuN+c0HN2awu4qm2Q1vHSL1LfSxMaNoFHqr+W8nDQ5IyEOmLV0qqyBlxCUVSmDYV3n9O2rirNVrLOHbjF1C1+x0f2OQxuTWVWjTQodEs9J5ypi3DDLHafad+XugfJbykC3w=
+	t=1749558199; cv=none; b=Xr68pCLk9LaQKOumUKvAqR16e6SnsuWM2bdI2TKwdhCntMawH1FUMOfZCEy4KJB6wbaUXOh6PRlPE+0i/laV4vbBja/Gbaf++sus+g1vne9sbiBNZ4XUl+LuCE8Nn9xQJMry4FiACRcNlLwE09Fuqzh2FeuvjQ4UN9zYIpufVJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749558031; c=relaxed/simple;
-	bh=Pgja4/lvNe3fMquzwA9FrxB76V11940z2mHUfLJY+PY=;
+	s=arc-20240116; t=1749558199; c=relaxed/simple;
+	bh=Mx+m0Kvr3P5//+kfdE27LV2gIzvBClZH1GCPHM85MaM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmFiApG6VmXy77VFr3vfVERTWIfmxEoIo13AZvjwOa7Sak6fSXhNPrJZAygt/Z6FTZIIP8Mqrh+jnR2ljPnYgM+IajtQngiPhVShjHy+B9GGpjgzawaUCEAuGKZP4HJHp8r/M/5KB+HfTbiw/Ru/cRegohmp34GonVhFP2+0IIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kq6WHHfd; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=iscwZpc5b3I1H7vqB9ewPUT2ysOL7QAbM3Md5VV/HS+OGJpfig4aSVMOatqnSdZo8hc87k7oAO1U8czuYZqNeEnPqk0AkRXRjH+7ARMMWwiTrHqcjclt1GvrAoLLYf9Q6+vShStZYIRlYooWVe/xuDbhhU6wu1zQqscwMNLUj4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=erC1vSIi; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749558029;
+	s=mimecast20190719; t=1749558196;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mMeA1vnnlvCC2BQWETMgH4IdWWhMpmY5D4WQM/9Lup4=;
-	b=Kq6WHHfd4TtS72T5+wTrhnRkmgRWmXpMFZxp0CZ8adxJuUaAIXKExu2nvCEWRTZ7cLTOE7
-	5kC654kE06940C7WyOX2OZ8ztu4emzpAm9icG7sGFz+PTJNsvTDb/r9ekQ0QDletDaxa6B
-	fM3p7LuS+b0778CKzxDxI137QuwV+EM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=GiWXWdJikqoIX0QaIbtyGeuDqgzC7gx2eetCW8Ce0Fw=;
+	b=erC1vSIi9TV6wzD27i3JlAzCD/piF0l3jnq6xmzGT+oqywdvtsOr3d4yTrp3nJY7TNAnsx
+	OXL1bSu9hbnlgcdoscDqm2/UQ4thmSHMmN81HJEBVtVkeaOla+q4HDufUBeQl8l3jL5tiq
+	LH/kCfUFbvfoXeY2w49krUrNFxadvGk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-67-tbOnSrmQMlKk49LSq1BdZA-1; Tue,
- 10 Jun 2025 08:20:27 -0400
-X-MC-Unique: tbOnSrmQMlKk49LSq1BdZA-1
-X-Mimecast-MFC-AGG-ID: tbOnSrmQMlKk49LSq1BdZA_1749558026
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-146-ypkTm2-fP4-Suj9YEK5lUg-1; Tue,
+ 10 Jun 2025 08:23:12 -0400
+X-MC-Unique: ypkTm2-fP4-Suj9YEK5lUg-1
+X-Mimecast-MFC-AGG-ID: ypkTm2-fP4-Suj9YEK5lUg_1749558191
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F1A8E1800291;
-	Tue, 10 Jun 2025 12:20:25 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2242D195608E;
+	Tue, 10 Jun 2025 12:23:11 +0000 (UTC)
 Received: from bfoster (unknown [10.22.80.100])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3306D30001B1;
-	Tue, 10 Jun 2025 12:20:25 +0000 (UTC)
-Date: Tue, 10 Jun 2025 08:24:00 -0400
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59A1E19560A3;
+	Tue, 10 Jun 2025 12:23:10 +0000 (UTC)
+Date: Tue, 10 Jun 2025 08:26:45 -0400
 From: Brian Foster <bfoster@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: Re: [PATCH 5/7] xfs: fill dirty folios on zero range of unwritten
- mappings
-Message-ID: <aEgj4J0d1AppDCuH@bfoster>
+Subject: Re: [PATCH RFC 7/7] xfs: error tag to force zeroing on debug kernels
+Message-ID: <aEgkhYne8EenhJfI@bfoster>
 References: <20250605173357.579720-1-bfoster@redhat.com>
- <20250605173357.579720-6-bfoster@redhat.com>
- <20250609161219.GE6156@frogsfrogsfrogs>
+ <20250605173357.579720-8-bfoster@redhat.com>
+ <aEe1oR3qRXz-QB67@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,99 +74,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250609161219.GE6156@frogsfrogsfrogs>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <aEe1oR3qRXz-QB67@infradead.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Jun 09, 2025 at 09:12:19AM -0700, Darrick J. Wong wrote:
-> On Thu, Jun 05, 2025 at 01:33:55PM -0400, Brian Foster wrote:
-> > Use the iomap folio batch mechanism to select folios to zero on zero
-> > range of unwritten mappings. Trim the resulting mapping if the batch
-> > is filled (unlikely for current use cases) to distinguish between a
-> > range to skip and one that requires another iteration due to a full
-> > batch.
+On Mon, Jun 09, 2025 at 09:33:37PM -0700, Christoph Hellwig wrote:
+> On Thu, Jun 05, 2025 at 01:33:57PM -0400, Brian Foster wrote:
+> > iomap_zero_range() has to cover various corner cases that are
+> > difficult to test on production kernels because it is used in fairly
+> > limited use cases. For example, it is currently only used by XFS and
+> > mostly only in partial block zeroing cases.
 > > 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> >  fs/xfs/xfs_iomap.c | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> > 
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index b5cf5bc6308d..63054f7ead0e 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-...
-> > @@ -1769,6 +1772,26 @@ xfs_buffered_write_iomap_begin(
-> >  		if (offset_fsb < eof_fsb && end_fsb > eof_fsb)
-> >  			end_fsb = eof_fsb;
-> >  
-> > +		/*
-> > +		 * Look up dirty folios for unwritten mappings within EOF.
-> > +		 * Providing this bypasses the flush iomap uses to trigger
-> > +		 * extent conversion when unwritten mappings have dirty
-> > +		 * pagecache in need of zeroing.
-> > +		 *
-> > +		 * Trim the mapping to the end pos of the lookup, which in turn
-> > +		 * was trimmed to the end of the batch if it became full before
-> > +		 * the end of the mapping.
-> > +		 */
-> > +		if (imap.br_state == XFS_EXT_UNWRITTEN &&
-> > +		    offset_fsb < eof_fsb) {
-> > +			loff_t len = min(count,
-> > +					 XFS_FSB_TO_B(mp, imap.br_blockcount));
-> > +
-> > +			end = iomap_fill_dirty_folios(iter, offset, len);
+> > While it's possible to test most of these functional cases, we can
+> > provide more robust test coverage by co-opting fallocate zero range
+> > to invoke zeroing of the entire range instead of the more efficient
+> > block punch/allocate sequence. Add an errortag to occasionally
+> > invoke forced zeroing.
 > 
-> ...though I wonder, does this need to happen in
-> xfs_buffered_write_iomap_begin?  Is it required to hold the ILOCK while
-> we go look for folios in the mapping?  Or could this become a part of
-> iomap_write_begin?
+> I like this, having an easy way to improve code coverage using the
+> existing fallocate and errtag interfaces is always a good thing.
+> 
+> Can I assume you plan to add a testcase using the errtag to xfstests?
 > 
 
-Technically it does not need to be inside ->iomap_begin(). The "dirty
-check" just needs to be before the fs drops its own locks associated
-with the mapping lookup to maintain functional correctness, and that
-includes doing it before the callout in the first place (i.e. this is
-how the filemap_range_needs_writeback() logic works). I have various
-older prototype versions of that work that tried to do things a bit more
-generically in that way, but ultimately they seemed less elegant for the
-purpose of zero range.
+Well that is kind of the question.. ;) My preference was to either add
+something to fstests to enable select errortags by default on every
+mount (or do the same in-kernel via XFS_DEBUG[_ERRTAGS] or some such)
+over just creating a one-off test that runs fsx or whatever with this
+error tag turned on. [1].
 
-WRT zero range, the main reason this is in the callback is that it's
-only required to search for dirty folios when the underlying mapping is
-unwritten, and we don't know that until the filesystem provides the
-mapping (and doing at after the fs drops locks is racy).
+That said, I wouldn't be opposed to just doing both if folks prefer
+that. It just bugs me to add yet another test that only runs a specific
+fsx test when we get much more coverage by running the full suite of
+tests. IOW, whenever somebody is testing a kernel that would actually
+run a custom test (XFS_DEBUG plus specific errortag support), we could
+in theory be running the whole suite with the same errortag turned on
+(albeit perhaps at a lesser frequency than a custom test would use). So
+from that perspective I'm not sure it makes a whole lot of sense to do
+both.
 
-That said, if we eventually use this for something like buffered writes,
-that is not so much of an issue and we probably want to instead
-lookup/allocate/lock each successive folio up front. That could likely
-occur at the iomap level (lock ordering issues and whatnot
-notwithstanding).
-
-The one caveat with zero range is that it's only really used for small
-ranges in practice, so it may not really be that big of a deal if the
-folio lookup occurred unconditionally. I think the justification for
-that is tied to broader using of batching in iomap, however, so I don't
-really want to force the issue unless it proves worthwhile. IOW what I'm
-trying to say is that if we do end up with a few more ops using this
-mechanism, it wouldn't surprise me if we just decided to deduplicate to
-the lowest common denominator implementation at that point (and do the
-lookups in iomap iter or something). We're just not there yet IMO.
+So any thoughts from anyone on a custom test vs. enabling errortag
+defaults (via fstests or kernel) vs. some combination of both?
 
 Brian
 
-> --D
-> 
-> > +			end_fsb = min_t(xfs_fileoff_t, end_fsb,
-> > +					XFS_B_TO_FSB(mp, end));
-> > +		}
-> > +
-> >  		xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
-> >  	}
-> >  
-> > -- 
-> > 2.49.0
-> > 
-> > 
-> 
+[1] Eric also raised the idea of branching off "test tag" variants of
+errortags that might help distinguish injection points that control
+behavior vs. those that truly create errors. That could reduce confusion
+for testers and whatnot.
+
+I haven't dug into viability, but in theory that could also define a set
+of events that don't spew event trigger noise into dmesg if certain
+events were to be enabled by default (again, on debug kernels only).
 
 
