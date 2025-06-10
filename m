@@ -1,179 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-51187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E383AD427B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 21:06:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E32AD428A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 21:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0AC67AC0F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 19:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5D13A53D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 19:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82465262807;
-	Tue, 10 Jun 2025 19:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA8E2609EE;
+	Tue, 10 Jun 2025 19:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="uJrmVteX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f9vmSxPh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDB125F99F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 19:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFBB25FA13
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 19:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749582350; cv=none; b=RkbghIod6ok+JhRyFzexjfRANMAbHrVD14AjUnTBrZ7QTC81l3eVRzRP9sYKztc9mfeyaFKbJU3FOPF9FY+gQFwOzsb3wCYiFN3YRWEpBgx/cY5KfvGlt3QN//vumfSGQBRQwa+JRq96od874abKPEVSWMIT4g/j3m/dP65c+9o=
+	t=1749582546; cv=none; b=C3bOELC9C7zc+dE4/rmlpBg4NyYj2lvMxogn7A3sRy2LubqRyd7XmjTi+ix7vZ+B6shv5Kp262+6mTCcWdyNvynKxr4PuXCHloKz9xkWN+K+gaNQr1pR92PeUAx2IwMGNqEsXLf1oIFttzCDltW47kLoP3TiJ2NvAEWgg6wwiss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749582350; c=relaxed/simple;
-	bh=Tg699knSwAu7/S2bRyHGf0H8ipYDR18FoTJSAJIzyMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FCv72v75WoOFIjAWFEu9sFwG8PQg963mgT56rDcpFRWoRC71Db23CQM27XWFmvESXMYjzTMIiH0BFGOMpnFvJrU+0mSuAaFk4eJxvz52PTsxZRcFPW7RmZglR3wfsSzEX0dqsaDkGasYezBhk+BwmYEIpZ9Uvnzv7tw2djs9UH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=uJrmVteX; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-407a3c0654aso4014737b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 12:05:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1749582348; x=1750187148; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FSaz2XVQb6c3ZnRbvHxNR/Gxmxkpkd2WgMTi88UzzMM=;
-        b=uJrmVteXrHOyfVDVgePrGN6yaMfo2HxVJcNCxVBCdlXaO4Iv8lODuovi+QFvll+XiL
-         EQcEqWRnT+54M5DYTSW2/fDdoQaw05sxX229ddz0HYm3RIsuTdVImA9YiOondFssvbOr
-         KoO8fSC7IhOo4QP7LhQ4KN2JBNpVBp5RI1fS758XuWkBoyLjH4zLGIhp7m7As5Hyx51B
-         EIsPFlxqcmk7ujO+9nZQlJ24EsRZIacqTc08VcsSX56YXhzrea2CsOIfLMxshllArZdl
-         05atifapnn4N2YCb+Zilf5Tk/xpjRsXCyJ0R3BL+s64SwizjsODTc0llfMIdWo1xI8vX
-         bZrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749582348; x=1750187148;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FSaz2XVQb6c3ZnRbvHxNR/Gxmxkpkd2WgMTi88UzzMM=;
-        b=otn2KXReyj3+Wlu2puht8oAfoGol83vX9bvB0ImV7vguGQyn06RibRVRpYo1LTP8yz
-         gOypNzBfHgULVBbd9s5PXlCu8hGRi/un9xjIqnmIr3Sawzili4d4KIHUPcEb0jwJKP/c
-         08MeVXmnQJd5w6pLXfPBF3X/OTOLkCiPuKFuqqBVCnvI2caXIuIjfhS7Cgq1ZSRmUPAW
-         ANoGNzBie1u9jiOM8dIHMTyUdwqXUDfN2QMLb67E5hQLXVQICijgoHTgVxnJ74z6HaLV
-         qc6JeJLJly7d1lEvidFt3O6Q+JDLpiUApf7J5ta+EJM1p+d1+UhbAUKRD3ecLIiSH767
-         wtsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzp2Vzi9k7EuaHhMhqwLQzUe26EH/VgUNQa/e8EXqqKcDo/F/XwbPae4FZ0m8rCLNZznU/R9NaF3vq+/hF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Cir3EanecWOxXDwKpwtURINGZE/k/D0pMFeQpZht7Vt9lT4w
-	zpu3ZFu4Wx50OKs8WFINtsEAdoR6FkRWJ4j6OrdaeYf9TVx88spSkFNxpWBeCzacn7c=
-X-Gm-Gg: ASbGncvIKUcpgLIr3kJ7/3UcK0Tj1qDqODxMi3AkZS9OA/G1lnUg25FS5NOZgPHcuVO
-	SarFlVjml9SFjMuDxGmt7CKtcy6FuroPl2sZFdodPwNe9PROEmOHiyUDr60t2hQR85mecxk3T9H
-	l0zdnjIZv+UaGpQErcyTm/hWbeGNUi0yfwHWoxHbcdc6EtjfPzOLQB1alGjoreDsHUWAK55RK9y
-	yKld81Vo8n61vZQVnSe9HZVkMOrYoQ8XSP/BPARfaJKQ/ZRH8DK5UFjPp6NQRK7sV7P4MdoRpoM
-	Ig3HsyLar89Jy14EUiUJmWBKI3cYSxr6jYQHztOi9uP7IGYSaZR1mCDqq7oNLj1f1KU3oi9sYhP
-	qgw16N2bhEQnwyEw09qhAstHx2Y7LpBirfCkzuOlvsi7MPlj9jDrsgA==
-X-Google-Smtp-Source: AGHT+IE4RCwrwROQPI9KAHBsZxY8PBwtUrCyxVC2tiwe/+NWIB5GTbtZv/R7pqnA/19vQn+Tf5HjkA==
-X-Received: by 2002:a05:6808:1806:b0:408:ed52:c62f with SMTP id 5614622812f47-40a5d0553a5mr391077b6e.2.1749582347461;
-        Tue, 10 Jun 2025 12:05:47 -0700 (PDT)
-Received: from system76-pc.attlocal.net (162-197-212-70.lightspeed.sntcca.sbcglobal.net. [162.197.212.70])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a5d95e89csm16503b6e.38.2025.06.10.12.05.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 12:05:46 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [PATCH] ceph: fix potential race condition of i_cap_delay_list access
-Date: Tue, 10 Jun 2025 12:05:29 -0700
-Message-ID: <20250610190529.516586-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749582546; c=relaxed/simple;
+	bh=P2c9QZ2QMTGEXsAYlVLRWVJAcrcG9fdTERiO9UVJyEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFRjQ+aHhO4ZpwdVdtG7NmLXSffa9S+D5i2Qrb0lFyryap2pWHb6YaMEYkRu22FgDoHLLufnDwisLcJevJxDHWcWnaQdVpriUmeZelhqADB5iR4XBdr4s+DZ9pjjjIYNEG8+28B3uQ/rWJnwiXheIb9ZqUU80g24Fko/gq0fbCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f9vmSxPh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749582543;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EDLdDx52Tt0xGB18gauxVIElFFaGCMshYvQZPbVpNqI=;
+	b=f9vmSxPha6ro6JfsSoqukt0CSltaBN6O+0qyW1X2r5q4P3I+a6uckywynjTH9Klo9fzBJG
+	KeM4lKNc2xATMt7qUDf24FI9DUYn4U6pbs0vhvePsdDhTggt/fYFipbF/kmioqab2a0B0J
+	89kpmcTTDQK9Iygf+0rcAgkhiYjyis0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-487-Uvd6UUwyNea9QZ_I4i4zfg-1; Tue,
+ 10 Jun 2025 15:09:00 -0400
+X-MC-Unique: Uvd6UUwyNea9QZ_I4i4zfg-1
+X-Mimecast-MFC-AGG-ID: Uvd6UUwyNea9QZ_I4i4zfg_1749582539
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90FE3195608A;
+	Tue, 10 Jun 2025 19:08:58 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.100])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D94519560AF;
+	Tue, 10 Jun 2025 19:08:56 +0000 (UTC)
+Date: Tue, 10 Jun 2025 15:12:31 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH RFC 7/7] xfs: error tag to force zeroing on debug kernels
+Message-ID: <aEiDn1WDcv8wQmLS@bfoster>
+References: <20250605173357.579720-1-bfoster@redhat.com>
+ <20250605173357.579720-8-bfoster@redhat.com>
+ <aEe1oR3qRXz-QB67@infradead.org>
+ <aEgkhYne8EenhJfI@bfoster>
+ <aEgzdZKtL2Sp5RRa@infradead.org>
+ <aEg_LH2BelAnY7It@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEg_LH2BelAnY7It@bfoster>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Tue, Jun 10, 2025 at 10:20:28AM -0400, Brian Foster wrote:
+> On Tue, Jun 10, 2025 at 06:30:29AM -0700, Christoph Hellwig wrote:
+> > On Tue, Jun 10, 2025 at 08:26:45AM -0400, Brian Foster wrote:
+> > > Well that is kind of the question.. ;) My preference was to either add
+> > > something to fstests to enable select errortags by default on every
+> > > mount (or do the same in-kernel via XFS_DEBUG[_ERRTAGS] or some such)
+> > > over just creating a one-off test that runs fsx or whatever with this
+> > > error tag turned on. [1].
+> > > 
+> > > That said, I wouldn't be opposed to just doing both if folks prefer
+> > > that. It just bugs me to add yet another test that only runs a specific
+> > > fsx test when we get much more coverage by running the full suite of
+> > > tests. IOW, whenever somebody is testing a kernel that would actually
+> > > run a custom test (XFS_DEBUG plus specific errortag support), we could
+> > > in theory be running the whole suite with the same errortag turned on
+> > > (albeit perhaps at a lesser frequency than a custom test would use). So
+> > > from that perspective I'm not sure it makes a whole lot of sense to do
+> > > both.
+> > > 
+> > > So any thoughts from anyone on a custom test vs. enabling errortag
+> > > defaults (via fstests or kernel) vs. some combination of both?
+> > 
+> > I definitively like a targeted test to exercise it.  If you want
+> > additional knows to turn on error tags that's probably fine if it
+> > works out.  I'm worried about adding more flags to xfstests because
+> > it makes it really hard to figure out what runs are need for good
+> > test coverage.
+> > 
+> > 
+> 
+> Yeah, an fstests variable would add yet another configuration to test,
+> which maybe defeats the point. But we could still turn on certain tags
+> by default in the kernel. For example, see the couple of open coded
+> get_random_u32_below() callsites in XFS where we already effectively do
+> this for XFS_DEBUG, they just aren't implemented as proper errortags.
+> 
+> I think the main thing that would need to change is to not xfs_warn() on
+> those knobs when they are enabled by default. I think there are a few
+> different ways that could possibly be done, ideally so we go back to
+> default/warn behavior when userspace makes an explicit errortag change,
+> but I'd have to play around with it a little bit. Hm?
+> 
+> Anyways, given the fstests config matrix concern I'm inclined to at
+> least give something like that a try first and then fall back to a
+> custom test if that fails or is objectionable for some other reason..
+> 
+> Brian
+> 
+> 
 
-The Coverity Scan service has detected potential
-race condition of i_cap_delay_list access [1].
-The CID 1596363 contains explanation: "Accessing
-ci->i_cap_delay_list without holding lock
-ceph_mds_client.cap_delay_lock. Elsewhere,
-ceph_inode_info.i_cap_delay_list is written to with
-ceph_mds_client.cap_delay_lock held 9 out of 9 times.
-The value of the shared data will be determined
-by the interleaving of thread execution. In ceph_check_caps:
-Thread shared data is accessed without holding an appropriate
-lock, possibly causing a race condition (CWE-366)".
+Here's a prototype for 1. an errtag quiet mode and 2. on-by-default
+tags. The alternative to a per-mount flag would be to hack a new struct
+into m_errortag that holds the current randfactor as well as a per-tag
+quiet flag, though I'm not sure how much people care about that. I
+didn't really plan on exposing this to userspace or anything for per-tag
+support, but this does mean all tags would start to warn once userspace
+changes any tag. I suppose that could become noisy if some day we end up
+with a bunch more default enabled tags. *shrug* I could go either way.
 
-The patch reworks __cap_delay_cancel() logic by means
-moving list_empty(&ci->i_cap_delay_list) under
-mdsc->cap_delay_lock protection. Patch introduces
-is_cap_delay_list_empty_safe() function that checks
-the emptiness of i_cap_delay_list under
-mdsc->cap_delay_lock protection. This function is used
-in ceph_check_caps() and __ceph_touch_fmode() methods
-to resolve the race condition issue.
+Otherwise I think this would allow conversion of the two open coded
+get_random_u32_below() cases and the new force zero tag into
+on-by-default errortags. Any thoughts?
 
-[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1596363
+--- 8< ---
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- fs/ceph/caps.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index a8d8b56cf9d2..eceee464ec50 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -566,13 +566,26 @@ static void __cap_delay_cancel(struct ceph_mds_client *mdsc,
- 	struct inode *inode = &ci->netfs.inode;
+ diff --git a/fs/xfs/xfs_error.c b/fs/xfs/xfs_error.c
+index dbd87e137694..54b38143a7a6 100644
+--- a/fs/xfs/xfs_error.c
++++ b/fs/xfs/xfs_error.c
+@@ -69,6 +69,7 @@ static unsigned int xfs_errortag_random_default[] = {
+ struct xfs_errortag_attr {
+ 	struct attribute	attr;
+ 	unsigned int		tag;
++	bool			enable_default;
+ };
  
- 	doutc(mdsc->fsc->client, "%p %llx.%llx\n", inode, ceph_vinop(inode));
--	if (list_empty(&ci->i_cap_delay_list))
--		return;
-+
- 	spin_lock(&mdsc->cap_delay_lock);
--	list_del_init(&ci->i_cap_delay_list);
-+	if (!list_empty(&ci->i_cap_delay_list)) {
-+		list_del_init(&ci->i_cap_delay_list);
-+	}
- 	spin_unlock(&mdsc->cap_delay_lock);
+ static inline struct xfs_errortag_attr *
+@@ -129,12 +130,15 @@ static const struct sysfs_ops xfs_errortag_sysfs_ops = {
+ 	.store = xfs_errortag_attr_store,
+ };
+ 
+-#define XFS_ERRORTAG_ATTR_RW(_name, _tag) \
++#define __XFS_ERRORTAG_ATTR_RW(_name, _tag, enable) \
+ static struct xfs_errortag_attr xfs_errortag_attr_##_name = {		\
+ 	.attr = {.name = __stringify(_name),				\
+ 		 .mode = VERIFY_OCTAL_PERMISSIONS(S_IWUSR | S_IRUGO) },	\
+ 	.tag	= (_tag),						\
++	.enable_default = enable,					\
  }
++#define XFS_ERRORTAG_ATTR_RW(_name, _tag) \
++	__XFS_ERRORTAG_ATTR_RW(_name, _tag, false)
  
-+static inline bool is_cap_delay_list_empty_safe(struct ceph_mds_client *mdsc,
-+						struct ceph_inode_info *ci)
+ #define XFS_ERRORTAG_ATTR_LIST(_name) &xfs_errortag_attr_##_name.attr
+ 
+@@ -240,6 +244,25 @@ static const struct kobj_type xfs_errortag_ktype = {
+ 	.default_groups = xfs_errortag_groups,
+ };
+ 
++static void
++xfs_errortag_init_enable_defaults(
++	struct xfs_mount	*mp)
 +{
-+	bool is_empty;
++	int i;
 +
-+	spin_lock(&mdsc->cap_delay_lock);
-+	is_empty = list_empty(&ci->i_cap_delay_list);
-+	spin_unlock(&mdsc->cap_delay_lock);
++	for (i = 0; xfs_errortag_attrs[i]; i++) {
++		struct xfs_errortag_attr *xfs_attr =
++				to_attr(xfs_errortag_attrs[i]);
 +
-+	return is_empty;
++		if (!xfs_attr->enable_default)
++			continue;
++
++		xfs_set_quiet_errtag(mp);
++		mp->m_errortag[xfs_attr->tag] =
++			xfs_errortag_random_default[xfs_attr->tag];
++	}
 +}
 +
- /* Common issue checks for add_cap, handle_cap_grant. */
- static void __check_cap_issue(struct ceph_inode_info *ci, struct ceph_cap *cap,
- 			      unsigned issued)
-@@ -2260,7 +2273,7 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags)
+ int
+ xfs_errortag_init(
+ 	struct xfs_mount	*mp)
+@@ -251,6 +274,8 @@ xfs_errortag_init(
+ 	if (!mp->m_errortag)
+ 		return -ENOMEM;
  
- 	/* periodically re-calculate caps wanted by open files */
- 	if (__ceph_is_any_real_caps(ci) &&
--	    list_empty(&ci->i_cap_delay_list) &&
-+	    is_cap_delay_list_empty_safe(mdsc, ci) &&
- 	    (file_wanted & ~CEPH_CAP_PIN) &&
- 	    !(used & (CEPH_CAP_FILE_RD | CEPH_CAP_ANY_FILE_WR))) {
- 		__cap_delay_requeue(mdsc, ci);
-@@ -4720,7 +4733,7 @@ void __ceph_touch_fmode(struct ceph_inode_info *ci,
- 	/* queue periodic check */
- 	if (fmode &&
- 	    __ceph_is_any_real_caps(ci) &&
--	    list_empty(&ci->i_cap_delay_list))
-+	    is_cap_delay_list_empty_safe(mdsc, ci))
- 		__cap_delay_requeue(mdsc, ci);
++	xfs_errortag_init_enable_defaults(mp);
++
+ 	ret = xfs_sysfs_init(&mp->m_errortag_kobj, &xfs_errortag_ktype,
+ 				&mp->m_kobj, "errortag");
+ 	if (ret)
+@@ -320,9 +345,11 @@ xfs_errortag_test(
+ 	if (!randfactor || get_random_u32_below(randfactor))
+ 		return false;
+ 
+-	xfs_warn_ratelimited(mp,
++	if (!xfs_is_quiet_errtag(mp)) {
++		xfs_warn_ratelimited(mp,
+ "Injecting error (%s) at file %s, line %d, on filesystem \"%s\"",
+ 			expression, file, line, mp->m_super->s_id);
++	}
+ 	return true;
  }
  
--- 
-2.49.0
+@@ -346,6 +373,7 @@ xfs_errortag_set(
+ 	if (!xfs_errortag_valid(error_tag))
+ 		return -EINVAL;
+ 
++	xfs_clear_quiet_errtag(mp);
+ 	mp->m_errortag[error_tag] = tag_value;
+ 	return 0;
+ }
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index d85084f9f317..44b02728056f 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -558,6 +558,8 @@ __XFS_HAS_FEAT(nouuid, NOUUID)
+  */
+ #define XFS_OPSTATE_BLOCKGC_ENABLED	6
+ 
++/* Debug kernel skips warning on errtag event triggers */
++#define XFS_OPSTATE_QUIET_ERRTAG	7
+ /* Kernel has logged a warning about shrink being used on this fs. */
+ #define XFS_OPSTATE_WARNED_SHRINK	9
+ /* Kernel has logged a warning about logged xattr updates being used. */
+@@ -600,6 +602,7 @@ __XFS_IS_OPSTATE(inode32, INODE32)
+ __XFS_IS_OPSTATE(readonly, READONLY)
+ __XFS_IS_OPSTATE(inodegc_enabled, INODEGC_ENABLED)
+ __XFS_IS_OPSTATE(blockgc_enabled, BLOCKGC_ENABLED)
++__XFS_IS_OPSTATE(quiet_errtag, QUIET_ERRTAG)
+ #ifdef CONFIG_XFS_QUOTA
+ __XFS_IS_OPSTATE(quotacheck_running, QUOTACHECK_RUNNING)
+ __XFS_IS_OPSTATE(resuming_quotaon, RESUMING_QUOTAON)
 
 
