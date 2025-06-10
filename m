@@ -1,63 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-51091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07AE2AD2C32
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 05:44:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73C6AD2C48
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 05:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEE3D16FB2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 03:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9E58170380
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 03:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1F325D1ED;
-	Tue, 10 Jun 2025 03:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358F925D204;
+	Tue, 10 Jun 2025 03:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EBqqahfv"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G2+6OHpm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945D62AF1B;
-	Tue, 10 Jun 2025 03:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB2822837F;
+	Tue, 10 Jun 2025 03:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749527047; cv=none; b=oFk6FRNYcfcjCyWnbQuLaSKaPeyr2HO5GcwQrxL9U6yTFYM8Qce+3XD6Ci5HX/kNBNaHsRmhi6X+s5h5u0UzZMyeuai8MWe5ZAaqJlNKwVre6MzTlirez+0MDz2XuBPEzP37CJNYShwY0J7Ani6jI7J4BRQuiv3bAlnqxX7zPGc=
+	t=1749527367; cv=none; b=IMndreVZkiJp1w0BclEMeqmdiFy4HqGilIHtthCxT1P/IzkQdFrrqdXKhoJI6tKqWkY1vvRLQ938NYwM7ZRMk0Y1XhEuQU17+qNQ69yB7PKPnpUxW9ziaupMK8pb7QQ10ujF6WIVv9rDqxfLe5zJbxqu1zGmkIVFYwGaX2p/jOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749527047; c=relaxed/simple;
-	bh=MVRvMTKY4Zq/mrv91guSyToqjb2dnWHHIE3Ya68xfRU=;
+	s=arc-20240116; t=1749527367; c=relaxed/simple;
+	bh=96gf3+9RfeP1SR68eJdyHt3SeP3bW1j6v7cQwo2RfX0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGnDQyQ/75GN8Le68z9f5Igv0F1ofgbIDjFQto4LTqZUT90ypBComVZw5KCEKNYA3GJKdhVmhNC9Yuo9scb2bWpZVSb3OIkRnC0UvazMAcx5f7bBVXKAUJQw+ienggXLEbTpDOD2nAMHccj5iLhynWzk9/Y8BaMfqwmSdj6E1mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EBqqahfv; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXNPw76Zj2mmFqbGrCe8iWTe7SNu3bH9YTmqPHQzKkcnTsun8L9pdCpX34EAHwUkx6nE1aViMOpRGqPQt2ODcDBtSnYj6uHZIeBJSmJmOkMsi1GrnY6J3KwEYNjIOJZqb0VFR8rytC9LIq4YVP98UbNvRazpm0a7evJjeVoPCfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G2+6OHpm; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dHed1Rc21KJ45DuuCfGvy/Ksm4Y7rEPnq66tToCk/8Y=; b=EBqqahfvnN7SrXfF3X1eg6zELV
-	wHq3h8/NUAzuLXXKqga/D5ko7oLh4SMz3gjVA73HzC2IxY3Er0UONNIxicBvASMsYcCyFPntJ/P7W
-	MfKbiMAICfEnixEUbYd3/P7N/IIJRCT831h64WvByiPKzDT9PUCdw7l1MLh+G1EdOQMFulqUV3LaV
-	rfVbPJo+UiNF2XJMX0/6PxrDRwGYH4/hhUaZZRbqsyOjQDt3WyG4NaFZXnzZuKEz6vSur7jEZYQXQ
-	7nByZW0Fc5dviH4DP5JPMQNWrI8d7nDhAF09M66407Yja8c+at+GmuVsBCggazBkaU5057Jm8l1Je
-	Ob+Hv9vw==;
+	bh=uBRuHciQtVNLJM1VRmIo0ajCcX2iRkczdJU3q9Eyj/o=; b=G2+6OHpm1c0hYazxJAvTYikA1x
+	aPUVyDDmhmuyge/3iK0mVGpa6L8vv8R8yzknxRMAcpR9df6Y0bJKPwJrNqAMXXDLyxQ5fNGBxTaUU
+	gH5HMy3j8sgmH6Yb5wEiHLr4+UcS9rdFeSIXlGuAfv2N+/obxek6S1MYqezR3bDppRHV/rNj9ONKw
+	L5fYcWswEz2v6UNpdyq29WPrE4pSxQJGx2vgbVov0E2WkTdLojuA40pMOahHJYThlStFzsp4n5gcs
+	3gaii/Yvz5D89iv5LICWfdF/XrProbVEJjck62WhN4/iJOVrA03WCkD4kzzr4BUMJwFph2WSfKdkK
+	uhP8bH1w==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uOpu9-00000005hHs-0j4n;
-	Tue, 10 Jun 2025 03:44:05 +0000
-Date: Mon, 9 Jun 2025 20:44:05 -0700
+	id 1uOpzJ-00000005i0r-1ocY;
+	Tue, 10 Jun 2025 03:49:25 +0000
+Date: Mon, 9 Jun 2025 20:49:25 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, miklos@szeredi.hu,
-	djwong@kernel.org, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Subject: Re: [PATCH v1 3/8] iomap: add buffered write support for
- IOMAP_IN_MEM iomaps
-Message-ID: <aEeqBWOkB-QXLQ_2@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, bernd.schubert@fastmail.fm,
+	kernel-team@meta.com
+Subject: Re: [PATCH v1 4/8] iomap: add writepages support for IOMAP_IN_MEM
+ iomaps
+Message-ID: <aEerRblqiB-h8UeL@infradead.org>
 References: <20250606233803.1421259-1-joannelkoong@gmail.com>
- <20250606233803.1421259-4-joannelkoong@gmail.com>
- <aEZpcWGYssJ2OpqL@infradead.org>
- <CAJnrk1asVKKakBOmXghU22fWiZu4D+PDKVM6z5fMbbFNCzP5dQ@mail.gmail.com>
+ <20250606233803.1421259-5-joannelkoong@gmail.com>
+ <aEZx5FKK13v36wRv@infradead.org>
+ <20250609165741.GK6156@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,44 +67,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJnrk1asVKKakBOmXghU22fWiZu4D+PDKVM6z5fMbbFNCzP5dQ@mail.gmail.com>
+In-Reply-To: <20250609165741.GK6156@frogsfrogsfrogs>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Jun 09, 2025 at 03:45:05PM -0700, Joanne Koong wrote:
-> > I just ran into this for another project and I hated my plumbing for
-> > this.  I hate yours very slightly less but I still don't like it.
-> >
-> > This is really more of a VM level concept, so I  wonder if we should
-> > instead:
-> >
-> >  - add a new read_folio_sync method to the address space operations that
-> >    reads a folio without unlocking it.
+On Mon, Jun 09, 2025 at 09:57:41AM -0700, Darrick J. Wong wrote:
+> > It might also be worth stating what you don't use.  One big thing
+> > that springs to mind is ioends.  Which are really useful if you
+> > need more than one request to handle a folio, something that is
+> > pretty common in network file systems.  I guess you don't need
+> > that for fuse?
 > 
-> imo I hate this more. AFAIU, basically fuse will be the only one
-> actually needing/using this?
+> My initial thought was "I wonder if Joanne would be better off with a
+> totally separate iomap_writepage_map_blocks implementation"
 
-No, not at all.  We have a few projects that needs a submit_io hook
-for iomap buffered reads - on is the btrfs conversion for their checksum
-and raid, the other is my series to support T10 PI (and maybe checksums
-in non-PI metadata as a follow on).  For ->read_folio and ->readahead
-we just has patches from Goldwyn and me to pass a new ops vector for
-that.  But I found it really ugly to do this for the write path, even
-if it works (my current version).  Also this path is the only reason
-why the srcmap in the iomap_iter exists - so that file systems that
-do out of place writes can read partial folios from one place, but
-return a different mapping to write it back to.  If we split it into
-a separate aops we could kill all that, something I've been wanting
-to do for a long time.
+I think that's basically what the patches do, right?
 
-> Though it's a more intensive change, what about just expanding the
-> existing address space operations ->read_folio() callback to take in
-> an offset, length, and a boolean for whether the folio should be
-> unlocked after the read?
 
-The boolean for locking behavior is not a pattern liked much in
-the kernel, for good reason - it makes verification really hard.
-Now maybe always unlocking the folio in the caller might make sense,
-but I'll need to consult at least willy on that before looking into
-that.
+> since I
+> *think* fuse just needs a callback from iomap to initiate FUSE_WRITE
+> calls on the dirty range(s) of a folio, and then fuse can call
+> mapping_set_error and iomap_finish_folio_write when those FUSE_WRITE
+> calls complete.  There are no bios, so I don't see much point in using
+> the ioend machinery.
+
+Note that the mapping_set_error in iomap_writepage_map is only for
+synchronous errors for mapping setup anyway, all the actual I/O error
+are handled asynchronously anyway.  Similar, clearing the writeback
+bit only happens for synchronous erorr, or the rare case of (almost)
+synchronous I/O.
 
 
