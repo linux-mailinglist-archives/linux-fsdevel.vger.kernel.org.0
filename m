@@ -1,74 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-51178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8A0AD3DC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 17:46:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5BCAD3DCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 17:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8FF168821
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 15:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C74BF1889622
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 15:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A484F238C03;
-	Tue, 10 Jun 2025 15:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287A52376EF;
+	Tue, 10 Jun 2025 15:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="P6Ctzxc+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sHivzWGj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE1C238144
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 15:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62381238C0C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 15:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749570284; cv=none; b=ioCWUnqBK5fGnY70U/ITavTfKjV5DKq4n4b38U8CJQUCGJHkM0QZYLEpJOHHAx4eYcJLl4zEk6ZuypOgCSTth0/mCVtTZG8BFts3eVuppLXahWeOm5S1McUjIuk7+wIB7Z1rgPRwEpuVQEErGIv/dZakT2e14J0s4rUOSOnAre0=
+	t=1749570286; cv=none; b=f1+AiGU3UdDwzqgQmyYAMWO73I4ApSNd4DmJZmWOoie39cB28DCZF4V7/DFlR4ap5+YXuj4k70wDSaxEKULKnvMin29rNal6gvy4ZDWqAQvWpr/p2js5EXOHLImjX5+MkktqWRsImJXxZwGEV4C8FmKfd/hI0PTNglqU3SkRouA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749570284; c=relaxed/simple;
-	bh=Ki/D0Tl8Pv8XAiwxWoKJLHITxw/kYN5PxBkw5i4oikE=;
+	s=arc-20240116; t=1749570286; c=relaxed/simple;
+	bh=0JAbAGuyFC4eBTahSWb568/wIDNOPS9ZfrE1eBKH34M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=rkTPHlEgRyWQt2wP03RBzUT+4TDkHPSkBkYjJdvl4Hvq+ZDP7tMRfMRw+chQf7bSpMtRC772et24PSWsCXd7jPL6qZsYS49qJ0Rp+hDZks9QZa4MULrZmiZ7MDxMWu/29ooH+xs4QeVanDkOap5NDztKWeFHOBLYSslZU4A4R5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=P6Ctzxc+; arc=none smtp.client-ip=203.254.224.33
+	 Content-Type:References; b=SXc2JoGoFEd9Swejoqel/95vNLvks9MaHYrEADOuUwzDs9769BV3vseawtS9viT1kvBjHKUW4B1JHHgI9hc7XhcMmVLTGEZZyemqCwjgS9hZxH9ypt1GUtYguJR7LXJL0C2j8OsNRmbIr2J2XnS84vXK5ybYcon5HEOixnmbCkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sHivzWGj; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250610154438epoutp032cd197cddcdf80e0b17217de9795de9f~HuOYccatG0751607516epoutp03I
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 15:44:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250610154438epoutp032cd197cddcdf80e0b17217de9795de9f~HuOYccatG0751607516epoutp03I
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250610154442epoutp010cfb5ba8fd7a8c5c7f52517cbf1500bb~HuOb47uvH1774517745epoutp013
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 15:44:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250610154442epoutp010cfb5ba8fd7a8c5c7f52517cbf1500bb~HuOb47uvH1774517745epoutp013
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749570278;
-	bh=GlAnwSu/SMQBNQbpbAQy9TOB98j2OblkwhvWTfU6qjY=;
+	s=mail20170921; t=1749570282;
+	bh=AGV6hPX+hYGrogCO0YHy18HPVoLdBiStbifCZdlTe9c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P6Ctzxc+V4HVVSApl6YDCN4dhLutGFXIX7TewnirmVg3rqSqpJAxS7G74LBDMpVWl
-	 xWLeekhlipeEBZVvfcJODoShZNc6EPK+21e+aj6PIBMuedHtQ/I2gbcYyPlhBIdlo4
-	 3XADqAN0GczUT43aSkcAyXhZmjRL1BRTUgIqR65E=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	b=sHivzWGjQ8QH6KrvdyBnxOrwbC2BY+zbBjRYH1ucST7VAFhOD3KW2chvvwgzlwZgh
+	 ymKtimV+335oBLyy/Ozl48gmvFDzaLIq988NtRnkAASXb5hC2OnIgU7a9VKnkhPEeI
+	 Je0rF7e45FOuzNFsIqSn9N0VX3+BVyNjHCF/DhkQ=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
 	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250610154437epcas5p19ecd405861a7e3f338f603dc531eccc3~HuOXJ7HC02642326423epcas5p14;
-	Tue, 10 Jun 2025 15:44:37 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bGtQC4VNgz2SSKY; Tue, 10 Jun
-	2025 15:44:35 +0000 (GMT)
+	20250610154441epcas5p12417bf279e84efd21354485b8632df05~HuObDSMF62642926429epcas5p10;
+	Tue, 10 Jun 2025 15:44:41 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bGtQH5m1xz6B9m6; Tue, 10 Jun
+	2025 15:44:39 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250610132312epcas5p20cdd1a3119df8ffc68770f06745e8481~HsS5YPhDH1244312443epcas5p2A;
-	Tue, 10 Jun 2025 13:23:12 +0000 (GMT)
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250610132317epcas5p442ce20c039224fb691ab0ba03fcb21e7~HsS9wH2Ug3202032020epcas5p4Z;
+	Tue, 10 Jun 2025 13:23:17 +0000 (GMT)
 Received: from localhost.localdomain (unknown [107.99.41.245]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250610132310epsmtip229d1e25b5c1f5cb072479a0d2cdbc089~HsS3hMc330360903609epsmtip2P;
-	Tue, 10 Jun 2025 13:23:10 +0000 (GMT)
+	20250610132315epsmtip2af61efba414d3408e1a09ddfc64a1b24~HsS7-lpZD0336803368epsmtip2Z;
+	Tue, 10 Jun 2025 13:23:15 +0000 (GMT)
 From: Anuj Gupta <anuj20.g@samsung.com>
 To: vincent.fu@samsung.com, jack@suse.cz, anuj1072538@gmail.com,
 	axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org,
 	hch@infradead.org, martin.petersen@oracle.com, ebiggers@kernel.org,
 	adilger@dilger.ca
 Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	joshi.k@samsung.com, Anuj Gupta <anuj20.g@samsung.com>, Christoph Hellwig
-	<hch@lst.de>
-Subject: [PATCH for-next v3 1/2] block: introduce pi_size field in
- blk_integrity
-Date: Tue, 10 Jun 2025 18:52:53 +0530
-Message-Id: <20250610132254.6152-2-anuj20.g@samsung.com>
+	joshi.k@samsung.com, Anuj Gupta <anuj20.g@samsung.com>
+Subject: [PATCH for-next v3 2/2] fs: add ioctl to query metadata and
+ protection info capabilities
+Date: Tue, 10 Jun 2025 18:52:54 +0530
+Message-Id: <20250610132254.6152-3-anuj20.g@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250610132254.6152-1-anuj20.g@samsung.com>
 Precedence: bulk
@@ -78,124 +77,243 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250610132312epcas5p20cdd1a3119df8ffc68770f06745e8481
+X-CMS-MailID: 20250610132317epcas5p442ce20c039224fb691ab0ba03fcb21e7
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-542,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250610132312epcas5p20cdd1a3119df8ffc68770f06745e8481
+X-CMS-RootMailID: 20250610132317epcas5p442ce20c039224fb691ab0ba03fcb21e7
 References: <20250610132254.6152-1-anuj20.g@samsung.com>
-	<CGME20250610132312epcas5p20cdd1a3119df8ffc68770f06745e8481@epcas5p2.samsung.com>
+	<CGME20250610132317epcas5p442ce20c039224fb691ab0ba03fcb21e7@epcas5p4.samsung.com>
 
-Introduce a new pi_size field in struct blk_integrity to explicitly
-represent the size (in bytes) of the protection information (PI) tuple.
-This is a prep patch.
-Add validation in blk_validate_integrity_limits() to ensure that
-pi_size matches the expected size for know checksum types and never
-exceeds the tuple_size.
+Add a new ioctl, FS_IOC_GETLBMD_CAP, to query metadata and protection
+info (PI) capabilities. This ioctl returns information about the files
+integrity profile. This is useful for userspace applications to
+understand a files end-to-end data protection support and configure the
+I/O accordingly.
 
-Suggested-by: Christoph Hellwig <hch@lst.de>
+For now this interface is only supported by block devices. However the
+design and placement of this ioctl in generic FS ioctl space allows us
+to extend it to work over files as well. This maybe useful when
+filesystems start supporting  PI-aware layouts.
+
+A new structure struct logical_block_metadata_cap is introduced, which
+contains the following fields:
+
+1. lbmd_flags: bitmask of logical block metadata capability flags
+2. lbmd_interval: the amount of data described by each unit of logical
+block metadata
+3. lbmd_size: size in bytes of the logical block metadata associated
+with each interval
+4. lbmd_opaque_size: size in bytes of the opaque block tag associated
+with each interval
+5. lbmd_opaque_offset: offset in bytes of the opaque block tag within
+the logical block metadata
+6. lbmd_pi_size: size in bytes of the T10 PI tuple associated with each
+interval
+7. lbmd_pi_offset: offset in bytes of T10 PI tuple within the logical
+block metadata
+8. lbmd_pi_guard_tag_type: T10 PI guard tag type
+9. lbmd_pi_app_tag_size: size in bytes of the T10 PI application tag
+10. lbmd_pi_ref_tag_size: size in bytes of the T10 PI reference tag
+11. lbmd_pi_storage_tag_size: size in bytes of the T10 PI storage tag
+12. lbmd_rsvd: reserved for future use
+
+The internal logic to fetch the capability is encapsulated in a helper
+function blk_get_meta_cap(), which uses the blk_integrity profile
+associated with the device. The ioctl returns -EOPNOTSUPP, if
+CONFIG_BLK_DEV_INTEGRITY is not enabled.
+
+Suggested-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 ---
- block/blk-settings.c     | 37 +++++++++++++++++++++++++++++++++++++
- drivers/nvme/host/core.c |  1 +
- drivers/scsi/sd_dif.c    |  1 +
- include/linux/blkdev.h   |  1 +
- 4 files changed, 40 insertions(+)
+ block/blk-integrity.c         | 53 +++++++++++++++++++++++++++++++++++
+ block/ioctl.c                 |  3 ++
+ include/linux/blk-integrity.h |  7 +++++
+ include/uapi/linux/fs.h       | 43 ++++++++++++++++++++++++++++
+ 4 files changed, 106 insertions(+)
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index a000daafbfb4..125b23acb5b7 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -14,6 +14,8 @@
- #include <linux/jiffies.h>
- #include <linux/gfp.h>
- #include <linux/dma-mapping.h>
+diff --git a/block/blk-integrity.c b/block/blk-integrity.c
+index e4e2567061f9..f9ad5bdb84f5 100644
+--- a/block/blk-integrity.c
++++ b/block/blk-integrity.c
+@@ -13,6 +13,7 @@
+ #include <linux/scatterlist.h>
+ #include <linux/export.h>
+ #include <linux/slab.h>
 +#include <linux/t10-pi.h>
-+#include <linux/crc64.h>
  
  #include "blk.h"
- #include "blk-rq-qos.h"
-@@ -135,6 +137,41 @@ static int blk_validate_integrity_limits(struct queue_limits *lim)
- 		return -EINVAL;
- 	}
  
-+	if (bi->pi_size > bi->tuple_size) {
-+		pr_warn("pi_size (%u) exceeds tuple_size (%u)\n",
-+						bi->pi_size, bi->tuple_size);
-+		return -EINVAL;
-+	}
-+
-+	switch (bi->csum_type) {
-+	case BLK_INTEGRITY_CSUM_NONE:
-+		if (!bi->pi_size) {
-+			pr_warn("pi_size must be 0 when checksum type \
-+				 is none\n");
-+			return -EINVAL;
-+		}
-+		break;
-+	case BLK_INTEGRITY_CSUM_CRC:
-+	case BLK_INTEGRITY_CSUM_IP:
-+		if (bi->pi_size != sizeof(struct t10_pi_tuple)) {
-+			pr_warn("pi_size mismatch for T10 PI: expected \
-+				 %zu, got %u\n",
-+				 sizeof(struct t10_pi_tuple),
-+				 bi->pi_size);
-+			return -EINVAL;
-+		}
-+		break;
-+	case BLK_INTEGRITY_CSUM_CRC64:
-+		if (bi->pi_size != sizeof(struct crc64_pi_tuple)) {
-+			pr_warn("pi_size mismatch for CRC64 PI: \
-+				 expected %zu, got %u\n",
-+				 sizeof(struct crc64_pi_tuple),
-+				 bi->pi_size);
-+			return -EINVAL;
-+		}
-+		break;
-+	}
-+
- 	if (!bi->interval_exp)
- 		bi->interval_exp = ilog2(lim->logical_block_size);
- 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index f69a232a000a..a9a2a0ca9797 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1868,6 +1868,7 @@ static bool nvme_init_integrity(struct nvme_ns_head *head,
- 	}
- 
- 	bi->tuple_size = head->ms;
-+	bi->pi_size = head->pi_size;
- 	bi->pi_offset = info->pi_offset;
- 	return true;
+@@ -54,6 +55,58 @@ int blk_rq_count_integrity_sg(struct request_queue *q, struct bio *bio)
+ 	return segments;
  }
-diff --git a/drivers/scsi/sd_dif.c b/drivers/scsi/sd_dif.c
-index ae6ce6f5d622..9c39a82298da 100644
---- a/drivers/scsi/sd_dif.c
-+++ b/drivers/scsi/sd_dif.c
-@@ -53,6 +53,7 @@ void sd_dif_config_host(struct scsi_disk *sdkp, struct queue_limits *lim)
- 		bi->flags |= BLK_INTEGRITY_REF_TAG;
  
- 	bi->tuple_size = sizeof(struct t10_pi_tuple);
-+	bi->pi_size = bi->tuple_size;
++int blk_get_meta_cap(struct block_device *bdev,
++		     struct logical_block_metadata_cap __user *argp)
++{
++	struct blk_integrity *bi = blk_get_integrity(bdev->bd_disk);
++	struct logical_block_metadata_cap meta_cap = {};
++
++	if (!bi)
++		goto out;
++
++	if (bi->flags & BLK_INTEGRITY_DEVICE_CAPABLE)
++		meta_cap.lbmd_flags |= LBMD_PI_CAP_INTEGRITY;
++	if (bi->flags & BLK_INTEGRITY_REF_TAG)
++		meta_cap.lbmd_flags |= LBMD_PI_CAP_REFTAG;
++	meta_cap.lbmd_interval = 1 << bi->interval_exp;
++	meta_cap.lbmd_size = bi->tuple_size;
++	if (bi->csum_type == BLK_INTEGRITY_CSUM_NONE) {
++		/* treat entire tuple as opaque block tag */
++		meta_cap.lbmd_opaque_size = bi->tuple_size;
++		goto out;
++	}
++	meta_cap.lbmd_pi_size = bi->pi_size;
++	meta_cap.lbmd_pi_offset = bi->pi_offset;
++	meta_cap.lbmd_opaque_size = bi->tuple_size - bi->pi_size;
++	if (meta_cap.lbmd_opaque_size && !bi->pi_offset)
++		meta_cap.lbmd_opaque_offset = bi->pi_size;
++
++	meta_cap.lbmd_guard_tag_type = bi->csum_type;
++	meta_cap.lbmd_app_tag_size = 2;
++
++	if (bi->flags & BLK_INTEGRITY_REF_TAG) {
++		switch (bi->csum_type) {
++		case BLK_INTEGRITY_CSUM_CRC64:
++			meta_cap.lbmd_ref_tag_size =
++				sizeof_field(struct crc64_pi_tuple, ref_tag);
++			break;
++		case BLK_INTEGRITY_CSUM_CRC:
++		case BLK_INTEGRITY_CSUM_IP:
++			meta_cap.lbmd_ref_tag_size =
++				sizeof_field(struct t10_pi_tuple, ref_tag);
++			break;
++		default:
++			break;
++		}
++	}
++
++out:
++	if (copy_to_user(argp, &meta_cap,
++			 sizeof(struct logical_block_metadata_cap)))
++		return -EFAULT;
++	return 0;
++}
++
+ /**
+  * blk_rq_map_integrity_sg - Map integrity metadata into a scatterlist
+  * @rq:		request to map
+diff --git a/block/ioctl.c b/block/ioctl.c
+index e472cc1030c6..19782f7b5ff1 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -13,6 +13,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/pagemap.h>
+ #include <linux/io_uring/cmd.h>
++#include <linux/blk-integrity.h>
+ #include <uapi/linux/blkdev.h>
+ #include "blk.h"
+ #include "blk-crypto-internal.h"
+@@ -643,6 +644,8 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
+ 		return blkdev_pr_preempt(bdev, mode, argp, true);
+ 	case IOC_PR_CLEAR:
+ 		return blkdev_pr_clear(bdev, mode, argp);
++	case FS_IOC_GETLBMD_CAP:
++		return blk_get_meta_cap(bdev, argp);
+ 	default:
+ 		return -ENOIOCTLCMD;
+ 	}
+diff --git a/include/linux/blk-integrity.h b/include/linux/blk-integrity.h
+index c7eae0bfb013..b4aff4dff843 100644
+--- a/include/linux/blk-integrity.h
++++ b/include/linux/blk-integrity.h
+@@ -29,6 +29,8 @@ int blk_rq_map_integrity_sg(struct request *, struct scatterlist *);
+ int blk_rq_count_integrity_sg(struct request_queue *, struct bio *);
+ int blk_rq_integrity_map_user(struct request *rq, void __user *ubuf,
+ 			      ssize_t bytes);
++int blk_get_meta_cap(struct block_device *bdev,
++		     struct logical_block_metadata_cap __user *argp);
  
- 	if (dif && type) {
- 		bi->flags |= BLK_INTEGRITY_DEVICE_CAPABLE;
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 332b56f323d9..1ed604b70e0f 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -120,6 +120,7 @@ struct blk_integrity {
- 	unsigned char				pi_offset;
- 	unsigned char				interval_exp;
- 	unsigned char				tag_size;
-+	unsigned char				pi_size;
+ static inline bool
+ blk_integrity_queue_supports_integrity(struct request_queue *q)
+@@ -92,6 +94,11 @@ static inline struct bio_vec rq_integrity_vec(struct request *rq)
+ 				 rq->bio->bi_integrity->bip_iter);
+ }
+ #else /* CONFIG_BLK_DEV_INTEGRITY */
++static inline int blk_get_meta_cap(struct block_device *bdev,
++				   struct logical_block_metadata_cap __user *argp)
++{
++	return -EOPNOTSUPP;
++}
+ static inline int blk_rq_count_integrity_sg(struct request_queue *q,
+ 					    struct bio *b)
+ {
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 0098b0ce8ccb..70350d5a4cd6 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -91,6 +91,47 @@ struct fs_sysfs_path {
+ 	__u8			name[128];
  };
  
- typedef unsigned int __bitwise blk_mode_t;
++/* Protection info capability flags */
++#define	LBMD_PI_CAP_INTEGRITY		(1 << 0)
++#define	LBMD_PI_CAP_REFTAG		(1 << 1)
++
++/* Checksum types for Protection Information */
++#define LBMD_PI_CSUM_NONE		0
++#define LBMD_PI_CSUM_IP			1
++#define LBMD_PI_CSUM_CRC16_T10DIF	2
++#define LBMD_PI_CSUM_CRC64_NVME		4
++
++/*
++ * struct logical_block_metadata_cap - Logical block metadata
++ * @lbmd_flags:			Bitmask of logical block metadata capability flags
++ * @lbmd_interval:		The amount of data described by each unit of logical block metadata
++ * @lbmd_size:			Size in bytes of the logical block metadata associated with each interval
++ * @lbmd_opaque_size:		Size in bytes of the opaque block tag associated with each interval
++ * @lbmd_opaque_offset:		Offset in bytes of the opaque block tag within the logical block metadata
++ * @lbmd_pi_size:		Size in bytes of the T10 PI tuple associated with each interval
++ * @lbmd_pi_offset:		Offset in bytes of T10 PI tuple within the logical block metadata
++ * @lbmd_pi_guard_tag_type:	T10 PI guard tag type
++ * @lbmd_pi_app_tag_size:	Size in bytes of the T10 PI application tag
++ * @lbmd_pi_ref_tag_size:	Size in bytes of the T10 PI reference tag
++ * @lbmd_pi_storage_tag_size:	Size in bytes of the T10 PI storage tag
++ * @lbmd_rsvd:			Reserved for future use
++ */
++
++struct logical_block_metadata_cap {
++	__u32	lbmd_flags;
++	__u16	lbmd_interval;
++	__u8	lbmd_size;
++	__u8	lbmd_opaque_size;
++	__u8	lbmd_opaque_offset;
++	__u8	lbmd_pi_size;
++	__u8	lbmd_pi_offset;
++	__u8	lbmd_guard_tag_type;
++	__u8	lbmd_app_tag_size;
++	__u8	lbmd_ref_tag_size;
++	__u8	lbmd_storage_tag_size;
++	__u8	lbmd_rsvd[17];
++};
++
+ /* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl definitions */
+ #define FILE_DEDUPE_RANGE_SAME		0
+ #define FILE_DEDUPE_RANGE_DIFFERS	1
+@@ -247,6 +288,8 @@ struct fsxattr {
+  * also /sys/kernel/debug/ for filesystems with debugfs exports
+  */
+ #define FS_IOC_GETFSSYSFSPATH		_IOR(0x15, 1, struct fs_sysfs_path)
++/* Get logical block metadata capability details */
++#define FS_IOC_GETLBMD_CAP		_IOR(0x15, 2, struct logical_block_metadata_cap)
+ 
+ /*
+  * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
 -- 
 2.25.1
 
