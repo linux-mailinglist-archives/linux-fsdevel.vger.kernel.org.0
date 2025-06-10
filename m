@@ -1,123 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-51089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAAFAD2BD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 04:12:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42BBAD2C2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 05:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B6B189016F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 02:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171E218914BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 03:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828E523F291;
-	Tue, 10 Jun 2025 02:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A60225D1FB;
+	Tue, 10 Jun 2025 03:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rvSCE2k8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4A7221DAD;
-	Tue, 10 Jun 2025 02:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9118321883E;
+	Tue, 10 Jun 2025 03:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749521513; cv=none; b=gzhuynrBvQti8/m1mEDFwAMzA44Jg54wtBtRxcNjGaYpb3DDCEiadNi3SQB+58Ciy+DbCHuYRiVqtWKi08ej9wVo4JwBFXrKNghbXfHFz5vzf2Vjc23x7oK52eJAmn3qJXigEJZkehqpoyalu8wAyqUISUgHeEgHHuUHyJf3gF4=
+	t=1749526768; cv=none; b=hxTS295qtmF3yIIb+ZjbUTZ1Zo0xFR9XKKhOOlr/Rz768DBws6+WyvWJJsbakUtiE4Kba8ltCuOhcpS8xClD0g/QPcX8fxl8lxSU9r0Y+Ftib97UlC9ErRnV91jga0RZvOjyjoYxoQW5FgLDFTpFTYmL/s9FTFqgdwk/QU151XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749521513; c=relaxed/simple;
-	bh=CWHORAXG2oiiaHYAWxfkNRLv9y4YW0URPt7RpnYjehg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S0gy4mPTI45vL/ZDcYfjkpEoYGH3RxzFEogqLFbqa2F85WMWaIilX4L6wa4oF+B5+HMetoiR9i0VFSpLtglAqFIBJ14cS2QXPj+RwsQo4xpg3AeYFN4rVRJC+3CBCSUxcowB/fBQbDw5W8xHXOhgS7/hAN7lx9llEbuKewpOjRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a6f0bcdf45so33032681cf.0;
-        Mon, 09 Jun 2025 19:11:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749521510; x=1750126310;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ckf4J7K6nhKzDsTt0cIUCHXIZuk9xFjMGBfmOU3gBK0=;
-        b=ljO68A1RGktZwWvCLWQ/WRyPhzvg5TgO5M1NK6amgY/Q6XOGh8gZ3fa3+1y06HC358
-         UsvxhctzBRpgpRrPaQyBSKIoJ9ppqO05RSrZsn0TWnp5h9VJsLWKRC2XsL1eBIIouF5U
-         RJzF5WZALO70iSh80D5W21ifZQI6VrYKPCj2B8RDPZYiU9F3QRn0aO6ZsA8cMSs861JV
-         +Q4wdnFEAS7wmcKiuiIm5QzKU1h2jRRA9cdVtgDN3qj/SzmYMIOueEAYZPqV5Ji9mdB7
-         5o5EmSHTTcnv9E+4lkf9cpeZI2pry6G3oU4YQhglMRdstl/Bh8p9EAXPxZhHIrr/m7Yr
-         00VA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaTBTBVipOnsH1Z8bdmcHPPcz59Kfw/SEHVox0mCETx4q4fk/cQcfORGw1mHr3+RP6FqEIIfOlFjcsElibhg==@vger.kernel.org, AJvYcCVhua6D6R7OncQmNAtZ9kQaPtFdXJ4IrYDgtFdZJXO0OV9pg/+FlOl58p1Ql3HshMAaUcQX5uT3vYw=@vger.kernel.org, AJvYcCXBdTDs7kUfTxNgbITdNbwxRUutfZMYpj/4uyUEH2fYczLoCpnIRFzsYHzpYbaNXXEz70shJUR9A0N7ZCeI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKDe6hI/OnROH7zfta2k3v0u6SiYPUs7lr/jkUgzjvgd2ToIc2
-	JGPS7/vn8ys9KlpXmdS7P18zmA/QjWQ8EJGO2IQqMkHt52xlM/1p+NTv
-X-Gm-Gg: ASbGncu7d4+2T18g7LtMcwKCBvPkVAlNQE1whjGAK59Xo9TJNoFJNBSjSkc/UMSlmLE
-	2f0om9kbsL3MmAMPSgE4ZoXbH4zHUHOpq4yySTtzaRQYO0+/jyrrBCNfxDlCgFQ2zrWRhE6bLNf
-	ZYG/TS8dxA/+NVKoKwZvRllz3C9HOH4xJfzf61LPUeoOSE/39UI1kMIqKmv9IfTBojhukoqrW5C
-	CWiqFOy3F73k2aAfn/iQmnpFuh1y3PrPNj8TJFzUrwrXgx50MJzyMnC9hMTnvu3sGn3cg2uNdPC
-	KORa0fvc37c0DfTxr9LaOakR01m43cl/ur3u8+ModIiZEueUBZrGS9XftihESnAf8oEbOuec5hs
-	swjbJTgesis/8V9rgirwIGg==
-X-Google-Smtp-Source: AGHT+IGNnDHYclUyHAoKMYivG6olKNNmJJk2Yuc9+l6b5bPprUMJMh5GFyd7t+oNAOyvMHBrev76OA==
-X-Received: by 2002:a05:622a:4a8e:b0:48e:9b77:38a4 with SMTP id d75a77b69052e-4a5b9d324c6mr254645271cf.26.1749521510558;
-        Mon, 09 Jun 2025 19:11:50 -0700 (PDT)
-Received: from localhost.localdomain (ip170.ip-51-81-44.us. [51.81.44.170])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d25a61a924sm625707785a.91.2025.06.09.19.11.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 19:11:50 -0700 (PDT)
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	Chen Linxuan <chenlinxuan@uniontech.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] doc: fuse: Add max_background and congestion_threshold
-Date: Tue, 10 Jun 2025 10:11:25 +0800
-Message-ID: <20250610021124.2800951-2-chenlinxuan@uniontech.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749526768; c=relaxed/simple;
+	bh=WFlW/++qHGMPwJfahFxJu2UAhr+WVq1zZtHELuxTUb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRUB+guL/d98GjgcqrLDjrAMALxnRNuFmttZQZ+IklOlNzlADbi1uPbE+C5hLJEPa+E89y/1aQBIwLQiuv3ExtSSYRXj3woN5ZP3QsP/Sla49VfIRE7QflJdVTInna7IelAtrzZqu5LdW2sSA0T4Bycr2fzqYeD8uO6z8h1W3pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rvSCE2k8; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GhStOomvkpU2vBUhXEJJZYGj7m3d8RJgB0w4RTLq+3s=; b=rvSCE2k83MoeULFUBgac25EBFZ
+	IOhRpwLdC4unAgoYjuIoNvZqBF8s4WGQbARWf92lJFmZpqLjrGjNrRpRiJZGtzHeLhtyZjYPyyEDQ
+	/7qhwrw6opuEfSoRibr+tLb4uhV4NzYBvmhGYMTD/zsVgdl1sq6Fu9CQLIyzNMn3ibmrFZbpVYH0g
+	bJ9kB8ZM6q13mA1CB84TvKZ4fufc1q2gmTbyAaI96sb8uY/rbP7F+Av21/l3rv2UYQ4FN2wuWaSm+
+	Q/nzTSoI2QvS/W8EVCWENe8PheGmgDVc3DF2QApxnL/hsVk2UbOomSJebtEh/gj9xDDqkStSFLdzL
+	4L/9G1BA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uOppd-00000005h1E-3VVJ;
+	Tue, 10 Jun 2025 03:39:25 +0000
+Date: Mon, 9 Jun 2025 20:39:25 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, miklos@szeredi.hu,
+	djwong@kernel.org, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	bernd.schubert@fastmail.fm, kernel-team@meta.com
+Subject: Re: [PATCH v1 2/8] iomap: add IOMAP_IN_MEM iomap type
+Message-ID: <aEeo7TbyczIILjml@infradead.org>
+References: <20250606233803.1421259-1-joannelkoong@gmail.com>
+ <20250606233803.1421259-3-joannelkoong@gmail.com>
+ <aEZm-tocHd4ITwvr@infradead.org>
+ <CAJnrk1Z-ubwmkpnC79OEWAdgumAS7PDtmGaecr8Fopwt0nW-aw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1Z-ubwmkpnC79OEWAdgumAS7PDtmGaecr8Fopwt0nW-aw@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-As I preparing patches adding selftests for fusectl,
-I notice that documentation of max_background and congestion_threshold
-is missing.
+On Mon, Jun 09, 2025 at 02:45:34PM -0700, Joanne Koong wrote:
+> IOMAP_INLINE is the closest in idea to what I'm looking for in that
+> it's completely independent from block io, but it falls short in a few
+> ways (described in the reply to Darrick in [1]). In terms of
+> implementation logic, IOMAP_MAPPED fits great but that's tied in idea
+> to mapped blocks and we'd be unable to make certain assertions (eg if
+> the iomap type doesn't use bios, the caller must provide
+> ->read_folio_sync() and ->writeback_folio() callbacks).
 
-This patch add some descriptions about these two files.
+Well, IFF we end up with both my proposals those two are the clean
+abstractions between the generic and block-level code and everyone
+is using them.  Let's see how that plays out.  I'd rather have a strong
+abstraction like that if we can and not add new types for what is
+essentially the same.
 
-Cc: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
----
- Documentation/filesystems/fuse.rst | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/Documentation/filesystems/fuse.rst b/Documentation/filesystems/fuse.rst
-index 1e31e87aee68c..c589316c8bb35 100644
---- a/Documentation/filesystems/fuse.rst
-+++ b/Documentation/filesystems/fuse.rst
-@@ -129,6 +129,20 @@ For each connection the following files exist within this directory:
- 	  connection.  This means that all waiting requests will be aborted an
- 	  error returned for all aborted and new requests.
- 
-+        max_background
-+          The maximum number of background requests that can be outstanding
-+          at a time. When the number of background requests reaches this limit,
-+          further requests will be blocked until some are completed, potentially
-+          causing I/O operations to stall.
-+
-+        congestion_threshold
-+          The threshold of background requests at which the kernel considers
-+          the filesystem to be congested. When the number of background requests
-+          exceeds this value, the kernel will skip asynchronous readahead
-+          operations, reducing read-ahead optimizations but preserving essential
-+          I/O, as well as suspending non-synchronous writeback operations
-+          (WB_SYNC_NONE), delaying page cache flushing to the filesystem.
-+
- Only the owner of the mount may read or write these files.
- 
- Interrupting filesystem operations
--- 
-2.43.0
+Btw, for zoned XFS, IOMAP_MAPPED also doesn't have a block number
+assigned yet and only actually does the I/O in the submit_ioend method.
 
 
