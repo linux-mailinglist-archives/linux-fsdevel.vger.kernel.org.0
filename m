@@ -1,255 +1,319 @@
-Return-Path: <linux-fsdevel+bounces-51188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E32AD428A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 21:09:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BAA8AD4348
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 21:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5D13A53D3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 19:08:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D15DF7A71BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 19:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA8E2609EE;
-	Tue, 10 Jun 2025 19:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C58E231825;
+	Tue, 10 Jun 2025 19:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f9vmSxPh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VglPUC1f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFBB25FA13
-	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 19:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C741EE7D5;
+	Tue, 10 Jun 2025 19:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749582546; cv=none; b=C3bOELC9C7zc+dE4/rmlpBg4NyYj2lvMxogn7A3sRy2LubqRyd7XmjTi+ix7vZ+B6shv5Kp262+6mTCcWdyNvynKxr4PuXCHloKz9xkWN+K+gaNQr1pR92PeUAx2IwMGNqEsXLf1oIFttzCDltW47kLoP3TiJ2NvAEWgg6wwiss=
+	t=1749585132; cv=none; b=uupZOF3ytv7D5P9qOnX72j2Fp6E1P3/qHI6bVjP1Cvh0cH9r9Q0cjiE2leBWDSf/qgFTSi4W4KERpzBlw5MwCD9thLlfliBCeB9KaH/MyI4XT3SrgVKdSEOMKx/qPhEe0zX7WeHscgmE1Hfv7/3uAeNxOyOKrKd8z8GQ38e8//A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749582546; c=relaxed/simple;
-	bh=P2c9QZ2QMTGEXsAYlVLRWVJAcrcG9fdTERiO9UVJyEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFRjQ+aHhO4ZpwdVdtG7NmLXSffa9S+D5i2Qrb0lFyryap2pWHb6YaMEYkRu22FgDoHLLufnDwisLcJevJxDHWcWnaQdVpriUmeZelhqADB5iR4XBdr4s+DZ9pjjjIYNEG8+28B3uQ/rWJnwiXheIb9ZqUU80g24Fko/gq0fbCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f9vmSxPh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749582543;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EDLdDx52Tt0xGB18gauxVIElFFaGCMshYvQZPbVpNqI=;
-	b=f9vmSxPha6ro6JfsSoqukt0CSltaBN6O+0qyW1X2r5q4P3I+a6uckywynjTH9Klo9fzBJG
-	KeM4lKNc2xATMt7qUDf24FI9DUYn4U6pbs0vhvePsdDhTggt/fYFipbF/kmioqab2a0B0J
-	89kpmcTTDQK9Iygf+0rcAgkhiYjyis0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-487-Uvd6UUwyNea9QZ_I4i4zfg-1; Tue,
- 10 Jun 2025 15:09:00 -0400
-X-MC-Unique: Uvd6UUwyNea9QZ_I4i4zfg-1
-X-Mimecast-MFC-AGG-ID: Uvd6UUwyNea9QZ_I4i4zfg_1749582539
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90FE3195608A;
-	Tue, 10 Jun 2025 19:08:58 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.100])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D94519560AF;
-	Tue, 10 Jun 2025 19:08:56 +0000 (UTC)
-Date: Tue, 10 Jun 2025 15:12:31 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH RFC 7/7] xfs: error tag to force zeroing on debug kernels
-Message-ID: <aEiDn1WDcv8wQmLS@bfoster>
-References: <20250605173357.579720-1-bfoster@redhat.com>
- <20250605173357.579720-8-bfoster@redhat.com>
- <aEe1oR3qRXz-QB67@infradead.org>
- <aEgkhYne8EenhJfI@bfoster>
- <aEgzdZKtL2Sp5RRa@infradead.org>
- <aEg_LH2BelAnY7It@bfoster>
+	s=arc-20240116; t=1749585132; c=relaxed/simple;
+	bh=PWvx3oKcZZjiRNrDHkXSP+e2jKQA7s+eakuGX6RL4oE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f1ltepBq+uQmhw2KBLQIBqjvwdfK42zHh7PcEtAm6hr6uV6kY2a2rVs8tySW6hAQaWwfQRMGua+aSTRg6iS1vho74soSG6OM7ULHsmkXyTZYKtizSbIDnFZvcyfMzB/l7K15xXz481/+B3ZADeQ4GSgfoyMq0PRfp4X9XUuHwGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VglPUC1f; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad88d77314bso1091398166b.1;
+        Tue, 10 Jun 2025 12:52:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749585129; x=1750189929; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yT8szgIUfe1SKplVmVvyLURewacO/t+cqK+5jdl87d0=;
+        b=VglPUC1fPqn8AnsNGrZVquAmuOPV/uzWSj/etXp/ccZ/JU4Qu58Wh/CxlUyCjTo+wi
+         RI1kQgUMbQAsDjOh6AGy7Tc+zFyi5UwyyKBYVmpeRj0ggUMHTltTgsJ2X2+E0P+IAEmk
+         N0pFRUVuZbgN4vG6lQk8LqHkPR/zPtrEHez1O2cKzkRsyDv0bCJmXztUgNdu5icFZB2+
+         9FjhzQEYLpD3lWwoCy3Afc/pCiFx+WSMFTfKWS9asKgSZ1tfJPMtLFbLRxmx3Vi34L1k
+         TPxK/Ilxxq74ZEHXOeoLurNEFjfsUAY2ifB0mV7r3LN5M19JwncQEf1TzbPtnatRNHL3
+         i9vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749585129; x=1750189929;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yT8szgIUfe1SKplVmVvyLURewacO/t+cqK+5jdl87d0=;
+        b=FvIlhtYu13K/gktlFi6nXWpXRZjB5M3LJbzDa+EniRz2N+4BmtmfmnfUQH7QIzwvP5
+         Iy1ID5wJeKDpQp5Y0QVZRAGa6AMbH6plhhAfruyzR8dbjqufcOt7CodRuZDnLeA96eUD
+         vHiLMJdSJ9yc5QfzOeRasWNikYRvJSzKsp8bbeBNgRzi4qT2BRkyUc01JeWHPXuKGFYo
+         PCc0sOUeOPS9UASXur5bv+KPA25911fhHDwcJkEjR3T01OelusmVaMFgH/ZYLncwJ9i/
+         A1W1Dul/k8ZtBMCfaiCwDv/jFZj1G5tVXhCN9zPbXQfgo+v+06Z1VswhscL9880ag/BV
+         FCsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ5qn1gxZqAJxfSTKbOUkkI6Adyh0vPuro5sxRtPQo0Y9+8nkpYxISDZsvXnHOqlWLlR1c1dcy/XkS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFLGjAQe1szNmpXYhcSVTQkmv4tkA2NsEWbF08CHm0d4YjtEbw
+	8UCGGpLUD+VYEMpxILxjakuhD37FV8SAbxemh/mYICTKXB+3p/5IdGq7E2xAYilNZELN8DQMnL5
+	fG+FurALaNPV4DixsIcUBTorqX1zcOmg=
+X-Gm-Gg: ASbGncu4wBAOfr6vURJXZwjDFCeDOnq4SYzeno5wyiKmFb6siO4Op25PhgAjaTWwm/j
+	aHc0yd7JeomC8sUEclH2DYeLhxmuCeeH78eIoCJf4KMNtFmUnwxFfjfsouko7lY5thYTZjl5iRV
+	oFj8ch5oGZ36lxIAQFZLJpUa0KfoGDG3rCBe4aUcgTrzY=
+X-Google-Smtp-Source: AGHT+IHTsZLaqBTddgiQERDEA2zREdgoyayAhFVDx5XaPHvWDM/WmK2m8w4TWtm6g6Q8yod8WFbGYAOmgOl0ByqOaQg=
+X-Received: by 2002:a17:907:3e28:b0:ade:422d:3167 with SMTP id
+ a640c23a62f3a-ade897e0612mr60947966b.49.1749585128432; Tue, 10 Jun 2025
+ 12:52:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEg_LH2BelAnY7It@bfoster>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250521235837.GB9688@frogsfrogsfrogs> <CAOQ4uxh3vW5z_Q35DtDhhTWqWtrkpFzK7QUsw3MGLPY4hqUxLw@mail.gmail.com>
+ <20250529164503.GB8282@frogsfrogsfrogs> <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
+ <20250609223159.GB6138@frogsfrogsfrogs> <CAOQ4uxgUVOLs070MyBpfodt12E0zjUn_SvyaCSJcm_M3SW36Ug@mail.gmail.com>
+ <20250610190026.GA6134@frogsfrogsfrogs>
+In-Reply-To: <20250610190026.GA6134@frogsfrogsfrogs>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 10 Jun 2025 21:51:55 +0200
+X-Gm-Features: AX0GCFu4wwo6rJC-Qc-psJhto-pTz4BZQJZBnw3gk_fLIcXr3F0j07ISckgOG2A
+Message-ID: <CAOQ4uxj4G_7E-Yba0hP2kpdeX17Fma0H-dB6Z8=BkbOWsF9NUg@mail.gmail.com>
+Subject: Re: [RFC[RAP]] fuse: use fs-iomap for better performance so we can
+ containerize ext4
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net, bernd@bsbernd.com, 
+	miklos@szeredi.hu, joannelkoong@gmail.com, Josef Bacik <josef@toxicpanda.com>, 
+	linux-ext4 <linux-ext4@vger.kernel.org>, "Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 10:20:28AM -0400, Brian Foster wrote:
-> On Tue, Jun 10, 2025 at 06:30:29AM -0700, Christoph Hellwig wrote:
-> > On Tue, Jun 10, 2025 at 08:26:45AM -0400, Brian Foster wrote:
-> > > Well that is kind of the question.. ;) My preference was to either add
-> > > something to fstests to enable select errortags by default on every
-> > > mount (or do the same in-kernel via XFS_DEBUG[_ERRTAGS] or some such)
-> > > over just creating a one-off test that runs fsx or whatever with this
-> > > error tag turned on. [1].
-> > > 
-> > > That said, I wouldn't be opposed to just doing both if folks prefer
-> > > that. It just bugs me to add yet another test that only runs a specific
-> > > fsx test when we get much more coverage by running the full suite of
-> > > tests. IOW, whenever somebody is testing a kernel that would actually
-> > > run a custom test (XFS_DEBUG plus specific errortag support), we could
-> > > in theory be running the whole suite with the same errortag turned on
-> > > (albeit perhaps at a lesser frequency than a custom test would use). So
-> > > from that perspective I'm not sure it makes a whole lot of sense to do
-> > > both.
-> > > 
-> > > So any thoughts from anyone on a custom test vs. enabling errortag
-> > > defaults (via fstests or kernel) vs. some combination of both?
-> > 
-> > I definitively like a targeted test to exercise it.  If you want
-> > additional knows to turn on error tags that's probably fine if it
-> > works out.  I'm worried about adding more flags to xfstests because
-> > it makes it really hard to figure out what runs are need for good
-> > test coverage.
-> > 
-> > 
-> 
-> Yeah, an fstests variable would add yet another configuration to test,
-> which maybe defeats the point. But we could still turn on certain tags
-> by default in the kernel. For example, see the couple of open coded
-> get_random_u32_below() callsites in XFS where we already effectively do
-> this for XFS_DEBUG, they just aren't implemented as proper errortags.
-> 
-> I think the main thing that would need to change is to not xfs_warn() on
-> those knobs when they are enabled by default. I think there are a few
-> different ways that could possibly be done, ideally so we go back to
-> default/warn behavior when userspace makes an explicit errortag change,
-> but I'd have to play around with it a little bit. Hm?
-> 
-> Anyways, given the fstests config matrix concern I'm inclined to at
-> least give something like that a try first and then fall back to a
-> custom test if that fails or is objectionable for some other reason..
-> 
-> Brian
-> 
-> 
+On Tue, Jun 10, 2025 at 9:00=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Tue, Jun 10, 2025 at 12:59:36PM +0200, Amir Goldstein wrote:
+> > On Tue, Jun 10, 2025 at 12:32=E2=80=AFAM Darrick J. Wong <djwong@kernel=
+.org> wrote:
+> > >
+> > > On Thu, May 29, 2025 at 09:41:23PM +0200, Amir Goldstein wrote:
+> > > >  or
+> > > >
+> > > > On Thu, May 29, 2025 at 6:45=E2=80=AFPM Darrick J. Wong <djwong@ker=
+nel.org> wrote:
+> > > > >
+> > > > > On Thu, May 22, 2025 at 06:24:50PM +0200, Amir Goldstein wrote:
+> > > > > > On Thu, May 22, 2025 at 1:58=E2=80=AFAM Darrick J. Wong <djwong=
+@kernel.org> wrote:
+> > > > > > >
+> > > > > > > Hi everyone,
+> > > > > > >
+> > > > > > > DO NOT MERGE THIS.
+> > > > > > >
+> > > > > > > This is the very first request for comments of a prototype to=
+ connect
+> > > > > > > the Linux fuse driver to fs-iomap for regular file IO operati=
+ons to and
+> > > > > > > from files whose contents persist to locally attached storage=
+ devices.
+> > > > > > >
+> > > > > > > Why would you want to do that?  Most filesystem drivers are s=
+eriously
+> > > > > > > vulnerable to metadata parsing attacks, as syzbot has shown r=
+epeatedly
+> > > > > > > over almost a decade of its existence.  Faulty code can lead =
+to total
+> > > > > > > kernel compromise, and I think there's a very strong incentiv=
+e to move
+> > > > > > > all that parsing out to userspace where we can containerize t=
+he fuse
+> > > > > > > server process.
+> > > > > > >
+> > > > > > > willy's folios conversion project (and to a certain degree RH=
+'s new
+> > > > > > > mount API) have also demonstrated that treewide changes to th=
+e core
+> > > > > > > mm/pagecache/fs code are very very difficult to pull off and =
+take years
+> > > > > > > because you have to understand every filesystem's bespoke use=
+ of that
+> > > > > > > core code.  Eeeugh.
+> > > > > > >
+> > > > > > > The fuse command plumbing is very simple -- the ->iomap_begin=
+,
+> > > > > > > ->iomap_end, and iomap ioend calls within iomap are turned in=
+to upcalls
+> > > > > > > to the fuse server via a trio of new fuse commands.  This is =
+suitable
+> > > > > > > for very simple filesystems that don't do tricky things with =
+mappings
+> > > > > > > (e.g. FAT/HFS) during writeback.  This isn't quite adequate f=
+or ext4,
+> > > > > > > but solving that is for the next sprint.
+> > > > > > >
+> > > > > > > With this overly simplistic RFC, I am to show that it's possi=
+ble to
+> > > > > > > build a fuse server for a real filesystem (ext4) that runs en=
+tirely in
+> > > > > > > userspace yet maintains most of its performance.  At this ear=
+ly stage I
+> > > > > > > get about 95% of the kernel ext4 driver's streaming directio =
+performance
+> > > > > > > on streaming IO, and 110% of its streaming buffered IO perfor=
+mance.
+> > > > > > > Random buffered IO suffers a 90% hit on writes due to unwritt=
+en extent
+> > > > > > > conversions.  Random direct IO is about 60% as fast as the ke=
+rnel; see
+> > > > > > > the cover letter for the fuse2fs iomap changes for more detai=
+ls.
+> > > > > > >
+> > > > > >
+> > > > > > Very cool!
+> > > > > >
+> > > > > > > There are some major warts remaining:
+> > > > > > >
+> > > > > > > 1. The iomap cookie validation is not present, which can lead=
+ to subtle
+> > > > > > > races between pagecache zeroing and writeback on filesystems =
+that
+> > > > > > > support unwritten and delalloc mappings.
+> > > > > > >
+> > > > > > > 2. Mappings ought to be cached in the kernel for more speed.
+> > > > > > >
+> > > > > > > 3. iomap doesn't support things like fscrypt or fsverity, and=
+ I haven't
+> > > > > > > yet figured out how inline data is supposed to work.
+> > > > > > >
+> > > > > > > 4. I would like to be able to turn on fuse+iomap on a per-ino=
+de basis,
+> > > > > > > which currently isn't possible because the kernel fuse driver=
+ will iget
+> > > > > > > inodes prior to calling FUSE_GETATTR to discover the properti=
+es of the
+> > > > > > > inode it just read.
+> > > > > >
+> > > > > > Can you make the decision about enabling iomap on lookup?
+> > > > > > The plan for passthrough for inode operations was to allow
+> > > > > > setting up passthough config of inode on lookup.
+> > > > >
+> > > > > The main requirement (especially for buffered IO) is that we've s=
+et the
+> > > > > address space operations structure either to the regular fuse one=
+ or to
+> > > > > the fuse+iomap ops before clearing INEW because the iomap/buffere=
+d-io.c
+> > > > > code assumes that cannot change on a live inode.
+> > > > >
+> > > > > So I /think/ we could ask the fuse server at inode instantiation =
+time
+> > > > > (which, if I'm reading the code correctly, is when iget5_locked g=
+ives
+> > > > > fuse an INEW inode and calls fuse_init_inode) provided it's ok to=
+ upcall
+> > > > > to userspace at that time.  Alternately I guess we could extend s=
+truct
+> > > > > fuse_attr with another FUSE_ATTR_ flag, I think?
+> > > > >
+> > > >
+> > > > The latter. Either extend fuse_attr or struct fuse_entry_out,
+> > > > which is in the responses of FUSE_LOOKUP,
+> > > > FUSE_READDIRPLUS, FUSE_CREATE, FUSE_TMPFILE.
+> > > > which instantiate fuse inodes.
+> > > >
+> > > > There is a very hand wavy discussion about this at:
+> > > > https://lore.kernel.org/linux-fsdevel/CAOQ4uxi2w+S4yy3yiBvGpJYSqC6G=
+OTAZQzzjygaH3TjH7Uc4+Q@mail.gmail.com/
+> > > >
+> > > > In a nutshell, we discussed adding a new FUSE_LOOKUP_HANDLE
+> > > > command that uses the variable length file handle instead of nodeid
+> > > > as a key for the inode.
+> > > >
+> > > > So we will have to extend fuse_entry_out anyway, but TBH I never go=
+t to
+> > > > look at the gritty details of how best to extend all the relevant c=
+ommands,
+> > > > so I hope I am not sending you down the wrong path.
+> > >
+> > > I found another twist to this story: the upper level libfuse3 library
+> > > assigns distinct nodeids for each directory entry.  These nodeids are
+> > > passed into the kernel and appear to the basis for an iget5_locked ca=
+ll.
+> > > IOWs, each nodeid causes a struct fuse_inode to be created in the
+> > > kernel.
+> > >
+> > > For a single-linked file this is no big deal, but for a hardlink this
+> > > makes iomap a mess because this means that in fuse2fs, an ext2 inode =
+can
+> > > map to multiple kernel fuse_inode objects.  This /really/ breaks the
+> > > locking model of iomap, which assumes that there's one in-kernel inod=
+e
+> > > and that it can use i_rwsem to synchronize updates.
+> > >
+> > > So I'm going to have to find a way to deal with this.  I tried trivia=
+lly
+> > > messing with libfuse nodeid assigment but that blew some assertion.
+> > > Maybe your LOOKUP_HANDLE thing would work.
+> > >
+> >
+> > Pull the emergency break!
+> >
+> > In an amature move, I did not look at fuse2fs.c before commenting on yo=
+ur
+> > work.
+> >
+> > High level fuse interface is not the right tool for the job.
+> > It's not even the easiest way to have written fuse2fs in the first plac=
+e.
+>
+> At the time I thought it would minimize friction across multiple
+> operating systems' fuse implementations.
+>
+> > High-level fuse API addresses file system objects with full paths.
+> > This is good for writing simple virtual filesystems, but it is not the
+> > correct nor is the easiest choice to write a userspace driver for ext4.
+>
+> Agreed, it's a *terrible* way to implement ext4.
+>
+> I think, however, that Ted would like to maintain compatibility with
+> macfuse and freebsd(?) so he's been resistant to rewriting the entire
+> program to work with the lowlevel library.
+>
+> That said, I decided just now to do some spelunking into those two fuse
+> ports and have discovered that freebsd[1] packages the same upstream
+> libfuse as linux, and macfuse[2] seems to vendor both libfuse 2 and 3.
+>
+> [1] https://wiki.freebsd.org/FUSEFS
+> [2] https://github.com/macfuse/macfuse
+>
+> Seeing as Debian 13 has killed off libfuse2 entirely, maybe I should
+> think about rewriting all of fuse2fs against the lowlevel library?  It's
+> really annoying to deal with all the problems of the current codebase.
+> I think I'll try to stabilize the current fuse+iomap code and then look
+> into a fuse2fs port.  What would we call it, fuse4fs? :D
+>
+> > Low-level fuse interface addresses filesystem objects by nodeid
+> > and requires the server to implement lookup(parent_nodeid, name)
+> > where the server gets to choose the nodeid (not libfuse).
+>
+> Does the nodeid for the root directory have to be FUSE_ROOT_ID?
 
-Here's a prototype for 1. an errtag quiet mode and 2. on-by-default
-tags. The alternative to a per-mount flag would be to hack a new struct
-into m_errortag that holds the current randfactor as well as a per-tag
-quiet flag, though I'm not sure how much people care about that. I
-didn't really plan on exposing this to userspace or anything for per-tag
-support, but this does mean all tags would start to warn once userspace
-changes any tag. I suppose that could become noisy if some day we end up
-with a bunch more default enabled tags. *shrug* I could go either way.
+Yeh, I think that's the case, otherwise FUSE_INIT would need to
+tell the kernel the root nodeid, because there is no lookup to
+return the root nodeid.
 
-Otherwise I think this would allow conversion of the two open coded
-get_random_u32_below() cases and the new force zero tag into
-on-by-default errortags. Any thoughts?
+> I guess
+> for ext4 that's not a big deal since ext2 inode #1 is the badblocks file
+> which cannot be accessed from userspace anyway.
+>
 
---- 8< ---
+As long as inode #1 is reserved it should be fine.
+just need to refine the rules of the one-to-one mapping with
+this exception.
 
- diff --git a/fs/xfs/xfs_error.c b/fs/xfs/xfs_error.c
-index dbd87e137694..54b38143a7a6 100644
---- a/fs/xfs/xfs_error.c
-+++ b/fs/xfs/xfs_error.c
-@@ -69,6 +69,7 @@ static unsigned int xfs_errortag_random_default[] = {
- struct xfs_errortag_attr {
- 	struct attribute	attr;
- 	unsigned int		tag;
-+	bool			enable_default;
- };
- 
- static inline struct xfs_errortag_attr *
-@@ -129,12 +130,15 @@ static const struct sysfs_ops xfs_errortag_sysfs_ops = {
- 	.store = xfs_errortag_attr_store,
- };
- 
--#define XFS_ERRORTAG_ATTR_RW(_name, _tag) \
-+#define __XFS_ERRORTAG_ATTR_RW(_name, _tag, enable) \
- static struct xfs_errortag_attr xfs_errortag_attr_##_name = {		\
- 	.attr = {.name = __stringify(_name),				\
- 		 .mode = VERIFY_OCTAL_PERMISSIONS(S_IWUSR | S_IRUGO) },	\
- 	.tag	= (_tag),						\
-+	.enable_default = enable,					\
- }
-+#define XFS_ERRORTAG_ATTR_RW(_name, _tag) \
-+	__XFS_ERRORTAG_ATTR_RW(_name, _tag, false)
- 
- #define XFS_ERRORTAG_ATTR_LIST(_name) &xfs_errortag_attr_##_name.attr
- 
-@@ -240,6 +244,25 @@ static const struct kobj_type xfs_errortag_ktype = {
- 	.default_groups = xfs_errortag_groups,
- };
- 
-+static void
-+xfs_errortag_init_enable_defaults(
-+	struct xfs_mount	*mp)
-+{
-+	int i;
-+
-+	for (i = 0; xfs_errortag_attrs[i]; i++) {
-+		struct xfs_errortag_attr *xfs_attr =
-+				to_attr(xfs_errortag_attrs[i]);
-+
-+		if (!xfs_attr->enable_default)
-+			continue;
-+
-+		xfs_set_quiet_errtag(mp);
-+		mp->m_errortag[xfs_attr->tag] =
-+			xfs_errortag_random_default[xfs_attr->tag];
-+	}
-+}
-+
- int
- xfs_errortag_init(
- 	struct xfs_mount	*mp)
-@@ -251,6 +274,8 @@ xfs_errortag_init(
- 	if (!mp->m_errortag)
- 		return -ENOMEM;
- 
-+	xfs_errortag_init_enable_defaults(mp);
-+
- 	ret = xfs_sysfs_init(&mp->m_errortag_kobj, &xfs_errortag_ktype,
- 				&mp->m_kobj, "errortag");
- 	if (ret)
-@@ -320,9 +345,11 @@ xfs_errortag_test(
- 	if (!randfactor || get_random_u32_below(randfactor))
- 		return false;
- 
--	xfs_warn_ratelimited(mp,
-+	if (!xfs_is_quiet_errtag(mp)) {
-+		xfs_warn_ratelimited(mp,
- "Injecting error (%s) at file %s, line %d, on filesystem \"%s\"",
- 			expression, file, line, mp->m_super->s_id);
-+	}
- 	return true;
- }
- 
-@@ -346,6 +373,7 @@ xfs_errortag_set(
- 	if (!xfs_errortag_valid(error_tag))
- 		return -EINVAL;
- 
-+	xfs_clear_quiet_errtag(mp);
- 	mp->m_errortag[error_tag] = tag_value;
- 	return 0;
- }
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index d85084f9f317..44b02728056f 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -558,6 +558,8 @@ __XFS_HAS_FEAT(nouuid, NOUUID)
-  */
- #define XFS_OPSTATE_BLOCKGC_ENABLED	6
- 
-+/* Debug kernel skips warning on errtag event triggers */
-+#define XFS_OPSTATE_QUIET_ERRTAG	7
- /* Kernel has logged a warning about shrink being used on this fs. */
- #define XFS_OPSTATE_WARNED_SHRINK	9
- /* Kernel has logged a warning about logged xattr updates being used. */
-@@ -600,6 +602,7 @@ __XFS_IS_OPSTATE(inode32, INODE32)
- __XFS_IS_OPSTATE(readonly, READONLY)
- __XFS_IS_OPSTATE(inodegc_enabled, INODEGC_ENABLED)
- __XFS_IS_OPSTATE(blockgc_enabled, BLOCKGC_ENABLED)
-+__XFS_IS_OPSTATE(quiet_errtag, QUIET_ERRTAG)
- #ifdef CONFIG_XFS_QUOTA
- __XFS_IS_OPSTATE(quotacheck_running, QUOTACHECK_RUNNING)
- __XFS_IS_OPSTATE(resuming_quotaon, RESUMING_QUOTAON)
-
+Thanks,
+Amir.
 
