@@ -1,224 +1,457 @@
-Return-Path: <linux-fsdevel+bounces-51087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BDDAD2B95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 03:48:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806C6AD2BCC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 04:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4B33B26A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 01:47:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71EA87A3F1A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 02:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5021C549F;
-	Tue, 10 Jun 2025 01:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U5jbqM4P";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="aAlVCLHr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863881C75E2;
+	Tue, 10 Jun 2025 02:10:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B1C20E6;
-	Tue, 10 Jun 2025 01:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749520073; cv=fail; b=ABc9LUMHS4eLik32k3tQE0kTOFBvGBhBzXcmxsYIyAtV61eycBP8isCmZn74z0h74SwNOg1IzLT/UA76RIxRZv+LPFXINhseUxg1rpD6jZgnatJjQXOSy42X3283P2Xl+amHS2NUWlquWv5O9B23IXz8tjrudQMhz2hDap4Gfbg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749520073; c=relaxed/simple;
-	bh=9eO6Twtl+KqxYXyqHkA7jON4tEKMrzcKYZmwTExJGjY=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=F01m74IyBrui8NUwJS34dr/DGHyR3NfcVeHvHSOtE1WOShQyVSTLHUNciErMFn2kdtaDWr/dGuW5hWJAx05IULL+UIB3lJdINpPn4VdWf13vhq071ll+ggAQPpqAKZS5hY/7eU9HUdCVIY4qYWvf95RY026l5vU4F4BcWUDHDGE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=U5jbqM4P; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=aAlVCLHr; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559FtF61005868;
-	Tue, 10 Jun 2025 01:47:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Dc+uA+Z13z9S/oMGg1
-	NiO9uroRPuC8yNXhVdLQ3vVUE=; b=U5jbqM4PZnJxGPkaA7aDvtniwKp8UAa0Eg
-	0EOx3iGNAlITFVcFdk40fuSFCsgM6uObNSSQvRcP/eTkVJ5LnkFBmZEJpFUCW5fa
-	eKm7yHdIlm1stM7du3pjMhvMYmeBooILhFMsmlkgElmqTWrYJSNutOmaLRfuDd9L
-	jJseKa6FMzeei4W3UpyORky7pDdqIMLs+p3bi8LW/0dIQPOBHclspZtG5/1cyLiX
-	TuV8JKTYbqbei6y5FJo4Kvw2nWBjED2Bb1G35jwmTBgbHYQ2JU9IIdtF9wqQzjqF
-	tNtZzJm5jVeMQom7x/idchJRkE/3zWWQDAVEb0/Ox3j1V+rFchCw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 474dad36n5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Jun 2025 01:47:18 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55A14bON012043;
-	Tue, 10 Jun 2025 01:47:17 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2061.outbound.protection.outlook.com [40.107.243.61])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 474bv93x5c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Jun 2025 01:47:17 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ewcH9OBdorJSduk7t5lXqMa71qygSdOvIYecnFpTmQEbC0caXL8uDMd3eoofd1piZQCpa1wgRA3MdtBfvCGP2RK0qvLuMAhmwEFqj2wBxQxGdcAkQb2ieb77VEnURAWSfFbDYZAF4l33EecuMBW13m5UDq7nY4PLqGtB8A55GVygraftV6FcQr0xKV7bEyNRpnTsdvACGsN7w+gNiP3f/6UCZLkXvEOp0rmSx0CG1aeGMBUfOydOJpxELUxObtWEPlHuoI1CAUJgaasBfd8Gt+To8kVGF8ErGXv7YqcOyVyq+7kKN/riQwjw/54ErIMu9+8ympEfi4iQUOKtkW5WRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Dc+uA+Z13z9S/oMGg1NiO9uroRPuC8yNXhVdLQ3vVUE=;
- b=m+qkTtWXArdWUQv83HE2EOwIry0/FvczQOMLxMSksg61czVGMUzP9KVvC/R3N85pKxw0Ajai6UE+fpns1lPjWBeip9jdPS63887RB27sSCg/qyrb1Gtk5DjV55VBLpqb40J38S56U2DJosPU0nAbxKLdesR449lIdNtw/X9VsTjK/5/XwHJwVqKDK/qjJ05w42my/VfnZNBctuV4nf9sItR2nQhqJhxpSmmxi1kh9bW+WuXjKMYrce2/UtltE6/haw1fNt/OOyyiOoKwqeupNqRnTlqPgKTpDNg3ohEJashjAI+9HShpQZRDoR9UZiih1ACVQgZwoqAcZgPWnMVGAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Dc+uA+Z13z9S/oMGg1NiO9uroRPuC8yNXhVdLQ3vVUE=;
- b=aAlVCLHrOb2bS6kNIb/gW3IZ9jmxclXGDV+Q2fV7605n7gRr4jSHTXfiDROfnbinZXpsPLtVmfbaI1N1jyAfJDcKU5VuDPd4CurXRdW1FEE/r0NVOBCKwFSKAduXi3meIADRzg9zl9WrHXm0nwBf/D/ZkbY3K1rWdwVbXfAyORk=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by SA2PR10MB4793.namprd10.prod.outlook.com (2603:10b6:806:110::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.24; Tue, 10 Jun
- 2025 01:47:15 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%7]) with mapi id 15.20.8813.024; Tue, 10 Jun 2025
- 01:47:15 +0000
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
-        tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
-        bmarzins@redhat.com, chaitanyak@nvidia.com,
-        shinichiro.kawasaki@wdc.com, brauner@kernel.org,
-        martin.petersen@oracle.com, yi.zhang@huawei.com,
-        chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 00/10] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20250604020850.1304633-1-yi.zhang@huaweicloud.com> (Zhang Yi's
-	message of "Wed, 4 Jun 2025 10:08:40 +0800")
-Organization: Oracle Corporation
-Message-ID: <yq17c1k74jd.fsf@ca-mkp.ca.oracle.com>
-References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
-Date: Mon, 09 Jun 2025 21:47:13 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: BL1PR13CA0366.namprd13.prod.outlook.com
- (2603:10b6:208:2c0::11) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C64F1624E5;
+	Tue, 10 Jun 2025 02:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749521441; cv=none; b=ArJxypHN4M42KFKH5FsglBNgZDhQE4ZxAmmSakZgZV0mk/zvRhY8hrW8VbmZZZWb2B8GVRccX79EepkX5mDxS1+4mB/WS036eOxcSK8E5ymxCGvB5kwTeLo5bhwZQrliVILXTu/32V9YR8xXV/EKUw26NLO9m98wQEfxRub1rNo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749521441; c=relaxed/simple;
+	bh=7r+gjaLUxohy1g3DPttixjKBYym83aEFktlGPw2yFKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aladmBpYn+28qjVh0LaD3KER7z+lvsu/QOzNSzWMY1NR8/8CC+GBvJqSQhRCvmSjbab5qsUUJ92wZaXFwAk3FAVk1ngT4RWo5e08CgVSwB/2U8aXHwy/9XsOaTR41Y/uRl7Zi7H4s/aAsr7Gnlr2CQpgILpAZ9aTwvz2dRDZgR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6faff792f9bso48099876d6.1;
+        Mon, 09 Jun 2025 19:10:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749521438; x=1750126238;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SgFVpQSPIamoJ83eX+jqQTfc3LjadWZZ8RnIxJP2vBM=;
+        b=j3aqev8g5OHEzlhihFytLJ7q37hGfNCgAmraKMM5IjAoaYKjQeQbfLLhToUem0atjb
+         mqVrTXajRkDkWDzPeGRmjtTnlP4Vk2/gTD6uN6JFROOB+StSvtzA/u9X3K+ln7WC388w
+         IyFVWWFhx5c5DUrNMHNkib5qx2W0ys9ZnpGSNsmE11mG+FY4OKqKaRTOFbjJWoGaNJR2
+         TWxuPK2p3JbeT2prWBu39sTF4TrBVTYnQMfKq2cK5rLHVzmiTLYz8MX2WzfzZi1Wtv6z
+         X2hfCTcmGGTaOgHRaCUmQfkS4HrDwekXuOvzSYX3usFf8+TcK2TndBuEwGUGp31whzo4
+         j6YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV07nN8CJtXkDZkYXs3DT0qYPlowV4ExcAgDScg7yEPPZ2ne4Lh7htR+Ge8hoJINIOEsx+ZwuAyuwmK44KGpMLs@vger.kernel.org, AJvYcCWS3m7q5X4YnkwC0HODYkn2dHRZtpU3e3LCDdIEmAXsRX7CNlw4zeHA6thXVpI22JMXQiQ2ji4802/UjGqv@vger.kernel.org, AJvYcCWgRaDwV4yyjB+0kAu16C4uuZ1KZoHCpxdpYhO3dkjDyMu+n9IKEBc8LmszD0VlY18vaiAZUrxw0N6nZgqf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc1F+us3/F0Nk4F6VdVrUcpa7UtBP0MPhm13a/7oSV29HWSoFU
+	RUjqqCrB4qBJ6KfoThAWu87eWw/zUE9P8u+XjCJwndVhANU919m9SLiB
+X-Gm-Gg: ASbGncsIskRA4/fsO9i4PJHa4oTKqgRQ4Q/Mbjq4v0v+nPZT9XZ+cqF7d8vQ+dlr09S
+	91rozSUO2Gpj3P9mbVGL+dP7ce3CCeboiq6ukEM/U29T1Fn6ZNl/Bjv9SZRYS7/OW3h5oqwvXy8
+	Ly53h1aIA1iLVq+WysbVFlOqyTMzCWUv5+K2PiAo4KGSsxtyqxwhh7HkBA9AwNoo+1qqNuzP7KG
+	tNLa46jIrmzmBPreVPvwi3f2lCM0NCZBb9hfHktcIVpsBx1Yk4fYbcBPb7H2bxEO82mQPzSdxKc
+	1XT1NNWtOU9ZlRe4AhjNl4ZHSkpPG5qQca3QRFp0HallNxd6Rus0MqTEfM2BngQHN+dPTv/oHzs
+	0gnNay9mSahq1yb6Hz7a3UQ==
+X-Google-Smtp-Source: AGHT+IEGBGjuXTdyD0YeMgSGEz748uRrth91BwIUUZQUHtCjGGSY8M+nCuXpUR7zWCsTj3PtcI4l+w==
+X-Received: by 2002:a05:6214:2488:b0:6fa:ba15:e8a with SMTP id 6a1803df08f44-6fb24c4b51bmr14981186d6.8.1749521438097;
+        Mon, 09 Jun 2025 19:10:38 -0700 (PDT)
+Received: from localhost.localdomain (ip170.ip-51-81-44.us. [51.81.44.170])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09b2a021sm59508786d6.83.2025.06.09.19.10.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 19:10:37 -0700 (PDT)
+From: Chen Linxuan <chenlinxuan@uniontech.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>
+Cc: zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	Chen Linxuan <chenlinxuan@uniontech.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 RESEND] selftests: filesystems: Add functional test for the abort file in fusectl
+Date: Tue, 10 Jun 2025 10:10:03 +0800
+Message-ID: <20250610021007.2800329-2-chenlinxuan@uniontech.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|SA2PR10MB4793:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35ddda93-0f0d-4030-2d26-08dda7c0b9b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rB/2d/pf0VKqjNXFncBeDxg67FdjmaE49kRYtTPyAe9Y9hQRlA5bF6yGp0aC?=
- =?us-ascii?Q?GcMvzqaoa1wvg7Kluq+iCrahEU33eZRv0Zza832Z0q/hWGIF+KQnkZQHWOda?=
- =?us-ascii?Q?O3TUaLsDv6hwQU22iCHS/JLsvf7TO3udbSoR1pvLb3nHKoCRIpWSbjnCJQRH?=
- =?us-ascii?Q?TFMWUiICGUTZtJdvncZzgpCXf9J9qPH9u9y+0oyrc1obrG1n6YE3Qe7po0rO?=
- =?us-ascii?Q?6zgVeHuPdq6UiSfzO+sf2vLO1L1QEW6NySQLvWoRYACOEbA3QAhYAHDB4ER8?=
- =?us-ascii?Q?Qf14LCN3PjThEGTl73DqOh7IC3c4RD1lXPtkPJKuT1ONP0EFwahiUwgUBuBZ?=
- =?us-ascii?Q?pxo+CICeg0rZkjrqMokrCpBq+o7uZGozFX8j3GlFmMR6AUV6E+OxbFFw3dUk?=
- =?us-ascii?Q?wtJ7ZKQyV/1Yqfvj8MDSU1J58icY2c4P8djW2JuX77nyT+WXStv19EnfZlc7?=
- =?us-ascii?Q?nNL+xzHVoGqwY4lvatqCnkKBtA0Mzy7tHuiquQytEiSAonpvBIv23zAVOJlz?=
- =?us-ascii?Q?iJ6X7A/xo6eU2eJO3WUBM5XAZKCnJLkF4LCGeiwv3/2500BdEqt+ns8l79rd?=
- =?us-ascii?Q?38PNpLZvftj0DdBVoC1PS2lj5mYRl5Qt1GNz484AMPxYG61UZ0geN4MkAvCz?=
- =?us-ascii?Q?f2ZdZ8PD/2gS5s4dCcsWLCSiUGz8BzmqWwI747GnvP1Tqc+1C43Bbv0Duyvs?=
- =?us-ascii?Q?YKHMpN75paMm1oRThhTz5H/+49uwYFkNp2e1pX8Wowoo64QYsrqy0uWgdUcV?=
- =?us-ascii?Q?f0M6rVg1nlBeCHMmyBdNkUz/eNQ0MjKnayn76+1UZ9vubf69u6jsY3+t2OG9?=
- =?us-ascii?Q?rGaIdZhgj7cy4nfffyTdDk4fkMEJecek5XdXKu+9ZgTc2ss+Kre1rUq50GxD?=
- =?us-ascii?Q?Yib8uI/d5xAOJr7r3BUfNmV3eMW+pzE0XF56LCsiyfEz0Es6OHOf4v1qaN9f?=
- =?us-ascii?Q?uEZUekzfHhthiYyNo0QQJSjOeuhP+O2/3z0b+V2h4q71hsz5NuIW4Fg0MJGa?=
- =?us-ascii?Q?jSfACY3qprTN7QLHtHbSRub59e8e5PK3GaQivFAqOZr3y0xfUxHHiiPJLXNg?=
- =?us-ascii?Q?bviUfPQhkspMaBHALVQ2RC6/VYYtkZ7AvlAohs1Bzpyjs1fyqEr0BE5XpRFc?=
- =?us-ascii?Q?WEy+Hvi3HmmFiJ09ALC6c6eA86nzW4O23Ua1TUDIpA3Zg3M6IN52fA3mprWE?=
- =?us-ascii?Q?RGSmWOfttKzBojdTRZzvhjwharbSrSlsrKxOLI6bx24pUNW+D4MFuGfCm2uw?=
- =?us-ascii?Q?EwqHFx2EIV3cQ35mb1Zt6GqW8bgti3NbjqJ6ARiSbLB/al/wfqJlvdUNEb1i?=
- =?us-ascii?Q?MPcXjL6INcg6fbuYPkcpGlisxWrNYlzcQ1GaTXQ9+sSHLm1sSbPEez/HMmiI?=
- =?us-ascii?Q?RMaMFbIO3Cerj0kqHH1vRxy56+6W8altcXbsqMpjDPKc+yXJzA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?f7XpkTCiDJyXKQCGAnKmZhJIwYzo9J287JV11gwtoDKZVvhJJEBHGKuWfKyf?=
- =?us-ascii?Q?yCh0XD/hsNtoxlGiesVIxj1dFD3qTsCjTG1fvBXwfF8UsCqtWLBySQZstci0?=
- =?us-ascii?Q?TwnKd6e8wa8cNhNedRpMi9yPTIy6J8mJjplNEBSRdY+54mWrhDi7Y71vC8k3?=
- =?us-ascii?Q?oYvEEZn6t2oXa76zAWgb7UTozSHbovpPejJxRr5fYXsx6ANREWMiaFyxMhTW?=
- =?us-ascii?Q?2Vk3VZJG/MCC2ttHbJLU3LOl3LLWCywmuKfYlQo+0DIiIqQ7rNHFe0R3zQuA?=
- =?us-ascii?Q?+Vzu17cgTirlpjJpPI49T07KdlGMaAV1vdG96XdPlJdd/8C6qzGg63N6gY/U?=
- =?us-ascii?Q?kEyHPjKzGjfQNtqQhmI9dIFFLbWOQ7asnjvLuHV+XEl3Uf3ozt8y7d9f50LF?=
- =?us-ascii?Q?YftcKQEmuneRyzdMzHcPMGf82WPv9T6U/ajBTpqR9A98/Qs2nCgmtFJPhf88?=
- =?us-ascii?Q?pIfkPT1u7zcCyuOK4XFzHOrXFmS2keXbKbCtfsbNwez1WadqxDIIUj87vmjS?=
- =?us-ascii?Q?V+HkOzyDc7w/505XBaCzsmQRcJt8CWbhtgFtn8fw1wLFSMb7zvouzw7iv1Kq?=
- =?us-ascii?Q?nOJ4If5lErrOrd5W2OBw+uj6OYZkP+9xLOC5kiBfzX3vJzaZMPDFdQoju8cQ?=
- =?us-ascii?Q?3jh1OROhsyh5cI+IiWsJSduj7ZEZ6uTsEj57HjGphz/y6Hur/fQofqelFXg3?=
- =?us-ascii?Q?DeIbu9VK2CRA+z2+ITYJ+ucl64ngxf386V21EV+KQg+vyywm+SdHkzeRkxIN?=
- =?us-ascii?Q?6H0WwcjBMty+mlNMbRp8FJOGjdvwUfzz8B4o18xkAaP6IlcF9n3v2ujpw19S?=
- =?us-ascii?Q?qyYU+QFZNdQlRiZR5/KiJt0Ns7TmuKPwcCcCLIVbo8np/vwU8uY4MeJhArEp?=
- =?us-ascii?Q?RdFBgCiXB5L5WzFlg4tCnSNgWNQ1vt0Eo9voo8VEX9V305HCwA4c4YhIWuVH?=
- =?us-ascii?Q?/Z+Cr8S+1v1Aizs/AC+F1BDOPA8Qc0HAW54EoVZts4sjnRED5tSkhD0kfrst?=
- =?us-ascii?Q?30IuHfafYjKDU7icy8tbOiaRm5YykBxE7fOFvXZhnRu/wtmUc5YMLlHl0Cl8?=
- =?us-ascii?Q?jCDTR7njt0Denl9ZNlfIIl0zNkacjaEYfs3qUM4a4I2OqkNV10N0HYPVRitT?=
- =?us-ascii?Q?TdP35oUEG/UrKoJYY82NODKFGIHOLeFrNvNFaW1nKtkWR4CtgeFarhgWgNeU?=
- =?us-ascii?Q?fTy7s1p/IanRkXys79fx0enTTHx+yq+oQPetntC+3Y+ft46B6SsJ4RCxH5Vn?=
- =?us-ascii?Q?xmZ/shEEQdO4SJ6h2B6GYFWP7fFVH74hBfJtkV3wDlMuVjnwQu8PHXYNmq97?=
- =?us-ascii?Q?H11prBArYvaQ1szttCeC7/cxF30wFe/AehWWX5JD/ObTfjctbSiYleHTs+ZF?=
- =?us-ascii?Q?8wzYeGvtlWzPiivDOWADJVBtewalAfWahhuhEKhV2bvpoEqHsRPuEnJCG/rl?=
- =?us-ascii?Q?B24cBAOWDd68jNGORqh+/SoyqaHaigNqhdoXahSgN8qP7CQsJKDstF5Nsael?=
- =?us-ascii?Q?YuhxfMzkLaueyha14BOrYy4W4l+DZ3yQSLojAIHukYE3sWfzw6YQjg7vR1vx?=
- =?us-ascii?Q?HhP+y/thXtPvgiGcb03MISVaWuHttLdFK2n007aeH3/nosN6eQNiyyd/N/OT?=
- =?us-ascii?Q?Cg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	9fSYs+QzpntBHPEKwfhF3cTRaz1E1cX6mucZzRqEZIxuk4KwLn95G/kTU5QoBIp4xt9WtAK5Ha/yVmtXOS+yJa9R0agTOQcCvFa+tfnTsVXhkvz+kVh1gmS7WnDf70fBtJnnxwQoRqnwLiauTJEmxAQi5bmBsQH5vXoMQxvYLboAlFJP0hU/2VsD4zk4ZIo8IzkCXjO1FvHU5hwVRRXmXSwn4NP6NMM7Et4YYnOaRoPakTypij5ZFQ3J6Slzfe4mFrMdl7/JKtl6T1M9GKHy+mT0Nw99qZZr2Ss+fGBHh/U30epf/J9m/8V4yH1G4kvzgHfZZ5ZB0bpV7qfgmwCnf0WVo8vIJBt2cIcqwNropZuuM8xfFc2sLjocJ/xOtrV5HX+cL+6l/9Ql6GVDSVqEfosbalaLt1SGwyI8TQsMPkeX4H6VOkkGugwNWYrDCGEpTp7Lcp956NID1+qHRsdWrq75N1C5B3FiRdyojksllKwrwQY3j3hhS/VNm/E7FzIc180uDyl8a0jltwqXAMPugDKO+J5X3HWsZfkomaArzCyEgserBLztHvamJq8EF0GwJZtUdr8Ys1yqW8kFkJgjY2Dsf1D40w8nI0I99qrMpDg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35ddda93-0f0d-4030-2d26-08dda7c0b9b6
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 01:47:14.9029
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D24ViCB61l67skoHHMJgWdmjk3PDd93ZndVDg6uscNj7kCGs+xQh/nAGUwtTlhfk2h+c1+5vuKBBvKtyKq2thJEmXEBulA9wpgXOLbyuPHs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4793
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_10,2025-06-09_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506100012
-X-Proofpoint-ORIG-GUID: GZHeU5CPcajlVhjSbdqYpwQSdt1zRBRc
-X-Authority-Analysis: v=2.4 cv=EJwG00ZC c=1 sm=1 tr=0 ts=68478ea6 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=nBxOl_bkpJgnWtLUi3YA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDAxMiBTYWx0ZWRfXxdVYiG+HpSb2 YeLjJWdEm1ivxCM/8lgxjj7APMRFai11DUxxnhjMA8fov7H79B6dEIvv3zXU+32CKfItqjelio8 EXrvqP41c4rjlDcnzyGToNH9p82yqnn9HZHUpGSe7UQwzrn+vYtTL2PcjLNidkWlke9SRiO3qGA
- Nb0egEPqtpto0IW94MWCQzowrtu632LI0j+AQyi3Dq5tqG0BDT1FzEXnImxt0+kT6O+D21NC9gx 6JrzRfXupXnXvVG2KxESeTWzESy/lqruFTMsy6b+NynP2dqHarRqm1/4xHKDj4lNXm705U2LTa1 j1ZG0+Xk1B4W3QkSJmgdVFEfmgetq+pdeOpfYZKzoh9+5SJ51zdeI/RiownRo3Lh1vuyU9Bfmrf
- AxVrAjY46DOpu5Tjtz+gbPDJXSlypx/Yv8veZPFWbeve0pRIBiE8MIBKHlHGTPKMt2mTegLl
-X-Proofpoint-GUID: GZHeU5CPcajlVhjSbdqYpwQSdt1zRBRc
+Content-Transfer-Encoding: 8bit
 
+This patch add a simple functional test for the "abort" file
+in fusectlfs (/sys/fs/fuse/connections/ID/about).
 
-Zhang,
+A simple fuse daemon is added for testing.
 
-> Changes since RFC v4:
->  - Rebase codes on 6.16-rc1.
->  - Add a new queue_limit flag, and change the write_zeroes_unmap sysfs
->    interface to RW mode. User can disable the unmap write zeroes
->    operation by writing '0' to it when the operation is slow.
->  - Modify the documentation of write_zeroes_unmap sysfs interface as
->    Martin suggested.
->  - Remove the statx interface.
->  - Make the bdev and ext4 don't allow to submit FALLOC_FL_WRITE_ZEROES
->    if the block device does not enable the unmap write zeroes operation,
->    it should return -EOPNOTSUPP.
+Related discussion can be found in the link below.
 
-This looks OK to me as long as the fs folks agree on the fallocate()
-semantics.
+Link: https://lore.kernel.org/all/CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com/
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+---
+Changes in v3:
+- Apply changes suggested by Amir Goldstein
+  - Rename the test subdir to filesystems/fuse
+  - Verify errno when connection is aborted
+- Apply changes suggested by Shuah Khan
+  - Update commit message
+- Link to v2: https://lore.kernel.org/all/20250517012350.10317-2-chenlinxuan@uniontech.com/
+Changes in v2:
+- Apply changes suggested by Amir Goldstein
+   - Check errno
+- Link to v1: https://lore.kernel.org/all/20250515073449.346774-2-chenlinxuan@uniontech.com/
+---
+ MAINTAINERS                                   |   1 +
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/filesystems/fuse/.gitignore     |   3 +
+ .../selftests/filesystems/fuse/Makefile       |  21 +++
+ .../selftests/filesystems/fuse/fuse_mnt.c     | 146 ++++++++++++++++++
+ .../selftests/filesystems/fuse/fusectl_test.c | 116 ++++++++++++++
+ 6 files changed, 288 insertions(+)
+ create mode 100644 tools/testing/selftests/filesystems/fuse/.gitignore
+ create mode 100644 tools/testing/selftests/filesystems/fuse/Makefile
+ create mode 100644 tools/testing/selftests/filesystems/fuse/fuse_mnt.c
+ create mode 100644 tools/testing/selftests/filesystems/fuse/fusectl_test.c
 
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a92290fffa163..04d90432c1841 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9901,6 +9901,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+ F:	Documentation/filesystems/fuse*
+ F:	fs/fuse/
+ F:	include/uapi/linux/fuse.h
++F:	tools/testing/selftests/filesystems/fuse/
+ 
+ FUTEX SUBSYSTEM
+ M:	Thomas Gleixner <tglx@linutronix.de>
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 339b31e6a6b59..c37a76a8ca214 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -36,6 +36,7 @@ TARGETS += filesystems/fat
+ TARGETS += filesystems/overlayfs
+ TARGETS += filesystems/statmount
+ TARGETS += filesystems/mount-notify
++TARGETS += filesystems/fuse
+ TARGETS += firmware
+ TARGETS += fpu
+ TARGETS += ftrace
+diff --git a/tools/testing/selftests/filesystems/fuse/.gitignore b/tools/testing/selftests/filesystems/fuse/.gitignore
+new file mode 100644
+index 0000000000000..3e72e742d08e8
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fuse/.gitignore
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
++fuse_mnt
++fusectl_test
+diff --git a/tools/testing/selftests/filesystems/fuse/Makefile b/tools/testing/selftests/filesystems/fuse/Makefile
+new file mode 100644
+index 0000000000000..612aad69a93aa
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fuse/Makefile
+@@ -0,0 +1,21 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++
++CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES)
++
++TEST_GEN_PROGS := fusectl_test
++TEST_GEN_FILES := fuse_mnt
++
++include ../../lib.mk
++
++VAR_CFLAGS := $(shell pkg-config fuse --cflags 2>/dev/null)
++ifeq ($(VAR_CFLAGS),)
++VAR_CFLAGS := -D_FILE_OFFSET_BITS=64 -I/usr/include/fuse
++endif
++
++VAR_LDLIBS := $(shell pkg-config fuse --libs 2>/dev/null)
++ifeq ($(VAR_LDLIBS),)
++VAR_LDLIBS := -lfuse -pthread
++endif
++
++$(OUTPUT)/fuse_mnt: CFLAGS += $(VAR_CFLAGS)
++$(OUTPUT)/fuse_mnt: LDLIBS += $(VAR_LDLIBS)
+diff --git a/tools/testing/selftests/filesystems/fuse/fuse_mnt.c b/tools/testing/selftests/filesystems/fuse/fuse_mnt.c
+new file mode 100644
+index 0000000000000..d12b17f30fadc
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fuse/fuse_mnt.c
+@@ -0,0 +1,146 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * fusectl test file-system
++ * Creates a simple FUSE filesystem with a single read-write file (/test)
++ */
++
++#define FUSE_USE_VERSION 26
++
++#include <fuse.h>
++#include <stdio.h>
++#include <string.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <stdlib.h>
++#include <unistd.h>
++
++#define MAX(a, b) ((a) > (b) ? (a) : (b))
++
++static char *content;
++static size_t content_size = 0;
++static const char test_path[] = "/test";
++
++static int test_getattr(const char *path, struct stat *st)
++{
++	memset(st, 0, sizeof(*st));
++
++	if (!strcmp(path, "/")) {
++		st->st_mode = S_IFDIR | 0755;
++		st->st_nlink = 2;
++		return 0;
++	}
++
++	if (!strcmp(path, test_path)) {
++		st->st_mode = S_IFREG | 0664;
++		st->st_nlink = 1;
++		st->st_size = content_size;
++		return 0;
++	}
++
++	return -ENOENT;
++}
++
++static int test_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
++			off_t offset, struct fuse_file_info *fi)
++{
++	if (strcmp(path, "/"))
++		return -ENOENT;
++
++	filler(buf, ".", NULL, 0);
++	filler(buf, "..", NULL, 0);
++	filler(buf, test_path + 1, NULL, 0);
++
++	return 0;
++}
++
++static int test_open(const char *path, struct fuse_file_info *fi)
++{
++	if (strcmp(path, test_path))
++		return -ENOENT;
++
++	return 0;
++}
++
++static int test_read(const char *path, char *buf, size_t size, off_t offset,
++		     struct fuse_file_info *fi)
++{
++	if (strcmp(path, test_path) != 0)
++		return -ENOENT;
++
++	if (!content || content_size == 0)
++		return 0;
++
++	if (offset >= content_size)
++		return 0;
++
++	if (offset + size > content_size)
++		size = content_size - offset;
++
++	memcpy(buf, content + offset, size);
++
++	return size;
++}
++
++static int test_write(const char *path, const char *buf, size_t size,
++		      off_t offset, struct fuse_file_info *fi)
++{
++	size_t new_size;
++
++	if (strcmp(path, test_path) != 0)
++		return -ENOENT;
++
++	if(offset > content_size)
++		return -EINVAL;
++
++	new_size = MAX(offset + size, content_size);
++
++	if (new_size > content_size)
++		content = realloc(content, new_size);
++
++	content_size = new_size;
++
++	if (!content)
++		return -ENOMEM;
++
++	memcpy(content + offset, buf, size);
++
++	return size;
++}
++
++static int test_truncate(const char *path, off_t size)
++{
++	if (strcmp(path, test_path) != 0)
++		return -ENOENT;
++
++	if (size == 0) {
++		free(content);
++		content = NULL;
++		content_size = 0;
++		return 0;
++	}
++
++	content = realloc(content, size);
++
++	if (!content)
++		return -ENOMEM;
++
++	if (size > content_size)
++		memset(content + content_size, 0, size - content_size);
++
++	content_size = size;
++	return 0;
++}
++
++static struct fuse_operations memfd_ops = {
++	.getattr = test_getattr,
++	.readdir = test_readdir,
++	.open = test_open,
++	.read = test_read,
++	.write = test_write,
++	.truncate = test_truncate,
++};
++
++int main(int argc, char *argv[])
++{
++	return fuse_main(argc, argv, &memfd_ops, NULL);
++}
+diff --git a/tools/testing/selftests/filesystems/fuse/fusectl_test.c b/tools/testing/selftests/filesystems/fuse/fusectl_test.c
+new file mode 100644
+index 0000000000000..7050fbe0970e7
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fuse/fusectl_test.c
+@@ -0,0 +1,116 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// Copyright (c) 2025 Chen Linxuan <chenlinxuan@uniontech.com>
++
++#define _GNU_SOURCE
++
++#include <errno.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/mount.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include <dirent.h>
++#include <linux/limits.h>
++
++#include "../../kselftest_harness.h"
++
++#define FUSECTL_MOUNTPOINT "/sys/fs/fuse/connections"
++#define FUSE_MOUNTPOINT "/tmp/fuse_mnt_XXXXXX"
++#define FUSE_DEVICE "/dev/fuse"
++#define FUSECTL_TEST_VALUE "1"
++
++FIXTURE(fusectl){
++	char fuse_mountpoint[sizeof(FUSE_MOUNTPOINT)];
++	int connection;
++};
++
++FIXTURE_SETUP(fusectl)
++{
++	const char *fuse_mnt_prog = "./fuse_mnt";
++	int status, pid;
++	struct stat statbuf;
++
++	strcpy(self->fuse_mountpoint, FUSE_MOUNTPOINT);
++
++	if (!mkdtemp(self->fuse_mountpoint))
++		SKIP(return,
++		     "Failed to create FUSE mountpoint %s",
++		     strerror(errno));
++
++	if (access(FUSECTL_MOUNTPOINT, F_OK))
++		SKIP(return,
++		     "FUSE control filesystem not mounted");
++
++	pid = fork();
++	if (pid < 0)
++		SKIP(return,
++		     "Failed to fork FUSE daemon process: %s",
++		     strerror(errno));
++
++	if (pid == 0) {
++		execlp(fuse_mnt_prog, fuse_mnt_prog, self->fuse_mountpoint, NULL);
++		exit(errno);
++	}
++
++	waitpid(pid, &status, 0);
++	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
++		SKIP(return,
++		     "Failed to start FUSE daemon %s",
++		     strerror(WEXITSTATUS(status)));
++	}
++
++	if (stat(self->fuse_mountpoint, &statbuf))
++		SKIP(return,
++		     "Failed to stat FUSE mountpoint %s",
++		     strerror(errno));
++
++	self->connection = statbuf.st_dev;
++}
++
++FIXTURE_TEARDOWN(fusectl)
++{
++	umount(self->fuse_mountpoint);
++	rmdir(self->fuse_mountpoint);
++}
++
++TEST_F(fusectl, abort)
++{
++	char path_buf[PATH_MAX];
++	int abort_fd, test_fd, ret;
++
++	sprintf(path_buf, "/sys/fs/fuse/connections/%d/abort", self->connection);
++
++	ASSERT_EQ(0, access(path_buf, F_OK));
++
++	abort_fd = open(path_buf, O_WRONLY);
++	ASSERT_GE(abort_fd, 0);
++
++	sprintf(path_buf, "%s/test", self->fuse_mountpoint);
++
++	test_fd = open(path_buf, O_RDWR);
++	ASSERT_GE(test_fd, 0);
++
++	ret = read(test_fd, path_buf, sizeof(path_buf));
++	ASSERT_EQ(ret, 0);
++
++	ret = write(test_fd, "test", sizeof("test"));
++	ASSERT_EQ(ret, sizeof("test"));
++
++	ret = lseek(test_fd, 0, SEEK_SET);
++	ASSERT_GE(ret, 0);
++
++	ret = write(abort_fd, FUSECTL_TEST_VALUE, sizeof(FUSECTL_TEST_VALUE));
++	ASSERT_GT(ret, 0);
++
++	close(abort_fd);
++
++	ret = read(test_fd, path_buf, sizeof(path_buf));
++	ASSERT_EQ(ret, -1);
++	ASSERT_EQ(errno, ENOTCONN);
++}
++
++TEST_HARNESS_MAIN
 -- 
-Martin K. Petersen
+2.43.0
+
 
