@@ -1,185 +1,304 @@
-Return-Path: <linux-fsdevel+bounces-51185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA373AD425C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 20:59:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978E9AD4262
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 21:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A58B16FA5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 18:59:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 349B817A884
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 19:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F61256C84;
-	Tue, 10 Jun 2025 18:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8A525E80E;
+	Tue, 10 Jun 2025 19:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="moEFz2gl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qn+QbXYN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C73020A5EC;
-	Tue, 10 Jun 2025 18:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A2F25E451;
+	Tue, 10 Jun 2025 19:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749581935; cv=none; b=WroenDr0vWzQcW6Hn+sT1zmFJ9j0JE82o8AdHvIZQcOa/Sy3x++pDHu6GyKbj3ryDgV85cVje+H/fi/FFDY/hvYTCZyc4i85yQ3WWhkQ0gpHT04roWP1HcMoqmTnjrHDDTJGK2mGSXv7o0n4mdLFoLtSB7Qb6PP6DcelciI2gCE=
+	t=1749582027; cv=none; b=TU0+0BBivTWDkzyYWa/pBpBZazAaKZojCa+d1n6+OTeO4RvnPlJ7tCtGw8fSoodA786PUvt06K6qUTePiLTIAstOq/DSz2WiPO5Wd0+LqoRPAFeSEqeHNqvI6cj94SQ7A11li27deXLX9q42ZSMcinvmkhWnV+lIy56xK95cBtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749581935; c=relaxed/simple;
-	bh=D+1hELWANpxNWxU1ev75dZ8d/Wvj1f0H958b6AgOt1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JtWv3LO1Fr2xD9Yi9NhEhtdLJZC1+YOxO2sHGZCqZbIGJkeaIdANQuC9RX6vv22YY31qLMRmk4f5ndxAfnCvVlu2TNrauqgtNN+OqDugaLRa+sShnzoDUJmb/IFLlu8LZayBM9OC0OioSU8Iy3LZI5KaQIw/QV/SQw6X7kyjrgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=moEFz2gl; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a5ae2fdf4eso1858211cf.0;
-        Tue, 10 Jun 2025 11:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749581933; x=1750186733; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=APy6IsiaxStLeex8yxExQ4OFXguE9K4A7CnbkvjJZp4=;
-        b=moEFz2glw3KxXCXtL6+8wlJ79msGHexxfITyN4GGm87PXWXWqStyXzO+bD0m14WHMC
-         o1j6J3HvoO7X8sbPx2noULSITckAm4XWbQDqvm0W54dTTQqi/1gxXoQa3D/J1Dxi4AjW
-         MN78UtngiQKjbHlOMvfUYfLjOjl4s8SFq/uPk3v+QkbvoOYMK8RQVb25KsmDuXvOBMCJ
-         1eVx2P2PGuXDNY6UWih6AvhJ0W3NK6bAyL2m7XkemSec7Yu0xGhVAe1TQKEGAQzSPEzU
-         zctPay0faTDP0ubjuls3ugFXRwicE0QoBx3nZjSmlipYtMd1oYYdyje1L6h0DOP6x7x6
-         gi4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749581933; x=1750186733;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=APy6IsiaxStLeex8yxExQ4OFXguE9K4A7CnbkvjJZp4=;
-        b=Jwib/vLgxHkZcfV03vmA47mSPaH8KNjxtk8xU2bNp9Ff957sfa0HEWSsFfERgzuorV
-         EjdqhaVSQFiXxFXaXex6dqUyYCJ7wghPmXXHgKfqFPVabAZS+NczBbjvoI/RlPfrITjP
-         3LQGEJjiLpOiTqncTA12Nr/H9lKhzstYAb2asB97omtT/gpLka/OhNLl+BMdLZdMweEc
-         mo/f8qyDnv8yOYLmxc2NuNX7CQN8jRImIXuevatRADn3wSWfycPFvsq/h06N+NvlKbXO
-         ux4a7zdkA7L8JOL0Z61RcGnTi1omFDPcCEBPv9+aAeQ2HidXAM+sdCQwBcCeTSBpy05f
-         UFhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwPVmmSC9MKmoaLVGLDqgMVbmZ3qLMHP0cnlg+9UY/mUFjx699FmfL+uNy7KXJCDy6K4YGaZ+M3ikBB5go@vger.kernel.org, AJvYcCXMSPLgCN8ZQ85vp+UZZf4Pl/Y5ITA8pU9uZ3PhjjGBA3QcHeWPbkXf1KODU58pY5F+G2srM6nkNhzx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxSF5B5p9icJhs8lwgOE+nIJW1XoLYoOxpay+dae/U5iAZNeFo
-	fUDHk+ePUAeC3ufoDKIuC8PFXYXZ8VPC9qSXHXxh74ZziGV0GV5v7ebOCDek3tlNQaaH5UihESC
-	2sXAX8cYyaLA5rR1PPfYoskLN7pBN1Gk=
-X-Gm-Gg: ASbGncu6gNrTm47qekIOYjpEkGBRMQXW91tkL/TLUI+PkeJvozS22CThktEbp6pEUVY
-	HI41NtAt5tvBzTZII8dX85F6HWDOq8bVOjIaBUjMqZATkVk4k/U/ZMW5fwsHmAsUyg5wmoHn65j
-	Hxy5UHs4VNW5AAP/Vge932+lW9e4gg8OUIzUmBBfJr5x7D/vNTcJ5wmQ==
-X-Google-Smtp-Source: AGHT+IFNiync1q8ex7/+948MBgzHp8mLIc8coPj4LmCOl8GV3le+khfr3G81wYr2HCsDbuX+llTAfC+4EeHuxVj0Dg8=
-X-Received: by 2002:a05:622a:1c0c:b0:47c:fefb:a5a with SMTP id
- d75a77b69052e-4a713c7929amr8086671cf.11.1749581932997; Tue, 10 Jun 2025
- 11:58:52 -0700 (PDT)
+	s=arc-20240116; t=1749582027; c=relaxed/simple;
+	bh=AqmITKyvbauMQ+HimUxRKpGdxVXFUgsbEJVZzwzINI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sLt77/5v8BNMi96ZaFSJ0ELAf+4O3GyUecvwYbf3etUZIOsRB7Vnli6qbgG5+kaB3OnA+0rqm25eE2MywnVJJk1NnBeBnHZdtanuQh3Z0fA4LWr0Bg+/GMGhrnxwC/sH1Fqf0nUVLq2bVySAdpXRBhToixFpgqq1NZmVLxdtZlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qn+QbXYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBAFC4CEF0;
+	Tue, 10 Jun 2025 19:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749582026;
+	bh=AqmITKyvbauMQ+HimUxRKpGdxVXFUgsbEJVZzwzINI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qn+QbXYNwZhj80b9PXan6fQwqJm9Y2M2byHGah/I83mldODG0M8ygvIsbxXwrvqtG
+	 nUrH4Bw1bOyhP25nv/hmLlukVcD7fYat408MeVfPDCnQ7y2aLyc0lkbMtLVWKsJSud
+	 AQASRog0TZ9UhQGTco5qILGKjQQH1yc7PMa7U1c7QF5hB+GSdV1xuWU+SMa1JGwHEn
+	 ZuJcQ+FaOr2TkhaN+terIenb/3j+UPIXf3qc0LePwC5VQJZff2ulh4ZtxuvsdAV5a0
+	 DY/KmZxeaQL5cVnqVKT8b8tw2fjUlfLVHGnZaMlgUwQXO+M4d4TV4Yk53cThswiaO8
+	 6qFliSromzosA==
+Date: Tue, 10 Jun 2025 12:00:26 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net,
+	bernd@bsbernd.com, miklos@szeredi.hu, joannelkoong@gmail.com,
+	Josef Bacik <josef@toxicpanda.com>,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [RFC[RAP]] fuse: use fs-iomap for better performance so we can
+ containerize ext4
+Message-ID: <20250610190026.GA6134@frogsfrogsfrogs>
+References: <20250521235837.GB9688@frogsfrogsfrogs>
+ <CAOQ4uxh3vW5z_Q35DtDhhTWqWtrkpFzK7QUsw3MGLPY4hqUxLw@mail.gmail.com>
+ <20250529164503.GB8282@frogsfrogsfrogs>
+ <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
+ <20250609223159.GB6138@frogsfrogsfrogs>
+ <CAOQ4uxgUVOLs070MyBpfodt12E0zjUn_SvyaCSJcm_M3SW36Ug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606233803.1421259-1-joannelkoong@gmail.com>
- <20250606233803.1421259-5-joannelkoong@gmail.com> <aEZx5FKK13v36wRv@infradead.org>
- <CAJnrk1ZuuE9HKa0OWRjrt6qaPvP5R4DTPBA90PV8M3ke+zqNnw@mail.gmail.com>
- <aEetTojb-DbXpllw@infradead.org> <CAJnrk1YNM5fotdoRmmHi3ZTig_3GDb-kcSce9haZDxG97insKw@mail.gmail.com>
-In-Reply-To: <CAJnrk1YNM5fotdoRmmHi3ZTig_3GDb-kcSce9haZDxG97insKw@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 10 Jun 2025 11:58:42 -0700
-X-Gm-Features: AX0GCFvfosFWf-7jWIAI9O3VGbR3YJwjOI2QpoBmVzv1LKoDt8_wwb_OegIpNYo
-Message-ID: <CAJnrk1a4VmaBhmjAjhBtcjFoa0hUgOQLj7dQc0x0C70a-Ms+5g@mail.gmail.com>
-Subject: Re: [PATCH v1 4/8] iomap: add writepages support for IOMAP_IN_MEM iomaps
-To: Christoph Hellwig <hch@infradead.org>
-Cc: miklos@szeredi.hu, djwong@kernel.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgUVOLs070MyBpfodt12E0zjUn_SvyaCSJcm_M3SW36Ug@mail.gmail.com>
 
-On Tue, Jun 10, 2025 at 11:23=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
-om> wrote:
->
-> On Mon, Jun 9, 2025 at 8:58=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
-rg> wrote:
+On Tue, Jun 10, 2025 at 12:59:36PM +0200, Amir Goldstein wrote:
+> On Tue, Jun 10, 2025 at 12:32 AM Darrick J. Wong <djwong@kernel.org> wrote:
 > >
-> > On Mon, Jun 09, 2025 at 04:15:27PM -0700, Joanne Koong wrote:
-> > > ioends are used in fuse for cleaning up state. fuse implements a
-> > > ->submit_ioend() callback in fuse_iomap_submit_ioend() (in patch 7/8)=
-.
-> >
-> > But do you use struct iomap_ioend at all?  (Sorry, still don't have a
-> > whole tree with the patches applied in front of me).
->
-> I don't use struct iomap_ioend at all and I'm realizing now that I
-> should just have fuse manually do the end-of-io submission after it
-> calls iomap_writepages() / iomap_writeback_dirty_folio() instead of
-> defining a ->submit_ioend(). Then, we can get rid of this
->
->  int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error)
->  {
-> +    if (wpc->iomap.type =3D=3D IOMAP_IN_MEM) {
-> +       if (wpc->ops->submit_ioend)
-> +          error =3D wpc->ops->submit_ioend(wpc, error);
-> +       return error;
-> +    }
->
-> that was added and leave the iomap_submit_ioend() logic untouched.
-
-Actually, nvm. You're right, it's cleaner to just have ioend stuff be total=
-ly
-abstracted away like you suggested below. I'll make that change for
-v2.
-
->
-> >
-> > > > Given that the patch that moved things around already wrapped the
-> > > > error propagation to the bio into a helpr, how does this differ
-> > > > from the main path in the function now?
+> > On Thu, May 29, 2025 at 09:41:23PM +0200, Amir Goldstein wrote:
+> > >  or
+> > >
+> > > On Thu, May 29, 2025 at 6:45 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > >
+> > > > On Thu, May 22, 2025 at 06:24:50PM +0200, Amir Goldstein wrote:
+> > > > > On Thu, May 22, 2025 at 1:58 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > > >
+> > > > > > Hi everyone,
+> > > > > >
+> > > > > > DO NOT MERGE THIS.
+> > > > > >
+> > > > > > This is the very first request for comments of a prototype to connect
+> > > > > > the Linux fuse driver to fs-iomap for regular file IO operations to and
+> > > > > > from files whose contents persist to locally attached storage devices.
+> > > > > >
+> > > > > > Why would you want to do that?  Most filesystem drivers are seriously
+> > > > > > vulnerable to metadata parsing attacks, as syzbot has shown repeatedly
+> > > > > > over almost a decade of its existence.  Faulty code can lead to total
+> > > > > > kernel compromise, and I think there's a very strong incentive to move
+> > > > > > all that parsing out to userspace where we can containerize the fuse
+> > > > > > server process.
+> > > > > >
+> > > > > > willy's folios conversion project (and to a certain degree RH's new
+> > > > > > mount API) have also demonstrated that treewide changes to the core
+> > > > > > mm/pagecache/fs code are very very difficult to pull off and take years
+> > > > > > because you have to understand every filesystem's bespoke use of that
+> > > > > > core code.  Eeeugh.
+> > > > > >
+> > > > > > The fuse command plumbing is very simple -- the ->iomap_begin,
+> > > > > > ->iomap_end, and iomap ioend calls within iomap are turned into upcalls
+> > > > > > to the fuse server via a trio of new fuse commands.  This is suitable
+> > > > > > for very simple filesystems that don't do tricky things with mappings
+> > > > > > (e.g. FAT/HFS) during writeback.  This isn't quite adequate for ext4,
+> > > > > > but solving that is for the next sprint.
+> > > > > >
+> > > > > > With this overly simplistic RFC, I am to show that it's possible to
+> > > > > > build a fuse server for a real filesystem (ext4) that runs entirely in
+> > > > > > userspace yet maintains most of its performance.  At this early stage I
+> > > > > > get about 95% of the kernel ext4 driver's streaming directio performance
+> > > > > > on streaming IO, and 110% of its streaming buffered IO performance.
+> > > > > > Random buffered IO suffers a 90% hit on writes due to unwritten extent
+> > > > > > conversions.  Random direct IO is about 60% as fast as the kernel; see
+> > > > > > the cover letter for the fuse2fs iomap changes for more details.
+> > > > > >
+> > > > >
+> > > > > Very cool!
+> > > > >
+> > > > > > There are some major warts remaining:
+> > > > > >
+> > > > > > 1. The iomap cookie validation is not present, which can lead to subtle
+> > > > > > races between pagecache zeroing and writeback on filesystems that
+> > > > > > support unwritten and delalloc mappings.
+> > > > > >
+> > > > > > 2. Mappings ought to be cached in the kernel for more speed.
+> > > > > >
+> > > > > > 3. iomap doesn't support things like fscrypt or fsverity, and I haven't
+> > > > > > yet figured out how inline data is supposed to work.
+> > > > > >
+> > > > > > 4. I would like to be able to turn on fuse+iomap on a per-inode basis,
+> > > > > > which currently isn't possible because the kernel fuse driver will iget
+> > > > > > inodes prior to calling FUSE_GETATTR to discover the properties of the
+> > > > > > inode it just read.
+> > > > >
+> > > > > Can you make the decision about enabling iomap on lookup?
+> > > > > The plan for passthrough for inode operations was to allow
+> > > > > setting up passthough config of inode on lookup.
+> > > >
+> > > > The main requirement (especially for buffered IO) is that we've set the
+> > > > address space operations structure either to the regular fuse one or to
+> > > > the fuse+iomap ops before clearing INEW because the iomap/buffered-io.c
+> > > > code assumes that cannot change on a live inode.
+> > > >
+> > > > So I /think/ we could ask the fuse server at inode instantiation time
+> > > > (which, if I'm reading the code correctly, is when iget5_locked gives
+> > > > fuse an INEW inode and calls fuse_init_inode) provided it's ok to upcall
+> > > > to userspace at that time.  Alternately I guess we could extend struct
+> > > > fuse_attr with another FUSE_ATTR_ flag, I think?
 > > > >
 > > >
-> > > If we don't add this special casing for IOMAP_IN_MEM here, then in
-> > > this function it'll hit the "if (!wpc->ioend)" case right in the
-> > > beginning and return error without calling the ->submit_ioend()
-> >
-> > So this suggests you don't use struct iomap_ioend at all.  Given that
-> > you add a private field to iomap_writepage_ctx I guess that is where
-> > you chain the fuse requests?
-> >
-> > Either way I think we should clean this up one way or another.  If the
-> > non-block iomap writeback code doesn't use ioends we should probably mo=
-ve
-> > the ioend chain into the private field, and hide everything using it (o=
-r
-> > even the ioend name) in proper abstraction.  In this case this means
-> > finding another way to check for a non-empty wpc.  One way would be to
-> > check nr_folios as any non-empty wbc must have a number of folios
-> > attached to it, the other would be to move the check into the
-> > ->submit_ioend method including the block fallback.  For a proper split
-> > the method should probably be renamed, and we'd probably want to requir=
-e
-> > every use to provide the submit method, even if the trivial block
-> > users set it to the default one provided.
-> >
-> > > > > -             if (!count)
-> > > > > +             /*
-> > > > > +              * If wpc->ops->writeback_folio is set, then it is =
-responsible
-> > > > > +              * for ending the writeback itself.
-> > > > > +              */
-> > > > > +             if (!count && !wpc->ops->writeback_folio)
-> > > > >                       folio_end_writeback(folio);
-> > > >
-> > > > This fails to explain why writeback_folio does the unlocking itself=
-.
+> > > The latter. Either extend fuse_attr or struct fuse_entry_out,
+> > > which is in the responses of FUSE_LOOKUP,
+> > > FUSE_READDIRPLUS, FUSE_CREATE, FUSE_TMPFILE.
+> > > which instantiate fuse inodes.
 > > >
-> > > writeback_folio needs to do the unlocking itself because the writebac=
-k
-> > > may be done asynchronously (as in the case for fuse). I'll add that a=
-s
-> > > a comment in v2.
+> > > There is a very hand wavy discussion about this at:
+> > > https://lore.kernel.org/linux-fsdevel/CAOQ4uxi2w+S4yy3yiBvGpJYSqC6GOTAZQzzjygaH3TjH7Uc4+Q@mail.gmail.com/
+> > >
+> > > In a nutshell, we discussed adding a new FUSE_LOOKUP_HANDLE
+> > > command that uses the variable length file handle instead of nodeid
+> > > as a key for the inode.
+> > >
+> > > So we will have to extend fuse_entry_out anyway, but TBH I never got to
+> > > look at the gritty details of how best to extend all the relevant commands,
+> > > so I hope I am not sending you down the wrong path.
 > >
-> > So how do you end up with a zero count here and still want
-> > the fuse code to unlock?
+> > I found another twist to this story: the upper level libfuse3 library
+> > assigns distinct nodeids for each directory entry.  These nodeids are
+> > passed into the kernel and appear to the basis for an iget5_locked call.
+> > IOWs, each nodeid causes a struct fuse_inode to be created in the
+> > kernel.
 > >
->
-> count is unused by ->writeback_folio(), so it's always just zero. But
-> I see what you're saying now. I should just increment count after
-> doing the ->writeback_folio() call and then we could just leave the
-> "if (!count)" check untouched. I like this suggestion a lot, i'll make
-> this change in v2.
+> > For a single-linked file this is no big deal, but for a hardlink this
+> > makes iomap a mess because this means that in fuse2fs, an ext2 inode can
+> > map to multiple kernel fuse_inode objects.  This /really/ breaks the
+> > locking model of iomap, which assumes that there's one in-kernel inode
+> > and that it can use i_rwsem to synchronize updates.
+> >
+> > So I'm going to have to find a way to deal with this.  I tried trivially
+> > messing with libfuse nodeid assigment but that blew some assertion.
+> > Maybe your LOOKUP_HANDLE thing would work.
+> >
+> 
+> Pull the emergency break!
+> 
+> In an amature move, I did not look at fuse2fs.c before commenting on your
+> work.
+> 
+> High level fuse interface is not the right tool for the job.
+> It's not even the easiest way to have written fuse2fs in the first place.
+
+At the time I thought it would minimize friction across multiple
+operating systems' fuse implementations.
+
+> High-level fuse API addresses file system objects with full paths.
+> This is good for writing simple virtual filesystems, but it is not the
+> correct nor is the easiest choice to write a userspace driver for ext4.
+
+Agreed, it's a *terrible* way to implement ext4.
+
+I think, however, that Ted would like to maintain compatibility with
+macfuse and freebsd(?) so he's been resistant to rewriting the entire
+program to work with the lowlevel library.
+
+That said, I decided just now to do some spelunking into those two fuse
+ports and have discovered that freebsd[1] packages the same upstream
+libfuse as linux, and macfuse[2] seems to vendor both libfuse 2 and 3.
+
+[1] https://wiki.freebsd.org/FUSEFS
+[2] https://github.com/macfuse/macfuse
+
+Seeing as Debian 13 has killed off libfuse2 entirely, maybe I should
+think about rewriting all of fuse2fs against the lowlevel library?  It's
+really annoying to deal with all the problems of the current codebase.
+I think I'll try to stabilize the current fuse+iomap code and then look
+into a fuse2fs port.  What would we call it, fuse4fs? :D
+
+> Low-level fuse interface addresses filesystem objects by nodeid
+> and requires the server to implement lookup(parent_nodeid, name)
+> where the server gets to choose the nodeid (not libfuse).
+
+Does the nodeid for the root directory have to be FUSE_ROOT_ID?  I guess
+for ext4 that's not a big deal since ext2 inode #1 is the badblocks file
+which cannot be accessed from userspace anyway.
+
+> current fuse2fs code needs to go to an effort to convert from full path
+> to inode + name using ext2fs_namei().
+> 
+> With the low-level fuse op_lookup() might have used the native ext2_lookup()
+> which would have been much more natural.
+> 
+> You can find the most featureful low-level fuse example at:
+> https://github.com/libfuse/libfuse/blob/master/example/passthrough_hp.cc
+> 
+> Among other things, the server has an inode cache, where an inode
+> has in its state 'nopen' (was this inode opened for io) and 'backing_id'
+> (was this inode mapped for kernel passthrough).
+> 
+> Currently this backing_id mapping is only made on first open of inode,
+> but the plan is to do that also at lookup time, for example, if the
+> iomap mode for the inode can be determined at lookup time.
+
+<nod>
+
+> > > > > > 5. ext4 doesn't support out of place writes so I don't know if that
+> > > > > > actually works correctly.
+> > > > > >
+> > > > > > 6. iomap is an inode-based service, not a file-based service.  This
+> > > > > > means that we /must/ push ext2's inode numbers into the kernel via
+> > > > > > FUSE_GETATTR so that it can report those same numbers back out through
+> > > > > > the FUSE_IOMAP_* calls.  However, the fuse kernel uses a separate nodeid
+> > > > > > to index its incore inode, so we have to pass those too so that
+> > > > > > notifications work properly.
+> > > > > >
+> > > > >
+> > > > > Again, I might be missing something, but as long as the fuse filesystem
+> > > > > is exposing a single backing filesystem, it should be possible to make
+> > > > > sure (via opt-in) that fuse nodeid's are equivalent to the backing fs
+> > > > > inode number.
+> > > > > See sketch in this WIP branch:
+> > > > > https://github.com/amir73il/linux/commit/210f7a29a51b085ead9f555978c85c9a4a503575
+> > > >
+> > > > I think this would work in many places, except for filesystems with
+> > > > 64-bit inumbers on 32-bit machines.  That might be a good argument for
+> > > > continuing to pass along the nodeid and fuse_inode::orig_ino like it
+> > > > does now.  Plus there are some filesystems that synthesize inode numbers
+> > > > so tying the two together might not be feasible/desirable anyway.
+> > > >
+> > > > Though one nice feature of letting fuse have its own nodeids might be
+> > > > that if the in-memory index switches to a tree structure, then it could
+> > > > be more compact if the filesystem's inumbers are fairly sparse like xfs.
+> > > > OTOH the current inode hashtable has been around for a very long time so
+> > > > that might not be a big concern.  For fuse2fs it doesn't matter since
+> > > > ext4 inumbers are u32.
+> > > >
+> > >
+> > > I wanted to see if declaring one-to-one 64bit ino can simplify things
+> > > for the first version of inode ops passthrough.
+> > > If this is not the case, or if this is too much of a limitation for
+> > > your use case
+> > > then nevermind.
+> > > But if it is a good enough shortcut for the demo and can be extended later,
+> > > then why not.
+> >
+> > It's very tempting, because it's very confusing to have nodeids and
+> > stat st_ino not be the same thing.
+> >
+> 
+> Now that I have explained that fuse2fs should be low-level, it should be
+> trivial to claim that it should have no problem to declare via
+> FUSE_PASSTHROUGH_INO flag to the kernel that nodeid == st_ino,
+> because I see no reason to implement fuse2fs with non one-to-one
+> mapping of ino <==> nodeid.
+
+Agreed!  Thanks for the nudge!
+
+Let's see what Ted thinks when he returns from vacation. :)
+
+--D
 
