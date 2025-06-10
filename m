@@ -1,349 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-51154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3391EAD343A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 13:00:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8ACAD34B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 13:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D7D189368B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 11:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2ED18968C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jun 2025 11:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30BA28CF59;
-	Tue, 10 Jun 2025 10:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6DF225A50;
+	Tue, 10 Jun 2025 11:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpFNwbbi"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BklAdfMP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C16A286D58;
-	Tue, 10 Jun 2025 10:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BEE188CB1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 11:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749553195; cv=none; b=JsriJXVJWRu87opcn3Wke4Ve8TZo6TZWZ4s/tsxytUs0deBURySTM7InQtkfvals57X7S5VYtkQCwaBDF+wcKANc8Y3NlUv0vRgAq05E17OuIpZua86JuXYoXJ6aLarJQ7UcoRkEqxNRzBr5GorLwNdLc9Rbm0wJW9nqlrgUiEs=
+	t=1749554133; cv=none; b=VjzDAjKpfsGaTri9n/pkQhofEoJp27axmDvhMrwDf8SikBjIIb4CUKeUITiq4ZCbIje+9XFuZNFK21GnMRmKGz0S/aRCxXpdeag3CdS+qA6j3XYp/zDQBM9xNd3V0ZDfftUeTXItqDBs85iC+wGOGY8NAwHbaE93uoVr+aTxwJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749553195; c=relaxed/simple;
-	bh=ivV4+afIMd3Xs6QrgS35Yg9Hsfo1ljdX0+KQj3LvrYw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vCCpRwwlrj7r0Icb4jkNyCUuCFmIa+HyW42a2X+oe4ZYoz4fAGM8CqpKI8egHj5GWzHmmSOFo9YfdmvoM2efEaJpEzahfXTkyZVTXQcklb1I0FL57YEViP2mhcHUNq6rVkEBaLhIoDxZbEwz8KdmnlDYXBWFa6t/9EohuoYXRUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpFNwbbi; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ade58f04fb2so282297366b.0;
-        Tue, 10 Jun 2025 03:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749553188; x=1750157988; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RBMHbmy12t6g1RNYj0kWM1uARKBAVpLlDGvuC02v+Fk=;
-        b=dpFNwbbioiKcO8IRRX8qoEP8Ewmp/iFtV65SAL8sd8u7NHTXfRsnu0wOgEIP8t9DbL
-         jxS1S16NhZN6h8Tw8wn0Wap1vAY5BrfFgsSQ+h2y7XedkzeTvFbb253HBPgkZiM8Oyg8
-         2PrE6AcVothaLSvbo4FiZN4hLM5CT+BhUXD4FgcykjvTI5x+qAwG74QRg0oOyrVO6Fiw
-         QgXwl3NvejISS1t5x6jdGwpvFHeWLIwfHXp3azxnnJs5Hf04J7hbcuCk1An+FHoh6/Vt
-         SnW5X5IIdh5WmqTQwF0cvMVuc7vnmHvfyPFchMEshY2Xd0t1ZEtSWJtSrXdrGAZ11d4f
-         pyxA==
+	s=arc-20240116; t=1749554133; c=relaxed/simple;
+	bh=6O7TowWrW8RNsfaxEJIVwT/zpwPDOK3ZMQ5Kpq5kBeo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uAYB3IFpUqgYo4iJshxFn/1NRreLBbrJo1WN6bynhkgSdQ3yWBdoTvjYTbPxYOEV6kFIPqnjX/ECG2wFavWvET2rBrej+nrTVkxIJwexEEd6GCZqJgVbOstQSSQbFfDa0txKeFmtv4P7tXHyFsbOpcRPB2xYQ8kGSzfL60L5SbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BklAdfMP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749554127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/NrHc0np9+RIheS43BkzhBXkoojAIRywKDBap8+J70M=;
+	b=BklAdfMP0SD/bUPWgBVgRzj+BfxvDSe7EKPlAUJCoEdlP9lOVC2SmJtA1+SQ7LCXXHeoJt
+	QnJFqKpRYEAJ1sUnHO7jzf7zhLRVGtELG6Yku+JnMuc4RMClygGgM5qsACR36J3J9bgXAS
+	GIcMztsk9sc+B6MSuEeMXKyqdi54Kcw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-46-1P4oCbMhMRmzfBRS41ztCg-1; Tue, 10 Jun 2025 07:15:26 -0400
+X-MC-Unique: 1P4oCbMhMRmzfBRS41ztCg-1
+X-Mimecast-MFC-AGG-ID: 1P4oCbMhMRmzfBRS41ztCg_1749554125
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4eb6fcd88so3492368f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jun 2025 04:15:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749553188; x=1750157988;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RBMHbmy12t6g1RNYj0kWM1uARKBAVpLlDGvuC02v+Fk=;
-        b=gZ8pTQFF3ZWpUdU1RY76qju6n+cQ0we5itstBrl4A5NLWd5jwcD3wGzVxt7NV+Xwah
-         kZYxQLdckBYMkcPX+EE4hY1OkKW4nNUojrHxKOsNB/+GRDxwgrswBSYr10HgQfj7jeAh
-         hSrCoWW9xT/h+DBRnnC6BJxFXGxuDeVEZ7QCM6ie82aBiX8iJSUhuTojodwzI+ISR/5D
-         i/5/xL1RE1d1qbn772MjYtN8LAdaQDm9SYQ/wMHXYtEGLsBHwXWcMMFNxCdGn9Kkbn14
-         IyXAmFNWwCyZzhg1BDtBpLK7MQD6HUHkGvt49+nnsIQGKvHDgY/8R9WdJx27gaC/tfUe
-         S53Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXPVvYC8Q9o3sXikNbtSgMNwKOKeAmZ47WoSaVd3Wfb1PkaaARNjynmNaDew62rZ9uQByk2DCFxX0Qo@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhAeecrX/6X3puUZpAYYVbSSKrmlQia5ukXOqLJ6AsdJ5g8Gn2
-	JUwNnG8a6JeTcx//yTXDYWUek78zJQEkLBdWvMRC4aN4lH4t9ps/9wI98K+pAbrUo3yCwPpvcse
-	icwjGjA8JtFK12REQC5EAgCR1SeLEmgGzP3+nYmw=
-X-Gm-Gg: ASbGncsncE2VS8iijGIlIQEU01CzbW6XrsJ6WTVKOfnSoBf4Dy9cRRaits/BZ4suJAG
-	s/d+aNiGmLk4UHO7BHYCwzwcB2J3tC2nY0Lx4h9VgAl/14uQsPMcwfAIejxgBcuYCyg4hKDlr6o
-	sV6bo0ixBVSxwCxhU6PocUHeKunVHJpK/kX2eHc42hVU8=
-X-Google-Smtp-Source: AGHT+IFUVRPFVelAXvbArPfuFc3vpl2WJ1fKE4ALNclgY2756HO/qRZj4nzsYB8f3ghKHX0HROkwrEhuISwoppX1KDA=
-X-Received: by 2002:a17:907:1c8e:b0:ad8:a41a:3cd2 with SMTP id
- a640c23a62f3a-ade1a9058e7mr1633477066b.16.1749553187888; Tue, 10 Jun 2025
- 03:59:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749554125; x=1750158925;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/NrHc0np9+RIheS43BkzhBXkoojAIRywKDBap8+J70M=;
+        b=HfM+j/o3mL461NGXGBSrRiHnAxn9MYXeQhiWrsq3+3jFd8Gt3pKci8P85t7X4Up/i+
+         y/7d4JonR8sE4ZRrliLWqgb7it6NM3GIvK8KYvfhlzEFZ46XMgQRucSBnuFB3Ace6EKk
+         OS/WLgknyFzh2uN3Hm96jHNhwGhcUV4Ow2RUcktv+rGhMryVyMvjGDF7cwJS2CI0i1YP
+         uuBafrdfJJQOjdPsFDsfznoBuKaGRj6T4fTnctNUhyiKIRBGR8yr+7zXHjMGWJX9XVV/
+         rOa8ZeqpqVIQWV9d3vZNIDpy5OlfE4+Vf8Ku/HdTLDri30QIbYa5TznZPixUDlSXe/c+
+         d+Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9xb9Rr8FYoNn08rDyU05Pq/WUaab5uW85PAzot1PZOPkNmpTUgcZmRFONxwjUCkSnsz0E8CDDq0D5XLve@vger.kernel.org
+X-Gm-Message-State: AOJu0YwivNPHiYpCD1DBZuC9yTYfGWd5yLIZhcGtudGSaq0rhPYRGwj+
+	rC0HhOrc5OJirc3+ZtyOT75gQD18ptY+QmqPIX139TYIt8xjLAkHwN33U8wq/wlg4e+pzzdPh10
+	zwVkpPWePxIo60b7ACEDKdfvBz+5piFOPUWXzGKh6Y4VH1KKvOAJtoKdUTqjUrTQVNgk=
+X-Gm-Gg: ASbGnctF2h6TXlDGLN3p3FxCyZK8+lEikLlAewlLgwU2F/U3YHmmVQIZKqWfwQPFu8D
+	oodIm322ExgZ7y6OLlhtzQ/2Hde2BCz8/NcQojqf6A5xQsz09hlrgQqFDXsIT+Cu7fv+/fvSyCd
+	6b32ODEuVL8rlmR3uq51AAeMhc4pFlZqkytzECl5w8SiAheShmzRUzdwrY3tEPef8Oc30h/chDS
+	XX1VD0YeDljSSJ7QwLsY08TPtWZ67r9llzXXswR6Zwj2OGxl5yQCKFP0JW+e9ktGnHXk9sjfhJW
+	fLvwDAgMfcURMZb5RksC785cn8VPs80vKsQOL58bT/H97S8L1dZzn4E=
+X-Received: by 2002:a05:6000:250f:b0:3a4:e7b7:3851 with SMTP id ffacd0b85a97d-3a531cf3622mr13074029f8f.58.1749554125285;
+        Tue, 10 Jun 2025 04:15:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGb7TpoI7QavnirWX2bw2oFs44j+xInfEFt55r8S38W/c8SoW7I3riRWPjYc5yrnZ1Xev10nA==
+X-Received: by 2002:a05:6000:250f:b0:3a4:e7b7:3851 with SMTP id ffacd0b85a97d-3a531cf3622mr13074011f8f.58.1749554124861;
+        Tue, 10 Jun 2025 04:15:24 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45209ce132csm138205255e9.12.2025.06.10.04.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 04:15:24 -0700 (PDT)
+Message-ID: <c08c2f5f-2607-42d3-8d68-4ea99c2d7e72@redhat.com>
+Date: Tue, 10 Jun 2025 13:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521235837.GB9688@frogsfrogsfrogs> <CAOQ4uxh3vW5z_Q35DtDhhTWqWtrkpFzK7QUsw3MGLPY4hqUxLw@mail.gmail.com>
- <20250529164503.GB8282@frogsfrogsfrogs> <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
- <20250609223159.GB6138@frogsfrogsfrogs>
-In-Reply-To: <20250609223159.GB6138@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 10 Jun 2025 12:59:36 +0200
-X-Gm-Features: AX0GCFupdvfZ2fk0jvsPzxZ2w4xAakEGAIcPKTZRhKPOL9Z7Ti0WGY8Du9qPZVs
-Message-ID: <CAOQ4uxgUVOLs070MyBpfodt12E0zjUn_SvyaCSJcm_M3SW36Ug@mail.gmail.com>
-Subject: Re: [RFC[RAP]] fuse: use fs-iomap for better performance so we can
- containerize ext4
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net, bernd@bsbernd.com, 
-	miklos@szeredi.hu, joannelkoong@gmail.com, Josef Bacik <josef@toxicpanda.com>, 
-	linux-ext4 <linux-ext4@vger.kernel.org>, "Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] /proc/pid/smaps: add mo info for vma in NOMMU system
+To: Andrew Morton <akpm@linux-foundation.org>,
+ wangfushuai <wangfushuai@baidu.com>
+Cc: andrii@kernel.org, osalvador@suse.de, Liam.Howlett@Oracle.com,
+ christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250607165335.87054-1-wangfushuai@baidu.com>
+ <20250607141857.40b912e164b8211b6d62eafd@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250607141857.40b912e164b8211b6d62eafd@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 10, 2025 at 12:32=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> On Thu, May 29, 2025 at 09:41:23PM +0200, Amir Goldstein wrote:
-> >  or
-> >
-> > On Thu, May 29, 2025 at 6:45=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
-org> wrote:
-> > >
-> > > On Thu, May 22, 2025 at 06:24:50PM +0200, Amir Goldstein wrote:
-> > > > On Thu, May 22, 2025 at 1:58=E2=80=AFAM Darrick J. Wong <djwong@ker=
-nel.org> wrote:
-> > > > >
-> > > > > Hi everyone,
-> > > > >
-> > > > > DO NOT MERGE THIS.
-> > > > >
-> > > > > This is the very first request for comments of a prototype to con=
-nect
-> > > > > the Linux fuse driver to fs-iomap for regular file IO operations =
-to and
-> > > > > from files whose contents persist to locally attached storage dev=
-ices.
-> > > > >
-> > > > > Why would you want to do that?  Most filesystem drivers are serio=
-usly
-> > > > > vulnerable to metadata parsing attacks, as syzbot has shown repea=
-tedly
-> > > > > over almost a decade of its existence.  Faulty code can lead to t=
-otal
-> > > > > kernel compromise, and I think there's a very strong incentive to=
- move
-> > > > > all that parsing out to userspace where we can containerize the f=
-use
-> > > > > server process.
-> > > > >
-> > > > > willy's folios conversion project (and to a certain degree RH's n=
-ew
-> > > > > mount API) have also demonstrated that treewide changes to the co=
-re
-> > > > > mm/pagecache/fs code are very very difficult to pull off and take=
- years
-> > > > > because you have to understand every filesystem's bespoke use of =
-that
-> > > > > core code.  Eeeugh.
-> > > > >
-> > > > > The fuse command plumbing is very simple -- the ->iomap_begin,
-> > > > > ->iomap_end, and iomap ioend calls within iomap are turned into u=
-pcalls
-> > > > > to the fuse server via a trio of new fuse commands.  This is suit=
-able
-> > > > > for very simple filesystems that don't do tricky things with mapp=
-ings
-> > > > > (e.g. FAT/HFS) during writeback.  This isn't quite adequate for e=
-xt4,
-> > > > > but solving that is for the next sprint.
-> > > > >
-> > > > > With this overly simplistic RFC, I am to show that it's possible =
-to
-> > > > > build a fuse server for a real filesystem (ext4) that runs entire=
-ly in
-> > > > > userspace yet maintains most of its performance.  At this early s=
-tage I
-> > > > > get about 95% of the kernel ext4 driver's streaming directio perf=
-ormance
-> > > > > on streaming IO, and 110% of its streaming buffered IO performanc=
-e.
-> > > > > Random buffered IO suffers a 90% hit on writes due to unwritten e=
-xtent
-> > > > > conversions.  Random direct IO is about 60% as fast as the kernel=
-; see
-> > > > > the cover letter for the fuse2fs iomap changes for more details.
-> > > > >
-> > > >
-> > > > Very cool!
-> > > >
-> > > > > There are some major warts remaining:
-> > > > >
-> > > > > 1. The iomap cookie validation is not present, which can lead to =
-subtle
-> > > > > races between pagecache zeroing and writeback on filesystems that
-> > > > > support unwritten and delalloc mappings.
-> > > > >
-> > > > > 2. Mappings ought to be cached in the kernel for more speed.
-> > > > >
-> > > > > 3. iomap doesn't support things like fscrypt or fsverity, and I h=
-aven't
-> > > > > yet figured out how inline data is supposed to work.
-> > > > >
-> > > > > 4. I would like to be able to turn on fuse+iomap on a per-inode b=
-asis,
-> > > > > which currently isn't possible because the kernel fuse driver wil=
-l iget
-> > > > > inodes prior to calling FUSE_GETATTR to discover the properties o=
-f the
-> > > > > inode it just read.
-> > > >
-> > > > Can you make the decision about enabling iomap on lookup?
-> > > > The plan for passthrough for inode operations was to allow
-> > > > setting up passthough config of inode on lookup.
-> > >
-> > > The main requirement (especially for buffered IO) is that we've set t=
-he
-> > > address space operations structure either to the regular fuse one or =
-to
-> > > the fuse+iomap ops before clearing INEW because the iomap/buffered-io=
-.c
-> > > code assumes that cannot change on a live inode.
-> > >
-> > > So I /think/ we could ask the fuse server at inode instantiation time
-> > > (which, if I'm reading the code correctly, is when iget5_locked gives
-> > > fuse an INEW inode and calls fuse_init_inode) provided it's ok to upc=
-all
-> > > to userspace at that time.  Alternately I guess we could extend struc=
-t
-> > > fuse_attr with another FUSE_ATTR_ flag, I think?
-> > >
-> >
-> > The latter. Either extend fuse_attr or struct fuse_entry_out,
-> > which is in the responses of FUSE_LOOKUP,
-> > FUSE_READDIRPLUS, FUSE_CREATE, FUSE_TMPFILE.
-> > which instantiate fuse inodes.
-> >
-> > There is a very hand wavy discussion about this at:
-> > https://lore.kernel.org/linux-fsdevel/CAOQ4uxi2w+S4yy3yiBvGpJYSqC6GOTAZ=
-QzzjygaH3TjH7Uc4+Q@mail.gmail.com/
-> >
-> > In a nutshell, we discussed adding a new FUSE_LOOKUP_HANDLE
-> > command that uses the variable length file handle instead of nodeid
-> > as a key for the inode.
-> >
-> > So we will have to extend fuse_entry_out anyway, but TBH I never got to
-> > look at the gritty details of how best to extend all the relevant comma=
-nds,
-> > so I hope I am not sending you down the wrong path.
->
-> I found another twist to this story: the upper level libfuse3 library
-> assigns distinct nodeids for each directory entry.  These nodeids are
-> passed into the kernel and appear to the basis for an iget5_locked call.
-> IOWs, each nodeid causes a struct fuse_inode to be created in the
-> kernel.
->
-> For a single-linked file this is no big deal, but for a hardlink this
-> makes iomap a mess because this means that in fuse2fs, an ext2 inode can
-> map to multiple kernel fuse_inode objects.  This /really/ breaks the
-> locking model of iomap, which assumes that there's one in-kernel inode
-> and that it can use i_rwsem to synchronize updates.
->
-> So I'm going to have to find a way to deal with this.  I tried trivially
-> messing with libfuse nodeid assigment but that blew some assertion.
-> Maybe your LOOKUP_HANDLE thing would work.
->
+On 07.06.25 23:18, Andrew Morton wrote:
+> On Sun, 8 Jun 2025 00:53:35 +0800 wangfushuai <wangfushuai@baidu.com> wrote:
+> 
+>> Add mo in /proc/[pid]/smaps to indicate vma is marked VM_MAYOVERLAY,
+>> which means the file mapping may overlay in NOMMU system.
+>>
+>> ...
+>>
+>> Fixes: b6b7a8faf05c ("mm/nommu: don't use VM_MAYSHARE for MAP_PRIVATE mappings")
+> 
+> In what sense does this "fix" b6b7a8faf05c?  Which, after all, said "no
+> functional change intended".
+> 
+> It does appear to be an improvement to the NOMMU user interface.
+> However it is non-backward-compatible - perhaps there's existing
+> userspace which is looking for "um" and which now needs to be changed
+> to look for "mo".
 
-Pull the emergency break!
+Very likely no. Nobody should be caring about this kernel-internal thing.
 
-In an amature move, I did not look at fuse2fs.c before commenting on your
-work.
+But let's read the doc:
 
-High level fuse interface is not the right tool for the job.
-It's not even the easiest way to have written fuse2fs in the first place.
+"Note that there is no guarantee that every flag and associated mnemonic 
+will be present in all further kernel releases. Things get changed, the 
+flags may be vanished or the reverse -- new added. Interpretation of 
+their meaning might change in future as well. So each consumer of these 
+flags has to follow each specific kernel version for the exact semantic."
 
-High-level fuse API addresses file system objects with full paths.
-This is good for writing simple virtual filesystems, but it is not the
-correct nor is the easiest choice to write a userspace driver for ext4.
+So nobody should be relying on any of that, but the doc goes on
 
-Low-level fuse interface addresses filesystem objects by nodeid
-and requires the server to implement lookup(parent_nodeid, name)
-where the server gets to choose the nodeid (not libfuse).
+"
+This file is only present if the CONFIG_MMU kernel configuration option 
+is enabled.
+"
 
-current fuse2fs code needs to go to an effort to convert from full path
-to inode + name using ext2fs_namei().
+Huh?
 
-With the low-level fuse op_lookup() might have used the native ext2_lookup(=
-)
-which would have been much more natural.
+$ grep "task_mmu" fs/proc/Makefile
+CFLAGS_task_mmu.o       += -Wno-override-init
+proc-$(CONFIG_MMU)      := task_mmu.o
 
-You can find the most featureful low-level fuse example at:
-https://github.com/libfuse/libfuse/blob/master/example/passthrough_hp.cc
+NAK
 
-Among other things, the server has an inode cache, where an inode
-has in its state 'nopen' (was this inode opened for io) and 'backing_id'
-(was this inode mapped for kernel passthrough).
+-- 
+Cheers,
 
-Currently this backing_id mapping is only made on first open of inode,
-but the plan is to do that also at lookup time, for example, if the
-iomap mode for the inode can be determined at lookup time.
+David / dhildenb
 
-
-> > > > > 5. ext4 doesn't support out of place writes so I don't know if th=
-at
-> > > > > actually works correctly.
-> > > > >
-> > > > > 6. iomap is an inode-based service, not a file-based service.  Th=
-is
-> > > > > means that we /must/ push ext2's inode numbers into the kernel vi=
-a
-> > > > > FUSE_GETATTR so that it can report those same numbers back out th=
-rough
-> > > > > the FUSE_IOMAP_* calls.  However, the fuse kernel uses a separate=
- nodeid
-> > > > > to index its incore inode, so we have to pass those too so that
-> > > > > notifications work properly.
-> > > > >
-> > > >
-> > > > Again, I might be missing something, but as long as the fuse filesy=
-stem
-> > > > is exposing a single backing filesystem, it should be possible to m=
-ake
-> > > > sure (via opt-in) that fuse nodeid's are equivalent to the backing =
-fs
-> > > > inode number.
-> > > > See sketch in this WIP branch:
-> > > > https://github.com/amir73il/linux/commit/210f7a29a51b085ead9f555978=
-c85c9a4a503575
-> > >
-> > > I think this would work in many places, except for filesystems with
-> > > 64-bit inumbers on 32-bit machines.  That might be a good argument fo=
-r
-> > > continuing to pass along the nodeid and fuse_inode::orig_ino like it
-> > > does now.  Plus there are some filesystems that synthesize inode numb=
-ers
-> > > so tying the two together might not be feasible/desirable anyway.
-> > >
-> > > Though one nice feature of letting fuse have its own nodeids might be
-> > > that if the in-memory index switches to a tree structure, then it cou=
-ld
-> > > be more compact if the filesystem's inumbers are fairly sparse like x=
-fs.
-> > > OTOH the current inode hashtable has been around for a very long time=
- so
-> > > that might not be a big concern.  For fuse2fs it doesn't matter since
-> > > ext4 inumbers are u32.
-> > >
-> >
-> > I wanted to see if declaring one-to-one 64bit ino can simplify things
-> > for the first version of inode ops passthrough.
-> > If this is not the case, or if this is too much of a limitation for
-> > your use case
-> > then nevermind.
-> > But if it is a good enough shortcut for the demo and can be extended la=
-ter,
-> > then why not.
->
-> It's very tempting, because it's very confusing to have nodeids and
-> stat st_ino not be the same thing.
->
-
-Now that I have explained that fuse2fs should be low-level, it should be
-trivial to claim that it should have no problem to declare via
-FUSE_PASSTHROUGH_INO flag to the kernel that nodeid =3D=3D st_ino,
-because I see no reason to implement fuse2fs with non one-to-one
-mapping of ino <=3D=3D> nodeid.
-
-Thanks,
-Amir.
 
