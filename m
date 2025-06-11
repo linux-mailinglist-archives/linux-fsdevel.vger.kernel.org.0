@@ -1,147 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-51358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33410AD5EF6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 21:23:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96483AD5DD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 20:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0D33A9EAA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 19:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F0523AA188
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 18:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CD02BD01E;
-	Wed, 11 Jun 2025 19:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22380288CB4;
+	Wed, 11 Jun 2025 18:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDieeVu8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A604029AB0E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 19:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA4225BF17;
+	Wed, 11 Jun 2025 18:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749669802; cv=none; b=nGvGJze4AMfkRhwxwQHEGToEq6NSM+ri7bJ7aVzDHUFC8PIJh6sqyqlNctub0+9r6KTvaT5ZG7TiF+f7cwx0L70p7GGsHTLzRxVbKXO6ZFQ7QPXAtRrPSUCg/SH0VSyt6l+97Jw+2cVWMpYQPpITpN0dims0bzBGqij8r+HrAoU=
+	t=1749665323; cv=none; b=XVnCd4IACe7jsSa375S6Lkz6nbuf7xLKOUyLhmlC9EdS3uHhpV8Gptydzm7jFt59m/hr4Z3n2vv5y8T+V/zqmvsR4ydCe1VRYfehZznnBkcmgDrGc5nIPuSgIfMOsjHVEVfuxtKWw9V8yytqPBiW9W9Ss/a36XSx/O7Cqpu8xYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749669802; c=relaxed/simple;
-	bh=wdAUIfA6Vz+0pVx2FNnom2a0zaaWLcLTW0x1GvWk3Bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XokmEYMlZJcFkp5z7wdxBZRmOx+WWOrxrfVm2Wu9k1fRSmbJxYQr5hC+UEiWeS+BVUwclyOWs6C1WtuluL97q7Hz3ChctICENtG5BnU4Ts9xsxF44GjsmfBDsTLAtVBtRAjOYUejf+eZquSqlZeK46MYcUjNAuItKjrJM/DR7cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org ([154.16.192.62])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 55BJMp6G027563
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Jun 2025 15:22:53 -0400
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id E6850346B78; Wed, 11 Jun 2025 07:56:29 -0400 (EDT)
-Date: Wed, 11 Jun 2025 10:56:29 -0100
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net,
-        bernd@bsbernd.com, miklos@szeredi.hu, joannelkoong@gmail.com,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Allison Karlitskaya <lis@redhat.com>
-Subject: Re: [RFC[RAP]] fuse: use fs-iomap for better performance so we can
- containerize ext4
-Message-ID: <20250611115629.GL784455@mit.edu>
-References: <20250521235837.GB9688@frogsfrogsfrogs>
- <CAOQ4uxh3vW5z_Q35DtDhhTWqWtrkpFzK7QUsw3MGLPY4hqUxLw@mail.gmail.com>
- <20250529164503.GB8282@frogsfrogsfrogs>
- <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
- <20250609223159.GB6138@frogsfrogsfrogs>
- <CAOQ4uxgUVOLs070MyBpfodt12E0zjUn_SvyaCSJcm_M3SW36Ug@mail.gmail.com>
- <20250610190026.GA6134@frogsfrogsfrogs>
+	s=arc-20240116; t=1749665323; c=relaxed/simple;
+	bh=vuuuUMNJTrbQEHqQfENAGTBD+eC4GhUdnYLcn0MH/mo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jrz72i+skQG2JEp6kuVLTxNsiSi9K8mu66Y6Lpuf7ndmGrzcSHfZj9nff0mqrnA0Hq9xqvPhIFWkJrhcKD6tDJZZdBHRTx78gZ43MYqll5DZY8jEkHoVa466vcCb+Bwc16aIwIEjeBVkZSBn2w15NHjRerUpcPctKsL8rdDyKOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDieeVu8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF1EC4CEF7;
+	Wed, 11 Jun 2025 18:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749665322;
+	bh=vuuuUMNJTrbQEHqQfENAGTBD+eC4GhUdnYLcn0MH/mo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LDieeVu8mKI6wIBQ8ZdpWUZUldPV9W0BwMM4LUOtbgqvvI4d0dtyk/SmXmQcfSaIR
+	 d6TnwRoMNtpY2sAOYNUwrazXaCv4ekn4sW7LK2+1VGqEtvkHjYkxUCR9+bp0zDRSuU
+	 KJCUi9kSsfFeRWtJgtF7/hH5uGaY7geR8/vMde+87w1jt2vCfo6pr2TV2t0d8zflOb
+	 RAky1CQfM9+j8Y9RKDCDL8A4/T4Q0UsFlvFDxLELvdB7HQW8SYY8rme9CVEUNY9IE7
+	 WtHdIfp6Qaj7Em7YQKdBuzyInfzFSTbeUTEqoqxssqdiC3toNkz/jnhfTWxSTcyjOO
+	 5yfOuTdcgf7DQ==
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fa980d05a8so1978976d6.2;
+        Wed, 11 Jun 2025 11:08:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVduRSp4ap98z1mjQzIgAUH30ijMd0isDFfMzn7a9TKBKHA1PatbbxBiI/AeQoFvOdhjLE/wUFOm5Bpja7y@vger.kernel.org, AJvYcCWDjEwDVtHqJfo82V2esdRXUAiOc0Fx/lwhFjYLSgd/lj7QH+QVyprMcNjWGb0V4zLy1Es=@vger.kernel.org, AJvYcCXfM5dEVawYAjsAge2Cvt9rFc3h4bRg56utcQvuYGP+f/T9d5AJ2AsOCdOFK0tJDEcswmaO/hbvLYugTlXd5g==@vger.kernel.org, AJvYcCXimap53u38UvBIzmLw1T92OwfGDLEuCYVs4ATk8wCDZHAJauz+5WviGluy+auC7+bQsoWb0/G+4w/Cj71eZfgvdYBnygAj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPGOu7rxk50a6iSQJ/1Pd/tmIAFjiNud0CT7i6MsOCwki+uIzV
+	DrL8nZHwOoJq1/7J/vTH79zdLnoyuCSfj04nFnHTxwJhtVdz3/B+bfSJukeOv5d6J6D3zXF+OTm
+	tmD/VY5AJvQVcjPXCJPMxrPRzNOe31fY=
+X-Google-Smtp-Source: AGHT+IGzNRxckgFW6/9tgae8ZuBzm8ytC4tCv/ilGsBolC7Bp6fawNV0TjQIMFe+Fjv7DtylNA1bhEMA95ml5uL/rzw=
+X-Received: by 2002:a05:6214:e4d:b0:6fa:b1bb:8315 with SMTP id
+ 6a1803df08f44-6fb2c31b52emr62514016d6.6.1749665321863; Wed, 11 Jun 2025
+ 11:08:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610190026.GA6134@frogsfrogsfrogs>
+References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
+ <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+ <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
+ <20250611.Bee1Iohoh4We@digikod.net> <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
+ <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
+In-Reply-To: <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
+From: Song Liu <song@kernel.org>
+Date: Wed, 11 Jun 2025 11:08:30 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
+X-Gm-Features: AX0GCFuvcvlocezfv1YysEsbb8GlPxqoc1TmFc95N3B5xJlTqTWXOvm7IcF3gM8
+Message-ID: <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
+	gnoack@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+Allison Karlitskaya
+On Wed, Jun 11, 2025 at 10:50=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote:
+[...]
+> > I think we will need some callback mechanism for this. Something like:
+> >
+> > for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rc=
+u) {
+> >    if (!try_rcu)
+> >       goto ref_walk;
+> >
+> >    __read_seqcount_begin();
+> >     /* rcu walk parents, from starting_path until root */
+> >    walk_rcu(starting_path, root, path) {
+> >     callback_fn(path, cb_data);
+> >   }
+> >   if (!read_seqcount_retry())
+> >     return xxx;  /* successful rcu walk */
+> >
+> > ref_walk:
+> >   /* ref walk parents, from starting_path until root */
+> >    walk(starting_path, root, path) {
+> >     callback_fn(path, cb_data);
+> >   }
+> >   return xxx;
+> > }
+> >
+> > Personally, I don't like this version very much, because the callback
+> > mechanism is not very flexible, and it is tricky to use it in BPF LSM.
+>
+> Aside from the "exposing mount seqcounts" problem, what do you think abou=
+t
+> the parent_iterator approach I suggested earlier?  I feel that it is
+> better than such a callback - more flexible, and also fits in right with
+> the BPF API you already designed (i.e. with a callback you might then hav=
+e
+> to allow BPF to pass a callback?).  There are some specifics that I can
+> improve - Micka=C3=ABl suggested some in our discussion:
+>
+> - Letting the caller take rcu_read_lock outside rather than doing it in
+> path_walk_parent_start
+>
+> - Instead of always requiring a struct parent_iterator, allow passing in
+> NULL for the iterator to path_walk_parent to do a reference walk without
+> needing to call path_walk_parent_start - this way might be simpler and
+> path_walk_parent_start/end can just be for rcu case.
+>
+> but what do you think about the overall shape of it?
 
-On Tue, Jun 10, 2025 at 12:00:26PM -0700, Darrick J. Wong wrote:
-> > High level fuse interface is not the right tool for the job.
-> > It's not even the easiest way to have written fuse2fs in the first place.
-> 
-> At the time I thought it would minimize friction across multiple
-> operating systems' fuse implementations.
-> 
-> > High-level fuse API addresses file system objects with full paths.
-> > This is good for writing simple virtual filesystems, but it is not the
-> > correct nor is the easiest choice to write a userspace driver for ext4.
-> 
-> Agreed, it's a *terrible* way to implement ext4.
-> 
-> I think, however, that Ted would like to maintain compatibility with
-> macfuse and freebsd(?) so he's been resistant to rewriting the entire
-> program to work with the lowlevel library.
+Personally, I don't have strong objections to this design. But VFS
+folks may have other concerns with it.
 
-My priority is to make sure that we have compatibility with other OS's
-(in particular MacOS, FreeBSD, if possible Windows, although that's
-not something that I develop against or have test vehicles to
-validate).  However, from what I can tell, they all support Fuse3 at
-this point --- MacFuse, FreeBSD, and WinFSP all have Fuse3 support as
-of today.
+Thanks,
+Song
 
-The only complaint that I've had about breaking support using Fuse2
-was from Allison (Cc'ed), who was involved with another Github
-project, whose Github Actions break because they were using a very old
-version of Ubuntu LTS 20.04), which only had support for libfuse2.  I
-am going to assume that this is probably only because they hadn't
-bothered to update their .github/workflows/ci.yaml file, and not
-because there was any inherit requirement that we support ancient
-versions of Linux distributions.  (When I was at IBM, I remember
-having to support customers who used RHEL4, and even in one extreme
-case, RHEL3 because there were a customer paying $$$$$ that refused to
-update; but that was well over a decade ago, and at this point, I'm
-finding it a lot harder to care about that.  :-)
-
-My plan is that after I release 1.47.2 (which will have some
-interesting data corruption bugfixes thanks to Darrick and other users
-using fuse2fs in deadly earnest, as opposed to as a lightweight way to
-copy files in and out of an file system image), I plan to transition
-the master and next branches for the future 1.48 release, and the
-maint branch will have bug fixes for 1.47.N releases.
-
-At that point, unless I hear some very strong arguments against, for
-1.48, my current thinking is that we will drop support for Fuse2.  I
-will still care about making sure that fuse2fs will build and work
-well enough that casual file copies work on MacOS and FreeBSD, and
-I'll accept patches that make fuse2fs work with WinFSP.  In practice,
-this means that Linux-specific things like Verity support will need to
-be #ifdef'ed so that they will build against MacFUSE, and I assume the
-same will be true for fuseblk mode and iomap mode(?).
-
-This may break the github actions for composefs-rs[1], but I'm going
-to assume that they can figure out a way to transition to Fuse3
-(hopefully by just using a newer version of Ubuntu, but I suppose it's
-possible that Rust bindings only exist for Fuse2, and not Fuse3).  But
-in any case, I don't think it makes sense to hold back fuse2fs
-development just for the sake of Ubuntu Focal (LTS 20.04).  And if
-necessary, composefs-rs can just stay back on e2fsprogs 1.47.N until
-they can get off of Fuse2 and/or Ubuntu 20.04.  Allison, does that
-sound fair to you?
-
-[1] https://github.com/containers/composefs-rs
-
-Does anyone else have any objections to dropping Fuse2 support?  And
-is that sufficient for folks to more easily support iomap mode in
-fuse2fs?
-
-Cheers,
-
-							- Ted
-
-P.S.  Greetings from Greenland.  :-)  (We're currently in the middle of
-a cruise that started in Iceland, and will be ending in New York City
-next week.)
+[...]
 
