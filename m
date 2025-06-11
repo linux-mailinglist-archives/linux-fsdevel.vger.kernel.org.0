@@ -1,58 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-51321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0E7AD5668
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 15:04:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69129AD5704
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 15:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D463A4CF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 13:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1937917E81C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 13:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DC02686B9;
-	Wed, 11 Jun 2025 13:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E1E28937B;
+	Wed, 11 Jun 2025 13:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnSXHlDf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ib/ZUXnB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB02827467A;
-	Wed, 11 Jun 2025 13:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41F935897;
+	Wed, 11 Jun 2025 13:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749647045; cv=none; b=pWFxsOoPUvcFzDhmkljDD2mgS6VV5fnP1tBXaJonDIG2FMesnrsY4WffJK+WTi/U24XNdQ2sAybAatuCdq5IKW8YBr2YegcNtityvqC/aYutkH8OXgkJf0rJJOXyHRGgtXMPHuhrSI+kVBwPFmHKZ+/d9NNhWoHzKeyQqFaDC+Q=
+	t=1749648656; cv=none; b=g1Ytvv9LAlAcEpopDLzifu65UoydWpisIWSOIVSlPtO9thJsk0mPEqR1nBBLQVeo7NpP7oL1oFNhhVbUxDI/+G+UoNxjVNQ8csEwQNXIxn9/4ClkZ+QEH28b7jf2WGncm5lQHj6EdGm8qzt7qlWn3M/5VQHyHWn6cg1L8Ot60g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749647045; c=relaxed/simple;
-	bh=QZLG015LXhv6DaUXWi7YJ8Vo50QVMGaxH3XhwZ0bP28=;
+	s=arc-20240116; t=1749648656; c=relaxed/simple;
+	bh=GUGz0+21sMoIfiL2In3f9xbvbUG5x3zI/S4GvQY7nfM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S4rhUcvS+K4IeVgwx0Ff6HWhX0RnnOfmTfM5WV8NhnmWd8M4uWoFGiy/xI+N2Ug8Xhn/1BVOxZSt/Lp3KiEDRn9soW2trN4ONau2zHIggRbVzQmBIibkG5AA7UeFjVn5ZHe3gCZ0mNaeSW17Ca9sgK8/HBbcFaAGzInXNGcaXb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnSXHlDf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF762C4CEEE;
-	Wed, 11 Jun 2025 13:04:04 +0000 (UTC)
+	 Content-Type:MIME-Version; b=OUkiX6hCnfcvvTVhMNs2iQPjVcaZExo9Va1rvqFbiW6q0UssrK0gVaiHTpavZ8rpEeE4QWhcRwvVmywRZQZyrgSeLYIZv/92DbYCDLV97O5y0czcYmYpdhY7EyL8gXipzbVgwy+GCkKWroe/19VF++nUMoVYIaYxHQmccYegpvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ib/ZUXnB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AE93C4CEEE;
+	Wed, 11 Jun 2025 13:30:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749647045;
-	bh=QZLG015LXhv6DaUXWi7YJ8Vo50QVMGaxH3XhwZ0bP28=;
+	s=k20201202; t=1749648655;
+	bh=GUGz0+21sMoIfiL2In3f9xbvbUG5x3zI/S4GvQY7nfM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=LnSXHlDfEec2P+ybZqOs49FTKxYqjl2wAQnCj+oXQS5WO675Z5SDZHISzeC5J177f
-	 CR3YQJPVETC6kZQRhvwCGY4/WJsQece6xyD3i9A6Vll94dojDuI5rkH+JB1oidlRrF
-	 0B99C6ksyyMzKxiQSY2Zm05Hty0Eyvi1rRDxLoCZLev/90gRRHXp9lRmXK2dL345BU
-	 63qBgEqdzBnlXX2Nu42oHcYz8415tuFBdCT68ORvHwuWjSnrUjVowZffDppJu6tRej
-	 fenPS/iVOUXPMlQD/Hij9APbtMokYmraF7fBTJyJ9rNk9VTZlpuKMcuqDuXW5wYuCX
-	 vT1QqfnjqK/+Q==
-Message-ID: <f7ab4c66f6a0ef689f2b784664f284e3b55ebd30.camel@kernel.org>
-Subject: Re: [PATCH 1/6] NFSD: add the ability to enable use of
- RWF_DONTCACHE for all IO
+	b=Ib/ZUXnBy8DmU56fIRfNvQVsMUMyBi2giTpXywwbm2XtnS9ZzSpETBwPrTYUov5bL
+	 UUYuhveQp6AYkwfbwhoNNx5C9XvX5Rj12+f/QlVmw2rMCKvfGywgH1oaD99lLL8gJN
+	 qsn8hUgR8wFbo/J1HFX6a3Kv+fzh29YFPytPsYKQNbI83Pwi2ixA5T5OCWpsHwnsdU
+	 9e20hKkYtyzRIduvZBPQcCfxodjb+0fwGF/sYLVs2x5niZltagAtMH0P8DuAwarhTk
+	 JlQQLnJIiQU4l6i9I3tKzatZffx5fIKN51BelcC7p+Q1E4qOJbX1lFBz/2AZi27TOX
+	 J1Qtun7MWj6EQ==
+Message-ID: <b1accdad470f19614f9d3865bb3a4c69958e5800.camel@kernel.org>
+Subject: Re: [PATCH 5/6] NFSD: leverage DIO alignment to selectively issue
+ O_DIRECT reads and writes
 From: Jeff Layton <jlayton@kernel.org>
 To: Mike Snitzer <snitzer@kernel.org>, Christoph Hellwig <hch@infradead.org>
 Cc: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Date: Wed, 11 Jun 2025 09:04:04 -0400
-In-Reply-To: <aEld-iBsy-vgXLoq@kernel.org>
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Dave Chinner
+	 <david@fromorbit.com>
+Date: Wed, 11 Jun 2025 09:30:54 -0400
+In-Reply-To: <aEl1RhqybSCAzv3H@kernel.org>
 References: <20250610205737.63343-1-snitzer@kernel.org>
-	 <20250610205737.63343-2-snitzer@kernel.org>
-	 <aEko3e_kpY-fA35R@infradead.org> <aEld-iBsy-vgXLoq@kernel.org>
+	 <20250610205737.63343-6-snitzer@kernel.org>
+	 <aEkpcmZG4rtAZk-3@infradead.org> <aEl1RhqybSCAzv3H@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -137,44 +138,107 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2025-06-11 at 06:44 -0400, Mike Snitzer wrote:
-> On Tue, Jun 10, 2025 at 11:57:33PM -0700, Christoph Hellwig wrote:
-> > On Tue, Jun 10, 2025 at 04:57:32PM -0400, Mike Snitzer wrote:
-> > > Add 'enable-dontcache' to NFSD's debugfs interface so that: Any data
-> > > read or written by NFSD will either not be cached (thanks to O_DIRECT=
-)
-> > > or will be removed from the page cache upon completion (DONTCACHE).
+On Wed, 2025-06-11 at 08:23 -0400, Mike Snitzer wrote:
+> On Wed, Jun 11, 2025 at 12:00:02AM -0700, Christoph Hellwig wrote:
+> > On Tue, Jun 10, 2025 at 04:57:36PM -0400, Mike Snitzer wrote:
+> > > IO must be aligned, otherwise it falls back to using buffered IO.
 > > >=20
-> > > enable-dontcache is 0 by default.  It may be enabled with:
-> > >   echo 1 > /sys/kernel/debug/nfsd/enable-dontcache
+> > > RWF_DONTCACHE is _not_ currently used for misaligned IO (even when
+> > > nfsd/enable-dontcache=3D1) because it works against us (due to RMW
+> > > needing to read without benefit of cache), whereas buffered IO enable=
+s
+> > > misaligned IO to be more performant.
 > >=20
-> > Having this as a global debug-only interface feels a bit odd.
-> >=20
+> > This seems to "randomly" mix direct I/O and buffered I/O on a file.
 >=20
-> I generally agree, I originally proposed nfsd.nfsd_dontcache=3DY
-> modparam:
-> https://lore.kernel.org/linux-nfs/20250220171205.12092-1-snitzer@kernel.o=
-rg/
+> It isn't random, if the IO is DIO-aligned it uses direct I/O.
 >=20
-> (and even implemented formal NFSD per-export "dontcache" control,
-> which Trond and I both think is probably needed).
+> > That's basically asking for data corruption due to invalidation races.
 >=20
-> But (ab)using debugfs is the approach Chuck and Jeff would like to
-> take for experimental NFSD changes so that we can kick the tires
-> without having to support an interface until the end of time. See
-> commit 9fe5ea760e64 ("NFSD: Add /sys/kernel/debug/nfsd") for more on
-> the general thinking.  First consumer was commit c9dcd1de7977 ("NFSD:
-> Add experimental setting to disable the use of splice read").
->=20
-> I'm fine with using debugfs, means to an end with no strings attached.
->=20
-> Once we have confidence in what is needed we can pivot back to
-> a modparam or per-export controls or whatever.
+> I've seen you speak of said dragons in other threads and even commit
+> headers, etc.  Could be they are lurking, but I took the approach of
+> "implement it [this patchset] and see what breaks".  It hasn't broken
+> yet, despite my having thrown a large battery of testing at it (which
+> includes all of Hammerspace's automated sanities testing that uses
+> many testsuites, e.g. xfstests, mdtest, etc, etc).
 >=20
 
-Yeah. I think this will probably end up being a per-export setting.
-We're just hesitant to commit to an interface until we have a bit more
-experience with this.
+I'm concerned here too. Invalidation races can mean silent data
+corruption. We'll need to ensure that this is safe.
+
+Incidentally, is there a good testcase for this? Something that does
+buffered and direct I/O from different tasks and looks for
+inconsistencies?
+
+> But the IOR "hard" workload, which checks for corruption and uses
+> 47008 blocksize to force excessive RMW, hasn't yet been ran with my
+> "[PATCH 6/6] NFSD: issue READs using O_DIRECT even if IO is
+> misaligned" [0]. That IOR "hard" testing will likely happen today.
+>=20
+> > But maybe also explain what this is trying to address to start with?
+>=20
+> Ha, I suspect you saw my too-many-words 0th patch header [1] and
+> ignored it?  Solid feedback, I need to be more succinct and I'm
+> probably too close to this work to see the gaps in introduction and
+> justification but will refine, starting now:
+>=20
+> Overview: NFSD currently only uses buffered IO and it routinely falls
+> over due to the problems RWF_DONTCACHE was developed to workaround.
+> But RWF_DONTCACHE also uses buffered IO and page cache and also
+> suffers from inefficiencies that direct IO doesn't.  Buffered IO's cpu
+> and memory consumption is particularly unwanted for resource
+> constrained systems.
+>=20
+> Maybe some pictures are worth 1000+ words.
+>=20
+> Here is a flamegraph showing buffered IO causing reclaim to bring the
+> system to a halt (when workload's working set far exceeds available
+> memory): https://original.art/buffered_read.svg
+>=20
+> Here is flamegraph for the same type of workload but using DONTCACHE
+> instead of normal buffered IO: https://original.art/dontcache_read.svg
+>=20
+> Dave Chinner provided his analysis of why DONTCACHE was struggling
+> [2].  And I gave further context to others and forecast that I'd be
+> working on implementing NFSD support for using O_DIRECT [3].  Then I
+> discussed how to approach the implementation with Chuck, Jeff and
+> others at the recent NFS Bakeathon.  This series implements my take on
+> what was discussed.
+>=20
+> This graph shows O_DIRECT vs buffered IO for the IOR "easy" workload
+> ("easy" because it uses aligned 1 MiB IOs rather than 47008 bytes like
+> IOR "hard"): https://original.art/NFSD_direct_vs_buffered_IO.jpg
+>=20
+> Buffered IO is generally worse across the board.  DONTCACHE provides
+> welcome reclaim storm relief without the alignment requirements of
+> O_DIRECT but there really is no substitute for O_DIRECT if we're able
+> to use it.  My patchset shows NFSD can and that it is much more
+> deterministic and less resource hungry.
+>=20
+> Direct I/O is definitely the direction we need to go, with DONTCACHE
+> fallback for misaligned write IO (once it is able to delay its
+> dropbehind to work better with misaligned IO).
+>=20
+> Mike
+>=20
+> [0]: https://lore.kernel.org/linux-nfs/20250610205737.63343-7-snitzer@ker=
+nel.org/
+> [1]: https://lore.kernel.org/linux-nfs/20250610205737.63343-1-snitzer@ker=
+nel.org/
+> [2]: https://lore.kernel.org/linux-nfs/aBrKbOoj4dgUvz8f@dread.disaster.ar=
+ea/
+> [3]: https://lore.kernel.org/linux-nfs/aBvVltbDKdHXMtLL@kernel.org/
+
+To summarize: the basic problem is that the pagecache is pretty useless
+for satisfying READs from nfsd. Most NFS workloads don't involve I/O to
+the same files from multiple clients. The client ends up having most of
+the data in its cache already and only very rarely do we need to
+revisit the data on the server.=C2=A0
+
+At the same time, it's really easy to overwhelm the storage with
+pagecache writeback with modern memory sizes. Having nfsd bypass the
+pagecache altogether is potentially a huge performance win, if it can
+be made to work safely.
 --=20
 Jeff Layton <jlayton@kernel.org>
 
