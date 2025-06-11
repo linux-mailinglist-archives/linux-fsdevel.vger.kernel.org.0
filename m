@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-51316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BE6AD5510
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 14:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF56AD5518
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 14:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BC5F7AC5BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 12:08:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E7D3ABA08
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 12:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DB527FD48;
-	Wed, 11 Jun 2025 12:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20F1281351;
+	Wed, 11 Jun 2025 12:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="ryRoA/4t"
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="jTOyg9qS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36943246798;
-	Wed, 11 Jun 2025 12:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87827280313;
+	Wed, 11 Jun 2025 12:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749643781; cv=none; b=hzdtv81DBURJPlSYmrNhFtwBhk/t+k0NgrTVgol/ip/FKuLd+o3S7l00Y5OqudrHn6jorMO7/UX1OrOYotqtimRo1uwG3t2Lq9rkHDd0j6ag4Lx1HzLVco4Bxvw5LWP4ojRj2vmQz80ahMR7Fh9B+p3zj0j12x6HHU3L8gwSTBA=
+	t=1749643784; cv=none; b=IjuROPf6qB2s+pTXdM3xfKsquYNhSJ/dJ2bTaj2wjx6hEKqm6CQGkoKVr25tD0n/0O0PatubrxN6hCFXSqKLFMNn3Pj8kewl9yiP9JWVNRpNv1klM2Fa8MI9Zd0iZp8jor4ELMxw2lf5gYJb3gjDNLUhUdsN9vvPl0JlDwAIN4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749643781; c=relaxed/simple;
-	bh=lk0PED5pXGrSgc6fTcC4zqze0TtP8mCx/ibnLORlYDI=;
+	s=arc-20240116; t=1749643784; c=relaxed/simple;
+	bh=8edYvABXWEyW4QyjYA/sihNI6vUS+2Ib7tvaC/2Cqqs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iCaDSZc/B60YpAw44bWC4vFWrPn3M2vHpxbB6Ueri9QvuzTTMGTcbuWQWqNbI98vFtVXGBZ7lNtXEXSsRxqQ1L7zNiL8A6pCeVROk+DDH+YwwakkU95GK8FMeQ4O5BR3R0b064yT2ECJEyfAlmcf69PD15qnABipkGadTVM11Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=ryRoA/4t; arc=none smtp.client-ip=52.119.213.156
+	 In-Reply-To:Content-Type; b=E6CXoKTAIS/g7uy7b8kb53GgKRyzq0giLtSUjgdGa79u2NSufqygZeJWKCfAHKL8ayJR/v1eXRYOuO2J+BSrOC5aGM9WITOx2qwllWI7xgcJG9VcQv+AALGC7Q9tK5GcqAqQbMqqKEwd3ou7YWL5iBeH/qc7GkHdyIqLk8FPx8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=jTOyg9qS; arc=none smtp.client-ip=99.78.197.220
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1749643780; x=1781179780;
+  t=1749643782; x=1781179782;
   h=message-id:date:mime-version:reply-to:subject:to:cc:
    references:from:in-reply-to:content-transfer-encoding;
-  bh=4usJcNNcgjXBZCgJObiiAHubx2WJa1Zhq0ik5FOjS0s=;
-  b=ryRoA/4tpiUnA2ZytpcIt/WXR4MczuKac8jmajB9raN+avnuHRCjdBin
-   MNEBKCP6TjUorpW5Ehieapb/pCnmh6k3SV/UJahZ7ZsyYeGr7rYBwIJpL
-   UB1f3DrTAgBNPbETDe/zC/I72L5rvp8cmdVuFQBBMpenS4tzM5ttFqfn3
-   zVRoGoWJ99vR+FjgjKzrjXdHKqey9I5vkuHtNVnidYeyOn1+DoAAaaV+C
-   7czfsoSwsqDBMdoAQWIFtZ2Lb2Qq+o+VRIJWKxuZB6qqLA9DHUTjHak2j
-   tn+7Cfj+l6sMh5uEstgxh6Iit/Norbbiap5buTJK6gPe7jPRaRcI8x1vG
-   g==;
+  bh=8uWizOJisq3qvf+JalT9q9Tn4t52oR3ukVog/80wa+A=;
+  b=jTOyg9qS2Iip1E313QaNcMjgTVGriJoa+MPma+NObGnfyxMDfn2svhYO
+   MmUmgzKtSFhQogJT69bW4nPrg9gKpJMvkeB8EOmS7Fo7gXVxqxoYHga0R
+   cG+rbjEob4rTIDYEFNrc4U8iOysxQNgTN7c7e6rBcIl3nuMIi57raBk3N
+   aug0ljnSdCOxL40TwU3a7IxOVKPwJAH1CTYdg6Mv5G6mjWBDNCLlJmo/F
+   hQVzHnzfez2Np6oaAU9Dbf05X4VMIp8WxUN4C5zohptrlyBDztkyTUagg
+   DHj3D9xvd/5TeW80PaZinQVZJapJxMrhi9NX3j1fiQGHIUmcuA+cYGnyT
+   w==;
 X-IronPort-AV: E=Sophos;i="6.16,227,1744070400"; 
-   d="scan'208";a="754132407"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 12:09:37 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:12650]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.7.229:2525] with esmtp (Farcaster)
- id b0e5603a-39dc-44ec-9237-eee7d8ad4ba0; Wed, 11 Jun 2025 12:09:35 +0000 (UTC)
-X-Farcaster-Flow-ID: b0e5603a-39dc-44ec-9237-eee7d8ad4ba0
+   d="scan'208";a="210305053"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 12:09:39 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:27053]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.27.130:2525] with esmtp (Farcaster)
+ id 7a036aa7-dc10-479b-80c2-2a7384eb7725; Wed, 11 Jun 2025 12:09:38 +0000 (UTC)
+X-Farcaster-Flow-ID: 7a036aa7-dc10-479b-80c2-2a7384eb7725
 Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 11 Jun 2025 12:09:35 +0000
+ Wed, 11 Jun 2025 12:09:38 +0000
 Received: from [192.168.1.170] (10.106.82.32) by EX19D022EUC002.ant.amazon.com
  (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Wed, 11 Jun 2025
- 12:09:33 +0000
-Message-ID: <36d96316-fd9b-4755-bb35-d1a2cea7bb7e@amazon.com>
-Date: Wed, 11 Jun 2025 13:09:32 +0100
+ 12:09:36 +0000
+Message-ID: <dd851cab-eb22-40ae-b926-6f0eb1567299@amazon.com>
+Date: Wed, 11 Jun 2025 13:09:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,8 +70,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v3 1/6] mm: userfaultfd: generic continue for non
- hugetlbfs
+Subject: Re: [PATCH v3 4/6] KVM: guest_memfd: add support for userfaultfd
+ minor
 To: Peter Xu <peterx@redhat.com>
 CC: <akpm@linux-foundation.org>, <pbonzini@redhat.com>, <shuah@kernel.org>,
 	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <muchun.song@linux.dev>,
@@ -83,7 +83,7 @@ CC: <akpm@linux-foundation.org>, <pbonzini@redhat.com>, <shuah@kernel.org>,
 	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
 	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>
 References: <20250404154352.23078-1-kalyazin@amazon.com>
- <20250404154352.23078-2-kalyazin@amazon.com> <aEiwHjl4tsUt98sh@x1.local>
+ <20250404154352.23078-5-kalyazin@amazon.com> <aEiwvi-oqfTiyP3s@x1.local>
 Content-Language: en-US
 From: Nikita Kalyazin <kalyazin@amazon.com>
 Autocrypt: addr=kalyazin@amazon.com; keydata=
@@ -95,7 +95,7 @@ Autocrypt: addr=kalyazin@amazon.com; keydata=
  ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
  ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
  i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <aEiwHjl4tsUt98sh@x1.local>
+In-Reply-To: <aEiwvi-oqfTiyP3s@x1.local>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: EX19D001EUA002.ant.amazon.com (10.252.50.215) To
@@ -103,70 +103,132 @@ X-ClientProxiedBy: EX19D001EUA002.ant.amazon.com (10.252.50.215) To
 
 
 
-On 10/06/2025 23:22, Peter Xu wrote:
-> On Fri, Apr 04, 2025 at 03:43:47PM +0000, Nikita Kalyazin wrote:
->> Remove shmem-specific code from UFFDIO_CONTINUE implementation for
->> non-huge pages by calling vm_ops->fault().  A new VMF flag,
->> FAULT_FLAG_USERFAULT_CONTINUE, is introduced to avoid recursive call to
->> handle_userfault().
-> 
-> It's not clear yet on why this is needed to be generalized out of the blue.
-> 
-> Some mentioning of guest_memfd use case might help for other reviewers, or
-> some mention of the need to introduce userfaultfd support in kernel
-> modules.
-
-Hi Peter,
-
-Sounds fair, thank you.
-
+On 10/06/2025 23:25, Peter Xu wrote:
+> On Fri, Apr 04, 2025 at 03:43:50PM +0000, Nikita Kalyazin wrote:
+>> Add support for sending a pagefault event if userfaultfd is registered.
+>> Only page minor event is currently supported.
 >>
->> Suggested-by: James Houghton <jthoughton@google.com>
 >> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
 >> ---
->>   include/linux/mm_types.h |  4 ++++
->>   mm/hugetlb.c             |  2 +-
->>   mm/shmem.c               |  9 ++++++---
->>   mm/userfaultfd.c         | 37 +++++++++++++++++++++++++++----------
->>   4 files changed, 38 insertions(+), 14 deletions(-)
+>>   virt/kvm/guest_memfd.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
 >>
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index 0234f14f2aa6..2f26ee9742bf 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -1429,6 +1429,9 @@ enum tlb_flush_reason {
->>    * @FAULT_FLAG_ORIG_PTE_VALID: whether the fault has vmf->orig_pte cached.
->>    *                        We should only access orig_pte if this flag set.
->>    * @FAULT_FLAG_VMA_LOCK: The fault is handled under VMA lock.
->> + * @FAULT_FLAG_USERFAULT_CONTINUE: The fault handler must not call userfaultfd
->> + *                                 minor handler as it is being called by the
->> + *                                 userfaultfd code itself.
+>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+>> index fbf89e643add..096d89e7282d 100644
+>> --- a/virt/kvm/guest_memfd.c
+>> +++ b/virt/kvm/guest_memfd.c
+>> @@ -4,6 +4,9 @@
+>>   #include <linux/kvm_host.h>
+>>   #include <linux/pagemap.h>
+>>   #include <linux/anon_inodes.h>
+>> +#ifdef CONFIG_KVM_PRIVATE_MEM
+>> +#include <linux/userfaultfd_k.h>
+>> +#endif /* CONFIG_KVM_PRIVATE_MEM */
+>>
+>>   #include "kvm_mm.h"
+>>
+>> @@ -380,6 +383,13 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+>>                kvm_gmem_mark_prepared(folio);
+>>        }
+>>
+>> +     if (userfaultfd_minor(vmf->vma) &&
+>> +         !(vmf->flags & FAULT_FLAG_USERFAULT_CONTINUE)) {
+>> +             folio_unlock(folio);
+>> +             filemap_invalidate_unlock_shared(inode->i_mapping);
+>> +             return handle_userfault(vmf, VM_UFFD_MINOR);
+>> +     }
+>> +
 > 
-> We probably shouldn't leak the "CONTINUE" concept to mm core if possible,
-> as it's not easy to follow when without userfault minor context.  It might
-> be better to use generic terms like NO_USERFAULT.
+> Hmm, does guest-memfd (when with your current approach) at least needs to
+> define the new can_userfault() hook?
+> 
+> Meanwhile, we have some hard-coded lines so far, like:
+> 
+> mfill_atomic():
+>          if (!vma_is_shmem(dst_vma) &&
+>              uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE))
+>                  goto out_unlock;
+> 
+> I thought it would fail guest-memfd already on a CONTINUE request, and it
+> doesn't seem to be touched yet in this series.
+> 
+> I'm not yet sure how the test worked out without hitting things like it.
+> Highly likely I missed something.  Some explanations would be welcomed..
 
-Yes, I agree, can name it more generically.
+Yes, I realised that I'd failed to post this part soon after I sent the 
+series, but I refrained from sending a new version because the upstream 
+consensus was to review/merge the mmap support in guest_memfd [1] before 
+continuing to build on top of it.  This is the missed part I planned to 
+include in the next version.  Sorry for the confusion.
 
-> Said that, I wonder if we'll need to add a vm_ops anyway in the latter
-> patch, whether we can also avoid reusing fault() but instead resolve the
-> page faults using the vm_ops hook too.  That might be helpful because then
-> we can avoid this new FAULT_FLAG_* that is totally not useful to
-> non-userfault users, meanwhile we also don't need to hand-cook the vm_fault
-> struct below just to suite the current fault() interfacing.
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index 64551e8a55fb..080437fa7eab 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -221,8 +221,10 @@ static inline bool vma_can_userfault(struct 
+vm_area_struct *vma,
+  	if (vm_flags & VM_DROPPABLE)
+  		return false;
 
-I'm not sure I fully understand that.  Calling fault() op helps us reuse 
-the FS specifics when resolving the fault.  I get that the new op can 
-imply the userfault flag so the flag doesn't need to be exposed to mm, 
-but doing so will bring duplication of the logic within FSes between 
-this new op and the fault(), unless we attempt to factor common parts 
-out.  For example, for shmem_get_folio_gfp(), we would still need to 
-find a way to suppress the call to handle_userfault() when 
-shmem_get_folio_gfp() is called from the new op.  Is that what you're 
-proposing?
+-	if (!vma->vm_ops->can_userfault ||
+-	    !vma->vm_ops->can_userfault(vma, VM_UFFD_MINOR))
++	if ((vm_flags & VM_UFFD_MINOR) &&
++	     (!vma->vm_ops ||
++	      !vma->vm_ops->can_userfault ||
++	      !vma->vm_ops->can_userfault(vma, VM_UFFD_MINOR)))
+  		return false;
+
+  	/*
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 0aa82c968e16..638360a78561 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -788,7 +788,9 @@ static __always_inline ssize_t mfill_atomic(struct 
+userfaultfd_ctx *ctx,
+  		return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
+  					     src_start, len, flags);
+
+-	can_userfault = dst_vma->vm_ops->can_userfault &&
++	can_userfault =
++	    dst_vma->vm_ops &&
++	    dst_vma->vm_ops->can_userfault &&
+  	    dst_vma->vm_ops->can_userfault(dst_vma, __VM_UFFD_FLAGS);
+
+  	if (!vma_is_anonymous(dst_vma) && !can_userfault)
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 91ee5dd91c31..202b12dc4b6f 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -420,8 +420,15 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+  	return ret;
+  }
+
++static bool kvm_gmem_can_userfault(struct vm_area_struct *vma,
++				   unsigned long vm_flags)
++{
++	return vm_flags & VM_UFFD_MINOR;
++}
++
+  static const struct vm_operations_struct kvm_gmem_vm_ops = {
+-	.fault = kvm_gmem_fault,
++	.fault         = kvm_gmem_fault,
++	.can_userfault = kvm_gmem_can_userfault,
+  };
+
+  static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
+
+
+[1] https://lore.kernel.org/kvm/20250605153800.557144-1-tabba@google.com/
 
 > 
 > Thanks,
+> 
+>>        vmf->page = folio_file_page(folio, vmf->pgoff);
+>>
+>>   out_folio:
+>> --
+>> 2.47.1
+>>
 > 
 > --
 > Peter Xu
