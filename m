@@ -1,165 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-51261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6235AAD4E99
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 10:39:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2F6AD4EA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 10:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1BE17AFF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 08:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1C93A775A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 08:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5560123F412;
-	Wed, 11 Jun 2025 08:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6022023ED63;
+	Wed, 11 Jun 2025 08:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdLdOahu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2191B23E359;
-	Wed, 11 Jun 2025 08:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57A223C8C9;
+	Wed, 11 Jun 2025 08:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749631114; cv=none; b=LSeGNaZUoS7p+Ww7X+wZ8q2Yxbkd3mnuLg6Vsllki7YmfTWgjfZ1TEhTjsJISK3X6jV5OdWCzLmN/1gLUvvETslkHwx/d85Nz2eF5joSjnbLqwREPV8YTrxD0uihXVxcDwp9pIyWvZV/7ECyZasdfqX6b5ThyiEzclJi+XmKqWk=
+	t=1749631264; cv=none; b=k09pkSOKJ605ny4oUKo0tzuU9gbPxBJJ2pPwlx/0BVx0N9cw20AbgX24J3NV3LYgo6c5gOr3m5PWLGUmVFD6tkS3WDFJ+hcGfUTgPFh1vwt+Hr1WYuOa1HLZ2Zv3a5qlAYM5F5394t00aBbkGdBvRO4M3j9Cwne0PkHufXfJl3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749631114; c=relaxed/simple;
-	bh=aHulynXRVVHWpUyUXomIsK4Ep2mEimLnrKrGIEb43Rk=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=IpntorObZGYSFdnbIR94x+5IE7j8ouJ9sRXC+gbucb4hAPoJcA0BBPGtXbWdb8NxMcnjl7anmCs5mBhIBoICmdNIzVgtYe2D6sjL7f9rX/BVyeewEP/+CTmmzaVDjQU7T2vhDafjD8B29QH+jVTJfXKBtEsBVBebaL2l0uF/jaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bHJw52mcJzYQvTS;
-	Wed, 11 Jun 2025 16:38:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 5DDFD1A0A6C;
-	Wed, 11 Jun 2025 16:38:28 +0800 (CST)
-Received: from [10.174.99.169] (unknown [10.174.99.169])
-	by APP2 (Coremail) with SMTP id Syh0CgCXoGOCQEloTNk1PA--.4547S2;
-	Wed, 11 Jun 2025 16:38:28 +0800 (CST)
-Subject: Re: [PATCH 1/7] mm: shmem: correctly pass alloced parameter to
- shmem_recalc_inode() to avoid WARN_ON()
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, hughd@google.com,
- willy@infradead.org, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250605221037.7872-1-shikemeng@huaweicloud.com>
- <20250605221037.7872-2-shikemeng@huaweicloud.com>
- <3d07c68f-da11-43d8-a2da-6b200b2fa40a@linux.alibaba.com>
- <994283d9-2dc4-6887-5d46-247b834879b5@huaweicloud.com>
- <9e59f1f0-db3b-2182-4485-887ac7036bfd@huaweicloud.com>
- <cf70cde3-b4a4-4596-aefa-a510e082e129@linux.alibaba.com>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <1ded199d-149f-d64c-536d-21ce158a09d6@huaweicloud.com>
-Date: Wed, 11 Jun 2025 16:38:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1749631264; c=relaxed/simple;
+	bh=4HYFS9JugtpIRtLXhDRyHDNPnv43ljpAxk5bo9qUBmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VHBI6eBHfHJUUv141JmnNONjfBuvgZLBpEadBqqFW+mbTerCYWUT8h9knlj5RXhozcf8Q+CkdnRouBcEekjA8mB6tWDvKgVN5NLxK1b+mNqA2OGawqqPtLG6x3+MmxCC9PS+Gyxqul1BWhONKykBBe6z5NKS/Hgqt3+RDqVZ8+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qdLdOahu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 243B3C4CEEE;
+	Wed, 11 Jun 2025 08:41:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749631264;
+	bh=4HYFS9JugtpIRtLXhDRyHDNPnv43ljpAxk5bo9qUBmU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qdLdOahud2SU+Jj1jWm0NVydU0RnaG8zYAU+zbPpJ20DI0/uaaTc5HuR6e73Ik2IC
+	 kv9ptdVy/1MEcJdboLhiZCeM04HwO1g4R/kda/LnAxJ09CRPuD2jBo12TIbeKx/bnj
+	 xVBkrWsf6atlfhhEdndPKfL0IwczCXyxsMpgW9OZYO47SP+R+Y5R3tusyWY7zmfPAu
+	 dqQ5SJIWENHxywz0CxR6XcY+VRgS1/Exft9dzZyfSRwUaEJGixpY4arG7tb9h1besd
+	 eC2YXmoSZmJPZEzPOrbIVAp4nbSHIy598uqM4IbL+d9kJI1glqpCbM1bf/RLe8l2WW
+	 oJf/ndrGWxFTQ==
+Date: Wed, 11 Jun 2025 10:41:00 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	linux-man@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>
+Subject: Re: RWF_DONTCACHE documentation
+Message-ID: <sxmgk5dskiuq6wdfmdffsk4qtd42dgiyzwjmxv22xchj5gbuls@sln3lw6x2fkh>
+References: <aD28onWyzS-HgNcB@infradead.org>
+ <cb062be5-04e4-4131-94cc-6a8d90a809ac@kernel.dk>
+ <a8a96487-99d9-442d-bf05-2df856458b39@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <cf70cde3-b4a4-4596-aefa-a510e082e129@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCXoGOCQEloTNk1PA--.4547S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWryfuFyxur1xtryxZw4fXwb_yoW5try5pr
-	W8Gas0yFZ8Jry0yFn2qF18Z3yaq3yrJa1UXrW5CFyxCan0qr1SgrWUKrWj9ryUCrWkGw4j
-	qF47K3srZryUZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFB
-	T5DUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4oc7qb5wdnbeqglb"
+Content-Disposition: inline
+In-Reply-To: <a8a96487-99d9-442d-bf05-2df856458b39@kernel.dk>
 
 
+--4oc7qb5wdnbeqglb
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	linux-man@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>
+Subject: Re: RWF_DONTCACHE documentation
+References: <aD28onWyzS-HgNcB@infradead.org>
+ <cb062be5-04e4-4131-94cc-6a8d90a809ac@kernel.dk>
+ <a8a96487-99d9-442d-bf05-2df856458b39@kernel.dk>
+MIME-Version: 1.0
+In-Reply-To: <a8a96487-99d9-442d-bf05-2df856458b39@kernel.dk>
 
-on 6/11/2025 3:29 PM, Baolin Wang wrote:
-> 
-> 
-> On 2025/6/10 09:02, Kemeng Shi wrote:
->>
->>
->> on 6/9/2025 8:46 AM, Kemeng Shi wrote:
->>>
->>>
->>> on 6/7/2025 2:11 PM, Baolin Wang wrote:
->>>>
->>>>
->>>> On 2025/6/6 06:10, Kemeng Shi wrote:
->>>>> As noted in the comments, we need to release block usage for swap entry
->>>>> which was replaced with poisoned swap entry. However, no block usage is
->>>>> actually freed by calling shmem_recalc_inode(inode, -nr_pages, -nr_pages).
->>>>> Instead, call shmem_recalc_inode(inode, 0, -nr_pages) can correctly release
->>>>> the block usage.
->>>>>
->>>>> Fixes: 6cec2b95dadf7 ("mm/shmem: fix infinite loop when swap in shmem error at swapoff time")
->>>>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
->>>>> ---
->>>>>    mm/shmem.c | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/mm/shmem.c b/mm/shmem.c
->>>>> index 4b42419ce6b2..e27d19867e03 100644
->>>>> --- a/mm/shmem.c
->>>>> +++ b/mm/shmem.c
->>>>> @@ -2145,7 +2145,7 @@ static void shmem_set_folio_swapin_error(struct inode *inode, pgoff_t index,
->>>>>         * won't be 0 when inode is released and thus trigger WARN_ON(i_blocks)
->>>>>         * in shmem_evict_inode().
->>>>>         */
->>>>> -    shmem_recalc_inode(inode, -nr_pages, -nr_pages);
->>>>> +    shmem_recalc_inode(inode, 0, -nr_pages);
->>>>>        swap_free_nr(swap, nr_pages);
->>>>>    }
->>>>
->>>> Have you tested your patch? When I inject an error to test your patch, the following issue will be triggered:As all issues are hard to trigger, I only run some simple test to ensure normal
->>> process is fine. Could you share how to inject the error to trigger following
->>> issue. I will have a deep look. Thanks
->> Sorry that the message is truncated. I mean I only test normal process is fine.
-> 
-> Please also test the swapin error case you try to fix. Obviously your current patch is incorrect.
-> 
->> Besides, I think there is another long-standing issue which could trigger the
->> following issue. Here is the issue which is possible to blame:
->> When swap entry is replaced with error entry in shmem_set_folio_swapin_error(),
->> we will reduce info->swapped. Afterwards, error entry could be deleted in
->> shmem_undo_range() and the info->swapped is reduced again. As a result, we
->> reduce info->swapped twice for a single swap entry.
-> 
-> OK. So you should do something like in shmem_find_swap_entries() to avoid decreasing info->swapped again.
-> 
-> entry = radix_to_swp_entry(folio);
-> /*
-> * swapin error entries can be found in the mapping. But they're
-> * deliberately ignored here as we've done everything we can do.
-> */
-> if (swp_type(entry) != type)
->     continue;
-> 
->> A simple way to confirm this is injecting error to original code. Could you
->> share how to trigger the issue or could you do the same test to original code?
-> 
-> Yes, original code is good.
-I still suspect that it's another long-standing issue which is triggerd by
-this by accident.
-> 
-> A simple test procedure is to allocate some shmem memory and swap them out, then swap in the shmem while injecting an error to trigger the swap-in error case, and finally unmap the program.
-> 
-Sure, will fix the mentiond long-standing issue first and try to run this
-test.
-I will appreciate if you can share your test code if it's convenient.
+Hi Jens,
 
-Thanks
+On Mon, Jun 02, 2025 at 02:54:01PM -0600, Jens Axboe wrote:
+> On 6/2/25 9:49 AM, Jens Axboe wrote:
+> > On 6/2/25 9:00 AM, Christoph Hellwig wrote:
+> >> Hi Jens,
+> >>
+> >> I just tried to reference RWF_DONTCACHE semantics in a standards
+> >> discussion, but it doesn't seem to be documented in the man pages
+> >> or in fact anywhere else I could easily find.  Could you please write
+> >> up the semantics for the preadv2/pwritev2 man page?
+> >=20
+> > Sure, I can write up something for the man page.
+>=20
+> Adding Darrick as well, as a) he helped review the patches, and b) his
+> phrasing is usually much better than mine.
+>=20
+> Anyway, here's my first attempt:
+>=20
+> diff --git a/man/man2/readv.2 b/man/man2/readv.2
+> index c3b0a7091619..2e23e2f15cf4 100644
+> --- a/man/man2/readv.2
+> +++ b/man/man2/readv.2
+> @@ -301,6 +301,28 @@ or their equivalent flags and system calls are used
+>  .B RWF_SYNC
+>  is specified for
+>  .BR pwritev2 ()).
+> +.TP
+> +.BR RWF_DONTCACHE " (since Linux 6.14)"
+> +Reads or writes to a regular file will prune instantiated page cache con=
+tent
+> +when the operation completes. This is different than normal buffered I/O,
 
+Please use semantic newlines, even for drafts; it makes editing later
+much easier.  See man-pages(7):
+
+$ MANWIDTH=3D72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
+   Use semantic newlines
+     In the source of a manual page, new sentences should be started on
+     new lines, long sentences should be split  into  lines  at  clause
+     breaks  (commas,  semicolons, colons, and so on), and long clauses
+     should be split at phrase boundaries.  This convention,  sometimes
+     known as "semantic newlines", makes it easier to see the effect of
+     patches, which often operate at the level of individual sentences,
+     clauses, or phrases.
+
+And a quote from Brian W. Kernighan about preparing documents:
+
+    Brian W. Kernighan, 1974 [UNIX For Beginners]:
+   =20
+    [
+    Hints for Preparing Documents
+   =20
+    Most documents go through several versions
+    (always more than you expected)
+    before they are finally finished.
+    Accordingly,
+    you should do whatever possible
+    to make the job of changing them easy.
+   =20
+    First,
+    when you do the purely mechanical operations of typing,
+    type so subsequent editing will be easy.
+    Start each sentence on a new line.
+    Make lines short,
+    and break lines at natural places,
+    such as after commas and semicolons,
+    rather than randomly.
+    Since most people change documents
+    by rewriting phrases and
+    adding, deleting and rearranging sentences,
+    these precautions simplify any editing you have to do later.
+    ]
+
+> +where the data usually remains in cache until such time that it gets rec=
+laimed
+> +due to memory pressure. If ranges of the read or written I/O was already=
+ in
+
+s/was/were/
+
+> +cache before this read or write, then those range will not be pruned at =
+I/O
+
+s/range/&s/
+
+> +completion time. Additionally, any range dirtied by a write operation wi=
+th
+> +.B RWF_DONTCACHE
+> +set will get kicked off for writeback. This is similar to calling
+> +.BR sync_file_range (2)
+> +with
+> +.IR SYNC_FILE_RANGE_WRITE
+> +to start writeback on the given range.
+> +.B RWF_DONTCACHE
+> +is a hint, or best effort, where no hard guarantees are given on the sta=
+te of
+> +the page cache once the operation completes.
+
+
+> +Note: file systems must support
+> +this feature as well.
+
+I'd remove the sentence above.  It's redundant with the following one.
+Also, to give it more visibility, and because it's not connected with
+the preceding text, I'd move it to a new paragraph with '.IP'.
+
+Other than this comments, the text looks good to me.  Thanks!
+
+
+Have a lovely day!
+Alex
+
+> +If used on a file system or block device that doesn't
+> +support it will return \-1 and
+> +.I errno
+> +will be set to
+> +.B EOPNOTSUPP .
+>  .SH RETURN VALUE
+>  On success,
+>  .BR readv (),
+> @@ -368,6 +390,12 @@ value from
+>  .I statx.
+>  .TP
+>  .B EOPNOTSUPP
+> +.B RWF_DONTCACHE
+> +was set in
+> +.IR flags
+> +and the file doesn't support it.
+> +.TP
+> +.B EOPNOTSUPP
+>  An unknown flag is specified in
+>  .IR flags .
+>  .SH VERSIONS
+>=20
+> --=20
+> Jens Axboe
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--4oc7qb5wdnbeqglb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhJQRYACgkQ64mZXMKQ
+wqlpBg/+KVksu3Nq/uSlhJSaTEpkEh9r4l1NHq1rQRYTMjJ4XTX3mVX+0S7bW7Tb
+M/ZMr5Wmg/AdUXZh0ktmnHm6N0uelazA7ssr0wS1um9MrVjFOGX8PwVVPcIL5cqm
+CX/fo4wETJCsGSxgLNzdGeTli7juCI9misKkMFE5JA6Gok0uUiC+9NAPg2h03AGb
+P2jVYukXUBf6KZbaIacxxN+CRhV8fdee+ocRG20WNTuetkK9hhwx2cS/UTPQ9y6s
+Ol0O+NZcxG2FZjsnV/rZp7a2xGJeFT5uqXNdSxquWJtoF7fJuP2XHzJ5BeBtUU9N
+LPm97OF19MEDRukB2so86+6Fg1migslx7DusjQ+85pUGKmrYqbRD8prgoBFsvNc9
+vShrft6xBrHNvvN2HMDSlnNkKtpRiq8Lt89UQfARW58pMirvJBZbutsx8BiSys2D
+9a0P29+W90AVnLe88OZ3cbISYwYPwRu5BkXPHSPHF1bWUl+/GPw7erjNik23jJcU
+Igs7pjK2J4OEzmlrY39nNtATjl6b6bsN11eZPd9aT1/5yUc1dr3r7saQkLIiEWIP
+bFQWnB+ZzypJ67RhtqHG32IKPRoxf6Zmcv4mzCQ1+TNCo4OHYstqSyYP52toHjuW
+FrmJdS43DPhDctotoMbv6hdOolZ7AUl/zTbWnOn+Hex4AMyHGc4=
+=1n7e
+-----END PGP SIGNATURE-----
+
+--4oc7qb5wdnbeqglb--
 
