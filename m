@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-51267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7367AD5078
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 11:48:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AE6AD5086
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 11:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B4DE176C0D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:47:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 891A77A36CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762AF242D90;
-	Wed, 11 Jun 2025 09:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2791A25F980;
+	Wed, 11 Jun 2025 09:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWUyjvCU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlzV+7n6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74CA7081D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 09:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845232AD2C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 09:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749635271; cv=none; b=cDB4pcjdjEB/2zx0RMyZZs+AEffBYkvyQawTU2xd9Pw2tnHzDbrM/d4Ul+0cM41jBAqHqKpLDyLIVPcL+KNv5oTzyqoTSr+13nfYxd0h6DVLEM7wHiaR+xB7Pw32BFDps79arjv8AN3P7D1sB6XhBmWcL6TLtaBzLeY3Zgtnpg4=
+	t=1749635361; cv=none; b=nJL7h3a5xsNwfEf5huiQvpyB2aaJjibuM82tXRWxcR6eFWVj5RLPxhvi6lEkDef98I46UMSwPohaJ5gK2YO9/PNaC5K7JMwMgubFFqOyBMApMl9xFjZ6iimotfz4s+wsTqvXJy3+rZXxy3s/JrprVAOS7XeqZ3qwAMBGN8zVn1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749635271; c=relaxed/simple;
-	bh=SZYZjrh6wvDkjWwr1bKqolGLVtjXaHfhP7iBoP8WqKc=;
+	s=arc-20240116; t=1749635361; c=relaxed/simple;
+	bh=zGOGn4swKZKx/1wIQ6WzJCa7vvv/Yv46ApbsEF07Ar8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V2rHIy2N+5oMqgOQeL6SmvdD51qx9c4P7n8gquhlhD1MGDCRIy8DFynNtVvMAa0alpaVzBT6YUPSW0C410FYaHMtvUOuhtTHaVO4WIIvHvQouoKB2rNLDnHZOrAf0GFHOG0L7zlE5pIRoduZkiO/HxWW1VLNYrJqH9Ftec8H1x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWUyjvCU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1162C4CEEE;
-	Wed, 11 Jun 2025 09:47:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuVPZLn3L04SAxR+Rt/RORPxT3o95PTYFNeT6TbHG8sOC3i7SABs6EuICkzWukBl5Uhw/Ztg3vkblPR9WrzhtQC/RCbTVSiyutSdux1bopPHHlRh8DUeQg5qyuAmeIcMbfS8zKyce1jyTSG0BJVd2MpQzE3HkEhrAXvlnoT5QlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlzV+7n6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E66BC4CEF2;
+	Wed, 11 Jun 2025 09:49:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749635271;
-	bh=SZYZjrh6wvDkjWwr1bKqolGLVtjXaHfhP7iBoP8WqKc=;
+	s=k20201202; t=1749635361;
+	bh=zGOGn4swKZKx/1wIQ6WzJCa7vvv/Yv46ApbsEF07Ar8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NWUyjvCU996NgI9HvaL1q7DZxvcxlWoexcbkN/gbmlandxiJ0mDNmz12VXSKb+fhn
-	 jw9u9owIxlhhrv0rB33jBB5jc1zNjbwgJFB3Jfqn/5i6FFiCMVWA0Ls5zMx+C/iE00
-	 vXM9yJVtwe5FwSktHVd3Y2D2c6qsJxdSji+Rzu2vSbKNeSq+e5DM/R/iGmvmUTLHN8
-	 /E19W0ITUUXNrC+yvDsPEWtafMh1n4jhWZpk0aEOMjBMz9Z36OFBc+foM8l2mjq7ii
-	 HdEHJqCYO8CZmvJrRQkI1cbRk2Vd2NGG2XFAzJSnwzZzLo8S2U9+7ihFOdfN59Tc36
-	 39pdkFRgh+4dg==
-Date: Wed, 11 Jun 2025 11:47:46 +0200
+	b=rlzV+7n60mK9Fl4Pi5aES1I299cTau6EMl5VNGkkhXh8QH0JOsFFgjTjImHREmasu
+	 ms/tyGBfSjeb6txpHEIpYiX5+cWYCWYIkiVePtBL3+QJ1JwDyjr/tqWhOatscZbHWE
+	 c4Fkhwiqo8maui1Q7djPdkN1Gdi6kIYEtBc2TH2eiWG8H1z2179yC1tB6m5wqsEAQ8
+	 0lczrvgBpc3rvtQsGneOQgeCfnaY9NLUtEbtO4JLv/CFfBQe/K9UoTV3yl/GFu3TzZ
+	 fQWD7jJt0Lne2IAUUxzBs4+KAK9VclRPgpYpq9+0QGt3tlsv62lEpkfQWCOnXTZnAv
+	 B75Z55oVCCmaQ==
+Date: Wed, 11 Jun 2025 11:49:16 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Neil Brown <neilb@suse.de>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [RFC][PATCHES v2] dentry->d_flags locking
-Message-ID: <20250611-absender-substantiell-efa976a909a3@brauner>
-References: <20250224010624.GT1977892@ZenIV>
- <20250224-anrief-schwester-33e6ca8774de@brauner>
- <20250611075023.GJ299672@ZenIV>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, miklos@szeredi.hu, 
+	neilb@suse.de, torvalds@linux-foundation.org
+Subject: Re: [PATCH v2 08/21] correct the set of flags forbidden at
+ d_set_d_op() time
+Message-ID: <20250611-zugegangen-kurzreisen-e372a2c9f2e8@brauner>
+References: <20250611075023.GJ299672@ZenIV>
+ <20250611075437.4166635-1-viro@zeniv.linux.org.uk>
+ <20250611075437.4166635-8-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,10 +60,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250611075023.GJ299672@ZenIV>
+In-Reply-To: <20250611075437.4166635-8-viro@zeniv.linux.org.uk>
 
-> Or are you talking about DCACHE_DONTCACHE (i.e. "unhash as soon as
-> refcount hits 0", rather than "never hash it at all")?
+On Wed, Jun 11, 2025 at 08:54:24AM +0100, Al Viro wrote:
+> DCACHE_OP_PRUNE in ->d_flags at the time of d_set_d_op() should've
+> been treated the same as any other DCACHE_OP_... - we forgot to adjust
+> that WARN_ON() when DCACHE_OP_PRUNE had been introduced...
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-Yes. The series is doing exactly that.
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
