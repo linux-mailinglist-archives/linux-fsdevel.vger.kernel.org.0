@@ -1,237 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-51317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF56AD5518
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 14:10:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D848AD5564
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 14:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E7D3ABA08
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 12:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A075918920E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 12:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20F1281351;
-	Wed, 11 Jun 2025 12:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7A327FD49;
+	Wed, 11 Jun 2025 12:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="jTOyg9qS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/gvWzEW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87827280313;
-	Wed, 11 Jun 2025 12:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748CE27C150;
+	Wed, 11 Jun 2025 12:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749643784; cv=none; b=IjuROPf6qB2s+pTXdM3xfKsquYNhSJ/dJ2bTaj2wjx6hEKqm6CQGkoKVr25tD0n/0O0PatubrxN6hCFXSqKLFMNn3Pj8kewl9yiP9JWVNRpNv1klM2Fa8MI9Zd0iZp8jor4ELMxw2lf5gYJb3gjDNLUhUdsN9vvPl0JlDwAIN4g=
+	t=1749644619; cv=none; b=rdgjUWWvyk6tGeeTW6bKPU6A3BsBrOboHAoiTIU4VbPJPh43xz5Xd1si9w9x+AlpbztX463ZXp2VjRrvNyZNwB8aOgq4O2qquE+l6Lf8kObkjGUKUz6ohQjWGDo1Z1XTulvBmec/gUjf+CGULOlYWihjlqHXcagapG+OgbJpf/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749643784; c=relaxed/simple;
-	bh=8edYvABXWEyW4QyjYA/sihNI6vUS+2Ib7tvaC/2Cqqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=E6CXoKTAIS/g7uy7b8kb53GgKRyzq0giLtSUjgdGa79u2NSufqygZeJWKCfAHKL8ayJR/v1eXRYOuO2J+BSrOC5aGM9WITOx2qwllWI7xgcJG9VcQv+AALGC7Q9tK5GcqAqQbMqqKEwd3ou7YWL5iBeH/qc7GkHdyIqLk8FPx8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=jTOyg9qS; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1749643782; x=1781179782;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=8uWizOJisq3qvf+JalT9q9Tn4t52oR3ukVog/80wa+A=;
-  b=jTOyg9qS2Iip1E313QaNcMjgTVGriJoa+MPma+NObGnfyxMDfn2svhYO
-   MmUmgzKtSFhQogJT69bW4nPrg9gKpJMvkeB8EOmS7Fo7gXVxqxoYHga0R
-   cG+rbjEob4rTIDYEFNrc4U8iOysxQNgTN7c7e6rBcIl3nuMIi57raBk3N
-   aug0ljnSdCOxL40TwU3a7IxOVKPwJAH1CTYdg6Mv5G6mjWBDNCLlJmo/F
-   hQVzHnzfez2Np6oaAU9Dbf05X4VMIp8WxUN4C5zohptrlyBDztkyTUagg
-   DHj3D9xvd/5TeW80PaZinQVZJapJxMrhi9NX3j1fiQGHIUmcuA+cYGnyT
-   w==;
-X-IronPort-AV: E=Sophos;i="6.16,227,1744070400"; 
-   d="scan'208";a="210305053"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2025 12:09:39 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:27053]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.27.130:2525] with esmtp (Farcaster)
- id 7a036aa7-dc10-479b-80c2-2a7384eb7725; Wed, 11 Jun 2025 12:09:38 +0000 (UTC)
-X-Farcaster-Flow-ID: 7a036aa7-dc10-479b-80c2-2a7384eb7725
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 11 Jun 2025 12:09:38 +0000
-Received: from [192.168.1.170] (10.106.82.32) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Wed, 11 Jun 2025
- 12:09:36 +0000
-Message-ID: <dd851cab-eb22-40ae-b926-6f0eb1567299@amazon.com>
-Date: Wed, 11 Jun 2025 13:09:36 +0100
+	s=arc-20240116; t=1749644619; c=relaxed/simple;
+	bh=e7rZEaxOwN2SgrYxFk1SXAqh8V6sNK2c5Wesu6qmQPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rwevmDZLYGO3/vbGEsg0OxYyTDwBtv6IQUDaMtyqAPIB4d7PEi1q4o1nnSBOCIcmDAIK7vO5MD75CEOOOyCfN1NnhmpSHPSZzf9meL2PNqmah+Byy2UD56O0E/0X7Z4lQdvI5O/1hG0TmwVo39cHyoI/rcJAgii5O1wf4Aawjlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/gvWzEW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B493C4CEEE;
+	Wed, 11 Jun 2025 12:23:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749644615;
+	bh=e7rZEaxOwN2SgrYxFk1SXAqh8V6sNK2c5Wesu6qmQPs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V/gvWzEWOoeshpEr4vNnWTx0sR1uUzIL21FMc8AyoRpXw2jI1qWDO8O9DP9GhsNO/
+	 KoTtKsIRs1U1u07U20u/SjTYlifhAqcb83IyC8bHpQbdvC5Q0NLwaXqPCGEg18YAx0
+	 7TOtsA72AwktDSaGLnehTa//Pk9IfZUnpyYEZEHuI17wZdACI3T/aCtp5hE9x5B6tE
+	 OmYuRZL1zi67ncr3Xlvnm50quOIm3CcMi6CNWLkMxFML3N4zeOIEJ/W3wm9cgBvyXt
+	 iliw2Z2xtD+9BA35WhzziOHmimv4lwFEYyfD0NT0i2s00wxu7hTcBvTlAUe8LOVNOs
+	 VBnmsfTiQC85A==
+Date: Wed, 11 Jun 2025 08:23:34 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 5/6] NFSD: leverage DIO alignment to selectively issue
+ O_DIRECT reads and writes
+Message-ID: <aEl1RhqybSCAzv3H@kernel.org>
+References: <20250610205737.63343-1-snitzer@kernel.org>
+ <20250610205737.63343-6-snitzer@kernel.org>
+ <aEkpcmZG4rtAZk-3@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v3 4/6] KVM: guest_memfd: add support for userfaultfd
- minor
-To: Peter Xu <peterx@redhat.com>
-CC: <akpm@linux-foundation.org>, <pbonzini@redhat.com>, <shuah@kernel.org>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <muchun.song@linux.dev>,
-	<hughd@google.com>, <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>, <jack@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <jannh@google.com>,
-	<ryan.roberts@arm.com>, <david@redhat.com>, <jthoughton@google.com>,
-	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
-	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>
-References: <20250404154352.23078-1-kalyazin@amazon.com>
- <20250404154352.23078-5-kalyazin@amazon.com> <aEiwvi-oqfTiyP3s@x1.local>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <aEiwvi-oqfTiyP3s@x1.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D001EUA002.ant.amazon.com (10.252.50.215) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEkpcmZG4rtAZk-3@infradead.org>
 
-
-
-On 10/06/2025 23:25, Peter Xu wrote:
-> On Fri, Apr 04, 2025 at 03:43:50PM +0000, Nikita Kalyazin wrote:
->> Add support for sending a pagefault event if userfaultfd is registered.
->> Only page minor event is currently supported.
->>
->> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
->> ---
->>   virt/kvm/guest_memfd.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
->> index fbf89e643add..096d89e7282d 100644
->> --- a/virt/kvm/guest_memfd.c
->> +++ b/virt/kvm/guest_memfd.c
->> @@ -4,6 +4,9 @@
->>   #include <linux/kvm_host.h>
->>   #include <linux/pagemap.h>
->>   #include <linux/anon_inodes.h>
->> +#ifdef CONFIG_KVM_PRIVATE_MEM
->> +#include <linux/userfaultfd_k.h>
->> +#endif /* CONFIG_KVM_PRIVATE_MEM */
->>
->>   #include "kvm_mm.h"
->>
->> @@ -380,6 +383,13 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
->>                kvm_gmem_mark_prepared(folio);
->>        }
->>
->> +     if (userfaultfd_minor(vmf->vma) &&
->> +         !(vmf->flags & FAULT_FLAG_USERFAULT_CONTINUE)) {
->> +             folio_unlock(folio);
->> +             filemap_invalidate_unlock_shared(inode->i_mapping);
->> +             return handle_userfault(vmf, VM_UFFD_MINOR);
->> +     }
->> +
+On Wed, Jun 11, 2025 at 12:00:02AM -0700, Christoph Hellwig wrote:
+> On Tue, Jun 10, 2025 at 04:57:36PM -0400, Mike Snitzer wrote:
+> > IO must be aligned, otherwise it falls back to using buffered IO.
+> > 
+> > RWF_DONTCACHE is _not_ currently used for misaligned IO (even when
+> > nfsd/enable-dontcache=1) because it works against us (due to RMW
+> > needing to read without benefit of cache), whereas buffered IO enables
+> > misaligned IO to be more performant.
 > 
-> Hmm, does guest-memfd (when with your current approach) at least needs to
-> define the new can_userfault() hook?
-> 
-> Meanwhile, we have some hard-coded lines so far, like:
-> 
-> mfill_atomic():
->          if (!vma_is_shmem(dst_vma) &&
->              uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE))
->                  goto out_unlock;
-> 
-> I thought it would fail guest-memfd already on a CONTINUE request, and it
-> doesn't seem to be touched yet in this series.
-> 
-> I'm not yet sure how the test worked out without hitting things like it.
-> Highly likely I missed something.  Some explanations would be welcomed..
+> This seems to "randomly" mix direct I/O and buffered I/O on a file.
 
-Yes, I realised that I'd failed to post this part soon after I sent the 
-series, but I refrained from sending a new version because the upstream 
-consensus was to review/merge the mmap support in guest_memfd [1] before 
-continuing to build on top of it.  This is the missed part I planned to 
-include in the next version.  Sorry for the confusion.
+It isn't random, if the IO is DIO-aligned it uses direct I/O.
 
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 64551e8a55fb..080437fa7eab 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -221,8 +221,10 @@ static inline bool vma_can_userfault(struct 
-vm_area_struct *vma,
-  	if (vm_flags & VM_DROPPABLE)
-  		return false;
+> That's basically asking for data corruption due to invalidation races.
 
--	if (!vma->vm_ops->can_userfault ||
--	    !vma->vm_ops->can_userfault(vma, VM_UFFD_MINOR))
-+	if ((vm_flags & VM_UFFD_MINOR) &&
-+	     (!vma->vm_ops ||
-+	      !vma->vm_ops->can_userfault ||
-+	      !vma->vm_ops->can_userfault(vma, VM_UFFD_MINOR)))
-  		return false;
+I've seen you speak of said dragons in other threads and even commit
+headers, etc.  Could be they are lurking, but I took the approach of
+"implement it [this patchset] and see what breaks".  It hasn't broken
+yet, despite my having thrown a large battery of testing at it (which
+includes all of Hammerspace's automated sanities testing that uses
+many testsuites, e.g. xfstests, mdtest, etc, etc).
 
-  	/*
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 0aa82c968e16..638360a78561 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -788,7 +788,9 @@ static __always_inline ssize_t mfill_atomic(struct 
-userfaultfd_ctx *ctx,
-  		return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
-  					     src_start, len, flags);
+But the IOR "hard" workload, which checks for corruption and uses
+47008 blocksize to force excessive RMW, hasn't yet been ran with my
+"[PATCH 6/6] NFSD: issue READs using O_DIRECT even if IO is
+misaligned" [0]. That IOR "hard" testing will likely happen today.
 
--	can_userfault = dst_vma->vm_ops->can_userfault &&
-+	can_userfault =
-+	    dst_vma->vm_ops &&
-+	    dst_vma->vm_ops->can_userfault &&
-  	    dst_vma->vm_ops->can_userfault(dst_vma, __VM_UFFD_FLAGS);
+> But maybe also explain what this is trying to address to start with?
 
-  	if (!vma_is_anonymous(dst_vma) && !can_userfault)
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 91ee5dd91c31..202b12dc4b6f 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -420,8 +420,15 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
-  	return ret;
-  }
+Ha, I suspect you saw my too-many-words 0th patch header [1] and
+ignored it?  Solid feedback, I need to be more succinct and I'm
+probably too close to this work to see the gaps in introduction and
+justification but will refine, starting now:
 
-+static bool kvm_gmem_can_userfault(struct vm_area_struct *vma,
-+				   unsigned long vm_flags)
-+{
-+	return vm_flags & VM_UFFD_MINOR;
-+}
-+
-  static const struct vm_operations_struct kvm_gmem_vm_ops = {
--	.fault = kvm_gmem_fault,
-+	.fault         = kvm_gmem_fault,
-+	.can_userfault = kvm_gmem_can_userfault,
-  };
+Overview: NFSD currently only uses buffered IO and it routinely falls
+over due to the problems RWF_DONTCACHE was developed to workaround.
+But RWF_DONTCACHE also uses buffered IO and page cache and also
+suffers from inefficiencies that direct IO doesn't.  Buffered IO's cpu
+and memory consumption is particularly unwanted for resource
+constrained systems.
 
-  static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
+Maybe some pictures are worth 1000+ words.
 
+Here is a flamegraph showing buffered IO causing reclaim to bring the
+system to a halt (when workload's working set far exceeds available
+memory): https://original.art/buffered_read.svg
 
-[1] https://lore.kernel.org/kvm/20250605153800.557144-1-tabba@google.com/
+Here is flamegraph for the same type of workload but using DONTCACHE
+instead of normal buffered IO: https://original.art/dontcache_read.svg
 
-> 
-> Thanks,
-> 
->>        vmf->page = folio_file_page(folio, vmf->pgoff);
->>
->>   out_folio:
->> --
->> 2.47.1
->>
-> 
-> --
-> Peter Xu
-> 
+Dave Chinner provided his analysis of why DONTCACHE was struggling
+[2].  And I gave further context to others and forecast that I'd be
+working on implementing NFSD support for using O_DIRECT [3].  Then I
+discussed how to approach the implementation with Chuck, Jeff and
+others at the recent NFS Bakeathon.  This series implements my take on
+what was discussed.
 
+This graph shows O_DIRECT vs buffered IO for the IOR "easy" workload
+("easy" because it uses aligned 1 MiB IOs rather than 47008 bytes like
+IOR "hard"): https://original.art/NFSD_direct_vs_buffered_IO.jpg
+
+Buffered IO is generally worse across the board.  DONTCACHE provides
+welcome reclaim storm relief without the alignment requirements of
+O_DIRECT but there really is no substitute for O_DIRECT if we're able
+to use it.  My patchset shows NFSD can and that it is much more
+deterministic and less resource hungry.
+
+Direct I/O is definitely the direction we need to go, with DONTCACHE
+fallback for misaligned write IO (once it is able to delay its
+dropbehind to work better with misaligned IO).
+
+Mike
+
+[0]: https://lore.kernel.org/linux-nfs/20250610205737.63343-7-snitzer@kernel.org/
+[1]: https://lore.kernel.org/linux-nfs/20250610205737.63343-1-snitzer@kernel.org/
+[2]: https://lore.kernel.org/linux-nfs/aBrKbOoj4dgUvz8f@dread.disaster.area/
+[3]: https://lore.kernel.org/linux-nfs/aBvVltbDKdHXMtLL@kernel.org/
 
