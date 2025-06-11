@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-51254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566A9AD4D98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:56:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4EAAD4D9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DEA53A38A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 07:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B69117C4F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 07:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C521024677F;
-	Wed, 11 Jun 2025 07:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D959248166;
+	Wed, 11 Jun 2025 07:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QkOvUCHM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CcFmctSt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B22A23C4F3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0A823A9AE
 	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 07:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749628483; cv=none; b=TMNpI5ukYoVYn5pgd8ma/Lt8Azzx1cNo1pIl2yeX+zXREDCY5MaWJ0wQ/eeDSnPISUpVCl5VOEXPI1yrOhWYuHIQ5gj8IlMkOrcPR7WFEX/s0DKspI31KJACO91vlAwoCT8AYUeGQKzqZ46016rDDVEY44om1FNAwu3vGeJWVp0=
+	t=1749628484; cv=none; b=pzluVT1zscJXnoe6MJJ2MZ1haLSimcEmivfZq5BCW27q7b7LBid31MC57ZCzINy+1FBkPqkuVe90C2w0rhWZCSotbhoad76TVpoS2qFyeRGnm24STXIoodGpYu6HXT8FUuxpq7Fj3F1H/41v0XH4roronZA2bn7gykekZP2yCXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749628483; c=relaxed/simple;
-	bh=LYyJa3bbU/PeJ387PCvjRc5+Npyhdv54NF/D6w+X1ws=;
+	s=arc-20240116; t=1749628484; c=relaxed/simple;
+	bh=NE6KtK7Y41l34gILJHUJmblJKMcZJ8Zi0d0I3/jFB+U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rD/sr3lqhH0ix+d4WFrbTmbGS2QOsZu5ZEh12rLkWV/YduME6DXNNU+BUn5hS+i5Dxno9ni68hvrTszV1A+M6mLCqBdNxWEEePoodttB/eJ3HKvhbJ48yzGnRGz2EXwuY/Su7oarg7pGFsacL2QSeynYImZAREyalr7Pe7IirEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=QkOvUCHM; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=btsEfPvCgUizjLXaGbJfeU49QgjOExnuReAZX4fCBeWl1vp45rudR+7CAJQ8asQ12tah5GLpNO3mBYrYcxUiKRS5U4B4Qog4GXqSFYVI38j/ybWzQw9g2vCjoOqBuJ7fTo3/38kfMHUD5sA3XScYZU99W29sA9ppljnOiYhcF1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CcFmctSt; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Q1iWHnFO4mTQdr8nQH8k3iNrtZR6emLghsXeVThHFlI=; b=QkOvUCHMubBB3Z0bCVw+gilAgl
-	RBg24KCCqxZFklrKBUvSKI0lSad5MDTrgoPKQudNGmEXqYcqX1d79Y2jv6RVBjTdHJRb/xRrN/O4U
-	nTVI20ewMjzTcC1eduDM9p6yUDiH8ia33E22FCWhDHw/lvgGuh/JGcefWkDZsG049BwIlwEjGl0ww
-	Wtp5wJfQaAk8YjMBjTVE5v7ZRnX11xmflFzJMrD72KMXcIVmy9jsGsva1FBPn70S7i6rQrB2LCKy2
-	Ar35+G84bUJZh74sAEIEcrxiSGGvFMSI98NZOlBYTypVAFnAu1gc7qV0gKkM+qosZ10NHb2DNKUmY
-	TIY6MAXw==;
+	bh=SHHs6S0xBH4lPtIr2fNbvJWNztXLX80K/+8kp0iOyVc=; b=CcFmctStmwiOWGYLrKtf+8KNOn
+	3jUT958foq1qTWKHt0LX/okagLg9gPZUwFFqsI/gBaxEsPfiEsKVqlYA5nXQPQg4ZgDoxnDiaGjEA
+	RlzQALCHr79HorjjlonH8vFxwpWiCxWK7tdqofQQOznAuT7nZdu07f/gI9dKfIN1KS+4pDyiLGKU3
+	kdG7MOmwNd8/XzWc5KoiFeDbLHD3JSRUtK2RgMu7G/gn/iSnbyDheM3dSUZeLG6E22Wa2F8DYjRq/
+	Gcz44Axtj091krgEMBT+1G7EtyioY4M9NXetLi6R+ZiHRT91akx1sx3vawyBpUsa2pMXyshuaAI2T
+	JaF26nhg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPGIB-0000000HTy5-4Af9;
+	id 1uPGIC-0000000HTyU-0pc9;
 	Wed, 11 Jun 2025 07:54:40 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -51,9 +51,9 @@ Cc: brauner@kernel.org,
 	miklos@szeredi.hu,
 	neilb@suse.de,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 15/21] kill simple_dentry_operations
-Date: Wed, 11 Jun 2025 08:54:31 +0100
-Message-ID: <20250611075437.4166635-15-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 16/21] ramfs, hugetlbfs, mqueue: set DCACHE_DONTCACHE
+Date: Wed, 11 Jun 2025 08:54:32 +0100
+Message-ID: <20250611075437.4166635-16-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250611075437.4166635-1-viro@zeniv.linux.org.uk>
 References: <20250611075023.GJ299672@ZenIV>
@@ -67,44 +67,54 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-No users left and anything that wants it would be better off just
-setting DCACHE_DONTCACHE in their ->s_d_flags.
+makes simple_lookup() slightly cheaper there - no need for
+simple_lookup() to set the flag and we want it on everything
+on those anyway.
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/libfs.c         | 5 -----
- include/linux/fs.h | 1 -
- 2 files changed, 6 deletions(-)
+ fs/hugetlbfs/inode.c | 1 +
+ fs/ramfs/inode.c     | 1 +
+ ipc/mqueue.c         | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 19cc12651708..3051211998b6 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -62,11 +62,6 @@ int always_delete_dentry(const struct dentry *dentry)
- }
- EXPORT_SYMBOL(always_delete_dentry);
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index e4de5425838d..6e0ade365a33 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1433,6 +1433,7 @@ hugetlbfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_blocksize_bits = huge_page_shift(ctx->hstate);
+ 	sb->s_magic = HUGETLBFS_MAGIC;
+ 	sb->s_op = &hugetlbfs_ops;
++	sb->s_d_flags = DCACHE_DONTCACHE;
+ 	sb->s_time_gran = 1;
  
--const struct dentry_operations simple_dentry_operations = {
--	.d_delete = always_delete_dentry,
--};
--EXPORT_SYMBOL(simple_dentry_operations);
--
- /*
-  * Lookup the data. This is trivial - if the dentry didn't already
-  * exist, we know it is negative.  Set d_op to delete negative dentries.
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 65548e70e596..d58bbb8262e8 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3606,7 +3606,6 @@ extern const struct address_space_operations ram_aops;
- extern int always_delete_dentry(const struct dentry *);
- extern struct inode *alloc_anon_inode(struct super_block *);
- extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
--extern const struct dentry_operations simple_dentry_operations;
+ 	/*
+diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+index 775fa905fda0..f8874c3b8c1e 100644
+--- a/fs/ramfs/inode.c
++++ b/fs/ramfs/inode.c
+@@ -269,6 +269,7 @@ static int ramfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_blocksize_bits	= PAGE_SHIFT;
+ 	sb->s_magic		= RAMFS_MAGIC;
+ 	sb->s_op		= &ramfs_ops;
++	sb->s_d_flags		= DCACHE_DONTCACHE;
+ 	sb->s_time_gran		= 1;
  
- extern struct dentry *simple_lookup(struct inode *, struct dentry *, unsigned int flags);
- extern ssize_t generic_read_dir(struct file *, char __user *, size_t, loff_t *);
+ 	inode = ramfs_get_inode(sb, NULL, S_IFDIR | fsi->mount_opts.mode, 0);
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 82ed2d3c9846..482af449e00d 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -411,6 +411,7 @@ static int mqueue_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_blocksize_bits = PAGE_SHIFT;
+ 	sb->s_magic = MQUEUE_MAGIC;
+ 	sb->s_op = &mqueue_super_ops;
++	sb->s_d_flags = DCACHE_DONTCACHE;
+ 
+ 	inode = mqueue_get_inode(sb, ns, S_IFDIR | S_ISVTX | S_IRWXUGO, NULL);
+ 	if (IS_ERR(inode))
 -- 
 2.39.5
 
