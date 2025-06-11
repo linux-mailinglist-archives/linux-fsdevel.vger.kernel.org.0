@@ -1,102 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-51227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF39AD4A11
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 06:35:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 956CFAD4A9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 08:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64447189B9D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 04:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090FE18977B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 06:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB2C20E034;
-	Wed, 11 Jun 2025 04:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCE9225A31;
+	Wed, 11 Jun 2025 06:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q9pBvlIh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KqkhcDIT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B0417E;
-	Wed, 11 Jun 2025 04:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F409D380;
+	Wed, 11 Jun 2025 06:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749616496; cv=none; b=AlDZENcAMdD69fcRviDEFMn4h0TP2qhKb36Yy0h4wvZLFHl5o5rF5rVJHMuqzCHH2g7Ch2fjBJS19u1/0MJIGpWE7Yesoey+/jopDOELKgpT1hNASHcitMPtlJi/nul5bfu56d5gUs++ziWLzQDuDGjT7rkw8yzDNy2BK57x3h4=
+	t=1749621642; cv=none; b=c8VqHuVEjbdXWzzAo83EGcNGY7JK763rIt/9oYZo/k0Bd0m/u4BBQGtGOa4vH2AmXw75VV7qYHxEUM0LcnNWxND+JboNzeFep/LLWczuplipuyGgQ2hP3PiLMTFFzrpUkOfTvyKrGQKVp+gg49hKBvxemWxRNmUAPTjYOcLBPmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749616496; c=relaxed/simple;
-	bh=LthGE3fUU7Vln18kBGtSPyqKU3ZFcnQlq1EL1a4+Ex0=;
+	s=arc-20240116; t=1749621642; c=relaxed/simple;
+	bh=d7QBmw4x+LBPfmuzFzx6MdrdG2/eVESjRUnjf99i6jI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r334uPnx5+GwUi37ebdB1e/GtEqUrK7glkJrjoaRmeE1b387/wMwCQzF+EILrgLYmdLbnBYBotq1i/9rpxQk1YYlOgj6gcxyHv1VpbkKWcdfk8y4/E0z+2Fn2G/Y2/IcTV7ALCo+9g8njvTXYvFCFV9XSeNLpY6inPs6gKUCAc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q9pBvlIh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ARbjRh7/rnRbjvUmhBkINZLHyFvPiwwBlxyxyZKqeFE=; b=q9pBvlIhw7CmlRzuGDAnChYrve
-	l7tTw7U8A9waVV9TjNjbhlc/YRyCLndgjnkRd7FmfIzS5BubAMCF/FdGJabjwQ+aWf1AK0dgoYpk7
-	FEJN5Jc5zMRQiFtQh6Z8daA1FdCqLbPmzJq4DXufXapM/oRl6ih5reJcfJoz3crPmCmdqfwshsZ8x
-	J0xGgZq3xr+aSlQD1DXfbBRmE+/upSARf2nNl9rUAe3sMQ5ww9zoG/I7FTqmDuhnaMgNZ2n/h+Uiu
-	WkvF7UzDsq1q+zEHH3/kDyivsHYmapuok71Al/hYkiKU2IZmx2uqFbNTwEKyOrAZDOksk1mn6GOlx
-	tZkJmq0Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPDAo-0000000ADVi-2M9F;
-	Wed, 11 Jun 2025 04:34:50 +0000
-Date: Wed, 11 Jun 2025 05:34:50 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
-	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, bernd.schubert@fastmail.fm,
-	kernel-team@meta.com, linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v1 5/8] iomap: add iomap_writeback_dirty_folio()
-Message-ID: <aEkHarE9_LlxFTAi@casper.infradead.org>
-References: <20250606233803.1421259-1-joannelkoong@gmail.com>
- <20250606233803.1421259-6-joannelkoong@gmail.com>
- <aEZoau3AuwoeqQgu@infradead.org>
- <20250609171444.GL6156@frogsfrogsfrogs>
- <aEetuahlyfHGTG7x@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLmCDCtQWuTbDDuO9MyOfNEaPIYUWW+0fg+IN1EjyoIgv8XgTHFbAvgdwx7sipRvma/gFie6SPuuMhlLUDU/PzyhL60Po1ZVz2RHTtpClirw1Nk0BFBJpLh1WfLklwgHYmb7F5aabyLTkalmk/PZEPJ0CbBOUt06WgcM+iCA7vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KqkhcDIT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67220C4CEEE;
+	Wed, 11 Jun 2025 06:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749621641;
+	bh=d7QBmw4x+LBPfmuzFzx6MdrdG2/eVESjRUnjf99i6jI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KqkhcDIT5xTIfnLPtKzOqaNOoatcXIeVPtuuv1xq3W2Q0YrOYBKEVbpfBESMUbFlR
+	 Qy2vg3sb7pViKE9SQrCf5yr9If1qokxC0OBe2yK5AqAGJ8dHbup3YLXfLLpFfYpqcD
+	 RabGFJcsDwNdWVDPuFSMD1EIEVa4FnAcIrdwO+TacbLJhASsBW0WYyxCKGmRf3i35U
+	 gnjqx+F2RaheYqgl/iVL9Fvc7WXx1STF3yy7IMok5HneoQz2llFjeh3LDDHPVdBoGb
+	 SCSz2nYZh7bhtPrN1ZFNm5ZW6CzhRvYZ5yn2b9bPoOuR6a8Da+dAlptiKWkBWslW8r
+	 zwPe/Kn5c33xA==
+Date: Tue, 10 Jun 2025 23:00:40 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net,
+	bernd@bsbernd.com, miklos@szeredi.hu, joannelkoong@gmail.com,
+	Josef Bacik <josef@toxicpanda.com>,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [RFC[RAP]] fuse: use fs-iomap for better performance so we can
+ containerize ext4
+Message-ID: <20250611060040.GC6138@frogsfrogsfrogs>
+References: <20250521235837.GB9688@frogsfrogsfrogs>
+ <CAOQ4uxh3vW5z_Q35DtDhhTWqWtrkpFzK7QUsw3MGLPY4hqUxLw@mail.gmail.com>
+ <20250529164503.GB8282@frogsfrogsfrogs>
+ <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
+ <20250609223159.GB6138@frogsfrogsfrogs>
+ <CAOQ4uxgUVOLs070MyBpfodt12E0zjUn_SvyaCSJcm_M3SW36Ug@mail.gmail.com>
+ <20250610190026.GA6134@frogsfrogsfrogs>
+ <CAOQ4uxj4G_7E-Yba0hP2kpdeX17Fma0H-dB6Z8=BkbOWsF9NUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aEetuahlyfHGTG7x@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxj4G_7E-Yba0hP2kpdeX17Fma0H-dB6Z8=BkbOWsF9NUg@mail.gmail.com>
 
-On Mon, Jun 09, 2025 at 08:59:53PM -0700, Christoph Hellwig wrote:
-> On Mon, Jun 09, 2025 at 10:14:44AM -0700, Darrick J. Wong wrote:
-> > > Where "folio laundering" means calling ->launder_folio, right?
-> > 
-> > What does fuse use folio laundering for, anyway?  It looks to me like
-> > the primary users are invalidate_inode_pages*.  Either the caller cares
-> > about flushing dirty data and has called filemap_write_and_wait_range;
-> > or it doesn't and wants to tear down the pagecache ahead of some other
-> > operation that's going to change the file contents and doesn't care.
-> > 
-> > I suppose it could be useful as a last-chance operation on a dirty folio
-> > that was dirtied after a filemap_write_and_wait_range but before
-> > invalidate_inode_pages*?  Though for xfs we just return EBUSY and let
-> > the caller try again (or not).  Is there a subtlety to fuse here that I
-> > don't know about?
+On Tue, Jun 10, 2025 at 09:51:55PM +0200, Amir Goldstein wrote:
+> On Tue, Jun 10, 2025 at 9:00 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Tue, Jun 10, 2025 at 12:59:36PM +0200, Amir Goldstein wrote:
+> > > On Tue, Jun 10, 2025 at 12:32 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > >
+> > > > On Thu, May 29, 2025 at 09:41:23PM +0200, Amir Goldstein wrote:
+> > > > >  or
+> > > > >
+> > > > > On Thu, May 29, 2025 at 6:45 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > > >
+> > > > > > On Thu, May 22, 2025 at 06:24:50PM +0200, Amir Goldstein wrote:
+> > > > > > > On Thu, May 22, 2025 at 1:58 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > > > > >
+> > > > > > > > Hi everyone,
+> > > > > > > >
+> > > > > > > > DO NOT MERGE THIS.
+> > > > > > > >
+> > > > > > > > This is the very first request for comments of a prototype to connect
+> > > > > > > > the Linux fuse driver to fs-iomap for regular file IO operations to and
+> > > > > > > > from files whose contents persist to locally attached storage devices.
+> > > > > > > >
+> > > > > > > > Why would you want to do that?  Most filesystem drivers are seriously
+> > > > > > > > vulnerable to metadata parsing attacks, as syzbot has shown repeatedly
+> > > > > > > > over almost a decade of its existence.  Faulty code can lead to total
+> > > > > > > > kernel compromise, and I think there's a very strong incentive to move
+> > > > > > > > all that parsing out to userspace where we can containerize the fuse
+> > > > > > > > server process.
+> > > > > > > >
+> > > > > > > > willy's folios conversion project (and to a certain degree RH's new
+> > > > > > > > mount API) have also demonstrated that treewide changes to the core
+> > > > > > > > mm/pagecache/fs code are very very difficult to pull off and take years
+> > > > > > > > because you have to understand every filesystem's bespoke use of that
+> > > > > > > > core code.  Eeeugh.
+> > > > > > > >
+> > > > > > > > The fuse command plumbing is very simple -- the ->iomap_begin,
+> > > > > > > > ->iomap_end, and iomap ioend calls within iomap are turned into upcalls
+> > > > > > > > to the fuse server via a trio of new fuse commands.  This is suitable
+> > > > > > > > for very simple filesystems that don't do tricky things with mappings
+> > > > > > > > (e.g. FAT/HFS) during writeback.  This isn't quite adequate for ext4,
+> > > > > > > > but solving that is for the next sprint.
+> > > > > > > >
+> > > > > > > > With this overly simplistic RFC, I am to show that it's possible to
+> > > > > > > > build a fuse server for a real filesystem (ext4) that runs entirely in
+> > > > > > > > userspace yet maintains most of its performance.  At this early stage I
+> > > > > > > > get about 95% of the kernel ext4 driver's streaming directio performance
+> > > > > > > > on streaming IO, and 110% of its streaming buffered IO performance.
+> > > > > > > > Random buffered IO suffers a 90% hit on writes due to unwritten extent
+> > > > > > > > conversions.  Random direct IO is about 60% as fast as the kernel; see
+> > > > > > > > the cover letter for the fuse2fs iomap changes for more details.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Very cool!
+> > > > > > >
+> > > > > > > > There are some major warts remaining:
+> > > > > > > >
+> > > > > > > > 1. The iomap cookie validation is not present, which can lead to subtle
+> > > > > > > > races between pagecache zeroing and writeback on filesystems that
+> > > > > > > > support unwritten and delalloc mappings.
+> > > > > > > >
+> > > > > > > > 2. Mappings ought to be cached in the kernel for more speed.
+> > > > > > > >
+> > > > > > > > 3. iomap doesn't support things like fscrypt or fsverity, and I haven't
+> > > > > > > > yet figured out how inline data is supposed to work.
+> > > > > > > >
+> > > > > > > > 4. I would like to be able to turn on fuse+iomap on a per-inode basis,
+> > > > > > > > which currently isn't possible because the kernel fuse driver will iget
+> > > > > > > > inodes prior to calling FUSE_GETATTR to discover the properties of the
+> > > > > > > > inode it just read.
+> > > > > > >
+> > > > > > > Can you make the decision about enabling iomap on lookup?
+> > > > > > > The plan for passthrough for inode operations was to allow
+> > > > > > > setting up passthough config of inode on lookup.
+> > > > > >
+> > > > > > The main requirement (especially for buffered IO) is that we've set the
+> > > > > > address space operations structure either to the regular fuse one or to
+> > > > > > the fuse+iomap ops before clearing INEW because the iomap/buffered-io.c
+> > > > > > code assumes that cannot change on a live inode.
+> > > > > >
+> > > > > > So I /think/ we could ask the fuse server at inode instantiation time
+> > > > > > (which, if I'm reading the code correctly, is when iget5_locked gives
+> > > > > > fuse an INEW inode and calls fuse_init_inode) provided it's ok to upcall
+> > > > > > to userspace at that time.  Alternately I guess we could extend struct
+> > > > > > fuse_attr with another FUSE_ATTR_ flag, I think?
+> > > > > >
+> > > > >
+> > > > > The latter. Either extend fuse_attr or struct fuse_entry_out,
+> > > > > which is in the responses of FUSE_LOOKUP,
+> > > > > FUSE_READDIRPLUS, FUSE_CREATE, FUSE_TMPFILE.
+> > > > > which instantiate fuse inodes.
+> > > > >
+> > > > > There is a very hand wavy discussion about this at:
+> > > > > https://lore.kernel.org/linux-fsdevel/CAOQ4uxi2w+S4yy3yiBvGpJYSqC6GOTAZQzzjygaH3TjH7Uc4+Q@mail.gmail.com/
+> > > > >
+> > > > > In a nutshell, we discussed adding a new FUSE_LOOKUP_HANDLE
+> > > > > command that uses the variable length file handle instead of nodeid
+> > > > > as a key for the inode.
+> > > > >
+> > > > > So we will have to extend fuse_entry_out anyway, but TBH I never got to
+> > > > > look at the gritty details of how best to extend all the relevant commands,
+> > > > > so I hope I am not sending you down the wrong path.
+> > > >
+> > > > I found another twist to this story: the upper level libfuse3 library
+> > > > assigns distinct nodeids for each directory entry.  These nodeids are
+> > > > passed into the kernel and appear to the basis for an iget5_locked call.
+> > > > IOWs, each nodeid causes a struct fuse_inode to be created in the
+> > > > kernel.
+> > > >
+> > > > For a single-linked file this is no big deal, but for a hardlink this
+> > > > makes iomap a mess because this means that in fuse2fs, an ext2 inode can
+> > > > map to multiple kernel fuse_inode objects.  This /really/ breaks the
+> > > > locking model of iomap, which assumes that there's one in-kernel inode
+> > > > and that it can use i_rwsem to synchronize updates.
+> > > >
+> > > > So I'm going to have to find a way to deal with this.  I tried trivially
+> > > > messing with libfuse nodeid assigment but that blew some assertion.
+> > > > Maybe your LOOKUP_HANDLE thing would work.
+> > > >
+> > >
+> > > Pull the emergency break!
+> > >
+> > > In an amature move, I did not look at fuse2fs.c before commenting on your
+> > > work.
+> > >
+> > > High level fuse interface is not the right tool for the job.
+> > > It's not even the easiest way to have written fuse2fs in the first place.
+> >
+> > At the time I thought it would minimize friction across multiple
+> > operating systems' fuse implementations.
+> >
+> > > High-level fuse API addresses file system objects with full paths.
+> > > This is good for writing simple virtual filesystems, but it is not the
+> > > correct nor is the easiest choice to write a userspace driver for ext4.
+> >
+> > Agreed, it's a *terrible* way to implement ext4.
+> >
+> > I think, however, that Ted would like to maintain compatibility with
+> > macfuse and freebsd(?) so he's been resistant to rewriting the entire
+> > program to work with the lowlevel library.
+> >
+> > That said, I decided just now to do some spelunking into those two fuse
+> > ports and have discovered that freebsd[1] packages the same upstream
+> > libfuse as linux, and macfuse[2] seems to vendor both libfuse 2 and 3.
+> >
+> > [1] https://wiki.freebsd.org/FUSEFS
+> > [2] https://github.com/macfuse/macfuse
+> >
+> > Seeing as Debian 13 has killed off libfuse2 entirely, maybe I should
+> > think about rewriting all of fuse2fs against the lowlevel library?  It's
+> > really annoying to deal with all the problems of the current codebase.
+> > I think I'll try to stabilize the current fuse+iomap code and then look
+> > into a fuse2fs port.  What would we call it, fuse4fs? :D
+> >
+> > > Low-level fuse interface addresses filesystem objects by nodeid
+> > > and requires the server to implement lookup(parent_nodeid, name)
+> > > where the server gets to choose the nodeid (not libfuse).
+> >
+> > Does the nodeid for the root directory have to be FUSE_ROOT_ID?
 > 
-> My memory might be betraying me, but I think willy once launched an
-> attempt to see if we can kill launder_folio.  Adding him, and the
-> mm and nfs lists to check if I have a point :)
+> Yeh, I think that's the case, otherwise FUSE_INIT would need to
+> tell the kernel the root nodeid, because there is no lookup to
+> return the root nodeid.
+> 
+> > I guess
+> > for ext4 that's not a big deal since ext2 inode #1 is the badblocks file
+> > which cannot be accessed from userspace anyway.
+> >
+> 
+> As long as inode #1 is reserved it should be fine.
+> just need to refine the rules of the one-to-one mapping with
+> this exception.
 
-I ... got distracted with everything else.
+Or just make it so that passthrough_ino filesystems can specify the
+rootdir inumber?
 
-Looking at the original addition of ->launder_page (e3db7691e9f3), I
-don't understand why we need it.  invalidate_inode_pages2() isn't
-supposed to invalidate dirty pages, so I don't understand why nfs
-found it necessary to do writeback from ->releasepage() instead
-of just returning false like iomap does.
+--D
 
-There's now a new question of what the hell btrfs is up to with
-->launder_folio, which they just added recently.
+> Thanks,
+> Amir.
+> 
 
