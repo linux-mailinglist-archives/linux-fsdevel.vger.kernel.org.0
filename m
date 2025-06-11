@@ -1,121 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-51354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42233AD5E89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 20:50:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0E3AD5EAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 20:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298AD18987BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 18:51:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F413F7A81A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 18:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF04D26B2C5;
-	Wed, 11 Jun 2025 18:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F87B278774;
+	Wed, 11 Jun 2025 18:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko8UhCBd"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CqqXV77N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459A222C355;
-	Wed, 11 Jun 2025 18:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05861D5CDD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 18:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749667840; cv=none; b=HSnECJH4sDNanDigo2AQt/J9JbjG00LdxymnfLjXSwSvA6Waen9adLGSII9+AL1FlZJSEKV41itw+Hwvfz5wdiroaE1E8jT4tHLmDXuICgLVB3+kWPZ0g5WBZX8n6Wp4y60+doHsycCZmC1QxHJP5AoIs3Of5oJUT/1X/kHn9pU=
+	t=1749668249; cv=none; b=hnNngjXAd90qcSR1EF2dFtVeoqBSGejBIVEFGb0evg+h3JSLC5Hi41sjWGNisAHTiHCQMZYRq3Mu/EHz6ePbIeiERXamoZEvb2kNHiSmuIv35VjYMX96o9EHNPzwcAhfRyZMdv8r5HypoEDE5bWD7vYP+0D3n3+EHmLdqfxGA4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749667840; c=relaxed/simple;
-	bh=K+VqBRIOI16KDT8vzgF0nS+BSfGDTIdxEkzKRZkWcK8=;
+	s=arc-20240116; t=1749668249; c=relaxed/simple;
+	bh=V+7AKa6FyLjb68uNNu+8sDkh3LsLbmL2kbRMyEaa4PE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gs4fzTNsBpNiN5xZE0OKlEMHqNWV3pvi1J1uL+4YlOYkYgyuFsB9gh2pQvCkJxqlNUmJwYcO2guMdmrRnoLIAOS1qK34A3kRQKMBTEbdunFZM/EuDNlQ7jZ2s/S0TcV15fDwSQeEGeHDI/57vgIiYVK3QYZLH2+AhGYHprn4pWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ko8UhCBd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DFBC4CEF4;
-	Wed, 11 Jun 2025 18:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749667840;
-	bh=K+VqBRIOI16KDT8vzgF0nS+BSfGDTIdxEkzKRZkWcK8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ko8UhCBdGvb0YAAkBYkL7Y05eXJStJxSF8pECQvKRoxcEEluvYLB41xv8mzNT8/TC
-	 UQdoiAgER56JiMp5N9QaK9w7JqgPlGaLwIDcFNJIjHZkmLq7ac/911jbsVSGNPG4g7
-	 zgRDgIJdnIXZN9t9++F0yHX9Ouy9BW4j7u95mhJNU6qCpzgGdNnY8XxxFYDWJLBzPC
-	 7tBTGj9Kmqc0WSWvoSvK+isewahpAUyYViZyC9WJMCEuylxuNZxi9Lj0KvXrgmB0mn
-	 ryGpN+pfV583K3e+DgeNJiEYpxWptSHdPuer9X+na91OZtRI0yoYhkHq4XO+HQ5mEQ
-	 1x3U57UBQF0nQ==
-Date: Wed, 11 Jun 2025 11:50:39 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, miklos@szeredi.hu,
-	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, bernd.schubert@fastmail.fm,
-	kernel-team@meta.com
-Subject: Re: [PATCH v1 2/8] iomap: add IOMAP_IN_MEM iomap type
-Message-ID: <20250611185039.GI6179@frogsfrogsfrogs>
-References: <20250606233803.1421259-1-joannelkoong@gmail.com>
- <20250606233803.1421259-3-joannelkoong@gmail.com>
- <aEZm-tocHd4ITwvr@infradead.org>
- <CAJnrk1Z-ubwmkpnC79OEWAdgumAS7PDtmGaecr8Fopwt0nW-aw@mail.gmail.com>
- <aEeo7TbyczIILjml@infradead.org>
- <aEgyu86jWSz0Gpia@infradead.org>
- <CAJnrk1b6eB71BmE_aOS77O-=77L_r5pim6GZYg45tUQnWChHUg@mail.gmail.com>
- <aEkARG3yyWSYcOu6@infradead.org>
- <CAJnrk1b8edbe8svuZXLtvWBnsNhY14hBCXhoqNXdHM6=df6YAg@mail.gmail.com>
- <CAJnrk1au_grkFx=GT-DmbqFE4FmXhyG1qOr0moXXpg8BuBdp1A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XGmzshGZac3AdASfXmZ6B0BRq89YkzH+5+dsQtfWP9BuWdaWSSbPTsPZvzFvji7wiahvHRxbXn2HwmbBckUMgKcb0ZHLmhcAHkSFbontjc/8y/E+BuBhmbXVZYzU24ru9J2YsFfUJef7K6oevbUGWAClQ9iyUf29YcMBeYN/2eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CqqXV77N; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0jon10ihRrAz9X8phGqkkZ5jZ6YAa5eolZeDSdBxkBI=; b=CqqXV77NXE39Sjogy47DkJGgtR
+	urzYy5XTmkN/jtZALd8daiZBoWL4quxcfbZJSLFhOeWZ2GPokkGRURDtWGfscVUDrYk6E1a8xoUei
+	TgyWbjN9URf/s17Bs7RRC5JPbJGlpgn/UvQVjhTryjmmCs1v/hxk2eJvZdMQZjsccDtjvUM0ykVby
+	DL2q1FTbyeaZaRHq0wNFCZNAct3CSwBCdx2qB7LVnAxJt5/+VVNZmpWoW1GlGkD9cMm+n8UpOhige
+	9zTLrMGr6jOlgCbo+IyO9mZxqnOpMSiP2O3VTHpJtWnyibuCqUb5KQ/3xUOzFrWiiJhXKNXv1cvfY
+	mU4VKMyw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPQdZ-00000005Ch1-16wV;
+	Wed, 11 Jun 2025 18:57:25 +0000
+Date: Wed, 11 Jun 2025 19:57:25 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: constify file ptr in backing_file accessor
+ helpers
+Message-ID: <20250611185725.GQ299672@ZenIV>
+References: <20250607115304.2521155-1-amir73il@gmail.com>
+ <20250607115304.2521155-2-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1au_grkFx=GT-DmbqFE4FmXhyG1qOr0moXXpg8BuBdp1A@mail.gmail.com>
+In-Reply-To: <20250607115304.2521155-2-amir73il@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jun 11, 2025 at 11:33:40AM -0700, Joanne Koong wrote:
-> On Tue, Jun 10, 2025 at 11:00 PM Joanne Koong <joannelkoong@gmail.com> wrote:
-> >
-> > On Tue, Jun 10, 2025 at 9:04 PM Christoph Hellwig <hch@infradead.org> wrote:
-> > >
-> > > On Tue, Jun 10, 2025 at 01:13:09PM -0700, Joanne Koong wrote:
-> > >
-> > > > For fuse at least, we definitely want granular reads, since reads may
-> > > > be extremely expensive (eg it may be a network fetch) and there's
-> > > > non-trivial mempcy overhead incurred with fuse needing to memcpy read
-> > > > buffer data from userspace back to the kernel.
-> > >
-> > > Ok, with that the plain ->read_folio variant is not going to fly.
-> > >
-> > > > > +               folio_lock(folio);
-> > > > > +               if (unlikely(folio->mapping != inode->i_mapping))
-> > > > > +                       return 1;
-> > > > > +               if (unlikely(!iomap_validate(iter)))
-> > > > > +                       return 1;
-> > > >
-> > > > Does this now basically mean that every caller that uses iomap for
-> > > > writes will have to implement ->iomap_valid and up the sequence
-> > > > counter anytime there's a write or truncate, in case the folio changes
-> > > > during the lock drop? Or were we already supposed to be doing this?
-> > >
-> > > Not any more than before.  It's is still option, but you still
-> > > very much want it to protect against races updating the mapping.
-> > >
-> > Okay thanks, I think I'll need to add this in for fuse then. I'll look
-> > at this some more
-> 
-> I read some of the thread in [1] and I don't think fuse needs this
-> after all. The iomap mapping won't be changing state and concurrent
-> writes are already protected by the file lock (if we don't use the
-> plain ->read_folio variant).
-> 
-> [1] https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
+On Sat, Jun 07, 2025 at 01:53:03PM +0200, Amir Goldstein wrote:
 
-<nod> If the mapping types don't change between read/write (which take
-i_rwsem in exclusive mode) and writeback (which doesn't take it at all)
-then I don't think there's a need to revalidate the mapping after
-grabbing a folio.  I think the other ways to avoid those races are (a)
-avoid unaligned zeroing if you can guarantee that the folios are always
-fully uptodate; and (b) don't do things that change the out-of-place
-write status of pagecache (e.g. reflink).
+> -struct path *backing_file_user_path(struct file *f)
+> +struct path *backing_file_user_path(const struct file *f)
+>  {
+>  	return &backing_file(f)->user_path;
+>  }
+>  EXPORT_SYMBOL_GPL(backing_file_user_path);
 
---D
+const struct path *, hopefully?  With separate backing_file_set_user_path()
+you shouldn't need to modify that struct path via that functions...
 
