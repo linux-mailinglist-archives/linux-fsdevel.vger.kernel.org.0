@@ -1,45 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-51237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327ADAD4CB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:32:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A40EAD4D5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459873A3032
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 07:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DA11BC0ECD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 07:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E56234970;
-	Wed, 11 Jun 2025 07:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A435E2367BC;
+	Wed, 11 Jun 2025 07:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hHFZ1Ths"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FDC23183C;
-	Wed, 11 Jun 2025 07:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC14231839;
+	Wed, 11 Jun 2025 07:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749627089; cv=none; b=MHQTRmtxN1clMCtQBMTKVIZmlLb8y6XGOLHfb4zc/GR4TZ1k1uHxGpqVkxyVV5cpaWZXaqSs5f9AEBZf4ekwYLagIe7FYBO2Jxs6HZpJG5jKCAio16LKGREGiqc8784Sz8NJIvV/JPRcOP4hSptVDuVQrn8plw+C0ZnfrGTzMnw=
+	t=1749627708; cv=none; b=OIcdA+EsckrTgmAtbF4cf3oRSRFDT1begj78vqpxp844hrbSlc2WYr2QLuTgcWrSTheWqo1K43/9AgZGJop/Lq2aXdkiCxUo1qL96bxLYBupIPhuDJCn2MOhWhKZtQVJN778BTRKK1aA6e05O9f4a3OiiN9umxOytVkUFrfhclM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749627089; c=relaxed/simple;
-	bh=uVY8gD5wTvCS8m0kEGk+hfJFF8nXcQhSPWKbuime2kk=;
+	s=arc-20240116; t=1749627708; c=relaxed/simple;
+	bh=l+BiDfw3/ID60Oy1QyNfLH/S+j5nSbuXDdxWB1eXT50=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LCPSO3WBMzUPw/0CtRcSdlK0hcCZQaFbK09q36js3xqb2mpiOO713nXu9zWGekclg1H/hkU6WAge2QbaZVVabS1zAQsW3VtVgqZE9C74IfKQGX1hDdAH4pT3DlShIguq8ZAFgWjs8UVBi98tU6QWR+uzDijnfDPvcJw6V4Cand8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bHHQh4rsVzYQvJs;
-	Wed, 11 Jun 2025 15:31:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id A3D651A0A55;
-	Wed, 11 Jun 2025 15:31:23 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP3 (Coremail) with SMTP id _Ch0CgA3icPJMElo89e+Ow--.19807S3;
-	Wed, 11 Jun 2025 15:31:23 +0800 (CST)
-Message-ID: <343f7f06-9bf6-442f-8e77-0a774203ec3f@huaweicloud.com>
-Date: Wed, 11 Jun 2025 15:31:21 +0800
+	 In-Reply-To:Content-Type; b=qe+xBAH6xfEI+VauGhEJ29tE9wwVMd6DMM3DYZBZ3kSu/bS6okulETDSyNDyNCA02zi/j9P0PoxR+LvD8jNPpmTxyOIkrIb7LJoD1u54s8rGTmUkjy1jpKz+sCCIjllMPlvTNGXkIFwJREDPp4ZL39Q1lJ68K3ykLm+XznoteRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hHFZ1Ths; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749627696; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=uq80mpSiBoOoP0SpXROsynAkOFNz2d9hYKWr1AlfZnY=;
+	b=hHFZ1Thsc89b5nTnkNqAaVoaG5hFzpC06z1s4xPs50eChwPZueMJuztZQeUmzVtyvQUARc1EdYzbHTO/pUUfwsIYJCjAeRB2S8Uwvt/oITquDSJKEeOf1cshxZ9SHhY4tIeXDqDRxsFrmQSjEHwmxduUCqT0+lbNiC0sAhECWS8=
+Received: from 30.74.144.128(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdcFevd_1749627695 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 11 Jun 2025 15:41:36 +0800
+Message-ID: <24580f79-c104-41aa-bbdb-e1ce120c28a0@linux.alibaba.com>
+Date: Wed, 11 Jun 2025 15:41:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,76 +48,49 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to
- queue limits features
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com,
- chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, brauner@kernel.org,
- martin.petersen@oracle.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
- <20250604020850.1304633-2-yi.zhang@huaweicloud.com>
- <20250611060900.GA4613@lst.de>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250611060900.GA4613@lst.de>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 2/7] mm: shmem: avoid setting error on splited entries in
+ shmem_set_folio_swapin_error()
+To: Kemeng Shi <shikemeng@huaweicloud.com>, hughd@google.com,
+ willy@infradead.org, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250605221037.7872-1-shikemeng@huaweicloud.com>
+ <20250605221037.7872-3-shikemeng@huaweicloud.com>
+ <c05b8612-83a6-47f7-84f8-72276c08a4ac@linux.alibaba.com>
+ <100d50f3-95df-86a3-7965-357d72390193@huaweicloud.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <100d50f3-95df-86a3-7965-357d72390193@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgA3icPJMElo89e+Ow--.19807S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw1kXw1DJFWxCryUZF4xWFg_yoWfWFc_Za
-	1SyryDCw4DArySyanrAwn8trWkKr4DXFWxur47Kay5Ca45Ja4xCrs5urySva4FqayFqF4I
-	krZxXF9F9FZ2gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
-	0PDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2025/6/11 14:09, Christoph Hellwig wrote:
-> On Wed, Jun 04, 2025 at 10:08:41AM +0800, Zhang Yi wrote:
->> +static ssize_t queue_write_zeroes_unmap_show(struct gendisk *disk, char *page)
-> 
-> ..
-> 
->> +static int queue_write_zeroes_unmap_store(struct gendisk *disk,
->> +		const char *page, size_t count, struct queue_limits *lim)
-> 
-> We're probably getting close to wanting macros for the sysfs
-> flags, similar to the one for the features (QUEUE_SYSFS_FEATURE).
-> 
-> No need to do this now, just thinking along.
 
-Yes.
 
-> 
->> +/* supports unmap write zeroes command */
->> +#define BLK_FEAT_WRITE_ZEROES_UNMAP	((__force blk_features_t)(1u << 17))
+On 2025/6/9 09:19, Kemeng Shi wrote:
 > 
 > 
-> Should this be exposed through sysfs as a read-only value?
+> on 6/7/2025 2:20 PM, Baolin Wang wrote:
+>>
+>>
+>> On 2025/6/6 06:10, Kemeng Shi wrote:
+>>> When large entry is splited, the first entry splited from large entry
+>>> retains the same entry value and index as original large entry but it's
+>>> order is reduced. In shmem_set_folio_swapin_error(), if large entry is
+>>> splited before xa_cmpxchg_irq(), we may replace the first splited entry
+>>> with error entry while using the size of original large entry for release
+>>> operations. This could lead to a WARN_ON(i_blocks) due to incorrect
+>>> nr_pages used by shmem_recalc_inode() and could lead to used after free
+>>> due to incorrect nr_pages used by swap_free_nr().
+>>
+>> I wonder if you have actually triggered this issue? When a large swap entry is split, it means the folio is already at order 0, so why would the size of the original large entry be used for release operations? Or is there another race condition?
+> All issues are found during review the code of shmem as I menthioned in
+> cover letter.
+> The folio could be allocated from shmem_swap_alloc_folio() and the folio
+> order will keep unchange when swap entry is split.
 
-Uh, are you suggesting adding another sysfs interface to expose
-this feature?
+Sorry, I did not get your point. If a large swap entry is split, we must 
+ensure that the corresponding folio is order 0.
 
-> 
-> Otherwise looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+However, I missed one potential case which was recently fixed by Kairui[1].
 
-Thanks,
-Yi.
-
+[1] https://lore.kernel.org/all/20250610181645.45922-1-ryncsn@gmail.com/
 
