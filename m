@@ -1,100 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-51265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8B8AD4F80
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 11:14:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59CA2AD5023
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 11:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B89316AF82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:14:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EAFE7A61F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929A2253F08;
-	Wed, 11 Jun 2025 09:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CB42609D5;
+	Wed, 11 Jun 2025 09:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtJ8jYuv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GW1Plu2E"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFBA226888
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 09:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE8923E25B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 09:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749633239; cv=none; b=bUsiy/klKWK15sc9m+rdU0voF7jHFPd5nsJ++mDl/meaQOPypi8S8mgZ3Wh2Oq0+3YQ+yFX+8jleMAJ+8olWGpn1RY0iETUbCkJ/hTzYRZdQZ3P8/baI1iVWRtpWmGaMNiJwRELMbzSZAb4EX67U1iY0ZN9EC2gsoVDMZP43TNU=
+	t=1749634608; cv=none; b=tEccRaHNZ1JyguzChHNJV5a7ccAJsIzMymmrYwiu+2kPgih17+z0OH0A2X5GfWjhWz7a6ND6sdy8HQEWD8J3RVxvUqLQB6IXRXTrcYEDbA5MxJqp2z2VONi0qB5guUwTCIR79JE2ZsAPgnNo8ZQkxP1RozCTRZ5FE5vPdm0X9mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749633239; c=relaxed/simple;
-	bh=nrEaIoqxMU6sacIJhkX3I8SB9I1dCy3nhHGJ8nkcHZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j+6kp9r2ePtgFSYvEIE/fZvIfxF8C1XKC0xVvhtRf7b6Hv2YLLFVbYxXLy7koacM0QoKE5cRSTbWygji/JdqFXCYnjcT7+dCJH8gG88bEYl28BU+aRtA9eMQdGCIXHDC+pm/zclgMPcsPmqZdDEwHnnzwldRDHHz4LpwRRRBAG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtJ8jYuv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E43BC4CEEE;
-	Wed, 11 Jun 2025 09:13:56 +0000 (UTC)
+	s=arc-20240116; t=1749634608; c=relaxed/simple;
+	bh=4S2bRreIV196LeuUbldSTWGivnFEuN0eS5NT0vpiDBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aUHqyREYM2tDZ19CWO1EacuOSchHvj5EZy666w74NoI29bOywkMCEMt/fbnX4AnTIGcg1diAhSdIKcgoXr7MGHPD1aXoRrPP2DkS9+1jcUoGDul0wGteO/rAAhPs/oG0iWIxrL89qj9N+VFkZ9Rl0fZICuB+05abbULthB3/bFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GW1Plu2E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40AECC4CEEE;
+	Wed, 11 Jun 2025 09:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749633238;
-	bh=nrEaIoqxMU6sacIJhkX3I8SB9I1dCy3nhHGJ8nkcHZU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RtJ8jYuv9yjjHV+t14Jz5tKsA23x3BgOO72i1HCcl3+9axniDDu0XavYk3uwLhZYf
-	 3QEchsmekSbHuQzqnU2IM6gP5BLnSn6HU2pxH8BwVL//k5OJD8L2TCv4Vo+IQekrP7
-	 N6CYdxXDI+aApMXwfnNJV4cB/d5AzBO1B/c/2PGtRfqwZF/UvU7YrmxYpeU43oK912
-	 R7j+FzQCQl1ddQHOL1VtzTcnOKpptuI32k5R4kF3+6oSkyBySwnDmE8pL2e3XqZDY1
-	 s4FPGHRTp5awq9O1sTFyXPbzeK1ZUAYprJdeXmRw5hZrgfcT11xn6z134bsjxZH7ds
-	 8FdEjqGGajYKg==
+	s=k20201202; t=1749634607;
+	bh=4S2bRreIV196LeuUbldSTWGivnFEuN0eS5NT0vpiDBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GW1Plu2E1YQshngRaYFlcETptgMwGpOmbUub7q7NrFfCDNA8/GUeVG+HfCldBsB7q
+	 KjyT13DcKplz01QkggfYlyECsYmGEKGSpP3vJoyjG4ztScBFcJ4xmGug6bycuN3ttW
+	 nIPtWlGl3vHFevyig0o1MBFjgseIGzMuimlH2XcCJL6XHmTfO9KbbXjn5LWfdrby7W
+	 Hyipz0CW98Och8T6TlEzPyoZHIKYG7kkPowsFv6qP5SVcUMjT5Pba9BBYLff+O9AQX
+	 Dj5bgVKYCbGi8KcpeYk/4Q21BDb0eOD2TS7CRjfgh0+OPX6dCfkSmhkFAOoecEPdD5
+	 peRQm1A7196Wg==
+Date: Wed, 11 Jun 2025 11:36:43 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2] backing_file accessors cleanup
-Date: Wed, 11 Jun 2025 11:13:51 +0200
-Message-ID: <20250611-entfachen-suppen-d0f790b4064a@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250607115304.2521155-1-amir73il@gmail.com>
-References: <20250607115304.2521155-1-amir73il@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
+	Jan Kara <jack@suse.cz>, Allison Karlitskaya <lis@redhat.com>
+Subject: Re: [PATCH 1/2] mount: fix detached mount regression
+Message-ID: <20250611-denkpause-wegrand-6eb6647dab77@brauner>
+References: <20250605-work-mount-regression-v1-0-60c89f4f4cf5@kernel.org>
+ <20250605-work-mount-regression-v1-1-60c89f4f4cf5@kernel.org>
+ <20250606045441.GS299672@ZenIV>
+ <20250606051428.GT299672@ZenIV>
+ <20250606070127.GU299672@ZenIV>
+ <20250606-neuformulierung-flohmarkt-42efdaa4bac5@brauner>
+ <20250606174502.GY299672@ZenIV>
+ <20250607052048.GZ299672@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1258; i=brauner@kernel.org; h=from:subject:message-id; bh=nrEaIoqxMU6sacIJhkX3I8SB9I1dCy3nhHGJ8nkcHZU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR4elxoeBhwYNlnpgn1u67u0Jr/cOlrgfQyLb4VeQyCq kdFjUS2dpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk+QdGhlk6AlssQ0K2uZx0 2fh9x9MXazq3TON9uZvzzftrgo+nMa1lZFg661tRuNEjt5fGDn8Kjm9wj322bPLaeyxfzh9QMza Oe8QAAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250607052048.GZ299672@ZenIV>
 
-On Sat, 07 Jun 2025 13:53:02 +0200, Amir Goldstein wrote:
-> Christian,
+On Sat, Jun 07, 2025 at 06:20:48AM +0100, Al Viro wrote:
+> On Fri, Jun 06, 2025 at 06:45:02PM +0100, Al Viro wrote:
+> > On Fri, Jun 06, 2025 at 09:58:26AM +0200, Christian Brauner wrote:
+> > 
+> > > Fwiw, check_mnt() is a useless name for this function that's been
+> > > bothering me forever.
+> > 
+> > Point, but let's keep the renaming (s/check_mnt/our_mount/, for
+> > example) separate.
 > 
-> As promissed, here is the backing_file accessors cleanup that
-> was dicussed on the overlayfs pr [1].
+> Modified and force-pushed.
 > 
-> I have kept the ovl patch separate from the vfs patch, so that
-> the vfs patch could be backported to stable kernels, because
-> the ovl patch depends on master of today.
+> It does pass xfstests without regressions.  kselftests... AFAICS,
+> no regressions either, but the damn thing is a mess.  Example:
 > 
-> [...]
+> # # set_layers_via_fds.c:711:set_layers_via_detached_mount_fds:Expected layers_found[i] (0) == true (1)
+> # # set_layers_via_fds.c:39:set_layers_via_detached_mount_fds:Expected rmdir("/set_layers_via_fds") (-1) == 0 (0)
+> # # set_layers_via_detached_mount_fds: Test terminated by assertion
+> # #          FAIL  set_layers_via_fds.set_layers_via_detached_mount_fds
+> 
+> Not a regression, AFAICT; the underlying problem is that mount options
+> are shown incorrectly in the tested case.  Still present after overlayfs
+> merge.  mount does succeed, but... in options we see this:
+> rw,relatime,lowerdir+=/,lowerdir+=/,lowerdir+=/,lowerdir+=/,datadir+=/,datadir+=/,datadir+=/,upperdir=/upper,workdir=/work,redirect_dir=on,uuid=on,metacopy=on
+> 
+> And it's a perfectly expected result - you are giving fsconfig(2) empty
+> path on a detached tree, created with OPEN_TREE_CLONE.  I.e. it *is*
+> an empty path in the mount tree the sucker's in.  What could d_path()
+> produce other than "/"?
 
-Applied to the vfs-6.17.file branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.file branch should appear in linux-next soon.
+Sigh. There's no need to get all high and mighty about this. For once I
+actually do write extensive selftests and they do actually catch a lot
+of bugs. It's a joke how little selftests we have given the importance
+of our apis. Nobody ever gives a flying fsck to review selftests when
+they're posted because nobody seems to actually care.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The simple thing here to do is to point out that there's an issue in the
+tests and that this should be fixed and maybe ask why.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+The answer to that is that the getline checked in
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+        TEST_F(set_layers_via_fds, set_layers_via_detached_mount_fds)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.file
+is a simple copy-and-paste error from
 
-[1/2] fs: constify file ptr in backing_file accessor helpers
-      https://git.kernel.org/vfs/vfs/c/52e50bf764e0
-[2/2] ovl: remove unneeded non-const conversion
-      https://git.kernel.org/vfs/vfs/c/9445dc8817b5
+        TEST_F(set_layers_via_fds, set_layers_via_fds)
+
+that should just be removed and that's the end of that problem.
+
+What sort of odd assumption is it that I'm not aware that a detached
+tree doesn't resolve to /tmp. It's clearly a simple bug.
+
+I actually had a patch to fix this I probably just forgot to paste it
+during the merge window that added support for this.
+
+> Note, BTW that it really does create set_layers_via_fds in root (WTF?) and
+> running that sucker again yields a predictable fun result - mkdir() failing
+> with EEXIST...
+
+It's clearly a cleanup issue in FIXTURE_TEARDOWN(). Either fix it or ask
+me to fix it.
+
+> IMO that kind of stuff should be dealt with by creating a temporary directory
+> somewhere in /tmp, mounting tmpfs on it, then doing all creations, etc.
+> inside that.  Then umount -l /tmp/<whatever>; rmdir /tmp/<whatever> will
+> clean the things up.
+
+Sorry, that's just wishful thinking at best and out of touch with how
+these apis are used. The fact that you need a private assembly in some
+hidden away directory followed by a umount is a complete waste of system
+calls for a start. It's also inherently unclean unless you also bring
+mount namespaces into the mix. Being able to use detached mount trees is
+simple and clean especially for the overlayfs layer case.
+
+There's enough cases where you don't ever want to leak the mounts into
+an actually accessible mount namespace.
 
