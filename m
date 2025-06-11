@@ -1,143 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-51218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8ABAD48F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 04:49:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C591AD4901
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 04:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AAA417C0CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 02:49:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED0A57A3D32
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 02:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467D42253FB;
-	Wed, 11 Jun 2025 02:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BE822541B;
+	Wed, 11 Jun 2025 02:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FraPMRfa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22DAEAC6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 02:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B03FEAC6;
+	Wed, 11 Jun 2025 02:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749610170; cv=none; b=qgHxYcrWsVYfVYkis9PK9X8XXtjUuubC+RGtyYb30pEEBoEK1M71UUzBBRvwAqzaypLIdrGO0syWRGpU9V+GJijVstVBaB15SlBGxca0TB8r8j7LOsCGUhQgUFzC6UtKGdBMRSS2FA4jS4E9PzugsODqnFF+OKKYmgYMR7xZihg=
+	t=1749610653; cv=none; b=hCrpymwyraJ1oYFrOn/YduIA5UJC8jHfb97v7eFtwq73DDkHXy/bQz9RE/bDsQo3bz4CllWGkYRvi3McU3si30zLmux5z1WBIFgaW7CUi6pjYmlNu0C0HDxqLKqUff3TjteNXmzLMshrs694J5I2rU5EpZbSfYvh9IjJ+woJAs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749610170; c=relaxed/simple;
-	bh=c1iyHEfX3PdCWXgUyvDSwgkoCR2UH8popZ66z4qF00E=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=Xdb8GC5Wl1vEeqaMbAmUtLqXJCQLCs41HHyIBQwLkPTDAu4k9VxvjrrGDLn0duNq3uU9o04ey9ciRTE0jsa7+Ui69kdJ3ZmaphdYUjQNvC/YKyi3v7ObF9gXvOr1/Mdx5yU2DBmHiBmhEwYSNJsqt07mtlZBIF+TckdKmEddvb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uPBWm-007z5s-6X;
-	Wed, 11 Jun 2025 02:49:24 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1749610653; c=relaxed/simple;
+	bh=ftbRrev081YY708k/2HkfTQQMsecdpEbMiB+x4kF9Ec=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=EAwdSv1SEwXkR5T3tjxHbShDXb7EdfZmKNKIq8BSHgoTf3F2TmbKL0mZd9SJjbJqm+mpgR9p4Q+KaZAm3wtnrkv/ZwbdgPqUB8Q1padkc0R9+vr1nQkvO52ItDluwdRKH+ochaLabRWedsCh95ij7yFyuFu2opsSWCN7NDTMLTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FraPMRfa; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3292aad800aso4792341fa.0;
+        Tue, 10 Jun 2025 19:57:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749610650; x=1750215450; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=k5/dKPGbzIpZPRhOJIYAIUAY23sahY1p0GkM5Dbi828=;
+        b=FraPMRfasMRsKi8S6wGwXMAlrzUCHdzRWYHzkki/JEbvAhwzAiYAaPqijhz8nLLr6Z
+         nW5bOp8p4PM/OlR8yYK9OHu+VnHnh6GZjUEw9a92ICBPtqmUNKmcZhApD08RpFWDmk0B
+         HHa1h3yJJcrVI5t/rxBUQrnYwP5o0zoX6ete26K0i8hUP2g2MJEnWSn4rqSSYlobBwKo
+         YmmRG94NBsXlYAS5vqhnHhdsILsnDAfFwoTBSGsAyOb65flfJ0DSgT76tAd4zohbv21t
+         x9EB2rzfhY3YizBry4YraKY538gcB4LO3+E2QUzCW4t3Mu5XB5/8ODRoouBgt8dGupPy
+         ZJfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749610650; x=1750215450;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k5/dKPGbzIpZPRhOJIYAIUAY23sahY1p0GkM5Dbi828=;
+        b=dYAXWNkupbR2Dia58D7TU1xuztXeprGrfzXn7hlhdI9TCmzwLGOVGDH+HNTZLyg1Kx
+         ZnYfHWZpWqZE8asJRLO8yr3gx+FDgkMMvBM8WuYrYa5KDNkqt6AENlt0f+rVCOWveZPv
+         3kmQTSZ7VG/qDTaimp/SX28aFdoJabPy1VaOhWoUrnfNR6QEkpChT9+t1dESVfedCQBm
+         jnb3eEUr4Nu/LKbjh/uMMgd1Dt4qJfSznmTUGT5JqO8qGc2Z2ORZYIGaL8016mL9MntL
+         oPPRI23OHY+lBZ6Jvt1EvlMd8zA61TMMQCH9LwDFyJ2Ynp1z+5otZSSIulLEOk3r9q4P
+         g+4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWtzzThM4uzw3SrsmE604A6cA6VPXzqH1yVnQbh4BNX5p0BgagL2Yt/ke/rkWNMqQKwAMBNkKLXis3a9nh6@vger.kernel.org, AJvYcCX2MXUY3m9E0DUl64h1nX4HR9/mhundMn9NOnp8YyfUUpkaoR9l6fEuqtQpVoRCjVA1bQLxqCGEoDyegSH0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5P42e8ViyBsL7MK81ViHJWA9p6Swv5znmUXmxP/ZP/z58ANBe
+	XuXYQa6L7VG76OmfpSmqxAWNPwuEVL0LCoXc1EX5zWor1H5lVkeqJR1h0Yq1Si0obsTWgUkQgxU
+	ZlUc2ad+/z+P6uGsSRr0T9tJR5G03/g==
+X-Gm-Gg: ASbGncsBIL44rsd6iSrKpaV1hMDlNfj3/2ZVv8wa7pybbWIL9Jy0Q++sdwGo7YUlIwD
+	k/rzAOrKGzyVk2+GY2uIROUouAdyq7x4JD3qFkjMz6sGGOfq+ez14mdSWKza8GRtvxzQ4NGDJaE
+	CK2ZYZiz+8yHMgQ2q5LJd/3N9EuVNrVKWKvZFNcbDKzl7x023DrHTWjHFkM2aid1B3
+X-Google-Smtp-Source: AGHT+IEFNzBv8fZSBw4aZ1kXDaDWLmj7aUuxHZCWz3lfEOlNJgoEOiB4e0JsaAMYaDjUOLs41dCtCLk2PDK81AZCINc=
+X-Received: by 2002:a05:651c:210f:b0:326:cf84:63c4 with SMTP id
+ 38308e7fff4ca-32b210c657fmr5158651fa.1.1749610649747; Tue, 10 Jun 2025
+ 19:57:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Subject:
- Re: [PATCH 5/8] Introduce S_DYING which warns that S_DEAD might follow.
-In-reply-to: <20250611011307.GI299672@ZenIV>
-References: <>, <20250611011307.GI299672@ZenIV>
-Date: Wed, 11 Jun 2025 12:49:21 +1000
-Message-id: <174961016183.608730.150458194978102523@noble.neil.brown.name>
+From: John <john.cs.hey@gmail.com>
+Date: Wed, 11 Jun 2025 10:57:17 +0800
+X-Gm-Features: AX0GCFt0cfSVXX65tmSyu3WNgHQ4OBUou2DiUUZrRdo_qtrgZDXAjeLg3uyGav4
+Message-ID: <CAP=Rh=P1fGXNWpy02ZfNaDaRVx-7i5sKzehHxjMn5s7puwTbtQ@mail.gmail.com>
+Subject: [Bug] INFO: task hung in bdev_getblk in Linux kernel v6.15
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 11 Jun 2025, Al Viro wrote:
-> On Wed, Jun 11, 2025 at 11:00:06AM +1000, NeilBrown wrote:
->=20
-> > Yes.
-> >=20
-> > >=20
-> > > Where does your dentry lock nest wrt ->i_rwsem?  As a bonus (well, malu=
-s, I guess)
-> > > question, where does it nest wrt parent *and* child inodes' ->i_rwsem f=
-or rmdir
-> > > and rename?
-> >=20
-> > Between inode of parent of the dentry and inode of the dentry.
->=20
-> That's... going to be fun to prove the deadlock avoidance.
-> Looking forward to such proof...
+Dear Linux Kernel Maintainers,
 
-I do hope to write something along those lines, but I'd rather do it
-after getting feedback on the design.  It's already changed several
-times and while I have growing confidence that I understand the key
-issues there is still room for change as discussed below.
+I hope this message finds you well.
 
->=20
-> Look, the reason why I'm sceptical is that we had quite a few interesting
-> problems with directory locking schemes; fun scenarios are easy to
-> miss and I've fucked up more than a few times in that area.  Fixing it
-> afterwards can be a real bitch, especially if we get filesystem-specific
-> parts in the picture.
+I am writing to report a potential vulnerability I encountered during
+testing of the Linux Kernel version v6.15.
 
-That's part of why I like bringing all the locking into namei.c using
-lookup_and_lock() etc.  Having everything in one place won't make it
-easy but might make it more tractable.
+Git Commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca (tag: v6.15)
 
->=20
-> So let's sort it out _before_ we go there.  And I mean proof - verifiable
-> statements about the functions, etc.
+Bug Location:
 
-I was hoping to get some of the refactoring - which I think it useful in
-any case - in before needing a complete tidy solution.  Partly this is
-because I thought the review discussion of the locking would be more
-effective when the code was clean and centralised....
+Bug report: https://hastebin.com/share/xafazazeve.yaml
 
->=20
-> Incidentally, what was the problem with having dentry locked before
-> the parent?  At least that way we would have a reasonable lock ordering...
-> It would require some preliminary work, but last time I looked at the
-> area (not very deeply) it felt like a plausible direction...  I wonder
-> which obstacle have I missed...
->=20
+Complete log: https://hastebin.com/share/wopivucivi.perl
 
-If we are to put the parent locking after the dentry locking it must
-also be after the d_alloc_parallel() locking.  As some readdir
-implementations (quite sensibly) use d_alloc_parallel() to prime the
-dcache with readdir results, we would not be able to hold the parent
-locked across readdir.  So we would need some other exclusion with
-rmdir.
+Entire kernel config:  https://hastebin.com/share/ajowibazak.ini
 
-Put another way: if we want to push the parent locking down into the
-filesystem for anything, we really need to do it for everything.
-For rmdir we would need the "set S_DYING and wait for locked dentries"
-to happen before taking the lock, and we cannot use parent lock for
-readdir.
+Root Cause Analysis:
 
-Maybe we could do that, but we can't use spare d_flags or i_flags for
-the readdir locking - we need a counter.  Maybe i_writecount or
-i_dio_count could provide the space we need as they aren't used on
-directories.
+The bug originates from bdev_getblk() in fs/buffer.c, where an invalid
+1024-byte block size is requested on a device with a 2048-byte logical
+block size. The function does not enforce block size consistency,
+leading to downstream allocation failure in
+ext4_reserve_inode_write(). This failure is not gracefully handled,
+resulting in a persistent hang of the writeback worker thread, I/O
+errors, and filesystem instability.
 
-I thought that going down that path added more complexity than I wanted,
-but it does have the advantage of making the purpose and scope of the
-different locks more explicit.
+At present, I have not yet obtained a minimal reproducer for this
+issue. However, I am actively working on reproducing it, and I will
+promptly share any additional findings or a working reproducer as soon
+as it becomes available.
 
-... or maybe we could change those readdir routines to do a try-lock.
-i.e.  have a d_alloc_parallel() variant which returned -EWOULDBLOCK
-rather than waiting for the dentry to be ready.  Maybe that is a
-sensible approach anyway...
+Thank you very much for your time and attention to this matter. I
+truly appreciate the efforts of the Linux kernel community.
 
-Another (unrelated) option that I've considered but not yet explored is
-using the same locking scheme for in_lookup dentries and for the targets
-of operations.  There would be just two DCACHE flags (locked, and
-waiter-exists) and the in_lookup dentries would be recognised by having
-d_inode being $RESERVED_ADDRESS.  Then dentries would always be created
-locked and then unlocked when they are ready (like inodes).  I think I
-like this, but I also wonder if it is worth the churn.
-
-NeilBrown
-
+Best regards,
+John
 
