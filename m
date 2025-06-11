@@ -1,142 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-51362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC88AAD607B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 23:00:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B03AD619D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 23:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1815E3AA1C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 20:59:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFE7A7A8191
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 21:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7752BD586;
-	Wed, 11 Jun 2025 20:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7D4248886;
+	Wed, 11 Jun 2025 21:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YL6nwlJW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTtHo4IW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDC219C560
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 20:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C6D243968;
+	Wed, 11 Jun 2025 21:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749675599; cv=none; b=HeX5+LtbDVzMb0gMTsQBgZOWi2w/Rog5fMaYcKxjnro6ewXX9SXNPl/lqa3wkZ95l9X/cnmXGJ7m/dvNi+J/w3jsO4e4hSClZrShGtWhlaxw2VcD/Gli9acEPslpqYBrNbz0ckZxI3+k35JhRU4MgEutd5ymOCpZsceRKqMpZCU=
+	t=1749677820; cv=none; b=Hn5tfJkJsvSeqvpokx/9WxJWnRIig7Zx4BaD4sU2CQzuAdZqnFauTEUT7adnViGQUwC2wV5V4vBAIL+oSXIYszROm+6iIV4e3iV4vZqNoA5emDXpoxSyCnGnYp+3IEouewRtAbEfHQybtFZNCj0tfJ7LzXBtRZfaJZDRQ7x712U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749675599; c=relaxed/simple;
-	bh=nATuHHUdXGwJIbec5/ITuY/3NpZYod4aFqLrAL1TCAw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o1NhjHtNVVLL783/xnSETfS1QwkehKPeQPx6ZTOBZAU7roKzZ3fKXtcI991ReUMMLaZwDV0XV7zaem47Vwre+ooc98GEUwR45MWFMO0lZ3FBQzQCpq6EyMhYbWAjgr4tPX9TykvjpWyJaSZGPaNAh+X+hL6iPdT/rAMUZZJ5odY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YL6nwlJW; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-607c5715ef2so553285a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 13:59:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749675595; x=1750280395; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BeAADMlrn5CH5UXUU5Y8bij4uMfdXwUjkzAYWoJq0Bs=;
-        b=YL6nwlJWPvORH3UvVX8cd6bNIbqp3pLvg3C8YsySQycMFgVN+CvlDO24rkhHUMs4fw
-         yvPZrmlQpgqAC2WAX+Uza6XP5e0vIfNjO4GgmGdW9Ebo5Fqtgw/OGbHpSf6BxwjaUGdO
-         bpF3p539Brx5YN6cGHh4TD+qPqa2kynGKcBzaGMjF/dgd3/NFj/Y+5TlIFyyprxYRqTE
-         sC6lxqaz5nThANRNA7k36Z0vqJ+KlNh161imYpv+X9kgr36e5shJk5OuOUZw0RYGeMZO
-         TUbHtSX3yuVh9EXnZIDgDrzLwBm6TaKJHTEfGM54LA6Iv5/u/TwkZI28KELXWD+9yNu/
-         iubg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749675595; x=1750280395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BeAADMlrn5CH5UXUU5Y8bij4uMfdXwUjkzAYWoJq0Bs=;
-        b=rRHmQPnO3qSao1TPgkuRCSgP9GhcUg08zRUuXInHOATFKhyaQlG9SDwa/hqMx5PiAY
-         ruJCkZ6tize2CLp17fRlBPZ1hQa7UmPZ1/4x0bKIv6z1xxX8OMerVj8DcLC2sb44puAA
-         4gxASwULKJIe/Lq82MrHHOEjIAjnFAbUjvzcUYp3JZHF1VDxKzSSaqzM9bKIjWV5/TnX
-         VJPddMm9n8LxGJ7bOUIvqs0RMHbzvryxJ3321MjMCb6h4gplH6X6Mbt6m5ko6kjguRaW
-         slhQSMzNp1fJRAGbJX5tAn94dksTrvlFTNe0KaIsmbRcjZuAUFva+aHuj2UuPuCpfO8E
-         fpJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWUgydOdr9YaQGEyaoYqnIXC1pOPNAg5XLoeAD4aw78tmI3ZaZRYbJfUCIsPG242/uEhBs+ZPG1KKv8PUC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRMXVDKYAUxC7Gse97Gk3Mh/giKZN2QbSVcXHfpq6lwam6zzLI
-	uOfCVXiEbIb5N9FmsIdlIF+YSFLjUMlh+/6uBYKDFbzQByzDOErDHyYD73tdl9r1LKNEtGx15Ah
-	9UKWkIxRPj+KwRHbBTz36yQRyyfHAUcwIDeuu
-X-Gm-Gg: ASbGncsdTwTXH1TYMX3CWbfgI+U45PyhVE3PT3gy5TO6uzY1ccf1bGV3jdyBUefKp9/
-	J0J1CffGaTAAhbc+PJWPvDh4S36PCI0XZ3p25Dk8FT1q5kIh4CpFeTLQSxpxRqMMqjwOTEEidDc
-	OPnlDbnjscAnltVT2CEQ6sLheR9VEUWTC0evXvZ+DECpI=
-X-Google-Smtp-Source: AGHT+IEhDfxbfn2DB4RWIkj6gzxrhlJByqZqh6sB0xKClzzdOQVmnrpn6n3GXsNHmejdvL8tXfQJB3lGD9BXxo5Yrqg=
-X-Received: by 2002:a17:907:3e06:b0:ad8:89f8:3f51 with SMTP id
- a640c23a62f3a-adea92790admr53820866b.6.1749675583546; Wed, 11 Jun 2025
- 13:59:43 -0700 (PDT)
+	s=arc-20240116; t=1749677820; c=relaxed/simple;
+	bh=wYNHkDW6WpVh2Jvzbqjve2B808mF0EEubMr2DeddhIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYdzv63KKNOmKqLG9rOk11ONZJkdlVZauek4cAhK7wF343zZtkeWlr/PCCAtsRhmYFeoxOKweDWlqw9pC4TKSWCiuZWM37rxoqLV/qLp9Af05tHT9sAy7ttuLPKbLou9ScOU1ECVt1NZ1j4aGmj8UB1UcWhiTYRaeDA4ZVh6Hkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTtHo4IW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57405C4CEE3;
+	Wed, 11 Jun 2025 21:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749677819;
+	bh=wYNHkDW6WpVh2Jvzbqjve2B808mF0EEubMr2DeddhIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dTtHo4IW38VTnQK7l0Od+IBPL2TrTr/Na/IL24hd30X4A1uug5okD8gjzaiaLoTKN
+	 R/uYZDsaBBCN3OtfQyqmfNX80eqsZrga8SyiWWMrTMdtwTvnFhlqaMMt/xCn87/8jz
+	 rUZTK6F/f/mSD/lW7W4/emf1wsASwS7IIgVf8OuDsRAFjHy4hEmqSNW6aTnrJ+1dQE
+	 n68mET//Hb5+XpTlcvkaly7iLa/EAK28DfF1rKcIJaOlUM+HsF4uXIbxxRyTQgP7/k
+	 6E1xUrrvy3rVXvj0Vzz9o0Skztv9/uB6Jr5qMRnmRt1jdpDkdycPAXpI/heKA1sicb
+	 s0J1IkUHfCTPw==
+Date: Wed, 11 Jun 2025 17:36:58 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: need SUNRPC TCP to receive into aligned pages [was: Re: [PATCH 1/6]
+ NFSD: add the ability to enable use of RWF_DONTCACHE for all IO]
+Message-ID: <aEn2-mYA3VDv-vB8@kernel.org>
+References: <20250610205737.63343-1-snitzer@kernel.org>
+ <20250610205737.63343-2-snitzer@kernel.org>
+ <4b858fb1-25f6-457f-8908-67339e20318e@oracle.com>
+ <aEnWhlXjzOmRfCJf@kernel.org>
+ <7c48e17c4b575375069a4bd965f346499e66ac3a.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250607115304.2521155-1-amir73il@gmail.com> <20250607115304.2521155-2-amir73il@gmail.com>
- <20250611185725.GQ299672@ZenIV>
-In-Reply-To: <20250611185725.GQ299672@ZenIV>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 11 Jun 2025 22:59:32 +0200
-X-Gm-Features: AX0GCFvtmf2b9o5Oau4qlA8CriNb1mEeSG2SHTa9FaxcVyHc0mH2Z56ySD0WQKQ
-Message-ID: <CAOQ4uxh6H6eo-t1Lx9qDHGc2cctdm2L-Kq23OPdmfs-uQYy2Bw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs: constify file ptr in backing_file accessor helpers
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c48e17c4b575375069a4bd965f346499e66ac3a.camel@kernel.org>
 
-On Wed, Jun 11, 2025 at 8:57=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
+On Wed, Jun 11, 2025 at 04:29:58PM -0400, Jeff Layton wrote:
+> On Wed, 2025-06-11 at 15:18 -0400, Mike Snitzer wrote:
+> > On Wed, Jun 11, 2025 at 10:31:20AM -0400, Chuck Lever wrote:
+> > > On 6/10/25 4:57 PM, Mike Snitzer wrote:
+> > > > Add 'enable-dontcache' to NFSD's debugfs interface so that: Any data
+> > > > read or written by NFSD will either not be cached (thanks to O_DIRECT)
+> > > > or will be removed from the page cache upon completion (DONTCACHE).
+> > > 
+> > > I thought we were going to do two switches: One for reads and one for
+> > > writes? I could be misremembering.
+> > 
+> > We did discuss the possibility of doing that.  Still can-do if that's
+> > what you'd prefer.
+> >  
+> 
+> Having them as separate controls in debugfs is fine for
+> experimentation's sake, but I imagine we'll need to be all-in one way
+> or the other with a real interface.
+> 
+> I think if we can crack the problem of receiving WRITE payloads into an
+> already-aligned buffer, then that becomes much more feasible. I think
+> that's a solveable problem.
+
+You'd immediately be my hero!  Let's get into it:
+
+In a previously reply to this thread you aptly detailed what I found
+out the hard way (with too much xdr_buf code review and tracing):
+
+On Wed, Jun 11, 2025 at 08:55:20AM -0400, Jeff Layton wrote:
+> >
+> > NFSD will also set RWF_DIRECT if a WRITE's IO is aligned relative to
+> > DIO alignment (both page and disk alignment).  This works quite well
+> > for aligned WRITE IO with SUNRPC's RDMA transport as-is, because it
+> > maps the WRITE payload into aligned pages. But more work is needed to
+> > be able to leverage O_DIRECT when SUNRPC's regular TCP transport is
+> > used. I spent quite a bit of time analyzing the existing xdr_buf code
+> > and NFSD's use of it.  Unfortunately, the WRITE payload gets stored in
+> > misaligned pages such that O_DIRECT isn't possible without a copy
+> > (completely defeating the point).  I'll reply to this cover letter to
+> > start a subthread to discuss how best to deal with misaligned write
+> > IO (by association with Hammerspace, I'm most interested in NFS v3).
+> >
 >
-> On Sat, Jun 07, 2025 at 01:53:03PM +0200, Amir Goldstein wrote:
+> Tricky problem. svc_tcp_recvfrom() just slurps the whole RPC into the
+> rq_pages array. To get alignment right, you'd probably have to do the
+> receive in a much more piecemeal way.
 >
-> > -struct path *backing_file_user_path(struct file *f)
-> > +struct path *backing_file_user_path(const struct file *f)
-> >  {
-> >       return &backing_file(f)->user_path;
-> >  }
-> >  EXPORT_SYMBOL_GPL(backing_file_user_path);
+> Basically, you'd need to decode as you receive chunks of the message,
+> and look out for WRITEs, and then set it up so that their payloads are
+> received with proper alignment.
+
+1)
+Yes, and while I arrived at the same exact conclusion I was left with
+dread about the potential for "breaking too many eggs to make that
+tasty omelette".
+
+If you (or others) see a way forward to have SUNRPC TCP's XDR receive
+"inline" decode (rather than have the 2 stage process you covered
+above) that'd be fantastic.  Seems like really old tech-debt in SUNRPC
+from a time when such care about alignment of WRITE payload pages was
+completely off engineers' collective radar (owed to NFSD only using
+buffered IO I assume?).
+
+2)
+One hack that I verified to work for READ and WRITE IO on my
+particular TCP testbed was to front-pad the first "head" page of the
+xdr_buf such that the WRITE payload started at the 2nd page of
+rq_pages.  So that looked like this hack for my usage:
+
+diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+index 8fc5b2b2d806..cf082a265261 100644
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -676,7 +676,9 @@ static bool svc_alloc_arg(struct svc_rqst *rqstp)
+
+        /* Make arg->head point to first page and arg->pages point to rest */
+        arg->head[0].iov_base = page_address(rqstp->rq_pages[0]);
+-       arg->head[0].iov_len = PAGE_SIZE;
++       // FIXME: front-pad optimized to align TCP's WRITE payload
++       // but may not be enough for other operations?
++       arg->head[0].iov_len = 148;
+        arg->pages = rqstp->rq_pages + 1;
+        arg->page_base = 0;
+        /* save at least one page for response */
+
+That gut "but may not be enough for other operations?" comment proved
+to be prophetic.
+
+Sadly it went on to fail spectacularly for other ops (specifically
+READDIR and READDIRPLUS, probably others would too) because
+xdr_inline_decode() _really_ doesn't like going beyond the end of the
+xdr_buf's inline "head" page.  It could be that even if
+xdr_inline_decode() et al was "fixed" (which isn't for the faint of
+heart given xdr_buf's more complex nature) there will likely be other
+mole(s) that pop up.  And in addition, we'd be wasting space in the
+xdr_buf's head page (PAGE_SIZE-frontpad).  So I moved on from trying
+to see this frontpad hack through to completion.
+
+3)
+Lastly, for completeness, I also mentioned briefly in a previous
+recent reply:
+
+On Wed, Jun 11, 2025 at 04:51:03PM -0400, Mike Snitzer wrote:
+> On Wed, Jun 11, 2025 at 11:44:29AM -0400, Jeff Layton wrote:
 >
-> const struct path *, hopefully?  With separate backing_file_set_user_path=
-()
-> you shouldn't need to modify that struct path via that functions...
+> > In any case, for now at least, unless you're using RDMA, it's going to
+> > end up falling back to buffered writes everywhere. The data is almost
+> > never going to be properly aligned coming in off the wire. That might
+> > be fixable though.
+>
+> Ben Coddington mentioned to me that soft-iwarp would allow use of RDMA
+> over TCP to workaround SUNRPC TCP's XDR handling always storing the
+> write payload in misaligned IO.  But that's purely a stop-gap
+> workaround, which needs testing (to see if soft-iwap negates the win
+> of using O_DIRECT, etc).
 
-Doh! of course. overlooked.
+(Ab)using soft-iwarp as the basis for easily getting page aligned TCP
+WRITE payloads seems pretty gross given we are chasing utmost
+performance, etc.
 
-Christian,
-
-Could you please apply this (compile tested) change in your tree?
+All said, I welcome your sage advice and help on this effort to
+DIO-align SUNRPC TCP's WRITE payload pages.
 
 Thanks,
-Amir.
-
-
-diff --git a/fs/file_table.c b/fs/file_table.c
-index f09d79a98111..b28bbfa07cb8 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -54,7 +54,7 @@ struct backing_file {
-
- #define backing_file(f) container_of(f, struct backing_file, file)
-
--struct path *backing_file_user_path(const struct file *f)
-+const struct path *backing_file_user_path(const struct file *f)
- {
-        return &backing_file(f)->user_path;
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fbcd74ae2a50..7845d029a4c0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2864,7 +2864,7 @@ struct file *dentry_open_nonotify(const struct
-path *path, int flags,
-                                  const struct cred *cred);
- struct file *dentry_create(const struct path *path, int flags, umode_t mod=
-e,
-                           const struct cred *cred);
--struct path *backing_file_user_path(const struct file *f);
-+const struct path *backing_file_user_path(const struct file *f);
+Mike
 
