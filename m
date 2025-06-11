@@ -1,51 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-51232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C05AD4AD2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 08:11:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D28AD4C25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 08:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5C43A6432
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 06:10:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFE218986D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 06:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD32228CA5;
-	Wed, 11 Jun 2025 06:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B2522D9EA;
+	Wed, 11 Jun 2025 06:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xUZVpeuq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3FF226888;
-	Wed, 11 Jun 2025 06:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B42F1D89FD;
+	Wed, 11 Jun 2025 06:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749622266; cv=none; b=UJ99rKpc86/CFxt/hyLOXPTK+mfJlAWsohYUUoEHJHpewkwhFAL7BIguicvDROqBWAYC4FpVt4uaQwcL6MSWf9lroIDwHmEmx+9c9tFSOqrfiBJ3dWsz2wuzpciHgTtmvQBo5DMprpH9p48Zlp15bdFnxWWzuFsDEBy5iX7HTy4=
+	t=1749625055; cv=none; b=pL8+fGa0W9WsIQvDf9AWOgaA8aKiXlBrglx5xK6PXRrj5cFIHn6/8TtykQ9AlKYNalunX3NMTGt2EqQQLtPp/jSDj1ghiAxlvbhkUAPg1p/lJzwGN79eU5GaNgGyVbUrN/4KYEM/IIcE+B/DmmJRj/E0sYd54gQ0zzTo+Wb8DTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749622266; c=relaxed/simple;
-	bh=gCYqfeP01dFMugvs6vUFmJxrlEq0uOra2uN2zZsgAuI=;
+	s=arc-20240116; t=1749625055; c=relaxed/simple;
+	bh=iTvPrdxsLTgq9OW4OYumyHmWPPRUmKZHcH1+dMoShWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eitUtsTQvZdx7huwbZROaGtpCZiGOxrBdlmKberDVrAzexeQwDQ0ZRbOu21iPMtUEohVwk6u5OwYxufCFerF1kskzWtbGFjZq8+mgQVsD80e6u8P8/LnKjc1R2ivtZatsIhKSYfE0Jn/iCU4eNOi3LExkkfKakYU7zf3KnUZ9Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 3722468AA6; Wed, 11 Jun 2025 08:10:59 +0200 (CEST)
-Date: Wed, 11 Jun 2025 08:10:58 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
-	tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
-	bmarzins@redhat.com, chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
-	martin.petersen@oracle.com, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 09/10] block: add FALLOC_FL_WRITE_ZEROES support
-Message-ID: <20250611061058.GB4613@lst.de>
-References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com> <20250604020850.1304633-10-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuheRhH+RFA57Y1Vp1yVm65WLdH1wa6Bq2YNZ9/pVuYWVCz6xBSh7UuJm9cemMAFsob9cajN/Q1HNlqcE2PaXO1yOHFu77BkcJSdiygiNNAGTigflRmj8YTe7nQfB89BilwPhlfznx3il01x/q6Ye8FmWlLkBXPENBhRsvgwzZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xUZVpeuq; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sMFeeB2Dbw5/O7ZYak8/g+wqndrxD4CXLJoYtiEdRTM=; b=xUZVpeuq12ugfHxzsCL8l9NrYN
+	yosVwPldiPGTgKZaxocUBhVZy3lK6m5XKRl5ZU+Smn11j25kR8Ld1a4wdOhEVIUD2M2LkfbZDERf8
+	uaRzzUrHBVy9jXWdqaewtK7sK4NdhxFqbrj7MFrfXXyPGbtgEQMpWYpA2UEjf7KjYu3pBw+L24BtI
+	3Y5VM95PaHKJ3CW5tUhOLolSXcvzN98uqxnoLi5PBJdhNleDpNmeqSBKYoGgpW/ewXzvNX2bIHEVN
+	1La/UiDMHCI8n75PhECR9nr1NDxnq8cLxmr8IdDfCnuuoW+ZHK9j62Kwmg6sjruURS1DkXLxE+XUq
+	M07fDDvA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPFOv-000000093Ez-2nbu;
+	Wed, 11 Jun 2025 06:57:33 +0000
+Date: Tue, 10 Jun 2025 23:57:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Mike Snitzer <snitzer@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE
+ for all IO
+Message-ID: <aEko3e_kpY-fA35R@infradead.org>
+References: <20250610205737.63343-1-snitzer@kernel.org>
+ <20250610205737.63343-2-snitzer@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,27 +63,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250604020850.1304633-10-yi.zhang@huaweicloud.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250610205737.63343-2-snitzer@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Jun 04, 2025 at 10:08:49AM +0800, Zhang Yi wrote:
-> @@ -856,6 +856,13 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
->  	/* Fail if we don't recognize the flags. */
->  	if (mode & ~BLKDEV_FALLOC_FL_SUPPORTED)
->  		return -EOPNOTSUPP;
-> +	/*
-> +	 * Don't allow writing zeroes if the device does not enable the
-> +	 * unmap write zeroes operation.
-> +	 */
-> +	if (!bdev_write_zeroes_unmap(bdev) &&
-> +	    (mode & FALLOC_FL_WRITE_ZEROES))
+On Tue, Jun 10, 2025 at 04:57:32PM -0400, Mike Snitzer wrote:
+> Add 'enable-dontcache' to NFSD's debugfs interface so that: Any data
+> read or written by NFSD will either not be cached (thanks to O_DIRECT)
+> or will be removed from the page cache upon completion (DONTCACHE).
+> 
+> enable-dontcache is 0 by default.  It may be enabled with:
+>   echo 1 > /sys/kernel/debug/nfsd/enable-dontcache
 
-Cosmetic nitpick, but I'd turn the check around to check the mode first
-as that's easier to read.  The whole check also fits onto a single line:
+Having this as a global debug-only interface feels a bit odd.
 
-	if ((mode & FALLOC_FL_WRITE_ZEROES) && !bdev_write_zeroes_unmap(bdev))
-
-Otherwise looks good:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 
