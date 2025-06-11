@@ -1,101 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-51274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5DEAD510E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 12:09:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A14AD513C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 12:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3D63A7E93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 10:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C196B1BC0237
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 10:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA63D270ECD;
-	Wed, 11 Jun 2025 10:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3C5267AF0;
+	Wed, 11 Jun 2025 10:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJclE1To"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz9x0vgP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A8127057D;
-	Wed, 11 Jun 2025 10:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229292620E5;
+	Wed, 11 Jun 2025 10:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749636246; cv=none; b=FtRNFPRsI5W4gDxn0no/pcueuEf2PvV63sEOnz3F6RFwqA1mHuT9tCXQQ9HNUa3nD14DaMN3SWWP5RiMeYxfmFJGMTEW4L/bV3Uhbbi//ZfxO3/tjg5k3qel+VQy928G9Zy/yx1HkwP5LmqL8TGPLsBxfbLFjtyvGQsvSdha2yo=
+	t=1749636312; cv=none; b=m6Gpm+eL+n3qevxqZprAFL15hMOJIex+HV8ikoE/V2OiMrzBmD4ibEjiEnaQ5XdOtAf7h/r9seQFc4TqmwRzBxRtSmo38Q5F5soeufVsgcvG2ImDy7YAViqlAf3wI5Le/T6fYu//gBHOVcb+Lhtukp90eaFXOqseGvnQPWROxlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749636246; c=relaxed/simple;
-	bh=T1ppAz1VzmH29y9/d6Z6oorRiK8qdvAxomNpsVpA7tY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LyPyj20TaksDCBz1T4ITADG0hKM4EKkXHR0pjMveOV+wcKXDR/M0uZN94Qq4eqjz/bmqI6T5Q0cd/fPrF1uGUanCDvD+UlmgiO4eVGmFkioPZJPSc2S8Vgw59Wx0vVysc2MbChwaipYpK2HHlLmiptSPcaGbQgZ6NMTuFY5BlkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJclE1To; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D09C4CEEE;
-	Wed, 11 Jun 2025 10:04:03 +0000 (UTC)
+	s=arc-20240116; t=1749636312; c=relaxed/simple;
+	bh=gPaP3WMO/RLExljCqXnu0HKGZ3gE4EOR9JfvXxizfI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oGYJ4yvM/SvAA1x3onnDLBBuHSUxN7BBSG6iwBXEzRqf087NHJkflbes3JUFGVMu8HCHGdyQvurNYoU8jxTmd/kwGLKBjYszTNQHlW5pNRONJmToG6V20VK1bB9hE9SpQPaq2rCbQeRqQmzUN8kIvIWIiYBYMvDqTiCJ6WB0Ixo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz9x0vgP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A8AC4CEEE;
+	Wed, 11 Jun 2025 10:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749636245;
-	bh=T1ppAz1VzmH29y9/d6Z6oorRiK8qdvAxomNpsVpA7tY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vJclE1Tok3zWmw469WgTJ5EfN7AFHXEMryPejVbjnnZNaiOSr7EoH6hpXn7+i6RmK
-	 qgvgnPXbilI5n9p/ZyasBvgpz6QJ3moasqcwrb/ErkU9BP8nunnL8WR1BIgMIK2ce9
-	 1oBQdITqAp07Ub5tWDyQ3vjl5SQeWukc4KdwWi5uEldxsyzGXw5Nexvfbcy+gVCMab
-	 qERo1+l/2KjgQu4n4rCnS1f2aHiV8hr1U5J2alOAC9g/7G3LkPZ9SGuhRy3gCLnm3s
-	 b5s4Q7W80x5EtTLfywawKOOktcD/jZM2lM00BiJnDzZFJC2RbfaidJxrZyp7CTz9ku
-	 I6AOY5oQ2yh/A==
+	s=k20201202; t=1749636312;
+	bh=gPaP3WMO/RLExljCqXnu0HKGZ3gE4EOR9JfvXxizfI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mz9x0vgPlloUBypKgcgmt2mjSkqPYSOoGHVjZmP7Yv8KIOEI6Eu3meYJucSkiN13d
+	 +8V3DlRC9nacOJMZqzHsQCHTCp6KbTrO8nSIYykx5Rsl/yGzsF7K6Zcu8gi6ZpF4Cr
+	 3vC6SaTgwqIiCM3txQRb4OukbNP6lkAxKBpBjiaf7Wke5Fdq4EeKCmHU+EXmYJ8+XT
+	 hrINlG12Fn27HOZayF3IO7QaEcZzdqc6fK8eyoL37aiEi3ygI6ZT77nGQtgVJz4lDN
+	 rZuAuAOBl/eIXAyikuRsApL7TK0rhxiyaUNikxIGnUGKGmI5m90nqT+1EIVo0ow2C3
+	 cw8qWT9nCvgZQ==
+Date: Wed, 11 Jun 2025 12:05:07 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	CIFS <linux-cifs@vger.kernel.org>,
-	Bharath S M <bharathsm@microsoft.com>,
-	Steve French <smfrench@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.com>
-Subject: Re: [PATCH] VFS: change try_lookup_noperm() to skip revalidation
-Date: Wed, 11 Jun 2025 12:03:53 +0200
-Message-ID: <20250611-leisten-vokal-55db13cc534e@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <174951744454.608730.18354002683881684261@noble.neil.brown.name>
-References: <174951744454.608730.18354002683881684261@noble.neil.brown.name>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Collin Funk <collin.funk1@gmail.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
+	eggert@cs.ucla.edu, bug-gnulib@gnu.org
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list()
+Message-ID: <20250611-gepunktet-umkurven-5482b6f39958@brauner>
+References: <20250605164852.2016-1-stephen.smalley.work@gmail.com>
+ <CAHC9VhQ-f-n+0g29MpBB3_om-e=vDqSC3h+Vn_XzpK2zpqamdQ@mail.gmail.com>
+ <CAHC9VhRUqpubkuFFVCfiMN4jDiEhXQvJ91vHjrM5d9e4bEopaw@mail.gmail.com>
+ <87plfhsa2r.fsf@gmail.com>
+ <CAHC9VhRSAaENMnEYXrPTY4Z4sPO_s4fSXF=rEUFuEEUg6Lz21Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1354; i=brauner@kernel.org; h=from:subject:message-id; bh=T1ppAz1VzmH29y9/d6Z6oorRiK8qdvAxomNpsVpA7tY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR4hkwo6tjEvjbwxlf9mlOnrq59dEKKU6j3reh2q/66k 9ZlHR53OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbiGcbwT9c71+gEu/T3hhyl SKYd7ef4fszk5fuzpXfJQsbGZN3TKxgZNtS0v3X6sqWQ+1EQ+8c8/ocrn2xQY3265+pjo7rz5gd t2QA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRSAaENMnEYXrPTY4Z4sPO_s4fSXF=rEUFuEEUg6Lz21Q@mail.gmail.com>
 
-On Tue, 10 Jun 2025 11:04:04 +1000, NeilBrown wrote:
-> The recent change from using d_hash_and_lookup() to using
-> try_lookup_noperm() inadvertently introduce a d_revalidate() call when
-> the lookup was successful.  Steven French reports that this resulted in
-> worse than halving of performance in some cases.
+On Tue, Jun 10, 2025 at 07:50:10PM -0400, Paul Moore wrote:
+> On Fri, Jun 6, 2025 at 1:39 AM Collin Funk <collin.funk1@gmail.com> wrote:
+> > Paul Moore <paul@paul-moore.com> writes:
+> > >> <stephen.smalley.work@gmail.com> wrote:
+> > >> >
+> > >> > commit 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always
+> > >> > include security.* xattrs") failed to reset err after the call to
+> > >> > security_inode_listsecurity(), which returns the length of the
+> > >> > returned xattr name. This results in simple_xattr_list() incorrectly
+> > >> > returning this length even if a POSIX acl is also set on the inode.
+> > >> >
+> > >> > Reported-by: Collin Funk <collin.funk1@gmail.com>
+> > >> > Closes: https://lore.kernel.org/selinux/8734ceal7q.fsf@gmail.com/
+> > >> > Reported-by: Paul Eggert <eggert@cs.ucla.edu>
+> > >> > Closes: https://bugzilla.redhat.com/show_bug.cgi?id=2369561
+> > >> > Fixes: 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always include security.* xattrs")
+> > >> >
+> > >> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > >> > ---
+> > >> >  fs/xattr.c | 1 +
+> > >> >  1 file changed, 1 insertion(+)
+> > >>
+> > >> Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > >
+> > > Resending this as it appears that Stephen's original posting had a
+> > > typo in the VFS mailing list.  The original post can be found in the
+> > > SELinux archives:
+> > >
+> > > https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.work@gmail.com/
+> >
+> > Hi, responding to this message since it has the correct lists.
+> >
+> > I just booted into a kernel with this patch applied and confirm that it
+> > fixes the Gnulib tests that were failing.
+> >
+> > Reviewed-by: Collin Funk <collin.funk1@gmail.com>
+> > Tested-by: Collin Funk <collin.funk1@gmail.com>
+> >
+> > Thanks for the fix.
 > 
-> Prior to the offending patch the only caller of try_lookup_noperm() was
-> autofs which does not need the d_revalidate().  So it is safe to remove
-> the d_revalidate() call providing we stop using try_lookup_noperm() to
-> implement lookup_noperm().
-> 
-> [...]
+> Al, Christian, are either of you going to pick up this fix to send to
+> Linus?  If not, any objection if I send this up?
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] VFS: change try_lookup_noperm() to skip revalidation
-      https://git.kernel.org/vfs/vfs/c/ad5a0351064c
+It's been in vfs.fixes for some time already and it'll go out with the
+first round of post -rc1 fixes this week.
 
