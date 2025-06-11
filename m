@@ -1,96 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-51238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A40EAD4D5D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:43:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B336AD4D6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 09:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DA11BC0ECD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 07:43:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E04457AB117
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 07:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A435E2367BC;
-	Wed, 11 Jun 2025 07:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAFF227BA9;
+	Wed, 11 Jun 2025 07:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hHFZ1Ths"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nhx1dBwG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC14231839;
-	Wed, 11 Jun 2025 07:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDC927718
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 07:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749627708; cv=none; b=OIcdA+EsckrTgmAtbF4cf3oRSRFDT1begj78vqpxp844hrbSlc2WYr2QLuTgcWrSTheWqo1K43/9AgZGJop/Lq2aXdkiCxUo1qL96bxLYBupIPhuDJCn2MOhWhKZtQVJN778BTRKK1aA6e05O9f4a3OiiN9umxOytVkUFrfhclM=
+	t=1749628230; cv=none; b=XJJQ6eM9PJmphH1wj+NtZsqRkqg3OTH4hEp6Vco1Co5Rx0bB/kvvo2LMz27BsUbWwc0PmT79fmvZ22bHmJ+9NIxkzvrEvdFMUM2TD4AjuTSwYfYI0sqBuWdH12Sk6BLhpP1p5xt9Rj1aexBTgIBUq6NROJ9JvslqzH9vA3t37G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749627708; c=relaxed/simple;
-	bh=l+BiDfw3/ID60Oy1QyNfLH/S+j5nSbuXDdxWB1eXT50=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qe+xBAH6xfEI+VauGhEJ29tE9wwVMd6DMM3DYZBZ3kSu/bS6okulETDSyNDyNCA02zi/j9P0PoxR+LvD8jNPpmTxyOIkrIb7LJoD1u54s8rGTmUkjy1jpKz+sCCIjllMPlvTNGXkIFwJREDPp4ZL39Q1lJ68K3ykLm+XznoteRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hHFZ1Ths; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749627696; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=uq80mpSiBoOoP0SpXROsynAkOFNz2d9hYKWr1AlfZnY=;
-	b=hHFZ1Thsc89b5nTnkNqAaVoaG5hFzpC06z1s4xPs50eChwPZueMJuztZQeUmzVtyvQUARc1EdYzbHTO/pUUfwsIYJCjAeRB2S8Uwvt/oITquDSJKEeOf1cshxZ9SHhY4tIeXDqDRxsFrmQSjEHwmxduUCqT0+lbNiC0sAhECWS8=
-Received: from 30.74.144.128(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdcFevd_1749627695 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Jun 2025 15:41:36 +0800
-Message-ID: <24580f79-c104-41aa-bbdb-e1ce120c28a0@linux.alibaba.com>
-Date: Wed, 11 Jun 2025 15:41:35 +0800
+	s=arc-20240116; t=1749628230; c=relaxed/simple;
+	bh=6Dspywsd2C/c92REUsPEh35A6Hr8NFLOPuZPIJyVgoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZodUeSvWiO6GgwxlowO48P04qZ9MbdYQVvTkVxzPVL6w29xWg3wSWehsbzfrahyzRbC+iq0gebSsomROYgMWnWD9ERRiY3skgDinFiOP75uoiQPE2P0tnq3kvYZFyp9+jOk+76kVUiZK8FnXAHSpzMmY+jbmd7tYzPYLBPLcxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nhx1dBwG; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aFgAi28pV+daoBCgDAFDCSReU6VmQiyPHzRvDEEoqmI=; b=nhx1dBwGzxFfzF5ueUYfVShJzc
+	HlhuO8jDQdafKdLUh6mr8tsT2JoZ5oXkuY9Jqm1m3K6k2B/sKzaZNnI4o3RSRppTtXc2bvymGBM42
+	hcM2i0XEnsqVAl9uXbihSnNKN47QZvKSLpDpB7k3vScgrDaz5vKJ6A3NxNdaIUXjcHnO8PtG/JvZx
+	NqHGW6UTE92RzK4vBQsJiqFHT/H8cNGYCSEkvUmKOGe8KDEhkzxdLaJ60No1hMwZaX3Sm8ADc2D19
+	9YiKa468jUgqsck0YnYIg+7mnEp49QI7fArOu5+ENBiNwwi3g/CX9Y9uIOPqZjD9uuAZZ16rNdbad
+	QO/qXf0w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPGE3-0000000HRf3-2wcJ;
+	Wed, 11 Jun 2025 07:50:23 +0000
+Date: Wed, 11 Jun 2025 08:50:23 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Neil Brown <neilb@suse.de>, Miklos Szeredi <miklos@szeredi.hu>,
+	Jan Kara <jack@suse.cz>
+Subject: [RFC][PATCHES v2] dentry->d_flags locking
+Message-ID: <20250611075023.GJ299672@ZenIV>
+References: <20250224010624.GT1977892@ZenIV>
+ <20250224-anrief-schwester-33e6ca8774de@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] mm: shmem: avoid setting error on splited entries in
- shmem_set_folio_swapin_error()
-To: Kemeng Shi <shikemeng@huaweicloud.com>, hughd@google.com,
- willy@infradead.org, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250605221037.7872-1-shikemeng@huaweicloud.com>
- <20250605221037.7872-3-shikemeng@huaweicloud.com>
- <c05b8612-83a6-47f7-84f8-72276c08a4ac@linux.alibaba.com>
- <100d50f3-95df-86a3-7965-357d72390193@huaweicloud.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <100d50f3-95df-86a3-7965-357d72390193@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224-anrief-schwester-33e6ca8774de@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Mon, Feb 24, 2025 at 12:45:49PM +0100, Christian Brauner wrote:
 
+> Also mentioned in my other reply: Can you please make the unhashed case
+> really explicit ideally at dentry allocation time. IOW, that there's a
+> flag or some other way of simply identifying a dentry as belonging to an
+> fs that will never hash them?
 
-On 2025/6/9 09:19, Kemeng Shi wrote:
-> 
-> 
-> on 6/7/2025 2:20 PM, Baolin Wang wrote:
->>
->>
->> On 2025/6/6 06:10, Kemeng Shi wrote:
->>> When large entry is splited, the first entry splited from large entry
->>> retains the same entry value and index as original large entry but it's
->>> order is reduced. In shmem_set_folio_swapin_error(), if large entry is
->>> splited before xa_cmpxchg_irq(), we may replace the first splited entry
->>> with error entry while using the size of original large entry for release
->>> operations. This could lead to a WARN_ON(i_blocks) due to incorrect
->>> nr_pages used by shmem_recalc_inode() and could lead to used after free
->>> due to incorrect nr_pages used by swap_free_nr().
->>
->> I wonder if you have actually triggered this issue? When a large swap entry is split, it means the folio is already at order 0, so why would the size of the original large entry be used for release operations? Or is there another race condition?
-> All issues are found during review the code of shmem as I menthioned in
-> cover letter.
-> The folio could be allocated from shmem_swap_alloc_folio() and the folio
-> order will keep unchange when swap entry is split.
+This really doesn't make sense; on all those filesystems we *do* want
+everything positive to be hashed.  So I don't see anything useful that
+fs/dcache.c could check, not to mention how much I dislike behaviour
+that depends upon "feature flags" in file_system_type in general.
 
-Sorry, I did not get your point. If a large swap entry is split, we must 
-ensure that the corresponding folio is order 0.
+All dentries are allocated unhashed negative; a plenty of such fs
+go through the normal lookup helpers when they populate their
+trees.  Sure, we could have their ->lookup() just return NULL
+and be done with that, but then we'd have to modify the code
+that handles attaching the damn things to inodes accordingly...
 
-However, I missed one potential case which was recently fixed by Kairui[1].
+I don't see any point, especially since it would just create churn
+for tree-in-dcache series porting^Wresurrection, which I'm going
+to do this weekend.
 
-[1] https://lore.kernel.org/all/20250610181645.45922-1-ryncsn@gmail.com/
+Or are you talking about DCACHE_DONTCACHE (i.e. "unhash as soon as
+refcount hits 0", rather than "never hash it at all")?
+
+Anyway, I have ported the "safe ->d_flags" series (this thread) to
+6.16-rc1.  Changes:
+
+* several commits got dropped (merged or, as in afs dynroot case, invalidated)
+* procfs flag moved to include/linux/procfs.h, deconflicted.
+* tracefs told to set DCACHE_DONTCACHE on everything; it is a behaviour
+change, and IMO the correct one.
+* in "simple_lookup(): just set DCACHE_DONTCACHE", don't set the flag if
+->d_op had been set and DCACHE_DONTCACHE wasn't already present.  That
+matches the mainline logics.  See comments in that commit...
+
+Force-pushed into
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.dcache
+Individual patches in followups; if nobody comes up with objections,
+into #for-next it goes.  Folks, please review.
 
