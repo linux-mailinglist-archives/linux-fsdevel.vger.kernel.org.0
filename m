@@ -1,65 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-51226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E465AD49EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 06:04:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF39AD4A11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 06:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1686116A4E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 04:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64447189B9D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 04:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BB71FDA8B;
-	Wed, 11 Jun 2025 04:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB2C20E034;
+	Wed, 11 Jun 2025 04:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TXxL88Bw"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q9pBvlIh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C2C35962;
-	Wed, 11 Jun 2025 04:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B0417E;
+	Wed, 11 Jun 2025 04:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749614662; cv=none; b=SZktWpmb6bBZfIErQkarPugr+bEIhv/rY73hikbsgV6uP26iApiEXBXN+fzaQGh1A3T/ufguOyJtq/VFdzp8Cifbf1hLqhomBx8eS0mbivdwXfH+fK4PiMdUMui3hnWwN7vRZ0farERd71jIN3dhqBSb7YL513GqqPbqJGumJSc=
+	t=1749616496; cv=none; b=AlDZENcAMdD69fcRviDEFMn4h0TP2qhKb36Yy0h4wvZLFHl5o5rF5rVJHMuqzCHH2g7Ch2fjBJS19u1/0MJIGpWE7Yesoey+/jopDOELKgpT1hNASHcitMPtlJi/nul5bfu56d5gUs++ziWLzQDuDGjT7rkw8yzDNy2BK57x3h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749614662; c=relaxed/simple;
-	bh=I5y7SpDYHhNs7xR1AW0mD/bdMwW+gnyliriQ1BwhFrY=;
+	s=arc-20240116; t=1749616496; c=relaxed/simple;
+	bh=LthGE3fUU7Vln18kBGtSPyqKU3ZFcnQlq1EL1a4+Ex0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIKK0z8vEelygWhXxL+TZ035KB2XWqA/TBgzNbGcVFdup+FHAf1ReB7Ix2RZxM0na+pE5tKbcGFSnBCoyF7ecbibF38qpkzF0+GJ0DklIyX+kO7llGCieC3KXneP7m2WjLNu6JNIcmDcolhRdFGPik56UjrI/GHn5KRAZGwuqdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TXxL88Bw; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=r334uPnx5+GwUi37ebdB1e/GtEqUrK7glkJrjoaRmeE1b387/wMwCQzF+EILrgLYmdLbnBYBotq1i/9rpxQk1YYlOgj6gcxyHv1VpbkKWcdfk8y4/E0z+2Fn2G/Y2/IcTV7ALCo+9g8njvTXYvFCFV9XSeNLpY6inPs6gKUCAc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q9pBvlIh; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=21XRgd1yPOmwtbXLkWGSXe/1zc/7gcY3wvoXSU21LTM=; b=TXxL88BwT0q8YzFMNxHwyfHnCa
-	A9kNMJrms+PpUd9c4oh3zUStSdPchmVYu6qX8X8RdIqx9la4jeZOffhnJsL/Ieewer6i8oWhtW7c+
-	fH3Fn7SfeK6wBj3wfvZMt7W/Itgjpquc3pd0mmUAFZQ5DqmyQ7DxWYWx6aR9K8jKAP3JGJv03khXX
-	Nm8kY9dVnPD1TJsOR+PXkcipGq9oj3BwRR+CSboWbzxi0VUAk3D6s5sMRE6QvmtXYmJqrJXVqpp3u
-	8fEh90lLYk8PDNI+2EPL+9fNwV280VDzaf8jzrJud0CKcNxA2WKLzg5usASsNn+DfxP5Zgbk3vMoC
-	wPQ16UJg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPChI-00000008o5h-27l2;
-	Wed, 11 Jun 2025 04:04:20 +0000
-Date: Tue, 10 Jun 2025 21:04:20 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, miklos@szeredi.hu,
-	djwong@kernel.org, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Subject: Re: [PATCH v1 2/8] iomap: add IOMAP_IN_MEM iomap type
-Message-ID: <aEkARG3yyWSYcOu6@infradead.org>
+	bh=ARbjRh7/rnRbjvUmhBkINZLHyFvPiwwBlxyxyZKqeFE=; b=q9pBvlIhw7CmlRzuGDAnChYrve
+	l7tTw7U8A9waVV9TjNjbhlc/YRyCLndgjnkRd7FmfIzS5BubAMCF/FdGJabjwQ+aWf1AK0dgoYpk7
+	FEJN5Jc5zMRQiFtQh6Z8daA1FdCqLbPmzJq4DXufXapM/oRl6ih5reJcfJoz3crPmCmdqfwshsZ8x
+	J0xGgZq3xr+aSlQD1DXfbBRmE+/upSARf2nNl9rUAe3sMQ5ww9zoG/I7FTqmDuhnaMgNZ2n/h+Uiu
+	WkvF7UzDsq1q+zEHH3/kDyivsHYmapuok71Al/hYkiKU2IZmx2uqFbNTwEKyOrAZDOksk1mn6GOlx
+	tZkJmq0Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPDAo-0000000ADVi-2M9F;
+	Wed, 11 Jun 2025 04:34:50 +0000
+Date: Wed, 11 Jun 2025 05:34:50 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, bernd.schubert@fastmail.fm,
+	kernel-team@meta.com, linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v1 5/8] iomap: add iomap_writeback_dirty_folio()
+Message-ID: <aEkHarE9_LlxFTAi@casper.infradead.org>
 References: <20250606233803.1421259-1-joannelkoong@gmail.com>
- <20250606233803.1421259-3-joannelkoong@gmail.com>
- <aEZm-tocHd4ITwvr@infradead.org>
- <CAJnrk1Z-ubwmkpnC79OEWAdgumAS7PDtmGaecr8Fopwt0nW-aw@mail.gmail.com>
- <aEeo7TbyczIILjml@infradead.org>
- <aEgyu86jWSz0Gpia@infradead.org>
- <CAJnrk1b6eB71BmE_aOS77O-=77L_r5pim6GZYg45tUQnWChHUg@mail.gmail.com>
+ <20250606233803.1421259-6-joannelkoong@gmail.com>
+ <aEZoau3AuwoeqQgu@infradead.org>
+ <20250609171444.GL6156@frogsfrogsfrogs>
+ <aEetuahlyfHGTG7x@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,43 +67,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJnrk1b6eB71BmE_aOS77O-=77L_r5pim6GZYg45tUQnWChHUg@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <aEetuahlyfHGTG7x@infradead.org>
 
-On Tue, Jun 10, 2025 at 01:13:09PM -0700, Joanne Koong wrote:
-> > synchronous ones.  And if the file system fragmented the folio so badly
-> > that we'll now need to do more than two reads we're still at least
-> > pipelining it, although that should basically never happen with modern
-> > file systems.
+On Mon, Jun 09, 2025 at 08:59:53PM -0700, Christoph Hellwig wrote:
+> On Mon, Jun 09, 2025 at 10:14:44AM -0700, Darrick J. Wong wrote:
+> > > Where "folio laundering" means calling ->launder_folio, right?
+> > 
+> > What does fuse use folio laundering for, anyway?  It looks to me like
+> > the primary users are invalidate_inode_pages*.  Either the caller cares
+> > about flushing dirty data and has called filemap_write_and_wait_range;
+> > or it doesn't and wants to tear down the pagecache ahead of some other
+> > operation that's going to change the file contents and doesn't care.
+> > 
+> > I suppose it could be useful as a last-chance operation on a dirty folio
+> > that was dirtied after a filemap_write_and_wait_range but before
+> > invalidate_inode_pages*?  Though for xfs we just return EBUSY and let
+> > the caller try again (or not).  Is there a subtlety to fuse here that I
+> > don't know about?
 > 
-> If the filesystem wants granular folio reads, it can also just do that
-> itself by calling an iomap helper (eg what iomap_adjust_read_range()
-> is doing right now) in its ->read_folio() implementation, correct?
+> My memory might be betraying me, but I think willy once launched an
+> attempt to see if we can kill launder_folio.  Adding him, and the
+> mm and nfs lists to check if I have a point :)
 
-Well, nothing tells ->read_folio how much to read.  But having a new
-variant of read_folio that allows partial reads might still be nicer
-than a iomap_folio_op.  Let me draft that and see if willy or other mm
-folks choke on it :)
+I ... got distracted with everything else.
 
-> For fuse at least, we definitely want granular reads, since reads may
-> be extremely expensive (eg it may be a network fetch) and there's
-> non-trivial mempcy overhead incurred with fuse needing to memcpy read
-> buffer data from userspace back to the kernel.
+Looking at the original addition of ->launder_page (e3db7691e9f3), I
+don't understand why we need it.  invalidate_inode_pages2() isn't
+supposed to invalidate dirty pages, so I don't understand why nfs
+found it necessary to do writeback from ->releasepage() instead
+of just returning false like iomap does.
 
-Ok, with that the plain ->read_folio variant is not going to fly.
-
-> > +               folio_lock(folio);
-> > +               if (unlikely(folio->mapping != inode->i_mapping))
-> > +                       return 1;
-> > +               if (unlikely(!iomap_validate(iter)))
-> > +                       return 1;
-> 
-> Does this now basically mean that every caller that uses iomap for
-> writes will have to implement ->iomap_valid and up the sequence
-> counter anytime there's a write or truncate, in case the folio changes
-> during the lock drop? Or were we already supposed to be doing this?
-
-Not any more than before.  It's is still option, but you still
-very much want it to protect against races updating the mapping.
-
+There's now a new question of what the hell btrfs is up to with
+->launder_folio, which they just added recently.
 
