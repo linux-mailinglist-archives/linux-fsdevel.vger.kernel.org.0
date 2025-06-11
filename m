@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-51368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5DCAD621C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 00:03:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C02AD621E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 00:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6363ABEF7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 22:03:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7EB2189B66B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 22:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DA124EAA9;
-	Wed, 11 Jun 2025 22:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B8325291C;
+	Wed, 11 Jun 2025 22:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wp26ieqD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kp3Z07xA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C72B248F7E;
-	Wed, 11 Jun 2025 22:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE85218591;
+	Wed, 11 Jun 2025 22:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749679363; cv=none; b=IAbE1n4ITMLRjGTDoO6G49laKNXIjSRlo8exeU02WFDu/Z7OK88U1VJwRRWshkGjgHxK/NEfoMRF7ln4LBUUNlMcTOggCGXvxAazoNiYDSgWOy366iQSNzPbfXpmWDqMMsSa6BZ9fqrSFQ+GtC9/apYvoBiE2YOREsGWEziKvsk=
+	t=1749679367; cv=none; b=pGwg2nQrko4uZwd4JJMjqOGNB7k1l810Br8ikr05J693N0kQ77d3OPEkljAqWYY8HNtmFrm+mMTCoSSjA7erzQcs0AL2iovliJ0ZMKQ7GA2+03X1Cs7fWa0NytvNogGWb0FpC9BDpBrl4hgI/xpgSofAxdCem4Dl6h6BPU+SW8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749679363; c=relaxed/simple;
-	bh=Hi02oc76+p86JeL/rDSImZf3mMqCUePyQLkgUn3sGQU=;
+	s=arc-20240116; t=1749679367; c=relaxed/simple;
+	bh=9F10qO9Msdgz89bnpZRuwO8YiDXQDw7GfTMJBW3OmZE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t5xhDc0p3u1If/gtQNkK2ASyn7ytVVV5iqk5qh/b/vD50RklzAi21bkEXsq9cV6s2Tp8yfcO205IkBNmehAOkaLDwCYMlVkt+u5RQVl1/yf59K+e4WADa82lHM1s/lrUPpoHh2nTaeSyxpMaJKFKqiJPGRA59UObZjvYYnGhavM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wp26ieqD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEAF5C4CEE3;
-	Wed, 11 Jun 2025 22:02:39 +0000 (UTC)
+	 MIME-Version; b=JmZDMubZ6BPQnI3D+GQkZ2PMnTSttfD97PDwSQdxB5wB+CNAz4VD/DJLfUaafFAkfUFpK4hgJSBVLre8Qxf8VbngNf6LlGkzr8yLgjvt6mxZx7QFwuPaPDXSg3y5AfWDJk7DNYXQ8HvEw1Qk1KRequWuo2BbGoubJjxLJjKpdXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kp3Z07xA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39DF4C4CEE3;
+	Wed, 11 Jun 2025 22:02:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749679361;
-	bh=Hi02oc76+p86JeL/rDSImZf3mMqCUePyQLkgUn3sGQU=;
+	s=k20201202; t=1749679366;
+	bh=9F10qO9Msdgz89bnpZRuwO8YiDXQDw7GfTMJBW3OmZE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Wp26ieqD9VUyimtQwBWZmI8RaAQ6usfI6e/iICqXd7QEpz8x34IzNJBsTtLEvGgIL
-	 uF/zTfj/WQ92JKyAUTPRuXdYJ6mmMGPwRl+n/B6zRFn7yhXhA7QePqtm3EzH3M6MBd
-	 4FI21Rm4A59OBZUi34lU6KzAnYTxdztsiW0KjTOBKRWOVQJaQ/0N8M1znKJO1FBlbQ
-	 5ZHMd4qabbSjfoGPhmBDW2F79eXGJHwiTgsC/nd+fu1XfvxX8kKMBRHUEKhoQpf/nK
-	 dgRSZqbwmXjtxjeKEZWFrTTBpLFdcne+vddwxTh7WxrZOO3P/x34EL2zK3NL/b5tKz
-	 7TypHbT0BLR4g==
+	b=Kp3Z07xA35Fds9w9PvlnVexQmfBcdgep4DEj8lzIak5loHb0URjbscmByxloe6g28
+	 dwr6IvYerDwnKBjUkJIG8YYqRLPs3Hza4c3dtzZQTf4gLAybzQALmwN8dpsPnUuFV8
+	 kgFWyudO3odCO2DCnK2hvNJTQ6cMnuGtazaD/Wg8u3MfrECQwJJvXFDx0JVaeGKN7f
+	 2dX4TOrJkz1G0d/hkQNrUlxam8zYP7tU3dEEX8FTfyh+GsziP5nykvUDdBIvoC+Eap
+	 cF5Lh9Ilx2a49l+aMg0fQ7gRIswigcvOFBn3fHK0u2yVlpKXNpPdEXe4Mk3unYLJ00
+	 QOd7bQBxsk5UQ==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -66,9 +66,9 @@ Cc: kernel-team@meta.com,
 	m@maowtm.org,
 	neil@brown.name,
 	Song Liu <song@kernel.org>
-Subject: [PATCH v4 bpf-next 3/5] bpf: Introduce path iterator
-Date: Wed, 11 Jun 2025 15:02:18 -0700
-Message-ID: <20250611220220.3681382-4-song@kernel.org>
+Subject: [PATCH v4 bpf-next 4/5] selftests/bpf: Add tests for bpf path iterator
+Date: Wed, 11 Jun 2025 15:02:19 -0700
+Message-ID: <20250611220220.3681382-5-song@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250611220220.3681382-1-song@kernel.org>
 References: <20250611220220.3681382-1-song@kernel.org>
@@ -80,137 +80,203 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a path iterator, which walks a struct path toward the root.
-This path iterator is based on path_walk_parent. A fixed zero'ed root
-is passed to path_walk_parent(). Therefore, unless the user terminates
-it earlier, the iterator will terminate at the real root.
+Add tests for bpf path iterator, including test cases similar to real
+workload (call bpf_path_d_path and bpf_get_dentry_xattr), and test cases
+where the verifier rejects invalid use of the iterator.
 
 Signed-off-by: Song Liu <song@kernel.org>
 ---
- fs/bpf_fs_kfuncs.c    | 72 +++++++++++++++++++++++++++++++++++++++++++
- kernel/bpf/verifier.c |  5 +++
- 2 files changed, 77 insertions(+)
+ .../testing/selftests/bpf/bpf_experimental.h  |   6 +
+ .../selftests/bpf/prog_tests/path_iter.c      |  12 ++
+ tools/testing/selftests/bpf/progs/path_iter.c | 145 ++++++++++++++++++
+ 3 files changed, 163 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/path_iter.c
+ create mode 100644 tools/testing/selftests/bpf/progs/path_iter.c
 
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 08412532db1b..1e7e94738c2b 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -10,6 +10,7 @@
- #include <linux/fsnotify.h>
- #include <linux/file.h>
- #include <linux/mm.h>
-+#include <linux/namei.h>
- #include <linux/xattr.h>
+diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
+index 5e512a1d09d1..cbb759b473df 100644
+--- a/tools/testing/selftests/bpf/bpf_experimental.h
++++ b/tools/testing/selftests/bpf/bpf_experimental.h
+@@ -596,4 +596,10 @@ extern int bpf_iter_dmabuf_new(struct bpf_iter_dmabuf *it) __weak __ksym;
+ extern struct dma_buf *bpf_iter_dmabuf_next(struct bpf_iter_dmabuf *it) __weak __ksym;
+ extern void bpf_iter_dmabuf_destroy(struct bpf_iter_dmabuf *it) __weak __ksym;
  
- __bpf_kfunc_start_defs();
-@@ -324,6 +325,74 @@ __bpf_kfunc int bpf_remove_dentry_xattr(struct dentry *dentry, const char *name_
- 
- __bpf_kfunc_end_defs();
- 
-+/* open-coded path iterator */
-+struct bpf_iter_path {
-+	__u64 __opaque[2];
-+} __aligned(8);
++struct bpf_iter_path;
++extern int bpf_iter_path_new(struct bpf_iter_path *it, struct path *start,
++			     __u64 flags) __weak __ksym;
++extern struct path *bpf_iter_path_next(struct bpf_iter_path *it) __weak __ksym;
++extern void bpf_iter_path_destroy(struct bpf_iter_path *it) __weak __ksym;
 +
-+struct bpf_iter_path_kern {
-+	struct path path;
-+} __aligned(8);
+ #endif
+diff --git a/tools/testing/selftests/bpf/prog_tests/path_iter.c b/tools/testing/selftests/bpf/prog_tests/path_iter.c
+new file mode 100644
+index 000000000000..3c99c24fbd96
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/path_iter.c
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
 +
-+__bpf_kfunc_start_defs();
++#include <test_progs.h>
++#include <bpf/libbpf.h>
++#include <bpf/btf.h>
++#include "path_iter.skel.h"
 +
-+__bpf_kfunc int bpf_iter_path_new(struct bpf_iter_path *it,
-+				  struct path *start,
-+				  __u64 flags)
++void test_path_iter(void)
 +{
-+	struct bpf_iter_path_kern *kit = (void *)it;
++	RUN_TESTS(path_iter);
++}
+diff --git a/tools/testing/selftests/bpf/progs/path_iter.c b/tools/testing/selftests/bpf/progs/path_iter.c
+new file mode 100644
+index 000000000000..74d0f4e19ffa
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/path_iter.c
+@@ -0,0 +1,145 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
 +
-+	BUILD_BUG_ON(sizeof(*kit) > sizeof(*it));
-+	BUILD_BUG_ON(__alignof__(*kit) != __alignof__(*it));
++#include "vmlinux.h"
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++#include "bpf_misc.h"
++#include "bpf_experimental.h"
 +
-+	if (flags) {
-+		/*
-+		 * _destroy() is still called when _new() fails. Zero
-+		 * kit->path so that it be passed to path_put() safely.
-+		 * Note: path_put() is no-op for zero'ed path.
-+		 */
-+		memset(&kit->path, 0, sizeof(struct path));
-+		return -EINVAL;
++char _license[] SEC("license") = "GPL";
++
++char path_name[256];
++char xattr_val[64];
++
++static __always_inline void access_path_dentry(struct path *p)
++{
++	struct bpf_dynptr ptr;
++	struct dentry *dentry;
++
++	if (!p)
++		return;
++
++	bpf_dynptr_from_mem(xattr_val, sizeof(xattr_val), 0, &ptr);
++	bpf_path_d_path(p, path_name, sizeof(path_name));
++
++	dentry = p->dentry;
++	if (dentry)
++		bpf_get_dentry_xattr(dentry, "user.xattr", &ptr);
++}
++
++SEC("lsm.s/file_open")
++__success
++int BPF_PROG(open_code, struct file *f)
++{
++	struct bpf_iter_path path_it;
++	struct path *p;
++	int ret;
++
++	ret = bpf_iter_path_new(&path_it, &f->f_path, 0);
++	if (ret) {
++		bpf_iter_path_destroy(&path_it);
++		return 0;
 +	}
 +
-+	kit->path = *start;
-+	path_get(&kit->path);
++	p = bpf_iter_path_next(&path_it);
++	access_path_dentry(p);
++	bpf_iter_path_destroy(&path_it);
 +
 +	return 0;
 +}
 +
-+__bpf_kfunc struct path *bpf_iter_path_next(struct bpf_iter_path *it)
++SEC("lsm.s/file_open")
++__success
++int BPF_PROG(for_each, struct file *f)
 +{
-+	struct bpf_iter_path_kern *kit = (void *)it;
-+	struct path root = {};
++	struct path *p;
 +
-+	/*
-+	 * "root" is zero'ed. Therefore, unless the loop is explicitly
-+	 * terminated, bpf_iter_path_next() will continue looping until
-+	 * we've reached the global root of the VFS.
-+	 *
-+	 * If a root of walk is needed, the user can check "path" against
-+	 * that root on each iteration.
-+	 */
-+	if (!path_walk_parent(&kit->path, &root))
-+		return NULL;
++	bpf_for_each(path, p, &f->f_path, 0)
++		access_path_dentry(p);
 +
-+	return &kit->path;
++	return 0;
 +}
 +
-+__bpf_kfunc void bpf_iter_path_destroy(struct bpf_iter_path *it)
++SEC("lsm.s/file_open")
++__failure __msg("Unreleased reference")
++int BPF_PROG(missing_destroy, struct file *f)
 +{
-+	struct bpf_iter_path_kern *kit = (void *)it;
++	struct bpf_iter_path path_it;
 +
-+	/*
-+	 * kit->path might be zero'ed, but this is OK because path_put()
-+	 * is no-op for zero'ed struct path
-+	 */
-+	path_put(&kit->path);
++	bpf_iter_path_new(&path_it, &f->f_path, 0);
++
++	return 0;
 +}
 +
-+__bpf_kfunc_end_defs();
++SEC("lsm.s/file_open")
++__failure __msg("expected an initialized iter_path")
++int BPF_PROG(missing_new, struct file *f)
++{
++	struct bpf_iter_path path_it;
 +
- BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
- BTF_ID_FLAGS(func, bpf_get_task_exe_file,
- 	     KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
-@@ -333,6 +402,9 @@ BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_iter_path_new, KF_ITER_NEW | KF_TRUSTED_ARGS | KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, bpf_iter_path_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, bpf_iter_path_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
- BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
- 
- static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index b1f797616f20..9b5ac7c02867 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7049,6 +7049,10 @@ BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket) {
- 	struct sock *sk;
- };
- 
-+BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct path) {
-+	struct dentry *dentry;
-+};
++	bpf_iter_path_destroy(&path_it);
++	return 0;
++}
 +
- static bool type_is_rcu(struct bpf_verifier_env *env,
- 			struct bpf_reg_state *reg,
- 			const char *field_name, u32 btf_id)
-@@ -7089,6 +7093,7 @@ static bool type_is_trusted_or_null(struct bpf_verifier_env *env,
- 				    const char *field_name, u32 btf_id)
- {
- 	BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket));
-+	BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct path));
- 
- 	return btf_nested_type_is_trusted(&env->log, reg, field_name, btf_id,
- 					  "__safe_trusted_or_null");
++SEC("lsm.s/file_open")
++__failure __msg("expected uninitialized iter_path")
++int BPF_PROG(new_twice, struct file *f)
++{
++	struct bpf_iter_path path_it;
++
++	bpf_iter_path_new(&path_it, &f->f_path, 0);
++	bpf_iter_path_new(&path_it, &f->f_path, 0);
++	bpf_iter_path_destroy(&path_it);
++	return 0;
++}
++
++SEC("lsm.s/file_open")
++__failure __msg("expected an initialized iter_path")
++int BPF_PROG(destroy_twice, struct file *f)
++{
++	struct bpf_iter_path path_it;
++
++	bpf_iter_path_new(&path_it, &f->f_path, 0);
++	bpf_iter_path_destroy(&path_it);
++	bpf_iter_path_destroy(&path_it);
++	return 0;
++}
++
++SEC("lsm.s/file_open")
++__success
++int BPF_PROG(reuse_path_iter, struct file *f)
++{
++	struct bpf_iter_path path_it;
++
++	bpf_iter_path_new(&path_it, &f->f_path, 0);
++	bpf_iter_path_destroy(&path_it);
++	bpf_iter_path_new(&path_it, &f->f_path, 0);
++	bpf_iter_path_destroy(&path_it);
++	return 0;
++}
++
++SEC("lsm.s/file_open")
++__failure __msg("invalid read from stack off")
++int BPF_PROG(invalid_read_path_iter, struct file *f)
++{
++	struct bpf_iter_path path_it;
++	struct bpf_iter_path path_it_2;
++
++
++	bpf_iter_path_new(&path_it, &f->f_path, 0);
++	path_it_2 = path_it;
++	bpf_iter_path_destroy(&path_it_2);
++	return 0;
++}
++
++SEC("lsm.s/sb_alloc_security")
++__failure __msg("must be referenced or trusted")
++int BPF_PROG(untrusted_path, struct super_block *sb)
++{
++	struct bpf_iter_path path_it;
++
++	bpf_iter_path_new(&path_it, &sb->s_bdev_file->f_path, 0);
++	bpf_iter_path_destroy(&path_it);
++	return 0;
++}
 -- 
 2.47.1
 
