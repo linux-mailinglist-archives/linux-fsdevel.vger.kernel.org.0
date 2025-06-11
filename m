@@ -1,135 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-51341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1937AD5B13
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 17:51:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F63AD5C17
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 18:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8771316C987
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 15:51:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F663A6789
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 16:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2FB1DED53;
-	Wed, 11 Jun 2025 15:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4B91EE035;
+	Wed, 11 Jun 2025 16:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwkK3sVu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7/DJ0Hq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969A71C84CE;
-	Wed, 11 Jun 2025 15:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080321E5B7E;
+	Wed, 11 Jun 2025 16:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749657105; cv=none; b=Awzj2HzShkh/6eQOrhmOnm/jHiVHr2r7A17C/bMAAIS06R/TmHHh1NY6ELHVrFdf0ug3KpK/kOMvpOTGTglT6A/CmPy34LbV58UTIBDWCKGNtU0ubjERG2nJwlpsk0U0B3vGvStA+YRV0s7bifAKV+uy5woC3ipZwvYoVqH9ZWU=
+	t=1749659191; cv=none; b=GNRAosWMB5CCxwiTkTqEr4pozB2X8IV0le5GfDAqRLEH0EpWbDKGP3hIlZVCxvqBXY4uXX+CTlkUmqtGXJ/IjrOTMqjLr4AVm1/YKb7l5ehSOptcd/rKr5G6ApDLGajonhipuirtJjW8hLX1McPF/4VRdDo/Du4irSlerPr+NDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749657105; c=relaxed/simple;
-	bh=Skl9KDuzJqFaqd+d7kcHfX6PNCmoq83oIlnZ4Q2zi04=;
+	s=arc-20240116; t=1749659191; c=relaxed/simple;
+	bh=rA8dODhAt/uUC//Z3tuOg3Vt6MfeVRuex9l8SlI4yIQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pjCHLnxgp9SNo3z26ZFanZVWKyDhUSNse3yBaa0eXKAkab+FbHRK9LciCrA1Py8DXnFOTczzHW+PTV0AoJI4liGAR5Zo9TSdn5MJOAJvC2he1/kE/0odXLlYdUxSwX6symPh2C8TxzxiWTwFB1+Xs+2V8QiAvrePIyjvBdGG88s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwkK3sVu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC8CC4CEE3;
-	Wed, 11 Jun 2025 15:51:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pFEjTFSJdBB5q3Xzn8+/npQKWSHt/2roFAl7D/bM0QqQs00MoAEsyi/xagLC1lhH0+0+pGe8paYRsWQGifc4r5bZxPRmqFmywwBNcEuZ/7SzCpVDYgDU6/h+2oy2s+21hAnwVajuMd+ZikZfC1hQ9x6tnOBTjWgV9tm+Y3pO5dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7/DJ0Hq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793F9C4CEE3;
+	Wed, 11 Jun 2025 16:26:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749657105;
-	bh=Skl9KDuzJqFaqd+d7kcHfX6PNCmoq83oIlnZ4Q2zi04=;
+	s=k20201202; t=1749659190;
+	bh=rA8dODhAt/uUC//Z3tuOg3Vt6MfeVRuex9l8SlI4yIQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iwkK3sVut+NThYh8qunzKpQ31Iwkrb1zjgxChbVqqV+oYpwR7fQbZPVg5A4Edk1ro
-	 DCx3vF9ZtNT6ZDuYi3UopU5ifN5EotQF9zpy+5l37R7AVrIL3EIjhVePvIh9dIB4ZS
-	 G/6R65R4Dn9ayyjY0KN/zRtZ28f2pepHw4nRUylMoAEErlDyz33KfDqQ4RyC751rg1
-	 +FDXedv6UJgjDRzfI7isBuziAum8IKVKFsQzx3ZXq/U/fnwpekElwBhfmXNCNgWWCD
-	 fqUIl1THgMSG4gfel9y+JyZmo6pLuQ80/jT72VVbjkgut1TcwbA6dDPc6rIL2IitzD
-	 9a5tjk1UXZF3w==
-Date: Wed, 11 Jun 2025 08:51:44 -0700
+	b=D7/DJ0Hq6F1ARg3g8k56lIyy4ONTSOIVEmNeNnBcwwMiwOSVa7fxs+tZj1jSG48HF
+	 A/xxuV67mjvHZsbVXpaNKFYVAUdpYhqg/OF1psmvRaRiYJ6wLXlLcw5+WIRC8GVIMp
+	 qSqtpTeCcK+/PIuhaQmn5+tV02F8RfFG8SYaeWRN/1IOFNK3SdRqLMs9akb1PU/vIl
+	 wyWjz6GNh+ea8xV8h+hY5r+pj20Jn0+b3O4oINNGF1nZy2o5acgalu18Hk65mPElpn
+	 rk1CUImWLHEWT1sVBM9uM3tBtQDV4FlEYRzE4Y+vNrltYvbLMIo7Sxir6dYUSBmnIu
+	 AvYtms3sRoeFQ==
+Date: Wed, 11 Jun 2025 09:26:29 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Kundan Kumar <kundanthebest@gmail.com>
-Cc: Anuj gupta <anuj1072538@gmail.com>, Christoph Hellwig <hch@lst.de>,
-	Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>,
-	Kundan Kumar <kundan.kumar@samsung.com>, jaegeuk@kernel.org,
-	chao@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, miklos@szeredi.hu, agruenba@redhat.com,
-	trondmy@kernel.org, anna@kernel.org, akpm@linux-foundation.org,
-	willy@infradead.org, mcgrof@kernel.org, clm@meta.com,
-	david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk,
-	ritesh.list@gmail.com, dave@stgolabs.net, p.raghav@samsung.com,
-	da.gomez@samsung.com, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-nfs@vger.kernel.org, linux-mm@kvack.org, gost.dev@samsung.com
-Subject: Re: [PATCH 00/13] Parallelizing filesystem writeback
-Message-ID: <20250611155144.GD6138@frogsfrogsfrogs>
-References: <CGME20250529113215epcas5p2edd67e7b129621f386be005fdba53378@epcas5p2.samsung.com>
- <20250529111504.89912-1-kundan.kumar@samsung.com>
- <20250602141904.GA21996@lst.de>
- <c029d791-20ca-4f2e-926d-91856ba9d515@samsung.com>
- <20250603132434.GA10865@lst.de>
- <CACzX3AuBVsdEUy09W+L+xRAGLsUD0S9+J2AO8nSguA2nX5d8GQ@mail.gmail.com>
- <CALYkqXqVRYqq+5_5W4Sdeh07M8DyEYLvrsm3yqhhCQTY0pvU1g@mail.gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com,
+	rafael@kernel.org, pavel@kernel.org, peterz@infradead.org,
+	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
+Subject: Re: [PATCH v2 1/6] super: remove pointless s_root checks
+Message-ID: <20250611162629.GE6138@frogsfrogsfrogs>
+References: <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
+ <20250329-work-freeze-v2-1-a47af37ecc3d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALYkqXqVRYqq+5_5W4Sdeh07M8DyEYLvrsm3yqhhCQTY0pvU1g@mail.gmail.com>
+In-Reply-To: <20250329-work-freeze-v2-1-a47af37ecc3d@kernel.org>
 
-On Wed, Jun 04, 2025 at 02:52:34PM +0530, Kundan Kumar wrote:
-> > > > For xfs used this command:
-> > > > xfs_io -c "stat" /mnt/testfile
-> > > > And for ext4 used this:
-> > > > filefrag /mnt/testfile
-> > >
-> > > filefrag merges contiguous extents, and only counts up for discontiguous
-> > > mappings, while fsxattr.nextents counts all extent even if they are
-> > > contiguous.  So you probably want to use filefrag for both cases.
-> >
-> > Got it — thanks for the clarification. We'll switch to using filefrag
-> > and will share updated extent count numbers accordingly.
+On Sat, Mar 29, 2025 at 09:42:14AM +0100, Christian Brauner wrote:
+> The locking guarantees that the superblock is alive and sb->s_root is
+> still set. Remove the pointless check.
 > 
-> Using filefrag, we recorded extent counts on xfs and ext4 at three
-> stages:
-> a. Just after a 1G random write,
-> b. After a 30-second wait,
-> c. After unmounting and remounting the filesystem,
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/super.c | 19 ++++++-------------
+>  1 file changed, 6 insertions(+), 13 deletions(-)
 > 
-> xfs
-> Base
-> a. 6251   b. 2526  c. 2526
-> Parallel writeback
-> a. 6183   b. 2326  c. 2326
+> diff --git a/fs/super.c b/fs/super.c
+> index 97a17f9d9023..dc14f4bf73a6 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -930,8 +930,7 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
+>  
+>  		locked = super_lock_shared(sb);
+>  		if (locked) {
+> -			if (sb->s_root)
+> -				f(sb, arg);
+> +			f(sb, arg);
+>  			super_unlock_shared(sb);
+>  		}
+>  
+> @@ -967,11 +966,8 @@ void iterate_supers_type(struct file_system_type *type,
+>  		spin_unlock(&sb_lock);
+>  
+>  		locked = super_lock_shared(sb);
+> -		if (locked) {
+> -			if (sb->s_root)
+> -				f(sb, arg);
+> -			super_unlock_shared(sb);
+> -		}
+> +		if (locked)
+> +			f(sb, arg);
 
-Interesting that the mapping record count goes down...
+Hey Christian,
 
-I wonder, you said the xfs filesystem has 4 AGs and 12 cores, so I guess
-wb_ctx_arr[] is 12?  I wonder, do you see a knee point in writeback
-throughput when the # of wb contexts exceeds the AG count?
+I might be trying to be the second(?) user of iterate_supers_type[1]. :)
 
-Though I guess for the (hopefully common) case of pure overwrites, we
-don't have to do any metadata updates so we wouldn't really hit a
-scaling limit due to ag count or log contention or whatever.  Does that
-square with what you see?
-
-> ext4
-> Base
-> a. 7080   b. 7080    c. 11
-> Parallel writeback
-> a. 5961   b. 5961    c. 11
-
-Hum, that's particularly ... interesting.  I wonder what the mapping
-count behaviors are when you turn off delayed allocation?
+This change removes the call to super_unlock_shared, which means that
+iterate_supers_type returns with the super_lock(s) still held.  I'm
+guessing that this is a bug and not an intentional change to require the
+callback to call super_unlock_shared, right?
 
 --D
 
-> Used the same fio commandline as earlier:
-> fio --filename=/mnt/testfile --name=test --bs=4k --iodepth=1024
-> --rw=randwrite --ioengine=io_uring  --fallocate=none --numjobs=1
-> --size=1G --direct=0 --eta-interval=1 --eta-newline=1
-> --group_reporting
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=health-monitoring&id=3ae9b1d43dcdeaa38e93dc400d1871872ba0e27f
+
+>  
+>  		spin_lock(&sb_lock);
+>  		if (p)
+> @@ -991,18 +987,15 @@ struct super_block *user_get_super(dev_t dev, bool excl)
+>  
+>  	spin_lock(&sb_lock);
+>  	list_for_each_entry(sb, &super_blocks, s_list) {
+> -		if (sb->s_dev ==  dev) {
+> +		if (sb->s_dev == dev) {
+>  			bool locked;
+>  
+>  			sb->s_count++;
+>  			spin_unlock(&sb_lock);
+>  			/* still alive? */
+>  			locked = super_lock(sb, excl);
+> -			if (locked) {
+> -				if (sb->s_root)
+> -					return sb;
+> -				super_unlock(sb, excl);
+> -			}
+> +			if (locked)
+> +				return sb; /* caller will drop */
+>  			/* nope, got unmounted */
+>  			spin_lock(&sb_lock);
+>  			__put_super(sb);
 > 
-> filefrag command:
-> filefrag  /mnt/testfile
+> -- 
+> 2.47.2
+> 
 > 
 
