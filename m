@@ -1,54 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-51280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1E5AD51F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 12:34:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975A0AD51F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 12:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CA73AAA27
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 10:32:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E7816B98A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 10:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E452276054;
-	Wed, 11 Jun 2025 10:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2DF276047;
+	Wed, 11 Jun 2025 10:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXp2xmk2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyGUZpWm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C9B26AAB2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 10:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3F727144F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 10:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749637918; cv=none; b=hqMzTBQtpoDZ88AdDgbpGNa7Cl+htvwbdszVEM/rC54pJAI/BxQ/i1lIrpIVdd7DSz7iuvMRXZ0So3Z2cSaR6t8klppaGR2r0DKfHPPvrM9pHnw5YvqtXFBpFvr+iBBUmMydqdwrYL5CR3jKKnryHkRxWVL/CyPI8UAPsWSYe2Y=
+	t=1749637953; cv=none; b=ErZFk2KFocaMMyUplnrR7JRPvwGKh6HLvfEbe55SDLRtrHdznpYB+PWdBWcmJ39cs1rNARRF4rOngcKeAWkm1rY30tvEKDkV/avi07U9PvAMcIt+u1XUzQSDR/x+DrUZKTDZQLwy9wz7sT4aiYtBS8uQIsr9Eulv93uDpN4dVmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749637918; c=relaxed/simple;
-	bh=52iJakoNUfL/vAC7DCoVjogWZewMXcj2zycvmDtd2gc=;
+	s=arc-20240116; t=1749637953; c=relaxed/simple;
+	bh=gjn1WIYIwLQEByp92bh8jxYRbSCKqduqr1u4JyfodK4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BL5eaiaVfTv6ykd51HrloE87rCAz75zHsvED2YrpYjTpnymVq+4BN/GqPxH0uVeAcvi/n+2PTvVSjt/EQJa24AE+GKEXPL0zdCtWTaRKtbDRL8/zuabHKubbzd68rsF5RbmT8X7E5dAeqJUk2qntvb+kIIzAQ9+/Ns/L3jSdSow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXp2xmk2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DDEC4CEF3;
-	Wed, 11 Jun 2025 10:31:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rnRt9KTEiJBwzXElnGpdB1PGvXwpEsgQejiJgq0Sz/pF3xckeu9z+LbdsLMv4o7fhgPbJJ7jbaRlyJIE5BebgwPAye/Cpe/oHwny75+mqxdwk/ztT4H5sEXov7lOABPb1Gf04iO49UHmdXqT6uM941DgU/zeX54hcf+KzQf2p8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyGUZpWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117B6C4CEEE;
+	Wed, 11 Jun 2025 10:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749637918;
-	bh=52iJakoNUfL/vAC7DCoVjogWZewMXcj2zycvmDtd2gc=;
+	s=k20201202; t=1749637953;
+	bh=gjn1WIYIwLQEByp92bh8jxYRbSCKqduqr1u4JyfodK4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lXp2xmk2/AXohPFG0Uu+pAwBzm1UtYDf6kdqy4Ve1IThSYTxbWLOrlgiXGdUf5lQ3
-	 NdRsrQVpDczImbe+ZHA2bREyjxe5xvnxQuXEkCl8T4IKvmnE/KQmG/nZRJwB2BReVo
-	 KGS0toLSNCD5VotAghLyaji6O/DLbZ3s4WSIB+F4qPEgb3Iu33mzmeD61+Thzq5ciV
-	 4573DhlAekNus95HPVQwgA5QIstQlugLvClSnBUcFq9eeqXaT+Cm96WlHh1cs/iNRJ
-	 3u7qsf1n2ydgsSaB8j90MslIafYx1Q5XvyEcVVKJQORNXaX6OC2svxlKPTaz/CbVOO
-	 h6E5zm0NTUlVg==
-Date: Wed, 11 Jun 2025 12:31:54 +0200
+	b=VyGUZpWm52BWo3O7J5fHOVj5nuYwEAT0vLP/3hHG9i8tCpVhEL3sbl2IShGKblGgy
+	 /OB8OuxiCPqEj0IrtqVde07B7B47xpSG0mPWg+ZLpmxRjqTXCNHhDb65oUvp/mxePm
+	 or2enf1TAYwnhhKTXof6uuaam/vN6+cZ/DZGGujx7BifqJnQrNbLVxO5BD6qVJUsgY
+	 yhX22BUEwvY0unO2jY9jk3psNw6yY18wdjBoGL1E4ocIMMz/c7QSNETbcjzBKhxDyZ
+	 hGeBIjJ2m674odq+Vn5ryUW2BNqKD9ThnjYV+YVPWs0wUW6/hY8jscfCOu7nFIWH3P
+	 OvbECboC/zong==
+Date: Wed, 11 Jun 2025 12:32:29 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCHES][RFC][CFR] mount-related stuff
-Message-ID: <20250611-ehrbaren-nahbereich-7bb253d46a94@brauner>
+Cc: linux-fsdevel@vger.kernel.org, ebiederm@xmission.com, jack@suse.cz, 
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 04/26] new predicate: mount_is_ancestor()
+Message-ID: <20250611-kaufen-galaxie-d5bb703fe530@brauner>
 References: <20250610081758.GE299672@ZenIV>
+ <20250610082148.1127550-1-viro@zeniv.linux.org.uk>
+ <20250610082148.1127550-4-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,36 +59,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250610081758.GE299672@ZenIV>
+In-Reply-To: <20250610082148.1127550-4-viro@zeniv.linux.org.uk>
 
-On Tue, Jun 10, 2025 at 09:17:58AM +0100, Al Viro wrote:
-> 	The next pile of mount massage; it will grow - there will be
-> further modifications, as well as fixes and documentation, but this is
-> the subset I've got in more or less settled form right now.
+On Tue, Jun 10, 2025 at 09:21:26AM +0100, Al Viro wrote:
+> mount_is_ancestor(p1, p2) returns true iff there is a possibly
+> empty ancestry chain from p1 to p2.
 > 
-> 	Review and testing would be very welcome.
+> Convert the open-coded checks.  Unlike those open-coded variants
+> it does not depend upon p1 not being root...
 > 
-> 	This series (-rc1-based) sits in
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.mount
-> individual patches in followups.
-> 
-> 	Rough overview:
-> 
-> Part 1: trivial cleanups and helpers:
-> 
-> 1) copy_tree(): don't set ->mnt_mountpoint on the root of copy
-> 	Ancient bogosity, fortunately harmless, but confusing.
-> 2) constify mnt_has_parent()
-> 3) pnode: lift peers() into pnode.h
-> 4) new predicate: mount_is_ancestor()
-> 	Incidentally, I wonder if the "early bail out on move
-> of anon into the same anon" was not due to (now eliminated)
-> corner case in loop detection...  Christian?
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-No, that wasn't the reason. When moving mounts between anonymous mount
-namespaces I wanted a very simple visual barrier that moving mounts into
-the same anonymous mount namespace is not possible.
-
-I even mentioned in the comment that this would be caught later but that
-I like it being explicitly checked for.
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
