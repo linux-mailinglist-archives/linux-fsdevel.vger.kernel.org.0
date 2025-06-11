@@ -1,179 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-51216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFE2AD479A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 03:00:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691BFAD47C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 03:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3823A89A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 01:00:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986283A840E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 01:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A3A2030A;
-	Wed, 11 Jun 2025 01:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF63322615;
+	Wed, 11 Jun 2025 01:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hqs1Q6xW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0537D944E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 01:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EEC4C80
+	for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jun 2025 01:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749603619; cv=none; b=K+xEaJmrXluLsIy7DYTcvet/NoDIpUxPfuJkzVO7WYto2gs3z3Q+UswL4PMxogFEXg60N2acmmksqMpvibm68C89Jf/sR2iQAvPhTaefQtA8XJcoWDODksRuKJJ3817w0oda7Lo8ZLsErmM0wAWPO+KKBREgdZ76Fcgy+hiGQV8=
+	t=1749604392; cv=none; b=IjRv5QcGPlsySZzZ8AoQZY3ZWEI7y2bpc0QTgvVTAUQmW6PSviyOEH3xRXmQ1R6wGg4yX214jOPN63a2SV/WYmqHeuqbpYCd+mWfMVo0tbPM7zYJIl0lOisntEL14oZxr06reDTXXW8mPejFvnZ/E3DvaIhAm1VUvpdkQKJwqI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749603619; c=relaxed/simple;
-	bh=tK2j7VPVlwYPO0yCJuWBsC4NOph9FjJWMfuf/NYQ14A=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=HArO2BPWxk7TIwW+5xAvvdETRbLpkDtDs2/wzqpSlStfo5f/5UcHdDdYvCkQkk4ce4XbchsasKoc/zOqsqMc8/56Uor6+QV2zzQQQMjF12Sr5koMVW6Z8t/8ZBhA5FBT+E/znwzEWo7y7uhe/D0l0H5AcDTvVpIC89alY7DEgik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uP9p1-007vCR-97;
-	Wed, 11 Jun 2025 01:00:07 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1749604392; c=relaxed/simple;
+	bh=AjTl62TMnpgSn3017tpohVzyIZqI3HMGdDwi2tRgghA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFS0CadwugSu79+3N0e53tmXcdKArjS80N2l1s8/vjvyw/MyTiBbYq3Tef6wxo0VP7OiuQ2gqL9wGeeyJUV7bUvuL91XFC5o4OAid4TeBowoWJk6WU2/PnI1MrRyEGNWfs6F8DuBrymkBoW33QjDkLeD5vql2gRchLfKuWmRgh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hqs1Q6xW; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+173dFevUk9aAIlNEWcst117XM2PcZOiQHmHqZSmYYA=; b=hqs1Q6xWzKMsmPsXG/KaywFuRD
+	Pzu4KgOy3Gx4nMIxlV4/4AQM58EbZq+Xjcno9cUBFOfChCgjO0HW8A70R7Wka4GsnCGMTHXHSsrVI
+	I+ckgXDWxCs36rk9WPFU17CjL9Cu+u9cQbQ6RVTXGnr2Mh+9W0pnLbUeVVqntha5UyfVtql/0Pn2O
+	cVnAvARLpsS8O5gujc091Qr+/7lQWvt648hc3G9lGNyEHvin2g66LAiirJ4WAxMOwzxAfySYD555o
+	5zu9aT+pluuMm00PvvC58fZBxS9M1H3kr9UcRDOXOuOu7qjTwfgu7srpxE25q6+du+PyLLiMSXtZw
+	SCp9+U7A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPA1b-0000000DpUU-0eeD;
+	Wed, 11 Jun 2025 01:13:07 +0000
+Date: Wed, 11 Jun 2025 02:13:07 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/8] Introduce S_DYING which warns that S_DEAD might
+ follow.
+Message-ID: <20250611011307.GI299672@ZenIV>
+References: <>
+ <20250610205732.GG299672@ZenIV>
+ <174960360675.608730.17207039742680720579@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Subject:
- Re: [PATCH 5/8] Introduce S_DYING which warns that S_DEAD might follow.
-In-reply-to: <20250610205732.GG299672@ZenIV>
-References: <>, <20250610205732.GG299672@ZenIV>
-Date: Wed, 11 Jun 2025 11:00:06 +1000
-Message-id: <174960360675.608730.17207039742680720579@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174960360675.608730.17207039742680720579@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, 11 Jun 2025, Al Viro wrote:
-> On Mon, Jun 09, 2025 at 05:34:10PM +1000, NeilBrown wrote:
-> > Once we support directory operations (e.g. create) without requiring the
-> > parent to be locked, the current practice locking a directory while
-> > processing rmdir() or similar will not be sufficient to wait for
-> > operations to complete and to block further operations.
-> >=20
-> > This patch introduced a new inode flag S_DYING.  It indicates that
-> > a rmdir or similar is being processed and new directory operations must
-> > not commence in the directory.  They should not abort either as the
-> > rmdir might fail - instead they should block.  They can do this by
-> > waiting for a lock on the inode.
-> >=20
-> > A new interface rmdir_lock() locks the inode, sets this flag, and waits
-> > for any children with DCACHE_LOCK set to complete their operation, and
-> > for any d_in_lookup() children to complete the lookup.  It should be
-> > called before attempted to delete the directory or set S_DEAD.  Matching
-> > rmdir_unlock() clears the flag and unlocks the inode.
-> >=20
-> > dentry_lock() and d_alloc_parallel() are changed to block while this
-> > flag it set and to fail if the parent IS_DEADDIR(), though dentry_lock()
-> > doesn't block for d_in_lookup() dentries.
->=20
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 4ad76df21677..c590f25d0d49 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -1770,8 +1770,11 @@ static bool __dentry_lock(struct dentry *dentry,
-> >  			  struct dentry *base, const struct qstr *last,
-> >  			  unsigned int subclass, int state)
-> >  {
-> > +	struct dentry *parent;
-> > +	struct inode *dir;
-> >  	int err;
-> > =20
-> > +retry:
-> >  	lock_acquire_exclusive(&dentry->dentry_map, subclass, 0, NULL, _THIS_IP=
-_);
-> >  	spin_lock(&dentry->d_lock);
-> >  	err =3D wait_var_event_any_lock(&dentry->d_flags,
-> > @@ -1782,10 +1785,43 @@ static bool __dentry_lock(struct dentry *dentry,
-> >  		spin_unlock(&dentry->d_lock);
-> >  		return false;
-> >  	}
-> > -
-> > -	dentry->d_flags |=3D DCACHE_LOCK;
-> > +	parent =3D dentry->d_parent;
->=20
-> Why will it stay the parent?  Matter of fact, why will it stay positive?
+On Wed, Jun 11, 2025 at 11:00:06AM +1000, NeilBrown wrote:
 
-As long as we continue to hold dentry->d_lock it will stay the
-parent, and so will have a reference, and so will stay positive.
+> Yes.
+> 
+> > 
+> > Where does your dentry lock nest wrt ->i_rwsem?  As a bonus (well, malus, I guess)
+> > question, where does it nest wrt parent *and* child inodes' ->i_rwsem for rmdir
+> > and rename?
+> 
+> Between inode of parent of the dentry and inode of the dentry.
 
->=20
-> > +	dir =3D igrab(parent->d_inode);
->=20
-> ... and not oops right here?
+That's... going to be fun to prove the deadlock avoidance.
+Looking forward to such proof...
 
-Still holding dentry->d_lock here so parent cannot have changed.
+Look, the reason why I'm sceptical is that we had quite a few interesting
+problems with directory locking schemes; fun scenarios are easy to
+miss and I've fucked up more than a few times in that area.  Fixing it
+afterwards can be a real bitch, especially if we get filesystem-specific
+parts in the picture.
 
->=20
-> > +	lock_map_release(&dentry->dentry_map);
-> >  	spin_unlock(&dentry->d_lock);
-> > -	return true;
-> > +
-> > +	if (state =3D=3D TASK_KILLABLE) {
-> > +		err =3D down_write_killable(&dir->i_rwsem);
-> > +		if (err) {
-> > +			iput(dir);
-> > +			return false;
-> > +		}
-> > +	} else
-> > +		inode_lock(dir);
-> > +	/* S_DYING much be clear now */
-> > +	inode_unlock(dir);
-> > +	iput(dir);
-> > +	goto retry;
->=20
-> OK, I'm really confused now.  Is it allowed to call dentry_lock() while hol=
-ding
-> ->i_rwsem of the parent?
+So let's sort it out _before_ we go there.  And I mean proof - verifiable
+statements about the functions, etc.
 
-Yes.
-
->=20
-> Where does your dentry lock nest wrt ->i_rwsem?  As a bonus (well, malus, I=
- guess)
-> question, where does it nest wrt parent *and* child inodes' ->i_rwsem for r=
-mdir
-> and rename?
-
-Between inode of parent of the dentry and inode of the dentry.
-
-In this case we aren't holding the dentry lock when we lock the parent.
-We might already have the parent locked when calling dentry_lock() if
-the filesystem hasn't opted out) but in that case S_DYING will not be
-set.  It is only set while holding the i_rw_sem in case which doesn't
-lock dentries.  So if S_DYING is set here, then it must be safe to lock
-the parent.
-
->=20
-> Tangentially connected question: which locks are held for ->unlink() in your
-> scheme?  You do need *something* on the victim inode to protect ->i_nlink
-> modifications, and anything on dentries of victim or their parent directori=
-es
-> is not going to give that.
->=20
-
-I haven't change the locking on non-directories at all.  The target of
-->unlink() will be locked after the dentry is locked (which is after the
-parent is locked if the fs requires that).
-
-->i_nlink for non-directories is still protected by ->i_rwsem on the
-inode.
-->i_nlink for directories is something the fs will have to handle
-when opting out of i_rwsem on directory ops.  NFS, for example, already
-takes inode->i_lock when calling inc_nlink() or drop_nlink().  The
-set_nlink() in nfs_update_inode() isn't obviously protected but as the
-number is informational it possibly doesn't matter.
-
-Thanks,
-NeilBrown
-
+Incidentally, what was the problem with having dentry locked before
+the parent?  At least that way we would have a reasonable lock ordering...
+It would require some preliminary work, but last time I looked at the
+area (not very deeply) it felt like a plausible direction...  I wonder
+which obstacle have I missed...
 
