@@ -1,128 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-51374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9A7AD6393
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 01:09:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3778DAD63A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 01:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7F01888222
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 23:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66EE2C025F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 23:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1AF2F4322;
-	Wed, 11 Jun 2025 22:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D786F219A8D;
+	Wed, 11 Jun 2025 23:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rzwkas8s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C308B258CC0;
-	Wed, 11 Jun 2025 22:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB19C13D;
+	Wed, 11 Jun 2025 23:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749682743; cv=none; b=PdLUSP3BPKr4ZxzP0UJYC7l9MwprkRVJqHEwz8IjFHH7JRzs38+ZGlUzoYMroypfZdOPiZWaKeC6wiLuW54T64kzPTGf/1tRwZLOHEXompt+YjVl3sshvQjoqBrmByNvG3KDEuNPhJP5i7kNuZvEBqTmuzE1uAWLyLbhNy7m++8=
+	t=1749683338; cv=none; b=OhjGaR4g66j7nI3DhyDQSoUVGF9l9/HPc8d4jGhPhlHK7pf5OnqrL05btKBkv8zeAbaciagSIfWTTqsO6DoiMI1gjVMjsX8JMufQLTDo6zZgQv5l/ImuzjNYHaslPWWgWoCVNN+CY3MOdWZVEyvy0IiINQZqaPnbqB6DURK7KKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749682743; c=relaxed/simple;
-	bh=+p49bxglS6vHYuXD21Z8kmOqvXOmaEy3O23Z2TX/mtU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ELa+tHuAZPj6iw4PYm01oyBxYCerV6DdUYTDwl3IPXThMpngG2jAC9c1GvBlqGgH9iCM8WRZsRmQr1ZQQQTJrtI3xSpnVBUxw0VATmjnAiZYmyioxBSPTC+3KXzaucKLN+tUCvwrEae7UncrT+vsogFOC2AoQabL5DTEtylUy60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uPUPL-008OC6-AX;
-	Wed, 11 Jun 2025 22:58:59 +0000
-From: NeilBrown <neil@brown.name>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: David Howells <dhowells@redhat.com>,
-	Tyler Hicks <code@tyhicks.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	Joel Granados <joel.granados@kernel.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	netfs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org
-Subject: [PATCH 2/2] fs/proc: take rcu_read_lock() in proc_sys_compare()
-Date: Thu, 12 Jun 2025 08:57:03 +1000
-Message-ID: <20250611225848.1374929-3-neil@brown.name>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250611225848.1374929-1-neil@brown.name>
-References: <20250611225848.1374929-1-neil@brown.name>
+	s=arc-20240116; t=1749683338; c=relaxed/simple;
+	bh=hDoQYVJFh4F12PjnMjcnr6tPU7818NrVp4deQ0m2a24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ncznutiuk1bATAIX7x//Ko6J9iZO95PNII86qmsyxJCk2ola/rc1qKhCR5ngGyyP4EA83M5gO9TxfUedmE2uX+pxtwNB+RF5LnIQUlnJpIEUmWqpwAEl7IKM19SvTNbYdpmxh61xzIa+AmjJjl9pywIQFPY/5wldXOtX/UrIOPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rzwkas8s; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a6f6d07bb5so4415901cf.2;
+        Wed, 11 Jun 2025 16:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749683335; x=1750288135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l2JuQOwBnHb9c1sBFy1lTJagtGJIItytWiSEh7sLGds=;
+        b=Rzwkas8s2gXF9d74LX2Ijx+swkJO7kY/I7ZgGOKWWLlYXCU70DLOTXjL13HU11m8th
+         B1jeYdsQtOO9HkHYsUDNTJ83WjO2bDQkj/PSW7fi3FsBbEkrqxUDNmOpow1hzDYzZvoe
+         GgfuFZM5tPTpvAXuj6Z1C1XiHLVGjvdCfms9DdHMBMgHGnGagcqti7dfi80gnMkJOufx
+         oLN+9AogjQ8HmxMkjVeWVVlhuG2A24jlMdLo4gX+qJO0WPTTST4XyU/+QqnKprd3P7At
+         FA3njMjAvEwNDvKfAJh6ae/slm+cAGeaAkqOCh+svlAeKeZ74U2De6ayJE98GSUoAtDK
+         hwAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749683335; x=1750288135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l2JuQOwBnHb9c1sBFy1lTJagtGJIItytWiSEh7sLGds=;
+        b=RtnUguc9ZAqvO7yoeTG8tU68yF6wRsWLx/dTNLw6wzqtz9jAYDIDmcTwEtMN/QFX2b
+         9shvRG2Omm1V6syZGi62qQ+oZh61u9u8o7DsU9yp6wrYDiY145fMzZBhAPO62OIvrqu/
+         krXyMIae7FXkOfmfoV8L9c/bswJlG1UVVC2j6ZkamlsDpRZxwHyEClJzf47Y5T2vjyF/
+         1S7LRNLo8a5fKQyTJwohW6Gkt0KgTDA81WMCfHOTeqTt8GoW29QzuKRuB8BRQe1os2o9
+         FacUwLtU2gzdQIFSpMf306O++pdvVN4ODSTTmOl5j0MyQmiH2Wf+xumLkOhoY13eUO7n
+         cTzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0CCDtG0ThYiad7wm31YvHdU9EuOX6dT/kiEI4crdtsIqpIgO8qPGKqjpnfS1OYWgYeXljVmwFErX0aMGR@vger.kernel.org, AJvYcCXHVgtaAviznp87hdQxsaQjEpjBKzpR/awekIv5L0KrC81hJw1lZkVp2bP6g3cWHCBkq/xKB3cGdZh6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbzJbYxRLYVovOpCJaBUtNk/kew60ZQisj2YDO+nTMmudztpc2
+	VP0xHdk8c6xmPdL1MNIETuIbqtC0xO+pp4m6cvVB8bdcNZWXXnCIRrtgJCHt/wJaZeWW954ELnM
+	6JfAopPC8RmJzZmECNOVbXHYiZKWhA9g=
+X-Gm-Gg: ASbGnctK6I8XoPmBD2FZsRENfwbI4bL7Cz71sUIacWOXx8AjcwAzoKB3YdsnrelpS3k
+	UO7Pl8VUIqWNLOsBCgfBwKa3B6XWa4EUHmR9+2xWTZ/lkEe39vWGn36vlAm114aODZrZPKp4iJd
+	Zhg4V06bKtl1VgBDkyi5RMUY/kxOEY7w+KtWN9VgWMeSiYut4n7Zcc3xc3qCk=
+X-Google-Smtp-Source: AGHT+IGToaqlmYUs+Qrz7Ss8GzmJPyzM7MGftBIFeGRD1jS1maqU/x5UTqxvnX1wzC90/vprKwfdh4dS62O2KX8vWC4=
+X-Received: by 2002:a05:622a:559a:b0:4a4:2e99:3a91 with SMTP id
+ d75a77b69052e-4a724253ab3mr12633701cf.11.1749683335285; Wed, 11 Jun 2025
+ 16:08:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250606233803.1421259-1-joannelkoong@gmail.com>
+ <20250606233803.1421259-3-joannelkoong@gmail.com> <aEZm-tocHd4ITwvr@infradead.org>
+ <CAJnrk1Z-ubwmkpnC79OEWAdgumAS7PDtmGaecr8Fopwt0nW-aw@mail.gmail.com>
+ <aEeo7TbyczIILjml@infradead.org> <aEgyu86jWSz0Gpia@infradead.org>
+ <CAJnrk1b6eB71BmE_aOS77O-=77L_r5pim6GZYg45tUQnWChHUg@mail.gmail.com>
+ <aEkARG3yyWSYcOu6@infradead.org> <CAJnrk1b8edbe8svuZXLtvWBnsNhY14hBCXhoqNXdHM6=df6YAg@mail.gmail.com>
+ <CAJnrk1au_grkFx=GT-DmbqFE4FmXhyG1qOr0moXXpg8BuBdp1A@mail.gmail.com> <20250611185039.GI6179@frogsfrogsfrogs>
+In-Reply-To: <20250611185039.GI6179@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 11 Jun 2025 16:08:42 -0700
+X-Gm-Features: AX0GCFt_L9SMpFeFtx8J6FU0F505zRU5lVzW17w1Zf0JlXpyh_OhP0zcA5k1Pqs
+Message-ID: <CAJnrk1YcMvDZ6=xyyJcZ_LcAPu_vrU-mRND4+dpTLb++RUy9bw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/8] iomap: add IOMAP_IN_MEM iomap type
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, miklos@szeredi.hu, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-proc_sys_compare() is the ->d_compare function for /proc/sys.
-It uses rcu_dereference() which assumes the RCU read lock is held and
-can complain if it isn't.
+On Wed, Jun 11, 2025 at 11:50=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
+> wrote:
+>
+> On Wed, Jun 11, 2025 at 11:33:40AM -0700, Joanne Koong wrote:
+> > On Tue, Jun 10, 2025 at 11:00=E2=80=AFPM Joanne Koong <joannelkoong@gma=
+il.com> wrote:
+> > >
+> > > On Tue, Jun 10, 2025 at 9:04=E2=80=AFPM Christoph Hellwig <hch@infrad=
+ead.org> wrote:
+> > > >
+> > > > On Tue, Jun 10, 2025 at 01:13:09PM -0700, Joanne Koong wrote:
+> > > >
+> > > > > For fuse at least, we definitely want granular reads, since reads=
+ may
+> > > > > be extremely expensive (eg it may be a network fetch) and there's
+> > > > > non-trivial mempcy overhead incurred with fuse needing to memcpy =
+read
+> > > > > buffer data from userspace back to the kernel.
+> > > >
+> > > > Ok, with that the plain ->read_folio variant is not going to fly.
+> > > >
+> > > > > > +               folio_lock(folio);
+> > > > > > +               if (unlikely(folio->mapping !=3D inode->i_mappi=
+ng))
+> > > > > > +                       return 1;
+> > > > > > +               if (unlikely(!iomap_validate(iter)))
+> > > > > > +                       return 1;
+> > > > >
+> > > > > Does this now basically mean that every caller that uses iomap fo=
+r
+> > > > > writes will have to implement ->iomap_valid and up the sequence
+> > > > > counter anytime there's a write or truncate, in case the folio ch=
+anges
+> > > > > during the lock drop? Or were we already supposed to be doing thi=
+s?
+> > > >
+> > > > Not any more than before.  It's is still option, but you still
+> > > > very much want it to protect against races updating the mapping.
+> > > >
+> > > Okay thanks, I think I'll need to add this in for fuse then. I'll loo=
+k
+> > > at this some more
+> >
+> > I read some of the thread in [1] and I don't think fuse needs this
+> > after all. The iomap mapping won't be changing state and concurrent
+> > writes are already protected by the file lock (if we don't use the
+> > plain ->read_folio variant).
+> >
+> > [1] https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.di=
+saster.area/
+>
+> <nod> If the mapping types don't change between read/write (which take
+> i_rwsem in exclusive mode) and writeback (which doesn't take it at all)
+> then I don't think there's a need to revalidate the mapping after
+> grabbing a folio.  I think the other ways to avoid those races are (a)
+> avoid unaligned zeroing if you can guarantee that the folios are always
+> fully uptodate; and (b) don't do things that change the out-of-place
+> write status of pagecache (e.g. reflink).
+>
+Awesome, thanks for verifying
 
-However there is no guarantee that this lock is held by d_same_name()
-(the caller of ->d_compare).  In particularly d_alloc_parallel() calls
-d_same_name() after rcu_read_unlock().
+I'll submit v2 rebased on top of the linux tree (if fuse is still
+behind mainline) after Christoph sends out his patch
 
-So this patch calls rcu_read_lock() before accessing the inode (which
-seems to be the focus of RCU protection here), and drops it afterwards.
-
-Signed-off-by: NeilBrown <neil@brown.name>
----
- fs/proc/proc_sysctl.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index cc9d74a06ff0..a4cdc0a189ef 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -917,19 +917,23 @@ static int proc_sys_compare(const struct dentry *dentry,
- {
- 	struct ctl_table_header *head;
- 	struct inode *inode;
-+	int ret;
- 
- 	/* Although proc doesn't have negative dentries, rcu-walk means
- 	 * that inode here can be NULL */
- 	/* AV: can it, indeed? */
-+	rcu_read_lock();
- 	inode = d_inode_rcu(dentry);
--	if (!inode)
--		return 1;
--	if (name->len != len)
--		return 1;
--	if (memcmp(name->name, str, len))
--		return 1;
--	head = rcu_dereference(PROC_I(inode)->sysctl);
--	return !head || !sysctl_is_seen(head);
-+	if (!inode ||
-+	    name->len != len ||
-+	    memcmp(name->name, str, len)) {
-+		ret = 1;
-+	} else {
-+		head = rcu_dereference(PROC_I(inode)->sysctl);
-+		ret = !head || !sysctl_is_seen(head);
-+	}
-+	rcu_read_unlock();
-+	return ret;
- }
- 
- static const struct dentry_operations proc_sys_dentry_operations = {
--- 
-2.49.0
-
+> --D
 
