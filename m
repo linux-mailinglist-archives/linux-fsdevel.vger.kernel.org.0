@@ -1,118 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-51506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7CAAD7761
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 18:03:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39F9AD774B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 18:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D1D3A4220
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:56:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6CE57A8DF4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88B227144B;
-	Thu, 12 Jun 2025 15:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B5A29A307;
+	Thu, 12 Jun 2025 16:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="adteXiLO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdiMO4Kl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB16D1B3957
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 15:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22495299A8C;
+	Thu, 12 Jun 2025 16:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749743818; cv=none; b=NJbMOBqFHD9WUTea4yuYnCzYr3QFWuLC9sGkFbKcTkMrPQvmPBGkiUFJMV8UZEEjc0xkMIMfouS7fT+OXD45+0zJKmrAMEuKNa+cN3pJSijFraob+ez+nCF5aMMqn3xBIj6QzPxHrIpdsAaecyzIf1+AZ1VuyAb4OMo4pn7PlPU=
+	t=1749744037; cv=none; b=DU7dVxbZFfifM16mYSn4/9SX/jHi68ar7mih8pndvQawfs5TII1Pqwr+C710PqdLv1huWXcXxW7DOLwrLm7Ain6dTDJwuCgwc2k08sHH9a0ydy/MmZMjUE5AHjcRdw/VMbMVPmEkq4HDVQT/VGnYnRzFUGTCTe7rHpCOMIGtn2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749743818; c=relaxed/simple;
-	bh=QaeCKRF5h21BnrbklbxGTMMCMqaScCZDI/SD6f2jAI0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wn08I8NB8bv4FRM2Ho8ojtAWVeyOP5TSn5pm05SobmJwFJM7ek62HOjQKe7kUT3swY6Xkw5o0gbMr6NHwvQumHFdR6KoQFWzeGnMT3jNch26Y5elKh3XRbXkigWA+utcDFhbQMtHawctz1Wbu1i6gxUDb40axbLJ4LrCNcJG/D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=adteXiLO; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235a3dd4f0dso8035555ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 08:56:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749743815; x=1750348615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QaeCKRF5h21BnrbklbxGTMMCMqaScCZDI/SD6f2jAI0=;
-        b=adteXiLOWS9T9XvVtbACWfggZ4ZZgyWsz4NQ7Pt+lrusJ+6m6JKl7jeFURXh/Elhi1
-         Kv9amv11c2Jl0oIypOUtmE7f7A0rEWjuKwyGwyMuMf4U8/ie0N2/zgUDYMlH4xZiuDmx
-         DX/XhHo+D2rrDlSsCseImQ81I0yWlaFA5OVgx6cO5qagCaHl2ogp5OJPF1KUpNRjY4Mc
-         pfSQZHx6oGy71eIlAsiwW9tdqPRSGkqLr3VTUCF9cljr5vYn3sU4EFdOVnvweGyI2VHg
-         HarkInbzrjXYimOpSN0RsTFoDhvyXw35XdZIm2cA+9MXRDaaVHfunCs1TwXyJ2I6yGl/
-         UoYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749743815; x=1750348615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QaeCKRF5h21BnrbklbxGTMMCMqaScCZDI/SD6f2jAI0=;
-        b=kQB6tBhYtjA7aZIECOArCrdrX8z+x56CDkxMCEVMa1R7f5URQfYjGAPE7mfVpLE8/O
-         8OmQjZlDImscrUqfmdtZ+ctbWDmGFh5yexAHBskFCK8n4BjmNHJFmng7u1gAwQE/7yaf
-         Ccsqd9fUsxCG7/Ea8okD1grYMpTj2K2W1k9JAAL3huNnM2+LvAFdvDvpO0lhTl+EZ1WS
-         1hiNyEy4aPVqzyAhPaHetJZxI1tNSsKDKPS//Qpxr9Zd6roke4l3PnVcxGuCQPkfDv/+
-         6MIJho5WEjzUzqO3mlQKTkN9rdLw8tFhhW4pTpVACWmCk/rP1a0CWwrQjTdduEqUTNrP
-         /FGg==
-X-Gm-Message-State: AOJu0YykLmK+y9NqJCeTA+b48Ov/V5gqfSRpDnIE3HYWJ8818H2qzfK+
-	8FSBHCjKqvqxS6cHQusdmkbsoP/rMM9Mq2XuERNmpSM2wwXN8lj+qPexVFG74N2SEnY32VSfuRv
-	/MmkgI66s+Ih05P4tmDt5pEjAS7OuzXG8s+zmf8wP/cF1ec184HfhYOz99QU=
-X-Gm-Gg: ASbGnctk/9BaTBH82jZhVvP0KRYojI8qFWS5/3xySzQX1zKrCg7EOvnVw984Q3kYfd2
-	K4PAeaxuZV+975mNLHe/zcuWk+YOYzVcCk5LdqCJLgnlMtPoll+zyuSdQ+l3dhV/DWnjfitDAF8
-	GU2OWkxStgBljWLzES5UPv+FYDSm5HTCbcEMrx3HHvYpSinMBovDzdt7icNb4rey9S3e2BPGHdQ
-	8Gycw==
-X-Google-Smtp-Source: AGHT+IE6+4Wa76KO9TPIgorE8i8beUVbaKDNVVNagZ0s500Wmvq7ngPLwT8NKEqDzNQ401T76r/dF7B7h1oKfRhh3rA=
-X-Received: by 2002:a17:902:cf46:b0:235:e71e:a396 with SMTP id
- d9443c01a7336-23641b40a37mr73558125ad.51.1749743814944; Thu, 12 Jun 2025
- 08:56:54 -0700 (PDT)
+	s=arc-20240116; t=1749744037; c=relaxed/simple;
+	bh=UMU27gYvQHH7PdtL/YFF/bFpvSv8erPUowtR9GgFuOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F3zjmccneN9llX1RZyZtGftxZxQqyd+PJ4GAinEislTOSSq+CPZ87RP2BrdCeaC7dKbnSy45ABZumMrl5107+b8JHuT8vMrVfXEbkINXzLtHneYHC5eteYQGSmYDlZ7RMaVaYHQvNEw4X4c5EjuwxqI3gf68jQ3hFhRomd/O3J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdiMO4Kl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F5FC4CEEA;
+	Thu, 12 Jun 2025 16:00:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749744036;
+	bh=UMU27gYvQHH7PdtL/YFF/bFpvSv8erPUowtR9GgFuOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tdiMO4Kloz2c4Oqq/t3PA/2eEXwBg317rFZ3frSPfdAzNiJJJxRqbk24P69Zi21Ry
+	 B/bDjBD4AbhEmm8zKFW/pBu4vnNLoieOT1purQb9DEw9L0DJBZVb23+ZxVW9A340lX
+	 ZdlDvsokXI79/BXau9v9KW1S8vbDECmLGccCOiHdGZCMChocVoj8BXLiTBW/tZfOGG
+	 jgzfPo6B8kQxeZzPvHwM5Dh9s0z+BriMMqa7tCsF8JT+0eAQGNsdm8Q7hHQdpCRXpz
+	 h2LUz4pfwBKCl6HN+X9buwAV4gpgmsi4BPZ5n7bT2V5/MTe8tWNH4lX47TbO13/6DS
+	 ILKagfZmDVYFw==
+Date: Thu, 12 Jun 2025 12:00:35 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE
+ for all IO
+Message-ID: <aEr5ozy-UnHT90R9@kernel.org>
+References: <20250610205737.63343-1-snitzer@kernel.org>
+ <20250610205737.63343-2-snitzer@kernel.org>
+ <4b858fb1-25f6-457f-8908-67339e20318e@oracle.com>
+ <aEnWhlXjzOmRfCJf@kernel.org>
+ <d8d01c41-f37f-42e0-9d46-62a51e95ab82@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEW=TRpJ89GmQym_RHSxyQ=x97btBBaJBT7hOtbQFKyk4jkzDQ@mail.gmail.com>
-In-Reply-To: <CAEW=TRpJ89GmQym_RHSxyQ=x97btBBaJBT7hOtbQFKyk4jkzDQ@mail.gmail.com>
-From: Prince Kumar <princer@google.com>
-Date: Thu, 12 Jun 2025 21:26:43 +0530
-X-Gm-Features: AX0GCFuumoT0JTeyGuDKSLZ3th6nLb68tn4JyQVJRFNO3pKf4y3XUhjAvck1YuI
-Message-ID: <CAEW=TRp9t2dTsp+Fd6szDdSrn4j350j0Yrju0GLtFDzzG7i_xw@mail.gmail.com>
-Subject: Re: Getting Unexpected Lookup entries calls after Readdirplus
-To: linux-fsdevel@vger.kernel.org
-Cc: Aditi Mittal <aditime@google.com>, Ashmeen Kaur <ashmeen@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8d01c41-f37f-42e0-9d46-62a51e95ab82@oracle.com>
 
-Gentle reminder!!
+On Thu, Jun 12, 2025 at 09:21:35AM -0400, Chuck Lever wrote:
+> On 6/11/25 3:18 PM, Mike Snitzer wrote:
+> > On Wed, Jun 11, 2025 at 10:31:20AM -0400, Chuck Lever wrote:
+> >> On 6/10/25 4:57 PM, Mike Snitzer wrote:
+> >>> Add 'enable-dontcache' to NFSD's debugfs interface so that: Any data
+> >>> read or written by NFSD will either not be cached (thanks to O_DIRECT)
+> >>> or will be removed from the page cache upon completion (DONTCACHE).
+> >>
+> >> I thought we were going to do two switches: One for reads and one for
+> >> writes? I could be misremembering.
+> > 
+> > We did discuss the possibility of doing that.  Still can-do if that's
+> > what you'd prefer.
+> 
+> For our experimental interface, I think having read and write enablement
+> as separate settings is wise, so please do that.
+> 
+> One quibble, though: The name "enable_dontcache" might be directly
+> meaningful to you, but I think others might find "enable_dont" to be
+> oxymoronic. And, it ties the setting to a specific kernel technology:
+> RWF_DONTCACHE.
+> 
+> So: Can we call these settings "io_cache_read" and "io_cache_write" ?
+> 
+> They could each carry multiple settings:
+> 
+> 0: Use page cache
+> 1: Use RWF_DONTCACHE
+> 2: Use O_DIRECT
+> 
+> You can choose to implement any or all of the above three mechanisms.
 
--Prince.
+I like it, will do for v2. But will have O_DIRECT=1 and RWF_DONTCACHE=2.
 
-On Thu, Jun 5, 2025 at 2:53=E2=80=AFPM Prince Kumar <princer@google.com> wr=
-ote:
->
-> Hello Team,
->
-> I'm implementing Readdirplus support in GCSFuse
-> (https://github.com/googlecloudplatform/gcsfuse) and have observed
-> behavior that seems to contradict my understanding of its purpose.
->
-> When Readdirplus returns ChildInodeEntry, I expect the kernel to use
-> this information and avoid subsequent lookup calls for those entries.
-> However, I'm seeing lookup calls persist for these entries unless an
-> entry_timeout is explicitly set.
->
-> One similar open issue on the libfuse github repo:
-> https://github.com/libfuse/libfuse/issues/235, which is closed but
-> seems un-resolved.
->
-> 1. Could you confirm if this is the expected behavior, or a kernel side i=
-ssue?
-> 2. Also, is there a way other than setting entry_timeout, to suppress
-> these lookup entries calls after the Readdirplus call?
->
-> Regards,
-> Prince Kumar.
+Thanks,
+Mike
 
