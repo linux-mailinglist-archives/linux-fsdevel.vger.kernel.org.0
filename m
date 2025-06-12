@@ -1,148 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-51488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19286AD72B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:53:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E7BAD72BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667C73AFF52
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A6C172F84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EEB23D2AE;
-	Thu, 12 Jun 2025 13:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7032472BD;
+	Thu, 12 Jun 2025 13:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jOr7YQ6X"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPOC7IHB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C73723CEE5;
-	Thu, 12 Jun 2025 13:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F82A2AEED;
+	Thu, 12 Jun 2025 13:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736223; cv=none; b=adVWEt6VDHMJ7zHCMYbL2crhzEBQaxnnlaIIHSnkv04yVgbhqx9Du613xuyIL+3H9f1qjJV0X5VCaW1b9m82kbwlKuiMRm2aBjw88zfTo3vX82+qAzDm8AKmHwZktS+5ci0al/ifEAKUgb08ywsIRSSnrzcJ4MrFsHR4iAYRjQ4=
+	t=1749736551; cv=none; b=OziNnSi27cAiS1s08EgdgWak+qspwCDiCxPHyz7RfkjQyVOvaPC7IHCb5rhZ8XADMNJLFsPE2C9rLQsP1bRfOEbpOMG058d8XRZjy1/rQuPiuFHcZQIbOY9fJOMqGtRYWEYCKU6n5lHTCuqJYoEX3vG8uCKTjc6MPA+dQ558IQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736223; c=relaxed/simple;
-	bh=oIBpX/GR/d6iEZePAjLKI7DJKIn8Lix1Fu3jd4gxJUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dh5a9zO2KQH0x01S6jQBxI8B/vx3yP4XZVZIeBtTJcoBSTCAMJGDM8xkSSAJBYBwgv4OvokiIvfgacaylyal0oU1wRqfSmCjtH92G6Qa0IsLT0fJ0X/KEcfjWVctuoEkyytkSEyJ0QdB1/7lN16WLG5sXP2o++usiUL9eh2qs3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jOr7YQ6X; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749736222; x=1781272222;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oIBpX/GR/d6iEZePAjLKI7DJKIn8Lix1Fu3jd4gxJUI=;
-  b=jOr7YQ6Xu6meBOnkcHsYOTgaYzgLUz5d7E4hcD0RyAg4aRbsaRSaqbwq
-   oEBuIEENSyh88d3AEXa9hhFBx2QQs/2u6C501By8XKh8FXwHycOIlZnAJ
-   qovL20/5+LhK88KBwSuODtVPMA1dhHAYvvymU7s2Q/YMnzaKforeuD0dI
-   reOnOy3U5/0FSh5XBuaKNyU10daToqwW3t1kGBsZFOvMzNK74gIE3q/mu
-   b5M9BZ0RgynhyV2hA8LAJ9LDlZh5bmDL6II6AruIyDEs5fCSb5r45g1Zg
-   5ZlMFv1gZI1AHdI/z/ou2XxbPO/G4b1Hos1ywr4hoLKKf72G9m7mDJ4TG
-   Q==;
-X-CSE-ConnectionGUID: kxVvOc5DQfyPNhzEpc9oLw==
-X-CSE-MsgGUID: QDT2E+GwSkSHkw4XMUjtRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="54544796"
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="54544796"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 06:50:10 -0700
-X-CSE-ConnectionGUID: IsYavwqjREqHO9+0j/jeVw==
-X-CSE-MsgGUID: fo/ynzeLQK2Ge2thxGeyEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="148019040"
-Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.111.188]) ([10.125.111.188])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 06:50:08 -0700
-Message-ID: <30a3048f-efbe-4999-a051-d48056bafe0b@intel.com>
-Date: Thu, 12 Jun 2025 06:50:07 -0700
+	s=arc-20240116; t=1749736551; c=relaxed/simple;
+	bh=E0Nxbb8Zhk8mfwiipHLBBckrZjv1zJdhcMMkqy7tMgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9GhRb3MFF3WUCOizMwD5CYBGJ7425S1oD24P/KMbr+bCzwN1amoEhCmQ2NgJCRnAWFAC2zmDP6g7Xaz5OGSxqO5Svh4oALPvZ4N5B1CjAzZ8vUHY9uuEuEzAKTy2HN84oZHn9T/GUVOXAcerSSiPwdF3DiQ5OqsN9GLBBEzrdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPOC7IHB; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ade5b8aab41so215911466b.0;
+        Thu, 12 Jun 2025 06:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749736548; x=1750341348; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xikeG81Glqm5M9v3u+UCgVKmnmOs9BH7r2u0CB2OILg=;
+        b=kPOC7IHB7oaMcgBNiRPMVraJYWrDhrfoCH2nmJxQzMbOXLVsFH95ru6BuLDPXU5/TP
+         XGyu35QBNLfQRRqcvLxc2Hfa+a4pqrJl0JMKKGI/F3cpJOI0A7DxHvriOVupVPMs+rAk
+         xqP9CGCVEj7h4Wd6Pv6T2truLEv6TBLUob1jQL0EDLk8FAzP4u61yccZB99xBNRznMS2
+         xdvYjRzg+OEsXyNHnFf3JDV97CRGmyziNLOyTcV104TTWBOtVNhyPc8dtyoCXi/tjv9G
+         fQyDl6dK+iux8UEhhBPi+fLkvwqgIoqp+bEsFns5wpThlPx9x+7F5u6ZIVSOPoFjnM/V
+         rP4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749736548; x=1750341348;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xikeG81Glqm5M9v3u+UCgVKmnmOs9BH7r2u0CB2OILg=;
+        b=JpZ0GozvaazjBibXzxVT8mVpVpD6p6qqtMqDe4XRWHKg4ZmWghcvaeVImOF/w+zsU+
+         p0o30TDmrNwG61sHjnR4AYvTQOctyuBzZrgJzw4rL6cKpgCUrLXBEav2H4stgIXUOHeS
+         /k1hQ7dtlH6gQI458CTu8F4fjkI26RvQ5HqxzAhoPOIIib3WSjq5JjhB5UKInrL7T5gb
+         Xrzf/VCtKfP5nULIlC18zfRaEm7jNF+sPSaLHz0obMeTNKF+wwxijOF3Esn1LUa0Lf8A
+         BguMbES6JNv0R1mpAnbF4nu6Ed3dPwEW+AiyLs61/6ZlOE7k3PzANg9u3pIxA5InGIIC
+         IEpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPxL3IloC0+xx7F6HU+65gaNwhrqiIX5nqeEIsqT508bqOJAaAeJojnsLmt6uPvJbszlpWMTRspEw2SBXJ@vger.kernel.org, AJvYcCXf5oWSMN5xhN1/RrRRvxI1evy1TJkk7ee3vMz2pZ2PQNRlZWEpg6TFfPzPwU3f7Dl0L6k0rdiI+J+4oNye@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx8o2e1aPQ8ykSclda1Zrp7ZfcsO8JS8LojyCzdXO0p0xb8o2T
+	FHT3epRL1CKizu12j3euSQxmeXPrNj2qfX2W73D1kFgnqCDMsdxO+J7M
+X-Gm-Gg: ASbGncuPGSmVX/igEw/isXiky7r3FNbqkFHRZJei2FJg0Hj9pQla1gtH7SLyU6q2jfH
+	sMhoFUMFUpmHGrdgnp+JHgQxpgb5j3VaS3sKVQuayeezGPxw+BNEVQIHVW8w20QWGw4u9Uf/LwE
+	I4axKqkJQjReHXJ8Nnr2l87vHKIXDxy9ssNYZjwGHOEQN5rYAeUlhrUkayc8eTYPepNnQkvLN0a
+	2Wd76E4QmvARVVNo2l1X1zUIsAuYldQNpJtB53GBqVlkU2Zs8cvMYQ6qpkkxatUQrIiJ20/bPB1
+	Tf8oCgoPMw/sqG+6cA+RnuX262klhW6T+MXnit0xIQius4UWiSaLIAGYeOZkhWCY/K5CwsFJ2cU
+	rxA==
+X-Google-Smtp-Source: AGHT+IEt/gyCua3q4hkdwtZlk5m5IJpx57fEfd6rwWGyPrfaAiZW+b8ZSeyx9l/e9qKVOFzE3helXQ==
+X-Received: by 2002:a17:907:7248:b0:ade:348f:88df with SMTP id a640c23a62f3a-adea92790f3mr328097866b.4.1749736547320;
+        Thu, 12 Jun 2025 06:55:47 -0700 (PDT)
+Received: from f (cst-prg-93-231.cust.vodafone.cz. [46.135.93.231])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adeadb8c3f8sm136320766b.129.2025.06.12.06.55.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 06:55:46 -0700 (PDT)
+Date: Thu, 12 Jun 2025 15:55:40 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Luis Henriques <luis@igalia.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+Subject: Re: [PATCH] fs: drop assert in file_seek_cur_needs_f_lock
+Message-ID: <ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
+References: <87tt4u4p4h.fsf@igalia.com>
+ <20250612094101.6003-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] add STATIC_PMD_ZERO_PAGE config option
-To: Pankaj Raghav <p.raghav@samsung.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>,
- Zi Yan <ziy@nvidia.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
- x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, kernel@pankajraghav.com, hch@lst.de
-References: <20250612105100.59144-1-p.raghav@samsung.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250612105100.59144-1-p.raghav@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250612094101.6003-1-luis@igalia.com>
 
-On 6/12/25 03:50, Pankaj Raghav wrote:
-> But to use huge_zero_folio, we need to pass a mm struct and the
-> put_folio needs to be called in the destructor. This makes sense for
-> systems that have memory constraints but for bigger servers, it does not
-> matter if the PMD size is reasonable (like in x86).
+On Thu, Jun 12, 2025 at 10:41:01AM +0100, Luis Henriques wrote:
+> The assert in function file_seek_cur_needs_f_lock() can be triggered very
+> easily because, as Jan Kara suggested, the file reference may get
+> incremented after checking it with fdget_pos().
+> 
+> Fixes: da06e3c51794 ("fs: don't needlessly acquire f_lock")
+> Signed-off-by: Luis Henriques <luis@igalia.com>
+> ---
+> Hi Christian,
+> 
+> It wasn't clear whether you'd be queueing this fix yourself.  Since I don't
+> see it on vfs.git, I decided to explicitly send the patch so that it doesn't
+> slip through the cracks.
+> 
+> Cheers,
+> -- 
+> Luis
+> 
+>  fs/file.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index 3a3146664cf3..075f07bdc977 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -1198,8 +1198,6 @@ bool file_seek_cur_needs_f_lock(struct file *file)
+>  	if (!(file->f_mode & FMODE_ATOMIC_POS) && !file->f_op->iterate_shared)
+>  		return false;
+>  
+> -	VFS_WARN_ON_ONCE((file_count(file) > 1) &&
+> -			 !mutex_is_locked(&file->f_pos_lock));
+>  	return true;
+>  }
+>  
 
-So, what's the problem with calling a destructor?
+There this justifies the change.
 
-In your last patch, surely bio_add_folio() can put the page/folio when
-it's done. Is the real problem that you don't want to call zero page
-specific code at bio teardown?
+fdget_pos() can only legally skip locking if it determines to be in
+position where nobody else can operate on the same file obj, meaning
+file_count(file) == 1 and it can't go up. Otherwise the lock is taken.
+
+Or to put it differently, fdget_pos() NOT taking the lock and new refs
+showing up later is a bug.
+
+I don't believe anything of the sort is happening here.
+
+Instead, overlayfs is playing games and *NOT* going through fdget_pos():
+
+	ovl_inode_lock(inode);
+        realfile = ovl_real_file(file);
+	[..]
+        ret = vfs_llseek(realfile, offset, whence);
+
+Given the custom inode locking around the call, it may be any other
+locking is unnecessary and the code happens to be correct despite the
+splat.
+
+I think the safest way out with some future-proofing is to in fact *add*
+the locking in ovl_llseek() to shut up the assert -- personally I find
+it uneasy there is some underlying file obj flying around.
+
+Even if ultimately the assert has to go, the proposed commit message
+does not justify it.
 
