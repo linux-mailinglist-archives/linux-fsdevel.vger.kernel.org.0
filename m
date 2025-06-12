@@ -1,86 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-51397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACDEDAD66A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 06:06:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CD0AD66C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 06:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A4AE164332
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 04:06:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE60C3AC19C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 04:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733A91D90C8;
-	Thu, 12 Jun 2025 04:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/fbMnh6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2EA1DF977;
+	Thu, 12 Jun 2025 04:30:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15EE19F137;
-	Thu, 12 Jun 2025 04:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C839128382;
+	Thu, 12 Jun 2025 04:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749701200; cv=none; b=EgL7lqD3VkuMgzpL8AX8swG5V7a15ROp2ukssulfhRBH6rbWYtNp98HLlad4YqDJ+IANO/zled3pPKTZ5Q1uD9/uj46mO1P8xhBRObI6vqprkwhgDiFEO28LryUuUgGqCyUqx1A/pUMlOcXRm1SixH22bwLgVRkVjXORxtbAtyk=
+	t=1749702640; cv=none; b=Hnai8BSU45j/g1GJDFAp4opnzRhWarNI2gLyvqECSLgu1JUd1AhkKmi++BkrQYlDkIwi5JKo2wVmoCD5unwM9/o28rwbwhSK6St+A2RcBlfVWfopZRZc5bekrzRZq2cYPfWnMAcde9IQMJOssCgUz5RwoBSg7kVNsfC7dyjCkJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749701200; c=relaxed/simple;
-	bh=Q4ZfThogLrjrzXMAxDJlRiD7rOypQqZu6v0KUZrg3KY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CsCDlq/i4fOe7ul+e9FSLXoeSEmPWC4G7tgDkBe9Cmr0gqqOo+A5NnIshqFMveOVvEanfDh0rHqy7Jm1VCv0JSCSlpacixkS2C5oRDtLT+LXbpqkORTBFpYxDSgKcmk/VNATiNGVy909KVDIE9GbF9rSDv4HXUEPYbUTc1lq+g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/fbMnh6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A1A7C4CEEA;
-	Thu, 12 Jun 2025 04:06:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749701200;
-	bh=Q4ZfThogLrjrzXMAxDJlRiD7rOypQqZu6v0KUZrg3KY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J/fbMnh6A/cjTgo7lUITahboGp1sZvt+yqQ9+dzfJ1x2SVGCkshiUIUJhObb9W2HC
-	 iIwbKpuYLlrFtKoLBTyc0SYLoMmmafoJO3CtnT3oLaa5WBmnoJjz8ljuNPlsJ8tH22
-	 Xb9gAO3UPl938q8TSlHmgV7h/STg+DViIZ0EDeCmE/obMMnxC7wej3kZZ29N8kJU5K
-	 JhhkuOoxr2VLkHuTyb3gdjniPi5JGAW893QI0S7+tHTg0dz4W9udr69W3Hv+/B4J0m
-	 HknQd6s7PeCg1lrlpK8ruUVjVFVdzOJe2xYiZdIOSrUIxJLfMtCQe3tVxsIMILghNV
-	 hNH/9z2L7VF/Q==
-Date: Wed, 11 Jun 2025 21:06:39 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 3/7] iomap: optional zero range dirty folio processing
-Message-ID: <20250612040639.GO6156@frogsfrogsfrogs>
-References: <20250605173357.579720-1-bfoster@redhat.com>
- <20250605173357.579720-4-bfoster@redhat.com>
- <20250609160420.GC6156@frogsfrogsfrogs>
- <aEgjMtAONSHz6yJT@bfoster>
- <20250610145552.GM6156@frogsfrogsfrogs>
- <aEj-HgO5BcVwb6Qc@infradead.org>
+	s=arc-20240116; t=1749702640; c=relaxed/simple;
+	bh=KtZUjJAg2eQN1hqERrYkxxQnWfsOhN7ohu1dvZH3944=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=VdI+UWobTeui35G0tPUdUXD0jGS2LmPkrIGCSVrVmTlaYqjn7n2IPT1Cum157umVzOA8n2rSkJY3K7k9eYbvy1FIPGIhmDGe+Ffhr6hB0y8xyC8RC2xLRyMUZaY2YI2Ou6XsUUyHy3L5DSVFzEbnvPgmh/a7THZ1x2/62Jay7Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uPZa0-008YSz-KI;
+	Thu, 12 Jun 2025 04:30:20 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEj-HgO5BcVwb6Qc@infradead.org>
+From: "NeilBrown" <neil@brown.name>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "David Howells" <dhowells@redhat.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Amir Goldstein" <amir73il@gmail.com>,
+ "Kees Cook" <kees@kernel.org>, "Joel Granados" <joel.granados@kernel.org>,
+ "Namjae Jeon" <linkinjeon@kernel.org>, "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>, netfs@lists.linux.dev,
+ linux-kernel@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs/proc: take rcu_read_lock() in proc_sys_compare()
+In-reply-to: <20250611233306.GA1647736@ZenIV>
+References: <>, <20250611233306.GA1647736@ZenIV>
+Date: Thu, 12 Jun 2025 14:30:20 +1000
+Message-id: <174970262010.608730.16666030974664097741@noble.neil.brown.name>
 
-On Tue, Jun 10, 2025 at 08:55:10PM -0700, Christoph Hellwig wrote:
-> On Tue, Jun 10, 2025 at 07:55:52AM -0700, Darrick J. Wong wrote:
-> > Hrmm.  On closer examination, at least for xfs we've taken i_rwsem and
-> > the invalidate_lock so I think it should be the case that you don't need
-> > to revalidate.  I think the same locks are held for iomap_unshare_range
-> > (mentioned elsewhere in this thread) though it doesn't apply to regular
-> > pagecache writes.
+On Thu, 12 Jun 2025, Al Viro wrote:
+> On Thu, Jun 12, 2025 at 08:57:03AM +1000, NeilBrown wrote:
 > 
-> We should document these assumptions, preferable using (lockdep)
-> asserts.
+> > However there is no guarantee that this lock is held by d_same_name()
+> > (the caller of ->d_compare).  In particularly d_alloc_parallel() calls
+> > d_same_name() after rcu_read_unlock().
+> 
+> d_alloc_parallel() calls d_same_name() with dentry being pinned;
+> if it's positive, nothing's going to happen to its inode,
+> rcu_read_lock() or not.  It can go from negative to positive,
+> but that's it.
+> 
+> Why is it needed?  We do care about possibly NULL inode (basically,
+> when RCU dcache lookup runs into a dentry getting evicted right
+> under it), but that's not relevant here.
+> 
 
-Agreed.  I think most of iomap/buffered-io.c wants the caller to hold
-i_rwsem in shared mode for reads; i_rwsem in exclusive mode for writes;
-and the invalidate lock for page faults.
+Maybe it isn't needed.  Maybe I could fix the warning by removing the
+rcu_dereference() (and the RCU_INIT_POINTER() in inode.c).  But then I
+might have to pretend that I understand the code - and it makes no
+sense.
 
-The big exception iirc is iomap_zero_range where you need to hold
-i_rwsem and the mapping invalidate lock, right?
+If a second d_alloc_parallel() is called while there is already a
+d_in_lookup() dentry, then ->d_compare will return 1 so a second
+d_in_lookup() will be created and ->lookup will be called twice
+(possibly concurrently) and both will be added to the dcache.  Probably
+not harmful but not really wanted.
 
---D
+And I'm having trouble seeing how sysctl_is_seen() is useful.  If it
+reports that the sysctl is not visible to this process, it'll just
+create a new dentry/inode which is that same as any other that would be
+created... 
+
+NeilBrown
 
