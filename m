@@ -1,88 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-51505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE451AD772C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 17:56:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7CAAD7761
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 18:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB75F7ADC97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:55:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D1D3A4220
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C1D298CA3;
-	Thu, 12 Jun 2025 15:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88B227144B;
+	Thu, 12 Jun 2025 15:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vd4WUjaH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="adteXiLO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05311AAA2F;
-	Thu, 12 Jun 2025 15:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB16D1B3957
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 15:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749743790; cv=none; b=h+vRER6OXVuY1KyjL1cOjBT9g0Z5VIFwtowC5tO7XE9TxqyTuWM5c+fLKOFe+KihJ+v5Fl9SNEsMzaIbLgqXUx1pjfPESrG3NInUSe4JHFwc9888E5mrzuQlBWgKbwKKror5Hc6u4rv5T63b6ZGq4BdkpTXV0lo+1BfJMaBn3DE=
+	t=1749743818; cv=none; b=NJbMOBqFHD9WUTea4yuYnCzYr3QFWuLC9sGkFbKcTkMrPQvmPBGkiUFJMV8UZEEjc0xkMIMfouS7fT+OXD45+0zJKmrAMEuKNa+cN3pJSijFraob+ez+nCF5aMMqn3xBIj6QzPxHrIpdsAaecyzIf1+AZ1VuyAb4OMo4pn7PlPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749743790; c=relaxed/simple;
-	bh=fPHaHi2HxEdBwj2oG5SqlCNxzhdpeu3yvO6FzaXVGDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rE7la4eLBaQcTrQPebCj654tguT/0968evs/6q6Qj7469OBo19TniFLrlMn3oMvoucGMIGL2L1LyBQvdmY5u0HCGyRB/hWISPDiVEbEw8gmvgsyzXS0YWZA0RH/rQZ2EQzEwTub14rpQL5G0GpRpPui21rVvKfzBw6QEuZaE9fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vd4WUjaH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F2BC4CEEB;
-	Thu, 12 Jun 2025 15:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749743790;
-	bh=fPHaHi2HxEdBwj2oG5SqlCNxzhdpeu3yvO6FzaXVGDU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vd4WUjaHdTJw5ReK7mTYSl7gNzWyKtYcw/9DADXColvdbygo4YDGFHejQv3XGmims
-	 aIJc2kmhKmoWrehoCyyqwIT/ENfKA51+giXhoin8fxGnHK9tHklYzJCKaJpe+BQ8qW
-	 9UBQCprGYwvxbeUusZfKhR2xMqbTnPB8ydx5XNMJ/gzV2YEXIa9RGotIZWZAiwVgNi
-	 Hkb12Qjp+AYHRJ9NOJt26k4KfE3KlSJFKdLt28D5YeFuPck9kINk6NWD6R2XOnp614
-	 JLE99SKiDrwbuG6E7yHo1vg51l3fvw/gCiHqfxDOvTRVJ06obC1WvnyLKsWd2vuR4h
-	 vqc8rvThTAy8A==
-Date: Thu, 12 Jun 2025 11:56:28 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Benjamin Coddington <bcodding@redhat.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
-	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: need SUNRPC TCP to receive into aligned pages [was: Re: [PATCH
- 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE for all IO]
-Message-ID: <aEr4rAbQiT1yGMsI@kernel.org>
-References: <20250610205737.63343-1-snitzer@kernel.org>
- <20250610205737.63343-2-snitzer@kernel.org>
- <4b858fb1-25f6-457f-8908-67339e20318e@oracle.com>
- <aEnWhlXjzOmRfCJf@kernel.org>
- <7c48e17c4b575375069a4bd965f346499e66ac3a.camel@kernel.org>
- <aEn2-mYA3VDv-vB8@kernel.org>
- <110c7644b829ce158680979e6cd358193ea3f52b.camel@kernel.org>
- <d13ef7d6-0040-40ac-9761-922a1ec5d911@oracle.com>
- <5D9EA89B-A65F-40A1-B78F-547A42734FC2@redhat.com>
+	s=arc-20240116; t=1749743818; c=relaxed/simple;
+	bh=QaeCKRF5h21BnrbklbxGTMMCMqaScCZDI/SD6f2jAI0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wn08I8NB8bv4FRM2Ho8ojtAWVeyOP5TSn5pm05SobmJwFJM7ek62HOjQKe7kUT3swY6Xkw5o0gbMr6NHwvQumHFdR6KoQFWzeGnMT3jNch26Y5elKh3XRbXkigWA+utcDFhbQMtHawctz1Wbu1i6gxUDb40axbLJ4LrCNcJG/D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=adteXiLO; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235a3dd4f0dso8035555ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 08:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749743815; x=1750348615; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QaeCKRF5h21BnrbklbxGTMMCMqaScCZDI/SD6f2jAI0=;
+        b=adteXiLOWS9T9XvVtbACWfggZ4ZZgyWsz4NQ7Pt+lrusJ+6m6JKl7jeFURXh/Elhi1
+         Kv9amv11c2Jl0oIypOUtmE7f7A0rEWjuKwyGwyMuMf4U8/ie0N2/zgUDYMlH4xZiuDmx
+         DX/XhHo+D2rrDlSsCseImQ81I0yWlaFA5OVgx6cO5qagCaHl2ogp5OJPF1KUpNRjY4Mc
+         pfSQZHx6oGy71eIlAsiwW9tdqPRSGkqLr3VTUCF9cljr5vYn3sU4EFdOVnvweGyI2VHg
+         HarkInbzrjXYimOpSN0RsTFoDhvyXw35XdZIm2cA+9MXRDaaVHfunCs1TwXyJ2I6yGl/
+         UoYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749743815; x=1750348615;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QaeCKRF5h21BnrbklbxGTMMCMqaScCZDI/SD6f2jAI0=;
+        b=kQB6tBhYtjA7aZIECOArCrdrX8z+x56CDkxMCEVMa1R7f5URQfYjGAPE7mfVpLE8/O
+         8OmQjZlDImscrUqfmdtZ+ctbWDmGFh5yexAHBskFCK8n4BjmNHJFmng7u1gAwQE/7yaf
+         Ccsqd9fUsxCG7/Ea8okD1grYMpTj2K2W1k9JAAL3huNnM2+LvAFdvDvpO0lhTl+EZ1WS
+         1hiNyEy4aPVqzyAhPaHetJZxI1tNSsKDKPS//Qpxr9Zd6roke4l3PnVcxGuCQPkfDv/+
+         6MIJho5WEjzUzqO3mlQKTkN9rdLw8tFhhW4pTpVACWmCk/rP1a0CWwrQjTdduEqUTNrP
+         /FGg==
+X-Gm-Message-State: AOJu0YykLmK+y9NqJCeTA+b48Ov/V5gqfSRpDnIE3HYWJ8818H2qzfK+
+	8FSBHCjKqvqxS6cHQusdmkbsoP/rMM9Mq2XuERNmpSM2wwXN8lj+qPexVFG74N2SEnY32VSfuRv
+	/MmkgI66s+Ih05P4tmDt5pEjAS7OuzXG8s+zmf8wP/cF1ec184HfhYOz99QU=
+X-Gm-Gg: ASbGnctk/9BaTBH82jZhVvP0KRYojI8qFWS5/3xySzQX1zKrCg7EOvnVw984Q3kYfd2
+	K4PAeaxuZV+975mNLHe/zcuWk+YOYzVcCk5LdqCJLgnlMtPoll+zyuSdQ+l3dhV/DWnjfitDAF8
+	GU2OWkxStgBljWLzES5UPv+FYDSm5HTCbcEMrx3HHvYpSinMBovDzdt7icNb4rey9S3e2BPGHdQ
+	8Gycw==
+X-Google-Smtp-Source: AGHT+IE6+4Wa76KO9TPIgorE8i8beUVbaKDNVVNagZ0s500Wmvq7ngPLwT8NKEqDzNQ401T76r/dF7B7h1oKfRhh3rA=
+X-Received: by 2002:a17:902:cf46:b0:235:e71e:a396 with SMTP id
+ d9443c01a7336-23641b40a37mr73558125ad.51.1749743814944; Thu, 12 Jun 2025
+ 08:56:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5D9EA89B-A65F-40A1-B78F-547A42734FC2@redhat.com>
+References: <CAEW=TRpJ89GmQym_RHSxyQ=x97btBBaJBT7hOtbQFKyk4jkzDQ@mail.gmail.com>
+In-Reply-To: <CAEW=TRpJ89GmQym_RHSxyQ=x97btBBaJBT7hOtbQFKyk4jkzDQ@mail.gmail.com>
+From: Prince Kumar <princer@google.com>
+Date: Thu, 12 Jun 2025 21:26:43 +0530
+X-Gm-Features: AX0GCFuumoT0JTeyGuDKSLZ3th6nLb68tn4JyQVJRFNO3pKf4y3XUhjAvck1YuI
+Message-ID: <CAEW=TRp9t2dTsp+Fd6szDdSrn4j350j0Yrju0GLtFDzzG7i_xw@mail.gmail.com>
+Subject: Re: Getting Unexpected Lookup entries calls after Readdirplus
+To: linux-fsdevel@vger.kernel.org
+Cc: Aditi Mittal <aditime@google.com>, Ashmeen Kaur <ashmeen@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 10:17:22AM -0400, Benjamin Coddington wrote:
-> 
-> What's already been mentioned elsewhere, but not yet here:
-> 
-> The transmitter could always just tell the receiver where the data is, we'd
-> need an NFS v3.1 and an extension for v4.2?
-> 
-> Pot Stirred,
-> Ben
+Gentle reminder!!
 
-Yeah, forgot to mention giving serious consideration to extending
-specs to make this happen easier.  Pros and cons to doing so.
+-Prince.
 
-Thanks for raising it.
-
-Mike
+On Thu, Jun 5, 2025 at 2:53=E2=80=AFPM Prince Kumar <princer@google.com> wr=
+ote:
+>
+> Hello Team,
+>
+> I'm implementing Readdirplus support in GCSFuse
+> (https://github.com/googlecloudplatform/gcsfuse) and have observed
+> behavior that seems to contradict my understanding of its purpose.
+>
+> When Readdirplus returns ChildInodeEntry, I expect the kernel to use
+> this information and avoid subsequent lookup calls for those entries.
+> However, I'm seeing lookup calls persist for these entries unless an
+> entry_timeout is explicitly set.
+>
+> One similar open issue on the libfuse github repo:
+> https://github.com/libfuse/libfuse/issues/235, which is closed but
+> seems un-resolved.
+>
+> 1. Could you confirm if this is the expected behavior, or a kernel side i=
+ssue?
+> 2. Also, is there a way other than setting entry_timeout, to suppress
+> these lookup entries calls after the Readdirplus call?
+>
+> Regards,
+> Prince Kumar.
 
