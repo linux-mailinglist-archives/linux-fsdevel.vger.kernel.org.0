@@ -1,312 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-51407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC36AD6804
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 08:29:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48053AD6853
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 08:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E72517E3B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 06:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B8641898AC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 06:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F19F1F2B88;
-	Thu, 12 Jun 2025 06:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F92A20B81E;
+	Thu, 12 Jun 2025 06:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYRRnRzP"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EDijHz/G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2083.outbound.protection.outlook.com [40.107.243.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59D71F2380;
-	Thu, 12 Jun 2025 06:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749709783; cv=none; b=uzPo0DI6mkceuTYUITvbfY08+Ut1uWe+9+S8ZG5P2VyJCspVgrLXxaMOaq8QB1wb+WEWM4pcmo1eTm5sf4kX+qIl8N6QrKDp4gizDp1wLuyZsTaVlTnzkTSd9zNqpxzQqc1bCHf9PHQt4N4ecJe/Ax9lnq4pzkaH2aIoHW5WuE0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749709783; c=relaxed/simple;
-	bh=tTttWpkeJescZ1D0ou68WiGucdpJczmz+va4QdiGySY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PvWHdmm3z/2zOuCctoYl/c+XcCgQE/OHvc2YzW3+7HnBgojVmR860pSaWLtf1KQMSTb4HhJKHCI27noS5u/lK8PUz1F240EHxrBoaYp1YLWYqN9YUKLm2j+rIJURyosdIMzWS1YWwBBVOJnaZgs059AH6YVMQoB/p5/4Ub6P71s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYRRnRzP; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad8826c05f2so110231966b.3;
-        Wed, 11 Jun 2025 23:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749709780; x=1750314580; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BMnQ0lSfRFOLX5YBEHmf2SW/xC1lQce8vd8CGQzY+DU=;
-        b=EYRRnRzPkGw2t7bgL4NAb3H7verwot3zD02C5+4AF9HHeJpZpZiF6lgkbS8UveZc5y
-         BHdMB5SmhhMsgn5ByRBFaNzzpMBAwXY53vigMrOZw6xfCMNo3z5JWIrBjNIMV4QIRBkx
-         AvuYl/9FN9m5SRJPucXj+3oImL/huoOvRQ/4FuCEcdHLeMebmmPhFKV8fAvlqydJ5AKT
-         r/EoY4b2s6e9YVIqldtP3du5ebwwZL4ywE6tqtGsZMRhZaL5sd7m3Ln3boQcWbMBNpoT
-         LpQUy3YUEX3KBqWtc1edsRXEYHL6a6U7K/csRF7FRLB7x1CpBkZXG+BGnUeAn/wBVwQL
-         t4Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749709780; x=1750314580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BMnQ0lSfRFOLX5YBEHmf2SW/xC1lQce8vd8CGQzY+DU=;
-        b=S0AJADYNaoW+qnoF8jlRPPVRUGBlCe/WINtLOdAxmOGE/SzbQFxJriBO4Wtez8UkAi
-         ok4IYMuKwSE2BNNeMHGp/JfVChNFklW++Brl2MSwp2DbmXZGWXuX0CVQnxxjdU7C7dJy
-         dJVM+NPho3oNuFb2L1OLj0rnJNOC+ORv7+Z6JjGGyoO+KqX8y/hjNE6zaW/AuunJrXt1
-         irMQIxlcVU+a9I+gi9jbSbASCJ2EkjG2yimBRXZzjVD8m9ZctN3lJyYaM+Df5gVzo5kA
-         X0hkh2s1TPE8G7L+7ftwtGTpM8aS1epCJ1WZ3qlPrCCFgfCghqm52qaFrAkuoIsbuGKR
-         pJPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ+HnPerySOrTGV3JC08ffCzWliGACJga/gfP5nGpOLNFLJRSegxUSdyfgMiQzrnJZx+s0Onhs/CwVJu4Z@vger.kernel.org, AJvYcCWLawBe+RbI5OjU6i5/UB+24w8dNh+dUc65hcoh4DdgI3n3C5OeeDQU8O110UhkJ/ePV+yIBg09OZxg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbggnH5lXbVyJqjaK8XiHdo0i2hAU9oR/D8P22BJ6yznNTGPfJ
-	h5Tc/jBf+5zmnqxcDEPksEYlFNFLSHiIDL9kIO+mmE+iKAYiHjyR8EGOLwjS3ALbJD88hjMud5X
-	5Cr5RKVnlMK5u4+14J6ougWgUn7wLG/f2EEhJoGE=
-X-Gm-Gg: ASbGncsTkxthlixg4xWnah9+/efeH/29o28cRCuxOQHA4cpWGgpWbsb9BE7l4GOi6UF
-	jRXHZWJAH8eyK2Xrs/4MOr5SBZFP1c3YYnhnWOoIZoaIYpb7rS6MsBRk0CA2YoxSIYVq1rAFAtn
-	7d23jB1xkzot1hVfAJV9rgMF0iC3ZCrpE+npCawMuH4OA=
-X-Google-Smtp-Source: AGHT+IH2tqYWLgnR1Egf0f5MrMl/H6jtwy+ptDHqBI3mVeE6Wy6cvK8/ye8gzcEnLr4CjkXnXZrWvT3Erw1ybY+ST6Q=
-X-Received: by 2002:a17:907:3ea4:b0:ad8:9428:6a3c with SMTP id
- a640c23a62f3a-adea2e356d9mr219291366b.11.1749709779759; Wed, 11 Jun 2025
- 23:29:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFE42F4325;
+	Thu, 12 Jun 2025 06:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749711333; cv=fail; b=AfI8wqtTEBNV8zO2g4bVgavTRGDJtAQERW9ZcZuGA2tqoK9vbL20EOUbr8N+rW9hrZBPYtN5u9dzI5jHcn06paRwvYUhi2TjIeh4CFPUltcMsl6E5n+05nukPYtIil/ZHeOcjIeSTkEVynZlA8PyQta0jCAupo5ej6xkYI+PfnY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749711333; c=relaxed/simple;
+	bh=p8sdurOur/uh4tT6+DzVLXmBNA5Vol0ITXy+kTd9Ok8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lyWN/DdSrrBB/ThBV8TQXfUp1LhUuzPw6tw/m6AZJINEidIE17VosO1oA3RW0lcQm8UWh59CRIFaRXpCvFIYxvOG6ngoRa6wXeN00jLdsjNvTOEtGmFH1bqlCaL1/NBN3E8IswIGqDB7m6ECbgU1SbNkkG7KlRPoXUUO1MSRZ6E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EDijHz/G; arc=fail smtp.client-ip=40.107.243.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ne/mWo/3HIyKHZZXkuivVrlUSy3LPdP8WsKcgmVOmaO+o7mP8cAceChMLaq7VBrDHihu0TpCA+3rRBqqmlGaxvwVSVEWbOS9PWmosMZMm/uf5tOO5DqLrRXtKJfk0nQmSIs8t1A0bQr3Ha2ccIICxd8YW8coe0ENz7CycVV/il3yBzf1zw4G4xJoJ1MlL3yW6cdhx19t7UD9L49EqVZ/9OBH+9qiYy/dfIk71wpAKXlX/EoeSDJHTk+H5sGWvwbnfT4KP+sy4HQnnz7fYsNnFl1nfdc1f0L6XMwpbxNJ0zr1KU6FU97vWXiPT6XWA6FE+YGjb9Fz9J1sPTdztuMNNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mDCNxCiX5CIOfx/smFjNPbsKZhAyZ3eCgJahtTIlnys=;
+ b=GuALqvMTbv81a1wkhMcfsy51Mo2vX72F/jKXmtCMKzMyBQuoAywcsoMmdjuHc+La1BWMPPmML9OGB237mfHuqIbEhisDo9NVypuQGShi6kEjTGDZy4JyC6xLz3xzKeubtSw2By75So1VpgHPb9xuDPD4Racyug0rLTHJHLQyncfjxkXUMiCnSLq5yIEMU9L7LpcxUrFGfzlwptwdklpCS7efCzDwtiGR9SZETs/nT1+OqhYUmDvt4Vz4zfVEuBQB+rGKj8lWTQfgR9U9kE77cLNHrwlSdR7k93+BT4RSJmbczcRFU9dDmR0wpyrfsPDdWNfekhnQpSWBtTUZ/HhMmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mDCNxCiX5CIOfx/smFjNPbsKZhAyZ3eCgJahtTIlnys=;
+ b=EDijHz/Gen4f8CgL1DFQwbYkpxNLz8kOMmTeIcIxEgsk4PRwQCb/ag8vL8Z52iD9MH2TFN1FuXZ75GWaOz5HTq/rxvwoWUCUdRxzJumOkHZab7hRmWa7FJWoZ8WHc8rrEkRecHup24MIqGpoJxcC/gVpypUW6qrTUSx9eTqtHtAZqxTJqukwHBWOjAHRXSIwNlnVgq4SrtruH0ucmkeGWcBDY6ctNnWi8Zla44Y2ditoPmWsTNhywZfjruYnFGhYC0u6qwEoSDPmcJYyJJY2VT7MAIDFTrep9u3O+kct9GcS00oV/vSsl7mxEiRhZs3Kjx33nzxisrqfkfsR179log==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7728.namprd12.prod.outlook.com (2603:10b6:8:13a::10)
+ by PH7PR12MB7257.namprd12.prod.outlook.com (2603:10b6:510:205::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.33; Thu, 12 Jun
+ 2025 06:55:28 +0000
+Received: from DS0PR12MB7728.namprd12.prod.outlook.com
+ ([fe80::f790:9057:1f2:6e67]) by DS0PR12MB7728.namprd12.prod.outlook.com
+ ([fe80::f790:9057:1f2:6e67%5]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
+ 06:55:28 +0000
+Date: Thu, 12 Jun 2025 16:55:23 +1000
+From: Alistair Popple <apopple@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com, 
+	dan.j.williams@intel.com, jgg@ziepe.ca, willy@infradead.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de, zhang.lyra@gmail.com, 
+	debug@rivosinc.com, bjorn@kernel.org, balbirs@nvidia.com, lorenzo.stoakes@oracle.com, 
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	John@groves.net
+Subject: Re: [PATCH 02/12] mm: Convert pXd_devmap checks to vma_is_dax
+Message-ID: <ru3g42fdhlo4hrffkmuz7usqe77jetgggx7jmjdx3nr5gw7lrc@3te4cu737jqt>
+References: <cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com>
+ <224f0265027a9578534586fa1f6ed80270aa24d5.1748500293.git-series.apopple@nvidia.com>
+ <371b8fdd-129d-4fe3-bbc7-f0a1bc433b30@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <371b8fdd-129d-4fe3-bbc7-f0a1bc433b30@redhat.com>
+X-ClientProxiedBy: SYBPR01CA0191.ausprd01.prod.outlook.com
+ (2603:10c6:10:52::35) To DS0PR12MB7728.namprd12.prod.outlook.com
+ (2603:10b6:8:13a::10)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
- <20250529042550.GB8328@frogsfrogsfrogs> <20250530-ahnen-relaxen-917e3bba8e2d@brauner>
- <20250530153847.GC8328@frogsfrogsfrogs> <aDuKgfi-CCykPuhD@dread.disaster.area>
- <20250603000327.GM8328@frogsfrogsfrogs> <20250606-zickig-wirft-6c61ba630e2c@brauner>
- <20250612034324.GG6138@frogsfrogsfrogs>
-In-Reply-To: <20250612034324.GG6138@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 12 Jun 2025 08:29:28 +0200
-X-Gm-Features: AX0GCFvDjuEqQBSU8IqmA6NSuBlOST-snvSGSn8O2xPLNvSBD8H71tf4-5EVQPQ
-Message-ID: <CAOQ4uxiEi2mGNNqYwPyJt-j=Ho0xrp5_c5wwg74eAT7A9GvCXA@mail.gmail.com>
-Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
- data corruption
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Dave Chinner <david@fromorbit.com>, 
-	Yafang Shao <laoar.shao@gmail.com>, cem@kernel.org, linux-xfs@vger.kernel.org, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7728:EE_|PH7PR12MB7257:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17d71744-93a8-42a1-bcaa-08dda97e1d59
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CivukSvRdq+PrSaqv4nvjL0iIkAAc7sNQG4AEGFuHkj9kCCE1XOO1EdqCXL/?=
+ =?us-ascii?Q?XFGTXJE4lxUP9tF8UMyuefgydHDYkqca4KGEkKhOfyov2vg3Rw9WMu+8Mq5D?=
+ =?us-ascii?Q?1iNSXcVqq3XtVhSd+JlY35VDl/1xyoeJB00q0SPyhQ6JLJImtgsToH6sD0yR?=
+ =?us-ascii?Q?MnHPdtQMnb2W/5zx5tO0B993E2zEs/JpARr3pvNs8OQpMDbsApEWEi447eGU?=
+ =?us-ascii?Q?p7TAu43EKA+PZd3BKWi5o9ctZx/UWDi2lEt1we6XgTBC3wiBcJac8hsKIjtI?=
+ =?us-ascii?Q?nI3BNdrcqqTmzpVk8dd8F1V8D7ZQs52haAIUl4R+D/5OTNxyGi2ip674X70L?=
+ =?us-ascii?Q?XQzQvna464fA1gHJ3pzz6QFLR9pZOE+egawwkmoIKlHiYQT4ZtYI234Sb/5M?=
+ =?us-ascii?Q?6eLZwWBMP8dylortGt/sVTIIEoJLdrPur3EQ5UKDzgY/DGkLo9zT1J4FFDUW?=
+ =?us-ascii?Q?jDJpUr7E5Wz7nDgiMMn8DJF3Ux2S/1G/VXI+Gdafy2tZljG9e7FECSdsNLpm?=
+ =?us-ascii?Q?aH5qF7SN3jlaoKOrXEEIBylmEG/p7AoKzoIXYn8+MBbFgelp3vUkCrcTEDCy?=
+ =?us-ascii?Q?iJ4rpDYXrW6Iy4Sbv5FHimSC0csm8HK4pAhUyoEYYuMDytVygL/NKna3rHg2?=
+ =?us-ascii?Q?N7QryyRvaDCVsIOyD4YYcwvn5riIhoZ8+yA34ATNWAWkKH9/4hPHk+VrHY0L?=
+ =?us-ascii?Q?oU5CzMFzcHwIIhS0ztBwtMtCU39AwVJa44qaG3Ia1ij68ZXwaFnBUYgjlJpE?=
+ =?us-ascii?Q?PMZPnh+v6FJPif9dYziOOEVRyOIyw0+BVT7DtdIcwn0gXlJbvH3UCWMh5e9J?=
+ =?us-ascii?Q?ZsdJM0vmPQn2NGTNrbiEm9zlP1NRV5uTovqBZJ6ZsmorCIj8xQxaIMmdv11v?=
+ =?us-ascii?Q?w+qNuTWa2nwbWo7DjaKUQqM0Mr3gG4cZ9KWyhfyT+6asYVV2N+CT9DYoKFiT?=
+ =?us-ascii?Q?6RsGeb7uEhU9H/55A84Ck16xspbtviK1WDvMogKvmOVu30xv3o+wfqEv+NOp?=
+ =?us-ascii?Q?ImEjTIt2PLMYN99SJlXqOiiX++dr61NvVO5RxGMdNGUtKZFcuQAw9J+awxJ2?=
+ =?us-ascii?Q?dOnYbQKCwaO7rN+UfUpGCOOWkloYqFoe1ubPbGJyeLATrgdtECz1KG3Fveyw?=
+ =?us-ascii?Q?50+tlBm6NQqydTjSr7KaWE/X1mSKcj5pJ2fyNllFakLGkWBXWrzHevvd010C?=
+ =?us-ascii?Q?po8mnxQOQeaAxGiGXu2CSOWUrpll8rwQLFh8LH6eV3zyag3wMkxZkhgGhGvf?=
+ =?us-ascii?Q?PhQAlge3qtwDW/bpdut3h2vWj+GdcqaEyqlHj8Y5w0jco9hUfKWDTWr8occN?=
+ =?us-ascii?Q?VWCatG4iSTKhsQYPrF210UwUH7EtUYe/Rhm7lf7/wEiiqm8NFiB12WZ5BU6N?=
+ =?us-ascii?Q?DjwcUN72vv33L7ll/wfeSGvEI3Z/DypR34H/qxR6T0U2x4aH9A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7728.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/EV+KhOxFJJGglJgod7Rp1eIOACACuQaPgNUfLCnTQ3sPV3/Qp0Q4Bluc9Uv?=
+ =?us-ascii?Q?hbMLdCkg0/IduXgKTBeJt64CuAJACUYSX82Amh+cDS+U7OAqj430LQru8ULN?=
+ =?us-ascii?Q?2hjUBYmuuNKJ2FCbNaXBN8aMcUbOoUL4eVLUWHscEAFLB+f2pqOV6m7dVVHb?=
+ =?us-ascii?Q?s44eUjne8RHyz+zQx6KOsguc5Z906g41SxAVQSxoaNKB9jTHLMs2aq+8AhaZ?=
+ =?us-ascii?Q?+csOSirW2mD123CYHCd4zc32jmJ8eSo6uZeuQSfCrqX+koeAN02aDZ9OLEiA?=
+ =?us-ascii?Q?+8PrT27OFOKdxAHKCpaxPh/lvB9ge8jWfdVz4/qysxetEA0Iar6NIcRuEcnG?=
+ =?us-ascii?Q?8H4PLrHj7EM6QwYGSfb1qRLIntGfeoH9XRrvrN+QUhnAEkGlgqyBWu9kXgpn?=
+ =?us-ascii?Q?5xwY3XI6IBHKPd77FcZG/GZZw6dBvGULB8cmezB/V+mG0cHVH3BqFUo6/K8Y?=
+ =?us-ascii?Q?NhMWQiqXCobcW7TsyqiTvSwCMDcHlZMGVXdhaU/h9PDCsw3C7SiNvbwCelYi?=
+ =?us-ascii?Q?kEbrM71ibDDmMiscwkRIWQ6JEGcj9ACWX4bm5K9FTs/aH0VzwmZwSbEVD5E+?=
+ =?us-ascii?Q?QXMCy+mQ5YhxWrmMFWMaZjJjXW63E9NpNRw1KOZaqgvmPkP9wWyjKkBMci9/?=
+ =?us-ascii?Q?3F83F8fTfZ7cEanVnBRf8vqXrH7QNqhiE99VxDS6zOZyDHj+rj2tBsW+h3zE?=
+ =?us-ascii?Q?YdD17PAm8IOMt0GgyDWW7auCyMhbiFQjLSeMffQBQYmJgqtjzHq7OR+9xZho?=
+ =?us-ascii?Q?G4CHttylo1ip69L2YHgxxJf6CnTMuokNhMlDOQ3jKBqKSSPGocu4gSD+T7MA?=
+ =?us-ascii?Q?rdLyW0o+/ZF8CDrjmd/DbPmSfMCkCypoIVQVLU5L315+jA7Ek97YJ1mnz+3E?=
+ =?us-ascii?Q?TSc937Vdbw2AjwRhJkYuWo9L8DV4CmZBjcA+f82Q+aUZP6r9gJdi4KyD4+FO?=
+ =?us-ascii?Q?Oaa3XVk87SkwgKzIbVNJegwaoQ0pyVgVk6qi2hE1qIlBhctviTlOl1AZRKpw?=
+ =?us-ascii?Q?IpQpwvZU1cbAPhhLwHey+8wOHVBFLLGgG5SMTGNdT/pgKjXvWX2jh5uHbSkw?=
+ =?us-ascii?Q?+UX7qFF+uBOOlE7DwjA6wi01Bz6A+ytMOP1ur3e7WnyoKWTd2eGeWqVvMrte?=
+ =?us-ascii?Q?Z4xqXmaTwfZ7fyFcY4kfyS7OzLJG49AyPfaxfL/KGb+U6uXG3cr7Ky20FxuF?=
+ =?us-ascii?Q?VAHng2Laft2TuvnYdP6Pdf4JL8OizYabgStLTD8VP5U7lkd9kOKITEoqz+sc?=
+ =?us-ascii?Q?b3XPztB2B1xchpAgWZNyPhxjXJLKCk7drZFJGn3/gOkIYBte+QZSTaKv1+t0?=
+ =?us-ascii?Q?dUN6QJ5f2VCblPY69ysxugeRIEVI3sjaJYUEPZTTiiQI0Z0Ftpl0nrqu1/GU?=
+ =?us-ascii?Q?ADjq3aeVomLj3JrnRBng3fa8EWYN2Wj27gphhyXQ3xjCNwC2o/9rIEiJJhGM?=
+ =?us-ascii?Q?oSbsGHy8KKXLjxUqdNtqsFOBBu1FvFisBogbm7O9HJ3O0zlBdY+ihGkd2C3A?=
+ =?us-ascii?Q?2OOqucJpvzTF1oRBIp6g8iObrbcQy5b9tPye7EqhKrueQeOpgdbn295sCpwi?=
+ =?us-ascii?Q?vUtfrJFWKO9tj+ukCZYzdGHhqyu5N2ZrtZMbwtcV?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17d71744-93a8-42a1-bcaa-08dda97e1d59
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7728.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 06:55:28.4032
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0Pg+G/Xmvc/7fr9U1Ar0JTrj3yzIX9zeKy3WdQq7UKpk3WoSinUm94fuWOi7+NtzFwXFaT2o2TYHzBKKJHG8Wg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7257
 
-On Thu, Jun 12, 2025 at 5:43=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Fri, Jun 06, 2025 at 12:43:20PM +0200, Christian Brauner wrote:
-> > On Mon, Jun 02, 2025 at 05:03:27PM -0700, Darrick J. Wong wrote:
-> > > On Sun, Jun 01, 2025 at 09:02:25AM +1000, Dave Chinner wrote:
-> > > > On Fri, May 30, 2025 at 08:38:47AM -0700, Darrick J. Wong wrote:
-> > > > > On Fri, May 30, 2025 at 07:17:00AM +0200, Christian Brauner wrote=
-:
-> > > > > > On Wed, May 28, 2025 at 09:25:50PM -0700, Darrick J. Wong wrote=
-:
-> > > > > > > On Thu, May 29, 2025 at 10:50:01AM +0800, Yafang Shao wrote:
-> > > > > > > > Hello,
-> > > > > > > >
-> > > > > > > > Recently, we encountered data loss when using XFS on an HDD=
- with bad
-> > > > > > > > blocks. After investigation, we determined that the issue w=
-as related
-> > > > > > > > to writeback errors. The details are as follows:
-> > > > > > > >
-> > > > > > > > 1. Process-A writes data to a file using buffered I/O and c=
-ompletes
-> > > > > > > > without errors.
-> > > > > > > > 2. However, during the writeback of the dirtied pagecache p=
-ages, an
-> > > > > > > > I/O error occurs, causing the data to fail to reach the dis=
-k.
-> > > > > > > > 3. Later, the pagecache pages may be reclaimed due to memor=
-y pressure,
-> > > > > > > > since they are already clean pages.
-> > > > > > > > 4. When Process-B reads the same file, it retrieves zeroed =
-data from
-> > > > > > > > the bad blocks, as the original data was never successfully=
- written
-> > > > > > > > (IOMAP_UNWRITTEN).
-> > > > > > > >
-> > > > > > > > We reviewed the related discussion [0] and confirmed that t=
-his is a
-> > > > > > > > known writeback error issue. While using fsync() after buff=
-ered
-> > > > > > > > write() could mitigate the problem, this approach is imprac=
-tical for
-> > > > > > > > our services.
-> > > > > > > >
-> > > > > > > > Instead, we propose introducing configurable options to not=
-ify users
-> > > > > > > > of writeback errors immediately and prevent further operati=
-ons on
-> > > > > > > > affected files or disks. Possible solutions include:
-> > > > > > > >
-> > > > > > > > - Option A: Immediately shut down the filesystem upon write=
-back errors.
-> > > > > > > > - Option B: Mark the affected file as inaccessible if a wri=
-teback error occurs.
-> > > > > > > >
-> > > > > > > > These options could be controlled via mount options or sysf=
-s
-> > > > > > > > configurations. Both solutions would be preferable to silen=
-tly
-> > > > > > > > returning corrupted data, as they ensure users are aware of=
- disk
-> > > > > > > > issues and can take corrective action.
-> > > > > > > >
-> > > > > > > > Any suggestions ?
-> > > > > > >
-> > > > > > > Option C: report all those write errors (direct and buffered)=
- to a
-> > > > > > > daemon and let it figure out what it wants to do:
-> > > > > > >
-> > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-li=
-nux.git/log/?h=3Dhealth-monitoring_2025-05-21
-> > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfspro=
-gs-dev.git/log/?h=3Dhealth-monitoring-rust_2025-05-21
-> > > > > > >
-> > > > > > > Yes this is a long term option since it involves adding upcal=
-ls from the
-> > > > > >
-> > > > > > I hope you don't mean actual usermodehelper upcalls here becaus=
-e we
-> > > > > > should not add any new ones. If you just mean a way to call up =
-from a
-> > > > > > lower layer than that's obviously fine.
-> > > > >
-> > > > > Correct.  The VFS upcalls to XFS on some event, then XFS queues t=
-he
-> > > > > event data (or drops it) and waits for userspace to read the queu=
-ed
-> > > > > events.  We're not directly invoking a helper program from deep i=
-n the
-> > > > > guts, that's too wild even for me. ;)
-> > > > >
-> > > > > > Fwiw, have you considered building this on top of a fanotify ex=
-tension
-> > > > > > instead of inventing your own mechanism for this?
-> > > > >
-> > > > > I have, at various stages of this experiment.
-> > > > >
-> > > > > Originally, I was only going to export xfs-specific metadata even=
-ts
-> > > > > (e.g. this AG's inode btree index is bad) so that the userspace p=
-rogram
-> > > > > (xfs_healer) could initiate a repair against the broken pieces.
-> > > > >
-> > > > > At the time I thought it would be fun to experiment with an anonf=
-d file
-> > > > > that emitted jsonp objects so that I could avoid the usual C stru=
-ct ABI
-> > > > > mess because json is easily parsed into key-value mapping objects=
- in a
-> > > > > lot of languages (that aren't C).  It later turned out that forma=
-tting
-> > > > > the json is rather more costly than I thought even with seq_bufs,=
- so I
-> > > > > added an alternate format that emits boring C structures.
-> > > > >
-> > > > > Having gone back to C structs, it would be possibly (and possibly=
- quite
-> > > > > nice) to migrate to fanotify so that I don't have to maintain a b=
-unch of
-> > > > > queuing code.  But that can have its own drawbacks, as Ted and I
-> > > > > discovered when we discussed his patches that pushed ext4 error e=
-vents
-> > > > > through fanotify:
-> > > > >
-> > > > > For filesystem metadata events, the fine details of representing =
-that
-> > > > > metadata in a generic interface gets really messy because each
-> > > > > filesystem has a different design.
-> > > >
-> > > > Perhaps that is the wrong approach. The event just needs to tell
-> > > > userspace that there is a metadata error, and the fs specific agent
-> > > > that receives the event can then pull the failure information from
-> > > > the filesystem through a fs specific ioctl interface.
-> > > >
-> > > > i.e. the fanotify event could simply be a unique error, and that
-> > > > gets passed back into the ioctl to retreive the fs specific details
-> > > > of the failure. We might not even need fanotify for this - I suspec=
-t
-> > > > that we could use udev events to punch error ID notifications out t=
-o
-> > > > userspace to trigger a fs specific helper to go find out what went
-> > > > wrong.
-> > >
-> > > I'm not sure if you're addressing me or brauner, but I think it would=
- be
-> > > even simpler to retain the current design where events are queued to =
-our
-> > > special xfs anonfd and read out by userspace.  Using fanotify as a "d=
-oor
-> > > bell" to go look at another fd is ... basically poll() but far more
-> > > complicated than it ought to be.  Pounding udev with events can resul=
-t
-> > > in userspace burning a lot of energy walking the entire rule chain.
-> >
-> > I don't think we need to rush any of this. My main concern is that if w=
-e
-> > come up with something then I want it to be able to be used by other
-> > filesystems as this seems something that is generally very useful. By
-> > using fanotify we implicitly enable this which is why I'm asking.
-> >
-> > I don't want the outcome to be that there's a filesystem with a very
-> > elaborate and detailed scheme that cannot be used by another one and
-> > then we end up with slightly different implementations of the same
-> > underlying concept. And so it will be impossible for userspace to
-> > consume correctly even if abstracted in multiple libraries.
->
-> Hrm.  I 60% agree and 60% disagree with you. :D
->
-> 60% disagree: for describing problems with internal filesystem metadata,
-> I don't think there's a generic way to expose that outside of ugly
-> stringly-parsing things like json.  Frankly I don't think any fs project
-> is going to want a piece of that cake.  Maybe we can share the mechanism
-> for returning fs-specific metadata error information to a daemon, but
-> the structure of the data is going to be per-filesystem.  And I think
-> the only clients are going to be written by the same fs folks for
-> internal purposes like starting online fsck.
->
-> 60% agree: for telling most programs that "hey, something went wrong
-> with this file range", I think it's completely appropriate to fling that
-> out via the existing generic fsnotify mechanisms that ext4 wired up.
-> I think the same applies to sending a "your fs is broken" event via
-> fsnotify too, in case regular user programs decide they want to nope
-> out.  IIRC there's already a generic notification for that too.
->
-> Fortunately the vfs hooks I wrote for xfs_healer are general enough that
-> I don't think it'd be difficult to wire them up to fsnotify.
->
-> > I think udev is the wrong medium for this and I'm pretty sure that the
-> > udev maintainers agree with me on this.
-> >
-> > I think this specific type of API would really benefit from gathering
-> > feedback from userspace. There's All Systems Go in Berlin in September
-> > and that might not be the worst time to present what you did and give a
-> > little demo. I'm not sure how fond you are of traveling though rn:
-> > https://all-systems-go.io/
->
-> I like travelling!  But happily, I'll be travelling for most of
-> September already.
->
-> But yeah, I've wondered if it would be useful to write a generic service
-> that would hang around on dbus, listen for the fsnotify events, and
-> broadcast them to clients.  I suspect that sifting through all the
-> containerization and idmapping stuff so that app A can't hear about
-> errors in app B's container might be a lot of work though.
->
+On Fri, May 30, 2025 at 11:37:21AM +0200, David Hildenbrand wrote:
+> On 29.05.25 08:32, Alistair Popple wrote:
+> > Currently dax is the only user of pmd and pud mapped ZONE_DEVICE
+> > pages. Therefore page walkers that want to exclude DAX pages can check
+> > pmd_devmap or pud_devmap. However soon dax will no longer set PFN_DEV,
+> > meaning dax pages are mapped as normal pages.
+> > 
+> > Ensure page walkers that currently use pXd_devmap to skip DAX pages
+> > continue to do so by adding explicit checks of the VMA instead.
+> > 
+> > Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> > ---
+> >   fs/userfaultfd.c | 2 +-
+> >   mm/hmm.c         | 2 +-
+> >   mm/userfaultfd.c | 2 +-
+> >   3 files changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > index 22f4bf9..de671d3 100644
+> > --- a/fs/userfaultfd.c
+> > +++ b/fs/userfaultfd.c
+> > @@ -304,7 +304,7 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+> >   		goto out;
+> >   	ret = false;
+> > -	if (!pmd_present(_pmd) || pmd_devmap(_pmd))
+> > +	if (!pmd_present(_pmd) || vma_is_dax(vmf->vma))
+> >   		goto out;
+> >   	if (pmd_trans_huge(_pmd)) {
+> > diff --git a/mm/hmm.c b/mm/hmm.c
+> > index 082f7b7..db12c0a 100644
+> > --- a/mm/hmm.c
+> > +++ b/mm/hmm.c
+> > @@ -429,7 +429,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
+> >   		return hmm_vma_walk_hole(start, end, -1, walk);
+> >   	}
+> > -	if (pud_leaf(pud) && pud_devmap(pud)) {
+> > +	if (pud_leaf(pud) && vma_is_dax(walk->vma)) {
+> >   		unsigned long i, npages, pfn;
+> >   		unsigned int required_fault;
+> >   		unsigned long *hmm_pfns;
+> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > index e0db855..133f750 100644
+> > --- a/mm/userfaultfd.c
+> > +++ b/mm/userfaultfd.c
+> > @@ -1791,7 +1791,7 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
+> >   		ptl = pmd_trans_huge_lock(src_pmd, src_vma);
+> >   		if (ptl) {
+> > -			if (pmd_devmap(*src_pmd)) {
+> > +			if (vma_is_dax(src_vma)) {
+> >   				spin_unlock(ptl);
+> >   				err = -ENOENT;
+> >   				break;
+> 
+> I assume we could also just refuse dax folios, right?
 
-FWIW, I would like to endorse the creation of systemd-fsnotifyd
-regardless of whether it is being used to report fs errors.
+Yep.
 
-If https://man.archlinux.org/man/core/systemd/systemd-mountfsd.8.en
-can mount a filesystem for an unpriv container, then this container
-also needs a way to request a watch on this filesystem, to be
-notified on either changes, access or errors.
+> If we decide to check VMAs, we should probably check earlier.
 
-Thanks,
-Amir.
+Ok, that makes sense.
+ 
+> But I wonder, what about anonymous non-dax pages in COW mappings? Is it
+> possible? Not supported?
+
+You mean other non-dax ZONE_DEVICE pages? Currently not possible, because
+non-dax ZONE_DEVICE pages can't be pmd mapped (although it is a future
+enhancement I'd like to make).
+
+> If supported, checking the actual folio would be the right thing to do.
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
