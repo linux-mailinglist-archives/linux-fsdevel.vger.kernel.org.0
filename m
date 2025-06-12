@@ -1,71 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-51379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F033AD63EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 01:39:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D97AD65EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 05:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 222E67A5C17
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jun 2025 23:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7755517AB61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 03:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14942C326C;
-	Wed, 11 Jun 2025 23:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98231DE4EC;
+	Thu, 12 Jun 2025 03:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SkOC0izJ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SiOAZI/F"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820831EDA02;
-	Wed, 11 Jun 2025 23:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67D61C7008;
+	Thu, 12 Jun 2025 03:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749685130; cv=none; b=Tt9QRJ/L4qth7u1r7lbI8AUceaTfuoGtIsBV3WCtUyJ7bYZA2f3vVdbt+O5MW8OccMuXlS/FiHYAbkvoK2s+JaBszywaJzSrnvFHDvvjNrL3RejyfeRvF9sfdZm+kra9dG746B1Zt0ZcUTJO9J7w7MHhm7hIIjyudHMpnuK9NtI=
+	t=1749697796; cv=none; b=ZL7i3myO3g3gfJUW5qZ0DpXpYHvDS9iRFGewkC1gvgzxq9Zu1vKD0dsbtZfvQMzLbRzGK/rMsa6rkmQfoLf1htfGhMxJqFr3VwpqEI0aNNIK3MWikO4ZgV8dF7tNVdV0SfjvofNIk+joT947Zu1TqMntXN8k73nzF/e4vF94aSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749685130; c=relaxed/simple;
-	bh=uqIVC5lH/KYq5ZMQbr3eDBFaQXB3hBnr+NN6nQseTn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSJAoBJduYildjYvle/t8WIkGJGyDB1MQfdQYI3qRfx/JQsto6oP7PXsNvb/LXZN9KCc0Txaic5xdLNG/I02OrXzz25QFdAOl6vZpxwGJkHxwm/572PROlyO+Y+c91Bs9vJmSxpwYtDbOF/y+yBzR5b+mvizcxfyhvjBxIYABmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SkOC0izJ; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1749697796; c=relaxed/simple;
+	bh=DEAKxwEP0f97ZC25btcEwMtoF6tf89fUMdG3w9mXM3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eqe/ZrDJH9+I/BtbxYg3HM9KoinEiCu/zFXi2A65OVU2NDi4hNujiGyffDB6E2nk9qJ2cRdIxpFNCqpN5NHwwJR/rmdba06bvXaZXZPXHE/vOwML8TrvV4cFNJLiW8YwNPVl5HgJV0ljLIoegv3g3Evpy9kIG0EiSb2IgG4qzLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SiOAZI/F; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gLi4q1Pf3yDQ5vkEwYbNMTHh4i7xmaOkqjOyF6eoxyY=; b=SkOC0izJuVXFGh34DQzhYDj8zh
-	QW74OV6eD0JNGnHnwPHRLcn4XY2IKgNhhCYpsjGEbqULwmSvXGMmmD03+SPscjR8dWURgpWETCk5T
-	iC2NhXHfhXUW+1nAc6woomfmw1ogDuzFWOES4UBm5FPmVtLes2JL9j4EfMDxpyNsN1D8AaiX1NccH
-	D4DD36XY0cEkv1fzSYaQX1Xs4XU2s/94sA+CkYvopDQA39sLvPlwJ08IVJ7XyA9guodDq0sdFCKcV
-	3mjgVKeDlrVpasSeIaWn2LdNvdmRoaiJ1pFomuYxWWL59cg9c/UOSbpICGIj/z9p8y8HOBGIyITU2
-	VHG2Wpxw==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=BXA36KNPQbEEnyh5QTb1TwGxDDi7cVRqZPTBPSEO0/0=; b=SiOAZI/FSHrpWKypCGTjk7p7U3
+	a7wVK+o9W2wEdpfqqGRW1L9a3jHxv98L2R2nApIHNHIc0L4Ep/a2Lln5fE2I7HhNYDvb3HzFV+3fH
+	NmlnL2093VK+gaVxC/gcGFnV2fODnpX6/YIzzXOfPbjEdocVOy4T/akvgezPoEhQCrLNpMrSfdQMW
+	Ppqj2PbZ3QMxOOzfoFIJu7CpcNhm3xgBkzktfdrisAZg3bh+s20aB3C8ie7IE9RYQpYip5fglYQ8h
+	FQNJ1Lewfq6OGUUIyjUtmhmp+YooBsRxyRPKG0rR3+PHSWpS5EWUnH6DMZCt/1RoKR+GWg8PmGe1O
+	6wNzqGqA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPV1m-00000007mdR-3qHi;
-	Wed, 11 Jun 2025 23:38:42 +0000
-Date: Thu, 12 Jun 2025 00:38:42 +0100
+	id 1uPYK7-00000009fQA-0j2w;
+	Thu, 12 Jun 2025 03:09:51 +0000
+Date: Thu, 12 Jun 2025 04:09:51 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, Kees Cook <kees@kernel.org>,
-	Joel Granados <joel.granados@kernel.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	netfs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org
-Subject: Re: [PATCH 1/2] VFS: change old_dir and new_dir in struct renamedata
- to dentrys
-Message-ID: <20250611233842.GB1647736@ZenIV>
-References: <20250611225848.1374929-1-neil@brown.name>
- <20250611225848.1374929-2-neil@brown.name>
+To: linux-security-module@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCHES][CFR][CFT] securityfs cleanups and fixes
+Message-ID: <20250612030951.GC1647736@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,22 +58,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250611225848.1374929-2-neil@brown.name>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Jun 12, 2025 at 08:57:02AM +1000, NeilBrown wrote:
-> all users of 'struct renamedata' have the dentry for the old and new
-> directories, and often have no use for the inode except to store it in
-> the renamedata.
-> 
-> This patch changes struct renamedata to hold the dentry, rather than
-> the inode, for the old and new directories, and changes callers to
-> match.
-> 
-> This results in the removal of several local variables and several
-> dereferences of ->d_inode at the cost of adding ->d_inode dereferences
-> to vfs_rename().
+	Resurrected and somewhat fixed series of securityfs
+cleanups and fixes:
 
-Umm...  No objections, as long as overlayfs part is correct; it seems
-to be, but I hadn't checked every chunk there...
+* one extra reference is enough to pin a dentry down; no need
+for two.  Switch to regular scheme, similar to shmem, debugfs,
+etc. - that fixes securityfs_recursive_remove() dentry leak,
+among other things.
+
+* we need to have the filesystem pinned to prevent the contents
+disappearing; what we do not need is pinning it for each file.
+Doing that only for files and directories in the root is enough.
+
+* the previous two changes allow to get rid of the racy kludges
+in efi_secret_unlink(), where we can use simple_unlink() instead
+of securityfs_remove().  Which does not require unlocking and
+relocking the parent, with all deadlocks that invites.
+
+* Make securityfs_remove() take the entire subtree out, turning
+securityfs_recursive_remove() into its alias.  Makes a lot more
+sense for callers and fixes a mount leak, while we are at it.
+
+* Making securityfs_remove() remove the entire subtree allows for
+much simpler life in most of the users - efi_secret, ima_fs,
+evm, ipe, tmp get cleaner.  I hadn't touched apparmor use of
+securityfs, but I suspect that it would be useful there as well.
+
+Branch (6.16-rc1-based) lives in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.securityfs
+Individual patches in followups.
+
+Help with testing and review would be very welcome.
+
+Shortlog:
+      securityfs: don't pin dentries twice, once is enough...
+      securityfs: pin filesystem only for objects directly in root
+      fix locking in efi_secret_unlink()
+      make securityfs_remove() remove the entire subtree
+      efi_secret: clean securityfs use up
+      ima_fs: don't bother with removal of files in directory we'll be removing
+      ima_fs: get rid of lookup-by-dentry stuff
+      evm_secfs: clear securityfs interactions
+      ipe: don't bother with removal of files in directory we'll be removing
+      tpm: don't bother with removal of files in directory we'll be removing
+
+Diffstat:
+
+ drivers/char/tpm/eventlog/common.c        |  46 +++-------
+ drivers/virt/coco/efi_secret/efi_secret.c |  47 ++--------
+ include/linux/security.h                  |   3 +-
+ include/linux/tpm.h                       |   2 +-
+ security/inode.c                          |  62 +++++---------
+ security/integrity/evm/evm_secfs.c        |  15 ++--
+ security/integrity/ima/ima_fs.c           | 137 +++++++-----------------------
+ security/ipe/fs.c                         |  32 +++----
+ security/ipe/policy_fs.c                  |   4 +-
+ 9 files changed, 97 insertions(+), 251 deletions(-)
+
 
