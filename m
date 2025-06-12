@@ -1,121 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-51442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D746CAD6EE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:21:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC94AD6ED3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7015D3B0CF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 11:21:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C461895140
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 11:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCC3245003;
-	Thu, 12 Jun 2025 11:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050A423A566;
+	Thu, 12 Jun 2025 11:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XN5HvSpm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10A223C50F;
-	Thu, 12 Jun 2025 11:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D4B205AA3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 11:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749727258; cv=none; b=Z7xZoI2xYVuaBD090gV8KG6rtO4c7eSvIOUrNKRnFFLjVx069TSOLnJ6SCRoWBh4AsOfiy46KfUNoS2IugRPEYCu96f5QhyXBCkTGAny5k71G8minB9Z7AzdkNakSEAsGz/rn4oFDKqhMkembNDnhouAnL4qTlNEje7QjDN86P8=
+	t=1749727158; cv=none; b=pZCLomXebb50q8CGrsTdHVSAfxpPcJECxR3VHIqG5W83EQqcqu2UlfPenR3RVsNhtTVUyfOYWNGZK6CZompgoKkjCL0ufz4u2Wx6x+eZaDhEi/7crGDTZOvX6Me0FQuI39Si5ldVomMlzUBB2+9AvqWUT0PH6Cje+ISpba/TiEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749727258; c=relaxed/simple;
-	bh=h6YOaSQV04KhF5kytS5KZKyKtH/gn74YtvcnSW9T1LE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GM/QpzjrqiVSx1TFxc8FDfRevTLxE2WOql1NgjQZhpW8Of/EMRmCVTNZpYq1tK+P46xKkfMVNQ+IIyroyd2NeWLTLRdWNg15moZ3ntPZZnwShvQvuMrDT89oiFamOe8AoLmjKEqU40QVUZEIxvgiEt1uEwrkKtM1VfWLNb3H2jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bJ0Sw65TCzYQvR7;
-	Thu, 12 Jun 2025 19:20:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CB8261A0F13;
-	Thu, 12 Jun 2025 19:20:47 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgB3218NuEpot0onPQ--.37716S3;
-	Thu, 12 Jun 2025 19:20:47 +0800 (CST)
-Message-ID: <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
-Date: Thu, 12 Jun 2025 19:20:45 +0800
+	s=arc-20240116; t=1749727158; c=relaxed/simple;
+	bh=5OvjGcFLItOVKsQwZytquBz7aSti7eoEZY1l1KOMTgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Sa56ryBNoPC6CmUGm/cTBk1oxmMX2BCOKbSvA1jB2ZZth3xSLoYwYy57mvxI5IX1BuFFLSvLNhZ3JPSkzm8VacJKDBIIwppwitTF6eUIishSVxff9sbdvT6p6Q07uCAXc79+nQIoqJOv+QLBQxts13ElslY6yatnNtEAwprqT5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XN5HvSpm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749727155;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=cfwqJxgz/BiPbh1Lz8eY9iJzvSVOhlSC1afDF4nBHn0=;
+	b=XN5HvSpmIXnLOYfk9W+SdSy0f9RAALonSHMyEn64QMnZ5QgHqy0SQ/HM5rd4FLZ7Jhd3Pz
+	mo0SoTmKF/Xo04dQhjoBjxf40cJfIz+7oxS+o2jtjyK9CDiBhsRYsGPqWKivUkf2xn5dM0
+	ZNFn2v4QfL5kND02swBcQgL6AKxZtxY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-t_wWnpQ_OxmT8rPX2SCtHQ-1; Thu,
+ 12 Jun 2025 07:19:12 -0400
+X-MC-Unique: t_wWnpQ_OxmT8rPX2SCtHQ-1
+X-Mimecast-MFC-AGG-ID: t_wWnpQ_OxmT8rPX2SCtHQ_1749727151
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF4891956088;
+	Thu, 12 Jun 2025 11:19:11 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.100])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC9D619560AF;
+	Thu, 12 Jun 2025 11:19:10 +0000 (UTC)
+Date: Thu, 12 Jun 2025 07:22:45 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Joanne Koong <joannelkoong@gmail.com>,
+	Miklos Szeredi <mszeredi@redhat.com>
+Subject: [BUG] fuse/virtiofs: kernel module build fail
+Message-ID: <aEq4haEQScwHIWK6@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to
- queue limits features
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com,
- chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, brauner@kernel.org,
- martin.petersen@oracle.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
- <20250604020850.1304633-2-yi.zhang@huaweicloud.com>
- <20250611060900.GA4613@lst.de>
- <343f7f06-9bf6-442f-8e77-0a774203ec3f@huaweicloud.com>
- <20250612044744.GA12828@lst.de>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250612044744.GA12828@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgB3218NuEpot0onPQ--.37716S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruF1UZFyxCrWxtF1DCr45Jrb_yoWkAwc_ur
-	s5JwsrZw1kJryxt34ftrs8Grsxuwsru3yxKw1xWr1rK3s8JF4xA3ykuwnFvw15tFsIgry2
-	9ry0qF4SkFW2gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
-	0PDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 2025/6/12 12:47, Christoph Hellwig wrote:
-> On Wed, Jun 11, 2025 at 03:31:21PM +0800, Zhang Yi wrote:
->>>> +/* supports unmap write zeroes command */
->>>> +#define BLK_FEAT_WRITE_ZEROES_UNMAP	((__force blk_features_t)(1u << 17))
->>>
->>>
->>> Should this be exposed through sysfs as a read-only value?
->>
->> Uh, are you suggesting adding another sysfs interface to expose
->> this feature?
-> 
-> That was the idea.  Or do we have another way to report this capability?
-> 
+Hi folks,
 
-Exposing this feature looks useful, but I think adding a new interface
-might be somewhat redundant, and it's also difficult to name the new
-interface. What about extend this interface to include 3 types? When
-read, it exposes the following:
+I run kernel compiles quite a bit over virtiofs in some of my local test
+setups and recently ran into an issue building xfs.ko once I had a
+v6.16-rc kernel installed in my guest. The test case is a simple:
 
- - none     : the device doesn't support BLK_FEAT_WRITE_ZEROES_UNMAP.
- - enabled  : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, but the
-              BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is not set.
- - disabled : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, and the
-              BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is set.
+  make -j N M=fs/xfs clean; make -j N M=fs/xfs
 
-Users can write '0' and '1' to disable and enable this operation if it
-is not 'none', thoughts?
+... and ends up spitting out link time errors like this as of commit
+63c69ad3d18a ("fuse: refactor fuse_fill_write_pages()"):
 
-Best regards,
-Yi.
+...
+  CC [M]  xfs.mod.o
+  CC [M]  .module-common.o
+  LD [M]  xfs.ko  
+  BTF [M] xfs.ko  
+die__process: DW_TAG_compile_unit, DW_TAG_type_unit, DW_TAG_partial_unit or DW_TAG_skeleton_unit expected got subprogram (0x2e) @ ed957!
+error decoding cu i_mmap_rwsem
+error decoding cu 
+...
+error decoding cu 
+pahole: xfs.ko: Invalid argument
+make[3]: *** [/root/repos/linux/scripts/Makefile.modfinal:57: xfs.ko] Error 1
+make[3]: *** Deleting file 'xfs.ko'
+make[2]: *** [/root/repos/linux/Makefile:1937: modules] Error 2
+make[1]: *** [/root/repos/linux/Makefile:248: __sub-make] Error 2
+make[1]: Leaving directory '/root/repos/linux/fs/xfs'
+make: *** [Makefile:248: __sub-make] Error 2
+
+... or this on latest master:
+
+...
+  LD [M]  fs/xfs/xfs.o
+fs/xfs/xfs.o: error: objtool: can't find reloc entry symbol 2145964924 for .rela.text
+make[4]: *** [scripts/Makefile.build:501: fs/xfs/xfs.o] Error 1
+make[4]: *** Deleting file 'fs/xfs/xfs.o'
+make[3]: *** [scripts/Makefile.build:554: fs/xfs] Error 2
+make[2]: *** [scripts/Makefile.build:554: fs] Error 2
+make[1]: *** [/root/repos/linux/Makefile:2006: .] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+The latter failure is what I saw through most of a bisect so I suspect
+one of the related followon commits alters the failure characteristic
+from the former, but I've not confirmed that. Also note out of
+convenience my test was to just recompile xfs.ko out of the same tree I
+was bisecting from because the failures were consistent and seemed to be
+a runtime kernel issue and not a source tree issue.
+
+I haven't had a chance to dig any further than this (and JFYI I'm
+probably not going to be responsive through the rest of today). I just
+completed the bisect and wanted to get it on list sooner rather than
+later..
+
+Brian
 
 
