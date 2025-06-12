@@ -1,97 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-51398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CD0AD66C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 06:30:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD702AD66E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 06:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE60C3AC19C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 04:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6843AD304
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 04:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2EA1DF977;
-	Thu, 12 Jun 2025 04:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267701D63DD;
+	Thu, 12 Jun 2025 04:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1IUoNwuk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C839128382;
-	Thu, 12 Jun 2025 04:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3E410E5;
+	Thu, 12 Jun 2025 04:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749702640; cv=none; b=Hnai8BSU45j/g1GJDFAp4opnzRhWarNI2gLyvqECSLgu1JUd1AhkKmi++BkrQYlDkIwi5JKo2wVmoCD5unwM9/o28rwbwhSK6St+A2RcBlfVWfopZRZc5bekrzRZq2cYPfWnMAcde9IQMJOssCgUz5RwoBSg7kVNsfC7dyjCkJQ=
+	t=1749703329; cv=none; b=ZZFHHSoRin57gQ3OVLF65K0RpL26s3ZreoHSXCUT6I5GseLWBaxXzuXNc9EoNZaH6Q8BKmEyHgJqDfVLeFqhpFdHfYW0XxuTmLaFZevksIBD3SYO/sc5Y0Ryux8UDyOUimd80wX1xdux7uMxpoo0vWNKYohWJ6s0ZsVMIuMn6zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749702640; c=relaxed/simple;
-	bh=KtZUjJAg2eQN1hqERrYkxxQnWfsOhN7ohu1dvZH3944=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=VdI+UWobTeui35G0tPUdUXD0jGS2LmPkrIGCSVrVmTlaYqjn7n2IPT1Cum157umVzOA8n2rSkJY3K7k9eYbvy1FIPGIhmDGe+Ffhr6hB0y8xyC8RC2xLRyMUZaY2YI2Ou6XsUUyHy3L5DSVFzEbnvPgmh/a7THZ1x2/62Jay7Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uPZa0-008YSz-KI;
-	Thu, 12 Jun 2025 04:30:20 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1749703329; c=relaxed/simple;
+	bh=tVpj/wkk6Oc+SQXgGXAr82FNsfge/FipnIuQpvI7K2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XfrfewYPjb9Lu3x4YHO80MNcSF+GyA6JgAGMMYLiH5CwXoi4GKdzP49VKmPB2/pyS78L3C7vhHmT8ZFjfEQDLW5VCl3cxUMenNrGmMdakSiAXc4aIEvBdtB5AatEEFDWonakEWFwpG+RZyjjDAYmIT572ElSa9+Xo7bkNzJYupE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1IUoNwuk; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sw52tFicz6QSeSNyZO+/IaSkFjn4ty5PJv8gCZfMXkc=; b=1IUoNwuk4iD1kkoZvgAdnksRvf
+	wCfqokNvkfLmGv0INcs91jEikrAPq4A7LPQSPejPYe8FW0PxRo9GFjlS521HXCM/wtHb3kuX8XNVB
+	5ovaC1aVApg6g45ud86qgH8tRqkuW6zDlexios7hrJHkKn1RA7O0cKN2Xz6tUB3jqpwLj6elhQeNZ
+	tyCzT9AbDmHIU910k3ELkIeH87W3tUbHnIj/Qpf1f3jxS/JuldLBDCYDgMdFX2Z84+Wh8v8T+5b6Q
+	ZtvCj/XS4WTT6mBCKDM4uApRjX4MDFO8VQCduYp3PQi+eiF/gv/LD+WVFLuCnrL6mushdD5L8VlEM
+	ArVchiJA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uPZlO-0000000C9VY-2cgt;
+	Thu, 12 Jun 2025 04:42:06 +0000
+Date: Wed, 11 Jun 2025 21:42:06 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>, miklos@szeredi.hu,
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, bernd.schubert@fastmail.fm,
+	kernel-team@meta.com
+Subject: Re: [PATCH v1 2/8] iomap: add IOMAP_IN_MEM iomap type
+Message-ID: <aEpans4ltog7lU2Z@infradead.org>
+References: <aEZm-tocHd4ITwvr@infradead.org>
+ <CAJnrk1Z-ubwmkpnC79OEWAdgumAS7PDtmGaecr8Fopwt0nW-aw@mail.gmail.com>
+ <aEeo7TbyczIILjml@infradead.org>
+ <aEgyu86jWSz0Gpia@infradead.org>
+ <CAJnrk1b6eB71BmE_aOS77O-=77L_r5pim6GZYg45tUQnWChHUg@mail.gmail.com>
+ <aEkARG3yyWSYcOu6@infradead.org>
+ <CAJnrk1b8edbe8svuZXLtvWBnsNhY14hBCXhoqNXdHM6=df6YAg@mail.gmail.com>
+ <CAJnrk1au_grkFx=GT-DmbqFE4FmXhyG1qOr0moXXpg8BuBdp1A@mail.gmail.com>
+ <20250611185039.GI6179@frogsfrogsfrogs>
+ <CAJnrk1YcMvDZ6=xyyJcZ_LcAPu_vrU-mRND4+dpTLb++RUy9bw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "David Howells" <dhowells@redhat.com>, "Tyler Hicks" <code@tyhicks.com>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Amir Goldstein" <amir73il@gmail.com>,
- "Kees Cook" <kees@kernel.org>, "Joel Granados" <joel.granados@kernel.org>,
- "Namjae Jeon" <linkinjeon@kernel.org>, "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>, netfs@lists.linux.dev,
- linux-kernel@vger.kernel.org, ecryptfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs/proc: take rcu_read_lock() in proc_sys_compare()
-In-reply-to: <20250611233306.GA1647736@ZenIV>
-References: <>, <20250611233306.GA1647736@ZenIV>
-Date: Thu, 12 Jun 2025 14:30:20 +1000
-Message-id: <174970262010.608730.16666030974664097741@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1YcMvDZ6=xyyJcZ_LcAPu_vrU-mRND4+dpTLb++RUy9bw@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, 12 Jun 2025, Al Viro wrote:
-> On Thu, Jun 12, 2025 at 08:57:03AM +1000, NeilBrown wrote:
+On Wed, Jun 11, 2025 at 04:08:42PM -0700, Joanne Koong wrote:
+> Awesome, thanks for verifying
 > 
-> > However there is no guarantee that this lock is held by d_same_name()
-> > (the caller of ->d_compare).  In particularly d_alloc_parallel() calls
-> > d_same_name() after rcu_read_unlock().
-> 
-> d_alloc_parallel() calls d_same_name() with dentry being pinned;
-> if it's positive, nothing's going to happen to its inode,
-> rcu_read_lock() or not.  It can go from negative to positive,
-> but that's it.
-> 
-> Why is it needed?  We do care about possibly NULL inode (basically,
-> when RCU dcache lookup runs into a dentry getting evicted right
-> under it), but that's not relevant here.
-> 
+> I'll submit v2 rebased on top of the linux tree (if fuse is still
+> behind mainline) after Christoph sends out his patch
 
-Maybe it isn't needed.  Maybe I could fix the warning by removing the
-rcu_dereference() (and the RCU_INIT_POINTER() in inode.c).  But then I
-might have to pretend that I understand the code - and it makes no
-sense.
-
-If a second d_alloc_parallel() is called while there is already a
-d_in_lookup() dentry, then ->d_compare will return 1 so a second
-d_in_lookup() will be created and ->lookup will be called twice
-(possibly concurrently) and both will be added to the dcache.  Probably
-not harmful but not really wanted.
-
-And I'm having trouble seeing how sysctl_is_seen() is useful.  If it
-reports that the sysctl is not visible to this process, it'll just
-create a new dentry/inode which is that same as any other that would be
-created... 
-
-NeilBrown
+Where my patch is trying to come up with a good idea for the
+read-modify-write in write_begin?  Still thinking hard about this,
+so maybe just resend with your current approach for now.
 
