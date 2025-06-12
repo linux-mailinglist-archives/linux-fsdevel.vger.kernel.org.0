@@ -1,184 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-51514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A714AAD799C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 20:07:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0516AAD79C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 20:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7082418899AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 18:07:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6BDE3B4AFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 18:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B472C3256;
-	Thu, 12 Jun 2025 18:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6FB2D1920;
+	Thu, 12 Jun 2025 18:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="go6H3AgI"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="xMncFVVR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514511F03EF;
-	Thu, 12 Jun 2025 18:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949B22AE6D;
+	Thu, 12 Jun 2025 18:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749751646; cv=none; b=UdcqXo9fujxvwLTlQjHKexrpdVVzLsgVi2SGOj3cjOQJO6hH+nVKdwkjo1eaLLLO60h1nVrNQHjc0UAPWKShV90t1K9yMsseCVXcXA3Vimxn5Q3KmI58RB3/UmKhNHsdMjNwLAvl4duS6cFNZeuQeXs+o9S9FjIL/wtVU/LDxNc=
+	t=1749752853; cv=none; b=e3mXLTMcycQTg5Y9KuovOX0LpUC/LEGi7nfgSVQzhneSHuUoPIRt/xyjiuekjjmvoMn5aB7vnPNirVvW6eeznodSM72RGU6zDPEhq24DJk2rDlIVD+BzZnFcsjiW76Lm3TsswBJt4rwmZEK7eF+09Ia15+D0YVmSzwNKuVj9JQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749751646; c=relaxed/simple;
-	bh=eM6QfeQzql7UqLEFhuaq/EAtkl9E7c4VSfI0W7L0U9g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mnL8k8NmLX/FJ8PLIo1Bsn1nwYMxqtQfI20CvhEUCnlEkKIkdmarKUdLwsF5hX1XHMmR6h0J2YQooOPpl6ngjPkYwczfU9NJpljT9kGSWa7nl0zU3kz4w06dBiVuyliIBPBMjGp899t8fs3qxCLSQtOuCMDbU7SlmAxW92/PUTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=go6H3AgI; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=NLI18LvjQ4CANycpGsFkt9dk8MUgMfENzEtgG+JvMSs=; b=go6H3AgIQSZpVtLYfNp5kAezy4
-	OZugAub43DyyFbjmDyBMzxDhFQa7Fcn/sHHUBMfhg0AAQqtOUoiGFpDQPJ7NPi0RCrUxlsQvgTC68
-	0oamLAFQc3U4In8kNMQ1jXgtNcgZrCB9xg1uOK9qtNP+bnG083QkgJcNwI9+iNc2AtnL/ZUKMaxzS
-	M+nKg0BpYvbBNnK1LNpJ82PXXwDjyEQjobQwocOfm/QmsxG2oAlVOH8Xz81hN5cdy/KeeF7Lqw1kH
-	ecszQjPH5B3dd+ev2mXlOKjbY6v8TrJ7jN1Z985Z2UvUC0g6blJceF1Dc+vGtZ69lCKxjjpDR2td2
-	sqzZqScQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uPmKX-002jLz-BM; Thu, 12 Jun 2025 20:07:13 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  kernel-dev@igalia.com
-Subject: Re: [PATCH] fs: drop assert in file_seek_cur_needs_f_lock
-In-Reply-To: <3gvuqzzyhiz5is42h4rbvqx43q4axmo7ehubomijvbr5k25xgb@pwjvfuttjegk>
-	(Jan Kara's message of "Thu, 12 Jun 2025 18:23:01 +0200")
-References: <87tt4u4p4h.fsf@igalia.com>
-	<20250612094101.6003-1-luis@igalia.com>
-	<ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
-	<3gvuqzzyhiz5is42h4rbvqx43q4axmo7ehubomijvbr5k25xgb@pwjvfuttjegk>
-Date: Thu, 12 Jun 2025 19:07:12 +0100
-Message-ID: <87v7p06dgv.fsf@igalia.com>
+	s=arc-20240116; t=1749752853; c=relaxed/simple;
+	bh=sLe44bhVPcyWtKzfId4ZB2+nTWu/lWdLaI+SCIPyRKI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hbz9+8RRT8Xb8AlUALFOXURJPBn6ayZLpFMco1sWVLAGs+CL7VVslYazYxDVdpfRIX7nIEXOC7rLnh6moXprHDgus3VSqXIEUmt/NRnhqTjhlN/kTk00WdSFUC+g6m+5EaYSwkgdc30L9Y/ug/LTHKknajZOPcALOX+aIjlJxqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=xMncFVVR; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1749752849;
+	bh=sLe44bhVPcyWtKzfId4ZB2+nTWu/lWdLaI+SCIPyRKI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=xMncFVVRGXzz9QDMbQjKFXqrLRU1AG9il5S4YeeusWGKkUgDdvDOzfV6/m9yHCgCx
+	 LxEvhmyNLKKf5fCBwMe2/OsDdYAFRZb3b5clYbbsFPLGii8922Z+pWgkvSTbCFTzOj
+	 QJocwBzx4RGdJ6hWhXmCtOti6wlE/mxuveGUHw08=
+Received: from [IPv6:2601:5c4:4302:c21::a774] (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 89DB91C02E3;
+	Thu, 12 Jun 2025 14:27:28 -0400 (EDT)
+Message-ID: <2dc7318d6c74b27a49b4c64b513f3da13d980473.camel@HansenPartnership.com>
+Subject: Re: [RFC] Keyrings: How to make them more useful
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, Jarkko
+ Sakkinen <jarkko@kernel.org>, Steve French <sfrench@samba.org>, Chuck Lever
+ <chuck.lever@oracle.com>,  Mimi Zohar <zohar@linux.ibm.com>
+Cc: Paulo Alcantara <pc@manguebit.org>, Herbert Xu
+ <herbert@gondor.apana.org.au>,  Jeffrey Altman <jaltman@auristor.com>,
+ hch@infradead.org, linux-afs@lists.infradead.org, 
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-crypto@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Thu, 12 Jun 2025 14:27:27 -0400
+In-Reply-To: <462886.1749731810@warthog.procyon.org.uk>
+References: <462886.1749731810@warthog.procyon.org.uk>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12 2025, Jan Kara wrote:
+On Thu, 2025-06-12 at 13:36 +0100, David Howells wrote:
+[...]
+> Thoughts?
 
-> On Thu 12-06-25 15:55:40, Mateusz Guzik wrote:
->> On Thu, Jun 12, 2025 at 10:41:01AM +0100, Luis Henriques wrote:
->> > The assert in function file_seek_cur_needs_f_lock() can be triggered v=
-ery
->> > easily because, as Jan Kara suggested, the file reference may get
->> > incremented after checking it with fdget_pos().
->> >=20
->> > Fixes: da06e3c51794 ("fs: don't needlessly acquire f_lock")
->> > Signed-off-by: Luis Henriques <luis@igalia.com>
->> > ---
->> > Hi Christian,
->> >=20
->> > It wasn't clear whether you'd be queueing this fix yourself.  Since I =
-don't
->> > see it on vfs.git, I decided to explicitly send the patch so that it d=
-oesn't
->> > slip through the cracks.
->> >=20
->> > Cheers,
->> > --=20
->> > Luis
->> >=20
->> >  fs/file.c | 2 --
->> >  1 file changed, 2 deletions(-)
->> >=20
->> > diff --git a/fs/file.c b/fs/file.c
->> > index 3a3146664cf3..075f07bdc977 100644
->> > --- a/fs/file.c
->> > +++ b/fs/file.c
->> > @@ -1198,8 +1198,6 @@ bool file_seek_cur_needs_f_lock(struct file *fil=
-e)
->> >  	if (!(file->f_mode & FMODE_ATOMIC_POS) && !file->f_op->iterate_share=
-d)
->> >  		return false;
->> >=20=20
->> > -	VFS_WARN_ON_ONCE((file_count(file) > 1) &&
->> > -			 !mutex_is_locked(&file->f_pos_lock));
->> >  	return true;
->> >  }
->>=20
->> fdget_pos() can only legally skip locking if it determines to be in
->> position where nobody else can operate on the same file obj, meaning
->> file_count(file) =3D=3D 1 and it can't go up. Otherwise the lock is take=
-n.
->>=20
->> Or to put it differently, fdget_pos() NOT taking the lock and new refs
->> showing up later is a bug.
->
-> I mostly agree and as I've checked again, this indeed seems to be the case
-> as fdget() will increment f_ref if file table is shared with another thre=
-ad
-> and thus file_needs_f_pos_lock() returns true whenever there are more
-> threads sharing the file table or if the struct file is dupped to another
-> fd. That being said I find the assertion in file_seek_cur_needs_f_lock()
-> misplaced - it just doesn't make sense in that place to me.
->=20=20
->> I don't believe anything of the sort is happening here.
->>=20
->> Instead, overlayfs is playing games and *NOT* going through fdget_pos():
->>=20
->> 	ovl_inode_lock(inode);
->>         realfile =3D ovl_real_file(file);
->> 	[..]
->>         ret =3D vfs_llseek(realfile, offset, whence);
->>=20
->> Given the custom inode locking around the call, it may be any other
->> locking is unnecessary and the code happens to be correct despite the
->> splat.
->
-> Right and good spotting. That's indeed more likely explanation than mine.
-> Actually custom locking around llseek isn't all that uncommon (mostly for
-> historical reasons AFAIK but that's another story).
->
->> I think the safest way out with some future-proofing is to in fact *add*
->> the locking in ovl_llseek() to shut up the assert -- personally I find
->> it uneasy there is some underlying file obj flying around.
->
-> Well, if you grep for vfs_llseek(), you'll see there are much more calls =
-to
-> it in the kernel than overlayfs. These callers outside of fs/read_write.c
-> are responsible for their locking. So I don't think keeping the assert in
-> file_seek_cur_needs_f_lock() makes any sense. If anything I'd be open to
-> putting it in fdput_pos() or something like that.
+One of the problems I keep tripping over is different special casing
+for user keyrings (which are real struct key structures) and system
+keyrings which are special values of the pointer in struct key *.
 
-Thank you Mateusz and Honza for looking into this.  Overlayfs was indeed
-my initial suspect, but I had two reasons for thinking that the assert was
-the problem: 1) that code was there for quite some time and 2) nobody else
-was reporting this issue.
+For examples of what this special handling does, just look at things
+like bpf_trace.c:bpf_lookup_{user|system}_key
 
->> Even if ultimately the assert has to go, the proposed commit message
->> does not justify it.
->
-> I guess the commit message could be improved. Something like:
->
-> The assert in function file_seek_cur_needs_f_lock() can be triggered very
-> easily because there are many users of vfs_llseek() (such as overlayfs)
-> that do their custom locking around llseek instead of relying on
-> fdget_pos(). Just drop the overzealous assertion.
+Since the serial allocation code has a hard coded not less than 3
+(which looks for all the world like it was designed to mean the two
+system keyring id's were never used as user serial numbers) I think we
+could simply allow the two system keyring ids to be passed into
+lookup_user_key() (which now might be a bit misnamed) and special case
+not freeing it in put_key().
 
-Thanks, makes more sense.
+Regards,
 
-Christian, do you prefer me to resend the patch or is it easier for you to
-just amend the commit?  (Though, to be fair, the authorship could also be
-changed as I mostly reported the issue and tested!)
+James
 
-Cheers,
---=20
-Lu=C3=ADs
 
