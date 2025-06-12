@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-51384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3984AD6602
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 05:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12636AD6605
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 05:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E81E7ABDB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 03:11:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01CBF1BC209C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 03:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B2F1F0E2E;
-	Thu, 12 Jun 2025 03:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843761F5858;
+	Thu, 12 Jun 2025 03:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="EakZV5ti"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="G2qoPIw9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483A21DED42;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940AA1DED64;
 	Thu, 12 Jun 2025 03:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749697919; cv=none; b=Rpi3MRBLAYKM4MiQm28yvWfS2XtS8rUxbAMuPGe1qo0cbOlzQ71WZJJ+kQRnVGuKrmQRWglclBf/xD5ODCMBB3ec8JCBgYfzeRdqk//2n4DYBNLfktAvp3pZLJSnloQ7XbGE1HJJHdVFBPu4tXlejL7NbWBGmw29xRroEF2Z7rs=
+	t=1749697919; cv=none; b=CRkSgSXUNOqNZ5tpNgCCW2Hh4qOyUzjLLP9aQ/AgHA7l6SBsDoMaUt3+/eW+rdKbUzueqrZiRah8lmuslAHKlFlK+s5VzRiAsBpPhhvEADbkLVL0Lrw/hpnYtT40o28n8BQOtb+E0NvkGungXQg9CelJ3w8+AMyfkGjN3Jz9O6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749697919; c=relaxed/simple;
-	bh=QjOHnh+Yt4PqlcAW+qCq/Kju4E4+I5d/K1Zma3tgC4I=;
+	bh=2w43J+m2hsaks2tLaoIL10DfG73jTspv9LtChcqcql4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FKyaOMwBbMcmKaB8mwPW2TodKFIq5B9UwP8DSMGeuwAXgQRBJlIGvnrjYKDs2npY3uu2Fac0NT9/jPbRIAZvUvVlW2rb8ZPpVkCkOFlRhnWD1M+tyrkdH94ORwWecPkFBwra7fD5lGW2SUvlN3i6tdcbd3vvt4edPmkpvJ4nejE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=EakZV5ti; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=FLw4wl462MsiFGUBgeBIKguB9EKbVo+Kc1thT85QKgMpuzyB2PEnExhQF/QsPCaVY+CIoswPPF+1+lHhTh7R3qs4Jx6r2cRvlYbUH6uU+aLlyDNN6S+nDHo1bbqykrZ5oOH90PJIXjNasak5FR3XJGZa47El3Xm/dGbbkjtiCfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=G2qoPIw9; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=3djBL8HHbUGU5RogRIz9x0fhkX7yEbrlgs7bG3UIn04=; b=EakZV5tirFPH3CX27VKuA8QGM5
-	aQ2OW9YtZBI1ve4eAg+oIECTCBDLtdtE97AmK4aSjKdoxboC4MCP1vj+LNwcFAp2/xgVAF4q9sffk
-	NUXvNiouo5ja1su40o3qKFkI1DM2ZVFEPPyOdPIfSC9WTX4Z3LRdh9K/0q3i8Z0IXf4WfoNbtuRpg
-	qFqTMWCIHRJOEVZq2NHWjc1zymBNVLp7Teng0/I9wE/1COsa9NZx6NdNmd0F1wI2LtOCIFVepa0iO
-	zel3/4eOktWjy5nl/0UyEAKiupcjPyMgMU89FcRKjmSpwNyoTV21Dqj398bw2921VCf50dMwFYXm2
-	jyQclRTg==;
+	bh=0adqSNDtsBX0j00vNqOcKAkGx/v7h4xPEQ5BScXZvAg=; b=G2qoPIw9s1QOzZwgU53XmGFB7I
+	+lLCohdQAoBUT5k3ZxdNfEud/bkhe33PJqLYVf2fKz1xLfbXMGkGvrL6+p0tQ//1vvakLqBx++oJc
+	EEewwD5eKbBehUa3R893UiaStteUR11luY6LIhvscewbUoT/Ta3tHAg48+zFBO5xIWyDeDfiYBnFq
+	SzJKetSORl6hqVOaS6V+BHSxk+ZJCrpM/HUYsHNX/D/Q1C3hpL6b4eS5PIn3zy92tbBf2ZkXuDUN0
+	Vwr8/Cr3ke36Sgxp1BZzWCPx5jZ6A5aJGyiupN1Ia4p5A3z6w/4XOo7bUeFf0sQC6niXp84EXaA3e
+	pCFHIw5Q==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPYM7-00000009gfC-2th8;
+	id 1uPYM7-00000009gfF-3GiZ;
 	Thu, 12 Jun 2025 03:11:55 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-security-module@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
 Cc: linux-integrity@vger.kernel.org
-Subject: [PATCH 09/10] ipe: don't bother with removal of files in directory we'll be removing
-Date: Thu, 12 Jun 2025 04:11:53 +0100
-Message-ID: <20250612031154.2308915-9-viro@zeniv.linux.org.uk>
+Subject: [PATCH 10/10] tpm: don't bother with removal of files in directory we'll be removing
+Date: Thu, 12 Jun 2025 04:11:54 +0100
+Message-ID: <20250612031154.2308915-10-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250612031154.2308915-1-viro@zeniv.linux.org.uk>
 References: <20250612030951.GC1647736@ZenIV>
@@ -64,110 +64,132 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... and use securityfs_remove() instead of securityfs_recursive_remove()
+FWIW, there is a reliable indication of removal - ->i_nlink going to 0 ;-)
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- security/ipe/fs.c        | 32 ++++++++++++--------------------
- security/ipe/policy_fs.c |  4 ++--
- 2 files changed, 14 insertions(+), 22 deletions(-)
+ drivers/char/tpm/eventlog/common.c | 46 ++++++++----------------------
+ include/linux/tpm.h                |  2 +-
+ 2 files changed, 13 insertions(+), 35 deletions(-)
 
-diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-index f40e50bfd2e7..0bb9468b8026 100644
---- a/security/ipe/fs.c
-+++ b/security/ipe/fs.c
-@@ -12,11 +12,8 @@
- #include "policy.h"
- #include "audit.h"
+diff --git a/drivers/char/tpm/eventlog/common.c b/drivers/char/tpm/eventlog/common.c
+index 4c0bbba64ee5..691813d2a5a2 100644
+--- a/drivers/char/tpm/eventlog/common.c
++++ b/drivers/char/tpm/eventlog/common.c
+@@ -32,7 +32,7 @@ static int tpm_bios_measurements_open(struct inode *inode,
+ 	struct tpm_chip *chip;
  
--static struct dentry *np __ro_after_init;
- static struct dentry *root __ro_after_init;
- struct dentry *policy_root __ro_after_init;
--static struct dentry *audit_node __ro_after_init;
--static struct dentry *enforce_node __ro_after_init;
- 
- /**
-  * setaudit() - Write handler for the securityfs node, "ipe/success_audit"
-@@ -200,27 +197,26 @@ static int __init ipe_init_securityfs(void)
+ 	inode_lock(inode);
+-	if (!inode->i_private) {
++	if (!inode->i_nlink) {
+ 		inode_unlock(inode);
+ 		return -ENODEV;
+ 	}
+@@ -105,7 +105,7 @@ static int tpm_read_log(struct tpm_chip *chip)
+ void tpm_bios_log_setup(struct tpm_chip *chip)
  {
- 	int rc = 0;
- 	struct ipe_policy *ap;
+ 	const char *name = dev_name(&chip->dev);
+-	unsigned int cnt;
 +	struct dentry *dentry;
+ 	int log_version;
+ 	int rc = 0;
  
- 	if (!ipe_enabled)
- 		return -EOPNOTSUPP;
+@@ -117,14 +117,12 @@ void tpm_bios_log_setup(struct tpm_chip *chip)
+ 		return;
+ 	log_version = rc;
  
- 	root = securityfs_create_dir("ipe", NULL);
--	if (IS_ERR(root)) {
--		rc = PTR_ERR(root);
+-	cnt = 0;
+-	chip->bios_dir[cnt] = securityfs_create_dir(name, NULL);
++	chip->bios_dir = securityfs_create_dir(name, NULL);
+ 	/* NOTE: securityfs_create_dir can return ENODEV if securityfs is
+ 	 * compiled out. The caller should ignore the ENODEV return code.
+ 	 */
+-	if (IS_ERR(chip->bios_dir[cnt]))
 -		goto err;
--	}
-+	if (IS_ERR(root))
-+		return PTR_ERR(root);
+-	cnt++;
++	if (IS_ERR(chip->bios_dir))
++		return;
  
--	audit_node = securityfs_create_file("success_audit", 0600, root,
-+	dentry = securityfs_create_file("success_audit", 0600, root,
- 					    NULL, &audit_fops);
--	if (IS_ERR(audit_node)) {
--		rc = PTR_ERR(audit_node);
-+	if (IS_ERR(dentry)) {
-+		rc = PTR_ERR(dentry);
+ 	chip->bin_log_seqops.chip = chip;
+ 	if (log_version == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2)
+@@ -135,14 +133,13 @@ void tpm_bios_log_setup(struct tpm_chip *chip)
+ 			&tpm1_binary_b_measurements_seqops;
+ 
+ 
+-	chip->bios_dir[cnt] =
++	dentry =
+ 	    securityfs_create_file("binary_bios_measurements",
+-				   0440, chip->bios_dir[0],
++				   0440, chip->bios_dir,
+ 				   (void *)&chip->bin_log_seqops,
+ 				   &tpm_bios_measurements_ops);
+-	if (IS_ERR(chip->bios_dir[cnt]))
++	if (IS_ERR(dentry))
  		goto err;
- 	}
+-	cnt++;
  
--	enforce_node = securityfs_create_file("enforce", 0600, root, NULL,
-+	dentry = securityfs_create_file("enforce", 0600, root, NULL,
- 					      &enforce_fops);
--	if (IS_ERR(enforce_node)) {
--		rc = PTR_ERR(enforce_node);
-+	if (IS_ERR(dentry)) {
-+		rc = PTR_ERR(dentry);
- 		goto err;
- 	}
+ 	if (!(chip->flags & TPM_CHIP_FLAG_TPM2)) {
  
-@@ -237,18 +233,14 @@ static int __init ipe_init_securityfs(void)
+@@ -150,42 +147,23 @@ void tpm_bios_log_setup(struct tpm_chip *chip)
+ 		chip->ascii_log_seqops.seqops =
+ 			&tpm1_ascii_b_measurements_seqops;
+ 
+-		chip->bios_dir[cnt] =
++		dentry =
+ 			securityfs_create_file("ascii_bios_measurements",
+-					       0440, chip->bios_dir[0],
++					       0440, chip->bios_dir,
+ 					       (void *)&chip->ascii_log_seqops,
+ 					       &tpm_bios_measurements_ops);
+-		if (IS_ERR(chip->bios_dir[cnt]))
++		if (IS_ERR(dentry))
  			goto err;
+-		cnt++;
  	}
  
--	np = securityfs_create_file("new_policy", 0200, root, NULL, &np_fops);
--	if (IS_ERR(np)) {
--		rc = PTR_ERR(np);
-+	dentry = securityfs_create_file("new_policy", 0200, root, NULL, &np_fops);
-+	if (IS_ERR(dentry)) {
-+		rc = PTR_ERR(dentry);
- 		goto err;
- 	}
+ 	return;
  
- 	return 0;
  err:
--	securityfs_remove(np);
--	securityfs_remove(policy_root);
--	securityfs_remove(enforce_node);
--	securityfs_remove(audit_node);
- 	securityfs_remove(root);
- 	return rc;
+-	chip->bios_dir[cnt] = NULL;
+ 	tpm_bios_log_teardown(chip);
+ 	return;
  }
-diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-index db26032ccbe1..9d92d8a14b13 100644
---- a/security/ipe/policy_fs.c
-+++ b/security/ipe/policy_fs.c
-@@ -438,7 +438,7 @@ static const struct ipefs_file policy_subdir[] = {
-  */
- void ipe_del_policyfs_node(struct ipe_policy *p)
+ 
+ void tpm_bios_log_teardown(struct tpm_chip *chip)
  {
--	securityfs_recursive_remove(p->policyfs);
-+	securityfs_remove(p->policyfs);
- 	p->policyfs = NULL;
+-	int i;
+-	struct inode *inode;
+-
+-	/* securityfs_remove currently doesn't take care of handling sync
+-	 * between removal and opening of pseudo files. To handle this, a
+-	 * workaround is added by making i_private = NULL here during removal
+-	 * and to check it during open(), both within inode_lock()/unlock().
+-	 * This design ensures that open() either safely gets kref or fails.
+-	 */
+-	for (i = (TPM_NUM_EVENT_LOG_FILES - 1); i >= 0; i--) {
+-		if (chip->bios_dir[i]) {
+-			inode = d_inode(chip->bios_dir[i]);
+-			inode_lock(inode);
+-			inode->i_private = NULL;
+-			inode_unlock(inode);
+-			securityfs_remove(chip->bios_dir[i]);
+-		}
+-	}
++	securityfs_remove(chip->bios_dir);
  }
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index a3d8305e88a5..9894c104dc93 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -182,7 +182,7 @@ struct tpm_chip {
+ 	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
+ 	bool duration_adjusted;
  
-@@ -485,6 +485,6 @@ int ipe_new_policyfs_node(struct ipe_policy *p)
+-	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
++	struct dentry *bios_dir;
  
- 	return 0;
- err:
--	securityfs_recursive_remove(policyfs);
-+	securityfs_remove(policyfs);
- 	return rc;
- }
+ 	const struct attribute_group *groups[3 + TPM_MAX_HASHES];
+ 	unsigned int groups_cnt;
 -- 
 2.39.5
 
