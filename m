@@ -1,353 +1,381 @@
-Return-Path: <linux-fsdevel+bounces-51443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8240BAD6F01
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B29A4AD6F20
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE73E7AA0C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 11:27:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8387B1898378
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 11:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE4023C8A1;
-	Thu, 12 Jun 2025 11:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3AE2F4336;
+	Thu, 12 Jun 2025 11:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVAPT8Vt"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ostiY3Rp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1AhroKxm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ostiY3Rp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1AhroKxm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E419D23A99F;
-	Thu, 12 Jun 2025 11:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C602F431D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 11:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749727728; cv=none; b=kmLGGJQpqKSvAJ/wkbqFOLQua7BxfFRGtoYZBwOpfF8RyzvO1eDRE/kTMD30Ky1cWCbyoT4mHg+J8X3x9FKmY1RN3PNnB0a2iIhxmq0zE1T6ypdYb+j+AE6JQhTDmdtauYQB02bp27ME9CTGybgpinuOVIqFupkqgxf6uzsgg+s=
+	t=1749728236; cv=none; b=MjcCqqz8cL+m+807FOfHrkxDxEciQPnUQdRPeIqb+gOBljRofIxpBKntjsxC/pPfwk4uNCzICMtTA4SqP1yNW8ClG19jgA8a2Piz+oGfy/PlcEoX4yE8WVgWtd2IgC9g4IkF24PD/oaQzOKYf0IubaZzgGUhBtsDkg4Ptdth+Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749727728; c=relaxed/simple;
-	bh=7PUfQRjnovH8lSirdXfeJkBAFhWToKhGtlZKDlRE4Rc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fbvEJxktJnPa6GI6NxKnBAFalPQMziHy6sRe4qPRPzoizb10d23xaMcBP80NzGyLqxHeMa2h8FME5pSW5WLCh0yyPin9htfASiycbJSXIiVsUIUnK+/0BJovNDssXNOKeOJomd58CEGxzo0ooSoBW8ZGQWFA4yZHscmDr00YyFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVAPT8Vt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E4EC4CEEA;
-	Thu, 12 Jun 2025 11:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749727727;
-	bh=7PUfQRjnovH8lSirdXfeJkBAFhWToKhGtlZKDlRE4Rc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VVAPT8VtpInYOmDDgZ5RSn1chO8t5aB1Macw5QO+0iVyUHwScJy5En8oz50frath1
-	 YzJCeQvq9dDFyTe03aXkA7j8zaz1hjl68h05sBhvt6hn1XcR77Ow9ZVQPgxNS/kZlX
-	 BNf1qb1pNN+44C6qWKbJm9DAj/0FMXHn6jLH+ikp3QabtsFPJZQhirpv2VUIhoWJxM
-	 vpalfSiPnI67eA3QA9j6OM+W+DVwQ88zFun6hpSUfr04mK1ixkpSZTpCG0rncFSIIH
-	 DJ/ucoAgOGvvhGKdqJSKPVy2ih5AwfM6449T66SbniIG6xxKDb0XZuMrX7fNFjEBkD
-	 bhwMpgn7voKDg==
-Message-ID: <60abafb21e5e57f4e910abcb27495e41a8344130.camel@kernel.org>
-Subject: Re: need SUNRPC TCP to receive into aligned pages [was: Re: [PATCH
- 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE for all IO]
-From: Jeff Layton <jlayton@kernel.org>
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Date: Thu, 12 Jun 2025 07:28:45 -0400
-In-Reply-To: <110c7644b829ce158680979e6cd358193ea3f52b.camel@kernel.org>
-References: <20250610205737.63343-1-snitzer@kernel.org>
-		 <20250610205737.63343-2-snitzer@kernel.org>
-		 <4b858fb1-25f6-457f-8908-67339e20318e@oracle.com>
-		 <aEnWhlXjzOmRfCJf@kernel.org>
-		 <7c48e17c4b575375069a4bd965f346499e66ac3a.camel@kernel.org>
-		 <aEn2-mYA3VDv-vB8@kernel.org>
-	 <110c7644b829ce158680979e6cd358193ea3f52b.camel@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1749728236; c=relaxed/simple;
+	bh=kq26j+ZonXg6jnR+Mnw4tjN8HSwyVUlYB6lXgfqRozk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DUdsKyOpo2ZBS0sy3pD11M0BulIp4QLIbNGJNi8I+l5cT4se5vMaVCGWkUU5xEZjWcaBhw2lCogN9UyiLwim6BM5bn/zyDNRKDZJxCJaSrtBpqKqtoFA/OBTCnANJG0YdKFyJ7PoT7ujG3nGPLlNpj3UE5NCWEtMAYjTT4RoY5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ostiY3Rp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1AhroKxm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ostiY3Rp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1AhroKxm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AE72D1F78E;
+	Thu, 12 Jun 2025 11:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749728225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SAaMXZaNbH9WPPhkq8n7uqpbqPdSSaReMxj+cBGzwlY=;
+	b=ostiY3RpZJXSgquqV3UuObYfhxZl2s8oXJIjcCg1VD5HPerbuGqFYh2atkjyaIMwIFjq5m
+	0jS+xbUwQlVj24sgYsRHkuKZYoLJYCHvZLwNH95CdJr9T2Qj7+CCfMyXo+qlUHU+krnX2T
+	TRRpt+Kl07T8600kqGW17mvRmgUbQhg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749728225;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SAaMXZaNbH9WPPhkq8n7uqpbqPdSSaReMxj+cBGzwlY=;
+	b=1AhroKxmJjnWpTIb+AkEvXyY4Xk4mMuettRUVBqDGeEIzpmNOE1JS7n8+BDkKQET8AZq0/
+	2wQV+K419+ufPQAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749728225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SAaMXZaNbH9WPPhkq8n7uqpbqPdSSaReMxj+cBGzwlY=;
+	b=ostiY3RpZJXSgquqV3UuObYfhxZl2s8oXJIjcCg1VD5HPerbuGqFYh2atkjyaIMwIFjq5m
+	0jS+xbUwQlVj24sgYsRHkuKZYoLJYCHvZLwNH95CdJr9T2Qj7+CCfMyXo+qlUHU+krnX2T
+	TRRpt+Kl07T8600kqGW17mvRmgUbQhg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749728225;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SAaMXZaNbH9WPPhkq8n7uqpbqPdSSaReMxj+cBGzwlY=;
+	b=1AhroKxmJjnWpTIb+AkEvXyY4Xk4mMuettRUVBqDGeEIzpmNOE1JS7n8+BDkKQET8AZq0/
+	2wQV+K419+ufPQAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9DD75132D8;
+	Thu, 12 Jun 2025 11:37:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JriCJuG7SmjrZgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 12 Jun 2025 11:37:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5D716A099E; Thu, 12 Jun 2025 13:37:05 +0200 (CEST)
+Date: Thu, 12 Jun 2025 13:37:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
+	Dave Chinner <david@fromorbit.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCH v5 4/5] mm/readahead: Store folio order in struct
+ file_ra_state
+Message-ID: <dhfhfcymhfdtqnwof4cqfhplgo24ho3kon3e7lrqwwgz26ehqr@g6h3g3yub4w4>
+References: <20250609092729.274960-1-ryan.roberts@arm.com>
+ <20250609092729.274960-5-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609092729.274960-5-ryan.roberts@arm.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Thu, 2025-06-12 at 06:28 -0400, Jeff Layton wrote:
-> On Wed, 2025-06-11 at 17:36 -0400, Mike Snitzer wrote:
-> > On Wed, Jun 11, 2025 at 04:29:58PM -0400, Jeff Layton wrote:
-> > > On Wed, 2025-06-11 at 15:18 -0400, Mike Snitzer wrote:
-> > > > On Wed, Jun 11, 2025 at 10:31:20AM -0400, Chuck Lever wrote:
-> > > > > On 6/10/25 4:57 PM, Mike Snitzer wrote:
-> > > > > > Add 'enable-dontcache' to NFSD's debugfs interface so that: Any=
- data
-> > > > > > read or written by NFSD will either not be cached (thanks to O_=
-DIRECT)
-> > > > > > or will be removed from the page cache upon completion (DONTCAC=
-HE).
-> > > > >=20
-> > > > > I thought we were going to do two switches: One for reads and one=
- for
-> > > > > writes? I could be misremembering.
-> > > >=20
-> > > > We did discuss the possibility of doing that.  Still can-do if that=
-'s
-> > > > what you'd prefer.
-> > > > =20
-> > >=20
-> > > Having them as separate controls in debugfs is fine for
-> > > experimentation's sake, but I imagine we'll need to be all-in one way
-> > > or the other with a real interface.
-> > >=20
-> > > I think if we can crack the problem of receiving WRITE payloads into =
-an
-> > > already-aligned buffer, then that becomes much more feasible. I think
-> > > that's a solveable problem.
-> >=20
-> > You'd immediately be my hero!  Let's get into it:
-> >=20
-> > In a previously reply to this thread you aptly detailed what I found
-> > out the hard way (with too much xdr_buf code review and tracing):
-> >=20
-> > On Wed, Jun 11, 2025 at 08:55:20AM -0400, Jeff Layton wrote:
-> > > >=20
-> > > > NFSD will also set RWF_DIRECT if a WRITE's IO is aligned relative t=
-o
-> > > > DIO alignment (both page and disk alignment).  This works quite wel=
-l
-> > > > for aligned WRITE IO with SUNRPC's RDMA transport as-is, because it
-> > > > maps the WRITE payload into aligned pages. But more work is needed =
-to
-> > > > be able to leverage O_DIRECT when SUNRPC's regular TCP transport is
-> > > > used. I spent quite a bit of time analyzing the existing xdr_buf co=
-de
-> > > > and NFSD's use of it.  Unfortunately, the WRITE payload gets stored=
- in
-> > > > misaligned pages such that O_DIRECT isn't possible without a copy
-> > > > (completely defeating the point).  I'll reply to this cover letter =
-to
-> > > > start a subthread to discuss how best to deal with misaligned write
-> > > > IO (by association with Hammerspace, I'm most interested in NFS v3)=
-.
-> > > >=20
-> > >=20
-> > > Tricky problem. svc_tcp_recvfrom() just slurps the whole RPC into the
-> > > rq_pages array. To get alignment right, you'd probably have to do the
-> > > receive in a much more piecemeal way.
-> > >=20
-> > > Basically, you'd need to decode as you receive chunks of the message,
-> > > and look out for WRITEs, and then set it up so that their payloads ar=
-e
-> > > received with proper alignment.
-> >=20
-> > 1)
-> > Yes, and while I arrived at the same exact conclusion I was left with
-> > dread about the potential for "breaking too many eggs to make that
-> > tasty omelette".
-> >=20
-> > If you (or others) see a way forward to have SUNRPC TCP's XDR receive
-> > "inline" decode (rather than have the 2 stage process you covered
-> > above) that'd be fantastic.  Seems like really old tech-debt in SUNRPC
-> > from a time when such care about alignment of WRITE payload pages was
-> > completely off engineers' collective radar (owed to NFSD only using
-> > buffered IO I assume?).
-> >=20
-> > 2)
-> > One hack that I verified to work for READ and WRITE IO on my
-> > particular TCP testbed was to front-pad the first "head" page of the
-> > xdr_buf such that the WRITE payload started at the 2nd page of
-> > rq_pages.  So that looked like this hack for my usage:
-> >=20
-> > diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
-> > index 8fc5b2b2d806..cf082a265261 100644
-> > --- a/net/sunrpc/svc_xprt.c
-> > +++ b/net/sunrpc/svc_xprt.c
-> > @@ -676,7 +676,9 @@ static bool svc_alloc_arg(struct svc_rqst *rqstp)
-> >=20
-> >         /* Make arg->head point to first page and arg->pages point to r=
-est */
-> >         arg->head[0].iov_base =3D page_address(rqstp->rq_pages[0]);
-> > -       arg->head[0].iov_len =3D PAGE_SIZE;
-> > +       // FIXME: front-pad optimized to align TCP's WRITE payload
-> > +       // but may not be enough for other operations?
-> > +       arg->head[0].iov_len =3D 148;
-> >         arg->pages =3D rqstp->rq_pages + 1;
-> >         arg->page_base =3D 0;
-> >         /* save at least one page for response */
-> >=20
-> > That gut "but may not be enough for other operations?" comment proved
-> > to be prophetic.
-> >=20
-> > Sadly it went on to fail spectacularly for other ops (specifically
-> > READDIR and READDIRPLUS, probably others would too) because
-> > xdr_inline_decode() _really_ doesn't like going beyond the end of the
-> > xdr_buf's inline "head" page.  It could be that even if
-> > xdr_inline_decode() et al was "fixed" (which isn't for the faint of
-> > heart given xdr_buf's more complex nature) there will likely be other
-> > mole(s) that pop up.  And in addition, we'd be wasting space in the
-> > xdr_buf's head page (PAGE_SIZE-frontpad).  So I moved on from trying
-> > to see this frontpad hack through to completion.
-> >=20
-> > 3)
-> > Lastly, for completeness, I also mentioned briefly in a previous
-> > recent reply:
-> >=20
-> > On Wed, Jun 11, 2025 at 04:51:03PM -0400, Mike Snitzer wrote:
-> > > On Wed, Jun 11, 2025 at 11:44:29AM -0400, Jeff Layton wrote:
-> > >=20
-> > > > In any case, for now at least, unless you're using RDMA, it's going=
- to
-> > > > end up falling back to buffered writes everywhere. The data is almo=
-st
-> > > > never going to be properly aligned coming in off the wire. That mig=
-ht
-> > > > be fixable though.
-> > >=20
-> > > Ben Coddington mentioned to me that soft-iwarp would allow use of RDM=
-A
-> > > over TCP to workaround SUNRPC TCP's XDR handling always storing the
-> > > write payload in misaligned IO.  But that's purely a stop-gap
-> > > workaround, which needs testing (to see if soft-iwap negates the win
-> > > of using O_DIRECT, etc).
-> >=20
-> > (Ab)using soft-iwarp as the basis for easily getting page aligned TCP
-> > WRITE payloads seems pretty gross given we are chasing utmost
-> > performance, etc.
-> >=20
-> > All said, I welcome your sage advice and help on this effort to
-> > DIO-align SUNRPC TCP's WRITE payload pages.
-> >=20
-> > Thanks,
-> > Mike
->=20
-> (Sent this to Mike only by accident yesterday -- resending to the full
-> list now)
->=20
-> I've been looking over the code today. Basically, I think we need to
-> have svc_tcp_recvfrom() receive in phases. At a high level:
->=20
-> 1/ receive the record marker (just like it does today)
->=20
-> 2/ receive enough for the RPC header and then decode it.
->=20
-> 3/ Use the rpc program and version from the decoded header to look up
-> the svc_program. Add an optional pg_tcp_recvfrom callback to that
-> structure that will receive the rest of the data into the buffer. If
-> pg_tcp_recvfrom isn't set, then just call svc_tcp_read_msg() like we do
-> today.
->=20
-> For NFSv3, pc_tcp_recvfrom can just look at the procedure. If it's
-> anything but a WRITE we'll just do what we do today
-> (svc_tcp_read_msg()).
->=20
-> For a WRITE, we'll receive the first part of the WRITE3args (everything
-> but the data) into rq_pages, and decode it. We can then use that info
-> to figure out the alignment. Advance to the next page in rq_pages, and
-> then to the point where the data is properly aligned. Do the receive
-> into that spot.
->=20
-> Then we just add a RQ_ALIGNED_DATA to rqstp->rq_flags, and teach
-> nfsd3_proc_write how to find the data and do a DIO write when it's set.
->=20
-> Unaligned writes are still a problem though. If two WRITE RPCs come in
-> for different parts of the same block at the same time, then you could
-> end up losing the result of the first write. I don't see a way to make
-> that non-racy.
->=20
-> NFSv4 will also be a bit of a challenge. We'll need to receive the
-> whole compound one operation at a time. If we hit a WRITE, then we can
-> just do the same thing that we do for v3 to align the data.
->=20
-> I'd probably aim to start with an implementation for v3, and then add
-> v4 support in a second phase.
->=20
-> I'm interested in working on this. It'll be a fair bit of work though.
-> I'll need to think about how to break this up into manageable pieces.
+On Mon 09-06-25 10:27:26, Ryan Roberts wrote:
+> Previously the folio order of the previous readahead request was
+> inferred from the folio who's readahead marker was hit. But due to the
+> way we have to round to non-natural boundaries sometimes, this first
+> folio in the readahead block is often smaller than the preferred order
+> for that request. This means that for cases where the initial sync
+> readahead is poorly aligned, the folio order will ramp up much more
+> slowly.
+> 
+> So instead, let's store the order in struct file_ra_state so we are not
+> affected by any required alignment. We previously made enough room in
+> the struct for a 16 order field. This should be plenty big enough since
+> we are limited to MAX_PAGECACHE_ORDER anyway, which is certainly never
+> larger than ~20.
+> 
+> Since we now pass order in struct file_ra_state, page_cache_ra_order()
+> no longer needs it's new_order parameter, so let's remove that.
+> 
+> Worked example:
+> 
+> Here we are touching pages 17-256 sequentially just as we did in the
+> previous commit, but now that we are remembering the preferred order
+> explicitly, we no longer have the slow ramp up problem. Note
+> specifically that we no longer have 2 rounds (2x ~128K) of order-2
+> folios:
+> 
+> TYPE    STARTOFFS     ENDOFFS        SIZE  STARTPG    ENDPG   NRPG  ORDER  RA
+> -----  ----------  ----------  ----------  -------  -------  -----  -----  --
+> HOLE   0x00000000  0x00001000        4096        0        1      1
+> FOLIO  0x00001000  0x00002000        4096        1        2      1      0
+> FOLIO  0x00002000  0x00003000        4096        2        3      1      0
+> FOLIO  0x00003000  0x00004000        4096        3        4      1      0
+> FOLIO  0x00004000  0x00005000        4096        4        5      1      0
+> FOLIO  0x00005000  0x00006000        4096        5        6      1      0
+> FOLIO  0x00006000  0x00007000        4096        6        7      1      0
+> FOLIO  0x00007000  0x00008000        4096        7        8      1      0
+> FOLIO  0x00008000  0x00009000        4096        8        9      1      0
+> FOLIO  0x00009000  0x0000a000        4096        9       10      1      0
+> FOLIO  0x0000a000  0x0000b000        4096       10       11      1      0
+> FOLIO  0x0000b000  0x0000c000        4096       11       12      1      0
+> FOLIO  0x0000c000  0x0000d000        4096       12       13      1      0
+> FOLIO  0x0000d000  0x0000e000        4096       13       14      1      0
+> FOLIO  0x0000e000  0x0000f000        4096       14       15      1      0
+> FOLIO  0x0000f000  0x00010000        4096       15       16      1      0
+> FOLIO  0x00010000  0x00011000        4096       16       17      1      0
+> FOLIO  0x00011000  0x00012000        4096       17       18      1      0
+> FOLIO  0x00012000  0x00013000        4096       18       19      1      0
+> FOLIO  0x00013000  0x00014000        4096       19       20      1      0
+> FOLIO  0x00014000  0x00015000        4096       20       21      1      0
+> FOLIO  0x00015000  0x00016000        4096       21       22      1      0
+> FOLIO  0x00016000  0x00017000        4096       22       23      1      0
+> FOLIO  0x00017000  0x00018000        4096       23       24      1      0
+> FOLIO  0x00018000  0x00019000        4096       24       25      1      0
+> FOLIO  0x00019000  0x0001a000        4096       25       26      1      0
+> FOLIO  0x0001a000  0x0001b000        4096       26       27      1      0
+> FOLIO  0x0001b000  0x0001c000        4096       27       28      1      0
+> FOLIO  0x0001c000  0x0001d000        4096       28       29      1      0
+> FOLIO  0x0001d000  0x0001e000        4096       29       30      1      0
+> FOLIO  0x0001e000  0x0001f000        4096       30       31      1      0
+> FOLIO  0x0001f000  0x00020000        4096       31       32      1      0
+> FOLIO  0x00020000  0x00021000        4096       32       33      1      0
+> FOLIO  0x00021000  0x00022000        4096       33       34      1      0
+> FOLIO  0x00022000  0x00024000        8192       34       36      2      1
+> FOLIO  0x00024000  0x00028000       16384       36       40      4      2
+> FOLIO  0x00028000  0x0002c000       16384       40       44      4      2
+> FOLIO  0x0002c000  0x00030000       16384       44       48      4      2
+> FOLIO  0x00030000  0x00034000       16384       48       52      4      2
+> FOLIO  0x00034000  0x00038000       16384       52       56      4      2
+> FOLIO  0x00038000  0x0003c000       16384       56       60      4      2
+> FOLIO  0x0003c000  0x00040000       16384       60       64      4      2
+> FOLIO  0x00040000  0x00050000       65536       64       80     16      4
+> FOLIO  0x00050000  0x00060000       65536       80       96     16      4
+> FOLIO  0x00060000  0x00080000      131072       96      128     32      5
+> FOLIO  0x00080000  0x000a0000      131072      128      160     32      5
+> FOLIO  0x000a0000  0x000c0000      131072      160      192     32      5
+> FOLIO  0x000c0000  0x000e0000      131072      192      224     32      5
+> FOLIO  0x000e0000  0x00100000      131072      224      256     32      5
+> FOLIO  0x00100000  0x00120000      131072      256      288     32      5
+> FOLIO  0x00120000  0x00140000      131072      288      320     32      5  Y
+> HOLE   0x00140000  0x00800000     7077888      320     2048   1728
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 
+Looks good! Feel free to add:
 
-Mike asked me to detail the race that I see between unaligned writes:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Since we'd have to fill a block before writing, the only way I can see
-to do this with DIO would be to pre-populate the incomplete blocks at
-the ends of the range before receiving the data into the buffer.
+								Honza
 
-Most filesystems allow you to do concurrent DIO writes to the same file
-in parallel. XFS, for instance only locks the inode->i_rwsem for read
-when doing a DIO write.
-
-Suppose we have two adjacent 1.5k WRITES going to a filesystem that has
-1k blocks. Both writes end up doing DIO reads to fill the unwritten
-part of the same block, and then receive in the data. Then they both
-issue their writes to the fs (2k each). The second writer will end up
-clobbering the data that the first wrote in the shared block.
---=20
-Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/fs.h |  2 ++
+>  mm/filemap.c       |  6 ++++--
+>  mm/internal.h      |  3 +--
+>  mm/readahead.c     | 21 +++++++++++++--------
+>  4 files changed, 20 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 87e7d5790e43..b5172b691f97 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1041,6 +1041,7 @@ struct fown_struct {
+>   *      and so were/are genuinely "ahead".  Start next readahead when
+>   *      the first of these pages is accessed.
+>   * @ra_pages: Maximum size of a readahead request, copied from the bdi.
+> + * @order: Preferred folio order used for most recent readahead.
+>   * @mmap_miss: How many mmap accesses missed in the page cache.
+>   * @prev_pos: The last byte in the most recent read request.
+>   *
+> @@ -1052,6 +1053,7 @@ struct file_ra_state {
+>  	unsigned int size;
+>  	unsigned int async_size;
+>  	unsigned int ra_pages;
+> +	unsigned short order;
+>  	unsigned short mmap_miss;
+>  	loff_t prev_pos;
+>  };
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 7bb4ffca8487..4b5c8d69f04c 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3232,7 +3232,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+>  		if (!(vm_flags & VM_RAND_READ))
+>  			ra->size *= 2;
+>  		ra->async_size = HPAGE_PMD_NR;
+> -		page_cache_ra_order(&ractl, ra, HPAGE_PMD_ORDER);
+> +		ra->order = HPAGE_PMD_ORDER;
+> +		page_cache_ra_order(&ractl, ra);
+>  		return fpin;
+>  	}
+>  #endif
+> @@ -3268,8 +3269,9 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+>  	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
+>  	ra->size = ra->ra_pages;
+>  	ra->async_size = ra->ra_pages / 4;
+> +	ra->order = 0;
+>  	ractl._index = ra->start;
+> -	page_cache_ra_order(&ractl, ra, 0);
+> +	page_cache_ra_order(&ractl, ra);
+>  	return fpin;
+>  }
+>  
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 6b8ed2017743..f91688e2894f 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -436,8 +436,7 @@ void zap_page_range_single_batched(struct mmu_gather *tlb,
+>  int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
+>  			   gfp_t gfp);
+>  
+> -void page_cache_ra_order(struct readahead_control *, struct file_ra_state *,
+> -		unsigned int order);
+> +void page_cache_ra_order(struct readahead_control *, struct file_ra_state *);
+>  void force_page_cache_ra(struct readahead_control *, unsigned long nr);
+>  static inline void force_page_cache_readahead(struct address_space *mapping,
+>  		struct file *file, pgoff_t index, unsigned long nr_to_read)
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index 87be20ae00d0..95a24f12d1e7 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -457,7 +457,7 @@ static inline int ra_alloc_folio(struct readahead_control *ractl, pgoff_t index,
+>  }
+>  
+>  void page_cache_ra_order(struct readahead_control *ractl,
+> -		struct file_ra_state *ra, unsigned int new_order)
+> +		struct file_ra_state *ra)
+>  {
+>  	struct address_space *mapping = ractl->mapping;
+>  	pgoff_t start = readahead_index(ractl);
+> @@ -468,9 +468,12 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  	unsigned int nofs;
+>  	int err = 0;
+>  	gfp_t gfp = readahead_gfp_mask(mapping);
+> +	unsigned int new_order = ra->order;
+>  
+> -	if (!mapping_large_folio_support(mapping))
+> +	if (!mapping_large_folio_support(mapping)) {
+> +		ra->order = 0;
+>  		goto fallback;
+> +	}
+>  
+>  	limit = min(limit, index + ra->size - 1);
+>  
+> @@ -478,6 +481,8 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>  	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
+>  	new_order = max(new_order, min_order);
+>  
+> +	ra->order = new_order;
+> +
+>  	/* See comment in page_cache_ra_unbounded() */
+>  	nofs = memalloc_nofs_save();
+>  	filemap_invalidate_lock_shared(mapping);
+> @@ -609,8 +614,9 @@ void page_cache_sync_ra(struct readahead_control *ractl,
+>  	ra->size = min(contig_count + req_count, max_pages);
+>  	ra->async_size = 1;
+>  readit:
+> +	ra->order = 0;
+>  	ractl->_index = ra->start;
+> -	page_cache_ra_order(ractl, ra, 0);
+> +	page_cache_ra_order(ractl, ra);
+>  }
+>  EXPORT_SYMBOL_GPL(page_cache_sync_ra);
+>  
+> @@ -621,7 +627,6 @@ void page_cache_async_ra(struct readahead_control *ractl,
+>  	struct file_ra_state *ra = ractl->ra;
+>  	pgoff_t index = readahead_index(ractl);
+>  	pgoff_t expected, start, end, aligned_end, align;
+> -	unsigned int order = folio_order(folio);
+>  
+>  	/* no readahead */
+>  	if (!ra->ra_pages)
+> @@ -644,7 +649,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
+>  	 * Ramp up sizes, and push forward the readahead window.
+>  	 */
+>  	expected = round_down(ra->start + ra->size - ra->async_size,
+> -			1UL << order);
+> +			1UL << folio_order(folio));
+>  	if (index == expected) {
+>  		ra->start += ra->size;
+>  		/*
+> @@ -673,15 +678,15 @@ void page_cache_async_ra(struct readahead_control *ractl,
+>  	ra->size += req_count;
+>  	ra->size = get_next_ra_size(ra, max_pages);
+>  readit:
+> -	order += 2;
+> -	align = 1UL << min(order, ffs(max_pages) - 1);
+> +	ra->order += 2;
+> +	align = 1UL << min(ra->order, ffs(max_pages) - 1);
+>  	end = ra->start + ra->size;
+>  	aligned_end = round_down(end, align);
+>  	if (aligned_end > ra->start)
+>  		ra->size -= end - aligned_end;
+>  	ra->async_size = ra->size;
+>  	ractl->_index = ra->start;
+> -	page_cache_ra_order(ractl, ra, order);
+> +	page_cache_ra_order(ractl, ra);
+>  }
+>  EXPORT_SYMBOL_GPL(page_cache_async_ra);
+>  
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
