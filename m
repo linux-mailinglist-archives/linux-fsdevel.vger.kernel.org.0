@@ -1,195 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-51491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29D2AD735C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 16:15:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43642AD7376
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 16:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AED3ADC51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 14:10:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840FE189305F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 14:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C0A24C08D;
-	Thu, 12 Jun 2025 14:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE2A248898;
+	Thu, 12 Jun 2025 14:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NHEAoLKC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XMYgYEiO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BDD248F6F;
-	Thu, 12 Jun 2025 14:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A232472B6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 14:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749737378; cv=none; b=mhHdwozdNnklyT21j7fsB+xdzdoYVayboz5mOZfAG1PCaO75C1xMltZ8wNhXD25unNkFYcVxmaRXiOWTK8Mi+7KmMwmNdlYsiDtIOUqh7CJqClwTR+rXw7haZH2V0Z5MhB1N20PWDp1wjcBVqz86NtAL1sq6Ympj47y03RSzyuM=
+	t=1749737450; cv=none; b=dnkUg/sUFlxfXYaR2uU86PUkrZLz7av0ZuIxi6219iDibfTt6eR0LviA+rNgaMoS7v6DKi0k2YXLy2tjOVpa6QIdKvQljsSMc5XTMQQU1tcCjL43lfrsmhfhLj8skRbbnqkGddMYIBRVRfn8nSrF9GX/xf9xii12q00QCoF9yvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749737378; c=relaxed/simple;
-	bh=kdkVV2FGMOSgAFU+V5temNkk1TA2PJJ7nYDpbTdZuw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rUxdon4K9at5tkX1A38Pw5Y/ucyRvOpO+UwsHDCc9qwN231OVIopYJgBbn5zPcB0o4nOuMPOPHzFNkP56w+9rzrwHvsY1saGIzbQcuq/Pp0onR0MaBil2axZA4CgUNJMmfPr7rlofxPUxtdYfsI6dHnyp0eomW4rFeMb7oikEyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NHEAoLKC; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749737377; x=1781273377;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kdkVV2FGMOSgAFU+V5temNkk1TA2PJJ7nYDpbTdZuw0=;
-  b=NHEAoLKCY9eMbMvyrktQa8LtOyOKRk3cTGfMPIEQVsCOGHkpGbvz/AFF
-   0+K7PNi5EfrojbqPuUM3ERhTiZ6Zyeg/LGYJi860qyepFv8SGTHGyfDqk
-   VKIIT8Z7jiMLjCcZ5H2aPgYwz/HKEK4bf4YVSi4ePlYPD1QsaDAPFwjmK
-   VNwx0Z7uaYg76az624aJNkD4oNVDtCxGfYgS6TqHzjy6v7LswAtsX79W4
-   WVLw30UwrvhS2sLyRXROXOKKe5wNx3IkX0GBcA74DHCFFzDIVFghkGLFm
-   EyN7/Spb0t7PXMlTZUMD+Ny/FlPp4URjnjz+2Nv+RAmyUleWoqqDdoKYj
-   g==;
-X-CSE-ConnectionGUID: sbxAvL3LQxSUW1rVkvb5kA==
-X-CSE-MsgGUID: T09uEs14R3Cywqb4Zkpe3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="77323439"
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="77323439"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 07:09:35 -0700
-X-CSE-ConnectionGUID: uXkU0nvlR9yZhAhwkLy+EA==
-X-CSE-MsgGUID: b77Tdni3R3i8puDUUZrwVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
-   d="scan'208";a="148086031"
-Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.111.188]) ([10.125.111.188])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 07:09:35 -0700
-Message-ID: <e3075e27-93d2-4a11-a174-f05a7497870e@intel.com>
-Date: Thu, 12 Jun 2025 07:09:34 -0700
+	s=arc-20240116; t=1749737450; c=relaxed/simple;
+	bh=rx2127rFnhUhdp1EywtDCGhrT9qHfuVS0rW2DH6MNzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J1LWSkCry3aPSJ/r9g1ciQz1zN3VjdohCBsv8VA/a41EKXWDmlQK1AINrC3ngJ0M9xq1GWH40+q4HAkK2TyLK/ehFkj+RrEQqGUpb5xgOjJjpzaUCPPPJfXQzx2EB8Ye2btO5ex9CJmRgbQIDfZYjuo/BaEUSP42PdjwmoSwEFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XMYgYEiO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749737447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P1JMQZmzbIb6utls8iGRZ0NkyFLiqg1p9Vq7xmlV1lU=;
+	b=XMYgYEiOgofvQth9mG7fUHVnh+6lkjNiMUywObXPMfGqY+LrBOGndgHpPfudlRborNJ8j4
+	xRCNhhs+ORSFQ+QC2xNDPpdp+RrIgjI67uk8Fsw3Pw6fGz/p9/Y93+e8UkUOSzok30zwRL
+	OltKlDEsq8j0N8XQrTeMHN+GFubA2Ng=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-486-ubVQ-dTQNmGrfAFCq5kbsw-1; Thu,
+ 12 Jun 2025 10:10:44 -0400
+X-MC-Unique: ubVQ-dTQNmGrfAFCq5kbsw-1
+X-Mimecast-MFC-AGG-ID: ubVQ-dTQNmGrfAFCq5kbsw_1749737441
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2F7DE1955F42;
+	Thu, 12 Jun 2025 14:10:41 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.58.9])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A98121956050;
+	Thu, 12 Jun 2025 14:10:36 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+ Steve French <sfrench@samba.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Paulo Alcantara <pc@manguebit.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
+ linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Keyrings: How to make them more useful
+Date: Thu, 12 Jun 2025 10:10:34 -0400
+Message-ID: <D33BA76E-E2D3-42C8-A983-A733ECD71CCE@redhat.com>
+In-Reply-To: <462886.1749731810@warthog.procyon.org.uk>
+References: <462886.1749731810@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] mm: add mm_get_static_huge_zero_folio() routine
-To: Pankaj Raghav <p.raghav@samsung.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>,
- Zi Yan <ziy@nvidia.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
- x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, kernel@pankajraghav.com, hch@lst.de
-References: <20250612105100.59144-1-p.raghav@samsung.com>
- <20250612105100.59144-5-p.raghav@samsung.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250612105100.59144-5-p.raghav@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 6/12/25 03:50, Pankaj Raghav wrote:
-> +/*
-> + * mm_get_static_huge_zero_folio - Get a PMD sized zero folio
+On 12 Jun 2025, at 8:36, David Howells wrote:
 
-Isn't that a rather inaccurate function name and comment?
+> Hi Jarkko, Steve, Chuck, Mimi, et al.,
+>
+> I think work needs to be done on the keyrings subsystem to make them more
+> useful for network filesystems and other kernel services such as TLS and
+> crypto.
+>
+> There are a number of issues that I think need addressing:
+>
+>  (1) One of the flaws in the initial design is that whilst keys have a type
+>      (which is necessary), this has to be specified as part of the lookup or
+>      the search, which is overly restrictive.
+>
+>      It probably would have been better to search by description alone and
+>      then, if a key is found, have any type of key with that description
+>      returned and let the app/service investigate the key to find the type.
+>
+>      Now, this is still possible to implement on top of the existing API: just
+>      allow a NULL type to be passed in - but we might need some way to
+>      enumerate all the keys with that description, but of different types.
+>      Possibly, the search function should return all the matching keys.
+>
+>      Possibly, within the kernel, for each keyring, all the keys of the same
+>      description can be stored within a group structure, and the search
+>      returns the group.  This could also have the added benefit of maybe
+>      making it easier to handle updates.
+>
+>  (2) For certain applications, keys need versioning - and we need to be able
+>      to get access to older versions (at least to some extent) of the keys.
+>      An example of this is cifs where (if I understand it correctly) the key
+>      version gets cranked, but not all servers may have caught up yet, so we
+>      need to be able to try the keys in descending order of version.
+>
+>      This could also work within the group idea mentioned above.
+>
+>  (3) For certain applications, such as AFS and AF_RXRPC, we may need to be
+>      able to keep a number of keys around that have the same description
+>      (e.g. cell name) and basic type (e.g. rxrpc) and version, but that have
+>      different crypto types (e.g. Rx security classes and Kerberos types, such
+>      as RxGK+aes256-cts-hmac-sha1-96, RxGK+aes128-cts-hmac-sha256-128 or
+>      RxKAD) as different servers in the same cell might not support all or we
+>      might be implementing a server that is offering multiple crypto types.
+>
+>      So we might need a "subtype" as well as a version.
+>
+>  (4) I think the keyring ACLs idea need to be revived.  We have a whole bunch
+>      of different keyrings, each with a specific 'domain' of usage for the
+>      keys contained therein for checking signatures on things.  Can we reduce
+>      this to one keyring and use ACLs to declare the specific purposes for
+>      which a key may be used or the specific tasks that may use it?  Use
+>      special subject IDs (ie. not simply UIDs/GIDs) to mark this.
+>
+>  (5) Replace the upcall mechanism with a listenable service channel, so that a
+>      userspace service (possibly part of systemd or driven from systemd) can
+>      listen on it and perform key creation/maintenance services.
 
-The third line of the function literally returns a non-PMD-sized zero folio.
+>      From previous discussions with the systemd maintainer, it would be a lot
+>      easier for them to manage if the key is attached to a file descriptor -
+>      at least for the duration of the maintenance operation.
+>
+>      Further, this needs to be containerised in some way so that requests from
+>      different containers can be handled separately - and can be
+>      distinguished.
 
-> + * This function will return a PMD sized zero folio if CONFIG_STATIC_PMD_ZERO_PAGE
-> + * is enabled. Otherwise, a ZERO_PAGE folio is returned.
-> + *
-> + * Deduce the size of the folio with folio_size instead of assuming the
-> + * folio size.
-> + */
-> +static inline struct folio *mm_get_static_huge_zero_folio(void)
-> +{
-> +	if(IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
-> +		return READ_ONCE(huge_zero_folio);
-> +	return page_folio(ZERO_PAGE(0));
-> +}
+Indeed one challenge on this front is configuring how to stitch together the
+various callers and recievers especially when one wants an upcall from one
+set of namespaces to be serviced within another.
 
-This doesn't tell us very much about when I should use:
+I had previously posted some work in this area that fleshes out the idea of
+a "key agent" which is a userspace process that can receive a notification
+to instantiate a key.  The nice part (IMO) of this idea is that the keyagent
+is represented by a key itself, so the channel is available to any process
+that has the keyagent key in their keyrings.
 
-	mm_get_static_huge_zero_folio()
-vs.
-	mm_get_huge_zero_folio(mm)
-vs.
-	page_folio(ZERO_PAGE(0))
+This allows a system to have a single keyagent for all processes/namespaces
+for a particular key type, or to build a more granular configuration where
+agents are confined within the same (or different) namespaces as the calling
+process.
 
-What's with the "mm_" in the name? Usually "mm" means "mm_struct" not
-Memory Management. It's really weird to prefix something that doesn't
-take an "mm_struct" with "mm_"
+I'd be happy to continue work on this front, since long-term it would allow
+us to convert various NFS upcall mechanisms such that NFS access within a
+container wouldn't require duplicated gssd/svcgssd/idmapper userspace
+processes in every container if all the system needed was to use a single
+global instance.  It would also allow the partitioning of secure
+cryptographic material (like keytabs and certificate secrets) from
+containers that might still want to use NFS, but not divulge those secrets
+to the processes in that container.
 
-Isn't the "get_" also a bad idea since mm_get_huge_zero_folio() does its
-own refcounting but this interface does not?
+Ben
 
-Shouldn't this be something more along the lines of:
-
-/*
- * pick_zero_folio() - Pick and return the largest available zero folio
- *
- * mm_get_huge_zero_folio() is preferred over this function. It is more
- * flexible and can provide a larger zero page under wider
- * circumstances.
- *
- * Only use this when there is no mm available.
- *
- * ... then other comments
- */
-static inline struct folio *pick_zero_folio(void)
-{
-	if (IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
-		return READ_ONCE(huge_zero_folio);
-	return page_folio(ZERO_PAGE(0));
-}
-
-Or, maybe even name it _just_: zero_folio()
 
