@@ -1,39 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-51433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFF2AD6E41
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 12:51:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76774AD6E45
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 12:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2901883CFA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 10:51:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D3E178E57
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 10:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00034239E97;
-	Thu, 12 Jun 2025 10:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5033D23C51C;
+	Thu, 12 Jun 2025 10:51:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A0F223339;
-	Thu, 12 Jun 2025 10:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE6D223339;
+	Thu, 12 Jun 2025 10:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725482; cv=none; b=g5eXwWe923h0yIXIeOc+CNHYuG+CuLK4LkfzEHyYJYNjx+cNawKnPy6sUJNGf3bnzrWuNHbDORfSn7HPOC5mMOWUbKxAon1f93FRUhEyDgcF4UJh+XPdogGzibRWCjH77qaUZX0YdzF2lmL2LlLSEpo+e3OOtFfuCi+RTl9oTIA=
+	t=1749725487; cv=none; b=oBlDTvljS9xVZrAbXVqKG5x9oUrXEMRvmBAELOCa6jK3gMpCzDlv5V/Ehh+kkL/zIc/2QCt88RRjzY6t88UHc7odAPYmb1uuDTu2rBRH0amgcH4Zle9xEwsGlM32T/QG/vmBhYrP/NOXzK6/71gusFdxSK3hxNtN3Cfd1mWiiF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725482; c=relaxed/simple;
-	bh=RTUyZzHc5+IhRr21BI9rWRtv9QEQ6vyWa/gmEwdxm6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=LZvJEVNbXW1NF5u3jryUraTVrZJEcL+kBruqOQaL4/bzs7nM47LqKIGdcjnVpbRAY3sVpuZ3pJpUXhmuqKApVyUSkGKlgq2PZzErMpGe/8SML/ONd2Z5EwGuyA/YcQmO+Vwzt/5OFxq/SKPO04ssBrcCz2WTFMhewhLN7kmmfSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.161
+	s=arc-20240116; t=1749725487; c=relaxed/simple;
+	bh=UZzeclDY+t72LopZhOCsfPtxy3MhuMyLEdOTtIboqBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hB3mCco8f0yhpITBLibB5BwjDkKc/Wwebte0AwVeXfXow3tnO8d84XXma62rOLSAaVLfYJ/V2LNeQ38Iea3JIRFhL6vZCpUEdzmTK8HauunO+rUC6ZBpU7pcYpg/7Ldu5PpLlR4pSpzi7X3uCf04ku0kD2uB/48IZB8LeEmJBIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bHzpk5YtZz9t13;
-	Thu, 12 Jun 2025 12:51:10 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bHzpr5vwHz9tGC;
+	Thu, 12 Jun 2025 12:51:16 +0200 (CEST)
 From: Pankaj Raghav <p.raghav@samsung.com>
 To: Suren Baghdasaryan <surenb@google.com>,
 	Ryan Roberts <ryan.roberts@arm.com>,
@@ -66,10 +67,11 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel@pankajraghav.com,
 	hch@lst.de,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 0/5] add STATIC_PMD_ZERO_PAGE config option
-Date: Thu, 12 Jun 2025 12:50:55 +0200
-Message-ID: <20250612105100.59144-1-p.raghav@samsung.com>
-Content-Type: text/plain; charset="utf-8"
+Subject: [PATCH 1/5] mm: move huge_zero_page declaration from huge_mm.h to mm.h
+Date: Thu, 12 Jun 2025 12:50:56 +0200
+Message-ID: <20250612105100.59144-2-p.raghav@samsung.com>
+In-Reply-To: <20250612105100.59144-1-p.raghav@samsung.com>
+References: <20250612105100.59144-1-p.raghav@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,80 +80,111 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are many places in the kernel where we need to zeroout larger
-chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
-is limited by PAGE_SIZE.
+Move the declaration associated with huge_zero_page from huge_mm.h to
+mm.h. This patch is in preparation for adding static PMD zero page.
 
-This concern was raised during the review of adding Large Block Size support
-to XFS[1][2].
+No functional changes.
 
-This is especially annoying in block devices and filesystems where we
-attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
-bvec support in block layer, it is much more efficient to send out
-larger zero pages as a part of a single bvec.
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+ include/linux/huge_mm.h | 31 -------------------------------
+ include/linux/mm.h      | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 31 deletions(-)
 
-Some examples of places in the kernel where this could be useful:
-- blkdev_issue_zero_pages()
-- iomap_dio_zero()
-- vmalloc.c:zero_iter()
-- rxperf_process_call()
-- fscrypt_zeroout_range_inline_crypt()
-- bch2_checksum_update()
-...
-
-We already have huge_zero_folio that is allocated on demand, and it will be
-deallocated by the shrinker if there are no users of it left.
-
-But to use huge_zero_folio, we need to pass a mm struct and the
-put_folio needs to be called in the destructor. This makes sense for
-systems that have memory constraints but for bigger servers, it does not
-matter if the PMD size is reasonable (like in x86).
-
-Add a config option STATIC_PMD_ZERO_PAGE that will always allocate
-the huge_zero_folio in .bss, and it will never be freed.
-
-The static PMD page is reused by huge_zero_folio when this config
-option is enabled.
-
-I have converted blkdev_issue_zero_pages() as an example as a part of
-this series.
-
-I will send patches to individual subsystems using the huge_zero_folio
-once this gets upstreamed.
-
-Looking forward to some feedback.
-
-[1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
-[2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
-
-Changes since RFC:
-- Added the config option based on the feedback from David.
-- Encode more info in the header to avoid dead code (Dave hansen
-  feedback)
-- The static part of huge_zero_folio in memory.c and the dynamic part
-  stays in huge_memory.c
-- Split the patches to make it easy for review.
-
-Pankaj Raghav (5):
-  mm: move huge_zero_page declaration from huge_mm.h to mm.h
-  huge_memory: add huge_zero_page_shrinker_(init|exit) function
-  mm: add static PMD zero page
-  mm: add mm_get_static_huge_zero_folio() routine
-  block: use mm_huge_zero_folio in __blkdev_issue_zero_pages()
-
- arch/x86/Kconfig               |  1 +
- arch/x86/include/asm/pgtable.h |  8 +++++
- arch/x86/kernel/head_64.S      |  8 +++++
- block/blk-lib.c                | 17 +++++----
- include/linux/huge_mm.h        | 31 ----------------
- include/linux/mm.h             | 64 ++++++++++++++++++++++++++++++++++
- mm/Kconfig                     | 13 +++++++
- mm/huge_memory.c               | 62 ++++++++++++++++++++++++--------
- mm/memory.c                    | 19 ++++++++++
- 9 files changed, 170 insertions(+), 53 deletions(-)
-
-
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 2f190c90192d..3e887374892c 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -478,22 +478,6 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 
+ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
+ 
+-extern struct folio *huge_zero_folio;
+-extern unsigned long huge_zero_pfn;
+-
+-static inline bool is_huge_zero_folio(const struct folio *folio)
+-{
+-	return READ_ONCE(huge_zero_folio) == folio;
+-}
+-
+-static inline bool is_huge_zero_pmd(pmd_t pmd)
+-{
+-	return pmd_present(pmd) && READ_ONCE(huge_zero_pfn) == pmd_pfn(pmd);
+-}
+-
+-struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
+-void mm_put_huge_zero_folio(struct mm_struct *mm);
+-
+ static inline bool thp_migration_supported(void)
+ {
+ 	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
+@@ -631,21 +615,6 @@ static inline vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+ 	return 0;
+ }
+ 
+-static inline bool is_huge_zero_folio(const struct folio *folio)
+-{
+-	return false;
+-}
+-
+-static inline bool is_huge_zero_pmd(pmd_t pmd)
+-{
+-	return false;
+-}
+-
+-static inline void mm_put_huge_zero_folio(struct mm_struct *mm)
+-{
+-	return;
+-}
+-
+ static inline struct page *follow_devmap_pmd(struct vm_area_struct *vma,
+ 	unsigned long addr, pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
+ {
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0ef2ba0c667a..c8fbeaacf896 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -4018,6 +4018,40 @@ static inline bool vma_is_special_huge(const struct vm_area_struct *vma)
+ 
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE || CONFIG_HUGETLBFS */
+ 
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++extern struct folio *huge_zero_folio;
++extern unsigned long huge_zero_pfn;
++
++static inline bool is_huge_zero_folio(const struct folio *folio)
++{
++	return READ_ONCE(huge_zero_folio) == folio;
++}
++
++static inline bool is_huge_zero_pmd(pmd_t pmd)
++{
++	return pmd_present(pmd) && READ_ONCE(huge_zero_pfn) == pmd_pfn(pmd);
++}
++
++struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
++void mm_put_huge_zero_folio(struct mm_struct *mm);
++
++#else
++static inline bool is_huge_zero_folio(const struct folio *folio)
++{
++	return false;
++}
++
++static inline bool is_huge_zero_pmd(pmd_t pmd)
++{
++	return false;
++}
++
++static inline void mm_put_huge_zero_folio(struct mm_struct *mm)
++{
++	return;
++}
++#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
++
+ #if MAX_NUMNODES > 1
+ void __init setup_nr_node_ids(void);
+ #else
 -- 
 2.49.0
 
