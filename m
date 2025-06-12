@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-51469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6D8AD71D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:27:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BFFAD71D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D4D17C68A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:27:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9124417C688
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891EB23CF12;
-	Thu, 12 Jun 2025 13:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A408024A07A;
+	Thu, 12 Jun 2025 13:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOnuUSm9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGxXX7cT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E994B2441A7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 13:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFF324A04D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 13:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734747; cv=none; b=GEqxFKIq8Zcu3by+dS+BwD/jICtKErTc+vDC1r8jhFGKHbmbc1fPJA6miTROR5cjiSG+gTnDWevvJAVkZaZyrYxJ2FX4kJDm7HdXYBY5WCjyVvgW9vsVZIszKbogru7OaJP5mHuJolJ+8YEPUfhZiSm+Xy5qCUAH8EbeUxxM8bA=
+	t=1749734749; cv=none; b=FszNNxaFUsSX9HfHkJAfurvCuT1a+AkeQ0YgVxWXv4MzWQMLBLklh+YILqIRok/7zVBKHWitflNXvoi93m6m9y75iViwBPO0iQfHcSklpKDHSnoPhSN1XqIAjAnsRld0xrIYXPd6OKshq+/xmIz0TpBadPZfR/Swh7MBGaUzjUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734747; c=relaxed/simple;
-	bh=dW8Ti0TuufgKOPQ1D37cohA5L3wamC9EhyFwQXcLXso=;
+	s=arc-20240116; t=1749734749; c=relaxed/simple;
+	bh=9mD9ktHuhYtmeJULYmDwuXaXXwezoRFa6vIRDPucgno=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NqTN+TpcGDFwieG7/mSXvqQ5aOkTnwhCyxSdCIr8WOv6jUH8EaiwrYUkQ++fNSyYjE8HJwMqoSVPUykG4jXOwt8qg7X9Q/svnm6CXQVkduFYK6M55YYFgJ5o+HrG3ehXIF7u3jt0jr2EJJAN64fYUs6YLOZGJwNdW8jrN3HJxzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOnuUSm9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 424A7C4CEEE;
-	Thu, 12 Jun 2025 13:25:45 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=K32FdXRIrqOamlEqY4U34XNH5mhXQN2MLVUyLiHppBH8hZnoO1C9G5ptChRuTdQDofos6L9BbzsGSMJK+qoN7EDc3SRM/95C97KF81TVeB4bprYK589f7egA0iwn7+FS9PaQiV3vSMG5DvxEYH8LxELmtWxHFShZH8HVSSoPBBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGxXX7cT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F1EC4CEF1;
+	Thu, 12 Jun 2025 13:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749734746;
-	bh=dW8Ti0TuufgKOPQ1D37cohA5L3wamC9EhyFwQXcLXso=;
+	s=k20201202; t=1749734748;
+	bh=9mD9ktHuhYtmeJULYmDwuXaXXwezoRFa6vIRDPucgno=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hOnuUSm9PORpqx0z8ku1m1J7eXoCBkfbCXNEo6K4Uy4iI8Qviy10g4DVWjxmqCF58
-	 xPPJt3o4G7hewrdteoZBiiq+JdSApKtzVNJkaUc6bNBtbCiHAZhfNbh8BpLjhhgGix
-	 HX6xg2gXozmay11F76UCYULE3ti954OOg70EF9KnaEdpYS/W6d8r233w9o7IN+wNgF
-	 PGZa6tuwh7h4BCiOj6FcPM/8SCNvp+6LEDPjP2cqUsByc+q7PuVRRu1rrZcj4fafLu
-	 H3pbZrPKNFvxU4czMU5uTPIRb377X8MYRjHkizThVp7seLPrdMIdXew1GG9XGu4mhj
-	 LmAyavTDuB7Ww==
+	b=rGxXX7cTKL2RghzI8A+ojah77xAYARGPwi8Y5fWf7/nLVH9gFaoy61rXf+xjYIPYe
+	 zPOi7QYvrThifjyiV5tfHCiOGH1KxuaB++vuSdC89tEkGBYNGamBRYS0hNYFCuaEJC
+	 vGeHqhXgxWKxLOU+HbZiu93dv16uzEUdQiB3/lVZae6O0jn+9RMnEbJRIFNlMzuBDK
+	 a14fKaIfDIWiUTh9NHYsnaWX3z7cniY8gvsTfwT8kRE8dyZLTWPtffAchZpXvi4JL0
+	 OdjmtSnzH8jkkuDjqwlvuP6hmp0KG6xuFiNleS74Jl1iSUK2SwaaAzF3JDALMhtVF/
+	 rJ3AmX+NHxD8w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 12 Jun 2025 15:25:22 +0200
-Subject: [PATCH 08/24] selftests/coredump: make sure invalid paths are
- rejected
+Date: Thu, 12 Jun 2025 15:25:23 +0200
+Subject: [PATCH 09/24] coredump: rename do_coredump() to vfs_coredump()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,8 +51,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-work-coredump-massage-v1-8-315c0c34ba94@kernel.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250612-work-coredump-massage-v1-9-315c0c34ba94@kernel.org>
 References: <20250612-work-coredump-massage-v1-0-315c0c34ba94@kernel.org>
 In-Reply-To: <20250612-work-coredump-massage-v1-0-315c0c34ba94@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -62,72 +61,97 @@ Cc: Jann Horn <jannh@google.com>, Josef Bacik <josef@toxicpanda.com>,
  Christian Brauner <brauner@kernel.org>, 
  Alexander Mikhalitsyn <alexander@mihalicyn.com>
 X-Mailer: b4 0.15-dev-6f78e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2043; i=brauner@kernel.org;
- h=from:subject:message-id; bh=dW8Ti0TuufgKOPQ1D37cohA5L3wamC9EhyFwQXcLXso=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR4XXVXeVJvUs/67Z32gcjCnbFntQ9UKK66UZBzjvdDT
- oqoQaBYRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwER6FzL8r10yW48l9enx6sT7
- 91RuTdqfc6qkb+eumOSHa6I8G7sOL2ZkeNLwSMf4p9S90GXs1xa84RYLP5Fr3OLifov13cNYIfk
- YNgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3469; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=9mD9ktHuhYtmeJULYmDwuXaXXwezoRFa6vIRDPucgno=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR4XXXvk//E4rpvjefdL0k/Nv0Pz7j/y/S54oHs45eb1
+ qocX3BXuKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiK/MYGe4dO3xNZNuFNZGK
+ mm2zgpp+O7AseyJQu+BohmCfc5RyXBQjw/Kbb3flXDRe4dVk/kRKQMby/s9lmmX7+oP2fLtjwjf
+ nOSMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
+Align the naming with the rest of our helpers exposed
+outside of core vfs.
+
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/coredump/stackdump_test.c | 32 ++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 6 deletions(-)
+ Documentation/security/credentials.rst                    | 2 +-
+ Documentation/translations/zh_CN/security/credentials.rst | 2 +-
+ fs/coredump.c                                             | 2 +-
+ include/linux/coredump.h                                  | 4 ++--
+ kernel/signal.c                                           | 2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/coredump/stackdump_test.c b/tools/testing/selftests/coredump/stackdump_test.c
-index 9a789156f27e..a4ac80bb1003 100644
---- a/tools/testing/selftests/coredump/stackdump_test.c
-+++ b/tools/testing/selftests/coredump/stackdump_test.c
-@@ -241,16 +241,19 @@ static int create_and_listen_unix_socket(const char *path)
+diff --git a/Documentation/security/credentials.rst b/Documentation/security/credentials.rst
+index 2aa0791bcefe..d0191c8b8060 100644
+--- a/Documentation/security/credentials.rst
++++ b/Documentation/security/credentials.rst
+@@ -555,5 +555,5 @@ the VFS, and that can be done by calling into such as ``vfs_mkdir()`` with a
+ different set of credentials.  This is done in the following places:
  
- static bool set_core_pattern(const char *pattern)
+  * ``sys_faccessat()``.
+- * ``do_coredump()``.
++ * ``vfs_coredump()``.
+  * nfs4recover.c.
+diff --git a/Documentation/translations/zh_CN/security/credentials.rst b/Documentation/translations/zh_CN/security/credentials.rst
+index 91c353dfb622..88fcd9152ffe 100644
+--- a/Documentation/translations/zh_CN/security/credentials.rst
++++ b/Documentation/translations/zh_CN/security/credentials.rst
+@@ -475,5 +475,5 @@ const指针上操作，因此不需要进行类型转换，但需要临时放弃
+ 如 ``vfs_mkdir()`` 来实现。以下是一些进行此操作的位置:
+ 
+  * ``sys_faccessat()``.
+- * ``do_coredump()``.
++ * ``vfs_coredump()``.
+  * nfs4recover.c.
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 52efd1b34261..8a401eeee940 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -865,7 +865,7 @@ static inline void coredump_sock_wait(struct file *file) { }
+ static inline void coredump_sock_shutdown(struct file *file) { }
+ #endif
+ 
+-void do_coredump(const kernel_siginfo_t *siginfo)
++void vfs_coredump(const kernel_siginfo_t *siginfo)
  {
--	FILE *file;
--	int ret;
-+	int fd;
-+	ssize_t ret;
+ 	struct core_state core_state;
+ 	struct core_name cn;
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index 76e41805b92d..96e8a66da133 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -43,7 +43,7 @@ extern int dump_emit(struct coredump_params *cprm, const void *addr, int nr);
+ extern int dump_align(struct coredump_params *cprm, int align);
+ int dump_user_range(struct coredump_params *cprm, unsigned long start,
+ 		    unsigned long len);
+-extern void do_coredump(const kernel_siginfo_t *siginfo);
++extern void vfs_coredump(const kernel_siginfo_t *siginfo);
  
--	file = fopen("/proc/sys/kernel/core_pattern", "w");
--	if (!file)
-+	fd = open("/proc/sys/kernel/core_pattern", O_WRONLY | O_CLOEXEC);
-+	if (fd < 0)
- 		return false;
+ /*
+  * Logging for the coredump code, ratelimited.
+@@ -63,7 +63,7 @@ extern void do_coredump(const kernel_siginfo_t *siginfo);
+ #define coredump_report_failure(fmt, ...) __COREDUMP_PRINTK(KERN_WARNING, fmt, ##__VA_ARGS__)
  
--	ret = fprintf(file, "%s", pattern);
--	fclose(file);
-+	ret = write(fd, pattern, strlen(pattern));
-+	close(fd);
-+	if (ret < 0)
-+		return false;
+ #else
+-static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
++static inline void vfs_coredump(const kernel_siginfo_t *siginfo) {}
  
-+	fprintf(stderr, "Set core_pattern to '%s' | %zu == %zu\n", pattern, ret, strlen(pattern));
- 	return ret == strlen(pattern);
- }
+ #define coredump_report(...)
+ #define coredump_report_failure(...)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 148082db9a55..e2c928de7d2c 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3016,7 +3016,7 @@ bool get_signal(struct ksignal *ksig)
+ 			 * first and our do_group_exit call below will use
+ 			 * that value and ignore the one we pass it.
+ 			 */
+-			do_coredump(&ksig->info);
++			vfs_coredump(&ksig->info);
+ 		}
  
-@@ -1804,4 +1807,21 @@ TEST_F_TIMEOUT(coredump, socket_multiple_crashing_coredumps_epoll_workers, 500)
- 	wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
- }
- 
-+TEST_F(coredump, socket_invalid_paths)
-+{
-+	ASSERT_FALSE(set_core_pattern("@ /tmp/coredump.socket"));
-+	ASSERT_FALSE(set_core_pattern("@/tmp/../coredump.socket"));
-+	ASSERT_FALSE(set_core_pattern("@../coredump.socket"));
-+	ASSERT_FALSE(set_core_pattern("@/tmp/coredump.socket/.."));
-+	ASSERT_FALSE(set_core_pattern("@.."));
-+
-+	ASSERT_FALSE(set_core_pattern("@@ /tmp/coredump.socket"));
-+	ASSERT_FALSE(set_core_pattern("@@/tmp/../coredump.socket"));
-+	ASSERT_FALSE(set_core_pattern("@@../coredump.socket"));
-+	ASSERT_FALSE(set_core_pattern("@@/tmp/coredump.socket/.."));
-+	ASSERT_FALSE(set_core_pattern("@@.."));
-+
-+	ASSERT_FALSE(set_core_pattern("@@@/tmp/coredump.socket"));
-+}
-+
- TEST_HARNESS_MAIN
+ 		/*
 
 -- 
 2.47.2
