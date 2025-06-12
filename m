@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-51437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FBAAD6E4E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 12:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D43AD6E52
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 12:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979D43B191F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 10:52:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DE5217EE75
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 10:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7C1248864;
-	Thu, 12 Jun 2025 10:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9982A23C51A;
+	Thu, 12 Jun 2025 10:51:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E10246797;
-	Thu, 12 Jun 2025 10:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9534D1AAA29;
+	Thu, 12 Jun 2025 10:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749725502; cv=none; b=XDW3gzfJgMUntqhIWA2dl9vcvD2ndXxAO4QF+mhwsipHYvtjKblGOBVfJ909jrXcrOylFGOGvxP/QJK2r5kTrPL7Bi0UwumflkFk0m8CEve4zYkzKU+v0KzV+ik+s3xI+Kw0JCCmDKnJj0KAJ0yFHHS1Jfj0uJwltEhh/QP60a8=
+	t=1749725516; cv=none; b=prwcSVzOKLznzN1+Y9WDz1PYOTdFxDC3Y8Kk4ZYYzwHvlUwc6YO1cR+ypXM2G3Dr6OOylyj1a5PKOxzFuhToNHsCqs/KbxS/EjYOW6NnRPuwxPjo41r617Ev/c1IrG+xLrDP3l6ce2o+ox5uN5sPPubVrPcbk3JoujOnf0Era5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749725502; c=relaxed/simple;
-	bh=QNuotDSbXamqQoufAqDmvk9X3kWMiUNh5OnMNgQcFr8=;
+	s=arc-20240116; t=1749725516; c=relaxed/simple;
+	bh=bd3wIJYZv4evP3kmcjH4Kxa+ysWUD4TN37ZjLBgIZCA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yz47Tywrg3AmBjoS1vlb259TFMLR46u4fXVtjmIuURPUNe6x4Cwma2MY0YXp48sqauKeKDqyfd5zOwdr9R3FM50lve78HLxyRbvngTiIf/dL84ZsmlOL1InkWP1fIbvLTf4SPXJC8yOdsN6epKjTVfqrLNVWlR0TdW5CPZ4/3mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=fguIEVYj8nTGjqT7Qk5sd9t2XsICPHyjhIMU5KXayJ+bQaX8abfUqdtZ2+Jtt+CEQkNvaDtLpYwc/GhFxbX8IHi0dlT6qpNUsTm/VXevVtvRfZyoF53CSmxAZGeV6rzQ8njuGp0gCkCvC0QdNd58f21IBj7e/gV2Ij93UImY/R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bHzqF3rv5z9std;
-	Thu, 12 Jun 2025 12:51:37 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bHzqP4ZBmz9ss0;
+	Thu, 12 Jun 2025 12:51:45 +0200 (CEST)
 From: Pankaj Raghav <p.raghav@samsung.com>
 To: Suren Baghdasaryan <surenb@google.com>,
 	Ryan Roberts <ryan.roberts@arm.com>,
@@ -67,9 +67,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel@pankajraghav.com,
 	hch@lst.de,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 4/5] mm: add mm_get_static_huge_zero_folio() routine
-Date: Thu, 12 Jun 2025 12:50:59 +0200
-Message-ID: <20250612105100.59144-5-p.raghav@samsung.com>
+Subject: [PATCH 5/5] block: use mm_huge_zero_folio in __blkdev_issue_zero_pages()
+Date: Thu, 12 Jun 2025 12:51:00 +0200
+Message-ID: <20250612105100.59144-6-p.raghav@samsung.com>
 In-Reply-To: <20250612105100.59144-1-p.raghav@samsung.com>
 References: <20250612105100.59144-1-p.raghav@samsung.com>
 Precedence: bulk
@@ -80,44 +80,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add mm_get_static_huge_zero_folio() routine so that huge_zero_folio can be
-used without the need to pass any mm struct. This will return ZERO_PAGE
-folio if CONFIG_STATIC_PMD_ZERO_PAGE is disabled.
+Use mm_get_static_huge_zero_folio() in __blkdev_issue_zero_pages().
 
-This routine can also be called even if THP is disabled.
+On systems with CONFIG_STATIC_PMD_ZERO_PAGE enabled, we will end up
+sending larger bvecs instead of multiple small ones.
+
+Noticed a 4% increase in performance on a commercial NVMe SSD which does
+not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
+gains might be bigger if the device supports bigger MDTS.
 
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- include/linux/mm.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ block/blk-lib.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index b20d60d68b3c..c8805480ff21 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4021,6 +4021,22 @@ static inline bool vma_is_special_huge(const struct vm_area_struct *vma)
- extern struct folio *huge_zero_folio;
- extern unsigned long huge_zero_pfn;
- 
-+/*
-+ * mm_get_static_huge_zero_folio - Get a PMD sized zero folio
-+ *
-+ * This function will return a PMD sized zero folio if CONFIG_STATIC_PMD_ZERO_PAGE
-+ * is enabled. Otherwise, a ZERO_PAGE folio is returned.
-+ *
-+ * Deduce the size of the folio with folio_size instead of assuming the
-+ * folio size.
-+ */
-+static inline struct folio *mm_get_static_huge_zero_folio(void)
-+{
-+	if(IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
-+		return READ_ONCE(huge_zero_folio);
-+	return page_folio(ZERO_PAGE(0));
-+}
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- static inline bool is_huge_zero_folio(const struct folio *folio)
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 4c9f20a689f7..4ee219637a3f 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -196,6 +196,10 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
+ 		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
+ 		struct bio **biop, unsigned int flags)
  {
++	struct folio *zero_folio;
++
++	zero_folio = mm_get_static_huge_zero_folio();
++
+ 	while (nr_sects) {
+ 		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
+ 		struct bio *bio;
+@@ -208,15 +212,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
+ 			break;
+ 
+ 		do {
+-			unsigned int len, added;
++			unsigned int len;
+ 
+-			len = min_t(sector_t,
+-				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
+-			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
+-			if (added < len)
++			len = min_t(sector_t, folio_size(zero_folio),
++				    nr_sects << SECTOR_SHIFT);
++			if (!bio_add_folio(bio, zero_folio, len, 0))
+ 				break;
+-			nr_sects -= added >> SECTOR_SHIFT;
+-			sector += added >> SECTOR_SHIFT;
++			nr_sects -= len >> SECTOR_SHIFT;
++			sector += len >> SECTOR_SHIFT;
+ 		} while (nr_sects);
+ 
+ 		*biop = bio_chain_and_submit(*biop, bio);
 -- 
 2.49.0
 
