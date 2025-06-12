@@ -1,172 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-51490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7957AD72CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C29D2AD735C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 16:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57BC63A2609
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:59:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AED3ADC51
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 14:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02CF2472BD;
-	Thu, 12 Jun 2025 13:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C0A24C08D;
+	Thu, 12 Jun 2025 14:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCDACP7V"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NHEAoLKC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F94623D2AE;
-	Thu, 12 Jun 2025 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BDD248F6F;
+	Thu, 12 Jun 2025 14:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736770; cv=none; b=ffxB4sdGwglEmJI9B1XiP8vPcm/R4LWI6Eo9n4ljdWvXMPYqcnGluucOFaATw49Z3+d70LVlvg6E/TdfHLJKJKsxhfvL2DPz6ubBRYO/8gIa6zc5jJUiynN0IjSLUTSsFc72CqLZMslQCkhpG4iETENLjlABUbPKvy1yI96QccY=
+	t=1749737378; cv=none; b=mhHdwozdNnklyT21j7fsB+xdzdoYVayboz5mOZfAG1PCaO75C1xMltZ8wNhXD25unNkFYcVxmaRXiOWTK8Mi+7KmMwmNdlYsiDtIOUqh7CJqClwTR+rXw7haZH2V0Z5MhB1N20PWDp1wjcBVqz86NtAL1sq6Ympj47y03RSzyuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736770; c=relaxed/simple;
-	bh=0fruNrL61s70gsmhqJiV7bdE97vxE3uBVBn3wzWCIEk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HXdv7530t23ii22VABX1YniU893jVKZKCRjt0cmi7eZt4aXO0QRAMOLGazzP+BtzbFH+tHJixm+l7+b4XHi2OvBVLVzDm+cc/GqbdoabczV0Yc6mv1uPb3RhXfgT4eqCvJYQlv1JQUtjPm4+xMDDRaBmL+loQbXMs4n1+oepL/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCDACP7V; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so1766723a12.2;
-        Thu, 12 Jun 2025 06:59:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749736767; x=1750341567; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=axy0rlQIMI9WMYF0qCH4ZRxaAh4fle4NuWe/olzB1AY=;
-        b=mCDACP7VYvEbo4sM+Xs653oASS/z5cy9LTyskx075mH1TdSHapdTIMedq7vob/D/iC
-         uTRU2Iejw3yjt1MCi2rXNQGiV4gXrA8x7y2qwRNJxxnvrsqwL2O85FO7OFMa0g9N+aQL
-         +MGQwRYX57e3/u2nwIIwbpbYL+hCvjlQlG5IomconqBYzJuohD04rpaM4r19GdQ0LarK
-         y1mtm7kXFKUiC/hjoSKSf1UDWmcH/6UJ9kAloUFtaZ7NcOosrLU7e5UMWuNlKpqgNRD0
-         FLsbZFFrtWODopgO6DoySsS470IJQ14OahpR7yffo212Rk7ZFDGjFwu9DA8MFbUZdwKj
-         1Wjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749736767; x=1750341567;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=axy0rlQIMI9WMYF0qCH4ZRxaAh4fle4NuWe/olzB1AY=;
-        b=xTuRT2Ue4rdjLrDtQkNw5vGmnehpuFJ4B0cKx6K4voupl11Zf+kb1t9Eq8ytBnTf1h
-         R0sDjJNdj9Ks1BxigHMrN9eGxf7Wi7mO0vmFjJSgTLGjUG0XYpzPnedqgR1Iy6vJRxOP
-         N4IVose+8AXNNjj3sg80ii0Pq2WaSne2QRsBNiG5q6INPm1J/SY8SHJuARyemewGbL+x
-         6EwK4yPm/rUR4yYDa3inkCLDLQEo3zgPgEXVhofvIQq7jL/DvTZ9Drv7TKNmKv6JczCa
-         SnooCxW05Dd7Hoin2FlyDpqfQeAGrW5FJQwW0sMYYzg1wrf7ieyEPveWKEtas8OxYcut
-         x7YA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUPP7IITJNMfktNtpqyBzsjIObDc4/D0OkyjFeWquwzv0NjIgk15NKABa23efooueYQiZ3ezoJNUtvj5F+@vger.kernel.org, AJvYcCWmoMgsGemilP2h24jEJQxHqjQbJ63H6RsqERVL9+RzwPTaY6XF+V8Tb3lPvLfXUbpWMX2+A3sY9Sm4cRVA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdPyQ7BYaeDJe/5NPKDzMIWSSq9haJ/dsMUsC0OB5kk6E19K9o
-	of+Ou7tj4NK6qbNpNDa+LY/Gm+9e5kR4843qdT8b8QdO4G8rmgLdJFjKhs6aakg615J/GlXAqOQ
-	7Hhr4BanOdVYyYI8yQegCtECTYVscSMY=
-X-Gm-Gg: ASbGncvqWETol0LywT2pAyMUjH1mOREvi1YetI2lQWpSI3ciAbsDYljLVE6/srdXN3r
-	3KohTPaH4G3G7Ey9xgxXCYCGTqWuhmhoTSJ7uX4iZDaazmyGrYvn1v6ODPAMrlgTYnwAshHnVv7
-	J2uxzvcn+aPq0jo68HKvivfKPEdX1rJ9LMpb0gTm5ik80=
-X-Google-Smtp-Source: AGHT+IHCp92945l3Lbtgjt/svwIozABtOwPn4OQRdnVjt/ol944mXSPlcGwdCBTCbWlG9Pwl0bclDvHWAS/3qCMb/j4=
-X-Received: by 2002:a17:906:4fca:b0:adb:e08:5e87 with SMTP id
- a640c23a62f3a-adea25df16emr412104266b.19.1749736766532; Thu, 12 Jun 2025
- 06:59:26 -0700 (PDT)
+	s=arc-20240116; t=1749737378; c=relaxed/simple;
+	bh=kdkVV2FGMOSgAFU+V5temNkk1TA2PJJ7nYDpbTdZuw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rUxdon4K9at5tkX1A38Pw5Y/ucyRvOpO+UwsHDCc9qwN231OVIopYJgBbn5zPcB0o4nOuMPOPHzFNkP56w+9rzrwHvsY1saGIzbQcuq/Pp0onR0MaBil2axZA4CgUNJMmfPr7rlofxPUxtdYfsI6dHnyp0eomW4rFeMb7oikEyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NHEAoLKC; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749737377; x=1781273377;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kdkVV2FGMOSgAFU+V5temNkk1TA2PJJ7nYDpbTdZuw0=;
+  b=NHEAoLKCY9eMbMvyrktQa8LtOyOKRk3cTGfMPIEQVsCOGHkpGbvz/AFF
+   0+K7PNi5EfrojbqPuUM3ERhTiZ6Zyeg/LGYJi860qyepFv8SGTHGyfDqk
+   VKIIT8Z7jiMLjCcZ5H2aPgYwz/HKEK4bf4YVSi4ePlYPD1QsaDAPFwjmK
+   VNwx0Z7uaYg76az624aJNkD4oNVDtCxGfYgS6TqHzjy6v7LswAtsX79W4
+   WVLw30UwrvhS2sLyRXROXOKKe5wNx3IkX0GBcA74DHCFFzDIVFghkGLFm
+   EyN7/Spb0t7PXMlTZUMD+Ny/FlPp4URjnjz+2Nv+RAmyUleWoqqDdoKYj
+   g==;
+X-CSE-ConnectionGUID: sbxAvL3LQxSUW1rVkvb5kA==
+X-CSE-MsgGUID: T09uEs14R3Cywqb4Zkpe3g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="77323439"
+X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
+   d="scan'208";a="77323439"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 07:09:35 -0700
+X-CSE-ConnectionGUID: uXkU0nvlR9yZhAhwkLy+EA==
+X-CSE-MsgGUID: b77Tdni3R3i8puDUUZrwVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,231,1744095600"; 
+   d="scan'208";a="148086031"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.111.188]) ([10.125.111.188])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2025 07:09:35 -0700
+Message-ID: <e3075e27-93d2-4a11-a174-f05a7497870e@intel.com>
+Date: Thu, 12 Jun 2025 07:09:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87tt4u4p4h.fsf@igalia.com> <20250612094101.6003-1-luis@igalia.com>
- <ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
-In-Reply-To: <ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 12 Jun 2025 15:59:14 +0200
-X-Gm-Features: AX0GCFuVyzyb2mmghgZNaZwSNzJ0qgm89k7sk9w6b-c01nLChtinaI9yTu6OiLw
-Message-ID: <CAGudoHG7jcSWkLYf0P6W6zYnK4XAY-xb30Vu5-qFVtX9atUWYQ@mail.gmail.com>
-Subject: Re: [PATCH] fs: drop assert in file_seek_cur_needs_f_lock
-To: Luis Henriques <luis@igalia.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] mm: add mm_get_static_huge_zero_folio() routine
+To: Pankaj Raghav <p.raghav@samsung.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Zi Yan <ziy@nvidia.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+ x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, kernel@pankajraghav.com, hch@lst.de
+References: <20250612105100.59144-1-p.raghav@samsung.com>
+ <20250612105100.59144-5-p.raghav@samsung.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20250612105100.59144-5-p.raghav@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 12, 2025 at 3:55=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Thu, Jun 12, 2025 at 10:41:01AM +0100, Luis Henriques wrote:
-> > The assert in function file_seek_cur_needs_f_lock() can be triggered ve=
-ry
-> > easily because, as Jan Kara suggested, the file reference may get
-> > incremented after checking it with fdget_pos().
-> >
-> > Fixes: da06e3c51794 ("fs: don't needlessly acquire f_lock")
-> > Signed-off-by: Luis Henriques <luis@igalia.com>
-> > ---
-> > Hi Christian,
-> >
-> > It wasn't clear whether you'd be queueing this fix yourself.  Since I d=
-on't
-> > see it on vfs.git, I decided to explicitly send the patch so that it do=
-esn't
-> > slip through the cracks.
-> >
-> > Cheers,
-> > --
-> > Luis
-> >
-> >  fs/file.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 3a3146664cf3..075f07bdc977 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -1198,8 +1198,6 @@ bool file_seek_cur_needs_f_lock(struct file *file=
-)
-> >       if (!(file->f_mode & FMODE_ATOMIC_POS) && !file->f_op->iterate_sh=
-ared)
-> >               return false;
-> >
-> > -     VFS_WARN_ON_ONCE((file_count(file) > 1) &&
-> > -                      !mutex_is_locked(&file->f_pos_lock));
-> >       return true;
-> >  }
-> >
->
-> There this justifies the change.
->
+On 6/12/25 03:50, Pankaj Raghav wrote:
+> +/*
+> + * mm_get_static_huge_zero_folio - Get a PMD sized zero folio
 
-Huh. scratch this sentence. I stand by the rest. :)
+Isn't that a rather inaccurate function name and comment?
 
-> fdget_pos() can only legally skip locking if it determines to be in
-> position where nobody else can operate on the same file obj, meaning
-> file_count(file) =3D=3D 1 and it can't go up. Otherwise the lock is taken=
-.
->
-> Or to put it differently, fdget_pos() NOT taking the lock and new refs
-> showing up later is a bug.
->
-> I don't believe anything of the sort is happening here.
->
-> Instead, overlayfs is playing games and *NOT* going through fdget_pos():
->
->         ovl_inode_lock(inode);
->         realfile =3D ovl_real_file(file);
->         [..]
->         ret =3D vfs_llseek(realfile, offset, whence);
->
-> Given the custom inode locking around the call, it may be any other
-> locking is unnecessary and the code happens to be correct despite the
-> splat.
->
-> I think the safest way out with some future-proofing is to in fact *add*
-> the locking in ovl_llseek() to shut up the assert -- personally I find
-> it uneasy there is some underlying file obj flying around.
->
-> Even if ultimately the assert has to go, the proposed commit message
-> does not justify it.
+The third line of the function literally returns a non-PMD-sized zero folio.
 
+> + * This function will return a PMD sized zero folio if CONFIG_STATIC_PMD_ZERO_PAGE
+> + * is enabled. Otherwise, a ZERO_PAGE folio is returned.
+> + *
+> + * Deduce the size of the folio with folio_size instead of assuming the
+> + * folio size.
+> + */
+> +static inline struct folio *mm_get_static_huge_zero_folio(void)
+> +{
+> +	if(IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
+> +		return READ_ONCE(huge_zero_folio);
+> +	return page_folio(ZERO_PAGE(0));
+> +}
 
+This doesn't tell us very much about when I should use:
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+	mm_get_static_huge_zero_folio()
+vs.
+	mm_get_huge_zero_folio(mm)
+vs.
+	page_folio(ZERO_PAGE(0))
+
+What's with the "mm_" in the name? Usually "mm" means "mm_struct" not
+Memory Management. It's really weird to prefix something that doesn't
+take an "mm_struct" with "mm_"
+
+Isn't the "get_" also a bad idea since mm_get_huge_zero_folio() does its
+own refcounting but this interface does not?
+
+Shouldn't this be something more along the lines of:
+
+/*
+ * pick_zero_folio() - Pick and return the largest available zero folio
+ *
+ * mm_get_huge_zero_folio() is preferred over this function. It is more
+ * flexible and can provide a larger zero page under wider
+ * circumstances.
+ *
+ * Only use this when there is no mm available.
+ *
+ * ... then other comments
+ */
+static inline struct folio *pick_zero_folio(void)
+{
+	if (IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
+		return READ_ONCE(huge_zero_folio);
+	return page_folio(ZERO_PAGE(0));
+}
+
+Or, maybe even name it _just_: zero_folio()
 
