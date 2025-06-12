@@ -1,381 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-51444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29A4AD6F20
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D31CBAD6F31
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8387B1898378
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 11:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D83189857A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 11:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3AE2F4336;
-	Thu, 12 Jun 2025 11:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ostiY3Rp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1AhroKxm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ostiY3Rp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1AhroKxm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CD32F4332;
+	Thu, 12 Jun 2025 11:37:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C602F431D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 11:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0B32F4333;
+	Thu, 12 Jun 2025 11:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749728236; cv=none; b=MjcCqqz8cL+m+807FOfHrkxDxEciQPnUQdRPeIqb+gOBljRofIxpBKntjsxC/pPfwk4uNCzICMtTA4SqP1yNW8ClG19jgA8a2Piz+oGfy/PlcEoX4yE8WVgWtd2IgC9g4IkF24PD/oaQzOKYf0IubaZzgGUhBtsDkg4Ptdth+Bk=
+	t=1749728268; cv=none; b=hSOPXz5xcMHpNfbiAjyc7+Vn1XBdowCH7ua2uQxaozNkhGH+sjdAaF8UjMO7MPeoLdN4V9pXmJDjYD6WSCQapfhPiPdc2Uo19Mz+Iw91LDgTQ30ILvQwqrOH3foIW2hCzOXlu/1mOCSAofDOk6kj+pMPjeoWKBBBLC+dmuTBcmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749728236; c=relaxed/simple;
-	bh=kq26j+ZonXg6jnR+Mnw4tjN8HSwyVUlYB6lXgfqRozk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUdsKyOpo2ZBS0sy3pD11M0BulIp4QLIbNGJNi8I+l5cT4se5vMaVCGWkUU5xEZjWcaBhw2lCogN9UyiLwim6BM5bn/zyDNRKDZJxCJaSrtBpqKqtoFA/OBTCnANJG0YdKFyJ7PoT7ujG3nGPLlNpj3UE5NCWEtMAYjTT4RoY5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ostiY3Rp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1AhroKxm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ostiY3Rp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1AhroKxm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AE72D1F78E;
-	Thu, 12 Jun 2025 11:37:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749728225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAaMXZaNbH9WPPhkq8n7uqpbqPdSSaReMxj+cBGzwlY=;
-	b=ostiY3RpZJXSgquqV3UuObYfhxZl2s8oXJIjcCg1VD5HPerbuGqFYh2atkjyaIMwIFjq5m
-	0jS+xbUwQlVj24sgYsRHkuKZYoLJYCHvZLwNH95CdJr9T2Qj7+CCfMyXo+qlUHU+krnX2T
-	TRRpt+Kl07T8600kqGW17mvRmgUbQhg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749728225;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAaMXZaNbH9WPPhkq8n7uqpbqPdSSaReMxj+cBGzwlY=;
-	b=1AhroKxmJjnWpTIb+AkEvXyY4Xk4mMuettRUVBqDGeEIzpmNOE1JS7n8+BDkKQET8AZq0/
-	2wQV+K419+ufPQAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749728225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAaMXZaNbH9WPPhkq8n7uqpbqPdSSaReMxj+cBGzwlY=;
-	b=ostiY3RpZJXSgquqV3UuObYfhxZl2s8oXJIjcCg1VD5HPerbuGqFYh2atkjyaIMwIFjq5m
-	0jS+xbUwQlVj24sgYsRHkuKZYoLJYCHvZLwNH95CdJr9T2Qj7+CCfMyXo+qlUHU+krnX2T
-	TRRpt+Kl07T8600kqGW17mvRmgUbQhg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749728225;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAaMXZaNbH9WPPhkq8n7uqpbqPdSSaReMxj+cBGzwlY=;
-	b=1AhroKxmJjnWpTIb+AkEvXyY4Xk4mMuettRUVBqDGeEIzpmNOE1JS7n8+BDkKQET8AZq0/
-	2wQV+K419+ufPQAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9DD75132D8;
-	Thu, 12 Jun 2025 11:37:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JriCJuG7SmjrZgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Jun 2025 11:37:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5D716A099E; Thu, 12 Jun 2025 13:37:05 +0200 (CEST)
-Date: Thu, 12 Jun 2025 13:37:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
-	Dave Chinner <david@fromorbit.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [PATCH v5 4/5] mm/readahead: Store folio order in struct
- file_ra_state
-Message-ID: <dhfhfcymhfdtqnwof4cqfhplgo24ho3kon3e7lrqwwgz26ehqr@g6h3g3yub4w4>
-References: <20250609092729.274960-1-ryan.roberts@arm.com>
- <20250609092729.274960-5-ryan.roberts@arm.com>
+	s=arc-20240116; t=1749728268; c=relaxed/simple;
+	bh=1hME+q7q5I+jjLm/t72QKjRqfoHtJN7hkve8S00L+WE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iW4W95KG9jb9KG8+tASQF0M91Z9u0VrjAaAr/YvGnA/tVpdNTsObEouIkzhMPwgRSQx1RziF1GKWg1ZlA3Kt3W+9aXxbd2+3t4qi+x3NK4RQBO+RKnRH5QYrwhKpw54ojqd+wOi2cnESBGbw4pVSXVTGztvlWxPm21imrK3fhZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bJ0rR4SwYzKHN95;
+	Thu, 12 Jun 2025 19:37:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id ECED01A01A4;
+	Thu, 12 Jun 2025 19:37:41 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXe18DvEpoJoUoPQ--.21926S3;
+	Thu, 12 Jun 2025 19:37:41 +0800 (CST)
+Message-ID: <b14aaa15-9d41-45cf-9bd8-fe92d256070d@huaweicloud.com>
+Date: Thu, 12 Jun 2025 19:37:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609092729.274960-5-ryan.roberts@arm.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/10] fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
+ tytso@mit.edu, john.g.garry@oracle.com, bmarzins@redhat.com,
+ chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, brauner@kernel.org,
+ martin.petersen@oracle.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com, linux-api@vger.kernel.org
+References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
+ <20250604020850.1304633-8-yi.zhang@huaweicloud.com>
+ <20250611150555.GB6134@frogsfrogsfrogs>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250611150555.GB6134@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXe18DvEpoJoUoPQ--.21926S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGrykKF4xGr1UuryUJryUAwb_yoWrWF45pF
+	W3Ca4UKr4kGFyfC3s3Z3Z7Cry5Zws3Kr43ZrW2gr1jvr15Wr1fKFsFgryYva4xJrs7Aa1Y
+	qr40vFy3ua4DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon 09-06-25 10:27:26, Ryan Roberts wrote:
-> Previously the folio order of the previous readahead request was
-> inferred from the folio who's readahead marker was hit. But due to the
-> way we have to round to non-natural boundaries sometimes, this first
-> folio in the readahead block is often smaller than the preferred order
-> for that request. This means that for cases where the initial sync
-> readahead is poorly aligned, the folio order will ramp up much more
-> slowly.
+On 2025/6/11 23:05, Darrick J. Wong wrote:
+> [cc linux-api about a fallocate uapi change]
 > 
-> So instead, let's store the order in struct file_ra_state so we are not
-> affected by any required alignment. We previously made enough room in
-> the struct for a 16 order field. This should be plenty big enough since
-> we are limited to MAX_PAGECACHE_ORDER anyway, which is certainly never
-> larger than ~20.
+> On Wed, Jun 04, 2025 at 10:08:47AM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> With the development of flash-based storage devices, we can quickly
+>> write zeros to SSDs using the WRITE_ZERO command if the devices do not
+>> actually write physical zeroes to the media. Therefore, we can use this
+>> command to quickly preallocate a real all-zero file with written
+>> extents. This approach should be beneficial for subsequent pure
+>> overwriting within this file, as it can save on block allocation and,
+>> consequently, significant metadata changes, which should greatly improve
+>> overwrite performance on certain filesystems.
+>>
+>> Therefore, introduce a new operation FALLOC_FL_WRITE_ZEROES to
+>> fallocate. This flag is used to convert a specified range of a file to
+>> zeros by issuing a zeroing operation. Blocks should be allocated for the
+>> regions that span holes in the file, and the entire range is converted
+>> to written extents. If the underlying device supports the actual offload
+>> write zeroes command, the process of zeroing out operation can be
+>> accelerated. If it does not, we currently don't prevent the file system
+>> from writing actual zeros to the device. This provides users with a new
+>> method to quickly generate a zeroed file, users no longer need to write
+>> zero data to create a file with written extents.
+>>
+>> Users can determine whether a disk supports the unmap write zeroes
+>> operation through querying this sysfs interface:
+>>
+>>     /sys/block/<disk>/queue/write_zeroes_unmap
+>>
+>> Finally, this flag cannot be specified in conjunction with the
+>> FALLOC_FL_KEEP_SIZE since allocating written extents beyond file EOF is
+>> not permitted. In addition, filesystems that always require out-of-place
+>> writes should not support this flag since they still need to allocated
+>> new blocks during subsequent overwrites.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> ---
+>>  fs/open.c                   |  1 +
+>>  include/linux/falloc.h      |  3 ++-
+>>  include/uapi/linux/falloc.h | 18 ++++++++++++++++++
+>>  3 files changed, 21 insertions(+), 1 deletion(-)
+>>
+[...]
+>> diff --git a/include/uapi/linux/falloc.h b/include/uapi/linux/falloc.h
+>> index 5810371ed72b..265aae7ff8c1 100644
+>> --- a/include/uapi/linux/falloc.h
+>> +++ b/include/uapi/linux/falloc.h
+>> @@ -78,4 +78,22 @@
+>>   */
+>>  #define FALLOC_FL_UNSHARE_RANGE		0x40
+>>  
+>> +/*
+>> + * FALLOC_FL_WRITE_ZEROES is used to convert a specified range of a file to
+>> + * zeros by issuing a zeroing operation. Blocks should be allocated for the
+>> + * regions that span holes in the file, and the entire range is converted to
+>> + * written extents.
 > 
-> Since we now pass order in struct file_ra_state, page_cache_ra_order()
-> no longer needs it's new_order parameter, so let's remove that.
+> I think you could simplify this a bit by talking only about the end
+> state after a successful call:
 > 
-> Worked example:
+> "FALLOC_FL_WRITE_ZEROES zeroes a specified file range in such a way that
+> subsequent writes to that range do not require further changes to file
+> mapping metadata."
 > 
-> Here we are touching pages 17-256 sequentially just as we did in the
-> previous commit, but now that we are remembering the preferred order
-> explicitly, we no longer have the slow ramp up problem. Note
-> specifically that we no longer have 2 rounds (2x ~128K) of order-2
-> folios:
+> Note that we don't say how the filesystem gets to this goal.  Presumably
+> the first implementations will send a zeroing operation to the block
+> device during allocation and the fs will create written mappings, but
+> there are other ways to get there -- a filesystem could maintain a pool
+> of pre-zeroed space and hand those out; or it could zero space on
+> freeing and mounting such that all new mappings can be created as
+> written even without the block device zeroing operation.
 > 
-> TYPE    STARTOFFS     ENDOFFS        SIZE  STARTPG    ENDPG   NRPG  ORDER  RA
-> -----  ----------  ----------  ----------  -------  -------  -----  -----  --
-> HOLE   0x00000000  0x00001000        4096        0        1      1
-> FOLIO  0x00001000  0x00002000        4096        1        2      1      0
-> FOLIO  0x00002000  0x00003000        4096        2        3      1      0
-> FOLIO  0x00003000  0x00004000        4096        3        4      1      0
-> FOLIO  0x00004000  0x00005000        4096        4        5      1      0
-> FOLIO  0x00005000  0x00006000        4096        5        6      1      0
-> FOLIO  0x00006000  0x00007000        4096        6        7      1      0
-> FOLIO  0x00007000  0x00008000        4096        7        8      1      0
-> FOLIO  0x00008000  0x00009000        4096        8        9      1      0
-> FOLIO  0x00009000  0x0000a000        4096        9       10      1      0
-> FOLIO  0x0000a000  0x0000b000        4096       10       11      1      0
-> FOLIO  0x0000b000  0x0000c000        4096       11       12      1      0
-> FOLIO  0x0000c000  0x0000d000        4096       12       13      1      0
-> FOLIO  0x0000d000  0x0000e000        4096       13       14      1      0
-> FOLIO  0x0000e000  0x0000f000        4096       14       15      1      0
-> FOLIO  0x0000f000  0x00010000        4096       15       16      1      0
-> FOLIO  0x00010000  0x00011000        4096       16       17      1      0
-> FOLIO  0x00011000  0x00012000        4096       17       18      1      0
-> FOLIO  0x00012000  0x00013000        4096       18       19      1      0
-> FOLIO  0x00013000  0x00014000        4096       19       20      1      0
-> FOLIO  0x00014000  0x00015000        4096       20       21      1      0
-> FOLIO  0x00015000  0x00016000        4096       21       22      1      0
-> FOLIO  0x00016000  0x00017000        4096       22       23      1      0
-> FOLIO  0x00017000  0x00018000        4096       23       24      1      0
-> FOLIO  0x00018000  0x00019000        4096       24       25      1      0
-> FOLIO  0x00019000  0x0001a000        4096       25       26      1      0
-> FOLIO  0x0001a000  0x0001b000        4096       26       27      1      0
-> FOLIO  0x0001b000  0x0001c000        4096       27       28      1      0
-> FOLIO  0x0001c000  0x0001d000        4096       28       29      1      0
-> FOLIO  0x0001d000  0x0001e000        4096       29       30      1      0
-> FOLIO  0x0001e000  0x0001f000        4096       30       31      1      0
-> FOLIO  0x0001f000  0x00020000        4096       31       32      1      0
-> FOLIO  0x00020000  0x00021000        4096       32       33      1      0
-> FOLIO  0x00021000  0x00022000        4096       33       34      1      0
-> FOLIO  0x00022000  0x00024000        8192       34       36      2      1
-> FOLIO  0x00024000  0x00028000       16384       36       40      4      2
-> FOLIO  0x00028000  0x0002c000       16384       40       44      4      2
-> FOLIO  0x0002c000  0x00030000       16384       44       48      4      2
-> FOLIO  0x00030000  0x00034000       16384       48       52      4      2
-> FOLIO  0x00034000  0x00038000       16384       52       56      4      2
-> FOLIO  0x00038000  0x0003c000       16384       56       60      4      2
-> FOLIO  0x0003c000  0x00040000       16384       60       64      4      2
-> FOLIO  0x00040000  0x00050000       65536       64       80     16      4
-> FOLIO  0x00050000  0x00060000       65536       80       96     16      4
-> FOLIO  0x00060000  0x00080000      131072       96      128     32      5
-> FOLIO  0x00080000  0x000a0000      131072      128      160     32      5
-> FOLIO  0x000a0000  0x000c0000      131072      160      192     32      5
-> FOLIO  0x000c0000  0x000e0000      131072      192      224     32      5
-> FOLIO  0x000e0000  0x00100000      131072      224      256     32      5
-> FOLIO  0x00100000  0x00120000      131072      256      288     32      5
-> FOLIO  0x00120000  0x00140000      131072      288      320     32      5  Y
-> HOLE   0x00140000  0x00800000     7077888      320     2048   1728
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> Or you could be running on some carefully engineered system where you
+> know the storage will always be zeroed at allocation time due to some
+> other aspect of the system design, e.g. a single-use throwaway cloud vm
+> where you allocate to the end of the disk and reboot the node.
 
-Looks good! Feel free to add:
+Indeed, it makes sense to me. It appears to be more generic and obscures
+the methods by which different file systems may achieve this goal. Thank
+you for the suggestion.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Best regards,
+Yi.
 
-								Honza
-
-> ---
->  include/linux/fs.h |  2 ++
->  mm/filemap.c       |  6 ++++--
->  mm/internal.h      |  3 +--
->  mm/readahead.c     | 21 +++++++++++++--------
->  4 files changed, 20 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 87e7d5790e43..b5172b691f97 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1041,6 +1041,7 @@ struct fown_struct {
->   *      and so were/are genuinely "ahead".  Start next readahead when
->   *      the first of these pages is accessed.
->   * @ra_pages: Maximum size of a readahead request, copied from the bdi.
-> + * @order: Preferred folio order used for most recent readahead.
->   * @mmap_miss: How many mmap accesses missed in the page cache.
->   * @prev_pos: The last byte in the most recent read request.
->   *
-> @@ -1052,6 +1053,7 @@ struct file_ra_state {
->  	unsigned int size;
->  	unsigned int async_size;
->  	unsigned int ra_pages;
-> +	unsigned short order;
->  	unsigned short mmap_miss;
->  	loff_t prev_pos;
->  };
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 7bb4ffca8487..4b5c8d69f04c 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3232,7 +3232,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  		if (!(vm_flags & VM_RAND_READ))
->  			ra->size *= 2;
->  		ra->async_size = HPAGE_PMD_NR;
-> -		page_cache_ra_order(&ractl, ra, HPAGE_PMD_ORDER);
-> +		ra->order = HPAGE_PMD_ORDER;
-> +		page_cache_ra_order(&ractl, ra);
->  		return fpin;
->  	}
->  #endif
-> @@ -3268,8 +3269,9 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
->  	ra->size = ra->ra_pages;
->  	ra->async_size = ra->ra_pages / 4;
-> +	ra->order = 0;
->  	ractl._index = ra->start;
-> -	page_cache_ra_order(&ractl, ra, 0);
-> +	page_cache_ra_order(&ractl, ra);
->  	return fpin;
->  }
->  
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 6b8ed2017743..f91688e2894f 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -436,8 +436,7 @@ void zap_page_range_single_batched(struct mmu_gather *tlb,
->  int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
->  			   gfp_t gfp);
->  
-> -void page_cache_ra_order(struct readahead_control *, struct file_ra_state *,
-> -		unsigned int order);
-> +void page_cache_ra_order(struct readahead_control *, struct file_ra_state *);
->  void force_page_cache_ra(struct readahead_control *, unsigned long nr);
->  static inline void force_page_cache_readahead(struct address_space *mapping,
->  		struct file *file, pgoff_t index, unsigned long nr_to_read)
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 87be20ae00d0..95a24f12d1e7 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -457,7 +457,7 @@ static inline int ra_alloc_folio(struct readahead_control *ractl, pgoff_t index,
->  }
->  
->  void page_cache_ra_order(struct readahead_control *ractl,
-> -		struct file_ra_state *ra, unsigned int new_order)
-> +		struct file_ra_state *ra)
->  {
->  	struct address_space *mapping = ractl->mapping;
->  	pgoff_t start = readahead_index(ractl);
-> @@ -468,9 +468,12 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  	unsigned int nofs;
->  	int err = 0;
->  	gfp_t gfp = readahead_gfp_mask(mapping);
-> +	unsigned int new_order = ra->order;
->  
-> -	if (!mapping_large_folio_support(mapping))
-> +	if (!mapping_large_folio_support(mapping)) {
-> +		ra->order = 0;
->  		goto fallback;
-> +	}
->  
->  	limit = min(limit, index + ra->size - 1);
->  
-> @@ -478,6 +481,8 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
->  	new_order = max(new_order, min_order);
->  
-> +	ra->order = new_order;
-> +
->  	/* See comment in page_cache_ra_unbounded() */
->  	nofs = memalloc_nofs_save();
->  	filemap_invalidate_lock_shared(mapping);
-> @@ -609,8 +614,9 @@ void page_cache_sync_ra(struct readahead_control *ractl,
->  	ra->size = min(contig_count + req_count, max_pages);
->  	ra->async_size = 1;
->  readit:
-> +	ra->order = 0;
->  	ractl->_index = ra->start;
-> -	page_cache_ra_order(ractl, ra, 0);
-> +	page_cache_ra_order(ractl, ra);
->  }
->  EXPORT_SYMBOL_GPL(page_cache_sync_ra);
->  
-> @@ -621,7 +627,6 @@ void page_cache_async_ra(struct readahead_control *ractl,
->  	struct file_ra_state *ra = ractl->ra;
->  	pgoff_t index = readahead_index(ractl);
->  	pgoff_t expected, start, end, aligned_end, align;
-> -	unsigned int order = folio_order(folio);
->  
->  	/* no readahead */
->  	if (!ra->ra_pages)
-> @@ -644,7 +649,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
->  	 * Ramp up sizes, and push forward the readahead window.
->  	 */
->  	expected = round_down(ra->start + ra->size - ra->async_size,
-> -			1UL << order);
-> +			1UL << folio_order(folio));
->  	if (index == expected) {
->  		ra->start += ra->size;
->  		/*
-> @@ -673,15 +678,15 @@ void page_cache_async_ra(struct readahead_control *ractl,
->  	ra->size += req_count;
->  	ra->size = get_next_ra_size(ra, max_pages);
->  readit:
-> -	order += 2;
-> -	align = 1UL << min(order, ffs(max_pages) - 1);
-> +	ra->order += 2;
-> +	align = 1UL << min(ra->order, ffs(max_pages) - 1);
->  	end = ra->start + ra->size;
->  	aligned_end = round_down(end, align);
->  	if (aligned_end > ra->start)
->  		ra->size -= end - aligned_end;
->  	ra->async_size = ra->size;
->  	ractl->_index = ra->start;
-> -	page_cache_ra_order(ractl, ra, order);
-> +	page_cache_ra_order(ractl, ra);
->  }
->  EXPORT_SYMBOL_GPL(page_cache_async_ra);
->  
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
