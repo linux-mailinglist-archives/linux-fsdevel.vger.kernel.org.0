@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-51478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC87AD71E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7625AD71E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 15:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA8317DD8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E065165DA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AE625B303;
-	Thu, 12 Jun 2025 13:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A906225B30A;
+	Thu, 12 Jun 2025 13:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3CTsva0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4OaHoAX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94722459CD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 13:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B32123E353
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 13:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734765; cv=none; b=QxnamAg/tTmweYwADHLjLpHcaO3OaUG72CPqYo+Vp5ru2h/j+V0TTlaeD+5R+ANy4fHPtPwbj3+AUn7NaKx6goxqUHi+amIG7FTQlB/Rv24N/KfKtVeSWfyII7k2+6D/8sSq7M/31uoM1R0ZvAdKknj4kTh/GHHshnQLA963bEQ=
+	t=1749734768; cv=none; b=qz45EAhdhsa7pZfwjVIN44Htm9EmP+NjpgzDpDiHNggzh18nIW5AD5QMKSkq79Lg0GSMnLO8CSNOil06ZkP7oZpKsCPKhfm0L6HeRjlZwQedfgnzhuYjFDej6eTkhe+DVkOeR5fL7ZUSgBgEedJGRV+wQfW44oHIZoV9QclbDKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734765; c=relaxed/simple;
-	bh=8z8jRYS65ySEEnT3DFKOiSpIbs1wXHDoKBkOLAcIIks=;
+	s=arc-20240116; t=1749734768; c=relaxed/simple;
+	bh=omTE8wnVFmGckS7IdJfWl5N4Qi8kLSwJBxEYJOHe0rY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eSqitNOYeBn3lVgLLlCGd2uWKswWquNdeVLGwIkBKDRUuHB5pNh62HwTAMuBbv5M6ymWCWP8wPxDWC1MKCkdP++6+oVqx09ZcRY3ISVA09qjufP+Syhvi7QHk8zmmXPFsz/dyMZWtyod1sF0jZ2ctQd/5kdZZsTOc7O7we+X/xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3CTsva0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA13C4CEEA;
-	Thu, 12 Jun 2025 13:26:03 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ulmrP/9rjKSOdAYX1UqLWD81Likm4v7jpfNp1xQnb9YXiYiJaed9z2z180FUh9uAFYNDlRDcIiSxTUBc+ou3frPwowz5nkw4Y4rzTfCdnB9lTnQpzHA/pN1ob3Y/UGSrtFx/7T56gP7YOHjHTNGpVEfgYF4aGPajDmMdMbKNQDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4OaHoAX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A6D5C4CEEA;
+	Thu, 12 Jun 2025 13:26:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749734765;
-	bh=8z8jRYS65ySEEnT3DFKOiSpIbs1wXHDoKBkOLAcIIks=;
+	s=k20201202; t=1749734767;
+	bh=omTE8wnVFmGckS7IdJfWl5N4Qi8kLSwJBxEYJOHe0rY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=f3CTsva0PHZ01M9L8PZsVMNBO1ifB5paicK/vr94SbWctb1QJR73zJkH9O28Q7hAo
-	 Vb5zTdPrdenKQ5sVxS9dn5sKFe6NkmWJgtz4j+agkzvG9E+mpUnar/VohkRrynUZ8N
-	 6LuLAo59WZAw/8p731LoEh2YqpOBDRzBPuoIndyzsz2GbB6xT3WAcstjOWq2gURnf+
-	 2CoMb2xGlWMlQy+2Txk0Bu8JMnBeBBjdKpOoet64LHqzJZP/xlxp6dlxKhw9/oGpm0
-	 fX9OGB2+1DjtXIIwaBJ7oxpwstfwktp8w76zS7328D50y0FWV9v5ExO7IK2xJuNlNh
-	 9+ogSdDh9oukQ==
+	b=L4OaHoAX1HqDJ7jqo9aBbKB8Pvr5R8serE+Q94XkdPUcuUzI/8BfPzBN3vLm4Sx6b
+	 v3xszySEQMKtS2GK0WE4ZioVXK19o1fv25hcZVDI0D/k1lqgaR0hMTm9/0OgxD22fa
+	 umZRJIDBqAp6d2Gm9RMvn0+frj37zsiUDRijwm0935ZD7atVynehe2jsKgi0TU3w03
+	 tznWiIDaeh39BOC1dPhWl5sV03rasah6ooWt6DbzR/MU/sXFpOCcXdxEvgc8wl39W+
+	 A7ikI1OeNH9g8/3ekgWaQ8C+0gt31OjBO6RzZXVURCljWn15co0AmRgtr1l9Y4BtWa
+	 etr6ZzDQbldjw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 12 Jun 2025 15:25:31 +0200
-Subject: [PATCH 17/24] coredump: auto cleanup argv
+Date: Thu, 12 Jun 2025 15:25:32 +0200
+Subject: [PATCH 18/24] coredump: directly return
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-work-coredump-massage-v1-17-315c0c34ba94@kernel.org>
+Message-Id: <20250612-work-coredump-massage-v1-18-315c0c34ba94@kernel.org>
 References: <20250612-work-coredump-massage-v1-0-315c0c34ba94@kernel.org>
 In-Reply-To: <20250612-work-coredump-massage-v1-0-315c0c34ba94@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -61,43 +61,51 @@ Cc: Jann Horn <jannh@google.com>, Josef Bacik <josef@toxicpanda.com>,
  Christian Brauner <brauner@kernel.org>, 
  Alexander Mikhalitsyn <alexander@mihalicyn.com>
 X-Mailer: b4 0.15-dev-6f78e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=831; i=brauner@kernel.org;
- h=from:subject:message-id; bh=8z8jRYS65ySEEnT3DFKOiSpIbs1wXHDoKBkOLAcIIks=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR4XXWf8OT3i/91WSl/LSXUrmVoTjAp+XZmZ72a74b90
- 09dfr0ovqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi11wZ/pk8sE4K/eOzjCP0
- 4MyN1VsD2Z8Uf3sepjnlmLF4gcHE1HZGhn8iTsaLn2rmzf5hfi/+g8TtNt9dv9wTi7ZlHq4svvy
- 8jwEA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=941; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=omTE8wnVFmGckS7IdJfWl5N4Qi8kLSwJBxEYJOHe0rY=;
+ b=kA0DAAoWkcYbwGV43KIByyZiAGhK1Ueh4NzhTLkjO34jPjjL1ZTle/1GhiPU9d9XveIlAsGMU
+ Yh1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmhK1UcACgkQkcYbwGV43KKylgEAjGPP
+ 5YD1fNYkDo93gChuSWKSsN8WfvUqNHrYVHggkjIA/0N3zI7Tpf72P29fz9Ol9qy1r39N4DprgrA
+ DdfC0tuUB
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-to prepare for a simpler exit path.
+instead of jumping to a pointless cleanup label.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/coredump.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/coredump.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/fs/coredump.c b/fs/coredump.c
-index f980a7920481..f8d5add84677 100644
+index f8d5add84677..ba771729f878 100644
 --- a/fs/coredump.c
 +++ b/fs/coredump.c
-@@ -1076,7 +1076,7 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
- 	const struct cred *old_cred;
- 	struct cred *cred;
- 	int retval = 0;
--	size_t *argv = NULL;
-+	size_t *argv __free(kfree) = NULL;
- 	int argc = 0;
- 	struct coredump_params cprm = {
- 		.siginfo = siginfo,
-@@ -1189,7 +1189,6 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
- 		atomic_dec(&core_pipe_count);
- 	}
- fail_unlock:
--	kfree(argv);
- 	kfree(cn.corename);
- 	coredump_finish(cn.core_dumped);
+@@ -1095,13 +1095,13 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
+ 
+ 	binfmt = mm->binfmt;
+ 	if (!binfmt || !binfmt->core_dump)
+-		goto fail;
++		return;
+ 	if (!__get_dumpable(cprm.mm_flags))
+-		goto fail;
++		return;
+ 
+ 	cred = prepare_creds();
+ 	if (!cred)
+-		goto fail;
++		return;
+ 	/*
+ 	 * We cannot trust fsuid as being the "true" uid of the process
+ 	 * nor do we know its entire history. We only know it was tainted
+@@ -1194,7 +1194,6 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
  	revert_creds(old_cred);
+ fail_creds:
+ 	put_cred(cred);
+-fail:
+ 	return;
+ }
+ 
 
 -- 
 2.47.2
