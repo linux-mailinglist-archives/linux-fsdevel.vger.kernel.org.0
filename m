@@ -1,243 +1,646 @@
-Return-Path: <linux-fsdevel+bounces-51517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBD4AD7B13
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 21:36:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8951EAD7B72
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 21:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5652A18914CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 19:37:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A7617AA99F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 19:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6816D2D3237;
-	Thu, 12 Jun 2025 19:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B362D5417;
+	Thu, 12 Jun 2025 19:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y+stGjDR"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="AQ8Uk+bQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CDF2F4309;
-	Thu, 12 Jun 2025 19:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749756993; cv=fail; b=jzVRl322ZDCIqjOfkSeyE8dAZqkelM5v9Q92BdMVdCzq9irxgEbwjfasyVCZ7CwZL/I1AjGwNAB3eLoeMCYOFl40y55RtYXDddoBq/lUt5oH4DMhe0ko/d6IrBUsWbycBcCDlIzLn8wPKNod9AHLSv9+sO8ntGLfj/hMooPrQ/E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749756993; c=relaxed/simple;
-	bh=TBDmbU6yz1c/A/pAf2+NpcXcKA0nCwyKsIT7Njq2TNM=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=DNDHl2+xNh1Catqux6GGsJa8GlY63fpniw+fxqXwD8fyf5J5idV5e1VQMRM9C18+gyc//INYznJUH2Q9J1oe8mrQXGzcZHZx3/V4LSjSxRzMUrHjVdjdFtaMw6WmYaHkGJzxPB8MtAJlg4kw68skSPZZpizHDv1hyqkI2b2m2KY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y+stGjDR; arc=fail smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CBGvgI000783;
-	Thu, 12 Jun 2025 19:36:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=TBDmbU6yz1c/A/pAf2+NpcXcKA0nCwyKsIT7Njq2TNM=; b=Y+stGjDR
-	x99DBh+5XGBA3zmbzl0l9y2DbSGI2Eke5TLdUYs/96Z7ge/1KjoQynI7fnpNYuHI
-	eNy7HDSJGDeAvqniObYQsj7aO41oASQnQrkubve+jfjVd9S1zAnkdazKXrpAyPpm
-	bEOGS8QnkvvHPRMVV63D83fJBJqEJIlQt4+eQaR2PLD00WzCYlALtLpXoPyG0xCv
-	+Kr7F9Anads+1+0ECEskQFy+uZQvEBTnn9vdGkBqrP3b55eZIaIXfa6Ny/mQpDDT
-	GAPzDCNefPfLyuayf1r6w34eIYgcY4cCx7OuopFED1DiBr2F6zgF9a1KypP6a5CQ
-	um6m2OT+Dk/Lqw==
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2088.outbound.protection.outlook.com [40.107.223.88])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4769x01kyu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 19:36:14 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SKLJ4RKPgvYFqZCL6YRGuOSNdpiUU0hDXhfEXwPU8ctxh6jD1Mx0tTRjpN/gKtW6mYgIDLpg5hYsMzUGHyxxC2k/+ZYJR64HRH/b40ub5FiobnosZZxs43vE13njw6w/YWEebTxT17SJ28P1fP5Bwh4pRQs6BVG0JmXGO8pEW39ubY6UATn/SIVRid4eF8tF/a1mYy5HN8PzmZlTtJzKX5wsQyItZGue2HbcwEH8/fIy+FC2NUv1cBypq4HOTFyUlH2JJDdh2xzCWXxSEUYEhG4RMZtO1a3SUnvOOPGCWk/5VV5MqYUGntID/mrZAwoKoYBSidTnzS/CEe0VbCgxFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TBDmbU6yz1c/A/pAf2+NpcXcKA0nCwyKsIT7Njq2TNM=;
- b=uPwEqYvJbw1PR58vinw+lmXyiUFgPNubaM/FS3hnhsY+lk/g1pHYKdEaqoo/uz6McA+zIVZ+o5I1IEyOYBJ0TvLKvd5sOQb0P/2O4cK8m+9hVcrRfNdKS/Y69CR9ReNWw//O6kr2IaqyQHAsjktWnnNI+w6hqQnnuNnQVQEn2/jbSqbnIsH8nFNvrx0LNLvpDPU6zwwiFrmfHxl1fJNWoxBc9m0m3I0K9ateycIr0Uxr/0dsyx0N1dbkySVTxUo4hGOXyRjbQqCK/pVLZJ1p1FwMgdHo8INlqz4QIKsx9Bt/N0+hp0anJs/AnSEEx35NGxowa5COA5IiELB1VziBDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by IA3PR15MB6722.namprd15.prod.outlook.com (2603:10b6:208:51b::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.23; Thu, 12 Jun
- 2025 19:36:12 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%7]) with mapi id 15.20.8813.018; Thu, 12 Jun 2025
- 19:36:12 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "willy@infradead.org" <willy@infradead.org>,
-        "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>
-CC: "hch@lst.de" <hch@lst.de>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>
-Thread-Topic: [EXTERNAL] [PATCH 4/5] ceph: Convert ceph_zero_partial_page() to
- use a folio
-Thread-Index: AQHb26ffIYbDsrgK+k6JSmW9loNoQrP/6zCA
-Date: Thu, 12 Jun 2025 19:36:12 +0000
-Message-ID: <80277dc7220fa255044d3d90109866aeb46a52da.camel@ibm.com>
-References: <20250612143443.2848197-1-willy@infradead.org>
-	 <20250612143443.2848197-5-willy@infradead.org>
-In-Reply-To: <20250612143443.2848197-5-willy@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|IA3PR15MB6722:EE_
-x-ms-office365-filtering-correlation-id: 25b5cfb7-2c46-4b07-bc44-08dda9e86375
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?d045ZlpNa255RUpMNTZKL2lQYnlPWFRZaldyZEo0eXUzd2Q3NDdXZlNrLzdJ?=
- =?utf-8?B?eXZMT1dMT290cC9EYlNNNy9SMUVGWEtxS2gxUWRvMVA5TW9FeTg4bzZkQmpW?=
- =?utf-8?B?VVRNUytqVDhmSWpvTFVDdktZSkFXRWo3UGt2VjhlRUdEd25ncWZZeHIzWGM5?=
- =?utf-8?B?MkZ4ZUluL212RmwzanhhRkhIek94YWlhMUVEaVAwc28yTXVMTS9LZmx4L3A3?=
- =?utf-8?B?UjFDaThKbFhPQTJ4enZXU2xJOHNXbnNNTGtNOTRld2trbXJERHI1bFA4Zkc4?=
- =?utf-8?B?ZnFhSU1qR2JnY3U3Ull6eGhHelBraHFBYkhJbnRiNjB3Zk9mWm1JUVVCZ0dG?=
- =?utf-8?B?VCtIcGRheXFBaDk4SkQyTmFvUlVjREJXM3BUMXlaRnNKei9IZk9WTWRwR1ZG?=
- =?utf-8?B?MHFJVXkrQ3R1SDhsbnphRWxLMzhUZFdOUXYwbi84MXBTZ1YvK3BWUWRtU2Zx?=
- =?utf-8?B?N29TQkVJWmI2Y2VoT0tWelhMVHJTOGRyTjVxU1RHbFpYMkZRMlcxSnhPVGZF?=
- =?utf-8?B?VlF2eGVDY0pLOGhRQnF3TFZFdjdVRjdQTXBDMWxVZVE3NjV4ZTc4MlMvOUpV?=
- =?utf-8?B?eFBjMVorU051R05xMGtvNUZlOHRoU0hOUUlyT1NyU3dnbjBtRW16a0ZNY0c1?=
- =?utf-8?B?V0RnTEIyaFFZRXRJVGpHZUtsaVM4dW9XS1lOc0lqZUpFYVJ6OUVlc0hNY2oy?=
- =?utf-8?B?S2R4SWtYZCtWS1RzUXd6YkZnbEZJcmZZV0thWHRXTVJ3V1QvL0gxN1FjZ20r?=
- =?utf-8?B?VVZEZWZXU0ZPYmZsY2tLZGNTbnpPTE42NE5UblgxTHIwSG1DTUVmSVRMcGhL?=
- =?utf-8?B?Wm5mWFNNMXpZQ0htSHlCdFVEeDV0bWZPZTdkMW9EdlZyRjg1RmIvcENzQ3A1?=
- =?utf-8?B?RjRoZ3ZYdE03c2NHNWxkTG5XTmFEdUZ4WnJqa04xclhVL0hJNCsrVGJXT1o1?=
- =?utf-8?B?QWM2cjJEb0FHeVZXdjRYYzFkUmF6L3owS01zTGdsUzR2NUdYYms2M3FrMDBE?=
- =?utf-8?B?Nmh5cnQ3QUZ4bkR4VGVEZkFUWnQyZXlhU3l5bEc5TzhaU0hGdnFBVG9WNlRN?=
- =?utf-8?B?b1IySm1WR2tFSFBGVUNhQ3ArNUE2OVpwQkdWUTRsUlJvNWVGSHFMOFNjNnpB?=
- =?utf-8?B?UU9US082cG5MRVpkVWliQk1zaEg3NG84SG5qS25rcXJPQWluNzYxWjBFWWVM?=
- =?utf-8?B?eGlwMlRZYnl2S2NkTEdna2IzYmNZUi9LMmM1R3dPNTFTWjdaalQxdVNWTHNF?=
- =?utf-8?B?RUx2QnI1UGErL3JrcVJsTUVMVUYzakJOTkZ0cGNVWjZBYytZWUtDQTI3STZq?=
- =?utf-8?B?Z2x3ZENOUi9uZnc4NnJWYUZTVkNSbG01QXRYcUphZVEvSWNQK0pQYlFrZWpI?=
- =?utf-8?B?SUQxYXhYWVlTU3EyQis5VHk3aGRQTzlyN245aGpwbjRHdGZlVVlHZFk0RXp1?=
- =?utf-8?B?a2NEWGkwSmM1aVFJUVFqU01KbTExbDVtUWlBemczNFUvRjUyaEt2aFFPWnFl?=
- =?utf-8?B?TjV5Z3g5bCtEVnJOUjUwbmkyMXFZN3d4a0FSMEdkdDFSTVhpT2J3RE9SbFJp?=
- =?utf-8?B?L1VFUHp6Zm5tUjZ1QmxHTVUvbEhWTFpqT3BYQXlKREpEZFo1SjZJMGc2N3lq?=
- =?utf-8?B?MWNNTVZWcHRhRlFsQmxpUHFSbC96Q3owVjV1b3NoYndBTlUxMWFrU0RZSnpr?=
- =?utf-8?B?QkoxZEk1R01MVTlmZElTNnNRbHBPeHlLWERFWWhuZ3NHK09sTmJERVRjZHlW?=
- =?utf-8?B?d1JFTTFaYnBQVExpckZwTng5dm5xcTc0Qlg0UjJFeTJtSyt5MHVWWWhXR2lQ?=
- =?utf-8?B?bHhBeUZDRWh5eERsNkVMeHVLeUZFMWxOV282YmJ1OVN0aExkUGorQ01ia0pR?=
- =?utf-8?B?anBPbldodzZqQWdMclAvcVJSOHM4OWlDSnA2cmRleTlyNHBDWXpiMlZ2bzd4?=
- =?utf-8?B?dUU2eWNXV2JTQ21sbDFEdk0wc2RPRmxtSFZlQ29MVEhYRUd2aGZwQ1Y0aTYy?=
- =?utf-8?B?Y1gwMVIweHl3PT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WWhNNzg4NVB6eTFNSXhlclpHT0dadWE4VEhPM0ZVODBXK05pQVl4Q0FZYWds?=
- =?utf-8?B?UUp4cHJiSXFIdjR6b3NKUWE1enBkNjJWanFqTjRPMUw4VXhPYTBidGlpY1Zx?=
- =?utf-8?B?bzYrRFdRZENKbTBHU1FySjJHR3VBcDZFMnhmSW5VUTc3NzJlcFZIK1huS3hQ?=
- =?utf-8?B?bU5zRFVRdk9acjRnTG9SbEN5RUdVWDJoZC9BOXMxaHVwNUtJYVRSSGlLTzNn?=
- =?utf-8?B?UzRjS05IeGtySGVUTXk0U2ZOSTllb0hOOTllSHJGTk5pVFBXSm1JNHI3YXRP?=
- =?utf-8?B?YkZpRGwxTlNqaEJ6WXhJUmg2YWErdmxIWmJUdkJoUjYxYUFpVUdmZXJtaDg0?=
- =?utf-8?B?NE5WL3RrT09IY3dZYmEzbzlsY1NKTTFTVVBDWmFocmdYWXAvWXFSRHY2L2l3?=
- =?utf-8?B?b204M0tIUUZPdmswVXlLZ3g1ODlNaGtzVmRJMlVSbXZNdklmek02c1JEVDEx?=
- =?utf-8?B?Um42MWM2bkZIR2Z2NjY2T1FTU3UxNXdDNVQwSUVpUms5YUo4cGcraWFpUnVP?=
- =?utf-8?B?Y25aSGw3aVVtZjliYTc4VmpGMitQK3Y3eFAvd0J5MVJRaHE2eWU0ZDJOdFRw?=
- =?utf-8?B?eHV2V1VzWGZITXFpd05DRHNHaVhaRTdJblFLdkIzcGtYaXMrenViSXNoeXla?=
- =?utf-8?B?SFdxRC9BR3owZ3l0ajRFK1U5WkpieWN1YndaOWhZMFlLYjlNdU45Qnl0cFpk?=
- =?utf-8?B?bVZuTzJXWjNSeUVzcnZBbUFIQzhxYnB4Q05rMlJnTk1UTUVad1J1WDI2dlpK?=
- =?utf-8?B?ejVlakhGeEFOdndMRHdQbnZDbmVUWk9PeXBMdGsrMDFacDRyU3JuaC9QenBr?=
- =?utf-8?B?STNhWHdvT1JjQmdTMndqaW92bXNITVRpUUxNbTFmY21aQ09hNU1LVVRDanFE?=
- =?utf-8?B?b3VQNlhweFpZTlVGbHI4d2NuZTU2bnRyN0pXNmc0TVNCcXAxZHkyT05yUkNT?=
- =?utf-8?B?Q1duVlBxaFpWSVN0RzNaRkIwbVByU2svTURsOXFDdUY4bTBWSFVDcjY1Ni9B?=
- =?utf-8?B?YzlvajAxVFpnb2RtTVVERlZHVzB4VGR6d1QyZXlKWTJZNC9XWks0ZTNsMWJM?=
- =?utf-8?B?WEV4RWxWL3BjTzJvQTB0TTJDaWtxN3BwcTJSSmgzbXh2MXZaNWU1RTlyYTAz?=
- =?utf-8?B?Z0JtVG4xa0UvVC9TZDZVSzZxcS9sVDNsRkhoazE3ZnhKTytFc2xrOVo0Sk1q?=
- =?utf-8?B?SE5NNFVCUkwrRVhHbFBiM1puNjdEODB5cTU2ZnBJb1kxQWpBSW9YTjBjSXZU?=
- =?utf-8?B?TUNsK2dQUTJaMnNuNHJFamQyTGJVV0RiLzVaYm9tMUorb0ZSQ2pUYnVCZFpo?=
- =?utf-8?B?UkxGQzFkV2FZUlpQMXlvRysyQXZiR2YxdVdYc3A4Z21wTVUzUmdCTzE4Y3RZ?=
- =?utf-8?B?T2Rrekpkemoxd0Y4QlZncHRCaGkrT3lxK08rbm45R0hnNlNFSkxSaFJuUWFi?=
- =?utf-8?B?M0FJdXdYdmxLNTc0WmZOSmVvMGZGc1VuS1ZDOFdYaUR0clVCWXNXMVhsNXo4?=
- =?utf-8?B?VlZkVkc0T3c5L3BRWXNGZnNaUjlZUGhqR1UwbmV6UmtlemlYbmpSWHRzZU9O?=
- =?utf-8?B?TGVTRGh3UVRmOG1jYmtsempKZ20rOGpGRkhsUUN0SCtONmdIMkd0Q3BySURz?=
- =?utf-8?B?elVvTm5hREJvTXRHRW5vVUFaNEdWZ1h1RzFGRmJHYUpxOUh2QnpIVjVHRklx?=
- =?utf-8?B?TzVjdkJvR2RZRzFDdWFDcFNmZWF2bGN6NlJzaFY3a1RVTExDMzNianRrRFB0?=
- =?utf-8?B?YUpWS3ZjcFV6dzlGTXhIcUNDMytrUWdhcXo1QW9VNnliMXZ3Y2kzNUk0cm95?=
- =?utf-8?B?WWhncjFpTU9ZME9nc2FGbW1yeU8zT3A5NEkzMDNUVGp5YjRsVGtuUVJaU243?=
- =?utf-8?B?cmpXN3RMeWZHM3M3U00wRjFKRXJDYk10aENQeTJRTzBMRjUxdmNTbElVOVFy?=
- =?utf-8?B?YjMrSjgyV1U5NlpsTm81RzVnb1J6dUNmdklIb2hUMDRFUnU5dFg3SVhPK1lt?=
- =?utf-8?B?VWdFZGoyRm9IeitkZkNaNmNZOUJwdUdPTkcxTmVpSHlqWFhLcWZrSnlPYm9p?=
- =?utf-8?B?Mi92cTJ5Z0diOGVlQjg4Rk5lVWsxN0gxVnVzQkhWQWdjYmlseTB1OWlIaU11?=
- =?utf-8?B?MUFnME5pRE91TVRQZGFHTmxXQitVd0NOSmNDTGh4bUVWdFBHTHlGTkxFc2J3?=
- =?utf-8?Q?z7xqech15M+s9I/K3JbaMJM=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BEE25C0D52FFF24E94C04FAF910B8C90@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5EE2D4B49
+	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 19:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749757856; cv=none; b=U2yFR4HDUiJN2qNTWra/VnwdGER9cxJ1NDnfxRU1VcZIl0RwVzNTtAaZeJqmH4wx4+C+ytoV63bARxGd7YAlAGPeup0S2cTT+xe8bcwCUXGcJIU4DEHcMVc0qYTTISBXRhRac9hjC87U0+Nq5KPcdYutcDYYUAtfvEQT6Lm3x64=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749757856; c=relaxed/simple;
+	bh=aKTlR7HA9qAeG/nCQedL5G41cfrkAam4TI7EPEu0ce4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NCUrC7FCY2jLMC9zsrioh9f7jTEd4QGVe1yPR7aYJJ0ZbzMdXPle9NXSwiQyR73RaxR4xooWn5Sgtwj6J0pI5PH4dwdkb2Im33GaXISy2G5WWtz6PUVIjh7I3a20zoWfeRB6VTM0f4owZzaznga6yBZToMnjYsLv7XBbOayUvgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=AQ8Uk+bQ; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-70e767ce72eso13182497b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 12:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1749757852; x=1750362652; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aKTlR7HA9qAeG/nCQedL5G41cfrkAam4TI7EPEu0ce4=;
+        b=AQ8Uk+bQCngMPmuswWnDMIfGWjGbEdafsPHH0npoBgM+FOPFCoBmOhIhoJD4R+pxnD
+         1LwXIiyFvmysWOpNiE+C/ScqS13D8AbJj2d5flb/0AABymlQnXbSLi//SaVINxWgmcWC
+         6W+oe8Oil5BZbrgPDUoueCxDwe6onLlMKGD8LKUgqKDNQjdO5XkhJfEdqvz8cMCA4XaI
+         biogi/z7nfFbu8qtEy2eyDcBL4XzJ7/kNxzD5GZaoCOhjXb9ri4p4kfe2jIweMw/SrmB
+         ZzMwlMbw+us2VgN4M5tezng4ZXDy8fxse0c1SKAo2URGVWMe511KyxhjN/CGmHO0SQR+
+         PGTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749757852; x=1750362652;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aKTlR7HA9qAeG/nCQedL5G41cfrkAam4TI7EPEu0ce4=;
+        b=NlTLCDicSmpRnh+JhHoWaxvERlz8kANfN/bNmlLCK4tTnIl7ALlsECH9sZP7h1ROiG
+         ZoIrDNwIvoSKumh1NjunABUJLT/6aQ+h5wCYZgozyaak2muk+v4leApM0kSafaBCzYF1
+         s7lQ1QApPlKOG3cPlICTjatNBNjYJt5KDCQrzvTqTDgO8QiKw/xNcp+09KVfFrABx+jK
+         AOKd3/DH8mUcJT/4Zu9nGD8rSIZorVcZOwAG/In/o67+wdK5fTva2q21ctVkqV16EY/w
+         zVyIIcEoMW0AUSdqs9htMCwhQLTTuNcSVDN7TlyE0b2T7chLqLSV448uVTWlZKdu3FgV
+         nxLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvLlhYjRoSb2+QCI7Gz4VammEUKeCWcCLO8wDGZtPIuZSh6C4/8+wVQyp/QuNgdycrAGUsyzKXD3i8adFJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQCWsjCT+ptmX1s7mB2GgXLcFmBP5z5dGC+W2w1nwfxbxFrFP1
+	ffH9C3BULyloucEWvlLmKQVCBKXd4yJPT0Sgdy7rr5c3/UKDXQ8eP1Ap4UaQZaZOr3U4e6yrd09
+	RAchZXCw=
+X-Gm-Gg: ASbGnctVo6+1mH2G7EKlIP8a7YXpfWIc23m0FIlzSN8ypdaXPpgp73u/rcGJXwdiE8h
+	XBiJHIUjlZmpZ6WafxA8jCFM/7nybZYtmTPsUNfUHxYKlQg7qjmNnuZ6C6sEqZ2rGeGOv5ERBZ0
+	YCO5vh6WgEgq4WCsizylupRmRsnuu33bIhMvkVMCpnb4UpQF9Rc0yo1o2CelkDlKQ9QJoz/hiEc
+	p+GV1IwPONF3G5Byo3TjqcPI9SEPGqKYY9g9FFMBY5yYSBl8P9eewGqex067jBL6uZrmtS/Zn+F
+	zI75SyqkQ6gBcwdaM2r69mOmPXnESTYkJ/9cC5Fe5dTCasEh63ORIK2lHIudf0BePl7zM0n4XdR
+	jPMqHfUTVwgx3gTWZcyh5Dthz07Dd6QksgQ==
+X-Google-Smtp-Source: AGHT+IEplsy1yBqk98ULEihHylHZFPji5KYkhaT3dZyGZKioHiXPVTYzfT9BTAjsq07UMcK9/XAK8A==
+X-Received: by 2002:a05:690c:3510:b0:70e:29af:844a with SMTP id 00721157ae682-71163781971mr9357547b3.18.1749757852494;
+        Thu, 12 Jun 2025 12:50:52 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430:f1cc:a889:5913:28fa? ([2600:1700:6476:1430:f1cc:a889:5913:28fa])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-711520598ebsm3879677b3.22.2025.06.12.12.50.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 12:50:51 -0700 (PDT)
+Message-ID: <670fd7d013c0309844530e88a9e5de15d91bcf59.camel@dubeyko.com>
+Subject: Re: [PATCH v5] ceph: fix slab-use-after-free in
+ have_mon_and_osd_map()
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: ceph-devel@vger.kernel.org, dhowells@redhat.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, amarkuze@redhat.com, 
+	Slava.Dubeyko@ibm.com
+Date: Thu, 12 Jun 2025 12:50:49 -0700
+In-Reply-To: <CAOi1vP_+0f-RjBrCHNGpuNtYqfcg6A+CKPGGf-Nb_dLC4phVUg@mail.gmail.com>
+References: <20250414221013.157819-1-slava@dubeyko.com>
+	 <CAOi1vP8QreVDgY363c5b1Ke35N7tmRArcLfqQcwQiwJ-ULeWxg@mail.gmail.com>
+	 <f6ef96ecfb43cdb695eb9292388434329ad3bc91.camel@dubeyko.com>
+	 <CAOi1vP_+0f-RjBrCHNGpuNtYqfcg6A+CKPGGf-Nb_dLC4phVUg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25b5cfb7-2c46-4b07-bc44-08dda9e86375
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2025 19:36:12.2396
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rOCydhJjEVJNRg34CqrsULjwLeiY95O8QBuoje/YyXKlzrp5+z4ASfSgmSPWqYD7v1+BBcowxnzBsEebttVlzg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR15MB6722
-X-Proofpoint-ORIG-GUID: 0r5KPyh9kTCxtTHmr8ShzaZL9aAcwkAE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDE0OSBTYWx0ZWRfX5Jmj/IsIUXCN wVWTHoe6ISFtzfjKKOvte8MjDvKA327LMUJrpCpSPuxsGbxyrGmIaEnM7gAWzXr8XkJX2Oh9R0K Q/gN/iWt2PJD+RxKCuExuNUTj5k5A601amsvqt/a9YsNxsnDBsaJDLFDnSwnsII5/vk8YqBStAZ
- r6bEljuHrIOqrnN9MbXQykT4N4M7+cRC+9d4fZ3OzI3VHFhrRsKBVcpX5OIvGSJDnQ15dqG0U6n CBe7Itodf/1dgAItfUzSkG6KuXxFCHOu7K1+zeP8jsYQsG5uXMw/9IJoOOz0BgGBcrEmqcsGG9B 9v3Bs4tlpF8xgOyRz8HNwijI7F3bv5iE9DEntV1tjtuUMt7Tk2CQcPWDxLftNoODJzoc/P0cT/d
- G3KDPoZhclzFrTT+mfmZV8aEUYr5kDNb+B06ohYgbqdX051a0Nyf4LFZ6c/an+ThexusTuPi
-X-Authority-Analysis: v=2.4 cv=YKGfyQGx c=1 sm=1 tr=0 ts=684b2c2e cx=c_pps a=qYMZzBO7ydizK6UiZNNFIA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6IFa9wvqVegA:10 a=JfrnYn6hAAAA:8 a=VnNF1IyMAAAA:8 a=yblNkXvDgx5R9Dp-HPEA:9 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-GUID: 0r5KPyh9kTCxtTHmr8ShzaZL9aAcwkAE
-Subject: Re:  [PATCH 4/5] ceph: Convert ceph_zero_partial_page() to use a folio
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- malwarescore=0 bulkscore=0 priorityscore=1501 phishscore=0 mlxscore=0
- lowpriorityscore=0 impostorscore=0 adultscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506120149
 
-T24gVGh1LCAyMDI1LTA2LTEyIGF0IDE1OjM0ICswMTAwLCBNYXR0aGV3IFdpbGNveCAoT3JhY2xl
-KSB3cm90ZToNCj4gUmV0cmlldmUgYSBmb2xpbyBmcm9tIHRoZSBwYWdlY2FjaGUgaW5zdGVhZCBv
-ZiBhIHBhZ2UgYW5kIG9wZXJhdGUgb24gaXQuDQo+IFJlbW92ZXMgc2V2ZXJhbCBoaWRkZW4gY2Fs
-bHMgdG8gY29tcG91bmRfaGVhZCgpIGFsb25nIHdpdGggY2FsbHMgdG8NCj4gZGVwcmVjYXRlZCBm
-dW5jdGlvbnMgbGlrZSB3YWl0X29uX3BhZ2Vfd3JpdGViYWNrKCkgYW5kIGZpbmRfbG9ja19wYWdl
-KCkuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNYXR0aGV3IFdpbGNveCAoT3JhY2xlKSA8d2lsbHlA
-aW5mcmFkZWFkLm9yZz4NCj4gLS0tDQo+ICBmcy9jZXBoL2ZpbGUuYyB8IDIxICsrKysrKysrKyst
-LS0tLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDExIGRlbGV0
-aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2ZzL2NlcGgvZmlsZS5jIGIvZnMvY2VwaC9maWxl
-LmMNCj4gaW5kZXggYTcyNTRjYWI0NGNjLi5kNWM2NzRkMmJhOGEgMTAwNjQ0DQo+IC0tLSBhL2Zz
-L2NlcGgvZmlsZS5jDQo+ICsrKyBiL2ZzL2NlcGgvZmlsZS5jDQo+IEBAIC0yNTMwLDE4ICsyNTMw
-LDE3IEBAIHN0YXRpYyBsb2ZmX3QgY2VwaF9sbHNlZWsoc3RydWN0IGZpbGUgKmZpbGUsIGxvZmZf
-dCBvZmZzZXQsIGludCB3aGVuY2UpDQo+ICAJcmV0dXJuIGdlbmVyaWNfZmlsZV9sbHNlZWsoZmls
-ZSwgb2Zmc2V0LCB3aGVuY2UpOw0KPiAgfQ0KPiAgDQo+IC1zdGF0aWMgaW5saW5lIHZvaWQgY2Vw
-aF96ZXJvX3BhcnRpYWxfcGFnZSgNCj4gLQlzdHJ1Y3QgaW5vZGUgKmlub2RlLCBsb2ZmX3Qgb2Zm
-c2V0LCB1bnNpZ25lZCBzaXplKQ0KPiArc3RhdGljIGlubGluZSB2b2lkIGNlcGhfemVyb19wYXJ0
-aWFsX3BhZ2Uoc3RydWN0IGlub2RlICppbm9kZSwNCj4gKwkJbG9mZl90IG9mZnNldCwgc2l6ZV90
-IHNpemUpDQo+ICB7DQo+IC0Jc3RydWN0IHBhZ2UgKnBhZ2U7DQo+IC0JcGdvZmZfdCBpbmRleCA9
-IG9mZnNldCA+PiBQQUdFX1NISUZUOw0KPiAtDQo+IC0JcGFnZSA9IGZpbmRfbG9ja19wYWdlKGlu
-b2RlLT5pX21hcHBpbmcsIGluZGV4KTsNCj4gLQlpZiAocGFnZSkgew0KPiAtCQl3YWl0X29uX3Bh
-Z2Vfd3JpdGViYWNrKHBhZ2UpOw0KPiAtCQl6ZXJvX3VzZXIocGFnZSwgb2Zmc2V0ICYgKFBBR0Vf
-U0laRSAtIDEpLCBzaXplKTsNCj4gLQkJdW5sb2NrX3BhZ2UocGFnZSk7DQo+IC0JCXB1dF9wYWdl
-KHBhZ2UpOw0KPiArCXN0cnVjdCBmb2xpbyAqZm9saW87DQo+ICsNCj4gKwlmb2xpbyA9IGZpbGVt
-YXBfbG9ja19mb2xpbyhpbm9kZS0+aV9tYXBwaW5nLCBvZmZzZXQgPj4gUEFHRV9TSElGVCk7DQo+
-ICsJaWYgKGZvbGlvKSB7DQo+ICsJCWZvbGlvX3dhaXRfd3JpdGViYWNrKGZvbGlvKTsNCj4gKwkJ
-Zm9saW9femVyb19yYW5nZShmb2xpbywgb2Zmc2V0X2luX2ZvbGlvKGZvbGlvLCBvZmZzZXQpLCBz
-aXplKTsNCj4gKwkJZm9saW9fdW5sb2NrKGZvbGlvKTsNCj4gKwkJZm9saW9fcHV0KGZvbGlvKTsN
-Cj4gIAl9DQo+ICB9DQo+ICANCg0KTG9va3MgcmVhbGx5IGdvb2QuIEFuZCBmaWxlbWFwX2xvY2tf
-Zm9saW8oKSBpcyBtb3JlIGVmZmljaWVudCB0aGFuDQpmaW5kX2xvY2tfcGFnZSgpIG5vdy4NCg0K
-UmV2aWV3ZWQtYnk6IFZpYWNoZXNsYXYgRHViZXlrbyA8U2xhdmEuRHViZXlrb0BpYm0uY29tPg0K
-DQpUaGFua3MsDQpTbGF2YS4NCg==
+On Thu, 2025-06-12 at 10:20 +0200, Ilya Dryomov wrote:
+> On Thu, Jun 12, 2025 at 1:14=E2=80=AFAM Viacheslav Dubeyko
+> <slava@dubeyko.com> wrote:
+> >=20
+> > On Wed, 2025-06-11 at 13:22 +0200, Ilya Dryomov wrote:
+> > > On Tue, Apr 15, 2025 at 12:10=E2=80=AFAM Viacheslav Dubeyko
+> > > <slava@dubeyko.com> wrote:
+> > > >=20
+> > > > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > > >=20
+> > > > The generic/395 and generic/397 is capable of generating
+> > > > the oops is on line net/ceph/ceph_common.c:794 with
+> > > > KASAN enabled.
+> > > >=20
+> > > > BUG: KASAN: slab-use-after-free in
+> > > > have_mon_and_osd_map+0x56/0x70
+> > > > Read of size 4 at addr ffff88811012d810 by task
+> > > > mount.ceph/13305
+> > > >=20
+> > > > CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-
+> > > > rc2-
+> > > > build2+ #1266
+> > > > Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+> > > > Call Trace:
+> > > > <TASK>
+> > > > dump_stack_lvl+0x57/0x80
+> > > > ? have_mon_and_osd_map+0x56/0x70
+> > > > print_address_description.constprop.0+0x84/0x330
+> > > > ? have_mon_and_osd_map+0x56/0x70
+> > > > print_report+0xe2/0x1e0
+> > > > ? rcu_read_unlock_sched+0x60/0x80
+> > > > ? kmem_cache_debug_flags+0xc/0x20
+> > > > ? fixup_red_left+0x17/0x30
+> > > > ? have_mon_and_osd_map+0x56/0x70
+> > > > kasan_report+0x8d/0xc0
+> > > > ? have_mon_and_osd_map+0x56/0x70
+> > > > have_mon_and_osd_map+0x56/0x70
+> > > > ceph_open_session+0x182/0x290
+> > > > ? __pfx_ceph_open_session+0x10/0x10
+> > > > ? __init_swait_queue_head+0x8d/0xa0
+> > > > ? __pfx_autoremove_wake_function+0x10/0x10
+> > > > ? shrinker_register+0xdd/0xf0
+> > > > ceph_get_tree+0x333/0x680
+> > > > vfs_get_tree+0x49/0x180
+> > > > do_new_mount+0x1a3/0x2d0
+> > > > ? __pfx_do_new_mount+0x10/0x10
+> > > > ? security_capable+0x39/0x70
+> > > > path_mount+0x6dd/0x730
+> > > > ? __pfx_path_mount+0x10/0x10
+> > > > ? kmem_cache_free+0x1e5/0x270
+> > > > ? user_path_at+0x48/0x60
+> > > > do_mount+0x99/0xe0
+> > > > ? __pfx_do_mount+0x10/0x10
+> > > > ? lock_release+0x155/0x190
+> > > > __do_sys_mount+0x141/0x180
+> > > > do_syscall_64+0x9f/0x100
+> > > > entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > > RIP: 0033:0x7f01b1b14f3e
+> > > > Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e
+> > > > 0f
+> > > > 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f
+> > > > 05
+> > > > <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89
+> > > > 01 48
+> > > > RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX:
+> > > > 00000000000000a5
+> > > > RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX:
+> > > > 00007f01b1b14f3e
+> > > > RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI:
+> > > > 0000564ec0147a20
+> > > > RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09:
+> > > > 0000000000000080
+> > > > R10: 0000000000000000 R11: 0000000000000246 R12:
+> > > > 00007fffd12a194e
+> > > > R13: 0000000000000000 R14: 00007fffd129fa50 R15:
+> > > > 00007fffd129fa40
+> > > > </TASK>
+> > > >=20
+> > > > Allocated by task 13305:
+> > > > stack_trace_save+0x8c/0xc0
+> > > > kasan_save_stack+0x1e/0x40
+> > > > kasan_save_track+0x10/0x30
+> > > > __kasan_kmalloc+0x3a/0x50
+> > > > __kmalloc_noprof+0x247/0x290
+> > > > ceph_osdmap_alloc+0x16/0x130
+> > > > ceph_osdc_init+0x27a/0x4c0
+> > > > ceph_create_client+0x153/0x190
+> > > > create_fs_client+0x50/0x2a0
+> > > > ceph_get_tree+0xff/0x680
+> > > > vfs_get_tree+0x49/0x180
+> > > > do_new_mount+0x1a3/0x2d0
+> > > > path_mount+0x6dd/0x730
+> > > > do_mount+0x99/0xe0
+> > > > __do_sys_mount+0x141/0x180
+> > > > do_syscall_64+0x9f/0x100
+> > > > entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > >=20
+> > > > Freed by task 9475:
+> > > > stack_trace_save+0x8c/0xc0
+> > > > kasan_save_stack+0x1e/0x40
+> > > > kasan_save_track+0x10/0x30
+> > > > kasan_save_free_info+0x3b/0x50
+> > > > __kasan_slab_free+0x18/0x30
+> > > > kfree+0x212/0x290
+> > > > handle_one_map+0x23c/0x3b0
+> > > > ceph_osdc_handle_map+0x3c9/0x590
+> > > > mon_dispatch+0x655/0x6f0
+> > > > ceph_con_process_message+0xc3/0xe0
+> > > > ceph_con_v1_try_read+0x614/0x760
+> > > > ceph_con_workfn+0x2de/0x650
+> > > > process_one_work+0x486/0x7c0
+> > > > process_scheduled_works+0x73/0x90
+> > > > worker_thread+0x1c8/0x2a0
+> > > > kthread+0x2ec/0x300
+> > > > ret_from_fork+0x24/0x40
+> > > > ret_from_fork_asm+0x1a/0x30
+> > > >=20
+> > > > The buggy address belongs to the object at ffff88811012d800
+> > > > which belongs to the cache kmalloc-512 of size 512
+> > > > The buggy address is located 16 bytes inside of
+> > > > freed 512-byte region [ffff88811012d800, ffff88811012da00)
+> > > >=20
+> > > > The buggy address belongs to the physical page:
+> > > > page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0
+> > > > pfn:0x11012c
+> > > > head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0
+> > > > pincount:0
+> > > > flags: 0x200000000000040(head|node=3D0|zone=3D2)
+> > > > page_type: f5(slab)
+> > > > raw: 0200000000000040 ffff888100042c80 dead000000000100
+> > > > dead000000000122
+> > > > raw: 0000000000000000 0000000080100010 00000000f5000000
+> > > > 0000000000000000
+> > > > head: 0200000000000040 ffff888100042c80 dead000000000100
+> > > > dead000000000122
+> > > > head: 0000000000000000 0000000080100010 00000000f5000000
+> > > > 0000000000000000
+> > > > head: 0200000000000002 ffffea0004404b01 ffffffffffffffff
+> > > > 0000000000000000
+> > > > head: 0000000000000004 0000000000000000 00000000ffffffff
+> > > > 0000000000000000
+> > > > page dumped because: kasan: bad access detected
+> > > >=20
+> > > > Memory state around the buggy address:
+> > > > ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > > fc
+> > > > ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > > fc
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0 ffff88811012d800: fa fb fb fb fb fb fb fb fb fb =
+fb fb fb fb
+> > > > fb
+> > > > fb
+> > > >=20
+> > > > ^
+> > > > ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > > fb
+> > > > ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > > fb
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > =3D=3D=3D
+> > > > Disabling lock debugging due to kernel taint
+> > > > libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+> > > > libceph: mon0 (1)90.155.74.19:6789 session established
+> > > > libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+> > > >=20
+> > > > We have such scenario:
+> > > >=20
+> > > > Thread 1:
+> > > > void ceph_osdmap_destroy(...) {
+> > > > =C2=A0=C2=A0=C2=A0 <skipped>
+> > > > =C2=A0=C2=A0=C2=A0 kfree(map);
+> > > > }
+> > > > Thread 1 sleep...
+> > > >=20
+> > > > Thread 2:
+> > > > static bool have_mon_and_osd_map(struct ceph_client *client) {
+> > > > =C2=A0=C2=A0=C2=A0 return client->monc.monmap && client->monc.monma=
+p->epoch &&
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 client->osdc.osdmap && c=
+lient->osdc.osdmap->epoch;
+> > > > }
+> > > > Thread 2 has oops...
+> > > >=20
+> > > > Thread 1 wake up:
+> > > > static int handle_one_map(...) {
+> > > > =C2=A0=C2=A0=C2=A0 <skipped>
+> > > > =C2=A0=C2=A0=C2=A0 osdc->osdmap =3D newmap;
+> > > > =C2=A0=C2=A0=C2=A0 <skipped>
+> > > > }
+> > > >=20
+> > > > This patch introduces a have_mon_and_osd_map atomic_t
+> > > > field in struct ceph_client. If there is no OSD and
+> > > > monitor maps, then the client->have_mon_and_osd_map
+> > > > is equal to zero. The OSD and monitor maps initialization
+> > > > results in incrementing of client->have_mon_and_osd_map
+> > > > under the lock. As a result, have_mon_and_osd_map() function
+> > > > simply checks now that client->have_mon_and_osd_map is equal to
+> > > > CEPH_CLIENT_HAS_MON_AND_OSD_MAP.
+> > > >=20
+> > > > Patch adds locking in the ceph_osdc_stop()
+> > > > method during the destructruction of osdc->osdmap and
+> > > > assigning of NULL to the pointer. The lock is used
+> > > > in the ceph_monc_stop() during the freeing of monc->monmap
+> > > > and assigning NULL to the pointer too. The monmap_show()
+> > > > and osdmap_show() methods were reworked to prevent
+> > > > the potential race condition during the methods call.
+> > > >=20
+> > > > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > > > ---
+> > > > =C2=A0include/linux/ceph/libceph.h | 20 ++++++++++++++++++++
+> > > > =C2=A0net/ceph/ceph_common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 6 ++++--
+> > > > =C2=A0net/ceph/debugfs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 17 +++++++++++++----
+> > > > =C2=A0net/ceph/mon_client.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 18 +++++++++++++++++-
+> > > > =C2=A0net/ceph/osd_client.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 11 +++++++++++
+> > > > =C2=A05 files changed, 65 insertions(+), 7 deletions(-)
+> > > >=20
+> > > > diff --git a/include/linux/ceph/libceph.h
+> > > > b/include/linux/ceph/libceph.h
+> > > > index 733e7f93db66..f5694bf5bd54 100644
+> > > > --- a/include/linux/ceph/libceph.h
+> > > > +++ b/include/linux/ceph/libceph.h
+> > > > @@ -132,6 +132,7 @@ struct ceph_client {
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_messenger ms=
+gr;=C2=A0=C2=A0 /* messenger instance */
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_mon_client m=
+onc;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_osd_client o=
+sdc;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 atomic_t have_mon_and_osd_map=
+;
+> > > >=20
+> > > > =C2=A0#ifdef CONFIG_DEBUG_FS
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dentry *debugfs_d=
+ir;
+> > > > @@ -141,6 +142,25 @@ struct ceph_client {
+> > > > =C2=A0#endif
+> > > > =C2=A0};
+> > > >=20
+> > > > +/*
+> > > > + * The have_mon_and_osd_map possible states
+> > > > + */
+> > > > +enum {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CEPH_CLIENT_HAS_NO_MON_AND_NO=
+_OSD_MAP =3D 0,
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CEPH_CLIENT_HAS_ONLY_ONE_MAP =
+=3D 1,
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CEPH_CLIENT_HAS_MON_AND_OSD_M=
+AP =3D 2,
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CEPH_CLIENT_MAP_STATE_UNKNOWN
+> > > > +};
+> > > > +
+> > > > +static inline
+> > > > +bool is_mon_and_osd_map_state_invalid(struct ceph_client
+> > > > *client)
+> > > > +{
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int have_mon_and_osd_map =3D =
+atomic_read(&client-
+> > > > > have_mon_and_osd_map);
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return have_mon_and_osd_map <
+> > > > CEPH_CLIENT_HAS_NO_MON_AND_NO_OSD_MAP ||
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 have_mon_and_osd_map >=3D
+> > > > CEPH_CLIENT_MAP_STATE_UNKNOWN;
+> > > > +}
+> > > > +
+> > > > =C2=A0#define from_msgr(ms)=C2=A0 container_of(ms, struct ceph_clie=
+nt,
+> > > > msgr)
+> > > >=20
+> > > > =C2=A0static inline bool ceph_msgr2(struct ceph_client *client)
+> > > > diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> > > > index 4c6441536d55..62efceb3b19d 100644
+> > > > --- a/net/ceph/ceph_common.c
+> > > > +++ b/net/ceph/ceph_common.c
+> > > > @@ -723,6 +723,8 @@ struct ceph_client
+> > > > *ceph_create_client(struct
+> > > > ceph_options *opt, void *private)
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_init(&client->moun=
+t_mutex);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 init_waitqueue_head(&cli=
+ent->auth_wq);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 atomic_set(&client->have_mon_=
+and_osd_map,
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CEPH_CLIENT_HAS_NO_MON_AND_NO_OSD_MAP)=
+;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 client->auth_err =3D 0;
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 client->extra_mon_dispat=
+ch =3D NULL;
+> > > > @@ -790,8 +792,8 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+> > > > =C2=A0 */
+> > > > =C2=A0static bool have_mon_and_osd_map(struct ceph_client *client)
+> > > > =C2=A0{
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return client->monc.monmap &&=
+ client->monc.monmap-
+> > > > >epoch &&
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 client->osdc.osdmap && client->osdc.osdmap-
+> > > > >epoch;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return atomic_read(&client->h=
+ave_mon_and_osd_map) =3D=3D
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> > > > CEPH_CLIENT_HAS_MON_AND_OSD_MAP;
+> > > > =C2=A0}
+> > > >=20
+> > > > =C2=A0/*
+> > > > diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+> > > > index 2110439f8a24..7b45c169a859 100644
+> > > > --- a/net/ceph/debugfs.c
+> > > > +++ b/net/ceph/debugfs.c
+> > > > @@ -36,8 +36,10 @@ static int monmap_show(struct seq_file *s,
+> > > > void
+> > > > *p)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_client *clie=
+nt =3D s->private;
+> > > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_lock(&client->monc.mute=
+x);
+> > > > +
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (client->monc.monmap =
+=3D=3D NULL)
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return 0;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 goto out_unlock;
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seq_printf(s, "epoch %d\=
+n", client->monc.monmap-
+> > > > >epoch);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < client=
+->monc.monmap->num_mon; i++) {
+> > > > @@ -48,6 +50,10 @@ static int monmap_show(struct seq_file *s,
+> > > > void
+> > > > *p)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 ENTITY_NAME(inst->name),
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 ceph_pr_addr(&inst->addr));
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > > +
+> > > > +out_unlock:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_unlock(&client->monc.mu=
+tex);
+> > > > +
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> > > > =C2=A0}
+> > > >=20
+> > > > @@ -56,13 +62,15 @@ static int osdmap_show(struct seq_file *s,
+> > > > void
+> > > > *p)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_client *clie=
+nt =3D s->private;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_osd_client *=
+osdc =3D &client->osdc;
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_osdmap *map =3D o=
+sdc->osdmap;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_osdmap *map =3D N=
+ULL;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct rb_node *n;
+> > > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 down_read(&osdc->lock);
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 map =3D osdc->osdmap;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (map =3D=3D NULL)
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return 0;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 goto out_unlock;
+> > > >=20
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 down_read(&osdc->lock);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seq_printf(s, "epoch %u =
+barrier %u flags 0x%x\n", map-
+> > > > > epoch,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 os=
+dc->epoch_barrier, map->flags);
+> > > >=20
+> > > > @@ -131,6 +139,7 @@ static int osdmap_show(struct seq_file *s,
+> > > > void
+> > > > *p)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 seq_printf(s, "]\n");
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > >=20
+> > > > +out_unlock:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 up_read(&osdc->lock);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> > > > =C2=A0}
+> > > > diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+> > > > index ab66b599ac47..5cf802236426 100644
+> > > > --- a/net/ceph/mon_client.c
+> > > > +++ b/net/ceph/mon_client.c
+> > > > @@ -562,12 +562,16 @@ static void ceph_monc_handle_map(struct
+> > > > ceph_mon_client *monc,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 atomic_dec(&client->have_mon_=
+and_osd_map);
+> > > > +
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kfree(monc->monmap);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 monc->monmap =3D monmap;
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __ceph_monc_got_map(monc=
+, CEPH_SUB_MONMAP, monc-
+> > > > >monmap-
+> > > > > epoch);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 client->have_fsid =3D tr=
+ue;
+> > > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 atomic_inc(&client->have_mon_=
+and_osd_map);
+> > > > +
+> > > > =C2=A0out:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_unlock(&monc->mute=
+x);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wake_up_all(&client->aut=
+h_wq);
+> > > > @@ -1220,6 +1224,9 @@ int ceph_monc_init(struct ceph_mon_client
+> > > > *monc, struct ceph_client *cl)
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 monc->fs_cluster_id =3D =
+CEPH_FS_CLUSTER_ID_NONE;
+> > > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 atomic_inc(&monc->client->hav=
+e_mon_and_osd_map);
+> > >=20
+> > > Hi Slava,
+> > >=20
+> > > Incrementing client->have_mon_and_osd_map here and in
+> > > ceph_osdc_init()
+> > > means that counter would be set to 2
+> > > (CEPH_CLIENT_HAS_MON_AND_OSD_MAP)
+> > > at the initialization time, way before a session with the monitor
+> > > is
+> > > established and any map is received.=C2=A0 This effectively disables
+> > > the
+> > > wait logic in __ceph_open_session() because of
+> > > have_mon_and_osd_map()
+> > > immediately returning true.=C2=A0 __ceph_open_session() is responsibl=
+e
+> > > for
+> > > setting up the debugfs directory and that is affected too: it's
+> > > created
+> > > as 00000000-0000-0000-0000-000000000000.client0 because neither
+> > > the
+> > > cluster FSID nor the client ID is known without the monmap.
+> > >=20
+> > > This patch seems to be over-complicated for what it needs to do:
+> > > I don't see a compelling reason for introducing the atomic and as
+> > > mentioned before there is no need to attempt to guard against
+> > > someone
+> > > continuing to use the client after ceph_osdc_stop() and
+> > > ceph_monc_stop()
+> > > are called.=C2=A0 It's the point of no return and the client itself
+> > > gets
+> > > freed very shortly after.
+> > >=20
+> > > Why not just open-code the wait loop in __ceph_open_session() to
+> > > allow
+> > > for monc->mutex and osdc->lock (for read) to be taken freely?=C2=A0 I=
+t
+> > > should
+> > > be a small change in __ceph_open_session() --
+> > > net/ceph/mon_client.c
+> > > and
+> > > net/ceph/osd_client.c wouldn't need to be touched at all.
+> > >=20
+> >=20
+> > Hi Ilya,
+> >=20
+> > Frankly speaking, I don't quite follow to your point. The main
+> > issue
+> > happens when one thread calls ceph_osdc_handle_map() [1] ->
+> > handle_one_map() [2]:
+> >=20
+> > ceph_osdmap_destroy() [3] -> kfree(map) -> go to sleep
+> >=20
+> > <-- another thread receives time slices to execute:
+> > have_mon_and_osd_map() BUT osdc->osdmap is already freed and
+> > invalid
+> > here!!!
+> >=20
+> > osdc->osdmap =3D newmap;
+> >=20
+> > So, it's not about ceph_osdc_stop() or ceph_monc_stop() but it's
+> > about
+> > regular operations.
+>=20
+> I know, but on top of the regular operations (to be precise, one
+> regular operation -- __ceph_open_session()) the current patch also
+> tries to harden ceph_osdc_stop() and ceph_monc_stop().=C2=A0 I wanted to
+> reiterate that it's not needed.
+>=20
+> >=20
+> > I've tried to exclude the necessity to use locks at all in
+> > have_mon_and_osd_map(). Do you mean that wait loop will be better
+> > solution?
+>=20
+> Yes, it seems preferable over an otherwise redundant (i.e. not used
+> for
+> anything else) atomic which turned out to be tricky enough to get
+> right
+> on the first try.
+>=20
+> > It sounds pretty complicated too for my taste and it will
+> > require coordination among threads. No? I am not completely sure
+> > that I
+> > follow to your vision.
+>=20
+> With the help of woken_wake_function() primitive it shouldn't be
+> complicated at all.=C2=A0 The diff would be limited to
+> __ceph_open_session()
+> and I would expect it to be on par with the current patch.=C2=A0 Making i=
+t
+> possible to freely take locks there would also squash another related
+> buglet: client->auth_err shouldn't be accessed outside of monc->mutex
+> either.=C2=A0 Being just an int, it's not complained about by KASAN ;)
+>=20
+> Since __ceph_open_session() is the only user of
+> have_mon_and_osd_map()
+> it could be open-coded inside of the wait loop.
+>=20
+
+OK. Let me try to rework my patch yet another time. :)
+
+Thanks,
+Slava.
 
