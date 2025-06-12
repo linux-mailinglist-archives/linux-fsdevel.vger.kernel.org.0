@@ -1,175 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-51440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC22AD6EA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D746CAD6EE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 13:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 510261895C44
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 11:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7015D3B0CF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 11:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FD123AB81;
-	Thu, 12 Jun 2025 11:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BxHiCzsJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NHfwxrKX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yXWtmN9F";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="M1X21LPa"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCC3245003;
+	Thu, 12 Jun 2025 11:20:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D0317A2EA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jun 2025 11:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10A223C50F;
+	Thu, 12 Jun 2025 11:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749726508; cv=none; b=eFo0bXrBJcwplDC/8smvoy53NTruIWTsdNSZyovR4frUNwmCRNzf6H3nSduytke64Lt44ixxU+GO7RAkzbvkoDgBvEziKQ8qWxEj4tmBsz71xD/RHxF/9c2tgVr8kPU4/AsflwCRohHa9FOJ/eD3rscysRwvrchfLkuz/l6gQ6s=
+	t=1749727258; cv=none; b=Z7xZoI2xYVuaBD090gV8KG6rtO4c7eSvIOUrNKRnFFLjVx069TSOLnJ6SCRoWBh4AsOfiy46KfUNoS2IugRPEYCu96f5QhyXBCkTGAny5k71G8minB9Z7AzdkNakSEAsGz/rn4oFDKqhMkembNDnhouAnL4qTlNEje7QjDN86P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749726508; c=relaxed/simple;
-	bh=VUEQpMDxv5SdbtacnxAkIpRyc25HgnZCQ6NI+Dql1P4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oSZgJD8G/7twq6MrJtlddjrYj7cp82uI/UT9skaIjUsQU6fPUDL7GVm3hJS+oZL7VdSP6koDQ2n8NhKMAfh6yaxza4w0/oGEgQstpWPYwqCd15cXjA/kf9g0Uvbukx1eXPBtEkJe4nChu0iGTO3RA9DjdVyYUx/7/bRe1Jeh7bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BxHiCzsJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NHfwxrKX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yXWtmN9F; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=M1X21LPa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 93DF821209;
-	Thu, 12 Jun 2025 11:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749726504; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kfgn7WSHdn26zjp9M0F4QsAyunZl5LBrO/4tS3XYles=;
-	b=BxHiCzsJm+uz7PD7nMWCaswHuP1+qJtAq7VeXApmfnnG5G8LvqY4rJ5qLnetVfEsxPht4R
-	p4szA8+FOuIfIDbZ3PFhk8ul3gO+uNgxdB/RGdO0JhzZPSD9OClGZNyIpGRVVBCez4Xy05
-	aqG85WO+tioctnxfHRoOa/Z12/dX0Ts=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749726504;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kfgn7WSHdn26zjp9M0F4QsAyunZl5LBrO/4tS3XYles=;
-	b=NHfwxrKXFUSnuAdIzOy3ou0iNy5Ljntrj2GWAsF4IE2pNqjBTz0cw+9I0kQ0yF1jitW6ic
-	Zw1GsEZq6y0kylAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749726503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kfgn7WSHdn26zjp9M0F4QsAyunZl5LBrO/4tS3XYles=;
-	b=yXWtmN9Fn3wWmN4nS7Xld8bsW0MdUT2d2w/vZkxklHkwglOc1CKm25tvtjNX2R5XpbDzPq
-	yUuauNzsZAVz/QwEi2g1FOFgxJuiGv6iTn7QguxMKUfwsMk5g4qPhBGAa+mGft0ObUX18D
-	fjmuXtilH/qcW26s60qG956RbXAGUE4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749726503;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kfgn7WSHdn26zjp9M0F4QsAyunZl5LBrO/4tS3XYles=;
-	b=M1X21LPafXDC2lfhPZ7t4cKNTHiPrF3o8a0W3i5mjm4Md9w2MHU/UGpE4vT7pFwRDDsmsd
-	2AbiOyZRIf90dPCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 89483139E2;
-	Thu, 12 Jun 2025 11:08:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id d+Z5ISe1SmiJXgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Jun 2025 11:08:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 52263A099E; Thu, 12 Jun 2025 13:08:19 +0200 (CEST)
-Date: Thu, 12 Jun 2025 13:08:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Luis Henriques <luis@igalia.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-Subject: Re: [PATCH] fs: drop assert in file_seek_cur_needs_f_lock
-Message-ID: <tsevuodksvhftqyobfu6ana5ibbbdtbqo46j5r3hir5kvmpozo@g3vcsirgdioe>
-References: <87tt4u4p4h.fsf@igalia.com>
- <20250612094101.6003-1-luis@igalia.com>
+	s=arc-20240116; t=1749727258; c=relaxed/simple;
+	bh=h6YOaSQV04KhF5kytS5KZKyKtH/gn74YtvcnSW9T1LE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GM/QpzjrqiVSx1TFxc8FDfRevTLxE2WOql1NgjQZhpW8Of/EMRmCVTNZpYq1tK+P46xKkfMVNQ+IIyroyd2NeWLTLRdWNg15moZ3ntPZZnwShvQvuMrDT89oiFamOe8AoLmjKEqU40QVUZEIxvgiEt1uEwrkKtM1VfWLNb3H2jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bJ0Sw65TCzYQvR7;
+	Thu, 12 Jun 2025 19:20:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id CB8261A0F13;
+	Thu, 12 Jun 2025 19:20:47 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgB3218NuEpot0onPQ--.37716S3;
+	Thu, 12 Jun 2025 19:20:47 +0800 (CST)
+Message-ID: <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
+Date: Thu, 12 Jun 2025 19:20:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612094101.6003-1-luis@igalia.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,igalia.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to
+ queue limits features
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com,
+ chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, brauner@kernel.org,
+ martin.petersen@oracle.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
+ <20250604020850.1304633-2-yi.zhang@huaweicloud.com>
+ <20250611060900.GA4613@lst.de>
+ <343f7f06-9bf6-442f-8e77-0a774203ec3f@huaweicloud.com>
+ <20250612044744.GA12828@lst.de>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250612044744.GA12828@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgB3218NuEpot0onPQ--.37716S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruF1UZFyxCrWxtF1DCr45Jrb_yoWkAwc_ur
+	s5JwsrZw1kJryxt34ftrs8Grsxuwsru3yxKw1xWr1rK3s8JF4xA3ykuwnFvw15tFsIgry2
+	9ry0qF4SkFW2gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu 12-06-25 10:41:01, Luis Henriques wrote:
-> The assert in function file_seek_cur_needs_f_lock() can be triggered very
-> easily because, as Jan Kara suggested, the file reference may get
-> incremented after checking it with fdget_pos().
+On 2025/6/12 12:47, Christoph Hellwig wrote:
+> On Wed, Jun 11, 2025 at 03:31:21PM +0800, Zhang Yi wrote:
+>>>> +/* supports unmap write zeroes command */
+>>>> +#define BLK_FEAT_WRITE_ZEROES_UNMAP	((__force blk_features_t)(1u << 17))
+>>>
+>>>
+>>> Should this be exposed through sysfs as a read-only value?
+>>
+>> Uh, are you suggesting adding another sysfs interface to expose
+>> this feature?
 > 
-> Fixes: da06e3c51794 ("fs: don't needlessly acquire f_lock")
-> Signed-off-by: Luis Henriques <luis@igalia.com>
+> That was the idea.  Or do we have another way to report this capability?
+> 
 
-Looks good. Feel free to add:
+Exposing this feature looks useful, but I think adding a new interface
+might be somewhat redundant, and it's also difficult to name the new
+interface. What about extend this interface to include 3 types? When
+read, it exposes the following:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+ - none     : the device doesn't support BLK_FEAT_WRITE_ZEROES_UNMAP.
+ - enabled  : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, but the
+              BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is not set.
+ - disabled : the device supports BLK_FEAT_WRITE_ZEROES_UNMAP, and the
+              BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED is set.
 
-								Honza
-> ---
-> Hi Christian,
-> 
-> It wasn't clear whether you'd be queueing this fix yourself.  Since I don't
-> see it on vfs.git, I decided to explicitly send the patch so that it doesn't
-> slip through the cracks.
-> 
-> Cheers,
-> -- 
-> Luis
-> 
->  fs/file.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index 3a3146664cf3..075f07bdc977 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -1198,8 +1198,6 @@ bool file_seek_cur_needs_f_lock(struct file *file)
->  	if (!(file->f_mode & FMODE_ATOMIC_POS) && !file->f_op->iterate_shared)
->  		return false;
->  
-> -	VFS_WARN_ON_ONCE((file_count(file) > 1) &&
-> -			 !mutex_is_locked(&file->f_pos_lock));
->  	return true;
->  }
->  
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Users can write '0' and '1' to disable and enable this operation if it
+is not 'none', thoughts?
+
+Best regards,
+Yi.
+
 
