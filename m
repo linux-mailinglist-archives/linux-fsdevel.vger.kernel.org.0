@@ -1,156 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-51523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91445AD7CB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 22:54:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CF4AD7DA1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 23:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E1927AA864
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 20:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C5116EE13
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jun 2025 21:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E370B2D878B;
-	Thu, 12 Jun 2025 20:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1CC22F177;
+	Thu, 12 Jun 2025 21:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="iZwhEzvY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DL7O3x6g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE7F2BE7D7;
-	Thu, 12 Jun 2025 20:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693FA222593;
+	Thu, 12 Jun 2025 21:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749761681; cv=none; b=eo2VR3UYY7fWZmBReEzIbWrDIdm7WG1IGFIQv64vJIL+OtYQzsTs9mbRLBM8S4v5/Kftsi4g6sRnFr2B4Yp8KX7DKBjmbAqcRzku8qSRzVc8lxa8B/FGWA2q8JVwkktZskBGMOxsyoxRB0QF6LWJte0EQ1RXYpdfyB30G6Jgou8=
+	t=1749764125; cv=none; b=CN6SHC1fWl0xweeeT03YzT3q/vJJtn9aPtMpqr510XDjJmQ7G/2d/04MsELxBAJeFFYdTMMCXptCf86b8fdrNq+a786lI8SokxeaaHI0tvkuundf6kTogZpn8e5ppnTg2HCkXpq7lQX5OVza8XUrkme6kJ5dJ195uShE//AujqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749761681; c=relaxed/simple;
-	bh=6P5cbaAl8rTt1XMIQMPvx6uTYWL/JwGk967YHx7eCtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vs/CBqJ1v03I2VNSiz6JbCPZzhy7y5EYzmxuuBIinJW7tWLgraWXL7DgWJ9YeZ2P1Fne0IiBoi5lMuiDrrwWxtR1f1Qx+6jSa8wtdVA2JOS/H2xBhCdGDy+HcFhjDwDGDn/Z3PfrNFxQwjnKBq01sFgg7ZjJz8wXnwXuDh09aJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=iZwhEzvY; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bJFBz4y5Jz9t7n;
-	Thu, 12 Jun 2025 22:54:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1749761675;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jMqfz5QP21cfg2NCOI8fXNl9RMD8SNqZRc2zFgJBMAw=;
-	b=iZwhEzvYWF83q7vfuMaVVdkC7ni+BF6LjRTCNacgi7U44mGZxBYd2q/TXF7Ca3rRKYdItU
-	NUgz7qHGRZMfSmTVAKhe3TxmO+Qk05M9l9tGcoW/2QwmlBvVxX64taW30RoE/wW+D11NOM
-	djFNftsO30QF7YJfCkQ/GplV4f4hky6I9UiUH2Z+x1YSc8njtD4/CYqoiGHiakIvAc+dsK
-	wAo6UxQlsBF1xc8KbSmLDnd8QliEucrqrX5UyPsP1s0nN/eW/4vkykI9RDo334phcgRNbq
-	rTXu+RytbxrtPM8jeGB1yOpaJV3cAC0V4C6sFCmQXSnH4w3d8viTGkZ+Mr0R+g==
-Date: Thu, 12 Jun 2025 22:54:28 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Pankaj Raghav <p.raghav@samsung.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de
-Subject: Re: [PATCH 4/5] mm: add mm_get_static_huge_zero_folio() routine
-Message-ID: <cglmujb275faqkpqmb75mz4tt5dtruvhntpe5t4qyzjr363qyr@vluzyx4hukap>
-References: <20250612105100.59144-1-p.raghav@samsung.com>
- <20250612105100.59144-5-p.raghav@samsung.com>
- <e3075e27-93d2-4a11-a174-f05a7497870e@intel.com>
+	s=arc-20240116; t=1749764125; c=relaxed/simple;
+	bh=DaVgg2Lko9pJWN/Pq4ZYoPZXaoSkQRqFYF0sn4s+0GQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yq48MtkbEZmeilxR+96OB+ZrUK+kcsrxEvB/F8mhVrZsVOlH3HNPw4zT/Swu5PXYebAgi307V6RLpPUvQOI6JcyhxJJkSIoLMSjmNYYXVd2sQ8s1ofiJxAQU9kBuGqDY6KcL31nLMWGTuhKIh4b97o2HdjzWE8a6KQ5Y45AVGoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DL7O3x6g; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ade5a0442dfso256921466b.1;
+        Thu, 12 Jun 2025 14:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749764122; x=1750368922; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U64NIYxZAHoKvybyVDEGdhPIhQljA4Nf7uiGkJOAi7o=;
+        b=DL7O3x6gOXE10rwRPARDlrdnlQ+0e5hn/G3Dg9Usbd3KQM9jelvppwxK1RhSp+3ofi
+         iUCHghjavY31psZ+SBTLJ4twS1QFetvVipiXPVInegd54IoZdkE01D5PAeTEUMh2xbyc
+         8/ZFJW4I5go3wzRUXY9u2HRFa59W5bZvxuI9QH78r0eRWpuME2WmFxhZ5ojtpi1owUCZ
+         C9RVQe4y5EQn0lWrt15DFh0xXUVi15XlZ5Jk6eifl2+rnkiDcPKkPFy2UvE9n+QsAsZw
+         BMJpYjdD3n6fhC6K8wN0xPrvsN5m/riCkATLcFgMMfjJUQgJiBHqdLHne+9Am41fXb9M
+         p0IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749764122; x=1750368922;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U64NIYxZAHoKvybyVDEGdhPIhQljA4Nf7uiGkJOAi7o=;
+        b=ZQxo9owJR/d4RIUIRhO2KRMsruxjTArYN5HVQn6KO2eBq9wUn4uFx9/gwj4OYxBZk5
+         rduwUApFiyaxRRrnMZ3iK4OLOEdZ/ad1IBpjquWfSQ0LA8jTlfBLQQQGVrn+T7O+E5wP
+         EAZQjJIATWRXSKNah2E8uSfMY54LuXwHcUSAfOxJgclfStraVHnWRqEcR9jnW8Tix7C9
+         R7e32XKL0ac/N6TVUCPJtRJCKtcJEoFR9D+aDC8Vr3QG7DsqamvL0j1LtXXmJuAMjX2w
+         3v98JWR8xMEOjXj6VkyPU14JvWYT8Co55ZrJx6P6hZ2jCRijFpu7l/Cc7fNYzhvKY1FS
+         svoA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7NXfguWQ7M76gKlov+85UmXnDs34xdw+CL/6TcfXH+DpM2iaW0YsYl5ZYKVg2RrKogIOcQyVyi2eTe31I@vger.kernel.org, AJvYcCXUzRjrDuQ7enhj47skTAzNgIqhe85QY935Hnl4N4eZMaFtsTYfH4BmDbexZKVmxaavsq3AtsLuJfIhlotQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNll6UF9gHYSmo1G7Lv/90mYr3Q7NFTzuo76Lyvp/iYe2iqjHm
+	1+QeFHwd91JR+ZztjKAa8z9gIwhwUUcVEW+GAgIrhChgXm0lpZ1NU8T0yyh+A5ZWoYOgIHZW+66
+	p4GdCVNM8WP+7gte54s6P9gQuWBPo3os=
+X-Gm-Gg: ASbGnct7fbaa3G7+NiIJ+uP6CRlOhtSKZz+KJj7eVXE+brKvYXuuX6D+21FIvXpwN5/
+	cA8M2zAOnyl+iGhgPhOgzXEl2Reln438pStUSIyqD/+5c47KFJwmV9JKcrgUJV0TLTVFwFWVdh2
+	5njXkHzIg/UplbfzuWLd2WSz8w2Ajx3MRSNcYWOG0DSk5apJTpGQEAtA==
+X-Google-Smtp-Source: AGHT+IGAh5CXGLnB0+4nshGnpjYSCoAxvi4IqYvAk+gL1DuSLwbBz121eoMWGcXT4V68Oyl6b8AN/PmiumL3WBt+6Uo=
+X-Received: by 2002:a17:907:3d89:b0:ad4:8ec1:8fcf with SMTP id
+ a640c23a62f3a-adec5d6e539mr64500466b.46.1749764121567; Thu, 12 Jun 2025
+ 14:35:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e3075e27-93d2-4a11-a174-f05a7497870e@intel.com>
+References: <87tt4u4p4h.fsf@igalia.com> <20250612094101.6003-1-luis@igalia.com>
+ <ybfhcrgmiwlsa4elkag6fuibfnniep76n43xzopxpe645vy4zr@fth26jirachp>
+ <3gvuqzzyhiz5is42h4rbvqx43q4axmo7ehubomijvbr5k25xgb@pwjvfuttjegk> <87v7p06dgv.fsf@igalia.com>
+In-Reply-To: <87v7p06dgv.fsf@igalia.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 12 Jun 2025 23:35:09 +0200
+X-Gm-Features: AX0GCFszNtcqxTBZPog6tjA6GGCRtIySoRGpQGKlku8OcwQC1PnTLTiH8OmDtzc
+Message-ID: <CAGudoHGfa28YwprFpTOd6JnuQ7KAP=j36et=u5VrEhTek0HFtQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: drop assert in file_seek_cur_needs_f_lock
+To: Luis Henriques <luis@igalia.com>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 07:09:34AM -0700, Dave Hansen wrote:
-> On 6/12/25 03:50, Pankaj Raghav wrote:
-> > +/*
-> > + * mm_get_static_huge_zero_folio - Get a PMD sized zero folio
-> 
-> Isn't that a rather inaccurate function name and comment?
-I agree. I also felt it was not a good name for the function.
+On Thu, Jun 12, 2025 at 8:07=E2=80=AFPM Luis Henriques <luis@igalia.com> wr=
+ote:
+> > I guess the commit message could be improved. Something like:
+> >
+> > The assert in function file_seek_cur_needs_f_lock() can be triggered ve=
+ry
+> > easily because there are many users of vfs_llseek() (such as overlayfs)
+> > that do their custom locking around llseek instead of relying on
+> > fdget_pos(). Just drop the overzealous assertion.
+>
+> Thanks, makes more sense.
+>
+> Christian, do you prefer me to resend the patch or is it easier for you t=
+o
+> just amend the commit?  (Though, to be fair, the authorship could also be
+> changed as I mostly reported the issue and tested!)
+>
 
-> 
-> The third line of the function literally returns a non-PMD-sized zero folio.
-> 
-> > + * This function will return a PMD sized zero folio if CONFIG_STATIC_PMD_ZERO_PAGE
-> > + * is enabled. Otherwise, a ZERO_PAGE folio is returned.
-> > + *
-> > + * Deduce the size of the folio with folio_size instead of assuming the
-> > + * folio size.
-> > + */
-> > +static inline struct folio *mm_get_static_huge_zero_folio(void)
-> > +{
-> > +	if(IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
-> > +		return READ_ONCE(huge_zero_folio);
-> > +	return page_folio(ZERO_PAGE(0));
-> > +}
-> 
-> This doesn't tell us very much about when I should use:
-> 
-> 	mm_get_static_huge_zero_folio()
-> vs.
-> 	mm_get_huge_zero_folio(mm)
-> vs.
-> 	page_folio(ZERO_PAGE(0))
-> 
-> What's with the "mm_" in the name? Usually "mm" means "mm_struct" not
-> Memory Management. It's really weird to prefix something that doesn't
-> take an "mm_struct" with "mm_"
+How about leaving a trace in the code.
 
-Got it. Actually, I was not aware of this one.
+For example a comment of this sort in place of the assert:
+Note that we are not guaranteed to be called after fdget_pos() on this
+file obj, in which case the caller is expected to provide the
+appropriate locking.
 
-> 
-> Isn't the "get_" also a bad idea since mm_get_huge_zero_folio() does its
-> own refcounting but this interface does not?
-> 
-
-Agree.
-
-> Shouldn't this be something more along the lines of:
-> 
-> /*
->  * pick_zero_folio() - Pick and return the largest available zero folio
->  *
->  * mm_get_huge_zero_folio() is preferred over this function. It is more
->  * flexible and can provide a larger zero page under wider
->  * circumstances.
->  *
->  * Only use this when there is no mm available.
->  *
->  * ... then other comments
->  */
-> static inline struct folio *pick_zero_folio(void)
-> {
-> 	if (IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
-> 		return READ_ONCE(huge_zero_folio);
-> 	return page_folio(ZERO_PAGE(0));
-> }
-> 
-> Or, maybe even name it _just_: zero_folio()
-
-I think zero_folio() sounds like a good and straightforward name. In
-most cases it will return a ZERO_PAGE() folio. If
-CONFIG_STATIC_PMD_ZERO_PAGE is enabled, then we return a PMD page.
-
-Thanks for all your comments Dave.
-
---
-Pankaj
+I find it fishy af that a rando fs is playing games with the file obj
+*and* the fact that games are played is not assertable, but at least
+people can be warned.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
