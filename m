@@ -1,208 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-51639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5ABAD981A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 00:20:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F410AD9836
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 00:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48F207AF21E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 22:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FBF71BC5027
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 22:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589B328135D;
-	Fri, 13 Jun 2025 22:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A0928DF07;
+	Fri, 13 Jun 2025 22:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNBw5d6e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCkjVS5F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B087223DD1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 22:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28D6239E85;
+	Fri, 13 Jun 2025 22:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749853224; cv=none; b=Hy6Rccb9GTe/jOZGQTPKm42AP/pI16IMDmT/2VqnXWyM1oNU8ABOr1YfV7J/h/IOD0RmPz+UiIzff9nrv/gTupsKyNRyuVksw6BDPEIU0BdCMTJhHXoETsLhlIbZ6/yQg/49XxdsKDfn3G+LugdDk6obTyRo9yHfxBMG3AA5qas=
+	t=1749853666; cv=none; b=FULDPT4vxwk0lD0BmuPylY3m6NDWvBs6eylhKvHIyTqGwnMexIZc24EWvaFh5HCvKNbfeANNWRd7tGZh1R3Iely5UOeDeyWiaiaGIgndi7uhOsfk+8L8FlovDBmzVm3LlBHNiIJf2Mc4W6Csswa1m4qAdlsAHCwko5srNyUvnGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749853224; c=relaxed/simple;
-	bh=OMIGIWIQd/rSC7KFxNJWRnMBcDJzLtcHNlB/hinhRdM=;
+	s=arc-20240116; t=1749853666; c=relaxed/simple;
+	bh=oz5GGeZK5HuwW8R1dyYQv0i5Y3h3LLimhUbd5OgIOdY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lrwj4uGHSS5eLOBD77O29f+38ehPtpyPYtuHIaowY8qDo7DofDa71lSsCuX3kSQFpH7a1T0gy40KcSVgO1+kMDNPACHKKy9zBkQ/m6Zcu2MC1xS39wlD95Ti5qgid3GJcuKiZhpnOHKXZmQBQ0iA8wEfNvR0FHfeq9zCefEz8AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNBw5d6e; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a44b3526e6so35075421cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 15:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749853222; x=1750458022; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PaufVDbjlFpyqm2sfJEF/rCAZBpY5rUDXdDgMGT3YeU=;
-        b=kNBw5d6eoVsazjxNj2qr2leiwvCiR/DE6p6aOjgFl+c9RwgmEfBfqDni6RQDScq3uD
-         92c6LgoDWvzKicPVzT9jRpZuzK5u7ItcnvSuaiROZ04sZV74XEne7Ot0Qdd8CiESjswa
-         YuWZ/Wo2OBTNvWUv9AhlyMUZAAq1xdRMH2zbfok1UUIbUlzOlYNkETXxVamziwMdjl4x
-         rbD0vrh4YthzYJjHkyK+i7kNQluzqURVPp7bNxyiik7d6s7ci7GvMgL/AADYtkUBiZyD
-         oYLUKHaDAfjWqfT0WaRBGooEHLRisfpQ98fXvDA2NQC2pciXgtofKJoZAIOKc8gNwcnj
-         8HDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749853222; x=1750458022;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PaufVDbjlFpyqm2sfJEF/rCAZBpY5rUDXdDgMGT3YeU=;
-        b=GdtAO+bmTYJx4TD2pL0fJR9jDD3mV9Fug+CcJ1JH0DTqsULyX7nRm5+njCZJNH/Up1
-         CBtLwldcCQ2JRN7YMQNjfY74N5U5HkKKpAlMtku64rlkicRpJ5LkMe1TwPycYuCcXzAi
-         +27u3+UuNKnkLYthYjbKxP4QXPkpsUps8CT3Fm8bEm1WQQNsf0eqjQMQeuApd2M03Mbz
-         GsKz4uAL5KxBb6gvZnRKLiQln6RN/S2DKWiZrOB8UCoRNAHBlSObs+YiEj7MAOoQNWmP
-         96eOhQirXBrLugXD4T8adXWmC00jkYW3pFy+574DWs97VFkuC+VUXncz3p8SL61iqTlJ
-         EbDg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9IW88Fod7HbqiPLCnT3rkdm/M7ZR1ng9Lw5nlgc+uGSNRzCAPsTrZsU6+vfuMl2dQZI7RTaXDFwvz31Sv@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvZbaePv+M8YMNw5JRO0IVC6AOop5MVsaIlim9hWJE5p34dCom
-	3C3/RoS3fy18jko9pBwhfO8XHmiKnbj8HXlOorb+3QC8rso5/HQriCIP2c0D8vMPwSp4e/eHYKC
-	ZY8GkCgVYVn82QhYfPO2ryCwI7cQf5IdTag==
-X-Gm-Gg: ASbGncvWCebtNkdBjZBazC5hIKTthBszw1D+veXJdz9aOvDHTaNhv/Wymj0I9YW4NIx
-	jByqOE1tGE3CXgBdKQ/PYJjveJ72GasZNCjzZrabnyEqJwk1OQrD1OObiG/zbAkTD7neyjO2Foz
-	LYyatIPXtFSxB2Lx4nS0m7oHy9oLSIBTYm1Zu5WsF0vfFITFroPwaLSLiYD4w=
-X-Google-Smtp-Source: AGHT+IEa+9cpl34UKtX4wSJHRiNmvZnCPgd9ICN/SMCQF4HajiVHm6rC51Ma/5vijXu7sMdaPvCkJkNhS0n0sZ7I8lY=
-X-Received: by 2002:a05:622a:c3:b0:4a4:369c:762b with SMTP id
- d75a77b69052e-4a73c4c54efmr13386741cf.22.1749853221975; Fri, 13 Jun 2025
- 15:20:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=IEHmnPbVgTR2ADXhd1IXWHX0voc+u4JRkUCUs1FGHqLP2/ge9eiRIoAzjTaFoATUeGyU8AUO7AUWl7uDrsIKpWGomP1k7/7qnRxbBck19MjvaPZNESIrYukKbWvh4MrfIIKrCtOUmhWraGiOof1bu1MmXETGudOaDmHo4zFlPQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCkjVS5F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22397C4CEFB;
+	Fri, 13 Jun 2025 22:27:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749853666;
+	bh=oz5GGeZK5HuwW8R1dyYQv0i5Y3h3LLimhUbd5OgIOdY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aCkjVS5FxDgUtqX8oVnyg6xn4mxlqiQ+M/pLPDwe7I1MJALISNIrn8GKHULqV7I4r
+	 kHChX13gq3l+CUgS3Ahb8tWITO9+Abym2+X1naKmv8Xk9Nv+M9jqWDQUjRm0AStq5Y
+	 /z+Nnk5/MQ1Y7+FzBlcCPnhGnrkJj0ntECW8wehUAb6YANOKl8OIzPNANCXoeCnmXD
+	 +IWgTHzuUuJ3TLN3TJTOnP5h0F+BHynHLfJMUlGMpGlFLPKU8oHpFt21kTAQAnCCIi
+	 K8eLxeBqRFU7NGRIiDDI3DJm5a86FcM5ihi8Dsy3/NleQ6KDM9mXRB2G7zs++c5XAd
+	 fYWWaNz+AMVFg==
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a44b0ed780so37103631cf.3;
+        Fri, 13 Jun 2025 15:27:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU35ZTP4YvEhF85h6pFJS83pZ4ZUMhLOPKk8I6DN8WO7kongiQ1AN2irMlkVwIAk55Gm28ae8C0ls3NAJN8@vger.kernel.org, AJvYcCUMthNvS9kkROTE9Oip4uc5uTFdNU0z8Fxg3+/FSWVj1kQCNTM/v08HKi+yssbkpmYqV4MMkOmGodctboBHNEcnq7X9NrN4@vger.kernel.org, AJvYcCWSbouNWmziph6Bni3TFS8ymb9TfeuLNyu6eF88l68Uy3l8iihr+iQ1Fll+uFuhRG/EtkcjHQXXX/Q18ILt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBlLQ3mptT7IMaf39zPj7ShTbDqnYXmyRKq/dgXtyiPJzzA8iF
+	VSgOq1+DUtfEYqQ+fFrH9Lt4K/1bCwCi42tZr27CgORx1wQ9ugiPHlQ6rcVWQ8URQL3jMuVk7on
+	3f+rxkh6Sy4dSf3zFueR+h0xwlDe5L7c=
+X-Google-Smtp-Source: AGHT+IGWkjVtdv83eE0pBs/jdfMfaxcVMpueUKvLdi3qvZP9yMR8Onxx6KI7dzY5aOnj72v0w6SET/QZNJny9oMPl7I=
+X-Received: by 2002:ac8:5a43:0:b0:4a3:fcc7:c73c with SMTP id
+ d75a77b69052e-4a73c4fd271mr14044651cf.8.1749853665106; Fri, 13 Jun 2025
+ 15:27:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aEq4haEQScwHIWK6@bfoster> <CAJnrk1aD_N6zX_htAgto_Bzo+1S-dmvgGRHaT_icbnwpVoDGsg@mail.gmail.com>
- <871prn20sm.fsf@igalia.com>
-In-Reply-To: <871prn20sm.fsf@igalia.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 13 Jun 2025 15:20:11 -0700
-X-Gm-Features: AX0GCFsj85fv7a4a86fuFgx3STrfMOEKZEXHOhlryT_9VO-Ko_7MLSwv_Cqn4aY
-Message-ID: <CAJnrk1ZYKnS65sOdM5_SNpQ_bWakctKCcPNdoFW0VwYLW0s40A@mail.gmail.com>
-Subject: Re: [BUG] fuse/virtiofs: kernel module build fail
-To: Luis Henriques <luis@igalia.com>
-Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <mszeredi@redhat.com>
+References: <20250611220220.3681382-1-song@kernel.org> <20250611220220.3681382-2-song@kernel.org>
+ <174977345565.608730.2655286329643493783@noble.neil.brown.name>
+In-Reply-To: <174977345565.608730.2655286329643493783@noble.neil.brown.name>
+From: Song Liu <song@kernel.org>
+Date: Fri, 13 Jun 2025 15:27:33 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7V9MWXBqiEFbFipUVASwysbB1pX3Lz0NCncFJ9Gjpo5w@mail.gmail.com>
+X-Gm-Features: AX0GCFsvU1L3eassdPC77vEMHxMtYL1v9e9xJtapswAl6ledQxqg87gGstBk2wM
+Message-ID: <CAPhsuW7V9MWXBqiEFbFipUVASwysbB1pX3Lz0NCncFJ9Gjpo5w@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
+To: NeilBrown <neil@brown.name>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com, 
+	m@maowtm.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 7:06=E2=80=AFAM Luis Henriques <luis@igalia.com> wr=
-ote:
+On Thu, Jun 12, 2025 at 5:11=E2=80=AFPM NeilBrown <neil@brown.name> wrote:
+[...]
+> > +
+> > +false_out:
+> > +     path_put(path);
+> > +     memset(path, 0, sizeof(*path));
+> > +     return false;
+> > +}
 >
-> On Thu, Jun 12 2025, Joanne Koong wrote:
->
-> > On Thu, Jun 12, 2025 at 4:19=E2=80=AFAM Brian Foster <bfoster@redhat.co=
-m> wrote:
-> >>
-> >> Hi folks,
-> >>
-> >> I run kernel compiles quite a bit over virtiofs in some of my local te=
-st
-> >> setups and recently ran into an issue building xfs.ko once I had a
-> >> v6.16-rc kernel installed in my guest. The test case is a simple:
-> >>
-> >>   make -j N M=3Dfs/xfs clean; make -j N M=3Dfs/xfs
-> >
-> > Hi Brian,
-> >
-> > If I'm understanding your setup correctly, basically you have the
-> > v6.16-rc kernel running on a VM, on that VM you mounted a virtiofs
-> > directory that references a linux repo that's on your host OS, and
-> > then from your VM you are compiling the fs/xfs module in that shared
-> > linux repo?
-> >
-> > I tried this on my local setup but I'm seeing some other issues:
-> >
-> > make[1]: Entering directory '/home/vmuser/linux/linux/fs/xfs'
-> >   LD [M]  xfs.o
-> > xfs.o: warning: objtool: __traceiter_xfs_attr_list_sf+0x23:
-> > unannotated intra-function call
-> > make[3]: *** [/home/vmuser/linux/linux/scripts/Makefile.build:501:
-> > xfs.o] Error 255
-> > make[3]: *** Deleting file 'xfs.o'
-> > make[2]: *** [/home/vmuser/linux/linux/Makefile:2006: .] Error 2
-> > make[1]: *** [/home/vmuser/linux/linux/Makefile:248: __sub-make] Error =
-2
-> > make[1]: Leaving directory '/home/vmuser/linux/linux/fs/xfs'
-> > make: *** [Makefile:248: __sub-make] Error 2
-> >
-> > Did you also run into these issues when you were compiling?
->
-> This is probably just a shot in the dark, but I remember seeing similar
-> build failures long time ago due to virtiofs caching.  I don't remember
-> the details, but maybe it's worth checking that.  I *think* that what
-> fixed it for me was to use '--cache auto'.
+> I think the public function should return 0 on success and -error on
+> failure.  That is a well established pattern.
 
-Thanks for the tip. I just tried it again with --cache=3Dauto but I'm
-still seeing the same issue.
+Yeah, I think we can use this pattern.
+
+> I also think you
+> shouldn't assume that all callers will want the same flags.
+
+__path_walk_parent() only handles two LOOKUP_ flags, so
+it is a bit weird to allow all the flags. But if folks think this is a
+good idea, I don't have strong objections to taking various flags.
 
 >
-> Cheers,
-> --
-> Lu=C3=ADs
+> And it isn't clear to me why you want to path_put() on failure.
+
+In earlier versions, we would keep "path" unchanged when the
+walk stopped. However, this is not the case in this version
+(choose_mountpoint() =3D> in_root =3D> return -EXDEV). So I
+decided to just release it, so that we will not leak a path that
+the walk should not get to.
+
 >
+> I wonder if there might be other potential users in the kernel.
+> If so we should consider how well the interface meets their needs.
 >
-> > Taking a look at what 63c69ad3d18a ("fuse: refactor
-> > fuse_fill_write_pages()") does, it seems odd to me that the changes in
-> > that commit would lead to the issues you're seeing - that commit
-> > doesn't alter structs or memory layouts in any way. I'll keep trying
-> > to repro the issue you're seeing.
-> >
-> >>
-> >> ... and ends up spitting out link time errors like this as of commit
-> >> 63c69ad3d18a ("fuse: refactor fuse_fill_write_pages()"):
-> >>
-> >> ...
-> >>   CC [M]  xfs.mod.o
-> >>   CC [M]  .module-common.o
-> >>   LD [M]  xfs.ko
-> >>   BTF [M] xfs.ko
-> >> die__process: DW_TAG_compile_unit, DW_TAG_type_unit, DW_TAG_partial_un=
-it or DW_TAG_skeleton_unit expected got subprogram (0x2e) @ ed957!
-> >> error decoding cu i_mmap_rwsem
-> >> error decoding cu
-> >> ...
-> >> error decoding cu
-> >> pahole: xfs.ko: Invalid argument
-> >> make[3]: *** [/root/repos/linux/scripts/Makefile.modfinal:57: xfs.ko] =
-Error 1
-> >> make[3]: *** Deleting file 'xfs.ko'
-> >> make[2]: *** [/root/repos/linux/Makefile:1937: modules] Error 2
-> >> make[1]: *** [/root/repos/linux/Makefile:248: __sub-make] Error 2
-> >> make[1]: Leaving directory '/root/repos/linux/fs/xfs'
-> >> make: *** [Makefile:248: __sub-make] Error 2
-> >>
-> >> ... or this on latest master:
-> >>
-> >> ...
-> >>   LD [M]  fs/xfs/xfs.o
-> >> fs/xfs/xfs.o: error: objtool: can't find reloc entry symbol 2145964924=
- for .rela.text
-> >> make[4]: *** [scripts/Makefile.build:501: fs/xfs/xfs.o] Error 1
-> >> make[4]: *** Deleting file 'fs/xfs/xfs.o'
-> >> make[3]: *** [scripts/Makefile.build:554: fs/xfs] Error 2
-> >> make[2]: *** [scripts/Makefile.build:554: fs] Error 2
-> >> make[1]: *** [/root/repos/linux/Makefile:2006: .] Error 2
-> >> make: *** [Makefile:248: __sub-make] Error 2
-> >>
-> >> The latter failure is what I saw through most of a bisect so I suspect
-> >> one of the related followon commits alters the failure characteristic
-> >> from the former, but I've not confirmed that. Also note out of
-> >> convenience my test was to just recompile xfs.ko out of the same tree =
-I
-> >> was bisecting from because the failures were consistent and seemed to =
-be
-> >> a runtime kernel issue and not a source tree issue.
-> >>
-> >> I haven't had a chance to dig any further than this (and JFYI I'm
-> >> probably not going to be responsive through the rest of today). I just
-> >> completed the bisect and wanted to get it on list sooner rather than
-> >> later..
-> >>
-> >> Brian
-> >>
-> >
->
+> autofs, devpts, nfsd, landlock all call follow_up...
+> maybe they should be using the new interface...
+> nfsd is the most likely to benefit - particularly nfsd_lookup_parent().
+
+AFAICT, autofs and devpts can just use follow_up().
+For nfsd, nfsd_lookup_parent() and nfsd4_encode_pathname4() can
+use path_walk_parent. And 2/5 covers landlock.
+
+I think we can update nfsd in a follow up patch, just to keep this set
+simpler.
+
+Thanks,
+Song
+
+> Just a thought..
+
+[...]
 
