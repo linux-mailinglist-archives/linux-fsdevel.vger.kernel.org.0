@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-51565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD584AD8437
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 09:36:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C98EAD842D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 09:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E20189B54C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 07:36:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6483A2197
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 07:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6F42E610A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBA52E6112;
 	Fri, 13 Jun 2025 07:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="siRuDdHc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oOgOfpJa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E72F2D8DB1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCE12D8DAE;
 	Fri, 13 Jun 2025 07:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800078; cv=none; b=Qhh3nMaBto4Gon1Emqu2JPtO0lTTMgI1qMxCmRNVS/QdymbqQUvU3/x+p7r2pyeH4LdhMieIKVh34z6UJI4skrn8joaM9+hy/jWmif3vHXHswIeISwG/ZxgtSonLXtcbM3zEmnrH7E+hYUwX3yzZWzKi4uFv1UHxxq6ezEBEoVc=
+	t=1749800077; cv=none; b=KGeLRtr5eYBlaH3eQJ+r0em6yFsqlqqS+lvUKipIMERSqhutqmeSSv7FdaNRRiinq3/SRDw27XyD3stY7tPJLyaMFKQvOddAPeS/MVcBIWIPCjo8tmo3KnVhNpJMJ1L3fAggoMS6kIv0QSIKHsaMWV/zCC2b8xlPlkR5JyiVlNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800078; c=relaxed/simple;
-	bh=wdXWpFOatLjdWqlca8dGwPt2EXAw/wiCY/0oCvMwnxo=;
+	s=arc-20240116; t=1749800077; c=relaxed/simple;
+	bh=dTiNSgThItZecnP137uptNA5NvevIEF9N/hciizudmQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RERV1IB2/y9RYttF8yOAFs0NpvS35TC7StDkvG76LWa/67pW2mZ9Lyh2l405SD4ahtsn4CWKMo55qHGncZpyEYvjvLEh5ISk/LtfaVHieILzd1vGrkVuAdKxCxqrQNKvJ6a7YVxXtlPGstwhy/Dq5JTpuDG+/7bvBDs9MqKdrmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=siRuDdHc; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=ETvdPv8IbpSTQY6EQ2yAp9s9ee7dMaXbVJl0KjHAJ+6CaN5rHAXUcQl6oxt4ifOh1bVl4Cyldg8EAvo5DwZ8SleTz9GgphnzFUWmAsAkbMx0FM0O1Pu6YKnYxLp7sFkuJ4G5TNpw+OwP9K2tmd3WaKCaRZ7sPAPGNNNaZdamN24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oOgOfpJa; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=SzKs44alqNGAJ3kFgYs8fo+7Wy1bSYSoSaOe36CWM88=; b=siRuDdHc4PES8uBXs3aYWjZVhG
-	Ql27fYcpl+Af0yt+P7sncyy5hZAfwWViGvytxN095e2QyNjOW8QCDAt5tqdoFmQHQFzEyFWC/7bT9
-	cPZmF05U3BeRf4k/vEkVu4LDvkhbjUKFslRCQq1zR+yQBwU7dKx8aH6MqACqNkXwa8jgkFG5Jw0Ny
-	GAucTxMHG1YtGE44xQ8Kfa3U10w+ihA+8W6jqtD0J7DsFeQAw1P1a6uuFiy3pKrTpD52S7N0nicvM
-	b5SljHp6tfhy1t9hpwdl+9/OyvgReMPZmhayt86xUkbm+/adduCYiFFTacWmJfmFx+U5dkCplNgPM
-	oJ2ZEMTA==;
+	bh=BeDUitGQM7v9elzOJiSTo/Qy2tJV8QNbdb20/rJTc7E=; b=oOgOfpJaDWk3UiRFq3ec1pqCgr
+	6XQGUMok+w4WzOxsYDWfC5w+GD+UqHmOX1BXiebRALRAqkIslfhMyV4lSRRRmkp0W2K1J5aVOSGXf
+	SQGIwNppMoopPGCH1zwJQSaPHY/oa3ESaVZOIJM7KASeudlV1ECpHqrK7Au72m5QYoSNDVGk9Vjt4
+	CXNd1CPZaxRvVpYYCm4GzwS/cYd2T+dF+duLOJbC85CUuy+wpw5V9//gpo8FdTeZ9RqFCGT+ItzW0
+	+fcoH4rvqYsXBzb/HCqLhFNRvSDZsNh1az0dRsDFFB+3DF6MplfQRZxhgzx9OhTrbiOXfh8nbmeKb
+	NtTZYyng==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPyvq-00000007qqA-07Hl;
+	id 1uPyvq-00000007qqL-0ldv;
 	Fri, 13 Jun 2025 07:34:34 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: chuck.lever@oracle.com,
 	neil@brown.name,
 	torvalds@linux-foundation.org,
 	trondmy@kernel.org
-Subject: [PATCH 09/17] rpc_pipe: don't overdo directory locking
-Date: Fri, 13 Jun 2025 08:34:24 +0100
-Message-ID: <20250613073432.1871345-9-viro@zeniv.linux.org.uk>
+Subject: [PATCH 10/17] rpc_pipe: saner primitive for creating subdirectories
+Date: Fri, 13 Jun 2025 08:34:25 +0100
+Message-ID: <20250613073432.1871345-10-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250613073432.1871345-1-viro@zeniv.linux.org.uk>
 References: <20250613073149.GI1647736@ZenIV>
@@ -68,125 +68,138 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Don't try to hold directories locked more than VFS requires;
-lock just before getting a child to be made positive (using
-simple_start_creating()) and unlock as soon as the child is
-created.  There's no benefit in keeping the parent locked
-while populating the child - it won't stop dcache lookups anyway.
+All users of __rpc_mkdir() have the same form - start_creating(),
+followed, in case of success, by __rpc_mkdir() and unlocking parent.
+
+Combine that into a single helper, expanding __rpc_mkdir() into it,
+along with the call of __rpc_create_common() in it.
+
+Don't mess with d_drop() + d_add() - just d_instantiate() and be
+done with that.  The reason __rpc_create_common() goes for that
+dance is that dentry it gets might or might not be hashed; here
+we know it's hashed.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- net/sunrpc/rpc_pipe.c | 44 +++++++++----------------------------------
- 1 file changed, 9 insertions(+), 35 deletions(-)
+ net/sunrpc/rpc_pipe.c | 67 +++++++++++++++++++++++++------------------
+ 1 file changed, 39 insertions(+), 28 deletions(-)
 
 diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-index dac1c35a642f..a61c1173738c 100644
+index a61c1173738c..c3f269aadcaf 100644
 --- a/net/sunrpc/rpc_pipe.c
 +++ b/net/sunrpc/rpc_pipe.c
-@@ -594,22 +594,6 @@ static int __rpc_mkpipe_dentry(struct inode *dir, struct dentry *dentry,
+@@ -524,21 +524,6 @@ static int __rpc_create(struct inode *dir, struct dentry *dentry,
  	return 0;
  }
  
--static struct dentry *__rpc_lookup_create_exclusive(struct dentry *parent,
--					  const char *name)
+-static int __rpc_mkdir(struct inode *dir, struct dentry *dentry,
+-		       umode_t mode,
+-		       const struct file_operations *i_fop,
+-		       void *private)
 -{
--	struct qstr q = QSTR(name);
--	struct dentry *dentry = try_lookup_noperm(&q, parent);
--	if (!dentry) {
--		dentry = d_alloc(parent, &q);
--		if (!dentry)
--			return ERR_PTR(-ENOMEM);
--	}
--	if (d_really_is_negative(dentry))
--		return dentry;
--	dput(dentry);
--	return ERR_PTR(-EEXIST);
+-	int err;
+-
+-	err = __rpc_create_common(dir, dentry, S_IFDIR | mode, i_fop, private);
+-	if (err)
+-		return err;
+-	inc_nlink(dir);
+-	fsnotify_mkdir(dir, dentry);
+-	return 0;
 -}
 -
+ static void
+ init_pipe(struct rpc_pipe *pipe)
+ {
+@@ -594,6 +579,35 @@ static int __rpc_mkpipe_dentry(struct inode *dir, struct dentry *dentry,
+ 	return 0;
+ }
+ 
++static struct dentry *rpc_new_dir(struct dentry *parent,
++				  const char *name,
++				  umode_t mode,
++				  void *private)
++{
++	struct dentry *dentry = simple_start_creating(parent, name);
++	struct inode *dir = parent->d_inode;
++	struct inode *inode;
++
++	if (IS_ERR(dentry))
++		return dentry;
++
++	inode = rpc_get_inode(dir->i_sb, S_IFDIR | mode);
++	if (unlikely(!inode)) {
++		dput(dentry);
++		inode_unlock(dir);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	inode->i_ino = iunique(dir->i_sb, 100);
++	rpc_inode_setowner(inode, private);
++	inc_nlink(dir);
++	d_instantiate(dentry, inode);
++	fsnotify_mkdir(dir, dentry);
++	inode_unlock(dir);
++
++	return dentry;
++}
++
  static int rpc_populate(struct dentry *parent,
  			const struct rpc_filelist *files,
  			int start, int eof,
-@@ -619,9 +603,8 @@ static int rpc_populate(struct dentry *parent,
- 	struct dentry *dentry;
+@@ -604,14 +618,14 @@ static int rpc_populate(struct dentry *parent,
  	int i, err;
  
--	inode_lock(dir);
  	for (i = start; i < eof; i++) {
--		dentry = __rpc_lookup_create_exclusive(parent, files[i].name);
-+		dentry = simple_start_creating(parent, files[i].name);
- 		err = PTR_ERR(dentry);
- 		if (IS_ERR(dentry))
- 			goto out_bad;
-@@ -633,20 +616,20 @@ static int rpc_populate(struct dentry *parent,
+-		dentry = simple_start_creating(parent, files[i].name);
+-		err = PTR_ERR(dentry);
+-		if (IS_ERR(dentry))
+-			goto out_bad;
+ 		switch (files[i].mode & S_IFMT) {
+ 			default:
+ 				BUG();
+ 			case S_IFREG:
++				dentry = simple_start_creating(parent, files[i].name);
++				err = PTR_ERR(dentry);
++				if (IS_ERR(dentry))
++					goto out_bad;
+ 				err = __rpc_create(dir, dentry,
  						files[i].mode,
  						files[i].i_fop,
- 						private);
-+				inode_unlock(dir);
+@@ -619,11 +633,13 @@ static int rpc_populate(struct dentry *parent,
+ 				inode_unlock(dir);
  				break;
  			case S_IFDIR:
- 				err = __rpc_mkdir(dir, dentry,
+-				err = __rpc_mkdir(dir, dentry,
++				dentry = rpc_new_dir(parent,
++						files[i].name,
  						files[i].mode,
- 						NULL,
+-						NULL,
  						private);
-+				inode_unlock(dir);
+-				inode_unlock(dir);
++				err = PTR_ERR(dentry);
++				if (IS_ERR(dentry))
++					goto out_bad;
  		}
  		if (err != 0)
  			goto out_bad;
- 	}
--	inode_unlock(dir);
- 	return 0;
- out_bad:
--	inode_unlock(dir);
- 	printk(KERN_WARNING "%s: %s failed to populate directory %pd\n",
- 			__FILE__, __func__, parent);
- 	return err;
-@@ -660,27 +643,21 @@ static struct dentry *rpc_mkdir_populate(struct dentry *parent,
- 	struct inode *dir = d_inode(parent);
+@@ -640,16 +656,11 @@ static struct dentry *rpc_mkdir_populate(struct dentry *parent,
+ 		int (*populate)(struct dentry *, void *), void *args_populate)
+ {
+ 	struct dentry *dentry;
+-	struct inode *dir = d_inode(parent);
  	int error;
  
--	inode_lock_nested(dir, I_MUTEX_PARENT);
--	dentry = __rpc_lookup_create_exclusive(parent, name);
-+	dentry = simple_start_creating(parent, name);
+-	dentry = simple_start_creating(parent, name);
++	dentry = rpc_new_dir(parent, name, mode, private);
  	if (IS_ERR(dentry))
--		goto out;
-+		return dentry;
- 	error = __rpc_mkdir(dir, dentry, mode, NULL, private);
-+	inode_unlock(dir);
- 	if (error != 0)
--		goto out_err;
-+		return ERR_PTR(error);
+ 		return dentry;
+-	error = __rpc_mkdir(dir, dentry, mode, NULL, private);
+-	inode_unlock(dir);
+-	if (error != 0)
+-		return ERR_PTR(error);
  	if (populate != NULL) {
  		error = populate(dentry, args_populate);
  		if (error) {
--			inode_unlock(dir);
- 			simple_recursive_removal(dentry, NULL);
- 			return ERR_PTR(error);
- 		}
- 	}
--out:
--	inode_unlock(dir);
- 	return dentry;
--out_err:
--	dentry = ERR_PTR(error);
--	goto out;
- }
- 
- /**
-@@ -715,12 +692,9 @@ int rpc_mkpipe_dentry(struct dentry *parent, const char *name,
- 	if (pipe->ops->downcall == NULL)
- 		umode &= ~0222;
- 
--	inode_lock_nested(dir, I_MUTEX_PARENT);
--	dentry = __rpc_lookup_create_exclusive(parent, name);
--	if (IS_ERR(dentry)) {
--		inode_unlock(dir);
-+	dentry = simple_start_creating(parent, name);
-+	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
--	}
- 	err = __rpc_mkpipe_dentry(dir, dentry, umode, &rpc_pipe_fops,
- 				  private, pipe);
- 	if (unlikely(err))
 -- 
 2.39.5
 
