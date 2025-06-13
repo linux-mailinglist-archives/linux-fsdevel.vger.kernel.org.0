@@ -1,170 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-51578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5C7AD87AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 11:23:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39787AD8875
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 11:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D79F13B6E94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 09:23:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540F3189D8C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 09:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F94291C05;
-	Fri, 13 Jun 2025 09:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKIhIjYs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAC42C1597;
+	Fri, 13 Jun 2025 09:50:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2DC19049B;
-	Fri, 13 Jun 2025 09:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EB41E0DE8;
+	Fri, 13 Jun 2025 09:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749806630; cv=none; b=XojemXJxTAdNhesUKu0uRsIsBhpNAvJhKzkSLMuzOjg/RpqDqCzzukyj3XtiRbtFW9iWgblLXwKssIqCA4h+4mWltT3xOLlxiKmSRxHt2EnP5m5RGM2xrp6fN2221mLQKH1DcpCLgv0WQzwRcKfzhRXIkjSX9jkdTxKE1o38/6M=
+	t=1749808251; cv=none; b=c0uJCFwb4OrMfeswTTAmpeJ3JMqlQC+YhmOzRuatZXZWbbNhs30FBRwuChCPaN85X9FRzdgybUPgkZJlYFNNokSIAbx/kunu1Lu1i5kzCKcuH6eR+2uxSUHvA9icBMejxWHY/qIdX1mz+I9c5hAjtXf7sYVd52qeLqBQJO5ZMtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749806630; c=relaxed/simple;
-	bh=4IM3ljHai7hhYuxZjlxbC1b3dgfoRlGohNkgBHQPTJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tAZ88+o7fQOg5QzfkEhYa+nJJxrOR/s1hS6Irfge2U8P/L5aqNf0tBiCsuBLq01JVlrrYq2DnvG+1avg5Vsw5bJpj0KehHBBKXzsfO2F0KGHH6Ue8tscqkhjVBNVaD0NbuqbNfDxyUxGfXrQoeZaAN6ED+N5v7IbT4bC2Y0pReQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKIhIjYs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 785FDC4CEE3;
-	Fri, 13 Jun 2025 09:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749806629;
-	bh=4IM3ljHai7hhYuxZjlxbC1b3dgfoRlGohNkgBHQPTJw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gKIhIjYsG6tslEAhzjn+gh02xfPhV8Zwt6HLme2cE5exQJLo3AgVlx6mJqNO2fp9/
-	 z3pwGrg2wkuIpaCxr9iOeujM+XeqO2AK0at5VdGgHzv1VIpHikz6BOMIpvRk0KNsuM
-	 eeOKcP7t9YgRl0/iJlG56MNRg/boGldhY9CsuaYo6aj9r6dxRFJWTyEWjL+l8ub6fO
-	 HFJwkVCevU1bU7benFDmVvf1G0NgcFf96mtVjqWa6/f4gOcPz/O6VpRZYHcX4JPcur
-	 CAe7W6OdHJBHX3nMT8+005SLu5nLexzn0djUosZfghj9XuGKokz0m/JWZZR7g/th/+
-	 Qd7ICSXEHJlzg==
-Date: Fri, 13 Jun 2025 05:23:48 -0400
-From: Mike Snitzer <snitzer@kernel.org>
+	s=arc-20240116; t=1749808251; c=relaxed/simple;
+	bh=2SxLHN8+izHSO99LNfa9CAd7o+biTDAqyFK75kRDWk4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I3gG26V5xOgV6Ilx3l2lltu+wWhu06sWW2sl8YAuuQxgm5ESYraoYfBKmnqV/gWzLtg+sKCQk+aExz/gCUQJCio/1uajzlCGIj+7GjS/ftiif9grpuauVwEGk/8chpiJvKQQxNQi4c7tQlAjIGK9wmRMCMtZOMmyd8HMfUNyIKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bJZ0q6dqXzYl4KT;
+	Fri, 13 Jun 2025 17:31:55 +0800 (CST)
+Received: from a017.hihonor.com (10.68.27.165) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Jun
+ 2025 17:33:55 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a017.hihonor.com
+ (10.68.27.165) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Jun
+ 2025 17:33:55 +0800
+Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
+ a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
+ Fri, 13 Jun 2025 17:33:55 +0800
+From: wangtao <tao.wangtao@honor.com>
 To: Christoph Hellwig <hch@infradead.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
-	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, david.flynn@hammerspace.com
-Subject: Re: need SUNRPC TCP to receive into aligned pages [was: Re: [PATCH
- 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE for all IO]
-Message-ID: <aEvuJP7_xhVk5R4S@kernel.org>
-References: <20250610205737.63343-1-snitzer@kernel.org>
- <20250610205737.63343-2-snitzer@kernel.org>
- <4b858fb1-25f6-457f-8908-67339e20318e@oracle.com>
- <aEnWhlXjzOmRfCJf@kernel.org>
- <7c48e17c4b575375069a4bd965f346499e66ac3a.camel@kernel.org>
- <aEn2-mYA3VDv-vB8@kernel.org>
- <110c7644b829ce158680979e6cd358193ea3f52b.camel@kernel.org>
- <d13ef7d6-0040-40ac-9761-922a1ec5d911@oracle.com>
- <f201c16677525288597becfd904d873931092cea.camel@kernel.org>
- <aEu7GSa7HRNNVJVA@infradead.org>
+CC: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, "kraxel@redhat.com"
+	<kraxel@redhat.com>, "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
+	<brauner@kernel.org>, "hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "amir73il@gmail.com"
+	<amir73il@gmail.com>, "benjamin.gaignard@collabora.com"
+	<benjamin.gaignard@collabora.com>, "Brian.Starkey@arm.com"
+	<Brian.Starkey@arm.com>, "jstultz@google.com" <jstultz@google.com>,
+	"tjmercier@google.com" <tjmercier@google.com>, "jack@suse.cz" <jack@suse.cz>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "wangbintian(BintianWang)"
+	<bintian.wang@honor.com>, yipengxiang <yipengxiang@honor.com>, liulu 00013167
+	<liulu.liu@honor.com>, hanfeng 00012985 <feng.han@honor.com>
+Subject: RE: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Thread-Topic: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Thread-Index: AQHb1G1ol+FT389RFkuW+lwB3adoKrPw4BKAgAADywCAAAF8AIAE6kCg//+rigCABEW6AIAA1IFwgAFUd4CABPdqMA==
+Date: Fri, 13 Jun 2025 09:33:55 +0000
+Message-ID: <34c2dbc06d074ffbb8f920418636bafc@honor.com>
+References: <20250603095245.17478-1-tao.wangtao@honor.com>
+ <aD7x_b0hVyvZDUsl@infradead.org>
+ <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+ <aD72alIxu718uri4@infradead.org> <5d36abace6bf492aadd847f0fabc38be@honor.com>
+ <a766fbf4-6cda-43a5-a1c7-61a3838f93f9@amd.com>
+ <aEZkjA1L-dP_Qt3U@infradead.org> <761986ec0f404856b6f21c3feca67012@honor.com>
+ <aEg0aYQJ9h_tyum9@infradead.org>
+In-Reply-To: <aEg0aYQJ9h_tyum9@infradead.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEu7GSa7HRNNVJVA@infradead.org>
 
-On Thu, Jun 12, 2025 at 10:46:01PM -0700, Christoph Hellwig wrote:
-> On Thu, Jun 12, 2025 at 12:22:42PM -0400, Jeff Layton wrote:
-> > If you're against the idea, I won't waste my time.
-> > 
-> > It would require some fairly hefty rejiggering of the receive code. The
-> > v4 part would be pretty nightmarish to work out too since you'd have to
-> > decode the compound as you receive to tell where the next op starts.
-> > 
-> > The potential for corruption with unaligned writes is also pretty
-> > nasty.
-> 
-> Maybe I'm missing an improvement to the receive buffer handling in modern
-> network hardware, but AFAIK this still would only help you to align the
-> sunrpc data buffer to page boundaries, but avoid the data copy from the
-> hardware receive buffer to the sunrpc data buffer as you still don't have
-> hardware header splitting.
-
-Correct, everything that Jeff detailed is about ensuring the WRITE
-payload is received into page aligned boundary.
-
-Which in practice has proven a hard requirement for O_DIRECT in my
-testing -- but I could be hitting some bizarre driver bug in my TCP
-testbed (which sadly sits ontop of older VMware guests/drivers).
-
-But if you looking at patch 5 in this series:
-https://lore.kernel.org/linux-nfs/20250610205737.63343-6-snitzer@kernel.org/
-
-I added fs/nfsd/vfs.c:is_dio_aligned(), which is basically a tweaked
-ditto of fs/btrfs/direct-io.c:check_direct_IO():
-
-static bool is_dio_aligned(const struct iov_iter *iter, loff_t offset,
-                           const u32 blocksize)
-{
-        u32 blocksize_mask;
-
-        if (!blocksize)
-                return false;
-
-        blocksize_mask = blocksize - 1;
-        if ((offset & blocksize_mask) ||
-            (iov_iter_alignment(iter) & blocksize_mask))
-                return false;
-
-        return true;
-}
-
-And fs/nfsd/vfs.c:nfsd_vfs_write() has (after my patch 5):
-
-        nvecs = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
-        iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
-
-        if (nfsd_enable_dontcache) {
-                if (is_dio_aligned(&iter, offset, nf->nf_dio_offset_align))
-                        flags |= RWF_DIRECT;
-
-What I found is that unless SUNRPC TPC stored the WRITE payload in a
-page-aligned boundary then iov_iter_alignment() would fail.
-
-The @payload arg above, with my SUNRPC TCP testing, was always offset
-148 bytes into the first page of the pages allocated for xdr_buf's
-use, which is rqstp->rq_pages, which is allocated by
-net/sunrpc/svc_xprt.c:svc_alloc_arg().
-
-> And I don't even know what this is supposed to buy the nfs server.
-> Direct I/O writes need to have the proper file offset alignment, but as
-> far as Linux is concerned we don't require any memory alignment.  Most
-> storage hardware has requirements for the memory alignment that we pass
-> on, but typically that's just a dword (4-byte) alignment, which matches
-> the alignment sunrpc wants for most XDR data structures anyway.  So what
-> additional alignment is actually needed for support direct I/O writes
-> assuming that is the goal?  (I might also simply misunderstand the
-> problem).
-
-THIS... this is the very precise question/detail I discussed with
-Hammerspace's CEO David Flynn when discussing Linux's O_DIRECT
-support.  David shares your understanding and confusion.  And all I
-could tell him is that in practice I always page-aligned my data
-buffers used to issue O_DIRECT.  And that in this instance if I don't
-then O_DIRECT doesn't work (if I commented out the iov_iter_alignment
-check in is_dio_aligned above).
-
-But is that simply due to xdr_buf_to_bvec()'s use of bvec_set_virt()
-for xdr_buf "head" page (first page of rqstp->rg_pages)?  Whereas you
-can see xdr_buf_to_bvec() uses bvec_set_page() to add each of the
-other pages that immediately follow the first "head" page.
-
-All said, if Linux can/should happily allow non-page-aligned DIO (and
-we only need to worry about the on-disk DIO alignment requirements)
-that'd be wonderful.
-
-Then its just a matter of finding where that is broken...
-
-Happy to dig into this further if you might nudge me in the right
-direction.
-
-Thanks,
-Mike
+DQo+IA0KPiBPbiBNb24sIEp1biAwOSwgMjAyNSBhdCAwOTozMjoyMEFNICswMDAwLCB3YW5ndGFv
+IHdyb3RlOg0KPiA+IEFyZSB5b3Ugc3VnZ2VzdGluZyBhZGRpbmcgYW4gSVRFUl9ETUFCVUYgdHlw
+ZSB0byBpb3ZfaXRlciwNCj4gDQo+IFllcy4NCg0KTWF5IEkgY2xhcmlmeTogRG8gYWxsIGRpc2sg
+b3BlcmF0aW9ucyByZXF1aXJlIGRhdGEgdG8gcGFzcyB0aHJvdWdoDQptZW1vcnkgKHJlYWRpbmcg
+aW50byBtZW1vcnkgb3Igd3JpdGluZyBmcm9tIG1lbW9yeSk/IEluIHRoZSBibG9jayBsYXllciwN
+CnRoZSBiaW8gc3RydWN0dXJlIHVzZXMgYmlvX2lvdl9pdGVyX2dldF9wYWdlcyB0byBjb252ZXJ0
+IGl0ZXJfdHlwZQ0Kb2JqZWN0cyBpbnRvIG1lbW9yeS1iYWNrZWQgYmlvX3ZlYyByZXByZXNlbnRh
+dGlvbnMuDQpIb3dldmVyLCBzb21lIGRtYWJ1ZnMgYXJlIG5vdCBtZW1vcnktYmFzZWQsIG1ha2lu
+ZyBwYWdlLXRvLWJpb192ZWMNCmNvbnZlcnNpb24gaW1wb3NzaWJsZS4gVGhpcyBzdWdnZXN0cyBh
+ZGRpbmcgYSBjYWxsYmFjayBmdW5jdGlvbiBpbg0KZG1hX2J1Zl9vcHMgdG8gaGFuZGxlIGRtYWJ1
+Zi0gdG8tYmlvX3ZlYyBjb252ZXJzaW9uLg0KDQpJbnRlcmVzdGluZ2x5LCBpZiBzdWNoIGEgY2Fs
+bGJhY2sgZXhpc3RzLCB0aGUgbmVlZCBmb3IgYSBkZWRpY2F0ZWQNCklURVJfRE1BQlVGIHR5cGUg
+bWlnaHQgZGlzYXBwZWFyLiBXb3VsZCB5b3UgbGlrZSB0byBkaXNjdXNzIHBvdGVudGlhbA0KaW1w
+bGVtZW50YXRpb24gdHJhZGVvZmZzIGhlcmU/DQoNClJlZ2FyZHMsDQpXYW5ndGFvLg0K
 
