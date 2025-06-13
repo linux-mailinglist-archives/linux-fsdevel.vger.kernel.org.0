@@ -1,87 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-51542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4826CAD8125
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 04:41:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DF4AD8144
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 04:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97A477B11EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 02:40:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F9B1898F79
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 02:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D60224676D;
-	Fri, 13 Jun 2025 02:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WQINv2Fs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B48242D9C;
+	Fri, 13 Jun 2025 02:52:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7335123BD0E;
-	Fri, 13 Jun 2025 02:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1973C18A6AD;
+	Fri, 13 Jun 2025 02:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749782500; cv=none; b=a5OXqqZTG9kTm04m/QMlpxqmc1/Td63y/B2fOCWWkpOepB+y3Ak+uiBcW+K5P+NW1YG/ahI0XB3Akpq6Jz/icta+WwJfXcdZ8KxEXTm7gLgqY/9H8cRVFvexSsug0pejh/qb7rVQ5Eod8i8456ppRp0AVHOgf3KGEwApi2+DWv8=
+	t=1749783158; cv=none; b=QHR3l3CftiSNdHbQFZsavZ7Jc4/oaTtyz/Z2qxM46ixbLEXwdLDaMgvcZRGDAoWKMNPIecQzdJiKyikos3aviA5NBOcN23aLvQ7nN0FNeVUDtgcZncIOSK7tcQqjIi6XQN+MF/E0Xu7cKDRfoFIWeHtsmMVqWpIHi3y2eUlZ0Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749782500; c=relaxed/simple;
-	bh=geS8XlZRiHCVw4EwzTvT0372eXrdMKICrknqgpXDSHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y575QFLiX/oyi+RcCaaF2Zjw9vVaI28Pp98vEtZxqOB28UTTbIacGp4mMSKlRJThgqJaxQtWWB4cDyGHRdX3V4Pfburs+NnsyCSwdcsbic8V4MMGLYafHwF7m3X3TCcB3F5fCMizOMyG54FPFZDV37Sz+Z5CLtYe/G6j8zRqf60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WQINv2Fs; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zOL4rBZFTivw87SF4aKWLQKacaGt47gTX8zDfWyLzn8=; b=WQINv2FskLl4oWiag2Tl4gnunG
-	ebY5JG1yfFMoI13Xuyl3SLJpDqv7hjtKQyJGoYTD+dE52gA3e59Btu5PaIBwWmca17P2CiWatCisM
-	p9laA2d8s2x/KyPdBydg/CKi24nSo12oDs0kf6+gpgu1B8evDu0o7K68LcOzXMEb/hAlmnNpMt7Ld
-	DUbdbKPVYDCNKKuWkXVUF6zZGRINPs7kVqziL5CjsKCKWJ2cat0KjIlQ+caf9J4haEpANoT1nkA7g
-	RJjX9+C1Y7FrMcxOQkyaSi0pwxxFYY2QwhCe1L2X8d+Q/kR10f3kTy78sF5wHZuQfCoCxe+2btuMN
-	BQsSGuqw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPuMI-000000053y9-1t9D;
-	Fri, 13 Jun 2025 02:41:34 +0000
-Date: Fri, 13 Jun 2025 03:41:34 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>,
-	linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] proc_sysctl: Fix up ->is_seen() handling
-Message-ID: <20250613024134.GF1647736@ZenIV>
-References: <>
- <20250613020111.GE1647736@ZenIV>
- <174978225309.608730.8864073362569294982@noble.neil.brown.name>
+	s=arc-20240116; t=1749783158; c=relaxed/simple;
+	bh=QyazcMeLFCkjCNo07nRBEmSyIRcBs2tA3az6DgTS+js=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:Date:Message-id; b=V0E0MPIfD4yjEg4PpzB1FIlEvFy2fqXaHANRNYDTIl3pi66FMX50WaRxzJeYrpGsUK1xeV9gGsVNnRn4pWrJfcQ6xprsDoMLjGJC0bT5efhRSWa2pkOT8EzWLqaBQvquF/UTWn+IX9xRopuIrT3Rub0Ph+hLoyBs7Q1kS+3gjGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uPuWv-009nYt-2o;
+	Fri, 13 Jun 2025 02:52:33 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174978225309.608730.8864073362569294982@noble.neil.brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+From: "NeilBrown" <neil@brown.name>
+To: Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <kees@kernel.org>,
+ Joel Granados <joel.granados@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] proc_sysctl: remove RCU annotations for accessing ->sysctl
+Date: Fri, 13 Jun 2025 12:52:32 +1000
+Message-id: <174978315268.608730.1330012617868311392@noble.neil.brown.name>
 
-On Fri, Jun 13, 2025 at 12:37:33PM +1000, NeilBrown wrote:
 
-> If two threads in the same namespace look up the same name at the same
-> time (which previously didn't exist), they will both enter
-> d_alloc_parallel() where neither will notice the other, so both will
-> create and install d_in_lookup() dentries, and then both will call
-> ->lookup, creating two identical inodes.
-> 
-> I suspect that isn't fatal, but it does seem odd.
-> 
-> Maybe proc_sys_compare should return 0 for d_in_lookup() (aka !inode)
-> dentries, and then proc_sys_revalidate() can perform the is_seen test
-> and return -EAGAIN if needed, and __lookup_slow() and others could
-> interpret that as meaning to "goto again" without calling
-> d_invalidate().
+The ->sysctl field of a procfs inode is only set when the inode is
+created, and when it is being evicted.  In both these cases there cannot
+be concurrent accesses and so using RCU_INIT_POINTER() and
+rcu_dereference() is misleading.
 
-Umm...  Not sure it's the best solution; let me think a bit.  Just need
-to finish going through the ported rpc_pipefs series for the final look
-and posting it; should be about half an hour or so...
+I discovered this with some devel code which called d_same_name()
+without holding the rcu_read_lock() - rcu_dereference() triggered a
+warning.  In mainline ->d_compare is called from d_alloc_parallel()
+without rcu_read_lock() after taking ->d_lock.  It is conceivable that
+the d_inode will have been set while waiting for that lock so mainline
+could trigger the same warning.
+
+This patch removes those accessor call.  Note that the sysctl field is
+not marked __rcu so sparse complains too.
+
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/proc/inode.c       | 2 +-
+ fs/proc/proc_sysctl.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index a3eb3b740f76..c3991dd314d9 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -42,7 +42,7 @@ static void proc_evict_inode(struct inode *inode)
+ 
+ 	head = ei->sysctl;
+ 	if (head) {
+-		RCU_INIT_POINTER(ei->sysctl, NULL);
++		ei->sysctl = NULL;
+ 		proc_sys_evict_inode(inode, head);
+ 	}
+ }
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index cc9d74a06ff0..976d7605560f 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -928,7 +928,7 @@ static int proc_sys_compare(const struct dentry *dentry,
+ 		return 1;
+ 	if (memcmp(name->name, str, len))
+ 		return 1;
+-	head = rcu_dereference(PROC_I(inode)->sysctl);
++	head = PROC_I(inode)->sysctl;
+ 	return !head || !sysctl_is_seen(head);
+ }
+ 
+-- 
+2.49.0
+
 
