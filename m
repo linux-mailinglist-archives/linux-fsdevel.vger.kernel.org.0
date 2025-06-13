@@ -1,260 +1,287 @@
-Return-Path: <linux-fsdevel+bounces-51643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2204AD98BE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 01:36:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F2AAD98C1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 01:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F50B3B5D5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 23:35:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7652A7AE084
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 23:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6E72727F7;
-	Fri, 13 Jun 2025 23:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1F128DB56;
+	Fri, 13 Jun 2025 23:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GRFim5Pq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Crxqd27c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BF4230274
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 23:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067BB2E11A9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 23:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749857770; cv=none; b=XPT2zbdTxzzy8LryhHyRrQBuZYxpvNyPB/omD3PI4I2MuZ6zofff8t5dtMJP5Yd7Mw/ElCCMj8qlfm0OCelwireP6tfrBhPSfRdEFUvvD2wv8LATo6fAB0H+WIeZiJCi2WweiOJ9MuXd8LtmeD63yb0eMMdsaAE8GS0TxxbZiI0=
+	t=1749858134; cv=none; b=RhmsH/lJO42hywTGA9aRNOGgGadw2+9FTtxcpcTIz7jwXQbZejEhKsZOV+8x0FIgLD++ACP3YzUuNGgdrDQ4N2YO/+RRS6RQ1qXZehS0QNmmne4+e8dy6TdGtqWJOvqGwVhrOSVTc07qBr0WHkCVokIuFA8GkBaAIZmq7IW0Ies=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749857770; c=relaxed/simple;
-	bh=DBwed/fb86PWripX90nf5OxMpz/FHIZwVx3hl5aHUh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hlbT2AMu6LMYF2bCWDPmEEGcmBRqsoUGyhEZC2MzoJ4D0k1dtdkrnsHspPcuhTyYwhnFye+pm83gyWgD7Mo57WZlDBAjPLGWLHdQm+O+QDzKuG0ktA+GsHARIB2m07Q5wOfQFKuL15v7gK3Lt50aM1SFaAY4qlu20MNVxvErWHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GRFim5Pq; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a525eee2e3so2116354f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 16:36:07 -0700 (PDT)
+	s=arc-20240116; t=1749858134; c=relaxed/simple;
+	bh=yuyftOPuqXu4Hl2fsZj9SLQ8FlH1PG/hxZC6vtxquJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pSXUm5HY0hk0WuAaShNj0hi0gpmWl6IdrZDEhEIFG08NltlYPMWZGXR8/XS9WxcQjF7syhBcYa3ScYVQ9tZ8qBqCtYm7PJu2s0t7si87/IWamGoxDlUnQnW7XNP0AC6PV7QvoFlFxr/oDhvFKBQJml48c0iqjSQuqB/qNPcJfyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Crxqd27c; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a58ebece05so29055141cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 16:42:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749857765; x=1750462565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NVtgqO8zaWnU1b+7C4UHw0GV4RrIwCYVPwYAxMGrkpo=;
-        b=GRFim5Pqik2dN3xyrJUktpIYR4w5t5uB+FK/2CEESxFWXLfFfojv0rsqUdBMA3M38l
-         aTqnp3llch0WRz2dE9s1xquN1Ct9M9DJPbY/KwmRbSFUTeY5DwsVUS8jhGSnmwihY5o1
-         XrUDegilbRKEFd7hvZVpYaFIlyBv56GbJXL54tMxLzwQQN6Y5FuQL679AMA8IQhqIt5M
-         wtrxjZd8MK9zgopAwzLfVNIRJolyOhKh1zEERn7HGv69YnOSZJn8JNo+UxP3q0FBhsW5
-         vhT9rNwzJlAJxCgi7U8kc6+zoCPx3PKE+3etbN2AbxAv03H9EodCGgQsqW9TsEI+4UMH
-         w6KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749857765; x=1750462565;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749858132; x=1750462932; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NVtgqO8zaWnU1b+7C4UHw0GV4RrIwCYVPwYAxMGrkpo=;
-        b=ubDCRkIWwF4TatkppzNpPchwiA3CK4Bolc5BvxIBSgOF1OAxUBig3qimA4aW62E1Mj
-         9jbMpFjHlKosRuEbdcV+RTkTfnwnSe7mJUCYia8uYPmWWX447igsIJYgJeoWlFfgmRHR
-         Q8c14Z/utyCwUMgsE/Yu+TzZEExvnCjXf1CJHnvTz3kklW4T/5HNDOVCoJS+/eBqXG2G
-         u/sActQ/M9ogl/8HKoEEFHaGI/qCnvjgq+CnamS2KRLxaiCUDyYI8DOMoRnFJYHllbMq
-         qxMM6oa9TSWieBvVhQPOvvGCwi4Df1lnLgnbN5BKiCRP4JTGajeLQh1ZLusP9uKoUB55
-         dPDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWh78z093nr+S/m49vzGVqkTn7v4zx9OBjJc0LAJ4gpd8VzwXChEbxE+3rNNVq5mGSgYQqUMbFL5C8pT1BV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzixV3LHQjB4yuvqUTn+eP5g5QAiVD+MLe+61zdJlj+5Hhojl3
-	YHN1RJUzYcJLE3UDZ2bKbt3WhK0c/Ru9Cg4zePd4mp7bSOUBqjerWyeyFs1+z/glx8M=
-X-Gm-Gg: ASbGncs8CAZoT/4bwci1XyocHKo4wfkS8fWVRr4gzm4LvN4vorq9QKgGlsEdeJI6eTn
-	Wtfju7AXYTpmFFkO4s6uyyFX9W51yu0a/cAbUC+yAeUfrHYpzb1FuTiKFvhRJ5WRLRugpyLuTto
-	9GlpyoVQGgbnjCRxxyV5KcEVbaJK4xoF3zEf14HqYeKC9uSHxsGrDIr6AsaTuweuI+KELqYFuoD
-	in+JydmymUirID5oS3gVEzYjeqTxXnOmRPEy6ukuysm+5FFKmY72lujMU016b+1NW37e/vuR/Ol
-	pjgLD4x5oK8x1YI476E7eCIjfi5DAjtUqUUyuNej/j8Ludk6/xhR5O2E6EdeJta4cuNFJLYmD77
-	/5LImOknrx0cNYw==
-X-Google-Smtp-Source: AGHT+IECtYVp7pAC34bACKnVVTNEA8V9tp+DqFZNljmtmFTIXW24136P6HkrdjurIr5cXOFpdqctLg==
-X-Received: by 2002:a05:6000:420c:b0:3a0:aed9:e34 with SMTP id ffacd0b85a97d-3a572e92ff4mr1251315f8f.48.1749857765407;
-        Fri, 13 Jun 2025 16:36:05 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe1639f97sm1990092a12.6.2025.06.13.16.36.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 16:36:04 -0700 (PDT)
-Message-ID: <375ecc77-7a5f-4baf-a6ec-fc7e8dc02bfb@suse.com>
-Date: Sat, 14 Jun 2025 09:05:58 +0930
+        bh=h0MOhBkeNroj1YjiV2fHUXA+J/132csfcB1ERhQzurY=;
+        b=Crxqd27cfo9xYjW1xWP5T1HFtFboWP6biKQfd5IZk9Ei3emoHoNRjytDosgLPHmI8m
+         5OI+l0YUiOhzVlTQOLqw/OcO0mztmQ7XH7IA1sYEAVloGtd+37Mjr02Hfk0n5LLT1ta0
+         uNRdOUpMmjJNN6DZo66yfEC2Y4fCVvgEPbCay4ldpwPe1fJI/zGO1m8YDK5OoClfyqu+
+         U7Ivu9JRVuRYeF15vYdH68IZXOI+HAavQvzOCMgXemx75e5QDrSsnnXEuzj//GP73Qfp
+         03iASsPfBHCEaqeqWY874zvHeF3eIMU2V7GLJGRyPZ6eIVpBfBnJXKVzWxYjdf0oYWcf
+         Bi8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749858132; x=1750462932;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h0MOhBkeNroj1YjiV2fHUXA+J/132csfcB1ERhQzurY=;
+        b=pev4/XqBpoY0U5ia1yZ3vciZQb5qwXv9LUIraksp3RM7KTxKXl17Xufljjjv1zYgiy
+         CCuY0grfeEwlA3oMDy8KrfKhTZljiC2vqBCC6HWaPOJ+oFsBF2O634+I3eipGxLT0bUI
+         arWqU3fUKqMItil8xCXM0yOjIMA3RGkT/PR8a4GEwT85gpW7pFLNdPSLYOM0yvM6LP3U
+         Hny/OCeA8zJNSKEZpJXnIR1Z0vN64Ax/gZaVfMb/eUN2FkzzpgPDMP4mLCxXkkBkzg8U
+         sY6l5wp60fpoj+cXmHY5AJ70C31Fq6plouZBhxJxACEdni8xjFYd/5x0QmLuIaMBFuQG
+         xylA==
+X-Gm-Message-State: AOJu0YwhqNdRBOTOOJNW8HyJW+6YsMTZkxZfU+7lw0O1/bpOVXpTYirx
+	S9I8K+Cbzm0wvpHzyQ0a3EHp6tzrJPC9UyHs3xb+qA/TCc+zzN6V8FgP1aIDDGkCxg1SNAKxsQ9
+	obf3oJ1jTCKpRgHo5bKnzPDPdGs+d39D6Xhb8
+X-Gm-Gg: ASbGncvVZpzOVFZ7paFnZfnPWGWDgnr+fZ0sLOc9uwRY5/h4ASf9/zlunsViy53CqlS
+	RIC7SPz81wUQYDH8R54iBq589GJp/rmJXnIASylOH+Lucw1ASIJdQ1SLPw25gkcLc8rPyepmffj
+	x9PHMI8joaEwQ9IcmV5viD1b/LeXByHLr1iPsVHS+TEefU5p+MWg/dRpJ2f4w=
+X-Google-Smtp-Source: AGHT+IG0L64xsvDUpFxLKor8iWSxntHRfDPhqRjhLeVl3iOLa9y17nEFXQo1mwgYngkJR8n1IMl5ujNS5m1zgyRjf34=
+X-Received: by 2002:ac8:7dc1:0:b0:4a4:4165:ed60 with SMTP id
+ d75a77b69052e-4a73c4fceb4mr19508451cf.3.1749858131778; Fri, 13 Jun 2025
+ 16:42:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] btrfs: Convert test_find_delalloc() to use a folio,
- part two
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Chris Mason
- <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250613190705.3166969-1-willy@infradead.org>
- <20250613190705.3166969-3-willy@infradead.org>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20250613190705.3166969-3-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <aEq4haEQScwHIWK6@bfoster> <CAJnrk1aD_N6zX_htAgto_Bzo+1S-dmvgGRHaT_icbnwpVoDGsg@mail.gmail.com>
+ <aEwPNxjEaFtnmsuR@bfoster>
+In-Reply-To: <aEwPNxjEaFtnmsuR@bfoster>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 13 Jun 2025 16:42:00 -0700
+X-Gm-Features: AX0GCFuJ9HgUQCg5tF5Z3itfRLNRAENYP7VE5MlofAtGMKFwn2AOkBQj7hGFeHs
+Message-ID: <CAJnrk1ZOP60By0XozFy+6zXYzbkEznye6rGSet16-g-JQoGfTw@mail.gmail.com>
+Subject: Re: [BUG] fuse/virtiofs: kernel module build fail
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jun 13, 2025 at 4:41=E2=80=AFAM Brian Foster <bfoster@redhat.com> w=
+rote:
+>
+> On Thu, Jun 12, 2025 at 02:56:56PM -0700, Joanne Koong wrote:
+> > On Thu, Jun 12, 2025 at 4:19=E2=80=AFAM Brian Foster <bfoster@redhat.co=
+m> wrote:
+> > >
+> > > Hi folks,
+> > >
+> > > I run kernel compiles quite a bit over virtiofs in some of my local t=
+est
+> > > setups and recently ran into an issue building xfs.ko once I had a
+> > > v6.16-rc kernel installed in my guest. The test case is a simple:
+> > >
+> > >   make -j N M=3Dfs/xfs clean; make -j N M=3Dfs/xfs
+> >
+> > Hi Brian,
+> >
+>
+> Hi Joanne,
+>
+> > If I'm understanding your setup correctly, basically you have the
+> > v6.16-rc kernel running on a VM, on that VM you mounted a virtiofs
+> > directory that references a linux repo that's on your host OS, and
+> > then from your VM you are compiling the fs/xfs module in that shared
+> > linux repo?
+> >
+>
+> Yep. Note again that I happen to be using the same repo that I was
+> bisecting, so technically the test case of recompiling the kernel module
+> is targeting different code each time, but the failure was so consistent
+> that I believe it to be a runtime issue.
+>
+> > I tried this on my local setup but I'm seeing some other issues:
+> >
+> > make[1]: Entering directory '/home/vmuser/linux/linux/fs/xfs'
+> >   LD [M]  xfs.o
+> > xfs.o: warning: objtool: __traceiter_xfs_attr_list_sf+0x23:
+> > unannotated intra-function call
+> > make[3]: *** [/home/vmuser/linux/linux/scripts/Makefile.build:501:
+> > xfs.o] Error 255
+> > make[3]: *** Deleting file 'xfs.o'
+> > make[2]: *** [/home/vmuser/linux/linux/Makefile:2006: .] Error 2
+> > make[1]: *** [/home/vmuser/linux/linux/Makefile:248: __sub-make] Error =
+2
+> > make[1]: Leaving directory '/home/vmuser/linux/linux/fs/xfs'
+> > make: *** [Makefile:248: __sub-make] Error 2
+> >
+> > Did you also run into these issues when you were compiling?
+> >
+>
+> I don't recall seeing that specific error, but TBH this kind of looks in
+> line with what I'm seeing in general. My suspicion is that this is not
+> actually a source code error, but something is corrupted somehow or
+> another via virtiofs.
+
+This is indeed the same issue as the one you saw. I was able to repro
+it on that commit you pointed to  (more details below)
+
+>
+> As a quick additional test, I just built my same repo from my host
+> system (running a distro v6.14 kernel) without any issue. Then if I do
+> the kernel module rebuild test of the same exact repo over virtiofs from
+> the guest, the error occurs.
+>
+> What is interesting is that if I try the same thing with another module
+> (i.e. fs/fuse, fs/nfs), the build seems to work fine, so maybe there is
+> something unique to XFS going on here. As a followup to that, I set my
+> repo back to v6.15 but still reproduce the same phenomenon: build
+> failure when compiling over virtiofs and not from the host.. :/
+>
+> > Taking a look at what 63c69ad3d18a ("fuse: refactor
+> > fuse_fill_write_pages()") does, it seems odd to me that the changes in
+> > that commit would lead to the issues you're seeing - that commit
+> > doesn't alter structs or memory layouts in any way. I'll keep trying
+> > to repro the issue you're seeing.
+> >
+>
+> Apologies I haven't really had a chance to look at the code.. It's
+> certainly possible I botched something in the bisect or misunderstood
+> some tooling differences or whatever, but I'm pretty sure I at least
+> tried the target commit and the immediate preceding commit after the
+> bisect to double check where the failing starts to happen.
+>
+> That said, I suspect you are actually reproducing the same general
+> problem with your test above, regardless of whether the analysis is
+> wrong. If you're able, have you tried whether that same compile works
+> from a host (or non-virtiofs) env? Thanks.
+
+You didn't mess up the bisect, I was able to verify that it is that
+commit that causes the issue. I misunderstood the error message and
+thought it was complaining about alignment in a struct being broken
+somewhere.
+
+This fixes the commit:
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1147,7 +1147,7 @@ static ssize_t fuse_send_write_pages(struct
+fuse_io_args *ia,
+ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+                                     struct address_space *mapping,
+                                     struct iov_iter *ii, loff_t pos,
+-                                    unsigned int max_pages)
++                                    unsigned int max_folios)
+ {
+        struct fuse_args_pages *ap =3D &ia->ap;
+        struct fuse_conn *fc =3D get_fuse_conn(mapping->host);
+@@ -1157,12 +1157,11 @@ static ssize_t fuse_fill_write_pages(struct
+fuse_io_args *ia,
+        int err =3D 0;
+
+        num =3D min(iov_iter_count(ii), fc->max_write);
+-       num =3D min(num, max_pages << PAGE_SHIFT);
+
+        ap->args.in_pages =3D true;
+        ap->descs[0].offset =3D offset;
+
+-       while (num) {
++       while (num && ap->num_folios < max_folios) {
+                size_t tmp;
+                struct folio *folio;
+                pgoff_t index =3D pos >> PAGE_SHIFT;
 
 
+The bug is that I incorrectly assumed that I could use max_pages <<
+PAGE_SHIFT as the upper limit for how many bytes to copy in, but
+there's the possibility that the copy_folio_from_iter_atomic() call
+that we do can copy over bytes from the iov_iter that are less than
+the length of the folio, so using max_pages << PAGE_SHIFT as the bound
+for max_pages is wrong.
 
-在 2025/6/14 04:37, Matthew Wilcox (Oracle) 写道:
-> Replace the 'page' variable with 'folio'.  Removes six calls to
-> compound_head().
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->   fs/btrfs/tests/extent-io-tests.c | 32 +++++++++++++++++---------------
->   1 file changed, 17 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/btrfs/tests/extent-io-tests.c b/fs/btrfs/tests/extent-io-tests.c
-> index 8bdf742d90fd..36720b77b440 100644
-> --- a/fs/btrfs/tests/extent-io-tests.c
-> +++ b/fs/btrfs/tests/extent-io-tests.c
-> @@ -111,7 +111,7 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
->   	struct btrfs_root *root = NULL;
->   	struct inode *inode = NULL;
->   	struct extent_io_tree *tmp;
-> -	struct page *page;
-> +	struct folio *folio;
->   	struct folio *locked_folio = NULL;
->   	unsigned long index = 0;
->   	/* In this test we need at least 2 file extents at its maximum size */
-> @@ -152,23 +152,25 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
->   	btrfs_extent_io_tree_init(NULL, tmp, IO_TREE_SELFTEST);
->   
->   	/*
-> -	 * First go through and create and mark all of our pages dirty, we pin
-> -	 * everything to make sure our pages don't get evicted and screw up our
-> +	 * First go through and create and mark all of our folios dirty, we pin
-> +	 * everything to make sure our folios don't get evicted and screw up our
->   	 * test.
->   	 */
->   	for (index = 0; index < (total_dirty >> PAGE_SHIFT); index++) {
-> -		page = find_or_create_page(inode->i_mapping, index, GFP_KERNEL);
-> -		if (!page) {
-> -			test_err("failed to allocate test page");
-> +		folio = __filemap_get_folio(inode->i_mapping, index,
-> +				FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-> +				GFP_KERNEL);
-> +		if (!folio) {
-> +			test_err("failed to allocate test folio");
->   			ret = -ENOMEM;
->   			goto out;
->   		}
-> -		SetPageDirty(page);
-> +		folio_mark_dirty(folio);
+I ran the fix locally on top of origin/master (commit 27605c8c0) as
+well and verified that it fixes the issue. I'll send this fix
+upstream.
 
-Crashing immediately when loading the module.
-(Need CONFIG_BTRFS_FS_RUN_SANITY_TESTS=y)
+Sorry for the inconvenience. Hope this bug didn't waste too much of
+your time. Thanks for reporting it.
 
-[   20.626710] BUG: kernel NULL pointer dereference, address: 
-0000000000000000
-[   20.628812] #PF: supervisor instruction fetch in kernel mode
-[   20.630648] #PF: error_code(0x0010) - not-present page
-[   20.632156] PGD 0 P4D 0
-[   20.632893] Oops: Oops: 0010 [#1] SMP NOPTI
-[   20.634052] CPU: 6 UID: 0 PID: 622 Comm: insmod Tainted: G 
-OE       6.16.0-rc1-custom+ #253 PREEMPT(full)
-[   20.636879] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-[   20.638321] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
-unknown 02/02/2022
-[   20.640524] RIP: 0010:0x0
-[   20.641290] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-[   20.643075] RSP: 0018:ffffc90001587c88 EFLAGS: 00010246
-[   20.644519] RAX: ffff88810b144670 RBX: 0000000000000000 RCX: 
-0000000000000001
-[   20.646490] RDX: 0000000000000000 RSI: ffffea0004128200 RDI: 
-ffff88810b144670
-[   20.648496] RBP: ffff88810b144500 R08: 0000000000000000 R09: 
-ffffffff83549b20
-[   20.650524] R10: 00000000000002c0 R11: 0000000000000000 R12: 
-0000000000000000
-[   20.652642] R13: ffff88810b1443a8 R14: ffffea0004128200 R15: 
-0000000000001000
-[   20.654778] FS:  00007f2e60e99740(0000) GS:ffff8882f45e2000(0000) 
-knlGS:0000000000000000
-[   20.657158] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   20.658980] CR2: ffffffffffffffd6 CR3: 00000001040b9000 CR4: 
-00000000000006f0
-[   20.661219] Call Trace:
-[   20.662057]  <TASK>
-[   20.662757]  btrfs_test_extent_io+0x17a/0xf40 [btrfs]
-[   20.664266]  btrfs_run_sanity_tests.cold+0x84/0x11e [btrfs]
-[   20.665839]  init_btrfs_fs+0x4d/0xb0 [btrfs]
-[   20.667380]  ? __pfx_init_btrfs_fs+0x10/0x10 [btrfs]
-[   20.668883]  do_one_initcall+0x76/0x250
-[   20.670098]  do_init_module+0x62/0x250
-[   20.671359]  init_module_from_file+0x85/0xc0
-[   20.672586]  idempotent_init_module+0x148/0x340
-[   20.673900]  __x64_sys_finit_module+0x6d/0xd0
-[   20.675074]  do_syscall_64+0x54/0x1d0
-[   20.676167]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-
-Furthermore, the error handling of __filemap_get_folio() is incorrect.
-That function returns either a valid folio, or an ERR_PTR(), no more NULL.
-
-This applies to all folio calls like filemap_lock_folio() too.
-
-Thanks,
-Qu
-
->   		if (index) {
-> -			unlock_page(page);
-> +			folio_unlock(folio);
->   		} else {
-> -			get_page(page);
-> -			locked_folio = page_folio(page);
-> +			folio_get(folio);
-> +			locked_folio = folio;
->   		}
->   	}
->   
-> @@ -283,14 +285,14 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
->   	 * Now to test where we run into a page that is no longer dirty in the
->   	 * range we want to find.
->   	 */
-> -	page = find_get_page(inode->i_mapping,
-> +	folio = filemap_get_folio(inode->i_mapping,
->   			     (max_bytes + SZ_1M) >> PAGE_SHIFT);
-> -	if (!page) {
-> -		test_err("couldn't find our page");
-> +	if (!folio) {
-> +		test_err("couldn't find our folio");
->   		goto out_bits;
->   	}
-> -	ClearPageDirty(page);
-> -	put_page(page);
-> +	folio_clear_dirty(folio);
-> +	folio_put(folio);
->   
->   	/* We unlocked it in the previous test */
->   	folio_lock(locked_folio);
-
+>
+> Brian
+>
+> > >
+> > > ... and ends up spitting out link time errors like this as of commit
+> > > 63c69ad3d18a ("fuse: refactor fuse_fill_write_pages()"):
+> > >
+> > > ...
+> > >   CC [M]  xfs.mod.o
+> > >   CC [M]  .module-common.o
+> > >   LD [M]  xfs.ko
+> > >   BTF [M] xfs.ko
+> > > die__process: DW_TAG_compile_unit, DW_TAG_type_unit, DW_TAG_partial_u=
+nit or DW_TAG_skeleton_unit expected got subprogram (0x2e) @ ed957!
+> > > error decoding cu i_mmap_rwsem
+> > > error decoding cu
+> > > ...
+> > > error decoding cu
+> > > pahole: xfs.ko: Invalid argument
+> > > make[3]: *** [/root/repos/linux/scripts/Makefile.modfinal:57: xfs.ko]=
+ Error 1
+> > > make[3]: *** Deleting file 'xfs.ko'
+> > > make[2]: *** [/root/repos/linux/Makefile:1937: modules] Error 2
+> > > make[1]: *** [/root/repos/linux/Makefile:248: __sub-make] Error 2
+> > > make[1]: Leaving directory '/root/repos/linux/fs/xfs'
+> > > make: *** [Makefile:248: __sub-make] Error 2
+> > >
+> > > ... or this on latest master:
+> > >
+> > > ...
+> > >   LD [M]  fs/xfs/xfs.o
+> > > fs/xfs/xfs.o: error: objtool: can't find reloc entry symbol 214596492=
+4 for .rela.text
+> > > make[4]: *** [scripts/Makefile.build:501: fs/xfs/xfs.o] Error 1
+> > > make[4]: *** Deleting file 'fs/xfs/xfs.o'
+> > > make[3]: *** [scripts/Makefile.build:554: fs/xfs] Error 2
+> > > make[2]: *** [scripts/Makefile.build:554: fs] Error 2
+> > > make[1]: *** [/root/repos/linux/Makefile:2006: .] Error 2
+> > > make: *** [Makefile:248: __sub-make] Error 2
+> > >
+> > > The latter failure is what I saw through most of a bisect so I suspec=
+t
+> > > one of the related followon commits alters the failure characteristic
+> > > from the former, but I've not confirmed that. Also note out of
+> > > convenience my test was to just recompile xfs.ko out of the same tree=
+ I
+> > > was bisecting from because the failures were consistent and seemed to=
+ be
+> > > a runtime kernel issue and not a source tree issue.
+> > >
+> > > I haven't had a chance to dig any further than this (and JFYI I'm
+> > > probably not going to be responsive through the rest of today). I jus=
+t
+> > > completed the bisect and wanted to get it on list sooner rather than
+> > > later..
+> > >
+> > > Brian
+> > >
+> >
+>
 
