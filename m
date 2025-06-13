@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-51630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCE1AD97BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 23:51:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0122AD97BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 23:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4783A4A29ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 21:51:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A7824A2A6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 21:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BA228EA76;
-	Fri, 13 Jun 2025 21:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD0A28ECC8;
+	Fri, 13 Jun 2025 21:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZUhcCp8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcJVwqOp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A70328EA65;
-	Fri, 13 Jun 2025 21:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50CE26B75E;
+	Fri, 13 Jun 2025 21:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749851466; cv=none; b=MVdRR7VpJv7i9GZUArc0Fi/hHOInAG+hK3jQxiH+AcsGcdIHpeHLRZ4E8qkD/x5IaV8IKi/OHfyUcpp5+pjRXcjyRF24cui+UjLqPMsty8MbQJEMhuRGjEdVwSHyRJRDE3Leg+icFKiVe2Hf8t6bSq2yu8nJR6dqwxC/iDDE7s8=
+	t=1749851467; cv=none; b=JnPHkdwAwu0xbA9ZykAF+823vpW7hgQ8qiI2DHs14U6JIRqvTw7jER6wRvz7SRVbLt3NNPx/fTkT1n8PndoozOP0CaGgWMWyjUqvm0g9CVbmJLFLVqaDBjjrdMP788fH5DTs1jK3UGuIp0V+P2NcU2hqXBBIG7Q89mlklLVqS+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749851466; c=relaxed/simple;
-	bh=NbVcWNErDUPJ0b/YyMi/QMe5DBSGxpQBZsgfxILjfSw=;
+	s=arc-20240116; t=1749851467; c=relaxed/simple;
+	bh=cBrYVGQj4lHBy/UsPaCTFXpOsO9+c6VWLcUCtFMjXqM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=erJOx5cVrbpOFpaNQoCIqkob1LW7jl9+aBLXHmc5O5OSxf9hVQIF7Rz11t0pFb2Sohdftm0LY8g9Wjjf5fOn+9Hb074fiQXy3O6tOiYSlggIR8wLP1ND97O5bR5kX630FiYbUhWdncfM4TTFn193OdfbJHnpJ5wMw8sJL79lmy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZUhcCp8; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=aRcgQGXNQHOM0WjXMVWLc4+e1vmUkyalRmHbflUaVoQj/31TG5ddmavUSHZB0lvO6YeEq3eRbxhhFZLNrh5hEAzURu9SyWHJEAuCx/pg3aGN0YmRJ7fzmRGVyzMo6q4OOF7DMpbMDZ/OnDDxsx6DZvWfPhz3PDPKW+foZbGhuwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PcJVwqOp; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235f9e87f78so27761425ad.2;
-        Fri, 13 Jun 2025 14:51:03 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-748435ce7cdso2333695b3a.1;
+        Fri, 13 Jun 2025 14:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749851463; x=1750456263; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749851465; x=1750456265; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nfcfku3VSZ/Zj0uP5QIqk4w/+NsJ7WJQ4W48WZy1pqw=;
-        b=TZUhcCp8ovw3CGDNRBiEPTAnJHEBfM42qrKO9l7s23fTNGRkAoK1BxntPnRFoE1NhJ
-         U0NOv+54rq4BAWboabQsvHtDAFUO+RJ1B1oGKqLscSuDMnrOHcGLlG1Ggsm1L4lIHaIA
-         MLEsoUGLe1QxCIRRboN3YPb65av+UIlqYKNK8vvVXdQTzGGnVeSZHVTy6cwmjNivZjAV
-         qeyNvFG8/HG2SeXA7+P4Np7s1g4reC52/GeEJ0yFEw5E4+7FvV3/LGhtlgV7I/Fu0mWF
-         w4W//41YvYkjk83j5ZgyCFh1KnPHmnq9Hg6J3UpPkBpRRzNbF7zzO21Pj9pVHR2elnLo
-         CShw==
+        bh=ALPOapVbuDQmetN0MyS8mhaMorwK81IS1lBHrNJLKk4=;
+        b=PcJVwqOpgXsfObnQK/KHWCWiRDC4w0Q/dDrFe63ra6S01Zcj4hIqhY/lZqRr7fUHQf
+         SeoB7jO6foUbO0X2ECQpSB/kwgeIy2asQpWz3EtBnsHh5u2m5BdWVvLMhpSEkh1UNh6o
+         kf4lkutxU+y3IfovaHtn21QRQK3b42oCH7OfbIZsXJux0EjN3K6T/UlwQ2TqteaFeqTB
+         oLTUCVHBwvKSxWPZwObf/1S4LTeo8vpYdGoaK5LUBZEqoobfyX01GnHAcxdpjH+D3NpV
+         XT1SSl5e2+ZXkuju1yc3oLTK7PxMVHWARWFS4o1kIjGkBLQ39e3X8jS9lh4h7/Nz9QBz
+         OH1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749851463; x=1750456263;
+        d=1e100.net; s=20230601; t=1749851465; x=1750456265;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nfcfku3VSZ/Zj0uP5QIqk4w/+NsJ7WJQ4W48WZy1pqw=;
-        b=Go+hjGtcwkhSqB2/ky9l3/k393pBAJW+ot7mBBQEAgdbYr/TEnAFQveAxm8VLfFxNH
-         zSsPUmB3AJRMb0Cb772d/RZ/v9IX7GZ8JyFBiHPD4+jbCrxoTvFeZpcfT+05y7SeILHc
-         nSCVb6Pt3qa/YFfw/669RvdjEaPkaMqndOQOdm8D8V949BRRHwsIH2wt0JxHiwduKsq7
-         8CZ0GgWiUb3uF1HECjwtZxBpP+RNVIOJtMAjr35Z2a7W3nDoUS+kpHyaV3ixEuccMuY8
-         UKlVxCzLVyiZJD2kwl/IQYSJCmwzTe/7eJRwleliJTecD1hSJBfG1AvUJgjApDQsDMb1
-         uu3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXnzROZv53k6LmAhwWPRYUMZutShpA6hKM7sqOFiynFSaXs1ZRIJkekHRVnqqNfMNTTpgBsxVtBptE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy571NhuvQkssnULk4n+GvJD9xi1HJ5aQu8PuHzJbNnqo9xqWbP
-	yNbDm51qDdFrik1Xuph2yoYntzwHunHwOv+jZYok5SkoGna1n9FGKY5/GLnAcQ==
-X-Gm-Gg: ASbGncvMkbigLe27xYdbUCrsqWEa8JeMzgoyKUUXkCD/HiEY9UA4iBXCgZWu7+BQHAl
-	Yit4bLYbzaTh/+ZQQ+cQ7Swmyl2M5biV3OH6aPdJXif6s6ApGtMLqm/YSZSk7LHG35EA8eXDBNe
-	iT6aIHVa8ONoGqHSJ6H0WORuhtHjD80qFyi3e8nz0z5RIk9lvIBcgSE6nJcUxFTJjC0o05hbmxz
-	RB/wkToLmbCdoGRofEM6A9O0+eMyC1w60h5qz8Ky/gTGUyc6ceNHild8KPHvyETQERM2QeiPcnU
-	5cz48E7WXsFaoCboyysbCoHzxWGw3A0+iD9CK2aIVRp5YYSGvo/LVLb5
-X-Google-Smtp-Source: AGHT+IHmLwKkL6d/1slxGCwzulr4InRZwxLV8ZN9PVWcYCy1oH7+EezbzXHeeukDTDrOND8RY+vC0w==
-X-Received: by 2002:a17:902:db11:b0:235:ecf2:397 with SMTP id d9443c01a7336-2366b1364admr14130755ad.33.1749851462902;
-        Fri, 13 Jun 2025 14:51:02 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:f::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1c6ab91sm3896326a91.48.2025.06.13.14.51.02
+        bh=ALPOapVbuDQmetN0MyS8mhaMorwK81IS1lBHrNJLKk4=;
+        b=aiIoT7yuLn6NjRhAaCXu2tjJIih7U9Y6iNBgSELPZWiH6nP2STXV1ZzQ9twRQuGekZ
+         3HIAJk168pLHQ10aaBFfjWoTsEk62XnvyDCvPSfEvcZipQhRclB/hCg+fNlbunZ9JseI
+         E9hbPteEosB+FkG39HSvTt58VUbNKGPcGZrtMbIz0auuSRimj9OHZdozYTXSOPkVZrc0
+         mwBJwoiPODROKHBgQrwK3EGfTw0pk7gaU3CXZCAm0rsjr0Nw7GGAdyzFjSTMXNK/Czq4
+         iSA0O14JD+6ryG4dc7J+YwwzSodbd9yK4VCkJtVQUeV+PNQhFHs4dM38ZNQzIDa/2uxz
+         1Xyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDJ0yId271uEyXvmmLQlDpeMoy28F5mZ2JMMTVfVaGYbJcXf6GYn1OyLPwFM4VUTFjcdl7BlVhZag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhqSvaCj4y00cTZ+KXrxZXDRDEHLNOeP1t2Ac+5SEfh9XK/2XH
+	068P03xEWcvhEzbizPQBd97Vv27+R3yxQJsZ5+cW0Et/Lr+Ifgbl7z2yto5beA==
+X-Gm-Gg: ASbGnctfG84W2i2n3ZTWNuhcEQuBlhpoEGdKtb/DSz4ao8Ee6S/zBmq7qAwpkwgSbGN
+	IZPTKz8hQ2MKlzSRyYZnqzoFQbd3Y20Isph1H0+60TYAv9TJ3LW0MOmPiDS6LmXfEVii+meisPO
+	lYVsQia/Omhmhv6/VMjzIe3eOztJAlYiZES78YUWF3XIoQ7CWasQzxkXpvqtf0tdij/ambjtLgL
+	+0h1i2GuoeXnDPR/dPTpK+LPz4zKCig9Jx7+ogoYlOwu/rHDlXX4z0C+fyVi3q5a8SBqM2Om8iI
+	olOh2keqqD55xZm0aEJFSUuyvn8vjgCWFTYeLhLW0SZ/Qvpl3uP90rkxAw==
+X-Google-Smtp-Source: AGHT+IG0W1sT65DNpDyCtAcu5sZH9ZzKGGs6Mza802JCmDL5MP9pCgjbh8SXbt9vF2rn0j0GD1xBpA==
+X-Received: by 2002:a05:6a21:6481:b0:1f5:9098:e448 with SMTP id adf61e73a8af0-21fbd54a6d8mr1096686637.5.1749851464876;
+        Fri, 13 Jun 2025 14:51:04 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:72::])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe1643195sm2275105a12.22.2025.06.13.14.51.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 14:51:02 -0700 (PDT)
+        Fri, 13 Jun 2025 14:51:04 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: hch@infradead.org,
@@ -81,9 +81,9 @@ Cc: hch@infradead.org,
 	brauner@kernel.org,
 	linux-xfs@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [PATCH v2 10/16] iomap: replace ->map_blocks() with generic ->writeback_folio() for writeback
-Date: Fri, 13 Jun 2025 14:46:35 -0700
-Message-ID: <20250613214642.2903225-11-joannelkoong@gmail.com>
+Subject: [PATCH v2 11/16] iomap: replace ->submit_ioend() with generic ->writeback_complete() for writeback
+Date: Fri, 13 Jun 2025 14:46:36 -0700
+Message-ID: <20250613214642.2903225-12-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250613214642.2903225-1-joannelkoong@gmail.com>
 References: <20250613214642.2903225-1-joannelkoong@gmail.com>
@@ -96,474 +96,287 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 As part of the larger effort to have iomap buffered io code support
-generic io, replace map_blocks() with writeback_folio() and move the
-bio writeback code into a helper function, iomap_bio_writeback_folio(),
+generic io, replace submit_ioend() with writeback_complete() and move the
+bio ioend code into a helper function, iomap_bio_writeback_complete(),
 that callers using bios can directly invoke.
 
 No functional changes.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- .../filesystems/iomap/operations.rst          | 38 +++++-----
- block/fops.c                                  |  7 +-
- fs/gfs2/bmap.c                                |  7 +-
- fs/iomap/buffered-io-bio.c                    | 49 +++++++++++-
- fs/iomap/buffered-io.c                        | 74 +++++--------------
- fs/iomap/internal.h                           |  4 -
- fs/xfs/xfs_aops.c                             | 14 +++-
- fs/zonefs/file.c                              |  7 +-
- include/linux/iomap.h                         | 42 ++++++++---
- 9 files changed, 148 insertions(+), 94 deletions(-)
+ .../filesystems/iomap/operations.rst          | 18 ++++----
+ fs/iomap/buffered-io-bio.c                    | 42 ++++++++++++++++++-
+ fs/iomap/buffered-io.c                        | 38 +++--------------
+ fs/iomap/internal.h                           |  4 +-
+ fs/xfs/xfs_aops.c                             | 14 ++++++-
+ include/linux/iomap.h                         | 26 ++++++++----
+ 6 files changed, 88 insertions(+), 54 deletions(-)
 
 diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
-index 9f0e8a46cc8c..5d018d504145 100644
+index 5d018d504145..47213c810622 100644
 --- a/Documentation/filesystems/iomap/operations.rst
 +++ b/Documentation/filesystems/iomap/operations.rst
-@@ -278,7 +278,7 @@ writeback.
- It does not lock ``i_rwsem`` or ``invalidate_lock``.
- 
- The dirty bit will be cleared for all folios run through the
--``->map_blocks`` machinery described below even if the writeback fails.
-+``->writeback_folio`` machinery described below even if the writeback fails.
- This is to prevent dirty folio clots when storage devices fail; an
- ``-EIO`` is recorded for userspace to collect via ``fsync``.
- 
-@@ -290,29 +290,33 @@ The ``ops`` structure must be specified and is as follows:
- .. code-block:: c
+@@ -291,7 +291,7 @@ The ``ops`` structure must be specified and is as follows:
  
   struct iomap_writeback_ops {
--     int (*map_blocks)(struct iomap_writepage_ctx *wpc, struct inode *inode,
--                       loff_t offset, unsigned len);
-+     int (*writeback_folio)(struct iomap_writeback_folio_range *ctx);
-      int (*submit_ioend)(struct iomap_writepage_ctx *wpc, int status);
+      int (*writeback_folio)(struct iomap_writeback_folio_range *ctx);
+-     int (*submit_ioend)(struct iomap_writepage_ctx *wpc, int status);
++     int (*writeback_complete)(struct iomap_writepage_ctx *wpc, int status);
       void (*discard_folio)(struct folio *folio, loff_t pos);
   };
  
- The fields are as follows:
+@@ -319,13 +319,15 @@ The fields are as follows:
  
--  - ``map_blocks``: Sets ``wpc->iomap`` to the space mapping of the file
--    range (in bytes) given by ``offset`` and ``len``.
--    iomap calls this function for each dirty fs block in each dirty folio,
--    though it will `reuse mappings
-+  - ``writeback_folio``: iomap calls this function for each dirty fs block
-+    in each dirty folio, though it will `reuse mappings
-     <https://lore.kernel.org/all/20231207072710.176093-15-hch@lst.de/>`_
-     for runs of contiguous dirty fsblocks within a folio.
--    Do not return ``IOMAP_INLINE`` mappings here; the ``->iomap_end``
--    function must deal with persisting written data.
--    Do not return ``IOMAP_DELALLOC`` mappings here; iomap currently
--    requires mapping to allocated space.
--    Filesystems can skip a potentially expensive mapping lookup if the
--    mappings have not changed.
--    This revalidation must be open-coded by the filesystem; it is
--    unclear if ``iomap::validity_cookie`` can be reused for this
--    purpose.
-+    For blocks that need to be mapped first, please take a look at
-+    ``iomap_bio_writeback_folio`` which takes in a ``iomap_map_blocks_t``
-+    mapping function. For that mapping function,
-+
-+      * Set ``wpc->iomap`` to the space mapping of the file range (in bytes)
-+        given by ``offset`` and ``len``.
-+      * Do not return ``IOMAP_INLINE`` mappings here; the ``->iomap_end``
-+        function must deal with persisting written data.
-+      * Do not return ``IOMAP_DELALLOC`` mappings here; iomap currently
-+        requires mapping to allocated space.
-+      * Filesystems can skip a potentially expensive mapping lookup if the
-+        mappings have not changed.
-+      * This revalidation must be open-coded by the filesystem; it is
-+        unclear if ``iomap::validity_cookie`` can be reused for this
-+        purpose.
-+
      This function must be supplied by the filesystem.
  
-   - ``submit_ioend``: Allows the file systems to hook into writeback bio
-@@ -323,7 +327,7 @@ The fields are as follows:
-     transactions from process context before submitting the bio.
-     This function is optional.
+-  - ``submit_ioend``: Allows the file systems to hook into writeback bio
+-    submission.
+-    This might include pre-write space accounting updates, or installing
+-    a custom ``->bi_end_io`` function for internal purposes, such as
+-    deferring the ioend completion to a workqueue to run metadata update
+-    transactions from process context before submitting the bio.
+-    This function is optional.
++  - ``writeback_complete``: Allows the file systems to execute any logic that
++    needs to happen after ``->writeback_folio`` has been called for all dirty
++    folios. This might include hooking into writeback bio submission for
++    pre-write space accounting updates, or installing a custom ``->bi_end_io``
++    function for internal purposes, such as deferring the ioend completion to
++    a workqueue to run metadata update transactions from process context
++    before submitting the bio.
++    This function is optional. If this function is not provided, iomap will
++    default to ``iomap_bio_writeback_complete``.
  
--  - ``discard_folio``: iomap calls this function after ``->map_blocks``
-+  - ``discard_folio``: iomap calls this function after ``->writeback_folio``
+   - ``discard_folio``: iomap calls this function after ``->writeback_folio``
      fails to schedule I/O for any part of a dirty folio.
-     The function should throw away any reservations that may have been
-     made for the write.
-diff --git a/block/fops.c b/block/fops.c
-index 1309861d4c2c..c35fe1495fd2 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -551,8 +551,13 @@ static int blkdev_map_blocks(struct iomap_writepage_ctx *wpc,
- 				  IOMAP_WRITE, &wpc->iomap, NULL);
- }
- 
-+static int blkdev_writeback_folio(struct iomap_writeback_folio_range *ctx)
-+{
-+	return iomap_bio_writeback_folio(ctx, blkdev_map_blocks);
-+}
-+
- static const struct iomap_writeback_ops blkdev_writeback_ops = {
--	.map_blocks		= blkdev_map_blocks,
-+	.writeback_folio	= blkdev_writeback_folio,
- };
- 
- static int blkdev_writepages(struct address_space *mapping,
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 7703d0471139..d13dfa986e18 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -2486,6 +2486,11 @@ static int gfs2_map_blocks(struct iomap_writepage_ctx *wpc, struct inode *inode,
- 	return ret;
- }
- 
-+static int gfs2_writeback_folio(struct iomap_writeback_folio_range *ctx)
-+{
-+	return iomap_bio_writeback_folio(ctx, gfs2_map_blocks);
-+}
-+
- const struct iomap_writeback_ops gfs2_writeback_ops = {
--	.map_blocks		= gfs2_map_blocks,
-+	.writeback_folio	= gfs2_writeback_folio,
- };
 diff --git a/fs/iomap/buffered-io-bio.c b/fs/iomap/buffered-io-bio.c
-index d5dfa1b3eef7..e052fc8b46c1 100644
+index e052fc8b46c1..e9f26a938c8d 100644
 --- a/fs/iomap/buffered-io-bio.c
 +++ b/fs/iomap/buffered-io-bio.c
-@@ -9,6 +9,7 @@
- #include <linux/writeback.h>
- 
- #include "internal.h"
-+#include "trace.h"
- 
- static void iomap_finish_folio_read(struct folio *folio, size_t off,
- 		size_t len, int error)
-@@ -208,7 +209,7 @@ static bool iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t pos,
-  * At the end of a writeback pass, there will be a cached ioend remaining on the
-  * writepage context that the caller will need to submit.
-  */
--int iomap_bio_add_to_ioend(struct iomap_writepage_ctx *wpc,
-+static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct folio *folio,
- 		struct inode *inode, loff_t pos, loff_t end_pos,
- 		unsigned len)
-@@ -290,3 +291,49 @@ int iomap_bio_add_to_ioend(struct iomap_writepage_ctx *wpc,
- 	wbc_account_cgroup_owner(wbc, folio, len);
- 	return 0;
+@@ -151,7 +151,7 @@ static void iomap_writepage_end_bio(struct bio *bio)
+ 	iomap_finish_ioend_buffered(ioend);
  }
+ 
+-void iomap_bio_ioend_error(struct iomap_writepage_ctx *wpc, int error)
++static void iomap_ioend_error(struct iomap_writepage_ctx *wpc, int error)
+ {
+ 	wpc->ioend->io_bio.bi_status = errno_to_blk_status(error);
+ 	bio_endio(&wpc->ioend->io_bio);
+@@ -230,7 +230,7 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+ 
+ 	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
+ new_ioend:
+-		error = iomap_submit_ioend(wpc, 0);
++		error = iomap_writeback_complete(wpc, 0);
+ 		if (error)
+ 			return error;
+ 		wpc->ioend = iomap_alloc_ioend(wpc, wbc, inode, pos,
+@@ -337,3 +337,41 @@ int iomap_bio_writeback_folio(struct iomap_writeback_folio_range *ctx,
+ 	return error;
+ }
+ EXPORT_SYMBOL_GPL(iomap_bio_writeback_folio);
 +
-+int iomap_bio_writeback_folio(struct iomap_writeback_folio_range *ctx,
-+		iomap_map_blocks_t map_blocks)
++/*
++ * Submit an ioend.
++ *
++ * If @error is non-zero, it means that we have a situation where some part of
++ * the submission process has failed after we've marked pages for writeback.
++ * We cannot cancel ioend directly in that case, so call the bio end I/O handler
++ * with the error status here to run the normal I/O completion handler to clear
++ * the writeback bit and let the file system proess the errors.
++ */
++int iomap_bio_writeback_complete(struct iomap_writepage_ctx *wpc, int error,
++		iomap_submit_ioend_t submit_ioend)
 +{
-+	struct iomap_writepage_ctx *wpc = ctx->wpc;
-+	struct folio *folio = ctx->folio;
-+	u64 pos = ctx->pos;
-+	u64 end_pos = ctx->end_pos;
-+	u32 dirty_len = ctx->dirty_len;
-+	struct writeback_control *wbc = ctx->wbc;
-+	struct inode *inode = folio->mapping->host;
-+	int error;
++	if (!wpc->ioend)
++		return error;
 +
-+	do {
-+		unsigned map_len;
-+
-+		error = map_blocks(wpc, inode, pos, dirty_len);
-+		if (error)
-+			break;
-+		trace_iomap_writepage_map(inode, pos, dirty_len, &wpc->iomap);
-+
-+		map_len = min_t(u64, dirty_len,
-+			wpc->iomap.offset + wpc->iomap.length - pos);
-+		WARN_ON_ONCE(!folio->private && map_len < dirty_len);
-+
-+		switch (wpc->iomap.type) {
-+		case IOMAP_INLINE:
-+			WARN_ON_ONCE(1);
++	/*
++	 * Let the file systems prepare the I/O submission and hook in an I/O
++	 * comletion handler.  This also needs to happen in case after a
++	 * failure happened so that the file system end I/O handler gets called
++	 * to clean up.
++	 */
++	if (submit_ioend) {
++		error = submit_ioend(wpc, error);
++	} else {
++		if (WARN_ON_ONCE(wpc->iomap.flags & IOMAP_F_ANON_WRITE))
 +			error = -EIO;
-+			break;
-+		case IOMAP_HOLE:
-+			break;
-+		default:
-+			error = iomap_add_to_ioend(wpc, wbc, folio, inode, pos,
-+					end_pos, map_len);
-+			if (!error)
-+				ctx->async_writeback = true;
-+			break;
-+		}
-+		dirty_len -= map_len;
-+		pos += map_len;
-+	} while (dirty_len && !error);
++		if (!error)
++			iomap_submit_bio(&wpc->ioend->io_bio);
++	}
 +
++	if (error)
++		iomap_ioend_error(wpc, error);
++
++	wpc->ioend = NULL;
 +	return error;
 +}
-+EXPORT_SYMBOL_GPL(iomap_bio_writeback_folio);
++EXPORT_SYMBOL_GPL(iomap_bio_writeback_complete);
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 2f620ebe20e2..2b8d733f65da 100644
+index 2b8d733f65da..bdf917ae56dc 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1486,57 +1486,6 @@ int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error)
+@@ -1450,39 +1450,13 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops,
+ }
+ EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
+ 
+-/*
+- * Submit an ioend.
+- *
+- * If @error is non-zero, it means that we have a situation where some part of
+- * the submission process has failed after we've marked pages for writeback.
+- * We cannot cancel ioend directly in that case, so call the bio end I/O handler
+- * with the error status here to run the normal I/O completion handler to clear
+- * the writeback bit and let the file system proess the errors.
+- */
+-int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error)
++int iomap_writeback_complete(struct iomap_writepage_ctx *wpc, int error)
+ {
+-	if (!wpc->ioend)
+-		return error;
+-
+-	/*
+-	 * Let the file systems prepare the I/O submission and hook in an I/O
+-	 * comletion handler.  This also needs to happen in case after a
+-	 * failure happened so that the file system end I/O handler gets called
+-	 * to clean up.
+-	 */
+-	if (wpc->ops->submit_ioend) {
+-		error = wpc->ops->submit_ioend(wpc, error);
+-	} else {
+-		if (WARN_ON_ONCE(wpc->iomap.flags & IOMAP_F_ANON_WRITE))
+-			error = -EIO;
+-		if (!error)
+-			iomap_submit_bio(&wpc->ioend->io_bio);
+-	}
+-
+-	if (error)
+-		iomap_bio_ioend_error(wpc, error);
++	if (wpc->ops->writeback_complete)
++		error = wpc->ops->writeback_complete(wpc, error);
++	else
++		error = iomap_bio_writeback_complete(wpc, error, NULL);
+ 
+-	wpc->ioend = NULL;
  	return error;
  }
  
--static int iomap_writepage_map_blocks(struct iomap_writepage_ctx *wpc,
--		struct writeback_control *wbc, struct folio *folio,
--		struct inode *inode, u64 pos, u64 end_pos,
--		unsigned dirty_len, bool *async_writeback)
--{
--	int error;
--
--	do {
--		unsigned map_len;
--
--		error = wpc->ops->map_blocks(wpc, inode, pos, dirty_len);
--		if (error)
--			break;
--		trace_iomap_writepage_map(inode, pos, dirty_len, &wpc->iomap);
--
--		map_len = min_t(u64, dirty_len,
--			wpc->iomap.offset + wpc->iomap.length - pos);
--		WARN_ON_ONCE(!folio->private && map_len < dirty_len);
--
--		switch (wpc->iomap.type) {
--		case IOMAP_INLINE:
--			WARN_ON_ONCE(1);
--			error = -EIO;
--			break;
--		case IOMAP_HOLE:
--			break;
--		default:
--			error = iomap_bio_add_to_ioend(wpc, wbc, folio, inode,
--					pos, end_pos, map_len);
--			if (!error)
--				*async_writeback = true;
--			break;
--		}
--		dirty_len -= map_len;
--		pos += map_len;
--	} while (dirty_len && !error);
--
--	/*
--	 * We cannot cancel the ioend directly here on error.  We may have
--	 * already set other pages under writeback and hence we have to run I/O
--	 * completion to mark the error state of the pages under writeback
--	 * appropriately.
--	 *
--	 * Just let the file system know what portion of the folio failed to
--	 * map.
--	 */
--	if (error && wpc->ops->discard_folio)
--		wpc->ops->discard_folio(folio, pos);
--	return error;
--}
--
- /*
-  * Check interaction of the folio with the file end.
-  *
-@@ -1603,9 +1552,14 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	u64 pos = folio_pos(folio);
- 	u64 end_pos = pos + folio_size(folio);
- 	u64 end_aligned = 0;
--	bool async_writeback = false;
- 	int error = 0;
- 	u32 rlen;
-+	struct iomap_writeback_folio_range ctx = {
-+		.wpc = wpc,
-+		.wbc = wbc,
-+		.folio = folio,
-+		.end_pos = end_pos,
-+	};
- 
- 	WARN_ON_ONCE(!folio_test_locked(folio));
- 	WARN_ON_ONCE(folio_test_dirty(folio));
-@@ -1646,14 +1600,20 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	 */
- 	end_aligned = round_up(end_pos, i_blocksize(inode));
- 	while ((rlen = iomap_find_dirty_range(folio, &pos, end_aligned))) {
--		error = iomap_writepage_map_blocks(wpc, wbc, folio, inode,
--				pos, end_pos, rlen, &async_writeback);
--		if (error)
-+		ctx.pos = pos;
-+		ctx.dirty_len = rlen;
-+		WARN_ON(!wpc->ops->writeback_folio);
-+		error = wpc->ops->writeback_folio(&ctx);
-+
-+		if (error) {
-+			if (wpc->ops->discard_folio)
-+				wpc->ops->discard_folio(folio, pos);
- 			break;
-+		}
- 		pos += rlen;
- 	}
- 
--	if (async_writeback)
-+	if (ctx.async_writeback)
- 		wpc->nr_folios++;
- 
- 	/*
-@@ -1675,7 +1635,7 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		if (atomic_dec_and_test(&ifs->write_bytes_pending))
- 			folio_end_writeback(folio);
- 	} else {
--		if (!async_writeback)
-+		if (!ctx.async_writeback)
- 			folio_end_writeback(folio);
- 	}
- 	mapping_set_error(inode->i_mapping, error);
+@@ -1661,6 +1635,6 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+ 	wpc->ops = ops;
+ 	while ((folio = writeback_iter(mapping, wbc, folio, &error)))
+ 		error = iomap_writepage_map(wpc, wbc, folio);
+-	return iomap_submit_ioend(wpc, error);
++	return iomap_writeback_complete(wpc, error);
+ }
+ EXPORT_SYMBOL_GPL(iomap_writepages);
 diff --git a/fs/iomap/internal.h b/fs/iomap/internal.h
-index 27e8a174dc3f..6efb5905bf4f 100644
+index 6efb5905bf4f..bfd3f3be845a 100644
 --- a/fs/iomap/internal.h
 +++ b/fs/iomap/internal.h
-@@ -37,9 +37,6 @@ int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error);
+@@ -32,7 +32,7 @@ u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend);
+ u32 iomap_finish_ioend_direct(struct iomap_ioend *ioend);
+ bool ifs_set_range_uptodate(struct folio *folio, struct iomap_folio_state *ifs,
+ 		size_t off, size_t len);
+-int iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error);
++int iomap_writeback_complete(struct iomap_writepage_ctx *wpc, int error);
+ 
  #ifdef CONFIG_BLOCK
  int iomap_bio_read_folio_sync(loff_t block_start, struct folio *folio,
- 		size_t poff, size_t plen, const struct iomap *iomap);
--int iomap_bio_add_to_ioend(struct iomap_writepage_ctx *wpc,
--		struct writeback_control *wbc, struct folio *folio,
--		struct inode *inode, loff_t pos, loff_t end_pos, unsigned len);
+@@ -40,12 +40,10 @@ int iomap_bio_read_folio_sync(loff_t block_start, struct folio *folio,
  void iomap_bio_readpage(const struct iomap *iomap, loff_t pos,
  		struct iomap_readpage_ctx *ctx, size_t poff, size_t plen,
  		loff_t length);
-@@ -47,7 +44,6 @@ void iomap_bio_ioend_error(struct iomap_writepage_ctx *wpc, int error);
+-void iomap_bio_ioend_error(struct iomap_writepage_ctx *wpc, int error);
  void iomap_submit_bio(struct bio *bio);
  #else
  #define iomap_bio_read_folio_sync(...)		(-ENOSYS)
--#define iomap_bio_add_to_ioend(...)		(-ENOSYS)
  #define iomap_bio_readpage(...)		((void)0)
- #define iomap_bio_ioend_error(...)		((void)0)
+-#define iomap_bio_ioend_error(...)		((void)0)
  #define iomap_submit_bio(...)			((void)0)
+ #endif /* CONFIG_BLOCK */
+ 
 diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 63151feb9c3f..8878c015bd48 100644
+index 8878c015bd48..63745ff68250 100644
 --- a/fs/xfs/xfs_aops.c
 +++ b/fs/xfs/xfs_aops.c
-@@ -455,6 +455,11 @@ xfs_ioend_needs_wq_completion(
- 	return false;
- }
- 
-+static int xfs_writeback_folio(struct iomap_writeback_folio_range *ctx)
-+{
-+	return iomap_bio_writeback_folio(ctx, xfs_map_blocks);
-+}
-+
- static int
- xfs_submit_ioend(
- 	struct iomap_writepage_ctx *wpc,
-@@ -526,7 +531,7 @@ xfs_discard_folio(
- }
- 
- static const struct iomap_writeback_ops xfs_writeback_ops = {
--	.map_blocks		= xfs_map_blocks,
-+	.writeback_folio	= xfs_writeback_folio,
- 	.submit_ioend		= xfs_submit_ioend,
- 	.discard_folio		= xfs_discard_folio,
- };
-@@ -608,6 +613,11 @@ xfs_zoned_map_blocks(
+@@ -493,6 +493,11 @@ xfs_submit_ioend(
  	return 0;
  }
  
-+static int xfs_zoned_writeback_folio(struct iomap_writeback_folio_range *ctx)
++static int xfs_writeback_complete(struct iomap_writepage_ctx *wpc, int error)
 +{
-+	return iomap_bio_writeback_folio(ctx, xfs_zoned_map_blocks);
++	return iomap_bio_writeback_complete(wpc, error, xfs_submit_ioend);
 +}
 +
- static int
- xfs_zoned_submit_ioend(
- 	struct iomap_writepage_ctx *wpc,
-@@ -621,7 +631,7 @@ xfs_zoned_submit_ioend(
- }
+ /*
+  * If the folio has delalloc blocks on it, the caller is asking us to punch them
+  * out. If we don't, we can leave a stale delalloc mapping covered by a clean
+@@ -532,7 +537,7 @@ xfs_discard_folio(
  
- static const struct iomap_writeback_ops xfs_zoned_writeback_ops = {
--	.map_blocks		= xfs_zoned_map_blocks,
-+	.writeback_folio	= xfs_zoned_writeback_folio,
- 	.submit_ioend		= xfs_zoned_submit_ioend,
+ static const struct iomap_writeback_ops xfs_writeback_ops = {
+ 	.writeback_folio	= xfs_writeback_folio,
+-	.submit_ioend		= xfs_submit_ioend,
++	.writeback_complete	= xfs_writeback_complete,
  	.discard_folio		= xfs_discard_folio,
  };
-diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
-index 42e2c0065bb3..11901e40e810 100644
---- a/fs/zonefs/file.c
-+++ b/fs/zonefs/file.c
-@@ -145,8 +145,13 @@ static int zonefs_write_map_blocks(struct iomap_writepage_ctx *wpc,
- 					IOMAP_WRITE, &wpc->iomap, NULL);
+ 
+@@ -630,9 +635,14 @@ xfs_zoned_submit_ioend(
+ 	return 0;
  }
  
-+static int zonefs_writeback_folio(struct iomap_writeback_folio_range *ctx)
++static int xfs_zoned_writeback_complete(struct iomap_writepage_ctx *wpc, int error)
 +{
-+	return iomap_bio_writeback_folio(ctx, zonefs_write_map_blocks);
++	return iomap_bio_writeback_complete(wpc, error, xfs_zoned_submit_ioend);
 +}
 +
- static const struct iomap_writeback_ops zonefs_writeback_ops = {
--	.map_blocks		= zonefs_write_map_blocks,
-+	.writeback_folio	= zonefs_writeback_folio,
+ static const struct iomap_writeback_ops xfs_zoned_writeback_ops = {
+ 	.writeback_folio	= xfs_zoned_writeback_folio,
+-	.submit_ioend		= xfs_zoned_submit_ioend,
++	.writeback_complete	= xfs_zoned_writeback_complete,
+ 	.discard_folio		= xfs_discard_folio,
  };
  
- static int zonefs_writepages(struct address_space *mapping,
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 51cf3e863caf..fe827948035d 100644
+index fe827948035d..f4350e59fe7e 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -16,6 +16,7 @@ struct inode;
- struct iomap_iter;
- struct iomap_dio;
- struct iomap_writepage_ctx;
-+struct iomap_writeback_folio_range;
- struct iov_iter;
- struct kiocb;
- struct page;
-@@ -427,18 +428,13 @@ static inline struct iomap_ioend *iomap_ioend_from_bio(struct bio *bio)
+@@ -437,14 +437,10 @@ struct iomap_writeback_ops {
+ 	int (*writeback_folio)(struct iomap_writeback_folio_range *ctx);
  
- struct iomap_writeback_ops {
  	/*
--	 * Required, maps the blocks so that writeback can be performed on
--	 * the range starting at offset.
-+	 * Required.
- 	 *
--	 * Can return arbitrarily large regions, but we need to call into it at
--	 * least once per folio to allow the file systems to synchronize with
--	 * the write path that could be invalidating mappings.
+-	 * Optional, allows the file systems to hook into bio submission,
+-	 * including overriding the bi_end_io handler.
 -	 *
--	 * An existing mapping from a previous call to this method can be reused
--	 * by the file system if it is still valid.
-+	 * If the writeback is done asynchronously, the caller is responsible
-+	 * for ending writeback on the folio once all the dirty ranges have been
-+	 * written out and the caller should set ctx->async_writeback to true.
+-	 * Returns 0 if the bio was successfully submitted, or a negative
+-	 * error code if status was non-zero or another error happened and
+-	 * the bio could not be submitted.
++	 * Optional, allows the file system to call into this once
++	 * ->writeback_folio() on all dirty ranges have been issued.
  	 */
--	int (*map_blocks)(struct iomap_writepage_ctx *wpc, struct inode *inode,
--			  loff_t offset, unsigned len);
-+	int (*writeback_folio)(struct iomap_writeback_folio_range *ctx);
+-	int (*submit_ioend)(struct iomap_writepage_ctx *wpc, int status);
++	int (*writeback_complete)(struct iomap_writepage_ctx *wpc, int status);
  
  	/*
- 	 * Optional, allows the file systems to hook into bio submission,
-@@ -464,6 +460,16 @@ struct iomap_writepage_ctx {
- 	u32			nr_folios;	/* folios added to the ioend */
- };
+ 	 * Optional, allows the file system to discard state on a page where
+@@ -563,4 +559,20 @@ typedef int iomap_map_blocks_t(struct iomap_writepage_ctx *wpc,
+ int iomap_bio_writeback_folio(struct iomap_writeback_folio_range *ctx,
+ 		iomap_map_blocks_t map_blocks);
  
-+struct iomap_writeback_folio_range {
-+	struct iomap_writepage_ctx *wpc;
-+	struct writeback_control *wbc;
-+	struct folio *folio;
-+	u64 pos;
-+	u64 end_pos;
-+	u32 dirty_len;
-+	bool async_writeback; /* should get set to true if writeback is async */
-+};
-+
- struct iomap_ioend *iomap_init_ioend(struct inode *inode, struct bio *bio,
- 		loff_t file_offset, u16 ioend_flags);
- struct iomap_ioend *iomap_split_ioend(struct iomap_ioend *ioend,
-@@ -541,4 +547,20 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- 
- extern struct bio_set iomap_ioend_bioset;
- 
++#ifdef CONFIG_BLOCK
 +/*
-+ * Maps the blocks so that writeback can be performed on the range
-+ * starting at offset.
++ * Allows the file systems to hook into bio submission, including overriding
++ * the bi_end_io handler.
 + *
-+ * Can return arbitrarily large regions, but we need to call into it at
-+ * least once per folio to allow the file systems to synchronize with
-+ * the write path that could be invalidating mappings.
-+ *
-+ * An existing mapping from a previous call to this method can be reused
-+ * by the file system if it is still valid.
++ * Returns 0 if the bio was successfully submitted, or a negative
++ * error code if status was non-zero or another error happened and
++ * the bio could not be submitted.
 + */
-+typedef int iomap_map_blocks_t(struct iomap_writepage_ctx *wpc,
-+		struct inode *inode, loff_t offset, unsigned int len);
-+int iomap_bio_writeback_folio(struct iomap_writeback_folio_range *ctx,
-+		iomap_map_blocks_t map_blocks);
++typedef int iomap_submit_ioend_t(struct iomap_writepage_ctx *wpc, int error);
++int iomap_bio_writeback_complete(struct iomap_writepage_ctx *wpc, int error,
++		iomap_submit_ioend_t submit_ioend);
++#else
++#define iomap_bio_writeback_complete(...)	(-ENOSYS)
++#endif /* CONFIG_BLOCK */
 +
  #endif /* LINUX_IOMAP_H */
 -- 
