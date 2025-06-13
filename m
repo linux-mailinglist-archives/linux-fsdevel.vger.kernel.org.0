@@ -1,261 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-51585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33FBAD899C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 12:39:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A62CAD89F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 13:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C6207A6E0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 10:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 864951896FDE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 11:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E852C15B9;
-	Fri, 13 Jun 2025 10:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="WYh8dlbT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C6E2D4B5D;
+	Fri, 13 Jun 2025 11:04:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f207.google.com (mail-qt1-f207.google.com [209.85.160.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837062989BA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 10:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED0F2C15A5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 11:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749811183; cv=none; b=m30Yg+wzuSsDq76baooW+Ylbf1Iuifw46btD3WbHzF7yOCegtmu3u6FYD+OE3SJFwF9oaKFjck4e3PjCyvp1XutZbprdVDODw1x4PNj44C1yh4htSGAM6A+nF8z+r4YbyonKYw52muK+QPYPdxy8v14hGgN198C3hL7TeqQDF3k=
+	t=1749812679; cv=none; b=KnZhnUmOUW6PyDe6VvCFCBrCVqtqwiumEp033PEJ9HGlvrLzxUgNLvSIn1kWnB+vDOJ0trHvYloDwHGnA90gCKu4e0hw+mh4pp6PuleqURC49fGZblY8jcrGrndNWcocVVZ5cF8I+6/B0O6O/S1TSpuNNPfekatyDkkvMLzyDQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749811183; c=relaxed/simple;
-	bh=GdG45ltDZykJUQKnvKB+ZZW2TcGSo4XsURWL4yl9R44=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XsTN2OaV1x5kybXZYPGtnA8sHM976CVSoBF2tg9ydJsO/UnM0DYY+0wHOdEQIV5pqeuqQna246ogP3Ng4lJwUEmawVKAgO+Ebda0E+ywlcC2FfTW/dBwmk08f3OjdE4HIB0lT3ruGpL74u7h5uvpap4jA+N1PH/ygLg1KZgXjIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=WYh8dlbT; arc=none smtp.client-ip=211.125.140.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1749811180; x=1781347180;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=V45lmQGziXq1E8wWEd5i1/SVdFp7OOAVEhPnblWcVok=;
-  b=WYh8dlbT66URZWKUW3z77CLV1saoJ6zj52+Z6DIjJ3YK0dzm5xPB/FHh
-   4GJinSq67miYUsQJ78m3q++Kv9xSyk3qGPz8QKT2TodgB/Uh0ArpS05Lh
-   fEVM26qYRKol3/zsP7auVlil2YazgaCmTKYwA76tItCFSTylNAi7O9zyq
-   hdKvS1RRgjijwWhoo1zn0LHitqUjajZgSM7kn52G/JgG3gR7ODWe0niKs
-   ah9lqq7GD7HYZT5cChu24VWvOYuaaJslD8uP+WSA2HnpxprtDQ1ARreOZ
-   kNNU43v+0ECvL8XDxSagb1cB8i6jzHBuRmq77K8Lp5Fd+4La82eyM7/Sc
-   A==;
-Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
-  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 19:39:33 +0900
-X-IronPort-AV: E=Sophos;i="6.16,233,1744038000"; 
-   d="scan'208";a="541540877"
-Received: from unknown (HELO cscsh-7000014390.ap.sony.com) ([43.82.111.225])
-  by jpmta-ob02.noc.sony.co.jp with ESMTP; 13 Jun 2025 19:39:33 +0900
-From: Yuezhang Mo <Yuezhang.Mo@sony.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com
-Cc: linux-fsdevel@vger.kernel.org,
-	Yuezhang Mo <Yuezhang.Mo@sony.com>
-Subject: [PATCH v1] exfat: add cluster chain loop check for dir
-Date: Fri, 13 Jun 2025 18:38:03 +0800
-Message-ID: <20250613103802.619272-2-Yuezhang.Mo@sony.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749812679; c=relaxed/simple;
+	bh=gkF11Vi2FrQD3WOhk2A71W/Qr3tehY8WiasNwBSxfKs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HW+EKOrW1xjwewc5W9iETsmdANYFcrND3yf8Cf6jhkBxxl+/7SRKDIiTspJ5tjJo1RpJZvBbTiWAAy/MLu4DRHfxvDTRhWuN1FPSiLF90xF7vXmoyrprqfzx7Q7Uq7IOd9MPHggmuVNkvtNVZRiQ+i5+NgbYilXoGZu5PpVO1QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.160.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-qt1-f207.google.com with SMTP id d75a77b69052e-4a43988c314so39674991cf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 04:04:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749812677; x=1750417477;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cpTGQab/U0D39e0o1gC8NFB6KS8WTusESL+/4+GxDfk=;
+        b=vFfqSILeh+df/RSvYibQM74wzkowKG6Y9o/BRzUw70i1F3ueOLy1TeBgyGd/hBRIAo
+         payalYBCjCc+XdBQqormW+1KLOzj/AyFOl0Hy6ny7rjjKlIs8Bz/MHWOR9qEIXwDdpDa
+         VB773/tMGsyG1fWk6USNrN6goP7kaVhv6dYR0UULmtU7+RdysxQc6No55ZvVUaBITEbq
+         ch01luX69vDD9+X4PbuhwroHAvMbCmRrWvMU09V1b9TIN/IEYiccQcWHQof33duUAkcQ
+         Y1qmCAIP+Ru/0IJzR2PspP7QwlGk0ARgv9XPSiZITzDe84VcxjWwaxGdGXO+WynDiJ1K
+         gi4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPwIo2p8pg3LnMeoKlUqkVyRRa22Wu2qx+I4moH+teLCERPydiGd/+UMWoddG9yXfk6xAm1NpV9EnUTSxm@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyzIaQSveTmXf2EztrzdfPpO9l/VUVh9l6zm9aPMmZ8zWzJ5JH
+	eDvqXI9XhrY3yGY4R4YejElxpQFc6J3Rzi6ZitHA1vNMyM3Rdj6GXgtJCOOMjALVS4dzxDi1wOU
+	AmsCrgyS+MgCS60x2WrVS4BYQzmWbyaMV9lsss4FJnEcE+8SjDQ0/fV1Udww=
+X-Google-Smtp-Source: AGHT+IE7vKBDsqsTe9tHa2v3D5xyEFZfFh8AgoWKXonoKkwkytcSrBCab9bQcAfYQtkx2BzSyr8Nj5Z3SMd9RArnwFJC2/edQ0I6
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:164d:b0:3dd:d746:25eb with SMTP id
+ e9e14a558f8ab-3de00bf6f74mr26720675ab.16.1749812666276; Fri, 13 Jun 2025
+ 04:04:26 -0700 (PDT)
+Date: Fri, 13 Jun 2025 04:04:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <684c05ba.050a0220.be214.029e.GAE@google.com>
+Subject: [syzbot] [hfs?] INFO: task hung in hfs_mdb_commit (3)
+From: syzbot <syzbot+6bdbdd12cf8cdbc66466@syzkaller.appspotmail.com>
+To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-An infinite loop may occur if the following conditions occur due to
-file system corruption.
+Hello,
 
-(1) Condition for exfat_count_dir_entries() to loop infinitely.
-    - The cluster chain includes a loop.
-    - There is no UNUSED entry in the cluster chain.
+syzbot found the following issue on:
 
-(2) Condition for exfat_create_upcase_table() to loop infinitely.
-    - The cluster chain of the root directory includes a loop.
-    - There are no UNUSED entry and up-case table entry in the cluster
-      chain of the root directory.
+HEAD commit:    19272b37aa4f Linux 6.16-rc1
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13d5ca0c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=162faeb2d1eaefb4
+dashboard link: https://syzkaller.appspot.com/bug?extid=6bdbdd12cf8cdbc66466
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1113ca82580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=125a29d4580000
 
-(3) Condition for exfat_load_bitmap() to loop infinitely.
-    - The cluster chain of the root directory includes a loop.
-    - There are no UNUSED entry and bitmap entry in the cluster chain
-      of the root directory.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/63fc98170cdb/disk-19272b37.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7f53e0c9076b/vmlinux-19272b37.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/249526f4900a/bzImage-19272b37.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/cafdeb8d4eab/mount_0.gz
 
-This commit adds checks in exfat_count_num_clusters() and
-exfat_count_dir_entries() to see if the cluster chain includes a loop,
-thus avoiding the above infinite loops.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6bdbdd12cf8cdbc66466@syzkaller.appspotmail.com
 
-Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+INFO: task kworker/0:0:9 blocked for more than 143 seconds.
+      Not tainted 6.16.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:0     state:D stack:27336 pid:9     tgid:9     ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: events_long flush_mdb
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5396 [inline]
+ __schedule+0x16a2/0x4cb0 kernel/sched/core.c:6785
+ __schedule_loop kernel/sched/core.c:6863 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6878
+ io_schedule+0x81/0xe0 kernel/sched/core.c:7723
+ bit_wait_io+0x11/0xd0 kernel/sched/wait_bit.c:247
+ __wait_on_bit_lock+0xe9/0x4f0 kernel/sched/wait_bit.c:90
+ out_of_line_wait_on_bit_lock+0x123/0x170 kernel/sched/wait_bit.c:117
+ lock_buffer include/linux/buffer_head.h:434 [inline]
+ hfs_mdb_commit+0xb0d/0x1160 fs/hfs/mdb.c:325
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Showing all locks held in the system:
+2 locks held by kworker/0:0/9:
+ #0: ffff88801a481548 ((wq_completion)events_long){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
+ #0: ffff88801a481548 ((wq_completion)events_long){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3321
+ #1: ffffc900000e7bc0 ((work_completion)(&(&sbi->mdb_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
+ #1: ffffc900000e7bc0 ((work_completion)(&(&sbi->mdb_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3321
+1 lock held by khungtaskd/31:
+ #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
+6 locks held by kworker/u8:7/4455:
+2 locks held by getty/5585:
+ #0: ffff888030f560a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc1-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
+ watchdog+0xfee/0x1030 kernel/hung_task.c:470
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.16.0-rc1-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
+Code: cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d a3 55 29 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffffff8de07d80 EFLAGS: 000002c2
+RAX: 19cf73c379472d00 RBX: ffffffff81974f68 RCX: 19cf73c379472d00
+RDX: 0000000000000001 RSI: ffffffff8d96d7bc RDI: ffffffff8be1af40
+RBP: ffffffff8de07ea8 R08: ffff8880b8632f5b R09: 1ffff110170c65eb
+R10: dffffc0000000000 R11: ffffed10170c65ec R12: ffffffff8f9fdef0
+R13: 0000000000000000 R14: 0000000000000000 R15: 1ffffffff1bd2a50
+FS:  0000000000000000(0000) GS:ffff888125c86000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0bd9123130 CR3: 000000002f7b4000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:749
+ default_idle_call+0x74/0xb0 kernel/sched/idle.c:117
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x1e8/0x510 kernel/sched/idle.c:325
+ cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:423
+ rest_init+0x2de/0x300 init/main.c:744
+ start_kernel+0x47d/0x500 init/main.c:1101
+ x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
+ x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
+ common_startup_64+0x13e/0x147
+ </TASK>
+
+
 ---
- fs/exfat/dir.c    | 33 +++++++++++++++++++++------------
- fs/exfat/fatent.c | 10 ++++++++++
- fs/exfat/super.c  | 32 +++++++++++++++++++++-----------
- 3 files changed, 52 insertions(+), 23 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index 3103b932b674..467271ad4d71 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -1194,7 +1194,8 @@ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir)
- {
- 	int i, count = 0;
- 	int dentries_per_clu;
--	unsigned int entry_type;
-+	unsigned int entry_type = TYPE_FILE;
-+	unsigned int clu_count = 0;
- 	struct exfat_chain clu;
- 	struct exfat_dentry *ep;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-@@ -1205,18 +1206,26 @@ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir)
- 	exfat_chain_dup(&clu, p_dir);
- 
- 	while (clu.dir != EXFAT_EOF_CLUSTER) {
--		for (i = 0; i < dentries_per_clu; i++) {
--			ep = exfat_get_dentry(sb, &clu, i, &bh);
--			if (!ep)
--				return -EIO;
--			entry_type = exfat_get_entry_type(ep);
--			brelse(bh);
-+		clu_count++;
-+		if (clu_count > sbi->used_clusters) {
-+			exfat_fs_error(sb, "dir size or FAT or bitmap is corrupted");
-+			return -EIO;
-+		}
- 
--			if (entry_type == TYPE_UNUSED)
--				return count;
--			if (entry_type != TYPE_DIR)
--				continue;
--			count++;
-+		if (entry_type != TYPE_UNUSED) {
-+			for (i = 0; i < dentries_per_clu; i++) {
-+				ep = exfat_get_dentry(sb, &clu, i, &bh);
-+				if (!ep)
-+					return -EIO;
-+				entry_type = exfat_get_entry_type(ep);
-+				brelse(bh);
-+
-+				if (entry_type == TYPE_UNUSED)
-+					break;
-+				if (entry_type != TYPE_DIR)
-+					continue;
-+				count++;
-+			}
- 		}
- 
- 		if (clu.flags == ALLOC_NO_FAT_CHAIN) {
-diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
-index 23065f948ae7..2a2615ca320f 100644
---- a/fs/exfat/fatent.c
-+++ b/fs/exfat/fatent.c
-@@ -490,5 +490,15 @@ int exfat_count_num_clusters(struct super_block *sb,
- 	}
- 
- 	*ret_count = count;
-+
-+	/*
-+	 * since exfat_count_used_clusters() is not called, sbi->used_clusters
-+	 * cannot be used here.
-+	 */
-+	if (i == sbi->num_clusters) {
-+		exfat_fs_error(sb, "The cluster chain has a loop");
-+		return -EIO;
-+	}
-+
- 	return 0;
- }
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 7ed858937d45..3a9ec75ab452 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -341,13 +341,12 @@ static void exfat_hash_init(struct super_block *sb)
- 		INIT_HLIST_HEAD(&sbi->inode_hashtable[i]);
- }
- 
--static int exfat_read_root(struct inode *inode)
-+static int exfat_read_root(struct inode *inode, struct exfat_chain *root_clu)
- {
- 	struct super_block *sb = inode->i_sb;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct exfat_inode_info *ei = EXFAT_I(inode);
--	struct exfat_chain cdir;
--	int num_subdirs, num_clu = 0;
-+	int num_subdirs;
- 
- 	exfat_chain_set(&ei->dir, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
- 	ei->entry = -1;
-@@ -360,12 +359,9 @@ static int exfat_read_root(struct inode *inode)
- 	ei->hint_stat.clu = sbi->root_dir;
- 	ei->hint_femp.eidx = EXFAT_HINT_NONE;
- 
--	exfat_chain_set(&cdir, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
--	if (exfat_count_num_clusters(sb, &cdir, &num_clu))
--		return -EIO;
--	i_size_write(inode, num_clu << sbi->cluster_size_bits);
-+	i_size_write(inode, EXFAT_CLU_TO_B(root_clu->size, sbi));
- 
--	num_subdirs = exfat_count_dir_entries(sb, &cdir);
-+	num_subdirs = exfat_count_dir_entries(sb, root_clu);
- 	if (num_subdirs < 0)
- 		return -EIO;
- 	set_nlink(inode, num_subdirs + EXFAT_MIN_SUBDIR);
-@@ -578,7 +574,8 @@ static int exfat_verify_boot_region(struct super_block *sb)
- }
- 
- /* mount the file system volume */
--static int __exfat_fill_super(struct super_block *sb)
-+static int __exfat_fill_super(struct super_block *sb,
-+		struct exfat_chain *root_clu)
- {
- 	int ret;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-@@ -595,6 +592,18 @@ static int __exfat_fill_super(struct super_block *sb)
- 		goto free_bh;
- 	}
- 
-+	/*
-+	 * Call exfat_count_num_cluster() before searching for up-case and
-+	 * bitmap directory entries to avoid infinite loop if they are missing
-+	 * and the cluster chain includes a loop.
-+	 */
-+	exfat_chain_set(root_clu, sbi->root_dir, 0, ALLOC_FAT_CHAIN);
-+	ret = exfat_count_num_clusters(sb, root_clu, &root_clu->size);
-+	if (ret) {
-+		exfat_err(sb, "failed to count the number of clusters in root");
-+		goto free_bh;
-+	}
-+
- 	ret = exfat_create_upcase_table(sb);
- 	if (ret) {
- 		exfat_err(sb, "failed to load upcase table");
-@@ -627,6 +636,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 	struct exfat_sb_info *sbi = sb->s_fs_info;
- 	struct exfat_mount_options *opts = &sbi->options;
- 	struct inode *root_inode;
-+	struct exfat_chain root_clu;
- 	int err;
- 
- 	if (opts->allow_utime == (unsigned short)-1)
-@@ -645,7 +655,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_time_min = EXFAT_MIN_TIMESTAMP_SECS;
- 	sb->s_time_max = EXFAT_MAX_TIMESTAMP_SECS;
- 
--	err = __exfat_fill_super(sb);
-+	err = __exfat_fill_super(sb, &root_clu);
- 	if (err) {
- 		exfat_err(sb, "failed to recognize exfat type");
- 		goto check_nls_io;
-@@ -680,7 +690,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	root_inode->i_ino = EXFAT_ROOT_INO;
- 	inode_set_iversion(root_inode, 1);
--	err = exfat_read_root(root_inode);
-+	err = exfat_read_root(root_inode, &root_clu);
- 	if (err) {
- 		exfat_err(sb, "failed to initialize root inode");
- 		goto put_inode;
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
