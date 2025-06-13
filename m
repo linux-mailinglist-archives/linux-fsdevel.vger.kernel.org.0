@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-51571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9022DAD843B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 09:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9834EAD843C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 09:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA5C189B00B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 07:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63A62189B40B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 07:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00C62E62DD;
-	Fri, 13 Jun 2025 07:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371352C3770;
+	Fri, 13 Jun 2025 07:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hj4H9CMH"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="HD1rpNQU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD0D2DECCC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE6E2DECC9;
 	Fri, 13 Jun 2025 07:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800079; cv=none; b=LveKyxsp1mGc5aSiVvn1Jme5zmWohK3WNSKn5Vp28+3fd2UG6ET09edYHM5c3ckZoQO8nx+AvJSjXQFR7kldMhspSoTYQx5hlQ9M/dhlF1QIoVSAlMxQKej4hdJcwlvR+R1ODXpJNczVjcpKTWzEpHWajGDQ2M5JqQkfooHX2PU=
+	t=1749800079; cv=none; b=fei3Wcy1Bv0AfgeUxWEDHTz7h2tkBJUwmoDlf8rRFDq58xsbr4cVzMBwnopXjP0zwlVLU8OSvstE1TaAHTnhHrW6hPzWTGLIwPQ4PYq20W2kRIjb1iemtCWjyAl/MF9hA/gPxIM7cswSrfpNSFdcjjhorr4AiQi3FOXPIfKEy7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749800079; c=relaxed/simple;
-	bh=AJ/iBAARWg+hiQ5XuhDNoVEfdp/Rg7GrZuBckcuK9/4=;
+	bh=8e8y0cH4NE2GLDLxNVdNTat5h2pkIRVNT7ZWAE6izj0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qO3ZbkAFKqYf27GjQtdWmKRflHXYGHJY4q4en9LZpaZ480CUnbZ1mKtjzICppdKNS7b0PMwgT1yj96dFvTpIGQtBwi2YNo+5lNIkMBcQthts4SRLe+bu4Sc3aV0fU5Lgv8PZubgxS/ruDU7HqOLRVPqD1nJgHCdJ6BjsAtVCIlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hj4H9CMH; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=PA6x+HYN1RAJdtdCFdL28eMb5iWGAO8BccKdsn2TFRUWy5x0Lq5u/HJsvLvAxcqjAy/QTIR9VMwwwUjRd9oPJrAf0GJXKSTNOK/8HldYLMQh9+icSE8+f/CeCzPleQRPWK6SwQLUqy2hJ8f1DDcCiB7XDJkykpH/ZG1z9xn5vS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=HD1rpNQU; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=WwU2MxvvT6viCDTE8lan9Z8XY4uaHgfShOqyFMlRjAU=; b=hj4H9CMH8lXq0NQ7B+l8gYldp8
-	C6/cOrXEiG21N7HSDjuryqhwiTcEEvzVttx4BXa+w4YC7aRgs8+zCqt4p8j+vHmS8yVjGcfdohyaU
-	KoyUqpkGMNZJQiC/RuF5thsUEMx+9rQouzDrZo2gqhUlybxZqCcOaBTJo9L/vsJVEdz5egq2oHumZ
-	Gob+XEFRdSMzhbH8IGrtLY9mBV8dClc04lGDlLXojNWo5rggFRLhho0/YbWTXb7GdAikXQujZbM9h
-	F/czhicZg6fi4ovlBJoGFjsO2fzGEbBbZL20AmrE8Wk2mCRBWdbFSABRtr6mE/KGjGK9k05DtFdV/
-	YK4aFJTQ==;
+	bh=26B+rEysAikMF6LvQvkO/EINK07ZM6LEtCbjOLOwf5g=; b=HD1rpNQU6eoo90dbVjXTcIfSRW
+	Pi3UFZXlT7NW70fQdaDTOH8R9WjzwPmTKbVzb4OdPih1dyg7WJyJhKkjiQ98B4LibQrmyTwUvVSxN
+	1Ls0BsAknLaN6MGZ++FZKJgiAX7buOC7gCyZa88u+DZF1xezjjNLl4iNG3VEZjmCqxsDiacHs4kg5
+	9TZ2xmtL9itfgQ3slfoZFYBpuWqHZWu195nsBrwVj5bwh6GvNAYk/UE+11UbTmn0255smbKv6fvGo
+	g7Y31C/E/PJoqLZpLkiOlZ1oKI1FUEK5Hj8TeqBwyo4fH+QxZdGfojtpntVz9UHc83rP1MYn4Kj0W
+	G3o2RIiw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPyvq-00000007qqZ-1N7q;
+	id 1uPyvq-00000007qqh-1iOO;
 	Fri, 13 Jun 2025 07:34:34 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: chuck.lever@oracle.com,
 	neil@brown.name,
 	torvalds@linux-foundation.org,
 	trondmy@kernel.org
-Subject: [PATCH 12/17] rpc_mkpipe_dentry(): switch to start_creating()
-Date: Fri, 13 Jun 2025 08:34:27 +0100
-Message-ID: <20250613073432.1871345-12-viro@zeniv.linux.org.uk>
+Subject: [PATCH 13/17] rpc_gssd_dummy_populate(): don't bother with rpc_populate()
+Date: Fri, 13 Jun 2025 08:34:28 +0100
+Message-ID: <20250613073432.1871345-13-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250613073432.1871345-1-viro@zeniv.linux.org.uk>
 References: <20250613073149.GI1647736@ZenIV>
@@ -68,131 +68,113 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... and make sure we set the rpc_pipe-private part of inode up before
-attaching it to dentry.
+Just have it create gssd (in root), clntXX in gssd, then info and gssd in clntXX
+- all with explicit rpc_new_dir()/rpc_new_file()/rpc_mkpipe_dentry().
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- net/sunrpc/rpc_pipe.c | 83 +++++++++++++++----------------------------
- 1 file changed, 29 insertions(+), 54 deletions(-)
+ net/sunrpc/rpc_pipe.c | 55 +++++++++----------------------------------
+ 1 file changed, 11 insertions(+), 44 deletions(-)
 
 diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-index 8f88c75c9b30..a52fe3bbf9dc 100644
+index a52fe3bbf9dc..9051842228ec 100644
 --- a/net/sunrpc/rpc_pipe.c
 +++ b/net/sunrpc/rpc_pipe.c
-@@ -485,31 +485,6 @@ rpc_get_inode(struct super_block *sb, umode_t mode)
- 	return inode;
- }
+@@ -997,7 +997,6 @@ enum {
+ 	RPCAUTH_nfsd4_cb,
+ 	RPCAUTH_cache,
+ 	RPCAUTH_nfsd,
+-	RPCAUTH_gssd,
+ 	RPCAUTH_RootEOF
+ };
  
--static int __rpc_create_common(struct inode *dir, struct dentry *dentry,
--			       umode_t mode,
--			       const struct file_operations *i_fop,
--			       void *private)
--{
--	struct inode *inode;
+@@ -1034,10 +1033,6 @@ static const struct rpc_filelist files[] = {
+ 		.name = "nfsd",
+ 		.mode = S_IFDIR | 0555,
+ 	},
+-	[RPCAUTH_gssd] = {
+-		.name = "gssd",
+-		.mode = S_IFDIR | 0555,
+-	},
+ };
+ 
+ /*
+@@ -1097,13 +1092,6 @@ void rpc_put_sb_net(const struct net *net)
+ }
+ EXPORT_SYMBOL_GPL(rpc_put_sb_net);
+ 
+-static const struct rpc_filelist gssd_dummy_clnt_dir[] = {
+-	[0] = {
+-		.name = "clntXX",
+-		.mode = S_IFDIR | 0555,
+-	},
+-};
 -
--	d_drop(dentry);
--	inode = rpc_get_inode(dir->i_sb, mode);
--	if (!inode)
--		goto out_err;
--	inode->i_ino = iunique(dir->i_sb, 100);
--	if (i_fop)
--		inode->i_fop = i_fop;
--	if (private)
--		rpc_inode_setowner(inode, private);
--	d_add(dentry, inode);
--	return 0;
--out_err:
--	printk(KERN_WARNING "%s: %s failed to allocate inode for dentry %pd\n",
--			__FILE__, __func__, dentry);
--	dput(dentry);
--	return -ENOMEM;
--}
--
- static void
- init_pipe(struct rpc_pipe *pipe)
+ static ssize_t
+ dummy_downcall(struct file *filp, const char __user *src, size_t len)
  {
-@@ -546,25 +521,6 @@ struct rpc_pipe *rpc_mkpipe_data(const struct rpc_pipe_ops *ops, int flags)
+@@ -1132,14 +1120,6 @@ rpc_dummy_info_show(struct seq_file *m, void *v)
  }
- EXPORT_SYMBOL_GPL(rpc_mkpipe_data);
+ DEFINE_SHOW_ATTRIBUTE(rpc_dummy_info);
  
--static int __rpc_mkpipe_dentry(struct inode *dir, struct dentry *dentry,
--			       umode_t mode,
--			       const struct file_operations *i_fop,
--			       void *private,
--			       struct rpc_pipe *pipe)
--{
--	struct rpc_inode *rpci;
--	int err;
+-static const struct rpc_filelist gssd_dummy_info_file[] = {
+-	[0] = {
+-		.name = "info",
+-		.i_fop = &rpc_dummy_info_fops,
+-		.mode = S_IFREG | 0400,
+-	},
+-};
 -
--	err = __rpc_create_common(dir, dentry, S_IFIFO | mode, i_fop, private);
--	if (err)
--		return err;
--	rpci = RPC_I(d_inode(dentry));
--	rpci->private = private;
--	rpci->pipe = pipe;
--	fsnotify_create(dir, dentry);
--	return 0;
--}
--
- static int rpc_new_file(struct dentry *parent,
- 			   const char *name,
- 			   umode_t mode,
-@@ -704,8 +660,10 @@ static struct dentry *rpc_mkdir_populate(struct dentry *parent,
- int rpc_mkpipe_dentry(struct dentry *parent, const char *name,
- 				 void *private, struct rpc_pipe *pipe)
+ /**
+  * rpc_gssd_dummy_populate - create a dummy gssd pipe
+  * @root:	root of the rpc_pipefs filesystem
+@@ -1151,35 +1131,22 @@ static const struct rpc_filelist gssd_dummy_info_file[] = {
+ static int
+ rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
  {
--	struct dentry *dentry;
- 	struct inode *dir = d_inode(parent);
-+	struct dentry *dentry;
-+	struct inode *inode;
-+	struct rpc_inode *rpci;
- 	umode_t umode = S_IFIFO | 0600;
- 	int err;
+-	int ret = 0;
+-	struct dentry *gssd_dentry;
+-	struct dentry *clnt_dentry = NULL;
++	struct dentry *gssd_dentry, *clnt_dentry;
++	int err;
  
-@@ -715,16 +673,33 @@ int rpc_mkpipe_dentry(struct dentry *parent, const char *name,
- 		umode &= ~0222;
+-	/* We should never get this far if "gssd" doesn't exist */
+-	gssd_dentry = try_lookup_noperm(&QSTR(files[RPCAUTH_gssd].name), root);
+-	if (!gssd_dentry)
++	gssd_dentry = rpc_new_dir(root, "gssd", 0555, NULL);
++	if (IS_ERR(gssd_dentry))
+ 		return -ENOENT;
  
- 	dentry = simple_start_creating(parent, name);
--	if (IS_ERR(dentry))
--		return PTR_ERR(dentry);
--	err = __rpc_mkpipe_dentry(dir, dentry, umode, &rpc_pipe_fops,
--				  private, pipe);
--	if (unlikely(err))
--		pr_warn("%s() failed to create pipe %pd/%s (errno = %d)\n",
--			__func__, parent, name, err);
--	else
--		pipe->dentry = dentry;
-+	if (IS_ERR(dentry)) {
-+		err = PTR_ERR(dentry);
-+		goto failed;
-+	}
-+
-+	inode = rpc_get_inode(dir->i_sb, umode);
-+	if (unlikely(!inode)) {
-+		dput(dentry);
-+		inode_unlock(dir);
-+		err = -ENOMEM;
-+		goto failed;
-+	}
-+	inode->i_ino = iunique(dir->i_sb, 100);
-+	inode->i_fop = &rpc_pipe_fops;
-+	rpci = RPC_I(inode);
-+	rpci->private = private;
-+	rpci->pipe = pipe;
-+	rpc_inode_setowner(inode, private);
-+	d_instantiate(dentry, inode);
-+	pipe->dentry = dentry;
-+	fsnotify_create(dir, dentry);
- 	inode_unlock(dir);
-+	return 0;
-+
-+failed:
-+	pr_warn("%s() failed to create pipe %pd/%s (errno = %d)\n",
-+			__func__, parent, name, err);
- 	return err;
+-	ret = rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
+-	if (ret) {
+-		dput(gssd_dentry);
+-		return ret;
+-	}
+-
+-	clnt_dentry = try_lookup_noperm(&QSTR(gssd_dummy_clnt_dir[0].name),
+-					  gssd_dentry);
+-	dput(gssd_dentry);
+-	if (!clnt_dentry)
++	clnt_dentry = rpc_new_dir(gssd_dentry, "clntXX", 0555, NULL);
++	if (IS_ERR(clnt_dentry))
+ 		return -ENOENT;
+ 
+-	ret = rpc_populate(clnt_dentry, gssd_dummy_info_file, 0, 1, NULL);
+-	if (ret) {
+-		dput(clnt_dentry);
+-		return ret;
+-	}
+-	ret = rpc_mkpipe_dentry(clnt_dentry, "gssd", NULL, pipe_data);
+-	dput(clnt_dentry);
+-	return ret;
++	err = rpc_new_file(clnt_dentry, "info", 0400,
++				   &rpc_dummy_info_fops, NULL);
++	if (!err)
++		err = rpc_mkpipe_dentry(clnt_dentry, "gssd", NULL, pipe_data);
++	return err;
  }
- EXPORT_SYMBOL_GPL(rpc_mkpipe_dentry);
+ 
+ static int
 -- 
 2.39.5
 
