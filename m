@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-51540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21BCAD80E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 04:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D14AD8110
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 04:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813F317FCA1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 02:18:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F003B18987F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 02:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9B81EF387;
-	Fri, 13 Jun 2025 02:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3D9244691;
+	Fri, 13 Jun 2025 02:37:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B11610C;
-	Fri, 13 Jun 2025 02:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A16C23AE62;
+	Fri, 13 Jun 2025 02:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749781104; cv=none; b=IYOwX7CthBTpnDHCPQRUui00OLC3jdZyJLOuUUgNrtXs+I+hw5ZsqnMwH8Lt1wvlMKZoG+EoZhCb+YRDUV2G8KhM+OTQuLeJW8ytYrLEabPXUQ8hgYXhJFMwVSgfQEwbNyC4EcHgFK6hMm2MbruhmfFpdtMYYfe8MtsuTCzp1Bw=
+	t=1749782258; cv=none; b=JFRcd8ImafO22RtFY7KD1QHeg+exLgEPS579ZCm0LEfJwi/AN/KNboFSLRhz82M5Nr9JpT6l8T7xp/Ez4cSfjUgH/z/SGWzq8g5fxXJzgGVUMT7sKk5m+RueZ1ffH9WRCtZhWMKXa5YlaCWhww4nKYYnBCOgrFay9TQvdnOxdVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749781104; c=relaxed/simple;
-	bh=vQZh0BojKe9rNgmmJExHLh+YL6uN/ZsAFvnjSw9pvek=;
+	s=arc-20240116; t=1749782258; c=relaxed/simple;
+	bh=LJWAuQOr6gJLtbQ1+3X2NJZqAsFLjMQDr8H9MVFlA3g=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=c4FYlER+FNDA8M9em6EjIYYnvpqhIaf5lcua5fVFXv+FyNaWadGsYPPAmqXsqoH7LlDw57BdeeqgNOloYvePRBPwjfD8J7yyJ5IMKNnloFiXP4Wk+dgi4EEMbohCztWF9L5NCARigd0+4ACB7vYNXVOH77WeGz7JlYFwHFMQVU0=
+	 References:Date:Message-id; b=PnSSm4vvRUWoFFVSrXYwmEMBZIiNS5EryuAAbRJezfAOFLDh0qNDYL8V4Mbp+tp+xbZQ+p9p61/AtjmXL4HVqloqeiJFik2ofgLYwIxSuTkXIPWdF1wW/iGtCuUdhzqebG/3IuSSinKSKxgYHMbJS37NeD2CWalkvsgqDa/ZYRE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1uPtzl-009jaA-GO;
-	Fri, 13 Jun 2025 02:18:17 +0000
+	id 1uPuIP-009mxQ-Fe;
+	Fri, 13 Jun 2025 02:37:33 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -49,8 +49,8 @@ Cc: "Kees Cook" <kees@kernel.org>, "Joel Granados" <joel.granados@kernel.org>,
 Subject: Re: [PATCH] proc_sysctl: Fix up ->is_seen() handling
 In-reply-to: <20250613020111.GE1647736@ZenIV>
 References: <>, <20250613020111.GE1647736@ZenIV>
-Date: Fri, 13 Jun 2025 12:18:17 +1000
-Message-id: <174978109711.608730.10518925097265210072@noble.neil.brown.name>
+Date: Fri, 13 Jun 2025 12:37:33 +1000
+Message-id: <174978225309.608730.8864073362569294982@noble.neil.brown.name>
 
 On Fri, 13 Jun 2025, Al Viro wrote:
 > On Fri, Jun 13, 2025 at 02:54:21AM +0100, Al Viro wrote:
@@ -78,11 +78,21 @@ On Fri, 13 Jun 2025, Al Viro wrote:
 > *and* staying hashed at the same time.
 > 
 
-Ahh - I misunderstood the meaning of "is_seen".
-It means "matches current namespace".
-I think I have a slightly better understanding now - thanks.
-I'll just remove the rcu stuff, which is pointless.
+If two threads in the same namespace look up the same name at the same
+time (which previously didn't exist), they will both enter
+d_alloc_parallel() where neither will notice the other, so both will
+create and install d_in_lookup() dentries, and then both will call
+->lookup, creating two identical inodes.
 
-Thanks,
+I suspect that isn't fatal, but it does seem odd.
+
+Maybe proc_sys_compare should return 0 for d_in_lookup() (aka !inode)
+dentries, and then proc_sys_revalidate() can perform the is_seen test
+and return -EAGAIN if needed, and __lookup_slow() and others could
+interpret that as meaning to "goto again" without calling
+d_invalidate().
+
+Maybe.
+
 NeilBrown
 
