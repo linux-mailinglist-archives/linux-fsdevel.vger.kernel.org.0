@@ -1,160 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-51642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B170AD98B5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 01:30:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2204AD98BE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 01:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2B17188AF53
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 23:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F50B3B5D5B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 23:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F7322F76C;
-	Fri, 13 Jun 2025 23:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6E72727F7;
+	Fri, 13 Jun 2025 23:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GRFim5Pq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B391F22FE18
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 23:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BF4230274
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 23:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749857436; cv=none; b=uYKe7OtlyWG+Xm2aL0NQbqMg7aTqA0OPDg56llnSu2+iBPpU/1H8CH5zZYe6fG0RSqNanwN8TkqXZKc/AuL3XUjlCNJLTJJdDwK2qOCr7/6AYJj3bauVBR+cpHlByHjE+/BHvWLHyZ0DQYsNPT1wqI+bvhZJUhLkBG+vaWVgWb0=
+	t=1749857770; cv=none; b=XPT2zbdTxzzy8LryhHyRrQBuZYxpvNyPB/omD3PI4I2MuZ6zofff8t5dtMJP5Yd7Mw/ElCCMj8qlfm0OCelwireP6tfrBhPSfRdEFUvvD2wv8LATo6fAB0H+WIeZiJCi2WweiOJ9MuXd8LtmeD63yb0eMMdsaAE8GS0TxxbZiI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749857436; c=relaxed/simple;
-	bh=0abnlyb7tMAEy1Y0XS37gQsAYKpdOw5VGv59YK1IzDs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=X5awtPkz2LdMNH46nm95VPl+A/YlwlDPPOoeqnq6kuYDQDSswwuqIQeTSF2tQ3ex/t9c2uzWJ05hzmirHThTe4wO0ReBPuSCalsTOIc0+KekKyMUfXMfnuvWpO7QLjnFYbk2ELtR3nbU+8RZRzjAOE4GHL72O7+EdsaTcanFm7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-8754cf2d6e2so272244439f.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 16:30:34 -0700 (PDT)
+	s=arc-20240116; t=1749857770; c=relaxed/simple;
+	bh=DBwed/fb86PWripX90nf5OxMpz/FHIZwVx3hl5aHUh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hlbT2AMu6LMYF2bCWDPmEEGcmBRqsoUGyhEZC2MzoJ4D0k1dtdkrnsHspPcuhTyYwhnFye+pm83gyWgD7Mo57WZlDBAjPLGWLHdQm+O+QDzKuG0ktA+GsHARIB2m07Q5wOfQFKuL15v7gK3Lt50aM1SFaAY4qlu20MNVxvErWHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GRFim5Pq; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a525eee2e3so2116354f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 16:36:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749857765; x=1750462565; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NVtgqO8zaWnU1b+7C4UHw0GV4RrIwCYVPwYAxMGrkpo=;
+        b=GRFim5Pqik2dN3xyrJUktpIYR4w5t5uB+FK/2CEESxFWXLfFfojv0rsqUdBMA3M38l
+         aTqnp3llch0WRz2dE9s1xquN1Ct9M9DJPbY/KwmRbSFUTeY5DwsVUS8jhGSnmwihY5o1
+         XrUDegilbRKEFd7hvZVpYaFIlyBv56GbJXL54tMxLzwQQN6Y5FuQL679AMA8IQhqIt5M
+         wtrxjZd8MK9zgopAwzLfVNIRJolyOhKh1zEERn7HGv69YnOSZJn8JNo+UxP3q0FBhsW5
+         vhT9rNwzJlAJxCgi7U8kc6+zoCPx3PKE+3etbN2AbxAv03H9EodCGgQsqW9TsEI+4UMH
+         w6KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749857434; x=1750462234;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vF7xs1A3Q2dAycwY5p/OJbr9P/yojYK9Yt6rhyL/AFs=;
-        b=I9Z8DcuAjkUIjzCbw4sj27tz4Lw9KfGWrvgileUp+7kzB2NF0AWccGJI7rAWfK5yaH
-         nyA+jWxt+DrGGJvQJQn6wHotS3GaP5Nrr6sXITIh3yC6MsxeuKzJoG2qVo+H12AE4/Al
-         1wnNo1KM4ml7a/UEdhRatuHigeB5vZVlw4eVihsQgfITHN9lZwO0772kLTZx14gPQuiy
-         /QT4t0wpHDUvtqeQp4HWDo5oCuyiGMtt+RLpqJmKCj7JPuZX2FPXR4KIsKf5YcD4/kLR
-         pDHBMzDqLyzSjHEqCIzmch389WW/+b/8DFxVLNxXJiA7tPzGZRwnMQrGPwp+4L1Fkig/
-         znKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVebeEJFjqUNCAnclZuCveekpOAqXwTzUyhYLXZ3mHus3gblDXTrZD8pU1MBtIhAic+t1lfI52/aqV7HnL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEDLgLXVND21yHK0j82ssesW0I3tzTbmmvpMy4tVeZ+O2f+34Q
-	ARED856ejRR4MfDDSHIWCwbCDKrfuIMHfjdZEdNCG1VL2Un1v/gJ1exSGXt3joNZg6gWckkLUcN
-	c4557ld7zo6wkHCh0iPmidfzz8ZbVXLEx28xpA8UMO86biBOjnwsYaIQ8QPU=
-X-Google-Smtp-Source: AGHT+IGRAA9OJyHdZx3olCjGPopW4j7o8RyPYuTFqvQIi0A6jUryimHBx8pugZDlISqy0X3182xYzFab7qTndPBx+vXNFNIaT6dB
+        d=1e100.net; s=20230601; t=1749857765; x=1750462565;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NVtgqO8zaWnU1b+7C4UHw0GV4RrIwCYVPwYAxMGrkpo=;
+        b=ubDCRkIWwF4TatkppzNpPchwiA3CK4Bolc5BvxIBSgOF1OAxUBig3qimA4aW62E1Mj
+         9jbMpFjHlKosRuEbdcV+RTkTfnwnSe7mJUCYia8uYPmWWX447igsIJYgJeoWlFfgmRHR
+         Q8c14Z/utyCwUMgsE/Yu+TzZEExvnCjXf1CJHnvTz3kklW4T/5HNDOVCoJS+/eBqXG2G
+         u/sActQ/M9ogl/8HKoEEFHaGI/qCnvjgq+CnamS2KRLxaiCUDyYI8DOMoRnFJYHllbMq
+         qxMM6oa9TSWieBvVhQPOvvGCwi4Df1lnLgnbN5BKiCRP4JTGajeLQh1ZLusP9uKoUB55
+         dPDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWh78z093nr+S/m49vzGVqkTn7v4zx9OBjJc0LAJ4gpd8VzwXChEbxE+3rNNVq5mGSgYQqUMbFL5C8pT1BV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzixV3LHQjB4yuvqUTn+eP5g5QAiVD+MLe+61zdJlj+5Hhojl3
+	YHN1RJUzYcJLE3UDZ2bKbt3WhK0c/Ru9Cg4zePd4mp7bSOUBqjerWyeyFs1+z/glx8M=
+X-Gm-Gg: ASbGncs8CAZoT/4bwci1XyocHKo4wfkS8fWVRr4gzm4LvN4vorq9QKgGlsEdeJI6eTn
+	Wtfju7AXYTpmFFkO4s6uyyFX9W51yu0a/cAbUC+yAeUfrHYpzb1FuTiKFvhRJ5WRLRugpyLuTto
+	9GlpyoVQGgbnjCRxxyV5KcEVbaJK4xoF3zEf14HqYeKC9uSHxsGrDIr6AsaTuweuI+KELqYFuoD
+	in+JydmymUirID5oS3gVEzYjeqTxXnOmRPEy6ukuysm+5FFKmY72lujMU016b+1NW37e/vuR/Ol
+	pjgLD4x5oK8x1YI476E7eCIjfi5DAjtUqUUyuNej/j8Ludk6/xhR5O2E6EdeJta4cuNFJLYmD77
+	/5LImOknrx0cNYw==
+X-Google-Smtp-Source: AGHT+IECtYVp7pAC34bACKnVVTNEA8V9tp+DqFZNljmtmFTIXW24136P6HkrdjurIr5cXOFpdqctLg==
+X-Received: by 2002:a05:6000:420c:b0:3a0:aed9:e34 with SMTP id ffacd0b85a97d-3a572e92ff4mr1251315f8f.48.1749857765407;
+        Fri, 13 Jun 2025 16:36:05 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe1639f97sm1990092a12.6.2025.06.13.16.36.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jun 2025 16:36:04 -0700 (PDT)
+Message-ID: <375ecc77-7a5f-4baf-a6ec-fc7e8dc02bfb@suse.com>
+Date: Sat, 14 Jun 2025 09:05:58 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168b:b0:3dc:7cc1:b731 with SMTP id
- e9e14a558f8ab-3de07c21db4mr17551605ab.0.1749857433818; Fri, 13 Jun 2025
- 16:30:33 -0700 (PDT)
-Date: Fri, 13 Jun 2025 16:30:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <684cb499.a00a0220.c6bd7.0010.GAE@google.com>
-Subject: [syzbot] [iomap?] [erofs?] WARNING in iomap_iter (5)
-From: syzbot <syzbot+d8f000c609f05f52d9b5@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, xiang@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    27605c8c0f69 Merge tag 'net-6.16-rc2' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=171079d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3a936e3316f9e2dc
-dashboard link: https://syzkaller.appspot.com/bug?extid=d8f000c609f05f52d9b5
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1725310c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115e0e82580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-27605c8c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c55edb669703/vmlinux-27605c8c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e12830584492/bzImage-27605c8c.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/36391cabb242/mount_2.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=165e0e82580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d8f000c609f05f52d9b5@syzkaller.appspotmail.com
-
-erofs (device loop0): EXPERIMENTAL EROFS subpage compressed block support in use. Use at your own risk!
-erofs (device loop0): mounted with root inode @ nid 36.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5317 at fs/iomap/iter.c:33 iomap_iter_done fs/iomap/iter.c:33 [inline]
-WARNING: CPU: 0 PID: 5317 at fs/iomap/iter.c:33 iomap_iter+0x87c/0xdf0 fs/iomap/iter.c:113
-Modules linked in:
-CPU: 0 UID: 0 PID: 5317 Comm: syz-executor245 Not tainted 6.16.0-rc1-syzkaller-00101-g27605c8c0f69 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:iomap_iter_done fs/iomap/iter.c:33 [inline]
-RIP: 0010:iomap_iter+0x87c/0xdf0 fs/iomap/iter.c:113
-Code: cc cc cc e8 a6 eb 6b ff 90 0f 0b 90 e9 31 f8 ff ff e8 98 eb 6b ff 90 0f 0b 90 bd fb ff ff ff e9 ad fb ff ff e8 85 eb 6b ff 90 <0f> 0b 90 e9 22 fd ff ff e8 77 eb 6b ff 90 0f 0b 90 e9 53 fd ff ff
-RSP: 0018:ffffc9000d08f808 EFLAGS: 00010293
-RAX: ffffffff8254736b RBX: ffffc9000d08f920 RCX: ffff88803a692440
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000074
-RBP: 1ffff92001a11f2a R08: ffffea00010c5277 R09: 1ffffd4000218a4e
-R10: dffffc0000000000 R11: fffff94000218a4f R12: 0000000000000074
-R13: 0000000000000000 R14: ffffc9000d08f950 R15: 1ffff92001a11f25
-FS:  0000555562dab380(0000) GS:ffff88808d252000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffeb97cc968 CR3: 0000000043323000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- iomap_fiemap+0x117/0x530 fs/iomap/fiemap.c:79
- ioctl_fiemap fs/ioctl.c:220 [inline]
- do_vfs_ioctl+0x16d3/0x1990 fs/ioctl.c:841
- __do_sys_ioctl fs/ioctl.c:905 [inline]
- __se_sys_ioctl+0x82/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbc6028fe59
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffccc462b68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbc6028fe59
-RDX: 0000200000000580 RSI: 00000000c020660b RDI: 0000000000000005
-RBP: 00007fbc603045f0 R08: 0000555562dac4c0 R09: 0000555562dac4c0
-R10: 00000000000001ca R11: 0000000000000246 R12: 00007ffccc462b90
-R13: 00007ffccc462db8 R14: 431bde82d7b634db R15: 00007fbc602d903b
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] btrfs: Convert test_find_delalloc() to use a folio,
+ part two
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Chris Mason
+ <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20250613190705.3166969-1-willy@infradead.org>
+ <20250613190705.3166969-3-willy@infradead.org>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20250613190705.3166969-3-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+在 2025/6/14 04:37, Matthew Wilcox (Oracle) 写道:
+> Replace the 'page' variable with 'folio'.  Removes six calls to
+> compound_head().
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>   fs/btrfs/tests/extent-io-tests.c | 32 +++++++++++++++++---------------
+>   1 file changed, 17 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/btrfs/tests/extent-io-tests.c b/fs/btrfs/tests/extent-io-tests.c
+> index 8bdf742d90fd..36720b77b440 100644
+> --- a/fs/btrfs/tests/extent-io-tests.c
+> +++ b/fs/btrfs/tests/extent-io-tests.c
+> @@ -111,7 +111,7 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
+>   	struct btrfs_root *root = NULL;
+>   	struct inode *inode = NULL;
+>   	struct extent_io_tree *tmp;
+> -	struct page *page;
+> +	struct folio *folio;
+>   	struct folio *locked_folio = NULL;
+>   	unsigned long index = 0;
+>   	/* In this test we need at least 2 file extents at its maximum size */
+> @@ -152,23 +152,25 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
+>   	btrfs_extent_io_tree_init(NULL, tmp, IO_TREE_SELFTEST);
+>   
+>   	/*
+> -	 * First go through and create and mark all of our pages dirty, we pin
+> -	 * everything to make sure our pages don't get evicted and screw up our
+> +	 * First go through and create and mark all of our folios dirty, we pin
+> +	 * everything to make sure our folios don't get evicted and screw up our
+>   	 * test.
+>   	 */
+>   	for (index = 0; index < (total_dirty >> PAGE_SHIFT); index++) {
+> -		page = find_or_create_page(inode->i_mapping, index, GFP_KERNEL);
+> -		if (!page) {
+> -			test_err("failed to allocate test page");
+> +		folio = __filemap_get_folio(inode->i_mapping, index,
+> +				FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
+> +				GFP_KERNEL);
+> +		if (!folio) {
+> +			test_err("failed to allocate test folio");
+>   			ret = -ENOMEM;
+>   			goto out;
+>   		}
+> -		SetPageDirty(page);
+> +		folio_mark_dirty(folio);
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Crashing immediately when loading the module.
+(Need CONFIG_BTRFS_FS_RUN_SANITY_TESTS=y)
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+[   20.626710] BUG: kernel NULL pointer dereference, address: 
+0000000000000000
+[   20.628812] #PF: supervisor instruction fetch in kernel mode
+[   20.630648] #PF: error_code(0x0010) - not-present page
+[   20.632156] PGD 0 P4D 0
+[   20.632893] Oops: Oops: 0010 [#1] SMP NOPTI
+[   20.634052] CPU: 6 UID: 0 PID: 622 Comm: insmod Tainted: G 
+OE       6.16.0-rc1-custom+ #253 PREEMPT(full)
+[   20.636879] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+[   20.638321] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+unknown 02/02/2022
+[   20.640524] RIP: 0010:0x0
+[   20.641290] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+[   20.643075] RSP: 0018:ffffc90001587c88 EFLAGS: 00010246
+[   20.644519] RAX: ffff88810b144670 RBX: 0000000000000000 RCX: 
+0000000000000001
+[   20.646490] RDX: 0000000000000000 RSI: ffffea0004128200 RDI: 
+ffff88810b144670
+[   20.648496] RBP: ffff88810b144500 R08: 0000000000000000 R09: 
+ffffffff83549b20
+[   20.650524] R10: 00000000000002c0 R11: 0000000000000000 R12: 
+0000000000000000
+[   20.652642] R13: ffff88810b1443a8 R14: ffffea0004128200 R15: 
+0000000000001000
+[   20.654778] FS:  00007f2e60e99740(0000) GS:ffff8882f45e2000(0000) 
+knlGS:0000000000000000
+[   20.657158] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   20.658980] CR2: ffffffffffffffd6 CR3: 00000001040b9000 CR4: 
+00000000000006f0
+[   20.661219] Call Trace:
+[   20.662057]  <TASK>
+[   20.662757]  btrfs_test_extent_io+0x17a/0xf40 [btrfs]
+[   20.664266]  btrfs_run_sanity_tests.cold+0x84/0x11e [btrfs]
+[   20.665839]  init_btrfs_fs+0x4d/0xb0 [btrfs]
+[   20.667380]  ? __pfx_init_btrfs_fs+0x10/0x10 [btrfs]
+[   20.668883]  do_one_initcall+0x76/0x250
+[   20.670098]  do_init_module+0x62/0x250
+[   20.671359]  init_module_from_file+0x85/0xc0
+[   20.672586]  idempotent_init_module+0x148/0x340
+[   20.673900]  __x64_sys_finit_module+0x6d/0xd0
+[   20.675074]  do_syscall_64+0x54/0x1d0
+[   20.676167]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Furthermore, the error handling of __filemap_get_folio() is incorrect.
+That function returns either a valid folio, or an ERR_PTR(), no more NULL.
 
-If you want to undo deduplication, reply with:
-#syz undup
+This applies to all folio calls like filemap_lock_folio() too.
+
+Thanks,
+Qu
+
+>   		if (index) {
+> -			unlock_page(page);
+> +			folio_unlock(folio);
+>   		} else {
+> -			get_page(page);
+> -			locked_folio = page_folio(page);
+> +			folio_get(folio);
+> +			locked_folio = folio;
+>   		}
+>   	}
+>   
+> @@ -283,14 +285,14 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
+>   	 * Now to test where we run into a page that is no longer dirty in the
+>   	 * range we want to find.
+>   	 */
+> -	page = find_get_page(inode->i_mapping,
+> +	folio = filemap_get_folio(inode->i_mapping,
+>   			     (max_bytes + SZ_1M) >> PAGE_SHIFT);
+> -	if (!page) {
+> -		test_err("couldn't find our page");
+> +	if (!folio) {
+> +		test_err("couldn't find our folio");
+>   		goto out_bits;
+>   	}
+> -	ClearPageDirty(page);
+> -	put_page(page);
+> +	folio_clear_dirty(folio);
+> +	folio_put(folio);
+>   
+>   	/* We unlocked it in the previous test */
+>   	folio_lock(locked_folio);
+
 
