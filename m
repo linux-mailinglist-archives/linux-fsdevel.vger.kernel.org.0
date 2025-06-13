@@ -1,101 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-51550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B72AD82B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 07:46:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47247AD82BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 07:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC63188F87C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 05:46:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA8217B7E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 05:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC83E24E4A8;
-	Fri, 13 Jun 2025 05:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nHpDQdSK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C15A25332E;
+	Fri, 13 Jun 2025 05:52:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10B92F4311;
-	Fri, 13 Jun 2025 05:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D6B2F4311;
+	Fri, 13 Jun 2025 05:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749793563; cv=none; b=q+S2jxZ/Y7OMrAOHsdXy6ZFaBQI7GcJVMm9GfpYU1Jwv4r1OpyTeeRs1PgwwcqZnbmkc+GByGrJ24fxK4EHxBTaPKV9uai5p/oiPjy8GzrMuOWXjrgVuV8NwAgRvnLOJ2YK6atNiixminJDvZWSnR5kIDPvfuBzbDD0wMyvqOQ4=
+	t=1749793951; cv=none; b=mIoV4x1fcQhTNGeQjsIfqTyigPysntDWUDG6sV7dwBcaCPUY/PX4pOQ1VTc9Ec5QZGw3+kH7lJsajNAL9oLuBUSIUjQ6kkrL5h6KUwPXbGheL45ExF1seQq1LRkvhkhio37zwsALagVwtSZMacm9a5MbqruKC//SgZjzaDM/vSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749793563; c=relaxed/simple;
-	bh=4fqXpc97924wJoXA7QsMhZJWFlxSbs6Egk6EObeBVt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2YtYLswllJP5yngJUlVXF7T8RjIPeRH5WDhyHvENFJTG8j7YIMWy4Aw4WinNwUp3hq4E5X8KnTw56BTP6P3wEy6wrWBRbLFuuoBSfGmNdE0F0pmfsal+YT2ocTQT91c53liNLtuFvA21ZLCNWLk0s0TkRPvBNJw6AzpkIUPPio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nHpDQdSK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sOp91Em8OeLhPgudK3PqHU28W38RB+5KU7SLvqrKdFQ=; b=nHpDQdSKnTK+Jo9Sf0vA/zABiE
-	bThJyvuNBM0GCoP9k67NguGuJr5gNqAekPeRfejrm7GGh6cGvnW8lXTIdrlPP+mVz4gg7OJud148A
-	W24f3QGC2PHcjk0JAb6DmHoOqX/9Dfj/4CDM6IcjyIITWbkyKIAt+WhS1yKDKg7bLgxeh3M3m6s/7
-	t2f3dQBGsYUTw9KGM+MNY3M3Z0X1GW2KKxnN0bSuqltAPgB6disdhmxuwEzfyIC1lerl3FtxbfXdt
-	+xiKefUSpYG95mIWUXWOy1aX/EX1CGOEU7T1DNvsOUwDm4yppKoRAiYrv3d0V6GunAYr8NoKNtvm3
-	ppgLKi+Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPxEn-0000000FQFG-0uri;
-	Fri, 13 Jun 2025 05:46:01 +0000
-Date: Thu, 12 Jun 2025 22:46:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Mike Snitzer <snitzer@kernel.org>,
-	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: need SUNRPC TCP to receive into aligned pages [was: Re: [PATCH
- 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE for all IO]
-Message-ID: <aEu7GSa7HRNNVJVA@infradead.org>
-References: <20250610205737.63343-1-snitzer@kernel.org>
- <20250610205737.63343-2-snitzer@kernel.org>
- <4b858fb1-25f6-457f-8908-67339e20318e@oracle.com>
- <aEnWhlXjzOmRfCJf@kernel.org>
- <7c48e17c4b575375069a4bd965f346499e66ac3a.camel@kernel.org>
- <aEn2-mYA3VDv-vB8@kernel.org>
- <110c7644b829ce158680979e6cd358193ea3f52b.camel@kernel.org>
- <d13ef7d6-0040-40ac-9761-922a1ec5d911@oracle.com>
- <f201c16677525288597becfd904d873931092cea.camel@kernel.org>
+	s=arc-20240116; t=1749793951; c=relaxed/simple;
+	bh=283HEQqRYfIsNiaMfyVunhuCtCyn94g73x9xYXlByAU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H4Yk9KLK7uKOMxFbGirmtcZRbsoWWqyCVVTyT5Ua06g3/9q5kFlwnmSFVB8LhsdZ57Fg/swDeQYp4Xwb6ZvJgWepQuG+yQFY/fiBDN4yCc/yqkznjUwYy9dGzEEIgpKSEF3rGtgxknARAP9tL1AIwUlWnmzrIgBz5IbspmWSuT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <vgoyal@redhat.com>, <stefanha@redhat.com>, <miklos@szeredi.hu>,
+	<eperezma@redhat.com>, <virtualization@lists.linux.dev>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH] virtio_fs: Remove redundant spinlock in virtio_fs_request_complete()
+Date: Fri, 13 Jun 2025 13:50:51 +0800
+Message-ID: <20250613055051.1873-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f201c16677525288597becfd904d873931092cea.camel@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc2.internal.baidu.com (172.31.50.46) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.51.57
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Thu, Jun 12, 2025 at 12:22:42PM -0400, Jeff Layton wrote:
-> If you're against the idea, I won't waste my time.
-> 
-> It would require some fairly hefty rejiggering of the receive code. The
-> v4 part would be pretty nightmarish to work out too since you'd have to
-> decode the compound as you receive to tell where the next op starts.
-> 
-> The potential for corruption with unaligned writes is also pretty
-> nasty.
+From: Li RongQing <lirongqing@baidu.com>
 
-Maybe I'm missing an improvement to the receive buffer handling in modern
-network hardware, but AFAIK this still would only help you to align the
-sunrpc data buffer to page boundaries, but avoid the data copy from the
-hardware receive buffer to the sunrpc data buffer as you still don't have
-hardware header splitting.
+Since clear_bit is an atomic operation, the spinlock is redundant and
+can be removed, reducing lock contention is good for performance.
 
-And I don't even know what this is supposed to buy the nfs server.
-Direct I/O writes need to have the proper file offset alignment, but as
-far as Linux is concerned we don't require any memory alignment.  Most
-storage hardware has requirements for the memory alignment that we pass
-on, but typically that's just a dword (4-byte) alignment, which matches
-the alignment sunrpc wants for most XDR data structures anyway.  So what
-additional alignment is actually needed for support direct I/O writes
-assuming that is the goal?  (I might also simply misunderstand the
-problem).
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+ fs/fuse/virtio_fs.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 8f2e2f3..de34179 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -791,9 +791,7 @@ static void virtio_fs_request_complete(struct fuse_req *req,
+ 		}
+ 	}
+ 
+-	spin_lock(&fpq->lock);
+ 	clear_bit(FR_SENT, &req->flags);
+-	spin_unlock(&fpq->lock);
+ 
+ 	fuse_request_end(req);
+ 	spin_lock(&fsvq->lock);
+-- 
+2.9.4
+
 
