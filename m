@@ -1,205 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-51586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A62CAD89F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 13:04:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F04AD8ACE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 13:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 864951896FDE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 11:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00EB1189ED80
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 11:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C6E2D4B5D;
-	Fri, 13 Jun 2025 11:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B0B2E2EF7;
+	Fri, 13 Jun 2025 11:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h9TgHrjH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f207.google.com (mail-qt1-f207.google.com [209.85.160.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED0F2C15A5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 11:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03A62E175B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 11:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749812679; cv=none; b=KnZhnUmOUW6PyDe6VvCFCBrCVqtqwiumEp033PEJ9HGlvrLzxUgNLvSIn1kWnB+vDOJ0trHvYloDwHGnA90gCKu4e0hw+mh4pp6PuleqURC49fGZblY8jcrGrndNWcocVVZ5cF8I+6/B0O6O/S1TSpuNNPfekatyDkkvMLzyDQ8=
+	t=1749814886; cv=none; b=Lp3fMJyf8QDLzCzsGlLATzOApb5ju0tK3WwnOs1FaefVB8yqdkf9rKwlNQNhstBt3HKJkocb5sucbbwrNf+boMMXqBU2gRixDSKZ+ye1KC4C2MFsr63nOzEZc8NlkT2m/GMrE6iCy9joDVY1xY9Z7aGz4OoPNpy5TgsalNsgbU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749812679; c=relaxed/simple;
-	bh=gkF11Vi2FrQD3WOhk2A71W/Qr3tehY8WiasNwBSxfKs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HW+EKOrW1xjwewc5W9iETsmdANYFcrND3yf8Cf6jhkBxxl+/7SRKDIiTspJ5tjJo1RpJZvBbTiWAAy/MLu4DRHfxvDTRhWuN1FPSiLF90xF7vXmoyrprqfzx7Q7Uq7IOd9MPHggmuVNkvtNVZRiQ+i5+NgbYilXoGZu5PpVO1QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.160.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-qt1-f207.google.com with SMTP id d75a77b69052e-4a43988c314so39674991cf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jun 2025 04:04:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749812677; x=1750417477;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cpTGQab/U0D39e0o1gC8NFB6KS8WTusESL+/4+GxDfk=;
-        b=vFfqSILeh+df/RSvYibQM74wzkowKG6Y9o/BRzUw70i1F3ueOLy1TeBgyGd/hBRIAo
-         payalYBCjCc+XdBQqormW+1KLOzj/AyFOl0Hy6ny7rjjKlIs8Bz/MHWOR9qEIXwDdpDa
-         VB773/tMGsyG1fWk6USNrN6goP7kaVhv6dYR0UULmtU7+RdysxQc6No55ZvVUaBITEbq
-         ch01luX69vDD9+X4PbuhwroHAvMbCmRrWvMU09V1b9TIN/IEYiccQcWHQof33duUAkcQ
-         Y1qmCAIP+Ru/0IJzR2PspP7QwlGk0ARgv9XPSiZITzDe84VcxjWwaxGdGXO+WynDiJ1K
-         gi4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVPwIo2p8pg3LnMeoKlUqkVyRRa22Wu2qx+I4moH+teLCERPydiGd/+UMWoddG9yXfk6xAm1NpV9EnUTSxm@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyzIaQSveTmXf2EztrzdfPpO9l/VUVh9l6zm9aPMmZ8zWzJ5JH
-	eDvqXI9XhrY3yGY4R4YejElxpQFc6J3Rzi6ZitHA1vNMyM3Rdj6GXgtJCOOMjALVS4dzxDi1wOU
-	AmsCrgyS+MgCS60x2WrVS4BYQzmWbyaMV9lsss4FJnEcE+8SjDQ0/fV1Udww=
-X-Google-Smtp-Source: AGHT+IE7vKBDsqsTe9tHa2v3D5xyEFZfFh8AgoWKXonoKkwkytcSrBCab9bQcAfYQtkx2BzSyr8Nj5Z3SMd9RArnwFJC2/edQ0I6
+	s=arc-20240116; t=1749814886; c=relaxed/simple;
+	bh=bPOM1DbKygjiYRYTopA2XM0ezXPB0Iiz6igXcowIpbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=od5Zho4261RBhtSWwiDTkwagygUy8e4GlLhfC74bOV9aW9kNi4VFwDvQ81t0ORp/2Fz/wvRJ6LLkLf40NFuN0WhGLNXXNs3Nco3S8p0e8zAyWJscqgXpJisP5fxSj0yjeq0dDFKTHpcEWpGMSJY4G1loLmDDfxUZzqCWzIGZp9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h9TgHrjH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749814883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d4wmhnbGVKz7lcJqCNGH28Zkju+eEmedqT1GB+u5T3A=;
+	b=h9TgHrjHFkSIWYsog1eP1v5yo9qGQ0QXw8sXVxUyubyUGgzXcBTaGYI89CAx27lCMJh/WM
+	N2KIWsBzksBZCfi05DSxvAl/otMw8Lhc1inBipxvXLuogcxh+5nzclw1R4DRyHbOPlAlsp
+	fq91a8Sq0bQamB4qe/ve1r4YrUBd8cc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-X2JFtXzsMd-NCea11w8p7w-1; Fri,
+ 13 Jun 2025 07:41:22 -0400
+X-MC-Unique: X2JFtXzsMd-NCea11w8p7w-1
+X-Mimecast-MFC-AGG-ID: X2JFtXzsMd-NCea11w8p7w_1749814881
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B3E4718002EC;
+	Fri, 13 Jun 2025 11:41:21 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.100])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 707F119560A3;
+	Fri, 13 Jun 2025 11:41:20 +0000 (UTC)
+Date: Fri, 13 Jun 2025 07:44:55 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: Re: [BUG] fuse/virtiofs: kernel module build fail
+Message-ID: <aEwPNxjEaFtnmsuR@bfoster>
+References: <aEq4haEQScwHIWK6@bfoster>
+ <CAJnrk1aD_N6zX_htAgto_Bzo+1S-dmvgGRHaT_icbnwpVoDGsg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164d:b0:3dd:d746:25eb with SMTP id
- e9e14a558f8ab-3de00bf6f74mr26720675ab.16.1749812666276; Fri, 13 Jun 2025
- 04:04:26 -0700 (PDT)
-Date: Fri, 13 Jun 2025 04:04:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <684c05ba.050a0220.be214.029e.GAE@google.com>
-Subject: [syzbot] [hfs?] INFO: task hung in hfs_mdb_commit (3)
-From: syzbot <syzbot+6bdbdd12cf8cdbc66466@syzkaller.appspotmail.com>
-To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1aD_N6zX_htAgto_Bzo+1S-dmvgGRHaT_icbnwpVoDGsg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hello,
+On Thu, Jun 12, 2025 at 02:56:56PM -0700, Joanne Koong wrote:
+> On Thu, Jun 12, 2025 at 4:19 AM Brian Foster <bfoster@redhat.com> wrote:
+> >
+> > Hi folks,
+> >
+> > I run kernel compiles quite a bit over virtiofs in some of my local test
+> > setups and recently ran into an issue building xfs.ko once I had a
+> > v6.16-rc kernel installed in my guest. The test case is a simple:
+> >
+> >   make -j N M=fs/xfs clean; make -j N M=fs/xfs
+> 
+> Hi Brian,
+> 
 
-syzbot found the following issue on:
+Hi Joanne,
 
-HEAD commit:    19272b37aa4f Linux 6.16-rc1
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13d5ca0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=162faeb2d1eaefb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=6bdbdd12cf8cdbc66466
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1113ca82580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=125a29d4580000
+> If I'm understanding your setup correctly, basically you have the
+> v6.16-rc kernel running on a VM, on that VM you mounted a virtiofs
+> directory that references a linux repo that's on your host OS, and
+> then from your VM you are compiling the fs/xfs module in that shared
+> linux repo?
+> 
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/63fc98170cdb/disk-19272b37.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7f53e0c9076b/vmlinux-19272b37.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/249526f4900a/bzImage-19272b37.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/cafdeb8d4eab/mount_0.gz
+Yep. Note again that I happen to be using the same repo that I was
+bisecting, so technically the test case of recompiling the kernel module
+is targeting different code each time, but the failure was so consistent
+that I believe it to be a runtime issue.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6bdbdd12cf8cdbc66466@syzkaller.appspotmail.com
+> I tried this on my local setup but I'm seeing some other issues:
+> 
+> make[1]: Entering directory '/home/vmuser/linux/linux/fs/xfs'
+>   LD [M]  xfs.o
+> xfs.o: warning: objtool: __traceiter_xfs_attr_list_sf+0x23:
+> unannotated intra-function call
+> make[3]: *** [/home/vmuser/linux/linux/scripts/Makefile.build:501:
+> xfs.o] Error 255
+> make[3]: *** Deleting file 'xfs.o'
+> make[2]: *** [/home/vmuser/linux/linux/Makefile:2006: .] Error 2
+> make[1]: *** [/home/vmuser/linux/linux/Makefile:248: __sub-make] Error 2
+> make[1]: Leaving directory '/home/vmuser/linux/linux/fs/xfs'
+> make: *** [Makefile:248: __sub-make] Error 2
+> 
+> Did you also run into these issues when you were compiling?
+> 
 
-INFO: task kworker/0:0:9 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc1-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:0     state:D stack:27336 pid:9     tgid:9     ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: events_long flush_mdb
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5396 [inline]
- __schedule+0x16a2/0x4cb0 kernel/sched/core.c:6785
- __schedule_loop kernel/sched/core.c:6863 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6878
- io_schedule+0x81/0xe0 kernel/sched/core.c:7723
- bit_wait_io+0x11/0xd0 kernel/sched/wait_bit.c:247
- __wait_on_bit_lock+0xe9/0x4f0 kernel/sched/wait_bit.c:90
- out_of_line_wait_on_bit_lock+0x123/0x170 kernel/sched/wait_bit.c:117
- lock_buffer include/linux/buffer_head.h:434 [inline]
- hfs_mdb_commit+0xb0d/0x1160 fs/hfs/mdb.c:325
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+I don't recall seeing that specific error, but TBH this kind of looks in
+line with what I'm seeing in general. My suspicion is that this is not
+actually a source code error, but something is corrupted somehow or
+another via virtiofs.
 
-Showing all locks held in the system:
-2 locks held by kworker/0:0/9:
- #0: ffff88801a481548 ((wq_completion)events_long){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
- #0: ffff88801a481548 ((wq_completion)events_long){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3321
- #1: ffffc900000e7bc0 ((work_completion)(&(&sbi->mdb_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
- #1: ffffc900000e7bc0 ((work_completion)(&(&sbi->mdb_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3321
-1 lock held by khungtaskd/31:
- #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e13eda0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
-6 locks held by kworker/u8:7/4455:
-2 locks held by getty/5585:
- #0: ffff888030f560a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+As a quick additional test, I just built my same repo from my host
+system (running a distro v6.14 kernel) without any issue. Then if I do
+the kernel module rebuild test of the same exact repo over virtiofs from
+the guest, the error occurs.
 
-=============================================
+What is interesting is that if I try the same thing with another module
+(i.e. fs/fuse, fs/nfs), the build seems to work fine, so maybe there is
+something unique to XFS going on here. As a followup to that, I set my
+repo back to v6.15 but still reproduce the same phenomenon: build
+failure when compiling over virtiofs and not from the host.. :/
 
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc1-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:470
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.16.0-rc1-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
-Code: cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d a3 55 29 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffffff8de07d80 EFLAGS: 000002c2
-RAX: 19cf73c379472d00 RBX: ffffffff81974f68 RCX: 19cf73c379472d00
-RDX: 0000000000000001 RSI: ffffffff8d96d7bc RDI: ffffffff8be1af40
-RBP: ffffffff8de07ea8 R08: ffff8880b8632f5b R09: 1ffff110170c65eb
-R10: dffffc0000000000 R11: ffffed10170c65ec R12: ffffffff8f9fdef0
-R13: 0000000000000000 R14: 0000000000000000 R15: 1ffffffff1bd2a50
-FS:  0000000000000000(0000) GS:ffff888125c86000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0bd9123130 CR3: 000000002f7b4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- default_idle+0x13/0x20 arch/x86/kernel/process.c:749
- default_idle_call+0x74/0xb0 kernel/sched/idle.c:117
- cpuidle_idle_call kernel/sched/idle.c:185 [inline]
- do_idle+0x1e8/0x510 kernel/sched/idle.c:325
- cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:423
- rest_init+0x2de/0x300 init/main.c:744
- start_kernel+0x47d/0x500 init/main.c:1101
- x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
- x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
- common_startup_64+0x13e/0x147
- </TASK>
+> Taking a look at what 63c69ad3d18a ("fuse: refactor
+> fuse_fill_write_pages()") does, it seems odd to me that the changes in
+> that commit would lead to the issues you're seeing - that commit
+> doesn't alter structs or memory layouts in any way. I'll keep trying
+> to repro the issue you're seeing.
+> 
 
+Apologies I haven't really had a chance to look at the code.. It's
+certainly possible I botched something in the bisect or misunderstood
+some tooling differences or whatever, but I'm pretty sure I at least
+tried the target commit and the immediate preceding commit after the
+bisect to double check where the failing starts to happen.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+That said, I suspect you are actually reproducing the same general
+problem with your test above, regardless of whether the analysis is
+wrong. If you're able, have you tried whether that same compile works
+from a host (or non-virtiofs) env? Thanks.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Brian
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> >
+> > ... and ends up spitting out link time errors like this as of commit
+> > 63c69ad3d18a ("fuse: refactor fuse_fill_write_pages()"):
+> >
+> > ...
+> >   CC [M]  xfs.mod.o
+> >   CC [M]  .module-common.o
+> >   LD [M]  xfs.ko
+> >   BTF [M] xfs.ko
+> > die__process: DW_TAG_compile_unit, DW_TAG_type_unit, DW_TAG_partial_unit or DW_TAG_skeleton_unit expected got subprogram (0x2e) @ ed957!
+> > error decoding cu i_mmap_rwsem
+> > error decoding cu
+> > ...
+> > error decoding cu
+> > pahole: xfs.ko: Invalid argument
+> > make[3]: *** [/root/repos/linux/scripts/Makefile.modfinal:57: xfs.ko] Error 1
+> > make[3]: *** Deleting file 'xfs.ko'
+> > make[2]: *** [/root/repos/linux/Makefile:1937: modules] Error 2
+> > make[1]: *** [/root/repos/linux/Makefile:248: __sub-make] Error 2
+> > make[1]: Leaving directory '/root/repos/linux/fs/xfs'
+> > make: *** [Makefile:248: __sub-make] Error 2
+> >
+> > ... or this on latest master:
+> >
+> > ...
+> >   LD [M]  fs/xfs/xfs.o
+> > fs/xfs/xfs.o: error: objtool: can't find reloc entry symbol 2145964924 for .rela.text
+> > make[4]: *** [scripts/Makefile.build:501: fs/xfs/xfs.o] Error 1
+> > make[4]: *** Deleting file 'fs/xfs/xfs.o'
+> > make[3]: *** [scripts/Makefile.build:554: fs/xfs] Error 2
+> > make[2]: *** [scripts/Makefile.build:554: fs] Error 2
+> > make[1]: *** [/root/repos/linux/Makefile:2006: .] Error 2
+> > make: *** [Makefile:248: __sub-make] Error 2
+> >
+> > The latter failure is what I saw through most of a bisect so I suspect
+> > one of the related followon commits alters the failure characteristic
+> > from the former, but I've not confirmed that. Also note out of
+> > convenience my test was to just recompile xfs.ko out of the same tree I
+> > was bisecting from because the failures were consistent and seemed to be
+> > a runtime kernel issue and not a source tree issue.
+> >
+> > I haven't had a chance to dig any further than this (and JFYI I'm
+> > probably not going to be responsive through the rest of today). I just
+> > completed the bisect and wanted to get it on list sooner rather than
+> > later..
+> >
+> > Brian
+> >
+> 
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
