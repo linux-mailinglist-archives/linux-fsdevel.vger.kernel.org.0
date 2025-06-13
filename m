@@ -1,39 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-51533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9198AD7F7C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 02:11:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CFFAD7FA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 02:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82F561892533
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 00:11:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 674B57AE4D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 00:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88224207F;
-	Fri, 13 Jun 2025 00:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023B71C6FF9;
+	Fri, 13 Jun 2025 00:38:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C9D1B95B;
-	Fri, 13 Jun 2025 00:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5090EEBA;
+	Fri, 13 Jun 2025 00:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749773470; cv=none; b=txc9DusHujGDBWNifMHbDcJhoR6xr16/1dfGyJPgYQCm907OLSXVqKlAllfr6ML/RQsMjPuGXIpKQ4YW6mmPGEyyaS4ilIIiyC7Zml4czmMHsJyLSgtdO3tTU+6oJdMiwC5XbltXwuY6TH9373aK6Jhqdd1V3z3zteVxiz02D+4=
+	t=1749775085; cv=none; b=FGJAmrEhjjejPifLJH92KpwU+NtDyYMDhj8eVMb9E/jYSHr+RYoCr0GCZTbBNMt28mO64y/e1BmuNS44BBXwW26+BT+LaMtVKDKS6Rt4dGPnN68VAEOVF6wSde9kcKdQbXd/lm9NOPD4hqVXHCabBL848vQudiEZPXpj12YxhlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749773470; c=relaxed/simple;
-	bh=Xf1sOH/3QGZlGQDOZlVWDmfVLgVBfgZWJ/NW2lY6tIA=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=mQuMq9hiA9WB8Mwp6zVimAOrodTzPEf9GwFHgebV/l+o/QQqO3ypNy0mhW2B2uEzYAUZgtZZmneAOXx3WVBYh2wmFT38z1HaX65xoIF8utwspM5NfDqMhil2AYmNtZzKonYlwmEUBAz0yrwWYTh/uOnNnYtKWgALMKaR+QMWvHw=
+	s=arc-20240116; t=1749775085; c=relaxed/simple;
+	bh=iqS/z3Gqo+8xCdoolb1OxJ6f5y0nNxZmycHc2wANlf4=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:Date:Message-id; b=mNHV3LDIhUf68JOj5Wc5ixok4iZAmFLbYlDn+T7Kmz6fB4TSC5U0qZctZuoCJgjxtHUmwuH0TzQPGl0tKDhsFD3HxxI/AwCuF6v/5Zr9X3QbN7i45pYMH1auyht40e7dz9hpvq0Mi2gJFg0irbD90dCfQmx+aXCTwNKpJ+/bnmM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1uPs0W-009ZlJ-Ou;
-	Fri, 13 Jun 2025 00:10:56 +0000
+	id 1uPsQh-009bhR-Km;
+	Fri, 13 Jun 2025 00:37:59 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -43,202 +42,123 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "NeilBrown" <neil@brown.name>
-To: "Song Liu" <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
- mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
- jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
- m@maowtm.org, "Song Liu" <song@kernel.org>
-Subject: Re: [PATCH v4 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-In-reply-to: <20250611220220.3681382-2-song@kernel.org>
-References: <20250611220220.3681382-1-song@kernel.org>,
- <20250611220220.3681382-2-song@kernel.org>
-Date: Fri, 13 Jun 2025 10:10:55 +1000
-Message-id: <174977345565.608730.2655286329643493783@noble.neil.brown.name>
-
-On Thu, 12 Jun 2025, Song Liu wrote:
-> This helper walks an input path to its parent. Logic are added to handle
-> walking across mount tree.
->=20
-> This will be used by landlock, and BPF LSM.
->=20
-> Suggested-by: Neil Brown <neil@brown.name>
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  fs/namei.c            | 99 +++++++++++++++++++++++++++++++++++++------
->  include/linux/namei.h |  2 +
->  2 files changed, 87 insertions(+), 14 deletions(-)
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4bb889fc980b..bc65361c5d13 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2048,36 +2048,107 @@ static struct dentry *follow_dotdot_rcu(struct nam=
-eidata *nd)
->  	return nd->path.dentry;
->  }
-> =20
-> -static struct dentry *follow_dotdot(struct nameidata *nd)
-> +/**
-> + * __path_walk_parent - Find the parent of the given struct path
-> + * @path  - The struct path to start from
-> + * @root  - A struct path which serves as a boundary not to be crosses.
-> + *        - If @root is zero'ed, walk all the way to global root.
-> + * @flags - Some LOOKUP_ flags.
-> + *
-> + * Find and return the dentry for the parent of the given path
-> + * (mount/dentry). If the given path is the root of a mounted tree, it
-> + * is first updated to the mount point on which that tree is mounted.
-> + *
-> + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new
-> + * mount, the error EXDEV is returned.
-> + *
-> + * If no parent can be found, either because the tree is not mounted or
-> + * because the @path matches the @root, then @path->dentry is returned
-> + * unless @flags contains %LOOKUP_BENEATH, in which case -EXDEV is returne=
-d.
-> + *
-> + * Returns: either an ERR_PTR() or the chosen parent which will have had
-> + * the refcount incremented.
-> + */
-> +static struct dentry *__path_walk_parent(struct path *path, const struct p=
-ath *root, int flags)
->  {
->  	struct dentry *parent;
-> =20
-> -	if (path_equal(&nd->path, &nd->root))
-> +	if (path_equal(path, root))
->  		goto in_root;
-> -	if (unlikely(nd->path.dentry =3D=3D nd->path.mnt->mnt_root)) {
-> -		struct path path;
-> +	if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-> +		struct path new_path;
-> =20
-> -		if (!choose_mountpoint(real_mount(nd->path.mnt),
-> -				       &nd->root, &path))
-> +		if (!choose_mountpoint(real_mount(path->mnt),
-> +				       root, &new_path))
->  			goto in_root;
-> -		path_put(&nd->path);
-> -		nd->path =3D path;
-> -		nd->inode =3D path.dentry->d_inode;
-> -		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
-> +		path_put(path);
-> +		*path =3D new_path;
-> +		if (unlikely(flags & LOOKUP_NO_XDEV))
->  			return ERR_PTR(-EXDEV);
->  	}
->  	/* rare case of legitimate dget_parent()... */
-> -	parent =3D dget_parent(nd->path.dentry);
-> -	if (unlikely(!path_connected(nd->path.mnt, parent))) {
-> +	parent =3D dget_parent(path->dentry);
-> +	if (unlikely(!path_connected(path->mnt, parent))) {
->  		dput(parent);
->  		return ERR_PTR(-ENOENT);
->  	}
->  	return parent;
-> =20
->  in_root:
-> -	if (unlikely(nd->flags & LOOKUP_BENEATH))
-> +	if (unlikely(flags & LOOKUP_BENEATH))
->  		return ERR_PTR(-EXDEV);
-> -	return dget(nd->path.dentry);
-> +	return dget(path->dentry);
-> +}
-> +
-> +/**
-> + * path_walk_parent - Walk to the parent of path
-> + * @path: input and output path.
-> + * @root: root of the path walk, do not go beyond this root. If @root is
-> + *        zero'ed, walk all the way to real root.
-> + *
-> + * Given a path, find the parent path. Replace @path with the parent path.
-> + * If we were already at the real root or a disconnected root, @path is
-> + * released and zero'ed.
-> + *
-> + * Returns:
-> + *  true  - if @path is updated to its parent.
-> + *  false - if @path is already the root (real root or @root).
-> + */
-> +bool path_walk_parent(struct path *path, const struct path *root)
-> +{
-> +	struct dentry *parent;
-> +
-> +	parent =3D __path_walk_parent(path, root, LOOKUP_BENEATH);
-> +
-> +	if (IS_ERR(parent))
-> +		goto false_out;
-> +
-> +	if (parent =3D=3D path->dentry) {
-> +		dput(parent);
-> +		goto false_out;
-> +	}
-> +	dput(path->dentry);
-> +	path->dentry =3D parent;
-> +	return true;
-> +
-> +false_out:
-> +	path_put(path);
-> +	memset(path, 0, sizeof(*path));
-> +	return false;
-> +}
-
-I think the public function should return 0 on success and -error on
-failure.  That is a well established pattern.  I also think you
-shouldn't assume that all callers will want the same flags.
-
-And it isn't clear to me why you want to path_put() on failure.
-
-I wonder if there might be other potential users in the kernel.
-If so we should consider how well the interface meets their needs.
-
-autofs, devpts, nfsd, landlock all call follow_up...
-maybe they should be using the new interface...
-nfsd is the most likely to benefit - particularly nfsd_lookup_parent().
-
-Just a thought..
-
-NeilBrown
+To: Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <kees@kernel.org>,Joel
+ Granados <joel.granados@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] proc_sysctl: Fix up ->is_seen() handling
+Date: Fri, 13 Jun 2025 10:37:58 +1000
+Message-id: <174977507817.608730.3467596162021780258@noble.neil.brown.name>
 
 
+Some sysctl tables can provide an is_seen() function which reports if
+the sysctl should be visible to the current process.  This is currently
+used to cause d_compare to fail for invisible sysctls.
 
-> +
-> +static struct dentry *follow_dotdot(struct nameidata *nd)
-> +{
-> +	struct dentry *parent =3D __path_walk_parent(&nd->path, &nd->root, nd->fl=
-ags);
-> +
-> +	if (IS_ERR(parent))
-> +		return parent;
-> +	if (unlikely(!path_connected(nd->path.mnt, parent))) {
-> +		dput(parent);
-> +		return ERR_PTR(-ENOENT);
-> +	}
-> +	nd->inode =3D nd->path.dentry->d_inode;
-> +	return parent;
->  }
-> =20
->  static const char *handle_dots(struct nameidata *nd, int type)
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 5d085428e471..cba5373ecf86 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -85,6 +85,8 @@ extern int follow_down_one(struct path *);
->  extern int follow_down(struct path *path, unsigned int flags);
->  extern int follow_up(struct path *);
-> =20
-> +bool path_walk_parent(struct path *path, const struct path *root);
-> +
->  extern struct dentry *lock_rename(struct dentry *, struct dentry *);
->  extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
->  extern void unlock_rename(struct dentry *, struct dentry *);
-> --=20
-> 2.47.1
->=20
->=20
+This technique might have worked in 2.6.26 when it was implemented, but
+it cannot work now.  In particular if ->d_compare always fails for a
+particular name, then d_alloc_parallel() will always create a new dentry
+and pass it to lookup() resulting in a new inode for every lookup.  I
+tested this by changing sysctl_is_seen() to always return 0.  When
+all sysctls were still visible and repeated lookups (ls -li) reported
+different inode numbers.
+
+This patch discards proc_sys_compare (the d_compare function) and
+instead adds the is_seen functionality into proc_sys_revalidate (the
+d_revalidate function).  If the sysctl table is unregistering, 0 is
+returned.  Otherwise if is_seen() exists but fails, -ENOENT is returned.
+
+The rcu_dereference() and RCU_INIT_POINTER() for ->sysctl are removed as
+the field is not rcu-managed.  It is only changed when the inode is
+created and when it is evicted, and in these cases there can be no
+possible concurrent access.
+
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/proc/inode.c       |  2 +-
+ fs/proc/proc_sysctl.c | 35 ++++-------------------------------
+ 2 files changed, 5 insertions(+), 32 deletions(-)
+
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index a3eb3b740f76..c3991dd314d9 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -42,7 +42,7 @@ static void proc_evict_inode(struct inode *inode)
+=20
+ 	head =3D ei->sysctl;
+ 	if (head) {
+-		RCU_INIT_POINTER(ei->sysctl, NULL);
++		ei->sysctl =3D NULL;
+ 		proc_sys_evict_inode(inode, head);
+ 	}
+ }
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index cc9d74a06ff0..dbf652b50909 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -884,21 +884,15 @@ static const struct inode_operations proc_sys_dir_opera=
+tions =3D {
+ 	.getattr	=3D proc_sys_getattr,
+ };
+=20
+-static int proc_sys_revalidate(struct inode *dir, const struct qstr *name,
+-			       struct dentry *dentry, unsigned int flags)
+-{
+-	if (flags & LOOKUP_RCU)
+-		return -ECHILD;
+-	return !PROC_I(d_inode(dentry))->sysctl->unregistering;
+-}
+-
+ static int proc_sys_delete(const struct dentry *dentry)
+ {
+ 	return !!PROC_I(d_inode(dentry))->sysctl->unregistering;
+ }
+=20
+-static int sysctl_is_seen(struct ctl_table_header *p)
++static int proc_sys_revalidate(struct inode *dir, const struct qstr *name,
++			       struct dentry *dentry, unsigned int flags)
+ {
++	struct ctl_table_header *p =3D PROC_I(d_inode(dentry))->sysctl;
+ 	struct ctl_table_set *set =3D p->set;
+ 	int res;
+ 	spin_lock(&sysctl_lock);
+@@ -907,35 +901,14 @@ static int sysctl_is_seen(struct ctl_table_header *p)
+ 	else if (!set->is_seen)
+ 		res =3D 1;
+ 	else
+-		res =3D set->is_seen(set);
++		res =3D set->is_seen(set) ? 1 : -ENOENT;
+ 	spin_unlock(&sysctl_lock);
+ 	return res;
+ }
+=20
+-static int proc_sys_compare(const struct dentry *dentry,
+-		unsigned int len, const char *str, const struct qstr *name)
+-{
+-	struct ctl_table_header *head;
+-	struct inode *inode;
+-
+-	/* Although proc doesn't have negative dentries, rcu-walk means
+-	 * that inode here can be NULL */
+-	/* AV: can it, indeed? */
+-	inode =3D d_inode_rcu(dentry);
+-	if (!inode)
+-		return 1;
+-	if (name->len !=3D len)
+-		return 1;
+-	if (memcmp(name->name, str, len))
+-		return 1;
+-	head =3D rcu_dereference(PROC_I(inode)->sysctl);
+-	return !head || !sysctl_is_seen(head);
+-}
+-
+ static const struct dentry_operations proc_sys_dentry_operations =3D {
+ 	.d_revalidate	=3D proc_sys_revalidate,
+ 	.d_delete	=3D proc_sys_delete,
+-	.d_compare	=3D proc_sys_compare,
+ };
+=20
+ static struct ctl_dir *find_subdir(struct ctl_dir *dir,
+--=20
+2.49.0
 
 
