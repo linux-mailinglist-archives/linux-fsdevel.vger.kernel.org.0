@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-51559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE4BAD842A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 09:35:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA65FAD841A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 09:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0AE189B49C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 07:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810B73B152E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jun 2025 07:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375AA2D8DB0;
-	Fri, 13 Jun 2025 07:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9182E1748;
+	Fri, 13 Jun 2025 07:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cG7ou85v"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="j7+tCTmB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76422D6633;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B753E2D661D;
 	Fri, 13 Jun 2025 07:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749800077; cv=none; b=tPPHyLZODlmvkxXWwdGyLlTyC7ZL+kcMTltB3BASrb65oWfnl3DlfRuBUgTyZrZIRfcwC1MqkrK2uYjWzyQhz6iDXA85lmZ1CGv5k2rLCMEXW+4KN+V+/odXlIM1Io06Whf9z1ijBSrpzKhNA/xoTm8nzRMRVvB03225cmIcJUc=
+	t=1749800076; cv=none; b=HZwItWGTpCwRBI3lcffufijwqwe/e5uZgf2LEEL5klr+2Qf8HchNcSTTrukTZYXsRQtG5z88avAesWvAdtV5JgknqTFhcQRanVNatEIPnjLirA7wJyj9rIa01SPHQW8d0I5d8FylMWIckKKDSOBke3G+HTZLNnVFsxMa9G2VwV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749800077; c=relaxed/simple;
-	bh=2GRlbDzOSFS8GGdy++z8bSoBOZCJUPuEDjPSmsPQnLY=;
+	s=arc-20240116; t=1749800076; c=relaxed/simple;
+	bh=KP4Uh+VHKAn/Ngp/OOvEbDlEoas6+OnVYT9jHvn0nJk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DH88TDxXTb0OY4I3Wi4iU2gJlJuc9ftid5RVE0AmofeGz+moBm1MqIKe0QXUgjXldxu7kFqnnS9nZfIugpo8tn5NQU403mj2qClil0tQIZexJutY675nXiIaOkBMBjqgfiT4XuhMX6qloJtjBOg96rok4iTtz60KbzJNAPCfGRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cG7ou85v; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=gF+x7PO5tlnnm/bs/uS/ztRJh8CSgn7jvmOj+rgB6wi2hFregQbRQYH313+og324sm8Uo4FWAsD56sYIBQzx2a1UteqG5SGdG1ae5qPIvHWbEt6sG0P5dSZzlYKSNZ1PNnaTMPKjdHye+aEw4Lcxq6nO8ZmmM5qtAaJ/775uT+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=j7+tCTmB; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=F588zEM0h0U7uHwHc5wav0oR+hElK+Md0j8ACmYPDko=; b=cG7ou85v14YpidnvELYsEiTwTA
-	mf8em5/Zy0MfF32StrjwWFVOW4oYucrATyVBrY47+micAW0MiGK3COz/sUm5YFQMrb6ABL7R844gE
-	+JceEoHkAbkp5abaYQT8hI4RSQ1ulxi9wtymNfS6kpiEEkraCwJWTn5XdwOheMQtR1kqp56lvE4gA
-	36eQJ3k3q1eJbUkF1bptRXkar6eAv1pRvjVz3WEQj/nWQPoUvT8qeFGkukoYvKcIK0Pz/nHfxuFD4
-	ZSTGBxRujLvYOEL2wXSmgmwB8Cb/fYfva1uZDIgQYsIqMmMumAVXeuRThM5rfRvF1vgq1qMHdEZhO
-	mZUBG+pQ==;
+	bh=tSZmphYNfQQqmF0KWY5djVrbUmJjr1rlmMSpvFBX2tI=; b=j7+tCTmBP2GoPsaTdZ/2ZD3L7Q
+	S7geqKEUSz2K5BPorBz88ykmlRObDNxRPXENPt9g6AG0+8SkmOnNopP7Qy8NedAzzG1KU2XBhGqc/
+	Ha3Gxy7EGOlrXnFj4fDGrSJM6QY8k9J+FDT1WSUlqj8CYMlY0vADzfcqmudwK0GtmQA6eGNX4FlD1
+	zi1m3kmWh3FeAPppUfD8Rx3+31SqNk6aLnGYBO+J3g3oep4w5EVoaamdRCRU07VNr+BmSaSsdkr7h
+	VQM7GVyPbqoqmkXLtN3Jjc/4JIKnl2eO2hZPVwgzInKkphAiQvSVxFzpNlg8+BIPpGN5co9Hf2nDw
+	WIxKLlVw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPyvp-00000007qpM-0hg7;
+	id 1uPyvp-00000007qpQ-1BLk;
 	Fri, 13 Jun 2025 07:34:33 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: chuck.lever@oracle.com,
 	neil@brown.name,
 	torvalds@linux-foundation.org,
 	trondmy@kernel.org
-Subject: [PATCH 03/17] rpc_pipe: clean failure exits in fill_super
-Date: Fri, 13 Jun 2025 08:34:18 +0100
-Message-ID: <20250613073432.1871345-3-viro@zeniv.linux.org.uk>
+Subject: [PATCH 04/17] rpc_{rmdir_,}depopulate(): use simple_recursive_removal() instead
+Date: Fri, 13 Jun 2025 08:34:19 +0100
+Message-ID: <20250613073432.1871345-4-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250613073432.1871345-1-viro@zeniv.linux.org.uk>
 References: <20250613073149.GI1647736@ZenIV>
@@ -68,135 +68,104 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-->kill_sb() will be called immediately after a failure return
-anyway, so we don't need to bother with notifier chain and
-rpc_gssd_dummy_depopulate().  What's more, rpc_gssd_dummy_populate()
-failure exits do not need to bother with __rpc_depopulate() -
-anything added to the tree will be taken out by ->kill_sb().
+no need to give an exact list of objects to be remove when it's
+simply every child of the victim directory.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- net/sunrpc/rpc_pipe.c | 67 +++++++++++--------------------------------
- 1 file changed, 16 insertions(+), 51 deletions(-)
+ net/sunrpc/rpc_pipe.c | 44 +++----------------------------------------
+ 1 file changed, 3 insertions(+), 41 deletions(-)
 
 diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-index 98f78cd55905..580e078e49a3 100644
+index 580e078e49a3..9571cbd91305 100644
 --- a/net/sunrpc/rpc_pipe.c
 +++ b/net/sunrpc/rpc_pipe.c
-@@ -1292,7 +1292,7 @@ static const struct rpc_filelist gssd_dummy_info_file[] = {
-  * Create a dummy set of directories and a pipe that gssd can hold open to
-  * indicate that it is up and running.
-  */
--static struct dentry *
-+static int
- rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
- {
- 	int ret = 0;
-@@ -1303,58 +1303,37 @@ rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
- 	/* We should never get this far if "gssd" doesn't exist */
- 	gssd_dentry = try_lookup_noperm(&QSTR(files[RPCAUTH_gssd].name), root);
- 	if (!gssd_dentry)
--		return ERR_PTR(-ENOENT);
-+		return -ENOENT;
- 
- 	ret = rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
- 	if (ret) {
--		pipe_dentry = ERR_PTR(ret);
--		goto out;
-+		dput(gssd_dentry);
-+		return ret;
+@@ -678,17 +678,6 @@ static void __rpc_depopulate(struct dentry *parent,
  	}
+ }
  
- 	clnt_dentry = try_lookup_noperm(&QSTR(gssd_dummy_clnt_dir[0].name),
- 					  gssd_dentry);
--	if (!clnt_dentry) {
--		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
--		pipe_dentry = ERR_PTR(-ENOENT);
--		goto out;
--	}
-+	dput(gssd_dentry);
-+	if (!clnt_dentry)
-+		return -ENOENT;
- 
- 	ret = rpc_populate(clnt_dentry, gssd_dummy_info_file, 0, 1, NULL);
- 	if (ret) {
--		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
--		pipe_dentry = ERR_PTR(ret);
--		goto out;
-+		dput(clnt_dentry);
-+		return ret;
- 	}
+-static void rpc_depopulate(struct dentry *parent,
+-			   const struct rpc_filelist *files,
+-			   int start, int eof)
+-{
+-	struct inode *dir = d_inode(parent);
 -
- 	pipe_dentry = rpc_mkpipe_dentry(clnt_dentry, "gssd", NULL, pipe_data);
--	if (IS_ERR(pipe_dentry)) {
--		__rpc_depopulate(clnt_dentry, gssd_dummy_info_file, 0, 1);
--		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
--	}
--out:
- 	dput(clnt_dentry);
--	dput(gssd_dentry);
--	return pipe_dentry;
+-	inode_lock_nested(dir, I_MUTEX_CHILD);
+-	__rpc_depopulate(parent, files, start, eof);
+-	inode_unlock(dir);
 -}
 -
--static void
--rpc_gssd_dummy_depopulate(struct dentry *pipe_dentry)
+ static int rpc_populate(struct dentry *parent,
+ 			const struct rpc_filelist *files,
+ 			int start, int eof,
+@@ -762,24 +751,6 @@ static struct dentry *rpc_mkdir_populate(struct dentry *parent,
+ 	goto out;
+ }
+ 
+-static int rpc_rmdir_depopulate(struct dentry *dentry,
+-		void (*depopulate)(struct dentry *))
 -{
--	struct dentry *clnt_dir = pipe_dentry->d_parent;
--	struct dentry *gssd_dir = clnt_dir->d_parent;
+-	struct dentry *parent;
+-	struct inode *dir;
+-	int error;
 -
--	dget(pipe_dentry);
--	__rpc_rmpipe(d_inode(clnt_dir), pipe_dentry);
--	__rpc_depopulate(clnt_dir, gssd_dummy_info_file, 0, 1);
--	__rpc_depopulate(gssd_dir, gssd_dummy_clnt_dir, 0, 1);
--	dput(pipe_dentry);
-+	if (IS_ERR(pipe_dentry))
-+		ret = PTR_ERR(pipe_dentry);
-+	return ret;
+-	parent = dget_parent(dentry);
+-	dir = d_inode(parent);
+-	inode_lock_nested(dir, I_MUTEX_PARENT);
+-	if (depopulate != NULL)
+-		depopulate(dentry);
+-	error = __rpc_rmdir(dir, dentry);
+-	inode_unlock(dir);
+-	dput(parent);
+-	return error;
+-}
+-
+ /**
+  * rpc_mkpipe_dentry - make an rpc_pipefs file for kernel<->userspace
+  *		       communication
+@@ -1030,11 +1001,6 @@ static int rpc_clntdir_populate(struct dentry *dentry, void *private)
+ 			    private);
  }
  
- static int
- rpc_fill_super(struct super_block *sb, struct fs_context *fc)
+-static void rpc_clntdir_depopulate(struct dentry *dentry)
+-{
+-	rpc_depopulate(dentry, authfiles, RPCAUTH_info, RPCAUTH_EOF);
+-}
+-
+ /**
+  * rpc_create_client_dir - Create a new rpc_client directory in rpc_pipefs
+  * @dentry: the parent of new directory
+@@ -1073,7 +1039,8 @@ int rpc_remove_client_dir(struct rpc_clnt *rpc_client)
+ 		return 0;
+ 	rpc_destroy_pipe_dir_objects(&rpc_client->cl_pipedir_objects);
+ 	rpc_client->cl_pipedir_objects.pdh_dentry = NULL;
+-	return rpc_rmdir_depopulate(dentry, rpc_clntdir_depopulate);
++	simple_recursive_removal(dentry, NULL);
++	return 0;
+ }
+ 
+ static const struct rpc_filelist cache_pipefs_files[3] = {
+@@ -1101,11 +1068,6 @@ static int rpc_cachedir_populate(struct dentry *dentry, void *private)
+ 			    private);
+ }
+ 
+-static void rpc_cachedir_depopulate(struct dentry *dentry)
+-{
+-	rpc_depopulate(dentry, cache_pipefs_files, 0, 3);
+-}
+-
+ struct dentry *rpc_create_cache_dir(struct dentry *parent, const char *name,
+ 				    umode_t umode, struct cache_detail *cd)
  {
- 	struct inode *inode;
--	struct dentry *root, *gssd_dentry;
-+	struct dentry *root;
- 	struct net *net = sb->s_fs_info;
- 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
- 	int err;
-@@ -1373,11 +1352,9 @@ rpc_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (rpc_populate(root, files, RPCAUTH_lockd, RPCAUTH_RootEOF, NULL))
- 		return -ENOMEM;
+@@ -1115,7 +1077,7 @@ struct dentry *rpc_create_cache_dir(struct dentry *parent, const char *name,
  
--	gssd_dentry = rpc_gssd_dummy_populate(root, sn->gssd_dummy);
--	if (IS_ERR(gssd_dentry)) {
--		__rpc_depopulate(root, files, RPCAUTH_lockd, RPCAUTH_RootEOF);
--		return PTR_ERR(gssd_dentry);
--	}
-+	err = rpc_gssd_dummy_populate(root, sn->gssd_dummy);
-+	if (err)
-+		return err;
- 
- 	dprintk("RPC:       sending pipefs MOUNT notification for net %x%s\n",
- 		net->ns.inum, NET_NAME(net));
-@@ -1386,18 +1363,6 @@ rpc_fill_super(struct super_block *sb, struct fs_context *fc)
- 	err = blocking_notifier_call_chain(&rpc_pipefs_notifier_list,
- 					   RPC_PIPEFS_MOUNT,
- 					   sb);
--	if (err)
--		goto err_depopulate;
--	mutex_unlock(&sn->pipefs_sb_lock);
--	return 0;
--
--err_depopulate:
--	rpc_gssd_dummy_depopulate(gssd_dentry);
--	blocking_notifier_call_chain(&rpc_pipefs_notifier_list,
--					   RPC_PIPEFS_UMOUNT,
--					   sb);
--	sn->pipefs_sb = NULL;
--	__rpc_depopulate(root, files, RPCAUTH_lockd, RPCAUTH_RootEOF);
- 	mutex_unlock(&sn->pipefs_sb_lock);
- 	return err;
+ void rpc_remove_cache_dir(struct dentry *dentry)
+ {
+-	rpc_rmdir_depopulate(dentry, rpc_cachedir_depopulate);
++	simple_recursive_removal(dentry, NULL);
  }
+ 
+ /*
 -- 
 2.39.5
 
