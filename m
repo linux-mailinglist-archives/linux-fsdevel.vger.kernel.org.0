@@ -1,147 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-51649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32ABAAD9A1C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:48:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EA7AD9A4C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DDB189C420
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 04:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2691E17CD5A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF931DE2CF;
-	Sat, 14 Jun 2025 04:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ACA1DE3DB;
+	Sat, 14 Jun 2025 06:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uUfeStW/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5BE2E11B4;
-	Sat, 14 Jun 2025 04:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4049F78F2B
+	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Jun 2025 06:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749876514; cv=none; b=C0RUzzQzaoYvxlLTBHaEHmtq3kpnipjYu5D7GO99LLpYP0IMl3Kq7CUV/908TohLvUP2+gRTdmZR3+StVExqLT87MuAXPIaJHsUq+HTtsSuKG8F0glHMZenQeLVSwYEMtiTXwnc5fUaIoi4lMY13HWeZh5krz7NQDt9XKHb4q48=
+	t=1749880856; cv=none; b=bYQMMahmdHTFykSx7lldv0GrJiGiij803I9sBdh/FbNYHtTaQBdt+dlRfGdbdO7mHcmYYRcK+TF8Y0lvgZOx/yqYw0wj6opw16HpwTwI+Vw5x48vDItiTDctJnl0I1u902KLasvKr15qxCEsb4/GmKGvSY9lKKv/T1VnEAACNEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749876514; c=relaxed/simple;
-	bh=lygWowa6guLMhQzlm7uWnDHP6s+JxGl/+Zxvm0cojAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xb0CwOOum4CbZMen1P0TwwNbbS7PT1LItKYBP1CKmNqAgRbRuXs8t5Y9dIyQcINwhYS4lpBX5RE3JyWeeZvkQWCnSJO0RpLvmWVRucXFIc8HBkQdd+lNXIpMn6Lm6xL9I5ubJNnguP4isz+VksLiNOw11vMskbnuqBzD1U2mxaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bK3gL25lkzKHN2h;
-	Sat, 14 Jun 2025 12:48:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9C4381A17DF;
-	Sat, 14 Jun 2025 12:48:28 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBXvGAa_0xoKqTaPQ--.42646S3;
-	Sat, 14 Jun 2025 12:48:28 +0800 (CST)
-Message-ID: <3d749264-6fdd-458f-a3a8-35d2320193b3@huaweicloud.com>
-Date: Sat, 14 Jun 2025 12:48:26 +0800
+	s=arc-20240116; t=1749880856; c=relaxed/simple;
+	bh=b9z9w3PTdtUGUtawr0ocT5z3TwhISVIPynAAVlgfFJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VTbzkAoWyRE3+bo9U26t4CWg+qkc6LQWPKBJCTsrmdo6VAefcl5pYyGBo3+oLzb6SRoSQ0jOpmj2ypB9uVlh4rq1bWoFqQKOvdlkhW265ySU75wVsO+ZrQshIRBp+khohJKsTtKPnegIydE7c3HDWFwfmBIvQZ+eM6prNAuGAZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uUfeStW/; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=R0iFuKX2CD/jEHTwSLz/yN1F6M1FFDVoz/XJI+Jub6I=; b=uUfeStW/1ze8Yf+mZMu2Fktg6R
+	B9N03SuonTKvBTAK71DVaUddABbITR5gRcLJU4YrUGDSebyz8oz7S2oficTt+4XiIAWACF7XB0zVG
+	F+HkgCSFfZd8ukat5sR9IgcngClZnyOBOEyGy3LXbLsgF9irzHtP3e3eftpPiYIunbWm711kUEJzg
+	8nwWzMo8QSE+pjGtWsuk3zxrXNlFENhG6X88os039hl52vHwZ417pHva/CPttTCoSenQ7DdftOAIj
+	epxTqJ+n5SgGANRho4otWJiJTG3xgskZzfFuzcnssfOJ7vJpx98KNtSrcSKXYaiEG7+ywSR5TNl0r
+	CDaYAeFw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uQJwg-000000021hk-2ZFR;
+	Sat, 14 Jun 2025 06:00:50 +0000
+Date: Sat, 14 Jun 2025 07:00:50 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>
+Subject: [PATCHES][RFC][CFT] simple_recursive_removal() work
+Message-ID: <20250614060050.GB1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to
- queue limits features
-To: "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- john.g.garry@oracle.com, bmarzins@redhat.com, chaitanyak@nvidia.com,
- shinichiro.kawasaki@wdc.com, brauner@kernel.org, martin.petersen@oracle.com,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
- <20250604020850.1304633-2-yi.zhang@huaweicloud.com>
- <20250611060900.GA4613@lst.de>
- <343f7f06-9bf6-442f-8e77-0a774203ec3f@huaweicloud.com>
- <20250612044744.GA12828@lst.de>
- <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
- <20250612150347.GK6138@frogsfrogsfrogs>
- <3569a77f-1f38-4764-b1e3-d0075775c7bb@huaweicloud.com>
- <20250613055630.GA9119@lst.de> <20250613145433.GF6134@frogsfrogsfrogs>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250613145433.GF6134@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBXvGAa_0xoKqTaPQ--.42646S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15uw47uryUJF4kCryxGrg_yoW8tF47pF
-	yjgFyxKrWDtF1UA3s5Aa10gF1Fq3y3Ga4xCrn7Wryku3s8WrnrWFs2g343XFyxC3s3Wa1j
-	vayxC3sI9ayvvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
-	0PDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2025/6/13 22:54, Darrick J. Wong wrote:
-> On Fri, Jun 13, 2025 at 07:56:30AM +0200, Christoph Hellwig wrote:
->> On Fri, Jun 13, 2025 at 11:15:41AM +0800, Zhang Yi wrote:
->>> Yeah, this solution looks good to me. However, we currently have only
->>> two selections (none and unmap). What if we keep it as is and simply
->>> hide this interface if BLK_FEAT_WRITE_ZEROES_UNMAP is not set, making
->>> it visible only when the device supports this feature? Something like
->>> below:
->>
->> I really hate having all kinds of different interfaces for configurations.
-> 
-> I really hate the open-coded string parsing nonsense that is sysfs. ;)
-> 
->> Maybe we should redo this similar to the other hardware/software interfaces
->> and have a hw_ limit that is exposed by the driver and re-only in
->> sysfs, and then the user configurable one without _hw.  Setting it to
->> zero disables the feature.
-> 
-> Yeah, that fits the /sys/block/foo/queue model better.
-> 
+[another part of tree-in-dcache pile pulled into a separate branch]
 
-OK, well. Please let me confirm, are you both suggesting adding
-max_hw_write_zeores_unmap_sectors and max_write_zeroes_unmap_sectors to
-the queue_limits instead of adding BLK_FEAT_WRITE_ZEROES_UNMAP to the
-queue_limits->features. Something like the following.
+	Removing subtrees of kernel filesystems is done in quite a few
+places; unfortunately, it's easy to get wrong.	A number of open-coded
+attempts are out there, with varying amount of bogosities.
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 378d3a1a22fc..14394850863c 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -376,7 +376,9 @@ struct queue_limits {
-        unsigned int            max_hw_discard_sectors;
-        unsigned int            max_user_discard_sectors;
-        unsigned int            max_secure_erase_sectors;
--       unsigned int            max_write_zeroes_sectors;
-+       unsigned int            max_hw_write_zeroes_sectors;
-+       unsigned int            max_hw_write_zeores_unmap_sectors;
-+       unsigned int            max_write_zeroes_unmap_sectors;
-        unsigned int            max_hw_zone_append_sectors;
-        unsigned int            max_zone_append_sectors;
-        unsigned int            discard_granularity;
+	simple_recursive_removal() had been introduced for doing that with
+all precautions needed; it does an equivalent of rm -rf, with sufficient
+locking, eviction of anything mounted on top of the subtree, etc.
 
-Besides, we should also rename max_write_zeroes_sectors to
-max_hw_write_zeroes_sectors since it is a hardware limitation reported
-by the driver.  If the device supports unmap write zeroes,
-max_hw_write_zeores_unmap_sectors should be equal to
-max_hw_write_zeroes_sectors, otherwise it should be 0.
+	The series below converts a bunch of open-coded instances
+to using that.  It's v6.16-rc1-based, lives in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.simple_recursive_removal
+Individual patches in followups.
 
-Right?
+The first commit is shared with work.rpc_pipe (and several other branches);
+the rest has not been posted yet.  If there's no objections, into -next
+it goes...
 
-Best regards,
-Yi.
+Shortlog:
+Al Viro(8)
+      simple_recursive_removal(): saner interaction with fsnotify
+      add locked_recursive_removal()
+      spufs: switch to locked_recursive_removal()
+      binfmt_misc: switch to locked_recursive_removal()
+      pstore: switch to locked_recursive_removal()
+      fuse_ctl: use simple_recursive_removal()
+      kill binderfs_remove_file()
+      functionfs, gadgetfs: use simple_recursive_removal()
 
+Diffstat:
+ arch/powerpc/platforms/cell/spufs/inode.c | 49 ++++++-------------------------
+ drivers/android/binder.c                  |  2 +-
+ drivers/android/binder_internal.h         |  2 --
+ drivers/android/binderfs.c                | 15 ----------
+ drivers/usb/gadget/function/f_fs.c        |  3 +-
+ drivers/usb/gadget/legacy/inode.c         |  7 +----
+ fs/binfmt_misc.c                          | 40 +------------------------
+ fs/fuse/control.c                         | 30 ++++++++-----------
+ fs/fuse/fuse_i.h                          |  6 ----
+ fs/libfs.c                                | 29 +++++++++++++-----
+ fs/pstore/inode.c                         |  3 +-
+ include/linux/fs.h                        |  2 ++
+ 12 files changed, 50 insertions(+), 138 deletions(-)
 
