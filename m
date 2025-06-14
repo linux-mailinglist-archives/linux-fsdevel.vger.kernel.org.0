@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-51651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4722BAD9A4D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:02:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A74FAD9A4E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02F9D17CE98
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:02:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B3A07ACFC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D5B1E22E6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBBB1E411C;
 	Sat, 14 Jun 2025 06:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pEXs6Wa/"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="r17P1CJ4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF3C2A1AA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9811C54AF
 	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Jun 2025 06:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749880954; cv=none; b=HQ+MwKmebwDia4tUZo/fgBuJ3OBpr6NKi6trD/3PKT/WSRXrIg0qTyF0Dx2+LhE/o2IIWsYNlLCA748g78rQyxDOHPuprEcNf7u3hRWuOOMVxLCkYtAj2CFH7HrEpifsFWy2DQQuoPpDdzDRpzf/y1eTc163RFurfIqrY4hU5HQ=
+	t=1749880954; cv=none; b=pJuYTXKMOvk8y6wVFpg+aoZzVZbPkyPrCbohtljhIWvHgrDkkddAW+rx3hrSlUavXQauKXndGv8n2arGLPwUgNTEegd6Q/tykByMi21gS8NUY28cYUz9y5/QND+wYWoNvITnWNUP9jumeekfdNfDiZJXfjjGlYDfqBGDhIHnpDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749880954; c=relaxed/simple;
-	bh=LJu1OY3fvPIFXU4lCCF00oqI6kjeuHvxUnP3ly9W5Ic=;
+	bh=vHUXLbp1sGXuX4+35l347HqozQ/7NCpSK9ITICu1lU0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hcK8hezyCSnWtw/D2kptfXinH2RGs4BlI9DWCGHU+z4EFfO2/sPLylCGYsEF0AQqw26fWE9dnWbgDn4UMysScE7xjcTEZh1CSBvd8wWT5ZKqaTYtcMMzd2y5AwPU5l6m6uyrqSyigCoFtuyTqObCUEY1QZ9bo4H/QJvNzk99J1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pEXs6Wa/; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=sF1ACFLQaE/7CWCSSb7W9/lEJIpoHFctMyuegkDwpEFoTk1g0vp08qgJ9/0ouryJsxEhczRDAlXrfoFvgkC/vPuiBMdkfe19n7stFFk95vDk8ezvAaoUyp45sFtjVtC7T+p9LIYa726Sm11WliAun98GozZpb7COw2AcOEHohAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=r17P1CJ4; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Wr0H5jh3TZJ0zV7oltYvQB4G1eh/qrqcOY7Bhi9PWLU=; b=pEXs6Wa/HSLvhSk8txIHad68Qt
-	0gvOOfLvq1jQ+jCgyptdt80tBx/xGub2TqpMlCO6LfASXfVcr6Wb5gD+qK2XRfbm845J1Ks9alncF
-	F03aD95ugVBhFJgekwyzPAJLYg4Ee+4dTnp8UuxXsTQxVNVzleJvddUjoRv/0Ql4g35xBub4EOtBL
-	n3UIPuGOmGU1Y2mZ3+V6iUj9Z7biR4Ocz29eYAiDqVWs074vpdB1M+iFEFRqUEMwHyhOyLz9JnWVk
-	TiNej0z3KQHCddyz1zzxZ777JARpAPSn9aDIYIVIwY9VipNRPL5cpyev23eLgtG+RgLDrmqqL8xsq
-	FoR8+1tQ==;
+	bh=kkTNxDPuumzgKB+NRw9BuBoSnSrifp1YcvxXA8F4v7U=; b=r17P1CJ4IHt+jRJc33ts+A8H4B
+	ThT9OITTy5y1mQaUsx2IUg4x9Uj9F9cJCj36gvdWfmvkjUx+5PJhTlyvpuv5/ftzjE7PCVcj1gJW5
+	vdL8rXjCJoHY52+DkkHuYSW9g53pCjTWTFf5KiIqrlzHhLohUK4DJhkektNxwIRCRe3GMf2uCx69T
+	2S5qWl3UudOEnT4kTW8K6QBkYDqaaWelVFXx0jbeXlPP2I8otdecxlYCzoKguf+z9fXh4Xrldym1k
+	E4R4bvvVy8whNgeR0FBBphR9GpFTWnRQkft8fUJcjoMo2QtOn8hAaNNZS/ENKe9AvAov2o/m8yFgt
+	HT5Yd9Ew==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQJyI-000000022p7-2jIM;
+	id 1uQJyI-000000022pM-3GvU;
 	Sat, 14 Jun 2025 06:02:30 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: neil@brown.name,
 	torvalds@linux-foundation.org,
 	brauner@kernel.org
-Subject: [PATCH 1/8] simple_recursive_removal(): saner interaction with fsnotify
-Date: Sat, 14 Jun 2025 07:02:23 +0100
-Message-ID: <20250614060230.487463-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH 2/8] add locked_recursive_removal()
+Date: Sat, 14 Jun 2025 07:02:24 +0100
+Message-ID: <20250614060230.487463-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250614060050.GB1880847@ZenIV>
+In-Reply-To: <20250614060230.487463-1-viro@zeniv.linux.org.uk>
 References: <20250614060050.GB1880847@ZenIV>
+ <20250614060230.487463-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,37 +65,94 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Make it match the real unlink(2)/rmdir(2) - notify *after* the
-operation.  And use fsnotify_delete() instead of messing with
-fsnotify_unlink()/fsnotify_rmdir().
+simple_recursive_removal() assumes that parent is not locked and
+locks it when it finally gets to removing the victim itself.
+Usually that's what we want, but there are places where the
+parent is *already* locked and we need it to stay that way.
+In those cases simple_recursive_removal() would, of course,
+deadlock, so we have to play racy games with unlocking/relocking
+the parent around the call or open-code the entire thing.
 
-Currently the only caller that cares is the one in debugfs, and
-there the order matching the normal syscalls makes more sense;
-it'll get more serious for users introduced later in the series.
+A better solution is to provide a variant that expects to
+be called with the parent already locked by the caller.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/libfs.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/libfs.c         | 24 ++++++++++++++++++++----
+ include/linux/fs.h |  2 ++
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index 9ea0ecc325a8..42e226af6095 100644
+index 42e226af6095..d0f934f0e541 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -628,12 +628,9 @@ void simple_recursive_removal(struct dentry *dentry,
- 			inode_lock(inode);
+@@ -605,8 +605,9 @@ struct dentry *find_next_child(struct dentry *parent, struct dentry *prev)
+ }
+ EXPORT_SYMBOL(find_next_child);
+ 
+-void simple_recursive_removal(struct dentry *dentry,
+-                              void (*callback)(struct dentry *))
++static void __simple_recursive_removal(struct dentry *dentry,
++                              void (*callback)(struct dentry *),
++			      bool locked)
+ {
+ 	struct dentry *this = dget(dentry);
+ 	while (true) {
+@@ -625,7 +626,8 @@ void simple_recursive_removal(struct dentry *dentry,
+ 			victim = this;
+ 			this = this->d_parent;
+ 			inode = this->d_inode;
+-			inode_lock(inode);
++			if (!locked || victim != dentry)
++				inode_lock(inode);
  			if (simple_positive(victim)) {
  				d_invalidate(victim);	// avoid lost mounts
--				if (d_is_dir(victim))
--					fsnotify_rmdir(inode, victim);
--				else
--					fsnotify_unlink(inode, victim);
  				if (callback)
- 					callback(victim);
-+				fsnotify_delete(inode, d_inode(victim), victim);
- 				dput(victim);		// unpin it
+@@ -638,7 +640,8 @@ void simple_recursive_removal(struct dentry *dentry,
+ 						      inode_set_ctime_current(inode));
+ 				if (d_is_dir(dentry))
+ 					drop_nlink(inode);
+-				inode_unlock(inode);
++				if (!locked)
++					inode_unlock(inode);
+ 				dput(dentry);
+ 				return;
  			}
- 			if (victim == dentry) {
+@@ -647,8 +650,21 @@ void simple_recursive_removal(struct dentry *dentry,
+ 		this = child;
+ 	}
+ }
++
++void simple_recursive_removal(struct dentry *dentry,
++                              void (*callback)(struct dentry *))
++{
++	return __simple_recursive_removal(dentry, callback, false);
++}
+ EXPORT_SYMBOL(simple_recursive_removal);
+ 
++void locked_recursive_removal(struct dentry *dentry,
++                              void (*callback)(struct dentry *))
++{
++	return __simple_recursive_removal(dentry, callback, true);
++}
++EXPORT_SYMBOL(locked_recursive_removal);
++
+ static const struct super_operations simple_super_operations = {
+ 	.statfs		= simple_statfs,
+ };
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 96c7925a6551..4f0c6bf8d652 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3595,6 +3595,8 @@ extern int simple_rename(struct mnt_idmap *, struct inode *,
+ 			 unsigned int);
+ extern void simple_recursive_removal(struct dentry *,
+                               void (*callback)(struct dentry *));
++extern void locked_recursive_removal(struct dentry *,
++                              void (*callback)(struct dentry *));
+ extern int noop_fsync(struct file *, loff_t, loff_t, int);
+ extern ssize_t noop_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
+ extern int simple_empty(struct dentry *);
 -- 
 2.39.5
 
