@@ -1,126 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-51657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAABAD9A54
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:03:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2BDAD9A58
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0CB17771F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:02:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FF717D3B8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A96E1D618C;
-	Sat, 14 Jun 2025 06:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967131DED60;
+	Sat, 14 Jun 2025 06:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TSwnHJmi"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="sv2H5qJl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DAB1DE8A0
-	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Jun 2025 06:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD0F23DE;
+	Sat, 14 Jun 2025 06:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749880956; cv=none; b=Uu+aBgW5ttbrKbZeMX7xjhkf+PYc3dU2BI90X5aEVM+oSOCns0/75xQQ1/hJg5VTEnMLs577zrHl7qOYFYD8FjuE+ygOu2fnU/hELARnvPY1cgUYk62Gn9RVYyhu39/MhKyJ4c/betCp7tzwtAiQHz1mlnZ2zPrF5ITUg/nuhwE=
+	t=1749882055; cv=none; b=kSJ6dt54J8rPhJ9fw2G04w0ZLcRiJx7eGxoC1fZ3skKzsvTEo5yNtelSNGFcBjuPYf2WCVKbN/FwqJKIHGRHimKiM+gebbVmjaM5QXKE+MT3PQ8d0DSNWjQlQE1/oVHzvFzVfeoyzBz6hdLAC4q/a7FMvw/5+NF8Wqg10QZlj+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749880956; c=relaxed/simple;
-	bh=qg2O6iZIseTcAZRQtk1St6N4PV/Ld/G7Bj1cvWMy0N4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cjucnYsvApwcL0OmM1EKWS09ISUAjcL030M3EC6HtmOMw7aOnv+++fhb9JhSGpAfxGn8TrZzgEpy3GYdiwKxa8/OlrxJPQqFNBZQH9dsSUnay+9Avsv7XYN1vKx+k1jU/DBm94SQkagPoIWzsOUDFdZmNJYUSqXDL53Fb5ZsET4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TSwnHJmi; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1749882055; c=relaxed/simple;
+	bh=Y4VZ0mIVGO43zUhEHGQbLBdI73QT+rbvtERI624NnCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MkF5xhNpBlBuiTYnHXYWSFbYih8beQePTOz86MdlI43WQ8vlf7OZOw8AW1SbfZnF2VKMVAObufh85dCh0mszRI/tsOrVsWqG4Z0Q1ErJmrD5Ex0n/0skt9v9w7j/WSnlvNSsFM69o0WGDfCyoK6zGgyc6KlR3Srl7uj0PlVvZvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=sv2H5qJl; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=zkQbpoHYynZJKwBwIgQufFZmwj6RMGLD5+dk1wRCrvY=; b=TSwnHJmiHjXIEeoB4vAZV0b3/s
-	Fe3W/60rbAo/tWgMRuBdRSD88h+XAqaeJXwLGZVhijuOVwF7TwkYTflB4u1oW1t+JLq1HxaW7nFH5
-	nK5g5EaKLG5wJ8CgwadVmOP4aCAlzs+IKqSL99Wk6BjEQaCjLlLJpKrs61owdOfggqIaR4umMeWFb
-	xGSs3+TRMnBoCOsbx7BKGYz8F96bFO1XoYOlF1mEqgFaatxJ/cPjEFYsGs+AT3syQeMEYJjP/EiUo
-	8qsH8XMDHmJmOTZ7ye+IGqHQts7Q5wkzkMpehgHX85LqNSZUPb4LuA1odzX72TwfVgAjkoqRYwNmm
-	rDxJGFdw==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=QPHguXyshzZzTGRSmBks3eALH+eO8BLLetl0Op2INqg=; b=sv2H5qJlSCoVCsa44VsW9MxYJI
+	bmshRvdcGlnm3+dFdo32GglBTwv37Wo8omMFU88WoT1pB2Fso3mYB24F5DkMRo9yGYjiprWN4XEBv
+	Ec7AWxqWc0CyotlCkq7/ZsIgCtMG1bLTVl8O7gWh2B9cQcn4MbeLU47XeBm6LkrT7VCeyihsLGGhT
+	GAL1yJICPolBpsOKvzw5MMvbvTVVaScD9j18XFoDagce1SSk9pEA009p9mSgR+MZngRRXC466lvXB
+	tqIQvndBYvbcWsH0oNSga4pEjyhfOGsKjIWr4780hOAT9oy9jOEAU2osTZbbBnv3eBwATOcK5tBEH
+	Pd8ZlIXg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQJyK-000000022qr-0Co6;
-	Sat, 14 Jun 2025 06:02:32 +0000
+	id 1uQKG3-00000002DtV-3L3c;
+	Sat, 14 Jun 2025 06:20:51 +0000
+Date: Sat, 14 Jun 2025 07:20:51 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
-Cc: neil@brown.name,
-	torvalds@linux-foundation.org,
-	brauner@kernel.org
-Subject: [PATCH 8/8] functionfs, gadgetfs: use simple_recursive_removal()
-Date: Sat, 14 Jun 2025 07:02:30 +0100
-Message-ID: <20250614060230.487463-8-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250614060230.487463-1-viro@zeniv.linux.org.uk>
-References: <20250614060050.GB1880847@ZenIV>
- <20250614060230.487463-1-viro@zeniv.linux.org.uk>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, ceph-devel@vger.kernel.org
+Subject: [PATCHES] ceph d_name race fixes
+Message-ID: <20250614062051.GC1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-usual mount leaks if something had been bound on top of disappearing
-files there.
+	Series of race fixes for d_name handling in ceph had been posted
+back in February, but apparently had fallen through the cracks - I expected
+ceph folks to pull (or cherry-pick) it, they apparently thought I'd send
+it to Linus and nobody checked what actually went down...
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- drivers/usb/gadget/function/f_fs.c | 3 +--
- drivers/usb/gadget/legacy/inode.c  | 7 +------
- 2 files changed, 2 insertions(+), 8 deletions(-)
+	I've rebased it to 6.16-rc1, with a couple of cosmetical changes
+suggested back then.  Currently it's in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.ceph-d_name-fixes
+Individual patches in followups.
 
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index 2dea9e42a0f8..ea5f0af1e8d2 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -2369,8 +2369,7 @@ static void ffs_epfiles_destroy(struct ffs_epfile *epfiles, unsigned count)
- 	for (; count; --count, ++epfile) {
- 		BUG_ON(mutex_is_locked(&epfile->mutex));
- 		if (epfile->dentry) {
--			d_delete(epfile->dentry);
--			dput(epfile->dentry);
-+			simple_recursive_removal(epfile->dentry, NULL);
- 			epfile->dentry = NULL;
- 		}
- 	}
-diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
-index fcce84a726f2..b51e132b0cd2 100644
---- a/drivers/usb/gadget/legacy/inode.c
-+++ b/drivers/usb/gadget/legacy/inode.c
-@@ -1561,7 +1561,6 @@ static void destroy_ep_files (struct dev_data *dev)
- 	spin_lock_irq (&dev->lock);
- 	while (!list_empty(&dev->epfiles)) {
- 		struct ep_data	*ep;
--		struct inode	*parent;
- 		struct dentry	*dentry;
- 
- 		/* break link to FS */
-@@ -1571,7 +1570,6 @@ static void destroy_ep_files (struct dev_data *dev)
- 
- 		dentry = ep->dentry;
- 		ep->dentry = NULL;
--		parent = d_inode(dentry->d_parent);
- 
- 		/* break link to controller */
- 		mutex_lock(&ep->lock);
-@@ -1586,10 +1584,7 @@ static void destroy_ep_files (struct dev_data *dev)
- 		put_ep (ep);
- 
- 		/* break link to dcache */
--		inode_lock(parent);
--		d_delete (dentry);
--		dput (dentry);
--		inode_unlock(parent);
-+		simple_recursive_removal(dentry, NULL);
- 
- 		spin_lock_irq (&dev->lock);
- 	}
--- 
-2.39.5
+	Folks, could you test and review it?  I really don't care which
+tree would it go through, just let's make sure that everyone agrees who
+pushes it out...
 
+Shortlog:
+Al Viro (3):
+      [ceph] parse_longname(): strrchr() expects NUL-terminated string
+      prep for ceph_encode_encrypted_fname() fixes
+      ceph: fix a race with rename() in ceph_mdsc_build_path()
+
+Diffstat:
+ fs/ceph/caps.c       | 18 +++++-------
+ fs/ceph/crypto.c     | 82 +++++++++++++++++-----------------------------------
+ fs/ceph/crypto.h     | 18 +++---------
+ fs/ceph/dir.c        |  7 ++---
+ fs/ceph/mds_client.c |  4 +--
+ 5 files changed, 43 insertions(+), 86 deletions(-)
 
