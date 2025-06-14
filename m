@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-51653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38285AD9A52
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:03:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BB9AD9A50
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7581B162B5B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:02:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7279A189CA37
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1234C1E47B4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1461E5213;
 	Sat, 14 Jun 2025 06:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ecZzO+zS"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uOl8TBKC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D271DDC1A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC011DE2D8
 	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Jun 2025 06:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749880954; cv=none; b=aviqcm0G7RKOznjP1rVkmp6wgJTMoeXnpm1xY+k95s1l92AJE6lEP3aO+azUg+Ocaf8tGJkUdSaPSf66zSv7DSx6tf5/HnsmEZs0BRx0/T57q85JKVowUfRnGopGaRGsA4PsDOnhEcsH30gwuihyCEaytg7IMtMv2hBGI+Pb2MA=
+	t=1749880954; cv=none; b=k6vyc4LWMna/jUVgdDUCI5vAVemiVzzbrN9wlW+7AWJxQvAOi5QFhRtrDMKCJEVSDrwhH0BF8AYNRIYbMYxIS+NP9/utfbKUxxqp2s/Q+jG/jH6aGzNNrGe/rLrKmQwHIG8xNvNytQksxLnxujGpI87gS5YX7DBkYsTkKdFGTMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749880954; c=relaxed/simple;
-	bh=Ymg2/whCQRAkj3yGTtGtKaQj5T77/CxdWapHn9OrXYA=;
+	bh=P2OMcl9Mw08LsHKwQxld/M4/gERASbKAh/7FXgmwuYQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O3jDp2wivAHfNvprxph9yFDXAsdx+ViPoacq1ZgKGutK6I9YdHp83BhKUUVW8BUUlHqaSglOY4ViJJVYNO+pE8eBC9XT2b6jCwqElENgRMXiyyPGZMrunAL0yKABACutFIzT4P7061mq0MeRz0h/IbUugLZuDyr6GQ2GNocj3mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ecZzO+zS; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=QLyy/2jDCLARdZ+ifPWx4KDbAXWL2cCKMiGO7P07/y88dWAK4utRhdNmFwx5Vot9WEPqOXPHFFvTQP4WQglg7E6eZocOZAMJZXOR3gKqkxGY4z6zSLSkU0bJNjmnEA8G3/gdEz9qRA55MyDZuQ+ItiMG4Dopl/mdSNPot5yN8Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uOl8TBKC; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=5uXU/uhdE2jo+QjPPv0nZ1Nhjleks3Fvhai4NzNphnA=; b=ecZzO+zSknxQfzoI6mwFd2zqwj
-	BrSfulcRRLDfNvzI9mK1laETkPcm960U3+8lyVKZnOT7xV4Oghw/J7yWzWNYjgee1q5+Znkt/v5lh
-	SvtxFpiA6TewOmxBqkZvIqBT6Kg1lgCMjTq/MJ12l451CgKLRWATg4u7OQI7wxvqY01sbYyWG7I1n
-	/mE/fkixfSZpSYZYHDbGvDAN5ZpVhFboEJGzTF2Xx0RORhCA5gCjKTR/g6Xr7V4fep7cl0wxvB4Q0
-	oA/NbA8t0RU+zwMDUnorYFKuwasNoZm7JrI/tWqJPx7mYGtgIK1NNo3kng2t1kGLpkE8wHUlmTs1m
-	/l4leuzA==;
+	bh=4WEbTTzGIc9M/336WTmmFjEORii//S3bF/Bo+dQSZMU=; b=uOl8TBKCmvlDAM7wlMd9BKWzgg
+	Y+49At3FaLtYRFS5pF+zXZQgX5FBK2RBy3DaFqxILRREncFvfBmmZiQM0xehS+GN8c+xVKL7XusjJ
+	Q/+OSSor5vJM8Nyab82acUbxhDy5vqFoxptm9V2yyI4Z8IwRfN9MKkOPRnvYIuSX3WTZhbPxGSvZq
+	Y36keGwSu1AWnvoRwvy0hxDuS94wzqvFtu6n9/GF5tiNQO4Ul1PSK0X2buuWzW726tyh/7CXakx88
+	pO0gMowlGiQ5v2M2mR94syx1KA0zjcUVWZGRBZQdhJJR04Z6OhI6GFCIHQbUPc1D3Pcp/srxAwJcN
+	JdyJ27Dw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQJyJ-000000022q9-1Jb9;
+	id 1uQJyJ-000000022qL-2Ejr;
 	Sat, 14 Jun 2025 06:02:31 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: neil@brown.name,
 	torvalds@linux-foundation.org,
 	brauner@kernel.org
-Subject: [PATCH 4/8] binfmt_misc: switch to locked_recursive_removal()
-Date: Sat, 14 Jun 2025 07:02:26 +0100
-Message-ID: <20250614060230.487463-4-viro@zeniv.linux.org.uk>
+Subject: [PATCH 5/8] pstore: switch to locked_recursive_removal()
+Date: Sat, 14 Jun 2025 07:02:27 +0100
+Message-ID: <20250614060230.487463-5-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250614060230.487463-1-viro@zeniv.linux.org.uk>
 References: <20250614060050.GB1880847@ZenIV>
@@ -65,71 +65,27 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... fixing a mount leak, strictly speaking.
+rather than playing with manual d_invalidate()
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/binfmt_misc.c | 40 +---------------------------------------
- 1 file changed, 1 insertion(+), 39 deletions(-)
+ fs/pstore/inode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index 432fbf4fc334..760437a91648 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -674,44 +674,6 @@ static void bm_evict_inode(struct inode *inode)
- 	}
- }
- 
--/**
-- * unlink_binfmt_dentry - remove the dentry for the binary type handler
-- * @dentry: dentry associated with the binary type handler
-- *
-- * Do the actual filesystem work to remove a dentry for a registered binary
-- * type handler. Since binfmt_misc only allows simple files to be created
-- * directly under the root dentry of the filesystem we ensure that we are
-- * indeed passed a dentry directly beneath the root dentry, that the inode
-- * associated with the root dentry is locked, and that it is a regular file we
-- * are asked to remove.
-- */
--static void unlink_binfmt_dentry(struct dentry *dentry)
--{
--	struct dentry *parent = dentry->d_parent;
--	struct inode *inode, *parent_inode;
--
--	/* All entries are immediate descendants of the root dentry. */
--	if (WARN_ON_ONCE(dentry->d_sb->s_root != parent))
--		return;
--
--	/* We only expect to be called on regular files. */
--	inode = d_inode(dentry);
--	if (WARN_ON_ONCE(!S_ISREG(inode->i_mode)))
--		return;
--
--	/* The parent inode must be locked. */
--	parent_inode = d_inode(parent);
--	if (WARN_ON_ONCE(!inode_is_locked(parent_inode)))
--		return;
--
--	if (simple_positive(dentry)) {
--		dget(dentry);
--		simple_unlink(parent_inode, dentry);
--		d_delete(dentry);
--		dput(dentry);
--	}
--}
--
- /**
-  * remove_binfmt_handler - remove a binary type handler
-  * @misc: handle to binfmt_misc instance
-@@ -729,7 +691,7 @@ static void remove_binfmt_handler(struct binfmt_misc *misc, Node *e)
- 	write_lock(&misc->entries_lock);
- 	list_del_init(&e->list);
- 	write_unlock(&misc->entries_lock);
--	unlink_binfmt_dentry(e->dentry);
-+	locked_recursive_removal(e->dentry, NULL);
- }
- 
- /* /<entry> */
+diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
+index bb3b769edc71..93307e677f91 100644
+--- a/fs/pstore/inode.c
++++ b/fs/pstore/inode.c
+@@ -318,8 +318,7 @@ int pstore_put_backend_records(struct pstore_info *psi)
+ 		list_for_each_entry_safe(pos, tmp, &records_list, list) {
+ 			if (pos->record->psi == psi) {
+ 				list_del_init(&pos->list);
+-				d_invalidate(pos->dentry);
+-				simple_unlink(d_inode(root), pos->dentry);
++				locked_recursive_removal(pos->dentry, NULL);
+ 				pos->dentry = NULL;
+ 			}
+ 		}
 -- 
 2.39.5
 
