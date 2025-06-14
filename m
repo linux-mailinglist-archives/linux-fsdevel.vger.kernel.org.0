@@ -1,140 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-51648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B64BAD99AA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 04:29:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32ABAAD9A1C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25EA17C3DE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 02:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DDB189C420
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 04:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F96136348;
-	Sat, 14 Jun 2025 02:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="TbhnSsGu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF931DE2CF;
+	Sat, 14 Jun 2025 04:48:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE5B320F;
-	Sat, 14 Jun 2025 02:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5BE2E11B4;
+	Sat, 14 Jun 2025 04:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749868181; cv=none; b=g0WS1NuJs8/x8P+TeusnqTZUGyDnubmfeyieebg2cVP/31czS3p4Ni97anaIGuhARmS0KykBRhpW6y0iYgIXRHoGz+GW2mFVfff6SpFxDBmTxQ4tJ9+CnjQB7lb6/jKSKe5RoXY0FCqxrQaGYFJCeRjNXfXtuEC+SX2SPBjRArU=
+	t=1749876514; cv=none; b=C0RUzzQzaoYvxlLTBHaEHmtq3kpnipjYu5D7GO99LLpYP0IMl3Kq7CUV/908TohLvUP2+gRTdmZR3+StVExqLT87MuAXPIaJHsUq+HTtsSuKG8F0glHMZenQeLVSwYEMtiTXwnc5fUaIoi4lMY13HWeZh5krz7NQDt9XKHb4q48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749868181; c=relaxed/simple;
-	bh=BovxG10OZYqF6W5tq+yAPUVvqZuanHu7KGWMGNq8AGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ursxs3FReL6KS8DTwwEOi2J304eZjli763hWNfTQIj1HXj9yGPlujUzx7zj49+MOiG947phk8ZHxcaplbq/pCjeGDjEorARNUnfpKdl/N1l+rVqXXhlIAbntaw5xJoIs1uSZ/z98RxdKt9uuAekXIw9MGExTO8Moel/b/B9mtfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=TbhnSsGu; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1749868164;
-	bh=BovxG10OZYqF6W5tq+yAPUVvqZuanHu7KGWMGNq8AGs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=TbhnSsGu2AzCWsOUu32kpMJhyhMUPwrIp/ObFG0RVdBxAqXEPdtBiQZbbclHQp2AA
-	 Pizx8UpIy52fYwsfPF88ELeqhIKhoT1UMODiEvSN7i35Bn6LIQpzdTRYIhzNM7493U
-	 qs8TX/mCxJUufytjmhfQH8PxpGHwRAGdqrya47mg=
-X-QQ-mid: zesmtpgz4t1749868161t60c621e0
-X-QQ-Originating-IP: HQ1RifYPmrBvX4nJYiTppklWoUSlq/+jeJSe/oh002w=
-Received: from mail-yb1-f170.google.com ( [209.85.219.170])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 14 Jun 2025 10:29:19 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17128236805914846518
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e81a6da56b2so1952783276.3;
-        Fri, 13 Jun 2025 19:29:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJp1d+Q7v3Ol18kppXibva4o7biINJfTvw2cRW83E1t89wZ1BL3hma3jQyF1c1RrpzL/jW1U/ku1Zx+cCv@vger.kernel.org, AJvYcCUeQufS1vJRnFK2y95icskimaaMPu+xQEQ4AVVjshICtMtJD20/fQjXhPwEiJGWlInbhIsVMD0mhuN6aJP50T1N@vger.kernel.org, AJvYcCXFpNNxmHZnXiaI2HC3/JSMV1aMUecaJK308iQQPbuwptTYoZKWAVrR/U0llyt/QRroNuzZin5SgSN25iEF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqEJFdRU1wOwq3QJouVUixg+u6S3xuyoY/YPi+z/Acw9jyHLpD
-	f8Aq5GzLJ/PrsqQeJlXaIzd+HYHCC+LPPZ4cu2Yq9uRHXI1vHSmzxeeF4qaIhVnu8VvkeZOqof1
-	y4Nmc7E5vz4uT4EEBw7qhWsU+ApLkBog=
-X-Google-Smtp-Source: AGHT+IGeNNvwOwAtaxQXk0HpW6trsT1/uxwZhODR+aTOWuDPm2/IDyjtvVhhpVls3I7U/ySgcvAXiXClyo/4la4+70w=
-X-Received: by 2002:a05:690c:25c9:b0:710:e966:bf96 with SMTP id
- 00721157ae682-7117544ca55mr25388537b3.27.1749868158733; Fri, 13 Jun 2025
- 19:29:18 -0700 (PDT)
+	s=arc-20240116; t=1749876514; c=relaxed/simple;
+	bh=lygWowa6guLMhQzlm7uWnDHP6s+JxGl/+Zxvm0cojAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xb0CwOOum4CbZMen1P0TwwNbbS7PT1LItKYBP1CKmNqAgRbRuXs8t5Y9dIyQcINwhYS4lpBX5RE3JyWeeZvkQWCnSJO0RpLvmWVRucXFIc8HBkQdd+lNXIpMn6Lm6xL9I5ubJNnguP4isz+VksLiNOw11vMskbnuqBzD1U2mxaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bK3gL25lkzKHN2h;
+	Sat, 14 Jun 2025 12:48:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9C4381A17DF;
+	Sat, 14 Jun 2025 12:48:28 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBXvGAa_0xoKqTaPQ--.42646S3;
+	Sat, 14 Jun 2025 12:48:28 +0800 (CST)
+Message-ID: <3d749264-6fdd-458f-a3a8-35d2320193b3@huaweicloud.com>
+Date: Sat, 14 Jun 2025 12:48:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610021007.2800329-2-chenlinxuan@uniontech.com> <CAJfpegt8Hk6nt5+iPg-if9iquWqr3eecgDSKYZvJY0OX+y5b9A@mail.gmail.com>
-In-Reply-To: <CAJfpegt8Hk6nt5+iPg-if9iquWqr3eecgDSKYZvJY0OX+y5b9A@mail.gmail.com>
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-Date: Sat, 14 Jun 2025 10:29:07 +0800
-X-Gmail-Original-Message-ID: <AD14EFC7B36E9425+CAC1kPDOvZnjDR9-FxxObdJJDuZ4p_uP=3hkkCUi+S=p-jYT6fQ@mail.gmail.com>
-X-Gm-Features: AX0GCFuGxAdS_kbYhyuhWm8A4nGla2TR44oTlyAhwzQSDVgEI27EUb_JGxe0VDE
-Message-ID: <CAC1kPDOvZnjDR9-FxxObdJJDuZ4p_uP=3hkkCUi+S=p-jYT6fQ@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND] selftests: filesystems: Add functional test for
- the abort file in fusectl
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Chen Linxuan <chenlinxuan@uniontech.com>, Shuah Khan <shuah@kernel.org>, zhanjun@uniontech.com, 
-	niecheng1@uniontech.com, Shuah Khan <skhan@linuxfoundation.org>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MfMKp/VE+ZXdb8puI5hdDSN789SNzcKwpowcwTeEgu1lfmrZzg+lJF7g
-	UUnwbIjIqeaoKEoidrQ6obPwJgBqK8LfkpGbZezdszSep3o4kpSkJJgUqn4m6tD36ngApe7
-	ynEhh11QUdFMMW94Z7ztLy5bmqdQGv1fNu3whIEZKZZ+16mTN+wRA2aVOEprMKsOZA+8n+S
-	bDJQjiTOqqVNC4Qov6CKQZRph8p68xH8ebkvXDN3MnQPwSkt/ngy7QhNcuA7i3WaYAM6wVq
-	ESOC4mtu5jJjoqVHgY8P00SUr3pdDUkybcOc9IufdQ70W8eV+kJQjNXM8EAiWqJ0VEOJAdm
-	wUBTeIh+cl8RJfh9EZ9a6BMQE1gE4cWOXS+ZQgGNhhRumXmGKnHqhQmHMlwP7ytnMri5R5X
-	3riIWqaxtG+DnpqAGDXDpdcHjwBHd5L+GsiEIuH217ltSAeVd9Pq1GPrwe9qPC1HS1UbUKi
-	goPZ3kvyBMxpj4aIdzfnjK1KY1CHt2yV0MheLFhmnPDeGGQQPN1BDpTwuvZGzUyH6duWFcX
-	e5tUdf45vhGZM395KA496/niQZ72V0+AkN1hIgF1usI9fwIP8rkBylp3RcuKgBVUYcbg4iq
-	w27e8HFlKhFpd3tAcXj2nIx34X5f/MqMWQpaL1UQRZvU+7FsTtTFvl1dJnZBwU551enWxw+
-	TsHDMn4Jfs4qQyXRWQoDcgjFdfYwyx8xgUlsUOCEgyLvkgsEEzN6+dHa+ezQxTwsQemwAXA
-	Wh7e2ove9QgpCFC++epPJlkFucKfX6i0nlIkWj00mPITOqMn155j3fuw6B2+4A2rUrSKDEC
-	67Az/JJE8ifFJQvE9wWn+r9ln6ImE6XTVSdSCbsQdLBkWrXl/fKDFacWFX6zhbeYAT9bKzf
-	DNjetx0AnIDZxVKGSYXwwcknUSq0q4zXjxRytWE9+j29EySs6YVvRy0OBKGioQGFvfvHv2b
-	tpwKqH7NQ7zwB8XNpD8RkYQQNhGsD3JTwQzMpL0334NGxlXYanYhb8Si6gFdTo61APwCD6a
-	Kr15eQ9bFYrNzKs3hMmheoDvDWu13y3Jla1cJpAncLdvUGLUX+nR3T4it1NH2TxjFIYR/R5
-	Q==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP to
+ queue limits features
+To: "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ john.g.garry@oracle.com, bmarzins@redhat.com, chaitanyak@nvidia.com,
+ shinichiro.kawasaki@wdc.com, brauner@kernel.org, martin.petersen@oracle.com,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
+ <20250604020850.1304633-2-yi.zhang@huaweicloud.com>
+ <20250611060900.GA4613@lst.de>
+ <343f7f06-9bf6-442f-8e77-0a774203ec3f@huaweicloud.com>
+ <20250612044744.GA12828@lst.de>
+ <41c21e20-5439-4157-ad73-6f133df42d28@huaweicloud.com>
+ <20250612150347.GK6138@frogsfrogsfrogs>
+ <3569a77f-1f38-4764-b1e3-d0075775c7bb@huaweicloud.com>
+ <20250613055630.GA9119@lst.de> <20250613145433.GF6134@frogsfrogsfrogs>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250613145433.GF6134@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBXvGAa_0xoKqTaPQ--.42646S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15uw47uryUJF4kCryxGrg_yoW8tF47pF
+	yjgFyxKrWDtF1UA3s5Aa10gF1Fq3y3Ga4xCrn7Wryku3s8WrnrWFs2g343XFyxC3s3Wa1j
+	vayxC3sI9ayvvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, Jun 12, 2025 at 4:56=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Tue, 10 Jun 2025 at 04:10, Chen Linxuan <chenlinxuan@uniontech.com> wr=
-ote:
-> >
-> > This patch add a simple functional test for the "abort" file
-> > in fusectlfs (/sys/fs/fuse/connections/ID/about).
-> >
-> > A simple fuse daemon is added for testing.
-> >
-> > Related discussion can be found in the link below.
-> >
-> > Link: https://lore.kernel.org/all/CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO6=
-8UcWg_OBhmSY=3DQ@mail.gmail.com/
-> > Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
-> > Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
->
-> Thanks.
->
-> I suggest setting up a userns environment, see attached patch (also
-> fixes a EBUSY on umount/rmdir).
+On 2025/6/13 22:54, Darrick J. Wong wrote:
+> On Fri, Jun 13, 2025 at 07:56:30AM +0200, Christoph Hellwig wrote:
+>> On Fri, Jun 13, 2025 at 11:15:41AM +0800, Zhang Yi wrote:
+>>> Yeah, this solution looks good to me. However, we currently have only
+>>> two selections (none and unmap). What if we keep it as is and simply
+>>> hide this interface if BLK_FEAT_WRITE_ZEROES_UNMAP is not set, making
+>>> it visible only when the device supports this feature? Something like
+>>> below:
+>>
+>> I really hate having all kinds of different interfaces for configurations.
+> 
+> I really hate the open-coded string parsing nonsense that is sysfs. ;)
+> 
+>> Maybe we should redo this similar to the other hardware/software interfaces
+>> and have a hw_ limit that is exposed by the driver and re-only in
+>> sysfs, and then the user configurable one without _hw.  Setting it to
+>> zero disables the feature.
+> 
+> Yeah, that fits the /sys/block/foo/queue model better.
+> 
 
-The v4 patch series has been sent with your suggested changes applied:
-https://lore.kernel.org/all/20250612094033.2538122-2-chenlinxuan@uniontech.=
-com/
+OK, well. Please let me confirm, are you both suggesting adding
+max_hw_write_zeores_unmap_sectors and max_write_zeroes_unmap_sectors to
+the queue_limits instead of adding BLK_FEAT_WRITE_ZEROES_UNMAP to the
+queue_limits->features. Something like the following.
 
-However, I have some concerns about creating a user namespace.
-Some downstream distributions (such as Ubuntu?) may disable
-unprivileged user namespaces by default.
-If we create the user namespace before mounting FUSE, these tests
-would require privileges.
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 378d3a1a22fc..14394850863c 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -376,7 +376,9 @@ struct queue_limits {
+        unsigned int            max_hw_discard_sectors;
+        unsigned int            max_user_discard_sectors;
+        unsigned int            max_secure_erase_sectors;
+-       unsigned int            max_write_zeroes_sectors;
++       unsigned int            max_hw_write_zeroes_sectors;
++       unsigned int            max_hw_write_zeores_unmap_sectors;
++       unsigned int            max_write_zeroes_unmap_sectors;
+        unsigned int            max_hw_zone_append_sectors;
+        unsigned int            max_zone_append_sectors;
+        unsigned int            discard_granularity;
 
->
-> Thanks,
-> Miklos
+Besides, we should also rename max_write_zeroes_sectors to
+max_hw_write_zeroes_sectors since it is a hardware limitation reported
+by the driver.  If the device supports unmap write zeroes,
+max_hw_write_zeores_unmap_sectors should be equal to
+max_hw_write_zeroes_sectors, otherwise it should be 0.
+
+Right?
+
+Best regards,
+Yi.
+
 
