@@ -1,460 +1,281 @@
-Return-Path: <linux-fsdevel+bounces-51670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B317CAD9EF9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 20:27:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E745AD9F0C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 20:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858AE3AD3EB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 18:26:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 889931897352
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 18:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935182E337C;
-	Sat, 14 Jun 2025 18:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903DE2E62D7;
+	Sat, 14 Jun 2025 18:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="DTILlGoz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SM+Y5+yc"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="FnP5KKZg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AAnyZL0n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227D079D0;
-	Sat, 14 Jun 2025 18:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F59C30100;
+	Sat, 14 Jun 2025 18:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749925623; cv=none; b=B+0JCXHtiRPQdKlD4UQZftuMXtrQqCPzoddd345uq8vlEUXVyuS4+ejp803K4wsT8NbT2vrZM7baSxY3FTK8GgzUOqgICrGIO9lwZajy4FqaPdoZArqQyvAx3LQhFR45PlPmLAIAxmgBoI0j8cIz4ch9T6H/N7pjEGfEFKLb2EQ=
+	t=1749926182; cv=none; b=hVQMnQsX2MFjgusgK+bjexSBGdiqDxzXIePUNYgT5EYptwtrdMuteZ1OqGQYdDrdGOklZZpICwysEUQ0Bd+Es4UDw+i2TSWFrhijn2IGas2Y3HGw/7pQnZb/rHIvhW0pHsWq+3SWfUTrkp+nBz6LGLqvt2ALeD5sEgTJ6tVPXsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749925623; c=relaxed/simple;
-	bh=yhE3kYIuS6e0GRl7uPSIcglzoiDqD609ZhjzThyuuNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mNbpmsdlXsYgAHDjoc/6M3UcrAZJAcFj6w/1nP3MpzVO9ZCn5inRgIL06sF7/X+XVbdVlq1Y0FRuBtbVRairOeyOdqw9eu0qNMksAB+2jyPqF2FR8AJipqoAeHByi5QDOllaMdpi9m+AVBG5Y8rel7yJwB0NX0WyIHvfg0H4SnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=DTILlGoz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SM+Y5+yc; arc=none smtp.client-ip=103.168.172.145
+	s=arc-20240116; t=1749926182; c=relaxed/simple;
+	bh=3dzdX4kZV66YVSeT4KnMyTAL6dUXfb3O9U7JJ4FkODI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JQwqo+xZROm6Dz2mS8YawzGB9UHo996fcpAULQKaPide5MLUokaIlWeljx/AUOqOZ8+0qzvFztHeXcfrZnffYq/Uw5jiqG5u/6WSHafnxsJS/OomMcvguU4OLyaEbgi24xBi4E3c3vojc3/GPd4DUQa5yNoaof8fboXxSALgMFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=FnP5KKZg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AAnyZL0n; arc=none smtp.client-ip=103.168.172.137
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2A6C5138033A;
-	Sat, 14 Jun 2025 14:26:59 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sat, 14 Jun 2025 14:26:59 -0400
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailflow.phl.internal (Postfix) with ESMTP id A3A5F2003C8;
+	Sat, 14 Jun 2025 14:36:19 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Sat, 14 Jun 2025 14:36:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm1; t=1749925619; x=1750012019; bh=sr1C6/pbThpyWAzfiQUO8
-	1KdODSjOzOoODJh4Ycto4g=; b=DTILlGozcHiFErC3RE88UAgvUGszO93ojaUbl
-	aoVr0lFftyMWa3gpORz7WPT0vPYjaqn3uSqfYcQom8tWxrkr/NmERHN4s3VCw3/w
-	cCh/EkswVzOAVvK2ScIRoja82lXpmWbzZzSvJ7v3LFR0LPlsdp9PK19/a9P7PS3Q
-	bMz90hdU5yblFnVRDaRi3RvMgQQA+VKgttRF/bfQiSnXVf53/zA9wMSq+VWBs+pV
-	/BFubr0YWCsFrN0jKW8TnuduwDKcmSxNeUQe11KJ68U7MAT95H/+lHrVMzd1neS8
-	YUp0WBWGcKtV4MzQLaBrgb2I9yblMwUA4vHdbfYjpyUzVeo2A==
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1749926179;
+	 x=1749933379; bh=/gO+W1y6nHMFbF2yimL+ciEfWt1+14MU/pwHIvdjUTo=; b=
+	FnP5KKZgNUO6leHMMDdBy5FsnNZ0mI2GJbe6suSh8QUGaJgPVt8kAxIUvRBMDQaU
+	6NAIB46tv9axMeSbGSZV4xXzjrG1YNqbEqa2rcewXhK40QbXNrr1v348X1U4IA+S
+	Vr8w2N595iO8zB6lQJLRo2gW/a73Ei/U7AeJmApTT5/Zm243XGvqTV4vP0A6QhjC
+	m4vcWHRCugp9JUnouEcDfQMEB9HzUWjtHZOzwj7Di3IwjP7C/EEDVntcvXMhNWEi
+	273qzJ4OXi0sEhL3tpWGsowriLljF9eCKZxqNIhawspA+9kIom9Qqid9H0tB0i5U
+	CdxasjgRXpGz0RsnwEfFfQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1749925619; x=1750012019; bh=sr1C6/pbThpyWAzfiQUO81KdODSjOzOoODJ
-	h4Ycto4g=; b=SM+Y5+ycNB806Z+jquwj5n6ha4RN2JuszWM3QV1zJ5LRs3xIe1X
-	3ovHhArbYc4GWeqe/dCzdPIcD9PRCr5OCRcM0xVc1vlUXE2dIgTkhDb0QvQ9P6A6
-	RQ72shqqN1tZqTxEG8frUPw/uv+dBZr8wyrKE25NoVXf6tCC1NtiY7AO2XZ01k0R
-	k8fK0Duo4m5lsF34uIrqEHtlCqi/ZnCB/o6lt2Qa60El4SrehifBCwE71ePTiijO
-	0xFxjlOiegRu/2FXFxmTlpnz/3dHMFodYhj1OSKR1pQhB3xDtZN03Uziv2eKjgNx
-	GEhKD79IURDYOI/0Sa4rGPu9KSvNrI7XB7A==
-X-ME-Sender: <xms:8r5NaI67DV6f8RdLOQ7C6KJLHN0N4sdf0d5FpMy1ZMK84iLi2ii2xQ>
-    <xme:8r5NaJ6LOLWkAEd7L83WLqo00iM3y4i4M2-sHZm68_nl0eRQMKOH-siNIEhEtlSjc
-    gIkNtA143OtY7mt_yU>
-X-ME-Received: <xmr:8r5NaHe-i6dyu_hNAv2KEgkoyfclPSljQSzXPug3j9rlUlgsBuPPQlMqeT85Lv7lo7smoZGetuVx>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddvudehgecutefuodetggdotefrod
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749926179; x=
+	1749933379; bh=/gO+W1y6nHMFbF2yimL+ciEfWt1+14MU/pwHIvdjUTo=; b=A
+	AnyZL0n1w+zeXR3mJrlqmLGJMNrDi7nNsjfJmh20Fz6jrgSo+J9pF63dJyG50ArR
+	ebfQp7L0rFkKVcV1duOywEog8RywIWqMQ6GuuetvNR5KZ/sP7359M1RkJ33o5Ss5
+	ZQmxH7rhdFH54YuF9Qzkv1ZXbIO4+cQ7Ed0kU9Az5jL+hDPBkPaxvzLeyCcFgX0F
+	UppWtrmyVjGzH9hPDNGFVupU5r58DUX3kHBi8OgWTmprGDRZrwBdhzMyDH4k/l5G
+	TdMfOVrsFf+bm5LeCMlKOuOp1TC3lfi9e6xpOkF1eznmflU8c/eeLXBbAEY2859A
+	p9hfJEXRhLwuHxEIzlHQw==
+X-ME-Sender: <xms:IsFNaDeD_Gi8NTqZZoLTfGIl8E-UInpCPgU5zj_jj_xoYikxdsTEBg>
+    <xme:IsFNaJNkEYJKFSRHeRwJ9QHgdZr54AQTyiCMenNPdL1YlF6pZyMKu8_zhTyRSQ2Mf
+    Hao6TFr-j6cZvJ_QPI>
+X-ME-Received: <xmr:IsFNaMg8qCp_49ecAFGvkePn9VQ78V8EU1DzRNld7ENDLt_MP6QhAQ_BivbZqmCn9sb0VfeOZ6xOd0wlRgGFFSU6>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddvudehiecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecu
-    hfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepleeigeegudefjefhuefgtedtfeeggeegffeuffelvdeiheetuddt
-    uddtudeukeevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdp
-    nhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitg
-    esughighhikhhougdrnhgvthdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgt
-    ohhmpdhrtghpthhtohepmhesmhgrohifthhmrdhorhhgpdhrtghpthhtohepshhonhhgse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhho
-    ughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfh
-    hsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:8r5NaNJuNvDMdwKp1J3uegD9X_lK-cnaJIDiOZe0IZ_-Dw4wTgwqnw>
-    <xmx:8r5NaMKfmbBIX6cKZ15PyFAgw67mnaQZoA3FbAmI6KIzdwghZ_-PIw>
-    <xmx:8r5NaOztrzokjbZ318MleF1WvumFcNo6ARBjNb5Gnme9Xjmt8uNK0w>
-    <xmx:8r5NaALn13z2J_yDq48ftKqKhscI5rai-ocw_Cc5M_FzZstf2LUBig>
-    <xmx:875NaChZkTqw1acyOCHuaMUqgUwWmO4v4BHuGTgTD44SCDnat93t-n2J>
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqe
+    enucggtffrrghtthgvrhhnpeefvdehleeutdfhlefgvedvgfeklefgleekgedtvdehvdfg
+    tdefieelhfdutefgudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohepvdefpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtghomhdprhgtphht
+    thhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguugihiiekje
+    esghhmrghilhdrtghomhdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:IsFNaE_9gA1qCS1kON1G0tE7Kg3KeSJc93s1s96OxSF86eJyd_4iSA>
+    <xmx:IsFNaPuYmOZb8mS0aRSECHqRJduSLv8uihtnOEV1xxAMx3GwhEsIjg>
+    <xmx:IsFNaDFBtXoougFzwushMdUiIpXEaTbvjM99FVPdzCegKWNYk_ozTw>
+    <xmx:IsFNaGNZiCFf13m5XeErDqKW5SWqnrzvKbHqvqZ7yBr273mB4McuVg>
+    <xmx:I8FNaIWExtNumH1iBKrzaUemEDpeMiyc5znla2aSxmqTcWMeJbnGB0wY>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 14 Jun 2025 14:26:57 -0400 (EDT)
-From: Tingmao Wang <m@maowtm.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: Tingmao Wang <m@maowtm.org>,
-	Song Liu <song@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] selftests/landlock: Add tests for access through disconnected paths
-Date: Sat, 14 Jun 2025 19:25:02 +0100
-Message-ID: <09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org>
-X-Mailer: git-send-email 2.49.0
+ 14 Jun 2025 14:36:15 -0400 (EDT)
+Message-ID: <75ea3f6b-cf5b-4e97-9214-cbd3f299008c@maowtm.org>
+Date: Sat, 14 Jun 2025 19:36:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
+ mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
+ jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net,
+ gnoack@google.com, neil@brown.name
+References: <20250611220220.3681382-1-song@kernel.org>
+ <20250611220220.3681382-2-song@kernel.org>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20250611220220.3681382-2-song@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This adds a test for the edge case discussed in [1], and in addition also
-test rename operations when the operands are through disconnected paths,
-as that go through a separate code path in Landlock.
+On 6/11/25 23:02, Song Liu wrote:
+> This helper walks an input path to its parent. Logic are added to handle
+> walking across mount tree.
+> 
+> This will be used by landlock, and BPF LSM.
+> 
+> Suggested-by: Neil Brown <neil@brown.name>
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  fs/namei.c            | 99 +++++++++++++++++++++++++++++++++++++------
+>  include/linux/namei.h |  2 +
+>  2 files changed, 87 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4bb889fc980b..bc65361c5d13 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2048,36 +2048,107 @@ static struct dentry *follow_dotdot_rcu(struct nameidata *nd)
+>  	return nd->path.dentry;
+>  }
+>  
+> -static struct dentry *follow_dotdot(struct nameidata *nd)
+> +/**
+> + * __path_walk_parent - Find the parent of the given struct path
+> + * @path  - The struct path to start from
+> + * @root  - A struct path which serves as a boundary not to be crosses.
+> + *        - If @root is zero'ed, walk all the way to global root.
+> + * @flags - Some LOOKUP_ flags.
+> + *
+> + * Find and return the dentry for the parent of the given path
+> + * (mount/dentry). If the given path is the root of a mounted tree, it
+> + * is first updated to the mount point on which that tree is mounted.
+> + *
+> + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new
+> + * mount, the error EXDEV is returned.
+> + *
+> + * If no parent can be found, either because the tree is not mounted or
+> + * because the @path matches the @root, then @path->dentry is returned
+> + * unless @flags contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
+> + *
+> + * Returns: either an ERR_PTR() or the chosen parent which will have had
+> + * the refcount incremented.
+> + */
+> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
+>  {
+>  	struct dentry *parent;
+>  
+> -	if (path_equal(&nd->path, &nd->root))
+> +	if (path_equal(path, root))
+>  		goto in_root;
+> -	if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
+> -		struct path path;
+> +	if (unlikely(path->dentry == path->mnt->mnt_root)) {
+> +		struct path new_path;
+>  
+> -		if (!choose_mountpoint(real_mount(nd->path.mnt),
+> -				       &nd->root, &path))
+> +		if (!choose_mountpoint(real_mount(path->mnt),
+> +				       root, &new_path))
+>  			goto in_root;
+> -		path_put(&nd->path);
+> -		nd->path = path;
+> -		nd->inode = path.dentry->d_inode;
+> -		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
+> +		path_put(path);
+> +		*path = new_path;
+> +		if (unlikely(flags & LOOKUP_NO_XDEV))
+>  			return ERR_PTR(-EXDEV);
+>  	}
+>  	/* rare case of legitimate dget_parent()... */
+> -	parent = dget_parent(nd->path.dentry);
+> -	if (unlikely(!path_connected(nd->path.mnt, parent))) {
+> +	parent = dget_parent(path->dentry);
+> +	if (unlikely(!path_connected(path->mnt, parent))) {
 
-[1]: https://lore.kernel.org/linux-security-module/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org/
+This is checking path_connected here but also in follow_dotdot,
+path_connected is checked again. Is this check meant to be here?  It will
+also change the landlock behaviour right?
 
-This has resulted in a WARNING, due to collect_domain_accesses() not
-expecting to reach a different root from path->mnt:
+(For some reason patch 2 rejects when I tried to apply it on v6.16-rc1, so
+I haven't actually tested this patch to see if this is really an issue)
 
-	#  RUN           layout1_bind.path_disconnected ...
-	#            OK  layout1_bind.path_disconnected
-	ok 96 layout1_bind.path_disconnected
-	#  RUN           layout1_bind.path_disconnected_rename ...
-	[..] ------------[ cut here ]------------
-	[..] WARNING: CPU: 3 PID: 385 at security/landlock/fs.c:1065 collect_domain_accesses
-	[..] ...
-	[..] RIP: 0010:collect_domain_accesses (security/landlock/fs.c:1065 (discriminator 2) security/landlock/fs.c:1031 (discriminator 2))
-	[..] current_check_refer_path (security/landlock/fs.c:1205)
-	[..] ...
-	[..] hook_path_rename (security/landlock/fs.c:1526)
-	[..] security_path_rename (security/security.c:2026 (discriminator 1))
-	[..] do_renameat2 (fs/namei.c:5264)
-	#            OK  layout1_bind.path_disconnected_rename
-	ok 97 layout1_bind.path_disconnected_rename
-
-My understanding is that terminating at the mountpoint is basically an
-optimization, so that for rename operations we only walks the path from
-the mountpoint to the real root once.  We probably want to keep this
-optimization, as disconnected paths are probably a very rare edge case.
-
-This might need more thinking, but maybe if one of the operands is
-disconnected, we can just let it walk until IS_ROOT(dentry), and also
-collect access for the other path until IS_ROOT(dentry), then call
-is_access_to_paths_allowed() passing in the root dentry we walked to?  (In
-this case is_access_to_paths_allowed will not do any walking and just make
-an access decision.)
-
-Letting the walk continue until IS_ROOT(dentry) is what
-is_access_to_paths_allowed() effectively does for non-renames.
-
-(Also note: moving the const char definitions a bit above so that we can
-use the path for s4d1 in cleanup code.)
-
-Signed-off-by: Tingmao Wang <m@maowtm.org>
----
- tools/testing/selftests/landlock/fs_test.c | 271 ++++++++++++++++++++-
- 1 file changed, 268 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 73729382d40f..d042a742a1c5 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -4521,6 +4521,17 @@ TEST_F_FORK(ioctl, handle_file_access_file)
- FIXTURE(layout1_bind) {};
- /* clang-format on */
- 
-+static const char bind_dir_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3";
-+static const char bind_file1_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f1";
-+/* Move targets for disconnected path tests */
-+static const char dir_s4d1[] = TMP_DIR "/s4d1";
-+static const char file1_s4d1[] = TMP_DIR "/s4d1/f1";
-+static const char file2_s4d1[] = TMP_DIR "/s4d1/f2";
-+static const char dir_s4d2[] = TMP_DIR "/s4d1/s4d2";
-+static const char file1_s4d2[] = TMP_DIR "/s4d1/s4d2/f1";
-+static const char file1_name[] = "f1";
-+static const char file2_name[] = "f2";
-+
- FIXTURE_SETUP(layout1_bind)
- {
- 	prepare_layout(_metadata);
-@@ -4536,14 +4547,14 @@ FIXTURE_TEARDOWN_PARENT(layout1_bind)
- {
- 	/* umount(dir_s2d2)) is handled by namespace lifetime. */
- 
-+	remove_path(file1_s4d1);
-+	remove_path(file2_s4d1);
-+
- 	remove_layout1(_metadata);
- 
- 	cleanup_layout(_metadata);
- }
- 
--static const char bind_dir_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3";
--static const char bind_file1_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f1";
--
- /*
-  * layout1_bind hierarchy:
-  *
-@@ -4766,6 +4777,260 @@ TEST_F_FORK(layout1_bind, reparent_cross_mount)
- 	ASSERT_EQ(0, rename(bind_file1_s1d3, file1_s2d2));
- }
- 
-+/*
-+ * Make sure access to file through a disconnected path works as expected.
-+ * This test uses s4d1 as the move target.
-+ */
-+TEST_F_FORK(layout1_bind, path_disconnected)
-+{
-+	const struct rule layer1_allow_all[] = {
-+		{
-+			.path = TMP_DIR,
-+			.access = ACCESS_ALL,
-+		},
-+		{},
-+	};
-+
-+	const struct rule layer2_allow_just_f1[] = {
-+		{
-+			.path = file1_s1d3,
-+			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-+		},
-+		{},
-+	};
-+
-+	const struct rule layer3_only_s1d2[] = {
-+		{
-+			.path = dir_s1d2,
-+			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-+		},
-+		{},
-+	};
-+
-+	/* Landlock should not deny access just because it is disconnected */
-+	int ruleset_fd =
-+		create_ruleset(_metadata, ACCESS_ALL, layer1_allow_all);
-+	/*
-+	 * Create the new ruleset now before we move the dir containing the
-+	 * file
-+	 */
-+	int ruleset_fd_l2 =
-+		create_ruleset(_metadata, ACCESS_RW, layer2_allow_just_f1);
-+	int ruleset_fd_l3 =
-+		create_ruleset(_metadata, ACCESS_RW, layer3_only_s1d2);
-+	int bind_s1d3_fd;
-+
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_LE(0, ruleset_fd_l2);
-+	ASSERT_LE(0, ruleset_fd_l3);
-+
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
-+
-+	ASSERT_LE(0, bind_s1d3_fd);
-+	/* Test access is possible before we move */
-+	ASSERT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+	/* Make it disconnected */
-+	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d1))
-+	{
-+		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d1,
-+		       strerror(errno));
-+	}
-+	/* Test access still possible */
-+	ASSERT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+	/*
-+	 * Test ".." not possibe (not because of landlock, but just because
-+	 * it's disconnected)
-+	 */
-+	ASSERT_EQ(ENOENT,
-+		  test_open_rel(bind_s1d3_fd, "..", O_RDONLY | O_DIRECTORY));
-+
-+	/* Should still work with a narrower rule */
-+	enforce_ruleset(_metadata, ruleset_fd_l2);
-+	ASSERT_EQ(0, close(ruleset_fd_l2));
-+
-+	ASSERT_EQ(0, test_open(file1_s4d1, O_RDONLY));
-+	ASSERT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+	ASSERT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file2_name, O_RDONLY));
-+
-+	/*
-+	 * But if we only allow access to under the original dir, then it
-+	 * should be denied.
-+	 */
-+	enforce_ruleset(_metadata, ruleset_fd_l3);
-+	ASSERT_EQ(0, close(ruleset_fd_l3));
-+	ASSERT_EQ(EACCES, test_open(file1_s4d1, O_RDONLY));
-+	ASSERT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+}
-+
-+/*
-+ * Test that we can rename to make files disconnected, and rename it back,
-+ * under landlock.  This test uses s4d2 as the move target, so that we can
-+ * have a rule allowing refers on the move target's immediate parent.
-+ */
-+TEST_F_FORK(layout1_bind, path_disconnected_rename)
-+{
-+	const struct rule layer1[] = {
-+		{
-+			.path = dir_s1d2,
-+			.access = LANDLOCK_ACCESS_FS_REFER |
-+				  LANDLOCK_ACCESS_FS_MAKE_DIR |
-+				  LANDLOCK_ACCESS_FS_REMOVE_DIR |
-+				  LANDLOCK_ACCESS_FS_MAKE_REG |
-+				  LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+				  LANDLOCK_ACCESS_FS_READ_FILE,
-+		},
-+		{
-+			.path = dir_s4d1,
-+			.access = LANDLOCK_ACCESS_FS_REFER |
-+				  LANDLOCK_ACCESS_FS_MAKE_DIR |
-+				  LANDLOCK_ACCESS_FS_REMOVE_DIR |
-+				  LANDLOCK_ACCESS_FS_MAKE_REG |
-+				  LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+				  LANDLOCK_ACCESS_FS_READ_FILE,
-+		},
-+		{}
-+	};
-+
-+	const struct rule layer2_only_s1d2[] = {
-+		{
-+			.path = dir_s1d2,
-+			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-+		},
-+		{},
-+	};
-+
-+	ASSERT_EQ(0, mkdir(dir_s4d1, 0755))
-+	{
-+		TH_LOG("Failed to create %s: %s", dir_s4d1, strerror(errno));
-+	}
-+
-+	int ruleset_fd = create_ruleset(_metadata, ACCESS_ALL, layer1);
-+	int ruleset_fd_l2 = create_ruleset(
-+		_metadata, LANDLOCK_ACCESS_FS_READ_FILE, layer2_only_s1d2);
-+	pid_t child_pid;
-+	int bind_s1d3_fd, status;
-+
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_LE(0, ruleset_fd_l2);
-+
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
-+	ASSERT_LE(0, bind_s1d3_fd);
-+	ASSERT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+
-+	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
-+	{
-+		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
-+		       strerror(errno));
-+	}
-+
-+	/*
-+	 * Since file is no longer under s1d2, we should not be able to access
-+	 * it if we enforced layer 2.  Do a fork to test this so we don't
-+	 * prevent ourselves from renaming it back later.
-+	 */
-+	child_pid = fork();
-+	if (child_pid == 0) {
-+		enforce_ruleset(_metadata, ruleset_fd_l2);
-+		ASSERT_EQ(0, close(ruleset_fd_l2));
-+		ASSERT_EQ(EACCES,
-+			  test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+		ASSERT_EQ(EACCES, test_open(file1_s4d2, O_RDONLY));
-+
-+		/*
-+		 * Test that access widening checks indeed prevents us from
-+		 * renaming it back
-+		 */
-+		ASSERT_EQ(-1, rename(dir_s4d2, dir_s1d3));
-+		ASSERT_EQ(EXDEV, errno);
-+		/*
-+		 * Including through the now disconnected fd (but it should return
-+		 * EXDEV)
-+		 */
-+		ASSERT_EQ(-1, renameat(bind_s1d3_fd, file1_name, AT_FDCWD,
-+				       file1_s2d2));
-+		ASSERT_EQ(EXDEV, errno);
-+		_exit(!__test_passed(_metadata));
-+		return;
-+	}
-+
-+	ASSERT_NE(-1, child_pid);
-+	ASSERT_EQ(child_pid, waitpid(child_pid, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+
-+	ASSERT_EQ(0, rename(dir_s4d2, dir_s1d3))
-+	{
-+		TH_LOG("Failed to rename %s back to %s: %s", dir_s4d1, dir_s1d3,
-+		       strerror(errno));
-+	}
-+
-+	/* Now check that we can access it under l2 */
-+	child_pid = fork();
-+	if (child_pid == 0) {
-+		enforce_ruleset(_metadata, ruleset_fd_l2);
-+		ASSERT_EQ(0, close(ruleset_fd_l2));
-+		ASSERT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+		ASSERT_EQ(0, test_open(file1_s1d3, O_RDONLY));
-+		_exit(!__test_passed(_metadata));
-+		return;
-+	}
-+	ASSERT_NE(-1, child_pid);
-+	ASSERT_EQ(child_pid, waitpid(child_pid, &status, 0));
-+	ASSERT_EQ(1, WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+
-+	/*
-+	 * Also test that we can rename via a disconnected path.  We move the
-+	 * dir back to the disconnected place first, then we rename file1 to
-+	 * file2 through our dir fd.
-+	 */
-+	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
-+	{
-+		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
-+		       strerror(errno));
-+	}
-+	ASSERT_EQ(0,
-+		  renameat(bind_s1d3_fd, file1_name, bind_s1d3_fd, file2_name))
-+	{
-+		TH_LOG("Failed to rename %s to %s through disconnected %s: %s",
-+		       file1_name, file2_name, bind_dir_s1d3, strerror(errno));
-+	}
-+	ASSERT_EQ(0, test_open_rel(bind_s1d3_fd, file2_name, O_RDONLY));
-+	ASSERT_EQ(0, renameat(bind_s1d3_fd, file2_name, AT_FDCWD, file1_s2d2))
-+	{
-+		TH_LOG("Failed to rename %s to %s through disconnected %s: %s",
-+		       file2_name, file1_s2d2, bind_dir_s1d3, strerror(errno));
-+	}
-+	ASSERT_EQ(0, test_open(file1_s2d2, O_RDONLY));
-+	ASSERT_EQ(0, test_open(file1_s1d2, O_RDONLY));
-+
-+	/* Move it back using the disconnected path as the target */
-+	ASSERT_EQ(0, renameat(AT_FDCWD, file1_s2d2, bind_s1d3_fd, file1_name))
-+	{
-+		TH_LOG("Failed to rename %s to %s through disconnected %s: %s",
-+		       file1_s1d2, file1_name, bind_dir_s1d3, strerror(errno));
-+	}
-+
-+	/* Now make it connected again */
-+	ASSERT_EQ(0, rename(dir_s4d2, dir_s1d3))
-+	{
-+		TH_LOG("Failed to rename %s back to %s: %s", dir_s4d2, dir_s1d3,
-+		       strerror(errno));
-+	}
-+
-+	/* Check again that we can access it under l2 */
-+	enforce_ruleset(_metadata, ruleset_fd_l2);
-+	ASSERT_EQ(0, close(ruleset_fd_l2));
-+	ASSERT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+	ASSERT_EQ(0, test_open(file1_s1d3, O_RDONLY));
-+}
-+
- #define LOWER_BASE TMP_DIR "/lower"
- #define LOWER_DATA LOWER_BASE "/data"
- static const char lower_fl1[] = LOWER_DATA "/fl1";
-
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
--- 
-2.49.0
+>  		dput(parent);
+>  		return ERR_PTR(-ENOENT);
+>  	}
+>  	return parent;
+>  
+>  in_root:
+> -	if (unlikely(nd->flags & LOOKUP_BENEATH))
+> +	if (unlikely(flags & LOOKUP_BENEATH))
+>  		return ERR_PTR(-EXDEV);
+> -	return dget(nd->path.dentry);
+> +	return dget(path->dentry);
+> +}
+> +
+> +/**
+> + * path_walk_parent - Walk to the parent of path
+> + * @path: input and output path.
+> + * @root: root of the path walk, do not go beyond this root. If @root is
+> + *        zero'ed, walk all the way to real root.
+> + *
+> + * Given a path, find the parent path. Replace @path with the parent path.
+> + * If we were already at the real root or a disconnected root, @path is
+> + * released and zero'ed.
+> + *
+> + * Returns:
+> + *  true  - if @path is updated to its parent.
+> + *  false - if @path is already the root (real root or @root).
+> + */
+> +bool path_walk_parent(struct path *path, const struct path *root)
+> +{
+> +	struct dentry *parent;
+> +
+> +	parent = __path_walk_parent(path, root, LOOKUP_BENEATH);
+> +
+> +	if (IS_ERR(parent))
+> +		goto false_out;
+> +
+> +	if (parent == path->dentry) {
+> +		dput(parent);
+> +		goto false_out;
+> +	}
+> +	dput(path->dentry);
+> +	path->dentry = parent;
+> +	return true;
+> +
+> +false_out:
+> +	path_put(path);
+> +	memset(path, 0, sizeof(*path));
+> +	return false;
+> +}
+> +
+> +static struct dentry *follow_dotdot(struct nameidata *nd)
+> +{
+> +	struct dentry *parent = __path_walk_parent(&nd->path, &nd->root, nd->flags);
+> +
+> +	if (IS_ERR(parent))
+> +		return parent;
+> +	if (unlikely(!path_connected(nd->path.mnt, parent))) {
+> +		dput(parent);
+> +		return ERR_PTR(-ENOENT);
+> +	}
+> +	nd->inode = nd->path.dentry->d_inode;
+> +	return parent;
+>  }
+>  
+>  static const char *handle_dots(struct nameidata *nd, int type)
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 5d085428e471..cba5373ecf86 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -85,6 +85,8 @@ extern int follow_down_one(struct path *);
+>  extern int follow_down(struct path *path, unsigned int flags);
+>  extern int follow_up(struct path *);
+>  
+> +bool path_walk_parent(struct path *path, const struct path *root);
+> +
+>  extern struct dentry *lock_rename(struct dentry *, struct dentry *);
+>  extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
+>  extern void unlock_rename(struct dentry *, struct dentry *);
 
 
