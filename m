@@ -1,59 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-51660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC774AD9A5B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D614AD9A5E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E5417E6BD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:23:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7B53BC109
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E0E1E00A0;
-	Sat, 14 Jun 2025 06:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197161E520D;
+	Sat, 14 Jun 2025 06:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="j6r7dwwt"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Kluasl6Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACC978F2B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096731DB34C;
 	Sat, 14 Jun 2025 06:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749882180; cv=none; b=Q6VRBpGBwLRrUvD3kG0jFYkm+hcX7eX/HwCAHiEIxwENMD7Ng2zi1CpkGaJq7agKdnI6FtjaD6GfT05Q3fm8duDRZPxe8mPIgDWCcTtBgX+//E2eFRDOhj3aH0qajgKJBjuxlIyt+9tH7V0wmfRaiophf7ZDqZUbLxq6RSxDTiE=
+	t=1749882180; cv=none; b=oaiVWkK9fclMZm4HM+a96hF6VIa7YnO3rS+YxPfaWRrY2mb7rjFBFn3ZSJP16greZgDW1FXiYOEeD+3y8S7Ljxen+jf24s4HdmZ7fdCXKv9KNEYIqJVnufwizWsbCUHpzY650o4nUm3QKaj2mRyNs36DiolHxrDZKbVjaeLODAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749882180; c=relaxed/simple;
-	bh=TlqCu8ZALoTMv7iWjN2/IMRy6xM7GvGO7H+Bge2KpL4=;
+	bh=Z8lUnvmTnEW0PaZtMJGNzUPZQ9GMcWwHmaWlZ+yrvsM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CdTHeoQt6o/037eK+3YDlWpmQBHGZ0LOKLA5SxYDcGoCkzFGBgPctI35yBYFmzg1QUpY5vjfyv4qf+CvbIvGcvD97ipsry2vH6pZGjMUT1afTopmYSDSoxahM4/4+0kYCkrwGbx1zU6CHq1OTU/mxIuH3IUoQUGLhs0Ocgh2i68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=j6r7dwwt; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=K4zRtHWP3Pm2I19+x60a/+V7mUvAn7vM1FDWXNTUrXcDdM86wLBsNykpKx/DoSC/dm5sMjPiBj4ZTNMVW5lubrH55XTiRLBU+jPEYMsd1vSdUUXfLie2HjiGaYjZv2ayoJY0GK18+OE7E+sqzOz1R+PXPrIRFNA0tINWA8/wQ7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Kluasl6Z; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=MAqQZxaNhoGE5HadZ98DDShwilRD6aaG5fQfUxqb9Co=; b=j6r7dwwt4NLoxcq6e3bfp+iDZj
-	TIVXFTCt5vorBSBi3zxTNhuVpo6oxBcRRZiKSPcfRLNnOLBaYFHjEzz+w8rLph01L29rfjw6If4xY
-	vUGjkbmsHxoLIFWPUnVq5atyW0+tUV4YIAWqUotsav+4Sl8a4gmdWNBjAdGia8G6NNNovtzEJ2j6q
-	3NvRosD48XlXiVIvHRHPhWviJi3iqgTEeRdXDylhjjSrLCRxmWbZdo8/n4qNpxz0v3xiVHD/pK8gG
-	1fQfh79yG4e5LrTArgmXHNbjbRPRP9yb4yc+UJ34hhKM4++e71NQlQCbw++fRzDgv3zNJuFngsxZq
-	3hwqGRaw==;
+	bh=vHwfGgE3DuWX2kUg/6/xwTVkKDufcqSh2iXxXHPgb+I=; b=Kluasl6ZHGhnOutTdyPwyWlE97
+	3Nl5zXTtV9rG+MsbXQ1VzbVyKDtDlaPniA3gNpubuOJhuxfabqq5vRAYBP0wMCcNcoju9t+khw892
+	a0NwnaGtVBYIu9KID76K9OGIAfsSgFu6J76NJ3Embo86tfc1MmFHJAtZmgl2GTuSMtbd/UzPHcbqF
+	y1L1quC+G0c382htVDOUzQK7GnfEg3+zagy9uUmTOfHgtdXcbIxtAmx28NBPTGd2hK3798akL071X
+	pZ0q4uOgQwVwyKbFpomNCd0wVgYVTFLat9rcYdBI8hfZMhNLZOfx4iOhn+LYafVm030QU+gQTgUq9
+	a2bi5IlQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQKI5-00000002FKn-0v1t;
+	id 1uQKI5-00000002FKw-1g3g;
 	Sat, 14 Jun 2025 06:22:57 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Slava.Dubeyko@ibm.com,
 	ceph-devel@vger.kernel.org
-Subject: [PATCH 1/3] [ceph] parse_longname(): strrchr() expects NUL-terminated string
-Date: Sat, 14 Jun 2025 07:22:55 +0100
-Message-ID: <20250614062257.535594-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH 2/3] prep for ceph_encode_encrypted_fname() fixes
+Date: Sat, 14 Jun 2025 07:22:56 +0100
+Message-ID: <20250614062257.535594-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250614062051.GC1880847@ZenIV>
+In-Reply-To: <20250614062257.535594-1-viro@zeniv.linux.org.uk>
 References: <20250614062051.GC1880847@ZenIV>
+ <20250614062257.535594-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,81 +64,107 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... and parse_longname() is not guaranteed that.  That's the reason
-why it uses kmemdup_nul() to build the argument for kstrtou64();
-the problem is, kstrtou64() is not the only thing that need it.
+ceph_encode_encrypted_dname() would be better off with plaintext name
+already copied into buffer; we'll lift that into the callers on the
+next step, which will allow to fix UAF on races with rename; for now
+copy it in the very beginning of ceph_encode_encrypted_dname().
 
-Just get a NUL-terminated copy of the entire thing and be done
-with that...
+That has a pleasant side benefit - we don't need to mess with tmp_buf
+anymore (i.e. that's 256 bytes off the stack footprint).
 
-Fixes: dd66df0053ef "ceph: add support for encrypted snapshot names"
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/ceph/crypto.c | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+ fs/ceph/crypto.c | 40 +++++++++++++++++-----------------------
+ 1 file changed, 17 insertions(+), 23 deletions(-)
 
 diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 3b3c4d8d401e..9c7062245880 100644
+index 9c7062245880..2aef56fc6275 100644
 --- a/fs/ceph/crypto.c
 +++ b/fs/ceph/crypto.c
-@@ -215,35 +215,31 @@ static struct inode *parse_longname(const struct inode *parent,
+@@ -258,31 +258,28 @@ int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_name,
+ {
  	struct ceph_client *cl = ceph_inode_to_client(parent);
- 	struct inode *dir = NULL;
- 	struct ceph_vino vino = { .snap = CEPH_NOSNAP };
--	char *inode_number;
--	char *name_end;
--	int orig_len = *name_len;
-+	char *name_end, *inode_number;
- 	int ret = -EIO;
--
-+	/* NUL-terminate */
-+	char *str __free(kfree) = kmemdup_nul(name, *name_len, GFP_KERNEL);
-+	if (!str)
-+		return ERR_PTR(-ENOMEM);
- 	/* Skip initial '_' */
--	name++;
--	name_end = strrchr(name, '_');
-+	str++;
-+	name_end = strrchr(str, '_');
- 	if (!name_end) {
--		doutc(cl, "failed to parse long snapshot name: %s\n", name);
-+		doutc(cl, "failed to parse long snapshot name: %s\n", str);
- 		return ERR_PTR(-EIO);
- 	}
--	*name_len = (name_end - name);
-+	*name_len = (name_end - str);
- 	if (*name_len <= 0) {
- 		pr_err_client(cl, "failed to parse long snapshot name\n");
- 		return ERR_PTR(-EIO);
- 	}
+ 	struct inode *dir = parent;
+-	struct qstr iname;
++	char *p = buf;
+ 	u32 len;
+ 	int name_len;
+ 	int elen;
+ 	int ret;
+ 	u8 *cryptbuf = NULL;
  
- 	/* Get the inode number */
--	inode_number = kmemdup_nul(name_end + 1,
--				   orig_len - *name_len - 2,
--				   GFP_KERNEL);
--	if (!inode_number)
--		return ERR_PTR(-ENOMEM);
-+	inode_number = name_end + 1;
- 	ret = kstrtou64(inode_number, 10, &vino.ino);
- 	if (ret) {
--		doutc(cl, "failed to parse inode number: %s\n", name);
--		dir = ERR_PTR(ret);
--		goto out;
-+		doutc(cl, "failed to parse inode number: %s\n", str);
-+		return ERR_PTR(ret);
- 	}
+-	iname.name = d_name->name;
+-	name_len = d_name->len;
++	memcpy(buf, d_name->name, d_name->len);
++	elen = d_name->len;
++
++	name_len = elen;
  
- 	/* And finally the inode */
-@@ -254,9 +250,6 @@ static struct inode *parse_longname(const struct inode *parent,
+ 	/* Handle the special case of snapshot names that start with '_' */
+-	if ((ceph_snap(dir) == CEPH_SNAPDIR) && (name_len > 0) &&
+-	    (iname.name[0] == '_')) {
+-		dir = parse_longname(parent, iname.name, &name_len);
++	if (ceph_snap(dir) == CEPH_SNAPDIR && *p == '_') {
++		dir = parse_longname(parent, p, &name_len);
  		if (IS_ERR(dir))
- 			doutc(cl, "can't find inode %s (%s)\n", inode_number, name);
+ 			return PTR_ERR(dir);
+-		iname.name++; /* skip initial '_' */
++		p++; /* skip initial '_' */
  	}
--
--out:
--	kfree(inode_number);
- 	return dir;
- }
+-	iname.len = name_len;
  
+-	if (!fscrypt_has_encryption_key(dir)) {
+-		memcpy(buf, d_name->name, d_name->len);
+-		elen = d_name->len;
++	if (!fscrypt_has_encryption_key(dir))
+ 		goto out;
+-	}
+ 
+ 	/*
+ 	 * Convert cleartext d_name to ciphertext. If result is longer than
+@@ -290,7 +287,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_name,
+ 	 *
+ 	 * See: fscrypt_setup_filename
+ 	 */
+-	if (!fscrypt_fname_encrypted_size(dir, iname.len, NAME_MAX, &len)) {
++	if (!fscrypt_fname_encrypted_size(dir, name_len, NAME_MAX, &len)) {
+ 		elen = -ENAMETOOLONG;
+ 		goto out;
+ 	}
+@@ -303,7 +300,9 @@ int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_name,
+ 		goto out;
+ 	}
+ 
+-	ret = fscrypt_fname_encrypt(dir, &iname, cryptbuf, len);
++	ret = fscrypt_fname_encrypt(dir,
++				    &(struct qstr)QSTR_INIT(p, name_len),
++				    cryptbuf, len);
+ 	if (ret) {
+ 		elen = ret;
+ 		goto out;
+@@ -324,18 +323,13 @@ int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_name,
+ 	}
+ 
+ 	/* base64 encode the encrypted name */
+-	elen = ceph_base64_encode(cryptbuf, len, buf);
+-	doutc(cl, "base64-encoded ciphertext name = %.*s\n", elen, buf);
++	elen = ceph_base64_encode(cryptbuf, len, p);
++	doutc(cl, "base64-encoded ciphertext name = %.*s\n", elen, p);
+ 
+ 	/* To understand the 240 limit, see CEPH_NOHASH_NAME_MAX comments */
+ 	WARN_ON(elen > 240);
+-	if ((elen > 0) && (dir != parent)) {
+-		char tmp_buf[NAME_MAX];
+-
+-		elen = snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%ld",
+-				elen, buf, dir->i_ino);
+-		memcpy(buf, tmp_buf, elen);
+-	}
++	if (dir != parent) // leading _ is already there; append _<inum>
++		elen += 1 + sprintf(p + elen, "_%ld", dir->i_ino);
+ 
+ out:
+ 	kfree(cryptbuf);
 -- 
 2.39.5
 
