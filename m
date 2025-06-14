@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-51656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE7FAD9A53
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38285AD9A52
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 08:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A79D7AC2E3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:01:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7581B162B5B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jun 2025 06:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6121E2847;
-	Sat, 14 Jun 2025 06:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1234C1E47B4;
+	Sat, 14 Jun 2025 06:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CT7qrXwO"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ecZzO+zS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD95B1D618C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D271DDC1A
 	for <linux-fsdevel@vger.kernel.org>; Sat, 14 Jun 2025 06:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749880955; cv=none; b=JxViLoT7yKuYkSt/AWcdmguxejuUHmDSIQPwbJStNgqne83syBvmAbl3ZsVidrvNWFi65C6ZMqzUhlc5XpUWznCZAJFoN3bRNNm//mzdgvcLd2jekBLMSM6CFNBNwWmgCd2P5BCAbq1kzxzcmuVqGOrU31LRK+Aj1SnGQ7dRmps=
+	t=1749880954; cv=none; b=aviqcm0G7RKOznjP1rVkmp6wgJTMoeXnpm1xY+k95s1l92AJE6lEP3aO+azUg+Ocaf8tGJkUdSaPSf66zSv7DSx6tf5/HnsmEZs0BRx0/T57q85JKVowUfRnGopGaRGsA4PsDOnhEcsH30gwuihyCEaytg7IMtMv2hBGI+Pb2MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749880955; c=relaxed/simple;
-	bh=U1BGoSUCOj/kXHtWHKOkxmoFV0uNLJfvL0Ilk9MkGTQ=;
+	s=arc-20240116; t=1749880954; c=relaxed/simple;
+	bh=Ymg2/whCQRAkj3yGTtGtKaQj5T77/CxdWapHn9OrXYA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nAx6LtB3um8/dKo/uaQ9QtOc+WxV25EwJxseq5JSS3k4wJGjkIHqATmBIYCAQY5N53xRJQMMHZjn4FJ++hf7zvoGx+lDOnFd6CVf2cE7hBlUo5V1PtVWetRIOubIvKtf0z70zUnbY2cY/gYxMsMhBVIoNpKFs4anIKJ/zyO7IKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CT7qrXwO; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=O3jDp2wivAHfNvprxph9yFDXAsdx+ViPoacq1ZgKGutK6I9YdHp83BhKUUVW8BUUlHqaSglOY4ViJJVYNO+pE8eBC9XT2b6jCwqElENgRMXiyyPGZMrunAL0yKABACutFIzT4P7061mq0MeRz0h/IbUugLZuDyr6GQ2GNocj3mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ecZzO+zS; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=z3sNvJdG4SuqTX+eOMOrcQnGbQ82WlKL73y+Juwcieg=; b=CT7qrXwOG6W5hQ0BtVs2MlQ2+R
-	VmfcUnjOza2nAXdyPOmofHOP4czgLNNLlXeevh7Urz9NriaU1e0Vw7fkHQNLBarPCJ50gqCjiwVaP
-	0fq+qIQI+Z6/3YTE3L1uUwxvTF52nvG0FjQT6eNx1fqsVyt/AM9DJkBW4JJd64/U1Lo413pkH1O57
-	UEqa/oR/jYJGF+ACVIv4uSMIeOgneHjQc+KCgapTnFB4e1SbswbRURsGCi3QHb2LtC/Fx3TpneSaj
-	g7Ylr+xz1hC9bu7935cjg3dVVny95HmDXY6UqkhUwwX1C2SuImIoi1uPNomKrdf0OppWk9OcIi+Rv
-	Or4y4qFw==;
+	bh=5uXU/uhdE2jo+QjPPv0nZ1Nhjleks3Fvhai4NzNphnA=; b=ecZzO+zSknxQfzoI6mwFd2zqwj
+	BrSfulcRRLDfNvzI9mK1laETkPcm960U3+8lyVKZnOT7xV4Oghw/J7yWzWNYjgee1q5+Znkt/v5lh
+	SvtxFpiA6TewOmxBqkZvIqBT6Kg1lgCMjTq/MJ12l451CgKLRWATg4u7OQI7wxvqY01sbYyWG7I1n
+	/mE/fkixfSZpSYZYHDbGvDAN5ZpVhFboEJGzTF2Xx0RORhCA5gCjKTR/g6Xr7V4fep7cl0wxvB4Q0
+	oA/NbA8t0RU+zwMDUnorYFKuwasNoZm7JrI/tWqJPx7mYGtgIK1NNo3kng2t1kGLpkE8wHUlmTs1m
+	/l4leuzA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQJyI-000000022pp-3qNd;
+	id 1uQJyJ-000000022q9-1Jb9;
 	Sat, 14 Jun 2025 06:02:31 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: neil@brown.name,
 	torvalds@linux-foundation.org,
 	brauner@kernel.org
-Subject: [PATCH 3/8] spufs: switch to locked_recursive_removal()
-Date: Sat, 14 Jun 2025 07:02:25 +0100
-Message-ID: <20250614060230.487463-3-viro@zeniv.linux.org.uk>
+Subject: [PATCH 4/8] binfmt_misc: switch to locked_recursive_removal()
+Date: Sat, 14 Jun 2025 07:02:26 +0100
+Message-ID: <20250614060230.487463-4-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250614060230.487463-1-viro@zeniv.linux.org.uk>
 References: <20250614060050.GB1880847@ZenIV>
@@ -65,107 +65,71 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... and fix an old deadlock on spufs_mkdir() failures to populate
-subdirectory - spufs_rmdir() had always been taking lock on the
-victim, so doing it while the victim is locked is a bad idea.
+... fixing a mount leak, strictly speaking.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/powerpc/platforms/cell/spufs/inode.c | 49 +++++------------------
- 1 file changed, 9 insertions(+), 40 deletions(-)
+ fs/binfmt_misc.c | 40 +---------------------------------------
+ 1 file changed, 1 insertion(+), 39 deletions(-)
 
-diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
-index 9f9e4b871627..7ec60290abe6 100644
---- a/arch/powerpc/platforms/cell/spufs/inode.c
-+++ b/arch/powerpc/platforms/cell/spufs/inode.c
-@@ -143,42 +143,13 @@ spufs_evict_inode(struct inode *inode)
- 		put_spu_gang(ei->i_gang);
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index 432fbf4fc334..760437a91648 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -674,44 +674,6 @@ static void bm_evict_inode(struct inode *inode)
+ 	}
  }
  
--static void spufs_prune_dir(struct dentry *dir)
+-/**
+- * unlink_binfmt_dentry - remove the dentry for the binary type handler
+- * @dentry: dentry associated with the binary type handler
+- *
+- * Do the actual filesystem work to remove a dentry for a registered binary
+- * type handler. Since binfmt_misc only allows simple files to be created
+- * directly under the root dentry of the filesystem we ensure that we are
+- * indeed passed a dentry directly beneath the root dentry, that the inode
+- * associated with the root dentry is locked, and that it is a regular file we
+- * are asked to remove.
+- */
+-static void unlink_binfmt_dentry(struct dentry *dentry)
 -{
--	struct dentry *dentry;
--	struct hlist_node *n;
+-	struct dentry *parent = dentry->d_parent;
+-	struct inode *inode, *parent_inode;
 -
--	inode_lock(d_inode(dir));
--	hlist_for_each_entry_safe(dentry, n, &dir->d_children, d_sib) {
--		spin_lock(&dentry->d_lock);
--		if (simple_positive(dentry)) {
--			dget_dlock(dentry);
--			__d_drop(dentry);
--			spin_unlock(&dentry->d_lock);
--			simple_unlink(d_inode(dir), dentry);
--			/* XXX: what was dcache_lock protecting here? Other
--			 * filesystems (IB, configfs) release dcache_lock
--			 * before unlink */
--			dput(dentry);
--		} else {
--			spin_unlock(&dentry->d_lock);
--		}
+-	/* All entries are immediate descendants of the root dentry. */
+-	if (WARN_ON_ONCE(dentry->d_sb->s_root != parent))
+-		return;
+-
+-	/* We only expect to be called on regular files. */
+-	inode = d_inode(dentry);
+-	if (WARN_ON_ONCE(!S_ISREG(inode->i_mode)))
+-		return;
+-
+-	/* The parent inode must be locked. */
+-	parent_inode = d_inode(parent);
+-	if (WARN_ON_ONCE(!inode_is_locked(parent_inode)))
+-		return;
+-
+-	if (simple_positive(dentry)) {
+-		dget(dentry);
+-		simple_unlink(parent_inode, dentry);
+-		d_delete(dentry);
+-		dput(dentry);
 -	}
--	shrink_dcache_parent(dir);
--	inode_unlock(d_inode(dir));
 -}
 -
- /* Caller must hold parent->i_mutex */
--static int spufs_rmdir(struct inode *parent, struct dentry *dir)
-+static void spufs_rmdir(struct inode *parent, struct dentry *dir)
- {
--	/* remove all entries */
--	int res;
--	spufs_prune_dir(dir);
--	d_drop(dir);
--	res = simple_rmdir(parent, dir);
--	/* We have to give up the mm_struct */
--	spu_forget(SPUFS_I(d_inode(dir))->i_ctx);
--	return res;
-+	struct spu_context *ctx = SPUFS_I(d_inode(dir))->i_ctx;
-+
-+	locked_recursive_removal(dir, NULL);
-+	spu_forget(ctx);
+ /**
+  * remove_binfmt_handler - remove a binary type handler
+  * @misc: handle to binfmt_misc instance
+@@ -729,7 +691,7 @@ static void remove_binfmt_handler(struct binfmt_misc *misc, Node *e)
+ 	write_lock(&misc->entries_lock);
+ 	list_del_init(&e->list);
+ 	write_unlock(&misc->entries_lock);
+-	unlink_binfmt_dentry(e->dentry);
++	locked_recursive_removal(e->dentry, NULL);
  }
  
- static int spufs_fill_dir(struct dentry *dir,
-@@ -222,15 +193,13 @@ static int spufs_dir_close(struct inode *inode, struct file *file)
- {
- 	struct inode *parent;
- 	struct dentry *dir;
--	int ret;
- 
- 	dir = file->f_path.dentry;
- 	parent = d_inode(dir->d_parent);
- 
- 	inode_lock_nested(parent, I_MUTEX_PARENT);
--	ret = spufs_rmdir(parent, dir);
-+	spufs_rmdir(parent, dir);
- 	inode_unlock(parent);
--	WARN_ON(ret);
- 
- 	unuse_gang(dir->d_parent);
- 	return dcache_dir_close(inode, file);
-@@ -288,11 +257,11 @@ spufs_mkdir(struct inode *dir, struct dentry *dentry, unsigned int flags,
- 		ret = spufs_fill_dir(dentry, spufs_dir_debug_contents,
- 				mode, ctx);
- 
-+	inode_unlock(inode);
-+
- 	if (ret)
- 		spufs_rmdir(dir, dentry);
- 
--	inode_unlock(inode);
--
- 	return ret;
- }
- 
-@@ -475,7 +444,7 @@ spufs_create_context(struct inode *inode, struct dentry *dentry,
- 
- 	ret = spufs_context_open(&path);
- 	if (ret < 0)
--		WARN_ON(spufs_rmdir(inode, dentry));
-+		spufs_rmdir(inode, dentry);
- 
- out_aff_unlock:
- 	if (affinity)
+ /* /<entry> */
 -- 
 2.39.5
 
