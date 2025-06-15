@@ -1,60 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-51678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309C6ADA070
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Jun 2025 02:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3459FADA099
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Jun 2025 04:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649093B4525
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Jun 2025 00:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9B21893D66
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Jun 2025 02:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5242E659;
-	Sun, 15 Jun 2025 00:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992616F06B;
+	Sun, 15 Jun 2025 02:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KiNwADhi"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eGvtAOVS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2633C28EB;
-	Sun, 15 Jun 2025 00:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC41211CBA;
+	Sun, 15 Jun 2025 02:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749948442; cv=none; b=EgNRh0Fq8sUsKQqLka28ww13KdulGwOlXvMC3HNQUzfk/WOU5qi8OAcz68FEd2LUw+gvAuL9wb6Eer93ydWIXobJ+LjBxTRtMoyhVkSltZG76sizC0xpSUO3+gBai9bBFCPYaR/VIQNfyHFRBOypBMGdJ3pmuoOuDDsZY+C9dKs=
+	t=1749952919; cv=none; b=PuAkPqcSAT4V636cUXOLOBYWv/PS6V7V170vR4yj+UQCc1lW9V+PTRiVRzJmE76KcIDYMz24vIy0do7DmgBwRV6n0FFlDJwTlLs6WY1GkAFi2RQUEiKa2rSKYCdoA4Ju2Xc8Q0gVPJHsJMzbuKt2KrdpqwoT42n+AJhKDU3Bmt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749948442; c=relaxed/simple;
-	bh=PTAC1rmoxxqDtDPyZ9wFnHW3Rmw7wCFiU51TtUkhBqE=;
+	s=arc-20240116; t=1749952919; c=relaxed/simple;
+	bh=O/QTV3SgMSG8EsyUwUU7f5X/zMiUkNxW2xWZhHIz0dA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlPHioeZ526CITRZXHsrPEnFRK468EbSB3bkY8rumJz/hxhx6TfSaPeq6T1pATeELoTy/vmVFSRvnfQfg28+R9KXeWn2ZUcuVmNVoOMYXox2EBYVX6D/2Uw1Dl/WxRglHt+lvQFfQM6zsx8r00DAA3TRBQ95lykUNcxsXrG7odQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KiNwADhi; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=dG36Ul/nuVVgyeQxz7gUT+G1A8x8pX7J7pp5pwI8p7zopf/b/TgHsUETkoKn9ABX2MPysUimKjVIamNrbec/2Et0okAVNjsZSTLcZIrVrDBr60EOD6uVLvQtY6HytEaT7MhBZFUTb/TVzdEy70g+6aw3MqFoyyk03HtB/Xq9P1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eGvtAOVS; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RAkhQVDjAssyyIalBm4YtnfniE7oZf/ItqEztDaO6MU=; b=KiNwADhilk2jl6QODvMeJVWZ7j
-	hvrxxp8HJy0MOOZ9o+H9JDYI44HM6RjejuecLgRU7pbtm0B+obDnz5RUOdBXbSmiItU5b/zOZlurQ
-	G6LbVovOBe97eWNznBmzmENgrwoLW1xRoPrdFO9fIaf6WsmUFLyksLOFw/x24aIUchujP6eaZ12ya
-	FNT1j2aE5DhJSYgA2LqmpSRpCSvQL0ZcHhXMhrM4GoRMx2QzV8ugCrmJ0vKCs66BEjI1yj3RyZ9iL
-	Sd7FADhWgrCFUWTNUd7gQhkKNvzqvaVZ8B3f7ROo6XdYZGUB3NYQI7sMwcMuohDHmZKnNoyGDu3zl
-	/lrRSI6A==;
+	bh=MFjBL1KWPaBD3zS+E/1euWh9toW9ZqwuJ3e+wNUifrw=; b=eGvtAOVSeFa9Dmlj56il76ZbKK
+	mDQgodmqscZfpD9iE9OIsb25r6kHG8j84g+hVsO2SIwFufLZylurebaWWAMh/0Ztliogb0WFSz1+y
+	496o7xabiy+G4frDbex2E6uIF7C/HXrBElNXyliKQXkoJ8gfz4P+LVb9BYovcHoaFAui2hAwaCAMr
+	IRQidrV0zL7ddSYXBa0E1eZXrj9obZ5Seg7i7kviP5rhqDcUvgsFo06NW0+XZ5tX5pseQtRq+X1+O
+	Zi4Zw56f6WkQK0DcAsflcQ0Z8jVBVgKjHLJXPAr69GLaWd555K5Sbt3G36/+/RcqwTYZW30JuJljr
+	azXk3wgQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQbWp-0000000CoVX-1S8m;
-	Sun, 15 Jun 2025 00:47:19 +0000
-Date: Sun, 15 Jun 2025 01:47:19 +0100
+	id 1uQch0-0000000DWIv-3wnN;
+	Sun, 15 Jun 2025 02:01:55 +0000
+Date: Sun, 15 Jun 2025 03:01:54 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>, bpf@vger.kernel.org
-Subject: [bpf_iter] get rid of redundant 3rd argument of prepare_seq_file()
-Message-ID: <20250615004719.GE3011112@ZenIV>
+Cc: linux-security-module@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH] selinuxfs_fill_super(): don't bother with
+ selinuxfs_info_free() on failures
+Message-ID: <20250615020154.GE1880847@ZenIV>
 References: <20250615003011.GD1880847@ZenIV>
  <20250615003110.GA3011112@ZenIV>
- <20250615003216.GB3011112@ZenIV>
- <20250615003321.GC3011112@ZenIV>
- <20250615003507.GD3011112@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,62 +62,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250615003507.GD3011112@ZenIV>
+In-Reply-To: <20250615003110.GA3011112@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
 [don't really care which tree that goes through; right now it's
 in viro/vfs.git #work.misc, but if somebody prefers to grab it
 through a different tree, just say so]
-always equal to __get_seq_info(2nd argument)
+
+Failures in there will be followed by sel_kill_sb(), which will call
+selinuxfs_info_free() anyway.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- kernel/bpf/bpf_iter.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ security/selinux/selinuxfs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/bpf/bpf_iter.c b/kernel/bpf/bpf_iter.c
-index 380e9a7cac75..303ab1f42d3a 100644
---- a/kernel/bpf/bpf_iter.c
-+++ b/kernel/bpf/bpf_iter.c
-@@ -38,8 +38,7 @@ static DEFINE_MUTEX(link_mutex);
- /* incremented on every opened seq_file */
- static atomic64_t session_id;
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index e67a8ce4b64c..b44b5919f4af 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -2097,8 +2097,6 @@ static int sel_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	pr_err("SELinux: %s:  failed while creating inodes\n",
+ 		__func__);
  
--static int prepare_seq_file(struct file *file, struct bpf_iter_link *link,
--			    const struct bpf_iter_seq_info *seq_info);
-+static int prepare_seq_file(struct file *file, struct bpf_iter_link *link);
- 
- static void bpf_iter_inc_seq_num(struct seq_file *seq)
- {
-@@ -257,7 +256,7 @@ static int iter_open(struct inode *inode, struct file *file)
- {
- 	struct bpf_iter_link *link = inode->i_private;
- 
--	return prepare_seq_file(file, link, __get_seq_info(link));
-+	return prepare_seq_file(file, link);
+-	selinux_fs_info_free(sb);
+-
+ 	return ret;
  }
- 
- static int iter_release(struct inode *inode, struct file *file)
-@@ -586,9 +585,9 @@ static void init_seq_meta(struct bpf_iter_priv_data *priv_data,
- 	priv_data->done_stop = false;
- }
- 
--static int prepare_seq_file(struct file *file, struct bpf_iter_link *link,
--			    const struct bpf_iter_seq_info *seq_info)
-+static int prepare_seq_file(struct file *file, struct bpf_iter_link *link)
- {
-+	const struct bpf_iter_seq_info *seq_info = __get_seq_info(link);
- 	struct bpf_iter_priv_data *priv_data;
- 	struct bpf_iter_target_info *tinfo;
- 	struct bpf_prog *prog;
-@@ -653,7 +652,7 @@ int bpf_iter_new_fd(struct bpf_link *link)
- 	}
- 
- 	iter_link = container_of(link, struct bpf_iter_link, link);
--	err = prepare_seq_file(file, iter_link, __get_seq_info(iter_link));
-+	err = prepare_seq_file(file, iter_link);
- 	if (err)
- 		goto free_file;
  
 -- 
 2.39.5
