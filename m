@@ -1,115 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-51694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EF2ADA474
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 00:54:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2407FADA47A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 01:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9679516D445
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Jun 2025 22:54:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E397188EC85
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Jun 2025 23:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5088E281369;
-	Sun, 15 Jun 2025 22:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="JMkbaykr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83317262800;
+	Sun, 15 Jun 2025 23:00:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B98280332
-	for <linux-fsdevel@vger.kernel.org>; Sun, 15 Jun 2025 22:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1411221348;
+	Sun, 15 Jun 2025 23:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750028038; cv=none; b=AzhQIygkhTvjo0Z4lfru8RN/a7CM2H6tzx5W9gA6SkTNvaPf864HI90SC3+OcWIG7vPqASdOjmvrJZEQN0YBYpHj+G9dASDXuNGpo0JByhq6xF7aBVDqG3IPNnkboKRIUXbBZI1ZIJnyn2chAlKO94b7+l77903EaSiG4r82LeA=
+	t=1750028452; cv=none; b=UdNf5E8Euz07jvgWx+9E4I0dztLBda9YaEasyxU6jGJQlR+EbcvxGmSwedAz2YbQ8Az2kitmfGM4ncuFjhXMawkvmbtHPp+o/ZBCez4txT4vBDZmVb4Rk8pCAQCzAsTZ1gYGIAL+lU3k/4e8ql2DTSChK0MyFnvxGmYhA2efYa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750028038; c=relaxed/simple;
-	bh=fJric2xuz/D7KmQiBryCjvqCKImRal40258ZoI4kmdE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EM/rUClQuOHSqym5vSIswlFUBsjKLkG5KsStKu+JBwHGzKdTclrCAAaXA5NuOMgZ/M2C4LwiH1p9p9WcgtIYsFhwhb4xJkBXgmRQATwfdYkusBbJkqynQ492D17pziGbcIy/reOMXKn+YBp+3PcZgiynLDXds/z5H18pecE1ljU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=JMkbaykr; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id BED5C240028
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jun 2025 00:53:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net;
-	s=1984.ea087b; t=1750028034;
-	bh=fJric2xuz/D7KmQiBryCjvqCKImRal40258ZoI4kmdE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:To:Cc:From;
-	b=JMkbaykrVVKtI5b6bPvljsCIZ++v/233NE2h4ZHwsZOHYTVQneI1Em2kapIX9Jny5
-	 yhiK3ZA3Rx7qXjfpa/K6xrtHO0vXSiPVjmtkdnkWq2/C7bpPQMfmahtkzqPAxpEu2U
-	 FH482o+Eg5s049jJJGKv1OxPh+v/Tm2+8flONGZy6kbT7WPUfBdKhHcWYQNBsANjQx
-	 IKrhbb4XRTSANki2u7tBe37ZLIJX1zRu9WAKQRLsWjgT71pzv4+m2Hg7YeoCN4E/kR
-	 GW1EajIOaPPq1gycrBFHAzIykg3cVmAs5SWaDeD2zmFIVCmb8QLXFNj6R0kocLTgs6
-	 5xrlM0c//1xTPu/EqpJy7O+szA1HuO8UErxhFJJgjvkh6fhm3pDne3IDAGQWzsv67s
-	 UAElpjfTiD6t/s3/NUQrI/VTjvJ/Kv/vlkJ7U42TYIv9TAbtNZwos0nQ6tQqonXrtp
-	 GY52Xy1ZlB+0d7owVrP3gyKxlIMUjO6JZf+YtG/wdZ8c41bM2TF
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4bL7jF2ZZxz9rxF;
-	Mon, 16 Jun 2025 00:53:53 +0200 (CEST)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-Date: Sun, 15 Jun 2025 22:51:53 +0000
-Subject: [PATCH v2] docs: filesystems: vfs: remove broken resource link
+	s=arc-20240116; t=1750028452; c=relaxed/simple;
+	bh=0+Eq7imDVhtyA4ah3U8MoUmMelbIy7qZo1J48iHgxsk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:Date:Message-id; b=L0VHgpDiAfG7/CfItREJ9GrwQY3Pnhfwqc744Zx1VpNZddtPlh/Q3iPkZGjG+r1BpbG0kbSriPCHT2jNvYDcUy6W4vqRfVOyY3+9TFgG5nXRTATYyZ1saaWgZpgbJ2MTugfbZCYWl6+FsXFWrDQr+vQtI8UZQ+1i8T/QMI2Ma4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uQwLA-00FKsE-U4;
+	Sun, 15 Jun 2025 23:00:40 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250616-vfs-docs-v2-1-70b82fbabdbe@posteo.net>
-X-B4-Tracking: v=1; b=H4sIAIhOT2gC/0XMywrCMBCF4VcpszaSDLZeVr6HdJHLxGaTlEwIS
- sm7Gwvi8j8cvg2YciCG27BBpho4pNgDDwPYRccnieB6A0oc5aRGUT0LlywLoyVqg/aqTh76fc3
- kw2unHnPvJXBJ+b3LVX3XHzL9kaqEEtJdzt5YqY3F+5q4UDpGKjC31j7wTOICoQAAAA==
-X-Change-ID: 20250615-vfs-docs-ba02ab2c914f
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
- Jonathan Corbet <corbet@lwn.net>, neil@brown.name
-Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Charalampos Mitrodimas <charmitro@posteo.net>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750028010; l=1228;
- i=charmitro@posteo.net; s=20250526; h=from:subject:message-id;
- bh=fJric2xuz/D7KmQiBryCjvqCKImRal40258ZoI4kmdE=;
- b=5zh7zA2RZutpTFQHg8S5OGUNE7swOo+Wd6Cqn5D47Xrt/Ieowfte+DKQxVXALtZkbJQq3cAoo
- mQCxXoB94h2CACCuHi5eGKOUtlEiaUVEDWToiJC0Z5Cvmhol2vJysby
-X-Developer-Key: i=charmitro@posteo.net; a=ed25519;
- pk=PNHEh5o1dcr5kfKoZhfwdsfm3CxVfRje7vFYKIW0Mp4=
+From: "NeilBrown" <neil@brown.name>
+To: Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <kees@kernel.org>,
+ Joel Granados <joel.granados@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject:
+ [PATCH v3?] proc_sysctl: remove rcu_dereference() for accessing ->sysctl
+Date: Mon, 16 Jun 2025 09:00:39 +1000
+Message-id: <175002843966.608730.14640390628578526912@noble.neil.brown.name>
 
-The referenced link is no longer accessible. Since an alternative
-source is not available, removing it entirely.
 
-Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
+The rcu_dereference() call in proc_sys_compare() is problematic as
+->d_compare is not guaranteed to be called with rcu_read_lock() held and
+rcu_dereference() can cause a warning when used without that lock.
+
+Specifically d_alloc_parallel() will call ->d_compare() without
+rcu_read_lock(), but with ->d_lock to ensure stability.  In this case
+->d_inode is usually NULL so the rcu_dereference() will normally not be
+reached, but it is possible that ->d_inode was set while waiting for
+->d_lock which could lead to the warning.
+
+The rcu_dereference() isn't really needed - ->sysctl isn't used in a
+pattern which normally requires RCU protection.  In particular it is
+never updated.  It is assigned a value in proc_sys_make_inode() before
+the inode is generally visible, and the value is freed (using
+rcu_free()) only after any possible access to the inode must have
+completed.
+
+Even though the value stored at ->sysctl is not freed, the ->sysctl
+pointer itself is set to NULL in proc_evict_inode().  This necessitates
+proc_sys_compare() taking care, reading the pointer with READ_ONCE()
+(currently via rcu_dereference()) and checking for NULL.  If we drop the
+assignment to NULL, this care becomes unnecessary.
+
+This patch removes the assignment of NULL in proc_evict_inode() so that
+for the entire (public) life of a proc_sysctl inode, the ->sysctl
+pointer is stable and points to a valid value.  It then changes
+proc_sys_compare() to simply use ->sysctl without any concern for it
+changing or being NULL.
+
+Signed-off-by: NeilBrown <neil@brown.name>
 ---
-Changes in v2:
-- Removed "so" from the patch description
-- Link to v1: https://lore.kernel.org/r/20250616-vfs-docs-v1-1-0d87fbc0abc2@posteo.net
----
- Documentation/filesystems/vfs.rst | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/proc/inode.c       | 4 +---
+ fs/proc/proc_sysctl.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index fd32a9a17bfb34e3f307ef6281d1114afe4fbc66..a90cba73b26c18344c3d34fdb78acb4ff6f14ae8 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -1549,9 +1549,6 @@ Resources
- Creating Linux virtual filesystems. 2002
-     <https://lwn.net/Articles/13325/>
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index a3eb3b740f76..e0f984c44523 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -41,10 +41,8 @@ static void proc_evict_inode(struct inode *inode)
+ 		proc_pid_evict_inode(ei);
  
--The Linux Virtual File-system Layer by Neil Brown. 1999
--    <http://www.cse.unsw.edu.au/~neilb/oss/linux-commentary/vfs.html>
--
- A tour of the Linux VFS by Michael K. Johnson. 1996
-     <https://www.tldp.org/LDP/khg/HyperNews/get/fs/vfstour.html>
+ 	head = ei->sysctl;
+-	if (head) {
+-		RCU_INIT_POINTER(ei->sysctl, NULL);
++	if (head)
+ 		proc_sys_evict_inode(inode, head);
+-	}
+ }
  
-
----
-base-commit: 4774cfe3543abb8ee98089f535e28ebfd45b975a
-change-id: 20250615-vfs-docs-ba02ab2c914f
-
-Best regards,
+ static struct kmem_cache *proc_inode_cachep __ro_after_init;
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index cc9d74a06ff0..5358327ee640 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -915,7 +915,6 @@ static int sysctl_is_seen(struct ctl_table_header *p)
+ static int proc_sys_compare(const struct dentry *dentry,
+ 		unsigned int len, const char *str, const struct qstr *name)
+ {
+-	struct ctl_table_header *head;
+ 	struct inode *inode;
+ 
+ 	/* Although proc doesn't have negative dentries, rcu-walk means
+@@ -928,8 +927,7 @@ static int proc_sys_compare(const struct dentry *dentry,
+ 		return 1;
+ 	if (memcmp(name->name, str, len))
+ 		return 1;
+-	head = rcu_dereference(PROC_I(inode)->sysctl);
+-	return !head || !sysctl_is_seen(head);
++	return !sysctl_is_seen(PROC_I(inode)->sysctl);
+ }
+ 
+ static const struct dentry_operations proc_sys_dentry_operations = {
 -- 
-Charalampos Mitrodimas <charmitro@posteo.net>
+2.49.0
 
 
