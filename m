@@ -1,169 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-51813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC136ADBB2C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 22:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F49ADBB3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 22:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2046B3AFF18
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 20:28:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE423B3E5A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 20:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25AC28A3F5;
-	Mon, 16 Jun 2025 20:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8088E2116EE;
+	Mon, 16 Jun 2025 20:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XSnCmY0M"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GdNnEmI6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01753188734;
-	Mon, 16 Jun 2025 20:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AF2207A0C;
+	Mon, 16 Jun 2025 20:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750105686; cv=none; b=bR6TZd1PqGdIHQII0iFySlpa8+ulmnI4PBsGqOaoOOjEVQTcDzeEIPQA66c11di+oN3HDd3YlBQNM2moojkV+V8/QmtsffD+hZDY+Kdvi3C7TcKjftI8PJvL5rcGS1k/Akt9V8tOexf2Be1c/kxvXun7gjbcHwR0xt8MV9A1d2U=
+	t=1750105840; cv=none; b=ucP5E70R0U3Sp/DQo9t0KHHVTZOO29IYW8HhY9KhjhUxrkfYUOdG2x6OY7qsMtZEND/zmhktfDivDmI0jbCwjVv1a/oVZRMeIeO7fVUJY4c7LuzVkNGWpHRvIU6maAmUSPGW5hqQ7gd8uF/SKafYUk+77Jupak1rv45Skq5mrPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750105686; c=relaxed/simple;
-	bh=R3wRxKwlAAHBbCsEPOWuhFiFhnm04q3MM+rzfa29QTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=egq0YhU3aMjVAB010tmsIxNChCPSzEmsPyJt1s2/PdWj30gdgMcba9n1g/t8HQWjUt0xe6oJov4YsaFiQX62jAPf5+ugzQmvdgQ/6WgwpXCAtn0cfCfjnKXbOITnEsuhvhVay0n1H7RnV8wxMTZcCaaYVCu8UiWvoaL8qliXrjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XSnCmY0M; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rMTsK0YsjlB18wsT75a6evHrM3XMSVJTrFI3gzXouMw=; b=XSnCmY0Ml7NLCrMRP4OfNwKCxm
-	t3knyrRU4umUwqGsAQ78VDJwhklMHyppjzgkgSiDjEr1eDLbkdmMI1Ud09tK10NOTGSkVr9OAVdA5
-	yeDW00x8GaS/9hTn/5iTIiI7ZEmOX2IYVaYsUKHT/a7Sh9XTAvxkYrLcfI6adjZOgVZ/EQ8izXpRS
-	N7CyfmoYNKAXSZWjXkcw7dH2WIhiyXqdB2rcIWxw4KPMz9e5BecjG1NA5nrYsPuYwy5tj/ShXnUjZ
-	Hx7i1JazW+vFcm5JpzfYFwz2+TREcWXzGJRoblKfrG12x8d/ZXuZZBMy93UQ4ahuLIE/06ESgJ7x2
-	dKaQyh9w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uRGPu-0000000GKxl-3X50;
-	Mon, 16 Jun 2025 20:26:54 +0000
-Date: Mon, 16 Jun 2025 21:26:54 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Tigran A . Aivazian" <aivazian.tigran@gmail.com>,
-	Kees Cook <kees@kernel.org>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>,
-	coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>,
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>, Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Bob Copeland <me@bobcopeland.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <jth@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-	linux-aio@kvack.org, linux-unionfs@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, linux-mm@kvack.org,
-	linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
-	jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-	ocfs2-devel@lists.linux.dev,
-	linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-	linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH 04/10] fs/dax: make it possible to check dev dax support
- without a VMA
-Message-ID: <aFB-Do9FE6H9SsGY@casper.infradead.org>
-References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
- <b09de1e8544384074165d92d048e80058d971286.1750099179.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1750105840; c=relaxed/simple;
+	bh=hamgTHtQphfJLg+71cqSsH6LRWS1AgeHRNqRdZHuBZY=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=mA+1mS5bOXftVjqqC/uRe+0FeeYVYgOOfARDzlRjtVtj7HrrFi1DfGxh91mQttsqsepS207IXV8HNtgW3UFQhYgX/P5iHRKlzK/BGH7ifmI1BFqkf18yHTIC6gKkgJo5b7nHrg3CwxbQD5nwyeVq4Zh1UcPSra1uxgNW4dQzak8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GdNnEmI6; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55GErUol009585;
+	Mon, 16 Jun 2025 20:30:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=GNzNeE
+	Bm+3DzC4Zr9XQJpngwrFW2dVlrFN3SOymuvLU=; b=GdNnEmI6smwbrBlQELGdK9
+	HFDgvBvtudUFiz+42H639vtCEnnjQy8k/hBnRMe87jezx3olvu/lbW2Iz5XkdHKN
+	FA7+Tt2OaITFj8GhJY37eSbPvwvn42lIAeZtBlg4agpycXyKAkpqPlJvM11pYSKR
+	y9m5TMLbata7pBeV6EHfSQPvQy8S9CL0NxRCY7C5F+SZI2wm1sBU/7gCztoxYyuL
+	146tlJF8KyT29fWURqJRE6d7hCB97J7Bc247uBGwJm6mNwl4KdKmFSIrY5e3jyBH
+	qixBNd+1bRhM8gg+PvKMphw3wro0MO4sfUUtnTl+Jy91QchympJM75RwbUzgyqJA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4790r1usq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 20:30:09 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55GH1hIe005490;
+	Mon, 16 Jun 2025 20:30:08 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 479mwkytv2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 20:30:08 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55GKU7T266716102
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Jun 2025 20:30:07 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 96C4B5805A;
+	Mon, 16 Jun 2025 20:30:07 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D9F0B58054;
+	Mon, 16 Jun 2025 20:30:05 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.36.235])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Jun 2025 20:30:05 +0000 (GMT)
+Message-ID: <0e70574bfae43ce939d67e89c858f303ae7ac204.camel@linux.ibm.com>
+Subject: Re: [RFC] Keyrings: How to make them more useful
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        Jarkko
+ Sakkinen <jarkko@kernel.org>, Steve French <sfrench@samba.org>,
+        Chuck Lever
+ <chuck.lever@oracle.com>
+Cc: Paulo Alcantara <pc@manguebit.org>,
+        Herbert Xu
+ <herbert@gondor.apana.org.au>,
+        Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <462886.1749731810@warthog.procyon.org.uk>
+References: <462886.1749731810@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 16 Jun 2025 16:30:05 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b09de1e8544384074165d92d048e80058d971286.1750099179.git.lorenzo.stoakes@oracle.com>
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: wXse2RC_vQ4JRRGq0lWq-Sdm9JDEdfIn
+X-Proofpoint-ORIG-GUID: wXse2RC_vQ4JRRGq0lWq-Sdm9JDEdfIn
+X-Authority-Analysis: v=2.4 cv=AqTu3P9P c=1 sm=1 tr=0 ts=68507ed1 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=JoNQkPbLKCQ6XZtbux0A:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDE0MCBTYWx0ZWRfX8/cI4/OlrSm1 rTcMmcQSkT8bXAKuvP126Suxa2KoCUma8s02UNrUz3zZlyCMQ6ud9aqKLBUY503LhgsjNJmWAb5 saB9BvFDbbZ73yFlY7B6+2MC/ALyGCllRpPkp2jgLPySBegRPYR4oVrkiQPQk74b6wLB2keWBjM
+ +UXEUgejZPd+ToJvVgJ28UPYc80VOc2FiXWsLECTwVuKjwQXTQr6U3UXN9IkUEaZB+zykhiLQyh hm+oRUPk/3K9ribP3YyAFjxcFAjSigrznSnSl1a3Toov0xOPCfoiT7z2LYuhefkVEF/yoRNiqe5 jlGYDjbU+a6jVhOKqrons1sJzGL8iTcb4HJ+dWayPoPUmxF3aahpIW1+P3bgA49mM8iaU6J5Rt4
+ mLmZwuf4boQZ/HmZV4rcPzdo3dYbg8rnnFhF5miWYZu9nXKmE4jQwwRgyxM3XK5xDiuuLpgr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_10,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 suspectscore=0 adultscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=768 mlxscore=0 spamscore=0
+ bulkscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506160140
 
-On Mon, Jun 16, 2025 at 08:33:23PM +0100, Lorenzo Stoakes wrote:
->  fs/ext4/file.c      |  2 +-
->  fs/xfs/xfs_file.c   |  3 ++-
+On Thu, 2025-06-12 at 13:36 +0100, David Howells wrote:
 
-Both of these already have the inode from the file ...
+[ ...]
 
-> +static inline bool daxdev_mapping_supported(vm_flags_t vm_flags,
-> +					    struct file *file,
-> +					    struct dax_device *dax_dev)
->  {
-> -	if (!(vma->vm_flags & VM_SYNC))
-> +	if (!(vm_flags & VM_SYNC))
->  		return true;
-> -	if (!IS_DAX(file_inode(vma->vm_file)))
-> +	if (!IS_DAX(file_inode(file)))
->  		return false;
->  	return dax_synchronous(dax_dev);
+>  (4) I think the keyring ACLs idea need to be revived.  We have a whole b=
+unch
+>      of different keyrings, each with a specific 'domain' of usage for th=
+e
+>      keys contained therein for checking signatures on things.  Can we re=
+duce
+>      this to one keyring and use ACLs to declare the specific purposes fo=
+r
+>      which a key may be used or the specific tasks that may use it?  Use
+>      special subject IDs (ie. not simply UIDs/GIDs) to mark this.
 
-... and the only thing this function uses from the file is the inode.
-So maybe pass in the inode rather than the file?
+David, which keyrings are you referring to?  What do you mean by 'domain' o=
+f
+usage?  At what level of granularity are you thinking of?  This needs to be
+describe in more detail.
 
+thanks,
+
+Mimi
 
