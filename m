@@ -1,71 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-51714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F467ADA9D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 09:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C8EADAA24
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 10:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 218AE18871E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 07:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939033A82D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 08:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3811202961;
-	Mon, 16 Jun 2025 07:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047FC2144A3;
+	Mon, 16 Jun 2025 07:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bMTh2iGj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOVcITC3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CE518E025;
-	Mon, 16 Jun 2025 07:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7AA1F0E2F;
+	Mon, 16 Jun 2025 07:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750060101; cv=none; b=AS9NAZq9TlGYjvPZSMsX2jST+rN2KTFjXjhGf5kUFyQLPCz1x5aIwHzKmotXhnDohyfbFA4IUWj1pWsPPDvvGaEs2V5OycgcbGWRsTEp9tC9rhenWnl04lJXgg8g9VCUFZ1/KBfttEeN9gqAkTMCnPk6JsT8i54Ai9tYkiG321A=
+	t=1750060791; cv=none; b=iGD6RQyuN02hvoGXX6SufjX3BbcZDGAWUeMExCPDWM5IzJdO8OdaqSLPupsO5K+wyXU1zMOKPj0FI6BkXHF9UpJpyChTnqjAWQunMXx55zWsiujfjZah4Ol9dOpDzIFvsjn46/uRvaG9iu9/VksSoneG8/GsIIptygCKVEwJWLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750060101; c=relaxed/simple;
-	bh=+iIPmuYIR6F5LD+a0iF6PdJq5ltgbL412UY54MPIgwU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WCHTV0YOhCLN6m3fgCdS5C4yycleIz5DsmVNmL9oMmvR/8bpoW2BLWBjNptNrhQoUjU8KSLLVhunFk1QY8wqXya4azZnKdSz0/LUEyw3rFC2xCVlC4a6vF+EDSCjGlutZEDvxdXG/Av8z0RbPqFPWCeux0GwR8iz2QG5GhVXOjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bMTh2iGj; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:To:
-	Content-Type; bh=+iIPmuYIR6F5LD+a0iF6PdJq5ltgbL412UY54MPIgwU=;
-	b=bMTh2iGjANzqA0fkenXxijxFfsuq5hBLU1dpaT+kTeuFL1+ulIVofkiZUY3EnO
-	Y007zeOvFFxQ12wHOTN3I0/TazA3bjwADonDaQbZ3FwyLeU22khDK25PhTgm+I/y
-	0wg1wc21PXlETkky1e01YoGqrfubed6W+NVfVsyTiMVL4=
-Received: from [10.42.12.6] (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDXLrMxzE9okqQRIw--.24480S2;
-	Mon, 16 Jun 2025 15:48:01 +0800 (CST)
-Message-ID: <41095783-1f43-488b-880b-c0c1245d4640@163.com>
-Date: Mon, 16 Jun 2025 15:48:01 +0800
+	s=arc-20240116; t=1750060791; c=relaxed/simple;
+	bh=M3kirMB7I0PslYpcYITprtiGrb3XS15fDjXTKOawV4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hlMkKOkQPDw54d+Kc0VYmFkWlCa9VB6fgzV5GXa/LdlfIRv3iLiMneUEfdrwh1AScmwTdogPFcYaNDiK/v7cpy+m8Mw35s4fdWkpz85LuVEivrMoRIMyhGwP0g1OwvqlCV7w4NUraOQDaamtMY/AEa0kTFEhgoChrzqQvpBKmH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOVcITC3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9FBCC4CEEA;
+	Mon, 16 Jun 2025 07:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750060790;
+	bh=M3kirMB7I0PslYpcYITprtiGrb3XS15fDjXTKOawV4M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QOVcITC3IPfmG2wgtHqZpSiFBYi6jqGqSOzNeoH9vfkSmo5kvKx4FoP3Bt3TVo4f3
+	 pBjVjs51cBw3wFGszj9ozgzBgx5oItB89616pE1op+KOHFWEDy2OlSZCfoBLkO6oQV
+	 TCQjxj1GqPswCC5RkYxuy2cPFOgHh9VDhN7IrZVrF3HpCmPhwm4gmAgVkxbrgp7p6G
+	 qWLZEqHvWmFGk4+Ik0bDFYK1ifXEMh/6sE2ebTl6uen5NcERNT3kda4vZgniVCoTde
+	 k4L+NK07M9i/Br2ELNClsTfrtNIsHoU8uAtBGH7oc7TBjU8HXmdTGM335V60Uzxq4E
+	 iv2tdKZvumacg==
+From: Christian Brauner <brauner@kernel.org>
+To: Luis Henriques <luis@igalia.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] fs: drop assert in file_seek_cur_needs_f_lock
+Date: Mon, 16 Jun 2025 09:59:37 +0200
+Message-ID: <20250616-entflammen-braten-00f78640ddce@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250613101111.17716-1-luis@igalia.com>
+References: <CAGudoHGfa28YwprFpTOd6JnuQ7KAP=j36et=u5VrEhTek0HFtQ@mail.gmail.com> <20250613101111.17716-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iomap: Reduce some calculations in
- iomap_adjust_read_range()
-From: Chi Zhiling <chizhiling@163.com>
-To: brauner@kernel.org, djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>
-References: <20250616054722.142310-1-chizhiling@163.com>
-Content-Language: en-US
-In-Reply-To: <20250616054722.142310-1-chizhiling@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDXLrMxzE9okqQRIw--.24480S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RNL05UUUUU
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBgA9unWhPxTW0uwAAsk
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1100; i=brauner@kernel.org; h=from:subject:message-id; bh=M3kirMB7I0PslYpcYITprtiGrb3XS15fDjXTKOawV4M=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT4n/t4cvXZUreskAUSR3c9z7cxDPjidU2z+qPJ3J+P1 E7vUPlxs6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiD7cw/Hf0dbJfwle6psXq 1s7eU/X9B3P8ns2zDZ1982vpjt+/21cz/I+ZPJGTve5ycczGaRIX30fvsPjiO6PElMl7s295bmH oRAYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 2025/6/16 13:47, Chi Zhiling wrote:
-> From: Chi Zhiling <chizhiling@kylinos.cn>
+On Fri, 13 Jun 2025 11:11:11 +0100, Luis Henriques wrote:
+> The assert in function file_seek_cur_needs_f_lock() can be triggered very
+> easily because there are many users of vfs_llseek() (such as overlayfs)
+> that do their custom locking around llseek instead of relying on
+> fdget_pos(). Just drop the overzealous assertion.
+> 
+> 
 
-I just noticed this patch has an issue, please ignore it.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs: drop assert in file_seek_cur_needs_f_lock
+      https://git.kernel.org/vfs/vfs/c/dd2d6b7f6f51
 
