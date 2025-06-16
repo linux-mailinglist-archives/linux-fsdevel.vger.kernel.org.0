@@ -1,95 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-51715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C8EADAA24
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 10:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 915FFADAA3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 10:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939033A82D2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 08:00:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310313A480F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 08:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047FC2144A3;
-	Mon, 16 Jun 2025 07:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B0420C497;
+	Mon, 16 Jun 2025 08:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOVcITC3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exIiur6r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7AA1F0E2F;
-	Mon, 16 Jun 2025 07:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E761DF271;
+	Mon, 16 Jun 2025 08:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750060791; cv=none; b=iGD6RQyuN02hvoGXX6SufjX3BbcZDGAWUeMExCPDWM5IzJdO8OdaqSLPupsO5K+wyXU1zMOKPj0FI6BkXHF9UpJpyChTnqjAWQunMXx55zWsiujfjZah4Ol9dOpDzIFvsjn46/uRvaG9iu9/VksSoneG8/GsIIptygCKVEwJWLw=
+	t=1750061207; cv=none; b=TLzMFMZYsK9a7ftIvdybTNFKPhNv2GHPTO937buSVolq2LLbqf27+VufaUJqTfAHAtlLsMjDTFCUfrrHjihlO1WoHCs5ots7FX4+R/R3Ez3qKEuCNhnT3AGjaZEpmFKK0p6kIr3Psu+rTWZooNYApwICvaqIqBZXJf6ypVWnxm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750060791; c=relaxed/simple;
-	bh=M3kirMB7I0PslYpcYITprtiGrb3XS15fDjXTKOawV4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hlMkKOkQPDw54d+Kc0VYmFkWlCa9VB6fgzV5GXa/LdlfIRv3iLiMneUEfdrwh1AScmwTdogPFcYaNDiK/v7cpy+m8Mw35s4fdWkpz85LuVEivrMoRIMyhGwP0g1OwvqlCV7w4NUraOQDaamtMY/AEa0kTFEhgoChrzqQvpBKmH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOVcITC3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9FBCC4CEEA;
-	Mon, 16 Jun 2025 07:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750060790;
-	bh=M3kirMB7I0PslYpcYITprtiGrb3XS15fDjXTKOawV4M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QOVcITC3IPfmG2wgtHqZpSiFBYi6jqGqSOzNeoH9vfkSmo5kvKx4FoP3Bt3TVo4f3
-	 pBjVjs51cBw3wFGszj9ozgzBgx5oItB89616pE1op+KOHFWEDy2OlSZCfoBLkO6oQV
-	 TCQjxj1GqPswCC5RkYxuy2cPFOgHh9VDhN7IrZVrF3HpCmPhwm4gmAgVkxbrgp7p6G
-	 qWLZEqHvWmFGk4+Ik0bDFYK1ifXEMh/6sE2ebTl6uen5NcERNT3kda4vZgniVCoTde
-	 k4L+NK07M9i/Br2ELNClsTfrtNIsHoU8uAtBGH7oc7TBjU8HXmdTGM335V60Uzxq4E
-	 iv2tdKZvumacg==
-From: Christian Brauner <brauner@kernel.org>
-To: Luis Henriques <luis@igalia.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] fs: drop assert in file_seek_cur_needs_f_lock
-Date: Mon, 16 Jun 2025 09:59:37 +0200
-Message-ID: <20250616-entflammen-braten-00f78640ddce@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250613101111.17716-1-luis@igalia.com>
-References: <CAGudoHGfa28YwprFpTOd6JnuQ7KAP=j36et=u5VrEhTek0HFtQ@mail.gmail.com> <20250613101111.17716-1-luis@igalia.com>
+	s=arc-20240116; t=1750061207; c=relaxed/simple;
+	bh=9b3yr9/fU38j4jGwczwOwRj64uUfu0bNpRnOd0HP2Go=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QtXoKiK1Hs4/CHUCXueH23jFjvl0qLkZzUT8KPQknxnjDlBG5J0xd1Tz/rBWVeBcA9zez/sMHdmCrTSFZIUUXv7qZ6Mv8j4pAUQ/pCpF8ldV+WDBfqToetT+ktiptCq2te/yEZBZ62rCCL92nP60WILYz12ojI9z6JprlKy6/7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exIiur6r; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad883afdf0cso822181366b.0;
+        Mon, 16 Jun 2025 01:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750061204; x=1750666004; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9b3yr9/fU38j4jGwczwOwRj64uUfu0bNpRnOd0HP2Go=;
+        b=exIiur6rdgKNqgjWqqG32sC/H2UTKEq+jKkzaL1vxEsvK9UHtbjuN87jja+qdr26SD
+         jQHQFWzC6uEEIGIEg7KPzw5ocudtEKCzZao2gBm4NiW3wNKmFBlia57r4cWqWdDUan9g
+         nYTd40u6uk4JMCsRctdYdOt4dOTDh1L542PCkbRjo7YZH6gf7kTH4P+MWNE7zWi1zNXa
+         Hb/+gAwLgbbDaHlFcPJgw4oXOT4wjaOT6lfi5GsBsuztSg8eRHb3ZTxoZ/h2d7bV4dqX
+         03uSV4/9jiml1wUeEsX77nb4rPjpiZyNWVbzBACMRNmmfKuk7ZWU2OjU6N5txoIWiIij
+         lh6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750061204; x=1750666004;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9b3yr9/fU38j4jGwczwOwRj64uUfu0bNpRnOd0HP2Go=;
+        b=anWuiKs/Fzu38Rv0QCTiZtIAyR8z2rloHEyd2J+cVT8sW98V5TlXZ9RW5uXrJrB2zs
+         y4TesoS/d3iohBCwdEHPRYHnGgi9rOnd0w8AuDZ/hZpzi+vd+bY8ilUo5zuwTJsp7NF+
+         bHXU3w1cmZYfL5GRp/S7cv6/2+kJueqPpsnNHEoGp8kLMeS1hkY5RDADdDs/SgkQQS7H
+         brZ56mrYmUv1hiinMQMNHjG9HfNQ06dz6W0eNiru6h3eCE7YyKUJFOcPGtSDWysbGKQi
+         Urf7gyebph1BNwkUUU9A4J9dZjx78DblH45BUbQmmwmS58u99aVo5nHZLq7p0ynjrz79
+         JhjA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1gHAG16EFxekpOzyV3e/DjmPSrmqP+jLURjQ78uT/M+ecAAWRwjh+pP5gqtbsohGX2WLdeIgdzUU7VSKt2g==@vger.kernel.org, AJvYcCWB4h8W2MdZmvCDFe9kB7fNSo/d5cO2KoRlWDUGKxmOz50PfzVefJB3X0PIgTtrmkCMStCMfmWJgFH6AUng@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzJpaYVLDyo4hN3rC5JoGDIubygkExt9/rwWihTUtDuGHpj3eG
+	BtSIx2ye6f9V4XRoE43oBiWzWFUAAkSqfEoSmX6uL7cvT1Xb1SFTNfWZMXheu27Om+QzZ3fQbR5
+	meP0BoTjG9IZpYGVAiObWxrJBafnSHg4=
+X-Gm-Gg: ASbGncuGNemK3btLeLAhYk1TbKDfQ3GQfLUdVjugmH3j5uAwhRxn0gXNlaa0afCoVDW
+	iqtczfDmN7FAb5aYYVn5cdXAQ+bNabc3zqo2zWzv7SMuk0hTvfXGfOo0V0C5ERCbYa6lUKzAdSV
+	K/qLLc/yLWB76NPwOBvr652fNZ40gnMyQGHPXzfhgk7X8=
+X-Google-Smtp-Source: AGHT+IGHxUceeoxNpJtKKM9dmzRSszHDyZ3AAXPhNVbpdJRhBeeIWJNS7i4KLtneasqEt+iuVM5Ser1gNHJlJ2E6evI=
+X-Received: by 2002:a17:907:dab:b0:ad8:9428:6a3c with SMTP id
+ a640c23a62f3a-adfad31ccc4mr795455266b.11.1750061203209; Mon, 16 Jun 2025
+ 01:06:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1100; i=brauner@kernel.org; h=from:subject:message-id; bh=M3kirMB7I0PslYpcYITprtiGrb3XS15fDjXTKOawV4M=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT4n/t4cvXZUreskAUSR3c9z7cxDPjidU2z+qPJ3J+P1 E7vUPlxs6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiD7cw/Hf0dbJfwle6psXq 1s7eU/X9B3P8ns2zDZ1982vpjt+/21cz/I+ZPJGTve5ycczGaRIX30fvsPjiO6PElMl7s295bmH oRAYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250602171702.1941891-1-amir73il@gmail.com> <oxmvu3v6a3r4ca26b4dhsx45vuulltbke742zna3rrinxc7qxb@kinu65dlrv3f>
+In-Reply-To: <oxmvu3v6a3r4ca26b4dhsx45vuulltbke742zna3rrinxc7qxb@kinu65dlrv3f>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 16 Jun 2025 10:06:32 +0200
+X-Gm-Features: AX0GCFuXVPh2CUexzoY1r3neBevRJzG35z8EW0jz0GKdX06N8brw-rPOsVDBNyo
+Message-ID: <CAOQ4uxicRiha+EV+Fv9iAbWqBJzqarZhCa3OjuTr93NpT+wW-Q@mail.gmail.com>
+Subject: Re: [PATCH v3] ovl: support layers on case-folding capable filesystems
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Jun 2025 11:11:11 +0100, Luis Henriques wrote:
-> The assert in function file_seek_cur_needs_f_lock() can be triggered very
-> easily because there are many users of vfs_llseek() (such as overlayfs)
-> that do their custom locking around llseek instead of relying on
-> fdget_pos(). Just drop the overzealous assertion.
-> 
-> 
+On Sun, Jun 15, 2025 at 9:20=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> On Mon, Jun 02, 2025 at 07:17:02PM +0200, Amir Goldstein wrote:
+> > Case folding is often applied to subtrees and not on an entire
+> > filesystem.
+> >
+> > Disallowing layers from filesystems that support case folding is over
+> > limiting.
+> >
+> > Replace the rule that case-folding capable are not allowed as layers
+> > with a rule that case folded directories are not allowed in a merged
+> > directory stack.
+> >
+> > Should case folding be enabled on an underlying directory while
+> > overlayfs is mounted the outcome is generally undefined.
+> >
+> > Specifically in ovl_lookup(), we check the base underlying directory
+> > and fail with -ESTALE and write a warning to kmsg if an underlying
+> > directory case folding is enabled.
+> >
+> > Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > Link: https://lore.kernel.org/linux-fsdevel/20250520051600.1903319-1-ke=
+nt.overstreet@linux.dev/
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >
+> > Miklos,
+> >
+> > This is my solution to Kent's request to allow overlayfs mount on
+> > bcachefs subtrees that do not have casefolding enabled, while other
+> > subtrees do have casefolding enabled.
+> >
+> > I have written a test to cover the change of behavior [1].
+> > This test does not run on old kernel's where the mount always fails
+> > with casefold capable layers.
+> >
+> > Let me know what you think.
+> >
+> > Kent,
+> >
+> > I have tested this on ext4.
+> > Please test on bcachefs.
+>
+> Where are we at with getting this in? I've got users who keep asking, so
+> hoping we can get it backported to 6.15
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+I'm planning to queue this for 6.17, but hoping to get an ACK from Miklos f=
+irst.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fs: drop assert in file_seek_cur_needs_f_lock
-      https://git.kernel.org/vfs/vfs/c/dd2d6b7f6f51
+Thanks,
+Amir.
 
