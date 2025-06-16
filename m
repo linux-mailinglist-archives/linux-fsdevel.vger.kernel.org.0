@@ -1,106 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-51795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BB5ADB913
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 20:49:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F02B8ADB961
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 21:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81FE73A4B3C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 18:49:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F56217336C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 19:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959EA289E04;
-	Mon, 16 Jun 2025 18:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ABB289E12;
+	Mon, 16 Jun 2025 19:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxLFR8cQ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="rp9bBVFk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A94021D585;
-	Mon, 16 Jun 2025 18:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6C01C7017
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jun 2025 19:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750099783; cv=none; b=uBOAGGfq6IsqCdIZXUII2GgpFAs4u1Dub+2xTYjnD3SKOePGsbrars+w2fCcAFiKXexoyWhQwdQmLSMunhM+NwwlBSE9A682VkHso7ic7KQARcOE7P79xK9HETzf1OzeUnbuXQvw4lg732snTdS6Y27sXNm6zZ2hsg07v6k3r+k=
+	t=1750101304; cv=none; b=jhjFwNTHPNm13yoodb1CYVSXKEUI2rmtgtA3+NV3IZcXPIsvsj+w8coQxXHXDvxOs+7zkewuL9kN0Yhv50Q16Cf3uyrRczRquRUokDrCQ+Nh4fSPI0Eoizkvb7P/kp8uEZ8OjJfFJWtzrmCB6Qpe/V1uXwWcRfDiQL/vaFwCWU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750099783; c=relaxed/simple;
-	bh=9qQ61Kp9umUHi4GxqExw5FJpuvThBeB78u+krMUOoCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bg5ahCRL+O2/2BNTQeuUdSZPaDhGF6fQV3hJSxvxQ3H9EYHEDNosdJgWE+VSIoyAi5OoOgK8Raxj0JHXRNls3eiJre0FEFnjxszDZvuUMB/Yi9NI33ONxfi+G8319c/C99qh943RZYcuTwzgaQzv9eHGCXb2b9dGmEZUO7mBdfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxLFR8cQ; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a44b0ed780so71726051cf.3;
-        Mon, 16 Jun 2025 11:49:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750099780; x=1750704580; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZbNgm74YKelcUXDbOCv5OUWQbQ2/2H3RfdKt5p5VlZA=;
-        b=ZxLFR8cQwgmRsWpY0v6qB7JRsTNDSDVBDgwI4+Tsaf/WsDD/lbhFx0MYJfgsAaBXns
-         LUDUMLXDveGI9eq1p5o+CiF9gVx0/g6kcyXcpBtMqtHFU4+ez1ya+TZEYibWoUMBAl00
-         cJAvLD1Fb3ao/TzjkUTc7DHydIbh76vHm2GTMfLcHAqjmV1m+IzXWvudsBdtSvhlyaxD
-         Dk2/5n5xoL7L09moRTN/cjbFdQ3x/gRJUmaMSLevAWZ4VeIxJ+gdFjHzjf6RPM1AaQyo
-         bJmaN1B8r7p4AxMKKuxIcsf34VR8RNRSK0HwdlzZ5vp02KaKsAPN8KYrhJLlvaIHRISq
-         haUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750099780; x=1750704580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZbNgm74YKelcUXDbOCv5OUWQbQ2/2H3RfdKt5p5VlZA=;
-        b=uG5wmybjO1DfQx042eNviRHscxAQb4rFklIvK73RPaVNTUOrTh6BAOVfHyGMHkCAfy
-         D5GD7uQslvmy1GP6k2urtCOgaOyv5wHzSLGfavO4t4TxcoZ59RfniCM4JhI/tOqJT356
-         Zzq3gAd3C2bfnXd4zRf6HBxeq5OQmL6FL1l7hWFl66Lt7im0BJPEnKHnqzMq4R91oYMO
-         9OLEi1lTPAQsCgeH8GuO7x9TDssgx6AmYeZwSv/p77jXtJZpI6plgqx0xwI90lijVdoP
-         hm1F3cTDp253B6SEyLIMGis6s1G6Sh5W820l88e6Y/TIPeZAEQvJQbtH9y99+SoE/qXO
-         GtbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNEJIJ9R88CpcpXRIxMOmF5LAvQruUqTcQqXT3OPsgALYRTPr0/nOgzTvDPWR5W3tRAbQnOD0dyjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH1d7qrimwO4ybTAPaS49GZMRlJ0aJYOIbDxcKw5U6QI1rjzv1
-	/BiQS0aGCuhPxJEo2qqkXwOrDan0EUUGYisK2pyQ4y2V6y1+elmdaTRXQIMgLpnhBVvC5p1FWwA
-	XQMK/I6z1rJgV/fskHDCPQcfohRw9Jc+wIIsa
-X-Gm-Gg: ASbGncsn9b42lPphTPEXgfi7ZDdX+gFxJgBoaNztB+IOvsV/ZGlNuNOK2Qv5iIGfCBW
-	jaaGo7pos4zpCwdz8y2RpBozLYvyVggNHQvXrx1gwvGgekDLZwUUo2aNryEPknIFOovr71Z96ZF
-	GBlvAG3ULZyDElPPWNgG/m0evbvkCgrlIMvawXBW+V0ijdJeQdlxpkzReUKo4=
-X-Google-Smtp-Source: AGHT+IGLpiMCmBeTSbFoQsIrZlhUdYB0kqAULHCAu+w8Mgtog6QDPt8QCC8hl4dZyD8ugor7d/G7sgZ9V4+SDzgTRtQ=
-X-Received: by 2002:ac8:58c8:0:b0:4a5:9b9c:2d9f with SMTP id
- d75a77b69052e-4a73c4fce3dmr182509771cf.2.1750099780359; Mon, 16 Jun 2025
- 11:49:40 -0700 (PDT)
+	s=arc-20240116; t=1750101304; c=relaxed/simple;
+	bh=WGaSf2nSrw2JHNRfZ2KrHoixp/DRMjDKUkm9YVBGvzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NIRQZ/rZh37XcXgg+QQz3ifIb20sxmqYCipl1OpDAfXKwIRUoylyWa9M7Vx4XonGFswHB5jnaASxgSWPVrFFTAx8uST5XBG2mf8u32TWVUJg2DfBrEkUDwxThJMegiaAOi7YeZ8yIpV587aiKywwVOuaLLOTgBLtERSkWcSU+m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=rp9bBVFk; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WXIrt0q0/ERiWgghth1Qv5tLYw5nS/oaLb8Ql2r9BuQ=; b=rp9bBVFk+O3w5m2/OhMY9/SHLi
+	2S5q+Z1XkfF8xuoMaeAsu5JgE5aFX2x6ImghgMSKLLxub2E4SbGBm+ny4WOqoyt9QTQ3Fap+c95Sy
+	E5QJ1EHYOVXJWvoYUu/QFmvP3EABhKZUMBAhczc6gP6nEpfcnHSTNq1Cg00YxJYxp0jkRWf71ewSY
+	EGB/SFGe1rm0Bj4wjk82WtAyRmTL87LzoHXiRZMU56tJT53ZcwU90pPWoGrjcxd8RGrwNU+y2ZzZv
+	rwFI1+q7g7Pq8O4DNN5AqnKX36+/VqqqTpu9BUYg8c+dUCj/baX/6WtVzSgCyxWg0W5bGIhV7HmOx
+	HCaRB4jA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uRFII-00000001aGm-2PKo;
+	Mon, 16 Jun 2025 19:14:58 +0000
+Date: Mon, 16 Jun 2025 20:14:58 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, neil@brown.name,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 3/8] spufs: switch to locked_recursive_removal()
+Message-ID: <20250616191458.GH1880847@ZenIV>
+References: <20250614060050.GB1880847@ZenIV>
+ <20250614060230.487463-1-viro@zeniv.linux.org.uk>
+ <20250614060230.487463-3-viro@zeniv.linux.org.uk>
+ <20250616-unsanft-gegolten-725b6c12e6c8@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613214642.2903225-1-joannelkoong@gmail.com>
- <20250613214642.2903225-10-joannelkoong@gmail.com> <aFATg58omJ2405xC@infradead.org>
-In-Reply-To: <aFATg58omJ2405xC@infradead.org>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 16 Jun 2025 11:49:29 -0700
-X-Gm-Features: AX0GCFvBUNWuSpPPwssnIdbnfMc4X1HhAR1N3Dkoa9SeH6VgFYK4K-hGJ-eEvmQ
-Message-ID: <CAJnrk1a934dLVLjUo2hy1jTo4B6xcj4ODMRb_YO8aM7CfquUfg@mail.gmail.com>
-Subject: Re: [PATCH v2 09/16] iomap: change 'count' to 'async_writeback'
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, djwong@kernel.org, anuj1072538@gmail.com, 
-	miklos@szeredi.hu, brauner@kernel.org, linux-xfs@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616-unsanft-gegolten-725b6c12e6c8@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Jun 16, 2025 at 5:52=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Fri, Jun 13, 2025 at 02:46:34PM -0700, Joanne Koong wrote:
-> > Rename "count" to "async_writeback" to better reflect its function and
-> > since it is used as a boolean, change its type from unsigned to bool.
->
-> Not sure async_writeback is really the right name here, the way it is
-> used is just that there is any writeback going on.  Which generally
-> is asynchronous as otherwise performance would suck, but the important
-> bit is that the responsibility for finishing the folio writeback shifted
-> to the caller.
+On Mon, Jun 16, 2025 at 04:40:14PM +0200, Christian Brauner wrote:
+> On Sat, Jun 14, 2025 at 07:02:25AM +0100, Al Viro wrote:
+> > ... and fix an old deadlock on spufs_mkdir() failures to populate
+> > subdirectory - spufs_rmdir() had always been taking lock on the
+> > victim, so doing it while the victim is locked is a bad idea.
+> > 
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > ---
+> 
+> Fwiw, I think simple_recursive_removal_locked() might be better.
+> It's longer and arguably uglier but it clearer communicates that its the
+> same helper as simple_recursive_removal() just with the assumption that
+> the caller already holds the lock.
 
-I like your name "wb_pending" a lot better.
+Not sure...  TBH, I'm somewhat tempted to rename simple_recursive_removal()
+to simple_remove()...
 
