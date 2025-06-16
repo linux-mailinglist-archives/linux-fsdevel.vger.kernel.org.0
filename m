@@ -1,72 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-51709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97ECADA7C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 07:40:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20622ADA7CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 07:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A62816B58B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 05:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4BBC16BC2C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 05:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971DC1D5AC6;
-	Mon, 16 Jun 2025 05:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4D91DBB13;
+	Mon, 16 Jun 2025 05:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WU/F4j/Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93AF17BA6;
-	Mon, 16 Jun 2025 05:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1578F2E11CF;
+	Mon, 16 Jun 2025 05:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750052441; cv=none; b=nBumbYhLWcu98Y7ExxtFhN3OL1URwxGVnhmDV+tO5+RsLWoI7LLXVGADh5ue3D52bHctt3iH+0yY74aBN6dz4MkSxSSwA52iT71RSmEkKADmaLeJ551WIDRM5KL+gIHeB7bbJNb7RAN6OBgmFQOetsW2hhJYAoPhBOtMb0dbYkQ=
+	t=1750052884; cv=none; b=RWJZTopeh34JuNxJmv1ToV2YVu6Xf8BNu22JFo3k080u52X/oJCnDjlPXtLXVDsMqCbEZF+y64pBNY5NnxPD85b76InkWaC5B32HFAff9a+ScB24LICrdRadltYunUeO8+BKWnuMV2zHi+QjaW+RGItYYV6qI0iXS4kIDqzm2EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750052441; c=relaxed/simple;
-	bh=zM9L3jCsYS9otA53EROIFxm91VKU6Dqzm/0PSoIh4Kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjUv0BHd6jCmMrjL+w4YA6TepB5qV805W7wDd9K7ykrtkCdE24emn3xEDhoyteF8goTK3sucnu94QKwlX5rEn0ArTEJXXGn5DSdhlSE12NnboG498PiLWh5WKed6pdbjswGUdjAnGEkqmSzOIOm3r9YICaqgQTOhRNgFWTdYE58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2157468BFE; Mon, 16 Jun 2025 07:40:35 +0200 (CEST)
-Date: Mon, 16 Jun 2025 07:40:34 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Pankaj Raghav <p.raghav@samsung.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, willy@infradead.org, x86@kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
-	gost.dev@samsung.com, kernel@pankajraghav.com, hch@lst.de
-Subject: Re: [PATCH 0/5] add STATIC_PMD_ZERO_PAGE config option
-Message-ID: <20250616054034.GA1559@lst.de>
-References: <20250612105100.59144-1-p.raghav@samsung.com>
+	s=arc-20240116; t=1750052884; c=relaxed/simple;
+	bh=R1R7XJL/dhzJf9/hmRHHVbhhwCBr0Ta41EznGtut0IQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KuA7BFICfbJUcbVJc+of/g2IUXzHxC2XGILy7uc6KXSjBvclNzMTrJ2Qv5SgYngLE6d0FdITnijxeGWTIvIkhTEojbrtZHRRpSA4Imgr9TBLDdM5Hvk982JHUafz5YbUD6WQ4bvbskYoe+Yv2Yxw3rTKd2UVJjp8RFN5OvMyMR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WU/F4j/Z; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Jk
+	/BDnEMpsNlCN3FFv58EfDt4wHUty9REFl4NR/+Vps=; b=WU/F4j/ZQzxlOsOOTQ
+	KWFObuTa5MDsw4q+mg9BpFm6xC2SvVyNNbbfcI7rHQlID/vWi5rUSz/W4Ezavxmm
+	jqGN8jaaowDZS1unCTLJcIoRPEjXqSO7vEKKG3CCjOB0DmKC6DBQ7Ixes7N73evO
+	wnvfUS0bwTEIOnyIqLo2CFH+Q=
+Received: from chi-Redmi-Book.. (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDXv+X5r09oXaT+IQ--.5361S2;
+	Mon, 16 Jun 2025 13:47:39 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: brauner@kernel.org,
+	djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH] iomap: Reduce some calculations in iomap_adjust_read_range()
+Date: Mon, 16 Jun 2025 13:47:22 +0800
+Message-ID: <20250616054722.142310-1-chizhiling@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612105100.59144-1-p.raghav@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXv+X5r09oXaT+IQ--.5361S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr1kKryxCr1xuFWxArW7XFb_yoW8Ar13pr
+	yvkFWqkr4DWry09F10kFySqr95Ka97Wr45CFyfW34xXFZ8JrnIgr97Ga1Y9FW0vFs7XFnF
+	vr1kKryUZF4UAr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UP73PUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiKRZmnWhE8HbdegACsL
 
-Just curious: why doesn't this series get rid of the iomap zero_page,
-which would be really low hanging fruit?
+From: Chi Zhiling <chizhiling@kylinos.cn>
+
+It's unnecessary to update the poff and plen in every loop, delay the
+calculations until return stage.
+
+Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+---
+ fs/iomap/buffered-io.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 3729391a18f3..0a1be45f7b96 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -233,7 +233,6 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 	loff_t orig_pos = *pos;
+ 	loff_t isize = i_size_read(inode);
+ 	unsigned block_bits = inode->i_blkbits;
+-	unsigned block_size = (1 << block_bits);
+ 	size_t poff = offset_in_folio(folio, *pos);
+ 	size_t plen = min_t(loff_t, folio_size(folio) - poff, length);
+ 	size_t orig_plen = plen;
+@@ -252,16 +251,12 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 		for (i = first; i <= last; i++) {
+ 			if (!ifs_block_is_uptodate(ifs, i))
+ 				break;
+-			*pos += block_size;
+-			poff += block_size;
+-			plen -= block_size;
+ 			first++;
+ 		}
+ 
+ 		/* truncate len if we find any trailing uptodate block(s) */
+ 		while (++i <= last) {
+ 			if (ifs_block_is_uptodate(ifs, i)) {
+-				plen -= (last - i + 1) * block_size;
+ 				last = i - 1;
+ 				break;
+ 			}
+@@ -277,9 +272,13 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 		unsigned end = offset_in_folio(folio, isize - 1) >> block_bits;
+ 
+ 		if (first <= end && last > end)
+-			plen -= (last - end) * block_size;
++			last = end;
+ 	}
+ 
++	poff = first << block_bits;
++	plen = (last - first + 1) << block_bits;
++	*pos = folio_pos(folio) + poff;
++
+ 	*offp = poff;
+ 	*lenp = plen;
+ }
+-- 
+2.43.0
 
 
