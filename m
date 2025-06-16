@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-51710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20622ADA7CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 07:48:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A03ADA842
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 08:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4BBC16BC2C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 05:48:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 888977A61F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 06:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4D91DBB13;
-	Mon, 16 Jun 2025 05:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2D21DE2BD;
+	Mon, 16 Jun 2025 06:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WU/F4j/Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzTxUX8Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1578F2E11CF;
-	Mon, 16 Jun 2025 05:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B0972626;
+	Mon, 16 Jun 2025 06:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750052884; cv=none; b=RWJZTopeh34JuNxJmv1ToV2YVu6Xf8BNu22JFo3k080u52X/oJCnDjlPXtLXVDsMqCbEZF+y64pBNY5NnxPD85b76InkWaC5B32HFAff9a+ScB24LICrdRadltYunUeO8+BKWnuMV2zHi+QjaW+RGItYYV6qI0iXS4kIDqzm2EQ=
+	t=1750055444; cv=none; b=dPKZ+KyRuCYPWDcbf20TMeHLz9s0Muietd16isTyVFvYvrVLvnuGYeEEbYf3KdU+Fli2mDEiK7MIw7TKf3/9YePbE0bQOUgTNaP6Y+7H3JpZyYOu1xhv9FwGG4uzWBQRvlGK+YltZ/Zf6Xn/KyYpFhQGle1Cga+xm5Vvi5GYJCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750052884; c=relaxed/simple;
-	bh=R1R7XJL/dhzJf9/hmRHHVbhhwCBr0Ta41EznGtut0IQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KuA7BFICfbJUcbVJc+of/g2IUXzHxC2XGILy7uc6KXSjBvclNzMTrJ2Qv5SgYngLE6d0FdITnijxeGWTIvIkhTEojbrtZHRRpSA4Imgr9TBLDdM5Hvk982JHUafz5YbUD6WQ4bvbskYoe+Yv2Yxw3rTKd2UVJjp8RFN5OvMyMR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WU/F4j/Z; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Jk
-	/BDnEMpsNlCN3FFv58EfDt4wHUty9REFl4NR/+Vps=; b=WU/F4j/ZQzxlOsOOTQ
-	KWFObuTa5MDsw4q+mg9BpFm6xC2SvVyNNbbfcI7rHQlID/vWi5rUSz/W4Ezavxmm
-	jqGN8jaaowDZS1unCTLJcIoRPEjXqSO7vEKKG3CCjOB0DmKC6DBQ7Ixes7N73evO
-	wnvfUS0bwTEIOnyIqLo2CFH+Q=
-Received: from chi-Redmi-Book.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDXv+X5r09oXaT+IQ--.5361S2;
-	Mon, 16 Jun 2025 13:47:39 +0800 (CST)
-From: Chi Zhiling <chizhiling@163.com>
-To: brauner@kernel.org,
-	djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org,
+	s=arc-20240116; t=1750055444; c=relaxed/simple;
+	bh=/CwtFfDuVXOHXbw7WvrWwerepPdxp0HV/s2hw8G1vGA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=t3eUpXYbZsHJou73d/airFpJaioTI0lOZ28eoj4giACV/hrK3xvc9eYB5iT9wEPQ08WJnkmADRk9zeFsASuKqz3KFwHFgEc3SsFSlGNeFAiJ9yr3Z3Z7H/t+0uyefaPK36NW+OSdH3x+ZPP7u+sGCa0a0xz1v7hc81TkTytCoZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzTxUX8Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A202C4CEEA;
+	Mon, 16 Jun 2025 06:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750055443;
+	bh=/CwtFfDuVXOHXbw7WvrWwerepPdxp0HV/s2hw8G1vGA=;
+	h=From:To:Subject:Date:From;
+	b=VzTxUX8ZhEgBkywNza7SWYPPCHO6CQ7b+FJX0ZpeR4LLj3LhtT/AGmR5b2JdI+lqj
+	 p8oLLAzdPb78qqEm9Qgelj2vdZIaV8E6IA8/cX8zid1k3cZzNIzU0m1CyiI9tWpEWT
+	 5q1xgIf36PaxZ7xaFZ0WZn7OvhKWl+hlavnXEMZ/hGUkxFv0z6I+Ldu/KifWcFMNLW
+	 +M62kruP+z0cV+65ycGyfQc//WSOJ+nn2PRGUuA5ksbAUdtJlVG1jpix3FjL/9wsJT
+	 zoej005D9ve3U4acCXj2y+AK32IB2ugGCT99mpScnOGgkoSKaYwma/cs4M1Yf4XPHF
+	 c0vBblQlIZKtA==
+From: Damien Le Moal <dlemoal@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [PATCH] iomap: Reduce some calculations in iomap_adjust_read_range()
-Date: Mon, 16 Jun 2025 13:47:22 +0800
-Message-ID: <20250616054722.142310-1-chizhiling@163.com>
-X-Mailer: git-send-email 2.43.0
+	linux-mm@vger.kernel.org
+Subject: [PATCH] block: Improve read ahead size for rotational devices
+Date: Mon, 16 Jun 2025 15:28:56 +0900
+Message-ID: <20250616062856.1629897-1-dlemoal@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,68 +56,69 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXv+X5r09oXaT+IQ--.5361S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr1kKryxCr1xuFWxArW7XFb_yoW8Ar13pr
-	yvkFWqkr4DWry09F10kFySqr95Ka97Wr45CFyfW34xXFZ8JrnIgr97Ga1Y9FW0vFs7XFnF
-	vr1kKryUZF4UAr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UP73PUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiKRZmnWhE8HbdegACsL
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+For a device that does not advertize an optimal I/O size, the function
+blk_apply_bdi_limits() defaults to an initial setting of the ra_pages
+field of struct backing_dev_info to VM_READAHEAD_PAGES, that is, 128 KB.
 
-It's unnecessary to update the poff and plen in every loop, delay the
-calculations until return stage.
+This low I/O size value is far from being optimal for hard-disk devices:
+when reading files from multiple contexts using buffered I/Os, the seek
+overhead between the small read commands generated to read-ahead
+multiple files will significantly limit the performance that can be
+achieved.
 
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+This fact applies to all ATA devices as ATA does not define an optimal
+I/O size and the SCSI SAT specification does not define a default value
+to expose to the host.
+
+Modify blk_apply_bdi_limits() to use a device max_sectors limit to
+calculate the ra_pages field of struct backing_dev_info, when the device
+is a rotational one (BLK_FEAT_ROTATIONAL feature is set). For a SCSI
+disk, this defaults to 2560 KB, which significantly improve performance
+for buffered reads. Using XFS and sequentially reading randomly selected
+(large) files stored on a SATA HDD, the maximum throughput achieved with
+8 readers reading files with 1MB buffered I/Os increases from 122 MB/s
+to 167 MB/s (+36%). The improvement is even larger when reading files
+using 128 KB buffered I/Os, with a throughput increasing from 57 MB/s to
+165 MB/s (+189%).
+
+Signed-off-by: Damien Le Moal <dlemoal@kernel.org>
 ---
- fs/iomap/buffered-io.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ block/blk-settings.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 3729391a18f3..0a1be45f7b96 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -233,7 +233,6 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 	loff_t orig_pos = *pos;
- 	loff_t isize = i_size_read(inode);
- 	unsigned block_bits = inode->i_blkbits;
--	unsigned block_size = (1 << block_bits);
- 	size_t poff = offset_in_folio(folio, *pos);
- 	size_t plen = min_t(loff_t, folio_size(folio) - poff, length);
- 	size_t orig_plen = plen;
-@@ -252,16 +251,12 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 		for (i = first; i <= last; i++) {
- 			if (!ifs_block_is_uptodate(ifs, i))
- 				break;
--			*pos += block_size;
--			poff += block_size;
--			plen -= block_size;
- 			first++;
- 		}
- 
- 		/* truncate len if we find any trailing uptodate block(s) */
- 		while (++i <= last) {
- 			if (ifs_block_is_uptodate(ifs, i)) {
--				plen -= (last - i + 1) * block_size;
- 				last = i - 1;
- 				break;
- 			}
-@@ -277,9 +272,13 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 		unsigned end = offset_in_folio(folio, isize - 1) >> block_bits;
- 
- 		if (first <= end && last > end)
--			plen -= (last - end) * block_size;
-+			last = end;
- 	}
- 
-+	poff = first << block_bits;
-+	plen = (last - first + 1) << block_bits;
-+	*pos = folio_pos(folio) + poff;
+diff --git a/block/blk-settings.c b/block/blk-settings.c
+index a000daafbfb4..66d402de9026 100644
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -58,16 +58,24 @@ EXPORT_SYMBOL(blk_set_stacking_limits);
+ void blk_apply_bdi_limits(struct backing_dev_info *bdi,
+ 		struct queue_limits *lim)
+ {
++	u64 io_opt = lim->io_opt;
 +
- 	*offp = poff;
- 	*lenp = plen;
+ 	/*
+ 	 * For read-ahead of large files to be effective, we need to read ahead
+-	 * at least twice the optimal I/O size.
++	 * at least twice the optimal I/O size. For rotational devices that do
++	 * not report an optimal I/O size (e.g. ATA HDDs), use the maximum I/O
++	 * size to avoid falling back to the (rather inefficient) small default
++	 * read-ahead size.
+ 	 *
+ 	 * There is no hardware limitation for the read-ahead size and the user
+ 	 * might have increased the read-ahead size through sysfs, so don't ever
+ 	 * decrease it.
+ 	 */
++	if (!io_opt && (lim->features & BLK_FEAT_ROTATIONAL))
++		io_opt = (u64)lim->max_sectors << SECTOR_SHIFT;
++
+ 	bdi->ra_pages = max3(bdi->ra_pages,
+-				lim->io_opt * 2 / PAGE_SIZE,
++				io_opt * 2 >> PAGE_SHIFT,
+ 				VM_READAHEAD_PAGES);
+ 	bdi->io_pages = lim->max_sectors >> PAGE_SECTORS_SHIFT;
  }
 -- 
-2.43.0
+2.49.0
 
 
