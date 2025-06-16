@@ -1,62 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-51766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E746ADB337
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 16:13:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F437ADB390
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 16:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 615817A1347
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 14:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B79F1891192
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 14:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549191DB924;
-	Mon, 16 Jun 2025 14:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D5F28540B;
+	Mon, 16 Jun 2025 14:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CfJ2D+YM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="chF7aZUK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A850842A99;
-	Mon, 16 Jun 2025 14:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2792853ED;
+	Mon, 16 Jun 2025 14:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750083194; cv=none; b=Vq9HqksIg8TLA96YeiooN6Xv+MoSlvQEpp7Be7xzXH5Vvh0Ct+Z7WI3jMviL18AP+3x4Y4scFc3GWeQ9T3SIKN1+22Fxaw28nn82SxdxMcb+aca7/KzZufhA8M3AVjOd14+jPmCWVcku2J/p1DzAQrx5plL6FQJZvTQW5JIuOLg=
+	t=1750083395; cv=none; b=phH1M/ENRD6BnCM3OsIZ2Yn8NQEGkfvUMrhf6S49AFrpAgCY39zXKnE7E5DhaKutfRwzwhB+Wef0p44bTekbn/Vm8JquDm/iFspyLKAq2Ilx+POvzhNiUMMUdulT2XuL0DinWJ3xVpL1sdaEBQ4qS9dqTkL9Vr+Thci5zRO7DKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750083194; c=relaxed/simple;
-	bh=K9lGYE1jC13GQlRKSFKfI1egBgg+0AaxtQyIvBUOSSM=;
+	s=arc-20240116; t=1750083395; c=relaxed/simple;
+	bh=2uT8JC/DSi8Dq7nQMzcbObK0mkEgpa4jHBqH+uyt6Ig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jP7q62dW1LMeRTamqmot9wE77T+kmVqtYnPKpoCLHdLIKV0BxyRV61KaEiK6pNlvOdAXVJ8dDddkHOoQXIMPHRh5tK+xhyqa1qQmMEWsVRnvdp+yyFj3ZZ7JVb7Q2XkSg62oK5uVChExToczbQhwFjvxSG2Ad83iZbhmgDlz93I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CfJ2D+YM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12393C4CEEA;
-	Mon, 16 Jun 2025 14:13:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=utGAWgQ7Nfqf8tFLeYajSFB3laMa4OfWF0dR8NvwV8x/HdHa8g9ix6Pwk2EAZlnCsWmgQOn2XAcnCSnyne8rKdpIzLn2T2/bmpBx7ld3FE9Skw5E3WeBw+hWSINLvHKq4kPwxqDQE7INd92/kwz5h43A+L0UCeaUHnTycVX5ngg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=chF7aZUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 530E6C4CEEA;
+	Mon, 16 Jun 2025 14:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750083194;
-	bh=K9lGYE1jC13GQlRKSFKfI1egBgg+0AaxtQyIvBUOSSM=;
+	s=k20201202; t=1750083394;
+	bh=2uT8JC/DSi8Dq7nQMzcbObK0mkEgpa4jHBqH+uyt6Ig=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CfJ2D+YM+/jAdZB7kow/k66QuxCaiA+KCGIIKdTXAScDkWBvkf8euzyYoAkXXmvI7
-	 0ZSy1McdEnIfG0vu1Prz3YVK8s82g8UvKp/jyZzlb/P7hJ9F7VcpUGtP+AVWXDNj+z
-	 ki4CpttRg2hw8I0zmq0rgMQz1kFDX5mU+G0nOfitIdZj+EQTXtZJ3IUn2DQdN5Tl1C
-	 4V3b7v3o1aSanESBDIXG96bOFRft3hWUgF7OgjqwiCRFag50WI5cSALvf/saEWDogn
-	 gpXvMOc10qkFuDSsZtDSP5LNnsKde+Pb2pAedkEWi5n0UBpfcTxzg3YAOuU4f3xALm
-	 AsCXz1KkoizWg==
-Date: Mon, 16 Jun 2025 16:13:09 +0200
+	b=chF7aZUKMctuvja+Uwx3VOEeKbVkNsJtS+FOJsv1Yd6YBkTUB9gZBpfJYVNlWJ303
+	 2nLd1z3C4bdhxtTAgHhD23j9vAA9rMMgUlq2Hc91KdQxbS8wLNXFV5+qP4ybzWGDFv
+	 XWCADIvIIOZi+RLYta2P8lxkv44zYtXeCVR2EIyrkLeyYZm5BFDKTgOjd0YcgOoDmh
+	 nD97+bYdy5hltcEQPcVet1PT8+42Ti2IUePEoi4TPA0kZ/0xdA8+oasMX8Qoto5G5s
+	 ZDYgu7SFNuE1QBXwA1It7O/qnIaQuk0UmjNHXMY6IOc664ZTgd5eucPbLUDghmUOa6
+	 XiWJni0XaiUxw==
+Date: Mon, 16 Jun 2025 16:16:30 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Collin Funk <collin.funk1@gmail.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
-	eggert@cs.ucla.edu, bug-gnulib@gnu.org
-Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list()
-Message-ID: <20250616-flitzen-barmherzigen-e30c63f9e8ba@brauner>
-References: <20250605164852.2016-1-stephen.smalley.work@gmail.com>
- <CAHC9VhQ-f-n+0g29MpBB3_om-e=vDqSC3h+Vn_XzpK2zpqamdQ@mail.gmail.com>
- <CAHC9VhRUqpubkuFFVCfiMN4jDiEhXQvJ91vHjrM5d9e4bEopaw@mail.gmail.com>
- <87plfhsa2r.fsf@gmail.com>
- <CAHC9VhRSAaENMnEYXrPTY4Z4sPO_s4fSXF=rEUFuEEUg6Lz21Q@mail.gmail.com>
- <20250611-gepunktet-umkurven-5482b6f39958@brauner>
- <CAHC9VhTWEWq_rzZnjbYrS6MCb5_gSBDAjUoYQY4htQ5MaY2o_w@mail.gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] landlock: opened file never has a negative dentry
+Message-ID: <20250616-quadrat-entmilitarisieren-5b80f13b60f9@brauner>
+References: <20250615003011.GD1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,59 +56,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTWEWq_rzZnjbYrS6MCb5_gSBDAjUoYQY4htQ5MaY2o_w@mail.gmail.com>
+In-Reply-To: <20250615003011.GD1880847@ZenIV>
 
-On Mon, Jun 16, 2025 at 10:03:52AM -0400, Paul Moore wrote:
-> On Wed, Jun 11, 2025 at 6:05 AM Christian Brauner <brauner@kernel.org> wrote:
-> > On Tue, Jun 10, 2025 at 07:50:10PM -0400, Paul Moore wrote:
-> > > On Fri, Jun 6, 2025 at 1:39 AM Collin Funk <collin.funk1@gmail.com> wrote:
-> > > > Paul Moore <paul@paul-moore.com> writes:
-> > > > >> <stephen.smalley.work@gmail.com> wrote:
-> > > > >> >
-> > > > >> > commit 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always
-> > > > >> > include security.* xattrs") failed to reset err after the call to
-> > > > >> > security_inode_listsecurity(), which returns the length of the
-> > > > >> > returned xattr name. This results in simple_xattr_list() incorrectly
-> > > > >> > returning this length even if a POSIX acl is also set on the inode.
-> > > > >> >
-> > > > >> > Reported-by: Collin Funk <collin.funk1@gmail.com>
-> > > > >> > Closes: https://lore.kernel.org/selinux/8734ceal7q.fsf@gmail.com/
-> > > > >> > Reported-by: Paul Eggert <eggert@cs.ucla.edu>
-> > > > >> > Closes: https://bugzilla.redhat.com/show_bug.cgi?id=2369561
-> > > > >> > Fixes: 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always include security.* xattrs")
-> > > > >> >
-> > > > >> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > > >> > ---
-> > > > >> >  fs/xattr.c | 1 +
-> > > > >> >  1 file changed, 1 insertion(+)
-> > > > >>
-> > > > >> Reviewed-by: Paul Moore <paul@paul-moore.com>
-> > > > >
-> > > > > Resending this as it appears that Stephen's original posting had a
-> > > > > typo in the VFS mailing list.  The original post can be found in the
-> > > > > SELinux archives:
-> > > > >
-> > > > > https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.work@gmail.com/
-> > > >
-> > > > Hi, responding to this message since it has the correct lists.
-> > > >
-> > > > I just booted into a kernel with this patch applied and confirm that it
-> > > > fixes the Gnulib tests that were failing.
-> > > >
-> > > > Reviewed-by: Collin Funk <collin.funk1@gmail.com>
-> > > > Tested-by: Collin Funk <collin.funk1@gmail.com>
-> > > >
-> > > > Thanks for the fix.
-> > >
-> > > Al, Christian, are either of you going to pick up this fix to send to
-> > > Linus?  If not, any objection if I send this up?
-> >
-> > It's been in vfs.fixes for some time already and it'll go out with the
-> > first round of post -rc1 fixes this week.
+On Sun, Jun 15, 2025 at 01:30:11AM +0100, Al Viro wrote:
+> [don't really care which tree that goes through; right now it's
+> in viro/vfs.git #work.misc, but if somebody prefers to grab it
+> through a different tree, just say so]
 > 
-> Checking on the status of this patch as we are at -rc2 and I don't see
-> it in Linus' tree?
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-Sent this morning with some other fixes.
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
