@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-51726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB00ADAD96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 12:42:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFE6ADADC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 12:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B397916F458
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 10:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458E93A5D2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 10:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50B22980BF;
-	Mon, 16 Jun 2025 10:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCFF29B239;
+	Mon, 16 Jun 2025 10:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="PtBEAxVo"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="JbX1CR8R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816A82882D1;
-	Mon, 16 Jun 2025 10:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EDB27FB10;
+	Mon, 16 Jun 2025 10:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750070513; cv=none; b=orK0/Tu9Du4Aoe640vK3or25xVo7vFY5ddowmZDPYV2rYaHV40ts90q0wPFa4GNqY30UkcSKKrNG+OKCb1MAvEPQU/nAesSw+nLiCKHS6HnAe6GPKkGG26CP5O87FmR/0sC2Ps3QGOUzN241C7kxsgZvEKk1PFLcO0I8JTvoBxg=
+	t=1750070986; cv=none; b=YLAZlh96tdPQS0iNzbVVm+8M4V1NqGWFP2uFgtI9foeMaZmM6N1wNEW9+9pn10eNvhio5X0flFnGE9j5DXXCh/vuoUU30r6Mqmou5FnRi+AZz3iIQGRwNLo900wG/GU8pngKFoP8z5cQRW5r0lTLw7f9oOPxjwYoCU0YPL07pNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750070513; c=relaxed/simple;
-	bh=9jQvnHzyUbfSeBBYrBGACK8W4qVfv3z2D1HKLv2ml1I=;
+	s=arc-20240116; t=1750070986; c=relaxed/simple;
+	bh=dTq/ijg9wAiLDDvYi5+KhFq6NE1kLb9RMnNwHLT6zAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAWufnPUobbgfmsWuZxnBWPHbEMz4myzyoKbq0hCOvrrVXzB6Wu0Lv8wVACN7gEXsXe+lgwwU1CKLf5T0/eCtjpSQlnermnflI8bWqdziHezAiXWhfJICtZNGPmu0Xbte/Omko/QlYhh0fuq5ffEmH48/kczW3sDmnjnT4HdBBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=PtBEAxVo; arc=none smtp.client-ip=80.241.56.152
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOKHVGbSTLTAQhCLd9u1kzBNhCdL1sT2yzIjON8IPlFFZhAMXjt/eBZrG4h3XXdI57eJDHxskX0HSBnwQVIzOVV5okQYXeoSMaa6+NsPO5My08HhRv6gIoihCzETxskxEUx9cAVtnq0LKk03w+YE0FralqkPprcZvuStQTznQXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=JbX1CR8R; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bLRPy4Xyfz9sNv;
-	Mon, 16 Jun 2025 12:41:42 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bLRb2549Vz9sQV;
+	Mon, 16 Jun 2025 12:49:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1750070502;
+	s=MBO0001; t=1750070974;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5oSk0eziRiPQxIm2xpJSi+rzCVxixCf2/SUD1VuuXvA=;
-	b=PtBEAxVon6X+5TauyCHml0gSVf0/dK0Bz09Z5ym8rKg8H0PYZ0URJ2w6F67+4+9YsFlBbj
-	2uqpgH2adVdkOzlaFbsakNOPFL//WXshXak1la9GF6kJZzioWFauDyUmTXiQq3gm9Bb7e4
-	OX3Lv8MiZ+P5Q1prPdc6ZBk0Bf/U++79fnNB8SFUNatFwc/owqStWtcOjYtcq5Of1BHCAG
-	jTVDO6nrqSYc+xd6t2OIpVGjyNy7POqsgHeexXChHIZp+jVRhcqyjGVph/fPLxYFA5ta/z
-	j5ZwBcoaSXf5cO5A55o6PN7HSajou51Pgas4/J5heggkVtC13NIjOxpoN9msow==
-Date: Mon, 16 Jun 2025 12:41:30 +0200
+	bh=XY8QmFX6C/sGkVxyzcatdwuMOackSJD85Ys2cJrlHdU=;
+	b=JbX1CR8RBtgCBQt8jaWY9VXnIednZIJjOtAvoib1pnvZYtCrjr7WedGKILsmrbjHc5Ejk1
+	U+EYALUUEEX7ioXOI0+f8htJlHxdiyPInM69QH9+x/zQ9MGxC/PYi1zKomi2BzPQ+ryMgM
+	LWBw4qAe5jDrzf2wJNd56YTxKrpD5t+Nr9QYUhJnBmX3C3Qd8H3J9THwBFFDwS5ccAnMAY
+	b6qdhL6RV5rmJCmXJv+c3mSrO2OVMeCWO6CN+ZTHSWd9Ne1KohY8T48fiOHT6/Jy5pikcV
+	D12PQCDwZVtg6fZKx7tvUb43RvI0lMB8MnmpErrcoKnSAoVyj+TX4ORp6a1K/g==
+Date: Mon, 16 Jun 2025 12:49:27 +0200
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: David Hildenbrand <david@redhat.com>
 Cc: Dave Hansen <dave.hansen@intel.com>, 
@@ -63,13 +63,14 @@ Cc: Dave Hansen <dave.hansen@intel.com>,
 	willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
 	gost.dev@samsung.com, hch@lst.de
-Subject: Re: [PATCH 4/5] mm: add mm_get_static_huge_zero_folio() routine
-Message-ID: <xyp7neexwts566fndmfdwivcrg4qmdu2nfv2nppcjukvpog3ib@ieuhruutubos>
+Subject: Re: [PATCH 0/5] add STATIC_PMD_ZERO_PAGE config option
+Message-ID: <vmc7bu6muygheuepfltjvbbio6gvjemxostq4rjum66s4ok2f7@x7l3y7ot7mf4>
 References: <20250612105100.59144-1-p.raghav@samsung.com>
- <20250612105100.59144-5-p.raghav@samsung.com>
- <e3075e27-93d2-4a11-a174-f05a7497870e@intel.com>
- <cglmujb275faqkpqmb75mz4tt5dtruvhntpe5t4qyzjr363qyr@vluzyx4hukap>
- <a65ee315-23b7-4058-895a-69045829bd01@redhat.com>
+ <30a3048f-efbe-4999-a051-d48056bafe0b@intel.com>
+ <nsquvkkywghoeloxexlgqman2ks7s6o6isxzvkehaipayaxnth@6er73cdqopmo>
+ <76a48d80-7eb0-4196-972d-ecdcbd4ae709@intel.com>
+ <jpuz2xprvhklazsziqofy6y66pjxy5eypj3pcypmkp6c2xkmpt@bblq4q5w7l7h>
+ <b128d1de-9ad5-4de7-8cd7-1490ae31d20f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,90 +79,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a65ee315-23b7-4058-895a-69045829bd01@redhat.com>
+In-Reply-To: <b128d1de-9ad5-4de7-8cd7-1490ae31d20f@redhat.com>
 
-On Mon, Jun 16, 2025 at 11:14:07AM +0200, David Hildenbrand wrote:
-> On 12.06.25 22:54, Pankaj Raghav (Samsung) wrote:
-> > On Thu, Jun 12, 2025 at 07:09:34AM -0700, Dave Hansen wrote:
-> > > On 6/12/25 03:50, Pankaj Raghav wrote:
-> > > > +/*
-> > > > + * mm_get_static_huge_zero_folio - Get a PMD sized zero folio
 > > > 
-> > > Isn't that a rather inaccurate function name and comment?
-> > I agree. I also felt it was not a good name for the function.
+> > > The mm is a nice convenient place to stick an mm but there are other
+> > > ways to keep an efficient refcount around. For instance, you could just
+> > > bump a per-cpu refcount and then have the shrinker sum up all the
+> > > refcounts to see if there are any outstanding on the system as a whole.
+> > > 
+> > > I understand that the current refcounts are tied to an mm, but you could
+> > > either replace the mm-specific ones or add something in parallel for
+> > > when there's no mm.
 > > 
-> > > 
-> > > The third line of the function literally returns a non-PMD-sized zero folio.
-> > > 
-> > > > + * This function will return a PMD sized zero folio if CONFIG_STATIC_PMD_ZERO_PAGE
-> > > > + * is enabled. Otherwise, a ZERO_PAGE folio is returned.
-> > > > + *
-> > > > + * Deduce the size of the folio with folio_size instead of assuming the
-> > > > + * folio size.
-> > > > + */
-> > > > +static inline struct folio *mm_get_static_huge_zero_folio(void)
-> > > > +{
-> > > > +	if(IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
-> > > > +		return READ_ONCE(huge_zero_folio);
-> > > > +	return page_folio(ZERO_PAGE(0));
-> > > > +}
-> > > 
-> > > This doesn't tell us very much about when I should use:
-> > > 
-> > > 	mm_get_static_huge_zero_folio()
-> > > vs.
-> > > 	mm_get_huge_zero_folio(mm)
-> > > vs.
-> > > 	page_folio(ZERO_PAGE(0))
-> > > 
-> > > What's with the "mm_" in the name? Usually "mm" means "mm_struct" not
-> > > Memory Management. It's really weird to prefix something that doesn't
-> > > take an "mm_struct" with "mm_"
+> > But the whole idea of allocating a static PMD page for sane
+> > architectures like x86 started with the intent of avoiding the refcounts and
+> > shrinker.
 > > 
-> > Got it. Actually, I was not aware of this one.
+> > This was the initial feedback I got[2]:
 > > 
-> > > 
-> > > Isn't the "get_" also a bad idea since mm_get_huge_zero_folio() does its
-> > > own refcounting but this interface does not?
-> > > 
-> > 
-> > Agree.
-> > 
-> > > Shouldn't this be something more along the lines of:
-> > > 
-> > > /*
-> > >   * pick_zero_folio() - Pick and return the largest available zero folio
-> > >   *
-> > >   * mm_get_huge_zero_folio() is preferred over this function. It is more
-> > >   * flexible and can provide a larger zero page under wider
-> > >   * circumstances.
-> > >   *
-> > >   * Only use this when there is no mm available.
-> > >   *
-> > >   * ... then other comments
-> > >   */
-> > > static inline struct folio *pick_zero_folio(void)
-> > > {
-> > > 	if (IS_ENABLED(CONFIG_STATIC_PMD_ZERO_PAGE))
-> > > 		return READ_ONCE(huge_zero_folio);
-> > > 	return page_folio(ZERO_PAGE(0));
-> > > }
-> > > 
-> > > Or, maybe even name it _just_: zero_folio()
-> > 
-> > I think zero_folio() sounds like a good and straightforward name. In
-> > most cases it will return a ZERO_PAGE() folio. If
-> > CONFIG_STATIC_PMD_ZERO_PAGE is enabled, then we return a PMD page.
+> > I mean, the whole thing about dynamically allocating/freeing it was for
+> > memory-constrained systems. For large systems, we just don't care.
 > 
-> "zero_folio" would be confusing I'm afraid.
+> For non-mm usage we can just use the folio refcount. The per-mm refcounts
+> are all combined into a single folio refcount. The way the global variable
+> is managed based on per-mm refcounts is the weird thing.
 > 
-> At least with current "is_zero_folio" etc.
+> In some corner cases we might end up having multiple instances of huge zero
+> folios right now. Just imagine:
 > 
-> "largest_zero_folio" or sth. like that might make it clearer that the size
-> we are getting back might actually differ.
+> 1) Allocate huge zero folio during read fault
+> 2) vmsplice() it
+> 3) Unmap the huge zero folio
+> 4) Shrinker runs and frees it
+> 5) Repeat with 1)
+> 
+> As long as the folio is vmspliced(), it will not get actually freed ...
+> 
+> I would hope that we could remove the shrinker completely, and simply never
+> free the huge zero folio once allocated. Or at least, only free it once it
+> is actually no longer used.
 > 
 
-That makes sense. I can change that in the next revision.
+Thanks for the explanation, David.
+
+But I am still a bit confused on how to proceed with these patches.
+
+So IIUC, our eventual goal is to get rid of the shrinker.
+
+But do we still want to add a static PMD page in the .bss or do we take
+an alternate approach here?
 
 --
 Pankaj
