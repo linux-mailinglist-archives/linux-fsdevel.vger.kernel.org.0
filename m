@@ -1,105 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-51723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0000ADABAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 11:22:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C337ADAD12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 12:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95564171240
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 09:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20B7F18862D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 10:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EA4273805;
-	Mon, 16 Jun 2025 09:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634C227A907;
+	Mon, 16 Jun 2025 10:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gdj4Q8/+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gwrMVlcb";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gdj4Q8/+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gwrMVlcb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993874A33;
-	Mon, 16 Jun 2025 09:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CAE27EFE2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jun 2025 10:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750065753; cv=none; b=dITGGBEFByWs2w79Uvdl8GqE6FyiQpmEha91EqIqK7/3Gl9r0XPXeBJgu2C9IBdvXrbMv/Sny5xoAoqtGS+Z2KYBS6u+sEt9eOnMr9Iar8m9xVsRFONkF4Xv4PtroDDdg7BSZzsdol/0hjiXrAS+fhW2WA5XhcEc4A6zn94yEtY=
+	t=1750068648; cv=none; b=ugfAYhSRfI4oBmVn4UUE9gHNhQ5gOEh9WyC9WCSzX8WsgkA0K+ysbjV0yP3L4XphlEDEuF//vNlQq66ZmKLGuqBMEZEG3jEnJhSGravYgXbgfut4RNxXZMJZBuoVPgrOuiPdeE5da5ElKMXRrMSJ/xHT7ba891ay09C3sHdPOFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750065753; c=relaxed/simple;
-	bh=sj0mm9m1O/8U8lkwTNwKNR/K+6FyXlt+/zWXc6yk2UM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=S9IQYM5vM4iXjgVpfRs/oypLpNRiO1CI0/xAubPoj5dmBjFJWGfGkI+sH6ibXjksqXNzvTz46IOw9kJpY/t4299hP2Dajh5X4uXdI+3ndRFkYbz7NpQ1NlegjzHkYiU/j63MV4NOfcMS2oaBfGpkcXqRjsjbRG63lk6zWk/Exv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 55G9LOLC071378;
-	Mon, 16 Jun 2025 17:21:24 +0800 (+08)
-	(envelope-from Zhengxu.Zhang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4bLPYW2Cy6z2P49JG;
-	Mon, 16 Jun 2025 17:18:07 +0800 (CST)
-Received: from BJMBX01.spreadtrum.com (10.0.64.7) by BJMBX01.spreadtrum.com
- (10.0.64.7) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 16 Jun
- 2025 17:21:23 +0800
-Received: from BJMBX01.spreadtrum.com ([fe80::54e:9a:129d:fac7]) by
- BJMBX01.spreadtrum.com ([fe80::54e:9a:129d:fac7%16]) with mapi id
- 15.00.1497.048; Mon, 16 Jun 2025 17:21:22 +0800
-From: =?utf-8?B?5byg5pS/5petIChaaGVuZ3h1IFpoYW5nKQ==?=
-	<Zhengxu.Zhang@unisoc.com>
-To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
-        Cixi Geng
-	<cixi.geng@linux.dev>,
-        "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?utf-8?B?546L55qTIChIYW9faGFvIFdhbmcp?= <Hao_hao.Wang@unisoc.com>,
-        =?utf-8?B?5byg5pS/5petIChaaGVuZ3h1IFpoYW5nKQ==?= <Zhengxu.Zhang@unisoc.com>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGV4ZmF0OiBmZGF0YXN5bmMgZmxhZyBzaG91bGQg?=
- =?utf-8?B?YmUgc2FtZSBsaWtlIGdlbmVyaWNfd3JpdGVfc3luYygp?=
-Thread-Topic: [PATCH] exfat: fdatasync flag should be same like
- generic_write_sync()
-Thread-Index: AQHb3CvF3g+Nw35RCU+Et+rOGeRoJrQA2ySngASsErA=
-Date: Mon, 16 Jun 2025 09:21:22 +0000
-Message-ID: <ebba6e12af06486cafa5e16a284b7d7e@BJMBX01.spreadtrum.com>
-References: <20250613062339.27763-1-cixi.geng@linux.dev>
- <PUZPR04MB6316E8048064CB15DACDDE1B8177A@PUZPR04MB6316.apcprd04.prod.outlook.com>
-In-Reply-To: <PUZPR04MB6316E8048064CB15DACDDE1B8177A@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1750068648; c=relaxed/simple;
+	bh=KmA1gvb1BgHKLpHjtVYUJFUCFxz6uXQdO77HkGO8SSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iwVzhxt4wrNagn3auhjV1NWvJTMh/9aDXYeB+Ummo7iTEoNA297b4cM3LXhWVe32nx/CjEx8rP0I1K/gqyD3DeMXa4kRMMoLcz4tMdhyAaHkS+Rv/8ZwnzqKJgVYeMUBNY99WHoS8fwB/Us2Hzs6Vg8A2QKwnLHLYDOc/3UPl64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gdj4Q8/+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gwrMVlcb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gdj4Q8/+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gwrMVlcb; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5BA65211A6;
+	Mon, 16 Jun 2025 10:10:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750068645; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8BaSuCJ5jt9OiYDg+RbrGk/O5naIRwZH4Tg1A9NatQ=;
+	b=gdj4Q8/+WDUWK4SCZLZuetgUvLPXxaS69ucvU1y+VuKQOLFauERa96TBPKH/nQuYq7p1GG
+	9bn4tlTkGG00QLxhnGDp7oZnfZ5bWNBK2M9vbiNNuqdEDtl29+p5oA449+WloOwDsiMu08
+	062JMgOpRl6bGzRzRCHy50KUnXNG/GU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750068645;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8BaSuCJ5jt9OiYDg+RbrGk/O5naIRwZH4Tg1A9NatQ=;
+	b=gwrMVlcbwEjj1utCw2cq2ulbdA+1SaODC8IAseZYH6NkvNDcwfB0ASzLUp2oah5nNpRHvs
+	AqajQKvpr2Jn4mDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750068645; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8BaSuCJ5jt9OiYDg+RbrGk/O5naIRwZH4Tg1A9NatQ=;
+	b=gdj4Q8/+WDUWK4SCZLZuetgUvLPXxaS69ucvU1y+VuKQOLFauERa96TBPKH/nQuYq7p1GG
+	9bn4tlTkGG00QLxhnGDp7oZnfZ5bWNBK2M9vbiNNuqdEDtl29+p5oA449+WloOwDsiMu08
+	062JMgOpRl6bGzRzRCHy50KUnXNG/GU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750068645;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8BaSuCJ5jt9OiYDg+RbrGk/O5naIRwZH4Tg1A9NatQ=;
+	b=gwrMVlcbwEjj1utCw2cq2ulbdA+1SaODC8IAseZYH6NkvNDcwfB0ASzLUp2oah5nNpRHvs
+	AqajQKvpr2Jn4mDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 508CB13A6B;
+	Mon, 16 Jun 2025 10:10:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JHKgE6XtT2gqWwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 16 Jun 2025 10:10:45 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 04A12A0951; Mon, 16 Jun 2025 12:10:40 +0200 (CEST)
+Date: Mon, 16 Jun 2025 12:10:40 +0200
+From: Jan Kara <jack@suse.cz>
+To: Junxuan Liao <ljx@cs.wisc.edu>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/1] docs/vfs: update references to i_mutex to i_rwsem
+Message-ID: <fduatokkcmrhtndxbmkcarycto5su7gb7jfkcb53gvzflj5o5a@itnis2jwtdt6>
+References: <666eabb6-6607-47f4-985a-0d25c764b172@cs.wisc.edu>
+ <fd087bc3-879f-4444-b4ad-601a3632d138@cs.wisc.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:SHSQR01.spreadtrum.com 55G9LOLC071378
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd087bc3-879f-4444-b4ad-601a3632d138@cs.wisc.edu>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IFl1ZXpoYW5nLk1vQHNv
-bnkuY29tIDxZdWV6aGFuZy5Nb0Bzb255LmNvbT4NCj4g5Y+R6YCB5pe26Ze0OiAyMDI15bm0Nuac
-iDEz5pelIDE4OjE0DQo+IOaUtuS7tuS6ujogQ2l4aSBHZW5nIDxjaXhpLmdlbmdAbGludXguZGV2
-PjsgbGlua2luamVvbkBrZXJuZWwub3JnOw0KPiBzajE1NTcuc2VvQHNhbXN1bmcuY29tDQo+IOaK
-hOmAgTogbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc7IOW8oOaUv+aXrQ0KPiAoWmhlbmd4dSBaaGFuZykgPFpoZW5neHUuWmhhbmdAdW5p
-c29jLmNvbT4NCj4g5Li76aKYOiBSZTogW1BBVENIXSBleGZhdDogZmRhdGFzeW5jIGZsYWcgc2hv
-dWxkIGJlIHNhbWUgbGlrZSBnZW5lcmljX3dyaXRlX3N5bmMoKQ0KPiANCj4gDQo+IA0KPiA+IGdl
-bmVyaWNfZmlsZV93cml0ZV9pdGVyKCksIHdoZW4gY2FsbGluZyBnZW5lcmljX3JpdGVfc3luYygp
-IGFuZA0KPiANCj4gcy9fcml0ZS9fd3JpdGUNCj4NCkkgd2lsbCBmaXggdGhpcyBieSBuZXh0IHBh
-dGNoLg0KPiA+IC0tLSBhL2ZzL2V4ZmF0L2ZpbGUuYw0KPiA+ICsrKyBiL2ZzL2V4ZmF0L2ZpbGUu
-Yw0KPiA+IEBAIC02MjUsNyArNjI1LDcgQEAgc3RhdGljIHNzaXplX3QgZXhmYXRfZmlsZV93cml0
-ZV9pdGVyKHN0cnVjdCBraW9jYiAqaW9jYiwNCj4gc3RydWN0IGlvdl9pdGVyICppdGVyKQ0KPiA+
-DQo+ID4gICAgICAgIGlmIChpb2NiX2lzX2RzeW5jKGlvY2IpICYmIGlvY2ItPmtpX3BvcyA+IHBv
-cykgew0KPiA+ICAgICAgICAgICAgICAgICBzc2l6ZV90IGVyciA9IHZmc19mc3luY19yYW5nZShm
-aWxlLCBwb3MsIGlvY2ItPmtpX3BvcyAtIDEsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBpb2NiLT5raV9mbGFncyAmIElPQ0JfU1lOQyk7DQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAoaW9jYi0+a2lfZmxhZ3MgJiBJT0NCX1NZTkMpID8gMCA6IDEpOw0K
-PiANCj4gSG93IGFib3V0IGNhbGxpbmcgZ2VuZXJpY193cml0ZV9zeW5jKCkgaW5zdGVhZCBvZiB2
-ZnNfZnN5bmNfcmFuZ2UoKSwgbGlrZSBpbg0KPiBnZW5lcmljX2ZpbGVfd3JpdGVfaXRlcigpPw0K
-VGhlIHNlY29uZCBhcmcgb2YgdmZzX2ZzeW5jX3JhbmdlICJwb3MiIG1heWJlIGNoYW5nZWQgYnkg
-dmFsaWRfc2l6ZSAoaWYgcG9zID4gdmFsaWRfc2l6ZSkuIA0KSXQgY2FuIG5vdCByZXBsYWNlIGJ5
-IGlvY2ItPmtpX3BvcyAtIHJldCAocmV0IGJ5IF9fZ2VuZXJpY19maWxlX3dyaXRlX2l0ZXIpLg0K
-U28gY3VycmVudCB3YXkgbWF5YmUgYmV0dGVyLg0K
+On Sun 15-06-25 21:16:53, Junxuan Liao wrote:
+> VFS has switched to i_rwsem for ten years now (9902af79c01a: parallel
+> lookups actual switch to rwsem), but the VFS documentation and comments
+> still has references to i_mutex.
+> 
+> Signed-off-by: Junxuan Liao <ljx@cs.wisc.edu>
+
+Thanks. This cleanup is long overdue :).
+
+> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> index fd32a9a17bfb..a09c4aab9b5b 100644
+> --- a/Documentation/filesystems/vfs.rst
+> +++ b/Documentation/filesystems/vfs.rst
+> @@ -759,7 +759,7 @@ dirty_folio to write data into the address_space, and
+>  writepages to writeback data to storage.
+>  
+>  Adding and removing pages to/from an address_space is protected by the
+> -inode's i_mutex.
+> +inode's i_rwsem.
+
+It is not your fault but this sentence is not actually true. i_rwsem is
+held exlusively when removing pages from an address space. However i_rwsem
+is often not held at all when adding pages to an address space.
+mapping->invalidate_lock is used for that.
+
+> diff --git a/fs/attr.c b/fs/attr.c
+> index 9caf63d20d03..3a3881d3147f 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -230,7 +230,7 @@ EXPORT_SYMBOL(setattr_prepare);
+>   * @inode:	the inode to be truncated
+>   * @offset:	the new size to assign to the inode
+>   *
+> - * inode_newsize_ok must be called with i_mutex held.
+> + * inode_newsize_ok must be called with i_rwsem held.
+
+I guess we can add "exclusively" here.
+
+Otherwise the changes look good to me.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
