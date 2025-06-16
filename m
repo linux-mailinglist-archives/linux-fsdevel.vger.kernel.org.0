@@ -1,139 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-51814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F49ADBB3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 22:31:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 222F3ADBB48
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 22:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE423B3E5A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 20:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F099718906BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 20:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8088E2116EE;
-	Mon, 16 Jun 2025 20:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5527D20B7FC;
+	Mon, 16 Jun 2025 20:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GdNnEmI6"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SPZXP/wP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AF2207A0C;
-	Mon, 16 Jun 2025 20:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E55136349
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jun 2025 20:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750105840; cv=none; b=ucP5E70R0U3Sp/DQo9t0KHHVTZOO29IYW8HhY9KhjhUxrkfYUOdG2x6OY7qsMtZEND/zmhktfDivDmI0jbCwjVv1a/oVZRMeIeO7fVUJY4c7LuzVkNGWpHRvIU6maAmUSPGW5hqQ7gd8uF/SKafYUk+77Jupak1rv45Skq5mrPk=
+	t=1750106322; cv=none; b=jZnMqpL/xP0BvMosKss+v49O9yoEyZDEvl2uJKyAkhuwfrYf/8l9yb9blna6T0obae0VSAISUZR2WZreJKWu8b9WYpWSfLWRDk1lyQkhmCl6m3WWh8L2/6LFMD/Gnc3tQsH3Vv0RKgE8VSAfF4QLjZQFmxgAbSrpNx8GiheDe/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750105840; c=relaxed/simple;
-	bh=hamgTHtQphfJLg+71cqSsH6LRWS1AgeHRNqRdZHuBZY=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=mA+1mS5bOXftVjqqC/uRe+0FeeYVYgOOfARDzlRjtVtj7HrrFi1DfGxh91mQttsqsepS207IXV8HNtgW3UFQhYgX/P5iHRKlzK/BGH7ifmI1BFqkf18yHTIC6gKkgJo5b7nHrg3CwxbQD5nwyeVq4Zh1UcPSra1uxgNW4dQzak8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GdNnEmI6; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55GErUol009585;
-	Mon, 16 Jun 2025 20:30:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=GNzNeE
-	Bm+3DzC4Zr9XQJpngwrFW2dVlrFN3SOymuvLU=; b=GdNnEmI6smwbrBlQELGdK9
-	HFDgvBvtudUFiz+42H639vtCEnnjQy8k/hBnRMe87jezx3olvu/lbW2Iz5XkdHKN
-	FA7+Tt2OaITFj8GhJY37eSbPvwvn42lIAeZtBlg4agpycXyKAkpqPlJvM11pYSKR
-	y9m5TMLbata7pBeV6EHfSQPvQy8S9CL0NxRCY7C5F+SZI2wm1sBU/7gCztoxYyuL
-	146tlJF8KyT29fWURqJRE6d7hCB97J7Bc247uBGwJm6mNwl4KdKmFSIrY5e3jyBH
-	qixBNd+1bRhM8gg+PvKMphw3wro0MO4sfUUtnTl+Jy91QchympJM75RwbUzgyqJA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4790r1usq7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 20:30:09 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55GH1hIe005490;
-	Mon, 16 Jun 2025 20:30:08 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 479mwkytv2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 20:30:08 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55GKU7T266716102
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Jun 2025 20:30:07 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 96C4B5805A;
-	Mon, 16 Jun 2025 20:30:07 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D9F0B58054;
-	Mon, 16 Jun 2025 20:30:05 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.36.235])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Jun 2025 20:30:05 +0000 (GMT)
-Message-ID: <0e70574bfae43ce939d67e89c858f303ae7ac204.camel@linux.ibm.com>
-Subject: Re: [RFC] Keyrings: How to make them more useful
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Jarkko
- Sakkinen <jarkko@kernel.org>, Steve French <sfrench@samba.org>,
-        Chuck Lever
- <chuck.lever@oracle.com>
-Cc: Paulo Alcantara <pc@manguebit.org>,
-        Herbert Xu
- <herbert@gondor.apana.org.au>,
-        Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <462886.1749731810@warthog.procyon.org.uk>
-References: <462886.1749731810@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Jun 2025 16:30:05 -0400
+	s=arc-20240116; t=1750106322; c=relaxed/simple;
+	bh=va9fi5446d5NJfKMY5GAQ49mIP93kHa9ezaWlyaN+RA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qqbg/t4kiGglXjlM97EyFuygJaPid8ckFZHhiynGAFu0l+7JdCqczP5UBiN50uh1sAWslrFUg2FGHszDAc3aH+Eqpyc2qyLmJMSyVBuhL86RO9NE5M7LzZ9zIbEYL4va6C+KlsmfsIMy9d2jOZ8EZng1Id2wSwzlusCwnDGEmvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SPZXP/wP; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=p2p8FtHrkiXlvyjLtwUnvSNfiw1M1F5Li13a+y2qmak=; b=SPZXP/wPYVGCT7blvSl92lhImB
+	utRbFDq5oBllsrG/x9f/0MM644Fs/0/bHEPPFI2P10iseZ6OXqA0euEXVdbygy3Vr0eRf186brXZ3
+	zqQUzO0v4R/6v4/OQ4kloNzPFTDXYK3tFDLHFjuE1s3rbAL8+VNu0HtbbtWC4luX/QiClIjjjQbFn
+	sgWsFEIprWCEH0qbnKvmx9wLa+htogYZkbOZVm47G7UX5GgYg3CNaQiViUB+1NR3bSNeydHtrbRjb
+	0oQRZJnG+nhN5PxvCJaGAnIK5g7Kga+V1Wck3ub18N+HLdF6TYIFcsz7AUTYp2kGy3d8sCXqNmAQJ
+	na4BRI4A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uRGbF-00000002Olo-1xmJ;
+	Mon, 16 Jun 2025 20:38:37 +0000
+Date: Mon, 16 Jun 2025 21:38:37 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, ebiederm@xmission.com, jack@suse.cz,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 25/26] get rid of mountpoint->m_count
+Message-ID: <20250616203837.GA438417@ZenIV>
+References: <20250610081758.GE299672@ZenIV>
+ <20250610082148.1127550-1-viro@zeniv.linux.org.uk>
+ <20250610082148.1127550-25-viro@zeniv.linux.org.uk>
+ <20250611-leidwesen-kundschaft-92abc4565458@brauner>
+ <20250611184700.GP299672@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wXse2RC_vQ4JRRGq0lWq-Sdm9JDEdfIn
-X-Proofpoint-ORIG-GUID: wXse2RC_vQ4JRRGq0lWq-Sdm9JDEdfIn
-X-Authority-Analysis: v=2.4 cv=AqTu3P9P c=1 sm=1 tr=0 ts=68507ed1 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=JoNQkPbLKCQ6XZtbux0A:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDE0MCBTYWx0ZWRfX8/cI4/OlrSm1 rTcMmcQSkT8bXAKuvP126Suxa2KoCUma8s02UNrUz3zZlyCMQ6ud9aqKLBUY503LhgsjNJmWAb5 saB9BvFDbbZ73yFlY7B6+2MC/ALyGCllRpPkp2jgLPySBegRPYR4oVrkiQPQk74b6wLB2keWBjM
- +UXEUgejZPd+ToJvVgJ28UPYc80VOc2FiXWsLECTwVuKjwQXTQr6U3UXN9IkUEaZB+zykhiLQyh hm+oRUPk/3K9ribP3YyAFjxcFAjSigrznSnSl1a3Toov0xOPCfoiT7z2LYuhefkVEF/yoRNiqe5 jlGYDjbU+a6jVhOKqrons1sJzGL8iTcb4HJ+dWayPoPUmxF3aahpIW1+P3bgA49mM8iaU6J5Rt4
- mLmZwuf4boQZ/HmZV4rcPzdo3dYbg8rnnFhF5miWYZu9nXKmE4jQwwRgyxM3XK5xDiuuLpgr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-16_10,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 suspectscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=768 mlxscore=0 spamscore=0
- bulkscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506160140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611184700.GP299672@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, 2025-06-12 at 13:36 +0100, David Howells wrote:
+On Wed, Jun 11, 2025 at 07:47:00PM +0100, Al Viro wrote:
+> On Wed, Jun 11, 2025 at 01:19:43PM +0200, Christian Brauner wrote:
+> 
+> > This feels well-suited for a DEFINE_FREE based annotation so that
+> > unpin_mountpoint() is called when the scope ends.
+> 
+> FWIW, I'd be more interested in having unlock_mount() treated that
+> way, but I'm not sure what syntax would make sense there.
+> 
+> scoped_cond_guard() is not a good fit, unfortunately...
 
-[ ...]
+Folks, how much would you hate the following trick:
 
->  (4) I think the keyring ACLs idea need to be revived.  We have a whole b=
-unch
->      of different keyrings, each with a specific 'domain' of usage for th=
-e
->      keys contained therein for checking signatures on things.  Can we re=
-duce
->      this to one keyring and use ACLs to declare the specific purposes fo=
-r
->      which a key may be used or the specific tasks that may use it?  Use
->      special subject IDs (ie. not simply UIDs/GIDs) to mark this.
+lock_mount(path, &m) returning void, and indicating error by storing
+ERR_PTR(-E...) into m.path; unlock_mount(&m) doing nothing if IS_ERR(m.mp);
+users turned into
 
-David, which keyrings are you referring to?  What do you mean by 'domain' o=
-f
-usage?  At what level of granularity are you thinking of?  This needs to be
-describe in more detail.
-
-thanks,
-
-Mimi
+	scoped_guard(lock_mount, mp)(path) {
+		if (IS_ERR(mp.mp))
+			return ERR_PTR(mp.mp);
+		....
+	}
 
