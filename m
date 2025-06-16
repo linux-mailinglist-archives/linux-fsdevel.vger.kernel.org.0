@@ -1,387 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-51720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD71DADAB7B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 11:07:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC38ADAB8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 11:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044B0188BAD3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 09:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C191714E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jun 2025 09:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2AB20127B;
-	Mon, 16 Jun 2025 09:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E390270EAB;
+	Mon, 16 Jun 2025 09:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xXuBwPDR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ol3PbQ+g";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xXuBwPDR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ol3PbQ+g"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hw6vcjDD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4218D1FF1C4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jun 2025 09:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4622F1DF982
+	for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jun 2025 09:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750064871; cv=none; b=T02ix+ejKasw+c1LwMVIh/hprTWfdpeG84D7ky7HfEW/j6FUWQ8RnJqZGPZzJXn/FO5wm6uGNgtjVspXf3wMJ2XxjGHKgRyxEj71YRl/aW6naKZdWSNsEnb64Pn8VfcbMtS69GPG2b/sEdfYXoNxmm6pBWkUGyP556+6TxC8TMA=
+	t=1750065141; cv=none; b=u70RhQj1VrB9anBcjz178nh1w8cxbmZVejrfWasHU+Ez0Stll57Nxe9+jb6E79PexE3Jj3qWMca33LKs/fRJOjGWQTt5cUevaY8qBhjXA8MIiGK5MuQSZaDyhVXo6H164b8bGKHvuPh2tXjn/SYgaLRMr5TtH9q6n0FwogYSEls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750064871; c=relaxed/simple;
-	bh=1LjkGH023z5VJBTOK64K4NabHr8r9LPgJU7arBEMX7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/523CGEEDtM9fAuo4EIirA3CJsLTiGZWg8Cj5M2DGuppHYA7vIjAtZ/UV/6NlRRpOZo0R+HHa+iuMd72AMxV74SWGw08mINmzVh9yckotYsDxukVfKSMut8jVwheQldJwG+fp3vxM4+CDSbZygN6a0szMwQsjQU03ZVtJk3MYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xXuBwPDR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ol3PbQ+g; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xXuBwPDR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ol3PbQ+g; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 66A611F38F;
-	Mon, 16 Jun 2025 09:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750064867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1750065141; c=relaxed/simple;
+	bh=CxFtkUaoICplqKg6mBF/vpC5ZoSwtzbG+6E2tKXhfc8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=APNdh9/qPqMkfKXygaoU9N9+78u7t95yH2X3EqeZbSBRUbDupAqUvA8/ml0yBFj+YJfJ3A774GYJsI4DBCT2cnNIXvU9qmFygK6GciE1RjIH7+FDQt37XK6FMFqQF49rx/GqwN5wOMOktxDwRp/92wsbhMy5s5BVgRMgdcte84Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hw6vcjDD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750065137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2IP/K83d2O/RVkoxEw8dV4eMvjAyYnww3kvorzbeLgg=;
-	b=xXuBwPDR3EUxRqpDTIooEEAXPt2cgGVKvxR7kZaIK/cVsvvxPS/foniVbGAdiQUa3qspHa
-	jqda0TvAN6VhcDaEfELiS8Zf9c6z9j5NiQH3PNH6fbE01FuTaq1q1CDVOI+wTy0gzbHENK
-	Rntyu6wDJOu4RHQft57UmlwrS3wUxds=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750064867;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2IP/K83d2O/RVkoxEw8dV4eMvjAyYnww3kvorzbeLgg=;
-	b=Ol3PbQ+g8cgpO+bNF326NX+Lh80YPDQP0ChIJfCEOTMSSBLRsF25Ojx3+nrJoG9el0wlww
-	+XQ9QdaW7FLIbKCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750064867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2IP/K83d2O/RVkoxEw8dV4eMvjAyYnww3kvorzbeLgg=;
-	b=xXuBwPDR3EUxRqpDTIooEEAXPt2cgGVKvxR7kZaIK/cVsvvxPS/foniVbGAdiQUa3qspHa
-	jqda0TvAN6VhcDaEfELiS8Zf9c6z9j5NiQH3PNH6fbE01FuTaq1q1CDVOI+wTy0gzbHENK
-	Rntyu6wDJOu4RHQft57UmlwrS3wUxds=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750064867;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2IP/K83d2O/RVkoxEw8dV4eMvjAyYnww3kvorzbeLgg=;
-	b=Ol3PbQ+g8cgpO+bNF326NX+Lh80YPDQP0ChIJfCEOTMSSBLRsF25Ojx3+nrJoG9el0wlww
-	+XQ9QdaW7FLIbKCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D180139E2;
-	Mon, 16 Jun 2025 09:07:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id W3/NEuPeT2g2RwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 16 Jun 2025 09:07:47 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EF41BA0951; Mon, 16 Jun 2025 11:07:46 +0200 (CEST)
-Date: Mon, 16 Jun 2025 11:07:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] fanotify HSM events for directories
-Message-ID: <2dx3pbcnv5w75fxb2ghqtsk6gzl6cuxmd2rinzwbq7xxfjf5z7@3nqidi3mno46>
-References: <20250604160918.2170961-1-amir73il@gmail.com>
- <e2rcmelzasy6q4vgggukdjb2s2qkczcgapknmnjb33advglc6y@jvi3haw7irxy>
- <CAOQ4uxg1k7DZazPDRuRfhnHmps_Oc8mmb1cy55eH-gzB9zwyjw@mail.gmail.com>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GQSoqKrp/ddRa/kh3o1Hv7MhPgf13bzJssOJZXJAf18=;
+	b=hw6vcjDDpkSxW06aUE0ZfQo3Fyl7fF/26/NG0WrrHdhvbpo1kvVIwJ5WJW6lr+HkmKOJZz
+	Rr+rT8l5p7aqgkq9VnbvBLPproNHSe3sC/CBe7LLPZoPwoWEGOfzvQmtv1Q8Dl53YFk5YC
+	kuqZ6qF9IhE6mBK+Alr2WYPbK/oF5tU=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-Pm4jr5upOkGOJMZPjgop2Q-1; Mon, 16 Jun 2025 05:12:14 -0400
+X-MC-Unique: Pm4jr5upOkGOJMZPjgop2Q-1
+X-Mimecast-MFC-AGG-ID: Pm4jr5upOkGOJMZPjgop2Q_1750065133
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a52cb5684dso2459814f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jun 2025 02:12:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750065133; x=1750669933;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GQSoqKrp/ddRa/kh3o1Hv7MhPgf13bzJssOJZXJAf18=;
+        b=LW02Rs56mLSDhZHPdO7gnNnLa7/JGiiMTz45BheTUBrd1OnJsofvYCENksWcMrN2ZN
+         me2fhnSXrY6B0+6ZfYlOjvlrfN3Ye7p2vuhrcRVvUXX1eezjqZpAe8YmPoJLUSoOdETX
+         Mne9eYQrpKz5F8OTiZTGH+92iXsSaFvFOwuK0IhnHE6rrDrfqMtb5UeHNvMcKesJ8iTL
+         NKjKhpY0Ukr1hE3FZUsDx3gyIy8gDMs5TFreHp4kHL7leknmesFT3LTkreN+ZvU9qg41
+         WImPms03WnTLtL/qrUBpaw6WrYRMUTy5Yhge8mbTm983BKbxyBivsouqaZoDnkYQkRK3
+         Mb/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVUL3QQxxnK2T6stiDY6eVnxXNqCLrGYzpnnSdhWFzmoZG9KFaoW2qg0CVKrgFxtcEEheMhV2qo4PaBvwjO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBZjCNmJawUy/Bxqfxxe72JPPuPIVHSz1I4xLgT152TGK0Tqnh
+	lzzlbkO1akCl6wEAmSTJoEA7zzbxzGFwcCq0PXQD0K2zn+a8jHDsEu2IXELyjMdb6MfPkIewSh+
+	dXWjExemFvZOGojhIXFw4ogLJrz5+flmTPfNvASLbzOT07tOOlA2ATUxKv+76CuDzLaE=
+X-Gm-Gg: ASbGnct+tFhnRaVkykfO6QsVCkwA3tD5pNjBxVb2q/Gcs5alu6716XjaiMYvj79KLHC
+	ne98ka1CTUY5ceqMi+7IZLBmSn23UXlZFzmj1VR+vo1FwgC8WHtS/hOne1igPQV/x7L4InKO0IR
+	uTvV0c7aSkMeNPHatrJZI161NbmiocchITvOpEdccBQPJlyWgKfeVSOuVati7IokUea315KudOs
+	OU8id0ePyqAs/KVI5PtBds/Cnr7le1r3AFWNEACIyLEu60hnTMizgaQ+O3dOMZa61zhxCIOil6q
+	NqHHhJ9/bIXGrhU5kSa6f/q8vinzc/wOGqJ9YXNyvm4Hw1HE49mVHF0V5Q11QNR5uZFgvFhTNcw
+	4wai8Yut15IQGmbinVq1AY/23vCJE9HZVG9Pxz0QqsRBcii4=
+X-Received: by 2002:a05:6000:2286:b0:3a4:d83a:eb4c with SMTP id ffacd0b85a97d-3a572e9a4bamr6400188f8f.57.1750065132613;
+        Mon, 16 Jun 2025 02:12:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHHJYnIt9dUbHvTScNyZFoVWDPNSRLqKY7Pq9JphyPgZ3sOj2Aaa3+c8Ekp/l0yglOVh/h4qQ==
+X-Received: by 2002:a05:6000:2286:b0:3a4:d83a:eb4c with SMTP id ffacd0b85a97d-3a572e9a4bamr6400152f8f.57.1750065132106;
+        Mon, 16 Jun 2025 02:12:12 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:bd00:949:b5a9:e02a:f265? (p200300d82f25bd000949b5a9e02af265.dip0.t-ipconnect.de. [2003:d8:2f25:bd00:949:b5a9:e02a:f265])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532dea1925sm141877845e9.12.2025.06.16.02.12.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Jun 2025 02:12:11 -0700 (PDT)
+Message-ID: <b128d1de-9ad5-4de7-8cd7-1490ae31d20f@redhat.com>
+Date: Mon, 16 Jun 2025 11:12:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxg1k7DZazPDRuRfhnHmps_Oc8mmb1cy55eH-gzB9zwyjw@mail.gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] add STATIC_PMD_ZERO_PAGE config option
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Dave Hansen <dave.hansen@intel.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Zi Yan <ziy@nvidia.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+ x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, hch@lst.de
+References: <20250612105100.59144-1-p.raghav@samsung.com>
+ <30a3048f-efbe-4999-a051-d48056bafe0b@intel.com>
+ <nsquvkkywghoeloxexlgqman2ks7s6o6isxzvkehaipayaxnth@6er73cdqopmo>
+ <76a48d80-7eb0-4196-972d-ecdcbd4ae709@intel.com>
+ <jpuz2xprvhklazsziqofy6y66pjxy5eypj3pcypmkp6c2xkmpt@bblq4q5w7l7h>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <jpuz2xprvhklazsziqofy6y66pjxy5eypj3pcypmkp6c2xkmpt@bblq4q5w7l7h>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Amir!
+On 13.06.25 10:58, Pankaj Raghav (Samsung) wrote:
+> On Thu, Jun 12, 2025 at 02:46:34PM -0700, Dave Hansen wrote:
+>> On 6/12/25 13:36, Pankaj Raghav (Samsung) wrote:
+>>> On Thu, Jun 12, 2025 at 06:50:07AM -0700, Dave Hansen wrote:
+>>>> On 6/12/25 03:50, Pankaj Raghav wrote:
+>>>>> But to use huge_zero_folio, we need to pass a mm struct and the
+>>>>> put_folio needs to be called in the destructor. This makes sense for
+>>>>> systems that have memory constraints but for bigger servers, it does not
+>>>>> matter if the PMD size is reasonable (like in x86).
+>>>>
+>>>> So, what's the problem with calling a destructor?
+>>>>
+>>>> In your last patch, surely bio_add_folio() can put the page/folio when
+>>>> it's done. Is the real problem that you don't want to call zero page
+>>>> specific code at bio teardown?
+>>>
+>>> Yeah, it feels like a lot of code on the caller just to use a zero page.
+>>> It would be nice just to have a call similar to ZERO_PAGE() in these
+>>> subsystems where we can have guarantee of getting huge zero page.
+>>>
+>>> Apart from that, these are the following problems if we use
+>>> mm_get_huge_zero_folio() at the moment:
+>>>
+>>> - We might end up allocating 512MB PMD on ARM systems with 64k base page
+>>>    size, which is undesirable. With the patch series posted, we will only
+>>>    enable the static huge page for sane architectures and page sizes.
+>>
+>> Does *anybody* want the 512MB huge zero page? Maybe it should be an
+>> opt-in at runtime or something.
+>>
+> Yeah, I think that needs to be fixed. David also pointed this out in one
+> of his earlier reviews[1].
+> 
+>>> - In the current implementation we always call mm_put_huge_zero_folio()
+>>>    in __mmput()[1]. I am not sure if model will work for all subsystems. For
+>>>    example bio completions can be async, i.e, we might need a reference
+>>>    to the zero page even if the process is no longer alive.
+>>
+>> The mm is a nice convenient place to stick an mm but there are other
+>> ways to keep an efficient refcount around. For instance, you could just
+>> bump a per-cpu refcount and then have the shrinker sum up all the
+>> refcounts to see if there are any outstanding on the system as a whole.
+>>
+>> I understand that the current refcounts are tied to an mm, but you could
+>> either replace the mm-specific ones or add something in parallel for
+>> when there's no mm.
+> 
+> But the whole idea of allocating a static PMD page for sane
+> architectures like x86 started with the intent of avoiding the refcounts and
+> shrinker.
+> 
+> This was the initial feedback I got[2]:
+> 
+> I mean, the whole thing about dynamically allocating/freeing it was for
+> memory-constrained systems. For large systems, we just don't care.
 
-On Tue 10-06-25 17:25:48, Amir Goldstein wrote:
-> On Tue, Jun 10, 2025 at 3:49 PM Jan Kara <jack@suse.cz> wrote:
-> > On Wed 04-06-25 18:09:15, Amir Goldstein wrote:
-> > > I am still tagging this as RFC for two semi-related reasons:
-> > >
-> > > 1) In my original draft of man-page for FAN_PATH_ACCESS [2],
-> > > I had introduced a new class FAN_CLASS_PRE_PATH, which FAN_PATH_ACCESS
-> > > requires and is defined as:
-> > > "Unlike FAN_CLASS_PRE_CONTENT, this class can be used along with
-> > >  FAN_REPORT_DFID_NAME to report the names of the looked up files along
-> > >  with O_PATH file descriptos in the new path lookup events."
-> > >
-> > > I am not sure if we really need FAN_CLASS_PRE_PATH, so wanted to ask
-> > > your opinion.
-> > >
-> > > The basic HSM (as implemented in my POC) does not need to get the lookup
-> > > name in the event - it populates dir on first readdir or lookup access.
-> > > So I think that support for (FAN_CLASS_PRE_CONTENT | FAN_REPORT_DFID_NAME)
-> > > could be added later per demand.
-> >
-> > The question here is what a real user is going to do? I know Meta guys
-> > don't care about directory events for their usecase. You seem to care about
-> > them so I presume you have some production use in mind?
-> 
-> Yes we have had it in production for a long time -
-> You can instantaneously create a lazy clone of the entire "cloud fs" locally.
-> Directories get populated with sparse files on first access.
-> Sparse files get populated with data on first IO access.
-> It is essentially the same use case as Meta and many other similar users.
-> The need for directory populate is just a question of scale -
-> How much does it take to create a "metadata clone" or the remote fs copy
-> and create all the sparse files.
-> At some point, it becomes too heavy to not do it lazily.
-> 
-> > How's that going to
-> > work? Because if I should guess I'd think that someone asks for the name
-> > being looked up sooner rather than later because for large dirs not having
-> > to fetch everything on lookup would be a noticeable win...
-> 
-> Populating a single sparse file on lookup would be a large win, but also pretty
-> hard to implement this "partially populated dir" state correctly. For
-> that reason,
-> We have not implemented this so far, but one can imagine (as you wrote) that
-> someone else may want to make use of that in the future.
+For non-mm usage we can just use the folio refcount. The per-mm 
+refcounts are all combined into a single folio refcount. The way the 
+global variable is managed based on per-mm refcounts is the weird thing.
 
-OK, thanks for clarification.
+In some corner cases we might end up having multiple instances of huge 
+zero folios right now. Just imagine:
 
-> > > 2) Current code does not generate FAN_PRE_ACCESS from vfs internal
-> > > lookup helpers such as  lookup_one*() helpers from overalyfs and nfsd.
-> > > This is related to the API of reporting an O_PATH event->fd for
-> > > FAN_PATH_ACCESS event, which requires a mount.
-> >
-> > AFAIU this means that you could not NFS export a filesystem that is HSM
-> > managed and you could not use HSM managed filesystem to compose overlayfs.
-> > I don't find either of those a critical feature but OTOH it would be nice
-> > if the API didn't restrict us from somehow implementing this in the future.
-> >
-> 
-> Right.
-> There are a few ways to address this.
-> FAN_REPORT_DFID_NAME is one of them.
-> 
-> Actually, the two cases, overlayfs and nfsd are different
-> in the aspect that the overlayfs layer uses a private mount clone
-> while nfsd actually exports a specific user visible mount.
-> So at least in theory nfsd could report lookup events with a path
-> as demonstrated with commit from my WIP FAN_PRE_MODIFY patches
-> https://github.com/amir73il/linux/commit/4a8b6401e64d8dbe0721e5aaa496f0ad59208560
+1) Allocate huge zero folio during read fault
+2) vmsplice() it
+3) Unmap the huge zero folio
+4) Shrinker runs and frees it
+5) Repeat with 1)
 
-OK, I agree that for nfsd reporting the event with the mount that nfsd exports
-would make sense.
+As long as the folio is vmspliced(), it will not get actually freed ...
 
-> Another way is to say that event->fd does not need to indicate the
-> mount where the event happened.
-> Especially if event->fd is O_PATH fd, then it could simply refer to a
-> directory dentry using some arbitrary mount that the listener has access to.
-> For example, we can allow an opt-in flag to say that the listener keeps
-> an O_PATH fd for the path provided in fanotify_mark() (i.e. for an sb mark)
-> and let fanotify report event->fd based on the listener's mount regardless
-> of the event generator's mount.
+I would hope that we could remove the shrinker completely, and simply 
+never free the huge zero folio once allocated. Or at least, only free it 
+once it is actually no longer used.
 
-So this would be controversial I think. Mounts can have different
-properties (like different read-only settings, different id mappings, ...),
-can reveal different parts of the filesystem and generally will be
-differently placed in mount hierarchy. So in particular with sb marks the
-implications of arbitrarily combining mount of a sb with some random dentry
-(which need not even be accesible through the mount) could lead to surprising
-results.
-
-> There is no real concern about the listener keeping the fs mount busy because:
-> 1. lsof will show this reference to the mount
-> 2. A proper listener with FAN_REPORT_DFID_NAME has to keep open
->    mount_fd mapped to fsid anyway to be able to repose paths from events
->    (for example: fsnotifywatch implementation in inotify-tools)
-> 
-> Then functionally, FAN_REPORT_DIR_FID and FAN_REPORT_DIR_FD
-> would be similar, except that the latter keeps a reference to the object while
-> in the event queue and the former does not.
-
-Yeah, I'm not that concerned about keeping the fs busy. After all we
-currently grab inode references and drop them on umount and we could do the
-same with whatever other references we have to the fs. 
-
-> > > If we decide that we want to support FAN_PATH_ACCESS from all the
-> > > path-less lookup_one*() helpers, then we need to support reporting
-> > > FAN_PATH_ACCESS event with directory fid.
-> > >
-> > > If we allow FAN_PATH_ACCESS event from path-less vfs helpers, we still
-> > > have to allow setting FAN_PATH_ACCESS in a mount mark/ignore mask, because
-> > > we need to provide a way for HSM to opt-out of FAN_PATH_ACCESS events
-> > > on its "work" mount - the path via which directories are populated.
-> > >
-> > > There may be a middle ground:
-> > > - Pass optional path arg to __lookup_slow() (i.e. from walk_component())
-> > > - Move fsnotify hook into __lookup_slow()
-> > > - fsnotify_lookup_perm() passes optional path data to fsnotify()
-> > > - fanotify_handle_event() returns -EPERM for FAN_PATH_ACCESS without
-> > >   path data
-> > >
-> > > This way, if HSM is enabled on an sb and not ignored on specific dir
-> > > after it was populated, path lookup from syscall will trigger
-> > > FAN_PATH_ACCESS events and overalyfs/nfsd will fail to lookup inside
-> > > non-populated directories.
-> >
-> > OK, but how will this manifest from the user POV? If we have say nfs
-> > exported filesystem that is HSM managed then there would have to be some
-> > knowledge in nfsd to know how to access needed files so that HSM can pull
-> > them? I guess I'm missing the advantage of this middle-ground solution...
-> 
-> The advantage is that an admin is able to set up a "lazy populated fs"
-> with the guarantee that:
-> 1. Non-populated objects can never be accessed
-> 2. If the remote fetch service is up and the objects are accessed
->     from a supported path (i.e. not overlayfs layer) then the objects
->     will be populated on access
-> 
-> This is stronger and more useful than silently serving invalid content IMO.
->
-> This is related to the discussion about persistent marks and how to protect
-> against access to non-populated objects while service is down, but since
-> we have at least one case that can result in an EIO error (service down)
-> then another case (access from overlayfs) maybe is not a game changer(?)
-
-Yes, reporting error for unpopulated content would be acceptable behavior.
-I just don't see this would be all that useful.
- 
-> > > Supporting populate events from overalyfs/nfsd could be implemented
-> > > later per demand by reporting directory fid instead of O_PATH fd.
-> > >
-> > > If you think that is worth checking, I can prepare a patch for the above
-> > > so we can expose it to performance regression bots.
-> > >
-> > > Better yet, if you have no issues with the implementation in this
-> > > patch set, maybe let it soak in for_next/for_testing as is to make
-> > > sure that it does not already introduce any performance regressions.
-> > >
-> > > Thoughts?
-> >
-> > If I should summarize the API situation: If we ever want to support HSM +
-> > NFS export / overlayfs, we must implement support for pre-content events
-> > with FID (DFID + name to be precise).
-> 
-> Yes, but there may be alternatives to FID.
-> 
-> > If we want to support HSM events on
-> > lookup with looked up name, we don't have to go for full DFID + name but we
-> > must at least add additional info with the name to the event.
-> 
-> Yes, reporting name is really a feature that could be opt-in.
-> And if we report name, it is no effort to also report FID,
-> regardless if we also report event->fd or not.
-> 
-> > Also if we go
-> > for reporting directory pre-content events with standard events, you want
-> > to add support for returning O_PATH fds for better efficiency and the code
-> > to handle FMODE_NONOTIFY directory fds in path lookup.
-> >
-> 
-> Yes. technically, O_PATH fd itself could be used to perform the populate of
-> dir in a kin way to event->fd being used to populate a file, so it is
-> elegant IMO.
-
-I agree it is kind of elegant. But I find reporting DFID and leaving upto
-userspace to provide "ignored" mount to fill in the contents elegant as
-well and there's no need to define behavior of O_PATH dir fds with NONOTIFY
-flags.
-
-> > Frankly seeing all this I think that going for DFID + name events for
-> > directory HSM events from the start may be the cleanest choice long term
-> > because then we'll have one way how to access the directory HSM
-> > functionality with possibility of extensions without having to add
-> > different APIs for it.
-> 
-> I see the appeal in that.
-> I definitely considered that when we planned the API
-> just wanted to consult with you before going forward with implementation.
-> 
-> > We'd just have to implement replying to FID events
-> > because we won't have fd to identify event we reply to so that will need
-> > some thought.
-> 
-> I keep forgetting about that :-D
-> 
-> My suggestion for FAN_REPORT_DIR_FD could work around this
-> problem ellegantly.
-
-I agree FAN_REPORT_DIR_FD doesn't have this problem and that certainly adds
-some appeal to it:). OTOH it is not that hard to solve - you'd need some
-idr allocator in the notification group and pass the identifier together
-with the event.
-
-> > What are your thoughts? Am I missing something?
-> 
-> My thoughts are that FAN_REPORT_DIR_FD and
-> FAN_REPORT_DFID_NAME may both be valid solutions and
-> they are not even conflicting.
-> In fact, there is no clear reason to deny mixing them together.
-> 
-> If you do not have any objection to the FAN_REPORT_DIR_FD
-> solution, then we need to decide if we want to do them both?
-> one at a time? both from the start?
-> 
-> My gut feeling is that FAN_REPORT_DIR_FD is going to be
-> more easy to implement and to users to use for first version
-> and then whether or not we need to extend to report name
-> we can deal with later.
-
-As I wrote in my first email what I'd like to avoid is having part of the
-functionality accessible in one way (say through FAN_REPORT_DIR_FD) and
-having to switch to different way (FAN_REPORT_DFID_NAME) for full
-functionality. That is in my opinion confusing to users and makes the api
-messy in the long term. So I'd lean more towards implementing fid-based
-events from the start. I don't think implementation-wise it's going to be
-much higher effort than FAN_REPORT_DIR_FD. I agree that for users it is
-somewhat more effort - they have to keep the private mount, open fhandle to
-get to the dir so that they can fill it in. But that doesn't seem to be
-that high bar either?
-
-We even have some precedens that events for regular files support both fd
-and fid events and for directory operations only fid events are supported.
-We could do it similarly for HSM events...
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+
+David / dhildenb
+
 
