@@ -1,106 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-51980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157EBADDE75
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 00:00:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BF4ADDE78
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 00:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5CD1400713
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 22:00:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACC217291F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 22:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C113CCA6F;
-	Tue, 17 Jun 2025 22:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1531F1DF75B;
+	Tue, 17 Jun 2025 22:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3h7SjuU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pw7TAtuQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFE71514F6;
-	Tue, 17 Jun 2025 22:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF15CA6F;
+	Tue, 17 Jun 2025 22:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750197624; cv=none; b=C5KeDCdAE5RfHbN5cLrZy0sSx19qP7fMAP89Y5X+3UttRgYdFFxk0/ArvvYmXgiWT5y3T28QYYnDouVNXcuqJ++4ew6CM4N3Z3XewPyCja96TknzaFevNPIUVUvpBohU8PRfdnZRCr8Ya7uJ5Kf7bDm3G1UO4aDQrclE7mDUZFU=
+	t=1750197686; cv=none; b=OuyBIX5sehngVjJ6PeRa4vuGmvXkjKqr1Yk2R5PWNptoWiMgeYXij7EYuC0Jn9gC9NDtPwNxglkrLCNJsuMtZuIcOPo3txWMfo0MTX+l7LUpxbHvlAUVR4W5eLK4C6x2qF0r5FD9CzK15M8LL2YOSV+Sq5suOuEDfHOJ5L2X084=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750197624; c=relaxed/simple;
-	bh=zgs35h9EtiQj2gsIkYN3K/XBSu+19KdaRfCI+ceSC2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ChHVk03qlcYocNOYfwIO7tDzbjHnFxc4dVAZp+zKM3fU9OF6nLrmzHku0naeY1KO3k14lmK2FFhjFn1k2GjcEUnKjhLM4lxsMC2zoMh+U12mJ0nkuctjQ2ObQlpgX4M5xjH0OQTVagG/CL1GMBNM9b/IY+OnqROBIfKu440oYAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3h7SjuU; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a6f3f88613so62408441cf.1;
-        Tue, 17 Jun 2025 15:00:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750197621; x=1750802421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txIUBFwdzlJtz0AE1b03VDLXigNRDHeYfG75FQwge3Y=;
-        b=L3h7SjuUgWAaDW8vzkxusq8aYrIRojyFyXzyfTW8nq8RkIxqFVjNrXw/2SimpMnXqn
-         ZGgEfunmIiZEysIq7vTpNY8UYgirZ4/OPa3tT5xO5bfETkC/RFIVlxSm+FwQokqyqS6q
-         1o0+dDGTywivCmXkvT/xlhU/XlZPTganVqSvElbwvCJpx3Ocxzc6Yp/2Ngx+lnxM2Ebs
-         CSUQQEFgug0lAeydn1NtDyWh3bHoyrxk/7zmYCHj24Sxk6+zxbPmkVTNq88ZIVjIlKYd
-         jTFrlG7NsR3697jPCOCy3re6b8r2MiiBiPHTP0nwqhGGyWrlkppAdtuyS75ZZ38oD+zy
-         jutw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750197621; x=1750802421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=txIUBFwdzlJtz0AE1b03VDLXigNRDHeYfG75FQwge3Y=;
-        b=ALhLYb0GuvbXNjggBDOVhOKWqVoDPZkuQ32cMcNVzn0urjDZg/kWfz6rNYuRjv37sp
-         WqiibIBceR2jtL+CV7FmbXVgQjxRs7dN/RVrNxxSbSSpu8wQvJR3ykfJnNkfbalkaXBd
-         tg7nkky2dsDUL9oaqwdwMyqDFLPyDiuGba2oNqclWbjJTgsgQgLH7/Yt99N5xNgU5Zxc
-         fVKv098OKmxmAkLv2fzrhPg3XnSsG/iM0n7YR8D0HfoNAZ0NfVLgC+4DzSJv+96yfXRa
-         en9bTKs8r8yH0TtB44n0wSUMv3rwNt6EvDOaxXhOEUFqJhZLvLDIWcsoLg9iOp2BtHxl
-         DZtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWk4LZY8fids6T1H7SvMdJeahd03IH9NJQ3DBQZJoAPX/TqzKlm5eUdIPEP1KBWq9pp3v/pAX6nhOAu@vger.kernel.org, AJvYcCWnVyDLKIM8ePlisIDl2p9wCHlKgYAp3b8K6tqbh4M1msRFVmd/893EYf7DzUeLdloPUevRnOVLFl3VK3Y4LQ==@vger.kernel.org, AJvYcCWp61cnXNJMTv0JFwv7EUm8A3HCUUhRqTytZSxxmYvrIAcT2k1b0jmBglDK5MsWA8txuoAmfmFiUN7tbg==@vger.kernel.org, AJvYcCXms3dbTkYX++WSKxGU0ere0GYbSR06SUaamWp6Rlxonjhfxq22vb5Fzg82ss9oXPQn/uXlQyt+uSYp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1Cned1rJgWMqtsG+kvEFDD2HLLtLuil1KTjo9RehA0wTJ6JDH
-	fM9LlT+0xyGUnWVuVyxgETpNMXNMOhmNesdZnWEatLc+zIwOf5n1+19rM1WzapSZQaZJqhAIWfy
-	AL3hptCEUCVMfYiQfB7uqxQ6enfqKy5E=
-X-Gm-Gg: ASbGncsNCg9bVYU7Fz18j2HNm3XXdm2WGFHOs611VEEkQjwqwW/XjSq1Xl33lYcpet4
-	sOmA6KvX+zySyXGCn5sm8GOQHVF9Y/XYEbBWsLisLYpd68ye1xSp7/4Hm1rI4mD3xQC4YGhz3js
-	U0HHi0Cu9QTJRWoKBzIwgFUG0qAJmh9Blm0R3ZSoP/CwsTl7G3uw5v7sIkP4g=
-X-Google-Smtp-Source: AGHT+IH0hdfYxpLNGLi3uEo213Cw3XqtMJ0PMjt6sD7nPMBUnc5OJF7u+w4++qwD5412WYS8skQhFb31RzNJBQ9+/x4=
-X-Received: by 2002:ac8:5949:0:b0:4a5:a4e9:132b with SMTP id
- d75a77b69052e-4a73c658c18mr221573461cf.48.1750197620736; Tue, 17 Jun 2025
- 15:00:20 -0700 (PDT)
+	s=arc-20240116; t=1750197686; c=relaxed/simple;
+	bh=98OltrgXlSIY+zJivzsdMUugbC523DqhsfawekZg9a8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eW388EvJoTN3AfcN3j0BKeHy/gCORJTeZaWhSk0qcGkaTkQts0SpA3gVLVjOF3K0f19nSdNTruNKa+fBY2SMo918Kr8aVf56iAe9k8XlCJ3xhF0KiFB/x5QRaVM1YInOSx21Ns7U9q9OBn1FGNpxFArWlq+RAiB10dmCQjb0Um0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pw7TAtuQ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9FMT2FpjdQo0FAdhbwycFRbupTNyRdJb2Vkr2XVSKqY=; b=pw7TAtuQKFDTsrWyKI93zDkl2d
+	BefezzL9pVcV4neiYzYD9FamEJrWAMjMFQEXnMKgiDYsJlvgXh4ILB/0cR/rwCIWBecVpO+bmORY/
+	ODnbTB3w6YRi9G0jNUyvd5ThY2FSCqww6BG/ET8xGx999ef5JGdOCQb3H2nZzVdGf6MXbkE/wTxg6
+	Gz09uCx+sIcWlzLQ3tcMPYGeDNWLnQQKm0PbO2FX/FrP6gRRSchCu1Wb4mZJjfSu2hCJ/WAlZ+dyh
+	woqDqlWCRHZjdkHf4fYB2OEZYgpOOdWNcNM6bFazAOt9Z47Tg4rpBV8m48hVvitWLlahCvV26/S2r
+	+axfU6IA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uReMs-00000001Q0T-1uHx;
+	Tue, 17 Jun 2025 22:01:22 +0000
+Date: Tue, 17 Jun 2025 23:01:22 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ceph: fix a race with rename() in
+ ceph_mdsc_build_path()
+Message-ID: <20250617220122.GM1880847@ZenIV>
+References: <20250614062051.GC1880847@ZenIV>
+ <20250614062257.535594-1-viro@zeniv.linux.org.uk>
+ <20250614062257.535594-3-viro@zeniv.linux.org.uk>
+ <f9008d5161cb8a7cdfed54da742939523641532d.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617105514.3393938-1-hch@lst.de> <20250617105514.3393938-10-hch@lst.de>
-In-Reply-To: <20250617105514.3393938-10-hch@lst.de>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 17 Jun 2025 15:00:09 -0700
-X-Gm-Features: AX0GCFvVfukB4jEEL0QyWt5wn8Z0d6yaU1T1xsjz2NFs3U_hou4mX4F2ZU4QqYc
-Message-ID: <CAJnrk1bkZGBnRcY5kXoxrqt0OoGZTu_ouWa=h6mF2Q97StT4Qw@mail.gmail.com>
-Subject: Re: [PATCH 09/11] iomap: export iomap_writeback_folio
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9008d5161cb8a7cdfed54da742939523641532d.camel@ibm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Jun 17, 2025 at 3:55=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> Allow fuse to use iomap_writeback_folio for folio laundering.  Note
-> that the caller needs to manually submit the pending writeback context.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Tue, Jun 17, 2025 at 06:21:38PM +0000, Viacheslav Dubeyko wrote:
 
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+> Tested-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-> ---
->  fs/iomap/buffered-io.c | 4 ++--
->  include/linux/iomap.h  | 1 +
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
+OK, tested-by/reviewed-by applied to commits in that branch, branch
+force-pushed to the same place
+(git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git work.ceph-d_name-fixes)
+
+Would you prefer to merge it via the ceph tree?  Or I could throw it
+into my #for-next and push it to Linus come the next window - up to you...
 
