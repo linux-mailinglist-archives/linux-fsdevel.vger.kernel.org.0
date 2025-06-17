@@ -1,87 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-51971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666ECADDC6A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 21:33:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21004ADDC71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 21:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE34D1940DB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 19:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B6AD1940FC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 19:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A3C2EBBAB;
-	Tue, 17 Jun 2025 19:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F065528B503;
+	Tue, 17 Jun 2025 19:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIvXlNt9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqlQaUcD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3484025CC55;
-	Tue, 17 Jun 2025 19:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBE8238D54;
+	Tue, 17 Jun 2025 19:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750188786; cv=none; b=aGmgTKqT9b3gSd3+H3Zi1SRCSfYaSS55+l2He+kNI0UPDe1A5PtBC77RrA5zR/DTsH6hhtc+Lyy9w54FV5MqSTSlJoaHTLKmcWZ6oC0cDL3fs4EyyTatEO0SYskzJJsY9G9WDA8/IpuTsontFSJOEDjI4G65MJr0ZRCWhYRBG8g=
+	t=1750188938; cv=none; b=RAwAli8e3srzmxy5Hqw9Wed3yQ0+J+/ec+K3ztiuSb5rNTjrkmuzEebG66wCNVJhxVfTJMDxMIzZ2d3cWXNoJljMnx7Nd02PxNfapUKqN5X0JHEg5QIxeAyQI2rXQuBKhdqnpMIPwI7pgRwMv5lt/vhX5SEDWBi30eyGwnlWIiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750188786; c=relaxed/simple;
-	bh=Aah+HSubQPUZAeKPHbnCgcwk4Pv9SienJRhWfGPoXVM=;
+	s=arc-20240116; t=1750188938; c=relaxed/simple;
+	bh=aHeR5TvY2TOMqEvpw3v/Isa3CBFokUQe/mc7hD6LOfk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KWsLebQpS2haiET7OHa4tKIlpauQVT2mGy5Lckb6VJrthuyRiD1hP0ZzeIl/MOnMdUSO+WaXPaHa+fNOhsr6UB0Kk0rMrLwYbO0iHMuge8vZTaJXzIcgDyq7zsGXlwITwzQO4Qhi3LiZHWmfC2gb4N5wABjUkegUJeY+DikwzLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eIvXlNt9; arc=none smtp.client-ip=209.85.160.170
+	 To:Cc:Content-Type; b=hqv5wn2p2/hMJvW86rZV36vNejeaT/j10l0aEhjW4O5KWjZjylwhYErhpVJ2MpqIWZbshW53toZX1JLf/iIlBilHQni8oth50KY4IAzQBuEecoIDM2F2JPi1Wy4ZCBLjGhRHPFn98fJcMllTouv2o7dWtMWkMJj8w9Ja9HLtYwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqlQaUcD; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a58b120bedso77055871cf.2;
-        Tue, 17 Jun 2025 12:33:04 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a42cb03673so72853211cf.3;
+        Tue, 17 Jun 2025 12:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750188784; x=1750793584; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750188935; x=1750793735; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nbe97D9Jmiian0+4yUZsYXhkQisqb/mr4o3dbA/bJbM=;
-        b=eIvXlNt9iyF/mPArua6df1n3/rJuQ+pFsG1PPUuw6DLAa3Y2FZbIR1fQHAS+UNFX/i
-         LR0Xa2OkVEh3jRuWxu63FZUpHOLyMtg938xHwqvohr/pksFtREV5WNLmeXt8JfjaWkdr
-         0bkKN0iKqe2C6CJyDIpJllJVUfV514ltt3GlKgVkP4x5/807C5/HFukbvcHhzBIk6LQD
-         Y38S0M5SL8iYUOOVZ1sZEQvJnMNKAVg8cyGdOxPJH2uyp+hs06R7smrFMwaAoe5dFFGJ
-         /IgUenZ/pp1UX2RzaBqBM1A+fG/rV9dhiUpeBNkzNMNsmEdzVIWYVZ0TY41qeI3kDp7W
-         qfOw==
+        bh=u/9a3nTLF3crPDcU7zdTz0aCFqms9P7e0P7pfzgojxs=;
+        b=TqlQaUcDClw92FhctarI0h5c3+IPkTn4FMPeUXlDXvhde3v5pMBsUJQkmNHenP3qXu
+         tKhshr3/LHJ8r0RSIjiu1Gj5j4W+UQtgDTzdcfBGpD4JRP/6ko6V9IbAnFG98suJPDGQ
+         qteEh24Ws6EXhoNSHeyGkf6vpBrAj7nXEtnpQXGebVbB3KyQ+CyiARIz7ZvzIt9p12+6
+         3VenRtpoORBJ26LwmZLLe8k5mLces+JOHFM0TwsPuT0B++gKOVphguyS6XEAjt5ZUJk+
+         FSVlUvRiu2pK9PPnURnjFOkwOpeqMGSDeYQBpPwT9nyBJCoQK+tyt5eJDVQXiXjcmhjX
+         5/uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750188784; x=1750793584;
+        d=1e100.net; s=20230601; t=1750188935; x=1750793735;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nbe97D9Jmiian0+4yUZsYXhkQisqb/mr4o3dbA/bJbM=;
-        b=XQHwrVsE1L2fJiQlIt6YiQqLeWf+6ukLoZaYRnQcQeqpblpEYRAnk/xfJFSuOXTHqN
-         SVqBDlTbUlJBh5gXlfAl0Nj10sbaDF/nO2rRSvYbZhU1S+XpUHAd2a/DJexxFWQCah9/
-         FyCEnBo+veA+ICv4iAdJOtFYEub62ZcZHCNhAZ/LN1k+59cRg+0R9eTvMGwx9s2vwEHy
-         xruBtZ0fz60ocfgUVVOXDkyVqj0VpVFnIoVRfHAaSrrGf4PjLn9Hysx3toXgkdl0HlBr
-         FDCskqUSIRTWzsmpGoHmMin6HZxXeKhOXmatmDEIZKFbjuxU+asH2/c4vzlgsJihXAs4
-         dekQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRyK0lKh0YB6ABbnEQ7Lk6pIYNqbOTfKPFqBLTyPzQYPIUhGj29+u8OeiiVVsYQhJBsRqiMxK+l7cTe1BLHQ==@vger.kernel.org, AJvYcCWN2x+dnPazGXpA9uKNAqlqb30WVmOl3ySGHFGwLsrYQGPKWFXwbnFuWHDqCkCGMZDRM5Sps24uduKj@vger.kernel.org, AJvYcCWihMmb9RN6fyucfUJXxtM0txMDhTIaTOD+Eawjlyt45c8nPz2Mzp3FtygTqMUguUPBU+Y5X/BOXB7p@vger.kernel.org, AJvYcCWy+Mbyhgp+sbhofuoF6ITxYm4NuyrwbmrqYvVDJ05XwUsnJSo9jkVyPh3XsxkbwjU9QKIM4FtyqJhV6A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr1TMALpzGQn4PP2r4jlB/bB7iH94oou5IFQ7umP8gVRC2JEla
-	oEKZM3PY9NnYLGo6UV2XhMuj/1h0y7+ldoRCizLqG7ss90kYnZycVmK72IW8ZE0iNTIFjEUNLXG
-	6A//qLuZLSYwLSI2C7deH4AyjAefYsF0=
-X-Gm-Gg: ASbGncs/6/87RPalc2Fsb567j1cPPJIqi7HS4xldWt6pb4me1FJXmACnTQajZQCymh9
-	hxcCFKElRGslDT6YhPwRzERhJaQM4UnQjstNob4wI6hxglzc6l9Tv4/lNO3cvINgKBDcHhP/XnW
-	HPD5cjjE/JF+cPKwf1hJV7SOT8wuR89HZ8IzCduFAMmmiH74Xr50F+VmrcoEUN9jeY3TGTjQ==
-X-Google-Smtp-Source: AGHT+IFs6szxS2r+gjeGsdqBiGo142lu+0TsxSL7Er/xKXXNedfsriBhcmkChn6VnN0EHL7qZN8FowNXo/P6UdDTHZM=
-X-Received: by 2002:a05:622a:1102:b0:477:e78:5a14 with SMTP id
- d75a77b69052e-4a73c484bbfmr241088891cf.3.1750188784164; Tue, 17 Jun 2025
- 12:33:04 -0700 (PDT)
+        bh=u/9a3nTLF3crPDcU7zdTz0aCFqms9P7e0P7pfzgojxs=;
+        b=nhC/X+RlIYBhf8x6oRaXgzPFVU0Rg/sCCX8xG2iWyAYCa3Glmen1i9Pz2C/E248s0b
+         1K/rl7wbv1OyGm+A+GKReZWymbDLPNStHiqpA0MDi8r2B1Sb5Il3G0D26ZB0KO+6VajZ
+         xrS1uXTPyVu7F23f05nrV8+l3Q8oXBL4se0ohclD3guiBUZ/zDjAnY8fkU6bcX3Vdqdo
+         kq4+KmrSRX2FYJalxfDPxPX43RROrfdEB+0oI/ZzvGn0b/yACFnM+qvZAagwxJe1NHi4
+         fcofci6FNqbDwWLfQE1cGdFDo7yfVCvnMHRhvfQRu2zYcO8unzwQ/NzFdEo3+8pl3giX
+         jPaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDcERrNcfYAbLBaa3kqnWkCNW73IXMuqJpOMOcb344dkDaqbL0E4o8wdsMP/zgVh3LDCyngr51LVaUmw==@vger.kernel.org, AJvYcCWVyhmu7AQGkvLQAEAqglWlda85LZvvG2DZTXj7+77iJMEEDcCJu/HLEiiL6xvqPQku1CtUlZKmqxjI@vger.kernel.org, AJvYcCWX72Plp+X/KMYfjYP7N6XmhwjZH/khYdlGhZfWhu3UUHRfpkK8sz24jN91hI33NkgeXJZmUxgPrmQ1+epMCA==@vger.kernel.org, AJvYcCWhY1qyxn/9mUelZn5r3RToY6QGOi7+fxRGvVceKb3njv87qhHlpgtTTxpgz0Jo7bBw0bWkSRrpmKDP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ+xl0eXfzO8bAW69UFLTv+3kDOijPS8+ZGt+a+/UASUqHK1TJ
+	48lAISKJDYuUB0iCX65oEoFM+pvYhdqscEFPdy+R2wbgwYWsmFKd5ERNy75iZXhxAQY/+GnF+hQ
+	5Dz4c/n3zEU5vtnasDAcwRNeuSwgQ05eEwUhK
+X-Gm-Gg: ASbGncuAI4TI3CJqSXvXPVY8Nv+g30G1LAXWYMu2f1C67lQzkSNB5cLQhKgE6+JZUA1
+	SRKVj8UevHfhArP/BFs1dRnyKPzYn6Ebu9A88zgq0fmE18HhsAhb9GtGTr5+GgH9YRete1m5/L8
+	cV2JOZ6p08cK5YlsomzUXvvriXXB4SLWkuiMyZMXruHavwd9wJZMZhY3AbGEoeYQT0mB/R2g==
+X-Google-Smtp-Source: AGHT+IGNWRrg78f2AdGVRIQIV7dWobH96xkUMSYd2uhj7HCCB8qHyFk4aKVijp1u4DOGWFfSZF3McIhV6rZZcXgCPlY=
+X-Received: by 2002:a05:622a:11c1:b0:4a3:96b7:2a73 with SMTP id
+ d75a77b69052e-4a73c533a1cmr231209081cf.16.1750188934744; Tue, 17 Jun 2025
+ 12:35:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616125957.3139793-1-hch@lst.de> <20250616125957.3139793-7-hch@lst.de>
- <CAJnrk1YtD2eYbtjxY4JWR3r75h1QyjwHPy+1NQBRUNrDmTUnQQ@mail.gmail.com> <20250617044420.GC1824@lst.de>
-In-Reply-To: <20250617044420.GC1824@lst.de>
+References: <20250617105514.3393938-1-hch@lst.de> <20250617105514.3393938-7-hch@lst.de>
+In-Reply-To: <20250617105514.3393938-7-hch@lst.de>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 17 Jun 2025 12:32:52 -0700
-X-Gm-Features: AX0GCFtRXAXeBs7bZNwJubD_2Slv0ZPzqWieKyeC3F6xMTrYOWwRlJxyDQUIKJ0
-Message-ID: <CAJnrk1ZYj0TvoLS=sE46p_8=b+3cZ=VNT1Zvd=HMembWUptHPQ@mail.gmail.com>
-Subject: Re: [PATCH 6/6] iomap: move all ioend handling to ioend.c
+Date: Tue, 17 Jun 2025 12:35:23 -0700
+X-Gm-Features: AX0GCFtb7h0lrcd8zlSxCJeX_oEZLGvjTqKxxkACd5AlnwnZgcq3jlm-zucC95I
+Message-ID: <CAJnrk1a8xkwwLthOrs3o+Jn8tqSCyEpOnomXL3+ONopFxd7QTA@mail.gmail.com>
+Subject: Re: [PATCH 06/11] iomap: move all ioend handling to ioend.c
 To: Christoph Hellwig <hch@lst.de>
 Cc: Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
@@ -89,21 +88,19 @@ Cc: Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 16, 2025 at 9:44=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+On Tue, Jun 17, 2025 at 3:55=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
 e:
 >
-> On Mon, Jun 16, 2025 at 01:52:10PM -0700, Joanne Koong wrote:
-> > >  #define IOEND_BATCH_SIZE       4096
-> > >
-> > > -u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend);
-> > >  u32 iomap_finish_ioend_direct(struct iomap_ioend *ioend);
-> > >
-> >
-> > Should iomap_finish_ioend_direct() get moved to ioend.c as well?
+> Now that the writeback code has the proper abstractions, all the ioend
+> code can be self-contained in ioend.c.
 >
-> It is pretty deeply tied into the direct I/O code, so I don't think
-> it is easily possible.   But I'll take another look.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Yeah, you're right. When I was testing this out yesterday it compiled
-cleanly for me because I had CONFIG_BLOCK=3Dn set.
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/iomap/buffered-io.c | 215 ----------------------------------------
+>  fs/iomap/internal.h    |   1 -
+>  fs/iomap/ioend.c       | 220 ++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 219 insertions(+), 217 deletions(-)
+>
 
