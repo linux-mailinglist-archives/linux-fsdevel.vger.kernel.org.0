@@ -1,182 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-51905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B363DADCE55
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4893CADCF16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 16:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD53017592E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 13:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768A317D70E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 14:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F63A2E3AF9;
-	Tue, 17 Jun 2025 13:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF2E2DE21D;
+	Tue, 17 Jun 2025 14:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQbquBVW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HDgsT7zC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98132E266E;
-	Tue, 17 Jun 2025 13:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979AA2E54D5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 14:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168460; cv=none; b=c2Mm4hIvAH4mugDHphcEXgDie0Wjodbk9w5I3DmDphdNanMX6LObfPFQFOUV5FKBJkyhgcnwZHlohYSwSF2y2hQvY95eWp3nmuAIOxaFGYDFYjS5s4BoIdkjYGvMe0g6zewvNvJouRZN2ELiTAnUBcLVhw3HgPZPo74aAifg1S4=
+	t=1750169223; cv=none; b=WFJTiE783XDubg2fx3rSfv0U8ase3oPKVz/BvtnTVYZYqY/dlGo+YIloId50+V6OaEAsJLLqap2TgcgC2BmNKSnfawAIgN5VaQbzZwYG27pIGCUCJSazrKknXwpzKXOWRifLkpDYYDsUn0rpCrS2EuDs8e86gm0XhTifHIRK+8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168460; c=relaxed/simple;
-	bh=+mvYcib1jOLn2MJdJlLe3/Of17qNWzn3vv5uSzZoKSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kl/yJjI2fxj794RFGX1W66GaO/HqBu3oYdwnoKk3K2k8e9FwB9AL+PU18zphQadJuaYjFSiQ7opWs0gwaPIdiuL/ZGKb1oGwFGi+NJ09xnnulnYlJ3vgDTZ2++LZI8W0H10gl2PuGm95LgWXOlsyIKD4gQ/kUwFuOpgtdgz27jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQbquBVW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 161CEC4CEF5;
-	Tue, 17 Jun 2025 13:54:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750168459;
-	bh=+mvYcib1jOLn2MJdJlLe3/Of17qNWzn3vv5uSzZoKSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qQbquBVWTNilpD9J2DZukqDqhw6dYV6sQdAC3swnhkXDCzrarHfIjtDx6+iaanIj2
-	 /w49fQnKSs5gIvxmaG8LRqyy10uW6vxniN9Vtlf836msmzLX6mULgZBsyo2VCzTtdQ
-	 v8HEJuCYV3Vzp6qLFx9lNWclFdUMun1+SF3Xe0r/IgIThr2gBMuIJcCrwNKPXlzr4k
-	 qKVgTe3En5KlysSFaraPhOlK6Hm77MlTIQOT81QI2BUf7+QXEZ3OYgm8HvmQq5bDyj
-	 EA6ptglxv3jHHKeLyaL/2d/HPCJgn2G8R6Gxm7WZ6HZYrmkdGksTvaIIGBQm3ZA2aU
-	 6u12Pn3Ty9DSA==
-Date: Tue, 17 Jun 2025 16:54:15 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org, Steve French <sfrench@samba.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
-	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Keyrings: How to make them more useful
-Message-ID: <aFFzWwPoXMhMJjTL@kernel.org>
-References: <462886.1749731810@warthog.procyon.org.uk>
+	s=arc-20240116; t=1750169223; c=relaxed/simple;
+	bh=lh4Wu179zCLjOtNueJK/Sz96qfLF/PqNel8O0RNTt9E=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=QABUk1ceGwW99LYVG5Jo13jVZ+lTO9BDQlJbPq1FpnidZDT6ERxozFi2B86L1PLHj2tCWdXX707yWNEcmiZHFw43IRhdxd0e6ESDQfS3yX3WeYpQHU4ue9U2R2MfH7CeJEDMLv1WkN2sAjx7ABNgMX29ENEvGf36O3PRuvCypy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HDgsT7zC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750169220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lh4Wu179zCLjOtNueJK/Sz96qfLF/PqNel8O0RNTt9E=;
+	b=HDgsT7zC5XwGnw/oAlxT7jAYJ100bNqsZX7OdbuQ6Kj5UlMpnBFw4AFnaltxhDX44uuT8l
+	y1udiMGWJAFhF6ZI2sZnwoU8PssFi0Z1JF9JE3lZ7RHwHwAG21wF0Kw3NUgL6CjWfZZ9UN
+	th9z7BvYAy/ntV4vOX/9P1b+JV+FjfU=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-2LLz78djNkqBLGkfhctWoA-1; Tue,
+ 17 Jun 2025 10:06:57 -0400
+X-MC-Unique: 2LLz78djNkqBLGkfhctWoA-1
+X-Mimecast-MFC-AGG-ID: 2LLz78djNkqBLGkfhctWoA_1750169214
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9696F19560A5;
+	Tue, 17 Jun 2025 14:06:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.18])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5C81A19560B0;
+	Tue, 17 Jun 2025 14:06:01 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
+References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+    "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+    Jens Axboe <axboe@kernel.dk>,
+    Jani Nikula <jani.nikula@linux.intel.com>,
+    Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+    Rodrigo Vivi <rodrigo.vivi@intel.com>,
+    Tvrtko Ursulin <tursulin@ursulin.net>,
+    David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Latchesar Ionkov <lucho@ionkov.net>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Christian Schoenebeck <linux_oss@crudebyte.com>,
+    David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Alexander Viro <viro@zeniv.linux.org.uk>,
+    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+    Benjamin LaHaise <bcrl@kvack.org>,
+    Miklos Szeredi <miklos@szeredi.hu>,
+    Amir Goldstein <amir73il@gmail.com>,
+    Kent Overstreet <kent.overstreet@linux.dev>,
+    "Tigran A
+ . Aivazian" <aivazian.tigran@gmail.com>,
+    Kees Cook <kees@kernel.org>, Chris Mason <clm@fb.com>,
+    Josef Bacik <josef@toxicpanda.com>, Xiubo Li <xiubli@redhat.com>,
+    Ilya Dryomov <idryomov@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>,
+    coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>,
+    Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+    Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+    Sandeep Dhavale <dhavale@google.com>,
+    Hongbo Li <lihongbo22@huawei.com>,
+    Namjae Jeon <linkinjeon@kernel.org>,
+    Sungjong Seo <sj1557.seo@samsung.com>,
+    Yuezhang Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>,
+    Andreas Dilger <adilger.kernel@dilger.ca>,
+    Jaegeuk Kim <jaegeuk@kernel.org>,
+    OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+    Viacheslav Dubeyko <slava@dubeyko.com>,
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+    Yangtao Li <frank.li@vivo.com>, Richard Weinberger <richard@nod.at>,
+    Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+    Johannes Berg <johannes@sipsolutions.net>,
+    Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+    David Woodhouse <dwmw2@infradead.org>,
+    Dave Kleikamp <shaggy@kernel.org>,
+    Trond Myklebust <trondmy@kernel.org>,
+    Anna Schumaker <anna@kernel.org>,
+    Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+    Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+    Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+    Joseph Qi <joseph.qi@linux.alibaba.com>,
+    Bob Copeland <me@bobcopeland.com>,
+    Mike Marshall <hubcap@omnibond.com>,
+    Martin Brandenburg <martin@omnibond.com>,
+    Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
+    Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Bharath SM <bharathsm@microsoft.com>,
+    Zhihao Cheng <chengzhihao1@huawei.com>,
+    Hans de Goede <hdegoede@redhat.com>,
+    Carlos Maiolino <cem@kernel.org>,
+    Damien Le Moal <dlemoal@kernel.org>,
+    Naohiro Aota <naohiro.aota@wdc.com>,
+    Johannes Thumshirn <jth@kernel.org>,
+    Dan Williams <dan.j.williams@intel.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+    Pedro Falcato <pfalcato@suse.de>, linux-block@vger.kernel.org,
+    linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+    dri-devel@lists.freedesktop.org, v9fs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+    linux-aio@kvack.org, linux-unionfs@vger.kernel.org,
+    linux-bcachefs@vger.kernel.org, linux-mm@kvack.org,
+    linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+    linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+    linux-f2fs-devel@lists.sourceforge.net, linux-um@lists.infradead.org,
+    linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+    linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+    ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+    linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
+    linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+    linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev
+Subject: Re: [PATCH 00/10] convert the majority of file systems to mmap_prepare
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <462886.1749731810@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <644215.1750169159.1@warthog.procyon.org.uk>
+Date: Tue, 17 Jun 2025 15:05:59 +0100
+Message-ID: <644216.1750169159@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Jun 12, 2025 at 01:36:50PM +0100, David Howells wrote:
-> Hi Jarkko, Steve, Chuck, Mimi, et al.,
-> 
-> I think work needs to be done on the keyrings subsystem to make them more
-> useful for network filesystems and other kernel services such as TLS and
-> crypto.
-> 
-> There are a number of issues that I think need addressing:
-> 
->  (1) One of the flaws in the initial design is that whilst keys have a type
->      (which is necessary), this has to be specified as part of the lookup or
->      the search, which is overly restrictive.
-> 
->      It probably would have been better to search by description alone and
->      then, if a key is found, have any type of key with that description
->      returned and let the app/service investigate the key to find the type.
-> 
->      Now, this is still possible to implement on top of the existing API: just
->      allow a NULL type to be passed in - but we might need some way to
->      enumerate all the keys with that description, but of different types.
->      Possibly, the search function should return all the matching keys.
-> 
->      Possibly, within the kernel, for each keyring, all the keys of the same
->      description can be stored within a group structure, and the search
->      returns the group.  This could also have the added benefit of maybe
->      making it easier to handle updates.
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-All keys matching the description can be collected by iterating all the
-key types (instead of passing NULL).
+> This is preferred to the existing f_op->mmap() hook as it does require a
+> VMA to be established yet,
 
-Having only a syscall for the process has of course much better
-concurrency properties.  Just trying to understand the improvements by
-actual measure, that's all.
+Did you mean ".. doesn't require a VMA to be established yet, ..."
 
->  (2) For certain applications, keys need versioning - and we need to be able
->      to get access to older versions (at least to some extent) of the keys.
->      An example of this is cifs where (if I understand it correctly) the key
->      version gets cranked, but not all servers may have caught up yet, so we
->      need to be able to try the keys in descending order of version.
-> 
->      This could also work within the group idea mentioned above.
-> 
->  (3) For certain applications, such as AFS and AF_RXRPC, we may need to be
->      able to keep a number of keys around that have the same description
->      (e.g. cell name) and basic type (e.g. rxrpc) and version, but that have
->      different crypto types (e.g. Rx security classes and Kerberos types, such
->      as RxGK+aes256-cts-hmac-sha1-96, RxGK+aes128-cts-hmac-sha256-128 or
->      RxKAD) as different servers in the same cell might not support all or we
->      might be implementing a server that is offering multiple crypto types.
-> 
->      So we might need a "subtype" as well as a version.
+David
 
-1. How the history is capped? I presume it is a fixed-size circular
-   buffer, where the oldest entry is deleted, when the key is updated.
-1. How history queried by the caller?
-2. How a newer version is revoked in favor of a newer version?
-
->  (4) I think the keyring ACLs idea need to be revived.  We have a whole bunch
->      of different keyrings, each with a specific 'domain' of usage for the
->      keys contained therein for checking signatures on things.  Can we reduce
->      this to one keyring and use ACLs to declare the specific purposes for
->      which a key may be used or the specific tasks that may use it?  Use
->      special subject IDs (ie. not simply UIDs/GIDs) to mark this.
-
-Is subject ID some kind of token that a process can hold (and possibly
-can be sent to a process)?
-
-> 
->  (5) Replace the upcall mechanism with a listenable service channel, so that a
->      userspace service (possibly part of systemd or driven from systemd) can
->      listen on it and perform key creation/maintenance services.
-> 
->      From previous discussions with the systemd maintainer, it would be a lot
->      easier for them to manage if the key is attached to a file descriptor -
->      at least for the duration of the maintenance operation.
-> 
->      Further, this needs to be containerised in some way so that requests from
->      different containers can be handled separately - and can be
->      distinguished
-
-This sounds like an universally sane idea (outside the scope of the
-patch set).
-
-> 
->  (6) Move away from keeping DNS records in a keyring, but rather keep them in
->      some sort of shrinkable list.  They could still be looked up over a
->      secure channel.
-
-Don't expertise to understand the benefits of this change. 
-
-
-> 
-> To aid with at least (1), (2) and (3) and possibly (4), I think it might be
-> worth adding an extended add_key() system call that takes an additional
-> parameter string:
-> 
-> 	key_serial_t add_key2(const char *type,
-> 			      const char *description,
-> 			      const char *parameters,
-> 			      const void payload, size_t plen,
-> 			      key_serial_t keyring);
-> 
-> The parameters would get passed to the key type driver for it to extract
-> things like version number and subtype from without the need to try and fold
-> it into the payload (which may, for example, be a binary ticket obtained from
-> kerberos).  Though possibly that is a bad example as the kerberos ticket may
-> contain multiple keys.
-
-Does the parameter list mimic kernel command-line style of comma
-separated attributes?
-
-BR, Jarkko
 
