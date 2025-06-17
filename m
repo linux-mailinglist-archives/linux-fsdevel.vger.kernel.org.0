@@ -1,134 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-51909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA54CADD014
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 16:39:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42463ADD21D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 17:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38C471889829
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 14:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A719617D3F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC351FF603;
-	Tue, 17 Jun 2025 14:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F542ECD2B;
+	Tue, 17 Jun 2025 15:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fswuEnnH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODz5LSl8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833981F9A8B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 14:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6232820F090
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 15:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750170941; cv=none; b=pTNfm2quFRlYfDuwjetto8zUunfB460MB7KxjvMkr3MUq/kDyPlnWasc+Uxx4i7nRBoOK4Qyh02oJY4swYqXOweTC3D+mm0yeaoqc3fFX6DcsXv3UO2ZKdkpJ0RLghsYYCabI1f/8lEGvl1tv1aG6peM1XTC//eDNCBmoaDP/qw=
+	t=1750174752; cv=none; b=MDpngrTZB/sBdx8jlQ/f1ALg/k/nQuUbRmrn66sTtalrcTovdAMo4g3kaWgDLOsH5Ddv67ps7RPqBPleXDafmsk4QyTPRYo7g6DfDX3fmQGVypIT84zD9FV660eDjIgW/bBDrmYJNVEjUpoTfFm1v1+4m1Vx3r6FVEzRNigfpyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750170941; c=relaxed/simple;
-	bh=FemY+hsQFrUD5ZAGM9NrybsPZvSowNvRmXOgYe8eQXU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KLRgLYwljqHRKB/gFb8PT2DZOx2UtUNRdfyNoHv/5Jjf53q3OyZpxtCcxpg6FIidm1S2JK3b1lUgFD+qSmUFpOmYW6GcRoiWA1+WHrhSZbKl9IyVomG26M/WcRQVg0UwFRYQdXK9chjmK3goS1cNhwP59/yxYjf8+fMV1B/5bNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fswuEnnH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750170937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jgNdlNRbfBs1E1Ur5QzUEwyVJhDqK+C7eqNF6/N6wfM=;
-	b=fswuEnnHWgLDBD0CEeR1bzUFLXjVu0dISYUcWcpcNzTT9IlVBmEuAdFtfIyt/IpST7xxM3
-	7Zl9aZV6CoJZBgyMKubSFgxz0CN17uTf4GQFQ+vNiQ/arKFJhXv9h2JwFjqA+vYvwPQdVo
-	yqIE5GsVLRTnROWPQPnoqzKavZZD+Jg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-622-0zefOsFXNYeL3FBEhr-Jhg-1; Tue, 17 Jun 2025 10:35:36 -0400
-X-MC-Unique: 0zefOsFXNYeL3FBEhr-Jhg-1
-X-Mimecast-MFC-AGG-ID: 0zefOsFXNYeL3FBEhr-Jhg_1750170935
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so37754295e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 07:35:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750170935; x=1750775735;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jgNdlNRbfBs1E1Ur5QzUEwyVJhDqK+C7eqNF6/N6wfM=;
-        b=Q7f2GtA+wkIce2c097xCz2r60MOt82uqSCrqpk72FkgmCvNT3/syxIpAC0Zml3AkmS
-         56A+UKIoig4kD0sP8LZom78oRn6LD7H1SrJNpMnqYmB6n1wTC5K3L3D4AnG9sE66iBw9
-         OxjNL+Fb29sJVPYgN8fbKEk3LnJoQFhO0ZXPHMO9q5tr5+w0sZwYFKSMmYCXipcUGv36
-         OW2FLtVrvtjo3BrzE5Mb1E25tqqFZ8aTukpxO7XTRSfR+xuzuTXVbuuvVLCcTdhs8se9
-         rK6vVKr5MnLbvp7tz5GNlDBIYkky4miGuobBAM7IPNtagdRpTEb1H7k+RAS+0BLFL00o
-         ccAQ==
-X-Gm-Message-State: AOJu0YyciCKN0gi1/raXCPWNSh+d6BKX5c349qwPZ9dBrB9fAq3TOtiO
-	Mskv8yUaIcEL/K5TeVPwyo84mb0Iwb/2OPzLrsVxz2izDmXCun4OU7Krw7aKOJ52xlcy1PQ0oo/
-	t03uSRS/08klruXxij+wbQGZSUST4Zu6MKQ9qskr8hcyUkPvahfZ7lO1r28pCxI0/NjM=
-X-Gm-Gg: ASbGncseNDh9pWudzOeey4IgUW6SFnivUCYA0/YJXxQAXMPrmRNblQZfJeEoAenNYm3
-	gJNwHPjcytncAjQh00913/4ntecVkFOwSbW3eDd9YIHTzmOHCcSBC3EVQI0fmm0TLUfel//2iUR
-	5oDxOkUEfvr4ct2fzOuekaUfrEtl6d7Cqt2EgA9Iu+6l6rnEfQIFpnUbPdeNAHLuR4L3gMXOXwv
-	OPQj5zzC2NwbARh/Gn23VKBSE1j/SHblYfosMX/+Cmr3kU2wasiFyusSVnhV3wtze3VVUjL5ckh
-	Sr+EJPzwM0Mn5JN3X7ZK4lE/3E0dMxsF5vGe89nh9x3E74FPFxWKkWf6r2auvjyKWOY3q0PQ8s9
-	Y49OzCQ==
-X-Received: by 2002:a5d:5c84:0:b0:3a4:f902:3845 with SMTP id ffacd0b85a97d-3a5723a261fmr11736169f8f.21.1750170934706;
-        Tue, 17 Jun 2025 07:35:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPkPKlpTmwMDIOZJAPGaDCPoTWf6kGLLVQZf/ykyAoEKvG2AJhCQQXS3FLdC7hGH+p405nNw==
-X-Received: by 2002:a5d:5c84:0:b0:3a4:f902:3845 with SMTP id ffacd0b85a97d-3a5723a261fmr11736147f8f.21.1750170934317;
-        Tue, 17 Jun 2025 07:35:34 -0700 (PDT)
-Received: from localhost (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a568b47198sm13954565f8f.81.2025.06.17.07.35.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 07:35:33 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: [PATCH v1] fs/proc/task_mmu: fix PAGE_IS_PFNZERO detection for the huge zero folio
-Date: Tue, 17 Jun 2025 16:35:32 +0200
-Message-ID: <20250617143532.2375383-1-david@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750174752; c=relaxed/simple;
+	bh=ycnqO27G+i01caKOho72IO/PreqWHzzf+3vmqZdwBas=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DIyizcJuj/TfdKxIJmHP1Ii8xUM6PwXpW9vykUaen2Sd7tL7Tk4yKhxmlNGhjH9pDFr5qjoDHkbS5RVB89oq/MobgoteGBFB0usMRGK/5EenwDgYZwq0SrSgnoqtUoKZjtnyAFjPKK5kfo3JgOAUTpOrvUlNahIr05vg2pH2azY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODz5LSl8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68947C4CEF1;
+	Tue, 17 Jun 2025 15:39:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750174752;
+	bh=ycnqO27G+i01caKOho72IO/PreqWHzzf+3vmqZdwBas=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ODz5LSl8ofhECIzHOYdXumRRZrI5FYWdxLJ/gMJkXpg6f+qZUvCdheEnVAR4a0qsM
+	 ehU94fBSD5hweicyxxZDqtJ14XwkE2d0C1cw8e3eGmXz5MKYdSfwmal2v6bG7TYv0F
+	 ljJzuAYUGwa9DGM/E4U5bfeidX2RHO2PieCWQZeTnhJvKPI2NOgqUOJBGomktm3mfy
+	 WjlF2b1YFv2+MFJ/wrldEKD6Z9O9HTMvigSuj/47Xr4d9a0T6OwL8u2Cuci6XTz/Wt
+	 tcuM2m2XeyhqiVQi02cSKOwq6T7j7ePop3lsJiOyvfElNohquVhvNuzucsvTF/mAc8
+	 5rk6kX4nesH0A==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC v2 0/2] pidfs: keep pidfs dentry stashed once created
+Date: Tue, 17 Jun 2025 17:39:02 +0200
+Message-Id: <20250617-work-pidfs-v2-0-529ca1990401@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABaMUWgC/02OwQrCMBBEf0X2bEqTYrCeBMEP8Co9bNJtG6pJ2
+ ZSolP67bfHgcQbem5kgEjuKcNpNwJRcdMEvQe13YDv0LQlXLxlUrg65loV4Be7F4OomCqVLVSi
+ LWMoGFmBgatx7k93hdr1AtZQGIwnD6G23ep4YR+Is6UxqwVauXOfiGPizfUhyo39z+n8uSZELL
+ Awae0TUypx7Yk+PLHAL1TzPX1sb99zNAAAA
+X-Change-ID: 20250613-work-pidfs-269232caa91f
+To: Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-262a7
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6145; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=ycnqO27G+i01caKOho72IO/PreqWHzzf+3vmqZdwBas=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQE9si5/LkYEGTVl+gmMDt2A6fXdeX4C8L6P8+emSr4d
+ U/Blk1MHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPZdYfhn2Lg7vT37gI/9FxN
+ Xu5YeHGvNs+dIA2/t8FWVtK37p7/EMbIsDyr7sPF2b+uXl6wo/DNxiZvs0uH3u961Xx+m9MtEyb
+ +32wA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-is_zero_pfn() does not work for the huge zero folio. Fix it by using
-is_huge_zero_pmd().
+Keep pidfs dentries around after a pidfd has been created for it. The
+pidfs dentry will only be cleaned up once the struct pid gets reaped.
 
-Found by code inspection.
+The current scheme allocated pidfs dentries on-demand repeatedly.
+This scheme is reaching it's limits as it makes it impossible to pin
+information that needs to be available after the task has exited or
+coredumped and that should not be lost simply because the pidfd got
+closed temporarily. The next opener should still see the stashed
+information.
 
-Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+This is also a prerequisite for supporting extended attributes on
+pidfds to allow attaching meta information to them.
+
+If someone opens a pidfd for a struct pid a pidfs dentry is allocated
+and stashed in pid->stashed. Once the last pidfd for the struct pid is
+closed the pidfs dentry is released and removed from pid->stashed.
+
+So if 10 callers create a pidfs for the same struct pid sequentially,
+i.e., each closing the pidfd before the other creates a new one then a
+new pidfs dentry is allocated every time.
+
+Because multiple tasks acquiring and releasing a pidfd for the same
+struct pid can race with each another a task may still find a valid
+pidfs entry from the previous task in pid->stashed and reuse it. Or it
+might find a dead dentry in there and fail to reuse it and so stashes a
+new pidfs dentry. Multiple tasks may race to stash a new pidfs dentry
+but only one will succeed, the other ones will put their dentry.
+
+The current scheme aims to ensure that a pidfs dentry for a struct pid
+can only be created if the task is still alive or if a pidfs dentry
+already existed before the task was reaped and so exit information has
+been was stashed in the pidfs inode.
+
+That's great expect that it's buggy. If a pidfs dentry is stashed in
+pid->stashed after pidfs_exit() but before __unhash_process() is called
+we will return a pidfd for a reaped task without exit information being
+available.
+
+The pidfds_pid_valid() check does not guard against this race as it
+doens't sync at all with pidfs_exit(). The pid_has_task() check might be
+successful simply because we're before __unhash_process() but after
+pidfs_exit().
+
+This switches to a scheme were pidfs entries are retained after a pidfd
+was created for the struct pid. So when allocating a pidfds dentry an
+extra reference is retained that is owned by the exit path and that will
+be put once the task does get reaped. In the new model pidfs dentries
+are still allocated on-demand but then kept until the task gets reaped.
+
+The synchronization mechanism uses the pid->wait_pidfd.lock in struct
+pid to synchronize with pidfs_exit() called when the task is reaped. If
+the path_from_stashed() fastpath fails, a new pidfs dentry is allocated
+and afterwards the pid->wait_pidfd.lock is taken. If no other task
+managed to stash its dentry there the callers will be stashed.
+
+When the task is reaped and calls pidfs_exit() the pid->wait_pidfd.lock
+is taken. Once pidfs_exit() holds the pid->wait_pidfd.lock and sees that
+no pidfs dentry is available in pid->stashed it knows that no new dentry
+can be stashed while it holds the pid->wait_pidfd.lock. It thus sets a
+ERR_PTR(-ESRCH) sentinel in pid->stashed. That sentinel allows
+pidfs_stash_dentry() to detect that the struct pid has already been
+reaped and refuse to stash a new dentry in pid->stashed. That works both
+in the fast- and slowpath.
+
+This in turn allows us to fix the bug mentioned earlier where we hand
+out a pidfd for a reaped task without having exit information set as we
+now sync with pidfs_exit() and thus release_task().
+
+This also has some subtle interactions with the path_from_stashed()
+fastpath that need to be considered. The path_from_stashed() fast path
+will try go get a reference to an already existing pidfs dentry in
+pid->stashed to avoid having to allocate and stash a pidfs dentry. If it
+finds a dentry in there it will return it.
+
+To not confuse path_from_stashed() pidfs_exit() must not replace a pidfs
+dentry stashed in pid->stashed with the ERR_PTR(-ESRCH) sentinel as
+path_from_stashed() could legitimately obtain another reference before
+pidfs_exit() was able to call dput() to put the final pidfs dentry
+reference. If it were to put the sentinel into pid->stashed it would
+invalidate a struct pid even though a pidfd was just created for it.
+
+So if a pidfs dentry is stashed in pid->stashed pidfs_exit() must leave
+clearing out pid->stashed to dentry->d_prune::pidfs_dentry_prune(). When
+pruning a dentry we must take care to not take the pid->wait_pidfd.lock
+as this would cause a lock inversion with dentry->d_lock in
+pidfs_stash_dentry(). This should fortunately not at all be necessary as
+by the time we call pidfs_dentry_prune() we know that the struct pid is
+dead as the task is reaped and that anyone concurrently trying to get a
+reference to the stashed dentry will fail to do so.
+
+IOW, it doesn't matter whether the path_from_stashed() fast path sees
+NULL, a dead dentry, or the ERR_PTR(-ESRCH) sentinel in pid->stashed.
+Any of those forces path_from_stashed() into the slowpath at which point
+pid->wait_pidfd.lock must be acquired. The slowpath will then see either
+a dead dentry or the ERR_PTR(-ESRCH) sentinel but never NULL and thus
+fail the creation of a new pidfs dentry.
+
+path_from_stashed() must take care to not try and take a reference on
+the ERR_PTR(-ESRCH) sentinel. So stashed_dentry_get() must be prepared
+to see a ERR_PTR(-ESRCH) sentinel in pid->stashed.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-
-Probably we should Cc stable, thoughts?
-
-We should also extend the pagemap_ioctl selftest to cover this case, but I
-don't have time for that right now. @Muhammad ?
+Changes in v2:
+- Fix lock inversion.
+- Link to v1: https://lore.kernel.org/20250616-work-pidfs-v1-0-a3babc8aa62b@kernel.org
 
 ---
- fs/proc/task_mmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Christian Brauner (2):
+      pidfs: keep pidfs dentry stashed once created
+      pidfs: remove pidfs_pid_valid()
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 27972c0749e78..4be91eb6ea5ca 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -2182,7 +2182,7 @@ static unsigned long pagemap_thp_category(struct pagemap_scan_private *p,
- 				categories |= PAGE_IS_FILE;
- 		}
- 
--		if (is_zero_pfn(pmd_pfn(pmd)))
-+		if (is_huge_zero_pmd(pmd))
- 			categories |= PAGE_IS_PFNZERO;
- 		if (pmd_soft_dirty(pmd))
- 			categories |= PAGE_IS_SOFT_DIRTY;
--- 
-2.49.0
+ fs/internal.h |   2 +
+ fs/libfs.c    |  22 +++++--
+ fs/pidfs.c    | 191 ++++++++++++++++++++++++++++++++++++++--------------------
+ kernel/pid.c  |   2 +-
+ 4 files changed, 147 insertions(+), 70 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250613-work-pidfs-269232caa91f
 
 
