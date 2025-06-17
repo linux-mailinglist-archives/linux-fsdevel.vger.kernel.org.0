@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-51933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9BCADD31A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 17:53:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AD2ADD2F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 17:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC39C188A0D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:49:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D597401DE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9902ED857;
-	Tue, 17 Jun 2025 15:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A142F2ED17A;
+	Tue, 17 Jun 2025 15:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AXbs1E54"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhQNR3n5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCF22ECE8D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 15:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073D81E573F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 15:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750175124; cv=none; b=Yf85jOOBFlX3gnyYCKu1N3gEsgvIHnTrLxr8YRfXmfXyzGOb1jtqb0bok1/XqK02AwHpLwmTFZiFjiTeaAg+1rfExmPtcOSeddqqiZWbQ7OZUo0X7DShyySYgjIp7RlhsTx1c2ifOnwirnJbyw7KjKTgpud/gIj1hPVXf2D4b18=
+	t=1750175127; cv=none; b=GO9lyTQXTz70c+DeH3bdXb4R8xsjRazlFYIUIifsTD74+JjWHIqrpSbe2uS3UPPDcHne/UyZi8qDPnoTlzujpH48z0dzjdYDWp8tHvHX0yVuZDnaTfPb+/2JVm2ua2z3pXV/oj2rQ38lGVADCRhplyBGZS1Qb0RIEB6Ab+skkq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750175124; c=relaxed/simple;
-	bh=G2ADcao7gr5wLevoR02sqtL5kkc1MgcUmNkBeBWy05Q=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jepoFukw5UaErzkRT5JAir/YjYYyk+8HnyRP5JbGw7ToE1kTw2RiGca6NxC8CySpGwJ4J1/pm0Z0tkTvHgUiyQGmr0VUzF89TTiyfs81LLXHjrTOna/cXmOmwmcBNlbXCxss0nk842F8N6eyG6Em7aW0LWND2pajDY29xQ+IO5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AXbs1E54; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8354C4CEE7;
-	Tue, 17 Jun 2025 15:45:21 +0000 (UTC)
+	s=arc-20240116; t=1750175127; c=relaxed/simple;
+	bh=UHJw0+IWD87G0xSJs3wlAUiSuj8RNBznHlUR4CGwtZQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=PTMQ0ObPoQNgOoBXmMDVq0Ln1Qevl1ffGH3t079rPqLkXCZuAc/yiv/3mmWUcK8Ty5iXK9RwCdRCpkQ6Es2nOz3xe10MSl9ytfJypxOdPQ2Q9yvo7ZhHCwyV5pXiIplqzATIhl5lDcmLk0cMwxgNGl2zSvMgB6Jx3Md4jnGp1uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhQNR3n5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49573C4CEE7;
+	Tue, 17 Jun 2025 15:45:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750175123;
-	bh=G2ADcao7gr5wLevoR02sqtL5kkc1MgcUmNkBeBWy05Q=;
-	h=From:Subject:Date:To:Cc:From;
-	b=AXbs1E54m6oHd6vLN/nRXv5Pv8Z0GC9mWkrnMnCD+9JmtsSHN7bHuJl196IdyWLhm
-	 dQz/RWD8DOYPg+5GMoeVM0lwyU684SJtmS0G0yOR/9XpdHy9EoiwV3w9lEUjzGdcxi
-	 jR84aCneBpDmjH+AiUqnBERmY8szzlrkpgJ6/Sl2M4IlwFtxXmMeDqtaQenq5MkuEz
-	 SPGVyWoa2Poe3iVCUGbnIS7khh4aZ6wtEacsImNl+rRR2pM/hF4XXmAb+3a936RpyQ
-	 vzd2e47logMrg32VDjIq4CfpdMbVgOAZ/soWUBf26E8ijZD101Me+CweC6wS+GG1Jb
-	 d8qniUOuKQCTA==
+	s=k20201202; t=1750175126;
+	bh=UHJw0+IWD87G0xSJs3wlAUiSuj8RNBznHlUR4CGwtZQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=KhQNR3n5B4PQhX835+GoF+oSe8EYAUbNEitABfFE/Dzhv5v5RreFj2NssApATek5G
+	 +YUYff0zJYKCJK/2A0edNDPhzGmmSDyphsQ+uKPkUaqtWBmnsPxgvrh/3BYDcrVqGM
+	 WraNs7oH/MfMt3N650WLr9bcbD4HCiJQcUjnl5luNkcFRCMDNvCU4I7qFGBy4F5WAa
+	 OU5/zK5Z9WVk0kRZ31Y0z3nmak9TpooxrEEUuk2ioG0Tljdilpmk3EohT9ikX8Tg4y
+	 erbzfDbO4Rj1wiBAcq1Uzpz1HPwW1nF6lOnJvzvYm13tW2O5cJMJjuWPJ32HufP7km
+	 ScbQ4QGPQRC6g==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH RFC 0/7] pidfs: support extended attributes
-Date: Tue, 17 Jun 2025 17:45:10 +0200
-Message-Id: <20250617-work-pidfs-xattr-v1-0-d9466a20da2e@kernel.org>
+Date: Tue, 17 Jun 2025 17:45:11 +0200
+Subject: [PATCH RFC 1/7] libfs: prepare to allow for non-immutable pidfd
+ inodes
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +53,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIaNUWgC/x2MwQrCQAxEf6XkbEp30YpeBT/Aq3jYbbM2CNuSF
- C2U/rvZzu3NMG8FJWFSuFYrCH1ZecwG7lBBN4T8JuTeGHzjT03rzvgb5YMT90lxCfMs6Cz+2Ca
- 6RA92m4QSL7vyCY/7DV5WxqCEUULuhmIrknqX1GWBbfsDNrtQ5okAAAA=
-X-Change-ID: 20250617-work-pidfs-xattr-1111246fe9b2
+Message-Id: <20250617-work-pidfs-xattr-v1-1-d9466a20da2e@kernel.org>
+References: <20250617-work-pidfs-xattr-v1-0-d9466a20da2e@kernel.org>
+In-Reply-To: <20250617-work-pidfs-xattr-v1-0-d9466a20da2e@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: Jann Horn <jannh@google.com>, Josef Bacik <josef@toxicpanda.com>, 
  Jeff Layton <jlayton@kernel.org>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
@@ -64,47 +64,37 @@ Cc: Jann Horn <jannh@google.com>, Josef Bacik <josef@toxicpanda.com>,
  Christian Brauner <brauner@kernel.org>, 
  Alexander Mikhalitsyn <alexander@mihalicyn.com>
 X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1577; i=brauner@kernel.org;
- h=from:subject:message-id; bh=G2ADcao7gr5wLevoR02sqtL5kkc1MgcUmNkBeBWy05Q=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQE9k6o+cdvsKnn8Rbt69/Ztr1sN7mjHensnPLQ89D0N
- YyWv0TaO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaiO5Hhf3CHQ1OPjuEnlRnz
- i24yHVHjWSByxWl6FbduxRdhwZi9jxgZDnwo2aCnYCFfflH6c/tpH+5bJ6adXqey/el8qYqAtl8
- TOQE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=588; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=UHJw0+IWD87G0xSJs3wlAUiSuj8RNBznHlUR4CGwtZQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQE9k5IDxTOClhgeJVpxeGOINGr/+Lji08yTTwaM6tsd
+ /DZv69jOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyyo7hf0mU2eo3qxcnzftq
+ EddlVtG8c7F3mU8x34pohYKNFvsTixj+JxeaCTnl2OwsfJvxeffCFOYVaZVWcdE17lkTYls+tC1
+ jAgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-With the incoming support for permanent pidfs dentries we can start
-supporting extended attributes on pidfds. This will allow to attach meta
-information to tasks. This currently adds support for trusted extended
-attributes which is a first natural target.
-
-One natural extension would be to introduce a custom pidfs.* extended
-attribute space and allow for the inheritance of extended attributes
-across fork() and exec().
-
-The first simple scheme will allow privileged userspace to slap tags
-onto pidfds which is useful for e.g., service managers such as systemd.
+Allow for S_IMMUTABLE to be stripped so that we can support xattrs on
+pidfds.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Christian Brauner (7):
-      libfs: prepare to allow for non-immutable pidfd inodes
-      pidfs: make inodes mutable
-      pidfs: raise SB_I_NODEV and SB_I_NOEXEC
-      pidfs: support xattrs on pidfds
-      selftests/pidfd: test extended attribute support
-      selftests/pidfd: test extended attribute support
-      selftests/pidfd: test setattr support
+ fs/libfs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- fs/libfs.c                                         |   1 -
- fs/pidfs.c                                         |  98 ++++++++++++++-
- tools/testing/selftests/pidfd/.gitignore           |   2 +
- tools/testing/selftests/pidfd/Makefile             |   3 +-
- tools/testing/selftests/pidfd/pidfd_setattr_test.c |  69 +++++++++++
- tools/testing/selftests/pidfd/pidfd_xattr_test.c   | 132 +++++++++++++++++++++
- 6 files changed, 301 insertions(+), 4 deletions(-)
----
-base-commit: ac79f1c5b96d8d2f39b3eed1084588160198f6d3
-change-id: 20250617-work-pidfs-xattr-1111246fe9b2
+diff --git a/fs/libfs.c b/fs/libfs.c
+index f496373869fb..9098dc6b26f9 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -2162,7 +2162,6 @@ static struct dentry *prepare_anon_dentry(struct dentry **stashed,
+ 
+ 	/* Notice when this is changed. */
+ 	WARN_ON_ONCE(!S_ISREG(inode->i_mode));
+-	WARN_ON_ONCE(!IS_IMMUTABLE(inode));
+ 
+ 	dentry = d_alloc_anon(sb);
+ 	if (!dentry) {
+
+-- 
+2.47.2
 
 
