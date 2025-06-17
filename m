@@ -1,191 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-51857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A056ADC3E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 10:01:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4137EADC608
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 11:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DC6170AC7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 08:01:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6547D3B9C4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 09:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DD423B62D;
-	Tue, 17 Jun 2025 08:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073B4292B2D;
+	Tue, 17 Jun 2025 09:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J24VFdGI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41069BE65
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 08:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF6C292B29
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 09:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750147290; cv=none; b=E0pOAg8kYkiV8LOY9ZWsTY6ygFaJ0WCAAk6iYKIcQ9o9htIUlX29Fit23HzUxvacf8edl1pPYls6qQjbXr9d3SYbLXnvxBDwW9i2VJzrnrgAXWDdQHYO4zRj6kCSuHogsfxCGzWOSgjQnoVCQsDTQNuNIxJ/B/dN+0U2I+8h0GU=
+	t=1750151983; cv=none; b=dd6mL2MmbIo0V5g+K44Od4V7/3UryB9q8LjxG6aHq8op6APvHVowJ3dNn0z7+GjsNwIFVaHPKgBWfpbpj8QNcBL2eL+oeO43hGllroqcfLmyqN15LiwEzyM6xYNckUmolaKXSQ8lo0R3CMSSavk9sp5qz2GinYFudflgy6zsJpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750147290; c=relaxed/simple;
-	bh=FYncf0Gwp1uLRRk+uYgc+h7nkTLVop02HHpfWbUpAT0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KXIvmevxNP9jKKd4ykScihV3JwsO5skALq6s0uC3a5h8kCoQPAHM+xJS6A2quNM//mseBceAGLX/qIpu3wh0G0mVcQr9huSWcd63BH9tPcWSrYk7xDilGKYHqAP63TEnd3ailohTtjQaSycHDpPF1G5N/YODkTo0eO0JmiEAsI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3ddc0a6d4bdso68513755ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 01:01:29 -0700 (PDT)
+	s=arc-20240116; t=1750151983; c=relaxed/simple;
+	bh=+5SWU1o8juSDYZoOuyQJC1B+OKlGQ52mSspkNeSUazk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KkiacB2S7kxS0J029OU1b1VwlmocQC2eWDYMQTsfz2jhcgyjRXyuS8l+BFy7LxV52I/JUZJbmm/8woSADTI0uBWWB1CapePPzZ+U/5wp7nzowxnFSvWsp6zOqMQe5OJezYH09zH8GjJ3WMUHaj2Rq97FCVKZmIealrqU3snj9fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J24VFdGI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750151980;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Pl6PxwbpUS7ADU1xqvtXXrf/iKUynSR5SAu+83BnGX4=;
+	b=J24VFdGI1Z2zNW5lowKImzrZa41MUw9N78xUxZth2XJjoSJShAPhIYTr2htFpfa59Cjdzw
+	XTUEUhkjhRqhQHbdlfuaXujIDXeP1HJQ3+X962gL36RkT2O/PpVH0L02K91PV/XOVVu71Z
+	UnuyuFkDzG9kNouA7GqVHe3zSyVWzwg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-17-tg02N5M7Pie5daDe08YBZA-1; Tue, 17 Jun 2025 05:19:38 -0400
+X-MC-Unique: tg02N5M7Pie5daDe08YBZA-1
+X-Mimecast-MFC-AGG-ID: tg02N5M7Pie5daDe08YBZA_1750151977
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f55ea44dso2265121f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 02:19:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750147288; x=1750752088;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e29NjVcmLgFlgix8gs7SJOTwD7u9KXoV23o2ubJcggQ=;
-        b=g1VCX9dKURmshukNdUYvBwcEq04FvbptPY+bdSznVHPUpCCjUyofNX+CKjGPremKC3
-         DJNuyuoQH5mGRqV67mZh4h1RJD9ODBNinXFrklTzwevn7u9dlRevq6rhUmajVQwaSjZa
-         2K4St+4LUA6PnpI71Oq/qlU8iVB0T7P2xYGCa0WHa2O9OCgCoDEHrS8z5gDeR72suaS2
-         6Sa4Ch45EGmwjLKEROiFhJLcgL3QlLtxjXiBjSNX5XFTiX7OMlnsNoYi2ktAzPLeDHUW
-         MCaAQIB49rLdv7d7HMDVy9n7WKyd6+mp61yObQIpTULaGuJpTlyFK860+cMFGkWo9xJA
-         z4dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhfVo4JJfbYC2hXPpGcExHiimhfGB41jjxdjOEz0YGMduYZ4TZwM35pIkvRfRQgfdFCccqGDprvZ6ss1p0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPeChHGynVaOs+iVHd8JsenKrnZ/SlIwPKf0CEgddHoJeNBcLB
-	zYQhpioFfNDf5QFyEQDcJ5tlYybcxvqZJWiryslMMz2BqrUl+GV6249+xABD9wtqqVgwjCCB9Gb
-	cXojMNWxUWQGI8E+VTRPVMjPM3daXlyZHj2E50eWvuOf5RNipPyuOcNxKqsc=
-X-Google-Smtp-Source: AGHT+IGEtTFqUZrc9jB73llRLoLcKYQbUn9ikYxSRc2hqlSQIm2PIZkBrEGpFh2tgRG1FMUZ5DzaJF874DDr6cZkYJQOSxAIJCMN
+        d=1e100.net; s=20230601; t=1750151977; x=1750756777;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Pl6PxwbpUS7ADU1xqvtXXrf/iKUynSR5SAu+83BnGX4=;
+        b=Fg8n7CaUt3b4Jw2FcMNKKMtVjtS/LWFwaQfsIyfjSomC0BbQro6kWMZYwdDj7bdw2d
+         k6w81WnQj3jnO4ELXfpmXrvnXPGBOtVZhuJNU9N6G2StID8xWhQD8cdUzwzhHCrhFZhH
+         qGPjTMrrcWrTAvhxjWlWYKJ/lzCLEhcRvM4b/ZTEjvIIBgBgCzUo4f0sWZsE9pwuaWlj
+         KJxolCa6JKoeg58GXeecdgRLoVtNQuKRNxcg/mcs1nPUWvSMZPgjZLhBX0ydr7FyrV9d
+         KLDq8sN+Wvnf6ayrJmPaI6vXd/S0NT1cotzKrayEQrgPNicebguy71gV8qBzXrVqhvtg
+         G5sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy4o+rP1US4JQkNVTDVXL1/mLqntKmt6UPEd78fdfpcoLzO+RH1UKeST5fABhIrNtyKbzkx4xN40gYRNKG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPBEdainVfA3ksZkK8Zw4nielOU3oVDNAYaPbL/uXp98MMhhZo
+	LgttfL6co6YMgKUFeoa92dlCAsiB9OXHLmFjTTdlZgzKC2ypXcFf2PjI4ZO0/bLA7S75JEb2pSL
+	xWLU1hMTWPptuTx5Z+TfJ+tpVMaaqFLmyFx9Px3gGGVUCTpJHCmpKMEWt6a5K2VSe9rs=
+X-Gm-Gg: ASbGncsDSFuAgmE86xqbc+iaTp/9zptuPY/oifgn0nZkdoI7hp39BLCH8qSpvL+LAry
+	vh6xW+EpLgB7QuoCgVuP6mcRtIS3IQnBqcoCM+GKP53BD10m8XeB/UQeid8vUZm6gQ/QBf2Csyo
+	3LoSWdZeyMzmdt/h06OJVV8suHv0sltJHubWJ7xD1gxlqAGwrHtJjP/cOCbzsVCiW8ukIMdPhoN
+	QIH73b0mJZg9tAaHTxlV+0N69WHxpCnFJBWHiUU0PKGQ/YkVRN0V0UemZ1fFJShwqv3SnsFqv7M
+	9qi4X5l6Flt3mRYTPp/qPI/geJmSUU+dRSVtsb4v3iQDO2a9vSE5v/V4HBwcoFC+CPLGMUuSvoS
+	bMQc3D+lvt6prSzVoxG93PU/p7DWAe2oT9hbmANRVyXBi8CI=
+X-Received: by 2002:a05:6000:4202:b0:3a4:dfaa:df8d with SMTP id ffacd0b85a97d-3a572367c45mr11265685f8f.9.1750151977230;
+        Tue, 17 Jun 2025 02:19:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHt8iXJvJT0W2e4sI8GT6VcpVG8jxrePAU09oM8r6xnq4XSbjmN3FC6k4gXR+D2djVSpIQQtw==
+X-Received: by 2002:a05:6000:4202:b0:3a4:dfaa:df8d with SMTP id ffacd0b85a97d-3a572367c45mr11265656f8f.9.1750151976687;
+        Tue, 17 Jun 2025 02:19:36 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b08e21sm13528866f8f.52.2025.06.17.02.19.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 02:19:36 -0700 (PDT)
+Message-ID: <bf855ce0-d0ba-4bd6-bfc1-8be2fdbdfe70@redhat.com>
+Date: Tue, 17 Jun 2025 11:19:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a68:b0:3dc:7bc9:503e with SMTP id
- e9e14a558f8ab-3de07cdb455mr138915935ab.2.1750147288407; Tue, 17 Jun 2025
- 01:01:28 -0700 (PDT)
-Date: Tue, 17 Jun 2025 01:01:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685120d8.a70a0220.395abc.0204.GAE@google.com>
-Subject: [syzbot] [ntfs3?] general protection fault in pick_link (2)
-From: syzbot <syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/14] mm: Convert pXd_devmap checks to vma_is_dax
+To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
+ dan.j.williams@intel.com, jgg@ziepe.ca, willy@infradead.org,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ zhang.lyra@gmail.com, debug@rivosinc.com, bjorn@kernel.org,
+ balbirs@nvidia.com, lorenzo.stoakes@oracle.com,
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, John@Groves.net,
+ m.szyprowski@samsung.com, Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.8d04615eb17b9e46fc0ae7402ca54b69e04b1043.1750075065.git-series.apopple@nvidia.com>
+ <361009510f346090fad328c53ec228d99bb955ee.1750075065.git-series.apopple@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <361009510f346090fad328c53ec228d99bb955ee.1750075065.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 16.06.25 13:58, Alistair Popple wrote:
+> Currently dax is the only user of pmd and pud mapped ZONE_DEVICE
+> pages. Therefore page walkers that want to exclude DAX pages can check
+> pmd_devmap or pud_devmap. However soon dax will no longer set PFN_DEV,
+> meaning dax pages are mapped as normal pages.
+> 
+> Ensure page walkers that currently use pXd_devmap to skip DAX pages
+> continue to do so by adding explicit checks of the VMA instead.
+ > > Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> 
+> ---
+> 
+> Changes from v1:
+> 
+>   - Remove vma_is_dax() check from mm/userfaultfd.c as
+>     validate_move_areas() will already skip DAX VMA's on account of them
+>     not being anonymous.
 
-syzbot found the following issue on:
+This should be documented in the patch description above.
 
-HEAD commit:    9afe652958c3 Merge tag 'x86_urgent_for_6.16-rc3' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10cf95d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d11f52d3049c3790
-dashboard link: https://syzkaller.appspot.com/bug?extid=1aa90f0eb1fc3e77d969
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11969e82580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14fd450c580000
+> ---
+>   fs/userfaultfd.c | 2 +-
+>   mm/hmm.c         | 2 +-
+>   mm/userfaultfd.c | 6 ------
+>   3 files changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index ef054b3..a886750 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -304,7 +304,7 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+>   		goto out;
+>   
+>   	ret = false;
+> -	if (!pmd_present(_pmd) || pmd_devmap(_pmd))
+> +	if (!pmd_present(_pmd) || vma_is_dax(vmf->vma))
+>   		goto out;
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-9afe6529.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/46695f4e5fdb/vmlinux-9afe6529.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4357674be01a/bzImage-9afe6529.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/dd817d4f3932/mount_0.gz
+VMA checks should be done before doing any page table walk.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com
+>   
+>   	if (pmd_trans_huge(_pmd)) {
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index feac861..5311753 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -441,7 +441,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
+>   		return hmm_vma_walk_hole(start, end, -1, walk);
+>   	}
+>   
+> -	if (pud_leaf(pud) && pud_devmap(pud)) {
+> +	if (pud_leaf(pud) && vma_is_dax(walk->vma)) {
+>   		unsigned long i, npages, pfn;
+>   		unsigned int required_fault;
+>   		unsigned long *hmm_pfns;
 
-ntfs3(loop0): ino=1b, "file0" ntfs_rename
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5313 Comm: syz-executor352 Not tainted 6.16.0-rc2-syzkaller-00024-g9afe652958c3 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:pick_link+0x4f1/0xe80 fs/namei.c:1949
-Code: 4c 89 f7 e8 81 fa ea ff 4d 8b 36 4d 85 f6 0f 84 9b 00 00 00 e8 50 7c 87 ff 49 bf 00 00 00 00 00 fc ff df 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 b9 06 00 00 41 0f b6 2e bf 2f 00 00 00
-RSP: 0018:ffffc9000d2477e8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffc9000d247908 RCX: ffff88801a34c880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff823d3d98
-R10: 000000003b9aca00 R11: ffffffff823cb0a0 R12: 1ffff92001a48f8b
-R13: ffffc9000d247c20 R14: 0000000000000002 R15: dffffc0000000000
-FS:  00005555725f0380(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4a1afaf000 CR3: 00000000438a8000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- step_into+0xc5d/0xf30 fs/namei.c:2008
- open_last_lookups fs/namei.c:3843 [inline]
- path_openat+0x1bc6/0x3830 fs/namei.c:4052
- do_filp_open+0x1fa/0x410 fs/namei.c:4082
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_open fs/open.c:1460 [inline]
- __se_sys_open fs/open.c:1456 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1456
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5aa2adeed9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc2e7cf7e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f5aa2b47ac0 RCX: 00007f5aa2adeed9
-RDX: 0000000000000000 RSI: 0000000000048500 RDI: 0000200000000a80
-RBP: 0000200000001240 R08: 00005555725f14c0 R09: 00005555725f14c0
-R10: 00005555725f14c0 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffc2e7cfa38 R14: 431bde82d7b634db R15: 00007f5aa2b2803b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:pick_link+0x4f1/0xe80 fs/namei.c:1949
-Code: 4c 89 f7 e8 81 fa ea ff 4d 8b 36 4d 85 f6 0f 84 9b 00 00 00 e8 50 7c 87 ff 49 bf 00 00 00 00 00 fc ff df 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 b9 06 00 00 41 0f b6 2e bf 2f 00 00 00
-RSP: 0018:ffffc9000d2477e8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffc9000d247908 RCX: ffff88801a34c880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff823d3d98
-R10: 000000003b9aca00 R11: ffffffff823cb0a0 R12: 1ffff92001a48f8b
-R13: ffffc9000d247c20 R14: 0000000000000002 R15: dffffc0000000000
-FS:  00005555725f0380(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055ff6c3df070 CR3: 00000000438a8000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	4c 89 f7             	mov    %r14,%rdi
-   3:	e8 81 fa ea ff       	call   0xffeafa89
-   8:	4d 8b 36             	mov    (%r14),%r14
-   b:	4d 85 f6             	test   %r14,%r14
-   e:	0f 84 9b 00 00 00    	je     0xaf
-  14:	e8 50 7c 87 ff       	call   0xff877c69
-  19:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
-  20:	fc ff df
-  23:	4c 89 f0             	mov    %r14,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 b9 06 00 00    	jne    0x6f0
-  37:	41 0f b6 2e          	movzbl (%r14),%ebp
-  3b:	bf 2f 00 00 00       	mov    $0x2f,%edi
+Dito.
+
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index 58b3ad6..8395db2 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1818,12 +1818,6 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
+>   
+>   		ptl = pmd_trans_huge_lock(src_pmd, src_vma);
+>   		if (ptl) {
+> -			if (pmd_devmap(*src_pmd)) {
+> -				spin_unlock(ptl);
+> -				err = -ENOENT;
+> -				break;
+> -			}
+> -
+>   			/* Check if we can move the pmd without splitting it. */
+>   			if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+>   			    !pmd_none(dst_pmdval)) {
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-- 
+Cheers,
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+David / dhildenb
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
