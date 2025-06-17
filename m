@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-51911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4107EADD266
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 17:42:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B10ADD21F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 17:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63B847A97C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8331917D3DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6CC2ECD3A;
-	Tue, 17 Jun 2025 15:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFEA2ECD36;
+	Tue, 17 Jun 2025 15:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFzD+tfj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTfhOtt0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A3B2ECD20
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 15:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146DC2E9753
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 15:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750174753; cv=none; b=tYPeIcYzLQytAQGoq0Vv/2tn0bnAxFp1Z8Et8/ofRWBl1XXjZEz8gr+5x0jPfpc0cavpkfWY+WyULTM0m0SDF4U3TNityKfBGgE4PUgVhT4pHIsG8fzoQQt++Ayhcem/nEOEDhb2GvQzK7Fs4selgRvnZYSKt27gPLNrK0R7bSM=
+	t=1750174755; cv=none; b=iTTL+caVDTb9SkUwiUqxoZI9VcJjXpv0YvqVh/WzKKbwqCJeJY4zfmcykyh8Q5+4+KJn8Q5nANqEQvpbwvsbmuN5jLnYkLj4ekkfWs5LUyartgAMhJeR1NgNyPal9DUhUHkNtFfnd5p1kulY4PgiS0YPoM7Ad08oX7kwjV40WBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750174753; c=relaxed/simple;
-	bh=uZ0guaYCp0EEeVOPvXg3mGV3+j+6lFC5b+oScN4g/64=;
+	s=arc-20240116; t=1750174755; c=relaxed/simple;
+	bh=lqp4HgX+oLAfdl7M76maixRqie1onJlHfXvyqDJjV5A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tuTrAOK2lJOqSjaSMUivWkhQLOh6Uuy+OWRAzrj4GNOYdNjpIWu6kF17Ee/8C37wPGfJ7MlJbkPVsYlQ7Dg28LNFU2weTT7y8KOMnS45BfRvSKRHwFY0AbOwDVowvX1f0tGr0hs3umWhY3p6SucZKQczJAuYeGsmBVPnCQMElBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFzD+tfj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A91C4CEE3;
-	Tue, 17 Jun 2025 15:39:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=AaxAw3jdeqgaS765XyGX9z938je2s5Yf9Kd4qsHU+BF3GfR3Mxh2mngX+zcnTYPVEzahE2n9dr5ynLSU5Mu51e6Gqfd65KWF5S8r7+RXI1DH4QGjy4xygMor2vjEnq05IUJX4QvqKUx4yO7xzOLnEdzWKC+WuEUQcIG0CJhRLJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTfhOtt0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1C4AC4CEE7;
+	Tue, 17 Jun 2025 15:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750174753;
-	bh=uZ0guaYCp0EEeVOPvXg3mGV3+j+6lFC5b+oScN4g/64=;
+	s=k20201202; t=1750174754;
+	bh=lqp4HgX+oLAfdl7M76maixRqie1onJlHfXvyqDJjV5A=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mFzD+tfjm416PobbTKjpDJv9gAXAuaD05O247LwIGj3FBA8SGBJ2ZMxEDtOl3m3Mb
-	 zNOFLwxyu5KkJ65brK+InldTPct9FDjFxyTA4w/mZK22suLgYEcaYBHCEF9uND3sqK
-	 K8tp+DlgK8SYL0AJTw5uo1OvxFBCOp+6UySRbBCGjeISjPLV+v1owb3mwbcM0EAnsC
-	 pNoFcgK3oYtptxBwzlASJtfF92vjRtf5HVFVoh4hixKe1fFLoehqwU6nIFhGpxiXIt
-	 IjWSmouHuPv5cjr7F2xpRwVl6c0JhCGsVo8ClXxAtQwcRIsNNWbHj1z7wlfmaz0ilF
-	 Fxk1yuIqrSdEg==
+	b=fTfhOtt02f3w2fsZnDR467CtVS7b7UI01lpLm4yVwiyKTXZ4Pq2XryXIY1YPm5A5U
+	 mjVQsVZU+3EVe8SgzywBRdeZa6xcVU8u7wsTS0D1RyKX2Dg37Ny0pmb11+xo9lcw6U
+	 zEqUwnMrH5XuLr5kIr1iXVv7ecR72y+U8ew4GudPBowQMDMtMiM3FxVz1CRnSxuS2O
+	 pIYyIBx2iANV43j4AU6l5LOWMhuINiLQZQxcON1PahF5JLWZ66/3u1nPFD2hnNqPz/
+	 StrrQi5MiuDz71NPfatyR9MgVn9Wo5YmW/vq/vxJyjVqH/kgDyRvqg98b3FKwq7LpE
+	 YujWTZYdwIN5w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 17 Jun 2025 17:39:03 +0200
-Subject: [PATCH RFC v2 1/2] pidfs: keep pidfs dentry stashed once created
+Date: Tue, 17 Jun 2025 17:39:04 +0200
+Subject: [PATCH RFC v2 2/2] pidfs: remove pidfs_pid_valid()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,401 +52,96 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-work-pidfs-v2-1-529ca1990401@kernel.org>
+Message-Id: <20250617-work-pidfs-v2-2-529ca1990401@kernel.org>
 References: <20250617-work-pidfs-v2-0-529ca1990401@kernel.org>
 In-Reply-To: <20250617-work-pidfs-v2-0-529ca1990401@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org
 Cc: Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14546; i=brauner@kernel.org;
- h=from:subject:message-id; bh=uZ0guaYCp0EEeVOPvXg3mGV3+j+6lFC5b+oScN4g/64=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQE9sjLZc6M6VDR/C34/rwgG4trqJpCntl806V3uWPeO
- ItseFPSUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBGhxwy/mN/NqC/v+CL2UbNf
- /efUf0HXTerjy409Dn34tEHlmEnwQkaGN/zR/8KLzp9oqfhxO93Q5dwngWMv72XmJ1zs3bPg84I
- bjAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2494; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=lqp4HgX+oLAfdl7M76maixRqie1onJlHfXvyqDJjV5A=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQE9sgfcak2Ovor/L5gZeuW2Ys1f6nzcRalWaiHZjJvX
+ Ooc7KjdUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJGeswz/g7tKWe6mlWxIX9Wh
+ 38HrWL/xSdH/evtLR/bvq1VMYdCtZGTYdHLPPz7l33fcPP+1d55sd1HLuSLesNluy2IJN2vbdn8
+ +AA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Keep pidfs dentries around after a pidfd has been created for it. The
-pidfs dentry will only be cleaned up once the struct pid gets reaped.
-
-The current scheme allocated pidfs dentries on-demand repeatedly.
-This scheme is reaching it's limits as it makes it impossible to pin
-information that needs to be available after the task has exited or
-coredumped and that should not be lost simply because the pidfd got
-closed temporarily. The next opener should still see the stashed
-information.
-
-If someone opens a pidfd for a struct pid a pidfs dentry is allocated
-and stashed in pid->stashed. Once the last pidfd for the struct pid is
-closed the pidfs dentry is released and removed from pid->stashed.
-
-So if 10 callers create a pidfs for the same struct pid sequentially,
-i.e., each closing the pidfd before the other creates a new one then a
-new pidfs dentry is allocated every time.
-
-Because multiple tasks acquiring and releasing a pidfd for the same
-struct pid can race with each another a task may still find a valid
-pidfs entry from the previous task in pid->stashed and reuse it. Or it
-might find a dead dentry in there and fail to reuse it and so stashes a
-new pidfs dentry. Multiple tasks may race to stash a new pidfs dentry
-but only one will succeed, the other ones will put their dentry.
-
-The current scheme aims to ensure that a pidfs dentry for a struct pid
-can only be created if the task is still alive or if a pidfs dentry
-already existed before the task was reaped and so exit information has
-been was stashed in the pidfs inode.
-
-That's great expect that it's buggy. If a pidfs dentry is stashed in
-pid->stashed after pidfs_exit() but before __unhash_process() is called
-we will return a pidfd for a reaped task without exit information being
-available.
-
-The pidfds_pid_valid() check does not guard against this race as it
-doens't sync at all with pidfs_exit(). The pid_has_task() check might be
-successful simply because we're before __unhash_process() but after
-pidfs_exit().
-
-This switches to a scheme were pidfs entries are retained after a pidfd
-was created for the struct pid. So when allocating a pidfds dentry an
-extra reference is retained that is owned by the exit path and that will
-be put once the task does get reaped. In the new model pidfs dentries
-are still allocated on-demand but then kept until the task gets reaped.
-
-The synchronization mechanism uses the pid->wait_pidfd.lock in struct
-pid to synchronize with pidfs_exit() called when the task is reaped. If
-the path_from_stashed() fastpath fails, a new pidfs dentry is allocated
-and afterwards the pid->wait_pidfd.lock is taken. If no other task
-managed to stash its dentry there the callers will be stashed.
-
-When the task is reaped and calls pidfs_exit() the pid->wait_pidfd.lock
-is taken. Once pidfs_exit() holds the pid->wait_pidfd.lock and sees that
-no pidfs dentry is available in pid->stashed it knows that no new dentry
-can be stashed while it holds the pid->wait_pidfd.lock. It thus sets a
-ERR_PTR(-ESRCH) sentinel in pid->stashed. That sentinel allows
-pidfs_stash_dentry() to detect that the struct pid has already been
-reaped and refuse to stash a new dentry in pid->stashed. That works both
-in the fast- and slowpath.
-
-This in turn allows us to fix the bug mentioned earlier where we hand
-out a pidfd for a reaped task without having exit information set as we
-now sync with pidfs_exit() and thus release_task().
-
-This also has some subtle interactions with the path_from_stashed()
-fastpath that need to be considered. The path_from_stashed() fast path
-will try go get a reference to an already existing pidfs dentry in
-pid->stashed to avoid having to allocate and stash a pidfs dentry. If it
-finds a dentry in there it will return it.
-
-To not confuse path_from_stashed() pidfs_exit() must not replace a pidfs
-dentry stashed in pid->stashed with the ERR_PTR(-ESRCH) sentinel as
-path_from_stashed() could legitimately obtain another reference before
-pidfs_exit() was able to call dput() to put the final pidfs dentry
-reference. If it were to put the sentinel into pid->stashed it would
-invalidate a struct pid even though a pidfd was just created for it.
-
-So if a pidfs dentry is stashed in pid->stashed pidfs_exit() must leave
-clearing out pid->stashed to dentry->d_prune::pidfs_dentry_prune(). When
-pruning a dentry we must take care to not take the pid->wait_pidfd.lock
-as this would cause a lock inversion with dentry->d_lock in
-pidfs_stash_dentry(). This should fortunately not at all be necessary as
-by the time we call pidfs_dentry_prune() we know that the struct pid is
-dead as the task is reaped and that anyone concurrently trying to get a
-reference to the stashed dentry will fail to do so.
-
-IOW, it doesn't matter whether the path_from_stashed() fast path sees
-NULL, a dead dentry, or the ERR_PTR(-ESRCH) sentinel in pid->stashed.
-Any of those forces path_from_stashed() into the slowpath at which point
-pid->wait_pidfd.lock must be acquired. The slowpath will then see either
-a dead dentry or the ERR_PTR(-ESRCH) sentinel but never NULL and thus
-fail the creation of a new pidfs dentry.
-
-path_from_stashed() must take care to not try and take a reference on
-the ERR_PTR(-ESRCH) sentinel. So stashed_dentry_get() must be prepared
-to see a ERR_PTR(-ESRCH) sentinel in pid->stashed.
+The validation is now completely handled in path_from_stashed().
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/internal.h |   2 +
- fs/libfs.c    |  22 +++++++--
- fs/pidfs.c    | 143 +++++++++++++++++++++++++++++++++++++++++++++++++++-------
- kernel/pid.c  |   2 +-
- 4 files changed, 147 insertions(+), 22 deletions(-)
+ fs/pidfs.c | 48 ------------------------------------------------
+ 1 file changed, 48 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 393f6c5c24f6..180b367c192b 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -322,6 +322,8 @@ struct mnt_idmap *alloc_mnt_idmap(struct user_namespace *mnt_userns);
- struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
- void mnt_idmap_put(struct mnt_idmap *idmap);
- struct stashed_operations {
-+	struct dentry *(*stash_dentry)(struct dentry **stashed,
-+				       struct dentry *dentry);
- 	void (*put_data)(void *data);
- 	int (*init_inode)(struct inode *inode, void *data);
- };
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 9ea0ecc325a8..f496373869fb 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -2128,6 +2128,8 @@ struct dentry *stashed_dentry_get(struct dentry **stashed)
- 	dentry = rcu_dereference(*stashed);
- 	if (!dentry)
- 		return NULL;
-+	if (IS_ERR(dentry))
-+		return dentry;
- 	if (!lockref_get_not_dead(&dentry->d_lockref))
- 		return NULL;
- 	return dentry;
-@@ -2218,12 +2220,15 @@ static struct dentry *stash_dentry(struct dentry **stashed,
- int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
- 		      struct path *path)
- {
--	struct dentry *dentry;
-+	struct dentry *dentry, *res;
- 	const struct stashed_operations *sops = mnt->mnt_sb->s_fs_info;
- 
- 	/* See if dentry can be reused. */
--	path->dentry = stashed_dentry_get(stashed);
--	if (path->dentry) {
-+	res = stashed_dentry_get(stashed);
-+	if (IS_ERR(res))
-+		return PTR_ERR(res);
-+	if (res) {
-+		path->dentry = res;
- 		sops->put_data(data);
- 		goto out_path;
- 	}
-@@ -2234,8 +2239,15 @@ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
- 		return PTR_ERR(dentry);
- 
- 	/* Added a new dentry. @data is now owned by the filesystem. */
--	path->dentry = stash_dentry(stashed, dentry);
--	if (path->dentry != dentry)
-+	if (sops->stash_dentry)
-+		res = sops->stash_dentry(stashed, dentry);
-+	else
-+		res = stash_dentry(stashed, dentry);
-+	if (IS_ERR(res))
-+		return PTR_ERR(res);
-+	path->dentry = res;
-+	/* A dentry was reused. */
-+	if (res != dentry)
- 		dput(dentry);
- 
- out_path:
 diff --git a/fs/pidfs.c b/fs/pidfs.c
-index c1f0a067be40..ee5e9a18c2d3 100644
+index ee5e9a18c2d3..9373d03fd263 100644
 --- a/fs/pidfs.c
 +++ b/fs/pidfs.c
-@@ -25,6 +25,20 @@
- #include "internal.h"
- #include "mount.h"
+@@ -869,53 +869,8 @@ static int pidfs_export_permission(struct handle_to_path_ctx *ctx,
+ 	return 0;
+ }
  
-+/*
-+ * Usage:
-+ * pid->wait_pidfd.lock protects:
-+ *   - insertion of dentry into pid->stashed
-+ *   - deletion of pid[PIDTYPE_TGID] task linkage
-+ *   - pidfs_exit() which sets pid->stashed to NULL
-+ *
-+ * Ordering:
-+ *   -> dentry->d_lock
-+ *      -> pid->wait_pidfd.lock
-+ */
-+
-+#define PIDFS_PID_DEAD ERR_PTR(-ESRCH)
-+
- static struct kmem_cache *pidfs_cachep __ro_after_init;
- 
- /*
-@@ -552,30 +566,47 @@ struct pid *pidfd_pid(const struct file *file)
-  * task has been reaped which cannot happen until we're out of
-  * release_task().
-  *
-- * If this struct pid is referred to by a pidfd then
-- * stashed_dentry_get() will return the dentry and inode for that struct
-- * pid. Since we've taken a reference on it there's now an additional
-- * reference from the exit path on it. Which is fine. We're going to put
-- * it again in a second and we know that the pid is kept alive anyway.
-+ * If this struct pid has at least once been referred to by a pidfd then
-+ * pid->stashed will contain a dentry. One reference exclusively belongs
-+ * to pidfs_exit(). There might of course be other references.
-  *
-  * Worst case is that we've filled in the info and immediately free the
-- * dentry and inode afterwards since the pidfd has been closed. Since
-- * pidfs_exit() currently is placed after exit_task_work() we know that
-- * it cannot be us aka the exiting task holding a pidfd to ourselves.
-+ * dentry and inode afterwards when no one holds an open pidfd anymore.
-+ * Since pidfs_exit() currently is placed after exit_task_work() we know
-+ * that it cannot be us aka the exiting task holding a pidfd to itself.
-  */
- void pidfs_exit(struct task_struct *tsk)
+-static inline bool pidfs_pid_valid(struct pid *pid, const struct path *path,
+-				   unsigned int flags)
+-{
+-	enum pid_type type;
+-
+-	if (flags & PIDFD_STALE)
+-		return true;
+-
+-	/*
+-	 * Make sure that if a pidfd is created PIDFD_INFO_EXIT
+-	 * information will be available. So after an inode for the
+-	 * pidfd has been allocated perform another check that the pid
+-	 * is still alive. If it is exit information is available even
+-	 * if the task gets reaped before the pidfd is returned to
+-	 * userspace. The only exception are indicated by PIDFD_STALE:
+-	 *
+-	 * (1) The kernel is in the middle of task creation and thus no
+-	 *     task linkage has been established yet.
+-	 * (2) The caller knows @pid has been registered in pidfs at a
+-	 *     time when the task was still alive.
+-	 *
+-	 * In both cases exit information will have been reported.
+-	 */
+-	if (flags & PIDFD_THREAD)
+-		type = PIDTYPE_PID;
+-	else
+-		type = PIDTYPE_TGID;
+-
+-	/*
+-	 * Since pidfs_exit() is called before struct pid's task linkage
+-	 * is removed the case where the task got reaped but a dentry
+-	 * was already attached to struct pid and exit information was
+-	 * recorded and published can be handled correctly.
+-	 */
+-	if (unlikely(!pid_has_task(pid, type))) {
+-		struct inode *inode = d_inode(path->dentry);
+-		return !!READ_ONCE(pidfs_i(inode)->exit_info);
+-	}
+-
+-	return true;
+-}
+-
+ static struct file *pidfs_export_open(struct path *path, unsigned int oflags)
  {
- 	struct dentry *dentry;
-+	struct pid *pid = task_pid(tsk);
+-	if (!pidfs_pid_valid(d_inode(path->dentry)->i_private, path, oflags))
+-		return ERR_PTR(-ESRCH);
+-
+ 	/*
+ 	 * Clear O_LARGEFILE as open_by_handle_at() forces it and raise
+ 	 * O_RDWR as pidfds always are.
+@@ -1032,9 +987,6 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
+ 	if (ret < 0)
+ 		return ERR_PTR(ret);
  
- 	might_sleep();
- 
--	dentry = stashed_dentry_get(&task_pid(tsk)->stashed);
--	if (dentry) {
--		struct inode *inode = d_inode(dentry);
--		struct pidfs_exit_info *exit_info = &pidfs_i(inode)->__pei;
-+	scoped_guard(spinlock_irq, &pid->wait_pidfd.lock) {
-+		struct inode *inode;
-+		struct pidfs_exit_info *exit_info;
- #ifdef CONFIG_CGROUPS
- 		struct cgroup *cgrp;
-+#endif
- 
-+		dentry = rcu_dereference_raw(pid->stashed);
-+		if (!dentry) {
-+			/*
-+			 * No one held a pidfd for this struct pid.
-+			 * Mark it as dead so no one can add a pidfs
-+			 * entry anymore. We're about to be reaped and
-+			 * so no exit information would be available.
-+			 */
-+			rcu_assign_pointer(pid->stashed, PIDFS_PID_DEAD);
-+			return;
-+		}
-+
-+		/* We own a reference assert that clearly. */
-+		VFS_WARN_ON_ONCE(__lockref_is_dead(&dentry->d_lockref));
-+		inode = d_inode(dentry);
-+		exit_info = &pidfs_i(inode)->__pei;
-+
-+#ifdef CONFIG_CGROUPS
- 		rcu_read_lock();
- 		cgrp = task_dfl_cgroup(tsk);
- 		exit_info->cgroupid = cgroup_id(cgrp);
-@@ -585,8 +616,15 @@ void pidfs_exit(struct task_struct *tsk)
- 
- 		/* Ensure that PIDFD_GET_INFO sees either all or nothing. */
- 		smp_store_release(&pidfs_i(inode)->exit_info, &pidfs_i(inode)->__pei);
--		dput(dentry);
- 	}
-+
-+	/*
-+	 * If there was a dentry in there we own a reference to it. So
-+	 * accessing pid->stashed is safe. Note, pid->stashed will be
-+	 * cleared by pidfs. Leave it alone as we could end up in a
-+	 * legitimate race with path_from_stashed()'s fast path.
-+	 */
-+	dput(dentry);
- }
- 
- #ifdef CONFIG_COREDUMP
-@@ -683,9 +721,44 @@ static char *pidfs_dname(struct dentry *dentry, char *buffer, int buflen)
- 	return dynamic_dname(buffer, buflen, "anon_inode:[pidfd]");
- }
- 
-+static void pidfs_dentry_prune(struct dentry *dentry)
-+{
-+	struct dentry **stashed = dentry->d_fsdata;
-+	struct inode *inode = d_inode(dentry);
-+	struct pid *pid;
-+
-+	if (WARN_ON_ONCE(!stashed))
-+		return;
-+
-+	if (!inode)
-+		return;
-+
-+	pid = inode->i_private;
-+	VFS_WARN_ON_ONCE(!pid);
-+	/*
-+	 * We can't acquire pid->wait_pidfd.lock as we're holding
-+	 * dentry->d_lock and pidfs_stash_dentry() needs to be able to
-+	 * hold dentry->d_lock under pid->wait_pidfd.lock.
-+	 *
-+	 * Also, we don't really need it...
-+	 */
-+	VFS_WARN_ON_ONCE(!__lockref_is_dead(&dentry->d_lockref));
-+	VFS_WARN_ON_ONCE(*stashed != dentry);
-+
-+	/*
-+	 * ... Because to get here the struct pid must have been reaped
-+	 * already && no one holds a pidfd open anymore. The only one
-+	 * that can race us is pidfd_stash_dentry(). Either it sees a
-+	 * dead dentry in pid->stashed or it sees our sentinel marking
-+	 * the struct pid as dead. There's no need to synchronize this
-+	 * with a lock.
-+	 */
-+	smp_store_release(stashed, PIDFS_PID_DEAD);
-+}
-+
- const struct dentry_operations pidfs_dentry_operations = {
- 	.d_dname	= pidfs_dname,
--	.d_prune	= stashed_dentry_prune,
-+	.d_prune	= pidfs_dentry_prune,
- };
- 
- static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-@@ -878,9 +951,47 @@ static void pidfs_put_data(void *data)
- 	put_pid(pid);
- }
- 
-+static struct dentry *pidfs_stash_dentry(struct dentry **stashed,
-+					 struct dentry *dentry)
-+{
-+	struct pid *pid = d_inode(dentry)->i_private;
-+	struct dentry *d;
-+
-+	VFS_WARN_ON_ONCE(stashed != &pid->stashed);
-+
-+	/* We need to synchronize with pidfs_exit(). */
-+	guard(spinlock_irq)(&pid->wait_pidfd.lock);
-+	guard(rcu)();
-+
-+	d = rcu_dereference(*stashed);
-+	if (!d) {
-+		/*
-+		 * There's nothing stashed in here so no pidfs dentry
-+		 * exists for this task yet and we're definitely not
-+		 * past pidfs_exit() and everyone else will wait for us.
-+		 */
-+		rcu_assign_pointer(*stashed, dget(dentry));
-+		return dentry;
-+	}
-+
-+	/* The struct pid is already marked dead. */
-+	if (IS_ERR(d))
-+		return d;
-+
-+	/*
-+	 * The struct pid isn't yet marked dead but there's a dead
-+	 * dentry in there which is just as well.
-+	 */
-+	if (!lockref_get_not_dead(&d->d_lockref))
-+		return ERR_PTR(-ESRCH);
-+
-+	return d;
-+}
-+
- static const struct stashed_operations pidfs_stashed_ops = {
--	.init_inode = pidfs_init_inode,
--	.put_data = pidfs_put_data,
-+	.stash_dentry	= pidfs_stash_dentry,
-+	.init_inode	= pidfs_init_inode,
-+	.put_data	= pidfs_put_data,
- };
- 
- static int pidfs_init_fs_context(struct fs_context *fc)
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 8317bcbc7cf7..30518852d990 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -100,7 +100,7 @@ void put_pid(struct pid *pid)
- 
- 	ns = pid->numbers[pid->level].ns;
- 	if (refcount_dec_and_test(&pid->count)) {
--		WARN_ON_ONCE(pid->stashed);
-+		WARN_ON_ONCE(!IS_ERR(pid->stashed));
- 		kmem_cache_free(ns->pid_cachep, pid);
- 		put_pid_ns(ns);
- 	}
+-	if (!pidfs_pid_valid(pid, &path, flags))
+-		return ERR_PTR(-ESRCH);
+-
+ 	flags &= ~PIDFD_STALE;
+ 	flags |= O_RDWR;
+ 	pidfd_file = dentry_open(&path, flags, current_cred());
 
 -- 
 2.47.2
