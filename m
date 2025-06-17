@@ -1,308 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-51944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7887FADD95A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 19:05:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D85ADD64D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 18:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDFF406C4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 16:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03BEA40188A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 16:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BC02EA748;
-	Tue, 17 Jun 2025 16:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41E22EA176;
+	Tue, 17 Jun 2025 16:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0mNSyfEt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FC0D4iz4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E15C2E8DE4;
-	Tue, 17 Jun 2025 16:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F71620B807
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 16:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750178449; cv=none; b=d5F8HzlsLtOr1PBCdvld7PG6VpstTl4LCuyRr2Zufb9fcNasvMi0pdaP4Kyv5nFTuIUDuAP4KpKtRH5//KzNL+3amegCcc+locvHcBduzAkLBZEjeeRGy1BRA274MwnvZ+/0WsydstNU4+4angBhnC9CUWwwaSsISKG4aAzVG/w=
+	t=1750177098; cv=none; b=ZRacXWfzTYXMCjj0pxiwonP6rg6Amhv9lJAw1gAwBdNoxdeB5xx/ew2qVmITIMmJIQtavXOZ8EbBunw/axc8udSayC/fw/8atRkgB3BfEhUDHeHxUhz202N2uS6/z1kR07C1ACog53neyV6AxGTbRA5vhK0eN6ajyl9A7QqoJ/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750178449; c=relaxed/simple;
-	bh=hYfsZ+h97b8SSCcK8Ze2SD1mhLygdwMfpK9oq0VwKTo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cBsG5T/PSDMVGTrdpMsA7lsTpUvwTtEKYtZjaHAGHpNwiWFUlEZqRHTA2UxRWmEJI9pEequA2vW801U6gGvLsdF4h27fkg8Sd22AAyNjQDBiRGr9pHl8Y1SGrC20zsOUum3IB6Vh97PGANLlXFUPasaCJj4zsNtyWEXZ83lX+B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0mNSyfEt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A49BC4CEE3;
-	Tue, 17 Jun 2025 16:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750178449;
-	bh=hYfsZ+h97b8SSCcK8Ze2SD1mhLygdwMfpK9oq0VwKTo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=0mNSyfEtckwG/mGjGLJz6e/PSC944bXgzGUbTbgwQSQ+wSxd9w9vO2B9/9U91XrkJ
-	 ykgP3zlA3Q6gBfH3DR0+XA4HZml7/cXmL4W4cyig3hkJUkR65VYS7BnJXAl21IB8c2
-	 hVunMatEIAio6KBa29gT5KYByd374Mt7KHPPVJB8=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	David Howells <dhowells@redhat.com>,
-	"Paulo Alcantara (Red Hat)" <pc@manguebit.com>,
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	Steve French <sfrench@samba.org>,
-	netfs@lists.linux.dev,
-	v9fs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.15 461/780] netfs: Fix undifferentiation of DIO reads from unbuffered reads
-Date: Tue, 17 Jun 2025 17:22:49 +0200
-Message-ID: <20250617152510.251693779@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250617152451.485330293@linuxfoundation.org>
-References: <20250617152451.485330293@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1750177098; c=relaxed/simple;
+	bh=EV4z8OrdAmsdvSsal+Eul/nlTIQTkqoRdK7bUO8Fg3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YcOBCiYPEJc3/TUllHUfq44KNoiT4kOD8bTQgGHsg4X+8VxX7muvqe9K1iRbn4TvIJP3SdQTJenVt7Sw84xxLpemOJ//xXzm4XJqtggGmPp5Kqa9Z4JMxh/aQcNSUp3fs5fJeLtmMyFn8o4vmPh1SFlMXBr0kGr9YK6fkeZLnEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FC0D4iz4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750177095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ggyx/jOc4d7bYwabgJy5rrVWttDhaySL1H54el9rbuo=;
+	b=FC0D4iz4C/KPhLMKQy29UEmBDHAOdhfsNKl7A8isXPtvGaP7oahYSqEa+dmmDCgE2fqzgP
+	p97kVneaUDHrN7BZ/Z0s67Cq60FVx/RcJXBkcu2OkzzCgsE5d0uCBbCS27JmQnodb+Up55
+	2toA7uj6DUh8OSXMbV3xIQ7LwtCGbxE=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-224-O-j0ui8_O4W02qVy-uOJVQ-1; Tue, 17 Jun 2025 12:18:14 -0400
+X-MC-Unique: O-j0ui8_O4W02qVy-uOJVQ-1
+X-Mimecast-MFC-AGG-ID: O-j0ui8_O4W02qVy-uOJVQ_1750177093
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f8192e2cso2859491f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 09:18:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750177093; x=1750781893;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ggyx/jOc4d7bYwabgJy5rrVWttDhaySL1H54el9rbuo=;
+        b=OWjoyxka/jLaM1oToqXCoLggfnaaMtcet2wg+gtGloQcyBgWzqwEGOGiD1rKBv8p4o
+         cwFr/z+tztqzYKsVzb+9kwl2Nfv/IOmXwpDqI9nwTMy5pkRaQTgGfk7njWozcrlBUoWS
+         sOR/mdgKX527YG9y71biD/OJw9hdGulFodh0BRe1LkdOJTv+kODFjEbUiiGl3w9KdJXu
+         Vc5oIA4kKq65AsJ/8ZWP6O71XJgf24Krw1zpxEUTmM2GS4IJi+MtmYGa9biRKn/aiQtX
+         h+rcaT2smXfljdnGCz0/Wb68OeQSBJgTf0Y5kpLi3a3kN+0Wgqe8TMjXuCVIaAHn1+ZS
+         Ndng==
+X-Gm-Message-State: AOJu0YwL381XxNg9zgiHCKYdPNvNkYRpCktc7JbvbTL92KTKB54/zIUX
+	mK/cN39br65QRxn55YgQLM6IytA6j3a2YTTderHGIFJxyknez5+Zd9v070m/E545q5zOxvSHzRa
+	jtaqAiP07rhvAz7l1IshT/HPsi5hZej1Abq5UNK2qBSybCTLSKsUciUkuOxWclH0L7ZI=
+X-Gm-Gg: ASbGncs6TWIXZwqDpG7z+oz1KcRyR0rKHcAvBrtVNlhRlefiu8Fn4wDu6iaBWE6V5qG
+	BqfsIjmKxmIEBLtMmnb4IhzsHdAKdKhlBZQF9ToZYsLdtkLtmFAUlkbjAxpK7gPAerCKyHUMRj8
+	A5InqQXKP567diEn4xkpEM3AceE2hjRH5H1XZjyhQnksNjnhYaAZzpXNSQ4Nc5jotUHqJGpHe4V
+	duzjQuv3JNrDuBl8qu2p+2BlNUTTobQTlzD5CSURCi+TsAiZN2Tk/y5OfI42YRHA3BCynIrvdPz
+	vJT4e10rIgh23LBsqPvPBDGJNoFnfz1V+BOExd6kvkaOuHcaEl9DeSStW2BwOy4eBYdhOEWPbuR
+	K8trubiDm+YSdp+VpYLcf8lWLVFeLdXMoXXQSfMDUu+eFX9U=
+X-Received: by 2002:a05:6000:310d:b0:3a4:e7b7:3851 with SMTP id ffacd0b85a97d-3a572e69d13mr12381462f8f.58.1750177093141;
+        Tue, 17 Jun 2025 09:18:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGy6w26SNF8JRiuV5RMogom+yqNk+oRLR2pX8ZZtPy7a4e3of9FalfrLKf1qQuD1a20chDIUg==
+X-Received: by 2002:a05:6000:310d:b0:3a4:e7b7:3851 with SMTP id ffacd0b85a97d-3a572e69d13mr12381435f8f.58.1750177092692;
+        Tue, 17 Jun 2025 09:18:12 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b087f8sm14640954f8f.53.2025.06.17.09.18.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 09:18:12 -0700 (PDT)
+Message-ID: <e7a6b0de-3f2a-4584-bc77-078569f69f55@redhat.com>
+Date: Tue, 17 Jun 2025 18:18:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 00/14] mm: vm_normal_page*() + CoW PFNMAP improvements
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250617154345.2494405-1-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250617154345.2494405-1-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-6.15-stable review patch.  If anyone has any objections, please let me know.
+On 17.06.25 17:43, David Hildenbrand wrote:
+> RFC because it's based on mm-new where some things might still change
+> around the devmap removal stuff.
+> 
+> While removing support for CoW PFNMAPs is a noble goal, I am not even sure
+> if we can remove said support for e.g., /dev/mem that easily.
+> 
+> In the end, Cow PFNMAPs are pretty simple: everything is "special" except
+> CoW'ed anon folios, that are "normal".
+> 
+> The only complication is: how to identify such pages without pte_special().
+> Because with pte_special(), it's easy.
+> 
+> Well, of course, one day all architectures might support pte_special() ...
+> either because we added support for pte_special() or removed support for
+> ... these architectures from Linux.
+> 
+> No need to wait for that day. Let's do some cleanups around
+> vm_normal_page()/vm_normal_page_pmd() and handling of the huge zero folio,
+> and remove the "horrible special case to handle copy-on-write behaviour"
+> that does questionable things in remap_pfn_range() with a VMA, simply by
+> 
+> ... looking for anonymous folios in CoW PFNMAPs to identify anonymous
+> folios? I know, sounds crazy ;)
 
-------------------
+I'll mention one corner case that just occurred to me: assume someone 
+maps arbitrary /dev/mem that is actually used by the kernel for user 
+space, and then some of that memory gets allocated as anonymous memory, 
+it would probably be a problem.
 
-From: David Howells <dhowells@redhat.com>
+Hmm, I'll have to think about that, and the interaction with 
+CONFIG_STRICT_DEVMEM.
 
-[ Upstream commit db26d62d79e4068934ad0dccdb92715df36352b9 ]
-
-On cifs, "DIO reads" (specified by O_DIRECT) need to be differentiated from
-"unbuffered reads" (specified by cache=none in the mount parameters).  The
-difference is flagged in the protocol and the server may behave
-differently: Windows Server will, for example, mandate that DIO reads are
-block aligned.
-
-Fix this by adding a NETFS_UNBUFFERED_READ to differentiate this from
-NETFS_DIO_READ, parallelling the write differentiation that already exists.
-cifs will then do the right thing.
-
-Fixes: 016dc8516aec ("netfs: Implement unbuffered/DIO read support")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/3444961.1747987072@warthog.procyon.org.uk
-Reviewed-by: "Paulo Alcantara (Red Hat)" <pc@manguebit.com>
-Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: Steve French <sfrench@samba.org>
-cc: netfs@lists.linux.dev
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
-cc: ceph-devel@vger.kernel.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/9p/vfs_addr.c             | 3 ++-
- fs/afs/write.c               | 1 +
- fs/ceph/addr.c               | 4 +++-
- fs/netfs/direct_read.c       | 3 ++-
- fs/netfs/main.c              | 1 +
- fs/netfs/misc.c              | 1 +
- fs/netfs/objects.c           | 1 +
- fs/netfs/read_collect.c      | 7 +++++--
- fs/nfs/fscache.c             | 1 +
- fs/smb/client/file.c         | 3 ++-
- include/linux/netfs.h        | 1 +
- include/trace/events/netfs.h | 1 +
- 12 files changed, 21 insertions(+), 6 deletions(-)
-
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index b5a4a28e0fe79..e4420591cf354 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -77,7 +77,8 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
- 
- 	/* if we just extended the file size, any portion not in
- 	 * cache won't be on server and is zeroes */
--	if (subreq->rreq->origin != NETFS_DIO_READ)
-+	if (subreq->rreq->origin != NETFS_UNBUFFERED_READ &&
-+	    subreq->rreq->origin != NETFS_DIO_READ)
- 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
- 	if (pos + total >= i_size_read(rreq->inode))
- 		__set_bit(NETFS_SREQ_HIT_EOF, &subreq->flags);
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 7df7b2f5e7b29..2e7526ea883ae 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -202,6 +202,7 @@ void afs_retry_request(struct netfs_io_request *wreq, struct netfs_io_stream *st
- 	case NETFS_READ_GAPS:
- 	case NETFS_READ_SINGLE:
- 	case NETFS_READ_FOR_WRITE:
-+	case NETFS_UNBUFFERED_READ:
- 	case NETFS_DIO_READ:
- 		return;
- 	default:
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 557c326561fdc..b95c4cb21c13f 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -238,6 +238,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
- 		if (sparse && err > 0)
- 			err = ceph_sparse_ext_map_end(op);
- 		if (err < subreq->len &&
-+		    subreq->rreq->origin != NETFS_UNBUFFERED_READ &&
- 		    subreq->rreq->origin != NETFS_DIO_READ)
- 			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
- 		if (IS_ENCRYPTED(inode) && err > 0) {
-@@ -281,7 +282,8 @@ static bool ceph_netfs_issue_op_inline(struct netfs_io_subrequest *subreq)
- 	size_t len;
- 	int mode;
- 
--	if (rreq->origin != NETFS_DIO_READ)
-+	if (rreq->origin != NETFS_UNBUFFERED_READ &&
-+	    rreq->origin != NETFS_DIO_READ)
- 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
- 	__clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
- 
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index a24e63d2c8186..9902766195d7b 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -188,7 +188,8 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kiocb *iocb, struct iov_iter *i
- 
- 	rreq = netfs_alloc_request(iocb->ki_filp->f_mapping, iocb->ki_filp,
- 				   iocb->ki_pos, orig_count,
--				   NETFS_DIO_READ);
-+				   iocb->ki_flags & IOCB_DIRECT ?
-+				   NETFS_DIO_READ : NETFS_UNBUFFERED_READ);
- 	if (IS_ERR(rreq))
- 		return PTR_ERR(rreq);
- 
-diff --git a/fs/netfs/main.c b/fs/netfs/main.c
-index 70ecc8f5f2103..3db401d269e7b 100644
---- a/fs/netfs/main.c
-+++ b/fs/netfs/main.c
-@@ -39,6 +39,7 @@ static const char *netfs_origins[nr__netfs_io_origin] = {
- 	[NETFS_READ_GAPS]		= "RG",
- 	[NETFS_READ_SINGLE]		= "R1",
- 	[NETFS_READ_FOR_WRITE]		= "RW",
-+	[NETFS_UNBUFFERED_READ]		= "UR",
- 	[NETFS_DIO_READ]		= "DR",
- 	[NETFS_WRITEBACK]		= "WB",
- 	[NETFS_WRITEBACK_SINGLE]	= "W1",
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 77e7f7c79d27c..43b67a28a8fa0 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -461,6 +461,7 @@ static ssize_t netfs_wait_for_request(struct netfs_io_request *rreq,
- 		case NETFS_DIO_READ:
- 		case NETFS_DIO_WRITE:
- 		case NETFS_READ_SINGLE:
-+		case NETFS_UNBUFFERED_READ:
- 		case NETFS_UNBUFFERED_WRITE:
- 			break;
- 		default:
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index d3eb9ba3013a7..31fa0c81e2a43 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -59,6 +59,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
- 	    origin == NETFS_READ_GAPS ||
- 	    origin == NETFS_READ_SINGLE ||
- 	    origin == NETFS_READ_FOR_WRITE ||
-+	    origin == NETFS_UNBUFFERED_READ ||
- 	    origin == NETFS_DIO_READ) {
- 		INIT_WORK(&rreq->work, netfs_read_collection_worker);
- 		rreq->io_streams[0].avail = true;
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index 900dd51c3b941..bad677e58a423 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -342,7 +342,8 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
- {
- 	unsigned int i;
- 
--	if (rreq->origin == NETFS_DIO_READ) {
-+	if (rreq->origin == NETFS_UNBUFFERED_READ ||
-+	    rreq->origin == NETFS_DIO_READ) {
- 		for (i = 0; i < rreq->direct_bv_count; i++) {
- 			flush_dcache_page(rreq->direct_bv[i].bv_page);
- 			// TODO: cifs marks pages in the destination buffer
-@@ -360,7 +361,8 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
- 	}
- 	if (rreq->netfs_ops->done)
- 		rreq->netfs_ops->done(rreq);
--	if (rreq->origin == NETFS_DIO_READ)
-+	if (rreq->origin == NETFS_UNBUFFERED_READ ||
-+	    rreq->origin == NETFS_DIO_READ)
- 		inode_dio_end(rreq->inode);
- }
- 
-@@ -416,6 +418,7 @@ bool netfs_read_collection(struct netfs_io_request *rreq)
- 	//netfs_rreq_is_still_valid(rreq);
- 
- 	switch (rreq->origin) {
-+	case NETFS_UNBUFFERED_READ:
- 	case NETFS_DIO_READ:
- 	case NETFS_READ_GAPS:
- 		netfs_rreq_assess_dio(rreq);
-diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-index e278a1ad1ca3e..8b07851787312 100644
---- a/fs/nfs/fscache.c
-+++ b/fs/nfs/fscache.c
-@@ -367,6 +367,7 @@ void nfs_netfs_read_completion(struct nfs_pgio_header *hdr)
- 
- 	sreq = netfs->sreq;
- 	if (test_bit(NFS_IOHDR_EOF, &hdr->flags) &&
-+	    sreq->rreq->origin != NETFS_UNBUFFERED_READ &&
- 	    sreq->rreq->origin != NETFS_DIO_READ)
- 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &sreq->flags);
- 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 3000c8a9d3ea5..d2df10b8e6fd8 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -219,7 +219,8 @@ static void cifs_issue_read(struct netfs_io_subrequest *subreq)
- 			goto failed;
- 	}
- 
--	if (subreq->rreq->origin != NETFS_DIO_READ)
-+	if (subreq->rreq->origin != NETFS_UNBUFFERED_READ &&
-+	    subreq->rreq->origin != NETFS_DIO_READ)
- 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
- 
- 	trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index c3f230732f51d..1464b3a104989 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -206,6 +206,7 @@ enum netfs_io_origin {
- 	NETFS_READ_GAPS,		/* This read is a synchronous read to fill gaps */
- 	NETFS_READ_SINGLE,		/* This read should be treated as a single object */
- 	NETFS_READ_FOR_WRITE,		/* This read is to prepare a write */
-+	NETFS_UNBUFFERED_READ,		/* This is an unbuffered read */
- 	NETFS_DIO_READ,			/* This is a direct I/O read */
- 	NETFS_WRITEBACK,		/* This write was triggered by writepages */
- 	NETFS_WRITEBACK_SINGLE,		/* This monolithic write was triggered by writepages */
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index 402c5e82e7b8d..4175eec40048a 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -39,6 +39,7 @@
- 	EM(NETFS_READ_GAPS,			"RG")		\
- 	EM(NETFS_READ_SINGLE,			"R1")		\
- 	EM(NETFS_READ_FOR_WRITE,		"RW")		\
-+	EM(NETFS_UNBUFFERED_READ,		"UR")		\
- 	EM(NETFS_DIO_READ,			"DR")		\
- 	EM(NETFS_WRITEBACK,			"WB")		\
- 	EM(NETFS_WRITEBACK_SINGLE,		"W1")		\
 -- 
-2.39.5
+Cheers,
 
-
+David / dhildenb
 
 
