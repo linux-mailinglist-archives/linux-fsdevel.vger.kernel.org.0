@@ -1,185 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-51940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51945-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17E2ADD2EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 17:51:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B56BADD89F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 18:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F14287AAECE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:48:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514C43B1D4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 16:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B6D2EE5FA;
-	Tue, 17 Jun 2025 15:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5EA28507D;
+	Tue, 17 Jun 2025 16:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnROnnxi"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kzLVlFE+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A5F2E92BC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 15:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737171ADC97;
+	Tue, 17 Jun 2025 16:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750175143; cv=none; b=PXYkWSNUTFyBoTzra43DEhDjsuGDg/eg5Nr7x0WIruCsthhGDR62jxoa0ultbUfJFojBR3cYKR9JjKUdrPN6NanHqxcyHPYPnq9hL2U8MxiBeslntkYf59zJzXrtbl1OYe3ZXFDtGAvfDR48DQLFknuFyYcCaI7jstKbnQs0zCk=
+	t=1750178513; cv=none; b=s+XLA4nXev+a2MzfjFFPSwZWYfWEKk5DMXjpliZBSAqLxKGV8AIzHX5GOsOUaJ+vFZ4Bap7tX6aE/6U9CBysTg4ha+MCXKGi4I8uXtB6z3wuuwvD4SAN+5H37oumuoFllJqi1i25RinqMmJiIBoBKT5NAblZDHmCX5PsGQi2O2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750175143; c=relaxed/simple;
-	bh=W4Z5v6mI8jm1Nj/+ZjgHLfhbbC8XiVN2M2XGtS/xh8E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UewpzA+HUKw/HWCJhCYMJsiWnq3mN3WQt9y2ScrHnGMH+HI4Zn6GitReBo/71IWO14/chL3M+OD5a99cbz4n+o+dWAIYzTRKFouUgFsoi25R5xt01zKLHIwEOAVLmzlIckW+jwRXIa6d3c4Yjep7XaQTJLvjOQTrwR9bZpgwaAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnROnnxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEC9C4CEF0;
-	Tue, 17 Jun 2025 15:45:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750175142;
-	bh=W4Z5v6mI8jm1Nj/+ZjgHLfhbbC8XiVN2M2XGtS/xh8E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XnROnnxihibTI37jXRuurrAvl+3IptHVwKuGTTVuMsZz+gJ7J26wepvfpwheb179p
-	 6O1+oUaFq4S1E9+RqGd0r0zRVKoUJPEtarG/cCKjFMPinz9BYgQ/wOCM+kjAD6R6Sy
-	 /1Ahc+vhGAIqQGeluc4qan1m7IK0tWZYz1TEtwuzzZD0QUu42hdGNKiMS7H1TakjEC
-	 JmhC5gaRT3csVFg8xS3aWqvJjXvoSAVKYdKT369XQQloGFUG52pfvTr8yOZz2T1p4/
-	 4Tf6Q8BBO4pIlyMgJqYm1GkK3GoePsjNa27J16sEzLyF+OhV8/QcWNgL/4C5Lx+kB3
-	 winqjxeG58MKw==
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 17 Jun 2025 17:45:17 +0200
-Subject: [PATCH RFC 7/7] selftests/pidfd: test setattr support
+	s=arc-20240116; t=1750178513; c=relaxed/simple;
+	bh=abDzn3/HuW9FrQlHz+9AyJ3SUWrN2ItQN3YuRAJJunI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ni30HnxxCU6mscxj/pkaGSaTyUKa2hcNEDKj2E7+uWcxTmsosKU8rcHZMQLmq3yPRBXLBAWKHVveIZGyFskG4pyejtiYcn2sYvMLNn0tX7/5IPOPBOF4WHhSW2fFoTFNDdZePaZ2RK2fvxBIqf3MyHSkO38WYo9whh+vjbGqJgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kzLVlFE+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6427C4CEE3;
+	Tue, 17 Jun 2025 16:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750178513;
+	bh=abDzn3/HuW9FrQlHz+9AyJ3SUWrN2ItQN3YuRAJJunI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kzLVlFE+goJp6k6TODFuAuRDbdR0A/yjmr5jpb0TTm05DykqnRDAEOQTBUHc3PJb+
+	 59ytng4Y76t4W1pEJUTRqA2VNnNeTuKz1O0kQ3Fj3douica7mVPI+6ETnlIG0IOIlH
+	 16bjuoH4Q621orYX6+J3ajfKCEvAP8bEsVE1JQuI=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com,
+	David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.15 453/780] netfs: Fix oops in write-retry from mis-resetting the subreq iterator
+Date: Tue, 17 Jun 2025 17:22:41 +0200
+Message-ID: <20250617152509.915938838@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250617152451.485330293@linuxfoundation.org>
+References: <20250617152451.485330293@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-work-pidfs-xattr-v1-7-d9466a20da2e@kernel.org>
-References: <20250617-work-pidfs-xattr-v1-0-d9466a20da2e@kernel.org>
-In-Reply-To: <20250617-work-pidfs-xattr-v1-0-d9466a20da2e@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Jann Horn <jannh@google.com>, Josef Bacik <josef@toxicpanda.com>, 
- Jeff Layton <jlayton@kernel.org>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
- Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- Christian Brauner <brauner@kernel.org>, 
- Alexander Mikhalitsyn <alexander@mihalicyn.com>
-X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3094; i=brauner@kernel.org;
- h=from:subject:message-id; bh=W4Z5v6mI8jm1Nj/+ZjgHLfhbbC8XiVN2M2XGtS/xh8E=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQE9k7cVPnfauK596a3fppOKuoXZkpc9HVBdZt3XunVk
- KuthzJrOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbC18fIMH3htNYtx6+9XW/a
- xsEQdTpZh+HJtAKXSuG1z3R9My4HXWRkuPPSyanJJE6NZX7jWi1ftr+Jd91WVr5RfZW/gP3v4sh
- 93AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Verify that ->setattr() on a pidfd doens't work.
+6.15-stable review patch.  If anyone has any objections, please let me know.
 
+------------------
+
+From: David Howells <dhowells@redhat.com>
+
+[ Upstream commit 4481f7f2b3df123ec77e828c849138f75cff2bf2 ]
+
+Fix the resetting of the subrequest iterator in netfs_retry_write_stream()
+to use the iterator-reset function as the iterator may have been shortened
+by a previous retry.  In such a case, the amount of data to be written by
+the subrequest is not "subreq->len" but "subreq->len -
+subreq->transferred".
+
+Without this, KASAN may see an error in iov_iter_revert():
+
+   BUG: KASAN: slab-out-of-bounds in iov_iter_revert lib/iov_iter.c:633 [inline]
+   BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x443/0x5a0 lib/iov_iter.c:611
+   Read of size 4 at addr ffff88802912a0b8 by task kworker/u32:7/1147
+
+   CPU: 1 UID: 0 PID: 1147 Comm: kworker/u32:7 Not tainted 6.15.0-rc6-syzkaller-00052-g9f35e33144ae #0 PREEMPT(full)
+   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+   Workqueue: events_unbound netfs_write_collection_worker
+   Call Trace:
+    <TASK>
+    __dump_stack lib/dump_stack.c:94 [inline]
+    dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+    print_address_description mm/kasan/report.c:408 [inline]
+    print_report+0xc3/0x670 mm/kasan/report.c:521
+    kasan_report+0xe0/0x110 mm/kasan/report.c:634
+    iov_iter_revert lib/iov_iter.c:633 [inline]
+    iov_iter_revert+0x443/0x5a0 lib/iov_iter.c:611
+    netfs_retry_write_stream fs/netfs/write_retry.c:44 [inline]
+    netfs_retry_writes+0x166d/0x1a50 fs/netfs/write_retry.c:231
+    netfs_collect_write_results fs/netfs/write_collect.c:352 [inline]
+    netfs_write_collection_worker+0x23fd/0x3830 fs/netfs/write_collect.c:374
+    process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+    process_scheduled_works kernel/workqueue.c:3319 [inline]
+    worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+    kthread+0x3c2/0x780 kernel/kthread.c:464
+    ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+    </TASK>
+
+Fixes: cd0277ed0c18 ("netfs: Use new folio_queue data type and iterator instead of xarray iter")
+Reported-by: syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=25b83a6f2c702075fcbc
+Signed-off-by: David Howells <dhowells@redhat.com>
+Link: https://lore.kernel.org/20250519090707.2848510-2-dhowells@redhat.com
+Tested-by: syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/pidfd/.gitignore           |  1 +
- tools/testing/selftests/pidfd/Makefile             |  2 +-
- tools/testing/selftests/pidfd/pidfd_setattr_test.c | 69 ++++++++++++++++++++++
- 3 files changed, 71 insertions(+), 1 deletion(-)
+ fs/netfs/write_retry.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
-index bc4130506eda..144e7ff65d6a 100644
---- a/tools/testing/selftests/pidfd/.gitignore
-+++ b/tools/testing/selftests/pidfd/.gitignore
-@@ -11,3 +11,4 @@ pidfd_bind_mount
- pidfd_info_test
- pidfd_exec_helper
- pidfd_xattr_test
-+pidfd_setattr_test
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-index c9fd5023ef15..03a6eede9c9e 100644
---- a/tools/testing/selftests/pidfd/Makefile
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -4,7 +4,7 @@ CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
- TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
- 	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
- 	pidfd_file_handle_test pidfd_bind_mount pidfd_info_test \
--	pidfd_xattr_test
-+	pidfd_xattr_test pidfd_setattr_test
+diff --git a/fs/netfs/write_retry.c b/fs/netfs/write_retry.c
+index 545d33079a77d..9b1ca8b0f4dd6 100644
+--- a/fs/netfs/write_retry.c
++++ b/fs/netfs/write_retry.c
+@@ -39,9 +39,10 @@ static void netfs_retry_write_stream(struct netfs_io_request *wreq,
+ 			if (test_bit(NETFS_SREQ_FAILED, &subreq->flags))
+ 				break;
+ 			if (__test_and_clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags)) {
+-				struct iov_iter source = subreq->io_iter;
++				struct iov_iter source;
  
- TEST_GEN_PROGS_EXTENDED := pidfd_exec_helper
- 
-diff --git a/tools/testing/selftests/pidfd/pidfd_setattr_test.c b/tools/testing/selftests/pidfd/pidfd_setattr_test.c
-new file mode 100644
-index 000000000000..d7de05edc4b3
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/pidfd_setattr_test.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <linux/types.h>
-+#include <poll.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/prctl.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <sys/socket.h>
-+#include <linux/kcmp.h>
-+#include <sys/stat.h>
-+#include <sys/xattr.h>
-+
-+#include "pidfd.h"
-+#include "../kselftest_harness.h"
-+
-+FIXTURE(pidfs_setattr)
-+{
-+	pid_t child_pid;
-+	int child_pidfd;
-+};
-+
-+FIXTURE_SETUP(pidfs_setattr)
-+{
-+	self->child_pid = create_child(&self->child_pidfd, CLONE_NEWUSER | CLONE_NEWPID);
-+	EXPECT_GE(self->child_pid, 0);
-+
-+	if (self->child_pid == 0)
-+		_exit(EXIT_SUCCESS);
-+}
-+
-+FIXTURE_TEARDOWN(pidfs_setattr)
-+{
-+	sys_waitid(P_PID, self->child_pid, NULL, WEXITED);
-+	EXPECT_EQ(close(self->child_pidfd), 0);
-+}
-+
-+TEST_F(pidfs_setattr, no_chown)
-+{
-+	ASSERT_LT(fchown(self->child_pidfd, 1234, 5678), 0);
-+	ASSERT_EQ(errno, EOPNOTSUPP);
-+}
-+
-+TEST_F(pidfs_setattr, no_chmod)
-+{
-+	ASSERT_LT(fchmod(self->child_pidfd, 0777), 0);
-+	ASSERT_EQ(errno, EOPNOTSUPP);
-+}
-+
-+TEST_F(pidfs_setattr, no_exec)
-+{
-+	char *const argv[] = { NULL };
-+	char *const envp[] = { NULL };
-+
-+	ASSERT_LT(execveat(self->child_pidfd, "", argv, envp, AT_EMPTY_PATH), 0);
-+	ASSERT_EQ(errno, EACCES);
-+}
-+
-+TEST_HARNESS_MAIN
-
+-				iov_iter_revert(&source, subreq->len - source.count);
++				netfs_reset_iter(subreq);
++				source = subreq->io_iter;
+ 				netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
+ 				netfs_reissue_write(stream, subreq, &source);
+ 			}
 -- 
-2.47.2
+2.39.5
+
+
 
 
