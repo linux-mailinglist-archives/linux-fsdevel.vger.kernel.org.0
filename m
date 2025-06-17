@@ -1,115 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-51826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF86ADBE1D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 02:28:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D3AADBE38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 02:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E6118902BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 00:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F217D172146
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 00:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C7C14EC46;
-	Tue, 17 Jun 2025 00:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E82315B0EC;
+	Tue, 17 Jun 2025 00:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZUwHBri"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgwatPar"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1405A1DA53;
-	Tue, 17 Jun 2025 00:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E1ECA6F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 00:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750120081; cv=none; b=m7mVpls3aChDbHFpwpLflDuFEyA0ZOc4e5lAM3c5m2N0YxO+w8Ars1v6qpSxGTboh9+THx3QyQ/v7riJxwGwTr0wYbniskcvRvWszK92EDDkRIjnNGXdYC5hCDJ9rGcCWqV46eTXpp1BKGBjqjd2bJN9YyMtvGsFNsqBl3bva0c=
+	t=1750120629; cv=none; b=P0rV4DYRXRt7ZVSQsZ/ku45CmEsClJuTw7GO6N1Nl94lWUuvjn6IhL0koWtAOIRi8f82QqTqN2TTNA7Vfj0ORTHg2ODRMm1IGMxAI6MvATiOZ2+/sfg4l2OtINlTEik/A4VMRc8VYYR/L+Mwa0aiXTjtiHxteD+pc22zIZPaP3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750120081; c=relaxed/simple;
-	bh=7Qxx2Bv9Tqez0tLC1L/y7o/+duyJt0x0aAbD9+t4eFk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eJI+GKC7BJa6E3ZS03agUf0vWCEPMbcoAfuqJ61E98dbaFLKt+dwNzRwBwHd5si136hLtGri/zUQV7ulqsOLe59LxYyHc7TVehAU1PUAvklb97B5yUEGOKZ204XZgHtIc+QMJlPqx3eLBgmajT8NpGdaVLWRQa3ZgiwPakpUMZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZUwHBri; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-236192f8770so35278575ad.0;
-        Mon, 16 Jun 2025 17:27:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750120079; x=1750724879; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Qxx2Bv9Tqez0tLC1L/y7o/+duyJt0x0aAbD9+t4eFk=;
-        b=BZUwHBritNC384ilG/q5FQHL+iow3S9TDrEyBcsnpYZO4N+TpE/+uuK7QW4ziNqQ4l
-         3fuHLh/63A9ACEyTtXegDt2zbD9utHkHJ+2R3SqxCSXUTVIygsKsYNM5P0ARHsJXorZr
-         +W64WFMnA2KdPRccTkpQy2iNsjp0XZh9jv1dhRSgUiHCWWgbEoNzjimTzfzShajRuZaa
-         lgUHKMCuzMW6XktVlqvnimU3yt89DVhpxIjUECvfNJtHRhENYV9Z8nkITn+1f5lJX5nc
-         kvEbwL5Gu4n+72CSkrdvYemYeXvaK40n+ayaNZ9xv7JxPDxZUmh2cQQ7WNaUsS4z0dVa
-         w6wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750120079; x=1750724879;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Qxx2Bv9Tqez0tLC1L/y7o/+duyJt0x0aAbD9+t4eFk=;
-        b=sFnpcnZ3LAnliWrlxjvkAURSDbLpx7DpeqRhz0v6MNIQa94jtnL3sZ/dvrPgkyfb8/
-         qbKAcVk+UvQY1hnknweodlGor3CVOXoz2VmW0kIfi9JWOwXWizSArRT9j9UfiBfOJoj7
-         +zMPRebDeqfMHBFbPNsbpMhUChuLy4PjNzxEbUapmBoSNyvchtm106nWPDXB3NfeGEqd
-         6XTmEhjjA03MC8wraHNdEheqaBITPcppt/Dx+DEaaFVoGA36bwHDJ7dlYh8t2rbnll50
-         xIURiDrM+MYfpkXN/T2rdTUGs4vdTwOpsq/fRXjq0w1XRTlM9YWWB60jRDpAAsQK6ztD
-         jx8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUjYj0c3f4vcxRqK02SREL3KuSAqDdmOI25yRUQ8vXxgju+hkI2AtFsy/SFIz1NBZbBVt24OPdhjb2MqzDT@vger.kernel.org, AJvYcCWXersz9nPRSK4K34kXJTQ4xOQJMtPXpCdWZrz89aMMQHy7/rUGdhmpN6/QYMrkQfHAM/3mo4cogA==@vger.kernel.org, AJvYcCXQYfQ0sZOzTbk7PP1tfWZFGZLg3S6aw+AumLu1I8VekqNaTq17FCEIdeP1piKErpOL8sLn1ZmTD34Iyf/m@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRMIMKgmj4VuBnE0hz+WIK9sBNjSGDittQYSk2Ynu6PoLeTFwp
-	rueKNNyV7Ni3qjGRq4olfEbytf0ffaXJD1huDW/IfATl0t3fLjgmWZbMaKWGOg==
-X-Gm-Gg: ASbGncsiZ8vFexyB5/FHyoG9Bxc3fRuiCcdv+ORAbMOTnELOpv1sE32A72gMjuD9f3V
-	1PPSPMK/mqacxneTUKmAugR6D7xBp52oSytQi8eHcXNKDFc+evpUkXcIkkmhjQPlyRpn25s4/v3
-	BJGM7tnASjrAwmZjLmp5IsI73yTKcdw3Dq5bqmhboTSBJNroAM+A/OnrhC+n+kf2bo64zoJbhn2
-	kBIpcgv86YY0DpNCRNNYHLrPJ6R83XiBIbMR//xf4wuCfA2jEw1oqPeGv0yLwaaTGg7PVF10JaF
-	wDn0kwNLAVHeKTWnZHqew2L1eL/lmKg8WR8NTdYoVeU=
-X-Google-Smtp-Source: AGHT+IHelUh3WFlejZF7FApK98bY1gYlu3NcEbElM+plWTe4NQvabgGXhG3ngjrjYNHoyOxKKaXCpQ==
-X-Received: by 2002:a17:903:1d0:b0:215:6c5f:d142 with SMTP id d9443c01a7336-2366ae55273mr158256785ad.20.1750120079276;
-        Mon, 16 Jun 2025 17:27:59 -0700 (PDT)
-Received: from fedora ([2601:646:8081:3770::de7b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d88d921sm67694385ad.40.2025.06.16.17.27.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 17:27:58 -0700 (PDT)
-From: Collin Funk <collin.funk1@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>,  linux-fsdevel@vger.kernel.org,
-  Alexander Viro <viro@zeniv.linux.org.uk>,  Stephen Smalley
- <stephen.smalley.work@gmail.com>,  linux-kernel@vger.kernel.org,
-  selinux@vger.kernel.org,  eggert@cs.ucla.edu,  bug-gnulib@gnu.org
-Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list()
-In-Reply-To: <20250616-flitzen-barmherzigen-e30c63f9e8ba@brauner>
-References: <20250605164852.2016-1-stephen.smalley.work@gmail.com>
-	<CAHC9VhQ-f-n+0g29MpBB3_om-e=vDqSC3h+Vn_XzpK2zpqamdQ@mail.gmail.com>
-	<CAHC9VhRUqpubkuFFVCfiMN4jDiEhXQvJ91vHjrM5d9e4bEopaw@mail.gmail.com>
-	<87plfhsa2r.fsf@gmail.com>
-	<CAHC9VhRSAaENMnEYXrPTY4Z4sPO_s4fSXF=rEUFuEEUg6Lz21Q@mail.gmail.com>
-	<20250611-gepunktet-umkurven-5482b6f39958@brauner>
-	<CAHC9VhTWEWq_rzZnjbYrS6MCb5_gSBDAjUoYQY4htQ5MaY2o_w@mail.gmail.com>
-	<20250616-flitzen-barmherzigen-e30c63f9e8ba@brauner>
-Date: Mon, 16 Jun 2025 17:27:57 -0700
-Message-ID: <875xgv6wky.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1750120629; c=relaxed/simple;
+	bh=LVK6KCjN4I74a6SPkbB3+D8Ue92ER+Qm1kDqk0iTEiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pcp2C8FQSvmuUNup/rKCa91Q9z75876zi+IAj17VxA0T0pNlxv6ui9osmgbqXC97SWvoTUpGl1VcXvuH3sL9N4TJTxZ1tInx562r8fGAE42ruoyb4vpLDocrihfK5ZL1acKDdYRrAgFe5acoNJxMc1WcPlLDgQ2py6wlDgDYJ+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgwatPar; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7731C4CEEA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 00:37:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750120628;
+	bh=LVK6KCjN4I74a6SPkbB3+D8Ue92ER+Qm1kDqk0iTEiM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BgwatParTPrugRCLvriVTg8Tw3w7CcNJL6zFJsF2BOrQ9Z2AP3NTrwL6rW4rMyaO/
+	 8WEbGKXoc8d6dUYb9A3Z/q2qrLBRYserb5Vot4cVPAvqoFqD7UVZ2Cu3IufmL0srcn
+	 3N9k/VwhJtRo3LRrYbD2/Bei1G00yTt++nypXkpkw7cbxCvGPm30GpSyJcTAikdZ6C
+	 uwQMQzCOSgLxDxvkjicSY3k8GwymtrgGWHg9VBPh16ywWT87jcjmAbY6enmuIyw3q1
+	 rMSgM7dsxQ8kTGY2t7eviNiedCyEIeMzEifPP7NP8zQM0Aw/5Ok1X79VUvUbXOkGeT
+	 INtRllQdccJig==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso9354353a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jun 2025 17:37:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU07tQj40+bg2i3AjoOj/AheulYGJukd44ZsZ3tffh4H2QlD3RrpcajjDh3LEkKJaHRklI4huVeNl+0rBwE@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx3IXBTkvfGtcgrpzcEyLQoEXzWA3zJk6yLSHQlhrSk6QsUzql
+	OsQsmRX1v5JFXT6KuwZGRsv8S62EDWxOgDTvtyPd+W4ol6rW6LAxTGoZ/vRmnaGnNGGMvey+zLE
+	DgjAKI4cH/P9sspbeZWz0m09lU8xuc8E=
+X-Google-Smtp-Source: AGHT+IEGizAudBYk4aGrMCp95841OIuxAqfW6NDgTofpYrKezB+UR6yNcplE+mgbbXfOYZxx9gHzmyzsHhB00yLOZwU=
+X-Received: by 2002:a17:907:7296:b0:ad8:96d2:f42 with SMTP id
+ a640c23a62f3a-adfad437bcemr1118059666b.36.1750120627547; Mon, 16 Jun 2025
+ 17:37:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250613103802.619272-2-Yuezhang.Mo@sony.com>
+In-Reply-To: <20250613103802.619272-2-Yuezhang.Mo@sony.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 17 Jun 2025 09:36:56 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_TFNnbJLNsYFW4=mCzVyx1ZqhuLD58aLD5cWu2uk2+Qw@mail.gmail.com>
+X-Gm-Features: AX0GCFuapI-w9SaTFw9Y9_GhjNVygcSJkGsH3U5rglEnmANdiJPmFOwnnbs0Rl0
+Message-ID: <CAKYAXd_TFNnbJLNsYFW4=mCzVyx1ZqhuLD58aLD5cWu2uk2+Qw@mail.gmail.com>
+Subject: Re: [PATCH v1] exfat: add cluster chain loop check for dir
+To: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Cc: sj1557.seo@samsung.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Christian Brauner <brauner@kernel.org> writes:
-
->> Checking on the status of this patch as we are at -rc2 and I don't see
->> it in Linus' tree?
+On Fri, Jun 13, 2025 at 7:39=E2=80=AFPM Yuezhang Mo <Yuezhang.Mo@sony.com> =
+wrote:
 >
-> Sent this morning with some other fixes.
+> An infinite loop may occur if the following conditions occur due to
+> file system corruption.
+>
+> (1) Condition for exfat_count_dir_entries() to loop infinitely.
+>     - The cluster chain includes a loop.
+>     - There is no UNUSED entry in the cluster chain.
+>
+> (2) Condition for exfat_create_upcase_table() to loop infinitely.
+>     - The cluster chain of the root directory includes a loop.
+>     - There are no UNUSED entry and up-case table entry in the cluster
+>       chain of the root directory.
+>
+> (3) Condition for exfat_load_bitmap() to loop infinitely.
+>     - The cluster chain of the root directory includes a loop.
+>     - There are no UNUSED entry and bitmap entry in the cluster chain
+>       of the root directory.
+>
+> This commit adds checks in exfat_count_num_clusters() and
+> exfat_count_dir_entries() to see if the cluster chain includes a loop,
+> thus avoiding the above infinite loops.
+>
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+> ---
+>  fs/exfat/dir.c    | 33 +++++++++++++++++++++------------
+>  fs/exfat/fatent.c | 10 ++++++++++
+>  fs/exfat/super.c  | 32 +++++++++++++++++++++-----------
+>  3 files changed, 52 insertions(+), 23 deletions(-)
+>
+> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+> index 3103b932b674..467271ad4d71 100644
+> --- a/fs/exfat/dir.c
+> +++ b/fs/exfat/dir.c
+> @@ -1194,7 +1194,8 @@ int exfat_count_dir_entries(struct super_block *sb,=
+ struct exfat_chain *p_dir)
+>  {
+>         int i, count =3D 0;
+>         int dentries_per_clu;
+> -       unsigned int entry_type;
+> +       unsigned int entry_type =3D TYPE_FILE;
+> +       unsigned int clu_count =3D 0;
+>         struct exfat_chain clu;
+>         struct exfat_dentry *ep;
+>         struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
+> @@ -1205,18 +1206,26 @@ int exfat_count_dir_entries(struct super_block *s=
+b, struct exfat_chain *p_dir)
+>         exfat_chain_dup(&clu, p_dir);
+>
+>         while (clu.dir !=3D EXFAT_EOF_CLUSTER) {
+> -               for (i =3D 0; i < dentries_per_clu; i++) {
+> -                       ep =3D exfat_get_dentry(sb, &clu, i, &bh);
+> -                       if (!ep)
+> -                               return -EIO;
+> -                       entry_type =3D exfat_get_entry_type(ep);
+> -                       brelse(bh);
+> +               clu_count++;
+> +               if (clu_count > sbi->used_clusters) {
+                    if (++clu_count > sbi->used_clusters) {
 
-I see it merged now [1].
+> +                       exfat_fs_error(sb, "dir size or FAT or bitmap is =
+corrupted");
+> +                       return -EIO;
+> +               }
+>
+> -                       if (entry_type =3D=3D TYPE_UNUSED)
+> -                               return count;
+> -                       if (entry_type !=3D TYPE_DIR)
+> -                               continue;
+> -                       count++;
+> +               if (entry_type !=3D TYPE_UNUSED) {
+> +                       for (i =3D 0; i < dentries_per_clu; i++) {
+> +                               ep =3D exfat_get_dentry(sb, &clu, i, &bh)=
+;
+> +                               if (!ep)
+> +                                       return -EIO;
+> +                               entry_type =3D exfat_get_entry_type(ep);
+> +                               brelse(bh);
+> +
+> +                               if (entry_type =3D=3D TYPE_UNUSED)
+> +                                       break;
+Is there any reason why you keep doing loop even though you found an
+unused entry?
 
-Thanks for the help all.
+> +                               if (entry_type !=3D TYPE_DIR)
+> +                                       continue;
+> +                               count++;
+> +                       }
+>                 }
+>
+>                 if (clu.flags =3D=3D ALLOC_NO_FAT_CHAIN) {
+> diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+> index 23065f948ae7..2a2615ca320f 100644
+> --- a/fs/exfat/fatent.c
+> +++ b/fs/exfat/fatent.c
+> @@ -490,5 +490,15 @@ int exfat_count_num_clusters(struct super_block *sb,
+>         }
+>
+>         *ret_count =3D count;
+> +
+> +       /*
+> +        * since exfat_count_used_clusters() is not called, sbi->used_clu=
+sters
+> +        * cannot be used here.
+> +        */
+> +       if (i =3D=3D sbi->num_clusters) {
+This is also right, But to make it more clear, wouldn't it be better
+to do clu !=3D EXFAT_EOF_CLUSTER?
 
-Collin
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fe78e02600f83d81e55f6fc352d82c4f264a2901
+Thanks.
+> +               exfat_fs_error(sb, "The cluster chain has a loop");
+> +               return -EIO;
+> +       }
+> +
+>         return 0;
+>  }
 
