@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-51861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8B8ADC694
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 11:34:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F93ADC6A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 11:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B53188B8F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 09:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5A0189950E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 09:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6000E293C71;
-	Tue, 17 Jun 2025 09:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9625294A16;
+	Tue, 17 Jun 2025 09:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cS2rywXi"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D/zDTGDP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3361E230D0E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 09:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEFE289839
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 09:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152873; cv=none; b=JkjPHKgHcrcgz5IsmidAlIVpXf6ySGiouUmgEOuYkSk5mPtVBNgupSqBQCBaXDq1YQp8xb1K5XOSY7Z3h8zLwO1GvzCqIPlkiwJIdPnW+2ptG3W10RM/5NtCi/lZUPU/pvndvaD/Zh5sMlWy4s+xEn5Td179elVhzYgTNYnPQIQ=
+	t=1750152923; cv=none; b=BThA1QRTK5WdyzG84P5oR26p+TB2wbXjgksSU9BRe56oOcM4xoq8Zsx/j1Z3O71w+YoFTpzjCUKWpxqkb2B8s/wEk0HMHakuh9Lyjjt9VstRw9Vyzb/V46+uawDN4u3Egs6V7gng7f0UP6hGhQDHZqAnoJ8B1Lr7UUzy3aDTJh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152873; c=relaxed/simple;
-	bh=/l+blL0P/WvKFXEmP8UAB8+2DcgBYjMRCa/JF+NxGbg=;
+	s=arc-20240116; t=1750152923; c=relaxed/simple;
+	bh=orOmsWmK7arl5guU70AdaHCHCOleWhKkPZuEjky9V7Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kO4xH5TVGbopit1EeKu71TPuaUa3+ww7tCPovYYwcPI8UfDXVdnceVwqUpQaj89/L4geYkj/mDL1NwsEK766CJ0O2ZKSLmwEEh1320eOOfF2HogqqomqEHAPJ2PAFJFNHTNHawvDRjLLGLvaCu7gnoxl10j9bAN02Owz86ZRDIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cS2rywXi; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=SYN/oDszctSRJGic457hZX0OpEdKacPLQL1AHKtzYs5juwNFJP+esUKra2+bxS7JcjMx3IytUI71XhXR5HwtZ2dMcG2bg+SBFuoY8nYUQwod2XOLgjwe1pGN8vqq0ClyrGqd/xHeRHYj7/UDhB4Q6lV6JBMWlbiJqY7Yikg05sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D/zDTGDP; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750152871;
+	s=mimecast20190719; t=1750152921;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UoO6Im3sdMj9qrKiZw97K0g1BjWI//UD+48kISxcxhU=;
-	b=cS2rywXifaqg765B6bFft6Cs8MAaiDaYhewIunDeO2XegYpKjIZkgDaOFh3YNKfv3a0i3Q
-	ACXfUvLkg8ANBwGN0QPApx40531uhqX5bVu4ifIUXj29SCtrknuvAB49BPQWkZ/ObY22fs
-	aj144Gbj6VvHG7bMfdFqqRVI51JL8po=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=sxNGLVvBoDB549OTJwTVX80yqxzNkqnyUmP8nOzpMNA=;
+	b=D/zDTGDPSFDLYnYiB6MjqVuiov28xW39P/Grr03Hhy952o9XfQibTfCKCzfv0TcmLN/ZDi
+	Ghuq7B8hsmNVn7DQhTddtnUbHpuKYuqnvlzhWTowKZiGa+mcXntjwYCaA90C4ON9n6dWoP
+	ka/nBn1neCXgllSsmANXOEubMGpqazQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-r19M1XvQNiy3g37sON2PYg-1; Tue, 17 Jun 2025 05:34:29 -0400
-X-MC-Unique: r19M1XvQNiy3g37sON2PYg-1
-X-Mimecast-MFC-AGG-ID: r19M1XvQNiy3g37sON2PYg_1750152868
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a578958000so997804f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 02:34:28 -0700 (PDT)
+ us-mta-479-hKPVgS8yPgOTYd3g95wiKg-1; Tue, 17 Jun 2025 05:35:18 -0400
+X-MC-Unique: hKPVgS8yPgOTYd3g95wiKg-1
+X-Mimecast-MFC-AGG-ID: hKPVgS8yPgOTYd3g95wiKg_1750152918
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso3047685e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 02:35:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750152868; x=1750757668;
+        d=1e100.net; s=20230601; t=1750152917; x=1750757717;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=UoO6Im3sdMj9qrKiZw97K0g1BjWI//UD+48kISxcxhU=;
-        b=k64pFgfzvDQXuOVVMoGqFCFGDbYzv+mqZvLTytmrLTXjAdLFbtdi4CmGlEMscYacVO
-         10ZecjSSGLJ/zEbP7A7oZnmWvgmKCpSD/xtMYC/0Ibr67wg4qtsLL1eMjG+8VWJs92Bd
-         50pVrhuXdPvpMR6c26IATN2xAwu85tWhXnR5aTnq967tigMBT9O95T6mWZ8mCmMmlgbp
-         0a2fMQcbpveS1Z9UYPDCo+5UIpJJsj3spzD3+yveOAY628aG2WMotcKjGgw8lU7Hi45m
-         zerCpm6wc8NMGYFTUohOVR0d0k7VUiM3wLCAyor2T64KrBT3sEo75GyYP4QWugW+GynC
-         /ZCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxhbtbefkTzDKlWo1rQFX6e0vewnY+mPxxa71BfOYEMSVVgwJMzmZRQPZKvGkKUC9DuROiNlCI9uR16bkZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvZ7h9b16lhYQYdc1UAYC1dBVCjLTkLHNT2g7zBhQhwtd4FXo8
-	ws41mNAAh7oPmAYnl3AQtaJwaxlXVy9bjGF1+HEsq2NHoHCwfqHx1XrdiRVCFpuo/GLYNYqSapS
-	v4Iomc2k+oAviqLVaC1YhU2hfkQcxu03MzmwLSzCbPKTx4aC58ptkA3KQw1xfgXmTDbI=
-X-Gm-Gg: ASbGncsnO84izl5XiUxSIngQa/FDW6noFRLf0DNWOnAzQdAfDmvmq+g2ab3vV9ia68u
-	W31bApJOIwc5J8hTyvvcHKn4ys3U4a8r1+kzDhBzBVOE8kPQfJaIAfUoxjQ6cHls/kqRdw647VU
-	qo3yhDON7TrfNPNmJpMT4AV9opzK4B6q/Fj7O6FEbPHphif0Ih1zII2eFnmxKfSelO15Agi9Cz7
-	QwMEvbdEDQzGccOM2nGGzI7dMEkMM6Ln2ovgmodRzWFY31tIbad2DI/hZu9aglJy3vl4ge9fztw
-	gYqu1ivP1i6tCzHr6c6P9TvSxZ7ylLfPNIjnOCkUnMaVNeU+xWEXKZH7YjqvbPUQWEWPbwFD3Vw
-	bvReLvhfhXhlZwEwc84h1hCesC21djBXjfpRpK4U73iSvk4o=
-X-Received: by 2002:a05:6000:480d:b0:3a4:ed2f:e82d with SMTP id ffacd0b85a97d-3a5723a49e0mr9462620f8f.22.1750152867961;
-        Tue, 17 Jun 2025 02:34:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGAmkCmIe8r1op6vQb6TFjyJmDKs7yVrH6V8NRIzvLkSM/8ZQuEH09JTbMfp0YgKwsQ3nxlSg==
-X-Received: by 2002:a05:6000:480d:b0:3a4:ed2f:e82d with SMTP id ffacd0b85a97d-3a5723a49e0mr9462594f8f.22.1750152867607;
-        Tue, 17 Jun 2025 02:34:27 -0700 (PDT)
+        bh=sxNGLVvBoDB549OTJwTVX80yqxzNkqnyUmP8nOzpMNA=;
+        b=tohxHxe/gqiaMhGXk3fo6c4/EQjCVWIfrgzFsJyxKimrSqUGh5DP7uKZoRrVMzMxA+
+         1zYXFGlt3H5rUHCjcQ2DjeRd5RY9sMYo7nTx95rL770FyF9FSYfkxp24nbsLoXONxhmZ
+         rC7mqGL/H06j0QSnKkdrB4jVd0slssGKeUYMhpXBIlqfBRYmWe7zrJXCXWDLpaOJ/Zig
+         u0gOaoeMatKiaJ++V6VVDcLkC/eouz/Ug1Gbia8OC4K5qzEW3jzxNWtxdjYDVFwXk5Xo
+         WKBfPG2mJ8ryDl5SaZvnjBO859J77+i2wkiYPFtTt+9a07T9NgYMzXUM+2XrmuBx/Ch0
+         2TWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcK2cv+9SzekRlIyvgk9wAaAaPa0A0I4o7ZLy2NUPt3pFBOORDCtUZRzEyk8a+jOZHIuJNi6lgTFo1weFV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdO5EKIiQdvyhsHp/vYNke5y9wN7+TH36nJ7goK/nwzieLWPXJ
+	h6D/8GkShl0WhHh+ramlsFh/8Q0O/RCVZmL2lzvoz9lp2nukP19QSSmK4QCEHLKqoxJCSad7Acj
+	/HlcLFc2g+kWpeDt0FY5sCpsQFyyf5iWDk2ED22GfoaDAe8ck3cp0Nclk19FgWnL6vgE=
+X-Gm-Gg: ASbGncsZfOaY8qVfRBlakc6VNU5SqOtbxNWZUDwyBB8jtReNQ5vlQ1PjEIYypcNg0DY
+	vgX9Le9L+QCPzyAQ8LOtwY/FoJ0f5dfh7ln107WfQvZgA7thx9goaaJzeE2REgzbri6u0I6NtPy
+	JVlendVcK2OmV6WzJWfc86nfyj6Iw2ytDpmgWbWo9wWyIZaLpPxtryP8Lt9XGMayL1balJ2wUEM
+	y4ljeKoL/jH/xqnhJfwnFM2nL3hflQkoyWaD893RyKzg6W114W3lZNPyEkoJo4wK6FHfMXMWdvC
+	cIKqw50+HqmGkOU3utYawsID7LCYiKlZUt9OE+Tm96L4yJY11ABAoDYdVlk1jPPhquyHFiFUJuj
+	FKc3Oj6cMO8QQXTmM+tpAHdU2xlPbER+Vc6LjXOH3tnVDTb8=
+X-Received: by 2002:a05:600c:64c8:b0:442:d9fb:d9a5 with SMTP id 5b1f17b1804b1-4533c92e02dmr116196875e9.9.1750152917434;
+        Tue, 17 Jun 2025 02:35:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEit+yPVLJbHP2/NKoMhgu9bHwQKBDL8e7RYDOzVbEtAUjPvQmNHH9hZ4psmoetdsF5NGVCyg==
+X-Received: by 2002:a05:600c:64c8:b0:442:d9fb:d9a5 with SMTP id 5b1f17b1804b1-4533c92e02dmr116195515e9.9.1750152915523;
+        Tue, 17 Jun 2025 02:35:15 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a7f8f9sm13367621f8f.42.2025.06.17.02.34.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a57b15015fsm7801901f8f.95.2025.06.17.02.35.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 02:34:27 -0700 (PDT)
-Message-ID: <b2640810-d528-4a3f-b69a-87847943dc2b@redhat.com>
-Date: Tue, 17 Jun 2025 11:34:25 +0200
+        Tue, 17 Jun 2025 02:35:15 -0700 (PDT)
+Message-ID: <69bea6b9-e9e7-4d17-843c-001029d4f2c2@redhat.com>
+Date: Tue, 17 Jun 2025 11:35:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/14] mm/memremap: Remove unused devmap_managed_key
+Subject: Re: [PATCH v2 13/14] mm: Remove callers of pfn_t functionality
 To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org
 Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
  dan.j.williams@intel.com, jgg@ziepe.ca, willy@infradead.org,
@@ -104,7 +104,7 @@ Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
  linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, John@Groves.net,
  m.szyprowski@samsung.com, Jason Gunthorpe <jgg@nvidia.com>
 References: <cover.8d04615eb17b9e46fc0ae7402ca54b69e04b1043.1750075065.git-series.apopple@nvidia.com>
- <51ccdbbc3d7b76a7f6e2aefb543eba52d653a230.1750075065.git-series.apopple@nvidia.com>
+ <657be8fef1f0d15c377ad3c420d77ca4db918013.1750075065.git-series.apopple@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -152,16 +152,75 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <51ccdbbc3d7b76a7f6e2aefb543eba52d653a230.1750075065.git-series.apopple@nvidia.com>
+In-Reply-To: <657be8fef1f0d15c377ad3c420d77ca4db918013.1750075065.git-series.apopple@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 16.06.25 13:58, Alistair Popple wrote:
-> It's no longer used so remove it.
+> All PFN_* pfn_t flags have been removed. Therefore there is no longer
+> a need for the pfn_t type and all uses can be replaced with normal
+> pfns.
 > 
 > Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> 
 > ---
+> 
+> Changes since v1:
+> 
+>   - Rebased on David's cleanup[1]
+> 
+> [1] https://lore.kernel.org/linux-mm/20250611120654.545963-1-david@redhat.com/
+> ---
+>   arch/x86/mm/pat/memtype.c                |  1 +-
+>   drivers/dax/device.c                     | 23 +++----
+>   drivers/dax/hmem/hmem.c                  |  1 +-
+>   drivers/dax/kmem.c                       |  1 +-
+>   drivers/dax/pmem.c                       |  1 +-
+>   drivers/dax/super.c                      |  3 +-
+>   drivers/gpu/drm/exynos/exynos_drm_gem.c  |  1 +-
+>   drivers/gpu/drm/gma500/fbdev.c           |  3 +-
+>   drivers/gpu/drm/i915/gem/i915_gem_mman.c |  1 +-
+>   drivers/gpu/drm/msm/msm_gem.c            |  1 +-
+>   drivers/gpu/drm/omapdrm/omap_gem.c       |  6 +--
+>   drivers/gpu/drm/v3d/v3d_bo.c             |  1 +-
+>   drivers/hwtracing/intel_th/msu.c         |  3 +-
+>   drivers/md/dm-linear.c                   |  2 +-
+>   drivers/md/dm-log-writes.c               |  2 +-
+>   drivers/md/dm-stripe.c                   |  2 +-
+>   drivers/md/dm-target.c                   |  2 +-
+>   drivers/md/dm-writecache.c               | 11 +--
+>   drivers/md/dm.c                          |  2 +-
+>   drivers/nvdimm/pmem.c                    |  8 +--
+>   drivers/nvdimm/pmem.h                    |  4 +-
+>   drivers/s390/block/dcssblk.c             |  9 +--
+>   drivers/vfio/pci/vfio_pci_core.c         |  5 +-
+>   fs/cramfs/inode.c                        |  5 +-
+>   fs/dax.c                                 | 50 +++++++--------
+>   fs/ext4/file.c                           |  2 +-
+>   fs/fuse/dax.c                            |  3 +-
+>   fs/fuse/virtio_fs.c                      |  5 +-
+>   fs/xfs/xfs_file.c                        |  2 +-
+>   include/linux/dax.h                      |  9 +--
+>   include/linux/device-mapper.h            |  2 +-
+>   include/linux/huge_mm.h                  |  6 +-
+>   include/linux/mm.h                       |  4 +-
+>   include/linux/pfn.h                      |  9 +---
+>   include/linux/pfn_t.h                    | 85 +-------------------------
+>   mm/debug_vm_pgtable.c                    |  1 +-
+>   mm/huge_memory.c                         | 21 +++---
+>   mm/memory.c                              | 31 ++++-----
+>   mm/memremap.c                            |  1 +-
+>   mm/migrate.c                             |  1 +-
+>   tools/testing/nvdimm/pmem-dax.c          |  6 +-
+>   tools/testing/nvdimm/test/iomap.c        |  7 +--
+>   tools/testing/nvdimm/test/nfit_test.h    |  1 +-
+>   43 files changed, 109 insertions(+), 235 deletions(-)
+>   delete mode 100644 include/linux/pfn_t.h
+> 
+
+Lovely
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
