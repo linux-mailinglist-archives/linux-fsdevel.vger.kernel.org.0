@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-51896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6EDADC9B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 13:44:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A836ADC9CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 13:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B533B661D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 11:43:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9D317A59E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 11:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D1B2E06D6;
-	Tue, 17 Jun 2025 11:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D292E06D8;
+	Tue, 17 Jun 2025 11:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pglRVmSg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKZAHZAC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAFD230D0E;
-	Tue, 17 Jun 2025 11:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D36218AAF;
+	Tue, 17 Jun 2025 11:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750160643; cv=none; b=UWvGfl0+tHnfD4UMddMYiRFuIk76lsBOq9wbOwkJfko2x/ZvzdRI/MFzmUiHh/U35zFXXzGCy67e38nH4nm5YL154OE34RiKFE0AQnOMu+nR1VOFeevZ5+g9wtTBj2VdgVuc4M1JeopFCECPmqtVb5igbHxtet/Nqo/PRggErHk=
+	t=1750160763; cv=none; b=Mpjz8/eEeJoV6uv3K3YYqoamVh67JDE7F02LoPQcXgf8kdKOvmD3+rwO0yDCaOp4jyW+/xhsabccKUouIldOXOZyHNCfGTOzEXlIQjq6m1pMOa+bDAEjEyB4FfE9S6I5X9IoeGpdT/oJRxYAIwiIc/t07qPTQBn45K07co0gpjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750160643; c=relaxed/simple;
-	bh=L4F/xAE2aK6xDa/QOHjQNfrbZ+ldwQ/xxyXW1QOlMqY=;
+	s=arc-20240116; t=1750160763; c=relaxed/simple;
+	bh=StMBYKo3IYdJvpDPP28DVy7nnfZ5iZVxiZzaq3OT7Gk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oClg1AA19USSIsRBfBSDCDB7/mTqMWQ2OWgd+EyNKArJqDDpGs/TlLjaSpHiYcDi627hPHeddANbFUEAlxbDpoEQkMArZyHIzB841gG8l4Y58vdeHMJdSycBSzTzR7s7ye1gGLHcKIRZPEK8XYZMUgMkFoGaE8Ce0q2zkuwQccY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pglRVmSg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBABEC4CEE3;
-	Tue, 17 Jun 2025 11:43:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqeUDAmXkDwlyXxKvSvsvb+ZwZheHvPWPR2OcDrpgcaoJchL/1QfghobDNsibojARbQkg6mIKfuhi5NGHYKf2bkSmqSxJ+M3wPM8SJm0VIvPl4z4SSFC2kP6ZBFv3YjjOg9Lb1MEx2+KYS6Y/k72MAeNobOQTm1U3o7QqXKE1LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKZAHZAC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E2A2C4CEE3;
+	Tue, 17 Jun 2025 11:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750160643;
-	bh=L4F/xAE2aK6xDa/QOHjQNfrbZ+ldwQ/xxyXW1QOlMqY=;
+	s=k20201202; t=1750160763;
+	bh=StMBYKo3IYdJvpDPP28DVy7nnfZ5iZVxiZzaq3OT7Gk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pglRVmSgsr6zVPCbLUxJit1HENECqtF+VKUELSm7DDvJTAXtRKCT9IonBR+vy/Pv+
-	 0KOSaKv4o78/UPxS/8WAJnS8XTOzb25DdQPvidNigl04+KbSBnUNdwYpWyPtjwUao2
-	 KVjU1eod47I9hfmAqu1HXs5NNkpj9ZmoKBDj9iEbYW+Iu4/Wq9ZnQvd/24RiYcCxU6
-	 ehoC5iKuDLDPBM85gO0tJ3zg29crJnqV/BFPF36D01IwNlhquecGAcdQBOYi0SfMgr
-	 iTlE7wC7JprLm5uHeq/OcqpnX3tE4351ouMdsYgL/8w6omsW5EvX+9RqdO82rtRfny
-	 Z7wz58Ln84EiQ==
-Date: Tue, 17 Jun 2025 13:43:36 +0200
+	b=LKZAHZAC9vUoLxqJ9kPw7y11d1vccxwHwO+yliNT9fTET47uPMg0jRAi/9kqollS2
+	 3j8hdqKrliDMUGiMhPw2i9dqvvInebMc6yA2lG7rgUpPGh/yxB0XWm17UXOqauVCc6
+	 Sagcwo9PDm6boEPAX0mIsK8saf5hKwJj0gSqfvOJcC35Ur+DJm/pIWbzY5aT2H/9YC
+	 9jut3Jn0eTCrVe+VIPmIgpnff0NScXFO+hEPUf2CI9uzx8gHglPFlh4VWh+b/JQt0q
+	 u82czCjtFdfG73DgONm2+NtA0s6Hq8jxAqKfQtbaaS8tUES6NzxY9nC8fYbzwdQBIB
+	 OrD8iaWSk5iyQ==
+Date: Tue, 17 Jun 2025 13:45:37 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
 Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
 	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
 	Jens Axboe <axboe@kernel.dk>, Jani Nikula <jani.nikula@linux.intel.com>, 
@@ -80,24 +80,25 @@ Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
 	Zhihao Cheng <chengzhihao1@huawei.com>, Hans de Goede <hdegoede@redhat.com>, 
 	Carlos Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
 	Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, v9fs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org, linux-aio@kvack.org, 
-	linux-unionfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu, 
-	ecryptfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
+	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-afs@lists.infradead.org, linux-aio@kvack.org, linux-unionfs@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-mm@kvack.org, linux-btrfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
 	linux-f2fs-devel@lists.sourceforge.net, linux-um@lists.infradead.org, linux-mtd@lists.infradead.org, 
 	jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org, 
 	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
 	linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org, linux-cifs@vger.kernel.org, 
 	samba-technical@lists.samba.org, linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH 04/10] fs/dax: make it possible to check dev dax support
- without a VMA
-Message-ID: <20250617-sehgewohnheiten-getagt-47e1ee917d4f@brauner>
+Subject: Re: [PATCH 06/10] fs/xfs: transition from deprecated .mmap hook to
+ .mmap_prepare
+Message-ID: <20250617-herdplatte-ringkampf-8e8b439e81f2@brauner>
 References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
- <b09de1e8544384074165d92d048e80058d971286.1750099179.git.lorenzo.stoakes@oracle.com>
- <aFB-Do9FE6H9SsGY@casper.infradead.org>
+ <cba8b29ba5f225df8f63f50182d5f6e0fcf94456.1750099179.git.lorenzo.stoakes@oracle.com>
+ <aFD4M48RMZB0Hj-f@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,29 +107,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aFB-Do9FE6H9SsGY@casper.infradead.org>
+In-Reply-To: <aFD4M48RMZB0Hj-f@infradead.org>
 
-On Mon, Jun 16, 2025 at 09:26:54PM +0100, Matthew Wilcox wrote:
-> On Mon, Jun 16, 2025 at 08:33:23PM +0100, Lorenzo Stoakes wrote:
-> >  fs/ext4/file.c      |  2 +-
-> >  fs/xfs/xfs_file.c   |  3 ++-
+On Mon, Jun 16, 2025 at 10:08:03PM -0700, Christoph Hellwig wrote:
+> On Mon, Jun 16, 2025 at 08:33:25PM +0100, Lorenzo Stoakes wrote:
+> >  STATIC int
+> > -xfs_file_mmap(
+> > -	struct file		*file,
+> > -	struct vm_area_struct	*vma)
+> > +xfs_file_mmap_prepare(
+> > +	struct vm_area_desc *desc)
 > 
-> Both of these already have the inode from the file ...
+> Please stick to the existing alignment for the declarations.
 > 
-> > +static inline bool daxdev_mapping_supported(vm_flags_t vm_flags,
-> > +					    struct file *file,
-> > +					    struct dax_device *dax_dev)
-> >  {
-> > -	if (!(vma->vm_flags & VM_SYNC))
-> > +	if (!(vm_flags & VM_SYNC))
-> >  		return true;
-> > -	if (!IS_DAX(file_inode(vma->vm_file)))
-> > +	if (!IS_DAX(file_inode(file)))
-> >  		return false;
-> >  	return dax_synchronous(dax_dev);
-> 
-> ... and the only thing this function uses from the file is the inode.
-> So maybe pass in the inode rather than the file?
+> Otherwise this looks good.
 
-Agreed. I've converted this to take const struct inode *.
+Fixed in-tree.
 
