@@ -1,91 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-51979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD94ADDE47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 23:54:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157EBADDE75
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 00:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E8F167F1F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 21:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5CD1400713
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 22:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C066291873;
-	Tue, 17 Jun 2025 21:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C113CCA6F;
+	Tue, 17 Jun 2025 22:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uafN8n/s"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3h7SjuU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8B92F5302;
-	Tue, 17 Jun 2025 21:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFE71514F6;
+	Tue, 17 Jun 2025 22:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750197238; cv=none; b=Ke6Er8B0TVBDMqpyiPyWd/bCfZAsWVEF6mP1SbW8RF1OsqpeE6rc2Cfieqcc8wL8MeQxH914ai10LIQVRoYAoVeQFQKiS/vlqskB0CellxWohaCAP3X4h0YuHUuUpE+Ouro3xM5dEIwrKwYwP1VjDPgb/WShEyEwl5AhvOqy8Rs=
+	t=1750197624; cv=none; b=C5KeDCdAE5RfHbN5cLrZy0sSx19qP7fMAP89Y5X+3UttRgYdFFxk0/ArvvYmXgiWT5y3T28QYYnDouVNXcuqJ++4ew6CM4N3Z3XewPyCja96TknzaFevNPIUVUvpBohU8PRfdnZRCr8Ya7uJ5Kf7bDm3G1UO4aDQrclE7mDUZFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750197238; c=relaxed/simple;
-	bh=PtLj67abZ/KpL9Q3IuYBJ2w7BRwkhJvJp6IyhNrFUDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QA/dgWudTKwF6jWy6n4AJYHbIrYCIOGT5N1QmGYsJDExZpkUVlOtnCQUlF7IsPXOQ5Itx6uyQFv7uuiDEZOnqROAXldMLj55FQ3p29z63ijgFoG9Ebndzc/AekDW1iEwn5ideK1/0ba4ZzLkWBNAoCdqZb7R4E2mjuyxGBAsJV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uafN8n/s; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=X9nuhrnuhTJv89xV+YDRP7ivaD79L39PJPrFNaVU358=; b=uafN8n/sx5ZNoR23yFmryBANkf
-	vUqhQCF/ySFd4A8Kk033nLTALmJVSKaG4FhWxEgvbKyGoYPCl0hfq4ZPrGt1ifbnS68J+vI36/fEw
-	ACNYIjn5zQaFLx+WN/L9e61l8tM+a5J2HXr349dh/MRpE5LvvdwVt5oid5ZkFeCtHVRy6kQh2ySg3
-	U5GuItB9sWJncIdj7fsevcy8nTnRhO/rUSNfrihnWEKNxzvhxIKwMG6gVByftBcYez65Ij0cmEfWh
-	JRjooHrMc+befh2a0DmatA17FLxKHXiJpiUHPGHCfkUlttuLnL5RHfGAh2z6yV562I8sExabpTUK4
-	h/RZ55AA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uReFd-00000001L6l-3jKq;
-	Tue, 17 Jun 2025 21:53:54 +0000
-Date: Tue, 17 Jun 2025 22:53:53 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [bpf_iter] get rid of redundant 3rd argument of
- prepare_seq_file()
-Message-ID: <20250617215353.GL1880847@ZenIV>
-References: <20250615003011.GD1880847@ZenIV>
- <20250615003110.GA3011112@ZenIV>
- <20250615003216.GB3011112@ZenIV>
- <20250615003321.GC3011112@ZenIV>
- <20250615003507.GD3011112@ZenIV>
- <20250615004719.GE3011112@ZenIV>
- <CAADnVQLB3viNyMzndwZbfZrpwLNAMcVE+ffwWPqEt5YVa3QaVA@mail.gmail.com>
+	s=arc-20240116; t=1750197624; c=relaxed/simple;
+	bh=zgs35h9EtiQj2gsIkYN3K/XBSu+19KdaRfCI+ceSC2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ChHVk03qlcYocNOYfwIO7tDzbjHnFxc4dVAZp+zKM3fU9OF6nLrmzHku0naeY1KO3k14lmK2FFhjFn1k2GjcEUnKjhLM4lxsMC2zoMh+U12mJ0nkuctjQ2ObQlpgX4M5xjH0OQTVagG/CL1GMBNM9b/IY+OnqROBIfKu440oYAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3h7SjuU; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a6f3f88613so62408441cf.1;
+        Tue, 17 Jun 2025 15:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750197621; x=1750802421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=txIUBFwdzlJtz0AE1b03VDLXigNRDHeYfG75FQwge3Y=;
+        b=L3h7SjuUgWAaDW8vzkxusq8aYrIRojyFyXzyfTW8nq8RkIxqFVjNrXw/2SimpMnXqn
+         ZGgEfunmIiZEysIq7vTpNY8UYgirZ4/OPa3tT5xO5bfETkC/RFIVlxSm+FwQokqyqS6q
+         1o0+dDGTywivCmXkvT/xlhU/XlZPTganVqSvElbwvCJpx3Ocxzc6Yp/2Ngx+lnxM2Ebs
+         CSUQQEFgug0lAeydn1NtDyWh3bHoyrxk/7zmYCHj24Sxk6+zxbPmkVTNq88ZIVjIlKYd
+         jTFrlG7NsR3697jPCOCy3re6b8r2MiiBiPHTP0nwqhGGyWrlkppAdtuyS75ZZ38oD+zy
+         jutw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750197621; x=1750802421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=txIUBFwdzlJtz0AE1b03VDLXigNRDHeYfG75FQwge3Y=;
+        b=ALhLYb0GuvbXNjggBDOVhOKWqVoDPZkuQ32cMcNVzn0urjDZg/kWfz6rNYuRjv37sp
+         WqiibIBceR2jtL+CV7FmbXVgQjxRs7dN/RVrNxxSbSSpu8wQvJR3ykfJnNkfbalkaXBd
+         tg7nkky2dsDUL9oaqwdwMyqDFLPyDiuGba2oNqclWbjJTgsgQgLH7/Yt99N5xNgU5Zxc
+         fVKv098OKmxmAkLv2fzrhPg3XnSsG/iM0n7YR8D0HfoNAZ0NfVLgC+4DzSJv+96yfXRa
+         en9bTKs8r8yH0TtB44n0wSUMv3rwNt6EvDOaxXhOEUFqJhZLvLDIWcsoLg9iOp2BtHxl
+         DZtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWk4LZY8fids6T1H7SvMdJeahd03IH9NJQ3DBQZJoAPX/TqzKlm5eUdIPEP1KBWq9pp3v/pAX6nhOAu@vger.kernel.org, AJvYcCWnVyDLKIM8ePlisIDl2p9wCHlKgYAp3b8K6tqbh4M1msRFVmd/893EYf7DzUeLdloPUevRnOVLFl3VK3Y4LQ==@vger.kernel.org, AJvYcCWp61cnXNJMTv0JFwv7EUm8A3HCUUhRqTytZSxxmYvrIAcT2k1b0jmBglDK5MsWA8txuoAmfmFiUN7tbg==@vger.kernel.org, AJvYcCXms3dbTkYX++WSKxGU0ere0GYbSR06SUaamWp6Rlxonjhfxq22vb5Fzg82ss9oXPQn/uXlQyt+uSYp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1Cned1rJgWMqtsG+kvEFDD2HLLtLuil1KTjo9RehA0wTJ6JDH
+	fM9LlT+0xyGUnWVuVyxgETpNMXNMOhmNesdZnWEatLc+zIwOf5n1+19rM1WzapSZQaZJqhAIWfy
+	AL3hptCEUCVMfYiQfB7uqxQ6enfqKy5E=
+X-Gm-Gg: ASbGncsNCg9bVYU7Fz18j2HNm3XXdm2WGFHOs611VEEkQjwqwW/XjSq1Xl33lYcpet4
+	sOmA6KvX+zySyXGCn5sm8GOQHVF9Y/XYEbBWsLisLYpd68ye1xSp7/4Hm1rI4mD3xQC4YGhz3js
+	U0HHi0Cu9QTJRWoKBzIwgFUG0qAJmh9Blm0R3ZSoP/CwsTl7G3uw5v7sIkP4g=
+X-Google-Smtp-Source: AGHT+IH0hdfYxpLNGLi3uEo213Cw3XqtMJ0PMjt6sD7nPMBUnc5OJF7u+w4++qwD5412WYS8skQhFb31RzNJBQ9+/x4=
+X-Received: by 2002:ac8:5949:0:b0:4a5:a4e9:132b with SMTP id
+ d75a77b69052e-4a73c658c18mr221573461cf.48.1750197620736; Tue, 17 Jun 2025
+ 15:00:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLB3viNyMzndwZbfZrpwLNAMcVE+ffwWPqEt5YVa3QaVA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250617105514.3393938-1-hch@lst.de> <20250617105514.3393938-10-hch@lst.de>
+In-Reply-To: <20250617105514.3393938-10-hch@lst.de>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 17 Jun 2025 15:00:09 -0700
+X-Gm-Features: AX0GCFvVfukB4jEEL0QyWt5wn8Z0d6yaU1T1xsjz2NFs3U_hou4mX4F2ZU4QqYc
+Message-ID: <CAJnrk1bkZGBnRcY5kXoxrqt0OoGZTu_ouWa=h6mF2Q97StT4Qw@mail.gmail.com>
+Subject: Re: [PATCH 09/11] iomap: export iomap_writeback_folio
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 17, 2025 at 10:31:37AM -0700, Alexei Starovoitov wrote:
-> On Sat, Jun 14, 2025 at 5:47 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > [don't really care which tree that goes through; right now it's
-> > in viro/vfs.git #work.misc, but if somebody prefers to grab it
-> > through a different tree, just say so]
-> > always equal to __get_seq_info(2nd argument)
-> 
-> We'll take it through bpf-next,
-> but it needs a proper commit log that explains the motivation.
-> Just to clean up the code a bit ?
-> or something else?
+On Tue, Jun 17, 2025 at 3:55=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> Allow fuse to use iomap_writeback_folio for folio laundering.  Note
+> that the caller needs to manually submit the pending writeback context.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Umm...  It had been sitting around for a couple of years, but IIRC
-that was from doing data flow analysis for bpf_iter_seq_info.
-I really don't remember details of that code audit, so just chalk
-it up to cleaning the code up a bit.
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+
+> ---
+>  fs/iomap/buffered-io.c | 4 ++--
+>  include/linux/iomap.h  | 1 +
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+>
 
