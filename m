@@ -1,66 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-51943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9442FADD880
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 18:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7887FADD95A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 19:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CA074A3B14
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 16:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDFF406C4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 16:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D542EE29A;
-	Tue, 17 Jun 2025 16:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BC02EA748;
+	Tue, 17 Jun 2025 16:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v9cd5ya3"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0mNSyfEt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD4E1A5B9D;
-	Tue, 17 Jun 2025 16:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E15C2E8DE4;
+	Tue, 17 Jun 2025 16:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750178413; cv=none; b=VFt9pO0ohwmPd8kYZcMb6QoMBp/Eh97FcVcsnygdXrxRa9zh8Hn29tiB5ZRf96mFMexJCqH8OdbL8i0zTPZg3CmgI0099pOJUsltc4M5vdrOnbHXXktk4KuLOgFYeYHAj9Zpu8nSpOZz0uGustG+FvdsGP3vsd/+E7C8a7Z+/ug=
+	t=1750178449; cv=none; b=d5F8HzlsLtOr1PBCdvld7PG6VpstTl4LCuyRr2Zufb9fcNasvMi0pdaP4Kyv5nFTuIUDuAP4KpKtRH5//KzNL+3amegCcc+locvHcBduzAkLBZEjeeRGy1BRA274MwnvZ+/0WsydstNU4+4angBhnC9CUWwwaSsISKG4aAzVG/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750178413; c=relaxed/simple;
-	bh=s7a1uakSVlSGbQmHw19imOjpbMXJlyXuqtPhbIWUGSE=;
+	s=arc-20240116; t=1750178449; c=relaxed/simple;
+	bh=hYfsZ+h97b8SSCcK8Ze2SD1mhLygdwMfpK9oq0VwKTo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gne1jfpAryLPvqxQhRzT05aSsIIa5cj4CEoEr+1mfMIj+d1mGMuFv4AVt3YpU9ArM8V5CTR6JjLXd354rFHg743NtflTW40oIrlcjcNBcwopkpzZXUSyr9NUI2UYUEV6+ExdRWDdA7xGgkJj5WzKFbPo9fLG3wpvN+VkQMKXBUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v9cd5ya3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1C3C4CEE3;
-	Tue, 17 Jun 2025 16:40:12 +0000 (UTC)
+	 MIME-Version; b=cBsG5T/PSDMVGTrdpMsA7lsTpUvwTtEKYtZjaHAGHpNwiWFUlEZqRHTA2UxRWmEJI9pEequA2vW801U6gGvLsdF4h27fkg8Sd22AAyNjQDBiRGr9pHl8Y1SGrC20zsOUum3IB6Vh97PGANLlXFUPasaCJj4zsNtyWEXZ83lX+B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0mNSyfEt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A49BC4CEE3;
+	Tue, 17 Jun 2025 16:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750178413;
-	bh=s7a1uakSVlSGbQmHw19imOjpbMXJlyXuqtPhbIWUGSE=;
+	s=korg; t=1750178449;
+	bh=hYfsZ+h97b8SSCcK8Ze2SD1mhLygdwMfpK9oq0VwKTo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=v9cd5ya3QvMAyRRjOfqhVJ+ZRauMD4t6q/iDqHkxNXOu0dICdkOBTUQgiUh6LO+m5
-	 lBW5IJvN5gW7+mJNtxuR5SgAUuXtA9QnEtw1myfIHRA2r2XFiCJn3PCOEZ+NuAfXTQ
-	 kaXtZb7Z1IiaVIR+6gWO1paZvi1MrCHIVRQBCfXg=
+	b=0mNSyfEtckwG/mGjGLJz6e/PSC944bXgzGUbTbgwQSQ+wSxd9w9vO2B9/9U91XrkJ
+	 ykgP3zlA3Q6gBfH3DR0+XA4HZml7/cXmL4W4cyig3hkJUkR65VYS7BnJXAl21IB8c2
+	 hVunMatEIAio6KBa29gT5KYByd374Mt7KHPPVJB8=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
 	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Steve French <stfrench@microsoft.com>,
-	Ihor Solodrai <ihor.solodrai@pm.me>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	v9fs@lists.linux.dev,
-	linux-cifs@vger.kernel.org,
+	"Paulo Alcantara (Red Hat)" <pc@manguebit.com>,
+	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	Steve French <sfrench@samba.org>,
 	netfs@lists.linux.dev,
+	v9fs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.15 456/780] netfs: Fix wait/wake to be consistent about the waitqueue used
-Date: Tue, 17 Jun 2025 17:22:44 +0200
-Message-ID: <20250617152510.039505623@linuxfoundation.org>
+Subject: [PATCH 6.15 461/780] netfs: Fix undifferentiation of DIO reads from unbuffered reads
+Date: Tue, 17 Jun 2025 17:22:49 +0200
+Message-ID: <20250617152510.251693779@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250617152451.485330293@linuxfoundation.org>
 References: <20250617152451.485330293@linuxfoundation.org>
@@ -81,877 +78,228 @@ Content-Transfer-Encoding: 8bit
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 2b1424cd131cfaba4cf7040473133d26cddac088 ]
+[ Upstream commit db26d62d79e4068934ad0dccdb92715df36352b9 ]
 
-Fix further inconsistencies in the use of waitqueues
-(clear_and_wake_up_bit() vs private waitqueue).
+On cifs, "DIO reads" (specified by O_DIRECT) need to be differentiated from
+"unbuffered reads" (specified by cache=none in the mount parameters).  The
+difference is flagged in the protocol and the server may behave
+differently: Windows Server will, for example, mandate that DIO reads are
+block aligned.
 
-Move some of this stuff from the read and write sides into common code so
-that it can be done in fewer places.
+Fix this by adding a NETFS_UNBUFFERED_READ to differentiate this from
+NETFS_DIO_READ, parallelling the write differentiation that already exists.
+cifs will then do the right thing.
 
-To make this work, async I/O needs to set NETFS_RREQ_OFFLOAD_COLLECTION to
-indicate that a workqueue will do the collecting and places that call the
-wait function need to deal with it returning the amount transferred.
-
-Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only use one work item")
+Fixes: 016dc8516aec ("netfs: Implement unbuffered/DIO read support")
 Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/20250519090707.2848510-5-dhowells@redhat.com
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Steve French <stfrench@microsoft.com>
-cc: Ihor Solodrai <ihor.solodrai@pm.me>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: v9fs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
+Link: https://lore.kernel.org/3444961.1747987072@warthog.procyon.org.uk
+Reviewed-by: "Paulo Alcantara (Red Hat)" <pc@manguebit.com>
+Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Steve French <sfrench@samba.org>
 cc: netfs@lists.linux.dev
+cc: v9fs@lists.linux.dev
+cc: linux-afs@lists.infradead.org
+cc: linux-cifs@vger.kernel.org
+cc: ceph-devel@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/buffered_read.c  |   2 +-
- fs/netfs/buffered_write.c |   2 +-
- fs/netfs/direct_read.c    |   4 +-
- fs/netfs/direct_write.c   |  10 +-
- fs/netfs/internal.h       |  33 ++++--
- fs/netfs/misc.c           | 218 ++++++++++++++++++++++++++++++++++++++
- fs/netfs/read_collect.c   | 139 +-----------------------
- fs/netfs/read_retry.c     |  24 +----
- fs/netfs/write_collect.c  |  36 ++-----
- fs/netfs/write_issue.c    |  28 +++--
- fs/netfs/write_retry.c    |  12 +--
- 11 files changed, 284 insertions(+), 224 deletions(-)
+ fs/9p/vfs_addr.c             | 3 ++-
+ fs/afs/write.c               | 1 +
+ fs/ceph/addr.c               | 4 +++-
+ fs/netfs/direct_read.c       | 3 ++-
+ fs/netfs/main.c              | 1 +
+ fs/netfs/misc.c              | 1 +
+ fs/netfs/objects.c           | 1 +
+ fs/netfs/read_collect.c      | 7 +++++--
+ fs/nfs/fscache.c             | 1 +
+ fs/smb/client/file.c         | 3 ++-
+ include/linux/netfs.h        | 1 +
+ include/trace/events/netfs.h | 1 +
+ 12 files changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index cb6202efc4668..fd4619275801b 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -312,7 +312,7 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
- 	if (unlikely(size > 0)) {
- 		smp_wmb(); /* Write lists before ALL_QUEUED. */
- 		set_bit(NETFS_RREQ_ALL_QUEUED, &rreq->flags);
--		netfs_wake_read_collector(rreq);
-+		netfs_wake_collector(rreq);
- 	}
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index b5a4a28e0fe79..e4420591cf354 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -77,7 +77,8 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
  
- 	/* Defer error return as we may need to wait for outstanding I/O. */
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index b4826360a4111..dbb544e183d13 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -386,7 +386,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
- 		wbc_detach_inode(&wbc);
- 		if (ret2 == -EIOCBQUEUED)
- 			return ret2;
--		if (ret == 0)
-+		if (ret == 0 && ret2 < 0)
- 			ret = ret2;
- 	}
+ 	/* if we just extended the file size, any portion not in
+ 	 * cache won't be on server and is zeroes */
+-	if (subreq->rreq->origin != NETFS_DIO_READ)
++	if (subreq->rreq->origin != NETFS_UNBUFFERED_READ &&
++	    subreq->rreq->origin != NETFS_DIO_READ)
+ 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 	if (pos + total >= i_size_read(rreq->inode))
+ 		__set_bit(NETFS_SREQ_HIT_EOF, &subreq->flags);
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 7df7b2f5e7b29..2e7526ea883ae 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -202,6 +202,7 @@ void afs_retry_request(struct netfs_io_request *wreq, struct netfs_io_stream *st
+ 	case NETFS_READ_GAPS:
+ 	case NETFS_READ_SINGLE:
+ 	case NETFS_READ_FOR_WRITE:
++	case NETFS_UNBUFFERED_READ:
+ 	case NETFS_DIO_READ:
+ 		return;
+ 	default:
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 557c326561fdc..b95c4cb21c13f 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -238,6 +238,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
+ 		if (sparse && err > 0)
+ 			err = ceph_sparse_ext_map_end(op);
+ 		if (err < subreq->len &&
++		    subreq->rreq->origin != NETFS_UNBUFFERED_READ &&
+ 		    subreq->rreq->origin != NETFS_DIO_READ)
+ 			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 		if (IS_ENCRYPTED(inode) && err > 0) {
+@@ -281,7 +282,8 @@ static bool ceph_netfs_issue_op_inline(struct netfs_io_subrequest *subreq)
+ 	size_t len;
+ 	int mode;
+ 
+-	if (rreq->origin != NETFS_DIO_READ)
++	if (rreq->origin != NETFS_UNBUFFERED_READ &&
++	    rreq->origin != NETFS_DIO_READ)
+ 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 	__clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
  
 diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index cb3c6dc0b1654..a24e63d2c8186 100644
+index a24e63d2c8186..9902766195d7b 100644
 --- a/fs/netfs/direct_read.c
 +++ b/fs/netfs/direct_read.c
-@@ -103,7 +103,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
- 		rreq->netfs_ops->issue_read(subreq);
+@@ -188,7 +188,8 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kiocb *iocb, struct iov_iter *i
  
- 		if (test_bit(NETFS_RREQ_PAUSE, &rreq->flags))
--			netfs_wait_for_pause(rreq);
-+			netfs_wait_for_paused_read(rreq);
- 		if (test_bit(NETFS_RREQ_FAILED, &rreq->flags))
- 			break;
- 		if (test_bit(NETFS_RREQ_BLOCKED, &rreq->flags) &&
-@@ -115,7 +115,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
- 	if (unlikely(size > 0)) {
- 		smp_wmb(); /* Write lists before ALL_QUEUED. */
- 		set_bit(NETFS_RREQ_ALL_QUEUED, &rreq->flags);
--		netfs_wake_read_collector(rreq);
-+		netfs_wake_collector(rreq);
- 	}
+ 	rreq = netfs_alloc_request(iocb->ki_filp->f_mapping, iocb->ki_filp,
+ 				   iocb->ki_pos, orig_count,
+-				   NETFS_DIO_READ);
++				   iocb->ki_flags & IOCB_DIRECT ?
++				   NETFS_DIO_READ : NETFS_UNBUFFERED_READ);
+ 	if (IS_ERR(rreq))
+ 		return PTR_ERR(rreq);
  
- 	return ret;
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index c98f1676f86df..fa9a5bf3c6d51 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -87,6 +87,8 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
- 	}
- 
- 	__set_bit(NETFS_RREQ_USE_IO_ITER, &wreq->flags);
-+	if (async)
-+		__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &wreq->flags);
- 
- 	/* Copy the data into the bounce buffer and encrypt it. */
- 	// TODO
-@@ -105,13 +107,9 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
- 
- 	if (!async) {
- 		trace_netfs_rreq(wreq, netfs_rreq_trace_wait_ip);
--		wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS,
--			    TASK_UNINTERRUPTIBLE);
--		ret = wreq->error;
--		if (ret == 0) {
--			ret = wreq->transferred;
-+		ret = netfs_wait_for_write(wreq);
-+		if (ret > 0)
- 			iocb->ki_pos += ret;
--		}
- 	} else {
- 		ret = -EIOCBQUEUED;
- 	}
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index b6500a7cda81d..e2ee9183392b9 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -62,6 +62,14 @@ static inline void netfs_proc_del_rreq(struct netfs_io_request *rreq) {}
- struct folio_queue *netfs_buffer_make_space(struct netfs_io_request *rreq,
- 					    enum netfs_folioq_trace trace);
- void netfs_reset_iter(struct netfs_io_subrequest *subreq);
-+void netfs_wake_collector(struct netfs_io_request *rreq);
-+void netfs_subreq_clear_in_progress(struct netfs_io_subrequest *subreq);
-+void netfs_wait_for_in_progress_stream(struct netfs_io_request *rreq,
-+				       struct netfs_io_stream *stream);
-+ssize_t netfs_wait_for_read(struct netfs_io_request *rreq);
-+ssize_t netfs_wait_for_write(struct netfs_io_request *rreq);
-+void netfs_wait_for_paused_read(struct netfs_io_request *rreq);
-+void netfs_wait_for_paused_write(struct netfs_io_request *rreq);
- 
- /*
-  * objects.c
-@@ -91,11 +99,9 @@ static inline void netfs_see_subrequest(struct netfs_io_subrequest *subreq,
- /*
-  * read_collect.c
-  */
-+bool netfs_read_collection(struct netfs_io_request *rreq);
- void netfs_read_collection_worker(struct work_struct *work);
--void netfs_wake_read_collector(struct netfs_io_request *rreq);
- void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error);
--ssize_t netfs_wait_for_read(struct netfs_io_request *rreq);
--void netfs_wait_for_pause(struct netfs_io_request *rreq);
- 
- /*
-  * read_pgpriv2.c
-@@ -175,8 +181,8 @@ static inline void netfs_stat_d(atomic_t *stat)
-  * write_collect.c
-  */
- int netfs_folio_written_back(struct folio *folio);
-+bool netfs_write_collection(struct netfs_io_request *wreq);
- void netfs_write_collection_worker(struct work_struct *work);
--void netfs_wake_write_collector(struct netfs_io_request *wreq);
- 
- /*
-  * write_issue.c
-@@ -197,8 +203,8 @@ struct netfs_io_request *netfs_begin_writethrough(struct kiocb *iocb, size_t len
- int netfs_advance_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
- 			       struct folio *folio, size_t copied, bool to_page_end,
- 			       struct folio **writethrough_cache);
--int netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
--			   struct folio *writethrough_cache);
-+ssize_t netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
-+			       struct folio *writethrough_cache);
- int netfs_unbuffered_write(struct netfs_io_request *wreq, bool may_wait, size_t len);
- 
- /*
-@@ -253,6 +259,21 @@ static inline void netfs_put_group_many(struct netfs_group *netfs_group, int nr)
- 		netfs_group->free(netfs_group);
- }
- 
-+/*
-+ * Clear and wake up a NETFS_RREQ_* flag bit on a request.
-+ */
-+static inline void netfs_wake_rreq_flag(struct netfs_io_request *rreq,
-+					unsigned int rreq_flag,
-+					enum netfs_rreq_trace trace)
-+{
-+	if (test_bit(rreq_flag, &rreq->flags)) {
-+		trace_netfs_rreq(rreq, trace);
-+		clear_bit_unlock(rreq_flag, &rreq->flags);
-+		smp_mb__after_atomic(); /* Set flag before task state */
-+		wake_up(&rreq->waitq);
-+	}
-+}
-+
- /*
-  * fscache-cache.c
-  */
+diff --git a/fs/netfs/main.c b/fs/netfs/main.c
+index 70ecc8f5f2103..3db401d269e7b 100644
+--- a/fs/netfs/main.c
++++ b/fs/netfs/main.c
+@@ -39,6 +39,7 @@ static const char *netfs_origins[nr__netfs_io_origin] = {
+ 	[NETFS_READ_GAPS]		= "RG",
+ 	[NETFS_READ_SINGLE]		= "R1",
+ 	[NETFS_READ_FOR_WRITE]		= "RW",
++	[NETFS_UNBUFFERED_READ]		= "UR",
+ 	[NETFS_DIO_READ]		= "DR",
+ 	[NETFS_WRITEBACK]		= "WB",
+ 	[NETFS_WRITEBACK_SINGLE]	= "W1",
 diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 7099aa07737ac..77e7f7c79d27c 100644
+index 77e7f7c79d27c..43b67a28a8fa0 100644
 --- a/fs/netfs/misc.c
 +++ b/fs/netfs/misc.c
-@@ -313,3 +313,221 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
- 	return true;
- }
- EXPORT_SYMBOL(netfs_release_folio);
-+
-+/*
-+ * Wake the collection work item.
-+ */
-+void netfs_wake_collector(struct netfs_io_request *rreq)
-+{
-+	if (test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags) &&
-+	    !test_bit(NETFS_RREQ_RETRYING, &rreq->flags)) {
-+		queue_work(system_unbound_wq, &rreq->work);
-+	} else {
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wake_queue);
-+		wake_up(&rreq->waitq);
-+	}
-+}
-+
-+/*
-+ * Mark a subrequest as no longer being in progress and, if need be, wake the
-+ * collector.
-+ */
-+void netfs_subreq_clear_in_progress(struct netfs_io_subrequest *subreq)
-+{
-+	struct netfs_io_request *rreq = subreq->rreq;
-+	struct netfs_io_stream *stream = &rreq->io_streams[subreq->stream_nr];
-+
-+	clear_bit_unlock(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
-+	smp_mb__after_atomic(); /* Clear IN_PROGRESS before task state */
-+
-+	/* If we are at the head of the queue, wake up the collector. */
-+	if (list_is_first(&subreq->rreq_link, &stream->subrequests) ||
-+	    test_bit(NETFS_RREQ_RETRYING, &rreq->flags))
-+		netfs_wake_collector(rreq);
-+}
-+
-+/*
-+ * Wait for all outstanding I/O in a stream to quiesce.
-+ */
-+void netfs_wait_for_in_progress_stream(struct netfs_io_request *rreq,
-+				       struct netfs_io_stream *stream)
-+{
-+	struct netfs_io_subrequest *subreq;
-+	DEFINE_WAIT(myself);
-+
-+	list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
-+		if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
-+			continue;
-+
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-+		for (;;) {
-+			prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
-+
-+			if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
-+				break;
-+
-+			trace_netfs_sreq(subreq, netfs_sreq_trace_wait_for);
-+			schedule();
-+			trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
-+		}
-+	}
-+
-+	finish_wait(&rreq->waitq, &myself);
-+}
-+
-+/*
-+ * Perform collection in app thread if not offloaded to workqueue.
-+ */
-+static int netfs_collect_in_app(struct netfs_io_request *rreq,
-+				bool (*collector)(struct netfs_io_request *rreq))
-+{
-+	bool need_collect = false, inactive = true;
-+
-+	for (int i = 0; i < NR_IO_STREAMS; i++) {
-+		struct netfs_io_subrequest *subreq;
-+		struct netfs_io_stream *stream = &rreq->io_streams[i];
-+
-+		if (!stream->active)
-+			continue;
-+		inactive = false;
-+		trace_netfs_collect_stream(rreq, stream);
-+		subreq = list_first_entry_or_null(&stream->subrequests,
-+						  struct netfs_io_subrequest,
-+						  rreq_link);
-+		if (subreq &&
-+		    (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags) ||
-+		     test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags))) {
-+			need_collect = true;
-+			break;
-+		}
-+	}
-+
-+	if (!need_collect && !inactive)
-+		return 0; /* Sleep */
-+
-+	__set_current_state(TASK_RUNNING);
-+	if (collector(rreq)) {
-+		/* Drop the ref from the NETFS_RREQ_IN_PROGRESS flag. */
-+		netfs_put_request(rreq, netfs_rreq_trace_put_work_ip);
-+		return 1; /* Done */
-+	}
-+
-+	if (inactive) {
-+		WARN(true, "Failed to collect inactive req R=%08x\n",
-+		     rreq->debug_id);
-+		cond_resched();
-+	}
-+	return 2; /* Again */
-+}
-+
-+/*
-+ * Wait for a request to complete, successfully or otherwise.
-+ */
-+static ssize_t netfs_wait_for_request(struct netfs_io_request *rreq,
-+				      bool (*collector)(struct netfs_io_request *rreq))
-+{
-+	DEFINE_WAIT(myself);
-+	ssize_t ret;
-+
-+	for (;;) {
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-+		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
-+
-+		if (!test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
-+			switch (netfs_collect_in_app(rreq, collector)) {
-+			case 0:
-+				break;
-+			case 1:
-+				goto all_collected;
-+			case 2:
-+				continue;
-+			}
-+		}
-+
-+		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
-+			break;
-+
-+		schedule();
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
-+	}
-+
-+all_collected:
-+	finish_wait(&rreq->waitq, &myself);
-+
-+	ret = rreq->error;
-+	if (ret == 0) {
-+		ret = rreq->transferred;
-+		switch (rreq->origin) {
-+		case NETFS_DIO_READ:
-+		case NETFS_DIO_WRITE:
-+		case NETFS_READ_SINGLE:
-+		case NETFS_UNBUFFERED_WRITE:
-+			break;
-+		default:
-+			if (rreq->submitted < rreq->len) {
-+				trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
-+				ret = -EIO;
-+			}
-+			break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+ssize_t netfs_wait_for_read(struct netfs_io_request *rreq)
-+{
-+	return netfs_wait_for_request(rreq, netfs_read_collection);
-+}
-+
-+ssize_t netfs_wait_for_write(struct netfs_io_request *rreq)
-+{
-+	return netfs_wait_for_request(rreq, netfs_write_collection);
-+}
-+
-+/*
-+ * Wait for a paused operation to unpause or complete in some manner.
-+ */
-+static void netfs_wait_for_pause(struct netfs_io_request *rreq,
-+				 bool (*collector)(struct netfs_io_request *rreq))
-+{
-+	DEFINE_WAIT(myself);
-+
-+	trace_netfs_rreq(rreq, netfs_rreq_trace_wait_pause);
-+
-+	for (;;) {
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-+		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
-+
-+		if (!test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
-+			switch (netfs_collect_in_app(rreq, collector)) {
-+			case 0:
-+				break;
-+			case 1:
-+				goto all_collected;
-+			case 2:
-+				continue;
-+			}
-+		}
-+
-+		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags) ||
-+		    !test_bit(NETFS_RREQ_PAUSE, &rreq->flags))
-+			break;
-+
-+		schedule();
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
-+	}
-+
-+all_collected:
-+	finish_wait(&rreq->waitq, &myself);
-+}
-+
-+void netfs_wait_for_paused_read(struct netfs_io_request *rreq)
-+{
-+	return netfs_wait_for_pause(rreq, netfs_read_collection);
-+}
-+
-+void netfs_wait_for_paused_write(struct netfs_io_request *rreq)
-+{
-+	return netfs_wait_for_pause(rreq, netfs_write_collection);
-+}
+@@ -461,6 +461,7 @@ static ssize_t netfs_wait_for_request(struct netfs_io_request *rreq,
+ 		case NETFS_DIO_READ:
+ 		case NETFS_DIO_WRITE:
+ 		case NETFS_READ_SINGLE:
++		case NETFS_UNBUFFERED_READ:
+ 		case NETFS_UNBUFFERED_WRITE:
+ 			break;
+ 		default:
+diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+index d3eb9ba3013a7..31fa0c81e2a43 100644
+--- a/fs/netfs/objects.c
++++ b/fs/netfs/objects.c
+@@ -59,6 +59,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
+ 	    origin == NETFS_READ_GAPS ||
+ 	    origin == NETFS_READ_SINGLE ||
+ 	    origin == NETFS_READ_FOR_WRITE ||
++	    origin == NETFS_UNBUFFERED_READ ||
+ 	    origin == NETFS_DIO_READ) {
+ 		INIT_WORK(&rreq->work, netfs_read_collection_worker);
+ 		rreq->io_streams[0].avail = true;
 diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index 1197ebce56757..900dd51c3b941 100644
+index 900dd51c3b941..bad677e58a423 100644
 --- a/fs/netfs/read_collect.c
 +++ b/fs/netfs/read_collect.c
-@@ -315,14 +315,8 @@ static void netfs_collect_read_results(struct netfs_io_request *rreq)
- 
- 	if (notes & NEED_RETRY)
- 		goto need_retry;
--	if ((notes & MADE_PROGRESS) && test_bit(NETFS_RREQ_PAUSE, &rreq->flags)) {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_unpause);
--		clear_bit_unlock(NETFS_RREQ_PAUSE, &rreq->flags);
--		smp_mb__after_atomic(); /* Set PAUSE before task state */
--		wake_up(&rreq->waitq);
--	}
--
- 	if (notes & MADE_PROGRESS) {
-+		netfs_wake_rreq_flag(rreq, NETFS_RREQ_PAUSE, netfs_rreq_trace_unpause);
- 		//cond_resched();
- 		goto reassess;
- 	}
-@@ -399,7 +393,7 @@ static void netfs_rreq_assess_single(struct netfs_io_request *rreq)
-  * Note that we're in normal kernel thread context at this point, possibly
-  * running on a workqueue.
-  */
--static bool netfs_read_collection(struct netfs_io_request *rreq)
-+bool netfs_read_collection(struct netfs_io_request *rreq)
+@@ -342,7 +342,8 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
  {
- 	struct netfs_io_stream *stream = &rreq->io_streams[0];
+ 	unsigned int i;
  
-@@ -434,8 +428,7 @@ static bool netfs_read_collection(struct netfs_io_request *rreq)
+-	if (rreq->origin == NETFS_DIO_READ) {
++	if (rreq->origin == NETFS_UNBUFFERED_READ ||
++	    rreq->origin == NETFS_DIO_READ) {
+ 		for (i = 0; i < rreq->direct_bv_count; i++) {
+ 			flush_dcache_page(rreq->direct_bv[i].bv_page);
+ 			// TODO: cifs marks pages in the destination buffer
+@@ -360,7 +361,8 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
  	}
- 	task_io_account_read(rreq->transferred);
- 
--	trace_netfs_rreq(rreq, netfs_rreq_trace_wake_ip);
--	clear_and_wake_up_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
-+	netfs_wake_rreq_flag(rreq, NETFS_RREQ_IN_PROGRESS, netfs_rreq_trace_wake_ip);
- 	/* As we cleared NETFS_RREQ_IN_PROGRESS, we acquired its ref. */
- 
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_done);
-@@ -460,20 +453,6 @@ void netfs_read_collection_worker(struct work_struct *work)
- 	}
+ 	if (rreq->netfs_ops->done)
+ 		rreq->netfs_ops->done(rreq);
+-	if (rreq->origin == NETFS_DIO_READ)
++	if (rreq->origin == NETFS_UNBUFFERED_READ ||
++	    rreq->origin == NETFS_DIO_READ)
+ 		inode_dio_end(rreq->inode);
  }
  
--/*
-- * Wake the collection work item.
-- */
--void netfs_wake_read_collector(struct netfs_io_request *rreq)
--{
--	if (test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags) &&
--	    !test_bit(NETFS_RREQ_RETRYING, &rreq->flags)) {
--		queue_work(system_unbound_wq, &rreq->work);
--	} else {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wake_queue);
--		wake_up(&rreq->waitq);
--	}
--}
--
- /**
-  * netfs_read_subreq_progress - Note progress of a read operation.
-  * @subreq: The read request that has terminated.
-@@ -502,7 +481,7 @@ void netfs_read_subreq_progress(struct netfs_io_subrequest *subreq)
- 	    list_is_first(&subreq->rreq_link, &stream->subrequests)
- 	    ) {
- 		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
--		netfs_wake_read_collector(rreq);
-+		netfs_wake_collector(rreq);
- 	}
- }
- EXPORT_SYMBOL(netfs_read_subreq_progress);
-@@ -526,7 +505,6 @@ EXPORT_SYMBOL(netfs_read_subreq_progress);
- void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq)
- {
- 	struct netfs_io_request *rreq = subreq->rreq;
--	struct netfs_io_stream *stream = &rreq->io_streams[0];
+@@ -416,6 +418,7 @@ bool netfs_read_collection(struct netfs_io_request *rreq)
+ 	//netfs_rreq_is_still_valid(rreq);
  
- 	switch (subreq->source) {
- 	case NETFS_READ_FROM_CACHE:
-@@ -573,15 +551,7 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq)
+ 	switch (rreq->origin) {
++	case NETFS_UNBUFFERED_READ:
+ 	case NETFS_DIO_READ:
+ 	case NETFS_READ_GAPS:
+ 		netfs_rreq_assess_dio(rreq);
+diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+index e278a1ad1ca3e..8b07851787312 100644
+--- a/fs/nfs/fscache.c
++++ b/fs/nfs/fscache.c
+@@ -367,6 +367,7 @@ void nfs_netfs_read_completion(struct nfs_pgio_header *hdr)
+ 
+ 	sreq = netfs->sreq;
+ 	if (test_bit(NFS_IOHDR_EOF, &hdr->flags) &&
++	    sreq->rreq->origin != NETFS_UNBUFFERED_READ &&
+ 	    sreq->rreq->origin != NETFS_DIO_READ)
+ 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &sreq->flags);
+ 
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index 3000c8a9d3ea5..d2df10b8e6fd8 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -219,7 +219,8 @@ static void cifs_issue_read(struct netfs_io_subrequest *subreq)
+ 			goto failed;
  	}
  
- 	trace_netfs_sreq(subreq, netfs_sreq_trace_terminated);
--
--	clear_bit_unlock(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
--	smp_mb__after_atomic(); /* Clear IN_PROGRESS before task state */
--
--	/* If we are at the head of the queue, wake up the collector. */
--	if (list_is_first(&subreq->rreq_link, &stream->subrequests) ||
--	    test_bit(NETFS_RREQ_RETRYING, &rreq->flags))
--		netfs_wake_read_collector(rreq);
--
-+	netfs_subreq_clear_in_progress(subreq);
- 	netfs_put_subrequest(subreq, netfs_sreq_trace_put_terminated);
- }
- EXPORT_SYMBOL(netfs_read_subreq_terminated);
-@@ -604,102 +574,3 @@ void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error)
- 	}
- 	netfs_read_subreq_terminated(subreq);
- }
--
--/*
-- * Wait for the read operation to complete, successfully or otherwise.
-- */
--ssize_t netfs_wait_for_read(struct netfs_io_request *rreq)
--{
--	struct netfs_io_subrequest *subreq;
--	struct netfs_io_stream *stream = &rreq->io_streams[0];
--	DEFINE_WAIT(myself);
--	ssize_t ret;
--
--	for (;;) {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
--		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
--
--		subreq = list_first_entry_or_null(&stream->subrequests,
--						  struct netfs_io_subrequest, rreq_link);
--		if (subreq &&
--		    (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags) ||
--		     test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags))) {
--			__set_current_state(TASK_RUNNING);
--			if (netfs_read_collection(rreq)) {
--				/* Drop the ref from the NETFS_RREQ_IN_PROGRESS flag. */
--				netfs_put_request(rreq, netfs_rreq_trace_put_work_ip);
--				break;
--			}
--			continue;
--		}
--
--		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
--			break;
--
--		schedule();
--		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
--	}
--
--	finish_wait(&rreq->waitq, &myself);
--
--	ret = rreq->error;
--	if (ret == 0) {
--		ret = rreq->transferred;
--		switch (rreq->origin) {
--		case NETFS_DIO_READ:
--		case NETFS_READ_SINGLE:
--			ret = rreq->transferred;
--			break;
--		default:
--			if (rreq->submitted < rreq->len) {
--				trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
--				ret = -EIO;
--			}
--			break;
--		}
--	}
--
--	return ret;
--}
--
--/*
-- * Wait for a paused read operation to unpause or complete in some manner.
-- */
--void netfs_wait_for_pause(struct netfs_io_request *rreq)
--{
--	struct netfs_io_subrequest *subreq;
--	struct netfs_io_stream *stream = &rreq->io_streams[0];
--	DEFINE_WAIT(myself);
--
--	trace_netfs_rreq(rreq, netfs_rreq_trace_wait_pause);
--
--	for (;;) {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
--		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
--
--		if (!test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
--			subreq = list_first_entry_or_null(&stream->subrequests,
--							  struct netfs_io_subrequest, rreq_link);
--			if (subreq &&
--			    (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags) ||
--			     test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags))) {
--				__set_current_state(TASK_RUNNING);
--				if (netfs_read_collection(rreq)) {
--					/* Drop the ref from the NETFS_RREQ_IN_PROGRESS flag. */
--					netfs_put_request(rreq, netfs_rreq_trace_put_work_ip);
--					break;
--				}
--				continue;
--			}
--		}
--
--		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags) ||
--		    !test_bit(NETFS_RREQ_PAUSE, &rreq->flags))
--			break;
--
--		schedule();
--		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
--	}
--
--	finish_wait(&rreq->waitq, &myself);
--}
-diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
-index 1378dc7fa2ccd..b99e84a8170af 100644
---- a/fs/netfs/read_retry.c
-+++ b/fs/netfs/read_retry.c
-@@ -257,35 +257,15 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
-  */
- void netfs_retry_reads(struct netfs_io_request *rreq)
- {
--	struct netfs_io_subrequest *subreq;
- 	struct netfs_io_stream *stream = &rreq->io_streams[0];
--	DEFINE_WAIT(myself);
+-	if (subreq->rreq->origin != NETFS_DIO_READ)
++	if (subreq->rreq->origin != NETFS_UNBUFFERED_READ &&
++	    subreq->rreq->origin != NETFS_DIO_READ)
+ 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
  
- 	netfs_stat(&netfs_n_rh_retry_read_req);
- 
--	set_bit(NETFS_RREQ_RETRYING, &rreq->flags);
--
- 	/* Wait for all outstanding I/O to quiesce before performing retries as
- 	 * we may need to renegotiate the I/O sizes.
- 	 */
--	list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
--		if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
--			continue;
--
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
--		for (;;) {
--			prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
--
--			if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
--				break;
--
--			trace_netfs_sreq(subreq, netfs_sreq_trace_wait_for);
--			schedule();
--			trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
--		}
--
--		finish_wait(&rreq->waitq, &myself);
--	}
-+	set_bit(NETFS_RREQ_RETRYING, &rreq->flags);
-+	netfs_wait_for_in_progress_stream(rreq, stream);
- 	clear_bit(NETFS_RREQ_RETRYING, &rreq->flags);
- 
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_resubmit);
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 7241d1fd2c14a..0ce7b53e7fe83 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -321,18 +321,14 @@ static void netfs_collect_write_results(struct netfs_io_request *wreq)
- 
- 	if (notes & NEED_RETRY)
- 		goto need_retry;
--	if ((notes & MADE_PROGRESS) && test_bit(NETFS_RREQ_PAUSE, &wreq->flags)) {
--		trace_netfs_rreq(wreq, netfs_rreq_trace_unpause);
--		clear_bit_unlock(NETFS_RREQ_PAUSE, &wreq->flags);
--		smp_mb__after_atomic(); /* Set PAUSE before task state */
--		wake_up(&wreq->waitq);
--	}
- 
--	if (notes & NEED_REASSESS) {
-+	if (notes & MADE_PROGRESS) {
-+		netfs_wake_rreq_flag(wreq, NETFS_RREQ_PAUSE, netfs_rreq_trace_unpause);
- 		//cond_resched();
- 		goto reassess_streams;
- 	}
--	if (notes & MADE_PROGRESS) {
-+
-+	if (notes & NEED_REASSESS) {
- 		//cond_resched();
- 		goto reassess_streams;
- 	}
-@@ -356,7 +352,7 @@ static void netfs_collect_write_results(struct netfs_io_request *wreq)
- /*
-  * Perform the collection of subrequests, folios and encryption buffers.
-  */
--static bool netfs_write_collection(struct netfs_io_request *wreq)
-+bool netfs_write_collection(struct netfs_io_request *wreq)
- {
- 	struct netfs_inode *ictx = netfs_inode(wreq->inode);
- 	size_t transferred;
-@@ -417,8 +413,7 @@ static bool netfs_write_collection(struct netfs_io_request *wreq)
- 		inode_dio_end(wreq->inode);
- 
- 	_debug("finished");
--	trace_netfs_rreq(wreq, netfs_rreq_trace_wake_ip);
--	clear_and_wake_up_bit(NETFS_RREQ_IN_PROGRESS, &wreq->flags);
-+	netfs_wake_rreq_flag(wreq, NETFS_RREQ_IN_PROGRESS, netfs_rreq_trace_wake_ip);
- 	/* As we cleared NETFS_RREQ_IN_PROGRESS, we acquired its ref. */
- 
- 	if (wreq->iocb) {
-@@ -448,14 +443,6 @@ void netfs_write_collection_worker(struct work_struct *work)
- 	}
- }
- 
--/*
-- * Wake the collection work item.
-- */
--void netfs_wake_write_collector(struct netfs_io_request *wreq)
--{
--	queue_work(system_unbound_wq, &wreq->work);
--}
--
- /**
-  * netfs_write_subrequest_terminated - Note the termination of a write operation.
-  * @_op: The I/O request that has terminated.
-@@ -479,7 +466,6 @@ void netfs_write_subrequest_terminated(void *_op, ssize_t transferred_or_error)
- {
- 	struct netfs_io_subrequest *subreq = _op;
- 	struct netfs_io_request *wreq = subreq->rreq;
--	struct netfs_io_stream *stream = &wreq->io_streams[subreq->stream_nr];
- 
- 	_enter("%x[%x] %zd", wreq->debug_id, subreq->debug_index, transferred_or_error);
- 
-@@ -531,15 +517,7 @@ void netfs_write_subrequest_terminated(void *_op, ssize_t transferred_or_error)
- 	}
- 
- 	trace_netfs_sreq(subreq, netfs_sreq_trace_terminated);
--
--	clear_and_wake_up_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
--
--	/* If we are at the head of the queue, wake up the collector,
--	 * transferring a ref to it if we were the ones to do so.
--	 */
--	if (list_is_first(&subreq->rreq_link, &stream->subrequests))
--		netfs_wake_write_collector(wreq);
--
-+	netfs_subreq_clear_in_progress(subreq);
- 	netfs_put_subrequest(subreq, netfs_sreq_trace_put_terminated);
- }
- EXPORT_SYMBOL(netfs_write_subrequest_terminated);
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 8744ed3faf29b..50bee2c4130d1 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -542,7 +542,7 @@ static void netfs_end_issue_write(struct netfs_io_request *wreq)
- 	}
- 
- 	if (needs_poke)
--		netfs_wake_write_collector(wreq);
-+		netfs_wake_collector(wreq);
- }
- 
- /*
-@@ -576,6 +576,7 @@ int netfs_writepages(struct address_space *mapping,
- 		goto couldnt_start;
- 	}
- 
-+	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &wreq->flags);
- 	trace_netfs_write(wreq, netfs_write_trace_writeback);
- 	netfs_stat(&netfs_n_wh_writepages);
- 
-@@ -599,7 +600,7 @@ int netfs_writepages(struct address_space *mapping,
- 	netfs_end_issue_write(wreq);
- 
- 	mutex_unlock(&ictx->wb_lock);
--	netfs_wake_write_collector(wreq);
-+	netfs_wake_collector(wreq);
- 
- 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
- 	_leave(" = %d", error);
-@@ -674,11 +675,11 @@ int netfs_advance_writethrough(struct netfs_io_request *wreq, struct writeback_c
- /*
-  * End a write operation used when writing through the pagecache.
-  */
--int netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
--			   struct folio *writethrough_cache)
-+ssize_t netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
-+			       struct folio *writethrough_cache)
- {
- 	struct netfs_inode *ictx = netfs_inode(wreq->inode);
--	int ret;
-+	ssize_t ret;
- 
- 	_enter("R=%x", wreq->debug_id);
- 
-@@ -689,12 +690,10 @@ int netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_contr
- 
- 	mutex_unlock(&ictx->wb_lock);
- 
--	if (wreq->iocb) {
-+	if (wreq->iocb)
- 		ret = -EIOCBQUEUED;
--	} else {
--		wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS, TASK_UNINTERRUPTIBLE);
--		ret = wreq->error;
--	}
-+	else
-+		ret = netfs_wait_for_write(wreq);
- 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
- 	return ret;
- }
-@@ -723,10 +722,8 @@ int netfs_unbuffered_write(struct netfs_io_request *wreq, bool may_wait, size_t
- 		start += part;
- 		len -= part;
- 		rolling_buffer_advance(&wreq->buffer, part);
--		if (test_bit(NETFS_RREQ_PAUSE, &wreq->flags)) {
--			trace_netfs_rreq(wreq, netfs_rreq_trace_wait_pause);
--			wait_event(wreq->waitq, !test_bit(NETFS_RREQ_PAUSE, &wreq->flags));
--		}
-+		if (test_bit(NETFS_RREQ_PAUSE, &wreq->flags))
-+			netfs_wait_for_paused_write(wreq);
- 		if (test_bit(NETFS_RREQ_FAILED, &wreq->flags))
- 			break;
- 	}
-@@ -886,6 +883,7 @@ int netfs_writeback_single(struct address_space *mapping,
- 		goto couldnt_start;
- 	}
- 
-+	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &wreq->flags);
- 	trace_netfs_write(wreq, netfs_write_trace_writeback_single);
- 	netfs_stat(&netfs_n_wh_writepages);
- 
-@@ -915,7 +913,7 @@ int netfs_writeback_single(struct address_space *mapping,
- 	set_bit(NETFS_RREQ_ALL_QUEUED, &wreq->flags);
- 
- 	mutex_unlock(&ictx->wb_lock);
--	netfs_wake_write_collector(wreq);
-+	netfs_wake_collector(wreq);
- 
- 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
- 	_leave(" = %d", ret);
-diff --git a/fs/netfs/write_retry.c b/fs/netfs/write_retry.c
-index 7408f6bb8e42e..9d1d8a8bab726 100644
---- a/fs/netfs/write_retry.c
-+++ b/fs/netfs/write_retry.c
-@@ -200,7 +200,6 @@ static void netfs_retry_write_stream(struct netfs_io_request *wreq,
-  */
- void netfs_retry_writes(struct netfs_io_request *wreq)
- {
--	struct netfs_io_subrequest *subreq;
- 	struct netfs_io_stream *stream;
- 	int s;
- 
-@@ -209,16 +208,13 @@ void netfs_retry_writes(struct netfs_io_request *wreq)
- 	/* Wait for all outstanding I/O to quiesce before performing retries as
- 	 * we may need to renegotiate the I/O sizes.
- 	 */
-+	set_bit(NETFS_RREQ_RETRYING, &wreq->flags);
- 	for (s = 0; s < NR_IO_STREAMS; s++) {
- 		stream = &wreq->io_streams[s];
--		if (!stream->active)
--			continue;
--
--		list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
--			wait_on_bit(&subreq->flags, NETFS_SREQ_IN_PROGRESS,
--				    TASK_UNINTERRUPTIBLE);
--		}
-+		if (stream->active)
-+			netfs_wait_for_in_progress_stream(wreq, stream);
- 	}
-+	clear_bit(NETFS_RREQ_RETRYING, &wreq->flags);
- 
- 	// TODO: Enc: Fetch changed partial pages
- 	// TODO: Enc: Reencrypt content if needed.
+ 	trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index c3f230732f51d..1464b3a104989 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -206,6 +206,7 @@ enum netfs_io_origin {
+ 	NETFS_READ_GAPS,		/* This read is a synchronous read to fill gaps */
+ 	NETFS_READ_SINGLE,		/* This read should be treated as a single object */
+ 	NETFS_READ_FOR_WRITE,		/* This read is to prepare a write */
++	NETFS_UNBUFFERED_READ,		/* This is an unbuffered read */
+ 	NETFS_DIO_READ,			/* This is a direct I/O read */
+ 	NETFS_WRITEBACK,		/* This write was triggered by writepages */
+ 	NETFS_WRITEBACK_SINGLE,		/* This monolithic write was triggered by writepages */
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index 402c5e82e7b8d..4175eec40048a 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -39,6 +39,7 @@
+ 	EM(NETFS_READ_GAPS,			"RG")		\
+ 	EM(NETFS_READ_SINGLE,			"R1")		\
+ 	EM(NETFS_READ_FOR_WRITE,		"RW")		\
++	EM(NETFS_UNBUFFERED_READ,		"UR")		\
+ 	EM(NETFS_DIO_READ,			"DR")		\
+ 	EM(NETFS_WRITEBACK,			"WB")		\
+ 	EM(NETFS_WRITEBACK_SINGLE,		"W1")		\
 -- 
 2.39.5
 
