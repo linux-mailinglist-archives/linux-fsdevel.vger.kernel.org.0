@@ -1,261 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-51866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C82FADC6DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 11:44:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E021CADC6E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 11:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A786F3AC9AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 09:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F125F174A4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 09:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF28B29824E;
-	Tue, 17 Jun 2025 09:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343992C08C2;
+	Tue, 17 Jun 2025 09:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bKraMVi3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RhREAylS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bKraMVi3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RhREAylS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PhZnPZvV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE7217A586
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 09:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DE42951A0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 09:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750153396; cv=none; b=b4Kz09r62BaSBkBgAJzmBPCFs35KYodnhFKAmbJWc//GMuhUK9f5uqREvTomMiOoc3Uuz2D6McyAG/zjkcsZJIWH0Z2j0GNKsLu6nCbcq69Urp78IuYZl/nJUNVqRTGTKSEClO5UK7SwDdv8DBmi8M+GnNhznO/tiX937GdkBa4=
+	t=1750153479; cv=none; b=PhvT5LArNtgTFsUVDlexFMlA/LgrrfeFkPcfiGQacaB18EpNj7m8jGDU3EHBiGucfhtIcbyZNu4dC+bkDta/TCNUAKn9VzsG/DdjVIU6pSIq0X2bd6vtAbp04FahmjIHCQnYFILxJftFS5L17tTZnifAd4tOj047mCBwBFaqoCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750153396; c=relaxed/simple;
-	bh=6cbAXMx6M699zKmxC7EtOzdoajJIK9YedrpKz2sdrxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oLbL6E//x5gWdvrz60ylmhLZKvkjWlFwMaThgeCxiM6jGH88MSE3pBqpsBT3z0bZj9FzOruMrm8NDx4rh4S9wah7Ttry5BqH2kO400ahOqVgWGCLHLc9XeyEDdCZVTQRyptZ8ZUbqQJLO1TI1QIkKhuU86OrYkRwCHsW1VCK1Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bKraMVi3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RhREAylS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bKraMVi3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RhREAylS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0CF842119C;
-	Tue, 17 Jun 2025 09:43:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750153392; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1750153479; c=relaxed/simple;
+	bh=SEIeerzS0thI+z5d6kA6cGgH8szp0nPEZ+WNtrQjWT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sSVpafd8int8zutvGz4oua8p/iQvBsNpSCxqaVk+Vvmf9oLSu28jyqf3dB+PGuDRfY/PpuMtrSqI6P7j7gTxYEkDpuHb710DXY2Zw8WTwcXTk293ZGBe7r8GcgtIkv80P58sLr5+0gjJEa7Qe2LFWHZ3vqk0AgGpbn7OnBg1dGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PhZnPZvV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750153476;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ESdVVC6Vqd+tWWO5c8CdVJaXlqhpCnDheWLaeuG4QG8=;
-	b=bKraMVi3D1FBro8xYB9RC2UDxtZfw42KBXSL2PqLZYQVrmyNVs2alGJksLbDkPawOA6BKv
-	GIS+RYipNXPW8y4j/K8i1tTZ64OoL/sEvjRXCdosPdt9jDeO/T0JzNxn1gDP4XVjCwfDqF
-	JDj9gjjKqACIQe2qM6KYvUesAZqNCrA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750153392;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ESdVVC6Vqd+tWWO5c8CdVJaXlqhpCnDheWLaeuG4QG8=;
-	b=RhREAylSU7OsSV4cC/vm+qTDJmSNTnBQIApIyZSwJiGLmUDCrXf66Ig+qprOUI0RjAkdNh
-	Fz2whe1PEWiUT8Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750153392; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ESdVVC6Vqd+tWWO5c8CdVJaXlqhpCnDheWLaeuG4QG8=;
-	b=bKraMVi3D1FBro8xYB9RC2UDxtZfw42KBXSL2PqLZYQVrmyNVs2alGJksLbDkPawOA6BKv
-	GIS+RYipNXPW8y4j/K8i1tTZ64OoL/sEvjRXCdosPdt9jDeO/T0JzNxn1gDP4XVjCwfDqF
-	JDj9gjjKqACIQe2qM6KYvUesAZqNCrA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750153392;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ESdVVC6Vqd+tWWO5c8CdVJaXlqhpCnDheWLaeuG4QG8=;
-	b=RhREAylSU7OsSV4cC/vm+qTDJmSNTnBQIApIyZSwJiGLmUDCrXf66Ig+qprOUI0RjAkdNh
-	Fz2whe1PEWiUT8Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F3FFF139E2;
-	Tue, 17 Jun 2025 09:43:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dPKHO684UWgLEAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 17 Jun 2025 09:43:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AD927A29F0; Tue, 17 Jun 2025 11:43:11 +0200 (CEST)
-Date: Tue, 17 Jun 2025 11:43:11 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] fanotify HSM events for directories
-Message-ID: <uxetof5i2ejhwujegsbhltntnozd4rz6cxtqx3xmtc63xugkyq@53bwknir2ha7>
-References: <20250604160918.2170961-1-amir73il@gmail.com>
- <e2rcmelzasy6q4vgggukdjb2s2qkczcgapknmnjb33advglc6y@jvi3haw7irxy>
- <CAOQ4uxg1k7DZazPDRuRfhnHmps_Oc8mmb1cy55eH-gzB9zwyjw@mail.gmail.com>
- <2dx3pbcnv5w75fxb2ghqtsk6gzl6cuxmd2rinzwbq7xxfjf5z7@3nqidi3mno46>
- <CAOQ4uxgjHGL4=9LCCbb=o1rFyziK4QTrJKzUYf=b2Ri9bk4ZPA@mail.gmail.com>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sdEh9cEys/eVA2SD9wfMRib1+LZeWMxS5mffwDFqNgM=;
+	b=PhZnPZvVgXYI9sDuBv5rhbBeuDZwc0VZbf1U2pE0Uf9QIjnXQMp3SSSJoyJHtzWX9ce//Q
+	SpVMnfSim05APgbchlApkNkRhiJcU6wCq24N6urLB5mDc/gsFM3xCSm8FFjWbIkPL1MEx4
+	OxxPsBngcK6yULgL3cr7qaJmyZH6pNk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-567-xlKraobsOT-ySScnV-zG3g-1; Tue, 17 Jun 2025 05:44:34 -0400
+X-MC-Unique: xlKraobsOT-ySScnV-zG3g-1
+X-Mimecast-MFC-AGG-ID: xlKraobsOT-ySScnV-zG3g_1750153473
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a58939191eso193190f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 02:44:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750153473; x=1750758273;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sdEh9cEys/eVA2SD9wfMRib1+LZeWMxS5mffwDFqNgM=;
+        b=Mu05uQ5IFCRYLhtqNIFhaDoYNuFWD3mSW2vAjJ93fQRXeaNGEyMhFenZ/O7ohjuZIt
+         /9QK1P09mW5vsOeFxJ7etWrFU5v7vb9xujyvxEExcuHqcZo8O9NeGArlNeWtm7hcZk+Z
+         q4e3f3BkUhwQFK52k1hXuXXT04dtPEGKj3fhJAldFyTAaqHLHaVdI982EEfNx8BPcOrU
+         kY47FY0jvCEo1HVHIFfnYT/u/qSyL4xNlphfAEAo8TucHY5uoQpBgtNSFPXXmhzrYhH3
+         62S1H1QUs4S9+KappStEajNB8oWR6ZxXoEKu6Sb3WZ6QIAnewPjhA2SDMYcA9fGVkf/U
+         d0Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUriGdSOciRMq/pEvHb4/pvg4GFgSnvr9Y70DHvi4nFtuXHNyO12I1xH+mQkQoRLm/crsnVVqDfv2kdYYio@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9mApi8wJXHY3VTnwemhqxKTjBFSFC8kNp9QXfn8sdpyoA+mPH
+	/TkYnnaSZFuSuKqKT2/BY+MM6XMluLOJgf4hSKf1g6lc6mUPeFZe+3Mzw6X9w1LD6D/mp//9AR0
+	sxs3iScRB4w0RomLUOSej5DI0Rl4UeDUzFnZ9KGCf2BySuk9VkBLqbGN8LtvAYU/EjNY=
+X-Gm-Gg: ASbGncshnjtQF3XwxBIjZtj3gLMza+BKG0FyUg8VFvbBzL2iyizOtRpwhBExsNgXukS
+	q8oPWWgUll7g+nlggen3jnROkAZJae0Qy0LIqSpxfQc0oiorXV6KgXET1DIM9Hl5o0cnFDDfaEQ
+	DvY1RR9K5vsPttbDL8wCKFKWjRh6AurUcN40SKpcPTDsAOEoIDf/KfcHz/UPWYMqJuDf2bPUAHr
+	D61GnU9UU1l8Qk+A/JZeBLTtn89NA96/msEVGTyk20Igq/Uh/WWoGWLXdbOMk66lcRiP/pYjvha
+	l5DfYplOaS4yt1nPkdQY7ef0YauB3gyFxfIA2kUw4WytFK/KiwY5yHrrl2pMUZrzAo/PdPwufja
+	Twfa63RTKIhypJ+hf+VuNBRckLO0RGB6PWOhNL5txUoL/iIw=
+X-Received: by 2002:a05:6000:65a:b0:3a5:88e9:a54f with SMTP id ffacd0b85a97d-3a588e9a99bmr1291327f8f.1.1750153473105;
+        Tue, 17 Jun 2025 02:44:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHQpVd3mwZ+TEDjCXC20DL1F3MMRYh4Y/yZHPnb93a/Bf/b7RyUJmn1/nXnnPCK9NELoBd4w==
+X-Received: by 2002:a05:6000:65a:b0:3a5:88e9:a54f with SMTP id ffacd0b85a97d-3a588e9a99bmr1291288f8f.1.1750153472667;
+        Tue, 17 Jun 2025 02:44:32 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b4b67bsm13257644f8f.83.2025.06.17.02.44.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 02:44:31 -0700 (PDT)
+Message-ID: <31bdbfcf-bbfa-46b7-a427-806d42d88cec@redhat.com>
+Date: Tue, 17 Jun 2025 11:44:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgjHGL4=9LCCbb=o1rFyziK4QTrJKzUYf=b2Ri9bk4ZPA@mail.gmail.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/14] mm/khugepaged: Remove redundant pmd_devmap()
+ check
+To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
+ dan.j.williams@intel.com, jgg@ziepe.ca, willy@infradead.org,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ zhang.lyra@gmail.com, debug@rivosinc.com, bjorn@kernel.org,
+ balbirs@nvidia.com, lorenzo.stoakes@oracle.com,
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, John@Groves.net,
+ m.szyprowski@samsung.com, Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.8d04615eb17b9e46fc0ae7402ca54b69e04b1043.1750075065.git-series.apopple@nvidia.com>
+ <d4aa84277015fe21978232ed4ac91bd7270e9ee0.1750075065.git-series.apopple@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <d4aa84277015fe21978232ed4ac91bd7270e9ee0.1750075065.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 16-06-25 19:00:42, Amir Goldstein wrote:
-> On Mon, Jun 16, 2025 at 11:07 AM Jan Kara <jack@suse.cz> wrote:
-> > On Tue 10-06-25 17:25:48, Amir Goldstein wrote:
-> > > On Tue, Jun 10, 2025 at 3:49 PM Jan Kara <jack@suse.cz> wrote:
-> > > > On Wed 04-06-25 18:09:15, Amir Goldstein wrote:
-> > > > > If we decide that we want to support FAN_PATH_ACCESS from all the
-> > > > > path-less lookup_one*() helpers, then we need to support reporting
-> > > > > FAN_PATH_ACCESS event with directory fid.
-> > > > >
-> > > > > If we allow FAN_PATH_ACCESS event from path-less vfs helpers, we still
-> > > > > have to allow setting FAN_PATH_ACCESS in a mount mark/ignore mask, because
-> > > > > we need to provide a way for HSM to opt-out of FAN_PATH_ACCESS events
-> > > > > on its "work" mount - the path via which directories are populated.
-> > > > >
-> > > > > There may be a middle ground:
-> > > > > - Pass optional path arg to __lookup_slow() (i.e. from walk_component())
-> > > > > - Move fsnotify hook into __lookup_slow()
-> > > > > - fsnotify_lookup_perm() passes optional path data to fsnotify()
-> > > > > - fanotify_handle_event() returns -EPERM for FAN_PATH_ACCESS without
-> > > > >   path data
-> > > > >
-> > > > > This way, if HSM is enabled on an sb and not ignored on specific dir
-> > > > > after it was populated, path lookup from syscall will trigger
-> > > > > FAN_PATH_ACCESS events and overalyfs/nfsd will fail to lookup inside
-> > > > > non-populated directories.
-> > > >
-> > > > OK, but how will this manifest from the user POV? If we have say nfs
-> > > > exported filesystem that is HSM managed then there would have to be some
-> > > > knowledge in nfsd to know how to access needed files so that HSM can pull
-> > > > them? I guess I'm missing the advantage of this middle-ground solution...
-> > >
-> > > The advantage is that an admin is able to set up a "lazy populated fs"
-> > > with the guarantee that:
-> > > 1. Non-populated objects can never be accessed
-> > > 2. If the remote fetch service is up and the objects are accessed
-> > >     from a supported path (i.e. not overlayfs layer) then the objects
-> > >     will be populated on access
-> > >
-> > > This is stronger and more useful than silently serving invalid content IMO.
-> > >
-> > > This is related to the discussion about persistent marks and how to protect
-> > > against access to non-populated objects while service is down, but since
-> > > we have at least one case that can result in an EIO error (service down)
-> > > then another case (access from overlayfs) maybe is not a game changer(?)
-> >
-> > Yes, reporting error for unpopulated content would be acceptable behavior.
-> > I just don't see this would be all that useful.
-> >
+On 16.06.25 13:58, Alistair Popple wrote:
+> The only users of pmd_devmap were device dax and fs dax. The check for
+> pmd_devmap() in check_pmd_state() is therefore redundant as callers
+> explicitly check for is_zone_device_page(), so this check can be dropped.
 > 
-> Regarding overlayfs, I think there is an even bigger problem.
-> There is the promise that we are not calling the blocking pre-content hook
-> with freeze protection held.
-> In overlayfs it is very common to take the upper layer freeze protection
-> for a relatively large scope (e.g. ovl_want_write() in ovl_create_object())
-> and perform lookups on upper fs or lower fs within this scope.
-> I am afraid that cleaning that up is not going to be realistic.
-> 
-> IMO, it is perfectly reasonable that overlayfs and HSM (at least pre-dir-access)
-> will be mutually exclusive features.
-> 
-> This is quite similar to overlayfs resulting in EIO if lower fs has an
-> auto mount point.
-> 
-> Is it quite common for users to want overlayfs mounted over
-> /var/lib/docker/overlay2
-> on the root fs.
-> HSM is not likely to be running on / and /etc, but likely on a very
-> distinct lazy populated source dir or something.
-> We can easily document and deny mounting overlayfs over subtrees where
-> HSM is enabled (or just pre-path events).
-> 
-> This way we can provide HSM lazy dir populate to the users that do not care
-> about overlayfs without having to solve very hard to unsolvable issues.
-> 
-> I will need to audit all the other users of vfs lookup helpers other than
-> overlayfs and nfsd, to estimate how many of them are pre-content event
-> safe and how many are a hopeless case.
-> 
-> On the top of my head, trying to make a cachefilesd directory an HSM
-> directory is absolutely insane, so not every user of vfs lookup helpers
-> should be able to populate HSM content - should should simply fail
-> (with a meaningful kmsg log).
 
-Right. What you write makes a lot of sense. You've convinced me that
-returning error from overlayfs (or similar users) when they try to access
-HSM managed dir is the least painful solution :).
+Looking again, is this true?
 
-> > As I wrote in my first email what I'd like to avoid is having part of the
-> > functionality accessible in one way (say through FAN_REPORT_DIR_FD) and
-> > having to switch to different way (FAN_REPORT_DFID_NAME) for full
-> > functionality. That is in my opinion confusing to users and makes the api
-> > messy in the long term. So I'd lean more towards implementing fid-based
-> > events from the start. I don't think implementation-wise it's going to be
-> > much higher effort than FAN_REPORT_DIR_FD. I agree that for users it is
-> > somewhat more effort - they have to keep the private mount, open fhandle to
-> > get to the dir so that they can fill it in. But that doesn't seem to be
-> > that high bar either?
-> >
-> 
-> ok.
-> 
-> > We even have some precedens that events for regular files support both fd
-> > and fid events and for directory operations only fid events are supported.
-> > We could do it similarly for HSM events...
-> 
-> That's true.
-> 
-> Another advantage is that FAN_REPORT_FID | FAN_CLASS_PRE_CONTENT
-> has not been allowed so far, so we can use it to set new semantics
-> that do not allow FAN_ONDIR and FAN_EVENT_ON_CHILD at all.
-> The two would be fully implied from the event type, unlike today
-> where we ignore them for some event types and use different meanings
-> to other event types.
+If we return "SCAN_SUCCEED", we assume there is a page table there that 
+we can map and walk.
 
-Right.
+But I assume we can drop that check because nobody will ever set 
+pmd_devmap() anymore?
 
-								Honza
+So likely just the description+sibject of this patch should be adjusted.
+
+FWIW, I think check_pmd_state() should be changed to work on pmd_leaf() 
+etc, but that's something for another day.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+
+David / dhildenb
+
 
