@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-51876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812D5ADC7BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 12:13:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912B5ADC7D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 12:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACB4E1892101
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 10:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05D83A40AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 10:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A232D12FF;
-	Tue, 17 Jun 2025 10:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DE92D2397;
+	Tue, 17 Jun 2025 10:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lYQbxJ10";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6Svwy5fM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lYQbxJ10";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6Svwy5fM"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GCA4vRTt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vofk+nlP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GCA4vRTt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vofk+nlP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CE32C08B5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 10:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C542BFC65
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 10:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750155174; cv=none; b=owLoAni4m8rjaMdtZ0qy/8ZM2y0tU8JzaJu0i/BxFdTEQ2csCOsU4o6qapKiUVE93DnLw0Q3Ax7gG0C3KEt2Y/iro+8HvmdL50oVgjOvB75WWjQ2TN2M6EDlHcD0VzNgjhMKEmz4XnOY2tZBGXjKugn+gKcBZ4fQqXDRlXU3Cak=
+	t=1750155246; cv=none; b=GLp8koaJ8DUU+YE8IU+Q4idnit4SU5raz3TfT6k1EKBHDTODmLm5mhI/fZ510OsqQHoZKA7MjDt12/H0k73RHt6kLUM16xIwSpDlSJNMLXR+tZzcgz1nsawtsf7FJHsb/ab6erV3C9SUZ6f5SaSh2acxIQbHooqr4JhOJoZXnFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750155174; c=relaxed/simple;
-	bh=Yvgz2Vh1swh/z+T1bpq5S1pxyzucSxoZA9u+bTmfFpk=;
+	s=arc-20240116; t=1750155246; c=relaxed/simple;
+	bh=sPO4WXT4jSenXo5Yqpp8hgtBRPi3I3kqJb8mnCUXJ84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cP+9WF30w0myHXezR6qInTKOwX36DfSh48QFtf2ii+xCxOzu6SYYWdazJo0jC0B5CaV9+kkDcdAOIwUh3VEz1PatLrsXNDNtgorCZB/qssAvgfBEkLQwEgpdkmPd0oBaJqL06qUYrYgROMfvpzhErObLco7a7QgnfQowGAZQpzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lYQbxJ10; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6Svwy5fM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lYQbxJ10; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6Svwy5fM; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXYKUrsC6lqUBYJazUD9WYsb+XSXRx+caR4gm3wRCXR8Poa3OqRbj6q3G2lBDji+mT5gMChrpA0bi53ROo1VWxvU2EUxlfX6f3lY2Osyf+wmW+zsou7UA4ODpqo7ZR8DsKKnRrwlwLNBt1M/P0nIJRr7BH5Xb61FXYYquNtCN9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GCA4vRTt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vofk+nlP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GCA4vRTt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vofk+nlP; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 17CD01F454;
-	Tue, 17 Jun 2025 10:12:49 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 943731F766;
+	Tue, 17 Jun 2025 10:14:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750155169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750155240; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4vW1BLf3KmtZV1m8k5bHUaabgyxSpXUIU3DYk4FH3CY=;
-	b=lYQbxJ10XiF36NJ1nZX42utoD9Yi9TyH4Ri/ANfsedxpT2Cx0Qq8W/p6zKiFmiP7s3zPkO
-	vbi/Khf10BE1V8jJeg5U2LP+5M9mZ+tGSED0JBxpGQbaWchHGHnUfgJnCPLHc2FZta69oj
-	vTfJbMV67J/+PmBScr0eGy8Ap6QA134=
+	bh=HumSZqJEc3NqTuF1gCNLL1DjTVit469VH90oXWtD97g=;
+	b=GCA4vRTtep8lSNqForgDoEbiH2FHffylKbTQW8ADGX0ygw7y0YzgmvKyJudwz1c+pn/vrP
+	oiM1utFqq3DKasuCS+rvGIM3fht87NThulP97W1MoOrovEYbQlceN3dPfOwqPwPdTl/wzO
+	Jc9QPnSqRm9TOoCgWTtotAyb95FVifI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750155169;
+	s=susede2_ed25519; t=1750155240;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4vW1BLf3KmtZV1m8k5bHUaabgyxSpXUIU3DYk4FH3CY=;
-	b=6Svwy5fMZHrfWJ0JoGLiBFzbzdphbHyONhbgAax6JbhOcNZmQutxQUD0ZOoTNQkgIB0GQQ
-	bUpA7yCdSF8Rm6Dw==
+	bh=HumSZqJEc3NqTuF1gCNLL1DjTVit469VH90oXWtD97g=;
+	b=vofk+nlPab1BttxugZRXW6jQtLNByPTK8FyDt52WanP8wxnuDGkGdmSvEDafeB/gXZrhW8
+	SgAfoWxD1JFY7mAA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lYQbxJ10;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6Svwy5fM
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GCA4vRTt;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vofk+nlP
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750155169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750155240; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4vW1BLf3KmtZV1m8k5bHUaabgyxSpXUIU3DYk4FH3CY=;
-	b=lYQbxJ10XiF36NJ1nZX42utoD9Yi9TyH4Ri/ANfsedxpT2Cx0Qq8W/p6zKiFmiP7s3zPkO
-	vbi/Khf10BE1V8jJeg5U2LP+5M9mZ+tGSED0JBxpGQbaWchHGHnUfgJnCPLHc2FZta69oj
-	vTfJbMV67J/+PmBScr0eGy8Ap6QA134=
+	bh=HumSZqJEc3NqTuF1gCNLL1DjTVit469VH90oXWtD97g=;
+	b=GCA4vRTtep8lSNqForgDoEbiH2FHffylKbTQW8ADGX0ygw7y0YzgmvKyJudwz1c+pn/vrP
+	oiM1utFqq3DKasuCS+rvGIM3fht87NThulP97W1MoOrovEYbQlceN3dPfOwqPwPdTl/wzO
+	Jc9QPnSqRm9TOoCgWTtotAyb95FVifI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750155169;
+	s=susede2_ed25519; t=1750155240;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4vW1BLf3KmtZV1m8k5bHUaabgyxSpXUIU3DYk4FH3CY=;
-	b=6Svwy5fMZHrfWJ0JoGLiBFzbzdphbHyONhbgAax6JbhOcNZmQutxQUD0ZOoTNQkgIB0GQQ
-	bUpA7yCdSF8Rm6Dw==
+	bh=HumSZqJEc3NqTuF1gCNLL1DjTVit469VH90oXWtD97g=;
+	b=vofk+nlPab1BttxugZRXW6jQtLNByPTK8FyDt52WanP8wxnuDGkGdmSvEDafeB/gXZrhW8
+	SgAfoWxD1JFY7mAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 060D213AE2;
-	Tue, 17 Jun 2025 10:12:49 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CE4913AE1;
+	Tue, 17 Jun 2025 10:14:00 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AD51AaE/UWgGGQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 17 Jun 2025 10:12:49 +0000
+	id UzN6Hug/UWhbGQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 17 Jun 2025 10:14:00 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A6C44A29F0; Tue, 17 Jun 2025 12:12:48 +0200 (CEST)
-Date: Tue, 17 Jun 2025 12:12:48 +0200
+	id 33D4AA29F0; Tue, 17 Jun 2025 12:14:00 +0200 (CEST)
+Date: Tue, 17 Jun 2025 12:14:00 +0200
 From: Jan Kara <jack@suse.cz>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
@@ -139,11 +139,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
 	linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org, linux-cifs@vger.kernel.org, 
 	samba-technical@lists.samba.org, linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH 07/10] mm/filemap: introduce
- generic_file_*_mmap_prepare() helpers
-Message-ID: <cxjn2u5nokhbgjvlb5qm6sgcrhbo7o6owhxz6ke5h43tydgrxm@yrcmyxzjzh4n>
+Subject: Re: [PATCH 08/10] fs: convert simple use of generic_file_*_mmap() to
+ .mmap_prepare()
+Message-ID: <3m4hxh7ybqgwr2fzymzsp4wiz254hdeelkdaajw3gxbdw7fezt@53eblikg32e3>
 References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
- <30622c1f0b98c66840bc8c02668bda276a810b70.1750099179.git.lorenzo.stoakes@oracle.com>
+ <c7dc90e44a9e75e750939ea369290d6e441a18e6.1750099179.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -152,7 +152,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30622c1f0b98c66840bc8c02668bda276a810b70.1750099179.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <c7dc90e44a9e75e750939ea369290d6e441a18e6.1750099179.git.lorenzo.stoakes@oracle.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 943731F766
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
 X-Spamd-Result: default: False [-2.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -181,22 +185,25 @@ X-Spamd-Result: default: False [-2.51 / 50.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DKIM_TRACE(0.00)[suse.cz:+];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 17CD01F454
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Score: -2.51
+X-Spam-Level: 
 
-On Mon 16-06-25 20:33:26, Lorenzo Stoakes wrote:
+On Mon 16-06-25 20:33:27, Lorenzo Stoakes wrote:
 > Since commit c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file
 > callback"), the f_op->mmap() hook has been deprecated in favour of
 > f_op->mmap_prepare().
 > 
-> The generic mmap handlers are very simple, so we can very easily convert
-> these in advance of converting file systems which use them.
+> We have provided generic .mmap_prepare() equivalents, so update all file
+> systems that specify these directly in their file_operations structures.
 > 
-> This patch does so.
+> This updates 9p, adfs, affs, bfs, fat, hfs, hfsplus, hostfs, hpfs, jffs2,
+> jfs, minix, omfs, ramfs and ufs file systems directly.
+> 
+> It updates generic_ro_fops which impacts qnx4, cramfs, befs, squashfs,
+> frebxfs, qnx6, efs, romfs, erofs and isofs file systems.
+> 
+> There are remaining file systems which use generic hooks in a less direct
+> way which we address in a subsequent commit.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
@@ -207,90 +214,232 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  include/linux/fs.h |  6 ++++--
->  mm/filemap.c       | 29 +++++++++++++++++++++++++++++
->  2 files changed, 33 insertions(+), 2 deletions(-)
+>  fs/9p/vfs_file.c        | 2 +-
+>  fs/adfs/file.c          | 2 +-
+>  fs/affs/file.c          | 2 +-
+>  fs/bfs/file.c           | 2 +-
+>  fs/fat/file.c           | 2 +-
+>  fs/hfs/inode.c          | 2 +-
+>  fs/hfsplus/inode.c      | 2 +-
+>  fs/hostfs/hostfs_kern.c | 2 +-
+>  fs/hpfs/file.c          | 2 +-
+>  fs/jffs2/file.c         | 2 +-
+>  fs/jfs/file.c           | 2 +-
+>  fs/minix/file.c         | 2 +-
+>  fs/omfs/file.c          | 2 +-
+>  fs/ramfs/file-mmu.c     | 2 +-
+>  fs/read_write.c         | 2 +-
+>  fs/ufs/file.c           | 2 +-
+>  16 files changed, 16 insertions(+), 16 deletions(-)
 > 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7120f80255b3..65cffc445fcc 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3395,8 +3395,10 @@ extern void inode_add_lru(struct inode *inode);
->  extern int sb_set_blocksize(struct super_block *, int);
->  extern int sb_min_blocksize(struct super_block *, int);
+> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+> index 348cc90bf9c5..2ff3e0ac7266 100644
+> --- a/fs/9p/vfs_file.c
+> +++ b/fs/9p/vfs_file.c
+> @@ -516,7 +516,7 @@ const struct file_operations v9fs_file_operations = {
+>  	.open = v9fs_file_open,
+>  	.release = v9fs_dir_release,
+>  	.lock = v9fs_file_lock,
+> -	.mmap = generic_file_readonly_mmap,
+> +	.mmap_prepare = generic_file_readonly_mmap_prepare,
+>  	.splice_read = v9fs_file_splice_read,
+>  	.splice_write = iter_file_splice_write,
+>  	.fsync = v9fs_file_fsync,
+> diff --git a/fs/adfs/file.c b/fs/adfs/file.c
+> index ee80718aaeec..cd13165fd904 100644
+> --- a/fs/adfs/file.c
+> +++ b/fs/adfs/file.c
+> @@ -25,7 +25,7 @@
+>  const struct file_operations adfs_file_operations = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.fsync		= generic_file_fsync,
+>  	.write_iter	= generic_file_write_iter,
+>  	.splice_read	= filemap_splice_read,
+> diff --git a/fs/affs/file.c b/fs/affs/file.c
+> index 7a71018e3f67..fbac204b7055 100644
+> --- a/fs/affs/file.c
+> +++ b/fs/affs/file.c
+> @@ -999,7 +999,7 @@ const struct file_operations affs_file_operations = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.open		= affs_file_open,
+>  	.release	= affs_file_release,
+>  	.fsync		= affs_file_fsync,
+> diff --git a/fs/bfs/file.c b/fs/bfs/file.c
+> index fa66a09e496a..6685c3411fe7 100644
+> --- a/fs/bfs/file.c
+> +++ b/fs/bfs/file.c
+> @@ -27,7 +27,7 @@ const struct file_operations bfs_file_operations = {
+>  	.llseek 	= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.splice_read	= filemap_splice_read,
+>  };
 >  
-> -extern int generic_file_mmap(struct file *, struct vm_area_struct *);
-> -extern int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
-> +int generic_file_mmap(struct file *, struct vm_area_struct *);
-> +int generic_file_mmap_prepare(struct vm_area_desc *desc);
-> +int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
-> +int generic_file_readonly_mmap_prepare(struct vm_area_desc *desc);
->  extern ssize_t generic_write_checks(struct kiocb *, struct iov_iter *);
->  int generic_write_checks_count(struct kiocb *iocb, loff_t *count);
->  extern int generic_write_check_limits(struct file *file, loff_t pos,
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 93fbc2ef232a..e75608cbf420 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3847,6 +3847,18 @@ int generic_file_mmap(struct file *file, struct vm_area_struct *vma)
->  	return 0;
->  }
+> diff --git a/fs/fat/file.c b/fs/fat/file.c
+> index e887e9ab7472..4fc49a614fb8 100644
+> --- a/fs/fat/file.c
+> +++ b/fs/fat/file.c
+> @@ -204,7 +204,7 @@ const struct file_operations fat_file_operations = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.release	= fat_file_release,
+>  	.unlocked_ioctl	= fat_generic_ioctl,
+>  	.compat_ioctl	= compat_ptr_ioctl,
+> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+> index a81ce7a740b9..d419586d668d 100644
+> --- a/fs/hfs/inode.c
+> +++ b/fs/hfs/inode.c
+> @@ -690,7 +690,7 @@ static const struct file_operations hfs_file_operations = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.splice_read	= filemap_splice_read,
+>  	.fsync		= hfs_file_fsync,
+>  	.open		= hfs_file_open,
+> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+> index f331e9574217..0af7e302730c 100644
+> --- a/fs/hfsplus/inode.c
+> +++ b/fs/hfsplus/inode.c
+> @@ -366,7 +366,7 @@ static const struct file_operations hfsplus_file_operations = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.splice_read	= filemap_splice_read,
+>  	.fsync		= hfsplus_file_fsync,
+>  	.open		= hfsplus_file_open,
+> diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+> index 702c41317589..bc22b6cc72af 100644
+> --- a/fs/hostfs/hostfs_kern.c
+> +++ b/fs/hostfs/hostfs_kern.c
+> @@ -382,7 +382,7 @@ static const struct file_operations hostfs_file_fops = {
+>  	.splice_write	= iter_file_splice_write,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.open		= hostfs_open,
+>  	.release	= hostfs_file_release,
+>  	.fsync		= hostfs_fsync,
+> diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
+> index 449a3fc1b8d9..a1a44e3edb19 100644
+> --- a/fs/hpfs/file.c
+> +++ b/fs/hpfs/file.c
+> @@ -255,7 +255,7 @@ const struct file_operations hpfs_file_ops =
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.release	= hpfs_file_release,
+>  	.fsync		= hpfs_file_fsync,
+>  	.splice_read	= filemap_splice_read,
+> diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
+> index 13c18ccc13b0..1e05f7fe5dd4 100644
+> --- a/fs/jffs2/file.c
+> +++ b/fs/jffs2/file.c
+> @@ -54,7 +54,7 @@ const struct file_operations jffs2_file_operations =
+>   	.read_iter =	generic_file_read_iter,
+>   	.write_iter =	generic_file_write_iter,
+>  	.unlocked_ioctl=jffs2_ioctl,
+> -	.mmap =		generic_file_readonly_mmap,
+> +	.mmap_prepare =	generic_file_readonly_mmap_prepare,
+>  	.fsync =	jffs2_fsync,
+>  	.splice_read =	filemap_splice_read,
+>  	.splice_write = iter_file_splice_write,
+> diff --git a/fs/jfs/file.c b/fs/jfs/file.c
+> index 01b6912e60f8..5e47951db630 100644
+> --- a/fs/jfs/file.c
+> +++ b/fs/jfs/file.c
+> @@ -143,7 +143,7 @@ const struct file_operations jfs_file_operations = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.splice_read	= filemap_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+>  	.fsync		= jfs_fsync,
+> diff --git a/fs/minix/file.c b/fs/minix/file.c
+> index 906d192ab7f3..dca7ac71f049 100644
+> --- a/fs/minix/file.c
+> +++ b/fs/minix/file.c
+> @@ -17,7 +17,7 @@ const struct file_operations minix_file_operations = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.fsync		= generic_file_fsync,
+>  	.splice_read	= filemap_splice_read,
+>  };
+> diff --git a/fs/omfs/file.c b/fs/omfs/file.c
+> index 98358d405b6a..319c04e63964 100644
+> --- a/fs/omfs/file.c
+> +++ b/fs/omfs/file.c
+> @@ -332,7 +332,7 @@ const struct file_operations omfs_file_operations = {
+>  	.llseek = generic_file_llseek,
+>  	.read_iter = generic_file_read_iter,
+>  	.write_iter = generic_file_write_iter,
+> -	.mmap = generic_file_mmap,
+> +	.mmap_prepare = generic_file_mmap_prepare,
+>  	.fsync = generic_file_fsync,
+>  	.splice_read = filemap_splice_read,
+>  };
+> diff --git a/fs/ramfs/file-mmu.c b/fs/ramfs/file-mmu.c
+> index b45c7edc3225..b11f5b20b78b 100644
+> --- a/fs/ramfs/file-mmu.c
+> +++ b/fs/ramfs/file-mmu.c
+> @@ -41,7 +41,7 @@ static unsigned long ramfs_mmu_get_unmapped_area(struct file *file,
+>  const struct file_operations ramfs_file_operations = {
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.fsync		= noop_fsync,
+>  	.splice_read	= filemap_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 0ef70e128c4a..80fdab99f9e4 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -28,7 +28,7 @@
+>  const struct file_operations generic_ro_fops = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+> -	.mmap		= generic_file_readonly_mmap,
+> +	.mmap_prepare	= generic_file_readonly_mmap_prepare,
+>  	.splice_read	= filemap_splice_read,
+>  };
 >  
-> +int generic_file_mmap_prepare(struct vm_area_desc *desc)
-> +{
-> +	struct file *file = desc->file;
-> +	struct address_space *mapping = file->f_mapping;
-> +
-> +	if (!mapping->a_ops->read_folio)
-> +		return -ENOEXEC;
-> +	file_accessed(file);
-> +	desc->vm_ops = &generic_file_vm_ops;
-> +	return 0;
-> +}
-> +
->  /*
->   * This is for filesystems which do not implement ->writepage.
->   */
-> @@ -3856,6 +3868,13 @@ int generic_file_readonly_mmap(struct file *file, struct vm_area_struct *vma)
->  		return -EINVAL;
->  	return generic_file_mmap(file, vma);
->  }
-> +
-> +int generic_file_readonly_mmap_prepare(struct vm_area_desc *desc)
-> +{
-> +	if (is_shared_maywrite(desc->vm_flags))
-> +		return -EINVAL;
-> +	return generic_file_mmap_prepare(desc);
-> +}
->  #else
->  vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf)
->  {
-> @@ -3865,15 +3884,25 @@ int generic_file_mmap(struct file *file, struct vm_area_struct *vma)
->  {
->  	return -ENOSYS;
->  }
-> +int generic_file_mmap_prepare(struct vm_area_desc *desc)
-> +{
-> +	return -ENOSYS;
-> +}
->  int generic_file_readonly_mmap(struct file *file, struct vm_area_struct *vma)
->  {
->  	return -ENOSYS;
->  }
-> +int generic_file_readonly_mmap_prepare(struct vm_area_desc *desc)
-> +{
-> +	return -ENOSYS;
-> +}
->  #endif /* CONFIG_MMU */
->  
->  EXPORT_SYMBOL(filemap_page_mkwrite);
->  EXPORT_SYMBOL(generic_file_mmap);
-> +EXPORT_SYMBOL(generic_file_mmap_prepare);
->  EXPORT_SYMBOL(generic_file_readonly_mmap);
-> +EXPORT_SYMBOL(generic_file_readonly_mmap_prepare);
->  
->  static struct folio *do_read_cache_folio(struct address_space *mapping,
->  		pgoff_t index, filler_t filler, struct file *file, gfp_t gfp)
+> diff --git a/fs/ufs/file.c b/fs/ufs/file.c
+> index 487ad1fc2de6..c2a391c17df7 100644
+> --- a/fs/ufs/file.c
+> +++ b/fs/ufs/file.c
+> @@ -38,7 +38,7 @@ const struct file_operations ufs_file_operations = {
+>  	.llseek		= generic_file_llseek,
+>  	.read_iter	= generic_file_read_iter,
+>  	.write_iter	= generic_file_write_iter,
+> -	.mmap		= generic_file_mmap,
+> +	.mmap_prepare	= generic_file_mmap_prepare,
+>  	.open           = generic_file_open,
+>  	.fsync		= generic_file_fsync,
+>  	.splice_read	= filemap_splice_read,
 > -- 
 > 2.49.0
 > 
