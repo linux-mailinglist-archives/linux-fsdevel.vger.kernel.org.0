@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-51910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-51911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42463ADD21D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 17:39:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4107EADD266
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 17:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A719617D3F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:39:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63B847A97C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jun 2025 15:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F542ECD2B;
-	Tue, 17 Jun 2025 15:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6CC2ECD3A;
+	Tue, 17 Jun 2025 15:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODz5LSl8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFzD+tfj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6232820F090
-	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 15:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A3B2ECD20
+	for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jun 2025 15:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750174752; cv=none; b=MDpngrTZB/sBdx8jlQ/f1ALg/k/nQuUbRmrn66sTtalrcTovdAMo4g3kaWgDLOsH5Ddv67ps7RPqBPleXDafmsk4QyTPRYo7g6DfDX3fmQGVypIT84zD9FV660eDjIgW/bBDrmYJNVEjUpoTfFm1v1+4m1Vx3r6FVEzRNigfpyI=
+	t=1750174753; cv=none; b=tYPeIcYzLQytAQGoq0Vv/2tn0bnAxFp1Z8Et8/ofRWBl1XXjZEz8gr+5x0jPfpc0cavpkfWY+WyULTM0m0SDF4U3TNityKfBGgE4PUgVhT4pHIsG8fzoQQt++Ayhcem/nEOEDhb2GvQzK7Fs4selgRvnZYSKt27gPLNrK0R7bSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750174752; c=relaxed/simple;
-	bh=ycnqO27G+i01caKOho72IO/PreqWHzzf+3vmqZdwBas=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DIyizcJuj/TfdKxIJmHP1Ii8xUM6PwXpW9vykUaen2Sd7tL7Tk4yKhxmlNGhjH9pDFr5qjoDHkbS5RVB89oq/MobgoteGBFB0usMRGK/5EenwDgYZwq0SrSgnoqtUoKZjtnyAFjPKK5kfo3JgOAUTpOrvUlNahIr05vg2pH2azY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODz5LSl8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68947C4CEF1;
-	Tue, 17 Jun 2025 15:39:11 +0000 (UTC)
+	s=arc-20240116; t=1750174753; c=relaxed/simple;
+	bh=uZ0guaYCp0EEeVOPvXg3mGV3+j+6lFC5b+oScN4g/64=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tuTrAOK2lJOqSjaSMUivWkhQLOh6Uuy+OWRAzrj4GNOYdNjpIWu6kF17Ee/8C37wPGfJ7MlJbkPVsYlQ7Dg28LNFU2weTT7y8KOMnS45BfRvSKRHwFY0AbOwDVowvX1f0tGr0hs3umWhY3p6SucZKQczJAuYeGsmBVPnCQMElBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFzD+tfj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A91C4CEE3;
+	Tue, 17 Jun 2025 15:39:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750174752;
-	bh=ycnqO27G+i01caKOho72IO/PreqWHzzf+3vmqZdwBas=;
-	h=From:Subject:Date:To:Cc:From;
-	b=ODz5LSl8ofhECIzHOYdXumRRZrI5FYWdxLJ/gMJkXpg6f+qZUvCdheEnVAR4a0qsM
-	 ehU94fBSD5hweicyxxZDqtJ14XwkE2d0C1cw8e3eGmXz5MKYdSfwmal2v6bG7TYv0F
-	 ljJzuAYUGwa9DGM/E4U5bfeidX2RHO2PieCWQZeTnhJvKPI2NOgqUOJBGomktm3mfy
-	 WjlF2b1YFv2+MFJ/wrldEKD6Z9O9HTMvigSuj/47Xr4d9a0T6OwL8u2Cuci6XTz/Wt
-	 tcuM2m2XeyhqiVQi02cSKOwq6T7j7ePop3lsJiOyvfElNohquVhvNuzucsvTF/mAc8
-	 5rk6kX4nesH0A==
+	s=k20201202; t=1750174753;
+	bh=uZ0guaYCp0EEeVOPvXg3mGV3+j+6lFC5b+oScN4g/64=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=mFzD+tfjm416PobbTKjpDJv9gAXAuaD05O247LwIGj3FBA8SGBJ2ZMxEDtOl3m3Mb
+	 zNOFLwxyu5KkJ65brK+InldTPct9FDjFxyTA4w/mZK22suLgYEcaYBHCEF9uND3sqK
+	 K8tp+DlgK8SYL0AJTw5uo1OvxFBCOp+6UySRbBCGjeISjPLV+v1owb3mwbcM0EAnsC
+	 pNoFcgK3oYtptxBwzlASJtfF92vjRtf5HVFVoh4hixKe1fFLoehqwU6nIFhGpxiXIt
+	 IjWSmouHuPv5cjr7F2xpRwVl6c0JhCGsVo8ClXxAtQwcRIsNNWbHj1z7wlfmaz0ilF
+	 Fxk1yuIqrSdEg==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH RFC v2 0/2] pidfs: keep pidfs dentry stashed once created
-Date: Tue, 17 Jun 2025 17:39:02 +0200
-Message-Id: <20250617-work-pidfs-v2-0-529ca1990401@kernel.org>
+Date: Tue, 17 Jun 2025 17:39:03 +0200
+Subject: [PATCH RFC v2 1/2] pidfs: keep pidfs dentry stashed once created
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,20 +52,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABaMUWgC/02OwQrCMBBEf0X2bEqTYrCeBMEP8Co9bNJtG6pJ2
- ZSolP67bfHgcQbem5kgEjuKcNpNwJRcdMEvQe13YDv0LQlXLxlUrg65loV4Be7F4OomCqVLVSi
- LWMoGFmBgatx7k93hdr1AtZQGIwnD6G23ep4YR+Is6UxqwVauXOfiGPizfUhyo39z+n8uSZELL
- Awae0TUypx7Yk+PLHAL1TzPX1sb99zNAAAA
-X-Change-ID: 20250613-work-pidfs-269232caa91f
+Message-Id: <20250617-work-pidfs-v2-1-529ca1990401@kernel.org>
+References: <20250617-work-pidfs-v2-0-529ca1990401@kernel.org>
+In-Reply-To: <20250617-work-pidfs-v2-0-529ca1990401@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org
 Cc: Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6145; i=brauner@kernel.org;
- h=from:subject:message-id; bh=ycnqO27G+i01caKOho72IO/PreqWHzzf+3vmqZdwBas=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQE9si5/LkYEGTVl+gmMDt2A6fXdeX4C8L6P8+emSr4d
- U/Blk1MHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPZdYfhn2Lg7vT37gI/9FxN
- Xu5YeHGvNs+dIA2/t8FWVtK37p7/EMbIsDyr7sPF2b+uXl6wo/DNxiZvs0uH3u961Xx+m9MtEyb
- +32wA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14546; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=uZ0guaYCp0EEeVOPvXg3mGV3+j+6lFC5b+oScN4g/64=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQE9sjLZc6M6VDR/C34/rwgG4trqJpCntl806V3uWPeO
+ ItseFPSUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBGhxwy/mN/NqC/v+CL2UbNf
+ /efUf0HXTerjy409Dn34tEHlmEnwQkaGN/zR/8KLzp9oqfhxO93Q5dwngWMv72XmJ1zs3bPg84I
+ bjAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
@@ -78,9 +76,6 @@ information that needs to be available after the task has exited or
 coredumped and that should not be lost simply because the pidfd got
 closed temporarily. The next opener should still see the stashed
 information.
-
-This is also a prerequisite for supporting extended attributes on
-pidfds to allow attaching meta information to them.
 
 If someone opens a pidfd for a struct pid a pidfs dentry is allocated
 and stashed in pid->stashed. Once the last pidfd for the struct pid is
@@ -172,22 +167,288 @@ to see a ERR_PTR(-ESRCH) sentinel in pid->stashed.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Changes in v2:
-- Fix lock inversion.
-- Link to v1: https://lore.kernel.org/20250616-work-pidfs-v1-0-a3babc8aa62b@kernel.org
-
----
-Christian Brauner (2):
-      pidfs: keep pidfs dentry stashed once created
-      pidfs: remove pidfs_pid_valid()
-
  fs/internal.h |   2 +
- fs/libfs.c    |  22 +++++--
- fs/pidfs.c    | 191 ++++++++++++++++++++++++++++++++++++++--------------------
+ fs/libfs.c    |  22 +++++++--
+ fs/pidfs.c    | 143 +++++++++++++++++++++++++++++++++++++++++++++++++++-------
  kernel/pid.c  |   2 +-
- 4 files changed, 147 insertions(+), 70 deletions(-)
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250613-work-pidfs-269232caa91f
+ 4 files changed, 147 insertions(+), 22 deletions(-)
+
+diff --git a/fs/internal.h b/fs/internal.h
+index 393f6c5c24f6..180b367c192b 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -322,6 +322,8 @@ struct mnt_idmap *alloc_mnt_idmap(struct user_namespace *mnt_userns);
+ struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
+ void mnt_idmap_put(struct mnt_idmap *idmap);
+ struct stashed_operations {
++	struct dentry *(*stash_dentry)(struct dentry **stashed,
++				       struct dentry *dentry);
+ 	void (*put_data)(void *data);
+ 	int (*init_inode)(struct inode *inode, void *data);
+ };
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 9ea0ecc325a8..f496373869fb 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -2128,6 +2128,8 @@ struct dentry *stashed_dentry_get(struct dentry **stashed)
+ 	dentry = rcu_dereference(*stashed);
+ 	if (!dentry)
+ 		return NULL;
++	if (IS_ERR(dentry))
++		return dentry;
+ 	if (!lockref_get_not_dead(&dentry->d_lockref))
+ 		return NULL;
+ 	return dentry;
+@@ -2218,12 +2220,15 @@ static struct dentry *stash_dentry(struct dentry **stashed,
+ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+ 		      struct path *path)
+ {
+-	struct dentry *dentry;
++	struct dentry *dentry, *res;
+ 	const struct stashed_operations *sops = mnt->mnt_sb->s_fs_info;
+ 
+ 	/* See if dentry can be reused. */
+-	path->dentry = stashed_dentry_get(stashed);
+-	if (path->dentry) {
++	res = stashed_dentry_get(stashed);
++	if (IS_ERR(res))
++		return PTR_ERR(res);
++	if (res) {
++		path->dentry = res;
+ 		sops->put_data(data);
+ 		goto out_path;
+ 	}
+@@ -2234,8 +2239,15 @@ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+ 		return PTR_ERR(dentry);
+ 
+ 	/* Added a new dentry. @data is now owned by the filesystem. */
+-	path->dentry = stash_dentry(stashed, dentry);
+-	if (path->dentry != dentry)
++	if (sops->stash_dentry)
++		res = sops->stash_dentry(stashed, dentry);
++	else
++		res = stash_dentry(stashed, dentry);
++	if (IS_ERR(res))
++		return PTR_ERR(res);
++	path->dentry = res;
++	/* A dentry was reused. */
++	if (res != dentry)
+ 		dput(dentry);
+ 
+ out_path:
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index c1f0a067be40..ee5e9a18c2d3 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -25,6 +25,20 @@
+ #include "internal.h"
+ #include "mount.h"
+ 
++/*
++ * Usage:
++ * pid->wait_pidfd.lock protects:
++ *   - insertion of dentry into pid->stashed
++ *   - deletion of pid[PIDTYPE_TGID] task linkage
++ *   - pidfs_exit() which sets pid->stashed to NULL
++ *
++ * Ordering:
++ *   -> dentry->d_lock
++ *      -> pid->wait_pidfd.lock
++ */
++
++#define PIDFS_PID_DEAD ERR_PTR(-ESRCH)
++
+ static struct kmem_cache *pidfs_cachep __ro_after_init;
+ 
+ /*
+@@ -552,30 +566,47 @@ struct pid *pidfd_pid(const struct file *file)
+  * task has been reaped which cannot happen until we're out of
+  * release_task().
+  *
+- * If this struct pid is referred to by a pidfd then
+- * stashed_dentry_get() will return the dentry and inode for that struct
+- * pid. Since we've taken a reference on it there's now an additional
+- * reference from the exit path on it. Which is fine. We're going to put
+- * it again in a second and we know that the pid is kept alive anyway.
++ * If this struct pid has at least once been referred to by a pidfd then
++ * pid->stashed will contain a dentry. One reference exclusively belongs
++ * to pidfs_exit(). There might of course be other references.
+  *
+  * Worst case is that we've filled in the info and immediately free the
+- * dentry and inode afterwards since the pidfd has been closed. Since
+- * pidfs_exit() currently is placed after exit_task_work() we know that
+- * it cannot be us aka the exiting task holding a pidfd to ourselves.
++ * dentry and inode afterwards when no one holds an open pidfd anymore.
++ * Since pidfs_exit() currently is placed after exit_task_work() we know
++ * that it cannot be us aka the exiting task holding a pidfd to itself.
+  */
+ void pidfs_exit(struct task_struct *tsk)
+ {
+ 	struct dentry *dentry;
++	struct pid *pid = task_pid(tsk);
+ 
+ 	might_sleep();
+ 
+-	dentry = stashed_dentry_get(&task_pid(tsk)->stashed);
+-	if (dentry) {
+-		struct inode *inode = d_inode(dentry);
+-		struct pidfs_exit_info *exit_info = &pidfs_i(inode)->__pei;
++	scoped_guard(spinlock_irq, &pid->wait_pidfd.lock) {
++		struct inode *inode;
++		struct pidfs_exit_info *exit_info;
+ #ifdef CONFIG_CGROUPS
+ 		struct cgroup *cgrp;
++#endif
+ 
++		dentry = rcu_dereference_raw(pid->stashed);
++		if (!dentry) {
++			/*
++			 * No one held a pidfd for this struct pid.
++			 * Mark it as dead so no one can add a pidfs
++			 * entry anymore. We're about to be reaped and
++			 * so no exit information would be available.
++			 */
++			rcu_assign_pointer(pid->stashed, PIDFS_PID_DEAD);
++			return;
++		}
++
++		/* We own a reference assert that clearly. */
++		VFS_WARN_ON_ONCE(__lockref_is_dead(&dentry->d_lockref));
++		inode = d_inode(dentry);
++		exit_info = &pidfs_i(inode)->__pei;
++
++#ifdef CONFIG_CGROUPS
+ 		rcu_read_lock();
+ 		cgrp = task_dfl_cgroup(tsk);
+ 		exit_info->cgroupid = cgroup_id(cgrp);
+@@ -585,8 +616,15 @@ void pidfs_exit(struct task_struct *tsk)
+ 
+ 		/* Ensure that PIDFD_GET_INFO sees either all or nothing. */
+ 		smp_store_release(&pidfs_i(inode)->exit_info, &pidfs_i(inode)->__pei);
+-		dput(dentry);
+ 	}
++
++	/*
++	 * If there was a dentry in there we own a reference to it. So
++	 * accessing pid->stashed is safe. Note, pid->stashed will be
++	 * cleared by pidfs. Leave it alone as we could end up in a
++	 * legitimate race with path_from_stashed()'s fast path.
++	 */
++	dput(dentry);
+ }
+ 
+ #ifdef CONFIG_COREDUMP
+@@ -683,9 +721,44 @@ static char *pidfs_dname(struct dentry *dentry, char *buffer, int buflen)
+ 	return dynamic_dname(buffer, buflen, "anon_inode:[pidfd]");
+ }
+ 
++static void pidfs_dentry_prune(struct dentry *dentry)
++{
++	struct dentry **stashed = dentry->d_fsdata;
++	struct inode *inode = d_inode(dentry);
++	struct pid *pid;
++
++	if (WARN_ON_ONCE(!stashed))
++		return;
++
++	if (!inode)
++		return;
++
++	pid = inode->i_private;
++	VFS_WARN_ON_ONCE(!pid);
++	/*
++	 * We can't acquire pid->wait_pidfd.lock as we're holding
++	 * dentry->d_lock and pidfs_stash_dentry() needs to be able to
++	 * hold dentry->d_lock under pid->wait_pidfd.lock.
++	 *
++	 * Also, we don't really need it...
++	 */
++	VFS_WARN_ON_ONCE(!__lockref_is_dead(&dentry->d_lockref));
++	VFS_WARN_ON_ONCE(*stashed != dentry);
++
++	/*
++	 * ... Because to get here the struct pid must have been reaped
++	 * already && no one holds a pidfd open anymore. The only one
++	 * that can race us is pidfd_stash_dentry(). Either it sees a
++	 * dead dentry in pid->stashed or it sees our sentinel marking
++	 * the struct pid as dead. There's no need to synchronize this
++	 * with a lock.
++	 */
++	smp_store_release(stashed, PIDFS_PID_DEAD);
++}
++
+ const struct dentry_operations pidfs_dentry_operations = {
+ 	.d_dname	= pidfs_dname,
+-	.d_prune	= stashed_dentry_prune,
++	.d_prune	= pidfs_dentry_prune,
+ };
+ 
+ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+@@ -878,9 +951,47 @@ static void pidfs_put_data(void *data)
+ 	put_pid(pid);
+ }
+ 
++static struct dentry *pidfs_stash_dentry(struct dentry **stashed,
++					 struct dentry *dentry)
++{
++	struct pid *pid = d_inode(dentry)->i_private;
++	struct dentry *d;
++
++	VFS_WARN_ON_ONCE(stashed != &pid->stashed);
++
++	/* We need to synchronize with pidfs_exit(). */
++	guard(spinlock_irq)(&pid->wait_pidfd.lock);
++	guard(rcu)();
++
++	d = rcu_dereference(*stashed);
++	if (!d) {
++		/*
++		 * There's nothing stashed in here so no pidfs dentry
++		 * exists for this task yet and we're definitely not
++		 * past pidfs_exit() and everyone else will wait for us.
++		 */
++		rcu_assign_pointer(*stashed, dget(dentry));
++		return dentry;
++	}
++
++	/* The struct pid is already marked dead. */
++	if (IS_ERR(d))
++		return d;
++
++	/*
++	 * The struct pid isn't yet marked dead but there's a dead
++	 * dentry in there which is just as well.
++	 */
++	if (!lockref_get_not_dead(&d->d_lockref))
++		return ERR_PTR(-ESRCH);
++
++	return d;
++}
++
+ static const struct stashed_operations pidfs_stashed_ops = {
+-	.init_inode = pidfs_init_inode,
+-	.put_data = pidfs_put_data,
++	.stash_dentry	= pidfs_stash_dentry,
++	.init_inode	= pidfs_init_inode,
++	.put_data	= pidfs_put_data,
+ };
+ 
+ static int pidfs_init_fs_context(struct fs_context *fc)
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 8317bcbc7cf7..30518852d990 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -100,7 +100,7 @@ void put_pid(struct pid *pid)
+ 
+ 	ns = pid->numbers[pid->level].ns;
+ 	if (refcount_dec_and_test(&pid->count)) {
+-		WARN_ON_ONCE(pid->stashed);
++		WARN_ON_ONCE(!IS_ERR(pid->stashed));
+ 		kmem_cache_free(ns->pid_cachep, pid);
+ 		put_pid_ns(ns);
+ 	}
+
+-- 
+2.47.2
 
 
