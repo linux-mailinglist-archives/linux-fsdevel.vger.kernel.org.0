@@ -1,325 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-52026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D871BADE6EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 11:30:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72CFADE718
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 11:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BE8D7A6F74
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 09:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405AA40449C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 09:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0752B285CA4;
-	Wed, 18 Jun 2025 09:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E075B25228E;
+	Wed, 18 Jun 2025 09:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W8mdruqZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XfRK2f6X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E17A28468D;
-	Wed, 18 Jun 2025 09:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238873; cv=fail; b=ubhUcR/RFS06fJdPSdE/ggeE7sOB+ox/GfRqQjn2vh2gCswkRB/Q7Pj+1Y47E8znqLNuf1+hTeOJ93mumA5hsLMU7a9H2zCaS5PUkCLKnSQnO4EVi+LsTMbxoKer/YLQLm4AiHI34SntMbwgf6eRFDalhllYmAY3vLaO6S4Ij/M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238873; c=relaxed/simple;
-	bh=/adNQdBnExvu2hARO/wjmjMzXVm6bDqL4bH7epVXkZc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=j1VqDUObCLhTeKo/AdqXMyth2BvK8ocRnBXENEPscFx0MYJ16oa1fULnQQRq8VRh5+AW5kavxZNf3K3/l4U4tu13m04YlxcRSsFvctD1u5+o4ndvBCnAatULc9xTy/KJaz7g4Mla7jFlqdt6+4UXb7AxMQMJe8pMBIDs1gw/LmY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W8mdruqZ; arc=fail smtp.client-ip=40.107.237.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kGEABTUc6Koe+G0y7yKrFHcl9zTU32EP1kMS967yCB7EYscCnxFayfoDwvhoQo0LIP0WFTL/xEEDgd3qyEiwug5H4ZruPt87e9iufdvgAqmvqvkLTIQAqKpdvUhuSasaeu+NoHh13BmuiFIhS3xtRoq9c0NHW+/5rJPs8X0z+M9RIVYlMskLLfpq7mk62e9lXmNG5HnJiSqe0W/k6ysffJCiUgerPHwCMoPYAgiM23Pn9Fu6AQm72wX/KeK2MjIC8BgRzmwPTCaTu82YlBBWTFISg1jRLgAneUCRXU9UVi0e+3R3H97NM3Zdw5IwwsT5jYf9B5M1chyqcwW1LovGpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nAcbXOQ7GidEIwb6g0mYqsPLn3sqQP0jr7rGkBXQDOo=;
- b=klulHncgS1vaZpY+YqHtVaTS8m9nb0TNctTCAR4NFjc+Dghy7p56qsgTfV3jU8J3xYy5HSvNA86rh+f+yMUAmfHmaHULAvqSJCHKDYvrDOKHfBRyvbWA86TgbvaUmdf2So8Qe8AXy2uyv4weYGLU70jTuNCuMz/qKXNfj5nvt3eIo7Z9+aKIcIcxFRJdm4g9PbIUiwkiHKFeguPVDlnnj3C03vTBlgnmOjC/24Zc8AAV9DrnjDDodSg6ccG8Iytm6he25r8Q9A1+XSSUALThIH/UcyYMgD9Izn8eY1zLCio/sodaIcAIK64yI7b+kQiyHpjQPyRRcsOtk49PatUubQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nAcbXOQ7GidEIwb6g0mYqsPLn3sqQP0jr7rGkBXQDOo=;
- b=W8mdruqZCksY74lTeO+dxyJWhIWn75mRMVXoubraEh4mHWrwV65dCdwSLrezNkvTesCHBWgKPRJNLgL4di0BxyBqmdBUkUcLal93ftydvDrnxZz6PDVKuQ0zBiVMg7tRLjnokaPchHIwHKn2VfAPnPEi4H2so4i44pDTmSelmtwbcef2RRrMSSWY87bMIHNRf1HxAhhzXN3Qyhyjzz5kmz1ksOIvSWtpEB2/bfJV25Rx89p4gARC/dzW5XmCdg1DGlC+Tl9OHGEue3u8OgC01MEahTb+dF8AucUFYbD9N/4Q2b34QqzMBewRItwXRgK00686wjMBNhX/IpXXF9Rz5g==
-Received: from CY8PR12MB7195.namprd12.prod.outlook.com (2603:10b6:930:59::11)
- by DM6PR12MB4172.namprd12.prod.outlook.com (2603:10b6:5:212::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
- 2025 09:27:48 +0000
-Received: from CY8PR12MB7195.namprd12.prod.outlook.com
- ([fe80::c06c:905a:63f8:9cd]) by CY8PR12MB7195.namprd12.prod.outlook.com
- ([fe80::c06c:905a:63f8:9cd%5]) with mapi id 15.20.8792.033; Wed, 18 Jun 2025
- 09:27:48 +0000
-From: Parav Pandit <parav@nvidia.com>
-To: Jan Kara <jack@suse.cz>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: warning on flushing page cache on block device removal
-Thread-Topic: warning on flushing page cache on block device removal
-Thread-Index:
- AdvMbvrhAHapLL5SQLSXHQ+FhiQIJwB7b58AACZikZAAAg9cAAAAQBBwAATDYIAAAA6IoAFeHfSQAunx63A=
-Date: Wed, 18 Jun 2025 09:27:47 +0000
-Message-ID:
- <CY8PR12MB71955E93B47608497B4504FEDC72A@CY8PR12MB7195.namprd12.prod.outlook.com>
-References:
- <CY8PR12MB7195CF4EB5642AC32A870A08DC9BA@CY8PR12MB7195.namprd12.prod.outlook.com>
- <2r4izyzcjxq4ors3u2b6tt4dv4rst4c4exfzhaejrda3jq4nrv@dffea3h4gyaq>
- <CY8PR12MB7195BB3A19DAB9584DD2BC84DC64A@CY8PR12MB7195.namprd12.prod.outlook.com>
- <nj4euycpechbg5lz4wo6s36di4u45anbdik4fec2ofolopknzs@imgrmwi2ofeh>
- <CY8PR12MB7195241146E429EE867BFAF5DC64A@CY8PR12MB7195.namprd12.prod.outlook.com>
- <pkstcm5x54ie466gce7ryaqd6lf767p6r4iin2ufby3swe46sg@3usmpixyeniq>
- <CY8PR12MB7195BADB223A5660E2D029C4DC64A@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CY8PR12MB719567D0A9EAE47A41EE3AC4DC6DA@CY8PR12MB7195.namprd12.prod.outlook.com>
-In-Reply-To:
- <CY8PR12MB719567D0A9EAE47A41EE3AC4DC6DA@CY8PR12MB7195.namprd12.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR12MB7195:EE_|DM6PR12MB4172:EE_
-x-ms-office365-filtering-correlation-id: 33fc8778-d857-4f40-cc32-08ddae4a63ad
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?tKPtf1JgzO4tcE4yCRE4j6ridbnHnqxkXkpCMRHk/YL6/X50eMRRv9lPzqmY?=
- =?us-ascii?Q?hkiv2YhlNbIxlqicVkN1jrIu4MIRKTKf4nWFjCAB48DILD3ibkgc0Q5OngzC?=
- =?us-ascii?Q?iuYFO8O2YKMHaMw9PFAS9B1+lbhDrKTF51p7f6vuKIxuSSLTm/yH1nsgOaxu?=
- =?us-ascii?Q?5QMYT4JsEFx5gXn0Y5+52cO8ARlKeKSS7QwKSkDOMp4pbD7UibKofACe2VtM?=
- =?us-ascii?Q?ewLD6TrdJYPQX6NrF6QNZatWUkI5dAkKuu1bQg5bMes6m5b1HSL97Fvx3G7C?=
- =?us-ascii?Q?03Ni2Eq8madSpIXlncnDbtJVQK7Af2Efnm5HtB6ik/YCTxGqGdfHFTsfHX/M?=
- =?us-ascii?Q?FwAGMkIWXQqXXyDlk8FO0GnNT3CzbCFuAhankEKHa/y8imxyT13aFMg6POzt?=
- =?us-ascii?Q?qK+XreqXZS35unrlA8DIwQBHk+vQtW7igEW1GJjjnUsqTnU5i7CdzKkBCG09?=
- =?us-ascii?Q?CMD6DgaeNtk3yW2wxFemsupJOybJsf4W+fHHV9h1TeLcFM8ziv6Y+QL4oAVt?=
- =?us-ascii?Q?rCWqUtEg6uAYNVHhQQUXKSjH6Nl/haq9/DKwLio54b2oInWYfuAK0Mp51g/m?=
- =?us-ascii?Q?rK6Y2X/XpzfoYPII6SOAdktFvLS7PF0eVFaU5VfUzYH5jxFN4jX5ZK27Y9CT?=
- =?us-ascii?Q?bYwKEl0wkd+6f2yS1i8npMat6VMiINLGdV6ZqStMGJ54Xdv0RLHe7fnw9Oax?=
- =?us-ascii?Q?IAiJCH+YYeMrNpNcr4gmGqJjU2JSCuxdDhS8EU2yczQb767WM9E9GetNzlbL?=
- =?us-ascii?Q?6joYxjV0YmFieMwd0i3Xq738065FDDascxze0gaqAA6sjBttc3EO7gCui/QR?=
- =?us-ascii?Q?M4UXqNz30quhR8eV534hRcJ0wkqnDOyR1L51u9GceeMiIjYUjSk47utjospM?=
- =?us-ascii?Q?ZTojUJSkrxTZ+T3y//SysZrjhIlJ7+2PIeF2cNGWlhlV6EP2+EL7U9Omn3PR?=
- =?us-ascii?Q?GNzXKImbZRLbk3D6vhqDsbWTQquS2tF6j2rYHFIl1eQxqnWgzs48OP0qaOQP?=
- =?us-ascii?Q?RaPPbEsrS9Lbo6Yt3EnyBdEzMqmp4ZAZw9ngZVULllMLJ2VRSdpk9Gpx7dAS?=
- =?us-ascii?Q?sMf1o5TWNGb/PxgpUD1X11OVHps52Kk+5oXRoh2DZKOiVbsDcOm3oY8/bZ2B?=
- =?us-ascii?Q?0tE4IulgnjTd5ApBmqNXDjbgiSq+94GDnZobQM5HINADPR11iqtLJu3n2mkc?=
- =?us-ascii?Q?RXL+xfAX8bYA2pqEdUOttagusfjkohQmWrQXMqyjYpQ4sdI9Nw9VJdkWNKz1?=
- =?us-ascii?Q?xdLD1fWRkTImryipY0dz6I45QUMQjaAgW5IPeLtW8zWp3P1DEPvInccup5Bp?=
- =?us-ascii?Q?TsVnJOBxAfajS1EMSI/tWhWXFhcMoPpBnrVS2Y6LFlRHpR2IP3Q+Ddi8+Zkz?=
- =?us-ascii?Q?MPPyrOOPsL8/0PVW3xvqpBXrXCYlP+2tG7hhkRZtgZi5cT0yhrjcCA2GUnhh?=
- =?us-ascii?Q?SYWqDa9Ijt7Jk7DMrP7Zps+FciR4SrIwz6YY2Gd/Vq77h7Y3P+l+lzSkAOYE?=
- =?us-ascii?Q?dwQTD8QZYDi4gTA=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7195.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?DyoetNGtlwwc274mvH87SM5m8CEskhG8ZtID4YcfkXad8yB9o2b0gX4rDnuj?=
- =?us-ascii?Q?w2pF2wA1O52M/hUItpKNWMlIgj2S5DC04KyeukhueS2PAgw8coUiwvLL+8eq?=
- =?us-ascii?Q?sCkRWw2oBBRBqBI8TVpz3adamQ3BkjDMe6vcLI/RX+baOvq6VrG6eXVmEbgh?=
- =?us-ascii?Q?JihkQ6LhkmejnN9Lu1Crjpz3v78M4aBfFVUyAfAScc7zZ/YoKDC/y/V5meEZ?=
- =?us-ascii?Q?XsC5eWRLiBXUzfb6mflbvOK1/NLASZclcpEDiUP6ugn5mi9S/CoPAcehclDd?=
- =?us-ascii?Q?U0KgD1guqZyA3GpD71p8k1D5M4w9fkur3gV82gF1Ep0noIAXL44SiWSckh58?=
- =?us-ascii?Q?fLTNW3c6uktRxmgoEBXoQf/0qfvkr1dyVOL4kNQrr3DP8+EXJEODws2SXKyl?=
- =?us-ascii?Q?XHfnjYAsgJBHWFxCfiHjoFPPZEfbNKikBZsbETCi9UPr7Wq4t70nTTjMJlqy?=
- =?us-ascii?Q?C27NQil1Gg0hIoaVd4k8CvpDB+zRKoXGiWBRqkh6EaQmZlyQTtip5EUfcUxX?=
- =?us-ascii?Q?xfiLFxMyWOtktLkKNkj+Cr9hO1SA17UUYUTfqqV2YSZKtXu8xhkHxd/yE2Yw?=
- =?us-ascii?Q?AzGkJtBLpgAArLUONfkpgHF3a3lxm2JSogAvYPBOM1lncY2bZX2d/WqRgRZb?=
- =?us-ascii?Q?KqdmbXRSD7xleGKgaKgCPn/Geew6por+ZRjg7FbXyyNHYx7LUtXFqML18tWp?=
- =?us-ascii?Q?9SFKIapR+K1vTEcEsyUkajBX15G1/b0sXYMIlWLG/V61dNYklPLT3Wcevwa9?=
- =?us-ascii?Q?v2vT8Tr8hEJmeV2Xb3pPUrk1L5YUxTUN13TSbNW5eMmd40Nk/AIW3/xOLklm?=
- =?us-ascii?Q?CCsHa7CJh541rh9HQKQCzVJ/OxB/LZIkJ+3rrFgYLv8hdaYk4iye0eBLj32C?=
- =?us-ascii?Q?UEFXH7NnSZH+Asxs4IEq85B9vCES4ehu0aZuKgW6/3ZB7HkVcE11J802E5G4?=
- =?us-ascii?Q?nZJEgyPeKaCWMw8cFKKncG7ii1HF6EGUV41u/lqdqOoF+SE3uc49/+Mij5k/?=
- =?us-ascii?Q?OqgOCBRO6CEL7PEpb9Kwhmk6EidYzJfYe3u8dQmvFYiQOB4aFx4EqCdKl8mw?=
- =?us-ascii?Q?t3qr6x1gWO2FIi4u05MIA9P8OCrtBWXCH1l+r/bmsvFxvhhRU6SBEmByc3RH?=
- =?us-ascii?Q?yVvjajwMvf7wt1SoUichpatFHj/KjUz3DTllMCMp5ZoGtNWWP+UremP4IdWp?=
- =?us-ascii?Q?UQpKfz9W+9ScdRNRH/zZmJz/ZUs2MDFw4VjMxobAeTZYdrZutk3pA9rHsZIV?=
- =?us-ascii?Q?QvqF7y59v/kTJk2RroyHDXgplEzzb054ki87/NOalU0Oa8fP+ys4j/ypVSK5?=
- =?us-ascii?Q?saHjb1x2PC5cLPKO2o2liYTb8vYwjPdNqk9UyPdO2/1aR1Fhe+p/vMrkHdWd?=
- =?us-ascii?Q?E5UwbKrtcyXGz/V77eq94Mo3LauEv/voY6880R4JPhYD7/q6Xc6OSJFlBJgZ?=
- =?us-ascii?Q?bwM8Pco8ZtjSlVLH0LxohaULBm0ETNrS6i5Xzl1LadGyjbeQg5mO/ANB4Pu9?=
- =?us-ascii?Q?uPx+AMy9aqsyZVfHXNaDqsvx5Ml0wWBFIdd/Ve1U+JjW48EI9T1vbubWPx7d?=
- =?us-ascii?Q?Luoy3YVbEOGi7env5RQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E67188CCA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 09:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750239070; cv=none; b=bXNTqzRZoV/4hWhyVx5w34strlzuxSdRt06MNjMevlags7Iz25T2nqoudXW08dOQkWYCKVCY09eUMrHlSYLiW0AKoOgw+aai2Bvr+1Qd6Vywvi/UN1AAo+dK0EhdxLt6mcNu5ctJuz90hNCGpuSLr4AB5gNN23llTdHZjsP2Ym8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750239070; c=relaxed/simple;
+	bh=4DUmQNuK4KTUlCUIkhvb5/nFonNtmaZleGEiMulYcdg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KAQwiiWrqslBrQLM8uFGyPLFzYZvO5YAVz/0GSKd1WiJHozrCgw3XHv27rm5WGT9elxKJPzUnyHH2tOBML2gTBNz2DvA/mNp86+rD+F3HhMig9eXX899+y53HnwKbVp+l5UTHVE9t00LA3RdK8Re7FY5yuw215llrDApHZ+PMLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XfRK2f6X; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750239067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DAAxpkDR64hsnaI9Udos0W7mCWFzGT/DUlyAtDcPHQM=;
+	b=XfRK2f6Xk0iT8cmMZXk815s0t3tgxz+oyOZWSVz+uW4+p+qa8jmYy4l02WoJfkmXsOZmMc
+	VfXqBLUNi2O+68Kz2Kw9vK+lybCs/GkbBmwoKXuCyXpzBstruW6ad8lfns1w/mgLG1Hd2K
+	Dy6GbhyvB+smAKK56F/oOL1WdRs77+I=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-s2MrJV7aMHC4bR7MPZCBGQ-1; Wed, 18 Jun 2025 05:31:06 -0400
+X-MC-Unique: s2MrJV7aMHC4bR7MPZCBGQ-1
+X-Mimecast-MFC-AGG-ID: s2MrJV7aMHC4bR7MPZCBGQ_1750239065
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45359bfe631so3230395e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 02:31:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750239065; x=1750843865;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DAAxpkDR64hsnaI9Udos0W7mCWFzGT/DUlyAtDcPHQM=;
+        b=LXjpIo6S7UKhm1nR2846sa98Lh5fZb3/01A+dJHvkqhcXcbgt4/9fGo8M4OKi5Vthq
+         VtF/DDEu/JxIUe4VoS9j9EsNmqbhZneqvUwr2KGcJVXZsmbEe4rERbUDGzNf3aPjm9BA
+         oXPw4ApkfYeVNcUayPbhIgIyYn4+JU46+Ao49UQ0f+0aCudBNFU5L5EUWbRkdyMiWnQg
+         Fs9iPcAgXQ9bSaVqgCp3i9pSANnWE5wjla9+Ft+1jKNQiI/kC1GhGL35LhwtIeH9MtWw
+         y6mqr0B5/MQAJ3yUdq5U703IJgAHwRv62hwBh6FVj1TTmC5yFp4UIWvc559EO1OcqGzz
+         D8tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKzb2crAltWGvS+S30S3W2wvJOqC0C+BPBSEp+gZ+fq5EM/Ae+IRr0CyBVUtQx8Vv1ugQuf7KY3QbME3v/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI1oxSI4k00kOt6Z56KdTQueQRpenZfF/gUhvudEKhrj2IOMRM
+	ygWj8kArHRK9uLpHnkCnJ1vRW4ic2LNzKn/oK13vMRaCCt6PoeGq+fj0mUfIgDdq2suFy/FSJkU
+	iIygcNKxu2D6GTMxUYDtlg3dv2EvnLDXa5j1FU0JSVOEEJHyXVIehojtSmXORB9x5MfQ=
+X-Gm-Gg: ASbGncsooWBKwhwQNke07PaNB2mrdNCtjRNTz5+1ll+rA8VT89VJAEmu+WDs/a8LJGl
+	QwLi8sMKzRCWnZ+VqP62+GbhEITdQa/B3tBg5wcNKQKGIAMpEcuGr3zFK7NfbJ34xzujJAY6MM9
+	GwMrLynYTQU8FhEp0TB8jgSVyEOEa3JsqEQ2KbWZNddkRSpuPtrzCAB87Wmqy0SWblzqSY2wEpb
+	qFxVMVrkYOYOeWjVPGEk/gVRaOP0uH1uBk9XlHHRHB4u4uIT7/1ax5jP02Y2yzq2evE2w5iIPdu
+	JOBu1JN3R998BnKp/J8REAloCt04wH3G6ewjVMX8BTC7XLhtA/eIi3gf1g2kzs5FYbwd3yTId8T
+	y2u6HNPbQbJ9e8wRpq4OAmbCQIsZBWaR6NxMzcYTs9te0xp8=
+X-Received: by 2002:a05:600c:5396:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-4533cac8fdbmr151178305e9.29.1750239064914;
+        Wed, 18 Jun 2025 02:31:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFE2lmgl3UBomQIO41tOZKwEtVJWCPsqqDyTr4SmltEOYbKotteA+xAeGqRpDK/3zaPP374g==
+X-Received: by 2002:a05:600c:5396:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-4533cac8fdbmr151178015e9.29.1750239064488;
+        Wed, 18 Jun 2025 02:31:04 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2d:2400:4052:3b5:fff9:4ed0? (p200300d82f2d2400405203b5fff94ed0.dip0.t-ipconnect.de. [2003:d8:2f2d:2400:4052:3b5:fff9:4ed0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a73845sm16606417f8f.35.2025.06.18.02.31.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jun 2025 02:31:04 -0700 (PDT)
+Message-ID: <051f769d-3a0e-409e-bd40-22000f10b986@redhat.com>
+Date: Wed, 18 Jun 2025 11:31:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7195.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33fc8778-d857-4f40-cc32-08ddae4a63ad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2025 09:27:47.9306
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tFwfBM5WTXeQziDG4crVfvlHvgwbuPgA2Wp7LEGPNLzDnKWKiEwZU22BKbuHCntQcdlp2L4NYj0+2DyEhJRhbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4172
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/14] mm: Convert vmf_insert_mixed() from using
+ pte_devmap to pte_special
+From: David Hildenbrand <david@redhat.com>
+To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
+ dan.j.williams@intel.com, jgg@ziepe.ca, willy@infradead.org,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ zhang.lyra@gmail.com, debug@rivosinc.com, bjorn@kernel.org,
+ balbirs@nvidia.com, lorenzo.stoakes@oracle.com,
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, John@Groves.net,
+ m.szyprowski@samsung.com, Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.8d04615eb17b9e46fc0ae7402ca54b69e04b1043.1750075065.git-series.apopple@nvidia.com>
+ <5c03174d2ea76f579e4675f5fab6277f5dd91be2.1750075065.git-series.apopple@nvidia.com>
+ <1709a271-273b-4668-b813-648e5785e4e8@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1709a271-273b-4668-b813-648e5785e4e8@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jan and others,
+On 17.06.25 11:49, David Hildenbrand wrote:
+> On 16.06.25 13:58, Alistair Popple wrote:
+>> DAX no longer requires device PTEs as it always has a ZONE_DEVICE page
+>> associated with the PTE that can be reference counted normally. Other users
+>> of pte_devmap are drivers that set PFN_DEV when calling vmf_insert_mixed()
+>> which ensures vm_normal_page() returns NULL for these entries.
+>>
+>> There is no reason to distinguish these pte_devmap users so in order to
+>> free up a PTE bit use pte_special instead for entries created with
+>> vmf_insert_mixed(). This will ensure vm_normal_page() will continue to
+>> return NULL for these pages.
+>>
+>> Architectures that don't support pte_special also don't support pte_devmap
+>> so those will continue to rely on pfn_valid() to determine if the page can
+>> be mapped.
+>>
+>> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+>> ---
 
-> From: Parav Pandit
-> Sent: 03 June 2025 07:03 PM
-> To: Jan Kara <jack@suse.cz>
-> Cc: linux-block@vger.kernel.org; linux-fsdevel@vger.kernel.org
-> Subject: RE: warning on flushing page cache on block device removal
->=20
-> Hi Jan,
->=20
-> > From: Parav Pandit <parav@nvidia.com>
-> > Sent: Tuesday, May 27, 2025 7:55 PM
-> >
-> >
-> > > From: Jan Kara <jack@suse.cz>
-> > > Sent: Tuesday, May 27, 2025 7:51 PM
-> > >
-> > > On Tue 27-05-25 12:07:20, Parav Pandit wrote:
-> > > > > From: Jan Kara <jack@suse.cz>
-> > > > > Sent: Tuesday, May 27, 2025 5:27 PM
-> > > > >
-> > > > > On Tue 27-05-25 11:00:56, Parav Pandit wrote:
-> > > > > > > From: Jan Kara <jack@suse.cz>
-> > > > > > > Sent: Monday, May 26, 2025 10:09 PM
-> > > > > > >
-> > > > > > > Hello!
-> > > > > > >
-> > > > > > > On Sat 24-05-25 05:56:55, Parav Pandit wrote:
-> > > > > > > > I am running a basic test of block device driver unbind,
-> > > > > > > > bind while the fio is running random write IOs with
-> > > > > > > > direct=3D0.  The test hits the WARN_ON assert on:
-> > > > > > > >
-> > > > > > > > void pagecache_isize_extended(struct inode *inode, loff_t
-> > > > > > > > from, loff_t
-> > > > > > > > to) {
-> > > > > > > >         int bsize =3D i_blocksize(inode);
-> > > > > > > >         loff_t rounded_from;
-> > > > > > > >         struct folio *folio;
-> > > > > > > >
-> > > > > > > >         WARN_ON(to > inode->i_size);
-> > > > > > > >
-> > > > > > > > This is because when the block device is removed during
-> > > > > > > > driver unbind, the driver flow is,
-> > > > > > > >
-> > > > > > > > del_gendisk()
-> > > > > > > >     __blk_mark_disk_dead()
-> > > > > > > >             set_capacity((disk, 0);
-> > > > > > > >                 bdev_set_nr_sectors()
-> > > > > > > >                     i_size_write() -> This will set the
-> > > > > > > > inode's isize to 0, while the
-> > > > > > > page cache is yet to be flushed.
-> > > > > > > >
-> > > > > > > > Below is the kernel call trace.
-> > > > > > > >
-> > > > > > > > Can someone help to identify, where should be the fix?
-> > > > > > > > Should block layer to not set the capacity to 0?
-> > > > > > > > Or page catch to overcome this dynamic changing of the size=
-?
-> > > > > > > > Or?
-> > > > > > >
-> > > > > > > After thinking about this the proper fix would be for
-> > > > > > > i_size_write() to happen under i_rwsem because the change in
-> > > > > > > the middle of the write is what's confusing the iomap code.
-> > > > > > > I smell some deadlock potential here but it's perhaps worth
-> > > > > > > trying :)
-> > > > > > >
-> > > > > > Without it, I gave a quick try with inode_lock() unlock() in
-> > > > > > i_size_write() and initramfs level it was stuck.  I am yet to
-> > > > > > try with LOCKDEP.
-> > > > >
-> > > > > You definitely cannot put inode_lock() into i_size_write().
-> > > > > i_size_write() is expected to be called under inode_lock. And
-> > > > > bdev_set_nr_sectors() is breaking this rule by not holding it.
-> > > > > So what you can try is to do
-> > > > > inode_lock() in bdev_set_nr_sectors() instead of grabbing bd_size=
-_lock.
-> > > > >
->=20
-> I replaced the bd_size_lock with inode_lock().
-> Was unable to reproduce the issue yet with the fix.
->=20
-> However, it right away breaks the Atari floppy driver who invokes
-> set_capacity() in queue_rq() at [1]. !!
->=20
-> [1]
-> https://elixir.bootlin.com/linux/v6.15/source/drivers/block/ataflop.c#L15=
-44
->=20
-> With my limited knowledge I find the fix risky as bottom block layer is i=
-nvoking
-> upper FS layer inode lock.
-> I suspect it may lead to A->B, B->A locking in some path.
->=20
-> Other than Atari floppy driver, I didn't find any other offending driver,=
- but its
-> hard to say, its safe from A->B, B->A deadlock.
-> A =3D inode lock
-> B =3D block driver level lock
->=20
-> > > > Ok. will try this.
-> > > > I am off for few days on travel, so earliest I can do is on Sunday.
-> > > >
-> > > > > > I was thinking, can the existing sequence lock be used for
-> > > > > > 64-bit case as well?
-> > > > >
-> > > > > The sequence lock is about updating inode->i_size value itself.
-> > > > > But we need much larger scale protection here - we need to make
-> > > > > sure write to the block device is not happening while the device
-> > > > > size changes. And that's what inode_lock is usually used for.
-> > > > >
-> > > > Other option to explore (with my limited knowledge) is, When the
-> > > > block device is removed, not to update the size,
-> > > >
-> > > > Because queue dying flag and other barriers are placed to prevent
-> > > > the IOs
-> > > entering lower layer or to fail them.
-> > > > Can that be the direction to fix?
-> > >
-> > > Well, that's definitely one line of defense and it's enough for
-> > > reads but for writes you don't want them to accumulate in the page
-> > > cache (and thus consume memory) when you know you have no way to
-> > > write
-> > them
-> > > out. So there needs to be some way for buffered writes to recognize
-> > > the backing store is gone and stop them before dirtying pages.
-> > > Currently that's achieved by reducing i_size, we can think of other
-> > > mechanisms but reducing i_size is kind of elegant if we can
-> > > synchronize that
-> > properly...
-> > >
-> > The block device notifies the bio layer by calling
-> > blk_queue_flag_set(QUEUE_FLAG_DYING, disk->queue); Maybe we can
-> come
-> > up with notification method that updates some flag to page cache layer
-> > to drop buffered writes to floor.
-> >
-> > Or other direction to explore, if the WAR_ON() is still valid, as it
-> > can change anytime?
-> >
+As Andrew notes offlined, there is no content here. I sent this by mistake
+after replying to patch#6 instead.
 
-Is below WARN_ON() still valid, given the disk size can change any time?
+-- 
+Cheers,
 
-void pagecache_isize_extended(struct inode *inode, loff_t from, loff_t to) =
-{
-        int bsize =3D i_blocksize(inode);
-        loff_t rounded_from;
-        struct folio *folio;
+David / dhildenb
 
-        WARN_ON(to > inode->i_size);
-
-
-> > > 								Honza
-> > > --
-> > > Jan Kara <jack@suse.com>
-> > > SUSE Labs, CR
 
