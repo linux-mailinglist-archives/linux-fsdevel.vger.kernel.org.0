@@ -1,274 +1,434 @@
-Return-Path: <linux-fsdevel+bounces-52099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D3AADF69F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 21:10:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9113ADF6B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 21:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4444A2DE3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 19:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C85223A7D74
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 19:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23A621019E;
-	Wed, 18 Jun 2025 19:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8B72045B1;
+	Wed, 18 Jun 2025 19:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qAS2CFm/"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="rbQ28Glt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2063.outbound.protection.outlook.com [40.107.94.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD8720409A;
-	Wed, 18 Jun 2025 19:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750273821; cv=fail; b=bHuJxdIDj26sZL1PGqIwKYeHV/B4dhl9nja1mt98KzhN/a4pj2to7L40NYCeNx/8gkPSc8DR06NHdstoNKBPJY8SCg/gabx9SCXxpCRiR4j5vWYsn5kNHBOAtDJuIrifbU8J2C+uRdmm93CkSe3/Jc2niI6q/qHtGUDo5mIollk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750273821; c=relaxed/simple;
-	bh=K5RA8WPNa7F4xjKhYUQfrnmlnTND2i3+gGdYyPCyg1c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sxEytGHATmMqJIU1Izk9Kf6+SKIHn6EHSVIo/JsZ8xB2d6LoDVmyD6RRKmq5ii/ibBbV0aL0kFsppmFPExa/71QhmhAAKWgehNIEoHzW4/m+ZGhzCcJo3k8R11cu6SIbqSxFWxwP1NLijRrPcOVQnXMB3aOxgpG6KdahuCYMb1I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qAS2CFm/; arc=fail smtp.client-ip=40.107.94.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uq1vXZ6mSmKw7MbFf8iK0W8QjXZf1pr8nZjTYL60ic5zJ1b14S3sfJ6Sd/b9PXByRm/WvhVMhnbEUJAboe4+HSXBlj53kACgq5978SromsgzTdaXUpN/LEvcmX/tM/mhn0Vc02w83eu6n70TbNSw6fM/OoHtWG412MsWjPizRFuDBzmbttvJl0sLVpzV0mYItPeC0dSDuacFMMi/jSRdnSfmetRq7jo59unZKkA+vflyO7NpoxR4mK8SNXs76qrqG6odFAMa43sUHzSy2YItp1ArJ1kVCW//fsQV3iNJ3W5EHVAHOQyGU7PVkzV2QzUpkK+CYjMmjUNgOgkzveeZSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kr1ucAdzhuPBSYm277iLPVUHjG6+LfJxNq3NVaNMrm0=;
- b=J80s6gIylL2jIRjq74vlY15BpGChsXqEv/ftTJK2xXU8jbZfpMsrXhwCTDQ6TWuCbQDxAdJBw+y2fAzk0jhEuHUW6zRB0+3+U2URaXc6Ve8zKqm6K0VFvVIMmrGN0EHkqkSKrLmwd4V4IqCEGFJNCYFHAYzU+3h9pcncDRg4+i8v2e7axcn5N8W0px/JlcWosiEIbq3cTcTw4flPtasO33oL3Y14WUI5cY+Jwl0InVjn1daQ/Z7oJybTdEsNoq7Ub3aRBeXnBsM5ZoQBgCAh4XL/yWJ4fjOWwUxItR7admudR4H1d+MxFqHWGNdaQQqDFU6lsi6zAOYDbO+QTZ4lCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kr1ucAdzhuPBSYm277iLPVUHjG6+LfJxNq3NVaNMrm0=;
- b=qAS2CFm/x7GO9LGWJIw4NImSNDOmnYLrQ/FJxKykFneD/QD3N4GMUvUzcND6teuiUh0m3IgKglpPh3zYNfW5r30NI+J8Ucq+m043C1InDocwpXx6pqUjqAI49/Ma0os6KfbNFOqMVYbNA56bYrpGoqyvLobPx22gnLoz69nqBHxHPtbdb7Xtyfu4HYWdRkTdkO9vdmFMMo6pAinHRd5WK6geTXDYhlucdPk/k1Ssejt001ZH8JBNjY385wP/gzKfE2scor2xRVlnLYqq3vAulo9xvZGnodgjfqS9/matZUjTmWUnYiP/pSESmlvMuNXnzKgKlzIurJ5jRhpjI5F75w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DM4PR12MB6637.namprd12.prod.outlook.com (2603:10b6:8:bb::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.29; Wed, 18 Jun 2025 19:10:16 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
- 19:10:16 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
- Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>,
- Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH RFC 08/29] mm/migrate: rename putback_movable_folio() to
- putback_movable_ops_page()
-Date: Wed, 18 Jun 2025 15:10:10 -0400
-X-Mailer: MailMate (2.0r6265)
-Message-ID: <AD158968-D369-4884-806A-18AEE2293C8B@nvidia.com>
-In-Reply-To: <20250618174014.1168640-9-david@redhat.com>
-References: <20250618174014.1168640-1-david@redhat.com>
- <20250618174014.1168640-9-david@redhat.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BN8PR04CA0066.namprd04.prod.outlook.com
- (2603:10b6:408:d4::40) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFB7258A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 19:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750274217; cv=none; b=W/dC890YqXWm+6f1L6mrfpYoUBG+5AVFMPBUJGXxeI54ChZH4xBY43J0OIRR3JDScfAaUUisAo1gpOWmhjgDPTooJBrUfshJrC4MD+TxZIEokoFYV9q7OTrOiQVcBqWV1vHIkJT1PC7V0oUS2Pmmol7yWxfM9zjwpaUbLz9FYKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750274217; c=relaxed/simple;
+	bh=uHG+NHfbjfawrGjIADmmEfzLQAnQAZv1xbV3TyPzD90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TYm7/PB+KdZNIUVv/IVoG6icaH5XsOeAFgs9ftVR+fmvIrStjqGxeqKwWmujr9LnvnTG9gqUA+KBx694oqUyQfIuppNla9uGdJroMIM2MXNgmCbrrIQ9b4TwHVXvHGUBw4jAEXEhgORV99y5/h3aSWAiqaiR4EYfG1ngvKZJvmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=rbQ28Glt; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-73a43d327d6so30541a34.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 12:16:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1750274214; x=1750879014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/d9H1thdQXX8feONir5EG7jw2WbWZx3JAxu3/X6opVE=;
+        b=rbQ28GltFRTDLBzEF3deUqhFSi23LGXoklc/wkNtrf+w1ANjv7rFcvF2kI3iy/JPOq
+         wAFzt1Vh+E+JueviDfYlOTmkgJKKMU9MFhpG1ah7VOdpvUX90D/WaNvRgi+ASNvm4f/z
+         jg9YlSZOvbz5Ttf95TKAMwC7Ko2MNrUlV6cOz5xCHgEAzwsuI4kEgAJLSnZUKfTHysks
+         2tBcbsghYYS2mdV5dqk/Ehmb8k5lLevd7/4DxOg4BztJjg8XAOTP1mOCHjpDLtYbnXgs
+         jXjx2R4iuRoN6fhisB9iN1/Jzu+J0S/mojHgcnA4U5MPjGPAQllIj+gShKg9tHShSEms
+         gbbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750274214; x=1750879014;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/d9H1thdQXX8feONir5EG7jw2WbWZx3JAxu3/X6opVE=;
+        b=d00UzZUU5+SqUeIMZJC3U5nK8JrO6CCuEOoCGvlVdJt1FGrmZ7LFbtT5F15vGaSnL+
+         lpuxdRXCx7V9TRkBm+MdfIKMJs9su5HPXQNto/zmufYpPVauygrqxoR+Dpw28n1YOKcV
+         BV0g18ypUeL84hvM66csbGRXm3K6VEy8O/J3igYqkS08UzWz0gFvYrQoMBLoh7ZkVN7S
+         3wzJKMSK0PyBRJV9kEqHC/9gYXX3CBquUtqKUQXH0FmKj9FEzYU4b0l9ZKBiF7eu+6vd
+         PyZruWNhU/R2IuIGwEbEVdNnwWwPPfiZkAVvEPzqR3oIilJQ3TXmG8Pt0x9UGD+GQYcf
+         OiwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmKJV4sjyZ6ito0ZuR6VAPkN+Iqg1aEk0Fe1tkI/5/RHLkq+Cb6UXUmJ1pBosyPIIdSUepCQRVarutip7T@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwYu83jE3lV/NlYBp76owhN4AZpQODGZRGg+CTq68iEnfcbN2l
+	rpL7lec9mR4zfS6Y2Rzd12Z9n1XvL49bYhEtPYGzStjlHngDWyZ4How9dx8Gczb5zvA=
+X-Gm-Gg: ASbGncu19AuZkqwXCOxzRkprI5qlFsfTcL7zAamQdxAjm1TtF95ZMkbAntC9WZKpMa8
+	5GpeyDFWLu0Pcw0DzF50DEQoiapuFRbHPpMzt+htQw0qwlfcstVzKbcU2AfoYVdUQB6H7o1bEON
+	H8CR8JHYdoFRJ0ctVX16CDjh3G5pVQHyzAlVgiLD+s6jW7HRxdaNzjA17sFT2Cc7OVErmOsl4/5
+	nuQx6MpPGBQlKXRzJRG0gBL9mBewOj47YqNhmZxhAqN8bOArAlWPZ07h4HBDLNyenuZLtdHNB2v
+	BOJVFmGJdzdlcVogFv11gNrJEYn3jeQu0zpovzKzwRRVzjOQy1QG72hrR2+ggjWyMnTvm2JlZtq
+	O9kUk/2E5YYtwOV1A0dap1Md9xsxT37PIYimcZcz4e8fr0e+XnUQS2g==
+X-Google-Smtp-Source: AGHT+IEzKlMecHDhWSdXLzkzoYKQOwVWyvCppytiqNm9y8IeoIacXR4CxDrNEIMUsZy/x5Febao7Lg==
+X-Received: by 2002:a05:6808:13c7:b0:403:3fb7:3870 with SMTP id 5614622812f47-40a7c1cbe28mr11071775b6e.10.1750274213617;
+        Wed, 18 Jun 2025 12:16:53 -0700 (PDT)
+Received: from system76-pc.attlocal.net (162-197-212-70.lightspeed.sntcca.sbcglobal.net. [162.197.212.70])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a740b2808sm2453797b6e.6.2025.06.18.12.16.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 12:16:52 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com
+Cc: dhowells@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH v6] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+Date: Wed, 18 Jun 2025 12:16:35 -0700
+Message-ID: <20250618191635.683070-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DM4PR12MB6637:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6f24617-9e9e-4c35-ad92-08ddae9bc262
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PMHSta2xY4BOazYoqXot9skOxRN2l2iIZ1HYPz6RzKJX8cnO/qjgdZG3DDH7?=
- =?us-ascii?Q?Qkx7S+BlJJXehmo5kTmzYbFnN+6TwhP2jam6qA7yjcAAJ/FAnvUrR75wv2hb?=
- =?us-ascii?Q?gfUNaIE5aS8/t2JfRZGVMXtHk8UO1W0TruV2eD/UijeRKplso8/XCj1kWLrD?=
- =?us-ascii?Q?6vnr2UN5Kuji70PAu+HCS1kjYy1ygVZgIjwxhj9Ft7YvbrzXx/dQSAcbh82Y?=
- =?us-ascii?Q?gbL2WvYxzj+uPFSzpxwy8jkIW79pvvutzk+LemaokCEaMvgQIszRMfcCDxgC?=
- =?us-ascii?Q?SveI6lCTl+BJvaYb1NHbqeruORuo/dpg39eVWwuhEyVCRXnvteZpOvDUa4Yn?=
- =?us-ascii?Q?ELmqg/ul9Vu8kdWxBJJOllI31UGYFK3S58xYGsEsoFiFi/JoalaMBkdsFk8Z?=
- =?us-ascii?Q?k5b3ii369rKoZGY7cp2Qvolf7IROHvb+yURYr97RLOuJJ4SVMdIcyHAFx+es?=
- =?us-ascii?Q?O6X/3+TEVMeemD66LgltBpdyFSqV9fkG2u3363UFjsZNjAJaFf3N3x/9U6T6?=
- =?us-ascii?Q?6/npCp7ejmeYTCyS7RQXmZu8b+5YsZij30iXJkDusZYNntBW+hSNeW6MJFVV?=
- =?us-ascii?Q?/KRYFHHZvgOxg3jxRR0cPJHNeHjffZ9i+mLBuII2PbnOXK56cje4UBF8dEIP?=
- =?us-ascii?Q?xqw5Bn3P2EIroXTIMV6bM3mL+rNF5ngn6tvcLOHOF6SDlhozgA6YmB86up6+?=
- =?us-ascii?Q?jBox6Sc4OnMX6BHDvdNdYMd6FEJsdHA+svR5/U3uQC5OMdZwx0KuQlZX/ozN?=
- =?us-ascii?Q?1ARSupTfxcUsNxy1nJI5P5UdoG/lUaZrFHBI74rE2JVqx4Jdzun7Bda/hPnE?=
- =?us-ascii?Q?wq2aeBewZITKuruRY54nKLybvTSjjco1agKADst4/dwyXYi7RkPJG4Y2TE2y?=
- =?us-ascii?Q?luKl/XUrFyTT9yYAgZK1CM6o3TkxXyEDNfbDPzKzHR5mdasx5sB+e6D+ke0G?=
- =?us-ascii?Q?xdFZQhuPKIlRsy7YBkyIyMmfjM2mLuthihHoG0f+7KApmG4CKTCX+kWwrmql?=
- =?us-ascii?Q?50hmMaQmOpjDsg/OyvfbgOlo8MlsknDHFqd9+eCVwDnIy/zrV1eJvX5H0DID?=
- =?us-ascii?Q?3YOa6z5sHx6AFnTRJyqRjnqeIpkhntS3yVDfjti5rCRo4SgKxlygryRjCQRa?=
- =?us-ascii?Q?Rwi9+mAjx1YK6EhYsDWB8+pLcrp/DiVbdcL1H2JxuOgh833GcuLo2wYfP5qi?=
- =?us-ascii?Q?IEm2tT5MJQONNLoxsQyVUtOfVGGlzllS3+sqSbMpy8NPbi9PTuBePmzAb4sK?=
- =?us-ascii?Q?g51b2Dqso2Q90BT9s6LatreFozo2fepebg99+++VA3G9SzDbmRyyNeBh1RPY?=
- =?us-ascii?Q?My/FVB/jdxbRJDbskeWZb+AO3FAKdfm0knnGnm9z6PU/ltkES74PAylJlJbl?=
- =?us-ascii?Q?G3lV/XvRwo4YcDYbBKFNZuPE6c6Dc/9VfDDVWF7lEtMpxcQCxfEU2x+9m0Qd?=
- =?us-ascii?Q?MUmi7xieyPM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OrU7s5zXdBiZaGcvSoFtCLaWCMzlKQQaIwp7w6ySeSFklVqE5mHeeMhv3je9?=
- =?us-ascii?Q?EWQwziMFyDheU5z+rfFALpgHeOraPt5KmcgW2uW4JgLTJAaUmSglQtF33RMI?=
- =?us-ascii?Q?Mxtji2SpR1srFKyMrUMMlVYemL1upZ1lXm4AosXshA1dCGyHUKFkKPKmFCaV?=
- =?us-ascii?Q?d7zpk0eZT25eqocbe8bwWEUIgzdok6keirsZzruV8HKay99xtAQWaXY+guej?=
- =?us-ascii?Q?TsdbFTGt7hPPuu9YmqozIKGQMGSlger2kSGwehUZNT7+HDeIjOw3RH4WMQ+C?=
- =?us-ascii?Q?/EKk8Syl3GCaZOiNNrBeCrgFl27oL83pIpkXjn4AH1Vn1Nc8QQMJPO2YqLLk?=
- =?us-ascii?Q?CYfeIZts6fFcSGsOGezoqTZZMC7dsFVLPxs54CLjaP8AgoX9Jv07k8mpMKcW?=
- =?us-ascii?Q?ZzR/kgUN9U07LfsbAfOGeaisStXCKhG/th2ygXVTC5sgE4L1yKzQY4JSBCZH?=
- =?us-ascii?Q?P38raB6kMTCyp+VyQjbF1NnVM6OZDzXc1XauVJn4dNyCQWn7DESM327wC2jq?=
- =?us-ascii?Q?wRV7yPYkiKawlkQWgl/PE+azs0O5iT7Ch0suJZ/Z5z37v8ofRNzCcKnXiacC?=
- =?us-ascii?Q?y7Qxk7VBEUiBnxsWoQWGJa8zmSF0FSeqySjfA5cX6gbpQTa0FGyz3osP20TC?=
- =?us-ascii?Q?6/I0boob9+nzap83QZLvX+FDnrybDnPIZ94VQFvTbv0rOCpxqA/HNAWqQaCp?=
- =?us-ascii?Q?3via+nPQRkkyxkqpVc/VC407JmvwLM1g0BsgLrWJCprayxFI2tdPRWrxtJZT?=
- =?us-ascii?Q?2zJnN3A+GWXkfR/Xs+EXQsxi/MUy4yWNl9rj5FTvGcK0ykRUU9+Let/iO7q+?=
- =?us-ascii?Q?me4aiJA8gJw0Ax8b4YvfTp2lkqBBTS4aI2+BME1Rl7evTxzOYS7CqQz9m8UT?=
- =?us-ascii?Q?3AadKID+dLuTsUR1luLoEf2KDFl/HK95tg50RQDlZ4v55ZGteDA8OXXC78xX?=
- =?us-ascii?Q?Ysvck5R7tSn7Uivv5GaBbUA4AnLeJVcKlF+XWt7UFtLM+rxYgYAJWM/jg7RN?=
- =?us-ascii?Q?auYfPGJEvUOezPJa4KtViY4jXI3TMUBjznJjRpddLn7mmVsLwhlaSOhTWg26?=
- =?us-ascii?Q?49xj+OlEhvYVPcGAXoId63h1EncIwCMzuDUX5VBSFDvdVrrHARFVbi63cnv5?=
- =?us-ascii?Q?Vv/M6opzcZ4tEHs12GO7YEhrMCEAHjdEGU8wAclATXHq6Uj8U+2ZYQk9z1KP?=
- =?us-ascii?Q?P7m8m1yyoWiQz43bX3boH6vM0d9KfQ9J8xZR29V3smYc6PXAGmWRf0MzslkJ?=
- =?us-ascii?Q?u0qq7MlIglaSePrld0YdOgjr9MDc9o1+bAQU7C42mdoNJRYNngj5bryoEswq?=
- =?us-ascii?Q?cgsp1Ccib14AumWOV01iDZUJz2r4qFif+7zrzRYG5WrKOsywktl+Uw8Puvl0?=
- =?us-ascii?Q?ShMiH1kMUFPn8iqjGmLf9k/d3agnTOw/UBoGcpmxszaSU9fknJ3w95Jfz7U5?=
- =?us-ascii?Q?TTPEZcRmVAxy0tj3M/bCzTUfckPrbP7AHpTBDrW57RU475FOqc19F+XXOWAd?=
- =?us-ascii?Q?JEQ9cCnxeVstCssaC/0CcQ5vqjgg8Br8nZmVkIZ6abWfX+5cQ8WMXSZ23Voc?=
- =?us-ascii?Q?OandTNTWpKWe5uMEfuBRLCnRXJ4yJO6HkAGzvZ1i?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6f24617-9e9e-4c35-ad92-08ddae9bc262
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 19:10:16.4171
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /ZX0YVpFKi2hAYnKUwAFlmqtckgzicV/2JB93W8O157uQFnayKycGmT8zvW8v8Lo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6637
+Content-Transfer-Encoding: 8bit
 
-On 18 Jun 2025, at 13:39, David Hildenbrand wrote:
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-> ... and factor the complete handling of movable_ops pages out.
-> Convert it similar to isolate_movable_ops_page().
->
-> While at it, convert the VM_BUG_ON_FOLIO() into a VM_WARN_ON_PAGE().
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/migrate.c | 37 ++++++++++++++++++++++++-------------
->  1 file changed, 24 insertions(+), 13 deletions(-)
->
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 6bbb455f8b593..32e77898f7d6c 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -133,12 +133,30 @@ bool isolate_movable_ops_page(struct page *page, =
-isolate_mode_t mode)
->  	return false;
->  }
->
-> -static void putback_movable_folio(struct folio *folio)
-> +/**
-> + * putback_movable_ops_page - putback an isolated movable_ops page
-> + * @page: The isolated page.
-> + *
-> + * Putback an isolated movable_ops page.
-> + *
-> + * After the page was putback, it might get freed instantly.
-> + */
-> +static void putback_movable_ops_page(struct page *page)
->  {
-> -	const struct movable_operations *mops =3D folio_movable_ops(folio);
-> -
-> -	mops->putback_page(&folio->page);
-> -	folio_clear_isolated(folio);
-> +	/*
-> +	 * TODO: these pages will not be folios in the future. All
-> +	 * folio dependencies will have to be removed.
-> +	 */
-> +	struct folio *folio =3D page_folio(page);
-> +
-> +	VM_WARN_ON_ONCE_PAGE(!PageIsolated(page), page);
-> +	folio_lock(folio);
-> +	/* If the page was released by it's owner, there is nothing to do. */=
+The generic/395 and generic/397 is capable of generating
+the oops is on line net/ceph/ceph_common.c:794 with
+KASAN enabled.
 
-> +	if (PageMovable(page))
-> +		page_movable_ops(page)->putback_page(page);
-> +	ClearPageIsolated(page);
-> +	folio_unlock(folio);
-> +	folio_put(folio);
+BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
+Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
 
-Why not use page version of lock, unlock, and put? Especially you are
-thinking about not using folio for these pages. Just a question,
-I am OK with current patch.
+CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ #1266
+Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+Call Trace:
+<TASK>
+dump_stack_lvl+0x57/0x80
+? have_mon_and_osd_map+0x56/0x70
+print_address_description.constprop.0+0x84/0x330
+? have_mon_and_osd_map+0x56/0x70
+print_report+0xe2/0x1e0
+? rcu_read_unlock_sched+0x60/0x80
+? kmem_cache_debug_flags+0xc/0x20
+? fixup_red_left+0x17/0x30
+? have_mon_and_osd_map+0x56/0x70
+kasan_report+0x8d/0xc0
+? have_mon_and_osd_map+0x56/0x70
+have_mon_and_osd_map+0x56/0x70
+ceph_open_session+0x182/0x290
+? __pfx_ceph_open_session+0x10/0x10
+? __init_swait_queue_head+0x8d/0xa0
+? __pfx_autoremove_wake_function+0x10/0x10
+? shrinker_register+0xdd/0xf0
+ceph_get_tree+0x333/0x680
+vfs_get_tree+0x49/0x180
+do_new_mount+0x1a3/0x2d0
+? __pfx_do_new_mount+0x10/0x10
+? security_capable+0x39/0x70
+path_mount+0x6dd/0x730
+? __pfx_path_mount+0x10/0x10
+? kmem_cache_free+0x1e5/0x270
+? user_path_at+0x48/0x60
+do_mount+0x99/0xe0
+? __pfx_do_mount+0x10/0x10
+? lock_release+0x155/0x190
+__do_sys_mount+0x141/0x180
+do_syscall_64+0x9f/0x100
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f01b1b14f3e
+Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
+RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
+RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
+RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
+R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
+</TASK>
 
->  }
->
->  /*
-> @@ -166,14 +184,7 @@ void putback_movable_pages(struct list_head *l)
->  		 * have PAGE_MAPPING_MOVABLE.
->  		 */
->  		if (unlikely(__folio_test_movable(folio))) {
-> -			VM_BUG_ON_FOLIO(!folio_test_isolated(folio), folio);
-> -			folio_lock(folio);
-> -			if (folio_test_movable(folio))
-> -				putback_movable_folio(folio);
-> -			else
-> -				folio_clear_isolated(folio);
-> -			folio_unlock(folio);
-> -			folio_put(folio);
-> +			putback_movable_ops_page(&folio->page);
->  		} else {
->  			node_stat_mod_folio(folio, NR_ISOLATED_ANON +
->  					folio_is_file_lru(folio), -folio_nr_pages(folio));
-> -- =
+Allocated by task 13305:
+stack_trace_save+0x8c/0xc0
+kasan_save_stack+0x1e/0x40
+kasan_save_track+0x10/0x30
+__kasan_kmalloc+0x3a/0x50
+__kmalloc_noprof+0x247/0x290
+ceph_osdmap_alloc+0x16/0x130
+ceph_osdc_init+0x27a/0x4c0
+ceph_create_client+0x153/0x190
+create_fs_client+0x50/0x2a0
+ceph_get_tree+0xff/0x680
+vfs_get_tree+0x49/0x180
+do_new_mount+0x1a3/0x2d0
+path_mount+0x6dd/0x730
+do_mount+0x99/0xe0
+__do_sys_mount+0x141/0x180
+do_syscall_64+0x9f/0x100
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-> 2.49.0
+Freed by task 9475:
+stack_trace_save+0x8c/0xc0
+kasan_save_stack+0x1e/0x40
+kasan_save_track+0x10/0x30
+kasan_save_free_info+0x3b/0x50
+__kasan_slab_free+0x18/0x30
+kfree+0x212/0x290
+handle_one_map+0x23c/0x3b0
+ceph_osdc_handle_map+0x3c9/0x590
+mon_dispatch+0x655/0x6f0
+ceph_con_process_message+0xc3/0xe0
+ceph_con_v1_try_read+0x614/0x760
+ceph_con_workfn+0x2de/0x650
+process_one_work+0x486/0x7c0
+process_scheduled_works+0x73/0x90
+worker_thread+0x1c8/0x2a0
+kthread+0x2ec/0x300
+ret_from_fork+0x24/0x40
+ret_from_fork_asm+0x1a/0x30
 
-Acked-by: Zi Yan <ziy@nvidia.com>
+The buggy address belongs to the object at ffff88811012d800
+which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 16 bytes inside of
+freed 512-byte region [ffff88811012d800, ffff88811012da00)
 
-Best Regards,
-Yan, Zi
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11012c
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x200000000000040(head|node=0|zone=2)
+page_type: f5(slab)
+raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
+head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+
+    ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+
+^
+ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb ==================================================================
+Disabling lock debugging due to kernel taint
+libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+libceph: mon0 (1)90.155.74.19:6789 session established
+libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+
+We have such scenario:
+
+Thread 1:
+void ceph_osdmap_destroy(...) {
+    <skipped>
+    kfree(map);
+}
+Thread 1 sleep...
+
+Thread 2:
+static bool have_mon_and_osd_map(struct ceph_client *client) {
+    return client->monc.monmap && client->monc.monmap->epoch &&
+        client->osdc.osdmap && client->osdc.osdmap->epoch;
+}
+Thread 2 has oops...
+
+Thread 1 wake up:
+static int handle_one_map(...) {
+    <skipped>
+    osdc->osdmap = newmap;
+    <skipped>
+}
+
+This patch fixes the issue by means of locking
+client->osdc.lock and client->monc.mutex before
+the checking client->osdc.osdmap and
+client->monc.monmap in have_mon_and_osd_map() function.
+Patch adds locking in the ceph_osdc_stop()
+method during the destructruction of osdc->osdmap and
+assigning of NULL to the pointer. The lock is used
+in the ceph_monc_stop() during the freeing of monc->monmap
+and assigning NULL to the pointer too. The monmap_show()
+and osdmap_show() methods were reworked to prevent
+the potential race condition during the methods call.
+
+Reported-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ net/ceph/ceph_common.c | 34 +++++++++++++++++++++++++++++-----
+ net/ceph/debugfs.c     | 17 +++++++++++++----
+ net/ceph/mon_client.c  |  9 ++++++++-
+ net/ceph/osd_client.c  |  4 ++++
+ 4 files changed, 54 insertions(+), 10 deletions(-)
+
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index 4c6441536d55..a28b29c763ca 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+  */
+ static bool have_mon_and_osd_map(struct ceph_client *client)
+ {
+-	return client->monc.monmap && client->monc.monmap->epoch &&
+-	       client->osdc.osdmap && client->osdc.osdmap->epoch;
++	bool have_mon_map = false;
++	bool have_osd_map = false;
++
++	mutex_lock(&client->monc.mutex);
++	have_mon_map = client->monc.monmap && client->monc.monmap->epoch;
++	mutex_unlock(&client->monc.mutex);
++
++	down_read(&client->osdc.lock);
++	have_osd_map = client->osdc.osdmap && client->osdc.osdmap->epoch;
++	up_read(&client->osdc.lock);
++
++	return have_mon_map && have_osd_map;
+ }
+ 
+ /*
+@@ -813,9 +823,23 @@ int __ceph_open_session(struct ceph_client *client, unsigned long started)
+ 
+ 		/* wait */
+ 		dout("mount waiting for mon_map\n");
+-		err = wait_event_interruptible_timeout(client->auth_wq,
+-			have_mon_and_osd_map(client) || (client->auth_err < 0),
+-			ceph_timeout_jiffies(timeout));
++
++		DEFINE_WAIT_FUNC(wait, woken_wake_function);
++
++		add_wait_queue(&client->auth_wq, &wait);
++
++		while (!(have_mon_and_osd_map(client) ||
++					(client->auth_err < 0))) {
++			if (signal_pending(current)) {
++				err = -ERESTARTSYS;
++				break;
++			}
++			wait_woken(&wait, TASK_INTERRUPTIBLE,
++				   ceph_timeout_jiffies(timeout));
++		}
++
++		remove_wait_queue(&client->auth_wq, &wait);
++
+ 		if (err < 0)
+ 			return err;
+ 		if (client->auth_err < 0)
+diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+index 2110439f8a24..7b45c169a859 100644
+--- a/net/ceph/debugfs.c
++++ b/net/ceph/debugfs.c
+@@ -36,8 +36,10 @@ static int monmap_show(struct seq_file *s, void *p)
+ 	int i;
+ 	struct ceph_client *client = s->private;
+ 
++	mutex_lock(&client->monc.mutex);
++
+ 	if (client->monc.monmap == NULL)
+-		return 0;
++		goto out_unlock;
+ 
+ 	seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
+ 	for (i = 0; i < client->monc.monmap->num_mon; i++) {
+@@ -48,6 +50,10 @@ static int monmap_show(struct seq_file *s, void *p)
+ 			   ENTITY_NAME(inst->name),
+ 			   ceph_pr_addr(&inst->addr));
+ 	}
++
++out_unlock:
++	mutex_unlock(&client->monc.mutex);
++
+ 	return 0;
+ }
+ 
+@@ -56,13 +62,15 @@ static int osdmap_show(struct seq_file *s, void *p)
+ 	int i;
+ 	struct ceph_client *client = s->private;
+ 	struct ceph_osd_client *osdc = &client->osdc;
+-	struct ceph_osdmap *map = osdc->osdmap;
++	struct ceph_osdmap *map = NULL;
+ 	struct rb_node *n;
+ 
++	down_read(&osdc->lock);
++
++	map = osdc->osdmap;
+ 	if (map == NULL)
+-		return 0;
++		goto out_unlock;
+ 
+-	down_read(&osdc->lock);
+ 	seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
+ 			osdc->epoch_barrier, map->flags);
+ 
+@@ -131,6 +139,7 @@ static int osdmap_show(struct seq_file *s, void *p)
+ 		seq_printf(s, "]\n");
+ 	}
+ 
++out_unlock:
+ 	up_read(&osdc->lock);
+ 	return 0;
+ }
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index ab66b599ac47..b299e5bbddb1 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -1232,6 +1232,7 @@ int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl)
+ 	ceph_auth_destroy(monc->auth);
+ out_monmap:
+ 	kfree(monc->monmap);
++	monc->monmap = NULL;
+ out:
+ 	return err;
+ }
+@@ -1239,6 +1240,8 @@ EXPORT_SYMBOL(ceph_monc_init);
+ 
+ void ceph_monc_stop(struct ceph_mon_client *monc)
+ {
++	struct ceph_monmap *old_monmap;
++
+ 	dout("stop\n");
+ 
+ 	mutex_lock(&monc->mutex);
+@@ -1266,7 +1269,11 @@ void ceph_monc_stop(struct ceph_mon_client *monc)
+ 	ceph_msg_put(monc->m_subscribe);
+ 	ceph_msg_put(monc->m_subscribe_ack);
+ 
+-	kfree(monc->monmap);
++	mutex_lock(&monc->mutex);
++	old_monmap = monc->monmap;
++	monc->monmap = NULL;
++	mutex_unlock(&monc->mutex);
++	kfree(old_monmap);
+ }
+ EXPORT_SYMBOL(ceph_monc_stop);
+ 
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 6664ea73ccf8..7f84db538868 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -5255,6 +5255,7 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
+ 	mempool_destroy(osdc->req_mempool);
+ out_map:
+ 	ceph_osdmap_destroy(osdc->osdmap);
++	osdc->osdmap = NULL;
+ out:
+ 	return err;
+ }
+@@ -5283,10 +5284,13 @@ void ceph_osdc_stop(struct ceph_osd_client *osdc)
+ 	WARN_ON(atomic_read(&osdc->num_requests));
+ 	WARN_ON(atomic_read(&osdc->num_homeless));
+ 
++	down_write(&osdc->lock);
+ 	ceph_osdmap_destroy(osdc->osdmap);
++	osdc->osdmap = NULL;
+ 	mempool_destroy(osdc->req_mempool);
+ 	ceph_msgpool_destroy(&osdc->msgpool_op);
+ 	ceph_msgpool_destroy(&osdc->msgpool_op_reply);
++	up_write(&osdc->lock);
+ }
+ 
+ int osd_req_op_copy_from_init(struct ceph_osd_request *req,
+-- 
+2.49.0
+
 
