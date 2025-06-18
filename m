@@ -1,108 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-52046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFBDADF0C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 17:10:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66483ADF0D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 17:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 532523B0D1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 15:09:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC1644A0E69
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 15:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337A12EE980;
-	Wed, 18 Jun 2025 15:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1342EF29B;
+	Wed, 18 Jun 2025 15:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OprzOL3a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/BFOemFf";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OprzOL3a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/BFOemFf"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="hXnkgei+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B392EE973
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 15:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7582EE987
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 15:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750259364; cv=none; b=REV1NtDP7v+iCcbrsvu3FPfLKMFUSHjOavNX+STcHw+Pa8GV4+gYzzojoXUjwl4qXwtB4y0LhnjHckIso+6ObyNnrwZE3891OImTTKFASTXZeQrrYlTmM2o/reClqVAbEKVpVrxcGleFZ4w8/HkcHdZLty/Jsq/F6J7OcVj+EbA=
+	t=1750259535; cv=none; b=Vwss1L5FQn5UsJiMD3fr0Tx/mbBO103SKUQFycnDGTWq9MfKV74sx7GMKpx9ouwJvzTmIXDF1FptRBNr3+wAv7oDqLDRvdlE4v0yJuEY2KmZmyFU02WfvSyrZ2YZGxbltrkxyEs//x78YasDVtPeDQnI7zY7nWpJC2AcyXQAQdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750259364; c=relaxed/simple;
-	bh=14NkrdCvY4Q+niLTtoWL/AKOSwBfwwX+l9rdMrcK1To=;
+	s=arc-20240116; t=1750259535; c=relaxed/simple;
+	bh=S9CRGFxZrsWQiCny4A4jtEs+ZyqisFVOoxUZS4pQsAE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X/10SYGN6u2GYTYElny2J+PjmO6SkVHwyn2R/byglfg5R2fM1Xt0p+/28pses3jA6my0d9DrDFaxKgkbCuqnmRDpAxHS6oKGZiGVdkWMyLiyDQb7k0FALZV2/3riaBjlpoie31NmPaP/SeJEOqZFFmU8azEDpWV9KDf8IZSFpH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OprzOL3a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/BFOemFf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OprzOL3a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/BFOemFf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A26A71F7BD;
-	Wed, 18 Jun 2025 15:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750259360; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vh+iX7MhwALae2lZDksDfr4ypQNbatZuhDTjeHvZ7Ag=;
-	b=OprzOL3aQabJ3cVXBphetiBXANxXnQtDkBqiKxuqa+kk5vrRjX1VH/nf7iIiR6/J35y9MD
-	NG2zHs/N1Ds3/ST9uuXRECGajFGKQysWbbc7/OJhonOk66+YP9D/NvZRNyQwEGoLPSuBA5
-	Z+fzz21HewgvQieAVsm+oKUCUAKsayg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750259360;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vh+iX7MhwALae2lZDksDfr4ypQNbatZuhDTjeHvZ7Ag=;
-	b=/BFOemFfOT2i+ydDSEaQ0hN2f/93EctAZZz39XCDvf2nipTh+aFWmdIujpwu5LsHS5d/lt
-	YGXt0G2bZILwMJAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=OprzOL3a;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="/BFOemFf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750259360; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vh+iX7MhwALae2lZDksDfr4ypQNbatZuhDTjeHvZ7Ag=;
-	b=OprzOL3aQabJ3cVXBphetiBXANxXnQtDkBqiKxuqa+kk5vrRjX1VH/nf7iIiR6/J35y9MD
-	NG2zHs/N1Ds3/ST9uuXRECGajFGKQysWbbc7/OJhonOk66+YP9D/NvZRNyQwEGoLPSuBA5
-	Z+fzz21HewgvQieAVsm+oKUCUAKsayg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750259360;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vh+iX7MhwALae2lZDksDfr4ypQNbatZuhDTjeHvZ7Ag=;
-	b=/BFOemFfOT2i+ydDSEaQ0hN2f/93EctAZZz39XCDvf2nipTh+aFWmdIujpwu5LsHS5d/lt
-	YGXt0G2bZILwMJAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9829913721;
-	Wed, 18 Jun 2025 15:09:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zrkgJaDWUmguCwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 18 Jun 2025 15:09:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 077B6A09DC; Wed, 18 Jun 2025 17:09:19 +0200 (CEST)
-Date: Wed, 18 Jun 2025 17:09:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Parav Pandit <parav@nvidia.com>
-Cc: Jan Kara <jack@suse.cz>, 
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: warning on flushing page cache on block device removal
-Message-ID: <vwgktqvzekzi6wjlxwzuumxvl4sxbfrtzzd2ltbvlfuqtmpkv6@xvgvey56l76z>
-References: <CY8PR12MB7195CF4EB5642AC32A870A08DC9BA@CY8PR12MB7195.namprd12.prod.outlook.com>
- <2r4izyzcjxq4ors3u2b6tt4dv4rst4c4exfzhaejrda3jq4nrv@dffea3h4gyaq>
- <CY8PR12MB7195BB3A19DAB9584DD2BC84DC64A@CY8PR12MB7195.namprd12.prod.outlook.com>
- <nj4euycpechbg5lz4wo6s36di4u45anbdik4fec2ofolopknzs@imgrmwi2ofeh>
- <CY8PR12MB7195241146E429EE867BFAF5DC64A@CY8PR12MB7195.namprd12.prod.outlook.com>
- <pkstcm5x54ie466gce7ryaqd6lf767p6r4iin2ufby3swe46sg@3usmpixyeniq>
- <CY8PR12MB7195BADB223A5660E2D029C4DC64A@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CY8PR12MB719567D0A9EAE47A41EE3AC4DC6DA@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CY8PR12MB71955E93B47608497B4504FEDC72A@CY8PR12MB7195.namprd12.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pDU7Furn19ERUVZGs2dpgtEYQNCQvQAVzD16lzjA0PKDX453LzdpWXHotgLVlD0mTpjQGxnu1X5yV2De3w94NMm9gmodoWvAe/8OG2nl736p39tCyShX49FZTONhTdc4NNmlHq4oPiO5H9oT+Zntxy1+jaGzwvs5o6T+2PYlik0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=hXnkgei+; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6face367320so68568646d6.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 08:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1750259531; x=1750864331; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8w7ovcA+eQ/2b8rTRZRntXptSXxd0DShnhC4amsa/B0=;
+        b=hXnkgei+GvAnXgvPWlRXZmB61e4NSw3VNV7hgtaLxE37zsDxFdKtJ/JVtovewvFlxP
+         BRigJGwouWNb/jP/l5rLf6wklgPEEtMX9ykrmBG8tArz+bONfw1mrWhNYGLV9tdhK17h
+         QMdRvlVoIAy+mnhBaSseAQhT7y4WICxcEY4Zt3drIDPdh/Grd/Fk8tFRPEL0UcHcRWug
+         QO7j1LyEhOfWZICyHdg3sqcsZVzOzj4lzY+RT6eA4BKvPh7Sus3QQPCOsjOue5nmHGje
+         e5mGy9ggdOQg0cQlN+wwwAtOaTW197HmFDXjOCmWVNrbLCdYKO8gXYtCHMZ+0K7jLewd
+         ZDPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750259531; x=1750864331;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8w7ovcA+eQ/2b8rTRZRntXptSXxd0DShnhC4amsa/B0=;
+        b=Db73tfhztvmNPke9KnyUHUxzMThy5m9z7bbkm2gDHwmNKHFlvJ4aDZND7PP6cB4H8B
+         J/EypbktxuJNNXq0M1mJq+d02IXTPwapyHkvOnhJYDGLc+/8l9sVdR8J/ECfWgGClMnO
+         e9LnHU1UnKSV6bH1xZL8GQYi/i4icBB0iSNv5x8rTsckZ8Ld24GiTtcIGpr7h1QgZDhg
+         kLDf/Q2EYBYEYxAP1EQB5CqH90leOJIOfcsxCq8TGlZa0Ah3j+eq3iHdPBqFk5XHB24s
+         ti1JosoARz0Gj78Ukpqcpy/zuuQ9jUazY70KzNfZEy13OFQiUDIF/0+urH3C/jfK95ce
+         YqQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJzOAp9hIIyCtgqZbg4h7gPVjPdlCpghv2/RPN34I2dIqolDHxx/H5N97Pw0j0LGISS3+8TE0SKFGpaTKL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/y1QKJlN6RALTILTWz6Awi0fr5MFOJBrFQQJ27GKL4NvYHVDp
+	GPJKGndLjOFHjJyR/Lu2QniEt3ch7/lHHdBJQRDWX7pMrqAA2wIg3GHoqktmN1XhpWo=
+X-Gm-Gg: ASbGnctjZcuuQ/K3NzMJHVkwHrDTflHFzPzdFk6rOj03NsVZm2gIWhSvV9DNZ2+o9ps
+	pY4zWxFk393OK6QciufYlD7tkybu0KPjxaYR3jtHW+Bu6E7DWsuuQwGVDDKqMQi3bEb1Fuh/tnV
+	W5t6MCwPqTRTBad8PnZrx3vlOIetqcJNoCUxC35pJC23Cga2HivgW2meTgiO1nHxQDcoaIqfHs0
+	ecoCAoF1vgDM/QuMWCbd7JTHFRpyBI7xXberb/OH+sUP7K2fwlEo6v6fvPJ1VKebVG0rn4clnU/
+	AVV9eKBFEoYoQlcRjJ2otL9gZXRZRTvWG27BYPNh5EdAsGp0oBE1HDOMAepHfOM7J1Qq
+X-Google-Smtp-Source: AGHT+IHofhP9BiiWq9pfl7Z5RgEudETJ5GYEen3cpQ0dOiuu8S3eCNtXQb4YOLf1G9jX/1/pyfy2rg==
+X-Received: by 2002:a05:6214:570d:b0:6e8:fbb7:6760 with SMTP id 6a1803df08f44-6fb47725d95mr260081446d6.1.1750259530934;
+        Wed, 18 Jun 2025 08:12:10 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F ([2620:10d:c091:400::5:cf64])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb4cca79bcsm45456016d6.6.2025.06.18.08.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 08:12:10 -0700 (PDT)
+Date: Wed, 18 Jun 2025 10:12:06 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Shivank Garg <shivankg@amd.com>
+Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz,
+	willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+	pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
+	tabba@google.com, vannapurve@google.com, chao.gao@intel.com,
+	bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com,
+	jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+	jack@suse.cz, rppt@kernel.org, hch@infradead.org,
+	cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
+	roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+	kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
+	apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
+	ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
+	gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
+	papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
+	quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Subject: Re: [RFC PATCH v8 4/7] mm/mempolicy: Export memory policy symbols
+Message-ID: <aFLXRtCDfoNzQym6@gourry-fedora-PF4VCD3F>
+References: <20250618112935.7629-1-shivankg@amd.com>
+ <20250618112935.7629-5-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -111,204 +110,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CY8PR12MB71955E93B47608497B4504FEDC72A@CY8PR12MB7195.namprd12.prod.outlook.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: A26A71F7BD
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+In-Reply-To: <20250618112935.7629-5-shivankg@amd.com>
 
-On Wed 18-06-25 09:27:47, Parav Pandit wrote:
-> Hi Jan and others,
+On Wed, Jun 18, 2025 at 11:29:32AM +0000, Shivank Garg wrote:
+> KVM guest_memfd wants to implement support for NUMA policies just like
+> shmem already does using the shared policy infrastructure. As
+> guest_memfd currently resides in KVM module code, we have to export the
+> relevant symbols.
 > 
-> > From: Parav Pandit
-> > Sent: 03 June 2025 07:03 PM
-> > To: Jan Kara <jack@suse.cz>
-> > Cc: linux-block@vger.kernel.org; linux-fsdevel@vger.kernel.org
-> > Subject: RE: warning on flushing page cache on block device removal
-> > 
-> > Hi Jan,
-> > 
-> > > From: Parav Pandit <parav@nvidia.com>
-> > > Sent: Tuesday, May 27, 2025 7:55 PM
-> > >
-> > >
-> > > > From: Jan Kara <jack@suse.cz>
-> > > > Sent: Tuesday, May 27, 2025 7:51 PM
-> > > >
-> > > > On Tue 27-05-25 12:07:20, Parav Pandit wrote:
-> > > > > > From: Jan Kara <jack@suse.cz>
-> > > > > > Sent: Tuesday, May 27, 2025 5:27 PM
-> > > > > >
-> > > > > > On Tue 27-05-25 11:00:56, Parav Pandit wrote:
-> > > > > > > > From: Jan Kara <jack@suse.cz>
-> > > > > > > > Sent: Monday, May 26, 2025 10:09 PM
-> > > > > > > >
-> > > > > > > > Hello!
-> > > > > > > >
-> > > > > > > > On Sat 24-05-25 05:56:55, Parav Pandit wrote:
-> > > > > > > > > I am running a basic test of block device driver unbind,
-> > > > > > > > > bind while the fio is running random write IOs with
-> > > > > > > > > direct=0.  The test hits the WARN_ON assert on:
-> > > > > > > > >
-> > > > > > > > > void pagecache_isize_extended(struct inode *inode, loff_t
-> > > > > > > > > from, loff_t
-> > > > > > > > > to) {
-> > > > > > > > >         int bsize = i_blocksize(inode);
-> > > > > > > > >         loff_t rounded_from;
-> > > > > > > > >         struct folio *folio;
-> > > > > > > > >
-> > > > > > > > >         WARN_ON(to > inode->i_size);
-> > > > > > > > >
-> > > > > > > > > This is because when the block device is removed during
-> > > > > > > > > driver unbind, the driver flow is,
-> > > > > > > > >
-> > > > > > > > > del_gendisk()
-> > > > > > > > >     __blk_mark_disk_dead()
-> > > > > > > > >             set_capacity((disk, 0);
-> > > > > > > > >                 bdev_set_nr_sectors()
-> > > > > > > > >                     i_size_write() -> This will set the
-> > > > > > > > > inode's isize to 0, while the
-> > > > > > > > page cache is yet to be flushed.
-> > > > > > > > >
-> > > > > > > > > Below is the kernel call trace.
-> > > > > > > > >
-> > > > > > > > > Can someone help to identify, where should be the fix?
-> > > > > > > > > Should block layer to not set the capacity to 0?
-> > > > > > > > > Or page catch to overcome this dynamic changing of the size?
-> > > > > > > > > Or?
-> > > > > > > >
-> > > > > > > > After thinking about this the proper fix would be for
-> > > > > > > > i_size_write() to happen under i_rwsem because the change in
-> > > > > > > > the middle of the write is what's confusing the iomap code.
-> > > > > > > > I smell some deadlock potential here but it's perhaps worth
-> > > > > > > > trying :)
-> > > > > > > >
-> > > > > > > Without it, I gave a quick try with inode_lock() unlock() in
-> > > > > > > i_size_write() and initramfs level it was stuck.  I am yet to
-> > > > > > > try with LOCKDEP.
-> > > > > >
-> > > > > > You definitely cannot put inode_lock() into i_size_write().
-> > > > > > i_size_write() is expected to be called under inode_lock. And
-> > > > > > bdev_set_nr_sectors() is breaking this rule by not holding it.
-> > > > > > So what you can try is to do
-> > > > > > inode_lock() in bdev_set_nr_sectors() instead of grabbing bd_size_lock.
-> > > > > >
-> > 
-> > I replaced the bd_size_lock with inode_lock().
-> > Was unable to reproduce the issue yet with the fix.
-> > 
-> > However, it right away breaks the Atari floppy driver who invokes
-> > set_capacity() in queue_rq() at [1]. !!
-> > 
-> > [1]
-> > https://elixir.bootlin.com/linux/v6.15/source/drivers/block/ataflop.c#L1544
-> > 
-> > With my limited knowledge I find the fix risky as bottom block layer is invoking
-> > upper FS layer inode lock.
-> > I suspect it may lead to A->B, B->A locking in some path.
-> > 
-> > Other than Atari floppy driver, I didn't find any other offending driver, but its
-> > hard to say, its safe from A->B, B->A deadlock.
-> > A = inode lock
-> > B = block driver level lock
-> > 
-> > > > > Ok. will try this.
-> > > > > I am off for few days on travel, so earliest I can do is on Sunday.
-> > > > >
-> > > > > > > I was thinking, can the existing sequence lock be used for
-> > > > > > > 64-bit case as well?
-> > > > > >
-> > > > > > The sequence lock is about updating inode->i_size value itself.
-> > > > > > But we need much larger scale protection here - we need to make
-> > > > > > sure write to the block device is not happening while the device
-> > > > > > size changes. And that's what inode_lock is usually used for.
-> > > > > >
-> > > > > Other option to explore (with my limited knowledge) is, When the
-> > > > > block device is removed, not to update the size,
-> > > > >
-> > > > > Because queue dying flag and other barriers are placed to prevent
-> > > > > the IOs
-> > > > entering lower layer or to fail them.
-> > > > > Can that be the direction to fix?
-> > > >
-> > > > Well, that's definitely one line of defense and it's enough for
-> > > > reads but for writes you don't want them to accumulate in the page
-> > > > cache (and thus consume memory) when you know you have no way to
-> > > > write
-> > > them
-> > > > out. So there needs to be some way for buffered writes to recognize
-> > > > the backing store is gone and stop them before dirtying pages.
-> > > > Currently that's achieved by reducing i_size, we can think of other
-> > > > mechanisms but reducing i_size is kind of elegant if we can
-> > > > synchronize that
-> > > properly...
-> > > >
-> > > The block device notifies the bio layer by calling
-> > > blk_queue_flag_set(QUEUE_FLAG_DYING, disk->queue); Maybe we can
-> > come
-> > > up with notification method that updates some flag to page cache layer
-> > > to drop buffered writes to floor.
-> > >
-> > > Or other direction to explore, if the WAR_ON() is still valid, as it
-> > > can change anytime?
-> > >
+> In the future, guest_memfd might be moved to core-mm, at which point the
+> symbols no longer would have to be exported. When/if that happens is
+> still unclear.
 > 
-> Is below WARN_ON() still valid, given the disk size can change any time?
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> ---
+>  mm/mempolicy.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> void pagecache_isize_extended(struct inode *inode, loff_t from, loff_t to) {
->         int bsize = i_blocksize(inode);
->         loff_t rounded_from;
->         struct folio *folio;
-> 
->         WARN_ON(to > inode->i_size);
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index 3b1dfd08338b..d98243cdf090 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -354,6 +354,7 @@ struct mempolicy *get_task_policy(struct task_struct *p)
+>  
+>  	return &default_policy;
+>  }
+> +EXPORT_SYMBOL_GPL(get_task_policy);
+>  
+>  static const struct mempolicy_operations {
+>  	int (*create)(struct mempolicy *pol, const nodemask_t *nodes);
+> @@ -487,6 +488,7 @@ void __mpol_put(struct mempolicy *pol)
+>  		return;
+>  	kmem_cache_free(policy_cache, pol);
+>  }
+> +EXPORT_SYMBOL_GPL(__mpol_put);
+>  
 
-Yes, the WARN_ON is valid. It complains that the zeroing of tail pages on
-extension of the file didn't do it's work properly. This is important for
-regular files. For block devices the situation is different as they cannot
-really be extended by writes so this code shouldn't ever trigger (but it
-does because the device invalidation trims i_size to 0 in the middle of the
-write).
+I'm concerned that get_task_policy doesn't actually increment the policy
+refcount - and mpol_cond_put only decrements the refcount for shared
+policies (vma policies) - while __mpol_put decrements it unconditionally.
 
-One relatively easy workaround would be to teach iomap_write_iter() to not
-touch i_size (and call pagecache_isize_extended()) for S_ISBLK inodes. That
-will at least fix the immediate problems you can hit without too much pain
-but the underlying problem that block device code should be holding i_rwsem
-when modifying i_size remains and can bite us in other places...
+If you look at how get_task_policy is used internally to mempolicy,
+you'll find that it either completes the operation in the context of the
+task lock (allocation time) or it calls mpol_get afterwards.
 
-								Honza
+Exporting this as-is creates a triping hazard, if only because get/put
+naming implies reference counting.
 
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+~Gregory
 
