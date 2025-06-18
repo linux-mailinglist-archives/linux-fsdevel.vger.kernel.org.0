@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-52118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4C2ADF815
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 22:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2ABADF817
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 22:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4792F3B0202
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 20:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2798E1892EA4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 20:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DCA21C19E;
-	Wed, 18 Jun 2025 20:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66B121CFF4;
+	Wed, 18 Jun 2025 20:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jz5ATQ4X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="am33uwK8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939071B78F3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 20:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131011B78F3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 20:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750280031; cv=none; b=H/DDGtGiNPAbHVdERJyqyXrJfKRUG2foW8n2CdghMqZ0xoOcuE9ye7uHcibuO+gJoRC6TTrdrUzqK2hfnGrE3APbIEfyakI36hFnEyPNBiWHCiDADMveAKdXhcwlgOZoxC576+SvZQwzLWwuV94uqibFO9wwOB6zDrhHKuPiKps=
+	t=1750280034; cv=none; b=U+47+EM0oHx2tPO6UFbUq/alZxfhB4Si3n/ieoq1fIOcxchY28kOiaJPzSo7Thju8cXQMwuGeGOozuEZv/O6yQdVShwN6XaYS9Pza6DoTYL5q1AgudTBIn/IaVIZjXhskIr5g4vjvVBBQpjJFYO/qqc3bPG96q5pDje4WWEEFU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750280031; c=relaxed/simple;
-	bh=rYd+MHZwVZIFLvMiQYDajUViJjSxzeUH6BBrlU/diZ4=;
+	s=arc-20240116; t=1750280034; c=relaxed/simple;
+	bh=S3KQgxjP8ukMLpt3/tkVFetgsJ+rIEWVjl61OyN601I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QG9dXOLzDmXnmAL8/tsN02ZiZor1blF7w27ZRXNltxrq4QBxTqGUle6Pqd1zIOKVWlhjfj7w8CEH8fgW7dWVN2DAMQjSDEQj6Wng/A4n3nYUiijA5/NwKH6O8JsseBcjLJBDkTAXkPgdJKfT7oU5EOXMBKmBqdPSN3VIujbO8aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jz5ATQ4X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16F01C4CEED;
-	Wed, 18 Jun 2025 20:53:48 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=YeKvbPCeF7oFco6kjgrsPGwspLq6HyUC+BG5O7ywrPlftWt3Ja1k9LhrBs5ijlBU70YCAz7LcXulQGauVB6eBptxcKbPEy1cPqT30hD7WErxVCTxRu//AbajUSroFUDnI+XUC0t2HRGbPc0Yhk3fueXv+QKYOwyKL731xA1UjYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=am33uwK8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A6EC4CEEF;
+	Wed, 18 Jun 2025 20:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750280031;
-	bh=rYd+MHZwVZIFLvMiQYDajUViJjSxzeUH6BBrlU/diZ4=;
+	s=k20201202; t=1750280033;
+	bh=S3KQgxjP8ukMLpt3/tkVFetgsJ+rIEWVjl61OyN601I=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jz5ATQ4X6TtidqlCO9+r7fGm5rMWsyvIU6WNOE0Iap1w741gelP/PIpZwtCHH8wgc
-	 4GXmpfLr1gleODZNAn/ViFhyilQB2BEiOIFIsiFM/CZRot0UnPxPuyb9x11C6m3JK5
-	 g1FIFpjoGSngoV27WkjqXJNIY9fAn6FrW1ky2y4Do4hTVASNuzX9Ok2A0vQZLUvevL
-	 3of++Wr2bp7eP6fkYcTKU7hZTJVkg84X18RwiSX8fJZTEJDAaaArSNp1RbC8GttUGs
-	 XNXZfWGJGKPYRskdMuHhOI77KzDERKnHXve5OeZ7ZG0PN0rACqhM/cisILBJo2FNyX
-	 nSM3jP1BNhWKg==
+	b=am33uwK8Hpv1t34lok9ky8c1jPwXTYcRBTdDT1TnPZSOlO5t+Zp0mnzucGnku7OmO
+	 xZChDWPriwSxxIagDqoXZO+Ko6HeD2dIlwLSPJDqCDg/PW7Ax1ZrEx+9kK5xbEtw0U
+	 3lP3/sLNjtPZLfPfGSTKZWFRSzETVyO9r9vVnAlcfp/8Zmmp9SmWlSElfAWO2g1foL
+	 s6iNMR39U+50s4t3CpDP6MVjdupVjr+YTW+AiiPyG+xRV46F+dRUee1sfr635QoR/Z
+	 aaIZ4y/Q1hio5X7XlVzJjzzFEM4b6lPXls7ez0YnLI1mmI6VbnBnjPr47L1DXPtfe4
+	 Zupp/CRIw9m1w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 18 Jun 2025 22:53:35 +0200
-Subject: [PATCH v2 01/16] pidfs: raise SB_I_NODEV and SB_I_NOEXEC
+Date: Wed, 18 Jun 2025 22:53:36 +0200
+Subject: [PATCH v2 02/16] libfs: massage path_from_stashed() to allow
+ custom stashing behavior
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-work-pidfs-persistent-v2-1-98f3456fd552@kernel.org>
+Message-Id: <20250618-work-pidfs-persistent-v2-2-98f3456fd552@kernel.org>
 References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org>
 In-Reply-To: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -63,40 +64,107 @@ Cc: Jann Horn <jannh@google.com>, Josef Bacik <josef@toxicpanda.com>,
  Christian Brauner <brauner@kernel.org>, 
  Alexander Mikhalitsyn <alexander@mihalicyn.com>
 X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=858; i=brauner@kernel.org;
- h=from:subject:message-id; bh=rYd+MHZwVZIFLvMiQYDajUViJjSxzeUH6BBrlU/diZ4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQEq0cYf1lZ8X65f8tk5pi9m2Rm7HgZuEhy0gVBM+a9R
- za6PVLf2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR49aMDIs5Nn9ZvPPqY+cS
- u31bo/SqgxKZrO7d617Lc6FjqVxwuREjw6x5VxumejoFrylP+2ghPM/8u80DxcXlE4r53X9McHP
- bzQEA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3222; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=S3KQgxjP8ukMLpt3/tkVFetgsJ+rIEWVjl61OyN601I=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQEq0ces2zmbjus2adRK/8nQFskvrrwfMmsmU+z2c0kz
+ yzPEJzfUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJEiZ0aGO5yuyWW2eiyNc3Lz
+ Tzr85Iq3iA1UYZjGnj7hood8YTgfI8MVhWm9/SY1kR7HBW8FLOSqeT6TtVzGWUxeIoXpam5cIhc A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Similar to commit 1ed95281c0c7 ("anon_inode: raise SB_I_NODEV and SB_I_NOEXEC"):
-it shouldn't be possible to execute pidfds via
-execveat(fd_anon_inode, "", NULL, NULL, AT_EMPTY_PATH)
-so raise SB_I_NOEXEC so that no one gets any creative ideas.
+* Add a callback to struct stashed_operations so it's possible to
+  implement custom behavior for pidfs and allow for it to return errors.
 
-Also raise SB_I_NODEV as we don't expect or support any devices on pidfs.
+* Teach stashed_dentry_get() to handle error pointers.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/pidfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/internal.h |  3 +++
+ fs/libfs.c    | 27 ++++++++++++++++++++-------
+ 2 files changed, 23 insertions(+), 7 deletions(-)
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index c1f0a067be40..ff2560b34ed1 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -891,6 +891,8 @@ static int pidfs_init_fs_context(struct fs_context *fc)
- 	if (!ctx)
- 		return -ENOMEM;
+diff --git a/fs/internal.h b/fs/internal.h
+index 393f6c5c24f6..22ba066d1dba 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -322,12 +322,15 @@ struct mnt_idmap *alloc_mnt_idmap(struct user_namespace *mnt_userns);
+ struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
+ void mnt_idmap_put(struct mnt_idmap *idmap);
+ struct stashed_operations {
++	struct dentry *(*stash_dentry)(struct dentry **stashed,
++				       struct dentry *dentry);
+ 	void (*put_data)(void *data);
+ 	int (*init_inode)(struct inode *inode, void *data);
+ };
+ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+ 		      struct path *path);
+ void stashed_dentry_prune(struct dentry *dentry);
++struct dentry *stash_dentry(struct dentry **stashed, struct dentry *dentry);
+ struct dentry *stashed_dentry_get(struct dentry **stashed);
+ /**
+  * path_mounted - check whether path is mounted
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 9ea0ecc325a8..3541e22c87b5 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -2128,6 +2128,8 @@ struct dentry *stashed_dentry_get(struct dentry **stashed)
+ 	dentry = rcu_dereference(*stashed);
+ 	if (!dentry)
+ 		return NULL;
++	if (IS_ERR(dentry))
++		return dentry;
+ 	if (!lockref_get_not_dead(&dentry->d_lockref))
+ 		return NULL;
+ 	return dentry;
+@@ -2176,8 +2178,7 @@ static struct dentry *prepare_anon_dentry(struct dentry **stashed,
+ 	return dentry;
+ }
  
-+	fc->s_iflags |= SB_I_NOEXEC;
-+	fc->s_iflags |= SB_I_NODEV;
- 	ctx->ops = &pidfs_sops;
- 	ctx->eops = &pidfs_export_operations;
- 	ctx->dops = &pidfs_dentry_operations;
+-static struct dentry *stash_dentry(struct dentry **stashed,
+-				   struct dentry *dentry)
++struct dentry *stash_dentry(struct dentry **stashed, struct dentry *dentry)
+ {
+ 	guard(rcu)();
+ 	for (;;) {
+@@ -2218,12 +2219,15 @@ static struct dentry *stash_dentry(struct dentry **stashed,
+ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+ 		      struct path *path)
+ {
+-	struct dentry *dentry;
++	struct dentry *dentry, *res;
+ 	const struct stashed_operations *sops = mnt->mnt_sb->s_fs_info;
+ 
+ 	/* See if dentry can be reused. */
+-	path->dentry = stashed_dentry_get(stashed);
+-	if (path->dentry) {
++	res = stashed_dentry_get(stashed);
++	if (IS_ERR(res))
++		return PTR_ERR(res);
++	if (res) {
++		path->dentry = res;
+ 		sops->put_data(data);
+ 		goto out_path;
+ 	}
+@@ -2234,8 +2238,17 @@ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+ 		return PTR_ERR(dentry);
+ 
+ 	/* Added a new dentry. @data is now owned by the filesystem. */
+-	path->dentry = stash_dentry(stashed, dentry);
+-	if (path->dentry != dentry)
++	if (sops->stash_dentry)
++		res = sops->stash_dentry(stashed, dentry);
++	else
++		res = stash_dentry(stashed, dentry);
++	if (IS_ERR(res)) {
++		dput(dentry);
++		return PTR_ERR(res);
++	}
++	path->dentry = res;
++	/* A dentry was reused. */
++	if (res != dentry)
+ 		dput(dentry);
+ 
+ out_path:
 
 -- 
 2.47.2
