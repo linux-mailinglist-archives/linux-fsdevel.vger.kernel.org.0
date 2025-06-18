@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-52004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C89ADE2C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 06:50:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD31BADE2D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 07:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDA1B3B8289
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 04:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 032F0189D36F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 05:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B6F1E572F;
-	Wed, 18 Jun 2025 04:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C7B1F4C85;
+	Wed, 18 Jun 2025 05:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aJtT/tv7"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gbjrNghd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D576C2F5335;
-	Wed, 18 Jun 2025 04:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2B22AD14;
+	Wed, 18 Jun 2025 05:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750222224; cv=none; b=adfQtik/w0OQG0+yjSLZF2/7VDWYGC3dsgPdiwhTtWBUW9IhDJoqbOX1Erv3i79H3K9HxxIB6qOfB+OV5xz6vA2luxPDPfX0Bjjlhjw7uLtWYtkZyt19es88TiQl0pLZxiHRmynEa//1ZENsC4nUieO8dLm21XA6tcvsk+GR4mA=
+	t=1750222925; cv=none; b=u6s0oTxHNlQphLpZRs26i6NyfqSLHXhp9kUL9PNEYvcn9azsPPC0oaxsTL2rAUx8SrcgQJj0CUdY6ut2y2XRypgVWRgfm9M9JH7Tymj0gG761YgxTc2qmxXm7ZzmsOxfihPotuquogeoY/UMPkFbVe1QK1vCCOlk9SxcUaT3vyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750222224; c=relaxed/simple;
-	bh=AmTtiMD6yE0jPOyHVPqZAQTx2+YEgvOS4EFS37eI394=;
+	s=arc-20240116; t=1750222925; c=relaxed/simple;
+	bh=7BMaVoYFIpb49CInRnrRacJqN0drhlg/3qU8w6fNkqg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CnRThTRA5vcNfHdHrlDmm/t5MTiDrQh89gPQWQ7uU2x2d0NdlTBMFiRDwix8+y6gb97unN8GYHlxjFNs8DA+3wtXavq7mMRs4hwWWBzAXAIRMeZULHrUAAfJHmC8cjr2CHQ3Iu6YnzgZFasr12pU/xpWUjr/JpLYs8ZoaVBdVag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aJtT/tv7; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=eoKn7JN8XhbklaxD8cV+yCp167Q3KCdcfTGPACzdBuu2YGQhEclkM0QTUo2TAUh0dpzjQGY4qgw3xVlQoLJVGiQIrAIPwd6AHHxjGOmlF6+OWpuTBwDbiBHCdjJLVMMeqHonjNgp57+82ZZTiqRtkyaNuAT7Z8kRohPUE5KtQ3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gbjrNghd; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ODPOLUlvf2qURExlUHFoxGYf/GepaVDBWLemGB5KzQg=; b=aJtT/tv7JViZp52Rwv4a57kxhj
-	IZhAE0UDRokQSHEsrfFxw80TXhXU41gT5fbCw8fzsyJhE/k+BvJ7JKS0gwVhj/wimJtgLOTgzyH8Y
-	xkPp/UXn+gGnpG9/R/dLka+cptbC/PDB7mBKyE7oWZFV1a84SfeO1mVNG8CmWewW3LITjxbr9URWC
-	1kRR+uFxL76xsnLa4vZ+OksgUN+e2yIJo+hIcFXOjPKIYK7H3HmPBzxYoePxd1KGjjyTztGpNh2xP
-	N/dBpN/4OF1ThQ/3jldFPSxnqPlPvmkBUBroCngQqmZ9g2ujc/JTw/HGEGHq9IQW4yPs3KZB47Slu
-	j9xe7o1w==;
+	bh=EIzXAoutPERb2KcFrdG9kd3CXke7qUGSorRKl3GVGyg=; b=gbjrNghdwxHQVkXqeSz1SthNcJ
+	s6dQpxuAcN1RmZagh0jvGDyUYyp9FT+0bWU2KY03pI4ImrNfpix/xFmGzFLg9ne/2poStWFE8UFcH
+	Wjdk9xlSYieaFnfx/xtg0hULEc5PxJyeQQixMUIBPuIoeUB0A+r9FzKshbkV7tNOrMjWU445fv15y
+	iSO8qZnrUWNqibfZCZSNopTMElFMjDY89lzj0JBYDLpHimtFEWUwQxY2lfos0ALVY/dKhfQC/A8xJ
+	HylRqBB/F/FX9JDITX50dYX7c+b7zl5KBSf+GwkcNmBRcvFigf9i3gbxQOpfl8L1NyHpWZlBF203c
+	lVBXn5FQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uRkka-00000005YCh-39gs;
-	Wed, 18 Jun 2025 04:50:16 +0000
-Date: Wed, 18 Jun 2025 05:50:16 +0100
+	id 1uRkvw-00000005gJ6-1xAH;
+	Wed, 18 Jun 2025 05:02:00 +0000
+Date: Wed, 18 Jun 2025 06:02:00 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Edward Adam Davis <eadavis@qq.com>
 Cc: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com,
@@ -53,9 +53,10 @@ Cc: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com,
 	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
 	syzkaller-bugs@googlegroups.com
 Subject: Re: [PATCH] fs: Prevent non-symlinks from entering pick link
-Message-ID: <20250618045016.GO1880847@ZenIV>
+Message-ID: <20250618050200.GP1880847@ZenIV>
 References: <685120d8.a70a0220.395abc.0204.GAE@google.com>
  <tencent_7FB38DB725848DA99213DDB35DBF195FCF07@qq.com>
+ <20250618045016.GO1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,37 +65,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_7FB38DB725848DA99213DDB35DBF195FCF07@qq.com>
+In-Reply-To: <20250618045016.GO1880847@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jun 18, 2025 at 11:30:48AM +0800, Edward Adam Davis wrote:
-> The reproducer uses a file0 on a ntfs3 file system with a corrupted i_link.
-> When renaming, the file0's inode is marked as a bad inode because the file
-> name cannot be deleted. However, before renaming, file0 is a directory.
-> After the renaming fails, it is marked as a bad inode, which makes it a
-> regular file. In any case, when opening it after creating a hard link,
-> pick_link() should not be entered because it is not a symbolic link from
-> beginning to end.
+On Wed, Jun 18, 2025 at 05:50:16AM +0100, Al Viro wrote:
+
+> NAK.  This is not the first time that garbage is suggested and no,
+> we are not going to paper over that shite in fs/namei.c.
 > 
-> Add a check on the symbolic link before entering pick_link() to avoid
-> triggering unknown exceptions when performing the i_link acquisition
-> operation on other types of files.
+> Not going to happen.
 > 
-> Reported-by: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=1aa90f0eb1fc3e77d969
-> Tested-by: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> You ARE NOT ALLOWED to call make_bad_inode() on a live inode, period.
+> Never, ever to be done.
+> 
+> There's a lot of assertions it violates and there's no chance in
+> hell to plaster each with that kind of checks.
+> 
+> Fix NTFS.  End of story.
 
-NAK.  This is not the first time that garbage is suggested and no,
-we are not going to paper over that shite in fs/namei.c.
+To elaborate a bit: if you look at the end of e.g. their attr_set_size(),
+you'll see
+out:
+        if (is_bad) {
+bad_inode:
+		_ntfs_bad_inode(&ni->vfs_inode);
+	}
+	return err;
+}
 
-Not going to happen.
+This is a bug.  So are similar places all over the place there.
+You are not supposed to use make_bad_inode() as a general-purpose
+"something went wrong, don't wanna see it anymore" tool.
 
-You ARE NOT ALLOWED to call make_bad_inode() on a live inode, period.
-Never, ever to be done.
-
-There's a lot of assertions it violates and there's no chance in
-hell to plaster each with that kind of checks.
-
-Fix NTFS.  End of story.
+And as long as it stays there, any fuzzing reports of ntfs are pretty
+much worthless - any of those places (easily located by grepping for
+_ntfs_bad_inode) can fuck the kernel up.  Once ntfs folks get around
+to saner error recovery, it would make sense to start looking into
+fuzzing that thing again.  Until then - nope.  Again, this is *NOT*
+going to be papered over in a random set of places (pretty certain
+to remain incomplete) in VFS.
 
