@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-52138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3F2ADF9D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 01:38:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B20ADF9D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 01:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92FC57A81E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 23:37:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC613BDDB0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 23:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A75F2EE96F;
-	Wed, 18 Jun 2025 23:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345362F19BE;
+	Wed, 18 Jun 2025 23:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="klAHhgdx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ybjnhxgl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EB328466C;
-	Wed, 18 Jun 2025 23:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8068628506B;
+	Wed, 18 Jun 2025 23:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750289880; cv=none; b=fiepiC3Gu/sN893f4U9CbuMElRFVTq829fA0fReP+Y5gqjPEv4IHq8+vR0GhYR0z/6FFYmoL1erSPEn/B7JOESGV3nxiPfH5lU1anGYJh9QwM2qOv20yxBHE7n6HvpnlbPV6heQDRj8WrRMZztZ9Tt04YZM53hRty0KrYw+FV8o=
+	t=1750289886; cv=none; b=Hn8ZSmHT5UwWTbqEelzepwbtwdxfJFng9O4MfgHIwyiAG9BUn+JHcfy3P9UwzXZUQK8l08KdXg90UGBxKe3i/GEQtqvfr5RdIDn3DJi7pTgR5cbMqISas8rNbLKWkp1qvNeglM/EyE4uBRqclgxg3L4TJKYv48FevKtEZ0XbNUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750289880; c=relaxed/simple;
-	bh=ZsxNKP/5L7kax4tFNOKGSX/EsEcy4YWBATqLLzfkmoI=;
+	s=arc-20240116; t=1750289886; c=relaxed/simple;
+	bh=BEJZRN76m+6IEQPpBHY905TwGMpPvyUC5d/zGM477GM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i5dNqNWBrpPsEmX/lBBORqOnyek7qPjUEGDYyzf9u+vCcdvlOuAiCnDgY5pykxXQGMBVGOMHBCeMEB5RL192QUaO76j1HSe5bm8EgBSrwDWuKQ2BZ7IodaY84qyWDFCd/b45fvJGnx4I7h1s8VTi5W1sUipKbGeAI5KnV7lu8FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=klAHhgdx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 476FCC4CEE7;
-	Wed, 18 Jun 2025 23:37:58 +0000 (UTC)
+	 MIME-Version; b=hBIw4DoArUQtRr2V50+2ptRd1inWNOiOQc6ubhP92X6eSsyDEmu4v4jc3b8ECC1O+Y1c+Wug3GDxNfGT2WVwGugttcAvp5+JIRn1awNGdv8whqXQkGw4KXNor1YcXTTbHmr8i060ToH8Vi7+qdqPR0cXBTjIi9xDPGkQwwFBtpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ybjnhxgl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F88C4CEE7;
+	Wed, 18 Jun 2025 23:38:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750289880;
-	bh=ZsxNKP/5L7kax4tFNOKGSX/EsEcy4YWBATqLLzfkmoI=;
+	s=k20201202; t=1750289886;
+	bh=BEJZRN76m+6IEQPpBHY905TwGMpPvyUC5d/zGM477GM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=klAHhgdx1mhHargsK8Gda2XXGuzU+NPLzSU++tI9EjnQTWy8sSe6Ay2LitA9ZpvSF
-	 +tRugWS7paLH/pa+XrZupYNJleWR87/1yIN/4b4S9oZPsDX5td9W4OztkRIDjVkb4n
-	 +XIxjlE5bmm54OpKGeOyAk45sMo9DXsF49uQXN/JH5tftF0iZXX0AFHhR9JYqf9H/e
-	 wH/J36sRFJVUi3BCnTV90cCIbWWAAj0lSmtr86AmlYbv3A0YFlKDjq6ptaUIv6aqs/
-	 d7qmrP4SL4UP5dhZPtPfQhn1yqeZg7Bn2YOfMJFYTVA15eLmDLtDklthIh0BZySeEz
-	 tweiWRcH8oXkA==
+	b=Ybjnhxgl6S4FzP8XrakM4Pq5QDHYuyAdLu/JGs8nDTFsHNTkE5DneuKuFow8jUFmH
+	 Ho9TZtHZwyLS1bajq8tO0UM3/3iZJ1X+j7jHJhD/pP0x/QX+444aoffZCwt7+2/An+
+	 a0OFx7mMQe/P81gzLkg0m/pez7LxATcFP+/MAuJLDUQ3yPylVtZePFwP0/EdVu13e1
+	 HmYNspkagu26CrWYB+BL0ZDycuOIEko8NyisNepGPSsEsCXDRyLZRLou1igdIOb3GF
+	 cj/MQR+R1IAdlHUNwohtIbQl9VZ8HWprxyQFf6gBChg1APZ7sEwBJ2tIwt++gdb3g5
+	 TNc2dfmo/n1ZA==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -62,9 +62,9 @@ Cc: kernel-team@meta.com,
 	tj@kernel.org,
 	daan.j.demeyer@gmail.com,
 	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 2/4] bpf: Introduce bpf_kernfs_read_xattr to read xattr of kernfs nodes
-Date: Wed, 18 Jun 2025 16:37:37 -0700
-Message-ID: <20250618233739.189106-3-song@kernel.org>
+Subject: [PATCH bpf-next 3/4] bpf: Mark cgroup_subsys_state->cgroup RCU safe
+Date: Wed, 18 Jun 2025 16:37:38 -0700
+Message-ID: <20250618233739.189106-4-song@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250618233739.189106-1-song@kernel.org>
 References: <20250618233739.189106-1-song@kernel.org>
@@ -76,82 +76,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-BPF programs, such as LSM and sched_ext, would benefit from tags on
-cgroups. One common practice to apply such tags is to set xattrs on
-cgroupfs files and folders.
-
-Introduce kfunc bpf_kernfs_read_xattr, which allows reading kernfs
-xattr under RCU read lock.
-
-Note that, we already have bpf_get_[file|dentry]_xattr. However, these
-two APIs are not ideal for reading cgroupfs xattrs, because:
-
-  1) These two APIs only works in sleepable contexts;
-  2) There is no kfunc that matches current cgroup to cgroupfs dentry.
+Mark struct cgroup_subsys_state->cgroup as safe under RCU read lock. This
+will enable accessing css->cgroup from a bpf css iterator.
 
 Signed-off-by: Song Liu <song@kernel.org>
 ---
- fs/bpf_fs_kfuncs.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ kernel/bpf/verifier.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 08412532db1b..7576dbc9b340 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -9,6 +9,7 @@
- #include <linux/fs.h>
- #include <linux/fsnotify.h>
- #include <linux/file.h>
-+#include <linux/kernfs.h>
- #include <linux/mm.h>
- #include <linux/xattr.h>
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 279a64933262..e2f53dc8766a 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -7058,6 +7058,10 @@ BTF_TYPE_SAFE_RCU(struct css_set) {
+ 	struct cgroup *dfl_cgrp;
+ };
  
-@@ -322,6 +323,37 @@ __bpf_kfunc int bpf_remove_dentry_xattr(struct dentry *dentry, const char *name_
- 	return ret;
++BTF_TYPE_SAFE_RCU(struct cgroup_subsys_state) {
++	struct cgroup *cgroup;
++};
++
+ /* RCU trusted: these fields are trusted in RCU CS and can be NULL */
+ BTF_TYPE_SAFE_RCU_OR_NULL(struct mm_struct) {
+ 	struct file __rcu *exe_file;
+@@ -7108,6 +7112,7 @@ static bool type_is_rcu(struct bpf_verifier_env *env,
+ 	BTF_TYPE_EMIT(BTF_TYPE_SAFE_RCU(struct task_struct));
+ 	BTF_TYPE_EMIT(BTF_TYPE_SAFE_RCU(struct cgroup));
+ 	BTF_TYPE_EMIT(BTF_TYPE_SAFE_RCU(struct css_set));
++	BTF_TYPE_EMIT(BTF_TYPE_SAFE_RCU(struct cgroup_subsys_state));
+ 
+ 	return btf_nested_type_is_trusted(&env->log, reg, field_name, btf_id, "__safe_rcu");
  }
- 
-+/**
-+ * bpf_kernfs_read_xattr - get xattr of a kernfs node
-+ * @kn: kernfs_node to get xattr from
-+ * @name__str: name of the xattr
-+ * @value_p: output buffer of the xattr value
-+ *
-+ * Get xattr *name__str* of *kn* and store the output in *value_ptr*.
-+ *
-+ * For security reasons, only *name__str* with prefix "user." is allowed.
-+ *
-+ * Return: length of the xattr value on success, a negative value on error.
-+ */
-+__bpf_kfunc int bpf_kernfs_read_xattr(struct kernfs_node *kn, const char *name__str,
-+				      struct bpf_dynptr *value_p)
-+{
-+	struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
-+	u32 value_len;
-+	void *value;
-+
-+	/* Only allow reading "user.*" xattrs */
-+	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-+		return -EPERM;
-+
-+	value_len = __bpf_dynptr_size(value_ptr);
-+	value = __bpf_dynptr_data_rw(value_ptr, value_len);
-+	if (!value)
-+		return -EINVAL;
-+
-+	return __kernfs_xattr_get(kn, name__str, value, value_len);
-+}
-+
- __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
-@@ -333,6 +365,7 @@ BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-+BTF_ID_FLAGS(func, bpf_kernfs_read_xattr, KF_RCU | KF_RCU_PROTECTED)
- BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
- 
- static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
 -- 
 2.47.1
 
