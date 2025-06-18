@@ -1,197 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-52052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588F1ADF18F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 17:40:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEDAADF188
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 17:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAFB47AD5D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 15:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6181D1BC1386
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 15:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953AA2EF9DC;
-	Wed, 18 Jun 2025 15:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166782F005F;
+	Wed, 18 Jun 2025 15:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pthvv1w8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cUuX43XQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="U3675Dap";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EgwCts+5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2ejdJ2F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665A2EBDEF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 15:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C748A2EFDA7;
+	Wed, 18 Jun 2025 15:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750261216; cv=none; b=J0y97aNdqvQ5M4xGAmJCDw71jwxe6vXSKk9chRDLo2q2s8t+ygdnob+xMjd8il2khzhJ9IbA5qKNlnalUBlIuCAQ+1Q76fMU7vwtCtFkpcQ4ENA5ZrxWll3dFjPTMNzyPUV1/IKNdQaoezrOF0w0Uxt6xD9Fc7NekRFFfAmtnec=
+	t=1750261172; cv=none; b=fiY98+/QkoxZ4GvHRnwwAv7+MrVuF7JLrr05g+8jKrmKznEYJUFqFackw9LPo6d0TD/ob2M6XURwvWe4cIvSC4hP1wwQbAyA1+BjXMSMEr8q2uGKEG6z2QyiFLNTtJIIGKngtMaKgKAemUlxt1v1nPxOpGSSM/3tQF7QAuB7RJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750261216; c=relaxed/simple;
-	bh=2ZNJkJ6X3kok9DQ6d4upSh74551BjlIERvlFKbnvhb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o//NMV3uFrEAKN1L5ggwK4ecCVhQGd9NO9L37FuVfxR1ZjfvDRuYkVVayo27ryJk+DEIjIJQUHOfRHps7put5daPa+bOO82h64GRtCsofPozF22CNpsygYdczF7yhfhMMYpYuvPwLbgYVG3L/N+cF9DErGGC0yyDa9OOFJivLck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pthvv1w8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cUuX43XQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=U3675Dap; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EgwCts+5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DD9E221169;
-	Wed, 18 Jun 2025 15:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750261211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aajZbQNn5tYVZ46FLC5U7JgjuQ2ym4lHWJngHWpWCOo=;
-	b=Pthvv1w8cc7M/21WoKmRX9Qu7Bp6afhfom87RT/3CTWoj7gJ0/7IsmVd/5ccZQLjCG2bW9
-	w54unQNCbDxg+k9RAkx80YmdBFPPPL7SU4I8QvIs28RcYLJha7mKs6Gf/d+/hGBPyB0TJi
-	kPv1gRz/ZmpfPdMdvhf+bTLY5jTbvCU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750261211;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aajZbQNn5tYVZ46FLC5U7JgjuQ2ym4lHWJngHWpWCOo=;
-	b=cUuX43XQNIuBvjaPBDuz0pqpy/uJWp3bKADAtCkpm99W74D+PkKZFlxBKmXkvmdcJ3Wr1u
-	C/WG4icw/nfHbbAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=U3675Dap;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EgwCts+5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750261210; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aajZbQNn5tYVZ46FLC5U7JgjuQ2ym4lHWJngHWpWCOo=;
-	b=U3675DapSG1zKUOQHX3qUccMZliXp2tJIDKX6xgMjtPcXq5PjS4T76IzwzrUSvcwpHTKb6
-	gMFqmmehT5n4K33xowQj8jbo7QXf9OwgOHgc49ZFJ3AVjPto11wYCwO/cA1utRzKEQoTnV
-	QN44WX+hiOnCwYa8ue8+xYIlw1XRAE8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750261210;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aajZbQNn5tYVZ46FLC5U7JgjuQ2ym4lHWJngHWpWCOo=;
-	b=EgwCts+5RTu/ydiC3r5pMytUJC7HskCR4D2hPnQr6JCTkM6VLdugDV5dfh+MK6M4N4/bEU
-	Np/YiqhpSWOW6lCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB75613A3F;
-	Wed, 18 Jun 2025 15:40:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jYVjMdrdUmhXFgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 18 Jun 2025 15:40:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7CBEEA09DC; Wed, 18 Jun 2025 17:40:02 +0200 (CEST)
-Date: Wed, 18 Jun 2025 17:40:02 +0200
-From: Jan Kara <jack@suse.cz>
-To: Pankaj Raghav <p.raghav@samsung.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	mcgrof@kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com, 
-	kernel@pankajraghav.com
-Subject: Re: [PATCH] fs/buffer: use min folio order to calculate upper limit
- in __getblk_slow()
-Message-ID: <rf5sve3v7vlkzae7ralok4vkkit24ashon3htmp56rmqshgcv5@a3bmz7mpkcwb>
-References: <20250618091710.119946-1-p.raghav@samsung.com>
+	s=arc-20240116; t=1750261172; c=relaxed/simple;
+	bh=7lErsAHSRoCyQEMmRAoJeuAHaQ8/QZ36UhrYB62zQHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XIAT5/O4CSrDnkXkbstAVDAgNxG3WUELb82HRsHr1A9zGmdCRRgmvuRzhyoKLVdN55u6/t9BX2YYTlgaYMafD+q8w33g/wL6vlPNjdBPBIkEnoDi64Q4tDO1D+H4hfIVXYiyJ6685k6i1SKrHBfwhbpNS0YNpoFrBl5cwes0gH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2ejdJ2F; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ade750971f2so934653266b.2;
+        Wed, 18 Jun 2025 08:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750261169; x=1750865969; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0+WVJxBsXeB2LzI73CXOJ5+vwmAsCvL86Bnd2mBbtAQ=;
+        b=c2ejdJ2FDe3YyBDNOBbRo1SLDgjn6V0FiAhVIpmsr8uZWaKgzygaVsCxeV0HFdlO8y
+         zKtpP++cfqVOxVwto7ScXBNt+mpJumtkxh3xkQ14lgkhoFaHhj4kVpg/hGwUn+GhjMXk
+         KIGio5Z8UCIM64HApZc6g43usEam3XXnroBZfwsRCLHJ5dPFPCsGfcnApbJgI0SmPuHz
+         2uYDfYzf4Q25e3YULKuePIMeRHC+xEKhLCeXxz5euOb/Xpy2X42TITl4Bf4vBC6sb8Ul
+         6eximFl7VRJcRb6GyL9UBAOQPw+LCTSn4PAOLki70TbzRbwSh0oVuTwrNNos57/x4O3M
+         dsyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750261169; x=1750865969;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0+WVJxBsXeB2LzI73CXOJ5+vwmAsCvL86Bnd2mBbtAQ=;
+        b=hlKeS1IRIrkbk8yPR6riU7o1BdgM9YaGHe0s2TOeVkKxgDXO++BZvbpRE4kpugUJEI
+         WNNo6x6Vhw8NzgcZ0bBN3840e8/Sc710s8n1JaQeBWsfH5hJFMTrCtaAR+bWz9AZLszR
+         P5qNkN2Go98Ll4dljfJM+A42U7qVpBJczv/SU5YXjB2NR1yJEI0bn9ztDCxSpjCMyk3B
+         F01DP3K6cem7AyZ1vP88nf4q5QFiu/jvdxBnwU9em1uo++6wfGcsV0iCjdTsupBQ2AD6
+         jQlp0pDNbEWgwEP8uC3CxctEhpKoAXfTQ0DX8KycRYtb5QZfJh7fYxW3Uit+1PveYYe5
+         O0AA==
+X-Forwarded-Encrypted: i=1; AJvYcCXH8j49cx+IvJ9NLwmOu5dHChC/wAcd3A9zpoFAR+PmcGJhQx9IXPi1mB43Jlf++kuu//GzEKTCMJz+PxxqXA==@vger.kernel.org, AJvYcCXXeYcu5PHClOyiCwufAIWKBPss3ayGhHryuuTISfOhfDZ6dZT8VG0EdZKPX+/oL7mkyXDtC8kzCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrLuC9FHEpYoQSwxWjpBbNyT9SEZWD9yyKZkGjC1On9OBMRmY7
+	kliCnw2DqzvrADashMOzZXy0PagS5C8w4WppJsVDmifkKEPA34tt67bj
+X-Gm-Gg: ASbGncvnsIV9dgxO1M/Jr7aLUQgtn6axSuEzwlKJL65OR0LmIimbvPy/joq0M0fzSmW
+	NeNWLFvpEaowjC+y047Tk1ohC13t19m0yRASP0ZVZ4A2DeeCbDoMawYaEqvyFO6wSQeWzRNBVc5
+	k90RslNVIMFvPvL5kzM4q+9H5cLQWcaIPgu2oXNBzINQlILpEpOgB2/TyULkqm2lAIZZ5BfvsGx
+	eJ/0lW+0QePEtMI/1mnnKf7IrPVtMW+wVNz5Emgh8ldvqHZqXVKpBZlAN8fYbtQ2D4lnOLmVyid
+	hICHMoUMZNHFaz0JY+i6VQ+t1w6V1DXJPItko3iYPjcZpHefgoZrPdDpYTHTon4nLNXiQEA=
+X-Google-Smtp-Source: AGHT+IGr1F+id+XITad14BlMe6GcxiFKdR9ap4zvcM+8Wpqe/H6QSqtveU0SqzXbNEX1fb0XeP8VtA==
+X-Received: by 2002:a17:907:1c0d:b0:ad2:2ef3:d487 with SMTP id a640c23a62f3a-adfad4f68f8mr1503412266b.58.1750261168737;
+        Wed, 18 Jun 2025 08:39:28 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.141.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159377sm1066214866b.9.2025.06.18.08.39.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jun 2025 08:39:28 -0700 (PDT)
+Message-ID: <a60a8c3e-e777-4f2f-ad83-916bb7b5bd2b@gmail.com>
+Date: Wed, 18 Jun 2025 16:40:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618091710.119946-1-p.raghav@samsung.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: DD9E221169
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -4.01
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 00/17] fuse: fuse-over-io-uring.
+To: Keith Busch <kbusch@kernel.org>, Bernd Schubert <bschubert@ddn.com>
+Cc: "xiaobing.li" <xiaobing.li@samsung.com>, amir73il@gmail.com,
+ axboe@kernel.dk, io-uring@vger.kernel.org, joannelkoong@gmail.com,
+ josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
+ tom.leiming@gmail.com, kun.dou@samsung.com, peiwei.li@samsung.com,
+ xue01.he@samsung.com, cliang01.li@samsung.com, joshi.k@samsung.com,
+ David Wei <dw@davidwei.uk>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+ <CGME20250618105918epcas5p472b61890ece3e8044e7172785f469cc0@epcas5p4.samsung.com>
+ <20250618105435.148458-1-xiaobing.li@samsung.com>
+ <dc5ef402-9727-4168-bdf4-b90217914841@ddn.com> <aFLbq5zYU6_qu_Yk@kbusch-mbp>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <aFLbq5zYU6_qu_Yk@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed 18-06-25 11:17:10, Pankaj Raghav wrote:
-> The maximum IO size that a block device can read as a single block is
-> based on the min folio order and not the PAGE_SIZE as we have bs > ps
-> support for block devices[1].
+On 6/18/25 16:30, Keith Busch wrote:
+> On Wed, Jun 18, 2025 at 03:13:41PM +0200, Bernd Schubert wrote:
+>> On 6/18/25 12:54, xiaobing.li wrote:
+>>>
+>>> Hi Bernd,
+>>>
+>>> Do you have any plans to add zero copy solution? We are interested in
+>>> FUSE's zero copy solution and conducting research in code.
+>>> If you have no plans in this regard for the time being, we intend to
+>>>   submit our solution.
+>>
+>> Hi Xiobing,
+>>
+>> Keith (add to CC) did some work for that in ublk and also planned to
+>> work on that for fuse (or a colleague). Maybe Keith could
+>> give an update.
 > 
-> Calculate the upper limit based on the on min folio order.
+> I was initially asked to implement a similar solution that ublk uses for
+> zero-copy, but the requirements changed such that it won't work. The
+> ublk server can't directly access the zero-copy buffers. It can only
+> indirectly refer to it with an io_ring registered buffer index, which is
+> fine my ublk use case, but the fuse server that I was trying to
+> enable does in fact need to directly access that data.
 > 
-> [1] https://lore.kernel.org/linux-block/20250221223823.1680616-1-mcgrof@kernel.org/
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> My colleauge had been working a solution, but it required shared memory
+> between the application and the fuse server, and therefore cooperation
+> between them, which is rather limiting. It's still on his to-do list,
+> but I don't think it's a high priority at the moment. If you have
+> something in the works, please feel free to share it when you're ready,
+> and I would be interested to review.
 
-...
+CC David
 
-> ---
-> I found this while I was adding bs > ps support to ext4. Ext4 uses this
-> routine to read the superblock.
-> 
->  fs/buffer.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 8cf4a1dc481e..98f90da69a0a 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -1121,10 +1121,11 @@ __getblk_slow(struct block_device *bdev, sector_t block,
->  	     unsigned size, gfp_t gfp)
->  {
->  	bool blocking = gfpflags_allow_blocking(gfp);
-> +	int blocklog = PAGE_SHIFT + mapping_min_folio_order(bdev->bd_mapping);
->  
->  	/* Size must be multiple of hard sectorsize */
-> -	if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
-> -			(size < 512 || size > PAGE_SIZE))) {
-> +	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
-> +		     (size < 512 || size > (1U << blocklog)))) {
-
-So this doesn't quite make sense to me.  Shouldn't it be capped from above
-by PAGE_SIZE << mapping_max_folio_order(bdev->bd_mapping)?
-
-								Honza
-
-
->  		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
->  					size);
->  		printk(KERN_ERR "logical block size: %d\n",
-> 
-> base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
-> -- 
-> 2.49.0
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pavel Begunkov
+
 
