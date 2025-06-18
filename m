@@ -1,137 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-52116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F7EADF812
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 22:52:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41709ADF814
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 22:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 823E67AB386
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 20:50:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0017F18808F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 20:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7277121CC49;
-	Wed, 18 Jun 2025 20:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B564C21ADA2;
+	Wed, 18 Jun 2025 20:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Tx6xHE3d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jK8K1Ms5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F96A217F53
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 20:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175151B78F3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 20:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750279933; cv=none; b=WfpcqFR2UTWN0UHxeoAI1EiQiBGq7a9EJ5DImpPTjXDD2Mlg0jxbJqFJXoSrD4qfg/FAHVIGrpPT0zg+KdJ8wcEBxAu7IkNS9hJv21CXZD42kaKT+2u1YYZcGzQDcktJau4+DsmXfTTkEYUfMOlu/NlBvCE6KsPQ0wtakyUEv1M=
+	t=1750280029; cv=none; b=cZhXsVTSnMQCmDkigoGGn2qp15g9cc+CNVlv9IIFwR4410LBjEUxxXudmhiLe+0wLSm64IHl1Q9xLvvy8iZd+DWSItW6hyvTZZl+q7HnbTzDXM+AxHEHMw84ezfN2UgW+BIiVhpk2aBnR+ganXJjVCVu0DXwHbl0lyK9eJi7iz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750279933; c=relaxed/simple;
-	bh=udfxxBUYqOxwF4CpJe01eYlAvRjWcIPtTrlrYNAkw1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SylJfrmHLxrGOvdq5AantLsYaDz2SyGvpuSl6DLQaNVspDh4NuX3Zr14Zjf1oU1aqsLThFymAI4/xM4BotatqlAOxph0vT8QYRgKBHUntg0ryeJkbPvtkw7j6MLEJsgbm4/hIq4bOemB/AipVOeybDTzqj3Nc4pWwpu4lOdenDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Tx6xHE3d; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-875acfc133dso1245139f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 13:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1750279930; x=1750884730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0Y7/EqwIOfu/4i0R5S1fQpdZTumyIs1zK/W1iPvlsMg=;
-        b=Tx6xHE3dr5yHfhCSAYw1ZM8boLJLe1tjT8s2V04jHLarNX5n7+d76DtwBP9aFpH0oq
-         YzFwthNCK3gTvz0Ga+1dCmfwAqUCenpM0o+vUkQwZtgpp2frSKFQixUM+Iv3zQszVXbg
-         ndyWdXNwPHKHhEvnGY0EdcrNhl+zdloqEA9II=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750279930; x=1750884730;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Y7/EqwIOfu/4i0R5S1fQpdZTumyIs1zK/W1iPvlsMg=;
-        b=ZQ9Wl2nkP87sgLZ6qDNEnQW+MJR3wQDIV4OVmgtxwsx+ja/SggbTD/9C4Vzqb8eY/l
-         Jue3EYeUajPunUZfqSrqd93GAugrYHJyXg1p2AQoskKEC0+oMyulFe9G2+3oFDpbljku
-         7ByHgVXsnP9Fc48KrDpcuxOyvv9ARK+caNF7Ncv37W/wWHyenMvvhzMsrTNZ78q2Gzow
-         pYFZNZ2qfsxsFWDzziG01zPAmMGMjOCSQzFxKLEM34SbFUYC5yPPq35QcBXc2wJsW/5Q
-         kOTqN/RuCwN8oUpKmU47UhKVcQlKvTDLOyFjSIONc72WtlsOpak/spBzT3o22eTseluy
-         bDwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXln6Iw192LyuEbOSw6r9Tl5LypJgkh3srs+/V2Y/dAMR+NyAEo30z6EMvYNLBWmdzo4Wq++s5ZG0FPhdo6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6aeLmKAq6kekGqCuQCi4+CKpOM0lUTKuzsWD8s0KCEkX1o+2b
-	PLe2+0XGSj7XMCVZbgFS9/e0IwjelJDF9tDCpa53OUmu62G0Lws/+m7n9ysT/57mr/s=
-X-Gm-Gg: ASbGncvwjMV/tW55FuxiZGYM3BRi24wew/abCdxk3KvW+pavIa6qetd4v/Qz3wFToC6
-	PAhVU2B3RdGAXORTZyfRVhmwotHtNLpYWXq/lDhaNVQBkcrLRF8OZ/R19EnZwMSwzKDMkfDbnJQ
-	U/5TKGYTb1oA73zLVq8Bn6g4/2iocKDoKJYSSkRhkXDlAa826jc0ArvPq2smQYUvHs2zl2GDzsU
-	bZU5SXBkW7dWjo5rMFZHm9xaThJHFVsfWwiwdlwRE/InLhhWuvk6fSnZbtpCvxYUsuupqSJvr1U
-	WKI6zfBVJvBpEUMSCeQ6DJCgWFkNy1j78//qOZPbgc0BXvHMdFmJZ/RIrikEx5S+FuloZSpejQ=
-	=
-X-Google-Smtp-Source: AGHT+IFPfu2uaM1NocL4Z4iAcYmQ75ftw0wdya9PlU93jjCX0lxXWAzQlA6uFQLDr/7/ZZFP1+EZow==
-X-Received: by 2002:a05:6602:3fc3:b0:875:acf6:21a with SMTP id ca18e2360f4ac-875dedc39afmr2110106839f.11.1750279930245;
-        Wed, 18 Jun 2025 13:52:10 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50149ca31b4sm2952500173.132.2025.06.18.13.52.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 13:52:09 -0700 (PDT)
-Message-ID: <9940a310-5a39-4489-a1bf-0809e5914c08@linuxfoundation.org>
-Date: Wed, 18 Jun 2025 14:52:08 -0600
+	s=arc-20240116; t=1750280029; c=relaxed/simple;
+	bh=f+x8CE09p9Tc6dmPtkUg/hPf87qNJGZ5eby641hBY2Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HcoyaNj0pqSxjo/IHV+HwO6mP9xPwUglLwFFK+DdpI5FVofBjdwkmXZIEHZrGGLFpMWGYPs4DYdILOYWhl3plVF8fgMeAJalexaL5W/eMwlRKzxDgiGKJoM6Skm9QFAPxBUXeSC5gkzCm/hP/sfuGlFEvMU5NH/CaD60R9Uw+s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jK8K1Ms5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B00C4CEE7;
+	Wed, 18 Jun 2025 20:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750280028;
+	bh=f+x8CE09p9Tc6dmPtkUg/hPf87qNJGZ5eby641hBY2Q=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jK8K1Ms5h3McKXDcUU5nGiLUYR9MAt1VMEcCfpobVqJnVRRhMuTE7zf3eay5YnRYO
+	 2NqtxviUqMXou0vE1vx5KGE0CmEm0bHJ7PPQdOklElsarh5MzXrqIVtbkgnTcYCBJD
+	 wGcUKcYZ8J6mUG5VbuisOYkauK/ZNX/FUbzpEG6gAzffhCSVTK6JozVFs9WX1EFzj7
+	 RqbS8q+VUoRI2GAJkvfpYBXqOZnA+iLtQDAYR9a6vHMVApzTW0Li/GbWA5R5Z+TzPq
+	 Ba9+BK+BTZn5bFRNkrQQpl3GoY1q1RWrv0ZbKJXDLez1BBcXhP7MGIxCnPIXOYvz+A
+	 V1cWPs8ONsrMg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 00/16] pidfs: persistent info & xattrs
+Date: Wed, 18 Jun 2025 22:53:34 +0200
+Message-Id: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] selftests: filesystems: Add functional test for the
- abort file in fusectl
-To: Chen Linxuan <chenlinxuan@uniontech.com>, Shuah Khan <shuah@kernel.org>,
- Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>
-Cc: zhanjun@uniontech.com, niecheng1@uniontech.com,
- Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250612094033.2538122-2-chenlinxuan@uniontech.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250612094033.2538122-2-chenlinxuan@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE4nU2gC/x3MQQqDMBBA0avIrDtiIgmlVyldJHFSh9IYZkQL4
+ t2bdvkW/x+gJEwKt+4AoY2Vl9JgLx2kOZQnIU/NYAfrBm+uuC/ywspTVqwkyrpSWdE6k2lM2aU
+ xQmurUObP/3t/NMeghFFCSfPv9g4tk37zvfEoycB5fgF2HZ73igAAAA==
+X-Change-ID: 20250618-work-pidfs-persistent-251fe3cf5c3b
+To: linux-fsdevel@vger.kernel.org
+Cc: Jann Horn <jannh@google.com>, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+ Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>
+X-Mailer: b4 0.15-dev-262a7
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5498; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=f+x8CE09p9Tc6dmPtkUg/hPf87qNJGZ5eby641hBY2Q=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQEq0dM3bu7MVo8sHjCnQjR7mqtJ+fvPWk0VHGN1Xi4r
+ Ub1VhNrRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwET+/WRkeBz2umf66evHnjzT
+ tJdZrKolb9NXWcm28EnU8QRvZc6m94wM659Z+TpMvPc+6sTK2p8eYqov2utqRdO3JibN7vfaK+r
+ GCQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 6/12/25 03:40, Chen Linxuan wrote:
-> This patch add a simple functional test for the "abort" file
-> in fusectlfs (/sys/fs/fuse/connections/ID/about).
-> 
-> A simple fuse daemon is added for testing.
-> 
-> Related discussion can be found in the link below.
-> 
-> Link: https://lore.kernel.org/all/CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com/
-> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
-> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Co-developed-by: Miklos Szeredi <miklos@szeredi.hu>
-> Reviewed-by: Miklos Szeredi <miklos@szeredi.hu>
-> ---
-> Changes in v4:
-> - Apply patch suggested by Miklos Szeredi
->    - Setting up a userns environment for testing
->    - Fix a EBUSY on umount/rmdir
-> - Link to v3: https://lore.kernel.org/all/20250610021007.2800329-2-chenlinxuan@uniontech.com/
-> Changes in v3:
-> - Apply changes suggested by Amir Goldstein
->    - Rename the test subdir to filesystems/fuse
->    - Verify errno when connection is aborted
-> - Apply changes suggested by Shuah Khan
->    - Update commit message
-> - Link to v2: https://lore.kernel.org/all/20250517012350.10317-2-chenlinxuan@uniontech.com/
-> Changes in v2:
-> - Apply changes suggested by Amir Goldstein
->     - Check errno
-> - Link to v1: https://lore.kernel.org/all/20250515073449.346774-2-chenlinxuan@uniontech.com/
+Persist exit and coredump information independent of whether anyone
+currently holds a pidfd for the struct pid.
 
-+ adding Christian to the thread
+The current scheme allocated pidfs dentries on-demand repeatedly.
+This scheme is reaching it's limits as it makes it impossible to pin
+information that needs to be available after the task has exited or
+coredumped and that should not be lost simply because the pidfd got
+closed temporarily. The next opener should still see the stashed
+information.
 
-Hi Christian,
+This is also a prerequisite for supporting extended attributes on
+pidfds to allow attaching meta information to them.
 
-Would you like me to take this patch through my tree?
+If someone opens a pidfd for a struct pid a pidfs dentry is allocated
+and stashed in pid->stashed. Once the last pidfd for the struct pid is
+closed the pidfs dentry is released and removed from pid->stashed.
 
-thanks,
--- Shuah
+So if 10 callers create a pidfs dentry for the same struct pid
+sequentially, i.e., each closing the pidfd before the other creates a
+new one then a new pidfs dentry is allocated every time.
+
+Because multiple tasks acquiring and releasing a pidfd for the same
+struct pid can race with each another a task may still find a valid
+pidfs entry from the previous task in pid->stashed and reuse it. Or it
+might find a dead dentry in there and fail to reuse it and so stashes a
+new pidfs dentry. Multiple tasks may race to stash a new pidfs dentry
+but only one will succeed, the other ones will put their dentry.
+
+The current scheme aims to ensure that a pidfs dentry for a struct pid
+can only be created if the task is still alive or if a pidfs dentry
+already existed before the task was reaped and so exit information has
+been was stashed in the pidfs inode.
+
+That's great except that it's buggy. If a pidfs dentry is stashed in
+pid->stashed after pidfs_exit() but before __unhash_process() is called
+we will return a pidfd for a reaped task without exit information being
+available.
+
+The pidfds_pid_valid() check does not guard against this race as it
+doens't sync at all with pidfs_exit(). The pid_has_task() check might be
+successful simply because we're before __unhash_process() but after
+pidfs_exit().
+
+Introduce a new scheme where the lifetime of information associated with
+a pidfs entry (coredump and exit information) isn't bound to the
+lifetime of the pidfs inode but the struct pid itself.
+
+The first time a pidfs dentry is allocated for a struct pid a struct
+pidfs_attr will be allocated which will be used to store exit and
+coredump information.
+
+If all pidfs for the pidfs dentry are closed the dentry and inode can be
+cleaned up but the struct pidfs_attr will stick until the struct pid
+itself is freed. This will ensure minimal memory usage while persisting
+relevant information.
+
+The new scheme has various advantages. First, it allows to close the
+race where we end up handing out a pidfd for a reaped task for which no
+exit information is available. Second, it minimizes memory usage.
+Third, it allows to remove complex lifetime tracking via dentries when
+registering a struct pid with pidfs. There's no need to get or put a
+reference. Instead, the lifetime of exit and coredump information
+associated with a struct pid is bound to the lifetime of struct pid
+itself.
+
+Now that we have a way to persist information for pidfs dentries we can
+start supporting extended attributes on pidfds. This will allow
+userspace to attach meta information to tasks.
+
+One natural extension would be to introduce a custom pidfs.* extended
+attribute space and allow for the inheritance of extended attributes
+across fork() and exec().
+
+The first simple scheme will allow privileged userspace to set trusted
+extended attributes on pidfs inodes.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (16):
+      pidfs: raise SB_I_NODEV and SB_I_NOEXEC
+      libfs: massage path_from_stashed() to allow custom stashing behavior
+      libfs: massage path_from_stashed()
+      pidfs: move to anonymous struct
+      pidfs: persist information
+      pidfs: remove unused members from struct pidfs_inode
+      pidfs: remove custom inode allocation
+      pidfs: remove pidfs_{get,put}_pid()
+      pidfs: remove pidfs_pid_valid()
+      libfs: prepare to allow for non-immutable pidfd inodes
+      pidfs: make inodes mutable
+      pidfs: support xattrs on pidfds
+      selftests/pidfd: test extended attribute support
+      selftests/pidfd: test extended attribute support
+      selftests/pidfd: test setattr support
+      pidfs: add some CONFIG_DEBUG_VFS asserts
+
+ fs/coredump.c                                      |   6 -
+ fs/internal.h                                      |   3 +
+ fs/libfs.c                                         |  34 +-
+ fs/pidfs.c                                         | 422 ++++++++++++---------
+ include/linux/pid.h                                |  14 +-
+ include/linux/pidfs.h                              |   3 +-
+ kernel/pid.c                                       |   2 +-
+ net/unix/af_unix.c                                 |   5 -
+ tools/testing/selftests/pidfd/.gitignore           |   2 +
+ tools/testing/selftests/pidfd/Makefile             |   3 +-
+ tools/testing/selftests/pidfd/pidfd_setattr_test.c |  69 ++++
+ tools/testing/selftests/pidfd/pidfd_xattr_test.c   | 132 +++++++
+ 12 files changed, 480 insertions(+), 215 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250618-work-pidfs-persistent-251fe3cf5c3b
+
 
