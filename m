@@ -1,171 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-52050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A20ADF16D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 17:31:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588F1ADF18F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 17:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2717E1896D49
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 15:31:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAFB47AD5D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 15:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64A12EBDEB;
-	Wed, 18 Jun 2025 15:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953AA2EF9DC;
+	Wed, 18 Jun 2025 15:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z6lA4HUe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LTHX0T3+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z6lA4HUe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LTHX0T3+"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pthvv1w8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cUuX43XQ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="U3675Dap";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EgwCts+5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C305F42049
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 15:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665A2EBDEF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 15:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750260694; cv=none; b=LpqVKfkrp3v+nh9I4mRAItnBqaiK14tQE53ps7nnSdiGK+SNt9Fl9W9x+ZzExlmt5uAEWPvL/vuA+I+D2rOJ4NfDFUnzOZ8j/8LaXzHLloBi5DiqcLiUX/TySpy4ZCW7DgbOLzZQ31MpNTW7AYwqeBl0zC1P+dxOqch2iKZif+I=
+	t=1750261216; cv=none; b=J0y97aNdqvQ5M4xGAmJCDw71jwxe6vXSKk9chRDLo2q2s8t+ygdnob+xMjd8il2khzhJ9IbA5qKNlnalUBlIuCAQ+1Q76fMU7vwtCtFkpcQ4ENA5ZrxWll3dFjPTMNzyPUV1/IKNdQaoezrOF0w0Uxt6xD9Fc7NekRFFfAmtnec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750260694; c=relaxed/simple;
-	bh=aWGF2JbuOH4++9EpJGoeAzXMpX7P3SqWckIH/4SBNkw=;
+	s=arc-20240116; t=1750261216; c=relaxed/simple;
+	bh=2ZNJkJ6X3kok9DQ6d4upSh74551BjlIERvlFKbnvhb8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pcieCM/uM1JEIQEgtMXxkwgJfrodkgpqRD+yweozHWL0283MmDFhoww0hitksW7IMv063cfvQ9dO1fcA6V80XOcWHNFJsbVAZigxjuBKUNKkPAGN8FtyztF7GLews3N7Ff9q9FpPKPmczYxxMPs6NKAW8F/vFsID+LwF5dEWTZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z6lA4HUe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LTHX0T3+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z6lA4HUe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LTHX0T3+; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=o//NMV3uFrEAKN1L5ggwK4ecCVhQGd9NO9L37FuVfxR1ZjfvDRuYkVVayo27ryJk+DEIjIJQUHOfRHps7put5daPa+bOO82h64GRtCsofPozF22CNpsygYdczF7yhfhMMYpYuvPwLbgYVG3L/N+cF9DErGGC0yyDa9OOFJivLck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pthvv1w8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cUuX43XQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=U3675Dap; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EgwCts+5; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 332891F7BD;
-	Wed, 18 Jun 2025 15:31:31 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DD9E221169;
+	Wed, 18 Jun 2025 15:40:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750260691; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750261211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=owjkAWQ3KYXsX+IefJJA+Ziv2qfJ85C6X7WRXhmfYKQ=;
-	b=z6lA4HUemsyrQw0IbqDayHnqZjeult3eFtaeY3eLf+oBuEaQDPw6IOYz734scHqJtOyeXi
-	0ohy4FOQK1XEFTVZgLzZ2VEvRshkW546ji6YOmSju+r7lAWWipPwRSkW5hA/sdO8czyhh8
-	IvQiKV68dbALYwg6U7m+verk60cUJ44=
+	bh=aajZbQNn5tYVZ46FLC5U7JgjuQ2ym4lHWJngHWpWCOo=;
+	b=Pthvv1w8cc7M/21WoKmRX9Qu7Bp6afhfom87RT/3CTWoj7gJ0/7IsmVd/5ccZQLjCG2bW9
+	w54unQNCbDxg+k9RAkx80YmdBFPPPL7SU4I8QvIs28RcYLJha7mKs6Gf/d+/hGBPyB0TJi
+	kPv1gRz/ZmpfPdMdvhf+bTLY5jTbvCU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750260691;
+	s=susede2_ed25519; t=1750261211;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=owjkAWQ3KYXsX+IefJJA+Ziv2qfJ85C6X7WRXhmfYKQ=;
-	b=LTHX0T3+QHDosod7b6W0OS7VWeFSlSlTSO+bx3ylHy6HDjET9NK6BOSGpbjK0iE7NpGTaB
-	CAhY8mZsoL7lanAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=aajZbQNn5tYVZ46FLC5U7JgjuQ2ym4lHWJngHWpWCOo=;
+	b=cUuX43XQNIuBvjaPBDuz0pqpy/uJWp3bKADAtCkpm99W74D+PkKZFlxBKmXkvmdcJ3Wr1u
+	C/WG4icw/nfHbbAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=U3675Dap;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EgwCts+5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750260691; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750261210; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=owjkAWQ3KYXsX+IefJJA+Ziv2qfJ85C6X7WRXhmfYKQ=;
-	b=z6lA4HUemsyrQw0IbqDayHnqZjeult3eFtaeY3eLf+oBuEaQDPw6IOYz734scHqJtOyeXi
-	0ohy4FOQK1XEFTVZgLzZ2VEvRshkW546ji6YOmSju+r7lAWWipPwRSkW5hA/sdO8czyhh8
-	IvQiKV68dbALYwg6U7m+verk60cUJ44=
+	bh=aajZbQNn5tYVZ46FLC5U7JgjuQ2ym4lHWJngHWpWCOo=;
+	b=U3675DapSG1zKUOQHX3qUccMZliXp2tJIDKX6xgMjtPcXq5PjS4T76IzwzrUSvcwpHTKb6
+	gMFqmmehT5n4K33xowQj8jbo7QXf9OwgOHgc49ZFJ3AVjPto11wYCwO/cA1utRzKEQoTnV
+	QN44WX+hiOnCwYa8ue8+xYIlw1XRAE8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750260691;
+	s=susede2_ed25519; t=1750261210;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=owjkAWQ3KYXsX+IefJJA+Ziv2qfJ85C6X7WRXhmfYKQ=;
-	b=LTHX0T3+QHDosod7b6W0OS7VWeFSlSlTSO+bx3ylHy6HDjET9NK6BOSGpbjK0iE7NpGTaB
-	CAhY8mZsoL7lanAg==
+	bh=aajZbQNn5tYVZ46FLC5U7JgjuQ2ym4lHWJngHWpWCOo=;
+	b=EgwCts+5RTu/ydiC3r5pMytUJC7HskCR4D2hPnQr6JCTkM6VLdugDV5dfh+MK6M4N4/bEU
+	Np/YiqhpSWOW6lCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 298F813A3F;
-	Wed, 18 Jun 2025 15:31:31 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB75613A3F;
+	Wed, 18 Jun 2025 15:40:10 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id K04cCtPbUmirEwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 18 Jun 2025 15:31:31 +0000
+	id jYVjMdrdUmhXFgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 18 Jun 2025 15:40:10 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A49C9A09DC; Wed, 18 Jun 2025 17:31:30 +0200 (CEST)
-Date: Wed, 18 Jun 2025 17:31:30 +0200
+	id 7CBEEA09DC; Wed, 18 Jun 2025 17:40:02 +0200 (CEST)
+Date: Wed, 18 Jun 2025 17:40:02 +0200
 From: Jan Kara <jack@suse.cz>
-To: RubenKelevra <rubenkelevra@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs_context: fix parameter name in infofc() macro
-Message-ID: <w2mvyptwkgmtpz5whnv4svsqkrmsepxrhug5fcfpdcvozbzilb@goimb6s56trb>
-References: <20250617230927.1790401-1-rubenkelevra@gmail.com>
+To: Pankaj Raghav <p.raghav@samsung.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	mcgrof@kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com, 
+	kernel@pankajraghav.com
+Subject: Re: [PATCH] fs/buffer: use min folio order to calculate upper limit
+ in __getblk_slow()
+Message-ID: <rf5sve3v7vlkzae7ralok4vkkit24ashon3htmp56rmqshgcv5@a3bmz7mpkcwb>
+References: <20250618091710.119946-1-p.raghav@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250617230927.1790401-1-rubenkelevra@gmail.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
+In-Reply-To: <20250618091710.119946-1-p.raghav@samsung.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: DD9E221169
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	MX_GOOD(-0.01)[];
 	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_THREE(0.00)[3];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -4.01
 X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
 
-On Wed 18-06-25 01:09:27, RubenKelevra wrote:
-> The macro takes a parameter called "p" but references "fc" internally.
-> This happens to compile as long as callers pass a variable named fc,
-> but breaks otherwise. Rename the first parameter to “fc” to match the
-> usage and to be consistent with warnfc() / errorfc().
+On Wed 18-06-25 11:17:10, Pankaj Raghav wrote:
+> The maximum IO size that a block device can read as a single block is
+> based on the min folio order and not the PAGE_SIZE as we have bs > ps
+> support for block devices[1].
 > 
-> Fixes: a3ff937b33d9 ("prefix-handling analogues of errorf() and friends")
-> Signed-off-by: RubenKelevra <rubenkelevra@gmail.com>
+> Calculate the upper limit based on the on min folio order.
+> 
+> [1] https://lore.kernel.org/linux-block/20250221223823.1680616-1-mcgrof@kernel.org/
+> 
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 
-Good catch. Feel free to add:
+...
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> ---
+> I found this while I was adding bs > ps support to ext4. Ext4 uses this
+> routine to read the superblock.
+> 
+>  fs/buffer.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 8cf4a1dc481e..98f90da69a0a 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -1121,10 +1121,11 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+>  	     unsigned size, gfp_t gfp)
+>  {
+>  	bool blocking = gfpflags_allow_blocking(gfp);
+> +	int blocklog = PAGE_SHIFT + mapping_min_folio_order(bdev->bd_mapping);
+>  
+>  	/* Size must be multiple of hard sectorsize */
+> -	if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
+> -			(size < 512 || size > PAGE_SIZE))) {
+> +	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
+> +		     (size < 512 || size > (1U << blocklog)))) {
+
+So this doesn't quite make sense to me.  Shouldn't it be capped from above
+by PAGE_SIZE << mapping_max_folio_order(bdev->bd_mapping)?
 
 								Honza
 
-> ---
->  include/linux/fs_context.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+
+>  		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
+>  					size);
+>  		printk(KERN_ERR "logical block size: %d\n",
 > 
-> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-> index a19e4bd32e4d..7773eb870039 100644
-> --- a/include/linux/fs_context.h
-> +++ b/include/linux/fs_context.h
-> @@ -200,7 +200,7 @@ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt,
->   */
->  #define infof(fc, fmt, ...) __logfc(fc, 'i', fmt, ## __VA_ARGS__)
->  #define info_plog(p, fmt, ...) __plog(p, 'i', fmt, ## __VA_ARGS__)
-> -#define infofc(p, fmt, ...) __plog((&(fc)->log), 'i', fmt, ## __VA_ARGS__)
-> +#define infofc(fc, fmt, ...) __plog((&(fc)->log), 'i', fmt, ## __VA_ARGS__)
->  
->  /**
->   * warnf - Store supplementary warning message
+> base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
 > -- 
 > 2.49.0
 > 
