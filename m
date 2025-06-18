@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-52132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B771FADF826
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 22:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07991ADF823
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 22:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2B41BC32BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 20:55:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A38644A1503
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 20:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB2B21FF54;
-	Wed, 18 Jun 2025 20:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAFA20E71E;
+	Wed, 18 Jun 2025 20:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHNWrdO6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgBtZN7e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB59121FF3C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 20:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7DA21B9F4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 20:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750280068; cv=none; b=TXnxS/DtVpZjy0h0B9ojUc6Rdext63SkxUBi33tOqioJuJG5yTBD6P9JIr9uv8jaVgYATGaGA/1Y+XN6zT7jf+MeKGpoIXAa5PxnuFsTH5ECFY98TU5TYKOonbxDu5sEWtvIFz6+oExLx2TxzvqqSi0qdCdT8h4BRUXX8hArO0Q=
+	t=1750280070; cv=none; b=NO4XpWhDMI+zNCH/xP8LZGuU4EbglHZMlHS2bkSzpMctTIPpEgK5/+ycve3zx8AV/RtQBgdyuLntRx3duakDpy5LeQH3zLhTYZ5sogyQUrCrTqXypybT/TH7xYRRhFv58eNYHZLijm1lXrGInlkOClIryj5ChlqK/C50uE5kWes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750280068; c=relaxed/simple;
-	bh=W4Z5v6mI8jm1Nj/+ZjgHLfhbbC8XiVN2M2XGtS/xh8E=;
+	s=arc-20240116; t=1750280070; c=relaxed/simple;
+	bh=o7xFeY8aY+kfvHfkaleOX5H1igQIfAu/CGpBdAhJKbw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Evsa0Rf9EHuYURJvRIuNIyMacR5RVUwZE89cKBpmdkX+WKekwE0ECgKHy56RxFFOQpYjEnD09spw2LwA+LhSLzbBSyfTm2lIT4FcYc8+nB+e/bWwbQ6quFgWAHKTWXZ5F8L9cTLqTEZ/d0YsHR1qJWYPIx12RG2rU+XP6Dr/50k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHNWrdO6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48C8DC4CEED;
-	Wed, 18 Jun 2025 20:54:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Jx9k/AdgdTwGxdMyQoa7DLEallkXV4kaCPOfnauKahZ0Io2jpT91za/SffeWrT8qCc+lmR91YfgLw3Lr+T5DoENQmhEBO9+f7HHj3WAS/KcxZG7qvWw94ZSGlK874nzkTmZljacxXk5KGsvc2F7Q57mNLJ8kbr+0E7xz1/oHiY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgBtZN7e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E821EC4CEE7;
+	Wed, 18 Jun 2025 20:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750280067;
-	bh=W4Z5v6mI8jm1Nj/+ZjgHLfhbbC8XiVN2M2XGtS/xh8E=;
+	s=k20201202; t=1750280070;
+	bh=o7xFeY8aY+kfvHfkaleOX5H1igQIfAu/CGpBdAhJKbw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZHNWrdO6lGpyKnQmhH0QGuCvOOiLaNcLUM/To8RXA7dvSdslL2Bl4l8/oxwiYIhCL
-	 oKCmfTdfnPHlxYJSnOnj/CY0cnzuhNoSuQM22EH/PN1E/Sk2GU21eAfrWyyx1FybfR
-	 gYwDkpVTDkgSdHSeXNfA+du2c6sBymb6Slp5teRUOhdOr8eK6h6GtrRcFQAgC1OEiA
-	 JBB1aw0FRoW2Ml2UvuXhLu1b0mbAqhUN+mOGVENiKDOvk1TB8GZDQHWLDEn+FQnGas
-	 PKS6Ws2QN5WYISujJIinS+Af2y7ZmyIL0xni3RW8JRMpdnmuenVPPgNVyey4vN7PnG
-	 8B9vE0ksoM+iQ==
+	b=VgBtZN7euDhUKnIYb+2Fvs5jiaP/mVME6VSt6BlzrgCHEUw7Vh0hoYbipQL6S4Q7i
+	 RrfQ9VKDIlYy92hdvpMUxLQz0rUVy+m9bW+hl1EDUzEndLh3vnEgZ2usCAOf4ov0za
+	 QoEr676Ndh59egaDshey8XA9j06LNHF/zi5n/oAL1zlGNeZ7+66hWYjoAlTiyrqyDP
+	 TFAN8ghzQMU28Cz7G3DHUHCQ157NCCJzXYRukj6L3eJXZtPqGzBHMufDIL+lMVjQnI
+	 24IbeX2+Ir5CW19Q8AikZ7h1/NDAVzDaxl68aAF4dXmNCGuGaH2J6v9WgWfoGWD7Nq
+	 h7RzSAMYaIk6Q==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 18 Jun 2025 22:53:49 +0200
-Subject: [PATCH v2 15/16] selftests/pidfd: test setattr support
+Date: Wed, 18 Jun 2025 22:53:50 +0200
+Subject: [PATCH v2 16/16] pidfs: add some CONFIG_DEBUG_VFS asserts
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-work-pidfs-persistent-v2-15-98f3456fd552@kernel.org>
+Message-Id: <20250618-work-pidfs-persistent-v2-16-98f3456fd552@kernel.org>
 References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org>
 In-Reply-To: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -63,121 +63,44 @@ Cc: Jann Horn <jannh@google.com>, Josef Bacik <josef@toxicpanda.com>,
  Christian Brauner <brauner@kernel.org>, 
  Alexander Mikhalitsyn <alexander@mihalicyn.com>
 X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3094; i=brauner@kernel.org;
- h=from:subject:message-id; bh=W4Z5v6mI8jm1Nj/+ZjgHLfhbbC8XiVN2M2XGtS/xh8E=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQEq0d6Net9Wrv1lxFLRaC81NundoZmD5cH+OVkd0uf+
- PymqmJLRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERCXjIyzNCQffUv8ao1b+7E
- 01zqabIy3w6rie7UMvu8ROfagUDjTwz/9Ir0XhxvDbx1v7zHo6rE5vpEc1vpM4tMNDrO6z6de+U
- kDwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=774; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=o7xFeY8aY+kfvHfkaleOX5H1igQIfAu/CGpBdAhJKbw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQEq0f2vZtopc7xYer546ZeoimvNrMaLmgs93CfUrP/s
+ u5LBy6ejlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlwPmBk2Mc3cfLqC4Xz5di/
+ dCdvaM+SKZhwaMlWX8NN+0I28uZfCmX4n/k1PvK/oWRQTciepQ4Hpy0MveCzO/5Gyb6b/aqKu1f
+ P5wQA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Verify that ->setattr() on a pidfd doens't work.
+Allow to catch some obvious bugs.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/pidfd/.gitignore           |  1 +
- tools/testing/selftests/pidfd/Makefile             |  2 +-
- tools/testing/selftests/pidfd/pidfd_setattr_test.c | 69 ++++++++++++++++++++++
- 3 files changed, 71 insertions(+), 1 deletion(-)
+ fs/pidfs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
-index bc4130506eda..144e7ff65d6a 100644
---- a/tools/testing/selftests/pidfd/.gitignore
-+++ b/tools/testing/selftests/pidfd/.gitignore
-@@ -11,3 +11,4 @@ pidfd_bind_mount
- pidfd_info_test
- pidfd_exec_helper
- pidfd_xattr_test
-+pidfd_setattr_test
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-index c9fd5023ef15..03a6eede9c9e 100644
---- a/tools/testing/selftests/pidfd/Makefile
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -4,7 +4,7 @@ CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
- TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
- 	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
- 	pidfd_file_handle_test pidfd_bind_mount pidfd_info_test \
--	pidfd_xattr_test
-+	pidfd_xattr_test pidfd_setattr_test
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 15d99854d243..1cf66fd9961e 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -809,6 +809,8 @@ static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+ 	if (ret < 0)
+ 		return ERR_PTR(ret);
  
- TEST_GEN_PROGS_EXTENDED := pidfd_exec_helper
++	VFS_WARN_ON_ONCE(!pid->attr);
++
+ 	mntput(path.mnt);
+ 	return path.dentry;
+ }
+@@ -1038,6 +1040,8 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
+ 	if (ret < 0)
+ 		return ERR_PTR(ret);
  
-diff --git a/tools/testing/selftests/pidfd/pidfd_setattr_test.c b/tools/testing/selftests/pidfd/pidfd_setattr_test.c
-new file mode 100644
-index 000000000000..d7de05edc4b3
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/pidfd_setattr_test.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
++	VFS_WARN_ON_ONCE(!pid->attr);
 +
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <linux/types.h>
-+#include <poll.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/prctl.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <sys/socket.h>
-+#include <linux/kcmp.h>
-+#include <sys/stat.h>
-+#include <sys/xattr.h>
-+
-+#include "pidfd.h"
-+#include "../kselftest_harness.h"
-+
-+FIXTURE(pidfs_setattr)
-+{
-+	pid_t child_pid;
-+	int child_pidfd;
-+};
-+
-+FIXTURE_SETUP(pidfs_setattr)
-+{
-+	self->child_pid = create_child(&self->child_pidfd, CLONE_NEWUSER | CLONE_NEWPID);
-+	EXPECT_GE(self->child_pid, 0);
-+
-+	if (self->child_pid == 0)
-+		_exit(EXIT_SUCCESS);
-+}
-+
-+FIXTURE_TEARDOWN(pidfs_setattr)
-+{
-+	sys_waitid(P_PID, self->child_pid, NULL, WEXITED);
-+	EXPECT_EQ(close(self->child_pidfd), 0);
-+}
-+
-+TEST_F(pidfs_setattr, no_chown)
-+{
-+	ASSERT_LT(fchown(self->child_pidfd, 1234, 5678), 0);
-+	ASSERT_EQ(errno, EOPNOTSUPP);
-+}
-+
-+TEST_F(pidfs_setattr, no_chmod)
-+{
-+	ASSERT_LT(fchmod(self->child_pidfd, 0777), 0);
-+	ASSERT_EQ(errno, EOPNOTSUPP);
-+}
-+
-+TEST_F(pidfs_setattr, no_exec)
-+{
-+	char *const argv[] = { NULL };
-+	char *const envp[] = { NULL };
-+
-+	ASSERT_LT(execveat(self->child_pidfd, "", argv, envp, AT_EMPTY_PATH), 0);
-+	ASSERT_EQ(errno, EACCES);
-+}
-+
-+TEST_HARNESS_MAIN
+ 	flags &= ~PIDFD_STALE;
+ 	flags |= O_RDWR;
+ 	pidfd_file = dentry_open(&path, flags, current_cred());
 
 -- 
 2.47.2
