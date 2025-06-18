@@ -1,92 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-52019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC0EADE50B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 09:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC513ADE5D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 10:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE1E1895C0F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 07:59:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDFDD1882B68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 08:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF32527EFE8;
-	Wed, 18 Jun 2025 07:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A39191F66;
+	Wed, 18 Jun 2025 08:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EP4W0ekK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6747027442;
-	Wed, 18 Jun 2025 07:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B14277C8E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 08:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750233518; cv=none; b=swUliCERqFFwOPIh+vpJtCMgA9Zssg5vUM2Mt+WaESLdPN0wT4KVmPXGjheJUMyMAAIW8FoyNf2+/QgMxIXRdmfJ2CU/f8ILx6nQzB7QRffOKWWH9Vby2eKZlS/dR6UufSQXkCwpu7GAFSQHI1UyFCCPWpLd/cqGk16fG5Ly+x0=
+	t=1750236012; cv=none; b=SPq/ejKa4qVcSXNpw+C2GOhiBp6JU7vv2vvu4B0RN9hbps0s3aTcf3/BaCrDuCyPFfkqFQ6maiBtDXngs1rriQW4dLhCccAS2+d4shuavHw8A543B19i2AQemcAeWl66hWKxGZm+r/JBys4vZamYV6Trxg/ognFNuD6wOnMAnh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750233518; c=relaxed/simple;
-	bh=EJDoq0UQGCTKftFym7aZqOmhudWniKAnk8XABrNLrSM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T9fGOnFWEENZRH/xdLob5Rd2kM2SNHA3tEwzwHrZ2O+MpE21EsFr8MNF77afP6zNbr5engqgb4lvBZb6MV6YWjIDbTr9GO697tDn9OAv4GvLNuRIQyaQ3fUj5vTKxKvfSoFVuF9DdismByGQAr/QpXUjD6eg+lX7JOLQ0LI/1IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bMbhf0GGvz9scZ;
-	Wed, 18 Jun 2025 09:58:26 +0200 (CEST)
-From: Pankaj Raghav <p.raghav@samsung.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>
-Cc: kernel@pankajraghav.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2] fs/buffer: remove comment about hard sectorsize
-Date: Wed, 18 Jun 2025 09:58:21 +0200
-Message-ID: <20250618075821.111459-1-p.raghav@samsung.com>
+	s=arc-20240116; t=1750236012; c=relaxed/simple;
+	bh=So/d6X4N5kfRZAVaLvLNqFDAQlWMMW/4h6r4krbIbLY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1i+C+9kj6p0ui/RQHfwC6XJ7+y4mGQ1HVv8G9OGEyRwSrLpoa1kWE7xoip+EsPr4BnidVBF/SsPZtqTPfy4LMzPnu3qXb9rjz2yu0Mp6lZYkmCrrgt+Js1RhPKynSdGAfK0TL9XExoGds4Sq6dyteeKC+/SaEN8mNUIg9QEA+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EP4W0ekK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 130E1C4CEE7;
+	Wed, 18 Jun 2025 08:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750236011;
+	bh=So/d6X4N5kfRZAVaLvLNqFDAQlWMMW/4h6r4krbIbLY=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=EP4W0ekK4ONdX3ORiOaCXhRnCnkdAJ7w1PbIZRxU/ID9Q/65eU3kr26HtltLzLaNi
+	 p6jgoQCpeyJ6phy5mGREgiQgdnTRTp3iAvaJ6ib2dE5pIH64yWNYC/grtCcOBaLYQR
+	 +vwh5q76Z6+TCMkR7r1v8yCwdY4YXawOpOYSrS1q0IIzJyjEC9sO+benCHWIvQS+2c
+	 G8f0XJ28O3qmWHOJ9apkB6+3RB++DcXmf+jdoVZswruul5W6+Tl8I8937aBWkb+eD7
+	 mRw+sfAKxZpep8Ryi4ZtRvk+w15E2eLuB9oa7H+u8T3HtjjTP9zmJhJfj5FOvDUyDQ
+	 SMkIAmo2eWVlQ==
+Date: Wed, 18 Jun 2025 10:40:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 1/2] pidfs: keep pidfs dentry stashed once created
+Message-ID: <20250618-einfrieren-faxnummer-26dc38e6311e@brauner>
+References: <20250617-work-pidfs-v2-0-529ca1990401@kernel.org>
+ <20250617-work-pidfs-v2-1-529ca1990401@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bMbhf0GGvz9scZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250617-work-pidfs-v2-1-529ca1990401@kernel.org>
 
-Commit e1defc4ff0cf ("block: Do away with the notion of hardsect_size")
-changed hardsect_size to logical block size. The comment on top still
-says hardsect_size.
+> @@ -2234,8 +2239,15 @@ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+>  		return PTR_ERR(dentry);
+>  
+>  	/* Added a new dentry. @data is now owned by the filesystem. */
+> -	path->dentry = stash_dentry(stashed, dentry);
+> -	if (path->dentry != dentry)
+> +	if (sops->stash_dentry)
+> +		res = sops->stash_dentry(stashed, dentry);
+> +	else
+> +		res = stash_dentry(stashed, dentry);
+> +	if (IS_ERR(res))
+> +		return PTR_ERR(res);
 
-Remove the comment as the code is pretty clear. While we are at it,
-format the relevant code.
-
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- fs/buffer.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 8cf4a1dc481e..a14d281c6a74 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1122,9 +1122,8 @@ __getblk_slow(struct block_device *bdev, sector_t block,
- {
- 	bool blocking = gfpflags_allow_blocking(gfp);
- 
--	/* Size must be multiple of hard sectorsize */
--	if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
--			(size < 512 || size > PAGE_SIZE))) {
-+	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
-+		     (size < 512 || size > PAGE_SIZE))) {
- 		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
- 					size);
- 		printk(KERN_ERR "logical block size: %d\n",
-
-base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
--- 
-2.49.0
-
+Missing dput(). Fixed in-tree.
 
