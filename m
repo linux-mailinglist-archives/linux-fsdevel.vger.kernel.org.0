@@ -1,97 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-52022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7446ADE66D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 11:17:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F7AADE671
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 11:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6911D3B1535
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 09:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353E3174222
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 09:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC862820A4;
-	Wed, 18 Jun 2025 09:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A24F280334;
+	Wed, 18 Jun 2025 09:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1aPEHow"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1C2202F70;
-	Wed, 18 Jun 2025 09:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66738460;
+	Wed, 18 Jun 2025 09:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238247; cv=none; b=Dy9/VYuGIYVqRxC8EdWsBPn6z3inTtKaNlucns71HRiGIpEKFqs1n7Zc6NdM0HAmPlKWFftEFEnhGTaNoiAJqexGKNOIeyi7NvYdfms9aZhk0px+18YmusV7oe07sr9QFQn6XW1NtrnsA9sP1EzGhoDWHWbSiq3gfRjWiA+eK3A=
+	t=1750238344; cv=none; b=UMFFUZn52QITuW7xq9XRY8WOvOkARi7NZCuZ6vpyXIoTC9SmPcl1awh2xsdzvkNRy8Otv08RqCQMWJMohLHS20KCVEn0zXSgAtVua4W1Y5hXO6C1D+8Ecvj58gK6b8NJb4zpcqhvNQ+nZGMD6VA5b9BNnHvdeJHZXwDq4PF6k40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238247; c=relaxed/simple;
-	bh=4guzzl8+uPUhHITQeQqcp6+BE4ne+X0iPtJ7/i9d4V8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NMi5O6PSJtvSrzDfU8BEXo2G2dA5EJkx9y9uTk8fbzbIfCsYdW1gOcRazYC9DQ3JiH2sN/dI3Drxj9yp3Dlc23xNcKxMJdaqynqrAaZ+UT8lZMHT09R6Nvrrw5TaaTi3+Zi4HId2Rxp5azRmDE8g7aXBt0gEClIZ8V1vNymFkKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bMdRc1fpdz9tG4;
-	Wed, 18 Jun 2025 11:17:16 +0200 (CEST)
-From: Pankaj Raghav <p.raghav@samsung.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	mcgrof@kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gost.dev@samsung.com,
-	kernel@pankajraghav.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH] fs/buffer: use min folio order to calculate upper limit in __getblk_slow()
-Date: Wed, 18 Jun 2025 11:17:10 +0200
-Message-ID: <20250618091710.119946-1-p.raghav@samsung.com>
+	s=arc-20240116; t=1750238344; c=relaxed/simple;
+	bh=BwpR+rZP2lNE2niMFjFRZlfZHHIA4fXPSo6ot9gp2Es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5EKAL/7HYcEQab4AQo+mvWrqWMzwBIr1FwD2oiGUSKjMQwEarEEsFrys45Z5ai8pYro/bl0DnbXv6sDYM+D28UQEeLe+LCVojJXTCk0HJBb1ZjASLAr9c+vT19W22wGOAybQuYRCl5O/CmaPcAjaEXLhSZYw5H6E/YfS7PV/bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1aPEHow; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC15C4CEE7;
+	Wed, 18 Jun 2025 09:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750238344;
+	bh=BwpR+rZP2lNE2niMFjFRZlfZHHIA4fXPSo6ot9gp2Es=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V1aPEHowVEVLqNprW+Ed+JhzYf8gWk9EB2lrmt+1PpfENC79sa2a4a+8myRptb1hC
+	 eki2V1dXvK80pXfdvfDoUhfv4ZXNpLYBJBG7SuecnV6VaHAwot4TvQLS+eEqyDoN2o
+	 g6R5F/a5I8td1aJYrVRrPRhtJMW7D5PWQ/A1G1fn6s9nC9JPXQeEALW1Z6kzR5N3rG
+	 HAth2Sr4AiG/rSOhc62rCxMydv+6ed60sMwmeiflNIKyEXsCCPXA2YSn7WkNBOI0W0
+	 N0BsDVdh/W9pWBqbzvZweXrFpqwhMaMIDTHyGXMk8mmsL6w2OcUJwslcKrVmDYJt9O
+	 2cH36GaBa3zuw==
+Date: Wed, 18 Jun 2025 11:18:56 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
+	"linux-trace-users@vger.kernel.org" <linux-trace-users@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Namhyung Kim <namhyung@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>
+Subject: Re: [RFC][PATCH] tracing: Deprecate auto-mounting tracefs in debugfs
+Message-ID: <20250618-freischaffend-gefunden-139c8c064797@brauner>
+References: <20250617133614.24e2ba7f@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250617133614.24e2ba7f@gandalf.local.home>
 
-The maximum IO size that a block device can read as a single block is
-based on the min folio order and not the PAGE_SIZE as we have bs > ps
-support for block devices[1].
+On Tue, Jun 17, 2025 at 01:36:14PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> In January 2015, tracefs was created to allow access to the tracing
+> infrastructure without needing to compile in debugfs. When tracefs is
+> configured, the directory /sys/kernel/tracing will exist and tooling is
+> expected to use that path to access the tracing infrastructure.
+> 
+> To allow backward compatibility, when debugfs is mounted, it would
+> automount tracefs in its "tracing" directory so that tooling that had hard
+> coded /sys/kernel/debug/tracing would still work.
+> 
+> It has been over 10 years since the new interface was introduced, and all
+> tooling should now be using it. Start the process of deprecating the old
+> path so that it doesn't need to be maintained anymore.
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
 
-Calculate the upper limit based on the on min folio order.
-
-[1] https://lore.kernel.org/linux-block/20250221223823.1680616-1-mcgrof@kernel.org/
-
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
-I found this while I was adding bs > ps support to ext4. Ext4 uses this
-routine to read the superblock.
-
- fs/buffer.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 8cf4a1dc481e..98f90da69a0a 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1121,10 +1121,11 @@ __getblk_slow(struct block_device *bdev, sector_t block,
- 	     unsigned size, gfp_t gfp)
- {
- 	bool blocking = gfpflags_allow_blocking(gfp);
-+	int blocklog = PAGE_SHIFT + mapping_min_folio_order(bdev->bd_mapping);
- 
- 	/* Size must be multiple of hard sectorsize */
--	if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
--			(size < 512 || size > PAGE_SIZE))) {
-+	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
-+		     (size < 512 || size > (1U << blocklog)))) {
- 		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
- 					size);
- 		printk(KERN_ERR "logical block size: %d\n",
-
-base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
--- 
-2.49.0
-
+Sounds reasonable.
 
