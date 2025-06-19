@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-52217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0CC4AE03B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:34:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB56AE03D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2880E7A5FDD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4752317E1A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C9F251791;
-	Thu, 19 Jun 2025 11:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85F22550CC;
+	Thu, 19 Jun 2025 11:32:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9C32459DE;
-	Thu, 19 Jun 2025 11:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26DD227E82;
+	Thu, 19 Jun 2025 11:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750332719; cv=none; b=sUEz2lUe0dOK1SR5wTVr1NRl5Q3Aane74xm6wACpwddP+F8+zmh4roYhi2W/9DDxAjivMglipPEvO1QCaTc0WFhMekNStHBZRPSKJpMmqO5gEFovYWF3cYX6mfs2eASQqtpUdHENx5VVAjUI11sWwJQwOStf6NKdjZ92wVxKXY0=
+	t=1750332721; cv=none; b=A8q5m8z+O4X0UBzfyI5eS1aUzqnzxuDZGMVf/MQfUzMq2rthEHa95QXUQdWIv0E4JZNGplW6ymZJ5kLt7e7B/0qT20qRL1NulklGC08OmxN+vk3qzWwkzQgZF5Xngi8cZWy8kubNuTHr+EtKs8uPaAwuL75KnspWzSpyssWjwYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750332719; c=relaxed/simple;
-	bh=FCBFLnmYvvjZmGqTyBAIDLtgtBH4FovV38bNkXCCplk=;
+	s=arc-20240116; t=1750332721; c=relaxed/simple;
+	bh=sFv2ORpGDM9HNERtH/DxH74CpBIOMYirWFHeolvuejI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TZUWh4vYQBa9vQDHuO30Uo9rfBgDUgllBr771oRFmDDqEeMThxcQodq2v+uZi3TqKpkfscYzvvAXxHe5mAT+j4rt1cPAjdkpDY4bjIJsF/XPUlDAgv1q3WI0sgC4tqqQ25leCT6YMZflf6JSWqmBp+BDwRr5ey+/zOIVRjbY/A0=
+	 MIME-Version; b=pAu+YC0i+lopWJ6Ibyv6r/QoLXI5Zw5bEirm5aJ8wZkMTj1JCmZS5jrh04LStmJ514oMchCFLgwpx+L08fXd+ZAcMFI1qQ/A35g+q6mqF/YG55x1Mfda7vFTOQwMfKKX2S64aWJk/DSGAsikDBjHqMGtx6FjeeXqs3jf+LYm89s=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bNJNS03z8zKHMxF;
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bNJNS5X4mzKHN7Y;
 	Thu, 19 Jun 2025 19:31:52 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 590531A193E;
-	Thu, 19 Jun 2025 19:31:50 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 1F6DE1A0DEC;
+	Thu, 19 Jun 2025 19:31:51 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCH618Y9VNoihn_Pw--.51230S9;
+	by APP4 (Coremail) with SMTP id gCh0CgCH618Y9VNoihn_Pw--.51230S10;
 	Thu, 19 Jun 2025 19:31:50 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-fsdevel@vger.kernel.org,
@@ -61,9 +61,9 @@ Cc: linux-xfs@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH v2 5/9] dm: clear unmap write zeroes limits when disabling write zeroes
-Date: Thu, 19 Jun 2025 19:18:02 +0800
-Message-ID: <20250619111806.3546162-6-yi.zhang@huaweicloud.com>
+Subject: [PATCH v2 6/9] fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
+Date: Thu, 19 Jun 2025 19:18:03 +0800
+Message-ID: <20250619111806.3546162-7-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
 References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
@@ -74,53 +74,125 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH618Y9VNoihn_Pw--.51230S9
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF4xXr4xAr18AFWkKw17ZFb_yoWDGwb_Ca
-	4ruFWDXry5CF1Sqr43AFn3ZrWYkryUXF18WF1Iq3sagFW8Xr95CF1vvFyY93W8ZFyjkF4U
-	ZF1kX34S9rs7tjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbvAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
-	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
-	F7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr
-	1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
-	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-	v20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
-	IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsG
-	vfC2KfnxnUUI43ZEXa7sRRtCztUUUUU==
+X-CM-TRANSID:gCh0CgCH618Y9VNoihn_Pw--.51230S10
+X-Coremail-Antispam: 1UD129KBjvJXoWxAryrGFW7Jr18Aw1kArW3GFg_yoWrCF1xpF
+	W3GF1rKrWvgF1rC3s3Can7ur98Zws5Gr43urWIgr1UZr45Jr1IgFsFgFyYva4xXrW3Aa1F
+	qFnI9r98ua47A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
+	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
+	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
+	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
+	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
+	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
+	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
+	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
+	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
+	daVFxhVjvjDU0xZFpf9x0pRiF4iUUUUU=
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-The unmap write zeroes limits have been set to the stacking queue limits
-by default in blk_set_stacking_limits() and blk_stack_limits(), but it
-should be cleared if any underlying device does not support it.
+With the development of flash-based storage devices, we can quickly
+write zeros to SSDs using the WRITE_ZERO command if the devices do not
+actually write physical zeroes to the media. Therefore, we can use this
+command to quickly preallocate a real all-zero file with written
+extents. This approach should be beneficial for subsequent pure
+overwriting within this file, as it can save on block allocation and,
+consequently, significant metadata changes, which should greatly improve
+overwrite performance on certain filesystems.
+
+Therefore, introduce a new operation FALLOC_FL_WRITE_ZEROES to
+fallocate. This flag is used to convert a specified range of a file to
+zeros by issuing a zeroing operation. Blocks should be allocated for the
+regions that span holes in the file, and the entire range is converted
+to written extents. If the underlying device supports the actual offload
+write zeroes command, the process of zeroing out operation can be
+accelerated. If it does not, we currently don't prevent the file system
+from writing actual zeros to the device. This provides users with a new
+method to quickly generate a zeroed file, users no longer need to write
+zero data to create a file with written extents.
+
+Users can determine whether a disk supports the unmap write zeroes
+feature through querying this sysfs interface:
+
+    /sys/block/<disk>/queue/write_zeroes_unmap_max_hw_bytes
+
+Users can also enable or disable the unmap write zeroes operation
+through this sysfs interface:
+
+    /sys/block/<disk>/queue/write_zeroes_unmap_max_bytes
+
+Finally, this flag cannot be specified in conjunction with the
+FALLOC_FL_KEEP_SIZE since allocating written extents beyond file EOF is
+not permitted. In addition, filesystems that always require out-of-place
+writes should not support this flag since they still need to allocated
+new blocks during subsequent overwrites.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 ---
- drivers/md/dm-table.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/open.c                   |  1 +
+ include/linux/falloc.h      |  3 ++-
+ include/uapi/linux/falloc.h | 17 +++++++++++++++++
+ 3 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 24a857ff6d0b..d9d5e6aa5707 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -2065,8 +2065,10 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
- 		limits->discard_alignment = 0;
- 	}
+diff --git a/fs/open.c b/fs/open.c
+index 7828234a7caa..b777e11e5522 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -281,6 +281,7 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 		break;
+ 	case FALLOC_FL_COLLAPSE_RANGE:
+ 	case FALLOC_FL_INSERT_RANGE:
++	case FALLOC_FL_WRITE_ZEROES:
+ 		if (mode & FALLOC_FL_KEEP_SIZE)
+ 			return -EOPNOTSUPP;
+ 		break;
+diff --git a/include/linux/falloc.h b/include/linux/falloc.h
+index 3f49f3df6af5..7c38c6b76b60 100644
+--- a/include/linux/falloc.h
++++ b/include/linux/falloc.h
+@@ -36,7 +36,8 @@ struct space_resv {
+ 				 FALLOC_FL_COLLAPSE_RANGE |	\
+ 				 FALLOC_FL_ZERO_RANGE |		\
+ 				 FALLOC_FL_INSERT_RANGE |	\
+-				 FALLOC_FL_UNSHARE_RANGE)
++				 FALLOC_FL_UNSHARE_RANGE |	\
++				 FALLOC_FL_WRITE_ZEROES)
  
--	if (!dm_table_supports_write_zeroes(t))
-+	if (!dm_table_supports_write_zeroes(t)) {
- 		limits->max_write_zeroes_sectors = 0;
-+		limits->max_hw_wzeroes_unmap_sectors = 0;
-+	}
+ /* on ia32 l_start is on a 32-bit boundary */
+ #if defined(CONFIG_X86_64)
+diff --git a/include/uapi/linux/falloc.h b/include/uapi/linux/falloc.h
+index 5810371ed72b..1f9ca757d02d 100644
+--- a/include/uapi/linux/falloc.h
++++ b/include/uapi/linux/falloc.h
+@@ -78,4 +78,21 @@
+  */
+ #define FALLOC_FL_UNSHARE_RANGE		0x40
  
- 	if (!dm_table_supports_secure_erase(t))
- 		limits->max_secure_erase_sectors = 0;
++/*
++ * FALLOC_FL_WRITE_ZEROES zeroes a specified file range in such a way that
++ * subsequent writes to that range do not require further changes to the file
++ * mapping metadata. This flag is beneficial for subsequent pure overwriting
++ * within this range, as it can save on block allocation and, consequently,
++ * significant metadata changes. Therefore, filesystems that always require
++ * out-of-place writes should not support this flag.
++ *
++ * Different filesystems may implement different limitations on the
++ * granularity of the zeroing operation. Most will preferably be accelerated
++ * by submitting write zeroes command if the backing storage supports, which
++ * may not physically write zeros to the media.
++ *
++ * This flag cannot be specified in conjunction with the FALLOC_FL_KEEP_SIZE.
++ */
++#define FALLOC_FL_WRITE_ZEROES		0x80
++
+ #endif /* _UAPI_FALLOC_H_ */
 -- 
 2.46.1
 
