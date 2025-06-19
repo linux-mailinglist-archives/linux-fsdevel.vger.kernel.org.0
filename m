@@ -1,270 +1,295 @@
-Return-Path: <linux-fsdevel+bounces-52249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D56AE0B4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 18:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124A3AE0B61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 18:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E651BC6A90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 16:22:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD1B189A10D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 16:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7026228BA82;
-	Thu, 19 Jun 2025 16:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E28F28C006;
+	Thu, 19 Jun 2025 16:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g9wPiqlW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2K+HySr5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g9wPiqlW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2K+HySr5"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BeGa7k9b";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tub6wDde";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BeGa7k9b";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tub6wDde"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CE4235046
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 16:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858B528C000
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 16:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750350123; cv=none; b=XWpOPokeHSEeuKoOUUA50oOHoptWozA4/fkT+uUARrne708fEgdn5H6/1nS1GeKg6ATxbOw2boTln4+iCmzigwDTmowG2dXFWM9ndgZP/ApROVfBQPlgiyg1SQ20rJPhSq+txmjLgDulJBTksEz4niJFgFr3nyz+THioPbHE/N8=
+	t=1750350525; cv=none; b=VwE6R/z1gLCvB4Pvmxz13Xr0dMw27qvQ9m4U/I0LS7WhqQjH5OdYqtpvQ2gheClkIRUdMt0Id+nmdo6iRPFyg7vqVw0x1s+q502R9GYsb5+W8Kqw7pgNAU6HcphUxcBEA2ssMPi6PvAhKze2DE62wChrTUUDv3XcqCxY8l9Pg6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750350123; c=relaxed/simple;
-	bh=7K6oZcAivfBhwTNb5BmkSij8yNph5jyg7D+Rul5+QL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/MfH94i4hoUC7cFmX7624bXHC/rELqb3wbCYokxM7RYohjkmgbLOViuD1JpEDjoQkwQKQJ6z2+8tvmdEoLTKcfrIu4L2ZwiHQHLpfO3bomLMmGg12AsvWXfqjYruw2mequVx8X5nnYJBqMvBHyInBK8kjfCSmfhjdEl1LnLl/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g9wPiqlW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2K+HySr5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g9wPiqlW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2K+HySr5; arc=none smtp.client-ip=195.135.223.131
+	s=arc-20240116; t=1750350525; c=relaxed/simple;
+	bh=zidJjhp4CtIdjYt9Zfq+jJWUL7rpncLQlS5a5aZqwzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TcNuVW6uw8IGKEYiBDEJ3WsbVMix6YEMNske864s7VIiJoe2pMR2PQmEYON/kq8Wc+JHx88uUHT6htPDLCn5u7D4EssCy9lPZYS/v+En7Oz01n/NMyxhNb8Id0SKopfu1+b4umZPp7JLYphs12EVmQI6Lld+bl7+f7I3n+8L3z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BeGa7k9b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tub6wDde; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BeGa7k9b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tub6wDde; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 34EDC1F38D;
-	Thu, 19 Jun 2025 16:22:00 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 30CB51F390;
+	Thu, 19 Jun 2025 16:28:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750350120; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750350521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VBXhWz3cKH2Kv/pzpJfoID2U/545GzOHbh+GauCAbd8=;
-	b=g9wPiqlW2Fnixj8kN17u08WSq+o7hxcFwJx7fP2WToLzdV9dscaK4jeii7cyPWf4YU/gWO
-	8fSHyGnum/hl1sTLmdVXBBsKYbgmMlUkxHBU6c/8EeOM65GbyUYe+URPhOVU0W5p7uvFDB
-	9rhcDk3XeOmbh9NXaQt9KHZtw9FCwSg=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L0XB80uY96nZSSx/hm/ejautkqzNKhDWxLnZPhTiV14=;
+	b=BeGa7k9bpKf9lHVInMG4ggxuTGbyy2Na2s3wSdo43x9lsanIwhCtf4qa/Wacks6GnEZByK
+	hamQIlvU5AYyj/ikzqT0qLBKXEMsW/Hf3YfYad6UDNgCIt4xevCWQY85+x36JxpNYh7L/6
+	tTaFvucek97bHLbrbXPucnvaZ77lHKc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750350120;
+	s=susede2_ed25519; t=1750350521;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VBXhWz3cKH2Kv/pzpJfoID2U/545GzOHbh+GauCAbd8=;
-	b=2K+HySr5dWstC+6lT2F5WnWJ3x4oP2Qg+I7Lf7bsX6wWtHlHQkGYxvf02EG4H6flbpU3iP
-	xaUOtohRFXn2WwBw==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L0XB80uY96nZSSx/hm/ejautkqzNKhDWxLnZPhTiV14=;
+	b=Tub6wDdeT7HClESsmBZg0rMuHkyWXvR6/u5d4sU9cui2QsyjBJ0P61M/u9Ycm2GAWxWtCn
+	QsRjPj+x3CzIsUAQ==
 Authentication-Results: smtp-out2.suse.de;
-	none
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BeGa7k9b;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Tub6wDde
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750350120; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750350521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VBXhWz3cKH2Kv/pzpJfoID2U/545GzOHbh+GauCAbd8=;
-	b=g9wPiqlW2Fnixj8kN17u08WSq+o7hxcFwJx7fP2WToLzdV9dscaK4jeii7cyPWf4YU/gWO
-	8fSHyGnum/hl1sTLmdVXBBsKYbgmMlUkxHBU6c/8EeOM65GbyUYe+URPhOVU0W5p7uvFDB
-	9rhcDk3XeOmbh9NXaQt9KHZtw9FCwSg=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L0XB80uY96nZSSx/hm/ejautkqzNKhDWxLnZPhTiV14=;
+	b=BeGa7k9bpKf9lHVInMG4ggxuTGbyy2Na2s3wSdo43x9lsanIwhCtf4qa/Wacks6GnEZByK
+	hamQIlvU5AYyj/ikzqT0qLBKXEMsW/Hf3YfYad6UDNgCIt4xevCWQY85+x36JxpNYh7L/6
+	tTaFvucek97bHLbrbXPucnvaZ77lHKc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750350120;
+	s=susede2_ed25519; t=1750350521;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VBXhWz3cKH2Kv/pzpJfoID2U/545GzOHbh+GauCAbd8=;
-	b=2K+HySr5dWstC+6lT2F5WnWJ3x4oP2Qg+I7Lf7bsX6wWtHlHQkGYxvf02EG4H6flbpU3iP
-	xaUOtohRFXn2WwBw==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L0XB80uY96nZSSx/hm/ejautkqzNKhDWxLnZPhTiV14=;
+	b=Tub6wDdeT7HClESsmBZg0rMuHkyWXvR6/u5d4sU9cui2QsyjBJ0P61M/u9Ycm2GAWxWtCn
+	QsRjPj+x3CzIsUAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 019B7136CC;
-	Thu, 19 Jun 2025 16:22:00 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8D4E136CC;
+	Thu, 19 Jun 2025 16:28:40 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TZwcACg5VGhIQwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 19 Jun 2025 16:21:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 853AEA29FA; Thu, 19 Jun 2025 18:21:59 +0200 (CEST)
-Date: Thu, 19 Jun 2025 18:21:59 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
-	yangerkun@huawei.com
-Subject: Re: [PATCH v2 2/6] ext4: fix stale data if it bail out of the
- extents mapping loop
-Message-ID: <m5drn6xauyaksmui7b3vpua24ttgmjnwsi3sgavpelxlcwivsw@6bpmobqvpw7f>
-References: <20250611111625.1668035-1-yi.zhang@huaweicloud.com>
- <20250611111625.1668035-3-yi.zhang@huaweicloud.com>
+	id TJacKLg6VGhBRQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 19 Jun 2025 16:28:40 +0000
+Message-ID: <b62b287a-8c13-474b-96ab-a33cc06f1c54@suse.cz>
+Date: Thu, 19 Jun 2025 18:28:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611111625.1668035-3-yi.zhang@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v8 4/7] mm/mempolicy: Export memory policy symbols
+Content-Language: en-US
+To: Shivank Garg <shivankg@amd.com>, Gregory Price <gourry@gourry.net>
+Cc: seanjc@google.com, david@redhat.com, willy@infradead.org,
+ akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
+ bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
+ chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
+ peterx@redhat.com, jack@suse.cz, rppt@kernel.org, hch@infradead.org,
+ cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
+ joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
+ jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
+ yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250618112935.7629-1-shivankg@amd.com>
+ <20250618112935.7629-5-shivankg@amd.com>
+ <aFLXRtCDfoNzQym6@gourry-fedora-PF4VCD3F>
+ <4267108c-ac26-4528-97cc-0d160568baee@amd.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <4267108c-ac26-4528-97cc-0d160568baee@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 30CB51F390
+X-Rspamd-Action: no action
 X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
+X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[3];
+	MX_GOOD(-0.01)[];
 	FROM_HAS_DN(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[google.com,redhat.com,infradead.org,linux-foundation.org,kernel.org,zeniv.linux.org.uk,paul-moore.com,namei.org,hallyn.com,suse.cz,intel.com,amd.com,nvidia.com,amazon.com,googlemail.com,amazon.co.uk,gmail.com,sk.com,linux.dev,linux.alibaba.com,arm.com,quicinc.com,vger.kernel.org,kvack.org,lists.linux.dev];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_GT_50(0.00)[65];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
 X-Spam-Level: 
 
-On Wed 11-06-25 19:16:21, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 6/19/25 13:13, Shivank Garg wrote:
 > 
-> During the process of writing back folios, if
-> mpage_map_and_submit_extent() exits the extent mapping loop due to an
-> ENOSPC or ENOMEM error, it may result in stale data or filesystem
-> inconsistency in environments where the block size is smaller than the
-> folio size.
 > 
-> When mapping a discontinuous folio in mpage_map_and_submit_extent(),
-> some buffers may have already be mapped. If we exit the mapping loop
-> prematurely, the folio data within the mapped range will not be written
-> back, and the file's disk size will not be updated. Once the transaction
-> that includes this range of extents is committed, this can lead to stale
-> data or filesystem inconsistency.
+> On 6/18/2025 8:42 PM, Gregory Price wrote:
+>> On Wed, Jun 18, 2025 at 11:29:32AM +0000, Shivank Garg wrote:
+>>> KVM guest_memfd wants to implement support for NUMA policies just like
+>>> shmem already does using the shared policy infrastructure. As
+>>> guest_memfd currently resides in KVM module code, we have to export the
+>>> relevant symbols.
+>>>
+>>> In the future, guest_memfd might be moved to core-mm, at which point the
+>>> symbols no longer would have to be exported. When/if that happens is
+>>> still unclear.
+>>>
+>>> Acked-by: David Hildenbrand <david@redhat.com>
+>>> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>>> Signed-off-by: Shivank Garg <shivankg@amd.com>
+>>> ---
+>>>  mm/mempolicy.c | 6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+>>> index 3b1dfd08338b..d98243cdf090 100644
+>>> --- a/mm/mempolicy.c
+>>> +++ b/mm/mempolicy.c
+>>> @@ -354,6 +354,7 @@ struct mempolicy *get_task_policy(struct task_struct *p)
+>>>  
+>>>  	return &default_policy;
+>>>  }
+>>> +EXPORT_SYMBOL_GPL(get_task_policy);
+>>>  
+>>>  static const struct mempolicy_operations {
+>>>  	int (*create)(struct mempolicy *pol, const nodemask_t *nodes);
+>>> @@ -487,6 +488,7 @@ void __mpol_put(struct mempolicy *pol)
+>>>  		return;
+>>>  	kmem_cache_free(policy_cache, pol);
+>>>  }
+>>> +EXPORT_SYMBOL_GPL(__mpol_put);
+>>>  
+>> 
+>> I'm concerned that get_task_policy doesn't actually increment the policy
+
+Hm it might be a bit misnomer. But fixing that would be out of scope here.
+
+>> refcount - and mpol_cond_put only decrements the refcount for shared
+>> policies (vma policies) - while __mpol_put decrements it unconditionally.
+>> 
+>> If you look at how get_task_policy is used internally to mempolicy,
+>> you'll find that it either completes the operation in the context of the
+>> task lock (allocation time) or it calls mpol_get afterwards.
 > 
-> Fix this by submitting the current processing partial mapped folio and
-> update the disk size to the end of the mapped range.
+> I agree. But the semantics of my usage isn't new. shmem use this in same way.
+
+Yeah it's only used in the context of the allocation or the get_mempolicy()
+syscall and the pointer is not retained somewhere indefinitely. In case of
+task's mempolicy, the protection comes from only accessing current task's
+policy, and also only the current task can replace it with the
+sys_mempolicy() syscall.
+
+> I think the alloc_frozen_pages_noprof(), alloc_pages_bulk_mempolicy_noprof()
+> calls get_task_policy without task_lock or calling mpol_get.
+
+Yes.
+
+>> 
+>> Exporting this as-is creates a triping hazard, if only because get/put
+>> naming implies reference counting.
+
+I don't think we in general consider the act of export a larger hazard for
+misuse than misuse by internal code. For e.g. __mpol_put() we have to export
+it due to combination of inlined and non-inlined code, but nobody would
+really call it directly, but use mpol_put() and mpol_cond_put(). We'd need
+to be able to "un-declare" it after the usage in the two inline wrappers to
+prevent direct (mis)use by both modules and non-modules.
+
+> Since KVM is the only user, we could consider newly added EXPORT_SYMBOL_GPL_FOR_MODULES(..., "kvm")
+> to avoid wider exposure.
+
+Yes that would be preferred now for all the guest_memfd related series in
+flight adding exports anywhere.
+
+> Does this solve your concern?
+> Or should we rename these functions.
+> What should be the preferred approach?
 > 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/ext4/inode.c | 50 +++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 48 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 3a086fee7989..d0db6e3bf158 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2362,6 +2362,42 @@ static int mpage_map_one_extent(handle_t *handle, struct mpage_da_data *mpd)
->  	return 0;
->  }
->  
-> +/*
-> + * This is used to submit mapped buffers in a single folio that is not fully
-> + * mapped for various reasons, such as insufficient space or journal credits.
-> + */
-> +static int mpage_submit_buffers(struct mpage_da_data *mpd, loff_t pos)
-> +{
-> +	struct inode *inode = mpd->inode;
-> +	struct folio *folio;
-> +	int ret;
-> +
-> +	folio = filemap_get_folio(inode->i_mapping, mpd->first_page);
-> +	if (IS_ERR(folio))
-> +		return PTR_ERR(folio);
-> +
-> +	ret = mpage_submit_folio(mpd, folio);
-> +	if (ret)
-> +		goto out;
-> +	/*
-> +	 * Update first_page to prevent this folio from being released in
-> +	 * mpage_release_unused_pages(), it should not equal to the folio
-> +	 * index.
-> +	 *
-> +	 * The first_page will be reset to the aligned folio index when this
-> +	 * folio is written again in the next round. Additionally, do not
-> +	 * update wbc->nr_to_write here, as it will be updated once the
-> +	 * entire folio has finished processing.
-> +	 */
-> +	mpd->first_page = round_up(pos, PAGE_SIZE) >> PAGE_SHIFT;
+> Thanks,
+> Shivank
 
-Well, but there can be many folios between mpd->first_page and pos. And
-this way you avoid cleaning them up (unlocking them and dropping elevated
-refcount) before we restart next loop. How is this going to work?
-
-Also I don't see in this patch where mpd->first_page would get set back to
-retry writing this folio. What am I missing?
-
-> +	WARN_ON_ONCE((folio->index == mpd->first_page) ||
-> +		     !folio_contains(folio, pos >> PAGE_SHIFT));
-> +out:
-> +	folio_unlock(folio);
-> +	folio_put(folio);
-> +	return ret;
-> +}
-> +
->  /*
->   * mpage_map_and_submit_extent - map extent starting at mpd->lblk of length
->   *				 mpd->len and submit pages underlying it for IO
-> @@ -2412,8 +2448,16 @@ static int mpage_map_and_submit_extent(handle_t *handle,
->  			 */
->  			if ((err == -ENOMEM) ||
->  			    (err == -ENOSPC && ext4_count_free_clusters(sb))) {
-> -				if (progress)
-> +				/*
-> +				 * We may have already allocated extents for
-> +				 * some bhs inside the folio, issue the
-> +				 * corresponding data to prevent stale data.
-> +				 */
-> +				if (progress) {
-> +					if (mpage_submit_buffers(mpd, disksize))
-> +						goto invalidate_dirty_pages;
->  					goto update_disksize;
-> +				}
->  				return err;
->  			}
->  			ext4_msg(sb, KERN_CRIT,
-> @@ -2432,6 +2476,8 @@ static int mpage_map_and_submit_extent(handle_t *handle,
->  			*give_up_on_write = true;
->  			return err;
->  		}
-> +		disksize = ((loff_t)(map->m_lblk + map->m_len)) <<
-> +				inode->i_blkbits;
-
-I don't think setting disksize like this is correct in case
-mpage_map_and_submit_buffers() below fails (when extent covers many folios
-and we don't succeed in writing them all). In that case we may need to keep
-disksize somewhere in the middle of the extent.
-
-Overall I don't think we need to modify disksize handling here. It is fine
-to leave (part of) the extent dangling beyond disksize until we retry the
-writeback in these rare cases.
-
->  		progress = 1;
->  		/*
->  		 * Update buffer state, submit mapped pages, and get us new
-> @@ -2442,12 +2488,12 @@ static int mpage_map_and_submit_extent(handle_t *handle,
->  			goto update_disksize;
->  	} while (map->m_len);
->  
-> +	disksize = ((loff_t)mpd->first_page) << PAGE_SHIFT;
->  update_disksize:
->  	/*
->  	 * Update on-disk size after IO is submitted.  Races with
->  	 * truncate are avoided by checking i_size under i_data_sem.
->  	 */
-> -	disksize = ((loff_t)mpd->first_page) << PAGE_SHIFT;
->  	if (disksize > READ_ONCE(EXT4_I(inode)->i_disksize)) {
->  		int err2;
->  		loff_t i_size;
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
