@@ -1,153 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-52210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45039AE0384
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:30:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D73AE03D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957F4189E99E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D014A3EA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB0121FF33;
-	Thu, 19 Jun 2025 11:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xr8fTo72"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28041253F39;
+	Thu, 19 Jun 2025 11:32:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D75528682;
-	Thu, 19 Jun 2025 11:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F8A24DD04
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 11:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750332626; cv=none; b=pe41/69KafV65k+Q2OA9FALOMbeI2z/aXlpYV6zhnSdyYvdMHmqAfgJJwFEspjB5qOF9PKke7gV0+vcl+ff6gWNB8/WiUY0vUJ7zyumHgLOvJDROHNrUGtfVwtp1waHy33Dm8vRVG56pMn+2KABoiM1pyrn4U5S9uaiVRSIvHdM=
+	t=1750332720; cv=none; b=Tp8mfBCc1s+1BscIz1WpuElbkmdSFGxccDrmndzAwXcXhJNGaUfGifh1F2bklypX7zu54Yzyvy0a7jiowQMkPdCu1HmIZlFfXtAVshRNVTBiPL8WMxehX2fANj16b1bGcEJzMsQQcgUhSLUqbGWqyW2vfdonVoUrWCTn01V8dEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750332626; c=relaxed/simple;
-	bh=06dcYr32eMU17iPm3Ydr8GIGR6UG3r1YmzA8+vfi3qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FkjdGXmU9F6nFsjmuKWyW8PQs9ExW0wERxNeRyyGwNaQpk67IStBaVOYMscRAKtJ0V6HzZc+mOjfeeKOmL2qYrJJIaD+vDjkbJkUaqF+UIEY/gGnPnrLK9/GUiur8ttWGDyxVEcbNACxgSsYImJezVy9F8iroBPO0SIwVLyPVeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xr8fTo72; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E04FC4CEEA;
-	Thu, 19 Jun 2025 11:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750332625;
-	bh=06dcYr32eMU17iPm3Ydr8GIGR6UG3r1YmzA8+vfi3qs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xr8fTo72oeNkbWUPP8PMsSo9z4DzmG+KfUj5FdWELQdcuDNxwAI7EURL3yP9m+yjG
-	 hG9TNN5IlhYOmNqHxt2zftiFC6uVH14jF98bWvtl8rfChoAZwr2Grt1WfS5oUV0FuH
-	 XqZ7Kw7yYyWWh9TeRSObwgz9kdNrROePQl409aHVdVht+KjPgZMKixmUDdBZo4LXnm
-	 A+fCMinVinPhZ19RrihdB4Dlo7bv45QmUCpm6nekR/zpmdCgUHF2Rccf+E1E1SZXsu
-	 F/ClcLEfRVXnm1c8aKxlDc5OjSNAUkePjnQtE6dpIFjLFlaMW/tgCAbbBCrGUsvbFY
-	 PkSZqRGxfvEYg==
-Date: Thu, 19 Jun 2025 13:30:17 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, 
-	djwong@kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2] statx.2: Add stx_atomic_write_unit_max_opt
-Message-ID: <xuxvvxyka5utcr5rajxrxjjjo7adz66etczfbu4jlgqdoks3b6@4abjfqhqxtux>
-References: <20250619090510.229114-1-john.g.garry@oracle.com>
- <7ret5bl5nbtolpdu2muaoeaheu6klrrfm2pvp3vkdfvfw7jxbr@zwsz2dpx7vxz>
- <22295562-ac0e-41df-a995-a52c0ebcaa12@oracle.com>
+	s=arc-20240116; t=1750332720; c=relaxed/simple;
+	bh=3MPrInjo3388gIKmhUGr9uGPORntDZqz8a3nFubP/rA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B0iydBKVf7Bm90rESnkpcb0eqvJJGvQ8xte3Vqwug8evLxlkKY0e8zeXR9G6LRVuFSDQ9z/aWuWExchp3Gbh/JTeksKcwC2ZsaRSDLwV6+mO4EbfQxx7BupDReqplIgu6dloDeiNNa/Gs2r7iu21wU6VisQvL3JAObWLwlFtkcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0C0761F38D;
+	Thu, 19 Jun 2025 11:31:51 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F9E913721;
+	Thu, 19 Jun 2025 11:31:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SfepIib1U2htbAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 19 Jun 2025 11:31:50 +0000
+Message-ID: <fad65354-804e-447f-9779-2c69a87f3e4d@suse.cz>
+Date: Thu, 19 Jun 2025 13:31:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bmw6aukllnz5jphy"
-Content-Disposition: inline
-In-Reply-To: <22295562-ac0e-41df-a995-a52c0ebcaa12@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] mm: change vm_get_page_prot() to accept vm_flags_t
+ argument
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "David S . Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Hugh Dickins <hughd@google.com>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm@vger.kernel.org, sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ linux-trace-kernel@vger.kernel.org
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+ <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 0C0761F38D
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.00
 
+On 6/18/25 21:42, Lorenzo Stoakes wrote:
+> We abstract the type of the VMA flags to vm_flags_t, however in may places
+> it is simply assumed this is unsigned long, which is simply incorrect.
+> 
+> At the moment this is simply an incongruity, however in future we plan to
+> change this type and therefore this change is a critical requirement for
+> doing so.
+> 
+> Overall, this patch does not introduce any functional change.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
---bmw6aukllnz5jphy
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, 
-	djwong@kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2] statx.2: Add stx_atomic_write_unit_max_opt
-References: <20250619090510.229114-1-john.g.garry@oracle.com>
- <7ret5bl5nbtolpdu2muaoeaheu6klrrfm2pvp3vkdfvfw7jxbr@zwsz2dpx7vxz>
- <22295562-ac0e-41df-a995-a52c0ebcaa12@oracle.com>
-MIME-Version: 1.0
-In-Reply-To: <22295562-ac0e-41df-a995-a52c0ebcaa12@oracle.com>
+> diff --git a/arch/powerpc/include/asm/book3s/64/pkeys.h b/arch/powerpc/include/asm/book3s/64/pkeys.h
+> index 5b178139f3c0..6f2075636591 100644
+> --- a/arch/powerpc/include/asm/book3s/64/pkeys.h
+> +++ b/arch/powerpc/include/asm/book3s/64/pkeys.h
+> @@ -4,8 +4,9 @@
+>  #define _ASM_POWERPC_BOOK3S_64_PKEYS_H
+>  
+>  #include <asm/book3s/64/hash-pkey.h>
+> +#include <linux/mm_types.h>
 
-Hi John,
+Hopefully not causing a circular header include.
 
-On Thu, Jun 19, 2025 at 12:24:21PM +0100, John Garry wrote:
-> > > @@ -514,6 +518,20 @@ is supported on block devices since Linux 6.11.
-> > >   The support on regular files varies by filesystem;
-> > >   it is supported by xfs and ext4 since Linux 6.13.
-> > >   .TP
-> > > +.I stx_atomic_write_unit_max_opt
-> > > +The maximum size (in bytes) which is optimised for writes issued with
-> > > +torn-write protection.
-> >=20
-> > Please break the line before 'optimized' and remove the current line
-> > break.
->=20
-> ok, but I am not sure the issue with the current formatting
+> -static inline u64 vmflag_to_pte_pkey_bits(u64 vm_flags)
+> +static inline u64 vmflag_to_pte_pkey_bits(vm_flags_t vm_flags)
 
-It's because of
+Is this change rather for patch 3? It's not changing vm_get_page_prot().
+OTOH git grep shows me you missed:
 
-$ MANWIDTH=3D72 man man-pages | sed -n '/Use semantic newlines/,/^$/p';
-   Use semantic newlines
-       In the source of a manual page, new sentences should be  started
-       on  new  lines,  long  sentences  should  be split into lines at
-       clause breaks (commas, semicolons, colons, and so on), and  long
-       clauses  should be split at phrase boundaries.  This convention,
-       sometimes known as "semantic newlines", makes it easier  to  see
-       the effect of patches, which often operate at the level of indi=E2=
-=80=90
-       vidual sentences, clauses, or phrases.
+arch/powerpc/mm/book3s64/pgtable.c:pgprot_t vm_get_page_prot(unsigned long
+vm_flags)
 
-> > > +.I stx_atomic_write_unit_max
-> > > +and will not be less than the value in
-> > > +.I stx_atomic_write_unit_min.
-> >=20
-> > This should be IR, and the '.' separated by a space, so that the '.' is
-> > not in italics.
->=20
-> So you mean like the following:
->=20
-> .IR stx_atomic_write_unit_min .
->=20
-> right?
+With that sorted out, feel free to add:
 
-Yep.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-
-Cheers,
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---bmw6aukllnz5jphy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhT9MgACgkQ64mZXMKQ
-wqlcIxAAqeghkLwvrlcRBsM28tC/DTSgf6y8UtyWUYPt7IXvxt6i5zeDxTqCmqXF
-cg6coRyI9ZuK5sJ9xMCNHCxmei08BXA8Iia+j7B0tTa4pZzrWnXNl+4ACyUla7NZ
-XlF2ykhJmdWX1xg3SX7XHlUAI1kpkqZIOPumPRuukffXUC6bkC4ZLiyG+4obBeZp
-hJNJybF+1H4kMY9iIsuX9Jw7dW1LJwnMJ/bywPOs0ck1/hTbFaWv7cBNkmbJZQno
-pxoyYWnhjlqfpuMYHeqog2R/V/OU1wrupsjJru7qKup1f7CtV2lxkPC3zIl94TU9
-NISWKSuYNaAwr4IcH0bx1qUNeF+9xnf3DMYVwbsZ9ky5A1tCPsupcQyuzwRNC1KX
-4PwyG2blcYFWFv5htTCirIiNeOzc7eXaLZmd1Y2uK+t4R/tZgljULdrMXqGb744w
-DnbsJtqpwpy154qBA+Yt+IZipieza+ez4+BKRQ5b5Ppi2+Os7F2wbMUN51G+vZDk
-KZzLm0p6+1Oy4HJvTKW3K6W66cKsRX3HaVAZ7CGlMus07X7S4EX3t9P2GVBkA1Lm
-aA+9xmLMnFp2rPuPcNQh69boIe2M8v81jo4s8V5nc3Pxh0fSIeDr5C1znLtURqB6
-f3otGNp5/tN1C1dFSz3iCMhdU8DI1Av8QY29dl3rKi1CE2iaBbQ=
-=JLB1
------END PGP SIGNATURE-----
-
---bmw6aukllnz5jphy--
+Thanks!
 
