@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-52162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F9B7AE001B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 10:42:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CD8AE0022
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 10:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 883BE7AEC3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 08:41:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F27517A4DEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 08:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E602726561D;
-	Thu, 19 Jun 2025 08:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B34A265614;
+	Thu, 19 Jun 2025 08:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SErdEUma"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lx+8Aom2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283AF264638;
-	Thu, 19 Jun 2025 08:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C523264618;
+	Thu, 19 Jun 2025 08:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750322550; cv=none; b=ePqdSfPbKxbkbfnbHyqPHNmsWOWDfNcdFhg0Jni8YphW7G/dAc9beyC22bzOtB9WMgNBINLUpPig5UDetY8SDq6cjHr5uvaMcUAG8WHGgOPVs5cNwBiWx+oV//ryl60MCWgAv+APSAfqVaFF5rlkooUQb1lih+U+5Ik+ZX3T9Ko=
+	t=1750322600; cv=none; b=AQWrkq9JQY/inkQxS8wma0WecLpho7bICvb7sEWPx0AEXJS5b0tqStXXNiHxs3U2oQcHx11d73kkrglVwQFdq6BU1AXMTpEwbyZwIgx817Remz2y8mMw6CTUATRh+on+pnxb/54Se8PLwIz/zqjCr4zUMVq3M6p6wPu/lPE8bFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750322550; c=relaxed/simple;
-	bh=3VFuG2FOQta3qfo/tXfeyceWpM2CtNcoqXoxG/UtwWc=;
+	s=arc-20240116; t=1750322600; c=relaxed/simple;
+	bh=knSaj9r63rqDmOZgZSzkHTRxv5ZxHAefKUEdl1kqPyc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FYDCydWsCcZHM6bs4ztQXS+x2V51A3WCpfWBlYG0V10ELhXoTBg+0wIxRIPdcpHJbuWvxrqU6yJaTHIZlmxlElm9x5LncCt8fmy/Uv2IX6kEHPcUgpr8HvAsJHkJp1eS4FKJdWaLYcrajTgCf7UUZC+4wzUoE6AtnMhcs7HcXmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SErdEUma; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04FBBC4CEEA;
-	Thu, 19 Jun 2025 08:42:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFFBbPrT9sFkQEX3/AMltIjFgZt/DvTeUpLQnYpIADvmxkddWLEetH6b6vGQ861vk/fOQsCsRMQUNujGl4IROCa7vLhr2af0Jbh9qvtBqSM+Rhm2rVdyKcljB278XhQITeItxbq5pSgNSF2anmEZnAkV1Qg5VANGhXbCiSB8vOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lx+8Aom2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDD26C4CEEA;
+	Thu, 19 Jun 2025 08:43:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750322549;
-	bh=3VFuG2FOQta3qfo/tXfeyceWpM2CtNcoqXoxG/UtwWc=;
+	s=k20201202; t=1750322599;
+	bh=knSaj9r63rqDmOZgZSzkHTRxv5ZxHAefKUEdl1kqPyc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SErdEUmaRiXUtAdabhdTNYYV8q5kEViKHeMvbdP07i8SdJqnyGDweje7/hf5ob2r1
-	 Y7GakfurOZd/kO55Uuejfbjb1S87B2AsLMEOZS16N3PqMiLkRzq0uK6SYLU7qgvTU/
-	 SVw+UbeIJFOnBUY3xSh5j8mzLsb/i9WbBp9W6Nyzn5AswOiCpHExDyjKEa4xghVxhq
-	 qVMVSR8Ah8c9+Gp0UD1wpCI2KA3aEvgMXWU2aB9vqWItkHQLyOH3Ng4vCX7N4MSO38
-	 GNkOCm/RoBAbDnsH25JuklGSA+93rTqS16MvDDHIq0NGhvg1unBUyT6Up6WtuKaRQA
-	 0XljRO/7NmUxw==
-Date: Thu, 19 Jun 2025 10:42:14 +0200
+	b=lx+8Aom2bWS0DwPE+fknSJmcgxiXj4hPNONs+bcBbG58HQmCKDnsstqHRT2i4Hp4L
+	 lp843vxSaoxc8h3gYUCcDj+Zh+yu8b6r+FvFhQ+Td5+++3gospBlNMUfmA3LVEZJSs
+	 H+3oavWrqrzTM/UA84yRmDqA4Ro9qEkEHcHT8xo64Y1izR3xbdYiXq7dj+TE9sqN4H
+	 jYQ+iAYmPQDM0wCups/Pmv+aKF39FYWoq8+FV7GmhH7giEKd9OWDqpxWcftV4jBCb/
+	 yrICzC+bzGrGPE5UA8GGBcr2iR43NMlMzxzSVX3l3nvy5v0p3eeBv8UbOPGjopnWuS
+	 eHXkzS7mWz7XQ==
+Date: Thu, 19 Jun 2025 10:43:03 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
@@ -73,11 +73,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	kvm@vger.kernel.org, sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev, 
 	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm: change vm_get_page_prot() to accept vm_flags_t
- argument
-Message-ID: <20250619-unwiederholbar-addition-6875c99fe08d@brauner>
+Subject: Re: [PATCH 3/3] mm: update architecture and driver code to use
+ vm_flags_t
+Message-ID: <20250619-eiskunstlauf-entkleidet-a9e1c0463f24@brauner>
 References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+ <b6eb1894abc5555ece80bb08af5c022ef780c8bc.1750274467.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,62 +86,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <b6eb1894abc5555ece80bb08af5c022ef780c8bc.1750274467.git.lorenzo.stoakes@oracle.com>
 
-On Wed, Jun 18, 2025 at 08:42:52PM +0100, Lorenzo Stoakes wrote:
-> We abstract the type of the VMA flags to vm_flags_t, however in may places
-> it is simply assumed this is unsigned long, which is simply incorrect.
-> 
-> At the moment this is simply an incongruity, however in future we plan to
-> change this type and therefore this change is a critical requirement for
-> doing so.
+On Wed, Jun 18, 2025 at 08:42:54PM +0100, Lorenzo Stoakes wrote:
+> In future we intend to change the vm_flags_t type, so it isn't correct for
+> architecture and driver code to assume it is unsigned long. Correct this
+> assumption across the board.
 > 
 > Overall, this patch does not introduce any functional change.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->  arch/arm64/mm/mmap.c                       | 2 +-
->  arch/powerpc/include/asm/book3s/64/pkeys.h | 3 ++-
->  arch/sparc/mm/init_64.c                    | 2 +-
->  arch/x86/mm/pgprot.c                       | 2 +-
->  include/linux/mm.h                         | 4 ++--
->  include/linux/pgtable.h                    | 2 +-
->  tools/testing/vma/vma_internal.h           | 2 +-
->  7 files changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
-> index c86c348857c4..08ee177432c2 100644
-> --- a/arch/arm64/mm/mmap.c
-> +++ b/arch/arm64/mm/mmap.c
-> @@ -81,7 +81,7 @@ static int __init adjust_protection_map(void)
->  }
->  arch_initcall(adjust_protection_map);
->  
-> -pgprot_t vm_get_page_prot(unsigned long vm_flags)
-> +pgprot_t vm_get_page_prot(vm_flags_t vm_flags)
->  {
->  	ptdesc_t prot;
->  
-> diff --git a/arch/powerpc/include/asm/book3s/64/pkeys.h b/arch/powerpc/include/asm/book3s/64/pkeys.h
-> index 5b178139f3c0..6f2075636591 100644
-> --- a/arch/powerpc/include/asm/book3s/64/pkeys.h
-> +++ b/arch/powerpc/include/asm/book3s/64/pkeys.h
-> @@ -4,8 +4,9 @@
->  #define _ASM_POWERPC_BOOK3S_64_PKEYS_H
->  
->  #include <asm/book3s/64/hash-pkey.h>
-> +#include <linux/mm_types.h>
->  
-> -static inline u64 vmflag_to_pte_pkey_bits(u64 vm_flags)
-> +static inline u64 vmflag_to_pte_pkey_bits(vm_flags_t vm_flags)
-
-If you change vm_flags_t to u64 you probably want to compile with some
-of these integer truncation options when you're doing the conversion.
-Because otherwise you risk silently truncating the upper 32bits when
-assigning to a 32bit variable. We've had had a patch series that almost
-introduced a very subtle bug when it tried to add the first flag outside
-the 32bit range in the lookup code a while ago. That series never made
-it but it just popped back into my head when I read your series.
 
 Acked-by: Christian Brauner <brauner@kernel.org>
 
