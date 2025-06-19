@@ -1,269 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-52252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C104AE0B79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 18:44:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8C9AE0C1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 19:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C741A1BC277F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 16:44:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361841BC6444
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 17:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B85E28BA82;
-	Thu, 19 Jun 2025 16:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522D528DF0F;
+	Thu, 19 Jun 2025 17:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc2aD+Rk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iYrgsVHt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc2aD+Rk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iYrgsVHt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dur9MXq4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F70111712
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 16:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B936E1F874F;
+	Thu, 19 Jun 2025 17:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750351473; cv=none; b=TUdLDBtWj6+88AQiYLFwBvS2ZjVRvZft+5AJh6TFVtebLLZ0o4ejzQj5r+OVOP5Y/sH7EALnjvFw2bItKusA0UhbD9r6/1JiC98byWSLvxpYGgchakkeX97R2ULFHQws/TL009Q03to88i/g92a/ElHekk6IwbAGwUBsdy80FI4=
+	t=1750355298; cv=none; b=aHmDTmjWw3O9KHR30e8nQHW8Oa7GNWdKbkXXnbXX5evTQaM0P0RyxmKZ7UU/vjOslVXjFWiI5sPjmaFpyB/0GFpTy4sMC9pcqiViPP6t6vlNZZVCB6U7Ht67LuC5NGtw8XAIgUMOoQYFcmccTnw6fxBaOB9V0NyitIVBMbqGy3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750351473; c=relaxed/simple;
-	bh=b/+ikzLp54Gc/0Xc09GVIw86JXBMCy4h4061cXUV7GI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZ4B9fxWgHmRK/dk4C+/1Uds/a+QsUbk9ibMc1iDBPvtCN4EiBbSkGJoTko1i31Nr4JhzqLPzPwi51Gd0/DBveruwU066TRHp1glGqzaYCnAOveN6zBZHIxtSzFcpsT9AT1TZrkYODeMCsPv9CBN4qiLwDVMpTL54obpoSU4pTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc2aD+Rk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iYrgsVHt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc2aD+Rk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iYrgsVHt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8ED40211E3;
-	Thu, 19 Jun 2025 16:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750351469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1N/DpDRogQtGmbHByX+jvX5Z1OyNpESX58Fdy62AS+Q=;
-	b=qc2aD+Rkb2PqRaORoyjmyNhxNS75Ye9PVbQDebDjJb62jRi5Y97Z+GJV0ky8C/4yJNPziG
-	08GfntvK4he50AzcQjuG3U6hI3ep2ssbkqs1AY48KIg7eo6zrRObRHCARAPPnDuSLb/lih
-	x/FMHO/DgRmrdzc43iVsSFbENybe188=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750351469;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1N/DpDRogQtGmbHByX+jvX5Z1OyNpESX58Fdy62AS+Q=;
-	b=iYrgsVHtWVTIxCiShTFdv0+Fe18Yck4+nQPXyCKlGSVE1QptSl6CQgIriuyzAP6Qmls1bk
-	QWMv31Iw3ia+OIAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qc2aD+Rk;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iYrgsVHt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750351469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1N/DpDRogQtGmbHByX+jvX5Z1OyNpESX58Fdy62AS+Q=;
-	b=qc2aD+Rkb2PqRaORoyjmyNhxNS75Ye9PVbQDebDjJb62jRi5Y97Z+GJV0ky8C/4yJNPziG
-	08GfntvK4he50AzcQjuG3U6hI3ep2ssbkqs1AY48KIg7eo6zrRObRHCARAPPnDuSLb/lih
-	x/FMHO/DgRmrdzc43iVsSFbENybe188=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750351469;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1N/DpDRogQtGmbHByX+jvX5Z1OyNpESX58Fdy62AS+Q=;
-	b=iYrgsVHtWVTIxCiShTFdv0+Fe18Yck4+nQPXyCKlGSVE1QptSl6CQgIriuyzAP6Qmls1bk
-	QWMv31Iw3ia+OIAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80C1A13721;
-	Thu, 19 Jun 2025 16:44:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id U+9qH20+VGh9SQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 19 Jun 2025 16:44:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3DA56A29FA; Thu, 19 Jun 2025 18:44:29 +0200 (CEST)
-Date: Thu, 19 Jun 2025 18:44:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
-	yangerkun@huawei.com
-Subject: Re: [PATCH v2 5/6] ext4/jbd2: reintroduce
- jbd2_journal_blocks_per_page()
-Message-ID: <ugup3tdvaxgzc6agaidbdh7sdcpzcqvwzsurqkesyhsyta7q7y@h3q6mrc2jcno>
-References: <20250611111625.1668035-1-yi.zhang@huaweicloud.com>
- <20250611111625.1668035-6-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1750355298; c=relaxed/simple;
+	bh=YvO5fzYLvhWnXwDLeu0osljtoe46Ll4TNlde5gM445I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NcVByybXj3eN7CpOg9jdIAlslnOLWNbO/NoZjL4vDiFRUc8unFezPvplkGnfxIQwQ2pOvDVM3V6re0jkidZtuxcRLoFVhJwBLy0zzl03g/gYWC1ucvKHMdjERsCMARv2Ogy6SCVxt9INew1OGxohAFG3tOpceKxT3+uol0sdumo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dur9MXq4; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b910593edso5461571fa.1;
+        Thu, 19 Jun 2025 10:48:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750355295; x=1750960095; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YvO5fzYLvhWnXwDLeu0osljtoe46Ll4TNlde5gM445I=;
+        b=Dur9MXq4R6R2Uc5aLo/Q4OtbEiXhRUwMmJmrFW0i02qvDBRHmhvbbdrIW61q8v+TvK
+         +UxDPreTNt9JftBgi85M1GVP8M0L3Vy+5eg8qe0oXt/yI7RWxMSQTuu83paFF3MDexLb
+         Pr+ONVi63gQzvpyEW1JTnEEUppDwVPn8OP2X7Otr0mybAFEviTftYliHPk1EZUAbMo4l
+         /gtFl0tqgBxDb8/069Loi5F1CLfVSNzNqH4TNV/A7E3WW477mQlDCFn67SP7awrNsGqU
+         eXrCkQ2810+SbBHjFEPQRCQ6XqH0VeKFaX5V1iYW1Qv4YYVfb/TNsm1iiNJk27ZHDJ30
+         Ii9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750355295; x=1750960095;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YvO5fzYLvhWnXwDLeu0osljtoe46Ll4TNlde5gM445I=;
+        b=JZTYpBFmYGFD09UOftSpE42jEYDdizIm2a5IqPVvwZDvYltOwOxoAv9JB5oC3cwOH0
+         sCQCrIHeS83sZAkUCgeVIIbq3wUMn72tDJPJeLLEyMD/5/qkQNQDJj6ATOphAicfbt3p
+         O2K0irs5oeHueyWFGXNU/UvL+YuguV2Jh/AekagNIrI3E3mG7vtuZt+e0RJL47gPuooa
+         JN64+9EXJ+/nQW3XpynGLRzqKYoApAQNhnBWYTxHIKmXU8XStMU10eTQxbekOvVtmNsh
+         X394c0cfRei4GB20ZCfQcRKxXN3ct70e8rJUQyb3c7UaCq3yTsQAC/ZG/d7V3Yeu4L9e
+         dKUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgrnmDxI5XrhidGwmAtP11cTOQUjjuWQU+pBep3Ykm8+Y/KrACd2pDuRDSaRdrndFY8+4nY1A92M9HreU=@vger.kernel.org, AJvYcCUlhjfLqPYeB/ULJYzOViWNF90vn4mwENe9VeFD/a+5DeEKfTJVKtoZNuDKphNSnnj48pN5gkLpXGo=@vger.kernel.org, AJvYcCUrpMJE+Ch3kYVOz1dTNRnFqS0G4CkMG+ys2a2wWlklhmaTocbOAV8MmnIuBT1PS45zHydwSWeHmPb/@vger.kernel.org, AJvYcCUxMH+t7wDdWMIE2HrMOe9zd65vBKJrTOwKIcfaFxix+uup0JmndXTxlp2vf/yampXX+OFPKd9b2WlW6gsc08o=@vger.kernel.org, AJvYcCVBKjYyBvDG3oFX5mMt6mQzIdH3RPAkL02dFgsi97xlghWLhJ8mFF1lDikoRnF84K9P74WX3axI5bcmtYc=@vger.kernel.org, AJvYcCVq0BmsKE0Mt7Pljq+57BAZCH1qWV7s7PgQj+CwxZjumQN6mTu6Cmg5/eFMOA4FgnEPfFY/2tlc8Q2/cA==@vger.kernel.org, AJvYcCW2dimP8UOEOb5S66NAbjlIyWUa642V91hVfpa4/VTaYkLY3OYK+sXqZJmLcJfqU0YR/v1QiBPavMWrJQO04A==@vger.kernel.org, AJvYcCWd38NLdzDwM91xidggvQ+ixK7FMCxPdXc14AUnSWzcglnmjYM3FR7O4+TGhnMyYZPi4d4n81XEdqJw@vger.kernel.org, AJvYcCWeIHF6kF7p/uWIoTSt8+TfUJ2s2MU5RbP/gANbxUtCvzltt1mVY3RLJvnk/eZ401zmOyMMC+KFwxVI@vger.kernel.org, AJvYcCWiCtY1cM4crGibVHh6
+ qA0XCiCdt/BC9TspGGFQ/fDCSN652rBM13sBnq5ibfqmy6hxUeV7EkWv1byhSRsc@vger.kernel.org, AJvYcCX1d73rru5zLcGzOmqGMBpC6DBVq9gceGIZH7KKoQg+GzvFYE0A2D0dvjl9446g/f2Qhbdec7B6t70V7G0=@vger.kernel.org, AJvYcCXDo9SueBR1AOMvgWNmyMOoLVn/jIrv/7LyoKxOQxp+iWpfnlO9RIbM5CMmLgryvcfCrXzR+yAGGjuncQ==@vger.kernel.org, AJvYcCXc5KL/IeYUEkoZBLtjP/EMQHh0gNVuWchlrp018Mq9hzx2R5J0DlIpx9Ytjg8hQO/Aw4oNd2hz2iC3Y2ACHw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEDwexr1WGUvgCuOfi5bsvm0FmJthPJYpT1zu5jX+cfpvet2r8
+	UoAgX44V8Kd5CUN1abtPyzsdUGSdOybQXtl3+fH7G05Qy1pMh0qnOTxBAjQrw2SFMAiNE9m8SHR
+	8W+hc2tN93CJfdy1cKkcjzeSUlCl94RE=
+X-Gm-Gg: ASbGncu1Ap4XRKaapXruYd/T6ZoJBKZZRVvY5NZjWJHNpeNdrTY5Tk7gUf+o+ESmVra
+	lOCuL0pLgd4P01bREuik6gyM+nmaXoIeS9mfMT/VMY1tcDF1N1R+OQP1D73IhUmfSW+AYavrerr
+	2idhxTQTAu1XVOEqwGGJVC+dUdh8mpVJWjICpy0ijk6x8dd4Gg/FjWDC94ys4l2hiZ6H+zjDPSx
+	gFFTA==
+X-Google-Smtp-Source: AGHT+IGL41V3DbmFvBsWr3jGwFHfcX0duW69mbczpCAOINsa85ECUigYdfUlpWqgF++enxibRnhFFvr8Kxdp2WtP+R0=
+X-Received: by 2002:a05:651c:2203:b0:32a:8297:54c9 with SMTP id
+ 38308e7fff4ca-32b4a3088bbmr63065741fa.8.1750355294494; Thu, 19 Jun 2025
+ 10:48:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611111625.1668035-6-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 8ED40211E3
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+References: <cover.1750099179.git.lorenzo.stoakes@oracle.com> <f528ac4f35b9378931bd800920fee53fc0c5c74d.1750099179.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <f528ac4f35b9378931bd800920fee53fc0c5c74d.1750099179.git.lorenzo.stoakes@oracle.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Fri, 20 Jun 2025 02:47:58 +0900
+X-Gm-Features: AX0GCFsRgomy43xV-Lv7Stfld1a1yqIyJ3-ysZ2OVO90S8cEE5UAjZMSvGqxZQ8
+Message-ID: <CAKFNMom4NJ91Ov7twQ3AGT7PSqt5vN9ROrNHzfV53GHf=bK6oQ@mail.gmail.com>
+Subject: Re: [PATCH 10/10] fs: replace mmap hook with .mmap_prepare for simple mappings
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Jens Axboe <axboe@kernel.dk>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
+	David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>, 
+	Marc Dionne <marc.dionne@auristor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Benjamin LaHaise <bcrl@kvack.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, 
+	"Tigran A . Aivazian" <aivazian.tigran@gmail.com>, Kees Cook <kees@kernel.org>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Xiubo Li <xiubli@redhat.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, 
+	Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
+	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>, 
+	Sandeep Dhavale <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
+	Yuezhang Mo <yuezhang.mo@sony.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Viacheslav Dubeyko <slava@dubeyko.com>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, 
+	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse <dwmw2@infradead.org>, 
+	Dave Kleikamp <shaggy@kernel.org>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, 
+	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Bob Copeland <me@bobcopeland.com>, Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Hans de Goede <hdegoede@redhat.com>, Carlos Maiolino <cem@kernel.org>, 
+	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
+	Johannes Thumshirn <jth@kernel.org>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, v9fs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org, 
+	linux-aio@kvack.org, linux-unionfs@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-um@lists.infradead.org, 
+	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, 
+	linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev, 
+	ocfs2-devel@lists.linux.dev, linux-karma-devel@lists.sourceforge.net, 
+	devel@lists.orangefs.org, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-xfs@vger.kernel.org, 
+	nvdimm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 11-06-25 19:16:24, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> This partially reverts commit d6bf294773a4 ("ext4/jbd2: convert
-> jbd2_journal_blocks_per_page() to support large folio"). This
-> jbd2_journal_blocks_per_folio() will lead to a significant
-> overestimation of journal credits. Since we still reserve credits for
-> one page and attempt to extend and restart handles during large folio
-> writebacks, so we should convert this helper back to
-> ext4_journal_blocks_per_page().
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Tue, Jun 17, 2025 at 4:48=E2=80=AFAM Lorenzo Stoakes wrote:
+>
+> Since commit c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file
+> callback"), the f_op->mmap() hook has been deprecated in favour of
+> f_op->mmap_prepare().
+>
+> This callback is invoked in the mmap() logic far earlier, so error handli=
+ng
+> can be performed more safely without complicated and bug-prone state
+> unwinding required should an error arise.
+>
+> This hook also avoids passing a pointer to a not-yet-correctly-establishe=
+d
+> VMA avoiding any issues with referencing this data structure.
+>
+> It rather provides a pointer to the new struct vm_area_desc descriptor ty=
+pe
+> which contains all required state and allows easy setting of required
+> parameters without any consideration needing to be paid to locking or
+> reference counts.
+>
+> Note that nested filesystems like overlayfs are compatible with an
+> .mmap_prepare() callback since commit bb666b7c2707 ("mm: add mmap_prepare=
+()
+> compatibility layer for nested file systems").
+>
+> In this patch we apply this change to file systems with relatively simple
+> mmap() hook logic - exfat, ceph, f2fs, bcachefs, zonefs, btrfs, ocfs2,
+> orangefs, nilfs2, romfs, ramfs and aio.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Here I'm not decided. Does it make any particular sense to reserve credits
-for one *page* worth of blocks when pages don't have any particular meaning
-in our writeback code anymore? We could reserve credits just for one
-physical extent and that should be enough. For blocksize == pagesize (most
-common configs) this would be actually equivalent. If blocksize < pagesize,
-this could force us to do some more writeback retries and thus get somewhat
-higher writeback CPU overhead but do we really care for these configs?  It
-is well possible I've overlooked something and someone will spot a
-performance regression in practical setup with this in which case we'd have
-to come up with something more clever but I think it's worth it to start
-simple and complicate later.
+For nilfs2,
 
-								Honza
+Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 
-> ---
->  fs/ext4/ext4_jbd2.h  | 7 +++++++
->  fs/ext4/inode.c      | 6 +++---
->  fs/jbd2/journal.c    | 6 ++++++
->  include/linux/jbd2.h | 1 +
->  4 files changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-> index 63d17c5201b5..c0ee756cb34c 100644
-> --- a/fs/ext4/ext4_jbd2.h
-> +++ b/fs/ext4/ext4_jbd2.h
-> @@ -326,6 +326,13 @@ static inline int ext4_journal_blocks_per_folio(struct inode *inode)
->  	return 0;
->  }
->  
-> +static inline int ext4_journal_blocks_per_page(struct inode *inode)
-> +{
-> +	if (EXT4_JOURNAL(inode) != NULL)
-> +		return jbd2_journal_blocks_per_page(inode);
-> +	return 0;
-> +}
-> +
->  static inline int ext4_journal_force_commit(journal_t *journal)
->  {
->  	if (journal)
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 67e37dd546eb..9835145b1b27 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2556,7 +2556,7 @@ static int mpage_map_and_submit_extent(handle_t *handle,
->   */
->  static int ext4_da_writepages_trans_blocks(struct inode *inode)
->  {
-> -	int bpp = ext4_journal_blocks_per_folio(inode);
-> +	int bpp = ext4_journal_blocks_per_page(inode);
->  
->  	return ext4_meta_trans_blocks(inode,
->  				MAX_WRITEPAGES_EXTENT_LEN + bpp - 1, bpp);
-> @@ -2634,7 +2634,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->  	ext4_lblk_t lblk;
->  	struct buffer_head *head;
->  	handle_t *handle = NULL;
-> -	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
-> +	int bpp = ext4_journal_blocks_per_page(mpd->inode);
->  
->  	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
->  		tag = PAGECACHE_TAG_TOWRITE;
-> @@ -6255,7 +6255,7 @@ int ext4_meta_trans_blocks(struct inode *inode, int lblocks, int pextents)
->   */
->  int ext4_writepage_trans_blocks(struct inode *inode)
->  {
-> -	int bpp = ext4_journal_blocks_per_folio(inode);
-> +	int bpp = ext4_journal_blocks_per_page(inode);
->  	int ret;
->  
->  	ret = ext4_meta_trans_blocks(inode, bpp, bpp);
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index d480b94117cd..7fccb425907f 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -84,6 +84,7 @@ EXPORT_SYMBOL(jbd2_journal_start_commit);
->  EXPORT_SYMBOL(jbd2_journal_force_commit_nested);
->  EXPORT_SYMBOL(jbd2_journal_wipe);
->  EXPORT_SYMBOL(jbd2_journal_blocks_per_folio);
-> +EXPORT_SYMBOL(jbd2_journal_blocks_per_page);
->  EXPORT_SYMBOL(jbd2_journal_invalidate_folio);
->  EXPORT_SYMBOL(jbd2_journal_try_to_free_buffers);
->  EXPORT_SYMBOL(jbd2_journal_force_commit);
-> @@ -2661,6 +2662,11 @@ int jbd2_journal_blocks_per_folio(struct inode *inode)
->  		     inode->i_sb->s_blocksize_bits);
->  }
->  
-> +int jbd2_journal_blocks_per_page(struct inode *inode)
-> +{
-> +	return 1 << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits);
-> +}
-> +
->  /*
->   * helper functions to deal with 32 or 64bit block numbers.
->   */
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index 43b9297fe8a7..f35369c104ba 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1724,6 +1724,7 @@ static inline int tid_geq(tid_t x, tid_t y)
->  }
->  
->  extern int jbd2_journal_blocks_per_folio(struct inode *inode);
-> +extern int jbd2_journal_blocks_per_page(struct inode *inode);
->  extern size_t journal_tag_bytes(journal_t *journal);
->  
->  static inline int jbd2_journal_has_csum_v2or3(journal_t *journal)
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Ryusuke Konishi
 
