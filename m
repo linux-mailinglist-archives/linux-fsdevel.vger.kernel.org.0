@@ -1,263 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-52273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D25DAE0F95
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 00:24:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66524AE0FDB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 01:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD7E516C93D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 22:24:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1FC116AAAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 23:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4D2246792;
-	Thu, 19 Jun 2025 22:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDC128C86C;
+	Thu, 19 Jun 2025 23:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdRU1qpL"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RbHjnOUG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6C323E35D;
-	Thu, 19 Jun 2025 22:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E69930E826
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 23:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750371886; cv=none; b=NWsuOXtE2DYIf2jdZhQSutiBQU0tTBMyYTL/b1cMSWXNkJHH2BZfVuVkMSoBSU/athW55ZRNfvPbCdAbbWgIBSctP0sTTmAovSS6Mp04PxwZ+3p3eferGiod/Qdfy1cl30pv5OlLek+p/NC4OuTjDIJGl8pergYsTtMo3J+R7hk=
+	t=1750374383; cv=none; b=ShmWrbJaVju4btW7/5qZ1Jl2YP8KNc+trjqXwifz3SUiXSFH1T3BsA4GGhxQzotO+a5iAKJf1f40CnjUi4AmXdvV8zWnHcKsaM3SCLdXXlC71YIuyeDyw+uuv1e1PI2+BaQigHvKCoL1e5fv3mz90YMmxONzAAWQ3S6ZHx/Dk5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750371886; c=relaxed/simple;
-	bh=ShktJbcUjdwML+bFdo48jk6VKPT9i9s43d3tNkkW+sg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=WF0iZ/8Z3hRINH4/VxwDOjVn6TO1ZmV08B1yhOtV2xBzCku+mSOtUR1OIOqWiQI5XdSc/qli7Cq2yZlbdr6rbuwYqCkPxNo7RgvK+hZVYGj7m2sWHoNCihlUedwCcdH8Lvno1ecsu7x7j9e4/QC6rEYMEGRYlB+uQsWUa9QHSRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdRU1qpL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF85C4CEFB;
-	Thu, 19 Jun 2025 22:24:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750371885;
-	bh=ShktJbcUjdwML+bFdo48jk6VKPT9i9s43d3tNkkW+sg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=OdRU1qpLh9onKFCKwf8KT6uAqOYdBxC63BIUpICKF/a2EnvdgfD2UfUqYTvDL/NPq
-	 YCU7YIHmwL4OsL3r3TEgQFWTQ6+FNtgTJR1Bkj4pRdPz4oWoZ3JPWzxKPgOo9qsfJR
-	 jzLPM4P54z7DnAG/4k258jHVAOtrTty/yKbc5QWVgHYglU64xF/Nhg8eqP32okJYNa
-	 Tn+k8I7Z7xFENTrAMM9aplklQ+qOmWIl5RNBYbwq8aPrWWPlL4uX1NcDZ3KKdNX6fl
-	 UTuPb1JdNAYr6A3mvoMccpoqX7jWs6WX5iD+Pv2ZtCifoBtwgO2rd0gVLlSgKvEY6a
-	 bOxJgdQzASfzw==
+	s=arc-20240116; t=1750374383; c=relaxed/simple;
+	bh=xLSzef8OBKp8WdSidUaWKWCzj3aDKaduxackxq7J+rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fv5bR0BB67bKcjlRkVHqr4cRAhkEtTf0u9WGA3es30IoX4BXrmqtNQB5aKur6fWD2W/8tQij8cixaY5dYl5zf+XuKW2iTX4PRarfZ3obMCifVNPsp7Zcld8leWZlqHX+91WgMf5Va2MKImiQBBx6nuGKxFcl6NumydvLYgixzps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RbHjnOUG; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 19 Jun 2025 19:06:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750374369;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=5LTGIqYt6iAiPr4P7jFH6TzoG7BfNPLA+2XxRHz76y4=;
+	b=RbHjnOUGIRQOiSZ3X3qm6q6z0BJ81fDvVlm3U+XdPWGD/bJ+iy7U3LKuE0kQ/Of91H4LgY
+	HQXsw+4fGxdy9l+BPBTh53hPMdLb/+m36OWAzEcg7pBYNrmSYgmCGtqkTzIq/9axTgRo/a
+	qu86og7+6IS1A33Aa38P0AZ+s7eaQv0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.16-rc3
+Message-ID: <4xkggoquxqprvphz2hwnir7nnuygeybf2xzpr5a4qtj4cko6fk@dlrov4usdlzm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 20 Jun 2025 00:24:41 +0200
-Message-Id: <DAQV1PLOI46S.2BVP6RPQ33Z8Y@kernel.org>
-Subject: Re: [RFC] Should we consider to re-write HFS/HFS+ in Rust?
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Viacheslav Dubeyko" <Slava.Dubeyko@ibm.com>, "frank.li@vivo.com"
- <frank.li@vivo.com>, "glaubitz@physik.fu-berlin.de"
- <glaubitz@physik.fu-berlin.de>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "slava@dubeyko.com" <slava@dubeyko.com>, "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <d5ea8adb198eb6b6d2f6accaf044b543631f7a72.camel@ibm.com>
- <4fce1d92-4b49-413d-9ed1-c29eda0753fd@vivo.com>
- <1ab023f2e9822926ed63f79c7ad4b0fed4b5a717.camel@ibm.com>
- <DAQREKHTS45A.98MH00SWH3PU@kernel.org>
- <a9dc59f404ec98d676fe811b2636936cb958dfb3.camel@ibm.com>
-In-Reply-To: <a9dc59f404ec98d676fe811b2636936cb958dfb3.camel@ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-On Thu Jun 19, 2025 at 11:39 PM CEST, Viacheslav Dubeyko wrote:
-> On Thu, 2025-06-19 at 21:33 +0200, Benno Lossin wrote:
->> Andreas Hindborg will most likely reply with some more info in the near
->> future, but I'll drop some of my thoughts.
->>=20
->> On Wed May 28, 2025 at 6:16 PM CEST, Viacheslav Dubeyko wrote:
->> > On Wed, 2025-05-28 at 20:40 +0800, Yangtao Li wrote:
->> > > +cc rust-for-linux
->> > >=20
->> > > =E5=9C=A8 2025/5/28 07:39, Viacheslav Dubeyko =E5=86=99=E9=81=93:
->> > > > Hi Adrian, Yangtao,
->> > > >=20
->> > > > One idea crossed my mind recently. And this is about re-writing HF=
-S/HFS+ in
->> > > > Rust. It could be interesting direction but I am not sure how reas=
-onable it
->> > > > could be. From one point of view, HFS/HFS+ are not critical subsys=
-tems and we
->> > > > can afford some experiments. From another point of view, we have e=
-nough issues
->> > > > in the HFS/HFS+ code and, maybe, re-working HFS/HFS+ can make the =
-code more
->> > > > stable.
->> > > >=20
->> > > > I don't think that it's a good idea to implement the complete re-w=
-riting of the
->> > > > whole driver at once. However, we need a some unification and gene=
-ralization of
->> > > > HFS/HFS+ code patterns in the form of re-usable code by both drive=
-rs. This re-
->> > > > usable code can be represented as by C code as by Rust code. And w=
-e can
->> > > > introduce this generalized code in the form of C and Rust at the s=
-ame time. So,
->> > > > we can re-write HFS/HFS+ code gradually step by step. My point her=
-e that we
->> > > > could have C code and Rust code for generalized functionality of H=
-FS/HFS+ and
->> > > > Kconfig would define which code will be compiled and used, finally=
-.
->> > > >=20
->> > > > How do you feel about this? And can we afford such implementation =
-efforts?
->> > >=20
->> > > It must be a crazy idea! Honestly, I'm a fan of new things.
->> > > If there is a clear path, I don't mind moving in that direction.
->> > >=20
->> >=20
->> > Why don't try even some crazy way. :)
->>=20
->> There are different paths that can be taken. One of the easiest would be
->> to introduce a rust reference driver [1] for HFS. The default config
->> option would still be the C driver so it doesn't break users (& still
->> allows all supported architectures), but it allows you to experiment
->> using Rust. Eventually, you could remove the C driver when ggc_rs is
->> mature enough or only keep the C one around for the obscure
->> architectures.
->>=20
->
-> Yeah, makes sense to me. It's one of the possible way. And I would like t=
-o have
-> as C as Rust implementation of driver as the first step. But it's hard en=
-ough to
-> implement everything at once. So, I would like to follow the step by step
-> approach.
->
->> If you don't want to break the duplicate drivers rule, then I can expand
->> a bit on the other options, but honestly, they aren't that great:
->>=20
->> There are some subsystems that go for a library approach: extract some
->> self-contained piece of functionality and move it to Rust code and then
->> call that from C. I personally don't really like this approach, as it
->> makes it hard to separate the safety boundary, create proper
->> abstractions & write idiomatic Rust code.
->>=20
->
-> This is what I am considering as the first step. As far as I can see, HFS=
- and
-> HFS+ have "duplicated" functionality with some peculiarities on every sid=
-e. So,
-> I am considering to have something like Rust "library" that can absorb th=
-is
-> "duplicated" fuctionality at first. As a result, HFS and HFS+ C code can =
-re-use
-> the Rust "library" at first. Finally, the whole driver(s) could be conver=
-ted
-> into the Rust implementation.=20
+Entirely too many patches, but mostly check/repair, and related.
 
-I'd of course have to see the concrete code, but this sounds a lot like
-calling back and forth between C and Rust. Which will most likely be
-painful. But it did work for the QR code generator, so we'll see.
+6.16 looks to be shaping up well, knock on wood.
 
->> [1]: https://rust-for-linux.com/rust-reference-drivers =20
->>=20
->
-> Thanks for sharing this.
->
->> > > It seems that downstream already has rust implementations of puzzle =
-and=20
->> > > ext2 file systems. If I understand correctly, there is currently a l=
-ack=20
->> > > of support for vfs and various infrastructure.
->> > >=20
->> >=20
->> > Yes, Rust implementation in kernel is slightly complicated topic. And =
-I don't
->> > suggest to implement the whole HFS/HFS+ driver at once. My idea is to =
-start from
->> > introduction of small Rust module that can implement some subset of HF=
-S/HFS+
->> > functionality that can be called by C code. It could look like a libra=
-ry that
->> > HFS/HFS+ drivers can re-use. And we can have C and Rust "library" and =
-people can
->> > select what they would like to compile (C or Rust implementation).
->>=20
->> One good path forward using the reference driver would be to first
->> create a read-only version. That was the plan that Wedson followed with
->> ext2 (and IIRC also ext4? I might misremember). It apparently makes the
->> initial implementation easier (I have no experience with filesystems)
->> and thus works better as a PoC.
->>=20
->
-> I see your point but even Read-Only functionality is too much. :) Because=
-, it
-> needs to implement 80% - 90% functionality of metadata management even fo=
-r Read-
-> Only case. And I would like to make the whole thing done by small working=
- steps.
-> This is why I would like: (1) start from Rust "library", (2) move metadat=
-a
-> management into Rust "library" gradually, (3) convert the whole driver in=
-to Rust
-> implementation.
+The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
 
-I personally don't know how this argument works, I only cited it in case
-it is useful to people with domain knowledge :)
+  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
 
->> > > I'm not an expert on Rust, so it would be great if some Rust people=
-=20
->> > > could share their opinions.
->> > >=20
->> >=20
->> > I hope that Rust people would like the idea. :)
->>=20
->> I'm sure that several Rust folks would be interested in getting their
->> hands dirty helping with writing abstractions and/or the driver itself.
->>=20
->
-> Sounds great! :) I really need some help and advice.
->
->> I personally am more on the Rust side of things, so I could help make
->> the abstractions feel idiomatic and ergonomic.
->>=20
->> Feel free to ask any follow up questions. Hope this helps!
->>=20
->
-> Sounds interesting! Let me prepare my questions. :) So, HFS/HFS+ have
-> superblock, bitmap, b-trees, extent records, catalog records. It sounds t=
-o me
-> like candidates for abstractions. Am I correct here? Are we understand
-> abstraction at the same way? :)
+are available in the Git repository at:
 
-Yes! Everything that is used by other drivers/subsystems are usual
-candidates for abstractions.
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-06-19
 
-Essentially an abstraction is a rustified version of the C API. For
-example, `Mutex<T>` is generic over the contained value, uses guards and
-only allows access to the inner value if the mutex is locked.
+for you to fetch changes up to b2e2bed119809a5ca384241e0631f04c6142ae08:
 
-Abstractions can take a pretty different form from the C API when it's
-possible to make certain undesired uses of the API impossible through
-Rust's type system or other features (in the case of the mutex, making
-it impossible to access a value without locking it). Though they can
-also be pretty simple if the C API is straightforward (this of course
-depends on the concrete API).
+  bcachefs: Add missing key type checks to check_snapshot_exists() (2025-06-19 14:37:04 -0400)
 
-Their purpose is to encapsulate the C API and expose its functionality
-to safe Rust (note that calling any C function is considered `unsafe` in
-Rust).
+----------------------------------------------------------------
+bcachefs fixes for 6.16-rc3
 
-Calling C functions directly from Rust driver code (ie without going
-through an abstraction) is not something that we want to allow (of
-course there might be some exceptional cases where it is needed
-temporarily). And thus everything that you use should have an
-abstraction (this might include driver-specific abstractions that
-effectively are also part of the driver, but encapsulate the C parts,
-when you have converted the driver fully to rust, you probably won't
-need any of them).
+- Lots of small check/repair fixes, primarily in subvol loop and
+  directory structure loop (when involving snapshots).
 
----
-Cheers,
-Benno
+- Fix a few 6.16 regressions: rare UAF in the foreground allocator path
+  when taking a transaction restart from the transaction bump allocator,
+  and some small fallout from the change to log the error being
+  corrected in the journal when repairing errors, also some fallout from
+  the btree node read error logging improvements.
+
+  (Alan, Bharadwaj)
+
+- New option: journal_rewind
+
+  This lets the entire filesystem be reset to an earlier point in time.
+
+  Note that this is only a disaster recovery tool, and right now there
+  are major caveats to using it (discards should be disabled, in
+  particular), but it successfully restored the filesystem of one of the
+  users who was bit by the subvolume deletion bug and didn't have
+  backups. I'll likely be making some changes to the discard path in the
+  future to make this a reliable recovery tool.
+
+- Some new btree iterator tracepoints, for tracking down some
+  livelock-ish behaviour we've been seeing in the main data write path.
+
+----------------------------------------------------------------
+Alan Huang (6):
+      bcachefs: Don't allocate new memory when mempool is exhausted
+      bcachefs: Fix alloc_req use after free
+      bcachefs: Add missing EBUG_ON
+      bcachefs: Delay calculation of trans->journal_u64s
+      bcachefs: Move bset size check before csum check
+      bcachefs: Fix pool->alloc NULL pointer dereference
+
+Bharadwaj Raju (1):
+      bcachefs: don't return fsck_fix for unfixable node errors in __btree_err
+
+Kent Overstreet (33):
+      bcachefs: trace_extent_trim_atomic
+      bcachefs: btree iter tracepoints
+      bcachefs: Fix bch2_journal_keys_peek_prev_min()
+      bcachefs: btree_iter: fix updates, journal overlay
+      bcachefs: better __bch2_snapshot_is_ancestor() assert
+      bcachefs: pass last_seq into fs_journal_start()
+      bcachefs: Fix "now allowing incompatible features" message
+      bcachefs: Fix snapshot_key_missing_inode_snapshot repair
+      bcachefs: fsck: fix add_inode()
+      bcachefs: fsck: fix extent past end of inode repair
+      bcachefs: opts.journal_rewind
+      bcachefs: Kill unused tracepoints
+      bcachefs: mark more errors autofix
+      bcachefs: fsck: Improve check_key_has_inode()
+      bcachefs: Call bch2_fs_init_rw() early if we'll be going rw
+      bcachefs: Fix __bch2_inum_to_path() when crossing subvol boundaries
+      bcachefs: fsck: Print path when we find a subvol loop
+      bcachefs: fsck: Fix remove_backpointer() for subvol roots
+      bcachefs: fsck: Fix reattach_inode() for subvol roots
+      bcachefs: fsck: check_directory_structure runs in reverse order
+      bcachefs: fsck: additional diagnostics for reattach_inode()
+      bcachefs: fsck: check_subdir_count logs path
+      bcachefs: fsck: Fix check_path_loop() + snapshots
+      bcachefs: Fix bch2_read_bio_to_text()
+      bcachefs: Fix restart handling in btree_node_scrub_work()
+      bcachefs: fsck: Fix check_directory_structure when no check_dirents
+      bcachefs: fsck: fix unhandled restart in topology repair
+      bcachefs: fsck: Fix oops in key_visible_in_snapshot()
+      bcachefs: fix spurious error in read_btree_roots()
+      bcachefs: Fix missing newlines before ero
+      bcachefs: Fix *__bch2_trans_subbuf_alloc() error path
+      bcachefs: Don't log fsck err in the journal if doing repair elsewhere
+      bcachefs: Add missing key type checks to check_snapshot_exists()
+
+ fs/bcachefs/alloc_background.c         |  13 +-
+ fs/bcachefs/bcachefs.h                 |   3 +-
+ fs/bcachefs/btree_gc.c                 |   8 +-
+ fs/bcachefs/btree_io.c                 |  74 ++++----
+ fs/bcachefs/btree_iter.c               | 173 ++++++++++++------
+ fs/bcachefs/btree_journal_iter.c       |  64 ++++---
+ fs/bcachefs/btree_journal_iter_types.h |   5 +-
+ fs/bcachefs/btree_trans_commit.c       |  18 +-
+ fs/bcachefs/btree_types.h              |   1 +
+ fs/bcachefs/btree_update.c             |  16 +-
+ fs/bcachefs/btree_update_interior.c    |  11 +-
+ fs/bcachefs/btree_update_interior.h    |   3 +
+ fs/bcachefs/btree_write_buffer.c       |   3 +
+ fs/bcachefs/chardev.c                  |  29 ++-
+ fs/bcachefs/data_update.c              |   1 +
+ fs/bcachefs/errcode.h                  |   5 -
+ fs/bcachefs/error.c                    |   4 +-
+ fs/bcachefs/extent_update.c            |  13 +-
+ fs/bcachefs/fsck.c                     | 317 +++++++++++++++++++++++----------
+ fs/bcachefs/inode.h                    |   5 +
+ fs/bcachefs/io_read.c                  |   7 +-
+ fs/bcachefs/journal.c                  |  18 +-
+ fs/bcachefs/journal.h                  |   2 +-
+ fs/bcachefs/journal_io.c               |  26 ++-
+ fs/bcachefs/namei.c                    |  30 +++-
+ fs/bcachefs/opts.h                     |   5 +
+ fs/bcachefs/recovery.c                 |  24 ++-
+ fs/bcachefs/recovery_passes.c          |   6 +-
+ fs/bcachefs/recovery_passes.h          |   9 +
+ fs/bcachefs/sb-errors_format.h         |  17 +-
+ fs/bcachefs/snapshot.c                 |  14 +-
+ fs/bcachefs/super.c                    |  13 +-
+ fs/bcachefs/super.h                    |   1 +
+ fs/bcachefs/trace.h                    | 125 +++----------
+ 34 files changed, 657 insertions(+), 406 deletions(-)
 
