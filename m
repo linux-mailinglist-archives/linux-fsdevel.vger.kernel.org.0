@@ -1,181 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-52152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086A8ADFD11
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 07:41:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 480FDADFD2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 07:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3089E17A97D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 05:41:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CFE01890F09
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 05:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB33242938;
-	Thu, 19 Jun 2025 05:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2451244662;
+	Thu, 19 Jun 2025 05:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C+5bmw2b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjXP7rVJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BA1241CB6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 05:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3271D555;
+	Thu, 19 Jun 2025 05:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750311688; cv=none; b=EeCsK3U+piSqOnc4XB0pyx3GrPG8iFMUCWves5plax6gnCw3m0K4ng9u+c2+oYjwnZKCIk4Ggd8KQOK6PeLcywovh4+i5oF3ZX8daCRc1mXJEtsFgYxMmdiLXcOv3r8kqpnHJMupMzRZIps5LxqKk28kWs8274hTvnbLISU2vSU=
+	t=1750312089; cv=none; b=oq0JgNzCGIZ/fMUtE8amNhkEGH3zcm3D+SyVDr9ghaNBRCNH5OjIqCnSH1VprF/v/HNLZlx/Kc6PLafUeJFsoF/IvjhHGuMbmJ2NFTspv1k+cfgEw3HE5jfR2ua/ahkYK/juegqkzXiHzun9j4KOIgRf5Iqmf0W2/sQcI6xYyxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750311688; c=relaxed/simple;
-	bh=LK/kMbdNJhgpXmf2BGnAGKd0QN7jHvtOpbE/3Ht30Ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4aoS30pmL6JsJyVwnjU9dIOceOd5H/1zdz7aCu/MpeQG/D47Np7xqrzz5kCdkjrqJVS5jpiscaQ1lKAAemrp667yTMAWUZWuK8zvDqIu5dOvXWs+1L9ALU9LTnkADqU5Y9YMG8bnHZM+Zfx9/WL6wd/9WgMKETca15s4405rUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C+5bmw2b; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so974334f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 22:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750311683; x=1750916483; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=q9Jptih0CGcCWmNh7johSvgsRzEMulNVyMDIMzTGZkU=;
-        b=C+5bmw2btttzpA1eZehcYg335MKiJTY7z11LMRn7VnOk1etXab5FJl5N5ZEDpazWh7
-         YxIiB/Q/eJtqNfKqEqEgRVXo8x6ScNMfp7RGqqUbW2bGDoOVj0Nz79P8oXbuoVNwVgKR
-         Y+yejk6ssQbrpQqNknO2ozdncpaifUKAKu4HQOl59AXVzJ6SVl4riEXefS0EcJPAvnjO
-         e4TyeJCjK1HJRqllCaF2V67NQTWjHz09KoBi3KYFf8j12q3UeODSrUDtFF4XteglMCzn
-         8GY1MSmKY/3swoOYmKmaHJqQkX7HRUPEvaEARx1wr0ex5RQ0rdvOmZZooirpO/hSZY9H
-         +OXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750311683; x=1750916483;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9Jptih0CGcCWmNh7johSvgsRzEMulNVyMDIMzTGZkU=;
-        b=FxWVHbilRRki71brJT1zF4BE/Y1hFPVXxigtHS0S+OsjEqDWfShYVOQ0IxDuoKpBhV
-         2S22OLmYmjuk9DwNo7WEbq6dPVOO0zOV/Sx2TNFsH/omPw98OU0ZrKJNrIFfVeayUS4r
-         P3S+m68FEymyQHSAQrkeXoSIb4TCq2giWhhwtkPYOxvn9f9IlzcQXIL1bO/+FDjrQL9n
-         Dck3puFd7/r+00+0ldtgERUI5XSSc3BnK6PaHqNydO/TKp8nzND+9GaiVPuxvaot3LFO
-         k18S14JNsLsx7FlOOe31KJZjCVpn5UIsK0LLgLDFo5/aqIQnGFWsi2NJ5H+8jQ/lCIHI
-         nSpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIkNhXTLbULSJ0JEASYTxppUwbvERj1W0f+UduhYW627yPkqPPr8Gy4rtSjkujhJJyQWhPa9IKj0/Vpt59@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4pon5mrXTlim4Vg0vP1ikXJ/x7NCW+fCNkOGhdw0s+FOr+amu
-	TkMRWtP6iBFcE8S+BjZYLlIx0Tx9wud/uKPIW8ppZwjEk2eyEYiYAqbCCsqPrTIBNGjPjImK1nl
-	oBHsT
-X-Gm-Gg: ASbGncv1DK1S1QjiWt2+i7k4oUBksazSkRpL2tQ2HT99DGPfESUM+DASIDD4dtYWDL+
-	USFSGBgRzv9oo60hvjA1DH65iccIPxvSttD7C6csFX0732nOVnrynmchMNV64LeAIdQ3n+u8JFQ
-	4Qerv9T1ZEWSpuEe8M9YGmH01beAX5a8V7GbrXfnjsCW9DU0xDCgFUg6QkTRCgJiiT1tyPX2szk
-	iqyp7HJgMqldta671Rmu6KU0N0ke8HA4r7x19wjvbPeuBWy7xGq9/mfk4nOaIIKwZ31+k5ed/rh
-	x172WfLhk6j9KJvYZz8mTo0B+6XWmsJteFcTDNA+obiL61ZUB9aJUJFVLhlWsrFvqPdvo2kIIz/
-	i9/YQIXlNYBWuOw==
-X-Google-Smtp-Source: AGHT+IEeCetJMzITvQTSEH8d9WGCjV3RVQtVEL7I79j4l30JcTvecr2dZYhDSZ+qs9Pc9ll6tx3egA==
-X-Received: by 2002:a05:6000:2b04:b0:3a4:f722:a46b with SMTP id ffacd0b85a97d-3a6c971ce5emr1124590f8f.15.1750311682860;
-        Wed, 18 Jun 2025 22:41:22 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a226ff3sm1172760a91.8.2025.06.18.22.41.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 22:41:22 -0700 (PDT)
-Message-ID: <f1cc6120-0410-4c69-b5ec-19194508148a@suse.com>
-Date: Thu, 19 Jun 2025 15:11:16 +0930
+	s=arc-20240116; t=1750312089; c=relaxed/simple;
+	bh=naO5r0xMIhdjbn0oOa+SVmj9KjDZ5worxHK7bSVntUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxtyFKOdauKgdqpLWbLmvxuGG6gOxa+SqNfWe2mTDxq9zpJBL4YO8FiO4obmJYPPiUVp135wH5/xxar2Mrh92sZ0byZn9WDG86+D8SwpudeQOGYSEuZHTCxIuU4SSuTORp3sP9qlMhQM9eXAeAGmjJfChkN7b+4I7fxmpK8Nxsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjXP7rVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DCB9C4CEEA;
+	Thu, 19 Jun 2025 05:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750312088;
+	bh=naO5r0xMIhdjbn0oOa+SVmj9KjDZ5worxHK7bSVntUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IjXP7rVJ7AZnRuppJyLrpp5E8Fh+t+2oljLVnWBBBSn/d1vR0eGIWRYGA9tuTPZxk
+	 1WjJMU7H0LqXwDq8R0BlorxkYnEHHHlDMoVIzC4TN0b7sC1cULh3G+MWJHwVH7xkz9
+	 tCPMfdyKM5V0i4bvNc7Nmlusq60gK1you1vNrbR0OMNiLtHUI3nfQN0juBAxkHM6/o
+	 ts+aKMfmoW7KUXQXeNQG3kObJpnfs/6SAEy+ZvEIdSUbOESxfPgslyESbzwTawbWW0
+	 0p+BbIlpITQh6XRqByB/6dGMmYRgJ3In9Qc8ufkd7ZoKCLwjJIVuYBHy37Sjo6Og4z
+	 FW+uh64HrHsSA==
+Date: Thu, 19 Jun 2025 08:47:46 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] use vm_flags_t consistently
+Message-ID: <aFOkguMF3QJpr4VA@kernel.org>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] btrfs: Convert test_find_delalloc() to use a folio
-To: Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250613190705.3166969-1-willy@infradead.org>
- <20250613190705.3166969-2-willy@infradead.org>
- <aFN62U-Fx4RZGj6Q@casper.infradead.org>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <aFN62U-Fx4RZGj6Q@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
 
-
-
-在 2025/6/19 12:20, Matthew Wilcox 写道:
-> On Fri, Jun 13, 2025 at 08:07:00PM +0100, Matthew Wilcox (Oracle) wrote:
->> @@ -201,17 +200,16 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
->>   	 *           |--- search ---|
->>   	 */
->>   	test_start = SZ_64M;
->> -	locked_page = find_lock_page(inode->i_mapping,
->> +	locked_folio = filemap_lock_folio(inode->i_mapping,
->>   				     test_start >> PAGE_SHIFT);
->> -	if (!locked_page) {
->> -		test_err("couldn't find the locked page");
->> +	if (!locked_folio) {
->> +		test_err("couldn't find the locked folio");
->>   		goto out_bits;
->>   	}
->>   	btrfs_set_extent_bit(tmp, sectorsize, max_bytes - 1, EXTENT_DELALLOC, NULL);
->>   	start = test_start;
->>   	end = start + PAGE_SIZE - 1;
->> -	found = find_lock_delalloc_range(inode, page_folio(locked_page), &start,
->> -					 &end);
->> +	found = find_lock_delalloc_range(inode, locked_folio, &start, &end);
->>   	if (!found) {
->>   		test_err("couldn't find delalloc in our range");
->>   		goto out_bits;
+On Wed, Jun 18, 2025 at 08:42:51PM +0100, Lorenzo Stoakes wrote:
+> The VMA flags field vma->vm_flags is of type vm_flags_t. Right now this is
+> exactly equivalent to unsigned long, but it should not be assumed to be.
 > 
-> Hm.  How much do you test the failure paths here?  It seems to me that
-> the 'locked_folio' is still locked at this point ...
-
-Yep, you're right, the error paths here should have the folio unlocked
-(all the error handling after fielmap_lock_folio()).
-
-It's just very rare to have a commit that won't pass selftest pushed to 
-upstream.
-
-Mind to fix it in another patch or you wish us to handle it before your 
-series?
-
-Thanks,
-Qu
-
+> Much code that references vma->vm_flags already correctly uses vm_flags_t,
+> but a fairly large chunk of code simply uses unsigned long and assumes that
+> the two are equivalent.
 > 
->> @@ -328,8 +323,8 @@ static int test_find_delalloc(u32 sectorsize, u32 nodesize)
->>   		dump_extent_io_tree(tmp);
->>   	btrfs_clear_extent_bits(tmp, 0, total_dirty - 1, (unsigned)-1);
->>   out:
->> -	if (locked_page)
->> -		put_page(locked_page);
->> +	if (locked_folio)
->> +		folio_put(locked_folio);
+> This series corrects that and has us use vm_flags_t consistently.
 > 
-> And here we put it without unlocking it, which should cause the page
-> allocator to squawk at you.
+> This series is motivated by the desire to, in a future series, adjust
+> vm_flags_t to be a u64 regardless of whether the kernel is 32-bit or 64-bit
+> in order to deal with the VMA flag exhaustion issue and avoid all the
+> various problems that arise from it (being unable to use certain features
+> in 32-bit, being unable to add new flags except for 64-bit, etc.)
 > 
+> This is therefore a critical first step towards that goal. At any rate,
+> using the correct type is of value regardless.
 > 
+> We additionally take the opportunity to refer to VMA flags as vm_flags
+> where possible to make clear what we're referring to.
+> 
+> Overall, this series does not introduce any functional change.
+> 
+> Lorenzo Stoakes (3):
+>   mm: change vm_get_page_prot() to accept vm_flags_t argument
+>   mm: update core kernel code to use vm_flags_t consistently
+>   mm: update architecture and driver code to use vm_flags_t
 
+For the series
+
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+ 
+>  arch/arm/mm/fault.c                        |   2 +-
+>  arch/arm64/include/asm/mman.h              |  10 +-
+>  arch/arm64/mm/fault.c                      |   2 +-
+>  arch/arm64/mm/mmap.c                       |   2 +-
+>  arch/arm64/mm/mmu.c                        |   2 +-
+>  arch/powerpc/include/asm/book3s/64/pkeys.h |   3 +-
+>  arch/powerpc/include/asm/mman.h            |   2 +-
+>  arch/powerpc/include/asm/pkeys.h           |   4 +-
+>  arch/powerpc/kvm/book3s_hv_uvmem.c         |   2 +-
+>  arch/sparc/include/asm/mman.h              |   4 +-
+>  arch/sparc/mm/init_64.c                    |   2 +-
+>  arch/x86/kernel/cpu/sgx/encl.c             |   8 +-
+>  arch/x86/kernel/cpu/sgx/encl.h             |   2 +-
+>  arch/x86/mm/pgprot.c                       |   2 +-
+>  fs/exec.c                                  |   2 +-
+>  fs/userfaultfd.c                           |   2 +-
+>  include/linux/coredump.h                   |   2 +-
+>  include/linux/huge_mm.h                    |  12 +-
+>  include/linux/khugepaged.h                 |   4 +-
+>  include/linux/ksm.h                        |   4 +-
+>  include/linux/memfd.h                      |   4 +-
+>  include/linux/mm.h                         |  10 +-
+>  include/linux/mm_types.h                   |   2 +-
+>  include/linux/mman.h                       |   4 +-
+>  include/linux/pgtable.h                    |   2 +-
+>  include/linux/rmap.h                       |   4 +-
+>  include/linux/userfaultfd_k.h              |   4 +-
+>  include/trace/events/fs_dax.h              |   6 +-
+>  mm/debug.c                                 |   2 +-
+>  mm/execmem.c                               |   8 +-
+>  mm/filemap.c                               |   2 +-
+>  mm/gup.c                                   |   2 +-
+>  mm/huge_memory.c                           |   2 +-
+>  mm/hugetlb.c                               |   4 +-
+>  mm/internal.h                              |   4 +-
+>  mm/khugepaged.c                            |   4 +-
+>  mm/ksm.c                                   |   2 +-
+>  mm/madvise.c                               |   4 +-
+>  mm/mapping_dirty_helpers.c                 |   2 +-
+>  mm/memfd.c                                 |   8 +-
+>  mm/memory.c                                |   4 +-
+>  mm/mmap.c                                  |  16 +-
+>  mm/mprotect.c                              |   8 +-
+>  mm/mremap.c                                |   2 +-
+>  mm/nommu.c                                 |  12 +-
+>  mm/rmap.c                                  |   4 +-
+>  mm/shmem.c                                 |   6 +-
+>  mm/userfaultfd.c                           |  14 +-
+>  mm/vma.c                                   |  78 +++---
+>  mm/vma.h                                   |  16 +-
+>  mm/vmscan.c                                |   4 +-
+>  tools/testing/vma/vma.c                    | 266 ++++++++++-----------
+>  tools/testing/vma/vma_internal.h           |  12 +-
+>  53 files changed, 298 insertions(+), 297 deletions(-)
+> 
+> --
+> 2.49.0
+
+-- 
+Sincerely yours,
+Mike.
 
