@@ -1,97 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-52199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC21AE0264
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 12:08:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A3AAE0271
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 12:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD5F3B5773
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 10:07:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4199818854B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 10:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3239B221F26;
-	Thu, 19 Jun 2025 10:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525952222C8;
+	Thu, 19 Jun 2025 10:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGHdSlBw"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cSm7u+UA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IxiBQ0WM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cSm7u+UA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IxiBQ0WM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A064221720;
-	Thu, 19 Jun 2025 10:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E397C35963
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 10:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750327684; cv=none; b=jQb55w1M0/Tz30MRMcFFAryKASOTGamukOvMEP6Ovd3dddura1AUjmm6xUi8gtDAh4df5ux4Ugi2oDIj2X8ViBHVs6g4ifZLl9gesvq+Fp/noD6RM4dK9gddsIWd1oV64hCUkw67gep3PX/H1FfuhUJE/ITpxkZicumBOcEnUW0=
+	t=1750328022; cv=none; b=B7PyZdDtPtjcAUw4qtvkPZPZF10KN/RbvM764qvj41HokS3j9v1rj89O+i+zlmNlq84nJ7sEcp1MtyH7rYkL++KplFCQgX5RaLWVT0PZk/K/g1073aMI9US2GmzSMAkzovez8I91kFD1u/fIsiCffWSj24NiRqZI+9jvxYVCRuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750327684; c=relaxed/simple;
-	bh=LjZ3u3NJvBKRYepoq/MXA3KSDEGcTVuRZrVeUc50jCI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JQNN7eTldV6aAchB2yqDhRtd80lhURPfLcXmrCUxUdPjDJi69vpspjbJjn4mzWBo6pfwzPhMvDTIjfZjjkBSoiG5Al/X7DDhjWQbmuM1FQGsBfZMM8qZEH5NxqVL3uz43lDhiC381wVhH+0cFVFjuV+G37anq6uNuDk8XePqiWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGHdSlBw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A4E0C4CEEA;
-	Thu, 19 Jun 2025 10:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750327684;
-	bh=LjZ3u3NJvBKRYepoq/MXA3KSDEGcTVuRZrVeUc50jCI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LGHdSlBwrEsHzjTIjds3GdgqbSOvBGRbGWcTyIeGYjn7Zij0Kt0E0fuSkqYOoJh6c
-	 tBD2HahLAO6Tk/R1l44ufp801wSqoeS1YBnWvfOt5qENr4lRn/vpHUOCIb6s+S9w9l
-	 eN9JMrx/B3uYkW0q8JmMlMjS81d8qeXIRyI9+nrrlPV03ztSGr4pvSi333OVVlwUin
-	 nYrMN9OGcjted+8QLn8CJI2Ny7bPBbiQEU59pjN8a5QF34hsXyMSJpZh8DGjXT7nhv
-	 wAqiZPRrQrEm63T4s2BPfkCQjCtvKPsuENt9THhO94lZL/kOyMyPZsrI9oJ7kZMcXa
-	 FhiHzjhhLYXqw==
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Pankaj Raghav <p.raghav@samsung.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	kernel@pankajraghav.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH v2] fs/buffer: remove comment about hard sectorsize
-Date: Thu, 19 Jun 2025 12:07:58 +0200
-Message-ID: <20250619-irreversibel-kaltfront-033771080900@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250618075821.111459-1-p.raghav@samsung.com>
-References: <20250618075821.111459-1-p.raghav@samsung.com>
+	s=arc-20240116; t=1750328022; c=relaxed/simple;
+	bh=lARrWwBoH5RijGIo1sVjDiUQo7cWexM0QdYFzXi5EMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d+tfA7LDUsUdsmremQZzXTzre4NmYhtmwQgtQKsbhspCQNxc5QlH4TNCQOvLCKEVGqWf9d3rQkkcjdj41uDfzGF8P7Ul8PJTA1KCIiHuoIHGqE+4cedtNGN9ru0Ykfa5pLDCdu4UXryiZviU4Dzo3bchUVVuQcpqop9/ol+0WvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cSm7u+UA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IxiBQ0WM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cSm7u+UA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IxiBQ0WM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1FE692118B;
+	Thu, 19 Jun 2025 10:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750328018; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jTI9Z6Q3pmfjpibUSNSxQNyenk2QP8gVYElzIW24P5E=;
+	b=cSm7u+UAe5Xh+vN31/0FzJ8bbPuXC+h2Sr5duY0AjWKaHR592t4k2jHJ9aoDOsS1rxUp3A
+	jD057Hh+Lye6qDEgL02BXWMDw8id51Ox7LoYXe5gKBF3/rKUHy7AH7SO+IgfervoX2BNQO
+	8RpYpJccYQozguVf9kEnSmC1aQ1pt3k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750328018;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jTI9Z6Q3pmfjpibUSNSxQNyenk2QP8gVYElzIW24P5E=;
+	b=IxiBQ0WMbf1X7CSOX5+R9KJO4R+A0LK68NGp3FRVJ2eCygw5VcXnuuHbguL75S1t1tmynK
+	YrHzVRMX+/gOWuCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750328018; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jTI9Z6Q3pmfjpibUSNSxQNyenk2QP8gVYElzIW24P5E=;
+	b=cSm7u+UAe5Xh+vN31/0FzJ8bbPuXC+h2Sr5duY0AjWKaHR592t4k2jHJ9aoDOsS1rxUp3A
+	jD057Hh+Lye6qDEgL02BXWMDw8id51Ox7LoYXe5gKBF3/rKUHy7AH7SO+IgfervoX2BNQO
+	8RpYpJccYQozguVf9kEnSmC1aQ1pt3k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750328018;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jTI9Z6Q3pmfjpibUSNSxQNyenk2QP8gVYElzIW24P5E=;
+	b=IxiBQ0WMbf1X7CSOX5+R9KJO4R+A0LK68NGp3FRVJ2eCygw5VcXnuuHbguL75S1t1tmynK
+	YrHzVRMX+/gOWuCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 116D7136CC;
+	Thu, 19 Jun 2025 10:13:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kA7iA9LiU2gJVgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 19 Jun 2025 10:13:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B8E5AA29F1; Thu, 19 Jun 2025 12:13:33 +0200 (CEST)
+Date: Thu, 19 Jun 2025 12:13:33 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Jan Kara <jack@suse.cz>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, mcgrof@kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Subject: Re: [PATCH] fs/buffer: use min folio order to calculate upper limit
+ in __getblk_slow()
+Message-ID: <qu2m6fw64ikk5dapckywr7tuyqjsyktvn4hnr7nl7py7p5dpbt@tzbvv6ivfvuu>
+References: <20250618091710.119946-1-p.raghav@samsung.com>
+ <rf5sve3v7vlkzae7ralok4vkkit24ashon3htmp56rmqshgcv5@a3bmz7mpkcwb>
+ <lv3zoqm3uuzfqskcr734btb3hgqy67ddmd4ik2vidl3y3qv2hj@2zb34igia4o5>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1120; i=brauner@kernel.org; h=from:subject:message-id; bh=LjZ3u3NJvBKRYepoq/MXA3KSDEGcTVuRZrVeUc50jCI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQEP6yL55wt9WxRoqzwYyPThc83Nh69KZ12rl+2OpXBQ 3md7rYfHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNJfsnIMHE/545tGxrFJIvl p9YYufmGsCf8/skjdK10Ue+HjrCS2wz/axvqdIW+BBaFLemR3CrxM0ZnWwXLovJL+wVa3SYL/cn hAwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lv3zoqm3uuzfqskcr734btb3hgqy67ddmd4ik2vidl3y3qv2hj@2zb34igia4o5>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Level: 
 
-On Wed, 18 Jun 2025 09:58:21 +0200, Pankaj Raghav wrote:
-> Commit e1defc4ff0cf ("block: Do away with the notion of hardsect_size")
-> changed hardsect_size to logical block size. The comment on top still
-> says hardsect_size.
+On Wed 18-06-25 21:50:56, Pankaj Raghav (Samsung) wrote:
+> > > diff --git a/fs/buffer.c b/fs/buffer.c
+> > > index 8cf4a1dc481e..98f90da69a0a 100644
+> > > --- a/fs/buffer.c
+> > > +++ b/fs/buffer.c
+> > > @@ -1121,10 +1121,11 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+> > >  	     unsigned size, gfp_t gfp)
+> > >  {
+> > >  	bool blocking = gfpflags_allow_blocking(gfp);
+> > > +	int blocklog = PAGE_SHIFT + mapping_min_folio_order(bdev->bd_mapping);
+> > >  
+> > >  	/* Size must be multiple of hard sectorsize */
+> > > -	if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
+> > > -			(size < 512 || size > PAGE_SIZE))) {
+> > > +	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
+> > > +		     (size < 512 || size > (1U << blocklog)))) {
+> > 
+> > So this doesn't quite make sense to me.  Shouldn't it be capped from above
+> > by PAGE_SIZE << mapping_max_folio_order(bdev->bd_mapping)?
 > 
-> Remove the comment as the code is pretty clear. While we are at it,
-> format the relevant code.
+> This __getblk_slow() function is used to read a block from a block
+> device and fill the page cache along with creating buffer heads.
 > 
-> [...]
+> I think the reason we have this check is to make sure the size, which is
+> block size is within the limits from 512 (SECTOR_SIZE) to upper limit on block size.
+> 
+> That upper limit on block size was PAGE_SIZE before the lbs support in 
+> block devices, but now the upper limit of block size is mapping_min_folio_order.
+> We set that in set_blocksize(). So a single block cannot be bigger than
+> (PAGE_SIZE << mapping_min_folio_order).
 
-Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.misc branch should appear in linux-next soon.
+Ah, right. Thanks for explanation. Feel free to add:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.misc
-
-[1/1] fs/buffer: remove comment about hard sectorsize
-      https://git.kernel.org/vfs/vfs/c/6ae58121126d
+									Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
