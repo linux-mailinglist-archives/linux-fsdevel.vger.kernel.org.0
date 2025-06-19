@@ -1,439 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-52140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126A7ADF9D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 01:39:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0980ADFA04
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 02:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8368A3BCE7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jun 2025 23:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5A8189E243
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 00:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BBC2F4A16;
-	Wed, 18 Jun 2025 23:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEE64A06;
+	Thu, 19 Jun 2025 00:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZK+gCY65"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpaBiocc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CEC29B221;
-	Wed, 18 Jun 2025 23:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F707134BD;
+	Thu, 19 Jun 2025 00:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750289892; cv=none; b=s88uSA9sbPmOUV/UNKx0sZnK0Xmuq+u74MV9ezwWoXip/04ZkaTx1UvfdysVCgvnI4YJvQ6CbxplW02gvjM9tEQDx44RhpL8ITuY4tATVUxU+KRuyY5WYpwEAcjoZPZTzRQowKeH1thnt0i743dDwiOOa360mexi5z/AB0pxTuM=
+	t=1750291647; cv=none; b=aaNxHZh3wNYA56C7TKHtiisq7C0ScKWOfqatB20pO2dyAfzq5IE4FVYnCwuVx7P8kPYS7BGxJBfAXI5304rCamDPYizc5I7NMmFpCPr0zWleyCENrg8w5i7yJWTuHEzAJHCFv5JebIhhQvau3UGL7Osaa0f56EuDuQsOgkTFuKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750289892; c=relaxed/simple;
-	bh=XUqG1vdMsgMYI/VRCB/BmmdtBIx3k72lJdL4ZezPJyo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ck+Bch7lxJN7srRmOjssaDP39jNjydIqKibYhgzEpcqwr4HtgFCN9YyzDUw83h6JEd3MJaMFenDZlbXhVQMS6WAzadg/JHiTLxUXgnoWpudX5UTBgvkiIKIHg/aKXJg/WPzQrPoEo7yyOZ6UvLgp/SqNHz6lsX999Oy4xJ8LwXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZK+gCY65; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7AF4C4CEE7;
-	Wed, 18 Jun 2025 23:38:09 +0000 (UTC)
+	s=arc-20240116; t=1750291647; c=relaxed/simple;
+	bh=dAiU03fjIPFdubyQ+ApCYOlimY1xmbTJy992dXG7JPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HK90d/RZ5nakxy8ChnsDRr/Nee3awP0hhEJXxkMX5sOiugt/BlTpMbu9QJKoKqyyrEFEw57794VOaaE8z95jOBjDfA+LGkNlRLRT+4DLfYLP/A6iN5ocFT/xOdobHtYA191S1oeRyFUUgrEgCAgz+grsp0Bh8MI8v/EQz+eITW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpaBiocc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB5DC4CEE7;
+	Thu, 19 Jun 2025 00:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750289891;
-	bh=XUqG1vdMsgMYI/VRCB/BmmdtBIx3k72lJdL4ZezPJyo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZK+gCY65lV5Wcvx3fgQsrFNipIOQHaFb6xxqf9MaYhVICC0mnbUETyNCX4D2hkzz4
-	 LPSHAlHgaGFjvMZbo/K0Yx08Al9YEdNTRe2pFPPz/1qwv2PXv0cBl+9ikmR1cKnfM8
-	 xOpNv92Peb0EwJYfzdyBUcdw5n6mztV3BGVpVHJvGIpePuwEk41amGzR+OTx7WPbXo
-	 QkcK0susK2ZXcKuKqXc9BPFhgmSedXnQ/jzh3JWw0VTcXgse5QOVH24dNX4kZMfNeU
-	 MWocEkdeYORK361MlgCkygSrafU/EYSS9laznCk9Y8qMptDLv3vVfBH2CmREHFlEjP
-	 aWuy7fAYmkgKg==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	gregkh@linuxfoundation.org,
-	tj@kernel.org,
-	daan.j.demeyer@gmail.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 4/4] selftests/bpf: Add tests for bpf_kernfs_read_xattr
-Date: Wed, 18 Jun 2025 16:37:39 -0700
-Message-ID: <20250618233739.189106-5-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250618233739.189106-1-song@kernel.org>
-References: <20250618233739.189106-1-song@kernel.org>
+	s=k20201202; t=1750291647;
+	bh=dAiU03fjIPFdubyQ+ApCYOlimY1xmbTJy992dXG7JPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RpaBioccwyNJNYbkYrNLGj4zErChYmfWVMZJnHq3+3BxOlkmwye2o2rwClvFNLBDJ
+	 wnUaq6bScHI2VqmzWG2xmpfvKaj/JYZCGC4SqilwBmfG93hfcy0SthQh24wNK5ggYW
+	 hb1n1l7IV6D6eCtv9K12YAC2hyCYbaqJIAHlrY6QvQOApG1zzXClb2eMZIJuuYcbF2
+	 e7q6O+rZpMmoGn9M9TWJwiBBAI+v6mN21O34m3v+86a1t+x2FA59/PimNUstyxREni
+	 DhOZh3OhlmrQUlxKC9eterk2g/YE3jUoFrvoYSDxTSpa+yhawu8BAa576KWWIUsN+y
+	 urBpAimcVxsWg==
+Date: Thu, 19 Jun 2025 02:07:17 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: linux-man@vger.kernel.org, Alexey Gladkov <legion@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] chmod.2: document fchmodat(AT_EMPTY_PATH)
+Message-ID: <k3rytfb6tjnxbwz5bxmj2q5hob6ao2qotyzees37cm36mmf3qq@b64p6fleloft>
+References: <20250619-fchmod-empty-path-v1-1-feff2c63abe4@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pn57fgp3qgeavnri"
+Content-Disposition: inline
+In-Reply-To: <20250619-fchmod-empty-path-v1-1-feff2c63abe4@cyphar.com>
 
-Add tests for different scenarios with bpf_kernfs_read_xattr:
-1. Read cgroup xattr from bpf_cgroup_from_id;
-2. Read cgroup xattr from bpf_cgroup_ancestor;
-3. Read cgroup xattr from css_iter;
-4. Verifier reject using bpf_kernfs_read_xattr in sleepable contexts.
-5. Use bpf_kernfs_read_xattr in LSM hook security_socket_connect.
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../selftests/bpf/prog_tests/kernfs_xattr.c   | 145 ++++++++++++++++++
- .../selftests/bpf/progs/kernfs_read_xattr.c   | 117 ++++++++++++++
- .../selftests/bpf/progs/read_cgroupfs_xattr.c |  60 ++++++++
- 3 files changed, 322 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kernfs_xattr.c
- create mode 100644 tools/testing/selftests/bpf/progs/kernfs_read_xattr.c
- create mode 100644 tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
+--pn57fgp3qgeavnri
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: linux-man@vger.kernel.org, Alexey Gladkov <legion@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] chmod.2: document fchmodat(AT_EMPTY_PATH)
+References: <20250619-fchmod-empty-path-v1-1-feff2c63abe4@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <20250619-fchmod-empty-path-v1-1-feff2c63abe4@cyphar.com>
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/kernfs_xattr.c b/tools/testing/selftests/bpf/prog_tests/kernfs_xattr.c
-new file mode 100644
-index 000000000000..b60ccfdc4c4d
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kernfs_xattr.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <sys/stat.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/socket.h>
-+#include <sys/xattr.h>
-+
-+#include <test_progs.h>
-+
-+#include "read_cgroupfs_xattr.skel.h"
-+#include "kernfs_read_xattr.skel.h"
-+
-+#define CGROUP_FS_ROOT "/sys/fs/cgroup/"
-+#define CGROUP_FS_PARENT CGROUP_FS_ROOT "foo/"
-+#define CGROUP_FS_CHILD CGROUP_FS_PARENT "bar/"
-+
-+static int move_pid_to_cgroup(const char *cgroup_folder, pid_t pid)
-+{
-+	char filename[128];
-+	char pid_str[64];
-+	int procs_fd;
-+	int ret;
-+
-+	snprintf(filename, sizeof(filename), "%scgroup.procs", cgroup_folder);
-+	snprintf(pid_str, sizeof(pid_str), "%d", pid);
-+
-+	procs_fd = open(filename, O_WRONLY | O_APPEND);
-+	if (!ASSERT_OK_FD(procs_fd, "open"))
-+		return -1;
-+
-+	ret = write(procs_fd, pid_str, strlen(pid_str));
-+	close(procs_fd);
-+	if (!ASSERT_GT(ret, 0, "write cgroup.procs"))
-+		return -1;
-+	return 0;
-+}
-+
-+static void reset_cgroups_and_lo(void)
-+{
-+	rmdir(CGROUP_FS_CHILD);
-+	rmdir(CGROUP_FS_PARENT);
-+	system("ip addr del 1.1.1.1/32 dev lo");
-+	system("ip link set dev lo down");
-+}
-+
-+static const char xattr_value_a[] = "bpf_selftest_value_a";
-+static const char xattr_value_b[] = "bpf_selftest_value_b";
-+static const char xattr_name[] = "user.bpf_test";
-+
-+static int setup_cgroups_and_lo(void)
-+{
-+	int err;
-+
-+	err = mkdir(CGROUP_FS_PARENT, 0755);
-+	if (!ASSERT_OK(err, "mkdir 1"))
-+		goto error;
-+	err = mkdir(CGROUP_FS_CHILD, 0755);
-+	if (!ASSERT_OK(err, "mkdir 2"))
-+		goto error;
-+
-+	err = setxattr(CGROUP_FS_PARENT, xattr_name, xattr_value_a,
-+		       strlen(xattr_value_a) + 1, 0);
-+	if (!ASSERT_OK(err, "setxattr 1"))
-+		goto error;
-+
-+	err = setxattr(CGROUP_FS_CHILD, xattr_name, xattr_value_b,
-+		       strlen(xattr_value_b) + 1, 0);
-+	if (!ASSERT_OK(err, "setxattr 2"))
-+		goto error;
-+
-+	err = system("ip link set dev lo up");
-+	if (!ASSERT_OK(err, "lo up"))
-+		goto error;
-+
-+	err = system("ip addr add 1.1.1.1 dev lo");
-+	if (!ASSERT_OK(err, "lo addr v4"))
-+		goto error;
-+
-+	err = write_sysctl("/proc/sys/net/ipv4/ping_group_range", "0 0");
-+	if (!ASSERT_OK(err, "write_sysctl"))
-+		goto error;
-+
-+	return 0;
-+error:
-+	reset_cgroups_and_lo();
-+	return err;
-+}
-+
-+static void test_read_cgroup_xattr(void)
-+{
-+	struct sockaddr_in sa4 = {
-+		.sin_family = AF_INET,
-+		.sin_addr.s_addr = htonl(INADDR_LOOPBACK),
-+	};
-+	struct read_cgroupfs_xattr *skel = NULL;
-+	pid_t pid = gettid();
-+	int sock_fd = -1;
-+	int connect_fd = -1;
-+
-+	if (!ASSERT_OK(setup_cgroups_and_lo(), "setup_cgroups_and_lo"))
-+		return;
-+	if (!ASSERT_OK(move_pid_to_cgroup(CGROUP_FS_CHILD, pid),
-+		       "move_pid_to_cgroup"))
-+		goto out;
-+
-+	skel = read_cgroupfs_xattr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "read_cgroupfs_xattr__open_and_load"))
-+		goto out;
-+
-+	skel->bss->target_pid = pid;
-+
-+	if (!ASSERT_OK(read_cgroupfs_xattr__attach(skel), "read_cgroupfs_xattr__attach"))
-+		goto out;
-+
-+	sock_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
-+	if (!ASSERT_OK_FD(sock_fd, "sock create"))
-+		goto out;
-+
-+	connect_fd = connect(sock_fd, &sa4, sizeof(sa4));
-+	if (!ASSERT_OK_FD(connect_fd, "connect 1"))
-+		goto out;
-+	close(connect_fd);
-+
-+	ASSERT_TRUE(skel->bss->found_value_a, "found_value_a");
-+	ASSERT_TRUE(skel->bss->found_value_b, "found_value_b");
-+
-+out:
-+	close(connect_fd);
-+	close(sock_fd);
-+	read_cgroupfs_xattr__destroy(skel);
-+	move_pid_to_cgroup(CGROUP_FS_ROOT, pid);
-+	reset_cgroups_and_lo();
-+}
-+
-+void test_kernfs_xattr(void)
-+{
-+	RUN_TESTS(kernfs_read_xattr);
-+
-+	if (test__start_subtest("read_cgroupfs_xattr"))
-+		test_read_cgroup_xattr();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/kernfs_read_xattr.c b/tools/testing/selftests/bpf/progs/kernfs_read_xattr.c
-new file mode 100644
-index 000000000000..851cdcec05a6
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/kernfs_read_xattr.c
-@@ -0,0 +1,117 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_experimental.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+char value[16];
-+
-+__always_inline void read_xattr(struct cgroup *cgroup)
-+{
-+	struct bpf_dynptr value_ptr;
-+
-+	bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-+	bpf_kernfs_read_xattr(cgroup->kn, "user.bpf_test",
-+			      &value_ptr);
-+}
-+
-+SEC("lsm.s/socket_connect")
-+__failure __msg("R1 must be a rcu pointer")
-+int BPF_PROG(sleepable_missing_rcu_lock, struct file *f)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	/* Sleepable, so cgrp->kn is not trusted */
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm.s/socket_connect")
-+__success
-+int BPF_PROG(sleepable_with_rcu_lock, struct file *f)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp;
-+
-+	bpf_rcu_read_lock();
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		goto out;
-+
-+	/* In rcu read lock, so cgrp->kn is trusted */
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(cgrp);
-+out:
-+	bpf_rcu_read_unlock();
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(non_sleepable, struct file *f)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	/* non-sleepable, so cgrp->kn is trusted */
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(use_css_iter, struct file *f)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css;
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	bpf_for_each(css, css, &cgrp->self, BPF_CGROUP_ITER_ANCESTORS_UP)
-+		read_xattr(css->cgroup);
-+
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(use_bpf_cgroup_ancestor, struct file *f)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp, *ancestor;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	ancestor = bpf_cgroup_ancestor(cgrp, 1);
-+	if (!ancestor)
-+		goto out;
-+	/* non-sleepable, so cgrp->kn is trusted */
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(ancestor);
-+out:
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c b/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
-new file mode 100644
-index 000000000000..5109e800a443
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_experimental.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+pid_t target_pid = 0;
-+
-+char xattr_value[64];
-+const char expected_value_a[] = "bpf_selftest_value_a";
-+const char expected_value_b[] = "bpf_selftest_value_b";
-+bool found_value_a;
-+bool found_value_b;
-+
-+SEC("lsm.s/socket_connect")
-+int BPF_PROG(test_socket_connect, struct file *f)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css, *tmp;
-+	struct bpf_dynptr value_ptr;
-+	struct cgroup *cgrp;
-+
-+	if ((bpf_get_current_pid_tgid() >> 32) != target_pid)
-+		return 0;
-+
-+	bpf_rcu_read_lock();
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp) {
-+		bpf_rcu_read_unlock();
-+		return 0;
-+	}
-+
-+	css = &cgrp->self;
-+	bpf_dynptr_from_mem(xattr_value, sizeof(xattr_value), 0, &value_ptr);
-+	bpf_for_each(css, tmp, css, BPF_CGROUP_ITER_ANCESTORS_UP) {
-+		int ret;
-+
-+		ret = bpf_kernfs_read_xattr(tmp->cgroup->kn, "user.bpf_test",
-+					    &value_ptr);
-+		if (ret < 0)
-+			continue;
-+
-+		if (ret == sizeof(expected_value_a) &&
-+		    !bpf_strncmp(xattr_value, sizeof(expected_value_a), expected_value_a))
-+			found_value_a = true;
-+		if (ret == sizeof(expected_value_b) &&
-+		    !bpf_strncmp(xattr_value, sizeof(expected_value_b), expected_value_b))
-+			found_value_b = true;
-+	}
-+
-+	bpf_rcu_read_unlock();
-+	bpf_cgroup_release(cgrp);
-+
-+	return 0;
-+}
--- 
-2.47.1
+Hi Aleksa,
 
+On Thu, Jun 19, 2025 at 04:34:30AM +1000, Aleksa Sarai wrote:
+> The documentation and behaviour is indentical to the equivalent flag for
+> fchownat(2).
+>=20
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+> This was added back in 2023, but I forgot to send the documentation
+> patch for this and only noticed when I was trying to use it and realised
+> it wasn't in the man page -- mea culpa!
+
+Thanks!  I've applied the patch:
+<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
+mit/?h=3Dcontrib&id=3Da4535bb6ddc0c1a060cedaee86430c39f590804e>
+
+Have a lovely day!
+Alex
+
+> ---
+>  man/man2/chmod.2 | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/man/man2/chmod.2 b/man/man2/chmod.2
+> index 307589481593..671e256ba525 100644
+> --- a/man/man2/chmod.2
+> +++ b/man/man2/chmod.2
+> @@ -190,7 +190,30 @@ is absolute, then
+>  is ignored.
+>  .P
+>  .I flags
+> -can either be 0, or include the following flag:
+> +can either be 0, or include the following flags:
+> +.TP
+> +.BR AT_EMPTY_PATH " (since Linux 6.6)"
+> +.\" commit 5daeb41a6fc9d0d81cb2291884b7410e062d8fa1
+> +If
+> +.I path
+> +is an empty string, operate on the file referred to by
+> +.I dirfd
+> +(which may have been obtained using the
+> +.BR open (2)
+> +.B O_PATH
+> +flag).
+> +In this case,
+> +.I dirfd
+> +can refer to any type of file, not just a directory.
+> +If
+> +.I dirfd
+> +is
+> +.BR AT_FDCWD ,
+> +the call operates on the current working directory.
+> +This flag is Linux-specific; define
+> +.B _GNU_SOURCE
+> +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
+> +to obtain its definition.
+>  .TP
+>  .B AT_SYMLINK_NOFOLLOW
+>  If
+>=20
+> ---
+> base-commit: 471c38fb3c5c53c6df2fad4a7353559b330c1323
+> change-id: 20250619-fchmod-empty-path-7680e8bb5481
+>=20
+> Best regards,
+> --=20
+> Aleksa Sarai <cyphar@cyphar.com>
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--pn57fgp3qgeavnri
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhTVLQACgkQ64mZXMKQ
+wqmmWxAAu2F2K8o8jtvmQadksYYWkWbjTcuIim2CIHgUy2XsmKEYH2G2IHnehH/l
+GdEEULookHo3RF0P1OEQA3wOhe/g3qpYFJUEv2+cCkaa1yut/v9D0JFTU6JJdKFd
+RUxMXGUFfdOd/qEAmqoOi03ukUtK0u5F/+5hPcimDslVXtKa/BRJAoG5W/KSPjzQ
+gkdHAmtGLQTulrZI9bpLzPhTEPEfyrt6cXXetxyrkT9Ij/x+JoS7IF0+j89aaOOB
+07UiZFLY3v5IgW581ahjxxNMIQ8uWDeZl3DE+SIF9zwYQpna6SiX3c5t/3PkjFey
+sxWO9RpfKCvk0QIGcHLN1acv2rBcpmsb/Rex5DLvrx/wlTYkwvCwg4yyE4IPtUMK
+kSU2QGoJjPbedivDjm+69yThHqGKdfgxLX5fPw9vqTFeloi8VExSkLiHmgHsT5jm
++/Z1Jtmfh8eJ9dnsNzzClqXgzchq7XVb6W2Q576VsfqfB+8Z6ET+W9T2wXCxfN/W
+VvBp2zz7h+LZOPy5yPytxmwoX783G45RAqzR1rRG81Zo7PSVX5Ewy8wFGuEwLnq0
+P2w7uXTQe4dbK2GTd0UQbDx+RiM3VNF6PIZt43GkParthOqMg3ARpsVoSZNLyDOl
+AW+qlR3nI38VCx6kB2ZhOjiswYlXBEb7VPMQ7UaLyHCJbP8nIHw=
+=KCyj
+-----END PGP SIGNATURE-----
+
+--pn57fgp3qgeavnri--
 
