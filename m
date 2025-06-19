@@ -1,199 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-52255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1502AE0D1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 20:46:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3958CAE0E0D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 21:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E381C201DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 18:46:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F3BE7A26DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 19:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6982D1F0992;
-	Thu, 19 Jun 2025 18:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7872441AA;
+	Thu, 19 Jun 2025 19:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RoGayEpj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7fB0MeK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4710430E84E;
-	Thu, 19 Jun 2025 18:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32ACA226D1A;
+	Thu, 19 Jun 2025 19:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750358786; cv=none; b=HaTH6/WrfyPlZuk4uTMWgb4SGc+vhOFmOwXwroGcHQ6+nzkTu8W7Ga2Ok5/wBJgWrUxDdLkoLExhq0wu4vqQoBHQSV14uJqrlVQ657G9o+SJ33S/VtyihNTC5VchiUIVVoOo2CzRT/++jxA8j0CpuhnL1G8ZKAG7Qp9hlnGmFcc=
+	t=1750361608; cv=none; b=IXffyJMAFdK+1hkJI7SVBwXmXNhA6EBGDOYqR8k3f1svuv651P9qj8Cjh1dAqgcDQwDKUdOsFNhbXhrvkUvw4qPgrC5OcybfXV3fhjOK73qK9ORsXA9KhdrNsWtIZ5EJJzO+0Oyjy7wAtkKoaKIBA7efkwmESSW6g0JbZyFNvJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750358786; c=relaxed/simple;
-	bh=C2AKUFX0mM6/YU4jHzPDAaPY3tOQKEWVp0/A+MxRcjQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=At5E/kCHTdbpdffTQNYhtm9KeOZuV1MxyPwPV2ZZ4xYsRNgKthvdhCHNTYap5AAOyrQMpQmLm+F/yo1MZL5QWOSynuRpODz79IQml5kGUJC5Shzqun7dCezHiUm4goLNVrhRHLy3+j10/YbbDUoJ9nZpF70yz/i7dFmZbHvbPVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RoGayEpj; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-531a1fad7faso302595e0c.2;
-        Thu, 19 Jun 2025 11:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750358784; x=1750963584; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QeVq00HdVoGRbDPLQhAs3mdL7Gnf/CARB+Q1SUgRL6w=;
-        b=RoGayEpjyRIUFhdo5qZGMfLNxKcWV1BXk+RkpvCD0ZasbilotOSm+TbVKUcIe5NpQY
-         LcGX6e8zMKePV9JOljAX7AH9H/6UsS3cdyqpD7ESfM7v6pk3iDA087l9WHFXNEGwuAIM
-         hoE3Kk/i5y6zH8Q7C8l1r8sq8TgIh10Up637kgCbsb3T2pANro5prqx7BeiA9+lc/dKz
-         DeFtrNki621hsWlrtYx3FIKuokDv7DI/fv6Fdbwudzv5LOAQ9LbJ4f9W81eoojfiq0GS
-         5Z7kufHMWqMVbh2mDwUBOd1tRN2nUc3qyguXW02QSYAi9ts5vJgkS60IlFKpbHHtWOXj
-         0SoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750358784; x=1750963584;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QeVq00HdVoGRbDPLQhAs3mdL7Gnf/CARB+Q1SUgRL6w=;
-        b=p3t7AuqZHtKWez+2subRB4hxyFjHC/T9Yz6lpWOQy0BgNuv/yJjkhgANITVrVf/kpr
-         76nrvkfA5aIDoaDwn03mJUJ2jQDYf6SrmoNtzOTnnC5TPXCt8s6sHHzgAgFl5fe+XP/d
-         t2aoGixYpNWqiiGnxYrnNLx4ey6VDUqP1t5FfjA0tiHjXxeaoo7WpirN5Y5V+saIlBaO
-         AFLbvKB0oWGDhN/lt92MuomGHRcQEK7zEU3CSJA0tnqmaU0OA+RACRP2j46rzDHrwR7t
-         axy2zEA3RwAwCDUpD9Ru5v+MYd81zoypRbgKUa44oTakGoOQnP3dvDj7pyEAs2fcDHfQ
-         4lrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDRJjHm2BvOGWesA79t10xQH0iQFD765cdfyzlItYKzAoDd41ycFtEVbL7P75xiDLWUVyszKZF7kAV1yLc@vger.kernel.org, AJvYcCWUEUAZecc5z8eTF4B+P3kf+H2+E/IsVb3SnJsL3o+qv2uPLn03lsA8vwzVd37tchU7WMHXRaDersSF6FJj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4fJzYGMkXAU6CyWffOkjGyhsTiCa5YAxCRcoNwcZW+aN/WAp0
-	H6yI5zTBO4WDKX4bXutTVLRidpsC2iJfi5bFEVk71Q3Xz2VmQgbMGX+gpSry2Fl6yei1zdaJVAt
-	EDvGbbIo6hyyWGXjH62oRtgOx5fERwamhd5ZxHKo=
-X-Gm-Gg: ASbGncuC0Ln9RIfb/P8nUWDbPkYlOPSnMpsND0iHTN4JXUgJQfIeYHQG0onIRCG1AN0
-	xJrLKVNh3Hu40h0c/5I10BiJetLo282+Tg0jAILCwdnY1gcD5zlhWoTNuJS+x4+Lzd4lLjjMtqR
-	qn4k6od+p3mgMFG1XDPqwsFS0PIEr2KPyohF/RfSJxsCHiIQIxfCc2aeEpwtTJNkbHrghufLLW0
-	xh6HbYsY576G2T9
-X-Google-Smtp-Source: AGHT+IHdojA7VEo4E8IieiCBlzs43e9mhEM3FcrEdMSuk9rz/qPmrAe1L7EGgy6z3Q3mtVzNgwMuMPsFxMM7O32oghQ=
-X-Received: by 2002:a05:6122:658d:b0:52c:4eb0:118d with SMTP id
- 71dfb90a1353d-531ad5a71f4mr16072e0c.4.1750358784118; Thu, 19 Jun 2025
- 11:46:24 -0700 (PDT)
+	s=arc-20240116; t=1750361608; c=relaxed/simple;
+	bh=K3ig0XW+sR2f7AhU8fu/SP67FM15tcTtEVt9oemecH0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=PbnnipJK2xNiIlIK1+SYusk0nhfXp4KpT38ciuc/p+TsgAGIYhqEd/Y4FN18lmvR2hLFbkf9XfIyfrC6kuBFxgO9/4GhcKU96dSWY0hzbZHdybTUATgf6kqj44wbDSOaGhlRlM4KMlnew23bkMHYDJ8L0srFMwEpPNX062jUm9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7fB0MeK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C49B2C4CEEA;
+	Thu, 19 Jun 2025 19:33:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750361608;
+	bh=K3ig0XW+sR2f7AhU8fu/SP67FM15tcTtEVt9oemecH0=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=j7fB0MeKB++tqdj9jER/Rm7izIOEiRPVFOlvKQYBzqlIV9K5iuWMMYXcyP0c68rFk
+	 ubFhWNSlyPudZ34UiTN06SvJJURtNhIr6SPv3ekvBo3jCdvpxBSoj6FqWjx2FyTrFe
+	 LuVga4BIn27AxV5MMzyFkmx/NzSu8HGGpPhI7sjNnYaDNYTG/Duvvfio5+00ugstmT
+	 S1I9tVu5pkU1OQ1E9Y4mtE9LSTjkFMAKYe9C4LfWDzhD9My3nvIJkwwNlB5igQDoGW
+	 EDMu9gtYJFuMhPDMI19KnGGkfJb/iJA5t+RoRvhxHSjHRDCbPjPUeIgrnt67GaMAyl
+	 srATyCiKuHdMw==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250619105117.106907-1-abinashsinghlalotra@gmail.com> <hzxqc3tbxc7bd6s3qv3hyocxvhuh4zszkvkqkvrmefhc5qrlez@5yroq663nxpj>
-In-Reply-To: <hzxqc3tbxc7bd6s3qv3hyocxvhuh4zszkvkqkvrmefhc5qrlez@5yroq663nxpj>
-From: Abinash <abinashlalotra@gmail.com>
-Date: Fri, 20 Jun 2025 00:16:12 +0530
-X-Gm-Features: Ac12FXwgPdwl46ouWcSvV-e23OqMaKKH8ZZxMHn58FSunXDV9g7azu6sJHmRmrI
-Message-ID: <CAJZ91LB0Sq7X3QUhNOPRXNC8YDgCfZQaPvEn_AP8=JEcfXEe=A@mail.gmail.com>
-Subject: Re: [PATCH v2] fsnotify: initialize destroy_next to avoid KMSAN
- uninit-value warning
-To: Jan Kara <jack@suse.cz>
-Cc: amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, avinashlalotra <abinashsinghlalotra@gmail.com>, 
-	syzbot+aaeb1646d01d0358cb2a@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 19 Jun 2025 21:33:24 +0200
+Message-Id: <DAQREKHTS45A.98MH00SWH3PU@kernel.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "slava@dubeyko.com" <slava@dubeyko.com>, "rust-for-linux@vger.kernel.org"
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [RFC] Should we consider to re-write HFS/HFS+ in Rust?
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Viacheslav Dubeyko" <Slava.Dubeyko@ibm.com>, "frank.li@vivo.com"
+ <frank.li@vivo.com>, "glaubitz@physik.fu-berlin.de"
+ <glaubitz@physik.fu-berlin.de>
+X-Mailer: aerc 0.20.1
+References: <d5ea8adb198eb6b6d2f6accaf044b543631f7a72.camel@ibm.com>
+ <4fce1d92-4b49-413d-9ed1-c29eda0753fd@vivo.com>
+ <1ab023f2e9822926ed63f79c7ad4b0fed4b5a717.camel@ibm.com>
+In-Reply-To: <1ab023f2e9822926ed63f79c7ad4b0fed4b5a717.camel@ibm.com>
 
-Thank you for your response.
+Andreas Hindborg will most likely reply with some more info in the near
+future, but I'll drop some of my thoughts.
 
-You are right =E2=80=94 it doesn't make sense at first glance.
-
-I went through the code again and tried to understand the connector's
-lifecycle more clearly.
-The destroy_next pointer is initialized when detaching the connector
-from the inode and before the connector is destroyed.
-This bug would only be possible if the connector allocated by
-fsnotify_attach_connector_to_object() were to somehow
-end up directly in the connector_destroy_list, which it does not.
-Before reaching that list, in fsnotify_put_mark(), the function
-fsnotify_detach_connector_from_object() nullifies the obj pointer.
-After that, the destroy_next pointer is explicitly set to the head of
-connector_destroy_list.
-
-So there's no scenario where a connector from
-fsnotify_attach_connector_to_object() can land
-in connector_destroy_list without destroy_next being initialized...
-
-This suggests that KMSAN might be confused, as the following loop:
-
-while (conn) {
-    free =3D conn;
-    conn =3D conn->destroy_next;
-    kmem_cache_free(fsnotify_mark_connector_cachep, free);
-}
-
-should not involve any uninitialized value access.
-
-
-Thank You
-regards
-Abinash
-
-
-On Thu, 19 Jun 2025 at 20:27, Jan Kara <jack@suse.cz> wrote:
+On Wed May 28, 2025 at 6:16 PM CEST, Viacheslav Dubeyko wrote:
+> On Wed, 2025-05-28 at 20:40 +0800, Yangtao Li wrote:
+>> +cc rust-for-linux
+>>=20
+>> =E5=9C=A8 2025/5/28 07:39, Viacheslav Dubeyko =E5=86=99=E9=81=93:
+>> > Hi Adrian, Yangtao,
+>> >=20
+>> > One idea crossed my mind recently. And this is about re-writing HFS/HF=
+S+ in
+>> > Rust. It could be interesting direction but I am not sure how reasonab=
+le it
+>> > could be. From one point of view, HFS/HFS+ are not critical subsystems=
+ and we
+>> > can afford some experiments. From another point of view, we have enoug=
+h issues
+>> > in the HFS/HFS+ code and, maybe, re-working HFS/HFS+ can make the code=
+ more
+>> > stable.
+>> >=20
+>> > I don't think that it's a good idea to implement the complete re-writi=
+ng of the
+>> > whole driver at once. However, we need a some unification and generali=
+zation of
+>> > HFS/HFS+ code patterns in the form of re-usable code by both drivers. =
+This re-
+>> > usable code can be represented as by C code as by Rust code. And we ca=
+n
+>> > introduce this generalized code in the form of C and Rust at the same =
+time. So,
+>> > we can re-write HFS/HFS+ code gradually step by step. My point here th=
+at we
+>> > could have C code and Rust code for generalized functionality of HFS/H=
+FS+ and
+>> > Kconfig would define which code will be compiled and used, finally.
+>> >=20
+>> > How do you feel about this? And can we afford such implementation effo=
+rts?
+>>=20
+>> It must be a crazy idea! Honestly, I'm a fan of new things.
+>> If there is a clear path, I don't mind moving in that direction.
+>>=20
 >
-> On Thu 19-06-25 16:21:17, avinashlalotra wrote:
-> > KMSAN reported an uninitialized value use in
-> > fsnotify_connector_destroy_workfn(), specifically when accessing
-> > `conn->destroy_next`:
-> >
-> >     BUG: KMSAN: uninit-value in fsnotify_connector_destroy_workfn+0x108=
-/0x160
-> >     Uninit was created at:
-> >      slab_alloc_node mm/slub.c:4197 [inline]
-> >      kmem_cache_alloc_noprof+0x81b/0xec0 mm/slub.c:4204
-> >      fsnotify_attach_connector_to_object fs/notify/mark.c:663
-> >
-> > The struct fsnotify_mark_connector was allocated using
-> > kmem_cache_alloc(), but the `destroy_next` field was never initialized,
-> > leading to a use of uninitialized memory when the work function later
-> > traversed the destroy list.
-> >
-> > Fix this by explicitly initializing `destroy_next` to NULL immediately
-> > after allocation.
-> >
-> > Reported-by: syzbot+aaeb1646d01d0358cb2a@syzkaller.appspotmail.com
-> > Signed-off-by: abinashlalotra <abinashsinghlalotra@gmail.com>
+> Why don't try even some crazy way. :)
+
+There are different paths that can be taken. One of the easiest would be
+to introduce a rust reference driver [1] for HFS. The default config
+option would still be the C driver so it doesn't break users (& still
+allows all supported architectures), but it allows you to experiment
+using Rust. Eventually, you could remove the C driver when ggc_rs is
+mature enough or only keep the C one around for the obscure
+architectures.
+
+If you don't want to break the duplicate drivers rule, then I can expand
+a bit on the other options, but honestly, they aren't that great:
+
+There are some subsystems that go for a library approach: extract some
+self-contained piece of functionality and move it to Rust code and then
+call that from C. I personally don't really like this approach, as it
+makes it hard to separate the safety boundary, create proper
+abstractions & write idiomatic Rust code.
+
+[1]: https://rust-for-linux.com/rust-reference-drivers
+
+>> It seems that downstream already has rust implementations of puzzle and=
+=20
+>> ext2 file systems. If I understand correctly, there is currently a lack=
+=20
+>> of support for vfs and various infrastructure.
+>>=20
 >
-> This doesn't make sense. If you checked definition of
-> fsnotify_mark_connector you'd see that destroy_next is in union with void
-> *obj:
+> Yes, Rust implementation in kernel is slightly complicated topic. And I d=
+on't
+> suggest to implement the whole HFS/HFS+ driver at once. My idea is to sta=
+rt from
+> introduction of small Rust module that can implement some subset of HFS/H=
+FS+
+> functionality that can be called by C code. It could look like a library =
+that
+> HFS/HFS+ drivers can re-use. And we can have C and Rust "library" and peo=
+ple can
+> select what they would like to compile (C or Rust implementation).
+
+One good path forward using the reference driver would be to first
+create a read-only version. That was the plan that Wedson followed with
+ext2 (and IIRC also ext4? I might misremember). It apparently makes the
+initial implementation easier (I have no experience with filesystems)
+and thus works better as a PoC.
+
+>> I'm not an expert on Rust, so it would be great if some Rust people=20
+>> could share their opinions.
+>>=20
 >
->         union {
->                 /* Object pointer [lock] */
->                 void *obj;
->                 /* Used listing heads to free after srcu period expires *=
-/
->                 struct fsnotify_mark_connector *destroy_next;
->         };
->
-> and we do initialize 'obj' pointer in
-> fsnotify_attach_connector_to_object(). So this report was caused either b=
-y
-> some other memory corruption or KMSAN getting utterly confused...
->
->                                                                 Honza
->
-> >
-> > ---
-> > v2: Corrected the syzbot Reported-by email address.
-> > ---
-> >  fs/notify/mark.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-> > index 798340db69d7..28013046f732 100644
-> > --- a/fs/notify/mark.c
-> > +++ b/fs/notify/mark.c
-> > @@ -665,6 +665,7 @@ static int fsnotify_attach_connector_to_object(fsno=
-tify_connp_t *connp,
-> >               return -ENOMEM;
-> >       spin_lock_init(&conn->lock);
-> >       INIT_HLIST_HEAD(&conn->list);
-> > +     conn->destroy_next =3D NULL;
-> >       conn->flags =3D 0;
-> >       conn->prio =3D 0;
-> >       conn->type =3D obj_type;
-> > --
-> > 2.43.0
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> I hope that Rust people would like the idea. :)
+
+I'm sure that several Rust folks would be interested in getting their
+hands dirty helping with writing abstractions and/or the driver itself.
+
+I personally am more on the Rust side of things, so I could help make
+the abstractions feel idiomatic and ergonomic.
+
+Feel free to ask any follow up questions. Hope this helps!
+
+---
+Cheers,
+Benno
 
