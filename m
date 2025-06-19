@@ -1,31 +1,31 @@
-Return-Path: <linux-fsdevel+bounces-52219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D73AE03D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:36:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404B6AE0447
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D014A3EA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95B5C18851FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28041253F39;
-	Thu, 19 Jun 2025 11:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D90B22FE08;
+	Thu, 19 Jun 2025 11:48:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F8A24DD04
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 11:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8CB22A7FC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 11:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750332720; cv=none; b=Tp8mfBCc1s+1BscIz1WpuElbkmdSFGxccDrmndzAwXcXhJNGaUfGifh1F2bklypX7zu54Yzyvy0a7jiowQMkPdCu1HmIZlFfXtAVshRNVTBiPL8WMxehX2fANj16b1bGcEJzMsQQcgUhSLUqbGWqyW2vfdonVoUrWCTn01V8dEw=
+	t=1750333718; cv=none; b=Tpa515PEVNkdNZb5loRAOMxCu8IJyH3BrlHzHaDOaRFd35yDwdMJOeYCB+56ImqPyqR4Y2zsGhNtJ3Aq/9sS6106LPMzUbumxxT/bpPmN7UJ8dtCJ0Kim/faMUMwT4FHV28W9YZqiLfQ8k425TufcRSooZ5ndwy5Qr634q83HG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750332720; c=relaxed/simple;
-	bh=3MPrInjo3388gIKmhUGr9uGPORntDZqz8a3nFubP/rA=;
+	s=arc-20240116; t=1750333718; c=relaxed/simple;
+	bh=BdsqGUxBzOnKdNyRdeLTIRnnhJzKZjz0Zd3NinBJBeo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B0iydBKVf7Bm90rESnkpcb0eqvJJGvQ8xte3Vqwug8evLxlkKY0e8zeXR9G6LRVuFSDQ9z/aWuWExchp3Gbh/JTeksKcwC2ZsaRSDLwV6+mO4EbfQxx7BupDReqplIgu6dloDeiNNa/Gs2r7iu21wU6VisQvL3JAObWLwlFtkcU=
+	 In-Reply-To:Content-Type; b=j9ZNZWFwbTjDn/XpNk3dAgHxOCuo8V6IQPFQIzZCLoFzCQ2U+AbvvBxIITwBoKi9LAvWAaLY9mX1OB/Yo/LNtppSUbknXRzgM1jx/D7F1y6/PWGGuHxhSUP9qDBOgDm8E1EXhmQ2GybSBOvUpwtb5Wwxtvp/gBKNcf7dUVhZUHg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
@@ -33,22 +33,22 @@ Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0C0761F38D;
-	Thu, 19 Jun 2025 11:31:51 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BFB681F38D;
+	Thu, 19 Jun 2025 11:48:34 +0000 (UTC)
 Authentication-Results: smtp-out2.suse.de;
 	none
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F9E913721;
-	Thu, 19 Jun 2025 11:31:50 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60CAD136CC;
+	Thu, 19 Jun 2025 11:48:34 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SfepIib1U2htbAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 19 Jun 2025 11:31:50 +0000
-Message-ID: <fad65354-804e-447f-9779-2c69a87f3e4d@suse.cz>
-Date: Thu, 19 Jun 2025 13:31:50 +0200
+	id iWtSFxL5U2g4cQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 19 Jun 2025 11:48:34 +0000
+Message-ID: <4735002d-3254-41a2-8a3a-5597afcdc6e6@suse.cz>
+Date: Thu, 19 Jun 2025 13:48:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,8 +56,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mm: change vm_get_page_prot() to accept vm_flags_t
- argument
+Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
+ consistently
 Content-Language: en-US
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Andrew Morton <akpm@linux-foundation.org>
@@ -98,7 +98,7 @@ Cc: Russell King <linux@armlinux.org.uk>,
  linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
  linux-trace-kernel@vger.kernel.org
 References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+ <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -139,60 +139,48 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Level: 
 X-Spamd-Result: default: False [-4.00 / 50.00];
 	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: 0C0761F38D
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: BFB681F38D
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
 X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Score: -4.00
 
 On 6/18/25 21:42, Lorenzo Stoakes wrote:
-> We abstract the type of the VMA flags to vm_flags_t, however in may places
-> it is simply assumed this is unsigned long, which is simply incorrect.
+> The core kernel code is currently very inconsistent in its use of
+> vm_flags_t vs. unsigned long. This prevents us from changing the type of
+> vm_flags_t in the future and is simply not correct, so correct this.
 > 
-> At the moment this is simply an incongruity, however in future we plan to
-> change this type and therefore this change is a critical requirement for
-> doing so.
+> While this results in rather a lot of churn, it is a critical pre-requisite
+> for a future planned change to VMA flag type.
 > 
+> Additionally, update VMA userland tests to account for the changes.
+> 
+> To make review easier and to break things into smaller parts, driver and
+> architecture-specific changes is left for a subsequent commit.
+> 
+> The code has been adjusted to cascade the changes across all calling code
+> as far as is needed.
+> 
+> We will adjust architecture-specific and driver code in a subsequent patch.
+
+Nit: this line is redundant with 2 paragraphs above.
+
 > Overall, this patch does not introduce any functional change.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-> diff --git a/arch/powerpc/include/asm/book3s/64/pkeys.h b/arch/powerpc/include/asm/book3s/64/pkeys.h
-> index 5b178139f3c0..6f2075636591 100644
-> --- a/arch/powerpc/include/asm/book3s/64/pkeys.h
-> +++ b/arch/powerpc/include/asm/book3s/64/pkeys.h
-> @@ -4,8 +4,9 @@
->  #define _ASM_POWERPC_BOOK3S_64_PKEYS_H
->  
->  #include <asm/book3s/64/hash-pkey.h>
-> +#include <linux/mm_types.h>
-
-Hopefully not causing a circular header include.
-
-> -static inline u64 vmflag_to_pte_pkey_bits(u64 vm_flags)
-> +static inline u64 vmflag_to_pte_pkey_bits(vm_flags_t vm_flags)
-
-Is this change rather for patch 3? It's not changing vm_get_page_prot().
-OTOH git grep shows me you missed:
-
-arch/powerpc/mm/book3s64/pgtable.c:pgprot_t vm_get_page_prot(unsigned long
-vm_flags)
-
-With that sorted out, feel free to add:
-
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-Thanks!
 
