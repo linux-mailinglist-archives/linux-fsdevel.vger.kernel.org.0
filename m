@@ -1,165 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-52259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2F8AE0E87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 22:19:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F00AE0E8F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 22:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40A8B1752E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 20:19:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5823BA6BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 20:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715AA25C83D;
-	Thu, 19 Jun 2025 20:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E756275B08;
+	Thu, 19 Jun 2025 20:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ci5qHial"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/ijAzAQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4DD244683;
-	Thu, 19 Jun 2025 20:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25ACA209F2E;
+	Thu, 19 Jun 2025 20:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750364352; cv=none; b=YvqaXWqEMgKiPlU7Vjef1H0V03WDI5tOYd/AcWkafpiFTbyMNBIU8y3b8IOydE31r1hMd6/CqIpfycfCjlEdyJpRavWrdMRAd2BcsJE6M1X4s8REOa1NRAXaaba3rpOup/NzKZJ/u07x9k+N6ExNiNSk467XUtczOZjUQLcGOZ4=
+	t=1750364577; cv=none; b=pbQxS0Y4HyJfu1mc/ynS+pzSeiJHppw7wO/5u49AnI1v0R7+a/jd15eDTXep74PTlugox/3R7TnQt4DskRsqI3UQXS4veqqU6h5MgS+tKJWXP7fGAQUatohx01a9ZhXJTePHIPQGv9wz3U1wfcGaQxxcd6+yE3QN5KEhLsXPa58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750364352; c=relaxed/simple;
-	bh=huz2UMczg8KycFP6lJNwZ1nNyYb3Alqa+R1KMPTH7cA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3qQpKBo9j9fpjz9ZHEMRByfQXZSNO6oK/axirSp1qvbm+4yxcRWQ5ig3YbA3v7n0vXAQC0P84R/105QI3kmi5wXHiXbQQ44/MHHb97u4ATEU2mG+VLluCXlhWENuUbKizf1keKNaYWny+RR2Rbg4HRyPC+Icb3/zc5K4JkZ7ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ci5qHial; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14476C4CEEA;
-	Thu, 19 Jun 2025 20:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750364352;
-	bh=huz2UMczg8KycFP6lJNwZ1nNyYb3Alqa+R1KMPTH7cA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ci5qHialCIABinU7TcPkhAA6qwXsiLD9LvTtWFk47gnufSYOH0fXohFmgsP/glhSZ
-	 uSotxTyLyUv2Grr53eKnfjWanLjsn824uvtcTWeiTdacf9xgw1oUy+3j1waMGfAzFA
-	 dZWgWY4QOki+YMn8rVqd/yq6arPpBM0BvrTRUIyN+NNsc0n7bmoAA5KKxjVdbpgjuY
-	 dEwAtLbCXw+XtxUWTyISA7ixyksbcZAoLmpfXwp+XlqQsqdIly1r/oI7iv+EtahNMD
-	 epAkG+2Zvt6hFF/vsfHIgxQuwFTmzNo/d9RZR3dru17QqfRLu6O25B/ZrP8ZccWbDY
-	 RfTilqRmOGNWg==
-Date: Thu, 19 Jun 2025 16:19:10 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	keith.mannthey@hammerspace.com
-Subject: Re: [PATCH 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE
- for all IO
-Message-ID: <aFRwvhM-wdQpTDin@kernel.org>
-References: <20250610205737.63343-1-snitzer@kernel.org>
- <20250610205737.63343-2-snitzer@kernel.org>
- <4b858fb1-25f6-457f-8908-67339e20318e@oracle.com>
- <aEnWhlXjzOmRfCJf@kernel.org>
- <d8d01c41-f37f-42e0-9d46-62a51e95ab82@oracle.com>
- <aEr5ozy-UnHT90R9@kernel.org>
- <5dc44ffd-9055-452c-87c6-2572e5a97299@oracle.com>
- <aFBB_txzX19E-96H@kernel.org>
- <aFGkV1ILAlmtpGVJ@kernel.org>
- <45f336e1-ff5a-4ac9-92f0-b458628fd73d@oracle.com>
+	s=arc-20240116; t=1750364577; c=relaxed/simple;
+	bh=U0Vtx0FEbrVhYxJW7I5M8RXK6uibaQf3BFnv9bPRzWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g1w6EyFfr88NLdIkda4r/APx34hCW+2pqdZYk7KLPzS2QMhyLjsL1gADngZT7SsFh5UIVqMCThZ4/+WvoJr8TQ/+GxAN2PsgL/SH6YQJpFvqxZmog8KhfMPUrc1hc9jsOzf+uDg2oQinGnVg9T1NGzqhU1b8cQNYF6BoSJYbC4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h/ijAzAQ; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b2fcd6fe970so170407a12.3;
+        Thu, 19 Jun 2025 13:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750364575; x=1750969375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U0Vtx0FEbrVhYxJW7I5M8RXK6uibaQf3BFnv9bPRzWA=;
+        b=h/ijAzAQlwlZVaZ5osOil8VlXfK9UQmGwBrRr1JDnwU8euD9XB5AEFXkmnx+O63EYa
+         rZYiuc20WStOtdbs4CvN/lyI2k6h7GqbBS+OCP3APbgo7mXuYyqyWyJ9bn7ovwm2Lhyu
+         I6QAwqti7qJRbXU4cRornPxfvZocChya9fFrWRT0sO7MldDzDhggGbQeqD3WPyZrM8l1
+         ctBX2s3uGfflMayu+ndYu8kY/NVJEDJ+5TrSBeVpkfTvd51nPnDfBObHOzcZ4fnu97Rr
+         Q0MOgaJ1V5rmit5OfxeTtfBMOWa6Dz6+NPmNouahMCdrLa3CtJSyCx/cDOROlueVmtbq
+         nlQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750364575; x=1750969375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U0Vtx0FEbrVhYxJW7I5M8RXK6uibaQf3BFnv9bPRzWA=;
+        b=phgF8LLfJLrOItQboIJaK5QC8TGY0IAC2VsyP1uWGSxD3zY38hairkzwV/c2hCyXpY
+         veJKxVaSDKL7w5tmCYXbSIQDbh5Tc1zb25G5DgqS2rVMPZkYSGBLTmSsu3eBQV39CSRc
+         SR8R5o3J1QaJ6DszW+S1Ot1H+70jxZuUf2TenJhDpBv4gaBqLAvs76IZ3Hhqp7VDwmrx
+         +KZ6cZeZuqtgVCz7DNEnyMe/VcTMsB28ZfyW7z70O9mc4FjoAHnMmtusKaOpoeCKOlU0
+         zYeXTk0jaxEe7cYrY8FS3C11klYRaRNDk5MLqvl2jWElG9f9oP1jgtQkb4tUIiYguwsS
+         0rxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+5oHYQbs3GjnahZ25P4fL1/rvJhKTk80u/KhlpuHyZWjm/LtAEM6xUgnI7TyXxfBGv5uDtgNaX5l89FoYq0s=@vger.kernel.org, AJvYcCV0vF8OdSiB7M9Izl/1Fucrq5RffMcoOJh5qoTXazhxbvh96BMzHTEkqckcD4ASkOLmL8r/pUqCu0fskFeM@vger.kernel.org
+X-Gm-Message-State: AOJu0YziWigDRd52VLkS6IckAMyVF+Ds2R5Nvnl2i37hBqxhGbilp8v4
+	ARm/qUDVkjwpQfmG/Ef+4bYSk6aqJISk9wFKqViM7p1vXYqShfBkr+KXTrWxoXlmUjFu3Fluu5K
+	zKjrDLAHpeCaX2JvXe+Ien5ilLvSEkXc=
+X-Gm-Gg: ASbGncv9NAcni43apVUTYLloxS+NbeODhLYdFlUz1EYYM16m840FX4ljyQqCCbu3m9S
+	rjufyOC/gGRCZcz3UHyl5rq4fJl+e/V/p3cPx7VamqISeLb0aDZF77sdPmr8Eg0ugwLc5n8Rhlg
+	vfVzWNLIxWQi12m8et3bIQnLPw9ysKch0w9OqlJzhmcrI=
+X-Google-Smtp-Source: AGHT+IEh6myrEwUkA435ejIGULYab5ub7ignTbK1wjyfFIpXjVU3mUfphk47lEi/J7AeJJGFx33OKUAoATi8c6pgITg=
+X-Received: by 2002:a17:90a:fc48:b0:310:cf92:7899 with SMTP id
+ 98e67ed59e1d1-3159d8ca80dmr288337a91.3.1750364575448; Thu, 19 Jun 2025
+ 13:22:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45f336e1-ff5a-4ac9-92f0-b458628fd73d@oracle.com>
+References: <d5ea8adb198eb6b6d2f6accaf044b543631f7a72.camel@ibm.com>
+ <4fce1d92-4b49-413d-9ed1-c29eda0753fd@vivo.com> <1ab023f2e9822926ed63f79c7ad4b0fed4b5a717.camel@ibm.com>
+ <DAQREKHTS45A.98MH00SWH3PU@kernel.org>
+In-Reply-To: <DAQREKHTS45A.98MH00SWH3PU@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 19 Jun 2025 22:22:42 +0200
+X-Gm-Features: Ac12FXwugJ7GABVDW_NvhQGGyyfAKlqw_soyIPdtxvwOrvQ8JPGchYrxrPC8hqQ
+Message-ID: <CANiq72k5SensLERt3PkyDfDWiQsds_3GpS4nQqPPPMVSiWwSfg@mail.gmail.com>
+Subject: Re: [RFC] Should we consider to re-write HFS/HFS+ in Rust?
+To: Benno Lossin <lossin@kernel.org>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "frank.li@vivo.com" <frank.li@vivo.com>, 
+	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>, 
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 17, 2025 at 01:31:23PM -0400, Chuck Lever wrote:
-> On 6/17/25 1:22 PM, Mike Snitzer wrote:
-> > On Mon, Jun 16, 2025 at 12:10:38PM -0400, Mike Snitzer wrote:
-> >> On Mon, Jun 16, 2025 at 09:32:16AM -0400, Chuck Lever wrote:
-> >>> On 6/12/25 12:00 PM, Mike Snitzer wrote:
-> >>>> On Thu, Jun 12, 2025 at 09:21:35AM -0400, Chuck Lever wrote:
-> >>>>> On 6/11/25 3:18 PM, Mike Snitzer wrote:
-> >>>>>> On Wed, Jun 11, 2025 at 10:31:20AM -0400, Chuck Lever wrote:
-> >>>>>>> On 6/10/25 4:57 PM, Mike Snitzer wrote:
-> >>>>>>>> Add 'enable-dontcache' to NFSD's debugfs interface so that: Any data
-> >>>>>>>> read or written by NFSD will either not be cached (thanks to O_DIRECT)
-> >>>>>>>> or will be removed from the page cache upon completion (DONTCACHE).
-> >>>>>>>
-> >>>>>>> I thought we were going to do two switches: One for reads and one for
-> >>>>>>> writes? I could be misremembering.
-> >>>>>>
-> >>>>>> We did discuss the possibility of doing that.  Still can-do if that's
-> >>>>>> what you'd prefer.
-> >>>>>
-> >>>>> For our experimental interface, I think having read and write enablement
-> >>>>> as separate settings is wise, so please do that.
-> >>>>>
-> >>>>> One quibble, though: The name "enable_dontcache" might be directly
-> >>>>> meaningful to you, but I think others might find "enable_dont" to be
-> >>>>> oxymoronic. And, it ties the setting to a specific kernel technology:
-> >>>>> RWF_DONTCACHE.
-> >>>>>
-> >>>>> So: Can we call these settings "io_cache_read" and "io_cache_write" ?
-> >>>>>
-> >>>>> They could each carry multiple settings:
-> >>>>>
-> >>>>> 0: Use page cache
-> >>>>> 1: Use RWF_DONTCACHE
-> >>>>> 2: Use O_DIRECT
-> >>>>>
-> >>>>> You can choose to implement any or all of the above three mechanisms.
-> >>>>
-> >>>> I like it, will do for v2. But will have O_DIRECT=1 and RWF_DONTCACHE=2.
-> >>>
-> >>> For io_cache_read, either settings 1 and 2 need to set
-> >>> disable_splice_read, or the io_cache_read setting has to be considered
-> >>> by nfsd_read_splice_ok() when deciding to use nfsd_iter_read() or
-> >>> splice read.
-> >>
-> >> Yes, I understand.
-> >>  
-> >>> However, it would be slightly nicer if we could decide whether splice
-> >>> read can be removed /before/ this series is merged. Can you get NFSD
-> >>> tested with IOR with disable_splice_read both enabled and disabled (no
-> >>> direct I/O)? Then we can compare the results to ensure that there is no
-> >>> negative performance impact for removing the splice read code.
-> >>
-> >> I can ask if we have a small window of opportunity to get this tested,
-> >> will let you know if so.
-> >>
-> > 
-> > I was able to enlist the help of Keith (cc'd) to get some runs in to
-> > compare splice_read vs vectored read.  A picture is worth 1000 words:
-> > https://original.art/NFSD_splice_vs_buffered_read_IOR_EASY.jpg
-> > 
-> > Left side is with splice_read running IOR_EASY with 48, 64, 96 PPN
-> > (Processes Per Node on each client) respectively.  Then the same
-> > IOR_EASY workload progression for buffered IO on the right side.
-> > 
-> > 6x servers with 1TB memory and 48 cpus, each configured with 32 NFSD
-> > threads, with CPU pinning and 4M Read Ahead. 6x clients running IOR_EASY. 
-> > 
-> > This was Keith's take on splice_read's benefits:
-> > - Is overall faster than buffered at any PPN.
-> > - Is able to scale higher with PPN (whereas buffered is flat).
-> > - Safe to say splice_read allows NFSD to do more IO then standard
-> >   buffered.
-> 
-> I thank you and Keith for the data!
+On Thu, Jun 19, 2025 at 9:35=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> There are some subsystems that go for a library approach: extract some
+> self-contained piece of functionality and move it to Rust code and then
+> call that from C. I personally don't really like this approach, as it
+> makes it hard to separate the safety boundary, create proper
+> abstractions & write idiomatic Rust code.
 
-You're welcome.
- 
-> > (These results came _after_ I did the patch to remove all the
-> > splice_read related code from NFSD and SUNRPC.. while cathartic, alas
-> > it seems it isn't meant to be at this point.  I'll let you do the
-> > honors in the future if/when you deem splice_read worthy of removal.)
-> 
-> If we were to make all NFS READ operations use O_DIRECT, then of course
-> NFSD's splice read should be removed at that point.
+Yeah, that approach works best when the interface surface is
+small/simple enough relative to the functionality, e.g. the QR code
+case we have in the kernel already.
 
-Yes, that makes sense.  I still need to try Christoph's idea (hope to
-do so over next 24hrs):
-https://lore.kernel.org/linux-nfs/aEu3o9imaQQF9vyg@infradead.org/
+So there are some use cases of the approach (codecs have also been
+discussed as another one). But going, in the extreme, "function by
+function" replacing C with Rust and having two-way calls everywhere
+isn't good, and it isn't the goal.
 
-But for now, here is my latest NFSD O_DIRECT/DONTCACHE work, think of
-the top 6 commits as a preview of what'll be v2 of this series:
-https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/log/?h=kernel-6.12.24/nfsd-testing
+Instead, we aim to write safe Rust APIs ("abstractions") and then
+ideally having pure Rust modules that take advantage of those.
+Sometimes you may want to keep certain pieces in C, but still use them
+from the Rust module until you cover those too eventually.
+
+> One good path forward using the reference driver would be to first
+> create a read-only version. That was the plan that Wedson followed with
+> ext2 (and IIRC also ext4? I might misremember). It apparently makes the
+> initial implementation easier (I have no experience with filesystems)
+> and thus works better as a PoC.
+
+Yeah, my understanding is that a read-only version would be easier.
+Performance is another axis too.
+
+It would be nice to see eventually a 100% safe code Rust filesystem,
+even if read-only and "slow". That could already have use cases.
+
+(Wedson was planning read-writes ones too.)
+
+(Thanks Benno!)
+
+Cheers,
+Miguel
 
