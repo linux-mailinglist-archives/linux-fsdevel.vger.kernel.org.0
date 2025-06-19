@@ -1,78 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-52198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDF9AE0256
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 12:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC21AE0264
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 12:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7EE16AF8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 10:06:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD5F3B5773
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 10:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01066221D8B;
-	Thu, 19 Jun 2025 10:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3239B221F26;
+	Thu, 19 Jun 2025 10:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZqy5T3M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGHdSlBw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EE9217F36
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 10:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A064221720;
+	Thu, 19 Jun 2025 10:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750327554; cv=none; b=s6hbw1G69cYxJ+nhhhfYryDXvyLHAahee6R+a2YfGCCQOz6UHJTe66CIgMLm1GRd1SrsnOe8d3hGTsy4MXcrjLiyuQFg8S4QgvsgYbgGMawhPQY0d8nfXMowupztjigiG+lExGrSTBNO4dtwxe9yvA8S5FFYFZ3c1LD/iNvoVzw=
+	t=1750327684; cv=none; b=jQb55w1M0/Tz30MRMcFFAryKASOTGamukOvMEP6Ovd3dddura1AUjmm6xUi8gtDAh4df5ux4Ugi2oDIj2X8ViBHVs6g4ifZLl9gesvq+Fp/noD6RM4dK9gddsIWd1oV64hCUkw67gep3PX/H1FfuhUJE/ITpxkZicumBOcEnUW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750327554; c=relaxed/simple;
-	bh=lpmH75q1o138ulv5wEjswPLaoaboV6H1jnKhOZ2xWkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uzcUj/PI2fDLJBJHlwFt313xxfN3A1kgyyebfO4irQxEFqqkPy1NliiSEdyXBjDu6DpEihgQnHxM6pS6b+OnMEXwvzkAxvjXX2Wp5ebBAzT1BK62krLuZRq6svcvCU0kJWi5uzOUjDaZCcg+yN8MlECNWZqi3927IT3/zX94eAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZqy5T3M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA0ADC4CEEA;
-	Thu, 19 Jun 2025 10:05:51 +0000 (UTC)
+	s=arc-20240116; t=1750327684; c=relaxed/simple;
+	bh=LjZ3u3NJvBKRYepoq/MXA3KSDEGcTVuRZrVeUc50jCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JQNN7eTldV6aAchB2yqDhRtd80lhURPfLcXmrCUxUdPjDJi69vpspjbJjn4mzWBo6pfwzPhMvDTIjfZjjkBSoiG5Al/X7DDhjWQbmuM1FQGsBfZMM8qZEH5NxqVL3uz43lDhiC381wVhH+0cFVFjuV+G37anq6uNuDk8XePqiWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGHdSlBw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A4E0C4CEEA;
+	Thu, 19 Jun 2025 10:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750327552;
-	bh=lpmH75q1o138ulv5wEjswPLaoaboV6H1jnKhOZ2xWkQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KZqy5T3MQvwX5qtFD7TxSvtyIyzH25oFmuVdP0yCyZUU71UlaHPOGOwPR5Lpld+b+
-	 wwAVX7x2wvJKjiqTMyaEr1IBrQYczcUjiXxSj+6SNiyOQtMbT4OWeG183z7lPxGVFN
-	 xyAiIF38+Q8kf22YCXK/tqe8IaWSyzr4nLhVdN6AMH4Pl1T75+VIqvNbkYPQB/rKHB
-	 0sydt92BataomeNXxK1PrlzTQ1SDtSOL0fuSNTpszJMupAYWIl8ItISmukdoYE5cJf
-	 4LVlnlhV9IARlUFc8hV+8jcIxO24hytkJxYxjZMZsXEKM4UwJmW1YqoSQzqLomsB5V
-	 0yfy220BqiL9Q==
-Date: Thu, 19 Jun 2025 12:05:49 +0200
+	s=k20201202; t=1750327684;
+	bh=LjZ3u3NJvBKRYepoq/MXA3KSDEGcTVuRZrVeUc50jCI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LGHdSlBwrEsHzjTIjds3GdgqbSOvBGRbGWcTyIeGYjn7Zij0Kt0E0fuSkqYOoJh6c
+	 tBD2HahLAO6Tk/R1l44ufp801wSqoeS1YBnWvfOt5qENr4lRn/vpHUOCIb6s+S9w9l
+	 eN9JMrx/B3uYkW0q8JmMlMjS81d8qeXIRyI9+nrrlPV03ztSGr4pvSi333OVVlwUin
+	 nYrMN9OGcjted+8QLn8CJI2Ny7bPBbiQEU59pjN8a5QF34hsXyMSJpZh8DGjXT7nhv
+	 wAqiZPRrQrEm63T4s2BPfkCQjCtvKPsuENt9THhO94lZL/kOyMyPZsrI9oJ7kZMcXa
+	 FhiHzjhhLYXqw==
 From: Christian Brauner <brauner@kernel.org>
-To: Dmitry Antipov <dmantipov@yandex.ru>
-Cc: Jan Kara <jack@suse.cz>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: Re: On possible data race in pollwake() / poll_schedule_timeout()
-Message-ID: <20250619-modeerscheinung-sumpf-f4d779fe7e42@brauner>
-References: <d44bea2f-b9c4-4c68-92d3-fc33361e9d2b@yandex.ru>
- <bwx72orsztfjx6aoftzzkl7wle3hi4syvusuwc7x36nw6t235e@bjwrosehblty>
- <d2bd4e09-40d8-4b53-abf7-c20b4f81e095@yandex.ru>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Pankaj Raghav <p.raghav@samsung.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel@pankajraghav.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v2] fs/buffer: remove comment about hard sectorsize
+Date: Thu, 19 Jun 2025 12:07:58 +0200
+Message-ID: <20250619-irreversibel-kaltfront-033771080900@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250618075821.111459-1-p.raghav@samsung.com>
+References: <20250618075821.111459-1-p.raghav@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d2bd4e09-40d8-4b53-abf7-c20b4f81e095@yandex.ru>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1120; i=brauner@kernel.org; h=from:subject:message-id; bh=LjZ3u3NJvBKRYepoq/MXA3KSDEGcTVuRZrVeUc50jCI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQEP6yL55wt9WxRoqzwYyPThc83Nh69KZ12rl+2OpXBQ 3md7rYfHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNJfsnIMHE/545tGxrFJIvl p9YYufmGsCf8/skjdK10Ue+HjrCS2wz/axvqdIW+BBaFLemR3CrxM0ZnWwXLovJL+wVa3SYL/cn hAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 08:08:22PM +0300, Dmitry Antipov wrote:
-> On 6/18/25 6:20 PM, Jan Kara wrote:
+On Wed, 18 Jun 2025 09:58:21 +0200, Pankaj Raghav wrote:
+> Commit e1defc4ff0cf ("block: Do away with the notion of hardsect_size")
+> changed hardsect_size to logical block size. The comment on top still
+> says hardsect_size.
 > 
-> > So KCSAN is really trigger-happy about issues like this. There's no
-> > practical issue here because it is hard to imagine how the compiler could
-> > compile the above code using some intermediate values stored into
-> > 'triggered' or multiple fetches from 'triggered'. But for the cleanliness
-> > of code and silencing of KCSAN your changes make sense.
+> Remove the comment as the code is pretty clear. While we are at it,
+> format the relevant code.
 > 
-> Thanks. Surely I've read Documentation/memory-barriers.txt more than
-> once, but, just for this particual case: is _ONCE() pair from the above
-> expected to work in the same way as:
+> [...]
 
-It's fine for this case.
+Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.misc
+
+[1/1] fs/buffer: remove comment about hard sectorsize
+      https://git.kernel.org/vfs/vfs/c/6ae58121126d
 
