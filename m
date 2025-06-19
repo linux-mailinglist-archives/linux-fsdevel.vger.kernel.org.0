@@ -1,115 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-52150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAB0ADFB74
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 04:52:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5FAADFD0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 07:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8AA3AF994
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 02:51:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B5317DB3C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 05:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F0821D3F0;
-	Thu, 19 Jun 2025 02:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B5224292E;
+	Thu, 19 Jun 2025 05:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FBTkXp/x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OR4cAjwN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8DC21A43B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 02:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF7B23A9A0;
+	Thu, 19 Jun 2025 05:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750301506; cv=none; b=Aa+7K6ws3UE5GfOpEvhXA9TZnVDk6RD4nXFpBvFonFQkKPXMZDk9KRY2g/R1J0FqrkB67c4BxOj4yYfyymPatUR2k6ehJ0ESgxbzV/flqvin+ciqcqzD4j5shu+FG8gkwq29fYAF2k511t7Azeb718jFtNFklDoba+/c9K7JHl8=
+	t=1750311442; cv=none; b=fXF8fCht2AjwwYcAwmoet3Nsai7kPz8r/65NbwkutmXrv6ZKUN5DQnTTaoC0LtpPjJqvPKmG/Mb0lEUdAFdN0xa/+AphjpAyPagpFWNjTHExNMpcYyCU/o6/CuItWGNycZVy9Aznk1bF8OZDs2vPGzyu4O+MabNmpJOUl9abwtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750301506; c=relaxed/simple;
-	bh=qvcnjQ+PsLVyZlnagd7L2hmtb5NKeyi4bcowbj1uSr8=;
+	s=arc-20240116; t=1750311442; c=relaxed/simple;
+	bh=CGFYslQlYW28b83jtPiXInTX2NXpIKy71b9x3BZGqSo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxO8g50N979B4XuLaJwc43tUxQvbwyhvO/BpNhhYVE4fGqBvNJ6mC9l0tkC/bsgWG1sMP4wVCNzfYcgWAOaitTl2ZgDS4S6uBgMZddmgvmNTebUCxrfz20OVAVeoGOqTAJM57RR0xru4jpSpOOxilJ6wW7OQGh5fNS+KgfvfU6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FBTkXp/x; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2366e5e4dbaso2339515ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jun 2025 19:51:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750301504; x=1750906304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7luqjWXmKm6yGrwAC00VgJVZYDbCcThLXju7FcsbCbY=;
-        b=FBTkXp/xKgT4e75go+uyF6RGALpKo6bvq3plNHlipN9mwIlp5x/nw0W96j+uH6oLVY
-         AnXDNbV5G2ulrJPwCAeuulqhXhkD8Lju8N0nsrflyJd7Z6j22lK+WTlLBERlnuV44bGa
-         7rrRraBTTg9Y1xhG23joexpJB/94j2FXXKvyg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750301504; x=1750906304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7luqjWXmKm6yGrwAC00VgJVZYDbCcThLXju7FcsbCbY=;
-        b=HBIeZdb8Yquf3ZvA6bC8U0RwMtYbR0D9eV6OUdQwgzoX5eB+br8Y1npepvGXajruvs
-         FlMiQXqQK0JCvtd1ylhFdNcBdLdKUFOynhHN1h6pXo9q0lYUbJvAAuuDVR5bsnS/k2YR
-         wtazMJ4H1h/Kmg1MPhe4jcXONbbsMCvrVd4c9L5Go8YNI4lriPda7fqP4U4hborpvab8
-         /04ZVF3Y9f5HPxhAPgbGN435iaBMuGP4EqXmWJdoDGpChBlXUSSiLHebujYT9GboAyoa
-         zfdPta+7utBTMslaDDxXy34dBWzl0iK+Tz9E9pmVDcwwJAWkZ+BMxc9bT/PLCG6ZqkXi
-         hWsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdOlVNjDYnyHDJoD+Z4bUPI7mAKZiL8rvlbdSSENfWI+bGMwTNLQvH0gEZSIRqzwkF4afuMcuZgYPjT9By@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQcWLz8NXdoaH+pg9E+VFQfiNmGE79keeZAh7hlxDaA5fRg3Rx
-	oLWyJEFyIdkpYl9Fu4nlTGBC28ThwUFF16OPo/IZgeLXyBkdyT7RL+lgquhdal8zug==
-X-Gm-Gg: ASbGncucbbE+Xu7rVCJeIAXvWXb7J9AtKgay5hI+VBHlnVofBoEQzmGBO2KS2Vgvkiv
-	74H6gOsawlP42ecz5IlmJnDVaAr63VC3zGF50LgRiWRj2rmI50UwcNofmvms11lLg3cu9LQrFyb
-	e1z5PpVB0YYRSyKpzGyi+/GW/lgpNKmDH/mMHrwBy5q2SQTRT9nzF1WinrztqwBBA6DlSNJ7L1x
-	UKPRCEcLFIBUlAvLKzuMB9DEyWKdikhiZS5IpGnMLDhja8Jpr+aS3/CRY9szkdA4g1KnE/2GwT+
-	KVl8Vt2dstzb4YPN3giY73U5ySHo0vwM9q6J4xkbw7ZtgNS4ybLVGEfBWjP+SuMh6tJLlbZdMT3
-	S
-X-Google-Smtp-Source: AGHT+IFbHqtRYblyKHnCUtjgxnbRWDa5q4RtTfoWxbt7Wol5AkAW2zsNXJDuDuPYnhNGYHTrb9+cAw==
-X-Received: by 2002:a17:902:ce89:b0:235:f059:17de with SMTP id d9443c01a7336-237cbf8d549mr27843375ad.15.1750301504470;
-        Wed, 18 Jun 2025 19:51:44 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:7cb6:ce70:9b77:ed3b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365e0d22absm109007455ad.255.2025.06.18.19.51.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 19:51:44 -0700 (PDT)
-Date: Thu, 19 Jun 2025 11:51:38 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Tomasz Figa <tfiga@chromium.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCHv2 2/2] fuse: use freezable wait in fuse_get_req()
-Message-ID: <aofjrqztimch5235rl2hy5y4u7imtqyqihexpejse7uilesrb5@w262yuqijncl>
-References: <20250610045321.4030262-1-senozhatsky@chromium.org>
- <20250610045321.4030262-2-senozhatsky@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cl73Or3TKF5pQ5jqJohW5YDN/2spIyeAlhP4C8nizWtC8gjP5bQizJ/2TI173XD1ZQoknQmcd0CSrftRq0X1pKLNK77pYJAlhkn4jiO9air1oVPKkLf0hKb8Tf0MZ6sppE/hihSzukB4AYPTBBhT7PfmgQpAxNiB2R+7lDszRpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OR4cAjwN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6FBCC4CEEA;
+	Thu, 19 Jun 2025 05:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750311441;
+	bh=CGFYslQlYW28b83jtPiXInTX2NXpIKy71b9x3BZGqSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OR4cAjwNo5wTYjgFpDC06vgMwWeVUlDkFt6P/PrdIsZc5cizAUV5QN+ZwbHohDycZ
+	 HH2zoU0ftohWLkRwMQPyWPT2yndJWQXBzxp/1gZr7g030cH8ZxL0HQ1JHMRBxp6ZjE
+	 SQPIypgESqrDheTs8P8q9DJn3McibdDMY2/uUr1gUkLHGsU0FougmgKnk3EfFahcMf
+	 8p7SPvWyq3QrtydLEZxp4Oxsj1UW5n40m7AwrSCbw5w75WS8tfHRMoihWOSxlptPA+
+	 vM9CP6m8PKGUQJqIrLZaK5IzpuhToHZ1dJIGPZLoV6QiyX8K01e1OVQOqDSOb5AXkr
+	 GQmKqnw4EifCw==
+Date: Thu, 19 Jun 2025 08:36:48 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Shivank Garg <shivankg@amd.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, Paul Moore <paul@paul-moore.com>,
+	Ackerley Tng <ackerleytng@google.com>,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-fsdevel@vger.kernel.org, aik@amd.com, ajones@ventanamicro.com,
+	akpm@linux-foundation.org, amoorthy@google.com,
+	anthony.yznaga@oracle.com, anup@brainfault.org,
+	aou@eecs.berkeley.edu, bfoster@redhat.com,
+	binbin.wu@linux.intel.com, brauner@kernel.org,
+	catalin.marinas@arm.com, chao.p.peng@intel.com,
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com,
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
+	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
+	rick.p.edgecombe@intel.com, rientjes@google.com,
+	roypat@amazon.co.uk, seanjc@google.com, shuah@kernel.org,
+	steven.price@arm.com, steven.sistare@oracle.com,
+	suzuki.poulose@arm.com, tabba@google.com, thomas.lendacky@amd.com,
+	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+Subject: Re: [PATCH 1/2] fs: Provide function that allocates a secure
+ anonymous inode
+Message-ID: <aFOh8N_rRdSi_Fbc@kernel.org>
+References: <cover.1748890962.git.ackerleytng@google.com>
+ <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
+ <aD_8z4pd7JcFkAwX@kernel.org>
+ <CAHC9VhQczhrVx4YEGbXbAS8FLi0jaV1RB0kb8e4rPsUOXYLqtA@mail.gmail.com>
+ <aEEv-A1ot_t8ePgv@kernel.org>
+ <CAHC9VhR3dKsXYAxY+1Ujr4weO=iBHMPHsJ3-8f=wM5q_oo81wA@mail.gmail.com>
+ <68430497a6fbf_19ff672943@iweiny-mobl.notmuch>
+ <647ab7a4-790f-4858-acf2-0f6bae5b7f99@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250610045321.4030262-2-senozhatsky@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <647ab7a4-790f-4858-acf2-0f6bae5b7f99@amd.com>
 
-On (25/06/10 13:52), Sergey Senozhatsky wrote:
-> Use freezable wait in fuse_get_req() so that it won't block
-> the system from entering suspend:
+On Mon, Jun 16, 2025 at 06:30:09PM +0530, Shivank Garg wrote:
 > 
->  Freezing user space processes failed after 20.009 seconds
->  Call trace:
->   __switch_to+0xcc/0x168
->   schedule+0x57c/0x1138
->   fuse_get_req+0xd0/0x2b0
->   fuse_simple_request+0x120/0x620
->   fuse_getxattr+0xe4/0x158
->   fuse_xattr_get+0x2c/0x48
->   __vfs_getxattr+0x160/0x1d8
->   get_vfs_caps_from_disk+0x74/0x1a8
->   __audit_inode+0x244/0x4d8
->   user_path_at_empty+0x2e0/0x390
->   __arm64_sys_faccessat+0xdc/0x260
 > 
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> On 6/6/2025 8:39 PM, Ira Weiny wrote:
+> > Paul Moore wrote:
+> >> On Thu, Jun 5, 2025 at 1:50 AM Mike Rapoport <rppt@kernel.org> wrote:
+> >>>
+> >>> secretmem always had S_PRIVATE set because alloc_anon_inode() clears it
+> >>> anyway and this patch does not change it.
+> >>
+> >> Yes, my apologies, I didn't look closely enough at the code.
+> >>
+> >>> I'm just thinking that it makes sense to actually allow LSM/SELinux
+> >>> controls that S_PRIVATE bypasses for both secretmem and guest_memfd.
+> >>
+> >> It's been a while since we added the anon_inode hooks so I'd have to
+> >> go dig through the old thread to understand the logic behind marking
+> >> secretmem S_PRIVATE, especially when the
+> >> anon_inode_make_secure_inode() function cleared it.  It's entirely
+> >> possible it may have just been an oversight.
 
-Miklos, are you fine with this?
+anon_inode_make_secure_inode() was introduced when more than 10 versions of
+secretmem already were posted so it didn't jump at me to replace
+alloc_anon_inode() with anon_inode_make_secure_inode().
+ 
+> > I'm jumping in where I don't know what I'm talking about...
+> > 
+> > But my reading of the S_PRIVATE flag is that the memory can't be mapped by
+> > user space.  So for guest_memfd() we need !S_PRIVATE because it is
+> > intended to be mapped by user space.  So we want the secure checks.
+> > 
+> > I think secretmem is the same.
+
+Agree.
+
+> > Do I have that right?
+> 
+> 
+> Hi Mike, Paul,
+> 
+> If I understand correctly,
+> we need to clear the S_PRIVATE flag for all secure inodes. The S_PRIVATE flag was previously
+> set for  secretmem (via alloc_anon_inode()), which caused security checks to be 
+> bypassed - this was unintentional since the original anon_inode_make_secure_inode() 
+> was already clearing it.
+> 
+> Both secretmem and guest_memfd create file descriptors
+> (memfd_create/kvm_create_guest_memfd)
+> so they should be subject to LSM/SELinux security policies rather than bypassing them with S_PRIVATE?
+> 
+> static struct inode *anon_inode_make_secure_inode(struct super_block *s,
+> 		const char *name, const struct inode *context_inode)
+> {
+> ...
+> 	/* Clear S_PRIVATE for all inodes*/
+> 	inode->i_flags &= ~S_PRIVATE;
+> ...
+> }
+> 
+> Please let me know if this conclusion makes sense?
+
+Yes, makes sense to me.
+ 
+> Thanks,
+> Shivank
+
+-- 
+Sincerely yours,
+Mike.
 
