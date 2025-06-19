@@ -1,101 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-52145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DA9ADFAB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 03:34:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D6FADFB47
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 04:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F791894DB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 01:35:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC27917FFB1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 02:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FDC191F98;
-	Thu, 19 Jun 2025 01:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0E7231831;
+	Thu, 19 Jun 2025 02:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="V3i3iqPS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A384D522A;
-	Thu, 19 Jun 2025 01:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197BF21FF57
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 02:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750296885; cv=none; b=S1He/9oHHG8/xLahHguBJFsqZmriE4rcG86WO6fauYBUA5khiIEBA/Tye727VyDp6o4FM+Hf3x3fRRPHXbnQkNRGQvYoANY8VkQZHqW9WNBycKTftnz2VLOmfiT0c4SaCY20/vJOrU7Jn8NrDnR8FKHkP4/isoXSIBngyTUutEA=
+	t=1750300523; cv=none; b=khp3E3NhRMIfeRK2Vani8p4e/uBTccQYSs1UREzaqQM5DKhCQVIQpPyEq1HavBJyD4Pdtg76i2Tb+xR8PQReQ9YN5I41NNtRjplLBsmSIXpvXRLZbjgO3eqRsv8uIMAz1ujBHsx2BS3Eoagzc4AY3YhYVKtTERhgdhPBnboZzx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750296885; c=relaxed/simple;
-	bh=//Joiet/g7/oftnpPdU2ZxGyf8S2qcX7qLMqv22tn4s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qfbSc01GEAqEyqo4a9D4euyz7yiK7x/mVNCRB9AW+KfujlGUc5/1IUza3A9RHwlKIidyIUXLEnmpZsn9FZDVojHt8NWmVNLCjyPlvFaderi3QeNzDL0cT+ljvOPjk+eHtjPhZ1uuw9dJZwGUTam2IyreTq7f/rWsHEhcCDZpJjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 55J1Xmu8038626;
-	Thu, 19 Jun 2025 09:33:48 +0800 (+08)
-	(envelope-from Zhengxu.Zhang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4bN32T4wHJz2NZbXl;
-	Thu, 19 Jun 2025 09:30:25 +0800 (CST)
-Received: from tj06287pcu.spreadtrum.com (10.5.32.43) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.48; Thu, 19 Jun 2025 09:33:45 +0800
-From: Zhengxu Zhang <zhengxu.zhang@unisoc.com>
-To: <linkinjeon@kernel.org>, <sj1557.seo@samsung.com>, <Yuezhang.Mo@sony.com>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <cixi.geng@linux.dev>, <hao_hao.wang@unisoc.com>,
-        <zhiguo.niu@unisoc.com>, <zhengxu.zhang@unisoc.com>
-Subject: [PATCH V2] exfat: fdatasync flag should be same like generic_write_sync()
-Date: Thu, 19 Jun 2025 09:33:31 +0800
-Message-ID: <20250619013331.664521-1-zhengxu.zhang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750300523; c=relaxed/simple;
+	bh=hqZQcUNs7o7B+mOvnc0QewI+V6z1oWhOMUqK7OYFn9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZuI0PZb5uOIEVOPsm12nx4667NvynFRSgiQJnOumIdXQ5R8tGRvOPhvTMwspTjK1jNkjF3YYg2+vioBjFnlU5kpGIeYU5E+TKtge31q18sdjoDSOOjTrroXEXXTs4XJkYsbQJgBpOws4QFQgko462qLpFkq6925MHEJR/ZD2uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=V3i3iqPS; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=T9yUyHB4MlHhnvLU4Berxn5Njc613ew8Qs5tFDPBWQs=; b=V3i3iqPSGx/d9OyZzfGdOF5OYB
+	+J63XbDpLDhYKWFRN10CXlc+7fVf23nozcEhjX8iNZQl9OsKPmrUN3mqHFSrvptVKqWp2a5pgxgnt
+	ZWckZyEi0Ot12mjPpwPjNzO4yYpmw+dE9ydB7Q1zi8p21XAWZlN7L3Qm12acwQR9ngjlXUlHbREhf
+	uWqQgc8xZG5bxz1n8bQL/KeuI0dUB9JUfBJ4Km9UAtfhqD6yQArep/A5KYlzs0Kaqrf8pytuaMVQP
+	a5JEA4mFRkE3+jAv/gtAeYBpSQlOiddw6iveJ8ieHKbR6+3IyrUoUjtY4vJVLbVA8eWDhYpF4f8uR
+	puP0le3g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uS57X-0000000GZuU-1Gqd;
+	Thu, 19 Jun 2025 02:35:19 +0000
+Date: Thu, 19 Jun 2025 03:35:19 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [BUG][RFC] broken use of __lookup_mnt() in path_overmounted()
+Message-ID: <20250619023519.GT1880847@ZenIV>
+References: <20250531205700.GD3574388@ZenIV>
+ <20250602-zugeneigt-abgepfiffen-c041e047f96e@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 55J1Xmu8038626
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250602-zugeneigt-abgepfiffen-c041e047f96e@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Test: androbench by default setting, use 64GB sdcard.
- the random write speed:
-	without this patch 3.5MB/s
-	with this patch 7MB/s
+On Mon, Jun 02, 2025 at 11:17:25AM +0200, Christian Brauner wrote:
 
-After patch "11a347fb6cef", the random write speed decreased significantly.
-the .write_iter() interface had been modified, and check the differences with
-generic_file_write_iter(), when calling generic_write_sync() and
-exfat_file_write_iter() to call vfs_fsync_range(), the fdatasync flag is wrong,
-and make not use the fdatasync mode, and make random write speed decreased.
+> Fwiw, I have pointed this out in one of my really early submission of
+> this work and had asked whether we generally want the same check. That's
+> also why I added the shadow-mount check into the automount path because
+> that could be used for that sort of issue to afair but my memory is
+> fuzzy here.
 
-So use generic_write_sync() instead of vfs_fsync_range().
+Actually, the check in do_move_mount() is too early.  Look:
+(after having made sure . is on a private mount)
+mount -t tmpfs none A
+mkdir A/x
+mount --make-shared A
+mount --bind A/x B
+mount --make-slave B
+mount -t tmpfs other A/x
+umount B
 
-Fixes: 11a347fb6cef ("exfat: change to get file size from DataLength")
+... and now move_mount() B beneath A/x.  See what happens?  We get one
+secondary copy, attached on top of the root of primary.  _After_ we'd
+entered attach_recursive_mnt(), so all checks in do_move_mount() have
+nothing to catch - yet.  So we end up with that secondary being side-by-side
+with the "other" tmpfs...
 
-Signed-off-by: Zhengxu Zhang <zhengxu.zhang@unisoc.com>
----
- fs/exfat/file.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+The unpleasant part is that we'll need to backport that stuff, so it
+has to be done _before_ the do_move_mount()/attach_recursive_mnt()
+cleanups ;-/
 
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 841a5b18e3df..7ac5126aa4f1 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -623,9 +623,8 @@ static ssize_t exfat_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	if (pos > valid_size)
- 		pos = valid_size;
- 
--	if (iocb_is_dsync(iocb) && iocb->ki_pos > pos) {
--		ssize_t err = vfs_fsync_range(file, pos, iocb->ki_pos - 1,
--				iocb->ki_flags & IOCB_SYNC);
-+	if (iocb->ki_pos > pos) {
-+		ssize_t err = generic_write_sync(iocb, iocb->ki_pos - pos);
- 		if (err < 0)
- 			return err;
- 	}
--- 
-2.25.1
+Once the side-by-side thing is eliminated, we can (and IMO should) add
+mnt->mnt_overmount pointing to whatever's mounted on top of root of
+mnt (NULL if nothing is).  That simplifies quite a few things, including
+the prevention of side-by-side shite, but we can't do it first, more's
+the pity...
 
+Hell knows, maybe MNT_OVERMOUNTED as the first step would be doable -
+it would allow for simpler (and lower-overhead) intermediate step
+before the introduction of ->mnt_overmount and further simplifications...
 
