@@ -1,205 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-52206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B51AE0313
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:05:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 439F3AE0314
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF41F3ACA0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:05:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D550D17688F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F072264C2;
-	Thu, 19 Jun 2025 11:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1Eiu0no"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D256822540A;
+	Thu, 19 Jun 2025 11:07:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1458221FB5;
-	Thu, 19 Jun 2025 11:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872EB18EFD4;
+	Thu, 19 Jun 2025 11:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750331144; cv=none; b=jM8yS4Eo6XC7gLX26BJpALde9lEv2EBJ1IsfcA8QG3wXONeDlg/Xi1ulzw64khqmA4zJ460Y4SrQtpNLdY1xlhJQxjuNPigtxQR7RExX8WI+nTTZWqMhh9/pvM41hSLqi8O3zhMe654Dod7FsCmBwIs4QM0d7S22rF1filSS6Dg=
+	t=1750331233; cv=none; b=rpENcSUVgO59Aab5ErRbFYgG6NeKvN0rf8ERNIcGcaXbT/1N6HDKQoXuUwPfKN8/TfPR75fYRFCQ0hR3x7kwst86B2eTFApBfng65Dx103Td8KNElUYawEaeCKg1XEkB0W+7CKTuw0ZNq/zZ8VlJqJQiWn1fkPgS50SFndDYrpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750331144; c=relaxed/simple;
-	bh=P5G0GKZeMdKwU8+KZLXBTlpUtLJy/08vDne9MSkvEwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PQbePi9XtjgXDjNbju+UA1KI6XCAa1VjxztiL5aent9idjZ/rGUFJFg3eDH8i2TJN3Fn53EH3xnZ/xg1v73EhmL7nfqPHQ5sTAdsD/SHJWsPt3MlxSm8/I7+Ye8EqCvswmERVJCqLXekEydRrbav1lxNSZ4poptHvfrudC//jBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1Eiu0no; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53DB5C4CEEA;
-	Thu, 19 Jun 2025 11:05:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750331141;
-	bh=P5G0GKZeMdKwU8+KZLXBTlpUtLJy/08vDne9MSkvEwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N1Eiu0noL8AwGuJY9Eb/OKyEPKs6wHlgQXhcZxPMlU/jAt/lnWngZYF/la3h+xrGY
-	 3BpWETKdylmh60btlkFkJJEv97VLHHjPJxx315jOO8a5+49VeiBffsDh/LN4299M0Y
-	 lfFDzHjErzIXaimjs82PqmbepGUfVe/jvQc0GuUtdVZSDv4PFwefx5zp1/nF2uTAsm
-	 IpIF4JIv9qAcXsLRZdTxm7a/1ixAUUmNJNSq74F2tPIFr00HfTrFqvb067khNfhG6E
-	 uTwe5y3LxVsjlS8XehLW8LRkeWMEsw8TATZii0LOIuPcSU9taGHdfisGBcS58uuSgY
-	 DCX6ZJPUdRBDQ==
-Date: Thu, 19 Jun 2025 13:05:30 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, 
-	djwong@kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2] statx.2: Add stx_atomic_write_unit_max_opt
-Message-ID: <7ret5bl5nbtolpdu2muaoeaheu6klrrfm2pvp3vkdfvfw7jxbr@zwsz2dpx7vxz>
-References: <20250619090510.229114-1-john.g.garry@oracle.com>
+	s=arc-20240116; t=1750331233; c=relaxed/simple;
+	bh=E0DJwRVynlCLgTuk+b4KrLi+EHFS6bthwX2FoN1u8VI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PqGAI54KidsfDL1HH0Nje7VcHZ9/sKgYhOV04c/CqxbhiT/iYIWH+tzCUEi2j+cfP6QSylglFFoNv5v7D/oyOa6TEEN22ziFpsmoEeh3gj7iTaAKyE3adgH8A7cuStC0+Kr4C8rjuMeF+eaW0gByGNOCKefzm/43jzJ4j1VR8OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C13C8113E;
+	Thu, 19 Jun 2025 04:06:48 -0700 (PDT)
+Received: from [10.57.84.221] (unknown [10.57.84.221])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BC913F58B;
+	Thu, 19 Jun 2025 04:07:06 -0700 (PDT)
+Message-ID: <ea7f9da7-9a9f-4b85-9d0a-35b320f5ed25@arm.com>
+Date: Thu, 19 Jun 2025 12:07:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hlpaxlv3mtoztp6n"
-Content-Disposition: inline
-In-Reply-To: <20250619090510.229114-1-john.g.garry@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/5] mm/filemap: Allow arch to request folio size for
+ exec memory
+Content-Language: en-GB
+To: Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20250609092729.274960-1-ryan.roberts@arm.com>
+ <20250609092729.274960-6-ryan.roberts@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250609092729.274960-6-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi Andrew,
+
+On 09/06/2025 10:27, Ryan Roberts wrote:
+> Change the readahead config so that if it is being requested for an
+> executable mapping, do a synchronous read into a set of folios with an
+> arch-specified order and in a naturally aligned manner. We no longer
+> center the read on the faulting page but simply align it down to the
+> previous natural boundary. Additionally, we don't bother with an
+> asynchronous part.
+> 
+> On arm64 if memory is physically contiguous and naturally aligned to the
+> "contpte" size, we can use contpte mappings, which improves utilization
+> of the TLB. When paired with the "multi-size THP" feature, this works
+> well to reduce dTLB pressure. However iTLB pressure is still high due to
+> executable mappings having a low likelihood of being in the required
+> folio size and mapping alignment, even when the filesystem supports
+> readahead into large folios (e.g. XFS).
+> 
+> The reason for the low likelihood is that the current readahead
+> algorithm starts with an order-0 folio and increases the folio order by
+> 2 every time the readahead mark is hit. But most executable memory tends
+> to be accessed randomly and so the readahead mark is rarely hit and most
+> executable folios remain order-0.
+> 
+> So let's special-case the read(ahead) logic for executable mappings. The
+> trade-off is performance improvement (due to more efficient storage of
+> the translations in iTLB) vs potential for making reclaim more difficult
+> (due to the folios being larger so if a part of the folio is hot the
+> whole thing is considered hot). But executable memory is a small portion
+> of the overall system memory so I doubt this will even register from a
+> reclaim perspective.
+> 
+> I've chosen 64K folio size for arm64 which benefits both the 4K and 16K
+> base page size configs. Crucially the same amount of data is still read
+> (usually 128K) so I'm not expecting any read amplification issues. I
+> don't anticipate any write amplification because text is always RO.
+> 
+> Note that the text region of an ELF file could be populated into the
+> page cache for other reasons than taking a fault in a mmapped area. The
+> most common case is due to the loader read()ing the header which can be
+> shared with the beginning of text. So some text will still remain in
+> small folios, but this simple, best effort change provides good
+> performance improvements as is.
+> 
+> Confine this special-case approach to the bounds of the VMA. This
+> prevents wasting memory for any padding that might exist in the file
+> between sections. Previously the padding would have been contained in
+> order-0 folios and would be easy to reclaim. But now it would be part of
+> a larger folio so more difficult to reclaim. Solve this by simply not
+> reading it into memory in the first place.
+> 
+> Benchmarking
+> ============
+> 
+> The below shows pgbench and redis benchmarks on Graviton3 arm64 system.
+> 
+> First, confirmation that this patch causes more text to be contained in
+> 64K folios:
+> 
+> +----------------------+---------------+---------------+---------------+
+> | File-backed folios by|  system boot  |    pgbench    |     redis     |
+> | size as percentage of+-------+-------+-------+-------+-------+-------+
+> | all mapped text mem  |before | after |before | after |before | after |
+> +======================+=======+=======+=======+=======+=======+=======+
+> | base-page-4kB        |   78% |   30% |   78% |   11% |   73% |   14% |
+> | thp-aligned-8kB      |    1% |    0% |    0% |    0% |    1% |    0% |
+> | thp-aligned-16kB     |   17% |    4% |   17% |    3% |   20% |    4% |
+> | thp-aligned-32kB     |    1% |    1% |    1% |    2% |    1% |    1% |
+> | thp-aligned-64kB     |    3% |   63% |    3% |   81% |    4% |   77% |
+> | thp-aligned-128kB    |    0% |    1% |    1% |    1% |    1% |    2% |
+> | thp-unaligned-64kB   |    0% |    0% |    0% |    1% |    0% |    1% |
+> | thp-unaligned-128kB  |    0% |    1% |    0% |    0% |    0% |    0% |
+> | thp-partial          |    0% |    0% |    0% |    1% |    0% |    1% |
+> +----------------------+-------+-------+-------+-------+-------+-------+
+> | cont-aligned-64kB    |    4% |   65% |    4% |   83% |    6% |   79% |
+> +----------------------+-------+-------+-------+-------+-------+-------+
+> 
+> The above shows that for both workloads (each isolated with cgroups) as
+> well as the general system state after boot, the amount of text backed
+> by 4K and 16K folios reduces and the amount backed by 64K folios
+> increases significantly. And the amount of text that is contpte-mapped
+> significantly increases (see last row).
+> 
+> And this is reflected in performance improvement. "(I)" indicates a
+> statistically significant improvement. Note TPS and Reqs/sec are rates
+> so bigger is better, ms is time so smaller is better:
+> 
+> +-------------+-------------------------------------------+------------+
+> | Benchmark   | Result Class                              | Improvemnt |
+> +=============+===========================================+============+
+> | pts/pgbench | Scale: 1 Clients: 1 RO (TPS)              |  (I) 3.47% |
+> |             | Scale: 1 Clients: 1 RO - Latency (ms)     |     -2.88% |
+> |             | Scale: 1 Clients: 250 RO (TPS)            |  (I) 5.02% |
+> |             | Scale: 1 Clients: 250 RO - Latency (ms)   | (I) -4.79% |
+> |             | Scale: 1 Clients: 1000 RO (TPS)           |  (I) 6.16% |
+> |             | Scale: 1 Clients: 1000 RO - Latency (ms)  | (I) -5.82% |
+> |             | Scale: 100 Clients: 1 RO (TPS)            |      2.51% |
+> |             | Scale: 100 Clients: 1 RO - Latency (ms)   |     -3.51% |
+> |             | Scale: 100 Clients: 250 RO (TPS)          |  (I) 4.75% |
+> |             | Scale: 100 Clients: 250 RO - Latency (ms) | (I) -4.44% |
+> |             | Scale: 100 Clients: 1000 RO (TPS)         |  (I) 6.34% |
+> |             | Scale: 100 Clients: 1000 RO - Latency (ms)| (I) -5.95% |
+> +-------------+-------------------------------------------+------------+
+> | pts/redis   | Test: GET Connections: 50 (Reqs/sec)      |  (I) 3.20% |
+> |             | Test: GET Connections: 1000 (Reqs/sec)    |  (I) 2.55% |
+> |             | Test: LPOP Connections: 50 (Reqs/sec)     |  (I) 4.59% |
+> |             | Test: LPOP Connections: 1000 (Reqs/sec)   |  (I) 4.81% |
+> |             | Test: LPUSH Connections: 50 (Reqs/sec)    |  (I) 5.31% |
+> |             | Test: LPUSH Connections: 1000 (Reqs/sec)  |  (I) 4.36% |
+> |             | Test: SADD Connections: 50 (Reqs/sec)     |  (I) 2.64% |
+> |             | Test: SADD Connections: 1000 (Reqs/sec)   |  (I) 4.15% |
+> |             | Test: SET Connections: 50 (Reqs/sec)      |  (I) 3.11% |
+> |             | Test: SET Connections: 1000 (Reqs/sec)    |  (I) 3.36% |
+> +-------------+-------------------------------------------+------------+
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Acked-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 
 
---hlpaxlv3mtoztp6n
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, 
-	djwong@kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2] statx.2: Add stx_atomic_write_unit_max_opt
-References: <20250619090510.229114-1-john.g.garry@oracle.com>
-MIME-Version: 1.0
-In-Reply-To: <20250619090510.229114-1-john.g.garry@oracle.com>
+A use-after-free issue was reported againt this patch, which I believe is still
+in mm-unstable? The problem is that I'm accessing the vma after unlocking it. So
+the fix is to move the unlock to after the if/else. Would you mind squashing
+this into the patch?
 
-Hi John,
+The report is here:
+https://lore.kernel.org/linux-mm/hi6tsbuplmf6jcr44tqu6mdhtyebyqgsfif7okhnrzkcowpo4d@agoyrl4ozyth/
 
-On Thu, Jun 19, 2025 at 09:05:10AM +0000, John Garry wrote:
-> XFS supports atomic writes - or untorn writes - based on two different
-> methods:
-> - HW offload in the disk
-> - FS method based on out-of-place writes
->=20
-> The value reported in stx_atomic_write_unit_max will be the max size of t=
-he
-> FS-based method.
->=20
-> The max atomic write unit size of the FS-based atomic writes will
-> typically be much larger than what is capable from the HW offload. Howeve=
-r,
-> FS-based atomic writes will also be typically much slower.
->=20
-> Advertise this HW offload size limit to the user in a new statx member,
-> stx_atomic_write_unit_max_opt.
->=20
-> We want STATX_WRITE_ATOMIC to get this new member in addition to the
-> already-existing members, so mention that a value of 0 means that
-> stx_atomic_write_unit_max holds this optimised limit.
+---8<---
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 93fbc2ef232a..eaf853d6b719 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3265,7 +3265,6 @@ static struct file *do_sync_mmap_readahead(struct vm_fault
+*vmf)
+ 	if (mmap_miss > MMAP_LOTSAMISS)
+ 		return fpin;
 
-Please say a "a value of 0 *in stx_atomic_write_unit_max_opt* means
-that ...", to clarify.
+-	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+ 	if (vm_flags & VM_EXEC) {
+ 		/*
+ 		 * Allow arch to request a preferred minimum folio order for
+@@ -3299,6 +3298,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault
+*vmf)
+ 		ra->async_size = ra->ra_pages / 4;
+ 		ra->order = 0;
+ 	}
++
++	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+ 	ractl._index = ra->start;
+ 	page_cache_ra_order(&ractl, ra);
+ 	return fpin;
+---8<---
 
-> Linux will zero unused statx members, so stx_atomic_write_unit_max_opt
-> will always hold 0 for older kernel versions which do not support
-> this FS-based atomic write method (for XFS).
->=20
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
-> Differences to RFC (v1):
-> - general rewrite
-> - mention that linux zeroes unused statx fields
->=20
-> diff --git a/man/man2/statx.2 b/man/man2/statx.2
-> index ef7dbbcf9..29400d055 100644
-> --- a/man/man2/statx.2
-> +++ b/man/man2/statx.2
-> @@ -74,6 +74,9 @@ struct statx {
->  \&
->      /* File offset alignment for direct I/O reads */
->      __u32   stx_dio_read_offset_align;
-> +\&
-> +    /* Direct I/O atomic write max opt limit */
-> +    __u32 stx_atomic_write_unit_max_opt;
+Thanks,
+Ryan
 
-Please align the member with the one above.
-
->  };
->  .EE
->  .in
-> @@ -266,7 +269,8 @@ STATX_SUBVOL	Want stx_subvol
->  	(since Linux 6.10; support varies by filesystem)
->  STATX_WRITE_ATOMIC	Want stx_atomic_write_unit_min,
->  	stx_atomic_write_unit_max,
-> -	and stx_atomic_write_segments_max.
-> +	stx_atomic_write_segments_max,
-> +	and stx_atomic_write_unit_max_opt.
->  	(since Linux 6.11; support varies by filesystem)
->  STATX_DIO_READ_ALIGN	Want stx_dio_read_offset_align.
->  	(since Linux 6.14; support varies by filesystem)
-> @@ -514,6 +518,20 @@ is supported on block devices since Linux 6.11.
->  The support on regular files varies by filesystem;
->  it is supported by xfs and ext4 since Linux 6.13.
->  .TP
-> +.I stx_atomic_write_unit_max_opt
-> +The maximum size (in bytes) which is optimised for writes issued with
-> +torn-write protection.
-
-Please break the line before 'optimized' and remove the current line
-break.
-
-> +If non-zero, this value will not exceed the value in
-
-Please break the line after ','.
-
-> +.I stx_atomic_write_unit_max
-> +and will not be less than the value in
-> +.I stx_atomic_write_unit_min.
-
-This should be IR, and the '.' separated by a space, so that the '.' is
-not in italics.
-
-
-Have a lovely day!
-Alex
-
-> +A value of zero indicates that
-> +.I stx_atomic_write_unit_max
-> +is the optimised limit.
-> +Slower writes may be experienced when the size of the write exceeds
-> +.I stx_atomic_write_unit_max_opt
-> +(when non-zero).
-> +.TP
->  .I stx_atomic_write_segments_max
->  The maximum number of elements in an array of vectors
->  for a write with torn-write protection enabled.
-> --=20
-> 2.31.1
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---hlpaxlv3mtoztp6n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhT7vMACgkQ64mZXMKQ
-wqnuVBAAgoPmOQzNRqsRdHZja+VBk7yJZPHH9IzpUEYKm87MW/L4FcP7wcYTbL8X
-KDkHmAdySKlJXBH01GLJ/lbVAzBxzcigpz7xWBmer6tPTF2irohmm8rBRx265ZdA
-wDdLo2bxFo175wxwx0ZY7lEWG/M4bfWpJPt7PXqFucgVehoRT4Ae/nVwdxkctN4x
-/ZPI+9esP7zKVNPxAr2Gu3RU/FjcrVo9AZXRpqYITg4sY8kGP14790rC1F6zM5ay
-qc4ADd4vUxRfp+1EVWl3sJ6NoxpTbS2nT40j3jlhLIxSH3PhvlladbxZpapDxRiK
-jmc6CXW6q4XbMoqzsK6lddcTKrBUZouO2AoBuWESizoqufp11mDl6q3DiMwH2a61
-i/4Q1/hRtzCQHu7JqCzshH4s34plL3UxeZjPIXMyPdJBie6sRaP63qvUXjNukX4Q
-ex43F88VlsqyUqwF93WUSM5W+F69BYFy8EDtPAQMikw2Cetd+LyCjVdWdwyhLlSV
-sgVmufZ5kwvnIWBxfgv3EU9QFPw+l2PRqeePCtnRMty04MvXsjqmdWfrdUXKrdto
-2y7gLjrFHq51qye1NPVA4d/EaF4ib6ZecNvefDsG1pdjIr5C3YaecSa2ipwT0O3V
-xJ33lOp3hVGkyd0MAuMk5nBmgLcFBCO0KJmLMuo2bXvNVCtoNBA=
-=3Qpk
------END PGP SIGNATURE-----
-
---hlpaxlv3mtoztp6n--
 
