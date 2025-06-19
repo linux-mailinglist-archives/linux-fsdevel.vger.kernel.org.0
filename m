@@ -1,98 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-52226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B866CAE0522
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 14:11:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7B6AE0531
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 14:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178AA1897EB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 12:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023FE18989FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 12:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB53D230BEC;
-	Thu, 19 Jun 2025 12:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5DE22F76F;
+	Thu, 19 Jun 2025 12:12:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14F53085B2;
-	Thu, 19 Jun 2025 12:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEBF220F5C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 12:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750335075; cv=none; b=C7Xb1kea/ZuAtfETus1BHcA/6ptTbG4i+jypIB7zKO9AOIJ6WcH/+ZCsqnrm0/Xe2VfeDdobFY+Eczu4vVA7gCsAgP1PZHpCWZdXGv7ulgABU7DjeOZMksH1gjXjsvSrb0e9K7sjGd7ctuPmMmPGI1gCEwLWpUBcbc1FYW8rzXs=
+	t=1750335178; cv=none; b=ScG1HcFMAEJjrkeYwQkiD7ts4EEyo2ppzojky28Tbso65uw6ellVasy1+CYZuK8h3Jp0YyLqkMwzG9w4SufZM+OLx/xGFG2KQCdVwLa9jhoFkIHRGzy52tCEC81q7Ka5eGpZyfKgM3UKNsSM/M38+r0nCKK4KqE5IMB1G9kmKf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750335075; c=relaxed/simple;
-	bh=A2ie+kUQrkB5Lxc2V7zJYm8SbzcSncNfJ5+TypUD6uQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LiCz1m+OmEwFoM5T+lE2QC+1A9YRz/BX+OO2CvjzXUghfmtmoEtxQ8VRrqzu7pQtOPVX9N+Af4mH6nxNSQNm9zFVr+KnxZROq2hS95s1fhfBdQDj+/U/nGVXqwpyS7mnOigTbtmE75dkJijy9hSDslamEwrhHuoLJvG5RFlBDO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	s=arc-20240116; t=1750335178; c=relaxed/simple;
+	bh=3aR7ijKhs4cMdRhIavTaxoR3+StcHCkyGT8FAX3AItY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CldPsiymOsO4Oiyo9I27711XVKj/E+ZUVT8dGjeuEzv03RBTKgu1S36J/RxpDK1szl0luYZragGz1FBsfqofXym5XFAhdPbUbl+SeNgFmElpFXy3Va7zmrt2EY1rmmsjwKPbcD6XxgdlLxMXDJpef7LYUY8OcfI4wm25q/jEKvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bNKFf55g0z9sWt;
-	Thu, 19 Jun 2025 14:11:02 +0200 (CEST)
-From: Pankaj Raghav <p.raghav@samsung.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	mcgrof@kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gost.dev@samsung.com,
-	kernel@pankajraghav.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2] fs/buffer: use min folio order to calculate upper limit in __getblk_slow()
-Date: Thu, 19 Jun 2025 14:10:58 +0200
-Message-ID: <20250619121058.140122-1-p.raghav@samsung.com>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E8D722121A;
+	Thu, 19 Jun 2025 12:12:54 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F06A3136CC;
+	Thu, 19 Jun 2025 12:12:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PH/eNsL+U2gneAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 19 Jun 2025 12:12:50 +0000
+Date: Thu, 19 Jun 2025 14:12:49 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Muchun Song <muchun.song@linux.dev>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: change vm_get_page_prot() to accept vm_flags_t
+ argument
+Message-ID: <aFP-wf0w8Dno3YyV@localhost.localdomain>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+ <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bNKFf55g0z9sWt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: E8D722121A
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.00
 
-The maximum IO size that a block device can read as a single block is
-based on the min folio order and not the PAGE_SIZE as we have bs > ps
-support for block devices[1].
+On Wed, Jun 18, 2025 at 08:42:52PM +0100, Lorenzo Stoakes wrote:
+> We abstract the type of the VMA flags to vm_flags_t, however in may places
+                                                                  many?
+> it is simply assumed this is unsigned long, which is simply incorrect.
+> 
+> At the moment this is simply an incongruity, however in future we plan to
+> change this type and therefore this change is a critical requirement for
+> doing so.
+> 
+> Overall, this patch does not introduce any functional change.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Calculate the upper limit based on the on min folio order.
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-[1] https://lore.kernel.org/linux-block/20250221223823.1680616-1-mcgrof@kernel.org/
+Same comments as Vlastimil, you want to push vmflag_to_pte_pkey_bits
+further to patch#2 and bring 
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
-Changes since v1:
-- Rebased on top of vfs/vfs-6.17.misc as it has a merge conflict.
-- Added RVB tag from Jan Kara.
+arch/powerpc/mm/book3s64/pgtable.c:pgprot_t vm_get_page_prot(unsigned long vm_flags)
 
- fs/buffer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index a14d281c6a74..445df839a0f0 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1121,9 +1121,10 @@ __getblk_slow(struct block_device *bdev, sector_t block,
- 	     unsigned size, gfp_t gfp)
- {
- 	bool blocking = gfpflags_allow_blocking(gfp);
-+	int blocklog = PAGE_SHIFT + mapping_min_folio_order(bdev->bd_mapping);
- 
- 	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
--		     (size < 512 || size > PAGE_SIZE))) {
-+		     (size < 512 || size > (1U << blocklog)))) {
- 		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
- 					size);
- 		printk(KERN_ERR "logical block size: %d\n",
-
-base-commit: 6ae58121126dcf8efcc2611f216a36a5e50b8ad9
 -- 
-2.49.0
-
+Oscar Salvador
+SUSE Labs
 
