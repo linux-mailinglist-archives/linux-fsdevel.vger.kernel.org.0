@@ -1,258 +1,331 @@
-Return-Path: <linux-fsdevel+bounces-52208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E045AE032B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:13:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B5FAE03B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 13:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 924FF1BC4C3C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:13:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA24917F5A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E75D223710;
-	Thu, 19 Jun 2025 11:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LWD1cmo0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BB22459D8;
+	Thu, 19 Jun 2025 11:31:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2076.outbound.protection.outlook.com [40.107.101.76])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4373B221FB5;
-	Thu, 19 Jun 2025 11:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750331610; cv=fail; b=Y2CAVrwp3ZnbyTA7CpSE2HdWaknvW2mQFgdCSdRdUX0m54tgX5IQK6HwiQmXexfLVgjrywqLAM5OORwWEukW9xfS1wN+u1NCdHPs5nqwnVacdH3B/yZdkaCD7VS/C1hfQQygIMWUrd2xgEY/qpFYKynBRq7Sdd8fbXd4eIQ9Glo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750331610; c=relaxed/simple;
-	bh=+D2ogRkQvHoMQKt31ppTlICAckIl36Xy49Gi2LckRec=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=K0QFQskpklEMeyYEWpjMoYhNluLAF7sfZYwpGwvjt4Ybtsl97siJ4Thgtl0Spr8nL/2hvO0gK15QTVGmfasXosm7R83rTFij6Vsx8/avDahkO52NEI4YRxvsLuTle4Kdj8mvHZSImYu2eARvcbF9eLHJSM/+W/BuNr0K/hYq8AY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LWD1cmo0; arc=fail smtp.client-ip=40.107.101.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DUQYrJeLY2mT+K57xLsjbVRNvVaqrExXnAqhvGzK7DHhCV/CKWYn9oQfXepJBm179njuQCy9c5hTpsWxMP2tGoZKliAQdhL/uTf6l/5p/56Jn9OjBZn+68VHCuN2Dg5ejhnewkLsca6l0ykDSgJXT+YLBd/DPC1gCgbU69Wt3IpOyN4K47M2sjFqYzuOgF2cPZ6trTJGLUuXuUkOiY9VKfFY5j2BM+XDvj5tJYW1GqhvDW3m/fbOpY/Ct602uBEUBZJy7HjM12LxaA3l5F4vSEuz3KEzimEpgmEOHi9I5RoX9cPjD9xp74I/L8u23lJiAvG+Czm65iZGOo6n2cHE/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DpOMMTdjB6BrY9M7K5wNsKOL5MirLyu39PCyT0SKg64=;
- b=LPM/9uSeHwlZL24fguDtjrAJLNwkN1IT5UalKAXcYBDKmFgPE2R/DPFcpnYrcblt8CnMoZku0bDVdXt4xPWPDzO68fPS+7/JMh4jiL8p9j55p+thLh0AYs5ZPZ1uFWfmkfcHcRUfJBxvN+cY47EP0513NRjvHT+d6mU7wSX4VfmgDeqdX2THs2LqLjCt3tlYsaKpUNNtqPDw5mQWGLGHQrMQaB40YIAui3cTU/GDaDIKdrFEkZNVF4v26JgCVZ7FMaLhMtxy6/rADcNaaXts53Ls6mrnRcMcvwUhXXrAZNsDIKCfyq7uZcC+SU30UdVftjalELSmj9weq/9URbxr6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DpOMMTdjB6BrY9M7K5wNsKOL5MirLyu39PCyT0SKg64=;
- b=LWD1cmo0u4Hcxj2YkTZXFpUyPA0yJf+BH9//4/pbrKQT1ZFqb699B7YAr3zEHTVsr0BajcisAIxPOpOkksqz0G3ztVuwfV68P/fTkZrL6jj3eWTk3O99I3dfwflm6+e/HgsImGffvcDfATmgdauiSBXuDWQTaod11n1ev/X9Y6M=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8)
- by SA3PR12MB9178.namprd12.prod.outlook.com (2603:10b6:806:396::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.36; Thu, 19 Jun
- 2025 11:13:25 +0000
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870]) by CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870%5]) with mapi id 15.20.8835.027; Thu, 19 Jun 2025
- 11:13:24 +0000
-Message-ID: <4267108c-ac26-4528-97cc-0d160568baee@amd.com>
-Date: Thu, 19 Jun 2025 16:43:00 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v8 4/7] mm/mempolicy: Export memory policy symbols
-To: Gregory Price <gourry@gourry.net>
-Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz, willy@infradead.org,
- akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
- bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
- chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
- yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
- peterx@redhat.com, jack@suse.cz, rppt@kernel.org, hch@infradead.org,
- cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
- roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
- dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
- jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
- yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
- aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-References: <20250618112935.7629-1-shivankg@amd.com>
- <20250618112935.7629-5-shivankg@amd.com>
- <aFLXRtCDfoNzQym6@gourry-fedora-PF4VCD3F>
-Content-Language: en-US
-From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <aFLXRtCDfoNzQym6@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BMXPR01CA0082.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:54::22) To CH2PR12MB4262.namprd12.prod.outlook.com
- (2603:10b6:610:af::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB0C230BF2;
+	Thu, 19 Jun 2025 11:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750332716; cv=none; b=kRgEFau4aLd0EY5ruy75fDYyVJUIDQqYwFZyuqjg4eCgRVC0psvRshWyQ+GaHL6UFrEPs/wFhcV+cJchG/wR3dt1c1qUC3SbxRHD+Cvvf+MDUkZgb4bI3FBMeRS3nVoLfz4NMHgTx4oC4186Kbo9hc5vbZMoNzTyOr2EKY2rWpc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750332716; c=relaxed/simple;
+	bh=dbuqoIesrqayIjFb9YxGxGETNeenCpHtgv5CO1iuZTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=En2qzQ5EUAHpmtBEBRFs59twvBIXGyvwVEkjeI6Sdln0vJxDOrlXWL2sDIDgRWek+4V01+GxlpMaXThdm2Y5NdFKC8eRoalqbGSrEMUF4Z5TTIAHMDEwUB8s8EZ9RJ4Ml4xHjlNrWe1drZ+my/0zwp49K6K6ZY+o5hIQxS4MtTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bNJNN1jpfzKHN2y;
+	Thu, 19 Jun 2025 19:31:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8F3B81A058E;
+	Thu, 19 Jun 2025 19:31:46 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgCH618Y9VNoihn_Pw--.51230S4;
+	Thu, 19 Jun 2025 19:31:43 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hch@lst.de,
+	tytso@mit.edu,
+	djwong@kernel.org,
+	john.g.garry@oracle.com,
+	bmarzins@redhat.com,
+	chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com,
+	brauner@kernel.org,
+	martin.petersen@oracle.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
+Date: Thu, 19 Jun 2025 19:17:57 +0800
+Message-ID: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4262:EE_|SA3PR12MB9178:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6da1ae5a-f926-48dc-7735-08ddaf224ecc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MVhhdk0vTVU0SERGaUNGemRZTEMwUXp6dlY0cTZHenJ6Z2JMODdHTDdOWElB?=
- =?utf-8?B?T3N2aDVkbnllNnpRaHMyd053N3hRbjBsNmpKY0dpVmJQVUlHay8rZTdLWGNM?=
- =?utf-8?B?WmtrUk94TmtuSTQ0WEpUVENaenRYakVhODBOQXhkSzlhcmpjVm5ocEdyQlRl?=
- =?utf-8?B?anJJUWhvVllRQnQwbmRqdFVsM1BYRGwzK2MwVkMrRnVtSVo3Y1VDaFhLSWNE?=
- =?utf-8?B?TUd6UmhqUGpNVEFUaFM3TE0zTllQeXNNazRVbG5CWjRmU3F2U3c2MHVsb0x1?=
- =?utf-8?B?cTREcUxjMUcwUUphaHk1N0FyMTc1ZkR5NlR1cThBQUdUa0JLWVIwMS9ZM3hR?=
- =?utf-8?B?NGlGMjJ1TzJJOWFWUjlLbk92WFRMbjZXZHplU2c5WEZ0SFpGRUNKR0JuR1Ex?=
- =?utf-8?B?RURQc0JLQzRxbnBwVzBuMmhHODZnTUZzUGR6ek5iVjRkd0ZPd28zeThLNTNq?=
- =?utf-8?B?MkpuOHUvSjVML2tUdnBhVURYemJTcWJ0M0laOE1MdzlvRTFZTHFKSmNqd3dF?=
- =?utf-8?B?cTl2Vnp1bVQ3TFRLWjN2L1NlSFArUllXNDFralhTMUxsQ3JOUEw4eGx6Vjli?=
- =?utf-8?B?N3ZRU3RxMG1VZ3diZEZrMXJyV1pRczJ3NnpweXRwbEpQdjdrN2RQMTU4ejJu?=
- =?utf-8?B?WW5EaVNNWHJCejhmUEM2b2w0VnBIUkpUd29sNnRIWis3MnQrSXdTcFhoZTds?=
- =?utf-8?B?czZhOVV1ZVVPQ2NZM3NnZ2lPcmx1YkUzYVhEbUV1WGlFWC91MWYwTHRtVjhK?=
- =?utf-8?B?Z09oZkxZR1prNDhSanlvdWdxNzZsb2FzV2w1M2ozOGplbUdhK1Jxd1FmWW5i?=
- =?utf-8?B?eWtlTUx1SVNGcFo0eUhDcjZIVWp4Ym4vYkJTdzZ1UUxqaUREd1JOQWdyYnpw?=
- =?utf-8?B?dkJiQ3NCRkt5eVVrNVFMZmk3aEozci9aVEo0MVBlSWFaYmVobjhhdS9KVHlK?=
- =?utf-8?B?RTR3OXFZWHo1RWdKRy85NTR5Nm8wQWsvRnIvVmd0enNIYllrWVRrTUovUjU3?=
- =?utf-8?B?R0R2VHNkcXdaUUdqcGtoZWs4eGtBNVRHZ25WWFdUeDlTVVQ1U2VRSE81VG5N?=
- =?utf-8?B?ZCswaDR2WHRFT3ZVMFdxVXFqVUNGV2dZY1IxWHF6QVBseUJZVFpVM05qeUNh?=
- =?utf-8?B?UDBNL2hHSFNMWnVjWmJhd2dqdnFlUlZ0MEpBbWZsNnJiWGNPOEZzUFJ4Q0g5?=
- =?utf-8?B?a0JXR2tSaVBsdHRwM2FNR0JqNWpINXdwWTJVMDRwcnp2YzBoSzZqMDBXM2Ro?=
- =?utf-8?B?TmRIQmJwT281dkE1ZHY3cG1OUmJPbC9BWGFKb1NyOHVhZHZ2YkZTeWc5VDhI?=
- =?utf-8?B?Z2NNMU5oVVU1ZncxZEdwSEk3b0ROMXI5aENtbVdMVCtQT0dsQVdjc0dyU3R6?=
- =?utf-8?B?ZnpTNnVEa0I2QkIrVzcvaUpXTm1XK25qRUtMUnFCb3R1dGM3clNZd1l1aEEr?=
- =?utf-8?B?RmZmQ24wZkU5Nno3dXh0b1REYnc5clR3aFI3YUttTzM4V0xnUkxvOHFtc3Bn?=
- =?utf-8?B?U3VpRjVpTldHYThLY1FybmNvTTJmWUhvUjB0MlVnMno2a2pmdE5JTUZmbTcx?=
- =?utf-8?B?WVE0MWVBYWRaS0lvYU1MdS8zajNyYmxLZExpSDdnYUtzbzErdmFQaW4yMzlW?=
- =?utf-8?B?d21DMFFZYmVEUG9EMkFaY2pxSUVYMEpoNEYzMS90a1dMYTFadTRWSDJMUm1i?=
- =?utf-8?B?ZnhSOWJHYk9Tc09VZ29ZWWVUZGNUOUhPNGpoL0xqeGxLYkx1S1NMNEVxMXpY?=
- =?utf-8?B?bXhnUHhtSGl0cjhCcXpxVDF6Z0hDZHZOcnQ3YnYzNFk0TkE5UE14Y3hyM0Fl?=
- =?utf-8?B?a1JnZUMzcVRDWFF1T3J0UG1lOTE0b2JpaENPVjROWjhpZU15WWNiYlVGTjdY?=
- =?utf-8?B?TFptVk5sTmxLdVNydjVmaVplK2RMYmp2UFB3MHhMS3ZsREZkZnBqRlNaZjRs?=
- =?utf-8?Q?vi0ZfYqDgk8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4262.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VHdDM3hPRjV3ekVXa0RQaXNWWFcyOUVZRlpCMEwrc0d1N0RMYWdlNjJ4YXB6?=
- =?utf-8?B?cHkxZVB0Nk54V282UUhsK1pzU0tlbHEzbkZHVmJYYk5WL0lLWTlndXlpMUZ6?=
- =?utf-8?B?ck0vaDBwaWg3c2tzRU5odnlVZ29KSS8rWUh5eldsRUlkaWJINDc5dG8xQit4?=
- =?utf-8?B?TDBpd05CSmlGNUlzdFU0TlhBZ1plWEpaNUh5K1B0OGYwS21WOEM0eFZ2TlV3?=
- =?utf-8?B?cW4yWFpKZ1pLQ1o4K2MyYWZiNGhCeDN4Z215d2d6Nk5vMk15RGNtSGpoMjRX?=
- =?utf-8?B?RlU5VmRHRW5LN0tTNDdlSDZyd2Q0UDl0cUVIRHZtM2ZDejB5Y0VaYXJKNm5F?=
- =?utf-8?B?NFlrUmNjK0dGRTVIRm5JQld4UXFVeFFrZm9ONGJSd3Jtd3V6NkVDOGJPR1hk?=
- =?utf-8?B?K2h3VXBreFh2eFJZbTZhVmJacnVLcW82Nmx2eDl0ZkRVMW0wVU1FV0xUYW92?=
- =?utf-8?B?ekhQU2hjTEl3YWh0VEd1cEZIQkdGaGhHQ1pSV3BNSzdVaFkvV2UraVluVGpt?=
- =?utf-8?B?TG80M0E1S05TZWRsVjA3RllLdEpObUdBZkFUOE9vMkYrNjkxdXJhVHM3bWRp?=
- =?utf-8?B?cDBpbm5lOFhLU2E1UVVBUUxXakt4ajRobWFOc0xHcEVrUFNBYXhJVUF3d0c2?=
- =?utf-8?B?QXZ4ZTc3MnRKLzhXMVA5eGZUUVVsK0RqVk5iNkZKQm9rKzFRbm1PQlRpQkVh?=
- =?utf-8?B?OXZhNWZiV3RtZDc0UEhhZHlsS2xzby9ETXEzay9TaVJXU2YrL0grUnpLVWRp?=
- =?utf-8?B?a2J6NGQ0U3BvU2FpWk5aTHNSVERIR3QwbjU0L3JLZzNBTkdiK29pRmRpNUta?=
- =?utf-8?B?a1VZNUxGZUUwVUxjbjYzRjJmV2RpbWpzNXBhbk9icUlmVkJtQ1dOZkJqVDVP?=
- =?utf-8?B?OGpEOFNoc1hXVjYyYktxdTRLblpoWnZhcWs1MTVMbmlZWUt5S1ZpaGY2cmdk?=
- =?utf-8?B?T0xjZDFic0o4VW1oT3k3cWNscTZaWDZ2cldqVmxraFFlSlpqeXRxdW4xNm1r?=
- =?utf-8?B?RUY4eE1sNitOeXNUUzkyKy9TSXBmSWRwZVNVczlYSnNZMnR2KzloeTFDSzRk?=
- =?utf-8?B?TlptUng5K2d3ci96R2RvcWt6R3dUdHh6RWhHTG1RZnZFbGhBRjhMbStuZG5O?=
- =?utf-8?B?a1JDdklaZlg2N2o5bVVBb1RVckJXc2hKL0xVRkdsNkw1dXFuT0NvaW1oQkpM?=
- =?utf-8?B?WkV4SmlnV1dxaTdHMkhMSHI0aGZpSWhNbUNhSVRTK3UzUjhYWkNWUEc2eFY1?=
- =?utf-8?B?TUtOSjZaSTF3RHRjdVg5ZFAyWjdqNWROV0NEK1h0eGFZQXpOaE1iL244QnEy?=
- =?utf-8?B?L2pxNTN4V1ZzS1M5Zjh1VFFmY0FackxOUCtmRmIweTlnbmpsa0hVZWNHUGJq?=
- =?utf-8?B?RnFOT3pZRXZoUTlwYVE2NElyTUhjb20vVVFlSm1mRnJ4U09qcDZhOVh0MXJH?=
- =?utf-8?B?Nmg5cG5uL3dhVkNGNHR3TWxLQTJ0NlhmQTI0cTB1T2VldVFFSWx1ZjR2a05T?=
- =?utf-8?B?QkNNZWhHTWNyY3JPSU1uL01tcnFWMDY2RTlrRzlFVERoWFlXRzZWWUUrVHBj?=
- =?utf-8?B?TVVnNllBbGNYd3pUZEdZRVVTN1BIcjVYNERITUFhay9HdkRIQ2RlTGRnb2Ra?=
- =?utf-8?B?REV6YVZXU3daTUNGZEFSdlRuVXEwcSt4QjYvNnlZdVRKZ3BxS1N0aTFrSkJ4?=
- =?utf-8?B?ZktoTERybWg3Z0w4Z0V0Q1VwQUd3ZnN5V2d5NWZ4bEIzWVJzWlFPSHB4TTBy?=
- =?utf-8?B?dHpTNklaZC95aWNNNGJqalQxLzVIOXF1bGhuUTVYOEoyNGp1cnNRWG8yaTlF?=
- =?utf-8?B?bC8vNzgwMVBXZk8zdGlaSXlSc2psYU1lUzJMN3NSNTcwYWZCYmRtRUcxWmZl?=
- =?utf-8?B?NmdjMmEydmhCY0NSNENUUGxIYVF0M21MaFQrTG01Rld4OHdET1ZBQlE2aklL?=
- =?utf-8?B?MElubHp2THFwOGdpTTVmVEhRYWNpc0VTWmlWeU1XYXlJVWtSUnpmYUs4Y3VV?=
- =?utf-8?B?eW1Mc2I1Y2VPK21JY3J1SzZ1UEd1am43MjRSSFo3RnlxNk9zLzIxazVMNUxm?=
- =?utf-8?B?ZE9BUHBqd3lLWjU3MTU3ZEtiZUxGOC9jWS9rbVlnMUt3MG91d2NyNTVuZ00w?=
- =?utf-8?Q?utzaa49KUsriS74NwJ4PYrwy1?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6da1ae5a-f926-48dc-7735-08ddaf224ecc
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4262.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 11:13:24.6368
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z2W2SBhDTnyN1P2wln9L5cX00Lrsv5FZnr2M8ZuTrXy7vnJDWLaNBnEF22yKKW91/xUey0phZa4Ma0HR2t+NIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9178
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCH618Y9VNoihn_Pw--.51230S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3tr4DAFWUWryDurW3uw1Utrb_yoWDtr4rpa
+	yUJF4Ykr1DKryxC3s3ua1IgryrZws5ArW3Gw4xK34UZFZ8XF1IgFs2ga4Yqa9rJFyfW3WD
+	XFsF9r9rua47A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRRBT5DUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
+From: Zhang Yi <yi.zhang@huawei.com>
 
+Changes since v1:
+ - Rebase codes on 6.16-rc2.
+ - Use max_{hw|user}_wzeroes_unmap_sectors queue limits instead of
+   BLK_FEAT_WRITE_ZEROES_UNMAP feature to represent the status of the
+   unmap write zeroes operation as Christoph and Darrick suggested. This
+   redoes the first 5 patches, so remove all the reviewed-by tags,
+   please review them again.
+ - Simplify the description of FALLOC_FL_WRITE_ZEROES in patch 06 as
+   Darrick suggested.
+ - Revise the check order of FALLOC_FL_WRITE_ZEROES in patch 08 as
+   Christoph suggested.
+Changes since RFC v4:
+ - Rebase codes on 6.16-rc1.
+ - Add a new queue_limit flag, and change the write_zeroes_unmap sysfs
+   interface to RW mode. User can disable the unmap write zeroes
+   operation by writing '0' to it when the operation is slow.
+ - Modify the documentation of write_zeroes_unmap sysfs interface as
+   Martin suggested.
+ - Remove the statx interface.
+ - Make the bdev and ext4 don't allow to submit FALLOC_FL_WRITE_ZEROES
+   if the block device does not enable the unmap write zeroes operation,
+   it should return -EOPNOTSUPP.
+Changes sicne RFC v3:
+ - Rebase codes on 6.15-rc2.
+ - Add a note in patch 1 to indicate that the unmap write zeros command
+   is not always guaranteed as Christoph suggested.
+ - Rename bdev_unmap_write_zeroes() helper and move it to patch 1 as
+   Christoph suggested.
+ - Introduce a new statx attribute flag STATX_ATTR_WRITE_ZEROES_UNMAP as
+   Christoph and Christian suggested.
+ - Exchange the order of the two patches that modified
+   blkdev_fallocate() as Christoph suggested.
+Changes since RFC v2:
+ - Rebase codes on next-20250314.
+ - Add support for nvme multipath.
+ - Add support for NVMeT with block device backing.
+ - Clear FALLOC_FL_WRITE_ZEROES if dm clear
+   limits->max_write_zeroes_sectors.
+ - Complement the counterpart userspace tools(util-linux and xfs_io)
+   and tests(blktests and xfstests), please see below for details.
+Changes since RFC v1:
+ - Switch to add a new write zeroes operation, FALLOC_FL_WRITE_ZEROES,
+   in fallocate, instead of just adding a supported flag to
+   FALLOC_FL_ZERO_RANGE.
+ - Introduce a new flag BLK_FEAT_WRITE_ZEROES_UNMAP to the block
+   device's queue limit features, and implement it on SCSI sd driver,
+   NVMe SSD driver and dm driver.
+ - Implement FALLOC_FL_WRITE_ZEROES on both the ext4 filesystem and
+   block device (bdev).
 
-On 6/18/2025 8:42 PM, Gregory Price wrote:
-> On Wed, Jun 18, 2025 at 11:29:32AM +0000, Shivank Garg wrote:
->> KVM guest_memfd wants to implement support for NUMA policies just like
->> shmem already does using the shared policy infrastructure. As
->> guest_memfd currently resides in KVM module code, we have to export the
->> relevant symbols.
->>
->> In the future, guest_memfd might be moved to core-mm, at which point the
->> symbols no longer would have to be exported. When/if that happens is
->> still unclear.
->>
->> Acked-by: David Hildenbrand <david@redhat.com>
->> Acked-by: Vlastimil Babka <vbabka@suse.cz>
->> Signed-off-by: Shivank Garg <shivankg@amd.com>
->> ---
->>  mm/mempolicy.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
->> index 3b1dfd08338b..d98243cdf090 100644
->> --- a/mm/mempolicy.c
->> +++ b/mm/mempolicy.c
->> @@ -354,6 +354,7 @@ struct mempolicy *get_task_policy(struct task_struct *p)
->>  
->>  	return &default_policy;
->>  }
->> +EXPORT_SYMBOL_GPL(get_task_policy);
->>  
->>  static const struct mempolicy_operations {
->>  	int (*create)(struct mempolicy *pol, const nodemask_t *nodes);
->> @@ -487,6 +488,7 @@ void __mpol_put(struct mempolicy *pol)
->>  		return;
->>  	kmem_cache_free(policy_cache, pol);
->>  }
->> +EXPORT_SYMBOL_GPL(__mpol_put);
->>  
-> 
-> I'm concerned that get_task_policy doesn't actually increment the policy
-> refcount - and mpol_cond_put only decrements the refcount for shared
-> policies (vma policies) - while __mpol_put decrements it unconditionally.
-> 
-> If you look at how get_task_policy is used internally to mempolicy,
-> you'll find that it either completes the operation in the context of the
-> task lock (allocation time) or it calls mpol_get afterwards.
+v1:     https://lore.kernel.org/linux-fsdevel/20250604020850.1304633-1-yi.zhang@huaweicloud.com/
+RFC v4: https://lore.kernel.org/linux-fsdevel/20250421021509.2366003-1-yi.zhang@huaweicloud.com/
+RFC v3: https://lore.kernel.org/linux-fsdevel/20250318073545.3518707-1-yi.zhang@huaweicloud.com/
+RFC v2: https://lore.kernel.org/linux-fsdevel/20250115114637.2705887-1-yi.zhang@huaweicloud.com/
+RFC v1: https://lore.kernel.org/linux-fsdevel/20241228014522.2395187-1-yi.zhang@huaweicloud.com/
 
-I agree. But the semantics of my usage isn't new. shmem use this in same way.
+The counterpart userspace tools changes and tests are here:
+ - util-linux: https://lore.kernel.org/linux-fsdevel/20250318073218.3513262-1-yi.zhang@huaweicloud.com/ 
+ - xfsprogs: https://lore.kernel.org/linux-fsdevel/20250318072318.3502037-1-yi.zhang@huaweicloud.com/
+ - xfstests: https://lore.kernel.org/linux-fsdevel/20250318072615.3505873-1-yi.zhang@huaweicloud.com/
+   (needs to be updated)
+ - blktests: https://lore.kernel.org/linux-fsdevel/20250318072835.3508696-1-yi.zhang@huaweicloud.com/
+   (needs to be updated)
 
-I think the alloc_frozen_pages_noprof(), alloc_pages_bulk_mempolicy_noprof()
-calls get_task_policy without task_lock or calling mpol_get.
+Original Description:
 
-> 
-> Exporting this as-is creates a triping hazard, if only because get/put
-> naming implies reference counting.
+Currently, we can use the fallocate command to quickly create a
+pre-allocated file. However, on most filesystems, such as ext4 and XFS,
+fallocate create pre-allocation blocks in an unwritten state, and the
+FALLOC_FL_ZERO_RANGE flag also behaves similarly. The extent state must
+be converted to a written state when the user writes data into this
+range later, which can trigger numerous metadata changes and consequent
+journal I/O. This may leads to significant write amplification and
+performance degradation in synchronous write mode. Therefore, we need a
+method to create a pre-allocated file with written extents that can be
+used for pure overwriting. At the monent, the only method available is
+to create an empty file and write zero data into it (for example, using
+'dd' with a large block size). However, this method is slow and consumes
+a considerable amount of disk bandwidth, we must pre-allocate files in
+advance but cannot add pre-allocated files while user business services
+are running.
 
-Since KVM is the only user, we could consider newly added EXPORT_SYMBOL_GPL_FOR_MODULES(..., "kvm")
-to avoid wider exposure.
-Does this solve your concern?
-Or should we rename these functions.
-What should be the preferred approach?
+Fortunately, with the development and more and more widely used of
+flash-based storage devices, we can efficiently write zeros to SSDs
+using the unmap write zeroes command if the devices do not write
+physical zeroes to the media. For example, if SCSI SSDs support the
+UMMAP bit or NVMe SSDs support the DEAC bit[1], the write zeroes command
+does not write actual data to the device, instead, NVMe converts the
+zeroed range to a deallocated state, which works fast and consumes
+almost no disk write bandwidth. Consequently, this feature can provide
+us with a faster method for creating pre-allocated files with written
+extents and zeroed data. However, please note that this may be a
+best-effort optimization rather than a mandatory requirement, some
+devices may partially fall back to writing physical zeroes due to
+factors such as receiving unaligned commands. 
+
+This series aims to implement this by:
+1. Introduce a new feature BLK_FEAT_WRITE_ZEROES_UNMAP to the block
+   device queue limit features, which indicates whether the storage is
+   device explicitly supports the unmapped write zeroes command. This
+   flag should be set to 1 by the driver if the attached disk supports
+   this command.
+
+2. Introduce a queue limit flag, BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED,
+   along with a corresponding sysfs entry. Users can query the support
+   status of the unmap write zeroes operation and disable this operation
+   if the write zeroes operation is very slow.
+
+       /sys/block/<disk>/queue/write_zeroes_unmap
+
+3. Introduce a new flag, FALLOC_FL_WRITE_ZEROES, into the fallocate.
+   Filesystems that support this operation should allocate written
+   extents and issue zeroes to the specified range of the device. For
+   local block device filesystems, this operation should depend on the
+   write_zeroes_unmap operaion of the underlying block device. It should
+   return -EOPNOTSUPP if the device doesn't enable unmap write zeroes
+   operaion.
+
+This series implements the BLK_FEAT_WRITE_ZEROES_UNMAP feature and
+BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED flag for SCSI, NVMe and
+device-mapper drivers, and add the FALLOC_FL_WRITE_ZEROES and
+STATX_ATTR_WRITE_ZEROES_UNMAP support for ext4 and raw bdev devices.
+Any comments are welcome.
+
+I've tested performance with this series on ext4 filesystem on my
+machine with an Intel Xeon Gold 6248R CPU, a 7TB KCD61LUL7T68 NVMe SSD
+which supports unmap write zeroes command with the Deallocated state
+and the DEAC bit. Feel free to give it a try.
+
+0. Ensure the NVMe device supports WRITE_ZERO command.
+
+ $ cat /sys/block/nvme5n1/queue/write_zeroes_max_bytes
+   8388608
+ $ nvme id-ns -H /dev/nvme5n1 | grep -i -A 3 "dlfeat"
+   dlfeat  : 25
+   [4:4] : 0x1   Guard Field of Deallocated Logical Blocks is set to CRC
+                 of The Value Read
+   [3:3] : 0x1   Deallocate Bit in the Write Zeroes Command is Supported
+   [2:0] : 0x1   Bytes Read From a Deallocated Logical Block and its
+                 Metadata are 0x00
+
+1. Compare 'dd' and fallocate with unmap write zeroes, the later one is
+   significantly faster than 'dd'.
+
+   Create a 1GB and 10GB zeroed file.
+    $dd if=/dev/zero of=foo bs=2M count=$count oflag=direct
+    $time fallocate -w -l $size bar
+
+    #1G
+    dd:                     0.5s
+    FALLOC_FL_WRITE_ZEROES: 0.17s
+
+    #10G
+    dd:                     5.0s
+    FALLOC_FL_WRITE_ZEROES: 1.7s
+
+2. Run fio overwrite and fallocate with unmap write zeroes
+   simultaneously, fallocate has little impact on write bandwidth and
+   only slightly affects write latency.
+
+ a) Test bandwidth costs.
+  $ fio -directory=/test -direct=1 -iodepth=10 -fsync=0 -rw=write \
+        -numjobs=10 -bs=2M -ioengine=libaio -size=20G -runtime=20 \
+        -fallocate=none -overwrite=1 -group_reportin -name=bw_test
+
+   Without background zero range:
+    bw (MiB/s): min= 2068, max= 2280, per=100.00%, avg=2186.40
+
+   With background zero range:
+    bw (MiB/s): min= 2056, max= 2308, per=100.00%, avg=2186.20
+
+ b) Test write latency costs.
+  $ fio -filename=/test/foo -direct=1 -iodepth=1 -fsync=0 -rw=write \
+        -numjobs=1 -bs=4k -ioengine=psync -size=5G -runtime=20 \
+        -fallocate=none -overwrite=1 -group_reportin -name=lat_test
+
+   Without background zero range:
+   lat (nsec): min=9269, max=71635, avg=9840.65
+
+   With a background zero range:
+   lat (usec): min=9, max=982, avg=11.03
+
+3. Compare overwriting in a pre-allocated unwritten file and a written
+   file in O_DSYNC mode. Write to a file with written extents is much
+   faster.
+
+  # First mkfs and create a test file according to below three cases,
+  # and then run fio.
+
+  $ fio -filename=/test/foo -direct=1 -iodepth=1 -fdatasync=1 \
+        -rw=write -numjobs=1 -bs=4k -ioengine=psync -size=5G \
+        -runtime=20 -fallocate=none -group_reportin -name=test
+
+   unwritten file:                 IOPS=20.1k, BW=78.7MiB/s
+   unwritten file + fast_commit:   IOPS=42.9k, BW=167MiB/s
+   written file:                   IOPS=98.8k, BW=386MiB/s
 
 Thanks,
-Shivank
+Yi.
+
+---
+
+[1] https://nvmexpress.org/specifications/
+    NVM Command Set Specification, Figure 82 and Figure 114.
+
+Zhang Yi (9):
+  block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits
+  nvme: set max_hw_wzeroes_unmap_sectors if device supports DEAC bit
+  nvmet: set WZDS and DRB if device enables unmap write zeroes operation
+  scsi: sd: set max_hw_wzeroes_unmap_sectors if device supports
+    SD_ZERO_*_UNMAP
+  dm: clear unmap write zeroes limits when disabling write zeroes
+  fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
+  block: factor out common part in blkdev_fallocate()
+  block: add FALLOC_FL_WRITE_ZEROES support
+  ext4: add FALLOC_FL_WRITE_ZEROES support
+
+ Documentation/ABI/stable/sysfs-block | 33 ++++++++++++++
+ block/blk-settings.c                 | 20 ++++++++-
+ block/blk-sysfs.c                    | 26 +++++++++++
+ block/fops.c                         | 44 +++++++++++--------
+ drivers/md/dm-table.c                |  4 +-
+ drivers/nvme/host/core.c             | 20 +++++----
+ drivers/nvme/target/io-cmd-bdev.c    |  4 ++
+ drivers/scsi/sd.c                    |  5 +++
+ fs/ext4/extents.c                    | 66 +++++++++++++++++++++++-----
+ fs/open.c                            |  1 +
+ include/linux/blkdev.h               | 10 +++++
+ include/linux/falloc.h               |  3 +-
+ include/trace/events/ext4.h          |  3 +-
+ include/uapi/linux/falloc.h          | 17 +++++++
+ 14 files changed, 212 insertions(+), 44 deletions(-)
+
+-- 
+2.46.1
+
 
