@@ -1,210 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-52194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F19DAE021C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 11:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A36AE0239
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 12:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F152F175ECB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 09:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A99F4A08C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 10:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B5222170B;
-	Thu, 19 Jun 2025 09:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C121F221DB0;
+	Thu, 19 Jun 2025 10:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U8gwvysv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXHujRx2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313B0220F55;
-	Thu, 19 Jun 2025 09:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750326848; cv=fail; b=KXnfhVA40tRT4p73yJeJvNLaY/mC1ubR0RWbt9cnd/8g0/hhzch56Qvy01AwamsmuXCEt8lHvxWGYkewEM1L88LAe+4GXoYin2SSU573Ub6KNS/4X9QPQOiaweKcuBuHxEAqRtUCV3GHVnhuq6OBy9r8ufVZt9iqCn6nvgHTvMI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750326848; c=relaxed/simple;
-	bh=C9Y+BxzazJHjjxtRxKxzDwPVaBvsjnJCvrd5AcPCgdw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C4FGhkVdWLhYYHAV+Fq5v/8ilaDxtl54W/dl2HBnRh+uYifDtKgskz1V80uNWZfKht4YsZ84rvhzXQ+4e4y7t8ZCn25/TzlHeZBt6gBLfVuIeCcoy5MZvM+cl8eMDVLS6BrngvJ7SfIE2BEjoy3oHHJoEO77GXiF2sN9riPSyZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U8gwvysv; arc=fail smtp.client-ip=40.107.94.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=On99XUgng4R4rOB1G4v5HW2+wAxzxUBm6a/sceWB99lLBTnbhWYsRJqrwgh1ipItxvivkRdfmOJFLHrs2xI9RdEkadQxXMb5O+dCgdJgbSrYsvzsoApMxOs4C5Fh8d/9ypLjPGJ7lgqr/GJHB2e+1Sib/pGl5PQpvjN8cHhRjVATeI99hjWK92jSaAp20E/rLKiMEs21GTvhdVdzoH59+Eazp0SffvpE3iepULjXsbNJPifRMC9q7rW+Wf+ZIEfKrLK3qlrcXnHP25LKenylAxiGrKPKkelDNJ2wP5gpJaL6KxqXqmoYAXH4OAS7IIGBw1HliZqlJnr5ahdk0Xb2jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RCE0cu3gWQ4L1/IJVdaapBefi5BLzopF1yYXo2wzHp8=;
- b=tr3q8+oE86rOQwwZJdF93sTKy9+IKn2uDlLO2z7v92oYvDFoIXnjPc1JarhO5p2ehJ6MOxxJONDBQFZUoZe0BZDd6E9jheUJ3KDhEKgZfIWk1zLb4igHea7BzMIMLOEexHpBFhwGq0vWTTObL+wVgvHQdeJS4o2UFcPazHLMpgaM3dMc0F8jLqQRVfyjTkCoEoOs8yRwBXf8leaV1kKe6DjaCrBHgpWWQkM/HLE3oNDb+XjcQ8XDX4kOfLGSEymVoyLdPEIbwBN5uj4HNVOQG3Ekg9RFogEtHL+xEcOGE6ssIoPocX3COnEd8aetJGrVpg7KzZhGFgSTDOb2rLjEfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RCE0cu3gWQ4L1/IJVdaapBefi5BLzopF1yYXo2wzHp8=;
- b=U8gwvysvJ2Uwe3A0g9SX0ao7qbA2fQHKwT2FLhydciCpwKipKq6b1HhO5K++0dLkX7jb1/4GmMEf/lF52r4i3tU6sHUorABlkiyd4kvSgef1jZpVl0xoMp46zUNBh8kK/57U1026TnHV52mIEZrpo61PmQq4rr4JyHbYC8+hcpQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8)
- by SA3PR12MB7857.namprd12.prod.outlook.com (2603:10b6:806:31e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.22; Thu, 19 Jun
- 2025 09:54:03 +0000
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870]) by CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870%5]) with mapi id 15.20.8835.027; Thu, 19 Jun 2025
- 09:54:02 +0000
-Message-ID: <abf72717-f0ca-4180-9e6f-83908581cbc1@amd.com>
-Date: Thu, 19 Jun 2025 15:23:52 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-To: Vlastimil Babka <vbabka@suse.cz>, david@redhat.com,
- akpm@linux-foundation.org, brauner@kernel.org, paul@paul-moore.com,
- rppt@kernel.org, viro@zeniv.linux.org.uk
-Cc: seanjc@google.com, willy@infradead.org, pbonzini@redhat.com,
- tabba@google.com, afranji@google.com, ackerleytng@google.com, jack@suse.cz,
- hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com,
- roypat@amazon.co.uk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20250619073136.506022-2-shivankg@amd.com>
- <da5316a7-eee3-4c96-83dd-78ae9f3e0117@suse.cz>
-Content-Language: en-US
-From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <da5316a7-eee3-4c96-83dd-78ae9f3e0117@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4PR01CA0034.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:273::7) To CH2PR12MB4262.namprd12.prod.outlook.com
- (2603:10b6:610:af::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191A835963;
+	Thu, 19 Jun 2025 10:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750327287; cv=none; b=QENeFgCHEcnVz/JroAXgImvWwRYtWwfk5iqrwzkmIOWZBeTgKPRMYSPj/K7BOfhr2uIk8hcwK5DVdZPK1a+dXzwfG4fTxxYc2piodqBbsqgToBAAq+DMmVwTQsr9VC+taiUq+/9MJhYWmqY6XPy3avn1qVNKohL59PDdupoiDiQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750327287; c=relaxed/simple;
+	bh=iH2r4/nOdisJ4ji3r1eyCc2glfT0fNCXVE6J/1rZ5yI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OstHINpAaXz//PkcyelxbJ2xeXLpuga13oJfcGKC5eLgF8ZbfRkAG8BLCGf6jge9T6qrPnDVLHeiebVthnfEUbDTGy/zmibnS2EqLk7S/TJml5M1zziQWV2sstVZqFYNWPUqbWBmRu1+1FlHYZ7txMy+bzYunMPQ09Efc0AWDhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXHujRx2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55811C4CEEA;
+	Thu, 19 Jun 2025 10:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750327286;
+	bh=iH2r4/nOdisJ4ji3r1eyCc2glfT0fNCXVE6J/1rZ5yI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YXHujRx2ZkIBQtDu3BCwhIEOlxLAAhZslA2k8hvv/w+RV1qJk+INWsQWw7hjGmorg
+	 ZKXxRWlfbSSUJkgxKd3Z4h3Eyy8dmr53NXMxneA8z0sxE7/0PHAH2FiShO1lPmMYHy
+	 S6qpJul6haD3AGvM9bFOxuQKeKC+qDIyZ0VmrUuQ6NzNnea5UQPbAiSDenDCEL/b1L
+	 Swb7ukZt0FWOJuQYKjwCtnNygvmB59Ll6oM+55xVCRnT/H8Gg0S2IpQDUXEs6cm0RB
+	 VUSC5YBYxIplToSY7nX+ponT5m0bRT0I1suIaehY1eUxSQSv79Y2NsktyXBrb0UYJI
+	 s7COAQxIknpjQ==
+Date: Thu, 19 Jun 2025 12:01:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <song@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, amir73il@gmail.com, gregkh@linuxfoundation.org, tj@kernel.org, 
+	daan.j.demeyer@gmail.com
+Subject: Re: [PATCH bpf-next 1/4] kernfs: Add __kernfs_xattr_get for RCU
+ protected access
+Message-ID: <20250619-kaulquappen-absagen-27377e154bc0@brauner>
+References: <20250618233739.189106-1-song@kernel.org>
+ <20250618233739.189106-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4262:EE_|SA3PR12MB7857:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5a734c8d-d0f1-4bb6-d9c4-08ddaf17387b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q2RLSVNPNURkL2tlUGpsbkJsd1U4aU5OcnUrWHNXWGtRdXA3OVVMUUphQmVF?=
- =?utf-8?B?OThFdFdEdVk5d2h2eDlrbit0bzBSd1R0SVBwWEQwZ3B2STNCRis2bjVUemVN?=
- =?utf-8?B?Z3JpcGlDYTgvN0lVNU1wbHBOaGwwWFlhM2N6cVA4NC93aWZkdFowZnVneDVz?=
- =?utf-8?B?MHlsVFJwRG96cFJZTmtrMS8reGdPK0owczFYMnp2R2ovUDAxVmhPN1dvQXBD?=
- =?utf-8?B?aXpreG1lRW91K3gyeS9DVW1zZnNMbFlaL0h0YXNpUUFWbFlaZTZzL3J5TDlM?=
- =?utf-8?B?ckFBOFExamcxZWRJbFVJK2h4RGR3MHdVeDQ3emFNVWQvQVJRNU9vS0VyRTNH?=
- =?utf-8?B?QlN4UFJLUG9yUnRRSTk4UVBwaWxMcFk3aG9RVmdLRUZqV3RvVUVBTllzRlRm?=
- =?utf-8?B?M3JLc0UvUkpHamcwUEpYUGxLL1RoYXEwd24wUUIyTkVlY1FhQ0xaQ1hyTVVw?=
- =?utf-8?B?d2xjV08xMmhJd2dyMkFodE1OUW84S0tMUEQyc3ArL2JKa0x2dzhCK0lVdzZR?=
- =?utf-8?B?NzcvcmFTTTZkM1lGdlNQYVc5VlE1MHhkdktucUdzYTdRZzlDSU80WFJzVnVp?=
- =?utf-8?B?d0Y2OEhCQ0tFMmozaTMzcmw2UDB0ekQ5MUZPOGNKWWZSWmpyMnp6dTJGRXZO?=
- =?utf-8?B?dHVTWUpwcDBGbGZUcjNEU0Yvc01jZmZ4VWNNOGtmQnpmdnM1dEExZjZuQUsr?=
- =?utf-8?B?SzlVaFRMRm54RWltWUZmcFJ2RGVyYU43NUozMGpubWVvanJVZ1NKTWtkOVBL?=
- =?utf-8?B?SnhNK0xCR05VY0E5Z2ExZlF4MGQxek9WdXozeUQ1TXpvaHFieFRiRjZidktI?=
- =?utf-8?B?YUZVblJmYkFtUXdSY1o3dFc5ZW12RXl5ZEFBWVFidldZZ1dUQWlWSFJGNi9x?=
- =?utf-8?B?ejl0Y3cwVVlTdTBlL2d3Ui9JNjA3OGtyQnpBNUlSZms0MWlwcDhhSmJ5cUdy?=
- =?utf-8?B?TFFJSHk0aFBBdzR2dTNTQkU3NjJyTnVqK3pMamtzRWlLcmFFQ0J4WU9kNTNn?=
- =?utf-8?B?cUUzUVluZHV4WVdnbzB5Vko3MFBicVdlUmdYdjBDdXhTK2o5OXFFTHh6Q1Ru?=
- =?utf-8?B?SUFqZjBwSi9ETDZacFB6ekNFOHZaWlpkN1REQWREd01WRXpTWEovUTNxNWNx?=
- =?utf-8?B?SW1QWmVoSDBEL1RyY1lYalp1b2Zsc0hMdytWSG9mZHRobjluNnZQL1NTS0Fk?=
- =?utf-8?B?YmxRcVBlQjNabUdYMmYrM04wOTEyZEE2THRuUUVIK0tFZE1PbnJWRmpsakU2?=
- =?utf-8?B?dm9FR1BHQ0xKWjRDVFRvVVUrYm4xYlYxWm9NUGhLcFVQOWs5V21NVk85V296?=
- =?utf-8?B?WC96YUhtWFM1RnBCbzhZZjBIYUFvWEowUm5aa0ZuQ1c3U3RheENWRDcyUXFX?=
- =?utf-8?B?WkNRSXY3RU9nYXlaVk05R1VML29pUElSZ3l2Q2Z5d2pRWFhhd1pTOFo5SXVn?=
- =?utf-8?B?Ukhad3VoYnBXbVdJTTRlZnNDbi9hUHM0aXNWNk90RnFoSjZXYTNuaVp0cDhM?=
- =?utf-8?B?djJhS2s0dVBPVXhBZlJlekVNUmp4WDgyQVVWOGl4b3NObTBBc2QyUXhDWGty?=
- =?utf-8?B?dC9qcHIwb1lmdFdVSXpsZG83cUI5VFIwYU9oNW44dE9jTjd1RzRDb1FaU0o2?=
- =?utf-8?B?UFY5VXBrL3QyQ0VWVHBLbjFpODVueVFwWjFkTDUxak4wRUR0N1A5N2FnU242?=
- =?utf-8?B?NmlkYjJtVGdkZXNhUHNBZ29jcXY0UmJJNU9XMHZ3NDZZTStLOHZJNE5IVjln?=
- =?utf-8?B?NjJwQkg0WW9ZcVY3SElWdUZlaUVTaXUvemxzWmVlMzhYcEtNWHRSWm5NcFAv?=
- =?utf-8?B?aDBOQkdMdEt4S0U3cGZINjVWdklkTEI2V0FLSVdRd1RSdnIrZzZkdW9VWDlv?=
- =?utf-8?B?bFM4YTNmTjBVMEIrMlAySnNtUSs2UHlIdW45MVRLQWZ1SlB3c2VxZmFsem5s?=
- =?utf-8?Q?sjhcMgXyBh0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4262.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MnBsTE0yWXZIYm1HNHBlZ0RRTWphamQ3NDdtMzZLcHpjQjlsd1lFTDJiMTdD?=
- =?utf-8?B?Z3ZNTTB5dWxnWlpBV2Z0eDJtaDZxSmNFaEZBVnloMjFlWW1IVG9BVmJjRHA2?=
- =?utf-8?B?OVpKL2ZraytnbUVObHdtaDR2RmdkVjA3VlAwTVVQSlZJUjFiRjkycXFNY3or?=
- =?utf-8?B?ZGxEUXNUbjA0VTVVVmtEYlRXVGVDQlBicjRUN2N5YWJZeEtXQ1BuaHEraU9k?=
- =?utf-8?B?ekdsQzZVOS91b2U2YkdHS254YzBRU01JUk91eXVTZ2JVai9OeVFUS2VtRjJY?=
- =?utf-8?B?WjZ2U01tR3AzTEFFMlF6T1cwckkwOFJRdW5aWHVXUXVHU01ZNy8zZU1HS216?=
- =?utf-8?B?Q1FPNndHUGg5ZTlscHI2czhyVU96d2lsc3ZBcE9oUnpqcXNFZXp0VnpCWUV0?=
- =?utf-8?B?c2M0OEkvVTczbkIrNDFPVEk0ZTlTeXBKcG1iUDhCb1hpd09DRW1jTVpUUkd4?=
- =?utf-8?B?alZNMnFNTWJYU0RlUExwUmVBWjF2NnN6UEdiNW9jbjBmQzE4YXRxMnJPVWFr?=
- =?utf-8?B?SEk1Q21Dbzk1QUI1bG9RU0ZMaG1wYUlSUlNUTUVPS1daMU1sMzZZazlyMWVC?=
- =?utf-8?B?L1BTOHpzdG1WbWdZWkNydEFrUE5Fc1JwNEtQZXAvU2xjZ3VNWkREQ2FFclhU?=
- =?utf-8?B?R1FTSXNwS0NxNTNIc0d2OGFaUzRYTFpmOWl5cm02Z0xkY0hhZ1lsazVvS25C?=
- =?utf-8?B?cUtackFFbFFFcUNVd0IybEY0ek5qb0FhYnZMR29VMEhxZ2pvbWNsL2VhT0Rm?=
- =?utf-8?B?blk0UDh3SkxzVUNVNjkvSHVEV2FUUTRrTUtYNzFPcGN0ak5VZjQ2MjVxMG14?=
- =?utf-8?B?ZklQcVE2S2h4ZDRqdnhGOFAyQlVIQUZrN21ndzh6NjdqRUJzYStFbnA5aHFW?=
- =?utf-8?B?WXh6a1hIM0FKZFdiUlVkZ24ybmYwM2NYRkpxUERzMDhsb3lIT0dxak4va3dx?=
- =?utf-8?B?VmNVbGJiaEUxOW1XMzRXZlprb3BFY3JZRXVGdnRpMTFGdThsUG5mMDBlVzI4?=
- =?utf-8?B?c3F2V01RZ09WSmFCbUEyd1FkYVllQ3RDVDRTNDZNWlp2bzFUd0RjZHhqRXFx?=
- =?utf-8?B?MHNibEl2VG9NYXVjMllLcWRzR2gwaUFDczRkZmtMcE1PcVV3OWhpa3FRYUox?=
- =?utf-8?B?Qk00ZnJXZDVqY2hpdVZIZ1RRQ3BISG1SenJxYlkwQkJ6VTdYeEIvNndVRm41?=
- =?utf-8?B?TnNZNWswRHNTYTJ6a1R5RG4zR3RSak54d3pPR3RkL0g1dmU4ZkhCdU1tZUxI?=
- =?utf-8?B?UjFudHF5NVNSYUp0dUhiMnJtK084ZExRMUc4ZWZXVy96NlRYQ3hCY0RJVDIy?=
- =?utf-8?B?ODJzMnA0dmo3T2lTMm1yOGl2QlZyeGJWMDdYalhVcXZWanRkVEt3SUlMeTI3?=
- =?utf-8?B?YmpLdjFnQ2g1UFdvNVRTbnhjOFlTMjRDNk12OW9oWVRpc1g1NTh0S2R6cG0y?=
- =?utf-8?B?VDRFanNHYmcyMDI3NmJKbU5RcXVGZnFtK2FHMnFubzRhTkMvWWorZ05GQXVl?=
- =?utf-8?B?Y2tsakRZdTdTT0pib2pPSjlOQk4xeEorRG9VU3JEa1ZYNXVLOTRZTXNCK3hx?=
- =?utf-8?B?V3JhZmpHOWdtOUhIUEJEK2tpZExtU0hscis5SDN2QStackJRU1VDWmt5c2dL?=
- =?utf-8?B?M0tHaG15eGREakpmeTZ0OGVVaGdGNHdzVHdGTXlMeVFzeWtjUHdTSG1SRmox?=
- =?utf-8?B?UTFjNHhCTlVwV0J3aDcxeWtNc2RNUFhHc0lRVElTWmJZaTRFK1piY0txRXdO?=
- =?utf-8?B?SUlTWHZXclUxRXRSUzRNS3lDQlN2Q2tnL1pselk0M2VSYWRxSDV4MkM2bkxE?=
- =?utf-8?B?REh1RDlmRmduTG5CeHYwdjJmdTlvSFlCVHNlaURyZFIzY0Y1aXhFNGg4blBr?=
- =?utf-8?B?dVgwRzFHTUQ2UW90SWRrTG5Td1RxU1BETmlFbjNBMURlSjFjKzV0VVlkMDRn?=
- =?utf-8?B?TlVLOXpVNXQya0hYSWFPR1N0bTRKZVZzV1ZjU2pRUHNGbU56VEpvYTRFNlFD?=
- =?utf-8?B?Z015WjJHWUNMZ0l1T3doMkhSOUt4d21OYjJXeWZxRE9vTGpoUzlaWjV3QUtH?=
- =?utf-8?B?dlpuK2hTTkpySTRjOHZRRUx1WXFIaDY4eFdkbGdESXFDeU1LeXlnZTJ5MUZp?=
- =?utf-8?Q?d5M3GUqdizCXf8Iisk1TvJNSy?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a734c8d-d0f1-4bb6-d9c4-08ddaf17387b
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4262.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 09:54:02.7707
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9QieL8gFNBqmT0yJZF5164lpxs1yPpmXKAx/BSz5VLHzCAMrEJwfGlGj8ywsh2z/wgwm63p4AD2h1ggUQoQSdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7857
+Content-Type: multipart/mixed; boundary="m55nvctvuaufcxua"
+Content-Disposition: inline
+In-Reply-To: <20250618233739.189106-2-song@kernel.org>
 
 
+--m55nvctvuaufcxua
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 6/19/2025 2:43 PM, Vlastimil Babka wrote:
-> On 6/19/25 09:31, Shivank Garg wrote:
->> Export anon_inode_make_secure_inode() to allow KVM guest_memfd to create
->> anonymous inodes with proper security context. This replaces the current
->> pattern of calling alloc_anon_inode() followed by
->> inode_init_security_anon() for creating security context manually.
->>
->> This change also fixes a security regression in secretmem where the
->> S_PRIVATE flag was not cleared after alloc_anon_inode(), causing
->> LSM/SELinux checks to be bypassed for secretmem file descriptors.
->>
->> As guest_memfd currently resides in the KVM module, we need to export this
+On Wed, Jun 18, 2025 at 04:37:36PM -0700, Song Liu wrote:
+> Existing kernfs_xattr_get() locks iattr_mutex, so it cannot be used in
+> RCU critical sections. Introduce __kernfs_xattr_get(), which reads xattr
+> under RCU read lock. This can be used by BPF programs to access cgroupfs
+> xattrs.
 > 
-> Could we use the new EXPORT_SYMBOL_GPL_FOR_MODULES() thingy to make this
-> explicit for KVM?
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  fs/kernfs/inode.c      | 14 ++++++++++++++
+>  include/linux/kernfs.h |  2 ++
+>  2 files changed, 16 insertions(+)
 > 
+> diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+> index b83054da68b3..0ca231d2012c 100644
+> --- a/fs/kernfs/inode.c
+> +++ b/fs/kernfs/inode.c
+> @@ -302,6 +302,20 @@ int kernfs_xattr_get(struct kernfs_node *kn, const char *name,
+>  	return simple_xattr_get(&attrs->xattrs, name, value, size);
+>  }
+>  
+> +int __kernfs_xattr_get(struct kernfs_node *kn, const char *name,
+> +		       void *value, size_t size)
+> +{
+> +	struct kernfs_iattrs *attrs;
+> +
+> +	WARN_ON_ONCE(!rcu_read_lock_held());
+> +
+> +	attrs = rcu_dereference(kn->iattr);
+> +	if (!attrs)
+> +		return -ENODATA;
 
-Thanks for the suggestion.
-I wasn't aware of this earlier. I think it makes sense to use it now.
+Hm, that looks a bit silly. Which isn't your fault. I'm looking at the
+kernfs code that does the xattr allocations and I think that's the
+origin of the silliness. It uses a single global mutex for all kernfs
+users thus serializing all allocations for kernfs->iattr. That seems
+crazy but maybe I'm missing a good reason.
 
-So, the code would look like this:
+I'm appending a patch to remove that mutex. @Greg, @Tejun, can you take
+a look whether that makes sense to you. Then I can take that patch and
+you can build yours on top of the series and I'll pick it all up in one
+go.
 
-+EXPORT_SYMBOL_GPL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
+You should then just use READ_ONCE(kn->iattr) or the
+kernfs_iattrs_noalloc(kn) helper in your kfunc.
 
-which builds fine for me. I hope this is the correct usage.
+--m55nvctvuaufcxua
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-kernfs-remove-iattr_mutex.patch"
 
-Thanks,
-Shivank
+From bdc53435a1cd5c456dc28d8239eff0e7fa4e8dda Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Thu, 19 Jun 2025 11:50:26 +0200
+Subject: [PATCH] kernfs: remove iattr_mutex
+
+All allocations of struct kernfs_iattrs are serialized through a global
+mutex. Simply do a racy allocation and let the first one win. I bet most
+callers are under inode->i_rwsem anyway and it wouldn't be needed but
+let's not require that.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Note, that this uses kfree() for the kmem cache allocation.
+That's been possible for a while now but not everyone knows about it
+yet so I'm pointing it out explicitly.
+---
+ fs/kernfs/inode.c | 74 +++++++++++++++++++++++++----------------------
+ 1 file changed, 40 insertions(+), 34 deletions(-)
+
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index b83054da68b3..f4b73b9482b7 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -24,45 +24,46 @@ static const struct inode_operations kernfs_iops = {
+ 	.listxattr	= kernfs_iop_listxattr,
+ };
+ 
+-static struct kernfs_iattrs *__kernfs_iattrs(struct kernfs_node *kn, int alloc)
++static struct kernfs_iattrs *__kernfs_iattrs(struct kernfs_node *kn, bool alloc)
+ {
+-	static DEFINE_MUTEX(iattr_mutex);
+-	struct kernfs_iattrs *ret;
++	struct kernfs_iattrs *ret __free(kfree) = NULL;
++	struct kernfs_iattrs *attr;
+ 
+-	mutex_lock(&iattr_mutex);
++	attr = READ_ONCE(kn->iattr);
++	if (attr || !alloc)
++		return attr;
+ 
+-	if (kn->iattr || !alloc)
+-		goto out_unlock;
+-
+-	kn->iattr = kmem_cache_zalloc(kernfs_iattrs_cache, GFP_KERNEL);
+-	if (!kn->iattr)
+-		goto out_unlock;
++	ret = kmem_cache_zalloc(kernfs_iattrs_cache, GFP_KERNEL);
++	if (!ret)
++		return NULL;
+ 
+ 	/* assign default attributes */
+-	kn->iattr->ia_uid = GLOBAL_ROOT_UID;
+-	kn->iattr->ia_gid = GLOBAL_ROOT_GID;
+-
+-	ktime_get_real_ts64(&kn->iattr->ia_atime);
+-	kn->iattr->ia_mtime = kn->iattr->ia_atime;
+-	kn->iattr->ia_ctime = kn->iattr->ia_atime;
+-
+-	simple_xattrs_init(&kn->iattr->xattrs);
+-	atomic_set(&kn->iattr->nr_user_xattrs, 0);
+-	atomic_set(&kn->iattr->user_xattr_size, 0);
+-out_unlock:
+-	ret = kn->iattr;
+-	mutex_unlock(&iattr_mutex);
+-	return ret;
++	ret->ia_uid = GLOBAL_ROOT_UID;
++	ret->ia_gid = GLOBAL_ROOT_GID;
++
++	ktime_get_real_ts64(&ret->ia_atime);
++	ret->ia_mtime = ret->ia_atime;
++	ret->ia_ctime = ret->ia_atime;
++
++	simple_xattrs_init(&ret->xattrs);
++	atomic_set(&ret->nr_user_xattrs, 0);
++	atomic_set(&ret->user_xattr_size, 0);
++
++	/* If someone raced us, recognize it. */
++	if (!try_cmpxchg(&kn->iattr, &attr, ret))
++		return READ_ONCE(kn->iattr);
++
++	return no_free_ptr(ret);
+ }
+ 
+ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
+ {
+-	return __kernfs_iattrs(kn, 1);
++	return __kernfs_iattrs(kn, true);
+ }
+ 
+ static struct kernfs_iattrs *kernfs_iattrs_noalloc(struct kernfs_node *kn)
+ {
+-	return __kernfs_iattrs(kn, 0);
++	return __kernfs_iattrs(kn, false);
+ }
+ 
+ int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr)
+@@ -141,9 +142,9 @@ ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size)
+ 	struct kernfs_node *kn = kernfs_dentry_node(dentry);
+ 	struct kernfs_iattrs *attrs;
+ 
+-	attrs = kernfs_iattrs(kn);
++	attrs = kernfs_iattrs_noalloc(kn);
+ 	if (!attrs)
+-		return -ENOMEM;
++		return -ENODATA;
+ 
+ 	return simple_xattr_list(d_inode(dentry), &attrs->xattrs, buf, size);
+ }
+@@ -166,9 +167,10 @@ static inline void set_inode_attr(struct inode *inode,
+ 
+ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
+ {
+-	struct kernfs_iattrs *attrs = kn->iattr;
++	struct kernfs_iattrs *attrs;
+ 
+ 	inode->i_mode = kn->mode;
++	attrs = kernfs_iattrs_noalloc(kn);
+ 	if (attrs)
+ 		/*
+ 		 * kernfs_node has non-default attributes get them from
+@@ -306,7 +308,9 @@ int kernfs_xattr_set(struct kernfs_node *kn, const char *name,
+ 		     const void *value, size_t size, int flags)
+ {
+ 	struct simple_xattr *old_xattr;
+-	struct kernfs_iattrs *attrs = kernfs_iattrs(kn);
++	struct kernfs_iattrs *attrs;
++
++	attrs = kernfs_iattrs(kn);
+ 	if (!attrs)
+ 		return -ENOMEM;
+ 
+@@ -345,8 +349,9 @@ static int kernfs_vfs_user_xattr_add(struct kernfs_node *kn,
+ 				     struct simple_xattrs *xattrs,
+ 				     const void *value, size_t size, int flags)
+ {
+-	atomic_t *sz = &kn->iattr->user_xattr_size;
+-	atomic_t *nr = &kn->iattr->nr_user_xattrs;
++	struct kernfs_iattrs *attr = kernfs_iattrs_noalloc(kn);
++	atomic_t *sz = &attr->user_xattr_size;
++	atomic_t *nr = &attr->nr_user_xattrs;
+ 	struct simple_xattr *old_xattr;
+ 	int ret;
+ 
+@@ -384,8 +389,9 @@ static int kernfs_vfs_user_xattr_rm(struct kernfs_node *kn,
+ 				    struct simple_xattrs *xattrs,
+ 				    const void *value, size_t size, int flags)
+ {
+-	atomic_t *sz = &kn->iattr->user_xattr_size;
+-	atomic_t *nr = &kn->iattr->nr_user_xattrs;
++	struct kernfs_iattrs *attr = kernfs_iattrs(kn);
++	atomic_t *sz = &attr->user_xattr_size;
++	atomic_t *nr = &attr->nr_user_xattrs;
+ 	struct simple_xattr *old_xattr;
+ 
+ 	old_xattr = simple_xattr_set(xattrs, full_name, value, size, flags);
+-- 
+2.47.2
+
+
+--m55nvctvuaufcxua--
 
