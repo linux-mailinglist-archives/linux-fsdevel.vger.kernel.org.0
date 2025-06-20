@@ -1,154 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-52351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E17AE2256
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:37:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371E8AE2275
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9DF33ADC73
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:36:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B2267A4C3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81BA2EAB8E;
-	Fri, 20 Jun 2025 18:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B04220687;
+	Fri, 20 Jun 2025 18:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="It6HDZAc"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wV33ZKmi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iltBBPrt";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wV33ZKmi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iltBBPrt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4046BFCE;
-	Fri, 20 Jun 2025 18:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338132DFA49
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 18:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750444606; cv=none; b=T/SyOJwgKAq2tmNQhKi57BA2d2B65yw4rjh9e/HhZnGGd+ETZ8DldTnsWQq3xmNVQ43a0lATCyjQCaN8irBLUqZG684KeoZx3kRNHDiGQj3aMkC+pRdMx59hJ7Qb5hjH8cIJZNrz3w3NMYyCc/T+os4tEENUF88v90AK4htL70A=
+	t=1750445226; cv=none; b=lKZjjPDxxw2/+spMl5YZC86N44RS93TxcCnQsqljGfKyR4hO5Ov3mFtzwvCCxm8l50/hTOKoMhhzaECk+vxSxCkE5BZtYJdvvd5TT+uRqD22Lqzi01C1mx9P/ACJufkXnQDYj6JPs/fjDFbhrreFGGFB3vUwONCSnnTG0MlikLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750444606; c=relaxed/simple;
-	bh=5aprew4hKX/coXkjFe17a/Yyf3ir4h7JJIR+NElQm6A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GV0XmbssbyBE7I/wm8mGFUhDyzTwalS5lC1y65YTMmzSHL5dPFbqjYwqzH3NHcRwx8G0Epu7pk/V/QjS4GdfrNtNL6r4o6gyU2jh31ygUy2VMDhVkzVNb5BHH9zy/vlUuncJc4qCjh7APfOK0ULgl2rfzGUvJeAq+pZvMLnmkDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=It6HDZAc; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2363616a1a6so18145835ad.3;
-        Fri, 20 Jun 2025 11:36:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750444604; x=1751049404; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=s4gciWTSONw0akSEEEhFqXpes8/mqcuvWff1e7xwDzs=;
-        b=It6HDZAc9AL787xkUle1V7wdcGePPaVkKUbY67oohIxW0P77VpbUDvM/T7xkpGLWbr
-         VI3OdY7tuXaSHDnzh8nSmaw9Wdj3ki94g1UJbbZBJP0qE3+WObmfimREtahAZBBmilGP
-         j5A/T/DMdrl0fB4jl7CIxwQaG05kJmGrex9nk4Rw04aEegTkphFvleV/j/fOKeI1NCNU
-         3CcusWPTT61rNdflN0GNattEsMvk7aOtSgWraG4bdA57H13ec1p3k3KKA6kTLAkdBzIO
-         XIYBzgEwWn0V2oEMMWzYiWgU/XL0mjTP35e3t9x/8aiJ+hDwMnvyPeR6FM/7c0vnM9TU
-         M9bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750444604; x=1751049404;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s4gciWTSONw0akSEEEhFqXpes8/mqcuvWff1e7xwDzs=;
-        b=R7r1JXuD7kmGZZyayWRu4PahhIfQ/XOWbqzcntW8MrCSaMZXANPRw/nWIAxv24CyDO
-         dGepen2IpQxorjOCcYoZpGpolD2edZxX3wgEH4IlStLMW8KKmNU8QAOhprN1uw2kL8aP
-         KVj5FVI7cYwXt9/sBhdZrMwuuIsGxi4CmKKMe2BfDnAz7JX0X9oZtCurYgG+g9A1gGml
-         YZzjDiGsYL3g2LERiIv0MVwF8oOxwZvH03gcNRU2QDVyhIC73w6za/eVoLnQCql1K4zy
-         kTPLlvKBuFf2q+9lWvPxlRjCd1wxEj7kSORAsPdtcTFNN9U7iBs1ZgcWp7HuV4fDxDY2
-         ACwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVe6NAK5XCZpE1ABBVWMnnFK/8bNdvdVVy5I8GozRod469/iE2ab9mMsC85lOmKDYhGEmxqcXzQ27WhVOCv@vger.kernel.org, AJvYcCW/rt/a2dedOUFswiUBXCj98CIXohgGbmipAmDTrLxdKYfhi03dk/Y3ZFD1+yGYnUvhugU+17N0V4JbdckV@vger.kernel.org, AJvYcCWhHNjVHflB//UQvlyp5yv2Uok8ela/3HW/sgosoK6qkC4rCBSxONeeXTp4pmkwXhl7LRxtHC34TEoUaG9ikSWjbuWjQs62@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkbP7w9tiBQhJ7NY8eW99BJwcSdr3PJOP2rKV0ZEVXhSiJu67n
-	kyCCVixfwbpj3vrnIb127TOFE++bohgoS+xkb0Rrs2BtKQCkf+mmtPh6
-X-Gm-Gg: ASbGncsCM5PfWhjckAPiq0F9K1wOeebcuOr8WaLA08r88x8kR26ucOLFoSZ4dhE0xaU
-	GhkxHpBbyu3HAYUTRHvI7TwS7TTZBAYpAIJCc+N+n0SWeGTztAWJQPv8xXBEdddifMMCvi7TM+W
-	Sq3T1/c8AR4tPIcWmfivGdEytjwvwt+I0IsOc+hEUvO8ycrchbBSEGTYRqa081tCR/gzbrCPR5l
-	25TvSJ0EU6xLRJRtJesl3ZeO8NTuAv62bPKBePZPJaPMuNRyyIs13Yskx7I3vuRXbkiGIVxfysG
-	GZI4vFPxGqqyxdHB3wXsl3J+w6Ph/OiXk2ERPqYc/udzB7LU0v1qjojjYAG0eVYs99um
-X-Google-Smtp-Source: AGHT+IGHKJOmUPn26KDy0m1jr5bhCOMFbt9X8MQuRFyRFftp90pbLKnHi7J8ydZpQWGBmXaW0/MOfA==
-X-Received: by 2002:a17:903:2306:b0:234:d7b2:2ac4 with SMTP id d9443c01a7336-237d980da56mr67713185ad.17.1750444603773;
-        Fri, 20 Jun 2025 11:36:43 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:14a::247? ([2620:10d:c090:600::1:97ac])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d860a426sm23459215ad.117.2025.06.20.11.36.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 11:36:43 -0700 (PDT)
-Message-ID: <de68f43f9e83230bbb055fdecba564ee662d6091.camel@gmail.com>
-Subject: Re: [PATCH v2 bpf-next 4/5] selftests/bpf: Add tests for
- bpf_cgroup_read_xattr
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Song Liu	
- <song@kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>, "Jose E. Marchesi"
-	 <jose.marchesi@oracle.com>
-Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel
- <linux-fsdevel@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>, LSM
- List <linux-security-module@vger.kernel.org>,  Kernel Team
- <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>, Alexei
- Starovoitov <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro	
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	 <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, Matt Bobrowski	
- <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, Daan
- De Meyer <daan.j.demeyer@gmail.com>
-Date: Fri, 20 Jun 2025 11:36:40 -0700
-In-Reply-To: <CAADnVQKKQ8G91EudWVpw5TZ6zg3DTaKx9nVBUj1EdLu=7K+ByQ@mail.gmail.com>
-References: <20250619220114.3956120-1-song@kernel.org>
-	 <20250619220114.3956120-5-song@kernel.org>
-	 <CAADnVQKKQ8G91EudWVpw5TZ6zg3DTaKx9nVBUj1EdLu=7K+ByQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1750445226; c=relaxed/simple;
+	bh=Cus87x9xWctWVEhliM11PHlEDTfUIJe8asLHPb9D8Qw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXB7ADHc1ddsHSY+C3qJpN7Q2D4z/z3OlzZdgRROVR8QC8/drrTuiDkzXR74B6MizCK+QopnnQF1EdVB0sFAxPHUXN+K2wnloQ9m/uo7ieHERg3reSeyaM+oHAAHLobabvSutUP+4IdSgf/sMnf3m7IDzc3/PTxRPR0fy0iNImQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wV33ZKmi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iltBBPrt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wV33ZKmi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iltBBPrt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2522F2122A;
+	Fri, 20 Jun 2025 18:47:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750445222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0TkWPg2eqT1+Wq/XA39xuKkI/6ymg24dNRTDXNGfR9M=;
+	b=wV33ZKmidBf6Y8tLbYUzp3ExOoEPuqaXGNO1YKfUzB3/w6kUbu02/maHt8FMnN4Da9PGMS
+	f/xj59Z9f2sNOOQGQZwZXjlX5vxf16MTmKx0ZrujArItuct/44+QL2YYZZXq6No3336eam
+	mNLTOl4uB7qph5v5nYSGBhagrx1l+yg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750445222;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0TkWPg2eqT1+Wq/XA39xuKkI/6ymg24dNRTDXNGfR9M=;
+	b=iltBBPrtxjj12CpwRx3h+WSbqrjS7pCaqKpa20FayEi0UZ3cdueWboT+A2rw9MX97i0kQZ
+	Kwks5DiRHuYcBuAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750445222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0TkWPg2eqT1+Wq/XA39xuKkI/6ymg24dNRTDXNGfR9M=;
+	b=wV33ZKmidBf6Y8tLbYUzp3ExOoEPuqaXGNO1YKfUzB3/w6kUbu02/maHt8FMnN4Da9PGMS
+	f/xj59Z9f2sNOOQGQZwZXjlX5vxf16MTmKx0ZrujArItuct/44+QL2YYZZXq6No3336eam
+	mNLTOl4uB7qph5v5nYSGBhagrx1l+yg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750445222;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0TkWPg2eqT1+Wq/XA39xuKkI/6ymg24dNRTDXNGfR9M=;
+	b=iltBBPrtxjj12CpwRx3h+WSbqrjS7pCaqKpa20FayEi0UZ3cdueWboT+A2rw9MX97i0kQZ
+	Kwks5DiRHuYcBuAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8461B136BA;
+	Fri, 20 Jun 2025 18:46:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id y/tWHaKsVWgWFwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 20 Jun 2025 18:46:58 +0000
+Date: Fri, 20 Jun 2025 19:46:56 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	"David S . Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>, 
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Hugh Dickins <hughd@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: change vm_get_page_prot() to accept vm_flags_t
+ argument
+Message-ID: <64r5sm2aqgphrs5t4vzzgz7qitn3efmxpxjzv4wsaeyuncrn56@tdu4z7uzxluq>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+ <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+ <20250619-unwiederholbar-addition-6875c99fe08d@brauner>
+ <a21c59dd-5d2d-4cd2-a04d-63eec059f3c9@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a21c59dd-5d2d-4cd2-a04d-63eec059f3c9@lucifer.local>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,armlinux.org.uk,arm.com,linux.ibm.com,ellerman.id.au,gmail.com,csgroup.eu,davemloft.net,gaisler.com,linux.intel.com,linutronix.de,redhat.com,alien8.de,zytor.com,infradead.org,zeniv.linux.org.uk,suse.cz,nvidia.com,linux.alibaba.com,oracle.com,zte.com.cn,linux.dev,google.com,suse.com,surriel.com,intel.com,goodmis.org,efficios.com,ziepe.ca,suse.de,cmpxchg.org,bytedance.com,lists.infradead.org,vger.kernel.org,lists.ozlabs.org,kvack.org,lists.linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_GT_50(0.00)[64];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Fri, 2025-06-20 at 11:11 -0700, Alexei Starovoitov wrote:
-> On Thu, Jun 19, 2025 at 3:02=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> > +       bpf_dynptr_from_mem(xattr_value, sizeof(xattr_value), 0, &value=
-_ptr);
->=20
-> https://github.com/kernel-patches/bpf/actions/runs/15767046528/job/444455=
-39248
->=20
-> progs/cgroup_read_xattr.c:19:9: error: =E2=80=98bpf_dynptr_from_mem=E2=80=
-=99 is static
-> but used in inline function =E2=80=98read_xattr=E2=80=99 which is not sta=
-tic [-Werror]
-> 19 | bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-> > ^~~~~~~~~~~~~~~~~~~
->=20
->=20
-> Jose,
->=20
-> Could you please help us understand this gcc-bpf error ?
-> What does it mean?
+On Thu, Jun 19, 2025 at 09:49:03AM +0100, Lorenzo Stoakes wrote:
+> On Thu, Jun 19, 2025 at 10:42:14AM +0200, Christian Brauner wrote:
+> > If you change vm_flags_t to u64 you probably want to compile with some
+> > of these integer truncation options when you're doing the conversion.
+> > Because otherwise you risk silently truncating the upper 32bits when
+> > assigning to a 32bit variable. We've had had a patch series that almost
+> > introduced a very subtle bug when it tried to add the first flag outside
+> > the 32bit range in the lookup code a while ago. That series never made
+> > it but it just popped back into my head when I read your series.
+> 
+> Yeah am very wary of this, it's a real concern. I'm not sure how precisely we
+> might enable such options but only in this instance? Because presumably we are
+> intentionally narrowing in probably quite a few places.
+> 
+> Pedro mentioned that there might be compiler options to help so I'm guessing
+> this is the same thing as to what you're thinking here?
 
-Not Jose, but was curious.
-Some googling lead to the following C99 wording [1]:
+I was thinking about -Wnarrowing but sadly it seems that this is only for C++
+code. Also MSVC is quite strict (even in C) when it comes to this stuff, so you
+could also add MSVC support to the kernel, small task :P
 
-  > An inline definition of a function with external linkage shall not
-  > contain a definition of a modifiable object with static storage
-  > duration, and shall not contain a reference to an identifier with
-  > internal linkage
+One could in theory add support for this stuff in GCC, but I would expect it
+to flag almost everything in the kernel (e.g long -> int implicit conversions).
+> 
+> I also considered a sparse flag, Pedro mentioned bitwise, but then I worry that
+> we'd have to __force in a million places to make that work and it'd be
+> non-obvious.
 
-[1] https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf
-    6.7.4 Function specifiers, paragraph 3
+Here's an example for __bitwise usage taken from block:
 
-The helper is defined as `static`:
+typedef unsigned int __bitwise blk_insert_t;
+#define BLK_MQ_INSERT_AT_HEAD		((__force blk_insert_t)0x01)
 
-  static long (* const bpf_dynptr_from_mem)(...) =3D (void *) 197;
 
-While `read_xattr` has external linkage:
+then in block/blk-mq.c:
 
-  __always_inline void read_xattr(struct cgroup *cgroup)
-  {
-	...
-	bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-	...
-  }
+	if (flags & BLK_MQ_INSERT_AT_HEAD)
+		list_add(&rq->queuelist, &hctx->dispatch);
 
-I think that declaring `read_xattr` as `static` should help with gcc.
+
+So doing regular old flag checks with the bitwise & operator seems to work fine.
+Assignment itself should also just work. So as long as we're vm_flags_t-typesafe
+there should be no problem? I think.
+
+> 
+> Matthew's original concept for this was to simply wrap an array, but that'd
+> require a complete rework of every single place where we use VMA flags (perhaps
+> we could mitigate it a _bit_ with a vm_flags_val() helper that grabs a u64?)
+> 
+
+I think the real question is whether we expect to ever require > 64 flags for
+VMAs? If so, going with an array would be the best option here. Though in that
+case I would guess we probably want to hide the current vm_flags member in
+vm_area_struct first, providing some vm_flags_is_set() and whatnot.
+
+-- 
+Pedro
 
