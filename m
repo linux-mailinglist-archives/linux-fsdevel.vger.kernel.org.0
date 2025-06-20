@@ -1,186 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-52274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66524AE0FDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 01:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CF6AE107B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 02:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1FC116AAAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jun 2025 23:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE5C4174D46
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 00:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDC128C86C;
-	Thu, 19 Jun 2025 23:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94441AAC9;
+	Fri, 20 Jun 2025 00:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RbHjnOUG"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZnMK5G+A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E69930E826
-	for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 23:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBF0AD24
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 00:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750374383; cv=none; b=ShmWrbJaVju4btW7/5qZ1Jl2YP8KNc+trjqXwifz3SUiXSFH1T3BsA4GGhxQzotO+a5iAKJf1f40CnjUi4AmXdvV8zWnHcKsaM3SCLdXXlC71YIuyeDyw+uuv1e1PI2+BaQigHvKCoL1e5fv3mz90YMmxONzAAWQ3S6ZHx/Dk5k=
+	t=1750380699; cv=none; b=nvSjOx4FmFvvCpgch61Co4j4lmAgh7LCNi3K9ojHkSCTxjltZtItcep9ABSP/gP5OXzm6sp7e3zgV7RvAtYZci6BLrrETQBFg0KjxP4Y32XKTzOV/fblhHamoEyRWq/ZHthQqvzuf0MYkwAdZdzKzsuTSRtzHrSHyM45ZiVYjTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750374383; c=relaxed/simple;
-	bh=xLSzef8OBKp8WdSidUaWKWCzj3aDKaduxackxq7J+rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fv5bR0BB67bKcjlRkVHqr4cRAhkEtTf0u9WGA3es30IoX4BXrmqtNQB5aKur6fWD2W/8tQij8cixaY5dYl5zf+XuKW2iTX4PRarfZ3obMCifVNPsp7Zcld8leWZlqHX+91WgMf5Va2MKImiQBBx6nuGKxFcl6NumydvLYgixzps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RbHjnOUG; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 19 Jun 2025 19:06:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750374369;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=5LTGIqYt6iAiPr4P7jFH6TzoG7BfNPLA+2XxRHz76y4=;
-	b=RbHjnOUGIRQOiSZ3X3qm6q6z0BJ81fDvVlm3U+XdPWGD/bJ+iy7U3LKuE0kQ/Of91H4LgY
-	HQXsw+4fGxdy9l+BPBTh53hPMdLb/+m36OWAzEcg7pBYNrmSYgmCGtqkTzIq/9axTgRo/a
-	qu86og7+6IS1A33Aa38P0AZ+s7eaQv0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.16-rc3
-Message-ID: <4xkggoquxqprvphz2hwnir7nnuygeybf2xzpr5a4qtj4cko6fk@dlrov4usdlzm>
+	s=arc-20240116; t=1750380699; c=relaxed/simple;
+	bh=XBfHEcK0mWjYsnnj8nv9sCwT1bjoUaVhc1XilYY5l2Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ITlT0A1F9Tbx5F5kQXRRKUP/kujdKMAF0CqQyU5XhVDWd0tf3kZO4GZUHKLAwUtrRUR9AuDJpna7Lzc34CiJBeTch4Zhxt2/16t7bHcZFrcBN5TlGYTagDFak5IZSyg5hFASDLY8f+V5nE41Ir6TEkLt1FHnQckHfonEszM44/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZnMK5G+A; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ade58ef47c0so271793166b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 17:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1750380695; x=1750985495; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=amCKKTK7Xfm9vaiLtnNoWf+4gB9P6Ypa7zFByBfugqE=;
+        b=ZnMK5G+A+WEyalYQwt6JJpcaXysCvoia/8R/4lxRVhmsdzlQe4pnji9hPimg0B92b5
+         cs8Vd8ETAyI8J8gPskDBALJ8qYGeuC4Zp7NFB/rw/e9W5Z23TFRM4rnTmeiH2IkKtXXc
+         e07+0f1vbS4EE1B6U8dRGaXIiJahM6TLHAmDI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750380695; x=1750985495;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=amCKKTK7Xfm9vaiLtnNoWf+4gB9P6Ypa7zFByBfugqE=;
+        b=BAxnRe6dvQggofAa7/IhsaQ3jYCsUM2yG8BAnPRbS1gyy0dNal6YfCgBF7GkFZz326
+         hi7cJ8lsRLjZom9MBehTB6HLIxVZlJp66B6AZcvYHbw0mpftkDooQOs589MC5+884DGv
+         zO4tWInYptxIdcpT17n4P6irnZAMhrP8A3HsP/zdc9M1KGh8KjTwEOMpM2xcnhEsVvPc
+         SEZnr5oHgA/mHcDdqntVEqMNBGnldiKiQ2o3kF8S7h8QQi3Z+ac3IxhVUsCNQQ6/v8lO
+         0ucr3SLvQC4c1/8pCnvKou+WSvbqkcbjjT9m3Xa+ZrJg536LjJWw+4d3Bz5ZVcH9Ibls
+         bfuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4ukW1zpu9/CZgUKWL3hZXdxLeE+LRXNYlVCvLcaOIjBrjGSFCZ+byi74XET8Xre8CkPx101hWNn1mJQho@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw04yCOqnoJgBBF4s56XyfeiIWO3djCOJ1fw7MinfqVrIQ/VtUq
+	y7O/3bj9ff7q6EwsaQLknh7XENi7PyJjjnucHOUtNiWSRdMnhLa0wwr1cVj3YVR54CySVr9tUi5
+	8sVait04=
+X-Gm-Gg: ASbGnctInfl+9R75c9tKzalwoSqZdKTJZTIKcw8k/JS3zzwi21pJZYJw9NfW43PFEAp
+	9sgGYLKaKfPw8dDvF6ny19sbvEBReCANajEkugkaiSjHmEQ+Uzh7cif6nQLbQ+LXn/uECaotjIi
+	dckXhCHnykUq8N4tl+t2biDqH71Cw86c1HVedFkUF4h1EyjDfuCJwEUm/zIb7qhu06SwH9JE2v6
+	P8UGOlkxDvZEO3Aqz9cykvhJVeHNOXgZmKDtQ1Ws3aDPsUTZTwqXoPvxMyv+ueXGcwunV8fMbSp
+	M+Y5muLrpwmFDyVJi6w7pma9l2v8XLng+L2XSK+8GbAj+zvuH9vUqG/vs7dUJF7tZrB+smhgD90
+	qxUiYnU49wqF7ug6asd4lP9cG1s+PsgB5ZxK6
+X-Google-Smtp-Source: AGHT+IFxyvGdOX1UCB+hzpT6RAUNYOUmgfps6eTbVlSB8Tut2bOX8bdOkrc7DRKuQIDk2kI1ISFL2g==
+X-Received: by 2002:a17:907:968f:b0:ade:3413:8792 with SMTP id a640c23a62f3a-ae05ae1f695mr42500066b.8.1750380695284;
+        Thu, 19 Jun 2025 17:51:35 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053ee4c84sm72430366b.67.2025.06.19.17.51.34
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jun 2025 17:51:34 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae04ce9153aso153487766b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 17:51:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVXopOoB7baoZNRp6cW9zEduRoIb6DkU+LgO15eqmn6lcYBzipHPwvB9349fkOsGLwlN03UBGqLHJ7AvgSM@vger.kernel.org
+X-Received: by 2002:a17:907:3cd4:b0:ad8:93f6:6637 with SMTP id
+ a640c23a62f3a-ae05aff9d00mr27360766b.21.1750380693794; Thu, 19 Jun 2025
+ 17:51:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+References: <4xkggoquxqprvphz2hwnir7nnuygeybf2xzpr5a4qtj4cko6fk@dlrov4usdlzm>
+In-Reply-To: <4xkggoquxqprvphz2hwnir7nnuygeybf2xzpr5a4qtj4cko6fk@dlrov4usdlzm>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 19 Jun 2025 17:51:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi2ae794_MyuW1XJAR64RDkDLUsRHvSemuWAkO6T45=YA@mail.gmail.com>
+X-Gm-Features: AX0GCFuhpreW8drYXdBOfJBDTA2DYta__fpckLTs4pxLGozxz1PdEwH2JifGeHE
+Message-ID: <CAHk-=wi2ae794_MyuW1XJAR64RDkDLUsRHvSemuWAkO6T45=YA@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc3
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Entirely too many patches, but mostly check/repair, and related.
+On Thu, 19 Jun 2025 at 16:06, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> - New option: journal_rewind
+>
+>   This lets the entire filesystem be reset to an earlier point in time.
+>
+>   Note that this is only a disaster recovery tool, and right now there
+>   are major caveats to using it (discards should be disabled, in
+>   particular), but it successfully restored the filesystem of one of the
+>   users who was bit by the subvolume deletion bug and didn't have
+>   backups. I'll likely be making some changes to the discard path in the
+>   future to make this a reliable recovery tool.
 
-6.16 looks to be shaping up well, knock on wood.
+You seem to have forgotten what the point of the merge window was again.
 
-The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
+We don't start adding new features just because you found other bugs.
 
-  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
+I remain steadfastly convinced that anybody who uses bcachefs is
+expecting it to be experimental. They had better.
 
-are available in the Git repository at:
+Make the -rc fixes be pure fixes.
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-06-19
-
-for you to fetch changes up to b2e2bed119809a5ca384241e0631f04c6142ae08:
-
-  bcachefs: Add missing key type checks to check_snapshot_exists() (2025-06-19 14:37:04 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.16-rc3
-
-- Lots of small check/repair fixes, primarily in subvol loop and
-  directory structure loop (when involving snapshots).
-
-- Fix a few 6.16 regressions: rare UAF in the foreground allocator path
-  when taking a transaction restart from the transaction bump allocator,
-  and some small fallout from the change to log the error being
-  corrected in the journal when repairing errors, also some fallout from
-  the btree node read error logging improvements.
-
-  (Alan, Bharadwaj)
-
-- New option: journal_rewind
-
-  This lets the entire filesystem be reset to an earlier point in time.
-
-  Note that this is only a disaster recovery tool, and right now there
-  are major caveats to using it (discards should be disabled, in
-  particular), but it successfully restored the filesystem of one of the
-  users who was bit by the subvolume deletion bug and didn't have
-  backups. I'll likely be making some changes to the discard path in the
-  future to make this a reliable recovery tool.
-
-- Some new btree iterator tracepoints, for tracking down some
-  livelock-ish behaviour we've been seeing in the main data write path.
-
-----------------------------------------------------------------
-Alan Huang (6):
-      bcachefs: Don't allocate new memory when mempool is exhausted
-      bcachefs: Fix alloc_req use after free
-      bcachefs: Add missing EBUG_ON
-      bcachefs: Delay calculation of trans->journal_u64s
-      bcachefs: Move bset size check before csum check
-      bcachefs: Fix pool->alloc NULL pointer dereference
-
-Bharadwaj Raju (1):
-      bcachefs: don't return fsck_fix for unfixable node errors in __btree_err
-
-Kent Overstreet (33):
-      bcachefs: trace_extent_trim_atomic
-      bcachefs: btree iter tracepoints
-      bcachefs: Fix bch2_journal_keys_peek_prev_min()
-      bcachefs: btree_iter: fix updates, journal overlay
-      bcachefs: better __bch2_snapshot_is_ancestor() assert
-      bcachefs: pass last_seq into fs_journal_start()
-      bcachefs: Fix "now allowing incompatible features" message
-      bcachefs: Fix snapshot_key_missing_inode_snapshot repair
-      bcachefs: fsck: fix add_inode()
-      bcachefs: fsck: fix extent past end of inode repair
-      bcachefs: opts.journal_rewind
-      bcachefs: Kill unused tracepoints
-      bcachefs: mark more errors autofix
-      bcachefs: fsck: Improve check_key_has_inode()
-      bcachefs: Call bch2_fs_init_rw() early if we'll be going rw
-      bcachefs: Fix __bch2_inum_to_path() when crossing subvol boundaries
-      bcachefs: fsck: Print path when we find a subvol loop
-      bcachefs: fsck: Fix remove_backpointer() for subvol roots
-      bcachefs: fsck: Fix reattach_inode() for subvol roots
-      bcachefs: fsck: check_directory_structure runs in reverse order
-      bcachefs: fsck: additional diagnostics for reattach_inode()
-      bcachefs: fsck: check_subdir_count logs path
-      bcachefs: fsck: Fix check_path_loop() + snapshots
-      bcachefs: Fix bch2_read_bio_to_text()
-      bcachefs: Fix restart handling in btree_node_scrub_work()
-      bcachefs: fsck: Fix check_directory_structure when no check_dirents
-      bcachefs: fsck: fix unhandled restart in topology repair
-      bcachefs: fsck: Fix oops in key_visible_in_snapshot()
-      bcachefs: fix spurious error in read_btree_roots()
-      bcachefs: Fix missing newlines before ero
-      bcachefs: Fix *__bch2_trans_subbuf_alloc() error path
-      bcachefs: Don't log fsck err in the journal if doing repair elsewhere
-      bcachefs: Add missing key type checks to check_snapshot_exists()
-
- fs/bcachefs/alloc_background.c         |  13 +-
- fs/bcachefs/bcachefs.h                 |   3 +-
- fs/bcachefs/btree_gc.c                 |   8 +-
- fs/bcachefs/btree_io.c                 |  74 ++++----
- fs/bcachefs/btree_iter.c               | 173 ++++++++++++------
- fs/bcachefs/btree_journal_iter.c       |  64 ++++---
- fs/bcachefs/btree_journal_iter_types.h |   5 +-
- fs/bcachefs/btree_trans_commit.c       |  18 +-
- fs/bcachefs/btree_types.h              |   1 +
- fs/bcachefs/btree_update.c             |  16 +-
- fs/bcachefs/btree_update_interior.c    |  11 +-
- fs/bcachefs/btree_update_interior.h    |   3 +
- fs/bcachefs/btree_write_buffer.c       |   3 +
- fs/bcachefs/chardev.c                  |  29 ++-
- fs/bcachefs/data_update.c              |   1 +
- fs/bcachefs/errcode.h                  |   5 -
- fs/bcachefs/error.c                    |   4 +-
- fs/bcachefs/extent_update.c            |  13 +-
- fs/bcachefs/fsck.c                     | 317 +++++++++++++++++++++++----------
- fs/bcachefs/inode.h                    |   5 +
- fs/bcachefs/io_read.c                  |   7 +-
- fs/bcachefs/journal.c                  |  18 +-
- fs/bcachefs/journal.h                  |   2 +-
- fs/bcachefs/journal_io.c               |  26 ++-
- fs/bcachefs/namei.c                    |  30 +++-
- fs/bcachefs/opts.h                     |   5 +
- fs/bcachefs/recovery.c                 |  24 ++-
- fs/bcachefs/recovery_passes.c          |   6 +-
- fs/bcachefs/recovery_passes.h          |   9 +
- fs/bcachefs/sb-errors_format.h         |  17 +-
- fs/bcachefs/snapshot.c                 |  14 +-
- fs/bcachefs/super.c                    |  13 +-
- fs/bcachefs/super.h                    |   1 +
- fs/bcachefs/trace.h                    | 125 +++----------
- 34 files changed, 657 insertions(+), 406 deletions(-)
+                Linus
 
