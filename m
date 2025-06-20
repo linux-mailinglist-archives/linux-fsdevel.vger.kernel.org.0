@@ -1,157 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-52344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BA6AE21C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:11:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D067AE21CC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A19737AE0EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87114A843F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4672E974C;
-	Fri, 20 Jun 2025 18:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCB02EAD1A;
+	Fri, 20 Jun 2025 18:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QQ4jfbH2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FkSgmwEa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QQ4jfbH2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FkSgmwEa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhJem19N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492421DF25C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 18:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CE42EA752;
+	Fri, 20 Jun 2025 18:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750443085; cv=none; b=nVUdWU3+NIBBi9nkmW3Quj6LiDVOoMCH30sQw6hM8pJY7TBsIRblYHLsgkQ4O96Uf6DQOlmHE0salpJHyou5jqrmUgbeBtFJ+a+kWYD6AR1QmN3pP8i9X9HMiaxf315qTfeDEV4/d1TRVUjVWurwHtA4f3AzJkU42XFwbsjJrpc=
+	t=1750443090; cv=none; b=Gh148CpQ+BDl5heV6qpqtCSTTQI27IAZBlfz2eCelZEqr4nu16ZzpZT0yzzhyBhHk5VKHpQ55bFs05wkvPgXWTGXVTn/U1UOvE5r+FHvsg+wLhZmS6g3Ozj0mqyZ1vS+GVPV5WkGBsDk7SOZ0wYh+LZKDomRqHlzSJccDdUWEg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750443085; c=relaxed/simple;
-	bh=UHvHChrgG5t1z1XdYwrjPeORXMs45w/rp2wXZzO+P9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uhi1iHvcQ8YwPuEpSJ+5IJ9Zvmoa2KzIqz+ugHBw926WfZuhdc9HljTPHlhtN8EvldmyeXxGXV2LS+5dZNsFT1PgnXi8D6dU+ty1S4z2o8kb35SG7vdlnFK+VK40Jy53FdmgGIGELSUnjn2udTs6A+NSqoVA9k+W0oHDPT3NHvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QQ4jfbH2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FkSgmwEa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QQ4jfbH2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FkSgmwEa; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2BAFE1F390;
-	Fri, 20 Jun 2025 18:11:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750443081; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9wNCyoAtgIAvJijllAWHlslig+KAc6oaM2vaNgyMkiM=;
-	b=QQ4jfbH2nf45VaK4NaygGchxSxjvAnBo7ze/NGwgK6XivCdj4hbaJUgrRG6Ii+nUsoDg0/
-	dKD0XtrQ5WHHr3nP81fs8uDicD37/SUAepGENZYRSFmz0o5KITub4Dx3dUilD8ZuogJVFP
-	74DUATe5QdMrbyyr1OzGMRr8msZCPx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750443081;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9wNCyoAtgIAvJijllAWHlslig+KAc6oaM2vaNgyMkiM=;
-	b=FkSgmwEaB4NvL6x2VN1Tj7UhrEo8MuOdS9/HQt4ivzx86lJk0muDbw2ZZDNQ9NEznxzUmr
-	rBtES02FP09ODSBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=QQ4jfbH2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=FkSgmwEa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750443081; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9wNCyoAtgIAvJijllAWHlslig+KAc6oaM2vaNgyMkiM=;
-	b=QQ4jfbH2nf45VaK4NaygGchxSxjvAnBo7ze/NGwgK6XivCdj4hbaJUgrRG6Ii+nUsoDg0/
-	dKD0XtrQ5WHHr3nP81fs8uDicD37/SUAepGENZYRSFmz0o5KITub4Dx3dUilD8ZuogJVFP
-	74DUATe5QdMrbyyr1OzGMRr8msZCPx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750443081;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9wNCyoAtgIAvJijllAWHlslig+KAc6oaM2vaNgyMkiM=;
-	b=FkSgmwEaB4NvL6x2VN1Tj7UhrEo8MuOdS9/HQt4ivzx86lJk0muDbw2ZZDNQ9NEznxzUmr
-	rBtES02FP09ODSBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 849CC13736;
-	Fri, 20 Jun 2025 18:11:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ksaeHEekVWjtDQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Fri, 20 Jun 2025 18:11:19 +0000
-Date: Fri, 20 Jun 2025 19:11:13 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, nvdimm@lists.linux.dev, 
-	Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>, 
-	Stefano Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Alistair Popple <apopple@nvidia.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH RFC 02/14] mm: drop highest_memmap_pfn
-Message-ID: <3ippshswsyi3gxhnfwxs2eat25633az3v6csdhx2xwx5cx7atr@5kq763xxyyy6>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-3-david@redhat.com>
+	s=arc-20240116; t=1750443090; c=relaxed/simple;
+	bh=1dDLFyjAEHX8cxwcTCC/k6iBaRFF/axpFXkeBLu67dM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvcSxBMNFIbQaE2fo+4aWcGFvG4rJ9Bs4fmriMSUf7s6KTCXH5pbmoucFgr0xXMYuS+7MWe/4Kkh5VtU8UO5bI81kuXecE9ncgKJen95P1lnT/FZdXNNpQwGvn+IeC0ZsGgTJ0027vjl9T9IDRHql9/URNvm+rU+7u52P1USNRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhJem19N; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so2188888f8f.1;
+        Fri, 20 Jun 2025 11:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750443087; x=1751047887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2mEzXZ/YIhixe6E1kyZ5GIWXcl4av2h83GgvTF7RG6c=;
+        b=fhJem19Nxd5HtTVDbiWg7qT8ulK/k0VLXouM/SZffxvSjhf96aO7ROeG/XH/6vDLnX
+         SeICoFd4PtLYMZW0k4r2X0adfBPYFDvgeH1R8EQAMQ9rtdHStgFEz4ah/WIRjp5c5zGj
+         aSPECJB1/jnm+Lo72u63YDnHXm4XRMeSDQ8Th4FmoTmXsyJFzigsb7jYlV2/fVf34elI
+         EeLkmBYEBvNXDu0J/Mj4T8wcOxohINFWNw84rtCzC+KK4RH49k7TFBSu0LrCzFEDouaQ
+         cB9lupTCg3r9Iw++f3QjYqTpUF7SAV5V0Qfp3GRsfMDNzC8pmiJ71xrl+OThVaWXG4/5
+         JuKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750443087; x=1751047887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2mEzXZ/YIhixe6E1kyZ5GIWXcl4av2h83GgvTF7RG6c=;
+        b=IxP4lGphzozaKG0sMBP1+15yOWSty9OYCT6hG/kzblsV68t1xelzPZU+YExbJWmnpG
+         iCxA2I4s9BgDs+gG84qZ8bmiskNTompCzEDhWeJhMaQYZUif6jyQgOFoqh3e+NPxMEKT
+         GLWILgFrb8tj/qSE0n0lD/pCiYshCGW+5NunHLesAwduKa4Tz83Mp5go/rMWtGt1KIhk
+         f2Btis4hpHGw7e7xDvt8nx7+bMmFqzUKz42POJ7TTnCII3ZV4roLB7nTmif1W8oZ8d25
+         yTOeJF1EKUoHeRtmcY2+WjMUQL0hGL43zwtiQHSe+yeOHZ/IZHMoRWK+HlnBG0fskZMK
+         EaSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbVelZf8AQI0YaRAsb20HT5wR9mG9In4yEzZMLQxXmdGwZFB7ZhDZATPCMU2j6Y++MJTlmag8/+gv8G9zP@vger.kernel.org, AJvYcCVOuKwyAwvluHj66MqTgZsjb4m//kuz3aBX6FnPWrYnlUR7zLsOBdWrnn+10D8QFeG573Xes9p5r5/hpSd1cU1IwkXGJvbR@vger.kernel.org, AJvYcCXEAi9NoLGr0bEFuIS0vlYHuCckHcT/6P46tdx0OtQk7Vu9WeVdA2G6AXOqGU8x7pVBlQu97rUlGyeY+dPK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw4bf1LH+J7pbPHRAlvT9yEq6EDJ9gwHkQv0YocLAE9arkccsU
+	Tvdfjfi2nxcPRHkPH9nlcK43jJaRhcWIjLY0V8OMqCzRK6DInSwF+qgOYce3tkYKtJG6ANdXDaK
+	5c5ab3KaO2TY73ldX9CMaA6odeMWBwmA=
+X-Gm-Gg: ASbGncuEdZu2bDMoPQzHH3PQJkpE+AoZmRnSGRA8cglG8RsD5js3FtQuRXgCjRFxWmx
+	TEOJilV5i9HIGbsGlwUn3MR2Z0JXgkiUig7s4CrqlzwiQ8I63UQFGlDYO8KQp1K/SYE7vAkczEz
+	e4azj8QX+hp2zTo0nb6Th3FrWZR0NnwDWC7+TfZ16HbF0lqCCwxVo2wwUmEmD9UQTJYQpsMO4O
+X-Google-Smtp-Source: AGHT+IGfJOYs+TU8Pm+1eKpur6OPfhxYVjv6rAi7gkrEUuJaY+iWia/CHhyGwOziyeDcYZ+upUUxt3w9mKnp3ZXK7uY=
+X-Received: by 2002:a05:6000:2011:b0:3a0:b565:a2cb with SMTP id
+ ffacd0b85a97d-3a6d277a9bcmr3464061f8f.1.1750443086458; Fri, 20 Jun 2025
+ 11:11:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617154345.2494405-3-david@redhat.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL89xh3ijk4gdpeanxbepagf1s)];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2BAFE1F390
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+References: <20250619220114.3956120-1-song@kernel.org> <20250619220114.3956120-5-song@kernel.org>
+In-Reply-To: <20250619220114.3956120-5-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 20 Jun 2025 11:11:15 -0700
+X-Gm-Features: Ac12FXyshEwARoZFYJF1zB3nJckCcTMlv6mMIXAMOjn59QA2CaNEhkcL1gCUHnA
+Message-ID: <CAADnVQKKQ8G91EudWVpw5TZ6zg3DTaKx9nVBUj1EdLu=7K+ByQ@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 4/5] selftests/bpf: Add tests for bpf_cgroup_read_xattr
+To: Song Liu <song@kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	"Jose E. Marchesi" <jose.marchesi@oracle.com>
+Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 17, 2025 at 05:43:33PM +0200, David Hildenbrand wrote:
-> Now unused, so let's drop it.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+On Thu, Jun 19, 2025 at 3:02=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> +       bpf_dynptr_from_mem(xattr_value, sizeof(xattr_value), 0, &value_p=
+tr);
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+https://github.com/kernel-patches/bpf/actions/runs/15767046528/job/44445539=
+248
 
--- 
-Pedro
+progs/cgroup_read_xattr.c:19:9: error: =E2=80=98bpf_dynptr_from_mem=E2=80=
+=99 is static
+but used in inline function =E2=80=98read_xattr=E2=80=99 which is not stati=
+c [-Werror]
+19 | bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
+| ^~~~~~~~~~~~~~~~~~~
+
+
+Jose,
+
+Could you please help us understand this gcc-bpf error ?
+What does it mean?
 
