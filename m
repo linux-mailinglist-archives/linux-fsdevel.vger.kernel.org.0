@@ -1,175 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-52350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24ECAE2239
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:31:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E17AE2256
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44BFA16A847
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9DF33ADC73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF052EACF8;
-	Fri, 20 Jun 2025 18:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81BA2EAB8E;
+	Fri, 20 Jun 2025 18:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FeUhZIrL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UpOOBQAm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FeUhZIrL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UpOOBQAm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="It6HDZAc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B75A21FF3D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 18:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4046BFCE;
+	Fri, 20 Jun 2025 18:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750444276; cv=none; b=b1pPaIOTf1r+QgQ8vVt4DeL19lxlzyBO/XJS6GIh72sRPfnOkc3C0s9k+iElq+H9qHrO5Ov506WoaT0dlWDEH/mdh1iix8pXRVLMY1KooYd89FEHZornY+zzBKgoN1lH6B3eMQ5n6mMZgMCN3nfQo6nVky0MetsrkNGHZ0m43ks=
+	t=1750444606; cv=none; b=T/SyOJwgKAq2tmNQhKi57BA2d2B65yw4rjh9e/HhZnGGd+ETZ8DldTnsWQq3xmNVQ43a0lATCyjQCaN8irBLUqZG684KeoZx3kRNHDiGQj3aMkC+pRdMx59hJ7Qb5hjH8cIJZNrz3w3NMYyCc/T+os4tEENUF88v90AK4htL70A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750444276; c=relaxed/simple;
-	bh=ad8vsSAm+A1358ro5HG+HW/KxeIAxNbEZgK7hOb00Nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9z6gwB6bwNgy52BvbP9xT6uUPJ5WZ3tPxRIfw0lHZXC/JftF/wmkM/kFxy75wDThFeJhPdtDxOt8ebFkjSgb+6Uqk8XGUtSH7lFsn8OY5h9/hKcgAp/kLLiDDwQkOhog7czZ6VCg0gS+cBdeMfge+Kp3Qhyj8mDTXBIULU29CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FeUhZIrL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UpOOBQAm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FeUhZIrL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UpOOBQAm; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A1D172122A;
-	Fri, 20 Jun 2025 18:31:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750444272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qmVG12TKwc2QVW0G8ian8AtN9mnqlZh4WCEqhc8pLTY=;
-	b=FeUhZIrLYm4/o8S8eNa53r7vMhoRAGFZLex3j4P4J6P9AZkL45f+IeQQIeeaiug+ZzRNFG
-	hARXJHANDh34/IjopPPX5I/xdKap8H63G8FhHa/3gDH6eeKztqNporF0VCesY+e0CanTA5
-	51aYl4AdOBArxDE3UjQRoagrNSvGRVg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750444272;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qmVG12TKwc2QVW0G8ian8AtN9mnqlZh4WCEqhc8pLTY=;
-	b=UpOOBQAmFBCtjEINkxipWx6NT/FVaqv9UBV56UH2PdyRFK1+D8Q4qnl2CvuUL/i+Ynj3b+
-	2x9kYcDlaPYsWpDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750444272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qmVG12TKwc2QVW0G8ian8AtN9mnqlZh4WCEqhc8pLTY=;
-	b=FeUhZIrLYm4/o8S8eNa53r7vMhoRAGFZLex3j4P4J6P9AZkL45f+IeQQIeeaiug+ZzRNFG
-	hARXJHANDh34/IjopPPX5I/xdKap8H63G8FhHa/3gDH6eeKztqNporF0VCesY+e0CanTA5
-	51aYl4AdOBArxDE3UjQRoagrNSvGRVg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750444272;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qmVG12TKwc2QVW0G8ian8AtN9mnqlZh4WCEqhc8pLTY=;
-	b=UpOOBQAmFBCtjEINkxipWx6NT/FVaqv9UBV56UH2PdyRFK1+D8Q4qnl2CvuUL/i+Ynj3b+
-	2x9kYcDlaPYsWpDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1B93313736;
-	Fri, 20 Jun 2025 18:31:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id c8qtA+2oVWgNEwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Fri, 20 Jun 2025 18:31:09 +0000
-Date: Fri, 20 Jun 2025 19:31:07 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Hugh Dickins <hughd@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm: change vm_get_page_prot() to accept vm_flags_t
- argument
-Message-ID: <drycqgdeh73cfghcovl3ujiaxcbmgrat73sf3aqtyanvoahrij@umib45jrz5qa>
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1750444606; c=relaxed/simple;
+	bh=5aprew4hKX/coXkjFe17a/Yyf3ir4h7JJIR+NElQm6A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GV0XmbssbyBE7I/wm8mGFUhDyzTwalS5lC1y65YTMmzSHL5dPFbqjYwqzH3NHcRwx8G0Epu7pk/V/QjS4GdfrNtNL6r4o6gyU2jh31ygUy2VMDhVkzVNb5BHH9zy/vlUuncJc4qCjh7APfOK0ULgl2rfzGUvJeAq+pZvMLnmkDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=It6HDZAc; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2363616a1a6so18145835ad.3;
+        Fri, 20 Jun 2025 11:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750444604; x=1751049404; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s4gciWTSONw0akSEEEhFqXpes8/mqcuvWff1e7xwDzs=;
+        b=It6HDZAc9AL787xkUle1V7wdcGePPaVkKUbY67oohIxW0P77VpbUDvM/T7xkpGLWbr
+         VI3OdY7tuXaSHDnzh8nSmaw9Wdj3ki94g1UJbbZBJP0qE3+WObmfimREtahAZBBmilGP
+         j5A/T/DMdrl0fB4jl7CIxwQaG05kJmGrex9nk4Rw04aEegTkphFvleV/j/fOKeI1NCNU
+         3CcusWPTT61rNdflN0GNattEsMvk7aOtSgWraG4bdA57H13ec1p3k3KKA6kTLAkdBzIO
+         XIYBzgEwWn0V2oEMMWzYiWgU/XL0mjTP35e3t9x/8aiJ+hDwMnvyPeR6FM/7c0vnM9TU
+         M9bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750444604; x=1751049404;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s4gciWTSONw0akSEEEhFqXpes8/mqcuvWff1e7xwDzs=;
+        b=R7r1JXuD7kmGZZyayWRu4PahhIfQ/XOWbqzcntW8MrCSaMZXANPRw/nWIAxv24CyDO
+         dGepen2IpQxorjOCcYoZpGpolD2edZxX3wgEH4IlStLMW8KKmNU8QAOhprN1uw2kL8aP
+         KVj5FVI7cYwXt9/sBhdZrMwuuIsGxi4CmKKMe2BfDnAz7JX0X9oZtCurYgG+g9A1gGml
+         YZzjDiGsYL3g2LERiIv0MVwF8oOxwZvH03gcNRU2QDVyhIC73w6za/eVoLnQCql1K4zy
+         kTPLlvKBuFf2q+9lWvPxlRjCd1wxEj7kSORAsPdtcTFNN9U7iBs1ZgcWp7HuV4fDxDY2
+         ACwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe6NAK5XCZpE1ABBVWMnnFK/8bNdvdVVy5I8GozRod469/iE2ab9mMsC85lOmKDYhGEmxqcXzQ27WhVOCv@vger.kernel.org, AJvYcCW/rt/a2dedOUFswiUBXCj98CIXohgGbmipAmDTrLxdKYfhi03dk/Y3ZFD1+yGYnUvhugU+17N0V4JbdckV@vger.kernel.org, AJvYcCWhHNjVHflB//UQvlyp5yv2Uok8ela/3HW/sgosoK6qkC4rCBSxONeeXTp4pmkwXhl7LRxtHC34TEoUaG9ikSWjbuWjQs62@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkbP7w9tiBQhJ7NY8eW99BJwcSdr3PJOP2rKV0ZEVXhSiJu67n
+	kyCCVixfwbpj3vrnIb127TOFE++bohgoS+xkb0Rrs2BtKQCkf+mmtPh6
+X-Gm-Gg: ASbGncsCM5PfWhjckAPiq0F9K1wOeebcuOr8WaLA08r88x8kR26ucOLFoSZ4dhE0xaU
+	GhkxHpBbyu3HAYUTRHvI7TwS7TTZBAYpAIJCc+N+n0SWeGTztAWJQPv8xXBEdddifMMCvi7TM+W
+	Sq3T1/c8AR4tPIcWmfivGdEytjwvwt+I0IsOc+hEUvO8ycrchbBSEGTYRqa081tCR/gzbrCPR5l
+	25TvSJ0EU6xLRJRtJesl3ZeO8NTuAv62bPKBePZPJaPMuNRyyIs13Yskx7I3vuRXbkiGIVxfysG
+	GZI4vFPxGqqyxdHB3wXsl3J+w6Ph/OiXk2ERPqYc/udzB7LU0v1qjojjYAG0eVYs99um
+X-Google-Smtp-Source: AGHT+IGHKJOmUPn26KDy0m1jr5bhCOMFbt9X8MQuRFyRFftp90pbLKnHi7J8ydZpQWGBmXaW0/MOfA==
+X-Received: by 2002:a17:903:2306:b0:234:d7b2:2ac4 with SMTP id d9443c01a7336-237d980da56mr67713185ad.17.1750444603773;
+        Fri, 20 Jun 2025 11:36:43 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:14a::247? ([2620:10d:c090:600::1:97ac])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d860a426sm23459215ad.117.2025.06.20.11.36.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 11:36:43 -0700 (PDT)
+Message-ID: <de68f43f9e83230bbb055fdecba564ee662d6091.camel@gmail.com>
+Subject: Re: [PATCH v2 bpf-next 4/5] selftests/bpf: Add tests for
+ bpf_cgroup_read_xattr
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Song Liu	
+ <song@kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>, "Jose E. Marchesi"
+	 <jose.marchesi@oracle.com>
+Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel
+ <linux-fsdevel@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>, LSM
+ List <linux-security-module@vger.kernel.org>,  Kernel Team
+ <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro	
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	 <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, Matt Bobrowski	
+ <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, Daan
+ De Meyer <daan.j.demeyer@gmail.com>
+Date: Fri, 20 Jun 2025 11:36:40 -0700
+In-Reply-To: <CAADnVQKKQ8G91EudWVpw5TZ6zg3DTaKx9nVBUj1EdLu=7K+ByQ@mail.gmail.com>
+References: <20250619220114.3956120-1-song@kernel.org>
+	 <20250619220114.3956120-5-song@kernel.org>
+	 <CAADnVQKKQ8G91EudWVpw5TZ6zg3DTaKx9nVBUj1EdLu=7K+ByQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a12769720a2743f235643b158c4f4f0a9911daf0.1750274467.git.lorenzo.stoakes@oracle.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_GT_50(0.00)[64];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,armlinux.org.uk,arm.com,kernel.org,linux.ibm.com,ellerman.id.au,gmail.com,csgroup.eu,davemloft.net,gaisler.com,linux.intel.com,linutronix.de,redhat.com,alien8.de,zytor.com,infradead.org,zeniv.linux.org.uk,suse.cz,nvidia.com,linux.alibaba.com,oracle.com,zte.com.cn,linux.dev,google.com,suse.com,surriel.com,intel.com,goodmis.org,efficios.com,ziepe.ca,suse.de,cmpxchg.org,bytedance.com,lists.infradead.org,vger.kernel.org,lists.ozlabs.org,kvack.org,lists.linux.dev];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.de:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
 
-On Wed, Jun 18, 2025 at 08:42:52PM +0100, Lorenzo Stoakes wrote:
-> We abstract the type of the VMA flags to vm_flags_t, however in may places
-> it is simply assumed this is unsigned long, which is simply incorrect.
-> 
-> At the moment this is simply an incongruity, however in future we plan to
-> change this type and therefore this change is a critical requirement for
-> doing so.
-> 
-> Overall, this patch does not introduce any functional change.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Fri, 2025-06-20 at 11:11 -0700, Alexei Starovoitov wrote:
+> On Thu, Jun 19, 2025 at 3:02=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> > +       bpf_dynptr_from_mem(xattr_value, sizeof(xattr_value), 0, &value=
+_ptr);
+>=20
+> https://github.com/kernel-patches/bpf/actions/runs/15767046528/job/444455=
+39248
+>=20
+> progs/cgroup_read_xattr.c:19:9: error: =E2=80=98bpf_dynptr_from_mem=E2=80=
+=99 is static
+> but used in inline function =E2=80=98read_xattr=E2=80=99 which is not sta=
+tic [-Werror]
+> 19 | bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
+> > ^~~~~~~~~~~~~~~~~~~
+>=20
+>=20
+> Jose,
+>=20
+> Could you please help us understand this gcc-bpf error ?
+> What does it mean?
 
-Nice little cleanup, thanks!
+Not Jose, but was curious.
+Some googling lead to the following C99 wording [1]:
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+  > An inline definition of a function with external linkage shall not
+  > contain a definition of a modifiable object with static storage
+  > duration, and shall not contain a reference to an identifier with
+  > internal linkage
 
--- 
-Pedro
+[1] https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf
+    6.7.4 Function specifiers, paragraph 3
+
+The helper is defined as `static`:
+
+  static long (* const bpf_dynptr_from_mem)(...) =3D (void *) 197;
+
+While `read_xattr` has external linkage:
+
+  __always_inline void read_xattr(struct cgroup *cgroup)
+  {
+	...
+	bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
+	...
+  }
+
+I think that declaring `read_xattr` as `static` should help with gcc.
 
