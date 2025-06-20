@@ -1,119 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-52310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79EFCAE1987
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 13:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BFAAE19EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 13:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E5F75A7608
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 11:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D3553A970E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 11:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC9728A1F6;
-	Fri, 20 Jun 2025 11:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F32128936C;
+	Fri, 20 Jun 2025 11:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1UYH/jTm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y4ReoX7H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKBJXDpt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4521283FEE;
-	Fri, 20 Jun 2025 11:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB796221260;
+	Fri, 20 Jun 2025 11:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750417385; cv=none; b=anVLUP/yThPWaJJq+1/hffJt/x1w9XIKfLShfQjlyljfzV0qdSowFpKdvWFpbvXcPFun4XxZ0hIryu1Miwfli1B7cLI6X4sqUYBYmyt2VvVT5vPEXWeaeJ73fm87T4QsYsn3DTcbU/m3xKgtys7joB04JljK15B92Kd9WM1aYgY=
+	t=1750418470; cv=none; b=JAL+Fxl/troA+CKemlxs+2LiwoZ4RVxfOv8WiiGdQiH85NuRSt3Cz644+9zSuydZeTucd379b2PmmAPG7KkWAYSmo4/1hpThZlKNml6+mxmpazN49BkAhVzUAPBC5EyNDfVyfy6FR4f+1YZFCD4juiKOdgBjOZ7ieF5qrcSCptI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750417385; c=relaxed/simple;
-	bh=VyKy7ZblJIux9A8nr4UKOBkLEzekMiA4P1J54fnWw9I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e6zIATmspK97F5GwzCAInHx1yodyjZKAHdY3c5ZaUaeTLXukRDT7hPBB4uI6YgZIqy86M0X9ykEEC1RKr9DkIDxXnqpxNnDeMn7XGNU6fXnL0SzqPwxivmwnlolcDxm+Hwi70mLGnEGGZrArDmiOjMxBbJHe7VLwRQXKu3lgbMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1UYH/jTm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y4ReoX7H; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750417379;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oGBO/Bsd9Ek7GSchB/P0tD6LqkXEF7CldRyZjA/Vzn4=;
-	b=1UYH/jTmoqNtisk0sd6H+kx4BMUL36RaQo3TE7OpOaUw0b5Na7GpkCvL2ZRMCBOKTvmGy9
-	YZukfkqX1aUw05oJkVzmgo27Rq6CTXb7upgl81qsHiJ3Xd2kNGTPsJGTU3aJP+SnICrE0e
-	A/LK6ZQaulEAv9qIhaF7MI7ZGvmvIItWtRwaTfbewMmGqzWF7phhDOZA75R2qFq2L1xbJ0
-	Y99zE2Zv5/3w8PAqaTC1rEtk0Ej2tg4I3y+yL6krKXqxCCGWJnpUusoacDIkyQJ4nQ85T5
-	vD3bD72YqPd/bV1Rb5rRDC/qnq8Etk18fUGY/H/JpWRtsEdoLRREClNoDBWGag==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750417379;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oGBO/Bsd9Ek7GSchB/P0tD6LqkXEF7CldRyZjA/Vzn4=;
-	b=y4ReoX7HpOtcCFEmySKh4pv1Io1/H2aWd803okTb2PyIjrrl4hheYhuxdiRInoT8Q803gQ
-	a8LinyR3edIM5UBA==
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
+	s=arc-20240116; t=1750418470; c=relaxed/simple;
+	bh=O4PKCznY7W3LGDkG5sDRa0s05jDbDksNrKayrGHplQk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BMj6C/610YaVGk3ZG3ylSJYsGDG+zlmz/jSr0Dkh2B+fICNXamLsWTXTPko/wyIS+9/zKBjkeucxo56qChgHjKDhlNZ1KMFdEVu3n29C3vEZDC5qk9di5ntvgIJmyZhAv2GhU42yX4cia8cpQEVNZ8N1nvUhTZVKsWXT+fyYoeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKBJXDpt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45C10C4CEE3;
+	Fri, 20 Jun 2025 11:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750418470;
+	bh=O4PKCznY7W3LGDkG5sDRa0s05jDbDksNrKayrGHplQk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AKBJXDptacMfKYLxow6/dFuLpayqedKiG7MUgBG73PRvOXa9pauNqlJl1td5CgHeG
+	 AEtNEyQGBsedoaOLcUNIe3IIPiOLmX2dmephDtwhHTb02R35TT1lEYawDL/zaAjZQ0
+	 Z6prlcvM9cQXLp3USRGUCOdKmOarqpvq4ojRl8drI196T0FEWyy1S5JZQT7ovoFCGB
+	 S/AZ+bS16iL0MFezHxgvNmbTN1hGMGyI9FqoHr93C44q8q0u/jA5kKyuo/QcuuNial
+	 8faOdjJCpSqVFtqt2kVtg/9m+8VDR7hgQB54pJytDRR5Dy8H2bPOkFKFXR88oj/Fyw
+	 XPgK6rtPrlB4Q==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
 	Jan Kara <jack@suse.cz>,
-	Shuah Khan <shuah@kernel.org>,
-	Luca Boccassi <luca.boccassi@gmail.com>,
 	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	linux-kselftest@vger.kernel.org,
+	Jann Horn <jannh@google.com>,
+	Luca Boccassi <luca.boccassi@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Roman Kisel <romank@linux.microsoft.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH] selftests/coredump: Fix "socket_detect_userspace_client" test failure
-Date: Fri, 20 Jun 2025 13:02:52 +0200
-Message-Id: <20250620110252.1640391-1-namcao@linutronix.de>
+Subject: [PATCH] coredump: reduce stack usage in vfs_coredump()
+Date: Fri, 20 Jun 2025 13:21:01 +0200
+Message-Id: <20250620112105.3396149-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The coredump.socket_detect_userspace_client test occasionally fails:
-    #  RUN           coredump.socket_detect_userspace_client ...
-    # stackdump_test.c:500:socket_detect_userspace_client:Expected 0 (0) !=
-=3D WIFEXITED(status) (0)
-    # socket_detect_userspace_client: Test terminated by assertion
-    #          FAIL  coredump.socket_detect_userspace_client
-    not ok 3 coredump.socket_detect_userspace_client
+From: Arnd Bergmann <arnd@arndb.de>
 
-because there is no guarantee that client's write() happens before server's
-close(). The client gets terminated SIGPIPE, and thus the test fails.
+The newly added socket coredump code runs into some corner cases
+with KASAN that end up needing a lot of stack space:
 
-Add a read() to server to make sure server's close() doesn't happen before
-client's write().
+fs/coredump.c:1206:1: error: the frame size of 1680 bytes is larger than 1280 bytes [-Werror=frame-larger-than=]
 
-Fixes: 7b6724fe9a6b ("selftests/coredump: add tests for AF_UNIX coredumps")
-Signed-off-by: Nam Cao <namcao@linutronix.de>
+Mark the socket helper function as noinline_for_stack so its stack
+usage does not leak out to the other code paths. This also seems to
+help with register pressure, and the resulting combined stack usage of
+vfs_coredump() and coredump_socket() is actually lower than the inlined
+version.
+
+Moving the core_state variable into coredump_wait() helps reduce the
+stack usage further and simplifies the code, though it is not sufficient
+to avoid the warning by itself.
+
+Fixes: 6a7a50e5f1ac ("coredump: use a single helper for the socket")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tools/testing/selftests/coredump/stackdump_test.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/coredump.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/tools/testing/selftests/coredump/stackdump_test.c b/tools/test=
-ing/selftests/coredump/stackdump_test.c
-index 9984413be9f06..68f8e479ac368 100644
---- a/tools/testing/selftests/coredump/stackdump_test.c
-+++ b/tools/testing/selftests/coredump/stackdump_test.c
-@@ -461,10 +461,15 @@ TEST_F(coredump, socket_detect_userspace_client)
- 			_exit(EXIT_FAILURE);
- 		}
-=20
-+		ret =3D read(fd_coredump, &c, 1);
-+
- 		close(fd_coredump);
- 		close(fd_server);
- 		close(fd_peer_pidfd);
- 		close(fd_core_file);
-+
-+		if (ret < 1)
-+			_exit(EXIT_FAILURE);
- 		_exit(EXIT_SUCCESS);
- 	}
- 	self->pid_coredump_server =3D pid_coredump_server;
---=20
+diff --git a/fs/coredump.c b/fs/coredump.c
+index e2611fb1f254..c46e3996ff91 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -518,27 +518,28 @@ static int zap_threads(struct task_struct *tsk,
+ 	return nr;
+ }
+ 
+-static int coredump_wait(int exit_code, struct core_state *core_state)
++static int coredump_wait(int exit_code)
+ {
+ 	struct task_struct *tsk = current;
++	struct core_state core_state;
+ 	int core_waiters = -EBUSY;
+ 
+-	init_completion(&core_state->startup);
+-	core_state->dumper.task = tsk;
+-	core_state->dumper.next = NULL;
++	init_completion(&core_state.startup);
++	core_state.dumper.task = tsk;
++	core_state.dumper.next = NULL;
+ 
+-	core_waiters = zap_threads(tsk, core_state, exit_code);
++	core_waiters = zap_threads(tsk, &core_state, exit_code);
+ 	if (core_waiters > 0) {
+ 		struct core_thread *ptr;
+ 
+-		wait_for_completion_state(&core_state->startup,
++		wait_for_completion_state(&core_state.startup,
+ 					  TASK_UNINTERRUPTIBLE|TASK_FREEZABLE);
+ 		/*
+ 		 * Wait for all the threads to become inactive, so that
+ 		 * all the thread context (extended register state, like
+ 		 * fpu etc) gets copied to the memory.
+ 		 */
+-		ptr = core_state->dumper.next;
++		ptr = core_state.dumper.next;
+ 		while (ptr != NULL) {
+ 			wait_task_inactive(ptr->task, TASK_ANY);
+ 			ptr = ptr->next;
+@@ -858,7 +859,7 @@ static bool coredump_sock_request(struct core_name *cn, struct coredump_params *
+ 	return coredump_sock_mark(cprm->file, COREDUMP_MARK_REQACK);
+ }
+ 
+-static bool coredump_socket(struct core_name *cn, struct coredump_params *cprm)
++static noinline_for_stack bool coredump_socket(struct core_name *cn, struct coredump_params *cprm)
+ {
+ 	if (!coredump_sock_connect(cn, cprm))
+ 		return false;
+@@ -1095,7 +1096,6 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
+ {
+ 	struct cred *cred __free(put_cred) = NULL;
+ 	size_t *argv __free(kfree) = NULL;
+-	struct core_state core_state;
+ 	struct core_name cn;
+ 	struct mm_struct *mm = current->mm;
+ 	struct linux_binfmt *binfmt = mm->binfmt;
+@@ -1131,7 +1131,7 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
+ 	if (coredump_force_suid_safe(&cprm))
+ 		cred->fsuid = GLOBAL_ROOT_UID;
+ 
+-	if (coredump_wait(siginfo->si_signo, &core_state) < 0)
++	if (coredump_wait(siginfo->si_signo) < 0)
+ 		return;
+ 
+ 	old_cred = override_creds(cred);
+-- 
 2.39.5
 
 
