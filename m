@@ -1,129 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-52348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A828AE221A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:20:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B892AE221F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE051895F56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F53F3AAB20
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7D72EAD16;
-	Fri, 20 Jun 2025 18:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE0C2EAB69;
+	Fri, 20 Jun 2025 18:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URxGbqtH"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DsMPYjS2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MwlL7164";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DsMPYjS2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MwlL7164"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7729E2E4241;
-	Fri, 20 Jun 2025 18:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A1C23B626
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 18:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750443520; cv=none; b=smi0eoMqdAUb+EtvNpXNsfLMdr0DmEakmmAO98rWW/jFT2r3B7VP/ZxyIgJzjtrfUDHqSWC+xxdc11Lnw6BUlesrfMRfSsY9hKVF3yOfE5CjvXaGIw/8gmJ6Rhks7WK9qLk8r9B7TnOyoaBhTC8dzTvXZygFJz61Ew2HIprMwYE=
+	t=1750443871; cv=none; b=JfGHo3uLjgB1auNqNnQ4E2HBVxwvXOsI+jJitAmwHe1De5yUcEVeVfHSBtVHYSIiQn8+4hWvplbxSd2rTymWc7yc1r2aQ1ThPLbrc2RpJC0xfGSE4PJbYIDFMjXUaI7L/wXTyQd6NSH5OXkdkqH+7/KOl/WjN8lfosa0xboRH60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750443520; c=relaxed/simple;
-	bh=/NTEe4LX2305a/082hD0ht8grH/4J99i57GtOdHR6eA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K0GETpJY3yvLAlUZfcaLcO3gg0F2fhpHPWqQmUhBZSCWi487UBGUTaMxXn5qeGF36Su23VqdvzVHNnfhpYq2xMzgR+A0H4/qxQ5XTMpkCQxIbZ5BfLRRTIduYITJ1mQfGbAPJuloGQ+P0d9bl4mp/ck2RQ5hRwlA/yN9BvDvkhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URxGbqtH; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a54700a463so1246512f8f.1;
-        Fri, 20 Jun 2025 11:18:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750443515; x=1751048315; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HhMV4vNytMAJBBpa9RjxnYZPyihfBUf6q6MsqT87Yqc=;
-        b=URxGbqtHAwvz0KT1uNfUhpH+FAL6mpEfHvCpRqRyyINewHTuyrtsoV8vai0/klBJ9s
-         OOQUyZo6G+0wHTCsS60xjoKQD2suXFWKz4Q+hCp2Xk6VcSRwWfw6ILrsMVH8C1/vWQKu
-         DI0OlpGO2fQZNR5boKBXPbdLvtoBJlpiq4DEJ+rV+SXWafdNVcTSfsTlRlBAA3xXmvH6
-         27mj9Zuqyx36Duca/1b8j72ksEFWOII4wXnGZhMA2tr/RrBYNjMO4HXviUeMphEqI+D4
-         MbIgExCdNT1amCYPUq99Uim8bL5T1j6fr//MRR3HS+iNxAH8ky25X+k1rEIKZastTp3C
-         s1xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750443515; x=1751048315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HhMV4vNytMAJBBpa9RjxnYZPyihfBUf6q6MsqT87Yqc=;
-        b=cSEcM1q6ulfHo4PLFQpNPBqbE2hLtqGdiKLDc6ihLhHsJ5g0tYioA3LeK40RSsrlHG
-         iQ1FhOoeDaLE7e6lEFwjWhUEIOKaXxr3Z+i6tbw58sf6UJ1kc6heP4vw+fOmtW6gxlRJ
-         IlcYqYEkK5wmN+XZMlbEYfHb2iL2AY+N7t27DX3O7eYWH2fA75aZwgvDU67X9ok+5SRC
-         Lfwt06ce+/xmuDcfwZ+HAGkafDJTSfFIajaGZDAVtLgj26hkNay5z1LaNouYSevkrP2G
-         WBSC/mUVrgcyBv6oY41afuflz29OhftAhl5R81XkTyTiGXeliReEByCDTuucm12rIGQC
-         MrRw==
-X-Forwarded-Encrypted: i=1; AJvYcCV01UXPBWt8OwC/9mptkaBDa74Ab5Lx4CFLFphFvp8/eSTf/uoJHYaEjJrLa94CRNUDG8YVyYHHVAVPJthNaA5rhLCDQm9b@vger.kernel.org, AJvYcCWKtNJM5VJN1q/AUmwjuVZEKOd17p9j2E0trAFhiAYgkdkl1kCMMty4QuZL6KfK9zJGXcDR9Sy8ZBPszgBH@vger.kernel.org, AJvYcCX+puBlZ6ljYFeLcjhMdt44avlrObtyzkUonVUmSvyTVwpytezF9MdcLPra1lJzYqCyWTG9Fi91aMufpIxC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXt7Jc2lJsFOWiODoUCeYUHGy/1GJwcGFfJGVDcxuj+MIEcrtJ
-	OBSoZ+UNq1ybGbvsD8402K50RMcsG17qm9uudA2V4B2PgVYwtkbYxnbagkPx8SpSFb2b3GTOinu
-	wLtN922t46t0zSygMsjxCoRjAS1ynLB8=
-X-Gm-Gg: ASbGncseJttrpocMfGgm+5dqX3yKfVJSYGCE03eGtEpaTFZv2vON4AFBD3KHY0OGvrw
-	jR087xjFPIm5HsdNXcAPNSzj27IGqIDZb+FAPT2hE4knXkPGiZNbMZsBcxxL4xMAh41nkIBoKmh
-	OiuYyTHRmn7gb6JC0NCTMEjHKewnLOG+tIuxd7jZ+cCLyE9vbJVZLH0/v9V7DD6rRqTY4JP/liy
-	yPBOTj2778=
-X-Google-Smtp-Source: AGHT+IERIFJDmPI5Mw1ELsO//3RTQwrHGmyoE7/KP5ElN4R3G1PWZpc1vQ2nU+JugdZ2pTBPpOEBKu8rdfjZoKFkLyU=
-X-Received: by 2002:a05:6000:26c8:b0:3a5:8977:e0f8 with SMTP id
- ffacd0b85a97d-3a6d27e16f5mr3057936f8f.19.1750443514689; Fri, 20 Jun 2025
- 11:18:34 -0700 (PDT)
+	s=arc-20240116; t=1750443871; c=relaxed/simple;
+	bh=LlTFqSicIxJCqJzx/7xhoEA+gIfY0lLy+8HgCJYNy+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GCOw+XxIqTUnZGDsJWuYhUaxsRxrbAVlUcogPusV83APAQWcAFtrgyqSeRgdcVxf9rRB5anzRh1MfPQPxAZMvskgAdjeOw6qAk7QaLZ6tuMOjtIVuCuv3QsEglqmY2EM2coZC/1ePAmeAfmQwYRhpPg1BzSBpRG8OCeyiW69Q6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DsMPYjS2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MwlL7164; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DsMPYjS2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MwlL7164; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5AD0C1F395;
+	Fri, 20 Jun 2025 18:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750443867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7lswmTKqGOdbcI3vWxx7qPu3GUSF0bctkl3uifvgYUg=;
+	b=DsMPYjS2tRka2AE8YfG8rgXcebue7QhMIu8TN6ar1zuv8DAX3Upu05PrQfCcJj2JeH17qi
+	++nEF0UBNawpKaNKFe17IbXNZ3V2EzItYXv3mSZzJ0MzQQ11StR6XsdMdDuFYod2GaOFPE
+	uLQoOXajiHzU8gBDGar7l8UQP37FTxA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750443867;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7lswmTKqGOdbcI3vWxx7qPu3GUSF0bctkl3uifvgYUg=;
+	b=MwlL7164CYwcEFQW8H5X8aOWOLsZN5j5aJWwkCKrZ5AyDrOvZ1n+zG03w5/LLdgmRe1/4z
+	17rvJX7nxfxWxJBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750443867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7lswmTKqGOdbcI3vWxx7qPu3GUSF0bctkl3uifvgYUg=;
+	b=DsMPYjS2tRka2AE8YfG8rgXcebue7QhMIu8TN6ar1zuv8DAX3Upu05PrQfCcJj2JeH17qi
+	++nEF0UBNawpKaNKFe17IbXNZ3V2EzItYXv3mSZzJ0MzQQ11StR6XsdMdDuFYod2GaOFPE
+	uLQoOXajiHzU8gBDGar7l8UQP37FTxA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750443867;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7lswmTKqGOdbcI3vWxx7qPu3GUSF0bctkl3uifvgYUg=;
+	b=MwlL7164CYwcEFQW8H5X8aOWOLsZN5j5aJWwkCKrZ5AyDrOvZ1n+zG03w5/LLdgmRe1/4z
+	17rvJX7nxfxWxJBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B41B413736;
+	Fri, 20 Jun 2025 18:24:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6HJcJlmnVWhUEQAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 20 Jun 2025 18:24:25 +0000
+Date: Fri, 20 Jun 2025 19:24:23 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, nvdimm@lists.linux.dev, 
+	Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>, 
+	Stefano Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Alistair Popple <apopple@nvidia.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH RFC 03/14] mm: compare pfns only if the entry is present
+ when inserting pfns/pages
+Message-ID: <dq5r2xmw3ypfk2luffas45up525aig4nu7qogojajspukak74o@gtg4kwwvjb5c>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-4-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619220114.3956120-1-song@kernel.org> <20250619220114.3956120-6-song@kernel.org>
-In-Reply-To: <20250619220114.3956120-6-song@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 20 Jun 2025 11:18:23 -0700
-X-Gm-Features: Ac12FXw3XqXyYvhqyw1ob3gjWc9KnOgD0rHoHKU7ZY9Bk53Kb-1LHiUxKohpROA
-Message-ID: <CAADnVQLCyk4O6w4WRxTKcQsEdZ3y6_CNc4mBF2ieT9m51E+2Lw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 5/5] bpf: Make bpf_cgroup_read_xattr available
- to cgroup and struct_ops progs
-To: Song Liu <song@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617154345.2494405-4-david@redhat.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL8d8xedm6iu8o66torxsk6bwd)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Level: 
 
-On Thu, Jun 19, 2025 at 3:02=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> cgroup BPF programs and struct_ops BPF programs (such as sched_ext), need
-> bpf_cgroup_read_xattr. Make bpf_cgroup_read_xattr available to these prog
-> types.
+On Tue, Jun 17, 2025 at 05:43:34PM +0200, David Hildenbrand wrote:
+> Doing a pte_pfn() etc. of something that is not a present page table
+> entry is wrong. Let's check in all relevant cases where we want to
+> upgrade write permissions when inserting pfns/pages whether the entry
+> is actually present.
+> 
+> It's not expected to have caused real harm in practice, so this is more a
+> cleanup than a fix for something that would likely trigger in some
+> weird circumstances.
 
-...
+Couldn't we e.g have a swap entry's "pfn" accidentally match the one we're
+inserting? Isn't that a correctness problem?
 
-> +       ret =3D register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_lsm_fs_=
-kfunc_set);
-> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS=
-, &bpf_fs_kfunc_set);
-> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SKB=
-, &bpf_fs_kfunc_set);
-> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOC=
-K, &bpf_fs_kfunc_set);
-> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_DEV=
-ICE, &bpf_fs_kfunc_set);
-> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOC=
-K_ADDR, &bpf_fs_kfunc_set);
-> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SYS=
-CTL, &bpf_fs_kfunc_set);
-> +       return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOCK=
-OPT, &bpf_fs_kfunc_set);
+> 
+> At some point, we should likely unify the two pte handling paths,
+> similar to how we did it for pmds/puds.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-No need to artificially restrict it like this.
-bpf_cgroup_read_xattr() is generic enough and the verifier will enforce
-the safety due to KF_RCU.
-Just add it to common_btf_ids.
+Nice little cleanup, thanks.
+
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+
+-- 
+Pedro
 
