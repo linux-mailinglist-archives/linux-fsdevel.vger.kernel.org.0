@@ -1,159 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-52311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BFAAE19EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 13:21:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36DCAE1A38
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 13:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D3553A970E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 11:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F9754A66C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 11:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F32128936C;
-	Fri, 20 Jun 2025 11:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKBJXDpt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5C525F984;
+	Fri, 20 Jun 2025 11:50:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB796221260;
-	Fri, 20 Jun 2025 11:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4910430E841;
+	Fri, 20 Jun 2025 11:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750418470; cv=none; b=JAL+Fxl/troA+CKemlxs+2LiwoZ4RVxfOv8WiiGdQiH85NuRSt3Cz644+9zSuydZeTucd379b2PmmAPG7KkWAYSmo4/1hpThZlKNml6+mxmpazN49BkAhVzUAPBC5EyNDfVyfy6FR4f+1YZFCD4juiKOdgBjOZ7ieF5qrcSCptI=
+	t=1750420223; cv=none; b=oj41v4V/uftzu2d4XeX/PMNYtyMRV03+dup603LMNlgaJBIhXBzZ8/SrNgywCiJhlHzKn8gvvYvLZUOawzb75Y3t15eqVTT+V+lxk0cEXqicY4dJcGNhVn58JiXcb2xxLblSQ++f1IbkP05LXuUJ6+XenBNJy5y6ZGebl7AHZ2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750418470; c=relaxed/simple;
-	bh=O4PKCznY7W3LGDkG5sDRa0s05jDbDksNrKayrGHplQk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BMj6C/610YaVGk3ZG3ylSJYsGDG+zlmz/jSr0Dkh2B+fICNXamLsWTXTPko/wyIS+9/zKBjkeucxo56qChgHjKDhlNZ1KMFdEVu3n29C3vEZDC5qk9di5ntvgIJmyZhAv2GhU42yX4cia8cpQEVNZ8N1nvUhTZVKsWXT+fyYoeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKBJXDpt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45C10C4CEE3;
-	Fri, 20 Jun 2025 11:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750418470;
-	bh=O4PKCznY7W3LGDkG5sDRa0s05jDbDksNrKayrGHplQk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=AKBJXDptacMfKYLxow6/dFuLpayqedKiG7MUgBG73PRvOXa9pauNqlJl1td5CgHeG
-	 AEtNEyQGBsedoaOLcUNIe3IIPiOLmX2dmephDtwhHTb02R35TT1lEYawDL/zaAjZQ0
-	 Z6prlcvM9cQXLp3USRGUCOdKmOarqpvq4ojRl8drI196T0FEWyy1S5JZQT7ovoFCGB
-	 S/AZ+bS16iL0MFezHxgvNmbTN1hGMGyI9FqoHr93C44q8q0u/jA5kKyuo/QcuuNial
-	 8faOdjJCpSqVFtqt2kVtg/9m+8VDR7hgQB54pJytDRR5Dy8H2bPOkFKFXR88oj/Fyw
-	 XPgK6rtPrlB4Q==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Jann Horn <jannh@google.com>,
-	Luca Boccassi <luca.boccassi@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Roman Kisel <romank@linux.microsoft.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] coredump: reduce stack usage in vfs_coredump()
-Date: Fri, 20 Jun 2025 13:21:01 +0200
-Message-Id: <20250620112105.3396149-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1750420223; c=relaxed/simple;
+	bh=nkpgK2qx0Maj3Ks5WDMYbHXp9o2yShyl8cyss/4J/sQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nxpVkTsf6BeJbi3YKJxErw68JCqfkdbAk3cpXuB8reO2LD4B2axsm/WM1taMlISvPB8XBgdePdjuLQhFu9tPHnKi1gHmUnDdg2ZiBjQVEOaeL4VyCsywBPlLuWStIB5kXYWSFKC4lRNpWYeq+xK4horYxwNPqS2ZfKYTkPhqPMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <vgoyal@redhat.com>, <stefanha@redhat.com>, <miklos@szeredi.hu>,
+	<eperezma@redhat.com>, <virtualization@lists.linux.dev>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH] virtio_fs: Remove request addition to processing list
+Date: Fri, 20 Jun 2025 19:49:25 +0800
+Message-ID: <20250620114925.2671-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc6.internal.baidu.com (172.31.3.16) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.41
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Li RongQing <lirongqing@baidu.com>
 
-The newly added socket coredump code runs into some corner cases
-with KASAN that end up needing a lot of stack space:
+Since virtio_fs does not utilize the fuse_pqueue->processing list, we
+can safely omit adding requests to this list. This change eliminates the
+associated spin_lock operations, thereby improving performance.
 
-fs/coredump.c:1206:1: error: the frame size of 1680 bytes is larger than 1280 bytes [-Werror=frame-larger-than=]
-
-Mark the socket helper function as noinline_for_stack so its stack
-usage does not leak out to the other code paths. This also seems to
-help with register pressure, and the resulting combined stack usage of
-vfs_coredump() and coredump_socket() is actually lower than the inlined
-version.
-
-Moving the core_state variable into coredump_wait() helps reduce the
-stack usage further and simplifies the code, though it is not sufficient
-to avoid the warning by itself.
-
-Fixes: 6a7a50e5f1ac ("coredump: use a single helper for the socket")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 ---
- fs/coredump.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ fs/fuse/virtio_fs.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index e2611fb1f254..c46e3996ff91 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -518,27 +518,28 @@ static int zap_threads(struct task_struct *tsk,
- 	return nr;
- }
- 
--static int coredump_wait(int exit_code, struct core_state *core_state)
-+static int coredump_wait(int exit_code)
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 82afe78..7a598ea5 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -814,7 +814,6 @@ static void virtio_fs_requests_done_work(struct work_struct *work)
  {
- 	struct task_struct *tsk = current;
-+	struct core_state core_state;
- 	int core_waiters = -EBUSY;
+ 	struct virtio_fs_vq *fsvq = container_of(work, struct virtio_fs_vq,
+ 						 done_work);
+-	struct fuse_pqueue *fpq = &fsvq->fud->pq;
+ 	struct virtqueue *vq = fsvq->vq;
+ 	struct fuse_req *req;
+ 	struct fuse_req *next;
+@@ -827,9 +826,7 @@ static void virtio_fs_requests_done_work(struct work_struct *work)
+ 		virtqueue_disable_cb(vq);
  
--	init_completion(&core_state->startup);
--	core_state->dumper.task = tsk;
--	core_state->dumper.next = NULL;
-+	init_completion(&core_state.startup);
-+	core_state.dumper.task = tsk;
-+	core_state.dumper.next = NULL;
+ 		while ((req = virtqueue_get_buf(vq, &len)) != NULL) {
+-			spin_lock(&fpq->lock);
+-			list_move_tail(&req->list, &reqs);
+-			spin_unlock(&fpq->lock);
++			list_add_tail(&req->list, &reqs);
+ 		}
+ 	} while (!virtqueue_enable_cb(vq));
+ 	spin_unlock(&fsvq->lock);
+@@ -1389,7 +1386,6 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 	unsigned int i;
+ 	int ret;
+ 	bool notify;
+-	struct fuse_pqueue *fpq;
  
--	core_waiters = zap_threads(tsk, core_state, exit_code);
-+	core_waiters = zap_threads(tsk, &core_state, exit_code);
- 	if (core_waiters > 0) {
- 		struct core_thread *ptr;
+ 	/* Does the sglist fit on the stack? */
+ 	total_sgs = sg_count_fuse_req(req);
+@@ -1445,10 +1441,6 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 	}
  
--		wait_for_completion_state(&core_state->startup,
-+		wait_for_completion_state(&core_state.startup,
- 					  TASK_UNINTERRUPTIBLE|TASK_FREEZABLE);
- 		/*
- 		 * Wait for all the threads to become inactive, so that
- 		 * all the thread context (extended register state, like
- 		 * fpu etc) gets copied to the memory.
- 		 */
--		ptr = core_state->dumper.next;
-+		ptr = core_state.dumper.next;
- 		while (ptr != NULL) {
- 			wait_task_inactive(ptr->task, TASK_ANY);
- 			ptr = ptr->next;
-@@ -858,7 +859,7 @@ static bool coredump_sock_request(struct core_name *cn, struct coredump_params *
- 	return coredump_sock_mark(cprm->file, COREDUMP_MARK_REQACK);
- }
- 
--static bool coredump_socket(struct core_name *cn, struct coredump_params *cprm)
-+static noinline_for_stack bool coredump_socket(struct core_name *cn, struct coredump_params *cprm)
- {
- 	if (!coredump_sock_connect(cn, cprm))
- 		return false;
-@@ -1095,7 +1096,6 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
- {
- 	struct cred *cred __free(put_cred) = NULL;
- 	size_t *argv __free(kfree) = NULL;
--	struct core_state core_state;
- 	struct core_name cn;
- 	struct mm_struct *mm = current->mm;
- 	struct linux_binfmt *binfmt = mm->binfmt;
-@@ -1131,7 +1131,7 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
- 	if (coredump_force_suid_safe(&cprm))
- 		cred->fsuid = GLOBAL_ROOT_UID;
- 
--	if (coredump_wait(siginfo->si_signo, &core_state) < 0)
-+	if (coredump_wait(siginfo->si_signo) < 0)
- 		return;
- 
- 	old_cred = override_creds(cred);
+ 	/* Request successfully sent. */
+-	fpq = &fsvq->fud->pq;
+-	spin_lock(&fpq->lock);
+-	list_add_tail(&req->list, fpq->processing);
+-	spin_unlock(&fpq->lock);
+ 	set_bit(FR_SENT, &req->flags);
+ 	/* matches barrier in request_wait_answer() */
+ 	smp_mb__after_atomic();
 -- 
-2.39.5
+2.9.4
 
 
