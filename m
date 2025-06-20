@@ -1,320 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-52287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C1DAE10F9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 04:16:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E742AAE12A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 06:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E3C6A02DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 02:16:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27481BC2193
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 04:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0413C450EE;
-	Fri, 20 Jun 2025 02:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1930C1F150A;
+	Fri, 20 Jun 2025 04:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="XplCFzea"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VYxGS7kv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C45B34CF5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 02:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C675336D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 04:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750385787; cv=none; b=pCejlMwMfGgrBCz2K+3NWbMTai068IIF0snhjYSqud9cCDLBAuI31apW5FYH/01Xj3Irw5PAKxFaizmGAgt0cMLy9zCBsKY5dDY8GxitH+fU4Rw5SKRc5Mf4zwBxGj/2KSrXoZMgLgSlZmJBI9AjTKLeZdW3xtSxEHqwnbP/yJI=
+	t=1750395234; cv=none; b=BN3LE860D2cl2OaI/3us5bnM1ENOqOQFW6qs/1vWCGqNQ1I3wFAENLAjl+Z+pzlxDcQU5R162yNvG/DxlgQDK8kOjGmmx3IGolrBKO3X80imAh5ENrAyK5rhfsE6X5NUI08Gcd5ygNRjHtuEkDLYzH4QLRrhhoIIVd/e2P7PoLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750385787; c=relaxed/simple;
-	bh=g5OW8tuvyxUA+t6pLcKEEoc1EraU6/LLk2G3G1r0G+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=llFvLI39V9PL96pDwcTb2VQGybFHrL4akXJnPo0Sp7x5FNVMGJU2Tha90npD2XMuJ/0jud+mVOhqEYqlfi4nIrR3RQKk85O5sflC5I50Rd7edIAgXYGXqtfOX0WW27L5bO/oqrILNojTA1xb3TZ65fsrnqTYYg0vLQh9RyPsxms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=XplCFzea; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-86a464849c2so45823939f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 19:16:25 -0700 (PDT)
+	s=arc-20240116; t=1750395234; c=relaxed/simple;
+	bh=E/YiGHnW1wZQ5X/0H0XDdrD4sDL0PuYMkMZ0cU3VFVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0OXisMQhvRdmWYS03U13vbQtrCM36lfhsRN5zyhX+Fb5yV6/N0tsFfyTqIBs25mRjJpfU4ZUGjwPIfRfzVcUc1svmlkOLhKhhzfVejBz+UYYijG84/JwtH7/1WkFoRKxIK6FipGStruUMaEx4d1ykV9vI3kIo87vyXWbazhqI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VYxGS7kv; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23636167b30so13094465ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jun 2025 21:53:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1750385784; x=1750990584; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x6VzlhRVh//x5/bp+2ihBVL31M01Rg7PAdE9X0/n0so=;
-        b=XplCFzeaT0UI3xYRmaARyqEdD97XMne1e3DHmUxq4ajv1NXr3mZN6+HpBn8+p4y2vC
-         ZIffVKiUiG6KqmOdRuglV8AMpVVmK4nQTkuQSjZlY1bJ3tlTIJtJsnRVEpwYPO8bF9ZX
-         giodreBA5Y6kd9L+peqjqAaxHRKKBPHIrTMEqj5/1zVehCA4H5ioBfnGCDoUjl1btvGI
-         JJSJ5VgF+p49cEhlNOYrOoebp+TLtvBmv8rMIAvDfPLEKH8iJ4gBUk+BkE/JCwXSq42/
-         t/oyEI5d6twFBpd+vHXXEusMArMv3k+DWtDse9duVqJ/nAclXbHwBvjmkeTMQd910xpN
-         opeQ==
+        d=chromium.org; s=google; t=1750395232; x=1751000032; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q2G3dD31TRdLmU2kMFyJcNMrg5YHR0QH2/Tfvo3Rsac=;
+        b=VYxGS7kv0WvICnF/14n2jOIJQ7K2q3TkVpgidj7fojgr4C4T8vd04Vp6eacnQKact5
+         x70QzlIK7YU6UoezLZfoWwCbIXayGQqK0a6Qq6OX2Tg05Fi0CmjQyUxtTbJY+UmS+4pq
+         hMbDGu4EdDWwlWImlDqTDy1ccuy5Ry+HdV5Zw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750385784; x=1750990584;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x6VzlhRVh//x5/bp+2ihBVL31M01Rg7PAdE9X0/n0so=;
-        b=EDJuKbuSXVdkGturrYXY2cQ/VY3yLworzw7djr7S2LUq84/azzUEX8hNy/AIYi5W64
-         XLrIqdYmxEn3stRW0Uyv2P/JznSWfES7ZhDm8SZy5+GLs/R3KnNI8X2Z8mvexudirN5M
-         q+ydOnAlzM+2HZdsUrFJJtUE01HVvD41naUCT266YW97bsRsd1CYSM4tlQm6BVvoXJvn
-         Ajf8LPILIjxea4NWJ3m/4x3sRljaVnKqRLDRzZjelqigCXT3g/m1lNUkTO0rai6qi4L3
-         tLfh5rrN0hBXK1ghsAeIt0BMwFAP+QvJ619LQ2ol/Yuk1wq+85CJ0ZBTpKUH+8xEFFCr
-         5ERQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVL3XgKAI2mkbRzKqKaXBCAUdyll12lustyAC3YjVmCclD++4uKhAIb2XYvi0v7tcebmAkB/Ppmw2Ahfzqr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrF15SdV5sx98x2fABewb6UC6e3gVVjjEFhtMEfRqAtMM9DkoF
-	a3vMyKW3XVmcyWai3QtzgSGmHioxRuvOrDfLQY0Lk6rirrQVWc7zBPz46emcNFqkEum+GG6sRbX
-	h30Gy1HHeqR3jN/xJ4we8u+zGkf7wgkepPAGn5kvW9g==
-X-Gm-Gg: ASbGncvoaOcblTk5xT1tQdmfPhvrv1xaOv2OtnIAtYPsDLQyiC75mgLPF3+plKn/rxV
-	U0qXTLNZ4AjWspj+BDqijYW32EZvZL9mqGM10DsV+dybubfv0wmT7C2sBMVwMzvzWjnfHp6Zuzw
-	DWGWEl0aqvjUjpT9Lyudb0bLeytZFVOp+etn86qiJCOQZrNA==
-X-Google-Smtp-Source: AGHT+IFMb9mI6JMrDwTDWGg+EBY6yLgAqHEKa1UTY7olo+luMJ+3DWC5EwQujeTUmlUkh6NOSS/MWljD6rFkZYVc5ek=
-X-Received: by 2002:a05:6602:8303:b0:867:15a5:d16 with SMTP id
- ca18e2360f4ac-8762e7372bemr28998539f.8.1750385784285; Thu, 19 Jun 2025
- 19:16:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750395232; x=1751000032;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q2G3dD31TRdLmU2kMFyJcNMrg5YHR0QH2/Tfvo3Rsac=;
+        b=hmazFJLOQkuNfHISf2aloa+/aXsbPTQQcPLw8dqFTHWj1FFouVd4xqyaoHunLjUR0a
+         bsn1XWEaaQLHK323zOh/LcnnIB5pJ9U0s8SJXGeDaOEGwZm5DtOWzwJhWhra16xEeVBp
+         PhplA1E2xvC2wOk0hZ7bfHHJl8Bj6MXrvXHc4PcOAmeNFZ5Pm8zZgctbn2YDv59ZjuCO
+         eLAgBeBLcE10RpnIpJZzUJsQQWkXS8rgVm9BOhgK59O8MuEYgqbfS3Rdkt1mzAcQpB9V
+         oaaTgA9Bc7ch84QPoSr15fZWD+sSJbNjp8vcEHvQdMfkuF7L5WhCvoxCnB01IHQ4eIJX
+         x21w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDm1tgDLyKMax1IClzZ6mUXzwC1dG9c1E4yQeXa41qvJPV92Edr78c00Y+8BRj0Flxp1iBytF24TIlxvYl@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO00Y7xAy1qjnB3C/VAPXpm6FgHFQN9T7MZ0IlJ3KvroGO5L9F
+	Grl67gCIuAdQ4NqemvGE9qYnK9YUvJpGl/IOXHjBn96tVx+a0/oWyPXPHdZmXUns4g==
+X-Gm-Gg: ASbGncskrJlBIOIitPGF+O1CFKKpFjPmLV5P9KlnwjqeY9BrHeQWEBmof9zqEQ52vfK
+	OJSfrhoHYkSdAqC3ejfJkqiVnY3gdUwDHl20MTm4QvjFdL+i2maL0HCuIyS6Te5dOx0b1OAPH90
+	nFcUMVXYG2x1pho8QUFoKrdqc6ZxHUqzxfohMROAOgOwQ8PJjmPDNV25JDaranLElt1AZk3scWA
+	y9vEKjP+YxgMsDQUMFB0SEBKWYwY9hnJ4Ub8WEIAvEyr4+D748G9RtrmNfyPpjVxIsUStx7cfok
+	F9f5XR9rWeqcv3PK7p3xrj/VU98aDYxNeKjgADHpR64dcGESOFSL1E6ZUicud3/FKg==
+X-Google-Smtp-Source: AGHT+IFk7B8k/GlrcRZRoZuXgJlsllcTVXF/E2PZN7eWGLXhECASjJTNH1UzB9LoljR7ceAwxCiMEA==
+X-Received: by 2002:a17:902:e842:b0:234:ef42:5d48 with SMTP id d9443c01a7336-237d9980027mr24292165ad.38.1750395232197;
+        Thu, 19 Jun 2025 21:53:52 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:e574:cc97:5a5d:2a87])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d860a854sm8018115ad.116.2025.06.19.21.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 21:53:51 -0700 (PDT)
+Date: Fri, 20 Jun 2025 13:53:47 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [RFC PATCH] fanotify: wake-up all waiters on release
+Message-ID: <76mwzuvqxrpml7zm3ebqaqcoimjwjda27xfyqracb7zp4cf5qv@ykpy5yabmegu>
+References: <3p5hvygkgdhrpbhphtjm55vnvprrgguk46gic547jlwdhjonw3@nz54h4fjnjkm>
+ <20250520123544.4087208-1-senozhatsky@chromium.org>
+ <bsji6w5ytunjt5vlgj6t53rrksqc7lp5fukwi2sbettzuzvnmg@fna73sxftrak>
+ <ccdghhd5ldpqc3nps5dur5ceqa2dgbteux2y6qddvlfuq3ar4g@m42fp4q5ne7n>
+ <xlbmnncnw6swdtf74nlbqkn57sxpt5f3bylpvhezdwgavx5h2r@boz7f5kg3x2q>
+ <yo2mrodmg32xw3v3pezwreqtncamn2kvr5feae6jlzxajxzf6s@dclplmsehqct>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604-v5_user_cfi_series-v17-0-4565c2cf869f@rivosinc.com>
- <20250604-v5_user_cfi_series-v17-15-4565c2cf869f@rivosinc.com> <CANXhq0pRXX_OMW2g2ui-k7Z_ZT+5a8Sra8oE28nBh5B9K2L5bQ@mail.gmail.com>
-In-Reply-To: <CANXhq0pRXX_OMW2g2ui-k7Z_ZT+5a8Sra8oE28nBh5B9K2L5bQ@mail.gmail.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 20 Jun 2025 10:16:12 +0800
-X-Gm-Features: AX0GCFudFSxSRELkYOW_7RRTcSiKTWMBH5CUlpZzl260C95QwRIsmCDm3_hQ72g
-Message-ID: <CANXhq0p3MVLMsr_r0RWMti476pT0EMx61PQArjo2fUauTdpXaQ@mail.gmail.com>
-Subject: Re: [PATCH v17 15/27] riscv/traps: Introduce software check exception
- and uprobe handling
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yo2mrodmg32xw3v3pezwreqtncamn2kvr5feae6jlzxajxzf6s@dclplmsehqct>
 
-On Mon, Jun 16, 2025 at 3:31=E2=80=AFPM Zong Li <zong.li@sifive.com> wrote:
->
-> On Thu, Jun 5, 2025 at 1:17=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> =
-wrote:
-> >
-> > zicfiss / zicfilp introduces a new exception to priv isa `software chec=
-k
-> > exception` with cause code =3D 18. This patch implements software check
-> > exception.
-> >
-> > Additionally it implements a cfi violation handler which checks for cod=
-e
-> > in xtval. If xtval=3D2, it means that sw check exception happened becau=
-se of
-> > an indirect branch not landing on 4 byte aligned PC or not landing on
-> > `lpad` instruction or label value embedded in `lpad` not matching label
-> > value setup in `x7`. If xtval=3D3, it means that sw check exception hap=
-pened
-> > because of mismatch between link register (x1 or x5) and top of shadow
-> > stack (on execution of `sspopchk`).
-> >
-> > In case of cfi violation, SIGSEGV is raised with code=3DSEGV_CPERR.
-> > SEGV_CPERR was introduced by x86 shadow stack patches.
-> >
-> > To keep uprobes working, handle the uprobe event first before reporting
-> > the CFI violation in software-check exception handler. Because when the
-> > landing pad is activated, if the uprobe point is set at the lpad
-> > instruction at the beginning of a function, the system triggers a softw=
-are
-> > -check exception instead of an ebreak exception due to the exception
-> > priority, then uprobe can't work successfully.
-> >
-> > Co-developed-by: Zong Li <zong.li@sifive.com>
-> > Reviewed-by: Zong Li <zong.li@sifive.com>
-> > Signed-off-by: Zong Li <zong.li@sifive.com>
-> > Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> > ---
-> >  arch/riscv/include/asm/asm-prototypes.h |  1 +
-> >  arch/riscv/include/asm/entry-common.h   |  2 ++
-> >  arch/riscv/kernel/entry.S               |  3 ++
-> >  arch/riscv/kernel/traps.c               | 51 +++++++++++++++++++++++++=
-++++++++
-> >  4 files changed, 57 insertions(+)
-> >
-> > diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/inclu=
-de/asm/asm-prototypes.h
-> > index cd627ec289f1..5a27cefd7805 100644
-> > --- a/arch/riscv/include/asm/asm-prototypes.h
-> > +++ b/arch/riscv/include/asm/asm-prototypes.h
-> > @@ -51,6 +51,7 @@ DECLARE_DO_ERROR_INFO(do_trap_ecall_u);
-> >  DECLARE_DO_ERROR_INFO(do_trap_ecall_s);
-> >  DECLARE_DO_ERROR_INFO(do_trap_ecall_m);
-> >  DECLARE_DO_ERROR_INFO(do_trap_break);
-> > +DECLARE_DO_ERROR_INFO(do_trap_software_check);
-> >
-> >  asmlinkage void handle_bad_stack(struct pt_regs *regs);
-> >  asmlinkage void do_page_fault(struct pt_regs *regs);
-> > diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include=
-/asm/entry-common.h
-> > index b28ccc6cdeea..34ed149af5d1 100644
-> > --- a/arch/riscv/include/asm/entry-common.h
-> > +++ b/arch/riscv/include/asm/entry-common.h
-> > @@ -40,4 +40,6 @@ static inline int handle_misaligned_store(struct pt_r=
-egs *regs)
-> >  }
-> >  #endif
-> >
-> > +bool handle_user_cfi_violation(struct pt_regs *regs);
-> > +
-> >  #endif /* _ASM_RISCV_ENTRY_COMMON_H */
-> > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> > index 978115567bca..8d25837a9384 100644
-> > --- a/arch/riscv/kernel/entry.S
-> > +++ b/arch/riscv/kernel/entry.S
-> > @@ -474,6 +474,9 @@ SYM_DATA_START_LOCAL(excp_vect_table)
-> >         RISCV_PTR do_page_fault   /* load page fault */
-> >         RISCV_PTR do_trap_unknown
-> >         RISCV_PTR do_page_fault   /* store page fault */
-> > +       RISCV_PTR do_trap_unknown /* cause=3D16 */
-> > +       RISCV_PTR do_trap_unknown /* cause=3D17 */
-> > +       RISCV_PTR do_trap_software_check /* cause=3D18 is sw check exce=
-ption */
-> >  SYM_DATA_END_LABEL(excp_vect_table, SYM_L_LOCAL, excp_vect_table_end)
-> >
-> >  #ifndef CONFIG_MMU
-> > diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> > index 8ff8e8b36524..64388370e1ad 100644
-> > --- a/arch/riscv/kernel/traps.c
-> > +++ b/arch/riscv/kernel/traps.c
-> > @@ -354,6 +354,57 @@ void do_trap_ecall_u(struct pt_regs *regs)
-> >
-> >  }
-> >
-> > +#define CFI_TVAL_FCFI_CODE     2
-> > +#define CFI_TVAL_BCFI_CODE     3
-> > +/* handle cfi violations */
-> > +bool handle_user_cfi_violation(struct pt_regs *regs)
-> > +{
-> > +       unsigned long tval =3D csr_read(CSR_TVAL);
-> > +       bool is_fcfi =3D (tval =3D=3D CFI_TVAL_FCFI_CODE && cpu_support=
-s_indirect_br_lp_instr());
-> > +       bool is_bcfi =3D (tval =3D=3D CFI_TVAL_BCFI_CODE && cpu_support=
-s_shadow_stack());
-> > +
-> > +       /*
-> > +        * Handle uprobe event first. The probe point can be a valid ta=
-rget
-> > +        * of indirect jumps or calls, in this case, forward cfi violat=
-ion
-> > +        * will be triggered instead of breakpoint exception.
-> > +        */
-> > +       if (is_fcfi && probe_breakpoint_handler(regs))
-> > +               return true;
->
-> Hi  Deepak,
-> Sorry for missing something earlier. I think we would like to clear
-> sstatus.SPELP in the uprobe handling case. For example:
->
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index c2ea999c1167..e8492bb57e09 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -349,8 +349,10 @@ bool handle_user_cfi_violation(struct pt_regs *regs)
->         bool is_fcfi =3D (tval =3D=3D CFI_TVAL_FCFI_CODE &&
-> cpu_supports_indirect_br_lp_instr());
->         bool is_bcfi =3D (tval =3D=3D CFI_TVAL_BCFI_CODE &&
-> cpu_supports_shadow_stack());
->
-> -       if (is_fcfi && probe_breakpoint_handler(regs))
-> +       if (is_fcfi && probe_breakpoint_handler(regs)) {
-> +               regs->status =3D regs->status & ~SR_ELP;
->                 return true;
-> +       }
->
->         if (is_fcfi || is_bcfi) {
->                 do_trap_error(regs, SIGSEGV, SEGV_CPERR, regs->epc,
->
->
-> When a user mode CFI violation occurs, the ELP state should be 1, and
-> the system traps into supervisor mode. During this trap, sstatus.SPELP
-> is set to 1, and the ELP state is reset to 0. If we don=E2=80=99t clear
-> sstatus.SPELP, the ELP state will become 1 again after executing the
-> sret instruction. As a result, the system might trigger another
-> forward CFI violation upon executing the next instruction in the user
-> program, unless it happens to be a lpad instruction.
->
-> The previous patch was tested on QEMU, but QEMU does not set the
-> sstatus.SPELP bit to 1 when a forward CFI violation occurs. Therefore,
-> I suspect that QEMU might also require some fixes.
+On (25/05/26 23:12), Sergey Senozhatsky wrote:
+[..]
+> > >  schedule+0x534/0x2540
+> > >  fsnotify_destroy_group+0xa7/0x150
+> > >  fanotify_release+0x147/0x160
+> > >  ____fput+0xe4/0x2a0
+> > >  task_work_run+0x71/0xb0
+> > >  do_exit+0x1ea/0x800
+> > >  do_group_exit+0x81/0x90
+> > >  get_signal+0x32d/0x4e0
 
-Hi Deepak,
-The issue with QEMU was that the sw-check exception bit in medeleg
-couldn't be set. This has been fixed in the latest QEMU mainline. I
-have re-tested the latest QEMU version, and it works.
+[..]
 
->
-> Thanks
->
-> > +
-> > +       if (is_fcfi || is_bcfi) {
-> > +               do_trap_error(regs, SIGSEGV, SEGV_CPERR, regs->epc,
-> > +                             "Oops - control flow violation");
-> > +               return true;
-> > +       }
-> > +
-> > +       return false;
-> > +}
-> > +
-> > +/*
-> > + * software check exception is defined with risc-v cfi spec. Software =
-check
-> > + * exception is raised when:-
-> > + * a) An indirect branch doesn't land on 4 byte aligned PC or `lpad`
-> > + *    instruction or `label` value programmed in `lpad` instr doesn't
-> > + *    match with value setup in `x7`. reported code in `xtval` is 2.
-> > + * b) `sspopchk` instruction finds a mismatch between top of shadow st=
-ack (ssp)
-> > + *    and x1/x5. reported code in `xtval` is 3.
-> > + */
-> > +asmlinkage __visible __trap_section void do_trap_software_check(struct=
- pt_regs *regs)
-> > +{
-> > +       if (user_mode(regs)) {
-> > +               irqentry_enter_from_user_mode(regs);
-> > +
-> > +               /* not a cfi violation, then merge into flow of unknown=
- trap handler */
-> > +               if (!handle_user_cfi_violation(regs))
-> > +                       do_trap_unknown(regs);
-> > +
-> > +               irqentry_exit_to_user_mode(regs);
-> > +       } else {
-> > +               /* sw check exception coming from kernel is a bug in ke=
-rnel */
-> > +               die(regs, "Kernel BUG");
-> > +       }
-> > +}
-> > +
-> >  #ifdef CONFIG_MMU
-> >  asmlinkage __visible noinstr void do_page_fault(struct pt_regs *regs)
-> >  {
-> >
-> > --
-> > 2.43.0
-> >
+> @@ -945,8 +945,10 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+>         if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
+>                 fsid = fanotify_get_fsid(iter_info);
+>                 /* Racing with mark destruction or creation? */
+> -               if (!fsid.val[0] && !fsid.val[1])
+> -                       return 0;
+> +               if (!fsid.val[0] && !fsid.val[1]) {
+> +                       ret = 0;
+> +                       goto finish;
+> +               }
+>         }
+
+Surprisingly enough, this did not help.
+
+Jan, one more silly question:
+
+fsnotify_get_mark_safe() and fsnotify_put_mark_wake() can be called on
+NULL mark.  Is it possible that between fsnotify_prepare_user_wait(iter_info)
+and fsnotify_finish_user_wait(iter_info) iter_info->marks[type] changes in
+such a way that creates imbalance?  That is, fsnotify_finish_user_wait() sees
+more NULL marks and hence does not rollback all the group->user_waits
+increments that fsnotify_prepare_user_wait() did?
 
