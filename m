@@ -1,206 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-52307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF8CAE1618
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 10:33:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD95AAE16DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 10:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CABD19E6894
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 08:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4F13BC8AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 08:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D77A238140;
-	Fri, 20 Jun 2025 08:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035D627E04D;
+	Fri, 20 Jun 2025 08:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNJsdDEu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VELAa85w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A9B30E84F;
-	Fri, 20 Jun 2025 08:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F06274660
+	for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 08:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750408290; cv=none; b=ixX5JPVGFBXGdyQFavQF2l2qM3e61TBvodMpDwO7t8qb4QLCdPGE5GpPs7uCmRXNOmgGbo0D3R+IJGydaC3tDfrUSr10kOLBFvnDCpBA3Wh/b33aiITZlUgDFKpOgdWoAxNno/7lr0px5hEHjyicK4zIs7XYUzG7hTBMi1DDjHA=
+	t=1750409935; cv=none; b=qtYFtj76LQH6onO7o/1dGq+NnYMgPmHZ7OFWIZOKzxlBw+czZ4VO+z3PTMhPbfHXPKvZBfQGIcPV0nDmPjxT6Za14QmpsOanYrBSgEWmd2PFs+p5gfbiw9Co/McUiOuPeKoIuTr7tKePYgPXnlptypLjw8m4Zpl+V2ceML2TMPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750408290; c=relaxed/simple;
-	bh=Bhu2W2Zp0blQzM5tWuUNkvTkKuqo41pZEk+2ifIlZgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUWRNwKdv6HGG4QOHCXy/InEOcRwHQpGd6hAILf8Sw/EQLIzhdn1nR+Znh8Q9bmMKmWH4BAMTMc/zNXVvWyC+d8+8Kv72fHWlht/4LfXIe3LxtYixxACDHsFqCEMcgtMWe0hr2a3E4Bj/p2Au7BYNPG25nx9Y8eMEjb9ReboBC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNJsdDEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A50CC4CEE3;
-	Fri, 20 Jun 2025 08:31:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750408290;
-	bh=Bhu2W2Zp0blQzM5tWuUNkvTkKuqo41pZEk+2ifIlZgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tNJsdDEualaroLs6cNc/FDnBC0ZDCzgl7Seo0MRUcyRryD8iggojfPlU6rNhjS7nw
-	 BWtBoU5RIEL8sRLABuFd+FzR7xoMqAuleDTdiGy9pJSe9kBVC7elXMJNhXlo7kkt7/
-	 RpAKYlYea16J8HyTzQJXY/P4rRkI5Gqi07GqhFP3rqe6hvbVSrtintLAfcrKbae5tR
-	 lwy6LiLkrQI+VfgD2E3qlzh4s3rbfvuqnh30ONY/O8XlFFkHPsQSGb7mpBFszWSqH+
-	 h2CDrZDZhZRZLf5aZvHkFzsiJyA7GrdhBn8qIkCtcCZcWlxwbb5BgkynGb3x/Ao8fd
-	 dZiQHdyVv2yUQ==
-Date: Fri, 20 Jun 2025 11:31:19 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: david@redhat.com, akpm@linux-foundation.org, brauner@kernel.org,
-	paul@paul-moore.com, viro@zeniv.linux.org.uk, seanjc@google.com,
-	vbabka@suse.cz, willy@infradead.org, pbonzini@redhat.com,
-	tabba@google.com, afranji@google.com, ackerleytng@google.com,
-	jack@suse.cz, hch@infradead.org, cgzones@googlemail.com,
-	ira.weiny@intel.com, roypat@amazon.co.uk,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH V2] fs: export anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-Message-ID: <aFUcV-zbJYzAdYig@kernel.org>
-References: <20250620070328.803704-3-shivankg@amd.com>
+	s=arc-20240116; t=1750409935; c=relaxed/simple;
+	bh=BpH0pHNPZm6LbbjEwIAiuSzrXdKhyBa5zujoGxkRqWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=giBwaH27W/Y2AaSCRzKcXmUdKaXoEgr4iCiSm+V/zZ4Dft9JiD/ZDFdjVpJ9CnhW6Fxrl5NGfR5C8Ooh4ou3IsI2FStQxMrHXlzABpRc+H5xhE3Fpb3Jpad11ZzOSrz2Mu/TAgu3dJ7SfOWV+YyLZ4RncThd1K/YKD+jE/AhPcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VELAa85w; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750409932;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QR8mG4qewbyLkZRi9qQoKnNeSih+x7nXiPiiahvnnPU=;
+	b=VELAa85wPMTJ/HLyXk7FAHDK0I8iZ3RDtS7i0XP2D9E9Ocz2UPgoqhefhOZWzyfs8b9ssK
+	s30O2MXPieRfegzuqUXf3kIijSEPtzBO6eI+dcdTXb1nKW0RPY9LPahRcllZhG0czBiHb0
+	97xieqMrMMmSD4jfpuSvQ9Eo0NaIUYs=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-688-ik2B7ZuBM1e1uIN8kQtx2A-1; Fri, 20 Jun 2025 04:58:50 -0400
+X-MC-Unique: ik2B7ZuBM1e1uIN8kQtx2A-1
+X-Mimecast-MFC-AGG-ID: ik2B7ZuBM1e1uIN8kQtx2A_1750409930
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-60d60b8ef64so715996eaf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jun 2025 01:58:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750409930; x=1751014730;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QR8mG4qewbyLkZRi9qQoKnNeSih+x7nXiPiiahvnnPU=;
+        b=daAhg9fl5wQR6sIiih5OvFihEU3KbdCLkgZtByh017MkpLIRxV2B8qY+NqaZELE65e
+         haz3Ju01jKyEuG0HvFMxTxB1SmxitGgxGYZaL8b3+cp+8kIjJG3RUce7UYhXAWg0JqZ4
+         TbG84L/MSRI+iIR1sibW/7AnyZZBykqSMZqzyLqleYJxCvtK32VdNnFo7qfsvDkkX6x8
+         O8aQbntJ7bRwDNVvggzuGirK1YUBssMKIxu3G6UCEnPnb+YTkvQZ5/XSLMntCmPqM2LY
+         cP4vr1vcn60LtNSIWml8vJBurELdvojdtiZtytpcn52J+JCZA4ZjDX8zecb7AgBjehYf
+         dK5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVhSTP0+dPk8iAEVKcupQNFvAU3oUs7e36HMkhk03gq+7neGJ4HKE5OVS2RxwK8O0ENvm9vTBTehrNpFiaz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz++7BYhrvJGWMhBzcyOMXflxTsQTl2y9IGPghESbP6icT8lCjr
+	YM9U05myrOBJTi7/AlHlV/Bft9OfKcYIS14bT+LhYwBU2WB4/Y2qoEkGYq3I1QGrLodmcoEXKnv
+	+U5dpq8P4Jik5OQ05cjL+0ZUYV/kF9FH/XVG8E7jR41UlecIzGUIAf25McbHohGCTNhdE3kDEW3
+	412c0TvMDZvOQD3gDMIlos5f/rh6qEkdfq2bJCucOivQ==
+X-Gm-Gg: ASbGncu/w4fUw1vuD3qL/X9ST5iXgYIaDLmIhhzfVzkE+hQSb6YfGed8s7Nmsvfyty5
+	8/5PX4GKlSAmsRYbH9GTR3MD45P+kvNN1lbhP9kpuEYEVOOOO280G9h1J50A0OivBvWI6lWInJR
+	yAcL8uAVwiJCnlbrqkbYJiJ42BTMoq4nkwcA==
+X-Received: by 2002:a4a:ee06:0:b0:611:2c55:3b39 with SMTP id 006d021491bc7-6115b9ba12amr1442283eaf.3.1750409930066;
+        Fri, 20 Jun 2025 01:58:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYB/C7y/mW7YGXkvLHZEzdWmX38VA5n5djcLK7T96pX0N2F2a4uL6sDg7dqqL+loHHQ+T7nIi2xdcPKAFDbCQ=
+X-Received: by 2002:a4a:ee06:0:b0:611:2c55:3b39 with SMTP id
+ 006d021491bc7-6115b9ba12amr1442272eaf.3.1750409929749; Fri, 20 Jun 2025
+ 01:58:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620070328.803704-3-shivankg@amd.com>
+References: <20250521235837.GB9688@frogsfrogsfrogs> <CAOQ4uxh3vW5z_Q35DtDhhTWqWtrkpFzK7QUsw3MGLPY4hqUxLw@mail.gmail.com>
+ <20250529164503.GB8282@frogsfrogsfrogs> <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
+ <20250609223159.GB6138@frogsfrogsfrogs> <CAOQ4uxgUVOLs070MyBpfodt12E0zjUn_SvyaCSJcm_M3SW36Ug@mail.gmail.com>
+ <20250610190026.GA6134@frogsfrogsfrogs> <20250611115629.GL784455@mit.edu>
+In-Reply-To: <20250611115629.GL784455@mit.edu>
+From: Allison Karlitskaya <lis@redhat.com>
+Date: Fri, 20 Jun 2025 10:58:38 +0200
+X-Gm-Features: Ac12FXzaDyHQsHgJ6iv0tV4BMxjkmezK6KxBuWvqs_fjsJwR-0Nnv7GswYhoT4g
+Message-ID: <CAOYeF9W8OpAjSS9r_MO5set0ZoUCAnTmG2iB7NXvOiewtnrqLg@mail.gmail.com>
+Subject: Re: [RFC[RAP]] fuse: use fs-iomap for better performance so we can
+ containerize ext4
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net, bernd@bsbernd.com, 
+	miklos@szeredi.hu, joannelkoong@gmail.com, Josef Bacik <josef@toxicpanda.com>, 
+	linux-ext4 <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 20, 2025 at 07:03:30AM +0000, Shivank Garg wrote:
-> Export anon_inode_make_secure_inode() to allow KVM guest_memfd to create
-> anonymous inodes with proper security context. This replaces the current
-> pattern of calling alloc_anon_inode() followed by
-> inode_init_security_anon() for creating security context manually.
-> 
-> This change also fixes a security regression in secretmem where the
-> S_PRIVATE flag was not cleared after alloc_anon_inode(), causing
-> LSM/SELinux checks to be bypassed for secretmem file descriptors.
-> 
-> As guest_memfd currently resides in the KVM module, we need to export this
-> symbol for use outside the core kernel. In the future, guest_memfd might be
-> moved to core-mm, at which point the symbols no longer would have to be
-> exported. When/if that happens is still unclear.
-> 
-> Fixes: 2bfe15c52612 ("mm: create security context for memfd_secret inodes")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Mike Rapoport <rppt@kernel.org>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
+hi Ted,
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Sorry I didn't see this earlier.  I've been travelling.
 
-> ---
-> The handling of the S_PRIVATE flag for these inodes was discussed
-> extensively ([1], [2], [3]).
-> 
-> As per discussion [3] with Mike and Paul, KVM guest_memfd and secretmem
-> result in user-visible file descriptors, so they should be subject to
-> LSM/SELinux security policies rather than bypassing them with S_PRIVATE.
-> 
-> [1] https://lore.kernel.org/all/b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com
-> [2] https://lore.kernel.org/all/cover.1748890962.git.ackerleytng@google.com
-> [3] https://lore.kernel.org/all/aFOh8N_rRdSi_Fbc@kernel.org
-> 
-> V1->V2: Use EXPORT_SYMBOL_GPL_FOR_MODULES() since KVM is the only user.
-> 
->  fs/anon_inodes.c   | 23 ++++++++++++++++++-----
->  include/linux/fs.h |  2 ++
->  mm/secretmem.c     |  9 +--------
->  3 files changed, 21 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> index e51e7d88980a..1d847a939f29 100644
-> --- a/fs/anon_inodes.c
-> +++ b/fs/anon_inodes.c
-> @@ -98,14 +98,25 @@ static struct file_system_type anon_inode_fs_type = {
->  	.kill_sb	= kill_anon_super,
->  };
->  
-> -static struct inode *anon_inode_make_secure_inode(
-> -	const char *name,
-> -	const struct inode *context_inode)
-> +/**
-> + * anon_inode_make_secure_inode - allocate an anonymous inode with security context
-> + * @sb:		[in]	Superblock to allocate from
-> + * @name:	[in]	Name of the class of the newfile (e.g., "secretmem")
-> + * @context_inode:
-> + *		[in]	Optional parent inode for security inheritance
-> + *
-> + * The function ensures proper security initialization through the LSM hook
-> + * security_inode_init_security_anon().
-> + *
-> + * Return:	Pointer to new inode on success, ERR_PTR on failure.
-> + */
-> +struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
-> +					   const struct inode *context_inode)
->  {
->  	struct inode *inode;
->  	int error;
->  
-> -	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-> +	inode = alloc_anon_inode(sb);
->  	if (IS_ERR(inode))
->  		return inode;
->  	inode->i_flags &= ~S_PRIVATE;
-> @@ -118,6 +129,7 @@ static struct inode *anon_inode_make_secure_inode(
->  	}
->  	return inode;
->  }
-> +EXPORT_SYMBOL_GPL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
->  
->  static struct file *__anon_inode_getfile(const char *name,
->  					 const struct file_operations *fops,
-> @@ -132,7 +144,8 @@ static struct file *__anon_inode_getfile(const char *name,
->  		return ERR_PTR(-ENOENT);
->  
->  	if (make_inode) {
-> -		inode =	anon_inode_make_secure_inode(name, context_inode);
-> +		inode =	anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
-> +						     name, context_inode);
->  		if (IS_ERR(inode)) {
->  			file = ERR_CAST(inode);
->  			goto err;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index b085f161ed22..040c0036320f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3608,6 +3608,8 @@ extern int simple_write_begin(struct file *file, struct address_space *mapping,
->  extern const struct address_space_operations ram_aops;
->  extern int always_delete_dentry(const struct dentry *);
->  extern struct inode *alloc_anon_inode(struct super_block *);
-> +struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
-> +					   const struct inode *context_inode);
->  extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
->  extern const struct dentry_operations simple_dentry_operations;
->  
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 589b26c2d553..9a11a38a6770 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigned long flags)
->  	struct file *file;
->  	struct inode *inode;
->  	const char *anon_name = "[secretmem]";
-> -	int err;
->  
-> -	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-> +	inode = anon_inode_make_secure_inode(secretmem_mnt->mnt_sb, anon_name, NULL);
->  	if (IS_ERR(inode))
->  		return ERR_CAST(inode);
->  
-> -	err = security_inode_init_security_anon(inode, &QSTR(anon_name), NULL);
-> -	if (err) {
-> -		file = ERR_PTR(err);
-> -		goto err_free_inode;
-> -	}
-> -
->  	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
->  				 O_RDWR, &secretmem_fops);
->  	if (IS_ERR(file))
-> -- 
-> 2.43.0
-> 
+On Wed, 11 Jun 2025 at 21:25, Theodore Ts'o <tytso@mit.edu> wrote:
+> This may break the github actions for composefs-rs[1], but I'm going
+> to assume that they can figure out a way to transition to Fuse3
+> (hopefully by just using a newer version of Ubuntu, but I suppose it's
+> possible that Rust bindings only exist for Fuse2, and not Fuse3).  But
+> in any case, I don't think it makes sense to hold back fuse2fs
+> development just for the sake of Ubuntu Focal (LTS 20.04).  And if
+> necessary, composefs-rs can just stay back on e2fsprogs 1.47.N until
+> they can get off of Fuse2 and/or Ubuntu 20.04.  Allison, does that
+> sound fair to you?
 
--- 
-Sincerely yours,
-Mike.
+To be honest, with a composefs-rs hat on, I don't care at all about
+fuse support for ext2/3/4 (although I think it's cool that it exists).
+We also use fuse in composefs-rs for unrelated reasons, but even there
+we use the fuser rust crate which has a "pure rust" direct syscall
+layer that no longer depends on libfuse.  Our use of e2fsprogs is
+strictly related to building testing images in CI, and for that we
+only use mkfs.ext4.  There's also no specific reason that we're using
+old Ubuntu.  I probably just copy-pasted it from another project
+without paying too much attention.
+
+Thanks for asking, though!
+
+lis
+
 
