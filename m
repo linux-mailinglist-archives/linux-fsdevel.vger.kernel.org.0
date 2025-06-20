@@ -1,129 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-52346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E3AAE21D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:12:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D63AE21F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 20:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4544A7A8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3ADF188ECC6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jun 2025 18:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994E92ECD0B;
-	Fri, 20 Jun 2025 18:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81682E9EDE;
+	Fri, 20 Jun 2025 18:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bw2LgU2V"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UB3oUedi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD712DFF17;
-	Fri, 20 Jun 2025 18:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEFE21516E;
+	Fri, 20 Jun 2025 18:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750443095; cv=none; b=YGLQTVGUgIYMiHPhNDLXNNh2R/UeARdGr/Rzyr9OWjOjkqy2x4Exbo6e9zGt/e4mFuZhRe6CSVjpAjx23hH/TECDHVekGFb1SZ8mMEoi05jQzdR0pxy44o7Tj5Jqp/o9bOAj9E4le/TE9emth8qZfwigtm8xW0da0YeTBXxnXbA=
+	t=1750443360; cv=none; b=i1hCTa8aLNdN5BkXbr5cdTqpm3TVN6tPBFJk0+mM0xrY2rYGJq68rg+B7qEqRVV2YQfyXmQxJXZkGtjPKuWUsH4CNMEMLP9f9DiiSWQbWOhqhkYlK2XmrXSJZIV/Ai3gNhkBSNJuD8YwjclsqUjdQ9Fh1R1v4YCQ/XtWlFRq+BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750443095; c=relaxed/simple;
-	bh=kpqSjYuyWWjTT8OzZQmWM89sNuGiYAs8n81bDCTR3VE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n/AagfV8ekujuSDtyQWdqcl/Vy1OmOvQE2MmjQvZCsZ2Pqyw3tFn3WS4ZXCK2u0kCVdYYOPqNAwHpRTfvO8jL2Oa58/r6GA7oDuZW6WZ7OOsZ4KBd/gakjGL64wKQT3SRGJuF9gpUqgwquxqgR5+/WDzyFWS6Wem0GJ1Uk6UBAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bw2LgU2V; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-313290ea247so371121a91.3;
-        Fri, 20 Jun 2025 11:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750443093; x=1751047893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kpqSjYuyWWjTT8OzZQmWM89sNuGiYAs8n81bDCTR3VE=;
-        b=bw2LgU2VbBHypuiszQk1+oKu+o6RJU6Ms83U54+xBx5/fehyCKP/DJOdVRwSNsNr2g
-         WS3R+2g6bYR7S7ri3KBFJYq7VQmY4WWiMuPTuUHepWtDDnUSvOFGpmTB2T6t89mkfpkw
-         AtcyD25e2FRxxVYbUA5UMNtb39HVi9qb+g7pqPcIwpvGkGHFyh93LWZcNwKtkdwobxQf
-         sqpzXwpzUBYFXxacCIEaiQT0spozZ+u1mCWwBFM+Vzfx0+QlrZ+sovkeu/u4Nl9krUUB
-         Ktu57250Wz8YcFPRj1iJeHzgpncH+kLsg3Fj8GFDVTI5ayIo2freDYIfaemGW+bF8SsA
-         VDbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750443093; x=1751047893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kpqSjYuyWWjTT8OzZQmWM89sNuGiYAs8n81bDCTR3VE=;
-        b=Kee/6K0vnBgEMHTgXNpPAwZtb1KusqSq5u0J/atrRQzHJ/3eOV9qHuOi9nRBHr3Q73
-         5w+RO8aLUnnMKCUchWpI4VrU1wFZfbbWMtoWidRVJZtMRqRdIw7k0m76BuW8g9LPCZI5
-         2K7iUQxnJoh6v+z719Sdttu29/0ek94KpfPR/T/pVYCGhJLXk9nXUi8+LOC/ZFztEff1
-         /mkOq6/SOU5/YYHffDlI9R6lznNp33zgJPS0saOf4vO3D+bodcegylXQ8DxB9JCWE+8q
-         ZoW63Rre4H1I2QElZ1pMbl6AudmVRCGrBwE7C9KQv0SCEZ5WNEwRJ0XfoEFPhvRrwuef
-         83jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWoWr/sZlsn5tQXDWy4WEny2zPjY45ekt5p/6xd6y3qKAP7jRzTQc0MD+q1DlVPuYZb9zFll6aV2+hvA8mD@vger.kernel.org, AJvYcCXcEgxKo2gzRCcIrM0Gx6NW27HU+P1qKafnpdruESiHModzoSDPFWpvOUQh05DaaSOSGbCnWbjKNaEhPpvagjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjjWEKxtJRXcPxq+r/UbQKZ42bSwty/AMwWeRmJKbGdF3AmoHd
-	zmRhKtDIECbxk784V/DsiI/8bf/NAmSqaNVbDySKA/hOMRMGRbHtVaq/3WgSPOWjgN+6amOfxzX
-	yy9WuicNF17+WOX4rvOGnYnIBS4sGyJ4=
-X-Gm-Gg: ASbGncu+cb7CZn669PEUFERjckE081qDTwxNcyMJtb9qzwX6R4nx59nWNOczYhQMAK5
-	SBg6CdgynzOJlrpkkhj9eYrGgPAY9P/NvDwfol8x4l1dBXSQxiv9dqJvnKOM80A1VMgCIbxiWRk
-	LVtwdTv9GZaUxm40RM6379i+CC2i00uK5wCoTfv8Yi8qI=
-X-Google-Smtp-Source: AGHT+IFxqtsyxxBPB2Vl7f77nKfRB1x63LSrdWF4dzpEMQXTmhAJl9NHWHFIwgkJubZvw2ibfMW6FG9dIBVBUAtkBws=
-X-Received: by 2002:a17:90b:3a50:b0:313:14b5:2521 with SMTP id
- 98e67ed59e1d1-3159d8d8235mr2656028a91.5.1750443092829; Fri, 20 Jun 2025
- 11:11:32 -0700 (PDT)
+	s=arc-20240116; t=1750443360; c=relaxed/simple;
+	bh=Tj2hRKWD2fXcMN2LW9yhosMBR01oYLnQsHKHD5f0Xs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=skhtoIJkUGQtI2c9Tde4zMlNwHjPKP/zrYZdKzPdmjK9SDpMr66tux2aWe0veeX/Zh2MlJL2imgtW+n3WZYbCX/wDyDn41LBv9Ww1MK3JYQTSgVXQ5jnxKEITNKdCXwV9xLBuRfP8mauxUxYg4/DFFdx27qIdZTSWmxZ7uxXR8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UB3oUedi; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UlFa8X9SJBeFgiRIm/NRtTllcGke3BNlF+LGXrYDlOk=; b=UB3oUedi3IHkRD0ogkPm/iFMhe
+	ynOsf+94Mia5ZGyWgs95OvhaK63zn7h2fGWkCcYw7DdZYpnscuB3FlGCd1VHvX+DtbvqgXb1jwgvU
+	mkXMU1TvqRGg/d+Ija/G8p6BXow0QtexTCZ4bXYCZnJY61TmQ73f+bMvSGrFvPpchqyb4TsViMWEo
+	58JOxTt57aRkRDuJraIVLOL5Wu2YD3bDHobla5k2u1NS/L/DecSj4jBD+vNYVxFDNPC2uQPe8i7Fn
+	50vsg97jVJQ5h8//ku2JGx1rsPVxfQomFM6wuxuWX4n0llgFYMdRTNehun/XWurgKIAjpQq/6UWFB
+	mptk47NA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uSgHL-0000000DIjQ-0y4d;
+	Fri, 20 Jun 2025 18:15:55 +0000
+Date: Fri, 20 Jun 2025 19:15:55 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, bernd.schubert@fastmail.fm,
+	kernel-team@meta.com, linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v1 5/8] iomap: add iomap_writeback_dirty_folio()
+Message-ID: <aFWlW6SUI6t-i0dN@casper.infradead.org>
+References: <20250606233803.1421259-1-joannelkoong@gmail.com>
+ <20250606233803.1421259-6-joannelkoong@gmail.com>
+ <aEZoau3AuwoeqQgu@infradead.org>
+ <20250609171444.GL6156@frogsfrogsfrogs>
+ <aEetuahlyfHGTG7x@infradead.org>
+ <aEkHarE9_LlxFTAi@casper.infradead.org>
+ <ac1506958d4c260c8beb6b840809e1bc8167ba2a.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d5ea8adb198eb6b6d2f6accaf044b543631f7a72.camel@ibm.com>
- <4fce1d92-4b49-413d-9ed1-c29eda0753fd@vivo.com> <1ab023f2e9822926ed63f79c7ad4b0fed4b5a717.camel@ibm.com>
- <DAQREKHTS45A.98MH00SWH3PU@kernel.org> <a9dc59f404ec98d676fe811b2636936cb958dfb3.camel@ibm.com>
- <DAQV1PLOI46S.2BVP6RPQ33Z8Y@kernel.org> <39bac29b653c92200954dcc8c4e8cab99215e5b4.camel@ibm.com>
-In-Reply-To: <39bac29b653c92200954dcc8c4e8cab99215e5b4.camel@ibm.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 20 Jun 2025 20:11:20 +0200
-X-Gm-Features: Ac12FXyibdZ42btlJZAQIYiLMWebP_G6s0CsDZnS-VjXtvvyo2sPMovx1R36vv8
-Message-ID: <CANiq72mUpTMapFMRd4o=RSN0kU0JbLwccRKn9R+NPE7DvXDuwg@mail.gmail.com>
-Subject: Re: [RFC] Should we consider to re-write HFS/HFS+ in Rust?
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "frank.li@vivo.com" <frank.li@vivo.com>, 
-	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, "lossin@kernel.org" <lossin@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>, 
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Ariel Miculas <ariel.miculas@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac1506958d4c260c8beb6b840809e1bc8167ba2a.camel@kernel.org>
 
-On Fri, Jun 20, 2025 at 7:50=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
->
-> Nowadays, VFS and memory subsystems are C implemented functionality. And =
-I don't
-> think that it will be changed any time soon. So, even file system driver =
-will be
-> completely re-written in Rust, then it should be ready to be called from =
-C code.
+On Wed, Jun 18, 2025 at 08:17:03AM -0400, Jeff Layton wrote:
+> On Wed, 2025-06-11 at 05:34 +0100, Matthew Wilcox wrote:
+> > On Mon, Jun 09, 2025 at 08:59:53PM -0700, Christoph Hellwig wrote:
+> > > On Mon, Jun 09, 2025 at 10:14:44AM -0700, Darrick J. Wong wrote:
+> > > > > Where "folio laundering" means calling ->launder_folio, right?
+> > > > 
+> > > > What does fuse use folio laundering for, anyway?  It looks to me like
+> > > > the primary users are invalidate_inode_pages*.  Either the caller cares
+> > > > about flushing dirty data and has called filemap_write_and_wait_range;
+> > > > or it doesn't and wants to tear down the pagecache ahead of some other
+> > > > operation that's going to change the file contents and doesn't care.
+> > > > 
+> > > > I suppose it could be useful as a last-chance operation on a dirty folio
+> > > > that was dirtied after a filemap_write_and_wait_range but before
+> > > > invalidate_inode_pages*?  Though for xfs we just return EBUSY and let
+> > > > the caller try again (or not).  Is there a subtlety to fuse here that I
+> > > > don't know about?
+> > > 
+> > > My memory might be betraying me, but I think willy once launched an
+> > > attempt to see if we can kill launder_folio.  Adding him, and the
+> > > mm and nfs lists to check if I have a point :)
+> > 
+> > I ... got distracted with everything else.
+> > 
+> > Looking at the original addition of ->launder_page (e3db7691e9f3), I
+> > don't understand why we need it.  invalidate_inode_pages2() isn't
+> > supposed to invalidate dirty pages, so I don't understand why nfs
+> > found it necessary to do writeback from ->releasepage() instead
+> > of just returning false like iomap does.
+> > 
+> > There's now a new question of what the hell btrfs is up to with
+> > ->launder_folio, which they just added recently.
+> 
+> IIRC...
+> 
+> The problem was a race where a task could could dirty a page in a
+> mmap'ed file after it had been written back but before it was unmapped
+> from the pagecache.
+> 
+> Bear in mind that the NFS client may need write back and then
+> invalidate the pagecache for a file that is still in use if it
+> discovers that the inode's attributes have changed on the server.
+> 
+> Trond's solution was to write the page out while holding the page lock
+> in this situation. I think we'd all welcome a way to avoid this race
+> that didn't require launder_folio().
 
-That is fine and expected.
+I think the problem is that we've left it up to the filesystem to handle
+"what do we do if we've dirtied a page^W folio between, say, calling
+filemap_write_and_wait_range() and calling filemap_release_folio()".
+Just to make sure we're all on the same page here, this is the sample
+path I'm looking at:
 
-> Moreover, file system driver needs to interact with block layer that is w=
-ritten
-> in C too. So, glue code is inevitable right now. How bad and inefficient =
-could
-> be using the glue code? Could you please share some example?
+__iomap_dio_rw
+  kiocb_invalidate_pages
+    filemap_invalidate_pages
+      filemap_write_and_wait_range
+      invalidate_inode_pages2_range
+        unmap_mapping_pages
+	folio_lock
+	folio_wait_writeback
+	folio_unmap_invalidate
+	  unmap_mapping_folio
+	folio_launder
+	filemap_release_folio
+	if (folio_test_dirty(folio))
+	  return -EBUSY;
 
-Please take a look the proposed VFS abstractions, the filesystems that
-were prototyped on top of them, and generally other Rust code we have.
+So some filesystems opt to write back the folio which has been dirtied
+(by implementing ->launder_folio) and others opt to fail (and fall back to
+buffered I/O when the user has requested direct I/O).  iomap filesystems
+all just "return false" for dirty folios, so it's clearly an acceptable
+outcome as far as xfstests go.
 
-As for "how bad", the key is that every time you go through a C
-signature, you need to constrain yourself to what C can encode (which
-is not much), use unsafe code and other interop issues. Thus you want
-to avoid having to go back and forth all the time.
+The question is whether this is acceptable for all the filesystem
+which implement ->launder_folio today.  Because we could just move the
+folio_test_dirty() to after the folio_lock() and remove all the testing
+of folio dirtiness from individual filesystems.
 
-Thus, the idea is to write the filesystem in Rust using abstractions
-that shield you from that.
-
-Cc'ing other potentially interested/related people.
-
-Cheers,
-Miguel
+Or have I missed something and picked the wrong sample path for
+analysing why we do/don't need to writeback folios in
+invalidate_inode_pages2_range()?
 
