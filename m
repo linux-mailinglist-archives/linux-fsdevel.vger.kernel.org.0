@@ -1,210 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-52381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BFCAE2B3E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jun 2025 20:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9C8AE2C89
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jun 2025 23:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6725178D49
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jun 2025 18:41:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3559E178BA6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jun 2025 21:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C318626FA6C;
-	Sat, 21 Jun 2025 18:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F44271453;
+	Sat, 21 Jun 2025 21:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cppRlAN0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkZSqp5l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B15282FA
-	for <linux-fsdevel@vger.kernel.org>; Sat, 21 Jun 2025 18:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD671922F5;
+	Sat, 21 Jun 2025 21:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750531256; cv=none; b=Qok38vl9OG/VHbRTD56UwPD12lR8cbZw+WIEvgpGjQY5weP3Kh0q4GfPlsstq8EAwNVwYr96xUE9Fve8tXCVI7HnrK9PktlgW6GXxG9rN/wBec/kdBZ1jHhFe0x6NyqBHL87LBWNULn7ru8LvJs5IxhbyKNu69yAG16kQjnG5AY=
+	t=1750540087; cv=none; b=rA4iFyeIgL2/MKbOc7hTXaaRhJ+8ezUItEw7a7IYIT2lN+CU36GrltdsFF0ziORpCClEeI+iUphR36arh+vQEufY9P2Ad/1w7G0Y8mjXdaF4FTUC9dG/ELDSuWxUDSSy9j4FtEshxnptHmGcE2pNThwYmhgT+AX++jZ9A8+B3r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750531256; c=relaxed/simple;
-	bh=4IFnmRIRAD36GeJm9EbPuQqG0BlFVpCjTDm4wRRolng=;
+	s=arc-20240116; t=1750540087; c=relaxed/simple;
+	bh=uPDd/tkXLBy6YrHz+vlFMwbnMsgJeHXQAl7bLYKRZDM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cmBnox2jtxCHZEthjYxwj4wYcWyTlvuqAS2PwjnDsc52h5uWoi2Rs5MjoQV3Sj5LwRHrg904gasjRDn2O1A9DT46n1LgaWFitkbgi7FWg91IzUAv5EwOEAh1jqQfj1Jv0cGtXRggE4p5pQWZ2KqrAjbViuH37xXTgvGjF4BycGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cppRlAN0; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-70e77831d68so28469407b3.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Jun 2025 11:40:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=bPhtJT57XLjYBfkwlDzBH3J+jcnaaAak+Q+DwKTHkNig7cfopwyDR6liShSibikooSFPSIIlkmT4dBw6nGMR0wdL35PMzBG2s9UsytsTAm33bwgSfcM+vTLGXqYEdt4NmPW4Z5cfFaPvawhl9P+2K6YkCm2iX+82089W9IStXmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkZSqp5l; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450dd065828so20517045e9.2;
+        Sat, 21 Jun 2025 14:08:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1750531252; x=1751136052; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750540084; x=1751144884; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/O7eGR/KeBgpF+haXdt/+l6begHBWoxBFv4KjhqCQCo=;
-        b=cppRlAN0up3EOGk8Z6bEU/uJa9Ltr2JjlquwoTWEEpzv0q7CSZpGM2LoQ+RdBLABfa
-         k4jA7eFy5NIXUU9mM4288abdptuA0X+N/4/rUl5GRXGQ6yMRA4oqVOkzL9p0oqf2galo
-         eQitpU48BNLRQi/3/LSzs8FvGmmtBFN8vhLXm7RoTwQ1gnAu5a7Eyl+7TLMTWwv+BCXU
-         MWAiNg+DnkMD+z5CZuqEuRwURMdxng6AfiP7xHoM/bC3aFQZ6Gxjx56irSaeNSAzaMd7
-         9Rz50IJpAO4+8DgZWc4P6d2pAscpw30nnstVGnfyWgbRM+4PCTEex0rbAqZiRb9J30i9
-         WUrw==
+        bh=riSivno+40WkCPg3f0KCZEq+ljs5At6s0yvmxVtoNPo=;
+        b=LkZSqp5lDpxHqoDrOv5AfSwC//p2c5xvu33vzdPriErO7a3r5QABKz3PtCrqxtICQp
+         ms3Fn/u1um7EFOt94I1xRQftylpHWQlzW/bb7HxlmtCxCO01TPObSkuDOiRSQATND4RW
+         Xx6N8biTXLzotiSsNqhHfUfNwJTGLIuWLf9Lp04N/Lv4ilDu75L3I6VISgcLmRVjsEfi
+         vo9ZdpyMCKnHc8DN7d8BJq2pf5Bm2nzmkPEDUz0qywUVvfVwNmJi3mGmGVkq/awz+f/C
+         j78KoC7ZIMJzjrjh7TW2aYplG+CeXtQiLBNW0VlblfoOpS/51ZXoFRzjemOit/x2LYlO
+         7k6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750531252; x=1751136052;
+        d=1e100.net; s=20230601; t=1750540084; x=1751144884;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/O7eGR/KeBgpF+haXdt/+l6begHBWoxBFv4KjhqCQCo=;
-        b=dnUUpMS49UJe8JXxohbeGuDoybYvuC9f94y5v2Fovi0svViOo4T+yMRpU8lP8oBshM
-         5trImStz+CfUr90EpHTbAtphl33fhIxSrMhonmbpH4nK/ERp/aHV34d3LHM4Nq7S2Jkf
-         D32ZE5Y4PGGugpffIWiMlj8vqSPnUnwBnM3wO2wvIXOUUstTrtm+viHeyJHJhZnCEj57
-         AhYl6t63HjtltMjKWtBoW37iZWej/ToQvO8qAEAZ20KwMv3AMofiEu+I1f6jsdSgFJ0Q
-         gkYlmo+2iqxWPyYN0me2GyOceeA4Orjg997KzRFwQTXj1MPr4cN0xgsKTFX0OZJV7OcY
-         WIsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWt2Dmh1F7kmKnDf+uWiR1SOYmF4KfoO4CCVDHahkTMQgDrsu2tTdfTg8df0HdmSS9CTlHNxhvMaO4DcFqI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxbmbuGUDURwS/9UirhK79j9WI+u01nM4NKdhE5vEDss2JCit7
-	5rUpYmrqZqFFlhSjiWeCeE5Pf3UfyX0mbrsW7PX4divT5Oa2ayKJ71t2z96xB2LAxAe4eoiXV7S
-	D5I+uvR4qlSHdHDtHl7V64JuhfV/TAvDbpo6Ns2UV
-X-Gm-Gg: ASbGncvlOOOoeBCubpl++DH5ebl029ubXLZMs4D4JL//cVD9z+i//iiM336+ovPPSIY
-	TXnzAYRt0jCSmaOSjevHpERjEw0CZ7oFM3fNHHlcgnfDN2BL0NqYD6Au8X4FiEPVW6znh+VD+iH
-	Dawl1EwSMOyWdW769TC4cE1vDmEVHMBgc3PhRdjW6ccgKFnXwKs9A6zA==
-X-Google-Smtp-Source: AGHT+IF0c9odPRdWSovZcikaBVGemDRVGjDCgc17+FAFopNT4am5rDQAzDB6W7LMoV/InAU0yDlZ9uni9IAfjBq5EEc=
-X-Received: by 2002:a05:690c:1a:b0:70e:1771:c165 with SMTP id
- 00721157ae682-712c6512becmr96547347b3.29.1750531252250; Sat, 21 Jun 2025
- 11:40:52 -0700 (PDT)
+        bh=riSivno+40WkCPg3f0KCZEq+ljs5At6s0yvmxVtoNPo=;
+        b=K9O7OfC+YSYQlnUDd42ehDmVnE/mujs9fAk6L+wxU8IIJHGOYpYLukBdBHcaiq9l/E
+         yCwd8HAmsI+gLQ5fkSapyo1SiPduPFyerFHqOhCxjkB87hj4YbWYa39WdzS3xPnHa5S1
+         PfJ6TmNAIa/Al+acgBYwiU1NG166Ue8YtTPEDEx3ukRGxEaAhk7MLWSAIc3boMLccgUC
+         krdnt/EgQ20z00oAFrcNm28YBfFf9u39gXCF5Ajq21uMfblHvdkFBXfM4F9whcPZ0MIX
+         zU/DpERJTp3kh5vcAra9io27uWCJlvcrKrZ1LQWKIIPiedBx8ADk44goXlkPizON7cEv
+         kXNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlij/i0EEeJomjxf6DoezbYWvrjl9sVGyD3GOWBLwbau+6rU8ugdNO6ElybHJ1NF2lcqTAUXtcbQEB6Zll@vger.kernel.org, AJvYcCXaAcmJAYAb2lBDk6kfTA3cOzJP2RLfsL0bV1OatNOYR3JQXzPHWYRJmbisTj6KS08iPnKAlq/KXrRwxF/D@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpbre6zzuYFoA8/khOPxZSQu59xMV6vV6n61wbQsK2h7EtBgt1
+	IVv58cFfshsiQ5UYhChwkuw8cMFO5waBxTBZk0LrZzeOVqFlZNF6VtzFaBdM8KZ38/8kaq2DfE3
+	HOvQzF9xjDrElz4rZDf0fWKLFi2pwbqrN3nu2YMY=
+X-Gm-Gg: ASbGncsXHeSA7smWh3DGYFy80wmmTplPFnG4+086OyHXwVAYzctxFcNIm8LlTvz5PwE
+	IBIhCtHLH3r4vVq50utIl+qx+4VlrUSiJAG4/eqFzaBQKcrUQESg8Z4iBtrXLgtCuF1TSAizDHX
+	woIISzflC3PHUDBzlUG+/FQaTBW3pyfyKK4S064dheuubqC60qr1+WPxFtwRbdb08gCq8=
+X-Google-Smtp-Source: AGHT+IHZk7tjDFiREsVqU/a9clYRf3wAOlGSNhsjyaGFAw+IAuGXaohAEn0ihq0CzA0RNkU21ZK7EYfmyPzQG5PeL60=
+X-Received: by 2002:a5d:5e88:0:b0:3a4:f63b:4bfc with SMTP id
+ ffacd0b85a97d-3a6d12d909bmr6895994f8f.34.1750540083273; Sat, 21 Jun 2025
+ 14:08:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFj5m9KOjqYmUOYM4EgDBrJ-rQxEgOhm+pokmdAE6w+bCGrhSg@mail.gmail.com>
-In-Reply-To: <CAFj5m9KOjqYmUOYM4EgDBrJ-rQxEgOhm+pokmdAE6w+bCGrhSg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 21 Jun 2025 14:40:41 -0400
-X-Gm-Features: Ac12FXxeC20nX9RGwhzbmW8A0ou1VC59sEjorGCGrwEZVDINxaAlTfaMP1f-2EI
-Message-ID: <CAHC9VhQ0dyqsjsNt98yiPCGsiuUXep3T7T24LWWRHy8V8xjV4Q@mail.gmail.com>
-Subject: Re: [v6.16-rc2+ Bug] panic in inode_doinit_with_dentry during booting
-To: Ming Lei <ming.lei@redhat.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, selinux@vger.kernel.org
+References: <4xkggoquxqprvphz2hwnir7nnuygeybf2xzpr5a4qtj4cko6fk@dlrov4usdlzm>
+ <06f75836-8276-428e-b128-8adffd0664ee@sotapeli.fi> <ep4g2kphzkxp3gtx6rz5ncbbnmxzkp6jsg6mvfarr5unp5f47h@dmo32t3edh2c>
+ <3366564.44csPzL39Z@lichtvoll.de> <hewwxyayvr33fcu5nzq4c2zqbyhcvg5ryev42cayh2gukvdiqj@vi36wbwxzhtr>
+ <20250620124346.GB3571269@mit.edu> <bwhemajjrh7hao5nzs5t2jwcgit6bwyw42ycjbdi5nobjgyj7n@4nscl4fp6cjo>
+ <ztqfbkxiuuvsp7r66kqxlnedca3h5ckm5wscopzo2e4z33rrjg@lyundluol5qq>
+In-Reply-To: <ztqfbkxiuuvsp7r66kqxlnedca3h5ckm5wscopzo2e4z33rrjg@lyundluol5qq>
+From: =?UTF-8?B?SsOpcsO0bWUgUG91bGlu?= <jeromepoulin@gmail.com>
+Date: Sat, 21 Jun 2025 17:07:51 -0400
+X-Gm-Features: AX0GCFs2T-tl-RzeUPoPS_vHTQdbWDsrtUBVVK2vC0_8Ocbm9nuxqiLN1W58aeg
+Message-ID: <CALJXSJrWjsAgN8HDUAhr5WYB97_YS57PuAhwpRctpNFU6=4AKQ@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc3
+To: linux-bcachefs@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Martin Steigerwald <martin@lichtvoll.de>, Jani Partanen <jiipee@sotapeli.fi>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 21, 2025 at 2:08=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> Hello Guys,
->
-> The latest v6.16-rc2+ kernel panics during booting, commit
-> 3f75bfff44be ("Merge tag 'mtd/fixes-for-6.16-rc3' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux"):
->
->
-> [  OK  ] Finished systemd-modules-load.service - Load Kernel Modules.
->          Starting systemd-sysctl.service - Apply Kernel Variables...
->          Starting systemd-sysusers.service - Create System Users...
-> [  OK  ] Finished systemd-sysctl.service - Apply Kernel Variables.
-> [    1.851473] Oops: general protection fault, probably for
-> non-canonical address 0x8cbad568292ed62c: 0000 [#1] SMP NOPTI
-> [    1.853362] CPU: 9 UID: 0 PID: 269 Comm: systemd-sysuser Not
-> tainted 6.16.0-rc2+ #328 PREEMPT(full)
-> [    1.854923] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-> BIOS 1.16.3-1.fc39 04/01/2014
-> [    1.856374] RIP: 0010:__list_add_valid_or_report+0x1e/0xa0
-> [    1.857366] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-> 53 48 83 ec 08 48 85 f6 0f 84 76 2f 76 ff 48 89 d3 48 85 d2 0f 84 5c
-> 2f9
-> [    1.860338] RSP: 0018:ffffd152c0de3a10 EFLAGS: 00010286
-> [    1.861244] RAX: ffff8aa5414d38d8 RBX: 8cbad568292ed624 RCX: 000000000=
-0000000
-> [    1.862439] RDX: 8cbad568292ed624 RSI: ffff8aa5401f40f0 RDI: ffff8aa54=
-14d38d8
-> [    1.863622] RBP: ffff8aa5414d38f4 R08: ffffd152c0de3a7c R09: ffffd152c=
-0de3a20
-> [    1.864810] R10: ffff8aa5401f40c0 R11: 0000000000000007 R12: ffff8aa54=
-14d38d8
-> [    1.864813] R13: ffff8aa5401f40c0 R14: ffff8aa5401f40f0 R15: ffff8aa54=
-14d38d0
-> [    1.864814] FS:  00007feebef42bc0(0000) GS:ffff8aa9ed02f000(0000)
-> knlGS:0000000000000000
-> [    1.864816] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    1.864818] CR2: 00007feebfb58180 CR3: 0000000117f4d004 CR4: 000000000=
-0770ef0
-> [    1.870018] PKRU: 55555554
-> [    1.870020] Call Trace:
-> [    1.870029]  <TASK>
-> [    1.870031]  inode_doinit_with_dentry+0x42d/0x520
+As a bcachefs user who has been following this discussion, I'd like to
+share my perspective on the current state of the filesystem and the
+path forward.
 
-Thanks for the report.  I'm assuming you didn't see this with
-v6.16-rc1, or earlier?
+I'm currently using this filesystem for a backup staging server so it
+is easy for me to make sure data isn't getting lost and can verify
+checksums at the application levels from time to time. The solution
+uses snapshots extensively as well as replication, reflinks and
+background compression.
 
-Do you have any line number information you could share?  Also, based
-on the RIP in __list_add_valid_or_report(), can you confirm that this
-is either happening in an initrd/initramfs or on a system where a
-SELinux policy is not being loaded?
+I really like this filesystem for multiple reasons, it fills the gap
+for missing features of traditional filesystems, it allows integrating
+cache devices almost seamlessly, it allows having metadata on local
+devices while still pushing to slow HDD, SMR or network devices
+without having to setup something like Ceph or a stack like Btrfs,
+mdadm and nbd/iSCSI.  I've seen all the features appear one by one on
+Bcachefs and it is growing fast.
 
-> [    1.870035]  security_d_instantiate+0x93/0xb0
-> [    1.870038]  d_instantiate+0x2e/0x60
-> [    1.870043]  ramfs_mknod+0x58/0xb0
-> [    1.870047]  path_openat+0xf53/0x1200
-> [    1.870050]  do_filp_open+0xd7/0x190
-> [    1.870053]  ? _raw_spin_unlock+0xe/0x30
-> [    1.870055]  do_sys_openat2+0x8a/0xe0
-> [    1.870058]  __x64_sys_openat+0x54/0xa0
-> [    1.870060]  do_syscall_64+0x84/0x2c0
-> [    1.870063]  ? __x64_sys_openat+0x54/0xa0
-> [    1.870064]  ? do_syscall_64+0x84/0x2c0
-> [    1.870066]  ? do_sys_openat2+0xa4/0xe0
-> [    1.870068]  ? __x64_sys_openat+0x54/0xa0
-> [    1.870069]  ? do_syscall_64+0x84/0x2c0
-> [    1.870070]  ? handle_mm_fault+0x1d7/0x2e0
-> [    1.870074]  ? do_user_addr_fault+0x211/0x680
-> [    1.870077]  ? clear_bhb_loop+0x50/0xa0
-> [    1.870079]  ? clear_bhb_loop+0x50/0xa0
-> [    1.870080]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [    1.870082] RIP: 0033:0x7feebf965e63
-> [    1.870084] Code: 83 e2 40 75 52 89 f0 f7 d0 a9 00 00 41 00 74 47
-> 80 3d 50 22 0e 00 00 74 62 89 da 4c 89 e6 bf 9c ff ff ff b8 01 01 00
-> 008
-> [    1.870085] RSP: 002b:00007ffd85a4c5d0 EFLAGS: 00000202 ORIG_RAX:
-> 0000000000000101
-> [    1.870087] RAX: ffffffffffffffda RBX: 00000000000a0141 RCX: 00007feeb=
-f965e63
-> [    1.870088] RDX: 00000000000a0141 RSI: 000055ed496c4f10 RDI: 00000000f=
-fffff9c
-> [    1.870089] RBP: 00007ffd85a4c640 R08: 00000000ffffff9c R09: 00007ffd8=
-5a4c4f0
-> [    1.870090] R10: 0000000000000180 R11: 0000000000000202 R12: 000055ed4=
-96c4f10
-> [    1.870091] R13: 0000000000000000 R14: 00007ffd85a4c6c0 R15: 000055ed2=
-9c98940
-> [    1.870092]  </TASK>
-> [    1.870093] Modules linked in: scsi_dh_rdac scsi_dh_emc
-> scsi_dh_alua ip6_tables ip_tables fuse dm_multipath qemu_fw_cfg
-> [    1.870121] ---[ end trace 0000000000000000 ]---
-> [    1.870123] RIP: 0010:__list_add_valid_or_report+0x1e/0xa0
-> [    1.870127] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-> 53 48 83 ec 08 48 85 f6 0f 84 76 2f 76 ff 48 89 d3 48 85 d2 0f 84 5c
-> 2f9
-> [    1.870127] RSP: 0018:ffffd152c0de3a10 EFLAGS: 00010286
-> [    1.870129] RAX: ffff8aa5414d38d8 RBX: 8cbad568292ed624 RCX: 000000000=
-0000000
-> [    1.870130] RDX: 8cbad568292ed624 RSI: ffff8aa5401f40f0 RDI: ffff8aa54=
-14d38d8
-> [    1.870130] RBP: ffff8aa5414d38f4 R08: ffffd152c0de3a7c R09: ffffd152c=
-0de3a20
-> [    1.870131] R10: ffff8aa5401f40c0 R11: 0000000000000007 R12: ffff8aa54=
-14d38d8
-> [    1.870132] R13: ffff8aa5401f40c0 R14: ffff8aa5401f40f0 R15: ffff8aa54=
-14d38d0
-> [    1.870133] FS:  00007feebef42bc0(0000) GS:ffff8aa9ed02f000(0000)
-> knlGS:0000000000000000
-> [    1.870134] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    1.870135] CR2: 00007feebfb58180 CR3: 0000000117f4d004 CR4: 000000000=
-0770ef0
-> [    1.870137] PKRU: 55555554
-> [    1.870138] Kernel panic - not syncing: Fatal exception
-> [    1.870365] Kernel Offset: 0x3a000000 from 0xffffffff81000000
-> (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> [    1.898219] ---[ end Kernel panic - not syncing: Fatal exception ]---
+I migrated from Btrfs after an incident with a RAID controller losing
+its cache that caused the filesystem to be unmountable and
+unrepairable.  Btrfs restore was able to recover *most* of the files
+on that server except a couple subvolumes which had to be recreated by
+the backup system.  And again, since this is a staging area for
+backups, I don't need 100% uptime or a guarantee that my files won't
+be lost so I felt pretty confident in using Bcachefs to speed up
+operations there.
 
---=20
-paul-moore.com
+Bcachefs was able to triple the speed of the backup system by having
+metadata stored in NVMe + passively caching all writes to NVMe.  The
+last part of the backup is now blazing fast since everything is in
+NVMe.
+
+At this point in time, I do believe Bcachefs has solid foundations, as
+of now, the only data corruption that lost me some files were related
+to a snapshot deletion bug for a feature that was not yet published to
+mainline.
+
+It hasn't been without its downsides, many times I had to take the
+filesystem for offline repair and Kent was always able to figure out
+the root cause of issues causing the FS not to mount read-write and
+issue a patch for the FS and for fsck.  We found many weird bugs
+together, ARM specific bugs, reflink causing corruption, resize not
+allocating buckets, many races and lock ups, upgrade not finishing
+correctly, corruption from weird interactions, data not staying cached
+when there's no promote_target.  All of this was fixed without much
+more damage than the last operations being lost and most were fixed
+really quickly from cat'ing a couple diagnostic files, using perf or
+worst case metadata image.
+
+The filesystem is very resilient at being rebooted anywhere, anytime.
+It went through many random resets during any of..  fsck repairs, fsck
+rebuilding the btree from scratch, upgrades, in the middle of snapshot
+operations, while replaying journal.  It just always recovers at
+places I wouldn't expect to be able to hit the power switch. Worst
+case, it mounted read-only and needed fsck but could always be mounted
+read-only.
+
+It also went through losing 6 devices and the write-back cache (that
+defective controller, again).  Fsck could repair it with minimal loss
+related to recent data. A lot of scary messages in fsck, but it
+finished and I could run scrub+rereplicate to finish it off (which
+fixed a couple more files).
+
+Where things get a bit more touchy is when combining all those
+features together;  operations tend to be a bit "racy" between each
+other and tend to lock up when there's multiple features running/being
+used in parallel.  I think this is where we get to the "move fast
+break things" part of the filesystem.  The foundation is solid, read,
+write, inode creations/suppression, bucket management, all basic posix
+operations, checksums, scrub, device addition. Many of the
+bcachefs-specific operations are stable, being able to set compression
+and replication level and data target per folder is awesome stuff and
+works well.
+
+From my experience, what is less polished are; snapshots and snapshot
+operations, reflink, nocow, multiprocess heavy workloads, those seem
+to be where the "experimental" part of the filesystem goes into the
+spotlight.  I've been running rotating snapshots on many machines, it
+works well until it doesn't and I need to reboot or fsck. Reflink
+before 6.14 seemed a bit hacky and can result in errors. Nocow tends
+to lock up but isn't really useful with bcachefs anyway. Maybe
+casefolding which might not be fully tested yet. Those are the true
+experimental features and aren't really labelled as such.
+
+We can always say "yes, this is fixed in master, this is fixed in
+6.XX-rc4" but it is still experimental and tends to be what causes the
+most pain right now.  I think this needs to be communicated more
+clearly. If the filesystem goes off experimental, I think a subset of
+features should be gated by filesystem options to reduce the need for
+big and urgent rc patches.
+
+The problem is...  when the experimental label is removed, it needs to
+be very clear that users aren't expected to be running the latest rc
+and master branch.  All the features marked as stable should have
+settled enough that there won't be 6 users requiring a developer to
+mount their filesystem read-write or recover files from a catastrophic
+race condition.
+
+This is where communication needs to be clear, bcachefs website,
+tools, options; should all clearly label features that might require
+someone to ask a developer's help or to run the latest release
+candidate or a debug version of the kernel.
+
+Bcachefs has very nice unit and integration testing with ktest, but it
+isn't enough to represent real-world usage yet and that's why I think
+some features should still be marked just as experimental as erasure
+coding.  Bcachefs filesystem where I do not use reflink, snapshot or
+anything wild, only multiple devices with foreground/promote_target,
+replication, compression, never experience weird issues or lockups for
+many kernel versions now.  Mind you, I'm not using bcachefs on any
+rootfs yet, only specific use-case and patterns that can be
+documented.
+
+I care about the future and success of bcachefs to be my go-to
+filesystem for anything that requires CoW features, robust repair
+tools, caching and flexible RAID-like features.  I just don't want it
+to get kicked out of the kernel because of huge changesets to fix bugs
+on features that shouldn't be used by someone who expects the
+filesystem to behave.
+
+It might slow down development a bit to mark some features as
+experimental, but it'll remove the pressure of having to push so many
+bug fixes that are critical to make sure users don't experience
+critical failures or blindly try to repair their FS using fsck -y
+without reporting issues. It reduces the experimental surface to a
+subset of features, it also makes the user aware of what they should
+do if enabled, eg.: contact dev before fsck -y, run a recent kernel at
+all time, etc.
+
+One more thing that I think is missing, many patches submitted, even
+if it doesn't show up, should have a Reported-By and Tested-By tag to
+help show how many people in the community are working and helping
+make Bcachefs great, it would also make people on the ML aware that
+patches aren't just thrown in there; it usually has been a reported
+bug from a community member which had to test the resulting patch.
+
+Anyway, that message is bigger than I expected and I hope brings some
+light on how I perceive bcachefs from a user standpoint.
+
+Have a great weekend!
+
+On Fri, Jun 20, 2025 at 8:15=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> On Fri, Jun 20, 2025 at 07:35:04PM -0400, Kent Overstreet wrote:
+> > So it's hard to fathom what's going on here.
+>
+> I also need to add that this kind of drama, and these responses to pull
+> requests - second guessing technical decisions, outright trash talk -
+> have done an incredible amount of damage, and I think it's time to make
+> you guys aware of that since it's directly relevant to the story of this
+> pull request.
+>
+> I've put a lot of work into building a real community around bcachefs,
+> because that's critical to making it the rock solid, dependable
+> filesystem, for eeryone, that I intend it to be: building a community
+> where people feel free to share observations, bug reports, and where
+> people trust that those will be acted on responsibly.
+>
+> That all gets set back whenever drama like this happens. Last time, the
+> casefolding bugfix pull request, ignited a whole vi. vs. emacs holy war.
+> Every time this happens, the calm, thoughtful people pull back, and all
+> I hear from are the angry, dramatic voices.
+>
+> More than that, I lost a hire because of Linus's constant,
+> every-other-pull-request "I'm thinking about removing bcachefs from the
+> kernel". It turns out, smart, thoughtful engineers with stable jobs
+> become very hesitant about leaving those jobs when that happens, and
+> that's all their co-workers are seeing.
+>
+> And the first thing that got cancelled/put aside because of that - work
+> that was in progress, and hasn't been completed - was tooling for
+> comprehensive programatic fault injection for on disk format errors.
+> IOW - the tooling and test coverage that would have caught the subvolume
+> deletion bug.
+>
+> That's a really painful loss right now.
+>
+> Even despite that, bcachefs development has been going incredibly
+> smoothly, and it's shaping up fast. Like I mentioned before, 100+ TB
+> filesystems are commonplace, users are commenting every release on how
+> much smoother is getting. We are, I hope, only a year or less from being
+> able to take the experimental label off, based on the decline in
+> critical bug reports I'm seeing.
+>
+> The only area that gives me cause for concern - and it causes a _lot_ of
+> concern - is upstream.
+>
 
