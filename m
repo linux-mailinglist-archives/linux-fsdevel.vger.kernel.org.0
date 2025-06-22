@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-52417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416E9AE3243
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:14:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD37AE3244
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF9316F033
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A7227A502C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BB52153E1;
-	Sun, 22 Jun 2025 21:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AD62153E1;
+	Sun, 22 Jun 2025 21:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="WkHGb8sy"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="eReb8S/g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B402EAE5
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B6F2EAE5
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750626846; cv=none; b=R+yZvDeb6uN2Zhn6lMbzT3cJeMMoDYayaCIo8qa7aWrHQFLbbX+MA9DqeZ7eDYlDMa/BRIs4ydKTbsw5+89a7yDmQW7cL2tyXoCPGYMi+j1ByLtkwgpIc94ToBBnBaADzifkj0U4bn6wbavCZVar2x+CrwCNxKe8cSVETWRbIDI=
+	t=1750626890; cv=none; b=q8h5xIYgJfTnBwiBxd6Vq9gRYsR0Tknxk/8pvjDcQ7Sjdu17yuRFeZkibEna7Lf0AEQkNNZOkJx22HhCN7m58pWIdRs6IIyVo4vjmYPQPow4Z9qzoW4v2qQfeWjhba9lrTs3O7+VAX7C/0yut3DqGM4UZxfiv5aTkivbzNNA6zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750626846; c=relaxed/simple;
-	bh=N3ZxUirxCunxJvATZXfMRKmKv+ffseg2f0MhKD6sghA=;
+	s=arc-20240116; t=1750626890; c=relaxed/simple;
+	bh=9yL2YJ8WzXy0y5MM4eijt2rBPcDKSBpSqKBJOu02PE4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BymUYXKcIFAZXgD+P6UbT3cQBhZM77e6lmIDW74Q3ShXnhKEfZY/QZkvpx4Z+8i3zvMNHliuoX2lLxvwmft64TebL/DPV0jMcayvZTERKABpH3VZAxiBh4dvQBrpMY6KDroOpOGTNqMt+XO/210ZCzA1peNMqUbx9Z7JXyXeHLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=WkHGb8sy; arc=none smtp.client-ip=209.85.167.47
+	 To:Cc:Content-Type; b=WGY+3Sn2UhkDA5U/wLgA0r4DY37bd4q3p8JiPufRGmghOApDQDfeCGGgqqN7G3R7ccO1jNJAkUesAVkbequkz514Yj7udeKyb5Qwyas0xC+Nh+y0JhyZkzmgejzBObsnHYTAEluQXKVUyPymgoBE5sXBqfk+8RSsHbUeh9wEFD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=eReb8S/g; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553dceb342fso2889249e87.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 14:14:04 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553b9eb2299so3960803e87.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 14:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1750626843; x=1751231643; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1750626887; x=1751231687; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U25dcbyhJ6glgn5Z3EICqSULiBhHeqQPDqS1H63S1VU=;
-        b=WkHGb8syPlQDSPNYzKDumwBq7+PDrpe3Qck1KqiQ7pMzCCgyvoJZ8MnIQC02aF3VD/
-         zPOxm8b4gSXQwCrgcLR40xjeNTVER2/33OsD2MvZczr7wcF+JibbYyGIn8GKY1aLPUqI
-         1LYcwBpT0QKwyJjULLhMIRUFex9pWhdAXuZQc=
+        bh=sFORI0i4tsBz1I+MDIYpr3mLqD9N5KKXSvBmgZjLWuY=;
+        b=eReb8S/geVyvtTN6A9GoYEhO3aEGxgaHF/tijbtD2bRYx0OKCOqMB/OFMi56dhRNsk
+         rUuSgvQaLfamS6fMFDP4aYTsnsiX7mDD5kC0/CzM9sbXfHpCMG9htZVqmNoPtxCphMv9
+         qVZE0fLCqxiCd+0CJHT1tVjqj0ap2xly+01Is=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750626843; x=1751231643;
+        d=1e100.net; s=20230601; t=1750626887; x=1751231687;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=U25dcbyhJ6glgn5Z3EICqSULiBhHeqQPDqS1H63S1VU=;
-        b=ZqAyj7Y0O5S0a3X8N33UkxXRoLOAHy/Y6AFq//nFojhpXcDOgPSdMcNT+p09dWuC6t
-         LPDSSEPMntRNaXgozt3huOTKATnIxX5T4Yej5kRLJmJSjFY2pySVjhzqZpu6abCSSnv2
-         AK0ryRDM//CY5COJPQRKYAQy8F1ngYPI6EK7XJyx6jGuy94PROOpfJe0nb0ycuQXNpLJ
-         qyu9lQaH2kXTDe/03yffTjbDDgJMNWaDKC+tqywXJPhtWrY66sMm/IUPXEMfB1ie3nHU
-         jYUZOge1AkUFVRK+j0h6v0CWiyd/n9lzHqbte0P1BZNMzbzdeKvf2wSfulWRefqwKQZR
-         GVEA==
-X-Gm-Message-State: AOJu0Yzcz63ERT9Hk+gpk9s2X8g2CV5lwSLimtajzvWK/y2JPt6o0cw2
-	sDBySvcc2EkfL5obKJpowoqNXvil527S741d4VNeYfOfzXIFlAEzCG6waDQvUilo/5ezQ/MVDVl
-	7YzjWdpCEdGp2+F4KUsJjk/Tky6h7uIAQcCsSVb1hgA==
-X-Gm-Gg: ASbGnct+RC1X/TTXyVNSLVwYuM9HPk+LQ9lzcJnW+QmRojCsqT4YT8Az76SbUoq7HWK
-	qmfTLi+62zCd7zWoUC2HftPnAaWM3nlJ2VAG36GWKzcc6WJDe+3Z22g2zRZtEnDjlFrKP6SxLpK
-	z5TyhoiZGLmxWoDvEyO3PulDw3ADsoFMZWZLGttuVRIcJJ
-X-Google-Smtp-Source: AGHT+IGg7j4MTzmpK9AnSXeeMQu93FYzJlR/33LFrchIpf6Cbc5ARKXNuSaopqvgkT0G2oaiEVfdpvmqRjkYEJF5WXk=
-X-Received: by 2002:a05:6512:3083:b0:553:2f33:ac04 with SMTP id
- 2adb3069b0e04-553e3be8255mr2893912e87.26.1750626842649; Sun, 22 Jun 2025
- 14:14:02 -0700 (PDT)
+        bh=sFORI0i4tsBz1I+MDIYpr3mLqD9N5KKXSvBmgZjLWuY=;
+        b=h/CpN8ZMPFzlQ6i9CsooErsnyGB1Tp7dYZN3Qs489UMFCi8W4div6dSdJyPJSdVTQX
+         bqxFKJUijj2b54SPyH3S5OXFC7mvDXO9PdDN+AQkmQV0vErjR2jrBGi5Y5EUD04ncM9p
+         cagjrlhgqD4IpgxcCKz/Zc18951Yiwq5hs1H/tOfy7mU/X9p1NefzuqsRyBfUkfqMLWK
+         Le01bHZPIYNHzfsJ5h8OInjbnzh3vs2dswHnZl+HfQ84FqdCYNUEYlEMsYz/Xialx3g9
+         45SkgAUO3Ack0JH1cQcaH1xaQX41zasj0gSc1Om8rHZ/lwMO5F0pkrJM7zyOcVuU/7Lx
+         kOsA==
+X-Gm-Message-State: AOJu0YwKrm1qaUoK4x9utVsETemvs0pXRY8NxJyubxge01LVUEPn1mgH
+	MCiUHVb4VeQMxRsVe6gdp8JqXUP9ZjSsU/yIwMI3+3sHO8ypc9lxTLPur02bnZJ/pfbb9DHC2PJ
+	dXStWMFaNNnywP+EKdVmcYE/IqM6QKiCnUMTKJ2BZZKapldihfwlNd65vCw==
+X-Gm-Gg: ASbGncu/waT4//b8WrA5e8aysBzlhxwr/lVbaTTsl+6S8MRtFSzktuIyr6yVfM4qLs5
+	mjvN4YQk9YjJZ4Upy2+o4wiUO5289qXe3FQNPXGDUE2msMCYUHiq4lxXCx5R+3BQlOT3kmbL02L
+	N+w5C+zmEbVxQcZgEXaYD5UytxhXN3spz/0yjLOn8xLWV1
+X-Google-Smtp-Source: AGHT+IF0sXKCamY1ZhuK7nI2Apxnq7b+lH9nTaXX5/bc1O1ip++HVbxL8Pq8AKqy+m3Oi06bHTLtBLck2p+GJ1c7edc=
+X-Received: by 2002:a05:6512:2393:b0:553:252b:e477 with SMTP id
+ 2adb3069b0e04-553e4fd73d3mr2674995e87.4.1750626886538; Sun, 22 Jun 2025
+ 14:14:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-9-98f3456fd552@kernel.org>
-In-Reply-To: <20250618-work-pidfs-persistent-v2-9-98f3456fd552@kernel.org>
+References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-10-98f3456fd552@kernel.org>
+In-Reply-To: <20250618-work-pidfs-persistent-v2-10-98f3456fd552@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Sun, 22 Jun 2025 23:13:50 +0200
-X-Gm-Features: Ac12FXz79xQRKzlsSOZjsSOx0NY4i_rmWfu6gkMfVctMVkPWZ_sHfDvtOyRyV8M
-Message-ID: <CAJqdLrqnBiB3Hp_PFPqwVWChOKGc_XWPTQC7j=2Y0h3cx5eEiQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/16] pidfs: remove pidfs_pid_valid()
+Date: Sun, 22 Jun 2025 23:14:35 +0200
+X-Gm-Features: Ac12FXw9q02NBpdUJ4EJ9--BNUX4qa0m_ctThelSqfadNOF7LquDBzQdUdFz3Ws
+Message-ID: <CAJqdLrrcSD5LXo3PSQhxOhh68Nz=jKni8u7=2c7ckWXYjCKxGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/16] libfs: prepare to allow for non-immutable pidfd inodes
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
 	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
@@ -86,89 +86,28 @@ Content-Type: text/plain; charset="UTF-8"
 Am Mi., 18. Juni 2025 um 22:54 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> The validation is now completely handled in path_from_stashed().
+> Allow for S_IMMUTABLE to be stripped so that we can support xattrs.
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 > ---
->  fs/pidfs.c | 53 -----------------------------------------------------
->  1 file changed, 53 deletions(-)
+>  fs/libfs.c | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index bc2342cf4492..ec375692a710 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -804,58 +804,8 @@ static int pidfs_export_permission(struct handle_to_path_ctx *ctx,
->         return 0;
->  }
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 997d3a363ce6..c5b520df9032 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -2162,7 +2162,6 @@ static struct dentry *prepare_anon_dentry(struct dentry **stashed,
 >
-> -static inline bool pidfs_pid_valid(struct pid *pid, const struct path *path,
-> -                                  unsigned int flags)
-> -{
-> -       enum pid_type type;
-> -
-> -       if (flags & PIDFD_STALE)
-> -               return true;
-> -
-> -       /*
-> -        * Make sure that if a pidfd is created PIDFD_INFO_EXIT
-> -        * information will be available. So after an inode for the
-> -        * pidfd has been allocated perform another check that the pid
-> -        * is still alive. If it is exit information is available even
-> -        * if the task gets reaped before the pidfd is returned to
-> -        * userspace. The only exception are indicated by PIDFD_STALE:
-> -        *
-> -        * (1) The kernel is in the middle of task creation and thus no
-> -        *     task linkage has been established yet.
-> -        * (2) The caller knows @pid has been registered in pidfs at a
-> -        *     time when the task was still alive.
-> -        *
-> -        * In both cases exit information will have been reported.
-> -        */
-> -       if (flags & PIDFD_THREAD)
-> -               type = PIDTYPE_PID;
-> -       else
-> -               type = PIDTYPE_TGID;
-> -
-> -       /*
-> -        * Since pidfs_exit() is called before struct pid's task linkage
-> -        * is removed the case where the task got reaped but a dentry
-> -        * was already attached to struct pid and exit information was
-> -        * recorded and published can be handled correctly.
-> -        */
-> -       if (unlikely(!pid_has_task(pid, type))) {
-> -               struct pidfs_attr *attr;
-> -
-> -               attr = READ_ONCE(pid->attr);
-> -               if (!attr)
-> -                       return false;
-> -               if (!READ_ONCE(attr->exit_info))
-> -                       return false;
-> -       }
-> -
-> -       return true;
-> -}
-> -
->  static struct file *pidfs_export_open(struct path *path, unsigned int oflags)
->  {
-> -       if (!pidfs_pid_valid(d_inode(path->dentry)->i_private, path, oflags))
-> -               return ERR_PTR(-ESRCH);
-> -
->         /*
->          * Clear O_LARGEFILE as open_by_handle_at() forces it and raise
->          * O_RDWR as pidfds always are.
-> @@ -993,9 +943,6 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
->         if (ret < 0)
->                 return ERR_PTR(ret);
+>         /* Notice when this is changed. */
+>         WARN_ON_ONCE(!S_ISREG(inode->i_mode));
+> -       WARN_ON_ONCE(!IS_IMMUTABLE(inode));
 >
-> -       if (!pidfs_pid_valid(pid, &path, flags))
-> -               return ERR_PTR(-ESRCH);
-> -
->         flags &= ~PIDFD_STALE;
->         flags |= O_RDWR;
->         pidfd_file = dentry_open(&path, flags, current_cred());
+>         dentry = d_alloc_anon(sb);
+>         if (!dentry) {
 >
 > --
 > 2.47.2
