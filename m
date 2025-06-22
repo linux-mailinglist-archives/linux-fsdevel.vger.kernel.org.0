@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-52396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585B2AE30BD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 18:20:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED40AE30CF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 18:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFA4916C1A7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 16:20:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84CB37A75EC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 16:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A296E1C1F12;
-	Sun, 22 Jun 2025 16:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8CD1EE014;
+	Sun, 22 Jun 2025 16:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzAFBn7z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AvCdFS2c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5821D847B;
-	Sun, 22 Jun 2025 16:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A458DDD3;
+	Sun, 22 Jun 2025 16:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750609251; cv=none; b=nEzvO7vIsYD5Bq++uBzbhQXyM66zV8XWvL9D/QjfgFwvpoFpdwLihHRPjkhUve0kSodP72Q/AnVxQojBvTCiPZgmcNDm7zeu1P2wGCfUw5sd/thmAFIGZcx0iJXATxpZvyN80KoIjzOCQIAbDwpRlJZ12WHYdaxHJPc6r6V9j/w=
+	t=1750610160; cv=none; b=U1QgBU0VDwvHvAxPRJ3S6f7DdNKbAe0VA6MfGUDTPxQ6hC5LhXLqLl7iFGZ70IiltWMRqW2HvBYt+A3P2evB758dk3o/+5x7oZ/cQxVA1GBLS6b/dyPapPE0we+LGh0+ReJvLcd4vMxpEDAlZc2ayqwfMNwKw98Percjk5xX7UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750609251; c=relaxed/simple;
-	bh=KgeA7oDZ67O0QhGSLso5xNvldIOlSQ7GNwGk9EZkG+Q=;
+	s=arc-20240116; t=1750610160; c=relaxed/simple;
+	bh=0MNHobrzR1isQrVx2j3psQxijYtWVnqO9jfxuSncCj0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VOrLLrFGGHABw8M52kP5slc3btgGimrOTs82Mlt3lokvPc055Rfa+8HnTOh0xvpa8Ypr75kdi7hReC4N5c6JjAWEH6hXBme1AcHnyrc92f5AJbFHKs5VcX2V1bSOHI0uMV16JTc/fOHfLUUl3n9AfxR/gwjto5SgMbzmKfqF3O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzAFBn7z; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version:Content-Type; b=PBPfdDwLtd1LKJ2TZu1gUxWyQIoFRAD8M8nRaucKNpz+L2/pcP0CxGtNTQkCArJ1ZsjzT4HXA9PdgVwKMgcr0auRs1TUVvIHIebqGdd0EiHv6vM06zGb0/TndKsCKjSe6G4qkKGIw3jDn8UdVaVj9fqFUm01pZifZoSjM4ylyD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AvCdFS2c; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-450ccda1a6eso29165955e9.2;
-        Sun, 22 Jun 2025 09:20:49 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-451dbe494d6so39219935e9.1;
+        Sun, 22 Jun 2025 09:35:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750609247; x=1751214047; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750610156; x=1751214956; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h9UguERxuhFrRUQfvCGEwWcq0+7rxY/z2LNMvf2rwsc=;
-        b=VzAFBn7zgvyiA6bB/PTrx+WHyUNZBfWHxW7ilg5mfoB0gD3/SLYf+1qU2KnrVLhf/b
-         Te2g2Y/d99gtYDUoBIxtE5sGrSgMbRSUP6OxyalPOvEv7RpUd/U9PWEaUqdDKU7dJIg5
-         6D+Zr06YF1G3i0uy23a46Sk3DPkNZ7YSL+7VKGFVI7kN6kICcPosTW5bF0WPePpp8kSB
-         ASgtDddMlUx4G7pnzfrSUldCL4anjlTez73CKn7JIoivBEWCSjB7/Ut1lMm3lgzmEUNj
-         y816Z8+7FeztN3qRx7SwQkKU1ILCbIozvZVUiAZ/4yjF3ecFlLgR5HhR1TEQOCAU5Zm5
-         uxog==
+        bh=k1oa4nNQ6OD1xXNiA0TVTj0NDdNUr9/eQINchl8HXO8=;
+        b=AvCdFS2cg1eaVkJUKo+s6tq3Dt7jY6LtnbsXkWiux/mBrPZZWmm44Fo7TlKhQore3b
+         p+kLkLQgwcWebeJVTT21WR+/LKG8PCDftxHVAr9a8fiSgqZXKZGL/id9kL68hn1vAQKm
+         nO8yHLXEawhi62MZRZDlKLsS1fxCeElHvjHIvpK8dZOCJXz6G1RSty+BphpLFHCoT8Uo
+         HqtT4BLQF33bOIyLeN/aemfMd3omblXlUCpUKixKLAZaEbjHw3vGkhimQCA0r3VIigal
+         p470YxnwWE4k+lQy6UnKezbamUdFECs4Vd7l0rSoiryylT4fRSHJqHXk+nagFDANx55Y
+         /Rbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750609247; x=1751214047;
+        d=1e100.net; s=20230601; t=1750610156; x=1751214956;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h9UguERxuhFrRUQfvCGEwWcq0+7rxY/z2LNMvf2rwsc=;
-        b=fH7Xl0qSBzWN3du13f082yBCtihqZ9HHnvjCXOiB7gVCJqqCcKfo/HJSDDwyZl/aI3
-         A1ANYYJi3vTU4bkZo/5zBS4+/XFqcqNW1/zXgLt5JhsxTki+lRcl9XfTmy/xW26VJ91Y
-         dJkKkzacUxhx9OJIoMe8HLP5jT7o3En/oXzgz4CJvhPX/M+QS1z0nB0yAGObi0jGfucy
-         QwGVhualRc4X0Vwm3Or0x1FgVs4veVXl+Olow+1q0ZiacOtszX6rBIsEE6tLGbqq5OBb
-         yFXS0KL5g2RFvgPNr/C9aRfTd7f/jP7H72v5CNS8ZXyyZ2HC4hW4lly4O7gFbw4Iaz0W
-         kSxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+GE9GiFiuJBd38imlMjxW6B5essgF75uJFUH/CxqvhcLlTSHj+mvhmSkh8qIhu6zTwv4vHBZ5QSKsux2D@vger.kernel.org, AJvYcCW7cBdv+GbhJZwsA2B8NVrCkooMhRWm7LvQIaO4QVSiFg1gw0Nt/jcD0o3uebt8s62jwobP9avndBO4N9fi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7uM394juR89XZp4L061JheF5Un1FrWnCwsRC0i3Q/smZaJbLX
-	cAWsKuk/RVp+GCPEXFUpeRxEozydZzH8cLVgOrpHf8g2Ow9njuCVrvJQ
-X-Gm-Gg: ASbGncuhLWf81Q+U3DgJLfiBEdic+YyKaHl6HyptjfXHAzbFHXc3xexkbgbNnIlJ/x/
-	cyG4BuDjGz+Z0lPfrJ68l57Qa11k+ZgGGYLUO7GmxU84h3hReN4Xb3eA5gogHLwRIJVKuKLIeD7
-	KOF0YkuKSRqGBlgU4D8YWzd2YyvRuJgZfeXsqwp8gEeYxfGOfuPKqVEcy7kG6lkLe3tV2ZGmANv
-	psA2I/4GvzUZZaoMG1MIB4Yzl2c2V9hUVQEpOHJA/UxDZfoOBt14UxUxka924Wz5QnK9Ew3dLWn
-	pLx/3hjQFhF/4Yr1Wl1D+sxw2cGgivlm+L82B6f2b2TkbOY/CrhaMxk05BAMJ3JuIv/drY0/xiq
-	sgNTWSZRQNwUElDFdn2gUg8QT
-X-Google-Smtp-Source: AGHT+IGm8Jkkiej/C+jG1pvkrtKONtBC9in64FwHFjGEl4tQBWrNcO7v48A3YibfheGLyTPhwgFPNg==
-X-Received: by 2002:a05:600c:45cb:b0:444:34c7:3ed9 with SMTP id 5b1f17b1804b1-453659f8288mr77140725e9.26.1750609247175;
-        Sun, 22 Jun 2025 09:20:47 -0700 (PDT)
+        bh=k1oa4nNQ6OD1xXNiA0TVTj0NDdNUr9/eQINchl8HXO8=;
+        b=rULqjZrbEIocf5j/xBhEHtrdZUAC/09syvpXEJCYZTodaWjTFpbRY5TC2naYm9IjAP
+         xGUMKrD1ovu9/v27CoROc0lbaG6gHtU/4DzkwcMTv9C6a6km7472uLOKPX83WAyPj4kl
+         HivsouqtxSPkVyFAOINjl8+AqVx9EVduJ9ZotoFuOUVRjPKf9C96CnHy6BshyfBCXgoo
+         7x93oU7txzQYhRGhsZt0vpWUw+Qmj9xsixQ9w+apDoEGRTG4qzt3lYxjjaZww3wagZ9L
+         6kMW5izInXyR1rLZepwO+NUIqH2q/O2rF4GO0gHFVh5g0i/0p/J7kDV98628OcU/R8fH
+         X26w==
+X-Forwarded-Encrypted: i=1; AJvYcCVZwp/CqCf3qiQnGiy2MI5hi4euLjAzsQFLLRWQl6oUR2qLPdtkkCvY71Mctk1H+LX807QAjquQFnkxMfFi@vger.kernel.org, AJvYcCWbd/QgL7zN4mGK5QOhMMSwINokm6kN5yu4ULZTzHB5I648uVXeaw5RXzxoekCcRDcAY/Q9aXk9vBkLecP4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/mS9hHnqsgq+gsrOTYrE/++YfGBhR6t2+juBv0yNhEzWmrq+W
+	jWGK2zj0uugWZCX1TySY9TUXGyjIpciZaMVrOf1XhrWI6G2AD0N3hQWX
+X-Gm-Gg: ASbGncvkjVpCaHZyawKyrMMGoSqhNlLbnoLn+UR+iUqPHGJLSDtls03dLt8tvUrmGPK
+	cxRwXpok2v1NeQroV2dn4cmzpQUhGKJ7gvI1R6vOh1aowQ0JrRl00aI2VeyvlRhhxc8VyjBfAUZ
+	5SAndkdu1DwLnvd1jaIxDaJ0W/apvZBj2qRluftpb7j4IU4SApB2+aZ4wwmcD6UkTQ8V5FOBUow
+	BQL1kf4OQ3aCOM2+ZengSlo5TJ5/Z4gkGl63jRY1Hv9ROiBst/LICqoDMV1NVshCloPD7Lyn1i+
+	03yHFqw1KY63KGQRDz/nL+FmMX9oroTMPB72UArD4Cd0SAdRBdefat7EFr3wrzW8ziE8XraVvlW
+	BbhUHxCcpHg0HVIyyojHOtdTQ
+X-Google-Smtp-Source: AGHT+IGIT3mcJ0gknkqPxwnQDk3KNRNpW3ykVb1rF9fBn2/P8z4fr9bdSWKQ+VnywD6VovL+QSHlYw==
+X-Received: by 2002:a05:600c:b86:b0:441:b076:fce8 with SMTP id 5b1f17b1804b1-453659c0bb9mr104566595e9.14.1750610156286;
+        Sun, 22 Jun 2025 09:35:56 -0700 (PDT)
 Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646cb57fsm85091375e9.1.2025.06.22.09.20.46
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f186dbsm7175528f8f.26.2025.06.22.09.35.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Jun 2025 09:20:46 -0700 (PDT)
-Date: Sun, 22 Jun 2025 17:20:43 +0100
+        Sun, 22 Jun 2025 09:35:56 -0700 (PDT)
+Date: Sun, 22 Jun 2025 17:35:54 +0100
 From: David Laight <david.laight.linux@gmail.com>
 To: Christophe Leroy <christophe.leroy@csgroup.eu>
 Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
@@ -88,10 +88,11 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
  <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
  linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
  linux-mm@kvack.org
-Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
-Message-ID: <20250622172043.3fb0e54c@pumpkin>
-In-Reply-To: <cover.1750585239.git.christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH 1/5] uaccess: Add masked_user_{read/write}_access_begin
+Message-ID: <20250622173554.7f016f96@pumpkin>
+In-Reply-To: <6fddae0cf0da15a6521bb847b63324b7a2a067b1.1750585239.git.christophe.leroy@csgroup.eu>
 References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
+	<6fddae0cf0da15a6521bb847b63324b7a2a067b1.1750585239.git.christophe.leroy@csgroup.eu>
 X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -102,88 +103,84 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sun, 22 Jun 2025 11:52:38 +0200
+On Sun, 22 Jun 2025 11:52:39 +0200
 Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
 
-> Masked user access avoids the address/size verification by access_ok().
-> Allthough its main purpose is to skip the speculation in the
-> verification of user address and size hence avoid the need of spec
-> mitigation, it also has the advantage to reduce the amount of
-> instructions needed so it also benefits to platforms that don't
-> need speculation mitigation, especially when the size of the copy is
-> not know at build time.
+> Allthough masked_user_access_begin() seems to only be used when reading
+> data from user at the moment, introduce masked_user_read_access_begin()
+> and masked_user_write_access_begin() in order to match
+> user_read_access_begin() and user_write_access_begin().
+> 
+> Have them default to masked_user_access_begin() when they are
+> not defined.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+>  fs/select.c             | 2 +-
+>  include/linux/uaccess.h | 8 ++++++++
+>  kernel/futex/futex.h    | 4 ++--
+>  lib/strncpy_from_user.c | 2 +-
+>  lib/strnlen_user.c      | 2 +-
+>  5 files changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/select.c b/fs/select.c
+> index 9fb650d03d52..d8547bedf5eb 100644
+> --- a/fs/select.c
+> +++ b/fs/select.c
+> @@ -777,7 +777,7 @@ static inline int get_sigset_argpack(struct sigset_argpack *to,
+>  	// the path is hot enough for overhead of copy_from_user() to matter
+>  	if (from) {
+>  		if (can_do_masked_user_access())
+> -			from = masked_user_access_begin(from);
+> +			from = masked_user_read_access_begin(from);
+>  		else if (!user_read_access_begin(from, sizeof(*from)))
+>  			return -EFAULT;
+>  		unsafe_get_user(to->p, &from->p, Efault);
+> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+> index 7c06f4795670..682a0cd2fe51 100644
+> --- a/include/linux/uaccess.h
+> +++ b/include/linux/uaccess.h
+> @@ -41,6 +41,14 @@
 
-It also removes a conditional branch that is quite likely to be
-statically predicted 'the wrong way'.
+>  #ifdef masked_user_access_begin
+>   #define can_do_masked_user_access() 1
+>  #else
+>   #define can_do_masked_user_access() 0
+>   #define masked_user_access_begin(src) NULL
+>   #define mask_user_address(src) (src)
+>  #endif
+>  
+> +#ifndef masked_user_write_access_begin
+> +#define masked_user_write_access_begin masked_user_access_begin
+> +#endif
+> +#ifndef masked_user_read_access_begin
+> +#define masked_user_read_access_begin masked_user_access_begin
+> +#endif
 
-> Unlike x86_64 which masks the address to 'all bits set' when the
-> user address is invalid, here the address is set to an address in
-> the gap. It avoids relying on the zero page to catch offseted
-> accesses. On book3s/32 it makes sure the opening remains on user
-> segment. The overcost is a single instruction in the masking.
+I think that needs merging with the bit above.
+Perhaps generating something like:
 
-That isn't true (any more).
-Linus changed the check to (approx):
-	if (uaddr > TASK_SIZE)
-		uaddr = TASK_SIZE;
-(Implemented with a conditional move)
-Replacing the original version that used cmp, sbb, or to get 'all bits set'.
-Quite likely the comments are wrong!
+#ifdef masked_user_access_begin
+#define masked_user_read_access_begin masked_user_access_begin
+#define masked_user_write_access_begin masked_user_access_begin
+#endif
 
-I thought there was a second architecture that implemented it - and might
-still set ~0u?
-As you noted returning 'TASK_SIZE' (or, at least, the base of a page that
-is guaranteed to fault) means that the caller only has to do 'reasonably
-sequential' accesses, and not guarantee to read offset zero first.
+#ifdef masked_user_read_access_begin
+  #define can_do_masked_user_access() 1
+#else
+  #define can_do_masked_user_access() 0
+  #define masked_user_read_access_begin(src) NULL
+  #define masked_user_write_access_begin(src) NULL
+  #define mask_user_address(src) (src)
+#endif
 
-As a separate patch, provided there is a guard page between user and kernel,
-and user accesses are 'reasonably sequential' even access_ok() need not
-check the transfer length. Linus wasn't that brave :-)
+Otherwise you'll have to #define masked_user_access_begin even though
+it is never used.
 
-I think some of the 'API' is still based on the original 386 code where
-the page tables had to be checked by hand for CoW.
+Two more patches could change x86-64 to define both and then remove
+the 'then unused' first check - but that has to be for later.
 
 	David
 
-> 
-> First patch adds masked_user_read_access_begin() and
-> masked_user_write_access_begin() to match with user_read_access_end()
-> and user_write_access_end().
-> 
-> Second patch adds speculation barrier to copy_from_user_iter() so that
-> the barrier in powerpc raw_copy_from_user() which is redundant with
-> the one in copy_from_user() can be removed.
-> 
-> Third patch removes the redundant barrier_nospec() in
-> raw_copy_from_user().
-> 
-> Fourth patch removes the unused size parameter when enabling/disabling
-> user access.
-> 
-> Last patch implements masked user access.
-> 
-> Christophe Leroy (5):
->   uaccess: Add masked_user_{read/write}_access_begin
->   uaccess: Add speculation barrier to copy_from_user_iter()
->   powerpc: Remove unused size parametre to KUAP enabling/disabling
->     functions
->   powerpc: Move barrier_nospec() out of allow_read_{from/write}_user()
->   powerpc: Implement masked user access
-> 
->  arch/powerpc/Kconfig                         |   2 +-
->  arch/powerpc/include/asm/book3s/32/kup.h     |   2 +-
->  arch/powerpc/include/asm/book3s/64/kup.h     |   4 +-
->  arch/powerpc/include/asm/kup.h               |  24 ++--
->  arch/powerpc/include/asm/nohash/32/kup-8xx.h |   2 +-
->  arch/powerpc/include/asm/nohash/kup-booke.h  |   2 +-
->  arch/powerpc/include/asm/uaccess.h           | 140 ++++++++++++++++---
->  fs/select.c                                  |   2 +-
->  include/linux/uaccess.h                      |   8 ++
->  kernel/futex/futex.h                         |   4 +-
->  lib/iov_iter.c                               |   7 +
->  lib/strncpy_from_user.c                      |   2 +-
->  lib/strnlen_user.c                           |   2 +-
->  13 files changed, 158 insertions(+), 43 deletions(-)
-> 
 
 
