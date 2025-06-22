@@ -1,82 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-52410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309DDAE3204
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 22:40:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DF9AE320B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 22:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBAA0188CE23
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 20:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931A616DE4A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 20:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBA71F152D;
-	Sun, 22 Jun 2025 20:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5EC1F3FC6;
+	Sun, 22 Jun 2025 20:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="QCmQmoU7"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="F0z2wK63"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3404D2F2E
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 20:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54402EAE5
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 20:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750624822; cv=none; b=pzRzGKGnTMeDIOY+YLdhLS8uu2A962LlG9y6UqSAoj8JTxVKtpqUubQa90fQwg3z2ytbBcMflN3iyKgO3v7Fp1MvJ3pY6V0kQ3lLw4pOJAJ5DETOkJA5Knf6YZJzWrq5Lxyt5AT8Zvqu9fdABR8/08l4yTyexcheK8BmusyRmO4=
+	t=1750624984; cv=none; b=K8YPVwKFlXQH0V+uxYq3Bm2n8We7uZrzYIyMO/JClKKSz5qWMGq9a+qpQjltEQvIkSsBa55ft2ittpp9fIMqeHPlo+nVT4vWtVUCgNWiE90ERpaVHDnsdtA9pn/6eVWsYICXw7nQ0SzWOfb1T69yWWqSSMpezHwaqykaTfBM1aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750624822; c=relaxed/simple;
-	bh=pXxwLXGXGg2gKWJ3SY9z8E8wNiCCClTBVyvP7VtTjb0=;
+	s=arc-20240116; t=1750624984; c=relaxed/simple;
+	bh=+jG2HuLWEx62oFB03Wuq//caQwog+L2q5/3i1YR9LNc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HBAkSQ83AtpEhaS0PD4Y3Eg9N6NvOQ7OobUDpHKigW3wYfbF9YGQOmSzSM55hTCHc1PYA3WB6XmjtLS8oTJVV5wOdpUhQqFTL6uwjrepXlP0Samum5GDzSdgQ4E/t95QxpwJPQA5KbFrK5pXLFoI+D9/LkPcsoh2cPNO4HgBSz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=QCmQmoU7; arc=none smtp.client-ip=209.85.167.42
+	 To:Cc:Content-Type; b=b98yFtUqwJo5Gd33cg50efUu96V7kXKaj6rsw0XOvKAiQH8lVSCIm2uXDP212PBPjEokrttT1pxldsToaN1g1HtLeu4+6LKNNs8GhJY5nHGVIIcBBLThojr59zW4OHNX8KmBChMQ/VOLiwkvBcW+shhnMb38LuEQ7U2ef4WtANA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=F0z2wK63; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553e5df44f8so2121034e87.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 13:40:18 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3105ef2a071so38937711fa.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 13:43:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1750624817; x=1751229617; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1750624981; x=1751229781; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=64bfE8SJaN1ZDgdvI3BREjsHjqwPHVAh2za8SWRc+Vk=;
-        b=QCmQmoU79hEVW9oEdd2zfnUyW22NRbTjYN47QHeylOy8sHUqyuD+lG4Wh6lDq00IOe
-         LOxZsfv47jvQrkCbSfus9bljTTagN91Q7jr+27lQj/fE8hqCRIkgX0I8/owKpJpsAMdS
-         vBy3oxGMGlHIJarCiTHvJtv99klEeqzkcPFzE=
+        bh=qEsyfeAiaq2fJuwkyqZ0Fgps4JqruNLVtd6VMI2wYm8=;
+        b=F0z2wK63m4wo4L8I1J17RAUuLawQQ1gKivkHLjvMUomhg9gGqAKbQ/0ymlF1/BCWdr
+         +eJtCjpKxh3DEBTg8SVlZuFNVMhw8SZcQ9ZU8stkTy7p8Ngay8AIDje0Hznd0EMSxdK6
+         /pkGzxKZlspl2IFdOOiTD4iivhT4TtSLimu44=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750624817; x=1751229617;
+        d=1e100.net; s=20230601; t=1750624981; x=1751229781;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=64bfE8SJaN1ZDgdvI3BREjsHjqwPHVAh2za8SWRc+Vk=;
-        b=Bo6AW/bejgWHDyBikG1QoMUTLqFzGM0LPUV2iZNka8KJAhkWbCrCKaTXf2PNKHeqW0
-         HUVLscBUcg7YmgZVPhTH5PgxTRiYcfDwT0BfXf9ceCn6omHlj5SQcLIxYW7w3BNjaMuT
-         7ttYHohl4lBeQXxNzE6vBSodwqDORwVXwPNA974SlEJpgm23S/kPiJwdnkOnjfENVQaj
-         7nk8NZWaMy0OWVVxR61HMEOpaI8YtV+3lKHo+5it2bz9It3IqQtTiHBcaM4mN82P3j5B
-         gKNHzt9SwbvSsog09WcqellkER34Irmiom9fz/ay1DwIwxhcjMVb/WQYCvvwPvGKZi42
-         8lAA==
-X-Gm-Message-State: AOJu0YxMEcrYsokH2NwP8NKy+MInMsedbO9uJhBJVe66zk1SQILNVDpK
-	Tq7jB59q0+IL3BlS2vakj2I7Usf5kJV/Uq729xofKxJNp6ZXyWjJwSIFy277V/ptjBQpRdA8LZI
-	nP2+1rBpbyycvLCmb8z1PgbFw4cBexekiGD81HP5ySw==
-X-Gm-Gg: ASbGnctNwT4lekikWPoXwAEwPAYkS+hfq01N98Tv+98BbVK0HLX634z4bcRXsIE9BUm
-	C1kuXeNLLriRd0/jNEKLns4/Cojsj9+vTsAOaQBcTAHoo/S1YmHvOdlVb+KOoOlhNF5J5Rq1Hot
-	/LBjWxKFNk6IiBwPyIyfiUMIaFQgVPK30F79FL49lUQB6F
-X-Google-Smtp-Source: AGHT+IFzBFnh+wY22A5kbkbvFI+2HoPzkuznky2dsI8O1l/CEgrhlAjtCbQUhkaviWnxoQob3syXe6RyY2PrbZEV+fo=
-X-Received: by 2002:a05:6512:b1f:b0:54a:cc04:ea24 with SMTP id
- 2adb3069b0e04-553e3c07959mr2938938e87.46.1750624817130; Sun, 22 Jun 2025
- 13:40:17 -0700 (PDT)
+        bh=qEsyfeAiaq2fJuwkyqZ0Fgps4JqruNLVtd6VMI2wYm8=;
+        b=Gtc2Po0871AB82oICjK6rGAkLE9Uv5QKb5bvlP6NAQBEKzCdd7yTGzLY2Nu2aZg04V
+         7ljxMhSzSsI00IlBYxcXWaC0snfXIN2d70egfGyz/vj83Y2OtILysDRctbp8unkgp+Ru
+         ot4v+itv9ufCoNJKqKt8irS1m27TiwAjZYT1l7GRUO//hKvhkaSmtl7r76I+SuTTugUW
+         8D/aK2hD4kInI+LTsDv0yraLkEb+LwO29qeUFH4yjXJYxLVBMPe6PQfsSlh7E+gqCeMQ
+         53/LOnZQg5GdqYHsG51tqsdykJ0FA4Kgmxkjru+vwZ3aJeZpzqNDmW1jW6iaRsNnYpmh
+         IINQ==
+X-Gm-Message-State: AOJu0YwOUHmDFqlQwkDquXZdwCrtBSlV8Tjb5N/BuECirfgAjZPsCMy1
+	PzjxhAxIBdZ7f/nfUTd0CzYsXsV/JyL0NSlJDsGDvCQgl1cbiqYb80fHbfXmO+ICsXBMtLd8HZL
+	JlrHyTRnDZvbyELzDd1QP6GgOYgUvohpRw5avKGqklw==
+X-Gm-Gg: ASbGncsqw/105Dexq6XXLD6XFAqj74c3DotfVdLARG1cDo1eI5qN4KpygfcQMh1XYng
+	i6fFjHlFALDUlaARNf/pxeW6tZmFVIu6eZAi1foz2UpU+jIcc4DqZiOnWmuH8aGMd5aILdM1sBf
+	t1k8vHJUrVLa5KzOnGbzOBgzQTmWG6EjPtiMPs/NLoM6Th
+X-Google-Smtp-Source: AGHT+IHzfZ9+dxpnD1y477EYAmydKv/nL+sZ4IkTpmj1GPdnWrVq9GTfRWoYXq4HSA+0kjm+jK+slR3sMn2lBtLdAIA=
+X-Received: by 2002:a05:651c:111b:b0:32a:8062:69b1 with SMTP id
+ 38308e7fff4ca-32b98e31c80mr21015321fa.8.1750624980755; Sun, 22 Jun 2025
+ 13:43:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-2-98f3456fd552@kernel.org>
-In-Reply-To: <20250618-work-pidfs-persistent-v2-2-98f3456fd552@kernel.org>
+References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-3-98f3456fd552@kernel.org>
+In-Reply-To: <20250618-work-pidfs-persistent-v2-3-98f3456fd552@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Sun, 22 Jun 2025 22:40:05 +0200
-X-Gm-Features: Ac12FXwXA4rsmuKPHrwb1z9zW-Zj3D_N0ZDg99oapODJPQQ0dTgxfDZyKrVPw3g
-Message-ID: <CAJqdLrqXTSPJv4QPcnO4wmvdAUXviyqWPxD7bRP6ULB_shpr4w@mail.gmail.com>
-Subject: Re: [PATCH v2 02/16] libfs: massage path_from_stashed() to allow
- custom stashing behavior
+Date: Sun, 22 Jun 2025 22:42:49 +0200
+X-Gm-Features: Ac12FXyuOD5smGfiXxvEsaxLph53CwUaViGrzJXBn661SuQ8xekBdXsVGrkDK3M
+Message-ID: <CAJqdLrqX+uSKyvWCcJo+dUp-ekSNxG8JrmEWSDJfrOkCbN8L-A@mail.gmail.com>
+Subject: Re: [PATCH v2 03/16] libfs: massage path_from_stashed()
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
 	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
@@ -87,102 +86,51 @@ Content-Type: text/plain; charset="UTF-8"
 Am Mi., 18. Juni 2025 um 22:53 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> * Add a callback to struct stashed_operations so it's possible to
->   implement custom behavior for pidfs and allow for it to return errors.
->
-> * Teach stashed_dentry_get() to handle error pointers.
+> Make it a littler easier to follow.
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 > ---
->  fs/internal.h |  3 +++
->  fs/libfs.c    | 27 ++++++++++++++++++++-------
->  2 files changed, 23 insertions(+), 7 deletions(-)
+>  fs/libfs.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
 >
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 393f6c5c24f6..22ba066d1dba 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -322,12 +322,15 @@ struct mnt_idmap *alloc_mnt_idmap(struct user_namespace *mnt_userns);
->  struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
->  void mnt_idmap_put(struct mnt_idmap *idmap);
->  struct stashed_operations {
-> +       struct dentry *(*stash_dentry)(struct dentry **stashed,
-> +                                      struct dentry *dentry);
->         void (*put_data)(void *data);
->         int (*init_inode)(struct inode *inode, void *data);
->  };
->  int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
->                       struct path *path);
->  void stashed_dentry_prune(struct dentry *dentry);
-> +struct dentry *stash_dentry(struct dentry **stashed, struct dentry *dentry);
->  struct dentry *stashed_dentry_get(struct dentry **stashed);
->  /**
->   * path_mounted - check whether path is mounted
 > diff --git a/fs/libfs.c b/fs/libfs.c
-> index 9ea0ecc325a8..3541e22c87b5 100644
+> index 3541e22c87b5..997d3a363ce6 100644
 > --- a/fs/libfs.c
 > +++ b/fs/libfs.c
-> @@ -2128,6 +2128,8 @@ struct dentry *stashed_dentry_get(struct dentry **stashed)
->         dentry = rcu_dereference(*stashed);
->         if (!dentry)
->                 return NULL;
-> +       if (IS_ERR(dentry))
-> +               return dentry;
->         if (!lockref_get_not_dead(&dentry->d_lockref))
->                 return NULL;
->         return dentry;
-> @@ -2176,8 +2178,7 @@ static struct dentry *prepare_anon_dentry(struct dentry **stashed,
->         return dentry;
->  }
->
-> -static struct dentry *stash_dentry(struct dentry **stashed,
-> -                                  struct dentry *dentry)
-> +struct dentry *stash_dentry(struct dentry **stashed, struct dentry *dentry)
->  {
->         guard(rcu)();
->         for (;;) {
-> @@ -2218,12 +2219,15 @@ static struct dentry *stash_dentry(struct dentry **stashed,
->  int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
->                       struct path *path)
->  {
-> -       struct dentry *dentry;
-> +       struct dentry *dentry, *res;
->         const struct stashed_operations *sops = mnt->mnt_sb->s_fs_info;
->
->         /* See if dentry can be reused. */
-> -       path->dentry = stashed_dentry_get(stashed);
-> -       if (path->dentry) {
-> +       res = stashed_dentry_get(stashed);
-> +       if (IS_ERR(res))
-> +               return PTR_ERR(res);
-> +       if (res) {
-> +               path->dentry = res;
+> @@ -2227,9 +2227,8 @@ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+>         if (IS_ERR(res))
+>                 return PTR_ERR(res);
+>         if (res) {
+> -               path->dentry = res;
 >                 sops->put_data(data);
->                 goto out_path;
+> -               goto out_path;
+> +               goto make_path;
 >         }
-> @@ -2234,8 +2238,17 @@ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
->                 return PTR_ERR(dentry);
 >
->         /* Added a new dentry. @data is now owned by the filesystem. */
-> -       path->dentry = stash_dentry(stashed, dentry);
-> -       if (path->dentry != dentry)
-> +       if (sops->stash_dentry)
-> +               res = sops->stash_dentry(stashed, dentry);
-> +       else
-> +               res = stash_dentry(stashed, dentry);
-> +       if (IS_ERR(res)) {
-> +               dput(dentry);
-> +               return PTR_ERR(res);
-> +       }
-> +       path->dentry = res;
-> +       /* A dentry was reused. */
-> +       if (res != dentry)
+>         /* Allocate a new dentry. */
+> @@ -2246,15 +2245,14 @@ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+>                 dput(dentry);
+>                 return PTR_ERR(res);
+>         }
+> -       path->dentry = res;
+> -       /* A dentry was reused. */
+>         if (res != dentry)
 >                 dput(dentry);
 >
->  out_path:
+> -out_path:
+> -       WARN_ON_ONCE(path->dentry->d_fsdata != stashed);
+> -       WARN_ON_ONCE(d_inode(path->dentry)->i_private != data);
+> +make_path:
+> +       path->dentry = res;
+>         path->mnt = mntget(mnt);
+> +       VFS_WARN_ON_ONCE(path->dentry->d_fsdata != stashed);
+> +       VFS_WARN_ON_ONCE(d_inode(path->dentry)->i_private != data);
+>         return 0;
+>  }
+>
 >
 > --
 > 2.47.2
