@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-52420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D04AE324B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9914AE324E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B590816F324
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:19:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67D8C16F51D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230471A5B92;
-	Sun, 22 Jun 2025 21:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3991A5B92;
+	Sun, 22 Jun 2025 21:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="gx1zjDnc"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="Ws4p1XgE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8387FEAC6
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D82EAC6
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750627190; cv=none; b=HM4hRMUV14E7EGNy2LJfmx2aEAjQtVnkdFVYGcUbRpCZAJLTrJxECzGs1ucXb9Q7duHQmtKrbn3VXYNwe2g7yfyUDTK2NP2UPgmGSyqYN9OPoun9bNleI+MdkkSQMmVPLo/qXKk/ngRiWpZWVsCwgfV5FMtxSx0Vbo7Zl1q6HBw=
+	t=1750627295; cv=none; b=QcGoNIwCsTEgA48tm6zUVQ9HA6znICt8v95ku1mAkoP1AaiS/0VY0c1etG56vCO34V2oR02nQNyWB7r5KZvv8baFugTBHro/fG9yIAAMXWYR/n9xRaJim7+J2gx8GiTPnwAeVxu+JEjXAKUMubHq/pz2g9zbdvwayuKQbmPAuiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750627190; c=relaxed/simple;
-	bh=BuW5NNZzyqCVPlEP8n+RnfgIb508yLCDcEJ7c609zf0=;
+	s=arc-20240116; t=1750627295; c=relaxed/simple;
+	bh=xpiyn+n4cGUhJbSCTa+Dt6Agc3VjN1Yp7oCWuUATovg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RRpP8SP+Xe2HYKrfUTWBhaSFW/ZcAciSE9/3DO1kQGiht/uXisc3D/Ad0hIhqKmUiAmztRQlcHcMff+RJTeiQ0llOrZfDT7EBWIdATA2w5ZVXGL/8XYxTuLBF3ijnzy+oNmahTaaOT43xr7q7UWayakYLjmfzv5nrlOaJwFkAwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=gx1zjDnc; arc=none smtp.client-ip=209.85.167.54
+	 To:Cc:Content-Type; b=LWXCBHBGf4TMRE8/RJxHBnH7t1/uyjx68zw3gUIpM+aZdTuDmesHx6tpNWXYFN+5OSMzkUBpDqSpn2WzFhWWGnt+y6VGREUnBYwKyziDfTMbuMijqMxb1UTu5rTGAB5gP0wnMgVtFQwKP+f1Fsu3DPkyzmh/uzZyuIBm7PVc3g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=Ws4p1XgE; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-553d52cb80dso3746894e87.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 14:19:48 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55351af2fc6so3660435e87.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 14:21:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1750627187; x=1751231987; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1750627292; x=1751232092; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lVZ3pAi9xeGcPwJhLJxQOvsDeFhAHrbbJOoCZmNbVwY=;
-        b=gx1zjDncv1LEF4hAYQu0N7rGi3B0JPT1Uo3pihHkX+kEjg5m1gX+5+QgjS3hgZeH32
-         emXyJK5vjWYLMaBjkixihGr5+PvlB1dsT3g1xhyR72kxCP+bQrxrWlN0AEi+yMYiFqiv
-         TMgyOmhUEhIDY/Kr6iSBeTB8WJ+tuvTPT2wEE=
+        bh=U9D9t4WZ0cPFISunUG/ACXcd6paSyRV27bUdVDT18/o=;
+        b=Ws4p1XgEAllb4r51y2uzbxz9MPyItxaVLpeW7GSmEDsHAu8U1isCOfTxeyla3wxJSZ
+         LwMZGC3YejX82zUqIjCcqPCQMaZOd0e5WdgF6xq46XvZYYk1ymGBskR7Qya/3lEmJUm2
+         upnIAVX53qMkT2tGfEjldF+AaHWzNzvgr+zR4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750627187; x=1751231987;
+        d=1e100.net; s=20230601; t=1750627292; x=1751232092;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lVZ3pAi9xeGcPwJhLJxQOvsDeFhAHrbbJOoCZmNbVwY=;
-        b=FfwWJB7N0LYJb20cB+f2CgPkR5I7TW1o3N2kr9um9bIXcxaHi1i6QP2UBmgDXsaOHt
-         ssuH6KrlOIYaP1tiUszQcnLCN0EaY1POaUBU5D1N5cQzTtG+FDf8i0UkQtnLwMuDMmI7
-         GxY8LXvtnFlxN7AhYBVCgjrh83bO0zCVr6qszU1tjxXisLh7D3PFNtrmh9iOOE7IM8W7
-         rmwxo2V3coWuE7DIkS+lttx7Y8SNqMJECSlTnQ6kMzeKcl5ZknUSfCTk6L8kOWMs/0BZ
-         TK7OQEX26ntV5vps1qT0Ra6AB6bCQ+D1reccJ4OpdrMNOfBII+eCyTXwFt2KYokfKc84
-         bURg==
-X-Gm-Message-State: AOJu0YyJgNQeB1XRq8w3Y1nCueXHgmmAfp67cpkBZ1zzXaqMgmGPeh0m
-	hBz5GztDbyNoNLaP2WWoSEBRGG4oGra+90vvauDfusipEo343+qaSxWGDMmFjk/Cg4dH2SfeQEf
-	x3IyNIxMzG2/2+QEWAbSKXwsXezMRwOjg+U1tsnDsuQ==
-X-Gm-Gg: ASbGncthqjz9Rn9Uf6vfP3jQDtvKKaUsBqO9LR3wO1aSCgY1sGYkFbIEVtcssIhGzte
-	3y9eV59MOFNQY50BIA9JswunD/znt7VhSfz2pF3ihcM6fAjA9PUJY8qWE7YMiyvL7Np83bDwtiF
-	lRFVt8ZUlfaQkqbCybjIogEexoR2W3qMkJ2mC1kr5THMbJJN7Ll9saglc=
-X-Google-Smtp-Source: AGHT+IFTJnwaGfFc/AJ0PwO/gS/bP63tByOtFO0RXA+KwmjIHJFV7o1enqq5uIYf893dbHSg47QKhb3D1fOhqYvh1vo=
-X-Received: by 2002:a05:6512:1284:b0:550:e04d:2b66 with SMTP id
- 2adb3069b0e04-553e503c1eamr2148456e87.17.1750627186467; Sun, 22 Jun 2025
- 14:19:46 -0700 (PDT)
+        bh=U9D9t4WZ0cPFISunUG/ACXcd6paSyRV27bUdVDT18/o=;
+        b=U/reoQx/SctljNH6ch/kYTx2DEzKmmDm4JVP1/Kc4NgomD2gGAMDoVJaCe+KXncKW+
+         cyA2VBIoQPxmG+73WUkGfyeQF2+Snt/BDcrwAE/je5QXWiW5X1hT/DCGJhLrzU0Hjn70
+         QE6nb7muxprS1GkSn5EL3alHGk57c4ZBtf8J71kwz8YMGjAfO6vtH6d+VVEMv3Pew/KI
+         UU3ZXt3xE+tAtimYmih5TwFPci0c9uC+RLXbwnCeHCm4VNI8Y4Wurt1SqqsQS5BzAKh3
+         JD+rTDU8uufDgmljyQro/d/yweAFQTWQoIw2eHpHF/iUygKomsan98Q90jIBiG3qMihX
+         9swA==
+X-Gm-Message-State: AOJu0Yx8rLJ+i0m3BbJB23VrM467MJ1u5kGHbXn8jYoTnZHxb2wYZJHz
+	Yp0ZS3VezuWF7+rdGREJ0KX5q0ISCYpt8irIqr19jfx4lGu8wrvg/7pHwaOhqMG0A4KTVbYsXXC
+	mukcTcsZ2N20im16tCHfQtpq0YTiltNp/nX7HJBI+JQ==
+X-Gm-Gg: ASbGncsZGNSROnXZIzoTSvKg2E9Xngn2NqA0tdnBG+i8Ib/HNL2sIgxgpw36vUDHJ5I
+	79UnVuvHYJbicK6XuUNA+a46om0Vbe5OW91AgnJonKexRmGwQe62MIMEQFgC/1/iOsM3G+nQqIZ
+	TRJLJwInhuMWNuwistbMvUON1OIdDG3fYGi5Ms8XMXpX7h
+X-Google-Smtp-Source: AGHT+IG+uE6JNaiTNBzEjPYbpS2N1EfNvaaSjmTotxGF1D0qrRZKCjwj8k5GaI1P+sfN/A8SL6YXqySV7rcKeEbMJKQ=
+X-Received: by 2002:a05:6512:1396:b0:553:659c:53fa with SMTP id
+ 2adb3069b0e04-553e3b9a33emr2979327e87.5.1750627291951; Sun, 22 Jun 2025
+ 14:21:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-12-98f3456fd552@kernel.org>
-In-Reply-To: <20250618-work-pidfs-persistent-v2-12-98f3456fd552@kernel.org>
+References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-13-98f3456fd552@kernel.org>
+In-Reply-To: <20250618-work-pidfs-persistent-v2-13-98f3456fd552@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Sun, 22 Jun 2025 23:19:35 +0200
-X-Gm-Features: Ac12FXwfBrTStBApNQR6WKJoSSEj5fKlPKrnsElev2Ayej0VHiB42JBribE6RcI
-Message-ID: <CAJqdLrpK8NARbLf4bNmy+xbqaFXpKYiRCQQhX7d+tbZMyiNnOw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/16] pidfs: support xattrs on pidfds
+Date: Sun, 22 Jun 2025 23:21:20 +0200
+X-Gm-Features: Ac12FXwaZEFcmgA-EYPqAWkuMJyDeY_NK_ENd6y1nb8cK0ukjr-rrX_rFer3XvA
+Message-ID: <CAJqdLrp6-RT5jtrpW6b06Hc--Ht8Ti+KH-tR=TAgbsK3Yci91g@mail.gmail.com>
+Subject: Re: [PATCH v2 13/16] selftests/pidfd: test extended attribute support
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
 	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
@@ -86,201 +86,144 @@ Content-Type: text/plain; charset="UTF-8"
 Am Mi., 18. Juni 2025 um 22:54 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> Now that we have a way to persist information for pidfs dentries we can
-> start supporting extended attributes on pidfds. This will allow
-> userspace to attach meta information to tasks.
->
-> One natural extension would be to introduce a custom pidfs.* extended
-> attribute space and allow for the inheritance of extended attributes
-> across fork() and exec().
->
-> The first simple scheme will allow privileged userspace to set trusted
-> extended attributes on pidfs inodes.
+> Add tests for extended attribute support on pidfds.
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+
 > ---
->  fs/pidfs.c | 106 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 102 insertions(+), 4 deletions(-)
+>  tools/testing/selftests/pidfd/.gitignore         |  1 +
+>  tools/testing/selftests/pidfd/Makefile           |  3 +-
+>  tools/testing/selftests/pidfd/pidfd_xattr_test.c | 97 ++++++++++++++++++++++++
+>  3 files changed, 100 insertions(+), 1 deletion(-)
 >
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index df5bc69ea1c0..15d99854d243 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -21,6 +21,7 @@
->  #include <linux/utsname.h>
->  #include <net/net_namespace.h>
->  #include <linux/coredump.h>
-> +#include <linux/xattr.h>
+> diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
+> index 0406a065deb4..bc4130506eda 100644
+> --- a/tools/testing/selftests/pidfd/.gitignore
+> +++ b/tools/testing/selftests/pidfd/.gitignore
+> @@ -10,3 +10,4 @@ pidfd_file_handle_test
+>  pidfd_bind_mount
+>  pidfd_info_test
+>  pidfd_exec_helper
+> +pidfd_xattr_test
+> diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
+> index fcbefc0d77f6..c9fd5023ef15 100644
+> --- a/tools/testing/selftests/pidfd/Makefile
+> +++ b/tools/testing/selftests/pidfd/Makefile
+> @@ -3,7 +3,8 @@ CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
 >
->  #include "internal.h"
->  #include "mount.h"
-> @@ -28,6 +29,7 @@
->  #define PIDFS_PID_DEAD ERR_PTR(-ESRCH)
+>  TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
+>         pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
+> -       pidfd_file_handle_test pidfd_bind_mount pidfd_info_test
+> +       pidfd_file_handle_test pidfd_bind_mount pidfd_info_test \
+> +       pidfd_xattr_test
 >
->  static struct kmem_cache *pidfs_attr_cachep __ro_after_init;
-> +static struct kmem_cache *pidfs_xattr_cachep __ro_after_init;
+>  TEST_GEN_PROGS_EXTENDED := pidfd_exec_helper
 >
->  /*
->   * Stashes information that userspace needs to access even after the
-> @@ -40,6 +42,7 @@ struct pidfs_exit_info {
->  };
->
->  struct pidfs_attr {
-> +       struct simple_xattrs *xattrs;
->         struct pidfs_exit_info __pei;
->         struct pidfs_exit_info *exit_info;
->  };
-> @@ -138,14 +141,27 @@ void pidfs_remove_pid(struct pid *pid)
->
->  void pidfs_free_pid(struct pid *pid)
->  {
-> +       struct pidfs_attr *attr __free(kfree) = no_free_ptr(pid->attr);
-> +       struct simple_xattrs *xattrs __free(kfree) = NULL;
+> diff --git a/tools/testing/selftests/pidfd/pidfd_xattr_test.c b/tools/testing/selftests/pidfd/pidfd_xattr_test.c
+> new file mode 100644
+> index 000000000000..00d400ac515b
+> --- /dev/null
+> +++ b/tools/testing/selftests/pidfd/pidfd_xattr_test.c
+> @@ -0,0 +1,97 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
->         /*
->          * Any dentry must've been wiped from the pid by now.
->          * Otherwise there's a reference count bug.
->          */
->         VFS_WARN_ON_ONCE(pid->stashed);
->
-> -       if (!IS_ERR(pid->attr))
-> -               kfree(pid->attr);
-> +       if (IS_ERR(attr))
-> +               return;
+> +#define _GNU_SOURCE
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <limits.h>
+> +#include <linux/types.h>
+> +#include <poll.h>
+> +#include <pthread.h>
+> +#include <sched.h>
+> +#include <signal.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <syscall.h>
+> +#include <sys/prctl.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +#include <sys/socket.h>
+> +#include <linux/kcmp.h>
+> +#include <sys/stat.h>
+> +#include <sys/xattr.h>
 > +
-> +       /*
-> +        * Any dentry must've been wiped from the pid by now. Otherwise
-> +        * there's a reference count bug.
-> +        */
-> +       VFS_WARN_ON_ONCE(pid->stashed);
-
-We have (almost) the same chunk 5 lines above. ;-)
-
+> +#include "pidfd.h"
+> +#include "../kselftest_harness.h"
 > +
-> +       xattrs = attr->xattrs;
-> +       if (xattrs)
-> +               simple_xattrs_free(attr->xattrs, NULL);
->  }
->
->  #ifdef CONFIG_PROC_FS
-> @@ -663,9 +679,24 @@ static int pidfs_getattr(struct mnt_idmap *idmap, const struct path *path,
->         return anon_inode_getattr(idmap, path, stat, request_mask, query_flags);
->  }
->
-> +static ssize_t pidfs_listxattr(struct dentry *dentry, char *buf, size_t size)
+> +FIXTURE(pidfs_xattr)
 > +{
-> +       struct inode *inode = d_inode(dentry);
-> +       struct pid *pid = inode->i_private;
-> +       struct pidfs_attr *attr = pid->attr;
-> +       struct simple_xattrs *xattrs;
+> +       pid_t child_pid;
+> +       int child_pidfd;
+> +};
 > +
-> +       xattrs = READ_ONCE(attr->xattrs);
-> +       if (!xattrs)
-> +               return 0;
+> +FIXTURE_SETUP(pidfs_xattr)
+> +{
+> +       self->child_pid = create_child(&self->child_pidfd, CLONE_NEWUSER | CLONE_NEWPID);
+> +       EXPECT_GE(self->child_pid, 0);
 > +
-> +       return simple_xattr_list(inode, xattrs, buf, size);
+> +       if (self->child_pid == 0)
+> +               _exit(EXIT_SUCCESS);
 > +}
 > +
->  static const struct inode_operations pidfs_inode_operations = {
-> -       .getattr = pidfs_getattr,
-> -       .setattr = pidfs_setattr,
-> +       .getattr        = pidfs_getattr,
-> +       .setattr        = pidfs_setattr,
-> +       .listxattr      = pidfs_listxattr,
->  };
->
->  static void pidfs_evict_inode(struct inode *inode)
-> @@ -905,6 +936,67 @@ static const struct stashed_operations pidfs_stashed_ops = {
->         .put_data       = pidfs_put_data,
->  };
->
-> +static int pidfs_xattr_get(const struct xattr_handler *handler,
-> +                          struct dentry *unused, struct inode *inode,
-> +                          const char *suffix, void *value, size_t size)
+> +FIXTURE_TEARDOWN(pidfs_xattr)
 > +{
-> +       struct pid *pid = inode->i_private;
-> +       struct pidfs_attr *attr = pid->attr;
-> +       const char *name;
-> +       struct simple_xattrs *xattrs;
-> +
-> +       xattrs = READ_ONCE(attr->xattrs);
-> +       if (!xattrs)
-> +               return 0;
-> +
-> +       name = xattr_full_name(handler, suffix);
-> +       return simple_xattr_get(xattrs, name, value, size);
+> +       sys_waitid(P_PID, self->child_pid, NULL, WEXITED);
 > +}
 > +
-> +static int pidfs_xattr_set(const struct xattr_handler *handler,
-> +                          struct mnt_idmap *idmap, struct dentry *unused,
-> +                          struct inode *inode, const char *suffix,
-> +                          const void *value, size_t size, int flags)
+> +TEST_F(pidfs_xattr, set_get_list_xattr_multiple)
 > +{
-> +       struct pid *pid = inode->i_private;
-> +       struct pidfs_attr *attr = pid->attr;
-> +       const char *name;
-> +       struct simple_xattrs *xattrs;
-> +       struct simple_xattr *old_xattr;
+> +       int ret, i;
+> +       char xattr_name[32];
+> +       char xattr_value[32];
+> +       char buf[32];
+> +       const int num_xattrs = 10;
+> +       char list[PATH_MAX] = {};
 > +
-> +       /* Ensure we're the only one to set @attr->xattrs. */
-> +       WARN_ON_ONCE(!inode_is_locked(inode));
-> +
-> +       xattrs = READ_ONCE(attr->xattrs);
-> +       if (!xattrs) {
-> +               xattrs = kmem_cache_zalloc(pidfs_xattr_cachep, GFP_KERNEL);
-> +               if (!xattrs)
-> +                       return -ENOMEM;
-> +
-> +               simple_xattrs_init(xattrs);
-> +               smp_store_release(&pid->attr->xattrs, xattrs);
+> +       for (i = 0; i < num_xattrs; i++) {
+> +               snprintf(xattr_name, sizeof(xattr_name), "trusted.testattr%d", i);
+> +               snprintf(xattr_value, sizeof(xattr_value), "testvalue%d", i);
+> +               ret = fsetxattr(self->child_pidfd, xattr_name, xattr_value, strlen(xattr_value), 0);
+> +               ASSERT_EQ(ret, 0);
 > +       }
 > +
-> +       name = xattr_full_name(handler, suffix);
-> +       old_xattr = simple_xattr_set(xattrs, name, value, size, flags);
-> +       if (IS_ERR(old_xattr))
-> +               return PTR_ERR(old_xattr);
+> +       for (i = 0; i < num_xattrs; i++) {
+> +               snprintf(xattr_name, sizeof(xattr_name), "trusted.testattr%d", i);
+> +               snprintf(xattr_value, sizeof(xattr_value), "testvalue%d", i);
+> +               memset(buf, 0, sizeof(buf));
+> +               ret = fgetxattr(self->child_pidfd, xattr_name, buf, sizeof(buf));
+> +               ASSERT_EQ(ret, strlen(xattr_value));
+> +               ASSERT_EQ(strcmp(buf, xattr_value), 0);
+> +       }
 > +
-> +       simple_xattr_free(old_xattr);
-> +       return 0;
+> +       ret = flistxattr(self->child_pidfd, list, sizeof(list));
+> +       ASSERT_GT(ret, 0);
+> +       for (i = 0; i < num_xattrs; i++) {
+> +               snprintf(xattr_name, sizeof(xattr_name), "trusted.testattr%d", i);
+> +               bool found = false;
+> +               for (char *it = list; it < list + ret; it += strlen(it) + 1) {
+> +                       if (strcmp(it, xattr_name))
+> +                               continue;
+> +                       found = true;
+> +                       break;
+> +               }
+> +               ASSERT_TRUE(found);
+> +       }
+> +
+> +       for (i = 0; i < num_xattrs; i++) {
+> +               snprintf(xattr_name, sizeof(xattr_name), "trusted.testattr%d", i);
+> +               ret = fremovexattr(self->child_pidfd, xattr_name);
+> +               ASSERT_EQ(ret, 0);
+> +
+> +               ret = fgetxattr(self->child_pidfd, xattr_name, buf, sizeof(buf));
+> +               ASSERT_EQ(ret, -1);
+> +               ASSERT_EQ(errno, ENODATA);
+> +       }
 > +}
 > +
-> +static const struct xattr_handler pidfs_trusted_xattr_handler = {
-> +       .prefix = XATTR_TRUSTED_PREFIX,
-> +       .get    = pidfs_xattr_get,
-> +       .set    = pidfs_xattr_set,
-> +};
-> +
-> +static const struct xattr_handler *const pidfs_xattr_handlers[] = {
-> +       &pidfs_trusted_xattr_handler,
-> +       NULL
-> +};
-> +
->  static int pidfs_init_fs_context(struct fs_context *fc)
->  {
->         struct pseudo_fs_context *ctx;
-> @@ -918,6 +1010,7 @@ static int pidfs_init_fs_context(struct fs_context *fc)
->         ctx->ops = &pidfs_sops;
->         ctx->eops = &pidfs_export_operations;
->         ctx->dops = &pidfs_dentry_operations;
-> +       ctx->xattr = pidfs_xattr_handlers;
->         fc->s_fs_info = (void *)&pidfs_stashed_ops;
->         return 0;
->  }
-> @@ -960,6 +1053,11 @@ void __init pidfs_init(void)
->         pidfs_attr_cachep = kmem_cache_create("pidfs_attr_cache", sizeof(struct pidfs_attr), 0,
->                                          (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
->                                           SLAB_ACCOUNT | SLAB_PANIC), NULL);
-> +
-> +       pidfs_xattr_cachep = kmem_cache_create("pidfs_xattr_cache",
-> +                                              sizeof(struct simple_xattrs), 0,
-> +                                              SLAB_PANIC, NULL);
-
-WDYT about adding SLAB_ACCOUNT here?
-
-> +
->         pidfs_mnt = kern_mount(&pidfs_type);
->         if (IS_ERR(pidfs_mnt))
->                 panic("Failed to mount pidfs pseudo filesystem");
+> +TEST_HARNESS_MAIN
 >
 > --
 > 2.47.2
