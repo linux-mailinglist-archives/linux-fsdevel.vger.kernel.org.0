@@ -1,117 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-52403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 951EBAE316C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 20:43:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 627F3AE31B7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB46316EA67
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 18:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519E93B12BD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 19:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D461F9413;
-	Sun, 22 Jun 2025 18:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XHPUHLQg"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F091F4262;
+	Sun, 22 Jun 2025 19:16:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A138914A62B;
-	Sun, 22 Jun 2025 18:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938C812BF24;
+	Sun, 22 Jun 2025 19:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750617805; cv=none; b=cPnaxWuVGxyhxNtoBRMEI7b/Qzle8Wk9FbbZyJ4uDqGwzY4DzPDcS3WjwgUeWnl4f0251+fZnD7LNJ8F+x+DPPNObDJEM8a4dLhdW6xPjCPM/erGlPUy6TIkbkAOKqOsFtIqqqAwVHKOn9RGRc9M+3P77I+TZxvH7vkMjMQIThQ=
+	t=1750619794; cv=none; b=WvUb9RP+WnUjRgOn0IwQsUsHGUVCedvcOdSu/Sm/77rgaby95hepYho0cjBr3XEUwWTffXkm5iF2f10cu3ujhoRoJmsAoc78iq57WpE3VcJO5mqrQFJetzTV9s0t43kDVyDSTLd3PcSyNDKqMyPJNZffTTtiZ4YHzVqHQsI8N2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750617805; c=relaxed/simple;
-	bh=3H2wKWU2193WXNtIUhATRt/ZTw4+1SQggiDA+AaWVjI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=E7XzzzCdO5K5VAiFzqIUfNADvLUyxudW5lLWnY43METlr6gfWwixpas0NiStI/tLQf5+F5Jc5lJwD42yqiBNJI9NwrZUMtoDwr5CwGm5O5jXALS2Oiny9gNjwlf7CVb2ndja652Ymmj2lMU61L7JDAv1+QVP8BkeybN3rO9Mumw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XHPUHLQg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D189C4CEE3;
-	Sun, 22 Jun 2025 18:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1750617805;
-	bh=3H2wKWU2193WXNtIUhATRt/ZTw4+1SQggiDA+AaWVjI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XHPUHLQglzrHpK2ZS8imdC6/smERAODfvRVpH2JeWdzBL/q/n5IqHb2TQkI29zi1K
-	 6oTx1a73gchf1/xMbFySG6/bhXW+GAtxWzT92/UQIr9+80WcSclzzzznwEJHOhgdE7
-	 /RQmsUSfX9zDx/b250gr43W8i8T4klKuUDPcoL2k=
-Date: Sun, 22 Jun 2025 11:43:22 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com,
- vbabka@suse.cz, shuah@kernel.org, pbonzini@redhat.com, brauner@kernel.org,
- viro@zeniv.linux.org.uk, ackerleytng@google.com, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
- tabba@google.com, vannapurve@google.com, chao.gao@intel.com,
- bharata@amd.com, nikunj@amd.com, michael.day@amd.com, yan.y.zhao@intel.com,
- Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
- aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
- jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
- ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
- ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
- rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
- kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
- apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
- ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
- gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
- papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
- quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-coco@lists.linux.dev
-Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
-Message-Id: <20250622114322.c6c35800e01e4cc4007a0f89@linux-foundation.org>
-In-Reply-To: <aFWR-2WAQ283SZvg@casper.infradead.org>
-References: <20250618112935.7629-4-shivankg@amd.com>
-	<20250620143502.3055777-2-willy@infradead.org>
-	<aFWR-2WAQ283SZvg@casper.infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750619794; c=relaxed/simple;
+	bh=jwuVHzM4TDgHWLvSGJ8nNIbeQO76XUQcC+NDMkBIBmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cb7G4PWj0BCOQrgItfWkWDYP4n+UoTSYB3vrSEORhXHsESFsfb/EjyEFwNjt5bv9GaucWTRSmxaRgkLXZqPh1v5I4+izH7+/C/lYxVNdtinVyUV4lDRpL9mepiOc2jptq0M+2y1VGQdy3e79ltGGPIOFG8KZpq2S3qHwU8oRolk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 55MIvBBC005896;
+	Sun, 22 Jun 2025 13:57:11 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 55MIv72V005883;
+	Sun, 22 Jun 2025 13:57:07 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Sun, 22 Jun 2025 13:57:06 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andre Almeida <andrealmeid@igalia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 5/5] powerpc: Implement masked user access
+Message-ID: <20250622185706.GB17294@gate.crashing.org>
+References: <cover.1750585239.git.christophe.leroy@csgroup.eu> <9dfb66c94941e8f778c4cabbf046af2a301dd963.1750585239.git.christophe.leroy@csgroup.eu> <20250622181351.08141b50@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250622181351.08141b50@pumpkin>
+User-Agent: Mutt/1.4.2.3i
 
-On Fri, 20 Jun 2025 17:53:15 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+Hi!
 
-> On Fri, Jun 20, 2025 at 03:34:47PM +0100, Matthew Wilcox (Oracle) wrote:
-> > +struct folio *__filemap_get_folio_mpol(struct address_space *mapping,
-> > +		pgoff_t index, fgf_t fgp_flags, gfp_t gfp,
-> > +		struct mempolicy *policy)
-> >  {
-> >  	struct folio *folio;
-> >  
-> > @@ -1982,7 +1984,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
-> >  			err = -ENOMEM;
-> >  			if (order > min_order)
-> >  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
-> > -			folio = filemap_alloc_folio(alloc_gfp, order, NULL);
-> > +			folio = filemap_alloc_folio(alloc_gfp, order, policy);
-> >  			if (!folio)
-> >  				continue;
+On Sun, Jun 22, 2025 at 06:13:51PM +0100, David Laight wrote:
+> On Sun, 22 Jun 2025 11:52:43 +0200
+> Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+> > e500 has the isel instruction which allows selecting one value or
+> > the other without branch and that instruction is not speculative, so
+> > use it. Allthough GCC usually generates code using that instruction,
+> > it is safer to use inline assembly to be sure. The result is:
+
+The instruction (which is a standard Power instruction since
+architecture version 2.03, published in 2006) can in principle be
+speculative, but there exist no Power implementations that do any data
+speculation like this at all.
+
+If you want any particular machine instructions to be generated you have
+to manually write it, sure, in inline asm or preferably in actual asm.
+But you can be sure that GCC will generate isel or similar (like the
+v3.1 set[n]bc[r] insns, best instructions ever!), whenever appropriate,
+i.e. when it is a) allowed at all, and b) advantageous.
+
+> >   14:	3d 20 bf fe 	lis     r9,-16386
+> >   18:	7c 03 48 40 	cmplw   r3,r9
+> >   1c:	7c 69 18 5e 	iselgt  r3,r9,r3
+> > 
+> > On other ones, when kernel space is over 0x80000000 and user space
+> > is below, the logic in mask_user_address_simple() leads to a
+> > 3 instruction sequence:
+> > 
+> >   14:	7c 69 fe 70 	srawi   r9,r3,31
+> >   18:	7c 63 48 78 	andc    r3,r3,r9
+> >   1c:	51 23 00 00 	rlwimi  r3,r9,0,0,0
+> > 
+> > This is the default on powerpc 8xx.
+> > 
+> > When the limit between user space and kernel space is not 0x80000000,
+> > mask_user_address_32() is used and a 6 instructions sequence is
+> > generated:
+> > 
+> >   24:	54 69 7c 7e 	srwi    r9,r3,17
+> >   28:	21 29 57 ff 	subfic  r9,r9,22527
+> >   2c:	7d 29 fe 70 	srawi   r9,r9,31
+> >   30:	75 2a b0 00 	andis.  r10,r9,45056
+> >   34:	7c 63 48 78 	andc    r3,r3,r9
+> >   38:	7c 63 53 78 	or      r3,r3,r10
+> > 
+> > The constraint is that TASK_SIZE be aligned to 128K in order to get
+> > the most optimal number of instructions.
+> > 
+> > When CONFIG_PPC_BARRIER_NOSPEC is not defined, fallback on the
+> > test-based masking as it is quicker than the 6 instructions sequence
+> > but not necessarily quicker than the 3 instructions sequences above.
 > 
-> This is missing the EXPORT_SYMBOL_GPL() change
+> Doesn't that depend on whether the branch is predicted correctly?
+> 
+> I can't read ppc asm well enough to check the above.
 
-I added this:
+[ PowerPC or Power (or Power Architecture, or Power ISA) ]
 
---- a/mm/filemap.c~filemap-add-__filemap_get_folio_mpol-fix
-+++ a/mm/filemap.c
-@@ -2032,7 +2032,7 @@ no_page:
- 		folio_clear_dropbehind(folio);
- 	return folio;
- }
--EXPORT_SYMBOL(__filemap_get_folio);
-+EXPORT_SYMBOL(__filemap_get_folio_mpol);
- 
- static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
- 		xa_mark_t mark)
-_
+> And the C is also a bit tortuous.
 
+I can read the code ;-)  All those instructions are normal simple
+integer instructions.  Shifts, adds, logicals.
+
+In general, correctly predicted non-taken bvranches cost absolutely
+nothing.  Correctly predicted taken branches cost the same as any taken
+branch, so a refetch, maybe resulting in a cycle or so of decode bubble.
+And a mispredicted branch can be very expensive, say on the order of a
+hundred cycles (but usually more like ten, which is still a lot of insns
+worth).
+
+So branches are great for predictable stuff, and "not so great" for
+not so predictable stuff.
+
+
+Segher
 
