@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-52416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3F0AE323F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:12:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 416E9AE3243
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D683ACAC2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF9316F033
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B442B1F8690;
-	Sun, 22 Jun 2025 21:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BB52153E1;
+	Sun, 22 Jun 2025 21:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="PsjZ8hO9"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="WkHGb8sy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CDF2EAE5
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B402EAE5
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750626731; cv=none; b=PCHx5TaXU5Tuf0abHDiuioboIQN8mzef2Dc/1hxOu4zYuszBw2mDtaBZ7wdi2eJ7Wk4ocrq1DpIz+C5A1JA4Ho/qApIM12Vq3W2PFRk0vVZnG7FVFznfO+LOO3OkZD2dpwgEqWeKbdF/eZjOIhppPCi6EoKFextRBTXbxk62vAM=
+	t=1750626846; cv=none; b=R+yZvDeb6uN2Zhn6lMbzT3cJeMMoDYayaCIo8qa7aWrHQFLbbX+MA9DqeZ7eDYlDMa/BRIs4ydKTbsw5+89a7yDmQW7cL2tyXoCPGYMi+j1ByLtkwgpIc94ToBBnBaADzifkj0U4bn6wbavCZVar2x+CrwCNxKe8cSVETWRbIDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750626731; c=relaxed/simple;
-	bh=0FnR03qDNQuPGE+Is65MEGq7f7QtyzHcaREf+tfNcXw=;
+	s=arc-20240116; t=1750626846; c=relaxed/simple;
+	bh=N3ZxUirxCunxJvATZXfMRKmKv+ffseg2f0MhKD6sghA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TqsStac+1iAABbGBaRvEg7U5f8KUSfEnWLadf1rdx+yRo+AoznPGA5TcGvfUmall7inRFr73qgbAK0vjN7iv19lX78nwNlYxfJbKgrAr6ABNVN6HsH5exCOQnoXXORlqD7KcHQ0dn9kvA6FZkK0nbM3MPx/n9uHwR6LLt1oQK7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=PsjZ8hO9; arc=none smtp.client-ip=209.85.208.172
+	 To:Cc:Content-Type; b=BymUYXKcIFAZXgD+P6UbT3cQBhZM77e6lmIDW74Q3ShXnhKEfZY/QZkvpx4Z+8i3zvMNHliuoX2lLxvwmft64TebL/DPV0jMcayvZTERKABpH3VZAxiBh4dvQBrpMY6KDroOpOGTNqMt+XO/210ZCzA1peNMqUbx9Z7JXyXeHLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=WkHGb8sy; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b7123edb9so33875591fa.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 14:12:09 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553dceb342fso2889249e87.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 14:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1750626727; x=1751231527; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1750626843; x=1751231643; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R/Y1NqWwz0tbJ3UCThJ77uB2AmtD519rE3rKA3t1PT0=;
-        b=PsjZ8hO9I5VZQg3nny7LipRywcVdS9r2sHwk5pv3pGK/TCE5Y93mTYB+ptLwV3YbCY
-         LcntlP3bSEFy6zCUmKvPem4pTtXSNYSWG17D7POhHVYaQRYpN1XGKnyuGLsJ9vhRMwS5
-         2SHCLti9GzXDv8kz0sDgJE/r7LpVaPQ0RTZi0=
+        bh=U25dcbyhJ6glgn5Z3EICqSULiBhHeqQPDqS1H63S1VU=;
+        b=WkHGb8syPlQDSPNYzKDumwBq7+PDrpe3Qck1KqiQ7pMzCCgyvoJZ8MnIQC02aF3VD/
+         zPOxm8b4gSXQwCrgcLR40xjeNTVER2/33OsD2MvZczr7wcF+JibbYyGIn8GKY1aLPUqI
+         1LYcwBpT0QKwyJjULLhMIRUFex9pWhdAXuZQc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750626727; x=1751231527;
+        d=1e100.net; s=20230601; t=1750626843; x=1751231643;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R/Y1NqWwz0tbJ3UCThJ77uB2AmtD519rE3rKA3t1PT0=;
-        b=ih8frInpjnVIM3D9GUFakb21hl0p8jE28Icgh0FdG4Y4C8kFAwmRWaso9bGBYVCxzQ
-         h0viIviMGWV3UKC19blalZ2j/sYQJ/OH9FJe6FuPPBk4G8MqgjHYG3g6rb7wABiXRdqC
-         ion5ssZTmTMUzPmI7Nh8IHA0vs53xiC2WwbQJIlAvIkrth77K6OqFbMOr02TeZGLjrKJ
-         LLF9u3wSAhXTsAOoFB0iNfGmc+kTFJ7qNa9yrLfGZzrvFOIH45Vr6jxJkHM8gTfNN/MP
-         I87Bl1dGF7KJZSUbzA0gY+yr6nxOiwj4/qfqZF198706UPI0tGE03z682oPGwIemWXJ4
-         QF8Q==
-X-Gm-Message-State: AOJu0YxsgQnhStMrIZYoDIDwZIvQc5tyge8vqqrvbAgBUee6PR5rIPAA
-	lQPuN48fZeDH8Ip3yRkP5HW4jGJ3PQeOvMpNJfEL+hs1f8ZZzrCROvg5M/Yr5VNmWpgrR87gJ2U
-	6e2Hc4x9Es5suHV65NtY9GFepVU+1av7E76NwP7Hh9g==
-X-Gm-Gg: ASbGncvCuXi5+Dgp5F3YeH9/dVb6FAsmq4LAq0fb8zTd7Klm89CHsnaDQNyfF9d5gKz
-	6e2iJw9dLlofaUN3y43P8Kf7C3Y3JytBEMdiVnY50nC4uo6gSM8az9UAt7ryqxvCDw73/MunDJt
-	G65qf8RNkBzq9i1zuwhKeVchh4e1fxRV9Im/2lHuQJDS7C
-X-Google-Smtp-Source: AGHT+IFK9xqxnpcdjFfuTgBDhfk2jyVIlvb28Zeb03pRifjn3knEfkLTZgmxnp1AwMH3GzvbNEuYBSErTzD5sFx1QeY=
-X-Received: by 2002:a2e:bc1a:0:b0:32a:66e6:9ff9 with SMTP id
- 38308e7fff4ca-32b98f37b14mr33369641fa.26.1750626727376; Sun, 22 Jun 2025
- 14:12:07 -0700 (PDT)
+        bh=U25dcbyhJ6glgn5Z3EICqSULiBhHeqQPDqS1H63S1VU=;
+        b=ZqAyj7Y0O5S0a3X8N33UkxXRoLOAHy/Y6AFq//nFojhpXcDOgPSdMcNT+p09dWuC6t
+         LPDSSEPMntRNaXgozt3huOTKATnIxX5T4Yej5kRLJmJSjFY2pySVjhzqZpu6abCSSnv2
+         AK0ryRDM//CY5COJPQRKYAQy8F1ngYPI6EK7XJyx6jGuy94PROOpfJe0nb0ycuQXNpLJ
+         qyu9lQaH2kXTDe/03yffTjbDDgJMNWaDKC+tqywXJPhtWrY66sMm/IUPXEMfB1ie3nHU
+         jYUZOge1AkUFVRK+j0h6v0CWiyd/n9lzHqbte0P1BZNMzbzdeKvf2wSfulWRefqwKQZR
+         GVEA==
+X-Gm-Message-State: AOJu0Yzcz63ERT9Hk+gpk9s2X8g2CV5lwSLimtajzvWK/y2JPt6o0cw2
+	sDBySvcc2EkfL5obKJpowoqNXvil527S741d4VNeYfOfzXIFlAEzCG6waDQvUilo/5ezQ/MVDVl
+	7YzjWdpCEdGp2+F4KUsJjk/Tky6h7uIAQcCsSVb1hgA==
+X-Gm-Gg: ASbGnct+RC1X/TTXyVNSLVwYuM9HPk+LQ9lzcJnW+QmRojCsqT4YT8Az76SbUoq7HWK
+	qmfTLi+62zCd7zWoUC2HftPnAaWM3nlJ2VAG36GWKzcc6WJDe+3Z22g2zRZtEnDjlFrKP6SxLpK
+	z5TyhoiZGLmxWoDvEyO3PulDw3ADsoFMZWZLGttuVRIcJJ
+X-Google-Smtp-Source: AGHT+IGg7j4MTzmpK9AnSXeeMQu93FYzJlR/33LFrchIpf6Cbc5ARKXNuSaopqvgkT0G2oaiEVfdpvmqRjkYEJF5WXk=
+X-Received: by 2002:a05:6512:3083:b0:553:2f33:ac04 with SMTP id
+ 2adb3069b0e04-553e3be8255mr2893912e87.26.1750626842649; Sun, 22 Jun 2025
+ 14:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-8-98f3456fd552@kernel.org>
-In-Reply-To: <20250618-work-pidfs-persistent-v2-8-98f3456fd552@kernel.org>
+References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-9-98f3456fd552@kernel.org>
+In-Reply-To: <20250618-work-pidfs-persistent-v2-9-98f3456fd552@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Sun, 22 Jun 2025 23:11:56 +0200
-X-Gm-Features: Ac12FXwNWqUbHPxRin55tFi-J3R7X260sXuP9873BsmFoIQ8PPovhLiJzOJ_BEE
-Message-ID: <CAJqdLro3yvjQjxYs-1avTKL29Di_vxSk47XD_RiTEgi6u7PKcw@mail.gmail.com>
-Subject: Re: [PATCH v2 08/16] pidfs: remove pidfs_{get,put}_pid()
+Date: Sun, 22 Jun 2025 23:13:50 +0200
+X-Gm-Features: Ac12FXz79xQRKzlsSOZjsSOx0NY4i_rmWfu6gkMfVctMVkPWZ_sHfDvtOyRyV8M
+Message-ID: <CAJqdLrqnBiB3Hp_PFPqwVWChOKGc_XWPTQC7j=2Y0h3cx5eEiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/16] pidfs: remove pidfs_pid_valid()
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
 	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
@@ -86,133 +86,89 @@ Content-Type: text/plain; charset="UTF-8"
 Am Mi., 18. Juni 2025 um 22:54 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> Now that we stash persistent information in struct pid there's no need
-> to play volatile games with pinning struct pid via dentries in pidfs.
+> The validation is now completely handled in path_from_stashed().
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 > ---
->  fs/coredump.c         |  6 ------
->  fs/pidfs.c            | 35 +----------------------------------
->  include/linux/pidfs.h |  2 --
->  net/unix/af_unix.c    |  5 -----
->  4 files changed, 1 insertion(+), 47 deletions(-)
+>  fs/pidfs.c | 53 -----------------------------------------------------
+>  1 file changed, 53 deletions(-)
 >
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index f217ebf2b3b6..55d6a713a0fb 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -898,12 +898,6 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->                 retval = kernel_connect(socket, (struct sockaddr *)(&addr),
->                                         addr_len, O_NONBLOCK | SOCK_COREDUMP);
->
-> -               /*
-> -                * ... Make sure to only put our reference after connect() took
-> -                * its own reference keeping the pidfs entry alive ...
-> -                */
-> -               pidfs_put_pid(cprm.pid);
-> -
->                 if (retval) {
->                         if (retval == -EAGAIN)
->                                 coredump_report_failure("Coredump socket %s receive queue full", addr.sun_path);
 > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index c49c53d6ae51..bc2342cf4492 100644
+> index bc2342cf4492..ec375692a710 100644
 > --- a/fs/pidfs.c
 > +++ b/fs/pidfs.c
-> @@ -895,8 +895,7 @@ static void pidfs_put_data(void *data)
->   * pidfs_register_pid - register a struct pid in pidfs
->   * @pid: pid to pin
->   *
-> - * Register a struct pid in pidfs. Needs to be paired with
-> - * pidfs_put_pid() to not risk leaking the pidfs dentry and inode.
-> + * Register a struct pid in pidfs.
->   *
->   * Return: On success zero, on error a negative error code is returned.
->   */
-> @@ -1007,38 +1006,6 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
->         return pidfd_file;
+> @@ -804,58 +804,8 @@ static int pidfs_export_permission(struct handle_to_path_ctx *ctx,
+>         return 0;
 >  }
 >
-> -/**
-> - * pidfs_get_pid - pin a struct pid through pidfs
-> - * @pid: pid to pin
-> - *
-> - * Similar to pidfs_register_pid() but only valid if the caller knows
-> - * there's a reference to the @pid through a dentry already that can't
-> - * go away.
-> - */
-> -void pidfs_get_pid(struct pid *pid)
+> -static inline bool pidfs_pid_valid(struct pid *pid, const struct path *path,
+> -                                  unsigned int flags)
 > -{
-> -       if (!pid)
-> -               return;
-> -       WARN_ON_ONCE(!stashed_dentry_get(&pid->stashed));
+> -       enum pid_type type;
+> -
+> -       if (flags & PIDFD_STALE)
+> -               return true;
+> -
+> -       /*
+> -        * Make sure that if a pidfd is created PIDFD_INFO_EXIT
+> -        * information will be available. So after an inode for the
+> -        * pidfd has been allocated perform another check that the pid
+> -        * is still alive. If it is exit information is available even
+> -        * if the task gets reaped before the pidfd is returned to
+> -        * userspace. The only exception are indicated by PIDFD_STALE:
+> -        *
+> -        * (1) The kernel is in the middle of task creation and thus no
+> -        *     task linkage has been established yet.
+> -        * (2) The caller knows @pid has been registered in pidfs at a
+> -        *     time when the task was still alive.
+> -        *
+> -        * In both cases exit information will have been reported.
+> -        */
+> -       if (flags & PIDFD_THREAD)
+> -               type = PIDTYPE_PID;
+> -       else
+> -               type = PIDTYPE_TGID;
+> -
+> -       /*
+> -        * Since pidfs_exit() is called before struct pid's task linkage
+> -        * is removed the case where the task got reaped but a dentry
+> -        * was already attached to struct pid and exit information was
+> -        * recorded and published can be handled correctly.
+> -        */
+> -       if (unlikely(!pid_has_task(pid, type))) {
+> -               struct pidfs_attr *attr;
+> -
+> -               attr = READ_ONCE(pid->attr);
+> -               if (!attr)
+> -                       return false;
+> -               if (!READ_ONCE(attr->exit_info))
+> -                       return false;
+> -       }
+> -
+> -       return true;
 > -}
 > -
-> -/**
-> - * pidfs_put_pid - drop a pidfs reference
-> - * @pid: pid to drop
-> - *
-> - * Drop a reference to @pid via pidfs. This is only safe if the
-> - * reference has been taken via pidfs_get_pid().
-> - */
-> -void pidfs_put_pid(struct pid *pid)
-> -{
-> -       might_sleep();
-> -
-> -       if (!pid)
-> -               return;
-> -       VFS_WARN_ON_ONCE(!pid->stashed);
-> -       dput(pid->stashed);
-> -}
-> -
->  void __init pidfs_init(void)
+>  static struct file *pidfs_export_open(struct path *path, unsigned int oflags)
 >  {
->         pidfs_attr_cachep = kmem_cache_create("pidfs_attr_cache", sizeof(struct pidfs_attr), 0,
-> diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-> index 8f6ed59bb3fb..3e08c33da2df 100644
-> --- a/include/linux/pidfs.h
-> +++ b/include/linux/pidfs.h
-> @@ -14,8 +14,6 @@ void pidfs_coredump(const struct coredump_params *cprm);
->  #endif
->  extern const struct dentry_operations pidfs_dentry_operations;
->  int pidfs_register_pid(struct pid *pid);
-> -void pidfs_get_pid(struct pid *pid);
-> -void pidfs_put_pid(struct pid *pid);
->  void pidfs_free_pid(struct pid *pid);
->
->  #endif /* _LINUX_PID_FS_H */
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 2e2e9997a68e..129388c309b0 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -646,9 +646,6 @@ static void unix_sock_destructor(struct sock *sk)
->                 return;
->         }
->
-> -       if (sk->sk_peer_pid)
-> -               pidfs_put_pid(sk->sk_peer_pid);
+> -       if (!pidfs_pid_valid(d_inode(path->dentry)->i_private, path, oflags))
+> -               return ERR_PTR(-ESRCH);
 > -
->         if (u->addr)
->                 unix_release_addr(u->addr);
+>         /*
+>          * Clear O_LARGEFILE as open_by_handle_at() forces it and raise
+>          * O_RDWR as pidfds always are.
+> @@ -993,9 +943,6 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
+>         if (ret < 0)
+>                 return ERR_PTR(ret);
 >
-> @@ -769,7 +766,6 @@ static void drop_peercred(struct unix_peercred *peercred)
->         swap(peercred->peer_pid, pid);
->         swap(peercred->peer_cred, cred);
->
-> -       pidfs_put_pid(pid);
->         put_pid(pid);
->         put_cred(cred);
->  }
-> @@ -802,7 +798,6 @@ static void copy_peercred(struct sock *sk, struct sock *peersk)
->
->         spin_lock(&sk->sk_peer_lock);
->         sk->sk_peer_pid = get_pid(peersk->sk_peer_pid);
-> -       pidfs_get_pid(sk->sk_peer_pid);
->         sk->sk_peer_cred = get_cred(peersk->sk_peer_cred);
->         spin_unlock(&sk->sk_peer_lock);
->  }
+> -       if (!pidfs_pid_valid(pid, &path, flags))
+> -               return ERR_PTR(-ESRCH);
+> -
+>         flags &= ~PIDFD_STALE;
+>         flags |= O_RDWR;
+>         pidfd_file = dentry_open(&path, flags, current_cred());
 >
 > --
 > 2.47.2
