@@ -1,83 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-52426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC963AE3285
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:51:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A11AE32BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 00:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D42188CD15
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708A918906AA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 22:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C04021765E;
-	Sun, 22 Jun 2025 21:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6682021CA02;
+	Sun, 22 Jun 2025 22:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="K+Us3lUU"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UnkMEMVn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13172AEFD
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF3A28EA;
+	Sun, 22 Jun 2025 22:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750629104; cv=none; b=jU8PUnR98qc5KoHllE604i8Qu+9c1taQ6eg1+CrQdqKBTY+/Y0RHFqJoHf9d93/0BQ+CsKRx98v++CGgpokLzZnmuWeV25col7HqAb//e4KBaYJXP1V8Id3dgN2uMypjC9Px2XKwQg7d4cBmBM1m6FsBcDp1p4UaYna9Rt4PtcE=
+	t=1750630588; cv=none; b=cW+r/YBNqFlEa4GI52fZOgJIHSs2SJyhTraJzxFw3MxOf+lzXB7ZjcGwHt6TW6kjUJzLix6ZGmAzufUMSlx98g7QD8cY7G86eUArxqfq2LTeAQPOZt5Hpn5ZNvh8n7dKLRHmA6syxUrDPZPT5LZeJZz1x3DX+MvYbskhCOb0Zec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750629104; c=relaxed/simple;
-	bh=WjwI8pTi1rtycTgLJqnpOrsQYa6C7vMLshzK41jAYng=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DzMRvmekU+1buobXWr8DoYspXZRe8xW8VSgQ6GX9aw9bp74DeWzrKFbLgHGkiUMowp9Itk8Im3Wzji3RWX6PLV+9P2rZzSCRfa94UHHeaEiz5Qz3rTMBfoShRZHx78KHH2DmrHf5K2uFFGFVPqE42xNERP5PkGH1Qdfbumi8wdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=K+Us3lUU; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=9JBeOs7ibWufFvJU0XCdltpEV+8nK6qVuajfwxyjDXI=; b=K+Us3lUUdtTnxrotL7zqTGwIti
-	iHHxU1TiOv+mXHPZtNWLGPyJUNTppr71ao5MnsaSmXPQiluVevE90ABNfrbPbaC30K1taeQ7uLUd/
-	PkyvUUFJIIo65KuYgDAdXCgrcHFKPVfi2vxWR6QByKTum9uycKoHweR9kLSfCfOO42XaWBnWQRbSm
-	+pe4Yiei6TRWeG56egUdG9PmLbvzyAGoLPds7zJBPq67GFKDCTjZbLm31rs+L61MYxmEYIb5P0ti0
-	EgPxbCBsakK0K1OOQfHEWaD5r5fvpeqWBv5YgLqzc0bwtZGv782FvID/BMtVWVOuKv+WxvXd0BIie
-	pL0q0yqw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTSbE-000000009PM-0Ldy;
-	Sun, 22 Jun 2025 21:51:40 +0000
-Date: Sun, 22 Jun 2025 22:51:40 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Eric Biggers <ebiggers@google.com>, linux-fsdevel@vger.kernel.org
-Subject: interesting breakage in ltp fanotify10
-Message-ID: <20250622215140.GX1880847@ZenIV>
+	s=arc-20240116; t=1750630588; c=relaxed/simple;
+	bh=tLByNlqUAJAlwrRiurqr1Tlca7v3+MRaflGdBfGFrh4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=kyRb8nnsfkV6FZuKbU8vwyWuWS/indVAvljQeJhjgMm1PV2j/qWThaFenVgqzVS6U/zocgQ0ZgLwkFLxk2w4az4pvcBjjGgKgAqeGgyM3D9tT7ymjrQ7QfnHu4HRKtABPOKlYzJLls2r9vwaMSMBCXBHMF/PSDgzT9ENdvsykrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UnkMEMVn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38383C4CEE3;
+	Sun, 22 Jun 2025 22:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1750630588;
+	bh=tLByNlqUAJAlwrRiurqr1Tlca7v3+MRaflGdBfGFrh4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UnkMEMVnPEVFZ/TxLkdkQxWUL8j100frOJstemv+j6qBeTRD2ky7OBir7vvHPnDxU
+	 ymtWmkFNLPhS+5J1oheVqlqb2kITNwDebPJCYbA4HxBEXkTU7RxEQh56IlEPOJv9I4
+	 EVWc61+GmVWxZEQpnxD95rkcfhnT2nbXjczFwLXE=
+Date: Sun, 22 Jun 2025 15:16:25 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Shivank Garg <shivankg@amd.com>
+Cc: Matthew Wilcox <willy@infradead.org>, seanjc@google.com,
+ david@redhat.com, vbabka@suse.cz, shuah@kernel.org, pbonzini@redhat.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
+ bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
+ chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
+ peterx@redhat.com, jack@suse.cz, rppt@kernel.org, hch@infradead.org,
+ cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
+ joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+ gourry@gourry.net, kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
+ apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
+ ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
+ gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
+ papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
+ quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-coco@lists.linux.dev
+Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
+Message-Id: <20250622151625.fb5d23362c2c3d1af22878d2@linux-foundation.org>
+In-Reply-To: <d1d7feed-c450-4b88-ab73-a673f4029433@amd.com>
+References: <20250618112935.7629-4-shivankg@amd.com>
+	<20250620143502.3055777-2-willy@infradead.org>
+	<aFWR-2WAQ283SZvg@casper.infradead.org>
+	<20250622114322.c6c35800e01e4cc4007a0f89@linux-foundation.org>
+	<d1d7feed-c450-4b88-ab73-a673f4029433@amd.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-	LTP 6763a3650734 "syscalls/fanotify10: Add test cases for evictable
-ignore mark" has an interesting effect on boxen where FANOTIFY is not
-enabled.  The thing is, tst_brk() ends up calling ->cleanup().  See the
-problem?
-	SAFE_FILE_PRINTF(CACHE_PRESSURE_FILE, "%d", old_cache_pressure);
-is executed, even though
-	SAFE_FILE_SCANF(CACHE_PRESSURE_FILE, "%d", &old_cache_pressure);
-	/* Set high priority for evicting inodes */
-	SAFE_FILE_PRINTF(CACHE_PRESSURE_FILE, "500");
-hadn't been.
+On Mon, 23 Jun 2025 00:32:05 +0530 Shivank Garg <shivankg@amd.com> wrote:
 
-	Result: fanotify10 on such kernel configs ends up zeroing
-/proc/sys/vm/vfs_cache_pressure.  How much does it confuse the rest of
-LTP is an interesting question; it *does* have a fun effect on subsequent
-xfstests run - generic/622 gets confused.  No other failures get reported
-by xfstests, for whatever little it's worth...
+> > -EXPORT_SYMBOL(__filemap_get_folio);
+> > +EXPORT_SYMBOL(__filemap_get_folio_mpol);
+> >  
+> >  static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
+> >  		xa_mark_t mark)
+> > _
+> > 
+> 
+> Hi Andrew,
+> 
+> Thank you for addressing this.
+> 
+> If you don’t mind me asking,
+> I was curious why we used EXPORT_SYMBOL instead of EXPORT_SYMBOL_GPL here.
+> I had previously received feedback recommending the use of EXPORT_SYMBOL_GPL
+> to better align with the kernel’s licensing philosophy, which made sense to me.
 
-	Arguably, there's an xfstests bug as well - since generic/622
-depends upon vfs_cache_pressure being non-zero, it ought to set it
-to something sane.
+Making this _GPL would effectively switch __filemap_get_folio() from
+non-GPL to GPL.  Leaving it at non-GPL is less disruptive and Matthew's
+patch did not have the intention of changing licensing.
+
+Also,
+
+hp2:/usr/src/25> grep "EXPORT_SYMBOL(" mm/filemap.c|wc -l
+48
+hp2:/usr/src/25> grep "EXPORT_SYMBOL_GPL(" mm/filemap.c|wc -l 
+9
+
+
 
