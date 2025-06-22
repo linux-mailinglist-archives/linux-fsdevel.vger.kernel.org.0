@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-52422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900F3AE324F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:22:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65307AE3250
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 23:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF0C3A6992
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:21:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54BD3A5D8D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 21:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CAA1E1E16;
-	Sun, 22 Jun 2025 21:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223511E1E16;
+	Sun, 22 Jun 2025 21:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="ZSSy9LWV"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="E8l8Tlnc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3641D1EA80
-	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2171EAC6
+	for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 21:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750627314; cv=none; b=QBI05rd1AKIbS42uGBCJC+tngXGXpwmRthct4eskNQdrENivyGXvW9gfRys9Bo1XMG1Pq6n66T86z0Rbt/xvJrP7UwVm5Ax77ffjSkOTXaoalFxpw8U/jqljwWvMYcbLeGf3ZoE9N7efZAkWJ8QR5YRCEkRS4c58uCsido2MkIU=
+	t=1750627359; cv=none; b=KyrureHtA9dMm+ROj+rpQVAC/rT8t2jp62NnsDJDj5RaAC+LVN4qPsvfViunf6eit+6f705l5iMFqzmwCnm/Kto42qm/q2sUWQEc/CdkvOvHou2PYROawrWEKUz5sjGxWsAND2jEUDcdrsOOnJosJD9YibnJXfdfRDJlVmT/wLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750627314; c=relaxed/simple;
-	bh=lF6XDLyijx5SNHwZr2ZTJzY/E//6ORHHlFKA3AxpV8g=;
+	s=arc-20240116; t=1750627359; c=relaxed/simple;
+	bh=l7dKY4O8eTSkankMlGf7KqseHjiVsaPvWTN9sHwGhfc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jzTfKc3rNuSW9sv1NXOSqbzC9qyRAnnZ+cUJP6150DU4Jxlu4kKNemkaMzDxAJIusrKIyn15sbY0BHqtPtF8zWAHUhPK0zyvAScYkyXxwav4jvK337hVvEXgx3ccLf0Tb90WKIsAbzeNKS7qyerIKlnIlOgslJurVHD86jP3Oxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=ZSSy9LWV; arc=none smtp.client-ip=209.85.208.173
+	 To:Cc:Content-Type; b=Vw9xcPq8CT9yKPE/yh3dQM1pvqCN3fD68dQ7Li/L9FsjMLGhj+dG4B6nl8S/xBDjs6iycUXCdSmwG/HUjnC1WgcdfztnWUpp+CTFMEBtTUaJw5FBU9tgaA2SnlDCm+x9Xywvjcz77pkxq73JQyVMICOXYLQkPm56Z9blss/dlr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=E8l8Tlnc; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32ca160b4bcso9774431fa.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 14:21:52 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32ae3e94e57so24198791fa.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jun 2025 14:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1750627311; x=1751232111; darn=vger.kernel.org;
+        d=mihalicyn.com; s=mihalicyn; t=1750627356; x=1751232156; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z5x2/hbpOJf5MRBL89mrP09U4Ur1Mg6lRyhNFHk8+SY=;
-        b=ZSSy9LWV5u5WvqsD2mGu97iG8kebvvn/ai7+Uaeo2Lv4T7jp0WgyjSL5/CLNRFJ6IE
-         L7W9kiKj4gN5hRHcCo6ZTXkptJva+AioIvwAHzscGDbwuVPRstC4et4U9omP0Ng6+6ek
-         fwWr+VtzkXDMrrEBAD9UpenGRh4tlFc9I+xAo=
+        bh=KWj6FsF465BuroFGk2V5hCVMGrEgUBAh2J4MZpMr0ug=;
+        b=E8l8Tlnc+PT6YIcWpiJZ3QyPgtcRbhaxrwxmSm0FNLEs3RrNSMtti0Vhu6yZe+Jd6T
+         qDNOxtPpATtHCXmeIyFwgVVF9ryROR7rlPMi3lTlpTx05vq6jYj1/0Jnv26ab5KRYp2G
+         xsUICCUI5ll2VrE8XUCyZ0QZRNX2eD2UUeSKQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750627311; x=1751232111;
+        d=1e100.net; s=20230601; t=1750627356; x=1751232156;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=z5x2/hbpOJf5MRBL89mrP09U4Ur1Mg6lRyhNFHk8+SY=;
-        b=UwAtWDVvNZupI4zCQDvnzZh3kgwrLITjHOEQwR/191K9IItt7w6TUS0k3L7cPzGqNt
-         AEN03dVVGeHm6nCRxmqT9lSG751/u9ow8Fw4o9mHP9ELKcZ4Le3p4ZyktmK7Y5l0/5DJ
-         rgXU1dZyJRu7yQgXuLmUXxAzIZi8ufqQN2U+uArrASsYKO7bnxAk/IlsywEF/Xojb/+v
-         3vbDV4kWsllhXvHUWWT7E8JEbzX3dB4SQDVS6av3I9NOjUh49xAp21LP59B5HUyAJA3b
-         UsG5zm+Ivoi3+lZjDpw6peYQL24l/W2qg/z6XefCqKGSKSwj3pME+H3dKv8F5i51GOcW
-         xYOw==
-X-Gm-Message-State: AOJu0YykGYx9HLLl+1JKoWZVuRNxqQfVGUB/APKzDYenhz1Ukf2JbRMG
-	BgHhEfIuP7t9XvRnaQCFya41Iz3PpEcUGiwuAD2rgSjCtgFBmSncyL6srRzCt0ZftgxlKFDnkw1
-	A1fvvJIWVIO9szMvrNszSw5aAxB2faCgG2uzB4D+YVw==
-X-Gm-Gg: ASbGncuSVPu4+akamHaSAyQAIOwMJMUAR5cl7vzYV5k/VQkAN1yhcqZiDGKKPgL/JAb
-	zcF2y7QQ7eOGwJmbek05mbdkl+m21UgeooEwpCIUt5jo/Q5asOoWfsMlSYWydOf0/V/GzOG9+M+
-	rgae0hNLy5t7nXWlFtFOlNsTtGWxVe607m1+YXASITd1eT
-X-Google-Smtp-Source: AGHT+IFvwhC8uR7qdOwgtHQ2GW+t8HnrH4tiGl30lINA9k5TSrchzH8ONRTQVANBr6ti/3oFfFU+Hdh8nYFAZKIoqlg=
-X-Received: by 2002:a05:651c:3dc:b0:32b:7123:ec4c with SMTP id
- 38308e7fff4ca-32b98faf268mr21440871fa.38.1750627311198; Sun, 22 Jun 2025
- 14:21:51 -0700 (PDT)
+        bh=KWj6FsF465BuroFGk2V5hCVMGrEgUBAh2J4MZpMr0ug=;
+        b=P2+oaF17IMhLOp9rWIvF9GwE4nOOmRsf34QeFlpyCl2GU+7ObnyoXAhiyfHkZ/D1uF
+         65JE+uqZ8krVqNx28iR0Zoq46EVQva2en6SX7INnRhzXpZfksMUseFr65ITpdzC6H8+f
+         x03faRWhg81zKAF5/1GRz0xk9rdi0f6I0bfgjm8QWB3dJn09TSg5XcqRyFnyaIEnUkaC
+         tzwWLeuwL1g4uzbOY6RiU1BGO8KYvHg3eEdW2pJI18CYikogGPvor8jalPT2AzJeeeTq
+         PhrDrFIDzfPkVozXVZ4baapsAnRMsgEa9bbvWFcM50vPeiU3gvZbG8omBVnbl08Kg+G0
+         k3JQ==
+X-Gm-Message-State: AOJu0Yy3vVWtZ+pD9mK32j2oZwgeT2uym+UTOoEDZrmYYuOM+e/aXHU5
+	wQwEwDCO2uVmv0mNJCHezXC58/WH7UEh9QjLnbTxYEVJ9SLRgtAklLByq9seVJEV5ShkHjHU0L3
+	awiKy/TjYKRrLpM30GOwRD4C7o1Ivh1+xueYNMo8qEg==
+X-Gm-Gg: ASbGnctiLyXarrsNFj0tRfwn3oM4bIrYlC97vA/iLkgq3CiTp++HmGEDxQ78jLIn/8j
+	0aldC6pmwfhyQyJBYcDdS7Du1Bl4SCHB83m5PvW31nB/L8j+tb3wGBbI4DXjwXgnYmbUAHtnato
+	LVbblbyoe1RHuQSaP22hiVWpT+sb9Q69oqxuRTGStV5fqy
+X-Google-Smtp-Source: AGHT+IF7cQ6dqhJp9AEy2K6MLiaikJPDrogFlCLHu8CWWxStwaN7OT1ZrOKCUyTrweinvdNe9vhVUGGXq+BYizUwAho=
+X-Received: by 2002:a05:651c:b8c:b0:32b:522e:e073 with SMTP id
+ 38308e7fff4ca-32b98f3798cmr26612111fa.25.1750627355801; Sun, 22 Jun 2025
+ 14:22:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-14-98f3456fd552@kernel.org>
-In-Reply-To: <20250618-work-pidfs-persistent-v2-14-98f3456fd552@kernel.org>
+References: <20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org> <20250618-work-pidfs-persistent-v2-15-98f3456fd552@kernel.org>
+In-Reply-To: <20250618-work-pidfs-persistent-v2-15-98f3456fd552@kernel.org>
 From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Sun, 22 Jun 2025 23:21:40 +0200
-X-Gm-Features: Ac12FXzRfDo5hz9LO1fs1-MJ_aH0QzzMjp9KOb0TsLpjzlUDc-HFX5A63Rkpdws
-Message-ID: <CAJqdLrrjL0yka75UKwV_5mgoUqc6V7YJHF_wXr98S0=5ZjRgRw@mail.gmail.com>
-Subject: Re: [PATCH v2 14/16] selftests/pidfd: test extended attribute support
+Date: Sun, 22 Jun 2025 23:22:24 +0200
+X-Gm-Features: Ac12FXynSMCfrGT1xEawtdMrk9G8QBrB8AwIJ5sduLKrln6nxPqc5EE8U8TM7WI
+Message-ID: <CAJqdLrrR6KtSANzjw-x-1RmhsKeqbPPrLE7sJPCaducGvjm7gw@mail.gmail.com>
+Subject: Re: [PATCH v2 15/16] selftests/pidfd: test setattr support
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
 	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
@@ -86,60 +86,115 @@ Content-Type: text/plain; charset="UTF-8"
 Am Mi., 18. Juni 2025 um 22:54 Uhr schrieb Christian Brauner
 <brauner@kernel.org>:
 >
-> Test that extended attributes are permanent.
+> Verify that ->setattr() on a pidfd doens't work.
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
 > ---
->  tools/testing/selftests/pidfd/pidfd_xattr_test.c | 35 ++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+>  tools/testing/selftests/pidfd/.gitignore           |  1 +
+>  tools/testing/selftests/pidfd/Makefile             |  2 +-
+>  tools/testing/selftests/pidfd/pidfd_setattr_test.c | 69 ++++++++++++++++++++++
+>  3 files changed, 71 insertions(+), 1 deletion(-)
 >
-> diff --git a/tools/testing/selftests/pidfd/pidfd_xattr_test.c b/tools/testing/selftests/pidfd/pidfd_xattr_test.c
-> index 00d400ac515b..5cf7bb0e4bf2 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_xattr_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_xattr_test.c
-> @@ -94,4 +94,39 @@ TEST_F(pidfs_xattr, set_get_list_xattr_multiple)
->         }
->  }
+> diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
+> index bc4130506eda..144e7ff65d6a 100644
+> --- a/tools/testing/selftests/pidfd/.gitignore
+> +++ b/tools/testing/selftests/pidfd/.gitignore
+> @@ -11,3 +11,4 @@ pidfd_bind_mount
+>  pidfd_info_test
+>  pidfd_exec_helper
+>  pidfd_xattr_test
+> +pidfd_setattr_test
+> diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
+> index c9fd5023ef15..03a6eede9c9e 100644
+> --- a/tools/testing/selftests/pidfd/Makefile
+> +++ b/tools/testing/selftests/pidfd/Makefile
+> @@ -4,7 +4,7 @@ CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
+>  TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
+>         pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
+>         pidfd_file_handle_test pidfd_bind_mount pidfd_info_test \
+> -       pidfd_xattr_test
+> +       pidfd_xattr_test pidfd_setattr_test
 >
-> +TEST_F(pidfs_xattr, set_get_list_xattr_persistent)
+>  TEST_GEN_PROGS_EXTENDED := pidfd_exec_helper
+>
+> diff --git a/tools/testing/selftests/pidfd/pidfd_setattr_test.c b/tools/testing/selftests/pidfd/pidfd_setattr_test.c
+> new file mode 100644
+> index 000000000000..d7de05edc4b3
+> --- /dev/null
+> +++ b/tools/testing/selftests/pidfd/pidfd_setattr_test.c
+> @@ -0,0 +1,69 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#define _GNU_SOURCE
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <limits.h>
+> +#include <linux/types.h>
+> +#include <poll.h>
+> +#include <pthread.h>
+> +#include <sched.h>
+> +#include <signal.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <syscall.h>
+> +#include <sys/prctl.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +#include <sys/socket.h>
+> +#include <linux/kcmp.h>
+> +#include <sys/stat.h>
+> +#include <sys/xattr.h>
+> +
+> +#include "pidfd.h"
+> +#include "../kselftest_harness.h"
+> +
+> +FIXTURE(pidfs_setattr)
 > +{
-> +       int ret;
-> +       char buf[32];
-> +       char list[PATH_MAX] = {};
+> +       pid_t child_pid;
+> +       int child_pidfd;
+> +};
 > +
-> +       ret = fsetxattr(self->child_pidfd, "trusted.persistent", "persistent value", strlen("persistent value"), 0);
-> +       ASSERT_EQ(ret, 0);
+> +FIXTURE_SETUP(pidfs_setattr)
+> +{
+> +       self->child_pid = create_child(&self->child_pidfd, CLONE_NEWUSER | CLONE_NEWPID);
+> +       EXPECT_GE(self->child_pid, 0);
 > +
-> +       memset(buf, 0, sizeof(buf));
-> +       ret = fgetxattr(self->child_pidfd, "trusted.persistent", buf, sizeof(buf));
-> +       ASSERT_EQ(ret, strlen("persistent value"));
-> +       ASSERT_EQ(strcmp(buf, "persistent value"), 0);
-> +
-> +       ret = flistxattr(self->child_pidfd, list, sizeof(list));
-> +       ASSERT_GT(ret, 0);
-> +       ASSERT_EQ(strcmp(list, "trusted.persistent"), 0)
-> +
-> +       ASSERT_EQ(close(self->child_pidfd), 0);
-> +       self->child_pidfd = -EBADF;
-> +       sleep(2);
-> +
-> +       self->child_pidfd = sys_pidfd_open(self->child_pid, 0);
-> +       ASSERT_GE(self->child_pidfd, 0);
-> +
-> +       memset(buf, 0, sizeof(buf));
-> +       ret = fgetxattr(self->child_pidfd, "trusted.persistent", buf, sizeof(buf));
-> +       ASSERT_EQ(ret, strlen("persistent value"));
-> +       ASSERT_EQ(strcmp(buf, "persistent value"), 0);
-> +
-> +       ret = flistxattr(self->child_pidfd, list, sizeof(list));
-> +       ASSERT_GT(ret, 0);
-> +       ASSERT_EQ(strcmp(list, "trusted.persistent"), 0);
+> +       if (self->child_pid == 0)
+> +               _exit(EXIT_SUCCESS);
 > +}
 > +
->  TEST_HARNESS_MAIN
+> +FIXTURE_TEARDOWN(pidfs_setattr)
+> +{
+> +       sys_waitid(P_PID, self->child_pid, NULL, WEXITED);
+> +       EXPECT_EQ(close(self->child_pidfd), 0);
+> +}
+> +
+> +TEST_F(pidfs_setattr, no_chown)
+> +{
+> +       ASSERT_LT(fchown(self->child_pidfd, 1234, 5678), 0);
+> +       ASSERT_EQ(errno, EOPNOTSUPP);
+> +}
+> +
+> +TEST_F(pidfs_setattr, no_chmod)
+> +{
+> +       ASSERT_LT(fchmod(self->child_pidfd, 0777), 0);
+> +       ASSERT_EQ(errno, EOPNOTSUPP);
+> +}
+> +
+> +TEST_F(pidfs_setattr, no_exec)
+> +{
+> +       char *const argv[] = { NULL };
+> +       char *const envp[] = { NULL };
+> +
+> +       ASSERT_LT(execveat(self->child_pidfd, "", argv, envp, AT_EMPTY_PATH), 0);
+> +       ASSERT_EQ(errno, EACCES);
+> +}
+> +
+> +TEST_HARNESS_MAIN
 >
 > --
 > 2.47.2
