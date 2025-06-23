@@ -1,120 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-52546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31ABAE3FEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 14:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8625FAE4097
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 14:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34EC27A2BE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:24:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 847DC7A9116
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C07523F409;
-	Mon, 23 Jun 2025 12:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D3D248F46;
+	Mon, 23 Jun 2025 12:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTzACbp6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWqW14O5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EDF5579E;
-	Mon, 23 Jun 2025 12:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF209242D6F;
+	Mon, 23 Jun 2025 12:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750681550; cv=none; b=hPGQiCoRjYqzq1aO3oBaiAmIhMGE/DyN/p6Bs2doSk8VsXUDebkMvUEJa+fmcbDUF2bt6/pkP0LhHuRk5PyYooWhun1oNkZBD3SFgtjTj1gmdPMU72f2uwR9B8c7tUasPlVfUF1eZiPHCtfTJxwOAyoAwxuOBF22x+gak/6CxGA=
+	t=1750682292; cv=none; b=Xv5ydllSrefR3ZAInVUuGApqFkbXwmh2HDmO959TT0sX70Lw770Nx9h+TT3ppZ9y98bDgr0vR4dJhehCYGZSd678Wqgyt7ILUm8YzYUkn9BximdaVbW8zb5C8ZPsQBP6DtJ9AJXnh4z6k+dTC22CkUS6s5E3d0abyl8kCtRzIyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750681550; c=relaxed/simple;
-	bh=NEpi/7jbMxlgA/Ip3kFmF6fyk2NnVHnyuKnlcrk3VP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lMMvKnKEcFrFr7/Af+VK+CVk3yuVmvDammno74XoL7VBkzubBBzadGCPdFAqvNOvvRNKe/nqb8u2xo7uj9SDso9ZZK00UtfLSxc0eFa2p95u5lZhYBldWJaGVr7s2cN04H4tp/09noY5zusJqNsfxeHjjuaTe73b8ZJwSZ0gS4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTzACbp6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AB2C4CEEA;
-	Mon, 23 Jun 2025 12:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750681549;
-	bh=NEpi/7jbMxlgA/Ip3kFmF6fyk2NnVHnyuKnlcrk3VP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XTzACbp6s++Eu5qs6WDi+DYNT9yNIgHydyOWqF5GNCL5Z0w/BI/NXxP6fLJc39tmu
-	 oo51dVdttN4gXPMX1+CefwGLgqI9IPijqLYm7xJyPK1/Z4O7t4AJI9uz3r9Ns/7emL
-	 sm+yry36VOY/lIR5oK4ni42YSDlCjMgP2D4bs4Pa1kCdNi1mf1lGWmI+rTy0FeeOoB
-	 z2r79FZ7zhNyeT/vlOS6gNxNgYl6o4zBPKGc6TtB/RcS2Fq226nL/1By6cteZk7WYX
-	 xICDdSCoGRCcLzPibNp9wA6OtyBs8EPQuWlKfcc9OtnERxFCTC5PhotehWSvncJT3f
-	 BPrhAiB1ntgbw==
-Date: Mon, 23 Jun 2025 14:25:45 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 8/9] fhandle, pidfs: support open_by_handle_at() purely
- based on file handle
-Message-ID: <20250623-wegnehmen-fragen-9dfdfdf0b2af@brauner>
-References: <20250623-work-pidfs-fhandle-v1-0-75899d67555f@kernel.org>
- <20250623-work-pidfs-fhandle-v1-8-75899d67555f@kernel.org>
- <ipk5yr7xxdmesql6wqzlbs734jjvn3had5vzqrck6e2ke4zanu@6sotvp4bd5lu>
+	s=arc-20240116; t=1750682292; c=relaxed/simple;
+	bh=VZy9CSUt9mk/vqF4oiRuTprjPvP6eJb/pARYaqfJwHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j2bMdJ/F5/AlOKrw+9Y891HDxGgtZTBOkYYb2QcdCOygazhC5SaGOwshtFKbxAayw2OhhMyfB2veworznlSRPICnhxv1NokIPNYc7mBWRKnMowqobgZfm8RoIMRS3U8k+dgFB26P3Pufkq1EOMRbZxxocO1G8LyIZsBc5iNhz3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWqW14O5; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad883afdf0cso826306066b.0;
+        Mon, 23 Jun 2025 05:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750682289; x=1751287089; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A27xQCTg0cti1RAIXekdY0tK1YGeklEpEsuW0zdAVtI=;
+        b=YWqW14O5sI6rPgCDHWU1k8KkD2tCOpqdzhEv+HkaWuaI/zwHUhojJiQl3L0y2UHAp3
+         W/vofpiQ232d4MDnc3Efvpfa9rtCoPeMqw8bPUL34lVJMesypp5WvcQlXliXq4V5DXDo
+         NJJnBQ9lPGfifdYKywtDKqtwYf/yQMS49C6xdyPVW1tttc1V7RuRl18vEtZERPTnKaBf
+         rr/Wg47dM8orpQqSjD+IgOyeowgqVcuxpYtYJFwt8JxyE2y3kLNUN02/VOmKXCflIVzz
+         qhjbppjQA94A8TGYFx8klu4FsQ4p37MoBzDvDfNHtcXWrrTWdpXnXYcwdAetlAokyQ5b
+         VHgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750682289; x=1751287089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A27xQCTg0cti1RAIXekdY0tK1YGeklEpEsuW0zdAVtI=;
+        b=T1U1UBphRL50mrYDp2KNbw54/Rf20ksSYgq9306mbXcGSW4fuN8+KDcJGdzDHhjMWP
+         qgoQqSs8elwz7zp8LV98YQjqfWRxKfnFnkPj9BHUIHMhZQU2AZ3Rt6jq86yq4uvKouR3
+         LBk90qmqeET2iWHyGB5VtrGAfipFzXbktwOw13WdhfG/8R1EArhWc48+ZP7EYG3hjLFP
+         fQgsQABsIyN/0zhPigThHxvyo1PASTHqLeQBOzwXgP9jA41CaMFchKAxMrQBlLdsgR3x
+         nTWswbQFl3yj0MthAqSdozw983Ua3GqtWKo5ucb/T3Hdzr1a8yw3FYmAhSAZi5EDk2KD
+         TcZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5HJDPtgDC23yMGPPwLxb4z2kMikJUJddcPNuUWa+L9FULZmEPJwiwtEwuPFzsdLBEOsob1R/uzDjo@vger.kernel.org, AJvYcCW5IjZxnW1nQdeJ80JG9lznvq0/x3PFnXavKFwFr7h2kfFBlFasHJ7BSSvWxlB+sdbL9kNtfjX3jxnDJWJT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdK4W6DpSCOdb9NHZX6Ueeifw7H853GG+3npUR7XhNS7xupKDX
+	JzIx9uoc6IOOoHrwgM5zGZYgLEgfGvIoVvfd5QBHI6TOsVNw1iWkJYgvwqWOpIvvtZPvaa6V6hw
+	MvJBgtdFZbMr8rIOtNWnNUy27GEHC2SrXtEFb8J0=
+X-Gm-Gg: ASbGncueig4Gi4//FxwI9CrSgc7zZlH+7gJcZ9V1n1Zno2jK5MpLho75uBCWVmVpTBV
+	E3weRrdgEyNZoB98cPTBS1U2WhdZ/SIoU3E+fuoYTvb/C1hW77/WBFzz0vlEUOPl6U7tOO4KwdM
+	HuBDM32iIU7V37+gHH0x4FsxnwdolWLrdE6BTEQdP+L28=
+X-Google-Smtp-Source: AGHT+IFyL1A9/MyPIFQlIui+rX/ahym4iCjS1bf4nqN/CQ4PDyoPYrcvaAHXrx1CxbO8ebRo3YrLyyc4y8AvhxulKuQ=
+X-Received: by 2002:a17:907:60d3:b0:ad8:9b5d:2c14 with SMTP id
+ a640c23a62f3a-ae057b3b6f3mr1326066966b.29.1750682288428; Mon, 23 Jun 2025
+ 05:38:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ipk5yr7xxdmesql6wqzlbs734jjvn3had5vzqrck6e2ke4zanu@6sotvp4bd5lu>
+References: <20250623-work-pidfs-fhandle-v1-0-75899d67555f@kernel.org>
+ <20250623-work-pidfs-fhandle-v1-7-75899d67555f@kernel.org> <qonvmbf5cqgcj6rshspxfjwb537vz25ahi2jk773gqgppplydh@7ohq6aw3qhez>
+In-Reply-To: <qonvmbf5cqgcj6rshspxfjwb537vz25ahi2jk773gqgppplydh@7ohq6aw3qhez>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 23 Jun 2025 14:37:57 +0200
+X-Gm-Features: AX0GCFsQClrSZ-0R6pYZpfhdiiia2RqeUZDbYF8V5u-0rHGhK1jrbg283Z8WnaA
+Message-ID: <CAOQ4uxiNisXa7C0-z7YTjuXtAuSzuqDKXvasaPtifuQPGGYkjw@mail.gmail.com>
+Subject: Re: [PATCH 7/9] fhandle: add EXPORT_OP_AUTONOMOUS_HANDLES marker
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 02:06:43PM +0200, Jan Kara wrote:
-> On Mon 23-06-25 11:01:30, Christian Brauner wrote:
-> > Various filesystems such as pidfs (and likely drm in the future) have a
-> > use-case to support opening files purely based on the handle without
-> > having to require a file descriptor to another object. That's especially
-> > the case for filesystems that don't do any lookup whatsoever and there's
-> > zero relationship between the objects. Such filesystems are also
-> > singletons that stay around for the lifetime of the system meaning that
-> > they can be uniquely identified and accessed purely based on the file
-> > handle type. Enable that so that userspace doesn't have to allocate an
-> > object needlessly especially if they can't do that for whatever reason.
-> > 
+On Mon, Jun 23, 2025 at 1:59=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 23-06-25 11:01:29, Christian Brauner wrote:
+> > Allow a filesystem to indicate that it supports encoding autonomous fil=
+e
+> > handles that can be decoded without having to pass a filesystem for the
+> > filesystem. In other words, the file handle uniquely identifies the
+> > filesystem.
+> >
 > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> 
-> Hmm, maybe we should predefine some invalid fd value userspace should pass
-> when it wants to "autopick" fs root? Otherwise defining more special fd
-> values like AT_FDCWD would become difficult in the future. Or we could just
+>
+> ...
+>
+> > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> > index 45b38a29643f..959a1f7d46d0 100644
+> > --- a/include/linux/exportfs.h
+> > +++ b/include/linux/exportfs.h
+> > @@ -194,7 +194,8 @@ struct handle_to_path_ctx {
+> >  /* Flags supported in encoded handle_type that is exported to user */
+> >  #define FILEID_IS_CONNECTABLE        0x10000
+> >  #define FILEID_IS_DIR                0x20000
+> > -#define FILEID_VALID_USER_FLAGS      (FILEID_IS_CONNECTABLE | FILEID_I=
+S_DIR)
+> > +#define FILEID_IS_AUTONOMOUS 0x40000
+> > +#define FILEID_VALID_USER_FLAGS      (FILEID_IS_CONNECTABLE | FILEID_I=
+S_DIR | FILEID_IS_AUTONOMOUS)
+>
+> Is there a reason for FILEID_IS_AUTONOMOUS? As far as I understand the
+> fh_type has to encode filesystem type anyway so that you know which root =
+to
+> pick. So FILEID_IS_AUTONOMOUS is just duplicating the information? But
+> maybe there's some benefit in having FILEID_IS_AUTONOMOUS which I'm
+> missing...
 
-Fwiw, I already did that with:
+The use of the high 16bits as a way for vfs to describe properties on
+the fhandle
+relies on the fact that filesystems, out of tree as well, are not
+allowed to return a type
+with high 16 bits set and we also enforce that.
+FWIW, the type is documented in exporting.rst FWIW as single byte:
+"A filehandle fragment consists of an array of 1 or more 4byte words,
+together with a one byte "type"."
 
-#define PIDFD_SELF_THREAD		-10000 /* Current thread. */
-#define PIDFD_SELF_THREAD_GROUP		-20000 /* Current thread group leader. */
+It is important to remember that filesystems file handles and their types
+are opaque and that filesystems in and of tree do not need to use constants
+defined in exportfs.h nor to avoid with collisions with the namespace of
+file type constants.
 
-I think the correct thing to do would have been to say anything below
+This way, to let vfs raise the autonomous flag based on export_op flags
+seems more backward compat and leaves less room for mistakes IMO.
 
-#define AT_FDCWD		-100    /* Special value for dirfd used to
+This way, to let vfs raise the autonomous flag based on export_op flags
+seems more backward compat and leaves less room for mistakes IMO.
 
-is reserved for the kernel. But we can probably easily do this and say
-anything from -10000 to -40000 is reserved for the kernel.
-
-I would then change:
-
-#define PIDFD_SELF_THREAD		-10000 /* Current thread. */
-#define PIDFD_SELF_THREAD_GROUP		-10001 /* Current thread group leader. */
-
-since that's very very new and then move
-PIDFD_SELF_THREAD/PIDFD_SELF_THREAD_GROUP to include/uapi/linux/fcntl.h
-
-and add that comment about the reserved range in there.
-
-The thing is that we'd need to enforce this on the system call level.
-
-Thoughts?
-
-> define that FILEID_PIDFS file handles *always* ignore the fd value and
-> auto-pick the root.
-
-I see the issue I don't think it's a big deal but I'm open to adding:
-
-#define AT_EBADF -10009 /* -10000 - EBADF */
-
-and document that as a stand-in for a handle that can't be resolved.
-
-Thoughts?
+Thanks,
+Amir.
 
