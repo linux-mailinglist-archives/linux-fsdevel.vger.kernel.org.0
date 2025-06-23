@@ -1,241 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-52433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D84CAE3446
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:19:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E343AE345C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F633B04F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:19:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D63188BC56
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFCC1A072C;
-	Mon, 23 Jun 2025 04:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAF51BD4F7;
+	Mon, 23 Jun 2025 04:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d2M7u88N"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nLZpoULY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8772FB2;
-	Mon, 23 Jun 2025 04:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750652355; cv=fail; b=cyXNYrI9sYxNwsRCq6wREcY+mZWRxpe9mg/0Kb5ylhiJTmSBBX83bGJP+lLa3BNmT68PgEBiFlt9aE1azHdk3eTzRGRrDzMHHFwzPyqmoOPLY6gcw5bVYcsQwpGFwDaio8dgsnwZG7xSL/8KKJ+/le7TFyVZkM8h27JD8peEsC4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750652355; c=relaxed/simple;
-	bh=t/oPb4vw6l3r9nRwmfmx6t0ndvdJpnGypLohb9lttVk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IM0UG/mZ7DbNC33JgfPlWvkHYLSw3xu/uNNL9MqGLS9Uz80uZl2yaLby6lfJAog4dl8WMw6SruA22QT+hAJviVwgg6oZvVdhSN/uYjoYFrmlacQorOcaUd95JN4o4lNqfTCy54gF8AsX7Ei7cPmbgx1ysGagmp3jidpHSRR+cCQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d2M7u88N; arc=fail smtp.client-ip=40.107.223.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RIoyknlf4gFhwL17fr8R+aI5+jDG+HgJcCD1by22jBXMD/PdqcVJ4wxpx6yo9wJ8Rtdbd7eJUycOVdupc3lDAY1r8mSbWonHMHFDCzI2PoAppowXKKLnv9mnusYugcE88ucAkVTwiJBYSiKfjUhJP0d/OjTCh14VOswvrjf6fzTnJE5CFaMZQMyB8yjNowVlOF0zJHSe4tQ+doyscl3K6MNZr8fWU3uvEPU5XKa4XAlsYNE/Lmw8/0Ka24+ATCzRTYcxA0zjEjgk66rQsC1AvgKZOazlC9bzYbSoMpRsjV6S6+Dc2hf65OG1kVq75bbmP1cw7+DxxLOc4uFgNFZ2fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6XvF8IK1T4UrMTL5OBIkuMJkgHqTAdf7NplHNZ6kym4=;
- b=yHBiQb9IIREXdf2LAn20PGLu/+oWbTtT3hYGtK5imgOUiB90KWNNu3zegeNW2LNvGmbuo0qXYV3d2mrzlcH1YgRjhH1PqESpX1Lm1ThaMqcjuSpNln6lgClhjZ+vUFh2n0Htl3V/x+h+CB5kZ68uzMkiab5NkF3BgNUh8VyvvAJacWen6KR1E4RjjOkEOVxxAqIpEvUBkWXQw2YBssXxfmM9UhcYfBRbzRjgFJHJPlAOqu4wUPQv9HBHa0MpdcBKfuoMRZsncWedaKAYWe/+XTA8QSw1EA7QGAP435jN7xTWPZHIwIYN/Q/0HE2+k2hdI7/nylr+en9tlFgvPNcmTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6XvF8IK1T4UrMTL5OBIkuMJkgHqTAdf7NplHNZ6kym4=;
- b=d2M7u88NUdfs82cB1Otj9jl1stjvwiDecp2OQscSkbUY8/xN82wSesbJjBStRrfZ/nr6rG3cFN0w/sx2eD+R5I384L5k+kfOK2jvXoeYObnnvnixRUdOgepDOKRviYGzr+cqpMcfxVo8NVQ5QxRzpwdQMEQGvZVF7I4jivJeyk0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa) by LV2PR12MB5991.namprd12.prod.outlook.com
- (2603:10b6:408:14f::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.22; Mon, 23 Jun
- 2025 04:19:08 +0000
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf%8]) with mapi id 15.20.8722.031; Mon, 23 Jun 2025
- 04:19:08 +0000
-Message-ID: <1af44ef0-8651-440c-b3ac-ef22a539b559@amd.com>
-Date: Mon, 23 Jun 2025 09:48:46 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, seanjc@google.com,
- david@redhat.com, vbabka@suse.cz, shuah@kernel.org, pbonzini@redhat.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
- bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
- chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
- yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
- peterx@redhat.com, jack@suse.cz, rppt@kernel.org, hch@infradead.org,
- cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
- roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
- apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
- ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
- gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
- papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
- quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-coco@lists.linux.dev
-References: <20250618112935.7629-4-shivankg@amd.com>
- <20250620143502.3055777-2-willy@infradead.org>
- <aFWR-2WAQ283SZvg@casper.infradead.org>
- <20250622114322.c6c35800e01e4cc4007a0f89@linux-foundation.org>
- <d1d7feed-c450-4b88-ab73-a673f4029433@amd.com>
- <20250622151625.fb5d23362c2c3d1af22878d2@linux-foundation.org>
-Content-Language: en-US
-From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <20250622151625.fb5d23362c2c3d1af22878d2@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN3PR01CA0158.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:c8::11) To SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D26134CB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 04:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750654157; cv=none; b=FskHyg4IaWKzbhbNQlyx1kTOuaK4Cc+gjulQ6nRPBe6Rr+Ya3vefyC4qvfk9ldyD+tEzBZ5w4XBAQMhLcHqCA88eTC5snO2oQHf5gp4zpjJ555dPtT+BtLAUYG5nnrHRbo0gT5veai50FepVzXZsyppkFZ6VllwZcKCgvKyaLRI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750654157; c=relaxed/simple;
+	bh=Ny+uK9zmGYUvfUsPKStEV5jKC5S2fCLMIwVT5ScAEUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uvlPNMexb0e3yWqXRtvmpw79iIGiygBlAFtsAmVqJkwvI89SHgf/+HeFXXi1hos9hxJ9BdYLas5Om5B09SL8Er8gGzbcTG0v7n58igot/QQdyHE+zeb9EHcrg+2uA9dXJjXQ3+Y7qIS8EQzYIokSKjGqATLZ8XoYki14yz5/7eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nLZpoULY; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rX+hl2JkBy6DPhweM08IgGE4taov0sfxgzNykp3FyBM=; b=nLZpoULYKevJzBkTxmKehvhcA1
+	2TIK3RuUX4S5d3pzQmJCxVxfSYOLKl05ICPlJxF9LBS7C2tzr1UW+FYdQSAnj8R/Luk+flgAxWY1o
+	F5onGUIJ1yjc+75dfMc7aXFORMsvo6Rv4GxRI8ezftiH18Z7GDU+fhxozLWy/aReeWohXZ07g/3bm
+	UlE2DWFjIK66ZSRIZlQCpINxYDPWSAttcrzXrXkGPKVE8lAXKeODeB/lS9B7t4d+sZx5lFjIOyeEA
+	XJUGGBBByvLfqLrsQgEehMYzRE5xVnsaObIQRxGliwMoo99q6jdkjdwFYr1VoQoK2DBv4Q5ZaHebB
+	GUhm8TxQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uTZ7I-00000005GTm-17LY;
+	Mon, 23 Jun 2025 04:49:12 +0000
+Date: Mon, 23 Jun 2025 05:49:12 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biederman <ebiederm@xmission.com>
+Subject: [PATCHES v2][RFC][CFR] mount-related stuff
+Message-ID: <20250623044912.GA1248894@ZenIV>
+References: <20250610081758.GE299672@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|LV2PR12MB5991:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77790a96-f9fd-49d4-1723-08ddb20d1921
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0YrL2VFU3VWdHdGSmdGcjRqcFBYOE9oc3loWlpoQ05xWXFaL3lKN3ZhQmd5?=
- =?utf-8?B?ZDBydDdnUk90aDhySzZLZXRLekRVR01GSUE2YXRZNk5FN2U3NEI2c1JXbWtq?=
- =?utf-8?B?YVgzMm5SaGxWNHBkTUZZeXZsaHZDaFdJWUZWRnJ5ZkNpM2lLZUZNUVBCUFRB?=
- =?utf-8?B?ZWRNUkNNNFVhMkF1aXhtb3ZuRkN3TXR6OW5KN2Z5TTEwQ1BPU1VxRTFJdHB2?=
- =?utf-8?B?R2pBSGNNbkhEaE1XQUNBdmxvbklXSS9xQldxbFhJUk9FVk9RQXZEZnpPMWlN?=
- =?utf-8?B?MnRPY213SHIvS2o5TURhWGxFMzlUNFhCcTBxaHVzNFFWSTA3MThIV2IyWEwr?=
- =?utf-8?B?NXpDb05uZWFpcnk5Z0pyQk9MYTZ4amp2d1F1amc3dDNKcmxjY3RydzVqTjln?=
- =?utf-8?B?UkttUjRKVUtHMUU1cHdCWDMvMHMvZDA4Y1RhVzFNMERqMHZWUC9PZ1RxamQv?=
- =?utf-8?B?Qy9pMTdyNElLbDVhWjVWbldiNlNydzJDS3Z6LzRmU1puL3VYUXdRTEZKdWhN?=
- =?utf-8?B?NkxMM1JudVNPNVIyMXQ3aG9vRDYyYnVNWEQrU0FXRitYZVBRMDdlWmc3YTUz?=
- =?utf-8?B?cnJFRERGbWpSbVk1a29WVjErQTVxbGtxWVZKUEZuNERycGZ3MWlRNEZPWGc2?=
- =?utf-8?B?V1I0dHhRRlNOOXR1QUVrYTRyYXlQQ2EzU3BzSDhpRUV2anM1LzlOaFB3ZlBO?=
- =?utf-8?B?SWFCYkd3dXo2MUZkc3l5WVkxVG96N0VjdkNlRW1rbVRLZFJxRVJic2xvVFdD?=
- =?utf-8?B?eWhBUlJpMjcvWTg1UVFFVEkyUC9HOEJ1ZzZoRVlTV3Bab2FKMFZKODdrd2JM?=
- =?utf-8?B?NVhWQ2NNd0IrOU1JUnFURmpVNkRIZjJscEtBM2NwRkYrUHpoNldVb2ZFWEdH?=
- =?utf-8?B?WTVFYmpFWUFEYVY1aE5Sd2RZMnBxbDFabjFUMmRpOGwySzM2UDhoUTZiMHBW?=
- =?utf-8?B?SjFHK2x3UUw5NzNRK3BCSFE5Qzk5QjRFa1NtNVlZWUNWWGdEVzVpV2wxbnJW?=
- =?utf-8?B?YmlXTUl0czF0OVNFdXVOTkZNZVNqNnFVNWp6aWtQTnI4T3hCWnRxMkkzWXpk?=
- =?utf-8?B?NWcyYUw0WWV3azhMS1hHS094eXNPVERJZTFib1BsUWppRFd0V2plMVQ3dWg3?=
- =?utf-8?B?TDIyMEt4dEtCMURTSWJNY2UrTHZ6T1JLZkw2Q0RJSDgxNUw4ZHI5ZXFmb245?=
- =?utf-8?B?R0pOWGtKYnhqeVJOaDhIOEdveUY1Yld2UHRDS3JWSFU1Q0R0VllSM1RKUGVB?=
- =?utf-8?B?MzUwbmlPMnkvVGxJNHBhQi9BQm9nM1lVMHR3MTNTbWhCZFdzS0FTN0FuWHFJ?=
- =?utf-8?B?a2c0VUppQ2U2UzNBcnVobm91bjVRbklLeHhPdGJUWlUyc29LRHJuMWxPZ290?=
- =?utf-8?B?NFlYNUNENWJ3NURMRVdqM0RWSk5NM000UTRUZUxGS2VuZnFwWGdDWlBnTDF6?=
- =?utf-8?B?akxLOUdPYXRLekRNbmhvMmlMRVRhdXJFcW56bzZiZ1QxVG40bW5zV2krS3FI?=
- =?utf-8?B?Nm1DM3NMTGYvZWtwaDN5Zjh2NmcxamQ4ekpmeXRhRURwUFdLZU5aSzVDb3pw?=
- =?utf-8?B?Y0lBdGdHbkVLemsva3UySE1uTkFjZWE3QXIyNnk3b0RmTVFRcjZ1ZTBxZWpB?=
- =?utf-8?B?RkRFdmdLZUwrSXJZTzBrekpIc2ZVUzE0K1JjaHptMDc4NHl4TXlwWXJkY050?=
- =?utf-8?B?aUVpWnFiRHZXQTIxRTdzMUpFSWd1U051MGh4RXYybGl1NmdtRVQ4eGxPVGNa?=
- =?utf-8?B?enpWbkhwRWVEUGtkZG9rSG9haXBodHhnSXRqeWI1ZGpaS1B3RmlOQ1ZPaC9B?=
- =?utf-8?B?OGNtdG4zSHZBbzlyd3diQ2Nzc1A0cldtN1YzZG5GRjFVMVlnOHN4RFJUVmZw?=
- =?utf-8?B?aTBxb053dy9mY3MyYXhBWFM1M2JwK2NyMjJtQVh2aFJxRFNJOVRsVk8xYlNT?=
- =?utf-8?Q?JaeVxGmDqiI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YXlwZ2VNMnV4RmFHZEFyTEwxcDROeUZVcnFHZnJLRU44WXMxQkxlWHBWMDJp?=
- =?utf-8?B?bDdyWDVKeWJtQWY4RkkvbU5KMm1LUUNTbmVnMzV3Q3EvbFRucW9sZnZLWFp4?=
- =?utf-8?B?VXBqSUR3SXoxbDhpdk5ERjBBRGw5NWVOMlIyaUJPNHNRWjU2akJjR3htc1N5?=
- =?utf-8?B?Ym50Q2pyT2ZsWE80QlpLYmhya2xzNk9JL2FjWVN5V3BieHpXZWF1djAwVm9E?=
- =?utf-8?B?d1BDemhpWnZzT0xaeDRzaFAzT2tqRS92WFkrSXVJODVkUUVMTzRUSWZ6bGN1?=
- =?utf-8?B?c2d3VjY0SC8zNmQvSmNkdUFwSjhsU0FLdjhMSGY5c2RiMUptNk5xTnJKWmZB?=
- =?utf-8?B?M0oxTHA1WnhDTnMrbmxYV2Z3SUR0c0orNU5QMEFwYjhNSWhvbk5HcTRSV25l?=
- =?utf-8?B?bHc1UC81Tm5RcFk2Vm9BSTVLTWxxa3A3OVZ1UVAySWZUYUFleDJqSUM1eTVa?=
- =?utf-8?B?Q0dHN3pWay9ySURMR2JvRExqNE9hZkFXVWxVbFcyc05qNlBqOGRVYmppSXE4?=
- =?utf-8?B?aGgzV3pZNndpaXc1bk8vdm52djBCbWlocnhmS1EySGZZbWRnNVRkLzlpc0pM?=
- =?utf-8?B?ckk3UURJdXVVWWtaYW85Q2drdFJZUzdJRm1YVHVZeVU0RzdvcS9mK243R1kr?=
- =?utf-8?B?L21jVC9nODRjZFZGdC9paHliODVwMTB5bUFhVWVEdFdzL2NGS2ZFdVpkZVQ0?=
- =?utf-8?B?ejR0c2FiN0tXWmJXbXRkRHNhbWVvaSttdC9mdHg2eE1GM3lvbzVMMHRGV0xk?=
- =?utf-8?B?NjVqZlRxay9OaTRnbFlCd2lYbW41RnVuYVZ6MnBPcUlzWWdHZUkxcDFvL2M4?=
- =?utf-8?B?dW03Z0RYM2R5RVJBQXZsakJPQU5TT2JXa3Q1OTZNTVUzVDFYVjA2UjZvZmwx?=
- =?utf-8?B?ME41NHZFVEEzc05DWDVhd0JTOXJ3eG5rRGwrR0xCYng0eHByVUNPRVBzOFdI?=
- =?utf-8?B?NzN3UmUxOEtYbVF5ZGRkOGVnM3puN2Y2MEM0RXAyUnZDemdpcHhRdDh1VitE?=
- =?utf-8?B?cHNsWTNOSXRydFJYMlZtY3Q3V0FBaUx1NlJWeGVpSDJybGJoTDRxTnBmaEtw?=
- =?utf-8?B?TzNJTG5LbFFMeXlEK2VqS3h1cEYvTnhKc0pJcmtvNFcvd0hGdUJhM3VyUDZh?=
- =?utf-8?B?TWFDNWtEOVlwdlNMLzhrOEZubWJTTnhFQ1VhR1VINmFidE4ra3N6cDdsRnFy?=
- =?utf-8?B?NFJ6aDVSM1U3N0tsUFJVQmFkaFpDaGdPY1RoRDc5ZERFUkFtTk04TXZHekti?=
- =?utf-8?B?VCtZMXhrR2VqeTNENjVwSFVOeG1KMnRIVG1LdElzOFRMc240Rmp6cGJRYmox?=
- =?utf-8?B?VitKZktoNnZibHpodlhSWm8zYXZNNHY1OUMzU2ZmcGlnSEt3c2ZMS2RiWGZL?=
- =?utf-8?B?VnpraUU4SnlXS0ZlT1dFYis3VmxWTURWRkxvcm82T1F2dXp2V05WaEpaQjQ0?=
- =?utf-8?B?ZER6Z1UxWXRMQVprMTFINStFb3lzaU5sa2RPQWVuY3FSZ0VCMk45SEZCV0tX?=
- =?utf-8?B?VnJpUmNMM2RaUmk3dTFyK1VVaFZLbGNGU2VsSFRtTmpOQVFXVjFPQVB6RkI2?=
- =?utf-8?B?LzVvOGdJU2I1Uk1md1pZTUkxUXZJbk5FcW9POHI5ZTMrS3V1ZlFXU21DblFQ?=
- =?utf-8?B?em1vMTNoOFNIMjEyMC9EaWkrbHlCcWptTEdBTEdEdzdldFV0SnVIekxxUU9D?=
- =?utf-8?B?aVd3TjFtdEIxbnREVVJvM3dtT3R1WXYrdnYzSURxazRHK0kyMitRT0FtQkdX?=
- =?utf-8?B?SFY5amoxekVNTGxvQUljMVF5VzQ4dFMvU01VeGFLdDNBVjFxckZIVEFnVmNu?=
- =?utf-8?B?Yko4VEdJa0dva0gxcDFCU1FjUC9KUnJPUlFTaCtpM093dGg3UFZ5RDJpaTdQ?=
- =?utf-8?B?c3VwL3lpZTlsOUl2UGc4WS83dEdPUWViQ1dxVXNoT3UxRVlTWEFEeU56alg4?=
- =?utf-8?B?bTE2UUw0NW9DUEQ4dW51L1FmS3ZpaFFLWUpCT3dBNEZXZE8wc1RXY2tLYUtw?=
- =?utf-8?B?ZzNQeC9JcGNRdGhMdEs5cnhPRzBidFlRNU5aKzN2akswY0srZU9yRTBMSUhL?=
- =?utf-8?B?VWg1b1RaSFl3ei8zOWdJazcrb1NCR1RUcmpqSytVaVVqNW5jc0RLR3IxYVRp?=
- =?utf-8?Q?nNGBEeokhURL6mktpjKLBupIJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77790a96-f9fd-49d4-1723-08ddb20d1921
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 04:19:08.6839
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6+9icrSPbSQwcu0W7oEev/tolXzjLTa1tXQpo4AEN1Yh7DkXRKGrISv1/EkVnIg988HNq3pVsymZW9AOfbKxQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5991
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610081758.GE299672@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-
-
-On 6/23/2025 3:46 AM, Andrew Morton wrote:
-> On Mon, 23 Jun 2025 00:32:05 +0530 Shivank Garg <shivankg@amd.com> wrote:
+On Tue, Jun 10, 2025 at 09:17:58AM +0100, Al Viro wrote:
+> 	The next pile of mount massage; it will grow - there will be
+> further modifications, as well as fixes and documentation, but this is
+> the subset I've got in more or less settled form right now.
 > 
->>> -EXPORT_SYMBOL(__filemap_get_folio);
->>> +EXPORT_SYMBOL(__filemap_get_folio_mpol);
->>>  
->>>  static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
->>>  		xa_mark_t mark)
->>> _
->>>
->>
->> Hi Andrew,
->>
->> Thank you for addressing this.
->>
->> If you don’t mind me asking,
->> I was curious why we used EXPORT_SYMBOL instead of EXPORT_SYMBOL_GPL here.
->> I had previously received feedback recommending the use of EXPORT_SYMBOL_GPL
->> to better align with the kernel’s licensing philosophy, which made sense to me.
+> 	Review and testing would be very welcome.
 > 
-> Making this _GPL would effectively switch __filemap_get_folio() from
-> non-GPL to GPL.  Leaving it at non-GPL is less disruptive and Matthew's
-> patch did not have the intention of changing licensing.
-> 
-> Also,
-> 
-> hp2:/usr/src/25> grep "EXPORT_SYMBOL(" mm/filemap.c|wc -l
-> 48
-> hp2:/usr/src/25> grep "EXPORT_SYMBOL_GPL(" mm/filemap.c|wc -l 
-> 9
-> 
-> 
+> 	This series (-rc1-based) sits in
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.mount
+> individual patches in followups.
 
-Thank you for the explanation.
-This makes sense to me.
+Updated variant force-pushed to
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.mount
+individual patches in followups.  It seems to survive testing here, but
+more testing and review would be very welcome.  That's still not all -
+there's more stuff in local queue, but it needs more massage; this is
+the reasonably settled-down subset at the moment.
 
-Reviewed-by: Shivank Garg <shivankg@amd.com>
+Changes since v1:
+Added fixes (-stable fodder, IMO):
+	replace collect_mounts()/drop_collected_mounts() with safer variant
+	attach_recursive_mnt(): do not lock the covering tree when sliding something under it
 
+Another thing that is probably a -stable candidate:
+	prevent mount hash conflicts
+That's an old headache hopefully taken care of; what we get out of it
+is the warranty that there won't be more than one hashed mount with
+given parent/mountpoint at any given time.  I've pulled that very
+early in the sequence, so that we had a chance to backport it.
+That comes with two prereqs (reordered from the middle of v1 series),
+both should be trivial to backport.
 
-Thanks,
-Shivank
+Added cleanups:
+	__attach_mnt(): lose the second argument
+	copy_tree(): don't link the mounts via mnt_list
+All uses of ->mnt_list are transient now - basically, various sets
+used during umount_tree().
+	mount: separate the flags accessed only under namespace_sem
+Makes for simpler locking; some of the flags are accessed only under
+namespace_sem, and we already rely upon that in the readers; taking
+them to a separate word avoids the need to grab mount_lock on the
+write side.
+	propagate_one(): get rid of dest_master
+	propagate_mnt(): get rid of globals
+Linus asked to get rid of fs/pnode.c globals; done.
+	take freeing of emptied mnt_namespace to namespace_unlock()
+
+A couple of commits made simpler by "prevent mount hash conflicts" -
+	Rewrite of propagate_umount()
+reparenting is guaranteed that there won't be more than one overmount now,
+no loop needed.
+	don't have mounts pin their parents
+simpler logics for "is there something other than overmount?"
+
+	Rough overview:
+
+Part 1: fixes
+
+1) replace collect_mounts()/drop_collected_mounts() with safer variant
+2) attach_recursive_mnt(): do not lock the covering tree when sliding something under it
+
+Part 2: getting rid of mount hash conflicts for good
+
+3) attach_mnt(): expand in attach_recursive_mnt(), then lose the flag argument
+4) get rid of mnt_set_mountpoint_beneath()
+5) prevent mount hash conflicts
+
+Part 3: trivial cleanups and helpers:
+
+6) copy_tree(): don't set ->mnt_mountpoint on the root of copy
+7) constify mnt_has_parent()
+8) pnode: lift peers() into pnode.h
+9) new predicate: mount_is_ancestor()
+10) constify is_local_mountpoint()
+11) new predicate: anon_ns_root(mount)
+12) dissolve_on_fput(): use anon_ns_root()
+13) __attach_mnt(): lose the second argument
+	... and rename to make_visible()
+14) don't set MNT_LOCKED on parentless mounts
+15) clone_mnt(): simplify the propagation-related logics
+16) do_umount(): simplify the "is it still mounted" checks
+
+Part 4: (somewhat of a side story) restore the machinery for long-term
+mounts from accumulated bitrot.
+
+17) sanitize handling of long-term internal mounts
+
+Part 5: propagate_umount() rewrite (posted last cycle)
+
+18) Rewrite of propagate_umount()
+
+Part 6: untangling do_move_mount()/attach_recursive_mnt().
+
+19) make commit_tree() usable in same-namespace move case
+20) attach_recursive_mnt(): unify the mnt_change_mountpoint() logics
+21) attach_recursive_mnt(): pass destination mount in all cases
+22) attach_recursive_mnt(): get rid of flags entirely
+23) do_move_mount(): take dropping the old mountpoint into attach_recursive_mnt()
+24) do_move_mount(): get rid of 'attached' flag
+
+Part 7: change locking for expiry lists.
+25) attach_recursive_mnt(): remove from expiry list on move
+26) take ->mnt_expire handling under mount_lock [read_seqlock_excl]
+
+Part 8: struct mountpoint massage.
+27) pivot_root(): reorder tree surgeries, collapse unhash_mnt() and put_mountpoint()
+28) combine __put_mountpoint() with unhash_mnt()
+29) get rid of mountpoint->m_count
+
+Part 9: regularize mount refcounting a bit
+30) don't have mounts pin their parents
+
+Part 10: misc stuff, will grow...
+31) copy_tree(): don't link the mounts via mnt_list
+32) mount: separate the flags accessed only under namespace_sem
+33) propagate_one(): get rid of dest_master
+34) propagate_mnt(): get rid of globals
+35) take freeing of emptied mnt_namespace to namespace_unlock()
+
+Diffstat:
+ Documentation/filesystems/porting.rst          |   9 +
+ Documentation/filesystems/propagate_umount.txt | 484 +++++++++++++++
+ drivers/gpu/drm/i915/gem/i915_gemfs.c          |  21 +-
+ drivers/gpu/drm/v3d/v3d_gemfs.c                |  21 +-
+ fs/hugetlbfs/inode.c                           |   2 +-
+ fs/mount.h                                     |  36 +-
+ fs/namespace.c                                 | 783 +++++++++++--------------
+ fs/pnode.c                                     | 499 ++++++++--------
+ fs/pnode.h                                     |  28 +-
+ include/linux/mount.h                          |  24 +-
+ ipc/mqueue.c                                   |   2 +-
+ kernel/audit_tree.c                            |  63 +-
+ 12 files changed, 1214 insertions(+), 758 deletions(-)
+ create mode 100644 Documentation/filesystems/propagate_umount.txt
 
