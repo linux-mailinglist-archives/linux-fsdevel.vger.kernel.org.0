@@ -1,179 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-52518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89600AE3CDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0DBAE3CF7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4761897613
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 10:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42951898241
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 10:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7075241105;
-	Mon, 23 Jun 2025 10:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E1824BBEB;
+	Mon, 23 Jun 2025 10:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ameovWbR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBgxPFn0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D96C19D884;
-	Mon, 23 Jun 2025 10:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FB323A566;
+	Mon, 23 Jun 2025 10:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750674700; cv=none; b=IBMoFFRHnp+BafAkPc/u8rhylhHhOVDcRN9PVIH5D9nYz4Sbf383msxOMaqZfzoO+uIReiyCBL8c1FcvNykDnp0cr4phOCva40TRz+i6GHfiPrxrbfOIa192VicmgnYmNtwC099X2g8cNp6BmB9tktU2V+ckbhNd/GA5b52QeRk=
+	t=1750675001; cv=none; b=OhLDQE/POPqH0qebQRXvUuZnQ0H9jR8QY26cj2paZNQeWwUtOS2r+T69vhvZ0jtDANBVsbkU4K3DGeWlc53U2Dbk1btWHueiRKZdWrWFK5M78exgjJOwXdHMDaL+dWaSNbE7JljiiMaQ0eHBJM31Y5ne6WIg6NMdCEGa8Qv3kdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750674700; c=relaxed/simple;
-	bh=zR14Sx+DV7BezGwBN7A3uclQOZtBEScNi9Dy45H0Leo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U4gCP8wZGChGSKoL68wksNNRe+NgQk/plDaLDomZrrbfFGOmqLK2zWUqXSN215Ofmu0spJXewzUloTmYcHz0AfGlV7Ffc28phD/1k7/Fx0iOKIh4WJqKgg67tOiELbz14ZyuYtCfDrlmzVDRLEvAmbXV2Px/EQH9F0yta8I4E+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ameovWbR; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-609c6afade7so9293944a12.1;
-        Mon, 23 Jun 2025 03:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750674697; x=1751279497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lzc5aGq2nd6xkbCCMdYCK+R1xGiBpmTNhQcRaPuhm7s=;
-        b=ameovWbRje1qlc8gBuBzrMrG4eLl2UNMVes0Vs+rH3es28zUg1n1dZE1Oe55YiMHuk
-         ZW+soz5pZGzaOyASadO9F6CivpU7izE+Uy+gLjzFvbC8OaazhvrHrXM8BB83S+AThPKW
-         y+rak9sd5acp0tzwMRuJ+i+1rkbc0fL0t4f6y7VTA4xVsV078xAeSbN4QMbZEFniZxzA
-         s4iwH0fLvUgIBxfTLK3tFk4p/f7sBI0C9YNUDHImaWgUnRxayOiLtufgqRTzMrFsmLkZ
-         /1kuxAyze9OjmKFAYD7JXGVOpjr4rfWN0Z14NnARI6eOgV5ofR+6wqwMDV2tMi6a4Ion
-         P3Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750674697; x=1751279497;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lzc5aGq2nd6xkbCCMdYCK+R1xGiBpmTNhQcRaPuhm7s=;
-        b=jsMAoIvfPoEmWdn+t3M2MnQNauBxD5RDvPNMG9PF6pyh4Kk1lWNR9EtStNRPUG0QuA
-         6qZ11lyM++dfVbvFKmlQHSdgKspuLrxMXdMysiqYk9lkh78/u1dZVi/M7XqJ5FV5QKrD
-         0yc/TzGwY2R3KjPYGQ8U14fAz8GY5V6Yhem2/qx1nILJKE+ZJ6RgIyH/97jhWNBF2G/q
-         uzWMSOd9zFeujKuOAZp2HByaHit/TyVEfrXQJUMjoar8rL+x6TuJXYu0bxPTFaCsxakL
-         HR27K/YYICR42YMnF8vKC3L94aAq4y+hSTk+RLb4BLNKY5VqkX2HmQJ5kOISF79DtyhL
-         PI+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUjc45iM+w8hcNxDzncL5V0md97Lv2igL4I4Y8iLd1kKKm7GOALXgc9FcyGLuBuSXxv1zm5LCZZ03Gp5sXc@vger.kernel.org, AJvYcCXVr0XaleZJ2Mh39MGnzGLST3qBrm6pYmtv4taC8LCM1E99hNiseAQPlZEdsFr9p/Mj54ftxiYZryuU6O6MZg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YydPbcI9retLiRwjP7SR1MxDFt3xBNDvb2BiOk78r7zBYC9zHgg
-	7kippeUuZZZTD8WQpMfxvR4gaN7QeX8OlMHK8ceDidwcISGT0awoTFFjrOK1lqNlYKKpYFjuJvh
-	G1ip7RYCGKZV6oVALOU2SWi6sNOQxlnU=
-X-Gm-Gg: ASbGncuBL97CZKNZD9OYGH5zrWQ2cmL7PD6kswAjOhsfRrp5KtYghp65xKjRriXbAxH
-	Rsk1mbbRPeYXDKTHfHSPjBfVHbKcwLvmuh5f+ybcQkZfjAQdD3fKFw7Q+uMDjTUADnWTS0QlWcp
-	olbN+Hn4Gcht5gJB5i97lp6HcwQzda1Djcyi6uI13+33Y=
-X-Google-Smtp-Source: AGHT+IEms52oEr3JVkL1IOacj3hEWp8ZrHLCxAZMd3KVqRI2s6S2JpBt5EJcu8qAIZhvf6e2XDGFkCM7+EaRCHL2EYA=
-X-Received: by 2002:a17:907:1c27:b0:ad2:2fdb:b0ab with SMTP id
- a640c23a62f3a-ae05b03812dmr1015299766b.29.1750674696190; Mon, 23 Jun 2025
- 03:31:36 -0700 (PDT)
+	s=arc-20240116; t=1750675001; c=relaxed/simple;
+	bh=w6pvwl3k5rkevGAqH21SXhWyXflGQudzwBjIPtzZN6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GiBvzuVL61ayfK4SyQNsXkfpJs8Z655DEC9HT2qg1aj5/xRQe0t862mvoMe/LzmIgtp2uvlwZ+nLfIa56R+uggKm7I95+PGNPifuV0L1xW62eter2PDcJXeqYurWZwrggDdowUpRxaxd4QQ5y7XRwiZafjUzscLKP1jVrSBt3IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBgxPFn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30500C4CEF0;
+	Mon, 23 Jun 2025 10:36:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750675000;
+	bh=w6pvwl3k5rkevGAqH21SXhWyXflGQudzwBjIPtzZN6c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BBgxPFn0/oyWnNb5RevlYjEc+qF7N56LGvRp2mZMyHftFyNppP9S46UucePgr7tME
+	 rO3GIyLefgNv1z2uj/X0TxXVfWW6meqEfa4VYzi0A2v21Z0CGKAuJ1xLWyRF3NDSn9
+	 rwA9Ha9E2gH83p3gh+sBR/p4UTlxcI8z40JWmSnvbT+vyG5hh9kHwAmN/6HdgjZL1M
+	 yhx2slsO80w9eZ8QaLSch1VAMv+gFvTnOMyr8uKNkOMKQF2OoQ0QD0OfQnjirExUpe
+	 Z0Y4KCKsbnaYIvbWZlsjS97hdDLEho8wU00tYAd7gjUiw5HunxTFAOLsa+kWM0yY2a
+	 7CeTjMm8wfCLw==
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Jann Horn <jannh@google.com>,
+	Luca Boccassi <luca.boccassi@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] coredump: reduce stack usage in vfs_coredump()
+Date: Mon, 23 Jun 2025 12:36:23 +0200
+Message-ID: <20250623-handschuhe-insgeheim-3a47bbb06367@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250620112105.3396149-1-arnd@kernel.org>
+References: <20250620112105.3396149-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250602171702.1941891-1-amir73il@gmail.com> <oxmvu3v6a3r4ca26b4dhsx45vuulltbke742zna3rrinxc7qxb@kinu65dlrv3f>
- <CAOQ4uxicRiha+EV+Fv9iAbWqBJzqarZhCa3OjuTr93NpT+wW-Q@mail.gmail.com>
- <CAOQ4uxiNjZKonPKh7Zbz89TmSE67BVHmAtLMZGz=CazNAYRmGQ@mail.gmail.com> <20250623-analog-kolossal-4eee589ebb08@brauner>
-In-Reply-To: <20250623-analog-kolossal-4eee589ebb08@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 23 Jun 2025 12:31:24 +0200
-X-Gm-Features: AX0GCFsMwK-59QADWkE1qGMtJqkYYbAWCaH0CgJZOBmBb1nRGu-k8DwEQCSgY4U
-Message-ID: <CAOQ4uxjT9ffYX0gFPJw9_+ZtJL_-CaJik=v+rT7tek==hd4apQ@mail.gmail.com>
-Subject: Re: [PATCH v3] ovl: support layers on case-folding capable filesystems
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1406; i=brauner@kernel.org; h=from:subject:message-id; bh=w6pvwl3k5rkevGAqH21SXhWyXflGQudzwBjIPtzZN6c=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRE6hnufaF8z0Y+eMecWwXLm0+IHvbIMWHeXFARdOQw8 5R3mflxHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP5cJSRoWvpactyJskzixT8 Furx8vN7s6SXTuHpmM+Rf7lealHSR4b/mTGZSSdCPz9rXHU+yabh8PEvbvva7V5KL2IsfuHFppX LDgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 23, 2025 at 12:26=E2=80=AFPM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Sun, Jun 22, 2025 at 09:20:24AM +0200, Amir Goldstein wrote:
-> > On Mon, Jun 16, 2025 at 10:06=E2=80=AFAM Amir Goldstein <amir73il@gmail=
-.com> wrote:
-> > >
-> > > On Sun, Jun 15, 2025 at 9:20=E2=80=AFPM Kent Overstreet
-> > > <kent.overstreet@linux.dev> wrote:
-> > > >
-> > > > On Mon, Jun 02, 2025 at 07:17:02PM +0200, Amir Goldstein wrote:
-> > > > > Case folding is often applied to subtrees and not on an entire
-> > > > > filesystem.
-> > > > >
-> > > > > Disallowing layers from filesystems that support case folding is =
-over
-> > > > > limiting.
-> > > > >
-> > > > > Replace the rule that case-folding capable are not allowed as lay=
-ers
-> > > > > with a rule that case folded directories are not allowed in a mer=
-ged
-> > > > > directory stack.
-> > > > >
-> > > > > Should case folding be enabled on an underlying directory while
-> > > > > overlayfs is mounted the outcome is generally undefined.
-> > > > >
-> > > > > Specifically in ovl_lookup(), we check the base underlying direct=
-ory
-> > > > > and fail with -ESTALE and write a warning to kmsg if an underlyin=
-g
-> > > > > directory case folding is enabled.
-> > > > >
-> > > > > Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > > > > Link: https://lore.kernel.org/linux-fsdevel/20250520051600.190331=
-9-1-kent.overstreet@linux.dev/
-> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > ---
-> > > > >
-> > > > > Miklos,
-> > > > >
-> > > > > This is my solution to Kent's request to allow overlayfs mount on
-> > > > > bcachefs subtrees that do not have casefolding enabled, while oth=
-er
-> > > > > subtrees do have casefolding enabled.
-> > > > >
-> > > > > I have written a test to cover the change of behavior [1].
-> > > > > This test does not run on old kernel's where the mount always fai=
-ls
-> > > > > with casefold capable layers.
-> > > > >
-> > > > > Let me know what you think.
-> > > > >
-> > > > > Kent,
-> > > > >
-> > > > > I have tested this on ext4.
-> > > > > Please test on bcachefs.
-> > > >
-> > > > Where are we at with getting this in? I've got users who keep askin=
-g, so
-> > > > hoping we can get it backported to 6.15
-> > >
-> > > I'm planning to queue this for 6.17, but hoping to get an ACK from Mi=
-klos first.
-> > >
-> >
-> > Hi Christian,
-> >
-> > I would like to let this change soak in next for 6.17.
-> > I can push to overlayfs-next, but since you have some changes on vfs.fi=
-le,
-> > I wanted to consult with you first.
-> >
-> > The changes are independent so they could go through different trees,
-> > but I don't like that so much, so I propose a few options.
-> >
-> > 1. make vfs.file a stable branch, so I can base overlayfs-next on it
-> > 2. rename to vfs.backing_file and make stable
-> > 3. take this single ovl patch via your tree, as I don't currently have
-> >     any other ovl patches queued to 6.17
->
-> Let's start with 3. and switch to a stable branch on demand?
+On Fri, 20 Jun 2025 13:21:01 +0200, Arnd Bergmann wrote:
+> The newly added socket coredump code runs into some corner cases
+> with KASAN that end up needing a lot of stack space:
+> 
+> fs/coredump.c:1206:1: error: the frame size of 1680 bytes is larger than 1280 bytes [-Werror=frame-larger-than=]
+> 
+> Mark the socket helper function as noinline_for_stack so its stack
+> usage does not leak out to the other code paths. This also seems to
+> help with register pressure, and the resulting combined stack usage of
+> vfs_coredump() and coredump_socket() is actually lower than the inlined
+> version.
+> 
+> [...]
 
-works for me
+Applied to the vfs-6.17.coredump branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.coredump branch should appear in linux-next soon.
 
-Thanks,
-Amir.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.coredump
+
+[1/1] coredump: reduce stack usage in vfs_coredump()
+      https://git.kernel.org/vfs/vfs/c/fb82645d3f72
 
