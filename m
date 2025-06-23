@@ -1,177 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-52524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AEAAE3D2F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:48:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A8AAE3D41
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB3A188604E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 10:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5D916CB1C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 10:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C8B23E226;
-	Mon, 23 Jun 2025 10:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7lCO+rk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11F6239E65;
+	Mon, 23 Jun 2025 10:47:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FF0136988;
-	Mon, 23 Jun 2025 10:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id BCB12136988;
+	Mon, 23 Jun 2025 10:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750675676; cv=none; b=BhS8BEIO5QjEuBOpUlnJsal8F99bZeDOEsyAQj1gwfK/Vh6bjzwsyWAeIh1xcTKZTNltj9ZA9+Bc9f+fFYeupEGrs35YWF6skuoGLyWtGwtXG4ziPPN4/yRP8f5NHSRNHsUbzoSQpGAB0JJMq9c92VOczlijRXgytU8V9BdxvuY=
+	t=1750675665; cv=none; b=ZN4BRkW4fHKp/QBG8yIiUYHag3y31/ZRHUz8jgV+6EDIUNTBpsjNop8P0CtEee7JwwlN+aiDY40EZEMZubXIP28Y55F/lSnmRvfVQwnJNx3lcfrIFpWfsniBv8Z9o8U98sfKKzl5kCY6bgrLLUpnYQ+sLungg4Pn+La3kXNYeRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750675676; c=relaxed/simple;
-	bh=vaI9JbaFKhhNbfL3EiT6CpfhfHc/XVt+vnuH5ChGQ2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g1GywFLVOx9r3kaySZWBhhv8QTTfwgSvKuTRBynfqZKl38AG0Mrdtois8Jg3SuedZjPwrgGJ759inLgGvJJl0WKaFH52O45aQjMTOH+k6sYdvpsN6SBZWwTtiVp342wNE7qydsuWSfsXGibepQLEKo9+GP4mb+bcZYnGzgWqT78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7lCO+rk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2F7C4CEF1;
-	Mon, 23 Jun 2025 10:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750675675;
-	bh=vaI9JbaFKhhNbfL3EiT6CpfhfHc/XVt+vnuH5ChGQ2o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b7lCO+rkZfha5OkwQI2AxXKyczCj80cT2NHRXpoSBK/KFuE980LACZ966Ktf6Frhb
-	 D6JFf5l3uNV8TKf1Lso9HNIMgZYBTJy0VmCqIo5YzPD0T4E5RzsEraPeo1TERBOiBe
-	 uTcVgBIvskm1u0sYg/4+VX4rrzPYKzSRXO7u4sDOl73xVsFORCeTXWIjRa9NZtBON6
-	 CzWMgaj53gWBJddS72rFl/tzbBqMWTppxR7smR+HB+TjXjR7CgNZFdKUxw5C/CpMeO
-	 wKiwRU22qiMQK8S/pnZp/IuiwheMKF18FwVsFxs7jiYypTApeeVXa4pJCtBC5aKeL+
-	 UCx+ilau5wxnA==
-From: Christian Brauner <brauner@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-xfs@vger.kernel.org,
+	s=arc-20240116; t=1750675665; c=relaxed/simple;
+	bh=yY64zDwdRCY42XgnhSwxhXqXaXXDuygVgFzhpdlOqD0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=toLHrg2eUFl9XuEYAAeTcr2TQEHj7D7FkUuXinHJbpQgbvbsxtRiMB1uw5IKQQo4KbsGHkeUux9NhaSiT3lB40CC+psjrouVzYW1SV70u6chCB/97eg/cBVyfpRshHk7JLyNJjuM2UjaM5W0RLnkPthSmgxwhi8JljNzEUzL6ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 75C08602FE8D8;
+	Mon, 23 Jun 2025 18:47:29 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: akpm@linux-foundation.org,
+	bhe@redhat.com,
+	vgoyal@redhat.com,
+	dyoung@redhat.com
+Cc: Su Hui <suhui@nfschina.com>,
+	kexec@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	djwong@kernel.org,
-	john.g.garry@oracle.com,
-	bmarzins@redhat.com,
-	chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com,
-	martin.petersen@oracle.com,
-	yi.zhang@huawei.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com,
 	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
-Date: Mon, 23 Jun 2025 12:46:54 +0200
-Message-ID: <20250623-woanders-allabendlich-f87ae2d9c704@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
-References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
+Date: Mon, 23 Jun 2025 18:47:05 +0800
+Message-Id: <20250623104704.3489471-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4373; i=brauner@kernel.org; h=from:subject:message-id; bh=OinsHwHlIaW6oGbcffOJfdJKYbQ2uEC1ci1r6m7GeH0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREGix/nvp5ld7fB65PPklO87v6O/f5D4/KcwUn71wJ5 7Vb5xff01HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRD18YGR4VrfgeVsV69OJK J4uDihukLdR8nao/PFXYPlvhrhG3bQojw4QTkzVm7196Yef0s6x+i0yz3+/Xk/fbUVW0+pff25N fPDgB
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 19 Jun 2025 19:17:57 +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Changes since v1:
->  - Rebase codes on 6.16-rc2.
->  - Use max_{hw|user}_wzeroes_unmap_sectors queue limits instead of
->    BLK_FEAT_WRITE_ZEROES_UNMAP feature to represent the status of the
->    unmap write zeroes operation as Christoph and Darrick suggested. This
->    redoes the first 5 patches, so remove all the reviewed-by tags,
->    please review them again.
->  - Simplify the description of FALLOC_FL_WRITE_ZEROES in patch 06 as
->    Darrick suggested.
->  - Revise the check order of FALLOC_FL_WRITE_ZEROES in patch 08 as
->    Christoph suggested.
-> Changes since RFC v4:
->  - Rebase codes on 6.16-rc1.
->  - Add a new queue_limit flag, and change the write_zeroes_unmap sysfs
->    interface to RW mode. User can disable the unmap write zeroes
->    operation by writing '0' to it when the operation is slow.
->  - Modify the documentation of write_zeroes_unmap sysfs interface as
->    Martin suggested.
->  - Remove the statx interface.
->  - Make the bdev and ext4 don't allow to submit FALLOC_FL_WRITE_ZEROES
->    if the block device does not enable the unmap write zeroes operation,
->    it should return -EOPNOTSUPP.
-> Changes sicne RFC v3:
->  - Rebase codes on 6.15-rc2.
->  - Add a note in patch 1 to indicate that the unmap write zeros command
->    is not always guaranteed as Christoph suggested.
->  - Rename bdev_unmap_write_zeroes() helper and move it to patch 1 as
->    Christoph suggested.
->  - Introduce a new statx attribute flag STATX_ATTR_WRITE_ZEROES_UNMAP as
->    Christoph and Christian suggested.
->  - Exchange the order of the two patches that modified
->    blkdev_fallocate() as Christoph suggested.
-> Changes since RFC v2:
->  - Rebase codes on next-20250314.
->  - Add support for nvme multipath.
->  - Add support for NVMeT with block device backing.
->  - Clear FALLOC_FL_WRITE_ZEROES if dm clear
->    limits->max_write_zeroes_sectors.
->  - Complement the counterpart userspace tools(util-linux and xfs_io)
->    and tests(blktests and xfstests), please see below for details.
-> Changes since RFC v1:
->  - Switch to add a new write zeroes operation, FALLOC_FL_WRITE_ZEROES,
->    in fallocate, instead of just adding a supported flag to
->    FALLOC_FL_ZERO_RANGE.
->  - Introduce a new flag BLK_FEAT_WRITE_ZEROES_UNMAP to the block
->    device's queue limit features, and implement it on SCSI sd driver,
->    NVMe SSD driver and dm driver.
->  - Implement FALLOC_FL_WRITE_ZEROES on both the ext4 filesystem and
->    block device (bdev).
-> 
-> [...]
+There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
+type from 'size_t' to 'unsigned int' for the consistency of data->size.
+Return -ENOMEM directly rather than goto the label to simplify the code.
+Using scoped_guard() to simplify the lock/unlock code.
 
-If needed, the branch can be declared stable and thus be used as base
-for other work.
-
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
+ fs/proc/vmcore.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
 
-Applied to the vfs-6.17.fallocate branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.fallocate branch should appear in linux-next soon.
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index 10d01eb09c43..9ac2863c68d8 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -1477,7 +1477,7 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+ {
+ 	struct vmcoredd_node *dump;
+ 	void *buf = NULL;
+-	size_t data_size;
++	unsigned int data_size;
+ 	int ret;
+ 
+ 	if (vmcoredd_disabled) {
+@@ -1490,10 +1490,8 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+ 		return -EINVAL;
+ 
+ 	dump = vzalloc(sizeof(*dump));
+-	if (!dump) {
+-		ret = -ENOMEM;
+-		goto out_err;
+-	}
++	if (!dump)
++		return -ENOMEM;
+ 
+ 	/* Keep size of the buffer page aligned so that it can be mmaped */
+ 	data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
+@@ -1519,21 +1517,18 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+ 	dump->size = data_size;
+ 
+ 	/* Add the dump to driver sysfs list and update the elfcore hdr */
+-	mutex_lock(&vmcore_mutex);
+-	if (vmcore_opened)
+-		pr_warn_once("Unexpected adding of device dump\n");
+-	if (vmcore_open) {
+-		ret = -EBUSY;
+-		goto unlock;
+-	}
+-
+-	list_add_tail(&dump->list, &vmcoredd_list);
+-	vmcoredd_update_size(data_size);
+-	mutex_unlock(&vmcore_mutex);
+-	return 0;
++	scoped_guard(mutex, &vmcore_mutex) {
++		if (vmcore_opened)
++			pr_warn_once("Unexpected adding of device dump\n");
++		if (vmcore_open) {
++			ret = -EBUSY;
++			goto out_err;
++		}
+ 
+-unlock:
+-	mutex_unlock(&vmcore_mutex);
++		list_add_tail(&dump->list, &vmcoredd_list);
++		vmcoredd_update_size(data_size);
++		return 0;
++	}
+ 
+ out_err:
+ 	vfree(buf);
+-- 
+2.30.2
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.fallocate
-
-[1/9] block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits
-      https://git.kernel.org/vfs/vfs/c/2695a9b086fd
-[2/9] nvme: set max_hw_wzeroes_unmap_sectors if device supports DEAC bit
-      https://git.kernel.org/vfs/vfs/c/bf07c1180194
-[3/9] nvmet: set WZDS and DRB if device enables unmap write zeroes operation
-      https://git.kernel.org/vfs/vfs/c/a6c7ab5adcba
-[4/9] scsi: sd: set max_hw_wzeroes_unmap_sectors if device supports SD_ZERO_*_UNMAP
-      https://git.kernel.org/vfs/vfs/c/92372ed1cc88
-[5/9] dm: clear unmap write zeroes limits when disabling write zeroes
-      https://git.kernel.org/vfs/vfs/c/e383d550e716
-[6/9] fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
-      https://git.kernel.org/vfs/vfs/c/1ed1b5df86ec
-[7/9] block: factor out common part in blkdev_fallocate()
-      https://git.kernel.org/vfs/vfs/c/96433508c8c0
-[8/9] block: add FALLOC_FL_WRITE_ZEROES support
-      https://git.kernel.org/vfs/vfs/c/2b4e5f9b3eb9
-[9/9] ext4: add FALLOC_FL_WRITE_ZEROES support
-      https://git.kernel.org/vfs/vfs/c/51954e469396
 
