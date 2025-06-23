@@ -1,110 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-52529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6EAAE3D9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 13:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3599AAE3DAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 13:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6274818895AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 11:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382FA189405B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 11:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6555723D28B;
-	Mon, 23 Jun 2025 11:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392F023D284;
+	Mon, 23 Jun 2025 11:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPkM7kW6"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MkCSdvc7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uay9gry2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MkCSdvc7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uay9gry2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823C182D2;
-	Mon, 23 Jun 2025 11:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5301E492D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 11:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750676632; cv=none; b=EvTsuLOG3zE0ZNxvmoHQXIoRoW5yFy3gLDPJ2VERxiTIMcuOcDfZcj6ZwABY1aeQ6vy+3aazaFBkmHEfBhggx6C/T9wjsI49pjWzXDf5ut4+miR6v3OXcuBGo0B2NsJFkOu0muUdGCygj8ASH19oBK+Z3GW8QMgIZuLPLMpodnc=
+	t=1750676983; cv=none; b=aMtbAdsQ4I+3DB93ElsCkyQK0E4sFs7hW4/qg4VfSnzuourb041sC34H0xSsY1ayIRBewbMgljkjQy5v0fgCCf/WcKfwDHzYrUKJLg2u6p+e2iKKT9511OR6CTHyGzoXFhCxrKNbYlOFsF+h547ObAdD1W7DzJgaurjmFRqgSn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750676632; c=relaxed/simple;
-	bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RUPTuXQostWICFFRU0HaPuGx9AvRgBXXxXSUCcdQQJwvDMNCVy0n/rnAvaLGYVuEbxQgxb+AbMpe6dzOLeMD29N7e8uQj41FTltLrxDAZvEobRdlntNO3UD0Jn53qg8jFNgeY3HlKHtm2BMIAk4JMbOawcYdDwxs9PpefVUWjVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPkM7kW6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1349BC4CEF1;
-	Mon, 23 Jun 2025 11:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750676632;
-	bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sPkM7kW6RGrImFy4retADz8t+GdHqqKsxHHgKwTWXDGsQDDnzvOhdlnWWDf3vYyin
-	 WXBGPLlYBeEQM3HKRxHMyatg8D7d2b7tGe+ORCrieFvWcvXnvZ9IoS0Oy+h/1SnDiS
-	 z8LFpdON2a8hlvSXKs3oxx72CthgJWiE6uiYkdX3Svut5axsWXHcGk20/N8uSLIRVC
-	 SNUgK5fb0corWQ7I8k2kxvURjaai3T3veCyQ06s7vN2qasHg+YgW0ShKH6GoPnoARO
-	 bN8d62PvTc2Y3ACPqS77nFOJv7jiegTXZh09BbEdVyEegnyKbHv/+Xk1tyVIaH6W6C
-	 yIhmWyM20aEDQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	gregkh@linuxfoundation.org,
-	tj@kernel.org,
-	daan.j.demeyer@gmail.com,
-	bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 bpf-next 0/4] Introduce bpf_cgroup_read_xattr
-Date: Mon, 23 Jun 2025 13:03:22 +0200
-Message-ID: <20250623-rebel-verlust-8fcd4cdd9122@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250623063854.1896364-1-song@kernel.org>
-References: <20250623063854.1896364-1-song@kernel.org>
+	s=arc-20240116; t=1750676983; c=relaxed/simple;
+	bh=byy6HnLzr4XvDPSgzzx70dttPtAqJtwCULtJrfZmBew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rebLpBJ/Y1DmIM0N37RBTthQOGiHJiD97FIXWcLTHSao5du15k5sTPvqLxKfg9GPUyN/XhkDn5uO0PHeOvHXQ7SIiYF7DVGr2u9pj7UbkzxSem+DU3vPgHDoowyo9S0MIoZFDk5eOs9IGa/tR5+tfWNIW2NwprCJFw4Qjh2Ui/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MkCSdvc7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uay9gry2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MkCSdvc7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uay9gry2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3D1551F385;
+	Mon, 23 Jun 2025 11:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750676980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9U/dY0NffF2ZhRrdLHT5QYYMdU9TDrPPd+rd5Jk1UWM=;
+	b=MkCSdvc7q15FJRiEvoEEZ2UGCiZb3KxDxpQ6euI6GwjVEbA1vGRzfyAsaLUTzUiPpXVLJc
+	qBXQfDHc+oN9ZvlWkC6i2kEdKI4ocX0Db+lCjjk3zrgjQh41o99t0FnOFMMlC3r38CgfnO
+	D3cq82do29o+D2IcQvXgdv5670jPIVY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750676980;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9U/dY0NffF2ZhRrdLHT5QYYMdU9TDrPPd+rd5Jk1UWM=;
+	b=uay9gry24POaaD+iZ24WM5IzdC+GWYiMzhXR5elcuQrXFuWrCiE12UncOaIUsUkoF2InjK
+	xX0PSHEdWvWXAOAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MkCSdvc7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=uay9gry2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750676980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9U/dY0NffF2ZhRrdLHT5QYYMdU9TDrPPd+rd5Jk1UWM=;
+	b=MkCSdvc7q15FJRiEvoEEZ2UGCiZb3KxDxpQ6euI6GwjVEbA1vGRzfyAsaLUTzUiPpXVLJc
+	qBXQfDHc+oN9ZvlWkC6i2kEdKI4ocX0Db+lCjjk3zrgjQh41o99t0FnOFMMlC3r38CgfnO
+	D3cq82do29o+D2IcQvXgdv5670jPIVY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750676980;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9U/dY0NffF2ZhRrdLHT5QYYMdU9TDrPPd+rd5Jk1UWM=;
+	b=uay9gry24POaaD+iZ24WM5IzdC+GWYiMzhXR5elcuQrXFuWrCiE12UncOaIUsUkoF2InjK
+	xX0PSHEdWvWXAOAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3023B13A27;
+	Mon, 23 Jun 2025 11:09:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /gy8C/Q1WWhlKgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 23 Jun 2025 11:09:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C58B8A2A00; Mon, 23 Jun 2025 13:09:39 +0200 (CEST)
+Date: Mon, 23 Jun 2025 13:09:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Junxuan Liao <ljx@cs.wisc.edu>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] docs/vfs: update references to i_mutex to i_rwsem
+Message-ID: <bi5e6qyg6htcmuocfahgvwxx2djxyeorhlc425y72pggmvw4hi@dzfheotxoz7j>
+References: <72223729-5471-474a-af3c-f366691fba82@cs.wisc.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1306; i=brauner@kernel.org; h=from:subject:message-id; bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREmvQxxkmWnyiY9b4jkN35i/uWIpeicHWmWex96+5JF 9YafDDsKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmIh1GyPDowk9n9dHRU9IrLZ0 rp9+zKBUn7/Terd+fuJpbaXy+wEyDP/snW/sa9WpmOUTMm9P8Cmno1zhJZoq86JX+DoUMp0IZGU AAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72223729-5471-474a-af3c-f366691fba82@cs.wisc.edu>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 3D1551F385
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On Sun, 22 Jun 2025 23:38:50 -0700, Song Liu wrote:
-> Introduce a new kfunc bpf_cgroup_read_xattr, which can read xattr from
-> cgroupfs nodes. The primary users are LSMs, cgroup programs, and sched_ext.
+On Sun 22-06-25 23:01:32, Junxuan Liao wrote:
+> VFS has switched to i_rwsem for ten years now (9902af79c01a: parallel
+> lookups actual switch to rwsem), but the VFS documentation and comments
+> still has references to i_mutex.
 > 
+> Signed-off-by: Junxuan Liao <ljx@cs.wisc.edu>
 
-Applied to the vfs-6.17.bpf branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.bpf branch should appear in linux-next soon.
+One comment below. Christian, can you please fix it up? Otherwise feel free
+to add:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> index fd32a9a17bfb..dd9da7e04a99 100644
+> --- a/Documentation/filesystems/vfs.rst
+> +++ b/Documentation/filesystems/vfs.rst
+> @@ -758,8 +758,9 @@ process is more complicated and uses write_begin/write_end or
+>  dirty_folio to write data into the address_space, and
+>  writepages to writeback data to storage.
+>  
+> -Adding and removing pages to/from an address_space is protected by the
+> -inode's i_mutex.
+> +Removing pages from an address_space requires holding the inode's i_rwsem
+> +exclusively, while adding pages to the address_space requires holding the
+> +inode's i_mapping->invalidate_lock exclusively.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+I wasn't probably precise enough in my previous comment. This paragraph
+should be:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.bpf
+Removing pages from an address_space requires holding the inode's i_rwsem
+exclusively and i_mapping->invalidate_lock exclusively. Adding pages to the
+address_space requires either holding inode's i_rwsem exclusively or
+i_mapping->invalidate_lock in shared mode.
 
-[1/4] kernfs: remove iattr_mutex
-      https://git.kernel.org/vfs/vfs/c/d1f4e9026007
-[2/4] bpf: Introduce bpf_cgroup_read_xattr to read xattr of cgroup's node
-      https://git.kernel.org/vfs/vfs/c/535b070f4a80
-[3/4] bpf: Mark cgroup_subsys_state->cgroup RCU safe
-      https://git.kernel.org/vfs/vfs/c/1504d8c7c702
-[4/4] selftests/bpf: Add tests for bpf_cgroup_read_xattr
-      https://git.kernel.org/vfs/vfs/c/f4fba2d6d282
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
