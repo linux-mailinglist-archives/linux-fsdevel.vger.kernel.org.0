@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-52562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067FCAE4160
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 14:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F364EAE4180
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 15:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5573A3746
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 179D83AA254
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 13:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AF724C68D;
-	Mon, 23 Jun 2025 12:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86796248882;
+	Mon, 23 Jun 2025 13:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIe5k82e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGv81Cd+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320C0248F63;
-	Mon, 23 Jun 2025 12:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40B11EF38E;
+	Mon, 23 Jun 2025 13:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750683395; cv=none; b=rrW//STmZrwNX4KgMLM8oTs+sRVCEqzVGII2f3RvAxsLfqyqaEiFSRQwD6aROyl2VnIvzkawskg4aN6YFx6GEb7N7lPyeJHvOTT+PaXIZk7Vb9qs0/FZEFJppap3m715eHTKeR4ZAhHCwaWuQBwEHoGUDVhX0ULpFsZakNE3PEw=
+	t=1750683648; cv=none; b=UgqVObia669YIC205jBG6UDu+9Yg+bgUa49N+SVK8NZGoX03Bhpld1yzRWeY9ASdh6ZOjrFfWXQLkFc93up4a1mSW9dP3SIHxoSH4u79FZZ/m7N3K1yl2XkiwQzfXEhvuPhJcDzyueNk2vye2+yV7boPU+JTY3yO4eEFqIDfUVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750683395; c=relaxed/simple;
-	bh=/Ru9AP2QGbA67LIOI47cR1sT7LARCHOvoI+J1683xFg=;
+	s=arc-20240116; t=1750683648; c=relaxed/simple;
+	bh=HHeSa0K3f0CqWQR6qvhRszU4bklGUN5r7edjrf1akig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTcnD81LR5jeWtuCo6TDqlnhrUTSYIAuWeDYAH1ZaSlmn8ZqCl3GfAprH10ETxEfLxTU89wm/2RCjH5Eyg2Jz16aDUEGVAByRM/sLNGJ/2ZmES0gU8iInw23bbsOYXgGq5nwo8vaf6fQSQmZUaMCk6seWdpm+mPjfwDflB3sOaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIe5k82e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06BD8C4CEEA;
-	Mon, 23 Jun 2025 12:56:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Na5PuHlBpVb0qDYFvyNEmfj9WPIzMGUsaLOgkkeD8iLsRO/Kj9uWxfjZc+xHuZl05TNuAIVK0xDZimuhP0fr1kCsfcYTKaaQGHEsws6dlRaOVYZbg7kvm9WBEhwzcGyyETwd1NjJ4q5lAk5J/Te3tGPhJvdyTJ4UEbzMp8IwS6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGv81Cd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 837D4C4CEEA;
+	Mon, 23 Jun 2025 13:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750683394;
-	bh=/Ru9AP2QGbA67LIOI47cR1sT7LARCHOvoI+J1683xFg=;
+	s=k20201202; t=1750683647;
+	bh=HHeSa0K3f0CqWQR6qvhRszU4bklGUN5r7edjrf1akig=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oIe5k82e1gXkUxRcP5vq15pTzRC8oSL8F1QZIZfAffKflmpHK5GKO5TxIz3Ye6p29
-	 Klz/FHt2tyxSmLlxQRa4H4Xeg4+CEKxJERBrUNXsLjuu4CTMOdbl7u1lYY3A7d72RW
-	 EXuM3kuUxcW4C5hJ91Yao1xaTeW4Go4ov4umKihyVUQ5AH5ZidxppOrocc1uofjvnz
-	 3paZ/GqgH72ywIPlJLkLqw8kgC0WUIXBo3F6FF9Z7VgKU/o42jaoZyJT7KySqZSi8o
-	 R0w5KO7kHwibgOh3GqwyFIHE/lEWvBY3VJ1mVjECiuztSo6l9G/opO5OQjo630JoEj
-	 1PAKIuqt1oPtw==
-Date: Mon, 23 Jun 2025 14:56:28 +0200
+	b=dGv81Cd+WesSSCBOQFcKtSK7Wx7AemYdUzn7CkRGReYGJKXHShrYuGJDecPso9yAm
+	 p2ytr84IIyewJ8QTe+ajZWupsvTk/hEh2tn2/K+odLzEGLU8Ekeif/U6yY50Mh8Ff/
+	 gShIoL7eECGb1liadOAMsUeSxFlvNWDL3KOJZ0R0LXQGp4ws9/JEhy6QEXDa4y8Vgg
+	 M6smpb4dbzevrC5Pyb4v8eWMirO+D7OBLDvFnzHSIHvKhBO/aQ2muNqVdJq26xGzHQ
+	 g+och14EaKh5YNOXcZFSioahr2L/Dm5cITA0zp159oSsuZl/i4h7/1psaQ9j0R7+7c
+	 W7dkz7mu8nIng==
+Date: Mon, 23 Jun 2025 15:00:43 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	Jeff Layton <jlayton@kernel.org>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: next-20250623: arm64 devices kernel panic Internal error Oops at
- pidfs_free_pid (fs/pidfs.c:162)
-Message-ID: <20250623-salat-kilowatt-3368c5e29631@brauner>
-References: <CA+G9fYt0MfXMEKqHKHrdfqg3Q5NgQsuG1f+cXRt83d7AscX5Fw@mail.gmail.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 8/9] fhandle, pidfs: support open_by_handle_at() purely
+ based on file handle
+Message-ID: <20250623-notstand-aufkreuzen-7e558b3b8f7e@brauner>
+References: <20250623-work-pidfs-fhandle-v1-0-75899d67555f@kernel.org>
+ <20250623-work-pidfs-fhandle-v1-8-75899d67555f@kernel.org>
+ <ipk5yr7xxdmesql6wqzlbs734jjvn3had5vzqrck6e2ke4zanu@6sotvp4bd5lu>
+ <20250623-wegnehmen-fragen-9dfdfdf0b2af@brauner>
+ <CAOQ4uxjZy8tc_tOChJ_r_FPkUxE0qrz0CxmKeJj2MZ7wyhLpBw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,59 +63,88 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYt0MfXMEKqHKHrdfqg3Q5NgQsuG1f+cXRt83d7AscX5Fw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjZy8tc_tOChJ_r_FPkUxE0qrz0CxmKeJj2MZ7wyhLpBw@mail.gmail.com>
 
-On Mon, Jun 23, 2025 at 05:29:38PM +0530, Naresh Kamboju wrote:
-> Regressions on arm64 devices and qemu-arm64 while running LTP controllers
-> and selftests cgroup test cases the following kernel Panic Internal error oops
-> found on the Linux next-20250623 tag.
+On Mon, Jun 23, 2025 at 02:54:00PM +0200, Amir Goldstein wrote:
+> On Mon, Jun 23, 2025 at 2:25 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Mon, Jun 23, 2025 at 02:06:43PM +0200, Jan Kara wrote:
+> > > On Mon 23-06-25 11:01:30, Christian Brauner wrote:
+> > > > Various filesystems such as pidfs (and likely drm in the future) have a
+> > > > use-case to support opening files purely based on the handle without
+> > > > having to require a file descriptor to another object. That's especially
+> > > > the case for filesystems that don't do any lookup whatsoever and there's
+> > > > zero relationship between the objects. Such filesystems are also
+> > > > singletons that stay around for the lifetime of the system meaning that
+> > > > they can be uniquely identified and accessed purely based on the file
+> > > > handle type. Enable that so that userspace doesn't have to allocate an
+> > > > object needlessly especially if they can't do that for whatever reason.
+> > > >
+> > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > >
+> > > Hmm, maybe we should predefine some invalid fd value userspace should pass
+> > > when it wants to "autopick" fs root? Otherwise defining more special fd
+> > > values like AT_FDCWD would become difficult in the future. Or we could just
+> >
+> > Fwiw, I already did that with:
+> >
+> > #define PIDFD_SELF_THREAD               -10000 /* Current thread. */
+> > #define PIDFD_SELF_THREAD_GROUP         -20000 /* Current thread group leader. */
+> >
+> > I think the correct thing to do would have been to say anything below
+> >
+> > #define AT_FDCWD                -100    /* Special value for dirfd used to
+> >
+> > is reserved for the kernel. But we can probably easily do this and say
+> > anything from -10000 to -40000 is reserved for the kernel.
+> >
+> > I would then change:
+> >
+> > #define PIDFD_SELF_THREAD               -10000 /* Current thread. */
+> > #define PIDFD_SELF_THREAD_GROUP         -10001 /* Current thread group leader. */
+> >
+> > since that's very very new and then move
+> > PIDFD_SELF_THREAD/PIDFD_SELF_THREAD_GROUP to include/uapi/linux/fcntl.h
+> >
+> > and add that comment about the reserved range in there.
+> >
+> > The thing is that we'd need to enforce this on the system call level.
+> >
+> > Thoughts?
+> >
+> > > define that FILEID_PIDFS file handles *always* ignore the fd value and
+> > > auto-pick the root.
+> >
+> > I see the issue I don't think it's a big deal but I'm open to adding:
+> >
+> > #define AT_EBADF -10009 /* -10000 - EBADF */
+> >
+> > and document that as a stand-in for a handle that can't be resolved.
+> >
+> > Thoughts?
 > 
-> Regressions found on arm64 device
->   - Kernel Panic Internal oops @ LTP controllers
->   - Kernel Panic Internal oops @ selftest cgroups
+> I think the AT prefix of AT_FDCWD may have been a mistake
+> because it is quite easy to confuse this value with the completely
+> unrelated namespace of AT_ flags.
 > 
-> Test environments:
->  - Dragonboard-410c
->  - e850-96
->  - FVP
->  - Juno-r2
->  - rk3399-rock-pi-4b
->  - qemu-arm64
-> 
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducibility? Yes
-> 
-> Boot regression: arm64 devices kernel panic Internal error Oops at
-> pidfs_free_pid (fs/pidfs.c:162)
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Test log
-> [   67.087303] Internal error: Oops: 0000000096000004 [#1]  SMP
-> [   67.094021] Modules linked in: snd_soc_hdmi_codec venus_enc
-> venus_dec videobuf2_dma_contig pm8916_wdt qcom_wcnss_pil
-> coresight_cpu_debug coresight_tmc coresight_replicator qcom_camss
-> coresight_stm snd_soc_lpass_apq8016 msm qrtr coresight_funnel
-> snd_soc_msm8916_digital snd_soc_lpass_cpu coresight_tpiu
-> snd_soc_msm8916_analog videobuf2_dma_sg stm_core coresight_cti
-> snd_soc_lpass_platform snd_soc_apq8016_sbc venus_core
-> snd_soc_qcom_common qcom_q6v5_mss v4l2_fwnode coresight snd_soc_core
-> qcom_pil_info v4l2_async snd_compress llcc_qcom snd_pcm_dmaengine
-> ocmem qcom_q6v5 v4l2_mem2mem videobuf2_memops snd_pcm qcom_sysmon
-> drm_exec adv7511 snd_timer videobuf2_v4l2 gpu_sched qcom_common snd
-> videodev drm_dp_aux_bus qcom_glink_smem soundcore qcom_spmi_vadc
-> mdt_loader drm_display_helper qnoc_msm8916 qmi_helpers
-> videobuf2_common qcom_vadc_common qcom_spmi_temp_alarm rtc_pm8xxx
-> qcom_pon qcom_stats mc cec drm_client_lib qcom_rng rpmsg_ctrl
-> display_connector rpmsg_char phy_qcom_usb_hs socinfo drm_kms_helper
-> rmtfs_mem ramoops
-> [   67.094437]  reed_solomon fuse drm backlight ip_tables x_tables
-> [   67.189084] CPU: 3 UID: 0 PID: 0 Comm: swapper/3 Not tainted
-> 6.16.0-rc3-next-20250623 #1 PREEMPT
-> [   67.194810] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-> [   67.234078] pc : pidfs_free_pid (fs/pidfs.c:162)
+> This is a null dirfd value. Is it not?
 
-Thanks, I see the issue. I'm pushing out a fix. Please let me know if
-that reproduces in the next few days.
+Not necessarily dirfd. We do allow direct operations of file descriptor
+of any type. For example, in the mount api where you can mount files
+onto other files.
+
+> 
+> FD_NULL, FD_NONE?
+
+FD_INVALID, I think.
+
+> 
+> You could envision that an *at() syscalls could in theory accept
+> (FD_NONE , "/an/absolute/path/only", ...
+> 
+> or MOUNTFD_NONE if we want to define a constant specifically for
+> this open_by_handle_at() extension.
+
+I think this is useful beyond open_by_handle_at().
 
