@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-52448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D244AE3477
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B5BAE3482
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB29C1890588
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:55:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E7C189058D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E98A1C7015;
-	Mon, 23 Jun 2025 04:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8074C1EFF80;
+	Mon, 23 Jun 2025 04:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cA4wxhsG"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ObB9WOPg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD421C862E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2FA1C863A
 	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 04:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750654473; cv=none; b=ebJv4GaaebzwllTgMwHenUQj5YT5ER6heOom0xkyM8qhai+lfh9rQxOl9sjYt4SnxLVIZcBVmopPn7c6Wa5fs8pwcDrSNVc1asnyWeL91KDK5lXe4rRnENHVkzjr538IVzCwXpaIK5fAaAw9u+nWbX0P1dAkd4jqD5YYcO2UUKk=
+	t=1750654475; cv=none; b=CjzbPSJibv/ZJ1jqZWFDMgen2yce6Io3367BE17untdM+VUJymfSyJO99gikIpRfbfhleYU1jxXSytaYuTP4+NrdtWut5BwMrbR4Ety9W+R4U0Nc7f1EaubVtADNkOiR+4Ep6ICI044ttnfHdwWk0cPTgVsW4FwXexA8/MX+/Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750654473; c=relaxed/simple;
-	bh=S7RzLJxFt3UztntFfrhUh6CwJyDCSNpIbFlQ4DG+/n0=;
+	s=arc-20240116; t=1750654475; c=relaxed/simple;
+	bh=MTIJEdaX7RY6spuI30YUJ423lndcAW/6Aq2e32Fxx4M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZXdB9/2ErvO9ucHb4PsznQTSGw49E7Gmv0qIqUcezkoPVHArNJoaTjM0tTe07QSSUjOIPgA4fUyBrp/8t/QAPpoahKyoLgHnQKWK0IYCH0VV4KrHzAXs2wzVYy2k8dklMA/+GcQlNcynPDlWj3J4t4J3NTn8hNs2gKyJwlxuLJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cA4wxhsG; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=HoKsgabmynK0JnlZX0TEL6VNlXNzGEmBjjCHDmKdq8LpY7WyArLKfXejjp1ibv80Cq64d160kgeF6lo2KLfJrNfH/gYLcW1u8hDgqmHB+qWfjnATzewKK/08z8+myVw3LeOCXZOe4ucYpVVQp86CTPr35Mo0HYQ5bg5o7IAuhYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ObB9WOPg; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Lrt5f9OWismStNyfR2DEXwTAgWXt+uVZ/i6Bxh55Z9E=; b=cA4wxhsGr9741c/kHY7fESvNTt
-	u28vsnm748dlo6BmgORGM5+Gkk6s+CV0CpAnr7Gx2hm6Szgb4WBPu8WUEU8a8m7EyRyxNOguk4Rka
-	am6Aa3ZL/4hIpeqoBSSTUmsAddt+n9c9YSSgz0X703E86EKxSz7JdzxJK3Btb6kXCt2hAEL6bK9/7
-	p+ngW/u25Wngs8p0ukuB0FBFoL6Py/oQkgS/QMVEDhmxX4hgwC+6GWtnZoTL1k3YtkeXQvMTltgvM
-	ZSkg9L8D9ODsshMdUKW42J5Sdyrud97X00NHlC6FxFgyZvcyZlVGTSZEzD8sGoog1LqEtOJx7/0qK
-	+0Mh5qNQ==;
+	bh=4dzTPQciaosLMooPxGjtaU2Jgy+fhtIq0rv0jjMuwbc=; b=ObB9WOPgLNJFwmZKHfjRzUAfYD
+	f2h8NP+Stzd1FajQlNoH/wPbRLg3sdsAJBGhWsOl2urNV1NMJ2+2dnuFa28T5HoTNjoi+HXMmr6+C
+	HnUplEze32I7tBUzIEUqiVVokqeUI6/yb0B770GvBwMDWXlJhnxInl8vKAZXHTsaQhBgTYAAYtfK2
+	HSQn3zQoAu3XQEGwTC2k8ARmBC7Pg5ZrM7D3KvAPYzKLYa4yqo8r84j4TBrm1lK6tHnL0atI/MM1G
+	l8F8ZEQU7R6B2C12SqE1ErbI1FHdSqxzBlaHdfDUuaMtwkWTWDO5wI5yfArnfwpnZi3zQfae59TZi
+	wYkvZB9g==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTZCQ-00000005Kqd-0DLc;
+	id 1uTZCQ-00000005Kqn-17XD;
 	Mon, 23 Jun 2025 04:54:30 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: brauner@kernel.org,
 	ebiederm@xmission.com,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 15/35] clone_mnt(): simplify the propagation-related logics
-Date: Mon, 23 Jun 2025 05:54:08 +0100
-Message-ID: <20250623045428.1271612-15-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 16/35] do_umount(): simplify the "is it still mounted" checks
+Date: Mon, 23 Jun 2025 05:54:09 +0100
+Message-ID: <20250623045428.1271612-16-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250623045428.1271612-1-viro@zeniv.linux.org.uk>
 References: <20250623044912.GA1248894@ZenIV>
@@ -66,94 +66,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The underlying rules are simple:
-	* MNT_SHARED should be set iff ->mnt_group_id of new mount ends up
-non-zero.
-	* mounts should be on the same ->mnt_share cyclic list iff they have
-the same non-zero ->mnt_group_id value.
-	* CL_PRIVATE is mutually exclusive with MNT_SHARED, MNT_SLAVE,
-MNT_SHARED_TO_SLAVE and MNT_EXPIRE; the whole point of that thing is to
-get a clone of old mount that would *not* be on any namespace-related
-lists.
+Calls of do_umount() are always preceded by can_umount(), where we'd
+done a racy check for mount belonging to our namespace; if it wasn't,
+can_unmount() would've failed with -EINVAL and we wouldn't have
+reached do_umount() at all.
 
-The above allows to make the logics more straightforward; what's more,
-it makes the proof that invariants are maintained much simpler.
-The variant in mainline is safe (aside of a very narrow race with
-unsafe modification of mnt_flags right after we had the mount exposed
-in superblock's ->s_mounts; theoretically it can race with ro remount
-of the original, but it's not easy to hit), but proof of its correctness
-is really unpleasant.
+That check needs to be redone once we have acquired namespace_sem
+and in do_umount() we do that.  However, that's done in a very odd
+way; we check that mount is still in rbtree of _some_ namespace or
+its mnt_list is not empty.  It is equivalent to check_mnt(mnt) -
+we know that earlier mnt was mounted in our namespace; if it has
+stayed there, it's going to remain in rbtree of our namespace.
+OTOH, if it ever had been removed from out namespace, it would be
+removed from rbtree and it never would've re-added to a namespace
+afterwards.  As for ->mnt_list, for something that had been mounted
+in a namespace we'll never observe non-empty ->mnt_list while holding
+namespace_sem - it does temporarily become non-empty during
+umount_tree(), but that doesn't outlast the call of umount_tree(),
+let alone dropping namespace_sem.
+
+Things get much easier to follow if we replace that with (equivalent)
+check_mnt(mnt) there.  What's more, currently we treat a failure of
+that test as "quietly do nothing"; we might as well pretend that we'd
+lost the race and fail on that the same way can_umount() would have.
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ fs/namespace.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index bfc85d50e8cb..fd453848c2c7 100644
+index fd453848c2c7..a7bf07d88da4 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1301,6 +1301,9 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 	if (!mnt)
- 		return ERR_PTR(-ENOMEM);
+@@ -1983,8 +1983,11 @@ static int do_umount(struct mount *mnt, int flags)
+ 	namespace_lock();
+ 	lock_mount_hash();
  
-+	mnt->mnt.mnt_flags = READ_ONCE(old->mnt.mnt_flags) &
-+			     ~MNT_INTERNAL_FLAGS;
+-	/* Recheck MNT_LOCKED with the locks held */
++	/* Repeat the earlier racy checks, now that we are holding the locks */
+ 	retval = -EINVAL;
++	if (!check_mnt(mnt))
++		goto out;
 +
- 	if (flag & (CL_SLAVE | CL_PRIVATE | CL_SHARED_TO_SLAVE))
- 		mnt->mnt_group_id = 0; /* not a peer of original */
- 	else
-@@ -1312,8 +1315,8 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 			goto out_free;
+ 	if (mnt->mnt.mnt_flags & MNT_LOCKED)
+ 		goto out;
+ 
+@@ -1993,16 +1996,14 @@ static int do_umount(struct mount *mnt, int flags)
+ 
+ 	event++;
+ 	if (flags & MNT_DETACH) {
+-		if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list))
+-			umount_tree(mnt, UMOUNT_PROPAGATE);
++		umount_tree(mnt, UMOUNT_PROPAGATE);
+ 		retval = 0;
+ 	} else {
+ 		smp_mb(); // paired with __legitimize_mnt()
+ 		shrink_submounts(mnt);
+ 		retval = -EBUSY;
+ 		if (!propagate_mount_busy(mnt, 2)) {
+-			if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list))
+-				umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
++			umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
+ 			retval = 0;
+ 		}
  	}
- 
--	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
--	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL|MNT_LOCKED);
-+	if (mnt->mnt_group_id)
-+		set_mnt_shared(mnt);
- 
- 	atomic_inc(&sb->s_active);
- 	mnt->mnt.mnt_idmap = mnt_idmap_get(mnt_idmap(&old->mnt));
-@@ -1326,22 +1329,20 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 	list_add_tail(&mnt->mnt_instance, &sb->s_mounts);
- 	unlock_mount_hash();
- 
-+	if (flag & CL_PRIVATE)	// we are done with it
-+		return mnt;
-+
-+	if (peers(mnt, old))
-+		list_add(&mnt->mnt_share, &old->mnt_share);
-+
- 	if ((flag & CL_SLAVE) ||
- 	    ((flag & CL_SHARED_TO_SLAVE) && IS_MNT_SHARED(old))) {
- 		list_add(&mnt->mnt_slave, &old->mnt_slave_list);
- 		mnt->mnt_master = old;
--		CLEAR_MNT_SHARED(mnt);
--	} else if (!(flag & CL_PRIVATE)) {
--		if ((flag & CL_MAKE_SHARED) || IS_MNT_SHARED(old))
--			list_add(&mnt->mnt_share, &old->mnt_share);
--		if (IS_MNT_SLAVE(old))
--			list_add(&mnt->mnt_slave, &old->mnt_slave);
-+	} else if (IS_MNT_SLAVE(old)) {
-+		list_add(&mnt->mnt_slave, &old->mnt_slave);
- 		mnt->mnt_master = old->mnt_master;
--	} else {
--		CLEAR_MNT_SHARED(mnt);
- 	}
--	if (flag & CL_MAKE_SHARED)
--		set_mnt_shared(mnt);
- 
- 	/* stick the duplicate mount on the same expiry list
- 	 * as the original if that was on one */
-@@ -1349,7 +1350,6 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 		if (!list_empty(&old->mnt_expire))
- 			list_add(&mnt->mnt_expire, &old->mnt_expire);
- 	}
--
- 	return mnt;
- 
-  out_free:
 -- 
 2.39.5
 
