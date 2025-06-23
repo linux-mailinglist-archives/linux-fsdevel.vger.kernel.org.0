@@ -1,245 +1,533 @@
-Return-Path: <linux-fsdevel+bounces-52642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9AFAE4DB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 21:41:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8BEAE4DBB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 21:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35395178EDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 19:41:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B99189CD8C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 19:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17322D4B53;
-	Mon, 23 Jun 2025 19:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374EC2D5430;
+	Mon, 23 Jun 2025 19:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PORuIXcj"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="M5Uba4Iy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E607819C554
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 19:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7102D5417
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 19:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750707669; cv=none; b=PeNJhTrbENCXOJTDdsYgn8i9y6nugC2pzy75qJUcZxCylukS26Vf6fXZFjNcZl7pMOKvYwyHH/lWdYK3E3vmlqOa+cBRiRAB9ScvLFk+q355z1nIj5G3H7S0Jv5sdFiiLhESF2LEuzl3sOMBxtjuZ5y5xk5xuzOaouvHtd0BNjc=
+	t=1750707911; cv=none; b=LVTl08/SZlbFTMkbsK/ReePA8fXEYjFdryGfPvNYKGF1VvhcMHi8HW3KX/v18kz+LLchJDEygbYlAb9JzhoAVCPx0+oZ8MAKcdLQPFfVbj2j4VCtwBYxM286FdWA0N+LebJTsclWa5gWfnps8gJEbIXzT1t67+J2HovUo25AlLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750707669; c=relaxed/simple;
-	bh=5NESCJ2C0k3c/bq33kaycObKMRXxkSk7OfchAPWb61A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LxBLe6FY0Ikd7ZYO8pwmacm3hKwLxq4eo8sJW1e6vQlDeWfRpM8cEExSgjjH3PgL9we+9zVrR7UMeR9X3d4+/TJJYfTzNW3DiOFUYvFcpjwv9BZbxePZS4FTi2WkWFgkXjPnHfuZJLWIups3R2YabR+dfpoPfYArVtgGjJh7alY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PORuIXcj; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bQz2v0xGhzXhX;
-	Mon, 23 Jun 2025 21:40:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1750707655;
-	bh=+PdntTwQutG2Ke93Rwxbf5el2guoygdYyJGMg5CRmPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PORuIXcj93tCuZWrSKna4Izi+Vp7SeJhJ0u6GjyPU20sD/+tVdOE2VbRQdriEWXkQ
-	 /lA/oVMXn9blC/+uvXgZ39xJf4GwjxPfxArulpzK54SkuWUK/tY2iDN5wKnznCsyHW
-	 lvZ5zHpDJp6Im27KI33e0japWfzhUH6u1e7V4vUM=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bQz2t46DczLW;
-	Mon, 23 Jun 2025 21:40:54 +0200 (CEST)
-Date: Mon, 23 Jun 2025 21:40:53 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] selftests/landlock: Add tests for access through
- disconnected paths
-Message-ID: <20250623.kaed2Ovei8ah@digikod.net>
-References: <09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org>
- <20250619.yohT8thouf5J@digikod.net>
- <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
+	s=arc-20240116; t=1750707911; c=relaxed/simple;
+	bh=7GN73VAH7Gib+8OU+sJ8tOTqzHfU8wd8HxrUZvJngdw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R8mIqo0U74taSyGhmDTQnKaGI2bVZWG8XfB0CqKv2eTzuaajUbPBTCv7KVbqgkKTdUi1P7Rp7Y+o7xGZt3cuKkhpY7J8JacDc79NlvEsnww7tibTuRKGo+gO7BOJqCNt2oc1T2ayrhzEdlyObfyjwme+E88oui1zra2F9oHRhUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=M5Uba4Iy; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NIgF5N009297
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 12:45:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=QR1hhYctvbRGynYAk7
+	wsNnWb34aSFx8GKjexVLGdwAE=; b=M5Uba4IyTFZov4gaUpix04KeJusO8rA8QH
+	atEABSy+reWnARE5i1ylHkOFD/bvHJJBeP1mdOyqpWHRdZ0bmq/t0epMZDPqTaVA
+	MzOuls0Gx4j6G7ZwZ1Veq/JLmjVsnuBZ+sS3KGrGgmr5ZQfwZp2CldtUmFj4syXf
+	DmL1JzheoW54Qgd7K6VUlIZ3sYonHG99B12lorWSGvFVmvoPSUfHqvMlqAOH7ssy
+	ErFPZ77t2OOZCnx8+3Dgej7HIpP1LRg2L1oy1IB1nCPaKQNPmmxvu/CfxW8g7KQE
+	aANWYNGB2wXH9ctfPDkbT/hYoSOm/yti6OISISPwWgZteWzpGlQg==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47en1xyyk8-9
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 12:45:08 -0700 (PDT)
+Received: from twshared4564.15.prn3.facebook.com (2620:10d:c0a8:fe::f072) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.24; Mon, 23 Jun 2025 19:45:03 +0000
+Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
+	id 88D6430431D58; Mon, 23 Jun 2025 12:45:01 -0700 (PDT)
+From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+To: <ibrahimjirdeh@meta.com>
+CC: <jack@suse.cz>, <amir73il@gmail.com>, <josef@toxicpanda.com>,
+        <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>
+Subject: [PATCH] fanotify: selftests for fanotify permission events
+Date: Mon, 23 Jun 2025 12:44:55 -0700
+Message-ID: <20250623194455.2847844-1-ibrahimjirdeh@meta.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=bs5MBFai c=1 sm=1 tr=0 ts=6859aec4 cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=6IFa9wvqVegA:10 a=VabnemYjAAAA:8 a=SlLpaudUyM84AMwXJDgA:9 a=gKebqoRLp9LExxC7YDUY:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDEyOCBTYWx0ZWRfXwQubgk0wgi+I JCTgWqjyXLvLLy3LpAzfmzE9pEpy0PMV4Z+yDTfrFoKZnzc3W7raIOF6oaJCqosq/6ympElcBtS l+PL0wio1zZ0aVvRtZTWxV2nLCGw94ZVQPlNSkcwzcb6ssk0Ov4GMO2+F9G4l1gICBdQkXLWXW0
+ hY6pFgMGVwiWsFDGHt24LcaqWLGJiT9wU2wWGkTqjq9/dtMSpVtfds7lx/DoQ9aMlozC9ERE6f0 jYcS1kj9j0IBwcre3Kn53N+D1/56rfbQDEbxZzc5vR6Fg5yiNHbJ4UppDsBKYoJAh/IGReNf1BL T2Q/hXQn32dPf+e4mG1CBZZOuzueNGevEoU6h06p/zElPE+Vi+9IxNQHkgjgbrsT99hSuYQpLcX
+ DRks7B1d9iMZz2a1bn9NF25KbA4UOoe4PZ8SnolHRC1sX1/Cm1pnGCmByP5Cdpv9Zk1Kqqr8
+X-Proofpoint-ORIG-GUID: vBEisAG98UKCltUicAChT4RxrnEkHxBg
+X-Proofpoint-GUID: vBEisAG98UKCltUicAChT4RxrnEkHxBg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-23_06,2025-06-23_07,2025-03-28_01
 
-On Sun, Jun 22, 2025 at 04:42:49PM +0100, Tingmao Wang wrote:
-> On 6/19/25 12:38, Mickaël Salaün wrote:
-> > On Sat, Jun 14, 2025 at 07:25:02PM +0100, Tingmao Wang wrote:
-> >> This adds a test for the edge case discussed in [1], and in addition also
-> >> test rename operations when the operands are through disconnected paths,
-> >> as that go through a separate code path in Landlock.
-> >>
-> >> [1]: https://lore.kernel.org/linux-security-module/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org/
-> >>
-> >> This has resulted in a WARNING, due to collect_domain_accesses() not
-> >> expecting to reach a different root from path->mnt:
-> >>
-> >> 	#  RUN           layout1_bind.path_disconnected ...
-> >> 	#            OK  layout1_bind.path_disconnected
-> >> 	ok 96 layout1_bind.path_disconnected
-> >> 	#  RUN           layout1_bind.path_disconnected_rename ...
-> >> 	[..] ------------[ cut here ]------------
-> >> 	[..] WARNING: CPU: 3 PID: 385 at security/landlock/fs.c:1065 collect_domain_accesses
-> >> 	[..] ...
-> >> 	[..] RIP: 0010:collect_domain_accesses (security/landlock/fs.c:1065 (discriminator 2) security/landlock/fs.c:1031 (discriminator 2))
-> >> 	[..] current_check_refer_path (security/landlock/fs.c:1205)
-> >> 	[..] ...
-> >> 	[..] hook_path_rename (security/landlock/fs.c:1526)
-> >> 	[..] security_path_rename (security/security.c:2026 (discriminator 1))
-> >> 	[..] do_renameat2 (fs/namei.c:5264)
-> >> 	#            OK  layout1_bind.path_disconnected_rename
-> >> 	ok 97 layout1_bind.path_disconnected_rename
-> > 
-> > Good catch and thanks for the tests!  I sent a fix:
-> > https://lore.kernel.org/all/20250618134734.1673254-1-mic@digikod.net/
-> > 
-> >>
-> >> My understanding is that terminating at the mountpoint is basically an
-> >> optimization, so that for rename operations we only walks the path from
-> >> the mountpoint to the real root once.  We probably want to keep this
-> >> optimization, as disconnected paths are probably a very rare edge case.
-> > 
-> > Rename operations can only happen within the same mount point, otherwise
-> > the kernel returns -EXDEV.  The collect_domain_accesses() is called for
-> > the source and the destination of a rename to walk to their common mount
-> > point, if any.  We could maybe improve this walk by doing them at the
-> > same time but because we don't know the depth of each path, I'm not sure
-> > the required extra complexity would be worth it.  The current approach
-> > is simple and opportunistically limits the walks.
-> > 
-> >>
-> >> This might need more thinking, but maybe if one of the operands is
-> >> disconnected, we can just let it walk until IS_ROOT(dentry), and also
-> >> collect access for the other path until IS_ROOT(dentry), then call
-> >> is_access_to_paths_allowed() passing in the root dentry we walked to?  (In
-> >> this case is_access_to_paths_allowed will not do any walking and just make
-> >> an access decision.)
-> > 
-> > If one side is in a disconnected directory and not the other side, the
-> > rename would be denied by the VFS,
-> 
-> Not always, right? For example in the path_disconnected_rename test we did:
+This adds selftests which exercise generating / responding to
+permission events. They requre root privileges since
+FAN_CLASS_PRE_CONTENT requires it.
 
-Correct, only the mount point matter.
+Signed-off-by: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+---
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/filesystems/fanotify/.gitignore |   2 +
+ .../selftests/filesystems/fanotify/Makefile   |   8 +
+ .../filesystems/fanotify/fanotify_perm_test.c | 386 ++++++++++++++++++
+ 4 files changed, 397 insertions(+)
+ create mode 100644 tools/testing/selftests/filesystems/fanotify/.gitigno=
+re
+ create mode 100644 tools/testing/selftests/filesystems/fanotify/Makefile
+ create mode 100644 tools/testing/selftests/filesystems/fanotify/fanotify=
+_perm_test.c
 
-> 
-> 5051.  ASSERT_EQ(0, renameat(bind_s1d3_fd, file2_name, AT_FDCWD, file1_s2d2))
->                              ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
->                              Disconnected              Connected
-> 
-> (and it also has the other way)
-> 
-> So looks like as long as they are still reached from two fds with two
-> paths that have the same mnt, it will be allowed.  It's just that when we
-> do parent walk we end up missing the mount.  This also means that for this
-> refer check, if after doing the two separate walks (with the disconnected
-> side walking all the way to IS_ROOT), we then walk from mnt again, we
-> would allow the rename if there is a rule on mnt (or its parents) allowing
-> file creation and refers, even if the disconnected side technically now
-> lives outside the file hierarchy under mnt and does not have a parent with
-> a rule allowing file creation.
-> 
-> (I'm not saying this is necessary wrong or needs fixing, but I think it's
-> an interesting consequence of the current implementation.)
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/M=
+akefile
+index 339b31e6a6b5..9cae71edca9f 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -32,6 +32,7 @@ TARGETS +=3D fchmodat2
+ TARGETS +=3D filesystems
+ TARGETS +=3D filesystems/binderfs
+ TARGETS +=3D filesystems/epoll
++TARGETS +=3D filesystems/fanotify
+ TARGETS +=3D filesystems/fat
+ TARGETS +=3D filesystems/overlayfs
+ TARGETS +=3D filesystems/statmount
+diff --git a/tools/testing/selftests/filesystems/fanotify/.gitignore b/to=
+ols/testing/selftests/filesystems/fanotify/.gitignore
+new file mode 100644
+index 000000000000..a9f51c9aca9f
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fanotify/.gitignore
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++fanotify_perm_test
+diff --git a/tools/testing/selftests/filesystems/fanotify/Makefile b/tool=
+s/testing/selftests/filesystems/fanotify/Makefile
+new file mode 100644
+index 000000000000..931bedd989b9
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fanotify/Makefile
+@@ -0,0 +1,8 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++
++CFLAGS +=3D -Wall -O2 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
++LDLIBS +=3D -lcap
++
++TEST_GEN_PROGS :=3D fanotify_perm_test
++
++include ../../lib.mk
+diff --git a/tools/testing/selftests/filesystems/fanotify/fanotify_perm_t=
+est.c b/tools/testing/selftests/filesystems/fanotify/fanotify_perm_test.c
+new file mode 100644
+index 000000000000..87d718323b1a
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/fanotify/fanotify_perm_test.c
+@@ -0,0 +1,386 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#define _GNU_SOURCE
++#include <fcntl.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <errno.h>
++#include <sys/syscall.h>
++#include <limits.h>
++
++#include "../../kselftest_harness.h"
++
++// Needed for linux/fanotify.h
++#ifndef __kernel_fsid_t
++typedef struct {
++	int val[2];
++} __kernel_fsid_t;
++#endif
++#include <sys/fanotify.h>
++
++static const char test_dir_templ[] =3D "/tmp/fanotify_perm_test.XXXXXX";
++
++FIXTURE(fanotify)
++{
++	char test_dir[sizeof(test_dir_templ)];
++	char test_dir2[sizeof(test_dir_templ)];
++	int fan_fd;
++	int fan_fd2;
++	char test_file_path[PATH_MAX];
++	char test_file_path2[PATH_MAX];
++	char test_exec_path[PATH_MAX];
++};
++
++FIXTURE_SETUP(fanotify)
++{
++	int ret;
++
++	/* Setup test directories and files */
++	strcpy(self->test_dir, test_dir_templ);
++	ASSERT_NE(mkdtemp(self->test_dir), NULL);
++	strcpy(self->test_dir2, test_dir_templ);
++	ASSERT_NE(mkdtemp(self->test_dir2), NULL);
++
++	snprintf(self->test_file_path, PATH_MAX, "%s/test_file",
++		 self->test_dir);
++	snprintf(self->test_file_path2, PATH_MAX, "%s/test_file2",
++		 self->test_dir2);
++	snprintf(self->test_exec_path, PATH_MAX, "%s/test_exec",
++		 self->test_dir);
++
++	ret =3D open(self->test_file_path, O_CREAT | O_RDWR, 0644);
++	ASSERT_GE(ret, 0);
++	ASSERT_EQ(write(ret, "test data", 9), 9);
++	close(ret);
++
++	ret =3D open(self->test_file_path2, O_CREAT | O_RDWR, 0644);
++	ASSERT_GE(ret, 0);
++	ASSERT_EQ(write(ret, "test data2", 9), 9);
++	close(ret);
++
++	ret =3D open(self->test_exec_path, O_CREAT | O_RDWR, 0755);
++	ASSERT_GE(ret, 0);
++	ASSERT_EQ(write(ret, "#!/bin/bash\necho test\n", 22), 22);
++	close(ret);
++
++	self->fan_fd =3D fanotify_init(
++		FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK | FAN_CLOEXEC, O_RDONLY);
++	ASSERT_GE(self->fan_fd, 0);
++
++	self->fan_fd2 =3D fanotify_init(FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK |
++					      FAN_CLOEXEC | FAN_ENABLE_EVENT_ID,
++				      O_RDONLY);
++	ASSERT_GE(self->fan_fd2, 0);
++
++	/* Mark the directories for permission events */
++	ret =3D fanotify_mark(self->fan_fd, FAN_MARK_ADD,
++			    FAN_OPEN_PERM | FAN_OPEN_EXEC_PERM |
++				    FAN_EVENT_ON_CHILD,
++			    AT_FDCWD, self->test_dir);
++	ASSERT_EQ(ret, 0);
++
++	ret =3D fanotify_mark(self->fan_fd2, FAN_MARK_ADD,
++			    FAN_OPEN_PERM | FAN_OPEN_EXEC_PERM |
++				    FAN_EVENT_ON_CHILD,
++			    AT_FDCWD, self->test_dir2);
++	ASSERT_EQ(ret, 0);
++}
++
++FIXTURE_TEARDOWN(fanotify)
++{
++	/* Clean up test directory and files */
++	if (self->fan_fd > 0)
++		close(self->fan_fd);
++	if (self->fan_fd2 > 0)
++		close(self->fan_fd2);
++
++	EXPECT_EQ(unlink(self->test_file_path), 0);
++	EXPECT_EQ(unlink(self->test_file_path2), 0);
++	EXPECT_EQ(unlink(self->test_exec_path), 0);
++	EXPECT_EQ(rmdir(self->test_dir), 0);
++	EXPECT_EQ(rmdir(self->test_dir2), 0);
++}
++
++static struct fanotify_event_metadata *get_event(int fd)
++{
++	struct fanotify_event_metadata *metadata;
++	ssize_t len;
++	char buf[256];
++
++	len =3D read(fd, buf, sizeof(buf));
++	if (len <=3D 0)
++		return NULL;
++
++	metadata =3D (void *)buf;
++	if (!FAN_EVENT_OK(metadata, len))
++		return NULL;
++
++	return metadata;
++}
++
++static int respond_to_event(int fd, struct fanotify_event_metadata *meta=
+data,
++			    uint32_t response, bool useEventId)
++{
++	struct fanotify_response resp;
++
++	if (useEventId) {
++		resp.event_id =3D metadata->event_id;
++	} else {
++		resp.fd =3D metadata->fd;
++	}
++	resp.response =3D response;
++
++	return write(fd, &resp, sizeof(resp));
++}
++
++static void verify_event(struct __test_metadata *const _metadata,
++			 struct fanotify_event_metadata *event,
++			 uint64_t expect_mask, int expect_pid)
++{
++	ASSERT_NE(event, NULL);
++	ASSERT_EQ(event->mask, expect_mask);
++
++	if (expect_pid > 0)
++		ASSERT_EQ(event->pid, expect_pid);
++}
++
++TEST_F(fanotify, open_perm_allow)
++{
++	struct fanotify_event_metadata *event;
++	int fd, ret;
++	pid_t child;
++
++	child =3D fork();
++	ASSERT_GE(child, 0);
++
++	if (child =3D=3D 0) {
++		/* Try to open the file - this should trigger FAN_OPEN_PERM */
++		fd =3D open(self->test_file_path, O_RDONLY);
++		if (fd < 0)
++			exit(EXIT_FAILURE);
++		close(fd);
++		exit(EXIT_SUCCESS);
++	}
++
++	usleep(100000);
++	event =3D get_event(self->fan_fd);
++	verify_event(_metadata, event, FAN_OPEN_PERM, child);
++
++	/* Allow the open operation */
++	close(event->fd);
++	ret =3D respond_to_event(self->fan_fd, event, FAN_ALLOW,
++			       false /* useEventId */);
++	ASSERT_EQ(ret, sizeof(struct fanotify_response));
++
++	int status;
++
++	ASSERT_EQ(waitpid(child, &status, 0), child);
++	ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
++}
++
++TEST_F(fanotify, open_perm_deny)
++{
++	struct fanotify_event_metadata *event;
++	int ret;
++	pid_t child;
++
++	child =3D fork();
++	ASSERT_GE(child, 0);
++
++	if (child =3D=3D 0) {
++		/* Try to open the file - this should trigger FAN_OPEN_PERM */
++		int fd =3D open(self->test_file_path, O_RDONLY);
++
++		/* If open succeeded, this is an error as we expect it to be denied */
++		if (fd >=3D 0) {
++			close(fd);
++			exit(EXIT_FAILURE);
++		}
++
++		/* Verify the expected error */
++		if (errno =3D=3D EPERM)
++			exit(EXIT_SUCCESS);
++
++		exit(EXIT_FAILURE);
++	}
++
++	usleep(100000);
++	event =3D get_event(self->fan_fd);
++	verify_event(_metadata, event, FAN_OPEN_PERM, child);
++
++	/* Deny the open operation */
++	close(event->fd);
++	ret =3D respond_to_event(self->fan_fd, event, FAN_DENY,
++			       false /* useEventId */);
++	ASSERT_EQ(ret, sizeof(struct fanotify_response));
++
++	int status;
++
++	ASSERT_EQ(waitpid(child, &status, 0), child);
++	ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
++}
++
++TEST_F(fanotify, exec_perm_allow)
++{
++	struct fanotify_event_metadata *event;
++	int ret;
++	pid_t child;
++
++	child =3D fork();
++	ASSERT_GE(child, 0);
++
++	if (child =3D=3D 0) {
++		/* Try to execute the file - this should trigger FAN_OPEN_EXEC_PERM */
++		execl(self->test_exec_path, "test_exec", NULL);
++
++		/* If we get here, execl failed */
++		exit(EXIT_FAILURE);
++	}
++
++	usleep(100000);
++	event =3D get_event(self->fan_fd);
++	verify_event(_metadata, event, FAN_OPEN_EXEC_PERM, child);
++
++	/* Allow the exec operation + ignore subsequent events */
++	ASSERT_GE(fanotify_mark(self->fan_fd,
++				FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
++					FAN_MARK_IGNORED_SURV_MODIFY,
++				FAN_OPEN_PERM | FAN_OPEN_EXEC_PERM, event->fd,
++				NULL),
++		  0);
++	close(event->fd);
++	ret =3D respond_to_event(self->fan_fd, event, FAN_ALLOW,
++			       false /* useEventId */);
++	ASSERT_EQ(ret, sizeof(struct fanotify_response));
++
++	int status;
++
++	ASSERT_EQ(waitpid(child, &status, 0), child);
++	ASSERT_EQ(WIFEXITED(status), 1);
++}
++
++TEST_F(fanotify, exec_perm_deny)
++{
++	struct fanotify_event_metadata *event;
++	int ret;
++	pid_t child;
++
++	child =3D fork();
++	ASSERT_GE(child, 0);
++
++	if (child =3D=3D 0) {
++		/* Try to execute the file - this should trigger FAN_OPEN_EXEC_PERM */
++		execl(self->test_exec_path, "test_exec", NULL);
++
++		/* If execl failed with EPERM, that's what we expect */
++		if (errno =3D=3D EPERM)
++			exit(EXIT_SUCCESS);
++
++		exit(EXIT_FAILURE);
++	}
++
++	usleep(100000);
++	event =3D get_event(self->fan_fd);
++	verify_event(_metadata, event, FAN_OPEN_EXEC_PERM, child);
++
++	/* Deny the exec operation */
++	close(event->fd);
++	ret =3D respond_to_event(self->fan_fd, event, FAN_DENY,
++			       false /* useEventId */);
++	ASSERT_EQ(ret, sizeof(struct fanotify_response));
++
++	int status;
++
++	ASSERT_EQ(waitpid(child, &status, 0), child);
++	ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
++}
++
++TEST_F(fanotify, default_response)
++{
++	struct fanotify_event_metadata *event;
++	int ret;
++	pid_t child;
++	struct fanotify_response resp;
++
++	/* Set default response to deny */
++	resp.fd =3D FAN_NOFD;
++	resp.response =3D FAN_DENY | FAN_DEFAULT;
++	ret =3D write(self->fan_fd, &resp, sizeof(resp));
++	ASSERT_EQ(ret, sizeof(resp));
++
++	child =3D fork();
++	ASSERT_GE(child, 0);
++
++	if (child =3D=3D 0) {
++		close(self->fan_fd);
++		/* Try to open the file - this should trigger FAN_OPEN_PERM */
++		int fd =3D open(self->test_file_path, O_RDONLY);
++
++		/* If open succeeded, this is an error as we expect it to be denied */
++		if (fd >=3D 0) {
++			close(fd);
++			exit(EXIT_FAILURE);
++		}
++
++		/* Verify the expected error */
++		if (errno =3D=3D EPERM)
++			exit(EXIT_SUCCESS);
++
++		exit(EXIT_FAILURE);
++	}
++
++	usleep(100000);
++	event =3D get_event(self->fan_fd);
++	verify_event(_metadata, event, FAN_OPEN_PERM, child);
++
++	/* Close fanotify group to return default response (DENY) */
++	close(self->fan_fd);
++	self->fan_fd =3D -1;
++
++	int status;
++
++	ASSERT_EQ(waitpid(child, &status, 0), child);
++	ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
++}
++
++TEST_F(fanotify, respond_via_event_id)
++{
++	struct fanotify_event_metadata *event;
++	int fd, ret;
++	pid_t child;
++
++	child =3D fork();
++	ASSERT_GE(child, 0);
++
++	if (child =3D=3D 0) {
++		/* Try to open the file - this should trigger FAN_OPEN_PERM */
++		fd =3D open(self->test_file_path2, O_RDONLY);
++		if (fd < 0)
++			exit(EXIT_FAILURE);
++		close(fd);
++		exit(EXIT_SUCCESS);
++	}
++
++	usleep(100000);
++	event =3D get_event(self->fan_fd2);
++	verify_event(_metadata, event, FAN_OPEN_PERM, child);
++	ASSERT_EQ(event->event_id, 1);
++
++	/* Allow the open operation */
++	close(event->fd);
++	ret =3D respond_to_event(self->fan_fd2, event, FAN_ALLOW,
++			       true /* useEventId */);
++	ASSERT_EQ(ret, sizeof(struct fanotify_response));
++
++	int status;
++
++	ASSERT_EQ(waitpid(child, &status, 0), child);
++	ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
++}
++
++TEST_HARNESS_MAIN
+--=20
+2.47.1
 
-Hmm, that's indeed a very subtle side effect.  One issue with the
-current implementation is that if a directory between the mount
-point and the source has REFER, and another directory not part of the
-source hierarchy but part of the disconnected directory's hierarchy has
-REFER and no other directory has REFER, and either the source or the
-destination hierarchy is disconnected between the mount point and the
-directory with the REFER, then Landlock will still deny such
-rename/link.  A directory with REFER initially between the mount point
-and the disconnected directory would also be ignored.  There is also the
-case where both the source and the destination are disconnected.
-
-I didn't consider such cases with collect_domain_accesses().  I'm
-wondering if this path walk gap should be fixed (instead of applying
-https://lore.kernel.org/all/20250618134734.1673254-1-mic@digikod.net/ )
-or not.  We should not rely on optimization side effects, but I'm not
-sure which behavior would make more sense...  Any though?
-
-> 
-> > but Landlock should still log (and then deny) the side that would be
-> > denied anyway.
-> > 
-> >>
-> >> Letting the walk continue until IS_ROOT(dentry) is what
-> >> is_access_to_paths_allowed() effectively does for non-renames.
-> >>
-A> >> (Also note: moving the const char definitions a bit above so that we can
-> >> use the path for s4d1 in cleanup code.)
-> >>
-> >> Signed-off-by: Tingmao Wang <m@maowtm.org>
-> > 
-> > I squashed your patches and push them to my next branch with some minor
-> > changes.  Please let me know if there is something wrong.
-> 
-> Thanks for the edits!  I did notice two things:
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index fa0f18ec62c4..c0a54dde7225 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -4561,6 +4561,17 @@ TEST_F_FORK(ioctl, handle_file_access_file)
->  FIXTURE(layout1_bind) {};
->  /* clang-format on */
->  
-> +static const char bind_dir_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3";
-> +static const char bind_file1_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f1";
-> +/* Moved targets for disconnected path tests. */
->     ^^^^^^^^^^^^^
->     I had "Move targets" here as a noun (i.e. the target/destinations of
->     the renames)
-
-Makes sense now :)
-
-> 
-> +static const char dir_s4d1[] = TMP_DIR "/s4d1";
-> +static const char file1_s4d1[] = TMP_DIR "/s4d1/f1";
-> ...
-> 
-> Also, I was just re-reading path_disconnected_rename and I managed to get
-> confused (i.e. "how is the rename in the forked child allowed at all (i.e.
-> how did we get EXDEV instead of EACCES) after applying layer 2?").  If you
-> end up amending that commit, can you add this short note:
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index c0a54dde7225..84615c4bb7c0 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -4936,6 +4936,8 @@ TEST_F_FORK(layout1_bind, path_disconnected_rename)
->  		},
->  		{}
->  	};
-> +
-> +	/* This layer only handles LANDLOCK_ACCESS_FS_READ_FILE only. */
-
-That can be useful.
-
->  	const struct rule layer2_only_s1d2[] = {
->  		{
->  			.path = dir_s1d2,
-> 
-> Wish I had caught this earlier.  I mean neither of the two things are
-> hugely important, but I assume until you actually send the merge request
-> you can amend stuff relatively easily?  If not then it's also alright :)
-
-I apply your changes.  Commits should usually wait at least a week in
-linux-next.
-
-> 
-> >
-> > [...]
-> 
-> Ack to all suggestions, thanks!
-> 
-> Best,
-> Tingmao
-> 
 
