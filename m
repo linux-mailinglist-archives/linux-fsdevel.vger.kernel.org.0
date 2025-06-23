@@ -1,62 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-52606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6906AE47D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 17:06:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FBAAE47F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 17:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD7E3B3F57
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 15:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 191543A5BEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 15:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FC626E158;
-	Mon, 23 Jun 2025 15:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C1C26FDA8;
+	Mon, 23 Jun 2025 15:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="roV9MjDY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ofuqf63q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5057B20311;
-	Mon, 23 Jun 2025 15:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A2D72624
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 15:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750690978; cv=none; b=Dcn1eAc9iF/iJWHcarocIIVIvCUdpCrP1XJNMqGzQ5D+PisiWQ2n+EpwjTUlSlX0BQCBRk7e7uxo4FBKSyu4LV5vpT0lNPiQZZqBISMOem4dSIdKmTGXgvcpmlKDo7xf1QfD5L3QpxkfJqPj1cadX6QNsR/2VAX5RdOM9cyKofs=
+	t=1750691205; cv=none; b=ME4rkUcBAfeOfoB5KkbCS2Ite0cQ2Z/lXhJ5k+j4XRvWpvs0tE7B5750ZqYpLXlu91KgYAnGMLRndgGVUYFED8e8Ymgb6u9PvDbksipY2olJ2dqLiEZN3/mEnocjxhnoVMMZABAPo8XDAQndGuDtYbF/JoeSh0oRJIN0/7doniQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750690978; c=relaxed/simple;
-	bh=UfOOd2Kbab7saikL7iEZKu0Y3vwnaFjjDz6MgRgKufo=;
+	s=arc-20240116; t=1750691205; c=relaxed/simple;
+	bh=wuFXrwwjjmEMgA8swF0EHEAsKQSn7YRia6AOViQcc2U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZCtRkw0/Tl75yof7gGEylz66YU8M7HwTeIydn07454wyb3iLLV1n9dQvwOhM+dFwNGIFRpV/TW7yWQ4iyAMweJbwn3v21TbYtBIX8PHDqyy3UB3pxm4/YnK54y72XqPDczXOTfjht3adsAWR/62CwOmOgSXAg5L7mX0nS69g4zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=roV9MjDY; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZnkW9whxI994oPI8HPdFvYzd5zyDYY4h9RfVyAmThoE=; b=roV9MjDYuONt+tmMUd69VQ4///
-	ihlu46HvY4+nNBikQyqzTNZ3hWD3fWf2HqPO3lzognOVBVOA7JFSylsueayrLS4+BImI+iMW9Acn0
-	i6tEdQKSuuVhgyZNIKOBwgbxMZ91pRpib86r41fqbLj5Cq/yWZDMk6g5EbnCu4iT8SRH5hvItyOVA
-	3srz4JinEm7/kfQf6+0ouA8yBYnpNke4zNri1o1iHUiBkJMe7gmC0ct//+gCczm6FNZzCd1LL9HSY
-	3DB/Zi9xbF1P4srfqjMLpGO4qnmvrYLyj3khL1oORup2DXhbBTJDSeAEYx0+DyeLRmffpd/rjnvzU
-	+21rlXmQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTihB-0000000D96D-1Dzr;
-	Mon, 23 Jun 2025 15:02:53 +0000
-Date: Mon, 23 Jun 2025 16:02:53 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-fsdevel@vger.kernel.org, riteshh@linux.ibm.com
-Subject: Re: [linux-next-20250620] Fails to boot to IBM Power Server
-Message-ID: <20250623150253.GC1880847@ZenIV>
-References: <aafeb4a9-31ea-43ad-b807-fd082cc0c9ad@linux.ibm.com>
- <20250623135602.GA1880847@ZenIV>
- <72342657-f579-4c4a-bcda-534e28c40304@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rcnosvmBh2vwL0cR2aELfYqE3DoLpUxs2loxNsnB+wHPwhI0AZDmA/N0n+fQYm0i8n+hjO5pWofRYu0juvOxywc+pxARUSykPEjJutj2xRdfrXAhiAb/tCNTmisfdSdl8C+HzBfQ7pNYBeDKfknbqj2OrLeOmpitjpWlPfQ6a1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ofuqf63q; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-4067106dd56so2857690b6e.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 08:06:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750691203; x=1751296003; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P/j2ABvQkeCCIY5OdnUsm4f6l2yn5EMgYcd1gCoSvvo=;
+        b=ofuqf63qV7wvQ1Ggu+d1azimjAgztFr8vMiAndlSU8PajIHg2bdy6A5/5k8FU0A04o
+         S151GjJEFyoRNgLY4jvBj5Msu7/s+NYsyvbWUO+3gIbe+4+mYLVRn3/sU29LM50Xtug/
+         VP0OoBhYJsNvPXDmuKk6DWCYOhdW1SfnvGgvX+3DczM/Q81oFEHNd+g86CBBple0dfb9
+         de4xyS/XPxxMmY41JVBZyf+nOD3gjqe4FQgPf50DUsO1PTa4+EQE//YFmp+HxV5PBpt7
+         S2RSBYJvh/cHAIhZM9Eu81h5+DDf/1jw+D6hhFiw7vLpAdP4UEmal7pS+d2BHxIWXa0N
+         yyjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750691203; x=1751296003;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P/j2ABvQkeCCIY5OdnUsm4f6l2yn5EMgYcd1gCoSvvo=;
+        b=LzFQpISRQNd9eS1NFPqTtRZICWy+XF2xtI55qj4bze7ZKiCiIH4L2wyFjmtlO1bvvW
+         YouNt8TwFgzMr9RjjbZ1I6HO22RcHbCo87Rhe1hDLqgPI+WIK4R7m+6567ezclGmsyvo
+         /ciFB8e/M5mE71KlN8cWzpa/SbmUYeJ6KBHWfAoR3dlpc+ZYJnfGzBhtQS04dcovlm8S
+         ka8hHwE/QtFWhjCWHFOkXHjT+zzrPWNCCXc73kYxcX430A9T2CXI5qlTend+fGImS0oR
+         4aKnjwDbUZ84RM5D6cWgHKLiiXXmAboBpQCiJBcelCiq9l0bZl4WkFRkbKDRozED0nwr
+         403A==
+X-Forwarded-Encrypted: i=1; AJvYcCUQm1PPKraxaZ9gqszfPo4E5XJJMhDCcH8cVgi1dXN9W3BVQiFSHnl//AFhqhtpDtsNi2QhyPEnYEgAf/XI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyawtR1vkjEjASlhH1PqqfmH3yvcke/gH9NHgIBq1WOIQlcu5Ah
+	AvbCtnexIRLLkQS0Zpdq7aspNieN1ZwT/UV2+xQmEp5u1QJBy49gFAXLHpg+1oR3L3w=
+X-Gm-Gg: ASbGnctMHWwC8MsUZwbs/qWCRIzjp2xkGO8b4Z/WCEQgsKdX45pWAKt27ak0GU9BYMG
+	w3hTcY4otzecIQ7P38ggoURJuwKPAB8I50NuAJjEg1z6bnZSSTDAlSoKUloy6Y1r46EWv9ufwby
+	O6eyOjHxjTFrFT6LtQ14ef65lDyoHbQkU3kTU+RU+YZ+CqgrT6GZTkLjXd3r9dBRPcjMYAjAttc
+	2p4hmLzWDTKuU+jap5zp1ftc8Ctq14WHleTPwcEXs2jc4M4tcsRUjdM38cnZDykagbxkf8lQrJS
+	8uZ8FqzcTJlrb/McZGHD95VQCcPMXwYM1B7G5Mq+q3XoNxJlDvzr9AnMZIOiqNjO0axfBw==
+X-Google-Smtp-Source: AGHT+IFnVBRfIjftIm0z+2nD3hcauMaTIzLigckSJhjmKqki1siCULVluA8fvloI9HOD+FViAKSc5g==
+X-Received: by 2002:a05:6808:1890:b0:406:7704:b2e9 with SMTP id 5614622812f47-40ac6fe36d7mr9778035b6e.9.1750691202870;
+        Mon, 23 Jun 2025 08:06:42 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6d394dfsm1419658b6e.43.2025.06.23.08.06.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 08:06:42 -0700 (PDT)
+Date: Mon, 23 Jun 2025 18:06:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: akpm@linux-foundation.org, bhe@redhat.com, vgoyal@redhat.com,
+	dyoung@redhat.com, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
+Message-ID: <33a9a2a5-a725-4ab0-865c-1d26e941e054@suswa.mountain>
+References: <20250623104704.3489471-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,44 +89,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <72342657-f579-4c4a-bcda-534e28c40304@linux.ibm.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250623104704.3489471-1-suhui@nfschina.com>
 
-On Mon, Jun 23, 2025 at 08:22:28PM +0530, Venkat Rao Bagalkote wrote:
+On Mon, Jun 23, 2025 at 06:47:05PM +0800, Su Hui wrote:
+> There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
+> type from 'size_t' to 'unsigned int' for the consistency of data->size.
+> Return -ENOMEM directly rather than goto the label to simplify the code.
+> Using scoped_guard() to simplify the lock/unlock code.
 > 
-> On 23/06/25 7:26 pm, Al Viro wrote:
-> > On Mon, Jun 23, 2025 at 07:20:03PM +0530, Venkat Rao Bagalkote wrote:
-> > 
-> > [NULL pointer dereference somewhere in collect_paths()]
-> > 
-> > Could you put objdump -d of the function in question somewhere?
-> > Or just fs/namespace.o from your build...
-> > 
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  fs/proc/vmcore.c | 33 ++++++++++++++-------------------
+>  1 file changed, 14 insertions(+), 19 deletions(-)
 > 
-> Attached is the namespace.o file.
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index 10d01eb09c43..9ac2863c68d8 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -1477,7 +1477,7 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+>  {
+>  	struct vmcoredd_node *dump;
+>  	void *buf = NULL;
+> -	size_t data_size;
+> +	unsigned int data_size;
+>  	int ret;
 
-Huh...
+This was in reverse Christmas tree order before.  Move the data_size
+declaration up a line.
 
-That looks like NULL first argument (path), which blows up on
-        struct mount *root = real_mount(path->mnt);
-just prior to grabbing namespace_sem...
+	long long_variable_name;
+	medium variable_name;
+	short name;
 
-*blinks*
-<obscenities>
+>  
+>  	if (vmcoredd_disabled) {
+> @@ -1490,10 +1490,8 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+>  		return -EINVAL;
+>  
+>  	dump = vzalloc(sizeof(*dump));
+> -	if (!dump) {
+> -		ret = -ENOMEM;
+> -		goto out_err;
+> -	}
+> +	if (!dump)
+> +		return -ENOMEM;
+>  
+>  	/* Keep size of the buffer page aligned so that it can be mmaped */
+>  	data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
+> @@ -1519,21 +1517,18 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+>  	dump->size = data_size;
+>  
+>  	/* Add the dump to driver sysfs list and update the elfcore hdr */
+> -	mutex_lock(&vmcore_mutex);
+> -	if (vmcore_opened)
+> -		pr_warn_once("Unexpected adding of device dump\n");
+> -	if (vmcore_open) {
+> -		ret = -EBUSY;
+> -		goto unlock;
+> -	}
+> -
+> -	list_add_tail(&dump->list, &vmcoredd_list);
+> -	vmcoredd_update_size(data_size);
+> -	mutex_unlock(&vmcore_mutex);
+> -	return 0;
+> +	scoped_guard(mutex, &vmcore_mutex) {
+> +		if (vmcore_opened)
+> +			pr_warn_once("Unexpected adding of device dump\n");
+> +		if (vmcore_open) {
+> +			ret = -EBUSY;
+> +			goto out_err;
+> +		}
+>  
+> -unlock:
+> -	mutex_unlock(&vmcore_mutex);
+> +		list_add_tail(&dump->list, &vmcoredd_list);
+> +		vmcoredd_update_size(data_size);
+> +		return 0;
 
-Could you check if the delta below fixes it?
+Please, move this "return 0;" out of the scoped_guard().  Otherwise
+it's not obvious that we return zero on the success path.
 
-diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-index 68e042ae93c7..b0eae2a3c895 100644
---- a/kernel/audit_tree.c
-+++ b/kernel/audit_tree.c
-@@ -832,7 +832,7 @@ int audit_add_tree_rule(struct audit_krule *rule)
- 	err = kern_path(tree->pathname, 0, &path);
- 	if (err)
- 		goto Err;
--	paths = collect_paths(paths, array, 16);
-+	paths = collect_paths(&path, array, 16);
- 	path_put(&path);
- 	if (IS_ERR(paths)) {
- 		err = PTR_ERR(paths);
+regards,
+dan carpenter
+
+> +	}
+>  
+>  out_err:
+>  	vfree(buf);
+> -- 
+> 2.30.2
+> 
 
