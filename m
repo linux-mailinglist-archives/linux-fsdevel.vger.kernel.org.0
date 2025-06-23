@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-52504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EDDAE3956
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 11:04:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B14AE395B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 11:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA97C16D3A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 09:03:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388B43B9501
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 09:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DA4238C12;
-	Mon, 23 Jun 2025 09:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBC9238C35;
+	Mon, 23 Jun 2025 09:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8QK9HsM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdgcH2cg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAB7238176;
-	Mon, 23 Jun 2025 09:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509D2238C16;
+	Mon, 23 Jun 2025 09:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750669315; cv=none; b=MdFXUEjOYnv6iBS3KQJyhc9srs2OKu75bRccigFqOBZHpRc+vrbVd7i/pnX7xUf7LjBXoy4flrLHxlpCevXWE4R7X/rOBp0lpw677JFbKJVInYvHbR2SKcDnS9uGajCoLBDKRa8t+Iz3jB/FvUAeG3ibYx4gT0XnpFOenKKPokE=
+	t=1750669318; cv=none; b=YpTr/4XinzQwI7vjmLtQlIjAasfyrwcorh8ERVCl0E01SA0ZQv96PDHZi8BqdS9AjpIRx92oqzYK175EFqJTfNzVuYReNbFCASO+MVJs/GfDLKN3k9vw8uTqBU/3iQuhAY0lSYWJGD44ZEiFSoy4ABtydeazN+SLLmo/MXn4Hts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750669315; c=relaxed/simple;
-	bh=a6sUFhCHKDgGHVZmg22ALl6fvlDWpmIFOyTGHkPjUAk=;
+	s=arc-20240116; t=1750669318; c=relaxed/simple;
+	bh=TVFVDLeM3Mz4Xq7wpzRyDiOJmxnCx9C5H6NrmYAME0Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rabqakr8+/med4YCdhhR/wBzN13MjjuihsIxQZVdM1c66DWBKZTJApuBXMF2ct+IjRHwI0y+/UgqaG0AmIZwaFBVAW0Eyu7F0PLzVNGYniGBuQUwfnSpVnuAqyOzyftEf1q3KAcJNMm9F0oosAJ6m6h2VMUGmLAARBmK0RffPxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8QK9HsM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE206C4CEED;
-	Mon, 23 Jun 2025 09:01:52 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JChC3IP0O5yUqLMzee/UL6zAEAWyx/IA7y8SiglzbiHxilKGa+AnHzC7dVgOyqmFURZhCYlJGWRJefnM0vJNmwIOJfAvT/cj0W9ezbj2/QXxnXXPUldHcHKUVmepkiJ/JmgXv1R3fDXWIbBYc78OBc3Q5klwiXiLZG5nvDB4OeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdgcH2cg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E62EC4CEF2;
+	Mon, 23 Jun 2025 09:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750669315;
-	bh=a6sUFhCHKDgGHVZmg22ALl6fvlDWpmIFOyTGHkPjUAk=;
+	s=k20201202; t=1750669317;
+	bh=TVFVDLeM3Mz4Xq7wpzRyDiOJmxnCx9C5H6NrmYAME0Q=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=r8QK9HsMbKkYTqKC0+l4pD3+CPkaHjLSj/0OCERGDdq2Hc08oPzGbKaMEak3mTp0T
-	 xPm3P8GlQBahaZQO5JjcPnyTPmsSeJWxmza8jtLzQUnfdiAQ25oZ5nemLYD2ryKDlv
-	 ccYCKu4NVqtUpXU5qCXHem0dFH0WU8uVwVMan+SmodcLWVeKpsWvmOE8/QfqqfqIJ4
-	 lUOm7jHENxEa//ww1YQ21yyLymAG40yMctxLMIulB/A51ZB3Ec/Tcg2U1pCjN4HBbz
-	 bmaqXUmqFdGIRouqmCEAsbDsMPBC4FjQSfH2336CYnp8W/EqXK8lIvJdCii8wQMTPM
-	 3O/MD6f9bsAug==
+	b=PdgcH2cg553/NKwNkHyYRgxC4m4eYRSqgANr6KxxIaboejGN9lLslUMxhIh/rlv3L
+	 Fx2V4C53EtFmNn+FNg0UiMMZ5KWOMh+jeIgc5wGEf1+XcIppGU1xY7Gh9gCu8Okq9v
+	 rSrEYSwTZcHuMnZNrqzHe8mMZQu/2nJ7xYMPzzbgZDNEuSI3s0wR+wXw4jAfOREylv
+	 ogKa2MTqeuZcmh0toVovEKjE9o6PR290+Dxcs2HKsfYpFxkwJRmzTxFtynYMaxQI7N
+	 RvJPQ+6E9gjq3xXsaRpoXn2BydI/CGDw6HLdh5P8Z7WJr5l3h/9pabeJKOv+KnRn/c
+	 8aONxuQpvxq7w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 23 Jun 2025 11:01:30 +0200
-Subject: [PATCH 8/9] fhandle, pidfs: support open_by_handle_at() purely
- based on file handle
+Date: Mon, 23 Jun 2025 11:01:31 +0200
+Subject: [PATCH 9/9] selftests/pidfd: decode pidfd file handles withou
+ having to specify an fd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-work-pidfs-fhandle-v1-8-75899d67555f@kernel.org>
+Message-Id: <20250623-work-pidfs-fhandle-v1-9-75899d67555f@kernel.org>
 References: <20250623-work-pidfs-fhandle-v1-0-75899d67555f@kernel.org>
 In-Reply-To: <20250623-work-pidfs-fhandle-v1-0-75899d67555f@kernel.org>
 To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
@@ -62,105 +62,95 @@ To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
 Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2966; i=brauner@kernel.org;
- h=from:subject:message-id; bh=a6sUFhCHKDgGHVZmg22ALl6fvlDWpmIFOyTGHkPjUAk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREir+u8av/eyLXYMvcxRzquUnpQtl24rc2Ne6RvvjNU
- k1usdCsjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInYvmJk2P76wgq9v7f3HKoz
- Cvf/uHo/J+OW21myLl3TnnE0fPqxk5eRYU+i9cK3NmmnvjYaa1R+fZuSHSnJ/q96fWL47Psn04o
- mcQEA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2694; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=TVFVDLeM3Mz4Xq7wpzRyDiOJmxnCx9C5H6NrmYAME0Q=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREir9+wx9/74j9QXaL6u39ZgsuX+g1Yjy/ebGZYmRA3
+ +ncrm1lHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMJ+8nIcP7G7rs1s7hbtV74
+ CcQxs+9Ys0xKIkL1VWXA4f5ToVKBhkAVby6KLJ7Q7H5YuS7EIvDRLZ1tte9+zVlwTdZr9uktSQd
+ ZAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Various filesystems such as pidfs (and likely drm in the future) have a
-use-case to support opening files purely based on the handle without
-having to require a file descriptor to another object. That's especially
-the case for filesystems that don't do any lookup whatsoever and there's
-zero relationship between the objects. Such filesystems are also
-singletons that stay around for the lifetime of the system meaning that
-they can be uniquely identified and accessed purely based on the file
-handle type. Enable that so that userspace doesn't have to allocate an
-object needlessly especially if they can't do that for whatever reason.
-
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/fhandle.c | 19 +++++++++++++++++--
- fs/pidfs.c   |  5 ++++-
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ tools/testing/selftests/pidfd/Makefile             |  2 +-
+ .../selftests/pidfd/pidfd_file_handle_test.c       | 54 ++++++++++++++++++++++
+ 2 files changed, 55 insertions(+), 1 deletion(-)
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index ab4891925b52..20d6477b5a9e 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -173,7 +173,7 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 	return err;
+diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
+index 03a6eede9c9e..764a8f9ecefa 100644
+--- a/tools/testing/selftests/pidfd/Makefile
++++ b/tools/testing/selftests/pidfd/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
++CFLAGS += -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES) -pthread -Wall
+ 
+ TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
+ 	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
+diff --git a/tools/testing/selftests/pidfd/pidfd_file_handle_test.c b/tools/testing/selftests/pidfd/pidfd_file_handle_test.c
+index 439b9c6c0457..f7e29416152c 100644
+--- a/tools/testing/selftests/pidfd/pidfd_file_handle_test.c
++++ b/tools/testing/selftests/pidfd/pidfd_file_handle_test.c
+@@ -500,4 +500,58 @@ TEST_F(file_handle, valid_name_to_handle_at_flags)
+ 	ASSERT_EQ(close(pidfd), 0);
  }
  
--static int get_path_anchor(int fd, struct path *root)
-+static int get_path_anchor(int fd, struct path *root, int handle_type)
- {
- 	if (fd >= 0) {
- 		CLASS(fd, f)(fd);
-@@ -193,6 +193,21 @@ static int get_path_anchor(int fd, struct path *root)
- 		return 0;
- 	}
- 
-+	/*
-+	 * Only autonomous handles can be decoded without a file
-+	 * descriptor.
-+	 */
-+	if (!(handle_type & FILEID_IS_AUTONOMOUS))
-+		return -EOPNOTSUPP;
++/*
++ * That we decode a file handle without having to pass a pidfd.
++ */
++TEST_F(file_handle, decode_purely_based_on_file_handle)
++{
++	int mnt_id;
++	struct file_handle *fh;
++	int pidfd = -EBADF;
++	struct stat st1, st2;
 +
-+	switch (handle_type & ~FILEID_USER_FLAGS_MASK) {
-+	case FILEID_PIDFS:
-+		pidfs_get_root(root);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
++	fh = malloc(sizeof(struct file_handle) + MAX_HANDLE_SZ);
++	ASSERT_NE(fh, NULL);
++	memset(fh, 0, sizeof(struct file_handle) + MAX_HANDLE_SZ);
++	fh->handle_bytes = MAX_HANDLE_SZ;
 +
- 	return 0;
- }
- 
-@@ -347,7 +362,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
- 	    FILEID_USER_FLAGS(f_handle.handle_type) & ~FILEID_VALID_USER_FLAGS)
- 		return -EINVAL;
- 
--	retval = get_path_anchor(mountdirfd, &ctx.root);
-+	retval = get_path_anchor(mountdirfd, &ctx.root, f_handle.handle_type);
- 	if (retval)
- 		return retval;
- 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 1b7bd14366dc..ea50a6afc325 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -747,7 +747,7 @@ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 
- 	*max_len = 2;
- 	*(u64 *)fh = pid->ino;
--	return FILEID_KERNFS;
-+	return FILEID_PIDFS;
- }
- 
- static int pidfs_ino_find(const void *key, const struct rb_node *node)
-@@ -802,6 +802,8 @@ static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
- 		return NULL;
- 
- 	switch (fh_type) {
-+	case FILEID_PIDFS:
-+		fallthrough;
- 	case FILEID_KERNFS:
- 		pid_ino = *(u64 *)fid;
- 		break;
-@@ -860,6 +862,7 @@ static const struct export_operations pidfs_export_operations = {
- 	.fh_to_dentry	= pidfs_fh_to_dentry,
- 	.open		= pidfs_export_open,
- 	.permission	= pidfs_export_permission,
-+	.flags		= EXPORT_OP_AUTONOMOUS_HANDLES,
- };
- 
- static int pidfs_init_inode(struct inode *inode, void *data)
++	ASSERT_EQ(name_to_handle_at(self->child_pidfd1, "", fh, &mnt_id, AT_EMPTY_PATH), 0);
++
++	ASSERT_EQ(fstat(self->child_pidfd1, &st1), 0);
++
++	pidfd = open_by_handle_at(-EBADF, fh, 0);
++	ASSERT_GE(pidfd, 0);
++
++	ASSERT_EQ(fstat(pidfd, &st2), 0);
++	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
++
++	ASSERT_EQ(close(pidfd), 0);
++
++	pidfd = open_by_handle_at(-EBADF, fh, O_CLOEXEC);
++	ASSERT_GE(pidfd, 0);
++
++	ASSERT_EQ(fstat(pidfd, &st2), 0);
++	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
++
++	ASSERT_EQ(close(pidfd), 0);
++
++	pidfd = open_by_handle_at(-EBADF, fh, O_NONBLOCK);
++	ASSERT_GE(pidfd, 0);
++
++	ASSERT_EQ(fstat(pidfd, &st2), 0);
++	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
++
++	ASSERT_EQ(close(pidfd), 0);
++
++	pidfd = open_by_handle_at(self->pidfd, fh, 0);
++	ASSERT_GE(pidfd, 0);
++
++	ASSERT_EQ(fstat(pidfd, &st2), 0);
++	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
++
++	ASSERT_EQ(close(pidfd), 0);
++
++	free(fh);
++}
++
+ TEST_HARNESS_MAIN
 
 -- 
 2.47.2
