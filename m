@@ -1,138 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-52614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D97AE485B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 17:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 624EAAE4866
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 17:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF1E3A689A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 15:20:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D298C3A972D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 15:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F048528B41A;
-	Mon, 23 Jun 2025 15:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739FE28AB07;
+	Mon, 23 Jun 2025 15:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Li4aUdsp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mjsgMC/x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CF8286D46
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 15:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B668287519
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 15:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691982; cv=none; b=HBv+zrkhWFWc0Thbxg5z5nyTALa69ptEhO2BaTmF4VOkyzRCU0GsILz9X1qWyKRQIlqaDtL3n9FgLfY+TOb5zGHGCCe38wfMSuCXjF4ca1mB4VTJ9d7zAkIgOaXk+gMfI/vU4Vmt/NB3d9+u9UOPssrQ01SYFQJZ9wY86SMrH9w=
+	t=1750692153; cv=none; b=rSNtpaSQMb3U7HIdMRONfmrq0K3GmHOH7vt8yOyUv/iA1Hgf8Ddo8gcdG1KcqMQvz/++Zq6ekKxrwx4WObmbT6jF+T2Nu153XvJeF/hHI1dlPDQt8Cdd/wnULHVpbvsqu/xbV2R6C1drcm8czXg0bVdHDu2oI3C2J5h8ZjAFIcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691982; c=relaxed/simple;
-	bh=lc100cMo9En40B0ztujnJRRO7hPXmlUrJUKsw1HShY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YPg4BP0vRdE/ABEi2eZRwQN+djr3erT0uz48SRqB0i/IpypeSJBUJj/KgBgDgQwPYmzvYY7I3bFEq8hl1ZX8M9NlLYEVTmLY2jk0VuyfRk0YEdjAFheQae+GufJfOjbhdWKXjxFUtiqxlowUfTMROZ/0SeGKUEmdxJAA6t4HbeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Li4aUdsp; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-adeaa4f3d07so875404566b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 08:19:40 -0700 (PDT)
+	s=arc-20240116; t=1750692153; c=relaxed/simple;
+	bh=hC9peFQk5TvNNRSqpIuY+epye1/M+kNum1ROmrB5xQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f42W7HyPAiZ90y8lQT0qtF0mO1lrKb3ag1U90vpSWjtsu5ZJOhRSWgl37ekOpVYgm/dsawbaizik0Z7XeMhB5zGAlUXt/oU/OmTW5dziW8uHCt0g7D+0YFVjSIvr1qEzIrVdySfYbPt/LH+taGpZmIVKQS453jZigE6wamifOfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mjsgMC/x; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-6116d9bb6ecso1087183eaf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 08:22:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750691979; x=1751296779; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yCpZRaNYcrlJ7g7L1zxin2BdglQIDQ3Fa5bAy+E1/kg=;
-        b=Li4aUdspklDyDQKJuRoCzOoqNmiYmlOWB2pUkzDwh4JuEVoC7iveooJQ8k2YiPgqbs
-         /gcxGo/rVx3vh7SP+RSBtzPjMS1fr/hW1toACwBn+OJbPsni5AOb0vdtNrcS+Ym6GbpE
-         HeBmhCBYfPqeS+tD3/iInP+b3TxP7vYM0wnzmb/WzHSuoICpincW/XPTIN8ZGNuMO33O
-         FHuInZmVvPYBHtRARwrxqfpBTMxYM63nCI0Ttp8dOiEhWJQRgFaBNsLnLETQxWox63TA
-         IuAC5f9EJM1iquB7tRzNp2J6RCcvFkiETKBKooCqAXZeRN811yteExfcZ39LTxwe+abu
-         7Dqw==
+        d=linaro.org; s=google; t=1750692151; x=1751296951; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bTZ19GRi4KU0H2wNqBnaKkKrv7m6rpdyKuL2QkFh6uQ=;
+        b=mjsgMC/xD/7Nu42Lgf44FhzejT4T/f/JDGVCRMV/3hizQOfqv7Nmnrf3s4Rh8gb/Pw
+         CSExBLuoDGt4qh+QwFjy6n+w8gZHLhfIZ+085HpT06uJXGwug8J5FM0ialJCKFEblggE
+         kd/2/mOPQrPieF6u53cs3Z39hf4GQBu5a6f8JhvMjLATQ6dy+WLiMfyS+zqZCR/c4K2f
+         pH+1R5JQxEi+SbAdVLFp2Z5dkaHoRGMRs+fN8sPYHgVEB+49h6TWu+TJ6ncozrliVymC
+         LmJli29nXUns52jR4ZM6KmXDAeA6TtEhO1MGsL9ikZCuXSJGzfSZW2DPDyNdUbc7a5II
+         g/gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750691979; x=1751296779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yCpZRaNYcrlJ7g7L1zxin2BdglQIDQ3Fa5bAy+E1/kg=;
-        b=vSo6rYEpUO1QYuFGznSZmKukuYoQYXFHbET5eIBfCgw2w/KfmypThy3P1iBw0CjlHs
-         iTEKCnoXfncizWAhZQwos3h31MQpvI2wmLAJSxcmDTBR6drbaS+tgjxjxwjOkT8G5DiD
-         P/PIhqUG6xQhNvBzROFpSz8UlUVFsVpZPXx9PGGo3qXIU26QECrdJfGsqbpFakc+l9Rc
-         cvK/OpVFxlDNTDr4d4Cqrds6KYrfOBmaqeqGTM5BvuR9D0+Ad5ZKa420ijk30nVq6fMa
-         nU69p4snecAd2CWc9KWFNwZFeO/qalRpYT8OvdjJqx8ZswqwYEkbVVavdq8BPYqI2sCG
-         sxEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRP/qdZXjLRHnYcNCYi+tNr671FxyWSkdMjHS1QiHw/H2L0qCYlDINxF+lbPF6l8bW7hzDB3hnjbWNXlYk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyl7X5Ph4UafGLJCGw24mWH9av+IAd/dEaxZnoeOoygxCrwLBs
-	O4GPL17XgavBDe/a4IEQCSu4AO2WJuC8xsb5sM/Yk3xVS4fa1cP+aHx15QvSMs8+HW/ZUlsmokZ
-	GckDdmLSnodsUQ4Ld4tNC1SRkMRqJvms=
-X-Gm-Gg: ASbGnctEF74zPs6RSl0OFENWFnsnOOJU7f6i4iXobE+2RPnJQIJshaYxuVUniYDqFds
-	R0ECfFMxQBAYSPgYHrhM93kxQnfLYmb60xNyFaWCDBBS6yW/47mEDfWidN+8vhtYDpN9F5Ny0Qt
-	z22OoyheKsKGx1vRGfaFoG7TVKZOs4yU2F9sk1VtKKr27UEgnvOwZvjg==
-X-Google-Smtp-Source: AGHT+IG2nEpSKguYvq4MT0QxB0uZkhC0q9k5UaApzvYIBw2WImr6QSPQ8WHQwfIIGy4TVpQhO/XQ26yuezEx15TWaZU=
-X-Received: by 2002:a17:907:2d86:b0:ad8:9257:5728 with SMTP id
- a640c23a62f3a-ae057d8cca2mr1299182366b.27.1750691978472; Mon, 23 Jun 2025
- 08:19:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750692151; x=1751296951;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bTZ19GRi4KU0H2wNqBnaKkKrv7m6rpdyKuL2QkFh6uQ=;
+        b=f4t4Xe5z+PyIYAlXHMDCqIWx5MKpLFFXPSuPlSsC7og2DSNeyIzQNQMZBeaagxDeSB
+         5A2G9Q7N3eKS75t2YQo2p4eFQ/a0saBhdl7uDbYHMYP5FnE3l1wCXpNW4Ib9v5KmWEET
+         X8S04+3zumhzvvxezX1wYMLCQHkQmhhDkIif8517gMdI4o2XFF8GvaFSuy0Fr1E1Vu/5
+         GMha02svqByKWUiqzVi/UKSriKLyRG1i+ItzOCGR6WLEM3a0S4cGwdvUkymGJZVValyp
+         71XC4G7cO7yWEby8lIpnhr9siQO6GP0UO4BmUELkF0WF4iZemXkvcamxFQXQxuA7uXRo
+         ZuQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXp3tFPrNqDfDtFdxmRrkiXFm4BjYAqW6neECmP2+tBeLTAccOzyYrxzb1/WO+XbXlN1fL7v2HyTGb2dLki@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFHzaIiDgy1MtUx3ykdWf2m8RJ8e9wnOlxRHtcT35A4MLZCFWm
+	Ul8I/lZrwfoBEmJmUxCn11jL6RJkoZwdXJn18vU7kCY2+avgnb0aBO9LjHN+HLwuDCx6zFSfUvO
+	gHojy
+X-Gm-Gg: ASbGncvWtlXuJZ8m6jNVg28ufZpMJevZazjDmzOVDCAqC/vyH/fuZBD/t7j0P9EzNHV
+	MRGF7ZY9KwpAobgoRhGhx+MJblLS8+FnQ5tuWrOjpBXzS8x3vPHwz66eO54WK2G9vgV5EC4wZDF
+	GnA3luZLJIzsxwluB3qkNsk6Zyy5TaaXJIBJdPEowpYoDR7fs8M0BpK3NruCYN5+iIDwDjAt+Xe
+	mY0onMPGREo35lM1k0H62xmhWIi9xuzPf0hEl22ibOdcJeaXta90ed2XHE1c+MM3gmb+2F0xU67
+	k94FQynfC7lvTgm/Y9k82CGce2YbOgd9c10/93AobmY9XnrczB5tmqcF7xcuDrgRq3ZgOw==
+X-Google-Smtp-Source: AGHT+IFkGyVDoc+8SQ8rASYfcEKGGB/Oc5hw+KdWNqGCuf0XX49CDwKCA3KtlNIgbDKU0n0iNbw/gw==
+X-Received: by 2002:a05:6870:392c:b0:2ea:8091:41f2 with SMTP id 586e51a60fabf-2eeee55c8cemr8102044fac.19.1750692151278;
+        Mon, 23 Jun 2025 08:22:31 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee8a8e5eb3sm1697426fac.32.2025.06.23.08.22.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 08:22:29 -0700 (PDT)
+Date: Mon, 23 Jun 2025 18:22:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: Su Hui <suhui@nfschina.com>, akpm@linux-foundation.org,
+	vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
+Message-ID: <d60db71a-0b4f-4e7d-8c06-7493934aa507@suswa.mountain>
+References: <20250623104704.3489471-1-suhui@nfschina.com>
+ <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250622215140.GX1880847@ZenIV> <CAOQ4uxioVpa3u3MKwFBibs2X0TWiqwY=uGTZnjDoPSB01kk=yQ@mail.gmail.com>
- <20250623144515.GB1880847@ZenIV>
-In-Reply-To: <20250623144515.GB1880847@ZenIV>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 23 Jun 2025 17:19:26 +0200
-X-Gm-Features: Ac12FXyyihH5TYAhYyJoqyhCl2n3PwsvmkwMKcy2wI_t4F_ZZCDNn659Q0mwsUw
-Message-ID: <CAOQ4uxhTXgTt62cX-F00e4vAyhDn=fCTxDqONcGT9+tBH-DkCQ@mail.gmail.com>
-Subject: Re: interesting breakage in ltp fanotify10
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Eric Biggers <ebiggers@google.com>, linux-fsdevel@vger.kernel.org, 
-	LTP List <ltp@lists.linux.it>, Petr Vorel <pvorel@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
 
-On Mon, Jun 23, 2025 at 4:45=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Mon, Jun 23, 2025 at 09:24:22AM +0200, Amir Goldstein wrote:
-> > On Sun, Jun 22, 2025 at 11:51=E2=80=AFPM Al Viro <viro@zeniv.linux.org.=
-uk> wrote:
-> > >
-> > >         LTP 6763a3650734 "syscalls/fanotify10: Add test cases for evi=
-ctable
-> > > ignore mark" has an interesting effect on boxen where FANOTIFY is not
-> > > enabled.  The thing is, tst_brk() ends up calling ->cleanup().  See t=
-he
-> > > problem?
-> > >         SAFE_FILE_PRINTF(CACHE_PRESSURE_FILE, "%d", old_cache_pressur=
-e);
-> > > is executed, even though
-> > >         SAFE_FILE_SCANF(CACHE_PRESSURE_FILE, "%d", &old_cache_pressur=
-e);
-> > >         /* Set high priority for evicting inodes */
-> > >         SAFE_FILE_PRINTF(CACHE_PRESSURE_FILE, "500");
-> > > hadn't been.
-> > >
-> > >         Result: fanotify10 on such kernel configs ends up zeroing
-> > > /proc/sys/vm/vfs_cache_pressure.
-> >
-> > oops.
-> > strange enough, I cannot reproduce it as something is preventing
-> > zeroing vfs_cache_pressure:
-> >
-> > fanotify23.c:232: TCONF: fanotify not configured in kernel
-> > fanotify23.c:249: TWARN: Failed to close FILE
-> > '/proc/sys/vm/vfs_cache_pressure': EINVAL (22)
->
-> How old is your ltp tree?  Mine was from late May (81d460ba6737 "overcomm=
-it_memory:
-> Disable optimization for malloc to prevent false positives")
+On Mon, Jun 23, 2025 at 10:36:45PM +0800, Baoquan He wrote:
+> On 06/23/25 at 06:47pm, Su Hui wrote:
+> > There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
+> > type from 'size_t' to 'unsigned int' for the consistency of data->size.
+> 
+> It's unclear to me why size_t is not suggested here. Isn't it assigned
+> a 'sizeof() + data->size' in which size_t should be used?
 
-My LTP tree is from end of May tag 20250530
+Yeah...  That's a good point.  People should generally default to size_t
+for sizes.  It really does prevent a lot of integer overflow bugs.  In
+this case data->size is not controlled by the user, but if it were
+then that would be an integer overflow on 32bit systems and not on
+64bit systems, until we start declaring sizes as unsigned int and
+then all the 32bit bugs start affecting everyone.
 
-> and I'm definitely
-> seeing that behaviour with fanotify23 as well.  No TWARN, though -
+regards,
+dan carpenter
 
-I have no idea where this strange TWARN is coming from
-I did not investigate it, but the bug is there anyway, so I sent a fix.
-
-Thanks,
-Amir.
 
