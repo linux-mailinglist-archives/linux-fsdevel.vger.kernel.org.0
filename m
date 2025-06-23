@@ -1,187 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-52637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D52FAE4D74
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 21:17:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC012AE4D85
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 21:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D5E17D463
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 19:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1A11884640
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 19:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB721F4628;
-	Mon, 23 Jun 2025 19:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0A52D5409;
+	Mon, 23 Jun 2025 19:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YobQ0v/r"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SWkxRRbY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2431678F4F;
-	Mon, 23 Jun 2025 19:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743772D4B79
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 19:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750706261; cv=none; b=dH18rPwV4wPCj18TngS7D6Ui0K8Ev/hy/Dcu5UpcHi+AX8Wj8fTJ35QJ+ZvepS4Bzw515BnaaiWjTjy5fR00/bQNpJLHInJW0U+LZXpphn58sjYouVb0BMNfSdCH1U8aHzIVzt5odqdD6PGVrWqfbeyN0d2x6KK77miGT4RC4uc=
+	t=1750706404; cv=none; b=ZOCf9tWQMH9G0UQZeUDitmYd93WWP4TqHki3cjSUNHEJN+qOeMqbAuTzX94/HPHl5N4zIluzcLNLIv4sZWp9ZXbOd+Plqm33KSnDk2MSPb/LB7zPTkmxavD5Aka8i2wIRYZc/aICVd5q6V/zyMJjIGwDMg4QmfUCXI5BJgJbu/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750706261; c=relaxed/simple;
-	bh=+Qly8++8NwkVFxi0EqVhD/4JcJSwOckHZ1V5SQOWRzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Apq2FgMTnd2YB1LUf7U/SMEOykihQdhczP+Il7tAh1mbY8WAi4V0YqDFifpDYEI31Zgtdz5F+QbdIiLcgMvJlxflBX4pIm3pv4IKQgLRa14Ph/OE4Xq4dtm9Q2hDMkSB4xrM6OI5dz8GKQMSOfZlfwQPOQS9enfACR3WFUM5uMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YobQ0v/r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6AE7C4CEF0;
-	Mon, 23 Jun 2025 19:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750706260;
-	bh=+Qly8++8NwkVFxi0EqVhD/4JcJSwOckHZ1V5SQOWRzc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YobQ0v/rxu+RveG+u6Y9Y+M/MRVN0bbgAuGVsFSeJ+7+Nnp0tE7wFrS5OF3fxjI6m
-	 HRTO3UaI+txGAABJa4TAzsnuixdF/xyXtC+pec1QPse1nRLe3As6QVbU7Qsg/SewD5
-	 7vBgtufZUUZxIFEtRoTics3030/3rRxcke2jyH5ftfi8ni4K8rhs3t5kTm3QXY8j3P
-	 E6I/Yi0bqRxaZZcHJXqipG16NPMh1U5sbYygJJ2ZtcKV1f7jKTSEBrmcyRSnykKFVC
-	 PZ7tnCVWJrTgCskT5dqxMnShe+3hU7LSAPwdAPM/i3vcEk1jGp6yo9YDas/pIkKZRZ
-	 8aQsPm7kZc3Sg==
-Date: Mon, 23 Jun 2025 21:17:36 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 6/9] exportfs: add FILEID_PIDFS
-Message-ID: <20250623-unklar-nachwachsen-09f3568700c8@brauner>
-References: <20250623-work-pidfs-fhandle-v1-0-75899d67555f@kernel.org>
- <20250623-work-pidfs-fhandle-v1-6-75899d67555f@kernel.org>
- <y6yp3ldhmmtl6mzr2arwr5fggzrlffc2pzvqbr7jkabqm5zm3u@6pwl22ctaxkx>
- <20250623-herzrasen-geblickt-9e2befc82298@brauner>
- <CAOQ4uxid1=97dZSZPB_4W5pocoU4cU-7G6WJ_4KQSGobZ_72xA@mail.gmail.com>
- <lo73q6ovi2m2skguq5ydedz2za4vud747ztwfxwzn33r3do7ia@p7y3sbyrznfi>
- <CAOQ4uxirz2sRrNNtO5Re=CdzwW+tLvoA0XHFW9V5HDPgh15g2A@mail.gmail.com>
- <idfofhnjxf35s4d6wifbdfh27a5blh5kzlpr5xkgkc3zkvz3nx@odyxd6o75a5a>
- <CAOQ4uxg9jWNxWg3ksoeEQ-KY0xKUwTPYokKN7d4whi_QDa=u_g@mail.gmail.com>
+	s=arc-20240116; t=1750706404; c=relaxed/simple;
+	bh=bPtpUMLV7xr1X126BF6oFqeloarjTFZdO7WU6y+TfGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OxRCu1Q6Q0h0VpaU+7Z/BVanHSOLqlEshas2qZEs24FJqwZqy4amGYiISdsSI7rgWZx5SE5bWfVKkQk1oQxd+x+6xSsfa3KO8TNeBsSr/hC7584/9SMo++TbU+sT6rAQ8Sfvc4MGQf4U+2nJpsQyn2niMzFJaMrJf77xka2mwaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWkxRRbY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750706401;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ia36cUstBWOxqzqqBwAJNyhejCeff2f/ZNqE/bIBYoU=;
+	b=SWkxRRbYv9u+Vgh6/C0yfxX6ryjA3YkaDFVolGTASVwRWrBUmcxzI+Uz0Y8cx88cfdcXjD
+	tfJae0dPppMX8psNZFReRLLx5udlajNpDmzknrzraoFH9sBbGqHnOLKPMdS4OVjKS4W0as
+	V06DK2+zNQiRD8pciKjgc1Ul3/7pjIo=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-457-tQP8FQUwMqeyT0BqtLQPUA-1; Mon, 23 Jun 2025 15:19:57 -0400
+X-MC-Unique: tQP8FQUwMqeyT0BqtLQPUA-1
+X-Mimecast-MFC-AGG-ID: tQP8FQUwMqeyT0BqtLQPUA_1750706397
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a50816cc58so1891064f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 12:19:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750706396; x=1751311196;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ia36cUstBWOxqzqqBwAJNyhejCeff2f/ZNqE/bIBYoU=;
+        b=hy83NapurAWtrDL1pMP9Q5pBWaPitwkUCpV/+7n29fhNVi8OgX0DufNHwoeiJsTN5r
+         1fOShfcH9cN7/Kw48fVx7I+9W5P0gFCDTBep5SJyhEX9vCNRvruYShXFODjR/wzIJd6d
+         jcBHLJhzjqSPMbrLynAXUiW+HhhLXcYuzNWt44VC+GKdJbEJA1rI+3+q8dex1jfYP/Ro
+         sgNlo88uu8amvA7xqLAvZxmtDZ8tRlMmOVRDI+IsrGy5e78X2+PgZ7sq3LIh/XqpCpaq
+         2J3OldC7CYY8IMzfnbpRzs2r/bccxrlCaBoYlKuV+wsyEs1AQ1UMZE1QOfPzzGGf8MAN
+         XsBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJHUc9HVPiD9DEgHTuRyCDFXdooOKoq+bz92lOcCvH4A2ih5w6x8goNpn8FVZ3CJKHhjimu/PiDvrwfWPA@vger.kernel.org
+X-Gm-Message-State: AOJu0YziMHNiI2UCo0LOJqI08K/NwSoW0nOLEfAjdvblCBolhnC7d/J1
+	5TiWME9OjpJmErgHaHodFDD24an6v6+xopW3WTFaKxPz/eNcpKkELmhLmtopuhu7LWUYZjd6/gy
+	bXPMWnuCV9CXWLitNKl+hrWnP0BPAuT11tAgle0A1Hu5bIL0fDaqrs8ml7bJHrlqkiyk=
+X-Gm-Gg: ASbGnctA++HdtmLr+1bYoGmhNiay+iFOS9bRZrX1jtrefgkK65YpTXpo/Y230reQaes
+	qd5mINxErG/bQvKcujNEH4FM4NwtBJu0i4F/pmPWt8fgHdKqf5efx2R7o5kouOfunL2gUdylXGw
+	OTl7L+r9ZgF1NHemt+tJLc1YIBcwcqfX8h69cpztK+EHPlleEJogIqw9yyT1xBxhs4PMsPjNApB
+	1Wx2SiYD5P4pnVDTjZcph7asq4xQ8t4DaSI1szCJPbBAhqxEgWGqB36TLnvpQW+VK3q8qIl8qTv
+	svjj9gjdtrGHJNzewrqNaOcCgtA+6Z80ZpnoEVxf4FXogKox5nhfJE2h4c1g6T0iCCVBq/+rpTv
+	qeGZeSQ6P6Nv8iu0m3NPYHUewWegfauhOSisyZqgF5ZKvQwyGUA==
+X-Received: by 2002:a05:6000:4107:b0:3a5:8a68:b836 with SMTP id ffacd0b85a97d-3a6d1329befmr10573971f8f.44.1750706396497;
+        Mon, 23 Jun 2025 12:19:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHnTvk3P/6PK4mDZPRi5nS+fcbmFs9L1Lavfj+RH/ks3CCp4alELqSqD5c1ZTArrgC0L3tcnQ==
+X-Received: by 2002:a05:6000:4107:b0:3a5:8a68:b836 with SMTP id ffacd0b85a97d-3a6d1329befmr10573942f8f.44.1750706396086;
+        Mon, 23 Jun 2025 12:19:56 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d117bfd9sm10346368f8f.57.2025.06.23.12.19.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 12:19:54 -0700 (PDT)
+Message-ID: <155d1f58-6568-4efa-968e-af3873707ad0@redhat.com>
+Date: Mon, 23 Jun 2025 21:19:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxg9jWNxWg3ksoeEQ-KY0xKUwTPYokKN7d4whi_QDa=u_g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 03/14] mm: compare pfns only if the entry is present
+ when inserting pfns/pages
+To: Pedro Falcato <pfalcato@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-4-david@redhat.com>
+ <dq5r2xmw3ypfk2luffas45up525aig4nu7qogojajspukak74o@gtg4kwwvjb5c>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <dq5r2xmw3ypfk2luffas45up525aig4nu7qogojajspukak74o@gtg4kwwvjb5c>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 23, 2025 at 04:05:18PM +0200, Amir Goldstein wrote:
-> On Mon, Jun 23, 2025 at 3:18 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Mon 23-06-25 15:05:45, Amir Goldstein wrote:
-> > > On Mon, Jun 23, 2025 at 2:41 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Mon 23-06-25 14:22:26, Amir Goldstein wrote:
-> > > > > On Mon, Jun 23, 2025 at 1:58 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > > > >
-> > > > > > On Mon, Jun 23, 2025 at 01:55:38PM +0200, Jan Kara wrote:
-> > > > > > > On Mon 23-06-25 11:01:28, Christian Brauner wrote:
-> > > > > > > > Introduce new pidfs file handle values.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > > > > > > ---
-> > > > > > > >  include/linux/exportfs.h | 11 +++++++++++
-> > > > > > > >  1 file changed, 11 insertions(+)
-> > > > > > > >
-> > > > > > > > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> > > > > > > > index 25c4a5afbd44..45b38a29643f 100644
-> > > > > > > > --- a/include/linux/exportfs.h
-> > > > > > > > +++ b/include/linux/exportfs.h
-> > > > > > > > @@ -99,6 +99,11 @@ enum fid_type {
-> > > > > > > >      */
-> > > > > > > >     FILEID_FAT_WITH_PARENT = 0x72,
-> > > > > > > >
-> > > > > > > > +   /*
-> > > > > > > > +    * 64 bit inode number.
-> > > > > > > > +    */
-> > > > > > > > +   FILEID_INO64 = 0x80,
-> > > > > > > > +
-> > > > > > > >     /*
-> > > > > > > >      * 64 bit inode number, 32 bit generation number.
-> > > > > > > >      */
-> > > > > > > > @@ -131,6 +136,12 @@ enum fid_type {
-> > > > > > > >      * Filesystems must not use 0xff file ID.
-> > > > > > > >      */
-> > > > > > > >     FILEID_INVALID = 0xff,
-> > > > > > > > +
-> > > > > > > > +   /* Internal kernel fid types */
-> > > > > > > > +
-> > > > > > > > +   /* pidfs fid types */
-> > > > > > > > +   FILEID_PIDFS_FSTYPE = 0x100,
-> > > > > > > > +   FILEID_PIDFS = FILEID_PIDFS_FSTYPE | FILEID_INO64,
-> > > > > > >
-> > > > > > > What is the point behind having FILEID_INO64 and FILEID_PIDFS separately?
-> > > > > > > Why not just allocate one value for FILEID_PIDFS and be done with it? Do
-> > > > > > > you expect some future extensions for pidfs?
-> > > > > >
-> > > > > > I wouldn't rule it out, yes. This was also one of Amir's suggestions.
-> > > > >
-> > > > > The idea was to parcel the autonomous fid type to fstype (pidfs)
-> > > > > which determines which is the fs to decode the autonomous fid
-> > > > > and a per-fs sub-type like we have today.
-> > > > >
-> > > > > Maybe it is a bit over design, but I don't think this is really limiting us
-> > > > > going forward, because those constants are not part of the uapi.
-> > > >
-> > > > OK, I agree these file handles do not survive reboot anyway so we are free
-> > > > to redefine the encoding in the future. So it is not a big deal (but it
-> > > > also wouldn't be a big deal to start simple and add some subtyping in the
-> > > > future when there's actual usecase). But in the current patch set we have
-> > > > one flag FILEID_IS_AUTONOMOUS which does provide this subtyping and then
-> > > > this FILEID_PIDFS_FSTYPE which doesn't seem to be about subtyping but about
-> > > > pidfs expecting some future extensions and wanting to recognize all its
-> > > > file handle types more easily (without having to enumerate all types like
-> > > > other filesystems)? My concern is that fh_type space isn't that big and if
-> > > > every filesystem started to reserve flag-like bits in it, we'd soon run out
-> > > > of it. So I don't think this is a great precedens although in this
-> > > > particular case I agree it can be modified in the future if we decide so...
-> > > >
-> > >
-> > > Yes, I agree.
-> > > For the sake of argument let's assume we have two types to begin with
-> > > pidfs and drm and then would you want to define them as:
-> > >
-> > >    /* Internal kernel fid types */
-> > >    FILEID_PIDFS = 0x100,
-> > >    FILEID_DRM = 0x200,
-> > >
-> > > Or
-> > >
-> > >    FILEID_PIDFS = 0x100,
-> > >    FILEID_DRM = 0x101,
-> > >
-> > > I think the former is easy to start with and we have plenty of time to
-> > > make reparceling if we get to dousens and file id type...
-> >
-> > No strong preference if we then test for equality with FILEID_PIDFS and
-> > FILEID_DRM and not like fh_type & FILEID_PIDFS.
-> >
-> > > Regarding the lower bits, I think it would be wise to reserve
-> > >
-> > > FILEID_PIDFS_FSTYPE = 0x100,
-> > > FILEID_PIDFS_ROOT = FILEID_PIDFS_FSTYPE | FILEID_ROOT /* also 0x100 */
-> > >
-> > > This is why I suggested using non zero lower bits and then why
-> > > not use the actual format descriptor for the lower bits as it was intended.
-> >
-> > I'm getting lost in these names a bit :) It's hard to see a difference for
-> > me without a concrete examples of where one should be used compared to the
-> > other...
+On 20.06.25 20:24, Pedro Falcato wrote:
+> On Tue, Jun 17, 2025 at 05:43:34PM +0200, David Hildenbrand wrote:
+>> Doing a pte_pfn() etc. of something that is not a present page table
+>> entry is wrong. Let's check in all relevant cases where we want to
+>> upgrade write permissions when inserting pfns/pages whether the entry
+>> is actually present.
+>>
+>> It's not expected to have caused real harm in practice, so this is more a
+>> cleanup than a fix for something that would likely trigger in some
+>> weird circumstances.
 > 
-> In any case, I don't feel strongly about it.
-> You can leave it as is or use
->     FILEID_PIDFS = 0x100,
-> or
->     FILEID_PIDFS = 0x180,
-> 
-> we can always change it later if we want to.
-> 
-> Thanks,
-> Amir.
+> Couldn't we e.g have a swap entry's "pfn" accidentally match the one we're
+> inserting? Isn't that a correctness problem?
 
-I'm completely lost.
+In theory yes, in practice I think this will not happen.
+
+... especially because the WARN_ON_ONCE() would already trigger in many 
+other cases before we would find one situation where it doesn't.
+
+That's why I decided against Fixes: and declaring this more a cleanup, 
+because the starts really would have to align ... :)
+
+Thanks!
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
