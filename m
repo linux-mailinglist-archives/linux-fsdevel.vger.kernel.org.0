@@ -1,114 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-52493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0191AE3809
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 10:12:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18268AE38D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 10:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEC217A853E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 08:11:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5CBF17171B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 08:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B98821638A;
-	Mon, 23 Jun 2025 08:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DDD226CF5;
+	Mon, 23 Jun 2025 08:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ti897vSR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372C21E0DD8;
-	Mon, 23 Jun 2025 08:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90B91EFF9B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 08:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750666363; cv=none; b=utnEYgIwOc1q0o2CJB0FGR48MEwYrPUfWFzDS8ZQ6OlFYgdTznnbPH3xMiXftMb886FTDOLdyN07l8jn8V7RSBGpi6pM8r3Dj/Th2I86TyN0g2icoEwfczfkPW6nSjIKxSc/oKaMmgMyS2hSU9jNnAfQKBSSKOzFzwN2AnwySrU=
+	t=1750668401; cv=none; b=SKSl8qxh8PKRInLyBJNgDsHLhRi9MXUUWLFZDWcGBDLOTLMrLz1Kl50f7yMq9u1iAF3gn5RdmqvgjdNSgnTk4VnG6KLCksxWJnDmxj4dxxDr5cazVwswToFOv9wN7yvTqbkcFA01JOxp8y6eqEwa1q/YxlHonKzLScDv0fRWly0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750666363; c=relaxed/simple;
-	bh=GlRv4e6jn0lrwjfx31u6KdO0Bvae9xSwKyzJfOxW1YQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PYI3DEBXDRqhZLFPYAChnynLNNFRatVDGYICKqN2uhTjRIFXO8TeEP3PAVgusBY/2bV5ti43/WVZuydGqqzlDqB3vuPncxzR6xPIX6MZP4aHM99p/6amCTo+JLxpxBOaZUe2O0puikCK9oD7eqiYxDgtXjdudATtqurLFsEPTzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bQgkw0mjSz2TSLJ;
-	Mon, 23 Jun 2025 16:11:04 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id BEB1014027A;
-	Mon, 23 Jun 2025 16:12:38 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Jun
- 2025 16:12:37 +0800
-Message-ID: <f71c6d59-8d5f-46c0-bf17-51b0e7c9a6c8@huawei.com>
-Date: Mon, 23 Jun 2025 16:12:36 +0800
+	s=arc-20240116; t=1750668401; c=relaxed/simple;
+	bh=p3ooWrtd74XweD38edeRuLzXlNCyv9cH2Jx/v1NmqNk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=Kf7Qwh11mww273oPzRLlciZEYNcrmF3kmijENW/BGMCCy1EVGTYsndsmknruZJ5rm/ZgyoM0TGSfp2gQCk2+wo/fe/py06FJJseeJk+RH8mybzza3YRAfq8UzfWBg7Lg1qpCYo3ccUrLPvH1+z/gNSys7YOiwWiWnVbxczHUeCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ti897vSR; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250623084636epoutp034fe7887bbe99c7030ff4d1fd2799aba0~Ln6GcUbw60712307123epoutp03D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 08:46:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250623084636epoutp034fe7887bbe99c7030ff4d1fd2799aba0~Ln6GcUbw60712307123epoutp03D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750668396;
+	bh=Ej5r4+iW7MlQeTUaUnhlBJoCynReztz31GW7uiq9cQ0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Ti897vSRU34GsjkgVp3G5g8ZcaNRpbzqZi3xJmg+/bfuMI5jcobicH9KC14Y7+HEg
+	 GyHGL4pxAKZzMmXtFN/ef5fojeVtI5Kwryquf3h2R2f9xgLzy/aigWE5Ik0UvJNqx3
+	 DWNyayXYnos/HylImiin29IdF3tysad724kUYU4Q=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250623084636epcas5p20f1ff4324ba7d40500f89fbe68a88d13~Ln6F6gRf00753007530epcas5p2H;
+	Mon, 23 Jun 2025 08:46:36 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bQhWt18fSz3hhTG; Mon, 23 Jun
+	2025 08:46:34 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250623083812epcas5p2f7487b16f6a354b42e47b15d874bfbea~LnyxFnCOP1422814228epcas5p2Z;
+	Mon, 23 Jun 2025 08:38:12 +0000 (GMT)
+Received: from node122.. (unknown [109.105.118.122]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250623083810epsmtip1bb4addeeaa32e347295146f12a47b77d~LnyvcBlWp2289822898epsmtip1X;
+	Mon, 23 Jun 2025 08:38:10 +0000 (GMT)
+From: "xiaobing.li" <xiaobing.li@samsung.com>
+To: kbusch@kernel.org
+Cc: bschubert@ddn.com, amir73il@gmail.com, asml.silence@gmail.com,
+	axboe@kernel.dk, io-uring@vger.kernel.org, joannelkoong@gmail.com,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
+	tom.leiming@gmail.com, dw@davidwei.uk, kun.dou@samsung.com,
+	peiwei.li@samsung.com, xue01.he@samsung.com, cliang01.li@samsung.com,
+	joshi.k@samsung.com
+Subject: Re: [PATCH v9 00/17] fuse: fuse-over-io-uring.
+Date: Mon, 23 Jun 2025 08:33:25 +0000
+Message-Id: <20250623083325.1044846-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aFLbq5zYU6_qu_Yk@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] ext4: fix insufficient credits calculation in
- ext4_meta_trans_blocks()
-To: Zhang Yi <yi.zhang@huaweicloud.com>, <linux-ext4@vger.kernel.org>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-	<ojaswin@linux.ibm.com>, <yi.zhang@huawei.com>, <yukuai3@huawei.com>,
-	<yangerkun@huawei.com>, Baokun Li <libaokun1@huawei.com>
-References: <20250611111625.1668035-1-yi.zhang@huaweicloud.com>
- <20250611111625.1668035-7-yi.zhang@huaweicloud.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20250611111625.1668035-7-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250623083812epcas5p2f7487b16f6a354b42e47b15d874bfbea
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250623083812epcas5p2f7487b16f6a354b42e47b15d874bfbea
+References: <aFLbq5zYU6_qu_Yk@kbusch-mbp>
+	<CGME20250623083812epcas5p2f7487b16f6a354b42e47b15d874bfbea@epcas5p2.samsung.com>
 
-On 2025/6/11 19:16, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Wed, Jun 18, 2025 at 09:30:51PM -0600, Keith Busch wrote:
+>On Wed, Jun 18, 2025 at 03:13:41PM +0200, Bernd Schubert wrote:
+>> On 6/18/25 12:54, xiaobing.li wrote:
+>> > 
+>> > Hi Bernd,
+>> > 
+>> > Do you have any plans to add zero copy solution? We are interested in
+>> > FUSE's zero copy solution and conducting research in code.
+>> > If you have no plans in this regard for the time being, we intend to
+>> >  submit our solution.
+>> 
+>> Hi Xiobing,
+>> 
+>> Keith (add to CC) did some work for that in ublk and also planned to
+>> work on that for fuse (or a colleague). Maybe Keith could
+>> give an update.
 >
-> The calculation of journal credits in ext4_meta_trans_blocks() should
-> include pextents, as each extent separately may be allocated from a
-> different group and thus need to update different bitmap and group
-> descriptor block.
+>I was initially asked to implement a similar solution that ublk uses for
+>zero-copy, but the requirements changed such that it won't work. The
+>ublk server can't directly access the zero-copy buffers. It can only
+>indirectly refer to it with an io_ring registered buffer index, which is
+>fine my ublk use case, but the fuse server that I was trying to
+>enable does in fact need to directly access that data.
 >
-> Fixes: 0e32d8617012 ("ext4: correct the journal credits calculations of allocating blocks")
-> Reported-by: Jan Kara <jack@suse.cz>
-> Closes: https://lore.kernel.org/linux-ext4/nhxfuu53wyacsrq7xqgxvgzcggyscu2tbabginahcygvmc45hy@t4fvmyeky33e/
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Looks good to me. Feel free to add:
+Hi Keith,
 
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
-
-> ---
->   fs/ext4/inode.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 9835145b1b27..9b6ebf823740 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -6218,7 +6218,7 @@ int ext4_meta_trans_blocks(struct inode *inode, int lblocks, int pextents)
->   	int ret;
->   
->   	/*
-> -	 * How many index and lead blocks need to touch to map @lblocks
-> +	 * How many index and leaf blocks need to touch to map @lblocks
->   	 * logical blocks to @pextents physical extents?
->   	 */
->   	idxblocks = ext4_index_trans_blocks(inode, lblocks, pextents);
-> @@ -6227,7 +6227,7 @@ int ext4_meta_trans_blocks(struct inode *inode, int lblocks, int pextents)
->   	 * Now let's see how many group bitmaps and group descriptors need
->   	 * to account
->   	 */
-> -	groups = idxblocks;
-> +	groups = idxblocks + pextents;
->   	gdpblocks = groups;
->   	if (groups > ngroups)
->   		groups = ngroups;
-
-
+If it's convenient, could you tell us what your current application 
+scenarios are and why you need to directly share memory between the 
+application and fuse?
+We are also currently thinking about implementing zero-copy in the 
+direction of directly sharing memory. Can you share your current ideas?
+ 
+Best regards
+--
+Xiaobing Li
 
