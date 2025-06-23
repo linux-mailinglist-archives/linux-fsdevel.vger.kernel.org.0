@@ -1,88 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-52545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82ECCAE403C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 14:30:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31ABAE3FEE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 14:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591B83BFAFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:23:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34EC27A2BE3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095E62459D2;
-	Mon, 23 Jun 2025 12:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C07523F409;
+	Mon, 23 Jun 2025 12:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LnNB/HnR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTzACbp6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5114123C4F3;
-	Mon, 23 Jun 2025 12:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EDF5579E;
+	Mon, 23 Jun 2025 12:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750681397; cv=none; b=iAbAPJXFa/k1OUU2YqgNeM1Y2THe4mI33Ym5Q4Ku3emPI6YIGOk4Ojpq2SQeRoVRSKD5SB3uuLJU3ojNKyjPIKDD5SNMKVliN7KAd9AyVxTpE3VJPzz/yaKpdk7AHw9tEGhnOe78vAwcoWnBhzDX/YtRWDBO6UzXA2JgdSIQ+g4=
+	t=1750681550; cv=none; b=hPGQiCoRjYqzq1aO3oBaiAmIhMGE/DyN/p6Bs2doSk8VsXUDebkMvUEJa+fmcbDUF2bt6/pkP0LhHuRk5PyYooWhun1oNkZBD3SFgtjTj1gmdPMU72f2uwR9B8c7tUasPlVfUF1eZiPHCtfTJxwOAyoAwxuOBF22x+gak/6CxGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750681397; c=relaxed/simple;
-	bh=spx48TxfkANdTm+YuFHey2z5P4yfowIJjITuirl3kDM=;
+	s=arc-20240116; t=1750681550; c=relaxed/simple;
+	bh=NEpi/7jbMxlgA/Ip3kFmF6fyk2NnVHnyuKnlcrk3VP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mt/++Q8JJObIt6YI2zs5Dq8dkfVi7SawCunAg1PsnQkc+GyPi44Lr+9OgpUaSn9SurgkW4lHIHvlMwQ7dnad/bqcyO3CcSb9V1cVm1+jB2b6db+RkE0jeLGxL+fmP8CWAPPd7JZ3ulcyDiTs7ElH0PkI4jUfhIxHWrJDY9b9slE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LnNB/HnR; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3oCr8/2E/ECUGMdCQG5uK2s/rAaWdb4SF8d9yHw1SGc=; b=LnNB/HnRw1ZuK8fdt8rSMJ2ZYs
-	q+mW5oayHUBd2qfRNZL5j0uUh9ko/ejIS840XHJrbvp0XXsnPshvxo22sJ2/tdoYi6ERn4uQPoids
-	wWMoD9y+CL3Eubvm4JTJtsfBUMB3K5F7LRxS8wdG6bSZK4z6byuJQYa85lbqNFDJRZj4Ia/+OYd8d
-	9ipCORuobaKsyF0cXHA8WHbUY6oPA7b/XkqQtx4BeOji44BWo4jJcuXOvV5cy7UrNymptQgKKmQ04
-	nj/lr96lizIJt52vWyInxpNXHVuHv8TrB4k/r+WH2R08hi5XIz+wWuYWais41pGsOlRtF3aaeYV3n
-	Lx7l0xHw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTgCR-00000003OC9-0JQF;
-	Mon, 23 Jun 2025 12:22:59 +0000
-Date: Mon, 23 Jun 2025 13:22:58 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: kent.overstreet@linux.dev, clm@fb.com, josef@toxicpanda.com,
-	dsterba@suse.com, xiang@kernel.org, chao@kernel.org,
-	jaegeuk@kernel.org, akpm@linux-foundation.org, david@redhat.com,
-	vbabka@suse.cz, zbestahu@gmail.com, jefflexu@linux.alibaba.com,
-	dhavale@google.com, lihongbo22@huawei.com, pankaj.gupta@amd.com,
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	kvm@vger.kernel.org, linux-coco@lists.linux.dev
-Subject: Re: [PATCH V2 1/2] mm/filemap: Add NUMA mempolicy support to
- filemap_alloc_folio()
-Message-ID: <aFlHIjLBwn3LQFMC@casper.infradead.org>
-References: <20250623093939.1323623-4-shivankg@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lMMvKnKEcFrFr7/Af+VK+CVk3yuVmvDammno74XoL7VBkzubBBzadGCPdFAqvNOvvRNKe/nqb8u2xo7uj9SDso9ZZK00UtfLSxc0eFa2p95u5lZhYBldWJaGVr7s2cN04H4tp/09noY5zusJqNsfxeHjjuaTe73b8ZJwSZ0gS4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTzACbp6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AB2C4CEEA;
+	Mon, 23 Jun 2025 12:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750681549;
+	bh=NEpi/7jbMxlgA/Ip3kFmF6fyk2NnVHnyuKnlcrk3VP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XTzACbp6s++Eu5qs6WDi+DYNT9yNIgHydyOWqF5GNCL5Z0w/BI/NXxP6fLJc39tmu
+	 oo51dVdttN4gXPMX1+CefwGLgqI9IPijqLYm7xJyPK1/Z4O7t4AJI9uz3r9Ns/7emL
+	 sm+yry36VOY/lIR5oK4ni42YSDlCjMgP2D4bs4Pa1kCdNi1mf1lGWmI+rTy0FeeOoB
+	 z2r79FZ7zhNyeT/vlOS6gNxNgYl6o4zBPKGc6TtB/RcS2Fq226nL/1By6cteZk7WYX
+	 xICDdSCoGRCcLzPibNp9wA6OtyBs8EPQuWlKfcc9OtnERxFCTC5PhotehWSvncJT3f
+	 BPrhAiB1ntgbw==
+Date: Mon, 23 Jun 2025 14:25:45 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 8/9] fhandle, pidfs: support open_by_handle_at() purely
+ based on file handle
+Message-ID: <20250623-wegnehmen-fragen-9dfdfdf0b2af@brauner>
+References: <20250623-work-pidfs-fhandle-v1-0-75899d67555f@kernel.org>
+ <20250623-work-pidfs-fhandle-v1-8-75899d67555f@kernel.org>
+ <ipk5yr7xxdmesql6wqzlbs734jjvn3had5vzqrck6e2ke4zanu@6sotvp4bd5lu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250623093939.1323623-4-shivankg@amd.com>
+In-Reply-To: <ipk5yr7xxdmesql6wqzlbs734jjvn3had5vzqrck6e2ke4zanu@6sotvp4bd5lu>
 
-On Mon, Jun 23, 2025 at 09:39:41AM +0000, Shivank Garg wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Mon, Jun 23, 2025 at 02:06:43PM +0200, Jan Kara wrote:
+> On Mon 23-06-25 11:01:30, Christian Brauner wrote:
+> > Various filesystems such as pidfs (and likely drm in the future) have a
+> > use-case to support opening files purely based on the handle without
+> > having to require a file descriptor to another object. That's especially
+> > the case for filesystems that don't do any lookup whatsoever and there's
+> > zero relationship between the objects. Such filesystems are also
+> > singletons that stay around for the lifetime of the system meaning that
+> > they can be uniquely identified and accessed purely based on the file
+> > handle type. Enable that so that userspace doesn't have to allocate an
+> > object needlessly especially if they can't do that for whatever reason.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > 
-> Add a mempolicy parameter to filemap_alloc_folio() to enable NUMA-aware
-> page cache allocations. This will be used by upcoming changes to
-> support NUMA policies in guest-memfd, where guest_memory needs to be
-> allocated according to NUMA policy specified by the VMM.
-> 
-> All existing users pass NULL maintaining current behavior.
+> Hmm, maybe we should predefine some invalid fd value userspace should pass
+> when it wants to "autopick" fs root? Otherwise defining more special fd
+> values like AT_FDCWD would become difficult in the future. Or we could just
 
-I don't want to see this as a separate series.  I want to see it as part
-of the series that introduces the user.
+Fwiw, I already did that with:
 
-Andrew, please drop these two patches from your tree.
+#define PIDFD_SELF_THREAD		-10000 /* Current thread. */
+#define PIDFD_SELF_THREAD_GROUP		-20000 /* Current thread group leader. */
+
+I think the correct thing to do would have been to say anything below
+
+#define AT_FDCWD		-100    /* Special value for dirfd used to
+
+is reserved for the kernel. But we can probably easily do this and say
+anything from -10000 to -40000 is reserved for the kernel.
+
+I would then change:
+
+#define PIDFD_SELF_THREAD		-10000 /* Current thread. */
+#define PIDFD_SELF_THREAD_GROUP		-10001 /* Current thread group leader. */
+
+since that's very very new and then move
+PIDFD_SELF_THREAD/PIDFD_SELF_THREAD_GROUP to include/uapi/linux/fcntl.h
+
+and add that comment about the reserved range in there.
+
+The thing is that we'd need to enforce this on the system call level.
+
+Thoughts?
+
+> define that FILEID_PIDFS file handles *always* ignore the fd value and
+> auto-pick the root.
+
+I see the issue I don't think it's a big deal but I'm open to adding:
+
+#define AT_EBADF -10009 /* -10000 - EBADF */
+
+and document that as a stand-in for a handle that can't be resolved.
+
+Thoughts?
 
