@@ -1,109 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-52633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2494AE4B91
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 19:03:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D69AE4CB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 20:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01E63B5293
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 17:03:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7654416D614
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 18:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7262524DCE8;
-	Mon, 23 Jun 2025 17:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC4C2D028A;
+	Mon, 23 Jun 2025 18:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ebXxcMGP"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A88B/ENI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8963D1B4242
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 17:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD7953BE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 18:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750698202; cv=none; b=FCDAfxnVHlg+DWta5p/ebG63yJAkc/z/9+4AAb4l0D6vAr7W/+ZjCKbmuGMpqODZfXubxpZ56PCMvdjienN5aPA0f+5uDA6SkWwJPLNVGacvYM3hun8iwgUnuSfaeiKEfDDSZP3AtnuM01/jDKTVzh195G4hWgGiuhBQgqHjGeY=
+	t=1750702919; cv=none; b=bpPA09Xbqzwfv5PD3k/Beja8NlhXURONEuotYflly/NOSNkceFmKcaHQKqf/PY20U5oRTwrRYlcrbHXTVIWkOt9PPeP+Wk973st0rSjMflPBNM5We/rmTZ6CJozoT4YZDrI6FdKbtJU9C8m4xMXX4An6QOfFZRtCm0EEVoXAuUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750698202; c=relaxed/simple;
-	bh=WqKeqe0ui/3PYtidl2Jzo+ET00a4MBiFsQAnjmF5mi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCJu6spuycTHLj7umV6308CfgZNN1S0a6WSYyhJpD4nCZpuxLkFqORWnEneXo8jVUHIlQFhjnIr9CE+LZFJ9PsOzosJwKEryIGAptqmyJ8jGgl//vJoqNUnzMPjz1HSM7DXpqKhKUwOnOAetiylnbpzGulmb0+GhsGu8UWb9t9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ebXxcMGP; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4WmuDGLWLtkGSCykoSCJTc19hdMKWQHLzuR/G4sydY8=; b=ebXxcMGPcve1x50gcbhW7tIrF0
-	9p2aWC/q2bG9azoqf6XEcbeTbRAbtO73sUyVUwJHMhBP5lUVEcy9yrORJMbtkNBf3IkHYm3zPUulU
-	QTF2f4y9/WHFTrM/+DFBmQAsJEFI4yR+/KxNqxP/l2u2/awwla013CQK41W7QIvAkssLvYAhy/ghp
-	873jwEysq/mbX/m70OVL9Ub7UAQXh2ol/Nl5WBtmatDKfVacyUk/bPkokRbpZxmIRy5ja9W+fRCCc
-	UZO7aLPmskDEDiUQubO3TlR04gnYv7gq5MtCSxCNTOMnNd3ES24nrMsxjJx+eCwS8/dMqoGYz4TGE
-	T8Za/Kag==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTkZf-0000000ElCp-04UM;
-	Mon, 23 Jun 2025 17:03:15 +0000
-Date: Mon, 23 Jun 2025 18:03:14 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	ebiederm@xmission.com, jack@suse.cz
-Subject: Re: [PATCH v2 17/35] sanitize handling of long-term internal mounts
-Message-ID: <20250623170314.GG1880847@ZenIV>
-References: <20250623044912.GA1248894@ZenIV>
- <20250623045428.1271612-1-viro@zeniv.linux.org.uk>
- <20250623045428.1271612-17-viro@zeniv.linux.org.uk>
- <CAHk-=wjiSU2Qp-S4Wmx57YbxCVm6d6mwXDjCV2P-XJRexN2fnw@mail.gmail.com>
+	s=arc-20240116; t=1750702919; c=relaxed/simple;
+	bh=KdoidYXby0xpk/s+6YujWdZAk6+GGiW8NtafDhpg3lw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U3iBW9gwj4hYsMjIr/YwlVY++I9suzeUH+p5/gEkb2tryABeJJdj/G5Xk9DKX2nsaN5/Mooa45X5RnLPrtkn76qbP5tFJxeuqyLJjflKTfFGWxs2zoKDsryOhCDU58AKSKuX8mKC+ioQYD5lT4yB8yo3mavSJi/U7sbZhlTqdvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A88B/ENI; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so7837586a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 11:21:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1750702915; x=1751307715; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GQs4olYcwyx9snEcwR/AxBPgclJCTw7iVJ4ACeNwh0U=;
+        b=A88B/ENI/5asfgFE1EcvYV6amYN+VP2j1UpaV03SfUgH5RTu3SzqfeezWiOJrc3/8q
+         CF9+L4VwjHaiAjjtS0tpJom2HHcNKO8dkg0JEM7TSkFrx8rPKGULVHGAYnYi8fcoARci
+         575670wNMyyFxeNNAKbThtKwXSR4OxZp3iT/w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750702915; x=1751307715;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GQs4olYcwyx9snEcwR/AxBPgclJCTw7iVJ4ACeNwh0U=;
+        b=AedMKP4tkemokxwxbmKUTiCOhQ6o27mf7S+ke4PrWxchixK6JnkPSXDCb8h8nkHheM
+         tPrddoK8jVhs0EKFVGu77pRs97zaqP1sT/+B7iK4SAm5RkJmWM7c/5p/KW6E/jSnS8VR
+         pdaejPQDxnt/XgkyKgRIQT1/lQdGVqxYgGVxDjJEfyOy+V6dJfX6mRkU4KAsk3h0dcHW
+         y7fPnY3zu0COBQ11CSRKQfMYNvWNFiRSzvZfji/4bN7hgJCYvLjZsyQRSMFo2T0cZEPp
+         y8txRdx2WFJgL61CbGFAhgF7kLe0e4T9hiIPiSy0Xa1uuwrQ+Czj1gpieifqKvD7VsmZ
+         ySFQ==
+X-Gm-Message-State: AOJu0YzlrFoUSBXDv7wqTvL8GL4ep62FC4X+UgEuwR3psazpss/y+30+
+	JtPObMCnRZCYPJyyyVIa3O6akLvvq00I6MOAYd782YID3zkdZw3+/pNOa8HMNwaXhK8Cxjjlnio
+	G18O/4Rs=
+X-Gm-Gg: ASbGncubD+1MZGteX6RUtwECITRHz6hs4EoLkkZc9B1MCTTaVaOy+0Vgv8MG6ldjoHl
+	4KUGStnTEAk7SN5d/cU4OADH9+CEYZyLIZ3NScs1n6Xn2wuwWdBRjAqNiXbPbsOZHmIjmtP0//s
+	ZUroWTPcoHbP/UN/0IrJ5umAqYtRJkZTYFUr4lHJ5Cv4RyMMaWT5fjLdfW+0lFsmmg7zPbbBY+C
+	9oQ0qi0c9vuRcVro+gm0Czjg4tJE1mACoxbdlQakGDfoqBYs3XN2C7cIBC34k+Xcu9uCzgBnXpv
+	eU96D/uRP9EnZcqEs/BycDRhwgjZRd61Y/ZPxKh0ssTzr8+had4ToFQvMSD+t11g8Tr6RaFYT8W
+	exELebc+pTRXL+ibl6zbEAwERMqrOC0+K6+K9
+X-Google-Smtp-Source: AGHT+IER/7cWOBu895x5XEFdaHF1IN0R+P6nE45mbo8agWvtSNw/Npw+XXVSKuZcnn1PT66C4KQwVw==
+X-Received: by 2002:a05:6402:5246:b0:606:df70:7a9f with SMTP id 4fb4d7f45d1cf-60a1d167770mr13614794a12.19.1750702915564;
+        Mon, 23 Jun 2025 11:21:55 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60a18c94730sm6364714a12.52.2025.06.23.11.21.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 11:21:54 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-607434e1821so6678555a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 11:21:54 -0700 (PDT)
+X-Received: by 2002:a17:907:3cd5:b0:ae0:8648:f8bf with SMTP id
+ a640c23a62f3a-ae08648fc4cmr568478866b.10.1750702914023; Mon, 23 Jun 2025
+ 11:21:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjiSU2Qp-S4Wmx57YbxCVm6d6mwXDjCV2P-XJRexN2fnw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250623044912.GA1248894@ZenIV> <20250623045428.1271612-1-viro@zeniv.linux.org.uk>
+ <20250623045428.1271612-17-viro@zeniv.linux.org.uk> <CAHk-=wjiSU2Qp-S4Wmx57YbxCVm6d6mwXDjCV2P-XJRexN2fnw@mail.gmail.com>
+ <20250623170314.GG1880847@ZenIV>
+In-Reply-To: <20250623170314.GG1880847@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 23 Jun 2025 11:21:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjcEG4rawktd_DbEJMJnTzqFvGRdEr53En8RAcNfKrvbg@mail.gmail.com>
+X-Gm-Features: AX0GCFsi-Z1jFQWD_lLCSbSbQmSD3eutPPA4tBySnO04u0sPuZvQl7udpGn0TWk
+Message-ID: <CAHk-=wjcEG4rawktd_DbEJMJnTzqFvGRdEr53En8RAcNfKrvbg@mail.gmail.com>
+Subject: Re: [PATCH v2 17/35] sanitize handling of long-term internal mounts
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, ebiederm@xmission.com, 
+	jack@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 23, 2025 at 09:18:33AM -0700, Linus Torvalds wrote:
+On Mon, 23 Jun 2025 at 10:03, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> I don't know...  7 callers with explicit strlen():
 
-> I'm not objecting to the patch, and I don't really even have a
-> solution: many of the existing cases actually do need the more
-> complicated vfs_parse_fs_string() interface because they don't want
-> that simple 'strlen()' for size.
+Yeah. Most of them clearly just want the string length.
 
-I don't know...  7 callers with explicit strlen():
-drivers/gpu/drm/i915/gem/i915_gemfs.c:16:       return vfs_parse_fs_string(fc, key, val, strlen(val));
-drivers/gpu/drm/v3d/v3d_gemfs.c:12:     return vfs_parse_fs_string(fc, key, val, strlen(val));
-fs/namespace.c:1284:            ret = vfs_parse_fs_string(fc, "source",
-fs/namespace.c:3799:            err = vfs_parse_fs_string(fc, "subtype",
-fs/namespace.c:3802:            err = vfs_parse_fs_string(fc, "source", name, strlen(name));
-fs/nfs/fs_context.c:1230:                       ret = vfs_parse_fs_string(fc, "context",
-kernel/trace/trace.c:10280:     ret = vfs_parse_fs_string(fc, "source",
+But there were clearly a couple that really didn't have a
+NUL-termination thing. And one - that nfs namespace thing - that do
+have a string, but get the string length differently.
 
-3 callers that could as well use strlen(), except that some of them need
-to cope with NULL (using 0 for length in that case):
-fs/fs_context.c:230:                    ret = vfs_parse_fs_string(fc, key, value, v_len);
-fs/nfs/namespace.c:293:         ret = vfs_parse_fs_string(fc, "source", p, buffer + 4096 - p);
-fs/smb/client/fs_context.c:785:         ret = vfs_parse_fs_string(fc, key, value, len);
+> > Or maybe even go further and some helper to doi that
+> > "fs_context_for_mount()" _with_ a list of param's to be added?
+>
+> Vararg, presumably?
 
-1 caller that really does need len < strlen(s):
-fs/afs/mntpt.c:140:                     ret = vfs_parse_fs_string(fc, "source", content, size - 1);
+Or just pass in a descriptor struct / array that can be NULL?
 
-> I just feel that at a minimum you shouldn't implement add_param()
-> twice, because some other users *would* want to do that.
-> 
-> So I wish you had made that a real helper - which would obviously then
-> also force a naming change ("fs_context_add_param()".
+But this really is not a huge deal. I was just looking at your series,
+and most things cleaned things up, and this one just grated on me a
+bit.
 
-May the bikeshedding commence ;-)
-
-> Or maybe even go further and some helper to doi that
-> "fs_context_for_mount()" _with_ a list of param's to be added?
-
-Vararg, presumably?
-
-> I do think that could be done later (separately), but wanted to just
-> mention this because I reacted to this patch.
+           Linus
 
