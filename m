@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-52458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B5BAE3482
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:55:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E1AAE347C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E7C189058D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:56:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7268A18907C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8074C1EFF80;
-	Mon, 23 Jun 2025 04:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0BA1E6DC5;
+	Mon, 23 Jun 2025 04:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ObB9WOPg"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Phbh/o5j"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2FA1C863A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB051C862B
 	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 04:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750654475; cv=none; b=CjzbPSJibv/ZJ1jqZWFDMgen2yce6Io3367BE17untdM+VUJymfSyJO99gikIpRfbfhleYU1jxXSytaYuTP4+NrdtWut5BwMrbR4Ety9W+R4U0Nc7f1EaubVtADNkOiR+4Ep6ICI044ttnfHdwWk0cPTgVsW4FwXexA8/MX+/Tk=
+	t=1750654474; cv=none; b=IfM/FfSWa6sjd/lmW2eAKsHSFAI+1igpxUNtwSIoWns6tpIaL1ny+vNrpF3bkqjvBp3TlgWT4QgtfPNZtuaPh6Z24MLicx8ReeXFfo/afVtOFzwitjgCz8sq51ZMMkdtRDtmI4gyUocO+d2gZNgsO/75HeT9MQXfaErt474oohw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750654475; c=relaxed/simple;
-	bh=MTIJEdaX7RY6spuI30YUJ423lndcAW/6Aq2e32Fxx4M=;
+	s=arc-20240116; t=1750654474; c=relaxed/simple;
+	bh=t7JVjmb9LmQOwLDtlnDkbqg5iib70qiFr0D9Spff8Hw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HoKsgabmynK0JnlZX0TEL6VNlXNzGEmBjjCHDmKdq8LpY7WyArLKfXejjp1ibv80Cq64d160kgeF6lo2KLfJrNfH/gYLcW1u8hDgqmHB+qWfjnATzewKK/08z8+myVw3LeOCXZOe4ucYpVVQp86CTPr35Mo0HYQ5bg5o7IAuhYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ObB9WOPg; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=TOdN4OaWSqv5blgJYnNl83ZzYWvYxh0//ia8yzNEWducBwGMREcPCRtanWd3/IpUIuBwyZJKoSa3isY6ChEtgNzim9BYfZh3IuL7EptYwfmCLfENulwHqAmbXeq8stgK0FjBcqlFzsXJeBoeGuI4ZFAuxxrzLpqeY9V4BFRW4nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Phbh/o5j; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=4dzTPQciaosLMooPxGjtaU2Jgy+fhtIq0rv0jjMuwbc=; b=ObB9WOPgLNJFwmZKHfjRzUAfYD
-	f2h8NP+Stzd1FajQlNoH/wPbRLg3sdsAJBGhWsOl2urNV1NMJ2+2dnuFa28T5HoTNjoi+HXMmr6+C
-	HnUplEze32I7tBUzIEUqiVVokqeUI6/yb0B770GvBwMDWXlJhnxInl8vKAZXHTsaQhBgTYAAYtfK2
-	HSQn3zQoAu3XQEGwTC2k8ARmBC7Pg5ZrM7D3KvAPYzKLYa4yqo8r84j4TBrm1lK6tHnL0atI/MM1G
-	l8F8ZEQU7R6B2C12SqE1ErbI1FHdSqxzBlaHdfDUuaMtwkWTWDO5wI5yfArnfwpnZi3zQfae59TZi
-	wYkvZB9g==;
+	bh=z2jK/UXAmdS58gPfCGiZyvtDyClDzyKnPsGqwQboCk8=; b=Phbh/o5jOWyx0723sDmznR+tvv
+	YzPyXJRC5qyr0iPwP5g41FYuLDydwrUk5g7xtzMuTYLwN/4OhoUyQugR2KNyqC9MoqolWE1taSdB3
+	hcx128Dg4xgH7wq+55rEfTkdMhVBQ6CZwr+qKjKKYgNOCrJqa8bCRDGjRpiMrJCI8mReS8M6HIDEG
+	dev6eddryo1T2K09wO0ZsfIGkGCIHSrfu3o8E+yCsPQbG0I5CQwXRT5E5/TbA+/Uoyr01ybs/nK4L
+	maPof5hcD+2VcaMEXCddwhimY9suWnUXyep79DPFoa+fXbE3MAGAYFYcqv8e+KbRztSKOUAGjmdgm
+	KdEdqTNg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTZCQ-00000005Kqn-17XD;
+	id 1uTZCQ-00000005Kr2-2IWm;
 	Mon, 23 Jun 2025 04:54:30 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: brauner@kernel.org,
 	ebiederm@xmission.com,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 16/35] do_umount(): simplify the "is it still mounted" checks
-Date: Mon, 23 Jun 2025 05:54:09 +0100
-Message-ID: <20250623045428.1271612-16-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 17/35] sanitize handling of long-term internal mounts
+Date: Mon, 23 Jun 2025 05:54:10 +0100
+Message-ID: <20250623045428.1271612-17-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250623045428.1271612-1-viro@zeniv.linux.org.uk>
 References: <20250623044912.GA1248894@ZenIV>
@@ -66,72 +66,228 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Calls of do_umount() are always preceded by can_umount(), where we'd
-done a racy check for mount belonging to our namespace; if it wasn't,
-can_unmount() would've failed with -EINVAL and we wouldn't have
-reached do_umount() at all.
+Original rationale for those had been the reduced cost of mntput()
+for the stuff that is mounted somewhere.  Mount refcount increments and
+decrements are frequent; what's worse, they tend to concentrate on the
+same instances and cacheline pingpong is quite noticable.
 
-That check needs to be redone once we have acquired namespace_sem
-and in do_umount() we do that.  However, that's done in a very odd
-way; we check that mount is still in rbtree of _some_ namespace or
-its mnt_list is not empty.  It is equivalent to check_mnt(mnt) -
-we know that earlier mnt was mounted in our namespace; if it has
-stayed there, it's going to remain in rbtree of our namespace.
-OTOH, if it ever had been removed from out namespace, it would be
-removed from rbtree and it never would've re-added to a namespace
-afterwards.  As for ->mnt_list, for something that had been mounted
-in a namespace we'll never observe non-empty ->mnt_list while holding
-namespace_sem - it does temporarily become non-empty during
-umount_tree(), but that doesn't outlast the call of umount_tree(),
-let alone dropping namespace_sem.
+As the result, mount refcounts are per-cpu; that allows a very cheap
+increment.  Plain decrement would be just as easy, but decrement-and-test
+is anything but (we need to add the components up, with exclusion against
+possible increment-from-zero, etc.).
 
-Things get much easier to follow if we replace that with (equivalent)
-check_mnt(mnt) there.  What's more, currently we treat a failure of
-that test as "quietly do nothing"; we might as well pretend that we'd
-lost the race and fail on that the same way can_umount() would have.
+Fortunately, there is a very common case where we can tell that decrement
+won't be the final one - if the thing we are dropping is currently
+mounted somewhere.  We have an RCU delay between the removal from mount
+tree and dropping the reference that used to pin it there, so we can
+just take rcu_read_lock() and check if the victim is mounted somewhere.
+If it is, we can go ahead and decrement without and further checks -
+the reference we are dropping is not the last one.  If it isn't, we
+get all the fun with locking, carefully adding up components, etc.,
+but the majority of refcount decrements end up taking the fast path.
+
+There is a major exception, though - pipes and sockets.  Those live
+on the internal filesystems that are not going to be mounted anywhere.
+They are not going to be _un_mounted, of course, so having to take the
+slow path every time a pipe or socket gets closed is really obnoxious.
+Solution had been to mark them as long-lived ones - essentially faking
+"they are mounted somewhere" indicator.
+
+With minor modification that works even for ones that do eventually get
+dropped - all it takes is making sure we have an RCU delay between
+clearing the "mounted somewhere" indicator and dropping the reference.
+
+There are some additional twists (if you want to drop a dozen of such
+internal mounts, you'd be better off with clearing the indicator on
+all of them, doing an RCU delay once, then dropping the references),
+but in the basic form it had been
+	* use kern_mount() if you want your internal mount to be
+a long-term one.
+	* use kern_unmount() to undo that.
+
+Unfortunately, the things did rot a bit during the mount API reshuffling.
+In several cases we have lost the "fake the indicator" part; kern_unmount()
+on the unmount side remained (it doesn't warn if you use it on a mount
+without the indicator), but all benefits regaring mntput() cost had been
+lost.
+
+To get rid of that bitrot, let's add a new helper that would work
+with fs_context-based API: fc_mount_longterm().  It's a counterpart
+of fc_mount() that does, on success, mark its result as long-term.
+It must be paired with kern_unmount() or equivalents.
+
+Converted:
+	1) mqueue (it used to use kern_mount_data() and the umount side
+is still as it used to be)
+	2) hugetlbfs (used to use kern_mount_data(), internal mount is
+never unmounted in this one)
+	3) i915 gemfs (used to be kern_mount() + manual remount to set
+options, still uses kern_unmount() on umount side)
+	4) v3d gemfs (copied from i915)
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/i915/gem/i915_gemfs.c | 21 ++++++++++++++++++---
+ drivers/gpu/drm/v3d/v3d_gemfs.c       | 21 ++++++++++++++++++---
+ fs/hugetlbfs/inode.c                  |  2 +-
+ fs/namespace.c                        |  9 +++++++++
+ include/linux/mount.h                 |  1 +
+ ipc/mqueue.c                          |  2 +-
+ 6 files changed, 48 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/gpu/drm/i915/gem/i915_gemfs.c b/drivers/gpu/drm/i915/gem/i915_gemfs.c
+index 65d84a93c525..a09e2eb47175 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gemfs.c
++++ b/drivers/gpu/drm/i915/gem/i915_gemfs.c
+@@ -5,16 +5,23 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/mount.h>
++#include <linux/fs_context.h>
+ 
+ #include "i915_drv.h"
+ #include "i915_gemfs.h"
+ #include "i915_utils.h"
+ 
++static int add_param(struct fs_context *fc, const char *key, const char *val)
++{
++	return vfs_parse_fs_string(fc, key, val, strlen(val));
++}
++
+ void i915_gemfs_init(struct drm_i915_private *i915)
+ {
+-	char huge_opt[] = "huge=within_size"; /* r/w */
+ 	struct file_system_type *type;
++	struct fs_context *fc;
+ 	struct vfsmount *gemfs;
++	int ret;
+ 
+ 	/*
+ 	 * By creating our own shmemfs mountpoint, we can pass in
+@@ -38,8 +45,16 @@ void i915_gemfs_init(struct drm_i915_private *i915)
+ 	if (!type)
+ 		goto err;
+ 
+-	gemfs = vfs_kern_mount(type, SB_KERNMOUNT, type->name, huge_opt);
+-	if (IS_ERR(gemfs))
++	fc = fs_context_for_mount(type, SB_KERNMOUNT);
++	if (IS_ERR(fc))
++		goto err;
++	ret = add_param(fc, "source", "tmpfs");
++	if (!ret)
++		ret = add_param(fc, "huge", "within_size");
++	if (!ret)
++		gemfs = fc_mount_longterm(fc);
++	put_fs_context(fc);
++	if (ret)
+ 		goto err;
+ 
+ 	i915->mm.gemfs = gemfs;
+diff --git a/drivers/gpu/drm/v3d/v3d_gemfs.c b/drivers/gpu/drm/v3d/v3d_gemfs.c
+index 4c5e18590a5c..8ec6ed82b3d9 100644
+--- a/drivers/gpu/drm/v3d/v3d_gemfs.c
++++ b/drivers/gpu/drm/v3d/v3d_gemfs.c
+@@ -3,14 +3,21 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/mount.h>
++#include <linux/fs_context.h>
+ 
+ #include "v3d_drv.h"
+ 
++static int add_param(struct fs_context *fc, const char *key, const char *val)
++{
++	return vfs_parse_fs_string(fc, key, val, strlen(val));
++}
++
+ void v3d_gemfs_init(struct v3d_dev *v3d)
+ {
+-	char huge_opt[] = "huge=within_size";
+ 	struct file_system_type *type;
++	struct fs_context *fc;
+ 	struct vfsmount *gemfs;
++	int ret;
+ 
+ 	/*
+ 	 * By creating our own shmemfs mountpoint, we can pass in
+@@ -28,8 +35,16 @@ void v3d_gemfs_init(struct v3d_dev *v3d)
+ 	if (!type)
+ 		goto err;
+ 
+-	gemfs = vfs_kern_mount(type, SB_KERNMOUNT, type->name, huge_opt);
+-	if (IS_ERR(gemfs))
++	fc = fs_context_for_mount(type, SB_KERNMOUNT);
++	if (IS_ERR(fc))
++		goto err;
++	ret = add_param(fc, "source", "tmpfs");
++	if (!ret)
++		ret = add_param(fc, "huge", "within_size");
++	if (!ret)
++		gemfs = fc_mount_longterm(fc);
++	put_fs_context(fc);
++	if (ret)
+ 		goto err;
+ 
+ 	v3d->gemfs = gemfs;
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index e4de5425838d..4e0397775167 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1587,7 +1587,7 @@ static struct vfsmount *__init mount_one_hugetlbfs(struct hstate *h)
+ 	} else {
+ 		struct hugetlbfs_fs_context *ctx = fc->fs_private;
+ 		ctx->hstate = h;
+-		mnt = fc_mount(fc);
++		mnt = fc_mount_longterm(fc);
+ 		put_fs_context(fc);
+ 	}
+ 	if (IS_ERR(mnt))
 diff --git a/fs/namespace.c b/fs/namespace.c
-index fd453848c2c7..a7bf07d88da4 100644
+index a7bf07d88da4..96bc3b804974 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1983,8 +1983,11 @@ static int do_umount(struct mount *mnt, int flags)
- 	namespace_lock();
- 	lock_mount_hash();
+@@ -1260,6 +1260,15 @@ struct vfsmount *fc_mount(struct fs_context *fc)
+ }
+ EXPORT_SYMBOL(fc_mount);
  
--	/* Recheck MNT_LOCKED with the locks held */
-+	/* Repeat the earlier racy checks, now that we are holding the locks */
- 	retval = -EINVAL;
-+	if (!check_mnt(mnt))
-+		goto out;
++struct vfsmount *fc_mount_longterm(struct fs_context *fc)
++{
++	struct vfsmount *mnt = fc_mount(fc);
++	if (!IS_ERR(mnt))
++		real_mount(mnt)->mnt_ns = MNT_NS_INTERNAL;
++	return mnt;
++}
++EXPORT_SYMBOL(fc_mount_longterm);
 +
- 	if (mnt->mnt.mnt_flags & MNT_LOCKED)
- 		goto out;
+ struct vfsmount *vfs_kern_mount(struct file_system_type *type,
+ 				int flags, const char *name,
+ 				void *data)
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index 1a508beba446..c145820fcbbf 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -98,6 +98,7 @@ int mnt_get_write_access(struct vfsmount *mnt);
+ void mnt_put_write_access(struct vfsmount *mnt);
  
-@@ -1993,16 +1996,14 @@ static int do_umount(struct mount *mnt, int flags)
+ extern struct vfsmount *fc_mount(struct fs_context *fc);
++extern struct vfsmount *fc_mount_longterm(struct fs_context *fc);
+ extern struct vfsmount *vfs_create_mount(struct fs_context *fc);
+ extern struct vfsmount *vfs_kern_mount(struct file_system_type *type,
+ 				      int flags, const char *name,
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 82ed2d3c9846..de7432efbf4a 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -482,7 +482,7 @@ static struct vfsmount *mq_create_mount(struct ipc_namespace *ns)
+ 	put_user_ns(fc->user_ns);
+ 	fc->user_ns = get_user_ns(ctx->ipc_ns->user_ns);
  
- 	event++;
- 	if (flags & MNT_DETACH) {
--		if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list))
--			umount_tree(mnt, UMOUNT_PROPAGATE);
-+		umount_tree(mnt, UMOUNT_PROPAGATE);
- 		retval = 0;
- 	} else {
- 		smp_mb(); // paired with __legitimize_mnt()
- 		shrink_submounts(mnt);
- 		retval = -EBUSY;
- 		if (!propagate_mount_busy(mnt, 2)) {
--			if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list))
--				umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
-+			umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
- 			retval = 0;
- 		}
- 	}
+-	mnt = fc_mount(fc);
++	mnt = fc_mount_longterm(fc);
+ 	put_fs_context(fc);
+ 	return mnt;
+ }
 -- 
 2.39.5
 
