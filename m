@@ -1,514 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-52560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FF3AE4131
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 14:53:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31631AE4144
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 14:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A08F1884A39
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C4043B3713
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DF22512DE;
-	Mon, 23 Jun 2025 12:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA97248F46;
+	Mon, 23 Jun 2025 12:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S4oKF+uI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzEWrlF0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07D924C06A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 12:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BF42BB1D;
+	Mon, 23 Jun 2025 12:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750682992; cv=none; b=dUhhgpKyMjD/rbbwe7nVUfYHhwEewAEk+eYqWitw81cBV05dvIQV8aptrT1Scl5ryR2Cg00YuMP9ETjBH/huwK3rU4nKI254ifCKNZJ91GyHASKzaTrbBRpiKms1yeX7Q2fZr7bS2j1VvzLd4yL+kyVELUrSQzCWmwJihVwy+og=
+	t=1750683258; cv=none; b=pUXB5C6fPeWrSsKzlS6sPqjIVIXGghgWTmf1PanF8BlbWfT9sT8GzJdIr53OiIESwbmX2jcvN8dUNCfiygZJ3DzqMbXti0fClSF+LOHov0vCIw0KhoCnKYaIYosDGR/kFo6sObQTwUhQTKCcPs8T3tmKVlycyY4MX3q1rcOws9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750682992; c=relaxed/simple;
-	bh=oCthaTSlKeRVHmOBNEH7eqZzOGsyawZils3bh9GqBfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rFr0RwBcc2aFGQp6jM63MuW4QxJcUddD54m4yScf19X/wQDz3eOZteLcyLkTh9oD6mbgAtb/ufB9DZy9V+AQ1nV9efsV0r3P3JkCVQrfWssu12hUhOJAk3t1oGN23GgW7Hd/TTv2amzt7ZWC3zJuTV3zYC1RkfG5jtGh6kjoTKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S4oKF+uI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750682990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=30JOm3WHwq4PToSA7+AabqrKHKJ051hYzw4hYdUxsoQ=;
-	b=S4oKF+uIQSDhBj2C5JFFw6+nfaKcsu6xIHHfX45HulptYlIvQtMg71yYVR0tq0nfmC+o6T
-	rLBvM5MbvdfNkiXPeGfBqf5aV6MnkVScI0cD47fZXOZLJ8JxikdhkVFEX9Oswk4yMprtQ8
-	iWDtqO9itK+f/YOcTKH99YxvBnQ8dIc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-533--Utz4PgUMJW6xjSHJUiXiw-1; Mon,
- 23 Jun 2025 08:49:44 -0400
-X-MC-Unique: -Utz4PgUMJW6xjSHJUiXiw-1
-X-Mimecast-MFC-AGG-ID: -Utz4PgUMJW6xjSHJUiXiw_1750682982
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D53B1809C8B;
-	Mon, 23 Jun 2025 12:49:42 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.81])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D62C0180045B;
-	Mon, 23 Jun 2025 12:49:38 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <sfrench@samba.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paulo Alcantara <pc@manguebit.org>
-Subject: [PATCH 11/11] netfs: Update tracepoints in a number of ways
-Date: Mon, 23 Jun 2025 13:48:31 +0100
-Message-ID: <20250623124835.1106414-12-dhowells@redhat.com>
-In-Reply-To: <20250623124835.1106414-1-dhowells@redhat.com>
-References: <20250623124835.1106414-1-dhowells@redhat.com>
+	s=arc-20240116; t=1750683258; c=relaxed/simple;
+	bh=0eKCwiVs6Dhcq3+vpFZt/td1Mic+jHQ/fFFv3YFAZpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=spmSUzjp/kfJgSoF9gl1n9pm1t0n3O0tjqzsky229XfpaifOgtQlUkF1+v5wWN1R9aDM7CEo03s9u7b1E/kc0D8wIMNYQVCSNEnoS39drcLuGydmSTJu2Po9TldamxTXYXlr3f72wlhEtGNjxk3FtGrRoQAX2h8UU74A8ahjbaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YzEWrlF0; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-acbb85ce788so797704466b.3;
+        Mon, 23 Jun 2025 05:54:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750683254; x=1751288054; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pDBoguKo1f7y5XT8NHz6BqdNW/slqgU7CYLp65HT+Xs=;
+        b=YzEWrlF0DnBX2ZqYnPMvW/0u2UfpglKcfSdFOi0tbObvFSvl5ysq6jZxBKRLaAWclV
+         MXOEBt7bDREqLwfUNKyMzx7YQktlA7jG4F1Nt7yn5Rx0N5N9+lQvXWMPJ1WRJhv/UeNa
+         +6EILEpF7FF4P3uVF+dZFjIvF6fa8eht9xGkNB70KYydXgFYYRXqWv8bvENLrtgw4idh
+         oucxz25w8Xo5MYwGrBJdbL9+7jlY/TdzVKhqKU2RbrA/SYlx70lCOs3ix3So5A3qcvGD
+         GzWQVxgDtZ+2BwEBY3t02XEZC7sWBnvdYkPZGosMMtEVC4DSWkX694fYP9EJZh4snl0t
+         Nvdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750683254; x=1751288054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pDBoguKo1f7y5XT8NHz6BqdNW/slqgU7CYLp65HT+Xs=;
+        b=ly9g5lF5k4OJWDRWeDeP2XXry2mKRleZ6RWOwDpzw0tM9rnmeAYi5DvqwnAETCMzFX
+         6FUbr7Mu4+OShkUJBxGJqvvNk/z2kpxA/PlLwRQUeVr2itra4XxGqoLlqOxqIhefydSq
+         68a1tQR2gg/TcIBh5PyI3VHTvRgAvRxsd62OGE+5QlUNIu6hKtJwN1ZW8KyY19Owpm1n
+         NHd3TwP6qv/yJqTXVfvveOW0SFGi4iGh2R87SWzIJE0qK9M6hsf5/8XzPu/XdFey5PYH
+         8/6ALdNRzO5YKCkOdKWj5YMbOw22n8Y7cE6227Y3JwJAls7NQ6sxV+y31MUJqPTJ3UWS
+         pdzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg3MIIjgSZpTr8OAhBKQC4kIcNKh35FCP9Wcto9bwYO/1WTwxZO7sD+zBd38VnEHZPdCiGIw8V5AWd@vger.kernel.org, AJvYcCXNCxiHdPN32DHapfAUD9I254lQ+W6I7junY9L4T5DHmBXDUZOf/8CUvaepcoQvt1oZA1DN8pfh8F6B2V/A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf3VpUsuFj7MW59bR/ZTpi59QuxrhxUECeOHNmcpsX+8+44Q2A
+	SHWzPPfOLjKuqz7iO864h/6+CH37ix6jUslpx7Zv/kLwbmCMbLKvB8GyatCg6Q5nUXXaydH7eWX
+	ie8Mg5K+vWL7lt9MBJ3pV7Tzx/lyXhAQ9GYsgQ5Q=
+X-Gm-Gg: ASbGncuDIxu9cPjFu82/gcdFR13r/jGM9rzxZhFZseuDU52HQglu7g1LN5ON0h739zt
+	LYRHaruHKLFg6hAEVmV2MOl/gtRpg5l0mUaoqG5HN4bIkBn7YdLYVpfulJTDsEDtCPT8w6RQmoD
+	qTcskjftoAKfwTvw2aB6foW7JY1HPVysF3pns1qt7H+Lc=
+X-Google-Smtp-Source: AGHT+IEwFlSwRYjkoi9rNLm8j/T3AFGwPTrws+nG10DKIhfYbNm+NTJ14P1VYVG0qgo9AdO/0uwl3j1FP61N0IYgM6g=
+X-Received: by 2002:a17:907:2d27:b0:ad5:749b:a735 with SMTP id
+ a640c23a62f3a-ae057a2859cmr1284148466b.27.1750683253921; Mon, 23 Jun 2025
+ 05:54:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250623-work-pidfs-fhandle-v1-0-75899d67555f@kernel.org>
+ <20250623-work-pidfs-fhandle-v1-8-75899d67555f@kernel.org>
+ <ipk5yr7xxdmesql6wqzlbs734jjvn3had5vzqrck6e2ke4zanu@6sotvp4bd5lu> <20250623-wegnehmen-fragen-9dfdfdf0b2af@brauner>
+In-Reply-To: <20250623-wegnehmen-fragen-9dfdfdf0b2af@brauner>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 23 Jun 2025 14:54:00 +0200
+X-Gm-Features: AX0GCFv_58W6yAZ_DTbjeyHw-rnqxCtHkDOcWYRGmZtE1j3X8894hh5K5NcxJYM
+Message-ID: <CAOQ4uxjZy8tc_tOChJ_r_FPkUxE0qrz0CxmKeJj2MZ7wyhLpBw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] fhandle, pidfs: support open_by_handle_at() purely
+ based on file handle
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Make a number of updates to the netfs tracepoints:
+On Mon, Jun 23, 2025 at 2:25=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Mon, Jun 23, 2025 at 02:06:43PM +0200, Jan Kara wrote:
+> > On Mon 23-06-25 11:01:30, Christian Brauner wrote:
+> > > Various filesystems such as pidfs (and likely drm in the future) have=
+ a
+> > > use-case to support opening files purely based on the handle without
+> > > having to require a file descriptor to another object. That's especia=
+lly
+> > > the case for filesystems that don't do any lookup whatsoever and ther=
+e's
+> > > zero relationship between the objects. Such filesystems are also
+> > > singletons that stay around for the lifetime of the system meaning th=
+at
+> > > they can be uniquely identified and accessed purely based on the file
+> > > handle type. Enable that so that userspace doesn't have to allocate a=
+n
+> > > object needlessly especially if they can't do that for whatever reaso=
+n.
+> > >
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> >
+> > Hmm, maybe we should predefine some invalid fd value userspace should p=
+ass
+> > when it wants to "autopick" fs root? Otherwise defining more special fd
+> > values like AT_FDCWD would become difficult in the future. Or we could =
+just
+>
+> Fwiw, I already did that with:
+>
+> #define PIDFD_SELF_THREAD               -10000 /* Current thread. */
+> #define PIDFD_SELF_THREAD_GROUP         -20000 /* Current thread group le=
+ader. */
+>
+> I think the correct thing to do would have been to say anything below
+>
+> #define AT_FDCWD                -100    /* Special value for dirfd used t=
+o
+>
+> is reserved for the kernel. But we can probably easily do this and say
+> anything from -10000 to -40000 is reserved for the kernel.
+>
+> I would then change:
+>
+> #define PIDFD_SELF_THREAD               -10000 /* Current thread. */
+> #define PIDFD_SELF_THREAD_GROUP         -10001 /* Current thread group le=
+ader. */
+>
+> since that's very very new and then move
+> PIDFD_SELF_THREAD/PIDFD_SELF_THREAD_GROUP to include/uapi/linux/fcntl.h
+>
+> and add that comment about the reserved range in there.
+>
+> The thing is that we'd need to enforce this on the system call level.
+>
+> Thoughts?
+>
+> > define that FILEID_PIDFS file handles *always* ignore the fd value and
+> > auto-pick the root.
+>
+> I see the issue I don't think it's a big deal but I'm open to adding:
+>
+> #define AT_EBADF -10009 /* -10000 - EBADF */
+>
+> and document that as a stand-in for a handle that can't be resolved.
+>
+> Thoughts?
 
- (1) Remove a duplicate trace from netfs_unbuffered_write_iter_locked().
+I think the AT prefix of AT_FDCWD may have been a mistake
+because it is quite easy to confuse this value with the completely
+unrelated namespace of AT_ flags.
 
- (2) Move the trace in netfs_wake_rreq_flag() to after the flag is cleared
-     so that the change appears in the trace.
+This is a null dirfd value. Is it not?
 
- (3) Differentiate the use of netfs_rreq_trace_wait/woke_queue symbols.
+FD_NULL, FD_NONE?
 
- (4) Don't do so many trace emissions in the wait functions as some of them
-     are redundant.
+You could envision that an *at() syscalls could in theory accept
+(FD_NONE , "/an/absolute/path/only", ...
 
- (5) In netfs_collect_read_results(), differentiate a subreq that's being
-     abandoned vs one that has been consumed in a regular way.
+or MOUNTFD_NONE if we want to define a constant specifically for
+this open_by_handle_at() extension.
 
- (6) Add a tracepoint to indicate the call to ->ki_complete().
-
- (7) Don't double-increment the subreq_counter when retrying a write.
-
- (8) Move the netfs_sreq_trace_io_progress tracepoint within cifs code to
-     just MID_RESPONSE_RECEIVED and add different tracepoints for other MID
-     states and note check failure.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Co-developed-by: Paulo Alcantara <pc@manguebit.org>
-Signed-off-by: Paulo Alcantara <pc@manguebit.org>
-cc: Steve French <sfrench@samba.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
----
- fs/netfs/direct_write.c      |  1 -
- fs/netfs/internal.h          |  2 +-
- fs/netfs/misc.c              | 14 ++++++--------
- fs/netfs/read_collect.c      | 12 +++++++++---
- fs/netfs/write_collect.c     |  4 +++-
- fs/netfs/write_retry.c       |  1 -
- fs/smb/client/cifssmb.c      | 20 ++++++++++++++++++++
- fs/smb/client/smb2pdu.c      | 26 ++++++++++++++++++++++----
- include/trace/events/netfs.h | 26 ++++++++++++++++++--------
- 9 files changed, 79 insertions(+), 27 deletions(-)
-
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index fa9a5bf3c6d5..c0797d6c72c9 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -106,7 +106,6 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
- 	}
- 
- 	if (!async) {
--		trace_netfs_rreq(wreq, netfs_rreq_trace_wait_ip);
- 		ret = netfs_wait_for_write(wreq);
- 		if (ret > 0)
- 			iocb->ki_pos += ret;
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index d6656d2b54ab..e13ed767aec0 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -267,9 +267,9 @@ static inline void netfs_wake_rreq_flag(struct netfs_io_request *rreq,
- 					enum netfs_rreq_trace trace)
- {
- 	if (test_bit(rreq_flag, &rreq->flags)) {
--		trace_netfs_rreq(rreq, trace);
- 		clear_bit_unlock(rreq_flag, &rreq->flags);
- 		smp_mb__after_atomic(); /* Set flag before task state */
-+		trace_netfs_rreq(rreq, trace);
- 		wake_up(&rreq->waitq);
- 	}
- }
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 127a269938bb..20748bcfbf59 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -359,7 +359,7 @@ void netfs_wait_for_in_progress_stream(struct netfs_io_request *rreq,
- 		if (!netfs_check_subreq_in_progress(subreq))
- 			continue;
- 
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_quiesce);
- 		for (;;) {
- 			prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
- 
-@@ -368,10 +368,10 @@ void netfs_wait_for_in_progress_stream(struct netfs_io_request *rreq,
- 
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_wait_for);
- 			schedule();
--			trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
- 		}
- 	}
- 
-+	trace_netfs_rreq(rreq, netfs_rreq_trace_waited_quiesce);
- 	finish_wait(&rreq->waitq, &myself);
- }
- 
-@@ -437,7 +437,6 @@ static ssize_t netfs_wait_for_in_progress(struct netfs_io_request *rreq,
- 	ssize_t ret;
- 
- 	for (;;) {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
- 		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
- 
- 		if (!test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
-@@ -457,11 +456,12 @@ static ssize_t netfs_wait_for_in_progress(struct netfs_io_request *rreq,
- 		if (!netfs_check_rreq_in_progress(rreq))
- 			break;
- 
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_ip);
- 		schedule();
--		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
- 	}
- 
- all_collected:
-+	trace_netfs_rreq(rreq, netfs_rreq_trace_waited_ip);
- 	finish_wait(&rreq->waitq, &myself);
- 
- 	ret = rreq->error;
-@@ -504,10 +504,8 @@ static void netfs_wait_for_pause(struct netfs_io_request *rreq,
- {
- 	DEFINE_WAIT(myself);
- 
--	trace_netfs_rreq(rreq, netfs_rreq_trace_wait_pause);
--
- 	for (;;) {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_pause);
- 		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
- 
- 		if (!test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
-@@ -530,10 +528,10 @@ static void netfs_wait_for_pause(struct netfs_io_request *rreq,
- 			break;
- 
- 		schedule();
--		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
- 	}
- 
- all_collected:
-+	trace_netfs_rreq(rreq, netfs_rreq_trace_waited_pause);
- 	finish_wait(&rreq->waitq, &myself);
- }
- 
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index cceed9d629c6..3e804da1e1eb 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -293,7 +293,9 @@ static void netfs_collect_read_results(struct netfs_io_request *rreq)
- 		spin_lock(&rreq->lock);
- 
- 		remove = front;
--		trace_netfs_sreq(front, netfs_sreq_trace_discard);
-+		trace_netfs_sreq(front,
-+				 notes & ABANDON_SREQ ?
-+				 netfs_sreq_trace_abandoned : netfs_sreq_trace_consumed);
- 		list_del_init(&front->rreq_link);
- 		front = list_first_entry_or_null(&stream->subrequests,
- 						 struct netfs_io_subrequest, rreq_link);
-@@ -353,9 +355,11 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
- 
- 	if (rreq->iocb) {
- 		rreq->iocb->ki_pos += rreq->transferred;
--		if (rreq->iocb->ki_complete)
-+		if (rreq->iocb->ki_complete) {
-+			trace_netfs_rreq(rreq, netfs_rreq_trace_ki_complete);
- 			rreq->iocb->ki_complete(
- 				rreq->iocb, rreq->error ? rreq->error : rreq->transferred);
-+		}
- 	}
- 	if (rreq->netfs_ops->done)
- 		rreq->netfs_ops->done(rreq);
-@@ -379,9 +383,11 @@ static void netfs_rreq_assess_single(struct netfs_io_request *rreq)
- 
- 	if (rreq->iocb) {
- 		rreq->iocb->ki_pos += rreq->transferred;
--		if (rreq->iocb->ki_complete)
-+		if (rreq->iocb->ki_complete) {
-+			trace_netfs_rreq(rreq, netfs_rreq_trace_ki_complete);
- 			rreq->iocb->ki_complete(
- 				rreq->iocb, rreq->error ? rreq->error : rreq->transferred);
-+		}
- 	}
- 	if (rreq->netfs_ops->done)
- 		rreq->netfs_ops->done(rreq);
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 2ac85a819b71..dedfdf80eccc 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -419,9 +419,11 @@ bool netfs_write_collection(struct netfs_io_request *wreq)
- 	if (wreq->iocb) {
- 		size_t written = min(wreq->transferred, wreq->len);
- 		wreq->iocb->ki_pos += written;
--		if (wreq->iocb->ki_complete)
-+		if (wreq->iocb->ki_complete) {
-+			trace_netfs_rreq(wreq, netfs_rreq_trace_ki_complete);
- 			wreq->iocb->ki_complete(
- 				wreq->iocb, wreq->error ? wreq->error : written);
-+		}
- 		wreq->iocb = VFS_PTR_POISON;
- 	}
- 
-diff --git a/fs/netfs/write_retry.c b/fs/netfs/write_retry.c
-index 7158657061e9..fc9c3e0d34d8 100644
---- a/fs/netfs/write_retry.c
-+++ b/fs/netfs/write_retry.c
-@@ -146,7 +146,6 @@ static void netfs_retry_write_stream(struct netfs_io_request *wreq,
- 			subreq = netfs_alloc_subrequest(wreq);
- 			subreq->source		= to->source;
- 			subreq->start		= start;
--			subreq->debug_index	= atomic_inc_return(&wreq->subreq_counter);
- 			subreq->stream_nr	= to->stream_nr;
- 			subreq->retry_count	= 1;
- 
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index 0e509a0433fb..75142f49d65d 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -1334,7 +1334,11 @@ cifs_readv_callback(struct mid_q_entry *mid)
- 		cifs_stats_bytes_read(tcon, rdata->got_bytes);
- 		break;
- 	case MID_REQUEST_SUBMITTED:
-+		trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_req_submitted);
-+		goto do_retry;
- 	case MID_RETRY_NEEDED:
-+		trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_retry_needed);
-+do_retry:
- 		__set_bit(NETFS_SREQ_NEED_RETRY, &rdata->subreq.flags);
- 		rdata->result = -EAGAIN;
- 		if (server->sign && rdata->got_bytes)
-@@ -1344,8 +1348,14 @@ cifs_readv_callback(struct mid_q_entry *mid)
- 		task_io_account_read(rdata->got_bytes);
- 		cifs_stats_bytes_read(tcon, rdata->got_bytes);
- 		break;
-+	case MID_RESPONSE_MALFORMED:
-+		trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_malformed);
-+		rdata->result = -EIO;
-+		break;
- 	default:
-+		trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_unknown);
- 		rdata->result = -EIO;
-+		break;
- 	}
- 
- 	if (rdata->result == -ENODATA) {
-@@ -1714,11 +1724,21 @@ cifs_writev_callback(struct mid_q_entry *mid)
- 		}
- 		break;
- 	case MID_REQUEST_SUBMITTED:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_req_submitted);
-+		__set_bit(NETFS_SREQ_NEED_RETRY, &wdata->subreq.flags);
-+		result = -EAGAIN;
-+		break;
- 	case MID_RETRY_NEEDED:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_retry_needed);
- 		__set_bit(NETFS_SREQ_NEED_RETRY, &wdata->subreq.flags);
- 		result = -EAGAIN;
- 		break;
-+	case MID_RESPONSE_MALFORMED:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_malformed);
-+		result = -EIO;
-+		break;
- 	default:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_unknown);
- 		result = -EIO;
- 		break;
- 	}
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 084ee66e73fd..7f6186c2e60d 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -4567,7 +4567,11 @@ smb2_readv_callback(struct mid_q_entry *mid)
- 		cifs_stats_bytes_read(tcon, rdata->got_bytes);
- 		break;
- 	case MID_REQUEST_SUBMITTED:
-+		trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_req_submitted);
-+		goto do_retry;
- 	case MID_RETRY_NEEDED:
-+		trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_retry_needed);
-+do_retry:
- 		__set_bit(NETFS_SREQ_NEED_RETRY, &rdata->subreq.flags);
- 		rdata->result = -EAGAIN;
- 		if (server->sign && rdata->got_bytes)
-@@ -4578,11 +4582,15 @@ smb2_readv_callback(struct mid_q_entry *mid)
- 		cifs_stats_bytes_read(tcon, rdata->got_bytes);
- 		break;
- 	case MID_RESPONSE_MALFORMED:
-+		trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_malformed);
- 		credits.value = le16_to_cpu(shdr->CreditRequest);
- 		credits.instance = server->reconnect_instance;
--		fallthrough;
-+		rdata->result = -EIO;
-+		break;
- 	default:
-+		trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_unknown);
- 		rdata->result = -EIO;
-+		break;
- 	}
- #ifdef CONFIG_CIFS_SMB_DIRECT
- 	/*
-@@ -4835,11 +4843,14 @@ smb2_writev_callback(struct mid_q_entry *mid)
- 
- 	switch (mid->mid_state) {
- 	case MID_RESPONSE_RECEIVED:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_progress);
- 		credits.value = le16_to_cpu(rsp->hdr.CreditRequest);
- 		credits.instance = server->reconnect_instance;
- 		result = smb2_check_receive(mid, server, 0);
--		if (result != 0)
-+		if (result != 0) {
-+			trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_bad);
- 			break;
-+		}
- 
- 		written = le32_to_cpu(rsp->DataLength);
- 		/*
-@@ -4861,15 +4872,23 @@ smb2_writev_callback(struct mid_q_entry *mid)
- 		}
- 		break;
- 	case MID_REQUEST_SUBMITTED:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_req_submitted);
-+		__set_bit(NETFS_SREQ_NEED_RETRY, &wdata->subreq.flags);
-+		result = -EAGAIN;
-+		break;
- 	case MID_RETRY_NEEDED:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_retry_needed);
- 		__set_bit(NETFS_SREQ_NEED_RETRY, &wdata->subreq.flags);
- 		result = -EAGAIN;
- 		break;
- 	case MID_RESPONSE_MALFORMED:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_malformed);
- 		credits.value = le16_to_cpu(rsp->hdr.CreditRequest);
- 		credits.instance = server->reconnect_instance;
--		fallthrough;
-+		result = -EIO;
-+		break;
- 	default:
-+		trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_unknown);
- 		result = -EIO;
- 		break;
- 	}
-@@ -4909,7 +4928,6 @@ smb2_writev_callback(struct mid_q_entry *mid)
- 			      server->credits, server->in_flight,
- 			      0, cifs_trace_rw_credits_write_response_clear);
- 	wdata->credits.value = 0;
--	trace_netfs_sreq(&wdata->subreq, netfs_sreq_trace_io_progress);
- 	cifs_write_subrequest_terminated(wdata, result ?: written);
- 	release_mid(mid);
- 	trace_smb3_rw_credits(rreq_debug_id, subreq_debug_index, 0,
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index c2d581429a7b..73e96ccbe830 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -50,12 +50,13 @@
- 
- #define netfs_rreq_traces					\
- 	EM(netfs_rreq_trace_assess,		"ASSESS ")	\
--	EM(netfs_rreq_trace_copy,		"COPY   ")	\
- 	EM(netfs_rreq_trace_collect,		"COLLECT")	\
- 	EM(netfs_rreq_trace_complete,		"COMPLET")	\
-+	EM(netfs_rreq_trace_copy,		"COPY   ")	\
- 	EM(netfs_rreq_trace_dirty,		"DIRTY  ")	\
- 	EM(netfs_rreq_trace_done,		"DONE   ")	\
- 	EM(netfs_rreq_trace_free,		"FREE   ")	\
-+	EM(netfs_rreq_trace_ki_complete,	"KI-CMPL")	\
- 	EM(netfs_rreq_trace_recollect,		"RECLLCT")	\
- 	EM(netfs_rreq_trace_redirty,		"REDIRTY")	\
- 	EM(netfs_rreq_trace_resubmit,		"RESUBMT")	\
-@@ -64,13 +65,15 @@
- 	EM(netfs_rreq_trace_unlock,		"UNLOCK ")	\
- 	EM(netfs_rreq_trace_unlock_pgpriv2,	"UNLCK-2")	\
- 	EM(netfs_rreq_trace_unmark,		"UNMARK ")	\
-+	EM(netfs_rreq_trace_unpause,		"UNPAUSE")	\
- 	EM(netfs_rreq_trace_wait_ip,		"WAIT-IP")	\
--	EM(netfs_rreq_trace_wait_pause,		"WT-PAUS")	\
--	EM(netfs_rreq_trace_wait_queue,		"WAIT-Q ")	\
-+	EM(netfs_rreq_trace_wait_pause,		"--PAUSED--")	\
-+	EM(netfs_rreq_trace_wait_quiesce,	"WAIT-QUIESCE")	\
-+	EM(netfs_rreq_trace_waited_ip,		"DONE-IP")	\
-+	EM(netfs_rreq_trace_waited_pause,	"--UNPAUSED--")	\
-+	EM(netfs_rreq_trace_waited_quiesce,	"DONE-QUIESCE")	\
- 	EM(netfs_rreq_trace_wake_ip,		"WAKE-IP")	\
- 	EM(netfs_rreq_trace_wake_queue,		"WAKE-Q ")	\
--	EM(netfs_rreq_trace_woke_queue,		"WOKE-Q ")	\
--	EM(netfs_rreq_trace_unpause,		"UNPAUSE")	\
- 	E_(netfs_rreq_trace_write_done,		"WR-DONE")
- 
- #define netfs_sreq_sources					\
-@@ -83,6 +86,7 @@
- 	E_(NETFS_WRITE_TO_CACHE,		"WRIT")
- 
- #define netfs_sreq_traces					\
-+	EM(netfs_sreq_trace_abandoned,		"ABNDN")	\
- 	EM(netfs_sreq_trace_add_donations,	"+DON ")	\
- 	EM(netfs_sreq_trace_added,		"ADD  ")	\
- 	EM(netfs_sreq_trace_cache_nowrite,	"CA-NW")	\
-@@ -90,6 +94,7 @@
- 	EM(netfs_sreq_trace_cache_write,	"CA-WR")	\
- 	EM(netfs_sreq_trace_cancel,		"CANCL")	\
- 	EM(netfs_sreq_trace_clear,		"CLEAR")	\
-+	EM(netfs_sreq_trace_consumed,		"CONSM")	\
- 	EM(netfs_sreq_trace_discard,		"DSCRD")	\
- 	EM(netfs_sreq_trace_donate_to_prev,	"DON-P")	\
- 	EM(netfs_sreq_trace_donate_to_next,	"DON-N")	\
-@@ -97,7 +102,12 @@
- 	EM(netfs_sreq_trace_fail,		"FAIL ")	\
- 	EM(netfs_sreq_trace_free,		"FREE ")	\
- 	EM(netfs_sreq_trace_hit_eof,		"EOF  ")	\
--	EM(netfs_sreq_trace_io_progress,	"IO   ")	\
-+	EM(netfs_sreq_trace_io_bad,		"I-BAD")	\
-+	EM(netfs_sreq_trace_io_malformed,	"I-MLF")	\
-+	EM(netfs_sreq_trace_io_unknown,		"I-UNK")	\
-+	EM(netfs_sreq_trace_io_progress,	"I-OK ")	\
-+	EM(netfs_sreq_trace_io_req_submitted,	"I-RSB")	\
-+	EM(netfs_sreq_trace_io_retry_needed,	"I-RTR")	\
- 	EM(netfs_sreq_trace_limited,		"LIMIT")	\
- 	EM(netfs_sreq_trace_need_clear,		"N-CLR")	\
- 	EM(netfs_sreq_trace_partial_read,	"PARTR")	\
-@@ -143,8 +153,8 @@
- 
- #define netfs_sreq_ref_traces					\
- 	EM(netfs_sreq_trace_get_copy_to_cache,	"GET COPY2C ")	\
--	EM(netfs_sreq_trace_get_resubmit,	"GET RESUBMIT")	\
--	EM(netfs_sreq_trace_get_submit,		"GET SUBMIT")	\
-+	EM(netfs_sreq_trace_get_resubmit,	"GET RESUBMT")	\
-+	EM(netfs_sreq_trace_get_submit,		"GET SUBMIT ")	\
- 	EM(netfs_sreq_trace_get_short_read,	"GET SHORTRD")	\
- 	EM(netfs_sreq_trace_new,		"NEW        ")	\
- 	EM(netfs_sreq_trace_put_abandon,	"PUT ABANDON")	\
-
+Thanks,
+Amir.
 
