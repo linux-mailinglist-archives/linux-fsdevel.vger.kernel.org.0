@@ -1,114 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-52615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624EAAE4866
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 17:24:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA07AE4861
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 17:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D298C3A972D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 15:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454B316B0BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 15:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739FE28AB07;
-	Mon, 23 Jun 2025 15:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E211328A1E0;
+	Mon, 23 Jun 2025 15:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mjsgMC/x"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KK3z2ZZa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B668287519
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 15:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1287328C867
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 15:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750692153; cv=none; b=rSNtpaSQMb3U7HIdMRONfmrq0K3GmHOH7vt8yOyUv/iA1Hgf8Ddo8gcdG1KcqMQvz/++Zq6ekKxrwx4WObmbT6jF+T2Nu153XvJeF/hHI1dlPDQt8Cdd/wnULHVpbvsqu/xbV2R6C1drcm8czXg0bVdHDu2oI3C2J5h8ZjAFIcc=
+	t=1750692201; cv=none; b=FgQUlnkOgfAXSKVgLgoFFIytAVRwCoQKKqSVOoTCMiCalPRYkU3VipSBoLV6I72wcQotlo+Dw24PEjdL9jwbuUsWQAEHk6ku2yR6sowr4nap4Z7jcElNACyWjlnMVkeLr4h+OEIh74QILM1pv0ax6UKqaB9W0zRuILy/L2G26ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750692153; c=relaxed/simple;
-	bh=hC9peFQk5TvNNRSqpIuY+epye1/M+kNum1ROmrB5xQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f42W7HyPAiZ90y8lQT0qtF0mO1lrKb3ag1U90vpSWjtsu5ZJOhRSWgl37ekOpVYgm/dsawbaizik0Z7XeMhB5zGAlUXt/oU/OmTW5dziW8uHCt0g7D+0YFVjSIvr1qEzIrVdySfYbPt/LH+taGpZmIVKQS453jZigE6wamifOfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mjsgMC/x; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-6116d9bb6ecso1087183eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 08:22:32 -0700 (PDT)
+	s=arc-20240116; t=1750692201; c=relaxed/simple;
+	bh=lGS+0f0d2TPqmr39/urKxDV5nS75hlwL5bSZDFpp3aI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vAAquUEjmxLaCneXnHA9/2Bm5CvpJjkUCAeXA7epCVW/Cv9j/s96ySl5zbVfLpc/ABpNwjFlSC8YRfzDpuvV7nXnXfIfDrzXr5MNRLdWcGZTy5xU3kEtkut1y55pvU2WT7OBAA6A6GoEXFWVPLED+7JQlJEi4CiBYqY6huoq9lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KK3z2ZZa; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-70e23e9aeefso33190057b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 08:23:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750692151; x=1751296951; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bTZ19GRi4KU0H2wNqBnaKkKrv7m6rpdyKuL2QkFh6uQ=;
-        b=mjsgMC/xD/7Nu42Lgf44FhzejT4T/f/JDGVCRMV/3hizQOfqv7Nmnrf3s4Rh8gb/Pw
-         CSExBLuoDGt4qh+QwFjy6n+w8gZHLhfIZ+085HpT06uJXGwug8J5FM0ialJCKFEblggE
-         kd/2/mOPQrPieF6u53cs3Z39hf4GQBu5a6f8JhvMjLATQ6dy+WLiMfyS+zqZCR/c4K2f
-         pH+1R5JQxEi+SbAdVLFp2Z5dkaHoRGMRs+fN8sPYHgVEB+49h6TWu+TJ6ncozrliVymC
-         LmJli29nXUns52jR4ZM6KmXDAeA6TtEhO1MGsL9ikZCuXSJGzfSZW2DPDyNdUbc7a5II
-         g/gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750692151; x=1751296951;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1750692196; x=1751296996; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bTZ19GRi4KU0H2wNqBnaKkKrv7m6rpdyKuL2QkFh6uQ=;
-        b=f4t4Xe5z+PyIYAlXHMDCqIWx5MKpLFFXPSuPlSsC7og2DSNeyIzQNQMZBeaagxDeSB
-         5A2G9Q7N3eKS75t2YQo2p4eFQ/a0saBhdl7uDbYHMYP5FnE3l1wCXpNW4Ib9v5KmWEET
-         X8S04+3zumhzvvxezX1wYMLCQHkQmhhDkIif8517gMdI4o2XFF8GvaFSuy0Fr1E1Vu/5
-         GMha02svqByKWUiqzVi/UKSriKLyRG1i+ItzOCGR6WLEM3a0S4cGwdvUkymGJZVValyp
-         71XC4G7cO7yWEby8lIpnhr9siQO6GP0UO4BmUELkF0WF4iZemXkvcamxFQXQxuA7uXRo
-         ZuQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXp3tFPrNqDfDtFdxmRrkiXFm4BjYAqW6neECmP2+tBeLTAccOzyYrxzb1/WO+XbXlN1fL7v2HyTGb2dLki@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFHzaIiDgy1MtUx3ykdWf2m8RJ8e9wnOlxRHtcT35A4MLZCFWm
-	Ul8I/lZrwfoBEmJmUxCn11jL6RJkoZwdXJn18vU7kCY2+avgnb0aBO9LjHN+HLwuDCx6zFSfUvO
-	gHojy
-X-Gm-Gg: ASbGncvWtlXuJZ8m6jNVg28ufZpMJevZazjDmzOVDCAqC/vyH/fuZBD/t7j0P9EzNHV
-	MRGF7ZY9KwpAobgoRhGhx+MJblLS8+FnQ5tuWrOjpBXzS8x3vPHwz66eO54WK2G9vgV5EC4wZDF
-	GnA3luZLJIzsxwluB3qkNsk6Zyy5TaaXJIBJdPEowpYoDR7fs8M0BpK3NruCYN5+iIDwDjAt+Xe
-	mY0onMPGREo35lM1k0H62xmhWIi9xuzPf0hEl22ibOdcJeaXta90ed2XHE1c+MM3gmb+2F0xU67
-	k94FQynfC7lvTgm/Y9k82CGce2YbOgd9c10/93AobmY9XnrczB5tmqcF7xcuDrgRq3ZgOw==
-X-Google-Smtp-Source: AGHT+IFkGyVDoc+8SQ8rASYfcEKGGB/Oc5hw+KdWNqGCuf0XX49CDwKCA3KtlNIgbDKU0n0iNbw/gw==
-X-Received: by 2002:a05:6870:392c:b0:2ea:8091:41f2 with SMTP id 586e51a60fabf-2eeee55c8cemr8102044fac.19.1750692151278;
-        Mon, 23 Jun 2025 08:22:31 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee8a8e5eb3sm1697426fac.32.2025.06.23.08.22.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:22:29 -0700 (PDT)
-Date: Mon, 23 Jun 2025 18:22:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: Su Hui <suhui@nfschina.com>, akpm@linux-foundation.org,
-	vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
-Message-ID: <d60db71a-0b4f-4e7d-8c06-7493934aa507@suswa.mountain>
-References: <20250623104704.3489471-1-suhui@nfschina.com>
- <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
+        bh=5C+Macx0w6ywU+A/VvTC8HUBWMBBqnb8N7PQsKLlGDs=;
+        b=KK3z2ZZa3naySG4UBYRrXHNJN/sqjzJpgXzbYb0hEdHli+tdbUhGQTl5KoG8t/KN7t
+         D214XNVYjV6nLye/i29wogBvV29DVSPI9KOaiDb+YMNaztf8aTUC/k7xJScXA9Km3mTf
+         vdm3tYLqIDaS+EqE9dmNSp5O/zvxlpiSz9SyMB2insFUqY1fHSSazu1jp2AbgLgXYtqM
+         yYK4m5WPyl4ieQ6Yk+A/xmRBReFHox5fh8w2gzIRqovUMJz8f93AjdSK/kAZj/L0ur/x
+         kBWqgEEEAY5RwKz/oAxUA4neebUJU0B9f5mx4RHm8tUqDmIZbsyKfM5b3aKa1fvm5Uso
+         PdWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750692196; x=1751296996;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5C+Macx0w6ywU+A/VvTC8HUBWMBBqnb8N7PQsKLlGDs=;
+        b=eMrO2gKtGWy91FRzXSxj2gPmzyT9vEKpc4VUXOOCJ9DaNG1I4zYcMzonWx7yMVjLqR
+         BccDEeRALLAqhGAGTFWzeqPzMy+V1AgMe//1GiBNPy6RpangEo5+d/tS7zubPjtinagK
+         IETvuRt2sbdVHNqCFMOcKZ7ua5bkMcwtrHVCbka3jf2maM9F9+KLkAKtekvBDqCOWauw
+         6366GPr2Is+CI2wDZAKfBzHOrd1v3dcxNoH4sjeK39CM9V0/UyadlzChx/lpnmlk4BTy
+         i6OsHvdjoRbh6pingvBKmOfenqyt3kgHT7a6UZgtP5x+ihPqcHvGqxha83trGMf52n4m
+         iBLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmPGpgmTYM9HcNYeP7Rc3ndxvqVQjZxW8He7cTs2rPzrG5tRCj+THjnuIEjk7YYf1FyRoqPzQX/ohxsQxf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyi1X1cZj7mynbsl2+O4jPMA6Z6VrumuRHDcpU3EFM8CEeIXPn
+	glGLsl7zg4XpflWaNFzF8gQgIuJdUShsozbED9VrG5ABFrWj9OVjDhlXxRI2YSDvC+FVrwsM/ZC
+	F0NFqUN+QbXSY0Kmi5dd11aaUDGM9bc2GQHtftOI1SHMshD2EZfg=
+X-Gm-Gg: ASbGncuF1Lm8H7bZUgGEvDw5eAorE3PzbRDuManYGp8MpV+qfnKmzfyNWu8VBQGh0aQ
+	AMs4nvNqHjDU8yDlEqc/Y9y1QFgUSrFkrYIvYqzaZEBfOz3NWM/lETeqL9+owEEMkYuo2MP/4iQ
+	HInSMe3Jj/26SHULynWRDhRJ9Wk+nUTQ3Irr992ZzjbHY=
+X-Google-Smtp-Source: AGHT+IFDWmvezTtn24M48J2+gCwvEZrGp1xjw9YXsal4m8rI9IlwaC+CRLf7Nu9lLnMcBNv3Itll1k7csRHQcl6+zOM=
+X-Received: by 2002:a05:690c:4a06:b0:70c:a854:8384 with SMTP id
+ 00721157ae682-712c63f3440mr197154127b3.11.1750692196000; Mon, 23 Jun 2025
+ 08:23:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
+References: <CAFj5m9KOjqYmUOYM4EgDBrJ-rQxEgOhm+pokmdAE6w+bCGrhSg@mail.gmail.com>
+ <CAHC9VhQ0dyqsjsNt98yiPCGsiuUXep3T7T24LWWRHy8V8xjV4Q@mail.gmail.com> <aFiwMxE4OlcFp7Ox@fedora>
+In-Reply-To: <aFiwMxE4OlcFp7Ox@fedora>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 23 Jun 2025 11:23:03 -0400
+X-Gm-Features: Ac12FXzfEPBnZct18t2NRX4DFqCH556EcUr1vJpCOtWVUEWdAIFOvsXhC2LL9A8
+Message-ID: <CAHC9VhQjF3L0B0GiZq-yWBMKjBMZ_qtnuG0Dn9g=bzjkFMYJig@mail.gmail.com>
+Subject: Re: [v6.16-rc2+ Bug] panic in inode_doinit_with_dentry during booting
+To: Ming Lei <ming.lei@redhat.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 10:36:45PM +0800, Baoquan He wrote:
-> On 06/23/25 at 06:47pm, Su Hui wrote:
-> > There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
-> > type from 'size_t' to 'unsigned int' for the consistency of data->size.
-> 
-> It's unclear to me why size_t is not suggested here. Isn't it assigned
-> a 'sizeof() + data->size' in which size_t should be used?
+On Sun, Jun 22, 2025 at 9:39=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
+e:
+> On Sat, Jun 21, 2025 at 02:40:41PM -0400, Paul Moore wrote:
+> > On Sat, Jun 21, 2025 at 2:08=E2=80=AFAM Ming Lei <ming.lei@redhat.com> =
+wrote:
+> > >
+> > > Hello Guys,
+> > >
+> > > The latest v6.16-rc2+ kernel panics during booting, commit
+> > > 3f75bfff44be ("Merge tag 'mtd/fixes-for-6.16-rc3' of
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux"):
+> > >
+> > >
+> > > [  OK  ] Finished systemd-modules-load.service - Load Kernel Modules.
+> > >          Starting systemd-sysctl.service - Apply Kernel Variables...
+> > >          Starting systemd-sysusers.service - Create System Users...
+> > > [  OK  ] Finished systemd-sysctl.service - Apply Kernel Variables.
+> > > [    1.851473] Oops: general protection fault, probably for
+> > > non-canonical address 0x8cbad568292ed62c: 0000 [#1] SMP NOPTI
+> > > [    1.853362] CPU: 9 UID: 0 PID: 269 Comm: systemd-sysuser Not
+> > > tainted 6.16.0-rc2+ #328 PREEMPT(full)
+> > > [    1.854923] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+> > > BIOS 1.16.3-1.fc39 04/01/2014
+> > > [    1.856374] RIP: 0010:__list_add_valid_or_report+0x1e/0xa0
+> > > [    1.857366] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
+> > > 53 48 83 ec 08 48 85 f6 0f 84 76 2f 76 ff 48 89 d3 48 85 d2 0f 84 5c
+> > > 2f9
+> > > [    1.860338] RSP: 0018:ffffd152c0de3a10 EFLAGS: 00010286
+> > > [    1.861244] RAX: ffff8aa5414d38d8 RBX: 8cbad568292ed624 RCX: 00000=
+00000000000
+> > > [    1.862439] RDX: 8cbad568292ed624 RSI: ffff8aa5401f40f0 RDI: ffff8=
+aa5414d38d8
+> > > [    1.863622] RBP: ffff8aa5414d38f4 R08: ffffd152c0de3a7c R09: ffffd=
+152c0de3a20
+> > > [    1.864810] R10: ffff8aa5401f40c0 R11: 0000000000000007 R12: ffff8=
+aa5414d38d8
+> > > [    1.864813] R13: ffff8aa5401f40c0 R14: ffff8aa5401f40f0 R15: ffff8=
+aa5414d38d0
+> > > [    1.864814] FS:  00007feebef42bc0(0000) GS:ffff8aa9ed02f000(0000)
+> > > knlGS:0000000000000000
+> > > [    1.864816] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [    1.864818] CR2: 00007feebfb58180 CR3: 0000000117f4d004 CR4: 00000=
+00000770ef0
+> > > [    1.870018] PKRU: 55555554
+> > > [    1.870020] Call Trace:
+> > > [    1.870029]  <TASK>
+> > > [    1.870031]  inode_doinit_with_dentry+0x42d/0x520
+> >
+> > Thanks for the report.  I'm assuming you didn't see this with
+> > v6.16-rc1, or earlier?
+>
+> It isn't observed on -rc2.
+>
+> >
+> > Do you have any line number information you could share?  Also, based
+> > on the RIP in __list_add_valid_or_report(), can you confirm that this
+> > is either happening in an initrd/initramfs or on a system where a
+> > SELinux policy is not being loaded?
+>
+> Looks the issue can't be reproduced any more with -rc3.
 
-Yeah...  That's a good point.  People should generally default to size_t
-for sizes.  It really does prevent a lot of integer overflow bugs.  In
-this case data->size is not controlled by the user, but if it were
-then that would be an integer overflow on 32bit systems and not on
-64bit systems, until we start declaring sizes as unsigned int and
-then all the 32bit bugs start affecting everyone.
+Thanks for the update.  If you see this again, please let us know.
 
-regards,
-dan carpenter
-
+--=20
+paul-moore.com
 
