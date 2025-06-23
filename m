@@ -1,115 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-52427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A11AE32BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 00:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF62AE3332
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 02:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708A918906AA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jun 2025 22:16:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F643AF921
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 00:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6682021CA02;
-	Sun, 22 Jun 2025 22:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A592BA2D;
+	Mon, 23 Jun 2025 00:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UnkMEMVn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFJC0H2C"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF3A28EA;
-	Sun, 22 Jun 2025 22:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92AE1853;
+	Mon, 23 Jun 2025 00:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750630588; cv=none; b=cW+r/YBNqFlEa4GI52fZOgJIHSs2SJyhTraJzxFw3MxOf+lzXB7ZjcGwHt6TW6kjUJzLix6ZGmAzufUMSlx98g7QD8cY7G86eUArxqfq2LTeAQPOZt5Hpn5ZNvh8n7dKLRHmA6syxUrDPZPT5LZeJZz1x3DX+MvYbskhCOb0Zec=
+	t=1750640160; cv=none; b=c2xObI8/Fl1lgKEcAVtpP626cKoQFIWMUU4ASqtBWQxdJbj1TK5vqh3kPWjUeVc9IfgoFnoXtORKTxHz3DVsqyVNWeISd+yCAIbR5hxwPn33oaWZPZJuQ2x54pEJpsq1SVodoefX/W+/7YFeWrva2VVsPOzyv4KU3Ree6Ix8FFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750630588; c=relaxed/simple;
-	bh=tLByNlqUAJAlwrRiurqr1Tlca7v3+MRaflGdBfGFrh4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kyRb8nnsfkV6FZuKbU8vwyWuWS/indVAvljQeJhjgMm1PV2j/qWThaFenVgqzVS6U/zocgQ0ZgLwkFLxk2w4az4pvcBjjGgKgAqeGgyM3D9tT7ymjrQ7QfnHu4HRKtABPOKlYzJLls2r9vwaMSMBCXBHMF/PSDgzT9ENdvsykrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UnkMEMVn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38383C4CEE3;
-	Sun, 22 Jun 2025 22:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1750630588;
-	bh=tLByNlqUAJAlwrRiurqr1Tlca7v3+MRaflGdBfGFrh4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UnkMEMVnPEVFZ/TxLkdkQxWUL8j100frOJstemv+j6qBeTRD2ky7OBir7vvHPnDxU
-	 ymtWmkFNLPhS+5J1oheVqlqb2kITNwDebPJCYbA4HxBEXkTU7RxEQh56IlEPOJv9I4
-	 EVWc61+GmVWxZEQpnxD95rkcfhnT2nbXjczFwLXE=
-Date: Sun, 22 Jun 2025 15:16:25 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: Matthew Wilcox <willy@infradead.org>, seanjc@google.com,
- david@redhat.com, vbabka@suse.cz, shuah@kernel.org, pbonzini@redhat.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
- bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
- chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
- yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
- peterx@redhat.com, jack@suse.cz, rppt@kernel.org, hch@infradead.org,
- cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
- roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
- apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
- ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
- gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
- papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
- quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-coco@lists.linux.dev
-Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
-Message-Id: <20250622151625.fb5d23362c2c3d1af22878d2@linux-foundation.org>
-In-Reply-To: <d1d7feed-c450-4b88-ab73-a673f4029433@amd.com>
-References: <20250618112935.7629-4-shivankg@amd.com>
-	<20250620143502.3055777-2-willy@infradead.org>
-	<aFWR-2WAQ283SZvg@casper.infradead.org>
-	<20250622114322.c6c35800e01e4cc4007a0f89@linux-foundation.org>
-	<d1d7feed-c450-4b88-ab73-a673f4029433@amd.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750640160; c=relaxed/simple;
+	bh=vcABYOkqq14g+eIUIf5QSuzIa5WGou1ACb34ZXbcWMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSnCG6h12HlBC4Gfk0doQsXJZyKcvNsh7hYORGWAslKXEumap2Px+IOpb63G3s0fozaFta7NA18jarfMXVQhbd8h+cnv4FpEyA0UnamU0Yrk2XlKJ/HEsJN9r3GhxiVBlc6iGUGdHZq2rOEcoFPO7BmJBk2tMjb+Ha2iva46/N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFJC0H2C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334A7C4CEE3;
+	Mon, 23 Jun 2025 00:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750640159;
+	bh=vcABYOkqq14g+eIUIf5QSuzIa5WGou1ACb34ZXbcWMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OFJC0H2Cd1jWpt4llw/3kqfljf/eymIjMOd6+6Sltgh7EyStjfN6KD7HKp6W3r14M
+	 HbUSj2uf75tNXzTvCivdLmxfUTINteTLaP+iWpO3FY2MH61IA7SGWwoeyvWAkvxeBq
+	 ZN6sYuP4lUe0bYKt9WZ05PkOfwVxmOa8uHn0JNIuFeVd+FFF3TLJ/phx8nX6e64TJk
+	 j9xS/eDLjYHxYOOSH06WaUUy2eibHTywlazrSeoTLznhpbeKGvx6/R2Qxn7hB4prN2
+	 CCGmSQOVhPzREWaRe+K5ng0IiRtqi4zbe+KcPN3S0j8/0+prl505srVzCDBIGTmDE0
+	 h//o+7r/08dlQ==
+Date: Mon, 23 Jun 2025 02:55:50 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, 
+	djwong@kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] statx.2: properly align stx_dio_read_offset_align
+Message-ID: <kup2hb4ffghnxc3ceed5qtf4wqgizmjmaika72fhgv55gum25j@fgjqslihhopw>
+References: <20250619154455.321848-1-john.g.garry@oracle.com>
+ <20250619154455.321848-2-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On Mon, 23 Jun 2025 00:32:05 +0530 Shivank Garg <shivankg@amd.com> wrote:
-
-> > -EXPORT_SYMBOL(__filemap_get_folio);
-> > +EXPORT_SYMBOL(__filemap_get_folio_mpol);
-> >  
-> >  static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
-> >  		xa_mark_t mark)
-> > _
-> > 
-> 
-> Hi Andrew,
-> 
-> Thank you for addressing this.
-> 
-> If you don’t mind me asking,
-> I was curious why we used EXPORT_SYMBOL instead of EXPORT_SYMBOL_GPL here.
-> I had previously received feedback recommending the use of EXPORT_SYMBOL_GPL
-> to better align with the kernel’s licensing philosophy, which made sense to me.
-
-Making this _GPL would effectively switch __filemap_get_folio() from
-non-GPL to GPL.  Leaving it at non-GPL is less disruptive and Matthew's
-patch did not have the intention of changing licensing.
-
-Also,
-
-hp2:/usr/src/25> grep "EXPORT_SYMBOL(" mm/filemap.c|wc -l
-48
-hp2:/usr/src/25> grep "EXPORT_SYMBOL_GPL(" mm/filemap.c|wc -l 
-9
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x3pfq6gjwi44iubs"
+Content-Disposition: inline
+In-Reply-To: <20250619154455.321848-2-john.g.garry@oracle.com>
 
 
+--x3pfq6gjwi44iubs
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, 
+	djwong@kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] statx.2: properly align stx_dio_read_offset_align
+References: <20250619154455.321848-1-john.g.garry@oracle.com>
+ <20250619154455.321848-2-john.g.garry@oracle.com>
+MIME-Version: 1.0
+In-Reply-To: <20250619154455.321848-2-john.g.garry@oracle.com>
+
+Hi John,
+
+On Thu, Jun 19, 2025 at 03:44:54PM +0000, John Garry wrote:
+> Align this member in struct statx with the members above it.
+>=20
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+
+Thanks!  I've applied the patch.
+<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
+mit/?h=3Dcontrib&id=3D6006fe8bf74e400e060ff70f62ac03d911af13c5>
+
+
+Have a lovely day!
+Alex
+
+> ---
+>  man/man2/statx.2 | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/man/man2/statx.2 b/man/man2/statx.2
+> index ef7dbbcf9..273d80711 100644
+> --- a/man/man2/statx.2
+> +++ b/man/man2/statx.2
+> @@ -73,7 +73,7 @@ struct statx {
+>      __u32 stx_atomic_write_segments_max;
+>  \&
+>      /* File offset alignment for direct I/O reads */
+> -    __u32   stx_dio_read_offset_align;
+> +    __u32 stx_dio_read_offset_align;
+>  };
+>  .EE
+>  .in
+> --=20
+> 2.31.1
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--x3pfq6gjwi44iubs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhYphUACgkQ64mZXMKQ
+wqkFthAAq2tmV1O+v/i0SGWBkOuvAIyAJJrCosjtR9WLmtByFV8veF4ZMYHIz9P+
+3+V/1hovEdNTkx48JitK4Ye0RoGEmU4/lgpDFokBqN0zSVNfOJenayAgiTS+24WY
+FMFKUUeO6ZT60h/8SpRDgq1njlPjyq8/19yhqZVuwr3nb+lEzDCHIDrzyCxPd/Px
+T9IGJ66pNnWR2UryFK+p32g3H8Rd9qebXVgS2AON1lCHlAAut/7LEEpBfCzv+hcS
+Dh9RtoEwOe5ix/vKY2Sx5ZR1K8IB9TzoxcmwX9bVCfOIRochX1P/C84v2IVyKtXj
+9mHe9lDszZ0jamjJaAZZR88pXO3QG9y3l8NZuVJoFgHfudCJ5EtEoy1iD0YJCfj8
+fO4AaIP4xSfHXH4YdDY/0n+ag3tp5QfclK2q3eIjrUXmScQZap5VkuHds1925ZKU
+9ac55J1v+mGV0wQkMQypJJQqkuYWTh3QCmi6kj/aGqczMdJQxaIx59fKdmzIqzLe
+x6mXxPaY1GF8kHl/+X74zejZh379aYUigivHgiBZceCHyziZKT9VNM+veLeq8QkD
+qOx9zg1k6gcJ3J1EoYjum5TJgpOWJBq1sfTxGZP3aC3hkvFRkN1poD2l3YAe0n/r
+4ZAJFHJcSJjsq5T/mItL4u0p7dDDDo4XiilFWwnWOFJI7MkDThg=
+=fmra
+-----END PGP SIGNATURE-----
+
+--x3pfq6gjwi44iubs--
 
