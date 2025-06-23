@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-52452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4110BAE3478
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:55:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D10AE3479
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DCD3B05D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E59B3B05A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC851E7C05;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E621E8324;
 	Mon, 23 Jun 2025 04:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FAhnAf2Y"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZoPURdNZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A791CCB4B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3231D63F2
 	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 04:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750654474; cv=none; b=eXfyAMKeRpuur8x7GpPwM85yqJf1fAFWMgAxUMGyfGslFsISlBDw1U9otYg1qCt8jAoNKVvPk57FZP8uwk5rkhDCd7m7XFntmQx5IwpaQXx7dMbRYQvWfSSfoSoRk1gE4miMWO1s4hMTi02OPs/yy+zCucQpguVBIZ7f0SVW6mY=
+	t=1750654474; cv=none; b=YAyI7NHRggtR7KD6b+qVeNBKshZ/lZL/GBW7Ok7uiYj+V+/HCGEllHydC+R87zF5sRJEYqY0T4ZMqejViDJCcg+35gzib/0T3PrscxgEmUl0VIic1D8pAm0sMcl7m+2a61qmqYhxjGGUiPAEb0Wk7wMh4IY+4KoqpUe7ntSNKWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750654474; c=relaxed/simple;
-	bh=nXRRTQ/2SwQov95ki626+98VB2mY8/cGtc3qr8UOuY8=;
+	bh=FLTl/Lb+/Pf2zsqXNxdoqc3Ayl1fDcthgHzmi+Yng4M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TgOSeCtQMO8WRPeOGD62LjiND2g3EqBwRdizl9di3jFohN7EibWzN1ASxhmpOKdN2EGhEhPFuqyPWWsvSvruirqbidVnvl1KHc1gl0zNkhDu3PSpVteIcxWNa/eAhqsIylt6k3rBRjQdffmg4otWqRx9OldqFQKjtyYIyVm4eM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FAhnAf2Y; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=p7kYXmBMqPDFpO/k7YjoHIKOD3b7sZQx2EFC4tMdGxAB1+n6MFVFoAQ7ftblXJHgtR5VwNT23V2frErRdS3koFwSGO01A6jhrLePcuzWA0GReFr4vn6WUJeB9V7fmKzkVP8SDkYxJ1ZAaRPXKV4tWJydcSH77mO5O/qtH4UCYeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZoPURdNZ; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ynzWzUKhLbJ2h5axo0GkKKl2zd9Q1340i9hGmYEPRnA=; b=FAhnAf2YAGYOAeiMml2+bto9lN
-	kOQYGHnJ0A9rovh7Q44DZONQUUOfCGvuQi4xOuxA6WFSrBEAbTUm1pKLnG81dUMJI380RfSzapwAX
-	M8/IYhbmhyMxfYwpDEJvvbmBGGozejeXcxIhuW3pGAXw4L2Ev118R59LHHPwlEfgXAvONcoOzL/p2
-	Q9ozVXys/xInQ4QRXDd2pwkza7Cm/UWLMVhYcIjOWHM5VXxdiLM8JfBvhkkZ54ZYAd/rEI06PYDWw
-	rQ8mT5SJsv1K0ACCPeIxANNZB1uEjTOnK/ZpIDUIxpeMHQYV9SQk1GNAnAy81YssaOBhblm6pzTDM
-	lPZ5dyFg==;
+	bh=pbUlAwLSWfNvK+HnwtUXkiDI6czdMaZLeA+BuAdY/Qk=; b=ZoPURdNZPZ57z7ZLdnv7TGanY5
+	B4eqD6RAc2eghR1q4sbfG7BzxtmuGSmzcS/6+X/rH6Bkq2Cq4Xa3XCdiNXTSVciy/MWzyEgdVLxwO
+	SS5IpFNwP8Vmp2Dlxeuhi9TPEj7qEv9ZiMU6txKUHX08N8uAl9IWp7cfvwaW3GR0NuYzTkOXsqKnU
+	/Rkcg/eWe2ZU2toNAjUWT88LaRl3Ij0vH/VG91iGzBmTwGSg4kRksahvYYxk3WSXQUGy7z/gUC+Vu
+	YTCHYlryvwij4z3hua9m69sm1ZjL+8E798Bu3WYaBCIhFFywlQzHC4ynir9jyPL7x6bqJDH/pJ5CA
+	YBb7M8YQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTZCR-00000005Krr-1Hwi;
+	id 1uTZCR-00000005Kry-1cKH;
 	Mon, 23 Jun 2025 04:54:31 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: brauner@kernel.org,
 	ebiederm@xmission.com,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 20/35] attach_recursive_mnt(): unify the mnt_change_mountpoint() logics
-Date: Mon, 23 Jun 2025 05:54:13 +0100
-Message-ID: <20250623045428.1271612-20-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 21/35] attach_recursive_mnt(): pass destination mount in all cases
+Date: Mon, 23 Jun 2025 05:54:14 +0100
+Message-ID: <20250623045428.1271612-21-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250623045428.1271612-1-viro@zeniv.linux.org.uk>
 References: <20250623044912.GA1248894@ZenIV>
@@ -66,82 +66,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The logics used for tucking under existing mount differs for original
-and copies; copies do a mount hash lookup to see if mountpoint to be is
-already overmounted, while the original is told explicitly.
+... and 'beneath' is no longer used there
 
-But the same logics that is used for copies works for the original,
-at which point the only place where we get very close to eliminating
-the need of passing 'beneath' flag to attach_recursive_mnt().
-
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ fs/namespace.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index a73f16926830..6092aaf604a7 100644
+index 6092aaf604a7..be3bfd99dc46 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -2643,7 +2643,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+@@ -2570,7 +2570,7 @@ enum mnt_tree_flags_t {
+ /**
+  * attach_recursive_mnt - attach a source mount tree
+  * @source_mnt: mount tree to be attached
+- * @top_mnt:    mount that @source_mnt will be mounted on or mounted beneath
++ * @dest_mnt:   mount that @source_mnt will be mounted on
+  * @dest_mp:    the mountpoint @source_mnt will be mounted at
+  * @flags:      modify how @source_mnt is supposed to be attached
+  *
+@@ -2635,20 +2635,20 @@ enum mnt_tree_flags_t {
+  *         Otherwise a negative error code is returned.
+  */
+ static int attach_recursive_mnt(struct mount *source_mnt,
+-				struct mount *top_mnt,
++				struct mount *dest_mnt,
+ 				struct mountpoint *dest_mp,
+ 				enum mnt_tree_flags_t flags)
+ {
+ 	struct user_namespace *user_ns = current->nsproxy->mnt_ns->user_ns;
  	HLIST_HEAD(tree_list);
- 	struct mnt_namespace *ns = top_mnt->mnt_ns;
+-	struct mnt_namespace *ns = top_mnt->mnt_ns;
++	struct mnt_namespace *ns = dest_mnt->mnt_ns;
  	struct mountpoint *smp;
--	struct mountpoint *secondary = NULL;
-+	struct mountpoint *shorter = NULL;
- 	struct mount *child, *dest_mnt, *p;
+ 	struct mountpoint *shorter = NULL;
+-	struct mount *child, *dest_mnt, *p;
++	struct mount *child, *p;
  	struct mount *top;
  	struct hlist_node *n;
-@@ -2655,14 +2655,12 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 	 * mounted beneath mounts on the same mountpoint.
- 	 */
- 	for (top = source_mnt; unlikely(top->overmount); top = top->overmount) {
--		if (!secondary && is_mnt_ns_file(top->mnt.mnt_root))
--			secondary = top->mnt_mp;
-+		if (!shorter && is_mnt_ns_file(top->mnt.mnt_root))
-+			shorter = top->mnt_mp;
- 	}
- 	smp = get_mountpoint(top->mnt.mnt_root);
- 	if (IS_ERR(smp))
- 		return PTR_ERR(smp);
--	if (!secondary)
--		secondary = smp;
+ 	int err = 0;
+-	bool moving = flags & MNT_TREE_MOVE, beneath = flags & MNT_TREE_BENEATH;
++	bool moving = flags & MNT_TREE_MOVE;
  
- 	/* Is there space to add these mounts to the mount namespace? */
- 	if (!moving) {
-@@ -2706,9 +2704,14 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 	/*
+ 	 * Preallocate a mountpoint in case the new mounts need to be
+@@ -2669,11 +2669,6 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 			goto out;
  	}
  
- 	mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
 -	if (beneath)
--		mnt_change_mountpoint(top, smp, top_mnt);
--	commit_tree(source_mnt);
-+	/*
-+	 * Now the original copy is in the same state as the secondaries -
-+	 * its root attached to mountpoint, but not hashed and all mounts
-+	 * in it are either in our namespace or in no namespace at all.
-+	 * Add the original to the list of copies and deal with the
-+	 * rest of work for all of them uniformly.
-+	 */
-+	hlist_add_head(&source_mnt->mnt_hash, &tree_list);
+-		dest_mnt = top_mnt->mnt_parent;
+-	else
+-		dest_mnt = top_mnt;
+-
+ 	if (IS_MNT_SHARED(dest_mnt)) {
+ 		err = invent_group_ids(source_mnt, true);
+ 		if (err)
+@@ -3688,7 +3683,7 @@ static int do_move_mount(struct path *old_path,
+ 	if (mount_is_ancestor(old, p))
+ 		goto out;
  
- 	hlist_for_each_entry_safe(child, n, &tree_list, mnt_hash) {
- 		struct mount *q;
-@@ -2719,10 +2722,13 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 		q = __lookup_mnt(&child->mnt_parent->mnt,
- 				 child->mnt_mountpoint);
- 		if (q) {
-+			struct mountpoint *mp = smp;
- 			struct mount *r = child;
- 			while (unlikely(r->overmount))
- 				r = r->overmount;
--			mnt_change_mountpoint(r, secondary, q);
-+			if (unlikely(shorter) && child != source_mnt)
-+				mp = shorter;
-+			mnt_change_mountpoint(r, mp, q);
- 		}
- 		commit_tree(child);
- 	}
+-	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp, flags);
++	err = attach_recursive_mnt(old, p, mp, flags);
+ 	if (err)
+ 		goto out;
+ 
 -- 
 2.39.5
 
