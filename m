@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-52468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD77AE348A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:56:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C323AAE3487
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AD23188AAE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC5B16D780
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 04:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FBE1F4C87;
-	Mon, 23 Jun 2025 04:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB6E1F3FF8;
+	Mon, 23 Jun 2025 04:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ndt6Kq2u"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ERFEFgnA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEEE1E2847
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D451E51E1
 	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 04:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750654477; cv=none; b=E3ULnje2oHiKanWE8S3WDoFiqlJw81jwHjFYqLC/4jH+NXl9yOo9bZYpE1ERJLSX5sL9yIdgg4l49H7JDgfAPf9qXaX5ks3VaVn0iVNoSuUEMm+tfrZlVMSmQg3ejWiZg+fGQSRuCSp5GN2RyiT5+9qie3FuaROwXUXrwHz/Ds4=
+	t=1750654477; cv=none; b=j2X5XYhph4cuUffd7TnKipFmzsosWxb0jdQqCPbR717MjjwQTUI9SNowhOulpK96vvYdB+lkHpD7pnqaKy9KPGqAfvvLtkQikYgB9g0E3uFgSw/5FWk+4HS6Hnsa4MeP1pHzeM71pVhJ4LCaLIlCASNBS0a5BKcgcPCcIoAULXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750654477; c=relaxed/simple;
-	bh=GmXCTMoHFa+YiKQ9vd/mdTzUTKnCLG0euj7hFikT0m8=;
+	bh=XIG7FfvL5o8E932yZpw0Er7uxtMhCu7Hgov/KdGnSns=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HPdDLl7Vi5nFoAVsFyZ/fEmyiU0ji8VnL+vrGG8N/LZotZr07t++PYxZdFviQgm24IxBS/MsNo8m5+V9fmyE6oORLdWOMcZC2ZO8GojZqocQesiN4IXn94t72grLpRmKdRHEa5QjNBPN5aZdLJ4MONSs5thu0wxdSSROvG8qN80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ndt6Kq2u; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=OdKIeTafK5UAI/8n67TOQ4U061ZBQJtrP1WTUywU0ZNH57p84OXIPXmH4tF4fU/+czYsd1ZIl1aXMaEA5fJJaha++Qyo5V7XIMm7/LQ53s0axlQ1uPkFOO7qJRiRStyABU0UkOHZnMji/AgYbQEcml5BlJVinddTZuYTpE8xxTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ERFEFgnA; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=QgfgOxtPN3HG+nT+TkjtQs8zqPkp+QzMvs5QERadcQs=; b=Ndt6Kq2uyIHfNMC/yNvuc7tY/U
-	/TaPiqXgKsfBYpZpnoTLEj8UklBhVDMZcqh+jaQh02oMtmKgwQ8k8bWJlJFOKKCEgGWq5okxYMryQ
-	WgjhSLm2R8KZazg572ZyUAie6rZvNKVGUPlO83FhkptmzotdIxxM6SmWUPmwib50ZNCTdrpMPDWuu
-	x6Za0JcrCdzQ2+2iCkCKhI8Vw9wBfa2BVNZ7KEFFAn7Qxr+2FECTMk8c6S1eUF2TQgWCbVbcUwNiT
-	klwSsCjVTo/S70EDRSZcRNWNwB86EeDNfZKqk9/I/gYbfV3y1jBFc/Cdrb/dv58R6X2qhrMeBu0A9
-	fhTdIKCw==;
+	bh=JbiDxAi2gin9LglvafrK4r6wdaZiNf+B2kphhvJ5v6g=; b=ERFEFgnAEM4XnUARr5JcNRB1aw
+	Tfgq0VHAX6rMvCv8tA2FrDSlMuSRVRThAunM8rikL9NiCLo0TEY32DJOFDb8czx8i1WV8LpJ8O7Dz
+	ce1GkK1DQUNFRwt9tfwOzfTu9xgxDeXMHC9j7CpZOvuzPlAgBEEfMIhc8MXzP6Mb2IDBwUejAZTEk
+	MMgv7wYQyziI7J7hMub2YIeDRgwB95txf+CgPBOIjrwuIPUcJYoiJYghM5dUCUb0eD69zLm0rEP8a
+	khXsEPKPpTAyK4yxUeok/DDEkDcDG4rUm22B93ChARQKbr3icyqhSl8ieaCE7nCW61Q6rg//SZFfk
+	52lG49tQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTZCT-00000005Kup-3hH6;
+	id 1uTZCT-00000005Kv0-41Sm;
 	Mon, 23 Jun 2025 04:54:33 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: brauner@kernel.org,
 	ebiederm@xmission.com,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v2 34/35] propagate_mnt(): get rid of globals
-Date: Mon, 23 Jun 2025 05:54:27 +0100
-Message-ID: <20250623045428.1271612-34-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 35/35] take freeing of emptied mnt_namespace to namespace_unlock()
+Date: Mon, 23 Jun 2025 05:54:28 +0100
+Message-ID: <20250623045428.1271612-35-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250623045428.1271612-1-viro@zeniv.linux.org.uk>
 References: <20250623044912.GA1248894@ZenIV>
@@ -66,150 +66,129 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-TBH, I'm not sure it makes the things better, but...
+Freeing of a namespace must be delayed until after we'd dealt with mount
+notifications (in namespace_unlock()).  The reasons are not immediately
+obvious (they are buried in ->prev_ns handling in mnt_notify()), and
+having that free_mnt_ns() explicitly called after namespace_unlock()
+is asking for trouble - it does feel like they should be OK to free
+as soon as they've been emptied.
 
-Fixed a stale comment, while we are at it - propagate_mnt() does *not*
-use ->mnt_list for linkage and it does not attach the secondaries to
-the original - they go into the caller-supplied list.  It had gone
-stale before the entire thing got merged into the tree...
+Make the things more explicit by setting 'emptied_ns' under namespace_sem
+and having namespace_unlock() free the sucker as soon as it's safe to free.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/pnode.c | 61 +++++++++++++++++++++++++++---------------------------
- 1 file changed, 31 insertions(+), 30 deletions(-)
+ fs/namespace.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/fs/pnode.c b/fs/pnode.c
-index b54f7ca8cff5..dacb7f515eed 100644
---- a/fs/pnode.c
-+++ b/fs/pnode.c
-@@ -214,25 +214,28 @@ static struct mount *next_group(struct mount *m, struct mount *origin)
- 	}
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 4ea72ecd2621..b8abac07b794 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -79,6 +79,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
+ static DECLARE_RWSEM(namespace_sem);
+ static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+ static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
++static struct mnt_namespace *emptied_ns; /* protected by namespace_sem */
+ static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+ 
+ #ifdef CONFIG_FSNOTIFY
+@@ -1730,15 +1731,18 @@ static bool need_notify_mnt_list(void)
  }
+ #endif
  
--/* all accesses are serialized by namespace_sem */
--static struct mount *last_dest, *first_source, *last_source;
--static struct hlist_head *list;
-+struct propagate_mnt_context {
-+	struct mountpoint *dest_mp;
-+	struct hlist_head *list;
-+	struct mount *last_dest, *source, *last_source;
-+};
- 
--static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
-+static int propagate_one(struct mount *m, struct propagate_mnt_context *ctx)
++static void free_mnt_ns(struct mnt_namespace *);
+ static void namespace_unlock(void)
  {
--	struct mount *child;
-+	struct mount *last_source = ctx->last_source;
-+	struct mount *copy;
- 	int type;
- 	/* skip ones added by this propagate_mnt() */
- 	if (IS_MNT_NEW(m))
- 		return 0;
- 	/* skip if mountpoint isn't visible in m */
--	if (!is_subdir(dest_mp->m_dentry, m->mnt.mnt_root))
-+	if (!is_subdir(ctx->dest_mp->m_dentry, m->mnt.mnt_root))
- 		return 0;
- 	/* skip if m is in the anon_ns */
- 	if (is_anon_ns(m->mnt_ns))
- 		return 0;
+ 	struct hlist_head head;
+ 	struct hlist_node *p;
+ 	struct mount *m;
++	struct mnt_namespace *ns = emptied_ns;
+ 	LIST_HEAD(list);
  
--	if (peers(m, last_dest)) {
-+	if (peers(m, ctx->last_dest)) {
- 		type = CL_MAKE_SHARED;
+ 	hlist_move_list(&unmounted, &head);
+ 	list_splice_init(&ex_mountpoints, &list);
++	emptied_ns = NULL;
+ 
+ 	if (need_notify_mnt_list()) {
+ 		/*
+@@ -1752,6 +1756,11 @@ static void namespace_unlock(void)
  	} else {
- 		struct mount *n, *p;
-@@ -244,7 +247,7 @@ static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
- 		}
- 		do {
- 			struct mount *parent = last_source->mnt_parent;
--			if (peers(last_source, first_source))
-+			if (peers(last_source, ctx->source))
- 				break;
- 			done = parent->mnt_master == p;
- 			if (done && peers(n, parent))
-@@ -258,18 +261,18 @@ static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
- 			type |= CL_MAKE_SHARED;
+ 		up_write(&namespace_sem);
  	}
- 		
--	child = copy_tree(last_source, last_source->mnt.mnt_root, type);
--	if (IS_ERR(child))
--		return PTR_ERR(child);
-+	copy = copy_tree(last_source, last_source->mnt.mnt_root, type);
-+	if (IS_ERR(copy))
-+		return PTR_ERR(copy);
- 	read_seqlock_excl(&mount_lock);
--	mnt_set_mountpoint(m, dest_mp, child);
-+	mnt_set_mountpoint(m, ctx->dest_mp, copy);
- 	read_sequnlock_excl(&mount_lock);
- 	if (m->mnt_master)
- 		SET_MNT_MARK(m->mnt_master);
--	last_dest = m;
--	last_source = child;
--	hlist_add_head(&child->mnt_hash, list);
--	return count_mounts(m->mnt_ns, child);
-+	ctx->last_dest = m;
-+	ctx->last_source = copy;
-+	hlist_add_head(&copy->mnt_hash, ctx->list);
-+	return count_mounts(m->mnt_ns, copy);
++	if (unlikely(ns)) {
++		/* Make sure we notice when we leak mounts. */
++		VFS_WARN_ON_ONCE(!mnt_ns_empty(ns));
++		free_mnt_ns(ns);
++	}
+ 
+ 	shrink_dentry_list(&list);
+ 
+@@ -2335,12 +2344,10 @@ void drop_collected_paths(struct path *paths, struct path *prealloc)
+ 		kfree(paths);
  }
  
- /*
-@@ -277,35 +280,33 @@ static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
-  * dentry 'dest_dentry'. And propagate that mount to
-  * all the peer and slave mounts of 'dest_mnt'.
-  * Link all the new mounts into a propagation tree headed at
-- * source_mnt. Also link all the new mounts using ->mnt_list
-- * headed at source_mnt's ->mnt_list
-+ * source_mnt.  Roots of all copies placed into 'tree_list',
-+ * linked by ->mnt_hash.
-  *
-  * @dest_mnt: destination mount.
-  * @dest_dentry: destination dentry.
-  * @source_mnt: source mount.
-- * @tree_list : list of heads of trees to be attached.
-+ * @tree_list : list of trees to be attached.
-  */
- int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
- 		    struct mount *source_mnt, struct hlist_head *tree_list)
+-static void free_mnt_ns(struct mnt_namespace *);
+ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *, bool);
+ 
+ void dissolve_on_fput(struct vfsmount *mnt)
  {
- 	struct mount *m, *n;
- 	int ret = 0;
-+	struct propagate_mnt_context ctx = {
-+		.source = source_mnt,
-+		.dest_mp = dest_mp,
-+		.list = tree_list,
-+		.last_source = source_mnt,
-+		.last_dest = dest_mnt,
-+	};
+-	struct mnt_namespace *ns;
+ 	struct mount *m = real_mount(mnt);
  
--	/*
--	 * we don't want to bother passing tons of arguments to
--	 * propagate_one(); everything is serialized by namespace_sem,
--	 * so globals will do just fine.
--	 */
--	last_dest = dest_mnt;
--	first_source = source_mnt;
--	last_source = source_mnt;
--	list = tree_list;
- 	if (dest_mnt->mnt_master)
- 		SET_MNT_MARK(dest_mnt->mnt_master);
+ 	/*
+@@ -2362,15 +2369,11 @@ void dissolve_on_fput(struct vfsmount *mnt)
+ 		if (!anon_ns_root(m))
+ 			return;
  
- 	/* all peers of dest_mnt, except dest_mnt itself */
- 	for (n = next_peer(dest_mnt); n != dest_mnt; n = next_peer(n)) {
--		ret = propagate_one(n, dest_mp);
-+		ret = propagate_one(n, &ctx);
- 		if (ret)
- 			goto out;
+-		ns = m->mnt_ns;
++		emptied_ns = m->mnt_ns;
+ 		lock_mount_hash();
+ 		umount_tree(m, UMOUNT_CONNECTED);
+ 		unlock_mount_hash();
  	}
-@@ -316,7 +317,7 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
- 		/* everything in that slave group */
- 		n = m;
- 		do {
--			ret = propagate_one(n, dest_mp);
-+			ret = propagate_one(n, &ctx);
- 			if (ret)
- 				goto out;
- 			n = next_peer(n);
+-
+-	/* Make sure we notice when we leak mounts. */
+-	VFS_WARN_ON_ONCE(!mnt_ns_empty(ns));
+-	free_mnt_ns(ns);
+ }
+ 
+ static bool __has_locked_children(struct mount *mnt, struct dentry *dentry)
+@@ -2678,6 +2681,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 	} else {
+ 		if (source_mnt->mnt_ns) {
+ 			/* move from anon - the caller will destroy */
++			emptied_ns = source_mnt->mnt_ns;
+ 			for (p = source_mnt; p; p = next_mnt(p, source_mnt))
+ 				move_from_ns(p);
+ 		}
+@@ -3658,13 +3662,6 @@ static int do_move_mount(struct path *old_path,
+ 	err = attach_recursive_mnt(old, p, mp.mp);
+ out:
+ 	unlock_mount(&mp);
+-	if (!err) {
+-		if (is_anon_ns(ns)) {
+-			/* Make sure we notice when we leak mounts. */
+-			VFS_WARN_ON_ONCE(!mnt_ns_empty(ns));
+-			free_mnt_ns(ns);
+-		}
+-	}
+ 	return err;
+ }
+ 
+@@ -6159,11 +6156,11 @@ void put_mnt_ns(struct mnt_namespace *ns)
+ 	if (!refcount_dec_and_test(&ns->ns.count))
+ 		return;
+ 	namespace_lock();
++	emptied_ns = ns;
+ 	lock_mount_hash();
+ 	umount_tree(ns->root, 0);
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+-	free_mnt_ns(ns);
+ }
+ 
+ struct vfsmount *kern_mount(struct file_system_type *type)
 -- 
 2.39.5
 
