@@ -1,96 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-52487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37589AE3699
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 09:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1FC1AE36A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 09:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A12218860E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B60218875CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949901F7569;
-	Mon, 23 Jun 2025 07:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44161F560D;
+	Mon, 23 Jun 2025 07:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xqnJHXHu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ja4HOD78";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xqnJHXHu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ja4HOD78"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dJj6DuYC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P+sVwuno";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dJj6DuYC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P+sVwuno"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BBA1EF394
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 07:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BB71F4629
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 07:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750663201; cv=none; b=S0uhzNxnwagVycyvf/n15yT37fnJ4LX/qRIVXbesKjStAiVXVyzttkwe7rHMAAr3VkB7D1JP6ZRC0FgjYNe0ZLh8NGwD/4qL79llpSyzC7JFof20cxDw/vrlZQ1q7bj2hdVrksX+oQXmKBHtlWugJYIb5W+f88akDhyP7g9NHHE=
+	t=1750663251; cv=none; b=tvTRh+AB79J3YOrP2OxQskJFH9aI4byERFuFdYUdsL2du882tNBVXjxxcW8sS75D8ZDwaj0IVSRTowQXmINrwnWHJ9n1DDU6qijdn6pGfNdn7ZSgHknf21+7sWBV+0uJiLvGsjRr60JqZHGi0/tdfRem8iWJZFlP4/PpEy9PT04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750663201; c=relaxed/simple;
-	bh=1pmuBafh3io8jJlY/cimQnZ16uLMUJURAGoo8vBXsQ0=;
+	s=arc-20240116; t=1750663251; c=relaxed/simple;
+	bh=69Pk6FyNrCrA8RGntSnC89SJw6YoEGa7V6SKwN/WZxA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uOU9uXMcYIGhewcRTxwDkOF4FhS5N1jxix23uVT17Aj2iQ0Q6wA8rAN9jBBec0ufGQfqTr5apvSbnjmGFgIrjJCzWRZkjJmk6AbSUK+yvIqjQcKZF3MAi7mXfAkPdGZDaVe2pVkv8Gf5/YfFlSQxVkhiEZPPruvhG8eGr24xErI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xqnJHXHu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ja4HOD78; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xqnJHXHu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ja4HOD78; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=qK5j7Noc+G/BvMBHZADg83tbeTRRHtqTKI44MvtpqITEX0RLkuO093fsH1G296W1O6e5UAoArrwjbEZuZHptAa0bv+4hAQyBC5g1qGit2bnF/0h7n0iQ04NKWW/ndgYSJZ9+q9oh8lu8DjvXDkRfwuKvHABpmXqYU4Tsxa9QQQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dJj6DuYC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P+sVwuno; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dJj6DuYC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P+sVwuno; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 74CE121187;
-	Mon, 23 Jun 2025 07:19:57 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 673602118F;
+	Mon, 23 Jun 2025 07:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750663197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750663247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=O4f5shhsHCjeSYtlFhLRL0EBwL5gYui0Bnj/zCC/Szc=;
-	b=xqnJHXHuirrZKjHE8/AdQ7B1uZLNyu04vSOwQZMf+l4iD91bJx5U8xQvfVgsj9A5iaOSuD
-	NlfPuwgZyDGClzJ0BS9rnysRDz7EVNI1V4KXGTW+3q/mD+cmZBvj0j/Q01tGEp5rpXvH32
-	Dazpib9WEXUaAOc5bswc9mK3rJPOQGA=
+	bh=DRjCqWcpP8HISA+KdwTXmtBqekjMgQTzW6I+4w90t9E=;
+	b=dJj6DuYCy3BI/FpQ6h/TnZIVQ+MrKMH6sgRUFcpVglWbMuaScro9zsWdcf2hhS0yEaIDmm
+	vMxtTAoGyS1K1W+LQx28oWNE9JazAVFzJMzv61bjx71uZ9WJ6DmMWAk1S1RXdy+z3/Mm4N
+	9bHKkZQYa+wHQELGa9Ij3Y5h4Bx8BKw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750663197;
+	s=susede2_ed25519; t=1750663247;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=O4f5shhsHCjeSYtlFhLRL0EBwL5gYui0Bnj/zCC/Szc=;
-	b=ja4HOD78DUeWsb/yo+cwD93tBZs8+Ng3A4sF/ZQCWjSIe437/5mRnqAHphIvgDPMpfw91i
-	ExMLFnjoslPLa8BA==
+	bh=DRjCqWcpP8HISA+KdwTXmtBqekjMgQTzW6I+4w90t9E=;
+	b=P+sVwunoOOGeGFiEPG3l2c8cdot6s0ce7JT6yQcC+3IS0lnOvWhSrgozQnG3Jncb9xCtSp
+	WbLJlhRqyndtuvDA==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xqnJHXHu;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ja4HOD78
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dJj6DuYC;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=P+sVwuno
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750663197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750663247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=O4f5shhsHCjeSYtlFhLRL0EBwL5gYui0Bnj/zCC/Szc=;
-	b=xqnJHXHuirrZKjHE8/AdQ7B1uZLNyu04vSOwQZMf+l4iD91bJx5U8xQvfVgsj9A5iaOSuD
-	NlfPuwgZyDGClzJ0BS9rnysRDz7EVNI1V4KXGTW+3q/mD+cmZBvj0j/Q01tGEp5rpXvH32
-	Dazpib9WEXUaAOc5bswc9mK3rJPOQGA=
+	bh=DRjCqWcpP8HISA+KdwTXmtBqekjMgQTzW6I+4w90t9E=;
+	b=dJj6DuYCy3BI/FpQ6h/TnZIVQ+MrKMH6sgRUFcpVglWbMuaScro9zsWdcf2hhS0yEaIDmm
+	vMxtTAoGyS1K1W+LQx28oWNE9JazAVFzJMzv61bjx71uZ9WJ6DmMWAk1S1RXdy+z3/Mm4N
+	9bHKkZQYa+wHQELGa9Ij3Y5h4Bx8BKw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750663197;
+	s=susede2_ed25519; t=1750663247;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=O4f5shhsHCjeSYtlFhLRL0EBwL5gYui0Bnj/zCC/Szc=;
-	b=ja4HOD78DUeWsb/yo+cwD93tBZs8+Ng3A4sF/ZQCWjSIe437/5mRnqAHphIvgDPMpfw91i
-	ExMLFnjoslPLa8BA==
+	bh=DRjCqWcpP8HISA+KdwTXmtBqekjMgQTzW6I+4w90t9E=;
+	b=P+sVwunoOOGeGFiEPG3l2c8cdot6s0ce7JT6yQcC+3IS0lnOvWhSrgozQnG3Jncb9xCtSp
+	WbLJlhRqyndtuvDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A56813A27;
-	Mon, 23 Jun 2025 07:19:57 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E9F3613A27;
+	Mon, 23 Jun 2025 07:20:46 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 89VpAR0AWWgWYgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 23 Jun 2025 07:19:57 +0000
-Message-ID: <eba365e3-b2a4-44c0-a444-71266e6d6fb9@suse.cz>
-Date: Mon, 23 Jun 2025 09:19:56 +0200
+	id iHfNOE4AWWhcYgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 23 Jun 2025 07:20:46 +0000
+Message-ID: <33ae908f-3c4e-4657-9f8f-e43cd75b45ec@suse.cz>
+Date: Mon, 23 Jun 2025 09:20:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,8 +98,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] filemap: Add a mempolicy argument to
- filemap_alloc_folio()
+Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
 Content-Language: en-US
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com,
@@ -125,7 +124,7 @@ Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
  linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
  linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
 References: <20250618112935.7629-4-shivankg@amd.com>
- <20250620143502.3055777-1-willy@infradead.org>
+ <20250620143502.3055777-2-willy@infradead.org>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -166,9 +165,13 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <20250620143502.3055777-1-willy@infradead.org>
+In-Reply-To: <20250620143502.3055777-2-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 673602118F
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
 X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -179,7 +182,7 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	MX_GOOD(-0.01)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,infradead.org:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,suse.cz:mid,suse.cz:dkim,suse.cz:email];
 	MIME_TRACE(0.00)[0:+];
 	ARC_NA(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
@@ -194,21 +197,14 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	RCVD_COUNT_TWO(0.00)[2];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 74CE121187
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Score: -3.01
+X-Spam-Level: 
 
 On 6/20/25 16:34, Matthew Wilcox (Oracle) wrote:
-> guest_memfd needs to support memory policies so add an argument
-> to filemap_alloc_folio().  All existing users pass NULL, the first
-> user will show up later in this series.
+> This allows guest_memfd to pass in a memory policy.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
 
 
