@@ -1,61 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-52471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27A1AE34A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:15:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF16AE34BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EFA91891729
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 05:15:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98CD16A165
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 05:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA061C7015;
-	Mon, 23 Jun 2025 05:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF071CCB40;
+	Mon, 23 Jun 2025 05:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iau/0aIR"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ejJRgmOx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D778F79CD;
-	Mon, 23 Jun 2025 05:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F8E111BF;
+	Mon, 23 Jun 2025 05:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750655721; cv=none; b=FWvCFG4oOtwMJGlIkeJwv1adb+aMJKEfW9dpUyneex0dzEiI9ioPz5SIATtC1ku2hp1hT5MS4CIkCiC6h9YqWDVo4xzmlRJuQWDJ04EsruQxRilXBJngY4eiU83vKkjLCAGkMHEG4HZvk6zIq2hLyYlf68eIV/kHQq70YYYskG0=
+	t=1750656580; cv=none; b=nuI+7Dj6+xO3LuMov9DJn9UQQfjMQZS5hr8W3uKqJi7q6NTRATM6LP6aB3V8oStQ920zPWjMdH3i7AMHA4eIJDp0KoN/n7Mc4wpPCDfTfEFvYlwUFBZhp6fKzc8q6+D+tSl7g1+on+IAF5vnyLpgg4DFjzDYhypJd2GfJlVoB8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750655721; c=relaxed/simple;
-	bh=6XIekcVZDc4Qi2rplfnqyF1aQ7UN02ejriQjfT3LZo8=;
+	s=arc-20240116; t=1750656580; c=relaxed/simple;
+	bh=F6BRBeuSR1TeFsMTMq1pEcye1ArudEGY1QZ6DuiFeZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwR+PqaEPiEmcRYufG1yItzqNROAbkSza6QhxTYP999GeYn4dLbvyaRsU07jyLwXP/NTB1JJORW5q6MQTTB/liTxobybggzGrne91z3jjBteBe7DCr/cP22sgnkz+4MICfxX63lUBEbiHmWQkHWCGJDt6l/+AOb3G/a6TkCI0Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iau/0aIR; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=EKBg56XQas07ZxXce0DF0gFsw6Px732xaFBRckDciLPcIq1YjjqciHlMQfQnf8xqUGhBsHqiLkiMXpL5y2+9i9viX7qM3NAyN7AEblWwrFktRTSKFkZDmwzXfVeJCnteaJxrjvlh2iqaS2CN0pz9h/r42oFWz2ZqrXvTYRXQh/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ejJRgmOx; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yOW1YcPYoq70hrO8NccVHVA7OSBmpuILYqcfTjgdc9k=; b=iau/0aIRAsRYza8VqT1L8YbepC
-	ETCMtZmq0JaxEZZUChk0a+cW4E90Z4UQB98SYVFjKSV/oMa7BuHcah7LfZ542hYhfc/MglPWRBibW
-	jpWnX7yDR0p57wODFc8BTH2kX1ejAqt+Ow7V1A11y9I2H31K5NRR6XYEcZd6wao8NrIUroBrFuQrI
-	MkJlpwzeUva64cYCl7WG+3BIw7FyIqpaP387XqtM+O+t272r/jxKqw+4wbDF+ORVSgjwJi8NOioHI
-	5w5PF3Hq38a6UcYN6a7ySUcgznjPxBomcEklXL3P9LLW0EuV2WNYXVFjydhJ+r1bm8sfyL0GRMxDL
-	3qdUdKvg==;
+	bh=N40QC5So83rB/6WLXPMiNJLeHTV9mbB3EpCgLUC629U=; b=ejJRgmOxh7AAULZXaPok1qmFLW
+	MWRE/meLeOwqkSuWukpx1nUSXSCj8yx8UPZPNXvOxw1LOjufiyTMhiU9ad01QqwJjGEACtYIus+vP
+	NwNS+WCNDZzyeo5S8JRf6Cj4iGJeI1kN1azTlkr38udsqhMtv10HlIpkcn7qEhRVs6dhxZzBUt8zw
+	7ly2ugGaJWgBOGkTrRq/chMHN/LYmaYvmk4tlxrWD8Nh1OrXyKPs/V0+qWw9EUgWhZn6BYRU8M3KR
+	sEk53FDH0Is3gyLCccZjZ/wE1Ch5IkKWYFKaLyAGtRMX6DlYsq1bE1E7bvnyF6YyCJJOtuam5h5JU
+	sDJ5CN7Q==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTZWZ-00000001b5q-1u7b;
-	Mon, 23 Jun 2025 05:15:19 +0000
-Date: Sun, 22 Jun 2025 22:15:19 -0700
+	id 1uTZkL-00000001cZS-19uQ;
+	Mon, 23 Jun 2025 05:29:33 +0000
+Date: Sun, 22 Jun 2025 22:29:33 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org
-Subject: Re: [PATCH RFC 5/6] fs: introduce a shutdown_bdev super block
- operation
-Message-ID: <aFji5yfAvEeuwvXF@infradead.org>
-References: <cover.1750397889.git.wqu@suse.com>
- <ef624790b57b76be25720e4a8021d7f5f03166cb.1750397889.git.wqu@suse.com>
- <wmvb4bnsz5bafoyu5mp33csjk4bcs63jemzi2cuqjzfy3rwogw@4t6fizv5ypna>
+To: Anuj Gupta <anuj20.g@samsung.com>
+Cc: vincent.fu@samsung.com, jack@suse.cz, anuj1072538@gmail.com,
+	axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	hch@infradead.org, martin.petersen@oracle.com, ebiggers@kernel.org,
+	adilger@dilger.ca, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+	gost.dev@samsung.com
+Subject: Re: [PATCH for-next v4 1/4] block: rename tuple_size field in
+ blk_integrity to metadata_size
+Message-ID: <aFjmPan6bmE8Vh1b@infradead.org>
+References: <20250618055153.48823-1-anuj20.g@samsung.com>
+ <CGME20250618055213epcas5p32ccbe13f8ed11ffa0beddaddb9a51595@epcas5p3.samsung.com>
+ <20250618055153.48823-2-anuj20.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,42 +68,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <wmvb4bnsz5bafoyu5mp33csjk4bcs63jemzi2cuqjzfy3rwogw@4t6fizv5ypna>
+In-Reply-To: <20250618055153.48823-2-anuj20.g@samsung.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Jun 20, 2025 at 05:36:52PM +0200, Jan Kara wrote:
-> On Fri 20-06-25 15:17:28, Qu Wenruo wrote:
-> > Currently we already have the super_operations::shutdown() callback,
-> > which is called when the block device of a filesystem is marked dead.
-> > 
-> > However this is mostly for single(ish) block device filesystems.
-> > 
-> > For multi-device filesystems, they may afford a missing device, thus may
-> > continue work without fully shutdown the filesystem.
-> > 
-> > So add a new super_operation::shutdown_bdev() callback, for mutli-device
-> > filesystems like btrfs and bcachefs.
-> > 
-> > For now the only user is fs_holder_ops::mark_dead(), which will call
-> > shutdown_bdev() if supported.
-> > If not supported then fallback to the original shutdown() callback.
-> > 
-> > Btrfs is going to add the usage of shutdown_bdev() soon.
-> > 
-> > Signed-off-by: Qu Wenruo <wqu@suse.com>
-> 
-> Thanks for the patch. I think that we could actually add 'bdev' that
-> triggered shutdown among arguments ->shutdown takes instead of introducing
-> a new handler.
+On Wed, Jun 18, 2025 at 11:21:50AM +0530, Anuj Gupta wrote:
+> @@ -299,7 +299,7 @@ static blk_status_t ext_pi_crc64_verify(struct blk_integrity_iter *iter,
+>  static void ext_pi_type1_prepare(struct request *rq)
+>  {
+>  	struct blk_integrity *bi = &rq->q->limits.integrity;
+> -	const int tuple_sz = bi->tuple_size;
+> +	const int tuple_sz = bi->metadata_size;
 
-I don't really think that's a good idea as-is.  The current ->shutdown
-callback is called ->shutdown because it is expected to shut the file
-system down.  That's why I suggested to Qu to add a new devloss callback,
-to describe that a device is lost.  In a file system with built-in
-redundancy that is not a shutdown.  So Qu, please add a devloss
-callback.  And maybe if we have no other good use for the shutdown
-callback we can remove it in favor of the devloss one.  But having
-something named shutdown take the block device and not always shutting
-the file system down is highly confusing.
+I guess keeping tuple here is fine because we're deep into PI code.
 
+The rest looks good as well:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
