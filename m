@@ -1,198 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-52528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F032AE3D84
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 12:58:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6EAAE3D9C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 13:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA743A4E58
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 10:57:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6274818895AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 11:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35C823C390;
-	Mon, 23 Jun 2025 10:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6555723D28B;
+	Mon, 23 Jun 2025 11:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gzvyvfIp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BJiMGwXc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gzvyvfIp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BJiMGwXc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPkM7kW6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62251F2BAD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 10:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823C182D2;
+	Mon, 23 Jun 2025 11:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750676237; cv=none; b=Gd4cwslilaNh/QjcZ4R2zSPuH62i2OH2Qtbjz2xxcpwKJ3zzZ6V2LJZAxN1xOpsr64l6ALmJTx3ogPABbGcuG8Dz7mKiotqtFIZzBVAqZfDTNIDpES306BYlQTAp7w0DXQOUuAEl+TT9VlGoGuyiqzntgK7G4FEuXLO5eZMjHUE=
+	t=1750676632; cv=none; b=EvTsuLOG3zE0ZNxvmoHQXIoRoW5yFy3gLDPJ2VERxiTIMcuOcDfZcj6ZwABY1aeQ6vy+3aazaFBkmHEfBhggx6C/T9wjsI49pjWzXDf5ut4+miR6v3OXcuBGo0B2NsJFkOu0muUdGCygj8ASH19oBK+Z3GW8QMgIZuLPLMpodnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750676237; c=relaxed/simple;
-	bh=RKWyiSUBekTwNtDR2zYZYFr3yu25BsQI5ea5CE4V6GQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bENNWq7iMfxVOIa2jXMIqUcBy2AHkmsHJzIT0gEkd3+F5D502hwNPFlCjbZ+FmF8z14/5QoMKLWD3nFisMFsdMGHI40Fvuf9CwOFXeayA8bRsddsKCrIFByneZpOYWY67/AS+55ypKp2wWb4dmhrouf195gzo1IhDKZOuykt6fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gzvyvfIp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BJiMGwXc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gzvyvfIp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BJiMGwXc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 28B491F454;
-	Mon, 23 Jun 2025 10:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750676234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/gu2zbmxV6GhdRCAd6U6ZxMVpT5s/UNDui+fbzYumCc=;
-	b=gzvyvfIpjNkzQ0QXLGJlnKTmGaki9Q3AwacPg9F6PysfZ+kxCc5vMVe2lYk2bxa83XFuSf
-	EBTNFFKja55WNwzwFVBoi4UkOHX7OG47AlFltuOicZJutIzK7md0Pj2pIXmv4yC9WFAOMx
-	cg0dpPlsDo4jJkoOaPWqynk/G6S77qc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750676234;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/gu2zbmxV6GhdRCAd6U6ZxMVpT5s/UNDui+fbzYumCc=;
-	b=BJiMGwXcZzLHJVWRfdGBcFx2mGpxftm1m0D31BfLmDcyq9oqoafKXbmsg07mD3a6ZUN9hH
-	ifzxBDMi7KG4+vCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750676234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/gu2zbmxV6GhdRCAd6U6ZxMVpT5s/UNDui+fbzYumCc=;
-	b=gzvyvfIpjNkzQ0QXLGJlnKTmGaki9Q3AwacPg9F6PysfZ+kxCc5vMVe2lYk2bxa83XFuSf
-	EBTNFFKja55WNwzwFVBoi4UkOHX7OG47AlFltuOicZJutIzK7md0Pj2pIXmv4yC9WFAOMx
-	cg0dpPlsDo4jJkoOaPWqynk/G6S77qc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750676234;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/gu2zbmxV6GhdRCAd6U6ZxMVpT5s/UNDui+fbzYumCc=;
-	b=BJiMGwXcZzLHJVWRfdGBcFx2mGpxftm1m0D31BfLmDcyq9oqoafKXbmsg07mD3a6ZUN9hH
-	ifzxBDMi7KG4+vCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1EE2B13AC9;
-	Mon, 23 Jun 2025 10:57:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZRiFBwozWWjrJgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 23 Jun 2025 10:57:14 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C0CEAA2A00; Mon, 23 Jun 2025 12:57:13 +0200 (CEST)
-Date: Mon, 23 Jun 2025 12:57:13 +0200
-From: Jan Kara <jack@suse.cz>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org
-Subject: Re: [PATCH RFC 5/6] fs: introduce a shutdown_bdev super block
- operation
-Message-ID: <asdmf7hg5j4xv6b3stnp6lb2374ptab6mehl3rheystfvgatrz@2nmrmzq3pdht>
-References: <cover.1750397889.git.wqu@suse.com>
- <ef624790b57b76be25720e4a8021d7f5f03166cb.1750397889.git.wqu@suse.com>
- <wmvb4bnsz5bafoyu5mp33csjk4bcs63jemzi2cuqjzfy3rwogw@4t6fizv5ypna>
- <aFji5yfAvEeuwvXF@infradead.org>
- <1882d73e-b287-4c73-abcf-52e10b43edea@gmx.com>
+	s=arc-20240116; t=1750676632; c=relaxed/simple;
+	bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RUPTuXQostWICFFRU0HaPuGx9AvRgBXXxXSUCcdQQJwvDMNCVy0n/rnAvaLGYVuEbxQgxb+AbMpe6dzOLeMD29N7e8uQj41FTltLrxDAZvEobRdlntNO3UD0Jn53qg8jFNgeY3HlKHtm2BMIAk4JMbOawcYdDwxs9PpefVUWjVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPkM7kW6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1349BC4CEF1;
+	Mon, 23 Jun 2025 11:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750676632;
+	bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sPkM7kW6RGrImFy4retADz8t+GdHqqKsxHHgKwTWXDGsQDDnzvOhdlnWWDf3vYyin
+	 WXBGPLlYBeEQM3HKRxHMyatg8D7d2b7tGe+ORCrieFvWcvXnvZ9IoS0Oy+h/1SnDiS
+	 z8LFpdON2a8hlvSXKs3oxx72CthgJWiE6uiYkdX3Svut5axsWXHcGk20/N8uSLIRVC
+	 SNUgK5fb0corWQ7I8k2kxvURjaai3T3veCyQ06s7vN2qasHg+YgW0ShKH6GoPnoARO
+	 bN8d62PvTc2Y3ACPqS77nFOJv7jiegTXZh09BbEdVyEegnyKbHv/+Xk1tyVIaH6W6C
+	 yIhmWyM20aEDQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	gregkh@linuxfoundation.org,
+	tj@kernel.org,
+	daan.j.demeyer@gmail.com,
+	bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 bpf-next 0/4] Introduce bpf_cgroup_read_xattr
+Date: Mon, 23 Jun 2025 13:03:22 +0200
+Message-ID: <20250623-rebel-verlust-8fcd4cdd9122@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250623063854.1896364-1-song@kernel.org>
+References: <20250623063854.1896364-1-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1306; i=brauner@kernel.org; h=from:subject:message-id; bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREmvQxxkmWnyiY9b4jkN35i/uWIpeicHWmWex96+5JF 9YafDDsKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmIh1GyPDowk9n9dHRU9IrLZ0 rp9+zKBUn7/Terd+fuJpbaXy+wEyDP/snW/sa9WpmOUTMm9P8Cmno1zhJZoq86JX+DoUMp0IZGU AAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1882d73e-b287-4c73-abcf-52e10b43edea@gmx.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmx.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmx.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
 
-On Mon 23-06-25 15:04:51, Qu Wenruo wrote:
-> 在 2025/6/23 14:45, Christoph Hellwig 写道:
-> > On Fri, Jun 20, 2025 at 05:36:52PM +0200, Jan Kara wrote:
-> > > On Fri 20-06-25 15:17:28, Qu Wenruo wrote:
-> > > > Currently we already have the super_operations::shutdown() callback,
-> > > > which is called when the block device of a filesystem is marked dead.
-> > > > 
-> > > > However this is mostly for single(ish) block device filesystems.
-> > > > 
-> > > > For multi-device filesystems, they may afford a missing device, thus may
-> > > > continue work without fully shutdown the filesystem.
-> > > > 
-> > > > So add a new super_operation::shutdown_bdev() callback, for mutli-device
-> > > > filesystems like btrfs and bcachefs.
-> > > > 
-> > > > For now the only user is fs_holder_ops::mark_dead(), which will call
-> > > > shutdown_bdev() if supported.
-> > > > If not supported then fallback to the original shutdown() callback.
-> > > > 
-> > > > Btrfs is going to add the usage of shutdown_bdev() soon.
-> > > > 
-> > > > Signed-off-by: Qu Wenruo <wqu@suse.com>
-> > > 
-> > > Thanks for the patch. I think that we could actually add 'bdev' that
-> > > triggered shutdown among arguments ->shutdown takes instead of introducing
-> > > a new handler.
-> > 
-> > I don't really think that's a good idea as-is.  The current ->shutdown
-> > callback is called ->shutdown because it is expected to shut the file
-> > system down.  That's why I suggested to Qu to add a new devloss callback,
-> > to describe that a device is lost.  In a file system with built-in
-> > redundancy that is not a shutdown.  So Qu, please add a devloss
-> > callback.  And maybe if we have no other good use for the shutdown
-> > callback we can remove it in favor of the devloss one.  But having
-> > something named shutdown take the block device and not always shutting
-> > the file system down is highly confusing.
+On Sun, 22 Jun 2025 23:38:50 -0700, Song Liu wrote:
+> Introduce a new kfunc bpf_cgroup_read_xattr, which can read xattr from
+> cgroupfs nodes. The primary users are LSMs, cgroup programs, and sched_ext.
 > 
-> OK, I got the point of the name "devloss" now, didn't notice the naming
-> itself is important at that timing.
-> 
-> And in fact a new callback is much easier on me, no need to modify the code
-> of other fses.
-> 
-> @Jan, would this be acceptable for a new devloss() callback instead?
 
-OK, now I understand the rationale better as well. Yes, devloss() callback
-makes sense to me. It just looked weird to have two types shutdown
-callback. And yes, eventually we might provide a generic handler for
-devloss callback that will just shut the filesystem down and then we can
-remove the shutdown callback but that can happen later.
+Applied to the vfs-6.17.bpf branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.bpf branch should appear in linux-next soon.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.bpf
+
+[1/4] kernfs: remove iattr_mutex
+      https://git.kernel.org/vfs/vfs/c/d1f4e9026007
+[2/4] bpf: Introduce bpf_cgroup_read_xattr to read xattr of cgroup's node
+      https://git.kernel.org/vfs/vfs/c/535b070f4a80
+[3/4] bpf: Mark cgroup_subsys_state->cgroup RCU safe
+      https://git.kernel.org/vfs/vfs/c/1504d8c7c702
+[4/4] selftests/bpf: Add tests for bpf_cgroup_read_xattr
+      https://git.kernel.org/vfs/vfs/c/f4fba2d6d282
 
