@@ -1,493 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-52486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F043AE35E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 08:40:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A36AE36B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 09:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A58716E899
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 06:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E54518903B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342CA1F4E34;
-	Mon, 23 Jun 2025 06:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A6B1F78E0;
+	Mon, 23 Jun 2025 07:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JS4OWkcr"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2j0J/TaS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LWRZ7KNl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2j0J/TaS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LWRZ7KNl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83798136348;
-	Mon, 23 Jun 2025 06:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D32718B47C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 07:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750660765; cv=none; b=PGr6ejATyhhYdJatO5NCQIU5DFb1A+uDVv4EXG0iKgz4X8JRwpDYQHZIWpLhNTffVNgXtGSntehxBEexYQpbMbg96XPso21eWqbhYxf+SYfybHdGB5a+JtdxEKj6ndLovdgT4ZA50ClK2wHADCJjsZs7z3vgJaenwR6Rrq7XK60=
+	t=1750663447; cv=none; b=ZbOLEzwiq4R6mlYusqjPlzF218HUIcrLK0rvR0dx1DOa8lDpZSNdBjSyEmxfpIGYckxtovJAS+sXo6oOyMqJXeb2Xd0ubNU/u7XE6jibAqdr53Ily4//xxFdpwX3zqdIO2bT2U4pBuz8k9Bppq7+0BlO5hl+ZcTniyPPu7Hcrxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750660765; c=relaxed/simple;
-	bh=RcUGPc+CuikCuze+InFNKjdzSi3ukfT0DGxKJP07Vco=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IhZKRHsc8Ky1gF32cKjbJPRQaN7NcNK3FGeolarsoty/nYZmhkRy5qC7RGtiilcHxgUvFSICKWuTufl3Ax6tDL/yDQBldLmyE3FiuB7pnOENxENtYN5tfRFP0MLdUm11nqcg0Ucs60rX+SDDZby7vgnvTTflN4ZqNROVdfMJ4TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JS4OWkcr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFC3C4CEED;
-	Mon, 23 Jun 2025 06:39:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750660765;
-	bh=RcUGPc+CuikCuze+InFNKjdzSi3ukfT0DGxKJP07Vco=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JS4OWkcr+Irv3m69dm0SIirYZcN8qYX4Raz0oEZuTcWU3LSFA48MZ2hE5ZZ7Z8Mzj
-	 glhLBrzjLqTfwyl1w1yVWDRQ+Kb4p0VOOe4K4Fu95z18RExJIkyrFYFEnxOPF3vAGf
-	 YE0+Q61os1v7R6WR/XNquj1xAyiIshjbkafrKBqJ3ElfdMACYwKksEHb1MaqLABfAl
-	 vKyLw9r2n2OYkNRFLGDJMUS2Rx5z4QpEMIdlHLjVXvyXHgI+fFuFEDSM1uEhUf9+8c
-	 +BAHbXwCbvOBpBrMzZDVsuuqKNTzFK7fxlf0uDm7b5KVjPKT3g4WuT7eG/EQWVl9OI
-	 Le+0JbRKhrdMw==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	gregkh@linuxfoundation.org,
-	tj@kernel.org,
-	daan.j.demeyer@gmail.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v3 bpf-next 4/4] selftests/bpf: Add tests for bpf_cgroup_read_xattr
-Date: Sun, 22 Jun 2025 23:38:54 -0700
-Message-ID: <20250623063854.1896364-5-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250623063854.1896364-1-song@kernel.org>
-References: <20250623063854.1896364-1-song@kernel.org>
+	s=arc-20240116; t=1750663447; c=relaxed/simple;
+	bh=uNt9x6nQ/gK3DoiMdoDwudgZshfaURJzAvqZMi0msOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ro7cVs6WXy2jfXPKJQZ9f1dM6of5mSSQeD3bk1GtziM3/JbYgtxR9QS2Za4ZszbjHOOJ9svyI/7iiAZWB7XdQ1kCA+vpR7i4xbNmW9Y9q3RzIdilb20rohCSjZGztUz9Dok73ai6daBeZUjhRbQ2mejaOhY9Wq8FIIOI9AT8nYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2j0J/TaS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LWRZ7KNl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2j0J/TaS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LWRZ7KNl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7A6F22117C;
+	Mon, 23 Jun 2025 07:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750663019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rIyupOCN+t5zzgK2WY+WLm8huvrucb9R/tfEk4deDJQ=;
+	b=2j0J/TaS2rvi3fL/cQXi+2OFw/6za/3+n9hb8DqeI1PRuwk+swi8rdzkUy4kVuaTJ3Gr59
+	kkafSUldWoyn67/X/Gu45XkmPNAsoDRbKA7rDK0Not4UWooVMJtxB6/cIrXFVwNCYKBCvz
+	D67vkoT5j3BQEaoNdnJnsFL1lXbd4eE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750663019;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rIyupOCN+t5zzgK2WY+WLm8huvrucb9R/tfEk4deDJQ=;
+	b=LWRZ7KNld8VhSqG+JFMlQf6wh96oHz24o8+/V7nXT+BKzbWKTFbaXGIFvqfVOyy5glAi9j
+	vOYJWGtu0amt4FBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750663019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rIyupOCN+t5zzgK2WY+WLm8huvrucb9R/tfEk4deDJQ=;
+	b=2j0J/TaS2rvi3fL/cQXi+2OFw/6za/3+n9hb8DqeI1PRuwk+swi8rdzkUy4kVuaTJ3Gr59
+	kkafSUldWoyn67/X/Gu45XkmPNAsoDRbKA7rDK0Not4UWooVMJtxB6/cIrXFVwNCYKBCvz
+	D67vkoT5j3BQEaoNdnJnsFL1lXbd4eE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750663019;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rIyupOCN+t5zzgK2WY+WLm8huvrucb9R/tfEk4deDJQ=;
+	b=LWRZ7KNld8VhSqG+JFMlQf6wh96oHz24o8+/V7nXT+BKzbWKTFbaXGIFvqfVOyy5glAi9j
+	vOYJWGtu0amt4FBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 104D013A27;
+	Mon, 23 Jun 2025 07:16:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yPuaA2v/WGhkYQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 23 Jun 2025 07:16:59 +0000
+Message-ID: <1d9a4656-8aa8-4e82-9301-644625bf2d4f@suse.cz>
+Date: Mon, 23 Jun 2025 09:16:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
+To: Shivank Garg <shivankg@amd.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>
+Cc: seanjc@google.com, david@redhat.com, shuah@kernel.org,
+ pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+ ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
+ vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
+ thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
+ kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org,
+ hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com,
+ rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com,
+ matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+ byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev,
+ ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com,
+ amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com,
+ ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com,
+ pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com,
+ suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250618112935.7629-4-shivankg@amd.com>
+ <20250620143502.3055777-2-willy@infradead.org>
+ <aFWR-2WAQ283SZvg@casper.infradead.org>
+ <20250622114322.c6c35800e01e4cc4007a0f89@linux-foundation.org>
+ <d1d7feed-c450-4b88-ab73-a673f4029433@amd.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <d1d7feed-c450-4b88-ab73-a673f4029433@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,redhat.com,kernel.org,zeniv.linux.org.uk,paul-moore.com,namei.org,hallyn.com,suse.cz,intel.com,amd.com,nvidia.com,amazon.com,infradead.org,googlemail.com,amazon.co.uk,gmail.com,sk.com,gourry.net,linux.dev,linux.alibaba.com,arm.com,quicinc.com,vger.kernel.org,kvack.org,lists.linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[65];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-Add tests for different scenarios with bpf_cgroup_read_xattr:
-1. Read cgroup xattr from bpf_cgroup_from_id;
-2. Read cgroup xattr from bpf_cgroup_ancestor;
-3. Read cgroup xattr from css_iter;
-4. Use bpf_cgroup_read_xattr in LSM hook security_socket_connect.
-5. Use bpf_cgroup_read_xattr in cgroup program.
+On 6/22/25 21:02, Shivank Garg wrote:
+> 
+> Hi Andrew,
+> 
+> Thank you for addressing this.
+> 
+> If you don’t mind me asking,
+> I was curious why we used EXPORT_SYMBOL instead of EXPORT_SYMBOL_GPL here.
+> I had previously received feedback recommending the use of EXPORT_SYMBOL_GPL
+> to better align with the kernel’s licensing philosophy, which made sense to me.
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../testing/selftests/bpf/bpf_experimental.h  |   3 +
- .../selftests/bpf/prog_tests/cgroup_xattr.c   | 145 ++++++++++++++++
- .../selftests/bpf/progs/cgroup_read_xattr.c   | 158 ++++++++++++++++++
- .../selftests/bpf/progs/read_cgroupfs_xattr.c |  60 +++++++
- 4 files changed, 366 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c
- create mode 100644 tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
- create mode 100644 tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
+That's the recommendation for new symbols, but this has become effectively a
+rename (plus a new parameter) so it's a bit different situation.
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index 5e512a1d09d1..da7e230f2781 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -596,4 +596,7 @@ extern int bpf_iter_dmabuf_new(struct bpf_iter_dmabuf *it) __weak __ksym;
- extern struct dma_buf *bpf_iter_dmabuf_next(struct bpf_iter_dmabuf *it) __weak __ksym;
- extern void bpf_iter_dmabuf_destroy(struct bpf_iter_dmabuf *it) __weak __ksym;
- 
-+extern int bpf_cgroup_read_xattr(struct cgroup *cgroup, const char *name__str,
-+				 struct bpf_dynptr *value_p) __weak __ksym;
-+
- #endif
-diff --git a/tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c b/tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c
-new file mode 100644
-index 000000000000..87978a0f7eb7
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <sys/stat.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/socket.h>
-+#include <sys/xattr.h>
-+
-+#include <test_progs.h>
-+
-+#include "read_cgroupfs_xattr.skel.h"
-+#include "cgroup_read_xattr.skel.h"
-+
-+#define CGROUP_FS_ROOT "/sys/fs/cgroup/"
-+#define CGROUP_FS_PARENT CGROUP_FS_ROOT "foo/"
-+#define CGROUP_FS_CHILD CGROUP_FS_PARENT "bar/"
-+
-+static int move_pid_to_cgroup(const char *cgroup_folder, pid_t pid)
-+{
-+	char filename[128];
-+	char pid_str[64];
-+	int procs_fd;
-+	int ret;
-+
-+	snprintf(filename, sizeof(filename), "%scgroup.procs", cgroup_folder);
-+	snprintf(pid_str, sizeof(pid_str), "%d", pid);
-+
-+	procs_fd = open(filename, O_WRONLY | O_APPEND);
-+	if (!ASSERT_OK_FD(procs_fd, "open"))
-+		return -1;
-+
-+	ret = write(procs_fd, pid_str, strlen(pid_str));
-+	close(procs_fd);
-+	if (!ASSERT_GT(ret, 0, "write cgroup.procs"))
-+		return -1;
-+	return 0;
-+}
-+
-+static void reset_cgroups_and_lo(void)
-+{
-+	rmdir(CGROUP_FS_CHILD);
-+	rmdir(CGROUP_FS_PARENT);
-+	system("ip addr del 1.1.1.1/32 dev lo");
-+	system("ip link set dev lo down");
-+}
-+
-+static const char xattr_value_a[] = "bpf_selftest_value_a";
-+static const char xattr_value_b[] = "bpf_selftest_value_b";
-+static const char xattr_name[] = "user.bpf_test";
-+
-+static int setup_cgroups_and_lo(void)
-+{
-+	int err;
-+
-+	err = mkdir(CGROUP_FS_PARENT, 0755);
-+	if (!ASSERT_OK(err, "mkdir 1"))
-+		goto error;
-+	err = mkdir(CGROUP_FS_CHILD, 0755);
-+	if (!ASSERT_OK(err, "mkdir 2"))
-+		goto error;
-+
-+	err = setxattr(CGROUP_FS_PARENT, xattr_name, xattr_value_a,
-+		       strlen(xattr_value_a) + 1, 0);
-+	if (!ASSERT_OK(err, "setxattr 1"))
-+		goto error;
-+
-+	err = setxattr(CGROUP_FS_CHILD, xattr_name, xattr_value_b,
-+		       strlen(xattr_value_b) + 1, 0);
-+	if (!ASSERT_OK(err, "setxattr 2"))
-+		goto error;
-+
-+	err = system("ip link set dev lo up");
-+	if (!ASSERT_OK(err, "lo up"))
-+		goto error;
-+
-+	err = system("ip addr add 1.1.1.1 dev lo");
-+	if (!ASSERT_OK(err, "lo addr v4"))
-+		goto error;
-+
-+	err = write_sysctl("/proc/sys/net/ipv4/ping_group_range", "0 0");
-+	if (!ASSERT_OK(err, "write_sysctl"))
-+		goto error;
-+
-+	return 0;
-+error:
-+	reset_cgroups_and_lo();
-+	return err;
-+}
-+
-+static void test_read_cgroup_xattr(void)
-+{
-+	struct sockaddr_in sa4 = {
-+		.sin_family = AF_INET,
-+		.sin_addr.s_addr = htonl(INADDR_LOOPBACK),
-+	};
-+	struct read_cgroupfs_xattr *skel = NULL;
-+	pid_t pid = gettid();
-+	int sock_fd = -1;
-+	int connect_fd = -1;
-+
-+	if (!ASSERT_OK(setup_cgroups_and_lo(), "setup_cgroups_and_lo"))
-+		return;
-+	if (!ASSERT_OK(move_pid_to_cgroup(CGROUP_FS_CHILD, pid),
-+		       "move_pid_to_cgroup"))
-+		goto out;
-+
-+	skel = read_cgroupfs_xattr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "read_cgroupfs_xattr__open_and_load"))
-+		goto out;
-+
-+	skel->bss->target_pid = pid;
-+
-+	if (!ASSERT_OK(read_cgroupfs_xattr__attach(skel), "read_cgroupfs_xattr__attach"))
-+		goto out;
-+
-+	sock_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
-+	if (!ASSERT_OK_FD(sock_fd, "sock create"))
-+		goto out;
-+
-+	connect_fd = connect(sock_fd, &sa4, sizeof(sa4));
-+	if (!ASSERT_OK_FD(connect_fd, "connect 1"))
-+		goto out;
-+	close(connect_fd);
-+
-+	ASSERT_TRUE(skel->bss->found_value_a, "found_value_a");
-+	ASSERT_TRUE(skel->bss->found_value_b, "found_value_b");
-+
-+out:
-+	close(connect_fd);
-+	close(sock_fd);
-+	read_cgroupfs_xattr__destroy(skel);
-+	move_pid_to_cgroup(CGROUP_FS_ROOT, pid);
-+	reset_cgroups_and_lo();
-+}
-+
-+void test_cgroup_xattr(void)
-+{
-+	RUN_TESTS(cgroup_read_xattr);
-+
-+	if (test__start_subtest("read_cgroupfs_xattr"))
-+		test_read_cgroup_xattr();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c b/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
-new file mode 100644
-index 000000000000..092db1d0435e
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
-@@ -0,0 +1,158 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_experimental.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+char value[16];
-+
-+static __always_inline void read_xattr(struct cgroup *cgroup)
-+{
-+	struct bpf_dynptr value_ptr;
-+
-+	bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-+	bpf_cgroup_read_xattr(cgroup, "user.bpf_test",
-+			      &value_ptr);
-+}
-+
-+SEC("lsm.s/socket_connect")
-+__success
-+int BPF_PROG(trusted_cgroup_ptr_sleepable)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(trusted_cgroup_ptr_non_sleepable)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(use_css_iter_non_sleepable)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css;
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	bpf_for_each(css, css, &cgrp->self, BPF_CGROUP_ITER_ANCESTORS_UP)
-+		read_xattr(css->cgroup);
-+
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm.s/socket_connect")
-+__failure __msg("expected an RCU CS")
-+int BPF_PROG(use_css_iter_sleepable_missing_rcu_lock)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css;
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	bpf_for_each(css, css, &cgrp->self, BPF_CGROUP_ITER_ANCESTORS_UP)
-+		read_xattr(css->cgroup);
-+
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm.s/socket_connect")
-+__success
-+int BPF_PROG(use_css_iter_sleepable_with_rcu_lock)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css;
-+	struct cgroup *cgrp;
-+
-+	bpf_rcu_read_lock();
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		goto out;
-+
-+	bpf_for_each(css, css, &cgrp->self, BPF_CGROUP_ITER_ANCESTORS_UP)
-+		read_xattr(css->cgroup);
-+
-+	bpf_cgroup_release(cgrp);
-+out:
-+	bpf_rcu_read_unlock();
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(use_bpf_cgroup_ancestor)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp, *ancestor;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	ancestor = bpf_cgroup_ancestor(cgrp, 1);
-+	if (!ancestor)
-+		goto out;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(ancestor);
-+out:
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("cgroup/sendmsg4")
-+__success
-+int BPF_PROG(cgroup_skb)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp, *ancestor;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	ancestor = bpf_cgroup_ancestor(cgrp, 1);
-+	if (!ancestor)
-+		goto out;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(ancestor);
-+out:
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c b/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
-new file mode 100644
-index 000000000000..855f85fc5522
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_experimental.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+pid_t target_pid = 0;
-+
-+char xattr_value[64];
-+static const char expected_value_a[] = "bpf_selftest_value_a";
-+static const char expected_value_b[] = "bpf_selftest_value_b";
-+bool found_value_a;
-+bool found_value_b;
-+
-+SEC("lsm.s/socket_connect")
-+int BPF_PROG(test_socket_connect)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css, *tmp;
-+	struct bpf_dynptr value_ptr;
-+	struct cgroup *cgrp;
-+
-+	if ((bpf_get_current_pid_tgid() >> 32) != target_pid)
-+		return 0;
-+
-+	bpf_rcu_read_lock();
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp) {
-+		bpf_rcu_read_unlock();
-+		return 0;
-+	}
-+
-+	css = &cgrp->self;
-+	bpf_dynptr_from_mem(xattr_value, sizeof(xattr_value), 0, &value_ptr);
-+	bpf_for_each(css, tmp, css, BPF_CGROUP_ITER_ANCESTORS_UP) {
-+		int ret;
-+
-+		ret = bpf_cgroup_read_xattr(tmp->cgroup, "user.bpf_test",
-+					    &value_ptr);
-+		if (ret < 0)
-+			continue;
-+
-+		if (ret == sizeof(expected_value_a) &&
-+		    !bpf_strncmp(xattr_value, sizeof(expected_value_a), expected_value_a))
-+			found_value_a = true;
-+		if (ret == sizeof(expected_value_b) &&
-+		    !bpf_strncmp(xattr_value, sizeof(expected_value_b), expected_value_b))
-+			found_value_b = true;
-+	}
-+
-+	bpf_rcu_read_unlock();
-+	bpf_cgroup_release(cgrp);
-+
-+	return 0;
-+}
--- 
-2.47.1
+> Thanks,
+> Shivank
+> 
 
 
