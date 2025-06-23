@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-52472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF16AE34BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:29:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628C9AE34C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98CD16A165
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 05:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952E03B018C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 05:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF071CCB40;
-	Mon, 23 Jun 2025 05:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86FC1C8601;
+	Mon, 23 Jun 2025 05:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ejJRgmOx"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e1KZ9QyY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F8E111BF;
-	Mon, 23 Jun 2025 05:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15714210FB;
+	Mon, 23 Jun 2025 05:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750656580; cv=none; b=nuI+7Dj6+xO3LuMov9DJn9UQQfjMQZS5hr8W3uKqJi7q6NTRATM6LP6aB3V8oStQ920zPWjMdH3i7AMHA4eIJDp0KoN/n7Mc4wpPCDfTfEFvYlwUFBZhp6fKzc8q6+D+tSl7g1+on+IAF5vnyLpgg4DFjzDYhypJd2GfJlVoB8o=
+	t=1750656620; cv=none; b=h1tyJvPmp5N+LV9LnEe2kyxpYW7uODfsTMOWlSlRxZ3cSs9+V7EH/tMHJ8DiCaE3ITzN730w40GK1s5xQZFwLni1WGIJ1Em3kzOmW1bVChFDbGKLDHPxW7SAZN3Fc3OkJLJD4nsiTo2z8d1rnNKMbPGR+9d+M5ww+OqLaCMXg9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750656580; c=relaxed/simple;
-	bh=F6BRBeuSR1TeFsMTMq1pEcye1ArudEGY1QZ6DuiFeZA=;
+	s=arc-20240116; t=1750656620; c=relaxed/simple;
+	bh=OLS9TfzrHaJbr7q8HR4u6+oaiCM98vyR/i7lZ8fnI68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKBg56XQas07ZxXce0DF0gFsw6Px732xaFBRckDciLPcIq1YjjqciHlMQfQnf8xqUGhBsHqiLkiMXpL5y2+9i9viX7qM3NAyN7AEblWwrFktRTSKFkZDmwzXfVeJCnteaJxrjvlh2iqaS2CN0pz9h/r42oFWz2ZqrXvTYRXQh/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ejJRgmOx; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=UnLTgu1/oGk/eQAecRsipmSHS08Oe/Okbn7enz8Vf9nroxNj/HfECxl5b6uW7mZtqqtJViQFF65SKToQdov0RDLwu+FJSrBjKew4UWXbybnOTPshJK9Ewm8Xa049BsQVJjy/35QR9x57tsXNFJZA42TWDr5D9lruXcZcivjFiis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e1KZ9QyY; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=N40QC5So83rB/6WLXPMiNJLeHTV9mbB3EpCgLUC629U=; b=ejJRgmOxh7AAULZXaPok1qmFLW
-	MWRE/meLeOwqkSuWukpx1nUSXSCj8yx8UPZPNXvOxw1LOjufiyTMhiU9ad01QqwJjGEACtYIus+vP
-	NwNS+WCNDZzyeo5S8JRf6Cj4iGJeI1kN1azTlkr38udsqhMtv10HlIpkcn7qEhRVs6dhxZzBUt8zw
-	7ly2ugGaJWgBOGkTrRq/chMHN/LYmaYvmk4tlxrWD8Nh1OrXyKPs/V0+qWw9EUgWhZn6BYRU8M3KR
-	sEk53FDH0Is3gyLCccZjZ/wE1Ch5IkKWYFKaLyAGtRMX6DlYsq1bE1E7bvnyF6YyCJJOtuam5h5JU
-	sDJ5CN7Q==;
+	bh=OLS9TfzrHaJbr7q8HR4u6+oaiCM98vyR/i7lZ8fnI68=; b=e1KZ9QyYVqszBvA+tNI5GhIgd8
+	Y/uPFGe+3zKpytXztk+ckvYQyRV5pHi2oAjJ0RJ58FRXkbKLu1m28XdCitYiqKiSaJcoLjaCo1LSH
+	4dQ0yJ1qrBdQ1Hojcf25FlLA/fptIAuK+zZZSIFa/dNeNPobp5B9MjHaGu8CyHyVAZYTe8Th6VRYU
+	wnHBsIqu9s/qFhqNKUYQ7O+eduTjklzN8jV/rCl3hXjTXzNy45/7NGmcC4QnUu1HSJ6y6J4I1Kluf
+	RTjId58owroV27j/BHi1mATd0dxTLf+gbrf+Vs+78pnSIx4zzSB+70uTveK7xlhz4xsUhfypzX0gM
+	LrvSR86A==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTZkL-00000001cZS-19uQ;
-	Mon, 23 Jun 2025 05:29:33 +0000
-Date: Sun, 22 Jun 2025 22:29:33 -0700
+	id 1uTZl0-00000001cg2-0hIM;
+	Mon, 23 Jun 2025 05:30:14 +0000
+Date: Sun, 22 Jun 2025 22:30:14 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: Anuj Gupta <anuj20.g@samsung.com>
 Cc: vincent.fu@samsung.com, jack@suse.cz, anuj1072538@gmail.com,
@@ -54,12 +54,12 @@ Cc: vincent.fu@samsung.com, jack@suse.cz, anuj1072538@gmail.com,
 	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
 	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
 	gost.dev@samsung.com
-Subject: Re: [PATCH for-next v4 1/4] block: rename tuple_size field in
- blk_integrity to metadata_size
-Message-ID: <aFjmPan6bmE8Vh1b@infradead.org>
+Subject: Re: [PATCH for-next v4 3/4] set pi_offset only when checksum type is
+ not BLK_INTEGRITY_CSUM_NONE
+Message-ID: <aFjmZkidi9O_73bW@infradead.org>
 References: <20250618055153.48823-1-anuj20.g@samsung.com>
- <CGME20250618055213epcas5p32ccbe13f8ed11ffa0beddaddb9a51595@epcas5p3.samsung.com>
- <20250618055153.48823-2-anuj20.g@samsung.com>
+ <CGME20250618055218epcas5p13a69c6cbb36108a34379148a4f8d0a20@epcas5p1.samsung.com>
+ <20250618055153.48823-4-anuj20.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,20 +68,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250618055153.48823-2-anuj20.g@samsung.com>
+In-Reply-To: <20250618055153.48823-4-anuj20.g@samsung.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Jun 18, 2025 at 11:21:50AM +0530, Anuj Gupta wrote:
-> @@ -299,7 +299,7 @@ static blk_status_t ext_pi_crc64_verify(struct blk_integrity_iter *iter,
->  static void ext_pi_type1_prepare(struct request *rq)
->  {
->  	struct blk_integrity *bi = &rq->q->limits.integrity;
-> -	const int tuple_sz = bi->tuple_size;
-> +	const int tuple_sz = bi->metadata_size;
+The Subject line is missing an "nvme: " prefix.
 
-I guess keeping tuple here is fine because we're deep into PI code.
-
-The rest looks good as well:
+Otherwise looks good:
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+
 
