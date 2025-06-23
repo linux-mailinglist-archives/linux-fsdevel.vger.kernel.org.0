@@ -1,123 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-52490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122B2AE36B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 09:24:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857BDAE372A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 09:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F7E4168286
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E53A1893A82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jun 2025 07:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BDB1EFF9F;
-	Mon, 23 Jun 2025 07:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFE71F7092;
+	Mon, 23 Jun 2025 07:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6e56gzS"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hEBB7216"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81821EF394
-	for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 07:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A991B4240;
+	Mon, 23 Jun 2025 07:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750663481; cv=none; b=TLUIY3ZtEN470TX7PHo+KOW2oGZ+SPMBTG3eshLBK9DY20REpX/pcEAozfiyLkHWot7GFNKyKSTOlDzFwCCjU87711n0fTE5F5ny90lr4sthCfUHjLKaC1U4Y1BoM1JkhF9cTXvgOInbmJYI20iMcLPdE8tidYfjCYClmkmoDGQ=
+	t=1750664548; cv=none; b=j8X60R87arfZob67fFO14jOrOgim4vDhMy04cYDxKFxx04Jgt4tpDMvJwxLTpuirBh5KqDTaKpMr2ic6+cWAhPaBVUhtTo+jsrjUNdXewJpvQhLYtYPkUPRqUHBOMCvrw+xdW25qaRO35r0OMaLKoHBz9oJOAYmKIcWbLkladJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750663481; c=relaxed/simple;
-	bh=aKY4yD28YYWDEjXY+G58AO1Bif5aQqKRzrKf55fISB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oGShlCmJACR2Bf7oU3ezzKUhYuvc+v3cOinc3AuIOk9yDhpHf5Rs+OQaPln85Ka0jWVWoW5CjsaTDO0693mGCueBMTAIEGa6ccQ+QwLKmLhZ2JAjE1vfcxuE8zEx1hEod6tSZYqaayXuz7mjJJRcvJhfxq41ua51YPHf+PVOcQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6e56gzS; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ade4679fba7so741527366b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 00:24:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750663476; x=1751268276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jnSgO9Cld+q9sOUqcUD5sOdXYXrCthqgrIwLD/AZjfo=;
-        b=d6e56gzSfv/NlD+dpiDtlxnaKPDpwzEQUJBn0Q7Iq1OhLJVorYexLRKn8z2D0yuVFY
-         FAqtlsEEhfhMDrcjcOgc/exoGz7wqaZChg9pNQO9Vq3qmAiRV3wb01ett9CmGjVIY/Dr
-         9S7DBXoOvF44D8rTXq9ffTjCxmvKNRHsCTs00OQFul0bfJ9+ajL1oVMipe3vjTQWmh1d
-         qBkoxtDCILhzXiJcPXifXZ9BPz3xO6IPoAzO5pMeUKHlT6iyKarnvWYThce5d2sYf2pj
-         DochJWPi85TgLKAjTvduCV/5dmcfQ8wCHHz1Pelt4cZwXfyXjpxxDZTIdouobPT5GeEd
-         nBBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750663476; x=1751268276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jnSgO9Cld+q9sOUqcUD5sOdXYXrCthqgrIwLD/AZjfo=;
-        b=Nkb0wf6A/S/wAffE4wXRA10Jk5jjSGEhmKxlzXZi9LrobytuH//iHRlbd9VlXYGAan
-         Pcdwpq02tE/LoqfT5S6vN9WDIpvcUvx+Z9SlL5kwC3edy6qfoztaLNuyOkJLIhyufzEx
-         +McsyxL9+teBa1r29TJH05E9tPxjZUZcMvhcTuCKo2perG6Dpv0N3bY9UwwTkrRqZCHl
-         KUVcCToA4xZwRMCO2iNc4ovvB/MI7BGybo8rcsRrkyV4QTvaFm4tGs5NpPMP7nfM1e2W
-         Gahg5qNDuIIf72VqxUt6jO9zeHtm1OmnPi7wIGHRl6d581752aT4GiOxMzsXzv1c7rLg
-         Oe3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUI8mNh0BltDVDnEaL4/qegrSC3YZVbgm4/vqSrylOVrFAGIA9Wm/Sc1KF5M1os0YW4iUVu2UGxD6de/4C0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoqG/Zaq/IVFTY5KgPwnaaPQiaRPXRD003LX/xz3H0cNUqkGPZ
-	S2yA9iEeDAZsiDAZ4vteEDlxbFBqHswcDFsPz7hr6P83frLBmnlEzyXMVc3ftbiaU7COuVVGmOO
-	kBftbMamSKz7ghghXBLeyKsY7TAO4e7U=
-X-Gm-Gg: ASbGncvg0EpIyVf6ogiPTtrbx6Lnij0yp9+hIm2rPFMOX+3fAnDnzlZW+PpirOHkc/G
-	LYXV4kA57WAqb2to2TS96l9tsZb0X3NjRVfKw/fixYM8/xWVHflZNPh2WNcdwoiw6Jn27U+dp1a
-	iZJkFo6z72oIjHeqKqnB3e5683pg7tNcEIxZt9FDIQBJA=
-X-Google-Smtp-Source: AGHT+IFHySMxYGTnSvF1XOHqn7sUVXMSvr9YT6wbbBkdGFJZp/tsb5Fhr9kchbPtoG93tX8FCoD3VdeltW7atFZClFA=
-X-Received: by 2002:a17:907:bacb:b0:adb:2f9c:34bb with SMTP id
- a640c23a62f3a-ae057b48d54mr1006541266b.49.1750663475632; Mon, 23 Jun 2025
- 00:24:35 -0700 (PDT)
+	s=arc-20240116; t=1750664548; c=relaxed/simple;
+	bh=Igc0gb/4fqGaP7PxgbaNOPDn2jKSvvZ/FT582jiBRuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NuR/CI/Q9Ea3Z8YGAe6DXMSn7YKVDo3SWY8P3IVg3wBve7psfc5EI2rdFo60u2aN+w+DfsuyG5Cp8WUHKbFVKkGvV2l2vjeViLb27BwXnEjnEu5x/sdeq9sD+kgzQ5CnGtSPmTbvTPl5juxjf5qHF24/bK0ukIbVyOApHQDGt2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hEBB7216; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gO6BgaOURwVvfKJZL4NV0+ycIT42XYR9tx/8Rf/n8Y8=; b=hEBB7216jZyDUq0t35LTpI2Mdh
+	Zim3MfJyDOpirhznfv4bpqhDbnn1P10fI/ZVT7eRo76+qbagr2pLY4pNTo1GSuFRKwP1okdLCZxF2
+	VOispB5mBgW53eh7AzdciuKpgb66wrW2ubGsearpzcZ+dgreiXc5/PjuTeDFbkvCA/btF4UGn45Q4
+	3nmXiw++HduhE3D9Ssg6ADye1GsbVRO0vZ2noQEy+z/j5Teb1HQbd+65zWE/my9wBOQl4DG7fZqZ/
+	y8OLoqhL1uvIi5UqEZJDZsQ/6/X+5BODaPaAW7w/s9bzTzk/ML5fwpIBXqM751lH9q3XwfkV30cYO
+	ptZWuL+Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uTbow-00000001tk8-0wHD;
+	Mon, 23 Jun 2025 07:42:26 +0000
+Date: Mon, 23 Jun 2025 00:42:26 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org, anuj1072538@gmail.com, miklos@szeredi.hu,
+	brauner@kernel.org, linux-xfs@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v2 04/16] iomap: add wrapper function iomap_bio_readpage()
+Message-ID: <aFkFYkleaEc9HxSr@infradead.org>
+References: <20250613214642.2903225-1-joannelkoong@gmail.com>
+ <20250613214642.2903225-5-joannelkoong@gmail.com>
+ <aFAS9SMi1GkqFVg2@infradead.org>
+ <CAJnrk1ZCeeVumEaMy+kxqqwn3n1gtSBjtCGUrT1nctjnJaKkZA@mail.gmail.com>
+ <aFDxNWQtInriqLU8@infradead.org>
+ <CAJnrk1ZrgXL2=7t2rCdAmBz0nNcRT0q7nBUtOUDfz2+CwCWb-A@mail.gmail.com>
+ <aFJEXZgiGuszZfh6@infradead.org>
+ <CAJnrk1aCo308fxgzYRnei1A29qskvMtiWNS50BJNwiyrQ2A_oA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250622215140.GX1880847@ZenIV>
-In-Reply-To: <20250622215140.GX1880847@ZenIV>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 23 Jun 2025 09:24:22 +0200
-X-Gm-Features: AX0GCFuFHgkwQWHNwiA3nArOxrXS2Ok-B3nI6YAvj3JxGejfwZRWtPizw2Yv2TM
-Message-ID: <CAOQ4uxioVpa3u3MKwFBibs2X0TWiqwY=uGTZnjDoPSB01kk=yQ@mail.gmail.com>
-Subject: Re: interesting breakage in ltp fanotify10
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Eric Biggers <ebiggers@google.com>, linux-fsdevel@vger.kernel.org, 
-	LTP List <ltp@lists.linux.it>, Petr Vorel <pvorel@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1aCo308fxgzYRnei1A29qskvMtiWNS50BJNwiyrQ2A_oA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sun, Jun 22, 2025 at 11:51=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
->
->         LTP 6763a3650734 "syscalls/fanotify10: Add test cases for evictab=
-le
-> ignore mark" has an interesting effect on boxen where FANOTIFY is not
-> enabled.  The thing is, tst_brk() ends up calling ->cleanup().  See the
-> problem?
->         SAFE_FILE_PRINTF(CACHE_PRESSURE_FILE, "%d", old_cache_pressure);
-> is executed, even though
->         SAFE_FILE_SCANF(CACHE_PRESSURE_FILE, "%d", &old_cache_pressure);
->         /* Set high priority for evicting inodes */
->         SAFE_FILE_PRINTF(CACHE_PRESSURE_FILE, "500");
-> hadn't been.
->
->         Result: fanotify10 on such kernel configs ends up zeroing
-> /proc/sys/vm/vfs_cache_pressure.
+On Wed, Jun 18, 2025 at 12:17:14PM -0700, Joanne Koong wrote:
+> > Sure.  What I mean is that I want to do this last before getting the
+> > series ready to merge.  I.e. don't bother with until we have something
+> > we're all fine with on a conceptual level.
+> 
+> I'm pausing this patchset until yours lands and then I was planning to
+> rebase this (the CONFIG_BLOCK and fuse specifics) on top of yours. Not
+> sure if that's what you mean or not, but yes, happy to go with
+> whatever you think works best.
 
-oops.
-strange enough, I cannot reproduce it as something is preventing
-zeroing vfs_cache_pressure:
+It's not going to land without a user..
 
-fanotify23.c:232: TCONF: fanotify not configured in kernel
-fanotify23.c:249: TWARN: Failed to close FILE
-'/proc/sys/vm/vfs_cache_pressure': EINVAL (22)
-
-# cat /proc/sys/vm/vfs_cache_pressure
-100
-
-But I'll send a fix all the same.
-
-Thanks,
-Amir.
+At some point we'll need to fuse side of this to go ahead.  I'm happy
+to either hand control of the series to you, or work with you on a
+common tree to make that happen.
 
