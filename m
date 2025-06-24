@@ -1,131 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-52716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700C3AE5FFF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:54:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35196AE6026
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E6F1922751
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:55:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3D23BAFE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4112797AA;
-	Tue, 24 Jun 2025 08:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4350B27AC25;
+	Tue, 24 Jun 2025 09:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjtYQUcc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cFLfhDEO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DC0253950;
-	Tue, 24 Jun 2025 08:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E162777F1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 09:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750755279; cv=none; b=XRPR5hw5VFBRQXcr7WKLbstbrk1OwrA702KpINYQ2MXo4wLO6VF76BJzgnzFpUvMLERInjasgOtbAK5+DzNX2k+/5iadCpRkk1X3QPB+0vo49RfxK993XojPUEjMS6zstqRW4vnuMRwAAXDimJelgxdDUM6YNR5ML0ayv0+Dwr4=
+	t=1750755751; cv=none; b=IuW65d5ejeXIHU3UDAXT/eyzTRE6ABOrc6+79pXOiQuHQ9tq2+nmLu0X5r5swGgf7JniKmWJeznIRycZNPh/pRH5pFZKKZwbiF7Ig+dHbTmZNgzWaEzNYIFfx4PgXNrAKwDYu9c+ecPuQhZOQeRnviX+HWVRLCh0u24vrksaoqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750755279; c=relaxed/simple;
-	bh=Tw5L0Y1w0eip6mUVkK2HT5/KDLxY0+uzOBK1dmVDiD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNAiJKCUnjZLsuVQ3e1U+2SRjmepytOMFq9vM3Y9b4xTbrjJmr0GcMHK/DzBPOVsuDNotsZbxk7f78VL8+5I0OWZNbJsLKW5hmHGMPSvfN9mr4iyUpZc4vZLAf6R68b30fWyZAannVlKM9cbMPqwbakwoYfhYahXfTpPQdPvB9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjtYQUcc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D02EC4CEE3;
-	Tue, 24 Jun 2025 08:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750755278;
-	bh=Tw5L0Y1w0eip6mUVkK2HT5/KDLxY0+uzOBK1dmVDiD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IjtYQUccuy67bxfo4Y1SLWqLxzse9kT8EqCIF8Sa1RskHRZ+Ve8RUSr5NbdJOwncr
-	 TEWgX5BEYLo6t2NUbOBNQpydZjHSOc01HmLK0gE1BBhIcycLmdJlFqsA9/repMzIIq
-	 P+ArXTpmEGCW/26jHv0sdBDNjHw5JGQg0p3o5tiMPc8kah0T4PF49+X1kjnwV+VH+m
-	 +cfqkYsApLDQRY7+G//0CxKCTmKYziYXgEvJ2V46ZwQesAFzI16VO0K2SS3uKIzTZ9
-	 X4rCymTEAPqyE1AQF935UKCM1dxPb8IoFwiZDI361EGjtkURXqIwUxSpyF61eLQCSq
-	 +h0axsXpzmhXw==
-Date: Tue, 24 Jun 2025 10:54:32 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	Jeff Layton <jlayton@kernel.org>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: next-20250623: arm64 devices kernel panic Internal error Oops at
- pidfs_free_pid (fs/pidfs.c:162)
-Message-ID: <20250624-elastisch-errichten-a2aec974177e@brauner>
-References: <CA+G9fYt0MfXMEKqHKHrdfqg3Q5NgQsuG1f+cXRt83d7AscX5Fw@mail.gmail.com>
- <20250623-salat-kilowatt-3368c5e29631@brauner>
- <CA+G9fYsfOg9uiwgYA1mHkBzwEkU6eLweneWJhFybt+X1Ekp55Q@mail.gmail.com>
+	s=arc-20240116; t=1750755751; c=relaxed/simple;
+	bh=JP89Vj/TbeY6UC2SgI40l+r8YLLxMD0iD9JJ5lKeLaQ=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=BopGbiLeYo9Qovb97rLqQBhOS2RLgAN86/LTumcwud7bs+ngkVHTCxR5RsAbR8njmIlzXiQ9UXFrcVMXcAAIebtLUPvtgfQBr54yyfza9IrRPSGVB/F6H/qf+UPgbGPtVmyK+onWc5OWRyFtLJ3nsVEUSDiVMpDYPmDc2GEiD1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cFLfhDEO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750755748;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qlOdlXhfpJ2qnP2BlVlsaFgHtdVv+17pO3XA1MNaXFU=;
+	b=cFLfhDEOfzkm1NVSTM8+CXlkJfH14nyoi9ynWCeAhxbSw1AQutdialwYOpKbSEokDE/B5B
+	9s+YVPzlwpAg3xZzOlvU8AulvJay3s/mYU5ODIt4OD64t3hApWQBRpN3MQxsxbMemnsk3x
+	/FhXGe7m9QqxvdGfwCbk7+uhdaI7/Ns=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-psbfh304N8yHCFiaoILq0w-1; Tue,
+ 24 Jun 2025 05:02:22 -0400
+X-MC-Unique: psbfh304N8yHCFiaoILq0w-1
+X-Mimecast-MFC-AGG-ID: psbfh304N8yHCFiaoILq0w_1750755739
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC1561956046;
+	Tue, 24 Jun 2025 09:02:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6E92618046C4;
+	Tue, 24 Jun 2025 09:02:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <aFlaxwpKChYXFf8A@infradead.org>
+References: <aFlaxwpKChYXFf8A@infradead.org> <2135907.1747061490@warthog.procyon.org.uk> <1069540.1746202908@warthog.procyon.org.uk> <165f5d5b-34f2-40de-b0ec-8c1ca36babe8@lunn.ch> <0aa1b4a2-47b2-40a4-ae14-ce2dd457a1f7@lunn.ch> <1015189.1746187621@warthog.procyon.org.uk> <1021352.1746193306@warthog.procyon.org.uk> <1098395.1750675858@warthog.procyon.org.uk>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: dhowells@redhat.com, Andrew Lunn <andrew@lunn.ch>,
+    Eric Dumazet <edumazet@google.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Jakub Kicinski <kuba@kernel.org>,
+    David Hildenbrand <david@redhat.com>,
+    John Hubbard <jhubbard@nvidia.com>,
+    Mina Almasry <almasrymina@google.com>, willy@infradead.org,
+    Christian Brauner <brauner@kernel.org>,
+    Al Viro <viro@zeniv.linux.org.uk>, netdev@vger.kernel.org,
+    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
+    Logan Gunthorpe <logang@deltatee.com>,
+    Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: How to handle P2P DMA with only {physaddr,len} in bio_vec?
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYsfOg9uiwgYA1mHkBzwEkU6eLweneWJhFybt+X1Ekp55Q@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1143686.1750755725.1@warthog.procyon.org.uk>
+Date: Tue, 24 Jun 2025 10:02:05 +0100
+Message-ID: <1143687.1750755725@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Jun 23, 2025 at 08:26:32PM +0530, Naresh Kamboju wrote:
-> On Mon, 23 Jun 2025 at 18:26, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Mon, Jun 23, 2025 at 05:29:38PM +0530, Naresh Kamboju wrote:
-> > > Regressions on arm64 devices and qemu-arm64 while running LTP controllers
-> > > and selftests cgroup test cases the following kernel Panic Internal error oops
-> > > found on the Linux next-20250623 tag.
-> > >
-> > > Regressions found on arm64 device
-> > >   - Kernel Panic Internal oops @ LTP controllers
-> > >   - Kernel Panic Internal oops @ selftest cgroups
-> > >
-> > > Test environments:
-> > >  - Dragonboard-410c
-> > >  - e850-96
-> > >  - FVP
-> > >  - Juno-r2
-> > >  - rk3399-rock-pi-4b
-> > >  - qemu-arm64
-> > >
-> > > Regression Analysis:
-> > >  - New regression? Yes
-> > >  - Reproducibility? Yes
-> > >
-> > > Boot regression: arm64 devices kernel panic Internal error Oops at
-> > > pidfs_free_pid (fs/pidfs.c:162)
-> > >
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > >
-> > > ## Test log
-> > > [   67.087303] Internal error: Oops: 0000000096000004 [#1]  SMP
-> > > [   67.094021] Modules linked in: snd_soc_hdmi_codec venus_enc
-> > > venus_dec videobuf2_dma_contig pm8916_wdt qcom_wcnss_pil
-> > > coresight_cpu_debug coresight_tmc coresight_replicator qcom_camss
-> > > coresight_stm snd_soc_lpass_apq8016 msm qrtr coresight_funnel
-> > > snd_soc_msm8916_digital snd_soc_lpass_cpu coresight_tpiu
-> > > snd_soc_msm8916_analog videobuf2_dma_sg stm_core coresight_cti
-> > > snd_soc_lpass_platform snd_soc_apq8016_sbc venus_core
-> > > snd_soc_qcom_common qcom_q6v5_mss v4l2_fwnode coresight snd_soc_core
-> > > qcom_pil_info v4l2_async snd_compress llcc_qcom snd_pcm_dmaengine
-> > > ocmem qcom_q6v5 v4l2_mem2mem videobuf2_memops snd_pcm qcom_sysmon
-> > > drm_exec adv7511 snd_timer videobuf2_v4l2 gpu_sched qcom_common snd
-> > > videodev drm_dp_aux_bus qcom_glink_smem soundcore qcom_spmi_vadc
-> > > mdt_loader drm_display_helper qnoc_msm8916 qmi_helpers
-> > > videobuf2_common qcom_vadc_common qcom_spmi_temp_alarm rtc_pm8xxx
-> > > qcom_pon qcom_stats mc cec drm_client_lib qcom_rng rpmsg_ctrl
-> > > display_connector rpmsg_char phy_qcom_usb_hs socinfo drm_kms_helper
-> > > rmtfs_mem ramoops
-> > > [   67.094437]  reed_solomon fuse drm backlight ip_tables x_tables
-> > > [   67.189084] CPU: 3 UID: 0 PID: 0 Comm: swapper/3 Not tainted
-> > > 6.16.0-rc3-next-20250623 #1 PREEMPT
-> > > [   67.194810] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-> > > [   67.234078] pc : pidfs_free_pid (fs/pidfs.c:162)
-> >
-> > Thanks, I see the issue. I'm pushing out a fix. Please let me know if
-> > that reproduces in the next few days.
+Christoph Hellwig <hch@infradead.org> wrote:
+
+> On Mon, Jun 23, 2025 at 11:50:58AM +0100, David Howells wrote:
+> > What's the best way to manage this without having to go back to the page
+> > struct for every DMA mapping we want to make?
 > 
-> Thanks. Please share the proposed fix patches.
-> I would like to build and test in LKFT test framework.
+> There isn't a very easy way.  Also because if you actually need to do
+> peer to peer transfers, you right now absolutely need the page to find
+> the pgmap that has the information on how to perform the peer to peer
+> transfer.
 
-It's in vfs-6.17.pidfs. Syzbot has a reproducer for the bug.
+Are you expecting P2P to become particularly common?  Because page struct
+lookups will become more expensive because we'll have to do type checking and
+Willy may eventually move them from a fixed array into a maple tree - so if we
+can record the P2P flag in the bio_vec, it would help speed up the "not P2P"
+case.
+
+> > Do we need to have
+> > iov_extract_user_pages() note this in the bio_vec?
+> > 
+> > 	struct bio_vec {
+> > 		physaddr_t	bv_base_addr;	/* 64-bits */
+> > 		size_t		bv_len:56;	/* Maybe just u32 */
+> > 		bool		p2pdma:1;	/* Region is involved in P2P */
+> > 		unsigned int	spare:7;
+> > 	};
+> 
+> Having a flag in the bio_vec might be a way to shortcut the P2P or not
+> decision a bit.  The downside is that without the flag, the bio_vec
+> in the brave new page-less world would actually just be:
+> 
+> 	struct bio_vec {
+> 		phys_addr_t	bv_phys;
+> 		u32		bv_len;
+> 	} __packed;
+> 
+> i.e. adding any more information would actually increase the size from
+> 12 bytes to 16 bytes for the usualy 64-bit phys_addr_t setups, and thus
+> undo all the memory savings that this move would provide.
+
+Do we actually need 32 bits for bv_len, especially given that MAX_RW_COUNT is
+capped at a bit less than 2GiB?  Could we, say, do:
+
+ 	struct bio_vec {
+ 		phys_addr_t	bv_phys;
+ 		u32		bv_len:31;
+		u32		bv_use_p2p:1;
+ 	} __packed;
+
+And rather than storing the how-to-do-P2P info in the page struct, does it
+make sense to hold it separately, keyed on bv_phys?
+
+Also, is it possible for the networking stack, say, to trivially map the P2P
+memory in order to checksum it?  I presume bv_phys in that case would point to
+a mapping of device memory?
+
+Thanks,
+David
+
 
