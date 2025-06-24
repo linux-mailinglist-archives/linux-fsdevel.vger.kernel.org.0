@@ -1,154 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-52792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B243AE6D38
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 19:02:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2D2AE6D73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 19:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2ED816F112
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 17:02:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EB46176946
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 17:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2932236F8;
-	Tue, 24 Jun 2025 17:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901032E2F05;
+	Tue, 24 Jun 2025 17:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jjmx-net.20230601.gappssmtp.com header.i=@jjmx-net.20230601.gappssmtp.com header.b="ooTyZZzC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D7D7DA73
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 17:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4528C1F4199
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 17:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750784548; cv=none; b=L+uDmo9lq+m1W5QbQn3cdN0wtQKhVELjzTdtct7UkrWsbZi9/KR4uLYf+9DsX92avIBmk7yrb6+RuakLtwj6cbC9jXILNpVk3cJETmkr1/yVaFmIVuTckcmhx0TSTgeNxLibkFGAU6U6x3cfZQ+Qy2IlZE5BAQbVJMeBqdRpvrQ=
+	t=1750785942; cv=none; b=plUwpSBAqpMfbHS6KmBPBuLPCM3zpAPJhBlayWakxc2rrtjTAMTSip2wS02ZhsMkrqCvPwH7cdGUcw9c9gazVgK2B7HimbOwmsqOun9oNym86gxds8MCyGnxOpuC/MQmSBb9hljPnTiqSmvoGjsp5eBLXQuhrV1y7ZI55E/jbLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750784548; c=relaxed/simple;
-	bh=rVT5B2iWZZr9OKkNpthk5FE/RUvJxgj/XBpIPkA+dVY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=I4crjkuz0EymfxN/GHY5VNE4UaWNZmF/BWWN6ka21lcLq3qSPWzjHhdyC7TbvSDqY6VbsOYs1B+/zqoc4WTehqZerG9icJ1BEhEPxWM/Q3icy8d8TthcGiI9v2JJ12uJ6YaC+hpfGddjiBw4NOwZJjl4ufoRQoDJnsJ2GAv50p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddd90ca184so6094465ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 10:02:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750784546; x=1751389346;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1750785942; c=relaxed/simple;
+	bh=yrYUf+T9jn1ekk5YxHOMtjBw4z5L9Hpbq5L0hufPiyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nDUowuvp/u6mhplkCKcTey4n/Ni0p+t8c++EX6HmLmRDGTltAmFgVgXiGX7uJcAw3Jn64zaWee6FTpuCLQ6ajxUGT61HWETCnNfjsPxJFDbHMdIBz/psi/mSmL+DE5tDugBz97Z3NDa1wwAvdA4XaIxcwPvBVHstBoVsniuSWuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jjmx.net; spf=none smtp.mailfrom=jjmx.net; dkim=pass (2048-bit key) header.d=jjmx-net.20230601.gappssmtp.com header.i=@jjmx-net.20230601.gappssmtp.com header.b=ooTyZZzC; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jjmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=jjmx.net
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-237e6963f63so21790565ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 10:25:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jjmx-net.20230601.gappssmtp.com; s=20230601; t=1750785940; x=1751390740; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RLFH6eoxt7bnwcvodcPHkdsqctyfANQtqy/+9gnynnQ=;
-        b=YSPkvVr/AnG1cbpFcxeigIyWTTDYe65nZabOYHaSqbrkCEYxdOK/4JyTuvlmZ+z5PG
-         xM8rrPh4QHEkdDy6cc67qt8+oomUAXfJanOQTIDWftJ6UxU00bff8/cIRJrhgDaRpGDi
-         3Vf37b2QebOq11ynfA56Rc8P495sXM2dZiJXN3fGpmTjL8QiNCs5pfFTT+KWBuffeGnV
-         1ZQ/oMh/hbN2TS7yd1VA1zFoB67r9d9ffCa94/hDXnDewKPJx9ETdfo4MRwXnvbAqHKg
-         YErsN6uZSx0fd3Dv4bn56culvcfFOcGkMJrYHYuo7d5X9CzC1ajcIV/7qpGhrX6cAzvx
-         ZxkA==
-X-Gm-Message-State: AOJu0Ywg9GNyEswGkQ/+N+r/K0Sk5zU4ZUjqRxcpgdY4wfFuWBEU635I
-	4fm91qWSq+K7/f/PYsnGJefFOFFMgRnTgr3DrdyytoHoVy+1YmGrrwNwLBYBHQdeCRNzEu2dyYT
-	1N9C2HZFbh1vjGmtn+FkNlwnRNSddSgu5bkbF0/6ZYQQVxG94h7EU2UM5UJUMlA==
-X-Google-Smtp-Source: AGHT+IFALlkKleQrrNMPzjarn8EpBeg13EQeNdOqET3QREb0fiA0vwwaEcVn7iiFB8i08VNs4qk2heQG9gVsU6i5dFCiuESZbVvx
+        bh=J57GGm0/SdIH6DZQhDnyNsTVoEW1iv54wd0A5EiJs7A=;
+        b=ooTyZZzCSgSEW/+Nrk+XjHYaq61xUD2LDvUwTgV6hhwY1td3AUrEdB49b8bftkhNyo
+         yWgnqPumV4ikRLELshzK/BXC7VbQ0z5giImfieMm28RWfgK3PZsxOP82MU7TN3xP0RZA
+         VZ3J+PUeXVNPtBgWg/ddNbs1U7l2JuLOoI6z6TEpVB0osw2CE2fWEMBZlFB8dI0TZLJw
+         0bzC5z7MIO8ItoUEnOQTDrog/zjyOHViQSi2Z8rg9Di53Yq254NeK2Si3xiJveRV3CIi
+         gc1MaS7w5AyePyIDnMHOam/9JL8pCYLNtLJqaQGTRPlxSu5PmUxWXvybf5cHi3sbv4e5
+         pGdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750785940; x=1751390740;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J57GGm0/SdIH6DZQhDnyNsTVoEW1iv54wd0A5EiJs7A=;
+        b=mdrQbPuDan1Tzl/3y3ff1ZH2FOAuNo+AkgMEPEtnn8Fs5RIrezXRNlF/WYe6OT1NQS
+         WHlqXVKXbPlvmM+/S5Vyj6SP8afKpPc5l5SrkTIj3WwWvW5cNRjxQFIArhqmHGsiNuzw
+         TC4jE4klfKKMaVC30mqGLsb4WNVr9pzpP+a5waezAwQbOo2gkVe0lphTUZcwvhFDo4H6
+         82ujU8wTxVQBOCz5WjlS7RGJQFKg/M2HwALYR7icCnKA88FlTAC07uRtB5oVzIQFgOnr
+         dUS++h24wnGP9yp+NW00a/K7k7UhQOgbE8lws9w+QUqyaaZlN76VYSgbaRrxFCsU7CM8
+         G5QQ==
+X-Gm-Message-State: AOJu0Yx0vWWW2PIJBaSu6lTcoHjqfUR8pQe1A3y4HmyMB9wWrUbPPseV
+	qXE1dM5xPVHHY9NLmnWhXur/rRGnHarCbJanuq1o7glLnVCCUFKLRF0bMSBl2dN1bewdrVsgEF3
+	ygCmC
+X-Gm-Gg: ASbGncs+rtArwdJ6PKajjmTxOb3g2j+lx1cjpv36pH8CJVCgedJD1xy/OgVjbCgeLrp
+	iZzZMOBv91bQZL08wleGwdcy2xCQaVRhmcK26tVDywmBguAsHoHk1QMbXSSIORfpOJJ7LSMwSSd
+	bgtVjZv6eObAuxWcS3jRPbyG8h1FkkAEf4tTDahPwUOCDn1n0NaNHQljCA53nRDnKVMPQqNl367
+	4UwnAyoLp/8K91P9NJan6gZxiF+4rzCXntuHm8kpRnHZkB6Vc+3al5gdv5ZHx28NSpEXoJxehZx
+	7Gsxz65VCVTbfcfv2nR30kk9GZQoCx4iZm1OG6I0y3DgInM5Zb5EgSN5dGdY/GK3JAoW
+X-Google-Smtp-Source: AGHT+IHGqwjj1vPA0ipDjB8+H8wvpu8EvGUzLOveaJIc7cF/8aoNMfft2/Nhp6Nnc8qe6eUyUIbesg==
+X-Received: by 2002:a17:903:187:b0:234:d679:72f7 with SMTP id d9443c01a7336-23823fead84mr2329285ad.23.1750785940315;
+        Tue, 24 Jun 2025 10:25:40 -0700 (PDT)
+Received: from [192.168.192.84] ([50.47.147.87])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-237d8729de6sm111543865ad.238.2025.06.24.10.25.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jun 2025 10:25:39 -0700 (PDT)
+Message-ID: <d6d091fa-1e6f-40ea-983a-59ac2d8a38d2@jjmx.net>
+Date: Tue, 24 Jun 2025 10:25:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3b83:b0:3dd:c4ed:39c0 with SMTP id
- e9e14a558f8ab-3de38c159a7mr227556445ab.1.1750784546405; Tue, 24 Jun 2025
- 10:02:26 -0700 (PDT)
-Date: Tue, 24 Jun 2025 10:02:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685ada22.a00a0220.2e5631.0089.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in minix_rename
-From: syzbot <syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][BUG] ns_mkdir_op() locking is FUBAR
+To: Al Viro <viro@zeniv.linux.org.uk>, John Johansen <john@apparmor.net>
+Cc: linux-fsdevel@vger.kernel.org, apparmor <apparmor@lists.ubuntu.com>
+References: <20250623213747.GJ1880847@ZenIV> <20250623222316.GK1880847@ZenIV>
+Content-Language: en-US
+From: John Johansen <john@jjmx.net>
+In-Reply-To: <20250623222316.GK1880847@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 6/23/25 15:23, Al Viro wrote:
+> On Mon, Jun 23, 2025 at 10:37:47PM +0100, Al Viro wrote:
+>
+>> Could you explain what exclusion are you trying to get there?
+>> The mechanism is currently broken, but what is it trying to achieve?
+> While we are at it:
+>
+> root@kvm1:~# cd /sys/kernel/security/apparmor/policy
+> root@kvm1:/sys/kernel/security/apparmor/policy# (for i in `seq 270`; do mkdir namespaces/$i; cd namespaces/$i; done)
+> root@kvm1:/sys/kernel/security/apparmor/policy# rmdir namespaces/1
+> [   40.980453] Oops: stack guard page: 0000 [#1] PREEMPT SMP NOPTI
+> [   40.980457] CPU: 3 UID: 0 PID: 2223 Comm: rmdir Not tainted 6.12.27-amd64 #11
+> [   40.980459] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.164
+> [   40.980460] RIP: 0010:inode_set_ctime_current+0x2c/0x100
+> [   40.980490] Code: 1e fa 0f 1f 44 00 00 55 48 89 e5 41 55 41 54 53 31 db 48 8f
+> [   40.980491] RSP: 0018:ffffc1cbc2cfbff8 EFLAGS: 00010292
+> [   40.980493] RAX: 0000000000400000 RBX: 0000000000000000 RCX: ffff9dbcc358ac70
+> [   40.980494] RDX: 0000000000000001 RSI: ffff9dbcc48c0300 RDI: ffffc1cbc2cfbff8
+> [   40.980495] RBP: ffffc1cbc2cfc028 R08: 0000000000000000 R09: ffffffffa484c6c0
+> [   40.980495] R10: ffff9dbcc0729cc0 R11: 0000000000000002 R12: ffff9dbcc4a75b28
+> [   40.980496] R13: ffff9dbcc4a75b28 R14: ffff9dbcc01fe600 R15: ffff9dbcc51a9e00
+> [   40.980498] FS:  00007ffb70ea4740(0000) GS:ffff9dbfefd80000(0000) knlGS:00000
+> [   40.980499] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   40.980499] CR2: ffffc1cbc2cfbfe8 CR3: 000000010619a000 CR4: 00000000000006f0
+> [   40.980501] Call Trace:
+> [   40.980510]  <TASK>
+> [   40.980513]  simple_unlink+0x24/0x50
+> [   40.980526]  aafs_remove+0x9a/0xb0
+> [   40.980543]  __aafs_ns_rmdir+0x2ec/0x3b0
+> [   40.980548]  destroy_ns.part.0+0x9f/0xc0
+> [   40.980558]  __aa_remove_ns+0x44/0x90
+> [   40.980560]  destroy_ns.part.0+0x40/0xc0
+> [   40.980562]  __aa_remove_ns+0x44/0x90
+> [   40.980563]  destroy_ns.part.0+0x40/0xc0
+> .....
+> [   40.981324]  ns_rmdir_op+0x189/0x300
+> [   40.981327]  vfs_rmdir+0x9b/0x200
+> [   40.981335]  do_rmdir+0x1ac/0x1c0
+> [   40.981340]  __x64_sys_rmdir+0x3f/0x70
+> [   40.981342]  do_syscall_64+0x82/0x190
+> [   40.981360]  ? do_fault+0x31a/0x550
+> [   40.981372]  ? __handle_mm_fault+0x7c2/0xf70
+> [   40.981373]  ? syscall_exit_to_user_mode_prepare+0x149/0x170
+> [   40.981388]  ? __count_memcg_events+0x53/0xf0
+> [   40.981392]  ? count_memcg_events.constprop.0+0x1a/0x30
+> [   40.981394]  ? handle_mm_fault+0x1bb/0x2c0
+> [   40.981396]  ? do_user_addr_fault+0x36c/0x620
+> [   40.981408]  ? exc_page_fault+0x7e/0x180
+> [   40.981412]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> .....
+> [   40.981486] Kernel panic - not syncing: Fatal exception in interrupt
+>
+> I realize that anyone who can play with apparmor config can screw the
+> box into the ground in a lot of ways, but... when you have a recursion
+> kernel-side, it would be nice to have its depth bounded.  Not even root
+> should be able to panic the box with a single call of rmdir(2)...
 
-syzbot found the following issue on:
+Indeed, we can cap this something about ~3x what realistically we would see with
 
-HEAD commit:    78f4e737a53e Merge tag 'for-6.16/dm-fixes' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10b29182580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28cc6f051378bb16
-dashboard link: https://syzkaller.appspot.com/bug?extid=a65e824272c5f741247d
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1446370c580000
+nesting of user namespaces. Some where between between 8-16 deep should be enough.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/560a423a60ad/disk-78f4e737.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9e97e18d85b9/vmlinux-78f4e737.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a147a5a27c6e/bzImage-78f4e737.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2c4c332ed1d0/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=12276b70580000)
+Something like
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6388 at fs/inode.c:417 drop_nlink+0xc5/0x110 fs/inode.c:417
-Modules linked in:
-CPU: 0 UID: 0 PID: 6388 Comm: syz.6.27 Not tainted 6.16.0-rc3-syzkaller-00042-g78f4e737a53e #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:drop_nlink+0xc5/0x110 fs/inode.c:417
-Code: 78 07 00 00 be 08 00 00 00 e8 c7 35 e8 ff f0 48 ff 83 78 07 00 00 5b 41 5c 41 5e 41 5f 5d e9 42 01 29 09 cc e8 fc da 86 ff 90 <0f> 0b 90 eb 81 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 5b ff ff ff
-RSP: 0018:ffffc900030c7a30 EFLAGS: 00010293
-RAX: ffffffff82397124 RBX: ffff888055405aa8 RCX: ffff88802da29e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff8f9fe1f7 R09: 1ffffffff1f3fc3e
-R10: dffffc0000000000 R11: fffffbfff1f3fc3f R12: 1ffff1100aa80b5e
-R13: 0000000000000000 R14: ffff888055405af0 R15: dffffc0000000000
-FS:  00007fb57180a6c0(0000) GS:ffff888125c83000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb571809f98 CR3: 0000000032278000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- inode_dec_link_count include/linux/fs.h:2634 [inline]
- minix_rename+0x3cf/0x700 fs/minix/namei.c:222
- vfs_rename+0xb99/0xec0 fs/namei.c:5137
- do_renameat2+0x878/0xc50 fs/namei.c:5286
- __do_sys_rename fs/namei.c:5333 [inline]
- __se_sys_rename fs/namei.c:5331 [inline]
- __x64_sys_rename+0x82/0x90 fs/namei.c:5331
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb57098e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb57180a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
-RAX: ffffffffffffffda RBX: 00007fb570bb6080 RCX: 00007fb57098e929
-RDX: 0000000000000000 RSI: 00002000000001c0 RDI: 0000200000001980
-RBP: 00007fb570a10b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007fb570bb6080 R15: 00007fffa5abc5a8
- </TASK>
+diff --git a/security/apparmor/include/policy_ns.h b/security/apparmor/include/policy_ns.h
+index d646070fd966..081a0d5988d4 100644
+--- a/security/apparmor/include/policy_ns.h
++++ b/security/apparmor/include/policy_ns.h
+@@ -19,6 +19,9 @@
+  #include "policy.h"
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
++/* maximum nesting of policy namespaces */
++#define MAX_NS_DEPTH 8
++
+  /* struct aa_ns_acct - accounting of profiles in namespace
+   * @max_size: maximum space allowed for all profiles in namespace
+   * @max_count: maximum number of profiles that can be in this namespace
+diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
+index 64783ca3b0f2..89a6fecfd39a 100644
+--- a/security/apparmor/policy_ns.c
++++ b/security/apparmor/policy_ns.c
+@@ -223,6 +223,9 @@ static struct aa_ns *__aa_create_ns(struct aa_ns *parent, const char *name,
+      AA_BUG(!name);
+      AA_BUG(!mutex_is_locked(&parent->lock));
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
++    if (ns->level >= MAX_NS_LEVEL)
++        return ERR_PTR(-EPERM);
++
+      ns = alloc_ns(parent->base.hname, name);
+      if (!ns)
+          return ERR_PTR(-ENOMEM);
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+would do for the creation side, which should be enough. But We could also
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+throw in a bug check and bail against the the ns->level on the rmdir as well.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+
 
