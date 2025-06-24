@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-52702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB54AE5F47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:30:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CDB8AE5F5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3218E189931C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:30:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CDBB17EC5E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9B925B2F0;
-	Tue, 24 Jun 2025 08:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DEA258CE8;
+	Tue, 24 Jun 2025 08:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0Rof7TA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwbgCOgN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE96258CE7;
-	Tue, 24 Jun 2025 08:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583EF25B302;
+	Tue, 24 Jun 2025 08:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750753786; cv=none; b=ewrei3jBcNm3QbBq7DB3QLw9gvl5Rt4Du2EFaHbsFX1uHICJzAuuzVe6UjHK0WSIyL4B5npqzFFm42+KmJ2zkjM5JVo4b3kSo6WOOCMpQ+TVbDMXMwHbumvH+kbup8hCSKTARiAVqQPpcpdcGKDy+PPp/oGjF/EV/dH2OqdgsyM=
+	t=1750753788; cv=none; b=RMNJNNGjfsc2ynopKfwdThBoQr+j0vfZ+t8tbq4DIaCetqS8n4ZR6jKnJoqSZ/MIxi2kMhW9TuA1K4joMMJvWnrYZXrv8BZSVfdEsdOrcqespOjG21GYFglyQp4uG/YC3nSZjdmIpkU+wZHPAGOezjXOVKllKdE0YUiLxdv0GK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750753786; c=relaxed/simple;
-	bh=KaE3o8NUMUoxnoYJgN7CddjbKmoL6iHIx4UrIi7jaUY=;
+	s=arc-20240116; t=1750753788; c=relaxed/simple;
+	bh=KrK8lbTCdb06XchgncN951ODBKYkzA/QBalZbj7oftA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dy7MJ2mzV37ovIs79Dl17sgoiEKsn69w/rBMnYvJpiqaYezUQJHVgIHUvpWydrc+ej239qclYFjFdNw+XEIY+kObYgUh8h+ekoa4TQGugTfJSBdNkAy0pBlxdu2+JdSdyFTj8IOkusVnH4rYlAgz+Up2m84Qd7fgdcv1JYq6VEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S0Rof7TA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E455C4CEEF;
-	Tue, 24 Jun 2025 08:29:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=AwYSMyOuaMCd5u6ftCZcXgiATHAQG/ylmkft+bflVfJIs9UTRarW6TnvnMRC7r4BwfOqxV9OBblmXejnXdvweiyGThrazCGApJdzWOc+oEYCM/4Al2al0neW5SYf+L2vz/Q/L7YiAR0UuOrKkgYBlVxCUEA538X2hzQ9QtKFyoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwbgCOgN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CDEEC4CEEF;
+	Tue, 24 Jun 2025 08:29:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750753786;
-	bh=KaE3o8NUMUoxnoYJgN7CddjbKmoL6iHIx4UrIi7jaUY=;
+	s=k20201202; t=1750753788;
+	bh=KrK8lbTCdb06XchgncN951ODBKYkzA/QBalZbj7oftA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=S0Rof7TAUh+8WyRGJ+Z9yZLcrsXpya8RQx+Lmka6u9wGgJK23tQiHiDQrC9sX3lsl
-	 Zxn6xtNG2muhSYjcTj7yb0kdVzYZSQdUFfVUVbH7X5wa3TP0esJvyxanS1rzWeb/Ni
-	 3VJyakTDqAa2ZFttmORm6k0QVZN8pFztJD00w6tcF2tpAXVQyfpxsO/bCRi58Sm6YV
-	 yESKY2I/Xg9z0MfYnR/lKG18bkmJy78TjT/xVQ+geoPk3kbMVn34V/7dUPhbYuzVsE
-	 AQltv9pv3VFFpYtn+JKQrDRGua0+gt2fx3SyTnnxk+o+05MPnjNdDpQaX0KZ8zZxb7
-	 TRPR8UgF2Nhqw==
+	b=AwbgCOgN2N95oXc9Wdyxm8+OTwISjCErqPozZBvKdEiyx1smKOdcsSRtDTZpVLnbc
+	 /DHJQTYynk6++Ai8NqMIqlojHUCwGH9UMo8lb+dJgXJHahqdf9Xdmf+DGw+MJ6V6qI
+	 Of3FtoYorh+ezVE1IMSaJyu18nOetzIQF3+D77zgGRvXbIwS8z481krodCVktWlHmZ
+	 0vQwIhJfEFuP17+4mVQjlk8eovlhIbTGNBv72Hl6kPAf+Gee0hDLV4xXTUzMnjYY/2
+	 U6rvaMuyhnp3yOu1b84sbxDST/8wgjjJA58ASHK5lizWAtsTR2CNGRrMnBuYqO4UC3
+	 ZWnqcpMcqpvSw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 24 Jun 2025 10:29:10 +0200
-Subject: [PATCH v2 07/11] uapi/fcntl: add FD_INVALID
+Date: Tue, 24 Jun 2025 10:29:11 +0200
+Subject: [PATCH v2 08/11] exportfs: add FILEID_PIDFS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-work-pidfs-fhandle-v2-7-d02a04858fe3@kernel.org>
+Message-Id: <20250624-work-pidfs-fhandle-v2-8-d02a04858fe3@kernel.org>
 References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
 In-Reply-To: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
 To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
@@ -61,34 +61,38 @@ To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
 Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=679; i=brauner@kernel.org;
- h=from:subject:message-id; bh=KaE3o8NUMUoxnoYJgN7CddjbKmoL6iHIx4UrIi7jaUY=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREJb5Q/BKcc6j9wprqSdmVunY/2R+udWriiua3YUxUV
- 72d/GNPRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERKohgZ+jc/mV3Hqx0iK6bR
- 8PjCSp5gbpGbM74q1m9Sme2j8G7lNoZ/uvqv97y6t/Nxa8GLHO30L0rH5h4yTrudIh6ReWLbNDU
- xNgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=591; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=KrK8lbTCdb06XchgncN951ODBKYkzA/QBalZbj7oftA=;
+ b=kA0DAAoWkcYbwGV43KIByyZiAGhaYejIIGqjhgBpqQXXFJxW4MHN5hktRPziS0Xt6LnjMRobr
+ Yh1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmhaYegACgkQkcYbwGV43KLNagD+O0a4
+ QSXeVf8beIMA/2UXr4kukgRtqG6ccsxqrgOLb9QA/iP0f5qA9By4NQZ6NCi/ySpgKZ/uPjrTSZF
+ pB4KzHMkF
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Add a marker for an invalid file descriptor.
+Introduce new pidfs file handle values.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/uapi/linux/fcntl.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/exportfs.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index ba4a698d2f33..a5bebe7c4400 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -110,6 +110,7 @@
- #define PIDFD_SELF_THREAD		-10000 /* Current thread. */
- #define PIDFD_SELF_THREAD_GROUP		-10001 /* Current thread group leader. */
+diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+index 25c4a5afbd44..5bb757b51f5c 100644
+--- a/include/linux/exportfs.h
++++ b/include/linux/exportfs.h
+@@ -131,6 +131,11 @@ enum fid_type {
+ 	 * Filesystems must not use 0xff file ID.
+ 	 */
+ 	FILEID_INVALID = 0xff,
++
++	/* Internal kernel fid types */
++
++	/* pidfs fid type */
++	FILEID_PIDFS = 0x100,
+ };
  
-+#define FD_INVALID			-10009 /* Invalid file descriptor: -10000 - EBADF = -10009 */
- 
- /* Generic flags for the *at(2) family of syscalls. */
- 
+ struct fid {
 
 -- 
 2.47.2
