@@ -1,289 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-52758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBB6AE64B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 14:23:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7DFAE64C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 14:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 645D74C13AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:22:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F2A1BC0060
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8E3296160;
-	Tue, 24 Jun 2025 12:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ACB29B200;
+	Tue, 24 Jun 2025 12:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZDNdCMeX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xr2OQc0R";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZDNdCMeX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xr2OQc0R"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n0U/Rwrx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2041.outbound.protection.outlook.com [40.107.93.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD0226A1BE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 12:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750767502; cv=none; b=SV6O8yTBqpJAeJ10B9FEsMKGLRqROWP335xzXH0iDkenbyRIZTIegeWd78K5nzP5GHTTOnM0QvYHI0raj+2VutH8cTiBkJ4U98IBwXsCuFFOaGrmQVLt+znXW86u60j+SyCOV1WVUw1dEeVXQw0HAEB7lszKjywVVQX9uS7O0do=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750767502; c=relaxed/simple;
-	bh=DndF2H368R7JPID8W7hu9MaxsrUk7MRsMn8Na9FB5fM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rVoT61hsucBMNhYuR8fnYEBHH3P2E3/DTaQNgnjAQMlOn8t02zr4OWx+PrUYC3+xltEOWpZ4OxlwhHTa7fPm5JbKs+vt6jSH6YwhCxfG1Mbrsebf0sp3ZJRW8pogwssZBeSfv7xRYxJ3+cypd8rho8pZg9W60Nc+EtmvEpsZQ1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZDNdCMeX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xr2OQc0R; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZDNdCMeX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xr2OQc0R; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9988421196;
-	Tue, 24 Jun 2025 12:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750767498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oA3tRkj5bq2qJ1oYxd2kuL6Q5137FwnQ2VWJigyeHsA=;
-	b=ZDNdCMeXK/1oA+bef4O2b+2HxklGaRVCsy2kSfRa5ucgAySjN7S6x7HNrNC4pMMuoljttS
-	ACQdOe9mF1WcJMmAU9ft37YLfrQbRj03sN/lk2xGSkDrbAZF8GfnGqHJdKJ8rtF8+wmJ/3
-	jglvkWRB1dEPMUJ5VSn1aVDyJyd6fg4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750767498;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oA3tRkj5bq2qJ1oYxd2kuL6Q5137FwnQ2VWJigyeHsA=;
-	b=xr2OQc0RWNXx0QTWhShMnXJHZMJB68lXh2PptWgP3oFy3q1pxfl8F4KFCEWKM2pLltBm9t
-	GQqvjJuzdhVACiAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750767498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oA3tRkj5bq2qJ1oYxd2kuL6Q5137FwnQ2VWJigyeHsA=;
-	b=ZDNdCMeXK/1oA+bef4O2b+2HxklGaRVCsy2kSfRa5ucgAySjN7S6x7HNrNC4pMMuoljttS
-	ACQdOe9mF1WcJMmAU9ft37YLfrQbRj03sN/lk2xGSkDrbAZF8GfnGqHJdKJ8rtF8+wmJ/3
-	jglvkWRB1dEPMUJ5VSn1aVDyJyd6fg4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750767498;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oA3tRkj5bq2qJ1oYxd2kuL6Q5137FwnQ2VWJigyeHsA=;
-	b=xr2OQc0RWNXx0QTWhShMnXJHZMJB68lXh2PptWgP3oFy3q1pxfl8F4KFCEWKM2pLltBm9t
-	GQqvjJuzdhVACiAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8906813A24;
-	Tue, 24 Jun 2025 12:18:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5CpxIYqXWmihUwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 24 Jun 2025 12:18:18 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C73FDA0A03; Tue, 24 Jun 2025 14:18:17 +0200 (CEST)
-Date: Tue, 24 Jun 2025 14:18:17 +0200
-From: Jan Kara <jack@suse.cz>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org, neil@brown.name
-Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-Message-ID: <htn4tupeslsrhyzrqt7pi34tye7tpp7amziiwflfpluj3u2nhs@e2axcpfuucv5>
-References: <20250617061116.3681325-1-song@kernel.org>
- <20250617061116.3681325-2-song@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F740291C12;
+	Tue, 24 Jun 2025 12:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750767532; cv=fail; b=KBfANmCYYjKAAyijFpsWoD6SgjwFhNaftWmKsDUikgV7xqQR7oxtqs16WUOWK+K7kls7hGCF0VG8PN2NH/QXzry46A0n0ny3TlWTN46cVbVvSk/cdqlaXz1/z6TKEtuVJso87RqurTixWVyZV/Y7KuYGPCDIi63+TxnwVP5WiOw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750767532; c=relaxed/simple;
+	bh=1Qo67fdqmZDVErn/XWSuVe62ffGcImmuZcac1ygst+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lHQ8vwVRRtATjrKpRiAseZvTn+hQ2OvWUNcD3gBwAQQyHdmEfeLetdYEcOb9Q5ruJlExMJrB7S7qGzm9pIUO76ZPA0VYeVxPFmTI8UuNfIBAf/m7PVRvLwNg37dA16ahsMyqFmq1lMkhxwCNPrbPlxJFKcIh5qQqo53M9HgRv1k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n0U/Rwrx; arc=fail smtp.client-ip=40.107.93.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MK0T7K9ikcJsj+rcAwwUzdJbWSi6a3DJTVu77wONjkf10ZRLfM5Meel7LMM3AvS9IpElvlnMvQNZ33Jp3gI7xClpjt016vy/qCP7xUE/xbu4eyDXHXUcqIG3xtrqMsuk46+Ml7JwZHvD1KhbgU/1JLAFHORxGCooib2xREWmAimnbS1a/XAhps77jzZZtpunyf1j84z+n5gbLJeM7MZaRQ2pvPHUN2B8a3rY531OlwmNm1rJETLJJyG4nb/cZkgCSqUhCHtsF9jgUi8uexD6VEbON5400yffv1CPPp5KTdLBLKktXzmOira0Rs0F1AuPPoWL8X6n4nRP3isRkOgVfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fLha9285DVj7/grm5DMhOghm33y+WqnhAjlZVpKBwaE=;
+ b=XMtwuT84LIk6n1zPJt1QKzWoQPk9Le1yUWVv0pCkkKwmTqJ9oPDn3WDJ7LF5x/xwSB3lvoODv10+1Y63w/oRW9x2pquSH7vf45yMbPiBJgubkq5HWWS9u5MULtUn+uKfLr1xuerMODR4gWHCwtj4bJJvkkEIZ50zQ6jKWuNxpUJfu7Kw6R24EObvQQgeGYD5Xx20uvUUktUkGWvdsJRWFcDjBhl8USf9Us7C7tBUJDt5CUo3yr1QriAWMFBGS7tbX0+VjOxkLSmXyFodEGWsyB5m1l1ieiXaXyD+thlJGtDpZZyC2onasIVm515eol27MBnGQoOGIKO1jDdxhBF9nQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fLha9285DVj7/grm5DMhOghm33y+WqnhAjlZVpKBwaE=;
+ b=n0U/RwrxGhHyOnOhVhdImoo6yJ1wuoEarn7N6dQFru63kMO8OCpv67IOX79pwh1/JllS3xRAkILyFvYNX6U+w+hbvTcnt3XMgY4cfCm1BMBwPe86D2h/KiCXg7nN4zsCkGVg0VqW3vkZbRcfUwOCSYg/dDyu5Sjt36fk9I4NwJD0PFiGI8B64EAwfizrz9PBnSN7vE9Jy3VrbCGWYaQ5gI2YJFrjcQxRuiJr1/kmGnlWmVSBid5fPIW+s/BpzJ0KZ8WQv7sA+sP8SaqSPoE+SiztodhOIT81Z8AyEik2zrRmPUaCAm8JN0icONtn1NoeJE1gPRu7SSHoObKVExYX3w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CH3PR12MB7594.namprd12.prod.outlook.com (2603:10b6:610:140::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Tue, 24 Jun
+ 2025 12:18:48 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8835.027; Tue, 24 Jun 2025
+ 12:18:48 +0000
+Date: Tue, 24 Jun 2025 09:18:46 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Mina Almasry <almasrymina@google.com>, willy@infradead.org,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, netdev@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
+	Logan Gunthorpe <logang@deltatee.com>
+Subject: Re: How to handle P2P DMA with only {physaddr,len} in bio_vec?
+Message-ID: <20250624121846.GE17127@nvidia.com>
+References: <aFlaxwpKChYXFf8A@infradead.org>
+ <2135907.1747061490@warthog.procyon.org.uk>
+ <1069540.1746202908@warthog.procyon.org.uk>
+ <165f5d5b-34f2-40de-b0ec-8c1ca36babe8@lunn.ch>
+ <0aa1b4a2-47b2-40a4-ae14-ce2dd457a1f7@lunn.ch>
+ <1015189.1746187621@warthog.procyon.org.uk>
+ <1021352.1746193306@warthog.procyon.org.uk>
+ <1098395.1750675858@warthog.procyon.org.uk>
+ <1143687.1750755725@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1143687.1750755725@warthog.procyon.org.uk>
+X-ClientProxiedBy: YT2PR01CA0002.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:38::7) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617061116.3681325-2-song@kernel.org>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com,maowtm.org,brown.name];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CH3PR12MB7594:EE_
+X-MS-Office365-Filtering-Correlation-Id: 18e0fdf2-809e-4873-d7a0-08ddb319457e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6AgfjJusFXxPQoqD+WyHjkifvm3L12grtITrjA3I4n4rTpe5Z0Htpm67G181?=
+ =?us-ascii?Q?oaYwYj17D5X6Tl0/dtQ5KyrJNafOZJ4wIjS7rgFvGVQoh3Aw4FewRimLJqNR?=
+ =?us-ascii?Q?DZRvLzkUEdCB5RDED/qjpCx8mXiudru7QKf2jtOZWOmqihbRBqeZjs+TrSJD?=
+ =?us-ascii?Q?RgNGIAKp74g9t9+OA2habq/o0rp4pz85NsMn/uzBHNUUoNmRvcBWFDgJ+DJT?=
+ =?us-ascii?Q?BDA+OMP/ZHkABL8xMm1v7+aGd1iQO4EY+3ejzNXGK8xADK6uFCO+LTwvdymc?=
+ =?us-ascii?Q?bnRzQzA4sAF3TwFQitkfSsidpCSZUirOi15a5xUMAF5uTryVS9KtqvM0bl8u?=
+ =?us-ascii?Q?qeKVo8OCumM4W6zldNo0VXyJ0o3oT5Z7Zj02XXYS3QnvOyHQHB5G/Fh2BByM?=
+ =?us-ascii?Q?1sQr0iLCeljplLYZ5GPDelt1p9Td53Fwr2qRrENNZ0krX94zfqUtyvwHV3L2?=
+ =?us-ascii?Q?LW0DWbxiKi+St4HGaFopToIEbXv74oJECnPs+fazH/n49MAkbNWlebr03fuc?=
+ =?us-ascii?Q?Umy13/y8NaIJOnl+4cTpCWAX83CTIT6C5kwY1WLUCZ3+svdpRgtw+gHOagt0?=
+ =?us-ascii?Q?FxZg55/JbEoG2o1ZEBBhwed/ELXkHGKvgw1MSvOQM303okgt29vQr01cr958?=
+ =?us-ascii?Q?yym9+ibRVK+pOKAH7fODA3qOq/9jHPqBZ6RGLTNFBfcnkSn5xdupbIkGuCcM?=
+ =?us-ascii?Q?svCd6nbaILWpaUwAxTerlxA+itvXpvHe8Q4ox2rTGpqa1zOoBFOsFQ23XaWU?=
+ =?us-ascii?Q?hPUJa8tMourcNBv+sfjMclvYod71gcq8QNIFFYnhO0l4h4pU2PwNkMl3bsZg?=
+ =?us-ascii?Q?VyF/N9ql7vBdIfJ22CRJp3Ox+22EWFlJm4CzFQpBgTk5ZSP+OBnKlxUFH6hC?=
+ =?us-ascii?Q?1BckV62Ehakz6XUYBpggIDVFACIL0VcuLS8eBNmJa292MvBuDi9sbbafyYT7?=
+ =?us-ascii?Q?UuEaXVA36YGO4Jo+du7mz3ecD6kZgUh9JwpAWBqj+aU5wl4PRTXtAW0ZS79W?=
+ =?us-ascii?Q?RAspEeRkWvLt+1/KrDsZR8y+GKWP3iJ+Otq7Qc/2NDsCHnAvS3yTzT3XIouQ?=
+ =?us-ascii?Q?mNNKes+ljkO4naCE3C0lriuPG9TNSX5DBXwzSFC14B1+/kqEpc8orH62KNYH?=
+ =?us-ascii?Q?vmlailsp6GlrUTHKfrRJIiYa0ZTUVB/psxwmdoJcqVRYKpqQpVWPB4zuETSL?=
+ =?us-ascii?Q?6daeeMm/nJVGty5VfpEFPJPz3CKRQfqkp6sa5iLoB9pNZxKVN0pN1PB2MpMZ?=
+ =?us-ascii?Q?5erjlLFowVn14xmZrS39p/3nyCcXU1fDv+8PNQLBaa2s1rN5Go5A/8yrFRc/?=
+ =?us-ascii?Q?TmPpqwGcN8z27pzXWl91F9m7iEhdvnLsSYqfmk8o9JGIUsTIspgAXFeljl4H?=
+ =?us-ascii?Q?ga8amcwNEaWA7hytEkSnGQdzZ18lX3xkrIM5X3CRCprSy5Fx+LkDOh+u3j+X?=
+ =?us-ascii?Q?u3Lt8HStgIY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lrauL5sTMNfAZKnBxcMSyHdCftAi4mDZ1EyUVKDIKsjO6UANIj8bOl009csP?=
+ =?us-ascii?Q?6ftKvehLzF9zoTB5r3GeojhSfm/unsIVPctdHJ28MYd6VXTSfSVNxrXIgvSP?=
+ =?us-ascii?Q?swyyWKWBocEY5be99RQmbFmhDTLJHBlazXp04CO0zb+Hc7fHuTQG3/Dth1i4?=
+ =?us-ascii?Q?GEsVNG0YVo0Slh8OmmTVvgcjbil0NvnCsqgwS5z6FlEVRHoOUg09Y2yOQ5dV?=
+ =?us-ascii?Q?e4zAAj8/VS1tWAJkseSo8LxolDoBuA+F/1CrimIlvjJ+/+Qoss+5BEJUEI5a?=
+ =?us-ascii?Q?oinu3Y681b0DSjHiYhHyrM8ezfPbC8KdCYgtHtOXLxWjNP6F2PuzPeia1HJZ?=
+ =?us-ascii?Q?2AEYjBrHKEBOPnhHaB/XQHoMR8hn7NNBZgfk2iVQfw4hqpgrjGqJtBYDllUC?=
+ =?us-ascii?Q?+yye1pAycfqaC0KW/TyRr2Mjw2jftw1qjoFHfCZG6GVzVpX5opl7PSB8oL2W?=
+ =?us-ascii?Q?7H7HL/t0yvdxK+EFakzpFEqepObzyxEWIHkjtO8+GpDbkT2v1XvEB4e/Wi8l?=
+ =?us-ascii?Q?alDD5v3HJFJ4U8ZSbjXVRzHXh9IKa3kJtMcpOeWuPtHH6hdaAZxwR+WrH2Vo?=
+ =?us-ascii?Q?vwhQ8tvo3dA7plUAeNei3CyRxVjrGLM55YMjhsGMsiwnfGRxRp4BOArslaDj?=
+ =?us-ascii?Q?ngoLPhXbcBepm8FSVxilKnqkH0i7+T331bwW5Ej0tkI+2J9FM2ikyPr6insE?=
+ =?us-ascii?Q?E9NJCu0Qm0ebBkCNbwr6G8hfnGsvMcqHxOcT4HGQVxWrWI/We7Ge+eM6hZhC?=
+ =?us-ascii?Q?aafjZpjE3e0b60jbsBMaX/weHFTOcycDhMQoZiln4xUumfuidrwuehQLUvox?=
+ =?us-ascii?Q?3yi6AIYGTtcMFqfmJoDGytuyhuB2LcM72R3LtT90WopSv0NdPDBx6gKxPsfU?=
+ =?us-ascii?Q?cK6lHCsJ2Y55rooJITtw+I7Y70xblAGmmoiH990F50ccsgw8EZsZcdtofY61?=
+ =?us-ascii?Q?19mZcDHctAAsiCR2WWCjqFczTUF7u9FjRiDlm7ERUFIZZEg8tVzCtfvXVICj?=
+ =?us-ascii?Q?mR3s9N2J6OAPKA7DHbHWQX5vGeanznClNw8ImcXpZ/OymDS3fK5GZ9tpXYwx?=
+ =?us-ascii?Q?WZndIVso+QOhSUk3l3iEzeeAQVg3AHiLCLzHjT4IQN0iJMAjUF3vmCg6z4Fu?=
+ =?us-ascii?Q?zY83SXKASPytawboaHwK5qYwFHu0Y/W1FGQOvU1dkn3YvdMzzAwvAGBVA+U6?=
+ =?us-ascii?Q?I+1EKCn0jkmkzHp3EBp3KwwrPQ5/2oosl1+bqqGTid+1W7qPj83FpX6IjipB?=
+ =?us-ascii?Q?BJeSSXc65neYq3LhC6t0x+TvdesFw1XkRUJoiRXU/SY66htltJhW2Gq1F2Iq?=
+ =?us-ascii?Q?mAmHOa4F+825EDDksK80cwqcy4APCKk+krFTMa/EcvSltadGg3BQ7/lU/kvy?=
+ =?us-ascii?Q?baExxJtg5BtGUk94qK+f4vxs5ai3jZhyVeHi69LsHy0bsmyn6y5YzeBctAAL?=
+ =?us-ascii?Q?BvM0l155jIhNkvdQMHLfyui/ZeANDehGCZqh9zNi7fs2UQMYo4PPxTOJbU1Q?=
+ =?us-ascii?Q?6L0c2RkjfQzuUi/KfSnCheLONvcemWc+jcttfzFFbpb5SVzqZUA7kXxv/JKF?=
+ =?us-ascii?Q?dRpugoxbNctZMk68CcY=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18e0fdf2-809e-4873-d7a0-08ddb319457e
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 12:18:48.2290
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MhlDdHmuo5FZmOtXQ8+vWWKgyJRWFRWpG3oKNrlM3v6AlqhvDJ2KsqecejrqZd28
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7594
 
-On Mon 16-06-25 23:11:12, Song Liu wrote:
-> This helper walks an input path to its parent. Logic are added to handle
-> walking across mount tree.
+On Tue, Jun 24, 2025 at 10:02:05AM +0100, David Howells wrote:
+> Christoph Hellwig <hch@infradead.org> wrote:
 > 
-> This will be used by landlock, and BPF LSM.
+> > On Mon, Jun 23, 2025 at 11:50:58AM +0100, David Howells wrote:
+> > > What's the best way to manage this without having to go back to the page
+> > > struct for every DMA mapping we want to make?
+> > 
+> > There isn't a very easy way.  Also because if you actually need to do
+> > peer to peer transfers, you right now absolutely need the page to find
+> > the pgmap that has the information on how to perform the peer to peer
+> > transfer.
 > 
-> Suggested-by: Neil Brown <neil@brown.name>
-> Signed-off-by: Song Liu <song@kernel.org>
+> Are you expecting P2P to become particularly common?  
 
-Looks good to me. Feel free to add:
+It is becoming common place in certain kinds of server system
+types. If half the system's memory is behind PCI on a GPU or something
+then you need P2P.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-One note below:
-
-> -static struct dentry *follow_dotdot(struct nameidata *nd)
-> +/**
-> + * __path_walk_parent - Find the parent of the given struct path
-> + * @path  - The struct path to start from
-> + * @root  - A struct path which serves as a boundary not to be crosses.
-> + *        - If @root is zero'ed, walk all the way to global root.
-> + * @flags - Some LOOKUP_ flags.
-> + *
-> + * Find and return the dentry for the parent of the given path
-> + * (mount/dentry). If the given path is the root of a mounted tree, it
-> + * is first updated to the mount point on which that tree is mounted.
-> + *
-> + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new
-> + * mount, the error EXDEV is returned.
-> + *
-> + * If no parent can be found, either because the tree is not mounted or
-> + * because the @path matches the @root, then @path->dentry is returned
-> + * unless @flags contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
-> + *
-> + * Returns: either an ERR_PTR() or the chosen parent which will have had
-> + * the refcount incremented.
-> + */
-
-The behavior with LOOKUP_NO_XDEV is kind of odd (not your fault) and
-interestingly I wasn't able to find a place that would depend on the path
-being updated in that case. So either I'm missing some subtle detail (quite
-possible) or we can clean that up in the future.
-
-								Honza
-
-> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
->  {
-> -	struct dentry *parent;
-> -
-> -	if (path_equal(&nd->path, &nd->root))
-> +	if (path_equal(path, root))
->  		goto in_root;
-> -	if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
-> -		struct path path;
-> +	if (unlikely(path->dentry == path->mnt->mnt_root)) {
-> +		struct path new_path;
->  
-> -		if (!choose_mountpoint(real_mount(nd->path.mnt),
-> -				       &nd->root, &path))
-> +		if (!choose_mountpoint(real_mount(path->mnt),
-> +				       root, &new_path))
->  			goto in_root;
-> -		path_put(&nd->path);
-> -		nd->path = path;
-> -		nd->inode = path.dentry->d_inode;
-> -		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
-> +		path_put(path);
-> +		*path = new_path;
-> +		if (unlikely(flags & LOOKUP_NO_XDEV))
->  			return ERR_PTR(-EXDEV);
->  	}
->  	/* rare case of legitimate dget_parent()... */
-> -	parent = dget_parent(nd->path.dentry);
-> +	return dget_parent(path->dentry);
-> +
-> +in_root:
-> +	if (unlikely(flags & LOOKUP_BENEATH))
-> +		return ERR_PTR(-EXDEV);
-> +	return dget(path->dentry);
-> +}
-> +
-> +/**
-> + * path_walk_parent - Walk to the parent of path
-> + * @path: input and output path.
-> + * @root: root of the path walk, do not go beyond this root. If @root is
-> + *        zero'ed, walk all the way to real root.
-> + *
-> + * Given a path, find the parent path. Replace @path with the parent path.
-> + * If we were already at the real root or a disconnected root, @path is
-> + * not changed.
-> + *
-> + * Returns:
-> + *  0  - if @path is updated to its parent.
-> + *  <0 - if @path is already the root (real root or @root).
-> + */
-> +int path_walk_parent(struct path *path, const struct path *root)
-> +{
-> +	struct dentry *parent;
-> +
-> +	parent = __path_walk_parent(path, root, LOOKUP_BENEATH);
-> +
-> +	if (IS_ERR(parent))
-> +		return PTR_ERR(parent);
-> +
-> +	if (parent == path->dentry) {
-> +		dput(parent);
-> +		return -ENOENT;
-> +	}
-> +	dput(path->dentry);
-> +	path->dentry = parent;
-> +	return 0;
-> +}
-> +
-> +static struct dentry *follow_dotdot(struct nameidata *nd)
-> +{
-> +	struct dentry *parent = __path_walk_parent(&nd->path, &nd->root, nd->flags);
-> +
-> +	if (IS_ERR(parent))
-> +		return parent;
->  	if (unlikely(!path_connected(nd->path.mnt, parent))) {
->  		dput(parent);
->  		return ERR_PTR(-ENOENT);
->  	}
-> +	nd->inode = nd->path.dentry->d_inode;
->  	return parent;
-> -
-> -in_root:
-> -	if (unlikely(nd->flags & LOOKUP_BENEATH))
-> -		return ERR_PTR(-EXDEV);
-> -	return dget(nd->path.dentry);
->  }
->  
->  static const char *handle_dots(struct nameidata *nd, int type)
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 5d085428e471..ca68fa4089e0 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -85,6 +85,8 @@ extern int follow_down_one(struct path *);
->  extern int follow_down(struct path *path, unsigned int flags);
->  extern int follow_up(struct path *);
->  
-> +int path_walk_parent(struct path *path, const struct path *root);
-> +
->  extern struct dentry *lock_rename(struct dentry *, struct dentry *);
->  extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
->  extern void unlock_rename(struct dentry *, struct dentry *);
-> -- 
-> 2.47.1
+> Do we actually need 32 bits for bv_len, especially given that MAX_RW_COUNT is
+> capped at a bit less than 2GiB?  Could we, say, do:
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  	struct bio_vec {
+>  		phys_addr_t	bv_phys;
+>  		u32		bv_len:31;
+> 		u32		bv_use_p2p:1;
+>  	} __packed;
+> 
+> And rather than storing the how-to-do-P2P info in the page struct, does it
+> make sense to hold it separately, keyed on bv_phys?
+
+I though we had agreed these sorts of 'mixed transfers' were not
+desirable and we want things to be uniform at this lowest level.
+
+So, I suggest the bio_vec should be entirely uniform, either it is all
+CPU memory or it is all P2P from the same source. This is what the
+block stack is doing by holding the P2P flag in the bio and splitting
+the bios when they are constructed.
+
+My intention to make a more general, less performant, API was to copy
+what bio is doing and have a list of bio_vecs, each bio_vec having the
+same properties.
+
+The struct enclosing the bio_vec (the bio, etc) would have the the
+flag if it is p2p and some way to get the needed p2p source metadata.
+
+The bio_vec itself would just store physical addresses and lengths. No
+need for complicated bit slicing.
+
+I think this is important because the new DMA API really doesn't want
+to be changing modes on a per-item basis..
+
+Jason
 
