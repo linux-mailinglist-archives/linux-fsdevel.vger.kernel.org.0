@@ -1,175 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-52710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AC4AE5F8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:36:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC2FAE5FBB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA22B189DEFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:37:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47734A2ADF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B330925E823;
-	Tue, 24 Jun 2025 08:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B642626B2AC;
+	Tue, 24 Jun 2025 08:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRy59Od4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B02125D8E9;
-	Tue, 24 Jun 2025 08:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD93239072;
+	Tue, 24 Jun 2025 08:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750754172; cv=none; b=NPn00nxBGMF1p8/6Ow7iFrFJgyotOmCJg7fGUpgwpqThIeXuUlKfGDtqIPK2Rnp5mx91bbHJPQByFQ1uyw01Ce8p6ghmuccjBU7tdgGO36aLjQTtwrTy7KfwriSsa7Ba+T4QK/6ZieisqNFkr3I+EgD/wlRsw+a4ypD9Ep0+PeQ=
+	t=1750754648; cv=none; b=ah5lw3H5w1o5FMijEI4Yb9AkqMHi4jqaCS7Q5sW4iKace0fuWoSzQWU+xHyXQ01kBw0pFuFqWeygh6QS6qncZjnrtCRUE4hE3LgphxY92prTb0Rsv3mIytvSsWlScxAlNhuRtPjH26wEEpn0a7tyd8Nr4uCJCz/Y4DgJe+fol2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750754172; c=relaxed/simple;
-	bh=Nx9IrRPwmqoCPc33na9M+Lr3g/VXJl7D7gv1DWymz98=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bF2FklsQJxHusQWSCjhdnHdDvrFmzf8RLUNKZVrvy/xmxJiBKBSSr/HmONhwfQvf7G4+EPTvHRUI45k54uXAQIX8TGg4r+Lb9fjh2OcgoK1Hl8Mt5/UEaf36d6yJJNmLLDoXyh1RAvS/aQG92b+CHlT8K1kAK9QBFF6aLgPRNSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from inp1wst086.omp.ru (81.22.207.138) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 24 Jun
- 2025 11:35:58 +0300
-From: Dmitriy Privalov <d.privalov@omp.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Dmitriy Privalov <d.privalov@omp.ru>, Miklos Szeredi <miklos@szeredi.hu>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH v2 5.10/5.15 3/3] fuse: don't increment nlink in link()
-Date: Tue, 24 Jun 2025 11:35:12 +0300
-Message-ID: <20250624083512.1386802-3-d.privalov@omp.ru>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250624083512.1386802-1-d.privalov@omp.ru>
-References: <20250624083512.1386802-1-d.privalov@omp.ru>
+	s=arc-20240116; t=1750754648; c=relaxed/simple;
+	bh=SIsgi3afey44s25VI1BTV0rs+6t0jfF1bwFGJw+D9ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=elZmSNrGgkMArYGkSdoNx65K5JWKhWSxEL96Sxvj1bQe96EaOldbNmEpm0fi9n4Dq2Kk5DgkSAv2HWbfJe5g02ztO9qS3R7EuCpnssKqck258LT+EuzwAPTLiOtnQ1+SfuYc15ODEyVLnCZYFvSF500IEsZdkU4x5fOVkd4AbbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRy59Od4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A439C4CEE3;
+	Tue, 24 Jun 2025 08:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750754647;
+	bh=SIsgi3afey44s25VI1BTV0rs+6t0jfF1bwFGJw+D9ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JRy59Od4UKvPAbkhyrtaZvicuZmVS2az4oISbzxVl8/AKzhJLPMwS4X54vIpn+WZb
+	 fUtZpimFOJbprq0jXyybDbBfoLPd+0Qtti9H+OTwJqsMWqo0spW6EhZ91kqHKs3eyf
+	 BAzFwajg48Me/SrLr2Ji5x6bMjKW0jce4Knr2qyvHdz2xJaRVX25szqBVQ1EX0PBHB
+	 9WGpaiXirmxn1akyTlbPT33ECk4brv98N28truKgqpej01Koj7HGngjWjOmtuxss8g
+	 jGYYx9jsdruDb1IEtQ5TGm+g13PFUwCxwkZFgTuqvNcQs7V6PuMBUw7UM78gPh38lK
+	 6aVM5iQUPoxIw==
+Date: Tue, 24 Jun 2025 10:44:03 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [fs?] general protection fault in pidfs_free_pid
+Message-ID: <20250624-fratze-fahrgast-a75e524f3ea6@brauner>
+References: <68599c8e.a00a0220.34b642.000f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 06/24/2025 08:21:21
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 194289 [Jun 24 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: d.privalov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 62 0.3.62
- e2af3448995f5f8a7fe71abf21bb23519d0f38c3
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.22.207.138:7.1.2;inp1wst086.omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/24/2025 08:23:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/24/2025 7:08:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <68599c8e.a00a0220.34b642.000f.GAE@google.com>
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+On Mon, Jun 23, 2025 at 11:27:26AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    5d4809e25903 Add linux-next specific files for 20250620
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=150ef30c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=58afc4b78b52b7e3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=25317a459958aec47bfa
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a5330c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c9f6bc580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/16492bf6b788/disk-5d4809e2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/7be284ded1de/vmlinux-5d4809e2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/467d717f0d9c/bzImage-5d4809e2.xz
+> 
+> The issue was bisected to:
+> 
+> commit fb0b3e2b2d7f213cb4fde623706f9ed6d748a373
+> Author: Christian Brauner <brauner@kernel.org>
+> Date:   Wed Jun 18 20:53:46 2025 +0000
+> 
+>     pidfs: support xattrs on pidfds
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a1b370580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a1b370580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13a1b370580000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com
+> Fixes: fb0b3e2b2d7f ("pidfs: support xattrs on pidfds")
 
-commit 97f044f690bac2b094bfb7fb2d177ef946c85880 upstream.
-
-The fuse_iget() call in create_new_entry() already updated the inode with
-all the new attributes and incremented the attribute version.
-
-Incrementing the nlink will result in the wrong count.  This wasn't noticed
-because the attributes were invalidated right after this.
-
-Updating ctime is still needed for the writeback case when the ctime is not
-refreshed.
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Dmitriy Privalov <d.privalov@omp.ru>
----
-v2: Add 371e8fd02969 and cefd1b83275d to backport
-
- fs/fuse/dir.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index f8b444674c14..08ede7f7d8dc 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -807,9 +807,8 @@ void fuse_flush_time_update(struct inode *inode)
- 	mapping_set_error(inode->i_mapping, err);
- }
- 
--void fuse_update_ctime(struct inode *inode)
-+static void fuse_update_ctime_in_cache(struct inode *inode)
- {
--	fuse_invalidate_attr(inode);
- 	if (!IS_NOCMTIME(inode)) {
- 		inode->i_ctime = current_time(inode);
- 		mark_inode_dirty_sync(inode);
-@@ -817,6 +816,12 @@ void fuse_update_ctime(struct inode *inode)
- 	}
- }
- 
-+void fuse_update_ctime(struct inode *inode)
-+{
-+	fuse_invalidate_attr(inode);
-+	fuse_update_ctime_in_cache(inode);
-+}
-+
- static void fuse_entry_unlinked(struct dentry *entry)
- {
- 	struct inode *inode = d_inode(entry);
-@@ -987,24 +992,11 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
- 	args.in_args[1].size = newent->d_name.len + 1;
- 	args.in_args[1].value = newent->d_name.name;
- 	err = create_new_entry(fm, &args, newdir, newent, inode->i_mode);
--	/* Contrary to "normal" filesystems it can happen that link
--	   makes two "logical" inodes point to the same "physical"
--	   inode.  We invalidate the attributes of the old one, so it
--	   will reflect changes in the backing inode (link count,
--	   etc.)
--	*/
--	if (!err) {
--		struct fuse_inode *fi = get_fuse_inode(inode);
--
--		spin_lock(&fi->lock);
--		fi->attr_version = atomic64_inc_return(&fm->fc->attr_version);
--		if (likely(inode->i_nlink < UINT_MAX))
--			inc_nlink(inode);
--		spin_unlock(&fi->lock);
--		fuse_update_ctime(inode);
--	} else if (err == -EINTR) {
-+	if (!err)
-+		fuse_update_ctime_in_cache(inode);
-+	else if (err == -EINTR)
- 		fuse_invalidate_attr(inode);
--	}
-+
- 	return err;
- }
- 
--- 
-2.34.1
-
+That is fixed on vfs-6.17.pidfs. :)
 
