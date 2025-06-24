@@ -1,171 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-52746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08F9AE62EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C33AE6317
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D74573B0208
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1A444029E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DDA28540E;
-	Tue, 24 Jun 2025 10:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D143B28689C;
+	Tue, 24 Jun 2025 10:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNhdahwb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEoN6U56"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3408223704;
-	Tue, 24 Jun 2025 10:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B56E27AC21;
+	Tue, 24 Jun 2025 10:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750762418; cv=none; b=oHLr1+0NW6A8qY/PtPqWHyn+Y7JELZDS+XiihWzhDDs3Pgl/vVc/oUtU2LnezmYehReeE9hohlXIvQ3nfsFwj9H4PzL6GAxKNT2OqNl/jAsvji6etdK63ljOFPdVVho5LB/zNnActgKnrKL/uruvoJL54mw6cS8/uQJQRaxQPE0=
+	t=1750762642; cv=none; b=QW5U+bkf1+qeuQEjpo09EqZqBskex6C1/qc94J8RI/2HUzb06D7Lvo2Q+TRFttLCvoVUdbxeQc3810il48V9TCsjc+huqwZ/0z3/rrmeXaQwErLreQke4G2TZimruyY5MvXBu36TaN1FqJ0L0ojNGn5SLC7X8V00Be6ydE6r/zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750762418; c=relaxed/simple;
-	bh=45nk+8zGQtLrYGgqO86tfw2+k3rD/oNMKk9MezrSvJA=;
+	s=arc-20240116; t=1750762642; c=relaxed/simple;
+	bh=zPSKwoum7a6hQTTc/ADw+Y9+hrLT3Y2gJRrsfEeQU0I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e7E24Mjl0nspK7UGAQilW2AFGn3ykWn9u6UlHWeA+EI0HrZLs0XTsZl940pORQ22cBzpz/+f3zSDRQ9Yqn25JzBNhDCWavDElZyQMO9jpUlMUTdWtBdh3UBJlWO3LebHVeaf1ut/zxdH/X9kk6OUy4B4OwshSaqVUvKH35DLdxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNhdahwb; arc=none smtp.client-ip=209.85.218.53
+	 To:Cc:Content-Type; b=nO0d9u2EsySINB8al1phGneWTpHTxOee3T+JlfLcvnIrhyKV6KEWBW1hzP/VOV6CRI3MPxpIsrM8pcYPc4MaVC14T6JN8jz6xl7dbgBZH13S7yJ1fWCT/bpLaGveYU8tBWQXGgxUA1Hm5u9g5MPA0NFZgvQSwLW6OoHVBBFiB6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEoN6U56; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-acb5ec407b1so862499866b.1;
-        Tue, 24 Jun 2025 03:53:35 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-addcea380eeso852423666b.0;
+        Tue, 24 Jun 2025 03:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750762414; x=1751367214; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750762639; x=1751367439; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1+7PumorwZUGjFOmFAYkRbYRUnDcMqo0iY74xjCwez0=;
-        b=fNhdahwb+jCAq1CLBDzZx0DB5ujOdpH/4J24JKHPm4vuVcrpNjSqX72h28Eohlv+xB
-         UNIgZkGg5J/YBrniM95vAIMueARQfeony2cjlA8k+6LJPgLpSvUMtGkqjNcPIzPnt3qX
-         CoJR0StR0MoU+k0uz1zsZxH3glqpeimdc7Li7yJ0P26Koh/eaA9AEMNKdKF2BPI+Pi+4
-         1Mz2j859e+FHZVtu1kR6nCr/J58vfGsnm3b827W87YbcJPdGHRX6SjWXxXj+pnucgv/y
-         NsZRhHKNqtDSTi0ZQZ06irZV3iorMOpLF08h7v9ShcmkrVOFEVcGiVIiUYRysRerR4X/
-         g4wA==
+        bh=tLq1L0EWWU7GtpochT1z4J5eWTxXJCSIvQ/2JaOs7Og=;
+        b=aEoN6U56LK+34gglgm4po+n670nr8A6G7hWQFdaCTKC/6Ti6izTY2Ea/gneMOkD6AS
+         ryfKcPgEPowPX8a0WORz3RdopkNp6VmGGDE3P6iLRQgEyZbwQC1UpX7FWnP2tUyyiiaN
+         6nAlDvFiI+sklKW2NI60es/BtTrep6dzArsJgjDmXELzrzCVowfItxTw23Y1hYFkbLgp
+         IQeFaY+BfKAjMxi81odO7DZJ03JhF1gOasNfbvyAuc+zDP+0R56ifhm5QkaNUjE6aXPs
+         gVGTip2n7l5NoIrROgoeDDVJ5nnCRbih5Ifkzav+XbR8glXV/6xi51wqYS/6SivY0dse
+         Z+oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750762414; x=1751367214;
+        d=1e100.net; s=20230601; t=1750762639; x=1751367439;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1+7PumorwZUGjFOmFAYkRbYRUnDcMqo0iY74xjCwez0=;
-        b=VjYUJ+LYA38Q5ZJPotHEOwY59WOxihYsCNi9skCk/q7EyU2jn4cIddoi0SeP7Ovqti
-         Ay3+9Djndaxjzc9oInaVooawNEkwT4OgEKdSuJRHXMssOxY6wFBaL0JBqCbpU47/NSH4
-         VnmmE/2S1JY6dsAM/4lFlUoUEvpw+KAgAm3rxP0gKD+EpXROhr5ZWZyTvWvkyyupiioe
-         5fSG9ox0fqSj8qJ0/YTMCy4aC53tq55tdMHR1SrT4/Gu3WOWtVUj6H2V277XSXcOKiHI
-         XgNmsQtGVpgGdsnTTZL+xWvDhSZKjmnay0wwkPetRxpxuBdWll4cs1aHC2s2nYc+VHFp
-         NrEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMwU5gf9LuTLLM65N2Sj6ensAX/uZpRorxsAxbrlZv35sBR5ozgS1J/Dn0LW/lQRj621B9VS4V+T5vFQVY@vger.kernel.org, AJvYcCXJpu+Xq4O7Qa9ylut5Lwn8/pLfMOnSZgzyGQmAX8fiKOKv+gyiUezG7oZZ/KvT0eHioAmshVUaQTPh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIoT74NDtHRObOxpzuyo0GQgYogbrLV9DYvGqf/qqxPO3w1Leg
-	g6tgpFc+TiwMEc8LUU7iEreBWKqm7kJlu/aEsgRo5heG1erD+XrwBaRjKMKYhZ7BiKvoV3JoVfY
-	1cQKMW8bTiDeh9JE9AlyZLJ2sYWwTddDktQLDqg0=
-X-Gm-Gg: ASbGnctDGoOmK0BIpylTlWSV1TPUDi8nks3Pqerbai0FT80JMlT6oxPY5VVZLt+4Ikf
-	rydauoC4M3Gh5LQ8c9j1tjURtyTTCiiFIdwFJzgq+kadZDyBwWHl/WxkOHOTeTEs37+oI3aVtoS
-	tTF4Uzla4J0/BJMy9Ou6YOioJrEsMtyqy25NDBA0NUrpA=
-X-Google-Smtp-Source: AGHT+IFDAQP8Gr0alp1oy6eXypbhr6+NZtMZ/Amf4pBvemt9dHBkiDBXsjQNPpbpd+L9aab94Bs2Uma6Xd9ypa+3Y70=
-X-Received: by 2002:a17:907:7ea1:b0:adb:229f:6b71 with SMTP id
- a640c23a62f3a-ae057927b27mr1377209766b.5.1750762413643; Tue, 24 Jun 2025
- 03:53:33 -0700 (PDT)
+        bh=tLq1L0EWWU7GtpochT1z4J5eWTxXJCSIvQ/2JaOs7Og=;
+        b=win1hoGFYHgFDosPUTS/jt2E7pts8+PmIovBaFiv2nY3KeY6KxG4WzxXb/b7Jkuia/
+         5OD5jVr9a4FiVgJMBFsJ/vZGEB2rDPnmbnHQUl/Arw2Xj6zNdqfHNwJytYCZ8HFtQInF
+         zuJ9KPZCIyrlOpLABSUuGwRyWoO4SMnO2+iZC3FxclO0UYhZP8sXR1X3GhqBGF3kP+c2
+         9gblTxl2bowW0/B1Grg9U80u5ioAmf6B6gHSrtwNR28IlfGBbEHB6Ei4C6S8PEKfngon
+         wupfekvvM9hbWQT4JHFcb7Bq+JhdEzo8R+PWS25FteHYKOqWELOGHIMVPvrVQtZMchdc
+         GMIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5PwisixG7bXtZMWrwBBm3NnvrFxLJt2s7Jf//VuEiVzZVVOWcYjukRBbRT2J1/h/7lJABMJO1DLWe@vger.kernel.org, AJvYcCW/SxURnSZG5J5uQUi6Vxhd3eBNXGyVpRA8q6gS8cTjRHKhBEs3QhkYqsVE0TXdHmVRezSjw07ghkC9SbzE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqtLazAqVkTjIi/OEgFDt3m2mnpwLoHaD38HcuDLFISbxtEjhs
+	iAvJsEDtwGw8agJpIPLvb2t65RKsmplCcHO+B9z8EI8g5ip/6gzUtz6QQLpbG2bcO/3IoncS3AY
+	TtYu3FOhaYjRRKWtu0ql7ScvljvctbyU=
+X-Gm-Gg: ASbGncuQsmVZ5wgwen1hqYD+lS2i99XlbmOthheXJxT5JbVXAgXpOBtAhbNx+P8R61K
+	ogSJavTqQSxk22okqE+XgKJCr0bjYEB2rMBHvqPFzDEsIrwiT9Ede9Ps36g/nh+eDkiqtTS7DWA
+	rj6MSqTFNYfJHcnBtgY5Hq2TvM6omPfWSbJeBakUcuTtg=
+X-Google-Smtp-Source: AGHT+IF4zKwKtgUMfJxfj4AdEvqHzih9vm1ZJ/MHTuIUOVpA0hjSXD40LPY+UrakkNzyIP5Mi0mEx+1OMGgw0Gh6pJI=
+X-Received: by 2002:a17:907:bd13:b0:ad8:a41a:3cc5 with SMTP id
+ a640c23a62f3a-ae057c81dacmr1495392166b.6.1750762638528; Tue, 24 Jun 2025
+ 03:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
- <20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org> <ng6fvyydyem4qh3rtkvaeyyxm3suixjoef5nepyhwgc4k26chp@n2tlycbek4vl>
-In-Reply-To: <ng6fvyydyem4qh3rtkvaeyyxm3suixjoef5nepyhwgc4k26chp@n2tlycbek4vl>
+References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org> <20250624-work-pidfs-fhandle-v2-6-d02a04858fe3@kernel.org>
+In-Reply-To: <20250624-work-pidfs-fhandle-v2-6-d02a04858fe3@kernel.org>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 24 Jun 2025 12:53:21 +0200
-X-Gm-Features: Ac12FXw02AGUYHrOEJ4tWkLqbQY3PrxSZ15ScMlYz3DyWHeshCuYbNKF8up_H-k
-Message-ID: <CAOQ4uxgB+01GsNh2hAJOqZF4oUaXqqCeiFVEwmm+_h9WhG-KdA@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] fhandle, pidfs: support open_by_handle_at()
- purely based on file handle
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
+Date: Tue, 24 Jun 2025 12:57:06 +0200
+X-Gm-Features: Ac12FXxmm3Kdx6wDCNrQJ5oXhv1Dfi4W95I-yKPcfzc5MOJki3O3kl-B06v8-o8
+Message-ID: <CAOQ4uxjiys1gHWy5eOMzwRqWzNJ-Tb8t+g3F0FFkmhVM3=ju0w@mail.gmail.com>
+Subject: Re: [PATCH v2 06/11] uapi/fcntl: mark range as reserved
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>, 
+	Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2025 at 11:30=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+On Tue, Jun 24, 2025 at 10:29=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
 >
-> On Tue 24-06-25 10:29:13, Christian Brauner wrote:
-> > Various filesystems such as pidfs (and likely drm in the future) have a
-> > use-case to support opening files purely based on the handle without
-> > having to require a file descriptor to another object. That's especiall=
-y
-> > the case for filesystems that don't do any lookup whatsoever and there'=
-s
-> > zero relationship between the objects. Such filesystems are also
-> > singletons that stay around for the lifetime of the system meaning that
-> > they can be uniquely identified and accessed purely based on the file
-> > handle type. Enable that so that userspace doesn't have to allocate an
-> > object needlessly especially if they can't do that for whatever reason.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/fhandle.c | 22 ++++++++++++++++++++--
-> >  fs/pidfs.c   |  5 ++++-
-> >  2 files changed, 24 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/fhandle.c b/fs/fhandle.c
-> > index ab4891925b52..54081e19f594 100644
-> > --- a/fs/fhandle.c
-> > +++ b/fs/fhandle.c
-> > @@ -173,7 +173,7 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const =
-char __user *, name,
-> >       return err;
-> >  }
-> >
-> > -static int get_path_anchor(int fd, struct path *root)
-> > +static int get_path_anchor(int fd, struct path *root, int handle_type)
-> >  {
-> >       if (fd >=3D 0) {
-> >               CLASS(fd, f)(fd);
-> > @@ -193,6 +193,24 @@ static int get_path_anchor(int fd, struct path *ro=
-ot)
-> >               return 0;
-> >       }
-> >
-> > +     /*
-> > +      * Only autonomous handles can be decoded without a file
-> > +      * descriptor.
-> > +      */
-> > +     if (!(handle_type & FILEID_IS_AUTONOMOUS))
-> > +             return -EOPNOTSUPP;
+> Mark the range from -10000 to -40000 as a range reserved for special
+> in-kernel values. Move the PIDFD_SELF_*/PIDFD_THREAD_* sentinels over so
+> all the special values are in one place.
 >
-> This somewhat ties to my comment to patch 5 that if someone passed invali=
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  include/uapi/linux/fcntl.h            | 16 ++++++++++++++++
+>  include/uapi/linux/pidfd.h            | 15 ---------------
+>  tools/testing/selftests/pidfd/pidfd.h |  2 +-
+>  3 files changed, 17 insertions(+), 16 deletions(-)
+>
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index a15ac2fa4b20..ba4a698d2f33 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -90,10 +90,26 @@
+>  #define DN_ATTRIB      0x00000020      /* File changed attibutes */
+>  #define DN_MULTISHOT   0x80000000      /* Don't remove notifier */
+>
+> +/* Reserved kernel ranges [-100], [-10000, -40000]. */
+>  #define AT_FDCWD               -100    /* Special value for dirfd used t=
+o
+>                                            indicate openat should use the
+>                                            current working directory. */
+>
+> +/*
+> + * The concept of process and threads in userland and the kernel is a co=
+nfusing
+> + * one - within the kernel every thread is a 'task' with its own individ=
+ual PID,
+> + * however from userland's point of view threads are grouped by a single=
+ PID,
+> + * which is that of the 'thread group leader', typically the first threa=
 d
-> fd < 0 before, we'd be returning -EBADF and now we'd be returning -EINVAL
-> or -EOPNOTSUPP based on FILEID_IS_AUTONOMOUS setting. I don't care that
-> much about it so feel free to ignore me but I think the following might b=
-e
-> more sensible error codes:
+> + * spawned.
+> + *
+> + * To cut the Gideon knot, for internal kernel usage, we refer to
+> + * PIDFD_SELF_THREAD to refer to the current thread (or task from a kern=
+el
+> + * perspective), and PIDFD_SELF_THREAD_GROUP to refer to the current thr=
+ead
+> + * group leader...
+> + */
+> +#define PIDFD_SELF_THREAD              -10000 /* Current thread. */
+> +#define PIDFD_SELF_THREAD_GROUP                -10001 /* Current thread =
+group leader. */
+> +
 >
->         if (!(handle_type & FILEID_IS_AUTONOMOUS)) {
->                 if (fd =3D=3D FD_INVALID)
->                         return -EOPNOTSUPP;
->                 return -EBADF;
->         }
+>  /* Generic flags for the *at(2) family of syscalls. */
 >
->         if (fd !=3D FD_INVALID)
->                 return -EBADF; (or -EINVAL no strong preference here)
+> diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+> index c27a4e238e4b..957db425d459 100644
+> --- a/include/uapi/linux/pidfd.h
+> +++ b/include/uapi/linux/pidfd.h
+> @@ -42,21 +42,6 @@
+>  #define PIDFD_COREDUMP_USER    (1U << 2) /* coredump was done as the use=
+r. */
+>  #define PIDFD_COREDUMP_ROOT    (1U << 3) /* coredump was done as root. *=
+/
+>
+> -/*
+> - * The concept of process and threads in userland and the kernel is a co=
+nfusing
+> - * one - within the kernel every thread is a 'task' with its own individ=
+ual PID,
+> - * however from userland's point of view threads are grouped by a single=
+ PID,
+> - * which is that of the 'thread group leader', typically the first threa=
+d
+> - * spawned.
+> - *
+> - * To cut the Gideon knot, for internal kernel usage, we refer to
+> - * PIDFD_SELF_THREAD to refer to the current thread (or task from a kern=
+el
+> - * perspective), and PIDFD_SELF_THREAD_GROUP to refer to the current thr=
+ead
+> - * group leader...
+> - */
+> -#define PIDFD_SELF_THREAD              -10000 /* Current thread. */
+> -#define PIDFD_SELF_THREAD_GROUP                -20000 /* Current thread =
+group leader. */
+> -
+>  /*
+>   * ...and for userland we make life simpler - PIDFD_SELF refers to the c=
+urrent
+>   * thread, PIDFD_SELF_PROCESS refers to the process thread group leader.
+> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selfte=
+sts/pidfd/pidfd.h
+> index efd74063126e..5dfeb1bdf399 100644
+> --- a/tools/testing/selftests/pidfd/pidfd.h
+> +++ b/tools/testing/selftests/pidfd/pidfd.h
+> @@ -56,7 +56,7 @@
+>  #endif
+>
+>  #ifndef PIDFD_SELF_THREAD_GROUP
+> -#define PIDFD_SELF_THREAD_GROUP                -20000 /* Current thread =
+group leader. */
+> +#define PIDFD_SELF_THREAD_GROUP                -10001 /* Current thread =
+group leader. */
 
-FWIW, I like -EBADF better.
-it makes the error more descriptive and keeps the flow simple:
+The commit message claims to move definions between header files,
+but the value of PIDFD_SELF_THREAD_GROUP was changed.
 
-+       /*
-+        * Only autonomous handles can be decoded without a file
-+        * descriptor and only when FD_INVALID is provided.
-+        */
-+       if (fd !=3D FD_INVALID)
-+               return -EBADF;
-+
-+       if (!(handle_type & FILEID_IS_AUTONOMOUS))
-+               return -EOPNOTSUPP;
+What am I missing?
 
 Thanks,
 Amir.
