@@ -1,142 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-52791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BF4AE6CF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 18:52:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B243AE6D38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 19:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23FA84A3FC1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 16:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2ED816F112
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 17:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A8E2E338F;
-	Tue, 24 Jun 2025 16:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRcqH/CW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2932236F8;
+	Tue, 24 Jun 2025 17:02:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F76157A6B;
-	Tue, 24 Jun 2025 16:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D7D7DA73
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 17:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750783811; cv=none; b=OaeS3Uy6syWlgCsBlS7NgjlXcZF8WOiBDk8iEaSsPzr8PATPQdzkL/7gQ7ZZ8H7uxiahLec8KCvzPCzOzJiocBv8SIXzcxmld2GKdXgZ3ZrIn29t9hYQAK2Qx74E3aeJ27+H3Umt6LlKAAsq5eld8qM1dqk40ywEZllHPF116C0=
+	t=1750784548; cv=none; b=L+uDmo9lq+m1W5QbQn3cdN0wtQKhVELjzTdtct7UkrWsbZi9/KR4uLYf+9DsX92avIBmk7yrb6+RuakLtwj6cbC9jXILNpVk3cJETmkr1/yVaFmIVuTckcmhx0TSTgeNxLibkFGAU6U6x3cfZQ+Qy2IlZE5BAQbVJMeBqdRpvrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750783811; c=relaxed/simple;
-	bh=A3ZBVkU52Nyhk/HLTgrSeZH/3gR4dsKnh3QElCBOqA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jdAcW0F2Tt+IdxNhYLzWyve3J+1ma+AkpQpy6EH1ypEL9TVbiYjQ9mqAV9iapv0C2LbQ7IviAZQ7/ldFtfypfP2jaP1bFE+hmbq1mGiZIxY5UbMAF+c2vy0Fj3nts1tcA66NDkHysIkZUSU3j50PWNeXi1X5Se555Lki2Pq4jWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRcqH/CW; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4536b8c183cso381855e9.0;
-        Tue, 24 Jun 2025 09:50:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750783806; x=1751388606; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+e3hnOeuzSCQasYOAxsJ6u0yD/pA+ufnXI0wxwmTU+4=;
-        b=bRcqH/CW0XL5o5Gnv9LhQEhgDuM7SHAxCwi/rCv77BgLnl/MtvnoSvkYuYHqI89Unp
-         Lvw6q+aFxXpxKXvtbxemL32ojxf0T2g5tcbwb7VzMTLJRCZXmj+tvtK9h17sJO79dHQb
-         hFAlstnotJ9dOAJLo78PJALig1yIAp7YLqUA8MD4iMk4UGsLEyHX2A5g3a3gcL2ermfy
-         plVDRMeUvEw4CQf178xqB/UIUOCDrkE6efrCdHE3Rwk7Yh9KK2LXZQTHptYxrAclbepW
-         Gpirm7PsmRwIbvVT8Chj6tGtVGDIo8vNv5PFw5hSsbdn1dwYZtIyI7KD9fMpkwfOv6n9
-         8CzA==
+	s=arc-20240116; t=1750784548; c=relaxed/simple;
+	bh=rVT5B2iWZZr9OKkNpthk5FE/RUvJxgj/XBpIPkA+dVY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=I4crjkuz0EymfxN/GHY5VNE4UaWNZmF/BWWN6ka21lcLq3qSPWzjHhdyC7TbvSDqY6VbsOYs1B+/zqoc4WTehqZerG9icJ1BEhEPxWM/Q3icy8d8TthcGiI9v2JJ12uJ6YaC+hpfGddjiBw4NOwZJjl4ufoRQoDJnsJ2GAv50p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddd90ca184so6094465ab.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 10:02:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750783806; x=1751388606;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+e3hnOeuzSCQasYOAxsJ6u0yD/pA+ufnXI0wxwmTU+4=;
-        b=KZuT7Y+T1fp1hwx0p/hIJf/xlqf6R7rZsPZ8/GzjhHLj7RiPWhDQApZ/ENjp0uu6ny
-         G7Wg3vM9gmtGGzGeDwdNLjoWPNR28YrhB0iasPlwPWXohIDxyzP4mSjXGkAYG8PGchCv
-         3c3akdre9jHqLes94HbmdrBFTF4GIOV5+J8Ushdsq8lLPLiPOGa9TOChocRNa1/z2CRg
-         yETr40/MCjExsUgA2iJKUuRrqcPT/4pBfpi2ulRJfH56px9JKf/MLhjQQqRg1I7WxEoB
-         hEo/tTxGDQ/D2x3dSVv6D7hBLUuysWFI+uniklhWMXSFjO7DIjVjKRGXT+TtyG828vK5
-         gC4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5zcjBUA7jTlRjE+i8H8zSyr2fTPQIbF6NPbL/vd5npB8M0Prid307wet/24Drimtw8QYNekFYMlHESMHU@vger.kernel.org, AJvYcCV7d8BchYohVmViq89ElQuRwOHLoCbNysOw8OfiXCjUbMSg21R9FFaTMw5j1Lle6lbH8brFzxWIibyFrnS8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAnL7Luhevs30I8VnV/SKex5u7OGTwa1Q6tc3siVW/xzRDvrg7
-	rxYkekkGS3Qu81Fui9i2qpekwvVr0O+7IBABcRSTUPwf0Ggigrt7x9B5
-X-Gm-Gg: ASbGncuqbIOywuqdyEJj92zA5VijNEwQuYxXUQ2siatLjqU5XzUktFu1//UZ4i0bG0G
-	hk/5hXQe9qLH2uoUAOdguJnryN+4FntRC/7/pYbp+tw6aaSLnvVirQBlJskWUfHqg8dQcsExRgk
-	gIASde41PeQQiuNYXnujwYin/HVsR6AShnY6TAqU7wPRJeAg6QR9bcvSHPZDO0aiuTpkgRgjOen
-	sLjnOt5QMRGfM6vi+8Lftx6dvrS1rZQD40SViUiQbCPezKjZAnb9ozQbEZrc+l/aGCvoTJLmUT2
-	K/vOzmDeyxAjMDMTVexdhhy33MUJJskc7PMVdWvHYRcRK3OZNTcC+oRD75xiQAhNm5r05u23Z8M
-	YmO7T9muH2TwLvgpCPhabRAaAFqkhQG+uNJg=
-X-Google-Smtp-Source: AGHT+IH0NW2taYrThKs/rmne2sj+/2+7M+BO+nO8dYgCHBW+cVa/eP5sOMngFZpqksHY5KrlSUEikw==
-X-Received: by 2002:a05:600c:4706:b0:450:d79d:3b16 with SMTP id 5b1f17b1804b1-4537b79c3d0mr49670815e9.14.1750783805834;
-        Tue, 24 Jun 2025 09:50:05 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646d1391sm147960395e9.9.2025.06.24.09.50.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 09:50:05 -0700 (PDT)
-Date: Tue, 24 Jun 2025 17:50:01 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao
- <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida
- <andrealmeid@igalia.com>, Andrew Morton <akpm@linux-foundation.org>, Dave
- Hansen <dave.hansen@linux.intel.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
-Message-ID: <20250624175001.148a768f@pumpkin>
-In-Reply-To: <20250624131714.GG17294@gate.crashing.org>
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
-	<20250622172043.3fb0e54c@pumpkin>
-	<ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu>
-	<20250624131714.GG17294@gate.crashing.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1750784546; x=1751389346;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RLFH6eoxt7bnwcvodcPHkdsqctyfANQtqy/+9gnynnQ=;
+        b=YSPkvVr/AnG1cbpFcxeigIyWTTDYe65nZabOYHaSqbrkCEYxdOK/4JyTuvlmZ+z5PG
+         xM8rrPh4QHEkdDy6cc67qt8+oomUAXfJanOQTIDWftJ6UxU00bff8/cIRJrhgDaRpGDi
+         3Vf37b2QebOq11ynfA56Rc8P495sXM2dZiJXN3fGpmTjL8QiNCs5pfFTT+KWBuffeGnV
+         1ZQ/oMh/hbN2TS7yd1VA1zFoB67r9d9ffCa94/hDXnDewKPJx9ETdfo4MRwXnvbAqHKg
+         YErsN6uZSx0fd3Dv4bn56culvcfFOcGkMJrYHYuo7d5X9CzC1ajcIV/7qpGhrX6cAzvx
+         ZxkA==
+X-Gm-Message-State: AOJu0Ywg9GNyEswGkQ/+N+r/K0Sk5zU4ZUjqRxcpgdY4wfFuWBEU635I
+	4fm91qWSq+K7/f/PYsnGJefFOFFMgRnTgr3DrdyytoHoVy+1YmGrrwNwLBYBHQdeCRNzEu2dyYT
+	1N9C2HZFbh1vjGmtn+FkNlwnRNSddSgu5bkbF0/6ZYQQVxG94h7EU2UM5UJUMlA==
+X-Google-Smtp-Source: AGHT+IFALlkKleQrrNMPzjarn8EpBeg13EQeNdOqET3QREb0fiA0vwwaEcVn7iiFB8i08VNs4qk2heQG9gVsU6i5dFCiuESZbVvx
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3b83:b0:3dd:c4ed:39c0 with SMTP id
+ e9e14a558f8ab-3de38c159a7mr227556445ab.1.1750784546405; Tue, 24 Jun 2025
+ 10:02:26 -0700 (PDT)
+Date: Tue, 24 Jun 2025 10:02:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685ada22.a00a0220.2e5631.0089.GAE@google.com>
+Subject: [syzbot] [fs?] WARNING in minix_rename
+From: syzbot <syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 24 Jun 2025 08:17:14 -0500
-Segher Boessenkool <segher@kernel.crashing.org> wrote:
+Hello,
 
-> On Tue, Jun 24, 2025 at 07:27:47AM +0200, Christophe Leroy wrote:
-> > Ah ok, I overlooked that, I didn't know the cmove instruction, seem 
-> > similar to the isel instruction on powerpc e500.  
-> 
-> cmove does a move (register or memory) when some condition is true.
+syzbot found the following issue on:
 
-The destination of x86 'cmov' is always a register (only the source can be
-memory - an is probably always read).
-It is a also a computational instruction.
-It may well always do the register write - hard to detect.
+HEAD commit:    78f4e737a53e Merge tag 'for-6.16/dm-fixes' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10b29182580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28cc6f051378bb16
+dashboard link: https://syzkaller.appspot.com/bug?extid=a65e824272c5f741247d
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1446370c580000
 
-There is a planned new instruction that would do a conditional write
-to memory - but not on any cpu yet.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/560a423a60ad/disk-78f4e737.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9e97e18d85b9/vmlinux-78f4e737.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a147a5a27c6e/bzImage-78f4e737.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2c4c332ed1d0/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=12276b70580000)
 
-> isel (which is base PowerPC, not something "e500" only) is a
-> computational instruction, it copies one of two registers to a third,
-> which of the two is decided by any bit in the condition register.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com
 
-Does that mean it could be used for all the ppc cpu variants?
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6388 at fs/inode.c:417 drop_nlink+0xc5/0x110 fs/inode.c:417
+Modules linked in:
+CPU: 0 UID: 0 PID: 6388 Comm: syz.6.27 Not tainted 6.16.0-rc3-syzkaller-00042-g78f4e737a53e #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:drop_nlink+0xc5/0x110 fs/inode.c:417
+Code: 78 07 00 00 be 08 00 00 00 e8 c7 35 e8 ff f0 48 ff 83 78 07 00 00 5b 41 5c 41 5e 41 5f 5d e9 42 01 29 09 cc e8 fc da 86 ff 90 <0f> 0b 90 eb 81 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 5b ff ff ff
+RSP: 0018:ffffc900030c7a30 EFLAGS: 00010293
+RAX: ffffffff82397124 RBX: ffff888055405aa8 RCX: ffff88802da29e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8f9fe1f7 R09: 1ffffffff1f3fc3e
+R10: dffffc0000000000 R11: fffffbfff1f3fc3f R12: 1ffff1100aa80b5e
+R13: 0000000000000000 R14: ffff888055405af0 R15: dffffc0000000000
+FS:  00007fb57180a6c0(0000) GS:ffff888125c83000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb571809f98 CR3: 0000000032278000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ inode_dec_link_count include/linux/fs.h:2634 [inline]
+ minix_rename+0x3cf/0x700 fs/minix/namei.c:222
+ vfs_rename+0xb99/0xec0 fs/namei.c:5137
+ do_renameat2+0x878/0xc50 fs/namei.c:5286
+ __do_sys_rename fs/namei.c:5333 [inline]
+ __se_sys_rename fs/namei.c:5331 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5331
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb57098e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb57180a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007fb570bb6080 RCX: 00007fb57098e929
+RDX: 0000000000000000 RSI: 00002000000001c0 RDI: 0000200000001980
+RBP: 00007fb570a10b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fb570bb6080 R15: 00007fffa5abc5a8
+ </TASK>
 
-> But sure, seen from very far off both isel and cmove can be used to
-> implement the ternary operator ("?:"), are similar in that way :-)
 
-Which is exactly what you want to avoid speculation.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-	David
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> 
-> 
-> Segher
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
