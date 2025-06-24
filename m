@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-52711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC2FAE5FBB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DB4AE5FC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47734A2ADF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672CB165469
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B642626B2AC;
-	Tue, 24 Jun 2025 08:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A36270ECF;
+	Tue, 24 Jun 2025 08:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRy59Od4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFsby8Nc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD93239072;
-	Tue, 24 Jun 2025 08:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB9A256C8A;
+	Tue, 24 Jun 2025 08:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750754648; cv=none; b=ah5lw3H5w1o5FMijEI4Yb9AkqMHi4jqaCS7Q5sW4iKace0fuWoSzQWU+xHyXQ01kBw0pFuFqWeygh6QS6qncZjnrtCRUE4hE3LgphxY92prTb0Rsv3mIytvSsWlScxAlNhuRtPjH26wEEpn0a7tyd8Nr4uCJCz/Y4DgJe+fol2k=
+	t=1750754734; cv=none; b=GKozxaRYo0v5kBkDPTYlbL8ytG3GnM5cpUdsnHJmSqsXvnGtiB7VDUZSbPoq9yC9pciyHrNWOb28eWt0Cr1QN7uGSdfa0tCgn0J/wyDTFf0sxtiHuSODOcJef/3jJbKQl1gN55RXMJTQTFhrnzN/LZ1HRxqNNLdX0VmjYNIPMmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750754648; c=relaxed/simple;
-	bh=SIsgi3afey44s25VI1BTV0rs+6t0jfF1bwFGJw+D9ts=;
+	s=arc-20240116; t=1750754734; c=relaxed/simple;
+	bh=34LmpEiX4TjPFhSnTIl7DsoNL2Ri1O8AUB1Br8IfKwM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elZmSNrGgkMArYGkSdoNx65K5JWKhWSxEL96Sxvj1bQe96EaOldbNmEpm0fi9n4Dq2Kk5DgkSAv2HWbfJe5g02ztO9qS3R7EuCpnssKqck258LT+EuzwAPTLiOtnQ1+SfuYc15ODEyVLnCZYFvSF500IEsZdkU4x5fOVkd4AbbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRy59Od4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A439C4CEE3;
-	Tue, 24 Jun 2025 08:44:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0sIea5FjTCYwTUzcyXGtVYuJ0kkoeb70AYI0gVG2mZASF2oJ22sQIciv/l2P+RscT8CUf7bSDAiLj1YTvYqdbF5bwkDNI9/aAZZPvgdMdQayhHVaHOlXCFS8PLwqLrsR7MkP3thMcLlXqPHbrujvv0H5eRybiNyCw8o71WLL7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFsby8Nc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C29C4CEE3;
+	Tue, 24 Jun 2025 08:45:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750754647;
-	bh=SIsgi3afey44s25VI1BTV0rs+6t0jfF1bwFGJw+D9ts=;
+	s=k20201202; t=1750754733;
+	bh=34LmpEiX4TjPFhSnTIl7DsoNL2Ri1O8AUB1Br8IfKwM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JRy59Od4UKvPAbkhyrtaZvicuZmVS2az4oISbzxVl8/AKzhJLPMwS4X54vIpn+WZb
-	 fUtZpimFOJbprq0jXyybDbBfoLPd+0Qtti9H+OTwJqsMWqo0spW6EhZ91kqHKs3eyf
-	 BAzFwajg48Me/SrLr2Ji5x6bMjKW0jce4Knr2qyvHdz2xJaRVX25szqBVQ1EX0PBHB
-	 9WGpaiXirmxn1akyTlbPT33ECk4brv98N28truKgqpej01Koj7HGngjWjOmtuxss8g
-	 jGYYx9jsdruDb1IEtQ5TGm+g13PFUwCxwkZFgTuqvNcQs7V6PuMBUw7UM78gPh38lK
-	 6aVM5iQUPoxIw==
-Date: Tue, 24 Jun 2025 10:44:03 +0200
+	b=gFsby8NcSNY7Q0zk48avWQuVssIX8nwyWekcuL1XmxYZwW2SZshqkSPKQCi1IdYI0
+	 jDZiAvRiJAnUXVDLKpahJM1fDFGgW3dVZK5oQOF2LG8wgRJAqo/B3pFTh2msOAbxPr
+	 SP6NHN2dNImrpxH3i7euS6AXNI3bvrPW4v6AqmzRUediULbRlB46JEK2fWfCDfec6t
+	 fWpjNUUR+9Gm+eYxTMhHuBYrTvvEz8HiEmuGgw5HCMTBwZLb9p+x3ytcrWo/N9V4ZG
+	 0r4MyrBlt5oMJeXePLc0oWvvHmP+gzoWN0mbaYx7arlM6csnyW6hogE62CW9Po+Uk9
+	 gvkXW7XIbFCVA==
+Date: Tue, 24 Jun 2025 10:45:29 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: syzbot <syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com>
 Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Subject: Re: [syzbot] [fs?] general protection fault in pidfs_free_pid
-Message-ID: <20250624-fratze-fahrgast-a75e524f3ea6@brauner>
+Message-ID: <20250624-serienweise-bezeugen-0f2a5ecd5d76@brauner>
 References: <68599c8e.a00a0220.34b642.000f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -94,5 +94,7 @@ On Mon, Jun 23, 2025 at 11:27:26AM -0700, syzbot wrote:
 > Reported-by: syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com
 > Fixes: fb0b3e2b2d7f ("pidfs: support xattrs on pidfds")
 
-That is fixed on vfs-6.17.pidfs. :)
+#syz test: 
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.17.pidfs
 
