@@ -1,592 +1,242 @@
-Return-Path: <linux-fsdevel+bounces-52680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A20AAE5C54
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:01:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E98AE5C53
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0E33A42FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 05:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79671BC0961
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 06:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D0624A049;
-	Tue, 24 Jun 2025 05:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092FA2343CF;
+	Tue, 24 Jun 2025 05:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKj29pUA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IttYJnOj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E74F23D2AD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 05:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA7B157A6B;
+	Tue, 24 Jun 2025 05:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750744755; cv=none; b=UA8GeJrAVKq+dq7qiGeYM7lsI5p1OVfB9kqDoLlaaOdd7ndf6+Hwi8OD/lVXvfVp2V9aU7ZBAolX4B/Xp0svh7PJ8PqJd6gsM+/IPdvh8rtk5mDyXWcEMoDbWqlsYPrZlFwjH5qpsO0fKXLAXDcdR3ei0NJI1voc7jRf4lYX5bc=
+	t=1750744783; cv=none; b=hKazZgA3pa/I5ctLOktBIjj9jEyUT1EsaPXe8Djyc2EiQ9+ms+8WuoR2V8nY0yP1oWi4GEQ5ZH/+WDPFJetf9zwCSe21vLo+Q0KNBIolP2nDkwVFGaMlWD5L1/5N95NEL3BKeAQAvVFI2yJDeoPP97tALiCqbbRXqeSp2rZcNHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750744755; c=relaxed/simple;
-	bh=LAp5JZIOSgljZImIc2SJWIB4p3YDj8N4mo3NG0LQkPA=;
+	s=arc-20240116; t=1750744783; c=relaxed/simple;
+	bh=p7JTv/Vl04sUhhRWS3lU9IHtibunvrxjNU3gZTKA1Uo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f8QHxSb5d5zi4QhkrtOM+Mg16cjkZrMwZ9sk6KxodEObVdNL7fovLSFaYqrsNsXMZO+7b7D3RJWNYKtJ7dUuKP2J2eFAWguSayUhWN5Sjc2X0mNjYXtQepobC9e5tkWqluUhawta3XlWp7l7eB0kMWyqw7Os9P3Q4xUmA5RnaJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kKj29pUA; arc=none smtp.client-ip=209.85.218.48
+	 To:Cc:Content-Type; b=KcjZZPSl+trnbK0G8Y5wKBC9zuioYReiMDSS14cejss3YuGZ7x0QijRyy7BwRxWr8tzwhF5IYE+wJYgjlBqeWpwFeQL7Si3GrmGvH8SpQUOhEmMlRmzs0kLmWUDz+QnoJGU3b0M1mTAd1V0DBFbNbiQYIBW6BwOCFMDtQHbeE54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IttYJnOj; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad89ee255easo900686066b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jun 2025 22:59:13 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ade48b24c97so863467866b.2;
+        Mon, 23 Jun 2025 22:59:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750744752; x=1751349552; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750744780; x=1751349580; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lVaZw0i4BUmAf1Ie86VkMnmnNGvdE1H+aGxHsXUBB+8=;
-        b=kKj29pUA13WDy921vgqBGSTNciDXXmgAZ495Vw9N9AQRHTJmyEwHdePQvs/WySbsS7
-         oYTVGWdDYeZSy/8YbcTgFBiCOsiX+IVfb/ONPeCzWcMbe7+bKKbg9Hu6X/PD1p7BADON
-         kTEes4FB8eYwLDl4YU0njqSpEKStKk1N7VU8DDUSGb4KD5o+Ru0J/qUzgvEBWbTvbzc8
-         WIBYF6smyhHnIz0xlcmjudhKNfpbwohjOAbbBD7HSGJtYGkazcxtPeHo9BmX4ms5UH8p
-         UsWWi9X1yZM+DXHriH0BWn6HulDo00Mr2+1AReE11F1rb/fad/kYUY53M8YYIGFkhTuN
-         eb7Q==
+        bh=m6010/ZxGOxc/GtHfiUtuCWiZZWt6dGaK+o3fK6MDmU=;
+        b=IttYJnOj0etVnHQH6B5Xxe+NuNF/t9QaiYGKfzf5/BkTxRdcteVXPk3rJ75oO1lKeh
+         aFekngkxUXXCBS7IIrRzcrNEz+eMo2JT9Q07lfphJ8B2IZm7dB1dp0uC6mb4qFNXiMjA
+         mcRtwcHvawX96/nVQu2yvkXKcIPpuySt8su1JvVHUgpWJdalJaqGW+NOEyRTJGmPl8Yl
+         8pMfKjMRqfwqKHRyzVVWfQAuWzwMkoY/2DYwKpLoMsyjxbtFB14Kzm4Sy3uT9KkNAUHd
+         qP6uPr+/h2vzP4njGdPU3pexh+utrC3STEhPYj2P3agA5qaXvOm3t8f2JnhXXgJVtRI6
+         5ejQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750744752; x=1751349552;
+        d=1e100.net; s=20230601; t=1750744780; x=1751349580;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lVaZw0i4BUmAf1Ie86VkMnmnNGvdE1H+aGxHsXUBB+8=;
-        b=ZUHze/G6A/vq7YYGK79WP8zdvfZ92te3NjLV/XK6LgkkIwEtLLWHBMZtovbyHFzEoH
-         lqgwb/ymNameJLW/9BJet64g4hCHG12lq0UNwTqKGW47gNYpjHu4lOtutnzPYD8vMP43
-         QQp4gBGr2REg7Kuh9Q2K2gU6NfrNUsaFzzOkuXhs5lHFY4YToLj4PTAeUpaldPDNOfwb
-         esxJiZgtZQqeGtrwTshLjBB/bCNWkykEUabKUd3LYXjhvf24MUBRLf+wjzqNqHvAAj32
-         UAANnZSu8KYe39HGCHCBObvO5s5I3mftnqX/shhH+60GR3zOqkICRVlBfPDK69D3BNSK
-         lS6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUDh72we1ypyo94uhK40G6UT7ra78ujX4kvtav0WzIBhv4xGn9/2LTpxUwAnYlXB8nXgwdV1Lm1926kU5e4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt7JGTUr55nb22nFPzI2OyW9r22UHeUMWTIc4md7sS79rDyqI6
-	FrAPS/pxloUBCK1A/j1cc/iBBsw5O9ySwCeXvhj5miFxUFnx1N+BJtfHaeKL+U45Mi07Vs06kBO
-	n7DqBwYnowHuNWh3qsyAUXupczVWTrzA=
-X-Gm-Gg: ASbGnctR59MBnty342fYlrkaB9iqimZC6YB459kT6nNWm0ek2uRUyvub5mQ4RFjb1bM
-	yRWEA32RWoOI693FNFWrB4DDzHg1gL+mPXPyWIbpEnzFFx6wWN4ayuxKNmHla3Hj0r/yEF2VK0Q
-	g9+KB3pVxAnY11AG/mtA/n6OpbQBRl+5s+PkWVzUeU13e6R5zaXK+AEg==
-X-Google-Smtp-Source: AGHT+IHNhOB6XHG8k2OnM2GK65BVRUGo1eOdCFPmFYBm07VFtL9+qzUYjiGLYaUrnuHzR99p80vbJqPq20LyWSOoel0=
-X-Received: by 2002:a17:907:9813:b0:ade:9b52:4d78 with SMTP id
- a640c23a62f3a-ae057f65e1dmr1421037566b.48.1750744751115; Mon, 23 Jun 2025
- 22:59:11 -0700 (PDT)
+        bh=m6010/ZxGOxc/GtHfiUtuCWiZZWt6dGaK+o3fK6MDmU=;
+        b=JFJYDwR1pIAlQ1o5HU8DgU1hwt4oRPwCf4P83vxNybIkSq679sFbEgGIuOUCSivaRd
+         H8vtQ95HdXxz+M04plYck3W2wfUGUHLMsB3FrP0cmRL2P8dyQVb4ExVbwgd/GzW3OEpB
+         CPUmccqw2D7dz02f3hkb7a0ferc7bHDUo46V0LHYXcusHNHOWTJeS4tY61ChLELz5S4o
+         5ussW0lEw8OawiO7zdO6/nzko4/TylQM1mOagB5c+lolnRUSO6FP/8aKBRZ3xmuicVoC
+         6hy0s3/kmO7LLxBAQ+/jsDpUHaknpBTfgJMaM/EQ1fUL00d79qyD1JhksG0QC6zCQdMF
+         x2wg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7/aGteJvn9URWRs14O9JVDQawZ+snmrNzWvN3xEvZflVtkMf+XIjOqNhx4hN0cM7F/m2HR6aTOlKF@vger.kernel.org, AJvYcCXSTMmIBHASQyzttNUpYouW89Ump6hovPrOeqpvhwvtt3xktYDv9EJ5fMncoHon44kREtIdhnYWAyVflE/4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS20uXVbKz+lHSzQetyoWjHswM8MDERctRO2M/ckMtAyrVlPUt
+	7BmH9Obbl3cJxZn5AKP2PIvXmMj/Cy/cP6UyWcWmXStlTkEs3cxWiy6rLti2HiwuamMsDPIVfYv
+	vlNf5hLIHsf59sk7643b6FWUIWh2uiFQ=
+X-Gm-Gg: ASbGnctwZ5YBEdOdZPUbU7hyaVi4icNvoA1oIa4SkrFmQimvOCl/EobBlq16bIgyuK6
+	Ignsa5I1Gf3hHc0WXToKSk5xja2RqTUksx1uQn1gvfIik8DrP7+PDHWtnDSdGfXMkr8zeB1wazA
+	rto6+cHoUK5TIhY1shtThx8FzxR2UpxZ1e4IfWYoBfNmQaROZsjwAxKSo=
+X-Google-Smtp-Source: AGHT+IE+xtk8mCeLX4OzNGlO9SwlPPmDyNCsobTZwfKxxEZdu+lYg/k7JddDFzyJ8a/vNVxMgcZ5qdSBpvnFKoOwczc=
+X-Received: by 2002:a17:907:7e92:b0:adb:229a:f8bd with SMTP id
+ a640c23a62f3a-ae057b6cc1dmr1547486566b.29.1750744779560; Mon, 23 Jun 2025
+ 22:59:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623194455.2847844-1-ibrahimjirdeh@meta.com>
-In-Reply-To: <20250623194455.2847844-1-ibrahimjirdeh@meta.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 24 Jun 2025 07:58:59 +0200
-X-Gm-Features: AX0GCFv1vn4E1s2bcV4YQsF5YlBtoCIDZ7y7DfmpBNTKxqC769mxq5wyU_e-qI0
-Message-ID: <CAOQ4uxgABrw4kTVPWBAbxDYnmbXmeMREv++ibtp4q1STdiWyag@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: selftests for fanotify permission events
-To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-Cc: jack@suse.cz, josef@toxicpanda.com, lesha@meta.com, 
-	linux-fsdevel@vger.kernel.org, sargun@meta.com
+References: <CGME20250529113215epcas5p2edd67e7b129621f386be005fdba53378@epcas5p2.samsung.com>
+ <20250529111504.89912-1-kundan.kumar@samsung.com> <20250602141904.GA21996@lst.de>
+ <c029d791-20ca-4f2e-926d-91856ba9d515@samsung.com> <20250603132434.GA10865@lst.de>
+ <CACzX3AuBVsdEUy09W+L+xRAGLsUD0S9+J2AO8nSguA2nX5d8GQ@mail.gmail.com>
+ <CALYkqXqVRYqq+5_5W4Sdeh07M8DyEYLvrsm3yqhhCQTY0pvU1g@mail.gmail.com> <20250611155144.GD6138@frogsfrogsfrogs>
+In-Reply-To: <20250611155144.GD6138@frogsfrogsfrogs>
+From: Kundan Kumar <kundanthebest@gmail.com>
+Date: Tue, 24 Jun 2025 11:29:28 +0530
+X-Gm-Features: Ac12FXzjJtXhWP5qaSTxOaM8kfMlrnXKIbZrGlp-NuqDUifHrwujHPqe26XNyh8
+Message-ID: <CALYkqXpOBb1Ak2kEKWbO2Kc5NaGwb4XsX1q4eEaNWmO_4SQq9w@mail.gmail.com>
+Subject: Re: [PATCH 00/13] Parallelizing filesystem writeback
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Anuj gupta <anuj1072538@gmail.com>, Christoph Hellwig <hch@lst.de>, 
+	"Anuj Gupta/Anuj Gupta" <anuj20.g@samsung.com>, Kundan Kumar <kundan.kumar@samsung.com>, jaegeuk@kernel.org, 
+	chao@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	miklos@szeredi.hu, agruenba@redhat.com, trondmy@kernel.org, anna@kernel.org, 
+	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org, 
+	clm@meta.com, david@fromorbit.com, amir73il@gmail.com, axboe@kernel.dk, 
+	ritesh.list@gmail.com, dave@stgolabs.net, p.raghav@samsung.com, 
+	da.gomez@samsung.com, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-nfs@vger.kernel.org, linux-mm@kvack.org, gost.dev@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 9:45=E2=80=AFPM Ibrahim Jirdeh <ibrahimjirdeh@meta.=
-com> wrote:
+On Wed, Jun 11, 2025 at 9:21=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
 >
-> This adds selftests which exercise generating / responding to
-> permission events. They requre root privileges since
-
-                                         ^^^^ require
-> FAN_CLASS_PRE_CONTENT requires it.
+> On Wed, Jun 04, 2025 at 02:52:34PM +0530, Kundan Kumar wrote:
+> > > > > For xfs used this command:
+> > > > > xfs_io -c "stat" /mnt/testfile
+> > > > > And for ext4 used this:
+> > > > > filefrag /mnt/testfile
+> > > >
+> > > > filefrag merges contiguous extents, and only counts up for disconti=
+guous
+> > > > mappings, while fsxattr.nextents counts all extent even if they are
+> > > > contiguous.  So you probably want to use filefrag for both cases.
+> > >
+> > > Got it =E2=80=94 thanks for the clarification. We'll switch to using =
+filefrag
+> > > and will share updated extent count numbers accordingly.
+> >
+> > Using filefrag, we recorded extent counts on xfs and ext4 at three
+> > stages:
+> > a. Just after a 1G random write,
+> > b. After a 30-second wait,
+> > c. After unmounting and remounting the filesystem,
+> >
+> > xfs
+> > Base
+> > a. 6251   b. 2526  c. 2526
+> > Parallel writeback
+> > a. 6183   b. 2326  c. 2326
 >
-> Signed-off-by: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-> ---
->  tools/testing/selftests/Makefile              |   1 +
->  .../selftests/filesystems/fanotify/.gitignore |   2 +
->  .../selftests/filesystems/fanotify/Makefile   |   8 +
->  .../filesystems/fanotify/fanotify_perm_test.c | 386 ++++++++++++++++++
->  4 files changed, 397 insertions(+)
->  create mode 100644 tools/testing/selftests/filesystems/fanotify/.gitigno=
-re
->  create mode 100644 tools/testing/selftests/filesystems/fanotify/Makefile
->  create mode 100644 tools/testing/selftests/filesystems/fanotify/fanotify=
-_perm_test.c
+> Interesting that the mapping record count goes down...
+>
+> I wonder, you said the xfs filesystem has 4 AGs and 12 cores, so I guess
+> wb_ctx_arr[] is 12?  I wonder, do you see a knee point in writeback
+> throughput when the # of wb contexts exceeds the AG count?
+>
+> Though I guess for the (hopefully common) case of pure overwrites, we
+> don't have to do any metadata updates so we wouldn't really hit a
+> scaling limit due to ag count or log contention or whatever.  Does that
+> square with what you see?
 >
 
-Hi Ibrahim,
+Hi Darrick,
 
-As a general comment, I do not mind having diverse testing
-methods, but just wanted to make sure that you know that we
-usually write fanotify tests to new features in LTP.
+We analyzed AG count vs. number of writeback contexts to identify any
+knee point. Earlier, wb_ctx_arr[] was fixed at 12; now we varied nr_wb_ctx
+and measured the impact.
 
-LTP vs. selftests have their pros and cons, but both bring value
-and add test coverage.
-selftests would not have been my first choice for this particular test,
-because it is so similar to tests already existing in LTP, e.g.:
-https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/sysc=
-alls/fanotify/fanotify24.c
+We implemented a configurable number of writeback contexts to measure
+throughput more easily. This feature will be exposed in the next series.
+To configure, used: echo <nr_wb_ctx> > /sys/class/bdi/259:2/nwritebacks.
 
-but I suppose that testing the full functionality of event listener fd hand=
-over
-might be easier to implement with the selftest infrastructure.
-Anyway, I will not require you to use one test suite or the other if you ha=
-ve
-a preference.
+In our test, writing 1G across 12 directories showed improved bandwidth up
+to the number of allocation groups (AGs), mostly a knee point, but gains
+tapered off beyond that. Also, we see a good increase in bandwidth of about
+16 times from base to nr_wb_ctx =3D 6.
 
-One of the perks of using selftests is that you can post the test patch in
-the same series of the feature patches, but you haven't made use of this pe=
-rk,
-so you may want to do that for v2.
-
-Other than that, the test looks good, so you may add:
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks,
-Amir.
+    Base (single threaded)                :  9799KiB/s
+    Parallel Writeback (nr_wb_ctx =3D 1)    :  9727KiB/s
+    Parallel Writeback (nr_wb_ctx =3D 2)    :  18.1MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 3)    :  46.4MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 4)    :  135MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 5)    :  160MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 6)    :  163MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 7)    :  162MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 8)    :  154MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 9)    :  152MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 10)   :  145MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 11)   :  145MiB/s
+    Parallel Writeback (nr_wb_ctx =3D 12)   :  138MiB/s
 
 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/M=
-akefile
-> index 339b31e6a6b5..9cae71edca9f 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -32,6 +32,7 @@ TARGETS +=3D fchmodat2
->  TARGETS +=3D filesystems
->  TARGETS +=3D filesystems/binderfs
->  TARGETS +=3D filesystems/epoll
-> +TARGETS +=3D filesystems/fanotify
->  TARGETS +=3D filesystems/fat
->  TARGETS +=3D filesystems/overlayfs
->  TARGETS +=3D filesystems/statmount
-> diff --git a/tools/testing/selftests/filesystems/fanotify/.gitignore b/to=
-ols/testing/selftests/filesystems/fanotify/.gitignore
-> new file mode 100644
-> index 000000000000..a9f51c9aca9f
-> --- /dev/null
-> +++ b/tools/testing/selftests/filesystems/fanotify/.gitignore
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +fanotify_perm_test
-> diff --git a/tools/testing/selftests/filesystems/fanotify/Makefile b/tool=
-s/testing/selftests/filesystems/fanotify/Makefile
-> new file mode 100644
-> index 000000000000..931bedd989b9
-> --- /dev/null
-> +++ b/tools/testing/selftests/filesystems/fanotify/Makefile
-> @@ -0,0 +1,8 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +CFLAGS +=3D -Wall -O2 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
-> +LDLIBS +=3D -lcap
-> +
-> +TEST_GEN_PROGS :=3D fanotify_perm_test
-> +
-> +include ../../lib.mk
-> diff --git a/tools/testing/selftests/filesystems/fanotify/fanotify_perm_t=
-est.c b/tools/testing/selftests/filesystems/fanotify/fanotify_perm_test.c
-> new file mode 100644
-> index 000000000000..87d718323b1a
-> --- /dev/null
-> +++ b/tools/testing/selftests/filesystems/fanotify/fanotify_perm_test.c
-> @@ -0,0 +1,386 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +#define _GNU_SOURCE
-> +#include <fcntl.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +#include <sys/stat.h>
-> +#include <sys/types.h>
-> +#include <sys/wait.h>
-> +#include <unistd.h>
-> +#include <stdlib.h>
-> +#include <errno.h>
-> +#include <sys/syscall.h>
-> +#include <limits.h>
-> +
-> +#include "../../kselftest_harness.h"
-> +
-> +// Needed for linux/fanotify.h
-> +#ifndef __kernel_fsid_t
-> +typedef struct {
-> +       int val[2];
-> +} __kernel_fsid_t;
-> +#endif
-> +#include <sys/fanotify.h>
-> +
-> +static const char test_dir_templ[] =3D "/tmp/fanotify_perm_test.XXXXXX";
-> +
-> +FIXTURE(fanotify)
-> +{
-> +       char test_dir[sizeof(test_dir_templ)];
-> +       char test_dir2[sizeof(test_dir_templ)];
-> +       int fan_fd;
-> +       int fan_fd2;
-> +       char test_file_path[PATH_MAX];
-> +       char test_file_path2[PATH_MAX];
-> +       char test_exec_path[PATH_MAX];
-> +};
-> +
-> +FIXTURE_SETUP(fanotify)
-> +{
-> +       int ret;
-> +
-> +       /* Setup test directories and files */
-> +       strcpy(self->test_dir, test_dir_templ);
-> +       ASSERT_NE(mkdtemp(self->test_dir), NULL);
-> +       strcpy(self->test_dir2, test_dir_templ);
-> +       ASSERT_NE(mkdtemp(self->test_dir2), NULL);
-> +
-> +       snprintf(self->test_file_path, PATH_MAX, "%s/test_file",
-> +                self->test_dir);
-> +       snprintf(self->test_file_path2, PATH_MAX, "%s/test_file2",
-> +                self->test_dir2);
-> +       snprintf(self->test_exec_path, PATH_MAX, "%s/test_exec",
-> +                self->test_dir);
-> +
-> +       ret =3D open(self->test_file_path, O_CREAT | O_RDWR, 0644);
-> +       ASSERT_GE(ret, 0);
-> +       ASSERT_EQ(write(ret, "test data", 9), 9);
-> +       close(ret);
-> +
-> +       ret =3D open(self->test_file_path2, O_CREAT | O_RDWR, 0644);
-> +       ASSERT_GE(ret, 0);
-> +       ASSERT_EQ(write(ret, "test data2", 9), 9);
-> +       close(ret);
-> +
-> +       ret =3D open(self->test_exec_path, O_CREAT | O_RDWR, 0755);
-> +       ASSERT_GE(ret, 0);
-> +       ASSERT_EQ(write(ret, "#!/bin/bash\necho test\n", 22), 22);
-> +       close(ret);
-> +
-> +       self->fan_fd =3D fanotify_init(
-> +               FAN_CLASS_PRE_CONTENT | FAN_NONBLOCK | FAN_CLOEXEC, O_RDO=
-NLY);
-> +       ASSERT_GE(self->fan_fd, 0);
-> +
-> +       self->fan_fd2 =3D fanotify_init(FAN_CLASS_PRE_CONTENT | FAN_NONBL=
-OCK |
-> +                                             FAN_CLOEXEC | FAN_ENABLE_EV=
-ENT_ID,
-> +                                     O_RDONLY);
-> +       ASSERT_GE(self->fan_fd2, 0);
-> +
-> +       /* Mark the directories for permission events */
-> +       ret =3D fanotify_mark(self->fan_fd, FAN_MARK_ADD,
-> +                           FAN_OPEN_PERM | FAN_OPEN_EXEC_PERM |
-> +                                   FAN_EVENT_ON_CHILD,
-> +                           AT_FDCWD, self->test_dir);
-> +       ASSERT_EQ(ret, 0);
-> +
-> +       ret =3D fanotify_mark(self->fan_fd2, FAN_MARK_ADD,
-> +                           FAN_OPEN_PERM | FAN_OPEN_EXEC_PERM |
-> +                                   FAN_EVENT_ON_CHILD,
-> +                           AT_FDCWD, self->test_dir2);
-> +       ASSERT_EQ(ret, 0);
-> +}
-> +
-> +FIXTURE_TEARDOWN(fanotify)
-> +{
-> +       /* Clean up test directory and files */
-> +       if (self->fan_fd > 0)
-> +               close(self->fan_fd);
-> +       if (self->fan_fd2 > 0)
-> +               close(self->fan_fd2);
-> +
-> +       EXPECT_EQ(unlink(self->test_file_path), 0);
-> +       EXPECT_EQ(unlink(self->test_file_path2), 0);
-> +       EXPECT_EQ(unlink(self->test_exec_path), 0);
-> +       EXPECT_EQ(rmdir(self->test_dir), 0);
-> +       EXPECT_EQ(rmdir(self->test_dir2), 0);
-> +}
-> +
-> +static struct fanotify_event_metadata *get_event(int fd)
-> +{
-> +       struct fanotify_event_metadata *metadata;
-> +       ssize_t len;
-> +       char buf[256];
-> +
-> +       len =3D read(fd, buf, sizeof(buf));
-> +       if (len <=3D 0)
-> +               return NULL;
-> +
-> +       metadata =3D (void *)buf;
-> +       if (!FAN_EVENT_OK(metadata, len))
-> +               return NULL;
-> +
-> +       return metadata;
-> +}
-> +
-> +static int respond_to_event(int fd, struct fanotify_event_metadata *meta=
-data,
-> +                           uint32_t response, bool useEventId)
-> +{
-> +       struct fanotify_response resp;
-> +
-> +       if (useEventId) {
-> +               resp.event_id =3D metadata->event_id;
-> +       } else {
-> +               resp.fd =3D metadata->fd;
-> +       }
-> +       resp.response =3D response;
-> +
-> +       return write(fd, &resp, sizeof(resp));
-> +}
-> +
-> +static void verify_event(struct __test_metadata *const _metadata,
-> +                        struct fanotify_event_metadata *event,
-> +                        uint64_t expect_mask, int expect_pid)
-> +{
-> +       ASSERT_NE(event, NULL);
-> +       ASSERT_EQ(event->mask, expect_mask);
-> +
-> +       if (expect_pid > 0)
-> +               ASSERT_EQ(event->pid, expect_pid);
-> +}
-> +
-> +TEST_F(fanotify, open_perm_allow)
-> +{
-> +       struct fanotify_event_metadata *event;
-> +       int fd, ret;
-> +       pid_t child;
-> +
-> +       child =3D fork();
-> +       ASSERT_GE(child, 0);
-> +
-> +       if (child =3D=3D 0) {
-> +               /* Try to open the file - this should trigger FAN_OPEN_PE=
-RM */
-> +               fd =3D open(self->test_file_path, O_RDONLY);
-> +               if (fd < 0)
-> +                       exit(EXIT_FAILURE);
-> +               close(fd);
-> +               exit(EXIT_SUCCESS);
-> +       }
-> +
-> +       usleep(100000);
-> +       event =3D get_event(self->fan_fd);
-> +       verify_event(_metadata, event, FAN_OPEN_PERM, child);
-> +
-> +       /* Allow the open operation */
-> +       close(event->fd);
-> +       ret =3D respond_to_event(self->fan_fd, event, FAN_ALLOW,
-> +                              false /* useEventId */);
-> +       ASSERT_EQ(ret, sizeof(struct fanotify_response));
-> +
-> +       int status;
-> +
-> +       ASSERT_EQ(waitpid(child, &status, 0), child);
-> +       ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
-> +}
-> +
-> +TEST_F(fanotify, open_perm_deny)
-> +{
-> +       struct fanotify_event_metadata *event;
-> +       int ret;
-> +       pid_t child;
-> +
-> +       child =3D fork();
-> +       ASSERT_GE(child, 0);
-> +
-> +       if (child =3D=3D 0) {
-> +               /* Try to open the file - this should trigger FAN_OPEN_PE=
-RM */
-> +               int fd =3D open(self->test_file_path, O_RDONLY);
-> +
-> +               /* If open succeeded, this is an error as we expect it to=
- be denied */
-> +               if (fd >=3D 0) {
-> +                       close(fd);
-> +                       exit(EXIT_FAILURE);
-> +               }
-> +
-> +               /* Verify the expected error */
-> +               if (errno =3D=3D EPERM)
-> +                       exit(EXIT_SUCCESS);
-> +
-> +               exit(EXIT_FAILURE);
-> +       }
-> +
-> +       usleep(100000);
-> +       event =3D get_event(self->fan_fd);
-> +       verify_event(_metadata, event, FAN_OPEN_PERM, child);
-> +
-> +       /* Deny the open operation */
-> +       close(event->fd);
-> +       ret =3D respond_to_event(self->fan_fd, event, FAN_DENY,
-> +                              false /* useEventId */);
-> +       ASSERT_EQ(ret, sizeof(struct fanotify_response));
-> +
-> +       int status;
-> +
-> +       ASSERT_EQ(waitpid(child, &status, 0), child);
-> +       ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
-> +}
-> +
-> +TEST_F(fanotify, exec_perm_allow)
-> +{
-> +       struct fanotify_event_metadata *event;
-> +       int ret;
-> +       pid_t child;
-> +
-> +       child =3D fork();
-> +       ASSERT_GE(child, 0);
-> +
-> +       if (child =3D=3D 0) {
-> +               /* Try to execute the file - this should trigger FAN_OPEN=
-_EXEC_PERM */
-> +               execl(self->test_exec_path, "test_exec", NULL);
-> +
-> +               /* If we get here, execl failed */
-> +               exit(EXIT_FAILURE);
-> +       }
-> +
-> +       usleep(100000);
-> +       event =3D get_event(self->fan_fd);
-> +       verify_event(_metadata, event, FAN_OPEN_EXEC_PERM, child);
-> +
-> +       /* Allow the exec operation + ignore subsequent events */
-> +       ASSERT_GE(fanotify_mark(self->fan_fd,
-> +                               FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
-> +                                       FAN_MARK_IGNORED_SURV_MODIFY,
-> +                               FAN_OPEN_PERM | FAN_OPEN_EXEC_PERM, event=
-->fd,
-> +                               NULL),
-> +                 0);
-> +       close(event->fd);
-> +       ret =3D respond_to_event(self->fan_fd, event, FAN_ALLOW,
-> +                              false /* useEventId */);
-> +       ASSERT_EQ(ret, sizeof(struct fanotify_response));
-> +
-> +       int status;
-> +
-> +       ASSERT_EQ(waitpid(child, &status, 0), child);
-> +       ASSERT_EQ(WIFEXITED(status), 1);
-> +}
-> +
-> +TEST_F(fanotify, exec_perm_deny)
-> +{
-> +       struct fanotify_event_metadata *event;
-> +       int ret;
-> +       pid_t child;
-> +
-> +       child =3D fork();
-> +       ASSERT_GE(child, 0);
-> +
-> +       if (child =3D=3D 0) {
-> +               /* Try to execute the file - this should trigger FAN_OPEN=
-_EXEC_PERM */
-> +               execl(self->test_exec_path, "test_exec", NULL);
-> +
-> +               /* If execl failed with EPERM, that's what we expect */
-> +               if (errno =3D=3D EPERM)
-> +                       exit(EXIT_SUCCESS);
-> +
-> +               exit(EXIT_FAILURE);
-> +       }
-> +
-> +       usleep(100000);
-> +       event =3D get_event(self->fan_fd);
-> +       verify_event(_metadata, event, FAN_OPEN_EXEC_PERM, child);
-> +
-> +       /* Deny the exec operation */
-> +       close(event->fd);
-> +       ret =3D respond_to_event(self->fan_fd, event, FAN_DENY,
-> +                              false /* useEventId */);
-> +       ASSERT_EQ(ret, sizeof(struct fanotify_response));
-> +
-> +       int status;
-> +
-> +       ASSERT_EQ(waitpid(child, &status, 0), child);
-> +       ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
-> +}
-> +
-> +TEST_F(fanotify, default_response)
-> +{
-> +       struct fanotify_event_metadata *event;
-> +       int ret;
-> +       pid_t child;
-> +       struct fanotify_response resp;
-> +
-> +       /* Set default response to deny */
-> +       resp.fd =3D FAN_NOFD;
-> +       resp.response =3D FAN_DENY | FAN_DEFAULT;
-> +       ret =3D write(self->fan_fd, &resp, sizeof(resp));
-> +       ASSERT_EQ(ret, sizeof(resp));
-> +
-> +       child =3D fork();
-> +       ASSERT_GE(child, 0);
-> +
-> +       if (child =3D=3D 0) {
-> +               close(self->fan_fd);
-> +               /* Try to open the file - this should trigger FAN_OPEN_PE=
-RM */
-> +               int fd =3D open(self->test_file_path, O_RDONLY);
-> +
-> +               /* If open succeeded, this is an error as we expect it to=
- be denied */
-> +               if (fd >=3D 0) {
-> +                       close(fd);
-> +                       exit(EXIT_FAILURE);
-> +               }
-> +
-> +               /* Verify the expected error */
-> +               if (errno =3D=3D EPERM)
-> +                       exit(EXIT_SUCCESS);
-> +
-> +               exit(EXIT_FAILURE);
-> +       }
-> +
-> +       usleep(100000);
-> +       event =3D get_event(self->fan_fd);
-> +       verify_event(_metadata, event, FAN_OPEN_PERM, child);
-> +
-> +       /* Close fanotify group to return default response (DENY) */
-> +       close(self->fan_fd);
-> +       self->fan_fd =3D -1;
-> +
-> +       int status;
-> +
-> +       ASSERT_EQ(waitpid(child, &status, 0), child);
-> +       ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
-> +}
-> +
-> +TEST_F(fanotify, respond_via_event_id)
-> +{
-> +       struct fanotify_event_metadata *event;
-> +       int fd, ret;
-> +       pid_t child;
-> +
-> +       child =3D fork();
-> +       ASSERT_GE(child, 0);
-> +
-> +       if (child =3D=3D 0) {
-> +               /* Try to open the file - this should trigger FAN_OPEN_PE=
-RM */
-> +               fd =3D open(self->test_file_path2, O_RDONLY);
-> +               if (fd < 0)
-> +                       exit(EXIT_FAILURE);
-> +               close(fd);
-> +               exit(EXIT_SUCCESS);
-> +       }
-> +
-> +       usleep(100000);
-> +       event =3D get_event(self->fan_fd2);
-> +       verify_event(_metadata, event, FAN_OPEN_PERM, child);
-> +       ASSERT_EQ(event->event_id, 1);
-> +
-> +       /* Allow the open operation */
-> +       close(event->fd);
-> +       ret =3D respond_to_event(self->fan_fd2, event, FAN_ALLOW,
-> +                              true /* useEventId */);
-> +       ASSERT_EQ(ret, sizeof(struct fanotify_response));
-> +
-> +       int status;
-> +
-> +       ASSERT_EQ(waitpid(child, &status, 0), child);
-> +       ASSERT_EQ(WEXITSTATUS(status), EXIT_SUCCESS);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> --
-> 2.47.1
+System config
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Number of CPUs =3D 12
+System RAM =3D 9G
+For XFS number of AGs =3D 4
+Used NVMe SSD of 3.84 TB (Enterprise SSD PM1733a)
+
+Script
+=3D=3D=3D=3D=3D
+mkfs.xfs -f /dev/nvme0n1
+mount /dev/nvme0n1 /mnt
+echo <num_wb_ctx> > /sys/class/bdi/259:2/nwritebacks
+sync
+echo 3 > /proc/sys/vm/drop_caches
+
+for i in {1..12}; do
+  mkdir -p /mnt/dir$i
+done
+
+fio job_nvme.fio
+
+umount /mnt
+echo 3 > /proc/sys/vm/drop_caches
+sync
+
+fio job
+=3D=3D=3D=3D=3D
+[global]
+bs=3D4k
+iodepth=3D1
+rw=3Drandwrite
+ioengine=3Dio_uring
+nrfiles=3D12
+numjobs=3D1                # Each job writes to a different file
+size=3D1g
+direct=3D0                 # Buffered I/O to trigger writeback
+group_reporting=3D1
+create_on_open=3D1
+name=3Dtest
+
+[job1]
+directory=3D/mnt/dir1
+
+[job2]
+directory=3D/mnt/dir2
+...
+...
+[job12]
+directory=3D/mnt/dir1
+
+> > ext4
+> > Base
+> > a. 7080   b. 7080    c. 11
+> > Parallel writeback
+> > a. 5961   b. 5961    c. 11
 >
+> Hum, that's particularly ... interesting.  I wonder what the mapping
+> count behaviors are when you turn off delayed allocation?
+>
+> --D
+>
+
+I attempted to disable delayed allocation by setting allocsize=3D4096
+during mount (mount -o allocsize=3D4096 /dev/pmem0 /mnt), but still
+observed a reduction in file fragments after a delay. Is there something
+I'm overlooking?
+
+-Kundan
 
