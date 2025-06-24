@@ -1,160 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-52751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EABFAE6361
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 13:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B97AE64A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 14:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3FC40073B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499341925E9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E48E288CBE;
-	Tue, 24 Jun 2025 11:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D18299A87;
+	Tue, 24 Jun 2025 12:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O+T6U1qF"
+	dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b="hpzAoHxX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B7D28688D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 11:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+Received: from mx10.didiglobal.com (mx10.didiglobal.com [111.202.70.125])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id E682E28ECEA;
+	Tue, 24 Jun 2025 12:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.125
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763532; cv=none; b=ce2jvX/9jcTq7rsSq7hP49H7KI82Lxo+YIova+efCrORBpx6NgdQaNNn9Sn3WAKjsX9UxtSVfXUR/H1SZAJxWIzeUfnoCWH52xOKTAXytJcx6azT6qi0kKk9wNMkCS9D1Y3y1Or2bV1aGjqaGHvOLbV76cULdN9I72yIwfIAC6w=
+	t=1750767338; cv=none; b=nU3S46tXbRkjdAG4/T7/vEUUbP4t+7NmeCB1JO7IvDE3VjJz+4pEq64RS60laWUr67GbidZN5uWhJQilJDwd+L+59qvJKiuPpXFyoNquB8oaZzkdGU70jIAP3s8rPQrQ+tW3WiSXKGZKH1nwQUj4DhQIbmiId2Lkawu42fUVtyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763532; c=relaxed/simple;
-	bh=mmyaQwrNqJf24cVo78MhxpTUoWV9AeICcZr+wKwojr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6cXuejMDRVaVOUbqkdUbmIVbzKufsw8vKy6pGRTq/JPjPQkxQavxUu78x07FbcjwrGJG0CKPf1uugKdXkSYnAcyBMqwuKTrgs62I8srs96fKTfd/BJNVK+TTMyNtexnisEI5wuAt9/i0PwwwdEvZBWgcROhYskEiVJ58pIRsbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O+T6U1qF; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750763531; x=1782299531;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mmyaQwrNqJf24cVo78MhxpTUoWV9AeICcZr+wKwojr0=;
-  b=O+T6U1qFn/AfyBBI2aUPPVUH+/xx0+PbJgDcf2jhvUkfL5tchslDSinf
-   Tcl/QB4MZNrOXdrmmXMxMVdrcG/TUbTL429EuPfbQQeVDC2eqcJsyTMLE
-   B55y6scx8cHKOK46EMAFfkMkHNY+d5GjXywo9hR43z8CUn1qzhVwh3hvg
-   qktrl4F7rxp+sQFpBovxzSY2qMgB5JJsDjNU4pRuUvSsScA19JFvpisii
-   ucizYdMTM2cVyX7NMDIJnv4SLxEPuG+QPYUakDpPa7QUyma64e2b89wo3
-   bstdq2w5qR+3jq5zL+joneNcS3zzmUNvQNprJRzuVNb3yiRsnNJN5IVLX
-   w==;
-X-CSE-ConnectionGUID: M0qMtONrQPCpiP5yVUfJLQ==
-X-CSE-MsgGUID: AfjVurwsQOKEaFBfZ7GNbg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52228360"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="52228360"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:12:10 -0700
-X-CSE-ConnectionGUID: NqGelhMZR6G/Wl6CyymbcA==
-X-CSE-MsgGUID: S3jN+/V3QtCLTGpj1W/uZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="155914102"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 24 Jun 2025 04:12:08 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uU1ZN-000S3C-2y;
-	Tue, 24 Jun 2025 11:12:05 +0000
-Date: Tue, 24 Jun 2025 19:11:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-Cc: oe-kbuild-all@lists.linux.dev, jack@suse.cz, amir73il@gmail.com,
-	josef@toxicpanda.com, lesha@meta.com, linux-fsdevel@vger.kernel.org,
-	sargun@meta.com
-Subject: Re: [PATCH] fanotify: support custom default close response
-Message-ID: <202506241819.lF9Wd4Tn-lkp@intel.com>
-References: <20250623192503.2673076-1-ibrahimjirdeh@meta.com>
+	s=arc-20240116; t=1750767338; c=relaxed/simple;
+	bh=NSR7S0h0nlsDFAQMve21bvAq8IdC1ftrKlDHkbcGUQg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=qvN4PVj4nRU4t3/TUrSq5EG0GQE521KgkegSduCE5aS1vfpzvwS8kQwdcQyoARgC+/WwSuf2JuIIol4Sad3RW1Qq2M4IwuqMGAKBJI4mE2T6fJNMeygj6yFsJ9r6IITCGpY1rbNi+UvpV9oZ6LZHwY3XUecrenxEtUwVAb7u+lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b=hpzAoHxX; arc=none smtp.client-ip=111.202.70.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
+Received: from mail.didiglobal.com (unknown [10.79.65.20])
+	by mx10.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id 39D011808ACAD9;
+	Tue, 24 Jun 2025 20:11:18 +0800 (CST)
+Received: from BJ03-ACTMBX-07.didichuxing.com (10.79.71.34) by
+ BJ02-ACTMBX-02.didichuxing.com (10.79.65.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 24 Jun 2025 20:12:00 +0800
+Received: from BJ03-ACTMBX-07.didichuxing.com (10.79.71.34) by
+ BJ03-ACTMBX-07.didichuxing.com (10.79.71.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 24 Jun 2025 20:12:00 +0800
+Received: from BJ03-ACTMBX-07.didichuxing.com ([fe80::b00b:de35:2067:9787]) by
+ BJ03-ACTMBX-07.didichuxing.com ([fe80::b00b:de35:2067:9787%7]) with mapi id
+ 15.02.1748.010; Tue, 24 Jun 2025 20:12:00 +0800
+X-MD-Sfrom: chentaotao@didiglobal.com
+X-MD-SrcIP: 10.79.65.20
+From: =?utf-8?B?6ZmI5rab5rabIFRhb3RhbyBDaGVu?= <chentaotao@didiglobal.com>
+To: "tytso@mit.edu" <tytso@mit.edu>, "hch@infradead.org" <hch@infradead.org>,
+	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>, "willy@infradead.org"
+	<willy@infradead.org>, "brauner@kernel.org" <brauner@kernel.org>,
+	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>, "tursulin@ursulin.net"
+	<tursulin@ursulin.net>, "airlied@gmail.com" <airlied@gmail.com>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "chentao325@qq.com" <chentao325@qq.com>,
+	=?utf-8?B?6ZmI5rab5rabIFRhb3RhbyBDaGVu?= <chentaotao@didiglobal.com>
+Subject: [PATCH v2 0/5] fs: refactor write_begin/write_end and add ext4
+ IOCB_DONTCACHE support
+Thread-Topic: [PATCH v2 0/5] fs: refactor write_begin/write_end and add ext4
+ IOCB_DONTCACHE support
+Thread-Index: AQHb5QEvaAoiRj/CJkyi1oGtEi5geQ==
+Date: Tue, 24 Jun 2025 12:11:59 +0000
+Message-ID: <20250624121149.2927-1-chentaotao@didiglobal.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2CD453F0A90DBA419D2AF275EA1B93EA@didichuxing.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623192503.2673076-1-ibrahimjirdeh@meta.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=didiglobal.com;
+	s=2025; t=1750767104;
+	bh=NSR7S0h0nlsDFAQMve21bvAq8IdC1ftrKlDHkbcGUQg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type;
+	b=hpzAoHxXGrLrOt4KyFR3Wu9rYx24YWOUGLJg4cMGOzA/LiAI2xzjQqbgxD9BgQG4N
+	 P80y8W+6+dxppjOjwG1nyrcKNA8+PVWIXfMRbf8pnKWnO1Gi8i1h2FuB27m95uce/B
+	 dt+7YIGgT0BlZlBUeiGUNZv/RWY4PuBRhALeYV+8=
 
-Hi Ibrahim,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.16-rc3 next-20250623]
-[cannot apply to jack-fs/fsnotify]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ibrahim-Jirdeh/fanotify-support-custom-default-close-response/20250624-032902
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250623192503.2673076-1-ibrahimjirdeh%40meta.com
-patch subject: [PATCH] fanotify: support custom default close response
-config: arm-randconfig-002-20250624 (https://download.01.org/0day-ci/archive/20250624/202506241819.lF9Wd4Tn-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250624/202506241819.lF9Wd4Tn-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506241819.lF9Wd4Tn-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   fs/notify/fanotify/fanotify_user.c: In function 'finish_permission_event.constprop':
->> fs/notify/fanotify/fanotify_user.c:316:3: warning: argument 2 null where non-null expected [-Wnonnull]
-      memcpy(&event->audit_rule, friar, sizeof(*friar));
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/string.h:65,
-                    from include/linux/bitmap.h:13,
-                    from include/linux/cpumask.h:12,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/rcupdate.h:29,
-                    from include/linux/sysctl.h:26,
-                    from include/linux/fanotify.h:5,
-                    from fs/notify/fanotify/fanotify_user.c:2:
-   arch/arm/include/asm/string.h:20:15: note: in a call to function 'memcpy' declared here
-    extern void * memcpy(void *, const void *, __kernel_size_t);
-                  ^~~~~~
-
-
-vim +316 fs/notify/fanotify/fanotify_user.c
-
-70529a199574c1 Richard Guy Briggs 2023-02-03  301  
-40873284d7106f Jan Kara           2019-01-08  302  /*
-40873284d7106f Jan Kara           2019-01-08  303   * Finish processing of permission event by setting it to ANSWERED state and
-40873284d7106f Jan Kara           2019-01-08  304   * drop group->notification_lock.
-40873284d7106f Jan Kara           2019-01-08  305   */
-40873284d7106f Jan Kara           2019-01-08  306  static void finish_permission_event(struct fsnotify_group *group,
-70529a199574c1 Richard Guy Briggs 2023-02-03  307  				    struct fanotify_perm_event *event, u32 response,
-70529a199574c1 Richard Guy Briggs 2023-02-03  308  				    struct fanotify_response_info_audit_rule *friar)
-40873284d7106f Jan Kara           2019-01-08  309  				    __releases(&group->notification_lock)
-40873284d7106f Jan Kara           2019-01-08  310  {
-fabf7f29b3e2ce Jan Kara           2019-01-08  311  	bool destroy = false;
-fabf7f29b3e2ce Jan Kara           2019-01-08  312  
-40873284d7106f Jan Kara           2019-01-08  313  	assert_spin_locked(&group->notification_lock);
-70529a199574c1 Richard Guy Briggs 2023-02-03  314  	event->response = response & ~FAN_INFO;
-70529a199574c1 Richard Guy Briggs 2023-02-03  315  	if (response & FAN_INFO)
-70529a199574c1 Richard Guy Briggs 2023-02-03 @316  		memcpy(&event->audit_rule, friar, sizeof(*friar));
-70529a199574c1 Richard Guy Briggs 2023-02-03  317  
-fabf7f29b3e2ce Jan Kara           2019-01-08  318  	if (event->state == FAN_EVENT_CANCELED)
-fabf7f29b3e2ce Jan Kara           2019-01-08  319  		destroy = true;
-fabf7f29b3e2ce Jan Kara           2019-01-08  320  	else
-40873284d7106f Jan Kara           2019-01-08  321  		event->state = FAN_EVENT_ANSWERED;
-40873284d7106f Jan Kara           2019-01-08  322  	spin_unlock(&group->notification_lock);
-fabf7f29b3e2ce Jan Kara           2019-01-08  323  	if (destroy)
-fabf7f29b3e2ce Jan Kara           2019-01-08  324  		fsnotify_destroy_event(group, &event->fae.fse);
-40873284d7106f Jan Kara           2019-01-08  325  }
-40873284d7106f Jan Kara           2019-01-08  326  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+RnJvbTogVGFvdGFvIENoZW4gPGNoZW50YW90YW9AZGlkaWdsb2JhbC5jb20+DQoNClRoaXMgcGF0
+Y2ggc2VyaWVzIHJlZmFjdG9ycyB0aGUgYWRkcmVzc19zcGFjZV9vcGVyYXRpb25zIHdyaXRlX2Jl
+Z2luKCkNCmFuZCB3cml0ZV9lbmQoKSBjYWxsYmFja3MgdG8gdGFrZSBzdHJ1Y3Qga2lvY2IgKiBh
+cyB0aGVpciBmaXJzdCBhcmd1bWVudCwNCmFsbG93aW5nIElPQ0IgZmxhZ3Mgc3VjaCBhcyBJT0NC
+X0RPTlRDQUNIRSB0byBwcm9wYWdhdGUgdG8gZmlsZXN5c3RlbeKAmXMNCmJ1ZmZlcmVkIHdyaXRl
+IHBhdGguDQoNCkV4dDQgaXMgdXBkYXRlZCB0byBpbXBsZW1lbnQgaGFuZGxpbmcgb2YgdGhlIElP
+Q0JfRE9OVENBQ0hFIGZsYWcgaW4gaXRzDQpidWZmZXJlZCB3cml0ZSBwYXRoIGFuZCB0byBhZHZl
+cnRpc2Ugc3VwcG9ydCB2aWEgdGhlIEZPUF9ET05UQ0FDSEUgZmlsZQ0Kb3BlcmF0aW9uIGZsYWcu
+DQoNCkFkZGl0aW9uYWxseSwgdGhlIGk5MTUgZHJpdmVy4oCZcyBzaG1lbSB3cml0ZSBwYXRocyBh
+cmUgdXBkYXRlZCB0byBieXBhc3MNCnRoZSBsZWdhY3kgd3JpdGVfYmVnaW4vd3JpdGVfZW5kIGlu
+dGVyZmFjZSBpbiBmYXZvciBvZiBkaXJlY3RseSBjYWxsaW5nDQp3cml0ZV9pdGVyKCksIHVzaW5n
+IGEgY29uc3RydWN0ZWQgc3luY2hyb25vdXMga2lvY2IuIEFub3RoZXIgaTkxNSBwYXRjaA0KcmVw
+bGFjZXMgYSBtYW51YWwgd3JpdGUgbG9vcCB3aXRoIGtlcm5lbF93cml0ZSgpIGluIHNobWVtIG9i
+amVjdCBjcmVhdGlvbi4NCg0KVGVzdGVkIHdpdGggZXh0NCBhbmQgaTkxNSBHRU0gd29ya2xvYWRz
+Lg0KDQpDaGFuZ2VzIHNpbmNlIHYxOg0KLSBleHQ0IHVzZXMga2lvY2ItPmtpX2ZsYWdzIGRpcmVj
+dGx5IGluc3RlYWQgb2YgZnNkYXRhLg0KLSB3cml0ZV9iZWdpbi93cml0ZV9lbmQgaW50ZXJmYWNl
+IGlzIGNoYW5nZWQgdG8gdGFrZSBzdHJ1Y3Qga2lvY2IgKg0KICBpbnN0ZWFkIG9mIHN0cnVjdCBm
+aWxlICouDQotIGk5MTUgc2htZW1fcHdyaXRlIHJlZmFjdG9yZWQgdG8gdXNlIHdyaXRlX2l0ZXIo
+KSBkaXJlY3RseSBpbnN0ZWFkDQogIG9mIHdyaXRlX2JlZ2luL3dyaXRlX2VuZC4NCi0gaTkxNSBH
+RU0gc2htZW0gb2JqZWN0IGNyZWF0aW9uIHJlcGxhY2VkIG1hbnVhbCB3cml0ZSBsb29wIHdpdGgN
+CiAga2VybmVsX3dyaXRlKCkuDQoNClRhb3RhbyBDaGVuICg1KToNCiAgZHJtL2k5MTU6IFVzZSBr
+ZXJuZWxfd3JpdGUoKSBpbiBzaG1lbSBvYmplY3QgY3JlYXRlDQogIGRybS9pOTE1OiBSZWZhY3Rv
+ciBzaG1lbV9wd3JpdGUoKSB0byB1c2Uga2lvY2IgYW5kIHdyaXRlX2l0ZXINCiAgZnM6IGNoYW5n
+ZSB3cml0ZV9iZWdpbi93cml0ZV9lbmQgaW50ZXJmYWNlIHRvIHRha2Ugc3RydWN0IGtpb2NiICoN
+CiAgZXh0NDogaGFuZGxlIElPQ0JfRE9OVENBQ0hFIGluIGJ1ZmZlcmVkIHdyaXRlIHBhdGgNCiAg
+ZXh0NDogZGVjbGFyZSBzdXBwb3J0IGZvciBGT1BfRE9OVENBQ0hFDQoNCiBEb2N1bWVudGF0aW9u
+L2ZpbGVzeXN0ZW1zL2xvY2tpbmcucnN0ICAgICB8ICAgNCArLQ0KIERvY3VtZW50YXRpb24vZmls
+ZXN5c3RlbXMvdmZzLnJzdCAgICAgICAgIHwgICA0ICstDQogYmxvY2svZm9wcy5jICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKy0NCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9nZW0v
+aTkxNV9nZW1fc2htZW0uYyB8IDExMiArKysrKystLS0tLS0tLS0tLS0tLS0tDQogZnMvYWRmcy9p
+bm9kZS5jICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKy0NCiBmcy9hZmZzL2ZpbGUu
+YyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxMiArLS0NCiBmcy9iY2FjaGVmcy9mcy1p
+by1idWZmZXJlZC5jICAgICAgICAgICAgICB8ICAgNCArLQ0KIGZzL2JjYWNoZWZzL2ZzLWlvLWJ1
+ZmZlcmVkLmggICAgICAgICAgICAgIHwgICA0ICstDQogZnMvYmZzL2ZpbGUuYyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBmcy9idWZmZXIuYyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAxOCArKy0tDQogZnMvY2VwaC9hZGRyLmMgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgfCAgIDYgKy0NCiBmcy9lY3J5cHRmcy9tbWFwLmMgICAgICAgICAgICAgICAg
+ICAgICAgICB8ICAxMCArLQ0KIGZzL2V4ZmF0L2ZpbGUuYyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHwgIDE0ICsrLQ0KIGZzL2V4ZmF0L2lub2RlLmMgICAgICAgICAgICAgICAgICAgICAgICAg
+IHwgICA2ICstDQogZnMvZXh0Mi9pbm9kZS5jICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAg
+IDYgKy0NCiBmcy9leHQ0L2ZpbGUuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMyAr
+LQ0KIGZzL2V4dDQvaW5vZGUuYyAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDI1ICsrLS0t
+DQogZnMvZjJmcy9kYXRhLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKy0NCiBm
+cy9mYXQvaW5vZGUuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgOCArLQ0KIGZzL2Z1
+c2UvZmlsZS5jICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA1ICstDQogZnMvaGZzL2hm
+c19mcy5oICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBmcy9oZnMvaW5vZGUu
+YyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArLQ0KIGZzL2hmc3BsdXMvaGZzcGx1
+c19mcy5oICAgICAgICAgICAgICAgICAgIHwgICAyICstDQogZnMvaGZzcGx1cy9pbm9kZS5jICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKy0NCiBmcy9ob3N0ZnMvaG9zdGZzX2tlcm4uYyAg
+ICAgICAgICAgICAgICAgICB8ICAgNiArLQ0KIGZzL2hwZnMvZmlsZS5jICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHwgICA4ICstDQogZnMvaHVnZXRsYmZzL2lub2RlLmMgICAgICAgICAgICAg
+ICAgICAgICAgfCAgIDQgKy0NCiBmcy9qZmZzMi9maWxlLmMgICAgICAgICAgICAgICAgICAgICAg
+ICAgICB8ICAgOCArLQ0KIGZzL2pmcy9pbm9kZS5jICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHwgICA2ICstDQogZnMvbGliZnMuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAg
+IDQgKy0NCiBmcy9taW5peC9pbm9kZS5jICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMiAr
+LQ0KIGZzL25mcy9maWxlLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA2ICstDQog
+ZnMvbmlsZnMyL2lub2RlLmMgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKy0NCiBmcy9u
+dGZzMy9maWxlLmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNyArLQ0KIGZzL250ZnMz
+L2lub2RlLmMgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA2ICstDQogZnMvbnRmczMvbnRm
+c19mcy5oICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKy0NCiBmcy9vY2ZzMi9hb3BzLmMg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArLQ0KIGZzL29tZnMvZmlsZS5jICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgICAyICstDQogZnMvb3JhbmdlZnMvaW5vZGUuYyAgICAg
+ICAgICAgICAgICAgICAgICAgfCAgIDYgKy0NCiBmcy91Ymlmcy9maWxlLmMgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAgNCArLQ0KIGZzL3VkZi9pbm9kZS5jICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIHwgICA5ICstDQogZnMvdWZzL2lub2RlLmMgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgfCAgIDYgKy0NCiBmcy92Ym94c2YvZmlsZS5jICAgICAgICAgICAgICAgICAgICAgICAg
+ICB8ICAgNCArLQ0KIGluY2x1ZGUvbGludXgvYnVmZmVyX2hlYWQuaCAgICAgICAgICAgICAgIHwg
+ICA0ICstDQogaW5jbHVkZS9saW51eC9mcy5oICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDYg
+Ky0NCiBtbS9maWxlbWFwLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArLQ0K
+IG1tL3NobWVtLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICstDQogNDcg
+ZmlsZXMgY2hhbmdlZCwgMTc2IGluc2VydGlvbnMoKyksIDIxMyBkZWxldGlvbnMoLSkNCg0KLS0g
+DQoyLjM0LjENCg==
 
