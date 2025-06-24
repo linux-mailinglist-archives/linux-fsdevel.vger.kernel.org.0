@@ -1,159 +1,282 @@
-Return-Path: <linux-fsdevel+bounces-52788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9FFAE6B46
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 17:37:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528B2AE6B57
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 17:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546B11886801
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 15:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C5817BA29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 15:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBE925634;
-	Tue, 24 Jun 2025 15:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDD42E6D21;
+	Tue, 24 Jun 2025 15:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D4O5FtOA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEjxx5l8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7392957BA
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 15:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A832DCBF6;
+	Tue, 24 Jun 2025 15:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750778139; cv=none; b=WFEBQiWIHVySF2Ly4Kso9a2w25uS7SJLUHdkEfRL2zc+wiI6GTpcot+H3Eck86ydeVGFCWkf2jXcsGYKkusWICm25s6OhuyATpM3XLXH3KvqcyEOIYOUxXBjEfkm1w3iGNGyeApCfhGc8HKULEgYxNEWWbLF3m5iOiRfvvvRBg8=
+	t=1750778614; cv=none; b=faIw+xCON5L9P38rxnRexTVzM+9iPgYwyjf2/uzRyUbe835nULs5hGK9KPHsWHAh91UeKgwlgm3ISYjolyyBIZhPY83sXF5Fp/Li7GEDqdv+WfOvkbebhMx2VZgnz2VbtmDqWrlWpYOZuUEj/XDC4MNl+FD3cGbWfpYMFiNVpQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750778139; c=relaxed/simple;
-	bh=ZrdxuWG7+LFoBk2IWmpfoUdLdIZz43RgZ3fNnrL1bTs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ckTiBCHFug+CHOM62s0EkmbfCIdFpim9ognOMjJku2roUgzNjdIyWJ8Fxno+77+hOK26xssEsGzc7WbWgoUYGjaZ8ROsU1H1X0l4VX9fxTIBwpWwKcWhLgp74eaLyFeB38GoXakcW18eSovdwzlmBwiFqDWYXe/9t6+8GQR3+EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D4O5FtOA; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so850625966b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 08:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1750778135; x=1751382935; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eLkoFblRVcI4qlzicS3evY0eDoBrk4ZSgrPnvsJhZ+Q=;
-        b=D4O5FtOA9Yt2WDFWzF48V0lhRyzjRMI77+3uvTWdycEfvkhBTQCW/8m6kmska5RZ42
-         RTDPKfRjckSNgMzaXL1YIA1WY5+wqFsb/GlwARfZx+/K90ZnjB9hAIjDqlJ5RroKPv0B
-         jL6sADr7ILu0b8cQK+jCNQ57unCHF2lLFa5Lg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750778135; x=1751382935;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eLkoFblRVcI4qlzicS3evY0eDoBrk4ZSgrPnvsJhZ+Q=;
-        b=JDmTAzVdUyzV/4nRnRlAeXPB2bSauK9M9uIpya3VN4ifaNW435QCYpLXh9k9+swlZn
-         SztfHoIEl5fhRZBlMe9jbq+2iT6V6toPmgAK3z4GcgkQudSpC8784vgca0ZoHVuqdgk/
-         ahtkj71SmNPoLNEYI6E/IkA2ce1IcAGShQyvaxnb4r0YDVHKGuC1/Hbiea/38vQSlzw9
-         2Rh+5oFBaJn8OJqtFNQJd0X7+zNPL30U4Dx/nJxYc/r0tsLOoxlRV9UfDLOe2Mq1+zMS
-         CIAyoaODIPmTCcyCyt8jcjDR7TL5UBOq+wOW7bfBwf0SgggIdj/3uL+DAI49uHZ40eLs
-         n4OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+WIAngoj3Mdn2ZWzM/jR333d3FIVMuigr1Ou+I1aRqFm7162GMQ54aIkvqCLJlT2FdeLdKrs9sVoQsOXB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNknUEzSCkMgapPhJ/kObP4T6tdWG39QRbqS5L0aiFmVZIcERy
-	avbyB+AmZywpQzvQJJW3wCkVqx4WfHwmtH51aVOKR3wRYMlrU3v4ad/aP5VrIJjRBht+FxhSFqW
-	TgxuZUMQ=
-X-Gm-Gg: ASbGncvqU/vMi4yK7pqkr+h4aOAkTtsio+mTdm8skE8aag96siR6uHzsYbMI9fq7pX+
-	ukfdfArMUT237h7LsLHDvxO/dikAbOlwf9R+bcQMwsAfoOy+lJyrEajLDGN4ExEICQeOLzltROY
-	yNDdJK6w377WpU4Ye9e4+CvLjHkdAfWJGrqf+hEv6eJNmOtwJROP0DUNZPgVgYQDdnr1StKROku
-	JN2vGiOfIPoEEMR64lEZ8FjOzZ8XigY1k16rEZvHeS565A894iZjsh/Mtu07+c1HN/Xy5n32hT0
-	jTrUA6e2Q3tY7WswafmLDdrHBBqsLRXF+Cm9ncl2OeL/MtpVzF0tEP+rZjZHlojpjGVdrUJx+B/
-	r16oU4dOsrv4Gkl6cZdT/CejfxgFN9X4/nON/
-X-Google-Smtp-Source: AGHT+IFHPkAOLJwDnPEtka8N/gQxXRPv64cvqrCdfS0mtbW+LVjyyXSjhnm+dQj5qi153nqzTg5s3Q==
-X-Received: by 2002:a17:907:6088:b0:ad2:4d69:6da5 with SMTP id a640c23a62f3a-ae057cdea94mr1757024466b.57.1750778134652;
-        Tue, 24 Jun 2025 08:15:34 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0541b7258sm887311666b.119.2025.06.24.08.15.33
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 08:15:33 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-601dfef6a8dso8698460a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 08:15:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXQnHljdQVRskYrs8GOCU/u9TAAgJ07LVMaA6+5n5adZNHI0/PlJHEuSqcT/mSXi3dkKCS8HiR2j4ClMs5A@vger.kernel.org
-X-Received: by 2002:a05:6402:4308:b0:608:330a:9f67 with SMTP id
- 4fb4d7f45d1cf-60a1d1a2ecamr15042057a12.32.1750778131214; Tue, 24 Jun 2025
- 08:15:31 -0700 (PDT)
+	s=arc-20240116; t=1750778614; c=relaxed/simple;
+	bh=a+seGXrhPW0GahtwOj0yhRGKclunqYWrymMbDOhiSmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAz6ORID7uzfrIylcENrGIAhtIMYpqOyCmnZMfW/73D1CwwdUBgAphCjKziVAo2zteOEjJgMGCtsctzUbax/8QpB65E1zuUVYnvpOA3DSrNUnRic+1P1nMREuRa8xqjhvwqsVQAOd7GnUnp0brTi8quLowvF19oVHEpTxEv4leY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEjxx5l8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7208EC4CEE3;
+	Tue, 24 Jun 2025 15:23:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750778614;
+	bh=a+seGXrhPW0GahtwOj0yhRGKclunqYWrymMbDOhiSmQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KEjxx5l8hW4pZwn4YZrH8EyQn4Ls/3VMy0UAVdZgGVojHw/j9BOR9sghplOlzBIJi
+	 0+m84A1987Ege1xLzj9KltGS89T+DtOHc4Ih0QvsXqFCJgEL8cyfQWYyCn97gkdkYm
+	 08r60/gHVVfhW5kSm2PY3yw23oQndTXq3R6tuJYB7hvbZqGR8FuGczvSRYYC+D3KWg
+	 UsBDl18q4MRdMgMvChxBFxeSITGb9dlKMia8aoLKVU2o6OJ88FYjXiNBvaMDbmsSpe
+	 7awPWW5hJMigaEWiXoZ4PCwH7vowNV9V3EEAgOnc99QBo2AfAPdu/ikvKdOjNbnJsL
+	 aoW8WQWDXUIfQ==
+Date: Tue, 24 Jun 2025 17:23:30 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 10/11] fhandle, pidfs: support open_by_handle_at()
+ purely based on file handle
+Message-ID: <20250624-dankt-ruhekissen-896ff2e32821@brauner>
+References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
+ <20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org>
+ <ng6fvyydyem4qh3rtkvaeyyxm3suixjoef5nepyhwgc4k26chp@n2tlycbek4vl>
+ <CAOQ4uxgB+01GsNh2hAJOqZF4oUaXqqCeiFVEwmm+_h9WhG-KdA@mail.gmail.com>
+ <CAOQ4uxjYGipMt4t+ZzYEQgn3EhWh327iEyoKyeoqKKGzwuHRsg@mail.gmail.com>
+ <20250624-reinreden-museen-5b07804eaffe@brauner>
+ <CAOQ4uxg_0+Z9vV1ArX2MbpDu=aGDXQSzQmMXR3mPPu5mFB8rTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
- <f4b2a32853b5daba7aeac9e9b96ec1ab88981589.1750585239.git.christophe.leroy@csgroup.eu>
- <CAHk-=wj4P6p1kBVW7aJbWAOGJZkB7fXFmwaXLieBRhjmvnWgvQ@mail.gmail.com> <2f569008-dd66-4bb6-bf5e-f2317bb95e10@csgroup.eu>
-In-Reply-To: <2f569008-dd66-4bb6-bf5e-f2317bb95e10@csgroup.eu>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 24 Jun 2025 08:15:14 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh+zcmrHM5ryM=_71vEwjaRjwRHVgFu8WRG5xsgu3ku+A@mail.gmail.com>
-X-Gm-Features: Ac12FXyiIOMeVWX36Mt87GnZfIOR3ssqbql1oPQlXRyO409zF_tN4rQRqufbqcw
-Message-ID: <CAHk-=wh+zcmrHM5ryM=_71vEwjaRjwRHVgFu8WRG5xsgu3ku+A@mail.gmail.com>
-Subject: Re: [PATCH 2/5] uaccess: Add speculation barrier to copy_from_user_iter()
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Laight <david.laight.linux@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="bqxxnyjefp5u3dzl"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxg_0+Z9vV1ArX2MbpDu=aGDXQSzQmMXR3mPPu5mFB8rTQ@mail.gmail.com>
 
-On Mon, 23 Jun 2025 at 22:49, Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
+
+--bqxxnyjefp5u3dzl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+On Tue, Jun 24, 2025 at 05:07:59PM +0200, Amir Goldstein wrote:
+> On Tue, Jun 24, 2025 at 4:51 PM Christian Brauner <brauner@kernel.org> wrote:
 > >
-> > (Although I also suspect that when we added ITER_UBUF we might have
-> > created cases where those user addresses aren't checked at iter
-> > creation time any more).
+> > On Tue, Jun 24, 2025 at 04:28:50PM +0200, Amir Goldstein wrote:
+> > > On Tue, Jun 24, 2025 at 12:53 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > >
+> > > > On Tue, Jun 24, 2025 at 11:30 AM Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > On Tue 24-06-25 10:29:13, Christian Brauner wrote:
+> > > > > > Various filesystems such as pidfs (and likely drm in the future) have a
+> > > > > > use-case to support opening files purely based on the handle without
+> > > > > > having to require a file descriptor to another object. That's especially
+> > > > > > the case for filesystems that don't do any lookup whatsoever and there's
+> > > > > > zero relationship between the objects. Such filesystems are also
+> > > > > > singletons that stay around for the lifetime of the system meaning that
+> > > > > > they can be uniquely identified and accessed purely based on the file
+> > > > > > handle type. Enable that so that userspace doesn't have to allocate an
+> > > > > > object needlessly especially if they can't do that for whatever reason.
+> > > > > >
+> > > > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > > > > ---
+> > > > > >  fs/fhandle.c | 22 ++++++++++++++++++++--
+> > > > > >  fs/pidfs.c   |  5 ++++-
+> > > > > >  2 files changed, 24 insertions(+), 3 deletions(-)
+> > > > > >
+> > > > > > diff --git a/fs/fhandle.c b/fs/fhandle.c
+> > > > > > index ab4891925b52..54081e19f594 100644
+> > > > > > --- a/fs/fhandle.c
+> > > > > > +++ b/fs/fhandle.c
+> > > > > > @@ -173,7 +173,7 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+> > > > > >       return err;
+> > > > > >  }
+> > > > > >
+> > > > > > -static int get_path_anchor(int fd, struct path *root)
+> > > > > > +static int get_path_anchor(int fd, struct path *root, int handle_type)
+> > > > > >  {
+> > > > > >       if (fd >= 0) {
+> > > > > >               CLASS(fd, f)(fd);
+> > > > > > @@ -193,6 +193,24 @@ static int get_path_anchor(int fd, struct path *root)
+> > > > > >               return 0;
+> > > > > >       }
+> > > > > >
+> > > > > > +     /*
+> > > > > > +      * Only autonomous handles can be decoded without a file
+> > > > > > +      * descriptor.
+> > > > > > +      */
+> > > > > > +     if (!(handle_type & FILEID_IS_AUTONOMOUS))
+> > > > > > +             return -EOPNOTSUPP;
+> > > > >
+> > > > > This somewhat ties to my comment to patch 5 that if someone passed invalid
+> > > > > fd < 0 before, we'd be returning -EBADF and now we'd be returning -EINVAL
+> > > > > or -EOPNOTSUPP based on FILEID_IS_AUTONOMOUS setting. I don't care that
+> > > > > much about it so feel free to ignore me but I think the following might be
+> > > > > more sensible error codes:
+> > > > >
+> > > > >         if (!(handle_type & FILEID_IS_AUTONOMOUS)) {
+> > > > >                 if (fd == FD_INVALID)
+> > > > >                         return -EOPNOTSUPP;
+> > > > >                 return -EBADF;
+> > > > >         }
+> > > > >
+> > > > >         if (fd != FD_INVALID)
+> > > > >                 return -EBADF; (or -EINVAL no strong preference here)
+> > > >
+> > > > FWIW, I like -EBADF better.
+> > > > it makes the error more descriptive and keeps the flow simple:
+> > > >
+> > > > +       /*
+> > > > +        * Only autonomous handles can be decoded without a file
+> > > > +        * descriptor and only when FD_INVALID is provided.
+> > > > +        */
+> > > > +       if (fd != FD_INVALID)
+> > > > +               return -EBADF;
+> > > > +
+> > > > +       if (!(handle_type & FILEID_IS_AUTONOMOUS))
+> > > > +               return -EOPNOTSUPP;
+> > > >
+> > >
+> > > Thinking about it some more, as I am trying to address your concerns
+> > > about crafting autonomous file handles by systemd, as you already
+> > > decided to define a range for kernel reserved values for fd, why not,
+> > > instead of requiring FD_INVALID for autonomous file handle, that we
+> > > actually define a kernel fd value that translates to "the root of pidfs":
+> > >
+> > > +       /*
+> > > +        * Autonomous handles can be decoded with a special file
+> > > +        * descriptor value that describes the filesystem.
+> > > +        */
+> > > +       switch (fd) {
+> > > +       case FD_PIDFS_ROOT:
+> > > +               pidfs_get_root(root);
+> > > +               break;
+> > > +       default:
+> > > +               return -EBADF;
+> > > +       }
+> > > +
+> > >
+> > > Then you can toss all my old ideas, including FILEID_IS_AUTONOMOUS,
+> > > and EXPORT_OP_AUTONOMOUS_HANDLES and you do not even need
+> > > to define FILEID_PIDFS anymore, just keep exporting FILEID_KERNFS
+> > > as before (you can also keep the existing systemd code) and when you want
+> > > to open file by handle you just go
+> > > open_by_handle_at(FD_PIDFS, &handle, 0)
+> > > and that's it.
+> > >
+> > > In the end, my one and only concern with autonomous file handles is that
+> > > there should be a user opt-in to request them.
+> > >
+> > > Sorry for taking the long road to get to this simpler design.
+> > > WDYT?
 > >
->
-> Let's take the follow path as an exemple:
->
-> snd_pcm_ioctl(SNDRV_PCM_IOCTL_WRITEI_FRAMES)
->    snd_pcm_common_ioctl()
->      snd_pcm_xferi_frames_ioctl()
->        snd_pcm_lib_write()
->          __snd_pcm_lib_xfer()
->            default_write_copy()
->              copy_from_iter()
->                _copy_from_iter()
->                  __copy_from_iter()
->                    iterate_and_advance()
->                      iterate_and_advance2()
->                        iterate_iovec()
->                          copy_from_user_iter()
->
-> As far as I can see, none of those functions check the accessibility of
-> the iovec. Am I missing something ?
+> > And simply place FD_PIDFS_ROOT into the -10000 range?
+> > Sounds good to me.
+> 
+> Yes.
+> 
+> I mean I don't expect there will be a flood of those singleton
+> filesystems, but generally speaking, a unique fd constant
+> to describe the root of a singleton filesystem makes sense IMO.
 
-So we still to do this checking at creation time (see import_iovec ->
-__import_iovec, and import_ubuf).
+Agreed. See the appended updated patches. I'm not resending completely.
+I just dropped other patches.
 
-In the path you give as an example, the check happens at that
-"do_transfer()" stage when it does
+--bqxxnyjefp5u3dzl
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-uapi-fcntl-add-FD_PIDFS_ROOT.patch"
 
-        err = import_ubuf(type, (__force void __user *)data, bytes, &iter);
+From 3941e37f62fe2c3c8b8675c12183185f20450539 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 24 Jun 2025 16:57:51 +0200
+Subject: [PATCH 1/2] uapi/fcntl: add FD_PIDFS_ROOT
 
-but yeah, it's very non-obvious (see __snd_pcm_lib_xfer(), which calls
-writer() which is either interleaved_copy() or noninterleaved_copy(),
-and then they do that do_transfer() thing which does that
-import_ubuf() thing.
+Add a special file descriptor indicating the root of the pidfs
+filesystem.
 
-So *because* you were supposed to have checked your iov_iters
-beforehand, the actual iter code itself at some point just used
-__copy_to_user() directly with no checking at all.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ include/uapi/linux/fcntl.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-And that all was really *much* too subtle, and Al fixed this a few
-years ago (see commit 09fc68dc66f7: "iov_iter: saner checks on
-copyin/copyout")
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index a5bebe7c4400..f291ab4f94eb 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -110,6 +110,7 @@
+ #define PIDFD_SELF_THREAD		-10000 /* Current thread. */
+ #define PIDFD_SELF_THREAD_GROUP		-10001 /* Current thread group leader. */
+ 
++#define FD_PIDFS_ROOT			-10002 /* Root of the pidfs filesystem */
+ #define FD_INVALID			-10009 /* Invalid file descriptor: -10000 - EBADF = -10009 */
+ 
+ /* Generic flags for the *at(2) family of syscalls. */
+-- 
+2.47.2
 
-                  Linus
+
+--bqxxnyjefp5u3dzl
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0002-fhandle-pidfs-support-open_by_handle_at-purely-based.patch"
+
+From b95361481b1e5bd3627835b7e4b921d5a09e68a4 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 24 Jun 2025 10:29:13 +0200
+Subject: [PATCH 2/2] fhandle, pidfs: support open_by_handle_at() purely based
+ on file handle
+
+Various filesystems such as pidfs (and likely drm in the future) have a
+use-case to support opening files purely based on the handle without
+having to require a file descriptor to another object. That's especially
+the case for filesystems that don't do any lookup whatsoever and there's
+zero relationship between the objects. Such filesystems are also
+singletons that stay around for the lifetime of the system meaning that
+they can be uniquely identified and accessed purely based on the file
+handle type. Enable that so that userspace doesn't have to allocate an
+object needlessly especially if they can't do that for whatever reason.
+
+Link: https://lore.kernel.org/20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/fhandle.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 9ef35f8e8989..b1363ead6c5e 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -188,6 +188,11 @@ static int get_path_anchor(int fd, struct path *root)
+ 		return 0;
+ 	}
+ 
++	if (fd == FD_PIDFS_ROOT) {
++		pidfs_get_root(root);
++		return 0;
++	}
++
+ 	return -EBADF;
+ }
+ 
+-- 
+2.47.2
+
+
+--bqxxnyjefp5u3dzl--
 
