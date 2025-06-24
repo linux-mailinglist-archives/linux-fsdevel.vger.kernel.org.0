@@ -1,111 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-52742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E33AE6202
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:17:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4A6AE62A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F026517B222
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFDA2188F874
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344F32857EC;
-	Tue, 24 Jun 2025 10:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PemOZtEj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7819128466F;
+	Tue, 24 Jun 2025 10:39:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8264C25743D;
-	Tue, 24 Jun 2025 10:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34F31F7580
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 10:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750760191; cv=none; b=TQTy9qjtrurQrBiXK72cx8AxflOdOJ7RUuQnJC2LpLcXeEw3LkWs2xxZrsCN3hnWcCBqGhAgH+BbQJk/CJQBxXWz4LDq9xOSMHs0eNa5WzQ0H6YaiqRlxSim5sAvExI9fem/M6bZ42BEMoe0OQxbiqmLC5WDoT8uOM47cBp3dNk=
+	t=1750761545; cv=none; b=aRsRIQ6R7fGcN48zxgkIwr3xfwJawVgfBVBCTH3NTXYxAPrLvwocYBTI1Yh56K9YsCfuJlWj8l/Ur60GxmWLixZhXQ5cCWkQd8Ivdwh3m+/ibBSMs/Gut/i7TvMDfEIs2X8+nb/f8ycgYioTvcFv1apDirUl6zerwZ9NLGlQKIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750760191; c=relaxed/simple;
-	bh=tIqh+jeeeHv0BdKtyxBCAEntFbk/YzdIIooy9mny8Mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfmuk/dxXGu6S643LHsJHkgv8ZbbNrs+X8YqZisNNAjPXm8RhuVH5OzhhlIZ0nJuhtEmuxVnrSFfvX/H+5moTbfQlfHX39iNVJjTK0Oqn0fY98AAmz+nPe4VO66hZGTw+ZqmmvB3Wp+OPYvLrgGtnqM5Ekbu7uRKBTVu8AIGX1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PemOZtEj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E485C4CEE3;
-	Tue, 24 Jun 2025 10:16:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750760191;
-	bh=tIqh+jeeeHv0BdKtyxBCAEntFbk/YzdIIooy9mny8Mw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PemOZtEjr/Tc4MCnLvaOzOraShQSTVSFAAAn501Ie9jgVfzdS9A+V8b3xjZK6zAvi
-	 1RUDxYdR/wut0fWSAu4U03sF0qlUZjjsBSZc76+lA/n1UK+TXn4xZx/GX7zehSNFjB
-	 eHZVtwXBTJzL3Na1pPiUfcJKqw50ieaQABh3rMXP67V1N1jG832k3jmVRlywbhwn6z
-	 W39wrFY7gzFQYnqKizspmvsNC68at/usbwxDZoblujhytPEEsDUukYSH1dcviDaMwB
-	 iq8AK8If4lk2wtkq8sZE5isgq56fmNShzI/sSkP9OpF/J/HHEM9kiEJLav4WDYcv1X
-	 WiellpGWuen8w==
-Date: Tue, 24 Jun 2025 12:16:26 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 05/11] fhandle: reflow get_path_anchor()
-Message-ID: <20250624-arztpraxen-verbal-0603f73ec23b@brauner>
-References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
- <20250624-work-pidfs-fhandle-v2-5-d02a04858fe3@kernel.org>
- <nem4nldmws4e6cgbnbc4nbbvq53jtadewspcimztbdeikppeda@ss33vygtetxd>
+	s=arc-20240116; t=1750761545; c=relaxed/simple;
+	bh=rphr/gilBmabSnM/0Q4jGkDtLiIwETrDvS3TjqvQIHY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HP5DNN7nWfdn0VL2Ke7xYV6H6EKGNOZWdoIIPEaa/z9GJ0nT+/wUyu4XfAK84v2lEPocSRvAsOuNPaHlOKVysnCQOfSyNBF/F83TY4Hg7kTvuio4fRTNy7zN2Ht5PIGOKRd4ENr9R5+QZVN/WR8wB6G1NA3cnGWN8kFy2SRpRqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddcfea00afso71162315ab.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 03:39:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750761543; x=1751366343;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZjChxfo2lLHHAf18M6IBygpThdOnehCGj0MYdl6w0bw=;
+        b=bKuqGv0tKx7Kvgj8+ukFoQo2car6r4Ds0GAZovKiHGVZMwvWfta4zZWXtsrrBnx+uC
+         ZC6Vq3Of1rB7gScp0pk9W9Rb892ESKsvSDDGeLOizxcNyhV8c98KQ4SoNdxOaR+n9Q54
+         r0NDiCFec2xbNIQ9OGKwZci3TO82MnicbQOmJSVCZVRDw819vlZr/mlu9JcxPCTd8ikI
+         zFllOVYn+B9uSRY8IqikvklcG52JbCLa6lvLX1CcyWsNVHkBym0Iy4wWegTEDOMD538j
+         rKk4wLl44BQ68qG789PEDzmQw/NNjDeUlDktltyoRWceKkGNit3/Y2silhsBvyieNvvY
+         OY5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWZvdqkZ8GYWQovwUfgljhOZ3of6tPekHe7Ss0M9RZxBYukyTGtWqj2XxtAoiCTZUu7t62lzBXaF7yCo2O@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTWTmzhrUHfwaZPCZ9Mqjo9C6TSKNYfYWXeTLZxhwsUT5iUBQr
+	5/2FDJBlX1tSTRbeHCikxAILU82P9UOjrV/nmfh61iCA+BEa+o3x9i980rbWz5U5vV4kTyJf479
+	3wEW8dxbdRoxTtz9SUvbZW8m9wBbEU51Fd0eHSjzFSlLn/7WMZBo7ZkYnRhs=
+X-Google-Smtp-Source: AGHT+IF1eR/bCiL7c/5fmlVP0t+h/SiOMoFpxFMZgFZNbDEKfJ/tzbqYYQXTjR9fnUkdsVKbb8YfnAA9F8qDtQMSM/rK0Q1DUhcI
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <nem4nldmws4e6cgbnbc4nbbvq53jtadewspcimztbdeikppeda@ss33vygtetxd>
+X-Received: by 2002:a92:c26c:0:b0:3dd:d348:715a with SMTP id
+ e9e14a558f8ab-3de38c31ab0mr184528235ab.8.1750761542883; Tue, 24 Jun 2025
+ 03:39:02 -0700 (PDT)
+Date: Tue, 24 Jun 2025 03:39:02 -0700
+In-Reply-To: <20250624-volldampf-brotscheiben-70bed5ac4dba@brauner>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685a8046.a00a0220.2e5631.006b.GAE@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in pidfs_free_pid
+From: syzbot <syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 24, 2025 at 11:16:39AM +0200, Jan Kara wrote:
-> On Tue 24-06-25 10:29:08, Christian Brauner wrote:
-> > Switch to a more common coding style.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/fhandle.c | 16 ++++++++++------
-> >  1 file changed, 10 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/fhandle.c b/fs/fhandle.c
-> > index d8d32208c621..22edced83e4c 100644
-> > --- a/fs/fhandle.c
-> > +++ b/fs/fhandle.c
-> > @@ -170,18 +170,22 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
-> >  
-> >  static int get_path_anchor(int fd, struct path *root)
-> >  {
-> > +	if (fd >= 0) {
-> > +		CLASS(fd, f)(fd);
-> > +		if (fd_empty(f))
-> > +			return -EBADF;
-> > +		*root = fd_file(f)->f_path;
-> > +		path_get(root);
-> > +		return 0;
-> > +	}
-> > +
-> >  	if (fd == AT_FDCWD) {
-> >  		struct fs_struct *fs = current->fs;
-> >  		spin_lock(&fs->lock);
-> >  		*root = fs->pwd;
-> >  		path_get(root);
-> >  		spin_unlock(&fs->lock);
-> > -	} else {
-> > -		CLASS(fd, f)(fd);
-> > -		if (fd_empty(f))
-> > -			return -EBADF;
-> > -		*root = fd_file(f)->f_path;
-> > -		path_get(root);
-> > +		return 0;
-> >  	}
-> 
-> This actually introduces a regression that when userspace passes invalid fd
-> < 0, we'd be returning 0 whereas previously we were returning -EBADF. I
-> think the return below should be switched to -EBADF to fix that.
+Hello,
 
-Whoops. Thanks!
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com
+Tested-by: syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         f077638b pidfs: fix pidfs_free_pid()
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.17.pidfs
+console output: https://syzkaller.appspot.com/x/log.txt?x=13dce70c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3a936e3316f9e2dc
+dashboard link: https://syzkaller.appspot.com/bug?extid=25317a459958aec47bfa
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
