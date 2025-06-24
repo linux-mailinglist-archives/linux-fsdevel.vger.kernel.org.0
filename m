@@ -1,94 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-52721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB9FAE6044
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:08:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B01AE6049
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2188B192454E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5B3316B4EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2909427AC21;
-	Tue, 24 Jun 2025 09:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C0027B4E1;
+	Tue, 24 Jun 2025 09:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEkMxJaJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ju3m5l6Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D04827A92A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 09:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D154719F480
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 09:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750756064; cv=none; b=TjHZSHR2I+4p5KWwsCxKOf+iXB21XEoldJC5TBoYnHJ+nXgm3AALlV+TkdFXSOmMNpljeKZTcMsQTBqWz19KJEhsjazQVDOamAmR+yh6S8+2AqD33B1JkqU+MIDEdnNiuLhvu8/yZNvH65+ueqx/nfXyzXQzIPQ0fZlVOA2rml4=
+	t=1750756077; cv=none; b=ptSnFhLUM8iHpDuCiRZMwNms5CXsoN2ARFWJP89q0wQiS9R1y8j4VdT7fqOHucfNpIXBqq8RuIFcPSM7LcNHFVXWi8TvliYuI9t8C/ghg8g5ZPrVXXBK1jnVygNT5w8R05w9LUjmibzfMLHA+KX4eOHjH0J9xw0wj1k+VECnlVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750756064; c=relaxed/simple;
-	bh=96QP0+BrvR2ir3iM55sfZnI3//5KRHJZm9Z7YsY5aGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cg13gcx9PYsOFMZHrnzIa89nemKYbUbwHVWwcsT+gGsF0WGeBwiNI2JimGYWRnjVrdegSx11pvWzxUOkaUbCovWwKnI0GWRjbi8+8O9igNMaabZV8BeqtExzHaxfFw6Kr8e057N6Nu/Op/Ti8s9B81RQI/1rEb1ohVKR1gbmkn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEkMxJaJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F53C4CEE3;
-	Tue, 24 Jun 2025 09:07:42 +0000 (UTC)
+	s=arc-20240116; t=1750756077; c=relaxed/simple;
+	bh=4oabjpNYgZb8M2/Nsrcq82+BVuQxgCKciQ1MlmFYIE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a9uhWzBHQ2nV88qXI3lSM2GLjxamFusCEFotNShnYpeWEI+/pDmH6SL5bcJasDaqEGrAdEvLgnZ+7bH1D9hizFN4h01TjpDZ2hl1E+7JFPs9h9Ar9MMwpJvdziqLf+vxcRqznxXyRWN4Rgb0dmchD3/j1Z8fGhHqReZDJIoMgrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ju3m5l6Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78E85C4CEE3;
+	Tue, 24 Jun 2025 09:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750756064;
-	bh=96QP0+BrvR2ir3iM55sfZnI3//5KRHJZm9Z7YsY5aGw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IEkMxJaJE4qUq9O8cah5YFU+nn8VHFWxFtoe2QHQiKbV7rsP5bO+jxxQgpPeDDYBW
-	 kAGf8O3JqloMH64P516Zeq3aQfclnxxsHVmMHXYMPGU1S8b6tqpLyd1oG+Tikcxrwr
-	 TKcMdXuaipTWX5jvyJr8XNL563SINoc3l1hQrYRld5OZvPZ5gzpP24H7tkdmH6ZSr1
-	 ShIEweszJU3M44pubiiTbs4s+m+JPD42EE6amhoTjmOf778drCq/l72hSMLQ8+wsDB
-	 AtZQRUp6OB2Unoyi2Vw1eJ6pMjou/5DmMrt97u9KQj51ogOvni+ZRPzgjW+zhnPop5
-	 kAKCskApdgbiw==
+	s=k20201202; t=1750756077;
+	bh=4oabjpNYgZb8M2/Nsrcq82+BVuQxgCKciQ1MlmFYIE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ju3m5l6ZQyt9+dCbzHYlkPQCyayHplZ1nWNR9MxxNviigaR1ZW61LhkNsqMz+aq9K
+	 ELwBnCphnek2YxX7aemWN65L+Xn/Jkq/hdLDfViiMCS07p0Jl8gb8zz0F9dHtJnMNR
+	 RVINEAL6ZodERyMlJRgznqaiuiXGLiO3oYtlILdYa85u33Qn9Ho2fS59TroyleepbH
+	 pNt+EQzEY3vUXuHTgA0Dok1HSlQGBLDvHCuGDrk47ImzN4/jz+8JLdk+tq/To7e6j8
+	 /f9c+y7zPcVSWV/agLiX84Z6+QO3upc4wU09lVLK15r1cx2oGUOxHTcbEAu0sD/79K
+	 X3e8rJflctz4g==
+Date: Tue, 24 Jun 2025 11:07:54 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: miklos@szeredi.hu,
-	Joanne Koong <joannelkoong@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	bfoster@redhat.com
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Brian Foster <bfoster@redhat.com>, miklos@szeredi.hu, 
+	linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] fuse: fix fuse_fill_write_pages() upper bound calculation
-Date: Tue, 24 Jun 2025 11:07:31 +0200
-Message-ID: <20250624-bohrinsel-unartig-97566e5f511f@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250614000114.910380-1-joannelkoong@gmail.com>
+Message-ID: <20250624-damen-abtauchen-c73cdf291eef@brauner>
 References: <20250614000114.910380-1-joannelkoong@gmail.com>
+ <aE1VvnDfZj0oJMMv@bfoster>
+ <CAJnrk1aUqLeas5n4qo7VpVn-+tgRZfBTSyhFR95TxXOzMDjKVA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1232; i=brauner@kernel.org; h=from:subject:message-id; bh=96QP0+BrvR2ir3iM55sfZnI3//5KRHJZm9Z7YsY5aGw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREZd3e+1Knsj/00U3FKyeF0mMqOnUrFpb9WOkskVIVG Ojp+Gl2RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESqMhgZrthNeXaA87epVbxH y6dXrya1zJ948cimdl5htfbAmjPHpzH8U/546symKa4n2hmvei36WLXdasWMvbK7xQTePk8+779 2CiMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1aUqLeas5n4qo7VpVn-+tgRZfBTSyhFR95TxXOzMDjKVA@mail.gmail.com>
 
-On Fri, 13 Jun 2025 17:01:14 -0700, Joanne Koong wrote:
-> This fixes a bug in commit 63c69ad3d18a ("fuse: refactor
-> fuse_fill_write_pages()") where max_pages << PAGE_SHIFT is mistakenly
-> used as the calculation for the max_pages upper limit but there's the
-> possibility that copy_folio_from_iter_atomic() may copy over bytes
-> from the iov_iter that are less than the full length of the folio,
-> which would lead to exceeding max_pages.
-> 
-> [...]
+> Miklos or Christian, could this fix be added to the next release candidate?
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fuse: fix fuse_fill_write_pages() upper bound calculation
-      https://git.kernel.org/vfs/vfs/c/dbee298cb7bb
+Snatched.
 
