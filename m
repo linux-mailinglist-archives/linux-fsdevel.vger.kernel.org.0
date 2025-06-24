@@ -1,64 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-52739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D05AE61EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:15:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C224EAE61FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 12:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130FF1899D35
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:15:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F165A18818F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3D7280035;
-	Tue, 24 Jun 2025 10:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ACE283144;
+	Tue, 24 Jun 2025 10:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hv79WMvd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVqn/Vdj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74FB8634F;
-	Tue, 24 Jun 2025 10:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40549281509;
+	Tue, 24 Jun 2025 10:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750760119; cv=none; b=c7rkVUFUux0c053V25YbbJuO90KHWhlF0bmqS5faa+uCYeyYHHrrThRC7z/APhzuQWHle/oCc9TVLg0OEAqrEmcl87ZsD03di2gJDV1s5pflcO5HpZTdpFm5xO4SnysVraWcVt8TexmvvShlG1oIDfxzDCKR9V6ItG26uUEDmoo=
+	t=1750760152; cv=none; b=M8akEEiVuWKodBfjcTxb4nj5/HHWuYa8H2X90cCMJJfuaotBCZ+zARD6giYoe7btkk8nHfrH6H2wR/g9Dc0jHJ4D3TKzk+GmiiFlLfNP15D0MgGzqsFRzFO5CbMbCom61YaQGFzUx+cPpfFwJURSCcFOMj03JJtQ2mgb82MAStc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750760119; c=relaxed/simple;
-	bh=rdUwDLVG/TKz8NYY/g0YuSZlKne+cP5og5UuSBrt19M=;
+	s=arc-20240116; t=1750760152; c=relaxed/simple;
+	bh=Bhimb+z8ZQRQlBvtJ7sZ+h5UwKqToF281KuGbFT3hVQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rDTLBp09XoIu/8zcP86orMxSqOtv7ppfoluqGkwihYNuZkBX2Y73FfeWUr4h3ripqn2eEoCSZyPkS78stu2j9T2j9hvpoxf8POah0gnJiWePXzRBHT50XKmJlfk2V6fOOJtmtEN+lqyywnbsPGUqHzznPK5TrpeWW4N/XnNtsXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hv79WMvd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C495EC4CEE3;
-	Tue, 24 Jun 2025 10:15:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWI05vd2Ro00EI+T3cDch4VQ2GHfBD/2lMkt/EkAJKQPZyTVSdm89kiu7QmbfiUNbpHj8CFgV0vYRMBVA5/q2Ve70orw1pTn3+3ms60ZwIFLQ0ngV1Q+APHF8lZ/NMcP9C21LhTE4JBdWu3JcWWTgM9H7aJSkBeM6XZ7X8y01DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVqn/Vdj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58ACCC4CEE3;
+	Tue, 24 Jun 2025 10:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750760117;
-	bh=rdUwDLVG/TKz8NYY/g0YuSZlKne+cP5og5UuSBrt19M=;
+	s=k20201202; t=1750760152;
+	bh=Bhimb+z8ZQRQlBvtJ7sZ+h5UwKqToF281KuGbFT3hVQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hv79WMvdidIh6Kk5+hAAYLuVm/TohQ2e8NrROwnIl97jLSY6SHfWuH778BexeRW92
-	 AYKrdOrePIugW4AtunSMsLoY23AW/PH+A/B3vwDwE38AT9YiStU/GjlbQMdIBBk2TA
-	 vYqjpgYKQwjZbp0fLrLIJQerPGplBqmXLp6LGeWXO3ZR2/2Xun7KeqDf+PO3HGUnLo
-	 IvI7Ou0752ayrwMMTS0fXStVAgxIc3PqXVFyBka7BGc5QhCXIhqUfzMjha8QQZgRXn
-	 BI4r9pYqM8y7FN78sNNXVRzJxDw/CajGsgdrB/1T7cV9361KBG5FQN7H1NmgEnj7gn
-	 oW07LCTrJZgow==
-Date: Tue, 24 Jun 2025 12:15:13 +0200
+	b=iVqn/Vdj7ASkl6oqHCFVy3JJc6Ef7Xc8JFmaFG5VYOkc18PjMwcFvV9Q57m+3Qi+0
+	 xoqI2qUAZlFBoAkXZy+UCfIdVpdb5Caj6LuN50Skva/hQvshlVV3g+qft6JIVox/6k
+	 cC5U7IloRHRshwMMiOFysfbjtY8g3rBbocTUOglOk9vwjVCK7AkC7dTWRyicnR96Ig
+	 t7F81xC+KmqHwtBc8S9q/gjXctr8s02hVyo9S8yKLh0DI0i65z4XyL5VtGhd8SttqX
+	 wpxrxmsZt+WI0VaS8y3wC4ATFDZNC6B5dGpPLMSmRbC53dg/xtT4bQUhJquh7+ryyQ
+	 kHYmaNz4GE8Lg==
+Date: Tue, 24 Jun 2025 12:15:48 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH RFC 5/6] fs: introduce a shutdown_bdev super block
- operation
-Message-ID: <20250624-goldschatz-wohnviertel-aeb3209ad47b@brauner>
-References: <ef624790b57b76be25720e4a8021d7f5f03166cb.1750397889.git.wqu@suse.com>
- <wmvb4bnsz5bafoyu5mp33csjk4bcs63jemzi2cuqjzfy3rwogw@4t6fizv5ypna>
- <aFji5yfAvEeuwvXF@infradead.org>
- <20250623-worte-idolisieren-75354608512a@brauner>
- <aFldWPte-CK2PKSM@infradead.org>
- <84d61295-9c4a-41e8-80f0-dcf56814d0ae@suse.com>
- <20250624-geerntet-haare-2ce4cc42b026@brauner>
- <8db82a80-242f-41ff-84b8-601d6dcd9b9d@suse.com>
- <20250624-briefe-hassen-f693b4fe3501@brauner>
- <abe98c94-b4e0-446b-90e7-c9cdb1c9d197@suse.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 10/11] fhandle, pidfs: support open_by_handle_at()
+ purely based on file handle
+Message-ID: <20250624-weltoffen-anteil-2863e47ffb66@brauner>
+References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
+ <20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org>
+ <ng6fvyydyem4qh3rtkvaeyyxm3suixjoef5nepyhwgc4k26chp@n2tlycbek4vl>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,81 +61,133 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <abe98c94-b4e0-446b-90e7-c9cdb1c9d197@suse.com>
+In-Reply-To: <ng6fvyydyem4qh3rtkvaeyyxm3suixjoef5nepyhwgc4k26chp@n2tlycbek4vl>
 
-On Tue, Jun 24, 2025 at 07:21:50PM +0930, Qu Wenruo wrote:
-> 
-> 
-> 在 2025/6/24 18:43, Christian Brauner 写道:
-> [...]
-> > > It's not hard for btrfs to provide it, we already have a check function
-> > > btrfs_check_rw_degradable() to do that.
-> > > 
-> > > Although I'd say, that will be something way down the road.
+On Tue, Jun 24, 2025 at 11:30:42AM +0200, Jan Kara wrote:
+> On Tue 24-06-25 10:29:13, Christian Brauner wrote:
+> > Various filesystems such as pidfs (and likely drm in the future) have a
+> > use-case to support opening files purely based on the handle without
+> > having to require a file descriptor to another object. That's especially
+> > the case for filesystems that don't do any lookup whatsoever and there's
+> > zero relationship between the objects. Such filesystems are also
+> > singletons that stay around for the lifetime of the system meaning that
+> > they can be uniquely identified and accessed purely based on the file
+> > handle type. Enable that so that userspace doesn't have to allocate an
+> > object needlessly especially if they can't do that for whatever reason.
 > > 
-> > Yes, for sure. I think long-term we should hoist at least the bare
-> > infrastructure for multi-device filesystem management into the VFS.
-> 
-> Just want to mention that, "multi-device filesystem" already includes fses
-> with external journal.
-
-Yes, that's what I meant below by "We've already done a bit of that".
-It's now possible to actually reach all devices associted with a
-filesystem from the block layer. It works for xfs and ext4 with
-journal fileystems. So for example, you can freeze the log device and
-the main device as the block layer is now able to find both and the fs
-stays frozen until both have been unfrozen. This wasn't possible before
-the rework we did.
-
-Now follows a tiny rant not targeted at you specifically but something
-that still bugs me in general:
-
-We had worked on extending this to btrfs so that it's all integrated
-properly with the block layer. And we heard long promises of how you
-would make that switch happen but refused us to let us make that switch.
-So now it's 2 years later and zero happend in that area.
-
-That also means block device freezing on btrfs is broken. If you freeze
-a block device used by btrfs via the dm (even though unlikely) layer you
-freeze the block device without btrfs being informed about that.
-
-It also means that block device removal is likely a bit yanky because
-btrfs won't be notified when any device other than the main device is
-suddenly yanked. You probably have logic there but the block layer can
-easily inform the filesystem about such an event nowadays and let it
-take appropriate action.
-
-And fwiw, you also don't restrict writing to mounted block devices.
-That's another thing you blocked us from implementing even though we
-sent the changes for that already and so we disabled that in
-ead622674df5 ("btrfs: Do not restrict writes to btrfs devices"). So
-you're also still vulnerable to that stuff.
-
-> 
-> Thus the new callback may be a good chance for those mature fses to explore
-> some corner case availability improvement, e.g. the loss of the external
-> journal device while there is no live journal on it.
-
-Already handled for xfs and ext4 cleanly since our rework iiuc.
-
-> (I have to admin it's super niche, and live-migration to internal journal
-> may be way more complex than my uneducated guess)
-> 
-> Thanks,
-> Qu
-> 
-> > Or we should at least explore whether that's feasible and if it's
-> > overall advantageous to maintenance and standardization. We've already
-> > done a bit of that and imho it's now a lot easier to reason about the
-> > basics already.
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/fhandle.c | 22 ++++++++++++++++++++--
+> >  fs/pidfs.c   |  5 ++++-
+> >  2 files changed, 24 insertions(+), 3 deletions(-)
 > > 
-> > > 
-> > > We even don't have a proper way to let end user configure the device loss
-> > > behavior.
-> > > E.g. some end users may prefer a full shutdown to be extra cautious, other
-> > > than continue degraded.
-> > 
-> > Right.
+> > diff --git a/fs/fhandle.c b/fs/fhandle.c
+> > index ab4891925b52..54081e19f594 100644
+> > --- a/fs/fhandle.c
+> > +++ b/fs/fhandle.c
+> > @@ -173,7 +173,7 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+> >  	return err;
+> >  }
+> >  
+> > -static int get_path_anchor(int fd, struct path *root)
+> > +static int get_path_anchor(int fd, struct path *root, int handle_type)
+> >  {
+> >  	if (fd >= 0) {
+> >  		CLASS(fd, f)(fd);
+> > @@ -193,6 +193,24 @@ static int get_path_anchor(int fd, struct path *root)
+> >  		return 0;
+> >  	}
+> >  
+> > +	/*
+> > +	 * Only autonomous handles can be decoded without a file
+> > +	 * descriptor.
+> > +	 */
+> > +	if (!(handle_type & FILEID_IS_AUTONOMOUS))
+> > +		return -EOPNOTSUPP;
 > 
+> This somewhat ties to my comment to patch 5 that if someone passed invalid
+> fd < 0 before, we'd be returning -EBADF and now we'd be returning -EINVAL
+> or -EOPNOTSUPP based on FILEID_IS_AUTONOMOUS setting. I don't care that
+> much about it so feel free to ignore me but I think the following might be
+> more sensible error codes:
+> 
+> 	if (!(handle_type & FILEID_IS_AUTONOMOUS)) {
+> 		if (fd == FD_INVALID)
+> 			return -EOPNOTSUPP;
+> 		return -EBADF;
+> 	}
+
+Yes, that makes sense. I'll take the suggestion.
+
+> 
+> 	if (fd != FD_INVALID)
+> 		return -EBADF; (or -EINVAL no strong preference here)
+> 
+> Since I don't care that much feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+> 
+> > +
+> > +	if (fd != FD_INVALID)
+> > +		return -EINVAL;
+> > +
+> > +	switch (handle_type & ~FILEID_USER_FLAGS_MASK) {
+> > +	case FILEID_PIDFS:
+> > +		pidfs_get_root(root);
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> >  	return 0;
+> >  }
+> >  
+> > @@ -347,7 +365,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
+> >  	    FILEID_USER_FLAGS(f_handle.handle_type) & ~FILEID_VALID_USER_FLAGS)
+> >  		return -EINVAL;
+> >  
+> > -	retval = get_path_anchor(mountdirfd, &ctx.root);
+> > +	retval = get_path_anchor(mountdirfd, &ctx.root, f_handle.handle_type);
+> >  	if (retval)
+> >  		return retval;
+> >  
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index 69b0541042b5..2ab9b47fbfae 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -747,7 +747,7 @@ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+> >  
+> >  	*max_len = 2;
+> >  	*(u64 *)fh = pid->ino;
+> > -	return FILEID_KERNFS;
+> > +	return FILEID_PIDFS;
+> >  }
+> >  
+> >  static int pidfs_ino_find(const void *key, const struct rb_node *node)
+> > @@ -802,6 +802,8 @@ static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+> >  		return NULL;
+> >  
+> >  	switch (fh_type) {
+> > +	case FILEID_PIDFS:
+> > +		fallthrough;
+> >  	case FILEID_KERNFS:
+> >  		pid_ino = *(u64 *)fid;
+> >  		break;
+> > @@ -860,6 +862,7 @@ static const struct export_operations pidfs_export_operations = {
+> >  	.fh_to_dentry	= pidfs_fh_to_dentry,
+> >  	.open		= pidfs_export_open,
+> >  	.permission	= pidfs_export_permission,
+> > +	.flags		= EXPORT_OP_AUTONOMOUS_HANDLES,
+> >  };
+> >  
+> >  static int pidfs_init_inode(struct inode *inode, void *data)
+> > 
+> > -- 
+> > 2.47.2
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
