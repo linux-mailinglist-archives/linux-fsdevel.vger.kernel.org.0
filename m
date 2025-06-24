@@ -1,56 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-52722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B01AE6049
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:09:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8200DAE6065
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5B3316B4EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1260D405FB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C0027B4E1;
-	Tue, 24 Jun 2025 09:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9FD27AC28;
+	Tue, 24 Jun 2025 09:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ju3m5l6Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMNPHHMA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D154719F480
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 09:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CA427A445;
+	Tue, 24 Jun 2025 09:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750756077; cv=none; b=ptSnFhLUM8iHpDuCiRZMwNms5CXsoN2ARFWJP89q0wQiS9R1y8j4VdT7fqOHucfNpIXBqq8RuIFcPSM7LcNHFVXWi8TvliYuI9t8C/ghg8g5ZPrVXXBK1jnVygNT5w8R05w9LUjmibzfMLHA+KX4eOHjH0J9xw0wj1k+VECnlVQ=
+	t=1750756419; cv=none; b=KVyQeCJDFP7zmqQBoZB1hxJd8eaqg0F5319ViYvcPneR7Bi6x2jLHkcq65bsmDkZdEcuQhSgNkyoUml7uOlXLM/ad6qFbT45zXm+vN/OWSpj01Ndrw6iF2vyvmLBSfe2CRbXpFLqQEyu0cR6S1gS5ra8KPOVWv7JrDw0f4nalcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750756077; c=relaxed/simple;
-	bh=4oabjpNYgZb8M2/Nsrcq82+BVuQxgCKciQ1MlmFYIE8=;
+	s=arc-20240116; t=1750756419; c=relaxed/simple;
+	bh=ENQDNM8agyaRhChQPBLyYdkAToQeaHv9AicS3tge5bQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9uhWzBHQ2nV88qXI3lSM2GLjxamFusCEFotNShnYpeWEI+/pDmH6SL5bcJasDaqEGrAdEvLgnZ+7bH1D9hizFN4h01TjpDZ2hl1E+7JFPs9h9Ar9MMwpJvdziqLf+vxcRqznxXyRWN4Rgb0dmchD3/j1Z8fGhHqReZDJIoMgrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ju3m5l6Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78E85C4CEE3;
-	Tue, 24 Jun 2025 09:07:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/36Tkajk4phVtxnAYDMfq0sGtqEmJhsH3O7Q1VXdqvtuXYKT1sPIgj8ooCcnpLGOF4T0s2JBqbN8p5GrFrWwo09GwxwjTIY4Qzlju5+0kw00qRUxEJqbeWyINgbzhGt1U9+Lw/oNuWftvPy2HZJQZ5pk3AU545iaBARFvyJs1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMNPHHMA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F40C4C4CEE3;
+	Tue, 24 Jun 2025 09:13:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750756077;
-	bh=4oabjpNYgZb8M2/Nsrcq82+BVuQxgCKciQ1MlmFYIE8=;
+	s=k20201202; t=1750756415;
+	bh=ENQDNM8agyaRhChQPBLyYdkAToQeaHv9AicS3tge5bQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ju3m5l6ZQyt9+dCbzHYlkPQCyayHplZ1nWNR9MxxNviigaR1ZW61LhkNsqMz+aq9K
-	 ELwBnCphnek2YxX7aemWN65L+Xn/Jkq/hdLDfViiMCS07p0Jl8gb8zz0F9dHtJnMNR
-	 RVINEAL6ZodERyMlJRgznqaiuiXGLiO3oYtlILdYa85u33Qn9Ho2fS59TroyleepbH
-	 pNt+EQzEY3vUXuHTgA0Dok1HSlQGBLDvHCuGDrk47ImzN4/jz+8JLdk+tq/To7e6j8
-	 /f9c+y7zPcVSWV/agLiX84Z6+QO3upc4wU09lVLK15r1cx2oGUOxHTcbEAu0sD/79K
-	 X3e8rJflctz4g==
-Date: Tue, 24 Jun 2025 11:07:54 +0200
+	b=YMNPHHMAQOylsqtc6JEIKhF6aASUmXRy/fv+5+8tmWN5aeSkIYSvqPoU41RRgXPhg
+	 wPyx9dhPLDhqzLsAH/nEJTsjpUZpbP6u3vR6uta0CDQiTyGAfUw10R8N1uA3GWKghg
+	 ujwWudchiWF1zzcHZ1ISvfV4cs7jS4cF2TdzsYHtOhtIAef3aNSvkUmBhsHTHP7zbL
+	 MIQgHVis4Pdm5QNo1uLdKQj/iDvWbT/Sgh3KNmqaipFxD4ypG8OOjjaURIL4wOuIJp
+	 519wFYxRELRqMvQCvFUCfODajBG3zekVKETfv0joTTz4x7eXHoqPwpm6GvR4Bm/J/4
+	 ahPRHcjdb6ABw==
+Date: Tue, 24 Jun 2025 11:13:31 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Brian Foster <bfoster@redhat.com>, miklos@szeredi.hu, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fuse: fix fuse_fill_write_pages() upper bound calculation
-Message-ID: <20250624-damen-abtauchen-c73cdf291eef@brauner>
-References: <20250614000114.910380-1-joannelkoong@gmail.com>
- <aE1VvnDfZj0oJMMv@bfoster>
- <CAJnrk1aUqLeas5n4qo7VpVn-+tgRZfBTSyhFR95TxXOzMDjKVA@mail.gmail.com>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH RFC 5/6] fs: introduce a shutdown_bdev super block
+ operation
+Message-ID: <20250624-briefe-hassen-f693b4fe3501@brauner>
+References: <cover.1750397889.git.wqu@suse.com>
+ <ef624790b57b76be25720e4a8021d7f5f03166cb.1750397889.git.wqu@suse.com>
+ <wmvb4bnsz5bafoyu5mp33csjk4bcs63jemzi2cuqjzfy3rwogw@4t6fizv5ypna>
+ <aFji5yfAvEeuwvXF@infradead.org>
+ <20250623-worte-idolisieren-75354608512a@brauner>
+ <aFldWPte-CK2PKSM@infradead.org>
+ <84d61295-9c4a-41e8-80f0-dcf56814d0ae@suse.com>
+ <20250624-geerntet-haare-2ce4cc42b026@brauner>
+ <8db82a80-242f-41ff-84b8-601d6dcd9b9d@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,9 +66,73 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJnrk1aUqLeas5n4qo7VpVn-+tgRZfBTSyhFR95TxXOzMDjKVA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8db82a80-242f-41ff-84b8-601d6dcd9b9d@suse.com>
 
-> Miklos or Christian, could this fix be added to the next release candidate?
+On Tue, Jun 24, 2025 at 06:36:01PM +0930, Qu Wenruo wrote:
+> 
+> 
+> 在 2025/6/24 18:21, Christian Brauner 写道:
+> > On Tue, Jun 24, 2025 at 06:57:08AM +0930, Qu Wenruo wrote:
+> > > 
+> > > 
+> > > 在 2025/6/23 23:27, Christoph Hellwig 写道:
+> > > > On Mon, Jun 23, 2025 at 12:56:28PM +0200, Christian Brauner wrote:
+> > > > >           void (*shutdown)(struct super_block *sb);
+> > > > > +       void (*drop_bdev)(struct super_block *sb, struct block_device *bdev /* , unsigned int flags/reason maybe too ? */);
+> > > > >    };
+> > > > > 
+> > > > > You might want to drop a block device independent of whether the device
+> > > > > was somehow lost. So I find that a bit more flexible.
+> > > > 
+> > > > Drop is weird word for what is happening here, and if it wasn't for the
+> > > > context in this thread I'd expect it to be about refcounting in Linux.
+> > > > 
+> > > > When the VFS/libfs does an upcall into the file system to notify it
+> > > > that a device is gone that's pretty much a device loss.  I'm not married
+> > > > to the exact name, but drop seems like a pretty bad choice.
+> > > 
+> > > What about a more common used term, mark_dead()?
+> > > 
+> > > It's already used in blk_holder_ops, and I'd say it's more straighforward to
+> > > me, compared to shutdown()/goingdown().
+> > 
+> > But it's not about the superblock going down necessarily. It's about the
+> > device going away for whatever reason:
+> > 
+> > void (*yank_bdev)(struct super_block *sb, struct block_device *bdev /* , unsigned int flags/reason maybe too ? */);
+> > void (*pull_bdev)(struct super_block *sb, struct block_device *bdev /* , unsigned int flags/reason maybe too ? */);
+> > void (*unplug_bdev)(struct super_block *sb, struct block_device *bdev /* , unsigned int flags/reason maybe too ? */);
+> > void (*remove_bdev)(struct super_block *sb, struct block_device *bdev /* , unsigned int flags/reason maybe too ? */);
+> 
+> All sound good to me, although the last one sounds better.
+> 
+> > 
+> > On a single device superblock unplugging that device would obviously
+> > cause an actual shutdown. On multi-device superblocks it doesn't always.
+> > 
+> > (That brings me to another thought. Is there a use-case for knowing in
+> > advance whether removing a device would shut down the superblock?
+> 
+> Maybe another interface like can_remove_bdev()?
+> 
+> It's not hard for btrfs to provide it, we already have a check function
+> btrfs_check_rw_degradable() to do that.
+> 
+> Although I'd say, that will be something way down the road.
 
-Snatched.
+Yes, for sure. I think long-term we should hoist at least the bare
+infrastructure for multi-device filesystem management into the VFS.
+Or we should at least explore whether that's feasible and if it's
+overall advantageous to maintenance and standardization. We've already
+done a bit of that and imho it's now a lot easier to reason about the
+basics already.
+
+> 
+> We even don't have a proper way to let end user configure the device loss
+> behavior.
+> E.g. some end users may prefer a full shutdown to be extra cautious, other
+> than continue degraded.
+
+Right.
 
