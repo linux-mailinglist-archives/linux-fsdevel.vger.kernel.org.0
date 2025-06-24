@@ -1,237 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-52780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1E4AE684F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 16:22:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9399AE6891
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 16:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72E33163CB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 14:18:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B5917B1093
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 14:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594712D131D;
-	Tue, 24 Jun 2025 14:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DC92571A1;
+	Tue, 24 Jun 2025 14:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Aw+YOyXD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AqcqrrGo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qGbJ/diV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qQVCPeFc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmV9fHfO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9E728468E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 14:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92E9291C09;
+	Tue, 24 Jun 2025 14:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750774542; cv=none; b=f1Z+bRTFtvxaKFiZdL9ayBaYNr4+Rxx9FuqQqDKMnHqPd8bNJRUldVbgDy2IQzLtGD0i4QOcvMSS0A9VtcXz6p7xjXyJJ64+MqnQuXhbg74L/3P0gq+ivtW5aSD3rn0petKQoAk605G2et/5M46jkNyEeb7ocmndrhJEuEKysig=
+	t=1750774851; cv=none; b=nH27SBlUKWtkXhLQ0pPZWJdCs/HgPMnh9FgSq+ORq92BIFPN2+AnRJkS88NGl/+xSZyH/7p5eBht3i4pcc9k+UjLbKgyZnaB4lcltrHi1DQ69fdEPqi6xU17gHcRnQKBvHkWGPxyXXYJ4OKIKqDeULPLHNJPWAt2zGXfBMpOiwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750774542; c=relaxed/simple;
-	bh=2Nu9HAWxpF/eyUgE9UWYYNCVDg9Ux1COtHr6h6IMrZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gx6spqwKhj1Pu0ZqNDWY6mxnnG2zxPH0AF1IegV8ANmyUzKE6lFcPM9s27LBTc9bnYUx5YV6DtOW4rnkG/7zu3h1UiEdilpwmo/AUVKoF4cOh0zOb0yIWj6Rom7AahSohvzMCkw9wneNnHiox1wh1YZxrYv675b+/3sGlxpqCCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Aw+YOyXD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AqcqrrGo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qGbJ/diV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qQVCPeFc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 24D601F455;
-	Tue, 24 Jun 2025 14:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750774539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FyltukVHRK6asImG9DlCa6G1w7yiSL2OH6R7FM1c2V0=;
-	b=Aw+YOyXDO4/r1ttxQJos87UMEzK4pDEdYTVD5W1iHvC3FgM/0sArsdQaT/sDGZkPvuzd0r
-	RBU40jYjQf6T2WvxzKtOMnP3ai0H/5iwyC0mWdslvl1vY76LreLcHV7ZRY0nub4EezYuZ8
-	ZNxApMH/kuy9ON8ecMAQS6nl+JA6pBc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750774539;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FyltukVHRK6asImG9DlCa6G1w7yiSL2OH6R7FM1c2V0=;
-	b=AqcqrrGoxZBZOqodwOdDJvu+maiX4tlfZek+GP5pCCDEXbwWU1akrqnyXdn2x8HmQ9brTD
-	NyTnhYnvDegiavDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="qGbJ/diV";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qQVCPeFc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750774538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FyltukVHRK6asImG9DlCa6G1w7yiSL2OH6R7FM1c2V0=;
-	b=qGbJ/diVcKOt8k7jB61CY5rvO8FG9bDsnRtowdy/PVNdJsvIzhqxkBzy0PGII0y+sjRP+E
-	WFvpNYHUHXHYUGQVwpLm5wOsX6EkjQM2QvpmqxQryUMXvzIbLa5iXkI39g1d9YMrFEA7tY
-	AJB3eWIP81u4PxfLxFBjeWTMKm5u5Hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750774538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FyltukVHRK6asImG9DlCa6G1w7yiSL2OH6R7FM1c2V0=;
-	b=qQVCPeFc/BHw9EPnR9Gv5DpGCainpbBes5WDY0NLELUPob7Wt9+s3bUZHeI4HLriihguvV
-	wSSKH9oFTUOodvBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 18A6213A24;
-	Tue, 24 Jun 2025 14:15:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gTv+BQqzWmjqeAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 24 Jun 2025 14:15:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 97779A0A03; Tue, 24 Jun 2025 16:15:37 +0200 (CEST)
-Date: Tue, 24 Jun 2025 16:15:37 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	stable@kernel.org
-Subject: Re: [PATCH v2 00/11] fhandle, pidfs: allow open_by_handle_at()
- purely based on file handle
-Message-ID: <z4gavwmwinr6me7ufmwk7y6vi7jfwwbv5bksrk4v4saochb3va@zxchg3jqz2x4>
-References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
- <20250624-teestube-noten-cbe0aa9542e1@brauner>
+	s=arc-20240116; t=1750774851; c=relaxed/simple;
+	bh=pTxD5BsYkDsJW8X8i4LtTxir/ws/ZMGlAJSMHfcUhBg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MJjoTzzGImzqufJ2c0bSoxr2RYhcvZKGr4+F69W2PJmbraj9llq3XK+elX7vpjekzjMOVxT6gUdQ/zKaufweZdxyegZw6zBvuuArHjh8iK0J+yXLjBjcR58/v4BCS+/BdHfT4lrFnjvdygX78DLHLoDas0sadsWQMwzRprx7XnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmV9fHfO; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so8507126a12.3;
+        Tue, 24 Jun 2025 07:20:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750774848; x=1751379648; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W5HTTitgAHrzxvm3Nog1ktxSEZ4cOQiOsM/irXDycSQ=;
+        b=GmV9fHfO3V9tStvfA3fvD50BWqIrBKIRHa2rXahzKBdAoEIbY5wCpxkguq3iidZazH
+         0A+UrQrlipTcYovNwNsglq2JmSVun/W0mxBip4rZOTq/Ia2hmwt7nRRU8eI6qKPzlTdO
+         YtABNV5m1rqhh3O9PcH0/dQwlstOq6zaUIT4BTPfj/GpDhj7xEdbRXwcyp+EeKTzOQJm
+         nFiWB+mZZ2zcIHyQ+5B7Hn3lkdLsE4gCbNjbQb9eFmKfVvi/n/yoZVrrBfJ0N8WeprPR
+         dSUFNhxIURMZTp0Rx6Zxy9GTUQA29eM8/iWC/2Wa5xutRsQ270jtpGQGJgZbcYuxzfST
+         HLxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750774848; x=1751379648;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W5HTTitgAHrzxvm3Nog1ktxSEZ4cOQiOsM/irXDycSQ=;
+        b=mTqaAdW0LNLrsup2CYUynCISR0vyUNEbaO7vrfIiR2Nt0VcoQ3jvLB3XXtVmS4lv3e
+         JmGMh+hIoiVOL3a5wYDyHH9PSlWVbnzG/RvtswyutYseFQSN9IjWMdYEPyrFQU8iTQ4O
+         DTaIlkUOxjzhkMYqV0AzXGD4WPO3rwy0QkTu9bLH5/IhS7aMqO15MDgDFVETVUc/T8WF
+         oCifQeDEHy3kibO1zdPHLmUfN9C/Odv5gIqZmEfbECeOs8R4Wb0p9012zgvSD60iKVac
+         Qbx6Kr0S1aHxuhQTypRQlQqv3JF8npGtxQhPymZmt/3i9yeXJsZzQ4PRC77lXHzMvfZx
+         5dvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE0LEWTzm0yEcNgtxxH2CQE2z4QSJrZGDoM5S4n91qs5dR93pK4US/ReYBrowZ26PIrk5Tqk9d/kJUfNew@vger.kernel.org, AJvYcCWjphq/BXtRFM0q7P2rHd6NUExmvDM/5oABffmLGMBCTnHMFZlNNRukeHLuAea1Z+XL9cYX0sC/x+n4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqM8n7QX29m5qmKvhvIcGmVkED+368NL9VN5o89TcyTrCGoEp2
+	vaLHmobKF9u66jIOjptx/c9pj0kvSgiBW95gA0CFmay85GucrWXP3bRnn8dLSo0G8IbqcXtVBVf
+	ioYj4B2vd53M1m776rIJNYz6uocn20ug=
+X-Gm-Gg: ASbGncspxcFzHaW0UQbXUgLoLxU9lsfXsrF2uQFAD2ooFbKSEYRxvIUsXfmk9sO3ylf
+	q910AwqKwn4h6cCNUA2jlODF3P3FMKtVij0Ram7bk4HCpFaCu6Ar84PcCm5vMvvC0+e4NCdy5aV
+	GTWO93AjBGYUVnJS2S/NCaCvA5C5S8U326roZKTOf84vY=
+X-Google-Smtp-Source: AGHT+IGK31UYHxZyegbhwqAA8Azl5cZSHc46jPoyB8h4dSFTqOv6EdPEttIj40sBvrczCtpj1VRoPqADNTSYhBE/7EU=
+X-Received: by 2002:a17:907:72d5:b0:add:f0a2:d5d8 with SMTP id
+ a640c23a62f3a-ae057c80225mr1580557866b.11.1750774847450; Tue, 24 Jun 2025
+ 07:20:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624-teestube-noten-cbe0aa9542e1@brauner>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,oracle.com,suse.cz,gmail.com,ffwll.ch,vger.kernel.org];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 24D601F455
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
+ <20250624-work-pidfs-fhandle-v2-8-d02a04858fe3@kernel.org>
+ <CAOQ4uxgA0FTB8jRC21uA6wC_5_VaFZB7O7CdF_EHA+HrBDS2DA@mail.gmail.com> <20250624-zeitzeugen-gegraben-88ef5162e1fd@brauner>
+In-Reply-To: <20250624-zeitzeugen-gegraben-88ef5162e1fd@brauner>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 24 Jun 2025 16:20:35 +0200
+X-Gm-Features: AX0GCFvnHUMS64lcFmc8M2CdJQfswJHBYdDBlsHX54F3Ve0e_XV8aTS2Ms2lS4k
+Message-ID: <CAOQ4uxguH4txWsh3rs0u+NUyGk0sXhqu=ezvzNKkAiW4fNOvOQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/11] exportfs: add FILEID_PIDFS
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 24-06-25 12:59:26, Christian Brauner wrote:
-> > For pidfs this means a file handle can function as full replacement for
-> > storing a pid in a file. Instead a file handle can be stored and
-> > reopened purely based on the file handle.
-> 
-> One thing I want to comment on generally. I know we document that a file
-> handle is an opaque thing and userspace shouldn't rely on the layout or
-> format (Propably so that we're free to redefine it.).
-> 
-> Realistically though that's just not what's happening. I've linked Amir
-> to that code already a few times but I'm doing it here for all of you
-> again:
-> 
-> [1]: https://github.com/systemd/systemd/blob/7e1647ae4e33dd8354bd311a7f7f5eb701be2391/src/basic/cgroup-util.c#L62-L77
-> 
->      Specifically:
->      
->      /* The structure to pass to name_to_handle_at() on cgroupfs2 */
->      typedef union {
->              struct file_handle file_handle;
->              uint8_t space[offsetof(struct file_handle, f_handle) + sizeof(uint64_t)];
->      } cg_file_handle;
->      
->      #define CG_FILE_HANDLE_INIT                                     \
->              (cg_file_handle) {                                      \
->                      .file_handle.handle_bytes = sizeof(uint64_t),   \
->                      .file_handle.handle_type = FILEID_KERNFS,       \
->              }
->      
->      #define CG_FILE_HANDLE_CGROUPID(fh) (*CAST_ALIGN_PTR(uint64_t, (fh).file_handle.f_handle))
->      
->      cg_file_handle fh = CG_FILE_HANDLE_INIT;
->      CG_FILE_HANDLE_CGROUPID(fh) = id;
->      
->      return RET_NERRNO(open_by_handle_at(cgroupfs_fd, &fh.file_handle, O_DIRECTORY|O_CLOEXEC));
-> 
-> Another example where the layout is assumed to be uapi/uabi is:
-> 
-> [2]: https://github.com/systemd/systemd/blob/7e1647ae4e33dd8354bd311a7f7f5eb701be2391/src/basic/pidfd-util.c#L232-L259
-> 
->      int pidfd_get_inode_id_impl(int fd, uint64_t *ret) {
->      <snip>
->                      union {
->                              struct file_handle file_handle;
->                              uint8_t space[offsetof(struct file_handle, f_handle) + sizeof(uint64_t)];
->                      } fh = {
->                              .file_handle.handle_bytes = sizeof(uint64_t),
->                              .file_handle.handle_type = FILEID_KERNFS,
->                      };
->                      int mnt_id;
->      
->                      r = RET_NERRNO(name_to_handle_at(fd, "", &fh.file_handle, &mnt_id, AT_EMPTY_PATH));
->                      if (r >= 0) {
->                              if (ret)
->                                      *ret = *CAST_ALIGN_PTR(uint64_t, fh.file_handle.f_handle);
->                              return 0;
->                      }
+On Tue, Jun 24, 2025 at 3:43=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, Jun 24, 2025 at 03:15:18PM +0200, Amir Goldstein wrote:
+> > On Tue, Jun 24, 2025 at 10:29=E2=80=AFAM Christian Brauner <brauner@ker=
+nel.org> wrote:
+> > >
+> > > Introduce new pidfs file handle values.
+> > >
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > ---
+> > >  include/linux/exportfs.h | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> > > index 25c4a5afbd44..5bb757b51f5c 100644
+> > > --- a/include/linux/exportfs.h
+> > > +++ b/include/linux/exportfs.h
+> > > @@ -131,6 +131,11 @@ enum fid_type {
+> > >          * Filesystems must not use 0xff file ID.
+> > >          */
+> > >         FILEID_INVALID =3D 0xff,
+> > > +
+> > > +       /* Internal kernel fid types */
+> > > +
+> > > +       /* pidfs fid type */
+> > > +       FILEID_PIDFS =3D 0x100,
+> > >  };
+> > >
+> >
+> > Jan,
+> >
+> > I just noticed that we have a fh_type <=3D 0xff assumption
+> > built into fanotify:
+> >
+> > /* Fixed size struct for file handle */
+> > struct fanotify_fh {
+> >         u8 type;
+> >         u8 len;
+> >
+> > and we do not enforce it.
+> > there is only check of type range 1..0xffff
+> > in exportfs_encode_inode_fh()
+> >
+> > We should probably do either:
+> >
+> > --- a/fs/notify/fanotify/fanotify.c
+> > +++ b/fs/notify/fanotify/fanotify.c
+> > @@ -454,7 +454,7 @@ static int fanotify_encode_fh(struct fanotify_fh
+> > *fh, struct inode *inode,
+> >         dwords =3D fh_len >> 2;
+> >         type =3D exportfs_encode_fid(inode, buf, &dwords);
+> >         err =3D -EINVAL;
+> > -       if (type <=3D 0 || type =3D=3D FILEID_INVALID || fh_len !=3D dw=
+ords << 2)
+> > +       if (type <=3D 0 || type >=3D FILEID_INVALID || fh_len !=3D dwor=
+ds << 2)
+> >                 goto out_err;
+> >
+> >         fh->type =3D type;
+> >
+> > OR
+> >
+> > --- a/fs/notify/fanotify/fanotify.h
+> > +++ b/fs/notify/fanotify/fanotify.h
+> > @@ -29,11 +29,10 @@ enum {
+> >
+> >  /* Fixed size struct for file handle */
+> >  struct fanotify_fh {
+> > -       u8 type;
+> > +       u16 type;
+> >         u8 len;
+> >  #define FANOTIFY_FH_FLAG_EXT_BUF 1
+> >         u8 flags;
+> > -       u8 pad;
+> >  } __aligned(4);
+> >
+> >
+> > Christian,
+> >
+> > Do you know if pidfs supports (or should support) fanotify with FAN_REP=
+ORT_FID?
+>
+> I think it's at least supported by fanotify in that FAN_REPORT_FID and
+> FAN_REPORT_PIDFD aren't mutually exclusive options afaict. I don't know
+> if it's used though.
+>
+> > If it does not need to be supported we can block it in fanotify_test_fi=
+d(),
+> > but if it does need fanotify support, we need to think about this.
+>
+> Sure, block it.
+>
 
-Thanks for sharing. Sigh... Personal note for the future: If something
-should be opaque blob for userspace, don't forget to encrypt the data
-before handing it over to userspace. :-P
+hmm, we are already denying sb/mount marks from SB_NOUSER,
+but inode marks are allowed.
+I don't want to special case pidfs.
+I guess we can do:
 
-> In (1) you can see that the layout is assumed to be uabi by
-> reconstructing the handle. In (2) you can see that the layout is assumed
-> to be uabi by extrating the inode number.
-> 
-> So both points mean that the "don't rely on it"-ship has already sailed.
-> If we get regressions reports for this (and we surely would) because we
-> changed it we're bound by the no-regression rule.
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1736,6 +1736,10 @@ static int fanotify_test_fid(struct dentry
+*dentry, unsigned int flags)
+        if (mark_type !=3D FAN_MARK_INODE && !exportfs_can_decode_fh(nop))
+                return -EOPNOTSUPP;
 
-Yep, FILEID_KERNFS is pretty much set in stone. OTOH I don't expect these
-kinds of hacks to be very widespread (I guess I'm naive ;) so if we really
-need to change it we could talk to systemd folks.
++       /* We do not support reporting autonomous file handles. */
++       if (nop && nop->flags & EXPORT_OP_AUTONOMOUS_HANDLES)
++               return -EOPNOTSUPP;
++
+        return 0;
+ }
 
-> So, for pidfs I'm very tempted to explicitly give the guarantee that
-> systemd just assumes currently.
-> 
-> The reason is that it will allow userspace to just store the 64-bit
-> pidfs inode number in a file or wherever they want and then reconstruct
-> the file handle without ever having to involve name_to_handle_at(). That
-> means you can just read the pid file and see the inode number you're
-> dealing with and not some binary gunk.
+if needed
 
-Well, you could just fprintf() the fhandle into the pid file if you don't
-like binary gunk. Those numbers would be telling about as much as the pidfs
-inode number tells you, don't they? I mean I'm still not at the point where
-I would *encourage* userspace to decode what's supposed to be opaque blob
-;). But maybe I'll get used to that idea...
+> >
+> > Especially, if we want fanotify to report autonomous file handles.
+> > In that case, the design that adds the flag in the open_by_handle_at()
+> > syscall won't do.
+>
+> Sorry, the design that adds the flag? You mean the FD_INVALID?
+> Why is that?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I mean the design that adds the flag FILEID_IS_AUTONOMOUS
+in do_sys_name_to_handle(), because fanotify encodes the file handle
+with the vfs helper exportfs_encode_fid(), so the resulting fid it reports
+is not autonomous.
+
+But I think I have a suggestion to untangle all this mess.
+I will explain in another email.
+
+Thanks,
+Amir.
 
