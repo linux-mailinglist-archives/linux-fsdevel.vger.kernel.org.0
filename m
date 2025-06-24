@@ -1,252 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-52736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D59AE6102
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:39:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEC3AE6177
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 137F27A6D27
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95E6F407336
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0865227BF84;
-	Tue, 24 Jun 2025 09:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F35283C82;
+	Tue, 24 Jun 2025 09:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fue5e0m5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qXp/8+am";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fue5e0m5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qXp/8+am"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P4pt91vt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E093F25CC50
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 09:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6322820A5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 09:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750757983; cv=none; b=HznLrqiBsUxeu1lykAS+KK278a+XxW28HwFaUtRoqr8i3k++X0cYQsJZQAIUQn7P+nCp+EUaK8wdhMQtx8ezOty7UgRHLEU+PKL9MqqOwo2RRRS6tEQO6R5r25vnpSzlxJxxnULIawN+Xl0zDdbaU5AmBOx9iDQJGysf8nCKQpg=
+	t=1750758719; cv=none; b=W9Lf7yFQwU5uFAoayzlJDbVDNOIPWa3CzWTsEl4gSvTyESb+B7l52tn8lS1v6lLoB5yT/S4ojBhAJCgkFPza49jVZCa/jdA2KUCeCzvPK/M0aFGMcYpBSOGRRYhnuL8GveBYBlOOExfS6Vcd0QCDEHSHI0pzNzQJyOajn4fb1d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750757983; c=relaxed/simple;
-	bh=o+Clf7Yp7wsqPYGo8XH9WsWgb0jpdVFNuO8HDyQc0VE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IP8OQ7t1FGYrQ1fQTRDs0L3KKFvIXMPgYCmj9ZXt1Amjwo0xPnLM8CsvB9qRpXwzhKLBwxDqIDWtc/JBEjGuWD7NvWyQTvDE0wAnqSUFyh+RmmO1DNTVRkuHTINQerRySVJv3P0wD0Mmk11G08EgmBSJXCcs4lR7SUd1b5rDygs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fue5e0m5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qXp/8+am; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fue5e0m5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qXp/8+am; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1E7AC1F391;
-	Tue, 24 Jun 2025 09:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750757980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vnEybcjYtBn0fE9XI6JZYyapdXswcfWlXGaHib2mIHA=;
-	b=Fue5e0m5+m0/+388fxa98kSDUSMPlNLoqDL8yVKnD5Wgb9eB8YOPw5Bs5nYgfW7zeZs1K2
-	p3BNAkR17g8pfBcknAeGfyBbyXT9DlqUfRFHSwarZCb7LVvP0d3Rs8i5TrtxVz2J/lTXCm
-	/KBpj6enYwIgFievpQbRRQqBQTFPvOQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750757980;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vnEybcjYtBn0fE9XI6JZYyapdXswcfWlXGaHib2mIHA=;
-	b=qXp/8+amFhzVEPUbwo04gDcAug7/wndPdNGjJozEU5SABxlUQGAouljQcP7T2twocDqpTj
-	IAGIya5EQuR5QqBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750757980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vnEybcjYtBn0fE9XI6JZYyapdXswcfWlXGaHib2mIHA=;
-	b=Fue5e0m5+m0/+388fxa98kSDUSMPlNLoqDL8yVKnD5Wgb9eB8YOPw5Bs5nYgfW7zeZs1K2
-	p3BNAkR17g8pfBcknAeGfyBbyXT9DlqUfRFHSwarZCb7LVvP0d3Rs8i5TrtxVz2J/lTXCm
-	/KBpj6enYwIgFievpQbRRQqBQTFPvOQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750757980;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vnEybcjYtBn0fE9XI6JZYyapdXswcfWlXGaHib2mIHA=;
-	b=qXp/8+amFhzVEPUbwo04gDcAug7/wndPdNGjJozEU5SABxlUQGAouljQcP7T2twocDqpTj
-	IAGIya5EQuR5QqBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 075A913751;
-	Tue, 24 Jun 2025 09:39:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GdLGAVxyWmi6IQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 24 Jun 2025 09:39:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A4A64A0A03; Tue, 24 Jun 2025 11:39:39 +0200 (CEST)
-Date: Tue, 24 Jun 2025 11:39:39 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] selftests/pidfd: decode pidfd file handles
- withou having to specify an fd
-Message-ID: <7ekmxqlg7bgwoglnn4ojv4d2ze5micuzjsjopw2tkkgnl6ei43@4jlaaouas7qg>
-References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
- <20250624-work-pidfs-fhandle-v2-11-d02a04858fe3@kernel.org>
+	s=arc-20240116; t=1750758719; c=relaxed/simple;
+	bh=3ggjFNl0YiUcZwHZCzVY2fLaZl2eqqSvLjxPcrQQ5iQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QdybBQUknojAQv1k/3OCbzZcEnkWmgExzLV17TTkufrynOelmkO/pisZLEZC1HuqJQzM+/PACKlaRmrq4onAXIloUSELKd6Ck+ckkcLtC3NxQgRspVhE0/7FGkVSzj38fsBPFPmM46PisuGFRt81cQfW+P1mcXRgL5DT/KEpwZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P4pt91vt; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so194521f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 02:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1750758715; x=1751363515; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mCMEAjfRu5oUF/8uWMFtpH6cgk/kkkTfVrjbmLL8XJI=;
+        b=P4pt91vtdnJ66d1BkubJS+uWK4DRIYFFhkZHdEaoXlPOGy9GgKEfKlO12+d/LEnA7f
+         U0WGM7X5gf+2OnkSyf8sBW9U1A0dy/A2zFoKG7A0YuQM1Xw33oH9o+pz9MP/fE5Bpxf6
+         zMmhczrpG2M78946/NPxrMbEAS3W2KLK/iJ/TS5wZs4eJk1BMdZPI3lXoVGuXc1nieyw
+         l6TD2z6PQcKbdGoMoKXsqKYuLK2I4ary2qYxin0/xfv+xGrXz75fK23BT8dDyFKwppSW
+         HAf/NIPE49jKWcgPVQmvKQ6+EQOyp5X4YQxNM4sWAzh2rerOPCaxU2zPNLY6DTsdiWsg
+         Aaog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750758715; x=1751363515;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mCMEAjfRu5oUF/8uWMFtpH6cgk/kkkTfVrjbmLL8XJI=;
+        b=pn7GeDlJ5BQMGoFwv8/axLb6vTAr6IJhMAQRkkViBRmXSRq2CJlncp1BZ+6Sr2QyhI
+         yHoRUpU1NASVH/K3/IijRdoO/ftv4CSogIpoM800abg0IWiICKtTosgWWZNVrgWl5Gvr
+         Zz8Kt5urxqSjD/C0uN0Fe/FK0bv+bH5Gi/cOmO+lTpWY77Wo+1OgBApLxftSiAVyK3y9
+         tgQSAXearFgPBbiLWRVc0OfLlHOC45L27YOLNfvIguJ1G9Li7RsXR1RKkONLdTSqjyDd
+         sc1OHT7YGtDawYoQKQ5ut1Y8IFIU+I/T1flyln0uLQNBGLQj6yBU32i2fQpm2gturoHt
+         7XCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHXR8fYi9XcS1SBZFGOLU3T4afa9lxJYKSPqU5IBKTf+kVQip0f4K8BvLgqnPqA5ns3xG5GnYtBcetD2S4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5oh2//pXGIaKtciWKbPy4dKHctnYrm5epODzokR0Tak8PrzLD
+	mKOSo11PBsZSjpX9En38IZKCBWDWcoEuPziRYjVXBlDu0q4NvMRavpjdjm+PjTsuCqU=
+X-Gm-Gg: ASbGnctwekYhoAzZsZt3SPDu9nU4Me5b6WF0TsBdex03wSCCalFpHi/0wrVjd60nyGp
+	OUkM1FRnoMIfsTcpAdAJYJdO0CCOEPoLMNDTG5bL1BO4tCvBnCZWz05bYzAZbSf9DoIMtEh6u4S
+	QUCoPvR4DVVaZjOw79i/p9+qekMwe0pntg4jyX2fWmh6EZwWm1KqpL138OHGmj+SPmh8Wu6ZIRr
+	3oxTcm9hdhCx7IxYien7H3/g0PhCFKj/j7QNW73y8v78bXlsUw2V2K/OErxNoLG7eCuPswqk045
+	MxBNrpt6wAZQdwyDWh2LhDU5adfpyD4Pgdh4scynSVxhObx/Ww/a4zrbVki0hnqA/isAiqP9Ly0
+	wB+vBUg/uQQhMoASDE7xWnCYL
+X-Google-Smtp-Source: AGHT+IFsuTvDUHmwiflUkrAvnHqrLlFxtwWqNkQoNZHM87eDeSw6YeebvIDXbtNpDWjsXgce3SdntA==
+X-Received: by 2002:a5d:5f4b:0:b0:3a1:fe77:9e1d with SMTP id ffacd0b85a97d-3a6d12c1848mr13619681f8f.16.1750758715062;
+        Tue, 24 Jun 2025 02:51:55 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d83f11easm102204355ad.84.2025.06.24.02.51.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jun 2025 02:51:54 -0700 (PDT)
+Message-ID: <abe98c94-b4e0-446b-90e7-c9cdb1c9d197@suse.com>
+Date: Tue, 24 Jun 2025 19:21:50 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624-work-pidfs-fhandle-v2-11-d02a04858fe3@kernel.org>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,oracle.com,suse.cz,gmail.com,ffwll.ch,vger.kernel.org];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 5/6] fs: introduce a shutdown_bdev super block
+ operation
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+ linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ viro@zeniv.linux.org.uk
+References: <cover.1750397889.git.wqu@suse.com>
+ <ef624790b57b76be25720e4a8021d7f5f03166cb.1750397889.git.wqu@suse.com>
+ <wmvb4bnsz5bafoyu5mp33csjk4bcs63jemzi2cuqjzfy3rwogw@4t6fizv5ypna>
+ <aFji5yfAvEeuwvXF@infradead.org>
+ <20250623-worte-idolisieren-75354608512a@brauner>
+ <aFldWPte-CK2PKSM@infradead.org>
+ <84d61295-9c4a-41e8-80f0-dcf56814d0ae@suse.com>
+ <20250624-geerntet-haare-2ce4cc42b026@brauner>
+ <8db82a80-242f-41ff-84b8-601d6dcd9b9d@suse.com>
+ <20250624-briefe-hassen-f693b4fe3501@brauner>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20250624-briefe-hassen-f693b4fe3501@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue 24-06-25 10:29:14, Christian Brauner wrote:
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Looks good. Feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  tools/testing/selftests/pidfd/Makefile             |  2 +-
->  tools/testing/selftests/pidfd/pidfd.h              |  4 ++
->  .../selftests/pidfd/pidfd_file_handle_test.c       | 60 ++++++++++++++++++++++
->  3 files changed, 65 insertions(+), 1 deletion(-)
+在 2025/6/24 18:43, Christian Brauner 写道:
+[...]
+>> It's not hard for btrfs to provide it, we already have a check function
+>> btrfs_check_rw_degradable() to do that.
+>>
+>> Although I'd say, that will be something way down the road.
 > 
-> diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-> index 03a6eede9c9e..764a8f9ecefa 100644
-> --- a/tools/testing/selftests/pidfd/Makefile
-> +++ b/tools/testing/selftests/pidfd/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
-> +CFLAGS += -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES) -pthread -Wall
->  
->  TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test \
->  	pidfd_poll_test pidfd_wait pidfd_getfd_test pidfd_setns_test \
-> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-> index 5dfeb1bdf399..b427a2636402 100644
-> --- a/tools/testing/selftests/pidfd/pidfd.h
-> +++ b/tools/testing/selftests/pidfd/pidfd.h
-> @@ -19,6 +19,10 @@
->  #include "../kselftest.h"
->  #include "../clone3/clone3_selftests.h"
->  
-> +#ifndef FD_INVALID
-> +#define FD_INVALID -10009 /* Invalid file descriptor. */
-> +#endif
-> +
->  #ifndef P_PIDFD
->  #define P_PIDFD 3
->  #endif
-> diff --git a/tools/testing/selftests/pidfd/pidfd_file_handle_test.c b/tools/testing/selftests/pidfd/pidfd_file_handle_test.c
-> index 439b9c6c0457..ff1bf51bca5e 100644
-> --- a/tools/testing/selftests/pidfd/pidfd_file_handle_test.c
-> +++ b/tools/testing/selftests/pidfd/pidfd_file_handle_test.c
-> @@ -500,4 +500,64 @@ TEST_F(file_handle, valid_name_to_handle_at_flags)
->  	ASSERT_EQ(close(pidfd), 0);
->  }
->  
-> +/*
-> + * That we decode a file handle without having to pass a pidfd.
-> + */
-> +TEST_F(file_handle, decode_purely_based_on_file_handle)
-> +{
-> +	int mnt_id;
-> +	struct file_handle *fh;
-> +	int pidfd = -EBADF;
-> +	struct stat st1, st2;
-> +
-> +	fh = malloc(sizeof(struct file_handle) + MAX_HANDLE_SZ);
-> +	ASSERT_NE(fh, NULL);
-> +	memset(fh, 0, sizeof(struct file_handle) + MAX_HANDLE_SZ);
-> +	fh->handle_bytes = MAX_HANDLE_SZ;
-> +
-> +	ASSERT_EQ(name_to_handle_at(self->child_pidfd1, "", fh, &mnt_id, AT_EMPTY_PATH), 0);
-> +
-> +	ASSERT_EQ(fstat(self->child_pidfd1, &st1), 0);
-> +
-> +	pidfd = open_by_handle_at(FD_INVALID, fh, 0);
-> +	ASSERT_GE(pidfd, 0);
-> +
-> +	ASSERT_EQ(fstat(pidfd, &st2), 0);
-> +	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-> +
-> +	ASSERT_EQ(close(pidfd), 0);
-> +
-> +	pidfd = open_by_handle_at(FD_INVALID, fh, O_CLOEXEC);
-> +	ASSERT_GE(pidfd, 0);
-> +
-> +	ASSERT_EQ(fstat(pidfd, &st2), 0);
-> +	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-> +
-> +	ASSERT_EQ(close(pidfd), 0);
-> +
-> +	pidfd = open_by_handle_at(FD_INVALID, fh, O_NONBLOCK);
-> +	ASSERT_GE(pidfd, 0);
-> +
-> +	ASSERT_EQ(fstat(pidfd, &st2), 0);
-> +	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-> +
-> +	ASSERT_EQ(close(pidfd), 0);
-> +
-> +	pidfd = open_by_handle_at(self->pidfd, fh, 0);
-> +	ASSERT_GE(pidfd, 0);
-> +
-> +	ASSERT_EQ(fstat(pidfd, &st2), 0);
-> +	ASSERT_TRUE(st1.st_dev == st2.st_dev && st1.st_ino == st2.st_ino);
-> +
-> +	ASSERT_EQ(close(pidfd), 0);
-> +
-> +	pidfd = open_by_handle_at(-EBADF, fh, 0);
-> +	ASSERT_LT(pidfd, 0);
-> +
-> +	pidfd = open_by_handle_at(AT_FDCWD, fh, 0);
-> +	ASSERT_LT(pidfd, 0);
-> +
-> +	free(fh);
-> +}
-> +
->  TEST_HARNESS_MAIN
+> Yes, for sure. I think long-term we should hoist at least the bare
+> infrastructure for multi-device filesystem management into the VFS.
+
+Just want to mention that, "multi-device filesystem" already includes 
+fses with external journal.
+
+Thus the new callback may be a good chance for those mature fses to 
+explore some corner case availability improvement, e.g. the loss of the 
+external journal device while there is no live journal on it.
+(I have to admin it's super niche, and live-migration to internal 
+journal may be way more complex than my uneducated guess)
+
+Thanks,
+Qu
+
+> Or we should at least explore whether that's feasible and if it's
+> overall advantageous to maintenance and standardization. We've already
+> done a bit of that and imho it's now a lot easier to reason about the
+> basics already.
 > 
-> -- 
-> 2.47.2
+>>
+>> We even don't have a proper way to let end user configure the device loss
+>> behavior.
+>> E.g. some end users may prefer a full shutdown to be extra cautious, other
+>> than continue degraded.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Right.
+
 
