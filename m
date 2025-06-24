@@ -1,128 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-52782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DAFAE68C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 16:32:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16492AE68E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 16:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34334E5AE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 14:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 041FD18923F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 14:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499332DECC4;
-	Tue, 24 Jun 2025 14:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A67323741;
+	Tue, 24 Jun 2025 14:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZxav9ec"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BgkSecGz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EDA2D23B6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 14:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26E31C84DF;
+	Tue, 24 Jun 2025 14:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750774981; cv=none; b=arph7m5kdO60ZCZ8b6vwQwmrzUTFuy5pbgmZo/n3533mCt+i+bnUc+5zC3CTjX7L+2DAfI3T2PEWnXWd3sRRLVscNiMs8j3D58qPTP7wRFNKqe9X0zLbDdwrEvXli+DaaDvSi5AiAkRpw9o5K4bVA2XbPnXvOzNOAS2NsmrLjvI=
+	t=1750775345; cv=none; b=hgRLtv1+DT520YjXbGERvLSme3Y0EfZJmNrTAri2HZtI6XsDJ6KwbdUU1q18KXVU2pPYaMLiMk7ZEmJ7D911uGF1yb6r95m2aj/6iZYzdfpa+5FuwbLW7N6/PGg150f+5kTcjpP1PXYVLaTHPNGl298kulOF/9rPZm4ghwBkEUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750774981; c=relaxed/simple;
-	bh=DyGsBcB6vv3h1JsbgAkV+Dgc9KpOte+BK0rILkrHnu4=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=tZhl8EtGHQYY32bcZwf6Gu6QQPgVjxw+HcrowrbHQbWZuBtPOoqLCvtH054wMf/Yq2crBdQy4zJZ/j3z+INen+KJBqoWmezHXCGFWtEQdm2FpJon2mBT4INULrp7YL8QFlJCAG2u4h9ZoHm+RcZ4DPnjC/snqXuEwgPlleJC9Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZZxav9ec; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750774979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Su4dK6eziUeWtnT2n4zYWHb6UwxoSMzl876+vyWG0NY=;
-	b=ZZxav9ectYkbgO4MOiCCi3vGQ76Yi77Y1TTvr7FOh2OciUjlK0nnVh9807nNth3KdYMxsG
-	qalsXkxxZ1Bk8Ty5YLR7U26d2kFV74VTKsYCy/zKh0uxSGBCfV3siFv7T3HZzd3TRWb1ii
-	cLur5FsUzs/Vn5g+tQHh77Zk3UyqM78=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-316-fMlWeTagONaZYJyOFC7J2Q-1; Tue,
- 24 Jun 2025 10:22:55 -0400
-X-MC-Unique: fMlWeTagONaZYJyOFC7J2Q-1
-X-Mimecast-MFC-AGG-ID: fMlWeTagONaZYJyOFC7J2Q_1750774974
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 60C8719560B3;
-	Tue, 24 Jun 2025 14:22:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 94E4530001A1;
-	Tue, 24 Jun 2025 14:22:52 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <f448a729-ca2e-40a8-be67-3334f47a3916@samba.org>
-References: <f448a729-ca2e-40a8-be67-3334f47a3916@samba.org> <1107690.1750683895@warthog.procyon.org.uk>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: dhowells@redhat.com,
-    "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-    netfs@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-    Steve French <stfrench@microsoft.com>
-Subject: Re: [PATCH] cifs: Collapse smbd_recv_*() into smbd_recv() and just use copy_to_iter()
+	s=arc-20240116; t=1750775345; c=relaxed/simple;
+	bh=5MN6uNUQRZyCIUK95PgqVlhMXf+1t2U1BLeFKEiYmoM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EamtV+2BziM6d8Vf5MPGhOTelDaZp6i6v4TzmC461PtUIXs+Vg48MI1EuDlWmwTSev5J6ZaEZtcZECYg/WHLHv/4Wu3A3hJXwa1HBKMCgHYq1hLkUUBGj24wIkmDAX6AZwvuE03PUvgl/KBQdykHcA2AtXTwNnoY8OuQXpvgm0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BgkSecGz; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6084dfb4cd5so12328275a12.0;
+        Tue, 24 Jun 2025 07:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750775342; x=1751380142; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v7Ub3HWzxgZGTyETvsdidBVZkJmivzQg2Ys8H1wC3MY=;
+        b=BgkSecGzC6m1vQRmAV+/F5wBqAiHuoLiXYsN/1tg28fqZJA7Ply7wn9epGiLmiJwd0
+         Zx7dBGguplNpyHZ/Tp2vXPk9Tj/3w91eYQ/60LRSc8l6TeZnpIllJzs1994i1romK2w5
+         Y4mdfOa0gd+umtiYx+8ufTs2/iXFsfo8ezliGvmnZmZUpG+MChONM+8mw7hQ4T6uWhXZ
+         50z0HUddNhttQfAHBXBvnZEI6MR0JwI38yiCUhQRa+DagZO9b8+1kev1wDcZWCi3Dqjs
+         VQbURVYPq5KBLDXeVxpEqfiF2vcqydxExxq+Vv7ytmVLuwmNHqu/HqHyq0EDJr9r3sLK
+         BQ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750775342; x=1751380142;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v7Ub3HWzxgZGTyETvsdidBVZkJmivzQg2Ys8H1wC3MY=;
+        b=udrVRXV0DcUKnE1PVOUeLrdx4J3tR+0e+tDqcUZA1V0OWAM9s1S5rjRZvWLnAnmqnH
+         8XTFaYxvsV0dQPGFeNK1BaH0AkeR499M+Brdj4lvhkT7M6q3PWlEz+pxSJgmXKyXV2hm
+         dcdWSKU/ArWbvS8enYa/1TpNScH5VE43L070wPKOOLIlYK7/vWSYDtWDyncwMtlWBcd+
+         6XwjsJJANz8hzc3SYyk2xq7dbzQGq0jCy4QNLkiwPHojiMRqtU1fISw0zG+vW1biTx5s
+         YPjelPEioZtd+yj8SKy4BgIKgzkC/RJBUi1wo+xWlCgXG0Cf+rU/59kv35RNRjt18G+f
+         EHlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBBa86CNcafAln0Fi6KtL9/Ii0BUWLNQJYgYdZjmBk875AMgEDdobU0fqTBbxcdwRFw/XLnunIktjVYdX6@vger.kernel.org, AJvYcCVxNk0QwNErFrmEzKtbLMSzmWiHM9DOy/fxmlxkX3/PvuL/zA+LNI209GD9C4znXb/Fx3+rePARnaA8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxytPHtlipyHO+g8nrfFaF+2eeFZGBvAOphLqZJommOX5nVV/Fe
+	yNiP+DMc4HY+05SVw9E8sT+xakSWr48ugLxFc5hBKDK4Iwe3UWR241gTXW+kce0Y0fFYvEGAInl
+	GelnjePzvF21e5MZQngE3gzXg+f5Ev28=
+X-Gm-Gg: ASbGncubDRxmlm2AXKF908XpizKMvxgBrd+2HqFr2Apn5TSlyT49ndg0AWsSW8MRPh+
+	vc58220uhjZzvTHY5xETVgTzq/aVB1rAv7fg8AYlhKlw7F6qhMUeGZ7x3ZncREL8GE7ZFoymrcM
+	LE26afiEwnPjyBdu21ZwOEYp2liGz2KiiqXMrnGpItAcU=
+X-Google-Smtp-Source: AGHT+IEXBzP4RQp46CUAppadc/LfMIKUKhDwFcYT4rN+y8C2QEp33zWX28oS9DIBNpmrrQslGarLV15ZfxyomoRSBec=
+X-Received: by 2002:a17:906:6a21:b0:ade:4f2:9077 with SMTP id
+ a640c23a62f3a-ae0a71f4599mr415811166b.5.1750775341612; Tue, 24 Jun 2025
+ 07:29:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1156126.1750774971.1@warthog.procyon.org.uk>
-Date: Tue, 24 Jun 2025 15:22:51 +0100
-Message-ID: <1156127.1750774971@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
+ <20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org>
+ <ng6fvyydyem4qh3rtkvaeyyxm3suixjoef5nepyhwgc4k26chp@n2tlycbek4vl> <CAOQ4uxgB+01GsNh2hAJOqZF4oUaXqqCeiFVEwmm+_h9WhG-KdA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgB+01GsNh2hAJOqZF4oUaXqqCeiFVEwmm+_h9WhG-KdA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 24 Jun 2025 16:28:50 +0200
+X-Gm-Features: AX0GCFtaZvA3yGy0FBmZxZgD1Oi-TeCxAceGj6ftnKud6FpnUfe6_3Cn2XYmvYg
+Message-ID: <CAOQ4uxjYGipMt4t+ZzYEQgn3EhWh327iEyoKyeoqKKGzwuHRsg@mail.gmail.com>
+Subject: Re: [PATCH v2 10/11] fhandle, pidfs: support open_by_handle_at()
+ purely based on file handle
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Stefan Metzmacher <metze@samba.org> wrote:
+On Tue, Jun 24, 2025 at 12:53=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> On Tue, Jun 24, 2025 at 11:30=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Tue 24-06-25 10:29:13, Christian Brauner wrote:
+> > > Various filesystems such as pidfs (and likely drm in the future) have=
+ a
+> > > use-case to support opening files purely based on the handle without
+> > > having to require a file descriptor to another object. That's especia=
+lly
+> > > the case for filesystems that don't do any lookup whatsoever and ther=
+e's
+> > > zero relationship between the objects. Such filesystems are also
+> > > singletons that stay around for the lifetime of the system meaning th=
+at
+> > > they can be uniquely identified and accessed purely based on the file
+> > > handle type. Enable that so that userspace doesn't have to allocate a=
+n
+> > > object needlessly especially if they can't do that for whatever reaso=
+n.
+> > >
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > ---
+> > >  fs/fhandle.c | 22 ++++++++++++++++++++--
+> > >  fs/pidfs.c   |  5 ++++-
+> > >  2 files changed, 24 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/fs/fhandle.c b/fs/fhandle.c
+> > > index ab4891925b52..54081e19f594 100644
+> > > --- a/fs/fhandle.c
+> > > +++ b/fs/fhandle.c
+> > > @@ -173,7 +173,7 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, cons=
+t char __user *, name,
+> > >       return err;
+> > >  }
+> > >
+> > > -static int get_path_anchor(int fd, struct path *root)
+> > > +static int get_path_anchor(int fd, struct path *root, int handle_typ=
+e)
+> > >  {
+> > >       if (fd >=3D 0) {
+> > >               CLASS(fd, f)(fd);
+> > > @@ -193,6 +193,24 @@ static int get_path_anchor(int fd, struct path *=
+root)
+> > >               return 0;
+> > >       }
+> > >
+> > > +     /*
+> > > +      * Only autonomous handles can be decoded without a file
+> > > +      * descriptor.
+> > > +      */
+> > > +     if (!(handle_type & FILEID_IS_AUTONOMOUS))
+> > > +             return -EOPNOTSUPP;
+> >
+> > This somewhat ties to my comment to patch 5 that if someone passed inva=
+lid
+> > fd < 0 before, we'd be returning -EBADF and now we'd be returning -EINV=
+AL
+> > or -EOPNOTSUPP based on FILEID_IS_AUTONOMOUS setting. I don't care that
+> > much about it so feel free to ignore me but I think the following might=
+ be
+> > more sensible error codes:
+> >
+> >         if (!(handle_type & FILEID_IS_AUTONOMOUS)) {
+> >                 if (fd =3D=3D FD_INVALID)
+> >                         return -EOPNOTSUPP;
+> >                 return -EBADF;
+> >         }
+> >
+> >         if (fd !=3D FD_INVALID)
+> >                 return -EBADF; (or -EINVAL no strong preference here)
+>
+> FWIW, I like -EBADF better.
+> it makes the error more descriptive and keeps the flow simple:
+>
+> +       /*
+> +        * Only autonomous handles can be decoded without a file
+> +        * descriptor and only when FD_INVALID is provided.
+> +        */
+> +       if (fd !=3D FD_INVALID)
+> +               return -EBADF;
+> +
+> +       if (!(handle_type & FILEID_IS_AUTONOMOUS))
+> +               return -EOPNOTSUPP;
+>
 
-> >   read_rfc1002_done:
-> > +		/* SMBDirect will read it all or nothing */
-> > +		msg->msg_iter.count = 0;
-> 
-> And this iov_iter_truncate(0);
+Thinking about it some more, as I am trying to address your concerns
+about crafting autonomous file handles by systemd, as you already
+decided to define a range for kernel reserved values for fd, why not,
+instead of requiring FD_INVALID for autonomous file handle, that we
+actually define a kernel fd value that translates to "the root of pidfs":
 
-Actually, it should probably have been iov_iter_advance().
++       /*
++        * Autonomous handles can be decoded with a special file
++        * descriptor value that describes the filesystem.
++        */
++       switch (fd) {
++       case FD_PIDFS_ROOT:
++               pidfs_get_root(root);
++               break;
++       default:
++               return -EBADF;
++       }
++
 
-> While I'm wondering why we had this at all.
-> 
-> It seems all callers of cifs_read_iter_from_socket()
-> don't care and the code path via sock_recvmsg() doesn't
-> truncate it just calls copy_to_iter() via this chain:
-> ->inet_recvmsg->tcp_recvmsg->skb_copy_datagram_msg->skb_copy_datagram_iter
-> ->simple_copy_to_iter->copy_to_iter()
-> 
-> I think the old code should have called
-> iov_iter_advance(rc) instead of msg->msg_iter.count = 0.
-> 
-> But the new code doesn't need it as copy_to_iter()
-> calls iterate_and_advance().
+Then you can toss all my old ideas, including FILEID_IS_AUTONOMOUS,
+and EXPORT_OP_AUTONOMOUS_HANDLES and you do not even need
+to define FILEID_PIDFS anymore, just keep exporting FILEID_KERNFS
+as before (you can also keep the existing systemd code) and when you want
+to open file by handle you just go
+open_by_handle_at(FD_PIDFS, &handle, 0)
+and that's it.
 
-Yeah, it should.  I seem to remember that there were situations in which it
-didn't, but it's possible I managed to get rid of them.
+In the end, my one and only concern with autonomous file handles is that
+there should be a user opt-in to request them.
 
-> > -	default:
-> > -		/* It's a bug in upper layer to get there */
-> > -		cifs_dbg(VFS, "Invalid msg type %d\n",
-> > -			 iov_iter_type(&msg->msg_iter));
-> > -		rc = -EINVAL;
-> > -	}
-> 
-> I guess this is actually a real fix as I just saw
-> CIFS: VFS: Invalid msg type 4
-> in logs while running the cifs/001 test.
-> And 4 is ITER_FOLIOQ.
+Sorry for taking the long road to get to this simpler design.
+WDYT?
 
-Ah... Were you using "-o seal"?  The encrypted data is held in a buffer formed
-from a folioq with a series of folios in it.
-
-David
-
+Thanks,
+Amir.
 
