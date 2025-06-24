@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-52704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DF0AE5F5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:32:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9FFAE5F62
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 10:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6804A37EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:30:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF6AD4C1DD1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 08:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9CB259CB5;
-	Tue, 24 Jun 2025 08:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8041F25B69E;
+	Tue, 24 Jun 2025 08:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9C5zSEW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/OjibEK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A53F25B66D;
-	Tue, 24 Jun 2025 08:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F3125B675;
+	Tue, 24 Jun 2025 08:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750753790; cv=none; b=bGIzgjZlBDNE5uKq3mTb6vKmg9CUJ+RmaS6rg0VmX2YdB2ihP5pO+r/56g59eyUIDUIwx+PLvM3jBoz3VyRi8MctOKdtllEXLbTRfQ3ryp6Rco5ibS08EHfFKQDe6uXyVUuYbVKgGLo2fhMk5lcDAOpxbd7y9OM7TlghZFZ+adA=
+	t=1750753792; cv=none; b=IrZAb0qKUUegKTQEryKVAR5TBr2IKLlIPnl41zxZ42ZdgXOWh7B7vFJNFD8STGDbB3wSmIxunP3E6OXjBmc9PLgJRpHffvT7twx3CrjrqXJ+CnyelYpojmR0+fw9YYvegWSlrNUytnSrvvMtIoEeKFxPhH6PC9wqotw/x33YGnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750753790; c=relaxed/simple;
-	bh=qmspEgfAxHFZ2cBX+pQKWI9MACvwAWohC61hKRze250=;
+	s=arc-20240116; t=1750753792; c=relaxed/simple;
+	bh=QGhdkds6tNtrL2dBz/1V3M09RW+7EzjI9qj+pDE1Yrw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t9ZxxJBZcgJwX6PEnHdQGskigdF+SAcJstFzOpej8Av+QnC55ZIZxPtUEexMX3qemODnZasf303yFDgzaues/0+Z9P2XncgKmOm/Bh++2Fh5HcjRJQsF25lNBYTNqeMzorfxnVmSassFNBW8q/Ss/74AaMGaBUShyMm6N2UMJJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9C5zSEW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8950C4CEF2;
-	Tue, 24 Jun 2025 08:29:48 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KQj+PmhJwVAM7AaUeCfzVxhcqxCaxd1wG38/xNLhn8dB1jyLF04/B3UCCmUiSgP4P/Qg8k2EVuXwES7yvjAqpi2l//iWLMC5SjE2NcXIjbBFgDX+GbrI90MF5kSX4QX6Fddxa0omZYsHsqLrbD/PoCdXdTFe5Cuj3wLmtcnKd9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/OjibEK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C76C4CEEF;
+	Tue, 24 Jun 2025 08:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750753790;
-	bh=qmspEgfAxHFZ2cBX+pQKWI9MACvwAWohC61hKRze250=;
+	s=k20201202; t=1750753792;
+	bh=QGhdkds6tNtrL2dBz/1V3M09RW+7EzjI9qj+pDE1Yrw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=S9C5zSEWHZJC0MEZ8fZHMa+t6kxzYtHZ9gnYpS+AuH66ofHjAhUwiimT0YQQOQd1Q
-	 jYaoPmBpL/azQCnRucSSH99GNifrN93hTHJa2188LB9jtQO+hvUmarwlPzCPafJHox
-	 vzPDCCqBd5nUb+0XsihFnhy1TE0ojg/fXhnQTm3CtoNh7brlN+cdB0zXA7/iplg7Je
-	 QFM4HIltXBAKCliJQ80TioRMC7zNn4gz7KyAhQXXM7zOxnEmNxwQbPM8HyjXN0aEC8
-	 znEyV34EZncgweQwm7yU3KrEvKzXMWA3EJUHBmqk6IIsV4YWXPpVeewU5HMupfTv4j
-	 c+Ehp8MiYxZ4g==
+	b=o/OjibEK82m7YW76MXh/iMPBQlSua7ImjbsWIAzuXtbZU5M1tVEjdDJmRtlDZOq6x
+	 +t+sYgEyEbRHjSr6wFpuWtzbHJoX7sE7VvoROxVHZ3+xoPWFkzqfehk64WrwUOtXbw
+	 sejRREZGfeT0Y42tPUQB0c5V9WJm1l7kttrfxFBF9/di6hg352rDwN3bA4kyzq3Eoc
+	 oNqa2sGPz3dbK04ZYooUGel6lPLW9RlwnuGqFFlMc5mnWt+gxA3iumjcagOs9XBO80
+	 VMv8bESl+Gpmrxn3BYTLlOAT/5z8j7sH9xwkUx9OzlIM01Vjf8yrYhMptPpi26eYZk
+	 ZqzlcxIG5wFeA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 24 Jun 2025 10:29:12 +0200
-Subject: [PATCH v2 09/11] fhandle: add EXPORT_OP_AUTONOMOUS_HANDLES marker
+Date: Tue, 24 Jun 2025 10:29:13 +0200
+Subject: [PATCH v2 10/11] fhandle, pidfs: support open_by_handle_at()
+ purely based on file handle
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-work-pidfs-fhandle-v2-9-d02a04858fe3@kernel.org>
+Message-Id: <20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org>
 References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
 In-Reply-To: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
 To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
@@ -61,78 +62,108 @@ To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
 Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-262a7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2484; i=brauner@kernel.org;
- h=from:subject:message-id; bh=qmspEgfAxHFZ2cBX+pQKWI9MACvwAWohC61hKRze250=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREJb4IebNZeU7uIpWZt54V3NK8evHt9luL2WP6XCca3
- T246JGLYkcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEblYxMnTYJn+xdNpX3HJz
- 7ZStp3VKn/qucHcJ3eZ8d++EGcHXmmwY/oqEi3Jf/7N9Y6TsgdzKYj79r+yTpRIf+rq09eddOuz
- MxgwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3017; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=QGhdkds6tNtrL2dBz/1V3M09RW+7EzjI9qj+pDE1Yrw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREJb64zb+i1cf9XR87+0Wzv9LeGZ+68zfuOq37Vnvj1
+ 2tiTNOSOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZy5zTDP4sdHGeqDU5eZpEy
+ vO3Bdl7zy/K7insO7PT6UfglZJtNXiPDfz9LRquNNfyOkRtm5Xw4bjLpYUqexQmWgpluN/S2BLy
+ 4wQ0A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Allow a filesystem to indicate that it supports encoding autonomous file
-handles that can be decoded without having to pass a filesystem for the
-filesystem. In other words, the file handle uniquely identifies the
-filesystem.
+Various filesystems such as pidfs (and likely drm in the future) have a
+use-case to support opening files purely based on the handle without
+having to require a file descriptor to another object. That's especially
+the case for filesystems that don't do any lookup whatsoever and there's
+zero relationship between the objects. Such filesystems are also
+singletons that stay around for the lifetime of the system meaning that
+they can be uniquely identified and accessed purely based on the file
+handle type. Enable that so that userspace doesn't have to allocate an
+object needlessly especially if they can't do that for whatever reason.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/fhandle.c             | 7 ++++++-
- include/linux/exportfs.h | 4 +++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ fs/fhandle.c | 22 ++++++++++++++++++++--
+ fs/pidfs.c   |  5 ++++-
+ 2 files changed, 24 insertions(+), 3 deletions(-)
 
 diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 22edced83e4c..ab4891925b52 100644
+index ab4891925b52..54081e19f594 100644
 --- a/fs/fhandle.c
 +++ b/fs/fhandle.c
-@@ -23,12 +23,13 @@ static long do_sys_name_to_handle(const struct path *path,
- 	struct file_handle f_handle;
- 	int handle_dwords, handle_bytes;
- 	struct file_handle *handle = NULL;
-+	const struct export_operations *eops = path->dentry->d_sb->s_export_op;
+@@ -173,7 +173,7 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+ 	return err;
+ }
  
- 	/*
- 	 * We need to make sure whether the file system support decoding of
- 	 * the file handle if decodeable file handle was requested.
- 	 */
--	if (!exportfs_can_encode_fh(path->dentry->d_sb->s_export_op, fh_flags))
-+	if (!exportfs_can_encode_fh(eops, fh_flags))
- 		return -EOPNOTSUPP;
- 
- 	/*
-@@ -90,6 +91,10 @@ static long do_sys_name_to_handle(const struct path *path,
- 			if (d_is_dir(path->dentry))
- 				handle->handle_type |= FILEID_IS_DIR;
- 		}
-+
-+		/* Filesystems supports autonomous file handles. */
-+		if (eops->flags & EXPORT_OP_AUTONOMOUS_HANDLES)
-+			handle->handle_type |= FILEID_IS_AUTONOMOUS;
- 		retval = 0;
+-static int get_path_anchor(int fd, struct path *root)
++static int get_path_anchor(int fd, struct path *root, int handle_type)
+ {
+ 	if (fd >= 0) {
+ 		CLASS(fd, f)(fd);
+@@ -193,6 +193,24 @@ static int get_path_anchor(int fd, struct path *root)
+ 		return 0;
  	}
- 	/* copy the mount id */
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index 5bb757b51f5c..f7f9038b285e 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -188,7 +188,8 @@ struct handle_to_path_ctx {
- /* Flags supported in encoded handle_type that is exported to user */
- #define FILEID_IS_CONNECTABLE	0x10000
- #define FILEID_IS_DIR		0x20000
--#define FILEID_VALID_USER_FLAGS	(FILEID_IS_CONNECTABLE | FILEID_IS_DIR)
-+#define FILEID_IS_AUTONOMOUS	0x40000
-+#define FILEID_VALID_USER_FLAGS	(FILEID_IS_CONNECTABLE | FILEID_IS_DIR | FILEID_IS_AUTONOMOUS)
  
- /**
-  * struct export_operations - for nfsd to communicate with file systems
-@@ -285,6 +286,7 @@ struct export_operations {
- 						*/
- #define EXPORT_OP_FLUSH_ON_CLOSE	(0x20) /* fs flushes file data on close */
- #define EXPORT_OP_NOLOCKS		(0x40) /* no file locking support */
-+#define EXPORT_OP_AUTONOMOUS_HANDLES	(0x80) /* filesystem supports autonomous file handles */
- 	unsigned long	flags;
++	/*
++	 * Only autonomous handles can be decoded without a file
++	 * descriptor.
++	 */
++	if (!(handle_type & FILEID_IS_AUTONOMOUS))
++		return -EOPNOTSUPP;
++
++	if (fd != FD_INVALID)
++		return -EINVAL;
++
++	switch (handle_type & ~FILEID_USER_FLAGS_MASK) {
++	case FILEID_PIDFS:
++		pidfs_get_root(root);
++		break;
++	default:
++		return -EINVAL;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -347,7 +365,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
+ 	    FILEID_USER_FLAGS(f_handle.handle_type) & ~FILEID_VALID_USER_FLAGS)
+ 		return -EINVAL;
+ 
+-	retval = get_path_anchor(mountdirfd, &ctx.root);
++	retval = get_path_anchor(mountdirfd, &ctx.root, f_handle.handle_type);
+ 	if (retval)
+ 		return retval;
+ 
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 69b0541042b5..2ab9b47fbfae 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -747,7 +747,7 @@ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+ 
+ 	*max_len = 2;
+ 	*(u64 *)fh = pid->ino;
+-	return FILEID_KERNFS;
++	return FILEID_PIDFS;
+ }
+ 
+ static int pidfs_ino_find(const void *key, const struct rb_node *node)
+@@ -802,6 +802,8 @@ static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+ 		return NULL;
+ 
+ 	switch (fh_type) {
++	case FILEID_PIDFS:
++		fallthrough;
+ 	case FILEID_KERNFS:
+ 		pid_ino = *(u64 *)fid;
+ 		break;
+@@ -860,6 +862,7 @@ static const struct export_operations pidfs_export_operations = {
+ 	.fh_to_dentry	= pidfs_fh_to_dentry,
+ 	.open		= pidfs_export_open,
+ 	.permission	= pidfs_export_permission,
++	.flags		= EXPORT_OP_AUTONOMOUS_HANDLES,
  };
  
+ static int pidfs_init_inode(struct inode *inode, void *data)
 
 -- 
 2.47.2
