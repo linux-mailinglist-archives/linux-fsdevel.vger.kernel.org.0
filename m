@@ -1,73 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-52815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF95FAE71B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 23:52:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A43FAE7209
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 00:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF9C3B4D5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 21:52:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6565617F26C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 22:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5B025B1D8;
-	Tue, 24 Jun 2025 21:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B679025B1C4;
+	Tue, 24 Jun 2025 22:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CfWI5l4A"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNI+M36G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2342D258CF8;
-	Tue, 24 Jun 2025 21:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E8A3D994;
+	Tue, 24 Jun 2025 22:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750801961; cv=none; b=BWNaRcE7IC1urmqGjaDb/mAM+3KtuR88luV4ri33QMlKPE/cKwGOY+tJNHEj5oH13wVBhY7kFS74qb39RLvR8oXxpmmJ+idGaeNyZwB3e7LcylYM3VWHtccMQ481pLXfua0MUF2tKnmTOYV3m83t8ReYic29PtZ8MWjOa/zQkK8=
+	t=1750802540; cv=none; b=Z3dU1uN4W5Wvu44DGPdJs+Tb+gDRJpMtY/NIjEvFnJJ9mWj9oPmOjsoK/Lkreii5ddDwPdurYZgFEf3P7hOZWCC7sAspxu1KRuACpopjYcXv+5mavRlLhde0DylihY4Y5yq3Y1aeM6sL2ayBX95XzlP7fFy0uYB+Hyre3wjL8kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750801961; c=relaxed/simple;
-	bh=sC6wgHO9eH3gbsuq2AvQ1YiNFJHZ09MzLzk7cPXCjXs=;
+	s=arc-20240116; t=1750802540; c=relaxed/simple;
+	bh=KI6/XmV9em9yxZDWFEWy5ZAZI3Im1BUdkLJpbjnspMQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ccWY7H9SJJW0GxzdeysEkvFYYL+8+ymr/uovz17/GCPJ3crKi1HJVMb7ysa0/IRK9oR2XJBDt8iE09HTQopamQSX0vmEkhMOO32kDstRQ18HIQcjWP64e/Iv1+hffNgzshKBZjSf/+MrkO6LKi6A1ujHUU4CyBWBhkdtQ5SU0Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CfWI5l4A; arc=none smtp.client-ip=209.85.160.182
+	 To:Cc:Content-Type; b=SFbAM2Tsd6McVMYxaZaskTSA1zt+QM+KSg5aOK9blb0BUpvEK/24sbskGEoaXCiEBTwIz+X5acH6AKHF/YqpQ4llm3HLfz7KGA17DqCEekN3g9EWURrZaiyS3qibUbklR6+CQEiOThphg29MvT8eL4BGM9alP/gY9BZS0zLpN7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TNI+M36G; arc=none smtp.client-ip=209.85.160.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a44b3526e6so11433871cf.0;
-        Tue, 24 Jun 2025 14:52:39 -0700 (PDT)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a77ffcb795so9797471cf.0;
+        Tue, 24 Jun 2025 15:02:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750801959; x=1751406759; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750802537; x=1751407337; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ltCO+pg+j7mpPUg7UdU9LwNKVjQTEPshXqjMTkedVoM=;
-        b=CfWI5l4ANj4mokp2O5+ES9U4qmn0JTKoltGXK0eWcyObOHap3aIe9Lyn5gKr4pSrRf
-         /pPc9rc1FZdUOjAQMMOL3rn93jT+FQbhi3mA0HWhrdMjax0iwY7xbvEQA36sjE0s7aR+
-         k3SYuuBYxIkPaiRAOdIC9m0Rza5jzraUEIukr5xFr3JcCnBh3XvkIzb434EaYRvu4sS5
-         W5XpLm5lzGFlWduQJloRjFbVH3aneAEWwXcyEzQ2/O/qiJiLeTenlo60Xc6M+pVkUWKT
-         DWU2N3KgZnwH+O6NGxZ86lxUN5NHj8m3lOsHM0wH1I2sdrQ4MxABpMK/0BPVgyzEm2Jf
-         n4jQ==
+        bh=KI6/XmV9em9yxZDWFEWy5ZAZI3Im1BUdkLJpbjnspMQ=;
+        b=TNI+M36Gs8zglTD5I9LsSpIvuD3R9HJ9LCbnDoN/xXw5kveum65x02BmxD8OA1h7NI
+         PUfziYy+2ZQ8OG1CmXGEcvkhaeaOSuthWBSML/ZrBfvCQRFtLM/EaSnSmVP8uth9eGee
+         R3YNzRN0CpBQD93pcE0HmK2Nt/gaWtEU3pMo5tfaBb/0xlsXI2KUJeeEnK5S1MKB0QHK
+         AGBLdH1YofBmvzgI7CUVMYXyUiB86C/lWFDjcxr+q2D4GDF6tG9xI2PhvWiEfKaKM1/U
+         K0Rw/5X97MiwETBYj7UCC7NRATGVcjUNDR+WfA5FWgwitakIe0LvCHRjpoR6QvRO4Yui
+         sJAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750801959; x=1751406759;
+        d=1e100.net; s=20230601; t=1750802537; x=1751407337;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ltCO+pg+j7mpPUg7UdU9LwNKVjQTEPshXqjMTkedVoM=;
-        b=nmaQPlofYp7zaxeMS1dX5KWfeuyiUYhOOCe9oJPSwtM1Z00WeoQwRXTt1qCWx3/RiG
-         kKR5U9cm+W4kDjjSk90wcRrKLw3IdTwumc9rabuODJs0DPP/zYjsccBtmjx39pD6DwWI
-         eXQRNsBeqRv+H5Dywg2Y3aD5rbCH+iB3CgU9yDjQFDc2Q5drkL7LNEaM50TNeV7gsdaG
-         y7Iuevs1hwvk/upV+aY5VxDQU0Y9Y1ylPVPdikyRR+Eurrdol5zHd6ZTztoTvBhGir4/
-         WHX46CoK3B4lAMJCM6EyFyZmAkMdTa1bje8j5cTNTZaY426EoivLwnMaF2S1I5a7eEP8
-         XNvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsW51+efiBy1SP4nthUrLSi/kPRWcNSANoVhTCKHQsbJW80N5gu5tBF2yD5HlHY46/bmfNYVJpge5h@vger.kernel.org, AJvYcCWMvtxIlUPWlx15f1SJDqtcNxGBUZtyO/PYbsBa0NGNXmDiSDxxVHqiSBEWcVGAVNIQLeicX599riuseA==@vger.kernel.org, AJvYcCXAnVnNwSviLXVEI0ZS1oHPWpQTkAJWYtXplSfiU1u51Wf9kRiR6fpIhs697pKa9/21W2G6tDbv495c@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI0KpMaaS4rGHOyZJyzvVghqkV0r6Ii9UQWeM04swS9nXIUP1i
-	cq2DUUTtkIXFAnfREreHdCYzdoD6Z3xrvRU/ChWDnTOIqW8qn9sMSWj3ub7OLc8lOcF1zN2yplB
-	9jWluACq2rjDsL3C3z5mAdOreSbeotdM=
-X-Gm-Gg: ASbGncvB1PCI/DzE0UBSjmmnBDSG6NjJILUGMvBSqnBPZhxWiT7AAmPJ3SVZoNjs4vQ
-	n3uMVS9yTUYwYiUjaReQN8satIJrlzWw4sJwdYDmHgITODx16P/nLZ+6rWqzQXN/fGkuOmqngFo
-	PgJ+0vH+4i4Ssrv15TcWuaDKuYqaowlzaRNYPkxTsXnMA0ZfrlMzXYwVIfPe3YxQscrHDEdA==
-X-Google-Smtp-Source: AGHT+IEIQcJlanYBWh+8JVVLaoapTGSrgVkcezH2Jd6X25FPNZsLIeGIDE4Mxrm30rGzbSOgcFfRB0zEa0wED6oydcY=
-X-Received: by 2002:a05:622a:18a7:b0:4a7:bf73:c5fb with SMTP id
- d75a77b69052e-4a7c06da56fmr14930661cf.22.1750801958965; Tue, 24 Jun 2025
- 14:52:38 -0700 (PDT)
+        bh=KI6/XmV9em9yxZDWFEWy5ZAZI3Im1BUdkLJpbjnspMQ=;
+        b=ql/fhVn0TB/vorlZOFKZFQ+jIRxD8/uHfE+AIPJNbiDrdpzHjoC/m8iAPE1k/Ebe9/
+         XutmRtANF3ZXBAk2dpCHGr1pIIRUA2TgdN/A+EiTSMPj/lErWsRGUbOFP5x5qU9WKiJu
+         jyCAbYVFGR/7Z02KQLqTV7psKHjNcqAm3MV7S10mjGQWpw6qdl9dhypmvOEG0csjkrNz
+         OsRU6hAsIGCdR7mt7DH+c3jecsBlL9GwsW5mSmPdiw92aMpe1OMMb8nq42qMzg/ceSrP
+         Z4+9L4t9UELnSOdMwEDn3GMtLu8psxXe6bQReikBkh8eAZ3ur0snTqiDh1yxv9g8SKXE
+         k9TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDHxNVsYVEda0efp/NOyw+P7Y41jeKMF7RVH5eplQbasvMI05oNcObFtfNqQbOO6k5X1sExjoD7zjh@vger.kernel.org, AJvYcCWElo9D1ERKm7zkCGn9MmYAgw6VBTZ26PydtVpKcj9tij6q5iOONj115J99E087AEVxkctFchRqJP6U@vger.kernel.org, AJvYcCWiz1Et8kdjatXWkNL8mECuUp2+SPBjEeBMCniEltgBqqwLeJvARXTd7XN1XYtZnhEspmsC8i9ib2FAKQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPQmsyK4dTd9ggbLTh8UqgtNyCOZRUU3KTzs0pvcHqgsbvIayR
+	ESP1nrvPvjENZNhH2OlQkjXU7pciKSp0JJCC5yTNx4bxG1QD51F2Nmg869RPinszDlEqTsEw1/T
+	zU94qbY3VAkARVDoRdYDB4r9oJ/Yz+e8=
+X-Gm-Gg: ASbGncv/1Tj81C8vtu/AePjHt1838vRe+VQUEigL1D14zgbYA8/R0sQrb5nn0oH3Jvx
+	au5Wz7hM6Kjf40uxdcD25mSplCE53JVPUjEgd9iTTkrcTHVJEkaLNWRvX3aDhpl7xHoZSbAdykl
+	puKMbNWU0rBuGv4QMdMyQ0GX5+Yb1wkWoor6Xp9x+sUkk4qrabMiFrUDXGdV0=
+X-Google-Smtp-Source: AGHT+IFApJK8qgHNiP15oAq3BEZlkrbkeLkCUqnNVjpYJuoZ4/jjmxsvBbUNxUSjqZ9kQuVJI4zok8KgKMGPbchiCDI=
+X-Received: by 2002:ac8:5905:0:b0:494:adff:7fe2 with SMTP id
+ d75a77b69052e-4a7c0bbd8c8mr16752751cf.43.1750802537276; Tue, 24 Jun 2025
+ 15:02:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,62 +75,48 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250624022135.832899-1-joannelkoong@gmail.com>
- <20250624022135.832899-13-joannelkoong@gmail.com> <CAJfpegt-O3fm9y4=NGWJUqgDOxtTkDBfjPnbDjjLbeuFNhUsUg@mail.gmail.com>
-In-Reply-To: <CAJfpegt-O3fm9y4=NGWJUqgDOxtTkDBfjPnbDjjLbeuFNhUsUg@mail.gmail.com>
+ <20250624022135.832899-2-joannelkoong@gmail.com> <783b0f0c-e39c-4f52-90e9-7f7e444d9e84@wdc.com>
+In-Reply-To: <783b0f0c-e39c-4f52-90e9-7f7e444d9e84@wdc.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 24 Jun 2025 14:52:27 -0700
-X-Gm-Features: AX0GCFuoxidmV2DONKGBu8GGbT28tUoZhYdBBWC_-QHWqMqDdAas9tv1y3pzzhg
-Message-ID: <CAJnrk1Yh957g9Brs1YA3AXnGxaAkHvp9Eummpx8sJtbr4JZJMQ@mail.gmail.com>
-Subject: Re: [PATCH v3 12/16] fuse: use iomap for buffered writes
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, brauner@kernel.org, 
-	djwong@kernel.org, anuj20.g@samsung.com, linux-xfs@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
-	kernel-team@meta.com
+Date: Tue, 24 Jun 2025 15:02:06 -0700
+X-Gm-Features: AX0GCFsv1OYMTj4vzKRiFaHM3oOY5EQaLukCgNj950jARV6_mnnMOsZzOQUOErY
+Message-ID: <CAJnrk1ZQ=wVKmoQS12ixQHDuynMZNEkcu+Z0TgLvXxXRx++eEA@mail.gmail.com>
+Subject: Re: [PATCH v3 01/16] iomap: pass more arguments using struct iomap_writepage_ctx
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, hch <hch@lst.de>, 
+	"miklos@szeredi.hu" <miklos@szeredi.hu>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"djwong@kernel.org" <djwong@kernel.org>, "anuj20.g@samsung.com" <anuj20.g@samsung.com>, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "gfs2@lists.linux.dev" <gfs2@lists.linux.dev>, 
+	"kernel-team@meta.com" <kernel-team@meta.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2025 at 3:07=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
+On Mon, Jun 23, 2025 at 11:07=E2=80=AFPM Johannes Thumshirn
+<Johannes.Thumshirn@wdc.com> wrote:
 >
-> On Tue, 24 Jun 2025 at 04:23, Joanne Koong <joannelkoong@gmail.com> wrote=
-:
->
-> >  static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_it=
-er *from)
-> >  {
-> >         struct file *file =3D iocb->ki_filp;
-> > @@ -1384,6 +1418,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb=
- *iocb, struct iov_iter *from)
-> >         struct inode *inode =3D mapping->host;
-> >         ssize_t err, count;
-> >         struct fuse_conn *fc =3D get_fuse_conn(inode);
-> > +       bool writeback =3D false;
+> On 24.06.25 04:23, Joanne Koong wrote:
+> > From: Christoph Hellwig <hch@lst.de>
 > >
-> >         if (fc->writeback_cache) {
-> >                 /* Update size (EOF optimization) and mode (SUID cleari=
-ng) */
-> > @@ -1397,8 +1432,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb=
- *iocb, struct iov_iter *from)
-> >                                                 file_inode(file))) {
-> >                         goto writethrough;
-> >                 }
-> > -
-> > -               return generic_file_write_iter(iocb, from);
-> > +               writeback =3D true;
+> > Add inode and wpc fields to pass the inode and writeback context that
+> > are needed in the entire writeback call chain, and let the callers
+> > initialize all fields in the writeback context before calling
+> > iomap_writepages to simplify the argument passing.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 >
-> Doing this in the else branch makes the writethrough label (which is
-> wrong now) unnecessary.
+> Looks good,
+> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> But IIRC it should also have Joanne's S-o-B as she's carrying it in her
+> tree.
 
-Hi Miklos,
+Hi Johannes,
 
-That's a great point, I'll get rid of the writethrough label in v4.
-
+I'll fix this up in v4 to include a signed-off-by line.
 
 Thanks,
 Joanne
-
->
-> Thanks,
-> Miklos
 
