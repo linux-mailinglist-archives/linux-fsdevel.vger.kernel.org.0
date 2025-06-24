@@ -1,200 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-52677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90E2AE5B78
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 06:17:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32600AE5C0E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 07:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB06C1BC2936
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 04:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF713A2E83
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 05:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749B3226D00;
-	Tue, 24 Jun 2025 04:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IOL4zxnU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308FD239581;
+	Tue, 24 Jun 2025 05:50:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8116F21B9F6;
-	Tue, 24 Jun 2025 04:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4185B2CCC1;
+	Tue, 24 Jun 2025 05:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750738583; cv=none; b=EbIgIrY0Nc7zqbgYdAfNI0ZZWlC7tK6gMv4l5bDfzxbxX2bw8FqlB5TLTQByF8an0VQRG5kG7kkLKZNnpUlgg5n1Vc9LHYflsTWaXpITBAazcih6B9Ph0Jy810/s0W/btYyVvIJJGzK1J/TE3Jetyue3VGOYoM5bQPbyO+8k5kg=
+	t=1750744241; cv=none; b=NKfIfGR+SzSZXlD2Xv0xjvmCK5FuM+zqfnDY/4DowisKTA5tGd1pujKfubjV5f4gTa5+YuFA9TKMGk44HjAcXeFbO0ADM5qgzxRo4ty2xsmMPuUI1zmoW98/HXJnkJ/lYYtq1OZviXxf+SuGFUUcBZVyCo9YpLLKmSgcIph/d2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750738583; c=relaxed/simple;
-	bh=5G65DW5QVEJiCP6BevqgcMH4BJprL0i7tiSazmp4+XU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TxqnssdI9dhQ2FRis+EHfFp4Hm3bJrZos2lz1w9aOektwHqqzg5iL2cA6lUkk3ZviLHjZj9fooZrWi9KqCQw1t6qsgx0a2cOIFtii83e7v7nFq3lGhurxhsz7wmQUoefRl+qB6Iho25uDiNdBWh4QTLJ4gBUtsc/C5RXbccjtCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IOL4zxnU; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1750738571; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=rax2iaNWOHCKSTHeRONdpsloXVAQJACyDqlDlmBHKYA=;
-	b=IOL4zxnUhxUMIfdtwOPU4ubp9N+hGmb4m52ei0x5WEB8nWp4ESIgh4FpP/qRvd+Gf9WxzgGyBn/T2Rfemf9tsCa+MQBD4fHFyUR3LTmz8LYh6XtqtMf8unx5DFn0ZALwXJCkFcNuvC+1mn1d2l/idKvXWY/enCK4rSeZOI9ZjBY=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wef2ct8_1750738566 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 24 Jun 2025 12:16:08 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Shivank Garg <shivankg@amd.com>
-Cc: <seanjc@google.com>,  <david@redhat.com>,  <vbabka@suse.cz>,
-  <willy@infradead.org>,  <akpm@linux-foundation.org>,  <shuah@kernel.org>,
-  <pbonzini@redhat.com>,  <brauner@kernel.org>,  <viro@zeniv.linux.org.uk>,
-  <ackerleytng@google.com>,  <paul@paul-moore.com>,  <jmorris@namei.org>,
-  <serge@hallyn.com>,  <pvorel@suse.cz>,  <bfoster@redhat.com>,
-  <tabba@google.com>,  <vannapurve@google.com>,  <chao.gao@intel.com>,
-  <bharata@amd.com>,  <nikunj@amd.com>,  <michael.day@amd.com>,
-  <yan.y.zhao@intel.com>,  <Neeraj.Upadhyay@amd.com>,
-  <thomas.lendacky@amd.com>,  <michael.roth@amd.com>,  <aik@amd.com>,
-  <jgg@nvidia.com>,  <kalyazin@amazon.com>,  <peterx@redhat.com>,
-  <jack@suse.cz>,  <rppt@kernel.org>,  <hch@infradead.org>,
-  <cgzones@googlemail.com>,  <ira.weiny@intel.com>,  <rientjes@google.com>,
-  <roypat@amazon.co.uk>,  <ziy@nvidia.com>,  <matthew.brost@intel.com>,
-  <joshua.hahnjy@gmail.com>,  <rakie.kim@sk.com>,  <byungchul@sk.com>,
-  <gourry@gourry.net>,  <kent.overstreet@linux.dev>,  <apopple@nvidia.com>,
-  <chao.p.peng@intel.com>,  <amit@infradead.org>,  <ddutile@redhat.com>,
-  <dan.j.williams@intel.com>,  <ashish.kalra@amd.com>,  <gshan@redhat.com>,
-  <jgowans@amazon.com>,  <pankaj.gupta@amd.com>,  <papaluri@amd.com>,
-  <yuzhao@google.com>,  <suzuki.poulose@arm.com>,
-  <quic_eberman@quicinc.com>,  <aneeshkumar.kizhakeveetil@arm.com>,
-  <linux-fsdevel@vger.kernel.org>,  <linux-mm@kvack.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-security-module@vger.kernel.org>,
-  <kvm@vger.kernel.org>,  <linux-kselftest@vger.kernel.org>,
-  <linux-coco@lists.linux.dev>
-Subject: Re: [RFC PATCH v8 5/7] KVM: guest_memfd: Add slab-allocated inode
- cache
-In-Reply-To: <20250618112935.7629-6-shivankg@amd.com> (Shivank Garg's message
-	of "Wed, 18 Jun 2025 11:29:33 +0000")
-References: <20250618112935.7629-1-shivankg@amd.com>
-	<20250618112935.7629-6-shivankg@amd.com>
-Date: Tue, 24 Jun 2025 12:16:06 +0800
-Message-ID: <87ecv9ojuh.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1750744241; c=relaxed/simple;
+	bh=3D0KQ5ka29PjRTqDd/N/4uZhjid6uamBrNB6qb6b4VM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OfiVZDjoYGMxu6HWf0KV90VTdFrNJoZJPhvNKND1cxJxMCBwBU4Ec1J9njlhHm1tG070MDsua1l9yMrD428ax6DOufBsl4VLEWt9rwqkrAG8tPfAHCVuGZ97hXaeeWKaE6OdUSVLT1YrfrgaBvAjYsPrRZuSaXuIuzztJJmp2FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bRD450pqCz9sHR;
+	Tue, 24 Jun 2025 07:27:49 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id TQwRk1sPy-Tu; Tue, 24 Jun 2025 07:27:48 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bRD446pFmz9sFT;
+	Tue, 24 Jun 2025 07:27:48 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DB3938B768;
+	Tue, 24 Jun 2025 07:27:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id SZzaiK0op1Va; Tue, 24 Jun 2025 07:27:48 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F03358B767;
+	Tue, 24 Jun 2025 07:27:47 +0200 (CEST)
+Message-ID: <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu>
+Date: Tue, 24 Jun 2025 07:27:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
+ <20250622172043.3fb0e54c@pumpkin>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250622172043.3fb0e54c@pumpkin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Shivank Garg <shivankg@amd.com> writes:
 
-> Add dedicated inode structure (kvm_gmem_inode_info) and slab-allocated
-> inode cache for guest memory backing, similar to how shmem handles inodes.
->
-> This adds the necessary allocation/destruction functions and prepares
-> for upcoming guest_memfd NUMA policy support changes.
->
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
-> ---
->  virt/kvm/guest_memfd.c | 51 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
->
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 159df462d193..5a1ce6f5e287 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -17,6 +17,15 @@ struct kvm_gmem {
->  	struct list_head entry;
->  };
->  
-> +struct kvm_gmem_inode_info {
-> +	struct inode vfs_inode;
-> +};
-> +
-> +static inline struct kvm_gmem_inode_info *KVM_GMEM_I(struct inode *inode)
-> +{
-> +	return container_of(inode, struct kvm_gmem_inode_info, vfs_inode);
-> +}
-> +
->  /**
->   * folio_file_pfn - like folio_file_page, but return a pfn.
->   * @folio: The folio which contains this index.
-> @@ -392,8 +401,33 @@ static struct file_operations kvm_gmem_fops = {
->  	.fallocate	= kvm_gmem_fallocate,
->  };
->  
-> +static struct kmem_cache *kvm_gmem_inode_cachep;
-> +
-> +static struct inode *kvm_gmem_alloc_inode(struct super_block *sb)
-> +{
-> +	struct kvm_gmem_inode_info *info;
-> +
-> +	info = alloc_inode_sb(sb, kvm_gmem_inode_cachep, GFP_KERNEL);
-> +	if (!info)
-> +		return NULL;
-> +
-> +	return &info->vfs_inode;
-> +}
-> +
-> +static void kvm_gmem_destroy_inode(struct inode *inode)
-> +{
-> +}
-> +
-> +static void kvm_gmem_free_inode(struct inode *inode)
-> +{
-> +	kmem_cache_free(kvm_gmem_inode_cachep, KVM_GMEM_I(inode));
-> +}
-> +
->  static const struct super_operations kvm_gmem_super_operations = {
->  	.statfs		= simple_statfs,
-> +	.alloc_inode	= kvm_gmem_alloc_inode,
-> +	.destroy_inode	= kvm_gmem_destroy_inode,
-> +	.free_inode	= kvm_gmem_free_inode,
->  };
->  
->  static int kvm_gmem_init_fs_context(struct fs_context *fc)
-> @@ -426,10 +460,26 @@ static int kvm_gmem_init_mount(void)
->  	return 0;
->  }
->  
-> +static void kvm_gmem_init_inode(void *foo)
-> +{
-> +	struct kvm_gmem_inode_info *info = foo;
-> +
-> +	inode_init_once(&info->vfs_inode);
-> +}
-> +
-> +static void kvm_gmem_init_inodecache(void)
-> +{
-> +	kvm_gmem_inode_cachep = kmem_cache_create("kvm_gmem_inode_cache",
-> +						  sizeof(struct kvm_gmem_inode_info),
-> +						  0, SLAB_ACCOUNT,
-> +						  kvm_gmem_init_inode);
 
-Check the return value?
+Le 22/06/2025 à 18:20, David Laight a écrit :
+> On Sun, 22 Jun 2025 11:52:38 +0200
+> Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+> 
+>> Masked user access avoids the address/size verification by access_ok().
+>> Allthough its main purpose is to skip the speculation in the
+>> verification of user address and size hence avoid the need of spec
+>> mitigation, it also has the advantage to reduce the amount of
+>> instructions needed so it also benefits to platforms that don't
+>> need speculation mitigation, especially when the size of the copy is
+>> not know at build time.
+> 
+> It also removes a conditional branch that is quite likely to be
+> statically predicted 'the wrong way'.
 
-And, I'm not a big fan of (logically) one line function encapsulation.
+But include/asm-generic/access_ok.h defines access_ok() as:
 
-> +}
-> +
->  int kvm_gmem_init(struct module *module)
->  {
->  	kvm_gmem_fops.owner = module;
->  
-> +	kvm_gmem_init_inodecache();
->  	return kvm_gmem_init_mount();
+	#define access_ok(addr, size) likely(__access_ok(addr, size))
 
-kmem_cache_destroy(kvm_gmem_inode_cachep) if kvm_gmem_init_mount()
-return with error?
+So GCC uses the 'unlikely' variant of the branch instruction to force 
+the correct prediction, doesn't it ?
 
->  }
->  
-> @@ -437,6 +487,7 @@ void kvm_gmem_exit(void)
->  {
->  	kern_unmount(kvm_gmem_mnt);
->  	kvm_gmem_mnt = NULL;
-> +	kmem_cache_destroy(kvm_gmem_inode_cachep);
->  }
->  
->  static int kvm_gmem_migrate_folio(struct address_space *mapping,
+> 
+>> Unlike x86_64 which masks the address to 'all bits set' when the
+>> user address is invalid, here the address is set to an address in
+>> the gap. It avoids relying on the zero page to catch offseted
+>> accesses. On book3s/32 it makes sure the opening remains on user
+>> segment. The overcost is a single instruction in the masking.
+> 
+> That isn't true (any more).
+> Linus changed the check to (approx):
+> 	if (uaddr > TASK_SIZE)
+> 		uaddr = TASK_SIZE;
+> (Implemented with a conditional move)
 
----
-Best Regards,
-Huang, Ying
+Ah ok, I overlooked that, I didn't know the cmove instruction, seem 
+similar to the isel instruction on powerpc e500.
+
+Christophe
+
 
