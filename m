@@ -1,154 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-52775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D41AE66FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 15:49:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A8DAE6744
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 15:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAE316F9F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 13:48:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33FF27B2060
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 13:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CE7288AD;
-	Tue, 24 Jun 2025 13:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZauqZgry"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D472C3774;
+	Tue, 24 Jun 2025 13:52:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE402C326B;
-	Tue, 24 Jun 2025 13:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F07C2C3264
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 13:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750772867; cv=none; b=e8QlP4U8IdRGTrmky85isKFtn9JqTMEqia9pS2xGYz1BNjXBGvhpEVZRoAZdIoizXYezaQkffgEvDirS1eVTpa7kUTEs8jywRVOZ4M4AQyoYJ4f8Vr9gs7bK134rVx5iO0srwKIsMkaxDhjT3e5oZSZFd1k7qwEuFZ6/61XHkL4=
+	t=1750773148; cv=none; b=FzbHVW7us2J/5ybiTvZ+vCSZoN6NcO/qNS/sxxav2RrZD2SKq5OR73J2BN+8qJ8SppAFlA7BD66oZxs55BlOHHEVaXKQFYqucyAH4OSzHuZvHM9CzigrOPCOYPVQPBOZGuRBi8xcUpS6zA5oSavpc9ieJvJFypWrQ6EZWr6hwIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750772867; c=relaxed/simple;
-	bh=FtwLIqO5woVkdBDQacpEPpHRl/PJ8wMIPZSvRk1rwOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYpm5VLkSax0XPv73mO3ChmWFeOfjmofpHqyC7GUKUEapitZvEJJ/9x8rPBZ3RdSim4RCw0OBShP7hL2wIRByYqtWJ9G4JUf4f5c1exU/fBlOtZIH2bantP8V+pzK4EsmI37Cusqz8qjowD0SbIRwyL3X5BEi62Vd9oI2+7gfnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZauqZgry; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8443C4CEEE;
-	Tue, 24 Jun 2025 13:47:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750772866;
-	bh=FtwLIqO5woVkdBDQacpEPpHRl/PJ8wMIPZSvRk1rwOU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZauqZgryz2N6y7vMj+PHLgP3hybIyizU3GhZ7kBikbkazwxPIHGkQWnoEvtjYGOyf
-	 YBqUvzX0n7YkELkR79eGrEYNfLphVrdEwq7/3yfhS1ADvjXSPXdbTW5XipGg0N2ZN/
-	 C65O27vpYzQ+BD0gEZF2o35sSEA4Gh6cnWIMgB72nwXkgLi+CI3peU0M16r8wlA1kb
-	 BIzOs+sVHOAf11H4nIziKGb5AtAu9nYHzfL8PTjGwOdP+2ZVidI6os7LLN+Pfs1qw3
-	 G27Ee5pW/SdBJp+QRNUSR2Kbjmr+ObhExCTlXKQYpCLMuB+cou5lyr2qXt4wdfUl7/
-	 otaHZiXU2H33A==
-Date: Tue, 24 Jun 2025 15:47:42 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jan Kara <jack@suse.cz>, Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 06/11] uapi/fcntl: mark range as reserved
-Message-ID: <20250624-abwinken-gefragt-32ece86ae381@brauner>
-References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
- <20250624-work-pidfs-fhandle-v2-6-d02a04858fe3@kernel.org>
- <CAOQ4uxjiys1gHWy5eOMzwRqWzNJ-Tb8t+g3F0FFkmhVM3=ju0w@mail.gmail.com>
+	s=arc-20240116; t=1750773148; c=relaxed/simple;
+	bh=oXZ8co1e8mmwl9zX6KlK8xWZmne+5OdHNz2El37jtVM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OwDM4mkuqXRjnGWGCYiqUKhW0ZNljhDEvS0JZ6QsK5vKLii9o6cQ49vNQ9oSg2Y3j8DEFQ/V1eFiuH5z7QW9z0RqzbQgsntw34qboZAvrAt7iB8HxxjndiM6g4tA6DdJaRwd8YDqpvnf4FGX6nEwVmPbdepB3V9okexwDjB1AZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3df2cc5104bso10123655ab.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 06:52:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750773145; x=1751377945;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uin6lLcwohm4lv9WyITuwcyVt/c+X4e6jvHm3Unx2MU=;
+        b=SLXGCVQFPvCkE5GYu21TE/Sku1FsN2MZmHSNHJ/myiitq3FXchcbUEEf4LsVnTiScE
+         +zt60/5jPm8IrsS+HcjA9vxiDGphSWBd0dhEq9ak3jp6pvPFNpbW5GAxrkTYFnZJuQes
+         rOIpgoNX7DkssxvEu9Fay2JBybw/M3pXw54DBl/rw1wCep+QKoUl8I6VZmosXN+2vH71
+         PoqLr2rwdkkWrLFKI18D2AY/vnVZt4h7UQ3BtRnGMdRRvhkr80IM3Y4/A3K6fJnyDqDB
+         97Iz7QlhogTaRCCvtmWDo2jCYRzE8mkuDW3Aac0PLSX87FB+2VIpsFLfHd4xd+PlaN0M
+         b0mg==
+X-Gm-Message-State: AOJu0YxaxatCfKs99VpoyBhNGWHeX1y44H5EClrlMLtceXmDgyjpaPg4
+	nTtO/McbAtoSFTsXv2xD34pWehbZDq9I4EKc4bDZ17eJZjk+4P+1r2TrR1RDt7twPSBq0iN4sit
+	bVudw2VEv8LAbYWSueWTrN/jrPW9MY8AyPzc7vlDseWapydvtOSP7FbnTRZE=
+X-Google-Smtp-Source: AGHT+IHvKvf/vVCdxwI030nwml5wrDQ6tlpXgTpPK6b9n0FXCh1L+iUC7/Lp70pNFIbf6gAfOug2uCJ+XPGVXDcG1bXFt78OzyPB
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjiys1gHWy5eOMzwRqWzNJ-Tb8t+g3F0FFkmhVM3=ju0w@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1a2b:b0:3dd:c1ed:d901 with SMTP id
+ e9e14a558f8ab-3de38cd92b9mr212604135ab.21.1750773145639; Tue, 24 Jun 2025
+ 06:52:25 -0700 (PDT)
+Date: Tue, 24 Jun 2025 06:52:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685aad99.a00a0220.2e5631.007a.GAE@google.com>
+Subject: [syzbot] Monthly hfs report (Jun 2025)
+From: syzbot <syzbot+list8132deb081c630ffb070@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 24, 2025 at 12:57:06PM +0200, Amir Goldstein wrote:
-> On Tue, Jun 24, 2025 at 10:29 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > Mark the range from -10000 to -40000 as a range reserved for special
-> > in-kernel values. Move the PIDFD_SELF_*/PIDFD_THREAD_* sentinels over so
-> > all the special values are in one place.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  include/uapi/linux/fcntl.h            | 16 ++++++++++++++++
-> >  include/uapi/linux/pidfd.h            | 15 ---------------
-> >  tools/testing/selftests/pidfd/pidfd.h |  2 +-
-> >  3 files changed, 17 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > index a15ac2fa4b20..ba4a698d2f33 100644
-> > --- a/include/uapi/linux/fcntl.h
-> > +++ b/include/uapi/linux/fcntl.h
-> > @@ -90,10 +90,26 @@
-> >  #define DN_ATTRIB      0x00000020      /* File changed attibutes */
-> >  #define DN_MULTISHOT   0x80000000      /* Don't remove notifier */
-> >
-> > +/* Reserved kernel ranges [-100], [-10000, -40000]. */
-> >  #define AT_FDCWD               -100    /* Special value for dirfd used to
-> >                                            indicate openat should use the
-> >                                            current working directory. */
-> >
-> > +/*
-> > + * The concept of process and threads in userland and the kernel is a confusing
-> > + * one - within the kernel every thread is a 'task' with its own individual PID,
-> > + * however from userland's point of view threads are grouped by a single PID,
-> > + * which is that of the 'thread group leader', typically the first thread
-> > + * spawned.
-> > + *
-> > + * To cut the Gideon knot, for internal kernel usage, we refer to
-> > + * PIDFD_SELF_THREAD to refer to the current thread (or task from a kernel
-> > + * perspective), and PIDFD_SELF_THREAD_GROUP to refer to the current thread
-> > + * group leader...
-> > + */
-> > +#define PIDFD_SELF_THREAD              -10000 /* Current thread. */
-> > +#define PIDFD_SELF_THREAD_GROUP                -10001 /* Current thread group leader. */
-> > +
-> >
-> >  /* Generic flags for the *at(2) family of syscalls. */
-> >
-> > diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-> > index c27a4e238e4b..957db425d459 100644
-> > --- a/include/uapi/linux/pidfd.h
-> > +++ b/include/uapi/linux/pidfd.h
-> > @@ -42,21 +42,6 @@
-> >  #define PIDFD_COREDUMP_USER    (1U << 2) /* coredump was done as the user. */
-> >  #define PIDFD_COREDUMP_ROOT    (1U << 3) /* coredump was done as root. */
-> >
-> > -/*
-> > - * The concept of process and threads in userland and the kernel is a confusing
-> > - * one - within the kernel every thread is a 'task' with its own individual PID,
-> > - * however from userland's point of view threads are grouped by a single PID,
-> > - * which is that of the 'thread group leader', typically the first thread
-> > - * spawned.
-> > - *
-> > - * To cut the Gideon knot, for internal kernel usage, we refer to
-> > - * PIDFD_SELF_THREAD to refer to the current thread (or task from a kernel
-> > - * perspective), and PIDFD_SELF_THREAD_GROUP to refer to the current thread
-> > - * group leader...
-> > - */
-> > -#define PIDFD_SELF_THREAD              -10000 /* Current thread. */
-> > -#define PIDFD_SELF_THREAD_GROUP                -20000 /* Current thread group leader. */
-> > -
-> >  /*
-> >   * ...and for userland we make life simpler - PIDFD_SELF refers to the current
-> >   * thread, PIDFD_SELF_PROCESS refers to the process thread group leader.
-> > diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-> > index efd74063126e..5dfeb1bdf399 100644
-> > --- a/tools/testing/selftests/pidfd/pidfd.h
-> > +++ b/tools/testing/selftests/pidfd/pidfd.h
-> > @@ -56,7 +56,7 @@
-> >  #endif
-> >
-> >  #ifndef PIDFD_SELF_THREAD_GROUP
-> > -#define PIDFD_SELF_THREAD_GROUP                -20000 /* Current thread group leader. */
-> > +#define PIDFD_SELF_THREAD_GROUP                -10001 /* Current thread group leader. */
-> 
-> The commit message claims to move definions between header files,
-> but the value of PIDFD_SELF_THREAD_GROUP was changed.
-> 
-> What am I missing?
+Hello hfs maintainers/developers,
 
-I've split that into two patches.
+This is a 31-day syzbot report for the hfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/hfs
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 46 issues are still open and 23 have already been fixed.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  90790   Yes   kernel BUG in hfs_write_inode
+                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
+<2>  17637   Yes   kernel BUG in __hfsplus_setxattr
+                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
+<3>  13270   Yes   possible deadlock in hfsplus_get_block
+                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
+<4>  8079    Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
+<5>  4225    Yes   KMSAN: uninit-value in hfsplus_delete_cat
+                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
+<6>  4084    Yes   possible deadlock in hfs_find_init (2)
+                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+<7>  4039    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
+<8>  3875    Yes   KMSAN: uninit-value in hfs_find_set_zero_bits
+                   https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
+<9>  3134    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
+                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
+<10> 2893    Yes   KMSAN: uninit-value in hfsplus_lookup
+                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
