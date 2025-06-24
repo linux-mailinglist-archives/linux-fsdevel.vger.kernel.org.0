@@ -1,187 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-52750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E957AE6333
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 13:03:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EABFAE6361
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 13:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43B5D7A4136
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:02:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3FC40073B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD5D286D56;
-	Tue, 24 Jun 2025 11:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E48E288CBE;
+	Tue, 24 Jun 2025 11:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="QhdYlYB3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n0jKip/D"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O+T6U1qF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D7419F480
-	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 11:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B7D28688D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 11:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763026; cv=none; b=lOBfa4qekkneqAmW1JMNv5QAS6zDFogw5Z4hzM3Ao4VDZg92mWZNnSr1Td69jaLMtwqgJ3HHkGNYBn9A1iAE9g6MzHN6KJcyL8+kWewrTgyYCZUn08zzJ1CGz4mJg4/8iShRoG5cDP99XyMRD5fp9fQI/1jYaDdc/BvFY/wr4nI=
+	t=1750763532; cv=none; b=ce2jvX/9jcTq7rsSq7hP49H7KI82Lxo+YIova+efCrORBpx6NgdQaNNn9Sn3WAKjsX9UxtSVfXUR/H1SZAJxWIzeUfnoCWH52xOKTAXytJcx6azT6qi0kKk9wNMkCS9D1Y3y1Or2bV1aGjqaGHvOLbV76cULdN9I72yIwfIAC6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763026; c=relaxed/simple;
-	bh=4CegfEkKvABjJ7L/h7fe4HEIXLyTW5qw/mN69+NBrMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bATpETkNF+bNvY4QArY4PGy+buICO/ssohqXpr5xVgHEY7zO8nd/hz4w3KiIHKq1SUCJUoWncFNJ2T1n58tbJjHu/5WXMmQZk+fSsryic/rAOOXKrj5P3fXIo7/YJEbsGEBuBlMdImTRAaCxdYtkrNcYDeRSJeyKuQ4+PkUC51I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=QhdYlYB3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n0jKip/D; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3CEA4114017E;
-	Tue, 24 Jun 2025 07:03:43 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 24 Jun 2025 07:03:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1750763023;
-	 x=1750849423; bh=mKdDcT6nPMv0lOyJCXJhNetcEX8t8wEb5+Ehzx1PdSU=; b=
-	QhdYlYB3irR/qAxVqvAze7lGABpzaDH00YO+P9fysy/4+CM7isQIPV8xDfko1vos
-	b3L3yCGhN4O03ipXWimrRq2RI/v/JbUMW1pjQnZtEYAAfLPHJSHOZRTUbVros9k+
-	8sBVkBDUHvhXyHkqpYjNG3x5251Q656zSEpw+bg6SJ4NN0rt2yM4221aJj91A/qp
-	8Xv1irIfKBahsHjyfdlt+rXOseuUGpyYLmZ5MbJ0Qjh/eDUxcrU95dS3V2nKz4UJ
-	1AhaWfkPOtkYcCvkeWSwOSDnqs2EUbx7QCwUWVVE79He3NUChoYikaEMEmILcfdh
-	NaN2cVU8SQEpV/ZXFvHyVA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750763023; x=
-	1750849423; bh=mKdDcT6nPMv0lOyJCXJhNetcEX8t8wEb5+Ehzx1PdSU=; b=n
-	0jKip/DwXQvAL01EuqxmHWwLGx2SHJpjGY1/DrFI5xzXCIEP/UqrA5v2+uvrcnC1
-	GKeAzYsdKfP99Mq15ERybjB1lPUasVbbUkbQPGphVZQnZtKshu2HSuhMwFC4x/ge
-	utJKcqjkbVZ27LFPtXVoQ7+AU9+HN0NW+p4mKYA5fb6a9ICDmFgh42xO7rNu7M9g
-	5/ygOOAK+Wfbrm0oA8qerZ6Y4PqzVxm18Z+aJ0MjmL1s/qRz0NpLMFKn60KlwVmO
-	jL4pKyC/uD2BA9ebjHxVi7Doy+bTusZOF+zoHJIRG4ag8QB0nAL9DliLMEFwXHOa
-	T6CI0A8/DXDkISho+3L1g==
-X-ME-Sender: <xms:DoZaaP6xNex-VhTaBHs-36SuDXxYkvw7t-c6rNWU5FoOKV3SqlBZVw>
-    <xme:DoZaaE4Z5XIVr3ICf_lFQjbK9n1q9xR0WNyaKAP7DYZ3tGdbemfVpmoltqT8UiKWV
-    Nn-YSgyRanF>
-X-ME-Received: <xmr:DoZaaGcykK8VFGikIYuX59pn2uGHSQRdai1bILw8a941ettCAlRj8-UCbgocrNNoZETofwSUPEWL5-rPrL_yx8iKsazbNn09MftDaQgX3e-6AdVur-I9vEU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdduleejvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepkfgrnhcumfgv
-    nhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpeefke
-    fhgeeigeetleffgeelteejkeduvdfhheejhfehueeitdehuefhkeeukeffheenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthh
-    gvmhgrfidrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtth
-    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghkse
-    hsuhhsvgdrtgiipdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgu
-    rghtihhonhdrohhrghdprhgtphhtthhopegvsghivgguvghrmhesgihmihhsshhiohhnrd
-    gtohhm
-X-ME-Proxy: <xmx:DoZaaAJshVsaNFD7lvJ55uwGhngVxatOCaiLYJaWhedavO5ohZ5Hrw>
-    <xmx:DoZaaDKN9GCZBZ23vRycv_E7ONqpQQzpkRNoNWTyD0KxjJJk7d3Rpw>
-    <xmx:DoZaaJym-QWbd8KSRQE7GMojN2CHdxGFcW90IUTfovXJllZvNCyWFA>
-    <xmx:DoZaaPKpaSlx8BxOzra_-aDuK731-AjO6sT0f_Ok3vntvEphbXyLwA>
-    <xmx:D4ZaaCKz4E0yo7pmhi8XUQTGPUAaaTd0tp25t7bKlpf7ycIvm0DoCPN2>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 24 Jun 2025 07:03:40 -0400 (EDT)
-Message-ID: <caf39678-8e83-445d-9340-d75b74c22f74@themaw.net>
-Date: Tue, 24 Jun 2025 19:03:37 +0800
+	s=arc-20240116; t=1750763532; c=relaxed/simple;
+	bh=mmyaQwrNqJf24cVo78MhxpTUoWV9AeICcZr+wKwojr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s6cXuejMDRVaVOUbqkdUbmIVbzKufsw8vKy6pGRTq/JPjPQkxQavxUu78x07FbcjwrGJG0CKPf1uugKdXkSYnAcyBMqwuKTrgs62I8srs96fKTfd/BJNVK+TTMyNtexnisEI5wuAt9/i0PwwwdEvZBWgcROhYskEiVJ58pIRsbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O+T6U1qF; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750763531; x=1782299531;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mmyaQwrNqJf24cVo78MhxpTUoWV9AeICcZr+wKwojr0=;
+  b=O+T6U1qFn/AfyBBI2aUPPVUH+/xx0+PbJgDcf2jhvUkfL5tchslDSinf
+   Tcl/QB4MZNrOXdrmmXMxMVdrcG/TUbTL429EuPfbQQeVDC2eqcJsyTMLE
+   B55y6scx8cHKOK46EMAFfkMkHNY+d5GjXywo9hR43z8CUn1qzhVwh3hvg
+   qktrl4F7rxp+sQFpBovxzSY2qMgB5JJsDjNU4pRuUvSsScA19JFvpisii
+   ucizYdMTM2cVyX7NMDIJnv4SLxEPuG+QPYUakDpPa7QUyma64e2b89wo3
+   bstdq2w5qR+3jq5zL+joneNcS3zzmUNvQNprJRzuVNb3yiRsnNJN5IVLX
+   w==;
+X-CSE-ConnectionGUID: M0qMtONrQPCpiP5yVUfJLQ==
+X-CSE-MsgGUID: AfjVurwsQOKEaFBfZ7GNbg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52228360"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="52228360"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:12:10 -0700
+X-CSE-ConnectionGUID: NqGelhMZR6G/Wl6CyymbcA==
+X-CSE-MsgGUID: S3jN+/V3QtCLTGpj1W/uZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="155914102"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 24 Jun 2025 04:12:08 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uU1ZN-000S3C-2y;
+	Tue, 24 Jun 2025 11:12:05 +0000
+Date: Tue, 24 Jun 2025 19:11:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+Cc: oe-kbuild-all@lists.linux.dev, jack@suse.cz, amir73il@gmail.com,
+	josef@toxicpanda.com, lesha@meta.com, linux-fsdevel@vger.kernel.org,
+	sargun@meta.com
+Subject: Re: [PATCH] fanotify: support custom default close response
+Message-ID: <202506241819.lF9Wd4Tn-lkp@intel.com>
+References: <20250623192503.2673076-1-ibrahimjirdeh@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHES v2][RFC][CFR] mount-related stuff
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Linus Torvalds <torvalds@linux-foundation.org>,
- Eric Biederman <ebiederm@xmission.com>
-References: <20250610081758.GE299672@ZenIV> <20250623044912.GA1248894@ZenIV>
- <93a5388a-3063-4aa2-8e77-6691c80d9974@themaw.net>
- <20250623185540.GH1880847@ZenIV>
- <45bb3590-7a6e-455c-bb99-71f21c6b2e6c@themaw.net>
- <20250624070533.GN1880847@ZenIV>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net;
- keydata= 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
-In-Reply-To: <20250624070533.GN1880847@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623192503.2673076-1-ibrahimjirdeh@meta.com>
 
-On 24/6/25 15:05, Al Viro wrote:
-> On Tue, Jun 24, 2025 at 02:48:53PM +0800, Ian Kent wrote:
->
->> Also alter may_umount_tree() to take a flag to indicate a reference to
->> the passed in mount is held.
->>
->> This avoids unnecessary umount requests being sent to the automount
->> daemon if a mount in another mount namespace is in use when the expire
->> check is done.
-> Huh?  I'm probably missing something, but all callers of may_umount_tree()
-> seem to be passing that flag...  propagate_mount_tree_busy() - sure, but why
-> does may_umount_tree() get that?
->
-> I'm half-asleep at the moment (3am here), so maybe it will make more sense
-> in the morning...
+Hi Ibrahim,
 
-Yes, fair point, maybe it should be propagate_mount_tree_busy() only 
-that grows
+kernel test robot noticed the following build warnings:
 
-a flag as it's the function that gets called without knowing whether the 
-caller
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.16-rc3 next-20250623]
+[cannot apply to jack-fs/fsnotify]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-holds an additional reference to the mount or not.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ibrahim-Jirdeh/fanotify-support-custom-default-close-response/20250624-032902
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250623192503.2673076-1-ibrahimjirdeh%40meta.com
+patch subject: [PATCH] fanotify: support custom default close response
+config: arm-randconfig-002-20250624 (https://download.01.org/0day-ci/archive/20250624/202506241819.lF9Wd4Tn-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250624/202506241819.lF9Wd4Tn-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506241819.lF9Wd4Tn-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   fs/notify/fanotify/fanotify_user.c: In function 'finish_permission_event.constprop':
+>> fs/notify/fanotify/fanotify_user.c:316:3: warning: argument 2 null where non-null expected [-Wnonnull]
+      memcpy(&event->audit_rule, friar, sizeof(*friar));
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/string.h:65,
+                    from include/linux/bitmap.h:13,
+                    from include/linux/cpumask.h:12,
+                    from include/linux/smp.h:13,
+                    from include/linux/lockdep.h:14,
+                    from include/linux/rcupdate.h:29,
+                    from include/linux/sysctl.h:26,
+                    from include/linux/fanotify.h:5,
+                    from fs/notify/fanotify/fanotify_user.c:2:
+   arch/arm/include/asm/string.h:20:15: note: in a call to function 'memcpy' declared here
+    extern void * memcpy(void *, const void *, __kernel_size_t);
+                  ^~~~~~
 
 
-Ian
+vim +316 fs/notify/fanotify/fanotify_user.c
 
+70529a199574c1 Richard Guy Briggs 2023-02-03  301  
+40873284d7106f Jan Kara           2019-01-08  302  /*
+40873284d7106f Jan Kara           2019-01-08  303   * Finish processing of permission event by setting it to ANSWERED state and
+40873284d7106f Jan Kara           2019-01-08  304   * drop group->notification_lock.
+40873284d7106f Jan Kara           2019-01-08  305   */
+40873284d7106f Jan Kara           2019-01-08  306  static void finish_permission_event(struct fsnotify_group *group,
+70529a199574c1 Richard Guy Briggs 2023-02-03  307  				    struct fanotify_perm_event *event, u32 response,
+70529a199574c1 Richard Guy Briggs 2023-02-03  308  				    struct fanotify_response_info_audit_rule *friar)
+40873284d7106f Jan Kara           2019-01-08  309  				    __releases(&group->notification_lock)
+40873284d7106f Jan Kara           2019-01-08  310  {
+fabf7f29b3e2ce Jan Kara           2019-01-08  311  	bool destroy = false;
+fabf7f29b3e2ce Jan Kara           2019-01-08  312  
+40873284d7106f Jan Kara           2019-01-08  313  	assert_spin_locked(&group->notification_lock);
+70529a199574c1 Richard Guy Briggs 2023-02-03  314  	event->response = response & ~FAN_INFO;
+70529a199574c1 Richard Guy Briggs 2023-02-03  315  	if (response & FAN_INFO)
+70529a199574c1 Richard Guy Briggs 2023-02-03 @316  		memcpy(&event->audit_rule, friar, sizeof(*friar));
+70529a199574c1 Richard Guy Briggs 2023-02-03  317  
+fabf7f29b3e2ce Jan Kara           2019-01-08  318  	if (event->state == FAN_EVENT_CANCELED)
+fabf7f29b3e2ce Jan Kara           2019-01-08  319  		destroy = true;
+fabf7f29b3e2ce Jan Kara           2019-01-08  320  	else
+40873284d7106f Jan Kara           2019-01-08  321  		event->state = FAN_EVENT_ANSWERED;
+40873284d7106f Jan Kara           2019-01-08  322  	spin_unlock(&group->notification_lock);
+fabf7f29b3e2ce Jan Kara           2019-01-08  323  	if (destroy)
+fabf7f29b3e2ce Jan Kara           2019-01-08  324  		fsnotify_destroy_event(group, &event->fae.fse);
+40873284d7106f Jan Kara           2019-01-08  325  }
+40873284d7106f Jan Kara           2019-01-08  326  
 
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
