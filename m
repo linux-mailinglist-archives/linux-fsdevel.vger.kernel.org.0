@@ -1,107 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-52730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8294AAE60C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48133AE60D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 11:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 171D2174A64
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14B219259FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 09:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED2D27C844;
-	Tue, 24 Jun 2025 09:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93ED257AF9;
+	Tue, 24 Jun 2025 09:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIDnlRSB"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LIQr7DNm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zmzr0S1n";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LIQr7DNm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zmzr0S1n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637F427C152;
-	Tue, 24 Jun 2025 09:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4A91ADFFB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jun 2025 09:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750757043; cv=none; b=RaX4K8D7nzxq8h34PzhpCBTp5SbJXkVFao8+Hy0EeR2KHfj6zbxrHRcQBJqbnnKzim9M4CSgDYSkb0ngQJSCwmIyJd+uwbxaFJJ0YEkJJV7K9ash9rlzQndG+z2HwGT8quWgefwwVkE1lZeXX0icD5VE18iPqfO8TiodiNVkXr8=
+	t=1750757447; cv=none; b=HzwwgI4WRE4R3+dCxJkKmuPR0MCTP/2K3OBBoNfXJ5gxJHovD+tYLvYQWyJS/mH81c56EzMReIROPsbOfm00aMwJKFDWpt0DEgrA4uJmgxk6otAiE0+/98fEjhoYW8FFKToz0QkOv+yObZAmeXeQ9PSNWbH7N8yQj7QkHF0cl0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750757043; c=relaxed/simple;
-	bh=QYAwKGaMyRPFds2JikA1ZeUtbx6W3TfSyn793IrFJDc=;
+	s=arc-20240116; t=1750757447; c=relaxed/simple;
+	bh=yKPQo10SwWyvjSyY1RLHwL86l/7+hljCKRvHdogDfuo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mJZHR3AV2qJP4xOSJ3S9ufOG6cFBT725I3FnnFBIjejFHu6kvTQZNqGwi7G/Kd8txfargpuzhRBVEtUnW3sF0kDaKylFlUPJb1s5tX3X2tpBnQvYytu8ZH8p0xX9Je6D+gcTpXXlYsCP3Gk+C6H58i8pKdOBRx2zuTfutvDkY+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIDnlRSB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0DFC4CEE3;
-	Tue, 24 Jun 2025 09:24:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750757043;
-	bh=QYAwKGaMyRPFds2JikA1ZeUtbx6W3TfSyn793IrFJDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FIDnlRSBQp/raYM1lA1Si36UfKygBLzdWycLUtBa1MIAl1xaHD3D+aMu0MwwN/j3H
-	 1KbxtXhu8BgDfURSFCKEuszkpGY4xL5Uot7m9VpMsNodSc/81unp9AmCOJ1J12KnNX
-	 ++lepZ8/1jA4e5BMhd+AbZYLUhvCPONHmRf3x2qfyGm/sMLvM4EGY2DrC1aMXIaJcF
-	 rslT5S44I/cTX++h/g8ao+weNoa8AOB10d02yMAuD+BRMnZ+7rnFIm8fD+tqXHW8DG
-	 ominQx6dYkZ+YuOJEazB3zO0s4aryCqiuys9COOT/6H8sTvK0aRPhMTltuHVEEUctk
-	 P101oRNGEnpCw==
-Date: Tue, 24 Jun 2025 11:23:59 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] general protection fault in pidfs_free_pid
-Message-ID: <20250624-volldampf-brotscheiben-70bed5ac4dba@brauner>
-References: <20250624-serienweise-bezeugen-0f2a5ecd5d76@brauner>
- <685a65af.050a0220.2303ee.0008.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bKGh9aFWnxcjJSg31uTjjjWgplgtHDbtdvLeB2cy6v6MSemrkrsJsFaGNAixmI7KXG/TlBk69ZDZFhRzcRiQ14ZzvpVX9QiP/eC3etnK/1aJXj1XUoEc+EEqn5J/xn62u2CdyXMgv6p5ZqpU6CBcLlwBlJ8O1BapcKayHnNJISg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LIQr7DNm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zmzr0S1n; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LIQr7DNm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zmzr0S1n; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9869E21188;
+	Tue, 24 Jun 2025 09:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750757442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vsCXbi7GO2SyLNGIrJxZ9U8joz8RZ1gI2cJPHPiAGik=;
+	b=LIQr7DNmS4Jm6nobdp06ugmQ5nEjKE6OoaSM8c99lj6qKNLnyaqijiNcWsdMznIKWNOdB8
+	6i5S9XgnY0q4VuDhi242osnmiKIhSxlTDZybAirZXw8u7FUlI1pBtz+7YIsOLImbbHn2mO
+	hl9fL+cF094sb+Uu4gHOg6gFOq1kz60=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750757442;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vsCXbi7GO2SyLNGIrJxZ9U8joz8RZ1gI2cJPHPiAGik=;
+	b=Zmzr0S1n5TlBFxrZYl3IAVYXFUU38JO6BwmhIcWcQGccZ92pxSrA8ztHFH9Fqy1nkCBf/B
+	h9TGn0e0Qqd9zkDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750757442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vsCXbi7GO2SyLNGIrJxZ9U8joz8RZ1gI2cJPHPiAGik=;
+	b=LIQr7DNmS4Jm6nobdp06ugmQ5nEjKE6OoaSM8c99lj6qKNLnyaqijiNcWsdMznIKWNOdB8
+	6i5S9XgnY0q4VuDhi242osnmiKIhSxlTDZybAirZXw8u7FUlI1pBtz+7YIsOLImbbHn2mO
+	hl9fL+cF094sb+Uu4gHOg6gFOq1kz60=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750757442;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vsCXbi7GO2SyLNGIrJxZ9U8joz8RZ1gI2cJPHPiAGik=;
+	b=Zmzr0S1n5TlBFxrZYl3IAVYXFUU38JO6BwmhIcWcQGccZ92pxSrA8ztHFH9Fqy1nkCBf/B
+	h9TGn0e0Qqd9zkDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8941013751;
+	Tue, 24 Jun 2025 09:30:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZYk0IUJwWmjSHgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 24 Jun 2025 09:30:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 41395A0A03; Tue, 24 Jun 2025 11:30:42 +0200 (CEST)
+Date: Tue, 24 Jun 2025 11:30:42 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 10/11] fhandle, pidfs: support open_by_handle_at()
+ purely based on file handle
+Message-ID: <ng6fvyydyem4qh3rtkvaeyyxm3suixjoef5nepyhwgc4k26chp@n2tlycbek4vl>
+References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
+ <20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <685a65af.050a0220.2303ee.0008.GAE@google.com>
+In-Reply-To: <20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,oracle.com,suse.cz,gmail.com,ffwll.ch,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Tue, Jun 24, 2025 at 01:45:35AM -0700, syzbot wrote:
-> > On Mon, Jun 23, 2025 at 11:27:26AM -0700, syzbot wrote:
-> >> Hello,
-> >> 
-> >> syzbot found the following issue on:
-> >> 
-> >> HEAD commit:    5d4809e25903 Add linux-next specific files for 20250620
-> >> git tree:       linux-next
-> >> console+strace: https://syzkaller.appspot.com/x/log.txt?x=150ef30c580000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=58afc4b78b52b7e3
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=25317a459958aec47bfa
-> >> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a5330c580000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c9f6bc580000
-> >> 
-> >> Downloadable assets:
-> >> disk image: https://storage.googleapis.com/syzbot-assets/16492bf6b788/disk-5d4809e2.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/7be284ded1de/vmlinux-5d4809e2.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/467d717f0d9c/bzImage-5d4809e2.xz
-> >> 
-> >> The issue was bisected to:
-> >> 
-> >> commit fb0b3e2b2d7f213cb4fde623706f9ed6d748a373
-> >> Author: Christian Brauner <brauner@kernel.org>
-> >> Date:   Wed Jun 18 20:53:46 2025 +0000
-> >> 
-> >>     pidfs: support xattrs on pidfds
-> >> 
-> >> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a1b370580000
-> >> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a1b370580000
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=13a1b370580000
-> >> 
-> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> >> Reported-by: syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com
-> >> Fixes: fb0b3e2b2d7f ("pidfs: support xattrs on pidfds")
-> >
-> > #syz test: 
-> >
-> > #syz test: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.17.pidfs
+On Tue 24-06-25 10:29:13, Christian Brauner wrote:
+> Various filesystems such as pidfs (and likely drm in the future) have a
+> use-case to support opening files purely based on the handle without
+> having to require a file descriptor to another object. That's especially
+> the case for filesystems that don't do any lookup whatsoever and there's
+> zero relationship between the objects. Such filesystems are also
+> singletons that stay around for the lifetime of the system meaning that
+> they can be uniquely identified and accessed purely based on the file
+> handle type. Enable that so that userspace doesn't have to allocate an
+> object needlessly especially if they can't do that for whatever reason.
 > 
-> Command #1:
-> want either no args or 2 args (repo, branch), got 4
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/fhandle.c | 22 ++++++++++++++++++++--
+>  fs/pidfs.c   |  5 ++++-
+>  2 files changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index ab4891925b52..54081e19f594 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -173,7 +173,7 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+>  	return err;
+>  }
+>  
+> -static int get_path_anchor(int fd, struct path *root)
+> +static int get_path_anchor(int fd, struct path *root, int handle_type)
+>  {
+>  	if (fd >= 0) {
+>  		CLASS(fd, f)(fd);
+> @@ -193,6 +193,24 @@ static int get_path_anchor(int fd, struct path *root)
+>  		return 0;
+>  	}
+>  
+> +	/*
+> +	 * Only autonomous handles can be decoded without a file
+> +	 * descriptor.
+> +	 */
+> +	if (!(handle_type & FILEID_IS_AUTONOMOUS))
+> +		return -EOPNOTSUPP;
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.17.pidfs
+This somewhat ties to my comment to patch 5 that if someone passed invalid
+fd < 0 before, we'd be returning -EBADF and now we'd be returning -EINVAL
+or -EOPNOTSUPP based on FILEID_IS_AUTONOMOUS setting. I don't care that
+much about it so feel free to ignore me but I think the following might be
+more sensible error codes:
+
+	if (!(handle_type & FILEID_IS_AUTONOMOUS)) {
+		if (fd == FD_INVALID)
+			return -EOPNOTSUPP;
+		return -EBADF;
+	}
+
+	if (fd != FD_INVALID)
+		return -EBADF; (or -EINVAL no strong preference here)
+
+Since I don't care that much feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> +
+> +	if (fd != FD_INVALID)
+> +		return -EINVAL;
+> +
+> +	switch (handle_type & ~FILEID_USER_FLAGS_MASK) {
+> +	case FILEID_PIDFS:
+> +		pidfs_get_root(root);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -347,7 +365,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
+>  	    FILEID_USER_FLAGS(f_handle.handle_type) & ~FILEID_VALID_USER_FLAGS)
+>  		return -EINVAL;
+>  
+> -	retval = get_path_anchor(mountdirfd, &ctx.root);
+> +	retval = get_path_anchor(mountdirfd, &ctx.root, f_handle.handle_type);
+>  	if (retval)
+>  		return retval;
+>  
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 69b0541042b5..2ab9b47fbfae 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -747,7 +747,7 @@ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+>  
+>  	*max_len = 2;
+>  	*(u64 *)fh = pid->ino;
+> -	return FILEID_KERNFS;
+> +	return FILEID_PIDFS;
+>  }
+>  
+>  static int pidfs_ino_find(const void *key, const struct rb_node *node)
+> @@ -802,6 +802,8 @@ static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+>  		return NULL;
+>  
+>  	switch (fh_type) {
+> +	case FILEID_PIDFS:
+> +		fallthrough;
+>  	case FILEID_KERNFS:
+>  		pid_ino = *(u64 *)fid;
+>  		break;
+> @@ -860,6 +862,7 @@ static const struct export_operations pidfs_export_operations = {
+>  	.fh_to_dentry	= pidfs_fh_to_dentry,
+>  	.open		= pidfs_export_open,
+>  	.permission	= pidfs_export_permission,
+> +	.flags		= EXPORT_OP_AUTONOMOUS_HANDLES,
+>  };
+>  
+>  static int pidfs_init_inode(struct inode *inode, void *data)
+> 
+> -- 
+> 2.47.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
