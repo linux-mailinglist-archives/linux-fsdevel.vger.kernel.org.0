@@ -1,105 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-52833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4323AE7379
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 01:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50824AE7400
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 02:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F094A04E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jun 2025 23:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA489175830
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 00:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D326B2AE;
-	Tue, 24 Jun 2025 23:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1748635C;
+	Wed, 25 Jun 2025 00:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bp+wmrjf"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WurVgxZE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B50D2CCC1;
-	Tue, 24 Jun 2025 23:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DE81C69D;
+	Wed, 25 Jun 2025 00:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750808958; cv=none; b=f4tWDi4io/vAUIYoSfSI944HHP41UUlXlgKnYoJV+JzDzllO3Oj4RZDp6u2SA273P3hoaeRgMh4nTTAvab0TZ/cT9eC7o6No51mJqnXY+BoY2qhVF/WZZseLsD2eP9vHG3x2MiSx//PfRRbM/bglVpecTQVY12BTLwLWAdH/+SM=
+	t=1750813077; cv=none; b=BwCOwV4p94s7VzQwYwQSqlpuVgXT9/RXYuWn6YL0xKMGlazK6DCpGP36hpDH+QkgxMnQrffytrDI/5Ayvl6aAzSPQ1Y69I/npCH8qS/IUxr34P3ZErOSxT2y2jqCgWK4RSuXnzMZMhBlvv/7689Glz66qPS+rmNLorlvQIUpwlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750808958; c=relaxed/simple;
-	bh=+WzVaLfiB/QTBCdoQz5BMY7POuyyHmL4cZX9Ji5cM/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=csvO7B9kLWol1/sC5XMPwRfoDcOMBUFDuB/xWFYFNqAML94scjCD013upQMLcY8sWSG2t/WUADLgPdF8GGFXb1xvctpWUMlUNcteiuZdjZWEe8bPIHNBG73mNbsRgMEG+b0YYCOcZqJoqsSoEpNL7VAIeeDfeElv1/j1rd9DsY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bp+wmrjf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01257C4CEF1;
-	Tue, 24 Jun 2025 23:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750808958;
-	bh=+WzVaLfiB/QTBCdoQz5BMY7POuyyHmL4cZX9Ji5cM/g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Bp+wmrjfdHPdrSX1U2X0vWegWVH2QUjbY+n2XJG6H/8DhfNE3TLJktXburAW7ftSI
-	 MWGMY1UI3zCBwUYpVUTcdsAetw6Z8Lp8qb97JpjzmLDwQAhrAq2xdlMMltDtGxwfXx
-	 w97U/L/UJUw9NAiwlu7RWk21ZK6/T+kIyjI6Q+NjoufUWtTjemllWo8HaffJJO4eKI
-	 0ACoRXFSkpslKTKNn8CUpE/EPeA2ayvy6xCHI89v5ZScXbZJW9bFJOwbLWBnEajwiy
-	 /lDUrnnyfTxiYBBq07NdKg7lo+nLqDosksafrSmb4XEcUSmEleCh2ywwdqh8wu+pWw
-	 T9zmPQUmtEnpQ==
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-70f147b5a52so45544607b3.3;
-        Tue, 24 Jun 2025 16:49:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxu/iSODeHmGY56y8eJZQP97HVdV1/QX/wXMc6/w2xCez1zzmJ5OOHDp1TNt4+5M1qEXC7lLJXS0z8Q8uz89RXhGy0sRCE@vger.kernel.org, AJvYcCW8Ep7j3Xdpvm6Sxwyb12oIGLrO6yZOJVXsczv1JA5HDyTM/AKPurfFY0EH+K34OEah6zeJoLoNfbA7Dit5@vger.kernel.org, AJvYcCXyoynW6wTgYteAdWV4JtQ47vqgLv+Av7srlrHl+NATLAQXQXvr21ve/CQCFVus/WDdfCy8rSQ2IYk3oETfcDbh@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiReRB4hGjlbubqhKYZKne6AsoAx9sJXLBTJqWe06SIzhFPoBn
-	DXMY06uhkck16hIZK8QvY3fPcUj7o9Cy0OMJ5FqSCWmLOuw00NGrPOYvmb3svj3yEqUWBJquQfU
-	7XV+LU45lEATVbvuMbw/fipXnnbmJcCA=
-X-Google-Smtp-Source: AGHT+IEkA0q9OT04QUqIeI06M67+a1D1IT8t1ftcvJQrJ41ytprUweK5zbFH+96ESpvfIsdvvtIZ+8b60bUsSO0RzRc=
-X-Received: by 2002:a05:690c:2506:b0:70e:15e7:59e2 with SMTP id
- 00721157ae682-71406dd15demr11751867b3.24.1750808957350; Tue, 24 Jun 2025
- 16:49:17 -0700 (PDT)
+	s=arc-20240116; t=1750813077; c=relaxed/simple;
+	bh=3sxog9KarjUra1bsPTIgTp68dHv6ihs9IGtnMgPj24I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eaTyZSTA9ozvfR2Qc8F151beNYFvnb052oiILzC1RzQZ1BGWsQ8ImhEI3dHwUMU+kXXJN1wJLK6CsLQabYwPaOFUVl6FZ73Ov3bhP2CaK0er2RcEGJYnQ8VLmTv1UpEUvBlnpq9HSD4W7+uh7g20Fx8u1MwbIaepH+GCKjZEb6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WurVgxZE; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=atVojG7bUTPZmKUSvlctp8HQyu35rHIBOIdL8quSxiE=; b=WurVgxZEUVqMBFhFWx3cZF0/IF
+	v2qTI11x5HFTbgEzDZJDkXsgxvs/wMo7Hs1IFqnwwGbO8HCVzjcLMXwob66ce15LcDd5FHuV8qnUP
+	OqGfLCtPZO28RIqf32+PYYpcxRXuN8fRaZWkMcCPo9zrvZamgr+mHvtw8H+8vqgutOOdS+Vphb7Uv
+	cpgz4qDfZFNjLG3O1YWHudbaJBFSGok3eR6nPd83uzr8+OBmp15BxOVyq+OlwUHQx2DqfyhKr8E9b
+	6q66Rwz/Ng4klFSV1Z925YaDkD0FJsdXtiCNRZ/tXo3DzrtWXCkA7gbnTpy568dzm8LoYmT/77w/n
+	hd/YEP8g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUESW-00000006N6e-2vN2;
+	Wed, 25 Jun 2025 00:57:52 +0000
+Date: Wed, 25 Jun 2025 01:57:52 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] selinuxfs_fill_super(): don't bother with
+ selinuxfs_info_free() on failures
+Message-ID: <20250625005752.GP1880847@ZenIV>
+References: <20250615003011.GD1880847@ZenIV>
+ <20250615003110.GA3011112@ZenIV>
+ <20250615020154.GE1880847@ZenIV>
+ <CAHC9VhR6BAOqHuBf+DdWQC-D+Lfd2C9WLTEpFjy1XQkqH1syig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612030951.GC1647736@ZenIV> <20250612031154.2308915-1-viro@zeniv.linux.org.uk>
- <20250612031154.2308915-9-viro@zeniv.linux.org.uk> <CAKtyLkEcH2D5vA19n4LQwrgGE2wHTpT_vshCgk2oUiO2rB12cw@mail.gmail.com>
-In-Reply-To: <CAKtyLkEcH2D5vA19n4LQwrgGE2wHTpT_vshCgk2oUiO2rB12cw@mail.gmail.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Tue, 24 Jun 2025 16:49:05 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkELBbT++iWNsaiN2Xi13Bp_coBZ3X4AXrnFUcqLMJdx=g@mail.gmail.com>
-X-Gm-Features: Ac12FXx0KpT4Uik68ffLxHs0YIZsByv_6tDerSLh9lDd2dpwIwoN7we-Sxic3WI
-Message-ID: <CAKtyLkELBbT++iWNsaiN2Xi13Bp_coBZ3X4AXrnFUcqLMJdx=g@mail.gmail.com>
-Subject: Re: [PATCH 09/10] ipe: don't bother with removal of files in
- directory we'll be removing
-To: Fan Wu <wufan@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhR6BAOqHuBf+DdWQC-D+Lfd2C9WLTEpFjy1XQkqH1syig@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Jun 12, 2025 at 10:43=E2=80=AFAM Fan Wu <wufan@kernel.org> wrote:
->
-> On Wed, Jun 11, 2025 at 8:12=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk>=
- wrote:
+On Tue, Jun 24, 2025 at 07:44:23PM -0400, Paul Moore wrote:
+> On Sat, Jun 14, 2025 at 10:02 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 > >
-> > ... and use securityfs_remove() instead of securityfs_recursive_remove(=
-)
+> > [don't really care which tree that goes through; right now it's
+> > in viro/vfs.git #work.misc, but if somebody prefers to grab it
+> > through a different tree, just say so]
+> >
+> > Failures in there will be followed by sel_kill_sb(), which will call
+> > selinuxfs_info_free() anyway.
 > >
 > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > > ---
-> >  security/ipe/fs.c        | 32 ++++++++++++--------------------
-> >  security/ipe/policy_fs.c |  4 ++--
-> >  2 files changed, 14 insertions(+), 22 deletions(-)
-> >
->
-> Acked-by: Fan Wu <wufan@kernel.org>
->
-> These changes look good to me. I ran our ipe test suite and it works well=
-.
->
-> However, I didn't try fault injection to trigger the dentry creation
-> failure. I will try it later.
->
+> >  security/selinux/selinuxfs.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> 
+> Thanks Al.  I went ahead and merged this into the selinux/dev branch
+> to help avoid any merge issues, but if you've changed your mind and
+> feel strongly about taking it via your tree let me know.
 
-I tried tracing the reference count with and without this patch set. I
-found that without the patch, there were indeed dentry leaks in the
-ipe policy folder, and this patch set has successfully fixed them.
-
--Fan
+Dropped from #work.misc and #for-next
 
