@@ -1,172 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-52905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3982AAE831B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 14:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164A7AE842B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 15:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F3B176330
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:47:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8BE1896AA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 13:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04742609E1;
-	Wed, 25 Jun 2025 12:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E3226462B;
+	Wed, 25 Jun 2025 13:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H8BxqI/s"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NgQ4wJnQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0B4260567
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 12:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDC9262FDE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 13:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750855651; cv=none; b=Vbresm3Ti6emJkGLEFLUXdXcPBTYtm6IiE7hrIyuV+AeiHV268nuBiYwjAve/L2EL/MsBV2E0nbPBFfU1RYQuJKXLbgwo77SC6yroPNcZOVEyj4sobDMNz4gzrvSRrIXorQuMQNXZnIsstqOZDSdjpipuK85oVexa809MiquxZc=
+	t=1750857262; cv=none; b=WWVPK6w2jyMtMPOyixxOr8sjR36Nn8ZvctlEwSp3v0Tjzzd2tb5KKtatBX+bDrRlVs36/71FpI+fXA3R3sGsDVIUcvl1DcCn1Ol9P3zr7jPnryY+86mQg56q9XxvnXmN16Qg1SiWMLG2MWQxY/m3Q/j835dVu+Hn1cTDy/RzQo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750855651; c=relaxed/simple;
-	bh=H+Ct5E6gqE1GqrxKKgsI88KcM25+Ev2zEH3FOvDCw7Y=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=gWbOR/T9TIowe9GyZ65r42UoOqXGWbqWKILbo5CWOEBSj792EXowj5xDEu/Vl5K8IkoWQQtn5pThsBTDnYCwmi02LKQRfAg+rngbD75kbgyx+V5K8evZKTz1DkLKNcOatcNfni5op/YjbeYttb1q78yGlYAR1sqD3E+VNP8cUmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H8BxqI/s; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750855648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/oWVGyRSPW0/HYVoKtdUnTRZXeUfPLeoGNr3XlUaLrQ=;
-	b=H8BxqI/sfrEpYg8rUtGYo6UAgw9NwILSR56zV5LagCbRyZie+LVsF3l2ZuUPtopE6k7n8T
-	YEpSXVHTURSu3LhdqPn/PHpI2gr4iZDshJfUKqLXtCTfAfZIJYQZCdS8aIzYWPvfYNEG55
-	Yv6MxJ9hzHzsDSwVQyxV7aXSQzYKPw4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-470-NFK1xPgHPCWFefj36B08xw-1; Wed,
- 25 Jun 2025 08:47:23 -0400
-X-MC-Unique: NFK1xPgHPCWFefj36B08xw-1
-X-Mimecast-MFC-AGG-ID: NFK1xPgHPCWFefj36B08xw_1750855642
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3DD91956089;
-	Wed, 25 Jun 2025 12:47:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4302419560AF;
-	Wed, 25 Jun 2025 12:47:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1156127.1750774971@warthog.procyon.org.uk>
-References: <1156127.1750774971@warthog.procyon.org.uk> <f448a729-ca2e-40a8-be67-3334f47a3916@samba.org> <1107690.1750683895@warthog.procyon.org.uk>
-Cc: dhowells@redhat.com, Stefan Metzmacher <metze@samba.org>,
-    "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-    netfs@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-    Steve French <stfrench@microsoft.com>
-Subject: Re: [PATCH] cifs: Collapse smbd_recv_*() into smbd_recv() and just use copy_to_iter()
+	s=arc-20240116; t=1750857262; c=relaxed/simple;
+	bh=VyVL4KpvH5PpIzU7d6A8maGwHpB/XkUHFTH7hoYbrgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=afPjAz0u5FDEcJYlv2/TviwS5pFQNG1cgTvTRmnSwfUXW1UPcuXAwmGSUKfeAeVgamLOKy9wfuLl0MOZL1usEqNfhfZ6NfPBLAF3svRkn998ysIoPHx4NAaww+Xcr6WIJNNqXf0nIZ2zev/PhRznXhKjJMx59CVLkKG8u+b+bDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NgQ4wJnQ; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bS2Mk28xSz4gR;
+	Wed, 25 Jun 2025 15:14:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1750857250;
+	bh=43gwrFzk4hwmv82prep9JmI9Q2MWI5mtLdOFVMSWLhk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NgQ4wJnQug59/VS2Oh7JY+Jr/FDR5DtjwhxRri1FhNkqbFQ98Q56GFLR7DHBsCkGs
+	 bvo158SXQyDMKoVRoSSsTcsyjc2FcyOfMwWoXW3XKFbYOrhVFjX0so85UBO99Rclv7
+	 jweEbF7djyq7VG+JJ+1QixEJ2MLc5oAIhHG6EUWA=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bS2Mj0pxCzMjj;
+	Wed, 25 Jun 2025 15:14:09 +0200 (CEST)
+Date: Wed, 25 Jun 2025 15:14:08 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: NeilBrown <neil@brown.name>
+Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, brauner@kernel.org, kernel-team@meta.com, andrii@kernel.org, 
+	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
+	Tingmao Wang <m@maowtm.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+Message-ID: <20250625.Ee2Ci6chae8h@digikod.net>
+References: <>
+ <20250624.xahShi0iCh7t@digikod.net>
+ <175080113326.2280845.18404947256630567790@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1362539.1750855639.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Jun 2025 13:47:19 +0100
-Message-ID: <1362540.1750855639@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <175080113326.2280845.18404947256630567790@noble.neil.brown.name>
+X-Infomaniak-Routing: alpha
 
-David Howells <dhowells@redhat.com> wrote:
+On Wed, Jun 25, 2025 at 07:38:53AM +1000, NeilBrown wrote:
+> On Wed, 25 Jun 2025, Mickaël Salaün wrote:
+> > On Fri, Jun 20, 2025 at 02:59:17PM -0700, Song Liu wrote:
+> > > Hi Christian, Mickaël, and folks,
+> > > 
+> > > Could you please share your comments on this version? Does this
+> > > look sane?
+> > 
+> > This looks good to me but we need to know what is the acceptable next
+> > step to support RCU.  If we can go with another _rcu helper, I'm good
+> > with the current approach, otherwise we need to figure out a way to
+> > leverage the current helper to make it compatible with callers being in
+> > a RCU read-side critical section while leveraging safe path walk (i.e.
+> > several calls to path_walk_parent).
+> 
+> Can you spell out the minimum that you need?
 
-> > And 4 is ITER_FOLIOQ.
+Sure.  We'd like to call this new helper in a RCU
+read-side critical section and leverage this capability to speed up path
+walk when there is no concurrent hierarchy modification.  This use case
+is similar to handle_dots() with LOOKUP_RCU calling follow_dotdot_rcu().
 
-I dumped some of the fields from the MID involved:
+The main issue with this approach is to keep some state of the path walk
+to know if the next call to "path_walk_parent_rcu()" would be valid
+(i.e. something like a very light version of nameidata, mainly sequence
+integers), and to get back to the non-RCU version otherwise.
 
-   CIFS: VFS: Invalid msg type 4 (mid=3Da4 optype=3D0 command=3D8)
-   CIFS: VFS:  - rcv=3Dcifs_readv_receive+0x0/0x270 cb=3Dsmb2_readv_callba=
-ck+0x0/0x480 hand=3Dsmb3_handle_read_data+0x0/0x40
+> 
+> My vague impression is that you want to search up from a given strut path,
+> no further then some other given path, looking for a dentry that matches
+> some rule.  Is that correct?
 
-So the ITER_FOLIOQ is from netfslib.  I've attached corresponding trace lo=
-g,
-edited down a bit to remove some columns.  Note that the EINVAL error gets
-discarded by cifs_demultiplex_thread() and replaced with EAGAIN by netfsli=
-b.
+Yes
 
-David
----
-         diff-6828: netfs_rreq_ref: R=3D0000000c NEW         r=3D2
-         diff-6828: netfs_read: R=3D0000000c READPAGE  c=3D00000000 ni=3D1=
-d4072 s=3D0 l=3D1000 sz=3D400
-         diff-6828: netfs_rreq_ref: R=3D0000000c GET SUBREQ  r=3D3
-         diff-6828: smb3_rw_credits: R=3D0000000c[1] rd-submit   cred=3D16=
- chg=3D0 pool=3D1688 ifl=3D1
-         diff-6828: netfs_sreq: R=3D0000000c[1] DOWN PREP  f=3D000 s=3D0 0=
-/400 s=3D0 e=3D0
-         diff-6828: smb3_rw_credits: R=3D0000000c[1] rd-issu-adj cred=3D16=
- chg=3D-15 pool=3D1688 ifl=3D1
-         diff-6828: netfs_sreq: R=3D0000000c[1] DOWN SUBMT f=3D102 s=3D0 0=
-/400 s=3D0 e=3D0
-         diff-6828: netfs_rreq_ref: R=3D0000000c GET SUBREQ  r=3D4
-         diff-6828: netfs_sreq: R=3D0000000c[2] ZERO SUBMT f=3D000 s=3D400=
- 0/c00 s=3D0 e=3D0
-         diff-6828: netfs_sreq: R=3D0000000c[2] ZERO TERM  f=3D102 s=3D400=
- c00/c00 s=3D1 e=3D0
-         diff-6828: netfs_collect_stream: R=3D0000000c[0:] cto=3D0 frn=3D0
-         diff-6828: netfs_rreq: R=3D0000000c RP WAIT-IP f=3D03
-        cifsd-6506: netfs_sreq: R=3D0000000c[1] DOWN I-RTR f=3D102 s=3D0 0=
-/400 s=3D0 e=3D0
-        cifsd-6506: smb3_read_err:       R=3D0000000c[1] xid=3D200 sid=3D0=
-x8 tid=3D0x2 fid=3D0xa0952 offset=3D0x0 len=3D0x400 rc=3D-11
-        cifsd-6506: smb3_rw_credits: R=3D0000000c[1] rd-resp-clr cred=3D1 =
-chg=3D0 pool=3D1703 ifl=3D1
-        cifsd-6506: netfs_sreq: R=3D0000000c[1] DOWN I-OK  f=3D302 s=3D0 0=
-/400 s=3D0 e=3D-11
-        cifsd-6506: netfs_failure: R=3D0000000c[1] DOWN f=3D302 s=3D0 0/40=
-0 read e=3D-11
-        cifsd-6506: netfs_rreq: R=3D0000000c RP PAUSE   f=3D03
-        cifsd-6506: netfs_sreq: R=3D0000000c[1] DOWN TERM  f=3D702 s=3D0 0=
-/400 s=3D0 e=3D-11
-        cifsd-6506: netfs_rreq: R=3D0000000c RP WAKE-Q  f=3D07
-        cifsd-6506: smb3_rw_credits: R=3D0000000c[1] rd-resp-add cred=3D0 =
-chg=3D0 pool=3D1703 ifl=3D1
-         diff-6828: netfs_collect_stream: R=3D0000000c[0:] cto=3D0 frn=3D0
-         diff-6828: netfs_rreq: R=3D0000000c RP COLLECT f=3D07
-         diff-6828: netfs_collect: R=3D0000000c s=3D0-1000
-         diff-6828: netfs_collect_sreq: R=3D0000000c[0:01] s=3D0 t=3D0/400
-         diff-6828: netfs_rreq: R=3D0000000c RP S-ABNDN f=3D07
-         diff-6828: netfs_sreq: R=3D0000000c[1] DOWN ABNDN f=3D602 s=3D0 4=
-00/400 s=3D0 e=3D-11
-         diff-6828: netfs_sreq: R=3D0000000c[1] DOWN FREE  f=3D602 s=3D0 4=
-00/400 s=3D0 e=3D-11
-         diff-6828: netfs_rreq_ref: R=3D0000000c PUT SUBREQ  r=3D3
-         diff-6828: netfs_collect_sreq: R=3D0000000c[0:02] s=3D400 t=3Dc00=
-/c00
-         diff-6828: netfs_sreq: R=3D0000000c[2] ZERO ABNDN f=3D002 s=3D400=
- c00/c00 s=3D1 e=3D0
-         diff-6828: netfs_sreq: R=3D0000000c[2] ZERO FREE  f=3D002 s=3D400=
- c00/c00 s=3D1 e=3D0
-         diff-6828: netfs_rreq_ref: R=3D0000000c PUT SUBREQ  r=3D2
-         diff-6828: netfs_collect_stream: R=3D0000000c[0:] cto=3D1000 frn=3D=
-ffffffff
-         diff-6828: netfs_collect_state: R=3D0000000c col=3D1000 cln=3D100=
-0 n=3D8c
-         diff-6828: netfs_rreq: R=3D0000000c RP UNPAUSE f=3D0b
-         diff-6828: netfs_collect_stream: R=3D0000000c[0:] cto=3D1000 frn=3D=
-ffffffff
-         diff-6828: netfs_collect_state: R=3D0000000c col=3D1000 cln=3D100=
-0 n=3D8
-         diff-6828: netfs_rreq: R=3D0000000c RP COMPLET f=3D0b
-         diff-6828: netfs_rreq: R=3D0000000c RP WAKE-IP f=3D0a
-         diff-6828: netfs_rreq: R=3D0000000c RP DONE    f=3D0a
-         diff-6828: netfs_rreq_ref: R=3D0000000c PUT WORK IP  r=3D1
-         diff-6828: netfs_rreq: R=3D0000000c RP DONE-IP f=3D0a
-         diff-6828: netfs_rreq_ref: R=3D0000000c PUT RETURN  r=3D0
-kworker/u16:0-12  : netfs_rreq: R=3D0000000c RP FREE    f=3D0a
+> 
+> In general, the original dentry could be moved away from under the
+> dentry you find moments after the match is reported.  What mechanisms do
+> you have in place to ensure this doesn't happen, or that it doesn't
+> matter?
 
+In the case of Landlock, by default, a set of access rights are denied
+and can only be allowed by an element in the file hierarchy.  The goal
+is to only allow access to files under a specific directory (or directly
+a specific file).  That's why we only care of the file hierarchy at the
+time of access check.  It's not an issue if the file/directory was
+moved or is being moved as long as we can walk its "current" hierarchy.
+Furthermore, a sandboxed process is restricted from doing arbitrary
+mounts (and renames/links are controlled with the
+LANDLOCK_ACCESS_FS_REFER right).
+
+However, we need to get a valid "snapshot" of the set of dentries that
+(could) lead to the evaluated file/directory.
+
+> 
+> Would it be sufficient to have an iterator which reported successive
+> ancestors in turn, or reported that you need to restart because something
+> changed?  Would you need to know that a restart happened or would it be
+> acceptable to transparently start again at the parent of the starting
+> point?
+
+If the path walk is being invalidated, we need to reset the collected
+access right and start again the path walk to get all the access rights
+from a consistent/real file hierarchy.
+
+> 
+> Or do you really need a "one step at a time" interface?
+
+We need to check each component of the path walk, so either we call an
+helper to get each of them and we do our check after that (we should be
+able to do that in RCU), or we provide a callback function which is
+called by the path walk helper.
+
+> 
+> Do you need more complex movements around the tree, or is just walking
+> up sufficient?
+
+Just walking up.
+
+> 
+> If this has been discussed or documented elsewhere I'd be happy for you
+> just to provide a reference, and I can come back with follow-up
+> questions if needed.
+
+Tingmao initially described the goal here:
+https://lore.kernel.org/all/afe77383-fe56-4029-848e-1401e3297139@maowtm.org/
+
+and she sent an RFC to illustrate that:
+https://lore.kernel.org/all/cover.1748997840.git.m@maowtm.org/
+
+The discussion mainly raised two questions:
+- Should we have one or two APIs?
+- How to store the state of the walk without exposing VFS internals to
+  the rest of the kernel?
+
+Thanks
+
+> 
+> Thanks,
+> NeilBrown
+> 
+> 
+> > 
+> > > 
+> > > Thanks,
+> > > Song
+> > > 
+> > > On Mon, Jun 16, 2025 at 11:11 PM Song Liu <song@kernel.org> wrote:
+> > > >
+> > > > In security use cases, it is common to apply rules to VFS subtrees.
+> > > > However, filtering files in a subtree is not straightforward [1].
+> > > >
+> > > > One solution to this problem is to start from a path and walk up the VFS
+> > > > tree (towards the root). Among in-tree LSMs, Landlock uses this solution.
+> > > >
+> > > 
+> > > [...]
+> > > 
+> > 
+> 
+> 
 
