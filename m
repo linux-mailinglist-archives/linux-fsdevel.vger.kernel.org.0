@@ -1,174 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-52900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F50AE81EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 13:49:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F290AE81F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 13:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 155147B7548
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 11:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F831BC47A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 11:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5872325D1F1;
-	Wed, 25 Jun 2025 11:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA72C25D548;
+	Wed, 25 Jun 2025 11:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fa5MXmON"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="icpCHs1G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7ED202960;
-	Wed, 25 Jun 2025 11:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912B225D213;
+	Wed, 25 Jun 2025 11:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750852174; cv=none; b=tX1vVw5WtOKQg+L4w7iz45zf6XFobX1AYbswy6uBTgUvNPUCnNqvJraYutvXWxJjFCZU+a7wWlw176ATLvVAnS8l+Upn42aqJ3M4PpKodam4nduUEI9A3RPs3rAo/j+1tDaPFlqFWXWB9I3cP87NsbPQMK+HULPklZzQ/BB1YMs=
+	t=1750852280; cv=none; b=dniso7rj6d6ZKriErPJXQnt7o0VzcBF42rjEKvC7bBbJvRksHDRiii0s2fZj7s6569379zpyPUJXjuKg7qiRdKaCwuSbYRywkeOsRYACHhmP1b+EMJHg2Cb+6tANOzj3UOCaMiK9pnZi9JC6aKMkb8hh4aEXfvzUSz0shYxo7hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750852174; c=relaxed/simple;
-	bh=T1y3v9XdjqwUNBwRwDZhB4swEe9RAFJ8LTgmJ+dg8As=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YjE4i0fm+9vJtv63bhkNjg4MC2RL71/JZy84+R0x1qJvCrBcY4iCgnyfq6unkiHuzCvJE1caaTeVo5fQMCCthLZkJwz/rZJwAVmDOFELSidZS7e31s97WTwUU+MDmTr4OGRLQF+QPkNfZ/JQVXkr8AxgPYy+RT7OhxmjQ0URNyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fa5MXmON; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7021EC4CEEE;
-	Wed, 25 Jun 2025 11:49:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750852174;
-	bh=T1y3v9XdjqwUNBwRwDZhB4swEe9RAFJ8LTgmJ+dg8As=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=fa5MXmONwvk8WoVsE1V1pkVfqSOZufYpkxlDr3XZB5+M1eKvbLbh+bgaGAk9XeBMS
-	 WfUUdaG74p7Z1QoQu7R65NIktezweOb25P17IjEnqX1EN+XpV11mT/R+HwgyAGbR9G
-	 2qiQwDFYPGcWRwMAV/pJAIR0ATn5GUAhVH+q5fAQGL1Y2HquDArlPNHkg3qbFJUk0c
-	 dggsyx04RPUIY3l0WUuMZK9Ou2dGiN5LLJJpb71sBJfPxe38ewzc9WH0NGzMkiU+hy
-	 AOaGo3zTzeYfgjPzOYYEg8V973WCQfAPt0cWnCq0pVB9s7zNn51nUTDRwTCebYp7mm
-	 BOifEejKgUy3A==
-Message-ID: <6ac46aa32eee969d9d8bc55be035247e3fdc0ac8.camel@kernel.org>
-Subject: Re: [PATCH] xfs: report a writeback error on a read() call
-From: Jeff Layton <jlayton@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, david@fromorbit.com,
- djwong@kernel.org, 	linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-xfs@vger.kernel.org,
- yc1082463@gmail.com
-Date: Wed, 25 Jun 2025 07:49:31 -0400
-In-Reply-To: <aFvbr6H3WUyix2fR@infradead.org>
-References: <aFqyyUk9lO5mSguL@infradead.org>
-	 <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
-	 <aFuezjrRG4L5dumV@infradead.org>
-	 <88e4b40b61f0860c28409bd50e3ae5f1d9c0410b.camel@kernel.org>
-	 <aFvbr6H3WUyix2fR@infradead.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1750852280; c=relaxed/simple;
+	bh=y3NNDejVQJ1CgTfZFcADg6wM2IwtjjH7Xcu8RJxVMEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4RwGJVS2lIgEG5t/lIWHX71fRYOGEpt3Dls5xX9Ue/gK5lEi7LAEHriRJmkyOH0Wp4ASB6My+fy7BOHT5KIm9CL2J4huTGJ0shAKtN9NrwtMBmCeCFPifbJY6f9K4LTqOhuINdIZ4V6ckP2GtEEhOaGHq3utvVvUV663jSe/kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=icpCHs1G; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=xMUsiXvQEf69tnf2W3tpfU1jFomrgiuQ867Hr3ffK1U=; b=icpCHs1GSsI+E16fhWdGBiRuZE
+	vUNAQ/2j1/VWj9z6DAMTuExUZQp63lQOeb5M6mug8a79RMkook19AryUmXRSmstUvZkUJ4jm45T/1
+	Uv2KeMTWLhWtqJVal1VgocV9I9Du8zGWYAgpYQekOmMsQFP6Pt+1nUuRV3xN22QWrvsOZJzvBgCww
+	JX9hTHLlmdF9MD2FrA8rECOi4rM7mwA/0xUPF8mZtJ7v7KSIM/F3oCq26qOvCmD4pzdlRR5qpquLH
+	0Ji90VrFatLIbBJyT8EKdJYPlOgccSk151zG2f1tTgl6Xg6bAA4Kt+BDdt8+ibAv9hMAnV1AnPTtW
+	SSVyuRdoDqCksT6bi4Pq6Rjhf493WWV5HheJk4fRMnN4QixUFvJrEAyQSit+WeLpsQv3MS5sw87EE
+	19bxuq9L8IA80u4XNypFkrYfpsyOqME7ROk4on1s/oPBUT8YdbnaKXmPpLPSLOaSKMxBok2LfxEh8
+	LxB4GECDjOUipqB6vgIr8pQ7;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1uUOep-00CPIo-0c;
+	Wed, 25 Jun 2025 11:51:15 +0000
+Message-ID: <e867b6c0-c468-4fc8-a30f-215b5dd18bdb@samba.org>
+Date: Wed, 25 Jun 2025 13:51:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cifs: Collapse smbd_recv_*() into smbd_recv() and just
+ use copy_to_iter()
+To: David Howells <dhowells@redhat.com>
+Cc: "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+ netfs@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Steve French <stfrench@microsoft.com>
+References: <6b69eef7-781d-42d3-9ce0-973ff9152dd5@samba.org>
+ <f448a729-ca2e-40a8-be67-3334f47a3916@samba.org>
+ <1107690.1750683895@warthog.procyon.org.uk>
+ <1156127.1750774971@warthog.procyon.org.uk>
+ <acb7f612-df26-4e2a-a35d-7cd040f513e1@samba.org>
+ <1341840.1750850709@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <1341840.1750850709@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-06-25 at 04:21 -0700, Christoph Hellwig wrote:
-> On Wed, Jun 25, 2025 at 06:40:07AM -0400, Jeff Layton wrote:
-> > Another option:
-> >=20
-> > We could expose this functionality in preadv2() with a new RWF_WBERR
-> > flag (better names welcome). That way applications could opt-in to
-> > checking for writeback errors like this. With that, the application is
-> > at least explicitly saying that it wants this behavior.
->=20
-> That sounds like a really strange interface to me.
->=20
-> I have to admit I don't fully understand the use case where an
-> application cares about these errors, but also doesn't use f(data)sync
-> or sync(fs) to actually persist the data.  If we can come up with a
-> coherent use case for that we should simply add a new syscall or fcntl
-> to query the delayed writeback errors instead of overloading other
-> interfaces.
+Am 25.06.25 um 13:25 schrieb David Howells:
+> Stefan Metzmacher <metze@samba.org> wrote:
+> 
+>>> [  922.218230] [   T6642] kernel BUG at mm/usercopy.c:102!
+> 
+> Ah, I don't have that config option enabled.  With it, I can reproduce that.
 
-It is weird, but I do sort of get the motivation.
+Ah, allocate_caches_and_workqueue() needs to use kmem_cache_create_usercopy/KMEM_CACHE_USERCOPY...
 
-In a some cases you want to be able to stream writes as fast as
-possible and let the kernel lazily write that back (because you don't
-want to block a thread), but knowing if a prior writeback error has
-occurred is a good thing too.
+I was already using that in my old wip smbdirect code.
 
-Another idea: add a new generic ioctl() that checks for writeback
-errors without syncing anything. That would be fairly simple to do and
-sounds like it would be useful, but I'd want to hear a better
-description of the use-case before we did anything like that.
---=20
-Jeff Layton <jlayton@kernel.org>
+metze
+
 
