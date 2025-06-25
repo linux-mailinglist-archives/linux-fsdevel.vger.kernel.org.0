@@ -1,170 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-52885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66031AE7F4A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:31:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56268AE7FAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B9A417CFFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:31:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF9577A882A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFFB29E0F9;
-	Wed, 25 Jun 2025 10:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB582BEFFB;
+	Wed, 25 Jun 2025 10:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0w29L976";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LzoVUj3D";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0w29L976";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LzoVUj3D"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S1qHsj8B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF75298981
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 10:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7BB29E0EA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 10:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750847442; cv=none; b=Pg/gjUBMsXfZqnvR9MpmcreoNrQeGwdeOlcmG1U5sNoCU94A6MbwSkPMY8UrIHvaWBrf0KYzkS5t/0DbowzE/AK1hAIM3RyF/rVsN1ZtPQRdtzrtz7vp+R2VJiDOalyUxW2eGPEudkzkotKaAQVAwTXgIVRWPnxG7jA/XATZB9Q=
+	t=1750847843; cv=none; b=ElYmA+8fHwgHiV2Y5XomjtFnqz7gywfeq5k4OYU99CfKHMLHDf4egOZ6dvc/Dy+E6ITJIhApBqfh9xmK8yqPdCUC+M/ZXO5KaPGoc2MErUTtLuPGWymAzi/DemxNODRgBoksJmIuBYUgm+zIUQi86PG2OcFo5MeQ1RlYH5DarjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750847442; c=relaxed/simple;
-	bh=dGAZhOW9p7UwAYvCs8OxhJrCgfybhv8mUBpkNFp5PFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T4BFzyMQlxL5ZgJkxXdM2QoQ8EnxdzPiWn2o1zeuuwKPF4W2yKxQ5N+l2fhwi87MoFuDlVB5wvSTDL4s+sHTup5ZqINXCWOAqProplRI6a35ybYssaT4NkOz+LoKpQNBD1WK7qyAxsR+HvFnrgKU0Z3/lKIL3tgp++9hekOucz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0w29L976; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LzoVUj3D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0w29L976; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LzoVUj3D; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AB60C1F457;
-	Wed, 25 Jun 2025 10:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750847438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1750847843; c=relaxed/simple;
+	bh=RFjd235L7/G9kW2qDRezkDrJvYAmAVxhzg6JrL2fuBc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y4ERI0LafzWszJ+DOx+3BevRhoqiUMvAqwTA5XwQPZPArQ5FtR3n5KTERdZ09kKQ1iruafqn3tItITumZph2A8KEQrCvVycpvztgn6IQa4EcFT5ferORMxA1vsxNZ0Zp2lhLCC+8hkZNJ49Akfl81pYoX+B0z9Fn3YeWUBuATDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S1qHsj8B; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750847840;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RvOY1s9oIG3GS4kWTIeUXpu8PIXRrkNntzq+8SohfCY=;
-	b=0w29L976TyeLxycUSigGqiNZWkVskGuKF7WjT9Wc6stkhOo2k9ha/8vytFUIV19bb7Uk08
-	YxPKaAdCqgdgOpypXqshCw4Mmw5/P0HnXaigCE0cAipDG5KZhJ469gStpb9dw/k+PWZcWL
-	x6Sy6iCIqTKbXriuaaWYCvfTeOJq9U8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750847438;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RvOY1s9oIG3GS4kWTIeUXpu8PIXRrkNntzq+8SohfCY=;
-	b=LzoVUj3DQg2qvYZlo4LmGcETxvT6NjS+LkOf2+VwrID+aNzOKbwU1rFluXlnoZBU7iPt10
-	d5oVQtwRejbM8qBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750847438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RvOY1s9oIG3GS4kWTIeUXpu8PIXRrkNntzq+8SohfCY=;
-	b=0w29L976TyeLxycUSigGqiNZWkVskGuKF7WjT9Wc6stkhOo2k9ha/8vytFUIV19bb7Uk08
-	YxPKaAdCqgdgOpypXqshCw4Mmw5/P0HnXaigCE0cAipDG5KZhJ469gStpb9dw/k+PWZcWL
-	x6Sy6iCIqTKbXriuaaWYCvfTeOJq9U8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750847438;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RvOY1s9oIG3GS4kWTIeUXpu8PIXRrkNntzq+8SohfCY=;
-	b=LzoVUj3DQg2qvYZlo4LmGcETxvT6NjS+LkOf2+VwrID+aNzOKbwU1rFluXlnoZBU7iPt10
-	d5oVQtwRejbM8qBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E5A113AC4;
-	Wed, 25 Jun 2025 10:30:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DYq8Is7PW2hjRwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 25 Jun 2025 10:30:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0F7D3A0857; Wed, 25 Jun 2025 12:30:34 +0200 (CEST)
-Date: Wed, 25 Jun 2025 12:30:34 +0200
-From: Jan Kara <jack@suse.cz>
-To: Song Liu <song@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, kpsingh@kernel.org, mattbobrowski@google.com, 
-	m@maowtm.org, neil@brown.name
-Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-Message-ID: <ob35gal3xcbkdkcdpekyvglwg5jsf6sgkdeyoj3gu4jr76ilxh@yhupo3iwet3l>
-References: <20250617061116.3681325-1-song@kernel.org>
- <20250617061116.3681325-2-song@kernel.org>
- <htn4tupeslsrhyzrqt7pi34tye7tpp7amziiwflfpluj3u2nhs@e2axcpfuucv5>
- <CAPhsuW5GKn=0HWDKkmOMTge_rCEJ+UMRNnmo7HpT-gwtURHpiw@mail.gmail.com>
+	bh=V/i6X5rNkwtkA0z3dVR9ep6Ga20RqSlPFLO6q4Jo+/c=;
+	b=S1qHsj8BCH32mkssaISwTeQ2X+P9b0PcSL+9AghsO2v16RHc+PAo/oTl6NsNrfFsU8WGXe
+	IPxg2hKFZ2Ivl7d0Ak7u5+Aqv3OlwVtVdQqMTvZwHDTkV0GM//G3EQKSK8GtSgAnrcEvXr
+	MeyvKAp6htypQ2LHcOd/VXfTFvzL2WM=
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
+ [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-425-cBoiV-v7MXyxHpSC04HX2Q-1; Wed, 25 Jun 2025 06:37:17 -0400
+X-MC-Unique: cBoiV-v7MXyxHpSC04HX2Q-1
+X-Mimecast-MFC-AGG-ID: cBoiV-v7MXyxHpSC04HX2Q_1750847837
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4e98c14da9bso324804137.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 03:37:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750847837; x=1751452637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V/i6X5rNkwtkA0z3dVR9ep6Ga20RqSlPFLO6q4Jo+/c=;
+        b=WIzzY9Vrn5p056l3MyfIuTst6za1/tlo7J5E9A610EitHkUyXztLjCCp/+gb+9X54u
+         GyhsMHllhmGqb8BMrk1ZKfLDsBf6RqkMJMHEMbN045FOJT1piNuZntRC1FMPmADN6q/7
+         MhpB8HaRhXfUXTQB9IRn+FCP0y9OgagiWnuIRnQgBchDUDlSFPqj2dT5z/aYrj8jZy1y
+         hvfnrcCruiHdAVjPHDE1+ibt59zvq5bhMxqbPnbKyGQ9JYqq4MPdlF792TzJ6yzKmapP
+         fWQl6Mqlj6noGRrFHv/o6piGsoFZZPEtazdZBAR3qzbQuFlJH0Co5JT/CDqx79MmRSOt
+         A56Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV1NmB5xZxKPT4AMDncotSLPDiZHFKgsPrjrrrrCGtu4SpztYZua4w6jJQ5ZZ2Ojjg/uoxM+FsvP3gF1khB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBoxVeqis2yFjOZKiWZHWEsSjLVJKN9yrymdaOmHXR6oc1Yfpc
+	D0nhhkHm/Ss24utmg94MOXOf3qdvIjjdA4YJrDsrn2+Xoi6SWGg7IQD49pXLJhllNTJRHfJZGHX
+	jpqVevfePB8Bu6kzWFGdP0KGbnNOXNfw83BgxGArFxjln9mljyXODKMA3xpEXdOty+fK9ImN3Ss
+	R5GZpNjFFMitcwz07FZYzjHH/es7tOxWb6QUEhz5Z77Q==
+X-Gm-Gg: ASbGncvSb0hx++ZHfXZI5x4inWrv6jUXdqq9jy4fEUQWFSMGJjhxXN4KSXhFMN8ybOA
+	kDLNhw1uuOtP2R/BZgVdfA7d+a2CJKhKfwmSmsdg4f8Eh2/nUgLOQOPzh98+QKKaZCrC70F0YA0
+	d3
+X-Received: by 2002:a05:6102:c0a:b0:4e9:968b:4414 with SMTP id ada2fe7eead31-4ecc76b5e32mr1155764137.22.1750847836972;
+        Wed, 25 Jun 2025 03:37:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjmoE/3Y+PAxOwo1N9Ubp8LCBIElRgF9CCRTyuKPdkdQMhC0WeUYbbn48B3y/Vk6EqzEU2KbbXj4tvlr3EqvQ=
+X-Received: by 2002:a05:6102:c0a:b0:4e9:968b:4414 with SMTP id
+ ada2fe7eead31-4ecc76b5e32mr1155756137.22.1750847836631; Wed, 25 Jun 2025
+ 03:37:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW5GKn=0HWDKkmOMTge_rCEJ+UMRNnmo7HpT-gwtURHpiw@mail.gmail.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,google.com,maowtm.org,brown.name];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+References: <20250613183453.596900-1-slava@dubeyko.com>
+In-Reply-To: <20250613183453.596900-1-slava@dubeyko.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Wed, 25 Jun 2025 13:37:06 +0300
+X-Gm-Features: Ac12FXw8zPCUBCoR_LcSrwIyPH209rQ9V46iiLqHrxIn7kQRVzE_ZjitLYeAsrA
+Message-ID: <CAO8a2SjLCq1ztLfYe7bPjhyDqAqX0AGBRdQ-cAuX7gzTrmm70g@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix potential race condition in ceph_ioctl_lazyio()
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 24-06-25 10:37:36, Song Liu wrote:
-> On Tue, Jun 24, 2025 at 5:18 AM Jan Kara <jack@suse.cz> wrote:
-> > > + *
-> > > + * Returns: either an ERR_PTR() or the chosen parent which will have had
-> > > + * the refcount incremented.
-> > > + */
-> >
-> > The behavior with LOOKUP_NO_XDEV is kind of odd (not your fault) and
-> > interestingly I wasn't able to find a place that would depend on the path
-> > being updated in that case. So either I'm missing some subtle detail (quite
-> > possible) or we can clean that up in the future.
-> 
-> We have RESOLVE_NO_XDEV in uapi/linux/openat2.h, so I guess we
-> cannot really remove it?
+Good work addressing the Coverity finding. The fix properly eliminates
+the race condition by moving the check inside the lock.
 
-I didn't mean to remove the LOOKUP_NO_XDEV flag, I meant to not update the
-passed path if LOOKUP_NO_XDEV is set, we are crossing the mountpoint and
-thus returning -EXDEV. As far as I've checked once we return error,
-everybody just path_put()s the nd->path so its update is just pointless.
-But there are many (indirect) callers so I might have missed some case.
+Reviewed-by: Alex Markuze amarkuze@redhat.com
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Fri, Jun 13, 2025 at 9:35=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
+>
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> The Coverity Scan service has detected potential
+> race condition in ceph_ioctl_lazyio() [1].
+>
+> The CID 1591046 contains explanation: "Check of thread-shared
+> field evades lock acquisition (LOCK_EVASION). Thread1 sets
+> fmode to a new value. Now the two threads have an inconsistent
+> view of fmode and updates to fields correlated with fmode
+> may be lost. The data guarded by this critical section may
+> be read while in an inconsistent state or modified by multiple
+> racing threads. In ceph_ioctl_lazyio: Checking the value of
+> a thread-shared field outside of a locked region to determine
+> if a locked operation involving that thread shared field
+> has completed. (CWE-543)".
+>
+> The patch places fi->fmode field access under ci->i_ceph_lock
+> protection. Also, it introduces the is_file_already_lazy
+> variable that is set under the lock and it is checked later
+> out of scope of critical section.
+>
+> [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
+sue=3D1591046
+>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> ---
+>  fs/ceph/ioctl.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+> index e861de3c79b9..60410cf27a34 100644
+> --- a/fs/ceph/ioctl.c
+> +++ b/fs/ceph/ioctl.c
+> @@ -246,21 +246,27 @@ static long ceph_ioctl_lazyio(struct file *file)
+>         struct ceph_inode_info *ci =3D ceph_inode(inode);
+>         struct ceph_mds_client *mdsc =3D ceph_inode_to_fs_client(inode)->=
+mdsc;
+>         struct ceph_client *cl =3D mdsc->fsc->client;
+> +       bool is_file_already_lazy =3D false;
+>
+> +       spin_lock(&ci->i_ceph_lock);
+>         if ((fi->fmode & CEPH_FILE_MODE_LAZY) =3D=3D 0) {
+> -               spin_lock(&ci->i_ceph_lock);
+>                 fi->fmode |=3D CEPH_FILE_MODE_LAZY;
+>                 ci->i_nr_by_mode[ffs(CEPH_FILE_MODE_LAZY)]++;
+>                 __ceph_touch_fmode(ci, mdsc, fi->fmode);
+> -               spin_unlock(&ci->i_ceph_lock);
+> +       } else
+> +               is_file_already_lazy =3D true;
+> +       spin_unlock(&ci->i_ceph_lock);
+> +
+> +       if (is_file_already_lazy) {
+> +               doutc(cl, "file %p %p %llx.%llx already lazy\n", file, in=
+ode,
+> +                     ceph_vinop(inode));
+> +       } else {
+>                 doutc(cl, "file %p %p %llx.%llx marked lazy\n", file, ino=
+de,
+>                       ceph_vinop(inode));
+>
+>                 ceph_check_caps(ci, 0);
+> -       } else {
+> -               doutc(cl, "file %p %p %llx.%llx already lazy\n", file, in=
+ode,
+> -                     ceph_vinop(inode));
+>         }
+> +
+>         return 0;
+>  }
+>
+> --
+> 2.49.0
+>
+
 
