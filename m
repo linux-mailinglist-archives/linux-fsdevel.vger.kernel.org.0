@@ -1,111 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-52855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A5BAE796B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7FDAE7987
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6525B16F56A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 08:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E53613B88F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 08:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5826D20DD42;
-	Wed, 25 Jun 2025 08:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FB520C47C;
+	Wed, 25 Jun 2025 08:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iH1n489F"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="144/JYRv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CF917A2F8;
-	Wed, 25 Jun 2025 08:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE7E1E5B6F;
+	Wed, 25 Jun 2025 08:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750838669; cv=none; b=Rj0+ia9byQxn2z5D8H3PbMEpueiECNGUrtFklZeksxGTEdW0GZkJeiGpWr+RxZ30sjMp6HPvM0lyh4IVybmbk8p4M5Agmo5bHvtChN2TA++j3uA0RnVTCvOv5FXJ9dLIC0Qw4sbZtOw7PKlE3TjGAOW/wXBaJPZvp03403ZAUWw=
+	t=1750838874; cv=none; b=edVnQ4uzlJG4UQwpkPc30j8v5LeMmurhFPy9cH5vbbRB8+cAcCgS4PkzOL6ou29+jI2LvRSYMUPE/yqU8RJqEIkKtZn1H/2vCLyyya4igmn01kik+N+bC2odV7G65Rr5ezjW7u6oweY6+O42kBFdyq8JeRussXD4k3dc+KnM82s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750838669; c=relaxed/simple;
-	bh=33Db58Zgs1Us82FoEGQ+AOZm9l1WltZ90kNW2vjvy6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jS5WfnInt9dke/uC59OgncX13QYCuAVzQ2qrLyS9c6mgrwxQ6mNZmkW9dbox6UtaJZjGObSL5lNcwYaIQn5cQAycRPsZB4gZWOo1+CWF7KQaXqc9q4trWPdOZJIFvzRtwgKx/gKlLVqkq/Bzv8dsKomT73Q6I68fSHucxFCK1j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iH1n489F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A09C4CEEA;
-	Wed, 25 Jun 2025 08:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750838669;
-	bh=33Db58Zgs1Us82FoEGQ+AOZm9l1WltZ90kNW2vjvy6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iH1n489FRT/VUDCzbZstkBsRFo5c8F/QxvDELXrmnB0il6WHte0vIcyu5rPE+DJtw
-	 Cxj+2D7s/QNd1hV2OSvnvUCYXs9f+HD2SqK0g+PiI1SvSgeqDm9nok2idfvm+VXf06
-	 4OdwhvFB5kpZfqgJ+GdVYC2Ml0cj3Q56rUKQw4+RYwzv1PVFnVnNCqPmZRn6zEJ4My
-	 P7N7u+Xh82fg35P2Nz7WEIWKCtFSLfnHs513dkhYS7po6+vuc+GxIDdMOYuSQg1QQL
-	 OCxmz9soe8yvYONFgmprZloT7OqCjIdaLjJriPpYTxtdDX02YuE5PBV9CLKzDU5KrF
-	 x8SDdin5EAkhg==
-Date: Wed, 25 Jun 2025 10:04:22 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>, 
-	"tytso@mit.edu" <tytso@mit.edu>, "hch@infradead.org" <hch@infradead.org>, 
-	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>, "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>, 
-	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>, "tursulin@ursulin.net" <tursulin@ursulin.net>, 
-	"airlied@gmail.com" <airlied@gmail.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"chentao325@qq.com" <chentao325@qq.com>
-Subject: Re: [PATCH v2 3/5] fs: change write_begin/write_end interface to
- take struct kiocb *
-Message-ID: <20250625-erstklassig-stilvoll-273282f0dd1b@brauner>
-References: <20250624121149.2927-1-chentaotao@didiglobal.com>
- <20250624121149.2927-4-chentaotao@didiglobal.com>
- <aFqfZ9hiiW4qnYtO@casper.infradead.org>
+	s=arc-20240116; t=1750838874; c=relaxed/simple;
+	bh=EfJw/0g7QhhPRLnaK8wP/mqnD4vTdaY9bWr2ETHstnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e5gFEmBPVF4mqXQQSyGbMvtGxlkE+RG/dW5B1ZqdnQ9yVY2Bcod+ARYXgx+ZNKeAp+mi6aopA8/NFMG6JgysEtGTi2ciQzAZpeAs7awHkyIv1OcZ4BNBi3Shr9T8n9SNItFw7RFFbk9yUbYI9AMBMFWlHeACYVn+aQGk1tF4CWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=144/JYRv; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=6mTaUT290cejXLzLDU1oPyVqQYKUXhul1tUXuPZsHEI=; b=144/JYRvtfcZXKlMWQr59Sge6/
+	3t66dx++Z6MTi/H6Bil2IhOAPmhXKkslW38YrpIAdPTXS5RP8g+mPPm3g4MmHcVdV3kieV8dQ/hWa
+	e++heScsYLOH4KKNI41MdFUGTc5RROTvsbws/Ec4Nr2kM4k2E+0KD5KzPMdhHoVCuElI/Jf7VBnmE
+	NHVUxIqU9gbTTcImewsdVzs3wkOLUX86HNYHAGOqxauVYG6W4kOu35LDAryLs3h42oafumFTI8nc3
+	v+9LQYgh5FiRPifwOeSX58a6r9TAZHXNgj+Pn4ssr1A6JgvIoU9k2g5dCVhjxmGldYn73pSBfw6BU
+	RdWW4eIyBvAoeZdVjGIgqAzXCyNOCIgPsKnyMYSOefh0NWn7s8iVwt513h3KWUxwsgdSooLn8lzJs
+	gTgrUenWd3MphmorskkgJW2uM9xpiG9F4diaX9PGWySn6aZFBj+iqWHyW70OhDQUfH6ic/cM+c7au
+	8e4bQJsaNEIOLiWX6dLIRtcN;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1uULAb-00CNtO-15;
+	Wed, 25 Jun 2025 08:07:49 +0000
+Message-ID: <acb7f612-df26-4e2a-a35d-7cd040f513e1@samba.org>
+Date: Wed, 25 Jun 2025 10:07:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aFqfZ9hiiW4qnYtO@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cifs: Collapse smbd_recv_*() into smbd_recv() and just
+ use copy_to_iter()
+To: David Howells <dhowells@redhat.com>
+Cc: "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+ netfs@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Steve French <stfrench@microsoft.com>
+References: <f448a729-ca2e-40a8-be67-3334f47a3916@samba.org>
+ <1107690.1750683895@warthog.procyon.org.uk>
+ <1156127.1750774971@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <1156127.1750774971@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 24, 2025 at 01:51:51PM +0100, Matthew Wilcox wrote:
-> On Tue, Jun 24, 2025 at 12:12:08PM +0000, 陈涛涛 Taotao Chen wrote:
-> > -static int blkdev_write_end(struct file *file, struct address_space *mapping,
-> > +static int blkdev_write_end(struct kiocb *iocb, struct address_space *mapping,
-> >  		loff_t pos, unsigned len, unsigned copied, struct folio *folio,
-> >  		void *fsdata)
-> >  {
-> >  	int ret;
-> > -	ret = block_write_end(file, mapping, pos, len, copied, folio, fsdata);
-> > +	ret = block_write_end(iocb->ki_filp, mapping, pos, len, copied, folio, fsdata);
+Am 24.06.25 um 16:22 schrieb David Howells:
+> Stefan Metzmacher <metze@samba.org> wrote:
 > 
-> ... huh.  I thought block_write_end() had to have the same prototype as
-> ->write_end because it was used by some filesystems as the ->write_end.
-> I see that's not true (any more?).  Maybe I was confused with
-> generic_write_end().  Anyway, block_write_end() doesn't use it's file
-> argument, and never will, so we can just remove it.
+>>>    read_rfc1002_done:
+>>> +		/* SMBDirect will read it all or nothing */
+>>> +		msg->msg_iter.count = 0;
+>>
+>> And this iov_iter_truncate(0);
 > 
-> > +++ b/include/linux/fs.h
-> > @@ -446,10 +446,10 @@ struct address_space_operations {
-> >  
-> >  	void (*readahead)(struct readahead_control *);
-> >  
-> > -	int (*write_begin)(struct file *, struct address_space *mapping,
-> > +	int (*write_begin)(struct kiocb *, struct address_space *mapping,
-> >  				loff_t pos, unsigned len,
-> >  				struct folio **foliop, void **fsdata);
-> > -	int (*write_end)(struct file *, struct address_space *mapping,
-> > +	int (*write_end)(struct kiocb *, struct address_space *mapping,
-> >  				loff_t pos, unsigned len, unsigned copied,
-> >  				struct folio *folio, void *fsdata);
+> Actually, it should probably have been iov_iter_advance().
 > 
-> Should we make this a 'const struct kiocb *'?  I don't see a need for
-> filesystems to be allowed to modify the kiocb in future, but perhaps
-> other people have different opinions.
+>> While I'm wondering why we had this at all.
+>>
+>> It seems all callers of cifs_read_iter_from_socket()
+>> don't care and the code path via sock_recvmsg() doesn't
+>> truncate it just calls copy_to_iter() via this chain:
+>> ->inet_recvmsg->tcp_recvmsg->skb_copy_datagram_msg->skb_copy_datagram_iter
+>> ->simple_copy_to_iter->copy_to_iter()
+>>
+>> I think the old code should have called
+>> iov_iter_advance(rc) instead of msg->msg_iter.count = 0.
+>>
+>> But the new code doesn't need it as copy_to_iter()
+>> calls iterate_and_advance().
+> 
+> Yeah, it should.  I seem to remember that there were situations in which it
+> didn't, but it's possible I managed to get rid of them.
+> 
+>>> -	default:
+>>> -		/* It's a bug in upper layer to get there */
+>>> -		cifs_dbg(VFS, "Invalid msg type %d\n",
+>>> -			 iov_iter_type(&msg->msg_iter));
+>>> -		rc = -EINVAL;
+>>> -	}
+>>
+>> I guess this is actually a real fix as I just saw
+>> CIFS: VFS: Invalid msg type 4
+>> in logs while running the cifs/001 test.
+>> And 4 is ITER_FOLIOQ.
+> 
+> Ah... Were you using "-o seal"?  The encrypted data is held in a buffer formed
+> from a folioq with a series of folios in it.
 
-Given I picked up Willy's change I'll wait for a resubmit of this series
-on top of vfs-6.17.misc unless I hear otherwise?
+I know tested it standalone in this tree:
+https://git.samba.org/?p=metze/linux/wip.git;a=shortlog;h=46a31189b8b059b3595a9586714761e6e76ba7c4
+
+Doing following mount:
+
+mount -t cifs -ousername=administrator,password=...,rdma,noperm,vers=3.0,mfsymlinks,actimeo=0 //172.31.9.1/test /mnt/test/
+
+It's using the siw driver (with modifications to work against the chelsio t404-bt card on windows) from
+here:
+https://git.samba.org/?p=metze/linux/wip.git;a=shortlog;h=5b89ff89f440ec36cf2c5ed2212be0d8523a4c9b
+
+But the siw difference should not really matter.
+
+This realiable generates this:
+
+[  922.048997] [   T6639] CIFS: Attempting to mount //172.31.9.1/test
+[  922.188445] [   T6639] CIFS: VFS: RDMA transport established
+[  922.217974] [   T6642] usercopy: Kernel memory exposure attempt detected from SLUB object 'smbd_response_0000000091e24ea1' (offset 81, size 63)!
+[  922.218221] [   T6642] ------------[ cut here ]------------
+[  922.218230] [   T6642] kernel BUG at mm/usercopy.c:102!
+[  922.218299] [   T6642] Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+[  922.218439] [   T6642] CPU: 1 UID: 0 PID: 6642 Comm: cifsd Kdump: loaded Tainted: G           OE       6.16.0-rc3-metze.01+ #1 PREEMPT(voluntary)
+[  922.218585] [   T6642] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+[  922.218635] [   T6642] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  922.218704] [   T6642] RIP: 0010:usercopy_abort+0x6c/0x80
+[  922.218783] [   T6642] Code: fa 91 51 48 c7 c2 c0 d4 fa 91 41 52 48 c7 c7 40 d5 fa 91 48 0f 45 d6 48 c7 c6 00 d5 fa 91 48 89 c1 49 0f 45 f3 e8 84 aa 6b ff <0f> 0b 49 c7 
+c1 c0 d3 fa 91 4d 89 ca 4d 89 c8 eb a8 0f 1f 00 90 90
+[  922.218925] [   T6642] RSP: 0018:ffffc90001887820 EFLAGS: 00010246
+[  922.218983] [   T6642] RAX: 0000000000000079 RBX: 0000000000000051 RCX: 0000000000000000
+[  922.219046] [   T6642] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  922.219108] [   T6642] RBP: ffffc90001887838 R08: 0000000000000000 R09: 0000000000000000
+[  922.219201] [   T6642] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000003f
+[  922.219261] [   T6642] R13: ffff88801f579280 R14: 0000000000000001 R15: ffffea0000163340
+[  922.219323] [   T6642] FS:  0000000000000000(0000) GS:ffff8881466e8000(0000) knlGS:0000000000000000
+[  922.219415] [   T6642] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  922.219469] [   T6642] CR2: 000075a216d19bb8 CR3: 000000000f5f6004 CR4: 00000000000726f0
+[  922.219560] [   T6642] Call Trace:
+[  922.219591] [   T6642]  <TASK>
+[  922.219624] [   T6642]  __check_heap_object+0xe3/0x120
+[  922.221090] [   T6642]  __check_object_size+0x4dc/0x6d0
+[  922.222547] [   T6642]  smbd_recv+0x77f/0xfe0 [cifs]
+[  922.224416] [   T6642]  ? __pfx_smbd_recv+0x10/0x10 [cifs]
+[  922.226195] [   T6642]  ? __kasan_check_write+0x14/0x30
+[  922.227722] [   T6642]  ? _raw_spin_lock+0x81/0xf0
+[  922.229190] [   T6642]  ? __pfx__raw_spin_lock+0x10/0x10
+[  922.230699] [   T6642]  ? sched_clock_noinstr+0x9/0x10
+[  922.232248] [   T6642]  cifs_readv_from_socket+0x276/0x8f0 [cifs]
+[  922.234149] [   T6642]  ? __pfx_cifs_readv_from_socket+0x10/0x10 [cifs]
+[  922.236222] [   T6642]  ? mempool_alloc_slab+0x15/0x20
+[  922.237705] [   T6642]  cifs_read_from_socket+0xcd/0x120 [cifs]
+[  922.239559] [   T6642]  ? __pfx_cifs_read_from_socket+0x10/0x10 [cifs]
+[  922.241403] [   T6642]  ? __pfx_mempool_alloc_noprof+0x10/0x10
+[  922.242827] [   T6642]  ? __kasan_check_write+0x14/0x30
+[  922.244141] [   T6642]  ? cifs_small_buf_get+0x62/0x90 [cifs]
+[  922.245500] [   T6642]  ? allocate_buffers+0x216/0x390 [cifs]
+[  922.246810] [   T6642]  cifs_demultiplex_thread+0x7e9/0x2d50 [cifs]
+[  922.248150] [   T6642]  ? _raw_spin_lock_irqsave+0x95/0x100
+[  922.249143] [   T6642]  ? __pfx_cifs_demultiplex_thread+0x10/0x10 [cifs]
+[  922.250163] [   T6642]  ? __pfx___schedule+0x10/0x10
+[  922.250977] [   T6642]  ? _raw_spin_lock_irqsave+0x95/0x100
+[  922.251715] [   T6642]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  922.252415] [   T6642]  ? __pfx_try_to_wake_up+0x10/0x10
+[  922.253094] [   T6642]  ? __kasan_check_read+0x11/0x20
+[  922.253766] [   T6642]  ? __kthread_parkme+0xa0/0x190
+[  922.254344] [   T6642]  ? __pfx_cifs_demultiplex_thread+0x10/0x10 [cifs]
+[  922.255073] [   T6642]  kthread+0x396/0x830
+[  922.255584] [   T6642]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+[  922.256070] [   T6642]  ? __pfx_kthread+0x10/0x10
+[  922.256568] [   T6642]  ? __kasan_check_write+0x14/0x30
+[  922.257047] [   T6642]  ? recalc_sigpending+0x180/0x210
+[  922.257535] [   T6642]  ? _raw_spin_unlock_irq+0xe/0x50
+[  922.258015] [   T6642]  ? calculate_sigpending+0x84/0xb0
+[  922.258509] [   T6642]  ? __pfx_kthread+0x10/0x10
+[  922.258976] [   T6642]  ret_from_fork+0x2b8/0x3b0
+[  922.259377] [   T6642]  ? __pfx_kthread+0x10/0x10
+[  922.259757] [   T6642]  ret_from_fork_asm+0x1a/0x30
+[  922.260133] [   T6642]  </TASK>
+[  922.260514] [   T6642] Modules linked in: cifs(OE) ccm cmac nls_utf8 cifs_arc4 nls_ucs2_utils rdma_cm iw_cm ib_cm cifs_md4 netfs siw(OE) ib_uverbs ib_core softdog vboxsf 
+vboxguest intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_class intel_pmc_ssram_telemetry intel_vsec polyval_clmulni 
+ghash_clmulni_intel sha1_ssse3 aesni_intel rapl i2c_piix4 i2c_smbus input_leds joydev mac_hid sunrpc binfmt_misc kvm_intel kvm irqbypass sch_fq_codel efi_pstore nfnetlink 
+vsock_loopback vmw_vsock_virtio_transport_common vmw_vsock_vmci_transport vsock vmw_vmci dmi_sysfs ip_tables x_tables autofs4 hid_generic vboxvideo drm_vram_helper usbhid 
+drm_ttm_helper vga16fb hid vgastate ahci ttm libahci video pata_acpi psmouse serio_raw wmi [last unloaded: cifs(OE)]
+
+
+Reverting it fixes it again.
+
+metze
 
