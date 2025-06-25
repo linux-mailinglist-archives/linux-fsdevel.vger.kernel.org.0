@@ -1,183 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-52916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CEEAE86F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:47:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E506AE8715
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AB207A3587
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 14:45:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51379164DCF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 14:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3232135A1;
-	Wed, 25 Jun 2025 14:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC02265CDD;
+	Wed, 25 Jun 2025 14:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ME25VdEp"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0DjZmKYp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lGCr9ha6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0B51B6D08
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 14:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0272748D;
+	Wed, 25 Jun 2025 14:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750862815; cv=none; b=UhXmFhJNka61l7xfQVfc4GMw8CtqLITq/KsUdFws3fe0gP6BtvTsSa5WKMbvn9m6D/R9COpKnOH1fMyFhkH4kajvSMi5DxtnJDDRX3uqCpROQMkZN14nUcEcqa4OiGqVDsQWdNCzNU88Lhzu+3OUqEPfMtC2g1bZ7+0SEbgChdE=
+	t=1750863038; cv=none; b=YUzzfSY7DCpfoQHlK1dS/GP5/j1R2hLX9XOIxFxB+E3NIhHqCxolnTV3NwOmpTN5k9JRIeSpr8B+ELurjMe6RbqVHnB9ISqRkkXIgpqOuTYmuRglxunHJtRHJLpXXxhNRNatlg/JhMTqe6T7Kfh0Qr/i2aw0SLMCnRc9K++tpIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750862815; c=relaxed/simple;
-	bh=9FUYabknNcurofwj4UCGhEeyGm1AsejGZaSQt7H1/es=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=p/8UyZq/eJnEc1MN5MR44+vgpAvTBDEfUyndn6MVauVnbCKo1USNkPuVcmGWmGI9FwrJJZA0rgiAVjIZOgKWktosxdWVDdsKc88sRXTVU9/D+D6iQ37jvIjAE2ivf2PM5Sk1FZqIC63zU7EheDI8Lux31SrVSvnANKXaVPi4gIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ME25VdEp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750862812;
+	s=arc-20240116; t=1750863038; c=relaxed/simple;
+	bh=i3Y+NX2yIkTE6if39QTvyYngYQbwBEOT+RphBGvC6XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UjSgZ4eoC9pFglMsYa55yXbjpaIoT0/9SaXBzskxMzUehz/oyI0f5dBkDX9jiGlyeKvTKkcspJuA6oSUJxywTp/Pi3VmZE5VxSR8BYcQNqp585zRTUr7tVO1xT359xAiTZHQpQfwk7JmGVnDlncrHE+zFoSwaqH2KP6BuPdsXOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0DjZmKYp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lGCr9ha6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 25 Jun 2025 16:50:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750863033;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uPXp9ejXM0towCU3Aodofw9cLB8p+LJAxhRXRbwRUFk=;
-	b=ME25VdEpmn1S2oMVfvitW4sFm1UJwWAE4tNTIUS94vZ2sAlld4RemgnPVGdstXJ4b/FJg0
-	9sSaYaoV/ICQAJYVMFkQ3HDEpxWgqmhrcJHZ6R9+Uk3E3tHguh/YAqSObAJg1MqZhLGC+T
-	GqgKRkMSm9kQiAR5c9yeFG5bcDdf+ms=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-443-tYk38OYFNWi0LQFBpUAHSA-1; Wed,
- 25 Jun 2025 10:46:46 -0400
-X-MC-Unique: tYk38OYFNWi0LQFBpUAHSA-1
-X-Mimecast-MFC-AGG-ID: tYk38OYFNWi0LQFBpUAHSA_1750862805
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3709F180034E;
-	Wed, 25 Jun 2025 14:46:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2790E30001A1;
-	Wed, 25 Jun 2025 14:46:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1372501.1750858644@warthog.procyon.org.uk>
-References: <1372501.1750858644@warthog.procyon.org.uk>
-To: Stefan Metzmacher <metze@samba.org>,
-    Steve French <stfrench@microsoft.com>
-Cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
-    linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] cifs: Fix the smbd_request and smbd_reponse slabs to allow usercopy
+	bh=CcrexWB9KD0jruJMQXOBWyR3l7NzZZewWuOS/rt3/UU=;
+	b=0DjZmKYpIwp0ExsYEKau8R+3zmOtOcZBCibe9pMfiHeuqAsCorqShFLiVgKEAQIANhZL95
+	S3tQKYew/fBAMo0X0UtCigIk0XCZ3c0t/XYOmS3ONZeTdxL3WRZrLD/ShaynunN1yy9qJv
+	Zq/s2QXDELsJO5681eYfywJKm58F4j2rSlmmLy6QP8Bqb7pCQLdSuplWoGmNKrpaeF3Tkd
+	Ldfa7lGvNR2dnOAruQWe78UGAXC9WrK8+J6I6uAXtqO7jb8BG6C1RPqNAHt3YaEyXT8o5D
+	aOWUrKtqXnQK0Z4OPpUGm41iD/BkJKopdW8cu2zosBZUlPFRgGrEAn8Xx5IWiQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750863033;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CcrexWB9KD0jruJMQXOBWyR3l7NzZZewWuOS/rt3/UU=;
+	b=lGCr9ha6d3/TwagN6mRuS4aWZewQQg87Fd4sj82L6WYJUZrCLh57SurwuQmTkkgIcxKMxV
+	6ED+k6skl0j/V4Bg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+Message-ID: <20250625145031.GQ4Bnc4K@linutronix.de>
+References: <20250527090836.1290532-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1382991.1750862802.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Jun 2025 15:46:42 +0100
-Message-ID: <1382992.1750862802@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250527090836.1290532-1-namcao@linutronix.de>
 
-    =
+On 2025-05-27 11:08:36 [+0200], Nam Cao wrote:
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1867,19 +1704,18 @@ static int ep_send_events(struct eventpoll *ep,
+>  	init_poll_funcptr(&pt, NULL);
+>  
+>  	mutex_lock(&ep->mtx);
+> -	ep_start_scan(ep, &txlist);
+>  
+> -	/*
+> -	 * We can loop without lock because we are passed a task private list.
+> -	 * Items cannot vanish during the loop we are holding ep->mtx.
+> -	 */
+> -	list_for_each_entry_safe(epi, tmp, &txlist, rdllink) {
+> +	while (res < maxevents) {
+>  		struct wakeup_source *ws;
+> +		struct llist_node *n;
+>  		__poll_t revents;
+>  
+> -		if (res >= maxevents)
+> +		n = llist_del_first(&ep->rdllist);
+> +		if (!n)
+>  			break;
+>  
+> +		epi = llist_entry(n, struct epitem, rdllink);
+> +
+>  		/*
+>  		 * Activate ep->ws before deactivating epi->ws to prevent
+>  		 * triggering auto-suspend here (in case we reactive epi->ws
+> @@ -1896,21 +1732,30 @@ static int ep_send_events(struct eventpoll *ep,
+>  			__pm_relax(ws);
+>  		}
+>  
+> -		list_del_init(&epi->rdllink);
+> -
+>  		/*
+>  		 * If the event mask intersect the caller-requested one,
+>  		 * deliver the event to userspace. Again, we are holding ep->mtx,
+>  		 * so no operations coming from userspace can change the item.
+>  		 */
+>  		revents = ep_item_poll(epi, &pt, 1);
+> -		if (!revents)
+> +		if (!revents) {
+> +			init_llist_node(n);
+> +
+> +			/*
+> +			 * Just in case epi becomes ready after ep_item_poll() above, but before
+> +			 * init_llist_node(). Make sure to add it to the ready list, otherwise an
+> +			 * event may be lost.
+> +			 */
 
-The handling of received data in the smbdirect client code involves using
-copy_to_iter() to copy data from the smbd_reponse struct's packet trailer
-to a folioq buffer provided by netfslib that encapsulates a chunk of
-pagecache.
+So why not llist_del_first_init() at the top? Wouldn't this avoid the
+add below? 
 
-If, however, CONFIG_HARDENED_USERCOPY=3Dy, this will result in the checks
-then performed in copy_to_iter() oopsing with something like the following=
-:
+> +			if (unlikely(ep_item_poll(epi, &pt, 1))) {
+> +				ep_pm_stay_awake(epi);
+> +				epitem_ready(epi);
+> +			}
+>  			continue;
+> +		}
+>  
+>  		events = epoll_put_uevent(revents, epi->event.data, events);
+>  		if (!events) {
+> -			list_add(&epi->rdllink, &txlist);
+> -			ep_pm_stay_awake(epi);
+> +			llist_add(&epi->rdllink, &ep->rdllist);
 
- CIFS: Attempting to mount //172.31.9.1/test
- CIFS: VFS: RDMA transport established
- usercopy: Kernel memory exposure attempt detected from SLUB object 'smbd_=
-response_0000000091e24ea1' (offset 81, size 63)!
- ------------[ cut here ]------------
- kernel BUG at mm/usercopy.c:102!
- ...
- RIP: 0010:usercopy_abort+0x6c/0x80
- ...
- Call Trace:
-  <TASK>
-  __check_heap_object+0xe3/0x120
-  __check_object_size+0x4dc/0x6d0
-  smbd_recv+0x77f/0xfe0 [cifs]
-  cifs_readv_from_socket+0x276/0x8f0 [cifs]
-  cifs_read_from_socket+0xcd/0x120 [cifs]
-  cifs_demultiplex_thread+0x7e9/0x2d50 [cifs]
-  kthread+0x396/0x830
-  ret_from_fork+0x2b8/0x3b0
-  ret_from_fork_asm+0x1a/0x30
+That epitem_ready() above and this llist_add() add epi back where it was
+retrieved from. Wouldn't it loop in this case?
 
-The problem is that the smbd_response slab's packet field isn't marked as
-being permitted for usercopy.
+I think you can avoid the add above and here adding it to txlist would
+avoid the loop. (It returns NULL if the copy-to-user failed so I am not
+sure why another retry will change something but the old code did it,
+too so).
 
-Fix this by passing parameters to kmem_slab_create() to indicate that
-copy_to_iter() is permitted from the packet region of the smbd_response
-slab objects, less the header space.
+>  			if (!res)
+>  				res = -EFAULT;
+>  			break;
 
-Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-Reported-by: Stefan Metzmacher <metze@samba.org>
-Link: https://lore.kernel.org/r/acb7f612-df26-4e2a-a35d-7cd040f513e1@samba=
-.org/
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <stfrench@microsoft.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/smbdirect.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+One note: The old code did "list_add() + ep_pm_stay_awake()". Now you do
+"ep_pm_stay_awake() + epitem_ready()". epitem_ready() adds the item
+conditionally to the list so you may do ep_pm_stay_awake() without
+adding it to the list because it already is. Looking through
+ep_pm_stay_awake() it shouldn't do any harm except incrementing a
+counter again.
 
-diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-index ef6bf8d6808d..f9773cc0d562 100644
---- a/fs/smb/client/smbdirect.c
-+++ b/fs/smb/client/smbdirect.c
-@@ -1475,6 +1475,9 @@ static int allocate_caches_and_workqueue(struct smbd=
-_connection *info)
- 	char name[MAX_NAME_LEN];
- 	int rc;
- =
-
-+	if (WARN_ON_ONCE(sp->max_recv_size < sizeof(struct smbdirect_data_transf=
-er)))
-+		return -ENOMEM;
-+
- 	scnprintf(name, MAX_NAME_LEN, "smbd_request_%p", info);
- 	info->request_cache =3D
- 		kmem_cache_create(
-@@ -1492,12 +1495,17 @@ static int allocate_caches_and_workqueue(struct sm=
-bd_connection *info)
- 		goto out1;
- =
-
- 	scnprintf(name, MAX_NAME_LEN, "smbd_response_%p", info);
-+
-+	struct kmem_cache_args response_args =3D {
-+		.align		=3D __alignof__(struct smbd_response),
-+		.useroffset	=3D (offsetof(struct smbd_response, packet) +
-+				   sizeof(struct smbdirect_data_transfer)),
-+		.usersize	=3D sp->max_recv_size - sizeof(struct smbdirect_data_transfer=
-),
-+	};
- 	info->response_cache =3D
--		kmem_cache_create(
--			name,
--			sizeof(struct smbd_response) +
--				sp->max_recv_size,
--			0, SLAB_HWCACHE_ALIGN, NULL);
-+		kmem_cache_create(name,
-+				  sizeof(struct smbd_response) + sp->max_recv_size,
-+				  &response_args, SLAB_HWCACHE_ALIGN);
- 	if (!info->response_cache)
- 		goto out2;
- =
-
+Sebastian
 
