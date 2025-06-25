@@ -1,140 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-52957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B381DAE8BD0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 19:55:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DFBAE8BD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 19:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFC35A6CFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 17:55:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8E01BC58C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 17:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA291DA60F;
-	Wed, 25 Jun 2025 17:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEF02D5C61;
+	Wed, 25 Jun 2025 17:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihutSd9k"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H6sb1Rau"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BFA2D4B66;
-	Wed, 25 Jun 2025 17:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F562D4B66
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 17:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750874145; cv=none; b=PuYBuI15kSSGTO92McPudE9+t717F6oNh0Hr7z6y/Zjgk67P79elXLDIO/cMq0SuToLcQRAUcRj4eZqQA7X1s4Z+/UuOB9YIFuHlPbcGmOWJ8LgiodIPc9rpoQtFP8gpN4J2KskiuzwPau5R3/7RgB8SswQSkknM9xnkMOWq1D8=
+	t=1750874149; cv=none; b=q2WYtEkjtnd2eRoMDx/7oYRfw68KBWwuaxtgdYe00AMqlFsNRRkvvQZxy0usnWmq1Ux/a+aguoGCdjeGV3QaBvadBO8wUq110if/bEUWle6DbEiBCwZzQojZj1Z82CsVs4mH4FpETkdx/5myf25xBi8GwmUiq2+BlSCO1Ell8VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750874145; c=relaxed/simple;
-	bh=3Ps2LWxr0Qj/WHYdtt5+dgVAKiRCKMXB0CUvldjUUeo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o2OnL2LFCafVkAXTH0aYy3xSMzcyP6jhxAk+FZ7OtVCXCRoao7ffvB+Brr92hb+TV3/g3dxh7ANqblB0QwaQ8VwlPfqNSMbOG/nhOSNcvZyOogUmrCxguYsUuP3qiYl6GfGhVZ7P/hHBduymJd9ZfLuxrvdWO43vM8r1w6pRGW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihutSd9k; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-adb5cb6d8f1so26669466b.3;
-        Wed, 25 Jun 2025 10:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750874142; x=1751478942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AtugL7WxHa5us9MWHTT0doGfkNfwxNhIZaQAdtPaj2A=;
-        b=ihutSd9kfgQSXwMaxq1BmDWQ3WkmMvgqfjv4/Z8YgFm7s8+k9x2BnxetT+kSkPvPP+
-         HZ9FO0VAsq1eKwal2bWW/+xSpEZXwdIqOKO/vZgPygDpuRkyzVpLepFeg14IbgA8C1NB
-         u6Z7WXju0C3IjxDbAQnd7cH31LuAVw67qVM56eYwZfi1vzVYO2D5XbaYDwWXoLmh94ws
-         AiVSv/0PY/+i5Qi9HQgtv6tAS/d0YR589fpFaIIzlIOK2NMoE4ac73Go9ChiW6RwRu2F
-         Qp9R6dmhthA3agyJuawig6y6gMM6gVmwq7Tb4qHStl/EEJ+dUEG/tEAAPZMBwZrQN52q
-         JykQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750874142; x=1751478942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AtugL7WxHa5us9MWHTT0doGfkNfwxNhIZaQAdtPaj2A=;
-        b=ldOV/DI5L/8ee5aRnp8mK4EeiofjweQSEkXgKJM/NOByz2RWkVghMs0z3f+g6XAhSA
-         6N8S3k98EvZ1JchzkHNBZAGdsM4yVFjMQK+tJHtrsP75huTUlEL4bh4zag+Vjoc4P/Fi
-         ADQ1JciuI8a3yoaEf7GH96z/gz85ogv5rgGgSTVsc/ztYTgZXQpxlOrA55YyP9gpDjyB
-         sPQ4Y0vZk7k08HgEllwaM4fEnN9hm+IauxrKvIGrOcj5+CY8f4OsRkaxtPiiP0HY1x9b
-         1DkQtdyL7fUHbqco64ty/Ef04a80deFK6GIAgAHDTIdRFc6wAMXRCaasGM6Lr9MXUoTI
-         iGpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCwqtfVeUSoWvWP+uWTqhSXt/KYdErubkLBjNaJX6hTBPbfUWCPx41THCZqp8F9XMlJ5W2rAAoYQbsUISgIA==@vger.kernel.org, AJvYcCXdBOIjTNxHXkR6MXkuj6dPV2JNutbxR48RdhtWaN1oaYKrm/NkX8OpW/LJB+XZsfv96Ku8PkBFB6FncBLY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHa9U6GLLPpVeWpPQYNTsi962+6LYE9fffoo2ym2GujK8m3suu
-	O0bs34rD202OXPwSVHJClitFpOTlr2JeiY6OGy1+V1uSuCwSBOTefhm87U5GoYQWbhNvE6GM0HC
-	23RQF0/SrZSKtepR0PhTkf8ippjxMmJE=
-X-Gm-Gg: ASbGncve/Hp5D1X1hBFHoXiUskNUqb2jx12BJI4cnmmdDBYXVFnmkEq21i13SAT0kew
-	twOoeir1ZmVdzE87Yz7Urm/vvj4mWT6WL1R7ZTUivLdor3m3gFIWOgKr4+yGYo4nLCJBVeTJvwe
-	QVGNqCZX6zp42r+xXAn7XxHl7cG4LUjZPEKpzLjnEMwDc=
-X-Google-Smtp-Source: AGHT+IHjRiDEwzCcf3jOrRQWLn2FoDb0IeTm68SM4EDzlbvJaXCP16Apypmy72AFeD+YpnfwOemuGw7lmmo2KO4BnGk=
-X-Received: by 2002:a17:907:a645:b0:ae0:ae4c:6e90 with SMTP id
- a640c23a62f3a-ae0bea6ad45mr387568066b.29.1750874141420; Wed, 25 Jun 2025
- 10:55:41 -0700 (PDT)
+	s=arc-20240116; t=1750874149; c=relaxed/simple;
+	bh=aCS4w1p/m9vmvmXRKmRbwkoccBqVIla1N5bIJ8vNO48=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=awKShzASFLFWQRiHvJRUcwbVC4+TilUtwIr9BmP/aDy3gAAy0gUKvYBcb/lqjSqx7pxJGEF50rQ37cmXiYif/kQ/v2RZbNQUKMdS//2pEGQnqgjQ9NLw+HVdeXNfTT5sXF0khStc+g0SnNwKUtUUxggLMLK1iaGu6WvzwP3KqaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H6sb1Rau; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750874145;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RUOylqOVWor4uhe+5G+Td0bk7o0Xqga9derNiT+GMEo=;
+	b=H6sb1Rauef6134B+XTRdNbQCyQIC8MU4LVZWrf6hKoRCzjaYAq30bR4vTr5Yzzf4uCs2gk
+	s1wqsqP5kbCr6V2L+UgvG9d4448IaMgQLoGi6A9sOz7ls0s9Q5ooY4LoWtoDFS8kyzrzHN
+	M3TQDWhxA9yObvUwum07H85FHaudEXw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-508-tarC-zOmOh6BfV6hTK0Rkw-1; Wed,
+ 25 Jun 2025 13:55:44 -0400
+X-MC-Unique: tarC-zOmOh6BfV6hTK0Rkw-1
+X-Mimecast-MFC-AGG-ID: tarC-zOmOh6BfV6hTK0Rkw_1750874141
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A637D180047F;
+	Wed, 25 Jun 2025 17:55:40 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A4A8A19560A3;
+	Wed, 25 Jun 2025 17:55:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <658c6f4f-468b-4233-b49a-4c39a7ab03ab@samba.org>
+References: <658c6f4f-468b-4233-b49a-4c39a7ab03ab@samba.org> <20250625164213.1408754-1-dhowells@redhat.com> <20250625164213.1408754-13-dhowells@redhat.com>
+To: Stefan Metzmacher <metze@samba.org>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+    netfs@lists.linux.dev, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    Steve French <stfrench@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v3 12/16] cifs: Fix reading into an ITER_FOLIOQ from the smbdirect code
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624230636.3233059-1-neil@brown.name> <20250624230636.3233059-5-neil@brown.name>
-In-Reply-To: <20250624230636.3233059-5-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 25 Jun 2025 19:55:30 +0200
-X-Gm-Features: Ac12FXxA7L0xBfRWOkeP-ScYDjcbPAOTOaBIsXtY8-fdGDbFzGluO68_e1B0ye8
-Message-ID: <CAOQ4uxg5EQ+Zt_RLXv-f5DuJONFzrL=9-z1tg4rfL12c-u7uJw@mail.gmail.com>
-Subject: Re: [PATCH 04/12] ovl: narrow locking in ovl_create_upper()
-To: NeilBrown <neil@brown.name>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1422740.1750874135.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Wed, 25 Jun 2025 18:55:35 +0100
+Message-ID: <1422741.1750874135@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Jun 25, 2025 at 1:07=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
->
-> Drop the directory lock immediately after the ovl_create_real() call and
-> take a separate lock later for cleanup in ovl_cleanup_unlocked() - if
-> needed.
->
-> This makes way for future changes where locks are taken on individual
-> dentries rather than the whole directory.
->
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/overlayfs/dir.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index a51a3dc02bf5..2d67704d641e 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -326,9 +326,10 @@ static int ovl_create_upper(struct dentry *dentry, s=
-truct inode *inode,
->                                     ovl_lookup_upper(ofs, dentry->d_name.=
-name,
->                                                      upperdir, dentry->d_=
-name.len),
->                                     attr);
-> +       inode_unlock(udir);
->         err =3D PTR_ERR(newdentry);
->         if (IS_ERR(newdentry))
-> -               goto out_unlock;
-> +               goto out;
->
->         if (ovl_type_merge(dentry->d_parent) && d_is_dir(newdentry) &&
->             !ovl_allow_offline_changes(ofs)) {
-> @@ -340,14 +341,13 @@ static int ovl_create_upper(struct dentry *dentry, =
-struct inode *inode,
+Stefan Metzmacher <metze@samba.org> wrote:
 
->        ovl_dir_modified(dentry->d_parent, false);
+> >   read_rfc1002_done:
+> > +		/* SMBDirect will read it all or nothing */
+> > +		msg->msg_iter.count =3D 0;
+>
+> I think we should be remove this.
+> =
 
-inside ovl_dir_modified() =3D>ovl_dir_version_inc() there is:
-   WARN_ON(!inode_is_locked(inode));
+> And I think this patch should come after the
+> CONFIG_HARDENED_USERCOPY change otherwise a bisect will trigger the prob=
+lem.
 
-so why is this WARN_ON not triggered by this change?
-either there are more changes that fix it later,
-or your tests did not cover this (seems unlikely)
-or you did not look in dmesg and overlay fstests do not check for it?
-some other explanation?
+Okay, done.  I've attached the revised version here.  I've also pushed it =
+to
+my git branch and switched patches 12 & 13 there.
 
-Thanks,
-Amir.
+David
+---
+cifs: Fix reading into an ITER_FOLIOQ from the smbdirect code
+
+When performing a file read from RDMA, smbd_recv() prints an "Invalid msg
+type 4" error and fails the I/O.  This is due to the switch-statement ther=
+e
+not handling the ITER_FOLIOQ handed down from netfslib.
+
+Fix this by collapsing smbd_recv_buf() and smbd_recv_page() into
+smbd_recv() and just using copy_to_iter() instead of memcpy().  This
+future-proofs the function too, in case more ITER_* types are added.
+
+Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+Reported-by: Stefan Metzmacher <metze@samba.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <stfrench@microsoft.com>
+cc: Tom Talpey <tom@talpey.com>
+cc: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/client/smbdirect.c |  112 ++++++----------------------------------=
+------
+ 1 file changed, 17 insertions(+), 95 deletions(-)
+
+diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
+index 0a9fd6c399f6..754e94a0e07f 100644
+--- a/fs/smb/client/smbdirect.c
++++ b/fs/smb/client/smbdirect.c
+@@ -1778,35 +1778,39 @@ struct smbd_connection *smbd_get_connection(
+ }
+ =
+
+ /*
+- * Receive data from receive reassembly queue
++ * Receive data from the transport's receive reassembly queue
+  * All the incoming data packets are placed in reassembly queue
+- * buf: the buffer to read data into
++ * iter: the buffer to read data into
+  * size: the length of data to read
+  * return value: actual data read
+- * Note: this implementation copies the data from reassebmly queue to rec=
+eive
++ *
++ * Note: this implementation copies the data from reassembly queue to rec=
+eive
+  * buffers used by upper layer. This is not the optimal code path. A bett=
+er way
+  * to do it is to not have upper layer allocate its receive buffers but r=
+ather
+  * borrow the buffer from reassembly queue, and return it after data is
+  * consumed. But this will require more changes to upper layer code, and =
+also
+  * need to consider packet boundaries while they still being reassembled.
+  */
+-static int smbd_recv_buf(struct smbd_connection *info, char *buf,
+-		unsigned int size)
++int smbd_recv(struct smbd_connection *info, struct msghdr *msg)
+ {
+ 	struct smbdirect_socket *sc =3D &info->socket;
+ 	struct smbd_response *response;
+ 	struct smbdirect_data_transfer *data_transfer;
++	size_t size =3D iov_iter_count(&msg->msg_iter);
+ 	int to_copy, to_read, data_read, offset;
+ 	u32 data_length, remaining_data_length, data_offset;
+ 	int rc;
+ =
+
++	if (WARN_ON_ONCE(iov_iter_rw(&msg->msg_iter) =3D=3D WRITE))
++		return -EINVAL; /* It's a bug in upper layer to get there */
++
+ again:
+ 	/*
+ 	 * No need to hold the reassembly queue lock all the time as we are
+ 	 * the only one reading from the front of the queue. The transport
+ 	 * may add more entries to the back of the queue at the same time
+ 	 */
+-	log_read(INFO, "size=3D%d info->reassembly_data_length=3D%d\n", size,
++	log_read(INFO, "size=3D%zd info->reassembly_data_length=3D%d\n", size,
+ 		info->reassembly_data_length);
+ 	if (info->reassembly_data_length >=3D size) {
+ 		int queue_length;
+@@ -1844,7 +1848,10 @@ static int smbd_recv_buf(struct smbd_connection *in=
+fo, char *buf,
+ 			if (response->first_segment && size =3D=3D 4) {
+ 				unsigned int rfc1002_len =3D
+ 					data_length + remaining_data_length;
+-				*((__be32 *)buf) =3D cpu_to_be32(rfc1002_len);
++				__be32 rfc1002_hdr =3D cpu_to_be32(rfc1002_len);
++				if (copy_to_iter(&rfc1002_hdr, sizeof(rfc1002_hdr),
++						 &msg->msg_iter) !=3D sizeof(rfc1002_hdr))
++					return -EFAULT;
+ 				data_read =3D 4;
+ 				response->first_segment =3D false;
+ 				log_read(INFO, "returning rfc1002 length %d\n",
+@@ -1853,10 +1860,9 @@ static int smbd_recv_buf(struct smbd_connection *in=
+fo, char *buf,
+ 			}
+ =
+
+ 			to_copy =3D min_t(int, data_length - offset, to_read);
+-			memcpy(
+-				buf + data_read,
+-				(char *)data_transfer + data_offset + offset,
+-				to_copy);
++			if (copy_to_iter((char *)data_transfer + data_offset + offset,
++					 to_copy, &msg->msg_iter) !=3D to_copy)
++				return -EFAULT;
+ =
+
+ 			/* move on to the next buffer? */
+ 			if (to_copy =3D=3D data_length - offset) {
+@@ -1921,90 +1927,6 @@ static int smbd_recv_buf(struct smbd_connection *in=
+fo, char *buf,
+ 	goto again;
+ }
+ =
+
+-/*
+- * Receive a page from receive reassembly queue
+- * page: the page to read data into
+- * to_read: the length of data to read
+- * return value: actual data read
+- */
+-static int smbd_recv_page(struct smbd_connection *info,
+-		struct page *page, unsigned int page_offset,
+-		unsigned int to_read)
+-{
+-	struct smbdirect_socket *sc =3D &info->socket;
+-	int ret;
+-	char *to_address;
+-	void *page_address;
+-
+-	/* make sure we have the page ready for read */
+-	ret =3D wait_event_interruptible(
+-		info->wait_reassembly_queue,
+-		info->reassembly_data_length >=3D to_read ||
+-			sc->status !=3D SMBDIRECT_SOCKET_CONNECTED);
+-	if (ret)
+-		return ret;
+-
+-	/* now we can read from reassembly queue and not sleep */
+-	page_address =3D kmap_atomic(page);
+-	to_address =3D (char *) page_address + page_offset;
+-
+-	log_read(INFO, "reading from page=3D%p address=3D%p to_read=3D%d\n",
+-		page, to_address, to_read);
+-
+-	ret =3D smbd_recv_buf(info, to_address, to_read);
+-	kunmap_atomic(page_address);
+-
+-	return ret;
+-}
+-
+-/*
+- * Receive data from transport
+- * msg: a msghdr point to the buffer, can be ITER_KVEC or ITER_BVEC
+- * return: total bytes read, or 0. SMB Direct will not do partial read.
+- */
+-int smbd_recv(struct smbd_connection *info, struct msghdr *msg)
+-{
+-	char *buf;
+-	struct page *page;
+-	unsigned int to_read, page_offset;
+-	int rc;
+-
+-	if (iov_iter_rw(&msg->msg_iter) =3D=3D WRITE) {
+-		/* It's a bug in upper layer to get there */
+-		cifs_dbg(VFS, "Invalid msg iter dir %u\n",
+-			 iov_iter_rw(&msg->msg_iter));
+-		rc =3D -EINVAL;
+-		goto out;
+-	}
+-
+-	switch (iov_iter_type(&msg->msg_iter)) {
+-	case ITER_KVEC:
+-		buf =3D msg->msg_iter.kvec->iov_base;
+-		to_read =3D msg->msg_iter.kvec->iov_len;
+-		rc =3D smbd_recv_buf(info, buf, to_read);
+-		break;
+-
+-	case ITER_BVEC:
+-		page =3D msg->msg_iter.bvec->bv_page;
+-		page_offset =3D msg->msg_iter.bvec->bv_offset;
+-		to_read =3D msg->msg_iter.bvec->bv_len;
+-		rc =3D smbd_recv_page(info, page, page_offset, to_read);
+-		break;
+-
+-	default:
+-		/* It's a bug in upper layer to get there */
+-		cifs_dbg(VFS, "Invalid msg type %d\n",
+-			 iov_iter_type(&msg->msg_iter));
+-		rc =3D -EINVAL;
+-	}
+-
+-out:
+-	/* SMBDirect will read it all or nothing */
+-	if (rc > 0)
+-		msg->msg_iter.count =3D 0;
+-	return rc;
+-}
+-
+ /*
+  * Send data to transport
+  * Each rqst is transported as a SMBDirect payload
+
 
