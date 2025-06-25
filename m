@@ -1,172 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-52887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089DAAE7FB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:40:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12AAAE7FBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609A316678C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:40:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDF8518882B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF0C29B8C7;
-	Wed, 25 Jun 2025 10:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3913029E0EE;
+	Wed, 25 Jun 2025 10:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAXroMdv"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E1OfjUGE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7759A2877F3;
-	Wed, 25 Jun 2025 10:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E451F29B23B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 10:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848016; cv=none; b=Rt5+1ujSdV9nViFHKLlMgkSRJ9xvenQe+mlpe96CiYUhfHgIWowH1A6Zt/NyJKrNcXOforDl4+B8Dv+2OrEbbHu/Xib2gtpJw4chILFal9ukBHsihaH/aXRxfnohWrE3uu757CRiPYYeJVZkbdBlAgOyBDibDRSKC6qEqxBurTA=
+	t=1750848051; cv=none; b=hwRvKGYB8Vud5sqFX1myjl1dr9uB1084L5wAw9AOvas1vX1n5GuMrGHBPRvkVme6dKSQWey5HlbZja7GrFmgHL3P4Al8dUfkTpNkpjLNecuevzHRCdttjgeaF7egQU9CuOmlbk0AXlf/vs0JUgl8fG+ha2iGhTd/zZ2IJqFIWds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848016; c=relaxed/simple;
-	bh=OKEvXRyyAqjIihGc7Qi8sQBVLZRFS746qEJXEGDHAeg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=njDISLTym4lbxuDV9lF5WOtjfD7DgU9J1RgzZGXOwGpL+9sNT221n6kJjnhTTMln4RX3SdDbyO6ZeuGTOj7SaAGzLa+35KvHJwolKAx6uZ3Zhw8zkw3+f+sjG58NXCbvpJ9bOn7EKRYlzdkBDyW58sjg2dH+XJ5aKK9pac/5t+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAXroMdv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF11C4CEEA;
-	Wed, 25 Jun 2025 10:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750848015;
-	bh=OKEvXRyyAqjIihGc7Qi8sQBVLZRFS746qEJXEGDHAeg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ZAXroMdvmmGGFAUiYiebaH2wDRvHnPm0A4nNxQWIy45HkHUsGXUUNGhqwI6Y+8ciL
-	 D/29O8F299La6zjBL21vYqFnZ5QVWBICsLXvDbdlCnT8XDhzuT8/Xz7ZzccEw+1BiK
-	 a2fTIF9EzmiTnSxlp3Dgb72OFizPEuIBwuPSPUfLURnwN3DgpPFxyv3PSnqg4zkq3h
-	 8YwYw9kTx6YFcFpgrktRg6NkDNYYQZOvVMW9PWGJpcyvh+4ve/O2+pGEi9pPpSCalG
-	 wyzgc1pq6gTTPs3F0JMR+H5XyLFWlejcBEa8bfbrsdQOO0b4HoqODAFy1UNcVA4Krr
-	 fytISrX5AI76g==
-Message-ID: <88e4b40b61f0860c28409bd50e3ae5f1d9c0410b.camel@kernel.org>
-Subject: Re: [PATCH] xfs: report a writeback error on a read() call
-From: Jeff Layton <jlayton@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>, Yafang Shao <laoar.shao@gmail.com>
-Cc: david@fromorbit.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, yc1082463@gmail.com
-Date: Wed, 25 Jun 2025 06:40:07 -0400
-In-Reply-To: <aFuezjrRG4L5dumV@infradead.org>
-References: <aFqyyUk9lO5mSguL@infradead.org>
-	 <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
-	 <aFuezjrRG4L5dumV@infradead.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1750848051; c=relaxed/simple;
+	bh=kdRywbgWT5zbIjE0V4UnI7MGY64eaZ1GFQ7MxZL739g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bu72+6MGv4JD4/Ed7f5DKVYRXfPhNhqmIgoaV9XPHY7E8vZFxsZ68W8JxgziHJkZtT4jeG7dOL0GHJDwwkGM1IlNa5fEAvSvD1pSIoR78n9QKo1Bz5HealHLl9yIKu0GAH6Qu+CO7qUl62vDLSQQo3c3FrZwMDU9/mbdTjXUhIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E1OfjUGE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750848048;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7h/KHM+Z1ETmgfw7Ga0CGtwnfJFvbJCAzq2poHb47zk=;
+	b=E1OfjUGE/bASkxoIcT24gx9xi4xowDN53yti9azMKhvg/7FTh9vKrB745m849iTQsiPSIK
+	s4v2Sbo4VKB4TuTL0E6L29to0WPuyozoWaG1SbOtU5AhYQtAVHBLv8O6Ic3C2+yx76zVpO
+	4rhi0LXOIBWSetuflfJ8wpiUk05Y5G4=
+Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com
+ [209.85.217.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-637-D0IvX1wfNVOsyIz2hBSWiA-1; Wed, 25 Jun 2025 06:40:45 -0400
+X-MC-Unique: D0IvX1wfNVOsyIz2hBSWiA-1
+X-Mimecast-MFC-AGG-ID: D0IvX1wfNVOsyIz2hBSWiA_1750848045
+Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-4e7f9ad4db5so5141160137.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 03:40:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750848045; x=1751452845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7h/KHM+Z1ETmgfw7Ga0CGtwnfJFvbJCAzq2poHb47zk=;
+        b=D2KEGPcbsWqIKbv4mzg6Zf+SVuSo4c85aY2+ytVrHdk6oe/jLXaHOe2Dfe0ui/oSBp
+         ktY8ZfEFYb0fXnt1uTp6Xu7tdDW6aG07/3QS/JtkfMGugefRJmNeA3yW2Rv9OTftd7sq
+         +CkwB+Beof0t5rHnqKA4MK/zoU3g4DyDcq0jx5oNadf5wC5icACBd0PvUcohDefuhpOs
+         VZobnYi+wEHFpnodnunbeaFkBrByABEBODrItr/m2lbeZGfrwj1rjBrmJpJ8pIAs9SwI
+         8DOgySvWy9+Qjcd29kjRy7NRWiUTgaXBxMfRJrrbdS7txv8E+T2jmmZOZLrso7qGJgiG
+         pRJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLhu93PQyufO1vj1TGpAXu0MzEwWYsjtI0eXX/WYwoAMxKFlaezivCJHqQZ1jb9Y1jzHXGOMlYnnMTvn0d@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcohMCZrV+FZhCBa9Sih+xlTAWzUMsyXNnQF99+LynMlg2UWEe
+	XukO8K1ji5GYfCea09GKUzUsDsh8J9wPhQUxRrsbjLEJ+o38qvsc+3Ojpj10Zqh2wW7BNnU8vlQ
+	4E8CfSrzW5ZI63iYsaHny52f2PFZEg7JkNY2FZzoqWqVWyxaiaJWOkRJeTWaLqCtFIohuJQVvET
+	97uRB3CVfXckrFmpLjuopLvi8Oyhn/ZWnN1yPEllN0sQ==
+X-Gm-Gg: ASbGncvCzRwya0Eg4uJ3h+BBZByZTo3iQsUdRtwUbVJ63L8NgVAeO8t/42BP662zmW3
+	hBCLK82BWiw3Bq2N2oLxVZ/tEbPDdCp32A+fq+wRyr4OWClFraFnI5gIF/YJgZYSZAiSjDZz8LE
+	pt
+X-Received: by 2002:a05:6102:2927:b0:4ec:c548:e57b with SMTP id ada2fe7eead31-4ecc63b0f4fmr1247640137.0.1750848044935;
+        Wed, 25 Jun 2025 03:40:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7Rrly+INsD2FyLdl36Be/L5V6Eddn3BzuS4sqrDJs6t6pJxfkEkXvuFGZkctU3cnellCkS1CHwmPPaKFihXQ=
+X-Received: by 2002:a05:6102:2927:b0:4ec:c548:e57b with SMTP id
+ ada2fe7eead31-4ecc63b0f4fmr1247636137.0.1750848044685; Wed, 25 Jun 2025
+ 03:40:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250612143443.2848197-1-willy@infradead.org> <20250612143443.2848197-4-willy@infradead.org>
+In-Reply-To: <20250612143443.2848197-4-willy@infradead.org>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Wed, 25 Jun 2025 13:40:33 +0300
+X-Gm-Features: Ac12FXyMPBCBLK4e87Hspuz-o2CzX-UVv_jmEtLCyzergMQSVwUQNGmL3GwfGWY
+Message-ID: <CAO8a2Sjtc9xfBjhe+MGjHwc=9vJP7pB1bwno1mgKpfZgAO1QLg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] direct-io: Use memzero_page()
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Ira Weiny <ira.weiny@intel.com>, Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-06-25 at 00:01 -0700, Christoph Hellwig wrote:
-> On Wed, Jun 25, 2025 at 10:44:57AM +0800, Yafang Shao wrote:
-> > > That's really kernel wide policy and not something magic done by a
-> > > single file system.
-> >=20
-> > XFS already supports an optional policy for handling metadata errors vi=
-a:
-> > /sys/fs/xfs/<disk>/error/metadata/
-> >=20
-> > It would be reasonable to introduce a similar optional policy for data
-> > errors:
-> > /sys/fs/xfs/<disk>/error/data/
-> >=20
-> > This data error policy could allow the filesystem to shut down immediat=
-ely
-> > if corrupted data is detected that might otherwise be exposed to usersp=
-ace.
->=20
-> I fully agree on that part, and would in fact argue for making it the
-> default.
->=20
-> But reporting writeback errors on read just on one file system and with
-> a specific option is really strange.
+Good cleanup.
 
+Reviewed-by: Alex Markuze amarkuze@redhat.com
 
-Another option:
+On Thu, Jun 12, 2025 at 5:36=E2=80=AFPM Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+>
+> memzero_page() is the new name for zero_user().
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/direct-io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> index bbd05f1a2145..111958634def 100644
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -996,7 +996,7 @@ static int do_direct_IO(struct dio *dio, struct dio_s=
+ubmit *sdio,
+>                                         dio_unpin_page(dio, page);
+>                                         goto out;
+>                                 }
+> -                               zero_user(page, from, 1 << blkbits);
+> +                               memzero_page(page, from, 1 << blkbits);
+>                                 sdio->block_in_file++;
+>                                 from +=3D 1 << blkbits;
+>                                 dio->result +=3D 1 << blkbits;
+> --
+> 2.47.2
+>
+>
 
-We could expose this functionality in preadv2() with a new RWF_WBERR
-flag (better names welcome). That way applications could opt-in to
-checking for writeback errors like this. With that, the application is
-at least explicitly saying that it wants this behavior.
---=20
-Jeff Layton <jlayton@kernel.org>
 
