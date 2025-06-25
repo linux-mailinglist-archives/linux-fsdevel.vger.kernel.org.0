@@ -1,137 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-52891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39C7AE7FCE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:42:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D727AE806C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800595A63C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:41:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73D147B0E57
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94352BEFFB;
-	Wed, 25 Jun 2025 10:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A0D2D5C81;
+	Wed, 25 Jun 2025 10:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2U7MUvr"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="qhnEOBWS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0B12BD01A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 10:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F12529E103;
+	Wed, 25 Jun 2025 10:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848101; cv=none; b=swgmrAvJkiP/4s1hwpXiL9BZXb8hIlE00x3TzV2WmeXQGf8kh2dzF4GjM+rveDiBkwcww35Ij/59nJahJgGhYZgGZHCQbenuxypuMIlnKbHk+hTB2jmo6nwjv4EWM4lJwgfdMkqUAVwPqcxlILYN1zUdHwMv8sQFx9jqlx7DrmI=
+	t=1750848801; cv=none; b=YX4Revj3gxpa3VcDwRGtxsNWwoZKE71sEsV5DldOb0COQ/z3Txp5E3zc4TS6GxXrtK01LV9Pz1X144yvP+uF8WA4uAjVxfcQldEuNQHpL7CRaCEaFPx1+wX2O3F2gMnb0N1LWPqyjzIM9Qm9an1bDhLJqQ0G4e8nwRp92vh4qK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848101; c=relaxed/simple;
-	bh=lOruoolLdTMrM1hsoH9Ovds3ZTDlEFaydFSeZp1B4V8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ln7A0SbqV39tK++icZEfNZj9jlgEkCGIQwhFAU1HYMoGgcMzGJOvVNtJozTC3DH+mxUU5c2NhYSUdhIANeQvkYAilxp7/1KwLad/+5NU7hDeRy6x4FMq7w1oukHT0QXIubMFETGdb8G4dsnBAR41Zpe6Q8oAWZV9YEBntUDmlnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2U7MUvr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750848098;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AXzJ6BG9oFnQy0s13phUi78sKWJpBfX2ctrsD+v2g/I=;
-	b=A2U7MUvrI3KIaWQqTzho6cR68uaiCFCjNvk1e/In8g7QRXZjy2zuQMvHgA5fue64PEeBEY
-	887X6B4JWEg8/32ZjPLBngb8ybxaXftbaCecvbJbfswke3Fc0lPTxtaeBDApj5lunJT3/s
-	5VO6ZKoJBuPlgCxGpMbbZC4fQSYLRBI=
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
- [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-346-dNBcPPoeOTieInvd4iRcOA-1; Wed, 25 Jun 2025 06:41:36 -0400
-X-MC-Unique: dNBcPPoeOTieInvd4iRcOA-1
-X-Mimecast-MFC-AGG-ID: dNBcPPoeOTieInvd4iRcOA_1750848096
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-4e81374b168so1245738137.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 03:41:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750848096; x=1751452896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AXzJ6BG9oFnQy0s13phUi78sKWJpBfX2ctrsD+v2g/I=;
-        b=GW9b3rlpmGVf0UbVSES0UndmiFf0p6T9zcsEc6HAckJcVnj/6TQblgxO4wwNkrLEbl
-         c5KEQApa0pLFh2vsKfLYnjJ0KLECWigV7zOGYzPIxDCXR4sC+T80e8bFvW45JBMvuosc
-         a700jK6rpOXPFDLQ74btlXUOjURDZV7HYD0vik4hRE2LhoewsoIQ0lYXsLoVVtDB6LSF
-         70G325B6aaivbvAr9pWnsEXCCVz863EwqhN96N2LgSQCn0ZQNh1CBrktjXEJwDh8/5zt
-         434LKWeeBgnIgQWDTQ+JvYG2Rq7x+KOHFpXfPyqCndkQF4ixlJt15hXbfV3CbNYThjcw
-         aLqg==
-X-Forwarded-Encrypted: i=1; AJvYcCX33pB098nDfq0S3PfhoNg249ucjY8JXKOFxml+yOOD4L1oPDG9xCvPjqbrthYDaRetoP0qFKgjJ03D0bXn@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE7S12DYFTjzXZjhB7TMMVFt/2Ufs6xKWB3VqAIplN8vpzvLcY
-	srNVBgkkEWQl7Bgs4XfA0xN8JIfxNs+o8UyIv5Txc92y/ojbllGMLLjTohveueVYfmNFnxxa7VP
-	S8RbTZMzJW/AnwQAscG35iDJJhAewwyxUsdmqs4ipBhQ1xn2rqLfmcjPFRqYRz18f/dsbJ/82Od
-	ZVfzAxHFm32/lbjk2i5cBTNCfEBZEK5AiKckcGVQBdaQ==
-X-Gm-Gg: ASbGnctImQ4v2p7mELAjyUlT4XFZowXj5vhJdKSONtrdKHP0XsUHhbGlhQ9jwgri20K
-	0cey3G9N3hwUpGUgDQncyU7PAPSS6JzHujAn4nJLmzZs/oXs3rkjlFKi4w9J8PXIaPQ3v1WDvTd
-	zB
-X-Received: by 2002:a05:6102:e0b:b0:4e5:a316:6ee6 with SMTP id ada2fe7eead31-4ecc769c5d5mr977802137.18.1750848096255;
-        Wed, 25 Jun 2025 03:41:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3rRMb8Kv0RHeqhtdNcN4p/j7yM7WdX52zFHAZihqFaG1oWPDvEzBZJHq9Wbj3VxPRs3mj3K9chbZ2rnwyba8=
-X-Received: by 2002:a05:6102:e0b:b0:4e5:a316:6ee6 with SMTP id
- ada2fe7eead31-4ecc769c5d5mr977794137.18.1750848095914; Wed, 25 Jun 2025
- 03:41:35 -0700 (PDT)
+	s=arc-20240116; t=1750848801; c=relaxed/simple;
+	bh=bVTQKiW4WJsF7lVIrAjNgK8DHJH4bRFEnocFDPoC7lw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W8c51B4lEmXjwUvgGp5S5YKZFG/8mtaOQ2pZo+1YrTshL8SXipGX9memul0hfl96XBf2D4GU5y+DMsM6+Zh42ThMWkUdQflC2Z7B9cPloJ+DMIE4Hh8QahqDV8QdVOoxsklMw5zXBd45t/eTxEOR2ptpHQQCt1N250rsL4/rDJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=qhnEOBWS; arc=none smtp.client-ip=203.205.221.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750848487; bh=tgd2pHPm2RnMeqq7Vwih1WR3E04pB2uiTC5jxE+M+kQ=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=qhnEOBWSxtRyXSoZkn6l7HUS44VXx4qEHQPF8kInnWqiU7crYtLTU7BtTVBVBie+z
+	 7H8ybhSTw7teK539iWcDYcaGtb3XIIAU6vvvR4KlnGdgKuzPh5R/U5gul6aSaJX9fe
+	 dRGzvkqYIS1+ZB+YR5wvknIdp7LiSxcPxJ5SH5rU=
+Received: from [172.25.20.158] ([111.202.154.66])
+	by newxmesmtplogicsvrszgpuc5-0.qq.com (NewEsmtp) with SMTP
+	id A7A2CCF1; Wed, 25 Jun 2025 18:41:58 +0800
+X-QQ-mid: xmsmtpt1750848118tykbxfohr
+Message-ID: <tencent_E8315EB273FA16ECA8DD46FDA3FC2A320A09@qq.com>
+X-QQ-XMAILINFO: N2/jAoEINgTTVmeFMsiQejiordXzU686AwuiVeg+WQ4hfHy1G68V9KJ6U8soDk
+	 FjqFfgCWPLze8PgyLk7XU3TyBnoQfb/6XHBeUMmHQrBEmBgnDoi3RLdIL7DFy1Tbc73yQn54bT9d
+	 e8FPcpQMT9NBuMMSNx8DJ/c2ds9Ja9LgEiomZK+KbGDaSgYXcZwkCDF6fI3zu0XkWRiU7oyPz1b4
+	 s1+99sUHA4eDOQpG0p32kSjphMvpHz6fsEm17ecmsTkj5r2l5sIYZ5/GrJYVK6nlRRfGw1V4palu
+	 BKxljpr2g3ZkATbXVN6Lsq92oxwdWEyRNI043fQtWEk0N9eXhdsRX1xz8T7c6IoWd1m06XwwIz3B
+	 hzNhUAy/jwdqsIdYaVvkekGTlZRK/EEUWBL1Chvck7J8MPv2iQ92tNfRoC72L+0kkkbdo6Cn4NyO
+	 jsA6SdPiD4STfr+cAUcUD6hDZSMkasYyQpGswLVN0Cpy3f3AlFWhlj+FEWWjmXAeULfxW3J+lpCQ
+	 v9ssZMsa8xz+JaI46jlkFCYR/vwCC9b/fx/FcX3bSHOEdKqzxCSe8oZQ0hvXrPsa/bxxLsb9h/E5
+	 ap+HjwZX3us+AfQIDtSNaps7EJLOXF/eOBJFsoVV58OX7Ay4Pj1UAtNaWefhruNwV8MJgqjKyQLv
+	 fv0rst6CtxHchFxqL5yfSwW7bHY1W/B3jixOXQx0JTRjZHQjRIEXus7+pS5a1TB4qZOrDJe3Atzp
+	 lK2qjRb0O27krp6uyzhBMCt71AHe0Y99+fT8jxrKe6aMgYUpSWgX4bCMJFbUZFqoUMA9NOPuDYgV
+	 JNYVsqTtnrhHE5C7zy92bEFT9guuboAFnk2cldlPo2tVG/diO3McJd8V0dboAwpu+NpMbb0wiR/v
+	 4lPYdscRlzPfyanf4I7w0nZ+gGbB0mxnWt0yOuTAr9auSf4qV1jB4EEsvxO/ym9FjO32VllWG2+t
+	 KnTXNqOhT0D1Oj+2/IPYgB3xm/FKr2JjU/7Vyy3X+Lwlmvd0XTWw==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-OQ-MSGID: <dedbc70d-36f6-43bb-b6bf-a87103b6bb24@qq.com>
+Date: Wed, 25 Jun 2025 18:41:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612143443.2848197-1-willy@infradead.org> <20250612143443.2848197-6-willy@infradead.org>
-In-Reply-To: <20250612143443.2848197-6-willy@infradead.org>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 25 Jun 2025 13:41:25 +0300
-X-Gm-Features: Ac12FXwFWhOETzcvDHbBzNovjF_5IML_YC5DRczUGY04YVAWJAwP94hRxUpsl0Q
-Message-ID: <CAO8a2Sg5Q7iYTSjR2iD3R+EXHe5O735zp4V=Ur17q8AgkJFCcA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] mm: Remove zero_user()
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	Ira Weiny <ira.weiny@intel.com>, Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Chentaotao <chentao325@qq.com>
+Subject: Re: [PATCH v2 1/5] drm/i915: Use kernel_write() in shmem object
+ create
+To: Matthew Wilcox <willy@infradead.org>,
+ =?UTF-8?B?6ZmI5rab5rabIFRhb3RhbyBDaGVu?= <chentaotao@didiglobal.com>
+Cc: "tytso@mit.edu" <tytso@mit.edu>, "hch@infradead.org" <hch@infradead.org>,
+ "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+ "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+ "tursulin@ursulin.net" <tursulin@ursulin.net>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250624121149.2927-1-chentaotao@didiglobal.com>
+ <20250624121149.2927-2-chentaotao@didiglobal.com>
+ <aFqYq-tLtjZjU0Ko@casper.infradead.org>
+In-Reply-To: <aFqYq-tLtjZjU0Ko@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Good cleanup.
 
-Reviewed-by: Alex Markuze amarkuze@redhat.com
+在 2025/6/24 20:23, Matthew Wilcox 写道:
+> On Tue, Jun 24, 2025 at 12:12:04PM +0000, 陈涛涛 Taotao Chen wrote:
+>> +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+>> @@ -637,8 +637,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
+>>   {
+>>   	struct drm_i915_gem_object *obj;
+>>   	struct file *file;
+>> -	const struct address_space_operations *aops;
+>> -	loff_t pos;
+>> +	loff_t pos = 0;
+>>   	int err;
+> I think 'err' needs to become ssize_t to avoid writes larger than 2GB
+> from being misinterpreted as errors.
 
-On Thu, Jun 12, 2025 at 5:35=E2=80=AFPM Matthew Wilcox (Oracle)
-<willy@infradead.org> wrote:
->
-> All users have now been converted to either memzero_page() or
-> folio_zero_range().
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/highmem.h | 6 ------
->  1 file changed, 6 deletions(-)
->
-> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-> index e48d7f27b0b9..a30526cc53a7 100644
-> --- a/include/linux/highmem.h
-> +++ b/include/linux/highmem.h
-> @@ -292,12 +292,6 @@ static inline void zero_user_segment(struct page *pa=
-ge,
->         zero_user_segments(page, start, end, 0, 0);
->  }
->
-> -static inline void zero_user(struct page *page,
-> -       unsigned start, unsigned size)
-> -{
-> -       zero_user_segments(page, start, start + size, 0, 0);
-> -}
-> -
->  #ifndef __HAVE_ARCH_COPY_USER_HIGHPAGE
->
->  static inline void copy_user_highpage(struct page *to, struct page *from=
-,
-> --
-> 2.47.2
->
->
+Thanks for the great catch! I’ve changed int err; to ssize_t err; as you 
+suggested.
+
+
 
 
