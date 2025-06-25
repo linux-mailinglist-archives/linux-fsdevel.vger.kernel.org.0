@@ -1,342 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-52934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FF3AE8912
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 18:03:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E2BAE8994
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 18:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D31188C4D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9452C161806
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC659264A8E;
-	Wed, 25 Jun 2025 16:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EE42C08A5;
+	Wed, 25 Jun 2025 16:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRPq9UUC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKHS7PKh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F3B1A7264;
-	Wed, 25 Jun 2025 16:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573E026C3B2;
+	Wed, 25 Jun 2025 16:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750867396; cv=none; b=fwWqJfHh4tywOjvTrUDNsXCnV037u3XsZWAFE8uqfMCP21fy1FsSg5c+Hb1V04rb2K1qmsPtzRClLyiLtm0Vh8io9b0tKDyuZ6biAi0VFoAK/I6MS0fvHj6e1EPoJH8vafb/UxPr0UQqESxepXPZ0WfUTgRuZz5YZ25zH03yfWs=
+	t=1750868475; cv=none; b=u61oD7eXk+mOBnPiFr1LgN0h6/5lit3its691PMu3pYXII0up7Ea32vDElAygxVyKy7ETjm2Xrz9AShjm//0emLLKadadODd8V0SdtMHPF0ueXhEgxqLRSnMOCMhHNeieE4QFECEL6DRlPi46ivY4lM3fToMadGVeOayCTcKnAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750867396; c=relaxed/simple;
-	bh=zK99S5UabvsJEec6HtjAXnkXr/EuKTtc9pgk8zMHlzw=;
+	s=arc-20240116; t=1750868475; c=relaxed/simple;
+	bh=XMP6ERBXfxV519EBoe1Y/mZ/m+8At/oi36qL9USyJ5s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLM6Bp3JwKT8V1e3j8z6pSf2T356fI3HdHv8++/c1PzhFAn6uAj1qJwFBrEC85IpDB/xniMUmRc3v0QRbsbMDRDVPlvQ6DHXtrnGu4dJWGjVXjXYWTHKNuPGt8wd1pkJyViRcPoUuLJbJfRnebJ58qG7MxbXtRh+M4j8SgVrseE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRPq9UUC; arc=none smtp.client-ip=209.85.218.43
+	 To:Cc:Content-Type; b=juUUXwyK5WuJs95+f+RURZt6fgvIdnD1LbffjH0czGcTYqinNqBcKewnVIjOoNGOgkf0N97tRt+vnJqyfDFLaTyV4KV4eEXn5na/4Amxr0KULirIAOy1CvNATWgaWx49GXl6VQaRP7wXBN7se9Wtzvx9OYDOOcjY7SHhSmUhg7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKHS7PKh; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so7170266b.2;
-        Wed, 25 Jun 2025 09:03:14 -0700 (PDT)
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fb3bba0730so13928566d6.0;
+        Wed, 25 Jun 2025 09:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750867393; x=1751472193; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750868472; x=1751473272; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lk61li/sZpsssak1WimMF7Ptc4fFLg+kXjcIFqtam0Q=;
-        b=cRPq9UUCuBtyWR//xlHhUNqgwbsO6fwQxs/IHWEt5hXfDoxCOY4twDnEUevx6B/eUC
-         Uxj2QKcvGUlE3aVX6wNJPsQgdXYSy89TS2qpPxS9g2pqLsFLh3mIg5ep5rr8HgfrjDTH
-         0mzCYzQOKm7PuC0uvc2sIy+qSs4AJZ7YZCU6Q90P0dFlxanAXLubnn42+4jfCF2Mv2IU
-         gxoGdxK+LhC3jRJV2mfx5ebN74+ThR2x09DR30dPjmNyMO/Qpr84FNs3r/qIOEGiU4ou
-         a8EXbMod1cy2jPEhCZ8WtBuMHd0kr142Saj4nY8cdaYG7Ym02WoRCV/SlD0xWzbL6Oem
-         ScXQ==
+        bh=9NVslBr1xkJaej9KYSvp2pb98xkmIaEpx8AR8MBWA3Y=;
+        b=KKHS7PKh1Tzi/umPFc5fZ06crDgdRXEIWlhStq7JSGeAVz7/qrt9SLqChBWXHmZ22V
+         keGme5bnlSsc2k5nHggKOmhlEIp7hGAyPHS8U9UqPCKFo0C1ODiTngwRGd1mdTElhksy
+         P7TTHUR1OxKu2FQGjEguHiZTPBpTA0w4/8n/hyDfbUMbCqNHooZ8LoMoXaBqusoQSaMt
+         GvnoVU0W2SIHuUzuBk3MsYve3jPVgtOncq+7NkU4jfsEH/eJ+O7pvWn7+mFGZ5tfxmFA
+         bJXoi7IIpxZAL96EtHA9SFCu2pzcAx0uCEy+MHxlkvCZuAQwLCTIETOw+UlsK2rYiUMX
+         YMvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750867393; x=1751472193;
+        d=1e100.net; s=20230601; t=1750868472; x=1751473272;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lk61li/sZpsssak1WimMF7Ptc4fFLg+kXjcIFqtam0Q=;
-        b=U9+wKdQm4JPQCQ31U9q9Ys7AdntrlKd1yzS/gibHNItCkXZOiUowPl4ltW/mpkW2CV
-         hwFhYzE41R7oQWeXsW2o/COOsGW7/1I6fmZcu6oVROljGfHvmg8sx5x42NylZr8Xg4RN
-         rgzaALjD9ushPcOOl4CHGj6Bf5FTUr4sC/wIChGLqawPECM3fZ7PZEGU6CnBZXhM/p8p
-         7SVDGw5i3/c8Jo0nWcU+8sERSQTNK0KdAP2OZP/Vc2l6kT1ebWytiiYBUxKSjziGRV31
-         BS2bVS7xDXbjcoVEHrDkGUVN+OmXxOY6QqxerS0llK1Xw5xXCAbrRup9ABChAfvRKe8t
-         aPYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5pEUEzmH9txOOl9KMCnRYds8yyD/Ma9pzbx7luNHNvQK7BtgtylvzW7/AIAqaXWY4hqIKLvypwRj075dPQ==@vger.kernel.org, AJvYcCVE/VRXA5m/8TvshG+0WvfIb7nOiJSmEm9+TQxxRaEixw78N1HRvXg7PQvygZkNkaz66BjWtOCSd55OueVq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9S/5nsNayzVh1FNtK7ox8OAJ++OXWZuDzYXXTj0Iul8GLL8SW
-	26yDg5mAidDZxyR2Y9R2FlTyYrXsLYp6y0tQ1bogmlBFwqMe1rP2v7zWFYeHG/TtGtJOqaPP5hu
-	EbdNm6Cc5iqUsTnXIBK6iFcRkTGQdAn7FuykM6/c=
-X-Gm-Gg: ASbGncvZy9il4tqeKnC8KhbsujPaGyVSO95A2gbEHJrSYFDXdOFUP5pd+q4Dlax5/9T
-	8xSOh7yaPWS7mvfWhMk57Kp21AysqCTJuDMkBmKOPQFcOw40hFcO1/oEIJkaeSVDsQKHuaOMj4q
-	ByTX6gBEULS6cALKQTLBubq10x8XfSPJrWis+nV95Bct7ZelCxWbkWqA==
-X-Google-Smtp-Source: AGHT+IFCBSMDaO4N2j6/3P/mdwG4qvmlSLKkW6INbt42brgG7kzgWqF2V16+QL+679S5TzczWmQ2k7LHRrEgdqwbRJc=
-X-Received: by 2002:a17:906:8f03:b0:ad5:430b:9013 with SMTP id
- a640c23a62f3a-ae0beabad4cmr328260166b.42.1750867390334; Wed, 25 Jun 2025
- 09:03:10 -0700 (PDT)
+        bh=9NVslBr1xkJaej9KYSvp2pb98xkmIaEpx8AR8MBWA3Y=;
+        b=Aw6eixF4SVSE3Z2ScabJL/1fPhLCWQicIC4v2RAkO9S5HL7GDYakewRpbqSOtoDkbf
+         8+Ysn1P+1uFsGH/Fh1yzjIDDDz6Wf8JE9+uRR/acyBe95+s/wMHS66tUwqjHUTVXv4Xl
+         iUxBwSU5V2nC+Cq69kHxIxnZe+xwACin4sxnXuY0PBXSG7p9QEXzOVLaq8zypXYfObV4
+         1ghbObD+cw7w4yGKNkXSwVua9VIFhWzGADMm6PMe3qwdMr3EO+0I/4fL7dhMDUyZQ4gc
+         xP6HQHm9As0LwmQ14XS6NJdC24HyOxUP0gf5MqM6mYbwQARFbKic8Fe3cKo12T2QoIKE
+         zjDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUm27OPwp+6fijOIR1K8EHjRl0X1e1CCsbTYxw6fjYUe6jDYH+23BlzHm3yJRpw+tWSZcCpqDAa+ci@vger.kernel.org, AJvYcCVU9vV0Znvp3jzD8lHU4NDKvzGPWqRlUmZTwKi2uOiY1PDc0TbfgJnRXrtVYEg7zpxhV8YGaevSoh2MmHfxdQ==@vger.kernel.org, AJvYcCW+c9Gfhnln1GEFf0QLaqyMaHZsQoWWijer5kSJVEn3Y1whaa+TlxcySFCKtWV6s5ytIAQESL3iJuLSnC8n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1S9/j1HjlBrfGb8FoawmG9PfP8xarrrKi/BrJH0LSrMFHhs6V
+	x4eBRcGcPCW7EgRA4CHezGJHryOeU54XAq1poMTTO2CsXcs6mxSwReRbDsQJrIwMnQlx+xkYTFd
+	Bj0AI2r4tpe2Wb4sKxYjQBby2HRrNKPo=
+X-Gm-Gg: ASbGncv9pfIuTX0082yYkNDONwmhKky098dkZKtC2GChiHSIXEDfzXRJ/H0EaosX3eP
+	U1EnXl5TNf91P8rqe5JMyhEuTmpAmuBsGAgVtNL562jzZ7K3kYBwfTrREl9da0JlFsyYsYWR0H6
+	ky8KHPUSsJqBJcF3qnXHo6whqSJFJ2dYo5BKOF5XbWyg1TfwaajiWhfUNgdwj+HAP2NEYz50//T
+	kjQ
+X-Google-Smtp-Source: AGHT+IF0E2ADWqAWPU392h4IO+FZ/wRsjmuf7c03br6vhyt8kFz6PcUB5E7QjpVnFsCxdOzBZ17XM3vfqbwilSgcRb4=
+X-Received: by 2002:a05:6214:419e:b0:6fa:ad2a:7998 with SMTP id
+ 6a1803df08f44-6fd753a870emr3103946d6.18.1750868472164; Wed, 25 Jun 2025
+ 09:21:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624230636.3233059-1-neil@brown.name> <20250624230636.3233059-3-neil@brown.name>
- <CAOQ4uxjzZGK6fw9=dFiC8kZCUtA7NVQVE_Sa2wdHLZ9ZD7upgA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjzZGK6fw9=dFiC8kZCUtA7NVQVE_Sa2wdHLZ9ZD7upgA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 25 Jun 2025 18:02:57 +0200
-X-Gm-Features: Ac12FXyfKUr2H_RQFLNZrY4-2bcpQvEy381NoOK3oRDIT5SXYmwACl4KVXR2LII
-Message-ID: <CAOQ4uxhCSbsPvnG1h0Bi=80KROtbCBBaB9SgZtpxMDjAVmPoKw@mail.gmail.com>
-Subject: Re: [PATCH 02/12] ovl: Call ovl_create_temp() and ovl_create_index()
- without lock held.
-To: NeilBrown <neil@brown.name>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
+References: <1372501.1750858644@warthog.procyon.org.uk> <1382992.1750862802@warthog.procyon.org.uk>
+ <011ec23b-d151-4ef8-bbe7-ba79e3678ae7@samba.org>
+In-Reply-To: <011ec23b-d151-4ef8-bbe7-ba79e3678ae7@samba.org>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 25 Jun 2025 11:21:00 -0500
+X-Gm-Features: Ac12FXwJI9fijUzybZTm6c-W7y-I5jTYEiHnpSWQL96V5yQo6-_Q8OXO622L3v8
+Message-ID: <CAH2r5mtzPKaiOmwQsaSTRWy1YdWygvVBdOPrhLLGbEfNAWXvEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] cifs: Fix the smbd_request and smbd_reponse slabs to
+ allow usercopy
+To: Stefan Metzmacher <metze@samba.org>
+Cc: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>, 
+	Paulo Alcantara <pc@manguebit.com>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 25, 2025 at 5:44=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
+added to cifs-2.6.git for-next and added RB and tested-by
+
+On Wed, Jun 25, 2025 at 10:55=E2=80=AFAM Stefan Metzmacher <metze@samba.org=
+> wrote:
 >
-> On Wed, Jun 25, 2025 at 1:07=E2=80=AFAM NeilBrown <neil@brown.name> wrote=
-:
+> reviewed-by and tested-by: Stefan Metzmacher <metze@samba.org>
+>
+> Am 25.06.25 um 16:46 schrieb David Howells:
 > >
-> > ovl currently locks a directory or two and then performs multiple actio=
-ns
-> > in one or both directories.  This is incompatible with proposed changes
-> > which will lock just the dentry of objects being acted on.
+> > The handling of received data in the smbdirect client code involves usi=
+ng
+> > copy_to_iter() to copy data from the smbd_reponse struct's packet trail=
+er
+> > to a folioq buffer provided by netfslib that encapsulates a chunk of
+> > pagecache.
 > >
-> > This patch moves calls to ovl_create_temp() and ovl_create_index() out
-> > of the locked region and has them take and release the relevant lock
-> > themselves.
+> > If, however, CONFIG_HARDENED_USERCOPY=3Dy, this will result in the chec=
+ks
+> > then performed in copy_to_iter() oopsing with something like the follow=
+ing:
 > >
-> > The lock that was taken before these functions are called is now taken
-> > after.  This means that any code between where the lock was taken and
-> > these calls is now unlocked.  This necessitates the creation of
-> > _unlocked() versions of ovl_cleanup() and ovl_lookup_upper().  These
-> > will be used more widely in future patches.
+> >   CIFS: Attempting to mount //172.31.9.1/test
+> >   CIFS: VFS: RDMA transport established
+> >   usercopy: Kernel memory exposure attempt detected from SLUB object 's=
+mbd_response_0000000091e24ea1' (offset 81, size 63)!
+> >   ------------[ cut here ]------------
+> >   kernel BUG at mm/usercopy.c:102!
+> >   ...
+> >   RIP: 0010:usercopy_abort+0x6c/0x80
+> >   ...
+> >   Call Trace:
+> >    <TASK>
+> >    __check_heap_object+0xe3/0x120
+> >    __check_object_size+0x4dc/0x6d0
+> >    smbd_recv+0x77f/0xfe0 [cifs]
+> >    cifs_readv_from_socket+0x276/0x8f0 [cifs]
+> >    cifs_read_from_socket+0xcd/0x120 [cifs]
+> >    cifs_demultiplex_thread+0x7e9/0x2d50 [cifs]
+> >    kthread+0x396/0x830
+> >    ret_from_fork+0x2b8/0x3b0
+> >    ret_from_fork_asm+0x1a/0x30
 > >
-> > ovl_cleanup_unlocked() takes a dentry for the directory rather than an
-> > inode as this simplifies calling slightly.
+> > The problem is that the smbd_response slab's packet field isn't marked =
+as
+> > being permitted for usercopy.
 > >
-> > Note that when we move a lookup or create out of a locked region in
-> > which the dentry is acted on, we need to ensure after taking the lock
-> > that the dentry is still in the directory we expect it to be in.  It is
-> > conceivable that it was moved.
+> > Fix this by passing parameters to kmem_slab_create() to indicate that
+> > copy_to_iter() is permitted from the packet region of the smbd_response
+> > slab objects, less the header space.
 > >
-> > Signed-off-by: NeilBrown <neil@brown.name>
+> > Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+> > Reported-by: Stefan Metzmacher <metze@samba.org>
+> > Link: https://lore.kernel.org/r/acb7f612-df26-4e2a-a35d-7cd040f513e1@sa=
+mba.org/
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Steve French <stfrench@microsoft.com>
+> > cc: Paulo Alcantara <pc@manguebit.com>
+> > cc: linux-cifs@vger.kernel.org
+> > cc: netfs@lists.linux.dev
+> > cc: linux-fsdevel@vger.kernel.org
 > > ---
-> >  fs/overlayfs/copy_up.c   | 37 +++++++++++-------
-> >  fs/overlayfs/dir.c       | 84 +++++++++++++++++++++++++---------------
-> >  fs/overlayfs/overlayfs.h | 10 +++++
-> >  fs/overlayfs/super.c     |  7 ++--
-> >  4 files changed, 88 insertions(+), 50 deletions(-)
+> >   fs/smb/client/smbdirect.c |   18 +++++++++++++-----
+> >   1 file changed, 13 insertions(+), 5 deletions(-)
 > >
-> > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> > index 8a3c0d18ec2e..7a21ad1f2b6e 100644
-> > --- a/fs/overlayfs/copy_up.c
-> > +++ b/fs/overlayfs/copy_up.c
-> > @@ -517,15 +517,12 @@ static int ovl_set_upper_fh(struct ovl_fs *ofs, s=
-truct dentry *upper,
+> > diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
+> > index ef6bf8d6808d..f9773cc0d562 100644
+> > --- a/fs/smb/client/smbdirect.c
+> > +++ b/fs/smb/client/smbdirect.c
+> > @@ -1475,6 +1475,9 @@ static int allocate_caches_and_workqueue(struct s=
+mbd_connection *info)
+> >       char name[MAX_NAME_LEN];
+> >       int rc;
 > >
-> >  /*
-> >   * Create and install index entry.
-> > - *
-> > - * Caller must hold i_mutex on indexdir.
-> >   */
-> >  static int ovl_create_index(struct dentry *dentry, const struct ovl_fh=
- *fh,
-> >                             struct dentry *upper)
-> >  {
-> >         struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
-> >         struct dentry *indexdir =3D ovl_indexdir(dentry->d_sb);
-> > -       struct inode *dir =3D d_inode(indexdir);
-> >         struct dentry *index =3D NULL;
-> >         struct dentry *temp =3D NULL;
-> >         struct qstr name =3D { };
-> > @@ -558,17 +555,21 @@ static int ovl_create_index(struct dentry *dentry=
-, const struct ovl_fh *fh,
-> >         err =3D ovl_set_upper_fh(ofs, upper, temp);
-> >         if (err)
-> >                 goto out;
-> > -
-> > +       lock_rename(indexdir, indexdir);
->
-> This is a really strange hack.
-> I assume your next patch set is going to remove this call, but I do not w=
-ish
-> to merge this hack as is for an unknown period of time.
->
-> Please introduce helpers {un,}lock_parent()
->
-> >         index =3D ovl_lookup_upper(ofs, name.name, indexdir, name.len);
-> >         if (IS_ERR(index)) {
-> >                 err =3D PTR_ERR(index);
-> > +       } else if (temp->d_parent !=3D indexdir) {
-> > +               err =3D -EINVAL;
-> > +               dput(index);
->
-> This can be inside lock_parent(parent, child)
-> where child is an optional arg.
->
-> err =3D lock_parent(indexdir, temp);
-> if (err)
->        goto out;
->
-> Because we should be checking this right after lock and
-> not after ovl_lookup_upper().
->
-> >         } else {
-> >                 err =3D ovl_do_rename(ofs, indexdir, temp, indexdir, in=
-dex, 0);
-> >                 dput(index);
-> >         }
-> > +       unlock_rename(indexdir, indexdir);
-> >  out:
-> >         if (err)
-> > -               ovl_cleanup(ofs, dir, temp);
-> > +               ovl_cleanup_unlocked(ofs, indexdir, temp);
-> >         dput(temp);
-> >  free_name:
-> >         kfree(name.name);
-> > @@ -779,9 +780,7 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_c=
-tx *c)
-> >                 return err;
-> >
-> >         ovl_start_write(c->dentry);
-> > -       inode_lock(wdir);
-> >         temp =3D ovl_create_temp(ofs, c->workdir, &cattr);
-> > -       inode_unlock(wdir);
-> >         ovl_end_write(c->dentry);
-> >         ovl_revert_cu_creds(&cc);
-> >
-> > @@ -794,6 +793,8 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_c=
-tx *c)
-> >          */
-> >         path.dentry =3D temp;
-> >         err =3D ovl_copy_up_data(c, &path);
-> > +       if (err)
-> > +               goto cleanup_write_unlocked;
-> >         /*
-> >          * We cannot hold lock_rename() throughout this helper, because=
- of
-> >          * lock ordering with sb_writers, which shouldn't be held when =
-calling
-> > @@ -801,6 +802,13 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_=
-ctx *c)
-> >          * temp wasn't moved before copy up completion or cleanup.
-> >          */
-> >         ovl_start_write(c->dentry);
+> > +     if (WARN_ON_ONCE(sp->max_recv_size < sizeof(struct smbdirect_data=
+_transfer)))
+> > +             return -ENOMEM;
 > > +
-> > +       if (S_ISDIR(c->stat.mode) && c->indexed) {
-> > +               err =3D ovl_create_index(c->dentry, c->origin_fh, temp)=
-;
-> > +               if (err)
-> > +                       goto cleanup_unlocked;
-> > +       }
-> > +
-> >         trap =3D lock_rename(c->workdir, c->destdir);
-> >         if (trap || temp->d_parent !=3D c->workdir) {
-> >                 /* temp or workdir moved underneath us? abort without c=
-leanup */
-> > @@ -809,20 +817,12 @@ static int ovl_copy_up_workdir(struct ovl_copy_up=
-_ctx *c)
-> >                 if (IS_ERR(trap))
-> >                         goto out;
-> >                 goto unlock;
-> > -       } else if (err) {
-> > -               goto cleanup;
-> >         }
+> >       scnprintf(name, MAX_NAME_LEN, "smbd_request_%p", info);
+> >       info->request_cache =3D
+> >               kmem_cache_create(
+> > @@ -1492,12 +1495,17 @@ static int allocate_caches_and_workqueue(struct=
+ smbd_connection *info)
+> >               goto out1;
 > >
-> >         err =3D ovl_copy_up_metadata(c, temp);
-> >         if (err)
-> >                 goto cleanup;
-> >
-> > -       if (S_ISDIR(c->stat.mode) && c->indexed) {
-> > -               err =3D ovl_create_index(c->dentry, c->origin_fh, temp)=
-;
-> > -               if (err)
-> > -                       goto cleanup;
-> > -       }
-> > -
-> >         upper =3D ovl_lookup_upper(ofs, c->destname.name, c->destdir,
-> >                                  c->destname.len);
-> >         err =3D PTR_ERR(upper);
-> > @@ -857,6 +857,13 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_=
-ctx *c)
-> >         ovl_cleanup(ofs, wdir, temp);
-> >         dput(temp);
-> >         goto unlock;
+> >       scnprintf(name, MAX_NAME_LEN, "smbd_response_%p", info);
 > > +
-> > +cleanup_write_unlocked:
-> > +       ovl_start_write(c->dentry);
-> > +cleanup_unlocked:
-> > +       ovl_cleanup_unlocked(ofs, c->workdir, temp);
-> > +       dput(temp);
-> > +       goto out;
-> >  }
+> > +     struct kmem_cache_args response_args =3D {
+> > +             .align          =3D __alignof__(struct smbd_response),
+> > +             .useroffset     =3D (offsetof(struct smbd_response, packe=
+t) +
+> > +                                sizeof(struct smbdirect_data_transfer)=
+),
+> > +             .usersize       =3D sp->max_recv_size - sizeof(struct smb=
+direct_data_transfer),
+> > +     };
+> >       info->response_cache =3D
+> > -             kmem_cache_create(
+> > -                     name,
+> > -                     sizeof(struct smbd_response) +
+> > -                             sp->max_recv_size,
+> > -                     0, SLAB_HWCACHE_ALIGN, NULL);
+> > +             kmem_cache_create(name,
+> > +                               sizeof(struct smbd_response) + sp->max_=
+recv_size,
+> > +                               &response_args, SLAB_HWCACHE_ALIGN);
+> >       if (!info->response_cache)
+> >               goto out2;
+> >
 >
-> Wow these various cleanup flows are quite hard to follow.
-> This is a massive patch set which is very hard for me to review
-> and it will also be hard for me to maintain the code as it is.
-> We need to figure out a way to simplify the code flow
-> either more re-factoring or using some scoped cleanup hooks.
-> I am open to suggestions.
 >
-> Thanks,
-> Amir.
->
-> >
-> >  /* Copyup using O_TMPFILE which does not require cross dir locking */
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index 4fc221ea6480..a51a3dc02bf5 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -43,6 +43,21 @@ int ovl_cleanup(struct ovl_fs *ofs, struct inode *wd=
-ir, struct dentry *wdentry)
-> >         return err;
-> >  }
-> >
-> > +int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir,
-> > +                        struct dentry *wdentry)
-> > +{
-> > +       int err;
-> > +
-> > +       inode_lock_nested(workdir->d_inode, I_MUTEX_PARENT);
-> > +       if (wdentry->d_parent =3D=3D workdir)
-> > +               ovl_cleanup(ofs, workdir->d_inode, wdentry);
-> > +       else
-> > +               err =3D -EINVAL;
-> > +       inode_unlock(workdir->d_inode);
-> > +
-> > +       return err;
-> > +}
-> > +
 
-Just to illustrate what I meant and how the flow of ovl_cleanup_unlocked()
-and later on ovl_cleanup() would look simpler:
 
-int lock_parent(struct dentry *parent, struct dentry *child)
-{
-       int err;
-
-       inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-       if (!child || child->d_parent =3D=3D parent)
-              return 0;
-
-       inode_unlock(parent->d_inode);
-       return -EINVAL;
-}
-
-int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir,
-                        struct dentry *wdentry)
-{
-       int err;
-
-       err =3D parent_lock(workdir, wdentry);
-       if (err)
-               return err;
-
-       ovl_cleanup(ofs, workdir->d_inode, wdentry);
-       parent_unlock(workdir);
-       return 0;
-}
-
+--=20
 Thanks,
-Amir.
+
+Steve
 
