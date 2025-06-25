@@ -1,88 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-52873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8BE5AE7B62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 11:04:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3537AE7B67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 11:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95CE01BC802A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 09:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8168175BEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 09:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4100E288CB2;
-	Wed, 25 Jun 2025 09:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE5D287507;
+	Wed, 25 Jun 2025 09:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SvQLLtbx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MO7XaDUM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7A92882CD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 09:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD94B272E42
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 09:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842205; cv=none; b=fUIbGQHDJ8F4EnjWMEB3cLu1jgs9t9UqYOq9bVlG3KJEr9g7+7/cJUPSHopTdEdIVfhy8mEA8yL1S3einmeDIQCApMfMxa4qKWYFMAAPqgtxXT0ayIiHxr7IbJJEfKqAv3rduwhhve6xrO5npYLOYDTOcG3Dgj22Dye7YJjR9Fk=
+	t=1750842272; cv=none; b=ry3L+EEOPMbrfpKe/ktJhHHL6Ka5M3jsLl28qo5joGMZs0Rho/7TX68Lk40Oad4zHHIqNxshSf/1f30/7DUGB2/5rOJ91qPgvZtv3SBiLg9Qy7jUeRMjDud6cbwJEdLh1riB1vsZevAkuxL7l50Bsba1pnnAj2mgESfbVBVbQ6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842205; c=relaxed/simple;
-	bh=JW2s+9q4qPQQc93v2PMvhmcFWFvDhURahsiJZzoXovw=;
+	s=arc-20240116; t=1750842272; c=relaxed/simple;
+	bh=uMgJZlm8kmOo1C0YzL8T4qtqGzwhvMcbLYuniNt1GrQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dHg0f0TSLg8IP+lpftILnnDY6nKFR+DT1p49cSNp8eJDs9v3mOgN9VaP/L+ZyNaU2txDrkmmyxLME+tGuZ2yrp0a1HYsKbratND1MnHCa/kLLhTl4L3rp3+41cP60+qCqGBkpop6heDEj1QPkjP+a34gJnvwhDUCb6GZl1EJE68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SvQLLtbx; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=OqfxvwLhYDKIQA2cAOrxybT3pB3ZC4iSyc/tL+BYEFJc2Tlc+zv3JwzYAGypFmtAFRvrpTRIdY/GoZ2hNX2aM5hyGwMX9lFSshoPbdmhOk3RBKiARd6OPbq4Ep53Qps2kpwVK/YDoaF/LrelLRbAbK9rWXE/c9GmrRfZZUuIffM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MO7XaDUM; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750842203;
+	s=mimecast20190719; t=1750842269;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=j6SPvABO8EkhAEJk1LKxiZOae6QeSJKDl11RtcagWeI=;
-	b=SvQLLtbxxB8PayrnXsNB63zlNLmANeKdFy3/S5ddQiqyOqD/IsjdcYpRtlNZmD6Vb80Kwx
-	1CGITJni43sbTWaW7eD6axTQYVFXtgvOxfeej7A1erruQvyeIDDTEkN7cRctM7s6FORQNj
-	QFRmRqRd+aqym1VSrVEdNKUEdk0JMXA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=mBhDzhwDu+oV0GKocax8RgDI9cO2NUV/K2JvMLKTnbI=;
+	b=MO7XaDUMt5WHe6x/QuViqLA1zHgUUmlRR3VSgGCgcavEHWdL4Z/p2JKmzIqZug1mrXA7lC
+	cjgoNil8ZL0ux9gTJdGJ9peF8je0zwwtDmyZ2HfNqieb7v1rJLJzgpwZ0+ak7IpgvtyC2V
+	SdJti1kdkbj2pg94EAdLsfeoya+GNn0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-112-8dRM5yhiNzqWTcGTXEKVOg-1; Wed, 25 Jun 2025 05:03:16 -0400
-X-MC-Unique: 8dRM5yhiNzqWTcGTXEKVOg-1
-X-Mimecast-MFC-AGG-ID: 8dRM5yhiNzqWTcGTXEKVOg_1750842195
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f3796779so706651f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 02:03:16 -0700 (PDT)
+ us-mta-357-iXPZvX73O9Cl2WjwNzDUyQ-1; Wed, 25 Jun 2025 05:04:27 -0400
+X-MC-Unique: iXPZvX73O9Cl2WjwNzDUyQ-1
+X-Mimecast-MFC-AGG-ID: iXPZvX73O9Cl2WjwNzDUyQ_1750842267
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a523ce0bb2so3505409f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 02:04:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750842195; x=1751446995;
+        d=1e100.net; s=20230601; t=1750842266; x=1751447066;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=j6SPvABO8EkhAEJk1LKxiZOae6QeSJKDl11RtcagWeI=;
-        b=fiBU6Sfceri/12ffocUKoc+zbmZfrGGdb36f562DXs1Si4A+bs6i9ukCp4E/e2Y9Or
-         ocKc9HTtI7fIEROUqt6p42QeN/NVmtctz/b2pwnl+WOJI8jPp72jcue6pcSKxgpUBvkl
-         3AqZY2foGR5YqoiBz6yOO9tNsTcjfQB3pfLVDJPOz8e9YJYgk/ARG3vXwyztvGAuvfe1
-         mgwyvpvURvkj66MPH5ZCAjY2kpjKXlpGBi8QlqsGy8iIRyaqY2R7f3RAYEVMfZ/Rh6MQ
-         T8sRnE3tLqcMjV9Y844deS9hqa0ekDFgDnj1eRvxDh3kXKutxgCLW4tXQBeby1/JUzXr
-         IPJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgiVBUZp4JOllPD+uu/qsfOaGObzabkIFuDZuwFUFJv4kGuGXrV1R9sRi7N6izVEpoH7ogceuALdlDWgk2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjkN7vWWnlW2TRUfSOlCgOsuC/xbgwmOZQDAb9dlRAlNTttkF3
-	9LxhEq30YZftNr94xmAui6yKB98fJI8QYXyxSYAfMSWLltpNmXxSLj+TxZFz/DuzZg/EA8aX+7c
-	VZtXB5gojS+Sv1yRo6gC4joTOX7V3SyYMOr6XQzEcUuuFEvFVFgIcC/dRGA090pQfaXg=
-X-Gm-Gg: ASbGncufXlCcf6Evf8dose6q2bUrEDiI+OkchsDW7u076/Alst2aUEkGBPTJHjq0qa3
-	5Cp8+1TkgWGmTbn0/6kBQODS4DF6BZu9xVV63t4vapmSBzujDj9yF8PgllBzvP3XyxA2qqVbv6k
-	ezNUAR+tteSJQltttzLIgkA0YpGarrqKdy0DfEER87DyfQIQoqMm+iXUggXzv8gYF9B3emtqGUJ
-	oNwrD1+wgmE+8oNmUNsmH/V/65BOadW9BMNK0VqapdctnCnw9tB36y6l4PZMe4R5pEhtv0mibHW
-	fqXc4RH5ArTmWocCsz+FtveXsBLTUZiZS4dxERr4k3yHtaUEZbAq8Y6X4FPgVX7zmIR1aDfHfTs
-	L31b+qtKlUm3oNUpszCN63SrNC28xVHfHecBs379YATGJ
-X-Received: by 2002:a05:6000:2709:b0:3a4:fe9d:1b10 with SMTP id ffacd0b85a97d-3a6ed646c16mr1271832f8f.45.1750842195158;
-        Wed, 25 Jun 2025 02:03:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHazW5nWUfQCM5Vf0SuwnpR0088kA+f/uiZKl6Om44U23eQf/ruKZPkuQodKAJMBqp+4oD7Fw==
-X-Received: by 2002:a05:6000:2709:b0:3a4:fe9d:1b10 with SMTP id ffacd0b85a97d-3a6ed646c16mr1271782f8f.45.1750842194712;
-        Wed, 25 Jun 2025 02:03:14 -0700 (PDT)
+        bh=mBhDzhwDu+oV0GKocax8RgDI9cO2NUV/K2JvMLKTnbI=;
+        b=T9OpeDOTJrxIsGKCRf8RWCkkpgtgyWp4ML/9MtpbPXT7wB8lKluRI2Rk+ZGVEYQ+jb
+         LlGiNVhvh2OlVhs3RXqzXGUnx95PzpQWw+hB+R+qeYyll4sjlW1iMyyIHtDWBLGQrMBY
+         Fp7xpx15X9CR22P7nZG1h+lfdeYKpTEcedR87dKw+EIpw4v3M/X7fCKlbXazEl1dxozc
+         gCY4XKQzWtahHV6hc9lamt4/Ccw/QDhSUO9uHt/g8umQpz9isnP8NXcSP/Yqm5Jp16r4
+         4M5zA3NGwYhXF8BUdo+U7Rv14/ds/kbFu3eDcUrP50Y6U4V91O3OeRSDgUY42Dl1IVtu
+         pDIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDKLAztfMocHnkCWJ8a/P3XhcenYEr45w7LgmQsY/t+7Y45PFrCvBbqGhSrBHu0gtQiK8Z6kGXHVM2oNJa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWmv1qh0LfPbRvhljjUIQBzziXmuKNbW60qGjBZ7b/9fsOvkJa
+	XAwOLTINDfPEIieNNvnUOo4G9GZP1Mzy0Wx2lmT9mCESdmzl+ysMGMXk9piWRLtjR8adJStG5dG
+	w7wqAoWjWkbTg2/1c4xu6bYt59MqqPinI2nlw2ubZOM1rf822PdeawugIqVgYSLw34xWIGBxGxS
+	4=
+X-Gm-Gg: ASbGncuFFXUTvNNbUnrRAn2q+dfQFv8fMEE7OosbNrZ4ebYH504kBdW0fcCYhJ9edtn
+	/WAWaSbr/aCRyrOsCnO4tlzz8L1wVQ/fhQSjsImqTLsv4I/RL3NNK3HlDwo89RjuMCcPYHNJrfD
+	lgUilK7TBf5tkMDrId+Yo/PvgvPH5LWEQsduc+9puv5LftyU/4iUmIsFauISRhSnxhHgL5+tVYG
+	Zd6UBchIvjAEpx9GQpCaWHjyXjSYZmZ81l19+IfKg8bT8GOBygA/n83V0tzz3gOHYLIO6b6lyFq
+	fzw/qfN6md6zv+gxwifSWQcQ7VUYwLkJ+tRRdmePzZhmH4XSPJvobSA514ZDc3ScjsyBEIQZcJH
+	ZHk7B/527WnZoIkU7qwF47M8gNXftCtrqd4mu41JSEK58
+X-Received: by 2002:a05:6000:26d2:b0:3a4:fc07:f453 with SMTP id ffacd0b85a97d-3a6ed5c910dmr1292212f8f.8.1750842266560;
+        Wed, 25 Jun 2025 02:04:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGVvoEG6BvgTkmXif0tj5T4xYuw1wZ555IQoWHI57kLqBKG4XZS1gaqfMOU/SLXEqw1QLIrvg==
+X-Received: by 2002:a05:6000:26d2:b0:3a4:fc07:f453 with SMTP id ffacd0b85a97d-3a6ed5c910dmr1292196f8f.8.1750842266139;
+        Wed, 25 Jun 2025 02:04:26 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f12:1b00:5d6b:db26:e2b7:12? (p200300d82f121b005d6bdb26e2b70012.dip0.t-ipconnect.de. [2003:d8:2f12:1b00:5d6b:db26:e2b7:12])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e805d342sm4022122f8f.21.2025.06.25.02.03.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e80f2670sm3983504f8f.49.2025.06.25.02.04.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 02:03:14 -0700 (PDT)
-Message-ID: <74acb38f-da34-448d-9b73-37433a5e342c@redhat.com>
-Date: Wed, 25 Jun 2025 11:03:11 +0200
+        Wed, 25 Jun 2025 02:04:23 -0700 (PDT)
+Message-ID: <4753c20a-1bbe-4c16-86b8-1b430860a91e@redhat.com>
+Date: Wed, 25 Jun 2025 11:04:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,17 +91,17 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 07/14] fs/dax: use vmf_insert_folio_pmd() to insert
- the huge zero folio
-To: Alistair Popple <apopple@nvidia.com>
+Subject: Re: [PATCH RFC 11/14] mm: remove "horrible special case to handle
+ copy-on-write behaviour"
+To: Oscar Salvador <osalvador@suse.de>
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-mm@kvack.org, nvdimm@lists.linux.dev,
  Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
  Stefano Stabellini <sstabellini@kernel.org>,
  Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
  Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
  Baolin Wang <baolin.wang@linux.alibaba.com>,
  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
@@ -111,8 +112,9 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
  Pedro Falcato <pfalcato@suse.de>
 References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-8-david@redhat.com>
- <cneygxe547b73gcfyjqfgdv2scxjeluwj5cpcsws4gyhx7ejgr@nxkrhie7o2th>
+ <20250617154345.2494405-12-david@redhat.com>
+ <5f4c0a45-f219-4d95-b5d7-b4ca1bc9540b@redhat.com>
+ <aFu7C0S_SjSOqO8G@localhost.localdomain>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -160,27 +162,20 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <cneygxe547b73gcfyjqfgdv2scxjeluwj5cpcsws4gyhx7ejgr@nxkrhie7o2th>
+In-Reply-To: <aFu7C0S_SjSOqO8G@localhost.localdomain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 24.06.25 03:16, Alistair Popple wrote:
-> On Tue, Jun 17, 2025 at 05:43:38PM +0200, David Hildenbrand wrote:
->> Let's convert to vmf_insert_folio_pmd().
->>
->> In the unlikely case there is already something mapped, we'll now still
->> call trace_dax_pmd_load_hole() and return VM_FAULT_NOPAGE.
->>
->> That should probably be fine, no need to add special cases for that.
+On 25.06.25 11:02, Oscar Salvador wrote:
+> On Wed, Jun 25, 2025 at 10:47:49AM +0200, David Hildenbrand wrote:
+>> I'm still thinking about this patch here, and will likely send out the other
+>> patches first as a v1, and come back to this one later.
 > 
-> I'm not sure about that. Consider dax_iomap_pmd_fault() -> dax_fault_iter() ->
-> dax_pmd_load_hole(). It calls split_huge_pmd() in response to VM_FAULT_FALLBACK
-> which will no longer happen, what makes that ok?
+> Patch#12 depends on this one, but Patch#13 should be ok to review
+> If I ignore the 'addr' parameter being dropped, right?
 
-My reasoning was that this is the exact same behavior other 
-vmf_insert_folio_pmd() users here would result in.
-
-But let me dig into the details.
+Yes, only #12 and #13 will be gone. #14 and #15 will simply have the 
+"addr" parameter in the _pud() variant as well.
 
 -- 
 Cheers,
