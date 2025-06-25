@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-52981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AC0AE91BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 01:13:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E35BAE91D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 01:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242793BEA84
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:13:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F9A77AF3CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C422F433D;
-	Wed, 25 Jun 2025 23:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15682FA639;
+	Wed, 25 Jun 2025 23:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Xzc8jX20"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="H/Hr1Is/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D35425C70D;
-	Wed, 25 Jun 2025 23:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30E32F431E;
+	Wed, 25 Jun 2025 23:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750893190; cv=none; b=VKsTKeLVuLOUweibGe9DL7nXQVnjtvEM19XPit0R3/tzXoFm0+kTe67hKGEHTK9/qfECucpLpIWeLTqBQQErIgG8isG7zYgvZFoE+3bcbdjppM8PtsjfjyuzJp1BS08piLCJpRrLOD/Byl201ILRnCmqGnlA4YfEEv8yN2fSexc=
+	t=1750893197; cv=none; b=D4Hbi6/gZPCRhN+9JuqviKIMIFUl3UntGPihlAh5cGtMThc5D+FuuW/s7QRLo7LB0eUVrB3Xxz0wVz0/jSfJ6k+/jkmS9X/PkYHX4ODHNwkuKHRxkCFFCmNnMMQSI4yn4XMA8/JdWNlLUN2U5D/FVaxc3yJKsZvb01mCJ9dsQLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750893190; c=relaxed/simple;
-	bh=t9s5qFPZVzBw/RTjdUr7DEuGsaHFR8SWRmVewFoAVmI=;
+	s=arc-20240116; t=1750893197; c=relaxed/simple;
+	bh=mwgMJbIMd1cGCE56ZD9loB+RHx1P8Kz4vvhCxEjNYMo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kd2Gvz2+selfaPGCTBRavtC6EGQKU/Na6NLi6X1NHglYuhvdcpl/U0JVK5dxRNpbjRmeD4D3x110qdFl0H4u+6KP0hVjpHkUJc5g2OXRPUk6yDNPtbzEXjuBChMzAFG8azdfC1tWcJTE/NBODgBdhR/qjF6STIdTRQLQxZLxshA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Xzc8jX20; arc=none smtp.client-ip=192.19.144.205
+	 MIME-Version; b=cVlQK5FGCijh1LwyPf5J7pscg6c+kxopjQ3R8b6GBaKLB6xahaMW+beKAypmjuaHZ28P0Tfi7rTUddp61Z2zZBBL3+5uNlX+o7zvClj2BBxHBRQm4CAMfq+sNH8vjaKUflKaqiTqzB0l0nuw0OeHqbMoT+iY7Q0EYc89kA/I9IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=H/Hr1Is/; arc=none smtp.client-ip=192.19.144.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 011F3C002813;
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 94E64C00280D;
 	Wed, 25 Jun 2025 16:13:08 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 011F3C002813
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 94E64C00280D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
 	s=dkimrelay; t=1750893188;
-	bh=t9s5qFPZVzBw/RTjdUr7DEuGsaHFR8SWRmVewFoAVmI=;
+	bh=mwgMJbIMd1cGCE56ZD9loB+RHx1P8Kz4vvhCxEjNYMo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xzc8jX2075Fi0/7E5Wh8QI8KkX+dz1yrPxYLjDrUWEPCNn3eRogcpSuvsH7sjGFg9
-	 5VoPhivsZqyHIEetd5Da1QwKl3ycW6rXoKwB8V+Tykr9cE3kbbW7iikwwmdXgS0zfH
-	 U+pczfMqe1SUaSH6OdR3Z7CvnUO6LMhgrW6VSduE=
+	b=H/Hr1Is/YTl+Gjszyje15GJJ65krWUazF6z+3b4W0kxHa5UpZJoBFhttdHtZOOnoC
+	 VsU33v4CCkxBdbH1bzQa35+AULxg9vKMM5Yi6K+FQp2qTYnEX4Vsq4lNbVDMmx8puB
+	 3/7/p7UaQ7tYgXJ0xih1VhCFtGJZ2OeOwzlI/UVM=
 Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 47A6418000530;
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id CE7FC18000853;
 	Wed, 25 Jun 2025 16:13:07 -0700 (PDT)
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 To: linux-kernel@vger.kernel.org
@@ -98,9 +98,9 @@ Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
 	maple-tree@lists.infradead.org (open list:MAPLE TREE),
 	linux-modules@vger.kernel.org (open list:MODULE SUPPORT),
 	linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM)
-Subject: [PATCH 04/16] MAINTAINERS: Include radixtree.py under GENERIC RADIX TREE entry
-Date: Wed, 25 Jun 2025 16:10:41 -0700
-Message-ID: <20250625231053.1134589-5-florian.fainelli@broadcom.com>
+Subject: [PATCH 05/16] MAINTAINERS: Include interrupts.py under IRQ SUBSYSTEM entry
+Date: Wed, 25 Jun 2025 16:10:42 -0700
+Message-ID: <20250625231053.1134589-6-florian.fainelli@broadcom.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
 References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
@@ -112,9 +112,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Include the GDB scripts file under scripts/gdb/linux/radix.py under the
-GENERIC RADIX TREE subsystem since it parses internal data structures
-that depend upon that subsystem.
+Include the GDB scripts file under scripts/gdb/linux/interrupts.py under
+the IRQ SUBSYSTEM entry since it parses internal data structures that
+depend upon that subsystem.
 
 Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 ---
@@ -122,17 +122,17 @@ Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index d51eeb1248be..cfb0d60ef069 100644
+index cfb0d60ef069..e1eda0d9d671 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -10171,6 +10171,7 @@ S:	Supported
- C:	irc://irc.oftc.net/bcache
- F:	include/linux/generic-radix-tree.h
- F:	lib/generic-radix-tree.c
-+F:	scripts/gdb/linux/radixtree.py
+@@ -12803,6 +12803,7 @@ F:	include/linux/irqnr.h
+ F:	include/linux/irqreturn.h
+ F:	kernel/irq/
+ F:	lib/group_cpus.c
++F:	scripts/gdb/linux/interrupts.py
  
- GENERIC RESISTIVE TOUCHSCREEN ADC DRIVER
- M:	Eugen Hristev <eugen.hristev@microchip.com>
+ IRQCHIP DRIVERS
+ M:	Thomas Gleixner <tglx@linutronix.de>
 -- 
 2.43.0
 
