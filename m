@@ -1,165 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-52911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E10AE8597
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CB9AE860B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA03016920D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 14:07:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04EC61638FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 14:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D384B264A8E;
-	Wed, 25 Jun 2025 14:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3215F265CBE;
+	Wed, 25 Jun 2025 14:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLtFmg4n"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ow4JylV7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3438C2641E7;
-	Wed, 25 Jun 2025 14:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C8B25BF0F;
+	Wed, 25 Jun 2025 14:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750860411; cv=none; b=bEdJLdSP9bjLE5VUTvwGwDPMWTHOgSZMe0Q9A0QaW+Ga5v/UG01P9w7wgyN+VEHJIFnPSFp+WdQIxabN3+zH7dNBSWsWWpC+WHz5wQgf2H/q4NHEhIuDEk7Ou1Jkx27ffXBqcrxuhleV+hcbugkbrf5lInTBa1s5fED/yqQLBaY=
+	t=1750861085; cv=none; b=L5su9v8dPmjAirra4XOIlweKiuWl4j3K7TCDOnRl4dZo/EyDVUr1z0MCJgQ8uiLbYRdihBP4Y56WF1KjT6MNkQ3P9oeo++GQy1BybYpfUBiCVn9wAbsXnWEo3hZfK+g4wHFrp9Srur20sHMMpayHmMF26+tLtyHjIrmDIKcj13E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750860411; c=relaxed/simple;
-	bh=lelwOUlGXjKpnwV0qhqy1Tv53TV1N0muszE3Pw3WOmU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UAAWKsIunF/v8I1oz9Fd8wOAChV3TDNINuxm6TmseTy1Lu3RxMbmkAqaqe3umyTxJDm92SvcY9ejb6QoxnyxT53w9r+qqhIJlMmrDjwuC+rSqwKzHPuT/yCswICc/k5FY58IsKI5a5Ca244xbJSeOFEZs6nHsIEWr0+3ityU6Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLtFmg4n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B47B5C4CEEB;
-	Wed, 25 Jun 2025 14:06:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750860410;
-	bh=lelwOUlGXjKpnwV0qhqy1Tv53TV1N0muszE3Pw3WOmU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=oLtFmg4n9Iw2oYEYSenegqNiTy3g/n+Zsilg0d28T1IcFrEzavCMRJk73qBeayXN3
-	 mC4yPXghQiD1gl14hRcHBuROm5I26zfURrmB/SoSeWNMS+0oP8+oB8ugheRNS1HYiu
-	 qzhnLP0Bpz9Dh/G4dPS29wpm8vxImadSp/aRJsPvqt2feZzH+hgM5JUYJ6cT6DzT46
-	 Gwv45gwuORtWyVjizz8sDe4lRik6QBSRA0w2l9vCvDyaJG7/ExVRgmPdOY00pi+Eib
-	 /HCRvWQ4HieV6R+RFNawCXfQ/5jVAeDjf2BmCFdgpJPy2gTXSXt+VycvbxwZWJyt50
-	 G6JNr7pxiSXAQ==
-Message-ID: <11735cf2e1893c14435c91264d58fae48be2973d.camel@kernel.org>
-Subject: Re: [PATCH] xfs: report a writeback error on a read() call
-From: Jeff Layton <jlayton@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, david@fromorbit.com,
- djwong@kernel.org, 	linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-xfs@vger.kernel.org,
- yc1082463@gmail.com
-Date: Wed, 25 Jun 2025 10:06:48 -0400
-In-Reply-To: <aFvkAIg4pAeCO3PN@infradead.org>
-References: <aFqyyUk9lO5mSguL@infradead.org>
-	 <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
-	 <aFuezjrRG4L5dumV@infradead.org>
-	 <88e4b40b61f0860c28409bd50e3ae5f1d9c0410b.camel@kernel.org>
-	 <aFvbr6H3WUyix2fR@infradead.org>
-	 <6ac46aa32eee969d9d8bc55be035247e3fdc0ac8.camel@kernel.org>
-	 <aFvkAIg4pAeCO3PN@infradead.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1750861085; c=relaxed/simple;
+	bh=M4G5XDxRuWGuM0Ue4i3Qt7POHiiyrCSIdxYPmlP+Yhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPthsI44xvMrx0J9ZfS/p4grIyC370lMOtmS5//SOgmTxbXcXRQCem3BDQTTKC5OAa6yN4e/rGL7owypkkD1Iefe1yK3Z5nciT4o+ymrbka/gAoyJCinbYZbKjUHMAwnhQ8X7xJ4YEOdBEV8vkfztpOGYJ9zyz76hka1/ukAC8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ow4JylV7; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750861084; x=1782397084;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=M4G5XDxRuWGuM0Ue4i3Qt7POHiiyrCSIdxYPmlP+Yhk=;
+  b=Ow4JylV7E/MiEsVaJA4CZtIC/X3Kg6IjI49v+50CFJq4+WDhnzr5+Kpx
+   u+Ktp0o6iNCRttnc+HwYSxaZ0ynmEsBT/F7nM86/Qk/IoMjnq7U0X03hM
+   U+NlNhSNGq37YT5jAVJc+tFSnrJy6hTZuWdrANgJuLhvsODwbqm0zcYSk
+   Wv3mokhHxcwvt3qbekvs72Rrc6WNWhXe/GiZ74WwcSpKlkjW/nk9hmmzF
+   S34/XDAxoXsmZgRTprLVMxyDwifyCTV6BHHoRTu2OwnQsqSdYHnxjSCbI
+   Ojd8TWKBFygK+J9sYHq8uUmIK988RP7twpDKyXHa9fcePnh3ERFxAnD9u
+   A==;
+X-CSE-ConnectionGUID: vT2SbaOHQZOATg9jOfYC7w==
+X-CSE-MsgGUID: 0EQGdEoXQRKqBkYMBqDQXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53197826"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="53197826"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 07:17:49 -0700
+X-CSE-ConnectionGUID: kltvbGmNTs2VqFyO5g4Z5w==
+X-CSE-MsgGUID: gGNfuW1XSeS7l+BDROKwjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="151658653"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 25 Jun 2025 07:17:45 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUQwZ-000TB8-1Q;
+	Wed, 25 Jun 2025 14:17:43 +0000
+Date: Wed, 25 Jun 2025 22:17:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, hch@lst.de, miklos@szeredi.hu,
+	brauner@kernel.org, djwong@kernel.org, anuj20.g@samsung.com,
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
+	kernel-team@meta.com
+Subject: Re: [PATCH v3 13/16] fuse: use iomap for writeback
+Message-ID: <202506252117.9V3HTO0i-lkp@intel.com>
+References: <20250624022135.832899-14-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624022135.832899-14-joannelkoong@gmail.com>
 
-On Wed, 2025-06-25 at 04:56 -0700, Christoph Hellwig wrote:
-> On Wed, Jun 25, 2025 at 07:49:31AM -0400, Jeff Layton wrote:
-> > Another idea: add a new generic ioctl() that checks for writeback
-> > errors without syncing anything. That would be fairly simple to do and
-> > sounds like it would be useful, but I'd want to hear a better
-> > description of the use-case before we did anything like that.
->=20
-> That's what I mean with my above proposal, except that I though of an
-> fcntl or syscall and not an ioctl.
+Hi Joanne,
 
-Yeah, a fcntl() would be reasonable, I think.
+kernel test robot noticed the following build errors:
 
-For a syscall, I guess we could add an fsync2() which just adds a flags
-field. Then add a FSYNC_JUSTCHECK flag that makes it just check for
-errors and return.
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on xfs-linux/for-next linus/master v6.16-rc3 next-20250625]
+[cannot apply to gfs2/for-next mszeredi-fuse/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Personally, I like the fcntl() idea better for this, but maybe we have
-other uses for a fsync2().
---=20
-Jeff Layton <jlayton@kernel.org>
+url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/iomap-pass-more-arguments-using-struct-iomap_writepage_ctx/20250624-102709
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250624022135.832899-14-joannelkoong%40gmail.com
+patch subject: [PATCH v3 13/16] fuse: use iomap for writeback
+config: arm64-randconfig-003-20250625 (https://download.01.org/0day-ci/archive/20250625/202506252117.9V3HTO0i-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 12.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250625/202506252117.9V3HTO0i-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506252117.9V3HTO0i-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_writepages':
+>> file.c:(.text+0xa30): undefined reference to `iomap_writepages'
+>> file.c:(.text+0xa30): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_writepages'
+   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_writepage_finish':
+>> file.c:(.text+0x1fd8): undefined reference to `iomap_finish_folio_write'
+>> file.c:(.text+0x1fd8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_finish_folio_write'
+   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_cache_write_iter':
+   file.c:(.text+0x888c): undefined reference to `iomap_file_buffered_write'
+   file.c:(.text+0x888c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_file_buffered_write'
+   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_iomap_writeback_range':
+>> file.c:(.text+0x9258): undefined reference to `iomap_start_folio_write'
+>> file.c:(.text+0x9258): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_start_folio_write'
+>> aarch64-linux-ld: fs/fuse/file.o:(.rodata+0x370): undefined reference to `iomap_dirty_folio'
+   aarch64-linux-ld: fs/fuse/file.o:(.rodata+0x3a0): undefined reference to `iomap_release_folio'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
