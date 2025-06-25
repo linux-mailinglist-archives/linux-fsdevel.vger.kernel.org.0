@@ -1,89 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-52848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9A6AE77AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 09:01:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F337AE790F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 09:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBE116801C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 07:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1443D1BC4E70
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 07:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FF81F866B;
-	Wed, 25 Jun 2025 07:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75447209F38;
+	Wed, 25 Jun 2025 07:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VOG3Z5ye"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJibZHwX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FF679F2;
-	Wed, 25 Jun 2025 07:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A0B22083;
+	Wed, 25 Jun 2025 07:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750834896; cv=none; b=bRsdePZT8loIFec8CoR6rv2o09Bwge6+nFSVTgHj2NAdhteHOYaH601w/V44dH0GtOiSJenL9TGCZDiWsCbA7qYGpJCZS0RniCI6lHxwttWitFnAn/LojUJRLLKEA3vsvHz2V7LZynNMXHRMwpKs27rkx0+NIMnbcbgVFdDDjpU=
+	t=1750837937; cv=none; b=atV+Zscos/BEMPdxdV1Ts2pRiU2BWh68E0wm9YqGlWxQSqhwV77HSrNGoz+gvXOmg3Lww2oPIrrawpNrQEoR2loylsA1wrpNstZjkYeRUcOnB7mfqMHe6QJzsWFVii6At9ZY9J7s+eyQkAWraYbdL+AKmeQv1uckP/SGGX0boSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750834896; c=relaxed/simple;
-	bh=gciUXRI5RoGH7MW8+6HdMvsnDB4tQnkO04ozRC3wZ7w=;
+	s=arc-20240116; t=1750837937; c=relaxed/simple;
+	bh=4REwJ0qTYWr/emujGc6w8gWG9fvUVadsnMPID2MW69k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJkmcL/hf+4ydxSo3bWqFDrGCAEf8GTiTq9DJS1Q4woX/NRfAzAH3lWUkLOxclf+eHwCjIW+DPCOkeSs7v0VsNANL3LRIbl6g49UDLOsvuo6pjnqQLMG0VV0kg+Sga5I++JG4QoGjusorP5MIKZufRnjk8Kq0QVLl9pY2TKlsaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VOG3Z5ye; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VrBYzP+Ry2B3NbNU4hQ6PEn7rOjvDYFr3WIL5OkLT8Q=; b=VOG3Z5yeGtYSi/UAOL3xpTDAbm
-	fz2EeUA3u057vMgix5kVW07dJWOiEr903LETeJwVnXiU/0ZVvFIV/YOuHRePOukvDhQliskEU7VhG
-	6FR0jY469yZ/tOAlLCUw6X0WmEpBWEf6XRXrD6AtNwZoSsBU2onD4CmDJm6v4cy9lrTCOsG5zMfNe
-	dHvdDx/4+AgGVQhVNm4CAg5vNiDuBT4t/3u/9xxroRahvGs73uxhIq3AB8paSWNdqHswJygmye6tl
-	OSUQD22dr9bnUe3+txxV20WY/n1c6Cz6qTtvhT41XUOrinoeQQ//47E2xXby0a9qh1MNNxzqqGOsX
-	iaTikL/Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uUK8U-00000007kXc-33oi;
-	Wed, 25 Jun 2025 07:01:34 +0000
-Date: Wed, 25 Jun 2025 00:01:34 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: hch@infradead.org, david@fromorbit.com, djwong@kernel.org,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	yc1082463@gmail.com
-Subject: Re: [PATCH] xfs: report a writeback error on a read() call
-Message-ID: <aFuezjrRG4L5dumV@infradead.org>
-References: <aFqyyUk9lO5mSguL@infradead.org>
- <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oko/5lilUddGzzJqPMJKe6XoTuRQKXys9wWi1tEMM7jTbWhV8Z5w1uwnFuYpUrDvDYKTh4zcp3c2NVajHpdBGgjTQWjk7JD5oK7TPvZzksUvAYzTyi8KmRa9OgcZgSVXvLWXsZe2oZEg7qVpiIxQ1H86MgbVgdZfVlv3GF7swdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJibZHwX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 765C0C4CEF1;
+	Wed, 25 Jun 2025 07:52:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750837936;
+	bh=4REwJ0qTYWr/emujGc6w8gWG9fvUVadsnMPID2MW69k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gJibZHwXM0lqSv/BhZ1sVZNCUgNANwiY4kbtUtBGwuM/V8DzGIrd42YPklC1dX9G9
+	 1Q21dboRtPjtG1PhwefbRYn+fTn1itmD0AiaN6nkK+pdN+PD+HfltlrNC8dbWu6c20
+	 i4aW2LUo8VqsDm+0g59WkWxoMXy8WbEOQyu9mQ7wcchtJvwJI4ECSGuEaJ8fDiMwln
+	 HvbnDwL1Zh2F1n1yYRHXi+g9j2C9nV/hUVo8w2OT5qRAaYbz++90QSNO7gLJBKpyyI
+	 w/NY3WUqB/iD1osTpHVOa1AkstpzgXKIEW35jxQ+TUCSkHXR+H2d5Yn7VeYpv1bOWN
+	 1cRegohsr5peg==
+Date: Wed, 25 Jun 2025 09:52:11 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 10/11] fhandle, pidfs: support open_by_handle_at()
+ purely based on file handle
+Message-ID: <20250625-undifferenziert-mitnahm-fb5e9550acdd@brauner>
+References: <20250624-work-pidfs-fhandle-v2-0-d02a04858fe3@kernel.org>
+ <20250624-work-pidfs-fhandle-v2-10-d02a04858fe3@kernel.org>
+ <20250624230745.GO1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250624230745.GO1880847@ZenIV>
 
-On Wed, Jun 25, 2025 at 10:44:57AM +0800, Yafang Shao wrote:
-> > That's really kernel wide policy and not something magic done by a
-> > single file system.
+On Wed, Jun 25, 2025 at 12:07:45AM +0100, Al Viro wrote:
+> On Tue, Jun 24, 2025 at 10:29:13AM +0200, Christian Brauner wrote:
+> > Various filesystems such as pidfs (and likely drm in the future) have a
+> > use-case to support opening files purely based on the handle without
+> > having to require a file descriptor to another object. That's especially
+> > the case for filesystems that don't do any lookup whatsoever and there's
+> > zero relationship between the objects. Such filesystems are also
+> > singletons that stay around for the lifetime of the system meaning that
+> > they can be uniquely identified and accessed purely based on the file
+> > handle type. Enable that so that userspace doesn't have to allocate an
+> > object needlessly especially if they can't do that for whatever reason.
 > 
-> XFS already supports an optional policy for handling metadata errors via:
-> /sys/fs/xfs/<disk>/error/metadata/
-> 
-> It would be reasonable to introduce a similar optional policy for data
-> errors:
-> /sys/fs/xfs/<disk>/error/data/
-> 
-> This data error policy could allow the filesystem to shut down immediately
-> if corrupted data is detected that might otherwise be exposed to userspace.
+> Whoa...  Two notes:
+> 	1) you really want to make sure that no _directories_ on those
+> filesystems are decodable.
 
-I fully agree on that part, and would in fact argue for making it the
-default.
+No directories exist on any of the obvious candidates (certainly not
+pidfs) and it's easy to add an assertion there. It's obvioulsy only
+going to work for specific filesystems.
 
-But reporting writeback errors on read just on one file system and with
-a specific option is really strange.
+> 	2) do you want to get the damn things bound somewhere?
 
+For the obvious cases either bind-mounts aren't supported or having a
+bind-mount would not constitute a problem. For starter pidfds can be
+created purely based on pidfd_open() which means you can always open a
+pidfd for process even if the bind-mount in question would not be
+accessible to you.
+
+Are there other concerns about bind-mounts that I'm missing?
 
