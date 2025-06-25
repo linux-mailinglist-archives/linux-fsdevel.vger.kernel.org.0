@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-52989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3154AE91E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 01:15:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458A7AE91DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 01:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFB34A8DB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD376A2FEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA6D2FCFFC;
-	Wed, 25 Jun 2025 23:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34A12FCFD5;
+	Wed, 25 Jun 2025 23:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cS/h4p5V"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="inTefrWH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8B12FA646;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D932F94BC;
 	Wed, 25 Jun 2025 23:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750893199; cv=none; b=qaTHNta4PIqwHcU72mUIKkOtdgy7xuo2A73a1j7uaBYjLnXME5Vd7dIp6K6jDTbT+XFxsEA2P9PjrYNw0t50M1L4zo9SFFnS2KTAuIGB9qIV/uyGnsFVg2sZSCM2PraH9YZRcfA0K7ZAQZaMYK0ljSMBDNPZdORAIry7IeB7ub8=
+	t=1750893199; cv=none; b=RjfZu4kXbNcrzjjoofjqz7IjCGI92M5Jqcgq5u3nhAYszdowSFsRvbgihg1KNg71d1o4+K7CeJU6Ostn37u+FIIAlIfA+OVJ6qygg8/q3UiaQ1oPguzXe6u2mF+CACWtfugploHTfOe1DZ0IjvNvfpSPkQOktfX6A9pyrzqNwlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750893199; c=relaxed/simple;
-	bh=vJKxu81Bu7+XfGaA30puQn2EqmTYh9aEWm5+YU8RJd4=;
+	bh=WmpX+jrnMLM/cwhfY1s9tHKZ4UfDw2y8nBi8pl+1w58=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=romC88PKcNHmdCpgQA4sb5G20IVMG1wm/ATOoB226q+E7wAnNkS8f3z5J50u/7Fm3H5K5KUseDww1z85bQxB8gFw3LwpD2Ro08+77fgzwkUODurzKGWoyr3j4DgXpxJ/8UUaDw9Q/ULLjHoxi5g91IvZSoViPeWMyzRiV1HkfgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cS/h4p5V; arc=none smtp.client-ip=192.19.144.207
+	 MIME-Version; b=GHiap58uEx8ujTJfDfJJrDpg6IU96EVIg95qDwJqKJXmjCtCgdaVyhUIoZGwkI35qqmSqQv8ixXfSXCSRrxv58Qf8v2M8AIKuoVrrFo7EmChT2e/r5HX19c/Va6yfmVJcB5fkOBs29WLLBlft40TIwhULsn0tFi7pAY167TqGhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=inTefrWH; arc=none smtp.client-ip=192.19.144.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id B9D87C002831;
-	Wed, 25 Jun 2025 16:13:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com B9D87C002831
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 45833C002832;
+	Wed, 25 Jun 2025 16:13:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 45833C002832
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1750893192;
-	bh=vJKxu81Bu7+XfGaA30puQn2EqmTYh9aEWm5+YU8RJd4=;
+	s=dkimrelay; t=1750893193;
+	bh=WmpX+jrnMLM/cwhfY1s9tHKZ4UfDw2y8nBi8pl+1w58=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cS/h4p5VjNW+qE6Z8BUlElgikJNuDLV3On0zzioZ4+b6/2USGo4/U3r3Elno1+dyv
-	 GLM9lt9f0met0IggAz3wZqWzmPHHTWX7uDzEhisQxQSr92NgatA9nrWaG0h6LPq7A1
-	 kCrgAAbQym5kKW0G27pINITa5jvr4WlBr5Oi6o4s=
+	b=inTefrWHn4voXLJ7xMd1ccxKZUnzKJNykHjPFa8XkYOoA45XhTF+mAx/kqA6tioND
+	 2kh8m4rv6PbfKrpdTdm00tMT5zjFTKCnCZUdAsiFURkssucd8FNnV1a39GknZcoRup
+	 qAGJ1hp6VHxcoEArLqmAmlPlP3XEcRVf5jqjB4/A=
 Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 2C99718000853;
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id A9F5A18000530;
 	Wed, 25 Jun 2025 16:13:12 -0700 (PDT)
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 To: linux-kernel@vger.kernel.org
@@ -98,9 +98,9 @@ Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
 	maple-tree@lists.infradead.org (open list:MAPLE TREE),
 	linux-modules@vger.kernel.org (open list:MODULE SUPPORT),
 	linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM)
-Subject: [PATCH 13/16] MAINTAINERS: Include proc.py under PROC FILESYSTEM entry
-Date: Wed, 25 Jun 2025 16:10:50 -0700
-Message-ID: <20250625231053.1134589-14-florian.fainelli@broadcom.com>
+Subject: [PATCH 14/16] MAINTAINERS: Include vmalloc.py under VMALLOC entry
+Date: Wed, 25 Jun 2025 16:10:51 -0700
+Message-ID: <20250625231053.1134589-15-florian.fainelli@broadcom.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
 References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
@@ -112,8 +112,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Include the GDB scripts file under scripts/gdb/linux/proc.py under the
-PROC FILESYSTEM subsystem since it parses internal data structures that
+Include the GDB scripts file under scripts/gdb/linux/vmalloc.py under
+the VMALLOC subsystem since it parses internal data structures that
 depend upon that subsystem.
 
 Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
@@ -122,17 +122,17 @@ Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 0931440c890b..610828010cca 100644
+index 610828010cca..8e86acd63739 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -19998,6 +19998,7 @@ S:	Maintained
- F:	Documentation/filesystems/proc.rst
- F:	fs/proc/
- F:	include/linux/proc_fs.h
-+F:	scripts/gdb/linux/proc.py
- F:	tools/testing/selftests/proc/
+@@ -26577,6 +26577,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+ F:	include/linux/vmalloc.h
+ F:	mm/vmalloc.c
+ F:	lib/test_vmalloc.c
++F:	scripts/gdb/linux/vmalloc.py
  
- PROC SYSCTL
+ VME SUBSYSTEM
+ L:	linux-kernel@vger.kernel.org
 -- 
 2.43.0
 
