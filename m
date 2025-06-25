@@ -1,162 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-52930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8F7AE88DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 17:55:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03D9AE88EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 17:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 285B5169F83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 15:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCC716E99A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 15:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7938729E0FA;
-	Wed, 25 Jun 2025 15:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBC629B214;
+	Wed, 25 Jun 2025 15:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="Vq2k33H2"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UTPLqWGW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2z60Z06n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5871A7264;
-	Wed, 25 Jun 2025 15:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CE62BE7AA;
+	Wed, 25 Jun 2025 15:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750866919; cv=none; b=TF3OkT/4IBjchi1PDmEdTSeBHAoJK5NoPSSiDjH7ZXE/FC23kyQY+1CU/5hAZ131RQskdlcqFjHijQRSrO0DWkyEigaQQ3jxF0rLp2SRJmdXoOZ6jHcJn4M6zVTF6Ljyycs187XXXlRyOrtekeYRGFMuNWYTQYNms1WFS1rnca4=
+	t=1750867041; cv=none; b=Dc17vIpaII4qr564XK+Z5v/xnWmIC+P6EMsjMkYwVNeL9J+W8YumLAtEblWm5OiJUck3hmpWXF/2vRelDHREfZpCk9looUhPZnsHxZrdQgOiQUbbq7ydWVJSDfDUaxKbTyLwg7btQag7ao80JuTAo3J5awHewSV6fNMWTgLOjWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750866919; c=relaxed/simple;
-	bh=nMg/fmRzABUVMBMxW77r3Z5ilmHMlpfCmcUZk5LUX2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PmiL2Y1d2jA/IZT/H25fkrnnWuBs+02h6O1w5sS/kYg74FEdA7WlccdpELkM/sTuFPrFgDQ7CZ1mcnQz2U9wb4HJZ7AklC7PkUbvdEYjf4existBNPb7QhZMrUHXWj0pZSBf6QkToz4ItRj06bbHsXREtP7L7vfAz6rXpEmvyuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=Vq2k33H2; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=vQ2ISujzgMsOuy0zYRu3RYmEVeMJJSS3rBIsIzJ2HbY=; b=Vq2k33H2AlmHKFttx/KWXpfyFV
-	nTP11K6mYya9sN2RyU3h9dUPIdisAgozsweNkF/oC/mlmrU+Eu5GE8jCBc8fl20lYAlRogduMqX3l
-	O1I/qtDgFSwwtGSE4NfGnORUl5mqnItsTfDrQcEHOXXx/8mnMht3n5mQN84U4IOqttrY+yq8BGxno
-	dlRRbQcNyUjDflXXvAqVk6hPPfDSROThMUml8cQjXFXBj1r72gKMOsXS7f1N5uU/1rZWiWV7Ty67u
-	Q8K3yhthMZN9j61zUn/oMvDTLhCvp/Vv3GNQdEeZ2eDOiKmv5rQ1VWW+QVxwM/e/YPK8Dy3ifvpvF
-	FVqT+zzPpTD/0q4kICF2ZgmlVdtZP+5KLQL6+qFQUePThJKbTx8P2p406RCun3RsUAQq0p62ANYMb
-	MW1phQGkQ1hi2szjFwzIqB8d3CpY4tJEeOKR/ZoCOiXrjP3FPPy1TW6QJnF5wl9skAmwH8vwWgGEy
-	ecCkskJul48CvOmrdxBv/4lD;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1uUSSw-00CRa4-38;
-	Wed, 25 Jun 2025 15:55:15 +0000
-Message-ID: <011ec23b-d151-4ef8-bbe7-ba79e3678ae7@samba.org>
-Date: Wed, 25 Jun 2025 17:55:14 +0200
+	s=arc-20240116; t=1750867041; c=relaxed/simple;
+	bh=E5uqucEcM/mKn6EztccekkvQtFRto2xMKL0P3StcGmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvrgxUmhCcCtvT6rAOnnSFoYyvicrATnxZyCTC3xpJkQGLRPUdWUY2KzljwYhCPfgXS4bhQUYngQfcu62bhTPqSsvj/SxEuVL81yFNUK1iY1Lz89I9axVb86HAlGrCTjsmPiS+x3+pa+SWiXM4k+7fLI/8QRWZjD4CZNS8Jr9ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UTPLqWGW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2z60Z06n; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 25 Jun 2025 17:57:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750867038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CfjwWrD5XKW/BysMkuSVW+dt/gVl5mSe4HCW3w5BYuU=;
+	b=UTPLqWGWembTwGM1I/YUgZo4X/TUmmRzpL5RjQlkxjSQAX8mSoiH1S881swoIMJ+d6miOb
+	kVV8R1iW6jSLzQpMd65GwdIIX+P/ejWPkCPEcQn9+rcJw44H01J8c0FqrrfJLAfZONwI1F
+	4vvVpQ3SCo6DAIU69OJ1xr/1Ggx8BpQ+77ATNEJ3V3/mNyyH+2q3YY/FXs0vQsXhv2/qwL
+	sPatIYxsz03GvfZN4DzhenQFfHGpgX5DpGtrxbUFxINOx3sg3SSKtXmkyU9sA6wlmaoEIF
+	/r1J4q7gh1O5JqWopj8qNOCBbNerEWHdUBUW2mx6EtCOk0hQsgtKnE5eZCzU1A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750867038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CfjwWrD5XKW/BysMkuSVW+dt/gVl5mSe4HCW3w5BYuU=;
+	b=2z60Z06nBhUZVxBM6oxgQ3PZgvvFA8ivzh/kRDzxuBwWuBlnDpNa6XDz+vnlONDs8uyNZI
+	1Ye7EO0EF0GRprCQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+Message-ID: <20250625155713.lckVkmJH@linutronix.de>
+References: <20250527090836.1290532-1-namcao@linutronix.de>
+ <20250625145031.GQ4Bnc4K@linutronix.de>
+ <20250625152702.JiI8qdk-@linutronix.de>
+ <20250625153354.0cgh85EQ@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cifs: Fix the smbd_request and smbd_reponse slabs to
- allow usercopy
-To: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>
-Cc: Paulo Alcantara <pc@manguebit.com>, linux-cifs@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1372501.1750858644@warthog.procyon.org.uk>
- <1382992.1750862802@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <1382992.1750862802@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625153354.0cgh85EQ@linutronix.de>
 
-reviewed-by and tested-by: Stefan Metzmacher <metze@samba.org>
+On Wed, Jun 25, 2025 at 05:33:54PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-06-25 17:27:02 [+0200], Nam Cao wrote:
+> > > > @@ -1896,21 +1732,30 @@ static int ep_send_events(struct eventpoll *ep,
+> > > >  			__pm_relax(ws);
+> > > >  		}
+> > > >  
+> > > > -		list_del_init(&epi->rdllink);
+> > > > -
+> > > >  		/*
+> > > >  		 * If the event mask intersect the caller-requested one,
+> > > >  		 * deliver the event to userspace. Again, we are holding ep->mtx,
+> > > >  		 * so no operations coming from userspace can change the item.
+> > > >  		 */
+> > > >  		revents = ep_item_poll(epi, &pt, 1);
+> > > > -		if (!revents)
+> > > > +		if (!revents) {
+> > > > +			init_llist_node(n);
+> > > > +
+> > > > +			/*
+> > > > +			 * Just in case epi becomes ready after ep_item_poll() above, but before
+> > > > +			 * init_llist_node(). Make sure to add it to the ready list, otherwise an
+> > > > +			 * event may be lost.
+> > > > +			 */
+> > > 
+> > > So why not llist_del_first_init() at the top? Wouldn't this avoid the
+> > > add below? 
+> > 
+> > Look at that function:
+> > 	static inline struct llist_node *llist_del_first_init(struct llist_head *head)
+> > 	{
+> > 		struct llist_node *n = llist_del_first(head);
+> > 
+> > 		// BROKEN: another task does llist_add() here for the same node
+> > 
+> > 		if (n)
+> > 			init_llist_node(n);
+> > 		return n;
+> > 	}
+> > 
+> > It is not atomic to another task doing llist_add() to the same node.
+> > init_llist_node() would then put the list in an inconsistent state.
+> 
+> Okay, I wasn't expecting another llist_add() from somewhere else. Makes
+> sense.
 
-Am 25.06.25 um 16:46 schrieb David Howells:
->      
-> The handling of received data in the smbdirect client code involves using
-> copy_to_iter() to copy data from the smbd_reponse struct's packet trailer
-> to a folioq buffer provided by netfslib that encapsulates a chunk of
-> pagecache.
-> 
-> If, however, CONFIG_HARDENED_USERCOPY=y, this will result in the checks
-> then performed in copy_to_iter() oopsing with something like the following:
-> 
->   CIFS: Attempting to mount //172.31.9.1/test
->   CIFS: VFS: RDMA transport established
->   usercopy: Kernel memory exposure attempt detected from SLUB object 'smbd_response_0000000091e24ea1' (offset 81, size 63)!
->   ------------[ cut here ]------------
->   kernel BUG at mm/usercopy.c:102!
->   ...
->   RIP: 0010:usercopy_abort+0x6c/0x80
->   ...
->   Call Trace:
->    <TASK>
->    __check_heap_object+0xe3/0x120
->    __check_object_size+0x4dc/0x6d0
->    smbd_recv+0x77f/0xfe0 [cifs]
->    cifs_readv_from_socket+0x276/0x8f0 [cifs]
->    cifs_read_from_socket+0xcd/0x120 [cifs]
->    cifs_demultiplex_thread+0x7e9/0x2d50 [cifs]
->    kthread+0x396/0x830
->    ret_from_fork+0x2b8/0x3b0
->    ret_from_fork_asm+0x1a/0x30
-> 
-> The problem is that the smbd_response slab's packet field isn't marked as
-> being permitted for usercopy.
-> 
-> Fix this by passing parameters to kmem_slab_create() to indicate that
-> copy_to_iter() is permitted from the packet region of the smbd_response
-> slab objects, less the header space.
-> 
-> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-> Reported-by: Stefan Metzmacher <metze@samba.org>
-> Link: https://lore.kernel.org/r/acb7f612-df26-4e2a-a35d-7cd040f513e1@samba.org/
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <stfrench@microsoft.com>
-> cc: Paulo Alcantara <pc@manguebit.com>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->   fs/smb/client/smbdirect.c |   18 +++++++++++++-----
->   1 file changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-> index ef6bf8d6808d..f9773cc0d562 100644
-> --- a/fs/smb/client/smbdirect.c
-> +++ b/fs/smb/client/smbdirect.c
-> @@ -1475,6 +1475,9 @@ static int allocate_caches_and_workqueue(struct smbd_connection *info)
->   	char name[MAX_NAME_LEN];
->   	int rc;
->   
-> +	if (WARN_ON_ONCE(sp->max_recv_size < sizeof(struct smbdirect_data_transfer)))
-> +		return -ENOMEM;
-> +
->   	scnprintf(name, MAX_NAME_LEN, "smbd_request_%p", info);
->   	info->request_cache =
->   		kmem_cache_create(
-> @@ -1492,12 +1495,17 @@ static int allocate_caches_and_workqueue(struct smbd_connection *info)
->   		goto out1;
->   
->   	scnprintf(name, MAX_NAME_LEN, "smbd_response_%p", info);
-> +
-> +	struct kmem_cache_args response_args = {
-> +		.align		= __alignof__(struct smbd_response),
-> +		.useroffset	= (offsetof(struct smbd_response, packet) +
-> +				   sizeof(struct smbdirect_data_transfer)),
-> +		.usersize	= sp->max_recv_size - sizeof(struct smbdirect_data_transfer),
-> +	};
->   	info->response_cache =
-> -		kmem_cache_create(
-> -			name,
-> -			sizeof(struct smbd_response) +
-> -				sp->max_recv_size,
-> -			0, SLAB_HWCACHE_ALIGN, NULL);
-> +		kmem_cache_create(name,
-> +				  sizeof(struct smbd_response) + sp->max_recv_size,
-> +				  &response_args, SLAB_HWCACHE_ALIGN);
->   	if (!info->response_cache)
->   		goto out2;
->   
+Sorry, it's been a few weeks and I misremembered. But that wasn't the
+reason. epitem_ready() is atomic to llist_del_first_init().
 
+The actual reason is that, llist_del_first_init() would allow another
+llist_add() to happen. So in the future loop iterations, we could see the
+same item again, and we would incorrectly report more events than actually
+available.
+
+Thus, init_llist_node() doesn't happen until we are done looping.
+
+> > To be sure, I tried your suggestion. Systemd sometimes failed to boot, and
+> > my stress test crashed instantly.
+> 
+> I had a trace_printk() there while testing and it never triggered.
+
+This code path is only executed for broken userspace.
+
+Nam
 
