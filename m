@@ -1,179 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-52886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56268AE7FAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:38:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 089DAAE7FB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF9577A882A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609A316678C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB582BEFFB;
-	Wed, 25 Jun 2025 10:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF0C29B8C7;
+	Wed, 25 Jun 2025 10:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S1qHsj8B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAXroMdv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7BB29E0EA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 10:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7759A2877F3;
+	Wed, 25 Jun 2025 10:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750847843; cv=none; b=ElYmA+8fHwgHiV2Y5XomjtFnqz7gywfeq5k4OYU99CfKHMLHDf4egOZ6dvc/Dy+E6ITJIhApBqfh9xmK8yqPdCUC+M/ZXO5KaPGoc2MErUTtLuPGWymAzi/DemxNODRgBoksJmIuBYUgm+zIUQi86PG2OcFo5MeQ1RlYH5DarjQ=
+	t=1750848016; cv=none; b=Rt5+1ujSdV9nViFHKLlMgkSRJ9xvenQe+mlpe96CiYUhfHgIWowH1A6Zt/NyJKrNcXOforDl4+B8Dv+2OrEbbHu/Xib2gtpJw4chILFal9ukBHsihaH/aXRxfnohWrE3uu757CRiPYYeJVZkbdBlAgOyBDibDRSKC6qEqxBurTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750847843; c=relaxed/simple;
-	bh=RFjd235L7/G9kW2qDRezkDrJvYAmAVxhzg6JrL2fuBc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y4ERI0LafzWszJ+DOx+3BevRhoqiUMvAqwTA5XwQPZPArQ5FtR3n5KTERdZ09kKQ1iruafqn3tItITumZph2A8KEQrCvVycpvztgn6IQa4EcFT5ferORMxA1vsxNZ0Zp2lhLCC+8hkZNJ49Akfl81pYoX+B0z9Fn3YeWUBuATDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S1qHsj8B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750847840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V/i6X5rNkwtkA0z3dVR9ep6Ga20RqSlPFLO6q4Jo+/c=;
-	b=S1qHsj8BCH32mkssaISwTeQ2X+P9b0PcSL+9AghsO2v16RHc+PAo/oTl6NsNrfFsU8WGXe
-	IPxg2hKFZ2Ivl7d0Ak7u5+Aqv3OlwVtVdQqMTvZwHDTkV0GM//G3EQKSK8GtSgAnrcEvXr
-	MeyvKAp6htypQ2LHcOd/VXfTFvzL2WM=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-425-cBoiV-v7MXyxHpSC04HX2Q-1; Wed, 25 Jun 2025 06:37:17 -0400
-X-MC-Unique: cBoiV-v7MXyxHpSC04HX2Q-1
-X-Mimecast-MFC-AGG-ID: cBoiV-v7MXyxHpSC04HX2Q_1750847837
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4e98c14da9bso324804137.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 03:37:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750847837; x=1751452637;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V/i6X5rNkwtkA0z3dVR9ep6Ga20RqSlPFLO6q4Jo+/c=;
-        b=WIzzY9Vrn5p056l3MyfIuTst6za1/tlo7J5E9A610EitHkUyXztLjCCp/+gb+9X54u
-         GyhsMHllhmGqb8BMrk1ZKfLDsBf6RqkMJMHEMbN045FOJT1piNuZntRC1FMPmADN6q/7
-         MhpB8HaRhXfUXTQB9IRn+FCP0y9OgagiWnuIRnQgBchDUDlSFPqj2dT5z/aYrj8jZy1y
-         hvfnrcCruiHdAVjPHDE1+ibt59zvq5bhMxqbPnbKyGQ9JYqq4MPdlF792TzJ6yzKmapP
-         fWQl6Mqlj6noGRrFHv/o6piGsoFZZPEtazdZBAR3qzbQuFlJH0Co5JT/CDqx79MmRSOt
-         A56Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV1NmB5xZxKPT4AMDncotSLPDiZHFKgsPrjrrrrCGtu4SpztYZua4w6jJQ5ZZ2Ojjg/uoxM+FsvP3gF1khB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBoxVeqis2yFjOZKiWZHWEsSjLVJKN9yrymdaOmHXR6oc1Yfpc
-	D0nhhkHm/Ss24utmg94MOXOf3qdvIjjdA4YJrDsrn2+Xoi6SWGg7IQD49pXLJhllNTJRHfJZGHX
-	jpqVevfePB8Bu6kzWFGdP0KGbnNOXNfw83BgxGArFxjln9mljyXODKMA3xpEXdOty+fK9ImN3Ss
-	R5GZpNjFFMitcwz07FZYzjHH/es7tOxWb6QUEhz5Z77Q==
-X-Gm-Gg: ASbGncvSb0hx++ZHfXZI5x4inWrv6jUXdqq9jy4fEUQWFSMGJjhxXN4KSXhFMN8ybOA
-	kDLNhw1uuOtP2R/BZgVdfA7d+a2CJKhKfwmSmsdg4f8Eh2/nUgLOQOPzh98+QKKaZCrC70F0YA0
-	d3
-X-Received: by 2002:a05:6102:c0a:b0:4e9:968b:4414 with SMTP id ada2fe7eead31-4ecc76b5e32mr1155764137.22.1750847836972;
-        Wed, 25 Jun 2025 03:37:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjmoE/3Y+PAxOwo1N9Ubp8LCBIElRgF9CCRTyuKPdkdQMhC0WeUYbbn48B3y/Vk6EqzEU2KbbXj4tvlr3EqvQ=
-X-Received: by 2002:a05:6102:c0a:b0:4e9:968b:4414 with SMTP id
- ada2fe7eead31-4ecc76b5e32mr1155756137.22.1750847836631; Wed, 25 Jun 2025
- 03:37:16 -0700 (PDT)
+	s=arc-20240116; t=1750848016; c=relaxed/simple;
+	bh=OKEvXRyyAqjIihGc7Qi8sQBVLZRFS746qEJXEGDHAeg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=njDISLTym4lbxuDV9lF5WOtjfD7DgU9J1RgzZGXOwGpL+9sNT221n6kJjnhTTMln4RX3SdDbyO6ZeuGTOj7SaAGzLa+35KvHJwolKAx6uZ3Zhw8zkw3+f+sjG58NXCbvpJ9bOn7EKRYlzdkBDyW58sjg2dH+XJ5aKK9pac/5t+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAXroMdv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF11C4CEEA;
+	Wed, 25 Jun 2025 10:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750848015;
+	bh=OKEvXRyyAqjIihGc7Qi8sQBVLZRFS746qEJXEGDHAeg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ZAXroMdvmmGGFAUiYiebaH2wDRvHnPm0A4nNxQWIy45HkHUsGXUUNGhqwI6Y+8ciL
+	 D/29O8F299La6zjBL21vYqFnZ5QVWBICsLXvDbdlCnT8XDhzuT8/Xz7ZzccEw+1BiK
+	 a2fTIF9EzmiTnSxlp3Dgb72OFizPEuIBwuPSPUfLURnwN3DgpPFxyv3PSnqg4zkq3h
+	 8YwYw9kTx6YFcFpgrktRg6NkDNYYQZOvVMW9PWGJpcyvh+4ve/O2+pGEi9pPpSCalG
+	 wyzgc1pq6gTTPs3F0JMR+H5XyLFWlejcBEa8bfbrsdQOO0b4HoqODAFy1UNcVA4Krr
+	 fytISrX5AI76g==
+Message-ID: <88e4b40b61f0860c28409bd50e3ae5f1d9c0410b.camel@kernel.org>
+Subject: Re: [PATCH] xfs: report a writeback error on a read() call
+From: Jeff Layton <jlayton@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>, Yafang Shao <laoar.shao@gmail.com>
+Cc: david@fromorbit.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, yc1082463@gmail.com
+Date: Wed, 25 Jun 2025 06:40:07 -0400
+In-Reply-To: <aFuezjrRG4L5dumV@infradead.org>
+References: <aFqyyUk9lO5mSguL@infradead.org>
+	 <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
+	 <aFuezjrRG4L5dumV@infradead.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613183453.596900-1-slava@dubeyko.com>
-In-Reply-To: <20250613183453.596900-1-slava@dubeyko.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 25 Jun 2025 13:37:06 +0300
-X-Gm-Features: Ac12FXw8zPCUBCoR_LcSrwIyPH209rQ9V46iiLqHrxIn7kQRVzE_ZjitLYeAsrA
-Message-ID: <CAO8a2SjLCq1ztLfYe7bPjhyDqAqX0AGBRdQ-cAuX7gzTrmm70g@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix potential race condition in ceph_ioctl_lazyio()
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Good work addressing the Coverity finding. The fix properly eliminates
-the race condition by moving the check inside the lock.
+On Wed, 2025-06-25 at 00:01 -0700, Christoph Hellwig wrote:
+> On Wed, Jun 25, 2025 at 10:44:57AM +0800, Yafang Shao wrote:
+> > > That's really kernel wide policy and not something magic done by a
+> > > single file system.
+> >=20
+> > XFS already supports an optional policy for handling metadata errors vi=
+a:
+> > /sys/fs/xfs/<disk>/error/metadata/
+> >=20
+> > It would be reasonable to introduce a similar optional policy for data
+> > errors:
+> > /sys/fs/xfs/<disk>/error/data/
+> >=20
+> > This data error policy could allow the filesystem to shut down immediat=
+ely
+> > if corrupted data is detected that might otherwise be exposed to usersp=
+ace.
+>=20
+> I fully agree on that part, and would in fact argue for making it the
+> default.
+>=20
+> But reporting writeback errors on read just on one file system and with
+> a specific option is really strange.
 
-Reviewed-by: Alex Markuze amarkuze@redhat.com
 
-On Fri, Jun 13, 2025 at 9:35=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
-om> wrote:
->
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->
-> The Coverity Scan service has detected potential
-> race condition in ceph_ioctl_lazyio() [1].
->
-> The CID 1591046 contains explanation: "Check of thread-shared
-> field evades lock acquisition (LOCK_EVASION). Thread1 sets
-> fmode to a new value. Now the two threads have an inconsistent
-> view of fmode and updates to fields correlated with fmode
-> may be lost. The data guarded by this critical section may
-> be read while in an inconsistent state or modified by multiple
-> racing threads. In ceph_ioctl_lazyio: Checking the value of
-> a thread-shared field outside of a locked region to determine
-> if a locked operation involving that thread shared field
-> has completed. (CWE-543)".
->
-> The patch places fi->fmode field access under ci->i_ceph_lock
-> protection. Also, it introduces the is_file_already_lazy
-> variable that is set under the lock and it is checked later
-> out of scope of critical section.
->
-> [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
-sue=3D1591046
->
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> ---
->  fs/ceph/ioctl.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
-> index e861de3c79b9..60410cf27a34 100644
-> --- a/fs/ceph/ioctl.c
-> +++ b/fs/ceph/ioctl.c
-> @@ -246,21 +246,27 @@ static long ceph_ioctl_lazyio(struct file *file)
->         struct ceph_inode_info *ci =3D ceph_inode(inode);
->         struct ceph_mds_client *mdsc =3D ceph_inode_to_fs_client(inode)->=
-mdsc;
->         struct ceph_client *cl =3D mdsc->fsc->client;
-> +       bool is_file_already_lazy =3D false;
->
-> +       spin_lock(&ci->i_ceph_lock);
->         if ((fi->fmode & CEPH_FILE_MODE_LAZY) =3D=3D 0) {
-> -               spin_lock(&ci->i_ceph_lock);
->                 fi->fmode |=3D CEPH_FILE_MODE_LAZY;
->                 ci->i_nr_by_mode[ffs(CEPH_FILE_MODE_LAZY)]++;
->                 __ceph_touch_fmode(ci, mdsc, fi->fmode);
-> -               spin_unlock(&ci->i_ceph_lock);
-> +       } else
-> +               is_file_already_lazy =3D true;
-> +       spin_unlock(&ci->i_ceph_lock);
-> +
-> +       if (is_file_already_lazy) {
-> +               doutc(cl, "file %p %p %llx.%llx already lazy\n", file, in=
-ode,
-> +                     ceph_vinop(inode));
-> +       } else {
->                 doutc(cl, "file %p %p %llx.%llx marked lazy\n", file, ino=
-de,
->                       ceph_vinop(inode));
->
->                 ceph_check_caps(ci, 0);
-> -       } else {
-> -               doutc(cl, "file %p %p %llx.%llx already lazy\n", file, in=
-ode,
-> -                     ceph_vinop(inode));
->         }
-> +
->         return 0;
->  }
->
-> --
-> 2.49.0
->
+Another option:
 
+We could expose this functionality in preadv2() with a new RWF_WBERR
+flag (better names welcome). That way applications could opt-in to
+checking for writeback errors like this. With that, the application is
+at least explicitly saying that it wants this behavior.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
