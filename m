@@ -1,133 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-52955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBE9AE8B2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 19:09:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33D6AE8B70
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 19:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E592D5A7B18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 17:07:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F9E174931
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 17:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2E12DAFDA;
-	Wed, 25 Jun 2025 17:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9B72D1F59;
+	Wed, 25 Jun 2025 17:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dLLPqjHW"
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="rQXRw887"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8CD28D8FE;
-	Wed, 25 Jun 2025 17:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8502D3074AC;
+	Wed, 25 Jun 2025 17:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750870989; cv=none; b=MdNjlUINSSPjhQC24zbLqAaoVlSpZrMLHIpZoEfPcaOGCcf6iSHyvoPRCfmErDm1DAmJJ3lRPhc765MvXxKfAnl1v+UGxlyctVwPBJ1CVka+Peu6j3sani4AvQuLJdwaqTaQXyY5kTinbntlzthI2JVT8nJmG2sPnzbRTm6Ao2s=
+	t=1750872210; cv=none; b=vGHxIaKiaCytOP+daMzBEdT25W/HzpFC3/8b1QlnSvFeltV6RuyfEOyvMMur7qxrc+o0Bvf9zX1A78QrXmy90BMVbChf7kGojSjIlGGbOvxJOQpDTrnbIGLHjliA5zjPkxOM/1GU6q3ITORW3Ra4ykSkbhwIOGrYRt0EY+J45kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750870989; c=relaxed/simple;
-	bh=0+ImX5Z5+yST+Npw31q/8a7InEoeRMTLz6Y4D6JHFtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JxU3e9j/0PZSAwl7LUBgyG1gcPJg44tY6emQ84Aa7q60jl1NvoGgUjtcLn03+R9Dxu1wU1cxDmGPZ0PwRVnaqOJIGfqE0WghSlLVeRY/UsRIrBYichap8wstFvWUOxTegIAGPE4mXYyQddZK7Fvae5JLG8y2KWTlA3BoCoVn1Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dLLPqjHW; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750870988; x=1782406988;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0+ImX5Z5+yST+Npw31q/8a7InEoeRMTLz6Y4D6JHFtI=;
-  b=dLLPqjHWXaGqeSnjkuEa1a7bz8sbdqIX/773yiy+IXxJsinUJ/Jr3VqB
-   6VhcSuC6lSW8TeAjvBobWFu/At+rE/fNKhwhQdjfe0FNbHohs/D/WxMz+
-   a7GRfgLjqLjdwi3KKIT5M/biLWNss/AY0YA5giqTf7i+HOLuIdMDJKpIy
-   TPbNdudHtcOCiRqK5L4sqDl1tRqv/hZnMsK5rQ1UvEe/O3kER5asOx5Kk
-   l17++GzDo60pbDprtFPIV8uhdT1hCnM4rwkFY2iB5eQsSl9z7I06NL/bq
-   xgCQgA/nqeD1W7Vg+ISanyJm4zO9MGyauy4wOMTLN1nckR38ryqrNb8+Q
-   g==;
-X-CSE-ConnectionGUID: 4vIlUPlDQDmI4VsvWzq/1g==
-X-CSE-MsgGUID: 7FsA+Na/RLWpQ5EGg90yow==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="78581520"
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="78581520"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 10:03:07 -0700
-X-CSE-ConnectionGUID: gy67ZgwNTDKWcXsuBplZwg==
-X-CSE-MsgGUID: e9r7QM1LQyqQI9aTuVfkMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="157767066"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 25 Jun 2025 10:03:04 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uUTWY-000TLm-0J;
-	Wed, 25 Jun 2025 17:03:02 +0000
-Date: Thu, 26 Jun 2025 01:02:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, hch@lst.de, miklos@szeredi.hu,
-	brauner@kernel.org, djwong@kernel.org, anuj20.g@samsung.com,
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
-	kernel-team@meta.com
-Subject: Re: [PATCH v3 14/16] fuse: use iomap for folio laundering
-Message-ID: <202506260003.qJL8KxcS-lkp@intel.com>
-References: <20250624022135.832899-15-joannelkoong@gmail.com>
+	s=arc-20240116; t=1750872210; c=relaxed/simple;
+	bh=BEDzEKt9JSATmJp5cnYe1NQYMywsbvi4ikfwEf/X8gs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U01+g88ava7Jw7cF4NHIMhmBQAD9sJoUk7JAayhPK7kzMhObMnXDbwt6cd0T4XShGsGg6v44ahzcMo1a/eLeUQYu5U3gIw8lw69zy9Pi/IBYbINdpYuGMfObOvJzMG5jtmmR+WJeMUPFhKPWfOEUfQkyp4o6GxTOBhrpVwm3GxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=rQXRw887; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=ZzWLo9F9RRZ6p3rOhQwF3R/YNmHPFvLGy60aTy/R4e0=; b=rQXRw887unOlqhD20dY3n74CFn
+	cPllOiKm2gLr0zvdv9nh/Ln03hde+M1gDZ7LRDhQl+k7SaHEv3dmgEHq6RJPztVtdsZ5XZaVIntMe
+	WBNa2LOeD5Mm+FI62EJ4LtcWsbQhELyGfgQ0H9xWkin1ZWicV5raotbicacJScBi43/Sw4qHtNojE
+	SpB6GXuCtPrg/2e7S87B2butjGKOtGokCSUmnUSoWAkORbXvw2tfRW2bYggNI0u65SEtNFeZIsYSf
+	sSSQWFPQdsswTfqsWCSYlP8qv2m8RA0TMfLCJVx5I6wsszGeEBuoyyqNqDGFwp2l7u25BZvj7HEGb
+	04ez/0bzmVIWvAa7zCyMthB/BSXjt9WNNYB5Pxla+ho6wID3+MU5wtHOl2TXyMGYwUV7iVLfVItJp
+	RHqrbhd4s94H52DhkHZFkXcAl3VQUxXBFhGR5oRXBsMwNyOPSjCCU5kLzWaWM7OMVJBn8KCwmKTg+
+	BpFYd9ErcxEKf/cC96aUT0Sa;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1uUTqB-00CSQA-1x;
+	Wed, 25 Jun 2025 17:23:19 +0000
+Message-ID: <658c6f4f-468b-4233-b49a-4c39a7ab03ab@samba.org>
+Date: Wed, 25 Jun 2025 19:23:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624022135.832899-15-joannelkoong@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/16] cifs: Fix reading into an ITER_FOLIOQ from the
+ smbdirect code
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>, Steve French <sfrench@samba.org>
+Cc: Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Steve French <stfrench@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Matthew Wilcox <willy@infradead.org>
+References: <20250625164213.1408754-1-dhowells@redhat.com>
+ <20250625164213.1408754-13-dhowells@redhat.com>
+Content-Language: en-US
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <20250625164213.1408754-13-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Joanne,
+Am 25.06.25 um 18:42 schrieb David Howells:
+> When performing a file read from RDMA, smbd_recv() prints an "Invalid msg
+> type 4" error and fails the I/O.  This is due to the switch-statement there
+> not handling the ITER_FOLIOQ handed down from netfslib.
+> 
+> Fix this by collapsing smbd_recv_buf() and smbd_recv_page() into
+> smbd_recv() and just using copy_to_iter() instead of memcpy().  This
+> future-proofs the function too, in case more ITER_* types are added.
+> 
+> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+> Reported-by: Stefan Metzmacher <metze@samba.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <stfrench@microsoft.com>
+> cc: Tom Talpey <tom@talpey.com>
+> cc: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: linux-cifs@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>   fs/smb/client/smbdirect.c | 114 +++++++-------------------------------
+>   1 file changed, 19 insertions(+), 95 deletions(-)
+> 
+> diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
+> index a976bcf61226..5fa46b2e682c 100644
+> --- a/fs/smb/client/smbdirect.c
+> +++ b/fs/smb/client/smbdirect.c
+> @@ -1770,35 +1770,39 @@ struct smbd_connection *smbd_get_connection(
+>   }
+>   
+>   /*
+> - * Receive data from receive reassembly queue
+> + * Receive data from the transport's receive reassembly queue
+>    * All the incoming data packets are placed in reassembly queue
+> - * buf: the buffer to read data into
+> + * iter: the buffer to read data into
+>    * size: the length of data to read
+>    * return value: actual data read
+> - * Note: this implementation copies the data from reassebmly queue to receive
+> + *
+> + * Note: this implementation copies the data from reassembly queue to receive
+>    * buffers used by upper layer. This is not the optimal code path. A better way
+>    * to do it is to not have upper layer allocate its receive buffers but rather
+>    * borrow the buffer from reassembly queue, and return it after data is
+>    * consumed. But this will require more changes to upper layer code, and also
+>    * need to consider packet boundaries while they still being reassembled.
+>    */
+> -static int smbd_recv_buf(struct smbd_connection *info, char *buf,
+> -		unsigned int size)
+> +int smbd_recv(struct smbd_connection *info, struct msghdr *msg)
+>   {
+>   	struct smbdirect_socket *sc = &info->socket;
+>   	struct smbd_response *response;
+>   	struct smbdirect_data_transfer *data_transfer;
+> +	size_t size = iov_iter_count(&msg->msg_iter);
+>   	int to_copy, to_read, data_read, offset;
+>   	u32 data_length, remaining_data_length, data_offset;
+>   	int rc;
+>   
+> +	if (WARN_ON_ONCE(iov_iter_rw(&msg->msg_iter) == WRITE))
+> +		return -EINVAL; /* It's a bug in upper layer to get there */
+> +
+>   again:
+>   	/*
+>   	 * No need to hold the reassembly queue lock all the time as we are
+>   	 * the only one reading from the front of the queue. The transport
+>   	 * may add more entries to the back of the queue at the same time
+>   	 */
+> -	log_read(INFO, "size=%d info->reassembly_data_length=%d\n", size,
+> +	log_read(INFO, "size=%zd info->reassembly_data_length=%d\n", size,
+>   		info->reassembly_data_length);
+>   	if (info->reassembly_data_length >= size) {
+>   		int queue_length;
+> @@ -1836,7 +1840,10 @@ static int smbd_recv_buf(struct smbd_connection *info, char *buf,
+>   			if (response->first_segment && size == 4) {
+>   				unsigned int rfc1002_len =
+>   					data_length + remaining_data_length;
+> -				*((__be32 *)buf) = cpu_to_be32(rfc1002_len);
+> +				__be32 rfc1002_hdr = cpu_to_be32(rfc1002_len);
+> +				if (copy_to_iter(&rfc1002_hdr, sizeof(rfc1002_hdr),
+> +						 &msg->msg_iter) != sizeof(rfc1002_hdr))
+> +					return -EFAULT;
+>   				data_read = 4;
+>   				response->first_segment = false;
+>   				log_read(INFO, "returning rfc1002 length %d\n",
+> @@ -1845,10 +1852,9 @@ static int smbd_recv_buf(struct smbd_connection *info, char *buf,
+>   			}
+>   
+>   			to_copy = min_t(int, data_length - offset, to_read);
+> -			memcpy(
+> -				buf + data_read,
+> -				(char *)data_transfer + data_offset + offset,
+> -				to_copy);
+> +			if (copy_to_iter((char *)data_transfer + data_offset + offset,
+> +					 to_copy, &msg->msg_iter) != to_copy)
+> +				return -EFAULT;
+>   
+>   			/* move on to the next buffer? */
+>   			if (to_copy == data_length - offset) {
+> @@ -1893,6 +1899,8 @@ static int smbd_recv_buf(struct smbd_connection *info, char *buf,
+>   			 data_read, info->reassembly_data_length,
+>   			 info->first_entry_offset);
+>   read_rfc1002_done:
+> +		/* SMBDirect will read it all or nothing */
+> +		msg->msg_iter.count = 0;
 
-kernel test robot noticed the following build errors:
+I think we should be remove this.
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on xfs-linux/for-next linus/master v6.16-rc3 next-20250625]
-[cannot apply to gfs2/for-next mszeredi-fuse/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+And I think this patch should come after the
+CONFIG_HARDENED_USERCOPY change otherwise a bisect will trigger the problem.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/iomap-pass-more-arguments-using-struct-iomap_writepage_ctx/20250624-102709
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250624022135.832899-15-joannelkoong%40gmail.com
-patch subject: [PATCH v3 14/16] fuse: use iomap for folio laundering
-config: arm64-randconfig-003-20250625 (https://download.01.org/0day-ci/archive/20250626/202506260003.qJL8KxcS-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250626/202506260003.qJL8KxcS-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506260003.qJL8KxcS-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_writepages':
-   file.c:(.text+0xbf0): undefined reference to `iomap_writepages'
-   file.c:(.text+0xbf0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_writepages'
-   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_writepage_finish':
-   file.c:(.text+0x1fd8): undefined reference to `iomap_finish_folio_write'
-   file.c:(.text+0x1fd8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_finish_folio_write'
-   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_cache_write_iter':
-   file.c:(.text+0x888c): undefined reference to `iomap_file_buffered_write'
-   file.c:(.text+0x888c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_file_buffered_write'
-   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_launder_folio':
->> file.c:(.text+0x8f74): undefined reference to `iomap_writeback_folio'
->> file.c:(.text+0x8f74): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_writeback_folio'
-   aarch64-linux-ld: fs/fuse/file.o: in function `fuse_iomap_writeback_range':
-   file.c:(.text+0x90d8): undefined reference to `iomap_start_folio_write'
-   file.c:(.text+0x90d8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iomap_start_folio_write'
-   aarch64-linux-ld: fs/fuse/file.o:(.rodata+0x370): undefined reference to `iomap_dirty_folio'
-   aarch64-linux-ld: fs/fuse/file.o:(.rodata+0x3a0): undefined reference to `iomap_release_folio'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+metze
 
