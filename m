@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-53034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C166FAE9303
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 01:54:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD75EAE9305
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 01:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E7D5A18D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:54:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE7B4A1FB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35172D3ED4;
-	Wed, 25 Jun 2025 23:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032322D3EE2;
+	Wed, 25 Jun 2025 23:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="PHMPOrj8";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="PHMPOrj8"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="HMqIPybS";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="btjjIVPA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BFB28726B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 23:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85C62D3ECC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 23:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750895653; cv=none; b=bJCPkM635COduGmjueHfaSDusV2ft6h/1Z+OQ/WglSiWTcOLl7Kjf8ygpNFxvGzOhszQKhIwadavgniK0yq6nSJKrunYZvk7ev8I8RUUvdq+C8D3Bk63vsRnVW/b/hfSLUI/JXBsWiWyDPmeZwQOheWcnD65n6xkFdimOU2aiN4=
+	t=1750895657; cv=none; b=Hw27tot6Jbb4Tz9kjFnBD2sUS/colili3VSPDpPwDd6ZbFd4oNOl10u85JZWrDipeLqTB6EnYuDf/wMYMHD0E4vAj2mFgKl1Io0sR9Ov2u3/DpkCVCRze3YMX53GGCNAxrHC/rY0wJwTP4m2GqVytYLe404d+4gsII3AkyBWmfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750895653; c=relaxed/simple;
-	bh=HvupKW54KPa9jGVGpdTdBhlgnBOhWHDD3Nrje2bks+Y=;
+	s=arc-20240116; t=1750895657; c=relaxed/simple;
+	bh=M6FRAU9EoR683/m8VmWDn5bPipYi8+xRzct0tJKEhko=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KbIyUfeva4zpm3kIPtAUxO53CJq8xoc2kKTvfLek5RWguepG6x17gCiqbZyYfT64oC2F1S2HHdPDYYdmdbkmI7WNaN5wYsjxVdPhkjv9aLiUXNqSus6saZwo4YUT2EFK6yk1qwR4NSkpi1xblSrY/8toXVE54T4PPNYCbGIxexA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=PHMPOrj8; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=PHMPOrj8; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=R3WE2vo3hN7xuxLZ0gymrHsYWuReTarChCP9bZi8QZqEKHRIN12Vj7y8uDzfGTwjiMzaAlYZ4sBL81kfw+Lo64Ez+y3SISKsDzpnbGog3rLI+A/uAFK/GilXSVbQ+1sRWamaSloymw35Xd2zDBwQcO6Rh9J9LKSlXUxQL3Jq3/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=HMqIPybS; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=btjjIVPA; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A96A31F460;
-	Wed, 25 Jun 2025 23:54:09 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CCBE921174;
+	Wed, 25 Jun 2025 23:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1750895649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750895652; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=s9xTTixAeKh5LgHSCF0NhpHUPGXFCvwfmlHXjd/8wS0=;
-	b=PHMPOrj8Roote4S9gwP5f6XE1omPmAj68qwUOSwqegRvLhalRpnifJbak3wreDXPQYP1ay
-	FqvJtuyvMNpRPP6kG8el0n+RqdPSW5DliqG1uYnmE5M9p4ipOdgPMVY+0JDO+E6s3dM3FM
-	QJip05LWGxpzwDLwVQsrh31yMVgieMo=
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=S2UUq5Vau3bQJ0uVB8WTIBzRzdpuxa9oYxrRLPqyDVE=;
+	b=HMqIPybSWI9H7lhRJKDQ6ZWvC7mnXrc0QiaU7ylpxgaBBvLrcZRiti9qo3cFajd2Kq9qs9
+	kI7UROqUioh009l+tAe/Dhh6rnf91CNFN/fTI8DKS4qKSm3gB5lcKkxtVfZ+agb5xBkJMF
+	uIttZZbVzHyrxSjcyMQSD3dVX3Z8fTg=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=btjjIVPA
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1750895649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750895651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=s9xTTixAeKh5LgHSCF0NhpHUPGXFCvwfmlHXjd/8wS0=;
-	b=PHMPOrj8Roote4S9gwP5f6XE1omPmAj68qwUOSwqegRvLhalRpnifJbak3wreDXPQYP1ay
-	FqvJtuyvMNpRPP6kG8el0n+RqdPSW5DliqG1uYnmE5M9p4ipOdgPMVY+0JDO+E6s3dM3FM
-	QJip05LWGxpzwDLwVQsrh31yMVgieMo=
+	bh=S2UUq5Vau3bQJ0uVB8WTIBzRzdpuxa9oYxrRLPqyDVE=;
+	b=btjjIVPAu1WHAsrprzLX11qPhaUkMdWXQiD7biRunOpShHp3z/3AGa5vLfRgGRtSNip9Tr
+	GjWdgDYFRoYnTPjps6ISHZM0q7pyuSTJBrQLVn7Fy0p6x4/HQlQSPyNd9ZEYp+HLNUOSDu
+	xB/Yu9Xg0MN5s40sRIwFQWY2JlPXK8I=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E084213301;
-	Wed, 25 Jun 2025 23:54:07 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1B88D13301;
+	Wed, 25 Jun 2025 23:54:09 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uPZLKB+MXGjQMAAAD6G6ig
-	(envelope-from <wqu@suse.com>); Wed, 25 Jun 2025 23:54:07 +0000
+	id OPbPMyGMXGjQMAAAD6G6ig
+	(envelope-from <wqu@suse.com>); Wed, 25 Jun 2025 23:54:09 +0000
 From: Qu Wenruo <wqu@suse.com>
 To: linux-btrfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
 Cc: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
 	jack@suse.cz
-Subject: [PATCH 1/6] fs: add a new remove_bdev() super operations callback
-Date: Thu, 26 Jun 2025 09:23:42 +0930
-Message-ID: <c8853ae1710df330e600a02efe629a3b196dde88.1750895337.git.wqu@suse.com>
+Subject: [PATCH 2/6] btrfs: introduce a new fs state, EMERGENCY_SHUTDOWN
+Date: Thu, 26 Jun 2025 09:23:43 +0930
+Message-ID: <12991c7995feb5e0a3a4cd17bfe89aad62d838ab.1750895337.git.wqu@suse.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1750895337.git.wqu@suse.com>
 References: <cover.1750895337.git.wqu@suse.com>
@@ -87,95 +87,130 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
+X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
 	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
+	DKIM_TRACE(0.00)[suse.com:+]
 X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: CCBE921174
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -3.01
 
-The new remove_bdev() call back is mostly for multi-device filesystems
-to handle device removal.
+This is btrfs' equivalent of XFS_IOC_GOINGDOWN or EXT4_IOC_SHUTDOWN,
+after entering the emergency shutdown state, all operations will return
+error (-EIO), and can not be bring back to normal state until unmount.
 
-Some multi-devices filesystems like btrfs can have the ability to handle
-device lose according to the setup (e.g. all chunks have extra mirrors),
-thus losing a block device will not interrupt the normal operations.
+A new helper, btrfs_force_shutdown() is introduced, which will:
 
-Btrfs will soon implement this call back by:
+- Mark the fs as error
+  But without flipping the fs read-only.
+  This is a special handling for the future shutdown ioctl, which will
+  freeze the fs first, set the SHUTDOWN flag, thaw the fs.
 
-- Automatically degrade the fs if read-write operations can be
-  maintained
+  But the thaw path will no longer call the unfreeze_fs() call back
+  if the superblock is already read-only.
 
-- Shutdown the fs if read-write operations can not be maintained
+  So to handle future shutdown correctly, we only mark the fs as error,
+  without flipping it read-only.
+
+- Set the SHUTDOWN flag and output an message
+
+The only extra thing is to set the EMERGENCY_SHUTDOWN flag to reject
+future operations with -EIO.
 
 Signed-off-by: Qu Wenruo <wqu@suse.com>
 ---
- fs/super.c         |  4 +++-
- include/linux/fs.h | 18 ++++++++++++++++++
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ fs/btrfs/fs.h       | 28 ++++++++++++++++++++++++++++
+ fs/btrfs/messages.c |  1 +
+ 2 files changed, 29 insertions(+)
 
-diff --git a/fs/super.c b/fs/super.c
-index 80418ca8e215..07845d2f9ec4 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1463,7 +1463,9 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
- 		sync_filesystem(sb);
- 	shrink_dcache_sb(sb);
- 	evict_inodes(sb);
--	if (sb->s_op->shutdown)
-+	if (sb->s_op->remove_bdev)
-+		sb->s_op->remove_bdev(sb, bdev, surprise);
-+	else if (sb->s_op->shutdown)
- 		sb->s_op->shutdown(sb);
+diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+index d90304d4e32c..45185c095696 100644
+--- a/fs/btrfs/fs.h
++++ b/fs/btrfs/fs.h
+@@ -29,6 +29,7 @@
+ #include "extent-io-tree.h"
+ #include "async-thread.h"
+ #include "block-rsv.h"
++#include "messages.h"
  
- 	super_unlock_shared(sb);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b085f161ed22..5e84e06c7354 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2367,7 +2367,25 @@ struct super_operations {
- 				  struct shrink_control *);
- 	long (*free_cached_objects)(struct super_block *,
- 				    struct shrink_control *);
+ struct inode;
+ struct super_block;
+@@ -120,6 +121,12 @@ enum {
+ 	/* No more delayed iput can be queued. */
+ 	BTRFS_FS_STATE_NO_DELAYED_IPUT,
+ 
 +	/*
-+	 * Callback to shutdown the fs.
-+	 *
-+	 * If a fs can not afford losing any block device, implement this callback.
++	 * Emergency shutdown, a step further than trans aborted by rejecting
++	 * all operations.
 +	 */
- 	void (*shutdown)(struct super_block *sb);
++	BTRFS_FS_STATE_EMERGENCY_SHUTDOWN,
 +
-+	/*
-+	 * Callback to handle a block device removal.
-+	 *
-+	 * Recommended to implement this for multi-device filesystems, as they
-+	 * may afford losing a block device and continue operations.
-+	 *
-+	 * @surprse:	indicates a surprise removal. If true the device/media is
-+	 *		already gone. Otherwise we're prepareing for an orderly
-+	 *		removal.
-+	 */
-+	void (*remove_bdev)(struct super_block *sb, struct block_device *bdev,
-+			    bool surprise);
+ 	BTRFS_FS_STATE_COUNT
  };
  
+@@ -1100,6 +1107,27 @@ static inline void btrfs_wake_unfinished_drop(struct btrfs_fs_info *fs_info)
+ 	(unlikely(test_bit(BTRFS_FS_STATE_LOG_CLEANUP_ERROR,		\
+ 			   &(fs_info)->fs_state)))
+ 
++static inline bool btrfs_is_shutdown(struct btrfs_fs_info *fs_info)
++{
++	return test_bit(BTRFS_FS_STATE_EMERGENCY_SHUTDOWN, &fs_info->fs_state);
++}
++
++static inline void btrfs_force_shutdown(struct btrfs_fs_info *fs_info)
++{
++	/*
++	 * Here we do not want to use handle_fs_error(), which will mark
++	 * the fs read-only.
++	 * Some call sites like shutdown ioctl will mark the fs shutdown
++	 * when the fs is frozen. But thaw path will handle RO and RW fs
++	 * differently.
++	 *
++	 * So here we only mark the fs error without flipping it RO.
++	 */
++	WRITE_ONCE(fs_info->fs_error, -EIO);
++	if (!test_and_set_bit(BTRFS_FS_STATE_EMERGENCY_SHUTDOWN, &fs_info->fs_state))
++		btrfs_info(fs_info, "emergency shutdown");
++}
++
  /*
+  * We use folio flag owner_2 to indicate there is an ordered extent with
+  * unfinished IO.
+diff --git a/fs/btrfs/messages.c b/fs/btrfs/messages.c
+index 363fd28c0268..2bb4bcb7c2cd 100644
+--- a/fs/btrfs/messages.c
++++ b/fs/btrfs/messages.c
+@@ -23,6 +23,7 @@ static const char fs_state_chars[] = {
+ 	[BTRFS_FS_STATE_NO_DATA_CSUMS]		= 'C',
+ 	[BTRFS_FS_STATE_SKIP_META_CSUMS]	= 'S',
+ 	[BTRFS_FS_STATE_LOG_CLEANUP_ERROR]	= 'L',
++	[BTRFS_FS_STATE_EMERGENCY_SHUTDOWN]	= 'E',
+ };
+ 
+ static void btrfs_state_to_string(const struct btrfs_fs_info *info, char *buf)
 -- 
 2.49.0
 
