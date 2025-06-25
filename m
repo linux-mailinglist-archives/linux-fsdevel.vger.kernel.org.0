@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-52998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADDDAE9223
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 01:21:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA6EAE9244
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 01:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A60116BE78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:21:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AC6B7B7AC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469B42F5315;
-	Wed, 25 Jun 2025 23:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A49C2FA623;
+	Wed, 25 Jun 2025 23:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="VxWLPP8s"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="ViCB+3V5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A182F363E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 23:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E5C2F49EE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 23:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750893528; cv=none; b=TZgRLoEXaF1oaMBtKjxySEQ4DqQF8udS2Wz9zxqr5+j0y0clu6VUAt5vnskl8WjnIn9of0bSL3auefKte10S3V+bWdQv2D12/0JSMEF6LQt1QIa1maSoiPaPNG6FSsJqh8ZF4UQ5r7Vps0xb7gzZ2rjbe5TDA5g6zXCMY/XW9DU=
+	t=1750893530; cv=none; b=KPUk/ib6/JfEIYBgSTH0PYOISPDaxoKxwQ/q57CbFdRJEAfTOm4HrIBuW7V1uhzFASAdXBDU1xg5l5/YdWJwu7PZL/ixhmaIwZn/qQI8j7TSrxYa3Ar1veEy8Xi+FxbO/UQ5mSLbvEEDS0L/lDYL/R6+ZylnIvd+JwgzAhtIepc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750893528; c=relaxed/simple;
-	bh=f+GDZMWDZJ+VR9AGii24ODCbYkbiXkpxGsAaLIJVFdg=;
+	s=arc-20240116; t=1750893530; c=relaxed/simple;
+	bh=PF4zPZ0Sp9cFfB82RPz+AlnuSwnkSMU7iIBj0zSOFYQ=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CyHd2w8330gfgaGsOSfhehQfLOleipUmd0efvZBqwx8ROKPLQ1UIihrj+i77lx1/j2CxibGuE/ew/RgYVk7fg/KH/jVyrRPNwIIjCjewuArEwD++GuSbU76Qth9r4476nzcfp6kA2nBPDHGU39/qxKngEVgjUZXyKNqvNKa9rYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=VxWLPP8s; arc=none smtp.client-ip=209.85.219.177
+	 MIME-Version; b=DpzuvrjylUO8/wmWBdiFdo3ZevgoWtkDk7KKNMPqUh58pU0Q+Yw6vketLWS8VE6xRVhN1ZraBpCFLHjj3sYjgqxjFdrB+7ueXI4eZgmjfJxPRPbBCOxQlUoFoO2KN2KTMSWsnBHatEI89eKxIR8Z/6GeMTMToJXJI7ApH5824+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=ViCB+3V5; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8601ce24c9so272524276.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 16:18:45 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e733cd55f9eso318269276.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 16:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1750893525; x=1751498325; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1750893527; x=1751498327; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=inB1PU3JWa0vbtTol7UPnIAGavYFixpKMP3Mnwcd84A=;
-        b=VxWLPP8sdoTqx1NZa+ByQnknb19kCXNJc4kTPASmEGQM14/7IXnhVO9f18/4xNfefP
-         QZddIfROvU2MphkpTgwoBEcd2kNeO9Dhv7WT7xF4M2hBlbXhWDdkYpO4QaiTPpFGm2xM
-         tYHh+DF5DTv10A22NQ8DzI+365/RBXspAo+Uygo9VjGYCtXRYTGbd4kGCU+2WX9DDUvq
-         g2pDlhY/TdfTCGZVy2PegTcp1vVwrlVUyrXYHzFknl0iM1RJWUVBYYXeHnu5F3feqrVL
-         fZPN2DnwYsX3hL4MAcjiMA2a2k1cvBHUWB5rWV1KWKSbrB7xaIQPuEs5+BYfaaYY9DTB
-         cXtA==
+        bh=Oli2O51+2uVx0lLUJdn7wg4sXYNT345uLjNKlql1qmI=;
+        b=ViCB+3V5htYFrHZMRHANBUKMG+bkSjOMn8AQIhMlOn+nvaOrw4Pb6+esS6L6xFmYKu
+         hs2+nIZrpnNdYCgi5qOyECPNN+f2DM7wwi4mFyHufgiotz4Kpj1jyCCgG8kKAV4R6MlB
+         em/T7NC40JexR821d2Euyyu07JvKz1HymVxiJTBvj0+DvHwUNR0Qj8wwZNGftTUoj5ID
+         x2I8fABa4RfLSpkjzIeb8rqOw9DUu869p2tau+5MSmpOJPCoTpGnvCLuQj/Loae59pAT
+         e7X5Gnlihiq32KW7A50UaDXPqnbPnYiLw+66a1OhK7J2Bwbvj7j4F8G84y5iBbLJ39TJ
+         yDuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750893525; x=1751498325;
+        d=1e100.net; s=20230601; t=1750893527; x=1751498327;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=inB1PU3JWa0vbtTol7UPnIAGavYFixpKMP3Mnwcd84A=;
-        b=d8hi+yfH2OaHk0K0z5qAAKCNQWMbPkTkNdILW1ej+aWBxqVAh62hQ+3XEf9YABjrkH
-         Q/7ntnuC8WR/bvzi2EekZp83BkYZGYwcH4k12cfuD0cAB55JGqaYHqAu4uOoyZKMjUZn
-         gun2/Fkmep2jFTOEiSbZpBn2xOmaCMfifsrKnOCjXKvTxhfbTBwBXSF4f8G8sjdvYRQr
-         YIbdUJ67qClx069G4xMG9uGJcWM8ub2a7Zxlkudfcta773y4HMQ+ZJqpSy0MVA+o+ZSN
-         VfNwx5FlylkqsZzFRDwkySXnTLSHZCUr6buGP7wpKrpafVMAzkFWfekF/YhQu0ak9Zh3
-         x6xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEwxkOjugA+bsWszGPdMe/yel0GcKR7sUNkhowv8AuoCKugtK52ef7pVNrfA0qpLmcJVjXBKwc9KpcW6Pt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHzBctg0v89KD9bZLq/yq2jyTPUbHvl2AFBfSHT+pvc9hFwiMx
-	yelSQSUyI9FwK3vQx0oXxXC5WAP72J9HdMHlEL8gvE1cKWuFdCYDSE+0j4hCQfQIIIo=
-X-Gm-Gg: ASbGncsAKZskaCE1l6WbqUZca0IiPDYQIVzH2iWfJ0NzJUK45J7zwxctnzIJVXz4sxL
-	gb/bPkn8zkcjH9QdXyWnkyCX7g5JkgQHAXLqp3ljrAafkd0DpJynwkmzvLGF1Ft66lgFxYWCVPj
-	7JNHkpAVRaDRMZHgqVZRRDuE+7KIT8EZjOI1U0e3uaFKdGva6oyG6Tx+JQXt509rmguNT/o7H8I
-	HZ6AQaNohwdCAOsUQzSxFckS+KU0JjyIla/kg4fNqwQK4yroC45uYKOju5/FAHjHHSp3kxzHwlA
-	WtbN+7f32TzNkDEZZqu/0dqmyNUV7/+ID1hD9v8T/0nswFVfSuMOM45NkFvdxA6IsGU2fWAcdkX
-	XGKDB96spn47qtAGzhntbjB+pCnQ+2IhEsBvIqOW/jEzjxwYeykVBDLOaV1TlO+s=
-X-Google-Smtp-Source: AGHT+IHRsJtLlwzyJUd/Ox/O3krs7IL9puzl8GoqWoWuzYibrteq8e0xpTf2XL0zflmCtIomZsxpVQ==
-X-Received: by 2002:a05:6902:10cf:b0:e81:e333:fc38 with SMTP id 3f1490d57ef6-e8601762c25mr6548852276.19.1750893525010;
-        Wed, 25 Jun 2025 16:18:45 -0700 (PDT)
+        bh=Oli2O51+2uVx0lLUJdn7wg4sXYNT345uLjNKlql1qmI=;
+        b=tX/ygIv2Ic4QfmsYcv6kFmoKBjQeNLtnXgUups7HbGbJnXR53W0OWEjwYtDALe3auh
+         OV2xnTegK47vmGkHN/KAjdeRcbAFAc6EC9lSBdPer5+tymfw+a3ZUgphVAhYNbYgr1Td
+         LitSkGSsFi19VZ7Uf5hvWuzWoQY6tdzPzGl8Bwo3gvO5CrQTQO9cvhQS5davv/qxgPrR
+         rihjF4BdbGVZ+fEcfIlNTo3F6CyKYR46Twy1zjdP+KC/pGDSxeI4dt4WgYJfMqlbEQFR
+         Jx31DgKGHrtZkkL2BMCLpZH37mtTpgSvF/LfkJ1tkhJbegwlxovxM+cC0G5BT+D9+LkE
+         x/gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBvcuntiyiwYkp5qfEqr8n+QOIs8o99Whli7eH3SSJSuZ85A7RzdSEF4/6AyFlyye76yL439ilH6dr40sE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx56KFjwIpBx0DGI+rZsh7R7e7lIuBXCnfJaHrcywkOIW/05uKU
+	0mC9MC7vHV9j7smq6Qn65+TkTvKltGP7Ci7WUIbiOqanmoiC/40XL6vz2oSUqLiVwXI=
+X-Gm-Gg: ASbGncvg9iolOgcuQFjEljGd8Lsbxwh0RgJulnFUEg6BxEdwD2wZS4caoijlQucbD8c
+	1TCMLOr95i0zBWYSlCCo+XYt2dV/5wwT6O8Y5eat849dY4657EbrzRoUFUSXWx3bvyCQUZ6z+L+
+	Rn5rqas16UvaEjjGmoYZtJ/EZLHERhCCNqoV8zGmFUloswBfV0dB0BMbNBp9P3w4SlJssVW6gEE
+	tVhYBVkeFVTHBjj9SCtTnXgxAR8HOJVwzreyMp90Es38/lRcCADspJf1Uhhq/oui2QLRW5mK/zX
+	zZwVlQXX1CtnRqjtt7Hygw0ZXKTan1/izp6z/t2g93Qm7sMMGYP3fYTyqfPHxEs+63zguP26grM
+	yFLMOH8WG/z9jlHiUWu/ulwNSVJgWbzCSrHH7VM6DGBrHd3JcJEUK
+X-Google-Smtp-Source: AGHT+IF1PnL73EgTJEwVzGrV6WgSUuuJlktSvOW7rB8u8kfkaYIkr57swyuuC7E1tjKCDwfV/0m2Xg==
+X-Received: by 2002:a05:6902:2305:b0:e84:2a48:993f with SMTP id 3f1490d57ef6-e879b8875e2mr2677057276.7.1750893526742;
+        Wed, 25 Jun 2025 16:18:46 -0700 (PDT)
 Received: from soleen.c.googlers.com.com (64.167.245.35.bc.googleusercontent.com. [35.245.167.64])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e842ac5c538sm3942684276.33.2025.06.25.16.18.43
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e842ac5c538sm3942684276.33.2025.06.25.16.18.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 16:18:44 -0700 (PDT)
+        Wed, 25 Jun 2025 16:18:46 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: pratyush@kernel.org,
 	jasonmiu@google.com,
@@ -140,9 +140,9 @@ To: pratyush@kernel.org,
 	brauner@kernel.org,
 	linux-api@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1 01/32] kho: init new_physxa->phys_bits to fix lockdep
-Date: Wed, 25 Jun 2025 23:17:48 +0000
-Message-ID: <20250625231838.1897085-2-pasha.tatashin@soleen.com>
+Subject: [PATCH v1 02/32] kho: mm: Don't allow deferred struct page with KHO
+Date: Wed, 25 Jun 2025 23:17:49 +0000
+Message-ID: <20250625231838.1897085-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 In-Reply-To: <20250625231838.1897085-1-pasha.tatashin@soleen.com>
 References: <20250625231838.1897085-1-pasha.tatashin@soleen.com>
@@ -154,87 +154,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Lockdep shows the following warning:
+KHO uses struct pages for the preserved memory early in boot, however,
+with deferred struct page initialization, only a small portion of
+memory has properly initialized struct pages.
 
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
+This problem was detected where vmemmap is poisoned, and illegal flag
+combinations are detected.
 
-[<ffffffff810133a6>] dump_stack_lvl+0x66/0xa0
-[<ffffffff8136012c>] assign_lock_key+0x10c/0x120
-[<ffffffff81358bb4>] register_lock_class+0xf4/0x2f0
-[<ffffffff813597ff>] __lock_acquire+0x7f/0x2c40
-[<ffffffff81360cb0>] ? __pfx_hlock_conflict+0x10/0x10
-[<ffffffff811707be>] ? native_flush_tlb_global+0x8e/0xa0
-[<ffffffff8117096e>] ? __flush_tlb_all+0x4e/0xa0
-[<ffffffff81172fc2>] ? __kernel_map_pages+0x112/0x140
-[<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-[<ffffffff81359556>] lock_acquire+0xe6/0x280
-[<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-[<ffffffff8100b9e0>] _raw_spin_lock+0x30/0x40
-[<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-[<ffffffff813ec327>] xa_load_or_alloc+0x67/0xe0
-[<ffffffff813eb4c0>] kho_preserve_folio+0x90/0x100
-[<ffffffff813ebb7f>] __kho_finalize+0xcf/0x400
-[<ffffffff813ebef4>] kho_finalize+0x34/0x70
+Don't allow them to be enabled together, and later we will have to
+teach KHO to work properly with deferred struct page init kernel
+feature.
 
-This is becase xa has its own lock, that is not initialized in
-xa_load_or_alloc.
+Fixes: 990a950fe8fd ("kexec: add config option for KHO")
 
-Modifiy __kho_preserve_order(), to properly call
-xa_init(&new_physxa->phys_bits);
-
-Fixes: fc33e4b44b27 ("kexec: enable KHO support for memory preservation")
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- kernel/kexec_handover.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+ kernel/Kconfig.kexec | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index 5a21dbe17950..1ff6b242f98c 100644
---- a/kernel/kexec_handover.c
-+++ b/kernel/kexec_handover.c
-@@ -144,14 +144,35 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
- 				unsigned int order)
- {
- 	struct kho_mem_phys_bits *bits;
--	struct kho_mem_phys *physxa;
-+	struct kho_mem_phys *physxa, *new_physxa;
- 	const unsigned long pfn_high = pfn >> order;
- 
- 	might_sleep();
- 
--	physxa = xa_load_or_alloc(&track->orders, order, sizeof(*physxa));
--	if (IS_ERR(physxa))
--		return PTR_ERR(physxa);
-+	physxa = xa_load(&track->orders, order);
-+	if (!physxa) {
-+		new_physxa = kzalloc(sizeof(*physxa), GFP_KERNEL);
-+		if (!new_physxa)
-+			return -ENOMEM;
-+
-+		xa_init(&new_physxa->phys_bits);
-+		physxa = xa_cmpxchg(&track->orders, order, NULL, new_physxa,
-+				    GFP_KERNEL);
-+		if (xa_is_err(physxa)) {
-+			int err_ret = xa_err(physxa);
-+
-+			xa_destroy(&new_physxa->phys_bits);
-+			kfree(new_physxa);
-+
-+			return err_ret;
-+		}
-+		if (physxa) {
-+			xa_destroy(&new_physxa->phys_bits);
-+			kfree(new_physxa);
-+		} else {
-+			physxa = new_physxa;
-+		}
-+	}
- 
- 	bits = xa_load_or_alloc(&physxa->phys_bits, pfn_high / PRESERVE_BITS,
- 				sizeof(*bits));
+diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+index e64ce21f9a80..ff8ab20f9228 100644
+--- a/kernel/Kconfig.kexec
++++ b/kernel/Kconfig.kexec
+@@ -97,6 +97,7 @@ config KEXEC_JUMP
+ config KEXEC_HANDOVER
+ 	bool "kexec handover"
+ 	depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FILE
++	depends on !DEFERRED_STRUCT_PAGE_INIT
+ 	select MEMBLOCK_KHO_SCRATCH
+ 	select KEXEC_FILE
+ 	select DEBUG_FS
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
