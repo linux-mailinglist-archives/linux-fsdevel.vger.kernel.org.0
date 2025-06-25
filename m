@@ -1,53 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-52880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0226AE7EC6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:13:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFB8AE7EDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 12:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF25189A42C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:13:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A381E189EADC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 10:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F572BEC39;
-	Wed, 25 Jun 2025 10:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9752029AAEC;
+	Wed, 25 Jun 2025 10:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="3kUpTaWJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L/wtGTNC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8A02BCF4D;
-	Wed, 25 Jun 2025 10:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8A6275871
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 10:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750846246; cv=none; b=GeVlSea+aNoIrt8Ytx9ZjG7dLgi4ksacCMBF8ZaYnoe87HpCkltQzCL1ICurKSChN360ZSgtlVsVlAU2Sx+v40F70IaU8/+V5Lu2VcyWC9vrIHmVStX3srZtO2lPZhaCgdvIcuM2n86OftCCwSBkUyuZUbE+5pj+5QXs+sRlYps=
+	t=1750846497; cv=none; b=bdOU8rUFnpBNZoryTSKI7jqcy7OEGrDt7G4oZi3oV5lcQCXFG/V9O1GhVXok3Z2Fs80/6c8MuSLOVSloxKbxkrxcbPRNMxE8WVw9TonIr0gVXuyxo9X998iNs5xoWrcFIcyLGTOcF3mYQWpG2wTsczj8F8DEL8qP8NdDtr65z6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750846246; c=relaxed/simple;
-	bh=LkUIUuxvI9+pSOrM8fBaunPMfvu0A7Df8v7u8k0hgL4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=h9/ECqPotC3g11I5seU4jldo1R3PnvqGxGgOQ9NL+BogEEq1+K1V2lsdolmp0QeRKWvC72spJHKBoRgzdKi4CqBezYWVf6RQlW6sXilFNw9xUXXcxZxSC2RCNYLPeX/hMMWNlSACQPhp4besKaGm2HQLGWGYhf0d1VD+0+OsuEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=3kUpTaWJ; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=Cc:To:From:Date:Message-ID;
-	bh=I3JIQN87DhAmoN/r06JPMh2tWfRpL1kRv0heGpkhbBM=; b=3kUpTaWJ1rZ88rj1OYca6ayMzk
-	YbrnyXoEV3eNPbk/zeXBexKjC6LeP3XEelU39BxPj+dJNNMR4gPHH6PrehllsGMB2+8s3mfq/zyD3
-	JfS0y4bRwKDbIjvJX7LcAiTqEx6RQTWkeULcqnlmztVUA8goPGIEjb5fn7Ns3oXF83dJ84IWvGbdc
-	soVeqVWcHdl7TyJ8N2C1dO0FHFwMNiRkzRH/T2e/4VkAs6Um+4sRU1ZVES3ZDrTHtg1qojW9/ursQ
-	KJasMsRfbg7sCiQtSqoNho/xZx8tn+lmG4eHV8syaJFPul85MkTGVUv6R1EkVSe0XxeEf7rpFvQWy
-	55pslHw6gofDg0D6I7vrc+Y+MDg3bGn1Rh90b/Pvcof3Y+MfLpR5toCULoB+FzCuiOkpxct3tsWxt
-	56txvhfGwLvCf3mVo++xTF3L43bPseOBhb/srQTD5RSiZ9q7Vo9an/r0g+oNPaqErdVjHEzfsjOLd
-	4ps7PLr33J3W3hqASSxDRlxu;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1uUN5W-00COeD-0V;
-	Wed, 25 Jun 2025 10:10:42 +0000
-Message-ID: <6b69eef7-781d-42d3-9ce0-973ff9152dd5@samba.org>
-Date: Wed, 25 Jun 2025 12:10:41 +0200
+	s=arc-20240116; t=1750846497; c=relaxed/simple;
+	bh=PzO6ztBfNimSyfx64qkZBXAUmYb+kTXD/55VqloyB5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZscB2V0wOwLIPhvCmCuWnybk+UzfNYFJu6v/nGZ7ZQ2FIf5GkOOaepMNveeE1yNDRKdi1+a8HwHblxI7rEgPH7Z2CLOGC5D4OIJKBXzrLJigcJmgMZPb9OAW+BvfwcNwSqwHktJHWw2S08bXlXRjB9pOqmlQQ975WIfA2QXVldI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L/wtGTNC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750846494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XjdslU0hJ7FdAOMc0fmPmVs8CPi2M/vDu4x7gBoGlaw=;
+	b=L/wtGTNCF1/yqGhXCRQJRYiDUb66NXlDfCvEyadVfl04hwwrNR6iM1ilqR1fjV047UGksW
+	lt7z6ut7RPi1O6hkd1RAGZnjOT0PKZO4W7XY2saU8XG+ZuUHZlR38weKEaI5an/16sMNSM
+	bYviktckhVH5JmQZoNLn1nqOb+UtPkQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-175-EkLlqSvkMXyXAsY4_OrqHA-1; Wed, 25 Jun 2025 06:14:52 -0400
+X-MC-Unique: EkLlqSvkMXyXAsY4_OrqHA-1
+X-Mimecast-MFC-AGG-ID: EkLlqSvkMXyXAsY4_OrqHA_1750846492
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-453817323afso4889705e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 03:14:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750846492; x=1751451292;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XjdslU0hJ7FdAOMc0fmPmVs8CPi2M/vDu4x7gBoGlaw=;
+        b=YjNtu1v4VQYg4mSqxjBEG9GV+dM2Cp9an1BwTQKHkEc2s5Rq1UVfQ6ym9I/rzQg1GS
+         4ej8wG5bpATtHz18hnC4jZPvE1b9S/vQSvNkjJPA1STDYg7RDtzvCnGCfdf8DXdVT58G
+         TN3UgG454EurfFbFKm+D9Q6wXEPj7U1pVLLTsJDNBp3boWSz2zAfWDzYEYYG1dY888AJ
+         2Zt/IXU7xRGGJ9+BRCKt0I7rZQdNZpHWC53x5kxNjbbCragFxQybZ39q57ge815Nblat
+         KXsMwV9HUj9S996AkmLAFP/KSmYLhhdTVZ6Qq3Z1lseAtbLRgTU7iT2GQOTF5XLZZ02/
+         53rA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjgPpDILYPZfJBwuYTUbtOaktrtDbMWeCLRmFtRWV0pqDQOFyoCtIEpEF1sCBuQd4KY0ecfTwVH4D5jiR6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFvGfE7CKBA5//EeutUqgcC1fc8jZPLJOXcjpVZbJjIR0XDhft
+	mv1UAapDnUIt4tMdxEEykVvjwWpG05kOzu00gl8eTbj6Rk61rtwvby6e2BjzGYoV1ZOj1J8J6Xz
+	zhvOmf4jHfTPNAGAthFXwAAnFm488eBggQAn6qkzcTM2oL7NvXWGd7E4t37WFZDyH9ng=
+X-Gm-Gg: ASbGncuple13OXDduAUnnZm8UxjKWgEtjVXdfnT+m/DaYZ026bRo0sWwqMpbrN1yJh1
+	/2OkVuDAEPMLA53BoD88OhoS/Ie2XoB+xbZYZpM1/8wsWlFVmK6Q8liZtCZ/C7TREOHvDzGasXm
+	RlX60YWr82hwi28ayaxh9tvm6h1xX1gBvP61lxPBU9qtcHXSmp3N7CbkGWGaURj4NvSZ5ZUBw62
+	a9hiGCznY88z/47pGEuMeZTPpv5VtLPMNVIEwMxm58m/VhHmFU4RH9D0j8sVGuKHx/QAmNXOI8H
+	MOIURcqxrdumDzN9yN8P4qp2K1W9yXTGr5a78TWA9QjeF4WF+DxuzA==
+X-Received: by 2002:a05:600c:348f:b0:450:d00d:588b with SMTP id 5b1f17b1804b1-45381ac2563mr24960845e9.9.1750846491760;
+        Wed, 25 Jun 2025 03:14:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFH9JVXQGzeiIaOJETPwD0mhFgfVQwPa4nS7QJxUmuEV97nlCNLYTvAiF9sgliseCzUuOgbUg==
+X-Received: by 2002:a05:600c:348f:b0:450:d00d:588b with SMTP id 5b1f17b1804b1-45381ac2563mr24960365e9.9.1750846491347;
+        Wed, 25 Jun 2025 03:14:51 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1abde.dip0.t-ipconnect.de. [87.161.171.222])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453835798acsm10471655e9.10.2025.06.25.03.14.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 03:14:50 -0700 (PDT)
+Message-ID: <77dc3ddb-f748-48bf-8dc4-b8f904611f98@redhat.com>
+Date: Wed, 25 Jun 2025 12:14:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,157 +89,107 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cifs: Collapse smbd_recv_*() into smbd_recv() and just
- use copy_to_iter()
-From: Stefan Metzmacher <metze@samba.org>
-To: David Howells <dhowells@redhat.com>
-Cc: "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
- netfs@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Steve French <stfrench@microsoft.com>
-References: <f448a729-ca2e-40a8-be67-3334f47a3916@samba.org>
- <1107690.1750683895@warthog.procyon.org.uk>
- <1156127.1750774971@warthog.procyon.org.uk>
- <acb7f612-df26-4e2a-a35d-7cd040f513e1@samba.org>
+Subject: Re: [PATCH RFC 10/14] mm/memory: factor out common code from
+ vm_normal_page_*()
+To: Oscar Salvador <osalvador@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-11-david@redhat.com>
+ <aFu5Bn2APcr2sf7k@localhost.localdomain>
+ <1ea2de52-7684-4e27-a8e9-233390f63eeb@redhat.com>
+ <aFu_VeTRSk4Pz-ZL@localhost.localdomain>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-In-Reply-To: <acb7f612-df26-4e2a-a35d-7cd040f513e1@samba.org>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aFu_VeTRSk4Pz-ZL@localhost.localdomain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Am 25.06.25 um 10:07 schrieb Stefan Metzmacher:
-> Am 24.06.25 um 16:22 schrieb David Howells:
->> Stefan Metzmacher <metze@samba.org> wrote:
+On 25.06.25 11:20, Oscar Salvador wrote:
+> On Wed, Jun 25, 2025 at 10:57:39AM +0200, David Hildenbrand wrote:
+>> I don't think that comment is required anymore -- we do exactly what
+>> vm_normal_page() does + documents,
 >>
->>>>    read_rfc1002_done:
->>>> +        /* SMBDirect will read it all or nothing */
->>>> +        msg->msg_iter.count = 0;
->>>
->>> And this iov_iter_truncate(0);
+>> What the current users are is not particularly important anymore.
 >>
->> Actually, it should probably have been iov_iter_advance().
->>
->>> While I'm wondering why we had this at all.
->>>
->>> It seems all callers of cifs_read_iter_from_socket()
->>> don't care and the code path via sock_recvmsg() doesn't
->>> truncate it just calls copy_to_iter() via this chain:
->>> ->inet_recvmsg->tcp_recvmsg->skb_copy_datagram_msg->skb_copy_datagram_iter
->>> ->simple_copy_to_iter->copy_to_iter()
->>>
->>> I think the old code should have called
->>> iov_iter_advance(rc) instead of msg->msg_iter.count = 0.
->>>
->>> But the new code doesn't need it as copy_to_iter()
->>> calls iterate_and_advance().
->>
->> Yeah, it should.  I seem to remember that there were situations in which it
->> didn't, but it's possible I managed to get rid of them.
->>
->>>> -    default:
->>>> -        /* It's a bug in upper layer to get there */
->>>> -        cifs_dbg(VFS, "Invalid msg type %d\n",
->>>> -             iov_iter_type(&msg->msg_iter));
->>>> -        rc = -EINVAL;
->>>> -    }
->>>
->>> I guess this is actually a real fix as I just saw
->>> CIFS: VFS: Invalid msg type 4
->>> in logs while running the cifs/001 test.
->>> And 4 is ITER_FOLIOQ.
->>
->> Ah... Were you using "-o seal"?  The encrypted data is held in a buffer formed
->> from a folioq with a series of folios in it.
+>> Or why do you think it would still be important?
 > 
-> I know tested it standalone in this tree:
-> https://git.samba.org/?p=metze/linux/wip.git;a=shortlog;h=46a31189b8b059b3595a9586714761e6e76ba7c4
+> Maybe the current users are not important, but at least a comment directing
+> to vm_normal_page like "See comment in vm_normal_page".
+> Here, and in vm_normal_page_pud().
+> 
+> Just someone has it clear why we're only checking for X and Y when we find a
+> pte/pmd/pud special.
+> 
+> But not really a strong opinion here, just I think that it might be helpful.
 
-It also happens with this:
-https://git.samba.org/?p=metze/linux/wip.git;a=shortlog;h=442dcd18dc1bf8d1e39f53d20810ca0a4958d139
+I was already debating with myself whether to add full kerneldoc for 
+these functions ... but yeah, to me the link to "vm_normal_page()" is 
+obvious, but we can just spell it out "see vm_normal_page()".
 
-Which contains your netfs fixes...
+-- 
+Cheers,
 
-> Doing following mount:
-> 
-> mount -t cifs -ousername=administrator,password=...,rdma,noperm,vers=3.0,mfsymlinks,actimeo=0 //172.31.9.1/test /mnt/test/
-> 
-> It's using the siw driver (with modifications to work against the chelsio t404-bt card on windows) from
-> here:
-> https://git.samba.org/?p=metze/linux/wip.git;a=shortlog;h=5b89ff89f440ec36cf2c5ed2212be0d8523a4c9b
-> 
-> But the siw difference should not really matter.
-> 
-> This realiable generates this:
-> 
-> [  922.048997] [   T6639] CIFS: Attempting to mount //172.31.9.1/test
-> [  922.188445] [   T6639] CIFS: VFS: RDMA transport established
-> [  922.217974] [   T6642] usercopy: Kernel memory exposure attempt detected from SLUB object 'smbd_response_0000000091e24ea1' (offset 81, size 63)!
-> [  922.218221] [   T6642] ------------[ cut here ]------------
-> [  922.218230] [   T6642] kernel BUG at mm/usercopy.c:102!
-> [  922.218299] [   T6642] Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-> [  922.218439] [   T6642] CPU: 1 UID: 0 PID: 6642 Comm: cifsd Kdump: loaded Tainted: G           OE       6.16.0-rc3-metze.01+ #1 PREEMPT(voluntary)
-> [  922.218585] [   T6642] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-> [  922.218635] [   T6642] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-> [  922.218704] [   T6642] RIP: 0010:usercopy_abort+0x6c/0x80
-> [  922.218783] [   T6642] Code: fa 91 51 48 c7 c2 c0 d4 fa 91 41 52 48 c7 c7 40 d5 fa 91 48 0f 45 d6 48 c7 c6 00 d5 fa 91 48 89 c1 49 0f 45 f3 e8 84 aa 6b ff <0f> 0b 49 c7 
-> c1 c0 d3 fa 91 4d 89 ca 4d 89 c8 eb a8 0f 1f 00 90 90
-> [  922.218925] [   T6642] RSP: 0018:ffffc90001887820 EFLAGS: 00010246
-> [  922.218983] [   T6642] RAX: 0000000000000079 RBX: 0000000000000051 RCX: 0000000000000000
-> [  922.219046] [   T6642] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> [  922.219108] [   T6642] RBP: ffffc90001887838 R08: 0000000000000000 R09: 0000000000000000
-> [  922.219201] [   T6642] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000003f
-> [  922.219261] [   T6642] R13: ffff88801f579280 R14: 0000000000000001 R15: ffffea0000163340
-> [  922.219323] [   T6642] FS:  0000000000000000(0000) GS:ffff8881466e8000(0000) knlGS:0000000000000000
-> [  922.219415] [   T6642] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  922.219469] [   T6642] CR2: 000075a216d19bb8 CR3: 000000000f5f6004 CR4: 00000000000726f0
-> [  922.219560] [   T6642] Call Trace:
-> [  922.219591] [   T6642]  <TASK>
-> [  922.219624] [   T6642]  __check_heap_object+0xe3/0x120
-> [  922.221090] [   T6642]  __check_object_size+0x4dc/0x6d0
-> [  922.222547] [   T6642]  smbd_recv+0x77f/0xfe0 [cifs]
-> [  922.224416] [   T6642]  ? __pfx_smbd_recv+0x10/0x10 [cifs]
-> [  922.226195] [   T6642]  ? __kasan_check_write+0x14/0x30
-> [  922.227722] [   T6642]  ? _raw_spin_lock+0x81/0xf0
-> [  922.229190] [   T6642]  ? __pfx__raw_spin_lock+0x10/0x10
-> [  922.230699] [   T6642]  ? sched_clock_noinstr+0x9/0x10
-> [  922.232248] [   T6642]  cifs_readv_from_socket+0x276/0x8f0 [cifs]
-> [  922.234149] [   T6642]  ? __pfx_cifs_readv_from_socket+0x10/0x10 [cifs]
-> [  922.236222] [   T6642]  ? mempool_alloc_slab+0x15/0x20
-> [  922.237705] [   T6642]  cifs_read_from_socket+0xcd/0x120 [cifs]
-> [  922.239559] [   T6642]  ? __pfx_cifs_read_from_socket+0x10/0x10 [cifs]
-> [  922.241403] [   T6642]  ? __pfx_mempool_alloc_noprof+0x10/0x10
-> [  922.242827] [   T6642]  ? __kasan_check_write+0x14/0x30
-> [  922.244141] [   T6642]  ? cifs_small_buf_get+0x62/0x90 [cifs]
-> [  922.245500] [   T6642]  ? allocate_buffers+0x216/0x390 [cifs]
-> [  922.246810] [   T6642]  cifs_demultiplex_thread+0x7e9/0x2d50 [cifs]
-> [  922.248150] [   T6642]  ? _raw_spin_lock_irqsave+0x95/0x100
-> [  922.249143] [   T6642]  ? __pfx_cifs_demultiplex_thread+0x10/0x10 [cifs]
-> [  922.250163] [   T6642]  ? __pfx___schedule+0x10/0x10
-> [  922.250977] [   T6642]  ? _raw_spin_lock_irqsave+0x95/0x100
-> [  922.251715] [   T6642]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> [  922.252415] [   T6642]  ? __pfx_try_to_wake_up+0x10/0x10
-> [  922.253094] [   T6642]  ? __kasan_check_read+0x11/0x20
-> [  922.253766] [   T6642]  ? __kthread_parkme+0xa0/0x190
-> [  922.254344] [   T6642]  ? __pfx_cifs_demultiplex_thread+0x10/0x10 [cifs]
-> [  922.255073] [   T6642]  kthread+0x396/0x830
-> [  922.255584] [   T6642]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> [  922.256070] [   T6642]  ? __pfx_kthread+0x10/0x10
-> [  922.256568] [   T6642]  ? __kasan_check_write+0x14/0x30
-> [  922.257047] [   T6642]  ? recalc_sigpending+0x180/0x210
-> [  922.257535] [   T6642]  ? _raw_spin_unlock_irq+0xe/0x50
-> [  922.258015] [   T6642]  ? calculate_sigpending+0x84/0xb0
-> [  922.258509] [   T6642]  ? __pfx_kthread+0x10/0x10
-> [  922.258976] [   T6642]  ret_from_fork+0x2b8/0x3b0
-> [  922.259377] [   T6642]  ? __pfx_kthread+0x10/0x10
-> [  922.259757] [   T6642]  ret_from_fork_asm+0x1a/0x30
-> [  922.260133] [   T6642]  </TASK>
-> [  922.260514] [   T6642] Modules linked in: cifs(OE) ccm cmac nls_utf8 cifs_arc4 nls_ucs2_utils rdma_cm iw_cm ib_cm cifs_md4 netfs siw(OE) ib_uverbs ib_core softdog vboxsf 
-> vboxguest intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_class intel_pmc_ssram_telemetry intel_vsec polyval_clmulni 
-> ghash_clmulni_intel sha1_ssse3 aesni_intel rapl i2c_piix4 i2c_smbus input_leds joydev mac_hid sunrpc binfmt_misc kvm_intel kvm irqbypass sch_fq_codel efi_pstore nfnetlink 
-> vsock_loopback vmw_vsock_virtio_transport_common vmw_vsock_vmci_transport vsock vmw_vmci dmi_sysfs ip_tables x_tables autofs4 hid_generic vboxvideo drm_vram_helper usbhid 
-> drm_ttm_helper vga16fb hid vgastate ahci ttm libahci video pata_acpi psmouse serio_raw wmi [last unloaded: cifs(OE)]
-> 
-> 
-> Reverting it fixes it again.
-> 
-> metze
+David / dhildenb
 
 
