@@ -1,74 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-52847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76C9AE7799
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 08:56:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9A6AE77AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 09:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C582C4A0480
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 06:56:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBE116801C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 07:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940251F7586;
-	Wed, 25 Jun 2025 06:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FF81F866B;
+	Wed, 25 Jun 2025 07:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CgIypNKh"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VOG3Z5ye"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CD01DE4D2;
-	Wed, 25 Jun 2025 06:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FF679F2;
+	Wed, 25 Jun 2025 07:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750834592; cv=none; b=qxdf7AW3Yy9CSMOpS5bkx179P3MGbkbWnNaF67mMDFPWYnBwnyPiLQmLk2J1X/v4qb5U7xFeYnSKOHu9mQ7qGM/feRPvT85Nj2eDEsOVVJxbC1bIiYL47p9/lsOj4GLaDL33k4c944CpwNQwHeyPrbcToDyfnqmpykD7wgb4hAs=
+	t=1750834896; cv=none; b=bRsdePZT8loIFec8CoR6rv2o09Bwge6+nFSVTgHj2NAdhteHOYaH601w/V44dH0GtOiSJenL9TGCZDiWsCbA7qYGpJCZS0RniCI6lHxwttWitFnAn/LojUJRLLKEA3vsvHz2V7LZynNMXHRMwpKs27rkx0+NIMnbcbgVFdDDjpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750834592; c=relaxed/simple;
-	bh=Uh1WwnNvimTsWyoQ0hTnqc/W/jE8I7xFNWmTFet+yG8=;
+	s=arc-20240116; t=1750834896; c=relaxed/simple;
+	bh=gciUXRI5RoGH7MW8+6HdMvsnDB4tQnkO04ozRC3wZ7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qz6lH2Mz0JT88inTB/aLTH33Y0bjN3D3ZdsMcrjvZplbDxecshBQx5QewMyUUvoW+rCK7s740W0R0PZK4KoGXJWzyKJ3MyvHK5Y9/mAmSa0eEKQK/qLgbLuxaM+kc0Ga5LgI06o2chs6AxYODBhBI9UKm9oc7zFbvg6UH9senwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CgIypNKh; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJkmcL/hf+4ydxSo3bWqFDrGCAEf8GTiTq9DJS1Q4woX/NRfAzAH3lWUkLOxclf+eHwCjIW+DPCOkeSs7v0VsNANL3LRIbl6g49UDLOsvuo6pjnqQLMG0VV0kg+Sga5I++JG4QoGjusorP5MIKZufRnjk8Kq0QVLl9pY2TKlsaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VOG3Z5ye; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Uh1WwnNvimTsWyoQ0hTnqc/W/jE8I7xFNWmTFet+yG8=; b=CgIypNKhmQ3029o1RKULsD2Xwj
-	vR4Dylx++/bDN9hEqSwPvw/3ZAfijYzkWi80sgOWXNcBE7uDwW/nADhc3mj691cB+/aauczS0ueB1
-	W1+4ny5XmQr4weZuy0cERCCzvlxXH7Ezo683DTg3ESOh87r42tGjM354mfQfI5d41GxF4fgoRQ4Pm
-	LyUNeB4Hq7HT2iCqF9DYpXYKF2aS9MwtV0XMecqbBn51oEpybU8HvkCxJ+dp4WtUnA8iYlsJySN+Q
-	YaRTV1EMoqBPLzBiT044IAGB6t7McuLAwZUq0PHXYqREJiEZmCJoBFR4uydwPbtL5TsQvkp98FRm9
-	Jjlg8naA==;
+	bh=VrBYzP+Ry2B3NbNU4hQ6PEn7rOjvDYFr3WIL5OkLT8Q=; b=VOG3Z5yeGtYSi/UAOL3xpTDAbm
+	fz2EeUA3u057vMgix5kVW07dJWOiEr903LETeJwVnXiU/0ZVvFIV/YOuHRePOukvDhQliskEU7VhG
+	6FR0jY469yZ/tOAlLCUw6X0WmEpBWEf6XRXrD6AtNwZoSsBU2onD4CmDJm6v4cy9lrTCOsG5zMfNe
+	dHvdDx/4+AgGVQhVNm4CAg5vNiDuBT4t/3u/9xxroRahvGs73uxhIq3AB8paSWNdqHswJygmye6tl
+	OSUQD22dr9bnUe3+txxV20WY/n1c6Cz6qTtvhT41XUOrinoeQQ//47E2xXby0a9qh1MNNxzqqGOsX
+	iaTikL/Q==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uUK3X-00000007k2q-0N1j;
-	Wed, 25 Jun 2025 06:56:27 +0000
-Date: Tue, 24 Jun 2025 23:56:27 -0700
-From: "hch@infradead.org" <hch@infradead.org>
-To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
-Cc: "tytso@mit.edu" <tytso@mit.edu>,
-	"hch@infradead.org" <hch@infradead.org>,
-	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-	"willy@infradead.org" <willy@infradead.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-	"tursulin@ursulin.net" <tursulin@ursulin.net>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"chentao325@qq.com" <chentao325@qq.com>
-Subject: Re: [PATCH v2 0/5] fs: refactor write_begin/write_end and add ext4
- IOCB_DONTCACHE support
-Message-ID: <aFudm1ndfN-kTSOx@infradead.org>
-References: <20250624121149.2927-1-chentaotao@didiglobal.com>
+	id 1uUK8U-00000007kXc-33oi;
+	Wed, 25 Jun 2025 07:01:34 +0000
+Date: Wed, 25 Jun 2025 00:01:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: hch@infradead.org, david@fromorbit.com, djwong@kernel.org,
+	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	yc1082463@gmail.com
+Subject: Re: [PATCH] xfs: report a writeback error on a read() call
+Message-ID: <aFuezjrRG4L5dumV@infradead.org>
+References: <aFqyyUk9lO5mSguL@infradead.org>
+ <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,13 +63,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250624121149.2927-1-chentaotao@didiglobal.com>
+In-Reply-To: <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Thanks, I really like the i915 work to stop the shmem abuse.
+On Wed, Jun 25, 2025 at 10:44:57AM +0800, Yafang Shao wrote:
+> > That's really kernel wide policy and not something magic done by a
+> > single file system.
+> 
+> XFS already supports an optional policy for handling metadata errors via:
+> /sys/fs/xfs/<disk>/error/metadata/
+> 
+> It would be reasonable to introduce a similar optional policy for data
+> errors:
+> /sys/fs/xfs/<disk>/error/data/
+> 
+> This data error policy could allow the filesystem to shut down immediately
+> if corrupted data is detected that might otherwise be exposed to userspace.
 
-I still hate it that we just change the write_begin/end ops while still
-in the address_space ops vs passing explicit callbacks, because that
-means we'll some other version of that abuse back sooner or later :(
+I fully agree on that part, and would in fact argue for making it the
+default.
+
+But reporting writeback errors on read just on one file system and with
+a specific option is really strange.
 
 
