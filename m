@@ -1,123 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-52976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8AFFAE905C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 23:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16351AE90E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 00:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C74CF189F0FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 21:45:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2391898AA0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 22:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B497F26D4C9;
-	Wed, 25 Jun 2025 21:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490C228A727;
+	Wed, 25 Jun 2025 22:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TlQxlEwn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F2B26CE0F;
-	Wed, 25 Jun 2025 21:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1DC289E04
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 22:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750887929; cv=none; b=rjeRTVF/zcjvDEt7oNLI9YpZR0G5GqVLwOSs0YwuKq85LwGC8LR8Tqh3xlXC7Q78rH43kwDP2yL7peG1xYiGpczyzqfOMu9md3cUMmkB3AKfRxLnP96MdDvvddf9lheKF5zfSYf06eLJcvMfrC4gPumpnZzkPfJ4L6mj2NMliZ4=
+	t=1750889729; cv=none; b=n3LazAwCp3aveBcXvwDmgfFKkDtqYcdOHl6npjAwnL/6D+1R5jg/a4f/77UB0ZDRc8VJdzqv13cqTr36EP9KHyHvv6KSp5JVhlm0hOqKO/AB8/m/RON7LJbZYPmIK4KFiwEreHvggMBGqyo1MyHPxsTsTSQK7fBkMG1oza5KquU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750887929; c=relaxed/simple;
-	bh=xzBP+699j1EQui1oe5SqTa5MCEOF8RKZFkPwrYRlLKw=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=SM5qGjM9FpvO7MWxhfVwH54R24ZilUdbrDCp78b5Cq0I8v3cPx87VfTlWRbY13OjEA1apepx9kb3NUGcYj3K7+mqcfNOyEK7blbjuQsgXhnoBgP42OAY/XVu448Q/yLVsPuvvB+R5Lf+a3WMgoIVJLyFjSAo0mRG7Ced4IDokLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uUXvp-004rxc-5O;
-	Wed, 25 Jun 2025 21:45:25 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1750889729; c=relaxed/simple;
+	bh=v15e1fsq/k9wQogGeLwjM8pmdEUQe6ZiBZIG2tnr5JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AHg3/8dy90MzlCAc+h7W59NpJsIQhy31oxBDsYqQxpUsQE2CdMQFldYCZoOfrKda+p+kCTInCfI4C6s2ZkZCg30EEBuZnyrGf3sudvMnDQVL8XRiez+ga3f03srhiPWTs8j4BulHnZPQszf/NFikbTb5xFktJJ5u7mddQFi067s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TlQxlEwn; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=kQdQW1VonLksORmc2reTI2hT7Dsgy6YNZ601dpB97cY=; b=TlQxlEwnNKSlXQTvtno40Pnstw
+	j8exmbCvvpqH8drKVqTJMFHErD1+E72gCJ+HCWOAAbMwslaiZXNrVZqjQBcxmPLzkmElb7TlGq7WN
+	YoALCYXXlIyhMyZbcvP/QHpO83GlumXg9fywHl9YIG3TzJGI0gPvfUDk+4riXP971nwrCzr1lhuLm
+	IezfI3eQ08fBgHcSbw0rDgTDyZbG5359aAdh2/GYKmMqsJtUiTUTVLltcU4riKiIUHz0cMLJuXYw3
+	zHoqK622gfnAuE0uRoCBpB3CfOdD42p+/p5wTURDXjgHmhHV9sS13sltUf4XdK64PX+NHNNv3Ma6e
+	AS+kvu1w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUYOq-00000006eI8-1az2;
+	Wed, 25 Jun 2025 22:15:24 +0000
+Date: Wed, 25 Jun 2025 23:15:24 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: [git pull] more mount fixes
+Message-ID: <20250625221524.GT1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Miklos Szeredi" <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/12] ovl: use is_subdir() for testing if one thing is a
- subdir of another
-In-reply-to:
- <CAOQ4uxhoVe2g+85C5e=UrGQHyyB=B4OgKcXF3B_puU+5j0mCRQ@mail.gmail.com>
-References:
- <>, <CAOQ4uxhoVe2g+85C5e=UrGQHyyB=B4OgKcXF3B_puU+5j0mCRQ@mail.gmail.com>
-Date: Thu, 26 Jun 2025 07:45:23 +1000
-Message-id: <175088792304.2280845.17292051611230790520@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, 26 Jun 2025, Amir Goldstein wrote:
-> On Wed, Jun 25, 2025 at 1:07=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
-> >
-> > Rather than using lock_rename(), use the more obvious is_subdir() for
-> > ensuring that neither upper nor workdir contain the other.
-> > Also be explicit in the comment that the two directories cannot be the
-> > same.
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> > ---
-> >  fs/overlayfs/super.c | 14 ++++----------
-> >  1 file changed, 4 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index cf99b276fdfb..db046b0d6a68 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -438,18 +438,12 @@ static int ovl_lower_dir(const char *name, struct p=
-ath *path,
-> >         return 0;
-> >  }
-> >
-> > -/* Workdir should not be subdir of upperdir and vice versa */
-> > +/* Workdir should not be subdir of upperdir and vice versa, and
-> > + * they should not be the same.
-> > + */
-> >  static bool ovl_workdir_ok(struct dentry *workdir, struct dentry *upperd=
-ir)
-> >  {
-> > -       bool ok =3D false;
-> > -
-> > -       if (workdir !=3D upperdir) {
-> > -               struct dentry *trap =3D lock_rename(workdir, upperdir);
-> > -               if (!IS_ERR(trap))
-> > -                       unlock_rename(workdir, upperdir);
-> > -               ok =3D (trap =3D=3D NULL);
-> > -       }
-> > -       return ok;
-> > +       return !is_subdir(workdir, upperdir) && !is_subdir(upperdir, work=
-dir);
->=20
-> I am not at ease with this simplification to an unlocked test.
-> In the cover letter you wrote that this patch is not like the other patches.
-> Is this really necessary for your work?
-> If not, please leave it out.
+More fallout from struct mount audit...
 
-I assume that by "unlocked" you mean that there are two separate calls
-to is_subdir() which are not guaranteed to be coherent.  I don't see how
-that could be a problem.  The directory hierarchy could certainly change
-between the calls, but it could equally change immediately after a fully
-locked call, and thereby invalidate the result.  It is not possible to
-provide a permanent guarantee that there is never a subdir relationship
-between the two.
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
-I don't absolutely need the patch.  I plan for lock_rename() to go away.
-It will be replaced by lookup_and_lock_rename() which will lock two
-dentries and protect the paths from them to their common ancestor from
-any renames.  lookup_and_lock_rename() can be given the two dentries
-rather than having it look them up given parents and names.  So it could
-be used for this test.  It just seems to me to be unnecessary
-complexity.  I will drop it (for now) if you like.
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
-NeilBrown.
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
+
+for you to fetch changes up to 0748e553df0225754c316a92af3a77fdc057b358:
+
+  userns and mnt_idmap leak in open_tree_attr(2) (2025-06-24 10:25:04 -0400)
+
+----------------------------------------------------------------
+Several mount-related fixes
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+----------------------------------------------------------------
+Al Viro (3):
+      replace collect_mounts()/drop_collected_mounts() with a safer variant
+      attach_recursive_mnt(): do not lock the covering tree when sliding something under it
+      userns and mnt_idmap leak in open_tree_attr(2)
+
+ Documentation/filesystems/porting.rst |   9 +++
+ fs/namespace.c                        | 115 +++++++++++++++++++---------------
+ fs/pnode.h                            |   2 -
+ include/linux/mount.h                 |   6 +-
+ kernel/audit_tree.c                   |  63 ++++++++++---------
+ 5 files changed, 111 insertions(+), 84 deletions(-)
 
