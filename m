@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-52946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044F6AE8A88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 18:48:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E853AE8A9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 18:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598AB163F62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FF4680E48
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E232ECE8F;
-	Wed, 25 Jun 2025 16:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556752ED859;
+	Wed, 25 Jun 2025 16:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q4FlZKnX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fLht+H10"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEA12EB5CD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 16:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DB92D4B67
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 16:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750869802; cv=none; b=QH5+O7Xhc5dPNGYH5OAiDn3cOwWVpN5XePZJqMIZAUHnYl3rAM7+mBWS4yCnKCwcVJMdocH9U5Eb0XNyIJ/5Qxxof+Y6C3slEb99ih+hxaIa/ic1Tz1ZxdoOONlVKn8me7nwa+miFOczt3eaMWdQZ+J1Y1ENXHWZIHiBAPLEbg4=
+	t=1750869810; cv=none; b=NoA2DKhFi1AfNPFXjRZ12awNZQ7NFm68qfHnM4sgRzVUm3gqkXShxMeXyr0xXvXQDknA+6ns18DbwCUcOtRdeHm7I5TLNvD38tUbySMmw7A/XWw5PjfYDC57tBv8ed7u06clHNUtmHe/3q/yzuWUG5bdHb2iXzsVoCkGuttBlRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750869802; c=relaxed/simple;
-	bh=Iaaav3T6nJBDFhHbPKVsXwalLRAcwYlRj02SQ9HB17k=;
+	s=arc-20240116; t=1750869810; c=relaxed/simple;
+	bh=SXgvElHG+rgpKsJbAG0nTmqC5C4ZMYho2SybTvsVsWE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YKEQx/k+rUg9mvEhJ4Bb3RmbkgORAjEJivjLuxMN9mexFdZk13v1HG9/1t+3OBNTRa0uI+2f9ENHXC9fV88SHlgf2LC7HDXmSXyKFwWPpbsPHu3xeNoK56jKHLffvFSctZEMg1fU/+x2n63Twx1QelMkkU1bVTFt2tQeGa5FWUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q4FlZKnX; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=h5WmAa/TfjMzAenLySYLQ25Yyp41faX5WApTNngioROYaJIwYmFUnJ/7zL+BL/h8s0UjSIQo2SV5Q+kj5gIo9o5LR7bYTjFo64H8hVPgbwdjmGBi/91Aacg+8tIv3i0K80+KRtM5buIQldri+y2bkJcqueHgKRV7FRLCsKhcmeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fLht+H10; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750869798;
+	s=mimecast20190719; t=1750869807;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SheY32pXE9zTXtwtlEtE2N2cmqkYRXORBzV4ANgeYMc=;
-	b=Q4FlZKnXSvOCtlBIpEjl9DM6h5aeZlfGk+DqSjeJ6drrcZAkhMupIr/xpiDpi36WfVtiAO
-	Rt3tHbtwciHJnWZNglL6k1JEspFiCTV5SaxyySkTr7I4EeUx91sZri/aqC0KKZ3UAU3RpX
-	BUcN2SIvO5W/T4yzfa8eMoDhHZiLOTE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=VIsFGLeExHe5sqFNaVeivDuS43dfh1gqeqA6FrJfFrA=;
+	b=fLht+H107SWqw56jGeACCEbzlmmkqfpHJY8o8y6FWm25q9mbw8P4/aq3O7pLiiu3HRnpR2
+	gLtUQ2nkfak7Qe75Zm9b8+t/9If78fBvCQm5C+QwIDAIdVxLifafmFEDPOJhZjW/cW5/Gm
+	4bZMcyN3KvlpmLCvbcR6qtiJBYLni88=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-139-yE5LAO04OYCv89DecXUnIw-1; Wed,
- 25 Jun 2025 12:43:15 -0400
-X-MC-Unique: yE5LAO04OYCv89DecXUnIw-1
-X-Mimecast-MFC-AGG-ID: yE5LAO04OYCv89DecXUnIw_1750869793
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-FDhUDpVvOaG5pNTOQr4ZMA-1; Wed,
+ 25 Jun 2025 12:43:20 -0400
+X-MC-Unique: FDhUDpVvOaG5pNTOQr4ZMA-1
+X-Mimecast-MFC-AGG-ID: FDhUDpVvOaG5pNTOQr4ZMA_1750869798
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 687FC19560AA;
-	Wed, 25 Jun 2025 16:43:13 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 829C2180028D;
+	Wed, 25 Jun 2025 16:43:18 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.81])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 866821956096;
-	Wed, 25 Jun 2025 16:43:09 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CECEA195608D;
+	Wed, 25 Jun 2025 16:43:14 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Christian Brauner <christian@brauner.io>,
 	Steve French <sfrench@samba.org>
@@ -70,10 +70,12 @@ Cc: David Howells <dhowells@redhat.com>,
 	v9fs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Paulo Alcantara <pc@manguebit.org>
-Subject: [PATCH v2 10/16] smb: client: fix warning when reconnecting channel
-Date: Wed, 25 Jun 2025 17:42:05 +0100
-Message-ID: <20250625164213.1408754-11-dhowells@redhat.com>
+	Stefan Metzmacher <metze@samba.org>,
+	Tom Talpey <tom@talpey.com>,
+	stable+noautosel@kernel.org
+Subject: [PATCH v2 11/16] smb: client: let smbd_post_send_iter() respect the peers max_send_size and transmit all data
+Date: Wed, 25 Jun 2025 17:42:06 +0100
+Message-ID: <20250625164213.1408754-12-dhowells@redhat.com>
 In-Reply-To: <20250625164213.1408754-1-dhowells@redhat.com>
 References: <20250625164213.1408754-1-dhowells@redhat.com>
 Precedence: bulk
@@ -83,122 +85,131 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: Paulo Alcantara <pc@manguebit.org>
+From: Stefan Metzmacher <metze@samba.org>
 
-When reconnecting a channel in smb2_reconnect_server(), a dummy tcon
-is passed down to smb2_reconnect() with ->query_interface
-uninitialized, so we can't call queue_delayed_work() on it.
+We should not send smbdirect_data_transfer messages larger than
+the negotiated max_send_size, typically 1364 bytes, which means
+24 bytes of the smbdirect_data_transfer header + 1340 payload bytes.
 
-Fix the following warning by ensuring that we're queueing the delayed
-worker from correct tcon.
+This happened when doing an SMB2 write with more than 1340 bytes
+(which is done inline as it's below rdma_readwrite_threshold).
 
-WARNING: CPU: 4 PID: 1126 at kernel/workqueue.c:2498 __queue_delayed_work+0x1d2/0x200
-Modules linked in: cifs cifs_arc4 nls_ucs2_utils cifs_md4 [last unloaded: cifs]
-CPU: 4 UID: 0 PID: 1126 Comm: kworker/4:0 Not tainted 6.16.0-rc3 #5 PREEMPT(voluntary)
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-4.fc42 04/01/2014
-Workqueue: cifsiod smb2_reconnect_server [cifs]
-RIP: 0010:__queue_delayed_work+0x1d2/0x200
-Code: 41 5e 41 5f e9 7f ee ff ff 90 0f 0b 90 e9 5d ff ff ff bf 02 00
-00 00 e8 6c f3 07 00 89 c3 eb bd 90 0f 0b 90 e9 57 f> 0b 90 e9 65 fe
-ff ff 90 0f 0b 90 e9 72 fe ff ff 90 0f 0b 90 e9
-RSP: 0018:ffffc900014afad8 EFLAGS: 00010003
-RAX: 0000000000000000 RBX: ffff888124d99988 RCX: ffffffff81399cc1
-RDX: dffffc0000000000 RSI: ffff888114326e00 RDI: ffff888124d999f0
-RBP: 000000000000ea60 R08: 0000000000000001 R09: ffffed10249b3331
-R10: ffff888124d9998f R11: 0000000000000004 R12: 0000000000000040
-R13: ffff888114326e00 R14: ffff888124d999d8 R15: ffff888114939020
-FS:  0000000000000000(0000) GS:ffff88829f7fe000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe7a2b4038 CR3: 0000000120a6f000 CR4: 0000000000750ef0
-PKRU: 55555554
-Call Trace:
- <TASK>
- queue_delayed_work_on+0xb4/0xc0
- smb2_reconnect+0xb22/0xf50 [cifs]
- smb2_reconnect_server+0x413/0xd40 [cifs]
- ? __pfx_smb2_reconnect_server+0x10/0x10 [cifs]
- ? local_clock_noinstr+0xd/0xd0
- ? local_clock+0x15/0x30
- ? lock_release+0x29b/0x390
- process_one_work+0x4c5/0xa10
- ? __pfx_process_one_work+0x10/0x10
- ? __list_add_valid_or_report+0x37/0x120
- worker_thread+0x2f1/0x5a0
- ? __kthread_parkme+0xde/0x100
- ? __pfx_worker_thread+0x10/0x10
- kthread+0x1fe/0x380
- ? kthread+0x10f/0x380
- ? __pfx_kthread+0x10/0x10
- ? local_clock_noinstr+0xd/0xd0
- ? ret_from_fork+0x1b/0x1f0
- ? local_clock+0x15/0x30
- ? lock_release+0x29b/0x390
- ? rcu_is_watching+0x20/0x50
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x15b/0x1f0
- ? __pfx_kthread+0x10/0x10
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-irq event stamp: 1116206
-hardirqs last  enabled at (1116205): [<ffffffff8143af42>] __up_console_sem+0x52/0x60
-hardirqs last disabled at (1116206): [<ffffffff81399f0e>] queue_delayed_work_on+0x6e/0xc0
-softirqs last  enabled at (1116138): [<ffffffffc04562fd>] __smb_send_rqst+0x42d/0x950 [cifs]
-softirqs last disabled at (1116136): [<ffffffff823d35e1>] release_sock+0x21/0xf0
+It means the peer resets the connection.
 
+When testing between cifs.ko and ksmbd.ko something like this
+is logged:
+
+client:
+
+    CIFS: VFS: RDMA transport re-established
+    siw: got TERMINATE. layer 1, type 2, code 2
+    siw: got TERMINATE. layer 1, type 2, code 2
+    siw: got TERMINATE. layer 1, type 2, code 2
+    siw: got TERMINATE. layer 1, type 2, code 2
+    siw: got TERMINATE. layer 1, type 2, code 2
+    siw: got TERMINATE. layer 1, type 2, code 2
+    siw: got TERMINATE. layer 1, type 2, code 2
+    siw: got TERMINATE. layer 1, type 2, code 2
+    siw: got TERMINATE. layer 1, type 2, code 2
+    CIFS: VFS: \\carina Send error in SessSetup = -11
+    smb2_reconnect: 12 callbacks suppressed
+    CIFS: VFS: reconnect tcon failed rc = -11
+    CIFS: VFS: reconnect tcon failed rc = -11
+    CIFS: VFS: reconnect tcon failed rc = -11
+    CIFS: VFS: SMB: Zero rsize calculated, using minimum value 65536
+
+and:
+
+    CIFS: VFS: RDMA transport re-established
+    siw: got TERMINATE. layer 1, type 2, code 2
+    CIFS: VFS: smbd_recv:1894 disconnected
+    siw: got TERMINATE. layer 1, type 2, code 2
+
+The ksmbd dmesg is showing things like:
+
+    smb_direct: Recv error. status='local length error (1)' opcode=128
+    smb_direct: disconnected
+    smb_direct: Recv error. status='local length error (1)' opcode=128
+    ksmbd: smb_direct: disconnected
+    ksmbd: sock_read failed: -107
+
+As smbd_post_send_iter() limits the transmitted number of bytes
+we need loop over it in order to transmit the whole iter.
+
+Cc: Steve French <sfrench@samba.org>
+Cc: Tom Talpey <tom@talpey.com>
 Cc: linux-cifs@vger.kernel.org
-Reported-by: David Howells <dhowells@redhat.com>
-Fixes: 42ca547b13a2 ("cifs: do not disable interface polling on failure")
-Reviewed-by: David Howells <dhowells@redhat.com>
-Tested-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+Cc: <stable+noautosel@kernel.org> # sp->max_send_size should be info->max_send_size in backports
+Fixes: 3d78fe73fa12 ("cifs: Build the RDMA SGE list directly from an iterator")
+Signed-off-by: Stefan Metzmacher <metze@samba.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- fs/smb/client/cifsglob.h |  1 +
- fs/smb/client/smb2pdu.c  | 10 ++++------
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ fs/smb/client/smbdirect.c | 31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index 45e94e18f4d5..da963294a573 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -1302,6 +1302,7 @@ struct cifs_tcon {
- 	bool use_persistent:1; /* use persistent instead of durable handles */
- 	bool no_lease:1;    /* Do not request leases on files or directories */
- 	bool use_witness:1; /* use witness protocol */
-+	bool dummy:1; /* dummy tcon used for reconnecting channels */
- 	__le32 capabilities;
- 	__u32 share_flags;
- 	__u32 maximal_access;
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 084ee66e73fd..572cfc42dda8 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -424,9 +424,9 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
- 		free_xid(xid);
- 		ses->flags &= ~CIFS_SES_FLAGS_PENDING_QUERY_INTERFACES;
+diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
+index cbc85bca006f..a976bcf61226 100644
+--- a/fs/smb/client/smbdirect.c
++++ b/fs/smb/client/smbdirect.c
+@@ -907,8 +907,10 @@ static int smbd_post_send_iter(struct smbd_connection *info,
+ 			.local_dma_lkey	= sc->ib.pd->local_dma_lkey,
+ 			.direction	= DMA_TO_DEVICE,
+ 		};
++		size_t payload_len = umin(*_remaining_data_length,
++					  sp->max_send_size - sizeof(*packet));
  
--		/* regardless of rc value, setup polling */
--		queue_delayed_work(cifsiod_wq, &tcon->query_interfaces,
--				   (SMB_INTERFACE_POLL_INTERVAL * HZ));
-+		if (!tcon->ipc && !tcon->dummy)
-+			queue_delayed_work(cifsiod_wq, &tcon->query_interfaces,
-+					   (SMB_INTERFACE_POLL_INTERVAL * HZ));
+-		rc = smb_extract_iter_to_rdma(iter, *_remaining_data_length,
++		rc = smb_extract_iter_to_rdma(iter, payload_len,
+ 					      &extract);
+ 		if (rc < 0)
+ 			goto err_dma;
+@@ -1013,6 +1015,27 @@ static int smbd_post_send_empty(struct smbd_connection *info)
+ 	return smbd_post_send_iter(info, NULL, &remaining_data_length);
+ }
  
- 		mutex_unlock(&ses->session_mutex);
++static int smbd_post_send_full_iter(struct smbd_connection *info,
++				    struct iov_iter *iter,
++				    int *_remaining_data_length)
++{
++	int rc = 0;
++
++	/*
++	 * smbd_post_send_iter() respects the
++	 * negotiated max_send_size, so we need to
++	 * loop until the full iter is posted
++	 */
++
++	while (iov_iter_count(iter) > 0) {
++		rc = smbd_post_send_iter(info, iter, _remaining_data_length);
++		if (rc < 0)
++			break;
++	}
++
++	return rc;
++}
++
+ /*
+  * Post a receive request to the transport
+  * The remote peer can only send data when a receive request is posted
+@@ -2032,14 +2055,14 @@ int smbd_send(struct TCP_Server_Info *server,
+ 			klen += rqst->rq_iov[i].iov_len;
+ 		iov_iter_kvec(&iter, ITER_SOURCE, rqst->rq_iov, rqst->rq_nvec, klen);
  
-@@ -4229,10 +4229,8 @@ void smb2_reconnect_server(struct work_struct *work)
+-		rc = smbd_post_send_iter(info, &iter, &remaining_data_length);
++		rc = smbd_post_send_full_iter(info, &iter, &remaining_data_length);
+ 		if (rc < 0)
+ 			break;
+ 
+ 		if (iov_iter_count(&rqst->rq_iter) > 0) {
+ 			/* And then the data pages if there are any */
+-			rc = smbd_post_send_iter(info, &rqst->rq_iter,
+-						 &remaining_data_length);
++			rc = smbd_post_send_full_iter(info, &rqst->rq_iter,
++						      &remaining_data_length);
+ 			if (rc < 0)
+ 				break;
  		}
- 		goto done;
- 	}
--
- 	tcon->status = TID_GOOD;
--	tcon->retry = false;
--	tcon->need_reconnect = false;
-+	tcon->dummy = true;
- 
- 	/* now reconnect sessions for necessary channels */
- 	list_for_each_entry_safe(ses, ses2, &tmp_ses_list, rlist) {
 
 
