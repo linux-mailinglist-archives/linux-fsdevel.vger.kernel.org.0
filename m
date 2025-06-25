@@ -1,147 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-52931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-52932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03D9AE88EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 17:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4ADAE8901
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 18:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCC716E99A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 15:57:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5201B4A3606
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jun 2025 16:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBC629B214;
-	Wed, 25 Jun 2025 15:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25051DF980;
+	Wed, 25 Jun 2025 16:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UTPLqWGW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2z60Z06n"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gw8ktGzT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CE62BE7AA;
-	Wed, 25 Jun 2025 15:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9640A1D5CE0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 16:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750867041; cv=none; b=Dc17vIpaII4qr564XK+Z5v/xnWmIC+P6EMsjMkYwVNeL9J+W8YumLAtEblWm5OiJUck3hmpWXF/2vRelDHREfZpCk9looUhPZnsHxZrdQgOiQUbbq7ydWVJSDfDUaxKbTyLwg7btQag7ao80JuTAo3J5awHewSV6fNMWTgLOjWY=
+	t=1750867225; cv=none; b=iKLrhGkk568HLSklOnZfudRFsu64G3MTDUncgmS+Z4tCWYCpBTPtNQ0JrcaJzm7FGWnSUhN5sGayOFAnAL9brnHm/B3jsM3Nn6NITXBW3X97SpBQ09YaqSoHMl7OO4S01f5RwAR/yyZLY5TRKX6Glycv0GKLHDcKEmeTfoqASt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750867041; c=relaxed/simple;
-	bh=E5uqucEcM/mKn6EztccekkvQtFRto2xMKL0P3StcGmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HvrgxUmhCcCtvT6rAOnnSFoYyvicrATnxZyCTC3xpJkQGLRPUdWUY2KzljwYhCPfgXS4bhQUYngQfcu62bhTPqSsvj/SxEuVL81yFNUK1iY1Lz89I9axVb86HAlGrCTjsmPiS+x3+pa+SWiXM4k+7fLI/8QRWZjD4CZNS8Jr9ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UTPLqWGW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2z60Z06n; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 25 Jun 2025 17:57:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750867038;
+	s=arc-20240116; t=1750867225; c=relaxed/simple;
+	bh=gmxAdGYH01kQqDUySciDEd2T1xICD8j3PusfHCEXsTE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=EgBhQQbkc2n+XXW/pI9CDc5INxI4QjMzzK0kzQCYTBXf3BdmGqHHOcaJC6cgymLF6LYKH0hIe5r8yI0MfSPfSzp30h9Mo6LKBxFayCcU2Z3Gd9H/3oS11Ecy3ecuOGUiD/3yidYl3qPI5m8GpgboRvkN1ka/b+gVgsXmwTBmdow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gw8ktGzT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750867222;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CfjwWrD5XKW/BysMkuSVW+dt/gVl5mSe4HCW3w5BYuU=;
-	b=UTPLqWGWembTwGM1I/YUgZo4X/TUmmRzpL5RjQlkxjSQAX8mSoiH1S881swoIMJ+d6miOb
-	kVV8R1iW6jSLzQpMd65GwdIIX+P/ejWPkCPEcQn9+rcJw44H01J8c0FqrrfJLAfZONwI1F
-	4vvVpQ3SCo6DAIU69OJ1xr/1Ggx8BpQ+77ATNEJ3V3/mNyyH+2q3YY/FXs0vQsXhv2/qwL
-	sPatIYxsz03GvfZN4DzhenQFfHGpgX5DpGtrxbUFxINOx3sg3SSKtXmkyU9sA6wlmaoEIF
-	/r1J4q7gh1O5JqWopj8qNOCBbNerEWHdUBUW2mx6EtCOk0hQsgtKnE5eZCzU1A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750867038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CfjwWrD5XKW/BysMkuSVW+dt/gVl5mSe4HCW3w5BYuU=;
-	b=2z60Z06nBhUZVxBM6oxgQ3PZgvvFA8ivzh/kRDzxuBwWuBlnDpNa6XDz+vnlONDs8uyNZI
-	1Ye7EO0EF0GRprCQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	John Ogness <john.ogness@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-Message-ID: <20250625155713.lckVkmJH@linutronix.de>
-References: <20250527090836.1290532-1-namcao@linutronix.de>
- <20250625145031.GQ4Bnc4K@linutronix.de>
- <20250625152702.JiI8qdk-@linutronix.de>
- <20250625153354.0cgh85EQ@linutronix.de>
+	bh=K0NvJR22D1lGBwJC9xwFeqS10DKhxpDNcNeEIOF/0eE=;
+	b=Gw8ktGzTu8GZd6tiniykxsJZ7fsqgO/aNLB2JbQ9/SMhlhPscwmkCsfjNPu6bLSDf8cl5V
+	nCC7BR25dDVPTkRMzpm1QeSFMgHNy7h6p6XE8q8oZlIXfUBgR6SVTH/wbSjt8JdXpIpHSd
+	TmQ2hUHMyDO2C+by/zF6BHQUhVVu+Tk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-AcHNvVIfOy2R2XPuDzd6pQ-1; Wed,
+ 25 Jun 2025 12:00:17 -0400
+X-MC-Unique: AcHNvVIfOy2R2XPuDzd6pQ-1
+X-Mimecast-MFC-AGG-ID: AcHNvVIfOy2R2XPuDzd6pQ_1750867215
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77C6E19560BA;
+	Wed, 25 Jun 2025 16:00:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B80FA19560A3;
+	Wed, 25 Jun 2025 16:00:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <15a2d9f7-0945-4bb9-9879-e2a615b8f208@samba.org>
+References: <15a2d9f7-0945-4bb9-9879-e2a615b8f208@samba.org> <1107690.1750683895@warthog.procyon.org.uk> <f448a729-ca2e-40a8-be67-3334f47a3916@samba.org>
+To: Stefan Metzmacher <metze@samba.org>
+Cc: dhowells@redhat.com,
+    "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+    netfs@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+    Steve French <stfrench@microsoft.com>
+Subject: Re: [PATCH] cifs: Collapse smbd_recv_*() into smbd_recv() and just use copy_to_iter()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625153354.0cgh85EQ@linutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1401345.1750867212.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 25 Jun 2025 17:00:12 +0100
+Message-ID: <1401346.1750867212@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Jun 25, 2025 at 05:33:54PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-06-25 17:27:02 [+0200], Nam Cao wrote:
-> > > > @@ -1896,21 +1732,30 @@ static int ep_send_events(struct eventpoll *ep,
-> > > >  			__pm_relax(ws);
-> > > >  		}
-> > > >  
-> > > > -		list_del_init(&epi->rdllink);
-> > > > -
-> > > >  		/*
-> > > >  		 * If the event mask intersect the caller-requested one,
-> > > >  		 * deliver the event to userspace. Again, we are holding ep->mtx,
-> > > >  		 * so no operations coming from userspace can change the item.
-> > > >  		 */
-> > > >  		revents = ep_item_poll(epi, &pt, 1);
-> > > > -		if (!revents)
-> > > > +		if (!revents) {
-> > > > +			init_llist_node(n);
-> > > > +
-> > > > +			/*
-> > > > +			 * Just in case epi becomes ready after ep_item_poll() above, but before
-> > > > +			 * init_llist_node(). Make sure to add it to the ready list, otherwise an
-> > > > +			 * event may be lost.
-> > > > +			 */
-> > > 
-> > > So why not llist_del_first_init() at the top? Wouldn't this avoid the
-> > > add below? 
-> > 
-> > Look at that function:
-> > 	static inline struct llist_node *llist_del_first_init(struct llist_head *head)
-> > 	{
-> > 		struct llist_node *n = llist_del_first(head);
-> > 
-> > 		// BROKEN: another task does llist_add() here for the same node
-> > 
-> > 		if (n)
-> > 			init_llist_node(n);
-> > 		return n;
-> > 	}
-> > 
-> > It is not atomic to another task doing llist_add() to the same node.
-> > init_llist_node() would then put the list in an inconsistent state.
-> 
-> Okay, I wasn't expecting another llist_add() from somewhere else. Makes
-> sense.
+Stefan Metzmacher <metze@samba.org> wrote:
 
-Sorry, it's been a few weeks and I misremembered. But that wasn't the
-reason. epitem_ready() is atomic to llist_del_first_init().
+> Please keep the rfc1002_len variable as it's used in the log_read messag=
+e
+> below and it should by host byteorder.
 
-The actual reason is that, llist_del_first_init() would allow another
-llist_add() to happen. So in the future loop iterations, we could see the
-same item again, and we would incorrectly report more events than actually
-available.
+So this change on top of the patch I posted?
 
-Thus, init_llist_node() doesn't happen until we are done looping.
+@@ -1838,11 +1838,11 @@ int smbd_recv(struct smbd_connection *info, struct=
+ msghdr *msg)
+                         * transport layer is added
+                         */
+                        if (response->first_segment && size =3D=3D 4) {
+-                               unsigned int len =3D
++                               unsigned int rfc1002_len =3D
+                                        data_length + remaining_data_lengt=
+h;
+-                               __be32 rfc1002_len =3D cpu_to_be32(len);
+-                               if (copy_to_iter(&rfc1002_len, sizeof(rfc1=
+002_len),
+-                                                &msg->msg_iter) !=3D size=
+of(rfc1002_len))
++                               __be32 rfc1002_hdr =3D cpu_to_be32(rfc1002=
+_len);
++                               if (copy_to_iter(&rfc1002_hdr, sizeof(rfc1=
+002_hdr),
++                                                &msg->msg_iter) !=3D size=
+of(rfc1002_hdr))
+                                        return -EFAULT;
+                                data_read =3D 4;
+                                response->first_segment =3D false;
 
-> > To be sure, I tried your suggestion. Systemd sometimes failed to boot, and
-> > my stress test crashed instantly.
-> 
-> I had a trace_printk() there while testing and it never triggered.
+Btw, I'm changing the patch subject and description to:
 
-This code path is only executed for broken userspace.
+    cifs: Fix reading into an ITER_FOLIOQ from the smbdirect code
+    =
 
-Nam
+    When performing a file read from RDMA, smbd_recv() prints an "Invalid =
+msg
+    type 4" error and fails the I/O.  This is due to the switch-statement =
+there
+    not handling the ITER_FOLIOQ handed down from netfslib.
+    =
+
+    Fix this by collapsing smbd_recv_buf() and smbd_recv_page() into
+    smbd_recv() and just using copy_to_iter() instead of memcpy().  This
+    future-proofs the function too, in case more ITER_* types are added.
+    =
+
+    Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+    Reported-by: Stefan Metzmacher <metze@samba.org>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    cc: Steve French <stfrench@microsoft.com>
+    cc: Tom Talpey <tom@talpey.com>
+    cc: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+    cc: Matthew Wilcox <willy@infradead.org>
+    cc: linux-cifs@vger.kernel.org
+    cc: netfs@lists.linux.dev
+    cc: linux-fsdevel@vger.kernel.org
+
+David
+
 
