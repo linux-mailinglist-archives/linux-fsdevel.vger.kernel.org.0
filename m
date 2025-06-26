@@ -1,105 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-53094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F037AE9F89
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 15:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73711AE9FE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 16:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ACB37AA031
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 13:56:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6317B46FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 14:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4812E92B3;
-	Thu, 26 Jun 2025 13:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFF22E7F1A;
+	Thu, 26 Jun 2025 14:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XB2dRBTJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08491922F6;
-	Thu, 26 Jun 2025 13:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4352E718A;
+	Thu, 26 Jun 2025 14:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750946241; cv=none; b=sd2eZAyEaj2lhaf0Pwtn0XQXFoon4mRof2tFtjiYAfZLdNH1jsqGd+Le7RAVgZ9rv8yIgCc+TM6doyDK+rjS4XWzV6j6sMfhFyZQYe1Q21yfKhVBakMO9Cgzp4ZgtislYAIQE2ofOCiwOvLfZj/QN8/nzcB0rAMxh6Fj0lBbIuM=
+	t=1750946883; cv=none; b=h2WTSb+bCmt4hlHgxom/xzhqD8bf+X1WfU2K7c6an8eALHmFXnxpI8ZB4SUAGDcO5xNU2cfSbhkd0kHAJ5vo/J3GYYLPYtVH1LTwBVC+qfXp0r0Io0CxF33pKQR7Q9mRz2g+mnu9lfMIFOSZesBoQZjItwiZElIVSVUXSZKb9W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750946241; c=relaxed/simple;
-	bh=0c7ZHZLsdl7RngXjNl2NpX2L2Tdel9+PLaSBG+/n1XA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cu1w5KznyGw1a1CS4xnBWTUrzlk176gNs+l6rXVviwoMN0cua/ZFk9eJwci9Q8WEjNIFax1L6D9BExIE3VuCWsC78Mwbyxd78WIoq0MEeS2hrvJDZ8Nb3MfgVf0ImOKi9kXw8NuxEC6VbIiWTpXyIKpr0Zjj6O1R3J3wTB0YQM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bSgH11TkwzYQv0F;
-	Thu, 26 Jun 2025 21:57:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 164801A236D;
-	Thu, 26 Jun 2025 21:57:16 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgD3W2C6UV1ofP7jQg--.28741S3;
-	Thu, 26 Jun 2025 21:57:15 +0800 (CST)
-Message-ID: <e2fe408c-23be-4cb4-9cb2-04178fad947f@huaweicloud.com>
-Date: Thu, 26 Jun 2025 21:57:14 +0800
+	s=arc-20240116; t=1750946883; c=relaxed/simple;
+	bh=W9tHbxHnKeRQE5geeibzijql5KBQit7N4QCOc9dhrsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gtA+rsiQCVoGFQSA2sh//KEpVr587oQBrGglAIUhglMhkUda67Ah6fj0R/Kz5kTrDZt8JehWSsyl1wiq57W5y/KpigR7mKuPt2Jfpo4DZ7m85hCO3fXye5zcBJYiVWzbY8wSjA/lGIPlFky4wYenRzDM3q7RiQITrvlC2N/UHqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XB2dRBTJ; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6facacf521eso11084106d6.3;
+        Thu, 26 Jun 2025 07:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750946881; x=1751551681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2AFJAJWMJoLX2aT06uj/U15KdrwYtiZtVOwqSV/4SzY=;
+        b=XB2dRBTJ+ygUGFOj7los26+P0cji2fWIPiNCpQY3mh/lVJrpDOHDIXSj8Mg5X4ueLx
+         fob76pCmDQn2SdB/wBOy2hsnDLoBmd9MxwsMjXW1BgdDv5KwwvCZl+MtMsbkapOJcEdz
+         3e0DA/Wnwj4wy8S096vVW9PVGp/COsvCXF3YYzkGNBfod0Iij4uPrNI+YoUlZagz+udY
+         D8IopIOfVSUpXnGA7iVa2Opuw6zGkcIVCpSq0IC4G1HvJIh9sQ/FZH1Z1n0A6dNc4O7+
+         NLbEtVlAYmtu0E9DN0m9ATecRxpJmb+aG+vz1f7Rhm48kf2CWzPzATQwnTD04KOXk6fG
+         1fBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750946881; x=1751551681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2AFJAJWMJoLX2aT06uj/U15KdrwYtiZtVOwqSV/4SzY=;
+        b=nzLEOwd33isGqHadQfsdUyq6xELNHjQs5hP6wry0nwco4FJ4+Z90FMGT5cFuUSmKSC
+         p61+LkWNsmf0udHGvEcs8J57lg2jY1tM4EgZvOFnNWR32bHrk8NjuewDTo8t6Wxst8Ov
+         AGCnyx0CjuWN1tNwNweaIwYeC9ccAPBz2bzBV/TRYVbaOEIhhFVfUrrI3kX0lyPi5kT6
+         /WJ5YLb4mjrIKSkHZYjcFwKBYvVMcKRKVrl55i/K4joiZeu5IrAgvBcmiFFToYb/MBqG
+         JAiQOU5eeG0ET7NUwdK9eHspvNEg0D3s786VZzpUT733q0xiUe4rvlznyIGy4svgR+hv
+         hoxw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0GU2mpS/bxbTZ9vHMsCu5XJVSJNAaoNNY2X8tYtSnLrOkWmEJ1ga9Qoy3+hNlH7UH1BLFxDiKgm/Z7qto@vger.kernel.org, AJvYcCWL+utsJ+rCdNBCgIqiC11dmTAxGUhPLaLOP3XBVywHoOlRMENAaEpL8BHrZiMDXZkBbWAkPkLDyz8k@vger.kernel.org, AJvYcCXx+AMy9KRZJrxOLkMsIYnxKv11VzWj0k6GbsoFo1YFW/AzH70E/QYm/vLRJQsy3c1d+N/AO0EWuaa0HhwbIQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh06X0QtPpswWY2wxI9dsaMPbkux9B8NyFlbD9rddyYntMGp0F
+	LqxlnAOpB/ANU+AJvT/0fLBH7tE5FNoP/NwtKp9wLJ80SkLmJDS3iYZIM0QlvTRbhpl0fpcaH11
+	efrCxfbZmgwwtLjqTUQfoxu5lXc+pW+w=
+X-Gm-Gg: ASbGncvjB4FwYJDJPUkIGfpZ81ZA1q4sCqdvG/pqzbciu8z02MkminKKTfwR8kRbFj1
+	PG+Kk5vzmNiqzaaQUDtRcei112uH2w3zFEhD+L55P8SB+WXFO8FDIFI/7jc2JYuibfnukr66Kja
+	LP2jZMnBw++PVPW0r5BnYXftIJiquw/tvKVw24q8HNlVCItVVzBx7hrplCramwrBWkm+sdOlMk0
+	If8sA==
+X-Google-Smtp-Source: AGHT+IFuTBd/k6VUgHv/Tqnp8nePZb+/XSJ00N/ywtLL9ZMOQqvkiEoIBt16EJ8iSVWekrkdSUFODlbllPETtxHu3oE=
+X-Received: by 2002:a05:6214:5bc2:b0:6f8:f1a5:e6a4 with SMTP id
+ 6a1803df08f44-6fd5efac2c6mr119139766d6.22.1750946881068; Thu, 26 Jun 2025
+ 07:08:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, hch@lst.de
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com,
- chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, brauner@kernel.org,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
- <yq11praqywi.fsf@ca-mkp.ca.oracle.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <yq11praqywi.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgD3W2C6UV1ofP7jQg--.28741S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW5JVWrJwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVW8ZVWrXwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UdxhLUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <1576470.1750941177@warthog.procyon.org.uk> <dd1b01babe2b5023e9e26c56a2f2b458@manguebit.org>
+In-Reply-To: <dd1b01babe2b5023e9e26c56a2f2b458@manguebit.org>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 26 Jun 2025 09:07:49 -0500
+X-Gm-Features: Ac12FXyyhbfNlNMpQYe9aZUeZ4JpjPV4v5OkXG2uBhjAE4kIr6iaVInUeAOolnI
+Message-ID: <CAH2r5mus-f5y+p16hkaYZWA=fCAiMGT1vpMawbVCZ2EC0K5Pxg@mail.gmail.com>
+Subject: Re: [PATCH] netfs: Fix i_size updating
+To: Paulo Alcantara <pc@manguebit.org>
+Cc: David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/6/23 23:08, Martin K. Petersen wrote:
-> 
-> Zhang,
-> 
->> This series implements the BLK_FEAT_WRITE_ZEROES_UNMAP feature and
->> BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED flag for SCSI, NVMe and
->> device-mapper drivers, and add the FALLOC_FL_WRITE_ZEROES and
->> STATX_ATTR_WRITE_ZEROES_UNMAP support for ext4 and raw bdev devices.
->> Any comments are welcome.
-> 
-> This looks OK to me.
-> 
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> 
+added to for-next pending testing
 
-Thank you, Martin and Christoph, for the patient review. I will update
-my test patches next.
+On Thu, Jun 26, 2025 at 8:39=E2=80=AFAM Paulo Alcantara <pc@manguebit.org> =
+wrote:
+>
+> David Howells <dhowells@redhat.com> writes:
+>
+> > Fix the updating of i_size, particularly in regard to the completion of=
+ DIO
+> > writes and especially async DIO writes by using a lock.
+> >
+> > The bug is triggered occasionally by the generic/207 xfstest as it chuc=
+ks a
+> > bunch of AIO DIO writes at the filesystem and then checks that fstat()
+> > returns a reasonable st_size as each completes.
+> >
+> > The problem is that netfs is trying to do "if new_size > inode->i_size,
+> > update inode->i_size" sort of thing but without a lock around it.
+> >
+> > This can be seen with cifs, but shouldn't be seen with kafs because kaf=
+s
+> > serialises modification ops on the client whereas cifs sends the reques=
+ts
+> > to the server as they're generated and lets the server order them.
+> >
+> > Fixes: 153a9961b551 ("netfs: Implement unbuffered/DIO write support")
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Steve French <sfrench@samba.org>
+> > cc: Paulo Alcantara <pc@manguebit.org>
+> > cc: linux-cifs@vger.kernel.org
+> > cc: netfs@lists.linux.dev
+> > cc: linux-fsdevel@vger.kernel.org
+> > ---
+> >  fs/netfs/buffered_write.c |    2 ++
+> >  fs/netfs/direct_write.c   |    8 ++++++--
+> >  2 files changed, 8 insertions(+), 2 deletions(-)
+>
+> Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+>
 
-Best regards,
-Yi.
 
+--=20
+Thanks,
+
+Steve
 
