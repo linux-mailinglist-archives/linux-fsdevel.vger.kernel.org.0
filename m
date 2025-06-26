@@ -1,222 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-53050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03753AE9495
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 05:35:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C360AE94CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 05:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41AB57ABD76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 03:34:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914C5175D37
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 03:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFADA1E501C;
-	Thu, 26 Jun 2025 03:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DCE20E32B;
+	Thu, 26 Jun 2025 03:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GqoXvvKE"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="3NzRWHAm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCA6282EB;
-	Thu, 26 Jun 2025 03:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034B61E9B22
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 03:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750908916; cv=none; b=FRNvvWBDL33kQPBoAYeJr/fXU/YzvYKLUslvd/wgRy+CIMiAZHsMa0XLjQUCmmaKXeezOJ1wRvX17kHF1LAuMYzZNb+etqR6p3vwpYSjDpHCZsF3FR3AQrJDCDi4856C9U6IEiFGFjvKefPdMV8/vN9NEh96BPwyDu++MSFKL88=
+	t=1750910285; cv=none; b=N5Y696KxmV0MRnVgZ+XXOUWjzZNArNSN/Kvf8SrWOFx0YAtZalzX+itWASDA8I3WeNB6U4Po1fBeAT1ZNbetCPrppgY3iVE2yMd2kbU9tek4XmOwsbsbKVbj8WV8eDUgEsTo+9eNA/OvIGkLOGtaWUKdPzpbg5QljCpuNgU4Gws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750908916; c=relaxed/simple;
-	bh=orbGFxw7oq8abSiPWHcCori/3Z1FkINWNXkk6JGT7+g=;
+	s=arc-20240116; t=1750910285; c=relaxed/simple;
+	bh=T2Miax55TEaH5XXrNWxmT95KXQwslFMTuIhlDQPaD6o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQ8sQHf/aVQyhK/qvP6G5fAoErY9DzzZ+XjqG2g7C4bTXJ+GpBOsWqm7FRKX+YTNw0EwHR8Vk6pBOdH0g9hBs717ROFEU2wTUrI1XtLrcx/j2C/d7BLhfwNrwn4fSsxN/upDmruGGBxUwqpEBP5+tSg3F+qJstpPIjweqUPRYJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GqoXvvKE; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750908914; x=1782444914;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=orbGFxw7oq8abSiPWHcCori/3Z1FkINWNXkk6JGT7+g=;
-  b=GqoXvvKEAFJLvcnXFi9a7XWsZRLkMSuNynKXQSgl9fBGtF1nK209r6Db
-   t/9Dsp2ciArrKgTwefz0QVdojt8HOmDDYgFRJNnaBaen2p7fHuNKkOkbS
-   OWdy9GAsFz2TYcrtqcqockEzLDqCX7LfIlKCeLq+9wzwb270FvxxxxXGy
-   N7Dxoo53dWTVZIcJB7AtWut0S0RhrtwEUEnHqBHClIV2EwbhVJ2BNLd6H
-   N8Lu2DIXeAi4l2RU+D5TtPIF2FAmHuvIpAANSt/wRwBy6NQEq3mwrb1P7
-   AHkAAiB8E3Z0T8Q5zNciBwRXixnuPr/zOVshyqw8zZKBnjauF18seZeW1
-   A==;
-X-CSE-ConnectionGUID: +bU+jm0jSPiHa/i2updwwg==
-X-CSE-MsgGUID: lkjOwVzMQiuxrELCMo+57A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="64552003"
-X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
-   d="scan'208";a="64552003"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 20:35:13 -0700
-X-CSE-ConnectionGUID: fRVmk8plS/CJiD3EwmUiWA==
-X-CSE-MsgGUID: 2ExLHqArQ0u7FplQ7xiMcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
-   d="scan'208";a="156787664"
-Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.35.3])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 20:35:10 -0700
-Date: Thu, 26 Jun 2025 11:35:06 +0800
-From: "Lai, Yi" <yi1.lai@linux.intel.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	willy@infradead.org, adilger.kernel@dilger.ca, jack@suse.cz,
-	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
-	yangerkun@huawei.com, yi1.lai@intel.com
-Subject: Re: [PATCH v2 8/8] ext4: enable large folio for regular file
-Message-ID: <aFy/6oD/AZeTjwAs@ly-workstation>
-References: <20250512063319.3539411-1-yi.zhang@huaweicloud.com>
- <20250512063319.3539411-9-yi.zhang@huaweicloud.com>
- <aFuv+bNk4LyqaSNU@ly-workstation>
- <20250625131545.GD28249@mit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KlsgTWPjwdEqSUj1CuirfJLL2salAJITAjZFGE+MOdN0BWiQCLpVW0Lm9ExJvcfBYTD8G0j4IW5I3jsipWy3APjq/VLhpWl18Gb8WfXtfblDxtY/an+QU+LF2mfumRu3RePkRFolavae8Y8P0R/+cRcEJLoJIbmv7J/TA0P8N+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=3NzRWHAm; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-748f5a4a423so439159b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jun 2025 20:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1750910283; x=1751515083; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ukewhoDGjvLSFodXCnO2Wi7qwdFCCxAWQjKm3BxoyQw=;
+        b=3NzRWHAm72ObkQsmlY+xEArO65buF439G7C0VhjZEwSSIe2/gnAnYiYiHzpFnXsf43
+         8gZ2H46RzbSiL3nHERBMuO9hTELT4lmYsekqVMHyq9UHhnykJs7/OzYeDdRYRiILApW2
+         WgRmsWcK6thNMXyAH5wtS9T1LKy+qDK3JOQZS2D8uR8mIqIr9QwznFSA/PzVL7l/S1gw
+         AkF0ABxBR+0Mk7vBqoxomKd06u9smeX/eGdVvF+OFADKqarURp2hzLSRP2lUnYuojHC2
+         MhHR3or1gS8hxXAc5HBk+g7SCXksXr8g7KqRkERX+Yg+MgUTis23Cwlyh8eLV4jGdEYC
+         3R2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750910283; x=1751515083;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ukewhoDGjvLSFodXCnO2Wi7qwdFCCxAWQjKm3BxoyQw=;
+        b=u5BANYz2iyNhBfAkoi913OZ914OdjvqOq+bL3D6AG1JTFmNSqCC8d3lGSEraAylgw7
+         fT4O1epoTvcPdiz/jEbVndJRKLUefSRRfz7cWpXKbGITyri/J/pz4uROs+cHSCnkI13n
+         vFa2fAn1J2YbBiRC27mLY4zWCAx4q82AcEX7nrRF+WXuo2VyM8ayPAbOiOZXuFl5MgQ/
+         pT5Q4mPvMoMR1VrNFC/1zDg/q25taOK+SMUc9kSJDxAhHUCnqXxkNGmJjDM3UoCrS6Qx
+         ecUrxSyt8EB0fd7gPi171Syk4s+AyWyU9M27oTACdXsKG/5oNf47c1xIcCYnfj/5+cSC
+         pVrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEPcs9beTDXBuldgJcRnoATgpo1twQlg8bhBLx1zpaMCl2SLEEyXvz481Y5LCxOIydVgZvXWXhdfX8Q14y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhhiU9l+wtpXRvOKHDTe5xyoIQ8KTHVb10IOSK/bcZTE4JYb2x
+	xxzEVxjZOCL2TEytX/qLZpLnoIODDVdLyg4fuXBGvwmjyygOonV04bHsPMdc5MIidb8=
+X-Gm-Gg: ASbGncuv1EAPQwkNHD9a/T7nsKoQSYOYbVDmvMxdEiTnAyW5zdwipIelOPvxTcf9h0s
+	8M2aB3SEnky0+ouaS8RUzSScHbOnMsoBVLM15OvTPzDSNNoyo2y5k2bVVWiAzVHZEkFzlR4Af1K
+	bNBrvszr30IMYL4zPx2kFBqWolsLnOMp+L8CDmdXl8H8CcdAzf2GynGfHFUhfQAVgsYvDli/rX0
+	zvkSExdIQof2G4EX1TCu+a3YVteV4B6lUgmzNXTGpGoHu1omrA2Z9UoTFbG+MgGrWJhjje4XcSH
+	9IUdRjmp2DbnvChoshfRpXDZhCrS1PXsWXPV7iZ/IP/6qSpcqFBM+B9bxIHhaB4iV6N8B7X2g6N
+	87s9Ffuli1yvIncNn9DRbrDkiaQgVFzCYYXlwGvdiOPf688dE
+X-Google-Smtp-Source: AGHT+IGfMj1hupvnOX/mD73qau+DpHSUC+w5eDTmeBI+czHsebUdwnvPvrfHC2KQ/TS+fSfAjMVx1g==
+X-Received: by 2002:a05:6a00:c86:b0:740:afda:a742 with SMTP id d2e1a72fcca58-74ad4059d79mr8122379b3a.0.1750910283181;
+        Wed, 25 Jun 2025 20:58:03 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c88548dbsm6145745b3a.133.2025.06.25.20.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 20:58:02 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1uUdkN-00000003L0Q-42Kg;
+	Thu, 26 Jun 2025 13:57:59 +1000
+Date: Thu, 26 Jun 2025 13:57:59 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	yc1082463@gmail.com
+Subject: Re: [PATCH] xfs: report a writeback error on a read() call
+Message-ID: <aFzFR6zD7X1_9bWj@dread.disaster.area>
+References: <aFqyyUk9lO5mSguL@infradead.org>
+ <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
+ <aFuezjrRG4L5dumV@infradead.org>
+ <88e4b40b61f0860c28409bd50e3ae5f1d9c0410b.camel@kernel.org>
+ <aFvbr6H3WUyix2fR@infradead.org>
+ <6ac46aa32eee969d9d8bc55be035247e3fdc0ac8.camel@kernel.org>
+ <aFvkAIg4pAeCO3PN@infradead.org>
+ <11735cf2e1893c14435c91264d58fae48be2973d.camel@kernel.org>
+ <CALOAHbDtFh5P_P0aTzaKRcwGfQmkrhgmk09BQ1tu9ZdXvKi8vQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250625131545.GD28249@mit.edu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALOAHbDtFh5P_P0aTzaKRcwGfQmkrhgmk09BQ1tu9ZdXvKi8vQ@mail.gmail.com>
 
-On Wed, Jun 25, 2025 at 09:15:45AM -0400, Theodore Ts'o wrote:
-> It looks like this failure requires using madvise() with MADV_HWPOISON
-> (which requires root) and MADV_PAGEOUT, and the stack trace is in deep
-> in the an mm codepath:
+On Thu, Jun 26, 2025 at 10:41:47AM +0800, Yafang Shao wrote:
+> On Wed, Jun 25, 2025 at 10:06 PM Jeff Layton <jlayton@kernel.org> wrote:
+> >
+> > On Wed, 2025-06-25 at 04:56 -0700, Christoph Hellwig wrote:
+> > > On Wed, Jun 25, 2025 at 07:49:31AM -0400, Jeff Layton wrote:
+> > > > Another idea: add a new generic ioctl() that checks for writeback
+> > > > errors without syncing anything. That would be fairly simple to do and
+> > > > sounds like it would be useful, but I'd want to hear a better
+> > > > description of the use-case before we did anything like that.
 > 
->    madvise_cold_or_pageout_pte_range+0x1cac/0x2800
->       reclaim_pages+0x393/0x560
->          reclaim_folio_list+0xe2/0x4c0
->             shrink_folio_list+0x44f/0x3d90
->                 unmap_poisoned_folio+0x130/0x500
->                     try_to_unmap+0x12f/0x140
->                        rmap_walk+0x16b/0x1f0
-> 		       ...
+> As you mentioned earlier, calling fsync()/fdatasync() after every
+> write() blocks the thread, degrading performance—especially on HDDs.
+> However, this isn’t the main issue in practice.
+> The real problem is that users typically don’t understand "writeback
+> errors". If you warn them, "You should call fsync() because writeback
+> errors might occur," their response will likely be: "What the hell is
+> a writeback error?"
 > 
-> The bisected commit is the one which enables using large folios, so
-> while it's possible that this due to ext4 doing something not quite
-> right when using large folios, it's also posible that this might be a
-> bug in the folio/mm code paths.
+> For example, our users (a big data platform) demanded that we
+> immediately shut down the filesystem upon writeback errors. These
+> users are algorithm analysts who write Python/Java UDFs for custom
+> logic—often involving temporary disk writes followed by reads to pass
+> data downstream. Yet, most have no idea how these underlying processes
+> work.
+
+And that's exactly why XFS originally never threw away dirty data on
+writeback errors. Because scientists and data analysts that wrote
+programs to chew through large amounts of data didn't care about
+persistence of their data mid-processing. They just wanted what they
+wrote to be there the next time the processing pipeline read it.
+
+> > > That's what I mean with my above proposal, except that I though of an
+> > > fcntl or syscall and not an ioctl.
+> >
+> > Yeah, a fcntl() would be reasonable, I think.
+> >
+> > For a syscall, I guess we could add an fsync2() which just adds a flags
+> > field. Then add a FSYNC_JUSTCHECK flag that makes it just check for
+> > errors and return.
+> >
+> > Personally, I like the fcntl() idea better for this, but maybe we have
+> > other uses for a fsync2().
 > 
-> Does this reproduce on other file systems, such as XFS?
->
+> What do you expect users to do with this new fcntl() or fsync2()? Call
+> fsync2() after every write()? That would still require massive
+> application refactoring.
 
-Indeed, this issue can also be reproduced on XFS file system. Thanks for the advice. I will conduct cross-filesystem validation next time when I encounter ext4 issue.
+<sigh>
 
-[  395.888267] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASI
-[  395.888767] KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-[  395.889150] CPU: 2 UID: 0 PID: 7420 Comm: repro Not tainted 6.16.0-rc3-86731a2a651e #1 PREEMPT(voluntary)
-[  395.889620] Hardware name: Red Hat KVM/RHEL, BIOS edk2-20241117-3.el9 11/17/2024
-[  395.889967] RIP: 0010:try_to_unmap_one+0x4ef/0x3860
-[  395.890230] Code: f5 a5 ff 48 8b 9d 78 ff ff ff 49 8d 46 18 48 89 85 70 fe ff ff 48 85 db 0f 84 96 1a 00 00 e8 c8 f58
-[  395.891081] RSP: 0018:ff1100011869ebc0 EFLAGS: 00010246
-[  395.891337] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81e1a1a1
-[  395.891676] RDX: ff11000130330000 RSI: ffffffff81e186c8 RDI: 0000000000000005
-[  395.892018] RBP: ff1100011869ed90 R08: 0000000000000001 R09: ffe21c00230d3d3b
-[  395.892356] R10: 0000000000000000 R11: ff11000130330e58 R12: 0000000020e00000
-[  395.892691] R13: ffd40000043c8000 R14: ffd40000043c8000 R15: dffffc0000000000
-[  395.893043] FS:  00007fbd34523740(0000) GS:ff110004a4e62000(0000) knlGS:0000000000000000
-[  395.893437] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  395.893718] CR2: 0000000021000000 CR3: 000000010f8bf004 CR4: 0000000000771ef0
-[  395.894060] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  395.894398] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-[  395.894732] PKRU: 55555554
-[  395.894868] Call Trace:
-[  395.894991]  <TASK>
-[  395.895109]  ? __pfx_try_to_unmap_one+0x10/0x10
-[  395.895337]  __rmap_walk_file+0x2a5/0x4a0
-[  395.895538]  rmap_walk+0x16b/0x1f0
-[  395.895706]  try_to_unmap+0x12f/0x140
-[  395.895853]  ? __pfx_try_to_unmap+0x10/0x10
-[  395.896061]  ? __pfx_try_to_unmap_one+0x10/0x10
-[  395.896284]  ? __pfx_folio_not_mapped+0x10/0x10
-[  395.896504]  ? __pfx_folio_lock_anon_vma_read+0x10/0x10
-[  395.896758]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
-[  395.897025]  unmap_poisoned_folio+0x130/0x500
-[  395.897251]  shrink_folio_list+0x44f/0x3d90
-[  395.897476]  ? __pfx_shrink_folio_list+0x10/0x10
-[  395.897719]  ? is_bpf_text_address+0x94/0x1b0
-[  395.897941]  ? debug_smp_processor_id+0x20/0x30
-[  395.898172]  ? is_bpf_text_address+0x9e/0x1b0
-[  395.898387]  ? kernel_text_address+0xd3/0xe0
-[  395.898604]  ? __kernel_text_address+0x16/0x50
-[  395.898827]  ? unwind_get_return_address+0x65/0xb0
-[  395.899066]  ? __pfx_stack_trace_consume_entry+0x10/0x10
-[  395.899326]  ? arch_stack_walk+0xa1/0xf0
-[  395.899530]  reclaim_folio_list+0xe2/0x4c0
-[  395.899733]  ? check_path.constprop.0+0x28/0x50
-[  395.899963]  ? __pfx_reclaim_folio_list+0x10/0x10
-[  395.900198]  ? folio_isolate_lru+0x38c/0x590
-[  395.900412]  reclaim_pages+0x393/0x560
-[  395.900606]  ? __pfx_reclaim_pages+0x10/0x10
-[  395.900824]  ? do_raw_spin_unlock+0x15c/0x210
-[  395.901044]  madvise_cold_or_pageout_pte_range+0x1cac/0x2800
-[  395.901326]  ? __pfx_madvise_cold_or_pageout_pte_range+0x10/0x10
-[  395.901631]  ? lock_is_held_type+0xef/0x150
-[  395.901852]  ? __pfx_madvise_cold_or_pageout_pte_range+0x10/0x10
-[  395.902158]  walk_pgd_range+0xe2d/0x2420
-[  395.902373]  ? __pfx_walk_pgd_range+0x10/0x10
-[  395.902593]  __walk_page_range+0x177/0x810
-[  395.902799]  ? find_vma+0xc4/0x140
-[  395.902977]  ? __pfx_find_vma+0x10/0x10
-[  395.903176]  ? __this_cpu_preempt_check+0x21/0x30
-[  395.903401]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
-[  395.903667]  walk_page_range_mm+0x39f/0x770
-[  395.903877]  ? __pfx_walk_page_range_mm+0x10/0x10
-[  395.904109]  ? __this_cpu_preempt_check+0x21/0x30
-[  395.904340]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
-[  395.904606]  ? mlock_drain_local+0x27f/0x4b0
-[  395.904826]  walk_page_range+0x70/0xa0
-[  395.905013]  ? __kasan_check_write+0x18/0x20
-[  395.905227]  madvise_do_behavior+0x13e3/0x35f0
-[  395.905453]  ? copy_vma_and_data+0x353/0x7d0
-[  395.905674]  ? __pfx_madvise_do_behavior+0x10/0x10
-[  395.905922]  ? __pfx_arch_get_unmapped_area_topdown+0x10/0x10
-[  395.906219]  ? __this_cpu_preempt_check+0x21/0x30
-[  395.906455]  ? lock_is_held_type+0xef/0x150
-[  395.906665]  ? __lock_acquire+0x412/0x22a0
-[  395.906875]  ? __this_cpu_preempt_check+0x21/0x30
-[  395.907105]  ? lock_acquire+0x180/0x310
-[  395.907306]  ? __pfx_down_read+0x10/0x10
-[  395.907503]  ? __lock_acquire+0x412/0x22a0
-[  395.907707]  ? __pfx___do_sys_mremap+0x10/0x10
-[  395.907929]  ? __sanitizer_cov_trace_switch+0x58/0xa0
-[  395.908186]  do_madvise+0x193/0x2b0
-[  395.908363]  ? do_madvise+0x193/0x2b0
-[  395.908550]  ? __pfx_do_madvise+0x10/0x10
-[  395.908801]  ? __this_cpu_preempt_check+0x21/0x30
-[  395.909036]  ? seqcount_lockdep_reader_access.constprop.0+0xb4/0xd0
-[  395.909335]  ? lockdep_hardirqs_on+0x89/0x110
-[  395.909556]  ? trace_hardirqs_on+0x51/0x60
-[  395.909763]  ? seqcount_lockdep_reader_access.constprop.0+0xc0/0xd0
-[  395.910073]  ? __sanitizer_cov_trace_cmp4+0x1a/0x20
-[  395.910332]  ? ktime_get_coarse_real_ts64+0xad/0xf0
-[  395.910578]  ? __audit_syscall_entry+0x39c/0x500
-[  395.910812]  __x64_sys_madvise+0xb2/0x120
-[  395.911016]  ? syscall_trace_enter+0x14d/0x280
-[  395.911240]  x64_sys_call+0x19ac/0x2150
-[  395.911431]  do_syscall_64+0x6d/0x2e0
-[  395.911619]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  395.911865] RIP: 0033:0x7fbd3430756d
-[  395.912046] Code: 5b 41 5c c3 66 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d8
-[  395.912905] RSP: 002b:00007ffe6486ec48 EFLAGS: 00000217 ORIG_RAX: 000000000000001c
-[  395.913267] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbd3430756d
-[  395.913603] RDX: 0000000000000015 RSI: 0000000000c00000 RDI: 0000000020400000
-[  395.913941] RBP: 00007ffe6486ec60 R08: 00007ffe6486ec60 R09: 00007ffe6486ec60
-[  395.914280] R10: 0000000020fc6000 R11: 0000000000000217 R12: 00007ffe6486edb8
-[  395.914629] R13: 00000000004018e5 R14: 0000000000403e08 R15: 00007fbd3456a000
-[  395.914989]  </TASK>
-[  395.915111] Modules linked in:
-[  395.915296] ---[ end trace 0000000000000000 ]---
+We already have a user interface that provides exactly the desired
+functionality.
 
-FYI, there is ongoing discussion in terms of folio/mm domain - https://lore.kernel.org/all/20250611074643.250837-1-tujinjiang@huawei.com/T/
+$ man sync_file_range
+....
+   Some details
+       SYNC_FILE_RANGE_WAIT_BEFORE  and  SYNC_FILE_RANGE_WAIT_AFTER
+       will  detect  any I/O errors or ENOSPC conditions and will
+       return these to the caller.
+....
 
-Regards,
-Yi Lai
+IOWs, checking for a past writeback IO error is as simple as:
 
- 
->      	  	       	     	  	   	- Ted
+	if (sync_file_range(fd, 0, 0, SYNC_FILE_RANGE_WAIT_BEFORE) < 0) {
+		/* An unreported writeback error was pending on the file */
+		wb_err = -errno;
+		......
+	}
+
+This does not cause new IO to be issued, it only blocks on writeback
+that is currently in progress, and it has no data integrity
+requirements at all. If the writeback has already been done, all it
+will do is sweep residual errors out to userspace.....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
