@@ -1,96 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-53089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C789CAE9EFE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 15:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F71AE9F06
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 15:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CDC17AC86
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 13:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322631C449BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 13:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3106C2E54B9;
-	Thu, 26 Jun 2025 13:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4958B2E6D09;
+	Thu, 26 Jun 2025 13:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="vFVDwpPB"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HZYW1/qm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BA42E62A5;
-	Thu, 26 Jun 2025 13:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2162E54B9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 13:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750945039; cv=none; b=M/6eIBP6cp+Sqp6a2iAZuXbdpaBga4Cf91xaP6sBcCyo2zV/4dLfdgCxr5lhmNZDb9HNSE4fT/en/FJvTjojNmnZx2UCyUewAsbkIwvkne3impexfPuql6+AsThHJSiFveYpNbQShwwQCeEo+4K8jkp9bPmRVlC/1eicu/JYO40=
+	t=1750945062; cv=none; b=Lxgq0XCzMpzV3kEvwR0AxSGhdZZvY1dPAqsqQfZ7MRQKcytXXgadDpRvKsMk8tYpw/diz0IhnuWV+Nv6by7v4CRlIjXrB+BLP1Mq8Y8dr8a48kbYNWaEa4M1yvpJsrUvyyzIFcOE6cUkZlvDQ+vYlF1PHiyHwVl7U/NtaSCNtLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750945039; c=relaxed/simple;
-	bh=7GiEbyk2gaqqZRY0Qdms/DBiHIKNN9PuO5+EEuTOtqg=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=VDaLyMyNd0nbiUzWfC3IWfS/KBeFkPCcekFD9QpDm+ejYKNSrjblPIKyStM8ns3RyarBX9Jf0S2bMt/HwzP9UW64f7VltS3G3mnmxImtOhj6KFY5WzgCafwj0v7ZCT8mpCeosBuwJ9vhdVIA1QGAgqR0Ki70hl4SF2HtSvkQVE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=vFVDwpPB; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=00Zee0q/6wyci+v7KW0sch+Nn4ot5TVE+7wD9jsiKXo=; b=vFVDwpPBeCOIlZIT9jRHjHgQ7z
-	JZCCbFczL/Cj2aOYuoUwv0Gf5EskJyKB69pSFlB0u3NrKRBApQrm5f+lk1ouymaUwj7hqImtC2T/r
-	Bz6Cx2BlR0bMlVghibVu/w8uUVXxZuqnYdQrninaNm6f9DYMxXnATMvr8AepPRn7X19USIBhuYNZH
-	YVbxS3wlldGGSkEQXs1C0qfGPHCpW7RGKD4mLRXatrJ6E7MVycCk3yApqYpld/ZKYs+8bMyuQ0QWW
-	Ofv3L3bG1A7oQbBopBpLdvThDFoBK91ggATdFwZAX4oxsZfuCd2bR6yx4QtySUXmWnSWRw/d8WIwo
-	EjpqeV/A==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
-	id 1uUmmr-00000000fRj-36fP;
-	Thu, 26 Jun 2025 10:37:09 -0300
-Message-ID: <dd1b01babe2b5023e9e26c56a2f2b458@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: David Howells <dhowells@redhat.com>, Christian Brauner
- <brauner@kernel.org>, Steve French <sfrench@samba.org>
-Cc: dhowells@redhat.com, linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix i_size updating
-In-Reply-To: <1576470.1750941177@warthog.procyon.org.uk>
-References: <1576470.1750941177@warthog.procyon.org.uk>
-Date: Thu, 26 Jun 2025 10:37:08 -0300
+	s=arc-20240116; t=1750945062; c=relaxed/simple;
+	bh=w2jzAQH4LMBMSnep14UttjTH0cLF3lqFH/x7Yg1wtpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P45M3PUcE+0xXwTbmk951UI8bIeFzGwcBzeD6htHaoEGoYj/E5Gb1Qpwrk8IIzNzMv6UaVryTi/wGTKEJfrWVZ4+SO9dcYY77Z3kS+wmkLq8CtU4mdT/I3m7lwDNheEpkldfM7/HZT4umktOz3QVhLNa2oG64T2vMcZ7VRWXxv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HZYW1/qm; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 26 Jun 2025 09:37:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750945048;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Zd1X+WmxRI1gjnAViN5ZA4D1dRNipkc/fi1akXY9jY=;
+	b=HZYW1/qmVmgByKRWFBJTkKMkIwBebA0CkI56exm57B8QcPMX1sVE07K8KqP7b+ctmywVC1
+	5GUPprfANLw8S+pNZ81nRw1DvUldQUZRVWpRkaajYUZBBxgPAWu6wGWuWyVhiNWsIGUBJO
+	EoLH8Ww3OPIOxRK9kYGypxlFizYAV8c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v3] ovl: support layers on case-folding capable
+ filesystems
+Message-ID: <v3sqyceuxalkzmu5yweciry54qjfwif3lloefpsapomz6afpv6@metypepdf3dt>
+References: <20250602171702.1941891-1-amir73il@gmail.com>
+ <oxmvu3v6a3r4ca26b4dhsx45vuulltbke742zna3rrinxc7qxb@kinu65dlrv3f>
+ <CAOQ4uxicRiha+EV+Fv9iAbWqBJzqarZhCa3OjuTr93NpT+wW-Q@mail.gmail.com>
+ <CAOQ4uxiNjZKonPKh7Zbz89TmSE67BVHmAtLMZGz=CazNAYRmGQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiNjZKonPKh7Zbz89TmSE67BVHmAtLMZGz=CazNAYRmGQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-David Howells <dhowells@redhat.com> writes:
+On Sun, Jun 22, 2025 at 09:20:24AM +0200, Amir Goldstein wrote:
+> On Mon, Jun 16, 2025 at 10:06 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Sun, Jun 15, 2025 at 9:20 PM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > >
+> > > On Mon, Jun 02, 2025 at 07:17:02PM +0200, Amir Goldstein wrote:
+> > > > Case folding is often applied to subtrees and not on an entire
+> > > > filesystem.
+> > > >
+> > > > Disallowing layers from filesystems that support case folding is over
+> > > > limiting.
+> > > >
+> > > > Replace the rule that case-folding capable are not allowed as layers
+> > > > with a rule that case folded directories are not allowed in a merged
+> > > > directory stack.
+> > > >
+> > > > Should case folding be enabled on an underlying directory while
+> > > > overlayfs is mounted the outcome is generally undefined.
+> > > >
+> > > > Specifically in ovl_lookup(), we check the base underlying directory
+> > > > and fail with -ESTALE and write a warning to kmsg if an underlying
+> > > > directory case folding is enabled.
+> > > >
+> > > > Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > > > Link: https://lore.kernel.org/linux-fsdevel/20250520051600.1903319-1-kent.overstreet@linux.dev/
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > ---
+> > > >
+> > > > Miklos,
+> > > >
+> > > > This is my solution to Kent's request to allow overlayfs mount on
+> > > > bcachefs subtrees that do not have casefolding enabled, while other
+> > > > subtrees do have casefolding enabled.
+> > > >
+> > > > I have written a test to cover the change of behavior [1].
+> > > > This test does not run on old kernel's where the mount always fails
+> > > > with casefold capable layers.
+> > > >
+> > > > Let me know what you think.
+> > > >
+> > > > Kent,
+> > > >
+> > > > I have tested this on ext4.
+> > > > Please test on bcachefs.
+> > >
+> > > Where are we at with getting this in? I've got users who keep asking, so
+> > > hoping we can get it backported to 6.15
+> >
+> > I'm planning to queue this for 6.17, but hoping to get an ACK from Miklos first.
+> >
+> 
+> Hi Christian,
+> 
+> I would like to let this change soak in next for 6.17.
+> I can push to overlayfs-next, but since you have some changes on vfs.file,
+> I wanted to consult with you first.
+> 
+> The changes are independent so they could go through different trees,
+> but I don't like that so much, so I propose a few options.
+> 
+> 1. make vfs.file a stable branch, so I can base overlayfs-next on it
+> 2. rename to vfs.backing_file and make stable
+> 3. take this single ovl patch via your tree, as I don't currently have
+>     any other ovl patches queued to 6.17
 
-> Fix the updating of i_size, particularly in regard to the completion of DIO
-> writes and especially async DIO writes by using a lock.
->
-> The bug is triggered occasionally by the generic/207 xfstest as it chucks a
-> bunch of AIO DIO writes at the filesystem and then checks that fstat()
-> returns a reasonable st_size as each completes.
->
-> The problem is that netfs is trying to do "if new_size > inode->i_size,
-> update inode->i_size" sort of thing but without a lock around it.
->
-> This can be seen with cifs, but shouldn't be seen with kafs because kafs
-> serialises modification ops on the client whereas cifs sends the requests
-> to the server as they're generated and lets the server order them.
->
-> Fixes: 153a9961b551 ("netfs: Implement unbuffered/DIO write support")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Paulo Alcantara <pc@manguebit.org>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/netfs/buffered_write.c |    2 ++
->  fs/netfs/direct_write.c   |    8 ++++++--
->  2 files changed, 8 insertions(+), 2 deletions(-)
+I've got more users hitting the casefolding + overlayfs issue.
 
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+If we made the new behaviour bcachefs only, would that make it work for
+you to get it into 6.16 + 6.15 backport?
+
+Otherwise I'm going to have to get my own workaround out...
 
