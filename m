@@ -1,223 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-53115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B96AEA746
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 21:46:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE06AEA8AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 23:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450CC17F752
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 19:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173B53AD70F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 21:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5152EE960;
-	Thu, 26 Jun 2025 19:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315B825E461;
+	Thu, 26 Jun 2025 21:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wxwm9AfZ"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="hoPpChdy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2064.outbound.protection.outlook.com [40.107.100.64])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ADE1FDE31;
-	Thu, 26 Jun 2025 19:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750967180; cv=fail; b=SpKOFgCjlaBQRPV7VLNou2yMXM25whvD1pfE0NlPvcrGzGVZQmL8v1O0iXGbRjR6S1z5X8sRgXdDV7plGf2qTzKl+ETDUjpMTk9u93uoTAIotaphK57GDjFD2Qd0t1xPIW2g86y78DxVc1dz5495HhVg1Dx6x5MANbjXXVvSf7Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750967180; c=relaxed/simple;
-	bh=TQEK2x9h7EXz4BO2wZpyfSN1NdYHanTFKpFjeITlSp4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Jm8D9oC4/gBfaxFeK88o8VPv0cPtYCQ5InlEeArooN2bJLtOfvhI+th0KlPeRXboaKz00+Eg0Fjq6XQGME3i2sFji/VrbwqDDy0Rr4AQP56Bg6yRMUiVvki4TEfrjmJ39mTa0WCE2KzAKTzJXStvNko25uSA7PdVp23WR8u0j7A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wxwm9AfZ; arc=fail smtp.client-ip=40.107.100.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tyBi3PUWd4CvuCdw4GB4VLFU7NmSNGb+pclhwu2qgmu0GHgRlqYZi8ONWtp0ThX54BbrPFovzwNBp4rldAdxvS0cd80vgUkv5RrdZhgMy80I17UgnUhLI5HT1dDN6C0DW3z1DCYpWwNeAAJMi6XhIIo4zqLB6vczF/x7eb6cpuW50mrmiFXmj6dMeFvQRo4LWr6vZP4Iygl1aLvWwQMuaZNNoZXzF2OFMQEEDD2TalbOacaUui1Gv1zazBOP0hfNxrj7hUrMVcGXlGyQmGpGeLCz9fp/oq5Gs75+yINVyYgtqAdAUXYJqXf9yy5QoiYMJAVHlOqwSiQUnRjS96greg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VozaPxBaRi+mjURQZ6b012lDUl/IDzmyxRss9vw+8dk=;
- b=bY9KdpUy+V1nzCrx7a2B8TAHcMow8MHMwbJy3xxDLGhkb/RMjo2D0tG8Kyf8ofSH6AI3q8TlJGf8WrSqzea7YZ/EoHpjwEy5TtGIVOBu1S3cZQDIB+z6scMFHSxTcPX5qrrVOGMFanJo7MDBPqonPtVuR1ufLeKu2bjh1e8ylEi2hNZvopIQNcMlFIIid7CK6kW4bStpS9fb97K4NSERMDjxBsRhQtXircj0w8o9K+Ej2VF+io7COOw3/a1b7OeAZWa72RMNgNOafHU2uUjvV38Wo3rAIfASAs5xWTnSFKY7VfrQwWhqlnudlcogZWT4lmjUPwCqmBGk5T0DL5mU5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VozaPxBaRi+mjURQZ6b012lDUl/IDzmyxRss9vw+8dk=;
- b=wxwm9AfZ3beC6was7voeC0UOIzBKsUb3cEPySgwjgoY3u5/4G98635+2HMmMWvN1XPRtCoAz3dB3XGE76gc6eIW4J22wSLJbLxEeu0f0AqunXr7qMjBEwfEofEcdWuzBc393kBLBkA7XWKf3Si7xa8VUdq+0uuAU6+55eqylkT8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa) by PH0PR12MB8173.namprd12.prod.outlook.com
- (2603:10b6:510:296::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Thu, 26 Jun
- 2025 19:46:16 +0000
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf%8]) with mapi id 15.20.8722.031; Thu, 26 Jun 2025
- 19:46:16 +0000
-Message-ID: <3fdab328-dda3-4685-b5a9-3aba2a40621c@amd.com>
-Date: Fri, 27 Jun 2025 01:16:04 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] fs: export anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-To: Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>,
- akpm@linux-foundation.org, brauner@kernel.org, paul@paul-moore.com,
- rppt@kernel.org, viro@zeniv.linux.org.uk
-Cc: seanjc@google.com, willy@infradead.org, pbonzini@redhat.com,
- tabba@google.com, afranji@google.com, ackerleytng@google.com, jack@suse.cz,
- hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com,
- roypat@amazon.co.uk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20250620070328.803704-3-shivankg@amd.com>
- <f2a205a5-aca9-4788-88ff-bfb3283610c5@redhat.com>
- <3114d54f-ed7c-4c68-9d32-53ce04175556@amd.com>
- <39f95eb9-c494-4967-8d4d-9768200637f4@suse.cz>
- <568cba54-dd42-45e9-be0f-53569811f2e9@suse.cz>
-Content-Language: en-US
-From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <568cba54-dd42-45e9-be0f-53569811f2e9@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BM1PR01CA0152.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:68::22) To SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C33919D06A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 21:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750972796; cv=none; b=gqZO/ZEA/pqhvVb/03kPpBKNpiIJbZc4aj5kJr/ygdqxo7mEgX6M1o0xdMSqgagLyCTi9aNkKgEu7yvXrOTiFoUJvmUjHoQ2bRaDETEd8xhc4xVTLI5C0MdxXqVUHI1IUq+LfAFF9ZMIYYODqcxRJ2JdUykspwL8XhuI/u7XcUg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750972796; c=relaxed/simple;
+	bh=V6rrzflo7oZ2UClOluyg4pAscZ8UAKNRbMC5iw591oY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qKUn6QGbsgaw7UkjVUiwfZiYkZ9UgemUQmq1mp0VkihUDE4GIlz0Aq4nvuohJfgeX574h0/X5KjAiei+cFeOuovHNfbLx2qhfhOQglGIznWLbUPNJzIBl4XDTSOdVsoBn+APrz33a2u695Z8m6z03ImjLdcsoB3ZAHllPQGrrFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=hoPpChdy; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QL8wHQ018481
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 14:19:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=r8vieA86eTeaLpVkpovWq3yeVlFwooh4zjZyCCXeV8I=; b=hoPpChdyfsCW
+	NbUEDrzTzFaYlj5M5bE3yW1DqMB693a494cfanyR6lJjrVVulLTBy2FEBqHvIPUf
+	rFPD0BOeIt7BqATDBeAi7GqPisTRzqi48n/nPfw7NO5qXg+ZNzzXinQie0UKPX17
+	Gbwh/g68AOQ4UWeTwEhoHGg/W10S5B9zeqRFM+s6aHONnD2k4eD8jqL+Ujl0mowG
+	TjM686wX9eLqw78RwIbX9wiH3W8eHzhs468xOxifs+SEv6NmeVpgjPZXKWMU3vI9
+	RNrURDg80CHJjIL3m4yDuh13/+wk8Ym5xWV657WbSGeX7MRHY2DJIvzKoR6988aa
+	LVsHBN46Rg==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47gextw3v4-4
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 14:19:53 -0700 (PDT)
+Received: from twshared24438.15.frc2.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.24; Thu, 26 Jun 2025 21:19:49 +0000
+Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
+	id 4BC1530A2A8A0; Thu, 26 Jun 2025 14:19:34 -0700 (PDT)
+From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+To: <amir73il@gmail.com>
+CC: <ibrahimjirdeh@meta.com>, <jack@suse.cz>, <josef@toxicpanda.com>,
+        <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>
+Subject: [PATCH] fanotify: support custom default close response
+Date: Thu, 26 Jun 2025 14:19:32 -0700
+Message-ID: <20250626211932.2468910-1-ibrahimjirdeh@meta.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <CAOQ4uxguBgMuUZqs0bT_cDyEX6465YkQkUHFPFE4tndys-y2Wg@mail.gmail.com>
+References: <CAOQ4uxguBgMuUZqs0bT_cDyEX6465YkQkUHFPFE4tndys-y2Wg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|PH0PR12MB8173:EE_
-X-MS-Office365-Filtering-Correlation-Id: a45163bf-6c69-4a30-72e9-08ddb4ea1cd0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RDZVS1pTc0pJZnVERTlQMmVtdjV0bmdiRmc2aUlCdzZFYUt1TmpjMENaTy9p?=
- =?utf-8?B?bDk3dXl6Tm9Ud0pXV0hhSzN0MnpHM2d1RGNYNmY4SzZ2enZ3VUUyVjZvR0Zv?=
- =?utf-8?B?Y29EL1NjMnlDeG1sVVY1bGV2Y3ZReGR6Y09Zbyt0R2d5K1dCVHBHU1o2eFdj?=
- =?utf-8?B?MHIrYWs3TmNXNTJtTXV1ZDNqRm9yTzNnVnZ5TlZQekcwVk9VaFpLY1V3VkxW?=
- =?utf-8?B?dFFQZTJCNWthdVVJWGtXUWIxT2ZCUmhuUGZRQkgvV2x3cWppZVN5RlZqa0Z4?=
- =?utf-8?B?Q1A3RzVFSVN0QXhmZXBUYmkwa2xibUNSNm5TODlYUXFQZnFicXpFOFRrZUQ2?=
- =?utf-8?B?YnBrdzlKMlRFT252akpsZlJmeS9sSWpsTmtlNUVMMDJrcXROdE9DbnpLNEx3?=
- =?utf-8?B?ZEFhSkNkVlQ4bTZQQzRNNUZjWDJ1eFRWci8xWDRzVFQ0c01MUkdRZURTNXBN?=
- =?utf-8?B?Q3pXTUYwaVR3VjBQalJXWGhkKytxeVFpd2p1VFJZYUM5cHFRbDg2cVh3WDNw?=
- =?utf-8?B?R0wwTnlpdk83OXFrckg0eXlsVlhYQk5HcFJJZ1Y0YUtqUkx2OFRjZVlZU0pV?=
- =?utf-8?B?K1VsUEtRYzA0aEcra1ZDZUorODZJYzVNQ2xFL0F2N0N4R1g0YkErb29PNloz?=
- =?utf-8?B?Y3o3QXZQUmVhMmU2Mmw0dVcrMTRZa28rYmZkaEtKekhJemMxcURDeEduWng1?=
- =?utf-8?B?VEZ2UVJyb21pZnRrbVhoRS85NWJCUXFYbWM0OW5CWVJJZU9lZDRXK0pIb1k3?=
- =?utf-8?B?TEFOWkFzQjl2QUlheStwYXdOdWoyT2tpK01Wdm1EcDhlUTlLK1RKc2ZxM1hr?=
- =?utf-8?B?MnkzNXdWMkFlRTZqZDdFUXJ2SENvUW9kVkJvN284TkVaOGgzbmUzL1hKNFBI?=
- =?utf-8?B?Ny9OdXhPLzg3YkNSZXR0QUF4ZjFWUzBUWnJpb0lBcVprQ1ZRb1NSVnFuTC9p?=
- =?utf-8?B?dmdRSFZxUWp1UW1ZbjRQQUVSUTlISkt4MXhZMVk5d3dUUnFqTEVIblhkOVpv?=
- =?utf-8?B?dEdHR0dHTFBXUGNDRDVXM1ZsL0ZodGJMOFB0Q1BTSkYyKytRRlovaVJ2aEZF?=
- =?utf-8?B?eDFzcWtRVVk2U0pZUG13SFJlYWNFQmxrSVVTelEycFBWK01qZEQ4dHRNbWkv?=
- =?utf-8?B?U2tCWHJzaExZYTBwdzVnc280OXRaWEN6QkEycGlmTmtJMnFpU1JsUUJPd1hx?=
- =?utf-8?B?RUNSSkZLcDB6cWw4TWwrT2NqRUNPeUswTWlGVS83aHJoV0EwRUxsNWp5b0Z6?=
- =?utf-8?B?TVRlRGpZVkZ4QzM4L3phbUxTUHVUdlhJdmdSRUU2VTZCUlZIamR3NHpYOThl?=
- =?utf-8?B?eEdhcUt5SUxrazY0Nm4waGFYTVFlMFByZ2Y5QzBBRkVCbXdVSWpsNFd3Wlpx?=
- =?utf-8?B?MCt4aGo3WU5tdCtZdDNKaUJXeE1nc1hlUzZxeVJEaHJGR0grR0FzZTZjV0hV?=
- =?utf-8?B?ZU5xNzN2TUxvV05xOTZPaEdzSXUwQWhPN2RxYkhDQlpqYmdvd2lSOXVyMlN3?=
- =?utf-8?B?QStzNDU5dWVOR29NRVByNnh5eVdKQ01pMUhyaHc3Y0ROdElpemU4blNGTXdG?=
- =?utf-8?B?RDIrSW5sN3ZuR1BpVDErSnNMVStYV3ZPdWE4OEl3WG5OSmdoUzllS0FmKzR0?=
- =?utf-8?B?Rm1ncDJqYjdxc1NWNnNGN2pSa0RMWjVNQThWeHN5Sm1LeUNPWW13cTVwdnVp?=
- =?utf-8?B?Vlpwb3pxbU14citrOUU0OXlmUHp1SksrdDlLMUxlNEF2QzZKVTRvOUtudkFQ?=
- =?utf-8?B?bmZlQVJRZDJoNGdHTElDZDRyK1hmeXh0QmpCMWJROU1ldFFmbTlCTnFyN3FI?=
- =?utf-8?B?eWRXK0F0L2JQa1JvN2pFcCtnWGYybE1ZS1Q3YTJJQ0taS3pSczFuaGVCdHJ2?=
- =?utf-8?B?MzhnQW9IT0pFWFVQMFNkbWdXSVcwK0UzeEdtdTBpMnYrQW1zUGMzZHdnNmRK?=
- =?utf-8?Q?wZ2rnOinhOI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aG95N0EveGpCY3ZtcmhjZ0h5N2dpbStLbS93WXdoaTdWQmhBb0QrZHlRNitz?=
- =?utf-8?B?ckFpd0EvMmFDU3kreWtmSzd5eCtobis2cDBDYis3SkhZRU9DR1ZZVFVaQ0dC?=
- =?utf-8?B?bHdSYWI3anM1UnJPNENtSU4xVEI4SGpUUTY1Z0tZQ0dBM1FmK3duNTlwZjBM?=
- =?utf-8?B?bUc1clF0ejhwSVFpVFhIYmJ4cDc2MWlybHVpSnBocDlXSnpiRW5TOXRWVURE?=
- =?utf-8?B?bGRXenBBNmxPT01HNG5sZWt2cUJkd3pwa2Vmb3dHK0kzbWpLZ1JnYW91aWtO?=
- =?utf-8?B?UXEyMXB0aDRzN2hxWkpyOVV4NG1sSEJTbFhEQTVDWExHQ0lpUzl4cmVJaGZa?=
- =?utf-8?B?NndCUXozM01xMDVQR1VBY0t3VzlKNTBhUE9JUjdHYmpzWjZxVzlzZDZ0UWZq?=
- =?utf-8?B?cDQ0dHZxTTZ2bW43cHd6ZmRJNEh4Vmszd2loNWdjM25pS2RUR0xuR0NBa0g1?=
- =?utf-8?B?TXVsRTRKY3VrKzZMNmdUQU0vUlZCWlZlcUNyaG9tVC9oekVxdUVUWmVkVWZh?=
- =?utf-8?B?L3luTzdLTjVqcWVXZi9xMkhSYldZNEJ6WUZ0S0xSNGFtUEp5VjVhdHdTSDVL?=
- =?utf-8?B?cUxkKy9aQzRHZzBUWDdZYVI4WHpmTEU1RnJWK1Z1VmwwODc4UGZHaWdNMlNG?=
- =?utf-8?B?QXMyYlRxMmtGcGUvNXhMaVl4YytJVUh3VWJha2QvdVlNQjBaQUxHc2xQWmQ4?=
- =?utf-8?B?aFBkVjNZaTBFdGNRV1VtRGhWK2pndVlTeDFCSWFHRnhsUWhOTUMrYzV3M2s5?=
- =?utf-8?B?Slp1YkVnSU9xMHVqdzlHTlNkbUlySS9WK2VzSkhwUmxZNW1GS1Fkc3NYaHY3?=
- =?utf-8?B?SkQ0a0dBYkVuajZHb2g0Z1VDdGY2RmFpZXE5bHc0M1lhUFMxWTBTL0Z1bmZ4?=
- =?utf-8?B?Um5nbWN6RFFkRHNsNEsvZjRLaDVFMW1yRnRJVkhkRXF1SHJaNUJHcm5ybmxD?=
- =?utf-8?B?QmtqdjRBRm95L3dRY1RTMmFLY0dTMWtxVlpzNWRJb2JzQTNLcEJDOUNCa0FH?=
- =?utf-8?B?YUVRNkNnTGY5MWpDVlYyVnZuUTZVQkpZd2JkRFk4MFBOMHZiU3puR3BKMCtT?=
- =?utf-8?B?SkF1MlJJbzV6RVVCemllb3hRWjk4T1Vwei9OWnRucUtXNXo1WStWM3lrK0Jw?=
- =?utf-8?B?cTJOd1pHd3BxTGROYWVPeitvb25lK29uNjhFSzh5K1hXUGozSi9ZWk00TWVY?=
- =?utf-8?B?a1FuUWJKalhoMTA2YkYrY3lkNnZYVEp4djRhWktYMHVZUG9lc0hma0haaG1W?=
- =?utf-8?B?aWFLTGJmZGtycWNIV2xWTXN6S2xpOW9WbjROWC9tYWJaMjNHczhjcW42ZVF3?=
- =?utf-8?B?VXIrSEE2ckM5cldkQk1yWTM3SUYxV0FUb0tMYVlYZ3RJYzFkVERETmpveC9z?=
- =?utf-8?B?ZHJTSDJGcVVyZFF0OHBGbFZoWWFGdFRVZ2xZQlNUaXpiNkk0TGpXNDZxeWVV?=
- =?utf-8?B?SWticE5CTUIxVXpSbm4zTVRTYkRSVzZ2djB4Q01kY2c5c1ZMbllZSnN1TTNG?=
- =?utf-8?B?U2RzV1I5OXpnVjJla1RYZjN2NWFoeWQxNDZDZFVRcmowYlBFNU9hRFlDTDRI?=
- =?utf-8?B?d3FvZHI3VjVvUWJOVi9RY0ZpQzVZdDBJbUpuUHdKZzk5L3pxYStqazBKeGor?=
- =?utf-8?B?VGRqbDJIajhtZW9RZTlqN2RJQU5LQU9hcWxRVDlmMlovcXlCaGhVZ2RiWWdO?=
- =?utf-8?B?V1o1ZGNNTVZDSUZpL2FISWc1RWhvY0EzYnA2ZVBzZEJPQ3MvSncwMHBNRS9o?=
- =?utf-8?B?QlY1WmlUR0hKQjZnY29RY0hVOXVNVGRldVEzdis0Mkl4OTFZQlU5VG9SOFYr?=
- =?utf-8?B?dkNobUU5MW5RYlVlcWVBZllJNkE2NWRCZXdUKzlsUFU1bFJuYWVjVU5Fb09T?=
- =?utf-8?B?bnJRZEhlbU9jeGFNWTBIZ0ZKaE4wNE80Y21nb0FvcHNXcFB5R1UySStBQW9v?=
- =?utf-8?B?WU5UUm5aWjBqcWpzNXkyMUZMelRsQnc1Z1AyQTB2Y1JtV2VOdjFzeGVoanVK?=
- =?utf-8?B?T0x6SWxsQ1dEcEpveXJJb040eDNkUzJzRFNMSUtXYW5FRnhWVm0wdGcxcGFk?=
- =?utf-8?B?MzZaMkxmY080SkRjUjN5TlIvNFVmaFBkSmNEeU05dFRsa28xNHUwaFRrcmNY?=
- =?utf-8?Q?0tfzpaoscVGLesAioUt3+hKqj?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a45163bf-6c69-4a30-72e9-08ddb4ea1cd0
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2025 19:46:16.1259
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Rwjvse6qviVF7ugmtlEFPr/pSn9QT8sC6rH7k4wKodr/L0RyNobuDLShsX2uq0tlWXnb4MHl0WbdwDfm25zSJw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8173
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=dLammPZb c=1 sm=1 tr=0 ts=685db979 cx=c_pps a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=VabnemYjAAAA:8 a=E5pSYoxeBN610M9yIE0A:9 a=gKebqoRLp9LExxC7YDUY:22
+X-Proofpoint-ORIG-GUID: NFnx52dShLrZEafw2RTTPrFuNDTDvOXH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDE4MiBTYWx0ZWRfXzxPztE5lvJoE 69wHTobNMg8HEXTfjxew+U/ByVxZfZ8FFZKCL4nJ6qdJUTetZI19qwU5kX8CxQOEFOw/yR7i971 OFg/CWmx76JgtN7RPpjaI+5gqf8hx7AHfwsXObCbFc+EP4Dx6+lOYOBgicn6A8B8d4yqdH9DNvX
+ QW1n5ljCp+8sh5uMgb/kT2mrzp5G2OUrKKCYgW2npUt3FkOKcxeVE4s5MWsUO48q4lwj7AcpGh/ sMNcPxQ0fiKTVxOdx2LroGzFaK3HAYN0oEH6R/BD09ENjKRDbpp2tnn5W+A7OwB22/uqSf17wgU FDBRp6ToZiLUMqLbmmmEdYVOlgZD50zE8KM0KZ/bBy9LxeXcel6O9qLgfk4sX8byp9TdeINzVKy
+ Tn+E2ErJTwvnvEez6SbQG0Szp2I94STKx8L1kdt+DSm5mwNS6wmnyPKc2Z+2U6sfl/H/U1BO
+X-Proofpoint-GUID: NFnx52dShLrZEafw2RTTPrFuNDTDvOXH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_06,2025-06-26_05,2025-03-28_01
 
+> On 6/23/25, 11:32 PM, "Amir Goldstein" <amir73il@gmail.com <mailto:amir=
+73il@gmail.com>> wrote:
+> > On Mon, Jun 23, 2025 at 9:26 PM Ibrahim Jirdeh <ibrahimjirdeh@meta.co=
+m> wrote:
+> >
+> > Currently the default response for pending events is FAN\_ALLOW.
+> > This makes default close response configurable. The main goal
+> > of these changes would be to provide better handling for pending
+> > events for lazy file loading use cases which may back fanotify
+> > events by a long-lived daemon. For earlier discussion see:
+> > [https://lore.kernel.org/linux-fsdevel/6za2mngeqslmqjg3icoubz37hbbxi6=
+bi44canfsg2aajgkialt@c3ujlrjzkppr/](https://lore.kernel.org/linux-fsdevel=
+/6za2mngeqslmqjg3icoubz37hbbxi6bi44canfsg2aajgkialt@c3ujlrjzkppr/)
+>
+> These lore links are typically placed at the commit message tail block
+> if related to a suggestion you would typically use:
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Link: [https://lore.kernel.org/linux-fsdevel/CAOQ4uxi6PvAcT1vL0d0e+7Yjv=
+kfU-kwFVVMAN-tc-FKXe1wtSg@mail.gmail.com/](https://lore.kernel.org/linux-=
+fsdevel/CAOQ4uxi6PvAcT1vL0d0e+7YjvkfU-kwFVVMAN-tc-FKXe1wtSg@mail.gmail.co=
+m/)
+> Signed-off-by: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+>
+> This way reviewers whose response is "what a terrible idea!" can
+> point their arrows at me instead of you ;)
+>
+> Note that this is a more accurate link to the message where the default
+> response API was proposed, so readers won't need to sift through
+> this long thread to find the reference.
+>
+> >
+> > This implements the first approach outlined there of providing
+> > configuration for response on group close. This is supported by
+> > writing a response with
+> > .fd =3D FAN\_NOFD
+> > .response =3D FAN\_DENY | FAN\_DEFAULT
+> > which modifies the group property default\_response
+> >
+> > Signed-off-by: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+> > ---
+> >  fs/notify/fanotify/fanotify\_user.c  | 14 ++++++++++++--
+> >  include/linux/fanotify.h            |  2 +-
+> >  include/linux/fsnotify\_backend.h    |  1 +
+> >  include/uapi/linux/fanotify.h       |  1 +
+> >  tools/include/uapi/linux/fanotify.h |  1 +
+> >  5 files changed, 16 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/notify/fanotify/fanotify\_user.c b/fs/notify/fanotify=
+/fanotify\_user.c
+> > index b192ee068a7a..02669abff4a5 100644
+> > --- a/fs/notify/fanotify/fanotify\_user.c
+> > +++ b/fs/notify/fanotify/fanotify\_user.c
+> > @@ -378,6 +378,13 @@ static int process\_access\_response(struct fsno=
+tify\_group \*group,
+> >                 return -EINVAL;
+> >         }
+> >
+> > +       if (response & FAN\_DEFAULT) {
+> > +               if (fd !=3D FAN\_NOFD)
+> > +                       return -EINVAL;
+> >
+> I think we also need to check that no bits other than the allowed bits
+> for default response
+> are set, for example, if user attempts to do:
+>  .response =3D FAN\_DENY | FAN\_AUDIT | FAN\_DEFAULT
+>
+> But that opens up the question, do we want to also allow custom
+> error in default response, e.g.:
+>  .response =3D FAN\_DENY\_ERRNO(EAGAIN) | FAN\_DEFAULT
+>
+> Anyway, we do not have to implement custom default error from the
+> start. It will complicate the implementation a bit, but as long as you =
+deny
+> setting the default response with unsupported flags, we can extend it l=
+ater.
 
+Sure I can update this to disallow unexpected bits when updating default =
+response.
+It does make sense to me to also support custom error in default response=
+, I can
+help with exending the feature either as a later part of this series, or =
+as
+future follow up. Also will update the links and commit tail block as you=
+'ve
+suggested.
 
-On 6/23/2025 7:58 PM, Vlastimil Babka wrote:
-> On 6/23/25 16:13, Vlastimil Babka wrote:
->> On 6/23/25 16:08, Shivank Garg wrote:
->>>
->>>
->>>>
->>>> In general, LGTM, but I think the actual fix should be separated from exporting it for guest_memfd purposes?
->>>>
->>>> Also makes backporting easier, when EXPORT_SYMBOL_GPL_FOR_MODULES does not exist yet ...
->>>>
->>> I agree. I did not think about backporting conflicts when sending the patch.
->>>
->>> Christian, I can send it as 2 separate patches to make it easier?
->>
->> The proper way is to send the fix without the export, and then add the
->> export only when adding its user.
-> 
-> Note: AFAIU either way the new user would be depending on a patch in a vfs
-> tree (maybe scheduled for an 6.16 rc and not the next merge window?) if
-> that's an issue for the development.
-
-Thanks Vlastimil.
-
-I have sent a revised patch [1] without EXPORT. The EXPORT can be added later through
-the KVM tree with the guest_memfd changes. Hopefully, anon_inode_make_secure_inode() change
-will be merged by then.
-
-Christian, could you please replace the current patch with V3 [1]? And Would you also
-be willing to provide your Acked-by when EXPORT_SYMBOL_GPL_FOR_MODULES change addition
-is submitted later?
-
-Thank you for the patience and review :)
-
-[1] https://lore.kernel.org/all/20250626191425.9645-5-shivankg@amd.com
-
-Best Regards,
-Shivank
-
+> >
+> > +               group->default\_response =3D response & FANOTIFY\_RES=
+PONSE\_ACCESS;
+> > +               return 0;
+> > +       }
+> > +
+> >         if ((response & FAN\_AUDIT) && !FAN\_GROUP\_FLAG(group, FAN\_=
+ENABLE\_AUDIT))
+> >                 return -EINVAL;
+> >
+> > @@ -1023,7 +1030,8 @@ static int fanotify\_release(struct inode \*ign=
+ored, struct file \*file)
+> >                 event =3D list\_first\_entry(&group->fanotify\_data.a=
+ccess\_list,
+> >                                 struct fanotify\_perm\_event, fae.fse=
+.list);
+> >                 list\_del\_init(&event->fae.fse.list);
+> > -               finish\_permission\_event(group, event, FAN\_ALLOW, N=
+ULL);
+> > +               finish\_permission\_event(group, event,
+> > +                               group->default\_response, NULL);
+> >                 spin\_lock(&group->notification\_lock);
+> >         }
+> >
+> > @@ -1040,7 +1048,7 @@ static int fanotify\_release(struct inode \*ign=
+ored, struct file \*file)
+> >                         fsnotify\_destroy\_event(group, fsn\_event);
+> >                 } else {
+> >                         finish\_permission\_event(group, FANOTIFY\_PE=
+RM(event),
+> > -                                               FAN\_ALLOW, NULL);
+> > +                                               group->default\_respo=
+nse, NULL);
+> >                 }
+> >                 spin\_lock(&group->notification\_lock);
+> >         }
+> > @@ -1640,6 +1648,8 @@ SYSCALL\_DEFINE2(fanotify\_init, unsigned int, =
+flags, unsigned int, event\_f\_flags)
+> >                 goto out\_destroy\_group;
+> >         }
+> >
+> > +       group->default\_response =3D FAN\_ALLOW;
+> > +
+> >         BUILD\_BUG\_ON(!(FANOTIFY\_ADMIN\_INIT\_FLAGS & FAN\_UNLIMITE=
+D\_QUEUE));
+> >         if (flags & FAN\_UNLIMITED\_QUEUE) {
+> >                 group->max\_events =3D UINT\_MAX;
+> > diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> > index 879cff5eccd4..182fc574b848 100644
+> > --- a/include/linux/fanotify.h
+> > +++ b/include/linux/fanotify.h
+> > @@ -134,7 +134,7 @@
+> >
+> >  /\* These masks check for invalid bits in permission responses. \*/
+> >  #define FANOTIFY\_RESPONSE\_ACCESS (FAN\_ALLOW | FAN\_DENY)
+> > -#define FANOTIFY\_RESPONSE\_FLAGS (FAN\_AUDIT | FAN\_INFO)
+> > +#define FANOTIFY\_RESPONSE\_FLAGS (FAN\_AUDIT | FAN\_INFO | FAN\_DEF=
+AULT)
+> >  #define FANOTIFY\_RESPONSE\_VALID\_MASK \\
+> >         (FANOTIFY\_RESPONSE\_ACCESS | FANOTIFY\_RESPONSE\_FLAGS | \\
+> >          (FAN\_ERRNO\_MASK << FAN\_ERRNO\_SHIFT))
+> > diff --git a/include/linux/fsnotify\_backend.h b/include/linux/fsnoti=
+fy\_backend.h
+> > index d4034ddaf392..9683396acda6 100644
+> > --- a/include/linux/fsnotify\_backend.h
+> > +++ b/include/linux/fsnotify\_backend.h
+> > @@ -231,6 +231,7 @@ struct fsnotify\_group {
+> >         unsigned int max\_events;                /\* maximum events a=
+llowed on the list \*/
+> >         enum fsnotify\_group\_prio priority;      /\* priority for se=
+nding events \*/
+> >         bool shutdown;          /\* group is being shut down, don't q=
+ueue more events \*/
+> > +       unsigned int default\_response; /\* default response sent on =
+group close \*/
+> >
+> >  #define FSNOTIFY\_GROUP\_USER    0x01 /\* user allocated group \*/
+> >  #define FSNOTIFY\_GROUP\_DUPS    0x02 /\* allow multiple marks per o=
+bject \*/
+> > diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanot=
+ify.h
+> > index e710967c7c26..7badde273a66 100644
+> > --- a/include/uapi/linux/fanotify.h
+> > +++ b/include/uapi/linux/fanotify.h
+> > @@ -254,6 +254,7 @@ struct fanotify\_response\_info\_audit\_rule {
+> >
+> >  #define FAN\_AUDIT      0x10    /\* Bitmask to create audit record f=
+or result \*/
+> >  #define FAN\_INFO       0x20    /\* Bitmask to indicate additional i=
+nformation \*/
+> > +#define FAN\_DEFAULT    0x30    /\* Bitmask to set default response =
+on close \*/
+> >
+> >  /\* No fd set in event \*/
+> >  #define FAN\_NOFD       -1
+> > diff --git a/tools/include/uapi/linux/fanotify.h b/tools/include/uapi=
+/linux/fanotify.h
+> > index e710967c7c26..7badde273a66 100644
+> > --- a/tools/include/uapi/linux/fanotify.h
+> > +++ b/tools/include/uapi/linux/fanotify.h
+> > @@ -254,6 +254,7 @@ struct fanotify\_response\_info\_audit\_rule {
+> >
+> >  #define FAN\_AUDIT      0x10    /\* Bitmask to create audit record f=
+or result \*/
+> >  #define FAN\_INFO       0x20    /\* Bitmask to indicate additional i=
+nformation \*/
+> > +#define FAN\_DEFAULT    0x30    /\* Bitmask to set default response =
+on close \*/
+> >
+> >  /\* No fd set in event \*/
+> >  #define FAN\_NOFD       -1
+> > --
+> > 2.47.1
 
