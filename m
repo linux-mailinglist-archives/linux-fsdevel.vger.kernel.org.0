@@ -1,151 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-53101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DAD2AEA295
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 17:32:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042BCAEA2F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 17:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6DF1C61175
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 15:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA4D4A81E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 15:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56F72ED142;
-	Thu, 26 Jun 2025 15:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA692EBDFB;
+	Thu, 26 Jun 2025 15:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eB4J+ntw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UqTz9nTB"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YkCVOwiW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L1+HqzXN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C69C2ECD12;
-	Thu, 26 Jun 2025 15:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFAD2EBBB7;
+	Thu, 26 Jun 2025 15:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750951430; cv=none; b=O/g/i14jG3aXcgxI/04CX5+wRjhblqMqFJDSWEo92leiJJDyG5YETnnlfuQCZXXiuFsMbeq4gPFHAFeWdMzP2vIWl9MXQJvbgFswp/3ARCQLb5xMgbovgBjXhn/jQY+vTvw7Bd6l2qa36mbT7mSRDVZhUUOjUxe1X8WiAYOe5v4=
+	t=1750953001; cv=none; b=TNVWjX+TvILBaegfei6t7N2QD5eVFUrkIpHgpLvss2ng0lFgnQwtWNLfZTiv8PwQUW3B7CvZEWBdpzcRAc8oc7AiqL35jZFlnVtftvKyryMhsl0k8GoJhZZU+R38BtgUHSb3zR3ERQemjmEvs7h27hJEvHuJP8+XLguQ4arvuuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750951430; c=relaxed/simple;
-	bh=VuhrQSogIfvNgLMSmClndkgcp/4HyaoB1qcUbwITc8g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WAR4BqicYfS79/Vh1ESjQ7g81AaiEtL7Gj+hur+EUU2NzK0qxUp0+STZlQ0mkdKBKpnubUsG4/UcftqwPFs8DvGuxaNk+kA8yqFJ2h03QFx85CWIWMuR06/AF/xjatcs9QXVwoPBSGKysu45ORNcvmDW4icjeNyxsgCg1UciIxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eB4J+ntw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UqTz9nTB; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1750953001; c=relaxed/simple;
+	bh=Mpi5liKjyiDncbXlQSUN5m41aQloT3tVm9OabwEOvYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K79BoxzgtpjmZXmg0Ox82FqPpX73HuakOfdx+aBmA0YvWrkswnMHOFR4eRPuNLb3UBHuE+AiBSxj1pNmtweOAogRSUxGXjms0Xf9JCRmVHdRP1SKaYuQ5VLDgqVNI1m1mUn9AzETIOX0e1v2dUlEqxL8lMgk87hahtCpFpt01kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YkCVOwiW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L1+HqzXN; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
+Date: Thu, 26 Jun 2025 17:49:54 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750951426;
+	s=2020; t=1750952996;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jL0tCZ3toSzGmOxjcnKOB+BJwR+ZZmNB0KXfY4YqPu4=;
-	b=eB4J+ntwsXtlYXTGA/BDefnyOFp8VM5NHUL2QQz4uWrHRJGHSzjkjL/vKMRk2ljn5EbrWo
-	RAql3jJxO8TdJ6z9+9Tv/jkGm90d/u8gXbovVKZ56Qgqy8dE73jCcH7G9v3OVOx1WJMf51
-	ZYFTvlUP0lAtcfz01cno/SxDnFepEdQKlnNTo2GyccS8qczR9eTUX7eC1k0ioObmPv6rB7
-	RyAgwp0SiqObuDKjH6IxlCteb9UaOHvp0Yh8ieijWiBmtFQym0fXI7gX6sZMnuXv+k0s0K
-	fqjsix/N5CkFxhE4MpKIbpQab8NgabVGBZGnIPTvP3AW3E89MZt02g6YiSflYg==
+	bh=SZA23onas5n4B09dCvBkdk+b6pfrOmlq+EopDm/BmP0=;
+	b=YkCVOwiWQSz/zQsWs8NjbsXOY4f36xUq/3yuKyRYBF7mthALXB1sTb+OqMvEZYQo2F/NHv
+	v3RYujSu5+03ArJGLSSQIbn7ZtzKOHus/j879dVfNiFVDo+ExtLiRYZj+eYfv2sgc4n0p4
+	BKsG87GRClfb1NdRBfjXCyJRCR7dYn62Xjnt6cuA4Nb3uEivkxspTucqGWsc2iJOT3FMFN
+	L7ZQJMZ8lQRxIw/xsDqvokCSJqJp0TpLAcIiUEzhrrOs//RbAANi7vD44QhTZpxcckxxOT
+	77oif/ku8R6GBghxw8pWwQaQRGLjyE8ySjKgt+MN3s7RVox/f/ztalWYb4fKUQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750951426;
+	s=2020e; t=1750952996;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jL0tCZ3toSzGmOxjcnKOB+BJwR+ZZmNB0KXfY4YqPu4=;
-	b=UqTz9nTBsQRoHH9zENmAM29A6/H6Gsy8qqeEnflQxaSBLwKpMzbBfHYb1noTxk08TTTJ2L
-	lmpbRx9G1CxVZKDA==
-To: Nam Cao <namcao@linutronix.de>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>, Martin
- Karsten <mkarsten@uwaterloo.ca>, Jens Axboe <axboe@kernel.dk>
-Cc: Nam Cao <namcao@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Valentin Schneider <vschneid@redhat.com>
+	bh=SZA23onas5n4B09dCvBkdk+b6pfrOmlq+EopDm/BmP0=;
+	b=L1+HqzXNd+Bj8avf6MduLQ8qq7mxtyC+oQmhlzi+om4KOidY7K/whfDEQ3Ihv82ZGiIyhq
+	yGZR1jmzlOTgt5Cw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Nam Cao <namcao@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>
 Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-In-Reply-To: <20250527090836.1290532-1-namcao@linutronix.de>
+Message-ID: <20250626154954.NH9L0mtz@linutronix.de>
 References: <20250527090836.1290532-1-namcao@linutronix.de>
-Date: Thu, 26 Jun 2025 17:29:46 +0206
-Message-ID: <841pr6msql.fsf@jogness.linutronix.de>
+ <841pr6msql.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <841pr6msql.fsf@jogness.linutronix.de>
 
-On 2025-05-27, Nam Cao <namcao@linutronix.de> wrote:
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index d4dbffdedd08e..a97a771a459c9 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -137,13 +137,7 @@ struct epitem {
->  	};
->  
->  	/* List header used to link this structure to the eventpoll ready list */
-> -	struct list_head rdllink;
-> -
-> -	/*
-> -	 * Works together "struct eventpoll"->ovflist in keeping the
-> -	 * single linked chain of items.
-> -	 */
-> -	struct epitem *next;
-> +	struct llist_node rdllink;
->  
->  	/* The file descriptor information this item refers to */
->  	struct epoll_filefd ffd;
-> @@ -191,22 +185,15 @@ struct eventpoll {
->  	/* Wait queue used by file->poll() */
->  	wait_queue_head_t poll_wait;
->  
-> -	/* List of ready file descriptors */
-> -	struct list_head rdllist;
-> -
-> -	/* Lock which protects rdllist and ovflist */
-> -	rwlock_t lock;
-> +	/*
-> +	 * List of ready file descriptors. Adding to this list is lockless. Items can be removed
-> +	 * only with eventpoll::mtx
-> +	 */
-> +	struct llist_head rdllist;
->  
->  	/* RB tree root used to store monitored fd structs */
->  	struct rb_root_cached rbr;
->  
-> -	/*
-> -	 * This is a single linked list that chains all the "struct epitem" that
-> -	 * happened while transferring ready events to userspace w/out
-> -	 * holding ->lock.
-> -	 */
-> -	struct epitem *ovflist;
-> -
->  	/* wakeup_source used when ep_send_events or __ep_eventpoll_poll is running */
->  	struct wakeup_source *ws;
->  
-> @@ -361,10 +348,14 @@ static inline int ep_cmp_ffd(struct epoll_filefd *p1,
->  	        (p1->file < p2->file ? -1 : p1->fd - p2->fd));
->  }
->  
-> -/* Tells us if the item is currently linked */
-> -static inline int ep_is_linked(struct epitem *epi)
-> +/*
-> + * Add the item to its container eventpoll's rdllist; do nothing if the item is already on rdllist.
-> + */
-> +static void epitem_ready(struct epitem *epi)
->  {
-> -	return !list_empty(&epi->rdllink);
-> +	if (&epi->rdllink == cmpxchg(&epi->rdllink.next, &epi->rdllink, NULL))
+On 2025-06-26 17:29:46 [+0206], John Ogness wrote:
+> > @@ -361,10 +348,14 @@ static inline int ep_cmp_ffd(struct epoll_filefd *p1,
+> >  	        (p1->file < p2->file ? -1 : p1->fd - p2->fd));
+> >  }
+> >  
+> > -/* Tells us if the item is currently linked */
+> > -static inline int ep_is_linked(struct epitem *epi)
+> > +/*
+> > + * Add the item to its container eventpoll's rdllist; do nothing if the item is already on rdllist.
+> > + */
+> > +static void epitem_ready(struct epitem *epi)
+> >  {
+> > -	return !list_empty(&epi->rdllink);
+> > +	if (&epi->rdllink == cmpxchg(&epi->rdllink.next, &epi->rdllink, NULL))
+> 
+> Perhaps:
+> 
+> 	if (try_cmpxchg(&epi->rdllink.next, &epi->rdllink, NULL))
 
-Perhaps:
+Not sure this is the same.
+This will write back the current value of epi->rdllink.next to
+epi->rdllink if epi->rdllink.next is not &epi->rdllink.
 
-	if (try_cmpxchg(&epi->rdllink.next, &epi->rdllink, NULL))
+The intention is to check if epi->rdllink.next is set to &epi->rdllink
+(pointing to itself) and if so set it NULL just to avoid to ensure
+further cmpxchg() will fail here.
 
-> +		llist_add(&epi->rdllink, &epi->ep->rdllist);
-> +
->  }
->  
->  static inline struct eppoll_entry *ep_pwq_from_wait(wait_queue_entry_t *p)
+> > +		llist_add(&epi->rdllink, &epi->ep->rdllist);
+> > +
+> >  }
+> >  
+> >  static inline struct eppoll_entry *ep_pwq_from_wait(wait_queue_entry_t *p)
+> 
+> John Ogness
 
-John Ogness
+Sebastian
 
