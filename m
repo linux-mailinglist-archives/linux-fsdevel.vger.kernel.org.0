@@ -1,286 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-53116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE06AEA8AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 23:20:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC273AEA90C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 23:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173B53AD70F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 21:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12196643429
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 21:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315B825E461;
-	Thu, 26 Jun 2025 21:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="hoPpChdy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D0A2609ED;
+	Thu, 26 Jun 2025 21:52:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C33919D06A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 21:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BCD25E47E;
+	Thu, 26 Jun 2025 21:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750972796; cv=none; b=gqZO/ZEA/pqhvVb/03kPpBKNpiIJbZc4aj5kJr/ygdqxo7mEgX6M1o0xdMSqgagLyCTi9aNkKgEu7yvXrOTiFoUJvmUjHoQ2bRaDETEd8xhc4xVTLI5C0MdxXqVUHI1IUq+LfAFF9ZMIYYODqcxRJ2JdUykspwL8XhuI/u7XcUg=
+	t=1750974722; cv=none; b=SZzrg4vDCyzHKwJUIiRfb5P0Yh0q9V1KVEdFg2WModMWc3z9EATBmMgizWdvaB8pnlDYhXJoThIAsC3mSllOEMQWiwTYoSy9+DWm6RqSJ6+4VkRugZahKq60NAN2XZnyKFl0QlIEq3D95BHJeV0mGLawnZyzY5BfLxJgLo0chUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750972796; c=relaxed/simple;
-	bh=V6rrzflo7oZ2UClOluyg4pAscZ8UAKNRbMC5iw591oY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qKUn6QGbsgaw7UkjVUiwfZiYkZ9UgemUQmq1mp0VkihUDE4GIlz0Aq4nvuohJfgeX574h0/X5KjAiei+cFeOuovHNfbLx2qhfhOQglGIznWLbUPNJzIBl4XDTSOdVsoBn+APrz33a2u695Z8m6z03ImjLdcsoB3ZAHllPQGrrFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=hoPpChdy; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QL8wHQ018481
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 14:19:53 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=r8vieA86eTeaLpVkpovWq3yeVlFwooh4zjZyCCXeV8I=; b=hoPpChdyfsCW
-	NbUEDrzTzFaYlj5M5bE3yW1DqMB693a494cfanyR6lJjrVVulLTBy2FEBqHvIPUf
-	rFPD0BOeIt7BqATDBeAi7GqPisTRzqi48n/nPfw7NO5qXg+ZNzzXinQie0UKPX17
-	Gbwh/g68AOQ4UWeTwEhoHGg/W10S5B9zeqRFM+s6aHONnD2k4eD8jqL+Ujl0mowG
-	TjM686wX9eLqw78RwIbX9wiH3W8eHzhs468xOxifs+SEv6NmeVpgjPZXKWMU3vI9
-	RNrURDg80CHJjIL3m4yDuh13/+wk8Ym5xWV657WbSGeX7MRHY2DJIvzKoR6988aa
-	LVsHBN46Rg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47gextw3v4-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 14:19:53 -0700 (PDT)
-Received: from twshared24438.15.frc2.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.24; Thu, 26 Jun 2025 21:19:49 +0000
-Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
-	id 4BC1530A2A8A0; Thu, 26 Jun 2025 14:19:34 -0700 (PDT)
-From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-To: <amir73il@gmail.com>
-CC: <ibrahimjirdeh@meta.com>, <jack@suse.cz>, <josef@toxicpanda.com>,
-        <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>
-Subject: [PATCH] fanotify: support custom default close response
-Date: Thu, 26 Jun 2025 14:19:32 -0700
-Message-ID: <20250626211932.2468910-1-ibrahimjirdeh@meta.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <CAOQ4uxguBgMuUZqs0bT_cDyEX6465YkQkUHFPFE4tndys-y2Wg@mail.gmail.com>
-References: <CAOQ4uxguBgMuUZqs0bT_cDyEX6465YkQkUHFPFE4tndys-y2Wg@mail.gmail.com>
+	s=arc-20240116; t=1750974722; c=relaxed/simple;
+	bh=bnz1Bb7o+gzldkFLngzW6l31QB4WnvlWMZjBoOExqS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=as77i60IFZq8hsURfUsV2mRTGZuMxxlz+Ic8E95f1skGZqMwny4ako6kLBc227CooTkkYiOYRt1Ta+OeQIC4/NGs7avyN4W45x/giSGawC4t9HsJPUInYsn1JI/FM9Ewi1xo+9BxxStgT5BJ3gBxgGAVJQW47XwGu9LhYpskPk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 55QLdUFG018871;
+	Thu, 26 Jun 2025 16:39:31 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 55QLdRb4018869;
+	Thu, 26 Jun 2025 16:39:27 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Thu, 26 Jun 2025 16:39:27 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andre Almeida <andrealmeid@igalia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
+Message-ID: <20250626213927.GQ17294@gate.crashing.org>
+References: <cover.1750585239.git.christophe.leroy@csgroup.eu> <20250622172043.3fb0e54c@pumpkin> <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu> <20250624131714.GG17294@gate.crashing.org> <20250624175001.148a768f@pumpkin> <20250624182505.GH17294@gate.crashing.org> <20250624220816.078f960d@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=dLammPZb c=1 sm=1 tr=0 ts=685db979 cx=c_pps a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=VabnemYjAAAA:8 a=E5pSYoxeBN610M9yIE0A:9 a=gKebqoRLp9LExxC7YDUY:22
-X-Proofpoint-ORIG-GUID: NFnx52dShLrZEafw2RTTPrFuNDTDvOXH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDE4MiBTYWx0ZWRfXzxPztE5lvJoE 69wHTobNMg8HEXTfjxew+U/ByVxZfZ8FFZKCL4nJ6qdJUTetZI19qwU5kX8CxQOEFOw/yR7i971 OFg/CWmx76JgtN7RPpjaI+5gqf8hx7AHfwsXObCbFc+EP4Dx6+lOYOBgicn6A8B8d4yqdH9DNvX
- QW1n5ljCp+8sh5uMgb/kT2mrzp5G2OUrKKCYgW2npUt3FkOKcxeVE4s5MWsUO48q4lwj7AcpGh/ sMNcPxQ0fiKTVxOdx2LroGzFaK3HAYN0oEH6R/BD09ENjKRDbpp2tnn5W+A7OwB22/uqSf17wgU FDBRp6ToZiLUMqLbmmmEdYVOlgZD50zE8KM0KZ/bBy9LxeXcel6O9qLgfk4sX8byp9TdeINzVKy
- Tn+E2ErJTwvnvEez6SbQG0Szp2I94STKx8L1kdt+DSm5mwNS6wmnyPKc2Z+2U6sfl/H/U1BO
-X-Proofpoint-GUID: NFnx52dShLrZEafw2RTTPrFuNDTDvOXH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_06,2025-06-26_05,2025-03-28_01
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624220816.078f960d@pumpkin>
+User-Agent: Mutt/1.4.2.3i
 
-> On 6/23/25, 11:32 PM, "Amir Goldstein" <amir73il@gmail.com <mailto:amir=
-73il@gmail.com>> wrote:
-> > On Mon, Jun 23, 2025 at 9:26 PM Ibrahim Jirdeh <ibrahimjirdeh@meta.co=
-m> wrote:
-> >
-> > Currently the default response for pending events is FAN\_ALLOW.
-> > This makes default close response configurable. The main goal
-> > of these changes would be to provide better handling for pending
-> > events for lazy file loading use cases which may back fanotify
-> > events by a long-lived daemon. For earlier discussion see:
-> > [https://lore.kernel.org/linux-fsdevel/6za2mngeqslmqjg3icoubz37hbbxi6=
-bi44canfsg2aajgkialt@c3ujlrjzkppr/](https://lore.kernel.org/linux-fsdevel=
-/6za2mngeqslmqjg3icoubz37hbbxi6bi44canfsg2aajgkialt@c3ujlrjzkppr/)
->
-> These lore links are typically placed at the commit message tail block
-> if related to a suggestion you would typically use:
->
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Link: [https://lore.kernel.org/linux-fsdevel/CAOQ4uxi6PvAcT1vL0d0e+7Yjv=
-kfU-kwFVVMAN-tc-FKXe1wtSg@mail.gmail.com/](https://lore.kernel.org/linux-=
-fsdevel/CAOQ4uxi6PvAcT1vL0d0e+7YjvkfU-kwFVVMAN-tc-FKXe1wtSg@mail.gmail.co=
-m/)
-> Signed-off-by: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
->
-> This way reviewers whose response is "what a terrible idea!" can
-> point their arrows at me instead of you ;)
->
-> Note that this is a more accurate link to the message where the default
-> response API was proposed, so readers won't need to sift through
-> this long thread to find the reference.
->
-> >
-> > This implements the first approach outlined there of providing
-> > configuration for response on group close. This is supported by
-> > writing a response with
-> > .fd =3D FAN\_NOFD
-> > .response =3D FAN\_DENY | FAN\_DEFAULT
-> > which modifies the group property default\_response
-> >
-> > Signed-off-by: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-> > ---
-> >  fs/notify/fanotify/fanotify\_user.c  | 14 ++++++++++++--
-> >  include/linux/fanotify.h            |  2 +-
-> >  include/linux/fsnotify\_backend.h    |  1 +
-> >  include/uapi/linux/fanotify.h       |  1 +
-> >  tools/include/uapi/linux/fanotify.h |  1 +
-> >  5 files changed, 16 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/notify/fanotify/fanotify\_user.c b/fs/notify/fanotify=
-/fanotify\_user.c
-> > index b192ee068a7a..02669abff4a5 100644
-> > --- a/fs/notify/fanotify/fanotify\_user.c
-> > +++ b/fs/notify/fanotify/fanotify\_user.c
-> > @@ -378,6 +378,13 @@ static int process\_access\_response(struct fsno=
-tify\_group \*group,
-> >                 return -EINVAL;
-> >         }
-> >
-> > +       if (response & FAN\_DEFAULT) {
-> > +               if (fd !=3D FAN\_NOFD)
-> > +                       return -EINVAL;
-> >
-> I think we also need to check that no bits other than the allowed bits
-> for default response
-> are set, for example, if user attempts to do:
->  .response =3D FAN\_DENY | FAN\_AUDIT | FAN\_DEFAULT
->
-> But that opens up the question, do we want to also allow custom
-> error in default response, e.g.:
->  .response =3D FAN\_DENY\_ERRNO(EAGAIN) | FAN\_DEFAULT
->
-> Anyway, we do not have to implement custom default error from the
-> start. It will complicate the implementation a bit, but as long as you =
-deny
-> setting the default response with unsupported flags, we can extend it l=
-ater.
+Hi!
 
-Sure I can update this to disallow unexpected bits when updating default =
-response.
-It does make sense to me to also support custom error in default response=
-, I can
-help with exending the feature either as a later part of this series, or =
-as
-future follow up. Also will update the links and commit tail block as you=
-'ve
-suggested.
+On Tue, Jun 24, 2025 at 10:08:16PM +0100, David Laight wrote:
+> On Tue, 24 Jun 2025 13:25:05 -0500
+> Segher Boessenkool <segher@kernel.crashing.org> wrote:
+> > On Tue, Jun 24, 2025 at 05:50:01PM +0100, David Laight wrote:
+> > > On Tue, 24 Jun 2025 08:17:14 -0500
+> > > Segher Boessenkool <segher@kernel.crashing.org> wrote:
+> > >   
+> > > > On Tue, Jun 24, 2025 at 07:27:47AM +0200, Christophe Leroy wrote:  
+> > > > > Ah ok, I overlooked that, I didn't know the cmove instruction, seem 
+> > > > > similar to the isel instruction on powerpc e500.    
+> > > > 
+> > > > cmove does a move (register or memory) when some condition is true.  
+> > > 
+> > > The destination of x86 'cmov' is always a register (only the source can be
+> > > memory - and is probably always read).  
+> > 
+> > Both source operands can be mem, right?  But probably not both at the
+> > same time.
+> 
+> It only has one 'real' source, but the implementation could easily
+> read the destination register and then decide which value to write
+> back - rather than doing a conditional write to the register file.
 
-> >
-> > +               group->default\_response =3D response & FANOTIFY\_RES=
-PONSE\_ACCESS;
-> > +               return 0;
-> > +       }
-> > +
-> >         if ((response & FAN\_AUDIT) && !FAN\_GROUP\_FLAG(group, FAN\_=
-ENABLE\_AUDIT))
-> >                 return -EINVAL;
-> >
-> > @@ -1023,7 +1030,8 @@ static int fanotify\_release(struct inode \*ign=
-ored, struct file \*file)
-> >                 event =3D list\_first\_entry(&group->fanotify\_data.a=
-ccess\_list,
-> >                                 struct fanotify\_perm\_event, fae.fse=
-.list);
-> >                 list\_del\_init(&event->fae.fse.list);
-> > -               finish\_permission\_event(group, event, FAN\_ALLOW, N=
-ULL);
-> > +               finish\_permission\_event(group, event,
-> > +                               group->default\_response, NULL);
-> >                 spin\_lock(&group->notification\_lock);
-> >         }
-> >
-> > @@ -1040,7 +1048,7 @@ static int fanotify\_release(struct inode \*ign=
-ored, struct file \*file)
-> >                         fsnotify\_destroy\_event(group, fsn\_event);
-> >                 } else {
-> >                         finish\_permission\_event(group, FANOTIFY\_PE=
-RM(event),
-> > -                                               FAN\_ALLOW, NULL);
-> > +                                               group->default\_respo=
-nse, NULL);
-> >                 }
-> >                 spin\_lock(&group->notification\_lock);
-> >         }
-> > @@ -1640,6 +1648,8 @@ SYSCALL\_DEFINE2(fanotify\_init, unsigned int, =
-flags, unsigned int, event\_f\_flags)
-> >                 goto out\_destroy\_group;
-> >         }
-> >
-> > +       group->default\_response =3D FAN\_ALLOW;
-> > +
-> >         BUILD\_BUG\_ON(!(FANOTIFY\_ADMIN\_INIT\_FLAGS & FAN\_UNLIMITE=
-D\_QUEUE));
-> >         if (flags & FAN\_UNLIMITED\_QUEUE) {
-> >                 group->max\_events =3D UINT\_MAX;
-> > diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-> > index 879cff5eccd4..182fc574b848 100644
-> > --- a/include/linux/fanotify.h
-> > +++ b/include/linux/fanotify.h
-> > @@ -134,7 +134,7 @@
-> >
-> >  /\* These masks check for invalid bits in permission responses. \*/
-> >  #define FANOTIFY\_RESPONSE\_ACCESS (FAN\_ALLOW | FAN\_DENY)
-> > -#define FANOTIFY\_RESPONSE\_FLAGS (FAN\_AUDIT | FAN\_INFO)
-> > +#define FANOTIFY\_RESPONSE\_FLAGS (FAN\_AUDIT | FAN\_INFO | FAN\_DEF=
-AULT)
-> >  #define FANOTIFY\_RESPONSE\_VALID\_MASK \\
-> >         (FANOTIFY\_RESPONSE\_ACCESS | FANOTIFY\_RESPONSE\_FLAGS | \\
-> >          (FAN\_ERRNO\_MASK << FAN\_ERRNO\_SHIFT))
-> > diff --git a/include/linux/fsnotify\_backend.h b/include/linux/fsnoti=
-fy\_backend.h
-> > index d4034ddaf392..9683396acda6 100644
-> > --- a/include/linux/fsnotify\_backend.h
-> > +++ b/include/linux/fsnotify\_backend.h
-> > @@ -231,6 +231,7 @@ struct fsnotify\_group {
-> >         unsigned int max\_events;                /\* maximum events a=
-llowed on the list \*/
-> >         enum fsnotify\_group\_prio priority;      /\* priority for se=
-nding events \*/
-> >         bool shutdown;          /\* group is being shut down, don't q=
-ueue more events \*/
-> > +       unsigned int default\_response; /\* default response sent on =
-group close \*/
-> >
-> >  #define FSNOTIFY\_GROUP\_USER    0x01 /\* user allocated group \*/
-> >  #define FSNOTIFY\_GROUP\_DUPS    0x02 /\* allow multiple marks per o=
-bject \*/
-> > diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanot=
-ify.h
-> > index e710967c7c26..7badde273a66 100644
-> > --- a/include/uapi/linux/fanotify.h
-> > +++ b/include/uapi/linux/fanotify.h
-> > @@ -254,6 +254,7 @@ struct fanotify\_response\_info\_audit\_rule {
-> >
-> >  #define FAN\_AUDIT      0x10    /\* Bitmask to create audit record f=
-or result \*/
-> >  #define FAN\_INFO       0x20    /\* Bitmask to indicate additional i=
-nformation \*/
-> > +#define FAN\_DEFAULT    0x30    /\* Bitmask to set default response =
-on close \*/
-> >
-> >  /\* No fd set in event \*/
-> >  #define FAN\_NOFD       -1
-> > diff --git a/tools/include/uapi/linux/fanotify.h b/tools/include/uapi=
-/linux/fanotify.h
-> > index e710967c7c26..7badde273a66 100644
-> > --- a/tools/include/uapi/linux/fanotify.h
-> > +++ b/tools/include/uapi/linux/fanotify.h
-> > @@ -254,6 +254,7 @@ struct fanotify\_response\_info\_audit\_rule {
-> >
-> >  #define FAN\_AUDIT      0x10    /\* Bitmask to create audit record f=
-or result \*/
-> >  #define FAN\_INFO       0x20    /\* Bitmask to indicate additional i=
-nformation \*/
-> > +#define FAN\_DEFAULT    0x30    /\* Bitmask to set default response =
-on close \*/
-> >
-> >  /\* No fd set in event \*/
-> >  #define FAN\_NOFD       -1
-> > --
-> > 2.47.1
+Yeah, in x86 many (most insns?) can read any reg that they write.  Not
+a great design, but heh.
+
+> A conditional write would be a right PITA for the alu result
+> forwarding logic
+
+Depends.  An implementation can always do the register forwarding etc.,
+just annul the actual store where appropriate (and not put it in the
+various store queues either, heh -- annul all the effects of the store).
+
+> > x86 is not a RISC architecture, or more generally, a load/store
+> > architecture.
+> 
+> It sort of is these days.
+
+Not at all.  Most *implementations* are, the uarchs, but the
+architecture (which determines the required visible semantics) is not.
+That impedance difference is quite painful, yes, for code generation
+more than for the processor implementation even -- as usual the
+compilers have to save the day!
+
+> The memory transfers are separate u-ops, so a 'reg += mem' instruction
+> is split into two be the decoder.
+
+Yup.  Very expensive.  Both for the implementation, and for the
+performance of eventual code running on it.
+
+> Although some u-ops get merged together and executed in one clock,
+> obvious example is some 'compare+branch' pairs.
+
+On many other architectures such things run in 0 cycles anyway :-)
+
+> > A computational instruction is one that doesn't touch memory or does a
+> > branch, or some system function, some supervisor or hypervisor
+> > instruction maybe.
+> > 
+> > x86 does not have many computational insns, most insns can touch
+> > memory :-)
+> 
+> Except that the memory 'bit' is executed separately from any alu 'stuff'.
+
+On many uarchs, yes.  But not in the arch.  No uarch can decide to just
+not implement these difficult and expensive insns :-)
+
+> > > There is a planned new instruction that would do a conditional write
+> > > to memory - but not on any cpu yet.  
+> > 
+> > Interesting!  Instructions like the atomic store insns we got for p9,
+> > maybe?  They can do minimum/maximum and various kinds of more generic
+> > reductions and similar.
+> 
+> I think they are only conditional stores.
+> But they do save a conditional branch.
+
+Yeah, but those are not ever executed *anyway*, there is branch
+prediction and we require that to be pretty good to get reasonable
+performance anyway.
+
+A branch around the store insns is just fine if it can be predicted
+correctly.  If it cannot be predicted correctly, you can do the store
+always, just have the address that is stored to depend on the condition
+(such the data is stored to some dummy memory if it "should not be
+done").  Source code gets such a transform done manually in the
+performance critical paths not infrequently, already.
+
+GCC does not currently do such a transformation AFAIK, but it is a
+pretty basic thing to do.  Conditional stores are not often written in
+source code programs, or there would probably be an implementation for
+this already :-)
+
+> A late disable of a memory write is far less problematic than a disabled
+> register file write. No one minds (too much) about slight delays between
+> writes and reads of the same location (reduced by a store to load forwarder)
+> but you don't want to lose clocks between adjacent simple alu instructions.
+
+Writes to memory take tens of cycles *anyway*, but all of that is hidden
+by the various memory load and store queues (which let you do forwarding
+in just a few cycles).
+
+> For my sins I re-implemented a soft cpu last year...
+
+Ouch :-)  But it was fun to do I hope?
+
+> Which doesn't have a 'cmov' :-(
+
+The x86 flag register bits are so limited and complicated in the first
+place, cmov is the easier part there ;-) 
+
+> > But ancient things do not.  Both 970 (Apple G5) and Cell BE do not yet
+> > have it (they are ISA 2.01 and 2.02 respectively).  And the older p5's
+> > do not have it yet either, but the newer ones do.
+> > 
+> > And all classic PowerPC is ISA 1.xx of course.  Medieval CPUs :-)
+> 
+> That make more sense than the list in patch 5/5.
+
+Not sure what list that is.  I'll find it :-)
+
+> > > > But sure, seen from very far off both isel and cmove can be used to
+> > > > implement the ternary operator ("?:"), are similar in that way :-)  
+> > > 
+> > > Which is exactly what you want to avoid speculation.  
+> > 
+> > There are cheaper / simpler / more effective / better ways to get that,
+> > but sure, everything is better than a conditional branch, always :-)
+> 
+> Everything except a TLB miss :-)
+
+Heh.  TLBa are just a tiny part of translation on Power.  We mostly care
+about the ERATs.  Look it up, if you want to be introduced to another
+level of pain :-)
+
+> And for access_ok() avoiding the conditional is a good enough reason
+> to use a 'conditional move' instruction.
+> Avoiding speculation is actually free.
+
+*Assuming* that avoiding speculation is actually free, you mean?
+
+
+Segher
 
