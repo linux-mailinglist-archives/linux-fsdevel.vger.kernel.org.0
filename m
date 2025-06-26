@@ -1,272 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-53114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEB6AEA675
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 21:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B96AEA746
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 21:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AEFF562D2A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 19:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450CC17F752
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 19:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0472EFDB2;
-	Thu, 26 Jun 2025 19:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5152EE960;
+	Thu, 26 Jun 2025 19:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Gdl6jHki"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wxwm9AfZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2070.outbound.protection.outlook.com [40.107.243.70])
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2064.outbound.protection.outlook.com [40.107.100.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0058C194AD5;
-	Thu, 26 Jun 2025 19:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ADE1FDE31;
+	Thu, 26 Jun 2025 19:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750966153; cv=fail; b=LdKiRdzZFDDK/ccUUkQgROQX04XsWWLsiNxEzR5yve2cI4c8HnlsdUUq6YnGOVjdXFtGKBmEICTYnZnuWV8jBfbnaZlqMWHVRp6bP+4vakx4TWjai15fkMumfiaSPznmIIugOLpjUqZY7AJgsWXQwLv6/RsVf4BLUL4o0d7lF7s=
+	t=1750967180; cv=fail; b=SpKOFgCjlaBQRPV7VLNou2yMXM25whvD1pfE0NlPvcrGzGVZQmL8v1O0iXGbRjR6S1z5X8sRgXdDV7plGf2qTzKl+ETDUjpMTk9u93uoTAIotaphK57GDjFD2Qd0t1xPIW2g86y78DxVc1dz5495HhVg1Dx6x5MANbjXXVvSf7Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750966153; c=relaxed/simple;
-	bh=NnrJSWvBthnPANa4FFmG4DpdKt6nRWOypJ+9/ieXfzY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LwydVXj+kn4aRE9yBPyFsGorjtU23pK5jBRLD4xn0hCIzx7naYHa1kCPig9LBRnGhY0QisH5mYkVb+pXGgVVA+0bQVU0n/j6W97hb6ADykDNRPYwyZ1OOerGoU/rDCMrk0as8u++zcjXWiOSdRkbSSTg8pGTFiYYNF4bNVzMQhQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Gdl6jHki; arc=fail smtp.client-ip=40.107.243.70
+	s=arc-20240116; t=1750967180; c=relaxed/simple;
+	bh=TQEK2x9h7EXz4BO2wZpyfSN1NdYHanTFKpFjeITlSp4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jm8D9oC4/gBfaxFeK88o8VPv0cPtYCQ5InlEeArooN2bJLtOfvhI+th0KlPeRXboaKz00+Eg0Fjq6XQGME3i2sFji/VrbwqDDy0Rr4AQP56Bg6yRMUiVvki4TEfrjmJ39mTa0WCE2KzAKTzJXStvNko25uSA7PdVp23WR8u0j7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wxwm9AfZ; arc=fail smtp.client-ip=40.107.100.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LBc/53OxJEeJqRAmC7JbkHNNMJuStccwzI72VhQ9l5/NcCUfdYxvyAWs743Docp0LLRncfKzGJHc4pwop6t1/cp/SFhJbLpuyHignQuWyMjf3jwcM5AWmKBM0Kpm9d2oeNH10tuQLOmXjzKv3qyvx2u4OHCUMyiDWLn8/CR3RQmzMgPp2F9odY3VUebkNtGfkbvJiOqcON1leDlIV+t8Z2lrloUiMVMrXIZ+ICjERc+zWr2HfIsylYFZVEn209Ur/c+XMFwPmuKmYy+igx53mUvrL5OFeqqWHOH3opEfGBzTORWV+fLXQnsq7RZgKoKXvkSnWVXzPT/8tsvPLjmvrA==
+ b=tyBi3PUWd4CvuCdw4GB4VLFU7NmSNGb+pclhwu2qgmu0GHgRlqYZi8ONWtp0ThX54BbrPFovzwNBp4rldAdxvS0cd80vgUkv5RrdZhgMy80I17UgnUhLI5HT1dDN6C0DW3z1DCYpWwNeAAJMi6XhIIo4zqLB6vczF/x7eb6cpuW50mrmiFXmj6dMeFvQRo4LWr6vZP4Iygl1aLvWwQMuaZNNoZXzF2OFMQEEDD2TalbOacaUui1Gv1zazBOP0hfNxrj7hUrMVcGXlGyQmGpGeLCz9fp/oq5Gs75+yINVyYgtqAdAUXYJqXf9yy5QoiYMJAVHlOqwSiQUnRjS96greg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c/7NlTokNQ+3vqtOkidoHStFd3Lv4la+h1IwMPDmcD0=;
- b=M2BBfQF/Vjf6xSzdsTGTOeqLVI4wpaulbLulK9z5AgQntkqEWSpLmtGaZYvGb6F797TVKr/MJg05Ix8sjeIcg+B56Wud3mnnimtXOk7/O6Vz7tj/5hqrwJhL4To4bKNyg+d76DKWB6C34uPHkmxPbb5L7VvjouQHDeN/kdeKktTy2GspbcKlqA0y+TsF22m/Bgl3Xf63bTAqdr0Y65Wv3WrRtBnUA02h0/Yjeg4+zodWuLrs5yLGzFliYL7HjS6o0TC0KQs3jkrOIkMJ/nGqw6VjtKQXVMJRRRYowTdXvTuS/MqEu5pBWiezcb/i2PwUgQubPp0mVKX7plpim9EpdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
+ bh=VozaPxBaRi+mjURQZ6b012lDUl/IDzmyxRss9vw+8dk=;
+ b=bY9KdpUy+V1nzCrx7a2B8TAHcMow8MHMwbJy3xxDLGhkb/RMjo2D0tG8Kyf8ofSH6AI3q8TlJGf8WrSqzea7YZ/EoHpjwEy5TtGIVOBu1S3cZQDIB+z6scMFHSxTcPX5qrrVOGMFanJo7MDBPqonPtVuR1ufLeKu2bjh1e8ylEi2hNZvopIQNcMlFIIid7CK6kW4bStpS9fb97K4NSERMDjxBsRhQtXircj0w8o9K+Ej2VF+io7COOw3/a1b7OeAZWa72RMNgNOafHU2uUjvV38Wo3rAIfASAs5xWTnSFKY7VfrQwWhqlnudlcogZWT4lmjUPwCqmBGk5T0DL5mU5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c/7NlTokNQ+3vqtOkidoHStFd3Lv4la+h1IwMPDmcD0=;
- b=Gdl6jHki0D3jzO3auHXcR2lHovWW+qrAdKzZJoIir4Gt9QBuniYOZgjql1r/1/yK+9fyATLXFfObVAxumZwFKAvlAtEvPZAULsGFnGci3+fxP1rYQyu+YKvskDSJMNIp6FIUMZa9VIb54rK9BC5B+u5KKLjqhyRpRq5dFb8lfjM=
-Received: from SA9PR13CA0059.namprd13.prod.outlook.com (2603:10b6:806:22::34)
- by DM6PR12MB4156.namprd12.prod.outlook.com (2603:10b6:5:218::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.30; Thu, 26 Jun
- 2025 19:29:09 +0000
-Received: from SN1PEPF0002636C.namprd02.prod.outlook.com
- (2603:10b6:806:22:cafe::33) by SA9PR13CA0059.outlook.office365.com
- (2603:10b6:806:22::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.7 via Frontend Transport; Thu,
- 26 Jun 2025 19:29:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002636C.mail.protection.outlook.com (10.167.241.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8880.14 via Frontend Transport; Thu, 26 Jun 2025 19:29:09 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
- 2025 14:29:02 -0500
+ bh=VozaPxBaRi+mjURQZ6b012lDUl/IDzmyxRss9vw+8dk=;
+ b=wxwm9AfZ3beC6was7voeC0UOIzBKsUb3cEPySgwjgoY3u5/4G98635+2HMmMWvN1XPRtCoAz3dB3XGE76gc6eIW4J22wSLJbLxEeu0f0AqunXr7qMjBEwfEofEcdWuzBc393kBLBkA7XWKf3Si7xa8VUdq+0uuAU6+55eqylkT8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+ (2603:10b6:a0f:fc02::9aa) by PH0PR12MB8173.namprd12.prod.outlook.com
+ (2603:10b6:510:296::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Thu, 26 Jun
+ 2025 19:46:16 +0000
+Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+ ([fe80::40bb:ae48:4c30:c3bf]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+ ([fe80::40bb:ae48:4c30:c3bf%8]) with mapi id 15.20.8722.031; Thu, 26 Jun 2025
+ 19:46:16 +0000
+Message-ID: <3fdab328-dda3-4685-b5a9-3aba2a40621c@amd.com>
+Date: Fri, 27 Jun 2025 01:16:04 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] fs: export anon_inode_make_secure_inode() and fix
+ secretmem LSM bypass
+To: Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>,
+ akpm@linux-foundation.org, brauner@kernel.org, paul@paul-moore.com,
+ rppt@kernel.org, viro@zeniv.linux.org.uk
+Cc: seanjc@google.com, willy@infradead.org, pbonzini@redhat.com,
+ tabba@google.com, afranji@google.com, ackerleytng@google.com, jack@suse.cz,
+ hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com,
+ roypat@amazon.co.uk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20250620070328.803704-3-shivankg@amd.com>
+ <f2a205a5-aca9-4788-88ff-bfb3283610c5@redhat.com>
+ <3114d54f-ed7c-4c68-9d32-53ce04175556@amd.com>
+ <39f95eb9-c494-4967-8d4d-9768200637f4@suse.cz>
+ <568cba54-dd42-45e9-be0f-53569811f2e9@suse.cz>
+Content-Language: en-US
 From: Shivank Garg <shivankg@amd.com>
-To: <david@redhat.com>, <akpm@linux-foundation.org>, <brauner@kernel.org>,
-	<paul@paul-moore.com>, <rppt@kernel.org>, <viro@zeniv.linux.org.uk>
-CC: <seanjc@google.com>, <vbabka@suse.cz>, <willy@infradead.org>,
-	<pbonzini@redhat.com>, <tabba@google.com>, <afranji@google.com>,
-	<ackerleytng@google.com>, <shivankg@amd.com>, <jack@suse.cz>,
-	<hch@infradead.org>, <cgzones@googlemail.com>, <ira.weiny@intel.com>,
-	<roypat@amazon.co.uk>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: [PATCH V3] fs: generalize anon_inode_make_secure_inode() and fix secretmem LSM bypass
-Date: Thu, 26 Jun 2025 19:14:29 +0000
-Message-ID: <20250626191425.9645-5-shivankg@amd.com>
-X-Mailer: git-send-email 2.43.0
+In-Reply-To: <568cba54-dd42-45e9-be0f-53569811f2e9@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BM1PR01CA0152.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:68::22) To SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+ (2603:10b6:a0f:fc02::9aa)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636C:EE_|DM6PR12MB4156:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8c9c9e6-76fc-4dae-c820-08ddb4e7b93c
+X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|PH0PR12MB8173:EE_
+X-MS-Office365-Filtering-Correlation-Id: a45163bf-6c69-4a30-72e9-08ddb4ea1cd0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KKLqvudKy67fz1Dt8GV/poTLI+35c9/kDGJyzcmwk2mdniERHtb+M1fHx5/1?=
- =?us-ascii?Q?E+vofGDqkVjCoKixZvfpoZ2Z7q544NiMebcOhBU3YTMK8ChQryshu7vBqZw+?=
- =?us-ascii?Q?VHwdMfhZYXJVUxp8c3P+T3r5Z6OPXKFEr8jjUs/ExBfBVuAf2rpOhlF+AUig?=
- =?us-ascii?Q?roOlg4jKqwxbhI1Hn8nVPzL0k31fiUDhJ52QpUsgS9papdVZ+tRePUdTH8iq?=
- =?us-ascii?Q?5LLzERXF8kZMb/GfwPqj3GnFCXDgfP0Q2EtvnBPDk0P2EizxjSf/9Jzyl+XA?=
- =?us-ascii?Q?htf9h9l2H+CEC9jIiK2xDmJp+g3r0cRLhjRaLF2f6O/oAIZQB0SlWtZIIY0l?=
- =?us-ascii?Q?J5Q7t36nBbnKbqa2Ye318nn+mxtttdysnrj4Z6lDynf793Q2VUPR0UUm27Eh?=
- =?us-ascii?Q?y7ejjxPmWnZp6FLVRhsdUyT8Yj8bkx02zn1EDcMs2Bzy3Qdoimn0koRcabzv?=
- =?us-ascii?Q?HLggWcALgS+l0DOjU0z6bx+FzF6V4mX8iJyHN8V01A770EQryp6WopfV+ys4?=
- =?us-ascii?Q?BOzp8jPcZVLWgR3YIiuseA7Vpt2YiQoBYGREoJiGtLgQySB8MsClNICMTLtW?=
- =?us-ascii?Q?WfENXlyxAB6wcTM6UHrHTzBETb4moz01mZNmSS4CNxTLfKE8qqprDm8HOGnT?=
- =?us-ascii?Q?m2DZdzqgYDCQ4X14+P8bGHkx3Z2UloA+yXS22NpUrRcjxO2+UDI8H9wP/qZS?=
- =?us-ascii?Q?mpsqnNkp2wphlm8/gZrmWZJU6iwPe4QtbNwWgdUv1DR3VUNd+G+0rdQffYdF?=
- =?us-ascii?Q?jw3goZPI9XypZPPy8l0Wu9/PXqRyEOEfjZlN1fM2izsSLAK+XTk3X0L+kbtx?=
- =?us-ascii?Q?W3ZQhVOgJY5SIxPgoqFuRBJw97nhg+IZ+z7MeDYAq321GqJamwtX54zQVp+j?=
- =?us-ascii?Q?bgOGRiIIJSACqLK79MVEbc6+ntGtMKW3AHAgJNlOYEyI2a+NPOA5zOmLlgnQ?=
- =?us-ascii?Q?WyIFPqXIBfi89DnS5WQio7KbwayT9H9KVM8zSvEtEw4P7mzT7MB+Fl0BZbkZ?=
- =?us-ascii?Q?6L5DtvHdroKs7cxbGSenWCMSDfgaSftfzS6xwnMsuOCsuVTrpmBrG6COxQEa?=
- =?us-ascii?Q?f066hmPutXfR9vMhL+C++x49oRnU2pxjsbw8L4yz6NiFjMtJyFPf+cmIXjL9?=
- =?us-ascii?Q?epWo9/nstis1HVQyfMeZfCb5OWouKp6XoZ6gPnu+TZDFITo/mzDGJ20d3rGM?=
- =?us-ascii?Q?j7qBZuykNW9Q18AklsfzxxoZNaEk7a+1cx6UP5sykT1hOnGNsgR2Syk3G1fz?=
- =?us-ascii?Q?TqVAbOD1ZS5mYKO1rMQqa2mB0m5dGV6gxVsrfTrlFIxdOda0XkGc5JHvm1C7?=
- =?us-ascii?Q?88V/PYkA6GLrA9Oe0ZUYkzcm64OZxne3rsIT/smQGGMN+SXn5Nec/E6PhwI6?=
- =?us-ascii?Q?bi4a8TxaJHRg7WchpVbsP1h2bosp3JplywleexxjMX/JArDG+6lJXr9m3xbZ?=
- =?us-ascii?Q?etGkA8xnfDvteJqLiHN/HtKSDkmS1lASkBLs68sDyG80glDpHlFUuulWCeBu?=
- =?us-ascii?Q?qkZ+Zbik2HTdzv5+rYnNd6Tm6dfNFh/RYfxFG0gnhTkEmBXZf/8We82QfA?=
- =?us-ascii?Q?=3D=3D?=
+	=?utf-8?B?RDZVS1pTc0pJZnVERTlQMmVtdjV0bmdiRmc2aUlCdzZFYUt1TmpjMENaTy9p?=
+ =?utf-8?B?bDk3dXl6Tm9Ud0pXV0hhSzN0MnpHM2d1RGNYNmY4SzZ2enZ3VUUyVjZvR0Zv?=
+ =?utf-8?B?Y29EL1NjMnlDeG1sVVY1bGV2Y3ZReGR6Y09Zbyt0R2d5K1dCVHBHU1o2eFdj?=
+ =?utf-8?B?MHIrYWs3TmNXNTJtTXV1ZDNqRm9yTzNnVnZ5TlZQekcwVk9VaFpLY1V3VkxW?=
+ =?utf-8?B?dFFQZTJCNWthdVVJWGtXUWIxT2ZCUmhuUGZRQkgvV2x3cWppZVN5RlZqa0Z4?=
+ =?utf-8?B?Q1A3RzVFSVN0QXhmZXBUYmkwa2xibUNSNm5TODlYUXFQZnFicXpFOFRrZUQ2?=
+ =?utf-8?B?YnBrdzlKMlRFT252akpsZlJmeS9sSWpsTmtlNUVMMDJrcXROdE9DbnpLNEx3?=
+ =?utf-8?B?ZEFhSkNkVlQ4bTZQQzRNNUZjWDJ1eFRWci8xWDRzVFQ0c01MUkdRZURTNXBN?=
+ =?utf-8?B?Q3pXTUYwaVR3VjBQalJXWGhkKytxeVFpd2p1VFJZYUM5cHFRbDg2cVh3WDNw?=
+ =?utf-8?B?R0wwTnlpdk83OXFrckg0eXlsVlhYQk5HcFJJZ1Y0YUtqUkx2OFRjZVlZU0pV?=
+ =?utf-8?B?K1VsUEtRYzA0aEcra1ZDZUorODZJYzVNQ2xFL0F2N0N4R1g0YkErb29PNloz?=
+ =?utf-8?B?Y3o3QXZQUmVhMmU2Mmw0dVcrMTRZa28rYmZkaEtKekhJemMxcURDeEduWng1?=
+ =?utf-8?B?VEZ2UVJyb21pZnRrbVhoRS85NWJCUXFYbWM0OW5CWVJJZU9lZDRXK0pIb1k3?=
+ =?utf-8?B?TEFOWkFzQjl2QUlheStwYXdOdWoyT2tpK01Wdm1EcDhlUTlLK1RKc2ZxM1hr?=
+ =?utf-8?B?MnkzNXdWMkFlRTZqZDdFUXJ2SENvUW9kVkJvN284TkVaOGgzbmUzL1hKNFBI?=
+ =?utf-8?B?Ny9OdXhPLzg3YkNSZXR0QUF4ZjFWUzBUWnJpb0lBcVprQ1ZRb1NSVnFuTC9p?=
+ =?utf-8?B?dmdRSFZxUWp1UW1ZbjRQQUVSUTlISkt4MXhZMVk5d3dUUnFqTEVIblhkOVpv?=
+ =?utf-8?B?dEdHR0dHTFBXUGNDRDVXM1ZsL0ZodGJMOFB0Q1BTSkYyKytRRlovaVJ2aEZF?=
+ =?utf-8?B?eDFzcWtRVVk2U0pZUG13SFJlYWNFQmxrSVVTelEycFBWK01qZEQ4dHRNbWkv?=
+ =?utf-8?B?U2tCWHJzaExZYTBwdzVnc280OXRaWEN6QkEycGlmTmtJMnFpU1JsUUJPd1hx?=
+ =?utf-8?B?RUNSSkZLcDB6cWw4TWwrT2NqRUNPeUswTWlGVS83aHJoV0EwRUxsNWp5b0Z6?=
+ =?utf-8?B?TVRlRGpZVkZ4QzM4L3phbUxTUHVUdlhJdmdSRUU2VTZCUlZIamR3NHpYOThl?=
+ =?utf-8?B?eEdhcUt5SUxrazY0Nm4waGFYTVFlMFByZ2Y5QzBBRkVCbXdVSWpsNFd3Wlpx?=
+ =?utf-8?B?MCt4aGo3WU5tdCtZdDNKaUJXeE1nc1hlUzZxeVJEaHJGR0grR0FzZTZjV0hV?=
+ =?utf-8?B?ZU5xNzN2TUxvV05xOTZPaEdzSXUwQWhPN2RxYkhDQlpqYmdvd2lSOXVyMlN3?=
+ =?utf-8?B?QStzNDU5dWVOR29NRVByNnh5eVdKQ01pMUhyaHc3Y0ROdElpemU4blNGTXdG?=
+ =?utf-8?B?RDIrSW5sN3ZuR1BpVDErSnNMVStYV3ZPdWE4OEl3WG5OSmdoUzllS0FmKzR0?=
+ =?utf-8?B?Rm1ncDJqYjdxc1NWNnNGN2pSa0RMWjVNQThWeHN5Sm1LeUNPWW13cTVwdnVp?=
+ =?utf-8?B?Vlpwb3pxbU14citrOUU0OXlmUHp1SksrdDlLMUxlNEF2QzZKVTRvOUtudkFQ?=
+ =?utf-8?B?bmZlQVJRZDJoNGdHTElDZDRyK1hmeXh0QmpCMWJROU1ldFFmbTlCTnFyN3FI?=
+ =?utf-8?B?eWRXK0F0L2JQa1JvN2pFcCtnWGYybE1ZS1Q3YTJJQ0taS3pSczFuaGVCdHJ2?=
+ =?utf-8?B?MzhnQW9IT0pFWFVQMFNkbWdXSVcwK0UzeEdtdTBpMnYrQW1zUGMzZHdnNmRK?=
+ =?utf-8?Q?wZ2rnOinhOI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aG95N0EveGpCY3ZtcmhjZ0h5N2dpbStLbS93WXdoaTdWQmhBb0QrZHlRNitz?=
+ =?utf-8?B?ckFpd0EvMmFDU3kreWtmSzd5eCtobis2cDBDYis3SkhZRU9DR1ZZVFVaQ0dC?=
+ =?utf-8?B?bHdSYWI3anM1UnJPNENtSU4xVEI4SGpUUTY1Z0tZQ0dBM1FmK3duNTlwZjBM?=
+ =?utf-8?B?bUc1clF0ejhwSVFpVFhIYmJ4cDc2MWlybHVpSnBocDlXSnpiRW5TOXRWVURE?=
+ =?utf-8?B?bGRXenBBNmxPT01HNG5sZWt2cUJkd3pwa2Vmb3dHK0kzbWpLZ1JnYW91aWtO?=
+ =?utf-8?B?UXEyMXB0aDRzN2hxWkpyOVV4NG1sSEJTbFhEQTVDWExHQ0lpUzl4cmVJaGZa?=
+ =?utf-8?B?NndCUXozM01xMDVQR1VBY0t3VzlKNTBhUE9JUjdHYmpzWjZxVzlzZDZ0UWZq?=
+ =?utf-8?B?cDQ0dHZxTTZ2bW43cHd6ZmRJNEh4Vmszd2loNWdjM25pS2RUR0xuR0NBa0g1?=
+ =?utf-8?B?TXVsRTRKY3VrKzZMNmdUQU0vUlZCWlZlcUNyaG9tVC9oekVxdUVUWmVkVWZh?=
+ =?utf-8?B?L3luTzdLTjVqcWVXZi9xMkhSYldZNEJ6WUZ0S0xSNGFtUEp5VjVhdHdTSDVL?=
+ =?utf-8?B?cUxkKy9aQzRHZzBUWDdZYVI4WHpmTEU1RnJWK1Z1VmwwODc4UGZHaWdNMlNG?=
+ =?utf-8?B?QXMyYlRxMmtGcGUvNXhMaVl4YytJVUh3VWJha2QvdVlNQjBaQUxHc2xQWmQ4?=
+ =?utf-8?B?aFBkVjNZaTBFdGNRV1VtRGhWK2pndVlTeDFCSWFHRnhsUWhOTUMrYzV3M2s5?=
+ =?utf-8?B?Slp1YkVnSU9xMHVqdzlHTlNkbUlySS9WK2VzSkhwUmxZNW1GS1Fkc3NYaHY3?=
+ =?utf-8?B?SkQ0a0dBYkVuajZHb2g0Z1VDdGY2RmFpZXE5bHc0M1lhUFMxWTBTL0Z1bmZ4?=
+ =?utf-8?B?Um5nbWN6RFFkRHNsNEsvZjRLaDVFMW1yRnRJVkhkRXF1SHJaNUJHcm5ybmxD?=
+ =?utf-8?B?QmtqdjRBRm95L3dRY1RTMmFLY0dTMWtxVlpzNWRJb2JzQTNLcEJDOUNCa0FH?=
+ =?utf-8?B?YUVRNkNnTGY5MWpDVlYyVnZuUTZVQkpZd2JkRFk4MFBOMHZiU3puR3BKMCtT?=
+ =?utf-8?B?SkF1MlJJbzV6RVVCemllb3hRWjk4T1Vwei9OWnRucUtXNXo1WStWM3lrK0Jw?=
+ =?utf-8?B?cTJOd1pHd3BxTGROYWVPeitvb25lK29uNjhFSzh5K1hXUGozSi9ZWk00TWVY?=
+ =?utf-8?B?a1FuUWJKalhoMTA2YkYrY3lkNnZYVEp4djRhWktYMHVZUG9lc0hma0haaG1W?=
+ =?utf-8?B?aWFLTGJmZGtycWNIV2xWTXN6S2xpOW9WbjROWC9tYWJaMjNHczhjcW42ZVF3?=
+ =?utf-8?B?VXIrSEE2ckM5cldkQk1yWTM3SUYxV0FUb0tMYVlYZ3RJYzFkVERETmpveC9z?=
+ =?utf-8?B?ZHJTSDJGcVVyZFF0OHBGbFZoWWFGdFRVZ2xZQlNUaXpiNkk0TGpXNDZxeWVV?=
+ =?utf-8?B?SWticE5CTUIxVXpSbm4zTVRTYkRSVzZ2djB4Q01kY2c5c1ZMbllZSnN1TTNG?=
+ =?utf-8?B?U2RzV1I5OXpnVjJla1RYZjN2NWFoeWQxNDZDZFVRcmowYlBFNU9hRFlDTDRI?=
+ =?utf-8?B?d3FvZHI3VjVvUWJOVi9RY0ZpQzVZdDBJbUpuUHdKZzk5L3pxYStqazBKeGor?=
+ =?utf-8?B?VGRqbDJIajhtZW9RZTlqN2RJQU5LQU9hcWxRVDlmMlovcXlCaGhVZ2RiWWdO?=
+ =?utf-8?B?V1o1ZGNNTVZDSUZpL2FISWc1RWhvY0EzYnA2ZVBzZEJPQ3MvSncwMHBNRS9o?=
+ =?utf-8?B?QlY1WmlUR0hKQjZnY29RY0hVOXVNVGRldVEzdis0Mkl4OTFZQlU5VG9SOFYr?=
+ =?utf-8?B?dkNobUU5MW5RYlVlcWVBZllJNkE2NWRCZXdUKzlsUFU1bFJuYWVjVU5Fb09T?=
+ =?utf-8?B?bnJRZEhlbU9jeGFNWTBIZ0ZKaE4wNE80Y21nb0FvcHNXcFB5R1UySStBQW9v?=
+ =?utf-8?B?WU5UUm5aWjBqcWpzNXkyMUZMelRsQnc1Z1AyQTB2Y1JtV2VOdjFzeGVoanVK?=
+ =?utf-8?B?T0x6SWxsQ1dEcEpveXJJb040eDNkUzJzRFNMSUtXYW5FRnhWVm0wdGcxcGFk?=
+ =?utf-8?B?MzZaMkxmY080SkRjUjN5TlIvNFVmaFBkSmNEeU05dFRsa28xNHUwaFRrcmNY?=
+ =?utf-8?Q?0tfzpaoscVGLesAioUt3+hKqj?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2025 19:29:09.4032
+X-MS-Exchange-CrossTenant-Network-Message-Id: a45163bf-6c69-4a30-72e9-08ddb4ea1cd0
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2025 19:46:16.1259
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8c9c9e6-76fc-4dae-c820-08ddb4e7b93c
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636C.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4156
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rwjvse6qviVF7ugmtlEFPr/pSn9QT8sC6rH7k4wKodr/L0RyNobuDLShsX2uq0tlWXnb4MHl0WbdwDfm25zSJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8173
 
-Extend anon_inode_make_secure_inode() to take superblock parameter and
-make it available via fs.h. This allows other subsystems to create
-anonymous inodes with proper security context.
 
-Use this function in secretmem to fix a security regression, where
-S_PRIVATE flag wasn't cleared after alloc_anon_inode(), causing
-LSM/SELinux checks to be skipped.
 
-Using anon_inode_make_secure_inode() ensures proper security context
-initialization through security_inode_init_security_anon().
+On 6/23/2025 7:58 PM, Vlastimil Babka wrote:
+> On 6/23/25 16:13, Vlastimil Babka wrote:
+>> On 6/23/25 16:08, Shivank Garg wrote:
+>>>
+>>>
+>>>>
+>>>> In general, LGTM, but I think the actual fix should be separated from exporting it for guest_memfd purposes?
+>>>>
+>>>> Also makes backporting easier, when EXPORT_SYMBOL_GPL_FOR_MODULES does not exist yet ...
+>>>>
+>>> I agree. I did not think about backporting conflicts when sending the patch.
+>>>
+>>> Christian, I can send it as 2 separate patches to make it easier?
+>>
+>> The proper way is to send the fix without the export, and then add the
+>> export only when adding its user.
+> 
+> Note: AFAIU either way the new user would be depending on a patch in a vfs
+> tree (maybe scheduled for an 6.16 rc and not the next merge window?) if
+> that's an issue for the development.
 
-Fixes: 2bfe15c52612 ("mm: create security context for memfd_secret inodes")
-Suggested-by: David Hildenbrand <david@redhat.com>
-Suggested-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
-The handling of the S_PRIVATE flag for these inodes was discussed
-extensively ([1], [2], [3]).
+Thanks Vlastimil.
 
-As per discussion [3] with Mike and Paul, KVM guest_memfd and secretmem
-result in user-visible file descriptors, so they should be subject to
-LSM/SELinux security policies rather than bypassing them with S_PRIVATE.
+I have sent a revised patch [1] without EXPORT. The EXPORT can be added later through
+the KVM tree with the guest_memfd changes. Hopefully, anon_inode_make_secure_inode() change
+will be merged by then.
 
-[1] https://lore.kernel.org/all/b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com
-[2] https://lore.kernel.org/all/cover.1748890962.git.ackerleytng@google.com
-[3] https://lore.kernel.org/all/aFOh8N_rRdSi_Fbc@kernel.org
+Christian, could you please replace the current patch with V3 [1]? And Would you also
+be willing to provide your Acked-by when EXPORT_SYMBOL_GPL_FOR_MODULES change addition
+is submitted later?
 
-V3:
-- Drop EXPORT to be added later in separate patch for KVM guest_memfd and
-  keep this patch focused on fix.
+Thank you for the patience and review :)
 
-V2: https://lore.kernel.org/all/20250620070328.803704-3-shivankg@amd.com
-- Use EXPORT_SYMBOL_GPL_FOR_MODULES() since KVM is the only user.
+[1] https://lore.kernel.org/all/20250626191425.9645-5-shivankg@amd.com
 
-V1: https://lore.kernel.org/all/20250619073136.506022-2-shivankg@amd.com
-
- fs/anon_inodes.c   | 22 +++++++++++++++++-----
- include/linux/fs.h |  2 ++
- mm/secretmem.c     |  9 +--------
- 3 files changed, 20 insertions(+), 13 deletions(-)
-
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index e51e7d88980a..c530405edd15 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -98,14 +98,25 @@ static struct file_system_type anon_inode_fs_type = {
- 	.kill_sb	= kill_anon_super,
- };
- 
--static struct inode *anon_inode_make_secure_inode(
--	const char *name,
--	const struct inode *context_inode)
-+/**
-+ * anon_inode_make_secure_inode - allocate an anonymous inode with security context
-+ * @sb:		[in]	Superblock to allocate from
-+ * @name:	[in]	Name of the class of the new file (e.g., "secretmem")
-+ * @context_inode:
-+ *		[in]	Optional parent inode for security inheritance
-+ *
-+ * The function ensures proper security initialization through the LSM hook
-+ * security_inode_init_security_anon().
-+ *
-+ * Return:	Pointer to new inode on success, ERR_PTR on failure.
-+ */
-+struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
-+					   const struct inode *context_inode)
- {
- 	struct inode *inode;
- 	int error;
- 
--	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-+	inode = alloc_anon_inode(sb);
- 	if (IS_ERR(inode))
- 		return inode;
- 	inode->i_flags &= ~S_PRIVATE;
-@@ -132,7 +143,8 @@ static struct file *__anon_inode_getfile(const char *name,
- 		return ERR_PTR(-ENOENT);
- 
- 	if (make_inode) {
--		inode =	anon_inode_make_secure_inode(name, context_inode);
-+		inode =	anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
-+						     name, context_inode);
- 		if (IS_ERR(inode)) {
- 			file = ERR_CAST(inode);
- 			goto err;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b085f161ed22..040c0036320f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3608,6 +3608,8 @@ extern int simple_write_begin(struct file *file, struct address_space *mapping,
- extern const struct address_space_operations ram_aops;
- extern int always_delete_dentry(const struct dentry *);
- extern struct inode *alloc_anon_inode(struct super_block *);
-+struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
-+					   const struct inode *context_inode);
- extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
- extern const struct dentry_operations simple_dentry_operations;
- 
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index 589b26c2d553..9a11a38a6770 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigned long flags)
- 	struct file *file;
- 	struct inode *inode;
- 	const char *anon_name = "[secretmem]";
--	int err;
- 
--	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-+	inode = anon_inode_make_secure_inode(secretmem_mnt->mnt_sb, anon_name, NULL);
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
- 
--	err = security_inode_init_security_anon(inode, &QSTR(anon_name), NULL);
--	if (err) {
--		file = ERR_PTR(err);
--		goto err_free_inode;
--	}
--
- 	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
- 				 O_RDWR, &secretmem_fops);
- 	if (IS_ERR(file))
--- 
-2.43.0
+Best Regards,
+Shivank
 
 
