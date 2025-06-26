@@ -1,154 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-53047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E26AE9455
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 04:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60913AE9459
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 04:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052541C41E9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 02:42:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599DE1C41FD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 02:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F751F12E9;
-	Thu, 26 Jun 2025 02:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9FA1F4168;
+	Thu, 26 Jun 2025 02:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPQfaBWE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BlvhXbm5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54CE224F6;
-	Thu, 26 Jun 2025 02:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1510918C332;
+	Thu, 26 Jun 2025 02:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750905746; cv=none; b=T4OUixTJqmQur2yeT9EJL4pDzEz44aBp/Qr2mXYQZztYuRqNOveArjU74Uqih0evGnCJ9jI1egC02wzsrg9PVHaFmKfldtbdu6vrJ0OgxGBHoNBtxLnZhRrrZ2sKR2UIacMejVVNg1QP1J1HK2xe0/ZMnuSwryp4Oi9h8XeoyVI=
+	t=1750905784; cv=none; b=XfEg5/Tuz6sT5gLcxq0m8E/F7FkGQcOks954+Tzq6FcPiJG9nH3U8hm1fovyrJ0hEj1KtYnAkj4eODFrDifc9REZX2ZR4Rf+uZYB0pK/Y2q+54j0VztJ7K4Vdoc6SKWao6edJHdX9dzXC5Td5Qz5tJm0+3GyvZe8YJyDprJ7ju4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750905746; c=relaxed/simple;
-	bh=od6P6pmOSXxNT727X5ed5nqh/+UXRwgTwbz0gpLU9MQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YY5DwyacTgnCI8HtFEVMRzC0DzNg8DhvcD+9Qm5wl9rEjPdOJwwuYWRhAVbN3wQ8+imn7T6CNqyiCIg99JWV784j0s0I7vLfBKC4B4HWHKTvOFX19qznFiI7/9R2y/l932Av1NKEApbyDX9HbAAx5aMgl1Uq6zAR0xb5mYVK6Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPQfaBWE; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7d412988b14so53158385a.3;
-        Wed, 25 Jun 2025 19:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750905744; x=1751510544; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=od6P6pmOSXxNT727X5ed5nqh/+UXRwgTwbz0gpLU9MQ=;
-        b=bPQfaBWEmiYT075vpsvayhgbkldu7kh5H84jRZtMAEc2TOgzESLihptGUyA7vAukd4
-         ZAg1Lu/dS4nxDs/8HRHXWyBIgqWL3k/9i3wcZgTKWd/UICKuW1hMfoRAES7hQedXi8Z2
-         L51ojSsdvEyE+eTryIW5HOgOyt8uywUPz8B5jaXz7imb7MvjDYZWmmuqe5MPMsr1HSoC
-         pSJKKllCmXmYwk86uMqCEW5qft+RVaCd5VUEazBxvq438U488RAk3lZV+9fpN1URg/Yi
-         7My/a5Jv0ts9Jrsn1z582PsCWGeCwjllsZWgo+SqmkpPlhJLKn8a0CpVM+pdUdfRqxsc
-         Bkcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750905744; x=1751510544;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=od6P6pmOSXxNT727X5ed5nqh/+UXRwgTwbz0gpLU9MQ=;
-        b=BwLKVsERe5TnIhe0MSjOC5d/UHGQQXM76I0x0oDA8ZLI/ms/2rTtQ/KORcd/nLV8uy
-         4/eNtCpPprieDaR0DwdZ5c9lBLaLrqVQLGq+sdOmD+q6jo6rEOY9R+ceNMhVOq7qNURK
-         Dgdz+9DZl0GextdoauUrW8KEYz0iC+PWEC27YwGwk6LT/zq6QHZG91ZG/TkyT+h7bpfs
-         2Icy28267GERctm48vsBNxyEmxuKgdjPAHRtq3UN/bKz6yiTRgW2Jk77umo475/SUb6j
-         Db4qio1YI0pMTBiKOxU3UkNQRKBe1wmVZsL/fibXdUYUDf5y3RIepUmsua56rspo8nU7
-         4R7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUbqYaezGl2yxstNRsoUP+ultkI5vn1lI3nwLky2ic7rMsDRIVdLj6iW/QiM7WZE9vZ1ASmv7FNjxewhWIV@vger.kernel.org, AJvYcCWiEAowxCRMKT3ccL2BmGPu8wa61/qzptbdsa6WCfv8S5p1lrhOSSZ4z+FB0J6AoiT5CQ+tpvt6YtmrHs5m@vger.kernel.org, AJvYcCWtkJB0OXvKkZwLhu58Vit3vVUpuyUY1Ox0k5tivZBGs2NjXrNgtgeZxUvbAg+6Bvn3Pt3HQg36BZSz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmj1lz+GFt290SuVHIcFLVxktkxCiVok5wVKj0sa9kyuUcsSrq
-	w1Q5NJWv4EBRH2TCFfS6bQPovJB5lyKq+FHA24qC4baT2rin6MbKlx55yv/IRWDTqTkEyg2ubV8
-	/E/tePAXcgIGzWQGZ2rozMsXytyk5cy0=
-X-Gm-Gg: ASbGncsJcW5G9jD19BqwYHVk60VTwRwKYp3ynT1QpKyzctT90Cwk5W6050DhGk5QGkg
-	5S5PSwDjjzq6k4xjC+yfsuCljeF5Y5xIzyF+Yweo2W5MwKsp7B6VsSADGZXOgi7FyJBK9gp0L44
-	gnxeb2bup3uSlLXpGa9Xw09mahOH/A+eGuJgPdC6hK+si4
-X-Google-Smtp-Source: AGHT+IESVy3V/n5VkLw86F20P5j1fnT7XdSirSPKlNbvL+IPuoLHuUJiiWnuFFgJTKm0pqp4XqQwdE2Y+JeaDXYNWNE=
-X-Received: by 2002:a05:620a:6844:b0:7d0:9c51:498a with SMTP id
- af79cd13be357-7d4296d2f5amr667522985a.13.1750905743658; Wed, 25 Jun 2025
- 19:42:23 -0700 (PDT)
+	s=arc-20240116; t=1750905784; c=relaxed/simple;
+	bh=JBpdw75QCGr81iwmekoGx8INzICXSF22MAqQ7zgFJ2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=F+dhke4beDRbPrqIPgnThgxyP/h5dOMQOV7iU9I/LOktqMgVfXWhoBd0zGBq2q9JtaEtu+8scUXvEr2zf2qH5YlUw9TKJP4MZNs0MNaTSZw8GzS6YfHuZx1TjKXbb+Iak3ntevbm0S2gKQDQUW6tLW+pNXc6heMMDxQ5a8Hjmm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BlvhXbm5; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description;
+	bh=24+mUdtrCzI4Op7D58pQppiwPVluWWu23vHUqIu9MSA=; b=BlvhXbm5dSfUVXaU4o2nKEHlOP
+	/OZ1h5AtCfQReWwNK32UTQm/nbB5948isLYLinOiIeQaR5d4qLeiq6BY2P/R+PlVuWKiM240AFTe+
+	TYMq7XLpj/feFD+y9NIACgZa6f6oRCna93ugt2fVtp8oLq3nBsPgMt1B6Iu8fCjTR4S/JhWmhp01o
+	Rl8lJ1mpKOUAXI5/DH0ahDc0ogHF0EpU64NZkHj+ta47eRnvj3dFTu1eM6iKH1iEllPelFx+QLR0t
+	6/pMHT+TCDqBR37MjaBxcorzic0CROyJ093A/469TMPmW0ionInk5EmBxIdUPb9rbNHgGWBfHWWCA
+	nLm3aJcg==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUcZE-000000061UF-3fko;
+	Thu, 26 Jun 2025 02:42:26 +0000
+Message-ID: <5f7b85d3-5c72-482a-9f80-55578c786800@infradead.org>
+Date: Wed, 25 Jun 2025 19:42:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aFqyyUk9lO5mSguL@infradead.org> <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
- <aFuezjrRG4L5dumV@infradead.org> <88e4b40b61f0860c28409bd50e3ae5f1d9c0410b.camel@kernel.org>
- <aFvbr6H3WUyix2fR@infradead.org> <6ac46aa32eee969d9d8bc55be035247e3fdc0ac8.camel@kernel.org>
- <aFvkAIg4pAeCO3PN@infradead.org> <11735cf2e1893c14435c91264d58fae48be2973d.camel@kernel.org>
-In-Reply-To: <11735cf2e1893c14435c91264d58fae48be2973d.camel@kernel.org>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 26 Jun 2025 10:41:47 +0800
-X-Gm-Features: Ac12FXwGQp7NN8Rq2OfqUZAlxy-GMLdddRaKYMN-0KtPUqnI-UrmaksSbjAnY6U
-Message-ID: <CALOAHbDtFh5P_P0aTzaKRcwGfQmkrhgmk09BQ1tu9ZdXvKi8vQ@mail.gmail.com>
-Subject: Re: [PATCH] xfs: report a writeback error on a read() call
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, david@fromorbit.com, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, yc1082463@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 29/32] docs: add documentation for memfd preservation
+ via LUO
+To: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org,
+ jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
+ rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+ ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org,
+ aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org,
+ tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com,
+ roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk,
+ mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org,
+ hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com,
+ joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com,
+ song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org,
+ gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org,
+ cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+ Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+ aleksander.lobakin@intel.com, ira.weiny@intel.com,
+ andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+ bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+ stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+ brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20250625231838.1897085-1-pasha.tatashin@soleen.com>
+ <20250625231838.1897085-30-pasha.tatashin@soleen.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250625231838.1897085-30-pasha.tatashin@soleen.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 25, 2025 at 10:06=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
->
-> On Wed, 2025-06-25 at 04:56 -0700, Christoph Hellwig wrote:
-> > On Wed, Jun 25, 2025 at 07:49:31AM -0400, Jeff Layton wrote:
-> > > Another idea: add a new generic ioctl() that checks for writeback
-> > > errors without syncing anything. That would be fairly simple to do an=
-d
-> > > sounds like it would be useful, but I'd want to hear a better
-> > > description of the use-case before we did anything like that.
 
-As you mentioned earlier, calling fsync()/fdatasync() after every
-write() blocks the thread, degrading performance=E2=80=94especially on HDDs=
-.
-However, this isn=E2=80=99t the main issue in practice.
-The real problem is that users typically don=E2=80=99t understand "writebac=
-k
-errors". If you warn them, "You should call fsync() because writeback
-errors might occur," their response will likely be: "What the hell is
-a writeback error?"
 
-For example, our users (a big data platform) demanded that we
-immediately shut down the filesystem upon writeback errors. These
-users are algorithm analysts who write Python/Java UDFs for custom
-logic=E2=80=94often involving temporary disk writes followed by reads to pa=
-ss
-data downstream. Yet, most have no idea how these underlying processes
-work.
+On 6/25/25 4:18 PM, Pasha Tatashin wrote:
+> +Cancellation
+> +  If the liveupdate is canceled after going into prepared phase, the memfd
+> +  functions like in normal phase.
 
-> >
-> > That's what I mean with my above proposal, except that I though of an
-> > fcntl or syscall and not an ioctl.
->
-> Yeah, a fcntl() would be reasonable, I think.
->
-> For a syscall, I guess we could add an fsync2() which just adds a flags
-> field. Then add a FSYNC_JUSTCHECK flag that makes it just check for
-> errors and return.
->
-> Personally, I like the fcntl() idea better for this, but maybe we have
-> other uses for a fsync2().
+We accept one 'l' or two 'l's in cancel[l]ing words, but it would be nice to be
+consistent here.
 
-What do you expect users to do with this new fcntl() or fsync2()? Call
-fsync2() after every write()? That would still require massive
-application refactoring.
+-- 
+~Randy
 
-Writeback errors are fundamentally bugs in the filesystem/block
-layer/driver stack. It makes no sense to expose kernel implementation
-flaws to userspace, forcing developers to compensate for kernel-level
-issues with additional syscalls.
-
-Most users neither have the patience nor should they need to
-understand the deepest intricacies of Linux kernel internals. The
-proper fix should happen in the kernel=E2=80=94not by pushing workarounds o=
-nto
-applications.
-
---=20
-Regards
-Yafang
 
