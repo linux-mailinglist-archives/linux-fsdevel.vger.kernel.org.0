@@ -1,269 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-53059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8090BAE9610
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 08:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3536AE968A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 09:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BACD94A4D40
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 06:22:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3C94A0130
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 07:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7A32264C6;
-	Thu, 26 Jun 2025 06:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6274D238D53;
+	Thu, 26 Jun 2025 07:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M2WqySIx"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lZMv50Vm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yk217dFj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yMxTBd+a";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="duk1rWj/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC7E84D08;
-	Thu, 26 Jun 2025 06:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266452264A2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 07:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750918950; cv=none; b=hfv/xOaZr4duHbRLXbhV0OE56A9ari6exGNv3q582p3A++ocDeVy1U2nB3zlBPA02cmSIOIfu+blqDw07V/eSemFd11y5/BPbkQOO5ihOY3mC11sABhXsd9bi8hTkRp77aVoPX2N3zi/hL2+QDE3NYXHuh7GKYogyJNxWocCNUM=
+	t=1750921258; cv=none; b=pNY4f1qNk7kM4lripF5lrsWKpPWp33r1GLIqfZnYP7DyzhPuay+k8/KkZccOsaQEAcZ89hOuwBDshh0A4Lfyxio+g3VWNrV0/ckbl6d5KphwvJLv9yNbXOVMNqm6tNfCaS+LHR9m0xKzRbcEgs9aS9kLFPhgujzwTGNGs8Tj5fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750918950; c=relaxed/simple;
-	bh=WkPZPo3daUaXRErnYhHy9ValI38EN3AVQHNhMtFZnbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Um3tAI4YrKIzrhhKIlo+SCRaVKFf6zAcEhaXvLv6zt/8qCsqldGXmTPy+RAf8K2msEUMMzhl/I0OVmKmQR7oTbsYEqPjMFd9bNsma56QXTeRE+9pjMIldM33d9O/Cttm/PoITZE7vXgDiujTjXoQL0wNOaNnFssHezCvOVOcsg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M2WqySIx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q4B5bm031140;
-	Thu, 26 Jun 2025 06:22:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Wdfnoc
-	0htXViaYtOXgTxlOPt/zSW2VKAxS55sMD+Oc8=; b=M2WqySIxQCyN+8AM1iOsir
-	rmiQYCH+MBdOD0lQmIiNwope5LukSXncFje/ej0GeL2TWK+QkG7Ajh9dZVnikJSF
-	D06iSH5jZiYjUEfB9RYIckGEWdY9VfiuTIvc2zYOxrihlNNFM3XXIyWHl6S3cDYq
-	0Iw1mBbXcq3vX2Mf7D5mQ+xQ2eKwbQjxkaQ2fw1Mi5IOE0VQP6e/AnFs/62hPZpS
-	DQzIhUUIeORWKPN7lSj6IepB9nkkKD4zXnFQ5UxSfuP1Wp6HTcVmRW9eICuCDCWW
-	D2p8PAJw3VakiBCnu2A8cuPERpyUrUPilixWQGIA+lO6GARcIRWD9FA1SL7YK8hg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dk6446ph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 06:22:15 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55Q6LDOm025786;
-	Thu, 26 Jun 2025 06:22:15 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dk6446pd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 06:22:14 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q3Z0v2014988;
-	Thu, 26 Jun 2025 06:22:14 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47e72twpc0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 06:22:14 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55Q6MD5Q29360894
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 26 Jun 2025 06:22:13 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E76935820B;
-	Thu, 26 Jun 2025 06:22:12 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1360F581FE;
-	Thu, 26 Jun 2025 06:22:09 +0000 (GMT)
-Received: from [9.204.205.94] (unknown [9.204.205.94])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 26 Jun 2025 06:22:08 +0000 (GMT)
-Message-ID: <cb93bc0a-5412-46fd-8fe1-3e13b5b08cca@linux.ibm.com>
-Date: Thu, 26 Jun 2025 11:52:07 +0530
+	s=arc-20240116; t=1750921258; c=relaxed/simple;
+	bh=FnzgBhRtwtMX6NcNxvTe2b7odRwD+FhTrz0zuPL4f5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a601w0kJgN1mul/n2iIvOU3XtJrYVk3gteyh2JU/iEpJqDrxXMrrwv1sXd+mx6pOGCU9fic8TcUsnBTN7uANvL1ZxHE5x1arGXZZppORecve3LBSgCEtumz4vkflAdZPFoKEf+qye4s6gPiy2NhmIg4wfcLxVtlAR1bDaLwnEmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lZMv50Vm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yk217dFj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yMxTBd+a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=duk1rWj/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 73B4C1F38D;
+	Thu, 26 Jun 2025 07:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750921250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TYok1CSTlk8p1Np6qemtLfABm+ux0CRPztAQma9oeEE=;
+	b=lZMv50VmlOww0cnCR4bTGtaG3/YCEjZIJ6hJx822LFw4jaavAR8G/Vy1Czng5OQFt2rpqo
+	8VmqFPqt9ymrt5jtflDCrYGH6sWEAnGXE85tQtvLgZkttXeDUBhoufkSAvEVNeWckZpwCd
+	ztOc1h53cwe42qRNMb2hGgkz02xH7yA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750921250;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TYok1CSTlk8p1Np6qemtLfABm+ux0CRPztAQma9oeEE=;
+	b=Yk217dFjxdhtP6WJfYgThK3CuZkiB8huYjwTlCVshEt762FxRendeV0OZrAj5IskI3DNAo
+	rfKTcHIVDloxw4Dw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750921245; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TYok1CSTlk8p1Np6qemtLfABm+ux0CRPztAQma9oeEE=;
+	b=yMxTBd+a/iQsREcegZkmiqbw/0ihN+mIHnZUsNghMtxNtc5daEPLhpUO2UExxfE7K3Noak
+	3XaGXFZvjty7loovjUFQ8MDetWfl03O/9WxgabqmYn/8/VOiaXn3znmzfCr9mb6E0iQbOh
+	TC4CiZ9L000hnWn8ljU/pGKpcCQiiUQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750921245;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TYok1CSTlk8p1Np6qemtLfABm+ux0CRPztAQma9oeEE=;
+	b=duk1rWj/y7XGLICouNKWy5v3+3YZ0SE686lbDg8QHueE1OU+FF3/HRAi+tJCueom7mmVlT
+	+Ehk8DKnFHhM5LBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6465013188;
+	Thu, 26 Jun 2025 07:00:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Lfl9GB3wXGgXIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 26 Jun 2025 07:00:45 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EC3E1A0953; Thu, 26 Jun 2025 09:00:44 +0200 (CEST)
+Date: Thu, 26 Jun 2025 09:00:44 +0200
+From: Jan Kara <jack@suse.cz>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Tejun Heo <tj@kernel.org>, Maxim Patlasov <mpatlasov@parallels.com>, 
+	Jan Kara <jack@suse.cz>, Zach O'Keefe <zokeefe@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Brendan Jackman <jackmanb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
+	Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH] mm, vmstat: remove the NR_WRITEBACK_TEMP node_stat_item
+ counter
+Message-ID: <rr2hxi5dxoh6n4pbx5pcyelquvotbksfy2d2m5ycydafog65j4@rcekxluoecrr>
+References: <20250625-nr_writeback_removal-v1-1-7f2a0df70faa@suse.cz>
+ <CAJnrk1YcA9MBC+KQdLE7B-CspoO5=xjkAf78swP6Q6UPijJaug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coredump: reduce stack usage in vfs_coredump()
-Content-Language: en-GB
-To: Arnd Bergmann <arnd@arndb.de>,
-        Marek Szyprowski
- <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-        Jann Horn <jannh@google.com>, Luca Boccassi <luca.boccassi@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Roman Kisel <romank@linux.microsoft.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250620112105.3396149-1-arnd@kernel.org>
- <404dfe9a-1f4f-4776-863a-d8bbe08335e2@samsung.com>
- <CGME20250625115426eucas1p17398cfcd215befcd3eafe0cac44b33a7@eucas1p1.samsung.com>
- <8f080dc3-ef13-4d9a-8964-0c2b3395072e@samsung.com>
- <cb0c926f-15be-4400-a9b9-0122a6238fea@app.fastmail.com>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <cb0c926f-15be-4400-a9b9-0122a6238fea@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA0OSBTYWx0ZWRfX2FZfc54LZBce 4XnnaQHK19tgKjD6W6SVblrKemCIEZN4C5gp0h4TfntSUxD2Tq9H2Bnt95BNvpUiKvQ+ycdfyVZ yO/ro61tqytKs1ZOHVKBe0xadcrUxQWlNj8WzlP4LCmybY7PJ7WTAHpZ40yeAGye9kQUbtZMGsR
- QIxurCSs3rF2bq13qK1JSuNtrGg2agQp3Pjs+0AOJfi+cUo6CysJaQ0lAVZIggmftwTTg6f42Fn x6jAWu3BbS2Jb9gpfGjQyX/Mg5/olqxF4mSU5rNFRj/aspJMlE8nCccqo6+cao3ZSuttSAZiUw/ FL8Z6/Y/1XU8hxwx7KoXcqLr5SAavoiuNYHUEwkDWkyvSLcxsKs+0zzg4ecNsUD39QVHFDTI1kY
- YWWOiTRA2hhuT6Daf9bFxGPnU/QExJJzvy+tNjc2Y3aTs3nNI4sykPSHK1T9vVW9koglkEWN
-X-Proofpoint-ORIG-GUID: bUcB70Q8gqodglWC38c8gomlNFJWYJrW
-X-Proofpoint-GUID: t9d9wTEmMFnHZVLxTPySLD3U5-kjZE5u
-X-Authority-Analysis: v=2.4 cv=BfvY0qt2 c=1 sm=1 tr=0 ts=685ce717 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=oBfdlqT_uavYyDoXnq8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_03,2025-06-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 clxscore=1011 suspectscore=0 adultscore=0 spamscore=0
- impostorscore=0 mlxlogscore=585 malwarescore=0 phishscore=0 bulkscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506260049
+In-Reply-To: <CAJnrk1YcA9MBC+KQdLE7B-CspoO5=xjkAf78swP6Q6UPijJaug@mail.gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RSPAMD_EMAILBL_FAIL(0.00)[jack.suse.com:query timed out];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
+On Wed 25-06-25 14:38:01, Joanne Koong wrote:
+> On Wed, Jun 25, 2025 at 8:51 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+> >
+> > The only user of the counter (FUSE) was removed in commit 0c58a97f919c
+> > ("fuse: remove tmp folio for writebacks and internal rb tree") so follow
+> > the established pattern of removing the counter and hardcoding 0 in
+> > meminfo output, as done recently with NR_BOUNCE. Update documentation
+> > for procfs, including for the value for Bounce that was missed when
+> > removing its counter.
+> >
+> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> > ---
+> > The removal of the counter is straightforward. The reason for the large
+> > Cc list is that there is a comment in mm/page-writeback.c function
+> > wb_position_ratio() that mentions NR_WRITEBACK_TEMP, and just deleting
+> > the sentence feels to me it could be the wrong thing to do - maybe the
+> > strictlimit feature itself is now obsolete? It sure does mention FUSE
+> > as the main reason to exist, but commit 5a53748568f79 that introduced it
+> > also mentions slow USB sticks as a possibile scenario. Has that
+> > happened? I'm not familiar enough with this so I'd rather highlight this
+> > and ask for input here than make "git grep NR_WRITEBACK_TEMP" return
+> > nothing.
+> 
+> My understanding is that even without the fuse use case, strictlimit
+> is still used for other devices via the /sys/class/bdi interface (eg
+> /sys/class/bdi/<bdi>/strict_limit) so I don't think the feature itself
+> is obsolete.
+> 
+> It's not clear to me whether fuse still needs strictlimit now that it
+> doesn't have tmp writeback pages, but it'd be great to get an answer
+> to this, as strictlimit currently leads to too much dirty throttling
+> when large folios are enabled in fuse.
 
-On 25/06/25 6:59 pm, Arnd Bergmann wrote:
-> On Wed, Jun 25, 2025, at 13:54, Marek Szyprowski wrote:
->> On 25.06.2025 13:41, Marek Szyprowski wrote:
->>> This change appears in today's linux-next (next-20250625) as commit
->>> fb82645d3f72 ("coredump: reduce stack usage in vfs_coredump()"). In my
->>> tests I found that it causes a kernel oops on some of my ARM 32bit
->>> Exynos based boards. This is really strange, because I don't see any
->>> obvious problem in this patch. Reverting $subject on top of linux-next
->>> hides/fixes the oops. I suspect some kind of use-after-free issue, but
->>> I cannot point anything related. Here is the kernel log from one of
->>> the affected boards (I've intentionally kept the register and stack
->>> dumps):
->> I've just checked once again and found the source of the issue.
->> vfs_coredump() calls coredump_cleanup(), which calls coredump_finish(),
->> which performs the following dereference:
->>
->> next = current->signal->core_state->dumper.next
->>
->> of the core_state assigned in zap_threads() called from coredump_wait().
->> It looks that core_state cannot be moved into coredump_wait() without
->> refactoring/cleaning this first.
+Well, Miklos would be the definitive source of truth here but as far as I
+know strictlimit is still desirable for FUSE even without
+NR_WRITEBACK_TEMP. Otherwise dirty pages in mappings where writeback can be
+potentially very slow (and definitely under userspace control) could
+consume most of the global dirty limit which is not what you usually want.
+That being said I can definitely see there are usecases of FUSE mounts
+where you don't want this extra throttling. But then it's upto sysadmin to
+configure min/max_ratio properly in these cases to avoid excessive
+throttling.
 
+Regarding the comment, I'm frankly not certain how strictlimit solved
+NR_WRITEBACK_TEMP issue because NR_WRITEBACK_TEMP was never included in any
+computations there AFAICS. It just helped to limit amount of outstanding
+dirty pages for FUSE mappings and thus indirectly limited the scope of
+NR_WRITEBACK_TEMP issue. Anyway I think the sentence is obsolete now and
+deleting it is indeed the right solution because FUSE writeback is now
+properly accounted in the dirty limit.
 
-IBM CI has also reported the similar crash, while running ./check 
-tests/generic/228 from xfstests. This issue is observed on both xfs and 
-ext4.
-
-
-Traces:
-
-
-[28956.438544] run fstests generic/228 at 2025-06-26 01:02:28
-[28956.806452] coredump: 4746(sysctl): Unsafe core_pattern used with 
-fs.suid_dumpable=2: pipe handler or fully qualified core dump path 
-required. Set kernel.core_pattern before fs.suid_dumpable.
-[28956.809279] BUG: Unable to handle kernel data access at 
-0x3437342e65727d2f
-[28956.809287] Faulting instruction address: 0xc0000000010fe718
-[28956.809292] Oops: Kernel access of bad area, sig: 11 [#1]
-[28956.809297] LE PAGE_SIZE=64K MMU=Hash  SMP NR_CPUS=8192 NUMA pSeries
-[28956.809303] Modules linked in: loop nft_fib_inet nft_fib_ipv4 
-nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 
-nft_reject nft_ct nft_chain_nat nf_nat bonding nf_conntrack 
-nf_defrag_ipv6 tls nf_defrag_ipv4 rfkill ip_set nf_tables nfnetlink 
-pseries_rng vmx_crypto xfs sr_mod cdrom sd_mod sg ibmvscsi ibmveth 
-scsi_transport_srp fuse
-[28956.809347] CPU: 25 UID: 0 PID: 4748 Comm: xfs_io Kdump: loaded Not 
-tainted 6.16.0-rc3-next-20250625 #1 VOLUNTARY
-[28956.809355] Hardware name: IBM,8375-42A POWER9 (architected) 0x4e0202 
-0xf000005 of:IBM,FW950.80 (VL950_131) hv:phyp pSeries
-[28956.809360] NIP:  c0000000010fe718 LR: c0000000001d0d20 CTR: 
-0000000000000000
-[28956.809365] REGS: c00000009a80f720 TRAP: 0380   Not tainted 
-(6.16.0-rc3-next-20250625)
-[28956.809370] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  
-CR: 88008844  XER: 20040000
-[28956.809385] CFAR: c0000000001d0d1c IRQMASK: 1
-[28956.809385] GPR00: c0000000001d0d20 c00000009a80f9c0 c000000001648100 
-3437342e65727d2f
-[28956.809385] GPR04: 0000000000000003 0000000000000000 0000000000000000 
-fffffffffffe0000
-[28956.809385] GPR08: c0000000c97baa00 0000000000000033 c0000000b9039000 
-0000000000008000
-[28956.809385] GPR12: c0000000001dd158 c000000017f91300 0000000000000000 
-0000000000000000
-[28956.809385] GPR16: 0000000000000000 0000000000000018 c0000000b9039000 
-c0000000b9039d60
-[28956.809385] GPR20: c0000000b9039080 c0000000b9039d48 0000000000040100 
-0000000000000001
-[28956.809385] GPR24: 0000000008430000 c00000009a80fd30 c0000000c97baa00 
-c000000002baf820
-[28956.809385] GPR28: 3437342e65727d2f 0000000000000000 0000000000000003 
-0000000000000000
-[28956.809444] NIP [c0000000010fe718] _raw_spin_lock_irqsave+0x34/0xb0
-[28956.809452] LR [c0000000001d0d20] try_to_wake_up+0x6c/0x828
-[28956.809459] Call Trace:
-[28956.809462] [c00000009a80f9c0] [c00000009a80fa10] 0xc00000009a80fa10 
-(unreliable)
-[28956.809469] [c00000009a80f9f0] [0000000000000000] 0x0
-[28956.809474] [c00000009a80fa80] [c0000000006f1958] 
-vfs_coredump+0x254/0x5c8
-[28956.809481] [c00000009a80fbf0] [c00000000018cf3c] get_signal+0x454/0xb64
-[28956.809488] [c00000009a80fcf0] [c00000000002188c] do_signal+0x7c/0x324
-[28956.809496] [c00000009a80fd90] [c000000000022a00] 
-do_notify_resume+0xb0/0x13c
-[28956.809502] [c00000009a80fdc0] [c000000000032508] 
-interrupt_exit_user_prepare_main+0x1ac/0x264
-[28956.809510] [c00000009a80fe20] [c000000000032710] 
-syscall_exit_prepare+0x150/0x178
-[28956.809516] [c00000009a80fe50] [c00000000000d068] 
-system_call_vectored_common+0x168/0x2ec
-[28956.809525] ---- interrupt: 3000 at 0x7fff82b24bf4
-[28956.809529] NIP:  00007fff82b24bf4 LR: 00007fff82b24bf4 CTR: 
-0000000000000000
-[28956.809534] REGS: c00000009a80fe80 TRAP: 3000   Not tainted 
-(6.16.0-rc3-next-20250625)
-[28956.809538] MSR:  800000000280f033 
-<SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48004802  XER: 00000000
-[28956.809554] IRQMASK: 0
-[28956.809554] GPR00: 0000000000000135 00007ffffe2ecf50 00007fff82c37200 
-ffffffffffffffe5
-[28956.809554] GPR04: 0000000000000000 0000000000000000 0000000006500000 
-00007fff82e3e120
-[28956.809554] GPR08: 00007fff82e369e8 0000000000000000 0000000000000000 
-0000000000000000
-[28956.809554] GPR12: 0000000000000000 00007fff82e3e120 0000000000000000 
-0000000000000000
-[28956.809554] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[28956.809554] GPR20: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000001
-[28956.809554] GPR24: 0000010009812f10 0000000000000000 0000000000000001 
-0000000123099fe8
-[28956.809554] GPR28: 0000000000000000 0000000000000003 0000000000000000 
-0000000006500000
-[28956.809610] NIP [00007fff82b24bf4] 0x7fff82b24bf4
-[28956.809614] LR [00007fff82b24bf4] 0x7fff82b24bf4
-[28956.809618] ---- interrupt: 3000
-[28956.809621] Code: 38429a1c 7c0802a6 60000000 fbe1fff8 f821ffd1 
-8bed0932 63e90001 992d0932 a12d0008 3ce0fffe 5529083c 61290001 
-<7d001829> 7d063879 40c20018 7d063838
-[28956.809641] ---[ end trace 0000000000000000 ]---
-[28956.812734] pstore: backend (nvram) writing error (-1)
-
-
-If you happen to fix this, please add below tag.
-
-
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-
-
-Regards,
-
-Venkat.
-
-> Thanks for the analysis, I agree that this can't work and my patch
-> just needs to be dropped. The 'noinline_for_stack' change on
-> its own is probably sufficient to avoid the warning, and I can
-> respin a new version after more build testing.
->
->       Arnd
->
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
