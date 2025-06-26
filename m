@@ -1,155 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-53065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007CDAE98A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 10:40:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBFFEAE98B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 10:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C72D7B0D42
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 08:38:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73887173DF9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 08:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F000E29ACED;
-	Thu, 26 Jun 2025 08:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A54C2957A9;
+	Thu, 26 Jun 2025 08:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IStPaNkt"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tjA/Rnk+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zstK+Uwb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580402676CD;
-	Thu, 26 Jun 2025 08:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0170F19D087;
+	Thu, 26 Jun 2025 08:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750927096; cv=none; b=bWYWBeXZ4fuZx/6xCeQ1+sXgW7AmTufpxy8gYXBxmAPvrv4xjWLePavHERg/z8fn32oyy7OHpXjbj3EyS7wt+qKQcae+06ov6E4J9nL1iOoKTFgj4+5AOYMP4EjL8mjIX1d4vMu7xb08fugiMUK5MC1yQXe6Qc+fmxRKKEkUof4=
+	t=1750927393; cv=none; b=gYGiEBljcYARq8OJNiOs/HaAxu8yxvcXGnSF2kIHuLXkcHF2A+yn+ij+cOksewZG4jrucimYgRXdF3LUXVlyGlDi5nbaACfasEluSpcOHIpJc+5/1O+kfKC5LpcGyKqNRi4XHpUg2nWnt5oyZBXUUU1dYDF/EpsQiqeoLXbUfik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750927096; c=relaxed/simple;
-	bh=fcdRgxgO6/Bua4siffnEn76OuY0xSirhNWgSf6Wk9cM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sEDMz7ppVly78KcqjeHZeYWE9IcpI8fesQMJxj/du5Jgej3nDZjuI9QaZg4c2OZpgbYJY50wu9AUwC4+UwznurSAsGmXY2x2YjynCjm3eaDoF+ZUFZuLG+Eb9OMAoO88hjuucUmhoCMjrFva8muYEWKuUhIAr7Xj0grHz3+Jwo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IStPaNkt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35BF9C4CEEB;
-	Thu, 26 Jun 2025 08:38:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750927095;
-	bh=fcdRgxgO6/Bua4siffnEn76OuY0xSirhNWgSf6Wk9cM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IStPaNktKbZJtQ8Dl4D0soJjKG+qYCV9ZOQq2F1T3FjzPtmL8pPe1eEueTBeSi4xz
-	 lFBG6fliUFk/fLZ/inJMpVJRXVBX5gOx8WcHvy8lwXcPXIbUJwrD+qKGKNbOnTIECg
-	 bXUzICNFseEaDiFuTEmS4yC3WHfyzi2gkPq1xvwQBtshFDMG6l8RolPTf6WESj+FYq
-	 6hJbqwNcmQYjqL2dDzyoJTCDjMlpvBkOpR33z3b2U3Nb+64mpup0WDC52pmXVaJSaY
-	 rZHW8r3ZZVl2xVg+Z+7BZeyZC+7XeJrEcWJ0VTE2XOiNW9hyOrFLKKTsFCWX/dMttl
-	 fbIeNp3E61TWg==
-Date: Thu, 26 Jun 2025 10:38:11 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Qu Wenruo <wqu@suse.com>, Christoph Hellwig <hch@lst.de>
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, jack@suse.cz
-Subject: Re: [PATCH 1/6] fs: add a new remove_bdev() super operations callback
-Message-ID: <20250626-schildern-flutlicht-36fa57d43570@brauner>
-References: <cover.1750895337.git.wqu@suse.com>
- <c8853ae1710df330e600a02efe629a3b196dde88.1750895337.git.wqu@suse.com>
+	s=arc-20240116; t=1750927393; c=relaxed/simple;
+	bh=DKrElHS/l9lkSY/LdvJgsJ229eH3cP1Pn2QsP3Kt0Wo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f9bePWy6UYhwh7zGcpcQwlCQE9NemvrexjpW5C23Mpa45n+hmFQFvQ+5DVCD5TAABJ3uRXMzbI+KUYejg8WGsMpEteYMf8sS41++sOcfPtDGh2KMCmTOfSxITEdirth85f9+jYvsp41pqu1kgO4mQLxF+721OmlO6yQ/ff2M5LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tjA/Rnk+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zstK+Uwb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750927384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lIEWFzd10izeW8NDAm48DU86YG8FHDrpuX4aNPjS3Jo=;
+	b=tjA/Rnk+7n4pUaOf3T/JaUV5OHu1PRc7GDWWXg+J1EyHmKjzmI1gEpTO1a7KpvtqQw5Ngh
+	eVLHzXA55XrWSxKkP1ESQMxAQ0+nb+G2M5bzeeUBwG5YKvfXF8jXGOX2BAn/Ln6HgbsctT
+	WHZIgftYRVJXnz0SdgxbfkVxMoxHTL5mVnhtBCfcvjrJrawUIPCo9nsUqbnBo3iYTRw0tB
+	cJvODXpp1ZWeMi7GHRQFRAChsSTWNMJOuDUe9vAvnliv9u8wvybWW5sNuKFWOtq6+QmeGH
+	BC8soDXGTlVyocY6ybkwsHHR/JKWQ9fFRwlBRvFDR28fwbOPFb3M3q5q5XCyyQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750927384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lIEWFzd10izeW8NDAm48DU86YG8FHDrpuX4aNPjS3Jo=;
+	b=zstK+UwbcYeqabnmHcHIqX8YuOVYAcK6vi7cltYuSxry4c+lorPwei2yXB1bmLGacEeBnx
+	hM2RyTRUrOy58kDw==
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ linux-kernel@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Jan Kiszka
+ <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph
+ Lameter <cl@gentwo.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich
+ <dakr@kernel.org>, Petr Mladek <pmladek@suse.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, Ulf
+ Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
+ <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
+ Vyukov <dvyukov@google.com>, Vincenzo Frascino
+ <vincenzo.frascino@arm.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
+ <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Kent
+ Overstreet <kent.overstreet@linux.dev>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Uladzislau Rezki
+ <urezki@gmail.com>, Matthew Wilcox <willy@infradead.org>, Kuan-Ying Lee
+ <kuan-ying.lee@canonical.com>, Ilya Leoshkevich <iii@linux.ibm.com>,
+ Etienne Buira <etienne.buira@free.fr>, Antonio Quartulli
+ <antonio@mandelbit.com>, Illia Ostapyshyn <illia@yshyn.com>, "open
+ list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, "open list:PER-CPU
+ MEMORY ALLOCATOR" <linux-mm@kvack.org>, "open list:GENERIC PM DOMAINS"
+ <linux-pm@vger.kernel.org>, "open list:KASAN"
+ <kasan-dev@googlegroups.com>, "open list:MAPLE TREE"
+ <maple-tree@lists.infradead.org>, "open list:MODULE SUPPORT"
+ <linux-modules@vger.kernel.org>, "open list:PROC FILESYSTEM"
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 12/16] MAINTAINERS: Include dmesg.py under PRINTK entry
+In-Reply-To: <20250625231053.1134589-13-florian.fainelli@broadcom.com>
+References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
+ <20250625231053.1134589-13-florian.fainelli@broadcom.com>
+Date: Thu, 26 Jun 2025 10:49:02 +0206
+Message-ID: <84v7oic2qx.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c8853ae1710df330e600a02efe629a3b196dde88.1750895337.git.wqu@suse.com>
+Content-Type: text/plain
 
-On Thu, Jun 26, 2025 at 09:23:42AM +0930, Qu Wenruo wrote:
-> The new remove_bdev() call back is mostly for multi-device filesystems
-> to handle device removal.
-> 
-> Some multi-devices filesystems like btrfs can have the ability to handle
-> device lose according to the setup (e.g. all chunks have extra mirrors),
-> thus losing a block device will not interrupt the normal operations.
-> 
-> Btrfs will soon implement this call back by:
-> 
-> - Automatically degrade the fs if read-write operations can be
->   maintained
-> 
-> - Shutdown the fs if read-write operations can not be maintained
-> 
-> Signed-off-by: Qu Wenruo <wqu@suse.com>
+On 2025-06-25, Florian Fainelli <florian.fainelli@broadcom.com> wrote:
+> Include the GDB scripts file under scripts/gdb/linux/dmesg.py under the
+> PRINTK subsystem since it parses internal data structures that depend
+> upon that subsystem.
+>
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 > ---
->  fs/super.c         |  4 +++-
->  include/linux/fs.h | 18 ++++++++++++++++++
->  2 files changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index 80418ca8e215..07845d2f9ec4 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1463,7 +1463,9 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
->  		sync_filesystem(sb);
->  	shrink_dcache_sb(sb);
->  	evict_inodes(sb);
-> -	if (sb->s_op->shutdown)
-> +	if (sb->s_op->remove_bdev)
-> +		sb->s_op->remove_bdev(sb, bdev, surprise);
-> +	else if (sb->s_op->shutdown)
->  		sb->s_op->shutdown(sb);
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 224825ddea83..0931440c890b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19982,6 +19982,7 @@ S:	Maintained
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
+>  F:	include/linux/printk.h
+>  F:	kernel/printk/
+> +F:	scripts/gdb/linux/dmesg.py
 
-This makes ->remove_bdev() and ->shutdown() mutually exclusive. I really
-really dislike this pattern. It introduces the possibility that a
-filesystem accidently implement both variants and assumes both are
-somehow called. That can be solved by an assert at superblock initation
-time but it's still nasty.
+Note that Documentation/admin-guide/kdump/gdbmacros.txt also contains a
+similar macro (dmesg). If something needs fixing in
+scripts/gdb/linux/dmesg.py, it usually needs fixing in
+Documentation/admin-guide/kdump/gdbmacros.txt as well.
 
-The other thing is that this just reeks of being the wrong api. We
-should absolutely aim for the methods to not be mutually exclusive. I
-hate that with a passion. That's just an ugly api and I want to have as
-little of that as possible in our code.
+So perhaps while at it, we can also add here:
 
->  
->  	super_unlock_shared(sb);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index b085f161ed22..5e84e06c7354 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2367,7 +2367,25 @@ struct super_operations {
->  				  struct shrink_control *);
->  	long (*free_cached_objects)(struct super_block *,
->  				    struct shrink_control *);
-> +	/*
-> +	 * Callback to shutdown the fs.
-> +	 *
-> +	 * If a fs can not afford losing any block device, implement this callback.
-> +	 */
->  	void (*shutdown)(struct super_block *sb);
-> +
-> +	/*
-> +	 * Callback to handle a block device removal.
-> +	 *
-> +	 * Recommended to implement this for multi-device filesystems, as they
-> +	 * may afford losing a block device and continue operations.
-> +	 *
-> +	 * @surprse:	indicates a surprise removal. If true the device/media is
-> +	 *		already gone. Otherwise we're prepareing for an orderly
-> +	 *		removal.
-> +	 */
-> +	void (*remove_bdev)(struct super_block *sb, struct block_device *bdev,
-> +			    bool surprise);
->  };
+F:	Documentation/admin-guide/kdump/gdbmacros.txt
 
-Yeah, I think that's just not a good api. That looks a lot to me like we
-should just collapse both functions even though earlier discussion said
-we shouldn't. Just do:
-
-s/shutdown/remove_bdev/
-
-or
-
-s/shutdown/shutdown_bdev()
-
-The filesystem will know whether it has to kill the filesystem or if it
-can keep going even if the device is lost. Hell, if we have to we could
-just have it return whether it killed the superblock or just the device
-by giving the method a return value. But for now it probably doesn't
-matter.
+John Ogness
 
