@@ -1,202 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-53060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3536AE968A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 09:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4150FAE96A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 09:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3C94A0130
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 07:01:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73BE84A25DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jun 2025 07:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6274D238D53;
-	Thu, 26 Jun 2025 07:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C1223B608;
+	Thu, 26 Jun 2025 07:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lZMv50Vm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yk217dFj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yMxTBd+a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="duk1rWj/"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WBAnZyhN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kTzYRbPB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WN7/bq4o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+lyEmxJR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266452264A2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 07:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D8022ACF3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jun 2025 07:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750921258; cv=none; b=pNY4f1qNk7kM4lripF5lrsWKpPWp33r1GLIqfZnYP7DyzhPuay+k8/KkZccOsaQEAcZ89hOuwBDshh0A4Lfyxio+g3VWNrV0/ckbl6d5KphwvJLv9yNbXOVMNqm6tNfCaS+LHR9m0xKzRbcEgs9aS9kLFPhgujzwTGNGs8Tj5fI=
+	t=1750922390; cv=none; b=FfTeUMLIJ1O/B8kFvI28hboEBN7NafLHo07EMVTTw1JlmC83LPravlMeGMIuiiIhy6r97pGgrIsCNwmlp9h3LPZCBq/tL8leK+MotHwaM3MtNaCKL0f+pKak0TgvmX9pOrTOHOvrwEjkrBZpCH2tqy7bYlAZ65Zf0MH+yDWmXts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750921258; c=relaxed/simple;
-	bh=FnzgBhRtwtMX6NcNxvTe2b7odRwD+FhTrz0zuPL4f5g=;
+	s=arc-20240116; t=1750922390; c=relaxed/simple;
+	bh=XEZqvWn7zIRA7zYRRi4aNQ2t9vdPXJsQBrABnusBxsk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a601w0kJgN1mul/n2iIvOU3XtJrYVk3gteyh2JU/iEpJqDrxXMrrwv1sXd+mx6pOGCU9fic8TcUsnBTN7uANvL1ZxHE5x1arGXZZppORecve3LBSgCEtumz4vkflAdZPFoKEf+qye4s6gPiy2NhmIg4wfcLxVtlAR1bDaLwnEmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lZMv50Vm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yk217dFj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yMxTBd+a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=duk1rWj/; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBzeCJyXmvJBOqgye2FD9SzwOzQRshj1yQ0VZueMLClTuaZMVb+1Z9ry+8Vx/MLLFJsQfhAukrigAvQCfRKS/aDp6H2PlvBc3MUqto3j7D2WkAoA1OAogFSQNXS06KF7Kb1pN77Fxq8423EatOLgYipCe5RiNlfTEgIRBw3bXPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WBAnZyhN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kTzYRbPB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WN7/bq4o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+lyEmxJR; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 73B4C1F38D;
-	Thu, 26 Jun 2025 07:00:45 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AE1F421192;
+	Thu, 26 Jun 2025 07:19:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750921250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750922387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TYok1CSTlk8p1Np6qemtLfABm+ux0CRPztAQma9oeEE=;
-	b=lZMv50VmlOww0cnCR4bTGtaG3/YCEjZIJ6hJx822LFw4jaavAR8G/Vy1Czng5OQFt2rpqo
-	8VmqFPqt9ymrt5jtflDCrYGH6sWEAnGXE85tQtvLgZkttXeDUBhoufkSAvEVNeWckZpwCd
-	ztOc1h53cwe42qRNMb2hGgkz02xH7yA=
+	bh=98T2iTFRy6OGY3MA6c3ijODx7Lf2ZjSGvky10urQJjU=;
+	b=WBAnZyhNyB5IDnZk/gCcalA6K3+HBb+45GAZDm/NIyax5R5omSwbV0xgZzYex9r6e+ZFLo
+	gSn2dNGXmO9oN1oAR73h4bs5QOZI8xJKkJEDlzyL5dnzTxcRZGkjpS83k5iaoTxoL6h+vb
+	pcQk0m4XVdcx4oMYU9E9WCLTwA3Up0Y=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750921250;
+	s=susede2_ed25519; t=1750922387;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TYok1CSTlk8p1Np6qemtLfABm+ux0CRPztAQma9oeEE=;
-	b=Yk217dFjxdhtP6WJfYgThK3CuZkiB8huYjwTlCVshEt762FxRendeV0OZrAj5IskI3DNAo
-	rfKTcHIVDloxw4Dw==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=98T2iTFRy6OGY3MA6c3ijODx7Lf2ZjSGvky10urQJjU=;
+	b=kTzYRbPB+Wm/2lvRrkCeZ+qXxD7+OCmEj67eLrq58gFoZqFbip1zSz7fLXh/KQ04C52Osr
+	L1TAgHmVsvbvHrAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="WN7/bq4o";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+lyEmxJR
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750921245; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1750922385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TYok1CSTlk8p1Np6qemtLfABm+ux0CRPztAQma9oeEE=;
-	b=yMxTBd+a/iQsREcegZkmiqbw/0ihN+mIHnZUsNghMtxNtc5daEPLhpUO2UExxfE7K3Noak
-	3XaGXFZvjty7loovjUFQ8MDetWfl03O/9WxgabqmYn/8/VOiaXn3znmzfCr9mb6E0iQbOh
-	TC4CiZ9L000hnWn8ljU/pGKpcCQiiUQ=
+	bh=98T2iTFRy6OGY3MA6c3ijODx7Lf2ZjSGvky10urQJjU=;
+	b=WN7/bq4ouRPZR98HO4fEWl0wHTYQUAW2NhWSeWiUt/xxBnIw2pB8YLCWM79KjEVDnHWxRk
+	c1tzuWylwsfSJlVdNz9UmvT88exUSRmarsfP03yF6ECW3AnclDPgAIRkwIhE3+TFhx69Kb
+	Gv1aZHUu5IUe66qAE3FiHZMMAb6H+Bs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750921245;
+	s=susede2_ed25519; t=1750922385;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TYok1CSTlk8p1Np6qemtLfABm+ux0CRPztAQma9oeEE=;
-	b=duk1rWj/y7XGLICouNKWy5v3+3YZ0SE686lbDg8QHueE1OU+FF3/HRAi+tJCueom7mmVlT
-	+Ehk8DKnFHhM5LBA==
+	bh=98T2iTFRy6OGY3MA6c3ijODx7Lf2ZjSGvky10urQJjU=;
+	b=+lyEmxJRN1MpTZ7uUyrEb/VQ5QimSor3OkzEgr1430XiU3HGgi3dSY02lYZM1kcijDZzWd
+	qMXDGxRUQe0FmpBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6465013188;
-	Thu, 26 Jun 2025 07:00:45 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CAA313188;
+	Thu, 26 Jun 2025 07:19:45 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Lfl9GB3wXGgXIgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 26 Jun 2025 07:00:45 +0000
+	id R7wyJpH0XGihJwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 26 Jun 2025 07:19:45 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EC3E1A0953; Thu, 26 Jun 2025 09:00:44 +0200 (CEST)
-Date: Thu, 26 Jun 2025 09:00:44 +0200
+	id 57852A0953; Thu, 26 Jun 2025 09:19:45 +0200 (CEST)
+Date: Thu, 26 Jun 2025 09:19:45 +0200
 From: Jan Kara <jack@suse.cz>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Tejun Heo <tj@kernel.org>, Maxim Patlasov <mpatlasov@parallels.com>, 
-	Jan Kara <jack@suse.cz>, Zach O'Keefe <zokeefe@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Brendan Jackman <jackmanb@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
-	Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] mm, vmstat: remove the NR_WRITEBACK_TEMP node_stat_item
- counter
-Message-ID: <rr2hxi5dxoh6n4pbx5pcyelquvotbksfy2d2m5ycydafog65j4@rcekxluoecrr>
-References: <20250625-nr_writeback_removal-v1-1-7f2a0df70faa@suse.cz>
- <CAJnrk1YcA9MBC+KQdLE7B-CspoO5=xjkAf78swP6Q6UPijJaug@mail.gmail.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Jan Kara <jack@suse.cz>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, mcgrof@kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3] fs/buffer: remove the min and max limit checks in
+ __getblk_slow()
+Message-ID: <lpf4hlxv2e3dd527xmbueuquvo37c23e7mfuiedrjaullr3ilk@6ifh3tkjgyp2>
+References: <20250625083704.167993-1-p.raghav@samsung.com>
+ <u7fadbfaq5wm7nqhn4yewbn43h3ahxuqm536ly473uch2v5qfl@hpgo2dfg77jp>
+ <jbtntrppqjzaq6tdfzvwojjsnpacrdmg74vcvab4dc2z6hlhnl@ntotjsab5ice>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1YcA9MBC+KQdLE7B-CspoO5=xjkAf78swP6Q6UPijJaug@mail.gmail.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
+In-Reply-To: <jbtntrppqjzaq6tdfzvwojjsnpacrdmg74vcvab4dc2z6hlhnl@ntotjsab5ice>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: AE1F421192
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
 	ARC_NA(0.00)[];
 	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,samsung.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RSPAMD_EMAILBL_FAIL(0.00)[jack.suse.com:query timed out];
-	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
 
-On Wed 25-06-25 14:38:01, Joanne Koong wrote:
-> On Wed, Jun 25, 2025 at 8:51 AM Vlastimil Babka <vbabka@suse.cz> wrote:
-> >
-> > The only user of the counter (FUSE) was removed in commit 0c58a97f919c
-> > ("fuse: remove tmp folio for writebacks and internal rb tree") so follow
-> > the established pattern of removing the counter and hardcoding 0 in
-> > meminfo output, as done recently with NR_BOUNCE. Update documentation
-> > for procfs, including for the value for Bounce that was missed when
-> > removing its counter.
-> >
-> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > ---
-> > The removal of the counter is straightforward. The reason for the large
-> > Cc list is that there is a comment in mm/page-writeback.c function
-> > wb_position_ratio() that mentions NR_WRITEBACK_TEMP, and just deleting
-> > the sentence feels to me it could be the wrong thing to do - maybe the
-> > strictlimit feature itself is now obsolete? It sure does mention FUSE
-> > as the main reason to exist, but commit 5a53748568f79 that introduced it
-> > also mentions slow USB sticks as a possibile scenario. Has that
-> > happened? I'm not familiar enough with this so I'd rather highlight this
-> > and ask for input here than make "git grep NR_WRITEBACK_TEMP" return
-> > nothing.
+On Wed 25-06-25 12:53:54, Pankaj Raghav (Samsung) wrote:
+> On Wed, Jun 25, 2025 at 12:16:49PM +0200, Jan Kara wrote:
+> > On Wed 25-06-25 10:37:04, Pankaj Raghav wrote:
+> > > All filesystems will already check the max and min value of their block
+> > > size during their initialization. __getblk_slow() is a very low-level
+> > > function to have these checks. Remove them and only check for logical
+> > > block size alignment.
+> > > 
+> > > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > 
+> > I know this is a bikeshedding but FWIW this is in the should never trigger
+> > territory so I'd be inclined to just make it WARN_ON_ONCE() and completely
+> > delete it once we refactor bh apis to make sure nobody can call bh
+> > functions with anything else than sb->s_blocksize.
+> > 
+> Something like this:
 > 
-> My understanding is that even without the fuse use case, strictlimit
-> is still used for other devices via the /sys/class/bdi interface (eg
-> /sys/class/bdi/<bdi>/strict_limit) so I don't think the feature itself
-> is obsolete.
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index a1aa01ebc0ce..a49b4be37c62 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -1122,10 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+>  {
+>         bool blocking = gfpflags_allow_blocking(gfp);
+>  
+> -       if (unlikely(size & (bdev_logical_block_size(bdev) - 1))) {
+> +       if (WARN_ON_ONCE(size & (bdev_logical_block_size(bdev) - 1))) {
+>                 printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
+>                        size, bdev_logical_block_size(bdev));
+> -               dump_stack();
+>                 return NULL;
+>         }
 > 
-> It's not clear to me whether fuse still needs strictlimit now that it
-> doesn't have tmp writeback pages, but it'd be great to get an answer
-> to this, as strictlimit currently leads to too much dirty throttling
-> when large folios are enabled in fuse.
+> I assume we don't need the dump_stack() anymore as we will print them
+> with WARN_ON_ONCE anyway?
 
-Well, Miklos would be the definitive source of truth here but as far as I
-know strictlimit is still desirable for FUSE even without
-NR_WRITEBACK_TEMP. Otherwise dirty pages in mappings where writeback can be
-potentially very slow (and definitely under userspace control) could
-consume most of the global dirty limit which is not what you usually want.
-That being said I can definitely see there are usecases of FUSE mounts
-where you don't want this extra throttling. But then it's upto sysadmin to
-configure min/max_ratio properly in these cases to avoid excessive
-throttling.
+Correct. Thanks! Feel free to add:
 
-Regarding the comment, I'm frankly not certain how strictlimit solved
-NR_WRITEBACK_TEMP issue because NR_WRITEBACK_TEMP was never included in any
-computations there AFAICS. It just helped to limit amount of outstanding
-dirty pages for FUSE mappings and thus indirectly limited the scope of
-NR_WRITEBACK_TEMP issue. Anyway I think the sentence is obsolete now and
-deleting it is indeed the right solution because FUSE writeback is now
-properly accounted in the dirty limit.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 -- 
