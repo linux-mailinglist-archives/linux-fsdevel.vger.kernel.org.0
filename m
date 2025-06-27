@@ -1,247 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-53153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8DDAEAFBC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 09:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B5FAEB0AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 09:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207B11889FDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 07:05:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7141C22EDE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 07:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E7722759D;
-	Fri, 27 Jun 2025 07:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A388E229B15;
+	Fri, 27 Jun 2025 07:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PUIdvxai"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FbbeNE/T";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kty7AgHZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2fJ8jZ9U";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hpagzk4S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518E9218589;
-	Fri, 27 Jun 2025 07:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644742264BF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 07:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751007849; cv=none; b=Q9XvCFcqA4m/M70hmhTOVh0oQ4RvXv5exL3IA+g08spdBjz+nKC1RHM4EtWBG8JbBkjDP68dtYrcp+IFnaaOmwtdrKXomI0V48TcNVtRqVVvjjbaKtwuFZAnVo6iB7Fbz/N84Hs87P2rx39Ppck82ay+xu3B3KZQcm38QTiWJ+Q=
+	t=1751010925; cv=none; b=KLrnY4sOH3zWbxhfK3G7TWhrWY4ZrCCTtPK203UeV5OAwV5qBvlkgtzGbKsN2CLG81tSDkCp9L1XldKcezMH+26K+qLqrKO677KczkibSop1Up1daAmt6gVR+EVKCeG2nYRXeurP8mqnZlyhgz0vY5iHnapsE9w+j65r+hn58D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751007849; c=relaxed/simple;
-	bh=98s2bo9d4mxifI3N8Nz1oL0jdryCLR+8yMY0o/4z+6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uORctraU3iRq17xCanyjHpqVC5i2/tI63zGrdqi/EXcby63rho4nIkEB/nxApMQSgPSMGkEjd9HSFhPIw7ReZ8X+dGcGvrmugfPiiZWJmAXjqTS1LL+LCBF59zagmEY+HieM0MsyxhrnywzGuAU5i1smcJyOaQRBk/fb8WKCZtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PUIdvxai; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=vODCfsYmJIjTxX9KxBg6yzhdDJTc+YeXtNFQoQoPSSI=; b=PUIdvxai/2AFJ4R0RH8HXntW0/
-	MgdX9CWNZGmP4zzV+4zUPMGH6B5hCW8z6ViOvy9hcWJynndlusStrc48BzXDB4kNAs4HDJHAjDKk8
-	xll0Qlwrmfb24eI+0zaF2fUZ3IK52Ht7zCb9WMXn/1v7qWLqXN/9vLMuq3zJ+jPEt35S/kxZOaUvb
-	nlIC841xTwaocDpV3Kn25dJMTUnp7Tr74iEo4MY9y30/JQGBv6sQYGB5wbPQgzPBjWLliA5Ex+bxR
-	3ytGEjo4cRsRuXxi81I8Ox3TcbqZ2CdPhrbESqIlBcj9jwXjJd57WO/HjiO1iojrYftHFoqNnB6q1
-	TDZvomVw==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uV383-0000000Dm4E-1rpt;
-	Fri, 27 Jun 2025 07:04:08 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	gfs2@lists.linux.dev
-Subject: [PATCH 12/12] iomap: build the writeback code without CONFIG_BLOCK
-Date: Fri, 27 Jun 2025 09:02:45 +0200
-Message-ID: <20250627070328.975394-13-hch@lst.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250627070328.975394-1-hch@lst.de>
-References: <20250627070328.975394-1-hch@lst.de>
+	s=arc-20240116; t=1751010925; c=relaxed/simple;
+	bh=W43fmgGb+2NzyqFCSS0630HfRedK2fz7xXA7ehGegzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+EVdC/9abP4diUa1e8BBygs+FGwgKv/C6sHV8sSLJ8tgSIVNcGdaVN0kGzj6KmQCKX7PWARis5/6hYClVkcHHial632uiC2sd8BAR/c3z7/046errl+vnRD7FBTcnEAvZTp/+P5dMtJkyMsof/nmh34bEm1toFWPEYCulAMhTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FbbeNE/T; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kty7AgHZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2fJ8jZ9U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hpagzk4S; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6A5C021174;
+	Fri, 27 Jun 2025 07:55:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751010921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ptecp9XDD5qXUjm1CHcOI25++V3ZYV625LMiuMqRD10=;
+	b=FbbeNE/TjNlk4A5o+6fTzCVPxDsccqxkglkAUwvwXESso0vOSRA93wslhbMWSdcgx2I9A1
+	FxsYl8peLk6l5FlB8AleHM4sdaXJe+cEOsXjVgIMGRYviXwc03H/7rf2+6l1NPsoASQO8Z
+	wzfkH8nr4OzuWShSLrvWP5nrRCOcpbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751010921;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ptecp9XDD5qXUjm1CHcOI25++V3ZYV625LMiuMqRD10=;
+	b=Kty7AgHZB6YBFhZcKRw2mTyW6CJChk6RVH9k5j8RNgF+vqOqoDBVsN3ynKtce9dk3L4P2Z
+	9VKCowIUIdiFr1CQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751010920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ptecp9XDD5qXUjm1CHcOI25++V3ZYV625LMiuMqRD10=;
+	b=2fJ8jZ9UnZlpBq7wdYctaRSdNpHrqZzHhjN/Plxy+wxWVUpw93g2jWHdviq1K8Z9WZkhjb
+	tL7jzDF3f1yKYcyY69EhbD6WS85W5KiM1KDVbp62R7ZM9CBX94CmJISxLdgPi6korVp0S2
+	k5TJhnCTONmdTMdl3bJVHLNGlUr3awU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751010920;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ptecp9XDD5qXUjm1CHcOI25++V3ZYV625LMiuMqRD10=;
+	b=Hpagzk4Sk2vJIqYpZVOghUpIQqL6dR5KUuMdCT2yVko6zVkWWutCvArYyCSpKT1jNDVWP9
+	c0nvjxBxvkOKNUDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5894713786;
+	Fri, 27 Jun 2025 07:55:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IbGcFWhOXmgIUQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 27 Jun 2025 07:55:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D996FA099D; Fri, 27 Jun 2025 09:55:19 +0200 (CEST)
+Date: Fri, 27 Jun 2025 09:55:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Kieran Bingham <kbingham@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@gentwo.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Uladzislau Rezki <urezki@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, Kuan-Ying Lee <kuan-ying.lee@canonical.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Etienne Buira <etienne.buira@free.fr>, 
+	Antonio Quartulli <antonio@mandelbit.com>, Illia Ostapyshyn <illia@yshyn.com>, 
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, "open list:PER-CPU MEMORY ALLOCATOR" <linux-mm@kvack.org>, 
+	"open list:GENERIC PM DOMAINS" <linux-pm@vger.kernel.org>, "open list:KASAN" <kasan-dev@googlegroups.com>, 
+	"open list:MAPLE TREE" <maple-tree@lists.infradead.org>, "open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>, 
+	"open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 00/16] MAINTAINERS: Include GDB scripts under their
+ relevant subsystems
+Message-ID: <iup2plrwgkxlnywm3imd2ctkbqzkckn4t3ho56kq4y4ykgzvbk@cefy6hl7yu6c>
+References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
+ <fynmrmsglw4liexcb37ykutf724lh7zbibilcjpysbmvgtkmes@mtjrfkve4av7>
+ <c66deb8f-774e-4981-accf-4f507943e08c@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c66deb8f-774e-4981-accf-4f507943e08c@broadcom.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWELVE(0.00)[49];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[free.fr,gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLb9dmf7wrehepajhg9kqn5udf)];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,vger.kernel.org,siemens.com,kernel.org,baylibre.com,gentwo.org,linuxfoundation.org,suse.com,goodmis.org,linutronix.de,chromium.org,linaro.org,gmail.com,google.com,arm.com,linux-foundation.org,samsung.com,linux.dev,zeniv.linux.org.uk,suse.cz,infradead.org,canonical.com,linux.ibm.com,free.fr,mandelbit.com,yshyn.com,kvack.org,googlegroups.com,lists.infradead.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-Allow fuse to use the iomap writeback code even when CONFIG_BLOCK is
-not enabled.  Do this with an ifdef instead of a separate file to keep
-the iomap_folio_state local to buffered-io.c.
+On Thu 26-06-25 09:39:36, Florian Fainelli wrote:
+> On 6/26/25 09:17, Liam R. Howlett wrote:
+> > * Florian Fainelli <florian.fainelli@broadcom.com> [250625 19:13]:
+> > > Linux has a number of very useful GDB scripts under scripts/gdb/linux/*
+> > > that provide OS awareness for debuggers and allows for debugging of a
+> > > variety of data structures (lists, timers, radix tree, mapletree, etc.)
+> > > as well as subsystems (clocks, devices, classes, busses, etc.).
+> > > 
+> > > These scripts are typically maintained in isolation from the subsystem
+> > > that they parse the data structures and symbols of, which can lead to
+> > > people playing catch up with fixing bugs or updating the script to work
+> > > with updates made to the internal APIs/objects etc. Here are some
+> > > recents examples:
+> > > 
+> > > https://lore.kernel.org/all/20250601055027.3661480-1-tony.ambardar@gmail.com/
+> > > https://lore.kernel.org/all/20250619225105.320729-1-florian.fainelli@broadcom.com/
+> > > https://lore.kernel.org/all/20250625021020.1056930-1-florian.fainelli@broadcom.com/
+> > > 
+> > > This patch series is intentionally split such that each subsystem
+> > > maintainer can decide whether to accept the extra
+> > > review/maintenance/guidance that can be offered when GDB scripts are
+> > > being updated or added.
+> > 
+> > I don't see why you think it was okay to propose this in the way you
+> > have gone about it.  Looking at the mailing list, you've been around for
+> > a while.
+> 
+> This should probably have been posted as RFC rather than PATCH, but as I
+> indicate in the cover letter this is broken down to allow maintainers like
+> yourself to accept/reject
+> 
+> > 
+> > The file you are telling me about seems to be extremely new and I needed
+> > to pull akpm/mm-new to discover where it came from.. because you never
+> > Cc'ed me on the file you are asking me to own.
+> 
+> Yes, that file is very new indeed, and my bad for not copying you on it.
+> 
+> I was not planning on burning an entire day worth of work to transition the
+> GDB scripts dumping the interrupt tree away from a radix tree to a maple
+> tree. All of which happens with the author of that conversion having
+> absolutely no idea that broke anything in the tree because very few people
+> know about the Python GDB scripts that Linux has. It is not pleasant to be
+> playing catch when it would have take maybe an extra couple hours for
+> someone intimately familiar with the maple tree to come up with a suitable
+> implementation replacement for mtree_load().
+> 
+> So having done it felt like there is a maintenance void that needs to be
+> filled, hence this patch set.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/Makefile      |   6 +--
- fs/iomap/buffered-io.c | 113 ++++++++++++++++++++++-------------------
- 2 files changed, 64 insertions(+), 55 deletions(-)
+I can see that it takes a lot of time to do a major update of a gdb
+debugging script after some refactoring like this. OTOH mandating some gdb
+scripts update is adding non-trivial amount of work to changes that are
+already hard enough to do as is. And the obvious question is what is the
+value? I've personally never used these gdb scripts and never felt a strong
+need for something like that. People have various debugging aids (like BPF
+scripts, gdb scripts, there's crash tool and drgn, and many more) lying
+around.  I'm personally of an opinion that it is not a responsibility of
+the person doing refactoring to make life easier for them or even fixing
+them and I don't think that the fact that some debug aid is under
+scripts/gdb/ directory is making it more special. So at least as far as I'm
+concerned (VFS, fsnotify and other filesystem related stuff) I don't plan
+on requiring updates to gdb scripts from people doing changes or otherwise
+actively maintain them.
 
-diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
-index 69e8ebb41302..f7e1c8534c46 100644
---- a/fs/iomap/Makefile
-+++ b/fs/iomap/Makefile
-@@ -9,9 +9,9 @@ ccflags-y += -I $(src)		# needed for trace events
- obj-$(CONFIG_FS_IOMAP)		+= iomap.o
- 
- iomap-y				+= trace.o \
--				   iter.o
--iomap-$(CONFIG_BLOCK)		+= buffered-io.o \
--				   direct-io.o \
-+				   iter.o \
-+				   buffered-io.o
-+iomap-$(CONFIG_BLOCK)		+= direct-io.o \
- 				   ioend.o \
- 				   fiemap.o \
- 				   seek.o
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 1a9ade77aeeb..6ceeb0e2fc13 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -284,6 +284,46 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 	*lenp = plen;
- }
- 
-+static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
-+		loff_t pos)
-+{
-+	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-+
-+	return srcmap->type != IOMAP_MAPPED ||
-+		(srcmap->flags & IOMAP_F_NEW) ||
-+		pos >= i_size_read(iter->inode);
-+}
-+
-+/**
-+ * iomap_read_inline_data - copy inline data into the page cache
-+ * @iter: iteration structure
-+ * @folio: folio to copy to
-+ *
-+ * Copy the inline data in @iter into @folio and zero out the rest of the folio.
-+ * Only a single IOMAP_INLINE extent is allowed at the end of each file.
-+ * Returns zero for success to complete the read, or the usual negative errno.
-+ */
-+static int iomap_read_inline_data(const struct iomap_iter *iter,
-+		struct folio *folio)
-+{
-+	const struct iomap *iomap = iomap_iter_srcmap(iter);
-+	size_t size = i_size_read(iter->inode) - iomap->offset;
-+	size_t offset = offset_in_folio(folio, iomap->offset);
-+
-+	if (folio_test_uptodate(folio))
-+		return 0;
-+
-+	if (WARN_ON_ONCE(size > iomap->length))
-+		return -EIO;
-+	if (offset > 0)
-+		ifs_alloc(iter->inode, folio, iter->flags);
-+
-+	folio_fill_tail(folio, offset, iomap->inline_data, size);
-+	iomap_set_range_uptodate(folio, offset, folio_size(folio) - offset);
-+	return 0;
-+}
-+
-+#ifdef CONFIG_BLOCK
- static void iomap_finish_folio_read(struct folio *folio, size_t off,
- 		size_t len, int error)
- {
-@@ -323,45 +363,6 @@ struct iomap_readpage_ctx {
- 	struct readahead_control *rac;
- };
- 
--/**
-- * iomap_read_inline_data - copy inline data into the page cache
-- * @iter: iteration structure
-- * @folio: folio to copy to
-- *
-- * Copy the inline data in @iter into @folio and zero out the rest of the folio.
-- * Only a single IOMAP_INLINE extent is allowed at the end of each file.
-- * Returns zero for success to complete the read, or the usual negative errno.
-- */
--static int iomap_read_inline_data(const struct iomap_iter *iter,
--		struct folio *folio)
--{
--	const struct iomap *iomap = iomap_iter_srcmap(iter);
--	size_t size = i_size_read(iter->inode) - iomap->offset;
--	size_t offset = offset_in_folio(folio, iomap->offset);
--
--	if (folio_test_uptodate(folio))
--		return 0;
--
--	if (WARN_ON_ONCE(size > iomap->length))
--		return -EIO;
--	if (offset > 0)
--		ifs_alloc(iter->inode, folio, iter->flags);
--
--	folio_fill_tail(folio, offset, iomap->inline_data, size);
--	iomap_set_range_uptodate(folio, offset, folio_size(folio) - offset);
--	return 0;
--}
--
--static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
--		loff_t pos)
--{
--	const struct iomap *srcmap = iomap_iter_srcmap(iter);
--
--	return srcmap->type != IOMAP_MAPPED ||
--		(srcmap->flags & IOMAP_F_NEW) ||
--		pos >= i_size_read(iter->inode);
--}
--
- static int iomap_readpage_iter(struct iomap_iter *iter,
- 		struct iomap_readpage_ctx *ctx)
- {
-@@ -554,6 +555,27 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
- }
- EXPORT_SYMBOL_GPL(iomap_readahead);
- 
-+static int iomap_read_folio_range(const struct iomap_iter *iter,
-+		struct folio *folio, loff_t pos, size_t len)
-+{
-+	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-+	struct bio_vec bvec;
-+	struct bio bio;
-+
-+	bio_init(&bio, srcmap->bdev, &bvec, 1, REQ_OP_READ);
-+	bio.bi_iter.bi_sector = iomap_sector(srcmap, pos);
-+	bio_add_folio_nofail(&bio, folio, len, offset_in_folio(folio, pos));
-+	return submit_bio_wait(&bio);
-+}
-+#else
-+static int iomap_read_folio_range(const struct iomap_iter *iter,
-+		struct folio *folio, loff_t pos, size_t len)
-+{
-+	WARN_ON_ONCE(1);
-+	return -EIO;
-+}
-+#endif /* CONFIG_BLOCK */
-+
- /*
-  * iomap_is_partially_uptodate checks whether blocks within a folio are
-  * uptodate or not.
-@@ -667,19 +689,6 @@ iomap_write_failed(struct inode *inode, loff_t pos, unsigned len)
- 					 pos + len - 1);
- }
- 
--static int iomap_read_folio_range(const struct iomap_iter *iter,
--		struct folio *folio, loff_t pos, size_t len)
--{
--	const struct iomap *srcmap = iomap_iter_srcmap(iter);
--	struct bio_vec bvec;
--	struct bio bio;
--
--	bio_init(&bio, srcmap->bdev, &bvec, 1, REQ_OP_READ);
--	bio.bi_iter.bi_sector = iomap_sector(srcmap, pos);
--	bio_add_folio_nofail(&bio, folio, len, offset_in_folio(folio, pos));
--	return submit_bio_wait(&bio);
--}
--
- static int __iomap_write_begin(const struct iomap_iter *iter,
- 		const struct iomap_write_ops *write_ops, size_t len,
- 		struct folio *folio)
+								Honza
 -- 
-2.47.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
