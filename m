@@ -1,175 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-53214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB10EAEC045
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 21:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C826EAEC1D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 23:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A542640C5E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 19:42:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA3644282
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 21:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50C1212B1E;
-	Fri, 27 Jun 2025 19:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C116525FA2D;
+	Fri, 27 Jun 2025 21:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M1yexdNX"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V2yC73wF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0841A2387
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 19:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7827621ADAE;
+	Fri, 27 Jun 2025 21:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751053370; cv=none; b=N5ViRzwkKnwFihgwvwDeuHL6A1pk55CGNfO1jkDUZs95zACjkYtM5UvPY6xYJbTs1/ny5uN8v8ZKe1R63aghJVi0q0HKSXYZ09nEtoxvb2DQbz1K61f1tlejSRxZKlBxQqMXB317VxzD4k7FD1xmUTPtEZvW6lo1EbxGUxCMgzk=
+	t=1751059152; cv=none; b=DCT/1RSGvTK7Lcc03Nq8m8vtG0kEKHShrdZ1LOudWt5EouvAczrwctXhQWMJS86+IaOLyzl84b68il1Mdq5NCK/+uE9q2MK4uxkIaYHpeN316WNTGFsNoraoJD3EijU1a0uMu9pGUDWePVBN7iiugFot44qU/boaiWp2ce7PvO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751053370; c=relaxed/simple;
-	bh=OLsiblbD30bMEADwFBTdnq08XDWZ4YNw5yDgXwOvedQ=;
+	s=arc-20240116; t=1751059152; c=relaxed/simple;
+	bh=CSDmqDjEEPtE67ns1OANFYqHt5N2irhJTWhyp+Bnppk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNXpG9IumSFG43FO0EBqkPWL0DEfqG7eekrgIMEWr3wKVWqD+WI0I4Hm74Raeks8pr4Ea8pQeLZM/QeV0NO+jCMortLK3wNm4JO4LFRg6IGO9eRVkJoy1B03V+jJIxpeTGlxesXhktYLLJcohalNACFJXh24cNdXnC9gs7De4S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M1yexdNX; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 27 Jun 2025 15:42:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751053365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h035NnqCX1c3xP4ru1BilXA6CW38PXAnRjGNRfkRM2I=;
-	b=M1yexdNXg+CWSBnaA7wfbhjGt1QdUK1sX+l2qF5Opz4iKF+0507R4USBh4Q45MD8nPWvSq
-	rdxskb4KflKZh6UeUQmEBK/gWGdtgbuLbYV4Wxaf6PM/d0guetTxA+urU99jTRL+n7tf55
-	FCpf77sHEAfZ0oykLEepCdXfiFEtrWE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Kyle Sanderson <kyle.leet@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
-Message-ID: <gxpaa7u46vicn5npm4plvvdd3iuowzts4oljuw2djfqny3rqae@n6vi53u6sa43>
-References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
- <CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
- <065f98ab-885d-4f5e-97e3-beef095b93f0@gmail.com>
- <774936dd-32b8-46f1-a849-2f8ea76a24ac@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O96Ibk8skI8NIrZS765idLk4mM/6G97EL9EO67QhxakK27AknhYzIxAgD4vl4pWaBp+6yzaxAxp2y+wYdM+7uS3GAKA/1AVB1R3+P+bp21t99qUZKiXufKO7+DW9vuBOLtuX/Y+Rumnch511Upck5YUbulw1PdZViFoXShoM56o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V2yC73wF; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TK6YsxLqexPCwLZ//8Bes1uH4QD/vwQuoEwg7UlOgrc=; b=V2yC73wF9tfyUWoyl4YZZwayUa
+	3S/LisvhLTv+iP6YAqO7t7bEI10d7/yNV7xh/4K2f/jfmUTzE1lS9gDN3V9ji+gx1pNHD/lEyozou
+	MmT3K/BClKIqeCXdsFOYY5hMYiuVORKPNT3Pq09vuI6kHHo2QEbdfgdBxLCXM2ofp2Ofvua5flAyJ
+	1REKmhqmyf+NWavmLa25R+9V3AHXJe44DuSdO3PiZJ9mCCkLLSKRTPtyVIdax9ZkQ3YIfKD6VrUQk
+	Bc/3y3ScyurVqPMe5X4uW6Ai2QbOFrGSvxPoWOkUGcAN2preRlEz5wc55PWAR3IgMByNyEZHdDItD
+	W703Mxhw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uVGTQ-0000000F0iH-2ZlW;
+	Fri, 27 Jun 2025 21:19:04 +0000
+Date: Fri, 27 Jun 2025 22:19:04 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>, djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, yc1082463@gmail.com
+Subject: Re: [PATCH] xfs: report a writeback error on a read() call
+Message-ID: <aF8KyEQIhA-7GfAq@casper.infradead.org>
+References: <aFuezjrRG4L5dumV@infradead.org>
+ <88e4b40b61f0860c28409bd50e3ae5f1d9c0410b.camel@kernel.org>
+ <aFvbr6H3WUyix2fR@infradead.org>
+ <6ac46aa32eee969d9d8bc55be035247e3fdc0ac8.camel@kernel.org>
+ <aFvkAIg4pAeCO3PN@infradead.org>
+ <11735cf2e1893c14435c91264d58fae48be2973d.camel@kernel.org>
+ <CALOAHbDtFh5P_P0aTzaKRcwGfQmkrhgmk09BQ1tu9ZdXvKi8vQ@mail.gmail.com>
+ <aFzFR6zD7X1_9bWj@dread.disaster.area>
+ <aF0gEWcA6bX1eNzU@infradead.org>
+ <aF3IPcneKbUe9IdH@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <774936dd-32b8-46f1-a849-2f8ea76a24ac@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <aF3IPcneKbUe9IdH@dread.disaster.area>
 
-On Fri, Jun 27, 2025 at 12:16:09PM -0700, Kyle Sanderson wrote:
-> On 6/27/2025 12:07 PM, Kyle Sanderson wrote:
-> > On 6/26/2025 8:21 PM, Linus Torvalds wrote:
-> > > On Thu, 26 Jun 2025 at 19:23, Kent Overstreet
-> > > <kent.overstreet@linux.dev> wrote:
-> > > > 
-> > > > per the maintainer thread discussion and precedent in xfs and btrfs
-> > > > for repair code in RCs, journal_rewind is again included
-> > > 
-> > > I have pulled this, but also as per that discussion, I think we'll be
-> > > parting ways in the 6.17 merge window.
-> > > 
-> > > You made it very clear that I can't even question any bug-fixes and I
-> > > should just pull anything and everything.
-> > > 
-> > > Honestly, at that point, I don't really feel comfortable being
-> > > involved at all, and the only thing we both seemed to really
-> > > fundamentally agree on in that discussion was "we're done".
-> > > 
-> > >                Linus
+On Fri, Jun 27, 2025 at 08:22:53AM +1000, Dave Chinner wrote:
+> On Thu, Jun 26, 2025 at 03:25:21AM -0700, Christoph Hellwig wrote:
+> > On Thu, Jun 26, 2025 at 01:57:59PM +1000, Dave Chinner wrote:
+> > > writeback errors. Because scientists and data analysts that wrote
+> > > programs to chew through large amounts of data didn't care about
+> > > persistence of their data mid-processing. They just wanted what they
+> > > wrote to be there the next time the processing pipeline read it.
 > > 
-> > Linus,
-> > 
-> > The pushback on rewind makes sense, it wasn’t fully integrated and was
-> > fsck code written to fix the problems with the retail 6.15 release -
-> > this looks like it slipped through Kents CI and there were indeed
-> > multiple people hit by it (myself included).
-> > 
-> > Quoting someone back to themselves is not cool, however I believe it
-> > highlights what has gone on here which is why I am breaking my own rule:
-> > 
-> > "One of the things I liked about the Rust side of the kernel was that
-> > there was one maintainer who was clearly much younger than most of the
-> > maintainers and that was the Rust maintainer.
-> > 
-> > We can clearly see that certain areas in the kernel bring in more young
-> > people.
-> > 
-> > At the Maintainer Summit, we had this clear division between the
-> > filesystem people, who were very careful and very staid, and cared
-> > deeply about their code being 100% correct - because if you have a bug
-> > in a filesystem, the data on your disk may be gone - so these people
-> > take themselves and their code very seriously.
-> > 
-> > And then you have the driver people who are a bit more 'okay',
-> > especially the GPU folks, 'where anything goes'.
-> > You notice that on the driver side it’s much easier to find young
-> > people, and that is traditionally how we’ve grown a lot of maintainers.
-> > " (1)
-> > 
-> > Kent is moving like the older days of rapid development - fast and
-> > driven - and this style clashes with the mature stable filesystem
-> > culture that demands extreme caution today. Almost every single patch
-> > has been in response to reported issues, the primary issue here is
-> > that’s on IRC where his younger users are (not so young, anymore - it is
-> > not tiktok), and not on lkml. The pace of development has kept up, and
-> > the "new feature" part of it like changing out the entire hash table in
-> > rc6 seems to have stopped. This is still experimental, and he's moving
-> > that way now with care and continuing to improve his testing coverage
-> > with each bug.
-> > 
-> > Kent has deep technical experience here, much earlier in the
-> > interview(1) regarding the 6.7 merge window this filesystem has been in
-> > the works for a decade. Maintainership means adapting to kernel process
-> > as much as code quality, that may be closer to the issue here.
-> > 
-> > If direct pulls aren’t working, maybe a co-maintainer or routing changes
-> > through a senior fs maintainer can help. If you're open to it, maybe
-> > that is even you.
-> > 
-> > Dropping bcachefs now would be a monumental step backward from the
-> > filesystems we have today. Enterprises simply do not use them for true
-> > storage at scale which is why vendors have largely taken over this
-> > space. The question is how to balance rigor with supporting new
-> > maintainers in the ecosystem. Everything Kent has written around
-> > supporting users is true, and publicly visible, if only to the 260 users
-> > on irc, and however many more are on matrix. There are plenty more that
-> > are offline, and while this is experimental there are a number of public
-> > sector agencies testing this now (I have seen reference to a number of
-> > emergency service providers, which isn’t great, but for whatever reason
-> > they are doing that).
-> > 
-> > (1) https://youtu.be/OvuEYtkOH88?t=1044
-> > 
-> > Kyle.
+> > That's only going to work if your RAM is as large as your permanent
+> > storage :)
 > 
-> Re-sending as this thread seems to have typo'd lkml (removing the bad
-> entry).
+> No, the old behaviour worked just fine with data sets larger than
+> RAM. When there is a random writeback error in a big data stream,
+> only those pages remained dirty and so never get tossed out of RAM. Hence
+> when a re-read of that file range occurred, the data was already in
+> RAM and the read succeeded, regardless of the fact that writeback
+> has been failing.
+> 
+> IOWs the behavioural problems that the user is reporting are present
+> because we got rid of the historic XFS writeback error handling
+> (leave the dirty pages in RAM and retry again later) and replaced it
+> with the historic Linux behaviour (toss the data out and mark the
+> mapping with an error).
+> 
+> The result of this change is exactly what the OP is having problems
+> with - reread of a range that had a writeback failure returns zeroes
+> or garbage, not the original data. If we kept the original XFS
+> behaviour, the user applications would handle these flakey writeback
+> failures just fine...
+> 
+> Put simply: we used to have more robust writeback failure handling
+> than we do now. That could (and probably should) be considered a
+> regression....
 
-Thanks.
-
-Also, I think I should add, in case my words in the private conversation
-were misinterpreted:
-
-I don't think bcachefs should be dropped from the kernel, I think it
-would be better for this to be worked out.
-
-I firstly want to reassure people that: if bcachefs has to be shipped as
-a DKMS module, that will not kill the project. It will be a giant hassle
-(especially if distributions have to scramble), but life will continue.
-I remain committed as ever to getting this done - one way or the other.
-
-And I think it is safe to say that going that route would be the better
-option for the sanity of myself and Linus, but it wouldn't be the better
-option for the users or the rest of the development community.
-
-With that, I am going to take a breather.
+When you say "used to" and "the old behaviour", when are you referring
+to, exactly?  When I came to XFS/iomap, the behaviour on writeback errors
+was to clear the Uptodate flag on writeback, which definitely did throw
+away the written data and forced a re-read from storage.
 
