@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-53199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E84FAEBC3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 17:46:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AF2AEBC79
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 17:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AE41C276AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 15:46:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 672397A8E5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 15:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0CC2EA148;
-	Fri, 27 Jun 2025 15:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC382EA496;
+	Fri, 27 Jun 2025 15:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n4oL3gyp"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z0ceVbAZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54772E9EBE;
-	Fri, 27 Jun 2025 15:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8427623B61F;
+	Fri, 27 Jun 2025 15:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751039166; cv=none; b=imsd+qokC2K6e3405bJW17a9Amjjkx2kEwar12hC1RZ1QppdCrmT/7UrSN6pRr2XGQuRvbieFBqcPnzUZ3/eS3DvrgWgI7K40XxIXiSVl0TGMnQhZA4XWwP5egunoNWBQZKLGRV5gs2b4dBxbya9Xs6iN05M9OcEDwBPichTvqA=
+	t=1751039546; cv=none; b=folD3kd1+eNGMSsZz+jhDRf+p5V8Xv73tNONYwk5+u5Bc5amWrdtimE1+hls0ImydF9BZYxAKzChjVCVJN/XO1IRNANNuSDj149LW6FfHQBBZqA0w/nvyB2okjBFCC6dHIVO3ONfmHnpqbkSwLReWOhx3sdISwVUExu9CGrKxVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751039166; c=relaxed/simple;
-	bh=pX+4k3111DQycypNzgJjqu+X5auTYHwX1w8qTrIgzYo=;
+	s=arc-20240116; t=1751039546; c=relaxed/simple;
+	bh=d40eK7td5Xa1FR52S3Q2YnEJMCDbNmnB5/xe1+8KVxw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1ULLAtzfUML1GhHppRv3XtSL91EjFTISQvVm0nPiqzw0VxIE2L22mIa/By9I8KJnRA2leLhx1WSiZk/Wj1IgdkxugFwvRdRHC90FpCGI/dgageOQ1CNTaAqCJ9bd8NbdfFyKWptZU1ik6JXNkJX7ZLuDhdOqb3SMzJawzkAUW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n4oL3gyp; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/dCTWmNR0A1z+ekx7OLIwpGWjlE4mAzVryI7xqXNKN5jmElNUnJM8VOBoh0F21KmtW1c0azrAUw5WEyHYxwZKgzr8BKcYnm6e9HmC2WA/Nigiil3VwL/+FnpeXJfpKRCLhq6KOPosrraEoMkSKxyepdIVUuwDUqZypU7obqtKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z0ceVbAZ; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
 	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
 	Sender:Reply-To:Content-ID:Content-Description;
-	bh=c3vCkFbhdgYVqqEDes1QFepeOfqXaiheP5+7KDv7Ebw=; b=n4oL3gypIqI5TK4THtINSLCpag
-	SLp8q5VAaIR2EAkfhPLrL7o2dw/4U+ToS3OxEkKznV75IoTM1GcozkaWQ/8eEI33+FO5aDjg13dQ9
-	DylQV6P3+OXB19c6sT+eReDIh97U+/GmnY8WvId1nHr4daVmwDz7ydeDjadHBnDQG7QrNElKKx/m9
-	hFgxuHXLCzivX/7zTwZqwWToFNjne1uEIhM5GhdaBPk0i4oEdgw2GF8trCoksP0lS41SPzRnPF+R1
-	pcmWZq+1ZNQMmJ4HglF5LEQKe1q2dAZxj5+MQJwTlZFK5lmsOXAISpwtg5rwx4xV34HpBgEEXMxOQ
-	9Fo+Gong==;
+	bh=Z+c/vMVBxvVliRM5Ba7u5qi1BNZCmTnatXuCT2DSf3s=; b=Z0ceVbAZOy3oDx3Jzp0zWCkcEC
+	5+/Ux5Woml8GdpSfkIhVTxnoD/1Ma1995s/H+9SLhMV2WFdH9AnA9VE6AMi5lmgAUc/GeLJBH8dv8
+	E+M91T3jrx+/xDUjfEcpMkKP2yciCidFInvaEizsorLfYjYs4vSQqrO5c8ROi7216sQU8i31mcYAN
+	tujVt5eFpXiIQNYSJqIuB4VKAotXXyXWuUkTHDWgreQsgQoRPqOcBBnTBM8tXQMMJZ9gn6FY62Phu
+	Xf2fu73K0hPBw9c5br2aSuebLqlrVwLN+UclnVhjVRg3/Iu1SkfzhW56ODmF5CZeO5B9qaQwK9fRF
+	+21HmNKA==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uVBGy-0000000EQ1q-4BPK;
-	Fri, 27 Jun 2025 15:45:53 +0000
-Date: Fri, 27 Jun 2025 16:45:52 +0100
+	id 1uVBN9-0000000EQf9-17Tf;
+	Fri, 27 Jun 2025 15:52:15 +0000
+Date: Fri, 27 Jun 2025 16:52:15 +0100
 From: Matthew Wilcox <willy@infradead.org>
 To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
 Cc: "tytso@mit.edu" <tytso@mit.edu>,
@@ -67,7 +67,7 @@ Cc: "tytso@mit.edu" <tytso@mit.edu>,
 	"frank.li@vivo.com" <frank.li@vivo.com>
 Subject: Re: [PATCH v3 3/4] fs: change write_begin/write_end interface to
  take struct kiocb *
-Message-ID: <aF68sKzx24P1q54h@casper.infradead.org>
+Message-ID: <aF6-L5Eu7XieS8aM@casper.infradead.org>
 References: <20250627110257.1870826-1-chentaotao@didiglobal.com>
  <20250627110257.1870826-4-chentaotao@didiglobal.com>
 Precedence: bulk
@@ -82,80 +82,22 @@ Content-Transfer-Encoding: 8bit
 In-Reply-To: <20250627110257.1870826-4-chentaotao@didiglobal.com>
 
 On Fri, Jun 27, 2025 at 11:03:11AM +0000, 陈涛涛 Taotao Chen wrote:
-> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> index 841a5b18e3df..fdc2fa1e5c41 100644
-> --- a/fs/exfat/file.c
-> +++ b/fs/exfat/file.c
-> @@ -532,10 +532,12 @@ int exfat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
->  	return blkdev_issue_flush(inode->i_sb->s_bdev);
+> @@ -1399,13 +1400,10 @@ static int write_end_fn(handle_t *handle, struct inode *inode,
 >  }
 >  
-> -static int exfat_extend_valid_size(struct file *file, loff_t new_valid_size)
-> +static int exfat_extend_valid_size(const struct kiocb *iocb,
-> +				   loff_t new_valid_size)
->  {
->  	int err;
->  	loff_t pos;
-> +	struct file *file = iocb->ki_filp;
->  	struct inode *inode = file_inode(file);
->  	struct exfat_inode_info *ei = EXFAT_I(inode);
->  	struct address_space *mapping = inode->i_mapping;
-> @@ -551,14 +553,14 @@ static int exfat_extend_valid_size(struct file *file, loff_t new_valid_size)
->  		if (pos + len > new_valid_size)
->  			len = new_valid_size - pos;
->  
-> -		err = ops->write_begin(file, mapping, pos, len, &folio, NULL);
-> +		err = ops->write_begin(iocb, mapping, pos, len, &folio, NULL);
->  		if (err)
->  			goto out;
->  
->  		off = offset_in_folio(folio, pos);
->  		folio_zero_new_buffers(folio, off, off + len);
->  
-> -		err = ops->write_end(file, mapping, pos, len, len, folio, NULL);
-> +		err = ops->write_end(iocb, mapping, pos, len, len, folio, NULL);
->  		if (err < 0)
->  			goto out;
->  		pos += len;
-> @@ -604,7 +606,7 @@ static ssize_t exfat_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  	}
->  
->  	if (pos > valid_size) {
-> -		ret = exfat_extend_valid_size(file, pos);
-> +		ret = exfat_extend_valid_size(iocb, pos);
->  		if (ret < 0 && ret != -ENOSPC) {
->  			exfat_err(inode->i_sb,
->  				"write: fail to zero from %llu to %llu(%zd)",
-> @@ -655,8 +657,11 @@ static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
->  	struct file *file = vma->vm_file;
->  	struct inode *inode = file_inode(file);
->  	struct exfat_inode_info *ei = EXFAT_I(inode);
-> +	struct kiocb iocb;
->  	loff_t start, end;
->  
-> +	init_sync_kiocb(&iocb, file);
-> +
->  	if (!inode_trylock(inode))
->  		return VM_FAULT_RETRY;
->  
-> @@ -665,7 +670,7 @@ static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
->  			start + vma->vm_end - vma->vm_start);
->  
->  	if (ei->valid_size < end) {
-> -		err = exfat_extend_valid_size(file, end);
-> +		err = exfat_extend_valid_size(&iocb, end);
->  		if (err < 0) {
->  			inode_unlock(inode);
->  			return vmf_fs_error(err);
+>  /*
+> - * We need to pick up the new inode size which generic_commit_write gave us
+> - * `file' can be NULL - eg, when called from page_symlink().
+> - *
 
-This is unnecessary work.  The only ->write_begin/write_end that we'll
-see here is exfat_write_begin() / exfat_write_end() which don't actually
-need iocb (or file).  Traditionally we pass NULL in these situations,
-but the exfat people probably weren't aware of this convention.
+Why delete this?  It seems still true to me, other than s/file/iocb/
 
-exfat_extend_valid_size() only uses the file it's passed to get the
-inode, and both callers already have the inode.  So I'd change
-exfat_extend_valid_size() to take an inode instead of a file as its
-first argument, then you can skip the creation of an iocb in
-exfat_page_mkwrite().
+>   * ext4 never places buffers on inode->i_mapping->i_private_list.  metadata
+>   * buffers are managed internally.
+>   */
+> -static int ext4_write_end(struct file *file,
+> +static int ext4_write_end(const struct kiocb *iocb,
+>  			  struct address_space *mapping,
+>  			  loff_t pos, unsigned len, unsigned copied,
+>  			  struct folio *folio, void *fsdata)
 
