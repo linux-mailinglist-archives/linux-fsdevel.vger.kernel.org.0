@@ -1,125 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-53133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673F3AEADB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 06:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC18EAEADC8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 06:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701B556342D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 04:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E10565B30
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 04:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC951C84C6;
-	Fri, 27 Jun 2025 04:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CFD1DC9B5;
+	Fri, 27 Jun 2025 04:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqQsdhNH"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="01tfxppe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+Vj0yGzk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BC8433CB;
-	Fri, 27 Jun 2025 04:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D871D5CD1;
+	Fri, 27 Jun 2025 04:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750997086; cv=none; b=E7FIbhrbH6PixSlpLlMATi2howEXERoPIdquRPNFbOEiGizkw0tDKBZLjCDsqrqsodFYtoMmmvL2d5IT3Vdi1mnCb/H3ZKr9sJ+5oh2eGkwqYT3E7fFd31vX366Xvgs+vTulivadV4y2ZcAW6t6yPC4htr6eRHZCvlcIJFNRqrg=
+	t=1750998011; cv=none; b=mR3cFzOXc+22HHQdAgQkRsR4RFvkVquVVd0UbE4KLP/kPcrG4Qo4pUOjuNpulV57lSlA0tRfWOHK/CJjW6Ej08YG8UpDwjUvGkKCc+lrmp1P4gocIdDAdGmJlMH6ieXSHh3P0wrrenABHLOihaqGkqY0AOMe/XT9r7PNVe0NOCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750997086; c=relaxed/simple;
-	bh=Mma9CMSMYc/gD5PCHcAaBFj3rdMlrbBicSyXXt9PcNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CH+fdUQoNoYrSKPhkzqKjsLyXwy3hR6iRwOjJmc0HDENGrGUJLDDdTpisrACc4SSBAdWK0YN6ntkKftS3+zJli9nGsumGHM2Lwwk0s+4VShNwaDbvgbVwMNQxgU6fKyQs9BEfbauyKcEsc3cTnZDf7oTW6XCtaK1tw2YNK7XHU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GqQsdhNH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A37C4CEF3;
-	Fri, 27 Jun 2025 04:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750997086;
-	bh=Mma9CMSMYc/gD5PCHcAaBFj3rdMlrbBicSyXXt9PcNw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GqQsdhNHawq+twbptt2NsZrIZKLSabBpQD8l9QCIvtKBdw6zr0kum6stEkpAQg3d4
-	 dh/Zee7lp4FeqOWOtb/hPstD7eb1WZQi7o+o0mgmxnBi/aDjVXqW9CL53IS40cof8S
-	 5btltkZpJZRkXm+lPpKeK/d6JkAZCrwL+gi8QaFZqWAv4/WRhQ6wbex8D6BHA/nB2R
-	 GLj6xRtD32CzobSbXj6JVrj3VR2al3BDFucGbOGaVOZK+zufw+FtB6oBFspD9S3B0/
-	 yeT+Zl456Sgorvbopz4XQlsW2ZerjX/8/4nuYhkBQBQqo9xxtUp4K55kyCE1h1+9Wh
-	 unEBKSHzEPiZw==
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a6f0bcdf45so24453891cf.0;
-        Thu, 26 Jun 2025 21:04:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEvFnWpy0Xw2lE75sZJkC7YwD49dcVKsVrN218hQjj2kS6Xw5361BfxYsg89CaBfLdHhGLEm2iMwWAvhOYrg7DnujI2a7j@vger.kernel.org, AJvYcCVuGO6WrSIk4mB57pqWphnnajmq1o9LQki7S69qaHqlRFSQcLm8k8YUdt8tUcwZRE1Uo1TLiS4KNrMQpu3C@vger.kernel.org, AJvYcCWJM/81xbjCcgU1w4+nkJN8TMyHbpcoR+ZBfVSbpCrxhKvDNq8LwdTB8Gi+Cp7Srk3tOPU=@vger.kernel.org, AJvYcCXqF5Nf9vj2euzgmzrVQqvjEEnT9TTTuK6vgRhsg6PqJKqjHrntYTakTWd7jOjsftUdzOoumY9LIBW3GuNkmA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaQQEUVYf20Df/hKMxeUlYepm0aR8PY0PNxxOv+4vUr3VoJgzm
-	Q809Bhqan9LdsBEl8tqkZRFDlZctuxgJpn9o+RaaoRq8pktU0da0aK/BPUnNKof8LY/kQkh0M7X
-	2pkaUP9sCifnDe8hxS1oW3Acmtk+Fi/Y=
-X-Google-Smtp-Source: AGHT+IEhPbrm4/U3sDNEwA/4jw/JLLVdlPl7uDfbqleHnpYFV4MonybK6KW/yjpz6QK1Zg9rw+cYaygKu52dDc4wc4Q=
-X-Received: by 2002:ac8:7d84:0:b0:4a7:1460:f1bd with SMTP id
- d75a77b69052e-4a7fc9ca4b4mr32081011cf.8.1750997085228; Thu, 26 Jun 2025
- 21:04:45 -0700 (PDT)
+	s=arc-20240116; t=1750998011; c=relaxed/simple;
+	bh=X2RNTFBcE5pFgCTIGNIa+ZUV72ZQZno5e4FS+xPjWBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzoPAHVA25rZUMQZ6QUzPrfWYudrOkycDv9cIyNad1hTkbQw7l/HgOPzy/msI5ZIaZmQXR6MSa2/Azkvb+sHN7GyvqWAzGrH9XZXC/A3K+/T/5SaQ4vboPPgY+11Qvf04mGloMRNBFCHxYfY8NlX00+rUZ9507noes8mQxauvRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=01tfxppe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+Vj0yGzk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 27 Jun 2025 06:20:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750998007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GwUcgevfKNTLblfy7PqHrCF2Fjb7b409d5rtxcTmjxU=;
+	b=01tfxppe/vlWzhIQ9PBxgV4F7dFyiqCfNqdmOrgfYRi3Eu9iVCocPyE2tu5gd8tJvdOHBV
+	8a9Z9bE9Grw/PCRriaOyl76ic2oJvB+7M2YA8sqQFMrlsPgq+BawvIaKqcRoKsgp1xpd3w
+	mwlkznL3U08XYX2GdoHm0I4DqjJCvD0J7ahQBRVtY93JXICdDUImzPRN72f2m7/kEmNuCE
+	hDPzsXa19VpFlwjaK/3ytWGUwN3+GsLBv5jcxnMclIDjOSlEd4pC/9ZNPVw9H7QGO/OGe5
+	rCUD/e0r/+wzohDK7LvRe82yL4sW/DMfchqF2vFm0MG9tHve62PKy5MpCTjnwg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750998007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GwUcgevfKNTLblfy7PqHrCF2Fjb7b409d5rtxcTmjxU=;
+	b=+Vj0yGzknQek4tIHi46J5NKXSB8IWruQaSEQ7axtDLPVKaotRa8p+q9w35/H/QrourZMgR
+	e72p5m+NNkUs6eAA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, workflows@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 12/15] kunit: Introduce UAPI testing framework
+Message-ID: <20250627060129-4fe09191-4714-4856-9de5-c8e5cf5ed0d6@linutronix.de>
+References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
+ <20250626-kunit-kselftests-v4-12-48760534fef5@linutronix.de>
+ <66deaafe1974c989e949975bafe3ab0b2ae3f5ff.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623063854.1896364-1-song@kernel.org> <20250623-rebel-verlust-8fcd4cdd9122@brauner>
- <CAADnVQ+iqMi2HEj_iH7hsx+XJAsqaMWqSDe4tzcGAnehFWA9Sw@mail.gmail.com>
-In-Reply-To: <CAADnVQ+iqMi2HEj_iH7hsx+XJAsqaMWqSDe4tzcGAnehFWA9Sw@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Thu, 26 Jun 2025 21:04:34 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7JAgXUObzkMAs_B=O09uHfhkgSuFV5nvUJbsv=Fh8JyA@mail.gmail.com>
-X-Gm-Features: Ac12FXzTPC_HoMmxjQGDCDLY07r8m3jwZx7i6Y_SyAOwjpCqaDat_mHEFoscOM0
-Message-ID: <CAPhsuW7JAgXUObzkMAs_B=O09uHfhkgSuFV5nvUJbsv=Fh8JyA@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 0/4] Introduce bpf_cgroup_read_xattr
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Tejun Heo <tj@kernel.org>, Daan De Meyer <daan.j.demeyer@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <66deaafe1974c989e949975bafe3ab0b2ae3f5ff.camel@sipsolutions.net>
 
-On Thu, Jun 26, 2025 at 7:14=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-[...]
-> ./test_progs -t lsm_cgroup
-> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> ./test_progs -t lsm_cgroup
-> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> ./test_progs -t cgroup_xattr
-> Summary: 1/8 PASSED, 0 SKIPPED, 0 FAILED
-> ./test_progs -t lsm_cgroup
-> test_lsm_cgroup_functional:PASS:bind(ETH_P_ALL) 0 nsec
-> (network_helpers.c:121: errno: Cannot assign requested address) Failed
-> to bind socket
-> test_lsm_cgroup_functional:FAIL:start_server unexpected start_server:
-> actual -1 < expected 0
-> (network_helpers.c:360: errno: Bad file descriptor) getsockopt(SOL_PROTOC=
-OL)
-> test_lsm_cgroup_functional:FAIL:connect_to_fd unexpected
-> connect_to_fd: actual -1 < expected 0
-> test_lsm_cgroup_functional:FAIL:accept unexpected accept: actual -1 < exp=
-ected 0
-> test_lsm_cgroup_functional:FAIL:getsockopt unexpected getsockopt:
-> actual -1 < expected 0
-> test_lsm_cgroup_functional:FAIL:sk_priority unexpected sk_priority:
-> actual 0 !=3D expected 234
-> ...
-> Summary: 0/1 PASSED, 0 SKIPPED, 1 FAILED
->
->
-> Song,
-> Please follow up with the fix for selftest.
-> It will be in bpf-next only.
+Hi Benjamin,
 
-The issue is because cgroup_xattr calls "ip link set dev lo up"
-in setup, and calls "ip link set dev lo down" in cleanup. Most
-other tests only call "ip link set dev lo up". IOW, it appears to
-me that cgroup_xattr is doing the cleanup properly. To fix this,
-we can either remove "dev lo down" from cgroup_xattr, or add
-"dev lo up" to lsm_cgroups. Do you have any preference one
-way or another?
+On Thu, Jun 26, 2025 at 08:11:17PM +0200, Benjamin Berg wrote:
+> I ran into two minor issues trying out the patches, see inline.
 
-Thanks,
-Song
+Thanks for testing the series.
+
+> On Thu, 2025-06-26 at 08:10 +0200, Thomas Weiﬂschuh wrote:
+> > Enable running UAPI tests as part of kunit.
+> > The selftests are embedded into the kernel image and their output is
+> > forwarded to kunit for unified reporting.
+> > 
+> > The implementation reuses parts of usermode drivers and usermode
+> > helpers. However these frameworks are not used directly as they make it
+> > impossible to retrieve a thread's exit code.
+> > 
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > 
+> > [SNIP]
+> > +/**
+> > + * KUNIT_UAPI_EMBED_BLOB() - Embed another build artifact into the kernel
+> > + * @_name: The name of symbol under which the artifact is embedded.
+> > + * @_path: Path to the artifact on disk.
+> > + *
+> > + * Embeds a build artifact like a userspace executable into the kernel or current module.
+> > + * The build artifact is read from disk and needs to be already built.
+> > + */
+> > +#define KUNIT_UAPI_EMBED_BLOB(_name, _path)					\
+> > +	asm (									\
+> > +	"	.pushsection .rodata, \"a\"				\n"	\
+> > +	"	.global " __stringify(CONCATENATE(_name, _data)) "	\n"	\
+> > +	__stringify(CONCATENATE(_name, _data)) ":			\n"	\
+> > +	"	.incbin " __stringify(_path) "				\n"	\
+> > +	"	.size " __stringify(CONCATENATE(_name, _data)) ", "		\
+> > +			". - " __stringify(CONCATENATE(_name, _data)) "	\n"	\
+> > +	"	.global " __stringify(CONCATENATE(_name, _end)) "	\n"	\
+> > +	__stringify(CONCATENATE(_name, _end)) ":			\n"	\
+> > +	"	.popsection						\n"	\
+> > +	);									\
+> > +										\
+> > +	extern const char CONCATENATE(_name, _data)[];				\
+> > +	extern const char CONCATENATE(_name, _end)[];				\
+> > +										\
+> > +	static const struct kunit_uapi_blob _name = {				\
+> > +		.path	= _path,						\
+> > +		.data	= CONCATENATE(_name, _data),				\
+> > +		.end	= CONCATENATE(_name, _end),				\
+> > +	}									\
+> 
+> For me, the compiler could not find the files for the ".incbin" unless
+> I added an include path. i.e. adding
+>   ccflags-y := -I$(obj)
+> to lib/kunit/Makefile fixed the problem for me.
+
+Can you share some more details on your build setup?
+This worked for me as-is and also passed 0day build testing.
+
+> > [SNIP]
+> > +static int kunit_uapi_run_executable_in_mount(struct kunit *test, const char *executable,
+> > +						†† struct vfsmount *mnt)
+> > +{
+> > +	struct kunit_uapi_user_mode_thread_ctx ctx = {
+> > +		.setup_done	= COMPLETION_INITIALIZER_ONSTACK(ctx.setup_done),
+> > +		.executable	= executable,
+> > +		.pwd		= {
+> > +			.mnt	= mnt,
+> > +			.dentry	= mnt->mnt_root,
+> > +		},
+> > +	};
+> > +	int forward_err, wait_err, ret;
+> 
+> ret needs to be initialized to zero here as the kernel_wait function
+> will only set "ret" if wo.wo_stat is non-zero.
+
+Ack.
+
+> > [SNIP]
+
+
+Thomas
 
