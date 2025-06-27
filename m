@@ -1,348 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-53196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB24AEBB6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 17:15:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F058DAEBB78
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 17:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788411C25563
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 15:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E9D3AB337
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 15:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB292E92DD;
-	Fri, 27 Jun 2025 15:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D105C2E8E01;
+	Fri, 27 Jun 2025 15:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eOJzTE2e"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bC5xhPrn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A271D2E92C8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 15:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D1A1459EA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 15:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751037104; cv=none; b=MMgo5M8uUAOk40XNr33VrYKOe+4FoVaVf+3otXVYdQdXcEZZtfgLTKpALLQQyX8utVoF9Lf/6Jzgrh3e1XbK8N7xoBL2OIVRN58ea5CnBT/vSWLoNLI6AGO9D90MwLqhN8ahO3W5ZKWrA2Dzr2MC8YMj8/Z4gtbuPwUa3pE7S20=
+	t=1751037470; cv=none; b=Rx265vLmfRWKcelyM7WZ7sZgUUTPIFPOZyqggGU7WC+ADu9fh48zmvkOlb7+jf1+emXB5ZmXMWTzW5o2WuMRgiweF0Ce9DZ/36gQl4WB2qNuecYoxZo2gt4xVVFbiW1FoEpsrhHUlnM356x8AlhxHHziyL/cTzT92mMD0G0XhtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751037104; c=relaxed/simple;
-	bh=MSR1rZ6axrEW/nag1GsZtrsc2NYT0HlHk8EAzHpGXpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oc23fQAuEf5QXqPzNnp6kjer/JEMc99sAVSf76dq1qrwFse/D0qvi7/cedycWm93Uy//3jVlb07c5lTMq/xUbqpW1jXHCR0aMOWxw3lOjOKDKJbA1FVG3P4Tj0g+3GlNc2qx63LndmJN72c5jId6nzMrRuw6IW3e4F6fVi0yEcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eOJzTE2e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751037101;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H5x/w8e+UV/VFoG6Hnar4e49cwam42RN12S0+F3Q+Qg=;
-	b=eOJzTE2ektPXDy44kiqB2Hp/Ye5X03tWq/ILNuThYOqpgATEBxd2qXojKgM2/Ho2jE4j55
-	V9AD6a9poBhRKQOlAoaAV6OC/gEU8BpYsNftLTZR5wBzsf+GLD8DG1dBMFODIn0cf1TNLe
-	PGvZquDcNstU6a+aTnoatxPH0EZaP/M=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-417-8o15-kfDNtOKXa3iBiaWfQ-1; Fri,
- 27 Jun 2025 11:11:40 -0400
-X-MC-Unique: 8o15-kfDNtOKXa3iBiaWfQ-1
-X-Mimecast-MFC-AGG-ID: 8o15-kfDNtOKXa3iBiaWfQ_1751037098
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A7D101809C9C;
-	Fri, 27 Jun 2025 15:11:38 +0000 (UTC)
-Received: from bfoster (unknown [10.22.64.142])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E9B1019560A7;
-	Fri, 27 Jun 2025 15:11:36 +0000 (UTC)
-Date: Fri, 27 Jun 2025 11:15:14 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Joanne Koong <joannelkoong@gmail.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev
-Subject: Re: [PATCH 06/12] iomap: move all ioend handling to ioend.c
-Message-ID: <aF61grplkxy7RXie@bfoster>
-References: <20250627070328.975394-1-hch@lst.de>
- <20250627070328.975394-7-hch@lst.de>
+	s=arc-20240116; t=1751037470; c=relaxed/simple;
+	bh=duqGKW964qjNwuxPqetVf/TrjZYvTw13+ovFDc1dkxw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XgMsTRYZg2HEwzEBxhk5ErZJGXyzNkWJwT59nG0n0S6CsD4uGa5/1EOpIEawENLd7LaZqYqRlEWVhQ0pcNCeWiBffgRY8P61B6YUgpeYPJDOIG6DzoKYh3dPxTKOC1M6stxvcgIh7swS12MPKmuvCO9FJkzbW6QoJ1hXV9ZwRMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bC5xhPrn; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so235355ab.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 08:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751037467; x=1751642267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ctaq7Efseld3m3PwMhLwojtbJNBExDIWVuNO2ad89Gw=;
+        b=bC5xhPrnk30A6esUoF1tTDyw8qSDGKl8ap9F2fK5g2uVMAnXFKB9dj9syGpwhpUto3
+         4OVTElAwBjz2T0ZZyALwTVglQ/GRkm8GLjGm0sUOkGbQROAxTs3eFtB/5KppOdhQRhiS
+         /7EmQwDS9ZPPY8U78NNfFjctlC9XIB5jURJkQOHmN8EscagB48g3M1j3RWlfIFBKP1LJ
+         gdkKI1y9cZLOVnhsMjM6SIHoMDQGhONPeB8y+rngKhEQwskIBGfht9gXFWbPStBL4Xpa
+         J/cxRkdk6V50pr4jQA64PusxOBIfL/OLBt/1BMgyQo8r5UQj4ECUxXqSKCDL/GwHS5Mx
+         JPrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751037467; x=1751642267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ctaq7Efseld3m3PwMhLwojtbJNBExDIWVuNO2ad89Gw=;
+        b=vuxQdCfm8MCXC++KW2Pg0Xe9GyM2B5q3k9nIfJb3lG/QZ5Nm4hnWZXZmziY0uUOdSm
+         LgJOMLqDimjVzxK4AkYP1Ga8D71LEo1pyVW8Djzm0ikXl7rK6Nf//cVepFZoL3Pkl2N6
+         qmwNgUOQ+nLjiUxAUKqocXMf55obBA/0on555taQQIUZQz0Tk06kxRP0XZexNEewYml0
+         euZwu/q5Bntx5qUmMSbEAZrcRCR2yiRYz0NsglQFDA5X8SFSFXK3ECu0C8PeSPNh1eBn
+         WcEvhe21w+Y5raVrcPqMqkLndmtmzwcsAIoTA8gyX59ZHbMnGga8uqv8ZrbH3OrJt70w
+         uYpg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Otx4zD1sSdZ2W7nimJewF9jFLh9ApH2b+Rg8emQfgpKY1VpJO9s441ZWUuJG6B1DBVzegchwh/ZgPd1p@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG8j1TQp/yjOsVmk+i65zQKYcyu6N9ZVZN+jZD3Lk2u6ApaC4k
+	TmlqU8ISD8wEa535mBjXaQTF+qibQPzZd8oXjeQ9Y+7MazXftew0MU+Xcer0hvtNbkbgm3Ml0aK
+	WFjJ6vDJ7GJVjIjrRJl9sPtzUrwqlyfxPscNmRlfJ
+X-Gm-Gg: ASbGncvh2GS8P/mpWmIctAuN0FY/aPWA3048UWQTS0bkS9i80O+yNEeKfgyut8SN2oi
+	TghgmNkpHyShjcUAjLVb/1D0XOPdVqGN8TKADfz2GPkOdpFcS8Kt10plJITr1oSjxhf7OMDVs0l
+	TIZtfYlUpnYSw5mpeIL1Z+HkpA216+v6C0oJ5+8WNk+RiCyUrZ1EljFnrU3MTvU4i/eC/Iy6itB
+	TJIej/BJzgG63k=
+X-Google-Smtp-Source: AGHT+IEb+xxzVEl4IYeZdvYpF90TB/n7ds2F+wk1b/UN6A6zXnHR6Y9V2ll0YmyvEsQKpdZrsBliB1gS8siVMNUIbc0=
+X-Received: by 2002:a17:902:c94f:b0:234:a469:62ef with SMTP id
+ d9443c01a7336-23ae4da691bmr146245ad.3.1751037466544; Fri, 27 Jun 2025
+ 08:17:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627070328.975394-7-hch@lst.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <cover.1747264138.git.ackerleytng@google.com> <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
+ <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
+ <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
+ <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
+ <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
+ <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com> <20250624130811.GB72557@ziepe.ca>
+ <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com> <31beeed3-b1be-439b-8a5b-db8c06dadc30@amd.com>
+In-Reply-To: <31beeed3-b1be-439b-8a5b-db8c06dadc30@amd.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Fri, 27 Jun 2025 08:17:34 -0700
+X-Gm-Features: Ac12FXyPZKiqBA6vQz47UeBICglaWzMRTynZ4wc-OUKHNtdWirkqG5VqjYk0knQ
+Message-ID: <CAGtprH9gojp6hit2SZ0jJBJnzuRvpfRhSa334UhAMFYPZzp4PA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+To: Alexey Kardashevskiy <aik@amd.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Fuad Tabba <tabba@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
+	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
+	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com, 
+	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 27, 2025 at 09:02:39AM +0200, Christoph Hellwig wrote:
-> Now that the writeback code has the proper abstractions, all the ioend
-> code can be self-contained in ioend.c.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  fs/iomap/buffered-io.c | 215 ----------------------------------------
->  fs/iomap/internal.h    |   1 -
->  fs/iomap/ioend.c       | 220 ++++++++++++++++++++++++++++++++++++++++-
->  3 files changed, 219 insertions(+), 217 deletions(-)
-> 
-...
-> diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
-> index 18894ebba6db..ce0a4c13d008 100644
-> --- a/fs/iomap/ioend.c
-> +++ b/fs/iomap/ioend.c
-> @@ -1,10 +1,13 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copyright (c) 2024-2025 Christoph Hellwig.
-> + * Copyright (c) 2016-2025 Christoph Hellwig.
->   */
->  #include <linux/iomap.h>
->  #include <linux/list_sort.h>
-> +#include <linux/pagemap.h>
-> +#include <linux/writeback.h>
->  #include "internal.h"
-> +#include "trace.h"
+On Thu, Jun 26, 2025 at 9:50=E2=80=AFPM Alexey Kardashevskiy <aik@amd.com> =
+wrote:
+>
+>
+>
+> On 25/6/25 00:10, Vishal Annapurve wrote:
+> > On Tue, Jun 24, 2025 at 6:08=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> =
+wrote:
+> >>
+> >> On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
+> >>
+> >>> Now, I am rebasing my RFC on top of this patchset and it fails in
+> >>> kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
+> >>> folios in my RFC.
+> >>>
+> >>> So what is the expected sequence here? The userspace unmaps a DMA
+> >>> page and maps it back right away, all from the userspace? The end
+> >>> result will be the exactly same which seems useless. And IOMMU TLB
+> >
+> >   As Jason described, ideally IOMMU just like KVM, should just:
+> > 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
+> > by IOMMU stack
+> > 2) Directly query pfns from guest_memfd for both shared/private ranges
+> > 3) Implement an invalidation callback that guest_memfd can invoke on
+> > conversions.
 
-Can any of these now be dropped from buffered-io.c?
+Conversions and truncations both.
 
-Otherwise LGTM:
+> >
+> > Current flow:
+> > Private to Shared conversion via kvm_gmem_convert_range() -
+> >      1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
+> > on each bound memslot overlapping with the range
+> >           -> KVM has the concept of invalidation_begin() and end(),
+> > which effectively ensures that between these function calls, no new
+> > EPT/NPT entries can be added for the range.
+> >       2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
+> > actually unmaps the KVM SEPT/NPT entries.
+> >       3) guest_memfd invokes kvm_gmem_execute_work() which updates the
+> > shareability and then splits the folios if needed
+> >
+> > Shared to private conversion via kvm_gmem_convert_range() -
+> >      1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
+> > on each bound memslot overlapping with the range
+> >       2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
+> > actually unmaps the host mappings which will unmap the KVM non-seucure
+> > EPT/NPT entries.
+> >       3) guest_memfd invokes kvm_gmem_execute_work() which updates the
+> > shareability and then merges the folios if needed.
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> >
+> > For IOMMU, could something like below work?
+> >
+> > * A new UAPI to bind IOMMU FDs with guest_memfd ranges
+>
+> Done that.
+>
+> > * VFIO_DMA_MAP/UNMAP operations modified to directly fetch pfns from
+> > guest_memfd ranges using kvm_gmem_get_pfn()
+>
+> This API imho should drop the confusing kvm_ prefix.
+>
+> >      -> kvm invokes kvm_gmem_is_private() to check for the range
+> > shareability, IOMMU could use the same or we could add an API in gmem
+> > that takes in access type and checks the shareability before returning
+> > the pfn.
+>
+> Right now I cutnpasted kvm_gmem_get_folio() (which essentially is filemap=
+_lock_folio()/filemap_alloc_folio()/__filemap_add_folio()) to avoid new lin=
+ks between iommufd.ko and kvm.ko. It is probably unavoidable though.
 
-Reviewed-by: Brian Foster <bfoster@redhat.com>
+I don't think that's the way to avoid links between iommufd.ko and
+kvm.ko. Cleaner way probably is to have gmem logic built-in and allow
+runtime registration of invalidation callbacks from KVM/IOMMU
+backends. Need to think about this more.
 
->  
->  struct bio_set iomap_ioend_bioset;
->  EXPORT_SYMBOL_GPL(iomap_ioend_bioset);
-> @@ -28,6 +31,221 @@ struct iomap_ioend *iomap_init_ioend(struct inode *inode,
->  }
->  EXPORT_SYMBOL_GPL(iomap_init_ioend);
->  
-> +/*
-> + * We're now finished for good with this ioend structure.  Update the folio
-> + * state, release holds on bios, and finally free up memory.  Do not use the
-> + * ioend after this.
-> + */
-> +static u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend)
-> +{
-> +	struct inode *inode = ioend->io_inode;
-> +	struct bio *bio = &ioend->io_bio;
-> +	struct folio_iter fi;
-> +	u32 folio_count = 0;
-> +
-> +	if (ioend->io_error) {
-> +		mapping_set_error(inode->i_mapping, ioend->io_error);
-> +		if (!bio_flagged(bio, BIO_QUIET)) {
-> +			pr_err_ratelimited(
-> +"%s: writeback error on inode %lu, offset %lld, sector %llu",
-> +				inode->i_sb->s_id, inode->i_ino,
-> +				ioend->io_offset, ioend->io_sector);
-> +		}
-> +	}
-> +
-> +	/* walk all folios in bio, ending page IO on them */
-> +	bio_for_each_folio_all(fi, bio) {
-> +		iomap_finish_folio_write(inode, fi.folio, fi.length);
-> +		folio_count++;
-> +	}
-> +
-> +	bio_put(bio);	/* frees the ioend */
-> +	return folio_count;
-> +}
-> +
-> +static void ioend_writeback_end_bio(struct bio *bio)
-> +{
-> +	struct iomap_ioend *ioend = iomap_ioend_from_bio(bio);
-> +
-> +	ioend->io_error = blk_status_to_errno(bio->bi_status);
-> +	iomap_finish_ioend_buffered(ioend);
-> +}
-> +
-> +/*
-> + * We cannot cancel the ioend directly in case of an error, so call the bio end
-> + * I/O handler with the error status here to run the normal I/O completion
-> + * handler.
-> + */
-> +int ioend_writeback_submit(struct iomap_writeback_ctx *wpc, int error)
-> +{
-> +	struct iomap_ioend *ioend = wpc->wb_ctx;
-> +
-> +	if (!ioend->io_bio.bi_end_io)
-> +		ioend->io_bio.bi_end_io = ioend_writeback_end_bio;
-> +
-> +	if (WARN_ON_ONCE(wpc->iomap.flags & IOMAP_F_ANON_WRITE))
-> +		error = -EIO;
-> +
-> +	if (error) {
-> +		ioend->io_bio.bi_status = errno_to_blk_status(error);
-> +		bio_endio(&ioend->io_bio);
-> +		return error;
-> +	}
-> +
-> +	submit_bio(&ioend->io_bio);
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(ioend_writeback_submit);
-> +
-> +static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writeback_ctx *wpc,
-> +		loff_t pos, u16 ioend_flags)
-> +{
-> +	struct bio *bio;
-> +
-> +	bio = bio_alloc_bioset(wpc->iomap.bdev, BIO_MAX_VECS,
-> +			       REQ_OP_WRITE | wbc_to_write_flags(wpc->wbc),
-> +			       GFP_NOFS, &iomap_ioend_bioset);
-> +	bio->bi_iter.bi_sector = iomap_sector(&wpc->iomap, pos);
-> +	bio->bi_write_hint = wpc->inode->i_write_hint;
-> +	wbc_init_bio(wpc->wbc, bio);
-> +	wpc->nr_folios = 0;
-> +	return iomap_init_ioend(wpc->inode, bio, pos, ioend_flags);
-> +}
-> +
-> +static bool iomap_can_add_to_ioend(struct iomap_writeback_ctx *wpc, loff_t pos,
-> +		u16 ioend_flags)
-> +{
-> +	struct iomap_ioend *ioend = wpc->wb_ctx;
-> +
-> +	if (ioend_flags & IOMAP_IOEND_BOUNDARY)
-> +		return false;
-> +	if ((ioend_flags & IOMAP_IOEND_NOMERGE_FLAGS) !=
-> +	    (ioend->io_flags & IOMAP_IOEND_NOMERGE_FLAGS))
-> +		return false;
-> +	if (pos != ioend->io_offset + ioend->io_size)
-> +		return false;
-> +	if (!(wpc->iomap.flags & IOMAP_F_ANON_WRITE) &&
-> +	    iomap_sector(&wpc->iomap, pos) != bio_end_sector(&ioend->io_bio))
-> +		return false;
-> +	/*
-> +	 * Limit ioend bio chain lengths to minimise IO completion latency. This
-> +	 * also prevents long tight loops ending page writeback on all the
-> +	 * folios in the ioend.
-> +	 */
-> +	if (wpc->nr_folios >= IOEND_BATCH_SIZE)
-> +		return false;
-> +	return true;
-> +}
-> +
-> +/*
-> + * Test to see if we have an existing ioend structure that we could append to
-> + * first; otherwise finish off the current ioend and start another.
-> + *
-> + * If a new ioend is created and cached, the old ioend is submitted to the block
-> + * layer instantly.  Batching optimisations are provided by higher level block
-> + * plugging.
-> + *
-> + * At the end of a writeback pass, there will be a cached ioend remaining on the
-> + * writepage context that the caller will need to submit.
-> + */
-> +ssize_t iomap_add_to_ioend(struct iomap_writeback_ctx *wpc, struct folio *folio,
-> +		loff_t pos, loff_t end_pos, unsigned int dirty_len)
-> +{
-> +	struct iomap_ioend *ioend = wpc->wb_ctx;
-> +	size_t poff = offset_in_folio(folio, pos);
-> +	unsigned int ioend_flags = 0;
-> +	unsigned int map_len = min_t(u64, dirty_len,
-> +		wpc->iomap.offset + wpc->iomap.length - pos);
-> +	int error;
-> +
-> +	trace_iomap_add_to_ioend(wpc->inode, pos, dirty_len, &wpc->iomap);
-> +
-> +	WARN_ON_ONCE(!folio->private && map_len < dirty_len);
-> +
-> +	switch (wpc->iomap.type) {
-> +	case IOMAP_INLINE:
-> +		WARN_ON_ONCE(1);
-> +		return -EIO;
-> +	case IOMAP_HOLE:
-> +		return map_len;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	if (wpc->iomap.type == IOMAP_UNWRITTEN)
-> +		ioend_flags |= IOMAP_IOEND_UNWRITTEN;
-> +	if (wpc->iomap.flags & IOMAP_F_SHARED)
-> +		ioend_flags |= IOMAP_IOEND_SHARED;
-> +	if (folio_test_dropbehind(folio))
-> +		ioend_flags |= IOMAP_IOEND_DONTCACHE;
-> +	if (pos == wpc->iomap.offset && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
-> +		ioend_flags |= IOMAP_IOEND_BOUNDARY;
-> +
-> +	if (!ioend || !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
-> +new_ioend:
-> +		if (ioend) {
-> +			error = wpc->ops->writeback_submit(wpc, 0);
-> +			if (error)
-> +				return error;
-> +		}
-> +		wpc->wb_ctx = ioend = iomap_alloc_ioend(wpc, pos, ioend_flags);
-> +	}
-> +
-> +	if (!bio_add_folio(&ioend->io_bio, folio, map_len, poff))
-> +		goto new_ioend;
-> +
-> +	iomap_start_folio_write(wpc->inode, folio, map_len);
-> +
-> +	/*
-> +	 * Clamp io_offset and io_size to the incore EOF so that ondisk
-> +	 * file size updates in the ioend completion are byte-accurate.
-> +	 * This avoids recovering files with zeroed tail regions when
-> +	 * writeback races with appending writes:
-> +	 *
-> +	 *    Thread 1:                  Thread 2:
-> +	 *    ------------               -----------
-> +	 *    write [A, A+B]
-> +	 *    update inode size to A+B
-> +	 *    submit I/O [A, A+BS]
-> +	 *                               write [A+B, A+B+C]
-> +	 *                               update inode size to A+B+C
-> +	 *    <I/O completes, updates disk size to min(A+B+C, A+BS)>
-> +	 *    <power failure>
-> +	 *
-> +	 *  After reboot:
-> +	 *    1) with A+B+C < A+BS, the file has zero padding in range
-> +	 *       [A+B, A+B+C]
-> +	 *
-> +	 *    |<     Block Size (BS)   >|
-> +	 *    |DDDDDDDDDDDD0000000000000|
-> +	 *    ^           ^        ^
-> +	 *    A          A+B     A+B+C
-> +	 *                       (EOF)
-> +	 *
-> +	 *    2) with A+B+C > A+BS, the file has zero padding in range
-> +	 *       [A+B, A+BS]
-> +	 *
-> +	 *    |<     Block Size (BS)   >|<     Block Size (BS)    >|
-> +	 *    |DDDDDDDDDDDD0000000000000|00000000000000000000000000|
-> +	 *    ^           ^             ^           ^
-> +	 *    A          A+B           A+BS       A+B+C
-> +	 *                             (EOF)
-> +	 *
-> +	 *    D = Valid Data
-> +	 *    0 = Zero Padding
-> +	 *
-> +	 * Note that this defeats the ability to chain the ioends of
-> +	 * appending writes.
-> +	 */
-> +	ioend->io_size += map_len;
-> +	if (ioend->io_offset + ioend->io_size > end_pos)
-> +		ioend->io_size = end_pos - ioend->io_offset;
-> +
-> +	wbc_account_cgroup_owner(wpc->wbc, folio, map_len);
-> +	return map_len;
-> +}
-> +EXPORT_SYMBOL_GPL(iomap_add_to_ioend);
-> +
->  static u32 iomap_finish_ioend(struct iomap_ioend *ioend, int error)
->  {
->  	if (ioend->io_parent) {
-> -- 
-> 2.47.2
-> 
-> 
+>
+>
+> > * IOMMU stack exposes an invalidation callback that can be invoked by
+> > guest_memfd.
+> >
+> > Private to Shared conversion via kvm_gmem_convert_range() -
+> >      1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
+> > on each bound memslot overlapping with the range
+> >       2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
+> > actually unmaps the KVM SEPT/NPT entries.
+> >             -> guest_memfd invokes IOMMU invalidation callback to zap
+> > the secure IOMMU entries.
+> >       3) guest_memfd invokes kvm_gmem_execute_work() which updates the
+> > shareability and then splits the folios if needed
+> >       4) Userspace invokes IOMMU map operation to map the ranges in
+> > non-secure IOMMU.
+> >
+> > Shared to private conversion via kvm_gmem_convert_range() -
+> >      1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
+> > on each bound memslot overlapping with the range
+> >       2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
+> > actually unmaps the host mappings which will unmap the KVM non-seucure
+> > EPT/NPT entries.
+> >           -> guest_memfd invokes IOMMU invalidation callback to zap the
+> > non-secure IOMMU entries.
+> >       3) guest_memfd invokes kvm_gmem_execute_work() which updates the
+> > shareability and then merges the folios if needed.
+> >       4) Userspace invokes IOMMU map operation to map the ranges in sec=
+ure IOMMU.
+>
+>
+> Alright (although this zap+map is not necessary on the AMD hw).
 
+IMO guest_memfd ideally should not directly interact or cater to arch
+specific needs, it should implement a mechanism that works for all
+archs. KVM/IOMMU implement invalidation callbacks and have all the
+architecture specific knowledge to take the right decisions.
+
+>
+>
+> > There should be a way to block external IOMMU pagetable updates while
+> > guest_memfd is performing conversion e.g. something like
+> > kvm_invalidate_begin()/end().
+> >
+> >>> is going to be flushed on a page conversion anyway (the RMPUPDATE
+> >>> instruction does that). All this is about AMD's x86 though.
+> >>
+> >> The iommu should not be using the VMA to manage the mapping. It should
+> >
+> > +1.
+>
+> Yeah, not doing this already, because I physically cannot map gmemfd's me=
+mory in IOMMU via VMA (which allocates memory via gup() so wrong memory is =
+mapped in IOMMU). Thanks,
+>
+>
+> >> be directly linked to the guestmemfd in some way that does not disturb
+> >> its operations. I imagine there would be some kind of invalidation
+> >> callback directly to the iommu.
+> >>
+> >> Presumably that invalidation call back can include a reason for the
+> >> invalidation (addr change, shared/private conversion, etc)
+> >>
+> >> I'm not sure how we will figure out which case is which but guestmemfd
+> >> should allow the iommu to plug in either invalidation scheme..
+> >>
+> >> Probably invalidation should be a global to the FD thing, I imagine
+> >> that once invalidation is established the iommu will not be
+> >> incrementing page refcounts.
+> >
+> > +1.
+>
+> Alright. Thanks for the comments.
+>
+> >
+> >>
+> >> Jason
+>
+> --
+> Alexey
+>
 
