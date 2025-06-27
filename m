@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-53144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE703AEAF91
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 09:04:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA164AEAF95
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 09:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A7456810C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 07:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347C7568292
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 07:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19F521D3CC;
-	Fri, 27 Jun 2025 07:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB08721FF30;
+	Fri, 27 Jun 2025 07:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4N0hZXML"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T4NzZ3O0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C5A1EB9F2;
-	Fri, 27 Jun 2025 07:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AE821B9D8;
+	Fri, 27 Jun 2025 07:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751007821; cv=none; b=kSyJ/R0LMgbH6Tn2sql4XG4gHfprn7wNHJHuvUiGsblli/mMl8uM9utV3docXr4kaQGfM4CvNqmyAbRh0dRDjuDUgHOpuXcInklwj0fdlLjfevqUaqOqaNDOgfCPgWd+ydT0F19xkJXvlkZW8MNicU+QsCZceJISvVWVDDrULxA=
+	t=1751007823; cv=none; b=KXheWrK83WofoyxK5Cnj3+rlD9j0GJan+ULceOYkDj9dZki0avKdyXuUNWc0+n8xFnsXzblPYNPIAFKQbXwTtptBcTusZ1qdcvnkvINCqA6zS74fp8CV+q4pEvD0Hk2abjVWjI7HPvF9LfMzZpMdHRiuXeMtvOYcP9YtyvOPyr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751007821; c=relaxed/simple;
-	bh=7SXkTfjGRLmVeJNvGuy0RdcR8dFZE4mAlONQddbVQrM=;
+	s=arc-20240116; t=1751007823; c=relaxed/simple;
+	bh=+BtKkhcCGkqbhyBDmmEiCGw7X7GAu0iBXTlpLsDWLJM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MXwBnDTpx0DyyYNTLPz6pIKceDtwkIKly+imVx2FOL47jhKkfpJg2ONufsDiyCOK2WezNzAWiMLeCk/LtGUhyfSVm6hCU0YUzwPVgRE4zdlkHWOKS0s9G5NondPvDcKlxRPc0Cj96Ul91tKla/2PWKb7lZLaDGNfeAuTJw1nlg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4N0hZXML; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=T51t/BN6U58nHdgdSNJC99Ql1x5hwkUO1O08bwa5DdjEExxQzkXtsCunzHdDchv7GTERBXxDxjbytWyi8OQ8MoSCu+J3sfoLmryMzAWKMfRxGVgWSDQLxSdPWhFsOBbZGPUEj5tm0+iiGtq3u2sXkKmWxDjPCUaRoWRLajIgkzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T4NzZ3O0; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=tT1QitRftfeJXLzQpGenbIFzt1SOzOD27VJPbRbqwJA=; b=4N0hZXMLC/zENqJFJRTHgqevfF
-	0GGtErRiU2f39+c94/CnuUd96rch81Sbx7QxY9RmZVezc9iUFDBZHDqKLzYppPUpOv+USUKQZSWls
-	DLSlwmD6bV79Sy3FPiXTWI1LuX0+7nXx7NbOUTHbL6ewoePokC3665345zA2Vm82noc1z85I2F/DU
-	/nzDL7CmfNAItBo0x8DMVFJOvWqSzEv2l5+90Io4rG4ftph8jIfO5OkdzhV8nX2QSWhNOP0M0FvI2
-	yL+sMl23dTGUV9kWi+DMGKGeYnxe+QM01/ZlblRCE6jY3DcvN63frSgUObVbHXEL6NnBGnzTAbVJG
-	x/X3UUBw==;
+	bh=/IpNOl4N9bPU4ElOfox6vp/bmvfeeuY/GQRdobKBR1E=; b=T4NzZ3O0kSDSng2nfB6kbPY/LB
+	i3RTmLBgBkxmoKPcAX2RO9nJd2ENZO3JrvCicrKJ1D5dHjackK+jFfRV4D1CxOcrz8AlyzQQkbRXK
+	IKAgmauUx6IOCis38B70p4LORY/w43/L9bkZpkxWl2a3hKglfQxPYiGdHYigAQAxhK/JKvLby338w
+	5a70E1DMI3BKvsE8U2v9ndoyowve0zcixbLMhLL/pM0ZINyJMs7zBEhVEcfCOdKuA/yDvPJKzNbsP
+	TgHHmii1rSpLKempVG7hC07JTuaLqk+HR28AugU5O1WlvNwVg1NxrZkfMBF8DjKsyE3amEgReDzfz
+	dac1hW2A==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uV37a-0000000DltL-2JTz;
-	Fri, 27 Jun 2025 07:03:38 +0000
+	id 1uV37c-0000000Dlta-3ZvE;
+	Fri, 27 Jun 2025 07:03:41 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>
 Cc: "Darrick J. Wong" <djwong@kernel.org>,
@@ -54,9 +54,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	linux-doc@vger.kernel.org,
 	linux-block@vger.kernel.org,
 	gfs2@lists.linux.dev
-Subject: [PATCH 03/12] iomap: refactor the writeback interface
-Date: Fri, 27 Jun 2025 09:02:36 +0200
-Message-ID: <20250627070328.975394-4-hch@lst.de>
+Subject: [PATCH 04/12] iomap: hide ioends from the generic writeback code
+Date: Fri, 27 Jun 2025 09:02:37 +0200
+Message-ID: <20250627070328.975394-5-hch@lst.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250627070328.975394-1-hch@lst.de>
 References: <20250627070328.975394-1-hch@lst.de>
@@ -69,618 +69,423 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Replace ->map_blocks with a new ->writeback_range, which differs in the
-following ways:
-
- - it must also queue up the I/O for writeback, that is called into the
-   slightly refactored and extended in scope iomap_add_to_ioend for
-   each region
- - can handle only a part of the requested region, that is the retry
-   loop for partial mappings moves to the caller
- - handles cleanup on failures as well, and thus also replaces the
-   discard_folio method only implemented by XFS.
-
-This will allow to use the iomap writeback code also for file systems
-that are not block based like fuse.
+Replace the ioend pointer in iomap_writeback_ctx with a void *wb_ctx
+one to facilitate non-block, non-ioend writeback for use.  Rename
+the submit_ioend method to writeback_submit and make it mandatory so
+that the generic writeback code stops seeing ioends and bios.
 
 Co-developed-by: Joanne Koong <joannelkoong@gmail.com>
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- .../filesystems/iomap/operations.rst          |  23 +---
- block/fops.c                                  |  25 ++--
- fs/gfs2/bmap.c                                |  26 ++--
- fs/iomap/buffered-io.c                        |  93 ++++++-------
- fs/iomap/trace.h                              |   2 +-
- fs/xfs/xfs_aops.c                             | 128 +++++++++++-------
- fs/zonefs/file.c                              |  28 ++--
- include/linux/iomap.h                         |  20 ++-
- 8 files changed, 183 insertions(+), 162 deletions(-)
+ .../filesystems/iomap/operations.rst          | 16 +---
+ block/fops.c                                  |  1 +
+ fs/gfs2/bmap.c                                |  1 +
+ fs/iomap/buffered-io.c                        | 91 ++++++++++---------
+ fs/xfs/xfs_aops.c                             | 60 ++++++------
+ fs/zonefs/file.c                              |  1 +
+ include/linux/iomap.h                         | 19 ++--
+ 7 files changed, 93 insertions(+), 96 deletions(-)
 
 diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
-index 52c2e23e0e76..3c7989ee84ff 100644
+index 3c7989ee84ff..7073c1a3ede3 100644
 --- a/Documentation/filesystems/iomap/operations.rst
 +++ b/Documentation/filesystems/iomap/operations.rst
-@@ -271,7 +271,7 @@ writeback.
- It does not lock ``i_rwsem`` or ``invalidate_lock``.
- 
- The dirty bit will be cleared for all folios run through the
--``->map_blocks`` machinery described below even if the writeback fails.
-+``->writeback_range`` machinery described below even if the writeback fails.
- This is to prevent dirty folio clots when storage devices fail; an
- ``-EIO`` is recorded for userspace to collect via ``fsync``.
- 
-@@ -283,15 +283,14 @@ The ``ops`` structure must be specified and is as follows:
- .. code-block:: c
- 
+@@ -285,7 +285,7 @@ The ``ops`` structure must be specified and is as follows:
   struct iomap_writeback_ops {
--     int (*map_blocks)(struct iomap_writeback_ctx *wpc, struct inode *inode,
--                       loff_t offset, unsigned len);
--     int (*submit_ioend)(struct iomap_writeback_ctx *wpc, int status);
--     void (*discard_folio)(struct folio *folio, loff_t pos);
-+    int (*writeback_range)(struct iomap_writeback_ctx *wpc,
-+    		struct folio *folio, u64 pos, unsigned int len, u64 end_pos);
-+    int (*submit_ioend)(struct iomap_writeback_ctx *wpc, int status);
+     int (*writeback_range)(struct iomap_writeback_ctx *wpc,
+     		struct folio *folio, u64 pos, unsigned int len, u64 end_pos);
+-    int (*submit_ioend)(struct iomap_writeback_ctx *wpc, int status);
++    int (*writeback_submit)(struct iomap_writeback_ctx *wpc, int error);
   };
  
  The fields are as follows:
+@@ -307,13 +307,7 @@ The fields are as follows:
+     purpose.
+     This function must be supplied by the filesystem.
  
--  - ``map_blocks``: Sets ``wpc->iomap`` to the space mapping of the file
-+  - ``writeback_range``: Sets ``wpc->iomap`` to the space mapping of the file
-     range (in bytes) given by ``offset`` and ``len``.
-     iomap calls this function for each dirty fs block in each dirty folio,
-     though it will `reuse mappings
-@@ -316,18 +315,6 @@ The fields are as follows:
-     transactions from process context before submitting the bio.
-     This function is optional.
- 
--  - ``discard_folio``: iomap calls this function after ``->map_blocks``
--    fails to schedule I/O for any part of a dirty folio.
--    The function should throw away any reservations that may have been
--    made for the write.
--    The folio will be marked clean and an ``-EIO`` recorded in the
--    pagecache.
--    Filesystems can use this callback to `remove
--    <https://lore.kernel.org/all/20201029163313.1766967-1-bfoster@redhat.com/>`_
--    delalloc reservations to avoid having delalloc reservations for
--    clean pagecache.
+-  - ``submit_ioend``: Allows the file systems to hook into writeback bio
+-    submission.
+-    This might include pre-write space accounting updates, or installing
+-    a custom ``->bi_end_io`` function for internal purposes, such as
+-    deferring the ioend completion to a workqueue to run metadata update
+-    transactions from process context before submitting the bio.
 -    This function is optional.
--
++  - ``writeback_submit``: Submit the previous built writeback context.
+ 
  Pagecache Writeback Completion
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -328,12 +322,6 @@ the address space.
+ This can happen in interrupt or process context, depending on the
+ storage device.
  
+-Filesystems that need to update internal bookkeeping (e.g. unwritten
+-extent conversions) should provide a ``->submit_ioend`` function to
+-set ``struct iomap_end::bio::bi_end_io`` to its own function.
+-This function should call ``iomap_finish_ioends`` after finishing its
+-own work (e.g. unwritten extent conversion).
+-
+ Some filesystems may wish to `amortize the cost of running metadata
+ transactions
+ <https://lore.kernel.org/all/20220120034733.221737-1-david@fromorbit.com/>`_
 diff --git a/block/fops.c b/block/fops.c
-index 00af678aaa3a..692be63a4aa0 100644
+index 692be63a4aa0..777f2318eca2 100644
 --- a/block/fops.c
 +++ b/block/fops.c
-@@ -537,22 +537,29 @@ static void blkdev_readahead(struct readahead_control *rac)
- 	iomap_readahead(rac, &blkdev_iomap_ops);
- }
- 
--static int blkdev_map_blocks(struct iomap_writeback_ctx *wpc,
--		struct inode *inode, loff_t offset, unsigned int len)
-+static ssize_t blkdev_writeback_range(struct iomap_writeback_ctx *wpc,
-+		struct folio *folio, u64 offset, unsigned int len, u64 end_pos)
- {
--	loff_t isize = i_size_read(inode);
-+	loff_t isize = i_size_read(wpc->inode);
- 
- 	if (WARN_ON_ONCE(offset >= isize))
- 		return -EIO;
--	if (offset >= wpc->iomap.offset &&
--	    offset < wpc->iomap.offset + wpc->iomap.length)
--		return 0;
--	return blkdev_iomap_begin(inode, offset, isize - offset,
--				  IOMAP_WRITE, &wpc->iomap, NULL);
-+
-+	if (offset < wpc->iomap.offset ||
-+	    offset >= wpc->iomap.offset + wpc->iomap.length) {
-+		int error;
-+
-+		error = blkdev_iomap_begin(wpc->inode, offset, isize - offset,
-+				IOMAP_WRITE, &wpc->iomap, NULL);
-+		if (error)
-+			return error;
-+	}
-+
-+	return iomap_add_to_ioend(wpc, folio, offset, end_pos, len);
- }
+@@ -560,6 +560,7 @@ static ssize_t blkdev_writeback_range(struct iomap_writeback_ctx *wpc,
  
  static const struct iomap_writeback_ops blkdev_writeback_ops = {
--	.map_blocks		= blkdev_map_blocks,
-+	.writeback_range	= blkdev_writeback_range,
+ 	.writeback_range	= blkdev_writeback_range,
++	.writeback_submit	= ioend_writeback_submit,
  };
  
  static int blkdev_writepages(struct address_space *mapping,
 diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 77a505e7a017..ff72e04a4788 100644
+index ff72e04a4788..eb49e49f2db4 100644
 --- a/fs/gfs2/bmap.c
 +++ b/fs/gfs2/bmap.c
-@@ -2469,23 +2469,25 @@ int __gfs2_punch_hole(struct file *file, loff_t offset, loff_t length)
- 	return error;
- }
- 
--static int gfs2_map_blocks(struct iomap_writeback_ctx *wpc, struct inode *inode,
--		loff_t offset, unsigned int len)
-+static ssize_t gfs2_writeback_range(struct iomap_writeback_ctx *wpc,
-+		struct folio *folio, u64 offset, unsigned int len, u64 end_pos)
- {
--	int ret;
--
--	if (WARN_ON_ONCE(gfs2_is_stuffed(GFS2_I(inode))))
-+	if (WARN_ON_ONCE(gfs2_is_stuffed(GFS2_I(wpc->inode))))
- 		return -EIO;
- 
--	if (offset >= wpc->iomap.offset &&
--	    offset < wpc->iomap.offset + wpc->iomap.length)
--		return 0;
-+	if (offset < wpc->iomap.offset ||
-+	    offset >= wpc->iomap.offset + wpc->iomap.length) {
-+		int ret;
- 
--	memset(&wpc->iomap, 0, sizeof(wpc->iomap));
--	ret = gfs2_iomap_get(inode, offset, INT_MAX, &wpc->iomap);
--	return ret;
-+		memset(&wpc->iomap, 0, sizeof(wpc->iomap));
-+		ret = gfs2_iomap_get(wpc->inode, offset, INT_MAX, &wpc->iomap);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return iomap_add_to_ioend(wpc, folio, offset, end_pos, len);
- }
+@@ -2490,4 +2490,5 @@ static ssize_t gfs2_writeback_range(struct iomap_writeback_ctx *wpc,
  
  const struct iomap_writeback_ops gfs2_writeback_ops = {
--	.map_blocks		= gfs2_map_blocks,
-+	.writeback_range	= gfs2_writeback_range,
+ 	.writeback_range	= gfs2_writeback_range,
++	.writeback_submit	= ioend_writeback_submit,
  };
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index ec2f70c6ec33..a54b14817cd0 100644
+index a54b14817cd0..a72ab487c8ab 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1676,14 +1676,30 @@ static bool iomap_can_add_to_ioend(struct iomap_writeback_ctx *wpc, loff_t pos,
-  * At the end of a writeback pass, there will be a cached ioend remaining on the
-  * writepage context that the caller will need to submit.
-  */
--static int iomap_add_to_ioend(struct iomap_writeback_ctx *wpc,
--		struct folio *folio, loff_t pos, loff_t end_pos, unsigned len)
-+ssize_t iomap_add_to_ioend(struct iomap_writeback_ctx *wpc, struct folio *folio,
-+		loff_t pos, loff_t end_pos, unsigned int dirty_len)
+@@ -1579,7 +1579,7 @@ u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend)
+ 	return folio_count;
+ }
+ 
+-static void iomap_writepage_end_bio(struct bio *bio)
++static void ioend_writeback_end_bio(struct bio *bio)
  {
+ 	struct iomap_ioend *ioend = iomap_ioend_from_bio(bio);
+ 
+@@ -1588,42 +1588,30 @@ static void iomap_writepage_end_bio(struct bio *bio)
+ }
+ 
+ /*
+- * Submit an ioend.
+- *
+- * If @error is non-zero, it means that we have a situation where some part of
+- * the submission process has failed after we've marked pages for writeback.
+- * We cannot cancel ioend directly in that case, so call the bio end I/O handler
+- * with the error status here to run the normal I/O completion handler to clear
+- * the writeback bit and let the file system proess the errors.
++ * We cannot cancel the ioend directly in case of an error, so call the bio end
++ * I/O handler with the error status here to run the normal I/O completion
++ * handler.
+  */
+-static int iomap_submit_ioend(struct iomap_writeback_ctx *wpc, int error)
++int ioend_writeback_submit(struct iomap_writeback_ctx *wpc, int error)
+ {
+-	if (!wpc->ioend)
+-		return error;
++	struct iomap_ioend *ioend = wpc->wb_ctx;
+ 
+-	/*
+-	 * Let the file systems prepare the I/O submission and hook in an I/O
+-	 * comletion handler.  This also needs to happen in case after a
+-	 * failure happened so that the file system end I/O handler gets called
+-	 * to clean up.
+-	 */
+-	if (wpc->ops->submit_ioend) {
+-		error = wpc->ops->submit_ioend(wpc, error);
+-	} else {
+-		if (WARN_ON_ONCE(wpc->iomap.flags & IOMAP_F_ANON_WRITE))
+-			error = -EIO;
+-		if (!error)
+-			submit_bio(&wpc->ioend->io_bio);
+-	}
++	if (!ioend->io_bio.bi_end_io)
++		ioend->io_bio.bi_end_io = ioend_writeback_end_bio;
++
++	if (WARN_ON_ONCE(wpc->iomap.flags & IOMAP_F_ANON_WRITE))
++		error = -EIO;
+ 
+ 	if (error) {
+-		wpc->ioend->io_bio.bi_status = errno_to_blk_status(error);
+-		bio_endio(&wpc->ioend->io_bio);
++		ioend->io_bio.bi_status = errno_to_blk_status(error);
++		bio_endio(&ioend->io_bio);
++		return error;
+ 	}
+ 
+-	wpc->ioend = NULL;
+-	return error;
++	submit_bio(&ioend->io_bio);
++	return 0;
+ }
++EXPORT_SYMBOL_GPL(ioend_writeback_submit);
+ 
+ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writeback_ctx *wpc,
+ 		loff_t pos, u16 ioend_flags)
+@@ -1634,7 +1622,6 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writeback_ctx *wpc,
+ 			       REQ_OP_WRITE | wbc_to_write_flags(wpc->wbc),
+ 			       GFP_NOFS, &iomap_ioend_bioset);
+ 	bio->bi_iter.bi_sector = iomap_sector(&wpc->iomap, pos);
+-	bio->bi_end_io = iomap_writepage_end_bio;
+ 	bio->bi_write_hint = wpc->inode->i_write_hint;
+ 	wbc_init_bio(wpc->wbc, bio);
+ 	wpc->nr_folios = 0;
+@@ -1644,16 +1631,17 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writeback_ctx *wpc,
+ static bool iomap_can_add_to_ioend(struct iomap_writeback_ctx *wpc, loff_t pos,
+ 		u16 ioend_flags)
+ {
++	struct iomap_ioend *ioend = wpc->wb_ctx;
++
+ 	if (ioend_flags & IOMAP_IOEND_BOUNDARY)
+ 		return false;
+ 	if ((ioend_flags & IOMAP_IOEND_NOMERGE_FLAGS) !=
+-	    (wpc->ioend->io_flags & IOMAP_IOEND_NOMERGE_FLAGS))
++	    (ioend->io_flags & IOMAP_IOEND_NOMERGE_FLAGS))
+ 		return false;
+-	if (pos != wpc->ioend->io_offset + wpc->ioend->io_size)
++	if (pos != ioend->io_offset + ioend->io_size)
+ 		return false;
+ 	if (!(wpc->iomap.flags & IOMAP_F_ANON_WRITE) &&
+-	    iomap_sector(&wpc->iomap, pos) !=
+-	    bio_end_sector(&wpc->ioend->io_bio))
++	    iomap_sector(&wpc->iomap, pos) != bio_end_sector(&ioend->io_bio))
+ 		return false;
+ 	/*
+ 	 * Limit ioend bio chain lengths to minimise IO completion latency. This
+@@ -1679,6 +1667,7 @@ static bool iomap_can_add_to_ioend(struct iomap_writeback_ctx *wpc, loff_t pos,
+ ssize_t iomap_add_to_ioend(struct iomap_writeback_ctx *wpc, struct folio *folio,
+ 		loff_t pos, loff_t end_pos, unsigned int dirty_len)
+ {
++	struct iomap_ioend *ioend = wpc->wb_ctx;
  	struct iomap_folio_state *ifs = folio->private;
  	size_t poff = offset_in_folio(folio, pos);
  	unsigned int ioend_flags = 0;
-+	unsigned int map_len = min_t(u64, dirty_len,
-+		wpc->iomap.offset + wpc->iomap.length - pos);
- 	int error;
+@@ -1709,15 +1698,17 @@ ssize_t iomap_add_to_ioend(struct iomap_writeback_ctx *wpc, struct folio *folio,
+ 	if (pos == wpc->iomap.offset && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
+ 		ioend_flags |= IOMAP_IOEND_BOUNDARY;
  
-+	trace_iomap_add_to_ioend(wpc->inode, pos, dirty_len, &wpc->iomap);
-+
-+	WARN_ON_ONCE(!folio->private && map_len < dirty_len);
-+
-+	switch (wpc->iomap.type) {
-+	case IOMAP_INLINE:
-+		WARN_ON_ONCE(1);
-+		return -EIO;
-+	case IOMAP_HOLE:
-+		return map_len;
-+	default:
-+		break;
-+	}
-+
- 	if (wpc->iomap.type == IOMAP_UNWRITTEN)
- 		ioend_flags |= IOMAP_IOEND_UNWRITTEN;
- 	if (wpc->iomap.flags & IOMAP_F_SHARED)
-@@ -1701,11 +1717,11 @@ static int iomap_add_to_ioend(struct iomap_writeback_ctx *wpc,
- 		wpc->ioend = iomap_alloc_ioend(wpc, pos, ioend_flags);
+-	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
++	if (!ioend || !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
+ new_ioend:
+-		error = iomap_submit_ioend(wpc, 0);
+-		if (error)
+-			return error;
+-		wpc->ioend = iomap_alloc_ioend(wpc, pos, ioend_flags);
++		if (ioend) {
++			error = wpc->ops->writeback_submit(wpc, 0);
++			if (error)
++				return error;
++		}
++		wpc->wb_ctx = ioend = iomap_alloc_ioend(wpc, pos, ioend_flags);
  	}
  
--	if (!bio_add_folio(&wpc->ioend->io_bio, folio, len, poff))
-+	if (!bio_add_folio(&wpc->ioend->io_bio, folio, map_len, poff))
+-	if (!bio_add_folio(&wpc->ioend->io_bio, folio, map_len, poff))
++	if (!bio_add_folio(&ioend->io_bio, folio, map_len, poff))
  		goto new_ioend;
  
  	if (ifs)
--		atomic_add(len, &ifs->write_bytes_pending);
-+		atomic_add(map_len, &ifs->write_bytes_pending);
- 
- 	/*
- 	 * Clamp io_offset and io_size to the incore EOF so that ondisk
-@@ -1748,63 +1764,34 @@ static int iomap_add_to_ioend(struct iomap_writeback_ctx *wpc,
+@@ -1764,9 +1755,9 @@ ssize_t iomap_add_to_ioend(struct iomap_writeback_ctx *wpc, struct folio *folio,
  	 * Note that this defeats the ability to chain the ioends of
  	 * appending writes.
  	 */
--	wpc->ioend->io_size += len;
-+	wpc->ioend->io_size += map_len;
- 	if (wpc->ioend->io_offset + wpc->ioend->io_size > end_pos)
- 		wpc->ioend->io_size = end_pos - wpc->ioend->io_offset;
+-	wpc->ioend->io_size += map_len;
+-	if (wpc->ioend->io_offset + wpc->ioend->io_size > end_pos)
+-		wpc->ioend->io_size = end_pos - wpc->ioend->io_offset;
++	ioend->io_size += map_len;
++	if (ioend->io_offset + ioend->io_size > end_pos)
++		ioend->io_size = end_pos - ioend->io_offset;
  
--	wbc_account_cgroup_owner(wpc->wbc, folio, len);
--	return 0;
-+	wbc_account_cgroup_owner(wpc->wbc, folio, map_len);
-+	return map_len;
- }
-+EXPORT_SYMBOL_GPL(iomap_add_to_ioend);
+ 	wbc_account_cgroup_owner(wpc->wbc, folio, map_len);
+ 	return map_len;
+@@ -1956,6 +1947,18 @@ iomap_writepages(struct iomap_writeback_ctx *wpc)
  
--static int iomap_writepage_map_blocks(struct iomap_writeback_ctx *wpc,
--		struct folio *folio, u64 pos, u64 end_pos, unsigned dirty_len,
-+static int iomap_writeback_range(struct iomap_writeback_ctx *wpc,
-+		struct folio *folio, u64 pos, u32 rlen, u64 end_pos,
- 		bool *wb_pending)
- {
--	int error;
--
- 	do {
--		unsigned map_len;
--
--		error = wpc->ops->map_blocks(wpc, wpc->inode, pos, dirty_len);
--		if (error)
--			break;
--		trace_iomap_writepage_map(wpc->inode, pos, dirty_len,
--				&wpc->iomap);
--
--		map_len = min_t(u64, dirty_len,
--			wpc->iomap.offset + wpc->iomap.length - pos);
--		WARN_ON_ONCE(!folio->private && map_len < dirty_len);
-+		ssize_t ret;
- 
--		switch (wpc->iomap.type) {
--		case IOMAP_INLINE:
--			WARN_ON_ONCE(1);
--			error = -EIO;
--			break;
--		case IOMAP_HOLE:
--			break;
--		default:
--			error = iomap_add_to_ioend(wpc, folio, pos, end_pos,
--					map_len);
--			if (!error)
--				*wb_pending = true;
--			break;
--		}
--		dirty_len -= map_len;
--		pos += map_len;
--	} while (dirty_len && !error);
-+		ret = wpc->ops->writeback_range(wpc, folio, pos, rlen, end_pos);
-+		if (WARN_ON_ONCE(ret == 0 || ret > rlen))
-+			return -EIO;
-+		if (ret < 0)
-+			return ret;
-+		rlen -= ret;
-+		pos += ret;
-+		if (wpc->iomap.type != IOMAP_HOLE)
-+			*wb_pending = true;
-+	} while (rlen);
- 
--	/*
--	 * We cannot cancel the ioend directly here on error.  We may have
--	 * already set other pages under writeback and hence we have to run I/O
--	 * completion to mark the error state of the pages under writeback
--	 * appropriately.
--	 *
--	 * Just let the file system know what portion of the folio failed to
--	 * map.
--	 */
--	if (error && wpc->ops->discard_folio)
--		wpc->ops->discard_folio(folio, pos);
--	return error;
-+	return 0;
- }
- 
- /*
-@@ -1916,8 +1903,8 @@ static int iomap_writepage_map(struct iomap_writeback_ctx *wpc,
- 	 */
- 	end_aligned = round_up(end_pos, i_blocksize(inode));
- 	while ((rlen = iomap_find_dirty_range(folio, &pos, end_aligned))) {
--		error = iomap_writepage_map_blocks(wpc, folio, pos, end_pos,
--				rlen, &wb_pending);
-+		error = iomap_writeback_range(wpc, folio, pos, rlen, end_pos,
-+				&wb_pending);
- 		if (error)
- 			break;
- 		pos += rlen;
-diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-index 455cc6f90be0..aaea02c9560a 100644
---- a/fs/iomap/trace.h
-+++ b/fs/iomap/trace.h
-@@ -169,7 +169,7 @@ DEFINE_EVENT(iomap_class, name,	\
- DEFINE_IOMAP_EVENT(iomap_iter_dstmap);
- DEFINE_IOMAP_EVENT(iomap_iter_srcmap);
- 
--TRACE_EVENT(iomap_writepage_map,
-+TRACE_EVENT(iomap_add_to_ioend,
- 	TP_PROTO(struct inode *inode, u64 pos, unsigned int dirty_len,
- 		 struct iomap *iomap),
- 	TP_ARGS(inode, pos, dirty_len, iomap),
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 81040b57a844..ce4ed03db21d 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -233,6 +233,47 @@ xfs_end_bio(
- 	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
- }
- 
-+/*
-+ * We cannot cancel the ioend directly on error.  We may have already set other
-+ * pages under writeback and hence we have to run I/O completion to mark the
-+ * error state of the pages under writeback appropriately.
-+ *
-+ * If the folio has delalloc blocks on it, the caller is asking us to punch them
-+ * out. If we don't, we can leave a stale delalloc mapping covered by a clean
-+ * page that needs to be dirtied again before the delalloc mapping can be
-+ * converted. This stale delalloc mapping can trip up a later direct I/O read
-+ * operation on the same region.
-+ *
-+ * We prevent this by truncating away the delalloc regions on the folio. Because
-+ * they are delalloc, we can do this without needing a transaction. Indeed - if
-+ * we get ENOSPC errors, we have to be able to do this truncation without a
-+ * transaction as there is no space left for block reservation (typically why
-+ * we see a ENOSPC in writeback).
-+ */
-+static void
-+xfs_discard_folio(
-+	struct folio		*folio,
-+	loff_t			pos)
-+{
-+	struct xfs_inode	*ip = XFS_I(folio->mapping->host);
-+	struct xfs_mount	*mp = ip->i_mount;
-+
-+	if (xfs_is_shutdown(mp))
-+		return;
-+
-+	xfs_alert_ratelimited(mp,
-+		"page discard on page "PTR_FMT", inode 0x%llx, pos %llu.",
-+			folio, ip->i_ino, pos);
+ 	while ((folio = writeback_iter(mapping, wpc->wbc, folio, &error)))
+ 		error = iomap_writepage_map(wpc, folio);
+-	return iomap_submit_ioend(wpc, error);
 +
 +	/*
-+	 * The end of the punch range is always the offset of the first
-+	 * byte of the next folio. Hence the end offset is only dependent on the
-+	 * folio itself and not the start offset that is passed in.
++	 * If @error is non-zero, it means that we have a situation where some
++	 * part of the submission process has failed after we've marked pages
++	 * for writeback.
++	 *
++	 * We cannot cancel the writeback directly in that case, so always call
++	 * ->writeback_submit to run the I/O completion handler to clear the
++	 * writeback bit and let the file system proess the errors.
 +	 */
-+	xfs_bmap_punch_delalloc_range(ip, XFS_DATA_FORK, pos,
-+				folio_pos(folio) + folio_size(folio), NULL);
-+}
-+
- /*
-  * Fast revalidation of the cached writeback mapping. Return true if the current
-  * mapping is valid, false otherwise.
-@@ -278,13 +319,12 @@ xfs_imap_valid(
++	if (wpc->wb_ctx)
++		return wpc->ops->writeback_submit(wpc, error);
++	return error;
+ }
+ EXPORT_SYMBOL_GPL(iomap_writepages);
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index ce4ed03db21d..193000e9ca7b 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -514,41 +514,40 @@ xfs_ioend_needs_wq_completion(
+ }
+ 
  static int
- xfs_map_blocks(
- 	struct iomap_writeback_ctx *wpc,
--	struct inode		*inode,
- 	loff_t			offset,
- 	unsigned int		len)
+-xfs_submit_ioend(
+-	struct iomap_writeback_ctx *wpc,
+-	int			status)
++xfs_writeback_submit(
++	struct iomap_writeback_ctx	*wpc,
++	int				error)
  {
--	struct xfs_inode	*ip = XFS_I(inode);
-+	struct xfs_inode	*ip = XFS_I(wpc->inode);
- 	struct xfs_mount	*mp = ip->i_mount;
--	ssize_t			count = i_blocksize(inode);
-+	ssize_t			count = i_blocksize(wpc->inode);
- 	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
- 	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, offset + count);
- 	xfs_fileoff_t		cow_fsb;
-@@ -436,6 +476,24 @@ xfs_map_blocks(
- 	return 0;
+-	struct iomap_ioend	*ioend = wpc->ioend;
+-	unsigned int		nofs_flag;
++	struct iomap_ioend		*ioend = wpc->wb_ctx;
+ 
+ 	/*
+-	 * We can allocate memory here while doing writeback on behalf of
+-	 * memory reclaim.  To avoid memory allocation deadlocks set the
+-	 * task-wide nofs context for the following operations.
++	 * Convert CoW extents to regular.
++	 *
++	 * We can allocate memory here while doing writeback on behalf of memory
++	 * reclaim.  To avoid memory allocation deadlocks, set the task-wide
++	 * nofs context.
+ 	 */
+-	nofs_flag = memalloc_nofs_save();
++	if (!error && (ioend->io_flags & IOMAP_IOEND_SHARED)) {
++		unsigned int		nofs_flag;
+ 
+-	/* Convert CoW extents to regular */
+-	if (!status && (ioend->io_flags & IOMAP_IOEND_SHARED)) {
+-		status = xfs_reflink_convert_cow(XFS_I(ioend->io_inode),
++		nofs_flag = memalloc_nofs_save();
++		error = xfs_reflink_convert_cow(XFS_I(ioend->io_inode),
+ 				ioend->io_offset, ioend->io_size);
++		memalloc_nofs_restore(nofs_flag);
+ 	}
+ 
+-	memalloc_nofs_restore(nofs_flag);
+-
+-	/* send ioends that might require a transaction to the completion wq */
++	/*
++	 * Send ioends that might require a transaction to the completion wq.
++	 */
+ 	if (xfs_ioend_needs_wq_completion(ioend))
+ 		ioend->io_bio.bi_end_io = xfs_end_bio;
+ 
+-	if (status)
+-		return status;
+-	submit_bio(&ioend->io_bio);
+-	return 0;
++	return ioend_writeback_submit(wpc, error);
  }
  
-+static ssize_t
-+xfs_writeback_range(
-+	struct iomap_writeback_ctx *wpc,
-+	struct folio		*folio,
-+	u64			offset,
-+	unsigned int		len,
-+	u64			end_pos)
-+{
-+	ssize_t			ret;
-+
-+	ret = xfs_map_blocks(wpc, offset, len);
-+	if (!ret)
-+		ret = iomap_add_to_ioend(wpc, folio, offset, end_pos, len);
-+	if (ret < 0)
-+		xfs_discard_folio(folio, offset);
-+	return ret;
-+}
-+
- static bool
- xfs_ioend_needs_wq_completion(
- 	struct iomap_ioend	*ioend)
-@@ -488,47 +546,9 @@ xfs_submit_ioend(
- 	return 0;
- }
- 
--/*
-- * If the folio has delalloc blocks on it, the caller is asking us to punch them
-- * out. If we don't, we can leave a stale delalloc mapping covered by a clean
-- * page that needs to be dirtied again before the delalloc mapping can be
-- * converted. This stale delalloc mapping can trip up a later direct I/O read
-- * operation on the same region.
-- *
-- * We prevent this by truncating away the delalloc regions on the folio. Because
-- * they are delalloc, we can do this without needing a transaction. Indeed - if
-- * we get ENOSPC errors, we have to be able to do this truncation without a
-- * transaction as there is no space left for block reservation (typically why
-- * we see a ENOSPC in writeback).
-- */
--static void
--xfs_discard_folio(
--	struct folio		*folio,
--	loff_t			pos)
--{
--	struct xfs_inode	*ip = XFS_I(folio->mapping->host);
--	struct xfs_mount	*mp = ip->i_mount;
--
--	if (xfs_is_shutdown(mp))
--		return;
--
--	xfs_alert_ratelimited(mp,
--		"page discard on page "PTR_FMT", inode 0x%llx, pos %llu.",
--			folio, ip->i_ino, pos);
--
--	/*
--	 * The end of the punch range is always the offset of the first
--	 * byte of the next folio. Hence the end offset is only dependent on the
--	 * folio itself and not the start offset that is passed in.
--	 */
--	xfs_bmap_punch_delalloc_range(ip, XFS_DATA_FORK, pos,
--				folio_pos(folio) + folio_size(folio), NULL);
--}
--
  static const struct iomap_writeback_ops xfs_writeback_ops = {
--	.map_blocks		= xfs_map_blocks,
-+	.writeback_range	= xfs_writeback_range,
- 	.submit_ioend		= xfs_submit_ioend,
--	.discard_folio		= xfs_discard_folio,
+ 	.writeback_range	= xfs_writeback_range,
+-	.submit_ioend		= xfs_submit_ioend,
++	.writeback_submit	= xfs_writeback_submit,
  };
  
  struct xfs_zoned_writepage_ctx {
-@@ -545,11 +565,10 @@ XFS_ZWPC(struct iomap_writeback_ctx *ctx)
+@@ -646,20 +645,25 @@ xfs_zoned_writeback_range(
+ }
+ 
  static int
- xfs_zoned_map_blocks(
- 	struct iomap_writeback_ctx *wpc,
--	struct inode		*inode,
- 	loff_t			offset,
- 	unsigned int		len)
+-xfs_zoned_submit_ioend(
+-	struct iomap_writeback_ctx *wpc,
+-	int			status)
++xfs_zoned_writeback_submit(
++	struct iomap_writeback_ctx	*wpc,
++	int				error)
  {
--	struct xfs_inode	*ip = XFS_I(inode);
-+	struct xfs_inode	*ip = XFS_I(wpc->inode);
- 	struct xfs_mount	*mp = ip->i_mount;
- 	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
- 	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, offset + len);
-@@ -608,6 +627,24 @@ xfs_zoned_map_blocks(
+-	wpc->ioend->io_bio.bi_end_io = xfs_end_bio;
+-	if (status)
+-		return status;
+-	xfs_zone_alloc_and_submit(wpc->ioend, &XFS_ZWPC(wpc)->open_zone);
++	struct iomap_ioend		*ioend = wpc->wb_ctx;
++
++	ioend->io_bio.bi_end_io = xfs_end_bio;
++	if (error) {
++		ioend->io_bio.bi_status = errno_to_blk_status(error);
++		bio_endio(&ioend->io_bio);
++		return error;
++	}
++	xfs_zone_alloc_and_submit(ioend, &XFS_ZWPC(wpc)->open_zone);
  	return 0;
  }
  
-+static ssize_t
-+xfs_zoned_writeback_range(
-+	struct iomap_writeback_ctx *wpc,
-+	struct folio		*folio,
-+	u64			offset,
-+	unsigned int		len,
-+	u64			end_pos)
-+{
-+	ssize_t			ret;
-+
-+	ret = xfs_zoned_map_blocks(wpc, offset, len);
-+	if (!ret)
-+		ret = iomap_add_to_ioend(wpc, folio, offset, end_pos, len);
-+	if (ret < 0)
-+		xfs_discard_folio(folio, offset);
-+	return ret;
-+}
-+
- static int
- xfs_zoned_submit_ioend(
- 	struct iomap_writeback_ctx *wpc,
-@@ -621,9 +658,8 @@ xfs_zoned_submit_ioend(
- }
- 
  static const struct iomap_writeback_ops xfs_zoned_writeback_ops = {
--	.map_blocks		= xfs_zoned_map_blocks,
-+	.writeback_range	= xfs_zoned_writeback_range,
- 	.submit_ioend		= xfs_zoned_submit_ioend,
--	.discard_folio		= xfs_discard_folio,
+ 	.writeback_range	= xfs_zoned_writeback_range,
+-	.submit_ioend		= xfs_zoned_submit_ioend,
++	.writeback_submit	= xfs_zoned_writeback_submit,
  };
  
  STATIC int
 diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
-index 5a4b9f2711a9..cb3d380c4651 100644
+index cb3d380c4651..a0ce6c97b9e5 100644
 --- a/fs/zonefs/file.c
 +++ b/fs/zonefs/file.c
-@@ -124,29 +124,33 @@ static void zonefs_readahead(struct readahead_control *rac)
-  * Map blocks for page writeback. This is used only on conventional zone files,
-  * which implies that the page range can only be within the fixed inode size.
-  */
--static int zonefs_write_map_blocks(struct iomap_writeback_ctx *wpc,
--				   struct inode *inode, loff_t offset,
--				   unsigned int len)
-+static ssize_t zonefs_writeback_range(struct iomap_writeback_ctx *wpc,
-+		struct folio *folio, u64 offset, unsigned len, u64 end_pos)
- {
--	struct zonefs_zone *z = zonefs_inode_zone(inode);
-+	struct zonefs_zone *z = zonefs_inode_zone(wpc->inode);
- 
- 	if (WARN_ON_ONCE(zonefs_zone_is_seq(z)))
- 		return -EIO;
--	if (WARN_ON_ONCE(offset >= i_size_read(inode)))
-+	if (WARN_ON_ONCE(offset >= i_size_read(wpc->inode)))
- 		return -EIO;
- 
- 	/* If the mapping is already OK, nothing needs to be done */
--	if (offset >= wpc->iomap.offset &&
--	    offset < wpc->iomap.offset + wpc->iomap.length)
--		return 0;
-+	if (offset < wpc->iomap.offset ||
-+	    offset >= wpc->iomap.offset + wpc->iomap.length) {
-+		int error;
-+
-+		error = zonefs_write_iomap_begin(wpc->inode, offset,
-+				z->z_capacity - offset, IOMAP_WRITE,
-+				&wpc->iomap, NULL);
-+		if (error)
-+			return error;
-+	}
- 
--	return zonefs_write_iomap_begin(inode, offset,
--					z->z_capacity - offset,
--					IOMAP_WRITE, &wpc->iomap, NULL);
-+	return iomap_add_to_ioend(wpc, folio, offset, end_pos, len);
- }
+@@ -151,6 +151,7 @@ static ssize_t zonefs_writeback_range(struct iomap_writeback_ctx *wpc,
  
  static const struct iomap_writeback_ops zonefs_writeback_ops = {
--	.map_blocks		= zonefs_write_map_blocks,
-+	.writeback_range	= zonefs_writeback_range,
+ 	.writeback_range	= zonefs_writeback_range,
++	.writeback_submit	= ioend_writeback_submit,
  };
  
  static int zonefs_writepages(struct address_space *mapping,
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 778d99f45ef1..e346475a023d 100644
+index e346475a023d..b65951cdb0b5 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -416,18 +416,20 @@ static inline struct iomap_ioend *iomap_ioend_from_bio(struct bio *bio)
+@@ -391,8 +391,7 @@ sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
+ /*
+  * Structure for writeback I/O completions.
+  *
+- * File systems implementing ->submit_ioend (for buffered I/O) or ->submit_io
+- * for direct I/O) can split a bio generated by iomap.  In that case the parent
++ * File systems can split a bio generated by iomap.  In that case the parent
+  * ioend it was split from is recorded in ioend->io_parent.
+  */
+ struct iomap_ioend {
+@@ -416,7 +415,7 @@ static inline struct iomap_ioend *iomap_ioend_from_bio(struct bio *bio)
  
  struct iomap_writeback_ops {
  	/*
--	 * Required, maps the blocks so that writeback can be performed on
--	 * the range starting at offset.
-+	 * Required, performs writeback on the passed in range
+-	 * Required, performs writeback on the passed in range
++	 * Performs writeback on the passed in range
  	 *
--	 * Can return arbitrarily large regions, but we need to call into it at
-+	 * Can map arbitrarily large regions, but we need to call into it at
+ 	 * Can map arbitrarily large regions, but we need to call into it at
  	 * least once per folio to allow the file systems to synchronize with
- 	 * the write path that could be invalidating mappings.
- 	 *
- 	 * An existing mapping from a previous call to this method can be reused
- 	 * by the file system if it is still valid.
-+	 *
-+	 * Returns the number of bytes processed or a negative errno.
- 	 */
--	int (*map_blocks)(struct iomap_writeback_ctx *wpc, struct inode *inode,
--			  loff_t offset, unsigned len);
-+	ssize_t (*writeback_range)(struct iomap_writeback_ctx *wpc,
-+			struct folio *folio, u64 pos, unsigned int len,
-+			u64 end_pos);
+@@ -432,23 +431,22 @@ struct iomap_writeback_ops {
+ 			u64 end_pos);
  
  	/*
- 	 * Optional, allows the file systems to hook into bio submission,
-@@ -438,12 +440,6 @@ struct iomap_writeback_ops {
- 	 * the bio could not be submitted.
+-	 * Optional, allows the file systems to hook into bio submission,
+-	 * including overriding the bi_end_io handler.
++	 * Submit a writeback context previously build up by ->writeback_range.
+ 	 *
+-	 * Returns 0 if the bio was successfully submitted, or a negative
+-	 * error code if status was non-zero or another error happened and
+-	 * the bio could not be submitted.
++	 * Returns 0 if the context was successfully submitted, or a negative
++	 * error code if not.  If @error is non-zero a failure occurred, and
++	 * the writeback context should be completed with an error.
  	 */
- 	int (*submit_ioend)(struct iomap_writeback_ctx *wpc, int status);
--
--	/*
--	 * Optional, allows the file system to discard state on a page where
--	 * we failed to submit any I/O.
--	 */
--	void (*discard_folio)(struct folio *folio, loff_t pos);
+-	int (*submit_ioend)(struct iomap_writeback_ctx *wpc, int status);
++	int (*writeback_submit)(struct iomap_writeback_ctx *wpc, int error);
  };
  
  struct iomap_writeback_ctx {
-@@ -463,6 +459,8 @@ void iomap_finish_ioends(struct iomap_ioend *ioend, int error);
- void iomap_ioend_try_merge(struct iomap_ioend *ioend,
- 		struct list_head *more_ioends);
+ 	struct iomap		iomap;
+ 	struct inode		*inode;
+ 	struct writeback_control *wbc;
+-	struct iomap_ioend	*ioend;
+ 	const struct iomap_writeback_ops *ops;
+ 	u32			nr_folios;	/* folios added to the ioend */
++	void			*wb_ctx;	/* pending writeback context */
+ };
+ 
+ struct iomap_ioend *iomap_init_ioend(struct inode *inode, struct bio *bio,
+@@ -461,6 +459,7 @@ void iomap_ioend_try_merge(struct iomap_ioend *ioend,
  void iomap_sort_ioends(struct list_head *ioend_list);
-+ssize_t iomap_add_to_ioend(struct iomap_writeback_ctx *wpc, struct folio *folio,
-+		loff_t pos, loff_t end_pos, unsigned int dirty_len);
+ ssize_t iomap_add_to_ioend(struct iomap_writeback_ctx *wpc, struct folio *folio,
+ 		loff_t pos, loff_t end_pos, unsigned int dirty_len);
++int ioend_writeback_submit(struct iomap_writeback_ctx *wpc, int error);
  int iomap_writepages(struct iomap_writeback_ctx *wpc);
  
  /*
