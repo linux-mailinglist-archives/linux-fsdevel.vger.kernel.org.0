@@ -1,130 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-53176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF565AEB9A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 16:20:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B9FAEBA3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 16:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD66E640F7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 14:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF0F18894C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 14:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5192E2666;
-	Fri, 27 Jun 2025 14:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FEC2F1FF5;
+	Fri, 27 Jun 2025 14:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="vtmBW32g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BE22E2640;
-	Fri, 27 Jun 2025 14:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70C017A586
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 14:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751034013; cv=none; b=fKk6b1Tb9c1LjlNkwPTu7pAAHKk5Gs5j8QgHtB4896KC8HdalK/vab8kTJ3IefZBVxdxpgD+Mjh1F9Ocoqk4RkwiIfEKalmP0hFFgTX7Kw7XIuv8RLjp38koazFXKRUCQyUJr5415uWBYT6PAnDfF2f0JynbVzZSSCiQXvM16vo=
+	t=1751035568; cv=none; b=LYLQSIVkGik4mrIcwMNTN91tY9lmiKXv0fxEllb9P4ydeW49Q/3+cmeWgGOy7i7JLXTwHFV7jXHqGssp7pHVugzPKF/EY6bKofMuaOal6wZGJ7t1VxDZxIwOfoZ0vNRxL8CkQcFaJqsD8C+RdA8fP5IdJN1/6hQAUdAihfh78Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751034013; c=relaxed/simple;
-	bh=EzhCQPgT4q4FikRj54oTe+DHEuehnFQRnWTjIramQHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lucWkMJhSSygG+Cl1KsrPFiD64PhxLqQmyhGDgKGcvnzJWtcQOOqZinuHggxgUsYJ7pGz7e9JCLGrSRxFlRPDq+/lv/d1Jdu1N2p/TScrM6WG22KmDE3LjMz1hzPxrgRLCeKRtMDHtPsWKih4ZpyHUAb9tKOM4WF5Ji8V4X0fGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 55REJVmB024488;
-	Fri, 27 Jun 2025 23:19:31 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 55REJUl8024484
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 27 Jun 2025 23:19:31 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d84dc916-2982-45dc-a9a5-a6255cbc62bd@I-love.SAKURA.ne.jp>
-Date: Fri, 27 Jun 2025 23:19:30 +0900
+	s=arc-20240116; t=1751035568; c=relaxed/simple;
+	bh=E3Y6IzzH6pxPxtBDBUSfanZZ39PEqoGxRtLOhfbrYg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiSRfNTZjdnnKPoV1Z6qxPzqkgDZzWO2Cclxz2yg9NjBzNkVZ+goksDc3bajYcROmlXkI+Pixx9kVTdgzHIC6t8c+tvsZFPV8bi8h/uBKDUjRAxpXg0W7RhXGCbyPAgnTKEvY8FPZEdrj71GVNKDNYL8z8Jb5eYIFTflqKZGJPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=vtmBW32g; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a7f46f9bb6so27474981cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 07:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1751035566; x=1751640366; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cRZ2pYMMlB12bEyOWlLPzPkRWlImskMORgDF4tKP1qU=;
+        b=vtmBW32gyxvDT3+DEMFKOabrGzfxEuOAEpEHM77wLWw++0FvVkCREW5rRuFv2FI3/r
+         S1lnu1IR6RPRYVLh2mZlHptrHCRCzJZzEn71R/U1ydDs2q7h1UUbZUvQDbi1VUtZkcoH
+         2s418vmzJ29PPnYZ+lzUzhuMo4GUJJ2TS6cOGSE3yMHHlwgtfGo7I4EbTBCkQuQd3WUD
+         OwygcdD0xHENTo2oq++ppyFDVptBXNqah+FxO+lXWdOeWOb0QYhsPda09M/GaRgzhQOL
+         aXAAK8L7J+kAQUfn7REOwMHXSGEQ/41VuSM5rJUMcyzN2/FeWYpIB28rf3CK0AlCj4q9
+         BfeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751035566; x=1751640366;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cRZ2pYMMlB12bEyOWlLPzPkRWlImskMORgDF4tKP1qU=;
+        b=sLu5Kv4oEOqHOVKLEcAwOxYHmGC6/OrGOUt8WqjynPsHOdNKo4YlP2hjJndHJTxMOX
+         umbs35wNRfQlsaVUv0pe6lBzfdgh/amTmO4vn1NPH7yWwVLNZ2ef40HxJ99Rmm8wiAno
+         qqNPGanxvGS+8qz4XSQ6rCkW8j5Kbk5BqBriWFiggwo7Z1vVx8aUYEwUWLepL1PodOe4
+         UTRdv1H3dGWzh34I4R5oEzxOrFwXQV+7Wfggelb36qSeWGXySA4NrTrhRbXp8crZ+TFg
+         I3WH8HqlvW5u7f00pDO4RX6LCqhRbBIpO2GhiuDxEwDPi6bqAJMCumCmpUrpkTg++FDj
+         gnTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoeatumRbnJUqm6uoOTyLfyNPh/zDPzCbakPit9QLnYwbtjxG1eMK+xQ++yz8GMtelxW7BJrGNSEre8MT1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCWb8t4Mn9gUto6saCR9nn17TWETSv1mdsF9E3GQP9zS3tdUtk
+	yyDCGPKwlmxWHxOLCl8hko5mIkxAN5EmR2wSLDKOPAjXvdX9arI3fSoTq5/YDdTeffo=
+X-Gm-Gg: ASbGncsMw2LDlBgy6fhzSsRMbPDPuvxym4B3sJ7l0FXiaUOeBmPHmAF2VJ3P00IZmDE
+	S2ZoVLV2FIl9VSgt33V2JVS51KJtd3uRbb52AEH6y53hHYrGoYMV7UvAjdGVJJbuyhzBi86KlHy
+	Go85bzmgAbk+ohCRFwNJQBKt4o5wzXyTAjPcJDoWiHwk50fnQ6bz/hpAB+TeEoqyBcCrpDuO5oA
+	EQekXNsclaKV24uQe0R7/FcJUJWIsWcE8IFsfwGzx5js9M6GgH6gEWBfjwY6RTfksgb7167djA4
+	A9TnHXlBb09PQONMp6ARcU41WAHimWxBLpYPvRNAr1iRP/UEKUw+06wfzNUxFA2dCTNtZJJVNKt
+	PuvBxFVSHMXP9oOJwJL3N2rU=
+X-Google-Smtp-Source: AGHT+IEl0a6FKcst6Ik6YqVg0aAynT4+CuhWSr+flkm8BIm7KHjl1Bb3vmzdqMA+uCtcxDKZ0P3SuA==
+X-Received: by 2002:ac8:5ad4:0:b0:4a7:6ddf:f7de with SMTP id d75a77b69052e-4a7fc9d7dc6mr61049981cf.1.1751035565530;
+        Fri, 27 Jun 2025 07:46:05 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc13a60bsm13628811cf.29.2025.06.27.07.46.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 07:46:04 -0700 (PDT)
+Date: Fri, 27 Jun 2025 10:46:04 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kerenl@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
+Message-ID: <20250627144441.GA349175@fedora>
+References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] ocfs2: update d_splice_alias() return code checking
-To: Al Viro <viro@zeniv.linux.org.uk>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Richard Weinberger <richard@nod.at>, ocfs2-devel@lists.linux.dev,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <d689279f-03ed-4f9b-8fde-713b2431f303@I-love.SAKURA.ne.jp>
- <20250626033411.GU1880847@ZenIV>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20250626033411.GU1880847@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
 
-When commit d3556babd7fa ("ocfs2: fix d_splice_alias() return code
-checking") was merged into v3.18-rc3, d_splice_alias() was returning
-one of a valid dentry, NULL or an ERR_PTR.
+On Thu, Jun 26, 2025 at 10:22:52PM -0400, Kent Overstreet wrote:
+> per the maintainer thread discussion and precedent in xfs and btrfs
+> for repair code in RCs, journal_rewind is again included
+>
 
-When commit b5ae6b15bd73 ("merge d_materialise_unique() into
-d_splice_alias()") was merged into v3.19-rc1, d_splice_alias() started
-returning -ELOOP as one of ERR_PTR values.
+I'm replying to set the record straight. This is not the start of the
+discussion. I am not going to let false statements stand by unchallenged
+however.
 
-Now, when syzkaller mounts a crafted ocfs2 filesystem image that hits
-d_splice_alias() == -ELOOP case from ocfs2_lookup(), ocfs2_lookup() fails
-to handle -ELOOP case and generic_shutdown_super() hits "VFS: Busy inodes
-after unmount" message.
+Sterba has never sent large pull requests in RCs, certainly not with features in
+them.  Even when Chris was the maintainer and we were a little faster and looser
+and were pushing the envelope to see what Linus would accept we didn't ship
+anything near this volume of patches past rc1.
 
-Instead of calling ocfs2_dentry_attach_lock() or ocfs2_dentry_attach_gen()
-when d_splice_alias() returned an ERR_PTR value, change ocfs2_lookup() to
-bail out immediately.
+And the numbers don't lie.
 
-Also, ocfs2_lookup() needs to call dupt() when ocfs2_dentry_attach_lock()
-returned an ERR_PTR value.
+josef@fedora:~/linux$ git tag --contains 1c6fdbd8f2465ddfb73a01ec620cbf3d14044e1a | grep -v rc > bcachefs-tags
+josef@fedora:~/linux$ git tag --contains be0e5c097fc206b863ce9fe6b3cfd6974b0110f4 | grep -v rc > tags
+josef@fedora:~/linux$ for i in $(cat tags); do git log --no-merges --oneline $i-rc2..$i fs/btrfs | wc -l; done > btrfs-counts.txt
+josef@fedora:~/linux$ for i in $(cat bcachefs-tags); do git log --no-merges --oneline $i-rc2..$i fs/bcachefs | wc -l; done > bcachefs-counts.txt
 
-Reported-by: syzbot <syzbot+1134d3a5b062e9665a7a@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=1134d3a5b062e9665a7a
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/ocfs2/namei.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+josef@fedora:~/linux$ R -q -e "x <- read.csv('btrfs-counts.txt', header = F); summary(x); sd(x[ , 1 ])"
+> x <- read.csv('btrfs-counts.txt', header = F); summary(x); sd(x[ , 1 ])
+       V1       
+ Min.   : 0.00  
+ 1st Qu.:10.25  
+ Median :19.00  
+ Mean   :20.48  
+ 3rd Qu.:27.50  
+ Max.   :55.00  
+[1] 11.77108
+> 
+josef@fedora:~/linux$ R -q -e "x <- read.csv('bcachefs-counts.txt', header = F); summary(x); sd(x[ , 1 ])"
+> x <- read.csv('bcachefs-counts.txt', header = F); summary(x); sd(x[ , 1 ])
+       V1        
+ Min.   :  0.00  
+ 1st Qu.: 38.50  
+ Median : 70.00  
+ Mean   : 63.86  
+ 3rd Qu.: 81.50  
+ Max.   :137.00  
+[1] 45.28218
+> 
 
-diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-index 99278c8f0e24..f75fd19974bc 100644
---- a/fs/ocfs2/namei.c
-+++ b/fs/ocfs2/namei.c
-@@ -142,6 +142,8 @@ static struct dentry *ocfs2_lookup(struct inode *dir, struct dentry *dentry,
- 
- bail_add:
- 	ret = d_splice_alias(inode, dentry);
-+	if (IS_ERR(ret))
-+		goto bail_unlock;
- 
- 	if (inode) {
- 		/*
-@@ -154,13 +156,12 @@ static struct dentry *ocfs2_lookup(struct inode *dir, struct dentry *dentry,
- 		 * NOTE: This dentry already has ->d_op set from
- 		 * ocfs2_get_parent() and ocfs2_get_dentry()
- 		 */
--		if (!IS_ERR_OR_NULL(ret))
--			dentry = ret;
--
--		status = ocfs2_dentry_attach_lock(dentry, inode,
-+		status = ocfs2_dentry_attach_lock(ret ? ret : dentry, inode,
- 						  OCFS2_I(dir)->ip_blkno);
- 		if (status) {
- 			mlog_errno(status);
-+			if (ret)
-+				dput(ret);
- 			ret = ERR_PTR(status);
- 			goto bail_unlock;
- 		}
--- 
-2.50.0
+So even including the wilder times of kernel development in general and btrfs's
+specifically, our worst window was 55 patches, less than your mean.
 
+These are not the same thing. Do not equivicate the two.  Sterba is a phenomenal
+maintainer who does his job well, manages to work with Linus just fine. We are
+not the same, we do not work the same, and we absolutely do follow the rules, as
+do 99.99% of the kernel community.
+
+If xfs has done this then good for them. Those developers have a track record of
+doing the right thing over a long period of time. Btrfs for sure hasn't. Thanks,
+
+Josef
 
