@@ -1,123 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-53175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD60AEB5D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 13:05:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF565AEB9A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 16:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBA2B3A534E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 11:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD66E640F7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 14:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE872D6601;
-	Fri, 27 Jun 2025 11:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b="ehTRUkDp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5192E2666;
+	Fri, 27 Jun 2025 14:20:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx10.didiglobal.com (mx10.didiglobal.com [111.202.70.125])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id E365F2D3EC4;
-	Fri, 27 Jun 2025 11:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.125
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BE22E2640;
+	Fri, 27 Jun 2025 14:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751022221; cv=none; b=U+gwBUTmQ4bbNwBorgN5h0R+3mcKE6HeTA60hYeW4najhOtCskvFjaG72eCMY6EiGhBBC7i0JG8Dv+gCobv1V1HfuAgAWYFfym1WXuas9VZDGpyYJu3c0IQQgPHLY1FP+gOKvHJADSZGGSb/K4PDUSQqPw8oS4Ew8VVdxoe4288=
+	t=1751034013; cv=none; b=fKk6b1Tb9c1LjlNkwPTu7pAAHKk5Gs5j8QgHtB4896KC8HdalK/vab8kTJ3IefZBVxdxpgD+Mjh1F9Ocoqk4RkwiIfEKalmP0hFFgTX7Kw7XIuv8RLjp38koazFXKRUCQyUJr5415uWBYT6PAnDfF2f0JynbVzZSSCiQXvM16vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751022221; c=relaxed/simple;
-	bh=4rXllrq3i00vA/X/MCfjVxkg+yARKY9+OylzC6mFE+c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version; b=qu4l6Dc/IPcjdyWYFv6N/tBWv90qkl1tuU94aStQFju/oizRphFc+fw+zchdkxILbTgNRNO2+0RLHC6QgQ50jiRXnbD3PLUTtl6hVrfYrdXDqd++GN75ci9em48b2vz5HT3AZwwxUoESwd2YInusu/f4tuMallwtlYOVT3VCWAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b=ehTRUkDp; arc=none smtp.client-ip=111.202.70.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
-Received: from mail.didiglobal.com (unknown [10.79.71.38])
-	by mx10.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id 69C23180FFD57A;
-	Fri, 27 Jun 2025 19:02:31 +0800 (CST)
-Received: from BJ03-ACTMBX-08.didichuxing.com (10.79.71.35) by
- BJ03-ACTMBX-02.didichuxing.com (10.79.71.38) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 27 Jun 2025 19:03:14 +0800
-Received: from BJ03-ACTMBX-07.didichuxing.com (10.79.71.34) by
- BJ03-ACTMBX-08.didichuxing.com (10.79.71.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 27 Jun 2025 19:03:13 +0800
-Received: from BJ03-ACTMBX-07.didichuxing.com ([fe80::2e1a:dd47:6d25:287e]) by
- BJ03-ACTMBX-07.didichuxing.com ([fe80::2e1a:dd47:6d25:287e%7]) with mapi id
- 15.02.1748.010; Fri, 27 Jun 2025 19:03:13 +0800
-X-MD-Sfrom: chentaotao@didiglobal.com
-X-MD-SrcIP: 10.79.71.38
-From: =?gb2312?B?s8LMzszOIFRhb3RhbyBDaGVu?= <chentaotao@didiglobal.com>
-To: "tytso@mit.edu" <tytso@mit.edu>, "hch@infradead.org" <hch@infradead.org>,
-	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>, "willy@infradead.org"
-	<willy@infradead.org>, "brauner@kernel.org" <brauner@kernel.org>,
-	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>, "tursulin@ursulin.net"
-	<tursulin@ursulin.net>, "airlied@gmail.com" <airlied@gmail.com>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "chentao325@qq.com" <chentao325@qq.com>,
-	"frank.li@vivo.com" <frank.li@vivo.com>,
-	=?gb2312?B?s8LMzszOIFRhb3RhbyBDaGVu?= <chentaotao@didiglobal.com>
-Subject: [PATCH v3 4/4] ext4: support uncached buffered I/O
-Thread-Topic: [PATCH v3 4/4] ext4: support uncached buffered I/O
-Thread-Index: AQHb51MTaMwhJCsRP0eEgBCVUoPCoQ==
-Date: Fri, 27 Jun 2025 11:03:13 +0000
-Message-ID: <20250627110257.1870826-5-chentaotao@didiglobal.com>
-In-Reply-To: <20250627110257.1870826-1-chentaotao@didiglobal.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1751034013; c=relaxed/simple;
+	bh=EzhCQPgT4q4FikRj54oTe+DHEuehnFQRnWTjIramQHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lucWkMJhSSygG+Cl1KsrPFiD64PhxLqQmyhGDgKGcvnzJWtcQOOqZinuHggxgUsYJ7pGz7e9JCLGrSRxFlRPDq+/lv/d1Jdu1N2p/TScrM6WG22KmDE3LjMz1hzPxrgRLCeKRtMDHtPsWKih4ZpyHUAb9tKOM4WF5Ji8V4X0fGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 55REJVmB024488;
+	Fri, 27 Jun 2025 23:19:31 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 55REJUl8024484
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 27 Jun 2025 23:19:31 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <d84dc916-2982-45dc-a9a5-a6255cbc62bd@I-love.SAKURA.ne.jp>
+Date: Fri, 27 Jun 2025 23:19:30 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=didiglobal.com;
-	s=2025; t=1751022173;
-	bh=4rXllrq3i00vA/X/MCfjVxkg+yARKY9+OylzC6mFE+c=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type;
-	b=ehTRUkDpCbEGkhMZpTTEM7DPSDb/UWxpKKgQP/Vy9sHFH/sbmH4ptirGdI2TC8yxO
-	 mZHpZNlUxGBa0YCbHJ9au4BOMGEAd3oFTVzILrWnaR5BANeKmYT+Ta2GlMcEnb/u4G
-	 uyBuOmOz7hUFR4dKovFjwFMs6SSIi6KRO/Nb5knw=
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] ocfs2: update d_splice_alias() return code checking
+To: Al Viro <viro@zeniv.linux.org.uk>, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Richard Weinberger <richard@nod.at>, ocfs2-devel@lists.linux.dev,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <d689279f-03ed-4f9b-8fde-713b2431f303@I-love.SAKURA.ne.jp>
+ <20250626033411.GU1880847@ZenIV>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250626033411.GU1880847@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-RnJvbTogVGFvdGFvIENoZW4gPGNoZW50YW90YW9AZGlkaWdsb2JhbC5jb20+DQoNClNldCBGT1Bf
-RE9OVENBQ0hFIGluIGV4dDRfZmlsZV9vcGVyYXRpb25zIHRvIGRlY2xhcmUgc3VwcG9ydCBmb3IN
-CnVuY2FjaGVkIGJ1ZmZlcmVkIEkvTy4NCg0KVG8gaGFuZGxlIHRoaXMgZmxhZywgYWRkIHByb2Nl
-c3NpbmcgZm9yIElPQ0JfRE9OVENBQ0hFIGluDQpleHQ0X3dyaXRlX2JlZ2luKCkgYW5kIGV4dDRf
-ZGFfd3JpdGVfYmVnaW4oKSBieSBwYXNzaW5nIEZHUF9ET05UQ0FDSEUNCnRvIHBhZ2UgY2FjaGUg
-bG9va3Vwcy4NCg0KUGFydCBvZiBhIHNlcmllcyByZWZhY3RvcmluZyBhZGRyZXNzX3NwYWNlX29w
-ZXJhdGlvbnMgd3JpdGVfYmVnaW4gYW5kDQp3cml0ZV9lbmQgY2FsbGJhY2tzIHRvIHVzZSBzdHJ1
-Y3Qga2lvY2IgZm9yIHBhc3Npbmcgd3JpdGUgY29udGV4dCBhbmQNCmZsYWdzLg0KDQpTaWduZWQt
-b2ZmLWJ5OiBUYW90YW8gQ2hlbiA8Y2hlbnRhb3Rhb0BkaWRpZ2xvYmFsLmNvbT4NCi0tLQ0KIGZz
-L2V4dDQvZmlsZS5jICB8IDMgKystDQogZnMvZXh0NC9pbm9kZS5jIHwgNiArKysrKysNCiAyIGZp
-bGVzIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0
-IGEvZnMvZXh0NC9maWxlLmMgYi9mcy9leHQ0L2ZpbGUuYw0KaW5kZXggMjFkZjgxMzQ3MTQ3Li4y
-NzRiNDFhNDc2YzggMTAwNjQ0DQotLS0gYS9mcy9leHQ0L2ZpbGUuYw0KKysrIGIvZnMvZXh0NC9m
-aWxlLmMNCkBAIC05NzcsNyArOTc3LDggQEAgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyBl
-eHQ0X2ZpbGVfb3BlcmF0aW9ucyA9IHsNCiAJLnNwbGljZV93cml0ZQk9IGl0ZXJfZmlsZV9zcGxp
-Y2Vfd3JpdGUsDQogCS5mYWxsb2NhdGUJPSBleHQ0X2ZhbGxvY2F0ZSwNCiAJLmZvcF9mbGFncwk9
-IEZPUF9NTUFQX1NZTkMgfCBGT1BfQlVGRkVSX1JBU1lOQyB8DQotCQkJICBGT1BfRElPX1BBUkFM
-TEVMX1dSSVRFLA0KKwkJCSAgRk9QX0RJT19QQVJBTExFTF9XUklURSB8DQorCQkJICBGT1BfRE9O
-VENBQ0hFLA0KIH07DQogDQogY29uc3Qgc3RydWN0IGlub2RlX29wZXJhdGlvbnMgZXh0NF9maWxl
-X2lub2RlX29wZXJhdGlvbnMgPSB7DQpkaWZmIC0tZ2l0IGEvZnMvZXh0NC9pbm9kZS5jIGIvZnMv
-ZXh0NC9pbm9kZS5jDQppbmRleCAwOGMxMDIwMGQ2ZmUuLjYzOWUyZTIzMWM0YiAxMDA2NDQNCi0t
-LSBhL2ZzL2V4dDQvaW5vZGUuYw0KKysrIGIvZnMvZXh0NC9pbm9kZS5jDQpAQCAtMTI3MCw2ICsx
-MjcwLDkgQEAgc3RhdGljIGludCBleHQ0X3dyaXRlX2JlZ2luKGNvbnN0IHN0cnVjdCBraW9jYiAq
-aW9jYiwNCiAJaWYgKHVubGlrZWx5KHJldCkpDQogCQlyZXR1cm4gcmV0Ow0KIA0KKwlpZiAoaW9j
-Yi0+a2lfZmxhZ3MgJiBJT0NCX0RPTlRDQUNIRSkNCisJCWZncCB8PSBGR1BfRE9OVENBQ0hFOw0K
-Kw0KIAl0cmFjZV9leHQ0X3dyaXRlX2JlZ2luKGlub2RlLCBwb3MsIGxlbik7DQogCS8qDQogCSAq
-IFJlc2VydmUgb25lIGJsb2NrIG1vcmUgZm9yIGFkZGl0aW9uIHRvIG9ycGhhbiBsaXN0IGluIGNh
-c2UNCkBAIC0zMDY4LDYgKzMwNzEsOSBAQCBzdGF0aWMgaW50IGV4dDRfZGFfd3JpdGVfYmVnaW4o
-Y29uc3Qgc3RydWN0IGtpb2NiICppb2NiLA0KIAkJCXJldHVybiAwOw0KIAl9DQogDQorCWlmIChp
-b2NiLT5raV9mbGFncyAmIElPQ0JfRE9OVENBQ0hFKQ0KKwkJZmdwIHw9IEZHUF9ET05UQ0FDSEU7
-DQorDQogcmV0cnk6DQogCWZncCB8PSBmZ2Zfc2V0X29yZGVyKGxlbik7DQogCWZvbGlvID0gX19m
-aWxlbWFwX2dldF9mb2xpbyhtYXBwaW5nLCBpbmRleCwgZmdwLA0KLS0gDQoyLjM0LjENCg==
+When commit d3556babd7fa ("ocfs2: fix d_splice_alias() return code
+checking") was merged into v3.18-rc3, d_splice_alias() was returning
+one of a valid dentry, NULL or an ERR_PTR.
+
+When commit b5ae6b15bd73 ("merge d_materialise_unique() into
+d_splice_alias()") was merged into v3.19-rc1, d_splice_alias() started
+returning -ELOOP as one of ERR_PTR values.
+
+Now, when syzkaller mounts a crafted ocfs2 filesystem image that hits
+d_splice_alias() == -ELOOP case from ocfs2_lookup(), ocfs2_lookup() fails
+to handle -ELOOP case and generic_shutdown_super() hits "VFS: Busy inodes
+after unmount" message.
+
+Instead of calling ocfs2_dentry_attach_lock() or ocfs2_dentry_attach_gen()
+when d_splice_alias() returned an ERR_PTR value, change ocfs2_lookup() to
+bail out immediately.
+
+Also, ocfs2_lookup() needs to call dupt() when ocfs2_dentry_attach_lock()
+returned an ERR_PTR value.
+
+Reported-by: syzbot <syzbot+1134d3a5b062e9665a7a@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=1134d3a5b062e9665a7a
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ fs/ocfs2/namei.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+index 99278c8f0e24..f75fd19974bc 100644
+--- a/fs/ocfs2/namei.c
++++ b/fs/ocfs2/namei.c
+@@ -142,6 +142,8 @@ static struct dentry *ocfs2_lookup(struct inode *dir, struct dentry *dentry,
+ 
+ bail_add:
+ 	ret = d_splice_alias(inode, dentry);
++	if (IS_ERR(ret))
++		goto bail_unlock;
+ 
+ 	if (inode) {
+ 		/*
+@@ -154,13 +156,12 @@ static struct dentry *ocfs2_lookup(struct inode *dir, struct dentry *dentry,
+ 		 * NOTE: This dentry already has ->d_op set from
+ 		 * ocfs2_get_parent() and ocfs2_get_dentry()
+ 		 */
+-		if (!IS_ERR_OR_NULL(ret))
+-			dentry = ret;
+-
+-		status = ocfs2_dentry_attach_lock(dentry, inode,
++		status = ocfs2_dentry_attach_lock(ret ? ret : dentry, inode,
+ 						  OCFS2_I(dir)->ip_blkno);
+ 		if (status) {
+ 			mlog_errno(status);
++			if (ret)
++				dput(ret);
+ 			ret = ERR_PTR(status);
+ 			goto bail_unlock;
+ 		}
+-- 
+2.50.0
+
 
