@@ -1,124 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-53169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4B0AEB52F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 12:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 317E2AEB54D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 12:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7791891AB3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 10:42:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79CED1886975
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 10:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F6429898E;
-	Fri, 27 Jun 2025 10:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2772980A5;
+	Fri, 27 Jun 2025 10:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lahfa.xyz header.i=@lahfa.xyz header.b="KIX31bsi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MguarB3+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from kurisu.lahfa.xyz (kurisu.lahfa.xyz [163.172.69.160])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EDE22156A;
-	Fri, 27 Jun 2025 10:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.69.160
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250E026E71D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 10:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751020909; cv=none; b=CIrk4oeoZ1ZehykYUGLK1aL9xePuEYAg/exvn112TBoB/xrOaGuAZdLQ8ZaYKi2CRLoh8UjIM3K/l2YqIDlIgvOSIKI8dXkHTxpgzs54jxiDpnC8Ewz6aD3tR6F7wqQdo/fozmXbPekjde3xxTVVRQh2xhRveVhFBghIMvwW6Mc=
+	t=1751021321; cv=none; b=gL9CZhiaGH47SgHJF56ddMv63uqTp7AuhMIlwgwIfNC2JduFk9xhrQTaCsBRag2l4OJs1jQbFwq+QwzKEXrt0TumQ/ESkYgWBb+8axlCKcA/v7SLHCCOR/44SOLwbkiapj8xcrNGkMyFi2a3pCZN/aViTqL681KoippEHPntMzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751020909; c=relaxed/simple;
-	bh=yhF0gvpQ2LingrBx1HYPfc8w3xJ+F33erqmQmXW9kPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cxp6Sa86smWRidCSbD/YxrKZbVj3MBMTAwjSRr0o2FtU8ccEfMbBHhxmpufbalLfla+kHI8hm41A0tw/WfbkCMD07qufkyo3rBv7fx7P2NbtQg1HMX9GZnVUHPzB5ZKZT1fLOlBtQ0p7f2Tgo9UFcpu8yfpGFwNiATzRUmxMprs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lahfa.xyz; spf=pass smtp.mailfrom=lahfa.xyz; dkim=pass (1024-bit key) header.d=lahfa.xyz header.i=@lahfa.xyz header.b=KIX31bsi; arc=none smtp.client-ip=163.172.69.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lahfa.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lahfa.xyz
-Date: Fri, 27 Jun 2025 12:33:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lahfa.xyz; s=kurisu;
-	t=1751020405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XKbXq1dbdhV8xumU0aZAN+tBsL+injlXBseZI72UWGQ=;
-	b=KIX31bsiJiF4FTf1m/nQ2lEmj9X0nb+B1EjYYq+QrDCcZ8lrVU5vVNzzvuJnhN1083vDrI
-	NrnzfKSvauvRKKJSrXC7hlw/ZqkztctbMnQDGxytK3R7L/TPLtZ5KOt58YJy+MEoSadumY
-	TtjeSwIdF4YwE8q9BJsTmXDGDK+5fto=
-From: Ryan Lahfa <ryan@lahfa.xyz>
-To: David Howells <dhowells@redhat.com>
-Cc: Antony Antony <antony.antony@secunet.com>, 
-	Antony Antony <antony@phenome.org>, Christian Brauner <brauner@kernel.org>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	Sedat Dilek <sedat.dilek@gmail.com>, Maximilian Bosch <maximilian@mbosch.me>, 
-	regressions@lists.linux.dev, v9fs@lists.linux.dev, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
-Message-ID: <gnji275b4iqotq3x3sa3igwa3vczk6tqtfcxpbv6k47hinrj2j@3wrm3id43qgj>
-References: <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
- <ZxFQw4OI9rrc7UYc@Antony2201.local>
- <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me>
- <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info>
- <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me>
- <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
- <3327438.1729678025@warthog.procyon.org.uk>
- <ZxlQv5OXjJUbkLah@moon.secunet.de>
- <1641293.1751018406@warthog.procyon.org.uk>
+	s=arc-20240116; t=1751021321; c=relaxed/simple;
+	bh=/85RuOPRdz10WhtV5tg0KaDNAsN83d7RTJXtymvnvfw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsIjcIGHZHLvbmeU8WERTJ/B6Z4e3TUJ1ZB7R88eZY1U89uLbxSJ2XXRzxmSXPL09fTUtW/oLeOahhJrLZ71kdl3mCXznGJqAz76KdtZMGkrCQHUTdeBWJYGLzUPGhlDkFCCOiWToUM6sxp7W+jklczghA9iix+EYbX4nU5reWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MguarB3+; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6099d89a19cso3800096a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 03:48:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751021318; x=1751626118; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sed18JzSciCIl0x61XPqbPhfFm4AeNRf1L1ILSV5G0A=;
+        b=MguarB3+wfPLHo4MqvRhl9yssVGHoYZzOkVoKNVXtEm4Pf0ZMi8OAhbvhTmUvDf41R
+         lVj9fu9Hv1/qJRJ9S6DjePg+IuqY/dKlVPFDtIVWDAEfH/GOIK8zmN39fo+kr1rSR7Em
+         8056TBNjYrLzMwgW3lWsJxqw8KeAgttQuEvYBWoZVcYSeQQlVAiYphLpDhqnVDjtuiPo
+         IFmI+bhfSmxePwKP0CPrHgZZCzt9Ddl/jYvaSFUafeCN/Y3DnU3TxAszVtWOJoEyMICG
+         2HViBfLJImdJeOepg/sQV3jMG7RlmFxeQk4yiKdzi1ySPQ2tLBregjUmfPGPNY56B0hx
+         KqHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751021318; x=1751626118;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sed18JzSciCIl0x61XPqbPhfFm4AeNRf1L1ILSV5G0A=;
+        b=v9XpagHOUZ0l0XAGIxKse20fN+t7Um83ynIsKzZ+48MxRXTPXYtikUqNok1MrreJl0
+         IrXO2fd4B7HYnchc+bRJNOGRYUwPQC9MVr0L3Zu65MqwPw+VdID+hqUN1XeDd6IePrmr
+         9Er/iYgclSF7gL9ZZKibQbkfDp8NXh+MHykM4GjSMODm8OynMuHAPrGgubhWD1CVCHuP
+         jWvqR/0lXj8RPc2n26hbCR7+IzCvy9ohBVSTXCU0uL+7WS5jY/6EeQjuEE0RjsFeYxRE
+         XHiwNoZAoemmlDTmW61+5+4VvjER0w4h05R52tdHZWDYjWMChEDv40jtifkWb32Iyf40
+         UFkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoziKspfInPtFrzjEOb8ch2JD+TefSqfrbHvI7ZAFqHQ/V40ro5A1sie9IL6XL57vIZQvFL3gbEWi/5nnA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7yIcIGqtx5AVkeoDIwNjy7ff3LU7nNW3xvEFPs1ytyAXC9Iv9
+	4ZkbnE9Ldu/Jq95e399PF4ATExFNa+Sv1m1oeIGevniX6ygF75+wM4ee
+X-Gm-Gg: ASbGnctuGRygZKB8sc9R6wPnJCKYfLqjOklXmFowjIW9DRXl8kU1tWIkGfBh3u/MKYd
+	BJkMpGnZB0CL2Eh5SwCymZ+yq4w8xyy73kD54HcHScS7bl2gXxjJTcdYqvvQbtrZk2lYIz5BPK1
+	snpc4qhLLbutVKNkQrhV6bIpCGMOSLUZSULQmbIRj0/fETNEtDbFuI7NCb3X3Fyuw6HS2gvrjbO
+	LXC57gLQ9mqd+bbcsGenuXcRoACYHSyjSwLmDk96HatGWtI6a8ngGxf8IJqITsG9HS/3ZHRdgp3
+	MqqdnTK46717Ar933Qa3TIpuHzK2CArB8G/FKBMmuM30YDvaN7gpDldU85/D/1rvddP+7m+Q4Fb
+	ga1uVDQaQO222A+AwfuVtYNlslHeO4ofNL6eBwiFQG4fv1Zpa7fjbStyv0Fc=
+X-Google-Smtp-Source: AGHT+IE33cdPsNxB6F5M8JBNZXmSKLSJKxjzCLf/2mzLRwTjZFX8R25CTiPfEWoVc9voh5QbNpXJyA==
+X-Received: by 2002:a05:6402:27d4:b0:60c:44d6:281f with SMTP id 4fb4d7f45d1cf-60c88b2eda0mr2269459a12.7.1751021317975;
+        Fri, 27 Jun 2025 03:48:37 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c831d5fecsm1296565a12.63.2025.06.27.03.48.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 03:48:37 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fanotify: sanitize handle_type values when reporting fid
+Date: Fri, 27 Jun 2025 12:48:35 +0200
+Message-ID: <20250627104835.184495-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1641293.1751018406@warthog.procyon.org.uk>
 
-Hi David,
+Unlike file_handle, type and len of struct fanotify_fh are u8.
+Traditionally, filesystem return handle_type < 0xff, but there
+is no enforecement for that in vfs.
 
-Le Fri, Jun 27, 2025 at 11:00:06AM +0100, David Howells a écrit :
-> Ryan Lahfa <ryan@lahfa.xyz> wrote:
-> 
-> > Here is how to reproduce it:
-> > 
-> > $ git clone https://gerrit.lix.systems/lix
-> > $ cd lix
-> > $ git fetch https://gerrit.lix.systems/lix refs/changes/29/3329/8 && git checkout FETCH_HEAD
-> > $ nix-build -A hydraJobs.tests.local-releng
-> 
-> How do I build and run this on Fedora is the problem :-/
+Add a sanity check in fanotify to avoid truncating handle_type
+if its value is > 0xff.
 
-This may introduce another layer but you could use a Docker container
-(Lix has http://ghcr.io/lix-project/lix) and run these instructions
-inside that context.
+Fixes: 7cdafe6cc4a6 ("exportfs: check for error return value from exportfs_encode_*()")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-Alternatives are the following:
+Jan,
 
-- static binary for Nix, I can build one for you and make it available.
-- the Lix installer, https://lix.systems/install/ (curl | sh but it does
-  prompt you for any step and tell you what it does, it should also be
-  very easy to uninstall!).
-- Debian has Nix packaged: https://packages.debian.org/sid/nix-bin (not
-  Lix, but doesn't matter for this reproducer).
-- Can install a remote VM for you with Fedora with one of the previous
-  option and give you root@ over there.
+This cleanup is a followup to the review of FILEID_PIDFS.
+The Fixes commit is a bit misleading because there is no bug in the
+Fixes commit, it's a just a fix-it-better statement, which is
+practical for stable backporting.
 
-Let me know how I can help.
+Thanks,
+Amir.
 
-> > [1]: https://gist.dgnum.eu/raito/3d1fa61ebaf642218342ffe644fb6efd
-> 
-> Looking at this, it looks very much like a page may have been double-freed.
-> 
-> Just to check, what are you using 9p for?  Containers?  And which transport is
-> being used, the virtio one?
+ fs/notify/fanotify/fanotify.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-9p is used in QEMU in this context.
-NixOS has a framework of end to end testing à la OpenQA from OpenSUSE
-that makes use of 9pfs to mount the host Nix store inside the guest VM
-to avoid copying back'n'forth things that are not under test.
-
-Yep, transport is virtio.
-
-Kind regards,
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 3083643b864b..bfe884d624e7 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -454,7 +454,13 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
+ 	dwords = fh_len >> 2;
+ 	type = exportfs_encode_fid(inode, buf, &dwords);
+ 	err = -EINVAL;
+-	if (type <= 0 || type == FILEID_INVALID || fh_len != dwords << 2)
++	/*
++	 * Unlike file_handle, type and len of struct fanotify_fh are u8.
++	 * Traditionally, filesystem return handle_type < 0xff, but there
++	 * is no enforecement for that in vfs.
++	 */
++	BUILD_BUG_ON(MAX_HANDLE_SZ > 0xff || FILEID_INVALID > 0xff);
++	if (type <= 0 || type >= FILEID_INVALID || fh_len != dwords << 2)
+ 		goto out_err;
+ 
+ 	fh->type = type;
 -- 
-Ryan Lahfa
+2.43.0
+
 
