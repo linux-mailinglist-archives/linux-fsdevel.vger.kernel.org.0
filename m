@@ -1,179 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-53126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C60AEACCE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 04:23:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3F4AEACF9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 04:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D5597B3E17
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 02:21:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1BE4A70B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jun 2025 02:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14C419066B;
-	Fri, 27 Jun 2025 02:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC597198A2F;
+	Fri, 27 Jun 2025 02:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NqQBdHO4"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lQSdPlm5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83F61419A9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jun 2025 02:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518FE26281;
+	Fri, 27 Jun 2025 02:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750990993; cv=none; b=IgHbdn14zlbmgFYiTQI0gRG1vfh1844gJuiLTJxd/3zjrFU21VAtbCQznTzSM3grpP2X0PvpEdlQEod0f58vnNlpPtdJ++sBzyEAJy+UXMeCPvxCZUX8yV1DP0sC+Og2zZL6vajhivMobQW+Bc2RNgX77zV/LihRTjqahIaBmNg=
+	t=1750992428; cv=none; b=fwGXHUBxAIa6zT7i8WS1k5s/lxeus97Pj/4tPa8Stm9YTGl+i1sPDOM7YbkyA0G8RRXBUMwx1dSFVCiMDdgJAHbVVPlEZzr8c9Dcpja3csP5rK17UjxrTyQRwpZ5Qvzfr9RNbr87OjJ3JpEwJ5OgKhBVsadXzsRh8eT1Plqs7rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750990993; c=relaxed/simple;
-	bh=av2Zn732X9HE4ruWynFtQpxMvhxph3ZGlcZA4HMgvFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KFlpzssZ4IcSo+h1ZL+6ABRJay0+fmTreMXhA5Gx/U+lL5EdPeajLKWZ+3OzZcFRUnFXW1G5NZe3HHcu8hdc4zCKkUhYSe9zhSlnISRIa1o7oAk2mevF/91+t97Y9rlKG0aMvJjKiOoim4b75A1RwZc+bGJfJq45VZjKfGRU3eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NqQBdHO4; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 26 Jun 2025 22:22:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750990977;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=EnchciEXaW72XzhWJSIc02euNtVTgDfT6M58RBTXTyk=;
-	b=NqQBdHO4fM8T/zVv6ijkz9N5BsOxsvT3VC5ow27+NJDG4PAAJ+sl/44+7dNMluhKNZuhKF
-	Br1qX+0lob5QCB90ndBKZGl8KevkakAiTdFNpLSA88dLB0kkvq4cHiUKFF3k/BgjTBTQC4
-	SdH8lgO1FAMzV8U3Y/WgUzu6oizUuUg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kerenl@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.16-rc4
-Message-ID: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
+	s=arc-20240116; t=1750992428; c=relaxed/simple;
+	bh=WQLNRAGTO03Ea/3tQ6gRyiAtgMsPG1wwx2zGsAwYKSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XoLUQd0apEEbdsJvtanJlioVR1EK4gewUnB+TlXjl1s5i1g+uaQmL99cQYVyBKzx4Cz7ptUSXK/uM0kQQqKQr/LaIiGxnbgJgmAg42/SCeiAdF88jnFM6JkPpNfOMogoYB7KDOtGq1Ao8nXrV1J+OJ22TktujW65dn4r3LQoFYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lQSdPlm5; arc=none smtp.client-ip=43.163.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750992414; bh=Pu0jA1GVRoKDx2l6du1YCcmFc4TR2c85F/Sld/qZPu4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=lQSdPlm5fiG5AxnyTsXZTrkD9Sw3jm7nCDQH75MdVkvw8U0VpZBv7lbPAQiIyKQBy
+	 4YnBLnkK8uA8+uLkqmK+9cJ+ovmtKTQFclaYvNpcAPFIg+pktnqZJkAdUGyFh1VtJ/
+	 ZDZH+OXVQpLcUYJZJXeTl/ptCiLYEeRVHXLK7sGc=
+Received: from [172.25.20.158] ([111.202.154.66])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id A2A3B4EF; Fri, 27 Jun 2025 10:40:42 +0800
+X-QQ-mid: xmsmtpt1750992042t5ouc00kx
+Message-ID: <tencent_5B902C24516F8FB647C156B41596BF68E70A@qq.com>
+X-QQ-XMAILINFO: OIJV+wUmQOUAf2UFzEHsFZTqx+Kq6+t/DjOoALtts+bmxTDYe0aOhXVnuSwlBh
+	 IKwrkPpmAPshTmKQvzmwkCKcnTChguPERIY3OFEg0UHXTqoUrZRp2DDlAO+zFQL43ghY2PXedN0N
+	 v8yTrkQcBKQXpry/j0lTZgxTRyMAJ4il5YSrVQ49OOvk7MOOXLV05fMdiFvaAzTH/AyBkC/8onJx
+	 fGCrWZ6Kc1086A9ImQRn8VYJhRsJ2A0ajoWlmFyH/RMMrgB+du2d3S5ta6e1sIqRWANj6DaSBB/Z
+	 0H9/sugRPpHBgWCYNx0zR4SZV+D9aVueby9w0rHO8uiZchZTQ55JEiGAU+zYCwUEnpO/WrQquPrS
+	 xNORxDZhqJvu3bpgFlZuUB2or5Lb138OPPBVk7ISqU7M9BBuVNhOAABrKgy88NMMi3v7RE5NmASd
+	 bsqw5KWSGbMh07yPp6WqG7AbWmS6f+8NMhKaGFBrzr8G31elIiLR0nBUI5Hq+4hzlmKOb4pJPYl4
+	 K7dCql/f4y0YBj9NR4/zukyH8EbMDdqBMv5KWHeqTg0br5FOrW3Vf2cgQnlbgpeADTVolKDZCQXU
+	 YvFE7JYMY6cWF5Lbz2XGMTgX/PuvSTc7+VlaJ0KCKC36LdQIub3IYqgAYHlqka42BjVm+2rQnIcW
+	 drCOo/tZbyhVd3A9q9ehEgnJ7LRGMQngSn1TiWgra5iFlb6L2UAknqV687ygfwTjMMM6SFmyGzKf
+	 TJj38y0CFzTSxkhVcKswqdpAyGx5Iyv4ZIue+K43wEjB8Opss/jsbBlrwBU40X9Znabyx/nUnLfy
+	 6cr3oIyu9m1nQZpc9UuJMwfrSU/V51GolaiyJW1CvRALeD6jxrTKx2ZYlVX/+QW67bN3K7D9FJCx
+	 Wdpk5o2c9KC/id7uBgDRKQXndyxAXpa2USSSOtHHe1iTSMZvWKw+fPK30Lh5vaJqcMkhQnSUsOFx
+	 rlUJPhp6v1cO2wygZAmvfIo/alad3u5jx2A2RXxVFTLQaz9X0RlA==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-OQ-MSGID: <3753a0b7-fed3-4391-9fc4-fade83c89a34@qq.com>
+Date: Fri, 27 Jun 2025 10:40:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] fs: change write_begin/write_end interface to take
+ struct kiocb *
+To: Christian Brauner <brauner@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: =?UTF-8?B?6ZmI5rab5rabIFRhb3RhbyBDaGVu?= <chentaotao@didiglobal.com>,
+ "tytso@mit.edu" <tytso@mit.edu>, "hch@infradead.org" <hch@infradead.org>,
+ "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+ "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+ "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+ "tursulin@ursulin.net" <tursulin@ursulin.net>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250624121149.2927-1-chentaotao@didiglobal.com>
+ <20250624121149.2927-4-chentaotao@didiglobal.com>
+ <aFqfZ9hiiW4qnYtO@casper.infradead.org>
+ <20250625-erstklassig-stilvoll-273282f0dd1b@brauner>
+From: Chen Taotao <chentao325@qq.com>
+In-Reply-To: <20250625-erstklassig-stilvoll-273282f0dd1b@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-per the maintainer thread discussion and precedent in xfs and btrfs
-for repair code in RCs, journal_rewind is again included
 
-The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
+在 2025/6/25 16:04, Christian Brauner 写道:
+> On Tue, Jun 24, 2025 at 01:51:51PM +0100, Matthew Wilcox wrote:
+>> On Tue, Jun 24, 2025 at 12:12:08PM +0000, 陈涛涛 Taotao Chen wrote:
+>>> -static int blkdev_write_end(struct file *file, struct address_space *mapping,
+>>> +static int blkdev_write_end(struct kiocb *iocb, struct address_space *mapping,
+>>>   		loff_t pos, unsigned len, unsigned copied, struct folio *folio,
+>>>   		void *fsdata)
+>>>   {
+>>>   	int ret;
+>>> -	ret = block_write_end(file, mapping, pos, len, copied, folio, fsdata);
+>>> +	ret = block_write_end(iocb->ki_filp, mapping, pos, len, copied, folio, fsdata);
+>> ... huh.  I thought block_write_end() had to have the same prototype as
+>> ->write_end because it was used by some filesystems as the ->write_end.
+>> I see that's not true (any more?).  Maybe I was confused with
+>> generic_write_end().  Anyway, block_write_end() doesn't use it's file
+>> argument, and never will, so we can just remove it.
+>>
+>>> +++ b/include/linux/fs.h
+>>> @@ -446,10 +446,10 @@ struct address_space_operations {
+>>>   
+>>>   	void (*readahead)(struct readahead_control *);
+>>>   
+>>> -	int (*write_begin)(struct file *, struct address_space *mapping,
+>>> +	int (*write_begin)(struct kiocb *, struct address_space *mapping,
+>>>   				loff_t pos, unsigned len,
+>>>   				struct folio **foliop, void **fsdata);
+>>> -	int (*write_end)(struct file *, struct address_space *mapping,
+>>> +	int (*write_end)(struct kiocb *, struct address_space *mapping,
+>>>   				loff_t pos, unsigned len, unsigned copied,
+>>>   				struct folio *folio, void *fsdata);
+>> Should we make this a 'const struct kiocb *'?  I don't see a need for
+>> filesystems to be allowed to modify the kiocb in future, but perhaps
+>> other people have different opinions.
+> Given I picked up Willy's change I'll wait for a resubmit of this series
+> on top of vfs-6.17.misc unless I hear otherwise?
+Sure, I’ll update the series on top of vfs-6.17.misc and resend it as 
+soon as possible.
 
-  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
+Best regards,
+Taotao Chen
 
-are available in the Git repository at:
-
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-06-26
-
-for you to fetch changes up to ef6fac0f9e5d0695cee1d820c727fe753eca52d5:
-
-  bcachefs: Plumb correct ip to trans_relock_fail tracepoint (2025-06-26 00:01:16 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.16-rc4
-
-----------------------------------------------------------------
-Alan Huang (7):
-      bcachefs: Don't allocate new memory when mempool is exhausted
-      bcachefs: Fix alloc_req use after free
-      bcachefs: Add missing EBUG_ON
-      bcachefs: Delay calculation of trans->journal_u64s
-      bcachefs: Move bset size check before csum check
-      bcachefs: Fix pool->alloc NULL pointer dereference
-      bcachefs: Don't unlock the trans if ret doesn't match BCH_ERR_operation_blocked
-
-Bharadwaj Raju (1):
-      bcachefs: don't return fsck_fix for unfixable node errors in __btree_err
-
-Kent Overstreet (43):
-      bcachefs: trace_extent_trim_atomic
-      bcachefs: btree iter tracepoints
-      bcachefs: Fix bch2_journal_keys_peek_prev_min()
-      bcachefs: btree_iter: fix updates, journal overlay
-      bcachefs: better __bch2_snapshot_is_ancestor() assert
-      bcachefs: pass last_seq into fs_journal_start()
-      bcachefs: Fix "now allowing incompatible features" message
-      bcachefs: Fix snapshot_key_missing_inode_snapshot repair
-      bcachefs: fsck: fix add_inode()
-      bcachefs: fsck: fix extent past end of inode repair
-      bcachefs: opts.journal_rewind
-      bcachefs: Kill unused tracepoints
-      bcachefs: mark more errors autofix
-      bcachefs: fsck: Improve check_key_has_inode()
-      bcachefs: Call bch2_fs_init_rw() early if we'll be going rw
-      bcachefs: Fix __bch2_inum_to_path() when crossing subvol boundaries
-      bcachefs: fsck: Print path when we find a subvol loop
-      bcachefs: fsck: Fix remove_backpointer() for subvol roots
-      bcachefs: fsck: Fix reattach_inode() for subvol roots
-      bcachefs: fsck: check_directory_structure runs in reverse order
-      bcachefs: fsck: additional diagnostics for reattach_inode()
-      bcachefs: fsck: check_subdir_count logs path
-      bcachefs: fsck: Fix check_path_loop() + snapshots
-      bcachefs: Fix bch2_read_bio_to_text()
-      bcachefs: Fix restart handling in btree_node_scrub_work()
-      bcachefs: fsck: Fix check_directory_structure when no check_dirents
-      bcachefs: fsck: fix unhandled restart in topology repair
-      bcachefs: fsck: Fix oops in key_visible_in_snapshot()
-      bcachefs: fix spurious error in read_btree_roots()
-      bcachefs: Fix missing newlines before ero
-      bcachefs: Fix *__bch2_trans_subbuf_alloc() error path
-      bcachefs: Don't log fsck err in the journal if doing repair elsewhere
-      bcachefs: Add missing key type checks to check_snapshot_exists()
-      bcachefs: Add missing bch2_err_class() to fileattr_set()
-      bcachefs: fix spurious error_throw
-      bcachefs: Fix range in bch2_lookup_indirect_extent() error path
-      bcachefs: Check for bad write buffer key when moving from journal
-      bcachefs: Use wait_on_allocator() when allocating journal
-      bcachefs: fix bch2_journal_keys_peek_prev_min() underflow
-      bcachefs: btree_root_unreadable_and_scan_found_nothing should not be autofix
-      bcachefs: Ensure btree node scan runs before checking for scanned nodes
-      bcachefs: Ensure we rewind to run recovery passes
-      bcachefs: Plumb correct ip to trans_relock_fail tracepoint
-
- fs/bcachefs/alloc_background.c         |  13 +-
- fs/bcachefs/backpointers.c             |   2 +-
- fs/bcachefs/bcachefs.h                 |   3 +-
- fs/bcachefs/btree_gc.c                 |  37 ++--
- fs/bcachefs/btree_io.c                 |  74 ++++----
- fs/bcachefs/btree_iter.c               | 173 ++++++++++++------
- fs/bcachefs/btree_journal_iter.c       |  82 ++++++---
- fs/bcachefs/btree_journal_iter_types.h |   5 +-
- fs/bcachefs/btree_locking.c            |  12 +-
- fs/bcachefs/btree_node_scan.c          |   6 +-
- fs/bcachefs/btree_node_scan.h          |   2 +-
- fs/bcachefs/btree_trans_commit.c       |  18 +-
- fs/bcachefs/btree_types.h              |   1 +
- fs/bcachefs/btree_update.c             |  16 +-
- fs/bcachefs/btree_update.h             |   5 +-
- fs/bcachefs/btree_update_interior.c    |  16 +-
- fs/bcachefs/btree_update_interior.h    |   3 +
- fs/bcachefs/btree_write_buffer.c       |   8 +-
- fs/bcachefs/btree_write_buffer.h       |   6 +
- fs/bcachefs/chardev.c                  |  29 ++-
- fs/bcachefs/data_update.c              |   1 +
- fs/bcachefs/errcode.h                  |   5 -
- fs/bcachefs/error.c                    |   4 +-
- fs/bcachefs/extent_update.c            |  13 +-
- fs/bcachefs/fs.c                       |   3 +-
- fs/bcachefs/fsck.c                     | 317 +++++++++++++++++++++++----------
- fs/bcachefs/inode.h                    |   5 +
- fs/bcachefs/io_read.c                  |   7 +-
- fs/bcachefs/journal.c                  |  20 +--
- fs/bcachefs/journal.h                  |   2 +-
- fs/bcachefs/journal_io.c               |  26 ++-
- fs/bcachefs/namei.c                    |  30 +++-
- fs/bcachefs/opts.h                     |   5 +
- fs/bcachefs/recovery.c                 |  24 ++-
- fs/bcachefs/recovery_passes.c          |  19 +-
- fs/bcachefs/recovery_passes.h          |   9 +
- fs/bcachefs/reflink.c                  |  12 +-
- fs/bcachefs/sb-errors_format.h         |  19 +-
- fs/bcachefs/snapshot.c                 |  14 +-
- fs/bcachefs/super.c                    |  13 +-
- fs/bcachefs/super.h                    |   1 +
- fs/bcachefs/trace.h                    | 125 +++----------
- 42 files changed, 734 insertions(+), 451 deletions(-)
 
