@@ -1,162 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-53230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927DFAECB96
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jun 2025 09:40:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F01AECC1D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jun 2025 12:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B128D17656B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jun 2025 07:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC95318949AE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jun 2025 10:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BAC1EDA1E;
-	Sun, 29 Jun 2025 07:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5260521CC7F;
+	Sun, 29 Jun 2025 10:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oe3xpJaW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZCgyCrx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F752BAF9;
-	Sun, 29 Jun 2025 07:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061CF1F4169;
+	Sun, 29 Jun 2025 10:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751182824; cv=none; b=VKddyw7XIdqAldd9gXv+ksL1x0Xtd8TOrWPyaR7yYcxAKqUd9zfswz1A9ADtgf1hfa7oXFtc4qgsST0ejhwj9qHg1k9bsTN1CvK8GdkBsOe3hM73HjzI6LlPILodcj25rnLJDfobeRpJ7NDHNarMJjgDcmh+s104yuunlvfq8RA=
+	t=1751192112; cv=none; b=O0HEOIVtcHcLPhsQsJlgLXFyOjWbBRab+eQlCUPxfL1U0cp9c95IyoHlOvzi17KhcK5OmD5/F5HQftzhqL4OQt5OwELNZwGhRRpZXMxk00px7e8WwmwP+MKWWT4vtelTsUsptPLd+Eg6RTsPSsmkZqQ6t5YwMpv6vpgnsnjGvtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751182824; c=relaxed/simple;
-	bh=0pkDIgKgJcoIUak+Q1ldoChrgf3t0SaaqA9PQnbbfxc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U2Ll1o8P6pVSyMp1TjyNfHQzAwWG/W42TGAlTXE1LevkRqF7hI+uYMyXry7uH+0FTZBcS1O61Uz6Y76TIhsxksIJxE6OmLlOKPEsEsYoH3hHEB4S/GCcfUz4krCI2PH+CzJsMPDcVVfN43NkoFyL6S63lISOqm8DzCx2XcRft98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oe3xpJaW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD6BC4CEEB;
-	Sun, 29 Jun 2025 07:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751182824;
-	bh=0pkDIgKgJcoIUak+Q1ldoChrgf3t0SaaqA9PQnbbfxc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Oe3xpJaWpxtOyptwR4HtiXngqEQK1RBeOE5fAHBhhTnC0ISfLwP73JpchWZwf0Bhm
-	 Nezfi/blHNfNkscVLx5pxkAu4YfgaI7RyEM9FV4kJzHjIFMbZeIxZdedNCXz7yTLrK
-	 eNtsHCECT5Lgn+HVg7sNbcR+7ppZr5YTtNV18hsJFcncjcUmYof8TKe6A3Z0VnHVwb
-	 91R1YpKZlvDAKD0+V5++wstSAj1A2kYANfblm4KfxgmSQbka0gGRwZKF5G5RkP0mCH
-	 ZuPUE5tbQn2cISPxyjrjsWucy/WzQ3PM5CS2SGGdAIZWc8AN2On86eT8zlaoPj/hw0
-	 BZTHRd//F4D5g==
-From: Sasha Levin <sashal@kernel.org>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org
-Cc: jack@suse.cz,
-	akpm@linux-foundation.org,
-	dada1@cosmosbay.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] fs: Prevent file descriptor table allocations exceeding INT_MAX
-Date: Sun, 29 Jun 2025 03:40:21 -0400
-Message-Id: <20250629074021.1038845-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1751192112; c=relaxed/simple;
+	bh=W2Sj0FqzFPGvWpO0mkRbXNUzJ8KD1W3cwBit7XUJxzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NSPEF065vMMY5r4iuw7PkMPFEcOOS1cOLrmpmI8cyshlgISDkvvDjbuHRShecnD1mdzWnO4hY/TP2htC6fEEH+CmXBwboxAuLrXOm+2IKEU0SwNSuLnl9quyGvEqAlkM/Ql/mlP5l7DvR69/OhdFgvAsld1Cd4O9X97Fqbokfp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZCgyCrx; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so22796615e9.1;
+        Sun, 29 Jun 2025 03:15:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751192108; x=1751796908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rv+KlWL8/gXlHieXHmmWXTDlacHPWEYy4YGQvjbJEp0=;
+        b=TZCgyCrxhKi9TTVqngok+s7B7wiQyshDBz3MS9kFqfLGy2Bi7Y+UqMlhpm79Vmi6eu
+         RJhx755DISyryVJlcOhDrCK45Af9PI1kx8io8+4oGXR0rMKDqirsZiCoZNrGGdP5NXWZ
+         ElxMOBYyWobQEXBLmOa0YzWBUTpAGDLZNzvDd6kOi8fXcO2epH3A/apjT4v/4C/U4Ajq
+         PXEVm4RjeN9rogVuZc4yUqAxMrNGH57P56Fh4Ar6Lm/36yC0ieHGhqnK2RtP6kQN0dow
+         z9RtCJgVkJh+IoHlUVNvVdbSavMVF+nsDjDmcizY5/NfwcbGmXTywgfleSwq81qDhKaT
+         VcKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751192108; x=1751796908;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rv+KlWL8/gXlHieXHmmWXTDlacHPWEYy4YGQvjbJEp0=;
+        b=Az6Yrm2G3twPyYoSfR9gwUA5v39bZANNU/SL89atdZ/dCZaTr0CmOycR4zbJGN56RB
+         YhqK33+31Kua49sJmYt+6EtDEOZCpHgZPXYMY6XVtLa54Xb8OsLnBtUdRNmNzQu9amCV
+         hweFWUXVLU5dTa7o//KylHBB4Rgmxpy9/9DenQwhJgaD1wdK0jhIgH/Tv0Tpz/kh0h2y
+         9YUbcip5LfgQyY4EBNQYKYUVV2dG5eIgQwUsWxJADcMpeu7wgrH7WAIhkIYyZ4QAsdtB
+         3E0PfB5lAGYKpkllA8oRAwTi4qWbR0NyK1EHl8C0+ztwhdAfYdOjnbsJrnMrtSFCHCEV
+         eqcg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/2qY5ym4bZKao1EiH5mZ785Ci698chCikl9gHt0m5ujMMrGaZEWLXFSa/y4J4kgV+qAjdljWaeiHPpEWP@vger.kernel.org, AJvYcCWuf9XqE9OnoEjgMHsKvUGRxnzb7iwgprCfxVyxKMShqcLRMmahIvmMyfyB0cmumOAY5TJsJ4fgc4OAR9nv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy28WRDh5UetJ1uiWkvNCTwbcaFjrTWutACgjmBq8MIyrRSbqp+
+	mb7PksvvL+lERDvO4NGaCHulU7T3EKBQoNtacboDPx7cQMc3dyuXnz0k
+X-Gm-Gg: ASbGncsARbwoBo+KHlGO0vEdDAmpc3usG8Gt4E28ufAaBhXf0GByH8QWWQTzTYZ2Uuf
+	RafKYOzM/X9yqJO6bE50CnOLjv3yI6WAPYbndMlwLChWAQGlpD/e9y10kNH97ZSNijvXAHE5v+l
+	F26GWeHJ33FB+FxwJr8fQ9vT9DF6suKB5Fpx2r47P44KUHqXvpc8BNXeUaK4p/VT5e8lk66tFz7
+	mx01fl49n1oNecy5SGkV8qDRoZGDfqAtQJJ2NIefhjypq3GY3DwkvCtRrxgDFYUM8CrD9zedoOK
+	DrFi+nTP8ZLoZb7DvmDeJjTMR7ZnCmdypPNHMudZ2pNknbCR5S404l6IFQUOmyVNNj1wjZlx09m
+	X7J8OYpkWshKnjfdzKpsMi5/Kq42S
+X-Google-Smtp-Source: AGHT+IEHSBTOuNU4gIJluwTcmrh+62LZDnnH7HDcmBH7HEYrjf3Wks9oCzUt76AUoKgLXxQD5c/hUA==
+X-Received: by 2002:a05:600c:8b69:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-4539ff478a7mr1146925e9.16.1751192108049;
+        Sun, 29 Jun 2025 03:15:08 -0700 (PDT)
+Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538f88efffsm72765615e9.17.2025.06.29.03.15.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 03:15:07 -0700 (PDT)
+Date: Sun, 29 Jun 2025 11:15:06 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, <mcgrof@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
+ <linux-fsdevel@vger.kernel.org>, <kernel@pankajraghav.com>,
+ <gost.dev@samsung.com>, Matthew Wilcox <willy@infradead.org>, Zhang Yi
+ <yi.zhang@huawei.com>, Yang Erkun <yangerkun@huawei.com>
+Subject: Re: [PATCH v4] fs/buffer: remove the min and max limit checks in
+ __getblk_slow()
+Message-ID: <20250629111506.7c58ccd7@pumpkin>
+In-Reply-To: <3398cb62-3666-4a79-84c1-3b967059cd77@huawei.com>
+References: <20250626113223.181399-1-p.raghav@samsung.com>
+	<3398cb62-3666-4a79-84c1-3b967059cd77@huawei.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When sysctl_nr_open is set to a very high value (for example, 1073741816
-as set by systemd), processes attempting to use file descriptors near
-the limit can trigger massive memory allocation attempts that exceed
-INT_MAX, resulting in a WARNING in mm/slub.c:
+On Fri, 27 Jun 2025 10:02:30 +0800
+Baokun Li <libaokun1@huawei.com> wrote:
 
-  WARNING: CPU: 0 PID: 44 at mm/slub.c:5027 __kvmalloc_node_noprof+0x21a/0x288
+> On 2025/6/26 19:32, Pankaj Raghav wrote:
+> > All filesystems will already check the max and min value of their block
+> > size during their initialization. __getblk_slow() is a very low-level
+> > function to have these checks. Remove them and only check for logical
+> > block size alignment.
+> >
+> > As this check with logical block size alignment might never trigger, add
+> > WARN_ON_ONCE() to the check. As WARN_ON_ONCE() will already print the
+> > stack, remove the call to dump_stack().
+> >
+> > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>  
+> 
+> Makes sense. Feel free to add:
+> 
+> Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> 
+> > ---
+> > Changes since v3:
+> > - Use WARN_ON_ONCE on the logical block size check and remove the call
+> >    to dump_stack.
+> > - Use IS_ALIGNED() to check for aligned instead of open coding the
+> >    check.
+> >
+> >   fs/buffer.c | 11 +++--------
+> >   1 file changed, 3 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/fs/buffer.c b/fs/buffer.c
+> > index d61073143127..565fe88773c2 100644
+> > --- a/fs/buffer.c
+> > +++ b/fs/buffer.c
+> > @@ -1122,14 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+> >   {
+> >   	bool blocking = gfpflags_allow_blocking(gfp);
+> >   
+> > -	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
+> > -		     (size < 512 || size > PAGE_SIZE))) {
+> > -		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
+> > -					size);
+> > -		printk(KERN_ERR "logical block size: %d\n",
+> > -					bdev_logical_block_size(bdev));
+> > -
+> > -		dump_stack();
+> > +	if (WARN_ON_ONCE(!IS_ALIGNED(size, bdev_logical_block_size(bdev)))) {
+> > +		printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
+> > +		       size, bdev_logical_block_size(bdev));
+> >   		return NULL;
 
-This happens because kvmalloc_array() and kvmalloc() check if the
-requested size exceeds INT_MAX and emit a warning when the allocation is
-not flagged with __GFP_NOWARN.
+Shouldn't that use WARN_ONCE(condition, fmt, ...)
 
-Specifically, when nr_open is set to 1073741816 (0x3ffffff8) and a
-process calls dup2(oldfd, 1073741880), the kernel attempts to allocate:
-- File descriptor array: 1073741880 * 8 bytes = 8,589,935,040 bytes
-- Multiple bitmaps: ~400MB
-- Total allocation size: > 8GB (exceeding INT_MAX = 2,147,483,647)
-
-Reproducer:
-1. Set /proc/sys/fs/nr_open to 1073741816:
-   # echo 1073741816 > /proc/sys/fs/nr_open
-
-2. Run a program that uses a high file descriptor:
-   #include <unistd.h>
-   #include <sys/resource.h>
-
-   int main() {
-       struct rlimit rlim = {1073741824, 1073741824};
-       setrlimit(RLIMIT_NOFILE, &rlim);
-       dup2(2, 1073741880);  // Triggers the warning
-       return 0;
-   }
-
-3. Observe WARNING in dmesg at mm/slub.c:5027
-
-systemd commit a8b627a introduced automatic bumping of fs.nr_open to the
-maximum possible value. The rationale was that systems with memory
-control groups (memcg) no longer need separate file descriptor limits
-since memory is properly accounted. However, this change overlooked
-that:
-
-1. The kernel's allocation functions still enforce INT_MAX as a maximum
-   size regardless of memcg accounting
-2. Programs and tests that legitimately test file descriptor limits can
-   inadvertently trigger massive allocations
-3. The resulting allocations (>8GB) are impractical and will always fail
-
-systemd's algorithm starts with INT_MAX and keeps halving the value
-until the kernel accepts it. On most systems, this results in nr_open
-being set to 1073741816 (0x3ffffff8), which is just under 1GB of file
-descriptors.
-
-While processes rarely use file descriptors near this limit in normal
-operation, certain selftests (like
-tools/testing/selftests/core/unshare_test.c) and programs that test file
-descriptor limits can trigger this issue.
-
-Fix this by adding a check in alloc_fdtable() to ensure the requested
-allocation size does not exceed INT_MAX. This causes the operation to
-fail with -EMFILE instead of triggering a kernel warning and avoids the
-impractical >8GB memory allocation request.
-
-Fixes: 9cfe015aa424 ("get rid of NR_OPEN and introduce a sysctl_nr_open")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/file.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/fs/file.c b/fs/file.c
-index b6db031545e65..6d2275c3be9c6 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -197,6 +197,21 @@ static struct fdtable *alloc_fdtable(unsigned int slots_wanted)
- 			return ERR_PTR(-EMFILE);
- 	}
+	David
  
-+	/*
-+	 * Check if the allocation size would exceed INT_MAX. kvmalloc_array()
-+	 * and kvmalloc() will warn if the allocation size is greater than
-+	 * INT_MAX, as filp_cachep objects are not __GFP_NOWARN.
-+	 *
-+	 * This can happen when sysctl_nr_open is set to a very high value and
-+	 * a process tries to use a file descriptor near that limit. For example,
-+	 * if sysctl_nr_open is set to 1073741816 (0x3ffffff8) - which is what
-+	 * systemd typically sets it to - then trying to use a file descriptor
-+	 * close to that value will require allocating a file descriptor table
-+	 * that exceeds 8GB in size.
-+	 */
-+	if (unlikely(nr > INT_MAX / sizeof(struct file *)))
-+		return ERR_PTR(-EMFILE);
-+
- 	fdt = kmalloc(sizeof(struct fdtable), GFP_KERNEL_ACCOUNT);
- 	if (!fdt)
- 		goto out;
--- 
-2.39.5
+> >   	}
+> >   
+> >
+> > base-commit: b39f7d75dc41b5f5d028192cd5d66cff71179f35  
+> 
+> 
+> 
 
 
