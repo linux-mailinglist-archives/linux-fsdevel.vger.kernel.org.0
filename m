@@ -1,137 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-53319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00152AED957
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 12:06:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C542BAED987
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 12:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C57A53B2CAC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 10:05:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD9467A9BD7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 10:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6752724A063;
-	Mon, 30 Jun 2025 10:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="zuotKfvT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E0B247287;
+	Mon, 30 Jun 2025 10:15:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6739D6BFC0;
-	Mon, 30 Jun 2025 10:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9721A76DE;
+	Mon, 30 Jun 2025 10:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277970; cv=none; b=uZ66a8pEtl9YcdeKrFm9ZP+xATyFr6yUusT6XF7h1707mc3qjGONeR6HeUH+axutCsfb55sMJwWqgYWYwCah6DI5koQJWVzkAJsRkMmoc2X6JJAstd3/VAublTAJIwhIDOovF9ZfRtRoCSqNXCC5jOZcm60aCllqZrVZvA/1+Sk=
+	t=1751278521; cv=none; b=AHOxwNQdOaYgAH9ZKNGywN2nRWhpkIWi30bNCI2QGPY+TIdOxapn3go+fT2FuRGg1CY1QW6U1dWc00Ue+VO7IeHmRPv0ClEDPJyzg1iwFItmB+NKI1OR4siJjg6oIL91LLNMPFQO7M7J/hIe3VQ3UF7SATdbf1+nY6jsVG/y/uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277970; c=relaxed/simple;
-	bh=idmzxaWZUEccbmv3UFhsjZX2rlSRens+xjcxcEIn1F8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZdyV+cqw3Jc1S6Tms3hQOHA+pb+1o3fpBOf3UeKy7Rro09E9wZFvdGq/bc4D7I4cnr9D7hcsaIRQf++s4WKSn+pjs0UF22QSI1wpKs+2ol2mKtA2gpThrQiiHjUQSPUnkRCxpefCjtYxoMInraJjIMIqpb/tfOTv2EOpZp3yqZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=zuotKfvT; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+	s=arc-20240116; t=1751278521; c=relaxed/simple;
+	bh=y/4YjTLWuIy0IC8lYRZeKfAEdR7HI1gNocKw3PUC0G4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uQY791xGa1q8vYfRYl7t+vlrxxPEweusCgbwgakkbXXBij6CNi6QwX+6F+FI8z1UTavOdvWs+To2ecAJDlvhOUujsxOyZVDT6ff6pVlM7fIojS4e1h86qwXUPy8o1rzuUyAjsv/WNFB9aXnbi8c2vvJ/6/OcC2vEsLdkHgHYEJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bW1yN51X8z9sqc;
-	Mon, 30 Jun 2025 12:06:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1751277964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FUqY6p8xHWIMOVC9OJie7vZ2SH/5zciF2FM6fFp1tPg=;
-	b=zuotKfvTKbBNr1XDp7EnliGK08aysOe25VVCo+8rUypcZBOouhwTjkRdSF35Twqw4juFE5
-	sY2zRtelnAw5GmqnoOLvQsFrD5gSZpTMKHiJpa49mPEfXw1u/Z/8zD4StVtPE6xWbGGUs7
-	vNTBG7xssauguqtbD57PTLNe3gH7nnAL6X6scmuEr9XikUWT5xnUSshyAmW96XIrWEZ5tQ
-	Es+JiAqk714dlnGaoZdpjcvpo/D18+FAy3NPw9dTeKhh9RMN1Tf0aFtiBnHU4LlunZQolZ
-	7yPmB0iFqwjNIKSr6L/7t4D6gFS2Iv9s34M9UFCAYKQqNnThqyCxF+M3Zeh8dw==
-Date: Mon, 30 Jun 2025 12:05:54 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Baokun Li <libaokun1@huawei.com>, Pankaj Raghav <p.raghav@samsung.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, mcgrof@kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	gost.dev@samsung.com, Matthew Wilcox <willy@infradead.org>, 
-	Zhang Yi <yi.zhang@huawei.com>, Yang Erkun <yangerkun@huawei.com>
-Subject: Re: [PATCH v4] fs/buffer: remove the min and max limit checks in
- __getblk_slow()
-Message-ID: <4qln6l2oc4y3yvfm36tbsgkxxaq4i7yvxbzlnz36yrvajdwmfs@lkk7ujwbulq2>
-References: <20250626113223.181399-1-p.raghav@samsung.com>
- <3398cb62-3666-4a79-84c1-3b967059cd77@huawei.com>
- <20250629111506.7c58ccd7@pumpkin>
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bW28z4SQ0z9syT;
+	Mon, 30 Jun 2025 12:15:15 +0200 (CEST)
+From: Pankaj Raghav <p.raghav@samsung.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	mcgrof@kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Cc: Baokun Li <libaokun1@huawei.com>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	gost.dev@samsung.com,
+	kernel@pankajraghav.com,
+	Zhang Yi <yi.zhang@huawei.com>,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH] fs/libfs: don't assume blocksize <= PAGE_SIZE in generic_check_addressable
+Date: Mon, 30 Jun 2025 12:15:09 +0200
+Message-ID: <20250630101509.212291-1-p.raghav@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250629111506.7c58ccd7@pumpkin>
-X-Rspamd-Queue-Id: 4bW1yN51X8z9sqc
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 29, 2025 at 11:15:06AM +0100, David Laight wrote:
-> On Fri, 27 Jun 2025 10:02:30 +0800
-> Baokun Li <libaokun1@huawei.com> wrote:
-> 
-> > On 2025/6/26 19:32, Pankaj Raghav wrote:
-> > > All filesystems will already check the max and min value of their block
-> > > size during their initialization. __getblk_slow() is a very low-level
-> > > function to have these checks. Remove them and only check for logical
-> > > block size alignment.
-> > >
-> > > As this check with logical block size alignment might never trigger, add
-> > > WARN_ON_ONCE() to the check. As WARN_ON_ONCE() will already print the
-> > > stack, remove the call to dump_stack().
-> > >
-> > > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>  
-> > 
-> > Makes sense. Feel free to add:
-> > 
-> > Reviewed-by: Baokun Li <libaokun1@huawei.com>
-> > 
-> > > ---
-> > > Changes since v3:
-> > > - Use WARN_ON_ONCE on the logical block size check and remove the call
-> > >    to dump_stack.
-> > > - Use IS_ALIGNED() to check for aligned instead of open coding the
-> > >    check.
-> > >
-> > >   fs/buffer.c | 11 +++--------
-> > >   1 file changed, 3 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/fs/buffer.c b/fs/buffer.c
-> > > index d61073143127..565fe88773c2 100644
-> > > --- a/fs/buffer.c
-> > > +++ b/fs/buffer.c
-> > > @@ -1122,14 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-> > >   {
-> > >   	bool blocking = gfpflags_allow_blocking(gfp);
-> > >   
-> > > -	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
-> > > -		     (size < 512 || size > PAGE_SIZE))) {
-> > > -		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
-> > > -					size);
-> > > -		printk(KERN_ERR "logical block size: %d\n",
-> > > -					bdev_logical_block_size(bdev));
-> > > -
-> > > -		dump_stack();
-> > > +	if (WARN_ON_ONCE(!IS_ALIGNED(size, bdev_logical_block_size(bdev)))) {
-> > > +		printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
-> > > +		       size, bdev_logical_block_size(bdev));
-> > >   		return NULL;
-> 
-> Shouldn't that use WARN_ONCE(condition, fmt, ...)
+Since [1], it is possible for filesystems to have blocksize > PAGE_SIZE
+of the system.
 
-We need to return NULL if the check fails. So having the condition and
-the format as an `if` condition does not look nice. Plus the formatting
-will look weird.
+Remove the assumption and make the check generic for all blocksizes in
+generic_check_addressable().
 
---
-Pankaj
+[1] https://lore.kernel.org/linux-xfs/20240822135018.1931258-1-kernel@pankajraghav.com/
+
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+ fs/libfs.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 4d1862f589e8..81756dc0be6d 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1584,13 +1584,17 @@ EXPORT_SYMBOL(generic_file_fsync);
+ int generic_check_addressable(unsigned blocksize_bits, u64 num_blocks)
+ {
+ 	u64 last_fs_block = num_blocks - 1;
+-	u64 last_fs_page =
+-		last_fs_block >> (PAGE_SHIFT - blocksize_bits);
++	u64 last_fs_page, max_bytes;
++
++	if (check_shl_overflow(num_blocks, blocksize_bits, &max_bytes))
++		return -EFBIG;
++
++	last_fs_page = (max_bytes >> PAGE_SHIFT) - 1;
+ 
+ 	if (unlikely(num_blocks == 0))
+ 		return 0;
+ 
+-	if ((blocksize_bits < 9) || (blocksize_bits > PAGE_SHIFT))
++	if ((blocksize_bits < 9))
+ 		return -EINVAL;
+ 
+ 	if ((last_fs_block > (sector_t)(~0ULL) >> (blocksize_bits - 9)) ||
+
+base-commit: b39f7d75dc41b5f5d028192cd5d66cff71179f35
+-- 
+2.49.0
+
 
