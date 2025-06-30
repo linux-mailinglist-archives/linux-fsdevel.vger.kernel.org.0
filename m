@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-53267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F589AED2A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 04:54:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49902AED2B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 04:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02542169290
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 02:54:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB9D3B514A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 02:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE311FBE8A;
-	Mon, 30 Jun 2025 02:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC421E5B62;
+	Mon, 30 Jun 2025 02:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pA86fmG7"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mpgdowUK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352201A76DE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C4C1A5B8B
 	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jun 2025 02:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751251982; cv=none; b=LHAVS/cEUerLSmKImoESTXhNUgCs2Q5OS4sDkoFQ5vTZFyk6k1i/3tYpFVQ+90LPeFKWQrabxjdQ916x59NECayrp8u5/4NkyNLOzgFAJAuzROfHXaN2EDyw8LC05LGtFExUy+YEZ8rH7tMv1XqJTwOmJLJrRa/tnv0r7tC6tGI=
+	t=1751251986; cv=none; b=MY4piUXt25D5HP4P0v8Wu33jtRukAPq4fwvpa1XxxNJQlYPIQgGkeZZcNudzV5auVZEif97w+3qWkSxq/YZjtBxWhd3oyzFlRJLzVNS/v9Ag7SctVGKW5UjFGzjPlNtxrPajA2LkLiLCEMGPxxoxJBWCbZiGdKPRPZ/F3PwW4Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751251982; c=relaxed/simple;
-	bh=GuXstB05r7G1u9RZz4jZfLCSF89V/AI9mn5uZXR6Y2w=;
+	s=arc-20240116; t=1751251986; c=relaxed/simple;
+	bh=hFOfIMG6nc6K5e7dVGeaGrbtyI/XhJrpZzqpnOS/U8Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rdo8E/1cKMIf/8dqcGRguAJnxdk1yMyCxrwSHQrYT0nZqxxH2HAuuuz8Pwsq0zvPgA9H8HaSKfR7ZTJC83DnkpLg6Fz4rSaSapzHhHxa/q9bQQEJvb+YLrPwPGra7QbIQgXVyJS+OHxqMpUSuVob8URGjsPi5oeVsgaK2BQJuXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pA86fmG7; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=D2UMx6J3uDBfMRY4YPJHZE4Eg8z77hyECcLFnzCuZ0zJjrWsPM0ll48T+Tz4z/CihU9/gbbOqwV+gHENRtaYbI7FRBCdHVdWfTSrzs4GFiRr6EWVqPcre5WnR65ErBMdkL3orQwjnZtEfKi4BjUvjuZORlgBWkQGgENC09FC9yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mpgdowUK; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=LJ7tpMV0SPGiN+7uyMjnBGKserdNIBfRTbNhMvumVZA=; b=pA86fmG75HjAQxqk+kNKdMVFGf
-	SwHzBE/66BOrb94YxLPBEx/GyogDWFAUIZF+TehDyb/y0fPJzQj5kMGKsinWBNVuFJViY1jBcH0Gi
-	fiFuNJOjJAfQ3z5HT3PZKXUwNZEXenIiI6YEElh/wQRUxKd5izOYmkmF9FfShiEumND5fyGV3PVzS
-	2SF9zHDAqWpkL/Lj6VNJp+TzM/hlIwKzbgqkUlZfIgWicvySImFBxvUKcV5Q+H7WUdDwzo4t8rAq3
-	nLzvIbj45JNStg4NSA7ceAVXm2RNrAxxSkZMyey1ROqud0nzeiXnW9jrhtUQKE9WBZPoMPoWcsvVB
-	DKZoDzsg==;
+	bh=dK+Mi6UtrZkp8Ka5QCfM7I/WNVnOo0LjI32J1jGjbJc=; b=mpgdowUKhah+zGz4fveZl0F625
+	NLjpCcery/tX4ie+fds8BpHriMgA9z56meO6sxJvQLRzNOgPXoM8hclJnHqw6QwXGkMcb3JLxsJdz
+	REwsGdZfFwsr/CscOyAHaY3fqoM33QNWY6nGchzYFOpuY8tMI6Ix/j0vbgYJSYhJDpG0fiGMD9HDy
+	WsGvV56HrbNM6+dEcDwdERWhitU31sIYe2+M94hMbS/kbRZZ/hmE6yPWaVLuA+LSvIX9bFAFtsnvk
+	qIc8rnq7gVYUVahnf3LoFfHS0C8vEBzOdjcrFAvchkwja/80PsYFSCML9idLGtQBIacpt+f3IA7F/
+	lvLNdKvQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uW4de-00000005p0x-1Jku;
+	id 1uW4de-00000005p18-1yll;
 	Mon, 30 Jun 2025 02:52:58 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: brauner@kernel.org,
 	ebiederm@xmission.com,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 28/48] don't have mounts pin their parents
-Date: Mon, 30 Jun 2025 03:52:35 +0100
-Message-ID: <20250630025255.1387419-28-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 29/48] mount: separate the flags accessed only under namespace_sem
+Date: Mon, 30 Jun 2025 03:52:36 +0100
+Message-ID: <20250630025255.1387419-29-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250630025255.1387419-1-viro@zeniv.linux.org.uk>
 References: <20250630025148.GA1383774@ZenIV>
@@ -66,229 +66,324 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Simplify the rules for mount refcounts.  Current rules include:
-	* being a namespace root => +1
-	* being someone's child => +1
-	* being someone's child => +1 to parent's refcount, unless you've
-				   already been through umount_tree().
+Several flags are updated and checked only under namespace_sem; we are
+already making use of that when we are checking them without mount_lock,
+but we have to hold mount_lock for all updates, which makes things
+clumsier than they have to be.
 
-The last part is not needed at all.  It makes for more places where need
-to decrement refcounts and it creates an asymmetry between the situations
-for something that has never been a part of a namespace and something that
-left one, both for no good reason.
+Take MNT_SHARED, MNT_UNBINDABLE, MNT_MARKED and MNT_UMOUNT_CANDIDATE
+into a separate field (->mnt_t_flags), renaming them to T_SHARED,
+etc. to avoid confusion.  All accesses must be under namespace_sem.
 
-If mount's refcount has additions from its children, we know that
-	* it's either someone's child itself (and will remain so
-until umount_tree(), at which point contributions from children
-will disappear), or
-	* or is the root of namespace (and will remain such until
-it either becomes someone's child in another namespace or goes through
-umount_tree()), or
-	* it is the root of some tree copy, and is currently pinned
-by the caller of copy_tree() (and remains such until it either gets
-into namespace, or goes to umount_tree()).
-In all cases we already have contribution(s) to refcount that will last
-as long as the contribution from children remains.  In other words, the
-lifetime is not affected by refcount contributions from children.
+That changes locking requirements for mnt_change_propagation() and
+set_mnt_shared() - only namespace_sem is needed now.  The same goes
+for SET_MNT_MARKED et.al.
 
-It might be useful for "is it busy" checks, but those are actually
-no harder to express without it.
+There might be more flags moved from ->mnt_flags to that field;
+this is just the initial set.
 
-NB: propagate_mnt_busy() part is an equivalent transformation, ugly as it
-is; the current logics is actually wrong and may give false negatives,
-but fixing that is for a separate patch (probably earlier in the queue).
-
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 31 +++++++++----------------------
- fs/pnode.c     | 49 +++++++++++++++++--------------------------------
- 2 files changed, 26 insertions(+), 54 deletions(-)
+ .../filesystems/propagate_umount.txt          | 12 +++++-----
+ fs/mount.h                                    | 17 ++++++++++++++
+ fs/namespace.c                                |  4 ----
+ fs/pnode.c                                    | 22 +++++++++----------
+ fs/pnode.h                                    | 19 +++++++++-------
+ include/linux/mount.h                         | 18 ++-------------
+ 6 files changed, 46 insertions(+), 46 deletions(-)
 
+diff --git a/Documentation/filesystems/propagate_umount.txt b/Documentation/filesystems/propagate_umount.txt
+index 6906903a8aa2..c90349e5b889 100644
+--- a/Documentation/filesystems/propagate_umount.txt
++++ b/Documentation/filesystems/propagate_umount.txt
+@@ -453,11 +453,11 @@ original set.
+ So let's go for
+ 	* original set ("set").  Linkage via mnt_list
+ 	* undecided candidates ("candidates").  Subset of a list,
+-consisting of all its elements marked with a new flag (MNT_UMOUNT_CANDIDATE).
++consisting of all its elements marked with a new flag (T_UMOUNT_CANDIDATE).
+ Initially all elements of the list will be marked that way; in the
+ end the list will become empty and no mounts will remain marked with
+ that flag.
+-	* Reuse MNT_MARKED for "has been already seen by trim_ancestors()".
++	* Reuse T_MARKED for "has been already seen by trim_ancestors()".
+ 	* anything in U that hadn't been in the original set - elements of
+ candidates will gradually be either discarded or moved there.  In other
+ words, it's the candidates we have already decided to unmount.	Its role
+@@ -465,13 +465,13 @@ is reasonably close to the old "to_umount", so let's use that name.
+ Linkage via mnt_list.
+ 
+ For gather_candidates() we'll need to maintain both candidates (S -
+-set) and intersection of S with set.  Use MNT_UMOUNT_CANDIDATE for
++set) and intersection of S with set.  Use T_UMOUNT_CANDIDATE for
+ all elements we encounter, putting the ones not already in the original
+ set into the list of candidates.  When we are done, strip that flag from
+ all elements of the original set.  That gives a cheap way to check
+ if element belongs to S (in gather_candidates) and to candidates
+ itself (at later stages).  Call that predicate is_candidate(); it would
+-be m->mnt_flags & MNT_UMOUNT_CANDIDATE.
++be m->mnt_t_flags & T_UMOUNT_CANDIDATE.
+ 
+ All elements of the original set are marked with MNT_UMOUNT and we'll
+ need the same for elements added when joining the contents of to_umount
+@@ -480,5 +480,5 @@ to to_umount; that's close to what the old 'umount_one' is doing, so
+ let's keep that name.  It also gives us another predicate we need -
+ "belongs to union of set and to_umount"; will_be_unmounted() for now.
+ 
+-Removals from the candidates list should strip both MNT_MARKED and
+-MNT_UMOUNT_CANDIDATE; call it remove_from_candidates_list().
++Removals from the candidates list should strip both T_MARKED and
++T_UMOUNT_CANDIDATE; call it remove_from_candidates_list().
+diff --git a/fs/mount.h b/fs/mount.h
+index 4355c482a841..f299dc85446d 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -84,6 +84,7 @@ struct mount {
+ 	struct list_head to_notify;	/* need to queue notification */
+ 	struct mnt_namespace *prev_ns;	/* previous namespace (NULL if none) */
+ #endif
++	int mnt_t_flags;		/* namespace_sem-protected flags */
+ 	int mnt_id;			/* mount identifier, reused */
+ 	u64 mnt_id_unique;		/* mount ID unique until reboot */
+ 	int mnt_group_id;		/* peer group identifier */
+@@ -93,6 +94,22 @@ struct mount {
+ 	struct mount *overmount;	/* mounted on ->mnt_root */
+ } __randomize_layout;
+ 
++enum {
++	T_SHARED		= 1, /* mount is shared */
++	T_UNBINDABLE		= 2, /* mount is unbindable */
++	T_MARKED		= 4, /* internal mark for propagate_... */
++	T_UMOUNT_CANDIDATE	= 8, /* for propagate_umount */
++
++	/*
++	 * T_SHARED_MASK is the set of flags that should be cleared when a
++	 * mount becomes shared.  Currently, this is only the flag that says a
++	 * mount cannot be bind mounted, since this is how we create a mount
++	 * that shares events with another mount.  If you add a new T_*
++	 * flag, consider how it interacts with shared mounts.
++	 */
++	T_SHARED_MASK	= T_UNBINDABLE,
++};
++
+ #define MNT_NS_INTERNAL ERR_PTR(-EINVAL) /* distinct from any mnt_namespace */
+ 
+ static inline struct mount *real_mount(struct vfsmount *mnt)
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 6df0436bfcb9..4bdf6a6e75ca 100644
+index 4bdf6a6e75ca..da27365418a5 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1075,7 +1075,6 @@ void mnt_set_mountpoint(struct mount *mnt,
- 			struct mountpoint *mp,
- 			struct mount *child_mnt)
- {
--	mnt_add_count(mnt, 1);	/* essentially, that's mntget */
- 	child_mnt->mnt_mountpoint = mp->m_dentry;
- 	child_mnt->mnt_parent = mnt;
- 	child_mnt->mnt_mp = mp;
-@@ -1118,7 +1117,6 @@ static void attach_mnt(struct mount *mnt, struct mount *parent,
- void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp, struct mount *mnt)
- {
- 	struct mountpoint *old_mp = mnt->mnt_mp;
--	struct mount *old_parent = mnt->mnt_parent;
- 
- 	list_del_init(&mnt->mnt_child);
- 	hlist_del_init(&mnt->mnt_mp_list);
-@@ -1127,7 +1125,6 @@ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp, struct m
- 	attach_mnt(mnt, parent, mp);
- 
- 	maybe_free_mountpoint(old_mp, &ex_mountpoints);
--	mnt_add_count(old_parent, -1);
- }
- 
- static inline struct mount *node_to_mount(struct rb_node *node)
-@@ -1652,23 +1649,19 @@ const struct seq_operations mounts_op = {
- int may_umount_tree(struct vfsmount *m)
- {
- 	struct mount *mnt = real_mount(m);
--	int actual_refs = 0;
--	int minimum_refs = 0;
--	struct mount *p;
--	BUG_ON(!m);
-+	bool busy = false;
- 
- 	/* write lock needed for mnt_get_count */
- 	lock_mount_hash();
--	for (p = mnt; p; p = next_mnt(p, mnt)) {
--		actual_refs += mnt_get_count(p);
--		minimum_refs += 2;
-+	for (struct mount *p = mnt; p; p = next_mnt(p, mnt)) {
-+		if (mnt_get_count(p) > (p == mnt ? 2 : 1)) {
-+			busy = true;
-+			break;
-+		}
+@@ -2917,10 +2917,8 @@ static int do_change_type(struct path *path, int ms_flags)
+ 			goto out_unlock;
  	}
- 	unlock_mount_hash();
  
--	if (actual_refs > minimum_refs)
--		return 0;
--
--	return 1;
-+	return !busy;
- }
+-	lock_mount_hash();
+ 	for (m = mnt; m; m = (recurse ? next_mnt(m, mnt) : NULL))
+ 		change_mnt_propagation(m, type);
+-	unlock_mount_hash();
  
- EXPORT_SYMBOL(may_umount_tree);
-@@ -1869,7 +1862,6 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+  out_unlock:
+ 	namespace_unlock();
+@@ -3409,9 +3407,7 @@ static int do_set_group(struct path *from_path, struct path *to_path)
+ 	if (IS_MNT_SHARED(from)) {
+ 		to->mnt_group_id = from->mnt_group_id;
+ 		list_add(&to->mnt_share, &from->mnt_share);
+-		lock_mount_hash();
+ 		set_mnt_shared(to);
+-		unlock_mount_hash();
+ 	}
  
- 		disconnect = disconnect_mount(p, how);
- 		if (mnt_has_parent(p)) {
--			mnt_add_count(p->mnt_parent, -1);
- 			if (!disconnect) {
- 				/* Don't forget about p */
- 				list_add_tail(&p->mnt_child, &p->mnt_parent->mnt_mounts);
-@@ -1946,7 +1938,7 @@ static int do_umount(struct mount *mnt, int flags)
- 		 * all race cases, but it's a slowpath.
- 		 */
- 		lock_mount_hash();
--		if (mnt_get_count(mnt) != 2) {
-+		if (!list_empty(&mnt->mnt_mounts) || mnt_get_count(mnt) != 2) {
- 			unlock_mount_hash();
- 			return -EBUSY;
- 		}
-@@ -3683,9 +3675,7 @@ static int do_move_mount(struct path *old_path,
- out:
- 	unlock_mount(&mp);
- 	if (!err) {
--		if (!is_anon_ns(ns)) {
--			mntput_no_expire(parent);
--		} else {
-+		if (is_anon_ns(ns)) {
- 			/* Make sure we notice when we leak mounts. */
- 			VFS_WARN_ON_ONCE(!mnt_ns_empty(ns));
- 			free_mnt_ns(ns);
-@@ -4753,7 +4743,6 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	/* mount new_root on / */
- 	attach_mnt(new_mnt, root_parent, root_mnt->mnt_mp);
- 	umount_mnt(root_mnt);
--	mnt_add_count(root_parent, -1);
- 	/* mount old root on put_old */
- 	attach_mnt(root_mnt, old_mnt, old_mp.mp);
- 	touch_mnt_namespace(current->nsproxy->mnt_ns);
-@@ -4766,8 +4755,6 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	error = 0;
- out4:
- 	unlock_mount(&old_mp);
--	if (!error)
--		mntput_no_expire(ex_parent);
- out3:
- 	path_put(&root);
- out2:
+ 	err = 0;
 diff --git a/fs/pnode.c b/fs/pnode.c
-index 901d40946d34..827d71736ac5 100644
+index 827d71736ac5..b997663de6d0 100644
 --- a/fs/pnode.c
 +++ b/fs/pnode.c
-@@ -332,21 +332,6 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
+@@ -112,7 +112,7 @@ static int do_make_slave(struct mount *mnt)
+ }
+ 
+ /*
+- * vfsmount lock must be held for write
++ * EXCL[namespace_sem]
+  */
+ void change_mnt_propagation(struct mount *mnt, int type)
+ {
+@@ -125,9 +125,9 @@ void change_mnt_propagation(struct mount *mnt, int type)
+ 		list_del_init(&mnt->mnt_slave);
+ 		mnt->mnt_master = NULL;
+ 		if (type == MS_UNBINDABLE)
+-			mnt->mnt.mnt_flags |= MNT_UNBINDABLE;
++			mnt->mnt_t_flags |= T_UNBINDABLE;
+ 		else
+-			mnt->mnt.mnt_flags &= ~MNT_UNBINDABLE;
++			mnt->mnt_t_flags &= ~T_UNBINDABLE;
+ 	}
+ }
+ 
+@@ -263,9 +263,9 @@ static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
+ 		return PTR_ERR(child);
+ 	read_seqlock_excl(&mount_lock);
+ 	mnt_set_mountpoint(m, dest_mp, child);
++	read_sequnlock_excl(&mount_lock);
+ 	if (m->mnt_master != dest_master)
+ 		SET_MNT_MARK(m->mnt_master);
+-	read_sequnlock_excl(&mount_lock);
+ 	last_dest = m;
+ 	last_source = child;
+ 	hlist_add_head(&child->mnt_hash, list);
+@@ -322,13 +322,11 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
+ 		} while (n != m);
+ 	}
+ out:
+-	read_seqlock_excl(&mount_lock);
+ 	hlist_for_each_entry(n, tree_list, mnt_hash) {
+ 		m = n->mnt_parent;
+ 		if (m->mnt_master != dest_mnt->mnt_master)
+ 			CLEAR_MNT_MARK(m->mnt_master);
+ 	}
+-	read_sequnlock_excl(&mount_lock);
  	return ret;
  }
  
--static struct mount *find_topper(struct mount *mnt)
--{
--	/* If there is exactly one mount covering mnt completely return it. */
--	struct mount *child;
--
--	if (!list_is_singular(&mnt->mnt_mounts))
--		return NULL;
--
--	child = list_first_entry(&mnt->mnt_mounts, struct mount, mnt_child);
--	if (child->mnt_mountpoint != mnt->mnt.mnt_root)
--		return NULL;
--
--	return child;
--}
--
- /*
-  * return true if the refcount is greater than count
-  */
-@@ -404,12 +389,8 @@ bool propagation_would_overmount(const struct mount *from,
-  */
- int propagate_mount_busy(struct mount *mnt, int refcnt)
+@@ -447,7 +445,7 @@ void propagate_mount_unlock(struct mount *mnt)
+ 
+ static inline bool is_candidate(struct mount *m)
  {
--	struct mount *m, *child, *topper;
- 	struct mount *parent = mnt->mnt_parent;
+-	return m->mnt.mnt_flags & MNT_UMOUNT_CANDIDATE;
++	return m->mnt_t_flags & T_UMOUNT_CANDIDATE;
+ }
  
--	if (mnt == parent)
--		return do_refcount_check(mnt, refcnt);
--
- 	/*
- 	 * quickly check if the current mount can be unmounted.
- 	 * If not, we don't have to go checking for all other
-@@ -418,23 +399,27 @@ int propagate_mount_busy(struct mount *mnt, int refcnt)
- 	if (!list_empty(&mnt->mnt_mounts) || do_refcount_check(mnt, refcnt))
- 		return 1;
+ static inline bool will_be_unmounted(struct mount *m)
+@@ -464,7 +462,7 @@ static void umount_one(struct mount *m, struct list_head *to_umount)
  
--	for (m = propagation_next(parent, parent); m;
-+	if (mnt == parent)
-+		return 0;
-+
-+	for (struct mount *m = propagation_next(parent, parent); m;
- 	     		m = propagation_next(m, parent)) {
--		int count = 1;
--		child = __lookup_mnt(&m->mnt, mnt->mnt_mountpoint);
--		if (!child)
--			continue;
-+		struct list_head *head;
-+		struct mount *child = __lookup_mnt(&m->mnt, mnt->mnt_mountpoint);
+ static void remove_from_candidate_list(struct mount *m)
+ {
+-	m->mnt.mnt_flags &= ~(MNT_MARKED | MNT_UMOUNT_CANDIDATE);
++	m->mnt_t_flags &= ~(T_MARKED | T_UMOUNT_CANDIDATE);
+ 	list_del_init(&m->mnt_list);
+ }
  
--		/* Is there exactly one mount on the child that covers
--		 * it completely whose reference should be ignored?
--		 */
--		topper = find_topper(child);
--		if (topper)
--			count += 1;
--		else if (!list_empty(&child->mnt_mounts))
-+		if (!child)
+@@ -476,7 +474,7 @@ static void gather_candidates(struct list_head *set,
+ 	list_for_each_entry(m, set, mnt_list) {
+ 		if (is_candidate(m))
  			continue;
- 
--		if (do_refcount_check(child, count))
-+		head = &child->mnt_mounts;
-+		if (!list_empty(head)) {
-+			/*
-+			 * a mount that covers child completely wouldn't prevent
-+			 * it being pulled out; any other would.
-+			 */
-+			if (!list_is_singular(head) || !child->overmount)
-+				continue;
-+		}
-+		if (do_refcount_check(child, 1))
- 			return 1;
+-		m->mnt.mnt_flags |= MNT_UMOUNT_CANDIDATE;
++		m->mnt_t_flags |= T_UMOUNT_CANDIDATE;
+ 		p = m->mnt_parent;
+ 		q = propagation_next(p, p);
+ 		while (q) {
+@@ -494,7 +492,7 @@ static void gather_candidates(struct list_head *set,
+ 					q = skip_propagation_subtree(q, p);
+ 					continue;
+ 				}
+-				child->mnt.mnt_flags |= MNT_UMOUNT_CANDIDATE;
++				child->mnt_t_flags |= T_UMOUNT_CANDIDATE;
+ 				if (!will_be_unmounted(child))
+ 					list_add(&child->mnt_list, candidates);
+ 			}
+@@ -502,7 +500,7 @@ static void gather_candidates(struct list_head *set,
+ 		}
  	}
- 	return 0;
+ 	list_for_each_entry(m, set, mnt_list)
+-		m->mnt.mnt_flags &= ~MNT_UMOUNT_CANDIDATE;
++		m->mnt_t_flags &= ~T_UMOUNT_CANDIDATE;
+ }
+ 
+ /*
+@@ -519,7 +517,7 @@ static void trim_ancestors(struct mount *m)
+ 			return;
+ 		SET_MNT_MARK(m);
+ 		if (m != p->overmount)
+-			p->mnt.mnt_flags &= ~MNT_UMOUNT_CANDIDATE;
++			p->mnt_t_flags &= ~T_UMOUNT_CANDIDATE;
+ 	}
+ }
+ 
+diff --git a/fs/pnode.h b/fs/pnode.h
+index 04f1ac53aa49..507e30e7a420 100644
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -10,14 +10,14 @@
+ #include <linux/list.h>
+ #include "mount.h"
+ 
+-#define IS_MNT_SHARED(m) ((m)->mnt.mnt_flags & MNT_SHARED)
++#define IS_MNT_SHARED(m) ((m)->mnt_t_flags & T_SHARED)
+ #define IS_MNT_SLAVE(m) ((m)->mnt_master)
+ #define IS_MNT_NEW(m) (!(m)->mnt_ns)
+-#define CLEAR_MNT_SHARED(m) ((m)->mnt.mnt_flags &= ~MNT_SHARED)
+-#define IS_MNT_UNBINDABLE(m) ((m)->mnt.mnt_flags & MNT_UNBINDABLE)
+-#define IS_MNT_MARKED(m) ((m)->mnt.mnt_flags & MNT_MARKED)
+-#define SET_MNT_MARK(m) ((m)->mnt.mnt_flags |= MNT_MARKED)
+-#define CLEAR_MNT_MARK(m) ((m)->mnt.mnt_flags &= ~MNT_MARKED)
++#define CLEAR_MNT_SHARED(m) ((m)->mnt_t_flags &= ~T_SHARED)
++#define IS_MNT_UNBINDABLE(m) ((m)->mnt_t_flags & T_UNBINDABLE)
++#define IS_MNT_MARKED(m) ((m)->mnt_t_flags & T_MARKED)
++#define SET_MNT_MARK(m) ((m)->mnt_t_flags |= T_MARKED)
++#define CLEAR_MNT_MARK(m) ((m)->mnt_t_flags &= ~T_MARKED)
+ #define IS_MNT_LOCKED(m) ((m)->mnt.mnt_flags & MNT_LOCKED)
+ 
+ #define CL_EXPIRE    		0x01
+@@ -28,10 +28,13 @@
+ #define CL_SHARED_TO_SLAVE	0x20
+ #define CL_COPY_MNT_NS_FILE	0x40
+ 
++/*
++ * EXCL[namespace_sem]
++ */
+ static inline void set_mnt_shared(struct mount *mnt)
+ {
+-	mnt->mnt.mnt_flags &= ~MNT_SHARED_MASK;
+-	mnt->mnt.mnt_flags |= MNT_SHARED;
++	mnt->mnt_t_flags &= ~T_SHARED_MASK;
++	mnt->mnt_t_flags |= T_SHARED;
+ }
+ 
+ static inline bool peers(const struct mount *m1, const struct mount *m2)
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index 65fa8442c00a..5f9c053b0897 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -35,12 +35,8 @@ enum mount_flags {
+ 	MNT_SHRINKABLE	= 0x100,
+ 	MNT_WRITE_HOLD	= 0x200,
+ 
+-	MNT_SHARED	= 0x1000, /* if the vfsmount is a shared mount */
+-	MNT_UNBINDABLE	= 0x2000, /* if the vfsmount is a unbindable mount */
+-
+ 	MNT_INTERNAL	= 0x4000,
+ 
+-	MNT_UMOUNT_CANDIDATE	= 0x020000,
+ 	MNT_LOCK_ATIME		= 0x040000,
+ 	MNT_LOCK_NOEXEC		= 0x080000,
+ 	MNT_LOCK_NOSUID		= 0x100000,
+@@ -49,25 +45,15 @@ enum mount_flags {
+ 	MNT_LOCKED		= 0x800000,
+ 	MNT_DOOMED		= 0x1000000,
+ 	MNT_SYNC_UMOUNT		= 0x2000000,
+-	MNT_MARKED		= 0x4000000,
+ 	MNT_UMOUNT		= 0x8000000,
+ 
+-	/*
+-	 * MNT_SHARED_MASK is the set of flags that should be cleared when a
+-	 * mount becomes shared.  Currently, this is only the flag that says a
+-	 * mount cannot be bind mounted, since this is how we create a mount
+-	 * that shares events with another mount.  If you add a new MNT_*
+-	 * flag, consider how it interacts with shared mounts.
+-	 */
+-	MNT_SHARED_MASK	= MNT_UNBINDABLE,
+ 	MNT_USER_SETTABLE_MASK  = MNT_NOSUID | MNT_NODEV | MNT_NOEXEC
+ 				  | MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME
+ 				  | MNT_READONLY | MNT_NOSYMFOLLOW,
+ 	MNT_ATIME_MASK = MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME,
+ 
+-	MNT_INTERNAL_FLAGS = MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL |
+-			     MNT_DOOMED | MNT_SYNC_UMOUNT | MNT_MARKED |
+-			     MNT_LOCKED | MNT_UMOUNT_CANDIDATE,
++	MNT_INTERNAL_FLAGS = MNT_WRITE_HOLD | MNT_INTERNAL | MNT_DOOMED |
++			     MNT_SYNC_UMOUNT | MNT_LOCKED
+ };
+ 
+ struct vfsmount {
 -- 
 2.39.5
 
