@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-53246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358D4AED28D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 04:53:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E326AED28C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 04:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7B23B5122
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 02:52:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BF916D167
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 02:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761561B412A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703C21AC88B;
 	Mon, 30 Jun 2025 02:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gAr+yfA9"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bQLL6Ehi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E02417A30B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFC717A305
 	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jun 2025 02:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751251979; cv=none; b=GKrGYgOGhPqj/gjK1anMohy1qUNOSQnzOXGFbs1XQJnQvxC+eRViY5svEsyTEnj3H8REnCPryTwNtSvSPbQESJ2sZsMhl61+ec1huiS8b/nvrJC7gIyljap3AVhyQQ8PSOgbNvBvQKl4s9Dw7M24nA161PYNd97kZLPr4KmS93M=
+	t=1751251979; cv=none; b=ohKrZWxP58lYC7nfVjsf9GrOha48r0imuXTjy0HvCEO85HxPK34IV62FkvgStgtMxa7WNnL94OHbiq09W2dXPI+qQs18BEPZhdYL7HUimCZ5jhCqUsErvvL88Difh378Xzor204akH/R+16oL+qAQ7COJLsWSi7usUhzZt36Zac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751251979; c=relaxed/simple;
-	bh=v1T1IOh4wkJRp9oc2k3e7VE3Lcq9afvwXVeUpJ/yoVE=;
+	bh=fWzydlJQwIYP5NTUlOOKqIHRgF0/xazrcswlMlOv34E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FHLo5OFAO3GmIMfb8DZSHjcedtGaWf/LSxf2Ij2rhFbjQaJWZxajJxgmsyjZ2PRy6GFeFoapOdh6zizWCd1b0iQVBKgo9yTBVLxYgC9NJt2vpIVR3mp86hqJsyAfF7IU6wU5SqeuifmzHDO0TTC4yZpNjJ1xJMAtanoBgYlZuV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gAr+yfA9; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=sfC8mkUxRCWMs4WH854lnnhbWjR3M1n1Kp7rOx/o5WQSLCFB+wIYWLPTlKAX76DYS6ZPh0p5r5hwDfv9W/XDHVLOKCOUZ87/WpHOPYjiBZp4XTzj9SFuq5XkKJPnmY8KiTQV2kOidGzGIv6uf+wD/o2RedSG19ln5uXN3AjU8E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bQLL6Ehi; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=TrmwYul+R7YZ6Y1I5yaiSBOEn4I41xC3rxTKhWFETzw=; b=gAr+yfA9J/shDbruyhGfS/bsp2
-	m4s2r6/zOC2XEDz9fbobXK4safmDN8bRkLA3XDxfdp3XXV06uv4+NpC/w3yMkXlvgduMv7f4+2VBO
-	QKxFfgfEXauha+ZWEM1tlFxQ4FaLrR+SG96koERkPbrzSa+iU/kv1HrxUS4a1N8l8+utOY2M1tCLn
-	w0wSwhnxkpXoawPgivhupTZBqxvSDMQXsY4HmIWmAbi7daQHdxOhSbcI3uoorGb7SoBLJXWJfjq62
-	m7ihOzQeljerMsvEMIdJhVBsF/IzKigLRCKOZLB0NfQF75yn9RvUV6jas4DEYm4FZFW3PMFQLgNHJ
-	PlUssJag==;
+	bh=fb34o0sKkaf+nETHAlYSCf5rYWqYBEsdEL/2U8pfKlc=; b=bQLL6EhibL3HQXbUIUse22ykha
+	W//wZu5+BPdMa/ykJeYfpNG0e2/n6jFUuT7GzTu3vLlnHxtK9BnIlkd5go2+JmBFTZ7dDTBONKUvL
+	f6+OP1rde6O65xciU6BATGCocHWv0FuXm2uRfwnPAnYARZddKVaD5MpF2gki9OwOBdyPGbcREp+5Y
+	9Dnq44OXHlOLVB/t+dYVbl9WfgK7kballVA9oEG3YrrtZkmY4VrFBEwTj3nhAuHqDCAI5rWknOjVd
+	e4xv/Jye8Nfv/cQ3ZlmoFs/qCouazpKieBUgFGyErZlojHnJdmHY6hO/cOVt20XKq9KrSHpHY0b47
+	H5uwRfJw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uW4db-00000005ow6-3WMI;
+	id 1uW4db-00000005owC-3yos;
 	Mon, 30 Jun 2025 02:52:55 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: brauner@kernel.org,
 	ebiederm@xmission.com,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 04/48] copy_tree(): don't set ->mnt_mountpoint on the root of copy
-Date: Mon, 30 Jun 2025 03:52:11 +0100
-Message-ID: <20250630025255.1387419-4-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 05/48] constify mnt_has_parent()
+Date: Mon, 30 Jun 2025 03:52:12 +0100
+Message-ID: <20250630025255.1387419-5-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250630025255.1387419-1-viro@zeniv.linux.org.uk>
 References: <20250630025148.GA1383774@ZenIV>
@@ -66,30 +66,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-It never made any sense - neither when copy_tree() had been introduced
-(2.4.11-pre5), nor at any point afterwards.  Mountpoint is meaningless
-without parent mount and the root of copied tree has no parent until we get
-around to attaching it somewhere.  At that time we'll have mountpoint set;
-before that we have no idea which dentry will be used as mountpoint.
-IOW, copy_tree() should just leave the default value.
-
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namespace.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/mount.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 9b732d74c2cc..f0a56dbceff9 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2222,7 +2222,6 @@ struct mount *copy_tree(struct mount *src_root, struct dentry *dentry,
- 		return dst_mnt;
+diff --git a/fs/mount.h b/fs/mount.h
+index b8beafdd6d24..c4d417cd7953 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -102,7 +102,7 @@ static inline struct mount *real_mount(struct vfsmount *mnt)
+ 	return container_of(mnt, struct mount, mnt);
+ }
  
- 	src_parent = src_root;
--	dst_mnt->mnt_mountpoint = src_root->mnt_mountpoint;
- 
- 	list_for_each_entry(src_root_child, &src_root->mnt_mounts, mnt_child) {
- 		if (!is_subdir(src_root_child->mnt_mountpoint, dentry))
+-static inline int mnt_has_parent(struct mount *mnt)
++static inline int mnt_has_parent(const struct mount *mnt)
+ {
+ 	return mnt != mnt->mnt_parent;
+ }
 -- 
 2.39.5
 
