@@ -1,108 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-53324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65374AEDA09
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 12:40:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90420AEDB20
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 13:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21813AE52B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 10:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E8F189B208
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 11:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E76257452;
-	Mon, 30 Jun 2025 10:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D8925CC6E;
+	Mon, 30 Jun 2025 11:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="X/PNxRlw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BFE2475CB;
-	Mon, 30 Jun 2025 10:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F201C23E354
+	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jun 2025 11:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751280029; cv=none; b=jQdKhiUdYh9Nd3G7NdEo/u2KLhMXoxQi8ItCqj3XljgP5B6fN8QONUtmGhnyDB64aB+Dx0Xev1oOIn3iQ8B2bgWExZmxnC9asDJ9A2PTcJHo+GaxZOQWodFP6bqqJrRgRXeQGf3dElik0r9Drm+j33GZC7oQ7nUiJxFtvO+wD54=
+	t=1751283226; cv=none; b=Z/FQQnO0GjctmQ2qyFv0MZOzOazdQa/4r/UKgh/JQ2BWII86ptKCNMiCBF1bOrhbd6KjToGxCkJ3AcQ68Oxar5meliQlDAh2x1BjQxnpm+ylJHf219jhafH7CapoyoDIT2gNhrFkQVFpJ8XExrD1xGZUw7prlyE6oadRI251lIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751280029; c=relaxed/simple;
-	bh=7eOYym6I7H8HHs2QY52x9mBtw9X9NrH9Lscp9i8ZlT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D5jbQbPsbxSuUUpZRZ1upw4CDCTZXqYgfchvUnfO7Oe7A6uoTsXOC5pT2SnHhYnCIwNQA7Zp25RHNGF4iiWUquppLFROFDkHvNB9DRf1wGYl4PdDQ1jFVK3CyXzTVtyyWGTmlqY1YhcokUbGh9WVpqwiynGx+CUem7MPqo/4Ib8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bW2jz4364z9svm;
-	Mon, 30 Jun 2025 12:40:23 +0200 (CEST)
-From: Pankaj Raghav <p.raghav@samsung.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	mcgrof@kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Cc: Baokun Li <libaokun1@huawei.com>,
-	linux-kernel@vger.kernel.org,
-	kernel@pankajraghav.com,
-	Zhang Yi <yi.zhang@huawei.com>,
-	linux-fsdevel@vger.kernel.org,
-	gost.dev@samsung.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2] fs/libfs: don't assume blocksize <= PAGE_SIZE in generic_check_addressable
-Date: Mon, 30 Jun 2025 12:40:18 +0200
-Message-ID: <20250630104018.213985-1-p.raghav@samsung.com>
+	s=arc-20240116; t=1751283226; c=relaxed/simple;
+	bh=07uvHHlnHh0VVlz+DTGdO0oIjOnV9WfuBssw90x/cmc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PXLE3lcVKv+ZdYIjZORtRL/R8fXXF+hJlxRQL8d5VMYc1o1HAhGso3mAujWSU/RUFwsBXuapn2MtNP0iUe8bHba7lUdTBLFX/+71YLvQvMqCq240Rk9murUD74Em4dVisgz31RyybYD/QezjUzYrqbKIeyymWTC0sInZtgB17Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=X/PNxRlw; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a8244e897fso2662641cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jun 2025 04:33:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1751283222; x=1751888022; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tus3vRMIGbFaFYmjva5uehJWq4zAy8HIVgAKqkn9hyU=;
+        b=X/PNxRlw+BPPT66c+eE0je+x1TF5uIfAcJgJmoghc5walIca25O564PA5NozUc1qmJ
+         yAyys6FiNL5XYjN8xj1aqggKK7VckoNZZLCnTLdKx4+ANDvoU/j631L0g6yKz74cyzRW
+         Juj+5M4eDzsgluC/digkuAD3Tp9yFim9k4cDk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751283222; x=1751888022;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tus3vRMIGbFaFYmjva5uehJWq4zAy8HIVgAKqkn9hyU=;
+        b=JSV65IG6yUJsnGZLpf/2fhH3FaL43DG8M0AdXXGYXGJhttPhs1mS+rLXwblf4HcKm7
+         U+fGhdwox+0kvvdXgJToGLDv1O0+9yo/G+c8nsAPfcpFDCdrnWGlQKoDfR0sCwrJZkfs
+         9cswdlJfvWr4yED8QrJS7e41mmQE+wdd9TMTJZcVizaZmR7Khj2ePHjue1bZixlmltoN
+         AguSh4sDA7l3LYhN+IDXQYFNL1iufXS4C67sTIzuDwb1S/QdwmyhiUQt0j7rVoL9RcB1
+         mW403drqIm5k7mHSAnkJaoqMGD2O5lU6JmOgDGxY1bvfBFpa/eLqB54tpZldDoKjh6W4
+         0GOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqgtVXnyVyTPrGIzJUXJm8Rp2R9U6gbqV2wIJluf7R13Anf2nGXJ1QZqKZHDU7WadV2JBd0lWE7e1hpsZj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkADzpwlsUtn3EBfSQQJlaDsNF8hTmKeZ9N+5c05W/l0ZVmRgs
+	6sCT9Wj9LoXtM222pMJJnuRD+zXTPswF9TeOVqGSw7dBmra8yNufFvOdRrPAxJBl6najMrcLvde
+	StxGX++nqxEHjo6eUP/qA6XwCv28Ffk3wJFqRUfBmBg==
+X-Gm-Gg: ASbGncs3wHQSiCaT2aRRJoFHFfKLxm0CVwvDfTRVEltYEgk1bz3BnB+3Mfy+7HqG1LM
+	44gjduNk87xcSHASq1FjDSZxgJEG9ivYjp7dxIM7Y8QsQHluJh3S9Gw+YjnbF5jPP35fYjVrdxV
+	sAURT2EL6JxxhPOHqIUpz+9Hx9RuZYkNDoWTOd/wdi/QZUxiDbZ7Ot4F3wlRhy5WRdM9UtCrYD0
+	tznyLNjkvhoKZo=
+X-Google-Smtp-Source: AGHT+IH9S55JU/IjYeFl/Z9WS+ibedaf/OWKjQe36UGqm71pSeJDJpYTI0bR1VDPa8cUCW+zm0MzMiI9xe4hyKaQPzY=
+X-Received: by 2002:a05:622a:58c8:b0:4a6:c5ee:6ced with SMTP id
+ d75a77b69052e-4a7fc9d5233mr236155911cf.4.1751283221667; Mon, 30 Jun 2025
+ 04:33:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250602171702.1941891-1-amir73il@gmail.com>
+In-Reply-To: <20250602171702.1941891-1-amir73il@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 30 Jun 2025 13:33:30 +0200
+X-Gm-Features: Ac12FXxsltcku95DZYoyPdjCaYcmBLG80SjGKx7yduWUYQ-n3cbod1rF4rohhpw
+Message-ID: <CAJfpegsx8to=HK7Cu5_9hrgTddrROSSOuCU=cSkhBs_5On33OA@mail.gmail.com>
+Subject: Re: [PATCH v3] ovl: support layers on case-folding capable filesystems
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-Since [1], it is possible for filesystems to have blocksize > PAGE_SIZE
-of the system.
+On Mon, 2 Jun 2025 at 19:17, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Case folding is often applied to subtrees and not on an entire
+> filesystem.
+>
+> Disallowing layers from filesystems that support case folding is over
+> limiting.
+>
+> Replace the rule that case-folding capable are not allowed as layers
+> with a rule that case folded directories are not allowed in a merged
+> directory stack.
+>
+> Should case folding be enabled on an underlying directory while
+> overlayfs is mounted the outcome is generally undefined.
+>
+> Specifically in ovl_lookup(), we check the base underlying directory
+> and fail with -ESTALE and write a warning to kmsg if an underlying
+> directory case folding is enabled.
+>
+> Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Link: https://lore.kernel.org/linux-fsdevel/20250520051600.1903319-1-kent.overstreet@linux.dev/
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Remove the assumption and make the check generic for all blocksizes in
-generic_check_addressable().
+Acked-by: Miklos Szeredi <mszeredi@redhat.com>
 
-[1] https://lore.kernel.org/linux-xfs/20240822135018.1931258-1-kernel@pankajraghav.com/
+Looks good.  Thanks for taking care of this.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
-Changes since v1:
-- Removed the unnecessary parantheses.
-- Added RVB from Jan Kara (Thanks).
+The only think I don't like is the pr_warn_ratelimited().  I totally
+understand why you did it, and I'd love to have generic infrastructure
+for returning extra error info without spamming dmesg.   Oh well.
 
- fs/libfs.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 4d1862f589e8..f99ecc300647 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1584,13 +1584,17 @@ EXPORT_SYMBOL(generic_file_fsync);
- int generic_check_addressable(unsigned blocksize_bits, u64 num_blocks)
- {
- 	u64 last_fs_block = num_blocks - 1;
--	u64 last_fs_page =
--		last_fs_block >> (PAGE_SHIFT - blocksize_bits);
-+	u64 last_fs_page, max_bytes;
-+
-+	if (check_shl_overflow(num_blocks, blocksize_bits, &max_bytes))
-+		return -EFBIG;
-+
-+	last_fs_page = (max_bytes >> PAGE_SHIFT) - 1;
- 
- 	if (unlikely(num_blocks == 0))
- 		return 0;
- 
--	if ((blocksize_bits < 9) || (blocksize_bits > PAGE_SHIFT))
-+	if (blocksize_bits < 9)
- 		return -EINVAL;
- 
- 	if ((last_fs_block > (sector_t)(~0ULL) >> (blocksize_bits - 9)) ||
-
-base-commit: b39f7d75dc41b5f5d028192cd5d66cff71179f35
--- 
-2.49.0
-
+Thanks,
+Miklos
 
