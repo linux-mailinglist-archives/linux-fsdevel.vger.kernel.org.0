@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-53245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E326AED28C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 04:53:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64E7AED295
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 04:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BF916D167
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 02:53:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 400E216463D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jun 2025 02:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703C21AC88B;
-	Mon, 30 Jun 2025 02:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F931E0DCB;
+	Mon, 30 Jun 2025 02:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bQLL6Ehi"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lgOEFyIw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFC717A305
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7516117BED0
 	for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jun 2025 02:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751251979; cv=none; b=ohKrZWxP58lYC7nfVjsf9GrOha48r0imuXTjy0HvCEO85HxPK34IV62FkvgStgtMxa7WNnL94OHbiq09W2dXPI+qQs18BEPZhdYL7HUimCZ5jhCqUsErvvL88Difh378Xzor204akH/R+16oL+qAQ7COJLsWSi7usUhzZt36Zac=
+	t=1751251980; cv=none; b=ueb11BIpcqRw6qlnCOA6RnOvZxBf+r5CRo/tTxTVQS2PPlonvnWaqp2gvzv3sdVllFxGSBFkMx+n1sLKYhHxtEZCJ1xojnuAb4Nf8fTczzmko2ntkimOmSxwxbguYl91KTlIr9RXMFJ+FqmOgXiPvsTPaAvfF1sOnGUnAsVbOMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751251979; c=relaxed/simple;
-	bh=fWzydlJQwIYP5NTUlOOKqIHRgF0/xazrcswlMlOv34E=;
+	s=arc-20240116; t=1751251980; c=relaxed/simple;
+	bh=pwpjO0ricdUZa6Zzu0H7c1KfMk0kdItipczz4MVOdHY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sfC8mkUxRCWMs4WH854lnnhbWjR3M1n1Kp7rOx/o5WQSLCFB+wIYWLPTlKAX76DYS6ZPh0p5r5hwDfv9W/XDHVLOKCOUZ87/WpHOPYjiBZp4XTzj9SFuq5XkKJPnmY8KiTQV2kOidGzGIv6uf+wD/o2RedSG19ln5uXN3AjU8E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bQLL6Ehi; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=lJEgMbusuKzPkdWV/sABYTSaJBH1pO0rjXIS5RARxuzXcagbldvlVw+PBQp5PIq8VF+dAVOacH2ZoPo29BbEQqZe3TQmK5DYqbhUQrNzV+E44nhdgviC0GFfACK3s/M+liw6MfuefwfzRLBr53SYJay4jNqjM4FwkAsM719QGWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lgOEFyIw; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=fb34o0sKkaf+nETHAlYSCf5rYWqYBEsdEL/2U8pfKlc=; b=bQLL6EhibL3HQXbUIUse22ykha
-	W//wZu5+BPdMa/ykJeYfpNG0e2/n6jFUuT7GzTu3vLlnHxtK9BnIlkd5go2+JmBFTZ7dDTBONKUvL
-	f6+OP1rde6O65xciU6BATGCocHWv0FuXm2uRfwnPAnYARZddKVaD5MpF2gki9OwOBdyPGbcREp+5Y
-	9Dnq44OXHlOLVB/t+dYVbl9WfgK7kballVA9oEG3YrrtZkmY4VrFBEwTj3nhAuHqDCAI5rWknOjVd
-	e4xv/Jye8Nfv/cQ3ZlmoFs/qCouazpKieBUgFGyErZlojHnJdmHY6hO/cOVt20XKq9KrSHpHY0b47
-	H5uwRfJw==;
+	bh=gW31xWMjyo2BHFHEjFqfTM22eOyUjxbqVPvZ7AeJZL0=; b=lgOEFyIwIgoNtGKnLAcPU+zCsn
+	b9sP8ZNy3VlzvCUYU4d8cMfwQiZOYORPY/ghpmL5R1BAQCfoDMRgVfvI9jeE/7jpumKYkp2A6pE7Z
+	fkp5vDivpEA4CZK6+ePFpNccOB3UQsYk6XHJbOB7kaElMszFpM88Pvt27w8rKGrLbmjuiaOuZgFj6
+	ucNYrkl3TgtJtFn0GSr0UB4/uPI11OJTUP3dScYBqyJgbvwUVkgKywn5gVFulm+gpXGPPtKAmLvsr
+	TKxlafRLawxegzAp7YAucu0VPsU4vLTD7+iEABLQP8456tfZhfW0oCBkV+2zqySJ6btVXnh2mDDlc
+	KtVTmWIw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uW4db-00000005owC-3yos;
-	Mon, 30 Jun 2025 02:52:55 +0000
+	id 1uW4dc-00000005owI-03n5;
+	Mon, 30 Jun 2025 02:52:56 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	ebiederm@xmission.com,
 	jack@suse.cz,
 	torvalds@linux-foundation.org
-Subject: [PATCH v3 05/48] constify mnt_has_parent()
-Date: Mon, 30 Jun 2025 03:52:12 +0100
-Message-ID: <20250630025255.1387419-5-viro@zeniv.linux.org.uk>
+Subject: [PATCH v3 06/48] pnode: lift peers() into pnode.h
+Date: Mon, 30 Jun 2025 03:52:13 +0100
+Message-ID: <20250630025255.1387419-6-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250630025255.1387419-1-viro@zeniv.linux.org.uk>
 References: <20250630025148.GA1383774@ZenIV>
@@ -66,25 +66,47 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
+it's going to be useful both in pnode.c and namespace.c
+
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/mount.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/pnode.c | 5 -----
+ fs/pnode.h | 5 +++++
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/mount.h b/fs/mount.h
-index b8beafdd6d24..c4d417cd7953 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -102,7 +102,7 @@ static inline struct mount *real_mount(struct vfsmount *mnt)
- 	return container_of(mnt, struct mount, mnt);
+diff --git a/fs/pnode.c b/fs/pnode.c
+index ffd429b760d5..aa187144e389 100644
+--- a/fs/pnode.c
++++ b/fs/pnode.c
+@@ -216,11 +216,6 @@ static struct mount *next_group(struct mount *m, struct mount *origin)
+ static struct mount *last_dest, *first_source, *last_source, *dest_master;
+ static struct hlist_head *list;
+ 
+-static inline bool peers(const struct mount *m1, const struct mount *m2)
+-{
+-	return m1->mnt_group_id == m2->mnt_group_id && m1->mnt_group_id;
+-}
+-
+ static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
+ {
+ 	struct mount *child;
+diff --git a/fs/pnode.h b/fs/pnode.h
+index 2d026fb98b18..93fa9311bd07 100644
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -34,6 +34,11 @@ static inline void set_mnt_shared(struct mount *mnt)
+ 	mnt->mnt.mnt_flags |= MNT_SHARED;
  }
  
--static inline int mnt_has_parent(struct mount *mnt)
-+static inline int mnt_has_parent(const struct mount *mnt)
- {
- 	return mnt != mnt->mnt_parent;
- }
++static inline bool peers(const struct mount *m1, const struct mount *m2)
++{
++	return m1->mnt_group_id == m2->mnt_group_id && m1->mnt_group_id;
++}
++
+ void change_mnt_propagation(struct mount *, int);
+ int propagate_mnt(struct mount *, struct mountpoint *, struct mount *,
+ 		struct hlist_head *);
 -- 
 2.39.5
 
