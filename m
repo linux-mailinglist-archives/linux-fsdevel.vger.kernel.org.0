@@ -1,57 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-53477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44452AEF6AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 13:36:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA82BAEF6E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 13:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AA657A7405
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 11:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55747447A85
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 11:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0222737E6;
-	Tue,  1 Jul 2025 11:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310612737F6;
+	Tue,  1 Jul 2025 11:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ur6x4GW4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYmJfDQg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F1227281E;
-	Tue,  1 Jul 2025 11:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3B22737F0;
+	Tue,  1 Jul 2025 11:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751369752; cv=none; b=WIb+gaXdWzqaz5p3ctrTNAq0vZMy2/JUtR0Qzq8nap+oLRqudDvacsyFKxmT2KTN7XhRyrq9Rzgl77Uxpb3RwE1ArrqV8tuPIyEBTr3nCVUSEQDTMTvjU3dp80pnQ6EwOSMwS2DYRY43JxJJXdNz5pv4G+VGSKRM9ZHSfUI8cmQ=
+	t=1751370071; cv=none; b=Pe2eK4i0l16sUHL+aoHpZfpFB8v1EZPL2phLFA+ISS9VV1srbPQkPQNCwOr1GobB8s736ifBXvWgOYiKQUY23qD01kYClnxIzh45aQiDZe4r3DgudToazDdKe7v5jvFK5cu1HrvGWFKl28UEroejB0pXxjP2/xbzVGB+lD1+3BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751369752; c=relaxed/simple;
-	bh=uMz31aacen0hV5LEAPRoownx/yVaGh9zlPPUKfGHmy8=;
+	s=arc-20240116; t=1751370071; c=relaxed/simple;
+	bh=m6pSYy0tOJNXW7ylgEySqJmEjacZzj22J0Usd7Xsnhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tm3pleaAzjpfzQEVn/fpWLFrRCaD6bYoNhteMVbSuyAD6QzI7UUKXFkCjnF797r5aQ54T4P2zptD+ouG5FB+fXE97P07/wUEyb6ezOz/B/lLLKLMyXwn6/BgZfz9R3pzvfYJUSj3TFhUCeoAT4chV8eYupWxlbqSLPwmKb3p4iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ur6x4GW4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F58FC4CEEB;
-	Tue,  1 Jul 2025 11:35:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tm3I8Xynm5dQNqP8O7H+s5+bx6IZykbaeXg1MhV5O7+8c199+/r/+HJ/+f3EnXz+4VEdzsCZJqW8SnowZBnTgtXXi8KaQA61d++a79UqAhYX8aEhfdVxnO7mY8adkztQU5hpdDFswSH8t8dhpud8JAWyYf+riP/DFUMqU7TyLY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYmJfDQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 400B6C4CEEB;
+	Tue,  1 Jul 2025 11:41:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751369752;
-	bh=uMz31aacen0hV5LEAPRoownx/yVaGh9zlPPUKfGHmy8=;
+	s=k20201202; t=1751370071;
+	bh=m6pSYy0tOJNXW7ylgEySqJmEjacZzj22J0Usd7Xsnhk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ur6x4GW4CrWBXFS/v/40PfmRB9CeuolQxuXxRp5EIOt293DICBoiHx6gkidmWbKVD
-	 v+CTsFD9lvIOa/rsbmsWYEQkjTnfbRIdvoMTXCekPGgXKxcJ3BNEWJHzCP7CVFPGr5
-	 yfFj8/otJNQrD5de/V7xwG+a9NQtIY53mSQlK5PjBNfe1EgQui26RehZ9htqXD30Xs
-	 YKsbG+cj9YcvLo16XVm9Ds4oa8hiAVJfqJFP07Jc/LhtFKm6uKz/iUdqrFBSqJi2u1
-	 J0bfdjRsjI5k7rlENzY3EQ3qSaqG12go7iiORZz4WMryMXtHMVT6IlbF4FbyMYxgT5
-	 lCH0Cy6kkye0w==
-Date: Tue, 1 Jul 2025 13:35:48 +0200
+	b=XYmJfDQgjwW/irh721f6asrwGaTLKzGybVLOL4ZXYAzXr0d4N33s7zjaGDn3H4SYg
+	 gQ4rajHiARf3HX/cV6soZIXSONNHEXy0EYAPFjuH+bONtrKOhsAVRbACUKVbryfY4O
+	 5UJCxlSzteDBYnE1gJVHvdLNGshMnNYGeKXSgCfe43rHNWWW+6RiqLfImMVOaoVEzf
+	 W4xZafS8kDa2dT45nEMt5BDAp0YO+cVLEuASMtc7hKao37mvUql/ZRjX/pAW2Wq/04
+	 OfC1xi3iaNldsfCrjLkg5aEVSfkkpQHoM5aeDagiu1LEheCFO8sJamPVOkvikgN2S0
+	 xSRQo9PqSEXwQ==
+Date: Tue, 1 Jul 2025 13:41:06 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz
-Subject: Re: [PATCH 1/6] fs: add a new remove_bdev() super operations callback
-Message-ID: <20250701-dissident-gruft-00838ea3f311@brauner>
-References: <cover.1750895337.git.wqu@suse.com>
- <c8853ae1710df330e600a02efe629a3b196dde88.1750895337.git.wqu@suse.com>
- <20250626-schildern-flutlicht-36fa57d43570@brauner>
- <20250626101443.GA6180@lst.de>
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	linux-cifs@vger.kernel.org, netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Merge i_size update functions
+Message-ID: <20250701-weswegen-wippt-089188706c33@brauner>
+References: <1576470.1750941177@warthog.procyon.org.uk>
+ <1587239.1750941876@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,32 +59,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250626101443.GA6180@lst.de>
+In-Reply-To: <1587239.1750941876@warthog.procyon.org.uk>
 
-On Thu, Jun 26, 2025 at 12:14:43PM +0200, Christoph Hellwig wrote:
-> On Thu, Jun 26, 2025 at 10:38:11AM +0200, Christian Brauner wrote:
-> > > +	if (sb->s_op->remove_bdev)
-> > > +		sb->s_op->remove_bdev(sb, bdev, surprise);
-> > > +	else if (sb->s_op->shutdown)
-> > >  		sb->s_op->shutdown(sb);
-> > 
-> > This makes ->remove_bdev() and ->shutdown() mutually exclusive. I really
-> > really dislike this pattern. It introduces the possibility that a
-> > filesystem accidently implement both variants and assumes both are
-> > somehow called. That can be solved by an assert at superblock initation
-> > time but it's still nasty.
-> > 
-> > The other thing is that this just reeks of being the wrong api. We
-> > should absolutely aim for the methods to not be mutually exclusive. I
-> > hate that with a passion. That's just an ugly api and I want to have as
-> > little of that as possible in our code.
+On Thu, Jun 26, 2025 at 01:44:36PM +0100, David Howells wrote:
+> Here's a follow up patch to the previous one, though this would be for next -
+> and assuming it's okay to do the i_blocks update in the DIO case which it
+> currently lacks.
 > 
-> Yes.  As I mentioned before I think we just want to transition everyone
-> to the remove_bdev API.  But our life is probably easier if Qu's series
-> only adds the new one so that we can do the transitions through the
-> file system trees instead of needing a global API change.  Or am I
-> overthinking this?
+> David
+> ---
+> Netfslib has two functions for updating the i_size after a write: one for
+> buffered writes into the pagecache and one for direct/unbuffered writes.
+> However, what needs to be done is much the same in both cases, so merge
+> them together.
+> 
+> This does raise one question, though: should updating the i_size after a
+> direct write do the same estimated update of i_blocks as is done for
+> buffered writes.
+> 
+> Also get rid of the cleanup function pointer from netfs_io_request as it's
+> only used for direct write to update i_size; instead do the i_size setting
+> directly from write collection.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <sfrench@samba.org>
+> cc: Paulo Alcantara <pc@manguebit.org>
+> cc: linux-cifs@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
 
-I think it's fine to do it right now. If we can avoid having
-transitional stages then let's do that.
+I have one big ask. Please please please put your comments after the
+commit message --- separator. Otherwise git/b4 will take your top
+comment as the commmit message and discard the actual commit message.
 
