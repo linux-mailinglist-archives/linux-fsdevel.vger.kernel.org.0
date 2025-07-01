@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-53453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2EEAEF209
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 10:58:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B29AEF208
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 10:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44AFB7AEE7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 08:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA206161EDC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 08:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8C126E6FD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC13326E6FC;
 	Tue,  1 Jul 2025 08:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2ODeEEg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOPCN3lE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607A81FDD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E1626A095;
 	Tue,  1 Jul 2025 08:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751360238; cv=none; b=YBVGXakol41zZdpH4KRTTfuC8kyeH2VPDsb4BdWxbiBtf/FRDu+ktx47K/3DO1LwIJVQ5aLcirzjK6gBVAnt8Ms/RIornh9jQCXobFnO+Jurx4G6qEs7m4GC4IJGPOFt4AAi/p8UaqPbjz5HhFbuQInQmO5eWBywFY8gL3D1wIA=
+	t=1751360238; cv=none; b=tkWqRN8PhmfnKkUjQVmQNFMSJvM+nC70oIXrd7VtyOG2BZRzHHCmrGepQiEv4J1xeszuOAa6Evb/aQw2IXJ6iHjRpznZxjQlFT3YJ72mGitVc21+G4qtu7W3MEwGR/RKg5fxSWTZ+glZ0TcTA+nAsaQn7zTGH92x8OBggbTYRbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751360238; c=relaxed/simple;
-	bh=WZgQ14D22dPLNcKEi9IjqUPAXlhupD02zXCi6Noet+Y=;
+	bh=vmReX47mqCLgmmgZzbo16/Xw5onF/bS5D530hw5Anx8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AuaSUXeoaFR3m+3bWjfwYzk/WYc+/DioS1iL6MfuYc7FYoFMl+WbuzhGhltgbWeFiIwVFiFUXDQSqMlcxH9XZfXWZ730VvwIjFNWC3GR/I9MDze7hGP0LSVeLC1yDlOcDRvbYe3qXQ6n0OtLEZYLUIVxyRrWhxa52SutbJwFbJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2ODeEEg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 06881C4CEFB;
+	 In-Reply-To:To:Cc; b=O1+OZkiYQKZYn9o6kN+Ri6Mxr/qGeOpEoG53O45Hi0mjrkSYr3iBwoiNNqRLWnioaiV8i0JMvo+fXIEmFPdG/atoNogJ/x1XvhyPi8G1psNUhpgvaZwGIHLHkcG8km+C09AAs6No6+PKqmZ6+p2puP5l+cFqetzPRzRLZiN5BWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOPCN3lE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1194EC4CEFD;
 	Tue,  1 Jul 2025 08:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751360238;
-	bh=WZgQ14D22dPLNcKEi9IjqUPAXlhupD02zXCi6Noet+Y=;
+	bh=vmReX47mqCLgmmgZzbo16/Xw5onF/bS5D530hw5Anx8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=J2ODeEEgPNRDu9oYlBwdaulZ8f/3Ww5Kk8nUVcACl0lyxIWOq+C/F3UiWDFWJMfEs
-	 qmMj5jjkM5McIu4DeeV+9/Wdmg3f6Fe1JUKFpu10Fp0gVuCFe+ToHWKZbe8sVawX1w
-	 byhS/y3cnV0ir+h0ZV1cP1cD4on9v0P6HM4oCiqMRgKHqWcf673UHhTDoz2tTVrCnw
-	 76BI6mYQtpnl3aa6hrEq/84gz2YEsTPXjzGjxDszyjBuMAivuPWvsUal1uY2alEabK
-	 obhrKcGhqsdLTTN0cpBcJ2Vxb7WcK6JzG8m9gigEnRkOeUqC6iJh3de3iM1k+0KEC2
-	 OUWyGX7N4ilgg==
+	b=TOPCN3lEFa9Pb04mHDONYZhWUehnQy/XLyKk96s791L+h1USqQRyA4hc3cG4FFZLw
+	 sf3uPeYnAvcMKvOb216bOzvNrcvmLCMrH2lyEaEo6Iy5TTOGiuPEAn/MwnxflhreUc
+	 gsr5GkJs9DkNf+FEFvJH7guc9x32yUpBk8hbuhpYbxGPI0JgQeItVYy87Hj8hlkUiq
+	 o1Y2UhDJh2V5cA8O+mOsyUUDIoP2d3w6hWKn70KbmIAK9ol9eY6rw773VduO6dpJCN
+	 4xCAjqx3GmCJmTDmMBFgf0xe4HTOoHJvZsfo51WdGgZz/AaHPkOx3o6oxBNH7xzjuV
+	 Egk5Rs5DlIP6Q==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F045BC8303D;
-	Tue,  1 Jul 2025 08:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0951BC8302F;
+	Tue,  1 Jul 2025 08:57:18 +0000 (UTC)
 From: Joel Granados <joel.granados@kernel.org>
-Date: Tue, 01 Jul 2025 10:56:46 +0200
-Subject: [PATCH 5/6] docs: Replace spaces with tabs in check-sysctl-docs
+Date: Tue, 01 Jul 2025 10:56:47 +0200
+Subject: [PATCH 6/6] docs: Downgrade arm64 & riscv from titles to comment
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-jag-sysctldoc-v1-5-936912553f58@kernel.org>
+Message-Id: <20250701-jag-sysctldoc-v1-6-936912553f58@kernel.org>
 References: <20250701-jag-sysctldoc-v1-0-936912553f58@kernel.org>
 In-Reply-To: <20250701-jag-sysctldoc-v1-0-936912553f58@kernel.org>
 To: Kees Cook <kees@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
@@ -66,257 +66,85 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Joel Granados <joel.granados@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6467;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2491;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=WZgQ14D22dPLNcKEi9IjqUPAXlhupD02zXCi6Noet+Y=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGhjouvcIQVcgTjcMwYVUzjN9clCy+sHEF9p5
- hcxDDX/MlPGXokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoY6LrAAoJELqXzVK3
- lkFPCLgL/0lRvZ0dCLUwkAUFUrId8D+HSxIbi5ts9LpkVtQN+/aLjDaApT5YXFq0LvXbe7+mGXF
- chBdiVr0jGNHhpELcWG5iXprYpknA2Ef0xPSNy/FEjuAymi4UFZuxSHwzfUZmytK/dyrodTb8oM
- j84G7XarKoIMoD8owzE8lI8n6O8BZ3u4C83ry8tepNb3DPYLA5HO7Dc/wcxTdrpc+sat11Vyg3S
- egynAQEAPwKaWvl2jkiZs7yJ8abu1jBagkLlFkcHi1K0r4TDeYl2GsjM7lu7aRNKcYXo8kXdPhu
- o0JiBR/V3vn4kmxpBX/sKDEHSfymiLrg2cGF28Q82vUVQod/lFPmLv9YijvgXRQt3jrurLAvQOy
- 0CFHlL1pTRaGINjgYDR74msCNjQtwWQ4OWAXAMaZNiCqcXu4w2dQfpo292e8loG23FwWq7Onte1
- Iocgogu1KdbcEKBPjlPLGqh1AsbOCxy70cbzHq+vPwncrQDhzJUas7/ADAPU6oCpH9zLfx1r6F6
- kU=
+ bh=vmReX47mqCLgmmgZzbo16/Xw5onF/bS5D530hw5Anx8=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGhjoutgafknIe4uDW/tuqngY3301IDb7siVv
+ D+Ppdv3MEHYgIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoY6LrAAoJELqXzVK3
+ lkFPIqYMAIw2aha8NP8P8uQJTcXrqi1uSeSVBitGs7JzTKKQH03EcYNNRzfXlq0GvfmC694C68K
+ 589+Rg8OmUJyr8RY9P8gRir1sNTcfD377eXgw2JBiBuNYo3sjcy9AH74ytTRTmuKtgkfOgqLbQB
+ L1t0O/8qy5g0lVo3UboWOEmAj28SisTNub/9IDCBLn/3YxVfeqlId3k6HJgp3E4Shr1Va8fwDHD
+ DUGoZ45iqIKT4ZNSDZcTuZpo+kLYFF+Q1zDWD+vXV8BeBRbOblYB9Fq5dKKWWq4elk5K/LhMdyB
+ ZwDosse7CN63dW+gi8zKu8wD1CcLQ7gBvQqcouX51yE/HMRlqiyIY8vvPhlOdzILOg7yZxdl5fh
+ K5Swo/tIBbzJh5pPNb5A9s0wLS06nyLLFa7rKscBeWVqhHqUF0lU+Qbtd/wgiEowZt3jRumBlya
+ qrzjEEq6B/3sp3UaVJUsfXH1j+4LAyb5+TgCSP4stcZ/rTULBR8x2KOtuq09XuOXDpQRa13oMI7
+ lk=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-Remove the combination of spaces and tabs in favor of just tabs.
+Remove the title string ("====") from under arm64 & riscv and move them
+to a commment under the perf_user_access sysctl. They are explanations,
+*not* sysctls themselves
+
+This effectively removes these two strings from appearing as not
+implemented when the check-sysctl-docs script is run
 
 Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
- scripts/check-sysctl-docs | 163 +++++++++++++++++++++++-----------------------
- 1 file changed, 81 insertions(+), 82 deletions(-)
+ Documentation/admin-guide/sysctl/kernel.rst | 32 +++++++++++++----------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
-diff --git a/scripts/check-sysctl-docs b/scripts/check-sysctl-docs
-index 3166012b9c6ea4435dc77afaadcff3a4944b1ca8..910fd8a9a2684aa709c1572e24fc94d52b093381 100755
---- a/scripts/check-sysctl-docs
-+++ b/scripts/check-sysctl-docs
-@@ -13,10 +13,10 @@
- # Specify -vdebug=1 to see debugging information
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index dd49a89a62d3542fa1a599f318dff26589e1d57b..c2683ce17b25821559d0c04914aea360440c7309 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -1014,30 +1014,26 @@ perf_user_access (arm64 and riscv only)
  
- BEGIN {
--    if (!table) {
-+	if (!table) {
- 	print "Please specify the table to look for using the table variable" > "/dev/stderr"
- 	exit 1
--    }
-+	}
+ Controls user space access for reading perf event counters.
  
- 	# Documentation title skiplist
- 	skiplist[0] = "^Documentation for"
-@@ -43,23 +43,23 @@ BEGIN {
+-arm64
+-=====
++* for arm64
++  The default value is 0 (access disabled).
  
- # Remove punctuation from the given value
- function trimpunct(value) {
--    while (value ~ /^["&]/) {
--	value = substr(value, 2)
--    }
--    while (value ~ /[]["&,}]$/) {
--	value = substr(value, 1, length(value) - 1)
--    }
--    return value
-+	while (value ~ /^["&]/) {
-+		value = substr(value, 2)
-+	}
-+	while (value ~ /[]["&,}]$/) {
-+		value = substr(value, 1, length(value) - 1)
-+	}
-+	return value
- }
+-The default value is 0 (access disabled).
++  When set to 1, user space can read performance monitor counter registers
++  directly.
  
- # Print the information for the given entry
- function printentry(entry) {
--    seen[entry]++
--    printf "* %s from %s", entry, file[entry]
--    if (documented[entry]) {
--	printf " (documented)"
--    }
--    print ""
-+	seen[entry]++
-+	printf "* %s from %s", entry, file[entry]
-+	if (documented[entry]) {
-+		printf " (documented)"
-+	}
-+	print ""
- }
+-When set to 1, user space can read performance monitor counter registers
+-directly.
++  See Documentation/arch/arm64/perf.rst for more information.
  
+-See Documentation/arch/arm64/perf.rst for more information.
++* for riscv
++  When set to 0, user space access is disabled.
  
-@@ -71,105 +71,104 @@ FNR == NR && /^=+$/ {
- 		}
- 	}
+-riscv
+-=====
++  The default value is 1, user space can read performance monitor counter
++  registers through perf, any direct access without perf intervention will trigger
++  an illegal instruction.
  
--    # The previous line is a section title, parse it
--    $0 = prevline
--    if (debug) print "Parsing " $0
--    inbrackets = 0
--    for (i = 1; i <= NF; i++) {
--	if (length($i) == 0) {
--	    continue
-+	# The previous line is a section title, parse it
-+	$0 = prevline
-+	if (debug) print "Parsing " $0
-+	inbrackets = 0
-+	for (i = 1; i <= NF; i++) {
-+		if (length($i) == 0) {
-+			continue
-+		}
-+		if (!inbrackets && substr($i, 1, 1) == "(") {
-+			inbrackets = 1
-+		}
-+		if (!inbrackets) {
-+			token = trimpunct($i)
-+			if (length(token) > 0 && token != "and") {
-+				if (debug) print trimpunct($i)
-+					documented[trimpunct($i)]++
-+			}
-+		}
-+		if (inbrackets && substr($i, length($i), 1) == ")") {
-+			inbrackets = 0
-+		}
- 	}
--	if (!inbrackets && substr($i, 1, 1) == "(") {
--	    inbrackets = 1
--	}
--	if (!inbrackets) {
--	    token = trimpunct($i)
--	    if (length(token) > 0 && token != "and") {
--		if (debug) print trimpunct($i)
--		documented[trimpunct($i)]++
--	    }
--	}
--	if (inbrackets && substr($i, length($i), 1) == ")") {
--	    inbrackets = 0
--	}
--    }
- }
+-When set to 0, user space access is disabled.
++  When set to 2, which enables legacy mode (user space has direct access to cycle
++  and insret CSRs only). Note that this legacy value is deprecated and will be
++  removed once all user space applications are fixed.
  
- FNR == NR {
--    prevline = $0
--    next
-+	prevline = $0
-+	next
- }
+-The default value is 1, user space can read performance monitor counter
+-registers through perf, any direct access without perf intervention will trigger
+-an illegal instruction.
+-
+-When set to 2, which enables legacy mode (user space has direct access to cycle
+-and insret CSRs only). Note that this legacy value is deprecated and will be
+-removed once all user space applications are fixed.
+-
+-Note that the time CSR is always directly accessible to all modes.
++  Note that the time CSR is always directly accessible to all modes.
  
- 
- # Stage 2: process each file and find all sysctl tables
- BEGINFILE {
--    delete entries
--    curtable = ""
--    curentry = ""
--    delete vars
--    if (debug) print "Processing file " FILENAME
-+	delete entries
-+	curtable = ""
-+	curentry = ""
-+	delete vars
-+	if (debug) print "Processing file " FILENAME
- }
- 
- /^static( const)? struct ctl_table/ {
--    match($0, /static( const)? struct ctl_table ([^][]+)/, tables)
--    curtable = tables[2]
--    if (debug) print "Processing table " curtable
-+	match($0, /static( const)? struct ctl_table ([^][]+)/, tables)
-+	curtable = tables[2]
-+	if (debug) print "Processing table " curtable
- }
- 
- /^};$/ {
--    curtable = ""
--    curentry = ""
--    delete vars
-+	curtable = ""
-+	curentry = ""
-+	delete vars
- }
- 
- curtable && /\.procname[\t ]*=[\t ]*".+"/ {
--    match($0, /.procname[\t ]*=[\t ]*"([^"]+)"/, names)
--    curentry = names[1]
--    if (debug) print "Adding entry " curentry " to table " curtable
--    entries[curtable][curentry]++
--    file[curentry] = FILENAME
-+	match($0, /.procname[\t ]*=[\t ]*"([^"]+)"/, names)
-+	curentry = names[1]
-+	if (debug) print "Adding entry " curentry " to table " curtable
-+	entries[curtable][curentry]++
-+	file[curentry] = FILENAME
- }
- 
- curtable && /UCOUNT_ENTRY.*/ {
--    match($0, /UCOUNT_ENTRY\("([^"]+)"\)/, names)
--    curentry = names[1]
--    if (debug) print "Adding entry " curentry " to table " curtable
--    entries[curtable][curentry]++
--    file[curentry] = FILENAME
-+	match($0, /UCOUNT_ENTRY\("([^"]+)"\)/, names)
-+	curentry = names[1]
-+	if (debug) print "Adding entry " curentry " to table " curtable
-+	entries[curtable][curentry]++
-+	file[curentry] = FILENAME
- }
- 
- /register_sysctl.*/ {
--    match($0, /register_sysctl(|_init|_sz)\("([^"]+)" *, *([^,)]+)/, tables)
--    if (debug) print "Registering table " tables[3] " at " tables[2]
--    if (tables[2] == table) {
--        for (entry in entries[tables[3]]) {
--            printentry(entry)
--        }
--    }
-+	match($0, /register_sysctl(|_init|_sz)\("([^"]+)" *, *([^,)]+)/, tables)
-+	if (debug) print "Registering table " tables[3] " at " tables[2]
-+	if (tables[2] == table) {
-+		for (entry in entries[tables[3]]) {
-+			printentry(entry)
-+		}
-+	}
- }
- 
- /kmemdup.*/ {
--    match($0, /([^ \t]+) *= *kmemdup\(([^,]+) *,/, names)
--    if (debug) print "Found variable " names[1] " for table " names[2]
--    if (names[2] in entries) {
--        vars[names[1]] = names[2]
--    }
-+	match($0, /([^ \t]+) *= *kmemdup\(([^,]+) *,/, names)
-+	if (debug) print "Found variable " names[1] " for table " names[2]
-+	if (names[2] in entries) {
-+		vars[names[1]] = names[2]
-+	}
- }
- 
- /__register_sysctl_table.*/ {
--    match($0, /__register_sysctl_table\([^,]+, *"([^"]+)" *, *([^,]+)/, tables)
--    if (debug) print "Registering variable table " tables[2] " at " tables[1]
--    if (tables[1] == table && tables[2] in vars) {
--        for (entry in entries[vars[tables[2]]]) {
--            printentry(entry)
--        }
--    }
-+	match($0, /__register_sysctl_table\([^,]+, *"([^"]+)" *, *([^,]+)/, tables)
-+	if (debug) print "Registering variable table " tables[2] " at " tables[1]
-+	if (tables[1] == table && tables[2] in vars) {
-+		for (entry in entries[vars[tables[2]]]) {
-+			printentry(entry)
-+		}
-+	}
- }
- 
- END {
--    for (entry in documented) {
--	if (!seen[entry]) {
--	    print "No implementation for " entry
-+	for (entry in documented) {
-+		if (!seen[entry])
-+			print "No implementation for " entry
- 	}
--    }
- }
+ pid_max
+ =======
 
 -- 
 2.47.2
