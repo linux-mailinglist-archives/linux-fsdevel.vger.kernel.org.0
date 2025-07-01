@@ -1,205 +1,438 @@
-Return-Path: <linux-fsdevel+bounces-53581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBEFAF0426
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 21:54:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5D7AF0436
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 21:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7481B4A24F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 19:54:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7717116EB38
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 19:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDC12820C6;
-	Tue,  1 Jul 2025 19:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA3F28468D;
+	Tue,  1 Jul 2025 19:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fo/YxcRz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hw+//fCu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD13279785;
-	Tue,  1 Jul 2025 19:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE4F200112;
+	Tue,  1 Jul 2025 19:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751399647; cv=none; b=Ca81HKuwI/LKByimTV47rwnEzJs3BJyyZYAIgDdYxIuUAQDHSbye6uycS5IVSP5iI3ERtpe0q3S3I7zjmFxKhv2AZPvSeJ3hlCgOZXPAzAgRBDlPNx2rfF1kyW6qEEvyXSXXIbMjq/O6VP7c6gRxINsO6TE2vhmHAAC5U72S/FU=
+	t=1751399887; cv=none; b=AZb7zclb7Im7r3rS3EiI5w4+zUgRcjFNWewXaWFSrpDDh3iXXL+ULeA19F0EdH0PVi56F2oEfTNVA8GTznoIxYtWiuCM+5Q6qS0ZChui31OlnMUayK1XBIab2/TsqSqCQ22MKc2ATgjY5uz18A8VJMiEflWZr7QEArU8/NnZREM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751399647; c=relaxed/simple;
-	bh=Yd/r5g9u2NZIWZkYoik90fsPSnjEUF3dw7edlX++I9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dE54+FqtmqLoxq+Cmq1K02gpDMvcwamSelzYmrFGwXxcacWWUJJEmpaMuwbX/MTR5C44FlzUCP7xdH6JZT+F8AZKuw91VxEd1sOImfU3FQRyJZ3AGf+2GONV5htfw2n6O+P1Q3TobTOzxfxtgh8MWwzaoKXFyFjO3lYN9gHFOuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fo/YxcRz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D23C4CEEE;
-	Tue,  1 Jul 2025 19:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751399647;
-	bh=Yd/r5g9u2NZIWZkYoik90fsPSnjEUF3dw7edlX++I9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fo/YxcRzlenSelFr/HeCpGRrtCh4Zt6Lfd7LXrBJ22cPEXJfPzuxG7ag0WmRhXySO
-	 uhiZkXZMKOvat1Rql6K5NuO11XbWbNrlHvm/F7mzL9ai0j8dcLvD86WCDDtlQFbB4+
-	 wQiSu3ov2gQMfgZEHW54DAQFxqfMyPwI8en1GTFXGk2rraSoRheueiF4OnndjL4C8r
-	 bgr5SLw8ZTQL/LlkXSINOes6L+kdz3uPuZWwYss3tePpBy+RBdGdeIqjo/mOyvTYI8
-	 /sFJiG/X8nwyqHNhKeindoBxO4STpx1k+jroNUfAN3PmCzfA1kQqPV+PE6ZfnktV5Q
-	 hYqDcA+hRpA5Q==
-Received: by pali.im (Postfix)
-	id 631775D6; Tue,  1 Jul 2025 21:54:05 +0200 (CEST)
-Date: Tue, 1 Jul 2025 21:54:05 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, selinux@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 5/6] fs: prepare for extending file_get/setattr()
-Message-ID: <20250701195405.xf27mjknu5bnunue@pali>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-5-c4e3bc35227b@kernel.org>
- <20250701183105.GP10009@frogsfrogsfrogs>
- <CAOQ4uxiCpGcZ7V8OqssP2xKsN0ZiAO7mQ_1Qt705BrcHeSPmBg@mail.gmail.com>
- <20250701194002.GS10009@frogsfrogsfrogs>
+	s=arc-20240116; t=1751399887; c=relaxed/simple;
+	bh=mh13/K2C3YH46fd5VgRsKUd7xhh7UShj7//mgZNl1Yw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b0qgE2+Q717QCC9Eksh9vq3dY27zwR63m7rFkHLmnAD6bvoTFFeWdtTB8cUAulzvDuNjPF5k3UCLJe7kwE2dtSl+bOW6ESERDUbSbvVuPUg9CUPCdcXcpySCHZSYzBmHd2YlDJCuIDRopHlqC7OjzZXBpH5AEUJRTS2BDfqUEC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hw+//fCu; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2363497cc4dso51620665ad.1;
+        Tue, 01 Jul 2025 12:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751399885; x=1752004685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nmXSKJuzG9fYEMivZ/nOpZUlPnVXgIe5HngikPOgmZk=;
+        b=hw+//fCuBTWsq+w9wYMnVyi3lJpSOl52rm1zyO+Sp2N2J4FhS1lgkedw0nJHJ0Ybol
+         FRhe4pk8p474+Dh3ZpScM5BVM9ZTMeUQer39UqgAkePaHuCt5qAzPBi8qPq2qMpCX8rY
+         IHxaZacRRfTzauxP0OBPkOLjaKvn+32L4XhbbESo0qOgSBJ1/s7VxTBoOXBnecqkrBtF
+         +b0HeRBG7xWFy/VTsgT2An9cuXG1rUqRdf8PHXI6+s541vG57oPSs2ihccMoEaJghoaF
+         i2vgWe0EPLQsTcWcOu66+61auOUv4dLZj7p52L7w8j/OTlx+yfbMyAHUJVwh9igIDyto
+         JVkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751399885; x=1752004685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nmXSKJuzG9fYEMivZ/nOpZUlPnVXgIe5HngikPOgmZk=;
+        b=LZcZbRcKhtJz126ARda1hBzHFLr7K/QoSgJh5bKH96uNMTwZRoZANdO0k5P3EnGIul
+         jhWj4QwAlx2GJ3nXDp+SVYUSyeDcOnxUwop6bDOs44Yhrnv+iB/I42b4S7P6KKtomER+
+         1V3sAGf6+pm0dv3FaD2Mq6cnVNYc/vFGdyS8MoDZEQkk+tPExfCGJVxjIo4oYefPes16
+         9Odb/HKbRPjwPHRyQ8TVej7cIWgopkC3RIXGBpgzKqEa4E2wqw3oBbhMhM6Cj/yJadzd
+         arxj6inrhmooIu+WbnoyvtDYQ4WeIUHIyZOuYVGJDwu/a3Zer6wMNo0LJ6ktZDaglDUF
+         XIOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfMK5mKa7qXOCvEEQc2a48Pz2LEnQx+TG56XxqUO4GKm11LcGReyd2W+gPBssYoQJMy5bdRbSqvgasB87w@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiolUXsjFY4yvxSKL7uimf02TNfTG2NY4dDLucgMo7DQGtE4Ov
+	FwK9arlrAEPsmfl4IuzmltKTkpXosZkSi86YwZ+wSTkQn+a7kU3Meq8Dy78ARCDvdoVA9mOvpJW
+	O4aKOYgu8rzQ4ZglzNFVQy9XrfVWqXe0=
+X-Gm-Gg: ASbGncvf33BL7MzW3lavKQj8hime1BRzb6BhBYYgzJz4jROSYllFN078kOS4RUCNDwx
+	pvcyVlee2m8XzRt+Z80JQn0WAqrRK50TqZ/ZDPgSVTEpiA9gy7zCoW7VOpVSkPMHXGX2/pJUH4D
+	P+HntxJc5rn/kuDSnwfdWiSDvxLqA4GiufpOp+r831omY=
+X-Google-Smtp-Source: AGHT+IHHBwn0oOW7PxvZqPDdPlNvZrpbA5ic4HSrfsn/Iay+n1g4+7/IXt7CCKaQ7cjc+n0tZdaa58yx5CyOIBI65/I=
+X-Received: by 2002:a17:902:e84f:b0:235:f49f:479d with SMTP id
+ d9443c01a7336-23c6e452307mr218215ad.3.1751399884589; Tue, 01 Jul 2025
+ 12:58:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250701194002.GS10009@frogsfrogsfrogs>
-User-Agent: NeoMutt/20180716
+References: <20250618191635.683070-1-slava@dubeyko.com>
+In-Reply-To: <20250618191635.683070-1-slava@dubeyko.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 1 Jul 2025 21:57:52 +0200
+X-Gm-Features: Ac12FXw-CC-ZZW3-erv5j4PL4aQKnA3ZXT-uqCQOMDT9S5JXD34r9yWF-WPaCNE
+Message-ID: <CAOi1vP9_869BCjUMsQkQPZ6now_nvsQxv-SKZrTrCP7YFX1TyQ@mail.gmail.com>
+Subject: Re: [PATCH v6] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, dhowells@redhat.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, amarkuze@redhat.com, 
+	Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 01 July 2025 12:40:02 Darrick J. Wong wrote:
-> On Tue, Jul 01, 2025 at 09:27:38PM +0200, Amir Goldstein wrote:
-> > On Tue, Jul 1, 2025 at 8:31 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > >
-> > > On Mon, Jun 30, 2025 at 06:20:15PM +0200, Andrey Albershteyn wrote:
-> > > > From: Amir Goldstein <amir73il@gmail.com>
-> > > >
-> > > > We intend to add support for more xflags to selective filesystems and
-> > > > We cannot rely on copy_struct_from_user() to detect this extension.
-> > > >
-> > > > In preparation of extending the API, do not allow setting xflags unknown
-> > > > by this kernel version.
-> > > >
-> > > > Also do not pass the read-only flags and read-only field fsx_nextents to
-> > > > filesystem.
-> > > >
-> > > > These changes should not affect existing chattr programs that use the
-> > > > ioctl to get fsxattr before setting the new values.
-> > > >
-> > > > Link: https://lore.kernel.org/linux-fsdevel/20250216164029.20673-4-pali@kernel.org/
-> > > > Cc: Pali Rohár <pali@kernel.org>
-> > > > Cc: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > > > ---
-> > > >  fs/file_attr.c           |  8 +++++++-
-> > > >  include/linux/fileattr.h | 20 ++++++++++++++++++++
-> > > >  2 files changed, 27 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/fs/file_attr.c b/fs/file_attr.c
-> > > > index 4e85fa00c092..62f08872d4ad 100644
-> > > > --- a/fs/file_attr.c
-> > > > +++ b/fs/file_attr.c
-> > > > @@ -99,9 +99,10 @@ EXPORT_SYMBOL(vfs_fileattr_get);
-> > > >  int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxattr __user *ufa)
-> > > >  {
-> > > >       struct fsxattr xfa;
-> > > > +     __u32 mask = FS_XFLAGS_MASK;
-> > > >
-> > > >       memset(&xfa, 0, sizeof(xfa));
-> > > > -     xfa.fsx_xflags = fa->fsx_xflags;
-> > > > +     xfa.fsx_xflags = fa->fsx_xflags & mask;
-> > >
-> > > I wonder, should it be an error if a filesystem sets an fsx_xflags bit
-> > > outside of FS_XFLAGS_MASK?  I guess that's one way to prevent
-> > > filesystems from overriding the VFS bits. ;)
-> > 
-> > I think Pali has a plan on how to ensure that later
-> > when the mask is provided via the API.
-> > 
-> > >
-> > > Though couldn't that be:
-> > >
-> > >         xfa.fsx_xflags = fa->fsx_xflags & FS_XFLAGS_MASK;
-> > >
-> > > instead?  And same below?
-> > >
-> > 
-> > Indeed. There is a reason for the var, because the next series
-> > by Pali will use a user provided mask, which defaults to FS_XFLAGS_MASK,
-> > so I left it this way.
-> > 
-> > I don't see a problem with it keeping as is, but if it bothers you
-> > I guess we can re-add the var later.
-> 
-> Nah, it doesn't bother me that much.
-> 
-> > > >       xfa.fsx_extsize = fa->fsx_extsize;
-> > > >       xfa.fsx_nextents = fa->fsx_nextents;
-> > > >       xfa.fsx_projid = fa->fsx_projid;
-> > > > @@ -118,11 +119,16 @@ static int copy_fsxattr_from_user(struct fileattr *fa,
-> > > >                                 struct fsxattr __user *ufa)
-> > > >  {
-> > > >       struct fsxattr xfa;
-> > > > +     __u32 mask = FS_XFLAGS_MASK;
-> > > >
-> > > >       if (copy_from_user(&xfa, ufa, sizeof(xfa)))
-> > > >               return -EFAULT;
-> > > >
-> > > > +     if (xfa.fsx_xflags & ~mask)
-> > > > +             return -EINVAL;
-> > >
-> > > I wonder if you want EOPNOTSUPP here?  We don't know how to support
-> > > unknown xflags.  OTOH if you all have beaten this to death while I was
-> > > out then don't start another round just for me. :P
-> > 
-> > We have beaten this API almost to death for sure ;)
-> > I don't remember if we discussed this specific aspect,
-> > but I am personally in favor of
-> > EOPNOTSUPP := the fs does not support the set/get operation
-> > EINVAL := some flags provided as value is invalid
-> > 
-> > For example, if the get API provides you with a mask of the
-> > valid flags that you can set, if you try to set flags outside of
-> > that mask you get EINVAL.
-> > 
-> > That's my interpretation, but I agree that EOPNOTSUPP can also
-> > make sense in this situation.
-> 
-> <nod> I think I'd rather EOPNOTSUPP for "bits are set that the kernel
-> doesn't recognize" and EINVAL (or maybe something else like
-> EPROTONOSUPPORT) for "fs driver will not let you change this bit".
-> At least for the syscall interface; we probably have to flatten that to
-> EOPNOTSUPP for both legacy ioctls.
+On Wed, Jun 18, 2025 at 9:16=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
+>
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> The generic/395 and generic/397 is capable of generating
+> the oops is on line net/ceph/ceph_common.c:794 with
+> KASAN enabled.
+>
+> BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
+> Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
+>
+> CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ =
+#1266
+> Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+> Call Trace:
+> <TASK>
+> dump_stack_lvl+0x57/0x80
+> ? have_mon_and_osd_map+0x56/0x70
+> print_address_description.constprop.0+0x84/0x330
+> ? have_mon_and_osd_map+0x56/0x70
+> print_report+0xe2/0x1e0
+> ? rcu_read_unlock_sched+0x60/0x80
+> ? kmem_cache_debug_flags+0xc/0x20
+> ? fixup_red_left+0x17/0x30
+> ? have_mon_and_osd_map+0x56/0x70
+> kasan_report+0x8d/0xc0
+> ? have_mon_and_osd_map+0x56/0x70
+> have_mon_and_osd_map+0x56/0x70
+> ceph_open_session+0x182/0x290
+> ? __pfx_ceph_open_session+0x10/0x10
+> ? __init_swait_queue_head+0x8d/0xa0
+> ? __pfx_autoremove_wake_function+0x10/0x10
+> ? shrinker_register+0xdd/0xf0
+> ceph_get_tree+0x333/0x680
+> vfs_get_tree+0x49/0x180
+> do_new_mount+0x1a3/0x2d0
+> ? __pfx_do_new_mount+0x10/0x10
+> ? security_capable+0x39/0x70
+> path_mount+0x6dd/0x730
+> ? __pfx_path_mount+0x10/0x10
+> ? kmem_cache_free+0x1e5/0x270
+> ? user_path_at+0x48/0x60
+> do_mount+0x99/0xe0
+> ? __pfx_do_mount+0x10/0x10
+> ? lock_release+0x155/0x190
+> __do_sys_mount+0x141/0x180
+> do_syscall_64+0x9f/0x100
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x7f01b1b14f3e
+> Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 0=
+0 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
+> RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
+> RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
+> RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
+> R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
+> </TASK>
+>
+> Allocated by task 13305:
+> stack_trace_save+0x8c/0xc0
+> kasan_save_stack+0x1e/0x40
+> kasan_save_track+0x10/0x30
+> __kasan_kmalloc+0x3a/0x50
+> __kmalloc_noprof+0x247/0x290
+> ceph_osdmap_alloc+0x16/0x130
+> ceph_osdc_init+0x27a/0x4c0
+> ceph_create_client+0x153/0x190
+> create_fs_client+0x50/0x2a0
+> ceph_get_tree+0xff/0x680
+> vfs_get_tree+0x49/0x180
+> do_new_mount+0x1a3/0x2d0
+> path_mount+0x6dd/0x730
+> do_mount+0x99/0xe0
+> __do_sys_mount+0x141/0x180
+> do_syscall_64+0x9f/0x100
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> Freed by task 9475:
+> stack_trace_save+0x8c/0xc0
+> kasan_save_stack+0x1e/0x40
+> kasan_save_track+0x10/0x30
+> kasan_save_free_info+0x3b/0x50
+> __kasan_slab_free+0x18/0x30
+> kfree+0x212/0x290
+> handle_one_map+0x23c/0x3b0
+> ceph_osdc_handle_map+0x3c9/0x590
+> mon_dispatch+0x655/0x6f0
+> ceph_con_process_message+0xc3/0xe0
+> ceph_con_v1_try_read+0x614/0x760
+> ceph_con_workfn+0x2de/0x650
+> process_one_work+0x486/0x7c0
+> process_scheduled_works+0x73/0x90
+> worker_thread+0x1c8/0x2a0
+> kthread+0x2ec/0x300
+> ret_from_fork+0x24/0x40
+> ret_from_fork_asm+0x1a/0x30
+>
+> The buggy address belongs to the object at ffff88811012d800
+> which belongs to the cache kmalloc-512 of size 512
+> The buggy address is located 16 bytes inside of
+> freed 512-byte region [ffff88811012d800, ffff88811012da00)
+>
+> The buggy address belongs to the physical page:
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1101=
+2c
+> head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> flags: 0x200000000000040(head|node=3D0|zone=3D2)
+> page_type: f5(slab)
+> raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+> raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+> head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+> head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+> head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
+> head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+> ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>
+>     ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>
+> ^
+> ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Disabling lock debugging due to kernel taint
+> libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+> libceph: mon0 (1)90.155.74.19:6789 session established
+> libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+>
+> We have such scenario:
+>
+> Thread 1:
+> void ceph_osdmap_destroy(...) {
+>     <skipped>
+>     kfree(map);
+> }
+> Thread 1 sleep...
+>
+> Thread 2:
+> static bool have_mon_and_osd_map(struct ceph_client *client) {
+>     return client->monc.monmap && client->monc.monmap->epoch &&
+>         client->osdc.osdmap && client->osdc.osdmap->epoch;
+> }
+> Thread 2 has oops...
+>
+> Thread 1 wake up:
+> static int handle_one_map(...) {
+>     <skipped>
+>     osdc->osdmap =3D newmap;
+>     <skipped>
+> }
+>
+> This patch fixes the issue by means of locking
+> client->osdc.lock and client->monc.mutex before
+> the checking client->osdc.osdmap and
+> client->monc.monmap in have_mon_and_osd_map() function.
+> Patch adds locking in the ceph_osdc_stop()
+> method during the destructruction of osdc->osdmap and
+> assigning of NULL to the pointer. The lock is used
+> in the ceph_monc_stop() during the freeing of monc->monmap
+> and assigning NULL to the pointer too. The monmap_show()
+> and osdmap_show() methods were reworked to prevent
+> the potential race condition during the methods call.
+>
+> Reported-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> ---
+>  net/ceph/ceph_common.c | 34 +++++++++++++++++++++++++++++-----
+>  net/ceph/debugfs.c     | 17 +++++++++++++----
+>  net/ceph/mon_client.c  |  9 ++++++++-
+>  net/ceph/osd_client.c  |  4 ++++
+>  4 files changed, 54 insertions(+), 10 deletions(-)
+>
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index 4c6441536d55..a28b29c763ca 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+>   */
+>  static bool have_mon_and_osd_map(struct ceph_client *client)
+>  {
+> -       return client->monc.monmap && client->monc.monmap->epoch &&
+> -              client->osdc.osdmap && client->osdc.osdmap->epoch;
+> +       bool have_mon_map =3D false;
+> +       bool have_osd_map =3D false;
+> +
+> +       mutex_lock(&client->monc.mutex);
+> +       have_mon_map =3D client->monc.monmap && client->monc.monmap->epoc=
+h;
+> +       mutex_unlock(&client->monc.mutex);
+> +
+> +       down_read(&client->osdc.lock);
+> +       have_osd_map =3D client->osdc.osdmap && client->osdc.osdmap->epoc=
+h;
+> +       up_read(&client->osdc.lock);
+> +
+> +       return have_mon_map && have_osd_map;
+>  }
+>
+>  /*
+> @@ -813,9 +823,23 @@ int __ceph_open_session(struct ceph_client *client, =
+unsigned long started)
+>
+>                 /* wait */
+>                 dout("mount waiting for mon_map\n");
+> -               err =3D wait_event_interruptible_timeout(client->auth_wq,
+> -                       have_mon_and_osd_map(client) || (client->auth_err=
+ < 0),
+> -                       ceph_timeout_jiffies(timeout));
+> +
+> +               DEFINE_WAIT_FUNC(wait, woken_wake_function);
+> +
+> +               add_wait_queue(&client->auth_wq, &wait);
+> +
+> +               while (!(have_mon_and_osd_map(client) ||
+> +                                       (client->auth_err < 0))) {
 
-... and this starting to be complicated if the "fs driver" is network
-based (as fs driver can support, but remote server not). See also:
-https://lore.kernel.org/linux-fsdevel/20241224160535.pi6nazpugqkhvfns@pali/t/#u
+Hi Slava,
 
-For backup/restore application it would be very useful to distinguish between:
-- "kernel does not support flag X"
-- "target filesystem does not support flag X"
-- "wrong structure was passed / syscall incorrectly called"
+This looks much better but misses two points raised in the comments on
+previous versions.  The first point is that it would be better to
+access client->auth_err under client->monc.mutex, matching how it's set
+in finish_auth() -- now that locks can be freely taken here it should
+be a trivial change.
 
-third option is bug in application - fatal error. second option is just
-a warning for user (sorry, we cannot set NEW FEATURE on FAT32, but if
-you would do restore to other fs, it is supported). and first option
-happens when you run new application on older kernel version, it is an
-recoverable error (or warning to user, but with more important level
-then second option as switching to different FS would not help).
+> +                       if (signal_pending(current)) {
+> +                               err =3D -ERESTARTSYS;
+> +                               break;
+> +                       }
+> +                       wait_woken(&wait, TASK_INTERRUPTIBLE,
+> +                                  ceph_timeout_jiffies(timeout));
+> +               }
+> +
+> +               remove_wait_queue(&client->auth_wq, &wait);
+> +
+>                 if (err < 0)
+>                         return err;
+>                 if (client->auth_err < 0)
 
-Could we return different errnos for these 3 situations?
+Separately, I wonder if the new nested loop which checks both for the
+presence of maps and client->auth_err could be merged into the existing
+outer loop which currently checks for the presence of maps in the loop
+condition and client->auth_err here in the loop body.  Having a single
+loop with everything checked in just one place would be a lot cleaner.
 
-> --D
-> 
-> > Thanks,
-> > Amir.
-> > 
+> diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+> index 2110439f8a24..7b45c169a859 100644
+> --- a/net/ceph/debugfs.c
+> +++ b/net/ceph/debugfs.c
+> @@ -36,8 +36,10 @@ static int monmap_show(struct seq_file *s, void *p)
+>         int i;
+>         struct ceph_client *client =3D s->private;
+>
+> +       mutex_lock(&client->monc.mutex);
+> +
+>         if (client->monc.monmap =3D=3D NULL)
+> -               return 0;
+> +               goto out_unlock;
+>
+>         seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
+>         for (i =3D 0; i < client->monc.monmap->num_mon; i++) {
+> @@ -48,6 +50,10 @@ static int monmap_show(struct seq_file *s, void *p)
+>                            ENTITY_NAME(inst->name),
+>                            ceph_pr_addr(&inst->addr));
+>         }
+> +
+> +out_unlock:
+> +       mutex_unlock(&client->monc.mutex);
+> +
+>         return 0;
+>  }
+>
+> @@ -56,13 +62,15 @@ static int osdmap_show(struct seq_file *s, void *p)
+>         int i;
+>         struct ceph_client *client =3D s->private;
+>         struct ceph_osd_client *osdc =3D &client->osdc;
+> -       struct ceph_osdmap *map =3D osdc->osdmap;
+> +       struct ceph_osdmap *map =3D NULL;
+>         struct rb_node *n;
+>
+> +       down_read(&osdc->lock);
+> +
+> +       map =3D osdc->osdmap;
+>         if (map =3D=3D NULL)
+> -               return 0;
+> +               goto out_unlock;
+>
+> -       down_read(&osdc->lock);
+>         seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
+>                         osdc->epoch_barrier, map->flags);
+>
+> @@ -131,6 +139,7 @@ static int osdmap_show(struct seq_file *s, void *p)
+>                 seq_printf(s, "]\n");
+>         }
+>
+> +out_unlock:
+>         up_read(&osdc->lock);
+>         return 0;
+>  }
+> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+> index ab66b599ac47..b299e5bbddb1 100644
+> --- a/net/ceph/mon_client.c
+> +++ b/net/ceph/mon_client.c
+> @@ -1232,6 +1232,7 @@ int ceph_monc_init(struct ceph_mon_client *monc, st=
+ruct ceph_client *cl)
+>         ceph_auth_destroy(monc->auth);
+>  out_monmap:
+>         kfree(monc->monmap);
+> +       monc->monmap =3D NULL;
+>  out:
+>         return err;
+>  }
+> @@ -1239,6 +1240,8 @@ EXPORT_SYMBOL(ceph_monc_init);
+>
+>  void ceph_monc_stop(struct ceph_mon_client *monc)
+>  {
+> +       struct ceph_monmap *old_monmap;
+> +
+>         dout("stop\n");
+>
+>         mutex_lock(&monc->mutex);
+> @@ -1266,7 +1269,11 @@ void ceph_monc_stop(struct ceph_mon_client *monc)
+>         ceph_msg_put(monc->m_subscribe);
+>         ceph_msg_put(monc->m_subscribe_ack);
+>
+> -       kfree(monc->monmap);
+> +       mutex_lock(&monc->mutex);
+> +       old_monmap =3D monc->monmap;
+> +       monc->monmap =3D NULL;
+> +       mutex_unlock(&monc->mutex);
+> +       kfree(old_monmap);
+
+The second point is that locking (or any changes at all) in
+ceph_monc_stop() and ceph_osdc_stop() shouldn't be needed.  As
+mentioned before, it's the point of no return where the entire client
+including monc and osdc parts gets freed very shortly after.
+
+Thanks,
+
+                Ilya
 
