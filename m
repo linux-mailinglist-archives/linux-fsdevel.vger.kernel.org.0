@@ -1,211 +1,401 @@
-Return-Path: <linux-fsdevel+bounces-53566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D84AF02D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 20:31:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3A4AF02E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 20:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840B01C203A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 18:32:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DCF47A552E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 18:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0662C27E075;
-	Tue,  1 Jul 2025 18:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD2927F74B;
+	Tue,  1 Jul 2025 18:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qror3dzs"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="LTjCAAKD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD35123BF96;
-	Tue,  1 Jul 2025 18:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7114E23B60B;
+	Tue,  1 Jul 2025 18:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751394695; cv=none; b=j/Gwfe6ReQCIWp5PU91ZuQ4WfGlEhswGz0WOmrpl5eLBtgudWrxuVXu2WqDbDRomBHlhR93DDGIkZEZMLeyCTAIZRRXfnEIrMow6X+WeCeoCibk2b4zoZFb7gdEdIYu4EXXCwyUkozsL7fIB3SeyMSgWOwNz35L22L940VBIqEg=
+	t=1751395121; cv=none; b=kvVOKEOlx1fDC2HyJggURzrHx134Ls8iUeznEOOCy+998uXOiT+5/CdaFCloP+RnFti1s07Lsmp8xgGz+SVb9Sc9C8cn+s5ESsUfQR2EUDf9Uj8gkF8HzXc1794M+5snuY1GG+i+hxRkhKpRw2VEZ390K2X8h4pslQ6GgzsGF3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751394695; c=relaxed/simple;
-	bh=8f5T/z/d9mkXgNIGoAFY6PAJ6uLHSygkYSo7LU0k71E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TBoBaoLASA9HW7zWZgEB4iWfRZeuOdghEcuu9ENaG6Hb/lHWb+nxj19hSm+rW9RJlvN/jMtTcbepSyyvw6dnpZp+ks8yQzblLFYMQj/leIilOcn3mDOvSXIJHPNEIaQVnpp8kx1AjTrrUjdWM1Li37qapH19VXbZ8uajONzD6RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qror3dzs; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so15174910a12.1;
-        Tue, 01 Jul 2025 11:31:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751394692; x=1751999492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UGSR1+268qXSnAbGFjg52/5RelVsYrvQ6RHRNOoVlp4=;
-        b=Qror3dzs3p26zs6epwDYnDES+LF5Jw/K3WZQI6OoICu0NNWhiiwrjDPKoTVLBQnkVm
-         Am0bOWeOANAspLVM4nOtCIpAEtye/Q54jsEyxUCwT8LDMta52DJ4CkEO+N0n9M4BRA6L
-         v1FsTny2O4kO6yWucbH6ciYO9FQH1MDHxcjpXAEH+lB7jtIM31GsGBbxhrtWAxrGOszV
-         AJlSatCotJ8jygdsO51zFaGir9nYBORJf0LAOobOpVQCDugd3YqfjEPB2x3w60w3kOfn
-         FniMF4kZSd15hjn+vtUu4Llwc1tR5B4f5KP15evV72Ycr27t5dFFzmCSGNd/EdBTD60Q
-         nysw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751394692; x=1751999492;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UGSR1+268qXSnAbGFjg52/5RelVsYrvQ6RHRNOoVlp4=;
-        b=ndi5dW3kiZ+VHn89XSWukiiONcgZP62Vvy4sjOrFrSgeT3NozrFlF7Uib2LR/IcDIS
-         eRY3G4Uakq2AkGSWl2QiyST8Rvk5vuIai3GirVSmo3ql8Bc1I+AHKFfFZEpbvOPJe/I6
-         LeDaZpxkw/GWxFyCMgwf3qWpKtqOTvbuybZ4FiKnnkeXIboBYG1M59QE+6myFZ6Ushgv
-         8bj7LLgCKYqDFnonSLFE/ih7oUtg89KYCJecdjJ3P342l0tluMUZDo+bdmJpLrhaFIXm
-         UfmW3DVE99crhBx7O/j893TZsDzAWnXPz1GzdQI3iq01K5SOBj4V5LBPDGOlJYviWJ8N
-         WNvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCcHDTxshM1tDHA57XmCtWj67mWyqkzPQdEBh9MbgHWY8upESXwr0v/1LO4zja1z0UZMuWTyaAuDK4y/ua@vger.kernel.org
-X-Gm-Message-State: AOJu0YylPq4iF4LOW66o0spmpQwAoVIvslGi/ZuWe94nGukB/RULtyaN
-	EnN8parlRY5iYJmaPoGmKWgbI45T9hBa5P+abB6eLjSiIX08FUq7mTbZoayh3PU6
-X-Gm-Gg: ASbGnctWJivWb66FcL44G1+UOkHG1VbS5oEJnC4cwV6PecuJ24QMQjERLEUN5htIPWc
-	KsmSE/dHdMD+12vVwRs8mVxBLkHaA7Pno2Q4Mujd3i4nePlvxgnvcbFy/PgQygGufi/ny+QsWHE
-	WkTimOj05xBCFmjvpgh9VjDanFANiMe4QQMzc0WpsSx1bUhr9RbYAvU8hQ3rZ6K0umlNp9qRQDM
-	L5sp2FEgBReRRTIVWU8iJovcsx//VKGqUUNznfnfBZ8wtruCoPBtEv/Wh6Sg5yUIi8Qus5f3ZR1
-	vlYje1CAs35dkFi0QrE9G+0bZFZm9Ce0AKr7KLJ2eZWv4VrGwKJSXvZ82o01LdBcpM+Kqo7s7h3
-	2faG6rda0a92RgCKrTUV3b1KqDd9wjWZL
-X-Google-Smtp-Source: AGHT+IFblHAzwzGC7Z820EiJieU1PxcRCD6BEorQmoDKlU2lrnoIDmdqYqVbQVjSsIiIEW3Z/ponxg==
-X-Received: by 2002:a17:907:3f8d:b0:ae2:3544:8121 with SMTP id a640c23a62f3a-ae3c17a2a3bmr14416866b.9.1751394691636;
-        Tue, 01 Jul 2025 11:31:31 -0700 (PDT)
-Received: from fedorarm (net-37-182-2-165.cust.vodafonedsl.it. [37.182.2.165])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353ca371csm929782566b.179.2025.07.01.11.31.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 11:31:31 -0700 (PDT)
-From: Matteo Croce <technoboy85@gmail.com>
-To: bpf@vger.kernel.org,
+	s=arc-20240116; t=1751395121; c=relaxed/simple;
+	bh=Y0pxFuahApnVcWNVwChOKPQ6Zny9lcVe7d99xt0+xrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NBpBxaWKDwakNxDQwNGOh1G76vj53E7/3o3RfdB+WKM0O+BtuRn0Dzj0gKmNi809zBioSv7XoWKr+5KKQchygfeqLNI2Squn7Y3fmd/kDXqgEsx4rSIGUjh/hDHDGxWjPAW2Yp4/rEKHJNgfsEMJBt75SGw38bu/xVz2dpJ2pfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=LTjCAAKD; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bWsH63FlszwFr;
+	Tue,  1 Jul 2025 20:38:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1751395106;
+	bh=79T8wPhK2yR1A4KPsGkpVWh6ctI0SNTGnpFbZ3qn/qM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LTjCAAKDe75YbS5BHdNSegiZ8hWtrrT00dMkgLuyn9yYD0j04f3Q98sA11GZMOdER
+	 6yvoO/Uuervq4t2f5uhtivL+MsHE85CzosJ1T2QTm0hsLSH2dnuZb4Nu+OilLDnZxu
+	 noGZVbi8dxLDMLctqh1Ba+yBC6R5KzdWCYUcXz94=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bWsH5510Gz9Tf;
+	Tue,  1 Jul 2025 20:38:25 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
+	NeilBrown <neil@brown.name>,
 	Christian Brauner <brauner@kernel.org>,
-	Song Liu <song@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Matteo Croce <teknoraver@meta.com>
-Subject: [PATCH bpf-next] selftests/bpf: don't call fsopen() as privileged user
-Date: Tue,  1 Jul 2025 20:31:23 +0200
-Message-ID: <20250701183123.31781-1-technoboy85@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jeff Xu <jeffxu@google.com>,
+	Ben Scarlato <akhna@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Song Liu <song@kernel.org>,
+	Tingmao Wang <m@maowtm.org>
+Subject: [RFC PATCH v1 1/2] landlock: Fix handling of disconnected directories
+Date: Tue,  1 Jul 2025 20:38:07 +0200
+Message-ID: <20250701183812.3201231-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-From: Matteo Croce <teknoraver@meta.com>
+We can get disconnected files or directories when they are visible and
+opened from a bind mount, before being renamed/moved from the source of
+the bind mount in a way that makes them inaccessible from the mount
+point (i.e. out of scope).
 
-In the BPF token example, the fsopen() syscall is called as privileged
-user. This is unneeded because fsopen() can be called also as
-unprivileged user from the user namespace.
-As the `fs_fd` file descriptor which was sent back and fort is still the
-same, keep it open instead of cloning and closing it twice via SCM_RIGHTS.
+Until now, access rights tied to files or directories opened through a
+disconnected directory were collected by walking the related hierarchy
+down to the root of this filesystem because the mount point couldn't be
+found.  This could lead to inconsistent access results, and
+hard-to-debug renames, especially because such paths cannot be printed.
 
-cfr. https://github.com/systemd/systemd/pull/36134
+For a sandboxed task to create a disconnected directory, it needs to
+have write access (i.e. FS_MAKE_REG, FS_REMOVE_FILE, and FS_REFER) to
+the underlying source of the bind mount, and read access to the related
+mount point.  Because a sandboxed task cannot get more access than those
+defined by its Landlock domain, this could only lead to inconsistent
+access rights because of missing those that should be inherited from the
+mount point hierarchy and inheriting from the hierarchy of the mounted
+filesystem instead.
 
-Signed-off-by: Matteo Croce <teknoraver@meta.com>
+Landlock now handles files/directories opened from disconnected
+directories like the mount point these disconnected directories were
+opened from.  This gives the guarantee that access rights on a
+file/directory cannot be more than those at open time.  The rationale is
+that disconnected hierarchies might not be visible nor accessible to a
+sandboxed task, and relying on the collected access rights from them
+could introduce unexpected results, especially for rename actions
+because of the access right comparison between the source and the
+destination (see LANDLOCK_ACCESS_FS_REFER).  This new behavior is much
+less surprising to users and safer from an access point of view.
+
+Unlike follow_dotdot(), we don't need to check for each directory if it
+is part of the mount's root, but instead this is only checked when we
+reached a root dentry (not a mount point), or when the access
+request is about to be allowed.  This limits the number of calls to
+is_subdir() which walks down the hierarchy (again).  This also avoids
+checking path connection at the beginning of the walk for each mount
+point, which would be racy.
+
+Make path_connected() public to stay consistent with the VFS.  This
+helper is used when we are about to allowed an access.
+
+This change increases the stack size with two Landlock layer masks
+backups that are needed to reset the collected access rights to the
+latest mount point.
+
+Because opened files have their access rights stored in the related file
+security properties, their is no impact for disconnected or unlinked
+files.
+
+A following commit will document handling of disconnected files and
+directories.
+
+Cc: Günther Noack <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>
+Reported-by: Tingmao Wang <m@maowtm.org>
+Closes: https://lore.kernel.org/r/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org
+Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER")
+Fixes: cb2c7d1a1776 ("landlock: Support filesystem access-control")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- .../testing/selftests/bpf/prog_tests/token.c  | 41 ++++++++++---------
- 1 file changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testing/selftests/bpf/prog_tests/token.c
-index f9392df23f8a..cfc032b910c4 100644
---- a/tools/testing/selftests/bpf/prog_tests/token.c
-+++ b/tools/testing/selftests/bpf/prog_tests/token.c
-@@ -115,7 +115,7 @@ static int create_bpffs_fd(void)
- 
- static int materialize_bpffs_fd(int fs_fd, struct bpffs_opts *opts)
+This replaces this patch:
+landlock: Remove warning in collect_domain_accesses()
+https://lore.kernel.org/r/20250618134734.1673254-1-mic@digikod.net
+
+I'll probably split this commit into two to ease backport (same for
+tests).
+
+This patch series applies on top of my next branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+
+TODO: Add documentation
+
+TODO: Add Landlock erratum
+---
+ fs/namei.c             |   2 +-
+ include/linux/fs.h     |   1 +
+ security/landlock/fs.c | 121 +++++++++++++++++++++++++++++++++++------
+ 3 files changed, 105 insertions(+), 19 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 4bb889fc980b..7853a876fc1c 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -716,7 +716,7 @@ static bool nd_alloc_stack(struct nameidata *nd)
+  * Rename can sometimes move a file or directory outside of a bind
+  * mount, path_connected allows those cases to be detected.
+  */
+-static bool path_connected(struct vfsmount *mnt, struct dentry *dentry)
++bool path_connected(struct vfsmount *mnt, struct dentry *dentry)
  {
--	int mnt_fd, err;
-+	int err;
+ 	struct super_block *sb = mnt->mnt_sb;
  
- 	/* set up token delegation mount options */
- 	err = set_delegate_mask(fs_fd, "delegate_cmds", opts->cmds, opts->cmds_str);
-@@ -136,12 +136,7 @@ static int materialize_bpffs_fd(int fs_fd, struct bpffs_opts *opts)
- 	if (err < 0)
- 		return -errno;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 4ec77da65f14..3c0e324a9272 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3252,6 +3252,7 @@ extern struct file * open_exec(const char *);
+ /* fs/dcache.c -- generic fs support functions */
+ extern bool is_subdir(struct dentry *, struct dentry *);
+ extern bool path_is_under(const struct path *, const struct path *);
++extern bool path_connected(struct vfsmount *mnt, struct dentry *dentry);
  
--	/* create O_PATH fd for detached mount */
--	mnt_fd = sys_fsmount(fs_fd, 0, 0);
--	if (err < 0)
--		return -errno;
--
--	return mnt_fd;
-+	return 0;
- }
+ extern char *file_path(struct file *, char *, int);
  
- /* send FD over Unix domain (AF_UNIX) socket */
-@@ -287,6 +282,7 @@ static void child(int sock_fd, struct bpffs_opts *opts, child_callback_fn callba
- {
- 	int mnt_fd = -1, fs_fd = -1, err = 0, bpffs_fd = -1, token_fd = -1;
- 	struct token_lsm *lsm_skel = NULL;
-+	char one;
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 1d6c4e728f92..51f03eb82069 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -768,7 +768,9 @@ static bool is_access_to_paths_allowed(
+ 	struct path walker_path;
+ 	access_mask_t access_masked_parent1, access_masked_parent2;
+ 	layer_mask_t _layer_masks_child1[LANDLOCK_NUM_ACCESS_FS],
+-		_layer_masks_child2[LANDLOCK_NUM_ACCESS_FS];
++		_layer_masks_child2[LANDLOCK_NUM_ACCESS_FS],
++		_layer_masks_parent1_bkp[LANDLOCK_NUM_ACCESS_FS],
++		_layer_masks_parent2_bkp[LANDLOCK_NUM_ACCESS_FS];
+ 	layer_mask_t(*layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS] = NULL,
+ 	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
  
- 	/* load and attach LSM "policy" before we go into unpriv userns */
- 	lsm_skel = token_lsm__open_and_load();
-@@ -333,13 +329,19 @@ static void child(int sock_fd, struct bpffs_opts *opts, child_callback_fn callba
- 	err = sendfd(sock_fd, fs_fd);
- 	if (!ASSERT_OK(err, "send_fs_fd"))
- 		goto cleanup;
--	zclose(fs_fd);
-+
-+	/* wait that the parent reads the fd, does the fsconfig() calls
-+	 * and send us a signal that it is done
-+	 */
-+	err = read(sock_fd, &one, sizeof(one));
-+	if (!ASSERT_GE(err, 0, "read_one"))
-+		goto cleanup;
- 
- 	/* avoid mucking around with mount namespaces and mounting at
--	 * well-known path, just get detach-mounted BPF FS fd back from parent
-+	 * well-known path, just create O_PATH fd for detached mount
- 	 */
--	err = recvfd(sock_fd, &mnt_fd);
--	if (!ASSERT_OK(err, "recv_mnt_fd"))
-+	mnt_fd = sys_fsmount(fs_fd, 0, 0);
-+	if (!ASSERT_OK_FD(mnt_fd, "mnt_fd"))
- 		goto cleanup;
- 
- 	/* try to fspick() BPF FS and try to add some delegation options */
-@@ -429,24 +431,24 @@ static int wait_for_pid(pid_t pid)
- 
- static void parent(int child_pid, struct bpffs_opts *bpffs_opts, int sock_fd)
- {
--	int fs_fd = -1, mnt_fd = -1, token_fd = -1, err;
-+	int fs_fd = -1, token_fd = -1, err;
-+	char one = 1;
- 
- 	err = recvfd(sock_fd, &fs_fd);
- 	if (!ASSERT_OK(err, "recv_bpffs_fd"))
- 		goto cleanup;
- 
--	mnt_fd = materialize_bpffs_fd(fs_fd, bpffs_opts);
--	if (!ASSERT_GE(mnt_fd, 0, "materialize_bpffs_fd")) {
-+	err = materialize_bpffs_fd(fs_fd, bpffs_opts);
-+	if (!ASSERT_GE(err, 0, "materialize_bpffs_fd")) {
- 		err = -EINVAL;
- 		goto cleanup;
+@@ -800,6 +802,8 @@ static bool is_access_to_paths_allowed(
+ 		access_masked_parent1 = access_masked_parent2 =
+ 			landlock_union_access_masks(domain).fs;
+ 		is_dom_check = true;
++		memcpy(&_layer_masks_parent2_bkp, layer_masks_parent2,
++		       sizeof(_layer_masks_parent2_bkp));
+ 	} else {
+ 		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
+ 			return false;
+@@ -807,6 +811,8 @@ static bool is_access_to_paths_allowed(
+ 		access_masked_parent1 = access_request_parent1;
+ 		access_masked_parent2 = access_request_parent2;
+ 		is_dom_check = false;
++		memcpy(&_layer_masks_parent1_bkp, layer_masks_parent1,
++		       sizeof(_layer_masks_parent1_bkp));
  	}
--	zclose(fs_fd);
  
--	/* pass BPF FS context object to parent */
--	err = sendfd(sock_fd, mnt_fd);
--	if (!ASSERT_OK(err, "send_mnt_fd"))
-+	/* notify the child that we did the fsconfig() calls and it can proceed. */
-+	err = write(sock_fd, &one, sizeof(one));
-+	if (!ASSERT_EQ(err, sizeof(one), "send_one"))
- 		goto cleanup;
--	zclose(mnt_fd);
-+	zclose(fs_fd);
+ 	if (unlikely(dentry_child1)) {
+@@ -858,6 +864,14 @@ static bool is_access_to_paths_allowed(
+ 				     child1_is_directory, layer_masks_parent2,
+ 				     layer_masks_child2,
+ 				     child2_is_directory))) {
++			/*
++			 * Rewinds walk for disconnected directories before any other state
++			 * change.
++			 */
++			if (unlikely(!path_connected(walker_path.mnt,
++						     walker_path.dentry)))
++				goto reset_to_mount_root;
++
+ 			/*
+ 			 * Now, downgrades the remaining checks from domain
+ 			 * handled accesses to requested accesses.
+@@ -893,14 +907,42 @@ static bool is_access_to_paths_allowed(
+ 					  ARRAY_SIZE(*layer_masks_parent2));
  
- 	/* receive BPF token FD back from child for some extra tests */
- 	err = recvfd(sock_fd, &token_fd);
-@@ -459,7 +461,6 @@ static void parent(int child_pid, struct bpffs_opts *bpffs_opts, int sock_fd)
- cleanup:
- 	zclose(sock_fd);
- 	zclose(fs_fd);
--	zclose(mnt_fd);
- 	zclose(token_fd);
+ 		/* Stops when a rule from each layer grants access. */
+-		if (allowed_parent1 && allowed_parent2)
++		if (allowed_parent1 && allowed_parent2) {
++			/*
++			 * Rewinds walk for disconnected directories before any other state
++			 * change.
++			 */
++			if (unlikely(!path_connected(walker_path.mnt,
++						     walker_path.dentry)))
++				goto reset_to_mount_root;
++
+ 			break;
++		}
++
+ jump_up:
+ 		if (walker_path.dentry == walker_path.mnt->mnt_root) {
+ 			if (follow_up(&walker_path)) {
++				/* Saves known good values. */
++				memcpy(&_layer_masks_parent1_bkp,
++				       layer_masks_parent1,
++				       sizeof(_layer_masks_parent1_bkp));
++				if (layer_masks_parent2)
++					memcpy(&_layer_masks_parent2_bkp,
++					       layer_masks_parent2,
++					       sizeof(_layer_masks_parent2_bkp));
++
+ 				/* Ignores hidden mount points. */
+ 				goto jump_up;
+ 			} else {
++				/*
++				 * Rewinds walk for disconnected directories before any other
++				 * state change.
++				 */
++				if (unlikely(!path_connected(
++					    walker_path.mnt,
++					    walker_path.dentry)))
++					goto reset_to_mount_root;
++
+ 				/*
+ 				 * Stops at the real root.  Denies access
+ 				 * because not all layers have granted access.
+@@ -909,20 +951,51 @@ static bool is_access_to_paths_allowed(
+ 			}
+ 		}
+ 		if (unlikely(IS_ROOT(walker_path.dentry))) {
+-			/*
+-			 * Stops at disconnected root directories.  Only allows
+-			 * access to internal filesystems (e.g. nsfs, which is
+-			 * reachable through /proc/<pid>/ns/<namespace>).
+-			 */
+ 			if (walker_path.mnt->mnt_flags & MNT_INTERNAL) {
++				/*
++				 * Stops and allows access when reaching disconnected root
++				 * directories that are part of internal filesystems (e.g. nsfs,
++				 * which is reachable through /proc/<pid>/ns/<namespace>).
++				 */
+ 				allowed_parent1 = true;
+ 				allowed_parent2 = true;
++				break;
++			} else {
++				/*
++				 * Ignores current walk in walker_path.mnt when reaching
++				 * disconnected root directories from bind mounts.  Reset the
++				 * collected access rights to the latest mount point (or @path)
++				 * we walked through, and start again from the current root of
++				 * the mount point.  The newly collected access rights will be
++				 * less than or equal to those at open time.
++				 */
++				goto reset_to_mount_root;
+ 			}
+-			break;
+ 		}
+ 		parent_dentry = dget_parent(walker_path.dentry);
+ 		dput(walker_path.dentry);
+ 		walker_path.dentry = parent_dentry;
++		continue;
++
++reset_to_mount_root:
++		/* Restores latest known good values. */
++		memcpy(layer_masks_parent1, &_layer_masks_parent1_bkp,
++		       sizeof(_layer_masks_parent1_bkp));
++		if (layer_masks_parent2)
++			memcpy(layer_masks_parent2, &_layer_masks_parent2_bkp,
++			       sizeof(_layer_masks_parent2_bkp));
++
++		/*
++		 * Ignores previous results.  They will be computed again with the next
++		 * iteration.
++		 */
++		allowed_parent1 = false;
++		allowed_parent2 = false;
++
++		/* Restarts with the current mount point. */
++		dput(walker_path.dentry);
++		walker_path.dentry = walker_path.mnt->mnt_root;
++		dget(walker_path.dentry);
+ 	}
+ 	path_put(&walker_path);
  
- 	if (child_pid > 0)
+@@ -1030,13 +1103,13 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
+  */
+ static bool collect_domain_accesses(
+ 	const struct landlock_ruleset *const domain,
+-	const struct dentry *const mnt_root, struct dentry *dir,
++	const struct path *const mnt_dir, struct dentry *dir,
+ 	layer_mask_t (*const layer_masks_dom)[LANDLOCK_NUM_ACCESS_FS])
+ {
+-	unsigned long access_dom;
++	access_mask_t access_dom;
+ 	bool ret = false;
+ 
+-	if (WARN_ON_ONCE(!domain || !mnt_root || !dir || !layer_masks_dom))
++	if (WARN_ON_ONCE(!domain || !mnt_dir || !dir || !layer_masks_dom))
+ 		return true;
+ 	if (is_nouser_or_private(dir))
+ 		return true;
+@@ -1053,6 +1126,10 @@ static bool collect_domain_accesses(
+ 		if (landlock_unmask_layers(find_rule(domain, dir), access_dom,
+ 					   layer_masks_dom,
+ 					   ARRAY_SIZE(*layer_masks_dom))) {
++			/* Ignores this walk if we end up in a disconnected directory. */
++			if (unlikely(!path_connected(mnt_dir->mnt, dir)))
++				goto cancel_walk;
++
+ 			/*
+ 			 * Stops when all handled accesses are allowed by at
+ 			 * least one rule in each layer.
+@@ -1061,13 +1138,23 @@ static bool collect_domain_accesses(
+ 			break;
+ 		}
+ 
+-		/* Stops at the mount point or disconnected root directories. */
+-		if (dir == mnt_root || IS_ROOT(dir))
++		/* Stops at the mount point. */
++		if (dir == mnt_dir->dentry)
+ 			break;
+ 
++		/* Ignores this walk if we end up in a disconnected root directory. */
++		if (unlikely(IS_ROOT(dir)))
++			goto cancel_walk;
++
+ 		parent_dentry = dget_parent(dir);
+ 		dput(dir);
+ 		dir = parent_dentry;
++		continue;
++
++cancel_walk:
++		landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
++					  layer_masks_dom, LANDLOCK_KEY_INODE);
++		break;
+ 	}
+ 	dput(dir);
+ 	return ret;
+@@ -1198,13 +1285,11 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 						      old_dentry->d_parent;
+ 
+ 	/* new_dir->dentry is equal to new_dentry->d_parent */
+-	allow_parent1 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
+-						old_parent,
+-						&layer_masks_parent1);
+-	allow_parent2 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
++	allow_parent1 = collect_domain_accesses(
++		subject->domain, &mnt_dir, old_parent, &layer_masks_parent1);
++	allow_parent2 = collect_domain_accesses(subject->domain, &mnt_dir,
+ 						new_dir->dentry,
+ 						&layer_masks_parent2);
+-
+ 	if (allow_parent1 && allow_parent2)
+ 		return 0;
+ 
 -- 
 2.50.0
 
