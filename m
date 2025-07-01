@@ -1,261 +1,837 @@
-Return-Path: <linux-fsdevel+bounces-53494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A23BAEF8B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 14:36:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23E3AEF8CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 14:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8538116A435
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 12:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B74881C0080F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 12:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5255F273819;
-	Tue,  1 Jul 2025 12:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0307B273D81;
+	Tue,  1 Jul 2025 12:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eOsvUrpJ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TUmRrzse";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nRdckrHW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cFUsBPG8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fdzvgwh4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2AD26F477
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 12:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5B71DA60D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 12:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751373386; cv=none; b=PobrnyuEByACLc6IOiZv5gDM7qp/0iLyI2H2IvEBbRDmV2rF7HYdEFWMgEIBD4LOvsFihgja9wa2VzFy6mmsaMVHJFRfrE5qOEaWhDb2UyKA3mEVJhTvUJfLCF1cCABbKgrIdaNoRbCWxX0Ct16LvIdhUuFK0kVHR7igf1mAm6A=
+	t=1751373506; cv=none; b=h4Y8nA+cs5eb+SkYAiw7DqMbB98yzlfrPyfG4xRl/JkImuViOGnKi5cytznif9mb0zsEzn3mpYTXiMezq4l8spcIsYEZT+QQHA0UbLSlISH+V0HGQQo4mGkG1JrWZ9FBMatHyecJed9RJXO9SpjHLLwRo3Nc8GsfQbnr7jTuT3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751373386; c=relaxed/simple;
-	bh=RSqTIjrct88sR7CZzH6GZUrUHcWswrjRQM40/qiNezA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OjsXmsJ0yawGsH8GzSh++MRzK9D5HvHiPus0nRfsMx4K8Is/kV8KaMLAx8vBAtguU5Gir+RMDM3Zd4gi7J1fcWOQ/o/Xs3pmRMeppdujvJ/63R8VX8gK4zHAA2MarmQDXRXREgF+VcRJqxnisLC4BC7XAaO6qmz9CP5+zL/mou8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eOsvUrpJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751373384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BWUS58/xuFehV84IBP/7jugiRMD3VIiL2+WOvgSmr/U=;
-	b=eOsvUrpJ0LOALtwLN0WKD0VCHfgjZuKZDMRrr3VNyIeZz9lNb9PT1kY6KBkExBHb9PlTsS
-	kxfvU9XEbT87u5GwdNoCuosF7MSLTuLeDFTfhfG6qDKBOKqghg5QasveGGUHEne5Ry6Tvo
-	cE5NwaBY1GJ5AMXNXYv5L5qsufDvEcU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-185-LF-5xnccNHeVtmQINMP87g-1; Tue, 01 Jul 2025 08:36:23 -0400
-X-MC-Unique: LF-5xnccNHeVtmQINMP87g-1
-X-Mimecast-MFC-AGG-ID: LF-5xnccNHeVtmQINMP87g_1751373382
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a50816ccc6so2255736f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jul 2025 05:36:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751373382; x=1751978182;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BWUS58/xuFehV84IBP/7jugiRMD3VIiL2+WOvgSmr/U=;
-        b=vabi6JBv70aeBjDRViQnoKoFAul/MTXrvTk+k8/6V8Fjwj1dVbJjg+EmL7AOYXee1E
-         Fxo+sD2GA8kp0iaGA5slk+Fwhnbf6qfhLnzsE93gByqGYsJQqudo6k+69Gan81daQ4jx
-         Tq3aUJW4BIueBl2Y68bMq85ut45kxY9OWAFB3Uw0VLUvD0BZ1kDYuqTTiUpMM+LnGHUJ
-         /xARtsijJ++iLWf3z1t7embhbzO173isxmRTQ8+dH7nV+ePVkc6NSVamuyqN6+Qx/zOr
-         2zF3G6Izx4G6wND3nbqdTq4o+bXg3aZF0ovA13CCNuSgqIA5E/fZA9C6BdAfWH7XqQNC
-         L3Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Vb+icsXOA7v1D+q5bH12x0nkyh0zdO7VbUSV6001Ft0+f/tapyzUZM4zg17gpyT5+ZEGDxX+BWb0Tqo3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGeqbg1DdMIiG0goMVABKA1C7LEtP7KpEbeJ/dHiJNDhx8/FrB
-	vyeDX9aXsgUKxKS6QZPhQ1xbAa6Od7+4uxUztktGkZMbQxdVfGtHZefVOz3eRGhwvq40yXSL27M
-	sNrkageLMPlFHJ9MlwYvaflp78XOcMkf27/f0WDfcrZwCqFjqXmfizekLoc0qsnqeOsc=
-X-Gm-Gg: ASbGncsJ5JHeBPuMyRUXOQ2DsEDGN30l5IuykHsib7hxn2RxhTKXJnmjm9LsX4S88/V
-	FsXkS5wj3hosbMzNCyq2+gumcfYyYYv48NOlN49ZE6LFULqvmtqSI8E0IWaC6BaROWoKT3OwGqW
-	stiE+Tt7q/CFIvIzVaSQLrutOMREAk7R05ff30yJiuiIU5heQtoDWTI7kac+nv0tIJmfFKJmpxI
-	P7MHeOK49iHjBnlB5NrOrJEA7Yt6wFwIpSQs/UTwqpwhRo73NKNt199Yii8MLE4JMLPqN05klbH
-	afOsBOYxbFrE3Qa6a+bFJKuvTq4QrcXB6vBw26I5J1gdjN5xhuEzDzIH7VcGvXaxNtOpnpcUGyU
-	7HtrFDqyVKiFMZ+UC9IHKiHhIqH27+buFFHMWg765TzK0X30UJA==
-X-Received: by 2002:adf:a21a:0:b0:3a5:88cf:479e with SMTP id ffacd0b85a97d-3a8fe79c8e3mr10444954f8f.48.1751373381329;
-        Tue, 01 Jul 2025 05:36:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqIR1BDJyK8ZRp8F0lL2pM8FI7W8fcFCGvncPeyeTD2kfxRgbkByPh+KE/B8iSSRVeA4M/aQ==
-X-Received: by 2002:adf:a21a:0:b0:3a5:88cf:479e with SMTP id ffacd0b85a97d-3a8fe79c8e3mr10444867f8f.48.1751373380689;
-        Tue, 01 Jul 2025 05:36:20 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f18:7500:202e:b0f1:76d6:f9af? (p200300d82f187500202eb0f176d6f9af.dip0.t-ipconnect.de. [2003:d8:2f18:7500:202e:b0f1:76d6:f9af])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a87e947431sm13174236f8f.0.2025.07.01.05.36.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 05:36:20 -0700 (PDT)
-Message-ID: <9af55241-8348-46a1-8f72-5ad7e61bcd84@redhat.com>
-Date: Tue, 1 Jul 2025 14:36:17 +0200
+	s=arc-20240116; t=1751373506; c=relaxed/simple;
+	bh=r9XUkDK6k5covBpTmy67KcB7tv3xPLVX3EqCwVGptqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsNIzk5zKpup1k96nSitXQCQ3Rs9Gs2WoEdid63i+aFxmyy9W7ACisyyVmoalhUYbRvbRE8AnDrhWrnF73jJzVffh4m7sHVLBVc3qr4l1F6fzGSKE6wDvYsZvsjHQ3kf03pA409jIzdffvWuQxrAUYBMzsVLF1dT4wb6bhKvz2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TUmRrzse; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nRdckrHW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cFUsBPG8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fdzvgwh4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7C2131F444;
+	Tue,  1 Jul 2025 12:38:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751373501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F7snTiFyHzeMiMewhy1BseBdTwMoEPOMwHTiq0jL+jM=;
+	b=TUmRrzsenALWMelaCW0Urzdwmc7zrislOuvwuNT4f1W+NyxZayagy9yaRJoZZBsXAJVIEf
+	NzSwmxH2BPnUd+O/Qn78k2iJHH9AXstUBQw/W2oQGSl9IhHMcn13bN6fYPv5cnc9UMFXyj
+	XCHXtGEZrup1Y8RQZACbkVdrTGaWTEA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751373501;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F7snTiFyHzeMiMewhy1BseBdTwMoEPOMwHTiq0jL+jM=;
+	b=nRdckrHWm7yUD/PRUhLtclhQoxM8h9/JcceB24Ikn1Hr3bshKvyBmTeH1xo9dhZwvfS7kT
+	B3D1cyXOYL/0//Ag==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751373500; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F7snTiFyHzeMiMewhy1BseBdTwMoEPOMwHTiq0jL+jM=;
+	b=cFUsBPG87xL1YCTkGMT/urlrKu/jl4Ado5moJMYpRIPnIdU82MLXLaouDGN92eOXcr8Yq5
+	rW9qqNHywnVt0In9PjZyuIjyoggbxIWk1J1JPRZyZNEcaTBRBYSaSSVdViBRIL0uhaoid7
+	751j4VMJxTlawel+NCdQqKG/tXySbAM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751373500;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F7snTiFyHzeMiMewhy1BseBdTwMoEPOMwHTiq0jL+jM=;
+	b=fdzvgwh4TuDG1he30wF6HokjJbmx51iI9e0xgrlNsfaarydd5Wk9ZxuOSRSVaMSg6m9dFq
+	asWZCSAvy6CIlrBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5BA1D1364B;
+	Tue,  1 Jul 2025 12:38:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xYBXFrzWY2jTawAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 01 Jul 2025 12:38:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E779EA0953; Tue,  1 Jul 2025 14:38:19 +0200 (CEST)
+Date: Tue, 1 Jul 2025 14:38:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 1/6] fs: split fileattr related helpers into separate
+ file
+Message-ID: <m43lttz4jxaiaiuxcxmzxust5et5odzeig2mnn5ea6wf5bdzef@sp3zmcu6jqd4>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-1-c4e3bc35227b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 18/29] mm: remove __folio_test_movable()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
- Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin
- <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>,
- Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Shakeel Butt <shakeel.butt@linux.dev>
-References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-19-david@redhat.com>
- <6e067746-9d18-4d04-a60a-536d5fee6b87@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6e067746-9d18-4d04-a60a-536d5fee6b87@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630-xattrat-syscall-v6-1-c4e3bc35227b@kernel.org>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,arndb.de,schaufler-ca.com,kernel.org,suse.cz,paul-moore.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
->> ---
->>   include/linux/page-flags.h |  6 ------
->>   mm/migrate.c               | 43 ++++++++++++--------------------------
->>   mm/vmscan.c                |  6 ++++--
->>   3 files changed, 17 insertions(+), 38 deletions(-)
->>
->> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->> index c67163b73c5ec..4c27ebb689e3c 100644
->> --- a/include/linux/page-flags.h
->> +++ b/include/linux/page-flags.h
->> @@ -744,12 +744,6 @@ static __always_inline bool PageAnon(const struct page *page)
->>   	return folio_test_anon(page_folio(page));
->>   }
->>
->> -static __always_inline bool __folio_test_movable(const struct folio *folio)
->> -{
->> -	return ((unsigned long)folio->mapping & PAGE_MAPPING_FLAGS) ==
->> -			PAGE_MAPPING_MOVABLE;
->> -}
->> -
+On Mon 30-06-25 18:20:11, Andrey Albershteyn wrote:
+> From: Andrey Albershteyn <aalbersh@kernel.org>
 > 
-> Woah, wait, does this mean we can remove PAGE_MAPPING_MOVABLE??
-
-Jup :)
-
+> This patch moves function related to file extended attributes
+> manipulations to separate file. Refactoring only.
 > 
-> Nice!
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/Makefile              |   3 +-
+>  fs/file_attr.c           | 318 +++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/ioctl.c               | 309 ---------------------------------------------
+>  include/linux/fileattr.h |   4 +
+>  4 files changed, 324 insertions(+), 310 deletions(-)
 > 
->>   static __always_inline bool page_has_movable_ops(const struct page *page)
->>   {
->>   	return ((unsigned long)page->mapping & PAGE_MAPPING_FLAGS) ==
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index 587af35b7390d..15d3c1031530c 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -219,12 +219,7 @@ void putback_movable_pages(struct list_head *l)
->>   			continue;
->>   		}
->>   		list_del(&folio->lru);
->> -		/*
->> -		 * We isolated non-lru movable folio so here we can use
->> -		 * __folio_test_movable because LRU folio's mapping cannot
->> -		 * have PAGE_MAPPING_MOVABLE.
->> -		 */
+> diff --git a/fs/Makefile b/fs/Makefile
+> index 79c08b914c47..334654f9584b 100644
+> --- a/fs/Makefile
+> +++ b/fs/Makefile
+> @@ -15,7 +15,8 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+>  		pnode.o splice.o sync.o utimes.o d_path.o \
+>  		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+>  		fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
+> -		kernel_read_file.o mnt_idmapping.o remap_range.o pidfs.o
+> +		kernel_read_file.o mnt_idmapping.o remap_range.o pidfs.o \
+> +		file_attr.o
+>  
+>  obj-$(CONFIG_BUFFER_HEAD)	+= buffer.o mpage.o
+>  obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
+> diff --git a/fs/file_attr.c b/fs/file_attr.c
+> new file mode 100644
+> index 000000000000..2910b7047721
+> --- /dev/null
+> +++ b/fs/file_attr.c
+> @@ -0,0 +1,318 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/fs.h>
+> +#include <linux/security.h>
+> +#include <linux/fscrypt.h>
+> +#include <linux/fileattr.h>
+> +
+> +/**
+> + * fileattr_fill_xflags - initialize fileattr with xflags
+> + * @fa:		fileattr pointer
+> + * @xflags:	FS_XFLAG_* flags
+> + *
+> + * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).  All
+> + * other fields are zeroed.
+> + */
+> +void fileattr_fill_xflags(struct fileattr *fa, u32 xflags)
+> +{
+> +	memset(fa, 0, sizeof(*fa));
+> +	fa->fsx_valid = true;
+> +	fa->fsx_xflags = xflags;
+> +	if (fa->fsx_xflags & FS_XFLAG_IMMUTABLE)
+> +		fa->flags |= FS_IMMUTABLE_FL;
+> +	if (fa->fsx_xflags & FS_XFLAG_APPEND)
+> +		fa->flags |= FS_APPEND_FL;
+> +	if (fa->fsx_xflags & FS_XFLAG_SYNC)
+> +		fa->flags |= FS_SYNC_FL;
+> +	if (fa->fsx_xflags & FS_XFLAG_NOATIME)
+> +		fa->flags |= FS_NOATIME_FL;
+> +	if (fa->fsx_xflags & FS_XFLAG_NODUMP)
+> +		fa->flags |= FS_NODUMP_FL;
+> +	if (fa->fsx_xflags & FS_XFLAG_DAX)
+> +		fa->flags |= FS_DAX_FL;
+> +	if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
+> +		fa->flags |= FS_PROJINHERIT_FL;
+> +}
+> +EXPORT_SYMBOL(fileattr_fill_xflags);
+> +
+> +/**
+> + * fileattr_fill_flags - initialize fileattr with flags
+> + * @fa:		fileattr pointer
+> + * @flags:	FS_*_FL flags
+> + *
+> + * Set ->flags, ->flags_valid and ->fsx_xflags (translated flags).
+> + * All other fields are zeroed.
+> + */
+> +void fileattr_fill_flags(struct fileattr *fa, u32 flags)
+> +{
+> +	memset(fa, 0, sizeof(*fa));
+> +	fa->flags_valid = true;
+> +	fa->flags = flags;
+> +	if (fa->flags & FS_SYNC_FL)
+> +		fa->fsx_xflags |= FS_XFLAG_SYNC;
+> +	if (fa->flags & FS_IMMUTABLE_FL)
+> +		fa->fsx_xflags |= FS_XFLAG_IMMUTABLE;
+> +	if (fa->flags & FS_APPEND_FL)
+> +		fa->fsx_xflags |= FS_XFLAG_APPEND;
+> +	if (fa->flags & FS_NODUMP_FL)
+> +		fa->fsx_xflags |= FS_XFLAG_NODUMP;
+> +	if (fa->flags & FS_NOATIME_FL)
+> +		fa->fsx_xflags |= FS_XFLAG_NOATIME;
+> +	if (fa->flags & FS_DAX_FL)
+> +		fa->fsx_xflags |= FS_XFLAG_DAX;
+> +	if (fa->flags & FS_PROJINHERIT_FL)
+> +		fa->fsx_xflags |= FS_XFLAG_PROJINHERIT;
+> +}
+> +EXPORT_SYMBOL(fileattr_fill_flags);
+> +
+> +/**
+> + * vfs_fileattr_get - retrieve miscellaneous file attributes
+> + * @dentry:	the object to retrieve from
+> + * @fa:		fileattr pointer
+> + *
+> + * Call i_op->fileattr_get() callback, if exists.
+> + *
+> + * Return: 0 on success, or a negative error on failure.
+> + */
+> +int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+> +{
+> +	struct inode *inode = d_inode(dentry);
+> +
+> +	if (!inode->i_op->fileattr_get)
+> +		return -ENOIOCTLCMD;
+> +
+> +	return inode->i_op->fileattr_get(dentry, fa);
+> +}
+> +EXPORT_SYMBOL(vfs_fileattr_get);
+> +
+> +/**
+> + * copy_fsxattr_to_user - copy fsxattr to userspace.
+> + * @fa:		fileattr pointer
+> + * @ufa:	fsxattr user pointer
+> + *
+> + * Return: 0 on success, or -EFAULT on failure.
+> + */
+> +int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxattr __user *ufa)
+> +{
+> +	struct fsxattr xfa;
+> +
+> +	memset(&xfa, 0, sizeof(xfa));
+> +	xfa.fsx_xflags = fa->fsx_xflags;
+> +	xfa.fsx_extsize = fa->fsx_extsize;
+> +	xfa.fsx_nextents = fa->fsx_nextents;
+> +	xfa.fsx_projid = fa->fsx_projid;
+> +	xfa.fsx_cowextsize = fa->fsx_cowextsize;
+> +
+> +	if (copy_to_user(ufa, &xfa, sizeof(xfa)))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(copy_fsxattr_to_user);
+> +
+> +static int copy_fsxattr_from_user(struct fileattr *fa,
+> +				  struct fsxattr __user *ufa)
+> +{
+> +	struct fsxattr xfa;
+> +
+> +	if (copy_from_user(&xfa, ufa, sizeof(xfa)))
+> +		return -EFAULT;
+> +
+> +	fileattr_fill_xflags(fa, xfa.fsx_xflags);
+> +	fa->fsx_extsize = xfa.fsx_extsize;
+> +	fa->fsx_nextents = xfa.fsx_nextents;
+> +	fa->fsx_projid = xfa.fsx_projid;
+> +	fa->fsx_cowextsize = xfa.fsx_cowextsize;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Generic function to check FS_IOC_FSSETXATTR/FS_IOC_SETFLAGS values and reject
+> + * any invalid configurations.
+> + *
+> + * Note: must be called with inode lock held.
+> + */
+> +static int fileattr_set_prepare(struct inode *inode,
+> +			      const struct fileattr *old_ma,
+> +			      struct fileattr *fa)
+> +{
+> +	int err;
+> +
+> +	/*
+> +	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
+> +	 * the relevant capability.
+> +	 */
+> +	if ((fa->flags ^ old_ma->flags) & (FS_APPEND_FL | FS_IMMUTABLE_FL) &&
+> +	    !capable(CAP_LINUX_IMMUTABLE))
+> +		return -EPERM;
+> +
+> +	err = fscrypt_prepare_setflags(inode, old_ma->flags, fa->flags);
+> +	if (err)
+> +		return err;
+> +
+> +	/*
+> +	 * Project Quota ID state is only allowed to change from within the init
+> +	 * namespace. Enforce that restriction only if we are trying to change
+> +	 * the quota ID state. Everything else is allowed in user namespaces.
+> +	 */
+> +	if (current_user_ns() != &init_user_ns) {
+> +		if (old_ma->fsx_projid != fa->fsx_projid)
+> +			return -EINVAL;
+> +		if ((old_ma->fsx_xflags ^ fa->fsx_xflags) &
+> +				FS_XFLAG_PROJINHERIT)
+> +			return -EINVAL;
+> +	} else {
+> +		/*
+> +		 * Caller is allowed to change the project ID. If it is being
+> +		 * changed, make sure that the new value is valid.
+> +		 */
+> +		if (old_ma->fsx_projid != fa->fsx_projid &&
+> +		    !projid_valid(make_kprojid(&init_user_ns, fa->fsx_projid)))
+> +			return -EINVAL;
+> +	}
+> +
+> +	/* Check extent size hints. */
+> +	if ((fa->fsx_xflags & FS_XFLAG_EXTSIZE) && !S_ISREG(inode->i_mode))
+> +		return -EINVAL;
+> +
+> +	if ((fa->fsx_xflags & FS_XFLAG_EXTSZINHERIT) &&
+> +			!S_ISDIR(inode->i_mode))
+> +		return -EINVAL;
+> +
+> +	if ((fa->fsx_xflags & FS_XFLAG_COWEXTSIZE) &&
+> +	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * It is only valid to set the DAX flag on regular files and
+> +	 * directories on filesystems.
+> +	 */
+> +	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
+> +	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+> +		return -EINVAL;
+> +
+> +	/* Extent size hints of zero turn off the flags. */
+> +	if (fa->fsx_extsize == 0)
+> +		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
+> +	if (fa->fsx_cowextsize == 0)
+> +		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * vfs_fileattr_set - change miscellaneous file attributes
+> + * @idmap:	idmap of the mount
+> + * @dentry:	the object to change
+> + * @fa:		fileattr pointer
+> + *
+> + * After verifying permissions, call i_op->fileattr_set() callback, if
+> + * exists.
+> + *
+> + * Verifying attributes involves retrieving current attributes with
+> + * i_op->fileattr_get(), this also allows initializing attributes that have
+> + * not been set by the caller to current values.  Inode lock is held
+> + * thoughout to prevent racing with another instance.
+> + *
+> + * Return: 0 on success, or a negative error on failure.
+> + */
+> +int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+> +		     struct fileattr *fa)
+> +{
+> +	struct inode *inode = d_inode(dentry);
+> +	struct fileattr old_ma = {};
+> +	int err;
+> +
+> +	if (!inode->i_op->fileattr_set)
+> +		return -ENOIOCTLCMD;
+> +
+> +	if (!inode_owner_or_capable(idmap, inode))
+> +		return -EPERM;
+> +
+> +	inode_lock(inode);
+> +	err = vfs_fileattr_get(dentry, &old_ma);
+> +	if (!err) {
+> +		/* initialize missing bits from old_ma */
+> +		if (fa->flags_valid) {
+> +			fa->fsx_xflags |= old_ma.fsx_xflags & ~FS_XFLAG_COMMON;
+> +			fa->fsx_extsize = old_ma.fsx_extsize;
+> +			fa->fsx_nextents = old_ma.fsx_nextents;
+> +			fa->fsx_projid = old_ma.fsx_projid;
+> +			fa->fsx_cowextsize = old_ma.fsx_cowextsize;
+> +		} else {
+> +			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
+> +		}
+> +		err = fileattr_set_prepare(inode, &old_ma, fa);
+> +		if (!err)
+> +			err = inode->i_op->fileattr_set(idmap, dentry, fa);
+> +	}
+> +	inode_unlock(inode);
+> +
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(vfs_fileattr_set);
+> +
+> +int ioctl_getflags(struct file *file, unsigned int __user *argp)
+> +{
+> +	struct fileattr fa = { .flags_valid = true }; /* hint only */
+> +	int err;
+> +
+> +	err = vfs_fileattr_get(file->f_path.dentry, &fa);
+> +	if (!err)
+> +		err = put_user(fa.flags, argp);
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(ioctl_getflags);
+> +
+> +int ioctl_setflags(struct file *file, unsigned int __user *argp)
+> +{
+> +	struct mnt_idmap *idmap = file_mnt_idmap(file);
+> +	struct dentry *dentry = file->f_path.dentry;
+> +	struct fileattr fa;
+> +	unsigned int flags;
+> +	int err;
+> +
+> +	err = get_user(flags, argp);
+> +	if (!err) {
+> +		err = mnt_want_write_file(file);
+> +		if (!err) {
+> +			fileattr_fill_flags(&fa, flags);
+> +			err = vfs_fileattr_set(idmap, dentry, &fa);
+> +			mnt_drop_write_file(file);
+> +		}
+> +	}
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(ioctl_setflags);
+> +
+> +int ioctl_fsgetxattr(struct file *file, void __user *argp)
+> +{
+> +	struct fileattr fa = { .fsx_valid = true }; /* hint only */
+> +	int err;
+> +
+> +	err = vfs_fileattr_get(file->f_path.dentry, &fa);
+> +	if (!err)
+> +		err = copy_fsxattr_to_user(&fa, argp);
+> +
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(ioctl_fsgetxattr);
+> +
+> +int ioctl_fssetxattr(struct file *file, void __user *argp)
+> +{
+> +	struct mnt_idmap *idmap = file_mnt_idmap(file);
+> +	struct dentry *dentry = file->f_path.dentry;
+> +	struct fileattr fa;
+> +	int err;
+> +
+> +	err = copy_fsxattr_from_user(&fa, argp);
+> +	if (!err) {
+> +		err = mnt_want_write_file(file);
+> +		if (!err) {
+> +			err = vfs_fileattr_set(idmap, dentry, &fa);
+> +			mnt_drop_write_file(file);
+> +		}
+> +	}
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(ioctl_fssetxattr);
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 69107a245b4c..0248cb8db2d3 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -453,315 +453,6 @@ static int ioctl_file_dedupe_range(struct file *file,
+>  	return ret;
+>  }
+>  
+> -/**
+> - * fileattr_fill_xflags - initialize fileattr with xflags
+> - * @fa:		fileattr pointer
+> - * @xflags:	FS_XFLAG_* flags
+> - *
+> - * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).  All
+> - * other fields are zeroed.
+> - */
+> -void fileattr_fill_xflags(struct fileattr *fa, u32 xflags)
+> -{
+> -	memset(fa, 0, sizeof(*fa));
+> -	fa->fsx_valid = true;
+> -	fa->fsx_xflags = xflags;
+> -	if (fa->fsx_xflags & FS_XFLAG_IMMUTABLE)
+> -		fa->flags |= FS_IMMUTABLE_FL;
+> -	if (fa->fsx_xflags & FS_XFLAG_APPEND)
+> -		fa->flags |= FS_APPEND_FL;
+> -	if (fa->fsx_xflags & FS_XFLAG_SYNC)
+> -		fa->flags |= FS_SYNC_FL;
+> -	if (fa->fsx_xflags & FS_XFLAG_NOATIME)
+> -		fa->flags |= FS_NOATIME_FL;
+> -	if (fa->fsx_xflags & FS_XFLAG_NODUMP)
+> -		fa->flags |= FS_NODUMP_FL;
+> -	if (fa->fsx_xflags & FS_XFLAG_DAX)
+> -		fa->flags |= FS_DAX_FL;
+> -	if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
+> -		fa->flags |= FS_PROJINHERIT_FL;
+> -}
+> -EXPORT_SYMBOL(fileattr_fill_xflags);
+> -
+> -/**
+> - * fileattr_fill_flags - initialize fileattr with flags
+> - * @fa:		fileattr pointer
+> - * @flags:	FS_*_FL flags
+> - *
+> - * Set ->flags, ->flags_valid and ->fsx_xflags (translated flags).
+> - * All other fields are zeroed.
+> - */
+> -void fileattr_fill_flags(struct fileattr *fa, u32 flags)
+> -{
+> -	memset(fa, 0, sizeof(*fa));
+> -	fa->flags_valid = true;
+> -	fa->flags = flags;
+> -	if (fa->flags & FS_SYNC_FL)
+> -		fa->fsx_xflags |= FS_XFLAG_SYNC;
+> -	if (fa->flags & FS_IMMUTABLE_FL)
+> -		fa->fsx_xflags |= FS_XFLAG_IMMUTABLE;
+> -	if (fa->flags & FS_APPEND_FL)
+> -		fa->fsx_xflags |= FS_XFLAG_APPEND;
+> -	if (fa->flags & FS_NODUMP_FL)
+> -		fa->fsx_xflags |= FS_XFLAG_NODUMP;
+> -	if (fa->flags & FS_NOATIME_FL)
+> -		fa->fsx_xflags |= FS_XFLAG_NOATIME;
+> -	if (fa->flags & FS_DAX_FL)
+> -		fa->fsx_xflags |= FS_XFLAG_DAX;
+> -	if (fa->flags & FS_PROJINHERIT_FL)
+> -		fa->fsx_xflags |= FS_XFLAG_PROJINHERIT;
+> -}
+> -EXPORT_SYMBOL(fileattr_fill_flags);
+> -
+> -/**
+> - * vfs_fileattr_get - retrieve miscellaneous file attributes
+> - * @dentry:	the object to retrieve from
+> - * @fa:		fileattr pointer
+> - *
+> - * Call i_op->fileattr_get() callback, if exists.
+> - *
+> - * Return: 0 on success, or a negative error on failure.
+> - */
+> -int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+> -{
+> -	struct inode *inode = d_inode(dentry);
+> -
+> -	if (!inode->i_op->fileattr_get)
+> -		return -ENOIOCTLCMD;
+> -
+> -	return inode->i_op->fileattr_get(dentry, fa);
+> -}
+> -EXPORT_SYMBOL(vfs_fileattr_get);
+> -
+> -/**
+> - * copy_fsxattr_to_user - copy fsxattr to userspace.
+> - * @fa:		fileattr pointer
+> - * @ufa:	fsxattr user pointer
+> - *
+> - * Return: 0 on success, or -EFAULT on failure.
+> - */
+> -int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxattr __user *ufa)
+> -{
+> -	struct fsxattr xfa;
+> -
+> -	memset(&xfa, 0, sizeof(xfa));
+> -	xfa.fsx_xflags = fa->fsx_xflags;
+> -	xfa.fsx_extsize = fa->fsx_extsize;
+> -	xfa.fsx_nextents = fa->fsx_nextents;
+> -	xfa.fsx_projid = fa->fsx_projid;
+> -	xfa.fsx_cowextsize = fa->fsx_cowextsize;
+> -
+> -	if (copy_to_user(ufa, &xfa, sizeof(xfa)))
+> -		return -EFAULT;
+> -
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL(copy_fsxattr_to_user);
+> -
+> -static int copy_fsxattr_from_user(struct fileattr *fa,
+> -				  struct fsxattr __user *ufa)
+> -{
+> -	struct fsxattr xfa;
+> -
+> -	if (copy_from_user(&xfa, ufa, sizeof(xfa)))
+> -		return -EFAULT;
+> -
+> -	fileattr_fill_xflags(fa, xfa.fsx_xflags);
+> -	fa->fsx_extsize = xfa.fsx_extsize;
+> -	fa->fsx_nextents = xfa.fsx_nextents;
+> -	fa->fsx_projid = xfa.fsx_projid;
+> -	fa->fsx_cowextsize = xfa.fsx_cowextsize;
+> -
+> -	return 0;
+> -}
+> -
+> -/*
+> - * Generic function to check FS_IOC_FSSETXATTR/FS_IOC_SETFLAGS values and reject
+> - * any invalid configurations.
+> - *
+> - * Note: must be called with inode lock held.
+> - */
+> -static int fileattr_set_prepare(struct inode *inode,
+> -			      const struct fileattr *old_ma,
+> -			      struct fileattr *fa)
+> -{
+> -	int err;
+> -
+> -	/*
+> -	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
+> -	 * the relevant capability.
+> -	 */
+> -	if ((fa->flags ^ old_ma->flags) & (FS_APPEND_FL | FS_IMMUTABLE_FL) &&
+> -	    !capable(CAP_LINUX_IMMUTABLE))
+> -		return -EPERM;
+> -
+> -	err = fscrypt_prepare_setflags(inode, old_ma->flags, fa->flags);
+> -	if (err)
+> -		return err;
+> -
+> -	/*
+> -	 * Project Quota ID state is only allowed to change from within the init
+> -	 * namespace. Enforce that restriction only if we are trying to change
+> -	 * the quota ID state. Everything else is allowed in user namespaces.
+> -	 */
+> -	if (current_user_ns() != &init_user_ns) {
+> -		if (old_ma->fsx_projid != fa->fsx_projid)
+> -			return -EINVAL;
+> -		if ((old_ma->fsx_xflags ^ fa->fsx_xflags) &
+> -				FS_XFLAG_PROJINHERIT)
+> -			return -EINVAL;
+> -	} else {
+> -		/*
+> -		 * Caller is allowed to change the project ID. If it is being
+> -		 * changed, make sure that the new value is valid.
+> -		 */
+> -		if (old_ma->fsx_projid != fa->fsx_projid &&
+> -		    !projid_valid(make_kprojid(&init_user_ns, fa->fsx_projid)))
+> -			return -EINVAL;
+> -	}
+> -
+> -	/* Check extent size hints. */
+> -	if ((fa->fsx_xflags & FS_XFLAG_EXTSIZE) && !S_ISREG(inode->i_mode))
+> -		return -EINVAL;
+> -
+> -	if ((fa->fsx_xflags & FS_XFLAG_EXTSZINHERIT) &&
+> -			!S_ISDIR(inode->i_mode))
+> -		return -EINVAL;
+> -
+> -	if ((fa->fsx_xflags & FS_XFLAG_COWEXTSIZE) &&
+> -	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
+> -		return -EINVAL;
+> -
+> -	/*
+> -	 * It is only valid to set the DAX flag on regular files and
+> -	 * directories on filesystems.
+> -	 */
+> -	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
+> -	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+> -		return -EINVAL;
+> -
+> -	/* Extent size hints of zero turn off the flags. */
+> -	if (fa->fsx_extsize == 0)
+> -		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
+> -	if (fa->fsx_cowextsize == 0)
+> -		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
+> -
+> -	return 0;
+> -}
+> -
+> -/**
+> - * vfs_fileattr_set - change miscellaneous file attributes
+> - * @idmap:	idmap of the mount
+> - * @dentry:	the object to change
+> - * @fa:		fileattr pointer
+> - *
+> - * After verifying permissions, call i_op->fileattr_set() callback, if
+> - * exists.
+> - *
+> - * Verifying attributes involves retrieving current attributes with
+> - * i_op->fileattr_get(), this also allows initializing attributes that have
+> - * not been set by the caller to current values.  Inode lock is held
+> - * thoughout to prevent racing with another instance.
+> - *
+> - * Return: 0 on success, or a negative error on failure.
+> - */
+> -int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+> -		     struct fileattr *fa)
+> -{
+> -	struct inode *inode = d_inode(dentry);
+> -	struct fileattr old_ma = {};
+> -	int err;
+> -
+> -	if (!inode->i_op->fileattr_set)
+> -		return -ENOIOCTLCMD;
+> -
+> -	if (!inode_owner_or_capable(idmap, inode))
+> -		return -EPERM;
+> -
+> -	inode_lock(inode);
+> -	err = vfs_fileattr_get(dentry, &old_ma);
+> -	if (!err) {
+> -		/* initialize missing bits from old_ma */
+> -		if (fa->flags_valid) {
+> -			fa->fsx_xflags |= old_ma.fsx_xflags & ~FS_XFLAG_COMMON;
+> -			fa->fsx_extsize = old_ma.fsx_extsize;
+> -			fa->fsx_nextents = old_ma.fsx_nextents;
+> -			fa->fsx_projid = old_ma.fsx_projid;
+> -			fa->fsx_cowextsize = old_ma.fsx_cowextsize;
+> -		} else {
+> -			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
+> -		}
+> -		err = fileattr_set_prepare(inode, &old_ma, fa);
+> -		if (!err)
+> -			err = inode->i_op->fileattr_set(idmap, dentry, fa);
+> -	}
+> -	inode_unlock(inode);
+> -
+> -	return err;
+> -}
+> -EXPORT_SYMBOL(vfs_fileattr_set);
+> -
+> -static int ioctl_getflags(struct file *file, unsigned int __user *argp)
+> -{
+> -	struct fileattr fa = { .flags_valid = true }; /* hint only */
+> -	int err;
+> -
+> -	err = vfs_fileattr_get(file->f_path.dentry, &fa);
+> -	if (!err)
+> -		err = put_user(fa.flags, argp);
+> -	return err;
+> -}
+> -
+> -static int ioctl_setflags(struct file *file, unsigned int __user *argp)
+> -{
+> -	struct mnt_idmap *idmap = file_mnt_idmap(file);
+> -	struct dentry *dentry = file->f_path.dentry;
+> -	struct fileattr fa;
+> -	unsigned int flags;
+> -	int err;
+> -
+> -	err = get_user(flags, argp);
+> -	if (!err) {
+> -		err = mnt_want_write_file(file);
+> -		if (!err) {
+> -			fileattr_fill_flags(&fa, flags);
+> -			err = vfs_fileattr_set(idmap, dentry, &fa);
+> -			mnt_drop_write_file(file);
+> -		}
+> -	}
+> -	return err;
+> -}
+> -
+> -static int ioctl_fsgetxattr(struct file *file, void __user *argp)
+> -{
+> -	struct fileattr fa = { .fsx_valid = true }; /* hint only */
+> -	int err;
+> -
+> -	err = vfs_fileattr_get(file->f_path.dentry, &fa);
+> -	if (!err)
+> -		err = copy_fsxattr_to_user(&fa, argp);
+> -
+> -	return err;
+> -}
+> -
+> -static int ioctl_fssetxattr(struct file *file, void __user *argp)
+> -{
+> -	struct mnt_idmap *idmap = file_mnt_idmap(file);
+> -	struct dentry *dentry = file->f_path.dentry;
+> -	struct fileattr fa;
+> -	int err;
+> -
+> -	err = copy_fsxattr_from_user(&fa, argp);
+> -	if (!err) {
+> -		err = mnt_want_write_file(file);
+> -		if (!err) {
+> -			err = vfs_fileattr_set(idmap, dentry, &fa);
+> -			mnt_drop_write_file(file);
+> -		}
+> -	}
+> -	return err;
+> -}
+> -
+>  static int ioctl_getfsuuid(struct file *file, void __user *argp)
+>  {
+>  	struct super_block *sb = file_inode(file)->i_sb;
+> diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
+> index 47c05a9851d0..6030d0bf7ad3 100644
+> --- a/include/linux/fileattr.h
+> +++ b/include/linux/fileattr.h
+> @@ -55,5 +55,9 @@ static inline bool fileattr_has_fsx(const struct fileattr *fa)
+>  int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa);
+>  int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+>  		     struct fileattr *fa);
+> +int ioctl_getflags(struct file *file, unsigned int __user *argp);
+> +int ioctl_setflags(struct file *file, unsigned int __user *argp);
+> +int ioctl_fsgetxattr(struct file *file, void __user *argp);
+> +int ioctl_fssetxattr(struct file *file, void __user *argp);
+>  
+>  #endif /* _LINUX_FILEATTR_H */
 > 
-> So hate these references to 'LRU' as in meaning 'pages that could be on the
-> LRU'.
-
-Yeah, it's a historical thing.
-
-But for anything we isolated, it had to be an LRU folio (PageLRU) 
-because that's how we were even able to isolate it ... from the LRU.
-
-[...]
-
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index 098bcc821fc74..103dfc729a823 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -1658,9 +1658,11 @@ unsigned int reclaim_clean_pages_from_list(struct zone *zone,
->>   	unsigned int noreclaim_flag;
->>
->>   	list_for_each_entry_safe(folio, next, folio_list, lru) {
->> +		/* TODO: these pages should not even appear in this list. */
->> +		if (page_has_movable_ops(&folio->page))
+> -- 
+> 2.47.2
 > 
-> VM_WARN_ON_ONCE()?
-
-Well, no, it can currently still happen. But really, movable_ops pages 
-are not folios that could ever be reclaimed that way.
-
-So the TODO highlights that movable_ops pages should never even be put 
-in a list (page->lru will go away).
-
 -- 
-Cheers,
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
