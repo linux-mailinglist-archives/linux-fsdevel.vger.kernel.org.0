@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-53487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9B7AEF879
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 14:29:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0611AEF888
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 14:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 940D3188304E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 12:29:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5B8C1882702
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 12:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4827B27585F;
-	Tue,  1 Jul 2025 12:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62E9273D9D;
+	Tue,  1 Jul 2025 12:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L7L336aG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bZwujR4n"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176792749FA
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 12:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFCB273D60
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 12:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751372731; cv=none; b=Ifi9Z2dHSlVuU77WWOvde8e7EWU8o9MneDJu0xUNp2u7/aMCH6/9+y3g2JZtM0DB6f/EAEUbgm2+2bo07KX3hTh9/8nosaVOrdJPyMQ6knByVj8gRYP0NbXDh3gbCdionp0LFlEY6f8u/e1Rt8Q4uBu3H/VgTMaKZnOTp8kUVCU=
+	t=1751372837; cv=none; b=kJ+SkleGlEjEUqHCnk9MT5b+4Jweq0MKHdAntlvPs0hOAvW+pB2eeW1d3G44v5goa1njlCbeWwbi2zskHkUQdioybFbZEUIrRB1y7Zbtyez13zyTKzeIlGi28n/gz2hZateVQHJs7m+y3AOiV3zFfFwSiJfNL791puSpJWTUzGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751372731; c=relaxed/simple;
-	bh=z/CCrJhSfJ+0N7wRoqbjcqIKdxPJ8urhIm9XK/idS34=;
+	s=arc-20240116; t=1751372837; c=relaxed/simple;
+	bh=j8plwK2r2sG78eupDPTV2+LjtVXteF6QvQSBw1+y/1g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jk3MbbvUhxQLRmyB4dBOCwhU4FB0y3xNLBSGEwPXeRMoZfWdTHPtFd19Ma4LjnPaTg9KB40ivqpDRG7C1RlDugrRLe9raQiG6uH+r7bhDl5KjixWPk/3sESPUW0DH3rhQm+BS21avtl57NCzH/cDksp6r8k0vj1DoPq/UOxenbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L7L336aG; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=ShgEdQX/5Ngq2G4hBmVvW92tDels2CG4GidOL+Hg1wb6/YsvpDdXm8l5Huw0MkzapJ1+4R+IKjZ8M8P2Nxl7dK7JnyX+CI0VuY5H+YFtenTjUWpw72gB8L11Nk51U/FW191zSCDUrgsJM4huUF18H/lKMtBJ3dxoAoSrEkWU5Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bZwujR4n; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751372728;
+	s=mimecast20190719; t=1751372834;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tj8pB/rMHLZ+6PtFNz+xS6WiL3VVVwDceOqfATE3uy4=;
-	b=L7L336aG3jcvnsPEILzPAkjcMGwURYyRoGMm0tVWWSdptOtjdhnq58rzT/XIeyA9U+PhVs
-	77425gDj1bzBDDGgb96ZKOBKvlCI/ygTvlcE3+DEZKOFSNH5X0OUoFozOHXnYcgDtm+qEb
-	xwcGvpQtz38xkQRbbgoJGhV9EaClvfY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=FEHfRalLuIEVVtsEsS9C6ifi6aMXwZRzg5zr/B5tJXU=;
+	b=bZwujR4nGDTROJ+A44j/vKfT2fGw+bK0Llvb4Obsl93vIqY7EQISzJsDeodQ1AIgyT6mlc
+	9tVzB5X8dOFoRZA8El1qmE2SVockiNi/cdNOcs6SNmce3+z2w6uI6oFJaL/GonFtSBtjbj
+	/EwKbBnw6VR5jy9zkjOmGb/1Jv726Zs=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-pdVHXCMGNCaWRf8XgIvgqQ-1; Tue, 01 Jul 2025 08:25:27 -0400
-X-MC-Unique: pdVHXCMGNCaWRf8XgIvgqQ-1
-X-Mimecast-MFC-AGG-ID: pdVHXCMGNCaWRf8XgIvgqQ_1751372727
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45359bfe631so26802625e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jul 2025 05:25:27 -0700 (PDT)
+ us-mta-624-qrBK446mPAOsDNlHeBUhbw-1; Tue, 01 Jul 2025 08:27:11 -0400
+X-MC-Unique: qrBK446mPAOsDNlHeBUhbw-1
+X-Mimecast-MFC-AGG-ID: qrBK446mPAOsDNlHeBUhbw_1751372830
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-452ff9e054eso26761765e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jul 2025 05:27:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751372726; x=1751977526;
+        d=1e100.net; s=20230601; t=1751372830; x=1751977630;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=tj8pB/rMHLZ+6PtFNz+xS6WiL3VVVwDceOqfATE3uy4=;
-        b=MOFv6iv9GXtD+iKNBdYSr+nBua4U3jt7qKAgflw51YUOojZqL8hQ1hu4vW0GTMfmwt
-         pFsvhGtsOtZ1Bt/K4KsBYDeLd2yEooxa3/4VOL1AdQsfH1db69QcJObpr+KslHEL40DX
-         5thQ4mc8g0UaFjFIaV/nDJ3P6Fu8iPiwBbwB9hnQUytw+iHvMlJ10TMpXU9w2p9lkpAb
-         6R9QsAbpl4YeK/rINlcZGl4W+Mh2fzshpEzXjBT4HPMZmvXDZbEbgSyEVA99/8fRSCU6
-         8x4QzSLdLl6Z6ybSu3mOM+b8bfoY5eAcHbijMQl3UxZQX1OriSDO0dW3ayw5+JDSNBAJ
-         59Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVHTTkxNfugaH64+FTJmGTSmxKd4Gz6OwgsjzzLwL6dI0k8zZygPfbmG+/AArKinqH6sp7QLgVyRojLCCnN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH8wuHa1X74y3yxl12bVEDN8/p3mc6gyF4nDpY2Vwqix8sZST+
-	rxwz96pX8FXbtZk+nKNwdzknnqeKSeiQsf8+d9MTUYTb7tqyZ3Vl6CYUOLpRsnZkTo3GxV1ZpZI
-	NZ+bNapRbLuMhew923hf3ZYk5YxuHg7P6gWgMQBxTe9B0660mbTAMcw7gNAWGRS9G5w8=
-X-Gm-Gg: ASbGncuBhCrotHd2hU4BykClCUBUOIe1dB/DaHvqQRtXXgqw1Q+90oVVTSR3mLl6IjI
-	z5r03U4qvkv7EQC5qmMuerIkUbT2rnJzQux8QhS36pet1zvpMi+vD7vES1E0XnHhm/KVMiKL5h+
-	8eSbedbfFpdlsqtaZ1g+9QboeGQsUqMpzpuz+fxxKBrkUdS3iEiARCAXp+oYRcQ+ltWJ7DgSyo9
-	u++zAmvrG71FuRPeAnRKi0fYd2QwKcLp6Y7t8CsmKZaJqHOqfUvj1K4gjHU7iW4vG/DZTsEdsZs
-	zK3geo+UB5oR4bmH3tHaswISqB3KzzcZZ59LvaZtvGCW9Q8rA0htpVgVE8w1mYEZsOACmH4aJ8h
-	qhu+RmAEYt5V6MtFHLR8B+zpWmwUhtpypdqAt/AIKJPM65ovj1Q==
-X-Received: by 2002:a05:600c:198a:b0:442:ccf9:e6f2 with SMTP id 5b1f17b1804b1-4538ee7df15mr201513255e9.16.1751372726381;
-        Tue, 01 Jul 2025 05:25:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtxNR73SFMqIoSFe5cIm5GNMerZkIb6R08bnmv81T1e6WZOFEwjwh+c20OjBL0zx8GNPpXsA==
-X-Received: by 2002:a05:600c:198a:b0:442:ccf9:e6f2 with SMTP id 5b1f17b1804b1-4538ee7df15mr201512785e9.16.1751372725799;
-        Tue, 01 Jul 2025 05:25:25 -0700 (PDT)
+        bh=FEHfRalLuIEVVtsEsS9C6ifi6aMXwZRzg5zr/B5tJXU=;
+        b=UrDsLqQVS3AKOr0XHbK2/Vs/wySdit5INjnKM3lRGWxyoT7KgdvjVgv97pgYcO6pyr
+         V5MnzL1WTy7ymgzWodPHCpEVmJ7dqQqzzQc+F/wkvS4GEkLQ+f3XW23AoeZZoXxnlLvJ
+         YOlKKbau9tRGZripTlUJvC0KGAtmU98+zZIkb7wG+viRdDtogLE949RvFQQ4dv1hDWTF
+         sqVN/pY3YWufexdpatoBvvMHTOT1QBL2wwp2C51g5RM+f22HccWKE/MsnVPO0bU9tvQt
+         xkWmsqIsgtc5s2Fpor7xKKP1zsplI2rRsDtre4zWMpF8OH7NISBNLUaFh2WBoFvhyjvD
+         B99w==
+X-Forwarded-Encrypted: i=1; AJvYcCXkthZWxtxbydMZ/Xfb2isEvOr/6lC/ektsjnE5v/aTqAyN2jHC1bCPqtiO3JNqDQHtkhzC0HvK6nUvg5hR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1U1sG1OaYQBH/kLnqHWAnVGD9iW7dmqv/nLReBDJIXe1lYMbK
+	QsJW/f83T3WPNuv11i3g8UmFzULW0L22qCULgr+nzhqjKBewjwCRP2HSZZW1lSQaF+vqd5m7P+r
+	4vZkXld8lTiuKxwYM611cOkkvS7BGol/YDhVc91Qr1MkC7fx/76VmNj75xZI1GhRjzvo=
+X-Gm-Gg: ASbGnctkNmhnCchuspItvK2Twi3CXUdr08fjHJPbm1rgjtnTU8+HAuT3Si4qBQnzj0h
+	2XDxFbmiuIGwBXNwUct9JvZCRf/bvv2EIZUJIooqarqT4pV+zj5SHnnFyNpzm5YLecsUHP6yEiC
+	PJi6NnfaqXQOZALeq15tj5AdA56mpmIM+qvXhchpIDgiRrChc2V8SXMo1LznAusarmNryQSvKtY
+	XvJc/zVsgeCW7Y8R+Rhq3dDJ4ZvGaF03uTkiPKOb7Fs/eaLMEs8qJExwwmt49IT2fNfVxzWybJl
+	bBJnc1D/be6gubXT+wESIL9OzugfXgUeODJnXjs8VTvW+MVSm/fXOMM8TWR4zSR7PKWN7JHsiKL
+	nxwQqsH9JS/C2I04vF7GLnp6fhT2sQYCwDluatNzwjvDg0cyKug==
+X-Received: by 2002:a05:600c:4fce:b0:442:f4a3:b5f2 with SMTP id 5b1f17b1804b1-45390259d15mr148237445e9.6.1751372830021;
+        Tue, 01 Jul 2025 05:27:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSJU2Sf5R53h48rrobFaZHNRWjQKFRP9ItDNhMojifotwoNth3ly8lc9eWoZidBApRccIuBQ==
+X-Received: by 2002:a05:600c:4fce:b0:442:f4a3:b5f2 with SMTP id 5b1f17b1804b1-45390259d15mr148236605e9.6.1751372829433;
+        Tue, 01 Jul 2025 05:27:09 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f18:7500:202e:b0f1:76d6:f9af? (p200300d82f187500202eb0f176d6f9af.dip0.t-ipconnect.de. [2003:d8:2f18:7500:202e:b0f1:76d6:f9af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a43325asm162371015e9.16.2025.07.01.05.25.23
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a421434sm166408505e9.37.2025.07.01.05.27.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 05:25:25 -0700 (PDT)
-Message-ID: <e29af2bf-34c7-4d26-a5d7-f061d2642bd5@redhat.com>
-Date: Tue, 1 Jul 2025 14:25:22 +0200
+        Tue, 01 Jul 2025 05:27:08 -0700 (PDT)
+Message-ID: <04e99b47-055f-4555-be11-76afb2065b0c@redhat.com>
+Date: Tue, 1 Jul 2025 14:27:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 14/29] mm/migrate: remove __ClearPageMovable()
+Subject: Re: [PATCH v1 15/29] mm/migration: remove PageMovable()
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
@@ -126,8 +126,8 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
  Shakeel Butt <shakeel.butt@linux.dev>
 References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-15-david@redhat.com>
- <24d2b984-857d-4a11-b016-dc0227d81c88@lucifer.local>
+ <20250630130011.330477-16-david@redhat.com>
+ <38e19e3a-e46b-4a50-8a34-dc04fc4a3c3c@lucifer.local>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -175,23 +175,24 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <24d2b984-857d-4a11-b016-dc0227d81c88@lucifer.local>
+In-Reply-To: <38e19e3a-e46b-4a50-8a34-dc04fc4a3c3c@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 01.07.25 12:43, Lorenzo Stoakes wrote:
-> On Mon, Jun 30, 2025 at 02:59:55PM +0200, David Hildenbrand wrote:
->> Unused, let's remove it.
->>
->> The Chinese docs in Documentation/translations/zh_CN/mm/page_migration.rst
->> still mention it, but that whole docs is destined to get outdated and
->> updated by somebody that actually speaks that language.
+On 01.07.25 12:50, Lorenzo Stoakes wrote:
+> On Mon, Jun 30, 2025 at 02:59:56PM +0200, David Hildenbrand wrote:
+>> As __ClearPageMovable() is gone that would have only made
+>> PageMovable()==false but still __PageMovable()==true, now
+>> PageMovable() == __PageMovable().
 > 
-> Yeah I've noticed these getting out of sync before, perhaps somebody fluent in
-> Simplified Chinese can assist at some point :) mine is rather rusty...
+> I think this could be rephrased to be clearer, something like:
+> 
+> 	Previously, if __ClearPageMovable() were invoked on a page, this would
+> 	cause __PageMovable() to return false, but due to the continued
+> 	existance of page movable ops, PageMovable() would have returned true.
+> 
 
-I already saw doc updates for this. Obviously, I can't review them in 
-any way, but people seem to be active updating them.
+"existence", yes will use that, thanks!
 
 -- 
 Cheers,
