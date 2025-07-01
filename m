@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-53512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A51AEFA3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 15:22:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A979AEFA2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 15:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9D5A3B5DBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 13:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4356D16E930
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 13:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A66D275B16;
-	Tue,  1 Jul 2025 13:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFD8275AE0;
+	Tue,  1 Jul 2025 13:21:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6032741D4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD69274661;
 	Tue,  1 Jul 2025 13:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751376063; cv=none; b=AdQTcGYfi+w5VBBagCR9oIWOC6NgPKuA5xL/6t+5b5Bu2mh2m/SzhepunThg5jHl/g5N6+WS+3+tY16OhO1bdLotyCrtawmGYO4ex1zwISoU63D6xeAlhM+mF8/0zZjeGghRIBkkrw6H06YirsRmMPTWRFqCljfmat461n8OWao=
+	t=1751376063; cv=none; b=Z4+10CZK8a63c5i5dhUVZiAMzVN/GEPf6+p7t/qUW6I9AW8PXPE9lgggxvmEENTfZrZQi2Gen+B0ZTxpTIMLhH6BxUlCKpj8iSgzqF2Ru0VGfPhmkGTsIXkNbPxScUVnwbwhwMP3I7jxUtvvuQlNHEl/bk5W9iEcMoSlvR2Vmvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751376063; c=relaxed/simple;
-	bh=a6cj2y49XC2xiZz1csecTHIMAOij8ZE5LgP/Y8KX5e4=;
+	bh=OMzw7fwuDNBES4pa/3F/wT/AyXaB44di+mYgT56ndXc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xdd8Z2lD0h6LLkxeRUghjMqAgLbZ5WYe8OXYzW/M7vw5vxvb0yZEyJ4zxktViYuqMclZSyv5ut4zncufFkVc1OwGzXpVZ1s8P5aNidXlsx9lG1E5HBycMKjbH0K7XRje/AtQZtMuz6Q7Tr0vUmDk9vkBtosmwJLFg+zVHVdIh1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=potTR2kZ1oO6RJEv9xvHPbfx0n8AHdWpLA+5DI+TpWY1oI4D2J+13R+51SLZfWzBKp6VcJebcXN6efHzlWTkuBiICfHs1kbIf3pv9ddIc2n6q4IE+0FRNiSJfdwcsJoxMngUzKm61qBVEScHxCIiasoNSbdEA9qqvee4yIEQ+tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bWkDr1SPNzYQvPS;
-	Tue,  1 Jul 2025 21:21:00 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bWkDs1dFdzKHN5g;
+	Tue,  1 Jul 2025 21:21:01 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 15C4C1A0E9A;
+	by mail.maildlp.com (Postfix) with ESMTP id 972C61A0E0A;
 	Tue,  1 Jul 2025 21:20:59 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP3 (Coremail) with SMTP id _Ch0CgAXeCWu4GNoXmJGAQ--.26904S8;
-	Tue, 01 Jul 2025 21:20:58 +0800 (CST)
+	by APP3 (Coremail) with SMTP id _Ch0CgAXeCWu4GNoXmJGAQ--.26904S9;
+	Tue, 01 Jul 2025 21:20:59 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	libaokun1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH v3 04/10] ext4: refactor the block allocation process of ext4_page_mkwrite()
-Date: Tue,  1 Jul 2025 21:06:29 +0800
-Message-ID: <20250701130635.4079595-5-yi.zhang@huaweicloud.com>
+Subject: [PATCH v3 05/10] ext4: restart handle if credits are insufficient during allocating blocks
+Date: Tue,  1 Jul 2025 21:06:30 +0800
+Message-ID: <20250701130635.4079595-6-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250701130635.4079595-1-yi.zhang@huaweicloud.com>
 References: <20250701130635.4079595-1-yi.zhang@huaweicloud.com>
@@ -65,10 +65,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAXeCWu4GNoXmJGAQ--.26904S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF15KF4DGFW5WFyUXFWkJFb_yoWrur4fpr
-	y3Kr95ur47u34DWFs3WF4DZF13Ka4vgrWUGFyxGr1fZa43trnxKF4rt3WvyF4UtrW3Xan2
-	qr4UAFyUu3WjgrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:_Ch0CgAXeCWu4GNoXmJGAQ--.26904S9
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF17Zw4kWw1rCF4DGrWruFg_yoWrCF4Dpr
+	WakFy5Gr17Wry3Wanaqw4DXF13W3WxtrWUJF93W3s0vFy8GrnxKFs0yFyYyFWvkrWkWa13
+	XF4jkryUWayjyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -79,7 +79,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxAF15KF4DGFW5WFyUXFWkJFb_yoWrur4fpr
 	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
 	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
 	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
+	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
 	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
 	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
 	WIevJa73UjIFyTuYvjfUriihUUUUU
@@ -87,148 +87,122 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-The block allocation process and error handling in ext4_page_mkwrite()
-is complex now. Refactor it by introducing a new helper function,
-ext4_block_page_mkwrite(). It will call ext4_block_write_begin() to
-allocate blocks instead of directly calling block_page_mkwrite().
-Preparing to implement retry logic in a subsequent patch to address
-situations where the reserved journal credits are insufficient.
-Additionally, this modification will help prevent potential deadlocks
-that may occur when waiting for folio writeback while holding the
-transaction handle.
+After large folios are supported on ext4, writing back a sufficiently
+large and discontinuous folio may consume a significant number of
+journal credits, placing considerable strain on the journal. For
+example, in a 20GB filesystem with 1K block size and 1MB journal size,
+writing back a 2MB folio could require thousands of credits in the
+worst-case scenario (when each block is discontinuous and distributed
+across different block groups), potentially exceeding the journal size.
+This issue can also occur in ext4_write_begin() and ext4_page_mkwrite()
+when delalloc is not enabled.
+
+Fix this by ensuring that there are sufficient journal credits before
+allocating an extent in mpage_map_one_extent() and
+ext4_block_write_begin(). If there are not enough credits, return
+-EAGAIN, exit the current mapping loop, restart a new handle and a new
+transaction, and allocating blocks on this folio again in the next
+iteration.
 
 Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 95 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 50 insertions(+), 45 deletions(-)
+ fs/ext4/inode.c | 40 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 5 deletions(-)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 62f1263d05da..31731a732df2 100644
+index 31731a732df2..efe778aaf74b 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -6605,6 +6605,53 @@ static int ext4_bh_unmapped(handle_t *handle, struct inode *inode,
- 	return !buffer_mapped(bh);
+@@ -877,6 +877,25 @@ static void ext4_update_bh_state(struct buffer_head *bh, unsigned long flags)
+ 	} while (unlikely(!try_cmpxchg(&bh->b_state, &old_state, new_state)));
  }
  
-+static int ext4_block_page_mkwrite(struct inode *inode, struct folio *folio,
-+				   get_block_t get_block)
++/*
++ * Make sure that the current journal transaction has enough credits to map
++ * one extent. Return -EAGAIN if it cannot extend the current running
++ * transaction.
++ */
++static inline int ext4_journal_ensure_extent_credits(handle_t *handle,
++						     struct inode *inode)
 +{
-+	handle_t *handle;
-+	loff_t size;
-+	unsigned long len;
++	int credits;
 +	int ret;
 +
-+	handle = ext4_journal_start(inode, EXT4_HT_WRITE_PAGE,
-+				    ext4_writepage_trans_blocks(inode));
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
++	if (!handle)
++		return 0;
 +
-+	folio_lock(folio);
-+	size = i_size_read(inode);
-+	/* Page got truncated from under us? */
-+	if (folio->mapping != inode->i_mapping || folio_pos(folio) > size) {
-+		ret = -EFAULT;
-+		goto out_error;
-+	}
-+
-+	len = folio_size(folio);
-+	if (folio_pos(folio) + len > size)
-+		len = size - folio_pos(folio);
-+
-+	ret = ext4_block_write_begin(handle, folio, 0, len, get_block);
-+	if (ret)
-+		goto out_error;
-+
-+	if (!ext4_should_journal_data(inode)) {
-+		block_commit_write(folio, 0, len);
-+		folio_mark_dirty(folio);
-+	} else {
-+		ret = ext4_journal_folio_buffers(handle, folio, len);
-+		if (ret)
-+			goto out_error;
-+	}
-+	ext4_journal_stop(handle);
-+	folio_wait_stable(folio);
-+	return ret;
-+
-+out_error:
-+	folio_unlock(folio);
-+	ext4_journal_stop(handle);
-+	return ret;
++	credits = ext4_chunk_trans_blocks(inode, 1);
++	ret = __ext4_journal_ensure_credits(handle, credits, credits, 0);
++	return ret <= 0 ? ret : -EAGAIN;
 +}
 +
- vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+ static int _ext4_get_block(struct inode *inode, sector_t iblock,
+ 			   struct buffer_head *bh, int flags)
  {
- 	struct vm_area_struct *vma = vmf->vma;
-@@ -6616,8 +6663,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 	struct file *file = vma->vm_file;
- 	struct inode *inode = file_inode(file);
- 	struct address_space *mapping = inode->i_mapping;
--	handle_t *handle;
--	get_block_t *get_block;
-+	get_block_t *get_block = ext4_get_block;
- 	int retries = 0;
+@@ -1175,7 +1194,9 @@ int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+ 			clear_buffer_new(bh);
+ 		if (!buffer_mapped(bh)) {
+ 			WARN_ON(bh->b_size != blocksize);
+-			err = get_block(inode, block, bh, 1);
++			err = ext4_journal_ensure_extent_credits(handle, inode);
++			if (!err)
++				err = get_block(inode, block, bh, 1);
+ 			if (err)
+ 				break;
+ 			if (buffer_new(bh)) {
+@@ -1374,8 +1395,9 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+ 				ext4_orphan_del(NULL, inode);
+ 		}
  
- 	if (unlikely(IS_IMMUTABLE(inode)))
-@@ -6685,46 +6731,9 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 	/* OK, we need to fill the hole... */
- 	if (ext4_should_dioread_nolock(inode))
- 		get_block = ext4_get_block_unwritten;
--	else
--		get_block = ext4_get_block;
+-		if (ret == -ENOSPC &&
+-		    ext4_should_retry_alloc(inode->i_sb, &retries))
++		if (ret == -EAGAIN ||
++		    (ret == -ENOSPC &&
++		     ext4_should_retry_alloc(inode->i_sb, &retries)))
+ 			goto retry_journal;
+ 		folio_put(folio);
+ 		return ret;
+@@ -2323,6 +2345,11 @@ static int mpage_map_one_extent(handle_t *handle, struct mpage_da_data *mpd)
+ 	int get_blocks_flags;
+ 	int err, dioread_nolock;
+ 
++	/* Make sure transaction has enough credits for this extent */
++	err = ext4_journal_ensure_extent_credits(handle, inode);
++	if (err < 0)
++		return err;
++
+ 	trace_ext4_da_write_pages_extent(inode, map);
+ 	/*
+ 	 * Call ext4_map_blocks() to allocate any delayed allocation blocks, or
+@@ -2450,7 +2477,7 @@ static int mpage_map_and_submit_extent(handle_t *handle,
+ 			 * In the case of ENOSPC, if ext4_count_free_blocks()
+ 			 * is non-zero, a commit should free up blocks.
+ 			 */
+-			if ((err == -ENOMEM) ||
++			if ((err == -ENOMEM) || (err == -EAGAIN) ||
+ 			    (err == -ENOSPC && ext4_count_free_clusters(sb))) {
+ 				/*
+ 				 * We may have already allocated extents for
+@@ -2956,6 +2983,8 @@ static int ext4_do_writepages(struct mpage_da_data *mpd)
+ 			ret = 0;
+ 			continue;
+ 		}
++		if (ret == -EAGAIN)
++			ret = 0;
+ 		/* Fatal error - ENOMEM, EIO... */
+ 		if (ret)
+ 			break;
+@@ -6734,7 +6763,8 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
  retry_alloc:
--	handle = ext4_journal_start(inode, EXT4_HT_WRITE_PAGE,
--				    ext4_writepage_trans_blocks(inode));
--	if (IS_ERR(handle)) {
--		ret = VM_FAULT_SIGBUS;
--		goto out;
--	}
--	/*
--	 * Data journalling can't use block_page_mkwrite() because it
--	 * will set_buffer_dirty() before do_journal_get_write_access()
--	 * thus might hit warning messages for dirty metadata buffers.
--	 */
--	if (!ext4_should_journal_data(inode)) {
--		err = block_page_mkwrite(vma, vmf, get_block);
--	} else {
--		folio_lock(folio);
--		size = i_size_read(inode);
--		/* Page got truncated from under us? */
--		if (folio->mapping != mapping || folio_pos(folio) > size) {
--			ret = VM_FAULT_NOPAGE;
--			goto out_error;
--		}
--
--		len = folio_size(folio);
--		if (folio_pos(folio) + len > size)
--			len = size - folio_pos(folio);
--
--		err = ext4_block_write_begin(handle, folio, 0, len,
--					     ext4_get_block);
--		if (!err) {
--			ret = VM_FAULT_SIGBUS;
--			if (ext4_journal_folio_buffers(handle, folio, len))
--				goto out_error;
--		} else {
--			folio_unlock(folio);
--		}
--	}
--	ext4_journal_stop(handle);
-+	/* Start jorunal and allocate blocks */
-+	err = ext4_block_page_mkwrite(inode, folio, get_block);
- 	if (err == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
+ 	/* Start jorunal and allocate blocks */
+ 	err = ext4_block_page_mkwrite(inode, folio, get_block);
+-	if (err == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
++	if (err == -EAGAIN ||
++	    (err == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries)))
  		goto retry_alloc;
  out_ret:
-@@ -6733,8 +6742,4 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 	filemap_invalidate_unlock_shared(mapping);
- 	sb_end_pagefault(inode->i_sb);
- 	return ret;
--out_error:
--	folio_unlock(folio);
--	ext4_journal_stop(handle);
--	goto out;
- }
+ 	ret = vmf_fs_error(err);
 -- 
 2.46.1
 
