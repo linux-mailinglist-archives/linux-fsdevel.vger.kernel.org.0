@@ -1,165 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-53572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9D8AF035E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 21:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A87DAAF036F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 21:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B441C075AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 19:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F3A1C07722
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 19:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613E9281368;
-	Tue,  1 Jul 2025 19:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1E6281353;
+	Tue,  1 Jul 2025 19:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+BDc6Iu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axXbWcki"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FAF1CBEAA;
-	Tue,  1 Jul 2025 19:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823F427E7CF;
+	Tue,  1 Jul 2025 19:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751396938; cv=none; b=jO6jy05j2LWh3m5HA1PQtpKZs6yLN6n42laPACd3cdDGXuBMz4lLWFPy55Xc9I44ahyV9QlRrHm9c96F9rjIRJ5EeSx6zbIy53sUpw9dd3+dp6x7tU5+gmpCD+uFy8r40t0LVRc8GVA7Abx0oOkcifsl5Wpennd3/ylyzEzY5RA=
+	t=1751397101; cv=none; b=kaU30D17eOfVujg6oCRa4/bjgqtr7PYa8zOCX4FnRLTaI/X2g6Sm3SmmsrIJUl8yxH2bWdyQBrAXnDRamRMnkmd97LOG/OTV/2alPBr4RCs8gw+dBKbALC05fbuSEmi959K7/Vscn+zQQoeQ9/mszLRSpRWWPhZ2iM76K9RN5d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751396938; c=relaxed/simple;
-	bh=vICwRvZ2gmJ2aXjP8dbL0q41nxaXT5Fje7WWGoXFC7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EC/izr6U+J9kj5dF5FgRxpxtaPQVArhtR7BEOtpcSGpFGVylCDwbAo/s3c86LUn8pbN2a4SSxMIr6hBqqrDqNAK55jb4lvXsStMylydEOaxY2KgnZIPUF8BXWBu7vPLFw10CLJi2hK4nSVKh2qYvqzRBjOxupcrPXKNAGmUJEiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+BDc6Iu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D540C4CEEB;
-	Tue,  1 Jul 2025 19:08:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751396938;
-	bh=vICwRvZ2gmJ2aXjP8dbL0q41nxaXT5Fje7WWGoXFC7Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R+BDc6Iu0isrbTPhplbPWe3yUY92oVOp3i46SjM2thkVV7BwzS+UWxGFgd3pnvvag
-	 VH9+HtQ9jEO6QgA/q/UhThHlpWygLhALN27Olj8pWwlYKPDRWQ3h47XP+AUvXiFFWK
-	 VYSyYquIPV0sHznHEV/KJJZqFI8kkVmWL3hPIRxWPG/7QtdpWuysyBi/1HHU9+DoDj
-	 cnFQGan15vg+4RlUbZ4eR9uNVCmvsCAj80HU9rTLxJYdwN0ZKelfXlsHnExzv4PgRJ
-	 YDB9TMso/iKg76I2eA1pGFH7J3Fz5UhZgW5x4QE7ittnOVSC9w+6V7BgqS9v9XFSbM
-	 Gyp0jwHKqYIoA==
-Date: Tue, 1 Jul 2025 12:08:57 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>,
-	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, selinux@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <20250701190857.GR10009@frogsfrogsfrogs>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
- <20250701184317.GQ10009@frogsfrogsfrogs>
- <20250701185457.jvbwhiiihdauymrg@pali>
+	s=arc-20240116; t=1751397101; c=relaxed/simple;
+	bh=vfrKJybgzwjpgw+TJOq6H2Fh67XbF07HjXoZ7cu5IM0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SARYjZo7EVlYAK8Q1Z5Sx9HxePSZsnuqpdOvFt49aQH3b9jR4f3toO01d6Vq4g8zchXR04mX0UFv/vpRTUrfdethFEti+e3YBwIIoh1r+uNBWjqLx+/Kh13bdrDfH6HbtZSzH6xWnePSLY1mtqEf2mj/DKDpeVUGXa0/gco9XvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=axXbWcki; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0a0cd709bso1389385866b.0;
+        Tue, 01 Jul 2025 12:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751397098; x=1752001898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QjzoNhUidVgZHP9QlhU4SH9c2JyuaDfBZkeqDe+rudE=;
+        b=axXbWckiGJUtuLvTow6+NCvzQO/IWp6X/weX0z47K5Mvw9pbJkX9ir1z8UAXwxGQCy
+         gNTWFn+cUz9bldUWI8n3Te9cMENOtfc9csQJJReG7/vbtKYoRvGTTYEV8qvO38Qp0Pvw
+         dPS9vSBLVlv5qhrv7tBlumpe/+PWKLcRUtjvG+S6ufpzqxVygYME+OxywDdF2AAI91hl
+         a25lXY/Das1UhRpVaif8cAmj7Xkl7Gkf5CFaKlZgc7LYAmQnC+HmDhr4Yt+J3c1kQ2X3
+         ham8rW5gowdt3KBFJuQk3cDYDKa+9h1HcuwG4O3RNzWNP+Oa0oEciY/WOGg1NQp6R1M5
+         QDQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751397098; x=1752001898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QjzoNhUidVgZHP9QlhU4SH9c2JyuaDfBZkeqDe+rudE=;
+        b=i/tj3rEm0zRLoo6b6O5M1gx16Cnd7uV3yoSYz05IhM0uKjfTqryNLzWh8NqJVEKRuo
+         s/Nb3P6FwhnecPtVIYKCCUHKvzOSXelvU4Dsej+P2hUtS1OworSKC/F2WH9fURMOCg/H
+         ZUw5axiVdIe+DnsypdcB7UyClM76d0uhRMIP2yt3DCE9R04CBfU5oCj4uap/umijZtHj
+         VvelUO80MNUl3+xp34w+bjYtCUUX5l5UwBC8cJdSdRqhl6bSxDhSZiSkSAv2xOfvYUFD
+         R1k1S160PkDEzXJeudaecPWk/6pwyPnpF6+nGsXYb0/6cA9dKc35Y/o91DYF63Jn+8zM
+         nisQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVO0QYv8je+vLjtkwAYpPNPDSmr2MNTE5OMUtx9M1TkyAXogis2Gm3gm/8Oh8cbGXXT9jTZuyjaYHGgZ5ftQ==@vger.kernel.org, AJvYcCW2tXtkCmriByUkAP1fWY7Ad26kE/nkyY1QGTfBVfC1uuml21tAkCqDo8++9IwspyE1qXYqmpT5sQYw5GH0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzihLcXTHpqEAVj+vvU7vjrqXQxrCNe+BTgA3hXJvUjlWWp1dqL
+	POG8AIY0ej/U4ZN6Yituj++i5dnx3FeH+0Min1L83P5Ba7u4nZVFnA5qybbsExzuercK4H/lMRm
+	0mz7BRAdk0X4/TxiO2WgjBPhCRJdDA0NsbnkVoxw=
+X-Gm-Gg: ASbGncvj6ahcrnUg17nNSvr4EXPJ7SN2sX6x29m1TTOKPzhOzhgo1YclbrmBUj94q8f
+	jYpyBG2j2D8p++Z/fljeGKmpgsmVNm8F5sBCe4JNVXoZ7I8GA0Zdk9aROCO/hIT3241JoPTsAuM
+	5qq8lM/mWTJUL/rPfLSRBc1sRO9B6lDPjzh3vJ1LdEgiQ=
+X-Google-Smtp-Source: AGHT+IGhoAtZ0nPpwrGpHsxUvERoXprnTWRhp/mrbBB9hf0usVRtrc8KBMAymCzAXIijLekld9yz3eRERBye6x5PP9I=
+X-Received: by 2002:a17:907:95a4:b0:ae0:573f:40bd with SMTP id
+ a640c23a62f3a-ae3c179c182mr26858466b.11.1751397097290; Tue, 01 Jul 2025
+ 12:11:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250701185457.jvbwhiiihdauymrg@pali>
+References: <20250701142930.429547-1-amir73il@gmail.com> <CAJfpegvjpcsbNq6dpu5pdpfMUqcaKoqY5gAy62jq2V_rU55J5w@mail.gmail.com>
+In-Reply-To: <CAJfpegvjpcsbNq6dpu5pdpfMUqcaKoqY5gAy62jq2V_rU55J5w@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 1 Jul 2025 21:11:26 +0200
+X-Gm-Features: Ac12FXyHjCkgSaxD32AfHlpauRy7bb_rinBdUaszueDSnTFbOw7zjwSrYEv_is4
+Message-ID: <CAOQ4uxjZ+EaJCNfCqx+jVNXumstNfKQZL6WOB61uA+EG3v6C0w@mail.gmail.com>
+Subject: Re: [PATCH] fuse: return -EOPNOTSUPP from ->fileattr_[gs]et() instead
+ of -ENOTTY
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrey Albershteyn <aalbersh@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 01, 2025 at 08:54:57PM +0200, Pali Rohár wrote:
-> On Tuesday 01 July 2025 11:43:17 Darrick J. Wong wrote:
-> > On Mon, Jun 30, 2025 at 06:20:16PM +0200, Andrey Albershteyn wrote:
-> > > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > > index 0098b0ce8ccb..0784f2033ba4 100644
-> > > --- a/include/uapi/linux/fs.h
-> > > +++ b/include/uapi/linux/fs.h
-> > > @@ -148,6 +148,24 @@ struct fsxattr {
-> > >  	unsigned char	fsx_pad[8];
-> > >  };
-> > >  
-> > > +/*
-> > > + * Variable size structure for file_[sg]et_attr().
-> > > + *
-> > > + * Note. This is alternative to the structure 'struct fileattr'/'struct fsxattr'.
-> > > + * As this structure is passed to/from userspace with its size, this can
-> > > + * be versioned based on the size.
-> > > + */
-> > > +struct fsx_fileattr {
-> > > +	__u32	fsx_xflags;	/* xflags field value (get/set) */
-> > 
-> > Should this to be __u64 from the start?  Seeing as (a) this struct is
-> > not already a multiple of 8 bytes and (b) it's likely that we'll have to
-> > add a u64 field at some point.  That would also address brauner's
-> > comment about padding.
-> 
-> Hello!
-> 
-> As I have already mentioned, after this syscall API/ABI is finished, I'm
-> planning to prepare patches for changing just selected fields / flags by
-> introducing a new mask field, and support for additional flags used by
-> existing filesystems (like windows flags).
-> 
-> My idea is extending this structure for a new "u32 fsx_xflags_mask"
-> and new "u32 fsx_xflags2" + "u32 fsx_xflags2_mask". (field names are
-> just examples).
-> 
-> So in case you are extending the structure now, please consider if it
-> makes sense to add all members, so we do not have to define 2 or 3
-> structure versions in near feature.
-> 
-> Your idea of __u64 for fsx_xflags means that it will already cover the
-> "u32 fsx_xflags2" field.
+On Tue, Jul 1, 2025 at 7:41=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
+>
+> On Tue, 1 Jul 2025 at 16:29, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > index 6f0e15f86c21..92754749f316 100644
+> > --- a/fs/overlayfs/inode.c
+> > +++ b/fs/overlayfs/inode.c
+> > @@ -722,7 +722,7 @@ int ovl_real_fileattr_get(const struct path *realpa=
+th, struct fileattr *fa)
+> >
+> >         err =3D vfs_fileattr_get(realpath->dentry, fa);
+> >         if (err =3D=3D -ENOIOCTLCMD)
+> > -               err =3D -ENOTTY;
+> > +               err =3D -EOPNOTSUPP;
+>
+> This doesn't make sense, the Andrey's 4/6 patch made vfs_fileattr_get
+> return EOPNOTSUPP instead of ENOIOCTLCMD.  So why is it being checked
+> here?
 
-Ah, ok, so that work *is* still coming. :)
+You are right.
+I was trying to demonstrate the change in fuse/ovl independent of
+Ansrey's patch, but don't worry after squashing this patch,
+there is no remaining conversion in ovl_real_fileattr_get().
 
-Are you still planning to add masks for xflags bits that are clearable
-and settable?  i.e.
+I verified that with Christian.
 
-	__u64	fa_xflags;		/* state */
-	...
-	<end of V0 structure>
-
-	__u64	fa_xflags_mask;		/* bits for setattr to examine */
-	__u64	fa_xflags_clearable;	/* clearable bits */
-	__u64	fa_xflags_settable;	/* settable bits */
-
-I think it's easier just to define u64 in the V0 structure and then add
-the three new fields in V1.  What do you think?
-
---D
-
-> > --D
-> > 
-> > > +	__u32	fsx_extsize;	/* extsize field value (get/set)*/
-> > > +	__u32	fsx_nextents;	/* nextents field value (get)   */
-> > > +	__u32	fsx_projid;	/* project identifier (get/set) */
-> > > +	__u32	fsx_cowextsize;	/* CoW extsize field value (get/set) */
-> > > +};
-> > > +
-> > > +#define FSX_FILEATTR_SIZE_VER0 20
-> > > +#define FSX_FILEATTR_SIZE_LATEST FSX_FILEATTR_SIZE_VER0
-> > > +
-> > >  /*
-> > >   * Flags for the fsx_xflags field
-> > >   */
-> > > diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-> > > index 580b4e246aec..d1ae5e92c615 100644
-> > > --- a/scripts/syscall.tbl
-> > > +++ b/scripts/syscall.tbl
-> > > @@ -408,3 +408,5 @@
-> > >  465	common	listxattrat			sys_listxattrat
-> > >  466	common	removexattrat			sys_removexattrat
-> > >  467	common	open_tree_attr			sys_open_tree_attr
-> > > +468	common	file_getattr			sys_file_getattr
-> > > +469	common	file_setattr			sys_file_setattr
-> > > 
-> > > -- 
-> > > 2.47.2
-> > > 
-> > > 
-> 
+Thanks,
+Amir.
 
