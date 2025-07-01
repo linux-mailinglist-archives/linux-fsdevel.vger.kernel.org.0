@@ -1,98 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-53465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2D0AEF4AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 12:13:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB0BAEF4C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 12:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9F04A34D6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 10:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B43480305
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 10:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA99270551;
-	Tue,  1 Jul 2025 10:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365DE26FD95;
+	Tue,  1 Jul 2025 10:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQfhlrM6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X5guPKg2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A691DF73A;
-	Tue,  1 Jul 2025 10:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F224D26E6E5
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 10:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751364799; cv=none; b=scS6kzgQK/U3LG4ToukCsjyhVw2DdzuACmLM1cGu250aLdiNhfx8KTNOIZgg3DJKxtCXDkz1mu/KOPdQX9EFWfmaHia2/B/77IlyMglWeOYaat6gqiN7rpeHVSvpgN9QzjP3XoByVKR1UCAVk2jAl3X65sUm3TTStN5a2HBlU10=
+	t=1751364949; cv=none; b=MNlQKLkK2/LukAQKRrxyugRwg//3tVBJVZdil5M5UabX+/uTbDJAVmVrOWfdCCmYk+Klmo/zqAs1j/CyQdrWXaodvVSlWStUS7+kHfSRtwuMsXHCAbxzRTVSPZJcgt+hQh5cSzDe0gkgY3gw0suN95p9kPzMFsA/2B+GS33bB6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751364799; c=relaxed/simple;
-	bh=TEMonp015D51LqvvTvGwKgPLEymL9NHIJMLfJIT8Klw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W11REbBWUzaV+kSNvR6PWcovJpMuSp1Iwk5AtFUEWTt8M/ffCXJTNDcqK40tFrJrCtWlN+r0p0fgGPfjaGOES83c9bYTi1O0ptAJsHj5G0ss6nV75GtGCF5jBtwVn8agFk747SmJgqC/XFalEqwxPm180K+ImkZ3gj55kt89h9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQfhlrM6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00C4AC4CEEE;
-	Tue,  1 Jul 2025 10:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751364799;
-	bh=TEMonp015D51LqvvTvGwKgPLEymL9NHIJMLfJIT8Klw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nQfhlrM63ddLxRAXWWPz57hu9kh2f3FDxtgMDohsdsOxj/qhkvorMEr6E3TPyoqvC
-	 /fuep2fvjcYLotitXHEeB6haOkbmOlwimnJ6DE+8qW+9G1/5KgLVIqSgxvi5bm91bD
-	 8JVQIAqqIUakfZvGX4fCnqiCid9WrbgnBNRPxShpUOH8t7BPsT9qPPQOM94XC3CKTU
-	 tZP19sQvcU7hhsUzCtwnvcxjv1IoVNxWLlaZq1prhpCw+yQNxNXA3WuY8VIuXhrs5G
-	 iBSnRWHpdRBeOY5ZT2YUWr+Fsh+OtOLe0ncHsm0Gbf1Yzf0NR6tXk0m3D6ukvBkSKX
-	 qCAN5XTsAgbqQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz,
-	akpm@linux-foundation.org,
-	dada1@cosmosbay.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: Prevent file descriptor table allocations exceeding INT_MAX
-Date: Tue,  1 Jul 2025 12:13:07 +0200
-Message-ID: <20250701-produkt-eulen-69bd80b6d1d2@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250629074021.1038845-1-sashal@kernel.org>
-References: <20250629074021.1038845-1-sashal@kernel.org>
+	s=arc-20240116; t=1751364949; c=relaxed/simple;
+	bh=nToQeFitzvpdsFa2XptVBAepU8eO4awOe3r5a/HWkVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZI3s5M9ItPx5vXavChuvGoUbSNCKgs+Q3rVd0pQr04TvGJrVsdoGQa+WuFVU+CXT9rD+HR7gPxQ7udI0J26RRNDjgYMW09fzCNVdZySBwvhiAHidbJCHsnQP/bvEZ9npBK4WQyXgDv6C720XugNj0SSNTDR1VTaL4L4kB74lHGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X5guPKg2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751364947;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=J4Wnv9upb7wAm0VhLvAftXFWY5tUZLgFJPfWZ7TYeAU=;
+	b=X5guPKg26l+Q6nEdaQysq0ZIie5jvi5r/QLqP+/48Nj/aWUfAonR3yf87Dig8sPb+fuWAR
+	Iet3220IzbRIwqvAvTseyAg8AAxJpSXM1FHs7oYLQiFdd59Kc1X+SDVjsifNe4gN+C7f0E
+	xsfgxDx/OrmY8IpT9v+YdZGEPsBs/5U=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-447-fCeLQq45MVyKef9uQlMlyA-1; Tue, 01 Jul 2025 06:15:45 -0400
+X-MC-Unique: fCeLQq45MVyKef9uQlMlyA-1
+X-Mimecast-MFC-AGG-ID: fCeLQq45MVyKef9uQlMlyA_1751364945
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a50049f8eeso2734855f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jul 2025 03:15:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751364944; x=1751969744;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=J4Wnv9upb7wAm0VhLvAftXFWY5tUZLgFJPfWZ7TYeAU=;
+        b=DklS+5ZQhCDib5iuPg8zcLtUW/1C105kBt2Nau+d905RCERtVAeAOb+e4P5bohDl1a
+         letteTf60n2tZHjrXq/dBAN3xqA8f0O7QEDasm0S/mwfGkBbMKN507b3/5E989GTzUu9
+         2BL6FoPcKLH09Xbo/dPVQXZf2s36JK/G9c+K5VOG2Ywm/p+VRiTZKMaLu2t0Oh4YXmbN
+         LagSvc2jXJEpADKbiTDvjw0gY36YTeRbez+AxVKZNgemA8bUEL8/dzyxWJRu62vABeR9
+         cBAktY84VlKNvVr2sjg1ra3rl+7sczksiWq1kHIK77E7ognBbjMdUhS/Tgd9OtLq2I8Z
+         J0Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsesQPNZK9Ce63nT6GqZPJhyPh+VEWgypeuYWzOxLrEmdTgNek1G5QPajjGAUItvaMt3JmEg1/64aFHu6D@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtqzwTnH/bfcEP01LNy5FnJxY+QU7gUKsPWvx17TLhdZDLH/5/
+	qGnAI+B9O9Ogonvwi7VOfHBvTkohVI3ejmTQB45Knkn6ytd7CKnbjTY2T8Z9sTUgF47E1q4lHKF
+	DBVSzUulXWetw35VNmZFt62s8YiN4E1fsFZhDn5evoCNThjdmTXZ48BFf2AeOAYSTPLcGUso1wQ
+	s6xw==
+X-Gm-Gg: ASbGnctrQcmzuJZczX5J3nDAWAkDB3RPIYB+ZDYLxiv+MQfRXI7Kz0vqlTE1kj3g8nX
+	2raAw43YZM8jnIuVDi7JMPF8lKWr1UAzcWQZeB50xf4Tzu6abbCXAeOUwSHsxfc/aLi7UIR566y
+	Alhw/BKinKlMJkPOU5c6CszrTxG2+b6Tc3Pu7zMYSHjAgxc3lEUQbIRcgheXTzDNcYDDsYiao1c
+	aY6n+heahPidt+5M2z8NRexi+yjZzgmdS+Nyz4rZho8MqUCuzO7qZoZ2blN6gZs+siUOli4dJzW
+	hW7EkMKfIKgwOUfFKfHDWD7ssMpnnbGSIRLCIIXo+Bp+2N/fxJ/WrYoE2UeaiCqgzKeIAbSHDsT
+	Z0D+lv1D4w9HvcTsPUgqoZjQ7bR38a6jMTl9y+zocVddYBCjosw==
+X-Received: by 2002:adf:9dd1:0:b0:3a4:f63b:4bfc with SMTP id ffacd0b85a97d-3a8ffcc9f0cmr13281151f8f.34.1751364944478;
+        Tue, 01 Jul 2025 03:15:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBcN+deUjqfPetiJ/myiyifjCnu6+sl2jGKUFJOp6xe1gkfchpSA8Op3NtcLea2c6cf5QT6g==
+X-Received: by 2002:adf:9dd1:0:b0:3a4:f63b:4bfc with SMTP id ffacd0b85a97d-3a8ffcc9f0cmr13281122f8f.34.1751364943981;
+        Tue, 01 Jul 2025 03:15:43 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f18:7500:202e:b0f1:76d6:f9af? (p200300d82f187500202eb0f176d6f9af.dip0.t-ipconnect.de. [2003:d8:2f18:7500:202e:b0f1:76d6:f9af])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538234be76sm191227645e9.15.2025.07.01.03.15.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 03:15:43 -0700 (PDT)
+Message-ID: <3887c07c-db95-41a2-a3c6-c1199005cdd0@redhat.com>
+Date: Tue, 1 Jul 2025 12:15:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1215; i=brauner@kernel.org; h=from:subject:message-id; bh=TEMonp015D51LqvvTvGwKgPLEymL9NHIJMLfJIT8Klw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQkb9kpZq9Q1HFsS2hb/sv2zIuvz9gFtvaIX07z1rz9o FKqIupVRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETU8hn+p88y43sv/bXM+8H1 LZ/DuLYK+lW3bfokFq5druPLMD2wi+E329Y9cglHVn+y/5ASs2BCkWbplR3+n7zWP//gfqP4aOA JfgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 10/29] mm/migrate: remove folio_test_movable() and
+ folio_movable_ops()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin
+ <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>,
+ Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>
+References: <20250630130011.330477-1-david@redhat.com>
+ <20250630130011.330477-11-david@redhat.com>
+ <100ed589-d3cf-4e31-b8d1-036a8bf77201@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <100ed589-d3cf-4e31-b8d1-036a8bf77201@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 29 Jun 2025 03:40:21 -0400, Sasha Levin wrote:
-> When sysctl_nr_open is set to a very high value (for example, 1073741816
-> as set by systemd), processes attempting to use file descriptors near
-> the limit can trigger massive memory allocation attempts that exceed
-> INT_MAX, resulting in a WARNING in mm/slub.c:
+On 30.06.25 19:07, Lorenzo Stoakes wrote:
+> On Mon, Jun 30, 2025 at 02:59:51PM +0200, David Hildenbrand wrote:
+>> Folios will have nothing to do with movable_ops page migration. These
+>> functions are now unused, so let's remove them.
 > 
->   WARNING: CPU: 0 PID: 44 at mm/slub.c:5027 __kvmalloc_node_noprof+0x21a/0x288
-> 
-> [...]
+> Maybe worth mentioning that __folio_test_movable() is still a thing (for now).
 
-Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.misc branch should appear in linux-next soon.
+"Note that __folio_test_movable() and friends will be removed separately 
+next, after more rework."
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Thanks!
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+-- 
+Cheers,
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+David / dhildenb
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.misc
-
-[1/1] fs: Prevent file descriptor table allocations exceeding INT_MAX
-      https://git.kernel.org/vfs/vfs/c/c608a019c82f
 
