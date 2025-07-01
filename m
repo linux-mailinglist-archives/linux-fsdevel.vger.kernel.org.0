@@ -1,207 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-53526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F4EAEFCD4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 16:42:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9489AEFD09
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 16:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026731C023C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 14:43:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2C47ACD54
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 14:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D63F277C86;
-	Tue,  1 Jul 2025 14:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9376277C9F;
+	Tue,  1 Jul 2025 14:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Bwi570hu"
+	dkim=pass (2048-bit key) header.d=stoffel.org header.i=@stoffel.org header.b="Ocx1PyaO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2049.outbound.protection.outlook.com [40.107.243.49])
+Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB6126CE10;
-	Tue,  1 Jul 2025 14:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751380960; cv=fail; b=j7pq/hR55yopIzzQZEs8sb9aXRHR4yJMQdSn6ymgu0caX1qsC+Q1ATzpNtq69FEE8nq25Qw91Qm3gFYa79QXkrI7zxvc0/+S5oIZ7amOrCvrOIaUYdXzDBP6ODoDnPU6zd34dKVO0OVFXuZ7IQbABHaByGrrXtQUdMvlfGmrLGc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751380960; c=relaxed/simple;
-	bh=llUR6uGyC8GCEIERKg6lq/boQnygQlMrBEgfkRt7AZ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tphjEnTS7o187IkMnlaNSff3aZ4Y6/ZtLbgfMxq8y26hKvl4QCKC4d0luh2GGFGwyN60TggshOIIaCo4UZyS5f99xRflR85mPAEUf4NL59jqqfsGYy723E0GvAqEW0m4zUTlCGVHPX9vCL4R8NfkafWyFt2YeSV94zMSHmo1LKI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Bwi570hu; arc=fail smtp.client-ip=40.107.243.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=shOVK/XRB7iSXV/Z16zKA/ApILCG9AHPomeRnL/kJDlB++yipsDTxSawqL70IzTyuXnzYJR31E0H3NWMhgzxu1e6qoBcm+z3ugNmxEwcAMba2eWvopuboboZ8G78O3WyoH89sqRva6s/gRejaTC7yR1Nr7WByxSFHhP0olOdnsSeK6tHnXDN3v2cBTE5nHdicOnBtNafH+K+j9iugtOfYMn5ss4WG0UUp5prKcnNmpQUxoQ6oADsjdzZgRsalnVZI0027bjGKyeXtwCkF15rjKy2rL1tdKpplM6nWXioxDLBuW02wbCWGxj4V6gVVXSqMDAt8kYnAzkmM4lvKcMYkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=55F0DnEOnVcghpcpeyZOnU64D9v7S1tlK2FSfnVU9Gc=;
- b=yt67sVKFGgHbi1+yqEa+B4uGPH7Nealilf+kOFheOE3+P58Wh9qCWjnea19ZqdZJ5x5+LvcqtgrwPgvBfwaIiYWiijF+uE6fkLFzulNEEKwitMqs8gSOgyW8Fe3mjWhGFtFmleHp8DrE30cuMgp2je6hFjx1p1vPqbP/GSEopWJ55Qsvx831WcxbciYF6j1/d1AHa5UEULzgTLJtp0azVdVJOn74TlDm4pd11hhUMnJk1F50HcjlNnuJ/5fKftP+sq+lsdfAN77wFlRkuAwWYDH1uzH8b6LsBe2X3UEdhf4KfF5LDwfErrFfU2qRrRuYKf4c0Z9HBim8tqzk/9NUCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=55F0DnEOnVcghpcpeyZOnU64D9v7S1tlK2FSfnVU9Gc=;
- b=Bwi570huOPsZ6YJa7xqNlry0R+Z7iENvFaUZapinvVJXfNiuPm/Mks1ssEQoJydoKFQ2fQlIrVcwjuJYFUIhuu4jUtZUoDyYHutR12+nefVyZ+NAek519VynpO6xDpG6vCKGQlXRfPWPMDBsi073Jxwsgk0h0LQ1FT61KId/WUdFrT5hVVLjp6++WMXcDiTPxJW5EziW0BOEIFFuCA+vsLc48SSij/sHV8IahZUt/qLwp3FgNZxmZWHzA/HbfeRYiDS8LkR3iCFDMefXIY7gsjHqHmao/w1foZP8XGFq2JgO9H5KeNd+W3sTNa0kE46FAb9ZgciAisE0jqq6zBN1nQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH7PR12MB5807.namprd12.prod.outlook.com (2603:10b6:510:1d3::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8880.24; Tue, 1 Jul 2025 14:42:31 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8880.029; Tue, 1 Jul 2025
- 14:42:31 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
- Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>,
- Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v1 08/29] mm/migrate: rename putback_movable_folio() to
- putback_movable_ops_page()
-Date: Tue, 01 Jul 2025 10:42:25 -0400
-X-Mailer: MailMate (2.0r6265)
-Message-ID: <95053F4D-04E7-4961-9DBB-1AEBB4B71255@nvidia.com>
-In-Reply-To: <20250630130011.330477-9-david@redhat.com>
-References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-9-david@redhat.com>
-Content-Type: text/plain
-X-ClientProxiedBy: BL1PR13CA0258.namprd13.prod.outlook.com
- (2603:10b6:208:2ba::23) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4052777E1;
+	Tue,  1 Jul 2025 14:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751381349; cv=none; b=HY/Fhr5/xzG45AdFXk0/pklLzPl97R7z+0fW37gmSGjnNbcjKopzQJhj2FhtXodxnfHCXbI+2XxiK498H6bunw/EP37Y9jMK6f1mh8Y2s1uDeD7y1K6UpqDzPgPHsH5fYWUthqGJSNueNIQVQmevAcrqba6AB8sMsTop97kyf/k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751381349; c=relaxed/simple;
+	bh=lRxGPfMELh7HzrgS15Q3ejhCWOxjdsNt9Sn5cFB1kZw=;
+	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
+	 In-Reply-To:References; b=EbpPjBcE8CB9WHOXTtiOgcr/1a5SKwmp9DJ5SvxLEvlZzwn058HWkOncyiNJliBcB+EH5iVtHCq1/4fcHv0XVPl/m3jTPnqf6LbW1qHzjibII/C1voO+Xn9PF7O5bHwGPcNaaWFcB6YxtQCrqHghfoHfBzX7HJvsXS1Nb4RNuS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; dkim=pass (2048-bit key) header.d=stoffel.org header.i=@stoffel.org header.b=Ocx1PyaO; arc=none smtp.client-ip=172.104.24.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stoffel.org;
+ i=@stoffel.org; q=dns/txt; s=20250308; t=1751380992; h=mime-version :
+ content-type : content-transfer-encoding : message-id : date : from :
+ to : cc : subject : in-reply-to : references : from;
+ bh=lRxGPfMELh7HzrgS15Q3ejhCWOxjdsNt9Sn5cFB1kZw=;
+ b=Ocx1PyaOH8aHynt34mUsXr9UJzfH/4C68EC8KU/vfepsuiTkKzJ14SA/Fq2UE8s+5haMf
+ MDC+iMXs60FTao2S1vUDzH7EsiJXfiId8FpqfqB4FEoVoMxl6zsHLkIu2d97/ldGGBwo45s
+ 9sfsy7OfYf/m/H7Wvk6KgPNrmZrfM88KJox3rnZHAlDUPKlVR+WNXcpLvmkf31RcuaeHfMQ
+ qmkhsLITA21K44pc9XDXQL4TiqUHwreoEDbpfWC+sR8XssaoHhbTlIOiMBP1/adMlTVy0N3
+ eheR64UVRhcZLJPmKnV01XYyVp9raM/6HYaAL4PfQNCoqRzqUilrjewn2DZg==
+Received: from quad.stoffel.org (syn-097-095-183-072.res.spectrum.com [97.95.183.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.stoffel.org (Postfix) with ESMTPSA id 87AD71E2CE;
+	Tue,  1 Jul 2025 10:43:12 -0400 (EDT)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+	id F2196A10F5; Tue,  1 Jul 2025 10:43:11 -0400 (EDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB5807:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86453715-a9b4-404a-883b-08ddb8ad8245
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Vq6r2rSXg41q4gt/3E2OszCQnmFvEVfRmYButbkENJBaDMcgk8eB6mm/Easb?=
- =?us-ascii?Q?DvY8wVd9Xx617BBUwwLJPqq/U+iC+YMxHPODb8i8Y8rPsBaOsbSh9IlPrfHh?=
- =?us-ascii?Q?PsuJ0GiAfBFya0S3jR7YzrnXKU+EDynUwIiH7xDdug5vEoA1w8REZyhVSPXl?=
- =?us-ascii?Q?C7am2h78V3feLDUgE4pnFjdJLBTcnKb8jGXA12f1E8yvhkJ3C6Z28fuVx5BM?=
- =?us-ascii?Q?ErCGIUkEcp9KBGGgZ3TlHZ/U+OaNPY1S1rAdfwaGxLOsLzv8n0mxWx/POKhw?=
- =?us-ascii?Q?7wc8WkAKczThVjp8VtjqplNIYNJCUuL8RiWfMtMelrwEJedxPjlLd8FG3uOC?=
- =?us-ascii?Q?6VuHvdZnElpiFTzE4AR+4Hapl4aautQHKfI1MfZhyVXiEqzfSej550I1wgt3?=
- =?us-ascii?Q?70J7W7fmMhNptZueI2/U6W2vfh50WXLjHnqGHICUO2hb7sTl+coj1G8gthVY?=
- =?us-ascii?Q?nf16JcYjnWpPHK/MGOZ77fgl77SM6umCUKzHUzcMnOSxMnLSTCrvqBzSI5ay?=
- =?us-ascii?Q?rR8uyCLls+Oof/yRWw2nPaRTumNgwimm283tjTTo6vYD+1tA+QqC2c6ETgIS?=
- =?us-ascii?Q?fDtky3jGYK6MRIxxwpPnXAiNcRDQN3N54uSbtHtBtLylQ9l7NWOQKNxMjO/D?=
- =?us-ascii?Q?idHORIF1f8pWPGJX+nnPE1G1yRr2yCZQR1ySeUm7Q3TW8xoLkzqwNaTsG/8Z?=
- =?us-ascii?Q?mME7FTOd8uUAitw/G3tckMia7UfbQNqq6UGWITb1LZF+bGiDaPf+Vimvves4?=
- =?us-ascii?Q?DaivfDLh7wGLlU4GFsKVnM9Mx2mqRAiJYQYFxvH1CnoQoAwzaJK3u/PKFKsF?=
- =?us-ascii?Q?GTwBI9zogrw8PCRbCwHSDYtKNvteCvEtkrdud2a8doRdSu/8ZiORbQ/NyhZ0?=
- =?us-ascii?Q?mNkSelj9kbVI6ZsS8AzlZDFQG+TF9cCWI3mNjAMHZqzwBxzffDnbXtn0JPa7?=
- =?us-ascii?Q?32wAc7tNnUpsbr/UVyGs5nfOFGqocAt/0QoV3tkhsg3KxDOgbAtanB5Bh0lK?=
- =?us-ascii?Q?cRgMWlvuRACBp09GZaAMG9YGW6wGiBr9mMCNKXlrKA8izCNcQMPQbRIAzGHm?=
- =?us-ascii?Q?DRp8ECxuDwkS6ejJWtufKV3q6GmsNXiUgsMNRoOfuWUwUkUPHarxm65qCCnt?=
- =?us-ascii?Q?ipcgPNUW/CzTixQ/EOM3GOdGSr0+JbdozfjTq8FoOBuiv2hX1ArvYh4SlA13?=
- =?us-ascii?Q?Ug6jgpomHhvvRunJmu6tf/TULz/+8vRQFmEjigP4RRczpEvl6r/zNUoipi88?=
- =?us-ascii?Q?xTeTiQADl37rj56y3DnW0gevyUFz2goWLpf8Ra6JwHp5TzUfrcmdp0auwGUs?=
- =?us-ascii?Q?VCGi9Q5fq0tyjJlo6MrjwazzdSGgubw3P6t5vzvLobCPXTXyzBM1eL7tXfVC?=
- =?us-ascii?Q?TMQ0cEWdfMXxzPB2Bb0Gg2yeasfeJSU/HWtpaAyusAguElF6anSjLkYsepjk?=
- =?us-ascii?Q?GlYgmHWo2z0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Mn0gOkmKvHoqW8wro7OeItqiY/Ilg2UOp87LREyOEo19tBCTatGdcd+ZAGva?=
- =?us-ascii?Q?MOdkV5AlOYtRjB1e2S5EBjEO2xAsnGzuv4ZKf2DV/g6WN43Z9ycSuIhnsXob?=
- =?us-ascii?Q?H/qYW/fB9ba5v43GsYXO4Eo7DEYpXFVrkbc51Y50XTrLWuFFdTzsXNuztpr9?=
- =?us-ascii?Q?j+x5sAlntd8w3Vvuy3KKtydK3PFP6cQPfYuiWh/vKrRZqWEaZu9EaZ2ewewr?=
- =?us-ascii?Q?abzwGs+5ZuQCXVlvRcpF2NrYLX/wJQ9IumfPNqykuPc2sZUM5/QYsBKGHtHQ?=
- =?us-ascii?Q?YzxXZC5ofAWzQMFGy1jNT4DltUV6KzlW/D6DxZQVHU3XtsT946n5wJbuJGek?=
- =?us-ascii?Q?xRe41gtXOfx61853xM9Muj54fg1uGqUvq4EI9Pl16v9QQiKcHm9O2EmZ6gAl?=
- =?us-ascii?Q?lWeEWQsovKm+bEu8exv9C+EM07f7K6S7PorV9xtkBoQk86gcrL4/gHYKmXqx?=
- =?us-ascii?Q?CrRpVXQKfbebeZ81ncEQp9zRkrsmxM80HmR00oEkThlZHdFsNCrbcIiM7/Xb?=
- =?us-ascii?Q?Fl3pAZaR12Z8U/WBpwUJmt3KwUXvwYSw7RaAozb12z+9zryvhOgoJA+Sccq5?=
- =?us-ascii?Q?FZjfWh7w1CaK7Rq54ApR2G1NESRE7cH+U/UsgZfz1hfHcK8SeeyYR4uSSfUa?=
- =?us-ascii?Q?AvYIYRYah9t5t8Ziek1cmXWjDrT9BEqFX1gFWCaNFQvT9c3bGTG2PpTXSMAJ?=
- =?us-ascii?Q?2lfhSppqVlfb6vZz3FfFcIPMqDrzv5Jpzy77dqtYMkJBBK+E0UXnL3WFkiy6?=
- =?us-ascii?Q?Q91ZjIZFatKgtf6bU+L0BMR+uXzx69Fzq0iWwR9y54fgLDJsyhHf+2/YQUtC?=
- =?us-ascii?Q?mD3IZV625g/U8PF5RwGI4LtdtcrmLmvnObVPJ2JIWLMIiOSGLZJFQmtliwtQ?=
- =?us-ascii?Q?5VP6GICvRRKp/MxV4e+IJRxEwGnmtkBrejxOpkFriWVCdtS/vKUaf/KF/89W?=
- =?us-ascii?Q?iz2+wUzFm2RaSObgUJqGZq1TWKKy7u45bKwh5HIBHx9vmteDicZAXvdeN/mB?=
- =?us-ascii?Q?+V9lbF0akiCLP7GdRceDCUKSR3iobRegBHEni5RFkTv+jiSHWUdlTLRW0Ksq?=
- =?us-ascii?Q?CRuORLvYjQBD07EMXWfRShS6ueUPXRvO+27rzjqpM5JkIo1mLbw4WvRnSFWx?=
- =?us-ascii?Q?t8rs2sYMaGnDbgNDn68/tq6LXYkHAylTX/0pGWuoaFAOZvEbckfK5qTSEcJX?=
- =?us-ascii?Q?mC/910R5JH6TF8/KiXlfOcQQpfQ4fCgBkhxi9HL58m5RcqsHkqZIpXgApj6h?=
- =?us-ascii?Q?yoM/AgdkcHphczvlhvspZ7J3972+UoOTArZhDQXpqPq5x2vNWtlpWTtyJAh9?=
- =?us-ascii?Q?cD4+ITfqFylEnYwfToM3qiafJoCQxJCXYCRw+3NX9rzHP0BWFcu4jzutNpDZ?=
- =?us-ascii?Q?IE+UdgkSdSgLnHGDgbosX9LkhZXP8iH9g+Qbt9xDTt0NhcFS0n6Es94H0kcj?=
- =?us-ascii?Q?aIj669u+4I2Ybb/642FrYZcev4WtAQynhAS1bRxUuQfM9O3Oj3A3uqic0NQA?=
- =?us-ascii?Q?2EAJuEW6rjDNGC6jcKwMrxcvAD9TZWe5C2sg+0DgCo4NHoFpwyaw9JY2K88M?=
- =?us-ascii?Q?hIjmHOIKFYjQB0298UQvs65syMGig7gzrGKNcT18?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86453715-a9b4-404a-883b-08ddb8ad8245
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 14:42:31.4733
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zhTvUw3s2tE5uMaIAhkhCPYj0PyoMdWRf9R7e3xUXWkgjOROF7Nl2D0EakRgLTRT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5807
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-ID: <26723.62463.967566.748222@quad.stoffel.home>
+Date: Tue, 1 Jul 2025 10:43:11 -0400
+From: "John Stoffel" <john@stoffel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+    linux-bcachefs@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org,
+    linux-kerenl@vger.kernel.org
+X-Clacks-Overhead: GNU Terry Pratchett
+Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
+In-Reply-To: <xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
+References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
+	<CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
+	<xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
+X-Mailer: VM 8.3.x under 28.2 (x86_64-pc-linux-gnu)
 
-On 30 Jun 2025, at 8:59, David Hildenbrand wrote:
+>>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
 
-> ... and factor the complete handling of movable_ops pages out.
-> Convert it similar to isolate_movable_ops_page().
->
-> While at it, convert the VM_BUG_ON_FOLIO() into a VM_WARN_ON_PAGE().
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/migrate.c | 37 ++++++++++++++++++++++++-------------
->  1 file changed, 24 insertions(+), 13 deletions(-)
->
+I wasn't sure if I wanted to chime in here, or even if it would be
+worth it.  But whatever.
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
+> On Thu, Jun 26, 2025 at 08:21:23PM -0700, Linus Torvalds wrote:
+>> On Thu, 26 Jun 2025 at 19:23, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>> >
+>> > per the maintainer thread discussion and precedent in xfs and btrfs
+>> > for repair code in RCs, journal_rewind is again included
+>> 
+>> I have pulled this, but also as per that discussion, I think we'll be
+>> parting ways in the 6.17 merge window.
+>> 
+>> You made it very clear that I can't even question any bug-fixes and I
+>> should just pull anything and everything.
 
-Best Regards,
-Yan, Zi
+> Linus, I'm not trying to say you can't have any say in bcachefs. Not at
+> all.
+
+> I positively enjoy working with you - when you're not being a dick,
+> but you can be genuinely impossible sometimes. A lot of times...
+
+Kent, you can be a dick too.  Prime example, the lines above.  And
+how you've treated me and others who gave feedback on bcachefs in the
+past.  I'm not a programmer, I'm in IT and follow this because it's
+interesting, and I've been doing data management all my career.  So
+new filesystems are interesting.  
+
+But I've also been bitten by data loss, so I'd never ever trust my
+production data to something labeled "experimental".  It's wonderful
+that you have stepped up and managed to get back people's data when
+bugs in the code have caused them to lose data.  
+
+But for god's sake, just because you can find and fix this type of bug
+during the -rc series, doesn't mean you need to try and patch it NOW.
+Queue it up for the next release.  Tell people how they can pull the
+patch early if they want, but don't push it late in the release
+cycle.  
+
+I've been watching this list since the early 2.x days, and I've seen
+how the workflow has evolved over time.  I've watched people burn out
+and leave, flame wars and all kinds of crap.  And the people who have
+stayed around are generally the nice people.  The flexible people.
+The people who know when to back the f*ck off and take their time.  
+
+> When bcachefs was getting merged, I got comments from another
+> filesystem maintainer that were pretty much "great! we finally have
+> a filesystem maintainer who can stand up to Linus!".
+
+Is that in terms of being dicks, or in terms of technical ability?  Or
+in terms of being super productive and focussed and able to get work
+done.  Standing up doesn't mean you're right.  Or wrong.  
+
+> And having been on the receiving end of a lot of venting from them
+> about what was going on... And more that I won't get into...
+
+> I don't want to be in that position.
+
+So don't!  Just step back a second.  Go back and read and re-read all
+the comments Linus had made about the workflow and release process
+over the years, much less decades of the kernel development.  I'm not
+sure you realize how much work it is to have people blasting patches
+at you all day long, 365 days a year, and who think their patches are
+the most important thing in the entire world bar none.   
+
+Just reflect on this for a second.  Take your hands off your keyboard,
+and don't type anything.  And think about how many other people also
+think their patches are the most important.  
+
+And about the users who _need_ _that_ _patch_ _right_ _now_ to fix a
+problem.  Why doesn't Linus see that I'm important and my part of the
+kernel is the most important!  
+
+Just let that sink in a bit.  
+
+Then think about how many people do not care about bcachefs at all,
+who don't even know it exists.  And haven't used it or want to use
+it.  Are they less important?  What about the graphics driver they
+need to get _their_ work done right now?  Is that more or less
+important?
+
+> I'm just not going to have any sense of humour where user data integrity
+> is concerned or making sure users have the bugfixes they need.
+
+So release your own patches in your own tree!  No one is stopping you!
+Have your '6.17-next' branch with the big re-working to fix this
+horrible issue.  But send in just the minimal patch _now_.  The
+absolutely the smallest patch.  
+
+Or just send in a revert for all you have done in the current series
+which is breaking people, because it wasn't quite baked enough for
+stability.  Fall back, re-group, re-submit it all on the next release.
+
+Slow down.  
+
+> Like I said - all I've been wanting is for you to tone it down and stop
+> holding pull requests over my head as THE place to have that discussion. 
+
+And you need to stop thinking you are the most important thing and
+only you can decide when bcachefs needs to be updated or not in the
+kernel tree.  
+
+> You have genuinely good ideas, and you're bloody sharp. It is FUN
+> getting shit done with you when we're not battling.
+
+I'm honestly amazed at your abilities here Kent, even though you can
+be an abrassive person too.  
+
+> But you have to understand the constraints people are under. Not
+> just myself.
+
+Dude, you need to listed to Linus saying this exact same line back to
+you.
+
+John
 
