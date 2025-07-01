@@ -1,56 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-53570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3C0AF0320
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 20:47:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1643AF033B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 20:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6F9E16C3DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 18:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C99C446608
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 18:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9555F245029;
-	Tue,  1 Jul 2025 18:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA14D280331;
+	Tue,  1 Jul 2025 18:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USwTPFVA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKc2G48m"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC45E3596B;
-	Tue,  1 Jul 2025 18:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DC323AB87;
+	Tue,  1 Jul 2025 18:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751395659; cv=none; b=Td3OsFt79ViF/VpcA1QcODXMDwaL1HkD6bMibmRgUimeVULpwFuw4ReEBUVv0cGzvp+QBpUMcOdcNS1rgErJGJDCi5oD2KTVhx/1Tb76yRcds50ikuqYyQroyGAl2nkuuN9PXrleh8qWTkbMc0bxUyoLSb6BGB2/A0hjCpD69Bw=
+	t=1751396101; cv=none; b=a4AAWxYqaCisv4jw/LstB+f8xOTqUC6Gk9Z7mdSneqSDnoFSrWkwbCqXuby9sK5vH5/JY6mkvDjwLmifOSUT418kH5JPpCTV5n4h6QMaUfg1jgboXU885zWjk43cVoGIUayUGyOOgWgj4ZwMmwFHIlZV4reaEGhVrqKcrhdtTpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751395659; c=relaxed/simple;
-	bh=JkTTkr7necSommWO+02eTXNXA+2BqYihS2B9P96yej4=;
+	s=arc-20240116; t=1751396101; c=relaxed/simple;
+	bh=3+LOkK7yAmYcFvOKVchdX4D20Wx83qWmNEjojDTk/VI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNwxvb+uxLb4ry3bXUC0X6w0qscwGcreSW4U/cpcd3Ocw1Jd4cmumf7jaKdeZOVd+3dk4ju5qjLyug4/gAfjiz8jA+7DSa21kco1ynu2lUa2GZJksMUlDtMztLcGin1FmcaUWHNGkgD5EnS03mH0s68hyKiyJvF8Xl77aDj1L90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USwTPFVA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E73AC4CEEB;
-	Tue,  1 Jul 2025 18:47:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=liVOR/qj+mmN/rogCs/AZxcXBm4uoUSI60lmEtzYNdP1iaBS0fM8JU+ztAntpV2HxOukdLCqyUHTBpR50QPCRke6HgCmWCiY7otMYtKhwC7fZPiCiXJBbRGPyDr1jjUfsD6HenWINlgzI9B1dCzP4Swd5nfTeK41ZJU3Exq4rd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKc2G48m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1176AC4CEEB;
+	Tue,  1 Jul 2025 18:55:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751395658;
-	bh=JkTTkr7necSommWO+02eTXNXA+2BqYihS2B9P96yej4=;
+	s=k20201202; t=1751396100;
+	bh=3+LOkK7yAmYcFvOKVchdX4D20Wx83qWmNEjojDTk/VI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USwTPFVA83klNEMTYfQHugsomxqIFBazWYYW6VXoMlsr4Kp1xroTJgkR6KHRm7CST
-	 3mp462/Fq/qPxMVuvILSLvkyOdCZVMqOrEQo7QUAXpPunYIUUwvPqIuCDH0Spywcar
-	 WrnnafQ7qUz35il5zvYSypT8S6xekZcckMwXDTNjISTUVqHjSxsjZ175r06XUvbTdi
-	 sf4IaSMNwJ/1nW2KHQCVZ3LTHLzafn9rUVLNs9r694DA6QUW5otmSHy8fGlVUlSMo2
-	 JV8ab8U21R2/tFFU4bfWdyWj1wIS5ndcJL7CU7wxvncHKBHkB4JN0Qcatnm4hMJNi9
-	 OP1herZ0ZwSOg==
-Date: Tue, 1 Jul 2025 11:47:37 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: alexjlzheng@gmail.com
-Cc: brauner@kernel.org, linux-xfs@vger.kernel.org,
+	b=MKc2G48mS21Kpe0iKnEQYljIa2CEQz2BOO+Ufl7FEMSRo9Y2SbiRlQdoQjApKDgTz
+	 Ayc5ye0NVomKu+7pIdiLy06V+WQ23nJL32pfhvg4CvGOKNGaRVLP3jSbQiVezdqmiu
+	 TTp3VT+YrXP1c8/Jjd1inXIYscX/Y1r3iKm2OVGZ7XnwHK3FtQivSdMd2zyzPHVVss
+	 hq8prZgyR3KeWOKalhwGrQiiwQz61Pn8l25II3zmeOkmBKaefE9jnimbfzYYqXQSwu
+	 L+sTJl3nEHHQ7edwxM4Fdd4SQLAgUujG5YdbHFKTQskCOdTzIGIND1MRRHYlR5iJsD
+	 oKbKvgolToCPw==
+Received: by pali.im (Postfix)
+	id DD3A85D6; Tue,  1 Jul 2025 20:54:57 +0200 (CEST)
+Date: Tue, 1 Jul 2025 20:54:57 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: Re: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with
- locks
-Message-ID: <20250701184737.GA9991@frogsfrogsfrogs>
-References: <20250701144847.12752-1-alexjlzheng@tencent.com>
+	linux-xfs@vger.kernel.org, selinux@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr
+ syscalls
+Message-ID: <20250701185457.jvbwhiiihdauymrg@pali>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
+ <20250701184317.GQ10009@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,50 +68,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250701144847.12752-1-alexjlzheng@tencent.com>
+In-Reply-To: <20250701184317.GQ10009@frogsfrogsfrogs>
+User-Agent: NeoMutt/20180716
 
-On Tue, Jul 01, 2025 at 10:48:47PM +0800, alexjlzheng@gmail.com wrote:
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
+On Tuesday 01 July 2025 11:43:17 Darrick J. Wong wrote:
+> On Mon, Jun 30, 2025 at 06:20:16PM +0200, Andrey Albershteyn wrote:
+> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> > index 0098b0ce8ccb..0784f2033ba4 100644
+> > --- a/include/uapi/linux/fs.h
+> > +++ b/include/uapi/linux/fs.h
+> > @@ -148,6 +148,24 @@ struct fsxattr {
+> >  	unsigned char	fsx_pad[8];
+> >  };
+> >  
+> > +/*
+> > + * Variable size structure for file_[sg]et_attr().
+> > + *
+> > + * Note. This is alternative to the structure 'struct fileattr'/'struct fsxattr'.
+> > + * As this structure is passed to/from userspace with its size, this can
+> > + * be versioned based on the size.
+> > + */
+> > +struct fsx_fileattr {
+> > +	__u32	fsx_xflags;	/* xflags field value (get/set) */
 > 
-> In the buffer write path, iomap_set_range_uptodate() is called every
-> time iomap_end_write() is called. But if folio_test_uptodate() holds, we
-> know that all blocks in this folio are already in the uptodate state, so
-> there is no need to go deep into the critical section of state_lock to
-> execute bitmap_set().
-> 
-> Although state_lock may not have significant lock contention due to
-> folio lock, this patch at least reduces the number of instructions.
-> 
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> ---
->  fs/iomap/buffered-io.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 3729391a18f3..fb4519158f3a 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -71,6 +71,9 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
->  	unsigned long flags;
->  	bool uptodate = true;
->  
-> +	if (folio_test_uptodate(folio))
-> +		return;
+> Should this to be __u64 from the start?  Seeing as (a) this struct is
+> not already a multiple of 8 bytes and (b) it's likely that we'll have to
+> add a u64 field at some point.  That would also address brauner's
+> comment about padding.
 
-Looks fine, but how exhaustively have you tested this with heavy IO
-workloads?  I /think/ it's the case that folios always creep towards
-ifs_is_fully_uptodate() == true state and once they've gotten there
-never go back.  But folio state bugs are tricky to detect once they've
-crept in.
+Hello!
 
---D
+As I have already mentioned, after this syscall API/ABI is finished, I'm
+planning to prepare patches for changing just selected fields / flags by
+introducing a new mask field, and support for additional flags used by
+existing filesystems (like windows flags).
 
-> +
->  	if (ifs) {
->  		spin_lock_irqsave(&ifs->state_lock, flags);
->  		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
-> -- 
-> 2.49.0
+My idea is extending this structure for a new "u32 fsx_xflags_mask"
+and new "u32 fsx_xflags2" + "u32 fsx_xflags2_mask". (field names are
+just examples).
+
+So in case you are extending the structure now, please consider if it
+makes sense to add all members, so we do not have to define 2 or 3
+structure versions in near feature.
+
+Your idea of __u64 for fsx_xflags means that it will already cover the
+"u32 fsx_xflags2" field.
+
+> --D
 > 
-> 
+> > +	__u32	fsx_extsize;	/* extsize field value (get/set)*/
+> > +	__u32	fsx_nextents;	/* nextents field value (get)   */
+> > +	__u32	fsx_projid;	/* project identifier (get/set) */
+> > +	__u32	fsx_cowextsize;	/* CoW extsize field value (get/set) */
+> > +};
+> > +
+> > +#define FSX_FILEATTR_SIZE_VER0 20
+> > +#define FSX_FILEATTR_SIZE_LATEST FSX_FILEATTR_SIZE_VER0
+> > +
+> >  /*
+> >   * Flags for the fsx_xflags field
+> >   */
+> > diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
+> > index 580b4e246aec..d1ae5e92c615 100644
+> > --- a/scripts/syscall.tbl
+> > +++ b/scripts/syscall.tbl
+> > @@ -408,3 +408,5 @@
+> >  465	common	listxattrat			sys_listxattrat
+> >  466	common	removexattrat			sys_removexattrat
+> >  467	common	open_tree_attr			sys_open_tree_attr
+> > +468	common	file_getattr			sys_file_getattr
+> > +469	common	file_setattr			sys_file_setattr
+> > 
+> > -- 
+> > 2.47.2
+> > 
+> > 
 
