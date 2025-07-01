@@ -1,89 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-53428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF0FAEF064
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 10:04:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDFCAEF094
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 10:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16408189D046
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 08:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6BC3E2744
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 08:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8C8268684;
-	Tue,  1 Jul 2025 08:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35F526A0B3;
+	Tue,  1 Jul 2025 08:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ta5oHIlP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VSvhskD3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8BC1F63CD
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 08:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875D22698AE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 08:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751357046; cv=none; b=oIZuPm0dKKMEkZ9UCbYhS9y2qXuH2NgWXxYq5xnsgJhQTZEYoEKzZ1nMwo0yyM7+Z+3LJsg6X077Dnam3lVLQkYenafcAXIxe8+umsBYZ1prvXZ+mclRMKvzKgw7vLpq7Xc/Jly6ASS4xX9qsABvp6zvd1SPQMxmcU0VXgwcNpw=
+	t=1751357479; cv=none; b=kFd6TOdXpaMXZAWdCYafxz94yezz62kyHF/YmP3reCiLtBE2QJDJJMRrVCsOMRH/5v5YZDYz1eIxKkZsbtWzxwOgnilbbBLs4aKOnBcZLxdEJSDZsIZUqb8S0k+uS++XW/rVJi4BudV6xQI0OAydNieMz5Dr890o7LSjiTXlZUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751357046; c=relaxed/simple;
-	bh=ZtIGBD2+g8T5YgNHrFs6+HwZ/kfDfPpPyWcD9GIgXbQ=;
+	s=arc-20240116; t=1751357479; c=relaxed/simple;
+	bh=xlvxWap5VmqOuFD+5gWUxQuiw4f6r8mbXdJEkaDMaUA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=orgQQLmGHUBZTY0J4QHAWFX2U8OgtWiOF9GDgimj7/jjLTEqVPVb3xCbUryQ2jSAPZCiBbKqcGGzkR2a/gwUSGEoUWxvQEpVZxzYAVt9LMX/Zde9QjDomz504nrltzL+FsDJNb0Sn02gQEADPUja8WDSRa6yKlUSDeiuLKJic5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ta5oHIlP; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=I4/BLRAuJ3vZ4Q4G5ujB0Kcf7TPzA18u59PV7EHLMxeZ7Z7/zMN4ihS/sRyBmyt188HYC7xlzGUDfis1wIiLy+QgXbICl2bhKVDwWn9sC9kskhQP41D6v4mMVAbPTh55PL3YvY8wk3U0V1L2fDmnAK+fkhWMLixOg2bixrchcuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VSvhskD3; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751357044;
+	s=mimecast20190719; t=1751357476;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pUfxa+nNjdWULRVVJvn16LKseq+jCWAXhMIO+TN4r9c=;
-	b=Ta5oHIlPNOiMjKpBO28OYZSC8J69mm+5phRdv+/aOcl4NriOkVVgZGACgGr8AKYkqv/qLl
-	5LsJnXtJdtX9gN9NYyagw3XdBljKMV/ae9BcRzm9+L3FTM7Y5aSajxZYt6hqpi/xNgkx/R
-	ckLZerUjgdZftNZ9fILJ/FSxDOzCCCg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=YrqKfOfhORr/5vproY5ovuBEQCam7Cslax8BPi13vvQ=;
+	b=VSvhskD3ixSpAjRFM02YDXA5fQr7by/BiCvONyik4YO5M+obxsQBND9uN9d0R1rrJhpZR6
+	/LsVoWojvody9M/fg7mx/Ok03WDxOF6/UN0V2cQ1v0/egGuIiAlA/8THcjJInABZ+PeK5E
+	nm5xFMGVqILktuw7Uh0NTNVwiWWeqHY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-79-3BwKXcqMM2ujGC8gQO4aIg-1; Tue, 01 Jul 2025 04:04:02 -0400
-X-MC-Unique: 3BwKXcqMM2ujGC8gQO4aIg-1
-X-Mimecast-MFC-AGG-ID: 3BwKXcqMM2ujGC8gQO4aIg_1751357042
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45311704d22so20966715e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jul 2025 01:04:02 -0700 (PDT)
+ us-mta-592-pZ6kfA6QM8uAwSFWWIPQEQ-1; Tue, 01 Jul 2025 04:11:15 -0400
+X-MC-Unique: pZ6kfA6QM8uAwSFWWIPQEQ-1
+X-Mimecast-MFC-AGG-ID: pZ6kfA6QM8uAwSFWWIPQEQ_1751357474
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a6d1394b07so3413854f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jul 2025 01:11:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751357041; x=1751961841;
+        d=1e100.net; s=20230601; t=1751357474; x=1751962274;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=pUfxa+nNjdWULRVVJvn16LKseq+jCWAXhMIO+TN4r9c=;
-        b=OKIutu1svytVc5svZdi3T4rAeGJMaA4Ra9hB9x2KdnJDXsKF92RACdmw/71Y2S6A+f
-         +u6iQZJnMMa0iwiTphB5h+3d3pNx/lX1rhbdawcJOWzeVj4jPA0jN3uUu3qpZc+TxZwT
-         gBZDxX7taLNZtZjtOWuB2vl04uYUeW9NI+NXdqxTUSHBWI1cF/+EcBHcMNL/p7RBpI2n
-         twFKBWnJeDJb8iQMCGVavM9h94bY1B5wGPzmdUjhuLRWyu1J66CgVGZFAzeotg0LZXum
-         g9wlfk6IeJRfrldXljMcUEaY/CHXpjSbpX1RGV4HxXuYy+jppAWpxr9gGoW3ShGSDnRZ
-         YgEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLM68GROKeY4MtJF/e+oMQNCj/iiycf9oVkegutlxHXe8CmVKfn2+AkllOswiVCPangk001hB94tA+xjEt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfLel2v9zx51pYzSIs++gvgb0pzbCUJTkV5TbitmEZ7i/9HVOt
-	N1NhjFLQybCjRVyQKpas+1gZ6sl8m3sw33sfJKH2zbjlNGBVo0kwnsS86NALWcto+0EcJ2UmYOs
-	GDn7QI+4qJFKhnoFBvyCjEr/5bOhob7pS8SzWfBpmq//dTGjZcx+zTmXjoORonpg5SdpiuBjJb3
-	FSHQ==
-X-Gm-Gg: ASbGncvYHPI3uRREwD2zezJSmeYHY9PkmWXFbTYGNVjIt6vhQSgqLjM0gS8Vk6geXmv
-	mRAVW4Jbozxtj/e5CJ1VD5o9aH3/UVtj5PBItiaXwUxsEr/0WzVjbteS6okPIE4hE8eqtBi/R0s
-	ACxXLunk3dJHgAfTQKFUMAU99yqNP+93mGNzUsjvYYWnCJ3L+uQVRv4/e9lAFBDZIrEEdGIMplx
-	qrRUFeevEM14M0P0KM28XXGBeI5fQqejY1J3nYCLdTdCd+CPAYWUz3BDv4Mzx8zWEj7J4K/y1O0
-	e2tIt9/dfIvS7FQfdtdomnRxK2aVATMsAR2G+9YRvs6qQta6PbolaMcMLR24uQYA3hrPKRZAx7v
-	g2u3+3ALTgxUrzC36HDs4ll5IbguHbrRjtxfKvEkolPy8QeUqzw==
-X-Received: by 2002:a05:600c:348b:b0:43c:f8fc:f697 with SMTP id 5b1f17b1804b1-453929a6d39mr150001055e9.9.1751357041402;
-        Tue, 01 Jul 2025 01:04:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGm6r359RgTt8m7jA8PuYlLgOkMn1+oAKNYFF6zANtJXeownWBFwaSRu8IR5EUD4wI8vxIgKQ==
-X-Received: by 2002:a05:600c:348b:b0:43c:f8fc:f697 with SMTP id 5b1f17b1804b1-453929a6d39mr150000635e9.9.1751357040906;
-        Tue, 01 Jul 2025 01:04:00 -0700 (PDT)
+        bh=YrqKfOfhORr/5vproY5ovuBEQCam7Cslax8BPi13vvQ=;
+        b=wMwsPLZSKp3XeDpEvIcH80I7kUCqDNgQ7rzcXJG5GbHvrO8zM20vp42BXa7G4XVXKT
+         iVR9wUshj6tPBwKTv0iWx9A3vBX8734oEome77ANA27l/ABoqyWHjpzr4tC4hpV5euAU
+         dMbt/eGrwpB1NQkvwxs0FdbQh2KT9m0q6A5Rq7P+8pooCNNb7P+pnDfxds45IIhDsDNx
+         HaERM/QH6St1mEtyaZv1zMYUHKKRCurrdl7pDnzCbILjSMKCPvREWYieY+N7LMItbDir
+         XWHv8PWLWyjR4e/5QEWXrRtrezwm2lTmQhBlBkuK+dHDwLm4mjfXnfAwQjDisih2QFjN
+         YbNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZKwTc2N5BCDqcSJWdbdVsiqlQuTxaiqF4KUG3EbyItiXO4+Bq8WLbIkbzcRz4sB7S/r+94TuGtMDAwPBG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkUTgz/B7a+cI3fbIlihSwXt1iWHwt63vfvy4q4kBceksgRQuy
+	mxr7m+Q4JEMeRAdM8k4a2yyQneLPqETTwhtq7Mmw331FSf4sJc4Y71if2xyfyU274mv4w9Uvvr8
+	A+kSqbmFuouti3WgydOBHn6Yv4UOsRLE+k0gbBdWdc2LJVbbiX8PtcQsU/IW2d0VohyA=
+X-Gm-Gg: ASbGnctZHfo16BwQyI14K1d/wWfbe9CJ7cYX8TJedfM3VTl7mqUTMpuZgUlWlgy2itR
+	AMXrrijewWIIxYO2h0f75YwquB2dBj5vUqF9KQI7lFkdgoe+ANELTnTsJAHGGkiccL2sS3fslVP
+	rsEK88cg270O79VaCXmVCF8s8zutjQD7dBUDntq2vpeEW80KSuWJsrQsYrWrWz+A78udmy7z1I/
+	uLXSj5MaiZGgl8WQCcNOPMv+Z34SXbAx6bP056QGNgaMsJeTCLigcqLB11tKGsGmDoZRX3+EHQk
+	YRmkO01cWBQSeXNJ5/VCNEn89YH/idiD5MiazJrVOUSR4u3P3k6pfXcEM1aPQvpNDDfn4wUmr45
+	t0Jz77gHs2vjm9i03FrdZm7UVHX4Y5yFqP4FdqYxAYQnAamVyNA==
+X-Received: by 2002:adf:fdca:0:b0:3a4:e4ee:4c7b with SMTP id ffacd0b85a97d-3a90d5a7cfemr12842276f8f.15.1751357473978;
+        Tue, 01 Jul 2025 01:11:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPya9SzQYm2Gmxkryry4rcIJONguISr6QtHQb7EIzTCLPQ+9unHQuu9F1m9XhBP7UVfQjAGg==
+X-Received: by 2002:adf:fdca:0:b0:3a4:e4ee:4c7b with SMTP id ffacd0b85a97d-3a90d5a7cfemr12842232f8f.15.1751357473490;
+        Tue, 01 Jul 2025 01:11:13 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f18:7500:202e:b0f1:76d6:f9af? (p200300d82f187500202eb0f176d6f9af.dip0.t-ipconnect.de. [2003:d8:2f18:7500:202e:b0f1:76d6:f9af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823c463asm186965025e9.39.2025.07.01.01.03.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e52bb3sm12734059f8f.56.2025.07.01.01.11.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 01:04:00 -0700 (PDT)
-Message-ID: <411b94bb-4662-4357-86a3-05478f2f8c8f@redhat.com>
-Date: Tue, 1 Jul 2025 10:03:57 +0200
+        Tue, 01 Jul 2025 01:11:12 -0700 (PDT)
+Message-ID: <bac3664f-a961-48bd-b642-368b128bb174@redhat.com>
+Date: Tue, 1 Jul 2025 10:11:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,14 +90,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 03/29] mm/zsmalloc: drop PageIsolated() related
- VM_BUG_ONs
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
+Subject: Re: [PATCH v1 05/29] mm/balloon_compaction: make PageOffline sticky
+ until the page is freed
+To: Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, virtualization@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
  Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
  Christophe Leroy <christophe.leroy@csgroup.eu>,
  Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
@@ -108,7 +107,7 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
  <eperezma@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
  Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
  Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
  Ying Huang <ying.huang@linux.alibaba.com>,
@@ -125,11 +124,11 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin
  <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>,
  Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Shakeel Butt <shakeel.butt@linux.dev>
+ Qi Zheng <zhengqi.arch@bytedance.com>, Shakeel Butt <shakeel.butt@linux.dev>
 References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-4-david@redhat.com>
- <ccc333aa-46c2-49ae-8d0f-ffbde95cb22d@lucifer.local>
+ <20250630130011.330477-6-david@redhat.com>
+ <6a6cde69-23de-4727-abd7-bae4c0918643@lucifer.local>
+ <595C96DA-C652-455F-91DB-F7893B95124B@nvidia.com> <aGN8l3-a7GeFhFlz@hyeyoo>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -177,86 +176,53 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ccc333aa-46c2-49ae-8d0f-ffbde95cb22d@lucifer.local>
+In-Reply-To: <aGN8l3-a7GeFhFlz@hyeyoo>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 30.06.25 17:17, Lorenzo Stoakes wrote:
-> On Mon, Jun 30, 2025 at 02:59:44PM +0200, David Hildenbrand wrote:
->> Let's drop these checks; these are conditions the core migration code
->> must make sure will hold either way, no need to double check.
+On 01.07.25 08:13, Harry Yoo wrote:
+> On Mon, Jun 30, 2025 at 12:14:01PM -0400, Zi Yan wrote:
+>> On 30 Jun 2025, at 12:01, Lorenzo Stoakes wrote:
 >>
->> Acked-by: Zi Yan <ziy@nvidia.com>
->> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
->> Acked-by: Harry Yoo <harry.yoo@oracle.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>> On Mon, Jun 30, 2025 at 02:59:46PM +0200, David Hildenbrand wrote:
+>>>> Let the page freeing code handle clearing the page type.
+>>>
+>>> Why is this advantageous? We want to keep the page marked offline for longer?
+>>>
+>>>>
+>>>> Acked-by: Zi Yan <ziy@nvidia.com>
+>>>> Acked-by: Harry Yoo <harry.yoo@oracle.com>
+>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>
+>>> On assumption this UINT_MAX stuff is sane :)) I mean this is straightforward I
+>>> guess:
+>>
+>> This is how page type is cleared.
+>> See: https://elixir.bootlin.com/linux/v6.15.4/source/include/linux/page-flags.h#L1013.
+>>
+>> I agree with you that patch 4 should have a comment in free_pages_prepare()
+>> about what the code is for and why UINT_MAX is used.
 > 
-> LGTM, one comment below.
+> Or instead of comment, maybe something like this:
 > 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> /* Clear any page type */
+> static __always_inline void __ClearPageType(struct page *page)
+> {
+> 	VM_WARN_ON_ONCE_PAGE(!page_has_type(page), page);
+> 	page->page_type = UINT_MAX;
+> }
+> 
+> in patch 4:
+> 
+> if (unlikely(page_has_type(page)))
+> 	__ClearPageType(page);
 > 
 
-Thanks!
+I don't think we should do that. It's very specialized code that nobody 
+should be reusing.
 
->> ---
->>   mm/zpdesc.h   | 5 -----
->>   mm/zsmalloc.c | 5 -----
->>   2 files changed, 10 deletions(-)
->>
->> diff --git a/mm/zpdesc.h b/mm/zpdesc.h
->> index d3df316e5bb7b..5cb7e3de43952 100644
->> --- a/mm/zpdesc.h
->> +++ b/mm/zpdesc.h
->> @@ -168,11 +168,6 @@ static inline void __zpdesc_clear_zsmalloc(struct zpdesc *zpdesc)
->>   	__ClearPageZsmalloc(zpdesc_page(zpdesc));
->>   }
->>
->> -static inline bool zpdesc_is_isolated(struct zpdesc *zpdesc)
->> -{
->> -	return PageIsolated(zpdesc_page(zpdesc));
->> -}
->> -
->>   static inline struct zone *zpdesc_zone(struct zpdesc *zpdesc)
->>   {
->>   	return page_zone(zpdesc_page(zpdesc));
->> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
->> index 999b513c7fdff..7f1431f2be98f 100644
->> --- a/mm/zsmalloc.c
->> +++ b/mm/zsmalloc.c
->> @@ -1719,8 +1719,6 @@ static bool zs_page_isolate(struct page *page, isolate_mode_t mode)
->>   	 * Page is locked so zspage couldn't be destroyed. For detail, look at
->>   	 * lock_zspage in free_zspage.
->>   	 */
->> -	VM_BUG_ON_PAGE(PageIsolated(page), page);
->> -
->>   	return true;
->>   }
->>
->> @@ -1739,8 +1737,6 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
->>   	unsigned long old_obj, new_obj;
->>   	unsigned int obj_idx;
->>
->> -	VM_BUG_ON_PAGE(!zpdesc_is_isolated(zpdesc), zpdesc_page(zpdesc));
->> -
->>   	/* The page is locked, so this pointer must remain valid */
->>   	zspage = get_zspage(zpdesc);
->>   	pool = zspage->pool;
->> @@ -1811,7 +1807,6 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
->>
->>   static void zs_page_putback(struct page *page)
->>   {
->> -	VM_BUG_ON_PAGE(!PageIsolated(page), page);
->>   }
-> 
-> Can we just drop zs_page_putback from movable_operations() now this is empty?
-
-Common code expects there to be a callback, and I don't want to change 
-that. Long-term I assume it will rather indicate a BUG if there is no 
-putback handler, not something we want to encourage.
-
-Likely, once we rework that isolated pages cannot get freed here, we'd 
-have to handle stuff on the putback path (realize that the page can be 
-freed and free it) -- TODO for that is added in #12.
+And it will all change once Willy reworks the page_type vs. _mapcount 
+overlay.
 
 -- 
 Cheers,
