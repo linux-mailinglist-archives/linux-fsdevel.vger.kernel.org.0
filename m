@@ -1,62 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-53569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A17DAF02F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 20:43:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3C0AF0320
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 20:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68EB16C836
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 18:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6F9E16C3DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 18:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9D027FB3F;
-	Tue,  1 Jul 2025 18:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9555F245029;
+	Tue,  1 Jul 2025 18:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwD/gItj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USwTPFVA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BCB26B2AA;
-	Tue,  1 Jul 2025 18:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC45E3596B;
+	Tue,  1 Jul 2025 18:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751395399; cv=none; b=IXlp2suVySceBuVOZTuIFDDLopQMuRtERCDwnYMWPOs2lVgsAdlZbDF/D1fiSoOXiKzeL/328de9eaD/JSylIqSFisMAH2+uluNGaa8pd0hSlMScySIijyMySVAEM5HZLzQtGGpcjerPReqp4SKEps4qqXNr1Elm8UBPhZ2gXeM=
+	t=1751395659; cv=none; b=Td3OsFt79ViF/VpcA1QcODXMDwaL1HkD6bMibmRgUimeVULpwFuw4ReEBUVv0cGzvp+QBpUMcOdcNS1rgErJGJDCi5oD2KTVhx/1Tb76yRcds50ikuqYyQroyGAl2nkuuN9PXrleh8qWTkbMc0bxUyoLSb6BGB2/A0hjCpD69Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751395399; c=relaxed/simple;
-	bh=st9TTbuw9eE4bbi3qT1g6AMOzooHD90mIKVljY6K6Ws=;
+	s=arc-20240116; t=1751395659; c=relaxed/simple;
+	bh=JkTTkr7necSommWO+02eTXNXA+2BqYihS2B9P96yej4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xrj90GZnDPCXULHKoFrawPWeWHOFoAiS0ShePyPyf4de7+gMo62yDsv53+HSWy5RqdWF/8zImNOvaGN0pjR8ZbDhh0u1Pour27skYIV7uwUwhJODQO6/76o7YrSlOCfoiYo+/8KrJGTEt7WF/5oSmZIxcV6PECXOrr8u6TbtwjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwD/gItj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D482C4CEEB;
-	Tue,  1 Jul 2025 18:43:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNwxvb+uxLb4ry3bXUC0X6w0qscwGcreSW4U/cpcd3Ocw1Jd4cmumf7jaKdeZOVd+3dk4ju5qjLyug4/gAfjiz8jA+7DSa21kco1ynu2lUa2GZJksMUlDtMztLcGin1FmcaUWHNGkgD5EnS03mH0s68hyKiyJvF8Xl77aDj1L90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USwTPFVA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E73AC4CEEB;
+	Tue,  1 Jul 2025 18:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751395398;
-	bh=st9TTbuw9eE4bbi3qT1g6AMOzooHD90mIKVljY6K6Ws=;
+	s=k20201202; t=1751395658;
+	bh=JkTTkr7necSommWO+02eTXNXA+2BqYihS2B9P96yej4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rwD/gItjO9VtgQ/NtPziOW0nlPHce6+cQCI6BETvirK97/569slxDBoLwPrmlHiyD
-	 3GEUQWu/YtQnFnlKA70YMQTJGlftUZ9F1hDLKgBnoMPhukTk+vuAHfVlCeDE2v5FE/
-	 B13zoC1G3sbXaoXYkUcU9h2HQymrp5p7f2RKI4skNIBhr61v5z5e3BqeCv/8YCrXYr
-	 CcXgUY9DTsT2nptAmNFa59NZrIpIYjMXG7wkp1TidihNkPlioxxS7ke1/Zo/QmotRw
-	 +GY3q5aDxzq6zskgcjb039RAcpVjPTYyfYKaIKlYmomEegyMbwxcYZ7s5upU2j3j5o
-	 s+dL2Bv19GK6A==
-Date: Tue, 1 Jul 2025 11:43:17 -0700
+	b=USwTPFVA83klNEMTYfQHugsomxqIFBazWYYW6VXoMlsr4Kp1xroTJgkR6KHRm7CST
+	 3mp462/Fq/qPxMVuvILSLvkyOdCZVMqOrEQo7QUAXpPunYIUUwvPqIuCDH0Spywcar
+	 WrnnafQ7qUz35il5zvYSypT8S6xekZcckMwXDTNjISTUVqHjSxsjZ175r06XUvbTdi
+	 sf4IaSMNwJ/1nW2KHQCVZ3LTHLzafn9rUVLNs9r694DA6QUW5otmSHy8fGlVUlSMo2
+	 JV8ab8U21R2/tFFU4bfWdyWj1wIS5ndcJL7CU7wxvncHKBHkB4JN0Qcatnm4hMJNi9
+	 OP1herZ0ZwSOg==
+Date: Tue, 1 Jul 2025 11:47:37 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org,
+To: alexjlzheng@gmail.com
+Cc: brauner@kernel.org, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, selinux@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <20250701184317.GQ10009@frogsfrogsfrogs>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: Re: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with
+ locks
+Message-ID: <20250701184737.GA9991@frogsfrogsfrogs>
+References: <20250701144847.12752-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,124 +59,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
+In-Reply-To: <20250701144847.12752-1-alexjlzheng@tencent.com>
 
-On Mon, Jun 30, 2025 at 06:20:16PM +0200, Andrey Albershteyn wrote:
-> From: Andrey Albershteyn <aalbersh@redhat.com>
+On Tue, Jul 01, 2025 at 10:48:47PM +0800, alexjlzheng@gmail.com wrote:
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
 > 
-> Introduce file_getattr() and file_setattr() syscalls to manipulate inode
-> extended attributes. The syscalls takes pair of file descriptor and
-> pathname. Then it operates on inode opened accroding to openat()
-> semantics. The struct fsx_fileattr is passed to obtain/change extended
-> attributes.
+> In the buffer write path, iomap_set_range_uptodate() is called every
+> time iomap_end_write() is called. But if folio_test_uptodate() holds, we
+> know that all blocks in this folio are already in the uptodate state, so
+> there is no need to go deep into the critical section of state_lock to
+> execute bitmap_set().
 > 
-> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> that file don't need to be open as we can reference it with a path
-> instead of fd. By having this we can manipulated inode extended
-> attributes not only on regular files but also on special ones. This
-> is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> we can not call ioctl() directly on the filesystem inode using fd.
+> Although state_lock may not have significant lock contention due to
+> folio lock, this patch at least reduces the number of instructions.
 > 
-> This patch adds two new syscalls which allows userspace to get/set
-> extended inode attributes on special files by using parent directory
-> and a path - *at() like syscall.
-> 
-> CC: linux-api@vger.kernel.org
-> CC: linux-fsdevel@vger.kernel.org
-> CC: linux-xfs@vger.kernel.org
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
 > ---
-
-<snip syscall table>
-
-> diff --git a/fs/file_attr.c b/fs/file_attr.c
-> index 62f08872d4ad..fda9d847eee5 100644
-> --- a/fs/file_attr.c
-> +++ b/fs/file_attr.c
-> @@ -3,6 +3,10 @@
->  #include <linux/security.h>
->  #include <linux/fscrypt.h>
->  #include <linux/fileattr.h>
-> +#include <linux/syscalls.h>
-> +#include <linux/namei.h>
-> +
-> +#include "internal.h"
+>  fs/iomap/buffered-io.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 3729391a18f3..fb4519158f3a 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -71,6 +71,9 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
+>  	unsigned long flags;
+>  	bool uptodate = true;
 >  
->  /**
->   * fileattr_fill_xflags - initialize fileattr with xflags
-> @@ -89,6 +93,19 @@ int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
->  }
->  EXPORT_SYMBOL(vfs_fileattr_get);
->  
-> +static void fileattr_to_fsx_fileattr(const struct fileattr *fa,
-> +				     struct fsx_fileattr *fsx)
+> +	if (folio_test_uptodate(folio))
+> +		return;
 
-Er... "fsx_fileattr" is the struct that the system call uses?
-
-That's a little confusing considering that xfs already has a
-xfs_fill_fsxattr function that actually fills a struct fileattr.
-That could be renamed xfs_fill_fileattr.
-
-I dunno.  There's a part of me that would really rather that the
-file_getattr and file_setattr syscalls operate on a struct file_attr.
-
-More whining/bikeshedding to come.
-
-<snip stuff that looks ok to me>
-
-<<well, I still dislike the CLASS(fd, fd)(fd) syntax...>>
-
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 0098b0ce8ccb..0784f2033ba4 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -148,6 +148,24 @@ struct fsxattr {
->  	unsigned char	fsx_pad[8];
->  };
->  
-> +/*
-> + * Variable size structure for file_[sg]et_attr().
-> + *
-> + * Note. This is alternative to the structure 'struct fileattr'/'struct fsxattr'.
-> + * As this structure is passed to/from userspace with its size, this can
-> + * be versioned based on the size.
-> + */
-> +struct fsx_fileattr {
-> +	__u32	fsx_xflags;	/* xflags field value (get/set) */
-
-Should this to be __u64 from the start?  Seeing as (a) this struct is
-not already a multiple of 8 bytes and (b) it's likely that we'll have to
-add a u64 field at some point.  That would also address brauner's
-comment about padding.
+Looks fine, but how exhaustively have you tested this with heavy IO
+workloads?  I /think/ it's the case that folios always creep towards
+ifs_is_fully_uptodate() == true state and once they've gotten there
+never go back.  But folio state bugs are tricky to detect once they've
+crept in.
 
 --D
 
-> +	__u32	fsx_extsize;	/* extsize field value (get/set)*/
-> +	__u32	fsx_nextents;	/* nextents field value (get)   */
-> +	__u32	fsx_projid;	/* project identifier (get/set) */
-> +	__u32	fsx_cowextsize;	/* CoW extsize field value (get/set) */
-> +};
 > +
-> +#define FSX_FILEATTR_SIZE_VER0 20
-> +#define FSX_FILEATTR_SIZE_LATEST FSX_FILEATTR_SIZE_VER0
-> +
->  /*
->   * Flags for the fsx_xflags field
->   */
-> diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-> index 580b4e246aec..d1ae5e92c615 100644
-> --- a/scripts/syscall.tbl
-> +++ b/scripts/syscall.tbl
-> @@ -408,3 +408,5 @@
->  465	common	listxattrat			sys_listxattrat
->  466	common	removexattrat			sys_removexattrat
->  467	common	open_tree_attr			sys_open_tree_attr
-> +468	common	file_getattr			sys_file_getattr
-> +469	common	file_setattr			sys_file_setattr
-> 
+>  	if (ifs) {
+>  		spin_lock_irqsave(&ifs->state_lock, flags);
+>  		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
 > -- 
-> 2.47.2
+> 2.49.0
 > 
 > 
 
