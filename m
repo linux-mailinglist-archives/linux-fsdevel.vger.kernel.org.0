@@ -1,161 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-53438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD10AEF11D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 10:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F4DBAEF124
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 10:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56C81BC5638
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 08:31:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18BE61BC60A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 08:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FD224337D;
-	Tue,  1 Jul 2025 08:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4984126A1CD;
+	Tue,  1 Jul 2025 08:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VlkR6qYw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XP/o9bl2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A981465A1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 08:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94773213E6D;
+	Tue,  1 Jul 2025 08:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751358653; cv=none; b=Khi70AX7wjKQCxsUAHg8hC1KhbFuXz92FCVMWKPb69sxAQMyV0ZemSwjGabpt0DUrqNmUKOxEDq6uRKhxslKMINX/bwdfz0a7jBK5cFhaU3EDa/NYbL+qFKsGwnuCjPvtaI26fjrIdYyme63oKzqeJIKCE2pficAJh1ClvnSShE=
+	t=1751358726; cv=none; b=ZSzYHKKfqoKioP5TTWxo1M+PFFHbhYaGn+/VEV8UmmC2O6J4qicdNXAZK5wgrltCXYMSz05hWMn2lDRYWZybDKk1WGewbQqJxlD1fvChdMmaSl4pwdY/JSCzS1i+dWJXH8PrBNFf+WkCmYu6T4NLzX6stQ6nX/vHK6el8DPz9BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751358653; c=relaxed/simple;
-	bh=jFVPizjC1SJlnLk2SyZjJwYurv2Ok3UhbdoJwg+tdkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hW14PZ14hw8gkuDZGmGgI9hyl22IWN4qghBzctd1iBIsFXJbQKRwSxrWcnMOAma1fteGzXmc59i8hvbiTqi28UIH1aHR55l9+Xc76YEJ1Q098H+nefetplIAzqbqMI1ndWclKxmhxBCtFDfj1e4zC3YljTK8IFUMbxVh6Ti/1NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VlkR6qYw; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-453643020bdso46438635e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jul 2025 01:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751358650; x=1751963450; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/bQAEZcF0mBIWfmGiF+sYNUM1oOuQ28vDEPiWDOuPs=;
-        b=VlkR6qYw87QTrFCUm1I3xSkjfO+Zxt43UCSgsVZfovf2VN5RiKAZhOeInkzEHOKYhV
-         W6bmT5+Kn0byrfSh1tBLUI1FvGsuTy4CUelEgOU4I191DIkjJ1qoedNm+0jryhfziDhF
-         SvckcSj9EE3pdKjb3a7zbCaw50eR3c9N+chMOp6s0SE9DMO9ubGSRMGlDWlDCFz2olSk
-         OdqBc8T8VF5C5/Ai+eHcNVFdi5ucgrbTKc6tOr8dWIhmXD6PLOzLdeqZXsG1f7njFJz/
-         66OrosF/XsVbVxzQnh/zop8yjhXmO67/RwLVKeWl2AV/tQRTSe9msbojndOPtqZGNxTj
-         1IHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751358650; x=1751963450;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9/bQAEZcF0mBIWfmGiF+sYNUM1oOuQ28vDEPiWDOuPs=;
-        b=vS/uB+GWGDwRxQtIXnVa9Q0r8mpctqBk+ocBJHMGf1RfQf3H+E0nJbD6RayCJuOnVt
-         XNSp96YJVyAxNwvx1hP3fhNvFL9lTydvkRYm6xXK5xzG7Cudn4Scs0lkV0at6ZmQa6IK
-         5JmyF9U7R1VmCAlrxxFKNUYwna0pnauodXCQFA5kEXJKzaz9xNtCUDYyvamFBRUIFzrW
-         Bry8QPvhbegnRMw1g3NU07a9+LqR9ekRBJxyqKxO8/xE5i3yZvGDDYGeh4H1vRFG1XGH
-         FOM48pKKB7XJccLdsDOI9U7UU1hmLghEMCB7738mWTnvY5Tn/sv1EuTWzTBjb9KZBa8O
-         LgOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCeqUiGykkjYXcz1tKoS1zTy7vx8Vn13a8iDie/4Ikub8oXrTI7Cmb3T15k7l1PPqMSGY2Bx9KTYhOcvKK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrExM2bqv1ONInKhBo+zClOO+6ymx6HDKpmiMpRt5QJGuTCN4U
-	UAKcrJzEBmt7uykUOUw5KZ6XBwiA9MJWTqLJp3iGS85bwgaWDaWRvM5HT1m6nbcTFAc=
-X-Gm-Gg: ASbGncsYlWoV7AE3FhMh8yTB6X7wYYGh09Q4zPsDJX2ojYulT3x6iKVQ82GS1FrJw1E
-	GEp7F27piDcxUHrVBxKXW7G74+yabUz1ULWp4L4ViiBR1KhP64St3ozeDocJ5lPC6VRRqR1CeLn
-	t5uT1OXfdnYnknk8OHL9hWN8PAMeMmuFBB8a4z3u/ZpoBdfi2mVI/HYK0G6ICk3Dvr4bFfGUWBs
-	RrLSMkhwtEIP5AbrvGVPc1hAmP8TNvPFBwE0Jgegqk39eY5yKyiT0tQDDf4/lOPynvYjEsK1p8m
-	VpmfRETc+AmhTqtYVTtGUtDqHhuQloXNW7vlZfkKpCroVgABGZNv/Ev6IbMuNC0jMhxkWrdpZxY
-	McX0c3CxDGvn5MJjxHkUF/6gM
-X-Google-Smtp-Source: AGHT+IHSkw6RSzLG3Mq8vgCv2qJnzOh7XFAbsxGFSLxdm1LXyo0ZldU763ptRnon5RRq20HSfPQKTQ==
-X-Received: by 2002:a5d:5f49:0:b0:3a5:5270:a52c with SMTP id ffacd0b85a97d-3a8f302a206mr13378986f8f.0.1751358649523;
-        Tue, 01 Jul 2025 01:30:49 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e31beab2sm10083514a12.47.2025.07.01.01.30.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 01:30:49 -0700 (PDT)
-Message-ID: <c6ef9cda-3fc5-4531-9586-f22914607d53@suse.com>
-Date: Tue, 1 Jul 2025 18:00:40 +0930
+	s=arc-20240116; t=1751358726; c=relaxed/simple;
+	bh=/7+pkp4WbYtUvgqARqha0maOzBZP7u7ePnf+Znr45xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrrsVoQ5xdK1dgk3ChqIf6glL5NrWHDyFDjtmLgrN/5n57KiWN2YzYUNqB5/zLOfwrc+J8lnbpQ0LK/AYFXYWm6FiUaoM33k5g/sBxVEKfXLDNxMJGy1uOpdP2HLaIE+dwwJtZD3WtfryE0FN4DqjMvdrKllkrRUvMT95uryhJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XP/o9bl2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 389E7C4CEEB;
+	Tue,  1 Jul 2025 08:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751358726;
+	bh=/7+pkp4WbYtUvgqARqha0maOzBZP7u7ePnf+Znr45xo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XP/o9bl2BTuqwDnKkbs6Se3x+BnCsy6lOWBg7iCxi2ScoPZlEfavsLjm3Te2hQHnn
+	 mCjdtn5BU7dOUTtwpds5jCJZOyab3wXMNq7rBgfYlum4+gkuZGyYsJ0S3rCSCXExsG
+	 2q+Zz7dZ5PflbpACYr1x3s/3XeHHqKiv5Dw8KIVOyY2kvBb44QjfpENRHEozFjErj0
+	 PAnCS9WyHxjIvyA70oB3WDvwxJYwHYuiwQ/a4siEUuHbCdq7Ue1ws8BG7BYqRXe565
+	 ktVRHaga8jik3NrdcsvkPOqVrm8fx1XSUDcD5uTixqx7kT64BI8jDpjyeushHGpOLg
+	 m7+kaEorfYgBg==
+Date: Tue, 1 Jul 2025 10:31:58 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Song Liu <song@kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 bpf-next 0/4] Introduce bpf_cgroup_read_xattr
+Message-ID: <20250701-angebahnt-fortan-6d4804227e87@brauner>
+References: <20250623063854.1896364-1-song@kernel.org>
+ <20250623-rebel-verlust-8fcd4cdd9122@brauner>
+ <CAADnVQ+iqMi2HEj_iH7hsx+XJAsqaMWqSDe4tzcGAnehFWA9Sw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] btrfs: implement remove_bdev super operation
- callback
-To: Anand Jain <anand.jain@oracle.com>, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
-References: <cover.1751347436.git.wqu@suse.com>
- <5c1f7441e3e2985143eb42e980cdcf081fdef61e.1751347436.git.wqu@suse.com>
- <d0d7243d-4254-41a3-85c6-887f9fb0db36@oracle.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <d0d7243d-4254-41a3-85c6-887f9fb0db36@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQ+iqMi2HEj_iH7hsx+XJAsqaMWqSDe4tzcGAnehFWA9Sw@mail.gmail.com>
 
+On Thu, Jun 26, 2025 at 07:14:20PM -0700, Alexei Starovoitov wrote:
+> On Mon, Jun 23, 2025 at 4:03 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Sun, 22 Jun 2025 23:38:50 -0700, Song Liu wrote:
+> > > Introduce a new kfunc bpf_cgroup_read_xattr, which can read xattr from
+> > > cgroupfs nodes. The primary users are LSMs, cgroup programs, and sched_ext.
+> > >
+> >
+> > Applied to the vfs-6.17.bpf branch of the vfs/vfs.git tree.
+> > Patches in the vfs-6.17.bpf branch should appear in linux-next soon.
+> 
+> Thanks.
+> Now merged into bpf-next/master as well.
+> 
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> 
+> bugs :(
+> 
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> 
+> Pls don't. Keep it as-is, otherwise there will be merge conflicts
+> during the merge window.
 
+This is just the common blurb. As soon as another part of the tree
+relies on something we stabilize the branch and only do fixes on top and
+never rebase. We usually recommend just pulling the branch which I think
+you did.
 
-在 2025/7/1 17:51, Anand Jain 写道:
+> 
+> > Note that commit hashes shown below are subject to change due to rebase,
+> > trailer updates or similar. If in doubt, please check the listed branch.
+> >
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs-6.17.bpf
+> >
+> > [1/4] kernfs: remove iattr_mutex
+> >       https://git.kernel.org/vfs/vfs/c/d1f4e9026007
+> > [2/4] bpf: Introduce bpf_cgroup_read_xattr to read xattr of cgroup's node
+> >       https://git.kernel.org/vfs/vfs/c/535b070f4a80
+> > [3/4] bpf: Mark cgroup_subsys_state->cgroup RCU safe
+> >       https://git.kernel.org/vfs/vfs/c/1504d8c7c702
+> > [4/4] selftests/bpf: Add tests for bpf_cgroup_read_xattr
+> >       https://git.kernel.org/vfs/vfs/c/f4fba2d6d282
+> 
+> Something wrong with this selftest.
+> Cleanup is not done correctly.
+> 
+> ./test_progs -t lsm_cgroup
+> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+> ./test_progs -t lsm_cgroup
+> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+> ./test_progs -t cgroup_xattr
+> Summary: 1/8 PASSED, 0 SKIPPED, 0 FAILED
+> ./test_progs -t lsm_cgroup
+> test_lsm_cgroup_functional:PASS:bind(ETH_P_ALL) 0 nsec
+> (network_helpers.c:121: errno: Cannot assign requested address) Failed
+> to bind socket
+> test_lsm_cgroup_functional:FAIL:start_server unexpected start_server:
+> actual -1 < expected 0
+> (network_helpers.c:360: errno: Bad file descriptor) getsockopt(SOL_PROTOCOL)
+> test_lsm_cgroup_functional:FAIL:connect_to_fd unexpected
+> connect_to_fd: actual -1 < expected 0
+> test_lsm_cgroup_functional:FAIL:accept unexpected accept: actual -1 < expected 0
+> test_lsm_cgroup_functional:FAIL:getsockopt unexpected getsockopt:
+> actual -1 < expected 0
+> test_lsm_cgroup_functional:FAIL:sk_priority unexpected sk_priority:
+> actual 0 != expected 234
+> ...
+> Summary: 0/1 PASSED, 0 SKIPPED, 1 FAILED
 > 
 > 
->> +#ifdef CONFIG_BTRFS_EXPERIMENTAL
->> +static void btrfs_remove_bdev(struct super_block *sb, struct 
->> block_device *bdev)
->> +{
->> +    struct btrfs_fs_info *fs_info = btrfs_sb(sb);
->> +    struct btrfs_device *device;
->> +    struct btrfs_dev_lookup_args lookup_args = { .devt = bdev->bd_dev };
->> +    bool can_rw;
->> +
->> +    mutex_lock(&fs_info->fs_devices->device_list_mutex);
->> +    device = btrfs_find_device(fs_info->fs_devices, &lookup_args);
->> +    if (!device) {
->> +        btrfs_warn(fs_info, "unable to find btrfs device for block 
->> device '%pg'",
->> +               bdev);
->> +        mutex_unlock(&fs_info->fs_devices->device_list_mutex);
->> +        return;
->> +    }
->> +    set_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state);
->> +    device->fs_devices->missing_devices++;
-> 
-> Where do we ensure that the block device wasn't already marked as
-> missing? If there's no such check, could missing_devices end up
-> exceeding total_devices?
+> Song,
+> Please follow up with the fix for selftest.
+> It will be in bpf-next only.
 
-Right, I'll change the device number related changes behind a 
-test_and_set_bit(), so that we won't double accounting the missing device.
-
-Thanks,
-Qu>
-> Thanks, Anand
-
+We should put that commit on the shared vfs-6.17.bpf branch.
 
