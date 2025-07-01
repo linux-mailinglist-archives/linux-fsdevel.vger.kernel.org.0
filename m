@@ -1,192 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-53528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9489AEFD09
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 16:49:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968D8AEFD04
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 16:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2C47ACD54
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 14:47:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CC701653F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 14:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9376277C9F;
-	Tue,  1 Jul 2025 14:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89DB277C84;
+	Tue,  1 Jul 2025 14:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stoffel.org header.i=@stoffel.org header.b="Ocx1PyaO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGQ4grDt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4052777E1;
-	Tue,  1 Jul 2025 14:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0997727381D;
+	Tue,  1 Jul 2025 14:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751381349; cv=none; b=HY/Fhr5/xzG45AdFXk0/pklLzPl97R7z+0fW37gmSGjnNbcjKopzQJhj2FhtXodxnfHCXbI+2XxiK498H6bunw/EP37Y9jMK6f1mh8Y2s1uDeD7y1K6UpqDzPgPHsH5fYWUthqGJSNueNIQVQmevAcrqba6AB8sMsTop97kyf/k=
+	t=1751381334; cv=none; b=DFd045yAZnZp9K+3axJjbLP5GUCC2KBtwlNi/HWksHJaJJg55WSAAfwNPC1fbsG5+UYFo570RbMu+mVmGH61CwMPdyOZdcsRdAHcxx0HWHL4tXTuvgOuZhoriWdIa78GiP+kx1wmMl5hlQTUy29X3Q4FeZodmv5vb9ZfECPif2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751381349; c=relaxed/simple;
-	bh=lRxGPfMELh7HzrgS15Q3ejhCWOxjdsNt9Sn5cFB1kZw=;
-	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
-	 In-Reply-To:References; b=EbpPjBcE8CB9WHOXTtiOgcr/1a5SKwmp9DJ5SvxLEvlZzwn058HWkOncyiNJliBcB+EH5iVtHCq1/4fcHv0XVPl/m3jTPnqf6LbW1qHzjibII/C1voO+Xn9PF7O5bHwGPcNaaWFcB6YxtQCrqHghfoHfBzX7HJvsXS1Nb4RNuS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; dkim=pass (2048-bit key) header.d=stoffel.org header.i=@stoffel.org header.b=Ocx1PyaO; arc=none smtp.client-ip=172.104.24.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stoffel.org;
- i=@stoffel.org; q=dns/txt; s=20250308; t=1751380992; h=mime-version :
- content-type : content-transfer-encoding : message-id : date : from :
- to : cc : subject : in-reply-to : references : from;
- bh=lRxGPfMELh7HzrgS15Q3ejhCWOxjdsNt9Sn5cFB1kZw=;
- b=Ocx1PyaOH8aHynt34mUsXr9UJzfH/4C68EC8KU/vfepsuiTkKzJ14SA/Fq2UE8s+5haMf
- MDC+iMXs60FTao2S1vUDzH7EsiJXfiId8FpqfqB4FEoVoMxl6zsHLkIu2d97/ldGGBwo45s
- 9sfsy7OfYf/m/H7Wvk6KgPNrmZrfM88KJox3rnZHAlDUPKlVR+WNXcpLvmkf31RcuaeHfMQ
- qmkhsLITA21K44pc9XDXQL4TiqUHwreoEDbpfWC+sR8XssaoHhbTlIOiMBP1/adMlTVy0N3
- eheR64UVRhcZLJPmKnV01XYyVp9raM/6HYaAL4PfQNCoqRzqUilrjewn2DZg==
-Received: from quad.stoffel.org (syn-097-095-183-072.res.spectrum.com [97.95.183.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.stoffel.org (Postfix) with ESMTPSA id 87AD71E2CE;
-	Tue,  1 Jul 2025 10:43:12 -0400 (EDT)
-Received: by quad.stoffel.org (Postfix, from userid 1000)
-	id F2196A10F5; Tue,  1 Jul 2025 10:43:11 -0400 (EDT)
+	s=arc-20240116; t=1751381334; c=relaxed/simple;
+	bh=9nGHm81l9vaSVC+koQDf3/Tk1BxpMihn75VMt6eGlEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uVRlnt5x16fk5kc0d4S7oxzW3nFBtCeMoEXAuo1TYoSbBRF5SJWHeJd9xI4/pV2lub6spbwll6ZIjjPrx2Q58KO235UwG9H0sF01xWg7oNjA4clEtjnIHgFrlKRNP2KkVAGV+so/9DhQG3HtUIPZeZsmPixX1+zhoDhlJiBC++0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGQ4grDt; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7490cb9a892so4071250b3a.0;
+        Tue, 01 Jul 2025 07:48:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751381332; x=1751986132; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V4iNujaHcx/laONpT27iJzlNXWf8XtGDRFAhj+zfXDo=;
+        b=YGQ4grDt+8fCNniX9Q4Kex8pDuAQKEsk3uTD2r7qD3LT71WdRKdYnqwZIiZnH+BhKm
+         MULL4czXts1vbRJ6gT381Dq+L90BxX0Y+OH+Y4Agv31cyBlqlcm21vl9xl1sLj4Nz/BP
+         tVv4q6qpZGjkpqMaoNksa530cKyIeJOwvpOgPZUzltK9HBQ2/j+gHkopTbTNnyFmwCIp
+         0/xK4aUzLTRwNA3fyiGEXIcrXfwOLalY0z06dZjQjskhbE67uj5vJinLwo71P3xybdDo
+         4g1JRBOQJVv8piaOqnJ9yGf664pLzIQ8cfVWIjtaVqWEF1Q8DzkpQ3fSIdeetzbkWv05
+         M94g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751381332; x=1751986132;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V4iNujaHcx/laONpT27iJzlNXWf8XtGDRFAhj+zfXDo=;
+        b=rtEiKO+7bsJp4TBvbNbE0QWJ20KOsJDLGw2auTCh9z6YPW0o2xghPaDRY4dLSfNtw1
+         0rsGjQCuSLaWURqkV2Vx8GC2OJSzxGPt2ClOQEy0wacRVEYnUWMcVS3uz33HKnm9EkZF
+         l+54up8/6ecfyOyPUCHF2tbjV0g2vpR5d2MGUQrYS8GVs4tEUdFbxe/9ID0/QmTYtD/i
+         iLZcpXD9uhp1sGuWh1TBn7JG02kGeBSHKKGU4ZNhAKsQ26ZF7GiA6B0xQjAgUJ2NbiDX
+         DjrcZosI652k5mRXLKBr8hcGp3ljCSOjGPKBoZOzPliSg5/o7e+/wTyYELzbTjWYFZOQ
+         Tq9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVXQ2AL4wGmgUymsaGRRMpOt/trf0IGArj9puZztSWB5kQeV0BwxUV+M0zfr0hlq5Xkase7H+nP3obWjik4@vger.kernel.org, AJvYcCW+WJTYg8eWk0NpUgHenWF9Q/+4+5OXhToU8L2VCsnEo/Q4SHzF9ySFVKmJVg3TDrXhay0S5DjS/r0/uuC0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/2RDu/CbsSEE/iiMAIJP79q3ZpXGo7KiWDZWQ5EVCqIAk2S6/
+	6faEPhHag64drdhoNB1hTdOMjXkm9aDV9qMd2NSTo5jpP5yUVFwWD29H
+X-Gm-Gg: ASbGncuReM5vN8HOV5OeprjN8Z8q4gNuAONX5bNp2OiOE9WWvVlMJPqOoFM/Gc2JKr9
+	lCHURoq0Ob9hK8NKyTElRaVGb/57S9QqJzOeEc6wzZobSTFzQDc51HO5Dk4cQ9Qoq7hTIsCAnUl
+	np8e1FWRJyGsNBUs8Q6PeQZvYcM9Z0w1wo08R3QLuyEXkZY+QlBKJ1wn4GzZ1TVXjO9qa1u81/v
+	S7ptvzDiqY6BkygagaMsCXqmkeiHAbFW/3bm8x3Zflsh0Kd8Pmixlt4K+afKl+Gks19DQj99oxJ
+	Lnvh8O+OsqclPgpNhcpvJUwpP5e/9SgB0UaBSoGTOW7WAaRaHdvPp1GE3/H12GAwHqypo5dFqz4
+	=
+X-Google-Smtp-Source: AGHT+IEbIAWmEjLrkdhnHtI22nqx6M907yfd8jIyUszMxmItcwo5fcrVXs/7K86li3sS/CX7AO/2xg==
+X-Received: by 2002:a05:6a00:18a7:b0:732:2484:e0ce with SMTP id d2e1a72fcca58-74af6f2f67fmr22103881b3a.17.1751381332145;
+        Tue, 01 Jul 2025 07:48:52 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5409a58sm11476913b3a.6.2025.07.01.07.48.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 07:48:51 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: brauner@kernel.org,
+	djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with locks
+Date: Tue,  1 Jul 2025 22:48:47 +0800
+Message-ID: <20250701144847.12752-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Message-ID: <26723.62463.967566.748222@quad.stoffel.home>
-Date: Tue, 1 Jul 2025 10:43:11 -0400
-From: "John Stoffel" <john@stoffel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-    linux-bcachefs@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org,
-    linux-kerenl@vger.kernel.org
-X-Clacks-Overhead: GNU Terry Pratchett
-Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
-In-Reply-To: <xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
-References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
-	<CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
-	<xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
-X-Mailer: VM 8.3.x under 28.2 (x86_64-pc-linux-gnu)
+Content-Transfer-Encoding: 8bit
 
->>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-I wasn't sure if I wanted to chime in here, or even if it would be
-worth it.  But whatever.
+In the buffer write path, iomap_set_range_uptodate() is called every
+time iomap_end_write() is called. But if folio_test_uptodate() holds, we
+know that all blocks in this folio are already in the uptodate state, so
+there is no need to go deep into the critical section of state_lock to
+execute bitmap_set().
 
-> On Thu, Jun 26, 2025 at 08:21:23PM -0700, Linus Torvalds wrote:
->> On Thu, 26 Jun 2025 at 19:23, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->> >
->> > per the maintainer thread discussion and precedent in xfs and btrfs
->> > for repair code in RCs, journal_rewind is again included
->> 
->> I have pulled this, but also as per that discussion, I think we'll be
->> parting ways in the 6.17 merge window.
->> 
->> You made it very clear that I can't even question any bug-fixes and I
->> should just pull anything and everything.
+Although state_lock may not have significant lock contention due to
+folio lock, this patch at least reduces the number of instructions.
 
-> Linus, I'm not trying to say you can't have any say in bcachefs. Not at
-> all.
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+ fs/iomap/buffered-io.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> I positively enjoy working with you - when you're not being a dick,
-> but you can be genuinely impossible sometimes. A lot of times...
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 3729391a18f3..fb4519158f3a 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -71,6 +71,9 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
+ 	unsigned long flags;
+ 	bool uptodate = true;
+ 
++	if (folio_test_uptodate(folio))
++		return;
++
+ 	if (ifs) {
+ 		spin_lock_irqsave(&ifs->state_lock, flags);
+ 		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
+-- 
+2.49.0
 
-Kent, you can be a dick too.  Prime example, the lines above.  And
-how you've treated me and others who gave feedback on bcachefs in the
-past.  I'm not a programmer, I'm in IT and follow this because it's
-interesting, and I've been doing data management all my career.  So
-new filesystems are interesting.  
-
-But I've also been bitten by data loss, so I'd never ever trust my
-production data to something labeled "experimental".  It's wonderful
-that you have stepped up and managed to get back people's data when
-bugs in the code have caused them to lose data.  
-
-But for god's sake, just because you can find and fix this type of bug
-during the -rc series, doesn't mean you need to try and patch it NOW.
-Queue it up for the next release.  Tell people how they can pull the
-patch early if they want, but don't push it late in the release
-cycle.  
-
-I've been watching this list since the early 2.x days, and I've seen
-how the workflow has evolved over time.  I've watched people burn out
-and leave, flame wars and all kinds of crap.  And the people who have
-stayed around are generally the nice people.  The flexible people.
-The people who know when to back the f*ck off and take their time.  
-
-> When bcachefs was getting merged, I got comments from another
-> filesystem maintainer that were pretty much "great! we finally have
-> a filesystem maintainer who can stand up to Linus!".
-
-Is that in terms of being dicks, or in terms of technical ability?  Or
-in terms of being super productive and focussed and able to get work
-done.  Standing up doesn't mean you're right.  Or wrong.  
-
-> And having been on the receiving end of a lot of venting from them
-> about what was going on... And more that I won't get into...
-
-> I don't want to be in that position.
-
-So don't!  Just step back a second.  Go back and read and re-read all
-the comments Linus had made about the workflow and release process
-over the years, much less decades of the kernel development.  I'm not
-sure you realize how much work it is to have people blasting patches
-at you all day long, 365 days a year, and who think their patches are
-the most important thing in the entire world bar none.   
-
-Just reflect on this for a second.  Take your hands off your keyboard,
-and don't type anything.  And think about how many other people also
-think their patches are the most important.  
-
-And about the users who _need_ _that_ _patch_ _right_ _now_ to fix a
-problem.  Why doesn't Linus see that I'm important and my part of the
-kernel is the most important!  
-
-Just let that sink in a bit.  
-
-Then think about how many people do not care about bcachefs at all,
-who don't even know it exists.  And haven't used it or want to use
-it.  Are they less important?  What about the graphics driver they
-need to get _their_ work done right now?  Is that more or less
-important?
-
-> I'm just not going to have any sense of humour where user data integrity
-> is concerned or making sure users have the bugfixes they need.
-
-So release your own patches in your own tree!  No one is stopping you!
-Have your '6.17-next' branch with the big re-working to fix this
-horrible issue.  But send in just the minimal patch _now_.  The
-absolutely the smallest patch.  
-
-Or just send in a revert for all you have done in the current series
-which is breaking people, because it wasn't quite baked enough for
-stability.  Fall back, re-group, re-submit it all on the next release.
-
-Slow down.  
-
-> Like I said - all I've been wanting is for you to tone it down and stop
-> holding pull requests over my head as THE place to have that discussion. 
-
-And you need to stop thinking you are the most important thing and
-only you can decide when bcachefs needs to be updated or not in the
-kernel tree.  
-
-> You have genuinely good ideas, and you're bloody sharp. It is FUN
-> getting shit done with you when we're not battling.
-
-I'm honestly amazed at your abilities here Kent, even though you can
-be an abrassive person too.  
-
-> But you have to understand the constraints people are under. Not
-> just myself.
-
-Dude, you need to listed to Linus saying this exact same line back to
-you.
-
-John
 
