@@ -1,93 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-53417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B961AEEE6C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 08:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01429AEEE90
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 08:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972203AE229
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 06:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9047A3B8312
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 06:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E02246781;
-	Tue,  1 Jul 2025 06:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A55450F2;
+	Tue,  1 Jul 2025 06:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4yNK6icE"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="anH1Z8n7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBDB18DB27;
-	Tue,  1 Jul 2025 06:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33136242909
+	for <linux-fsdevel@vger.kernel.org>; Tue,  1 Jul 2025 06:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751350482; cv=none; b=KxJnkOJB1LELQ/G0RX2W9XM18VXhH8GdBAyJ/DS/z6Y0xEMp7U6sQA1XzNAjm+CHYn4xcq2mz+QCii46+X9ozLy71w8WqheNAvMVM0difRTOCc0mmLXD8DNGrEOTeUFOMoXwBKw11Q/zYtkfVlJ5QKxsiwXs1il5Yl3wftrVrp8=
+	t=1751351008; cv=none; b=LzxW+9NZ4AHAg4us+EHJCqdjebz5o4J8L/dT8GVdvJ33T1xxjEtgyFTz/6us5pU8VUOeUi0BEBRH1O8+p1vY99z8Gav9WWmZpun1/IEBmvhQbih96LINU48q8MZFOabUQJ58vwDW0FBtyP6t1xsBHj014z7D8WSYRL3kYueMTHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751350482; c=relaxed/simple;
-	bh=fqfk3sXOy2ZiAiWY0+FRDfTGbWwX9D3PpPCPMIMtOHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJ6HjfZUfosqt8th3ffIdWDlGXWaZfDNgUWb2rUwbN9YcTbvrRmlDVy9iIUz/i2ZFiU6FrQlV/eUhgKh0pPv/pjzVjtiGeZdZoEVoTJEJINV+2q+3rdhKrBt/2lJ+Pfkx9kfeC41A9Bi17Splu6qYcGPOQodDuVC1GJECHHrWug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4yNK6icE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Gc4XjL5EuHDBKQZc9KZENAeMq/+oahftr2cmxvLnjwM=; b=4yNK6icE3icj78/Z5jgTDYUpNZ
-	meqAdykMclbXUAmXPnY+taEuo2ZBnGs9S4rc8tWo9NDv/JAYb+IpTYoam3IlaOB2HQ4bI+qEhbkFP
-	T7QytErxPpYn6NNBbTV0uQBICPSml8TxczM2ZDaQ5ZidDNmdfUTAImRmgO9vfWilrWbtZfPw6OXC5
-	jMlllO3P5VHyohh43d/0d5kCphJMmDdnLRyzUxRqADd615zFAqtUAdQEnZArzXNSxxbC8axUva4qe
-	D1Qw3Ya4FUZAiXqT4tZGtXE2PBpToDkZ0XpOCMvezR8GbkeOWQWqE21tVg2ghzmrIt58SfPRGBmOV
-	86K6NqhA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWUGM-000000047X1-0DQk;
-	Tue, 01 Jul 2025 06:14:38 +0000
-Date: Mon, 30 Jun 2025 23:14:38 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Qu Wenruo <wqu@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] fs: enhance and rename shutdown() callback to
- remove_bdev()
-Message-ID: <aGN8zsyYEArKr0DV@infradead.org>
-References: <cover.1751347436.git.wqu@suse.com>
- <6164b8c708b6606c640c066fbc42f8ca9838c24b.1751347436.git.wqu@suse.com>
+	s=arc-20240116; t=1751351008; c=relaxed/simple;
+	bh=6yttm5Qep3NBN0kX2vSnM3H0+zpYWdBsyhzAI2zpwU8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N1Ia3OIMVswL3+t70QRuDwMrXj/TuWrDynRrVWC6iSpnQixSbEcl8Auf8nKsdKKavDd5SjZjHL1IW6rAdJ3LA1k+++8iS8d/NaFn78rzNBH2oLkqRpV8ptZnGRmsMz5hAHAy9gin+LHnPuZv6NYeN2hOQm99cCgYRAff2noOdtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=anH1Z8n7; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6ff16e97d1eso51010046d6.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jun 2025 23:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1751351006; x=1751955806; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6yttm5Qep3NBN0kX2vSnM3H0+zpYWdBsyhzAI2zpwU8=;
+        b=anH1Z8n7gTpIxKbFXysvAkXY6GYcSGYyp2kwpBWDuRqq+tzHmXpkCIpltC3K528TKm
+         Vuc1gJkLA9+OpRWfvVJAglU3eAbF6O9fFqvO8Dx6qN8yERI+DTJuusNxo3UOTfHvdzlH
+         B4Vy9k463Wo10p6viP/ivkGKuM0IW4f3aRE9E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751351006; x=1751955806;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6yttm5Qep3NBN0kX2vSnM3H0+zpYWdBsyhzAI2zpwU8=;
+        b=Q2gqfVfuH1p3Cyfkb50XEZFLEVxzkMlofnVFMTmqM9N38Ur6epHOjUZc+BAGuRUnOE
+         lZEIeXeISvdTKRw26IOq1vh7DqoAjIV9VKK6CD+KWjWuc9EnEwXQcgxNWkbpm6b3cxm6
+         ITukNlAesc5rZbj/fd8EGVC86wcSoHkW7KbAKIX1UpknfZQO/kF9rAbYLsveN8t6s2YA
+         vgAelXMJpO4NAk90FSFIlqEqiJCu7oddzDo6RdbQPLPtKZKCJZ/6zZIBInF0m8UjvH//
+         AgfE5pRukWtEe+WhWtbN9wA+3ulMZPRuqnc96Rt8hysXW9ZBKNdNz0twg1SzAKJrXZ00
+         NsgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOL6onBkkW3CraW7YKUhQD2c/BSpqUOkOhhhxQ5oli6iwDghR8kBK7Pgv/Iz76p5Fo2w6GZPknWrZpO1p6@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq+MxuJB7TzTQLO/FYdLPVp0uBvp0r1tiC7vJKt8wLn97Ali1K
+	wX0wWS1S6xLWmacNzsfBtH1cgWbmtgmzMCt0zXT3A4uQu0ToN5WiHKzJyxQd+H9xzZ/zzvhuk7W
+	jfmIwJFB/BDabTZjmDuqysiKF+mFyaG5+TCKegCm3Cw==
+X-Gm-Gg: ASbGncuTBrpW5Rp1sEH7D8wnCXpOZ968t9zabVw5URF5MYX0yZ/49YySzjgMg74+woY
+	JGktXmXNHDZyok51geMAsxx5MuaDj4yAVsJxOd/ZjYuqgmatgwG1Z7GH0ct/zrC/vk2ytmS3/EQ
+	4sEFH78dWag0xPfvnMYgGleRBUnQp+aUOgLDDYmg/bO+epkz2kR/jS3kxE/MpbQcVCNhqIXKerr
+	Gm7
+X-Google-Smtp-Source: AGHT+IF/4eCMJfHhQh+NomYc895/DRC2IEJWxiuPw7wJwiLPtRg1dt/Dr1B22JHPC3Z1DLGs7QY/n9Jj5bCLzyMZhhk=
+X-Received: by 2002:ac8:5806:0:b0:494:b247:4ddb with SMTP id
+ d75a77b69052e-4a82e9b8105mr37293761cf.4.1751351005922; Mon, 30 Jun 2025
+ 23:23:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6164b8c708b6606c640c066fbc42f8ca9838c24b.1751347436.git.wqu@suse.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20250606233803.1421259-1-joannelkoong@gmail.com>
+ <20250606233803.1421259-6-joannelkoong@gmail.com> <aEZoau3AuwoeqQgu@infradead.org>
+ <20250609171444.GL6156@frogsfrogsfrogs> <aEetuahlyfHGTG7x@infradead.org>
+ <aEkHarE9_LlxFTAi@casper.infradead.org> <ac1506958d4c260c8beb6b840809e1bc8167ba2a.camel@kernel.org>
+ <aFWlW6SUI6t-i0dN@casper.infradead.org> <CAJnrk1b3HfGOAkxXrJuhm3sFfJDzzd=Z7vQbKk3HO_JkGAxVuQ@mail.gmail.com>
+ <aFuWhnjsKqo6ftit@infradead.org> <CAJnrk1Zud2V5fn5SB6Wqbk8zyOFrD_wQp7B5jDBnUXiGyiJPvQ@mail.gmail.com>
+In-Reply-To: <CAJnrk1Zud2V5fn5SB6Wqbk8zyOFrD_wQp7B5jDBnUXiGyiJPvQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 1 Jul 2025 08:23:15 +0200
+X-Gm-Features: Ac12FXx4vgjv5ycm_1iHhIFxMh2pxXOzEd-Q9OTergY2osOj37o6vwohMHvjQOk
+Message-ID: <CAJfpegvOizDZb9Lw1f0BHbH05owLh7-KOqeB3H8bgZhwRpN=5Q@mail.gmail.com>
+Subject: Re: [PATCH v1 5/8] iomap: add iomap_writeback_dirty_folio()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Matthew Wilcox <willy@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, kernel-team@meta.com, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 01, 2025 at 03:02:34PM +0930, Qu Wenruo wrote:
-> To allow those multi-device filesystems to be integrated to use
-> fs_holder_ops:
-> 
-> - Rename shutdown() call back to remove_bdev()
->   To better describe when the call back is called.
+On Wed, 25 Jun 2025 at 18:44, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-What is renamed back here?
+> Yes but as I understand it, the focus right now is on getting rid of
+> ->launder_folio as an API. The iomap pov imo is a separate issue with
+> determining whether fuse in particular needs to write back the dirty
+> page before releasing or should just fail.
 
-> -static void exfat_shutdown(struct super_block *sb)
-> +static void exfat_shutdown(struct super_block *sb, struct block_device *bdev)
->  {
->  	exfat_force_shutdown(sb, EXFAT_GOING_DOWN_NOSYNC);
->  }
-> @@ -202,7 +202,7 @@ static const struct super_operations exfat_sops = {
->  	.put_super	= exfat_put_super,
->  	.statfs		= exfat_statfs,
->  	.show_options	= exfat_show_options,
-> -	.shutdown	= exfat_shutdown,
-> +	.remove_bdev	= exfat_shutdown,
+Fuse calls invalidate_inode_pages2() not just for direct I/O:
 
-Please also rename the function so that they match the method name.
+ - open without FOPEN_KEEP_CACHE
+ - FUSE_NOTIFY_INVAL_INODE
+ - mtime/size change with FUSE_AUTO_INVAL_DATA turned
+on/FUSE_EXPLICIT_INVAL_DATA turned off
+ - truncate
 
+In most of these cases dirty pages d need to be written back.
+
+Thanks,
+Miklos
 
