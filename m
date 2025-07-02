@@ -1,179 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-53658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A50AF5AA5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 16:11:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E54AF5AB6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 16:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770FB188AB76
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 14:11:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1FDC446890
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 14:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7A02BD5B5;
-	Wed,  2 Jul 2025 14:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4082BE7A7;
+	Wed,  2 Jul 2025 14:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kzQa8lv5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cIRDrzBS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kzQa8lv5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cIRDrzBS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHgxogd/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C15F2BCF51
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 14:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BBF2BD59E;
+	Wed,  2 Jul 2025 14:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465463; cv=none; b=q3WN+S7DDGdYq8vysPW3ZQXn5TDImABfzSnV5iBUoc3jazrtLfdm/POb/UBVRcysyLBp/9dxSd8UiINX2bdMqqbDDgoTW+uHt2MZefyvOuYRDjGTPI9TzTbYlZw5Q+95xL+5Qylh9LIjOqP4QvmUgs+TDRIGSecbktBATlUQfz0=
+	t=1751465560; cv=none; b=KQDlzjtPvFMdIItTxaiG3XDJNv6mNa2wLumQGeO8j1Ul2mkY4E0OgoFtytL5OA9xUKBQvTN0d0ZfHmcnQ70WZt2GSYtxtzFLa67I3k+P8LA56hp2DtHj9LZ9aGfkH3bpJKr/miKC2z386Pc3/q4CsKgZFsXdW7QMFFAYfD9glUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465463; c=relaxed/simple;
-	bh=XH9LIv5DjlEQvQUcxLjrQnIy5UoheiabMEDO0Yq4lQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=allvYH0ku/A/fEp4h2TCcb6nxXJbKNJp66piSrU5S7q3wPQTtFHYmaZX16zbZz+u+lT7+wlvCJ/iMnoqJqjK1j/Ls2XbWEvVPJrlZXStkc0hGNLPs0vejTRVb0KudCmZcpjArZXn8q0b6S5XbERs0ukH8X1HPDVYiyFl5JErqt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kzQa8lv5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cIRDrzBS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kzQa8lv5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cIRDrzBS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 502A32118C;
-	Wed,  2 Jul 2025 14:11:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751465460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ec4lvPxD+Im5OIbkkiVJgxQ8vvdCpvany66SPb/hpS4=;
-	b=kzQa8lv5lBQUYWHF9ifqwnq6aMlcduVzP03mFXQ+tUioxTxz8qXQtmTcPE7sSV/tenXq6z
-	XVSqbMCJtHH1wgZbCZQzmhSWyj385W3HgUvNv7SZnpBjS7ans50VgPcUs/45B6Sznb39ds
-	BG8ZeCLs8c8SFbxpajWbmGJ+AuFWO9k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751465460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ec4lvPxD+Im5OIbkkiVJgxQ8vvdCpvany66SPb/hpS4=;
-	b=cIRDrzBSuQju3UVyA+EqGnxxwKVCdf9Y//plPC83pYurqQn6ZoJ58mrG5X7d3Bdsj3yQVW
-	GG2wYlZbRVvMyYBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kzQa8lv5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cIRDrzBS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751465460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ec4lvPxD+Im5OIbkkiVJgxQ8vvdCpvany66SPb/hpS4=;
-	b=kzQa8lv5lBQUYWHF9ifqwnq6aMlcduVzP03mFXQ+tUioxTxz8qXQtmTcPE7sSV/tenXq6z
-	XVSqbMCJtHH1wgZbCZQzmhSWyj385W3HgUvNv7SZnpBjS7ans50VgPcUs/45B6Sznb39ds
-	BG8ZeCLs8c8SFbxpajWbmGJ+AuFWO9k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751465460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ec4lvPxD+Im5OIbkkiVJgxQ8vvdCpvany66SPb/hpS4=;
-	b=cIRDrzBSuQju3UVyA+EqGnxxwKVCdf9Y//plPC83pYurqQn6ZoJ58mrG5X7d3Bdsj3yQVW
-	GG2wYlZbRVvMyYBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4687713A24;
-	Wed,  2 Jul 2025 14:11:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id V242EfQ9ZWgtQAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Jul 2025 14:11:00 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 02AB7A0A55; Wed,  2 Jul 2025 16:10:59 +0200 (CEST)
-Date: Wed, 2 Jul 2025 16:10:59 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, sashal@kernel.org, yi.zhang@huawei.com, libaokun1@huawei.com, 
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v3 04/10] ext4: refactor the block allocation process of
- ext4_page_mkwrite()
-Message-ID: <y66ier4j3kqxagrm4ztdls4iqxpggaj2bt4nwtsi2hen2bgnn3@ph3cev64ie6w>
-References: <20250701130635.4079595-1-yi.zhang@huaweicloud.com>
- <20250701130635.4079595-5-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1751465560; c=relaxed/simple;
+	bh=Dm6xqHk0RBgx7vLihZyB1iyak1emMrW4rq8J0I4i8o4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZlyUfpzqTPhTiqo7K6c9SfXm/lgyt9Y/yFlueWAWByBfz0DmN36TQ5hT/tjjRGp2/FmWLBmeSsjb09icPDAdTlIULPo0SYb0+YAuYIudcxQonlLp9c3dGTTqbg+ubXULL2tZnZn/FaizrffZ2wHEJHOeGMF7O2NONjeRGZb73dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHgxogd/; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b321bd36a41so3965924a12.2;
+        Wed, 02 Jul 2025 07:12:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751465555; x=1752070355; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3hi0b4Q2TMU9s9ow4O1FxnYpGW2LdSH037wzbnfcLAI=;
+        b=UHgxogd/e2vGa8mbXR0Ryy0YrcG83M1VqWf+KuzZqVLCBaobO/1gDIRxF6h5ZHpclf
+         1hDAxIbT26J+e46c0hYZ1WLHcUp/WBp8K6fsU0pHP7/ZGQQA/mzWkNJS15SwT5q3GmJp
+         35zIbo38vxOluo0YLt864gYpQh0HCNUH2LKz9nBJJ2PC4wR4n3ex1Sq8m6Dn7k5HOo7p
+         F5tprdjz9MtM1bEj/uRufs7poW/H7h7l6t2FKOtInqNNLpD4JmGFvFn/9RQCRpxbUd+o
+         jXdhODCa8KjT81recq+ixZiAGMunRlmTbUQzNBufWFAvHw2uj7f856KaDXg2BkuG0/Hc
+         OmSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751465555; x=1752070355;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3hi0b4Q2TMU9s9ow4O1FxnYpGW2LdSH037wzbnfcLAI=;
+        b=Tax2hcW/14/rshrtzjm3E1q7/B/C0qMrTRMcuFpMO3vS76Uxe+GTU+ibTokwlcWvsc
+         SSritfsSmGL46i0k9gT0tmzeDOglUayZ2nCw8oOquulUi2ity5oH+pA5z4Ff7QWFggfo
+         LDYctO6ZWEy2CBwei61OFp2yJz2Xs4X8US2g3YwJ/wAkc6FdOmckDOc69XkfIpiQozI4
+         6DjmtS+vi6uWeh9TLbHfhYER5G4WzdnbBcw4/YMZ4PILNyWe891YiQSaEC7i3tzxm819
+         CtXRkUhpp04irKIvTY3aYrivsxZvMEc404ox9ZRZXCTrKNtsZSmHf19cm6VcKRQ4Upca
+         NKXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOniCKDhgDCCVgUIEBZ0HW0kGhLKtRRoQ1s/cVn8ALYiX2f1U2t0TXGOP1/KyXgt+xzd1Jnaa1hKWE8yuNsQ==@vger.kernel.org, AJvYcCV8MMG+VWc1+LRY/8Nd3GawytSrzz1zUk6T+t7d78haBJLdlt3OuIoYKXI2BZXGY2Yaovt9g3QkUh5iqQ==@vger.kernel.org, AJvYcCVeX1sopL+Q0IW/sBsrJJ8vBA7KmMrqqAf9QZIVpQPycWH+QILO2jiefx40cP31FWBBT3lSCvRMSVbzK76J@vger.kernel.org, AJvYcCWoivTaPMihWtJnHa4F7FsegHAuvTtW39Uz6Q48cjVYpWfB0ivgvoz317ydDPG3B/VlqNKS+JERfRtjsw==@vger.kernel.org, AJvYcCXSlbXAUHmBnv0jqw4JBGILStDgs+jG7qdsGbwN69Zh2/6rw3A9uw/jDiIj9DmEzDLMy36BQAmzyeFr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpFaBB3/GB06zPjVGqI3a8E9KuaIzxmA+q1WNauyUt0sXG0689
+	i11Bb6/tgv7KCm8O6UqvpU96kuucTPWDgimJv82OQhCZIbJ06coPtd25
+X-Gm-Gg: ASbGncse17autRLbKo7wvsMqi7sv4xUAFj4TV3w5OSPayzbUFHp03nwqsFY938bQPx2
+	3GzF/8zGTGrjW+18JhBfRLb1/+ndY2EFuFp7sxJoMH8ttJ041wITc9gH8bxpEK4NBZq7lw3o+FF
+	JKF7dFLcSR3LItJy9qtqwtjv7IWzeStXbeIScNdJxzMdbmMRyuMxHuP1LwyOMGJxsqfmMYk0T+b
+	wNxSAfMjGoUSpbe/ljnqd8t213EYXMo+sE1cNo6y+HPK2SJL7+jEpSIHRDVCNBB5SrFXA4NVTQS
+	mC3d982wBqRnByvOb159jFtBt7P1ASks7pmBe+gE+omGFGOtjwzXsDtNBzXe32UxXBFRmKIgzN5
+	THjntgwD4/1F7YcSsDY1oW014ct5/iIwtqZteqVI=
+X-Google-Smtp-Source: AGHT+IFKRDLioih13g48ycaXA5K8ysUyKk1vSQvjV96+wwiKTloc/oO2WVx/lFSAoNhOajXgeeSAFQ==
+X-Received: by 2002:a05:6a20:a126:b0:21d:fd1:9be with SMTP id adf61e73a8af0-222d7de1c90mr4563817637.12.1751465555071;
+        Wed, 02 Jul 2025 07:12:35 -0700 (PDT)
+Received: from ?IPV6:240e:305:798e:6800:ad23:906d:e07c:8a1e? ([240e:305:798e:6800:ad23:906d:e07c:8a1e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af56ce9f3sm14100034b3a.122.2025.07.02.07.12.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 07:12:34 -0700 (PDT)
+Message-ID: <54a85ec6-992d-4685-9031-114ba634e0a3@gmail.com>
+Date: Wed, 2 Jul 2025 22:12:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701130635.4079595-5-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,huawei.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 502A32118C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] fs: change write_begin/write_end interface to take
+ struct kiocb *
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "tytso@mit.edu" <tytso@mit.edu>, "hch@infradead.org" <hch@infradead.org>,
+ "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+ "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+ "tursulin@ursulin.net" <tursulin@ursulin.net>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "chentao325@qq.com" <chentao325@qq.com>,
+ "frank.li@vivo.com" <frank.li@vivo.com>
+References: <20250627110257.1870826-1-chentaotao@didiglobal.com>
+ <20250627110257.1870826-4-chentaotao@didiglobal.com>
+ <aF68sKzx24P1q54h@casper.infradead.org>
+From: Taotao Chen <chentt325@gmail.com>
+In-Reply-To: <aF68sKzx24P1q54h@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue 01-07-25 21:06:29, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> The block allocation process and error handling in ext4_page_mkwrite()
-> is complex now. Refactor it by introducing a new helper function,
-> ext4_block_page_mkwrite(). It will call ext4_block_write_begin() to
-> allocate blocks instead of directly calling block_page_mkwrite().
-> Preparing to implement retry logic in a subsequent patch to address
-> situations where the reserved journal credits are insufficient.
-> Additionally, this modification will help prevent potential deadlocks
-> that may occur when waiting for folio writeback while holding the
-> transaction handle.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Looks good! Feel free to add:
+在 2025/6/27 23:45, Matthew Wilcox 写道:
+> On Fri, Jun 27, 2025 at 11:03:11AM +0000, 陈涛涛 Taotao Chen wrote:
+>> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+>> index 841a5b18e3df..fdc2fa1e5c41 100644
+>> --- a/fs/exfat/file.c
+>> +++ b/fs/exfat/file.c
+>> @@ -532,10 +532,12 @@ int exfat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+>>   	return blkdev_issue_flush(inode->i_sb->s_bdev);
+>>   }
+>>   
+>> -static int exfat_extend_valid_size(struct file *file, loff_t new_valid_size)
+>> +static int exfat_extend_valid_size(const struct kiocb *iocb,
+>> +				   loff_t new_valid_size)
+>>   {
+>>   	int err;
+>>   	loff_t pos;
+>> +	struct file *file = iocb->ki_filp;
+>>   	struct inode *inode = file_inode(file);
+>>   	struct exfat_inode_info *ei = EXFAT_I(inode);
+>>   	struct address_space *mapping = inode->i_mapping;
+>> @@ -551,14 +553,14 @@ static int exfat_extend_valid_size(struct file *file, loff_t new_valid_size)
+>>   		if (pos + len > new_valid_size)
+>>   			len = new_valid_size - pos;
+>>   
+>> -		err = ops->write_begin(file, mapping, pos, len, &folio, NULL);
+>> +		err = ops->write_begin(iocb, mapping, pos, len, &folio, NULL);
+>>   		if (err)
+>>   			goto out;
+>>   
+>>   		off = offset_in_folio(folio, pos);
+>>   		folio_zero_new_buffers(folio, off, off + len);
+>>   
+>> -		err = ops->write_end(file, mapping, pos, len, len, folio, NULL);
+>> +		err = ops->write_end(iocb, mapping, pos, len, len, folio, NULL);
+>>   		if (err < 0)
+>>   			goto out;
+>>   		pos += len;
+>> @@ -604,7 +606,7 @@ static ssize_t exfat_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+>>   	}
+>>   
+>>   	if (pos > valid_size) {
+>> -		ret = exfat_extend_valid_size(file, pos);
+>> +		ret = exfat_extend_valid_size(iocb, pos);
+>>   		if (ret < 0 && ret != -ENOSPC) {
+>>   			exfat_err(inode->i_sb,
+>>   				"write: fail to zero from %llu to %llu(%zd)",
+>> @@ -655,8 +657,11 @@ static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
+>>   	struct file *file = vma->vm_file;
+>>   	struct inode *inode = file_inode(file);
+>>   	struct exfat_inode_info *ei = EXFAT_I(inode);
+>> +	struct kiocb iocb;
+>>   	loff_t start, end;
+>>   
+>> +	init_sync_kiocb(&iocb, file);
+>> +
+>>   	if (!inode_trylock(inode))
+>>   		return VM_FAULT_RETRY;
+>>   
+>> @@ -665,7 +670,7 @@ static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
+>>   			start + vma->vm_end - vma->vm_start);
+>>   
+>>   	if (ei->valid_size < end) {
+>> -		err = exfat_extend_valid_size(file, end);
+>> +		err = exfat_extend_valid_size(&iocb, end);
+>>   		if (err < 0) {
+>>   			inode_unlock(inode);
+>>   			return vmf_fs_error(err);
+> This is unnecessary work.  The only ->write_begin/write_end that we'll
+> see here is exfat_write_begin() / exfat_write_end() which don't actually
+> need iocb (or file).  Traditionally we pass NULL in these situations,
+> but the exfat people probably weren't aware of this convention.
+>
+> exfat_extend_valid_size() only uses the file it's passed to get the
+> inode, and both callers already have the inode.  So I'd change
+> exfat_extend_valid_size() to take an inode instead of a file as its
+> first argument, then you can skip the creation of an iocb in
+> exfat_page_mkwrite().
 
-Reviewed-by: Jan Kara <jack@suse.cz>
 
-One typo fix below:
+My initial goal was to maintain consistency with the updated ->write_begin/
 
-> +	/* Start jorunal and allocate blocks */
-		 ^^^ journal
+->write_end interfaces. That meant passing the iocb to avoid special cases
 
-> +	err = ext4_block_page_mkwrite(inode, folio, get_block);
->  	if (err == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
->  		goto retry_alloc;
->  out_ret:
+and keep the changes minimal and safe.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+But you're right, since exfat_write_begin() and exfat_write_end() don't 
+use the
+
+iocb or file pointer, passing NULL is fine, and having 
+exfat_extend_valid_size()
+
+directly take an inode makes the code simpler and clearer.
+
+
+In addition, inside the ntfs_extend_initialized_size() function, I also 
+set the iocb
+
+parameter to NULL when calling ntfs_write_begin() and ntfs_write_end().
+
+
+
 
