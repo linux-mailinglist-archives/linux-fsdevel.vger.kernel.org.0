@@ -1,209 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-53740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE4DAF6519
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 00:25:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B5BAF65B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 00:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CCEA4A18E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 22:25:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450261BC48C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 22:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E36246773;
-	Wed,  2 Jul 2025 22:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FAF24EAAA;
+	Wed,  2 Jul 2025 22:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y47i09IZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48591EC014
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 22:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21592DE710;
+	Wed,  2 Jul 2025 22:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751495131; cv=none; b=cLYCmZrcuKemDESpYR/gfOWRIEJEAHPd6IskVw7lxch49x/CU0elhv7jZ8kzLIE/kMoGYOTEsHJpUFEyKqunxw06lJSI6e8iH6yVn0R74rIr4oZgysaLYEhwkHcJT+xPTnR4JuTqaKd+D4aiI0HVhxBsK95svNdqlfYHbM6cRAM=
+	t=1751497045; cv=none; b=enzGUcKIh4fvWAOFYGPDrKskITCI3h69DIg069/cUxFlR/5CgV6eC2czusdQPS1N0xG3HPUFG0dTIUoB9TnDh6Yq2irfkxUrAa7jWGd3gp0J1Ov/V+ylb3YEZU3uLonPoPh91AzTy5zyhZHUT9zZfeTgszZv0jl7uHk6Zoovj/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751495131; c=relaxed/simple;
-	bh=FwB4e6b9DTOqtJf7coY+vgdQ52tc5Z4DuBrnjuvcQCk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iOBbkNNa3TPM/El6cGeubnUaKVW3+TgpPaQ8WmyNbbMRCTThx4/q35HxT1G3LUiYeDijY4JQa4wCpZCg1xeyarfXTtYV3xofB8Vs5AMwmFG9rA5jGsgJO9JRGsJeMRyEDMJ3NqsTHTFc/4oaiLZznO0GfguoWHem/aWsNVMqA9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3df33d97436so3717335ab.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 15:25:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751495129; x=1752099929;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1751497045; c=relaxed/simple;
+	bh=8EW0hGGxBNPaepJB/kat+o+7PivqzOmIdnFN/RapTEk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JfP4E/p12yiZmKk2+exAAsF8bHjID6xv/NDe9qcxesZWmqaJ72sFnmmVi9F8GS6iApVLuXavt2rabACqVEVGoplPdepk3hRe1SK48WFsx+FvXp3+5FnKxLtaUjKl/fHYbYNPN/d9oYH7QfrcZjAWEdoXYj9/DpnFfuWKS8ItytY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y47i09IZ; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a5840ec53dso89973261cf.0;
+        Wed, 02 Jul 2025 15:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751497043; x=1752101843; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pErhI2u+uq8KWGvVut0ueMZ9mVMNWYhQEEkRMdxrjbE=;
-        b=vEpEOQ7DRxpcOQkH29+iJWdKgxrh+zJopzNryoeFTgOFmt2hcrF2jMH5Zd/nkQP/Wq
-         TUCCHsHud0nvMXM6uzZP+mEsVGV7rDiJaxL6T+cbVJ5jksfgx9Y4pUufoEL6Nh8dlEoX
-         /RbaApXrzbdIwS3QU92Zk1lLybRuc2DdQY1l/zrtWroqcAT4+ipiUeFw8lYZjc1Hs3Kt
-         C4nXZP9uBfMLGotw8JlzJ2YrGIwTwCKvqOXBUw4PWT8JlMOpxANKLPzmbiVuQHGb0QRI
-         tYRm2eZDxcrqxf2q+zam129ee+m2tZIqzE5Ef21BK8ijhEvFCWxwKEF/Wwb+GG3SlO1D
-         qQKA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8WM2TdzYFDEM7E93XAc4QaX9vnok4fi9MHG1fbyBJTqf3LcvOoTXB/7+She/qZlzGGWD3UGC+H+0JU/WZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9BWQA++pcCWHMWYI8XiJlUQaB6y3WDlzKHnRwUfhF0FhnDihL
-	4Flo0SShTlzF3qfORlqQAT+GoEdNtWSUG1/wXPHOrrKMWssUHLV/YPE0oUp06wWY+cvPNrr2PJ1
-	3LmJZvf6oti2etuLi1Di0K7Ewc+eE78eLi5gp5J2V1OzTuYUiV/QI659wL8Q=
-X-Google-Smtp-Source: AGHT+IEMfsXDKOrjk3mfsESFHHcRI3MnClkTMAWdQwp13B9+52qg3BbQun2vWaYTX8iX15bCjNG91w2PbqNKb/bucdCTpCNfNbHK
+        bh=L+sj4DzOPih53SQUVn5/WouvC+G14JrQj6it97lI9Kg=;
+        b=Y47i09IZk5Et4ftvV1FxOZmTsZ4EWF/yIKUxArsHWI8s9/7v3cPW2VHOxJIUZNZydx
+         HybZ9We+llzhu6swD1Wk6yf6WDOEVdPUMjKSdvTI7UTHkb5N4QPSqDCZFR5TDDIVrcob
+         IF6N6da3AsvPLkSJpTNsCSznssP2bMKAS9FOAXPnh2P4HSsdD6helG1QFPXWbNBzTSs4
+         /XTjZYec4Ip3phcorCNliRRSSKyZubVJTQc/NzvU8GhzrsLMzexaJYAT9caD1NGzzQx7
+         wKA8+oivWFUKAY4wj/Q8E2hS8QVleUxoJ91ptjblZeQaQu3n3+wp2aWQYNMAk63XWz9H
+         TPFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751497043; x=1752101843;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L+sj4DzOPih53SQUVn5/WouvC+G14JrQj6it97lI9Kg=;
+        b=da9yHRZ16laDkJkaxmizfbcVNlKIs0Uog6HbrLYMXrOa8iq5H+FLmOlWq2Q99RdHaK
+         ZPA6JerCgP7j5I09fYJL/fmWFs90zKLNmxL07i8UBXMOKI5N//Sj9PTYhIPH0rZM6H5g
+         tKG7cDGIUhALFpSS48cs43wwwAdL8DX0xM3JpLxUW4tmIDQWQDiQi6cIjghOGiit2FIq
+         AS3MkNVO7GynAvqKZh5eqjs3TFdmxZQi9KVc+hf8FkplQuNxvu2607XTkyox6mFuL/yC
+         H6YomETs+F1LZYOAw7I/0J5cVhDNv6M8Izu3+/r5YSyihfAOWUs/5562efQAMsuJxuq2
+         ZPIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+XLmNaCzygWE0qQ3mpN+OP6YFD2m/dgZJ1YuDVNjhZMKn/MSa1UPTPpvuVAaDGA1EvBD2A7Y5QM7v@vger.kernel.org, AJvYcCUr3nPNIPEcNAZ+tO9tBmR3MX9WI6NqJaG3L+LUAU7S1fxJUS92gI1FMQXwRQbGjBCvMx13AFZO69kSVg==@vger.kernel.org, AJvYcCXuVWmhuvWHED6uDRXwiP4HY7Mt36HfavKqa3sWv7ITrWRw21t2qSDl2QbHdKzG5SVDtTMzmDrDNWRI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtk5rNqDDAFC+QCrKsrESUv6MDF9H3yLtvVhpMnayhMylW+vDv
+	aM01pxSFQysowEkB2hA+JdB5bJ6bhLKGzwQTT10MIpU3mptopJuUCdw3INU0FTtrU0Oze/aJp7A
+	bpVfJV2O+7Ei8iObCTHSoyw904dLr3+k=
+X-Gm-Gg: ASbGncvrEzdPb8KL7crHyAS8Swy5R1btdo+HHJZ43ghJY0umYV32mlWjW1IUzKB+ZIH
+	vXVtWxoArXxqMpRo1tYTxjCRIeZjQ/Xd0aAwWspWpB+ttni541cAUYKLox9rEGX5fh2UBebWqAq
+	FmDlKbhqZUPF1XarnxQlbD5Xk7ue/Bv1QaMGNQ5TaeSdxXBwI2f2TfbNl9UZo=
+X-Google-Smtp-Source: AGHT+IGh+uw6/WknPh/VOBOhELlnb2ckIXgQMw+Dl8Agj8uw+6O+8N23tvom7rsshXm0+/bXl2b6LhX8aRmfe9JENnM=
+X-Received: by 2002:a05:622a:1343:b0:494:9455:5731 with SMTP id
+ d75a77b69052e-4a9768dc925mr69623251cf.7.1751497042623; Wed, 02 Jul 2025
+ 15:57:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4f:b0:3df:3548:4961 with SMTP id
- e9e14a558f8ab-3e05c35212cmr17965975ab.6.1751495128983; Wed, 02 Jul 2025
- 15:25:28 -0700 (PDT)
-Date: Wed, 02 Jul 2025 15:25:28 -0700
-In-Reply-To: <686571dd.a70a0220.2b31f5.0001.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6865b1d8.a70a0220.5d25f.06c3.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING: suspicious RCU usage in proc_sys_compare
-From: syzbot <syzbot+268eaa983b2fb27e5e38@syzkaller.appspotmail.com>
-To: joel.granados@kernel.org, kees@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250624022135.832899-1-joannelkoong@gmail.com>
+ <20250624022135.832899-13-joannelkoong@gmail.com> <20250702175509.GF10009@frogsfrogsfrogs>
+ <20250702175743.GG10009@frogsfrogsfrogs>
+In-Reply-To: <20250702175743.GG10009@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 2 Jul 2025 15:57:10 -0700
+X-Gm-Features: Ac12FXz7lG-Jak0UpEVy1wDinr93eTqUtI8IoSMS4xFeGJDW7InC6JSRScIU8tA
+Message-ID: <CAJnrk1ZhFropUE-qoXcfa4VB740quF7nkQ3cs+NNbwPTFgpLsw@mail.gmail.com>
+Subject: Re: [PATCH v3 12/16] fuse: use iomap for buffered writes
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, miklos@szeredi.hu, 
+	brauner@kernel.org, anuj20.g@samsung.com, linux-xfs@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
+	kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Wed, Jul 2, 2025 at 10:57=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Wed, Jul 02, 2025 at 10:55:09AM -0700, Darrick J. Wong wrote:
+> > On Mon, Jun 23, 2025 at 07:21:31PM -0700, Joanne Koong wrote:
+> > > Have buffered writes go through iomap. This has two advantages:
+> > > * granular large folio synchronous reads
+> > > * granular large folio dirty tracking
+> > >
+> > > If for example there is a 1 MB large folio and a write issued at pos =
+1
+> > > to pos 1 MB - 2, only the head and tail pages will need to be read in
+> > > and marked uptodate instead of the entire folio needing to be read in=
+.
+> > > Non-relevant trailing pages are also skipped (eg if for a 1 MB large
+> > > folio a write is issued at pos 1 to 4099, only the first two pages ar=
+e
+> > > read in and the ones after that are skipped).
+> > >
+> > > iomap also has granular dirty tracking. This is useful in that when i=
+t
+> > > comes to writeback time, only the dirty portions of the large folio w=
+ill
+> > > be written instead of having to write out the entire folio. For examp=
+le
+> > > if there is a 1 MB large folio and only 2 bytes in it are dirty, only
+> > > the page for those dirty bytes get written out. Please note that
+> > > granular writeback is only done once fuse also uses iomap in writebac=
+k
+> > > (separate commit).
+> > >
+> > > .release_folio needs to be set to iomap_release_folio so that any
+> > > allocated iomap ifs structs get freed.
+> >
+> > What happens in the !iomap case, which can still happen for
+> > !writeback_cache filesystems?  I don't think you can call
+> > iomap_release_folio, because iomap doesn't own folio->private in that
+> > case.
 
-HEAD commit:    50c8770a42fa Add linux-next specific files for 20250702
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1656b48c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dd831c9dfe03f77e=
-c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D268eaa983b2fb27e5=
-e38
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-=
-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D117a148c58000=
-0
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1050f982580000
+AFAICS, there's otherwise no private data attached to the folio for
+fuse for the non-writeback paths, so I don't think this is an issue.
+ifs_free() would be a no-op.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb40fda2e0ca/disk-=
-50c8770a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cba4d214940c/vmlinux-=
-50c8770a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4b23ed647866/bzI=
-mage-50c8770a.xz
+>
+> ...and I think the answer to that is that the !writeback_cache case
+> passes all file IO directly to the fuse server and never touches the
+> page cache at all?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+268eaa983b2fb27e5e38@syzkaller.appspotmail.com
+There's two !writeback_cache cases, direct io and writethrough.
+For writethrough, the file IO gets passed to the fuse server and it
+also gets written to the page cache.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-WARNING: suspicious RCU usage
-6.16.0-rc4-next-20250702-syzkaller #0 Not tainted
------------------------------
-fs/proc/proc_sysctl.c:934 suspicious rcu_dereference_check() usage!
-
-other info that might help us debug this:
-
-
-rcu_scheduler_active =3D 2, debug_locks =3D 1
-3 locks held by syz-executor847/5848:
- #0: ffff88805c84c428 (sb_writers#3){.+.+}-{0:0}, at: mnt_want_write+0x41/0=
-x90 fs/namespace.c:557
- #1: ffff888030198c30 (&sb->s_type->i_mutex_key#10){++++}-{4:4}, at: inode_=
-lock_shared include/linux/fs.h:884 [inline]
- #1: ffff888030198c30 (&sb->s_type->i_mutex_key#10){++++}-{4:4}, at: open_l=
-ast_lookups fs/namei.c:3806 [inline]
- #1: ffff888030198c30 (&sb->s_type->i_mutex_key#10){++++}-{4:4}, at: path_o=
-penat+0x8cb/0x3830 fs/namei.c:4043
- #2: ffff88805d995560 (&lockref->lock){+.+.}-{3:3}, at: spin_lock include/l=
-inux/spinlock.h:351 [inline]
- #2: ffff88805d995560 (&lockref->lock){+.+.}-{3:3}, at: d_alloc_parallel+0x=
-ace/0x15e0 fs/dcache.c:2623
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5848 Comm: syz-executor847 Not tainted 6.16.0-rc4-next-2=
-0250702-syzkaller #0 PREEMPT(full)=20
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
-gle 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- lockdep_rcu_suspicious+0x140/0x1d0 kernel/locking/lockdep.c:6871
- proc_sys_compare+0x27d/0x2c0 fs/proc/proc_sysctl.c:934
- d_same_name fs/dcache.c:2179 [inline]
- d_alloc_parallel+0x1060/0x15e0 fs/dcache.c:2637
- lookup_open fs/namei.c:3630 [inline]
- open_last_lookups fs/namei.c:3807 [inline]
- path_openat+0xa3b/0x3830 fs/namei.c:4043
- do_filp_open+0x1fa/0x410 fs/namei.c:4073
- do_sys_openat2+0x121/0x1c0 fs/open.c:1434
- do_sys_open fs/open.c:1449 [inline]
- __do_sys_openat fs/open.c:1465 [inline]
- __se_sys_openat fs/open.c:1460 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1460
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faf9ff7a291
-Code: 75 57 89 f0 25 00 00 41 00 3d 00 00 41 00 74 49 80 3d da ab 08 00 00 =
-74 6d 89 da 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff f=
-f 0f 87 93 00 00 00 48 8b 54 24 28 64 48 2b 14 25
-RSP: 002b:00007fff03f8f390 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000080001 RCX: 00007faf9ff7a291
-RDX: 0000000000080001 RSI: 00007faf9ffcb7d7 RDI: 00000000ffffff9c
-RBP: 00007faf9ffcb7d7 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00007fff03f8f430
-R13: 00007faf9fffa590 R14: 0000000000000000 R15: 0000000000000001
- </TASK>
-chnl_net:caif_netlink_parms(): no params data found
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered disabled state
-bridge_slave_0: entered allmulticast mode
-bridge_slave_0: entered promiscuous mode
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered disabled state
-bridge_slave_1: entered allmulticast mode
-bridge_slave_1: entered promiscuous mode
-bond0: (slave bond_slave_0): Enslaving as an active interface with an up li=
-nk
-bond0: (slave bond_slave_1): Enslaving as an active interface with an up li=
-nk
-team0: Port device team_slave_0 added
-team0: Port device team_slave_1 added
-batman_adv: batadv0: Adding interface: batadv_slave_0
-batman_adv: batadv0: The MTU of interface batadv_slave_0 is too small (1500=
-) to handle the transport of batman-adv packets. Packets going over this in=
-terface will be fragmented on layer2 which could impact the performance. Se=
-tting the MTU to 1560 would solve the problem.
-batman_adv: batadv0: Not using interface batadv_slave_0 (retrying later): i=
-nterface not active
-batman_adv: batadv0: Adding interface: batadv_slave_1
-batman_adv: batadv0: The MTU of interface batadv_slave_1 is too small (1500=
-) to handle the transport of batman-adv packets. Packets going over this in=
-terface will be fragmented on layer2 which could impact the performance. Se=
-tting the MTU to 1560 would solve the problem.
-batman_adv: batadv0: Not using interface batadv_slave_1 (retrying later): i=
-nterface not active
-hsr_slave_0: entered promiscuous mode
-hsr_slave_1: entered promiscuous mode
-debugfs: 'hsr0' already exists in 'hsr'
-Cannot create hsr debugfs directory
-netdevsim netdevsim2 netdevsim0: renamed from eth0
-netdevsim netdevsim2 netdevsim1: renamed from eth1
-netdevsim netdevsim2 netdevsim2: renamed from eth2
-netdevsim netdevsim2 netdevsim3: renamed from eth3
-8021q: adding VLAN 0 to HW filter on device bond0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device batadv0
-veth0_vlan: entered promiscuous mode
-veth1_vlan: entered promiscuous mode
-veth0_macvtap: entered promiscuous mode
-veth1_macvtap: entered promiscuous mode
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> --D
+>
 
