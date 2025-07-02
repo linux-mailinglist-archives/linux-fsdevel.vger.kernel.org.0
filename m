@@ -1,366 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-53591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47508AF0AC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 07:34:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0429DAF0AC3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 07:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604661BC4FA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 05:35:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506024A4391
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 05:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF661EC006;
-	Wed,  2 Jul 2025 05:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5561F1301;
+	Wed,  2 Jul 2025 05:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="B1g00Ij6"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Tm3qmSM+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2672160B8A
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 05:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1B160B8A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 05:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751434483; cv=none; b=N6ZPbdqhK43YIFOmNCY/bIMJhAaj/Qm3QGzygnf68xoEIJM8F6D5KCDQMiwGhivuOAYRMQLuLox0zOBID6fMY+uHoS4V7H2dQ42b+tK/VhXFCaHuAFhPPxX/dc9asjl4TDo8ef0WmwXStOZPM4odlOvVjazzTM+UWMhNwP5uzGI=
+	t=1751434493; cv=none; b=qaRXWPOZI6686rRFonAbVSFcXRKDw8vVMPDTlUPpA4qpGgnf4RYAgQOgrtGXPcDhT2giKiOe3Ub9sDyiEt/Wk8q/ROhnWrzfbVsTc/W8DPuG7rYEuoRZd37c2jNHnophaDOnNZ5m2qRLpib58gQzDBODNRR24SVFAWdko6nj3BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751434483; c=relaxed/simple;
-	bh=jCu3TdexZPpAY5iAlslZqYsx/US7sDgITguhvpibR4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=G6OmGjAFe4Z9T4mhSEiV4xrwkq9WM3tMSN5fTfCfl22yI30SCBrV8jXgddmLUj9K0ov5JjhY6MK58dfH/WMoAUj5aPsjCh7LkSOKDNjl+QFo79A99/KG8tEDOZe/FdUMkjlZal1DRziU8ehKzSZJAJ+ESV2sBi2lLUWXm1DvTVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=B1g00Ij6; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=9paDXq24RdiH/POl2uzW89wzJY+d0HubUzwA7BfAESI=; b=B1g00Ij6W30VCPhJ0wZSyCuvRi
-	CBwkuIPhrW08ysZI3gema9anydshI1cwITf1wXZyrkIoe+U1MsyIwhs4pcs1jXvoaycJKxWo2lZfB
-	bPQ17E+oIjLM3QzYUyUcP/6hE4cvV5IXXZQKcK4sDuMQziOy+CC+GxGbTbEeHRehCJJQwceZqkbyj
-	NmV1VfTkQ70QzV7D+QRf5PDMo5KKBUbMSl8JJW0EUbnCidVqBZnf9G+VuWcXRun4dwSxLJ0dUl8T9
-	1CTIwepfsm8phGxJ3vgxwGDpyRu0HRfFk7jAQjOYLOd9ZPrWXiqSGWuufwJJa1c9r0dD6Jso6KU9J
-	oQHNAEHA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWq7B-00000008QoR-1qa7;
-	Wed, 02 Jul 2025 05:34:37 +0000
-Date: Wed, 2 Jul 2025 06:34:37 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: "Ahmed S. Darwish" <darwi@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH][RFC] fold fs_struct->{lock,seq} into a seqlock
-Message-ID: <20250702053437.GC1880847@ZenIV>
+	s=arc-20240116; t=1751434493; c=relaxed/simple;
+	bh=j/nJWaa5fsLM/3Fdphqm2plFbLgIbO6bw+18ujbICR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u8+Y8HwhLKPpZSr7n+dnQhivxXGDaiJcaOJfXII2iw0ivVeh1FTv6lznh6cNwS8H13KqU3mMUZGUKTqbM1B81bnvdlVgfYCoNXdVTPNIU5bwYvrOL2NjhYbRecsjOETolq3A5cllb1wxb4hIyNTqshIcEGbVxincX6imODMVMwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Tm3qmSM+; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a58ba6c945so60813841cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Jul 2025 22:34:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1751434491; x=1752039291; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=j/nJWaa5fsLM/3Fdphqm2plFbLgIbO6bw+18ujbICR8=;
+        b=Tm3qmSM+St0MiAHyOLGr1cy+bKiIbNb4xSOFKIm13bOHzwlOnsvX1j0Sw7KozmhroU
+         fHOPhp2aVLrf/okWVtxHMJG9FTC3nIdHuLht6r3IQT4gbL3ib9GsDXxSNFJVqTQhEEjE
+         fJYM1hA+8sfcc+iBiirKmonGrpg9wENsujvlU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751434491; x=1752039291;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j/nJWaa5fsLM/3Fdphqm2plFbLgIbO6bw+18ujbICR8=;
+        b=icCIsoMMAi4aY3My7t+kx9Cajfz45Hd6b/XTSn66QMqahkLnm1spZxvMoFhIaL1oSM
+         /MFUCK5S/P+F6pmcsBJ/yWY/B8fsi34DHpv+K4c78siNVlovX1fDHxdDjqujH4EBC+ZH
+         wmTIf0xUBKlC1iZinV9TvxCtsf9eFVVgu6aaRtuTiQuOi4d2ompDd6NHyvmnZyaDukAe
+         sbWJawgRRvCbSGXq1s2cgbTydgxZId6FIOWZ1jwSamvHxhQJE3EKuOje9z2okNfsUhPD
+         GLPzczVuH1hWytm+8j1NIXAiN0bTokTc8xz9vdxmicJ4wa+r7xrIsrUY6gpoa89k0Fix
+         8Egw==
+X-Gm-Message-State: AOJu0YxPV4KIJOSrs79K16fi4zp0ovuUfQUg7BCSzXY6VOS5o3WVnBnk
+	W8CVO1JKpfxPfSwwqhPsQd0/1B06D0HgyqU416IilqCDeFEZBLs+654nyRpjJ0fmr34zqsHiE5t
+	FjW8UgfHGzVcRPUBiZgiC5MsGK+B3D4T84mfU6jmzwQ==
+X-Gm-Gg: ASbGncuqcNbz+nS6Hh6J3N7zaLrbo7a7EYUsCPTSei7oRWYBdZ+VC7p6w7y3RC7uJtf
+	QA+tTrqUJ+QEKyOwvqqrRx7Xki2JZPxgNZlslFuaA+Wpd2+b6tPGfJ2K7OcOysmlvFT+G8f/6Nt
+	YVf7H0hN5QrfGj9DAkanmrcCd5DBkCTSnholsVUXyPE1hwhc8/aqlJvOkSqvRsVqtcSx1rNwcYD
+	WsE
+X-Google-Smtp-Source: AGHT+IG11RBCOEKFUL2/rBKQv4WB0MyV8b5RRG9N8NLG36pRirgFT/ofEss1s5GjqeuVfFpv1QK8kZ6ydL0UiiRiOgA=
+X-Received: by 2002:a05:622a:1a14:b0:474:e75e:fccc with SMTP id
+ d75a77b69052e-4a976a2463dmr28150251cf.35.1751434491229; Tue, 01 Jul 2025
+ 22:34:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250523181604.3939656-1-joannelkoong@gmail.com> <20250523181604.3939656-2-joannelkoong@gmail.com>
+In-Reply-To: <20250523181604.3939656-2-joannelkoong@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 2 Jul 2025 07:34:40 +0200
+X-Gm-Features: Ac12FXwaQNUhNfDRKWMywlBRFzrIyQ2tqx6xCiD_cPBjV39UE6sTt6Q2u0WdDMw
+Message-ID: <CAJfpegudqgztbQb1z1c9TKhvdAz1usspVi1Cx3qFOj_RjSb=vw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fuse: clean up null folio check in fuse_copy_folio()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, dan.carpenter@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-	The combination of spinlock_t lock and seqcount_spinlock_t seq
-in struct fs_struct is an open-coded seqlock_t (see linux/seqlock_types.h).
-	Combine and switch to equivalent seqlock_t primitives.  AFAICS,
-that does end up with the same sequence of underlying operations in all
-cases.
-	While we are at it, get_fs_pwd() is open-coded verbatim in 
-get_path_from_fd(); rather than applying conversion to it, replace with
-the call of get_fs_pwd() there.  Not worth splitting the commit for that,
-IMO...
+On Fri, 23 May 2025 at 20:18, Joanne Koong <joannelkoong@gmail.com> wrote:
+>
+> In fuse_copy_folio(), the folio in *foliop will never be null.
+> fuse_copy_folio() is called from two places, fuse_copy_folios() and
+> fuse_notify_store(). In fuse_copy_folios(), the folio will never be null
+> since ap->num_folios always reflects how many folios are stored in the
+> ap->folios[] array.
 
-	A bit of historical background - conversion of seqlock_t to
-use of seqcount_spinlock_t happened several months after the same
-had been done to struct fs_struct; switching fs_struct to seqlock_t
-could've been done immediately after that, but it looks like nobody
-had gotten around to that until now.
+Hmm, well, did you verify that none of the callers leave any holes?
+ISTR there was a reason to put the NULL check in there, I just don't
+remember what that reason was.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/d_path.c b/fs/d_path.c
-index 5f4da5c8d5db..bb365511066b 100644
---- a/fs/d_path.c
-+++ b/fs/d_path.c
-@@ -241,9 +241,9 @@ static void get_fs_root_rcu(struct fs_struct *fs, struct path *root)
- 	unsigned seq;
- 
- 	do {
--		seq = read_seqcount_begin(&fs->seq);
-+		seq = read_seqbegin(&fs->seq);
- 		*root = fs->root;
--	} while (read_seqcount_retry(&fs->seq, seq));
-+	} while (read_seqretry(&fs->seq, seq));
- }
- 
- /**
-@@ -385,10 +385,10 @@ static void get_fs_root_and_pwd_rcu(struct fs_struct *fs, struct path *root,
- 	unsigned seq;
- 
- 	do {
--		seq = read_seqcount_begin(&fs->seq);
-+		seq = read_seqbegin(&fs->seq);
- 		*root = fs->root;
- 		*pwd = fs->pwd;
--	} while (read_seqcount_retry(&fs->seq, seq));
-+	} while (read_seqretry(&fs->seq, seq));
- }
- 
- /*
-diff --git a/fs/exec.c b/fs/exec.c
-index 1f5fdd2e096e..871078ddb220 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1510,7 +1510,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
- 	 * state is protected by cred_guard_mutex we hold.
- 	 */
- 	n_fs = 1;
--	spin_lock(&p->fs->lock);
-+	read_seqlock_excl(&p->fs->seq);
- 	rcu_read_lock();
- 	for_other_threads(p, t) {
- 		if (t->fs == p->fs)
-@@ -1523,7 +1523,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
- 		bprm->unsafe |= LSM_UNSAFE_SHARE;
- 	else
- 		p->fs->in_exec = 1;
--	spin_unlock(&p->fs->lock);
-+	read_sequnlock_excl(&p->fs->seq);
- }
- 
- static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 3e092ae6d142..e2f8e788d33a 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -171,11 +171,7 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- static int get_path_from_fd(int fd, struct path *root)
- {
- 	if (fd == AT_FDCWD) {
--		struct fs_struct *fs = current->fs;
--		spin_lock(&fs->lock);
--		*root = fs->pwd;
--		path_get(root);
--		spin_unlock(&fs->lock);
-+		get_fs_pwd(current->fs, root);
- 	} else {
- 		CLASS(fd, f)(fd);
- 		if (fd_empty(f))
-diff --git a/fs/fs_struct.c b/fs/fs_struct.c
-index 64c2d0814ed6..28be762ac1c6 100644
---- a/fs/fs_struct.c
-+++ b/fs/fs_struct.c
-@@ -17,12 +17,10 @@ void set_fs_root(struct fs_struct *fs, const struct path *path)
- 	struct path old_root;
- 
- 	path_get(path);
--	spin_lock(&fs->lock);
--	write_seqcount_begin(&fs->seq);
-+	write_seqlock(&fs->seq);
- 	old_root = fs->root;
- 	fs->root = *path;
--	write_seqcount_end(&fs->seq);
--	spin_unlock(&fs->lock);
-+	write_sequnlock(&fs->seq);
- 	if (old_root.dentry)
- 		path_put(&old_root);
- }
-@@ -36,12 +34,10 @@ void set_fs_pwd(struct fs_struct *fs, const struct path *path)
- 	struct path old_pwd;
- 
- 	path_get(path);
--	spin_lock(&fs->lock);
--	write_seqcount_begin(&fs->seq);
-+	write_seqlock(&fs->seq);
- 	old_pwd = fs->pwd;
- 	fs->pwd = *path;
--	write_seqcount_end(&fs->seq);
--	spin_unlock(&fs->lock);
-+	write_sequnlock(&fs->seq);
- 
- 	if (old_pwd.dentry)
- 		path_put(&old_pwd);
-@@ -67,16 +63,14 @@ void chroot_fs_refs(const struct path *old_root, const struct path *new_root)
- 		fs = p->fs;
- 		if (fs) {
- 			int hits = 0;
--			spin_lock(&fs->lock);
--			write_seqcount_begin(&fs->seq);
-+			write_seqlock(&fs->seq);
- 			hits += replace_path(&fs->root, old_root, new_root);
- 			hits += replace_path(&fs->pwd, old_root, new_root);
--			write_seqcount_end(&fs->seq);
- 			while (hits--) {
- 				count++;
- 				path_get(new_root);
- 			}
--			spin_unlock(&fs->lock);
-+			write_sequnlock(&fs->seq);
- 		}
- 		task_unlock(p);
- 	}
-@@ -99,10 +93,10 @@ void exit_fs(struct task_struct *tsk)
- 	if (fs) {
- 		int kill;
- 		task_lock(tsk);
--		spin_lock(&fs->lock);
-+		read_seqlock_excl(&fs->seq);
- 		tsk->fs = NULL;
- 		kill = !--fs->users;
--		spin_unlock(&fs->lock);
-+		read_sequnlock_excl(&fs->seq);
- 		task_unlock(tsk);
- 		if (kill)
- 			free_fs_struct(fs);
-@@ -116,16 +110,15 @@ struct fs_struct *copy_fs_struct(struct fs_struct *old)
- 	if (fs) {
- 		fs->users = 1;
- 		fs->in_exec = 0;
--		spin_lock_init(&fs->lock);
--		seqcount_spinlock_init(&fs->seq, &fs->lock);
-+		seqlock_init(&fs->seq);
- 		fs->umask = old->umask;
- 
--		spin_lock(&old->lock);
-+		read_seqlock_excl(&old->seq);
- 		fs->root = old->root;
- 		path_get(&fs->root);
- 		fs->pwd = old->pwd;
- 		path_get(&fs->pwd);
--		spin_unlock(&old->lock);
-+		read_sequnlock_excl(&old->seq);
- 	}
- 	return fs;
- }
-@@ -140,10 +133,10 @@ int unshare_fs_struct(void)
- 		return -ENOMEM;
- 
- 	task_lock(current);
--	spin_lock(&fs->lock);
-+	read_seqlock_excl(&fs->seq);
- 	kill = !--fs->users;
- 	current->fs = new_fs;
--	spin_unlock(&fs->lock);
-+	read_sequnlock_excl(&fs->seq);
- 	task_unlock(current);
- 
- 	if (kill)
-@@ -162,7 +155,6 @@ EXPORT_SYMBOL(current_umask);
- /* to be mentioned only in INIT_TASK */
- struct fs_struct init_fs = {
- 	.users		= 1,
--	.lock		= __SPIN_LOCK_UNLOCKED(init_fs.lock),
--	.seq		= SEQCNT_SPINLOCK_ZERO(init_fs.seq, &init_fs.lock),
-+	.seq		= __SEQLOCK_UNLOCKED(init_fs.seq),
- 	.umask		= 0022,
- };
-diff --git a/fs/namei.c b/fs/namei.c
-index f761cafaeaad..cb33780f94dd 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1012,10 +1012,10 @@ static int set_root(struct nameidata *nd)
- 		unsigned seq;
- 
- 		do {
--			seq = read_seqcount_begin(&fs->seq);
-+			seq = read_seqbegin(&fs->seq);
- 			nd->root = fs->root;
- 			nd->root_seq = __read_seqcount_begin(&nd->root.dentry->d_seq);
--		} while (read_seqcount_retry(&fs->seq, seq));
-+		} while (read_seqretry(&fs->seq, seq));
- 	} else {
- 		get_fs_root(fs, &nd->root);
- 		nd->state |= ND_ROOT_GRABBED;
-@@ -2580,11 +2580,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 			unsigned seq;
- 
- 			do {
--				seq = read_seqcount_begin(&fs->seq);
-+				seq = read_seqbegin(&fs->seq);
- 				nd->path = fs->pwd;
- 				nd->inode = nd->path.dentry->d_inode;
- 				nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
--			} while (read_seqcount_retry(&fs->seq, seq));
-+			} while (read_seqretry(&fs->seq, seq));
- 		} else {
- 			get_fs_pwd(current->fs, &nd->path);
- 			nd->inode = nd->path.dentry->d_inode;
-diff --git a/include/linux/fs_struct.h b/include/linux/fs_struct.h
-index 783b48dedb72..baf200ab5c77 100644
---- a/include/linux/fs_struct.h
-+++ b/include/linux/fs_struct.h
-@@ -8,8 +8,7 @@
- 
- struct fs_struct {
- 	int users;
--	spinlock_t lock;
--	seqcount_spinlock_t seq;
-+	seqlock_t seq;
- 	int umask;
- 	int in_exec;
- 	struct path root, pwd;
-@@ -26,18 +25,18 @@ extern int unshare_fs_struct(void);
- 
- static inline void get_fs_root(struct fs_struct *fs, struct path *root)
- {
--	spin_lock(&fs->lock);
-+	read_seqlock_excl(&fs->seq);
- 	*root = fs->root;
- 	path_get(root);
--	spin_unlock(&fs->lock);
-+	read_sequnlock_excl(&fs->seq);
- }
- 
- static inline void get_fs_pwd(struct fs_struct *fs, struct path *pwd)
- {
--	spin_lock(&fs->lock);
-+	read_seqlock_excl(&fs->seq);
- 	*pwd = fs->pwd;
- 	path_get(pwd);
--	spin_unlock(&fs->lock);
-+	read_sequnlock_excl(&fs->seq);
- }
- 
- extern bool current_chrooted(void);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 1ee8eb11f38b..6318a25a16ba 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1542,14 +1542,14 @@ static int copy_fs(unsigned long clone_flags, struct task_struct *tsk)
- 	struct fs_struct *fs = current->fs;
- 	if (clone_flags & CLONE_FS) {
- 		/* tsk->fs is already what we want */
--		spin_lock(&fs->lock);
-+		read_seqlock_excl(&fs->seq);
- 		/* "users" and "in_exec" locked for check_unsafe_exec() */
- 		if (fs->in_exec) {
--			spin_unlock(&fs->lock);
-+			read_sequnlock_excl(&fs->seq);
- 			return -EAGAIN;
- 		}
- 		fs->users++;
--		spin_unlock(&fs->lock);
-+		read_sequnlock_excl(&fs->seq);
- 		return 0;
- 	}
- 	tsk->fs = copy_fs_struct(fs);
-@@ -3149,13 +3149,13 @@ int ksys_unshare(unsigned long unshare_flags)
- 
- 		if (new_fs) {
- 			fs = current->fs;
--			spin_lock(&fs->lock);
-+			read_seqlock_excl(&fs->seq);
- 			current->fs = new_fs;
- 			if (--fs->users)
- 				new_fs = NULL;
- 			else
- 				new_fs = fs;
--			spin_unlock(&fs->lock);
-+			read_sequnlock_excl(&fs->seq);
- 		}
- 
- 		if (new_fd)
+Thanks,
+Miklos
 
