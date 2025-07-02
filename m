@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-53731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BE0AF63EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 23:25:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F6BAF63F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 23:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C5C1711E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 21:25:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0E71C44798
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 21:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B81C26CE18;
-	Wed,  2 Jul 2025 21:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF8D23C50F;
+	Wed,  2 Jul 2025 21:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="X4AspTId"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nwTpW0DE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F388E230268;
-	Wed,  2 Jul 2025 21:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E0D230268
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 21:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751491545; cv=none; b=gfd3EMD/6wlamMwuYs1ODUtMBuwQb6BzI4CZ+yYfYznavN396RF44S1t6ot/F8lznrPipCpG8KCSbeK7d3mr6CyfS41ePQrQmz9oh/01gHccOJEx5ypelGIJB/bw5R/5N5e80GBK2oEzkYIGNzEKuhhqIxF6sFRetMbDaMUZ6/4=
+	t=1751491579; cv=none; b=FAtqiHOdxlOXnIT6Gc1NbiuIInXtHaourGzq967Qa7h/Y5jwTTn+02kwRIAKPMvBeipLl/6SVdcsuxO8hxaFhPnYVsEKOvOsVEEH3UTfW8BQIh+GFqpvmyDITsY/KCxIcPntY1i3FTQcoWLJ/hGRMfH6OXwI+OJy0qezPLGHlSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751491545; c=relaxed/simple;
-	bh=m/rn8noWNQPIfBXKrGfHmVb2dM6W1UkWtrO/SOtCET0=;
+	s=arc-20240116; t=1751491579; c=relaxed/simple;
+	bh=nnwl8LwaDXnCcdfj5tlLevD0OVUgssNqTtlLhbnnr3k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0cTX86HEuqCyoHMTK/2wKyDLfnWiP91C3WReNv6TapSrs5zcAV0/vHiq/zGtwhv0ONjCmlmZOD8ORTiGdY2DGuxMuaSb0fGlDSTJdae7ZT4Q+FtNMvRoNLDzN35nDRDrc6JB6/x7o7QP/tXqr+i0UpHTuUuPhwSqqHB5de6MnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=X4AspTId; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=YeCFZ9DHGGlg0AKSEi0ropyHqd99945LzzyXd3odhSd/B9OvnatdHHa/Jy4it1KHanqd2B+dVu7s/BmDYJfNoDBbMVT8C70iVfpWraawbsvznWefZxWbih22gUUyO0tjaci3LQSgaJ+HpRmmAFy8UsPR3E1k3Og+WLc9SnSqoZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nwTpW0DE; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=D2qWpaip3f31L6c6ADO/UKCapKoI96YpHqRy3PS/oKs=; b=X4AspTIdrc//4kzgAQ1vMESKjH
-	zryNsOpWUhR7taZ4CrEcsmbQdECO/2hOHdbhfY+k/tFqgdKySKvLtf+IBdUL979cY7cGiqRu208Cn
-	O0dWBofJwG21/u0bpPKYxVwcONlLAW6xFCwT95RLKAlydo3lvansWkVaApzbI4aWr1K6mHznXV8j0
-	1MhvDAikaNg2q022uoN7CTbi9kd6Y4RoiaaOfsfUF4Nc5IoTOOWTNr0sl0iSvdH0oUbIThUHbCDp9
-	ovW7hv0G5ES9417VzVr3eT99JeRVACACQySwZri4WRV0C8/JInjX/6byKuvYYUfkNmexd7diOPlTG
-	iH89mmXg==;
+	bh=Z6ubDD8gTwN9kZsIwtiFHEKAmsRRJCaJuDE/i05tWcY=; b=nwTpW0DEJtUz3mTNIHEHPZO5O0
+	HNzKZxNnqmWMb9be79lt7r3083j26zAPWtNup34D2sOYtbhiUDiwPLbiaDXUiP0GpYQZrVb++46vf
+	xjQSAoOrl2c8bCqRjT+eY01N+jEhLqIFIES/GUlPm1RCbVzds4wqYOr4Hg56y0N8G+0P5tFVMrL4d
+	Wh0FdIGo4no86wCdYje/sWE/wEiSlvBwftIk+AA4zOiClqIW014U1Qas6KJEAqgtkdyertan4CJgX
+	nA8d9H0S8xWHq8lIdpxb7gceVASQQTBX3Nomj9G+OZZjcIy5UaXruF56ne/8mxrYwqlCozNLfmDuA
+	y2qXjTGA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uX4xa-0000000EOJP-2Q69;
-	Wed, 02 Jul 2025 21:25:42 +0000
-Date: Wed, 2 Jul 2025 22:25:42 +0100
+	id 1uX4y8-0000000EOeM-1uNx;
+	Wed, 02 Jul 2025 21:26:16 +0000
+Date: Wed, 2 Jul 2025 22:26:16 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [PATCH 08/11] fix tt_command_write()
-Message-ID: <20250702212542.GH3406663@ZenIV>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [PATCH 09/11] debugfs_get_aux(): allow storing non-const void *
+Message-ID: <20250702212616.GI3406663@ZenIV>
 References: <20250702211305.GE1880847@ZenIV>
  <20250702211408.GA3406663@ZenIV>
 Precedence: bulk
@@ -63,88 +63,82 @@ Content-Disposition: inline
 In-Reply-To: <20250702211408.GA3406663@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-1) unbalanced debugfs_file_get().  Not needed in the first place -
-file_operations are accessed only via debugfs_create_file(), so
-debugfs wrappers will take care of that itself.
-
-2) kmalloc() for a buffer used only for duration of a function is not
-a problem, but for a buffer no longer than 16 bytes?
-
-3) strstr() is for finding substrings; for finding a character there's
-strchr().
+typechecking is up to users, anyway...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/thermal/testing/command.c | 30 ++++++++++--------------------
- 1 file changed, 10 insertions(+), 20 deletions(-)
+ drivers/staging/greybus/camera.c | 2 +-
+ fs/debugfs/file.c                | 2 +-
+ fs/debugfs/inode.c               | 2 +-
+ fs/debugfs/internal.h            | 2 +-
+ include/linux/debugfs.h          | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/thermal/testing/command.c b/drivers/thermal/testing/command.c
-index ba11d70e8021..1159ecea57e7 100644
---- a/drivers/thermal/testing/command.c
-+++ b/drivers/thermal/testing/command.c
-@@ -139,31 +139,21 @@ static int tt_command_exec(int index, const char *arg)
- 	return ret;
+diff --git a/drivers/staging/greybus/camera.c b/drivers/staging/greybus/camera.c
+index ec9fddfc0b14..5ac19c0055d9 100644
+--- a/drivers/staging/greybus/camera.c
++++ b/drivers/staging/greybus/camera.c
+@@ -1128,7 +1128,7 @@ static ssize_t gb_camera_debugfs_write(struct file *file,
+ 
+ static int gb_camera_debugfs_open(struct inode *inode, struct file *file)
+ {
+-	file->private_data = (void *)debugfs_get_aux(file);
++	file->private_data = debugfs_get_aux(file);
+ 	return 0;
  }
  
--static ssize_t tt_command_process(struct dentry *dentry, const char __user *user_buf,
--				  size_t count)
-+static ssize_t tt_command_process(char *s)
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index 77784091a10f..3ec3324c2060 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -47,7 +47,7 @@ const struct file_operations debugfs_noop_file_operations = {
+ 
+ #define F_DENTRY(filp) ((filp)->f_path.dentry)
+ 
+-const void *debugfs_get_aux(const struct file *file)
++void *debugfs_get_aux(const struct file *file)
  {
--	char *buf __free(kfree);
- 	char *arg;
- 	int i;
+ 	return DEBUGFS_I(file_inode(file))->aux;
+ }
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index 30c4944e1862..43e5d1bf1f32 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -459,7 +459,7 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+ 		proxy_fops = &debugfs_noop_file_operations;
+ 	inode->i_fop = proxy_fops;
+ 	DEBUGFS_I(inode)->raw = real_fops;
+-	DEBUGFS_I(inode)->aux = aux;
++	DEBUGFS_I(inode)->aux = (void *)aux;
  
--	buf = kmalloc(count + 1, GFP_KERNEL);
--	if (!buf)
--		return -ENOMEM;
-+	strim(s);
+ 	d_instantiate(dentry, inode);
+ 	fsnotify_create(d_inode(dentry->d_parent), dentry);
+diff --git a/fs/debugfs/internal.h b/fs/debugfs/internal.h
+index 93483fe84425..427987f81571 100644
+--- a/fs/debugfs/internal.h
++++ b/fs/debugfs/internal.h
+@@ -19,7 +19,7 @@ struct debugfs_inode_info {
+ 		const struct debugfs_short_fops *short_fops;
+ 		debugfs_automount_t automount;
+ 	};
+-	const void *aux;
++	void *aux;
+ };
  
--	if (copy_from_user(buf, user_buf, count))
--		return -EFAULT;
--
--	buf[count] = '\0';
--	strim(buf);
--
--	arg = strstr(buf, ":");
-+	arg = strchr(s, ':');
- 	if (arg) {
- 		*arg = '\0';
- 		arg++;
- 	}
+ static inline struct debugfs_inode_info *DEBUGFS_I(struct inode *inode)
+diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
+index a420152105d0..7cecda29447e 100644
+--- a/include/linux/debugfs.h
++++ b/include/linux/debugfs.h
+@@ -162,7 +162,7 @@ void debugfs_remove(struct dentry *dentry);
  
- 	for (i = 0; i < ARRAY_SIZE(tt_command_strings); i++) {
--		if (!strcmp(buf, tt_command_strings[i]))
-+		if (!strcmp(s, tt_command_strings[i]))
- 			return tt_command_exec(i, arg);
- 	}
+ void debugfs_lookup_and_remove(const char *name, struct dentry *parent);
  
-@@ -173,20 +163,20 @@ static ssize_t tt_command_process(struct dentry *dentry, const char __user *user
- static ssize_t tt_command_write(struct file *file, const char __user *user_buf,
- 				size_t count, loff_t *ppos)
- {
--	struct dentry *dentry = file->f_path.dentry;
-+	char buf[TT_COMMAND_SIZE];
- 	ssize_t ret;
+-const void *debugfs_get_aux(const struct file *file);
++void *debugfs_get_aux(const struct file *file);
  
- 	if (*ppos)
- 		return -EINVAL;
- 
--	if (count + 1 > TT_COMMAND_SIZE)
-+	if (count > TT_COMMAND_SIZE - 1)
- 		return -E2BIG;
- 
--	ret = debugfs_file_get(dentry);
--	if (unlikely(ret))
--		return ret;
-+	if (copy_from_user(buf, user_buf, count))
-+		return -EFAULT;
-+	buf[count] = '\0';
- 
--	ret = tt_command_process(dentry, user_buf, count);
-+	ret = tt_command_process(buf);
- 	if (ret)
- 		return ret;
- 
+ int debugfs_file_get(struct dentry *dentry);
+ void debugfs_file_put(struct dentry *dentry);
 -- 
 2.39.5
 
