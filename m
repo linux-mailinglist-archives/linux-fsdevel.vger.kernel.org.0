@@ -1,170 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-53655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2DEAF5A41
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 15:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C844AAF5A5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 16:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82D03444FBF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 13:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4F2482D01
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 14:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2846E27EFFD;
-	Wed,  2 Jul 2025 13:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2B1285418;
+	Wed,  2 Jul 2025 14:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vW5p+89B"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y3RIt4U5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t0uKXR0s";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DmP3jEwi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zpR8FQhT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356CA27A477
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 13:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB3423E32B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 14:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751464465; cv=none; b=A0geDrhsYim1KdRMUIDyU/Sd28QPhQlUbiqulOYsSmsS4SiCgMUgDFQh//0JFFw1TdGV/ltZZtYzfcq/6QjJTOhaXLLtTv10D0/WME5wn++MtAQPrvdLhVEnPZ4vmaGT2sVXvu7ePXIRF3W67MV5S68IBCQuhg49XzLD2PB125k=
+	t=1751464862; cv=none; b=u0pCEVbgDg7tJ3vqRNwqh3CHhN66a5BcC/f50xiUv9ctbRJRCVMDr3mIpARznFheYB3jch0CqE6eNYRnERKSqz0gVg8ydECFCmByUSLz8byxJrfx8FYQLHgI71DSTs5OwbzSwoZq5dwXOOTtRiAD1V6fReXqWq85/ALwQ+FFTTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751464465; c=relaxed/simple;
-	bh=JYcMfo/FRV0MXHDD6f3JXpyZw1uOm6GKaDPQ9wemazA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ptC3QwdRcerysrOBIqyyC0sF06wBEt3oK43zlVb7AB0sPT9ompXiSllXx88fb7JIR5qrz1H0YSa8j385KGMwt7nxiaNRCgL+wL2LlXiS6enHQTGngVgDrd0nL3MF8h8vzEtiz1mWercpzoEatS+Ez51E15J0b8vmBoB5IicGHv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vW5p+89B; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-237f270513bso377445ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 06:54:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751464463; x=1752069263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kJKh0bhmf7f4ICuPLjZddH/eg+QtQRmvEhkym3b4VZM=;
-        b=vW5p+89BxMEqixi/n3Unclc2DoAPPx7T0yzcZIbQMWq+fgM9MupOABCb3C63QIPNy8
-         3NNXf/r5Tzk/fHKVTrklfRXjMsbk9p88aLChECA4u5JmSau48iJk6aaEPTC/XVl/x2V/
-         iA4/Ucl3LS95JVVzIjPU1hYBTosJp2D5afZVk0zxsp5+a5VJS51pnL/fo0NqUnvzzrcs
-         PCRYewa2ENjR+WvisU6K/OwebjDX8uiv8GeNNmyrmra69KgHM4IAeGMBy6p5/mBZt+qO
-         Qy0alvNaZUOIFx9GX2+jcttyIG+aYFKn6XgYJG3ccEreFo7qbr+xbzOcwHcVF01MXiP6
-         D+yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751464463; x=1752069263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kJKh0bhmf7f4ICuPLjZddH/eg+QtQRmvEhkym3b4VZM=;
-        b=TAGNkpmonCi16V/DK8Tau8u5muGXzesDIkMsHXjoPl7S+AiAlzcdem2K4xVLIN/vcj
-         60fb+Rg9/kJBSV0V5lcYTcTbnmFPKqrRNhYW/oMq4m+a22cnHPoyd4XiYdV/goYlpJb7
-         x9xHg/kwhQ/1yWaBCXYhzXbzTxOwG98LU8V8jFcAdv6yjKmOXLRuh+ZPybbAoPmDUneI
-         iYPNBzRC2Z41jyTE/7VtthkszBJcosQUuI9Ej9asK8QhUSUFKA4BdjF1B3IAWnnr+T1A
-         MVn03OEDg7GWm4DnR2kuliqBVgn1GgC8ImDSc3jIaEDBRhTzooQ0yGyB1az8Uy6nUdBU
-         n9uA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4+AToJUwnVqGeNHMl22sbG/KHR7qxRepIgTnFuC8AFrAlVPpxeGRdiECk59NZqIbU/Tsw7R4XoCBESTA2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTximRwi5h0+yGv+z2SZI/BrWXoipLlJXQTv3JEfSZ4bNKVW1N
-	tfEvZZwnBu6Mg1tc41O29bMZGX0Xhl4ko/V3H1ygnOk0ti1/E9fjDgkRRHJDGiijNJyjMUGpGwZ
-	sK4dhtylUngjrPzKB7mx/X6A5+ObxPPWgXquzWIAF
-X-Gm-Gg: ASbGnctwT0SdHjs9SctKVLELF4VX9+TynWJFkIyCxMBOsvH3MZfpn33b/ESnybwQqVE
-	wpPZYhK0XuBqYV+q+D+aqpglXCo1JuaR8n/07j11OJvgTVAavgX+m0SlS3gCB6iGhyRcXqmSV/1
-	MfR+0dus8dkOioVsA+K8wOvg+HsY++nVRdKWczPh789LiIhWX3eUFGaqye+Mevntz+jRJmytPPC
-	lqU
-X-Google-Smtp-Source: AGHT+IHkpkBgJvS1R3RkrtvsvOEZZf/jKPLYOGmrsQsZdhoqLh6xPOUqe8mNaDmp8JgFozGwZ+2Sa6aXZMCU210+49A=
-X-Received: by 2002:a17:903:1ac5:b0:215:9ab0:402 with SMTP id
- d9443c01a7336-23c5ffc0004mr6060785ad.18.1751464462881; Wed, 02 Jul 2025
- 06:54:22 -0700 (PDT)
+	s=arc-20240116; t=1751464862; c=relaxed/simple;
+	bh=q7cWX1q5XOzIdmgSMYhMNuKO/w6LPYIMvhl38UMpbiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ULlRZbkAu+n6hnVFb6mUXDPh46djVpgQ/NdXNquvELaqStcgvqIin25T5Mb3ZD8WaFq1mUxmKzc+fU3R8abcrMrfK5t5PdIlPW2Mzy6RZk73iGs1xUrxBqXGAvVgO9YsSlYky6TifdNZy3VwhGKjMk8VkzhoMjaV1csg6f3IPQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y3RIt4U5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t0uKXR0s; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DmP3jEwi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zpR8FQhT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A389321175;
+	Wed,  2 Jul 2025 14:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751464857; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ogH5YUW3xFK4kTYSL5tuO47wTBbYiwnGy6sd7kuVWOQ=;
+	b=Y3RIt4U5uTMhRULdEOh5VlMjU6Waer02EL8tU7If8NuSxK6hlraTkGO5syJGDwSQvPmi93
+	zlq6bGyhrQLVc8OZpXRXvhhGdC2mAyEq4uD06BlMn3HNitxFhQf1hf8zMogcdQD1klcBh/
+	tQgz4JHYZw04FyRt2A4o9xScw4OsgGc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751464857;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ogH5YUW3xFK4kTYSL5tuO47wTBbYiwnGy6sd7kuVWOQ=;
+	b=t0uKXR0se5y8ck4qHsvCXrf+KbLHtrncIGkGq4PF7stdiaZbL3fRf0CtJhcRau9+78iarF
+	GfBHuKVVwqJeaxCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DmP3jEwi;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zpR8FQhT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751464856; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ogH5YUW3xFK4kTYSL5tuO47wTBbYiwnGy6sd7kuVWOQ=;
+	b=DmP3jEwiMLCOIgJqKNnCCinvlmwM4o4rPAMoWGTsMm8UD1p6Yyir1/JiWHUR+kb8Ryv2/r
+	CYv9kuFb0cYpM+NlnE7NTROOUAno8khmCZA4QdDFAtMYStR0ybDG73HvpffdzBP+x6qvGO
+	SMHUXNUb1uplap+NhsAKyRhtBiJjEUQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751464856;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ogH5YUW3xFK4kTYSL5tuO47wTBbYiwnGy6sd7kuVWOQ=;
+	b=zpR8FQhTaAlIwT1znlpyQzPn6LSqc+sFnm0UsfzlpVNWa7pcSppCJyUxf2ZdJx01lnRWHO
+	/D9WKTm2tmRam6Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D8D413A24;
+	Wed,  2 Jul 2025 14:00:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gOCDIpg7ZWiHPAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 02 Jul 2025 14:00:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A2514A0A55; Wed,  2 Jul 2025 16:00:51 +0200 (CEST)
+Date: Wed, 2 Jul 2025 16:00:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	ojaswin@linux.ibm.com, sashal@kernel.org, yi.zhang@huawei.com, libaokun1@huawei.com, 
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v3 01/10] ext4: process folios writeback in bytes
+Message-ID: <oggzqu4j23ihzsi7qfwiluy5w3nwubgbyhqu2a3hdtta7cyhno@smlzq7xmrflq>
+References: <20250701130635.4079595-1-yi.zhang@huaweicloud.com>
+ <20250701130635.4079595-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
- <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
- <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
- <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
- <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com> <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com> <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
-In-Reply-To: <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Wed, 2 Jul 2025 06:54:10 -0700
-X-Gm-Features: Ac12FXydqjoi-wuuZAMsDh9iHHkaJIooZH0B4_yVoZTkA8pqs4QeyD27Ae8Anyg
-Message-ID: <CAGtprH9-njcgQjGZvGbbVX+i8D-qPUOkKFHbOWA20962niLTcw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Alexey Kardashevskiy <aik@amd.com>, Fuad Tabba <tabba@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701130635.4079595-2-yi.zhang@huaweicloud.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: A389321175
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On Wed, Jul 2, 2025 at 1:38=E2=80=AFAM Yan Zhao <yan.y.zhao@intel.com> wrot=
-e:
->
-> On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
-> > On Tue, Jun 24, 2025 at 6:08=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> =
-wrote:
-> > >
-> > > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
-> > >
-> > > > Now, I am rebasing my RFC on top of this patchset and it fails in
-> > > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
-> > > > folios in my RFC.
-> > > >
-> > > > So what is the expected sequence here? The userspace unmaps a DMA
-> > > > page and maps it back right away, all from the userspace? The end
-> > > > result will be the exactly same which seems useless. And IOMMU TLB
-> >
-> >  As Jason described, ideally IOMMU just like KVM, should just:
-> > 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
-> > by IOMMU stack
-> In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to =
-inform
-> TDX module about which pages are used by it for DMAs purposes.
-> So, if a page is regarded as pinned by TDs for DMA, the TDX module will f=
-ail the
-> unmap of the pages from S-EPT.
->
-> If IOMMU side does not increase refcount, IMHO, some way to indicate that
-> certain PFNs are used by TDs for DMA is still required, so guest_memfd ca=
-n
-> reject the request before attempting the actual unmap.
+On Tue 01-07-25 21:06:26, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Since ext4 supports large folios, processing writebacks in pages is no
+> longer appropriate, it can be modified to process writebacks in bytes.
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-So it looks like guest_memfd will need an interface with KVM/IOMMU
-backends to check if unmapping can succeed. And if unmapping still
-fails, there should be a way for KVM/IOMMU backends to kill the TD and
-any TDIs bound to that TD.
+Just one small issue. With that fixed feel free to add:
 
-> Otherwise, the unmap of TD-DMA-pinned pages will fail.
->
-> Upon this kind of unmapping failure, it also doesn't help for host to ret=
-ry
-> unmapping without unpinning from TD.
->
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+> @@ -2786,18 +2788,18 @@ static int ext4_do_writepages(struct mpage_da_data *mpd)
+>  		writeback_index = mapping->writeback_index;
+>  		if (writeback_index)
+>  			cycled = 0;
+> -		mpd->first_page = writeback_index;
+> -		mpd->last_page = -1;
+> +		mpd->start_pos = writeback_index << PAGE_SHIFT;
+> +		mpd->end_pos = -1;
+
+Careful here. Previously last_page was unsigned long so -1 was fine but now
+loff_t is signed. So we should rather store LLONG_MAX here.
+
+									Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
