@@ -1,226 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-53666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DF9AF5B35
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 16:34:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9DEAF5B72
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 16:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094A83A60BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 14:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB5B1C42F01
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 14:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082F5307AF3;
-	Wed,  2 Jul 2025 14:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D91C3093BE;
+	Wed,  2 Jul 2025 14:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cuqwUwUA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uZUdu1rh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eXUyGZai";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E0VG6IHZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G+g3meNU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECBE2F5307
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 14:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11419307AE8
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 14:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751466876; cv=none; b=fNKHFNjqWMDzvuFFOTWGRvwHHI4KvpkyR9/+MycZtV0QJ8LsXzNtXYz+ZluA4QBqbUec1dCNhOwj/purZVU/c0sUv4bMYNlCtub+fruBJlTfRp5p0+3i+c95H8Xe3bXX+LdDWrqoXKXYbFBobzGRyAHFnpvgHgBNR7TUE2JL19c=
+	t=1751467450; cv=none; b=maI99Fxpu3NfwOQyqSmsusfj36rEgvwMvK+t7kaDAzXI0AB6bSo8jf03qRX/4bLi/qmiTVKEtx+SXJWuEv6/GmvtZgNwf8hRetsXKLfp3tRHBoa1OYs1KHSn4NymGdhkqqoegCzeI8Q5zOWIDOtulzrztlADOcCS5BLbZ9DlBE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751466876; c=relaxed/simple;
-	bh=epLzkS0pNBoPrsvr5Xd6ikwLk40ga6ReZLZIvmH70J0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pWuPgbnPFReKqjAP46EvvCHgqnmkBzYWdlSUPBKpVI483720dGwugNK3acUMkYcbaAfjOLVlnBGZPKvhCieAjFWXE126fSaFsFMZyicrRFcCGWf3zFiw47m36EJ8f+mxvwkZKbdZX1ayMWWW926i7DvklawWXGzjeeW4qVJwaTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cuqwUwUA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uZUdu1rh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eXUyGZai; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E0VG6IHZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EFD801F38D;
-	Wed,  2 Jul 2025 14:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751466873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z8Y/km41+XwnsHF2SeWAKoMP9vO75rN03wqB7wxWr5U=;
-	b=cuqwUwUAhUkVzoDgT6Xdv1sA0yRpk9vOlCteZSEjlnDIsA+SIDFD8lfpKvQ7csi1ZOfNgM
-	NwVsecHh/dp8QddDFkSNgoYEZbTstysvxjk1Z14V5tFpqbdO9/AV+lCZGm4tb8y1n03wJB
-	yrUs1EjF03zKmQWhmAk8l6FB3ELwN8I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751466873;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z8Y/km41+XwnsHF2SeWAKoMP9vO75rN03wqB7wxWr5U=;
-	b=uZUdu1rha3rTVRvPdx+63U+IV+tLWAZBinNwV7V6F5r9F/kJ/60Z+6KDApRiKrHLTFH+ok
-	NvQdT8wq+AejifCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eXUyGZai;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=E0VG6IHZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751466872; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z8Y/km41+XwnsHF2SeWAKoMP9vO75rN03wqB7wxWr5U=;
-	b=eXUyGZai8cYwaUuO7cJLFs6EjvE2Cc+GR8oEgZgNEcqdn1rZeQnYwTXVCxaG0knY43ehuT
-	oYC199zSeG0unmAlh3uxuMZw4gMV9UtHq7hrcAvEQH4h4EVTXqP/8z7nA8StlSPL+7E2bO
-	QZUntFzmZr84ZiyiikBNPx21V7UXc7w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751466872;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z8Y/km41+XwnsHF2SeWAKoMP9vO75rN03wqB7wxWr5U=;
-	b=E0VG6IHZZ7gebj2RU3ufIOVxxridH9Y+0SWkH+spzCAjRd5VnYIWbNyWkq81KDWahb5OZc
-	+FOsFVFi0wqNPADQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA8DF13A24;
-	Wed,  2 Jul 2025 14:34:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /7hWNXhDZWiTRwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Jul 2025 14:34:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6F560A0A55; Wed,  2 Jul 2025 16:34:24 +0200 (CEST)
-Date: Wed, 2 Jul 2025 16:34:24 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, sashal@kernel.org, yi.zhang@huawei.com, libaokun1@huawei.com, 
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v3 08/10] ext4: reserved credits for one extent during
- the folio writeback
-Message-ID: <3lhwbxlfcqt5ou3z2xzo7o7zdvpmgldju33cd2wqnvsszfhnaf@i2qkwhrja7be>
-References: <20250701130635.4079595-1-yi.zhang@huaweicloud.com>
- <20250701130635.4079595-9-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1751467450; c=relaxed/simple;
+	bh=6Wb49X0BJHbqwWrkROi+YR+7r3jK71+OW26GsASEmwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qZ8yS2rqYJpDtHzrIylMUO6rOEIrxL7jnrNHFH0t0uCYimTuhMhPnVvbYlxGch74JdtMiQEFvL2XMkgtL/n7HUCQi5P1mU9XGe35E9nJG5/M0fiWCDT7Tvi0+OHi9k20kkXBWdDhrccfvndHhhHHzhfnh9uJcBg7PshGcGvaeDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G+g3meNU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751467448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=v5kZ8LByR5tDk+2RARWaEVx7RJMhvOELDCL82WVT4Mo=;
+	b=G+g3meNUA5vhD0acKdIe5dNInSfREG03Td0jbUFe3aMVsmuOfMlsOEXcy5Aw2wOpq5lsKZ
+	OgarRzaOHzkhgck7REMnxHnnSoP8J4pAYMnEIIvBGlZptwBuxqVc4C7ge8J5sWOcGsUFX5
+	jRHfWOHt+64PeDVZP9MsAx9UQuxgRoY=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-359-AgyFkrFUNYiz9Bd_7CkikA-1; Wed, 02 Jul 2025 10:44:05 -0400
+X-MC-Unique: AgyFkrFUNYiz9Bd_7CkikA-1
+X-Mimecast-MFC-AGG-ID: AgyFkrFUNYiz9Bd_7CkikA_1751467444
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a6d90929d6so1804801f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 07:44:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751467444; x=1752072244;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v5kZ8LByR5tDk+2RARWaEVx7RJMhvOELDCL82WVT4Mo=;
+        b=oNfoSD/dt+LUvScjqSUUgfAvvppWtqldc5ltGgsz5l1VPkgkqyQfc0VokNqUDoHXY5
+         33Pmqhs4shIqz2UHfwRWf4ZRTgAXeHwLJF6709C9SHhOtCEE10qyEpvKC1oUA2im9jzn
+         8EX8x8qZ4qzPIFyw2Er2Yqpv4TqNCAY7oZfXLGnNBT6IkzDOqGk/yVSxjQnn5zAYCeIQ
+         lyHK5ZJcDI5cpBc0xIbpfKyM4Z9CN+SpTK0lg03vlIsfhnaDNexBn2aksdXwLlQsBm38
+         Q4ftECpibZxfuucDwDmZfDeTyjTrWHXL4U6KKSpbD0rc8HG0RHd2QWa7bPUoW9uepadq
+         yTnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHa//Q5nAQQt+gKdS7I50YJRMELHoqIkZXkB5bC9hHRrIDIAV6ICscNeGtX2BBXKzbCFC+50/M71IRlndh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKL9ADLPiariZcO/qdhP4LkkWXn+ajILC1F6bnCRNuR+5WCmf8
+	yB6Xo20s4RA8JT6hy39cqimtVMXeRrZoEPIjovptlSiMuh6uVXpj1O5DMYq82/I43UI7K6jIHnG
+	mRZX9FNM+ze1kaeQ83Y0xrliIIA2pt9IUt8szZ1LsY0M09WLdxW1wwDHO4WuzmTJB5I4=
+X-Gm-Gg: ASbGncvFh0myf+NZJUrFo1BQLNMogDvEcAeIob9lpVS2rsM5suxsdvl+HiI4Nly5HcO
+	6uDhIcfDluYE1jTnZUbCjmKdY7x41J0QHWRaNyMAEGqSAcLvzn8c5EC/psvabZID6X2CTWKkZkF
+	T7DzCK5zMkmyV2bAn2DyUAyKvs53tMH0ex/W2WagFUyKcnyoKPVLiabPFlb0UX4SIS3B2zY335h
+	9qgtWR+eMj9idGu1JsX/7OUtYPc0k1/PGKfm9gSEofHSyRkxHxlUV3N8f/MNc8f+HgUjyHjGE2W
+	LXgRNpC8FK/SkkJx4wjNRj5ZigWbJ4E4/aDzv+nALqyVUUDYawbPuXc=
+X-Received: by 2002:adf:9b84:0:b0:3a4:f744:e00c with SMTP id ffacd0b85a97d-3b20095ce61mr1968567f8f.29.1751467443771;
+        Wed, 02 Jul 2025 07:44:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFp7NbPcO7rJZWXvSnrni21vm6TsH+e1Wf8nuopye15pGumcNSxUt3JtyGqe+Gm1zDhsN9hOA==
+X-Received: by 2002:adf:9b84:0:b0:3a4:f744:e00c with SMTP id ffacd0b85a97d-3b20095ce61mr1968544f8f.29.1751467443279;
+        Wed, 02 Jul 2025 07:44:03 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e52a26sm16417581f8f.51.2025.07.02.07.44.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 07:44:02 -0700 (PDT)
+Message-ID: <693725d9-a293-414f-a706-f77446e335b1@redhat.com>
+Date: Wed, 2 Jul 2025 16:44:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701130635.4079595-9-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,huawei.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: EFD801F38D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] mm/maps: move kmalloc() call location in
+ do_procmap_query() out of RCU critical section
+To: Jeongjun Park <aha310510@gmail.com>, akpm@linux-foundation.org
+Cc: andrii@kernel.org, osalvador@suse.de, Liam.Howlett@Oracle.com,
+ surenb@google.com, christophe.leroy@csgroup.eu,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ syzbot+6246a83e7bd9f8a3e239@syzkaller.appspotmail.com
+References: <20250702135332.291866-1-aha310510@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250702135332.291866-1-aha310510@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 01-07-25 21:06:33, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 02.07.25 15:53, Jeongjun Park wrote:
+> In do_procmap_query(), we are allocating name_buf as much as name_buf_sz
+> with kmalloc().
 > 
-> After ext4 supports large folios, reserving journal credits for one
-> maximum-ordered folio based on the worst case cenario during the
-> writeback process can easily exceed the maximum transaction credits.
-> Additionally, reserving journal credits for one page is also no
-> longer appropriate.
+> However, due to the previous commit eff061546ca5
+> ("mm/maps: execute PROCMAP_QUERY ioctl under per-vma locks"),
+> the location of kmalloc() is located inside the RCU critical section.
 > 
-> Currently, the folio writeback process can either extend the journal
-> credits or initiate a new transaction if the currently reserved journal
-> credits are insufficient. Therefore, it can be modified to reserve
-> credits for only one extent at the outset. In most cases involving
-> continuous mapping, these credits are generally adequate, and we may
-> only need to perform some basic credit expansion. However, in extreme
-> cases where the block size and folio size differ significantly, or when
-> the folios are sufficiently discontinuous, it may be necessary to
-> restart a new transaction and resubmit the folios.
+> This causes might_sleep_if() to be called inside the RCU critical section,
+> so we need to move the call location of kmalloc() outside the RCU critical
+> section to prevent this.
 > 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> Reported-by: syzbot+6246a83e7bd9f8a3e239@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=6246a83e7bd9f8a3e239
+> Fixes: eff061546ca5 ("mm/maps: execute PROCMAP_QUERY ioctl under per-vma locks")
 
-Looks good. Feel free to add:
+That commit is not upstream yet (and the commit id is not stable), so it 
+should be squashed into the problematic commit.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+As a side note: the patch subject of this and the original patch should 
+start with "fs/proc/task_mmu", not "mm/maps".
 
-								Honza
-
-> ---
->  fs/ext4/inode.c | 25 ++++++++-----------------
->  1 file changed, 8 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 3230734a3014..ceaede80d791 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2546,21 +2546,6 @@ static int mpage_map_and_submit_extent(handle_t *handle,
->  	return err;
->  }
->  
-> -/*
-> - * Calculate the total number of credits to reserve for one writepages
-> - * iteration. This is called from ext4_writepages(). We map an extent of
-> - * up to MAX_WRITEPAGES_EXTENT_LEN blocks and then we go on and finish mapping
-> - * the last partial page. So in total we can map MAX_WRITEPAGES_EXTENT_LEN +
-> - * bpp - 1 blocks in bpp different extents.
-> - */
-> -static int ext4_da_writepages_trans_blocks(struct inode *inode)
-> -{
-> -	int bpp = ext4_journal_blocks_per_folio(inode);
-> -
-> -	return ext4_meta_trans_blocks(inode,
-> -				MAX_WRITEPAGES_EXTENT_LEN + bpp - 1, bpp);
-> -}
-> -
->  static int ext4_journal_folio_buffers(handle_t *handle, struct folio *folio,
->  				     size_t len)
->  {
-> @@ -2917,8 +2902,14 @@ static int ext4_do_writepages(struct mpage_da_data *mpd)
->  		 * not supported by delalloc.
->  		 */
->  		BUG_ON(ext4_should_journal_data(inode));
-> -		needed_blocks = ext4_da_writepages_trans_blocks(inode);
-> -
-> +		/*
-> +		 * Calculate the number of credits needed to reserve for one
-> +		 * extent of up to MAX_WRITEPAGES_EXTENT_LEN blocks. It will
-> +		 * attempt to extend the transaction or start a new iteration
-> +		 * if the reserved credits are insufficient.
-> +		 */
-> +		needed_blocks = ext4_chunk_trans_blocks(inode,
-> +						MAX_WRITEPAGES_EXTENT_LEN);
->  		/* start a new transaction */
->  		handle = ext4_journal_start_with_reserve(inode,
->  				EXT4_HT_WRITE_PAGE, needed_blocks, rsv_blocks);
-> -- 
-> 2.46.1
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+
+David / dhildenb
+
 
