@@ -1,248 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-53596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51EC1AF0C2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 09:03:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2272CAF0D8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 10:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBB04E0F25
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 07:03:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEB247AAE7E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 08:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CB9225A38;
-	Wed,  2 Jul 2025 07:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F633235C1E;
+	Wed,  2 Jul 2025 08:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMsVscb8"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XmCcyH2e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90468DF42;
-	Wed,  2 Jul 2025 07:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBC8235346
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 08:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751439825; cv=none; b=jhsJ5MJQ3x+Q/Z4IgiF6o/obEJpOGLrugaNfMffHH3D6Cu6nzNBBEOpkUTfbdEaRfz8vKlJcJYPtwIBtS3dAzZFXyj9Awei+UrtvvzhyBNy/VQkorVZN6FdjB2v/bwGWIGOO2tbHdgcJtpqvxzGAEZe/TNwQdM1HuU694+DMnv0=
+	t=1751443912; cv=none; b=KNYY/eCZbAprRETVOQUet9KZEoxpErrKWu5xeMs/j0MPLLRYj/6cxNiBTro075WZkDJUPTeC/N3BD86DRIuWVcrgG49r1wl6SuDaDwQipGo1Sshpf7iki7Bq8S8r4vskidNXYMVbUkoDZBNXkAG9DJ44fOXsMlbufPLPPdZa/TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751439825; c=relaxed/simple;
-	bh=V6vCs0c8yyA0t3ljD5Y3SHjSTlVe2lP5Rg5mSGLSYDg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rKYellTlIRt+SJqaRugWFIMeS7Hbca9ma7FR7wJh3+PZruRM0aH7P80YqNQbezr00bAsxgV449A7zU41wijWOReIjvWKBjOIbUPazHht2JaTFh5UCgmPtMhp2cNb3t3bFYFsx69TegFCVi7eq3XftORnY+mFR81NHCbSlvfQGBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMsVscb8; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0ccfd5ca5so572832466b.3;
-        Wed, 02 Jul 2025 00:03:43 -0700 (PDT)
+	s=arc-20240116; t=1751443912; c=relaxed/simple;
+	bh=QG1iZiP+R2rzXaTe56gOjHC0fYF3d/JOXWrEX8czvSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JzKULMpIbkB/2mx/pi/vwn35G3PqxlsHh7h0ouUjFFidVCkWg9p3vqPx/ORPGuP9Xv0z6pTOxGqRaebriapYwrxkAuOXlOqyr254e9DkoncyYI0FpLlcwhDjqq4LUPlLKXjC5JnSzr1MXzW/zD1d0ENxavK3WfwJXKF6Ui2288s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XmCcyH2e; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235ef62066eso82086805ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 01:11:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751439822; x=1752044622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0frIadAGCzwpkQRRNha5PFzuZ3qy68wHuqlhythiwpU=;
-        b=eMsVscb85RgAXMQNjadqpKttgQulmti9h106KHfljhMmtCFbsTU/z9zkhWLEmpPG5Q
-         TVEtTKZj8Qt8P6a8b0Qir8yoNp5t5sb8XYff1AiqP57h2gFJ+iMQ+7LeA5waWNJnguIg
-         06Y1KLlrNCGYqW9QR2wABs6O6T0H+C8gQ9PK60/rSh8xgUZhvlYFkHF7RNLR5euMTgO4
-         qhiHzTgGkgoMRWyLzRHgd2RXC9bpeFq6wg7A2yOLk2frem0hEkPpoaidaCVvtNe0KpOn
-         cu5MkDAT8lk4ESEcAbSnAyC06s5oudqu1zt/z3QSlhWkByUhQQoBhGfr/JFuYz9Hjl8D
-         bLcA==
+        d=chromium.org; s=google; t=1751443910; x=1752048710; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ndb+JaIMrjzxA+tCLX6/GeFttkCVzpWqjwe11W0C+PU=;
+        b=XmCcyH2eZ+1iYyBqxZGqz3hKWHLiT6hDZ9LdpBV3k95bYP9/xlpjKst8L6GxYj3dHl
+         lB++zWksjl1GR314xlEomUGtOiUcQ2IFC+dh/Ls7PxjVns8cTzHFXgcr6UuqYWcTOm1m
+         oJzwy6dxnLRNYNK5mkgvZ+X6u0BFWre4F8DTI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751439822; x=1752044622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0frIadAGCzwpkQRRNha5PFzuZ3qy68wHuqlhythiwpU=;
-        b=lMz7ovE5Ay+u/EGcFAUpI7fK+lZw1v9RQX3Q08Ub0mAvUk7jQlxTOOvM9ChOtjoBoz
-         4d/AcsXGaOTKL8Ywd0hO98vwj4cI5at93s4kpWSD5fKk3qoy+eB3Y3fRM2FcIspp/1I+
-         h5zBYmAwlfdmBNjuLeQogyzp78wgXfcyE+1oqNkZqAjK/QIE5WnqBp2AqgXL/5FI2Ejy
-         8rJkxd/ybOl8Uc3crffSTxK/VJNGkwhp8mn0TJhXak3YMgshprVCkQ2RbTpnw/FdWiAP
-         PbEUm2FFpBK1Cg9cyI6xLZb5oC8dhgo4Hs2lhDfv+7tiLqOxEVBij9KwaTmP7HK+vS2I
-         Wpyg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+X4ZRHeE2/QPwEJCXMzhYj17cm2B3XhEV55KF8uLF/ZdfifPZR4lja+hw2JRIDMbcHJDA1xF4fdg=@vger.kernel.org, AJvYcCUv4fxdq7KPK38NkctSymFdMCI04Va/gCZXBJ3pyH2+BcG2g+DDUwGzo1SJCJRUiZWYeuCxxlUf+CvU@vger.kernel.org, AJvYcCVUeO8VuOSyvWmAqmePCxfnqC5l8f02AFmaqKpcK3GbjAnWe2ZoCozYPfLgX51lK9Hyt2PSUZyyXTPoK1ayCQ==@vger.kernel.org, AJvYcCX2BMTPqJEDQ58AwLpLrhvZoRYwoACsMbHtDYMMbCkRwRdLgj8pCdirgnOs1FB+DyxE+9wCSoMfxg==@vger.kernel.org, AJvYcCXLmcydCSg0xasHAqsW3rot9shVaUK1wdOGYqGioWgFWk9Jc/G6XpWc/h4UdftEGNN2pjWIvDpky9c4jhFR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGQd6Ycwa+Q+1L52meoX+fMty0bvzeFVf1A8zS06NNGdghsER5
-	Xd+ZtQ5WlFClLZYwx/JV2KfRdA6Ox+UMF1JI+mDvqtrq9i7X5PQxaddPotYmWlC4YfKVOw8WT1+
-	JMGE9a+puC/V/RPhiZigUg8p9zfjaSQI=
-X-Gm-Gg: ASbGncvbl/1TI6c4tjMoR3dVWF7XqUbrk6GN1VXZ+7dyA+JJHy343KlmirOD+Nz7f8r
-	6HmyfbgyC2G3flum34M9h/CHxOVqGGJJk16HLl4MIOP2nA7a0sFZIPDyxAx0mEr1+IqC2zAyCgF
-	kY5RFAW47jmq+frWOY2uksKiDEQifl2yBrEpxXtjlpDIQ=
-X-Google-Smtp-Source: AGHT+IGMD2AU5x3an/OFXUbjEqkI5gyhDCd4v/OLCCvyRko2Nm8hqZl2hgGEc9WpyGFDasYi1aIion4MMfTDkJhJ7xs=
-X-Received: by 2002:a17:907:1c16:b0:ae0:c8f9:4529 with SMTP id
- a640c23a62f3a-ae3c2df35cfmr154148966b.49.1751439821267; Wed, 02 Jul 2025
- 00:03:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751443910; x=1752048710;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ndb+JaIMrjzxA+tCLX6/GeFttkCVzpWqjwe11W0C+PU=;
+        b=FFcoIMGW0YSqgVeZypG/9wEaui2qPZaEA2+y7A3m/xQ857rYs7P7+eC2i2JCCnDs0U
+         VU8FJr+SgSiuxCMU2EA40T92kmZQ24hpzt1COk5W3WHKDaOFQB11blb8RscWfHZMKc8n
+         cpRG5LSwETs6o45hiPeTe9Tdi6FzXcvfd2QhRP8ABBfF7TohnYG8WymdMq0G/biVa+ys
+         Ljz3tjwK4n7qAA+KNT35ZEXCSHv44ep9O/WIQncdiawLL3t1E+MyysiOyUIFkYBElLe0
+         ZwUESyUYIEoYRUbuCKyBYVcRmUQ264LQQmGImZQ/tUWcLDYaysMoChIPNaoBdZWf+JRA
+         XJXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4G2nfoJweMl/so7yAyPvupEhobVxIXWSwREVK6VODNFvQrT5gdCB7lfnexup9csXyYAvMc8PNdj0qh9Kn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZG1mcv2hYIxzfweu1rHFCZzto3W0LawX93zpL9DJRJQSiYFnh
+	ZIGp3CkFgUuhlJ5ChZg8eEJ0UqL25iuokmmQDGX45vwhOwPGhL4dyimGhZAiYNurNg==
+X-Gm-Gg: ASbGncsuefmzsZYSMg05ZXs28fVFPJ9a2WWNnKqospPmc4oTDH9k8uJsrA960WtiGJA
+	u3IkLGwRInbhmupEDxbOKkGHV5P8lTGDCB4Kxtt08TC7RwOJt4hBKtd8oTnjJaU2Mi0T2ncAHmV
+	m39kJiqByHnAQJTkwMvCq1qWi+I/vdG0soLz3hDsuLZdJEUBq2YFVaAcsyH+PZ/DJERv0oY2B+7
+	1lPLwzCQ34DwX5qUzbHPh3pD6piYW0DdiXq6x5L2uTDh58UNConPyN/k7Sho/jw9+HgZnwVNZvK
+	ZqDDKZIzBLwVHZciEOA6fJAcpFNyksvfl7C37G16G4AEzE9EymxJeI9YPC8EQ4VsmA==
+X-Google-Smtp-Source: AGHT+IFyaxLPiNw4RnMZfl9Tf3kKU0bVL2nwN672ya66HP6pYgxM8O8hDYVQs76FVVGhmt0dmGwu+w==
+X-Received: by 2002:a17:903:320b:b0:234:f1ac:c036 with SMTP id d9443c01a7336-23c6e5e23d7mr21917615ad.50.1751443910448;
+        Wed, 02 Jul 2025 01:11:50 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:8825:8cdb:cb6b:8e71])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3013d7csm12080632a12.11.2025.07.02.01.11.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 01:11:49 -0700 (PDT)
+Date: Wed, 2 Jul 2025 17:11:38 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, virtualization@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Jerrin Shaji George <jerrin.shaji-george@broadcom.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Alistair Popple <apopple@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
+	Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>
+Subject: Re: [PATCH v1 12/29] mm/zsmalloc: stop using __ClearPageMovable()
+Message-ID: <zmsay3nrpmjec5n7v44svfa7iwl6vklqan4dgjn4wpvsr5hqt7@cqfwdvhncgrg>
+References: <20250630130011.330477-1-david@redhat.com>
+ <20250630130011.330477-13-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-5-c4e3bc35227b@kernel.org> <20250701183105.GP10009@frogsfrogsfrogs>
- <CAOQ4uxiCpGcZ7V8OqssP2xKsN0ZiAO7mQ_1Qt705BrcHeSPmBg@mail.gmail.com>
- <20250701194002.GS10009@frogsfrogsfrogs> <20250701195405.xf27mjknu5bnunue@pali>
-In-Reply-To: <20250701195405.xf27mjknu5bnunue@pali>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 2 Jul 2025 09:03:29 +0200
-X-Gm-Features: Ac12FXzpApZdbBfdtdr7BbHG_-JJ4nQlGUsVSEHxt4nNW1vlwAVqQ_bZMiyKoME
-Message-ID: <CAOQ4uxjZWGz2bqen4F+fkQqZYQjKyufFVky4tOTnwng4D5G4nQ@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] fs: prepare for extending file_get/setattr()
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Andrey Albershteyn <aalbersh@redhat.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Paul Moore <paul@paul-moore.com>, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630130011.330477-13-david@redhat.com>
 
-On Tue, Jul 1, 2025 at 9:54=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> wr=
-ote:
->
-> On Tuesday 01 July 2025 12:40:02 Darrick J. Wong wrote:
-> > On Tue, Jul 01, 2025 at 09:27:38PM +0200, Amir Goldstein wrote:
-> > > On Tue, Jul 1, 2025 at 8:31=E2=80=AFPM Darrick J. Wong <djwong@kernel=
-.org> wrote:
-> > > >
-> > > > On Mon, Jun 30, 2025 at 06:20:15PM +0200, Andrey Albershteyn wrote:
-> > > > > From: Amir Goldstein <amir73il@gmail.com>
-> > > > >
-> > > > > We intend to add support for more xflags to selective filesystems=
- and
-> > > > > We cannot rely on copy_struct_from_user() to detect this extensio=
-n.
-> > > > >
-> > > > > In preparation of extending the API, do not allow setting xflags =
-unknown
-> > > > > by this kernel version.
-> > > > >
-> > > > > Also do not pass the read-only flags and read-only field fsx_next=
-ents to
-> > > > > filesystem.
-> > > > >
-> > > > > These changes should not affect existing chattr programs that use=
- the
-> > > > > ioctl to get fsxattr before setting the new values.
-> > > > >
-> > > > > Link: https://lore.kernel.org/linux-fsdevel/20250216164029.20673-=
-4-pali@kernel.org/
-> > > > > Cc: Pali Roh=C3=A1r <pali@kernel.org>
-> > > > > Cc: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > > > > ---
-> > > > >  fs/file_attr.c           |  8 +++++++-
-> > > > >  include/linux/fileattr.h | 20 ++++++++++++++++++++
-> > > > >  2 files changed, 27 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/fs/file_attr.c b/fs/file_attr.c
-> > > > > index 4e85fa00c092..62f08872d4ad 100644
-> > > > > --- a/fs/file_attr.c
-> > > > > +++ b/fs/file_attr.c
-> > > > > @@ -99,9 +99,10 @@ EXPORT_SYMBOL(vfs_fileattr_get);
-> > > > >  int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxat=
-tr __user *ufa)
-> > > > >  {
-> > > > >       struct fsxattr xfa;
-> > > > > +     __u32 mask =3D FS_XFLAGS_MASK;
-> > > > >
-> > > > >       memset(&xfa, 0, sizeof(xfa));
-> > > > > -     xfa.fsx_xflags =3D fa->fsx_xflags;
-> > > > > +     xfa.fsx_xflags =3D fa->fsx_xflags & mask;
-> > > >
-> > > > I wonder, should it be an error if a filesystem sets an fsx_xflags =
-bit
-> > > > outside of FS_XFLAGS_MASK?  I guess that's one way to prevent
-> > > > filesystems from overriding the VFS bits. ;)
-> > >
-> > > I think Pali has a plan on how to ensure that later
-> > > when the mask is provided via the API.
-> > >
-> > > >
-> > > > Though couldn't that be:
-> > > >
-> > > >         xfa.fsx_xflags =3D fa->fsx_xflags & FS_XFLAGS_MASK;
-> > > >
-> > > > instead?  And same below?
-> > > >
-> > >
-> > > Indeed. There is a reason for the var, because the next series
-> > > by Pali will use a user provided mask, which defaults to FS_XFLAGS_MA=
-SK,
-> > > so I left it this way.
-> > >
-> > > I don't see a problem with it keeping as is, but if it bothers you
-> > > I guess we can re-add the var later.
-> >
-> > Nah, it doesn't bother me that much.
-> >
-> > > > >       xfa.fsx_extsize =3D fa->fsx_extsize;
-> > > > >       xfa.fsx_nextents =3D fa->fsx_nextents;
-> > > > >       xfa.fsx_projid =3D fa->fsx_projid;
-> > > > > @@ -118,11 +119,16 @@ static int copy_fsxattr_from_user(struct fi=
-leattr *fa,
-> > > > >                                 struct fsxattr __user *ufa)
-> > > > >  {
-> > > > >       struct fsxattr xfa;
-> > > > > +     __u32 mask =3D FS_XFLAGS_MASK;
-> > > > >
-> > > > >       if (copy_from_user(&xfa, ufa, sizeof(xfa)))
-> > > > >               return -EFAULT;
-> > > > >
-> > > > > +     if (xfa.fsx_xflags & ~mask)
-> > > > > +             return -EINVAL;
-> > > >
-> > > > I wonder if you want EOPNOTSUPP here?  We don't know how to support
-> > > > unknown xflags.  OTOH if you all have beaten this to death while I =
-was
-> > > > out then don't start another round just for me. :P
-> > >
-> > > We have beaten this API almost to death for sure ;)
-> > > I don't remember if we discussed this specific aspect,
-> > > but I am personally in favor of
-> > > EOPNOTSUPP :=3D the fs does not support the set/get operation
-> > > EINVAL :=3D some flags provided as value is invalid
-> > >
-> > > For example, if the get API provides you with a mask of the
-> > > valid flags that you can set, if you try to set flags outside of
-> > > that mask you get EINVAL.
-> > >
-> > > That's my interpretation, but I agree that EOPNOTSUPP can also
-> > > make sense in this situation.
-> >
-> > <nod> I think I'd rather EOPNOTSUPP for "bits are set that the kernel
-> > doesn't recognize" and EINVAL (or maybe something else like
-> > EPROTONOSUPPORT) for "fs driver will not let you change this bit".
-> > At least for the syscall interface; we probably have to flatten that to
-> > EOPNOTSUPP for both legacy ioctls.
+On (25/06/30 14:59), David Hildenbrand wrote:
+[..]
+>  static int zs_page_migrate(struct page *newpage, struct page *page,
+> @@ -1736,6 +1736,13 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+>  	unsigned long old_obj, new_obj;
+>  	unsigned int obj_idx;
+>  
+> +	/*
+> +	 * TODO: nothing prevents a zspage from getting destroyed while
+> +	 * isolated: we should disallow that and defer it.
+> +	 */
 
-Given the precedents of returning EOPNOTSUPP in xfs_fileattr_set()
-and ext4_ioctl_setflags() for flags that cannot be set, I agree.
-
->
-> ... and this starting to be complicated if the "fs driver" is network
-> based (as fs driver can support, but remote server not). See also:
-> https://lore.kernel.org/linux-fsdevel/20241224160535.pi6nazpugqkhvfns@pal=
-i/t/#u
->
-> For backup/restore application it would be very useful to distinguish bet=
-ween:
-> - "kernel does not support flag X"
-> - "target filesystem does not support flag X"
-> - "wrong structure was passed / syscall incorrectly called"
->
-> third option is bug in application - fatal error. second option is just
-> a warning for user (sorry, we cannot set NEW FEATURE on FAT32, but if
-> you would do restore to other fs, it is supported). and first option
-> happens when you run new application on older kernel version, it is an
-> recoverable error (or warning to user, but with more important level
-> then second option as switching to different FS would not help).
->
-> Could we return different errnos for these 3 situations?
-
-That would be nice, but actually according to your plan
-the get API returns the mask of flags supported by the filesystem
-(on that specific object even), so userspace in fact has a way to
-distinguish between the first two EOPNOTSUPP cases.
-
-Thanks,
-Amir.
+Can you elaborate?
 
