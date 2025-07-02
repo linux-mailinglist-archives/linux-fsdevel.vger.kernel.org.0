@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-53727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F9BAF63D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 23:17:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6071EAF63DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 23:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5A62176395
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 21:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9E91C44163
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 21:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57E42367DA;
-	Wed,  2 Jul 2025 21:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3E3239E9A;
+	Wed,  2 Jul 2025 21:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VnNrgdqs"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FbEPUvrF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68C62DE700
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 21:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7192DE6FA
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 21:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751491064; cv=none; b=Tu+1nfDGqCotp4PRQH5IcwvQ/XBn27Fb81QJS1r3ScrS8aO9u+1unFTlITCzWTAxM3FOy1z0kKW7zphL9mAS5KtOvm19SCnj5hDpaAyfDBCZxfzTWgejbuTQKqf2ExheyW3t5mqOWhUHAHHA/m1+CAVHqkAFDcoHwQ5KyDUOetg=
+	t=1751491329; cv=none; b=imLIB2BHMQnU35SHhRiaDPddbcMaYMe6JiwAnhd199kmKIUYkiBhVaY/DoRlD5T+qXXCdWEDWqnjNMBcrltxQNQ7RmuJmNgCioH6CVqqKH0pDBtpJ92Jf6go2xtMJHxWHbrpkolm0uXQxF0eJIRUE+2X5m9ppg7Ig3rFxtqDlWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751491064; c=relaxed/simple;
-	bh=JWqhBTrNuU3eEjjDpRGLc/D6UonTe/NG5vY8q8tAnYQ=;
+	s=arc-20240116; t=1751491329; c=relaxed/simple;
+	bh=qi3aN4AMHrC+ZtpBjB9p33nO4D+79Ya/IvKATAJIiTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ucRY5wIpjARyZItdUYxxTd5BOORF+jrYFompFeAwnJ00f5ZQmcb43CFHiE5LPWnTefzDYQVc8kqSSTEGvG6JAiibgrPdOBr8jKyN6KHlgV4phaDsR/nunLWyBtmzYKvxfMA+24Bc2p2/KdVSwnslkJ5LNkhVeT8RZ2B9KEIyKII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VnNrgdqs; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=RI1oQfs7OAqkTIN+epd0fjFatY0McupLanoyYgPeil25079nWKJSadXTkWmUqhk7Kc6mVAMJedMuQJHu4tVYcjAfH4relWvEeHRrIsq+FJGmR4hMbissqdMe4HPixcTLHbFncRyeZ0jZZUl8Uz0J0aPvRh5pMiopf2e+RXHbOWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FbEPUvrF; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yZJCP+2UZQwzSfBgsZZNvcBirXP6VoVDGCDx7eUFErg=; b=VnNrgdqsPoyFYkoQLksjdWhHfF
-	v992R3gFxzkRm3cDelvJVyBXRObAoFpvbbbBAKbvy4xjQglKW5D1OvWDkrWRqODrUQvgBpnq1eHL0
-	r/l5e9I71vLC/t+Fl9JTkB8GR8AE6q8OmTB6KujZnVKmuG3mooVKpC2Mkwc+S6sWsxkFeIPtJSTHG
-	5JWdWK5L1zgLNsSEyXwynue9SfuhXnSdfxTGLtGyirCSi6/yM87KXUn/qsbJBTBd44rkqqv5OOt6h
-	BsxS8H6am9ZyZJtfgYh2p0ezHn8S3qXTCx6LAAOstf7wfbPQj4JSQt9pmuWKepwhQPGUtr0s6zRQR
-	yUGgFcgg==;
+	bh=hSM+1S7iY+NCy3VYQAkico90ip30lc5TwRGI02ph5/k=; b=FbEPUvrF8a6dnye/QcA9U0botz
+	IWIgh90Pi8gwjW1BMSmQpKLFcD2Wf2XygXssr828gwgUfxYDR5ivvP8m2Q90+BON14Vtg8IVMsteZ
+	cEbbr/PqWGqfPaug/IFSpSbSCaErBpPA9ASBKOj9hw6vLYjHvTRsg1s1JVWszaMy/DCEtq3etRimM
+	vzRJ5PQaYk7zYrRCQcvLzyTGCIdPRUeT4yfjE2lw3rZHy5PdT+VtmQfw3FYnfWnf42VEnG5spq4FU
+	spGAQGI0OhnsxWx98O5t4G/ko4iCXjF3c0XB3gBaK2gPZkUtaA7lGdTOiKfU5aDpWztCiVm2f0lCo
+	MdCs7Abw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uX4pn-0000000EKV3-3pTK;
-	Wed, 02 Jul 2025 21:17:40 +0000
-Date: Wed, 2 Jul 2025 22:17:39 +0100
+	id 1uX4u5-0000000EMRk-365t;
+	Wed, 02 Jul 2025 21:22:05 +0000
+Date: Wed, 2 Jul 2025 22:22:05 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 05/11] vmscan: don't bother with debugfs_real_fops()
-Message-ID: <20250702211739.GE3406663@ZenIV>
+Cc: linux-fsdevel@vger.kernel.org, Louis Peens <louis.peens@corigine.com>
+Subject: [PATCH 06/11] netronome: don't bother with debugfs_real_fops()
+Message-ID: <20250702212205.GF3406663@ZenIV>
 References: <20250702211305.GE1880847@ZenIV>
  <20250702211408.GA3406663@ZenIV>
 Precedence: bulk
@@ -63,41 +63,58 @@ Content-Disposition: inline
 In-Reply-To: <20250702211408.GA3406663@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-... not when it's used only to check which file is used;
-debugfs_create_file_aux_num() allows to stash a number into
-debugfs entry and debugfs_get_aux_num() extracts it.
+Just turn nfp_tx_q_show() into a wrapper for helper that gets
+told whether it's tx or xdp via an explicit argument and have
+nfp_xdp_q_show() call the underlying helper instead.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- mm/vmscan.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ .../net/ethernet/netronome/nfp/nfp_net_debugfs.c  | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index f8dfd2864bbf..0e661672cbb9 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -5420,7 +5420,7 @@ static void lru_gen_seq_show_full(struct seq_file *m, struct lruvec *lruvec,
- static int lru_gen_seq_show(struct seq_file *m, void *v)
+diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_debugfs.c b/drivers/net/ethernet/netronome/nfp/nfp_net_debugfs.c
+index d8b735ccf899..d843d1e19715 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfp_net_debugfs.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_net_debugfs.c
+@@ -77,7 +77,7 @@ DEFINE_SHOW_ATTRIBUTE(nfp_rx_q);
+ static int nfp_tx_q_show(struct seq_file *file, void *data);
+ DEFINE_SHOW_ATTRIBUTE(nfp_tx_q);
+ 
+-static int nfp_tx_q_show(struct seq_file *file, void *data)
++static int __nfp_tx_q_show(struct seq_file *file, void *data, bool is_xdp)
  {
- 	unsigned long seq;
--	bool full = !debugfs_real_fops(m->file)->write;
-+	bool full = debugfs_get_aux_num(m->file);
- 	struct lruvec *lruvec = v;
- 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
- 	int nid = lruvec_pgdat(lruvec)->node_id;
-@@ -5756,8 +5756,10 @@ static int __init init_lru_gen(void)
- 	if (sysfs_create_group(mm_kobj, &lru_gen_attr_group))
- 		pr_err("lru_gen: failed to create sysfs group\n");
+ 	struct nfp_net_r_vector *r_vec = file->private;
+ 	struct nfp_net_tx_ring *tx_ring;
+@@ -86,10 +86,10 @@ static int nfp_tx_q_show(struct seq_file *file, void *data)
  
--	debugfs_create_file("lru_gen", 0644, NULL, NULL, &lru_gen_rw_fops);
--	debugfs_create_file("lru_gen_full", 0444, NULL, NULL, &lru_gen_ro_fops);
-+	debugfs_create_file_aux_num("lru_gen", 0644, NULL, NULL, 1,
-+				    &lru_gen_rw_fops);
-+	debugfs_create_file_aux_num("lru_gen_full", 0444, NULL, NULL, 0,
-+				    &lru_gen_ro_fops);
+ 	rtnl_lock();
  
+-	if (debugfs_real_fops(file->file) == &nfp_tx_q_fops)
+-		tx_ring = r_vec->tx_ring;
+-	else
++	if (is_xdp)
+ 		tx_ring = r_vec->xdp_ring;
++	else
++		tx_ring = r_vec->tx_ring;
+ 	if (!r_vec->nfp_net || !tx_ring)
+ 		goto out;
+ 	nn = r_vec->nfp_net;
+@@ -115,9 +115,14 @@ static int nfp_tx_q_show(struct seq_file *file, void *data)
  	return 0;
- };
+ }
+ 
++static int nfp_tx_q_show(struct seq_file *file, void *data)
++{
++	return __nfp_tx_q_show(file, data, false);
++}
++
+ static int nfp_xdp_q_show(struct seq_file *file, void *data)
+ {
+-	return nfp_tx_q_show(file, data);
++	return __nfp_tx_q_show(file, data, true);
+ }
+ DEFINE_SHOW_ATTRIBUTE(nfp_xdp_q);
+ 
 -- 
 2.39.5
 
