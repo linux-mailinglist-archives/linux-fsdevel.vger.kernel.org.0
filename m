@@ -1,149 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-53741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B5BAF65B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 00:57:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F236FAF6625
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 01:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450261BC48C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 22:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48C701C42E0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 23:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FAF24EAAA;
-	Wed,  2 Jul 2025 22:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA442BE62F;
+	Wed,  2 Jul 2025 23:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y47i09IZ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Gmjuk/Jo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21592DE710;
-	Wed,  2 Jul 2025 22:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E861325F994
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 23:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751497045; cv=none; b=enzGUcKIh4fvWAOFYGPDrKskITCI3h69DIg069/cUxFlR/5CgV6eC2czusdQPS1N0xG3HPUFG0dTIUoB9TnDh6Yq2irfkxUrAa7jWGd3gp0J1Ov/V+ylb3YEZU3uLonPoPh91AzTy5zyhZHUT9zZfeTgszZv0jl7uHk6Zoovj/A=
+	t=1751498357; cv=none; b=QnUXTi8xp28w6d0vcKHi6VDmwv79dtF5cnHTpk5tHn1ffPfqjnIbkqTYfBe3LKZ6uYnOYsZ2cXGlZ8r2Hoc62Hz3t/1+GTudTkKGhiEUQF3xh8bK9sLinPParYRRnDy6sj1TsmyX05wDD4nnYQCaXPPTkddyluP3ypNcMXfjsGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751497045; c=relaxed/simple;
-	bh=8EW0hGGxBNPaepJB/kat+o+7PivqzOmIdnFN/RapTEk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JfP4E/p12yiZmKk2+exAAsF8bHjID6xv/NDe9qcxesZWmqaJ72sFnmmVi9F8GS6iApVLuXavt2rabACqVEVGoplPdepk3hRe1SK48WFsx+FvXp3+5FnKxLtaUjKl/fHYbYNPN/d9oYH7QfrcZjAWEdoXYj9/DpnFfuWKS8ItytY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y47i09IZ; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a5840ec53dso89973261cf.0;
-        Wed, 02 Jul 2025 15:57:23 -0700 (PDT)
+	s=arc-20240116; t=1751498357; c=relaxed/simple;
+	bh=2XuKrjuTzfADbmarj0Xs2JyIvENzZiudcJsrwvv0B0E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gWAfI75kIBqH4MxyJ/3XrBdWEL1eNk8N9GspfT0DASpItm2YgvnxVc+BXgp3CWcBME1AyCBQe0FaKEzOrDbm3oMjjahHLvNwwSyWmX1+a3BwizfvNxAtV+SgnpdIsdvz7OvNMmssR8x44QXOsu0NeOgS4Bj1npkKf8NJTjQ3tDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Gmjuk/Jo; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3e057f2c8d8so8980955ab.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 16:19:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751497043; x=1752101843; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751498354; x=1752103154; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L+sj4DzOPih53SQUVn5/WouvC+G14JrQj6it97lI9Kg=;
-        b=Y47i09IZk5Et4ftvV1FxOZmTsZ4EWF/yIKUxArsHWI8s9/7v3cPW2VHOxJIUZNZydx
-         HybZ9We+llzhu6swD1Wk6yf6WDOEVdPUMjKSdvTI7UTHkb5N4QPSqDCZFR5TDDIVrcob
-         IF6N6da3AsvPLkSJpTNsCSznssP2bMKAS9FOAXPnh2P4HSsdD6helG1QFPXWbNBzTSs4
-         /XTjZYec4Ip3phcorCNliRRSSKyZubVJTQc/NzvU8GhzrsLMzexaJYAT9caD1NGzzQx7
-         wKA8+oivWFUKAY4wj/Q8E2hS8QVleUxoJ91ptjblZeQaQu3n3+wp2aWQYNMAk63XWz9H
-         TPFw==
+        bh=0l/N30YfYOnzNVPk9e9LC8H0KdFEXlOJ5r3jt1u/SPs=;
+        b=Gmjuk/Jo8TL8QKzIbszNqUXpeKqZ4p+m/ro4pZMWu39GcXG42Lz1T/5cKI12rrIjkz
+         UhuCq5sBDOecea9kXZ0LemT6j69SRpFjMylDAA0TAvJzvqfmeoahI2xzqIEDeoK6op59
+         qEkr8yAENGK2PAx+BHNxkahUGaChel2DwKcoK3WXfUF21gv7sS7IoVraejb5+Jbbb98v
+         wOchNd2xIewdNb0NCpFRTBarR69gB/5Ore2fTV1kSiaoQ2SSlYjMgKN1mI5lbtFQ67QF
+         lVS+BbEPKsfOo8i/7nDJFQ26qoeULgAfnTB4KSBoHaid8i3VxFDsJGjP62pHKvIqlQyx
+         000w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751497043; x=1752101843;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1751498354; x=1752103154;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=L+sj4DzOPih53SQUVn5/WouvC+G14JrQj6it97lI9Kg=;
-        b=da9yHRZ16laDkJkaxmizfbcVNlKIs0Uog6HbrLYMXrOa8iq5H+FLmOlWq2Q99RdHaK
-         ZPA6JerCgP7j5I09fYJL/fmWFs90zKLNmxL07i8UBXMOKI5N//Sj9PTYhIPH0rZM6H5g
-         tKG7cDGIUhALFpSS48cs43wwwAdL8DX0xM3JpLxUW4tmIDQWQDiQi6cIjghOGiit2FIq
-         AS3MkNVO7GynAvqKZh5eqjs3TFdmxZQi9KVc+hf8FkplQuNxvu2607XTkyox6mFuL/yC
-         H6YomETs+F1LZYOAw7I/0J5cVhDNv6M8Izu3+/r5YSyihfAOWUs/5562efQAMsuJxuq2
-         ZPIw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+XLmNaCzygWE0qQ3mpN+OP6YFD2m/dgZJ1YuDVNjhZMKn/MSa1UPTPpvuVAaDGA1EvBD2A7Y5QM7v@vger.kernel.org, AJvYcCUr3nPNIPEcNAZ+tO9tBmR3MX9WI6NqJaG3L+LUAU7S1fxJUS92gI1FMQXwRQbGjBCvMx13AFZO69kSVg==@vger.kernel.org, AJvYcCXuVWmhuvWHED6uDRXwiP4HY7Mt36HfavKqa3sWv7ITrWRw21t2qSDl2QbHdKzG5SVDtTMzmDrDNWRI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtk5rNqDDAFC+QCrKsrESUv6MDF9H3yLtvVhpMnayhMylW+vDv
-	aM01pxSFQysowEkB2hA+JdB5bJ6bhLKGzwQTT10MIpU3mptopJuUCdw3INU0FTtrU0Oze/aJp7A
-	bpVfJV2O+7Ei8iObCTHSoyw904dLr3+k=
-X-Gm-Gg: ASbGncvrEzdPb8KL7crHyAS8Swy5R1btdo+HHJZ43ghJY0umYV32mlWjW1IUzKB+ZIH
-	vXVtWxoArXxqMpRo1tYTxjCRIeZjQ/Xd0aAwWspWpB+ttni541cAUYKLox9rEGX5fh2UBebWqAq
-	FmDlKbhqZUPF1XarnxQlbD5Xk7ue/Bv1QaMGNQ5TaeSdxXBwI2f2TfbNl9UZo=
-X-Google-Smtp-Source: AGHT+IGh+uw6/WknPh/VOBOhELlnb2ckIXgQMw+Dl8Agj8uw+6O+8N23tvom7rsshXm0+/bXl2b6LhX8aRmfe9JENnM=
-X-Received: by 2002:a05:622a:1343:b0:494:9455:5731 with SMTP id
- d75a77b69052e-4a9768dc925mr69623251cf.7.1751497042623; Wed, 02 Jul 2025
- 15:57:22 -0700 (PDT)
+        bh=0l/N30YfYOnzNVPk9e9LC8H0KdFEXlOJ5r3jt1u/SPs=;
+        b=LmgckqslQmkAViiDWXB/dAfkZRdX49jqhGr5HAgwjcC3Li/KOEtlHe4Wca4t2pSdfq
+         PzQ04O/zGSgUaSI/dhnvAPLRiDGeNTUAmxqADNrjYDh4zumnHT37zGjeBfQJWFtLPwxA
+         aoyu9aKjdd8LwCXBhiQWNycmmJwZRB1VnomBDcVpszcIcgLc6d9FQd9uwfzBjzXptNKF
+         TJ7DHBq7d1Z8B5x39HrzJ6dX2jUgihB7+YHNsiDkbpiL3qqsm4QUYye+jRY/y1EBN471
+         FvyNMqcI6VDv4fgcbFlySp2IoKWAHsqmZPCKLaFJvZ3uMRJHArq1p0Nbe2uZHmgHO8px
+         p4Zg==
+X-Gm-Message-State: AOJu0Yzsh8rDV8GTXUcgp3by65xlw1hI5A+M6BnKWE4sSSh7fXzzJPMJ
+	9bms1Sy2nsZswMGlaKsPR8BNNAcJzhzRiXepqytEexQm1D7KJ3g8VXNPjC3kchKFPuWH16mMX+U
+	r100p
+X-Gm-Gg: ASbGncsFwQLw+V+YpxlQTiuJi3laDqOadRSO8InWvmq0scM7uAxTUbAxnHh/SP9lXSL
+	GAWaH1Bj6brzHUWNle4sBCzrAsIoJBLwd9rbYyQu0NJp5iMANLfxd2g5dPyFAHjCZjYF9gXpgx7
+	7pNrPmYTOHoOgAyCohyvFtL95sblpN5KaQmvtOkoeAWMqEGZcVlHvtWq8VLx846VYKlfbM0+2qx
+	0Vh8AuKSwzMZpntmpmdyutxHzjifC4CHqjzMhksMuP7Nxax7sTsmj8ib6c+J6hJRC6rdv8ngh7x
+	BmJ7arf9DaH5G9pZgc4RMfgprAIImX2lTzHDx4FbTL1c759r5Tv8Yg==
+X-Google-Smtp-Source: AGHT+IHMH7E5jXmc85tpF2ZmfhX9o8LwIpGAXUuM2IRAjJ7JFybYjfZFdD948UlZ9MRk58ULXnrHNQ==
+X-Received: by 2002:a05:6e02:380a:b0:3dd:f813:64c5 with SMTP id e9e14a558f8ab-3e05c9d5573mr12171415ab.22.1751498353991;
+        Wed, 02 Jul 2025 16:19:13 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3df4a09165dsm38313005ab.43.2025.07.02.16.19.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 16:19:12 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <20250702211408.GA3406663@ZenIV>
+References: <20250702211305.GE1880847@ZenIV>
+ <20250702211408.GA3406663@ZenIV>
+Subject: Re: (subset) [PATCH 01/11] zynqmp: don't bother with
+ debugfs_file_{get,put}() in proxied fops
+Message-Id: <175149835231.467027.7368105747282893229.b4-ty@kernel.dk>
+Date: Wed, 02 Jul 2025 17:19:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624022135.832899-1-joannelkoong@gmail.com>
- <20250624022135.832899-13-joannelkoong@gmail.com> <20250702175509.GF10009@frogsfrogsfrogs>
- <20250702175743.GG10009@frogsfrogsfrogs>
-In-Reply-To: <20250702175743.GG10009@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 2 Jul 2025 15:57:10 -0700
-X-Gm-Features: Ac12FXz7lG-Jak0UpEVy1wDinr93eTqUtI8IoSMS4xFeGJDW7InC6JSRScIU8tA
-Message-ID: <CAJnrk1ZhFropUE-qoXcfa4VB740quF7nkQ3cs+NNbwPTFgpLsw@mail.gmail.com>
-Subject: Re: [PATCH v3 12/16] fuse: use iomap for buffered writes
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, miklos@szeredi.hu, 
-	brauner@kernel.org, anuj20.g@samsung.com, linux-xfs@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-d7477
 
-On Wed, Jul 2, 2025 at 10:57=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Wed, Jul 02, 2025 at 10:55:09AM -0700, Darrick J. Wong wrote:
-> > On Mon, Jun 23, 2025 at 07:21:31PM -0700, Joanne Koong wrote:
-> > > Have buffered writes go through iomap. This has two advantages:
-> > > * granular large folio synchronous reads
-> > > * granular large folio dirty tracking
-> > >
-> > > If for example there is a 1 MB large folio and a write issued at pos =
-1
-> > > to pos 1 MB - 2, only the head and tail pages will need to be read in
-> > > and marked uptodate instead of the entire folio needing to be read in=
-.
-> > > Non-relevant trailing pages are also skipped (eg if for a 1 MB large
-> > > folio a write is issued at pos 1 to 4099, only the first two pages ar=
-e
-> > > read in and the ones after that are skipped).
-> > >
-> > > iomap also has granular dirty tracking. This is useful in that when i=
-t
-> > > comes to writeback time, only the dirty portions of the large folio w=
-ill
-> > > be written instead of having to write out the entire folio. For examp=
-le
-> > > if there is a 1 MB large folio and only 2 bytes in it are dirty, only
-> > > the page for those dirty bytes get written out. Please note that
-> > > granular writeback is only done once fuse also uses iomap in writebac=
-k
-> > > (separate commit).
-> > >
-> > > .release_folio needs to be set to iomap_release_folio so that any
-> > > allocated iomap ifs structs get freed.
-> >
-> > What happens in the !iomap case, which can still happen for
-> > !writeback_cache filesystems?  I don't think you can call
-> > iomap_release_folio, because iomap doesn't own folio->private in that
-> > case.
 
-AFAICS, there's otherwise no private data attached to the folio for
-fuse for the non-writeback paths, so I don't think this is an issue.
-ifs_free() would be a no-op.
+On Wed, 02 Jul 2025 22:14:08 +0100, Al Viro wrote:
+> When debugfs file has been created by debugfs_create_file_unsafe(),
+> we do need the file_operations methods to use debugfs_file_{get,put}()
+> to prevent concurrent removal; for files created by debugfs_create_file()
+> that is done in the wrappers that call underlying methods, so there's
+> no point whatsoever duplicating that in the underlying methods themselves.
+> 
+> 
+> [...]
 
->
-> ...and I think the answer to that is that the !writeback_cache case
-> passes all file IO directly to the fuse server and never touches the
-> page cache at all?
+Applied, thanks!
 
-There's two !writeback_cache cases, direct io and writethrough.
-For writethrough, the file IO gets passed to the fuse server and it
-also gets written to the page cache.
+[10/11] blk-mq-debugfs: use debugfs_get_aux()
+        commit: c25885fc939f29200cccb58ffdb920a91ec62647
 
->
-> --D
->
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
