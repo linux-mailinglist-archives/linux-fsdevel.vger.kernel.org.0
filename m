@@ -1,153 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-53719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9783AF6234
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 21:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 905E0AF61CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 20:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 863B61C47543
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 19:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE39B1C4458E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 18:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F8D2D9EF4;
-	Wed,  2 Jul 2025 18:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDC926B0A5;
+	Wed,  2 Jul 2025 18:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="iE/jubqi";
-	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="fjDuO26c";
-	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="SW26/YE6";
-	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="b/DrPuw6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cE5VIa3u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9402BE651;
-	Wed,  2 Jul 2025 18:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2D221B9C9;
+	Wed,  2 Jul 2025 18:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751482788; cv=none; b=qnyJnC3GPFCI3fZ3zPYwhRzGLBMaygt7hEvx3T9ab3hMhash+Ag67/9EFXh1X8JY6E9nK/2cEJTpnITGKU1Fr/ft98Tb/wQ29LLbypj5s8fJSno2Fgg67YwQMfUwU62K5sJyP7Onf8dbf3liRIWYGfE9s9SVN8Rg2pS0nkxSvB4=
+	t=1751482212; cv=none; b=lo5AhJVPr0Xa0Kk/zsQdqFlytT5eoBa62D2FlJzuQqh67QtH+kgSunn88V5WiTa7ZCH0pE82E5xtHUSLRpZa9b7BQMrMZm7GAMUmQFEYYTCTjW4Pjsk26H2aJsKmUOGrczcJQVuEhR3oWAOg+LikEuWgptFhRN4ng98yVPyRMhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751482788; c=relaxed/simple;
-	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cXQ4nqDK014vOIaA4u9ai0rhoHw+XAyK2Onk1DeVzYujocoU9fwB3OJglVPHJt+nptawRwpWIYSKLr+gmn+LR+EF7nmLFgOx4gxBzqJrfgGvzNa6sGKG4qNC9qSgnR4xQYm1wbeDWi0f9JGhY8X4diIbOOrw/vWJLYx0KP6ow28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=iE/jubqi; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=fjDuO26c; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=SW26/YE6; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=b/DrPuw6; arc=none smtp.client-ip=49.12.77.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
-Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:41c4:f6bf:9765:d776])
-	by mail.tnxip.de (Postfix) with ESMTPS id D18DD1F508;
-	Wed,  2 Jul 2025 20:49:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
-	t=1751482193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
-	b=iE/jubqic12yzgfhguECgeXwFLfaUdG2lbDggyuFT+JWIUHNFDBlFSVu/9MgMtlVdOLcoz
-	H/coId7izuylyqJ+hqijSp5ID+bPXU+7vwcurTVEsOiqTbiC501yu7CMJBKfpVXLBuYPh7
-	HxHpmOpr1Z7xUOBZ4aP78nMgzHHHhOk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
-	s=mail-vps-ed; t=1751482193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
-	b=fjDuO26crbRSF0bVmRO+lJSefRPFWJRBYPGhr+dDlMSMAnchwjBB8rNZPjfMX733mGTh60
-	+bY5NGp4tGSfhZCw==
-Received: from [IPV6:2a04:4540:8c04:1600:d42:34ad:c501:6cc5] (unknown [IPv6:2a04:4540:8c04:1600:d42:34ad:c501:6cc5])
-	by gw.tnxip.de (Postfix) with ESMTPSA id 8478B3800000000017FE8;
-	Wed, 02 Jul 2025 20:49:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
-	t=1751482193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
-	b=SW26/YE6Nkw2wtr2YrG7+Q3tv/OJT1Wg1NHQYybgyPXTvQr/+iTwJCJm5/QjI+LD25TJn2
-	kTk6d88O3HIkpMXnUUP1+f1PiPQ2Q/Btf8PaghEhxVeKpevNAirIpx4huYwgtaH9V4NK2F
-	l9xwKzgQPaHi7ZjV8QZ9TUtDr6ZnErA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
-	s=mail-gw-ed; t=1751482193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
-	b=b/DrPuw6PzjFdtZoIVuocUtrnF94Giab5lQ0S7r/Lr8J1GpMMxzkHVXIR/QdR13+r5EcWi
-	fDXrA+72zNNjplDw==
-Message-ID: <a448243d-8ef8-48d8-afbc-2c45068c882c@tnxip.de>
-Date: Wed, 2 Jul 2025 20:49:32 +0200
+	s=arc-20240116; t=1751482212; c=relaxed/simple;
+	bh=o38s9KW5xlL09If/ehLVMBXYY/kbSCjY6FI7qi81S48=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYhQuSZ0ovgEPq9nNB5Az8LH5wDReE+flsuLI9MQstVTsJyhx0k3lTNdVGzNb3AFerzIMYSY7363E5YGPoH3PdAHiB+ZfHZK1Pr+ew9v8WtOj2HKsqFGHLLhouc6Fy1m3DJXvh7wBifRQZkPgkNYp9Umj0YH4lYzAR1+lgMi1JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cE5VIa3u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B26C4CEE7;
+	Wed,  2 Jul 2025 18:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751482210;
+	bh=o38s9KW5xlL09If/ehLVMBXYY/kbSCjY6FI7qi81S48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cE5VIa3unfTIuwN5c3hc8ufJzNz+rbskyspGSVMI2zP6gbIGVCVmNm/GOqiPYXa27
+	 WiJfiud82LYFAWQWUuyBUGQ+QT1TqkaGxTQpDVItcObfvBMJNH2ieuEruNRCjx11Ed
+	 AjD/MAq1V+ldytYVXFBQfqtjLW+W+xpTfthwXOZIbT0j3QdJQ6OP1n6VJM6YML0hE7
+	 oHS7p7ieTpUYEXz08wenTG0m5jWcIk+QzH/5ZhT0UUiGIJvqus6Vd3IShw9ONOlqWn
+	 K3MWlAMSivYZsQ79tHUp/K20LAcZIISfZnfEvP2coY+hhVT2G3l6nyv4lWoEeFEI/Y
+	 ekhdhgFAjsysg==
+Date: Wed, 2 Jul 2025 11:50:09 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 5/7] xfs: fill dirty folios on zero range of unwritten
+ mappings
+Message-ID: <20250702185009.GX10009@frogsfrogsfrogs>
+References: <20250605173357.579720-1-bfoster@redhat.com>
+ <20250605173357.579720-6-bfoster@redhat.com>
+ <20250609161219.GE6156@frogsfrogsfrogs>
+ <aEgj4J0d1AppDCuH@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- "Carl E. Thompson" <cet@carlthompson.net>
-Cc: John Stoffel <john@stoffel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
- <CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
- <xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
- <26723.62463.967566.748222@quad.stoffel.home>
- <gq2c4qlivewr2j5tp6cubfouvr42jww4ilhx3l55cxmbeotejk@emoy2z2ztmi2>
- <751434463.112.1751478094192@mail.carlthompson.net>
- <fomli5univuatcdc7syty56wffm4uvslocxkufks27otyix7fl@6c5i7w7g64qo>
-Content-Language: en-US, de-DE
-From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
-In-Reply-To: <fomli5univuatcdc7syty56wffm4uvslocxkufks27otyix7fl@6c5i7w7g64qo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEgj4J0d1AppDCuH@bfoster>
 
-On 02.07.25 19:53, Kent Overstreet wrote:
-> On Wed, Jul 02, 2025 at 10:41:34AM -0700, Carl E. Thompson wrote:
->> Kent, at this point in bcachefs' development you want complete control
->> over your development processes and timetable that you simply can't
->> get in the mainline kernel. It's in your own best interest for you to
->> develop out-of-tree for now.
-> Carl, all I'm doing is stating up front what it's going to take to get
-> this done right.
->
-> I'm not particularly pushing one way or the other for bcachefs to stay
-> in; there are pros and cons either way. It'll be disruptive for it to be
-> out, but if the alternative is disrupting process too much and driving
-> Linus and I completely completely nuts, that's ok.
->
-> Everyone please be patient. This is a 10+ year process, no one thing is
-> make or break.
->
-So as a user usually hanging out on IRC and running Kent's trees:
+On Tue, Jun 10, 2025 at 08:24:00AM -0400, Brian Foster wrote:
+> On Mon, Jun 09, 2025 at 09:12:19AM -0700, Darrick J. Wong wrote:
+> > On Thu, Jun 05, 2025 at 01:33:55PM -0400, Brian Foster wrote:
+> > > Use the iomap folio batch mechanism to select folios to zero on zero
+> > > range of unwritten mappings. Trim the resulting mapping if the batch
+> > > is filled (unlikely for current use cases) to distinguish between a
+> > > range to skip and one that requires another iteration due to a full
+> > > batch.
+> > > 
+> > > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > > ---
+> > >  fs/xfs/xfs_iomap.c | 23 +++++++++++++++++++++++
+> > >  1 file changed, 23 insertions(+)
+> > > 
+> > > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> > > index b5cf5bc6308d..63054f7ead0e 100644
+> > > --- a/fs/xfs/xfs_iomap.c
+> > > +++ b/fs/xfs/xfs_iomap.c
+> ...
+> > > @@ -1769,6 +1772,26 @@ xfs_buffered_write_iomap_begin(
+> > >  		if (offset_fsb < eof_fsb && end_fsb > eof_fsb)
+> > >  			end_fsb = eof_fsb;
+> > >  
+> > > +		/*
+> > > +		 * Look up dirty folios for unwritten mappings within EOF.
+> > > +		 * Providing this bypasses the flush iomap uses to trigger
+> > > +		 * extent conversion when unwritten mappings have dirty
+> > > +		 * pagecache in need of zeroing.
+> > > +		 *
+> > > +		 * Trim the mapping to the end pos of the lookup, which in turn
+> > > +		 * was trimmed to the end of the batch if it became full before
+> > > +		 * the end of the mapping.
+> > > +		 */
+> > > +		if (imap.br_state == XFS_EXT_UNWRITTEN &&
+> > > +		    offset_fsb < eof_fsb) {
+> > > +			loff_t len = min(count,
+> > > +					 XFS_FSB_TO_B(mp, imap.br_blockcount));
+> > > +
+> > > +			end = iomap_fill_dirty_folios(iter, offset, len);
+> > 
+> > ...though I wonder, does this need to happen in
+> > xfs_buffered_write_iomap_begin?  Is it required to hold the ILOCK while
+> > we go look for folios in the mapping?  Or could this become a part of
+> > iomap_write_begin?
+> > 
+> 
+> Technically it does not need to be inside ->iomap_begin(). The "dirty
+> check" just needs to be before the fs drops its own locks associated
+> with the mapping lookup to maintain functional correctness, and that
+> includes doing it before the callout in the first place (i.e. this is
+> how the filemap_range_needs_writeback() logic works). I have various
+> older prototype versions of that work that tried to do things a bit more
+> generically in that way, but ultimately they seemed less elegant for the
+> purpose of zero range.
+> 
+> WRT zero range, the main reason this is in the callback is that it's
+> only required to search for dirty folios when the underlying mapping is
+> unwritten, and we don't know that until the filesystem provides the
+> mapping (and doing at after the fs drops locks is racy).
 
-I think most of those people actually testing bcachefs are either
-running bcachefs-master, -rc or some outdated distro kernel. From my
-perspective I'd think it would be good enough to push for-upstream
-during the merge window and then only provide further patches if there
-where regressions or some really bad bug appears that actually eats data
-(like the one that bit me). If it's "just" stability fixes, well, if
-people running a distro kernel hit those bugs they'll need to build a
--rc kernel anyways to get fixes, those could just build bcachefs-master.
-When running Linus' tree I am aware and accept that I am not running the
-absolutely latest code.
+<nod>
 
-I've had some pretty bad experience with amdgpu requiring out of tree
-patches to get my system running free of glitches, which took months to
-get into upstream. It's annoying, but I accept that.
+> That said, if we eventually use this for something like buffered writes,
+> that is not so much of an issue and we probably want to instead
+> lookup/allocate/lock each successive folio up front. That could likely
+> occur at the iomap level (lock ordering issues and whatnot
+> notwithstanding).
+> 
+> The one caveat with zero range is that it's only really used for small
+> ranges in practice, so it may not really be that big of a deal if the
+> folio lookup occurred unconditionally. I think the justification for
+> that is tied to broader using of batching in iomap, however, so I don't
+> really want to force the issue unless it proves worthwhile. IOW what I'm
+> trying to say is that if we do end up with a few more ops using this
+> mechanism, it wouldn't surprise me if we just decided to deduplicate to
+> the lowest common denominator implementation at that point (and do the
+> lookups in iomap iter or something). We're just not there yet IMO.
 
-I'd rather have a slightly outdated bcachefs in kernel than not at all.
-It is good to have a distro kernel I can fall back to if I mess up my
-own kernel building ;)
+<nod> I suppose it could be useful for performance reasons to try to
+grab as many folios as we can while we still hold the ILOCK, though we'd
+have to be careful about lock inversions.
 
+--D
 
-my 0.02€
-
-/Malte
-
+> 
+> Brian
+> 
+> > --D
+> > 
+> > > +			end_fsb = min_t(xfs_fileoff_t, end_fsb,
+> > > +					XFS_B_TO_FSB(mp, end));
+> > > +		}
+> > > +
+> > >  		xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
+> > >  	}
+> > >  
+> > > -- 
+> > > 2.49.0
+> > > 
+> > > 
+> > 
+> 
+> 
 
