@@ -1,87 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-53671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B71AF5BB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 16:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA93AAF5CED
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 17:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78D5A1C43945
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 14:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7A71C25A6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 15:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9E830AAB6;
-	Wed,  2 Jul 2025 14:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC6E2D948A;
+	Wed,  2 Jul 2025 15:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DnIU5xeN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bn1K/m0P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1A13093D8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 14:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D04F2D9485
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 15:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751467982; cv=none; b=BEBWt2yqwToS+4QJMGzCNZTXyjipUyf+unO/pt52EngskvmdpJTOaICJbRTfFnakl4W81TIlgrCAUBQ77wqRINbS6miphgflB2gcqi9yYWB7YiQbHtLEP58lZECDxBXdvLGyuC7j6ibfWwPEZim4tBepGdiUwYUOgUVY2Qnos80=
+	t=1751469947; cv=none; b=tsdkyPYRu6XhPPbE87wS4RWz39ffCmTYHNC/uj2ow0A6AIWKoiczEPaMaO02RJiEaCGXbmWOycItaUE0nX+exOz8P3AsNnKWe5AcsIId+TJKdtIBTFRvB7IgdEkthpq3u8rC083Y+17iAXr7EshhuVIst2QLLgIRjQWM82ArDDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751467982; c=relaxed/simple;
-	bh=1WpcSP1JHaereL+EgjjueQUUIKUuA5rHNbUpItx789Y=;
+	s=arc-20240116; t=1751469947; c=relaxed/simple;
+	bh=ozAq4H7NKMi99W0DR+dgxSwDGggAfgQwOjbIsAOjbpo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZzT1E7AQNnp8NFzvAZJsFbBxvEk9tM6PtGUt51Dw5zsICM+97mqGknh1rsdY6GmZHm4qNvdg/YW2Md/23uEvGdhtdW6oT7Vw4XqPJvuwu+ZhqEtZ6y0+p7nb0I7JdaSfpBuk9/FyNDpnjfE5hRcqb0hxzAYpYkBAvdhEuKLPTdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DnIU5xeN; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=CU769YsfJrBoXOYm3LeoIRQxTN2cUvBa1nqkXDZWDAmJbM2vHhZiXcnWhMEKfUcYWQw5ZqGKOVyNufgL83DyrS61rLkl7miHFL5MLBdJ1tP9MbQVqD0LDsQ4FrLLL9/XyV/apgqa+IHb5VwBpbv5NlYsp8SR4g3L8GqqIm9bGfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bn1K/m0P; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751467979;
+	s=mimecast20190719; t=1751469944;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T5nj6T4+km6XBVJylVpc2FdMnDZamikSe9UfbX+MJzI=;
-	b=DnIU5xeNIMQ4selEObSEd/Hxlph4YJOUzpm18at0fscW8wPe8sOhf5wzApI546onACF2xI
-	tSieJfigna0g9DBI/Y5L+xGfCtf0sTJttnK6RbrHwofGbQeS7G/7eGBAZplJbr8ECmgPRa
-	URCGpBZh/GC0IpUFe6kRzto+8e9qKmw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=1zZV1K34K5vsU5bBEYqLthbNyfG8BgJV/i5Welf7t/g=;
+	b=Bn1K/m0PU2U3QSPaMiHDZ9IEss70sP4dyQo4AqGCa2DIdZPw/BydGbJ10nCodpn103KH03
+	L5f6F+VWaJ2ilXVktUADQx9RXOuakOluJM7WppwrFEQnYdTwVstNENYyw+ylX4uDPjvTsx
+	IhcWTw6S1PxNjCZwOVRx+RrtgmOkm4g=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-484-vxsGdxxqOP6ZNikD9AOWrg-1; Wed, 02 Jul 2025 10:52:58 -0400
-X-MC-Unique: vxsGdxxqOP6ZNikD9AOWrg-1
-X-Mimecast-MFC-AGG-ID: vxsGdxxqOP6ZNikD9AOWrg_1751467977
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a5780e8137so3900043f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 07:52:58 -0700 (PDT)
+ us-mta-695-FfSS5IKJOLu7Nfm5VElVPQ-1; Wed, 02 Jul 2025 11:25:43 -0400
+X-MC-Unique: FfSS5IKJOLu7Nfm5VElVPQ-1
+X-Mimecast-MFC-AGG-ID: FfSS5IKJOLu7Nfm5VElVPQ_1751469942
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a579058758so1850637f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 08:25:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751467977; x=1752072777;
+        d=1e100.net; s=20230601; t=1751469942; x=1752074742;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=T5nj6T4+km6XBVJylVpc2FdMnDZamikSe9UfbX+MJzI=;
-        b=kRsoCpJoAVw/fXGGlA1ucqk2L9QeFGVYJR2ZDRgTFjR80kD3sUS9NOHe2D5ERjjj7q
-         FgC3cL/x7kVVAiDgw0wMIaQ+GfCZGYrJBvsGYo+58G3mbYcOQu3g08q7CX2ozBinYoiQ
-         cHCi+S6FSx3ZEvuTwI4/kw95WiTZNAHrjfSoa08Uei2u2d9lu5eY7e2OFNRoN5JUOj0f
-         IV+s/jIW1Xzt4LpvWlkt3fNBJqK332ApFC0wRqeRWb3Qc06E9Ogqaig2qd/phjCaDcVH
-         8A/bv1Zz1+6pT5pgmCkZLCitUH1GB4pcOfJutWfOtPOT4C7pFNqgeE0/NNyd3katnRmP
-         8H5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXxNxoKucfe7LDCMN5ZfT9bJJu8+wS7ANvD0KT7fKaG+pY39EsRltb6b3FHMjjvL4XZGgHzCIB/Xj44QHqs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ1ZS33FeKini1vZEwbxdbLtYBhAUwmbmXrIoprbnfCEgBUCcE
-	tSjSHX6bpZevOiK6xG0gNVV6J1qevRctNuKPvy1Yl//znjvCc3PQBYINJ75WoRfBjN1xmLUMrGv
-	kKYPaeA7RIML/o5EyzMx7wQn6RGMWFrKu1rRW9XoA58P+Gy8j1hBPP7BtgT7q2oY+YLI=
-X-Gm-Gg: ASbGncvWTzGe8rjYJWNJHwiAePbGtLQQQNKecIUeCKSMExvzYunekIIKNYHnYgoMipk
-	aF7b0VcBepBZQdicPZR2CNnmcEU5JHUyo8PNnzmtNy8N1Ef4cX4iXhxhJRoqyqM3CaGJqFb307C
-	Go2E5kKOvUdGGIS0mXj41nT6lBnqDcQ8Aqg+uouHspcnBf5YRgU9cAlZldwM6JsCXl+b2hPzcFY
-	oIcG4W8J/cpEaRLTjTmmN1BwD0vMI/fGhM+5onA3jlJZMMJhNKEVyIdEOL2YzLtWp9NgnOUIFiD
-	yncDAp96AXFTb1oOrtQa1GNtEbtsCyx7+d++k8Owt4K7R2k19V7zuTM=
-X-Received: by 2002:a05:6000:2302:b0:3a5:1388:9a55 with SMTP id ffacd0b85a97d-3b1f5813ebbmr2700871f8f.5.1751467977296;
-        Wed, 02 Jul 2025 07:52:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF6zmp9d2w2MJkn7HSBDnoWuF5cmgkYx/VRxm4DVngK4kJgBtnY9v5ljh4jmUYVqeNL+t+SYg==
-X-Received: by 2002:a05:6000:2302:b0:3a5:1388:9a55 with SMTP id ffacd0b85a97d-3b1f5813ebbmr2700827f8f.5.1751467976689;
-        Wed, 02 Jul 2025 07:52:56 -0700 (PDT)
+        bh=1zZV1K34K5vsU5bBEYqLthbNyfG8BgJV/i5Welf7t/g=;
+        b=Dpu94+Y6nEAnGAVO5VB8YJnWTCrHIOcFO/oU/DrmSAC7zYiQYLP5g64SiJaLf8PGe8
+         UnUQJdkUQ8ELW4n8WbzFkH2zWmzQSySgq73tZdjP4zY7xqqOYpU5osjTvJvK7jS2zh0Y
+         U8FG7bc1K7q/5U0StAaI/znzkixodv+NJ7RoWxEasdq+gKqCpMs81DSBZKOGLJ/PRDgy
+         KItnwzGdlR8V62Ty7JSHbt3Fa5OvRaYfG1pTlgnIdnt6e2b7EtazDgYPzTNgi3/7sHkT
+         zqk57r1J4NkDF49aO3sd2u8LqstVgRn5TJADMUigj+D+kQU+mnx4rgAQOBGFCE3pyX+Z
+         fjlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhTXyYJhsH+H7xvFO5CtlmMWPllPsmfFghseEk1KP/WjWCKSBAgiqjvTVufkl1PaBol/Q1w66RIV/4LLng@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2wSfSHOieerT761GYYyCdFzA6zYkB0l38IcqOoVcecH4mPRJm
+	2o6JdVSN16kJmK8rbPICC2nbo+ffYo/1wcxAYQXBrMxRNdWIAfsg/Y58lQ+VfWNOTtjSFmRnoCC
+	GPcYJFhQLCFEu6L9uOvoiMMCIPAhMCswZ3x8RAtpb2D7ecxrSu7Y8l414eoKr0aWehvA=
+X-Gm-Gg: ASbGncu5WD8u842YAIvJPuQnuagzeJB+Y2ux+apiXQKIGPUM1v8hzUC0mSRKa9feTcl
+	OFiaj+kzxmOXrl3AnLbyxcoqLCdgoiiATbDqn/UbnrooaP8IYXipcm5+qDc+AD/qzltPUJa/JsR
+	TYVzZ+hq2Hcoeqvcf7cyOynNlzE6zD9AaC2kkAq+Ty5NbEbewbObJ0qPq2hvXEdhYSkJ5sRBON5
+	1Z7ie7S0iFm1BgC0RWg/Fx24U17EjqVFuqUziWzqeiCnxInKK9uf1ea4BHinJYLYmhvDFmBJ/Tk
+	xLtfuJ89w/Pwt7QQ5LfXIbwb2Y/q/PwtqiEPBlC/L6yBycxZVVHypJ4=
+X-Received: by 2002:a05:6000:40cc:b0:3a5:2f23:3780 with SMTP id ffacd0b85a97d-3b1ffcd6a02mr2834588f8f.18.1751469942203;
+        Wed, 02 Jul 2025 08:25:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsUNCCRvW2G8ERz1v+CzxV36sRx/sOGiOA5hGIRC55Fq8/UJikBoj+bsw3If92RbCTbdxtOA==
+X-Received: by 2002:a05:6000:40cc:b0:3a5:2f23:3780 with SMTP id ffacd0b85a97d-3b1ffcd6a02mr2834527f8f.18.1751469941626;
+        Wed, 02 Jul 2025 08:25:41 -0700 (PDT)
 Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e76e1sm16577247f8f.16.2025.07.02.07.52.54
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e52ad2sm16118859f8f.48.2025.07.02.08.25.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 07:52:56 -0700 (PDT)
-Message-ID: <bd162903-6854-4b69-ad4b-89deb8e0d695@redhat.com>
-Date: Wed, 2 Jul 2025 16:52:53 +0200
+        Wed, 02 Jul 2025 08:25:41 -0700 (PDT)
+Message-ID: <e76b6a9d-b887-4790-a2fd-032648be99ff@redhat.com>
+Date: Wed, 2 Jul 2025 17:25:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,8 +89,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 27/29] docs/mm: convert from "Non-LRU page migration"
- to "movable_ops page migration"
+Subject: Re: [PATCH v1 20/29] mm: convert "movable" flag in page->mapping to a
+ page flag
 To: Harry Yoo <harry.yoo@oracle.com>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
@@ -126,7 +126,8 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
  Qi Zheng <zhengqi.arch@bytedance.com>, Shakeel Butt <shakeel.butt@linux.dev>
 References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-28-david@redhat.com> <aGVA2p5mUWoBDVKJ@hyeyoo>
+ <20250630130011.330477-21-david@redhat.com> <aGUd34v-4S7eXojo@hyeyoo>
+ <a533ae7e-f993-4673-bb00-ec9d10c11c83@redhat.com> <aGUtxakO8p_94rTl@hyeyoo>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -174,46 +175,78 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <aGVA2p5mUWoBDVKJ@hyeyoo>
+In-Reply-To: <aGUtxakO8p_94rTl@hyeyoo>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 02.07.25 16:23, Harry Yoo wrote:
-> On Mon, Jun 30, 2025 at 03:00:08PM +0200, David Hildenbrand wrote:
->> Let's bring the docs up-to-date.
+On 02.07.25 15:01, Harry Yoo wrote:
+> On Wed, Jul 02, 2025 at 02:01:33PM +0200, David Hildenbrand wrote:
+>> On 02.07.25 13:54, Harry Yoo wrote:
+>>> On Mon, Jun 30, 2025 at 03:00:01PM +0200, David Hildenbrand wrote:
+>>>> Instead, let's use a page flag. As the page flag can result in
+>>>> false-positives, glue it to the page types for which we
+>>>> support/implement movable_ops page migration.
+>>>>
+>>>> The flag reused by PageMovableOps() might be sued by other pages, so
+>>>> warning in case it is set in page_has_movable_ops() might result in
+>>>> false-positive warnings.
+>>>>
+>>>> Reviewed-by: Zi Yan <ziy@nvidia.com>
+>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>> ---
+>>>
+>>> LGTM,
+>>> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+>>>
+>>> With a question: is there any reason to change the page flag
+>>> operations to use atomic bit ops?
 >>
->> Reviewed-by: Zi Yan <ziy@nvidia.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
+>> As we have the page lock in there, it's complicated. I thought about this
+>> when writing that code, and was not able to convince myself that it is safe.
 >>
->> +movable_ops page migration
->> +==========================
->> +
->> +Selected typed, non-folio pages (e.g., pages inflated in a memory balloon,
->> +zsmalloc pages) can be migrated using the movable_ops migration framework.
->> +
->> +The "struct movable_operations" provide callbacks specific to a page type
->> +for isolating, migrating and un-isolating (putback) these pages.
->> +
->> +Once a page is indicated as having movable_ops, that condition must not
->> +change until the page was freed back to the buddy. This includes not
->> +changing/clearing the page type and not changing/clearing the
->> +PG_movable_ops page flag.
->> +
->> +Arbitrary drivers cannot currently make use of this framework, as it
->> +requires:
->> +
->> +(a) a page type
->> +(b) indicating them as possibly having movable_ops in page_has_movable_ops()
->> +    based on the page type
+>> But that was when I was prototyping and reshuffling patches, and we would
+>> still have code that would clear the flag.
+>   
+>> Given that we only allow setting the flag, it might be okay to use the
+>> non-atomic variant as long as there can be nobody racing with us when
+>> modifying flags. Especially trying to lock the folio concurrently is the big
+>> problem.
+>>
+>> In isolate_movable_ops_page(), there is a comment about checking the flag
+>> before grabbing the page lock, so that should be handled.
 > 
->> +(c) returning the movable_ops from page_has_movable_ops() based on the page
->> +    type
+> Right.
 > 
-> I think you meant page_movable_ops()?
+>> I'll have to check some other cases in balloon/zsmalloc code.
+> 
+> Okay, it's totally fine to go with atomic version and then
+> switching back to non atomic ops when we're sure it's safe.
+> 
 
-Very right, thanks!
+I'll definitely do the following:
 
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 8b23a74963feb..5f2b570735852 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -1145,9 +1145,11 @@ PAGEFLAG(Isolated, isolated, PF_ANY);
+   * the flag might be used in other context for other pages. Always use
+   * page_has_movable_ops() instead.
+   */
+-PAGEFLAG(MovableOps, movable_ops, PF_NO_TAIL);
++TESTPAGEFLAG(MovableOps, movable_ops, PF_NO_TAIL);
++SETPAGEFLAG(MovableOps, movable_ops, PF_NO_TAIL);
+  #else /* !CONFIG_MIGRATION */
+-PAGEFLAG_FALSE(MovableOps, movable_ops);
++TESTPAGEFLAG_FALSE(MovableOps, movable_ops);
++SETPAGEFLAG_NOOP(MovableOps, movable_ops);
+  #endif /* CONFIG_MIGRATION */
+  
+  /**
+
+Because the flag must not get cleared.
+
+There is no __SETPAGEFLAG_NOOP yet, unfortunately.
 -- 
 Cheers,
 
