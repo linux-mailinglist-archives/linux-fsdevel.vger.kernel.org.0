@@ -1,119 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-53738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5421AF650C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 00:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68234AF6514
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 00:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FCCC3A8674
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 22:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D8E4E06C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 22:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3CB242D6B;
-	Wed,  2 Jul 2025 22:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC00246BA5;
+	Wed,  2 Jul 2025 22:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvSFYJO+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mx8C1zUs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570582DE718
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 22:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C689970805;
+	Wed,  2 Jul 2025 22:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751494803; cv=none; b=rvpG6ZbmIrNMNQYSFytMJi9f4N2EHGXF82v8ZNEXUBcVXYqIRFHZJBTaKml1AGBZzwVPp+bidJe87zhEUSj+ORnALmcEX+/YF81yn6XzNo+iCzNsQ2OETNqomnQm+9avmxbEt/xZvIbMj5JXfgJhGC8MMcwFXOVZAlEfch87VfA=
+	t=1751494995; cv=none; b=FtUfNUE6GUHOdV/urvKqUuJS1MlIlO8vbzETVcbVOTJiaSSQC1k/kibC0IHAZzzefS2zXBBg5zMKgR1nhdjAf+ukb8kMWHvN2fe8nSEJon9jXsiTIAFusx4ePud50ZlJhB7iGUXT7+1/HCNO07G5UZcxeaK8J23EjQFHms0iQuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751494803; c=relaxed/simple;
-	bh=s1kJC27xSojl53YMJYuiMKdzdUsNH/EGM/6a1+RM+xU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rlG2ldTrRfH/OwQTM+NfoyJGmeSWXvcHNOQR2jrz0Bwf5KkL1eJ3ftffXhj2R5yAmJgfmQnkHUnkSaALu4Wxw22dIF5ZaiFFO78XeTm/1J0xvbT64BR6kx+wqYXBlDRFPqGA3+1ATm6vMULNC4jC3mim+9OuRf0FzDwFeh+ayyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvSFYJO+; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a7f46f9bb6so66109741cf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 15:20:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751494800; x=1752099600; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s1kJC27xSojl53YMJYuiMKdzdUsNH/EGM/6a1+RM+xU=;
-        b=dvSFYJO+JiIUwMbCD177stQX2j73p4PKYVXeewQnbIXFBgLvnWSxerFtZ07gfu1krR
-         aS2VbNIRjQtQY3FnKWOY0ywry3z7FDekXlUBUKaSk9T2tI3SjpYPDNynJX2i/VJ5YXy7
-         Hywn+L6DjT/Ha3AIGFDMFFu83RY+oCqDWVvY8s4K5WQgnKe8NsX5kGf2NJBo+16iyHuW
-         yib7rvzh4vujcmBxdJxMAnNZeHl9QKLSa82uMfDCEDH7HRZR8P73Ys1DYsnCJVLiK6Pv
-         RoMAQHGvBR9FAHt43eflLwAVrWjLxNEiYGBjLP+m1/po3G02zWG6f4xcU5LfSfX5yHMQ
-         VAGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751494800; x=1752099600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s1kJC27xSojl53YMJYuiMKdzdUsNH/EGM/6a1+RM+xU=;
-        b=cZ1c9SHJNvwXwdrfao7YSbOGYeJv/mc774wOwdm2GJawb1pxiUPy6r+AbNwb7LMIu/
-         kpJHeHXk8//GW2oXtclU+oTbGNtCN/O/V6CvoQf1nvweqBRlBv21z9tyFC7rqS4JdGMV
-         iPrzNF/W41MNzGqVspQkffREV5+rsSKneq4PUxns68yvM36Kx41semnPO4DGaiqWWF3E
-         cF9PC+l9A6ppdtwI0Z3rG7l3jZzL2gvfdPiiMMRjSdHsLjEHcDfIrxJdl79Ph4XSZyMc
-         K319ZbFCyjwbC26kQM9joh4SvQ0XaSdbkf7hIHXlmhopxlZJit90svlRQFIiRQUfT59o
-         xagA==
-X-Gm-Message-State: AOJu0Yw3Xv2PvO/h5TSpJ0MsALh32SVUVnR8tvbSsVMZolRF+uAt1QOA
-	mJ6uVD+xzgBiafovUq7DIRKvQEgoe42MIEwZ7inRj8kmpSBYgjUFCluK7rVZlydEN8Y508aG+an
-	4iG44og7+YFOhzoqxX6utZWhR7OUofhk=
-X-Gm-Gg: ASbGncuEi+hosVvhGhvNnd5my5jYPTIG8gGM+HU2skiLB7IME0tdP29jO5j5cDtn3fc
-	Rx5FG4d5BeWzO9pmkBmU/1jjfttYjC2YsTv0yicpLWFBJYxRXiDrbXnHExOreKUbS2rT8HVRwWy
-	auLkMr4JR2oF5+E33BcJ1PDZv5nGKwtA2KG2Ylm+hw2a7aeJyPplQaE7h/HdQ=
-X-Google-Smtp-Source: AGHT+IEqSroXHEe+QzVCxkvIVuli9xX6HZVsDaC/Km/v2PVnrPXaMQCYngDo1BwC2qVyQvb29fz/F9BgU/v0EqFcLm4=
-X-Received: by 2002:a05:622a:5b92:b0:494:993d:ec30 with SMTP id
- d75a77b69052e-4a9768f256fmr76533251cf.16.1751494800083; Wed, 02 Jul 2025
- 15:20:00 -0700 (PDT)
+	s=arc-20240116; t=1751494995; c=relaxed/simple;
+	bh=LVmaI22NMWk9nHFNJ/A528jljikC5KaEan2NqadkjSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XYWBgu4ZK42PifNFdb0ZDhqJo/Dt9bs7b5dgYbIOrQ+Axy+SdziqCU6NU/SvS/6vVcfsUUjQLFneQ3ofogHZSW2R2ZUflum76yKOl3u2pmeyrRTu/lI4nkmxLlwYdmv90qh4DD8zSs6c0ONo4CHLl9A5I/BzdEThSBZGpKPwqLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mx8C1zUs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BB73C4CEE7;
+	Wed,  2 Jul 2025 22:23:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751494995;
+	bh=LVmaI22NMWk9nHFNJ/A528jljikC5KaEan2NqadkjSg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mx8C1zUsS1ZWyO8ZpwurYk+HZEZ9ouQ4ugxjMEb0F+Us68GPGF7iqMHer3boyd3Sw
+	 a1nvIjNgDsnJR4QIxn5sWTqoJxAhpn39/QF7rAI49MSNPkVq1OYP/VfuoXZKMoffXi
+	 2ihvbZ1s4M6IFD06t+ToXPFa1oX3ywC8PjkNbrESbYa03ZKRQHfNi3LFwqdy1FAEsY
+	 SUlgei1ECb2vYcCMSecVu+KnyhH+wvu/iKvyYw2Xg94Vqex3aYRZ6cl51j++QCBSX+
+	 viKdCeHEydawfI4Eq3MsBw+S+0wPdNYxP6shPmrnVpUz3qMtANooHFH6lqAZrtTXa/
+	 +monDaqm4OKCQ==
+Date: Wed, 2 Jul 2025 15:23:14 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Brian Foster <bfoster@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH 01/12] iomap: pass more arguments using the iomap
+ writeback context
+Message-ID: <20250702222314.GE9991@frogsfrogsfrogs>
+References: <20250627070328.975394-1-hch@lst.de>
+ <20250627070328.975394-2-hch@lst.de>
+ <aF601H1HVkw-g_Gk@bfoster>
+ <20250630054407.GC28532@lst.de>
+ <aGKF6Tfg4M94U3iA@bfoster>
+ <20250702181847.GL10009@frogsfrogsfrogs>
+ <CAJnrk1YWjSO-FmnzHGRerBP6r6rPSAAm3MgUKfkr_AYjDJjUxA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250523181604.3939656-1-joannelkoong@gmail.com>
- <20250523181604.3939656-2-joannelkoong@gmail.com> <CAJfpegudqgztbQb1z1c9TKhvdAz1usspVi1Cx3qFOj_RjSb=vw@mail.gmail.com>
-In-Reply-To: <CAJfpegudqgztbQb1z1c9TKhvdAz1usspVi1Cx3qFOj_RjSb=vw@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 2 Jul 2025 15:19:49 -0700
-X-Gm-Features: Ac12FXzfZMAgYDGlAq_bEmnpbMxattXHsbmHmVUmKrrQTD5CkbO59nvPxiYem8M
-Message-ID: <CAJnrk1bJm7oAU-vr=ySzf8c2SmBDFZ94Lr-BU110tVqx+xFxcw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fuse: clean up null folio check in fuse_copy_folio()
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, dan.carpenter@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1YWjSO-FmnzHGRerBP6r6rPSAAm3MgUKfkr_AYjDJjUxA@mail.gmail.com>
 
-On Tue, Jul 1, 2025 at 10:34=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Fri, 23 May 2025 at 20:18, Joanne Koong <joannelkoong@gmail.com> wrote=
-:
+On Wed, Jul 02, 2025 at 03:00:42PM -0700, Joanne Koong wrote:
+> On Wed, Jul 2, 2025 at 11:18 AM Darrick J. Wong <djwong@kernel.org> wrote:
 > >
-> > In fuse_copy_folio(), the folio in *foliop will never be null.
-> > fuse_copy_folio() is called from two places, fuse_copy_folios() and
-> > fuse_notify_store(). In fuse_copy_folios(), the folio will never be nul=
-l
-> > since ap->num_folios always reflects how many folios are stored in the
-> > ap->folios[] array.
->
-> Hmm, well, did you verify that none of the callers leave any holes?
-> ISTR there was a reason to put the NULL check in there, I just don't
-> remember what that reason was.
+> > On Mon, Jun 30, 2025 at 08:41:13AM -0400, Brian Foster wrote:
+> > > On Mon, Jun 30, 2025 at 07:44:07AM +0200, Christoph Hellwig wrote:
+> > > > On Fri, Jun 27, 2025 at 11:12:20AM -0400, Brian Foster wrote:
+> > > > > I find it slightly annoying that the struct name now implies 'wbc,'
+> > > > > which is obviously used by the writeback_control inside it. It would be
+> > > > > nice to eventually rename wpc to something more useful, but that's for
+> > > > > another patch:
+> > > >
+> > > > True, but wbc is already taken by the writeback_control structure.
+> > > > Maybe I should just drop the renaming for now?
+> > > >
+> > >
+> > > Yeah, that's what makes it confusing IMO. writeback_ctx looks like it
+> > > would be wbc, but it's actually wpc and wbc is something internal. But I
+> > > dunno.. it's not like the original struct name is great either.
+> > >
+> > > I was thinking maybe rename the wpc variable name to something like
+> > > wbctx (or maybe wbctx and wbctl? *shrug*). Not to say that is elegant by
+> > > any stretch, but just to better differentiate from wbc/wpc and make the
+> > > code a little easier to read going forward. I don't really have a strong
+> > > opinion wrt this series so I don't want to bikeshed too much. Whatever
+> > > you want to go with is fine by me.
+> >
+> > I'd have gone with iwc or iwbc, but I don't really care that much. :)
+> >
+> > Now I'm confused because I've now seen the same patch from joanne and
+> > hch and don't know which one is going forward.  Maybe I should just wait
+> > for a combined megaseries...
+> 
+> Christoph's is the main source of truth and mine is just pulling his
+> patches and putting the fuse changes on top of that :) For the v3 fuse
+> iomap patchset [1], the iomap patches in that were taken verbatim from
+> his "refactor the iomap writeback code v2" patchset [2].
+> 
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20250624022135.832899-1-joannelkoong@gmail.com/
+> [2] https://lore.kernel.org/linux-fsdevel/20250617105514.3393938-1-hch@lst.de/
 
-I audited the places where ap->num_folios gets set or incremented and
-didn't see any place where there wasn't also an
-ap->folios[ap->num_folios] assignment preceding it.
+<nod> Well I migrated all my replies to hch's "refactor the iomap
+writeback code v3" patchset so I guess I'll... wait for whoever makes
+the next move. ;)
 
-I'm fine with dropping this patch if you would rather the NULL check
-be left in there.
+--D
 
-Thanks,
-Joanne
-
->
-> Thanks,
-> Miklos
+> >
+> > --D
+> >
+> > > Brian
+> > >
+> > >
+> 
 
