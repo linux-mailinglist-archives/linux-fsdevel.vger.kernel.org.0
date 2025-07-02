@@ -1,94 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-53585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9431DAF054C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 23:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91543AF0864
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 04:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3805E4469EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Jul 2025 20:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 037691C05D9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 02:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF1330206B;
-	Tue,  1 Jul 2025 20:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2nPHEoj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5499F17A2EA;
+	Wed,  2 Jul 2025 02:16:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEBC2FEE29;
-	Tue,  1 Jul 2025 20:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23D9FBF6;
+	Wed,  2 Jul 2025 02:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751403583; cv=none; b=p6KDhPDfc9QghteNBydv/MQKc6xsMbi5aS6z5VhBVHx76AigkPGV4w73Dvgr9pnKDAnHv37Zp+se+Pmho3C6ZCTOcfFGOHwfP5zQ57sCm5/IhGwVy/XnFwNXKBc7yWFtCl+sdiTYYSBrvWJS8xkIgnjLyiHde/1K7X2p1O8IuOc=
+	t=1751422585; cv=none; b=H+BfGkRjdI67OpKHOcXanTEQnV7tKJkW7JNft0MtJfeIZmEbNyKfrfqTBlAxIdc0xsPpOzNusc7bZ6Q4LzzH4rlbaRswOBSpB8gOx5DlkhFhVxzkUiL6wYId6tKU78SM6bHHZ4OCrvpHm/5zzGz4QnjK2aNRnxPJCgL4c+3hEsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751403583; c=relaxed/simple;
-	bh=LdFKXc5zIIFbkF6UTCMWqKAWCcBGTFsXoiLEfjtzXHo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=i4NQafJ4jRvB8+M5T15JAzP1L9XFcm2s0mPGQAgQQSo1IVnNScsawQhXaOjHgApYK9q0Iqaaz/CXjBcBYEPjMbFmwuZ1TfcRCD9VXyAzm8jcdm024mZsEgD/99Bst4ABvwA+58wonXgBUB0Gek4XM2CLp8QF2SLjhvJi5FODr+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2nPHEoj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F51C4CEEB;
-	Tue,  1 Jul 2025 20:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751403582;
-	bh=LdFKXc5zIIFbkF6UTCMWqKAWCcBGTFsXoiLEfjtzXHo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Z2nPHEojQXwfwmA0KzYM9JkdBM/1gIys9m39NasT6EhWLuizYi1BUGm1BCuYEpz9x
-	 hBK+Qg/XGY82eXc/A8dRYMhUewbO1Xz8usDydaK0ZtZY9anTWLu0c/79vnShCUvag6
-	 VV0bjyPCP4m9MoHwD9wFHhr9x9xJ942ARSKNe0jSp4+CYtXPIj09mzqk/B3+mO4TFS
-	 bolrVmZPW4msfAglG/WXTqNAzMLg+0sbc3xkYa+Q6BjWahBvVeiRrShCxQvGSV+v2l
-	 hufPmmV8/q//wkcuQXgimLhVnaekeGfQTAxpwMISP5lmaNyZOxD7i+oTcykXifDkOm
-	 zEjsBm+KQtv4w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DD5383B273;
-	Tue,  1 Jul 2025 21:00:08 +0000 (UTC)
+	s=arc-20240116; t=1751422585; c=relaxed/simple;
+	bh=KSjOCxH0JSJcefO+vKgYyGtoBcDCM2Dr7rhqNWRzXNA=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=RPU49RbfNDU20l0C9vSdwb8w3KGexNwHj+ufVLOhg6qAwBCc+GUy++KFg3/XYC8rETVF4rFKS9ZRgQY9PHvUs0ck7x8E8GpJwn3l9jWblJZ9j5ydL9P/joMx7+naNcQ0gFgmGO6G0+ZYxyEQlo5VH7manyKk+ynlza+Jl4XaZnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uWn1G-00GI4S-JQ;
+	Wed, 02 Jul 2025 02:16:18 +0000
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next] selftests/bpf: don't call fsopen() as privileged
- user
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175140360726.116693.10341336783596879643.git-patchwork-notify@kernel.org>
-Date: Tue, 01 Jul 2025 21:00:07 +0000
-References: <20250701183123.31781-1-technoboy85@gmail.com>
-In-Reply-To: <20250701183123.31781-1-technoboy85@gmail.com>
-To: Matteo Croce <technoboy85@gmail.com>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, andrii@kernel.org,
- brauner@kernel.org, song@kernel.org, linux-kernel@vger.kernel.org,
- teknoraver@meta.com
+From: "NeilBrown" <neil@brown.name>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: "Miklos Szeredi" <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 07/12] ovl: narrow locking in ovl_rename()
+In-reply-to:
+ <CAOQ4uxjDK3AJoY-geRLprvSKEW7UopJLY_9WcJ0LjwiKAP29uA@mail.gmail.com>
+References:
+ <>, <CAOQ4uxjDK3AJoY-geRLprvSKEW7UopJLY_9WcJ0LjwiKAP29uA@mail.gmail.com>
+Date: Wed, 02 Jul 2025 12:16:18 +1000
+Message-id: <175142257818.565058.8422284947466318667@noble.neil.brown.name>
 
-Hello:
+On Thu, 26 Jun 2025, Amir Goldstein wrote:
+> On Wed, Jun 25, 2025 at 1:07=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+> >
+> > Drop the rename lock immediately after the rename, and use
+> > ovl_cleanup_unlocked() for cleanup.
+> >
+> > This makes way for future changes where locks are taken on individual
+> > dentries rather than the whole directory.
+> >
+> > Signed-off-by: NeilBrown <neil@brown.name>
+> > ---
+> >  fs/overlayfs/dir.c | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> > index 2b879d7c386e..5afe17cee305 100644
+> > --- a/fs/overlayfs/dir.c
+> > +++ b/fs/overlayfs/dir.c
+> > @@ -1270,9 +1270,10 @@ static int ovl_rename(struct mnt_idmap *idmap, str=
+uct inode *olddir,
+> >                             new_upperdir, newdentry, flags);
+> >         if (err)
+> >                 goto out_dput;
+> > +       unlock_rename(new_upperdir, old_upperdir);
+> >
+> >         if (cleanup_whiteout)
+> > -               ovl_cleanup(ofs, old_upperdir->d_inode, newdentry);
+> > +               ovl_cleanup_unlocked(ofs, old_upperdir, newdentry);
+> >
+> >         if (overwrite && d_inode(new)) {
+> >                 if (new_is_dir)
+> > @@ -1291,12 +1292,8 @@ static int ovl_rename(struct mnt_idmap *idmap, str=
+uct inode *olddir,
+> >         if (d_inode(new) && ovl_dentry_upper(new))
+> >                 ovl_copyattr(d_inode(new));
+> >
+> > -out_dput:
+> >         dput(newdentry);
+> > -out_dput_old:
+> >         dput(olddentry);
+> > -out_unlock:
+> > -       unlock_rename(new_upperdir, old_upperdir);
+> >  out_revert_creds:
+> >         ovl_revert_creds(old_cred);
+> >         if (update_nlink)
+> > @@ -1307,6 +1304,14 @@ static int ovl_rename(struct mnt_idmap *idmap, str=
+uct inode *olddir,
+> >         dput(opaquedir);
+> >         ovl_cache_free(&list);
+> >         return err;
+> > +
+> > +out_dput:
+> > +       dput(newdentry);
+> > +out_dput_old:
+> > +       dput(olddentry);
+> > +out_unlock:
+> > +       unlock_rename(new_upperdir, old_upperdir);
+> > +       goto out_revert_creds;
+> >  }
+>=20
+> Once again, I really do not like the resulting code flow.
+> This is a huge function and impossile to follow all condition.
+> As a rule of thumb, I think you need to factor out the block of code under
+> lock_rename() to avoid those horrible goto mazes.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+I'll see what I can do to improve it.
 
-On Tue,  1 Jul 2025 20:31:23 +0200 you wrote:
-> From: Matteo Croce <teknoraver@meta.com>
-> 
-> In the BPF token example, the fsopen() syscall is called as privileged
-> user. This is unneeded because fsopen() can be called also as
-> unprivileged user from the user namespace.
-> As the `fs_fd` file descriptor which was sent back and fort is still the
-> same, keep it open instead of cloning and closing it twice via SCM_RIGHTS.
-> 
-> [...]
+>=20
+> The no error case used to do dput(newdentry) and dput(olddentry)
+> how come they are gone now?
+> what am I missing?
 
-Here is the summary with links:
-  - [bpf-next] selftests/bpf: don't call fsopen() as privileged user
-    https://git.kernel.org/bpf/bpf-next/c/212ec9229567
+Those dput()s are still there.  I removed the goto labels between them
+but not the dput()s themselves.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Thanks,
+NeilBrown
 
+>=20
+> Thanks,
+> Amir.
+>=20
 
 
