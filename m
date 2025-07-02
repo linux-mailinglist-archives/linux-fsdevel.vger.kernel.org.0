@@ -1,185 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-53736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60613AF6452
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 23:48:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08722AF64AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 00:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5F61C23128
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 21:48:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CAD64E61A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 22:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B21023F412;
-	Wed,  2 Jul 2025 21:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF08242D84;
+	Wed,  2 Jul 2025 22:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxO0d7i3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKm5OWmJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E828F4F1;
-	Wed,  2 Jul 2025 21:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0A51940A2;
+	Wed,  2 Jul 2025 22:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751492876; cv=none; b=Pk+ADmLF+OJM5glybXK6uHcz3AkhjOgix9JJ5LJCnfoYtRsMPa1kgK3Mq+LvDcYMItoqpAQrE6SSqXH6igLLTdXBwdzNvVBURgz4/5UGnTkaGW6052g/KJzv+QQ/tMR2lJ7tLnHSb3kXkLdBGeYxQzuTTEoH96t71gcyRzVBBlA=
+	t=1751493658; cv=none; b=hWNi1PxknlZWtKWeLJ2Ovwr6z6PY2CRh3UGI89KeOuIN8cxnY+8NFzqn7+HzqwMncEPrQOfNlywR698FIxMFK/2PN3D1rkywNHfIMcm2fGEm4fNoXs4CvbMfZ7yBMpJeg9LXjVuuE6wvFCYPsrKxSEEFMARykh1JjKnq4YBr0WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751492876; c=relaxed/simple;
-	bh=3F0e4ClGzJgX/J6AnoNUdr6gzOEpfijU8HaAHHh0I0A=;
+	s=arc-20240116; t=1751493658; c=relaxed/simple;
+	bh=I2HXhl9/BOzIBeeYz0x5dYvcHignO7fdSMD8M+8Zvhg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DhLNx9ihIUJ2qNQ5tHzW3ADoOZmF3V7C3EExVaZE8Jfg5Q1ooGzFmwDVbywhKqjYRDuyc1raXaMmYUqwOMb5GpYwftI/G0dSCek9I3hIq3THgb5n2kiYVeDnKgcUOQ8I+aKZyYRbIzZ1D+Skd6ZAKX9YJ60vkiesZdhVC1AwKJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxO0d7i3; arc=none smtp.client-ip=209.85.160.173
+	 To:Cc:Content-Type; b=opkkaoZ6BJoXk8KvS7Ig2SQHs2NaWRcMVDA/fM780e0YCh2zj7vC/kIG4RJ9LNbX0quFZSi06A21Uc/L8wwaxXLCUKKfZf0zUbyGZr9f1sQVNVfR6bEKxqAZtHdCEVH83obNN6zpCReqTJ4tqDOBSabIOfiWT+kWHoxc5H6zf2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKm5OWmJ; arc=none smtp.client-ip=209.85.160.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a5840ec53dso89437381cf.0;
-        Wed, 02 Jul 2025 14:47:54 -0700 (PDT)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a752944794so83493531cf.3;
+        Wed, 02 Jul 2025 15:00:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751492873; x=1752097673; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751493653; x=1752098453; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NzvjFSwko+dMrc+VXfpopyy6igCQQKgZWqJ5p1e5f6w=;
-        b=CxO0d7i3Xl0pSF3OVyXsgDKVfUZGryL2NHMEuXGjAuZhRKvV3fI7eB/aIjN6EWzKaR
-         vNtsbaFYZ6G8VF/XEGOGrOv97SE1bNGoDNBoWu89fpSQgEZCcOYfYg0+Ggs37ktzhvcS
-         If64MhVaqsV9muDGq8NNBb7uUcDc1OdDC0I/foAtG4GV2rSWpf7vQq6AWsRQIzfDM+pU
-         2LV0bG6CTJR5IQMrSHHoy9pELk5w4g9fbaM+ZtF5rnriVAdrvKdwTNhvsdggPyPjxdDW
-         LLGLomxAPvGV8Wry63UmE/aOsru9+AMFCQQLmzp3aNfWm8aam6PIIcnvuPm3ryb3b4hP
-         Vpjg==
+        bh=THoCMbnlktwyHzz2kQcX/L8gGaM+8iyGu2w9om/iuLU=;
+        b=dKm5OWmJQsF6k/C0FYYDGXAkFYXfu1u9RCVcsdSM/xSqSFH0evMElFMd1XWDg0ZIiz
+         a4uBOgyvYIpnsiLDMqlpaDsJl7hAuAnTxea451EieslBgRgVtLVd6cU9/kUaE+aLzAHB
+         bDtmOV5MpE0ahMXG4zmjAbIRWw/5meLtNDhVsGf0WkHF3sh/6gJ4rLcP1Xec9X2ccXI3
+         CGq+mIvJ40Gx0HMuAYZGLxcrSSuksO9MZWjB0Nymi1FJZbw4ZHsNRVRk3dlR1WJat3IN
+         XN6ba5YhM53fC/nZ8bgKZoxNicanpdP+I8tnkzIYwoO9w9m6ctTWId4gaB5WmqnsJR40
+         fn8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751492873; x=1752097673;
+        d=1e100.net; s=20230601; t=1751493653; x=1752098453;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NzvjFSwko+dMrc+VXfpopyy6igCQQKgZWqJ5p1e5f6w=;
-        b=pLVjgoiE7fmDMxHaVja5ioVQZf/oh5o4lI6jRgf/SkTowP87bG4wRH5T5P0ims45Jx
-         Q6qAbk4QBsTCHg9XahkLfbBT1Mw6ITaZK1HsRePrh09/O78ez/SL9LcAHYI/M6ruC3Uh
-         e29G3yCUPLOskldsB0dqWMqu/zSOdJK8Ngmu4hHEXo9YEBD5ymX7CyXdOHacBjTWd7Pp
-         kzs91A+0NN4lft+fctPUAm90DMd5qPzsg34vee6I6ED7WMYcJ2Bi2w5InY6TqDhfRv+E
-         eRYiRhBmdfzFOautDiExbHHzyIO8cF8j29xKQ7hZaX2jf+hWgomD9/5xhj3wInafAKEx
-         y1EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDddxioRNAoJDJkXih9HSGNkfTLQcTR2RN7KCO3EL8mRpihWX20MRDixJk9EnglVboSI7k3ZjV0MpZsA==@vger.kernel.org, AJvYcCVRgFmoTuzhBryo3YbJEEVYaAKmfjzlnmJk9M7wBE0/1gOfh+UW9CAwMuiS6Kb57zMpEQeqU8pD9k2C@vger.kernel.org, AJvYcCWw+nDJXUYfVNGllRcZ2+vGikPhMOMgwVV90i5eJAHRK68POIre867cvMnw0WRkKGaymdSSijAALRey@vger.kernel.org, AJvYcCXObC2MnaN2/OtlGJy9ecYiHWWy5iXwHBAvXURjUQA4ijvHXEy0jeYeFRrXsxT3mmQ2ZlFXAho0ll4d0dqzhw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze4GOGcxlaL2NEFG1CIFHMod+Lt66JYvfqhFOlACgms7eDZmnO
-	ZxY90bz8rhJZJ2BzPF9oVWW+wtwmyCG8vRgwIx6A6aZf/gCl5uasHcca9+PD7m3kONX2BKKwpEU
-	V+ndLAAz76FxJ+BgaRsucANFBcPDaDOU=
-X-Gm-Gg: ASbGnct1DSVu5PLmrV7Lfy6LG6zTD30tQc9iqqfXM/WblrsFKJQPrdAmsRhcUn3ZtX4
-	wVkaOUr9HB6XJJkbB+/eROUWLDscRDe0l/cb82TUT9/LWzP2xp/+TDVVA0fVhkcsOkYySFm2w/t
-	ZjVOgbVmbi5Xho1RBYmzxVtUIo7FnCweG/wui4BQbnuAhx/XhMdtEADAoqcbkmHN0dQs/bbw==
-X-Google-Smtp-Source: AGHT+IG8NcRgD8HjsYiMmdTDaNKZPb9NcZq/V1BCtOww+6YZ0E97J6rokogv4y/jJOKonqENm32mK1l2oO6j6tLbRnY=
-X-Received: by 2002:ac8:7f88:0:b0:4a7:8916:90a1 with SMTP id
- d75a77b69052e-4a97694b788mr64158191cf.22.1751492872931; Wed, 02 Jul 2025
- 14:47:52 -0700 (PDT)
+        bh=THoCMbnlktwyHzz2kQcX/L8gGaM+8iyGu2w9om/iuLU=;
+        b=ZwERqYGAWVz5RtBifYSI5VrERM+RPQW/jXkudPvOHcv2H+laGMUFnP+KmKOm0lZqUR
+         ekSGtUMxYQsezQTRk6mLyMr1dJaYGHnTVv6Fcw6qJa8/j5Xy+IYVlrwV5kZRuAj89g7z
+         TuXSHIEbpSEa3nmmQLPAG9KcXHh/E+itcq6ZVKGxoEzRNh4AhgVgCfFn+HK6uJbrFcVH
+         OELlDgmrO5oNakJVYlQz2VwFytLDAtsAi1lhQWvBmDHurM+0FkskxyavDJ6ApAENWjMt
+         3FotEtxGYnTTgz91FQ4B4d/pSHQgGjj88qoPv1Qko8IGmXpAm1Iq1IJQnQlggzcyCRFD
+         eTbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6IgJIjEGJmiNq/GbkkX/eDOuRrfyD73xl7Hujk2JoepbNXEvFqmMd2V/yfrfEE3CNyiOTwZm9qFiD@vger.kernel.org, AJvYcCU8XLgP4/HPIzWnJLUZQq1qeGV1SuAZQo4QngQI/NdqQvV4B+dcuitcSOaOK10nNft9G6ucr13Y4uf0oe/xNg==@vger.kernel.org, AJvYcCU9jWCzCqdg/XNq8qt6ccuu4XxPCZoO3qFUE2gEKJA1S/5kw66T4U7DhW9WQgzZmhg/5nKehV1a3CS8@vger.kernel.org, AJvYcCXm7zYHhktbUbFR5JGTcYlDt3UdZs2Qdpgi5W8o9emrRh0y5ZJccgc+1p9WcyM4uc7bKZxx4vsM5vUpmg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV7nI7b66FvFi/3Whu7CW5Jgnxgh5hYESO1wTPnBVvsJFT5USI
+	mmMGjp9io59eOcsEpiBWoWN6XhX4lvcQPlKkQqDVUsau1tOPhnmgEZUXlJ4Kkxa1948Z9mMqfVw
+	833Rk4zMka0uPU0b243z0a+cNnUkYHP/vSPlZ8jU=
+X-Gm-Gg: ASbGncvMQNhNLDGN+d2/g6XyABUzz63ViGg0LHnu5rD2+buDte2Z1C/eDpbp3hxuFVU
+	klEy5vnBO+5gnZumygjmPzemR9UgDQKnJpzbuZMnhTbbY7WkVPfbN/IfjMBmTXvR4somRpVKftS
+	qMo92W8NgG9oghhU1AiQ+RG68kSY8hvTjVySqrhHgrT/CX+3KP9Fir2IeQjwt01osqSuVN4Q==
+X-Google-Smtp-Source: AGHT+IGzkbGoHx67gm7//UOl9sXu9mntq0NbD7/FRK8AZGQcb3YRbyxMFYTrfA3GEzYiBVHJ4SFBTIK7amTWCmVYjGc=
+X-Received: by 2002:a05:622a:4c14:b0:48e:5cda:d04e with SMTP id
+ d75a77b69052e-4a976a53cb0mr67294621cf.36.1751493653206; Wed, 02 Jul 2025
+ 15:00:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606233803.1421259-6-joannelkoong@gmail.com>
- <aEZoau3AuwoeqQgu@infradead.org> <20250609171444.GL6156@frogsfrogsfrogs>
- <aEetuahlyfHGTG7x@infradead.org> <aEkHarE9_LlxFTAi@casper.infradead.org>
- <ac1506958d4c260c8beb6b840809e1bc8167ba2a.camel@kernel.org>
- <aFWlW6SUI6t-i0dN@casper.infradead.org> <CAJnrk1b3HfGOAkxXrJuhm3sFfJDzzd=Z7vQbKk3HO_JkGAxVuQ@mail.gmail.com>
- <aFuWhnjsKqo6ftit@infradead.org> <CAJnrk1Zud2V5fn5SB6Wqbk8zyOFrD_wQp7B5jDBnUXiGyiJPvQ@mail.gmail.com>
- <20250701054101.GE10035@frogsfrogsfrogs> <CAJnrk1bRL47BawgTCjLdrsuK=hpd+zkRwA+ZgLDUN7GzzJzNxw@mail.gmail.com>
-In-Reply-To: <CAJnrk1bRL47BawgTCjLdrsuK=hpd+zkRwA+ZgLDUN7GzzJzNxw@mail.gmail.com>
+References: <20250627070328.975394-1-hch@lst.de> <20250627070328.975394-2-hch@lst.de>
+ <aF601H1HVkw-g_Gk@bfoster> <20250630054407.GC28532@lst.de>
+ <aGKF6Tfg4M94U3iA@bfoster> <20250702181847.GL10009@frogsfrogsfrogs>
+In-Reply-To: <20250702181847.GL10009@frogsfrogsfrogs>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 2 Jul 2025 14:47:42 -0700
-X-Gm-Features: Ac12FXym-R9az5mneQ_EpRVW06KPBGyYF3nzRvjGnvd59Swbs2wunS06cNQoyGo
-Message-ID: <CAJnrk1bWe7MNQGrSDgRaX4L1fEcwqzz2tqOCKv8DfySnFS8GRQ@mail.gmail.com>
-Subject: Re: [PATCH v1 5/8] iomap: add iomap_writeback_dirty_folio()
+Date: Wed, 2 Jul 2025 15:00:42 -0700
+X-Gm-Features: Ac12FXyiBAM5F056BsVQ_D-n0BsEnWC_2Lt1EQ3hTmWssFKMH3Kv25uDtBPegLc
+Message-ID: <CAJnrk1YWjSO-FmnzHGRerBP6r6rPSAAm3MgUKfkr_AYjDJjUxA@mail.gmail.com>
+Subject: Re: [PATCH 01/12] iomap: pass more arguments using the iomap
+ writeback context
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Matthew Wilcox <willy@infradead.org>, 
-	Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	bernd.schubert@fastmail.fm, kernel-team@meta.com, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: Brian Foster <bfoster@redhat.com>, Christoph Hellwig <hch@lst.de>, 
+	Christian Brauner <brauner@kernel.org>, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 2, 2025 at 2:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
+On Wed, Jul 2, 2025 at 11:18=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
 >
-> On Mon, Jun 30, 2025 at 10:41=E2=80=AFPM Darrick J. Wong <djwong@kernel.o=
-rg> wrote:
-> >
-> > On Wed, Jun 25, 2025 at 09:44:31AM -0700, Joanne Koong wrote:
-> > > On Tue, Jun 24, 2025 at 11:26=E2=80=AFPM Christoph Hellwig <hch@infra=
-dead.org> wrote:
-> > > >
-> > > > On Tue, Jun 24, 2025 at 10:26:01PM -0700, Joanne Koong wrote:
-> > > > > > The question is whether this is acceptable for all the filesyst=
-em
-> > > > > > which implement ->launder_folio today.  Because we could just m=
-ove the
-> > > > > > folio_test_dirty() to after the folio_lock() and remove all the=
- testing
-> > > > > > of folio dirtiness from individual filesystems.
-> > > > >
-> > > > > Or could the filesystems that implement ->launder_folio (from wha=
-t I
-> > > > > see, there's only 4: fuse, nfs, btrfs, and orangefs) just move th=
-at
-> > > > > logic into their .release_folio implementation? I don't see why n=
-ot.
-> > > > > In folio_unmap_invalidate(), we call:
-> > > >
-> > > > Without even looking into the details from the iomap POV that basic=
-ally
-> > > > doesn't matter.  You'd still need the write back a single locked fo=
-lio
-> > > > interface, which adds API surface, and because it only writes a sin=
-gle
-> > > > folio at a time is rather inefficient.  Not a deal breaker because
-> > > > the current version look ok, but it would still be preferable to no=
-t
-> > > > have an extra magic interface for it.
-> > > >
+> On Mon, Jun 30, 2025 at 08:41:13AM -0400, Brian Foster wrote:
+> > On Mon, Jun 30, 2025 at 07:44:07AM +0200, Christoph Hellwig wrote:
+> > > On Fri, Jun 27, 2025 at 11:12:20AM -0400, Brian Foster wrote:
+> > > > I find it slightly annoying that the struct name now implies 'wbc,'
+> > > > which is obviously used by the writeback_control inside it. It woul=
+d be
+> > > > nice to eventually rename wpc to something more useful, but that's =
+for
+> > > > another patch:
 > > >
-> > > Yes but as I understand it, the focus right now is on getting rid of
-> > > ->launder_folio as an API. The iomap pov imo is a separate issue with
-> > > determining whether fuse in particular needs to write back the dirty
-> > > page before releasing or should just fail.
+> > > True, but wbc is already taken by the writeback_control structure.
+> > > Maybe I should just drop the renaming for now?
+> > >
 > >
-> > This might not help for Joanne's case, but so far the lack of a
-> > launder_folio in my fuse+iomap prototype hasn't hindered it at all.
-> > From what I can tell it's ok to bounce EBUSY back to dio callers...
+> > Yeah, that's what makes it confusing IMO. writeback_ctx looks like it
+> > would be wbc, but it's actually wpc and wbc is something internal. But =
+I
+> > dunno.. it's not like the original struct name is great either.
 > >
-> > > btrfs uses ->launder_folio() to free some previously allocated
-> > > reservation (added in commit 872617a "btrfs: implement launder_folio
-> > > for clearing dirty page reserve") so at the very least, that logic
-> > > would need to be moved to .release_folio() (if that suffices? Adding
-> > > the btrfs group to cc). It's still vague to me whether
-> > > fuse/nfs/orangefs need to write back the dirty page, but it seems fin=
-e
-> >
-> > ...but only because a retry will initiate another writeback so
-> > eventually we can make some forward progress.  But it helps a lot that
-> > fuse+iomap is handing the entire IO stack over to iomap.
-> >
-> > > to me not to - as I understand it, the worst that can happen (and
-> > > please correct me if I'm wrong here, Matthew) from just failing it
-> > > with -EBUSY is that the folio lingers longer in the page cache until
-> > > it eventually gets written back and cleared out, and that only happen=
-s
-> > > if the file is mapped and written to in that window between
-> > > filemap_write_and_wait_range() and unmap_mapping_folio(). afaics, if
-> > > fuse/nfs/orangefs do need to write back the dirty folio instead of
-> > > failing w/ -EBUSY, they could just do that logic in .release_folio.
-> >
-> > What do you do in ->release_folio if writeback fails?  Redirty it and
-> > return false?
+> > I was thinking maybe rename the wpc variable name to something like
+> > wbctx (or maybe wbctx and wbctl? *shrug*). Not to say that is elegant b=
+y
+> > any stretch, but just to better differentiate from wbc/wpc and make the
+> > code a little easier to read going forward. I don't really have a stron=
+g
+> > opinion wrt this series so I don't want to bikeshed too much. Whatever
+> > you want to go with is fine by me.
 >
-> Yeah, I was thinking we just redirty it and return false. I don't
-> think that leads to any deviation from existing behavior (eg in
-> folio_unmap_invalidate(), a failed writeback will return -EBUSY
-> regardless of whether the writeback attempt happens from
-> ->launder_folio() or ->release_folio()).
+> I'd have gone with iwc or iwbc, but I don't really care that much. :)
+>
+> Now I'm confused because I've now seen the same patch from joanne and
+> hch and don't know which one is going forward.  Maybe I should just wait
+> for a combined megaseries...
 
-Or actually I guess the one deviation is that with ->launder_folio()
-it can return back a custom error code (eg -ENOMEM) to
-folio_unmap_invalidate() whereas release_folio() errors will default
-to -EBUSY, but the error code propagated to folio->mapping will be the
-same.
+Christoph's is the main source of truth and mine is just pulling his
+patches and putting the fuse changes on top of that :) For the v3 fuse
+iomap patchset [1], the iomap patches in that were taken verbatim from
+his "refactor the iomap writeback code v2" patchset [2].
+
+
+[1] https://lore.kernel.org/linux-fsdevel/20250624022135.832899-1-joannelko=
+ong@gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/20250617105514.3393938-1-hch@lst.=
+de/
+
+>
+> --D
+>
+> > Brian
 > >
-> > --D
+> >
 
