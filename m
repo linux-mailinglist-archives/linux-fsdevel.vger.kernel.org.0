@@ -1,107 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-53653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80E8AF5A36
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 15:54:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7E6AF5A39
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 15:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A845446CD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 13:52:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FA147AFB77
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 13:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313DB28312B;
-	Wed,  2 Jul 2025 13:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D0127A477;
+	Wed,  2 Jul 2025 13:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m5bgYAUQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISemkQsk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A9027CCCD
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 13:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09BD2652BD;
+	Wed,  2 Jul 2025 13:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751464257; cv=none; b=XSA/oGeYmAFpJe5FBmtJttQ/SeQ1HLgvN9W4/hMfRiGf2kBYCmx8noEqlsbKb8lY3I7NUAwsGWJQ6ImhBCCGDH1xywz4ZF5Nhy3eXod/fbTG1yJO1zYYVlKAqlMlnF7hfn73uy5y3xpshfekOOYVUqzoZZSeXQj+iLfL6ClTuE8=
+	t=1751464433; cv=none; b=IvY4Cep4jAdPbw0ia2kj2DVFbJqANiAFBxxJLW/V/nuMaun8XUAZg4BcBa6DjGPeGAdB3pIb5qcDZbhCIE5ceuer6Qxsbd2iUZ2xbkKUvwWTKE+nXceDpyRyvS4CIHIgk2e4D2rQthtnVvCxqTmDWeyz1euRURE+AOd/Cj6QMgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751464257; c=relaxed/simple;
-	bh=LDP9lqebG32wAFEhL2w8nw57/9Ji2DO8m3R5qWReTSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QZGuQ/F4WmUfAAkfEEc5/xkgl2iLeq3qK4w39eV4Kcp624kX3Nf3gL/gSKWeDH75q+PGV21j7PK12uKaFWFV56R5jlhHFpTBOx7yy5nrCBERp7lTv5YBC1voLUW4Re+kVzTYMVp8EUAVnpY9/hijBe6VoLQgQwoHqFsuD8yCPUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m5bgYAUQ; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3df3ce3ec91so17082245ab.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 06:50:55 -0700 (PDT)
+	s=arc-20240116; t=1751464433; c=relaxed/simple;
+	bh=oL5ROgMkCNu3a/za1C5UVisYMIlOPy2PoMgM8u/9u5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eQE26aPw/VB0kyO9Q9aa/7i5Q8T9jqnvHwkKHodwjF0V7LUqJWIEseEbcnhgIKv2imTEuZ+hFxloD/LRzxo6WC5r7moQKYezOrUXADzevoSmL6TupPaQEmSl+jPJe7gIafoepuZ4CUqASj45934iJcnqo9IAYhmt1sFISqZBQW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISemkQsk; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so7435920b3a.0;
+        Wed, 02 Jul 2025 06:53:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751464255; x=1752069055; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mLW/0N0XpNzMpPt8g9m2q67+nQhviZAqExsESNfUAQI=;
-        b=m5bgYAUQLT+PjVW8wPfjV61Jt7v0OLfTLV1EiNmwaZd89b8RElrTO2/Hk8MNzpUw+J
-         hzcMB5+f9mUP2pASWX/i/03+Ou+PlqEMtqhOCJqMaZtA/zgiKSZf2bystbninRZJW7dW
-         Y5n/Ib3KFCbNN8vK7CZoMcgoRukfXauOiniWvMwyRs0OT/dUZyiGtUUfMYcu38v8xP1t
-         Zn0xowdZxGai+bqHO5Kg/uvLK7KHukJ7x08XOt3cmUAoMRlNo8Lp36/vOdFEkFV7wOxN
-         p83hTqJwT/kudoQieOAj81YMytiQesmfqkc1UEEdJILG86ADMGi7QKYUYjBSwP9Q30qc
-         hZ4Q==
+        d=gmail.com; s=20230601; t=1751464431; x=1752069231; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZDvTF9WG0Sc0wOYg/V56v6aDtZy6k2fKHx6MlmQhok=;
+        b=ISemkQskYYERDqsm1ksklgeIPgEpEVRSj54uApu8AJNxg9UuqhMPcNYLlKTCp8OXq9
+         5EdV5CS9zoyoD5h60YmhooziOM7k0WEmFrJZ7GW4r34FPAviRkDb48Y/381edFii0SaS
+         UzQePhwjPJJr9iPXDE5w8P4nPJKASxDj6BTIwm389T7n5Q8oXnGGUQF/rLCImZcAzaOV
+         356Rlo8/GWfLF+JR2NPJV2zqY08uwGRTl3icGRxGFI2hTdToIlRGXdgACVI3BFF/xf/O
+         JnYVw62Ok2YQTfUOvvuyelCs8mE+UXEK6gkpjXg+159X484g+RrWVEC1EWkODhYVgWw5
+         zfyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751464255; x=1752069055;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mLW/0N0XpNzMpPt8g9m2q67+nQhviZAqExsESNfUAQI=;
-        b=UpqE0eil/PyTlPh03r24OUj6fE/KiLPjBI9+qEgOBmoMYCIi+mOPS/bXKu4An2cF3a
-         pi0JYFIYFi2UHbdXGHsaeROf4TqsOPEtLz/B8Df2Qp8D/bxbcpD8JaJpemgdyzQSyJxB
-         bAoI4M9kn0YD9wHL9jtqVDdMSQgBcEwH7rdvqAuAIzxwrZkVpy8QN2MetJS+0xacdX9w
-         unGm5zo64N3wq828EaunsbKEPwHWxtLLEcHsUF3q1FGmC1bPYLWJcss+t1OcXDHLOCBu
-         wDbIZByDcbcIL8fVZvcnx65fmMseu1vRVvMuqLGX8BktQSDJ9NWqRfxKvImnsw0ST6lO
-         JQEg==
-X-Gm-Message-State: AOJu0Yy6KKE01A21xiDvNVgcqXqVFGhnKOipUTw16mk+7P9MMjYjFhO1
-	9eFhFCFrL2ub+B8/OertDo4nsl8zRUIzrOowiBF5DKUVYSRy5WmKAfSpzSb9wFgcXaVL6usYziz
-	kaREF
-X-Gm-Gg: ASbGncvY7lJL81/36pVmaLP+lrFL/clMRFYR13RP+5qX+Wwi5Ulh/QKQzVLRkzaSq5O
-	QNwXY5I3Pj6Vl8/OxIDX9eVKHY2A2y3DCnIy/3LP1nPPh4S3IirJJUnojne8V/F8lq1MmPJEGl+
-	Ku36+Lca89tgbFnJYqsXPGNcCyQE9Y3dsjJ+aCCmJAZOkbjrzk8erGYnOQy7a46a8hAez4owyx5
-	b7blSkHnfAeARPjTMHzdYQyaqNm7bxF0KCPi91lfOdZ5/CVgG+ASO453Kmd8D9xSjn6bbDRFFKP
-	gQPfFfq5uV4YfhP0pJxKL+2F0Ru9nlrSEs1nRPL/LaKE6vGeQg0zY0J5NgrQsxX4l6e0rA==
-X-Google-Smtp-Source: AGHT+IHAsltQpbQrRTRHfn1V7UB4MacxzVGxuDT5b3XXV6LL/xGqcw1VGkZtnTQZ+XrujaVF8jD/yQ==
-X-Received: by 2002:a05:6e02:17c7:b0:3dd:f4d5:1c1a with SMTP id e9e14a558f8ab-3e0549f29d8mr32106745ab.17.1751464255008;
-        Wed, 02 Jul 2025 06:50:55 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3df49fed018sm35911325ab.23.2025.07.02.06.50.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 06:50:54 -0700 (PDT)
-Message-ID: <5838f57d-b3bd-4db1-b762-847f970ab60d@kernel.dk>
-Date: Wed, 2 Jul 2025 07:50:53 -0600
+        d=1e100.net; s=20230601; t=1751464431; x=1752069231;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ZDvTF9WG0Sc0wOYg/V56v6aDtZy6k2fKHx6MlmQhok=;
+        b=Q/8MPw3WEhLfpEhTtgnyPudv5nCoDCBbUXeMBu3fAaFlS7ZKCBoV0me+22i4ln6mIk
+         veW/L0LYX/GAB5SkhApfdfSaXOR9wuMWhoE6GLAiFDpuVkKFiUKld3+LTPSMiBw+Tohb
+         5DVKQD02uByzIVDHibqL4JVwm8SNGH24l52vDj0ce4rVtTQo/iZepugl6o30HGOAREW2
+         Npsds/UFIRZ2jH3inbefhcG+tD7zz61uIj90yOZ6CxJIlevrJliN5nzjL37+G9U5sKec
+         1aVbCwg7D2g8+ueWT9iBnhN8eq+6OPfPfJBUhDHxoVWfXBXlVFSzdKhjkNlEh1jqw38s
+         yBVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5HZgX+OmfUQ0pCRXAmtSHHwPfHcLZXwjWnN53B1dPA09+9GIM1ZAWdmy0ik6cNoXE/ZsiG5Ic04oC/Vpo@vger.kernel.org, AJvYcCWTqFlHHTMVhGNiDa+NqkWVZPQP3Wd63R86l7mROSeTILrcrDt/qJuQdp39qMTyuebTRqPeeIoyfa+z2yvl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbNLnfSf7js6G7ivKNrQKqeiUbSA+RRaGrmLwAzyaOCJ4CH8iu
+	dSNisRvvfCgBpLDp8+F9fL9f4jh2O7KdplEdA23n66EnTk1xFsfpo3Vk
+X-Gm-Gg: ASbGncvm/Yb2b02Eb7vWT7LvXF5VmSV4ia9U+qDEE1Q/8CTcFpL1P1HCbsWzhJaGKS2
+	/4jcTT9YbfpqYwDLtHkjjAnuyTvf/bpF7hn2btTsJReMzuQFUe/e1kBJ3N1kpsIsnu/Usc+WeQA
+	r+6oY4wZK1jUey6VI+GkeR3ens+2CxExGqeRjwnxf2JMpuRGVcNmykVVUN4FIv96ebUe5xc7ftP
+	fFcIOAyrVGpDDL8ov1ZIsdwvbJ700f969OZi8Y5XwFNdwOIS50shidHne/TnbxeYQqARSnOSvJG
+	QSbwYBHKbp+NFEERdk7+7hDtGqbydO/ghgQlyiKiq+3Ews2GYpQ4HPC4jUwYNDF6z8mbm1Jg6T6
+	k
+X-Google-Smtp-Source: AGHT+IFY/fMo+EcugOFY0yLHK6w4ow8m13WDFJmbyFs8qEuuD7i0KEMYSTC3rgcjlAP/Ax5lXWr8rw==
+X-Received: by 2002:a05:6a21:4ccc:b0:21a:ed12:bdf9 with SMTP id adf61e73a8af0-222d7df6094mr5135889637.17.1751464431135;
+        Wed, 02 Jul 2025 06:53:51 -0700 (PDT)
+Received: from localhost.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3214d9esm12910305a12.71.2025.07.02.06.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 06:53:50 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: akpm@linux-foundation.org
+Cc: david@redhat.com,
+	andrii@kernel.org,
+	osalvador@suse.de,
+	Liam.Howlett@Oracle.com,
+	surenb@google.com,
+	christophe.leroy@csgroup.eu,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	syzbot+6246a83e7bd9f8a3e239@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH next] mm/maps: move kmalloc() call location in do_procmap_query() out of RCU critical section
+Date: Wed,  2 Jul 2025 22:53:32 +0900
+Message-ID: <20250702135332.291866-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] anon_inode: rework assertions
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, stable@kernel.org
-References: <20250702-work-fixes-v1-1-ff76ea589e33@kernel.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250702-work-fixes-v1-1-ff76ea589e33@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/2/25 3:23 AM, Christian Brauner wrote:
-> Making anonymous inodes regular files comes with a lot of risk and
-> regression potential as evidenced by a recent hickup in io_uring. We're
-> better of continuing to not have them be regular files. Since we have
-> S_ANON_INODE we can port all of our assertions easily.
+In do_procmap_query(), we are allocating name_buf as much as name_buf_sz
+with kmalloc().
 
-Looks good to me and eases my worries on the S_IFREG addition.
+However, due to the previous commit eff061546ca5 
+("mm/maps: execute PROCMAP_QUERY ioctl under per-vma locks"),
+the location of kmalloc() is located inside the RCU critical section.
 
-Acked-by: Jens Axboe <axboe@kernel.dk>
+This causes might_sleep_if() to be called inside the RCU critical section,
+so we need to move the call location of kmalloc() outside the RCU critical
+section to prevent this.
 
--- 
-Jens Axboe
+Reported-by: syzbot+6246a83e7bd9f8a3e239@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=6246a83e7bd9f8a3e239
+Fixes: eff061546ca5 ("mm/maps: execute PROCMAP_QUERY ioctl under per-vma locks")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ fs/proc/task_mmu.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f3659046efb7..42b0224c6ac9 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -595,6 +595,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+ 	char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
+ 	__u64 usize;
+ 	int err;
++	size_t name_buf_sz;
+ 
+ 	if (copy_from_user(&usize, (void __user *)uarg, sizeof(usize)))
+ 		return -EFAULT;
+@@ -621,12 +622,18 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+ 	if (!mm || !mmget_not_zero(mm))
+ 		return -ESRCH;
+ 
+-	err = query_vma_setup(priv);
+-	if (err) {
++	name_buf_sz = min_t(size_t, PATH_MAX, karg.vma_name_size);
++
++	name_buf = kmalloc(name_buf_sz, GFP_KERNEL);
++	if (!name_buf) {
+ 		mmput(mm);
+-		return err;
++		return -ENOMEM;
+ 	}
+ 
++	err = query_vma_setup(priv);
++	if (err)
++		goto fail_vma_setup;
++
+ 	vma = query_matching_vma(priv, karg.query_addr, karg.query_flags);
+ 	if (IS_ERR(vma)) {
+ 		err = PTR_ERR(vma);
+@@ -679,20 +686,12 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+ 	}
+ 
+ 	if (karg.vma_name_size) {
+-		size_t name_buf_sz = min_t(size_t, PATH_MAX, karg.vma_name_size);
+ 		const struct path *path;
+ 		const char *name_fmt;
+ 		size_t name_sz = 0;
+ 
+ 		get_vma_name(vma, &path, &name, &name_fmt);
+ 
+-		if (path || name_fmt || name) {
+-			name_buf = kmalloc(name_buf_sz, GFP_KERNEL);
+-			if (!name_buf) {
+-				err = -ENOMEM;
+-				goto out;
+-			}
+-		}
+ 		if (path) {
+ 			name = d_path(path, name_buf, name_buf_sz);
+ 			if (IS_ERR(name)) {
+@@ -733,6 +732,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+ 
+ out:
+ 	query_vma_teardown(priv);
++fail_vma_setup:
+ 	mmput(mm);
+ 	kfree(name_buf);
+ 	return err;
+--
 
