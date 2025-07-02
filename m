@@ -1,58 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-53700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EDAEAF60EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 20:15:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D740AF60FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 20:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED423AEC6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 18:14:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 601764A771D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 18:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC8B315508;
-	Wed,  2 Jul 2025 18:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE4030E843;
+	Wed,  2 Jul 2025 18:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oraOvWI6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq8TPn5Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF0021770C;
-	Wed,  2 Jul 2025 18:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB0219A;
+	Wed,  2 Jul 2025 18:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751480114; cv=none; b=q205pFGE2FBg06U0TXcw0qfsyTkMOzn2h0WMnoZ6WgkMTGPB1sug7AsNdvyZaRuimB2UBERZRpvjdwEHBcmzGCb3t3ggBQIMiiv2DjMYUIbuFmkJyRoYu22be7t66ZFCIQQ2o+6+5SB9sQY6Ain8xUo63BPD2RWcDDXjFkzIfIQ=
+	t=1751480328; cv=none; b=Ljhc3ovaQhOGutnZJyixd7WjOBk+gshrh4tCAHCVqpJuv5CoNEa29KZHIcACpduBZx7vD7fyytDljhECiYnNLwFqP8532J/0oN8VPVz1k8YLbiUSbig9qNztcm2uMwP/kh7U3KxjlOLip10jcp2RjvV/q3CvuL9rVBrASp3S1kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751480114; c=relaxed/simple;
-	bh=CNiTdgDPyHA5SNxqNVT3s7Ja4sppZ88um/f5Spk4PGw=;
+	s=arc-20240116; t=1751480328; c=relaxed/simple;
+	bh=IUf5SnET6UqfSq+SGrTMn7zzbo0/g6VkyLbiNpv2AbU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXD6552aAQQe3qltjnv5byJjZEfYSSzeBwTDVZgWQwRPQk+B52cbic+gE9d4ygyvkPa9toxN8QNivz96PGJdnd55AD0kVDCbES3SyKFKApXD2UQoVbOdQeJUwwwZS2X10vFiuaXraGwZzDdzHNacWLx8CxCVEXR/rmtiTqiI410=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oraOvWI6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20B64C4CEE7;
-	Wed,  2 Jul 2025 18:15:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQnlUj3pBv3dZz9MLE30xgD+ERo6wpoENV7o+gEtD0WFCAWZStzqAtTXS8G1oe0vzdPz9nzQaBTjsUhoSSAThbNYHqE7bqkg35OiVOEniG98YL+sQaoqKm8d7h5xt6P7mblQpWX9IXzEZOaR4fMtnTG5X1VdYGm681qB7G4XpXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq8TPn5Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B30C4CEE7;
+	Wed,  2 Jul 2025 18:18:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751480114;
-	bh=CNiTdgDPyHA5SNxqNVT3s7Ja4sppZ88um/f5Spk4PGw=;
+	s=k20201202; t=1751480327;
+	bh=IUf5SnET6UqfSq+SGrTMn7zzbo0/g6VkyLbiNpv2AbU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oraOvWI6e6AIuo+hDQPK4DISnr7kJk+41gEJsNulSMCVOmZxllsuCwASjFsMLz9ey
-	 LkSOMHw/BXwXQ9iLokaXD9XPLP2wImzmqgzNvJ7U9YDubVqy8ei9HTvtqcd5wtiL7A
-	 CHGFzQjFY9a5mScABY3LiTh7b/g1x8QM9EMZ49t89nJyRhT7LFcKDjmu0OXx24tJNq
-	 KLCoRCoXaKgbJJz/khXOk5Q+7XyHWFqesRhRIPIZz8DCgY0GVmCR3S+/K/FDP7Q/m7
-	 ERcv/ePBaoPI/elB8uTTB1CHx+ZKOeKM9j/p+YUuBuQhyghZsZW/so8wJJ3WozDLbY
-	 fKAcMye1hNjDA==
-Date: Wed, 2 Jul 2025 11:15:13 -0700
+	b=Gq8TPn5YFpubZZUlsZFOxjtVxCmDcYElfghlbDUWYFZTkBKOIJvJu9FMYWrVo/bVb
+	 aeOLEzi530YlTHgGgtNfCln9f95p4c4xZtsziYHM5UzBAYu/Kw1r2WBHPbNgW/pBk+
+	 xY/Sgf+n8Mqs91nOIpNSdiIc5AdQ7WDMfwWkzVLOyDO3HeHJ/nmId62y97iVymtjpX
+	 rLkICTigoWRXRE1Ln77BhfYTfs7Wl7FQks619FCyGRX6qY5eQJjLMRCzsFLu/x0Fur
+	 xd93qbx6B/SlPsrq253ksQh492E6huVuRc8xT/D6mkFvkR/4Qb+Gk3qfvGu2xNmfPk
+	 w3S/juSTcY23w==
+Date: Wed, 2 Jul 2025 11:18:47 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, miklos@szeredi.hu,
-	brauner@kernel.org, anuj20.g@samsung.com, linux-xfs@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
-	gfs2@lists.linux.dev, kernel-team@meta.com
-Subject: Re: [PATCH v3 16/16] fuse: refactor writeback to use
- iomap_writepage_ctx inode
-Message-ID: <20250702181513.GK10009@frogsfrogsfrogs>
-References: <20250624022135.832899-1-joannelkoong@gmail.com>
- <20250624022135.832899-17-joannelkoong@gmail.com>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
+	Joanne Koong <joannelkoong@gmail.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH 01/12] iomap: pass more arguments using the iomap
+ writeback context
+Message-ID: <20250702181847.GL10009@frogsfrogsfrogs>
+References: <20250627070328.975394-1-hch@lst.de>
+ <20250627070328.975394-2-hch@lst.de>
+ <aF601H1HVkw-g_Gk@bfoster>
+ <20250630054407.GC28532@lst.de>
+ <aGKF6Tfg4M94U3iA@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,124 +65,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250624022135.832899-17-joannelkoong@gmail.com>
+In-Reply-To: <aGKF6Tfg4M94U3iA@bfoster>
 
-On Mon, Jun 23, 2025 at 07:21:35PM -0700, Joanne Koong wrote:
-> struct iomap_writepage_ctx includes a pointer to the file inode. In
-> writeback, use that instead of also passing the inode into
-> fuse_fill_wb_data.
+On Mon, Jun 30, 2025 at 08:41:13AM -0400, Brian Foster wrote:
+> On Mon, Jun 30, 2025 at 07:44:07AM +0200, Christoph Hellwig wrote:
+> > On Fri, Jun 27, 2025 at 11:12:20AM -0400, Brian Foster wrote:
+> > > I find it slightly annoying that the struct name now implies 'wbc,'
+> > > which is obviously used by the writeback_control inside it. It would be
+> > > nice to eventually rename wpc to something more useful, but that's for
+> > > another patch:
+> > 
+> > True, but wbc is already taken by the writeback_control structure.
+> > Maybe I should just drop the renaming for now?
+> > 
 > 
-> No functional changes.
+> Yeah, that's what makes it confusing IMO. writeback_ctx looks like it
+> would be wbc, but it's actually wpc and wbc is something internal. But I
+> dunno.. it's not like the original struct name is great either.
 > 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> I was thinking maybe rename the wpc variable name to something like
+> wbctx (or maybe wbctx and wbctl? *shrug*). Not to say that is elegant by
+> any stretch, but just to better differentiate from wbc/wpc and make the
+> code a little easier to read going forward. I don't really have a strong
+> opinion wrt this series so I don't want to bikeshed too much. Whatever
+> you want to go with is fine by me.
 
-Looks good,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+I'd have gone with iwc or iwbc, but I don't really care that much. :)
+
+Now I'm confused because I've now seen the same patch from joanne and
+hch and don't know which one is going forward.  Maybe I should just wait
+for a combined megaseries...
 
 --D
 
-> ---
->  fs/fuse/file.c | 27 ++++++++++++---------------
->  1 file changed, 12 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 865d04b8ef31..4f17ba69ddfc 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -2070,16 +2070,16 @@ struct fuse_fill_wb_data {
->  	unsigned int nr_bytes;
->  };
->  
-> -static bool fuse_pages_realloc(struct fuse_fill_wb_data *data)
-> +static bool fuse_pages_realloc(struct fuse_fill_wb_data *data,
-> +			       unsigned int max_pages)
->  {
->  	struct fuse_args_pages *ap = &data->wpa->ia.ap;
-> -	struct fuse_conn *fc = get_fuse_conn(data->inode);
->  	struct folio **folios;
->  	struct fuse_folio_desc *descs;
->  	unsigned int nfolios = min_t(unsigned int,
->  				     max_t(unsigned int, data->max_folios * 2,
->  					   FUSE_DEFAULT_MAX_PAGES_PER_REQ),
-> -				    fc->max_pages);
-> +				    max_pages);
->  	WARN_ON(nfolios <= data->max_folios);
->  
->  	folios = fuse_folios_alloc(nfolios, GFP_NOFS, &descs);
-> @@ -2096,10 +2096,10 @@ static bool fuse_pages_realloc(struct fuse_fill_wb_data *data)
->  	return true;
->  }
->  
-> -static void fuse_writepages_send(struct fuse_fill_wb_data *data)
-> +static void fuse_writepages_send(struct inode *inode,
-> +				 struct fuse_fill_wb_data *data)
->  {
->  	struct fuse_writepage_args *wpa = data->wpa;
-> -	struct inode *inode = data->inode;
->  	struct fuse_inode *fi = get_fuse_inode(inode);
->  
->  	spin_lock(&fi->lock);
-> @@ -2134,7 +2134,8 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
->  		return true;
->  
->  	/* Need to grow the pages array?  If so, did the expansion fail? */
-> -	if (ap->num_folios == data->max_folios && !fuse_pages_realloc(data))
-> +	if (ap->num_folios == data->max_folios &&
-> +	    !fuse_pages_realloc(data, fc->max_pages))
->  		return true;
->  
->  	return false;
-> @@ -2147,7 +2148,7 @@ static ssize_t fuse_iomap_writeback_range(struct iomap_writepage_ctx *wpc,
->  	struct fuse_fill_wb_data *data = wpc->wb_ctx;
->  	struct fuse_writepage_args *wpa = data->wpa;
->  	struct fuse_args_pages *ap = &wpa->ia.ap;
-> -	struct inode *inode = data->inode;
-> +	struct inode *inode = wpc->inode;
->  	struct fuse_inode *fi = get_fuse_inode(inode);
->  	struct fuse_conn *fc = get_fuse_conn(inode);
->  	loff_t offset = offset_in_folio(folio, pos);
-> @@ -2165,7 +2166,7 @@ static ssize_t fuse_iomap_writeback_range(struct iomap_writepage_ctx *wpc,
->  	iomap_start_folio_write(inode, folio, 1);
->  
->  	if (wpa && fuse_writepage_need_send(fc, folio, offset, len, ap, data)) {
-> -		fuse_writepages_send(data);
-> +		fuse_writepages_send(inode, data);
->  		data->wpa = NULL;
->  		data->nr_bytes = 0;
->  	}
-> @@ -2199,7 +2200,7 @@ static int fuse_iomap_writeback_submit(struct iomap_writepage_ctx *wpc,
->  
->  	if (data->wpa) {
->  		WARN_ON(!data->wpa->ia.ap.num_folios);
-> -		fuse_writepages_send(data);
-> +		fuse_writepages_send(wpc->inode, data);
->  	}
->  
->  	if (data->ff)
-> @@ -2218,9 +2219,7 @@ static int fuse_writepages(struct address_space *mapping,
->  {
->  	struct inode *inode = mapping->host;
->  	struct fuse_conn *fc = get_fuse_conn(inode);
-> -	struct fuse_fill_wb_data data = {
-> -		.inode = inode,
-> -	};
-> +	struct fuse_fill_wb_data data = {};
->  	struct iomap_writepage_ctx wpc = {
->  		.inode = inode,
->  		.iomap.type = IOMAP_MAPPED,
-> @@ -2242,9 +2241,7 @@ static int fuse_writepages(struct address_space *mapping,
->  static int fuse_launder_folio(struct folio *folio)
->  {
->  	int err = 0;
-> -	struct fuse_fill_wb_data data = {
-> -		.inode = folio->mapping->host,
-> -	};
-> +	struct fuse_fill_wb_data data = {};
->  	struct iomap_writepage_ctx wpc = {
->  		.inode = folio->mapping->host,
->  		.iomap.type = IOMAP_MAPPED,
-> -- 
-> 2.47.1
+> Brian
 > 
 > 
 
