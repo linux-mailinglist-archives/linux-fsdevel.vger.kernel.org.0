@@ -1,136 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-53595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD35CAF0B4B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 08:09:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51EC1AF0C2D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 09:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 715B57A238D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 06:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBB04E0F25
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 07:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1685F219A7E;
-	Wed,  2 Jul 2025 06:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CB9225A38;
+	Wed,  2 Jul 2025 07:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LpA8JIrQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMsVscb8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889AB1F8733;
-	Wed,  2 Jul 2025 06:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90468DF42;
+	Wed,  2 Jul 2025 07:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751436525; cv=none; b=R+MNe46x7uvt8vgb/4I2FnF+Orm57UBV3wWVJOE+Oos5WtwadmXfPuJM28HFkuarny+pe33s6Dh0usYKmbegcKzDDqG3MLCHQDvfC8PmP1BuPWGuMpKkpknqmUXW/EclrhL4FoEGAbCo1YzOLTEMnMpd/beCUcc6odXrg16rVKg=
+	t=1751439825; cv=none; b=jhsJ5MJQ3x+Q/Z4IgiF6o/obEJpOGLrugaNfMffHH3D6Cu6nzNBBEOpkUTfbdEaRfz8vKlJcJYPtwIBtS3dAzZFXyj9Awei+UrtvvzhyBNy/VQkorVZN6FdjB2v/bwGWIGOO2tbHdgcJtpqvxzGAEZe/TNwQdM1HuU694+DMnv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751436525; c=relaxed/simple;
-	bh=Av1Oiy/xN0m8B+/PemSUH/jn3tcD8byDJ6A5jomGNlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nLqvA63gVG2FJH4ZcatjgT5uNUbuDr6d+eMzflmN9gmsAmhameRc3/gA6HHAHYwtFTyUZdvPYJP+PlerbuCLacv9xLGLh4imyv5PfeeYEMXDKm+uG5MYmQVFO+e8WorsiJyuPM9C3mCilaT1nhe4e3G9JcpwJQIGEy5qr3ZyHuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LpA8JIrQ; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751436512; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=sMvhXIyNxqo7UGxmugSbsWYEXKpzsVkdC7WrW9hFCPQ=;
-	b=LpA8JIrQAz9iLlpc6Ue4Ue81zK1QQMvHzesh0taj6iuek9TGd0d6OaNuGqYplntopvxdT4Jjc+0ODaeVgeYete4Jkz2F3iXSHI2K8VaqF10RVAZa3vtfHGKEtVhQjdCXuQLAwynPIqpMx4Ae50tAlw/5zWOLTK+qk/XsMDANyg0=
-Received: from 30.221.128.110(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WgZlKp0_1751436511 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 02 Jul 2025 14:08:32 +0800
-Message-ID: <881f7b6d-c9c3-4529-9256-b812d2e5380a@linux.alibaba.com>
-Date: Wed, 2 Jul 2025 14:08:31 +0800
+	s=arc-20240116; t=1751439825; c=relaxed/simple;
+	bh=V6vCs0c8yyA0t3ljD5Y3SHjSTlVe2lP5Rg5mSGLSYDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rKYellTlIRt+SJqaRugWFIMeS7Hbca9ma7FR7wJh3+PZruRM0aH7P80YqNQbezr00bAsxgV449A7zU41wijWOReIjvWKBjOIbUPazHht2JaTFh5UCgmPtMhp2cNb3t3bFYFsx69TegFCVi7eq3XftORnY+mFR81NHCbSlvfQGBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMsVscb8; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0ccfd5ca5so572832466b.3;
+        Wed, 02 Jul 2025 00:03:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751439822; x=1752044622; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0frIadAGCzwpkQRRNha5PFzuZ3qy68wHuqlhythiwpU=;
+        b=eMsVscb85RgAXMQNjadqpKttgQulmti9h106KHfljhMmtCFbsTU/z9zkhWLEmpPG5Q
+         TVEtTKZj8Qt8P6a8b0Qir8yoNp5t5sb8XYff1AiqP57h2gFJ+iMQ+7LeA5waWNJnguIg
+         06Y1KLlrNCGYqW9QR2wABs6O6T0H+C8gQ9PK60/rSh8xgUZhvlYFkHF7RNLR5euMTgO4
+         qhiHzTgGkgoMRWyLzRHgd2RXC9bpeFq6wg7A2yOLk2frem0hEkPpoaidaCVvtNe0KpOn
+         cu5MkDAT8lk4ESEcAbSnAyC06s5oudqu1zt/z3QSlhWkByUhQQoBhGfr/JFuYz9Hjl8D
+         bLcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751439822; x=1752044622;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0frIadAGCzwpkQRRNha5PFzuZ3qy68wHuqlhythiwpU=;
+        b=lMz7ovE5Ay+u/EGcFAUpI7fK+lZw1v9RQX3Q08Ub0mAvUk7jQlxTOOvM9ChOtjoBoz
+         4d/AcsXGaOTKL8Ywd0hO98vwj4cI5at93s4kpWSD5fKk3qoy+eB3Y3fRM2FcIspp/1I+
+         h5zBYmAwlfdmBNjuLeQogyzp78wgXfcyE+1oqNkZqAjK/QIE5WnqBp2AqgXL/5FI2Ejy
+         8rJkxd/ybOl8Uc3crffSTxK/VJNGkwhp8mn0TJhXak3YMgshprVCkQ2RbTpnw/FdWiAP
+         PbEUm2FFpBK1Cg9cyI6xLZb5oC8dhgo4Hs2lhDfv+7tiLqOxEVBij9KwaTmP7HK+vS2I
+         Wpyg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+X4ZRHeE2/QPwEJCXMzhYj17cm2B3XhEV55KF8uLF/ZdfifPZR4lja+hw2JRIDMbcHJDA1xF4fdg=@vger.kernel.org, AJvYcCUv4fxdq7KPK38NkctSymFdMCI04Va/gCZXBJ3pyH2+BcG2g+DDUwGzo1SJCJRUiZWYeuCxxlUf+CvU@vger.kernel.org, AJvYcCVUeO8VuOSyvWmAqmePCxfnqC5l8f02AFmaqKpcK3GbjAnWe2ZoCozYPfLgX51lK9Hyt2PSUZyyXTPoK1ayCQ==@vger.kernel.org, AJvYcCX2BMTPqJEDQ58AwLpLrhvZoRYwoACsMbHtDYMMbCkRwRdLgj8pCdirgnOs1FB+DyxE+9wCSoMfxg==@vger.kernel.org, AJvYcCXLmcydCSg0xasHAqsW3rot9shVaUK1wdOGYqGioWgFWk9Jc/G6XpWc/h4UdftEGNN2pjWIvDpky9c4jhFR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGQd6Ycwa+Q+1L52meoX+fMty0bvzeFVf1A8zS06NNGdghsER5
+	Xd+ZtQ5WlFClLZYwx/JV2KfRdA6Ox+UMF1JI+mDvqtrq9i7X5PQxaddPotYmWlC4YfKVOw8WT1+
+	JMGE9a+puC/V/RPhiZigUg8p9zfjaSQI=
+X-Gm-Gg: ASbGncvbl/1TI6c4tjMoR3dVWF7XqUbrk6GN1VXZ+7dyA+JJHy343KlmirOD+Nz7f8r
+	6HmyfbgyC2G3flum34M9h/CHxOVqGGJJk16HLl4MIOP2nA7a0sFZIPDyxAx0mEr1+IqC2zAyCgF
+	kY5RFAW47jmq+frWOY2uksKiDEQifl2yBrEpxXtjlpDIQ=
+X-Google-Smtp-Source: AGHT+IGMD2AU5x3an/OFXUbjEqkI5gyhDCd4v/OLCCvyRko2Nm8hqZl2hgGEc9WpyGFDasYi1aIion4MMfTDkJhJ7xs=
+X-Received: by 2002:a17:907:1c16:b0:ae0:c8f9:4529 with SMTP id
+ a640c23a62f3a-ae3c2df35cfmr154148966b.49.1751439821267; Wed, 02 Jul 2025
+ 00:03:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ocfs2: update d_splice_alias() return code checking
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Mark Fasheh <mark@fasheh.com>,
- Joel Becker <jlbec@evilplan.org>, Richard Weinberger <richard@nod.at>,
- ocfs2-devel@lists.linux.dev, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <d689279f-03ed-4f9b-8fde-713b2431f303@I-love.SAKURA.ne.jp>
- <20250626033411.GU1880847@ZenIV>
- <d84dc916-2982-45dc-a9a5-a6255cbc62bd@I-love.SAKURA.ne.jp>
- <973af6b9-e4c7-4519-99af-9c82dc6ca98f@linux.alibaba.com>
- <da5be67d-2a0b-4b93-85d6-42f3b7440135@I-love.SAKURA.ne.jp>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <da5be67d-2a0b-4b93-85d6-42f3b7440135@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-5-c4e3bc35227b@kernel.org> <20250701183105.GP10009@frogsfrogsfrogs>
+ <CAOQ4uxiCpGcZ7V8OqssP2xKsN0ZiAO7mQ_1Qt705BrcHeSPmBg@mail.gmail.com>
+ <20250701194002.GS10009@frogsfrogsfrogs> <20250701195405.xf27mjknu5bnunue@pali>
+In-Reply-To: <20250701195405.xf27mjknu5bnunue@pali>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 2 Jul 2025 09:03:29 +0200
+X-Gm-Features: Ac12FXzpApZdbBfdtdr7BbHG_-JJ4nQlGUsVSEHxt4nNW1vlwAVqQ_bZMiyKoME
+Message-ID: <CAOQ4uxjZWGz2bqen4F+fkQqZYQjKyufFVky4tOTnwng4D5G4nQ@mail.gmail.com>
+Subject: Re: [PATCH v6 5/6] fs: prepare for extending file_get/setattr()
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Andrey Albershteyn <aalbersh@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Paul Moore <paul@paul-moore.com>, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 1, 2025 at 9:54=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> wr=
+ote:
+>
+> On Tuesday 01 July 2025 12:40:02 Darrick J. Wong wrote:
+> > On Tue, Jul 01, 2025 at 09:27:38PM +0200, Amir Goldstein wrote:
+> > > On Tue, Jul 1, 2025 at 8:31=E2=80=AFPM Darrick J. Wong <djwong@kernel=
+.org> wrote:
+> > > >
+> > > > On Mon, Jun 30, 2025 at 06:20:15PM +0200, Andrey Albershteyn wrote:
+> > > > > From: Amir Goldstein <amir73il@gmail.com>
+> > > > >
+> > > > > We intend to add support for more xflags to selective filesystems=
+ and
+> > > > > We cannot rely on copy_struct_from_user() to detect this extensio=
+n.
+> > > > >
+> > > > > In preparation of extending the API, do not allow setting xflags =
+unknown
+> > > > > by this kernel version.
+> > > > >
+> > > > > Also do not pass the read-only flags and read-only field fsx_next=
+ents to
+> > > > > filesystem.
+> > > > >
+> > > > > These changes should not affect existing chattr programs that use=
+ the
+> > > > > ioctl to get fsxattr before setting the new values.
+> > > > >
+> > > > > Link: https://lore.kernel.org/linux-fsdevel/20250216164029.20673-=
+4-pali@kernel.org/
+> > > > > Cc: Pali Roh=C3=A1r <pali@kernel.org>
+> > > > > Cc: Andrey Albershteyn <aalbersh@redhat.com>
+> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > > > > ---
+> > > > >  fs/file_attr.c           |  8 +++++++-
+> > > > >  include/linux/fileattr.h | 20 ++++++++++++++++++++
+> > > > >  2 files changed, 27 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/fs/file_attr.c b/fs/file_attr.c
+> > > > > index 4e85fa00c092..62f08872d4ad 100644
+> > > > > --- a/fs/file_attr.c
+> > > > > +++ b/fs/file_attr.c
+> > > > > @@ -99,9 +99,10 @@ EXPORT_SYMBOL(vfs_fileattr_get);
+> > > > >  int copy_fsxattr_to_user(const struct fileattr *fa, struct fsxat=
+tr __user *ufa)
+> > > > >  {
+> > > > >       struct fsxattr xfa;
+> > > > > +     __u32 mask =3D FS_XFLAGS_MASK;
+> > > > >
+> > > > >       memset(&xfa, 0, sizeof(xfa));
+> > > > > -     xfa.fsx_xflags =3D fa->fsx_xflags;
+> > > > > +     xfa.fsx_xflags =3D fa->fsx_xflags & mask;
+> > > >
+> > > > I wonder, should it be an error if a filesystem sets an fsx_xflags =
+bit
+> > > > outside of FS_XFLAGS_MASK?  I guess that's one way to prevent
+> > > > filesystems from overriding the VFS bits. ;)
+> > >
+> > > I think Pali has a plan on how to ensure that later
+> > > when the mask is provided via the API.
+> > >
+> > > >
+> > > > Though couldn't that be:
+> > > >
+> > > >         xfa.fsx_xflags =3D fa->fsx_xflags & FS_XFLAGS_MASK;
+> > > >
+> > > > instead?  And same below?
+> > > >
+> > >
+> > > Indeed. There is a reason for the var, because the next series
+> > > by Pali will use a user provided mask, which defaults to FS_XFLAGS_MA=
+SK,
+> > > so I left it this way.
+> > >
+> > > I don't see a problem with it keeping as is, but if it bothers you
+> > > I guess we can re-add the var later.
+> >
+> > Nah, it doesn't bother me that much.
+> >
+> > > > >       xfa.fsx_extsize =3D fa->fsx_extsize;
+> > > > >       xfa.fsx_nextents =3D fa->fsx_nextents;
+> > > > >       xfa.fsx_projid =3D fa->fsx_projid;
+> > > > > @@ -118,11 +119,16 @@ static int copy_fsxattr_from_user(struct fi=
+leattr *fa,
+> > > > >                                 struct fsxattr __user *ufa)
+> > > > >  {
+> > > > >       struct fsxattr xfa;
+> > > > > +     __u32 mask =3D FS_XFLAGS_MASK;
+> > > > >
+> > > > >       if (copy_from_user(&xfa, ufa, sizeof(xfa)))
+> > > > >               return -EFAULT;
+> > > > >
+> > > > > +     if (xfa.fsx_xflags & ~mask)
+> > > > > +             return -EINVAL;
+> > > >
+> > > > I wonder if you want EOPNOTSUPP here?  We don't know how to support
+> > > > unknown xflags.  OTOH if you all have beaten this to death while I =
+was
+> > > > out then don't start another round just for me. :P
+> > >
+> > > We have beaten this API almost to death for sure ;)
+> > > I don't remember if we discussed this specific aspect,
+> > > but I am personally in favor of
+> > > EOPNOTSUPP :=3D the fs does not support the set/get operation
+> > > EINVAL :=3D some flags provided as value is invalid
+> > >
+> > > For example, if the get API provides you with a mask of the
+> > > valid flags that you can set, if you try to set flags outside of
+> > > that mask you get EINVAL.
+> > >
+> > > That's my interpretation, but I agree that EOPNOTSUPP can also
+> > > make sense in this situation.
+> >
+> > <nod> I think I'd rather EOPNOTSUPP for "bits are set that the kernel
+> > doesn't recognize" and EINVAL (or maybe something else like
+> > EPROTONOSUPPORT) for "fs driver will not let you change this bit".
+> > At least for the syscall interface; we probably have to flatten that to
+> > EOPNOTSUPP for both legacy ioctls.
 
+Given the precedents of returning EOPNOTSUPP in xfs_fileattr_set()
+and ext4_ioctl_setflags() for flags that cannot be set, I agree.
 
-On 2025/6/30 18:21, Tetsuo Handa wrote:
-> When commit d3556babd7fa ("ocfs2: fix d_splice_alias() return code
-> checking") was merged into v3.18-rc3, d_splice_alias() was returning
-> one of a valid dentry, NULL or an ERR_PTR.
-> 
-> When commit b5ae6b15bd73 ("merge d_materialise_unique() into
-> d_splice_alias()") was merged into v3.19-rc1, d_splice_alias() started
-> returning -ELOOP as one of ERR_PTR values.
-> 
-> Now, when syzkaller mounts a crafted ocfs2 filesystem image that hits
-> d_splice_alias() == -ELOOP case from ocfs2_lookup(), ocfs2_lookup() fails
-> to handle -ELOOP case and generic_shutdown_super() hits "VFS: Busy inodes
-> after unmount" message.
-> 
-> Instead of calling ocfs2_dentry_attach_lock() or ocfs2_dentry_attach_gen()
-> when d_splice_alias() returned an ERR_PTR value, change ocfs2_lookup() to
-> bail out immediately.
-> 
-> Also, ocfs2_lookup() needs to call dupt() when ocfs2_dentry_attach_lock()
-> returned an ERR_PTR value.
-> 
-> Reported-by: syzbot <syzbot+1134d3a5b062e9665a7a@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=1134d3a5b062e9665a7a
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>
+> ... and this starting to be complicated if the "fs driver" is network
+> based (as fs driver can support, but remote server not). See also:
+> https://lore.kernel.org/linux-fsdevel/20241224160535.pi6nazpugqkhvfns@pal=
+i/t/#u
+>
+> For backup/restore application it would be very useful to distinguish bet=
+ween:
+> - "kernel does not support flag X"
+> - "target filesystem does not support flag X"
+> - "wrong structure was passed / syscall incorrectly called"
+>
+> third option is bug in application - fatal error. second option is just
+> a warning for user (sorry, we cannot set NEW FEATURE on FAT32, but if
+> you would do restore to other fs, it is supported). and first option
+> happens when you run new application on older kernel version, it is an
+> recoverable error (or warning to user, but with more important level
+> then second option as switching to different FS would not help).
+>
+> Could we return different errnos for these 3 situations?
 
-Looks fine to me.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+That would be nice, but actually according to your plan
+the get API returns the mask of flags supported by the filesystem
+(on that specific object even), so userspace in fact has a way to
+distinguish between the first two EOPNOTSUPP cases.
 
-> ---
->  fs/ocfs2/namei.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-> index 99278c8f0e24..721580dfce3a 100644
-> --- a/fs/ocfs2/namei.c
-> +++ b/fs/ocfs2/namei.c
-> @@ -142,6 +142,8 @@ static struct dentry *ocfs2_lookup(struct inode *dir, struct dentry *dentry,
->  
->  bail_add:
->  	ret = d_splice_alias(inode, dentry);
-> +	if (IS_ERR(ret))
-> +		goto bail_unlock;
->  
->  	if (inode) {
->  		/*
-> @@ -154,15 +156,16 @@ static struct dentry *ocfs2_lookup(struct inode *dir, struct dentry *dentry,
->  		 * NOTE: This dentry already has ->d_op set from
->  		 * ocfs2_get_parent() and ocfs2_get_dentry()
->  		 */
-> -		if (!IS_ERR_OR_NULL(ret))
-> +		if (ret)
->  			dentry = ret;
->  
->  		status = ocfs2_dentry_attach_lock(dentry, inode,
->  						  OCFS2_I(dir)->ip_blkno);
->  		if (status) {
->  			mlog_errno(status);
-> +			if (ret)
-> +				dput(ret);
->  			ret = ERR_PTR(status);
-> -			goto bail_unlock;
->  		}
->  	} else
->  		ocfs2_dentry_attach_gen(dentry);
-
+Thanks,
+Amir.
 
