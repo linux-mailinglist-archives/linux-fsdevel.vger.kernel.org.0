@@ -1,120 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-53641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7C1AF15E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 14:40:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A475AF1657
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 15:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1A927AAECF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 12:39:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 283867B1E7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 12:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B852749E7;
-	Wed,  2 Jul 2025 12:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB59275842;
+	Wed,  2 Jul 2025 12:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBasmfAg"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Z9HK89E4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1EE271449;
-	Wed,  2 Jul 2025 12:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577291E1DE0
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 12:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751460025; cv=none; b=JhNK//WMO9jvdwvDGLyBozqkXWtuKZqIl11skCkYvzdxBYnKY+vWT+2CEM/04m6Jp7/J74iF7I87jPSiEFvppWp/J4vzvEVUiFblIz8UdCbAZIXqkraNsJ70FV8rujY+Xu8U+YOZs3oQF2LY9Fifc0I7zR7Ia9a3gLye3DLkJd0=
+	t=1751461173; cv=none; b=a6vYPEsZUtE03J3INOAJnh1I8yF+M6J4+ZViVJpLvktFRSMSRuZK4KUd6QWwp7oDQpFUYjfGtZNLnXba+66nweANX+yra3n2ohfKz6HMScIfa9NPQb5EYca4QCuyGrJ9ZoAA3ttGlyTWizSO5WyVhpKiG1sE0J2NGQ7xQsXYp90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751460025; c=relaxed/simple;
-	bh=PZV1Mjm8WRt0BTVC+LtJNn6scged36v1d0AnwXcvL8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6zbut5CK7gpufKaEblooIDyeU7LdIo/vgMGXkuASdvIAvvtKCHUeA4GNmQQyhzNkoNxCXR6devzBr9UfukxLMI6Lt2mAeM49Te2YkUnzlDE+3vga/hS59RWQRa7JtbBomwPauQmn8zM52hCOKodWJiT16ptsxmRrNU9ZtxFogM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBasmfAg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDF5C4CEF0;
-	Wed,  2 Jul 2025 12:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751460024;
-	bh=PZV1Mjm8WRt0BTVC+LtJNn6scged36v1d0AnwXcvL8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bBasmfAg4ZR2h68mT47lufx94gDB+Hsf6CVYKKtn5CI+M+wjJ29rLJB4wE98OjHoE
-	 iR8Nkc+0laghIBqOVV3hX1cPkmDLADa8zGLr6UMS+TBAsCsaHkyjbb+yeVzmPZsVVA
-	 KmtiKIsI0p1lyKA1/XY7EVdgiMlis3LUehPD67HdcomfR9EDD+IsXV/FoBKujEpX/y
-	 ez07gBaPGj7M6Ok28o29jixwxfPb5dEh4/EiJ5Cgp5/0G9T7DXLF8xtPi4UxPud90z
-	 h0/0OVfMJvrPZtn+fm7Ye22jQGBu8+rf0wPbRoLE62vzms5FYI5SlPitq4XnfxuMbE
-	 Z8zkoZ+NKdjLg==
-Date: Wed, 2 Jul 2025 14:40:18 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Jan Kara <jack@suse.cz>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <20250702-stagnation-dackel-294bb4cd9f3d@brauner>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
- <20250701184317.GQ10009@frogsfrogsfrogs>
+	s=arc-20240116; t=1751461173; c=relaxed/simple;
+	bh=RdghsNeUlHbxHdMrJoDo/Hn6WmpubB9kWWqFa/2UJw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o9OK/cffCHvrjwejEaioUhdyX5aKZNiuqh+H0eHQjK/oGfpPChM9OO3t2b5rDzeVDSrSHjMWuF/labpQh2xj3e6sP+S0dAHPkcL4HgaFDVTxTp/tYLutCX+hWE3zXo7qUOYBnzd7+OTejddPWlknDimaKCk3xQjhefTVdwtDQUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Z9HK89E4; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a52d82adcaso58065501cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 05:59:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1751461169; x=1752065969; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UkUcASf93F33U6ZGNKqIIGKB0FsFcDmBc6tNYJB0dm0=;
+        b=Z9HK89E4Ie87qTVUfstidJs1eu2C2uFIubeRDnRKaxdRr+yYy8No4g9Vyzx2iEJatz
+         5PpeJniulGe+vyQzvajDmQmqsAUYqQg14eBOObA3ubQMZhcZtOJzWzJnRyl5zLU67I+G
+         hJjpKFboDcAThQ4HGCFSirrR8GDuwImVilrfk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751461169; x=1752065969;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UkUcASf93F33U6ZGNKqIIGKB0FsFcDmBc6tNYJB0dm0=;
+        b=glN0EtlefxZyvgIKpEnW9cus8EcXGt/VmjO5Rrs4rAwy7cyZbA3azsyLsGoutd910u
+         moBarxeSmR6m29wpLbUKrJy8MfHtW9PsF26VdAgWppIUvmydPY70O0o7xxL9AWTxzY6O
+         0EVyEecLqUsPYwNLQTE5NDfdVP5tvcI5qjN4gKw0p4kVB7Vv+5eI/NRcijmS3MbWMAB1
+         mBcQhbOoBzDWduw2MYwsFvBN12mWOfW+nK9CKDRD5K8eg4V4HVZHbzjNq4DEO5cVqJ9X
+         8SWlg8nhCXgTlmQk3gl4Mo4HYk4VSdEiVKgEGaMCiBXD22ihbicnEcsSr+8ew2W7ZTeS
+         Ujgw==
+X-Gm-Message-State: AOJu0YxG3h8CND/+0p0sqs7LrXgdQrStQKwuCBQMp3D/0awml1ZcCW+H
+	Yax1HT2q6nytEEFpZCtZE8Qa1OrmVY+uAbxZCYjW4ggHOlOvDWSWYIY6lrUe7hWmGepnrKHfoqL
+	arb1UOh9a4iVptOx3d4C9rOLmuBQy8eORpkzhzypQ/5drXJURdCMUrB8=
+X-Gm-Gg: ASbGncuQqwfRc0zqdIrPEJ97aHndZZ00gAtAP5jbg36RNTBrBMJT4/fEkeqRAS41G0E
+	ZjmVnnpSU/V2v6mwIRIlqndGf7FxzTXF4fjjzllq/J61/R69TA/P0mrH+sI1+5xwyC+pV8ZZ8dX
+	9B+X/6hFkfxPsl0+9vJ2G4A5QfzBJfESbTAJdRitDxGOi2eMkGHaU4j/sdo4EQWh1NfPTnKR6C4
+	v/o
+X-Google-Smtp-Source: AGHT+IHxl+NEYjI9S7LcUeODRw9nNOQr9FET3aoroPSUJ4DnNpITGbMut00R3sC4DE5xOD/BlmCHLXuFRrP8pKn4LOE=
+X-Received: by 2002:ac8:7f94:0:b0:477:13b7:8336 with SMTP id
+ d75a77b69052e-4a9768f0c61mr41971901cf.17.1751461168747; Wed, 02 Jul 2025
+ 05:59:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250701184317.GQ10009@frogsfrogsfrogs>
+References: <CA+AidNeR+_SZPQjD37JcibOoQEwtDEYz6bBef1O3PfboS0BJtw@mail.gmail.com>
+In-Reply-To: <CA+AidNeR+_SZPQjD37JcibOoQEwtDEYz6bBef1O3PfboS0BJtw@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 2 Jul 2025 14:59:17 +0200
+X-Gm-Features: Ac12FXy7uaeToFNUvxNeuXfF1zskVIz9ivpnlwYTnnbLulPAbRWcYryB9g8s75I
+Message-ID: <CAJfpegsdhqnxCmQfQzGRP=zbkuNofExcqoCi5dMk4jAFc14EoQ@mail.gmail.com>
+Subject: Re: Query regarding FUSE passthrough not using kernel page cache thus
+ causing performance regression
+To: Ashmeen Kaur <ashmeen@google.com>
+Cc: linux-fsdevel@vger.kernel.org, Manish Katiyar <mkatiyar@google.com>, 
+	GCSFuse dev email group <gcs-fuse-dev@google.com>, Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-> Er... "fsx_fileattr" is the struct that the system call uses?
-> 
-> That's a little confusing considering that xfs already has a
-> xfs_fill_fsxattr function that actually fills a struct fileattr.
-> That could be renamed xfs_fill_fileattr.
-> 
-> I dunno.  There's a part of me that would really rather that the
-> file_getattr and file_setattr syscalls operate on a struct file_attr.
+On Wed, 2 Jul 2025 at 14:27, Ashmeen Kaur <ashmeen@google.com> wrote:
+>
+> Hello Team,
+>
+> I have been experimenting with the FUSE
+> passthrough(https://docs.kernel.org/filesystems/fuse-passthrough.html)
+> feature. I have a question regarding its interaction with the kernel
+> page cache.
+>
+> During my evaluation, I observed a performance degradation when using
+> passthrough. My understanding is that the I/O on the passthrough
+> backing file descriptor bypasses the kernel page cache and goes
+> directly to disk.
 
-Agreed, I'm pretty sure I suggested this during an earlier review. Fits
-in line with struct mount_attr and others. Fwiw, struct fileattr (the
-kernel internal thing) should've really been struct file_kattr or struct
-kernel_file_attr. This is a common pattern now:
+Passthrough opens the backing file with the same flags as the fuse
+file was opened.  If it had O_DIRECT, then the backing file will be
+opened with O_DIRECT.
 
-struct mount_attr vs struct mount_kattr
+If your fuse server implementation removed O_DIRECT from the open
+flags before opening the backing file, then this can indeed be a
+regression.   Otherwise there is probably some other issue.
 
-struct clone_args vs struct kernel_clone_kargs
-
-etc.
-
-> 
-> More whining/bikeshedding to come.
-> 
-> <snip stuff that looks ok to me>
-> 
-> <<well, I still dislike the CLASS(fd, fd)(fd) syntax...>>
-
-Noted, and duly ignored...
-
-> 
-> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > index 0098b0ce8ccb..0784f2033ba4 100644
-> > --- a/include/uapi/linux/fs.h
-> > +++ b/include/uapi/linux/fs.h
-> > @@ -148,6 +148,24 @@ struct fsxattr {
-> >  	unsigned char	fsx_pad[8];
-> >  };
-> >  
-> > +/*
-> > + * Variable size structure for file_[sg]et_attr().
-> > + *
-> > + * Note. This is alternative to the structure 'struct fileattr'/'struct fsxattr'.
-> > + * As this structure is passed to/from userspace with its size, this can
-> > + * be versioned based on the size.
-> > + */
-> > +struct fsx_fileattr {
-> > +	__u32	fsx_xflags;	/* xflags field value (get/set) */
-> 
-> Should this to be __u64 from the start?  Seeing as (a) this struct is
-
-Agreed. I changed that.
+Thanks,
+Miklos
 
