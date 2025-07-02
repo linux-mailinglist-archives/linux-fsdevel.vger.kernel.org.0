@@ -1,132 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-53609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D0FAF0F76
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 11:15:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E827AF0FAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 11:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E984440AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 09:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5953B1C27A6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 09:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E946C242D6A;
-	Wed,  2 Jul 2025 09:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F0C242D87;
+	Wed,  2 Jul 2025 09:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b90bYBqD"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J9GjE5ix";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2xWDQTnC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABA4219A8D;
-	Wed,  2 Jul 2025 09:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66BA339A1
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 09:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751447643; cv=none; b=gXE9WJ8QlPHGGguZFeTHIYailiaVLxgflva+T0urd5DfjmjsdcbCeNLk2/lz4s/CjqoEIxn1OBjomcgs7sVtwaZ5VtJJD1cwAdNmE7WKXf/8I+ybjy14gByMmA/hwuPF3qiGGjvBLx2o65nrZqCkBcb0p0sdjJhdTKj1vq0xvnE=
+	t=1751447747; cv=none; b=ZYpP6h7wttVJ/3yQOUrmR16EKPhqqAJ750/W2tD60Up35hf3seWg27IipwPt5ptbFdGMOnOyccN+avW6EJ8RhBV+mbQkbRRqas3J0cpPFsz9pgIWmrOnybQq6YLaQ2wp8+pYg/gg+hYs/2g86wAItKjdqBoZr52t9tR0Cr6P4Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751447643; c=relaxed/simple;
-	bh=arp/RXJFijFrUN/wQbLbSmWxuyiKJielKbqEREc+Y6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ol2jHyHFefd1KDiCciCbGw+4/t2ig1nMLAMeluIeg2AdQ8/XGQzAryF9mTD9m5H8MZqbwMG9GmKrm3X4HUg77BvrjmHq29owajkEjx3b59JxJXiFhG21FkIgyLvtET9RC6sTFzfNL1rW3xBYi3sqOYs/v99RVaRYE3/9srhkHVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b90bYBqD; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso7024594a12.1;
-        Wed, 02 Jul 2025 02:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751447640; x=1752052440; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOnKL2iySZqX8VVh+L223ZxSRCRPq10Nr2PZwBL+7sg=;
-        b=b90bYBqDrbJrzU3s3ghZlttO3/Zv+ncaWuah9dZLZUAWFNNfVGDoTNtIRlv39Cf0pX
-         tCaGaXmi/r5ON9Z5j3Fn+SoC+Dn0Xyb8oNjIk9Auep1VYxQgupMfCKHDqxigomHkhmwm
-         5MGopEKNMF7nzSIEi1fW+y/A+S+XvevZiV0mtBf/4a/60ei9MCJ1+qyHYY/DB3HZCGyw
-         rHUQCEQwLH0CmPJVFeD+SYAztkugfgAQoyQHUPn/IC0s8RVtW3RxlVWixLiMrYFFSU3v
-         aP9aEPEdYvwD4esDuZH2H6RGzPHKpgW2Y1sEW1mEdzDMHU8vdTtp5NdE0WwHe2WXngyQ
-         E4Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751447640; x=1752052440;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YOnKL2iySZqX8VVh+L223ZxSRCRPq10Nr2PZwBL+7sg=;
-        b=Meh2qccrN75Psdg8tQKvBVFn/EE0hibpNSg6vPRlQ9nyt0pITdrAWzlOeoQQeZrNfU
-         JGNyL3qSS0Xwf240W8ZW1K2lPCoiuUM3igURkcpED00vjLUfQRC0CvD6+falUp/cYswT
-         GXDb8TJqu1xglM0acUefSajQ4nNcm1ZwZQjHNHNC/g5fOEZzKQgM0I6iTetwRa6cXd30
-         Rbdai8rBIwk7nKUrJWXQYLJI8aRhI+Hz1FbYww5ThHPoJQ6xMdCWm5YAeBeJkjcPpZnc
-         iuwoUFAGjLHTsPWKOI61QzXqFziuTNZY2U+V6HDFWtlhaph0m8aFsx5+uItWibfpRJKj
-         CcYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw4zEoPjHzrMXRKgiFkVCWOGDqCESVj2C4sk5vQCFdeUArs53i7gfDsAgrgD8TTAf0Mo3w01Lt/FSN6xYv6Q==@vger.kernel.org, AJvYcCV8o9/QKj23j9ONlAi58V3TV6OCQpg1QqIUAeJnOPhNVX2am2a90iIYjTUraZgX0Ooqf/KRhXI+2xe3@vger.kernel.org, AJvYcCViAhHhrL4Y6OlxvjAh71MMY5h6K6XFLfjyzuyZxqsMa5Z7w486tYr7/EWRJXqKsxMEkfWJ/TFlrPM=@vger.kernel.org, AJvYcCWDnLP2Auo2dC6CEPbMA9O/TeH5bD3BvmW9B7HP7gcoZtduAhuQjy5IRnXnayG0mS2VWvNLKVvW8Q==@vger.kernel.org, AJvYcCWVNlHl7mM7UN+YZT+skqUg8fvjB2Rq5NtcsutyxERRwIxMdVOEPckQIF2/VR9CwxoU0IYJG8Bogv/ezNCW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9eiT/JP11azitllBg1w+YkG2PVxV0EPwrTIufMS3ACOMF2Hr/
-	AKVLNcLmZEL6TjI5t1fPeHiOtwjkE0XlGEU2RTm+M6D6wcOpw+62qpR3acvQjDPEwgiW0+0reeu
-	8oQaq4oGqN1fNqI4DY4USwDTydTJ8kAQ=
-X-Gm-Gg: ASbGnctg5wiXqaUbbJPpc/bjndt1NN1bb7DALM2h+UUwaW3lUYwEABSMhH0vCJnDdLm
-	8SszhGfO8t+cgmZspNG1ie4fX504GbBPxSdITP94Mfow+UBaeo/3g9JgS567gDMPN1CC7qbcXg1
-	IjgXU8RpMJanE+OU4YqO+siPsxnRp3RG5MZYMBDLGPSbGoZPUgCY5XqQ==
-X-Google-Smtp-Source: AGHT+IGlk8ck2yGJiSvYpbNFUVRsx8Y0aQIabBLOLnPDFVgvwubtNKreUJ+vATAAMAwvHsiBczX2MScCqWUycc9KxFQ=
-X-Received: by 2002:a17:907:94c3:b0:add:ed3a:e792 with SMTP id
- a640c23a62f3a-ae3c2da9581mr192429266b.47.1751447639461; Wed, 02 Jul 2025
- 02:13:59 -0700 (PDT)
+	s=arc-20240116; t=1751447747; c=relaxed/simple;
+	bh=CndgwlHRgOZthwD5DyXASu5VNyHbH0pDUi/qHVRr1j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQdHqxWym/UYD9fztGL/t49Za0thVH67GBtwcDon4Vkl7PgCs+K50odY6Pr3oMFaGgYS15ejr5Kg3W2ZZWgszqDprrcSmR19oYYb9Epg/FQ4uW5zWfyjCmVW0FuYtHHs4Epjo3A/BughNnb+gcfR0mrx6XBPJPow5QxgjQJ4DBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J9GjE5ix; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2xWDQTnC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 2 Jul 2025 11:15:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751447743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D5hXHySVY0Z2KIA6NHkHAaBuc/mXp8otI0ZRTy1A46A=;
+	b=J9GjE5ix+TynHToflQXzFMhBbU98yyFILDG/yjV9c9Ur7Q+fPDNys25vy4DsVG1QJgCR5K
+	HnJQwUE5ZE/T7jVnSr3f4EPmH7yyYcV97XNlptfAkHMAoPVMuAMOEz2gL1Mocc5sSVrrOC
+	qBKLpcnN76oAFtY6FMNjJ8izMiIkQZtUa2D9cbADM/tXiQnm5Pc1xwSDPWaCL2Z6trB5AO
+	izZD9gguJyWNifWVuObOHU08ZW7h/Rrhv4XdXqShv+28L8mIMBAnq100P28NPRqOniGwK+
+	t6m2ZbE4iA3R1zYpdDVwU/ThqriQcJ76AyH84wORYTKep6wgxjvSJ9ResLTCjQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751447743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D5hXHySVY0Z2KIA6NHkHAaBuc/mXp8otI0ZRTy1A46A=;
+	b=2xWDQTnC2S4xfk9BoGm9igtFbADPWMOJ982X/XM+5I9RsXe/Uhv2W2yGNZ1M0SmNaPV4V0
+	Q4CeF/2Hmw6b0IBg==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH][RFC] fold fs_struct->{lock,seq} into a seqlock
+Message-ID: <aGT4vvHMFxBsbSv1@lx-t490>
+References: <20250702053437.GC1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org> <20250701-bauzaun-riskieren-595464ef81c4@brauner>
-In-Reply-To: <20250701-bauzaun-riskieren-595464ef81c4@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 2 Jul 2025 11:13:48 +0200
-X-Gm-Features: Ac12FXwQ_wZQ_QCTo4zCnlXIsD2UE88jy3YPrf_EnnTl4HhmrEsOq9hi_uihdY0
-Message-ID: <CAOQ4uxjfs=YJmgj0CfJ1NxuPaHgh4B6Vou6jG-WBoi1hGdSDdQ@mail.gmail.com>
-Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr syscalls
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Jan Kara <jack@suse.cz>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
-	Andrey Albershteyn <aalbersh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702053437.GC1880847@ZenIV>
 
-> > +/*
-> > + * Variable size structure for file_[sg]et_attr().
-> > + *
-> > + * Note. This is alternative to the structure 'struct fileattr'/'struct fsxattr'.
-> > + * As this structure is passed to/from userspace with its size, this can
-> > + * be versioned based on the size.
-> > + */
-> > +struct fsx_fileattr {
-> > +     __u32   fsx_xflags;     /* xflags field value (get/set) */
-> > +     __u32   fsx_extsize;    /* extsize field value (get/set)*/
-> > +     __u32   fsx_nextents;   /* nextents field value (get)   */
-> > +     __u32   fsx_projid;     /* project identifier (get/set) */
-> > +     __u32   fsx_cowextsize; /* CoW extsize field value (get/set) */
+On Wed, 02 Jul 2025, Al Viro wrote:
 >
-> This misses a:
+> 	The combination of spinlock_t lock and seqcount_spinlock_t seq
+> in struct fs_struct is an open-coded seqlock_t (see linux/seqlock_types.h).
+> 	Combine and switch to equivalent seqlock_t primitives.  AFAICS,
+> that does end up with the same sequence of underlying operations in all
+> cases.
+> 	While we are at it, get_fs_pwd() is open-coded verbatim in
+> get_path_from_fd(); rather than applying conversion to it, replace with
+> the call of get_fs_pwd() there.  Not worth splitting the commit for that,
+> IMO...
 >
-> __u32 __spare;
+> 	A bit of historical background - conversion of seqlock_t to
+> use of seqcount_spinlock_t happened several months after the same
+> had been done to struct fs_struct; switching fs_struct to seqlock_t
+> could've been done immediately after that, but it looks like nobody
+> had gotten around to that until now.
 >
-> so there's no holes in the struct. :)
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-Adding __spare and not verifying that it is zeroed gets us to the
-point that we are not able to replace __spare with a real field later.
-
-I suggest to resolve this hole as Darrick and Pali suggested by making it
-__u64 fsx_xflags
-
-w.r.t Darrick's comment, I kind of like it that the name for the UAPI
-struct (fsxattr)
-differs from the name of the kernel internal representation (fileattr), but
-I agree that fsx_fileattr does not give a good hint on what it is.
-
-I think that renaming struct fsx_fileattr to struct fsxattr64 along
-with changing the
-width of fsx_xflags will help reduce the confusion of users.
-
-What do you guys think?
-
-Thanks,
-Amir.
+Acked-by: Ahmed S. Darwish <darwi@linutronix.de>
 
