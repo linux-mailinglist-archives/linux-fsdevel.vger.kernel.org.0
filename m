@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-53717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905E0AF61CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 20:50:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5A1AF61E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 20:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE39B1C4458E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 18:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715CE4E3027
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 18:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDC926B0A5;
-	Wed,  2 Jul 2025 18:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A49F2E49AF;
+	Wed,  2 Jul 2025 18:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cE5VIa3u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iM0ZzfxT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2D221B9C9;
-	Wed,  2 Jul 2025 18:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF22E2BE637;
+	Wed,  2 Jul 2025 18:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751482212; cv=none; b=lo5AhJVPr0Xa0Kk/zsQdqFlytT5eoBa62D2FlJzuQqh67QtH+kgSunn88V5WiTa7ZCH0pE82E5xtHUSLRpZa9b7BQMrMZm7GAMUmQFEYYTCTjW4Pjsk26H2aJsKmUOGrczcJQVuEhR3oWAOg+LikEuWgptFhRN4ng98yVPyRMhw=
+	t=1751482334; cv=none; b=Ry1OHr/FHjJAhnuc14Ex7zeyLmDstYCzNwI1JC/Tv657k9UnqmMjvLOQ+49GmcrvwgL5KCxKRcjUhYZ4R9s0+IkAbbb0H/gRjq8HcgBYAdMbvqmGSOMbYeueU7x3tCmemsUQDrPJJ4wIStwX3fHw7SW6lfGV4Vqk7U1eQYyIGek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751482212; c=relaxed/simple;
-	bh=o38s9KW5xlL09If/ehLVMBXYY/kbSCjY6FI7qi81S48=;
+	s=arc-20240116; t=1751482334; c=relaxed/simple;
+	bh=OHk7XwglHJcDWN72KQjJUAxP0PTjfem32WqdpZA4khw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uYhQuSZ0ovgEPq9nNB5Az8LH5wDReE+flsuLI9MQstVTsJyhx0k3lTNdVGzNb3AFerzIMYSY7363E5YGPoH3PdAHiB+ZfHZK1Pr+ew9v8WtOj2HKsqFGHLLhouc6Fy1m3DJXvh7wBifRQZkPgkNYp9Umj0YH4lYzAR1+lgMi1JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cE5VIa3u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B26C4CEE7;
-	Wed,  2 Jul 2025 18:50:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrVl8fHwmUW/pAlCL1tOPelG2s6E2aDcWwvACJ6ch5vUNbrN+9+MWxKaSxvkzsWwMxvzrCLN/4XRubaiL8xRb4GPRMwwQ1ylpa2YyqB3vQBy4C1GnN5dBFWFXok8vHl0LRaV1QT5LgXoX5Js4Sk3e1ce9xFjgrvFKm15+TqXfk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iM0ZzfxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45663C4CEE7;
+	Wed,  2 Jul 2025 18:52:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751482210;
-	bh=o38s9KW5xlL09If/ehLVMBXYY/kbSCjY6FI7qi81S48=;
+	s=k20201202; t=1751482334;
+	bh=OHk7XwglHJcDWN72KQjJUAxP0PTjfem32WqdpZA4khw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cE5VIa3unfTIuwN5c3hc8ufJzNz+rbskyspGSVMI2zP6gbIGVCVmNm/GOqiPYXa27
-	 WiJfiud82LYFAWQWUuyBUGQ+QT1TqkaGxTQpDVItcObfvBMJNH2ieuEruNRCjx11Ed
-	 AjD/MAq1V+ldytYVXFBQfqtjLW+W+xpTfthwXOZIbT0j3QdJQ6OP1n6VJM6YML0hE7
-	 oHS7p7ieTpUYEXz08wenTG0m5jWcIk+QzH/5ZhT0UUiGIJvqus6Vd3IShw9ONOlqWn
-	 K3MWlAMSivYZsQ79tHUp/K20LAcZIISfZnfEvP2coY+hhVT2G3l6nyv4lWoEeFEI/Y
-	 ekhdhgFAjsysg==
-Date: Wed, 2 Jul 2025 11:50:09 -0700
+	b=iM0ZzfxT+xq4GpA8fIVxugSeI1LBwGsjeitUjYcIA3//vGtGY55runcEoY+NiyKTy
+	 mxyi4kjHC+c7Tfgn2FJPDORAOzvmdpD53Za2drdZPFidSFt4h4roFGhyBVmoA2HEmo
+	 wSja+nZwAH0djf2ev2tfvFTvHFemJFVVGQnkoeWLJ+39aYOt6VxB3IcGpUl5Ay5TfA
+	 uFWP9Fya+UYH8gBqoZTvxzX1E7luxDgqnCh9ZPOmMJD8eOcppnI4U8liL5K3Xvizfl
+	 ieMrUgCf9gIXRBhBLPMqz37iHtde2UPEXO6o+iU7zo7Kv/GExbXDfEJ4fUwMCIIRuD
+	 ng+Cf3ERhd2fA==
+Date: Wed, 2 Jul 2025 11:52:13 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 5/7] xfs: fill dirty folios on zero range of unwritten
- mappings
-Message-ID: <20250702185009.GX10009@frogsfrogsfrogs>
-References: <20250605173357.579720-1-bfoster@redhat.com>
- <20250605173357.579720-6-bfoster@redhat.com>
- <20250609161219.GE6156@frogsfrogsfrogs>
- <aEgj4J0d1AppDCuH@bfoster>
+To: Jinliang Zheng <alexjlzheng@gmail.com>
+Cc: alexjlzheng@tencent.com, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with
+ locks
+Message-ID: <20250702185213.GY10009@frogsfrogsfrogs>
+References: <20250701184737.GA9991@frogsfrogsfrogs>
+ <20250702120912.36380-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,109 +60,82 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aEgj4J0d1AppDCuH@bfoster>
+In-Reply-To: <20250702120912.36380-1-alexjlzheng@tencent.com>
 
-On Tue, Jun 10, 2025 at 08:24:00AM -0400, Brian Foster wrote:
-> On Mon, Jun 09, 2025 at 09:12:19AM -0700, Darrick J. Wong wrote:
-> > On Thu, Jun 05, 2025 at 01:33:55PM -0400, Brian Foster wrote:
-> > > Use the iomap folio batch mechanism to select folios to zero on zero
-> > > range of unwritten mappings. Trim the resulting mapping if the batch
-> > > is filled (unlikely for current use cases) to distinguish between a
-> > > range to skip and one that requires another iteration due to a full
-> > > batch.
+On Wed, Jul 02, 2025 at 08:09:12PM +0800, Jinliang Zheng wrote:
+> On Tue, 1 Jul 2025 11:47:37 -0700, djwong@kernel.org wrote:
+> > On Tue, Jul 03, 2025 at 10:48:47PM +0800, alexjlzheng@gmail.com wrote:
+> > > From: Jinliang Zheng <alexjlzheng@tencent.com>
 > > > 
-> > > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > > In the buffer write path, iomap_set_range_uptodate() is called every
+> > > time iomap_end_write() is called. But if folio_test_uptodate() holds, we
+> > > know that all blocks in this folio are already in the uptodate state, so
+> > > there is no need to go deep into the critical section of state_lock to
+> > > execute bitmap_set().
+> > > 
+> > > Although state_lock may not have significant lock contention due to
+> > > folio lock, this patch at least reduces the number of instructions.
+> > > 
+> > > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
 > > > ---
-> > >  fs/xfs/xfs_iomap.c | 23 +++++++++++++++++++++++
-> > >  1 file changed, 23 insertions(+)
+> > >  fs/iomap/buffered-io.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
 > > > 
-> > > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > > index b5cf5bc6308d..63054f7ead0e 100644
-> > > --- a/fs/xfs/xfs_iomap.c
-> > > +++ b/fs/xfs/xfs_iomap.c
-> ...
-> > > @@ -1769,6 +1772,26 @@ xfs_buffered_write_iomap_begin(
-> > >  		if (offset_fsb < eof_fsb && end_fsb > eof_fsb)
-> > >  			end_fsb = eof_fsb;
+> > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > > index 3729391a18f3..fb4519158f3a 100644
+> > > --- a/fs/iomap/buffered-io.c
+> > > +++ b/fs/iomap/buffered-io.c
+> > > @@ -71,6 +71,9 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
+> > >  	unsigned long flags;
+> > >  	bool uptodate = true;
 > > >  
-> > > +		/*
-> > > +		 * Look up dirty folios for unwritten mappings within EOF.
-> > > +		 * Providing this bypasses the flush iomap uses to trigger
-> > > +		 * extent conversion when unwritten mappings have dirty
-> > > +		 * pagecache in need of zeroing.
-> > > +		 *
-> > > +		 * Trim the mapping to the end pos of the lookup, which in turn
-> > > +		 * was trimmed to the end of the batch if it became full before
-> > > +		 * the end of the mapping.
-> > > +		 */
-> > > +		if (imap.br_state == XFS_EXT_UNWRITTEN &&
-> > > +		    offset_fsb < eof_fsb) {
-> > > +			loff_t len = min(count,
-> > > +					 XFS_FSB_TO_B(mp, imap.br_blockcount));
-> > > +
-> > > +			end = iomap_fill_dirty_folios(iter, offset, len);
+> > > +	if (folio_test_uptodate(folio))
+> > > +		return;
 > > 
-> > ...though I wonder, does this need to happen in
-> > xfs_buffered_write_iomap_begin?  Is it required to hold the ILOCK while
-> > we go look for folios in the mapping?  Or could this become a part of
-> > iomap_write_begin?
-> > 
+> > Looks fine, but how exhaustively have you tested this with heavy IO
+> > workloads?  I /think/ it's the case that folios always creep towards
+> > ifs_is_fully_uptodate() == true state and once they've gotten there
+> > never go back.  But folio state bugs are tricky to detect once they've
+> > crept in.
 > 
-> Technically it does not need to be inside ->iomap_begin(). The "dirty
-> check" just needs to be before the fs drops its own locks associated
-> with the mapping lookup to maintain functional correctness, and that
-> includes doing it before the callout in the first place (i.e. this is
-> how the filemap_range_needs_writeback() logic works). I have various
-> older prototype versions of that work that tried to do things a bit more
-> generically in that way, but ultimately they seemed less elegant for the
-> purpose of zero range.
+> I tested fio, ltp and xfstests combined for about 30 hours. The command
+> used for fio test is:
 > 
-> WRT zero range, the main reason this is in the callback is that it's
-> only required to search for dirty folios when the underlying mapping is
-> unwritten, and we don't know that until the filesystem provides the
-> mapping (and doing at after the fs drops locks is racy).
-
-<nod>
-
-> That said, if we eventually use this for something like buffered writes,
-> that is not so much of an issue and we probably want to instead
-> lookup/allocate/lock each successive folio up front. That could likely
-> occur at the iomap level (lock ordering issues and whatnot
-> notwithstanding).
+>   fio --name=4k-rw \
+>     --filename=/data2/testfile \
+>     --size=1G \
+>     --bs=4096 \
+>     --ioengine=libaio \
+>     --iodepth=32 \
+>     --rw=randrw \
+>     --direct=0 \
+>     --buffered=1 \
+>     --numjobs=16 \
+>     --runtime=60 \
+>     --time_based \
+>     --group_reporting
 > 
-> The one caveat with zero range is that it's only really used for small
-> ranges in practice, so it may not really be that big of a deal if the
-> folio lookup occurred unconditionally. I think the justification for
-> that is tied to broader using of batching in iomap, however, so I don't
-> really want to force the issue unless it proves worthwhile. IOW what I'm
-> trying to say is that if we do end up with a few more ops using this
-> mechanism, it wouldn't surprise me if we just decided to deduplicate to
-> the lowest common denominator implementation at that point (and do the
-> lookups in iomap iter or something). We're just not there yet IMO.
+> ltp and xfstests showed no noticeable errors caused by this patch.
 
-<nod> I suppose it could be useful for performance reasons to try to
-grab as many folios as we can while we still hold the ILOCK, though we'd
-have to be careful about lock inversions.
+<nod> I think this fine then...
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
 > 
-> Brian
+> thanks,
+> Jinliang Zheng. :)
 > 
+> > 
 > > --D
 > > 
-> > > +			end_fsb = min_t(xfs_fileoff_t, end_fsb,
-> > > +					XFS_B_TO_FSB(mp, end));
-> > > +		}
 > > > +
-> > >  		xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
-> > >  	}
-> > >  
+> > >  	if (ifs) {
+> > >  		spin_lock_irqsave(&ifs->state_lock, flags);
+> > >  		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
 > > > -- 
 > > > 2.49.0
 > > > 
 > > > 
-> > 
-> 
 > 
 
