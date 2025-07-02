@@ -1,57 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-53718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5A1AF61E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 20:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2789AF62A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 21:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715CE4E3027
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 18:52:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D3D16B5D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 19:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A49F2E49AF;
-	Wed,  2 Jul 2025 18:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C9B2D0C9D;
+	Wed,  2 Jul 2025 19:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iM0ZzfxT"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="utsPt8qL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF22E2BE637;
-	Wed,  2 Jul 2025 18:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DB02F7CE1
+	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 19:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751482334; cv=none; b=Ry1OHr/FHjJAhnuc14Ex7zeyLmDstYCzNwI1JC/Tv657k9UnqmMjvLOQ+49GmcrvwgL5KCxKRcjUhYZ4R9s0+IkAbbb0H/gRjq8HcgBYAdMbvqmGSOMbYeueU7x3tCmemsUQDrPJJ4wIStwX3fHw7SW6lfGV4Vqk7U1eQYyIGek=
+	t=1751484549; cv=none; b=mxogBp06JjCee5Pm/qAFLT+iZbwe/1kdVLak55Qha5NDGJSqOPa299Rwfw5609xaz69Fj7/2sgiP/tT1fNufmzengwt6nKPRossh+NR9uIVT0mwLsCHUEW8LAk6RqCoYmtLVtNKzgJ1NbEVMMwvbZjgXJyT4I81HbrcrRD0xmMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751482334; c=relaxed/simple;
-	bh=OHk7XwglHJcDWN72KQjJUAxP0PTjfem32WqdpZA4khw=;
+	s=arc-20240116; t=1751484549; c=relaxed/simple;
+	bh=9bCkmPODbjjbew4bDBSC/UGuv+Xu4KHByPoYvqDm7LI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QrVl8fHwmUW/pAlCL1tOPelG2s6E2aDcWwvACJ6ch5vUNbrN+9+MWxKaSxvkzsWwMxvzrCLN/4XRubaiL8xRb4GPRMwwQ1ylpa2YyqB3vQBy4C1GnN5dBFWFXok8vHl0LRaV1QT5LgXoX5Js4Sk3e1ce9xFjgrvFKm15+TqXfk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iM0ZzfxT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45663C4CEE7;
-	Wed,  2 Jul 2025 18:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751482334;
-	bh=OHk7XwglHJcDWN72KQjJUAxP0PTjfem32WqdpZA4khw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iM0ZzfxT+xq4GpA8fIVxugSeI1LBwGsjeitUjYcIA3//vGtGY55runcEoY+NiyKTy
-	 mxyi4kjHC+c7Tfgn2FJPDORAOzvmdpD53Za2drdZPFidSFt4h4roFGhyBVmoA2HEmo
-	 wSja+nZwAH0djf2ev2tfvFTvHFemJFVVGQnkoeWLJ+39aYOt6VxB3IcGpUl5Ay5TfA
-	 uFWP9Fya+UYH8gBqoZTvxzX1E7luxDgqnCh9ZPOmMJD8eOcppnI4U8liL5K3Xvizfl
-	 ieMrUgCf9gIXRBhBLPMqz37iHtde2UPEXO6o+iU7zo7Kv/GExbXDfEJ4fUwMCIIRuD
-	 ng+Cf3ERhd2fA==
-Date: Wed, 2 Jul 2025 11:52:13 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: alexjlzheng@tencent.com, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with
- locks
-Message-ID: <20250702185213.GY10009@frogsfrogsfrogs>
-References: <20250701184737.GA9991@frogsfrogsfrogs>
- <20250702120912.36380-1-alexjlzheng@tencent.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGaJhkjRWyJtUCFQUKdWT+UrgfP1DHo1/edtbMf2v/vVp7Sqw5H2o+b0w6atHQNy7Bgh1xt9TcAFKejhew68EyEo0F/YlhpOtEY3e3PMKgijNXXq7M4yZWj9QmU22Pqqy2Qr6eiIOqq23UnKkU6cG0dPQuSQqI08ar4RQBzvAA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=utsPt8qL; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lgI0Pcd7OsjzpxPVKtVcwCMI1Ngf5UJbANJhII+UJhU=; b=utsPt8qLYdgpIGZHg3l3VIPK3s
+	kUHyvDuXsyKSGk2Nrw7RE5oQ2Kcodp5DIExWEXDAItDF9rLXXIjezt3mvfpGUNK4OlLa7Hm3kiMzI
+	e/VAVpYduPHHuM3CjFUUeEuQ582X4UqCbQOzMObd3Z4i64oAvfgWofB0QCRF/wKd474YEGGx5cL9b
+	NmieuBea+LY7clxQaN/Ss3OZVRPgFdqFAqe0nuf9hgi0GJHQm/appNtG0+dWJVq0xFhbcTo24lbnv
+	IpQ6IwAGxS/RxNPBzGygEO24dwv/fOBnmt2u5eX0vkOrl0Saj3XkDosxNf/7c4CobF2eOCppdN+Fz
+	H1ENaMWA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uX38h-0000000DdX7-2xRk;
+	Wed, 02 Jul 2025 19:29:03 +0000
+Date: Wed, 2 Jul 2025 20:29:03 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCHES v3][RFC][CFR] mount-related stuff
+Message-ID: <20250702192903.GA3248425@ZenIV>
+References: <20250610081758.GE299672@ZenIV>
+ <20250623044912.GA1248894@ZenIV>
+ <20250630025148.GA1383774@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,82 +63,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250702120912.36380-1-alexjlzheng@tencent.com>
+In-Reply-To: <20250630025148.GA1383774@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jul 02, 2025 at 08:09:12PM +0800, Jinliang Zheng wrote:
-> On Tue, 1 Jul 2025 11:47:37 -0700, djwong@kernel.org wrote:
-> > On Tue, Jul 03, 2025 at 10:48:47PM +0800, alexjlzheng@gmail.com wrote:
-> > > From: Jinliang Zheng <alexjlzheng@tencent.com>
-> > > 
-> > > In the buffer write path, iomap_set_range_uptodate() is called every
-> > > time iomap_end_write() is called. But if folio_test_uptodate() holds, we
-> > > know that all blocks in this folio are already in the uptodate state, so
-> > > there is no need to go deep into the critical section of state_lock to
-> > > execute bitmap_set().
-> > > 
-> > > Although state_lock may not have significant lock contention due to
-> > > folio lock, this patch at least reduces the number of instructions.
-> > > 
-> > > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> > > ---
-> > >  fs/iomap/buffered-io.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > index 3729391a18f3..fb4519158f3a 100644
-> > > --- a/fs/iomap/buffered-io.c
-> > > +++ b/fs/iomap/buffered-io.c
-> > > @@ -71,6 +71,9 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
-> > >  	unsigned long flags;
-> > >  	bool uptodate = true;
-> > >  
-> > > +	if (folio_test_uptodate(folio))
-> > > +		return;
-> > 
-> > Looks fine, but how exhaustively have you tested this with heavy IO
-> > workloads?  I /think/ it's the case that folios always creep towards
-> > ifs_is_fully_uptodate() == true state and once they've gotten there
-> > never go back.  But folio state bugs are tricky to detect once they've
-> > crept in.
+On Mon, Jun 30, 2025 at 03:51:48AM +0100, Al Viro wrote:
+> Updated variant (-rc4-based) force-pushed to
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.mount
+> individual patches in followups.  It seems to survive testing here, but
+> more testing and review would be very welcome.  Again, that is not all -
+> there's more stuff coming...
 > 
-> I tested fio, ltp and xfstests combined for about 30 hours. The command
-> used for fio test is:
-> 
->   fio --name=4k-rw \
->     --filename=/data2/testfile \
->     --size=1G \
->     --bs=4096 \
->     --ioengine=libaio \
->     --iodepth=32 \
->     --rw=randrw \
->     --direct=0 \
->     --buffered=1 \
->     --numjobs=16 \
->     --runtime=60 \
->     --time_based \
->     --group_reporting
-> 
-> ltp and xfstests showed no noticeable errors caused by this patch.
+> Folks, please review - if nobody objects, it goes into #for-next in
+> a day or two.
 
-<nod> I think this fine then...
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
-> 
-> thanks,
-> Jinliang Zheng. :)
-> 
-> > 
-> > --D
-> > 
-> > > +
-> > >  	if (ifs) {
-> > >  		spin_lock_irqsave(&ifs->state_lock, flags);
-> > >  		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
-> > > -- 
-> > > 2.49.0
-> > > 
-> > > 
-> 
+... and there it goes.
 
