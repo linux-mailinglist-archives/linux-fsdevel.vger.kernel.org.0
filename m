@@ -1,171 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-53678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF85DAF5EB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 18:34:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE76AF5ED6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 18:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E553AE59B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 16:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EAA21C457A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Jul 2025 16:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AD430115C;
-	Wed,  2 Jul 2025 16:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA8923C4E9;
+	Wed,  2 Jul 2025 16:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Kha0xlGH"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="I1fUlzcv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203D22FF478
-	for <linux-fsdevel@vger.kernel.org>; Wed,  2 Jul 2025 16:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A902F50B5;
+	Wed,  2 Jul 2025 16:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751474049; cv=none; b=so5lBRc+ZWaxyXVQ3MNY79T5A44uyX/QnZPSb8lK8veZrlQio7BvRl3h5ODVRk1llyyQwk+ymdwFf/3W19bCel7CWJouUHBLzmKDI3r78RFmEepqIp8UUB9piDmwgfaG2j2ccIBgmPKVT9Eqk7nc0L5SYxF1pGpNq31Ubt3hni8=
+	t=1751474159; cv=none; b=b2VFx4RObZjBELrCDMkE4jyPoDFj7A1eOfX8KrXK12OXb2grOtzXIPgfgaDBLv8tHB2thOV7/pGalkgW9sH7qZ4GSFJuIuumVkz/bSHKuh/d5wydDaWvaDOnYdpzLyiLRlrJPYnX6RgE0Dp7v9MKrW5GzCd9TYjleJrhs8A6u7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751474049; c=relaxed/simple;
-	bh=4lR1Xh08/sQLiOaBFrRDSvCEUOK2+dsuYmN7W/oIA+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYQIN90V/AdOdO3d+jWI9q00A7kdj5eCMUli4KWWa6XJvgfqQ96n56Tg5DWMea7c3eLj3S+Gm1Dfcv9y3UJMwfzFuJGzpIqo14Yx3avoTxIk4vgwjgG1MePSCqRNiZIbnE9cNAdWlp0DAszksoa5lt7bugodO3wGxJSFKn977H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Kha0xlGH; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 2 Jul 2025 12:34:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751474044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNtQyZYN8r1glr1xYZPVCQJBFCDyqJ1sFSVx2i0k8WI=;
-	b=Kha0xlGHuC4/w2TjLggwX8g2P81eHQpGKN0WXnaAsxtU4LIv44fQ42AD8Oj26wBBlcn4D1
-	oHmR/uXz7Ujdze8OQhPOeWrT2mQFCpe138xQJQvK5qqsKfmzlsaDTUMFZH7ps4SeyScohp
-	UWnTH96+aFPGpv/H8DFHV4WvW9lkZyc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: John Stoffel <john@stoffel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kerenl@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
-Message-ID: <gq2c4qlivewr2j5tp6cubfouvr42jww4ilhx3l55cxmbeotejk@emoy2z2ztmi2>
-References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
- <CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
- <xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
- <26723.62463.967566.748222@quad.stoffel.home>
+	s=arc-20240116; t=1751474159; c=relaxed/simple;
+	bh=yZEjONrzcZENuzKEaQuvgIhNN+3lLCSPSnVgEE+2jDU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZnRODVM/MH9qx+mlQU96dwFz5r4/jgQ3qAh/eOhH6qpub541pAwiF6p58726/re+3H+1oVC6q79sN7WsI2FTUaDr+KyWjSLi/ZWpnwnEqvcPvEenRVoFFSeeZkPJNFy+PvwYkgPaKohUJ20l9hBCV9P+WfO5OAmPoElK/3fb2Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=I1fUlzcv; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YqPYHUWKBExHrHxxYieGS7K3EpkIcdpaIqcCODsjLkc=; b=I1fUlzcvPF2opKVyBCNm08K86A
+	Y1C8R3Po8WVGkTpbJHk82BQsaOS1cJEUDbPNf2lYAuRstG1SGP8pnLx29MLPcAGtagjG1fwADP9fW
+	DUfmbl3uBGNOJMLyPkyja0I5O5dc9e5AhNEIrHtK4d2XXFY8YddSHTZMwo+MoYRCZk9HpH8A2bAOg
+	MOty2462a0RODzVdmOZ/CrM30C9hWUh8WdfixpPU1V6dQ/5qKkToBaALP1re/h7sIRYS6fk9k2te9
+	+tLFTHLTdxOLZj+fNu2I9bxBuwdio3P4LvAhh4bkF41c/HKF9B8WXxWonYZAYO2Wie8wHLxai8xfS
+	D4dFiuUw==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uX0Qt-00BXYj-OS; Wed, 02 Jul 2025 18:35:39 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>,  Laura Promberger
+ <laura.promberger@cern.ch>,  Dave Chinner <david@fromorbit.com>,  Matt
+ Harvey <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] fuse: new workqueue to periodically invalidate
+ expired dentries
+In-Reply-To: <CAJfpegue3szRGZs+ogvYjiVt0YUo-=e+hrj-r=8ZDy11Zgrt9w@mail.gmail.com>
+	(Miklos Szeredi's message of "Wed, 2 Jul 2025 17:39:58 +0200")
+References: <20250520154203.31359-1-luis@igalia.com>
+	<CAJfpegue3szRGZs+ogvYjiVt0YUo-=e+hrj-r=8ZDy11Zgrt9w@mail.gmail.com>
+Date: Wed, 02 Jul 2025 17:35:33 +0100
+Message-ID: <87bjq2k0tm.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26723.62463.967566.748222@quad.stoffel.home>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 01, 2025 at 10:43:11AM -0400, John Stoffel wrote:
-> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
-> 
-> I wasn't sure if I wanted to chime in here, or even if it would be
-> worth it.  But whatever.
-> 
-> > On Thu, Jun 26, 2025 at 08:21:23PM -0700, Linus Torvalds wrote:
-> >> On Thu, 26 Jun 2025 at 19:23, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >> >
-> >> > per the maintainer thread discussion and precedent in xfs and btrfs
-> >> > for repair code in RCs, journal_rewind is again included
-> >> 
-> >> I have pulled this, but also as per that discussion, I think we'll be
-> >> parting ways in the 6.17 merge window.
-> >> 
-> >> You made it very clear that I can't even question any bug-fixes and I
-> >> should just pull anything and everything.
-> 
-> > Linus, I'm not trying to say you can't have any say in bcachefs. Not at
-> > all.
-> 
-> > I positively enjoy working with you - when you're not being a dick,
-> > but you can be genuinely impossible sometimes. A lot of times...
-> 
-> Kent, you can be a dick too.  Prime example, the lines above.  And
-> how you've treated me and others who gave feedback on bcachefs in the
-> past.  I'm not a programmer, I'm in IT and follow this because it's
-> interesting, and I've been doing data management all my career.  So
-> new filesystems are interesting.  
+On Wed, Jul 02 2025, Miklos Szeredi wrote:
 
-Oh yes, I can be. I apologize if I've been a dick to you personally, I
-try to be nice to my users and build good working relationships. But
-kernel development is a high stakes, high pressure, stressful job, as I
-often remind people. I don't ever take it personally, although sometimes
-we do need to cool off before we drive each other completely mad :)
+> On Tue, 20 May 2025 at 17:42, Luis Henriques <luis@igalia.com> wrote:
+>>
+>> This patch adds a new module parameter 'inval_wq' which is used to start=
+ a
+>> workqueue to periodically invalidate expired dentries.  The value of this
+>> new parameter is the period, in seconds, of the workqueue.  When it is s=
+et,
+>> every new dentry will be added to an rbtree, sorted by the dentry's expi=
+ry
+>> time.
+>>
+>> When the workqueue is executed, it will check the dentries in this tree =
+and
+>> invalidate them if:
+>>
+>>   - The dentry has timed-out, or if
+>>   - The connection epoch has been incremented.
+>
+> I wonder, why not make the whole infrastructure global?  There's no
+> reason to have separate rb-trees and workqueues for each fuse
+> instance.
 
-If there was something that was unresolved, and you'd like me to look at
-it again, I'd be more than happy to. If you want to share what you were
-hitting here, I'll tell you what I know - and if it was from a year or
-more ago it's most likely been fixed.
+Hmm... true.  My initial approach was to use a mount parameter to enabled
+it for each connection.  When you suggested replacing that by a module
+parameter, I should have done that too.
 
-> Slow down.  
+> Contention on the lock would be worse, but it's bad as it
+> is, so need some solution, e.g. hashed lock, which is better done with
+> a single instance.
 
-This is the most critical phase in the 10+ year process of shipping a
-new filesystem.
+Right, I'll think how to fix it (or at least reduce contention).
 
-We're seeing continually increasing usage (hopefully by users who are
-prepared to accept that risk, but not always!), but we're not yet ready
-for true widespread deployment.
+>> The workqueue will run for, at most, 5 seconds each time.  It will
+>> reschedule itself if the dentries tree isn't empty.
+>
+> It should check need_resched() instead.
 
-Shipping a project as large and complex as a filesystem must be done
-incrementally, in stages where we're deploying to gradually increasing
-numbers of users, fixing everything they find and assessing where we're
-at before opening it up to more users.
+OK.
 
-Working with users, supporting with them, checking in on how it's doing,
-and getting them the fixes for what they find is how we iterate and
-improve. The job is not done until it's working well for everyone.
+>> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+>> index 1fb0b15a6088..257ca2b36b94 100644
+>> --- a/fs/fuse/dir.c
+>> +++ b/fs/fuse/dir.c
+>> @@ -34,33 +34,153 @@ static void fuse_advise_use_readdirplus(struct inod=
+e *dir)
+>>         set_bit(FUSE_I_ADVISE_RDPLUS, &fi->state);
+>>  }
+>>
+>> -#if BITS_PER_LONG >=3D 64
+>> -static inline void __fuse_dentry_settime(struct dentry *entry, u64 time)
+>> +struct fuse_dentry {
+>> +       u64 time;
+>> +       struct rcu_head rcu;
+>> +       struct rb_node node;
+>> +       struct dentry *dentry;
+>> +};
+>> +
+>
+> You lost the union with rcu_head.   Any other field is okay, none of
+> them matter in rcu protected code.  E.g.
+>
+> struct fuse_dentry {
+>         u64 time;
+>         union {
+>                 struct rcu_head rcu;
+>                 struct rb_node node;
+>         };
+>         struct dentry *dentry;
+> };
 
-Right now, everyone is concerned because this is a hotly anticipated
-project, and everyone wants to see it done right.
+Oops.  I'll fix that.
 
-And in 6.16, we had two massive pull requests (30+ patches in a week,
-twice in a row); that also generates concern when people are wondering
-"is this thing stabilizing?".
+Thanks a lot for your feedback, Miklos.  Much appreciated.  I'll re-work
+this patch and send a new revision shortly.
 
-6.16 was largely a case of a few particularly interesting bug reports
-generating a bunch of fixes (and relatively simple and localized fixes,
-which is what we like to see) for repair corner cases, the biggest
-culprit (again) being snapshots.
-
-If you look at the bug tracker, especially rate of incoming bugs and the
-severity of bug reports (and also other sources of bug reports, like
-reddit and IRC) - yes, we are stabilizing fast.
-
-There is still a lot of work to be done, but we're on the right track.
-
-"Slowing down" is not something you do without a concrete reason. Right
-now we need to be getting those fixes out to users so they can keep
-testing and finding the next bug. When someone has invested time and
-effort learning how the system works and how to report bugs, we don't
-watn them getting frustrated and leaving - we want to work with them, so
-they can keep testing and finding new bugs.
-
-The signals that would tell me it's time to slow down are:
-
-- Regressions getting through (quantity, severity, time spent on fixing
-  them)
-- Bugs getting through that show that show that something fundamental is
-  missing (testing, hardening), or broken in our our design.
-- Frequency of bug reports going up to where I can't keep up (it's been
-  in steady, gradual decline)
-
-We actually do not want this to be 100% perfect before it sees users.
-That would result in a filesystem that's brittle - a glass cannon. We
-might get it to the point where it works 99% of the time, but then when
-it breaks we'd be in a panic - and if you discover it then, when it's in
-the wild, it's too late.
-
-The processes for how we debug and recover from failures, in the wild,
-is a huge part (perhaps the majority) of what we're working on now. That
-stuff has to be baked into the design on a deep level, and like all
-other complex design it requires continual iteration.
-
-That is how we'll get the reliability and robustness we hope to achieve.
+Cheers,
+--=20
+Lu=C3=ADs
 
