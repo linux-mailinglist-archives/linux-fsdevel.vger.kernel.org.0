@@ -1,151 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-53761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D530AF68A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 05:22:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8674AF68B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 05:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67394A2F22
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 03:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99441BC6B45
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 03:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E415722DF85;
-	Thu,  3 Jul 2025 03:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SxMv53Xx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005A8239E99;
+	Thu,  3 Jul 2025 03:35:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0AE22B8C5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 03:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41982356CB;
+	Thu,  3 Jul 2025 03:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751512959; cv=none; b=k9RFvf0jEmcy6e07z/Odh+fhjbZYtGzwE+JID1ZCFQlQVJ6J/thUC0GzGmScnSrIM1IHy6dxHAnbxtvwMZrhufuQXf4Tytzf2L83R2bEcnC2OiorCp+TI44UXDMLDqYXlf6GiEafz3htjFFy+gqVPGcVJUvzmNTiYZLwGr9ggdE=
+	t=1751513751; cv=none; b=M2qq9J+n25bWLP31FcMT74Xgk1wkSDTCoPPMBnRzcT4NzgE3fF/sVzZqUFiKr43DrkONV2PLyTnO7ahyX3JSIbbMvmDo2r37r27mLYdkPhGydq4aHuE7s8s+NQtDjq3rC/FNiNgMgEMmpxO8bGx2cBwuhVSKX3n17ERWb+QlkTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751512959; c=relaxed/simple;
-	bh=jRAp1AVjN+o0z0U9utUV1cQ17XRWoHhVViGsl36T9Fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JI6GCYOBrg99uEAGgA6CfzZShbUPHR6uDNvo0YM5E45dGa+sqRTxScJzFtYpce5VC7raP8YBayIOTyOvNVCQ16M8ORqUU7/BszI+2Lvt0qPhQCgh8cDchmAqIY3IJo4P7Jhv13eO/80vfM8w/B0z6Aa7eT1JF8My4VPmdhsP5Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SxMv53Xx; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b34a78bb6e7so3866577a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 20:22:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1751512956; x=1752117756; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3/FURbw0Qjice8ym2SrrqkCxrOCjqZwE+s45rYEO0E=;
-        b=SxMv53Xx6Degcdj47VTRozTEgcj9lqtxUGfqgW+mN15Ck/uN+S80/jxpVUbrPGDAse
-         Tf3uQ0wMhzwJgoc1+99tdez86AOQV4WPinPUdktvYk37Dlv8Wfh0IDvP91+59DOAPC8M
-         1yYMHzssFyQve7RxVvVq6GTiEh3Tntv1JfOiI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751512956; x=1752117756;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u3/FURbw0Qjice8ym2SrrqkCxrOCjqZwE+s45rYEO0E=;
-        b=R5TYa2aIxYbh9t+Uwl6kCcfgVix47VCn0DHBv0N0LWhyQQzv0tvG0n3Z8/ixdG7Ls+
-         3n31m7Bh7Kc2+VXLrCJb4hNJgWgSRPmcEQrOzb0W5sXPrlmlavjMpKw6C4bMmNiU8AOu
-         +ItmJPFdsepbDb/sBfz0lvLjBFx4ZlIkDwZBHQViY+xQboC72G78FEdYDFGjdUOCLTtn
-         I+6k/DqqHf4XZOH1j73Cz/bPPbwPGYxxgOMMqTFapK9HjU+KbUW6jhWasZqGl01XlqF+
-         DJWuUSUur5JwxKlKxboZkfL6Y6JL3EI4YXq8f6x4MRzKpMGkLCe4NcmpDoOpTZ6Hw9fl
-         LHzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfTteRqOalFL9aQGU7zHC1/gsoSzGbaoDrl/+u//2+1iVmH4BGSoCIGNhaCLob5fC5x+T3PiUZiD+pQE9t@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1F5fJdfh4E5gosKcJ3xy7RReRprKKCTC1rUbR2ZVjQQJDWI3L
-	ZURASGk9CRXBCjJ+dwbI/SIE9WI2KsfX03Vb/7IFI08zAZnk973uSoxCJuryMfpxSA==
-X-Gm-Gg: ASbGnctldWoK9kLHWBbFoqjzZI9GkFtcET26vnY34MpqIwFgZUXYOQLoFHgb0h8OeLh
-	ZlnfveFIjUCPa7VsdRi+b1V0Glh97gJ9fLEAEJI+m18lfH/5xJu6s60ycEePBOaLccKO3IRBIzk
-	UJpAD/VU1x4V3wbmJPiy8A4yYAobcVp9OHD7hKcuB4E/wlisyGyuvX8+Hzq5kw4rFEvgxeK6GAz
-	ZY4bJ6zOlkyHpZCcMGWo6e7UluUXEvQmNdvZDVuUgfloUkSDTWGhwHAna6Ta8kBMuxrE1Eg+0m8
-	RSM7d/gR9JIEjju7QwDFyiEhlqRNFLzYM+ow0ikkk5RnXj6jMAEiU9gTU+xazqRz+hdyS6WXYuv
-	L
-X-Google-Smtp-Source: AGHT+IEAy0Xvd7q1RC5hmp7SawamH/oI/muiFAFExRx9I64wiUZ1PQhrNgi3qS6Dq4f35q/YwfITMQ==
-X-Received: by 2002:a17:90b:3946:b0:311:e8cc:4264 with SMTP id 98e67ed59e1d1-31a9d545d21mr2763491a91.12.1751512955991;
-        Wed, 02 Jul 2025 20:22:35 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:8e3f:7c33:158f:349b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31a9cc5204bsm1117959a91.8.2025.07.02.20.22.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 20:22:35 -0700 (PDT)
-Date: Thu, 3 Jul 2025 12:22:23 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, virtualization@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Jerrin Shaji George <jerrin.shaji-george@broadcom.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
-	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	Alistair Popple <apopple@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Minchan Kim <minchan@kernel.org>, Brendan Jackman <jackmanb@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
-	Naoya Horiguchi <nao.horiguchi@gmail.com>, Oscar Salvador <osalvador@suse.de>, 
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v1 12/29] mm/zsmalloc: stop using __ClearPageMovable()
-Message-ID: <vscedd6m3cq73c5ggjjz6ndordivgeh4dmvzeok222bnderr5c@dujm4ndthtxb>
-References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-13-david@redhat.com>
- <zmsay3nrpmjec5n7v44svfa7iwl6vklqan4dgjn4wpvsr5hqt7@cqfwdvhncgrg>
- <757cf6b9-730b-4b12-9a3d-27699e20e3ac@redhat.com>
- <ugm7j66msq2w2hd3jg3thsxd2mv7vudozal3nblnfemclvut64@yp7d6vgesath>
- <11de6ae0-d4ec-43d5-a82e-146d82f17fff@redhat.com>
- <5thkl2h5qan5gm7putqd4o6yn5ht2c5zeei5qbjoni677xr7po@kbfokuekiubj>
+	s=arc-20240116; t=1751513751; c=relaxed/simple;
+	bh=aAiZg72MzhU/nwICqHjkhrX5X7yDG6hB2keLduoAXfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rP3x7ENl+MzP7CcMHIkTRJ05oHHO+/d2u0mKLGU/jI/rPcRDAuDGTd+NDD83wYMB4uA2xi8gDQMwo8UxHYDrgvZ3/WX5pwh8Z6h3lo34dzyNhgSrDA0xMf3wECCgey5hRr+zirRdxo4uXTzaQ4ctji5ystQmuFaiy5/f9M4r9cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bXj8g3pglzKHMbj;
+	Thu,  3 Jul 2025 11:35:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id E416B1A1101;
+	Thu,  3 Jul 2025 11:35:45 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP3 (Coremail) with SMTP id _Ch0CgBHpySN+mVo3w_yAQ--.57305S3;
+	Thu, 03 Jul 2025 11:35:43 +0800 (CST)
+Message-ID: <99010bfd-c968-49c7-b62b-c72b38722c1b@huaweicloud.com>
+Date: Thu, 3 Jul 2025 11:35:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5thkl2h5qan5gm7putqd4o6yn5ht2c5zeei5qbjoni677xr7po@kbfokuekiubj>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
+ tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
+ bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
+ martin.petersen@oracle.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org
+References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
+ <20250623-woanders-allabendlich-f87ae2d9c704@brauner>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250623-woanders-allabendlich-f87ae2d9c704@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgBHpySN+mVo3w_yAQ--.57305S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF45tr1Duw4ftrWrZw1kZrb_yoWrtw15pa
+	yUJFZ8KF4DJr17J397uF109F15Zws3Ar15Ka1rKw1kZrWYqrnagFWIga4UXasrCr93Ww1x
+	ZFsFya4q9ay7AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On (25/07/03 11:28), Sergey Senozhatsky wrote:
-> > > > > >    static int zs_page_migrate(struct page *newpage, struct page *page,
-> > > > > > @@ -1736,6 +1736,13 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
-> > > > > >    	unsigned long old_obj, new_obj;
-> > > > > >    	unsigned int obj_idx;
-> > > > > > +	/*
-> > > > > > +	 * TODO: nothing prevents a zspage from getting destroyed while
-> > > > > > +	 * isolated: we should disallow that and defer it.
-> > > > > > +	 */
-> > > > > 
-> > > > > Can you elaborate?
-> > > > 
-> > > > We can only free a zspage in free_zspage() while the page is locked.
-> > > > 
-> > > > After we isolated a zspage page for migration (under page lock!), we drop
-> > >                        ^^ a physical page? (IOW zspage chain page?)
-> > > 
-> > > > the lock again, to retake the lock when trying to migrate it.
-> > > > 
-> > > > That means, there is a window where a zspage can be freed although the page
-> > > > is isolated for migration.
-> > > 
-> > > I see, thanks.  Looks somewhat fragile.  Is this a new thing?
-> > 
-> > No, it's been like that forever. And I was surprised that only zsmalloc
-> > behaves that way
+On 2025/6/23 18:46, Christian Brauner wrote:
+> On Thu, 19 Jun 2025 19:17:57 +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Changes since v1:
+>>  - Rebase codes on 6.16-rc2.
+>>  - Use max_{hw|user}_wzeroes_unmap_sectors queue limits instead of
+>>    BLK_FEAT_WRITE_ZEROES_UNMAP feature to represent the status of the
+>>    unmap write zeroes operation as Christoph and Darrick suggested. This
+>>    redoes the first 5 patches, so remove all the reviewed-by tags,
+>>    please review them again.
+>>  - Simplify the description of FALLOC_FL_WRITE_ZEROES in patch 06 as
+>>    Darrick suggested.
+>>  - Revise the check order of FALLOC_FL_WRITE_ZEROES in patch 08 as
+>>    Christoph suggested.
+>> Changes since RFC v4:
+>>  - Rebase codes on 6.16-rc1.
+>>  - Add a new queue_limit flag, and change the write_zeroes_unmap sysfs
+>>    interface to RW mode. User can disable the unmap write zeroes
+>>    operation by writing '0' to it when the operation is slow.
+>>  - Modify the documentation of write_zeroes_unmap sysfs interface as
+>>    Martin suggested.
+>>  - Remove the statx interface.
+>>  - Make the bdev and ext4 don't allow to submit FALLOC_FL_WRITE_ZEROES
+>>    if the block device does not enable the unmap write zeroes operation,
+>>    it should return -EOPNOTSUPP.
+>> Changes sicne RFC v3:
+>>  - Rebase codes on 6.15-rc2.
+>>  - Add a note in patch 1 to indicate that the unmap write zeros command
+>>    is not always guaranteed as Christoph suggested.
+>>  - Rename bdev_unmap_write_zeroes() helper and move it to patch 1 as
+>>    Christoph suggested.
+>>  - Introduce a new statx attribute flag STATX_ATTR_WRITE_ZEROES_UNMAP as
+>>    Christoph and Christian suggested.
+>>  - Exchange the order of the two patches that modified
+>>    blkdev_fallocate() as Christoph suggested.
+>> Changes since RFC v2:
+>>  - Rebase codes on next-20250314.
+>>  - Add support for nvme multipath.
+>>  - Add support for NVMeT with block device backing.
+>>  - Clear FALLOC_FL_WRITE_ZEROES if dm clear
+>>    limits->max_write_zeroes_sectors.
+>>  - Complement the counterpart userspace tools(util-linux and xfs_io)
+>>    and tests(blktests and xfstests), please see below for details.
+>> Changes since RFC v1:
+>>  - Switch to add a new write zeroes operation, FALLOC_FL_WRITE_ZEROES,
+>>    in fallocate, instead of just adding a supported flag to
+>>    FALLOC_FL_ZERO_RANGE.
+>>  - Introduce a new flag BLK_FEAT_WRITE_ZEROES_UNMAP to the block
+>>    device's queue limit features, and implement it on SCSI sd driver,
+>>    NVMe SSD driver and dm driver.
+>>  - Implement FALLOC_FL_WRITE_ZEROES on both the ext4 filesystem and
+>>    block device (bdev).
+>>
+>> [...]
 > 
-> Oh, that makes two of us.
+> If needed, the branch can be declared stable and thus be used as base
+> for other work.
+> 
+> ---
+> 
+> Applied to the vfs-6.17.fallocate branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.17.fallocate branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs-6.17.fallocate
 
-I sort of wonder if zs_page_migrate() VM_BUG_ON_PAGE() removal and
-zspage check addition need to be landed outside of this series, as
-a zsmalloc fixup.
+Hi Christian,
+
+I noticed that this patch series doesn't appear to be merged into this
+branch. Just wondering if it might have been missed?
+
+Best regards,
+Yi.
+
+> 
+> [1/9] block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits
+>       https://git.kernel.org/vfs/vfs/c/2695a9b086fd
+> [2/9] nvme: set max_hw_wzeroes_unmap_sectors if device supports DEAC bit
+>       https://git.kernel.org/vfs/vfs/c/bf07c1180194
+> [3/9] nvmet: set WZDS and DRB if device enables unmap write zeroes operation
+>       https://git.kernel.org/vfs/vfs/c/a6c7ab5adcba
+> [4/9] scsi: sd: set max_hw_wzeroes_unmap_sectors if device supports SD_ZERO_*_UNMAP
+>       https://git.kernel.org/vfs/vfs/c/92372ed1cc88
+> [5/9] dm: clear unmap write zeroes limits when disabling write zeroes
+>       https://git.kernel.org/vfs/vfs/c/e383d550e716
+> [6/9] fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
+>       https://git.kernel.org/vfs/vfs/c/1ed1b5df86ec
+> [7/9] block: factor out common part in blkdev_fallocate()
+>       https://git.kernel.org/vfs/vfs/c/96433508c8c0
+> [8/9] block: add FALLOC_FL_WRITE_ZEROES support
+>       https://git.kernel.org/vfs/vfs/c/2b4e5f9b3eb9
+> [9/9] ext4: add FALLOC_FL_WRITE_ZEROES support
+>       https://git.kernel.org/vfs/vfs/c/51954e469396
+
 
