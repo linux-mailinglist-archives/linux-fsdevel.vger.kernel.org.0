@@ -1,154 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-53756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62766AF67CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 04:13:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D32AF67E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 04:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A7C1C28568
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 02:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53344E4B31
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 02:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5C61FFC45;
-	Thu,  3 Jul 2025 02:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="e8xmKeux"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4501D5173;
+	Thu,  3 Jul 2025 02:18:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C2E7BAEC
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 02:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F1186353
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 02:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751508801; cv=none; b=tfwkWy+g+zhwCguCHxTen0/gkXETFzL5rajyg+yBJRnWqXn2CKsRcyz/poG9Q51Bv1j36iInnX6FKLsYIRtU443rSD+aDZhv4GeuQxw73Vbe+h+Pa78RLske4IC+lY1BbvppJ+5sbtkLDrxdt7rcEiNY8NvE1DRop1I2D+2nglk=
+	t=1751509118; cv=none; b=Rg4V7eCqTbzUpwOOi1J24X13F93yeHdj+bPy3DDJ94swjClE/0uISEyP+07Bd32p3mTft4BSxcKeUWyOqH5d2jMAahxWOuyk/OlT6HLNiTpSCDjGsczQ2QdIVQrNJsT3GqE+j1gz8D9wAg4AyL/G8lzJ8Nom2n7vU15jFeG65YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751508801; c=relaxed/simple;
-	bh=5ymmmvaYHZkZ63J3xtIxq0o0ASFDyKJPxoguG2Sd+B0=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=QOfEqcQkg5PEETOLs6DYdoJBH5h/FhfL9iFVyQAna+dg2U4aOB0ZCW4Ioazrka8fYy9IfWrZXV3NFm28mxw2rawBF8nP4kHJF6hdi0ANbq5ggJ7iEvC/ecP8TuwBflo+RzpeldO/WNOb2jcVTYkWCth0IRr9/RFIn8Zh3nKKvEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=e8xmKeux; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a5851764e1so148423151cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 19:13:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1751508797; x=1752113597; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TzXhie4CIWJW7jzt+VKFb4S+L+Efm25Tu2fG/WJtN10=;
-        b=e8xmKeuxN8pjpI9dI7PMfKLhAdn3rhXeTwTPuJGm6mG9lYLViCvAOysvO2DA4uva3e
-         LQ3aEQrfZ+HPPm7h4flY5zzSEnL8Ncib/SROeW5ptYSgE8iLE8WUrmYT53DFkvaZeuXU
-         GJ2uZa1xQUJVL0lFeVEUpCD3+YvgvqIVQCaXJIYv08dPIfdQdQVllVa3bVwyyQpyUep5
-         bBGjwkBqY/d4VSINVzCUXbjhrkY30HGAOc2R2MFl7ADcVuBRky5z3vSJ0Pb+zyNiLN83
-         ljIYpLU1QinagELHB2JpPhKWvflRsq1RXfaHvFqOTosaebS9V4Fr6OGwqR20+pZfZGGp
-         NSIA==
+	s=arc-20240116; t=1751509118; c=relaxed/simple;
+	bh=w6v4b1Sv8vHkmy0AJXwcpTK0Qw8A26XW180RA3XgmwQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=N+sUy7N2MikcNl4Rxa2WCVXv2XYpY80qs3FwIzSga4HrN/1V6JTeya5Ka/A0sam+budAOjhscZRfkzOW9Vq0+aZWyqPP+96eA/en0zcloY+O1zOjIufi/UY83pDcm2bIWO5K8B7QbrwdA/TvUZEyj917gE0VW/UjAsius2q0xhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3df309d9842so127410655ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 19:18:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751508797; x=1752113597;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TzXhie4CIWJW7jzt+VKFb4S+L+Efm25Tu2fG/WJtN10=;
-        b=hAwaUDrKA5EYlqBs6YHdMV+i2fy2I6IwtdO6E4Gp7CIpVKJbnw7IHg5uo12KOOqsSk
-         /ObaLIimvnEdXI3C2IeDXonJPDCJdngqqjTKsK47YzLdBM5Bl30/ve67unjz4A74lW+b
-         9j2aN+Zu71TcqISM9NAix/YVdCXrCiFG/dkDJ7LzFmKeN+kR8Xl/5cELvDzSxy+EpRzH
-         G2+55sON7UYGiRUlP/P6W4VpehHNPZa7KG+Te1fanWDKnD6hc+sS1DsZQsgFLcQeFfDo
-         yX90O408alGtjJQq94udABS0GHPmDA7FTpmqEf7y6bXO/ZF22e4dMxqhV7fqROmJSI95
-         UgLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQSIDUzncmZdqQo/FNpJ6i5OMTI0BihtGvuyfsrEPq7hYEyccxVQj+W3Gs2AN4dKWih/TNb6sYjZwKZQZT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ3E4y61ybd+DO5XagLeMwrYTwoHwwkSlemotK8JsRScU7Co3a
-	dI+IclV7P2DzPZ++yFJcPQId4orfeBO/LuUOpapvQw9NuM1J2IzuWx9H54NHvJkkbg==
-X-Gm-Gg: ASbGnctJ2eT64rncPNcBrgYF+sL84Wyhwh7xrXsrAI57gcZw0EEmiakdzlvpD27/Hat
-	FoTCGcc1g10K8BODeQhpOBBBDanG1BuAWyVWQ04ZmFx4QM39ww75baFS3lTb7R1H8pxG6oasb5u
-	lbj+eC8bZguZPaYG4U1ETmWRnhWWx4NtcxltIffHFo7hSdTo4nO48AxmWZ1Tak8ApNW3mq9Mk+F
-	YXXDPwta7JY0nsaEOPiVwhk3spWC99BdhG7TDmKaPvx8ugf34vsmLCOPmSqW5YmgEz/9maEQznH
-	A7uq99wA01O0ZRxCKq+f8DxZQlvmaIq1lDaCt+lO23px17CaehLxI/HXb3diFNRKw9GD2gUtmnl
-	3rUEerANmuO57Ig/Y80f2aGTL4mekbRw=
-X-Google-Smtp-Source: AGHT+IELjxIty3QvxZPgn1IkijyUpwDEpAbFyjSsKr5nQr+vunzikG5BR25gm20fjjhw/qG4dKVsnw==
-X-Received: by 2002:a05:622a:4e:b0:476:add4:d2cf with SMTP id d75a77b69052e-4a9879c3c8fmr28867621cf.16.1751508797160;
-        Wed, 02 Jul 2025 19:13:17 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7d44316a54fsm1034468285a.34.2025.07.02.19.13.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 19:13:16 -0700 (PDT)
-Date: Wed, 02 Jul 2025 22:13:16 -0400
-Message-ID: <a888364d0562815ca7e848b4d4f5b629@paul-moore.com>
+        d=1e100.net; s=20230601; t=1751509115; x=1752113915;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c/KeYqAzhlug2cBlOAvbYyW9y7V2ttwqcW5y5zhjy80=;
+        b=NQ+67oJ4nVpMv0LLtCDckT1PjF6/OpYhmLysaVKxI613qSgAl9avIEL1mpDV12wFci
+         XPTq0pVHob2GkopkBm3BAl4MAvcQ4OnKoeBgyosB+ZouajJr1BV1vERJln94WUMFGSh8
+         ZXXkFxGPGnx+ugsgZUNBzv2LPSozpOsAzf+ZJYGLe0aeh7kD+oNns2BMDXbLz0YhmPqS
+         ZNRhcQy4GGxAblfmSUZJ+dP3HY4L0144RVMCFagsrM4InTcrpV+ODAL6YMx+9vOnY/4l
+         tC5WPU6w8mNTci7rfCuPE6JLSNzQpUjo3NlCxsb9PgvHtimn/ntlcJLYqJ+Z9oYv4xyE
+         ZdGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVg1R9GbeAQLmLbIVMN0Pfn9Lld4i5n0sGQLI4PKnP/+f4352eFVktZCKui/7ZidhjYKXJsCSK1Wkz/ZtXe@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlyKVnSrVP2y4E6WyBQIWj/c1wwS4xQzN7OzkwTBzqaZN/KMDy
+	nWkTn6EVQEuKWVhxCGNDCcJfx355/obRMBOOJuYtpm5blJFc4csIDJYssoE0aN0LQYVEQyN5FVj
+	ZY0VthU7+OsWTW8mvRZTUD21seaDYyuPFDhdrGEuQsQwvTe4lHDrZn6j+uWg=
+X-Google-Smtp-Source: AGHT+IE4L9la8RyH87X3ZXX5fLSYYN9RNx7vp9JR76jrtT1rZHYYadDT1F9A+PfVZZt1hqYJ5gRRY9ebGqZvFjCbt+mCAtj2+2PD
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250702_2201/pstg-lib:20250702_2201/pstg-pwork:20250702_2201
-From: Paul Moore <paul@paul-moore.com>
-To: Shivank Garg <shivankg@amd.com>, <david@redhat.com>, <akpm@linux-foundation.org>, <brauner@kernel.org>, <rppt@kernel.org>, <viro@zeniv.linux.org.uk>
-Cc: <seanjc@google.com>, <vbabka@suse.cz>, <willy@infradead.org>, <pbonzini@redhat.com>, <tabba@google.com>, <afranji@google.com>, <ackerleytng@google.com>, <shivankg@amd.com>, <jack@suse.cz>, <hch@infradead.org>, <cgzones@googlemail.com>, <ira.weiny@intel.com>, <roypat@amazon.co.uk>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3] fs: generalize anon_inode_make_secure_inode() and fix  secretmem LSM bypass
-References: <20250626191425.9645-5-shivankg@amd.com>
-In-Reply-To: <20250626191425.9645-5-shivankg@amd.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:3397:b0:3df:43d1:6a58 with SMTP id
+ e9e14a558f8ab-3e05c3382f0mr26651945ab.20.1751509114831; Wed, 02 Jul 2025
+ 19:18:34 -0700 (PDT)
+Date: Wed, 02 Jul 2025 19:18:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6865e87a.a70a0220.2b31f5.000a.GAE@google.com>
+Subject: [syzbot] [exfat?] kernel BUG in folio_set_bh
+From: syzbot <syzbot+f4f84b57a01d6b8364ad@syzkaller.appspotmail.com>
+To: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Jun 26, 2025 Shivank Garg <shivankg@amd.com> wrote:
-> 
-> Extend anon_inode_make_secure_inode() to take superblock parameter and
-> make it available via fs.h. This allows other subsystems to create
-> anonymous inodes with proper security context.
-> 
-> Use this function in secretmem to fix a security regression, where
-> S_PRIVATE flag wasn't cleared after alloc_anon_inode(), causing
-> LSM/SELinux checks to be skipped.
-> 
-> Using anon_inode_make_secure_inode() ensures proper security context
-> initialization through security_inode_init_security_anon().
-> 
-> Fixes: 2bfe15c52612 ("mm: create security context for memfd_secret inodes")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
-> Acked-by: Pankaj Gupta <pankaj.gupta@amd.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> ---
-> The handling of the S_PRIVATE flag for these inodes was discussed
-> extensively ([1], [2], [3]).
-> 
-> As per discussion [3] with Mike and Paul, KVM guest_memfd and secretmem
-> result in user-visible file descriptors, so they should be subject to
-> LSM/SELinux security policies rather than bypassing them with S_PRIVATE.
-> 
-> [1] https://lore.kernel.org/all/b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com
-> [2] https://lore.kernel.org/all/cover.1748890962.git.ackerleytng@google.com
-> [3] https://lore.kernel.org/all/aFOh8N_rRdSi_Fbc@kernel.org
-> 
-> V3:
-> - Drop EXPORT to be added later in separate patch for KVM guest_memfd and
->   keep this patch focused on fix.
-> 
-> V2: https://lore.kernel.org/all/20250620070328.803704-3-shivankg@amd.com
-> - Use EXPORT_SYMBOL_GPL_FOR_MODULES() since KVM is the only user.
-> 
-> V1: https://lore.kernel.org/all/20250619073136.506022-2-shivankg@amd.com
-> 
->  fs/anon_inodes.c   | 22 +++++++++++++++++-----
->  include/linux/fs.h |  2 ++
->  mm/secretmem.c     |  9 +--------
->  3 files changed, 20 insertions(+), 13 deletions(-)
+Hello,
 
-Thanks again for your continued work on this!  I think the patch looks
-pretty reasonable, but it would be good to hear a bit about how you've
-tested this before ACK'ing the patch.  For example, have you tested this
-against any of the LSMs which provide anonymous inode support?
+syzbot found the following issue on:
 
-At the very least, the selinux-testsuite has a basic secretmem test, it
-would be good to know if the test passes with this patch or if any
-additional work is needed to ensure compatibility.
+HEAD commit:    50c8770a42fa Add linux-next specific files for 20250702
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1500f982580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d831c9dfe03f77ec
+dashboard link: https://syzkaller.appspot.com/bug?extid=f4f84b57a01d6b8364ad
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c93770580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1001aebc580000
 
-https://github.com/SELinuxProject/selinux-testsuite
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eb40fda2e0ca/disk-50c8770a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cba4d214940c/vmlinux-50c8770a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4b23ed647866/bzImage-50c8770a.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ef503c02b7ee/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=11c93770580000)
 
---
-paul-moore.com
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f4f84b57a01d6b8364ad@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 128
+------------[ cut here ]------------
+kernel BUG at fs/buffer.c:1582!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 6151 Comm: syz.0.51 Not tainted 6.16.0-rc4-next-20250702-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:folio_set_bh+0x1dc/0x1e0 fs/buffer.c:1582
+Code: 4c 89 e2 e8 d6 eb b6 02 e9 42 ff ff ff e8 cc 7c 79 ff 48 89 df 48 c7 c6 a0 ec 99 8b e8 ad af c1 ff 90 0f 0b e8 b5 7c 79 ff 90 <0f> 0b 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f
+RSP: 0018:ffffc90003c5f8e0 EFLAGS: 00010293
+RAX: ffffffff8246582b RBX: ffffea0001840a40 RCX: ffff8880776c3c00
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000001000
+RBP: dffffc0000000000 R08: ffffea0001840a47 R09: 1ffffd4000308148
+R10: dffffc0000000000 R11: fffff94000308149 R12: 0000000000000000
+R13: 0000000000001000 R14: ffff8880744cfcb0 R15: 0000000000001000
+FS:  0000555591bcd500(0000) GS:ffff888125d1d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5810d71d60 CR3: 0000000076ee0000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ folio_alloc_buffers+0x3a0/0x640 fs/buffer.c:946
+ grow_dev_folio fs/buffer.c:1075 [inline]
+ grow_buffers fs/buffer.c:1116 [inline]
+ __getblk_slow fs/buffer.c:1134 [inline]
+ bdev_getblk+0x286/0x660 fs/buffer.c:1461
+ __bread_gfp+0x89/0x3c0 fs/buffer.c:1515
+ sb_bread include/linux/buffer_head.h:346 [inline]
+ fat_fill_super+0x5e2/0x3570 fs/fat/inode.c:1598
+ get_tree_bdev_flags+0x40b/0x4d0 fs/super.c:1681
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1804
+ do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+ do_mount fs/namespace.c:4239 [inline]
+ __do_sys_mount fs/namespace.c:4450 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5810d900ca
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe6ee42248 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffe6ee422d0 RCX: 00007f5810d900ca
+RDX: 0000200000000240 RSI: 0000200000000280 RDI: 00007ffe6ee42290
+RBP: 0000200000000240 R08: 00007ffe6ee422d0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000200000000280
+R13: 00007ffe6ee42290 R14: 0000000000000221 R15: 0000200000000480
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:folio_set_bh+0x1dc/0x1e0 fs/buffer.c:1582
+Code: 4c 89 e2 e8 d6 eb b6 02 e9 42 ff ff ff e8 cc 7c 79 ff 48 89 df 48 c7 c6 a0 ec 99 8b e8 ad af c1 ff 90 0f 0b e8 b5 7c 79 ff 90 <0f> 0b 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f
+RSP: 0018:ffffc90003c5f8e0 EFLAGS: 00010293
+RAX: ffffffff8246582b RBX: ffffea0001840a40 RCX: ffff8880776c3c00
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000001000
+RBP: dffffc0000000000 R08: ffffea0001840a47 R09: 1ffffd4000308148
+R10: dffffc0000000000 R11: fffff94000308149 R12: 0000000000000000
+R13: 0000000000001000 R14: ffff8880744cfcb0 R15: 0000000000001000
+FS:  0000555591bcd500(0000) GS:ffff888125c1d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9535e0f000 CR3: 0000000076ee0000 CR4: 00000000003526f0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
