@@ -1,165 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-53815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E932AAF7DBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:26:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D19DAF7DE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA5A189BB82
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91CD9544E4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5215724C07A;
-	Thu,  3 Jul 2025 16:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE7D258CEC;
+	Thu,  3 Jul 2025 16:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fgQbuPoQ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AadFsHcS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S3IjBH4v";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AadFsHcS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S3IjBH4v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2979124C068
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 16:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BC924EF76
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 16:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751559741; cv=none; b=OvwjtKyEGKA7Mwv2tdQ+y2ct4dSn0S4cI1WM8PpWcJ/rjWEgLq3drvYIvl/CiI5LAzQkbaU52Ug8t01tKUWv6iTVIVjFJqL1sjyCMR1ugMUHVr8pi8YqowVcy1UOMIYYQzUo6HJ2pHQ8uQxNoV6qMiTOpGWBIfRas2ZHbCGpU94=
+	t=1751560050; cv=none; b=GbPuD3/BD/NNDooJC2J8axlQIwZoCpoFfQuMUNRv5gbd3r5IEz9lcyyefMB1VMpyq7UKdN8Ano+DavdJYZMAJEeIXDFMdQ15U9Xi3caWCijtyM+TzlrrryPOlH8aylx13pIljmhil0f2k//NsfcXUS1Eo1eDIRw1eugFQhxGnS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751559741; c=relaxed/simple;
-	bh=gdZmBMfeXsKq4/7JgyXZhrWZPSmEqLgpVKOVbalyu+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NDMgO4WoZih3U1aKkRsJjRLIay/hxPEO94Y4frrrinJiD1Qo7OlgBNTKXkefQ+QR7zlj7Lqfw7Q0asJMGu78VlnYO9s4noMjVWeaTJ6bB58Pu8QQvs7o8icoQBLuJznqxHKEvWoFkbUNI8DR9+MiDA6AkFRRan6huZPzbq62ejo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=fgQbuPoQ; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a77ea7ed49so16112651cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Jul 2025 09:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1751559736; x=1752164536; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMBffgttmkxxA4/eZf8nyaQOMbEUx2oThNSpJ0q+Ivw=;
-        b=fgQbuPoQaXTCUlR/g6fXI6qHisgXsbCQCYo5BPpZe+hQ0WA6d4rufsG0TRHZsRI6oS
-         9kSIaDuFypAmXqW6W8+zX8bNvxkNs0n3DMYs3Eky3PCosqlbUeoDB84Luw9XiPlLvZqW
-         C3p7q/Duybk4eGJ5trvJhQiwHiQH8ragQC25A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751559736; x=1752164536;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XMBffgttmkxxA4/eZf8nyaQOMbEUx2oThNSpJ0q+Ivw=;
-        b=JsokvgoAsj4k4ZsTgvbuCVSN16sqhgfXC6pyWXGkVA5F2btPzgjx9aNDdIFwfVSozZ
-         n4ZC2EbLKfo6zh6UqE6J/zj06ulgoaIobFaXhdhe3qEzYraRD6byC49+c5nsqJoigzq1
-         uwPo3LHv3vFQKSvXlD1bqoslqlsgTnihyvE4/RBUF3vD9sn0RqPdkqwnxrOnv0v0Y3+I
-         Fvhc3VFmgsCzD2huvvgqbiGMwwCTvnNTgl0RKbebadwTyTJyQvmKmzLbyi7x3Ar4YMKc
-         BaaljDV8Mvnr9sfLsjjO5+K1p3nyq/vyeIuu8zrYThOWI/JeUn2rsmW1XNXFQ9PrqxYu
-         xP5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV5wDLttN72q6S60VEG7YDKHiFqPxsxBIIujtMbE8JQ8K/EvalxVy1pSuyln8E4CBGB+RWFKT8NDo3oNwLe@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe5WnF+41M9j9uQzcBPsvohQGunQYXX2nGECe76bhUIt7TmyC/
-	cqMumt5CQ0V7HmcnrT8/3RvFvl6Ymy3ICGM6N2/PHHYBt1i9x4EIRSL/U0mrG3Ohv9c3P6rjTAq
-	5xjeusiaJvT1qQPrfGJ27Y1nfNX99EWZq1rCGZGM+iw==
-X-Gm-Gg: ASbGncuXCkG0Pir0+TwopTCfv3rMhErV09b3J4mcEAuIEXFvNyUGhyu57z1UHN2K8UE
-	p5rTroQlMCM+kbYbt8LuCtdFnltbprqCvdc++E5sgVNu1dfIzMlQG+UOgNIP4frDnrgxI8iJaZm
-	SHHCTg3qJGlUnUf2FrOO1rkmTH4NbBST1BxBBY6za4HFpwbAppcJVIdUHD6pfyi6S5OLw4GMlkx
-	ton
-X-Google-Smtp-Source: AGHT+IFpuWG2GvhxYtMxAUh8WB2KH6TdrkAQqKFkT6/brzKZ7LJ25FQ4et3TwOoMOt2zHTxyqqiGsJj1ooh5yXFVh9s=
-X-Received: by 2002:ac8:5e12:0:b0:4a7:7c8e:1d5 with SMTP id
- d75a77b69052e-4a98aff555amr50766221cf.17.1751559735655; Thu, 03 Jul 2025
- 09:22:15 -0700 (PDT)
+	s=arc-20240116; t=1751560050; c=relaxed/simple;
+	bh=+YEmb/aAuUbKEa+H7axk+n5A0WbJP7KHeWZJ7YEfRH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WpicSIgoV6TU8I5z9IuId3Aa+2lp8K0U1zWuk7qdiFmSRMvVv6odRausoSRUd20xDx3IVh/iicliym8/nmwDoG5o6BhiqsZv9zkNX40utuZZw56mSdntlBVYHqWbHVGFU7sqFu/8RUzB4T5M56E7XIAEekZmeSU8h8UBU/+elFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AadFsHcS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S3IjBH4v; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AadFsHcS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S3IjBH4v; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C0ECA1F387;
+	Thu,  3 Jul 2025 16:27:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751560046; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O3bdd++N6TfAFi91n85bZ1CQ92T+rDnQ3Zr/2gbtk2s=;
+	b=AadFsHcSnAbH7g5k9OntraPjT4LtB7Loz/AD8NsEL2hN7/KTVHdAAnN7HyVJBFELdt95RR
+	2p6pOS9c0DJpFEO+Gpa4k6RNAPtyBD7D2l0+LLgh3R8V5NzREunwc02g+r3fzs6Lgiv/4j
+	h9Gt/wGcvlnE83SKP/KFPgTHNW5Jjqk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751560046;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O3bdd++N6TfAFi91n85bZ1CQ92T+rDnQ3Zr/2gbtk2s=;
+	b=S3IjBH4vMMUBRvrCdcn9b80+ok9XO5ZqSFQGyRsM6NcBBcW1fc3mOqo0KtqpoVmhvZDat+
+	Z8+OgbKzAwX+2vBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751560046; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O3bdd++N6TfAFi91n85bZ1CQ92T+rDnQ3Zr/2gbtk2s=;
+	b=AadFsHcSnAbH7g5k9OntraPjT4LtB7Loz/AD8NsEL2hN7/KTVHdAAnN7HyVJBFELdt95RR
+	2p6pOS9c0DJpFEO+Gpa4k6RNAPtyBD7D2l0+LLgh3R8V5NzREunwc02g+r3fzs6Lgiv/4j
+	h9Gt/wGcvlnE83SKP/KFPgTHNW5Jjqk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751560046;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O3bdd++N6TfAFi91n85bZ1CQ92T+rDnQ3Zr/2gbtk2s=;
+	b=S3IjBH4vMMUBRvrCdcn9b80+ok9XO5ZqSFQGyRsM6NcBBcW1fc3mOqo0KtqpoVmhvZDat+
+	Z8+OgbKzAwX+2vBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B232F1368E;
+	Thu,  3 Jul 2025 16:27:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 73J3K26vZmiHCwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 03 Jul 2025 16:27:26 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4E81FA0A48; Thu,  3 Jul 2025 18:27:26 +0200 (CEST)
+Date: Thu, 3 Jul 2025 18:27:26 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, sashal@kernel.org, yi.zhang@huawei.com, 
+	libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v3 05/10] ext4: restart handle if credits are
+ insufficient during allocating blocks
+Message-ID: <zqrcmug26tnhhjombztjjqwcorbnk4elqg2dqayhtfo2gkx3e3@wvzykthigny6>
+References: <20250701130635.4079595-1-yi.zhang@huaweicloud.com>
+ <20250701130635.4079595-6-yi.zhang@huaweicloud.com>
+ <i7lzmvk5prgnw2zri46adshfjhfq63r7le5w5sv67wmkiimbhc@a24oub5o6xtg>
+ <ceb8c9c1-f426-4cd0-b7d8-841190631a90@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703130539.1696938-1-mszeredi@redhat.com> <CAOQ4uxjC6scXXVi0dHv-UahL2hBXVqLtZvn4BDvT6o_9+LcA7Q@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjC6scXXVi0dHv-UahL2hBXVqLtZvn4BDvT6o_9+LcA7Q@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 3 Jul 2025 18:22:04 +0200
-X-Gm-Features: Ac12FXzVLZyjUaGHMpszFZPAO4F7c7gwjMsNeVyaXNkm1jVqr5Ufm1y9QFji9_k
-Message-ID: <CAJfpegty_ajdMjaqDN00opt7dvBwBQnMvDpAY=DnJxavsEsSSw@mail.gmail.com>
-Subject: Re: [RFC PATCH] fanotify: add watchdog for permission events
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Ian Kent <raven@themaw.net>, Eric Sandeen <sandeen@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ceb8c9c1-f426-4cd0-b7d8-841190631a90@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Thu, 3 Jul 2025 at 17:47, Amir Goldstein <amir73il@gmail.com> wrote:
+On Thu 03-07-25 10:13:07, Zhang Yi wrote:
+> On 2025/7/2 22:18, Jan Kara wrote:
+> > On Tue 01-07-25 21:06:30, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> After large folios are supported on ext4, writing back a sufficiently
+> >> large and discontinuous folio may consume a significant number of
+> >> journal credits, placing considerable strain on the journal. For
+> >> example, in a 20GB filesystem with 1K block size and 1MB journal size,
+> >> writing back a 2MB folio could require thousands of credits in the
+> >> worst-case scenario (when each block is discontinuous and distributed
+> >> across different block groups), potentially exceeding the journal size.
+> >> This issue can also occur in ext4_write_begin() and ext4_page_mkwrite()
+> >> when delalloc is not enabled.
+> >>
+> >> Fix this by ensuring that there are sufficient journal credits before
+> >> allocating an extent in mpage_map_one_extent() and
+> >> ext4_block_write_begin(). If there are not enough credits, return
+> >> -EAGAIN, exit the current mapping loop, restart a new handle and a new
+> >> transaction, and allocating blocks on this folio again in the next
+> >> iteration.
+> >>
+> >> Suggested-by: Jan Kara <jack@suse.cz>
+> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> > 
+> > Very nice. Feel free to add:
+> > 
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > 
+> > One small comment below:
+> > 
+> >> +/*
+> >> + * Make sure that the current journal transaction has enough credits to map
+> >> + * one extent. Return -EAGAIN if it cannot extend the current running
+> >> + * transaction.
+> >> + */
+> >> +static inline int ext4_journal_ensure_extent_credits(handle_t *handle,
+> >> +						     struct inode *inode)
+> >> +{
+> >> +	int credits;
+> >> +	int ret;
+> >> +
+> >> +	if (!handle)
+> > 
+> > Shouldn't this rather be ext4_handle_valid(handle) to catch nojournal mode
+> > properly?
+> > 
+> __ext4_journal_ensure_credits() already calls ext4_handle_valid() to handle
+> nojournal mode, and the '!handle' check here is to handle the case where
+> ext4_block_write_begin() passes in a NULL 'handle'.
 
-> Do you mean deadlock in userspace or deadlock on some kernel
-> lock because the server is operating on the filesystem and the
-> permission event was in a locked context?
+Ah, right. But then you don't need the test at all, do you? Anyway,
+whatever you decide to do with this (or nothing) is fine by me.
 
-Server is doing in a loop:
-
-1) read perm event from from fanotify fd
-2) do something to decide between allow/deny
-3) write reply to fanotify
-
-It doesn't matter where 2) gets stuck, in userspace or in the kernel,
-the result is the same: a stuck open syscall.
-
-> There is a nuance here.
-> Your patch does not count the time from when the operation was queued
-> and blocked.
->
-> It counts the time from when the AV software *reads* the event.
-> If AV software went off to take a nap and does not read events,
-> you will not get a watchdog.
-
-Right.
-
-But server is unlikely to be doing anything between 3) and 1), so in
-practice the head of the queue is unlikely to be stuck.  But maybe the
-watchdog could be taught to handle that case as well (no outstanding
-requests ad no forward progress in the queue).
-
-> If it is, then I wonder if you could share some details about the
-> analysis of the deadlocks.
-
-It's very often plain recursion: handling the event triggers another
-permission event,  in some roundabout way, obviously, otherwise it
-would have been found in testing.
-
-This is apparently a continuing problem for support teams,  because
-when this happens the OS is the first to blame: "everything froze,
-this is broke" and sometimes it's hard to convince customers and even
-harder to convince AV vendors, that it's not in fact the OS.
-
-> So are the deadlocks that you found happen on fs with atomic_open()?
-> Technically, we can release the dir inode lock in finish_open()
-> I think it's just a matter of code architecture to make this happen.
-
-I don't think it's this.
-
-> I think that's one of those features where sysctl knob is more useful to
-> distros and admin than Kconfig.
-> Might as well be a sysctl knob to control perm_group_timeout
-> where 0 means off.
-
-Okay.
-
-> It is a bit odd to have a pid_t pid field here as well as
-> struct pid *pid field in fae.pid (the event generating pid).
-> So I think, either reuse fae.pid to keep reference to reader task_pid
-> or leave this pid_t field here with a more specific name.
-
-Yeah, I noticed the name conflict, then forgot about it.  Will fix.
-
-> It would have been more natural and balanced to add group
-> to watchdog list on fanotify_init().
->
-> You can do that based on (group->priority > FSNOTIFY_PRIO_NORMAL)
-> because while a program could create an fanotify group with
-> priority FAN_CLASS_CONTENT and not add permission event
-> watches, there is absolutely no reason to optimize for this case and
-> not add this group to the "permission events capable" perm_group list.
-
-Yeah, it's aesthetically more pleasing, but I wonder if it's worth it
-having to explain why it's done this way.
-
-A more self explanatory solution is to just move the list_empty()
-inside the spinlock, and performance-wise it's not going to matter.
-
-Thanks,
-Miklos
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
