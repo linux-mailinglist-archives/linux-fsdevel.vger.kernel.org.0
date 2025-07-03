@@ -1,80 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-53747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC32CAF6684
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 02:12:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C591CAF66C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 02:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B38F1C249F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 00:12:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC0514A864F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 00:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889DA28EA;
-	Thu,  3 Jul 2025 00:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C610361FCE;
+	Thu,  3 Jul 2025 00:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hIEWK/+q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED67136E;
-	Thu,  3 Jul 2025 00:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195022F43
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 00:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751501533; cv=none; b=ezKhjQftYgLgIy57E0gXIwM9EvO/fGMo8v6ynsFpefLijvX81b/inuQ8ia5G7fublmMkTFbf/nyb2F9LzjXHOPNs0OJknQko47zenu1o2OlBK7cDezrk6zHyA2nEVdv5hYDHYEsbYSzfEnqHv/sY3Jvxx2rONW8ozJ4oTcBJMHo=
+	t=1751502214; cv=none; b=cw0ZofnMNQGjDPc8gMaBEpfAIa+tgBGlYiheDInOfMmSG9WcJK1LUPAwNxujddt8tyioj3/wFD/C5wmh4TUTfSvKLMDnoJeHcRBlfc+z8CqP59izRHRl0qIrSPxcETqsqbt8WLhKOd6Dv3DJVR1Obtr6PJOg2ajFmzJ4a6obkjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751501533; c=relaxed/simple;
-	bh=EzTaJbTBwS6sr+YwdKRlnurveNvCRmdGaQL0dw6JdTs=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=BqvH+QB1MaVgS1n2U82imYSwiqNgDirfUjzU07UWWk12JRi2K2vxT+DnttT779BC8APlnQzXl0BEdrtMhRlKpCh6wISVSUQpOEy8lzLMVVvhybcO8lXMagJEbqpKHJUycJIOUKKjIM3Xevu6k+jShNzx24jaWW6P3J5VtJl9LuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uX7Yc-00H9mP-V4;
-	Thu, 03 Jul 2025 00:12:07 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1751502214; c=relaxed/simple;
+	bh=6LMbYIIgeZUq1orWC5fVrBqD/Ek2PAvnqd0knbfh7XY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmF8VJoCJ3m5S5qRyy0dJvujsVaiZXPHHMvbMU7Ht/JNO19HqAN2z5OgePHCj3UoRo2b7OzK2y7zHLB+r3pjCJfcFidOnAi4rvmkREYcgPic6KR9g3nFH0seDZRoRwi0o3TZE2Z3uo1rcbG4XFznyRtrpgqUumPVJpBqSw95koo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hIEWK/+q; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UE4IuECEi/dNUyNkAelmVq4GoVMmkCTkbXavgIxugZY=; b=hIEWK/+qaY/gaEqVxuBP6PWJse
+	clAunf2na3M2xH/IOanJzhSVXpfE6iRUa4UHDXJyDISe2t7wG7AWVHJ2lDYVjMVGElVv+Ej0X9Z1b
+	FDwM25TeumuNVQvS24SK2QM/gfAXGwYzxED+ciXcavRko+kNTS+32XWtOA6NuP4tmwDa5JHeMl42a
+	SO1nOkC0JP78bTrnUqojUdd0f5UqTnH71o6OQUQv/0q8P4Gl0aXcFbvmfSpwXM4eObZToNdadG2Cy
+	l4V90bExKJU0AfseA/P9npO7a6nlb8EElDYidHRJxNO9EvzpyivqgPKZVkcoDm913iE88WPwFzVqQ
+	svTSeYNQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uX7jd-0000000Fbrb-0iSG;
+	Thu, 03 Jul 2025 00:23:29 +0000
+Date: Thu, 3 Jul 2025 01:23:29 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: (subset) [PATCH 01/11] zynqmp: don't bother with
+ debugfs_file_{get,put}() in proxied fops
+Message-ID: <20250703002329.GF1880847@ZenIV>
+References: <20250702211305.GE1880847@ZenIV>
+ <20250702211408.GA3406663@ZenIV>
+ <175149835231.467027.7368105747282893229.b4-ty@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Mike Snitzer" <snitzer@kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, "Jens Axboe" <axboe@kernel.dk>
-Subject: Re: need SUNRPC TCP to receive into aligned pages [was: Re: [PATCH
- 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE for all IO]
-In-reply-to: <110c7644b829ce158680979e6cd358193ea3f52b.camel@kernel.org>
-References: <>, <110c7644b829ce158680979e6cd358193ea3f52b.camel@kernel.org>
-Date: Thu, 03 Jul 2025 10:12:06 +1000
-Message-id: <175150152640.565058.13872428130182626290@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <175149835231.467027.7368105747282893229.b4-ty@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, 12 Jun 2025, Jeff Layton wrote:
+On Wed, Jul 02, 2025 at 05:19:12PM -0600, Jens Axboe wrote:
 > 
-> I've been looking over the code today. Basically, I think we need to
-> have svc_tcp_recvfrom() receive in phases. At a high level:
+> On Wed, 02 Jul 2025 22:14:08 +0100, Al Viro wrote:
+> > When debugfs file has been created by debugfs_create_file_unsafe(),
+> > we do need the file_operations methods to use debugfs_file_{get,put}()
+> > to prevent concurrent removal; for files created by debugfs_create_file()
+> > that is done in the wrappers that call underlying methods, so there's
+> > no point whatsoever duplicating that in the underlying methods themselves.
+> > 
+> > 
+> > [...]
 > 
-> 1/ receive the record marker (just like it does today)
+> Applied, thanks!
+> 
+> [10/11] blk-mq-debugfs: use debugfs_get_aux()
+>         commit: c25885fc939f29200cccb58ffdb920a91ec62647
 
-Long ago (IETF 47??) I heard someone talking about a "smart" network
-card that would detect UDP packets to port 2049, split the data into the
-largest power-of-2 as a final component and the remainder as a header,
-and DMA them into memory that way.  This would very often put the data
-in page-aligned memory.
-
-We could do the same thing here.
-Currently we copy as much as will fit into the "header" and the rest
-into the "pages".  We could instead use power-of-2 maths to put some in
-the header and a whole number of pages into the "pages".
-
-This would probably work well for NFSv3 and shouldn't make NFSv4 worse
-It wouldn't provide a guarantee, but could provide a useful
-optimisation.
-
-NeilBrown
+Umm...  That sucker depends upon the previous commit - you'll
+need to cast debugfs_get_aux() result to void * without that...
 
