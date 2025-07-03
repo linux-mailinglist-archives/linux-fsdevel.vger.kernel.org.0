@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-53824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B0CAF808B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 20:51:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EEBAF808D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 20:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4669C4A5B4A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474EA583805
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D532F2C41;
-	Thu,  3 Jul 2025 18:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AC72F363A;
+	Thu,  3 Jul 2025 18:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rm7AkplL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSiDdKeo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400ED1C5F08;
-	Thu,  3 Jul 2025 18:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8E52F2735;
+	Thu,  3 Jul 2025 18:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751568643; cv=none; b=CIJg/tfcWFLAKF6o/IcSKnhkZSQi3tNpfrMRKpZH5uKlOgIjzxvHNrMYgLxO7pyR55tNI99u2gC0RvHN7cY+sXEsuV2HmrbK5vtYIp2s08jAUSRr1L2ljtC/6VD4L2DIZZUaKtPY2jM+n6RWANsjyoQefeESbZShvxxsHVBgI6A=
+	t=1751568645; cv=none; b=un4r4Z7VjLeZp2bPHHb01Tt3A+4Y1JnCTqhAL0BHdOR4y8Kyo9GcgntCvquwVDT9uWgjPLV9ZWP+L9Dvw/Dyk7NJOjIAK07V5Y9QHGxv8idJ8tYFnVtCYhA7PsIUMhr5bcVI7W+ecJbW+Q2i0z65cAbFQWwDTIgGsBzQNvGIVdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751568643; c=relaxed/simple;
-	bh=r7zU/NI6k0w2nK9GLUrhezJkiaHouNNrUAqAk2AR65M=;
+	s=arc-20240116; t=1751568645; c=relaxed/simple;
+	bh=gsIhmfFsaL+5EF4z3f0VUnIpcZS1jFVcEdA2B4rIq38=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bfEeFWVJXbThRHzG6JY0YMMajLCiPE5k9aKo7PPzpSxxoNQMLEyJDPw8YDH6tR2dhJU9b5vo4EdQkXJUJWUOJMzpuidwbzK3+x2nsnYnctVXLaaLeOsOLilcJWugtde4aRYaC0Vvc7+tnSEP+FGQu9uicXFjxU0wHON2uV8wgak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rm7AkplL; arc=none smtp.client-ip=209.85.210.45
+	 MIME-Version; b=cOuH7qb0jGdi+0nakU0bUss/0M1a/4oTHU/L17yS9DZmAzyNNoHPNoTzVrVEgKRf4d3BoXjfQYaKBNSTLHWZXL6lcXULIWTAkDvtAopMFeKwJYZ8dGJyflW6z/W5m2dclrhZWAinKISl+q8WSfr1ig52RcvHBT8Va1KsEhZzyJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SSiDdKeo; arc=none smtp.client-ip=209.85.160.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-73a8d0e3822so140869a34.2;
-        Thu, 03 Jul 2025 11:50:40 -0700 (PDT)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2eff5d1c7efso203670fac.2;
+        Thu, 03 Jul 2025 11:50:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751568640; x=1752173440; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751568643; x=1752173443; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+TgC0a/U5AW9OV2eqK8aHn6K3OlQMlAMMt+8AXwopR0=;
-        b=Rm7AkplLu4wGTMQIB7Wm2tb5yA7YLMTf9U57qbrjhm3dCel/vvL+vV2vJI1c/IkdWC
-         hIuPpUZJ1cvGFspWSHzI0pEsVbLzYb05kVtDZNT+aAFG9DThiNITZxNanoL5goPkWjw0
-         QegdJy5jxFumdJe1h3fPpmIIYuxstRxGg2sS5g3CvcRbD0xDoEw7smZAJb6AN5q1qqZR
-         9F3+hXJeOclNWwi1LERi1MXloQ4xBW9zWl97o1YpTri+WhtP+kVSHahvcIHPruiAvtvd
-         rOmSlP42wpQI/LRm3gxpIjFOoUbYHz3YgOLb2TUEKhZch9OJ92DEmMzNsnKtWh94u66s
-         axDA==
+        bh=37keBjnXcy0vWAMphYKQfFgDhN7R9v7a8FhgLd8vRyw=;
+        b=SSiDdKeo7G5rAvx0AI6SPLId6Dsc1OUWlU8WUWBOdiOvKNDZeNLyB4DuAhrgzyhmTf
+         uRQtK55IfnbrfCq5szAS9n/v58WmpjFtlTZdeduzGmE8NhRX/cJ4ndvYjQmBKbspD+MJ
+         czAEIwbXK71aayf4VrIyaDxKzpYt46ekhS3EdGzaie1tx3o4Sdtoub2iiwFSx8yTFtvK
+         fWwfzlscsseX3hDlFMVCN7aG2cg1x+rEuWp1qadQAGjDlPXSnByIYI51+wIpY61++dZO
+         jPR6UegcjHB+r0/a6rhSpCs3N0dq780JpzmcZjzdVzFXEaJf7LjVIdQgBFEn60y9Eg1o
+         YM+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751568640; x=1752173440;
+        d=1e100.net; s=20230601; t=1751568643; x=1752173443;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=+TgC0a/U5AW9OV2eqK8aHn6K3OlQMlAMMt+8AXwopR0=;
-        b=I6DMORXXSysqSGWxCTPOYUCdSHrlSWGbjzbfNiTY6Wv9bSJEUQ56Xh4DRt684YAKN2
-         Osz30dpaHqure/wUDe2KTRSclurOJ5S0i+dSiieknccTq7GGfHxnwHcskUBqpCKXt1hG
-         n/vnpqjLMjOUvb2FhhJLjNLE1HX5S56olVPHmrBBG6/IbGy427dSpmER2x/sxBFEVquo
-         1g4reBcH275IgX0L/bNfq4wrv+Bdcyr3PtytMqWXZmvoAxLOm42KDUBaehyW6UdAkCmk
-         YPiXMFlO4aJWmRL9WujhUATqr/6k7njt9tA/vMPR7W4Uu2h8cVLv9ScxsEnXMaoecDFx
-         jZmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPrWFgb0bCTIhq6WEPwKeMmskhvN/IjG4l6Vi9lJbms5rMWKBapH1qkge9cEy7effLCYd4G+G6HrI=@vger.kernel.org, AJvYcCVwQxNIgHPCBrHrxZBKckkYzZexU+m/XulCr6g8n2mluT2GK52ar59x4mwrr24/0jZoMiHc5Ha2E0uv@vger.kernel.org, AJvYcCXMJuIWQTt5IGYM86LA6u4C871tFXCKQqRjV2AyPy21CTLdMNOyWfGQZdcN/TTS4PJE5oYNxY3VBzq9TXP1@vger.kernel.org, AJvYcCXwwonuSB0ahPwOZmSDCPQgQ2COIILA7rOknbgwPpMhTWNxWEhpLk/yoAl88MRMvgE50C21Mrv9vwVQ57gAgg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzwhVdtGCLNMajT8WG1f76CdneqvCHW3vDK3XmttswSmQvTQWI
-	0jK+iO4UaDVSnobzgxEgOuMUM+9+NRhP+nAeYyL5/yXYYtZijrhJNXKT
-X-Gm-Gg: ASbGnctO4It7lR2v+j9epOms7VpSKbCgvhACxtHWEAsnJuwt/f8rc2PwO7xZqH/L1Oz
-	FmhWsOZgkIUkerB1XZLmmq0ozcLZJjaAxf4DkO1WkcFL9s2RRrxiqEx12BKEmxdyq6wnSCFIBYo
-	6R+1P7fx8QrHUPuyr8s9UJoP0lMRO2u0iI8v67mbRWzzHUHa+LeEcakEvz7hwQFlOumO1+Sy3Oi
-	xVvzZv6wbVZE1KQnUj+WtpjyB37eD80YBPDYAOdLfzUz0egBTZ+GvSp8dS6JwylTmgQIQEL6hu1
-	KFx5i9EIA2I1cp/obhUolCbhV/tOh8mnvObCR7j5EM4Eq+zuttTOcF1iyjbkB8MBTJPgfi1M2vR
-	Rxj7DHAoV3pxPJw==
-X-Google-Smtp-Source: AGHT+IF73hX0JJIFBHibtD6A0+6uqUWfKLCEXmyBw6pOmIubhMzzPV9Jpbwsi9M9zd7Nm7jge6Jo8g==
-X-Received: by 2002:a05:6808:1b07:b0:404:e0b3:12f with SMTP id 5614622812f47-40b8876eecbmr6495647b6e.11.1751568640087;
-        Thu, 03 Jul 2025 11:50:40 -0700 (PDT)
+        bh=37keBjnXcy0vWAMphYKQfFgDhN7R9v7a8FhgLd8vRyw=;
+        b=eDAJnJnEccfGrDekwFuAigMmyuBZdrfCK6+NnmQqKHIkJSRefQDpPGQuOJS41bmmWN
+         5sdKkybBDYpdbsYQMRMrzsWLotMR8p3qypFarkkDSPmdgsU/dxOWgjYvq34TVdS9xMpj
+         rGSiPjcfw+whrRFWsB5EECTuhdzrN6+Wt5Fg6Tb3HvmnN6dIViGNzYXTFUhh4BiXTeow
+         DAqv2UwMCGq7X9plDvlbpFgTaen2DUCVqHHhXJ1AKzDPO95P+ZKnyTvw4srbs97kuIFW
+         rLkg9W1OntmaHRkr0krmqXaTrnSKu4Ws0E6sbhHjjuuGpmVHOTjsGwWWgKmsmqoOheL/
+         VsMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBuwqmAtZpZ3PutQZrRtWfv4OiL16OAQWMdWH+QmY63Lj64hD9nJiEqT4OIzqfEOgABn+NzL9laMS+@vger.kernel.org, AJvYcCUNiUtfFfdqC7eugzxiWrkFOFlv3SmTXcIdDn1vF5XGB6ZCHIH/3LUtd8WpLPC8NeE/KXVZv/hHWuPLJAg0@vger.kernel.org, AJvYcCVfMOCT2W2tiNVQHH9kxTF44ApDw9CvoLRULTOY6bQVFhJn3spP/HkUAd4vuDqcQkoSQWJ2AuqiJrM=@vger.kernel.org, AJvYcCWoitsnxDB3fjLBFJQrrKyVwAjC13sKsRPFRalIn5IfnZP0sJyXxOGMLlAQheBc4X46HgWPMVP7U0gbygcckw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqY5/2PUgmsD66UZa4hqzOZaRfTWSsydzl6wWDXNpHVXNlXwc2
+	ujrerkBYwT40h20LkLFxNJWTH1+ToyelikbMOP/uZhDbedrStiQPkXEq
+X-Gm-Gg: ASbGncvlsQrNt2dRqKiD2+/Njga22es2h7HxHXxhDH7KX+d3Ru04/8uhzLrz8ure5Vd
+	JXvNzixGMe+h3GhJqxUFSPo7LQumJ/ohb1cJ4llCIJRb2cz64nNVEWRwNhpAA5iCLM4FiWyiNwG
+	ujf9YPhqwQ7UHPjuzT1HTtXQfKebBuFF5ubnH7hhx2/KgO5tt1xWmQwZ212uxL/AILXuQaXGZQE
+	f7XeVRfmD2e/NHI2u6KGlcIxjy4wXbZIZv7CYxMaaBLBypJLzLHG9yHbl6m/c2OMIEDVDGsFkhV
+	1Wzdfz0OvoFEMUK7y3qOcFIlb/H9s+OXmKTnrRmmWmj0i7fo9Z/Ga8FEYczfU+D/YyUwg2L+46X
+	6TARJD/0qINjF6d4zwVbrA179
+X-Google-Smtp-Source: AGHT+IGGO26vNj25TCeR8caAFdVMd/7bQ1PotJARXetJW6yAE8gTTCz/lmho2fjx9+U6Hq3mnqrM6w==
+X-Received: by 2002:a05:6871:8416:b0:2f7:64ff:aae2 with SMTP id 586e51a60fabf-2f764ffaf42mr2834618fac.36.1751568642961;
+        Thu, 03 Jul 2025 11:50:42 -0700 (PDT)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:cd4:2776:8c4a:3597])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f90d1ccsm68195a34.44.2025.07.03.11.50.38
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f90d1ccsm68195a34.44.2025.07.03.11.50.41
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 03 Jul 2025 11:50:39 -0700 (PDT)
+        Thu, 03 Jul 2025 11:50:42 -0700 (PDT)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -105,9 +105,9 @@ Cc: John Groves <jgroves@micron.com>,
 	Aravind Ramesh <arramesh@micron.com>,
 	Ajay Joshi <ajayjoshi@micron.com>,
 	John Groves <john@groves.net>
-Subject: [RFC V2 01/18] dev_dax_iomap: Move dax_pgoff_to_phys() from device.c to bus.c
-Date: Thu,  3 Jul 2025 13:50:15 -0500
-Message-Id: <20250703185032.46568-2-john@groves.net>
+Subject: [RFC V2 02/18] dev_dax_iomap: Add fs_dax_get() func to prepare dax for fs-dax usage
+Date: Thu,  3 Jul 2025 13:50:16 -0500
+Message-Id: <20250703185032.46568-3-john@groves.net>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250703185032.46568-1-john@groves.net>
 References: <20250703185032.46568-1-john@groves.net>
@@ -119,91 +119,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-No changes to the function - just moved it.
+This function should be called by fs-dax file systems after opening the
+devdax device. This adds holder_operations, which effects exclusivity
+between callers of fs_dax_get().
 
-dev_dax_iomap needs to call this function from
-drivers/dax/bus.c.
+This function serves the same role as fs_dax_get_by_bdev(), which dax
+file systems call after opening the pmem block device.
 
-drivers/dax/bus.c can't call functions in drivers/dax/device.c -
-that creates a circular linkage dependency - but device.c can
-call functions in bus.c. Also exports dax_pgoff_to_phys() since
-both bus.c and device.c now call it.
+This also adds the CONFIG_DEV_DAX_IOMAP Kconfig parameter
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- drivers/dax/bus.c    | 24 ++++++++++++++++++++++++
- drivers/dax/device.c | 23 -----------------------
- 2 files changed, 24 insertions(+), 23 deletions(-)
+ drivers/dax/Kconfig |  6 ++++++
+ drivers/dax/super.c | 30 ++++++++++++++++++++++++++++++
+ include/linux/dax.h |  5 +++++
+ 3 files changed, 41 insertions(+)
 
-diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-index fde29e0ad68b..9d9a4ae7bbc0 100644
---- a/drivers/dax/bus.c
-+++ b/drivers/dax/bus.c
-@@ -1417,6 +1417,30 @@ static const struct device_type dev_dax_type = {
- 	.groups = dax_attribute_groups,
- };
+diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
+index d656e4c0eb84..ad19fa966b8b 100644
+--- a/drivers/dax/Kconfig
++++ b/drivers/dax/Kconfig
+@@ -78,4 +78,10 @@ config DEV_DAX_KMEM
  
-+/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c  */
-+__weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
-+			      unsigned long size)
+ 	  Say N if unsure.
+ 
++config DEV_DAX_IOMAP
++       depends on DEV_DAX && DAX
++       def_bool y
++       help
++         Support iomap mapping of devdax devices (for FS-DAX file
++         systems that reside on character /dev/dax devices)
+ endif
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index e16d1d40d773..48bab9b5f341 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -122,6 +122,36 @@ void fs_put_dax(struct dax_device *dax_dev, void *holder)
+ EXPORT_SYMBOL_GPL(fs_put_dax);
+ #endif /* CONFIG_BLOCK && CONFIG_FS_DAX */
+ 
++#if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)
++/**
++ * fs_dax_get()
++ *
++ * fs-dax file systems call this function to prepare to use a devdax device for
++ * fsdax. This is like fs_dax_get_by_bdev(), but the caller already has struct
++ * dev_dax (and there  * is no bdev). The holder makes this exclusive.
++ *
++ * @dax_dev: dev to be prepared for fs-dax usage
++ * @holder: filesystem or mapped device inside the dax_device
++ * @hops: operations for the inner holder
++ *
++ * Returns: 0 on success, <0 on failure
++ */
++int fs_dax_get(struct dax_device *dax_dev, void *holder,
++	const struct dax_holder_operations *hops)
 +{
-+	int i;
++	if (!dax_dev || !dax_alive(dax_dev) || !igrab(&dax_dev->inode))
++		return -ENODEV;
 +
-+	for (i = 0; i < dev_dax->nr_range; i++) {
-+		struct dev_dax_range *dax_range = &dev_dax->ranges[i];
-+		struct range *range = &dax_range->range;
-+		unsigned long long pgoff_end;
-+		phys_addr_t phys;
++	if (cmpxchg(&dax_dev->holder_data, NULL, holder))
++		return -EBUSY;
 +
-+		pgoff_end = dax_range->pgoff + PHYS_PFN(range_len(range)) - 1;
-+		if (pgoff < dax_range->pgoff || pgoff > pgoff_end)
-+			continue;
-+		phys = PFN_PHYS(pgoff - dax_range->pgoff) + range->start;
-+		if (phys + size - 1 <= range->end)
-+			return phys;
-+		break;
-+	}
-+	return -1;
++	dax_dev->holder_ops = hops;
++
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(dax_pgoff_to_phys);
++EXPORT_SYMBOL_GPL(fs_dax_get);
++#endif /* DEV_DAX_IOMAP */
 +
- static struct dev_dax *__devm_create_dev_dax(struct dev_dax_data *data)
- {
- 	struct dax_region *dax_region = data->dax_region;
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 6d74e62bbee0..29f61771fef0 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -50,29 +50,6 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
- 	return 0;
- }
+ enum dax_device_flags {
+ 	/* !alive + rcu grace period == no new operations / mappings */
+ 	DAXDEV_ALIVE,
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index df41a0017b31..86bf5922f1b0 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -51,6 +51,11 @@ struct dax_holder_operations {
  
--/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c */
--__weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
--		unsigned long size)
--{
--	int i;
--
--	for (i = 0; i < dev_dax->nr_range; i++) {
--		struct dev_dax_range *dax_range = &dev_dax->ranges[i];
--		struct range *range = &dax_range->range;
--		unsigned long long pgoff_end;
--		phys_addr_t phys;
--
--		pgoff_end = dax_range->pgoff + PHYS_PFN(range_len(range)) - 1;
--		if (pgoff < dax_range->pgoff || pgoff > pgoff_end)
--			continue;
--		phys = PFN_PHYS(pgoff - dax_range->pgoff) + range->start;
--		if (phys + size - 1 <= range->end)
--			return phys;
--		break;
--	}
--	return -1;
--}
--
- static void dax_set_mapping(struct vm_fault *vmf, pfn_t pfn,
- 			      unsigned long fault_size)
- {
+ #if IS_ENABLED(CONFIG_DAX)
+ struct dax_device *alloc_dax(void *private, const struct dax_operations *ops);
++
++#if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)
++int fs_dax_get(struct dax_device *dax_dev, void *holder, const struct dax_holder_operations *hops);
++struct dax_device *inode_dax(struct inode *inode);
++#endif
+ void *dax_holder(struct dax_device *dax_dev);
+ void put_dax(struct dax_device *dax_dev);
+ void kill_dax(struct dax_device *dax_dev);
 -- 
 2.49.0
 
