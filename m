@@ -1,376 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-53813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584F2AF7CB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 17:45:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBABAF7DA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA446178F08
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 15:43:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E1031CC0C9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968BF2D1F61;
-	Thu,  3 Jul 2025 15:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548E42EF662;
+	Thu,  3 Jul 2025 16:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlC+guln"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PR1OlAxK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C7A22A4DA
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 15:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F5F239099
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 16:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751557362; cv=none; b=LyHZz37ot1IH8dir8Ojn1l2Gc2OdImmfJ2fFo70ck9OODrKg2Uc/Z2oIxMnmvXhxODZTZ6LtQzDuiZAZxWNe8SAbVCfjRwmS4cyzEF/l2Rroly+ljClPdcsmLPbA3stApu81pJmSr6VeC2qp/5cgs0yhyYIajJz5kru7hOnW3Ag=
+	t=1751558959; cv=none; b=ub9tt9NOAZ2rgkaL5wTAyIzmdDqXkDB4zw6e6junIZyLnMf4txDZdvriuz2xSLya1WDMicb671S+AzG+yHtOt4YO19KgOwk/kLPBFzYINJQibDZvk4a3N/pe7y177V0y1vsm5siPRUwYXDZw1mvceHJOlT5f4uHA9nDFnMUOEkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751557362; c=relaxed/simple;
-	bh=yUDtToY+ze28DG0qEFOgkoNbkYCz3GTbIyaEeTkBRd0=;
+	s=arc-20240116; t=1751558959; c=relaxed/simple;
+	bh=9dMexpUH3aV5aLJEJeF9XGFvv979Ndp7x8v5u3/XssI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VKYUYqNp6Tyki+I0yWjY7qzQRukP3nCIbw4DikPdYOs5IWyvpa1ZIWw6svkay/IzoRQ9YyOSUUpHO5Egx5SmVa+p8ZGbqwd4p2Eg32Mbgc5hgwDuiRwMyvH1ezxnB9Z1uG9UcDreFP2wSImDTRBnJYpamOe2IfIET/JA9U/7/uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlC+guln; arc=none smtp.client-ip=209.85.218.41
+	 To:Cc:Content-Type; b=mJQjM461glXJ5g/GAuvjBOV4hlVTxSmOEM1r+KTMiQ6ebkQI+6bm2D9h+y0b62eVyeBZFlSlUmiG7Ee+qhRP236LPyhEe/vLOzFkRfODFwsa5rbt7dd9UP4Dcutu/MF5zMihfkfLqvM1oRtSLzQqmVH21oAYH35EISCmPgif8No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PR1OlAxK; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae35f36da9dso5574866b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Jul 2025 08:42:38 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae3a604b43bso11340266b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Jul 2025 09:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751557357; x=1752162157; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751558955; x=1752163755; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oLRG/YJH4HZroyAUVnCCVBlhG5whe6AdwRfcpicbYyk=;
-        b=XlC+gulnRLouyDHmmFeUEoPfZi/3O4TD2d0bvDBkzC7RmTnKQIxdgjx6NJs9ZgwtRx
-         ItqLZqU0cAYojExJxwKIcOaY4daeEQJkD6uzAb6sXV377pXqFSms4Of78+Y8pRVbFEuO
-         s0nIun70F+b3kLcHSc7/PM3Ti0bu9kMFgb/mnmST5Y6A2SP8lor439WSppqazfgF1Ijt
-         GTt8uVFjf4UfEkmfqBiakvfX3vK8teLkuGJGusBPpFNldrF8icjTm3EBrgL7v1kZyctv
-         ZTngeaJp9ciLbIpq/RNFIz1xdxZMqP4JSv0YJFnKhG2yrvupr+aeCcfNI5HKz8QbLcUl
-         2v5w==
+        bh=KP4tACoHZbh4VhWfrCWN7lh9GYnJuBttlYcEpFv1jXI=;
+        b=PR1OlAxKWdcp6LS1aRo3W5/ZE8chbi8XEzbQerYnjZ01T2YOlAricALuMO6qyrQ8K+
+         qSW2bfcu6Car/0e7nmlg18xbvKKsNq0ggqcrDdhmAVba6sBtsSBlVwZq3rXC77pJd5Gc
+         xjMfUox3eM3EvCW9Kerxgypn2t6sviXqJz0Ild6onGrOf6JGbogwMo1GK8k+N6G4qhpv
+         rJURyQHOsyoDA8u7qYUaFTkexa9vPT+fXmb80gkj9+JcvSskeIx68PIRkvBTnYyhKvqq
+         GcrqEP3Wp/p+GxM2za+IT9m16H7EiK19AyGME0RIiq5i7PgrTTUd9rhfHUTOgeaSmmtv
+         94RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751557357; x=1752162157;
+        d=1e100.net; s=20230601; t=1751558955; x=1752163755;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oLRG/YJH4HZroyAUVnCCVBlhG5whe6AdwRfcpicbYyk=;
-        b=iIDWKdvjaeGhquunDBFkFaOwwg+qlDc+mxUawb/VCHnnBbZdt2xkXKoubXmL08za0Z
-         u0hSRcSVNQgTRVZxwEa43ttS5v+mXqZj2d3y423Dq9RxbYixAXEwuyxBCjXqUecwCMB0
-         YiS0Vlyn+mfK9Twu9tyFtwR+6Pqmdu4XOq1HGR37ZUS1ZdKuoNg3DLoaXzQOB3A1+24V
-         SM4vVPz9F4ntvJdvyHe+/seLk8OYJXP6GczWHn8MomRpavG4efBFaOGdl2+iQ2sPE69p
-         t9U/mc8XIp/Eb+en/qEdR3q4W1+5sVKO8DyX6APviBT7RYGroau7wAuZHDnbXLyCHSEs
-         fGag==
-X-Gm-Message-State: AOJu0YzXYE76jfJCK4MigHk2D2RGQxUYnFoecMo5ImFBm04ihBbdfVAh
-	J9QGqnzV37ieROTjYltNue2kmeAAKKLzSDlakKAw4X80mu89VbWyUyTon20OBbBVuTex1h1YLcN
-	enuDc8cUyVJ3T1Yj0O1qETaCcANOydr4=
-X-Gm-Gg: ASbGncut2squnUmoovey/9CZkpCeeZGJ5ApNHI6+Wgu2Ux1WFGzvVBcuiMoJ8Az6vAm
-	tebyB8MKR/P8ASot+Y30c2hZH8gRmwiUOB2UB/gYAGpoJrv/7AqQMXDVR4cqt7IZtd6IZkXuh9h
-	6lVA9n0vti7tfExNsCZdd3N0cPmKOiUZs1G5MbaHXdwHg=
-X-Google-Smtp-Source: AGHT+IHmbgBxCbiKP5lRSU3DHKtSmNbNK6omES58GM3qoydjmFlRZp1khJYryUD+1zZmsUwYvcZO9jaxnIgU6sdrsBY=
-X-Received: by 2002:a17:907:6d1f:b0:ade:cdec:7085 with SMTP id
- a640c23a62f3a-ae3d83f77ffmr424418066b.26.1751557356498; Thu, 03 Jul 2025
- 08:42:36 -0700 (PDT)
+        bh=KP4tACoHZbh4VhWfrCWN7lh9GYnJuBttlYcEpFv1jXI=;
+        b=fpRBxbjteFfV7bCH2y9C6O0EFUaGmrvjTVg1+2U4qZjzdeCSLelZx1rDdg6JQdXNKr
+         lQnjrgxp6xEEGVG1fs7MdXPU0aW0Jaoan+Gj4h2fC3ijNYwgXQHCl0Yc0JrtHQsAPZbY
+         iNqbSwLL1I3qOfs5X329mLiW970YEzSew3GRTmbv12bljbjj59j4KM07otyUUZ5wsorp
+         bXWv50V/0/wmRilPRxOHducB9Eg+6LeDf4nZFUzIKZ8nG53icUd5jEttC51D2CohZkeS
+         S7xIHjvGMhNuHt4c+nace8sVHes8lXEjv67QD37FbYyyDNMj43hyVZtNOh07gmxGrXoL
+         KGnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVtE5dY5sb2aZlKcXl0oXlGe5hs4bNh8g8BjxbtXjNHNb1rw594da9lRbpRmklXVheR7IBJy0GyD7r8CQS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8jHrgE48TRhDf+MiD5JgYZLLHxnjYt2QKhIoT6yjWJ8nSdo1b
+	A1tO2eANVqR8n3AaHqROVT+ex/uRy+bVfFtuustAZQngqV2z78jQh+v0qB3OcI8pjNlqBj5azuA
+	4AFEGab/4sOFNKnXmPvjT3wfe7aLUUL4=
+X-Gm-Gg: ASbGncu61+fkiXhwluboqZMrxQqHzfMmtqKaEEpYVEYCAjv9JUXLIY68EgoXht6H9AD
+	mHSHCPehWvxZf4CCcFeG+JZfRSqj34nD+YLdZgNX9YNJXKqg5bGhwckTwUutZgOMpjfImhGNt58
+	5wTrc9r3c5TtZqWAoGm3BPD8OVI1sRsAyBqp8lkIUM7buCvvoywu6RXg==
+X-Google-Smtp-Source: AGHT+IGGP1HKwZM77I4tbU9tkDqur8QTuFHGdrZEsO++7UMhjoMhkR3IdrvJZaE4/PNYvrtJ8yrqIyL8e5j+oEWn8Cc=
+X-Received: by 2002:a17:907:9308:b0:ae3:c521:db6 with SMTP id
+ a640c23a62f3a-ae3d8baffe4mr389356766b.58.1751558954872; Thu, 03 Jul 2025
+ 09:09:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703130539.1696938-1-mszeredi@redhat.com>
-In-Reply-To: <20250703130539.1696938-1-mszeredi@redhat.com>
+References: <CAOQ4uxjTtyn04XC65hv2MVsRByGyvxJ0wK=-FZmb1sH1w0CFtA@mail.gmail.com>
+ <20250703070916.217663-1-ibrahimjirdeh@meta.com> <CAOQ4uxgfhf6g71_8y5iXLmNVMBvYVtpPJgd9PNXQzZnqa2=CkQ@mail.gmail.com>
+ <26dpu7ouochrzo4koexbwofgygqo7mhjbvswzhvqhf46i3kbvc@d6dzwpg6agoc>
+In-Reply-To: <26dpu7ouochrzo4koexbwofgygqo7mhjbvswzhvqhf46i3kbvc@d6dzwpg6agoc>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 3 Jul 2025 17:42:24 +0200
-X-Gm-Features: Ac12FXxG11PX2u5zmzwvBKPtvquHUsGbPKLCPCx85kx-0CwGf29KlBB1txy3yrU
-Message-ID: <CAOQ4uxjC6scXXVi0dHv-UahL2hBXVqLtZvn4BDvT6o_9+LcA7Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] fanotify: add watchdog for permission events
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Ian Kent <raven@themaw.net>, Eric Sandeen <sandeen@redhat.com>
+Date: Thu, 3 Jul 2025 18:09:01 +0200
+X-Gm-Features: Ac12FXxdR-Pi4UpFf7e_-tRj0eWvKQjqSxcgZfD638gDVUxfz7yuaproBR0XKBA
+Message-ID: <CAOQ4uxjd1tPFoV6CrsktJK8yr+ZMBptTMK-qH_+ADjiK7voYOw@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: support custom default close response
+To: Jan Kara <jack@suse.cz>
+Cc: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, josef@toxicpanda.com, lesha@meta.com, 
+	linux-fsdevel@vger.kernel.org, sargun@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 3, 2025 at 3:05=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com>=
- wrote:
+On Thu, Jul 3, 2025 at 4:43=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
-> This is to make it easier to debug issues with AV software, which time an=
-d
-> again deadlocks with no indication of where the issue comes from, and the
-> kernel being blamed for the deadlock.  Then we need to analyze dumps to
-> prove that the kernel is not in fact at fault.
-
-Interesting.
-Do you mean deadlock in userspace or deadlock on some kernel
-lock because the server is operating on the filesystem and the
-permission event was in a locked context?
-
+> On Thu 03-07-25 10:27:17, Amir Goldstein wrote:
+> > On Thu, Jul 3, 2025 at 9:10=E2=80=AFAM Ibrahim Jirdeh <ibrahimjirdeh@me=
+ta.com> wrote:
+> > >
+> > > > On Wed, Jul 2, 2025 at 6:15=E2=80=AFPM Jan Kara <jack@suse.cz> wrot=
+e:
+> > > > > Eventually the new service starts and we are in the situation I d=
+escribe 3
+> > > > > paragraphs above about handling pending events.
+> > > > >
+> > > > > So if we'd implement resending of pending events after group clos=
+ure, I
+> > > > > don't see how default response (at least in its current form) wou=
+ld be
+> > > > > useful for anything.
+> > > > >
+> > > > > Why I like the proposal of resending pending events:
+> > > > > a) No spurious FAN_DENY errors in case of service crash
+> > > > > b) No need for new concept (and API) for default response, just a=
+ feature
+> > > > >    flag.
+> > > > > c) With additional ioctl to trigger resending pending events with=
+out group
+> > > > >    closure, the newly started service can simply reuse the
+> > > > >    same notification group (even in case of old service crash) th=
+us
+> > > > >    inheriting all placed marks (which is something Ibrahim would =
+like to
+> > > > >    have).
+> > > >
+> > >
+> > > I'm also a fan of the approach of support for resending pending event=
+s. As
+> > > mentioned exposing this behavior as an ioctl and thereby removing the=
+ need to
+> > > recreate fanotify group makes the usage a fair bit simpler for our ca=
+se.
+> > >
+> > > One basic question I have (mainly for understanding), is if the FAN_R=
+ETRY flag is
+> > > set in the proposed patch, in the case where there is one existing gr=
+oup being
+> > > closed (ie no handover setup), what would be the behavior for pending=
+ events?
+> > > Is it the same as now, events are allowed, just that they get resent =
+once?
+> >
+> > Yes, same as now.
+> > Instead of replying FAN_ALLOW, syscall is being restarted
+> > to check if a new watcher was added since this watcher took the event.
 >
-> With this patch a warning is printed when permission event is received by
-> userspace but not answered for more than 20 seconds.
+> Yes, just it isn't the whole syscall that's restarted but only the
+> fsnotify() call.
 >
 
-There is a nuance here.
-Your patch does not count the time from when the operation was queued
-and blocked.
+Right. I missed that.
 
-It counts the time from when the AV software *reads* the event.
-If AV software went off to take a nap and does not read events,
-you will not get a watchdog.
-
-Is that good enough to catch the usual offenders?
-That relates to my question above whether the deadlock
-is inherently because of doing some fs work in the context
-of handling a permission event.
-
-If it is, then I wonder if you could share some details about the
-analysis of the deadlocks.
-
-Reason I am asking is because when working on pre-content
-events, as a side effect, because they share the same hook
-with FAN_ACCESS_PERM, the latter event should not be emitted
-in the context of fs locks (unless I missed something).
-
-When auditing FAN_OPEN_PERM I recall only one context that
-seemed like a potential deadlock trap, which is the permission
-hook called from finish_open() in atomic_open() in the context of
- inode_lock{,_shared}(dir->d_inode);
-
-So are the deadlocks that you found happen on fs with atomic_open()?
-Technically, we can release the dir inode lock in finish_open()
-I think it's just a matter of code architecture to make this happen.
-
-> The timeout is very coarse (20-40s) but I guess it's good enough for the
-> purpose.
+> > Wondering out loud:
+> > Currently we order the marks on the mark obj_list,
+> > within the same priority group, first-subscribed-last-handled.
+> >
+> > I never stopped to think if this order made sense or not.
+> > Seems like it was just the easier way to implement insert by priority o=
+rder.
+> >
+> > But if we order the marks first-subscribed-first-handled within the sam=
+e
+> > priority group, we won't need to restart the syscall to restart mark
+> > list iteration.
+> >
+> > The new group of the newly started daemon, will be next in the mark lis=
+t
+> > after the current stopped group returns FAN_ALLOW.
+> > Isn't that a tad less intrusive handover then restarting the syscall
+> > and causing a bunch of unrelated subsystems to observe the restart?
+> >
+> > And I think that the first-subscribed-first-handled order makes a bit m=
+ore
+> > sense logically.
+> > I mean, if admin really cares about making some super important securit=
+y
+> > group first, admin could make sure that its a priority service that
+> > starts very early
+> > admin cannot make sure that the important group starts last...
 >
-> Overhead should be minimal.
+> So this idea also briefly crossed my mind yesterday but I didn't look int=
+o
+> it in detail. Looking at how we currently do mark iteration in fsnotify
+> this won't be very easy to implement. iter_info has an array of marks, so=
+me
+> of those are marks we are currently reporting to, some of those may be fr=
+om
+> the next group to report to. Some may be even NULL because for this mark
+> type there were no more marks to report to. So it's difficult to make sur=
+e
+> iter_into will properly pick freshly added group and its marks without
+> completely restarting mark iteration. I'm not saying it cannot be done bu=
+t
+> I'm not sure it's worth the hassle.
 >
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/notify/fanotify/Kconfig         |   5 ++
->  fs/notify/fanotify/fanotify.h      |   6 +-
->  fs/notify/fanotify/fanotify_user.c | 102 +++++++++++++++++++++++++++++
->  include/linux/fsnotify_backend.h   |   4 ++
->  4 files changed, 116 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-> index 0e36aaf379b7..eeb9c443254e 100644
-> --- a/fs/notify/fanotify/Kconfig
-> +++ b/fs/notify/fanotify/Kconfig
-> @@ -24,3 +24,8 @@ config FANOTIFY_ACCESS_PERMISSIONS
->            hierarchical storage management systems.
->
->            If unsure, say N.
-> +
-> +config FANOTIFY_PERM_WATCHDOG
-> +       bool "fanotify permission event watchdog"
-> +       depends on FANOTIFY_ACCESS_PERMISSIONS
-> +       default n
 
-I think that's one of those features where sysctl knob is more useful to
-distros and admin than Kconfig.
-Might as well be a sysctl knob to control perm_group_timeout
-where 0 means off.
-
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.=
-h
-> index b44e70e44be6..8b60fbb9594f 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -438,10 +438,14 @@ FANOTIFY_ME(struct fanotify_event *event)
->  struct fanotify_perm_event {
->         struct fanotify_event fae;
->         struct path path;
-> -       const loff_t *ppos;             /* optional file range info */
-> +       union {
-> +               const loff_t *ppos;     /* optional file range info */
-> +               pid_t pid;              /* pid of task processing the eve=
-nt */
-
-It is a bit odd to have a pid_t pid field here as well as
-struct pid *pid field in fae.pid (the event generating pid).
-So I think, either reuse fae.pid to keep reference to reader task_pid
-or leave this pid_t field here with a more specific name.
-
-> +       };
->         size_t count;
->         u32 response;                   /* userspace answer to the event =
-*/
->         unsigned short state;           /* state of the event */
-> +       unsigned short watchdog_cnt;    /* already scanned by watchdog? *=
-/
->         int fd;         /* fd we passed to userspace for this event */
->         union {
->                 struct fanotify_response_info_header hdr;
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
-tify_user.c
-> index 87f861e9004f..a9a34da2c864 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -95,6 +95,96 @@ static void __init fanotify_sysctls_init(void)
->  #define fanotify_sysctls_init() do { } while (0)
->  #endif /* CONFIG_SYSCTL */
->
-> +#ifdef CONFIG_FANOTIFY_PERM_WATCHDOG
-> +static LIST_HEAD(perm_group_list);
-> +static DEFINE_SPINLOCK(perm_group_lock);
-> +static void perm_group_watchdog(struct work_struct *work);
-> +static DECLARE_DELAYED_WORK(perm_group_work, perm_group_watchdog);
-> +static unsigned int perm_group_timeout =3D 20;
-> +
-> +static void perm_group_watchdog_schedule(void)
-> +{
-> +       schedule_delayed_work(&perm_group_work, secs_to_jiffies(perm_grou=
-p_timeout));
-> +}
-> +
-> +static void perm_group_watchdog(struct work_struct *work)
-> +{
-> +       struct fsnotify_group *group;
-> +       struct fanotify_perm_event *event;
-> +       struct task_struct *task;
-> +       pid_t failed_pid =3D 0;
-> +
-> +       guard(spinlock)(&perm_group_lock);
-> +       if (list_empty(&perm_group_list))
-> +               return;
-> +
-> +       list_for_each_entry(group, &perm_group_list, fanotify_data.perm_g=
-roup) {
-> +               /*
-> +                * Ok to test without lock, racing with an addition is
-> +                * fine, will deal with it next round
-> +                */
-> +               if (list_empty(&group->fanotify_data.access_list))
-> +                       continue;
-> +
-> +               scoped_guard(spinlock, &group->notification_lock) {
-> +                       list_for_each_entry(event, &group->fanotify_data.=
-access_list, fae.fse.list) {
-> +                               if (likely(event->watchdog_cnt =3D=3D 0))=
- {
-> +                                       event->watchdog_cnt =3D 1;
-> +                               } else if (event->watchdog_cnt =3D=3D 1) =
-{
-> +                                       /* Report on event only once */
-> +                                       event->watchdog_cnt =3D 2;
-> +
-> +                                       /* Do not report same pid repeate=
-dly */
-> +                                       if (event->pid =3D=3D failed_pid)
-> +                                               continue;
-> +
-> +                                       failed_pid =3D event->pid;
-> +                                       rcu_read_lock();
-> +                                       task =3D find_task_by_pid_ns(even=
-t->pid, &init_pid_ns);
-> +                                       pr_warn_ratelimited("PID %u (%s) =
-failed to respond to fanotify queue for more than %i seconds\n",
-> +                                                           event->pid, t=
-ask ? task->comm : NULL, perm_group_timeout);
-> +                                       rcu_read_unlock();
-> +                               }
-> +                       }
-> +               }
-> +       }
-> +       perm_group_watchdog_schedule();
-> +}
-> +
-> +static void fanotify_perm_watchdog_group_remove(struct fsnotify_group *g=
-roup)
-> +{
-> +       if (!list_empty(&group->fanotify_data.perm_group)) {
-> +               /* Perm event watchdog can no longer scan this group. */
-> +               spin_lock(&perm_group_lock);
-> +               list_del(&group->fanotify_data.perm_group);
-> +               spin_unlock(&perm_group_lock);
-> +       }
-> +}
-> +
-> +static void fanotify_perm_watchdog_group_add(struct fsnotify_group *grou=
-p)
-> +{
-> +       if (list_empty(&group->fanotify_data.perm_group)) {
-> +               /* Add to perm_group_list for monitoring by watchdog. */
-> +               spin_lock(&perm_group_lock);
-> +               if (list_empty(&perm_group_list))
-> +                       perm_group_watchdog_schedule();
-> +               list_add_tail(&group->fanotify_data.perm_group, &perm_gro=
-up_list);
-> +               spin_unlock(&perm_group_lock);
-> +       }
-> +}
-> +
-> +#else
-> +
-> +static void fanotify_perm_watchdog_group_remove(struct fsnotify_group *g=
-roup)
-> +{
-> +}
-> +
-> +static void fanotify_perm_watchdog_group_add(struct fsnotify_group *grou=
-p)
-> +{
-> +}
-> +
-> +#endif
-> +
->  /*
->   * All flags that may be specified in parameter event_f_flags of fanotif=
-y_init.
->   *
-> @@ -210,6 +300,8 @@ static void fanotify_unhash_event(struct fsnotify_gro=
-up *group,
->         hlist_del_init(&event->merge_list);
->  }
->
-> +
-> +
->  /*
->   * Get an fanotify notification event if one exists and is small
->   * enough to fit in "count". Return an error pointer if the count
-> @@ -953,6 +1045,7 @@ static ssize_t fanotify_read(struct file *file, char=
- __user *buf,
->                                 spin_lock(&group->notification_lock);
->                                 list_add_tail(&event->fse.list,
->                                         &group->fanotify_data.access_list=
-);
-> +                               FANOTIFY_PERM(event)->pid =3D current->pi=
-d;
->                                 spin_unlock(&group->notification_lock);
->                         }
->                 }
-> @@ -1012,6 +1105,8 @@ static int fanotify_release(struct inode *ignored, =
-struct file *file)
->          */
->         fsnotify_group_stop_queueing(group);
->
-> +       fanotify_perm_watchdog_group_remove(group);
-> +
->         /*
->          * Process all permission events on access_list and notification =
-queue
->          * and simulate reply from userspace.
-> @@ -1464,6 +1559,10 @@ static int fanotify_add_mark(struct fsnotify_group=
- *group,
->         fsnotify_group_unlock(group);
->
->         fsnotify_put_mark(fsn_mark);
-> +
-> +       if (!ret && (mask & FANOTIFY_PERM_EVENTS))
-> +               fanotify_perm_watchdog_group_add(group);
-> +
-
-This ends up doing
-       if (list_empty(&group->fanotify_data.perm_group)) {
-
-Without holding the group lock nor the perm_group_lock.
-it does not look safe against adding to fanotify_data.perm_group
-twice.
-
-It would have been more natural and balanced to add group
-to watchdog list on fanotify_init().
-
-You can do that based on (group->priority > FSNOTIFY_PRIO_NORMAL)
-because while a program could create an fanotify group with
-priority FAN_CLASS_CONTENT and not add permission event
-watches, there is absolutely no reason to optimize for this case and
-not add this group to the "permission events capable" perm_group list.
+Yes, I see what you mean.
+Restarting fsnotify() seems more sensible.
 
 Thanks,
 Amir.
