@@ -1,100 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-53803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21130AF7748
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50659AF7794
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 546DC17FB36
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 14:24:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEE1175C28
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 14:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF982EA75E;
-	Thu,  3 Jul 2025 14:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400902ED870;
+	Thu,  3 Jul 2025 14:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BSmjL+hK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASEaO95Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0826B2EA178;
-	Thu,  3 Jul 2025 14:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D092EBDF9;
+	Thu,  3 Jul 2025 14:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751552626; cv=none; b=uAwLqUBRS/RwnUhWV31kutRcRr3NRykiQ5eWzGcMKkB25IjIQirvZZMfxWMhpeluz1hPvK2gsB7f9iZwbkA7f6Iffiml4CmwevxQskuARsos0m9EJDqLRaJ+nQgRszMuGliTpCpn7/qmsoJI4RfGpA+cc3gn/u4RuM/SLJu7CyU=
+	t=1751553192; cv=none; b=joGYZTGunu9fuuK4pmtCDnTwZzmkWHPxgsXy0irqwdXYgPWB1Tup4iqDd6X4v+3gqrilr2eukzkMYsPXfS+JgKg4GlVUWlvfuoKycRzX1SXYC+L6uwVxxaUS5pp4qi3kObxES39BgcfwqpAiBwsW6sQGbNN+GsJaClA8BknJbt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751552626; c=relaxed/simple;
-	bh=UqCHVI6XlSbC/TOR9oByBhaP+pzp8e91+zTZgpxb5M4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dVPBFolUpgJGutzw72yJ+iMy89qitWWdzHAFqMBziFDz+02ERpXlNaC48Yq9qjyjKQvJ4cEiLMZkABNLap+W9IlrRY2XkbS88rU2TcyKTinYHHsGRUPjNsfM7ha0hPOWltEurtyq4nzhdg0743E+p2hvj+6fGBXdpnMUPSsMptE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BSmjL+hK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fdwQ7VoCdy9EDfz8qdHjHeqLPa9H8WWCarPWLj8vDE4=; b=BSmjL+hKMq+uETspb9lUMyEHQw
-	0bxFAeC2GxGIerv0/y1S/jtyOo7o3HC1cIdgrFj/cACDXHADEyUAeyoUOrq8ommeAQlnCoyHHfpHY
-	cLukEWcTdu23KMrC3Bql3cKQxdIc43/VGAmkIgT3U6kex/lPTpXOZ9DU9iScomTE/fckWN1rCQl3w
-	wUQm0VQRKQr9LO+52bCrAajjRBNfF83RTFXcqDrCuhW7+pKKDu8l5dOoQOVIuuCE79gDxCxnmPW5d
-	+NxJ9PmSYP0do/VK/Svlnk+pKid4eQ7cwDTOxHQ28VByz6yhjhnHBPZJW2Fk7L5l0D0rt+o48bZSW
-	YHaTLpvw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXKql-0000000BeR1-44Zb;
-	Thu, 03 Jul 2025 14:23:43 +0000
-Date: Thu, 3 Jul 2025 07:23:43 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	Keith Busch <kbusch@kernel.org>, David Wei <dw@davidwei.uk>,
-	Vishal Verma <vishal1.verma@intel.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [RFC 00/12] io_uring dmabuf read/write support
-Message-ID: <aGaSb5rpLD9uc1IK@infradead.org>
-References: <cover.1751035820.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1751553192; c=relaxed/simple;
+	bh=pbnpZTecA/emnfYuNr9pfpPVP71XL99mm/JpD31d6Bo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tW6pUmK21182jVKKjJJb06sUiqMjD80VO+qdAoY3OzA4WrcYBeSO4Y6eiyiqUvOstpaPRuoeJgShkIwi1ipikuKwaAscU70gql0IS1SRwkGBLSPbRfKckdo/uc0LEwe5Tak0mV5B9DyMrahey9RYws6/UCB2fcNxQfS34cwlfcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ASEaO95Z; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3139027b825so37568a91.0;
+        Thu, 03 Jul 2025 07:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751553190; x=1752157990; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c6ULj4GSQdITNFr+qLBDFzv5ASstogN2mu1F9t/ePJQ=;
+        b=ASEaO95Z+SPOpEHhaEdMvpW4zM+tPmij7fMNC+/2HeErWS9MVS//qKJK6yWSNdg4Mr
+         1/29CWYxan8aAwpQrMIAbZczf2Mfq8wJVlQu9fFIkYhUTHtwWk401EXMl+YBePONbgoB
+         j1VcRNxz0Dg4oYELzfW+bic8vygVbzO9rqHmwD0nJMy/l2urCoymUFJ6Dc6BcwIAaW8j
+         HDRfc07UDpDvfk+fXir/GutVW+pfoO8lB2G2EW6PKVMeOx1Upr+apq6cZA0SLXcBQFbt
+         PyC470y/L171Eg/FAjBa+JvtPjZsejuQKAX7SO3wSFkfQLVf9Q+lKYLzmJ/2KUJnQOsP
+         GDRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751553190; x=1752157990;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c6ULj4GSQdITNFr+qLBDFzv5ASstogN2mu1F9t/ePJQ=;
+        b=f6sQ9KRl2B1lrjFZbOd6we6CjUAMQ3yy7FmRuG8Pj39ccuV0XOI3AEuaEbqAXMFPPh
+         zeOVtQ8CqGBOfqB9aZju7aXMm1jkZ2xPjuuYBsLR9Ih0nCm88RXZ8DNf3AsAPO3dIe4G
+         OJiRtdD8XjTF+GtpNGx2ByWHTMdLWZvKMS9v6sRpzesx3xIgHQBjW1CSisI0WoBO2uCp
+         dIxN+VSHiST1bxe4UctjNAbK+7IXmbcWU7AVSopXuDTgkag5aXAVH4f+ev+3dEA55Aiu
+         jM0L8knZAh0gRuvCXDLTRQLf0xL/8nYfMKyW8s7RW78vBSN2MaVf1tQnGsFVDqlQt5Ky
+         lg4w==
+X-Forwarded-Encrypted: i=1; AJvYcCV6mZiPKduBuKW+T1f+SMOusDFmGKDUSco7kjUoLnlY7svU9L4464Vh3of0+OUzfnFAfLUxrRUy4HE/@vger.kernel.org, AJvYcCWpoDiOuCOtnPK07puDPNS0EISo4RuroRzf3ZShlZa5P5xf9QPGDi7DVtBTNGP3BGlSEJlqpuxIBe+uwxHh@vger.kernel.org, AJvYcCX8z0dMwS8QLTJYHxnmzqoMNS56drID+Z2Q9/79H7N0MlIXbYPnDJ2PVVRCui4E6ixEUg0l0z5/NALuxLex@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7qPqIV5AGv+CPQUE1YW7qbRecdccHVPnNmMU+BQHlKdMtBWSx
+	v8e4NUqUdS5bdAncHjtAgmN2jlNtGAxoitD79ZXc+O/FQJWgtRzC73Jm
+X-Gm-Gg: ASbGncs6gy8IFgKLhzmXMZloaS6ryAmMPX4dHPpkbLQoBJE+1JfD3qKjW1sIa/9qLnm
+	eCpx13OJnkkVjY5Mby55rQqlfowHFkPA9PHehOxBnZE0DYEq313Kub+bLSJs/PJK+ddHJxK6gSW
+	/NPwLxhCgwXTsw0QrBSrIWlj0WxwAUEvX4kbYiz/1v2rH99zSrNNIBOGcih2me84md28njLC5E/
+	Zza7uIu3jN3TZdrP2FuvDDdzhKNphoOLb5U7McKykuhBHHhSKRX/nQAn5cjChgn2IMRdTsBVFUH
+	Tj7W2SvV9cfQ8p186PFBPL4oaI8kKjAnf6hgBuf6UaN2iis29PuVxBfeDity7aSwPi7S61ifcWA
+	=
+X-Google-Smtp-Source: AGHT+IFw+K7j7iqmYpcjjjtR+iwrjkgRPl3+q+ppwsYlqqPKEE+ZodtA8iPQzN0yAnBxDlmUm9+6mw==
+X-Received: by 2002:a17:90b:3848:b0:315:9ac2:8700 with SMTP id 98e67ed59e1d1-31a9d5c8bcamr4442778a91.24.1751553190359;
+        Thu, 03 Jul 2025 07:33:10 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c7c59cbb3sm14972705ad.110.2025.07.03.07.33.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 07:33:09 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: hch@infradead.org
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with locks
+Date: Thu,  3 Jul 2025 22:33:08 +0800
+Message-ID: <20250703143308.661683-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <aGaKoDhuw72wZ9dM@infradead.org>
+References: <aGaKoDhuw72wZ9dM@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1751035820.git.asml.silence@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-[Note: it would be really useful to Cc all relevant maintainers]
+On Thu, 3 Jul 2025 06:50:24 -0700, Christoph Hellwig wrote:
+> On Wed, Jul 03, 2025 at 08:09:12PM +0800, Jinliang Zheng wrote:
+> > ltp and xfstests showed no noticeable errors caused by this patch.
+> 
+> With what block and page size?  I guess it was block size < PAGE_SIZE
+> as otherwise you wouldn't want to optimize this past, but just asking
+> in case.
 
-On Fri, Jun 27, 2025 at 04:10:27PM +0100, Pavel Begunkov wrote:
-> This series implements it for read/write io_uring requests. The uAPI
-> looks similar to normal registered buffers, the user will need to
-> register a dmabuf in io_uring first and then use it as any other
-> registered buffer. On registration the user also specifies a file
-> to map the dmabuf for.
+Hahaha, I really want to try -b size=512, but I don't want to turn off
+crc, so I can only choose -b size=1024.
 
-Just commenting from the in-kernel POV here, where the interface
-feels wrong.
+By the way, the test was done on xfs.
 
-You can't just expose 'the DMA device' up file operations, because
-there can be and often is more than one.  Similarly stuffing a
-dma_addr_t into an iovec is rather dangerous.
-
-The model that should work much better is to have file operations
-to attach to / detach from a dma_buf, and then have an iter that
-specifies a dmabuf and offsets into.  That way the code behind the
-file operations can forward the attachment to all the needed
-devices (including more/less while it remains attached to the file)
-and can pick the right dma address for each device.
-
-I also remember some discussion that new dma-buf importers should
-use the dynamic imported model for long-term imports, but as I'm
-everything but an expert in that area I'll let the dma-buf folks
-speak.
-
+thanks,
+Jinliang Zheng. :)
 
