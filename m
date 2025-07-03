@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-53828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E19AF809C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 20:52:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F88AF80A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 20:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35944E39F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:51:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44C453A0606
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F5E2F49F0;
-	Thu,  3 Jul 2025 18:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71802F5098;
+	Thu,  3 Jul 2025 18:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpXvOiW2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g38Tbq8g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3BD2F4327;
-	Thu,  3 Jul 2025 18:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941852F49FD;
+	Thu,  3 Jul 2025 18:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751568656; cv=none; b=KmYMSL10K4JIzgLjmdUKpu2iDXeAatpunwUoEY6OHRG3YBdMAY6owwVPTAy0gGWn7RMVAF5+uRGegsmNLryrXN+SJNjpjtMaBTATBZeRBoCYO702XkH/jpFz1+RZnkwmHSuHdD4SNbUAduUgmRjUmyBKlK+ZxBeA1VRX7Ep3LrY=
+	t=1751568659; cv=none; b=ub6TJo29RQEaUVRp0mMKLlXEp5FlFL5bHEKMJFWDV1NFFQY7qOzRxqQnA8hM6ctq5oqHnc7fBsHlU82MdD1R69oMOsmLuzWIAdg+IuzzIrXS2sSx7gxzw5qxxOKMW72X4HN0P7UiRaECCf+z9Xhor/uIqPT01R+Y6blQFCBItk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751568656; c=relaxed/simple;
-	bh=3KazfK/QQTaTKMCPWi0YxDdEC7X6OVxJtOIOm2yyTcs=;
+	s=arc-20240116; t=1751568659; c=relaxed/simple;
+	bh=9z/0+wP63OG5wXftLWkn27sSwdysRUwo3gRSnRSt66U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kmGX0u94mV4QPwkWnbJAKBdiR+7pgC4RZuVoJvnSPxvP7ohxnorWsXmQw8JXKSnRugIgSuZnO7lplwMK5eWwfDmhjve2qEwNlOhKvDOujVlKIYQivo6iwlc01FvbE5av0mobRQuuPOTqZCkz1xRqAzpSWdg4E26YBHbIzFKtCTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BpXvOiW2; arc=none smtp.client-ip=209.85.210.51
+	 MIME-Version; b=HMWHow8dL7Nns5Egqc9qxNYMqzqLi8nKN7iEixXOKWjvWA/RYBEefjJFywYdvMRcwkC77AMdRm4rkDY/Uf4ha/02ficMGrDV5czWfjbL2KyoTgKwmQx19TFqhJuZEXUlZWGNb8IdAw+o/yh5O1Ui/Zx2TZAJMLJV0p2k+u2k6jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g38Tbq8g; arc=none smtp.client-ip=209.85.210.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7382ffcb373so158586a34.0;
-        Thu, 03 Jul 2025 11:50:54 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72c14138668so96510a34.2;
+        Thu, 03 Jul 2025 11:50:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751568654; x=1752173454; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751568657; x=1752173457; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PaZvyCikUvPqtnjUjM92+A61XpmMjGb4Ba8q0a5FCxQ=;
-        b=BpXvOiW2YfI5BrKVWmJ4j3ntBBMS0BBWEomgtyOZrTi3uRmqCtkz4Pt2AEIDWzQbc1
-         hhOS5RgCKHIprUxXQDAgEpKasHfEUV0e74NUQdjcC2iP2pIjVb5IXEO1nB9Zyk/mdZBj
-         UFYOmZM4bOy6jUc+595OL2qLts1cSqu6qSc4gmNgCW3rTbBjCdkQxovLOzf8mh6Xgk2c
-         xmkctnLBNcV1grRv1EdUabA8p9tP9nHYT0AyVecvSirdusnML6EqYGLEjgDBP4HCbsfm
-         BZdwB3zge7l+Tsihi5E6LtrfCZGdbI2532D8LnzHFGlk0swmNigz6wzYmyEzY5qJeesj
-         49hw==
+        bh=jHFHSP5AI7GYN3LviveRts2reQTV/UFJRypYogMzU4M=;
+        b=g38Tbq8ghEAz5EJUZcKjNtNc0Icf/uHsp9c6BNxz+M6RxENGeXEjELrK132DVLXqg5
+         Dr0DAtXqXnblS/FqCn0mFgyJ2eLeFyUWf0aZXZ08kFpvFrHf1CnAK0w5Yf3FSVYQzvSk
+         9q63gAei5QC5/r3DNJWlP+SvU7CFJ17S+FhXUE8K/VdPfOY93QY0gGZRXExDkH9W9lqK
+         PHhAYcpNv9EcjpbpJ7FBwwnk+7Srl69syHAI8sqZePft+9VFLrV/lg5a1NDftGOXS1Td
+         tmBvND2MeveghiMdlH/QU+cIwopYhsXdBTQJaV7hDdIr7G99+FMrftneyijxuraM4n3T
+         IzUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751568654; x=1752173454;
+        d=1e100.net; s=20230601; t=1751568657; x=1752173457;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=PaZvyCikUvPqtnjUjM92+A61XpmMjGb4Ba8q0a5FCxQ=;
-        b=cXdFvRti6Qs2ZLpKfOoibSDXfZmsghQPU6Nb+ajoRwARoH4emr4brWSPl5IaGonKCj
-         Se28m7N/lC0fOhH0zvAY5qd3BcZYlVh9+mgUhezkFNGBbR+s6XPMi1vvfSWUebCDKG3J
-         tXp5FC45k5734XMJpuDO7bTzxXWMKIBM6ZaYbQtc/RG8bBcHsqEpsD5t2XHiy4Wd8d82
-         TOa5y30MFBaHypWUQfTo3XXS/xtkgUu38F/CVa/Md6zuR/AeczDhhW/Ewgvzhw2Irdl6
-         BkCcpi3IM6WRZU83N3dUbR8HDmS67k1T9ad3CJYRs32j1RvBRTTbpm+uWrC1S78hcWAt
-         ekrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtg5RwpES+I5DcnrfIzfJ0D8nRZUAcf3LCZzIGn+8RZ0OA0QdalNSMsySvstyffY2r4H0Kn9ZOYD0=@vger.kernel.org, AJvYcCWw+bK1I/5CrDkIiXu8FGwN44rjhj0Iv/hAh+IYES4NmU5Ke2Hf+K0wzPSKPENmC4wq2no0PG4xlOSqQn8L9Q==@vger.kernel.org, AJvYcCX4jB+cCMAfBck18dzLIxLZPweCHyZgXrQ6X/GESVKqxcJreSh9ebE79PZDRsgWkmwy3Dfb8Q0mcSpk@vger.kernel.org, AJvYcCXbcv0LRHtWyYpXKaiaTHprjjyC+Xcdqrm/CSMZQ4Rag3NDGJ+LtZSL5zx9132ec7XLZ4gvapkv6W004O/2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZg4sZ3MkC4EZBvT5WFWZNDCCKvrfBleoHsjlfIr+48tU5S21o
-	1LoAiZntpVtZ9RG6tCBujLlVk4RHKqni4lxLGVHNVZ65P+1p8md9U70D
-X-Gm-Gg: ASbGncvHoGfKAEqTmS/zIfywi3fdZYDcwlqsrSNbsown8OyQBcVHY5VpkBuARXt+I0O
-	ixA/TKSwA86I8C/Zk7qcMDT4tGuFlC6apyCTI8mRChGC+oNtm7eE+MiPR3F8zmylBFDd2lv0d+O
-	BseBYTtCKUadO9XR/NwAr3vaAAFHkybevW0Fduwm8AA2TrUbZ7HJ5JAv0GFJ2jftY89cQBNM1C6
-	hEmegrMdXCvhnxMZjXTF8Ye474WIGLcaTKjuMKW9P3d6joMA0UEBmLaJfqQGX6rMeqcJtkqG5Q9
-	K1kwmglXYQaAtL/WsK2yMUtfH84h5w/A1ppDd7KP7S7zhzpd2rQ/8xO/Xl3cL5joZQmslmIzcBL
-	cZWbdQPubHcFV1A==
-X-Google-Smtp-Source: AGHT+IG1W2DMSfl06LORBDysLa+UgwkOnJVfP99hi5suwjrNBfuyFXSpDfxUXAAn0IKIrMiIDsFKRg==
-X-Received: by 2002:a05:6830:f8b:b0:73b:2c88:8ec3 with SMTP id 46e09a7af769-73c8c5d0bccmr3217610a34.27.1751568654018;
-        Thu, 03 Jul 2025 11:50:54 -0700 (PDT)
+        bh=jHFHSP5AI7GYN3LviveRts2reQTV/UFJRypYogMzU4M=;
+        b=Z4LeIfY0tif3q115ulVOuwnS7R2B1Df857zxLLPzMDkzIRKhwtbIhe07tqd1MYSUg0
+         SjxKSgjrEy8xvk4vkoID3pRua/+BJ8d1tNhDgyjCg4Bh4EFfffGDTmLCDvNU0LA2sOjt
+         N/eHHHMMzOo6mjyfh/qkyprXlVoUckCVraGyKM41NeUUCo2adYzEz/EcGVW6PBvy3zA4
+         LrjipHD2HsZd+R+DCvOCBVmVCE6ow09dbZvmnd8cHmmaOUlC2MPfhP9XQvAaLU7FWeKV
+         tLlrP5U4zZgDaU7PAusf+Q3AenQ24q/Ck1tw6WlaOFDHEb9fStaVkYCpgtFxKzuZUIQ/
+         YCNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXTiUIFVJfydTfeR2shBPwUoaMjYGUI1v8Lsy+ptBsOh3/UmwGuMErBmTOgLGI7vLIAF70LzCXSVJpk1xkqw==@vger.kernel.org, AJvYcCUnKlb4EA1BkR+HoEsxSh6LpCRer2kUd7T9+9t+AasOae8k6dqaih2c3LNEsFiwGeYJC4jTLtei/AXv@vger.kernel.org, AJvYcCV7fQX08uNm/o51Iq3REzZkUw2YynN/MiNV5eecPJjVozxHszABjZSEbz5yCFqXx1WdDWAVYBF+WR+or1pI@vger.kernel.org, AJvYcCXusgD9Wgpe2ei7aIF2tCctS9EOx7OteJbZI3vXTDUcAoQ0MKLUYg9qcwS1k+apGCvpOXE99mPcNzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm8MujzIX2m6E4I5gY/LkhBIdX1HcZ8pCLSs8Uz+x4YQ0c2DTf
+	lVZM3Gdc2//TIxhWfhOEyTbGLMZMeQh4IglOXOYMW6KLsRyKAfGXU6xV
+X-Gm-Gg: ASbGncs7hm3nZfCsZPWcSF8R5fLDm9mXFQDcYOTI1XtTP62cVMI3ETG56so2FOMWe0Y
+	H5tOe/RAYWqcHMQRZHJqIs/LqxZA/T+o9JXkrs8ylkUgpaMUq4+BimMUNh0wNOIOJPlInJZK3aC
+	X3FSQTgKpFKjU2SeSNeitgukwHLz9iVldLn/lG2tNJZWEOUDKwnHyM4zu4VK7mC3J8MU6/2NRXt
+	6DHIoYNuk2ohMHhOKQolw4L0w1MCupyPMWBn6EcIPy/JCmaQQ8vmhTnPVtTeuV/ZLFmaTYIO9A5
+	gHvJw9bo0mFW19yzMZ/IRc1IXJOQPAeDpbnyIhV9CRD2vZ7BVgGYauCgkqJRicB14v2T6z2Dr+n
+	AaQ+S2oz57Mi9jw==
+X-Google-Smtp-Source: AGHT+IF0yW0ffG1FgWh4UvPzdITwKwUQUwagTaujR+MOBNLBlFUmukcBu+glnTJT7fKxI7YS3bMYPA==
+X-Received: by 2002:a05:6830:440b:b0:72a:11aa:6ebd with SMTP id 46e09a7af769-73c897e113dmr3275732a34.23.1751568656688;
+        Thu, 03 Jul 2025 11:50:56 -0700 (PDT)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:cd4:2776:8c4a:3597])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f90d1ccsm68195a34.44.2025.07.03.11.50.52
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f90d1ccsm68195a34.44.2025.07.03.11.50.54
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 03 Jul 2025 11:50:53 -0700 (PDT)
+        Thu, 03 Jul 2025 11:50:56 -0700 (PDT)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -105,9 +105,9 @@ Cc: John Groves <jgroves@micron.com>,
 	Aravind Ramesh <arramesh@micron.com>,
 	Ajay Joshi <ajayjoshi@micron.com>,
 	John Groves <john@groves.net>
-Subject: [RFC V2 05/18] dev_dax_iomap: export dax_dev_get()
-Date: Thu,  3 Jul 2025 13:50:19 -0500
-Message-Id: <20250703185032.46568-6-john@groves.net>
+Subject: [RFC V2 06/18] dev_dax_iomap: (ignore!) Drop poisoned page warning in fs/dax.c
+Date: Thu,  3 Jul 2025 13:50:20 -0500
+Message-Id: <20250703185032.46568-7-john@groves.net>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250703185032.46568-1-john@groves.net>
 References: <20250703185032.46568-1-john@groves.net>
@@ -119,47 +119,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-famfs needs access to dev_dax_get()
+This just works around a the "poisoned page" warning that will be
+properly fixed in a future version of this patch set. Please ignore
+for the moment.
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- drivers/dax/super.c | 3 ++-
- include/linux/dax.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ fs/dax.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 48bab9b5f341..033fd841c2bb 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -452,7 +452,7 @@ static int dax_set(struct inode *inode, void *data)
- 	return 0;
- }
- 
--static struct dax_device *dax_dev_get(dev_t devt)
-+struct dax_device *dax_dev_get(dev_t devt)
- {
- 	struct dax_device *dax_dev;
- 	struct inode *inode;
-@@ -475,6 +475,7 @@ static struct dax_device *dax_dev_get(dev_t devt)
- 
- 	return dax_dev;
- }
-+EXPORT_SYMBOL_GPL(dax_dev_get);
- 
- struct dax_device *alloc_dax(void *private, const struct dax_operations *ops)
- {
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 86bf5922f1b0..c7bf03535b52 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -55,6 +55,7 @@ struct dax_device *alloc_dax(void *private, const struct dax_operations *ops);
- #if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)
- int fs_dax_get(struct dax_device *dax_dev, void *holder, const struct dax_holder_operations *hops);
- struct dax_device *inode_dax(struct inode *inode);
-+struct dax_device *dax_dev_get(dev_t devt);
- #endif
- void *dax_holder(struct dax_device *dax_dev);
- void put_dax(struct dax_device *dax_dev);
+diff --git a/fs/dax.c b/fs/dax.c
+index 21b47402b3dc..635937593d5e 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -369,7 +369,6 @@ static void dax_associate_entry(void *entry, struct address_space *mapping,
+ 		if (shared) {
+ 			dax_page_share_get(page);
+ 		} else {
+-			WARN_ON_ONCE(page->mapping);
+ 			page->mapping = mapping;
+ 			page->index = index + i++;
+ 		}
 -- 
 2.49.0
 
