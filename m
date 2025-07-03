@@ -1,82 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-53774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6629CAF6C62
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 10:04:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F99AF6C6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 10:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 821AF4A2F45
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 08:04:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1EE1641E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 08:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C183029C327;
-	Thu,  3 Jul 2025 08:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=commercia.pl header.i=@commercia.pl header.b="n4k9Ao87"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81012C08B3;
+	Thu,  3 Jul 2025 08:07:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.commercia.pl (mail.commercia.pl [57.129.61.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21962BFC7C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 08:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.129.61.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADC8293C6D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 08:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751529868; cv=none; b=Qr9qQapSE+TEwDULmvUFrl0UGL7GjGbwWT3EeFBtngSHueWVpcF+xx9xNFywiW/ne73PpcG6wzHb0oDkoy41URcBQMMQcVeqXumMcn4+SmBwXX0MlA+wztQM8rAjGt18PExmJJiCT4QbictHSMm2LXtLju+Vh/IOFdbsBuitYrU=
+	t=1751530024; cv=none; b=UtAK+GCHQFXGIdACsQkSCxFR2z0lkSx+yQzIPAmz2xLFI8x6oWR6GU3TZslGuVpl2mh+QXkAGNGlGAiExlXh3mMQFq5UFMeNjJyNJ7VJaO/4cycyQDk4Cl1jytSQlsGL951ITTBTlINqAkJkaRyyR5jVwX7qWjxFX0Cr4TBuavg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751529868; c=relaxed/simple;
-	bh=I1LF8pPoyIdV8QbvOgleVb5LrSswFDCLi8nvXPDSYDk=;
-	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type; b=nKVvHjN1oKq1aqn611a0SCUuHOm8e9CktluQaE282iqr5mhrhpe7YcN+ed6HD108wiqAv+gPwmFg+moDFj3WdEFsPEh1xOTGoKH34OIrXa6fuuccKFWgqgH5lre6/gwX0B+bPNRaHRLVHWL8Zvzq9dF3EioYJiVzdxFJgz9ylHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=commercia.pl; spf=pass smtp.mailfrom=commercia.pl; dkim=pass (2048-bit key) header.d=commercia.pl header.i=@commercia.pl header.b=n4k9Ao87; arc=none smtp.client-ip=57.129.61.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=commercia.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=commercia.pl
-Received: by mail.commercia.pl (Postfix, from userid 1002)
-	id EF5E424BBA; Thu,  3 Jul 2025 07:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=commercia.pl; s=mail;
-	t=1751529357; bh=I1LF8pPoyIdV8QbvOgleVb5LrSswFDCLi8nvXPDSYDk=;
-	h=Date:From:To:Subject:From;
-	b=n4k9Ao87Let5pc9rYGSEYg7qRyvavGpR1et3Zxjpm2CQQmVulhJ7z4IJNFAEHqJHJ
-	 ojWb1wwlCxYYKxDOzxE8KPEi/G08O3Zhd+YiNzRUkFvZRlTVdV1xYn0C/3lT0Hmzlf
-	 IHyJT9dVnsHQx5qD6IZF6T9QMCpdsOXcgAXkUlVVdV6UdiSFrXsXPnkL4UqqNTSgl1
-	 tN9DkEZFZlLFgRloDGLAMmE4kREIWECtnO+fTL+aVCGAALk2/cgAqQEUTDgQuI5/EE
-	 SM45ORIvdy+OgCEPrtGu7Sb09794aj19CObHvC9S+8UX8Zyq54pjLyilQrfEJfGpRY
-	 LEFdNJYIXz3NA==
-Received: by mail.commercia.pl for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 07:55:54 GMT
-Message-ID: <20250703064500-0.1.2x.9yjg.0.q1gwbnco0b@commercia.pl>
-Date: Thu,  3 Jul 2025 07:55:54 GMT
-From: "Robert Chojnowski" <robert.chojnowski@commercia.pl>
-To: <linux-fsdevel@vger.kernel.org>
-Subject: =?UTF-8?Q?Zlecenie_t=C5=82umaczenia?=
-X-Mailer: mail.commercia.pl
+	s=arc-20240116; t=1751530024; c=relaxed/simple;
+	bh=6SLDQrtFq2uE49WVnxjLVqjIr3a0GuM7Y4d8VzWInIU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YWOHz1feiFUfbHPMoK0YdKlDmsi5bG7SVeVhwpUbshoFQJs+OPY4IPEDXsjWF3YE/F98G0rFpR5aJ9qB6pfEO1O9o6wguCSziKT9sRtrFBwWlv3uQJqQ0D+nJVs+hDmdfolmgEXUwACrNo3K3wpxvSAryLMwuPwQWO5DEii1BKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87632a0275dso614720339f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Jul 2025 01:07:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751530022; x=1752134822;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3hKl5Ia/jKC0Yd7lUOzXfYy0UlX85jIR9h7CqoUJHPk=;
+        b=EZ5Y+vIqRP60ja9klDINl3RAejp49DiDhGFVIcxGZcdygVxqT9gdaHNGHuQKt3EoLJ
+         EYePw8s2vAHFG0h+j5myoNUvYO0Y+pr7ajjzEOJXx8Jka5r/raW6s1JyshAOTTHH3Y6l
+         IhL1UMSZskNhR3+/l3Axm/oRdCLf1GNg9lt236jPuEDHK6NivyLtrW+ShWV8D4GJQUdD
+         qE+DNXXxASH+xgsvxvxdaXvYpgXf5h+0B/GvBzcCH0H1L93Ugj3Wehqmk6GS1rCQBSsQ
+         CyYcPL8qbq8HZoGFnF8zivPoshYXHVT9lXpZsZlByta0LOamQmmoRG1/MY9QV4tHoPCJ
+         OTHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUcNGKjS+FoLo1waNo0gQHJWCBKG4/Xb5VfvA9WWuOQ+usls/Sx2os5Q9v6/2O8swaaJSGpMfMjUoZF7/z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYPGE6yhMS8b1nB0uTkH2wG9II6h4BOBWlgBXoxbbCfdx6RVXQ
+	1wgCgH6nMNFtZyhHVsbeVtO+cq+70YJ9MG6fUqrOXlR4O9u70/3xWYxJZIg+C2izg9rmPf7lVvV
+	pTinNBfx4oOSEDqi2MsrBoUT+m0JK2Zw8C5r8fB5L9Tt/v/OysC1EppepAE4=
+X-Google-Smtp-Source: AGHT+IFHEHLjcWpu9j2fzi8xyd5CDP/yiePQGBUZyFCCw6WjHXkwTCzEx5NWZDpvvSAkDH1/M0eUL8oNkp1nB8pYZMSHHsHHN/Lf
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6602:1584:b0:876:c5ff:24d4 with SMTP id
+ ca18e2360f4ac-876c6a09d1bmr967003139f.4.1751530022059; Thu, 03 Jul 2025
+ 01:07:02 -0700 (PDT)
+Date: Thu, 03 Jul 2025 01:07:02 -0700
+In-Reply-To: <6865e87a.a70a0220.2b31f5.000a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68663a26.a70a0220.5d25f.0856.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] kernel BUG in folio_set_bh
+From: syzbot <syzbot+f4f84b57a01d6b8364ad@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, hare@suse.de, 
+	hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mcgrof@kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Dzie=C5=84 dobry,
+syzbot has bisected this issue to:
 
-oferujemy kompleksowe t=C5=82umaczenia dla firm, kt=C3=B3re ceni=C4=85 na=
-jwy=C5=BCsz=C4=85 jako=C5=9B=C4=87, precyzj=C4=99 oraz terminow=C4=85 rea=
-lizacj=C4=99 zlece=C5=84.
+commit 47dd67532303803a87f43195e088b3b4bcf0454d
+Author: Luis Chamberlain <mcgrof@kernel.org>
+Date:   Fri Feb 21 22:38:22 2025 +0000
 
-Nasze podej=C5=9Bcie opiera si=C4=99 na niezawodno=C5=9Bci i elastyczno=C5=
-=9Bci =E2=80=93 doskonale rozumiemy, jak wa=C5=BCny jest czas w biznesie.=
- Dzi=C4=99ki nowoczesnym narz=C4=99dziom i optymalizacji proces=C3=B3w je=
-ste=C5=9Bmy w stanie obni=C5=BCy=C4=87 koszty t=C5=82umacze=C5=84 o 30-40=
-%, jednocze=C5=9Bnie skracaj=C4=85c czas realizacji bez kompromis=C3=B3w =
-w zakresie jako=C5=9Bci.
+    block/bdev: lift block size restrictions to 64k
 
-Specjalizujemy si=C4=99 w t=C5=82umaczeniach: medycznych, prawnych, techn=
-icznych, marketingowych, finansowych, naukowych, a tak=C5=BCe w t=C5=82um=
-aczeniach ekspresowych stron internetowych i dokument=C3=B3w.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15ec33d4580000
+start commit:   50c8770a42fa Add linux-next specific files for 20250702
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17ec33d4580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ec33d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d831c9dfe03f77ec
+dashboard link: https://syzkaller.appspot.com/bug?extid=f4f84b57a01d6b8364ad
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c93770580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1001aebc580000
 
-Czy mog=C4=99 przedstawi=C4=87 szczeg=C3=B3=C5=82y naszej oferty?
+Reported-by: syzbot+f4f84b57a01d6b8364ad@syzkaller.appspotmail.com
+Fixes: 47dd67532303 ("block/bdev: lift block size restrictions to 64k")
 
-
-Pozdrawiam
-Robert Chojnowski
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
