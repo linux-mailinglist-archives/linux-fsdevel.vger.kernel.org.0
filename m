@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-53830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D7EAF80A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 20:52:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9EB3AF80A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 20:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5524E6106
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:52:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D94B16721C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 18:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D032F50AD;
-	Thu,  3 Jul 2025 18:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9EC2F5334;
+	Thu,  3 Jul 2025 18:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EyMzbUpe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQDg/Gfq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4642F271A;
-	Thu,  3 Jul 2025 18:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4822F5323;
+	Thu,  3 Jul 2025 18:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751568662; cv=none; b=mBiyGVhoqJA7m3TqYl6/qh8p16YJWzKS6Mo+HowCJ4OTELFtZ3dhl6biUbp0VWZuFkTIweAoo8031YzAVmPJp4UVrqhJnQDYDwAgijd/NPeAo/5irgetK6+eslXoEpfgqLJO5Xla/cofJ07WCsNXXZD7jP/PJEPvOiBq32+NYdk=
+	t=1751568666; cv=none; b=EmjHOOt3CGhg462W8laQbPjji2D4R7d5Y+unVoknj73lNHnyn4WZzw7mrk5zU+RkvW7FmPQW35Mst8igOxNn2EfLcq9F8+BglxDmTr195eVSJNkmKU1rp3E57LjYfV/0FLt/6O412l7oiIe13vsneyxjAQ9y7gC3/1mZKeEyPhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751568662; c=relaxed/simple;
-	bh=i2RCOjAti+UF5LQ1PHdINLhvfnaWKUaVeHHuyTJYyzc=;
+	s=arc-20240116; t=1751568666; c=relaxed/simple;
+	bh=kGGXBghV4lzKmeRVN+j+pfeJiQeXOVHeL7W4dyeFZvE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SlND5VbbWuGOyiX2UNyG9hLU0NtTCJmApwOdipa+unUtwZwky4nTRwJ4Pmrnj4Hm6iK8Hifo1lNMVXzCIDJfsfuTUSrCVpwC//YzCmnMNTh9joIwwQj5cyx2S+pN4B4l3RSAczuh66znWsxfn7iJlA2fIziwVE6pL7BT6CuGIiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EyMzbUpe; arc=none smtp.client-ip=209.85.160.53
+	 MIME-Version; b=ekUuHTLeBSfYbXWPlqeZNQ/o/eerzP9oWIVHsT1P/C5KNQvMd+dJe1uf9dDhSapws8ruBlSnBnn2rqnUVxI0BP1BOAaR2QwVEIv6gOw5YChLwcCEU+32K9eqaJWrC0jdmiDNPBZ2xQ7cgnhjb2kEMc5UZE4I/I7H4iSWW4cOMBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQDg/Gfq; arc=none smtp.client-ip=209.85.210.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2ea58f008e9so278691fac.0;
-        Thu, 03 Jul 2025 11:51:00 -0700 (PDT)
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-735b2699d5dso153399a34.0;
+        Thu, 03 Jul 2025 11:51:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751568660; x=1752173460; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751568663; x=1752173463; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s2xZpjaui5XzSxxh0Gj0eCk++fJOkriDnBX6FJshI1g=;
-        b=EyMzbUpeuNlVa0TWNpunez4Re03nlVbjXKe/0CzftYiPEF4ZDyD2t8OyUKPfXzgORD
-         vQ6wxJT8T7Ci399Ss+hPFFuT9YDrpaRuRVRggCrfF/sfLPMf8QiU9XLekZAMRJoRaJnW
-         kZz7riQ9JTuv9qBxCTQgfdgBQBA8Hd79Jg2bDVjsPXjdxsE25mPTgBeELG5mFvxOAp7c
-         iXEKaG1f+VS5SYzvm+q4rZ7SPI2QHrzrkLtitSNR1f9mRH6oqD1BradSnQgiyrFCEI+G
-         I1WbkRDLuio8yxMRPs6XaVPwKCeYKHasEVJ5nOWA3Ck4nmdy7J2jeCVHikjKOeyJtmAS
-         L9GA==
+        bh=b/+tFl2/Decgi2IQHespB0RF7ZlGK7hVUQHMC/s+Z0A=;
+        b=mQDg/Gfq9zg6RN7gx9H6Y+3M3Fit6PdZhemdKA3X4Tg+++XVfYUU493ZTkG/vKQWyS
+         9od+qPSbfEAS0bnHSL1fXJUPXuzq7mn/82pCFPy/Qle08DNnHP+zMEeiTPDuEXsrAbi8
+         qEuq/9TFFTj/WEDy74RIYnOe1G2Mt+CLm8W8iYZc9aqQb6MYJd5IJXJoiLqrQdWTcS3o
+         RbHsuhG7yuseuhRLm/RqSkpTFuC/jBR2Xx0O3JZYLZvD+Ru9o7WESHnB+60VXOHfeAfE
+         l3xzeqvsOjN4S4kM/Yq3Nm9qaurXV4O66vE+P9jSA3I4ijgqbGtgDCVAcScxOnFuBjWT
+         Sdpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751568660; x=1752173460;
+        d=1e100.net; s=20230601; t=1751568663; x=1752173463;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=s2xZpjaui5XzSxxh0Gj0eCk++fJOkriDnBX6FJshI1g=;
-        b=AxBApliwSIAkwNpYGFTmULck+nKW4OPppvjQnA/nMWl84uNGIJ2q8zVQbuz+BV+9YQ
-         6fz6vfdgm0lILT/Ei1f0kf9AiWq8ho5+0lXbUcOvRp9zR7TEunvtrWJ4iB10ssWbsUAx
-         yP8W7P1062zOA3+C9S0fS/jDfJLF1ppNAX3OKAj5FeavMAA4HnG2hu5QZfiekLqCtl1D
-         9REcGcJ2OTLLDRGL52Ao70tUVPkXXg/AZYHCN6lIDvErxPKoPyNy2Caj3TDVugW/ca+A
-         WCG3px7aLvhZ8dU9IDUZFvTFJ7ibiCB5q1w6mgcLj4TPg1lLUR5lKO8h8L92lplyFQio
-         xSKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEywq2IuB0c3tF/FNNQR+uyArQX5WmjSdKh12lJhS+yXGuHwLxdk0pHTEPa3uEHPy+oRY46Dz7MHQ=@vger.kernel.org, AJvYcCV1TJZ3x1dvAboRKOsPZ4XHsaZrjluEFHG2jn3xRXC//TnGYOcqNrGrbIovrg7klNiUDsa7t1e3V4jSfpYc@vger.kernel.org, AJvYcCWK3WY+2cEPGj0pTEPWGk1o00hdOkVzLRliQ57d7e2GV0ZCy4bYc8HvA6KpHUpaZzzrX7aYZFIKtCLY@vger.kernel.org, AJvYcCXbrV2dRGLJfMEO/cmM0sz8lcsbyzumNDrnj1yWVaNq2r2UVJYCVfCrjADNsm4CYdEccqqN/wxPEnpbNuDwXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSjW25+P0OM9C3P8CiutWYvbwTayr1Ep4SUL+Jued7c7S2Hd4f
-	83zZhaBtyyfyUGbXIKO5JK4rC+Nfmrh/Q6vD6UX8G0wlcKNGgrZ2Ruaa
-X-Gm-Gg: ASbGncuU71kWIOKi5z9u/bF8f2hWxkN6ln4r0cYEOaZFDfXXGBOr7sRgpKrvg5+vL0Q
-	140mT4YQAmEzzVgAToT2exApFuRdGQFRMFkO8/KNNH0eYfH6q3IZudtkTsEBIE7WtoyxwLdqXTu
-	4CRtxxo8G4BSMvUzLzWP07u7uNqgBvrduGdENcuisR0LRw+ZHraHVrLisgLRdhiMzv8oNoNSKmM
-	0WvNSwLDoOWs2pBfLPsOOys7Fgsd3jdb4+057BptQB1XdSovtHojaBg9xyoN3YZzq1Z259hDg5s
-	JddbgjY56SkzHj1/l9MI9LeCftOFdji7lsUFJXhthTUZmSFAFQZCgrzPH72i0eecph/NpgP7WNt
-	A0j1Hk3eusEG6hQ==
-X-Google-Smtp-Source: AGHT+IFWojQvKP3cIpPU0Ex4gOP0RyReOaJ9oJ//8+DQ1D2UxOY6HF2XKVzeow4Q9s0j3FT7ZnZiXw==
-X-Received: by 2002:a05:6870:b201:b0:2f3:e087:6b08 with SMTP id 586e51a60fabf-2f5a8b9022bmr6076525fac.24.1751568659637;
-        Thu, 03 Jul 2025 11:50:59 -0700 (PDT)
+        bh=b/+tFl2/Decgi2IQHespB0RF7ZlGK7hVUQHMC/s+Z0A=;
+        b=fi/2UA1gjrR9/Nqt9M4NVGTYwHOeMD8SmzX0TrdSNFNG6pieEJEEB/MbC9B7hD4Ryo
+         j6rKliVJFgEJA+mGqpxhzUj0qF8lwrgmc5/Xf+56o/wYTlm+TMxNfQuacPqLEl3imRsW
+         W4YyoR6JclbgsnsG5El0T/NmPZe+h56J0vlcjnJX8t3jOLEcdZVDdzp+Y+Mdmrx4t4LJ
+         8aIljJ+FyqekPVQdEwJXFsQ7X/ZWYOEONKyn8mzaKT6pXf3xMm/E92+E5znEc+fYuKWs
+         57fUD6P6ufRzGOhX5dw9Y3cQN16pHtnBQ0Nq+YAvQ/2kwOiOTLDGWtMikt4fGujatZhx
+         fspw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcM3g8h4Xz6ajfjT7fbFh6JpW/DhAzmPr3Qq5Oy8e6Gh+HIKyPrHeFirwMzZuRS1G/iwzLIyuvuec8NOnj@vger.kernel.org, AJvYcCVCzRBuIGCOkM6fWtKi5BZ4TomLtYvcm3ES1MdzEqzSNWDp9ncCp4zFsXMiqsioozKRiTHmwrmY7+/NSbWEAg==@vger.kernel.org, AJvYcCWW1ZUh/8SFl3PBh7cGL5sZME3Zxd4g9rMnoJ1P8BiE2roBvYiQOktYSmwfkhd4mDEzz/gHy27ZFhKd@vger.kernel.org, AJvYcCWoIDSQedsCvczWyDU08i2arfJBnkC6fepkfvLoX+ixjpKpc5jc5LM7Q+nZdXSsWoY/GRzr9kq0caY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2+c1FQi3JN+88i5NaKIzF3lIRKO2CYnDxbC/uW9cSqVxs83If
+	CTunc08mG3/6OQDa/fmhMDMjHorVEO2C5dIwJQ9wgOM3AkuunwMR9XoJ
+X-Gm-Gg: ASbGncuXO226wIS6BBoiZzzxfazPOmwXp0Ii112agQNCHziLM4h+ykQeelSMSJ4uDDR
+	LnxysAWXvTLEnmRC8eW11SSyQYzsktQHbost3xvCoh+F6uJDkEzQniTsDfAsIQoPojDbVUQilgk
+	dyaigopSWyYvjBhOoChjRhwfk4p6nrx42dehJHX7J8ptbOD7huri73bO9ecU14wrZaK3SQsqLQg
+	KtKHJrFZ/OWay0GsS1rKC6td7Xfz8jcls+qGSjWaO6LLl7E0FQ+58HIdgu7N0xXm1rGXBy4RNJY
+	TaVpjQc4iZzD4m7IS6XDXpTY1mW4BnJy4UdtLE9CAF4tSSz3AaT9ITlvbQxrUYX+jfB3I9yS/5U
+	R2kQPzsKqrIW25A==
+X-Google-Smtp-Source: AGHT+IGO7sODaaFj8dS4msIF49YLoYQDdi+gB7SnaLJLRU0NcABvpJXyxo3DQ89xtl0K0dJU2j4aYw==
+X-Received: by 2002:a05:6830:630d:b0:73a:6904:1b45 with SMTP id 46e09a7af769-73b4c9c704bmr7359023a34.8.1751568662976;
+        Thu, 03 Jul 2025 11:51:02 -0700 (PDT)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:cd4:2776:8c4a:3597])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f90d1ccsm68195a34.44.2025.07.03.11.50.57
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f90d1ccsm68195a34.44.2025.07.03.11.51.00
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 03 Jul 2025 11:50:59 -0700 (PDT)
+        Thu, 03 Jul 2025 11:51:01 -0700 (PDT)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -105,9 +105,9 @@ Cc: John Groves <jgroves@micron.com>,
 	Aravind Ramesh <arramesh@micron.com>,
 	Ajay Joshi <ajayjoshi@micron.com>,
 	John Groves <john@groves.net>
-Subject: [RFC V2 07/18] famfs_fuse: magic.h: Add famfs magic numbers
-Date: Thu,  3 Jul 2025 13:50:21 -0500
-Message-Id: <20250703185032.46568-8-john@groves.net>
+Subject: [RFC V2 08/18] famfs_fuse: Kconfig
+Date: Thu,  3 Jul 2025 13:50:22 -0500
+Message-Id: <20250703185032.46568-9-john@groves.net>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250703185032.46568-1-john@groves.net>
 References: <20250703185032.46568-1-john@groves.net>
@@ -119,26 +119,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Famfs distinguishes between its on-media and in-memory superblocks
+Add FUSE_FAMFS_DAX config parameter, to control compilation of famfs
+within fuse.
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- include/uapi/linux/magic.h | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/fuse/Kconfig | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index bb575f3ab45e..ee497665d8d7 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -38,6 +38,8 @@
- #define OVERLAYFS_SUPER_MAGIC	0x794c7630
- #define FUSE_SUPER_MAGIC	0x65735546
- #define BCACHEFS_SUPER_MAGIC	0xca451a4e
-+#define FAMFS_SUPER_MAGIC	0x87b282ff
-+#define FAMFS_STATFS_MAGIC      0x87b282fd
+diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+index ca215a3cba3e..e6d554f2a21c 100644
+--- a/fs/fuse/Kconfig
++++ b/fs/fuse/Kconfig
+@@ -75,3 +75,16 @@ config FUSE_IO_URING
  
- #define MINIX_SUPER_MAGIC	0x137F		/* minix v1 fs, 14 char names */
- #define MINIX_SUPER_MAGIC2	0x138F		/* minix v1 fs, 30 char names */
+ 	  If you want to allow fuse server/client communication through io-uring,
+ 	  answer Y
++
++config FUSE_FAMFS_DAX
++	bool "FUSE support for fs-dax filesystems backed by devdax"
++	depends on FUSE_FS
++	default FUSE_FS
++	select DEV_DAX_IOMAP
++	help
++	  This enables the fabric-attached memory file system (famfs),
++	  which enables formatting devdax memory as a file system. Famfs
++	  is primarily intended for scale-out shared access to
++	  disaggregated memory.
++
++	  To enable famfs or other fuse/fs-dax file systems, answer Y
 -- 
 2.49.0
 
