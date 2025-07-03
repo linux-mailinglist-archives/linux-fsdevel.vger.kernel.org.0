@@ -1,145 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-53852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75A4AF8381
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 00:36:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C7AAF83CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 00:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4F23AC5F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 22:35:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA6D4E4DE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 22:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189512BF3D7;
-	Thu,  3 Jul 2025 22:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CD32BF3D7;
+	Thu,  3 Jul 2025 22:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeaLb3kn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvdkEn3U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66709239E6B;
-	Thu,  3 Jul 2025 22:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F29239E65;
+	Thu,  3 Jul 2025 22:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751582150; cv=none; b=otcSxaGVtAQZj+Mfl7zjNLsIqmVBn416EUXTQmlee7EgoTsNvsZfHR96L/zfwBguHq8Yx85SASgF5obdbxs4poTkNGbG7ypfw6zBAfLvktlJyXKLlhhQMfckf3pRvz7Mut4PSTIs8TVwI4WApGyxC1JG/BRdp1iCAQoCt9orj8c=
+	t=1751582754; cv=none; b=miMxLZBcVWa3AAaaylk19VralqiDBVTg1ijrenAxbbbrPCbx0UkN4iRthJBdTWHNkEr5eYwV1fURSY75ieQE5bV1VAbXgngRYCpc5xl8quTFppi9Hcf2koGL6KCuUFL3O9DeKXKtIGwFQPRSUpC9Rqcq/iKf2It1WGIxcd+eC14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751582150; c=relaxed/simple;
-	bh=AlJk2xQunl62/+VSHOBeCHmjXQob70EjT8VDdy6SYyU=;
+	s=arc-20240116; t=1751582754; c=relaxed/simple;
+	bh=HPiHsjtsNUgZ0EFVulpD9xRBLiID8ZLRDhdfVW3IdsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4aWMsPsuGkDfCwYF3CJHE+O0bbnpyiXRnY0IgKPLP2qfeIcx4vcvD2JtiPnYrFHrzbhew2sdOIVqyu8PGq96PU55U9vmkt7/wPLWVAE3vQKL11cmEMc+J7PqxJshxo9VP4DnUgeLPJjKSHODyY684B+XwJCD+Ye4Q2zhmNmz/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeaLb3kn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D785C4CEE3;
-	Thu,  3 Jul 2025 22:35:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751582150;
-	bh=AlJk2xQunl62/+VSHOBeCHmjXQob70EjT8VDdy6SYyU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oeaLb3kn+WHfZRnrdLxOLSD/6uJyDJUkSuZRSJF7uUrUz5MYOOBey3B4sAhmUx8YU
-	 FvNvLp8hpODDXoDg2TbNgdW95pg+nerBvKl3JujNgWn/sE4k8xXAjBmLvPeMmEX6cL
-	 /vNlU4yKBhkzzsCroEDOH0poaKFGjVDlBSIz36866iQ5UEN/d+Ojgd52WBsgP6EJR0
-	 v8/KhooaC1xWsWo1rooyhDokq5+Y4VbZSlZWdpS9lrWnquXLElQp1W9RAhNP5zY7qn
-	 wR3sOHGJ8eEfH5yoPRC8YZSUN/rg8LZSSGJ19zLhfASR5X/r7+6ZDR12gzUZcgj4pR
-	 XDERRPCfKGoBA==
-Date: Thu, 3 Jul 2025 15:35:49 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, selinux@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <20250703223549.GA2672029@frogsfrogsfrogs>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
- <20250701184317.GQ10009@frogsfrogsfrogs>
- <20250702-stagnation-dackel-294bb4cd9f3d@brauner>
- <CAOQ4uximwjYabeO=-ktMtnzMsx6KXBs=pUsgNno=_qgpQnpHCA@mail.gmail.com>
- <20250702183750.GW10009@frogsfrogsfrogs>
- <20250703-restlaufzeit-baurecht-9ed44552b481@brauner>
- <CAOQ4uxjouOA+RkiVQ8H11nNVcsi24qOujruqKgfajOCKP1SMpQ@mail.gmail.com>
- <20250703-haufen-problemlos-c2569d208bd8@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W1TvvoHGE80OzhPjheOnTJ3lYp36HfwJ6ZEfEl8O/hs3l2ee1GLvqWftD/+J20jGvXNqwvm0vcYGG/hFkknEG5RyrDFAmJu3MEbIdc1x+HrYK8Wn1nBytK4s8cumN60bBXj5BMxsu8n8Cl0C+tMRSuDPcwsSRufNkQOy9YuiEUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvdkEn3U; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-73b1fbe64a6so142015a34.1;
+        Thu, 03 Jul 2025 15:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751582751; x=1752187551; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/YPfgimj3TTDyL48vSPqdxv4VejexqVlnC8mgGOjy00=;
+        b=UvdkEn3U3hv60QoHKFN6gVJq+mcJwFG08bBw4VpT/z2xIfpTe3CugfPNFkv2gAJ3mE
+         xDIhPPYvZQDHjnvcCjwZclLkqShxNDHo5EehkCh4gFIsNfE6UHuS1DCpolaOym0Y1Fud
+         kgCBJJSursGSVmc190ZMmzeGHctQ5O44atZr3KjbJGxfaTCjP3SHrDhg3F8TZ3POS4Ue
+         Bt3ZTZyIJc15yPmdhu8SsdGjLuxvMZPBiAlvWfMp6NR2Wd6H8H0KOpZzsdLcQLQMHe8r
+         VdF+Y/6I1C96fx1fHheF9HiULnbTJXJ3J71PMqrXnVjhxzuenYhcH1o4Rw1UgOVhypR1
+         DzRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751582751; x=1752187551;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/YPfgimj3TTDyL48vSPqdxv4VejexqVlnC8mgGOjy00=;
+        b=j8W0uxkGIrjIJnpx8fBgNEk+I41KXV+6CaSr7rAEtRwU/yFsMmYOlwIb0dUqZmxtaO
+         iweFRmDG+dz1uhkBMj20c5lzfd5k6FmDvMIxCQ1y6b2zvGccK1XVMsiTLv6wqIQLNPv4
+         O5+/PKatRqBDvCO4GvhDV3Ha/K4wiEzkq+DQuv1AocIGDA/GL0F0PIE2fAXYS4o7joyH
+         RTxPwcrTKu4aVW/vH86DWxX39DeR6sEFqFnLQ3MBc27SOZnmu3mrqjK1+TktMOJvvFw6
+         B3T63jf9bU7ll7+Qa1ifJyzE2eWzl4N57EzqYZlZql8JyqoxL1zbQaivpT/I02oyXdpB
+         qLDA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Ns5kGxkSQyvdXAeoo7Xju8at84HhJt0rlHTJkeC9BCPXBR5Ia23F58lx0J+vBOJTK4QKy03EVt0=@vger.kernel.org, AJvYcCUv3TgFbLSNZkwelLbp7U4qAK/d6eiAfYco+21caGe84CctdutCe9Ju8+dOVxmjBSER4a3VgKgvkYgx4Kes@vger.kernel.org, AJvYcCWplqpz8Rv1pIAk7xKfgZKD32uRPXi08Fb+ZTPLmOuHF2BmNHra0MU9aH/SUmbj4P44Z8Rs7MRfVSic@vger.kernel.org, AJvYcCXpN4KBIRzm9JAuUy/23UPsx9SPyhCQSl1d6+++0AasqKOoWZN3J/Prfzw4RXkzPm19azRrWDrx6IOGEBl8mQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnx3tdmZobwdLdbFmuVR4qwcCBhC10BjUVGkq5I/z0P+lDaVMg
+	kaxfC/8HhARVpJhFPQG9GxV8ntpGv5D5l8AoOAKU/c8kXRZPZGSuhiRIvtzVrvc2
+X-Gm-Gg: ASbGncvHYD/6+nsFtiNxKhJe/sRGZaqL/gzLzyoRsx4HhLsi4l5d3WIIeRJceQ8cYJp
+	8/9ba69fMrQDB9PrX1/OvjU79QYudZtraiYJNvLWcQtOXS5ZQ/oZz/Cfcig9w7SyacIJiWi9ckW
+	27GVZ2/xRczRWeuwXKYa1GMU2FV6ZOFFq+3rlJldKTFqDdOXaHReZ1jmnVhuFnQye/B9CmZQQFE
+	IX64DPZvpUOo3zRF5wD4PBVg1nKqN6k8/nlddHZrdnjJBYP2rVAOBLQwTIt2CPMGE196YW6WQDt
+	6Cb7k2InpgPABO8MXg5MRk4GJpIdxJeah23EynroJ/UAJ7/6IH2WAVf70FcDUVhAKw5bJpFXbRe
+	MrdJJA8dp9A==
+X-Google-Smtp-Source: AGHT+IHgGLtiiEgL7LDQ1Ih8w/gzruS2hdwVBLtgvJrCpoHNfH4Jij5JOMCtHWIqD9KxgQY4KtoqHA==
+X-Received: by 2002:a05:6830:2d81:b0:72b:89ca:5120 with SMTP id 46e09a7af769-73ca124817bmr592721a34.8.1751582750775;
+        Thu, 03 Jul 2025 15:45:50 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:cd4:2776:8c4a:3597])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f75356fsm159877a34.26.2025.07.03.15.45.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 15:45:50 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Thu, 3 Jul 2025 17:45:48 -0500
+From: John Groves <John@groves.net>
+To: Dan Williams <dan.j.williams@intel.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for
+ famfs
+Message-ID: <aimijj4mxtklldc3w6xpuwaaneoa7ekv5cnjj7rva3xmzoslgx@x4cwlmwb7dpm>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-11-john@groves.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250703-haufen-problemlos-c2569d208bd8@brauner>
+In-Reply-To: <20250703185032.46568-11-john@groves.net>
 
-On Thu, Jul 03, 2025 at 10:46:30AM +0200, Christian Brauner wrote:
-> On Thu, Jul 03, 2025 at 10:42:27AM +0200, Amir Goldstein wrote:
-> > On Thu, Jul 3, 2025 at 10:28 AM Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > On Wed, Jul 02, 2025 at 11:37:50AM -0700, Darrick J. Wong wrote:
-> > > > On Wed, Jul 02, 2025 at 03:43:28PM +0200, Amir Goldstein wrote:
-> > > > > On Wed, Jul 2, 2025 at 2:40 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > > > >
-> > > > > > > Er... "fsx_fileattr" is the struct that the system call uses?
-> > > > > > >
-> > > > > > > That's a little confusing considering that xfs already has a
-> > > > > > > xfs_fill_fsxattr function that actually fills a struct fileattr.
-> > > > > > > That could be renamed xfs_fill_fileattr.
-> > > > > > >
-> > > > > > > I dunno.  There's a part of me that would really rather that the
-> > > > > > > file_getattr and file_setattr syscalls operate on a struct file_attr.
-> > > > > >
-> > > > > > Agreed, I'm pretty sure I suggested this during an earlier review. Fits
-> > > > > > in line with struct mount_attr and others. Fwiw, struct fileattr (the
-> > > > > > kernel internal thing) should've really been struct file_kattr or struct
-> > > > > > kernel_file_attr. This is a common pattern now:
-> > > > > >
-> > > > > > struct mount_attr vs struct mount_kattr
-> > > > > >
-> > > > > > struct clone_args vs struct kernel_clone_kargs
-> > > > > >
-> > > > > > etc.
-> > > > > >file_attr
-> > > > >
-> > > > > I can see the allure, but we have a long history here with fsxattr,
-> > > > > so I think it serves the users better to reference this history with
-> > > > > fsxattr64.
-> > > >
-> > > > <shrug> XFS has a long history with 'struct fsxattr' (the structure you
-> > > > passed to XFS_IOC_FSGETXATTR) but the rest of the kernel needn't be so
-> > > > fixated upon the historical name.  ext4/f2fs/overlay afaict are just
-> > > > going along for the ride.
-> > > >
-> > > > IOWs I like brauner's struct file_attr and struct file_kattr
-> > > > suggestions.
-> > > >
-> > > > > That, and also, avoid the churn of s/fileattr/file_kattr/
-> > > > > If you want to do this renaming, please do it in the same PR
-> > > > > because I don't like the idea of having both file_attr and fileattr
-> > > > > in the tree for an unknown period.
-> > > >
-> > > > But yeah, that ought to be a treewide change done at the same time.
-> > >
-> > > Why do you all hate me? ;)
-> > > See the appended patch.
-> > 
-> > This looks obviously fine, but I wonder how much conflicts that would
-> > cause in linux-next?
-> > It may just be small enough to get by.
+On 25/07/03 01:50PM, John Groves wrote:
+> * FUSE_DAX_FMAP flag in INIT request/reply
 > 
-> With such changes that's always a possibility but really I'll just
-> provide a branch with the resolutions for Linus to pull.
+> * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
+>   famfs-enabled connection
+> 
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+>  fs/fuse/fuse_i.h          |  3 +++
+>  fs/fuse/inode.c           | 14 ++++++++++++++
+>  include/uapi/linux/fuse.h |  4 ++++
+>  3 files changed, 21 insertions(+)
+> 
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 9d87ac48d724..a592c1002861 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -873,6 +873,9 @@ struct fuse_conn {
+>  	/* Use io_uring for communication */
+>  	unsigned int io_uring;
+>  
+> +	/* dev_dax_iomap support for famfs */
+> +	unsigned int famfs_iomap:1;
+> +
+>  	/** Maximum stack depth for passthrough backing files */
+>  	int max_stack_depth;
+>  
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 29147657a99f..e48e11c3f9f3 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  			}
+>  			if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
+>  				fc->io_uring = 1;
+> +			if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
+> +			    flags & FUSE_DAX_FMAP) {
+> +				/* XXX: Should also check that fuse server
+> +				 * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN,
+> +				 * since it is directing the kernel to access
+> +				 * dax memory directly - but this function
+> +				 * appears not to be called in fuse server
+> +				 * process context (b/c even if it drops
+> +				 * those capabilities, they are held here).
+> +				 */
+> +				fc->famfs_iomap = 1;
 
-<nod> That looks good to me. :)
+I think there should be a check here that the fuse server is 
+capable(CAP_SYS_RAWIO) (or maybe CAP_SYS_ADMIN), but this function doesn't 
+run in fuse server context. A famfs fuse server is providing fmaps, which 
+map files to devdax memory, which should not be an unprivileged operation.
 
-At worst you can always ask Linus "Hey I want to do a treewide name
-change of $X to $Y, can I stuff that in at the very end of the merge
-window?" and IME he'll let you do that.  Even better if someone keeps
-him supplied with fresh change patches.
+1) Does fs/fuse already store the capabilities of the fuse server?
+2) If not, where do you suggest I do that, and where do you suggest I store
+that info? The only dead-obvious place (to me) that fs/fuse runs in server
+context is in fuse_dev_open(), but it doesn't store anything...
 
---D
+@Miklos, I'd appreciate your advice here.
+
+Thanks!
+John
+
 
