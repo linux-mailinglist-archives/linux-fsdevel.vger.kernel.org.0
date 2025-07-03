@@ -1,155 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-53802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8F4AF76FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21130AF7748
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CEF71893EE1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 14:14:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 546DC17FB36
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 14:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2BC2E88AB;
-	Thu,  3 Jul 2025 14:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF982EA75E;
+	Thu,  3 Jul 2025 14:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BSmjL+hK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A082D5418;
-	Thu,  3 Jul 2025 14:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0826B2EA178;
+	Thu,  3 Jul 2025 14:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751552040; cv=none; b=Y6nlH8J/OBkXzshUYWBf34iX2m734KEJ5pgAARtT3z7dWTnTy8cYVbyXDH6X5dZCV4ueZux66SEM1PZiNWQXkUSa73PJHXO9hhbERzDbBhBWLqVyGxv8PI4wAlqCNFdbIGNMXhN2QL6G67Z+/05se8rUHf0V3/UO1JoLRJeVMng=
+	t=1751552626; cv=none; b=uAwLqUBRS/RwnUhWV31kutRcRr3NRykiQ5eWzGcMKkB25IjIQirvZZMfxWMhpeluz1hPvK2gsB7f9iZwbkA7f6Iffiml4CmwevxQskuARsos0m9EJDqLRaJ+nQgRszMuGliTpCpn7/qmsoJI4RfGpA+cc3gn/u4RuM/SLJu7CyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751552040; c=relaxed/simple;
-	bh=jYa0ElrOwg3E30m7l7Nw6tKSbtT2mPC05vfYnMLOo4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dyVqQV4td19MX6b3V4SclwLedlszhobjetCacf3in47A7NfXYVrOK4g9YFAtE1jW1M3nhHwzxqIIeBhecWAPqKIZcVNCsjrXdPoSXmV3TIH32+Eg6EHKDOt/JWxte8n57jD+DPIEtdQDwzKMH/LY3BGwMvW8wIA3s9ufcdm/qLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bXzJz0DsgzYQtrH;
-	Thu,  3 Jul 2025 22:13:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id D8C491A108E;
-	Thu,  3 Jul 2025 22:13:53 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP3 (Coremail) with SMTP id _Ch0CgAHaCUfkGZoidghAg--.13097S3;
-	Thu, 03 Jul 2025 22:13:53 +0800 (CST)
-Message-ID: <a6225180-9983-4a0a-8898-435b014b8ebe@huaweicloud.com>
-Date: Thu, 3 Jul 2025 22:13:51 +0800
+	s=arc-20240116; t=1751552626; c=relaxed/simple;
+	bh=UqCHVI6XlSbC/TOR9oByBhaP+pzp8e91+zTZgpxb5M4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVPBFolUpgJGutzw72yJ+iMy89qitWWdzHAFqMBziFDz+02ERpXlNaC48Yq9qjyjKQvJ4cEiLMZkABNLap+W9IlrRY2XkbS88rU2TcyKTinYHHsGRUPjNsfM7ha0hPOWltEurtyq4nzhdg0743E+p2hvj+6fGBXdpnMUPSsMptE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BSmjL+hK; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fdwQ7VoCdy9EDfz8qdHjHeqLPa9H8WWCarPWLj8vDE4=; b=BSmjL+hKMq+uETspb9lUMyEHQw
+	0bxFAeC2GxGIerv0/y1S/jtyOo7o3HC1cIdgrFj/cACDXHADEyUAeyoUOrq8ommeAQlnCoyHHfpHY
+	cLukEWcTdu23KMrC3Bql3cKQxdIc43/VGAmkIgT3U6kex/lPTpXOZ9DU9iScomTE/fckWN1rCQl3w
+	wUQm0VQRKQr9LO+52bCrAajjRBNfF83RTFXcqDrCuhW7+pKKDu8l5dOoQOVIuuCE79gDxCxnmPW5d
+	+NxJ9PmSYP0do/VK/Svlnk+pKid4eQ7cwDTOxHQ28VByz6yhjhnHBPZJW2Fk7L5l0D0rt+o48bZSW
+	YHaTLpvw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXKql-0000000BeR1-44Zb;
+	Thu, 03 Jul 2025 14:23:43 +0000
+Date: Thu, 3 Jul 2025 07:23:43 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>, David Wei <dw@davidwei.uk>,
+	Vishal Verma <vishal1.verma@intel.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [RFC 00/12] io_uring dmabuf read/write support
+Message-ID: <aGaSb5rpLD9uc1IK@infradead.org>
+References: <cover.1751035820.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] ext4: enable large folio for regular file
-To: Theodore Ts'o <tytso@mit.edu>, "D, Suneeth" <Suneeth.D@amd.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, willy@infradead.org, adilger.kernel@dilger.ca,
- jack@suse.cz, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250512063319.3539411-1-yi.zhang@huaweicloud.com>
- <20250512063319.3539411-9-yi.zhang@huaweicloud.com>
- <f59ef632-0d11-4ae7-bdad-d552fe1f1d78@amd.com>
- <94de227e-23c1-4089-b99c-e8fc0beae5da@huaweicloud.com>
- <20250626145647.GA217371@mit.edu>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250626145647.GA217371@mit.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgAHaCUfkGZoidghAg--.13097S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr17uFWkWFyDGr4rJw4DXFb_yoW5XFyxpF
-	WakFn7AFnxXw4xAwn7Gw1kZr9Iy3s5XFW3G3Z5GryjvwnxGF4S9FW0qas5uFW7GrWUX3WI
-	qw4jv343Z3W5XFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1751035820.git.asml.silence@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 2025/6/26 22:56, Theodore Ts'o wrote:
-> On Thu, Jun 26, 2025 at 09:26:41PM +0800, Zhang Yi wrote:
->>
->> Thanks for the report, I will try to reproduce this performance regression on
->> my machine and find out what caused this regression.
-> 
-> I took a quick look at this, and I *think* it's because lmbench is
-> measuring the latency of mmap read's --- I'm going to guess 4k random
-> page faults, but I'm not sure.  If that's the case, this may just be a
-> natural result of using large folios, and the tradeoff of optimizing
-> for large reads versus small page faults.
-> 
-> But if you could take a closer look, that would be great, thanks!
-> 
+[Note: it would be really useful to Cc all relevant maintainers]
 
-After analyzing what the lmbench mmap test actually does, I found that
-the regression is related to the mmap writes, not mmap reads. In other
-words, the latency increases in ext4_page_mkwrite() after we enable
-large folios.
+On Fri, Jun 27, 2025 at 04:10:27PM +0100, Pavel Begunkov wrote:
+> This series implements it for read/write io_uring requests. The uAPI
+> looks similar to normal registered buffers, the user will need to
+> register a dmabuf in io_uring first and then use it as any other
+> registered buffer. On registration the user also specifies a file
+> to map the dmabuf for.
 
-The lmbench mmap test performed the following two tests:
-1. mmap a range with PROT_READ|PROT_WRITE and MAP_SHARED, and then
-   write one byte every 16KB sequentially.
-2. mmap a range with PROT_READ and MAP_SHARED, and then read byte
-   one by one sequentially.
+Just commenting from the in-kernel POV here, where the interface
+feels wrong.
 
-For the mmap read test, the average page fault latency on my machine
-can be improved from 3,634 ns to 2,005 ns. This improvement is due to
-the ability to save the folio readahead loop in page_cache_async_ra()
-and the set PTE loop in filemap_map_pages() after implementing support
-for large folios.
+You can't just expose 'the DMA device' up file operations, because
+there can be and often is more than one.  Similarly stuffing a
+dma_addr_t into an iovec is rather dangerous.
 
-For the mmap write test, the number of page faults does not decrease
-due to the large folio (the maximum order is 5), each page still
-incurs one page fault. However, the ext4_page_mkwrite() does multiple
-iterations through buffer_head in the folio, so the time consumption
-will increase. The latency of ext4_page_mkwrite() can be increased
-from 958ns to 1596ns.
+The model that should work much better is to have file operations
+to attach to / detach from a dma_buf, and then have an iter that
+specifies a dmabuf and offsets into.  That way the code behind the
+file operations can forward the attachment to all the needed
+devices (including more/less while it remains attached to the file)
+and can pick the right dma address for each device.
 
-After looking at the comments in finish_fault() and 43e027e414232
-("mm: memory: extend finish_fault() to support large folio").
-
-vm_fault_t finish_fault(struct vm_fault *vmf)
-{
-	...
-	nr_pages = folio_nr_pages(folio);
-
-	/*
-	 * Using per-page fault to maintain the uffd semantics, and same
-	 * approach also applies to non-anonymous-shmem faults to avoid
-	 * inflating the RSS of the process.
-	 */
-	if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma)) ||
-	    unlikely(needs_fallback)) {
-		nr_pages = 1;
-	...
-	set_pte_range(vmf, folio, page, nr_pages, addr);
-}
-
-I believe this regression can be resolved if the finish_fault()
-supports file-based large folios, but I'm not sure if we are planning
-to implement this.
-
-As for ext4_page_mkwrite(), I think it can also be optimized by reducing
-the number of the folio iterations, but this would make it impossible to
-use existing generic helpers and could make the code very messy.
-
-Best regards,
-Yi.
+I also remember some discussion that new dma-buf importers should
+use the dynamic imported model for long-term imports, but as I'm
+everything but an expert in that area I'll let the dma-buf folks
+speak.
 
 
