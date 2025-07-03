@@ -1,176 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-53757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D32AF67E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 04:18:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63399AF67F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 04:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53344E4B31
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 02:18:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA5F4A6A21
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 02:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4501D5173;
-	Thu,  3 Jul 2025 02:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85591FFC5E;
+	Thu,  3 Jul 2025 02:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gXx4bsi2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F1186353
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 02:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A351C1E520D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 02:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751509118; cv=none; b=Rg4V7eCqTbzUpwOOi1J24X13F93yeHdj+bPy3DDJ94swjClE/0uISEyP+07Bd32p3mTft4BSxcKeUWyOqH5d2jMAahxWOuyk/OlT6HLNiTpSCDjGsczQ2QdIVQrNJsT3GqE+j1gz8D9wAg4AyL/G8lzJ8Nom2n7vU15jFeG65YQ=
+	t=1751509721; cv=none; b=HapDae1jdyeW+o6VQWZGIwdjObeCBEWsGl7Sbca7hldNGBdwJhMXfFOzQAOAvCOf88OpB2ZjXjth0vX7S1tie+cjoDjUWIXfeslpkPxHZY4K2/DI9WPzRDLY/NwxpW7/9s3iN0xjzZE6KmRDdk8icno75cqSygMdAFD3s58uKus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751509118; c=relaxed/simple;
-	bh=w6v4b1Sv8vHkmy0AJXwcpTK0Qw8A26XW180RA3XgmwQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=N+sUy7N2MikcNl4Rxa2WCVXv2XYpY80qs3FwIzSga4HrN/1V6JTeya5Ka/A0sam+budAOjhscZRfkzOW9Vq0+aZWyqPP+96eA/en0zcloY+O1zOjIufi/UY83pDcm2bIWO5K8B7QbrwdA/TvUZEyj917gE0VW/UjAsius2q0xhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3df309d9842so127410655ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 19:18:35 -0700 (PDT)
+	s=arc-20240116; t=1751509721; c=relaxed/simple;
+	bh=oI+NQH+nFJLnW1KEYVWh8bCi6cQjiUciyVOdI8RQ9jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cwgtSsT13e5jD/c8cSh3fasiW0WCclx1Uv6CDM3P1bdnXgfExRyPufmnJOGjJiIKHA7G+wMpx7ogIJmFl2e1oX/SInvsvj0RL2d9HtxYQETIMTus25Fup+lX5SVq0xSQ1Um4K//G+H2g78hHr/1rYjyeoxrvwIPBy405smy7SCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gXx4bsi2; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso6223484b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Jul 2025 19:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1751509717; x=1752114517; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t2nTXIo+CvpirZ9A1QVaQpQOlJd4MreiW9qDAdilxYI=;
+        b=gXx4bsi27gy8C/9QSu11WuXlJ2tNIZ3xTcmLj8+js07ghOG5/TIusM5Enf3iism0En
+         LmMygaeq8TWHzB9s/5xAZZToWDjJ4CDaNCf2uVze4KKKUP/UZAjcOEs04St4fAhgxXkp
+         tfG9A3LuLXDxV2Ty3D18qbtZxQN6L2LF3KZAY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751509115; x=1752113915;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c/KeYqAzhlug2cBlOAvbYyW9y7V2ttwqcW5y5zhjy80=;
-        b=NQ+67oJ4nVpMv0LLtCDckT1PjF6/OpYhmLysaVKxI613qSgAl9avIEL1mpDV12wFci
-         XPTq0pVHob2GkopkBm3BAl4MAvcQ4OnKoeBgyosB+ZouajJr1BV1vERJln94WUMFGSh8
-         ZXXkFxGPGnx+ugsgZUNBzv2LPSozpOsAzf+ZJYGLe0aeh7kD+oNns2BMDXbLz0YhmPqS
-         ZNRhcQy4GGxAblfmSUZJ+dP3HY4L0144RVMCFagsrM4InTcrpV+ODAL6YMx+9vOnY/4l
-         tC5WPU6w8mNTci7rfCuPE6JLSNzQpUjo3NlCxsb9PgvHtimn/ntlcJLYqJ+Z9oYv4xyE
-         ZdGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVg1R9GbeAQLmLbIVMN0Pfn9Lld4i5n0sGQLI4PKnP/+f4352eFVktZCKui/7ZidhjYKXJsCSK1Wkz/ZtXe@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlyKVnSrVP2y4E6WyBQIWj/c1wwS4xQzN7OzkwTBzqaZN/KMDy
-	nWkTn6EVQEuKWVhxCGNDCcJfx355/obRMBOOJuYtpm5blJFc4csIDJYssoE0aN0LQYVEQyN5FVj
-	ZY0VthU7+OsWTW8mvRZTUD21seaDYyuPFDhdrGEuQsQwvTe4lHDrZn6j+uWg=
-X-Google-Smtp-Source: AGHT+IE4L9la8RyH87X3ZXX5fLSYYN9RNx7vp9JR76jrtT1rZHYYadDT1F9A+PfVZZt1hqYJ5gRRY9ebGqZvFjCbt+mCAtj2+2PD
+        d=1e100.net; s=20230601; t=1751509717; x=1752114517;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t2nTXIo+CvpirZ9A1QVaQpQOlJd4MreiW9qDAdilxYI=;
+        b=HyqyS72kNNehRzOAi7UzQlIZI8SXHpUEvssrP8TV8dAk8iOcXVJhDrT8vhVNzBjk9C
+         +nL+EHpkX89eGmXRrmv1G3gI2m6mZGPC8qiO3UGBAfq3BKelaLHEBpqmCcJdLQ8YZsP8
+         80UwespDjFIgEvxiSXUbRKeT8AeCD0CxIGjafzk84hqg488GR2LNOZEVEQXrDbMHJ3ih
+         1U9SY2fQol+dbjoJIptLAgwu/vAADZQ9MpaEgWwNNfrpzes2ISZ14ceKJGwbv/v1nib9
+         mVmPVUOX1kQjxJz8RwjetViIin7NnFwhhwuhPCNcw/0hzwr8f8dAMxX7o4RoFw1EF0+t
+         I9Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCWE+wu9GEirp004uETlN96CL3OEjHv3ECkTMyhJH1x5q328uR+6tICJrWVqQgh4HUou3ogYA3QPPVaPiQvJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlCnYsI6FUeteyeFUEKAbUUYzkXkpCQOC0VQuPp+SPijopvyqE
+	uPFoYIcl05qZ2eU4T3ZcpRYeeWwH/512PstGFsUDlo9+AhFmnJuEWay/8laoJcFruA==
+X-Gm-Gg: ASbGncuQac4no8JDIKFXH+lP5iCqwvf/zDT/Ogz0XdqyFZ72U/iEmkf3MwrTkAd7muh
+	LPkETnevTJz/Z5oHCQtEsbGd9SevGkZTV1eCFHkarMr4fDkJXhM22Pw6Z6ecxQmn4mFJMpC1sr8
+	lcouqRuC0hZs/fZWEVcjqZsaTLUGjyOQUNXP7rEZPiA8ZRnoMPuBrYbTvWAx8GuOVOIUOVIoXtM
+	K/BQn3AUttzQ2i2jaIfODKtTAItOoOt5aMBp2okc7Yd2KMh7CQ4D58gnbQbMY3hWdSWyIEke1lv
+	eh8yHcjLVNE05aQ2lj/If3UkHvJQQy4IHk93EWhJlqza1inKLyM54bP8sedce/CeVA==
+X-Google-Smtp-Source: AGHT+IF0mvA6yS/npwsiNYiL0/8VVavPM/4qMbTse5ZctfFIAIwQSgruKczXUi/oxdeocj+35zKyHA==
+X-Received: by 2002:a05:6a00:3d11:b0:748:de24:1ade with SMTP id d2e1a72fcca58-74c9980d533mr2410295b3a.7.1751509716701;
+        Wed, 02 Jul 2025 19:28:36 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:8e3f:7c33:158f:349b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af541d23fsm15895056b3a.59.2025.07.02.19.28.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 19:28:35 -0700 (PDT)
+Date: Thu, 3 Jul 2025 11:28:23 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Alistair Popple <apopple@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Minchan Kim <minchan@kernel.org>, Brendan Jackman <jackmanb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
+	Naoya Horiguchi <nao.horiguchi@gmail.com>, Oscar Salvador <osalvador@suse.de>, 
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+	Qi Zheng <zhengqi.arch@bytedance.com>, Shakeel Butt <shakeel.butt@linux.dev>
+Subject: Re: [PATCH v1 12/29] mm/zsmalloc: stop using __ClearPageMovable()
+Message-ID: <5thkl2h5qan5gm7putqd4o6yn5ht2c5zeei5qbjoni677xr7po@kbfokuekiubj>
+References: <20250630130011.330477-1-david@redhat.com>
+ <20250630130011.330477-13-david@redhat.com>
+ <zmsay3nrpmjec5n7v44svfa7iwl6vklqan4dgjn4wpvsr5hqt7@cqfwdvhncgrg>
+ <757cf6b9-730b-4b12-9a3d-27699e20e3ac@redhat.com>
+ <ugm7j66msq2w2hd3jg3thsxd2mv7vudozal3nblnfemclvut64@yp7d6vgesath>
+ <11de6ae0-d4ec-43d5-a82e-146d82f17fff@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3397:b0:3df:43d1:6a58 with SMTP id
- e9e14a558f8ab-3e05c3382f0mr26651945ab.20.1751509114831; Wed, 02 Jul 2025
- 19:18:34 -0700 (PDT)
-Date: Wed, 02 Jul 2025 19:18:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6865e87a.a70a0220.2b31f5.000a.GAE@google.com>
-Subject: [syzbot] [exfat?] kernel BUG in folio_set_bh
-From: syzbot <syzbot+f4f84b57a01d6b8364ad@syzkaller.appspotmail.com>
-To: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11de6ae0-d4ec-43d5-a82e-146d82f17fff@redhat.com>
 
-Hello,
+On (25/07/02 12:55), David Hildenbrand wrote:
+> On 02.07.25 12:10, Sergey Senozhatsky wrote:
+> > On (25/07/02 10:25), David Hildenbrand wrote:
+> > > On 02.07.25 10:11, Sergey Senozhatsky wrote:
+> > > > On (25/06/30 14:59), David Hildenbrand wrote:
+> > > > [..]
+> > > > >    static int zs_page_migrate(struct page *newpage, struct page *page,
+> > > > > @@ -1736,6 +1736,13 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+> > > > >    	unsigned long old_obj, new_obj;
+> > > > >    	unsigned int obj_idx;
+> > > > > +	/*
+> > > > > +	 * TODO: nothing prevents a zspage from getting destroyed while
+> > > > > +	 * isolated: we should disallow that and defer it.
+> > > > > +	 */
+> > > > 
+> > > > Can you elaborate?
+> > > 
+> > > We can only free a zspage in free_zspage() while the page is locked.
+> > > 
+> > > After we isolated a zspage page for migration (under page lock!), we drop
+> >                        ^^ a physical page? (IOW zspage chain page?)
+> > 
+> > > the lock again, to retake the lock when trying to migrate it.
+> > > 
+> > > That means, there is a window where a zspage can be freed although the page
+> > > is isolated for migration.
+> > 
+> > I see, thanks.  Looks somewhat fragile.  Is this a new thing?
+> 
+> No, it's been like that forever. And I was surprised that only zsmalloc
+> behaves that way
 
-syzbot found the following issue on:
+Oh, that makes two of us.
 
-HEAD commit:    50c8770a42fa Add linux-next specific files for 20250702
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1500f982580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d831c9dfe03f77ec
-dashboard link: https://syzkaller.appspot.com/bug?extid=f4f84b57a01d6b8364ad
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c93770580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1001aebc580000
+> > > While we currently keep that working (as far as I can see), in the future we
+> > > want to remove that support from the core.
+> > 
+> > Maybe comment can more explicitly distinguish zspage isolation and
+> > physical page (zspage chain) isolation?  zspages can get isolated
+> > for compaction (defragmentation), for instance, which is a different
+> > form of isolation.
+> 
+> Well, it's confusing, as we have MM compaction (-> migration) and apparently
+> zs_compact.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb40fda2e0ca/disk-50c8770a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cba4d214940c/vmlinux-50c8770a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4b23ed647866/bzImage-50c8770a.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/ef503c02b7ee/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=11c93770580000)
+True.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f4f84b57a01d6b8364ad@syzkaller.appspotmail.com
+> I'll try to clarify that we are talking about isolation for page migration
+> purposes.
 
-loop0: detected capacity change from 0 to 128
-------------[ cut here ]------------
-kernel BUG at fs/buffer.c:1582!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 6151 Comm: syz.0.51 Not tainted 6.16.0-rc4-next-20250702-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:folio_set_bh+0x1dc/0x1e0 fs/buffer.c:1582
-Code: 4c 89 e2 e8 d6 eb b6 02 e9 42 ff ff ff e8 cc 7c 79 ff 48 89 df 48 c7 c6 a0 ec 99 8b e8 ad af c1 ff 90 0f 0b e8 b5 7c 79 ff 90 <0f> 0b 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f
-RSP: 0018:ffffc90003c5f8e0 EFLAGS: 00010293
-RAX: ffffffff8246582b RBX: ffffea0001840a40 RCX: ffff8880776c3c00
-RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000001000
-RBP: dffffc0000000000 R08: ffffea0001840a47 R09: 1ffffd4000308148
-R10: dffffc0000000000 R11: fffff94000308149 R12: 0000000000000000
-R13: 0000000000001000 R14: ffff8880744cfcb0 R15: 0000000000001000
-FS:  0000555591bcd500(0000) GS:ffff888125d1d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5810d71d60 CR3: 0000000076ee0000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- folio_alloc_buffers+0x3a0/0x640 fs/buffer.c:946
- grow_dev_folio fs/buffer.c:1075 [inline]
- grow_buffers fs/buffer.c:1116 [inline]
- __getblk_slow fs/buffer.c:1134 [inline]
- bdev_getblk+0x286/0x660 fs/buffer.c:1461
- __bread_gfp+0x89/0x3c0 fs/buffer.c:1515
- sb_bread include/linux/buffer_head.h:346 [inline]
- fat_fill_super+0x5e2/0x3570 fs/fat/inode.c:1598
- get_tree_bdev_flags+0x40b/0x4d0 fs/super.c:1681
- vfs_get_tree+0x92/0x2b0 fs/super.c:1804
- do_new_mount+0x24a/0xa40 fs/namespace.c:3902
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4427
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5810d900ca
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe6ee42248 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffe6ee422d0 RCX: 00007f5810d900ca
-RDX: 0000200000000240 RSI: 0000200000000280 RDI: 00007ffe6ee42290
-RBP: 0000200000000240 R08: 00007ffe6ee422d0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000200000000280
-R13: 00007ffe6ee42290 R14: 0000000000000221 R15: 0000200000000480
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:folio_set_bh+0x1dc/0x1e0 fs/buffer.c:1582
-Code: 4c 89 e2 e8 d6 eb b6 02 e9 42 ff ff ff e8 cc 7c 79 ff 48 89 df 48 c7 c6 a0 ec 99 8b e8 ad af c1 ff 90 0f 0b e8 b5 7c 79 ff 90 <0f> 0b 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f
-RSP: 0018:ffffc90003c5f8e0 EFLAGS: 00010293
-RAX: ffffffff8246582b RBX: ffffea0001840a40 RCX: ffff8880776c3c00
-RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000001000
-RBP: dffffc0000000000 R08: ffffea0001840a47 R09: 1ffffd4000308148
-R10: dffffc0000000000 R11: fffff94000308149 R12: 0000000000000000
-R13: 0000000000001000 R14: ffff8880744cfcb0 R15: 0000000000001000
-FS:  0000555591bcd500(0000) GS:ffff888125c1d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9535e0f000 CR3: 0000000076ee0000 CR4: 00000000003526f0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks.
 
