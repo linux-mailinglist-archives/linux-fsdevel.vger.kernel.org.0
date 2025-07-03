@@ -1,214 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-53806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1E7AF77DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:44:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368E6AF77F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 16:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDF2567FC6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 14:44:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D843F567384
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 14:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43A82EE277;
-	Thu,  3 Jul 2025 14:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCCA2EE616;
+	Thu,  3 Jul 2025 14:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gOuGy5v9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/9TmepgV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gOuGy5v9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/9TmepgV"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xw0Nq/aB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5912E62CD
-	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 14:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774732EE5EC;
+	Thu,  3 Jul 2025 14:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751553832; cv=none; b=n40Sky2o83GO13wt4guWF1Zo77LUREwuFCEp++GE5WSy2+4hPf7ko32cRjK9u/NhNXmcjSvuZQ3CMUhYGgIB0n0vFFPi5An8q/AeXUr55+eSygKILeKagrDpG8kzUIIDcWa6UNClLnOLaYSugvNmxjqsgAam/C2mOAZKe267fUk=
+	t=1751553909; cv=none; b=cGBz1IACMhU++RVGuaPs3TBi9sxtqPr0PYTq4Z7eCxImJ/nulNDLzatKWWYNFBs/ugZHyLgHwrCSce7Mwcj6up47u8rBLr+UrwNOBtGETKr9OdSUGL+ImsY2B7kDeH8wTtQ9HgsN7NQBKudw4o9Wa9Fwphde6Avti+zL49dxLfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751553832; c=relaxed/simple;
-	bh=ZtslKzAI5IVUfM7amCFT9Sn81UB8w513tlOXwjsWeMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0W8h4E8TiaGFZ3xw8t/WU5lE9ylZ/Ssg0pN/z5Fi64vDyVfi/D9AaH1BX8WFHyUpPSWXQrGZctUoLcmyDF+WufPdBgB1FGktZEAEFrSECEQpUtp5RX/2RfMYkK3MXhxn8ORK92Nk28au+AgOaOVjFVck9MAV0tIlL/F76GtNJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gOuGy5v9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/9TmepgV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gOuGy5v9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/9TmepgV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9EA07211AC;
-	Thu,  3 Jul 2025 14:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751553828; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1751553909; c=relaxed/simple;
+	bh=Ae1tTKSZCMTkOVIlkV7/uZhkeFMV1n32rMfpwg6PKm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r4bDz+wTt9Yf+NiN0XGaVIO23fE7LI8V3EBywqgA2id2Z7gnUVzuRZEho1/jjcrUipJEXOzR8/ljYxc+xd6aJA6GDHNR2VM08vLjpdWBk7BOjPoTvFEjHERlSlLLB4i/OGkiD3H+czuhsepdniG35+2JVnxIBLvxxFfvGEyOm8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xw0Nq/aB; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <aa977869-f93f-4c2b-a189-f90e2d3bc7da@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751553894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2KKOK5STEEnIKYkIfRLTvYhfMiKp2W9OxZzF19SQJZQ=;
-	b=gOuGy5v9xWBJad9rt97dbmxFpOtw+gkEXJTLKkQ2mis+DT8vgW4sZHWII7xNFkf29Ul7mM
-	k8OwKic5MyOBYb+6gwpBoqiDVwEyvNVk7T9GyNvzmzwj2hbd66umFP6WRMA0UDdMGsERMf
-	65jxojAMnWwXZ4qJSm4NNtbVEYqzWx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751553828;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2KKOK5STEEnIKYkIfRLTvYhfMiKp2W9OxZzF19SQJZQ=;
-	b=/9TmepgVeFFwkw4mjopyYSkBV9H2u9iyK6EehjHEaJrjcIgKUcMYqsRuCx4jHcv5rpjw9p
-	bDZogSmomKgaglCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751553828; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2KKOK5STEEnIKYkIfRLTvYhfMiKp2W9OxZzF19SQJZQ=;
-	b=gOuGy5v9xWBJad9rt97dbmxFpOtw+gkEXJTLKkQ2mis+DT8vgW4sZHWII7xNFkf29Ul7mM
-	k8OwKic5MyOBYb+6gwpBoqiDVwEyvNVk7T9GyNvzmzwj2hbd66umFP6WRMA0UDdMGsERMf
-	65jxojAMnWwXZ4qJSm4NNtbVEYqzWx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751553828;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2KKOK5STEEnIKYkIfRLTvYhfMiKp2W9OxZzF19SQJZQ=;
-	b=/9TmepgVeFFwkw4mjopyYSkBV9H2u9iyK6EehjHEaJrjcIgKUcMYqsRuCx4jHcv5rpjw9p
-	bDZogSmomKgaglCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E5A71368E;
-	Thu,  3 Jul 2025 14:43:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ac28IiSXZmgbaQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 03 Jul 2025 14:43:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 87A27A0A48; Thu,  3 Jul 2025 16:43:47 +0200 (CEST)
-Date: Thu, 3 Jul 2025 16:43:47 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, jack@suse.cz, 
-	josef@toxicpanda.com, lesha@meta.com, linux-fsdevel@vger.kernel.org, sargun@meta.com
-Subject: Re: [PATCH] fanotify: support custom default close response
-Message-ID: <26dpu7ouochrzo4koexbwofgygqo7mhjbvswzhvqhf46i3kbvc@d6dzwpg6agoc>
-References: <CAOQ4uxjTtyn04XC65hv2MVsRByGyvxJ0wK=-FZmb1sH1w0CFtA@mail.gmail.com>
- <20250703070916.217663-1-ibrahimjirdeh@meta.com>
- <CAOQ4uxgfhf6g71_8y5iXLmNVMBvYVtpPJgd9PNXQzZnqa2=CkQ@mail.gmail.com>
+	bh=JOIrRfIeyTH2apsnsGitpg+mindX/IyZqQlNCkKTr4I=;
+	b=xw0Nq/aBHVz2IZHt44g+yDNXMx0Jed8Ecs/I7Q8XpWowwI0KhrCtu7tM8hiuQMEO4xFxZq
+	Pucfwly1yrq2L5+Uh3Y/1m/oyNxJlaLfYA+rF+qU27u4jKqGLYBBXKLdsVmYvbjzI4qgdE
+	5jQ8Y1ofO5WJu7Xdc9pFpUFAAWtApgY=
+Date: Thu, 3 Jul 2025 22:44:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
+ in vm_normal_page()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Lance Yang <ioworker0@gmail.com>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-2-david@redhat.com>
+ <aFVZCvOpIpBGAf9w@localhost.localdomain>
+ <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
+ <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
+ <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgfhf6g71_8y5iXLmNVMBvYVtpPJgd9PNXQzZnqa2=CkQ@mail.gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+X-Migadu-Flow: FLOW_OUT
 
-On Thu 03-07-25 10:27:17, Amir Goldstein wrote:
-> On Thu, Jul 3, 2025 at 9:10 AM Ibrahim Jirdeh <ibrahimjirdeh@meta.com> wrote:
-> >
-> > > On Wed, Jul 2, 2025 at 6:15 PM Jan Kara <jack@suse.cz> wrote:
-> > > > Eventually the new service starts and we are in the situation I describe 3
-> > > > paragraphs above about handling pending events.
-> > > >
-> > > > So if we'd implement resending of pending events after group closure, I
-> > > > don't see how default response (at least in its current form) would be
-> > > > useful for anything.
-> > > >
-> > > > Why I like the proposal of resending pending events:
-> > > > a) No spurious FAN_DENY errors in case of service crash
-> > > > b) No need for new concept (and API) for default response, just a feature
-> > > >    flag.
-> > > > c) With additional ioctl to trigger resending pending events without group
-> > > >    closure, the newly started service can simply reuse the
-> > > >    same notification group (even in case of old service crash) thus
-> > > >    inheriting all placed marks (which is something Ibrahim would like to
-> > > >    have).
-> > >
-> >
-> > I'm also a fan of the approach of support for resending pending events. As
-> > mentioned exposing this behavior as an ioctl and thereby removing the need to
-> > recreate fanotify group makes the usage a fair bit simpler for our case.
-> >
-> > One basic question I have (mainly for understanding), is if the FAN_RETRY flag is
-> > set in the proposed patch, in the case where there is one existing group being
-> > closed (ie no handover setup), what would be the behavior for pending events?
-> > Is it the same as now, events are allowed, just that they get resent once?
-> 
-> Yes, same as now.
-> Instead of replying FAN_ALLOW, syscall is being restarted
-> to check if a new watcher was added since this watcher took the event.
 
-Yes, just it isn't the whole syscall that's restarted but only the
-fsnotify() call.
 
-> Wondering out loud:
-> Currently we order the marks on the mark obj_list,
-> within the same priority group, first-subscribed-last-handled.
+On 2025/7/3 20:39, David Hildenbrand wrote:
+> On 03.07.25 14:34, Lance Yang wrote:
+>> On Mon, Jun 23, 2025 at 10:04 PM David Hildenbrand <david@redhat.com> 
+>> wrote:
+>>>
+>>> On 20.06.25 14:50, Oscar Salvador wrote:
+>>>> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
+>>>>> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
+>>>>> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
+>>>>> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
+>>>>> readily available.
+>>>>>
+>>>>> Nowadays, this is the last remaining highest_memmap_pfn user, and this
+>>>>> sanity check is not really triggering ... frequently.
+>>>>>
+>>>>> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
+>>>>> simplify and get rid of highest_memmap_pfn. Checking for
+>>>>> pfn_to_online_page() might be even better, but it would not handle
+>>>>> ZONE_DEVICE properly.
+>>>>>
+>>>>> Do the same in vm_normal_page_pmd(), where we don't even report a
+>>>>> problem at all ...
+>>>>>
+>>>>> What might be better in the future is having a runtime option like
+>>>>> page-table-check to enable such checks dynamically on-demand. 
+>>>>> Something
+>>>>> for the future.
+>>>>>
+>>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>>
+>>>
+>>> Hi Oscar,
+>>>
+>>>> I'm confused, I'm missing something here.
+>>>> Before this change we would return NULL if e.g: pfn > 
+>>>> highest_memmap_pfn, but
+>>>> now we just print the warning and call pfn_to_page() anyway.
+>>>> AFAIK, pfn_to_page() doesn't return NULL?
+>>>
+>>> You're missing that vm_normal_page_pmd() was created as a copy from
+>>> vm_normal_page() [history of the sanity check above], but as we don't
+>>> have (and shouldn't have ...) print_bad_pmd(), we made the code look
+>>> like this would be something that can just happen.
+>>>
+>>> "
+>>> Do the same in vm_normal_page_pmd(), where we don't even report a
+>>> problem at all ...
+>>> "
+>>>
+>>> So we made something that should never happen a runtime sanity check
+>>> without ever reporting a problem ...
+>>
+>> IIUC, the reasoning is that because this case should never happen, we can
+>> change the behavior from returning NULL to a "warn and continue" model?
 > 
-> I never stopped to think if this order made sense or not.
-> Seems like it was just the easier way to implement insert by priority order.
-> 
-> But if we order the marks first-subscribed-first-handled within the same
-> priority group, we won't need to restart the syscall to restart mark
-> list iteration.
-> 
-> The new group of the newly started daemon, will be next in the mark list
-> after the current stopped group returns FAN_ALLOW.
-> Isn't that a tad less intrusive handover then restarting the syscall
-> and causing a bunch of unrelated subsystems to observe the restart?
-> 
-> And I think that the first-subscribed-first-handled order makes a bit more
-> sense logically.
-> I mean, if admin really cares about making some super important security
-> group first, admin could make sure that its a priority service that
-> starts very early
-> admin cannot make sure that the important group starts last...
+> Well, yes. Point is, that check should have never been copy-pasted that 
+> way, while dropping the actual warning :)
 
-So this idea also briefly crossed my mind yesterday but I didn't look into
-it in detail. Looking at how we currently do mark iteration in fsnotify
-this won't be very easy to implement. iter_info has an array of marks, some
-of those are marks we are currently reporting to, some of those may be from
-the next group to report to. Some may be even NULL because for this mark
-type there were no more marks to report to. So it's difficult to make sure
-iter_into will properly pick freshly added group and its marks without
-completely restarting mark iteration. I'm not saying it cannot be done but
-I'm not sure it's worth the hassle.
+Ah, I see your point now. Thanks for clarifying!
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> It's a sanity check for something that should never happen, turned into 
+> something that looks like it must be handled and would be valid to 
+> encounter.
+
+Yeah. Makes sense to me ;)
+
+
 
