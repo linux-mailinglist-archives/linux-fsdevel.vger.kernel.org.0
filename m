@@ -1,87 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-53791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA27AF7334
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 14:04:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C02BAF7336
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 14:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCFD8562D44
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 12:04:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9517656358B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 12:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B055E2E54B7;
-	Thu,  3 Jul 2025 12:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BD42E6D26;
+	Thu,  3 Jul 2025 12:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M52IOnLP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T677CqwI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D942E4278;
-	Thu,  3 Jul 2025 12:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B492E62C3;
+	Thu,  3 Jul 2025 12:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751544229; cv=none; b=Pvzmxj4gz8Csihb6P0I+s8I8n30+TG9gwsGcaB26RebaEok8f6XpqIw/g1ejO0d/yGKTbh3DmCNmYMTwGY3iot0Itl1ktwXeHlTpPZVQkkJH9WUXOtqLKLmWUcyclAMG8rkB9DbaU0rm8CRdVGV/Cvh7Ul7bp3ngHj0fvYQpW10=
+	t=1751544233; cv=none; b=KOZRed3trAIZ/It3IdyDeMwM2NNp3Pvc/WV00fwKG0rtoeva3uMAkVA5hbbOu3gVleQ6zCWHhAcRNrtp1KM15rqlhPiPdyhpkCTW3IAGQp/ivBl3/mNsn0XsojWVYGSjI2O+9TTZRqRH4ipG6cgN07dsm2nqTWKpQgPPEHb1FPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751544229; c=relaxed/simple;
-	bh=DPLlg8RFPNJdxWW/brCD2gDkRKgZCaF2rPsXV0R+7D0=;
+	s=arc-20240116; t=1751544233; c=relaxed/simple;
+	bh=jsD9YH9kuJbOz2Nw8fyYrbyTDwny+3LMZ7c8TI4cvqM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mdMi+IuEiGfyEWFwhg+Ftf9KimYhOqPVHK77+yWUvRoNtjDRulIYRE0S6z63MxGHi+iLUF848XJy/gWc04P5Efa/W7SeIm1EMmbPHFf6EbxOGjdrwlCkwumm5ES1T76+a6hUvLcAoAMiFOF0yVQ62365oQ2FUiA06hcTNhsBrDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M52IOnLP; arc=none smtp.client-ip=209.85.208.45
+	 MIME-Version; b=ngNsFy5tXcY3ufdO/OwjdiFktkmVFkeJCVQmvQib0NfdXGRCjAhHnyWYuU9X10W4eqPcoQ1Pcw9oao2VQQkkwNbO52N5ULFYPLQCnXd5PzHOJmRpTYmgtmgCn0urj0wg5BYrkIeGdHWObLE0BFz1zD2ktm8MESZ6AToH84C7Uus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T677CqwI; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60c01b983b6so1741748a12.0;
-        Thu, 03 Jul 2025 05:03:47 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60bf5a08729so11012238a12.0;
+        Thu, 03 Jul 2025 05:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751544225; x=1752149025; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751544229; x=1752149029; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fZiJRpaaJ7ruZirKbZeRPx4dN5q7YM53YMqzZaGHH3A=;
-        b=M52IOnLPAEWznqfeDk/3jt0d4zM18enditDp/aziC52udAZrpsQVap7dPxTI8P/4/G
-         KDeSKO0SF+Jz9wsMgMmD9pLrPtP2XiGUIFVfGhdI+AgnZQ5gA4tJW9NbvcAhB0JeCYYn
-         J16qR5iuCP4moNBkDAZJ1CU7En2KTZ94Etuj1KvhCGdKr7v7lhvZNalZOtQyc2pgrWMg
-         fJbq8HdfOyJJxxheKnvCDTvSMlfJNls+THel2Vr0mZmhhj1LZC6snemldmPQZRICgdTO
-         NWS1uo5fj9LSYz1JzMlamDaMl1Uux6bPSgTIdKEOIqQidMio94PIyCz76VK5DlPLtcB2
-         kh8g==
+        bh=2bWYCB6WfPUI/fvWa8m+GGn4eYVfhW03+nxeFICCU4E=;
+        b=T677CqwIQBTTVG36ZVllrreSaZA5mGcG/wXNPZq6cFRZtlte5E2zrohaxGFTv64qoM
+         wHfqC40KninqcTxIO98mBXmbZCEl3U/wjliBSkTxQFpfbSOm78hdU04t+wj+iAOfWuT5
+         01LaLVMOzb80lS7OqXeKBavgmSUDoL3jUxMIycl0U9k/aL8xEGO8dvRdzHbDt5qkWGTP
+         X0334EAZUfn+KKLbM7vvT28Up9CMchX7b9PRzfWEc6yBImZe3ujKR0X28GeAgyo0ML9B
+         rEQ5kiQKMRw2aib66JZG3t0FjwlOuYu4BuRO9M3vGAPMrtdMkpGyRnuUE+ziIZcRgveC
+         nwBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751544225; x=1752149025;
+        d=1e100.net; s=20230601; t=1751544229; x=1752149029;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fZiJRpaaJ7ruZirKbZeRPx4dN5q7YM53YMqzZaGHH3A=;
-        b=JebDibWcZcNNXOMi5uJA2qo1yfnMcdDnX3HI+02EcJT9CoUYMDY4QHDey2v4iK3Q3G
-         I1KTLIeT1/XtRq74uD95I1GGna0F908qWAs6hbZsBBg2V7MvELdIr7NSM3HXf6BikynY
-         LAVYA/qwzBJGLsjrjh+re1zrLkSE3bylAh1MZk41jX1+BkNZXyy4xex8Ec70mQthyg6y
-         m7KBqtL92UZeJrWLmyX6ixBClhzH1hkYIqMCByWwZNq8LHYV/9noV2R131LrhtfhgGUE
-         UyWeOtjzJuxL0EcOqxdDPKsBpKxV5dpcfOhIbhA2AW7U1AFk2FqrOxk3G12mrC6zudDx
-         Khjg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8nXkZSwtyU2AtQw1VPamekinXtkgpVLDUmZdi4790KiELzvpBKyeMRU9aJEOmGSzK8aISa3tm4acz1ue3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDSewitI5hxRh7Z4donKrZl9rLU1wvq7tIQv6rdNjDEJi8Ejeb
-	shDuPLZMNmmyFmFQG8FNCw/w83vYO+EtY7ESK1c6DrvfKgitn898pQtq97RrenGK
-X-Gm-Gg: ASbGncuKhDDE1diTFeXkCZefag0mY37Ylk+8Gw3kpkoK0D9GetlZBUoT8s+GoLCEanN
-	L6k6RRAPxUFOa7dVWoAsCYNYsOhKwsAIaD2T279HTPWW7PwKw6RoPw+OaNAABh7kIbwdRiExhIV
-	V7jFfIPrl2bf6Flvd74R2lXuO3xF07jsqcHAQOS1Pd+XrOhfXjblIqjiRbgat0us8IOkt5YkbnJ
-	LAp2ZupaMiiG75VXHZ6mUQM4WymrH53IY1XgTBJzNvfTqEMvXgwFeMUlcF2eqZ+VypYwx4wKa6d
-	yNcgCaGprFxIJPHyXWALusCmETbgdIrs4tUwe1CTXp+ciXXM4mDrM9qnCMDMJTFCqrKqZSol4oM
-	iKbYii4ldJl+N4t1A+4xnj8sge0BTqRnQXfB+lPs=
-X-Google-Smtp-Source: AGHT+IHYDAaPmrCCz58mtFkwj6fZMHuKWu8i2NQzgkDwQJlkkBjrcsE0qfhmirYRpHgfVTYpyPcTpw==
-X-Received: by 2002:a05:6402:22d6:b0:607:2e08:f3e6 with SMTP id 4fb4d7f45d1cf-60e723fdf65mr1686967a12.17.1751544225203;
-        Thu, 03 Jul 2025 05:03:45 -0700 (PDT)
+        bh=2bWYCB6WfPUI/fvWa8m+GGn4eYVfhW03+nxeFICCU4E=;
+        b=V8MSEnOAbUWTamH+88jPoVTZ0VQ2dlkv0bKmahakNHT90Gz2By3TN2CDPKtttdCq1o
+         XH1uKAwsllW3QXGdII4DhmHp6cPj/zRrNYdwo6yFYIgfO+FYS/taozy89WQBomwWBgid
+         B8aNUfo/KwyriQg84rR5Bp+Uq/0vnr/AUjIrV1lxbATSMnyzB2fnePkOjY/A0Vne9CAB
+         DYNMLYeW21Pw7DXxpZ6DQzItX6xf5csvEZr9NEXq0Nhe2CZHF2DA6Vq5lbpcybmH2HcQ
+         PRM0y1evmjYBbOAD/vUAgcOcXrtkAUgOKFB28G7aFfSb1EQgPOA85EByAmmD4AILuJ3B
+         cHBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWF/Qb9ogV4aEa3ytQ64fi1getzUpkmE39VEM6CzIpb2kCWbB/UvnfHIdkFv7TzkJ42M5FWS4p74EvjKogW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxVdJjyDC7MKGNJu7rcKnS19Xx9HRCIXoqOv+ECNef0GQ4oned
+	Q8HaHMKo4gQhrB37jT/n9yozt4Rid8N0FtN1iFpxrNR/4uzXNe4Nc3/0xpOfJZIU
+X-Gm-Gg: ASbGncuMBKDIqeldCVJImIe9KlkiAHG1Jy3wjZyNoMJwF8xeyClCpSz2VgspST6+z9b
+	3k4JWJvC8R43+C/r8ELYOsl9wEADtgIWVLWL9RSh6umicupik59AWdEHvRMnuT0W9p0atPkW1E7
+	NLb5WQPc/Ns0p3yJHwnS72G+gXds4PAYHDqLSNkr8NABx5VEnHFzA72VYIft3Za41YF5PQ4hO+y
+	Or93bBZRM6HAPY46Ork+Ooxe4QeY+v6jgLpYDvaNbNTba/TGOg3CMo6PO0qVs938zVQYR/LiYS9
+	XQMqRJQS4m2a/xneoYLBDfWsL0IU8KVi9uHmp1Y21xZsAdWioCmUVF4EtFWjQRUVLMizSw8TGfn
+	PNsRqkeBe2BThmt0d2K2AvR82OaH9YveGbWYwObY=
+X-Google-Smtp-Source: AGHT+IEZYS9li2tfKun6TzOZdJNjRX1nV7xFW/O6jF6WWUakzeglVIQiROoz8XNYN3xnKYNHB5Y0vA==
+X-Received: by 2002:a50:d6cb:0:b0:60c:3c19:1e07 with SMTP id 4fb4d7f45d1cf-60e52cd3706mr4571413a12.15.1751544229356;
+        Thu, 03 Jul 2025 05:03:49 -0700 (PDT)
 Received: from Mac.lan (p5088513f.dip0.t-ipconnect.de. [80.136.81.63])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c83205eb0sm10563837a12.72.2025.07.03.05.03.44
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c83205eb0sm10563837a12.72.2025.07.03.05.03.48
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 03 Jul 2025 05:03:44 -0700 (PDT)
+        Thu, 03 Jul 2025 05:03:48 -0700 (PDT)
 From: Laura Brehm <laurajfbrehm@gmail.com>
 X-Google-Original-From: Laura Brehm <laurabrehm@hey.com>
 To: linux-kernel@vger.kernel.org
 Cc: Laura Brehm <laurabrehm@hey.com>,
 	brauner@kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/2] coredump: fix race condition between connect and putting pidfs dentry
-Date: Thu,  3 Jul 2025 14:02:43 +0200
-Message-Id: <20250703120244.96908-2-laurabrehm@hey.com>
+Subject: [PATCH 2/2] coredump: fix PIDFD_INFO_COREDUMP ioctl check
+Date: Thu,  3 Jul 2025 14:02:44 +0200
+Message-Id: <20250703120244.96908-3-laurabrehm@hey.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250703120244.96908-1-laurabrehm@hey.com>
 References: <20250703120244.96908-1-laurabrehm@hey.com>
@@ -93,68 +93,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In Commit 1d8db6fd698de1f73b1a7d72aea578fdd18d9a87 ("pidfs, coredump:
-add PIDFD_INFO_COREDUMP"), the coredump handling logic puts the pidfs
-entry right after `connect`, and states:
+In Commit 1d8db6fd698de1f73b1a7d72aea578fdd18d9a87 ("pidfs,
+coredump: add PIDFD_INFO_COREDUMP"), the following code was added:
 
-    Make sure to only put our reference after connect() took
-    its own reference keeping the pidfs entry alive ...
+    if (mask & PIDFD_INFO_COREDUMP) {
+        kinfo.mask |= PIDFD_INFO_COREDUMP;
+        kinfo.coredump_mask = READ_ONCE(pidfs_i(inode)->__pei.coredump_mask);
+    }
+    [...]
+    if (!(kinfo.mask & PIDFD_INFO_COREDUMP)) {
+        task_lock(task);
+        if (task->mm)
+            kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
+        task_unlock(task);
+    }
 
-However, `connect` does not seem to take a reference to the pidfs
-entry, just the pid struct (please correct me if I'm wrong here).
-Since the expectation is that the coredump server makes a
-PIDFD_GET_INFO ioctl to get the coredump info - see Commit
-a3b4ca60f93ff3e8b41fffbf63bb02ef3b169c5e ("coredump: add coredump
-socket"):
+The second bit in particular looks off to me - the condition in essence
+checks whether PIDFD_INFO_COREDUMP was **not** requested, and if so
+fetches the coredump_mask in kinfo, since it's checking !(kinfo.mask &
+PIDFD_INFO_COREDUMP), which is unconditionally set in the earlier hunk.
 
-    The pidfd for the crashing task will contain information how the
-    task coredumps. The PIDFD_GET_INFO ioctl gained a new flag
-    PIDFD_INFO_COREDUMP which can be used to retreive the coredump
-    information.
+I'm tempted to assume the idea in the second hunk was to calculate the
+coredump mask if one was requested but fetched in the first hunk, in
+which case the check should be
+    if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask))
+which might be more legibly written as
+    if ((mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask))
 
-    If the coredump gets a new coredump client connection the kernel
-    guarantees that PIDFD_INFO_COREDUMP information is available.
+This could also instead be achieved by changing the first hunk to be:
 
-This seems to result in the coredump server racing with the kernel to
-get the pidfd before the kernel puts the pidfs entry, and if it loses
-it won't be able to retrieve the coredump information.
+    if (mask & PIDFD_INFO_COREDUMP) {
+	kinfo.coredump_mask = READ_ONCE(pidfs_i(inode)->__pei.coredump_mask);
+	if (kinfo.coredump_mask)
+	    kinfo.mask |= PIDFD_INFO_COREDUMP;
+    }
 
-This patch simply moves the `pidfs_put_pid` call to after the kernel is
-done handing off the coredump to the coredump server.
+and the second hunk to:
+
+    if ((mask & PIDFD_INFO_COREDUMP) && !(kinfo.mask & PIDFD_INFO_COREDUMP)) {
+	task_lock(task);
+        if (task->mm) {
+	    kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
+            kinfo.mask |= PIDFD_INFO_COREDUMP;
+        }
+        task_unlock(task);
+    }
+
+However, when looking at this, the supposition that the second hunk
+means to cover cases where the coredump info was requested but the first
+hunk failed to get it starts getting doubtful, so apologies if I'm
+completely off-base.
+
+This patch addresses the issue by fixing the check in the second hunk.
 
 Signed-off-by: Laura Brehm <laurabrehm@hey.com>
 Cc: brauner@kernel.org
 Cc: linux-fsdevel@vger.kernel.org
 ---
- fs/coredump.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ fs/pidfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index f217ebf2b3b6..a379758d9ca9 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -898,12 +898,6 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		retval = kernel_connect(socket, (struct sockaddr *)(&addr),
- 					addr_len, O_NONBLOCK | SOCK_COREDUMP);
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 69919be1c9d8..4625e097e3a0 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -319,7 +319,7 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+ 	if (!c)
+ 		return -ESRCH;
  
--		/*
--		 * ... Make sure to only put our reference after connect() took
--		 * its own reference keeping the pidfs entry alive ...
--		 */
--		pidfs_put_pid(cprm.pid);
--
- 		if (retval) {
- 			if (retval == -EAGAIN)
- 				coredump_report_failure("Coredump socket %s receive queue full", addr.sun_path);
-@@ -1002,6 +996,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- close_fail:
- 	if (cprm.file)
- 		filp_close(cprm.file, NULL);
-+	if (cn.core_type == COREDUMP_SOCK)
-+		pidfs_put_pid(cprm.pid);
- fail_dropcount:
- 	if (cn.core_type == COREDUMP_PIPE)
- 		atomic_dec(&core_dump_count);
+-	if (!(kinfo.mask & PIDFD_INFO_COREDUMP)) {
++	if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask)) {
+ 		task_lock(task);
+ 		if (task->mm)
+ 			kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
 -- 
 2.39.5 (Apple Git-154)
 
