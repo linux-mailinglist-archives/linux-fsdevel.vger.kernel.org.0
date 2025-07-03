@@ -1,150 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-53784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C335EAF70DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 12:47:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA3CAF71C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 13:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F01A17A896D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 10:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677F61C26193
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Jul 2025 11:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6C62E2F09;
-	Thu,  3 Jul 2025 10:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9BC266B59;
+	Thu,  3 Jul 2025 11:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0x232XR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clytzNWR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0BA2D9EFB;
-	Thu,  3 Jul 2025 10:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D0172632
+	for <linux-fsdevel@vger.kernel.org>; Thu,  3 Jul 2025 11:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751539634; cv=none; b=GS5+GkIuRUtDhEGxa9b5A63zrbM+okj7TJe2mfnl78WkoNUGi4HPhUXzfUn2dnd3OMjDu14YHtP3j7u7Mx8l24Q7DGrvCSwsk7wIRiUozXUKZ+VIqOqc82vxRmUUQJ6sX5jSM0WOrPKeqE5HMHXwf94lxKQNb1InbuBm9oWgzK0=
+	t=1751541060; cv=none; b=TKVlEspUg6UGYSrRI7RsOasQf2btXxhwHfWMWmZsia+lbz450N4kEAIXW3Dr6I+Qe98wSjUY/XbSoSQFwPYHdOIgejjntolNqFmJmqBy3bDMnphPWlscfbkgImujiJXpAYeZPkspULbH9mHxdZxe985gHHXmXQDJpHXrjJulQrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751539634; c=relaxed/simple;
-	bh=NkBVSvIRK6m5xJpAYwjcb6boeOKxulWEgOMtKfEgvGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aGFSF83/Yzg7g8ne0QreuBGmuTrGh8FhH8ORY5NlmrMS2AKEAjuAiFa4P9tvFqubP/bWyhEMpG47WFuYavdvi6RENLCH3NSjoXuBaF4LA9hYtcglkMojSGE6ExjKDcgYqq4W8isMzpwxidu0WQKJvkvTiVByNhsIYXA3lcaLtrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0x232XR; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23602481460so80836355ad.0;
-        Thu, 03 Jul 2025 03:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751539632; x=1752144432; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yT116BmQVYQp7TgXBQY166ymvqYjgN3gIl7mlb2d3wM=;
-        b=R0x232XRd3uS4UHUgKiGB5nheq8G2pOpy245WXg1l5hkAMGcNbwQT7KZUILV703xdP
-         ZDTtQGdkI6OdmQvdOxVgBCOdvnZCjpDnixnJ28CrxKf+YZ+FIXJK5wHtsgvCdJHif0jE
-         wpq0yG1Rnms0ULntbXSbEw/qqs6LdYvaP7rLSqvqmIeq5nwqiRVI/7je5WM47LfKngNx
-         BwA9Q2sJLfxg5480HbDk2pLwdooYwtbgytp34iPV1ib6OymHzsMogAzWxsM2BRlXN0Rf
-         rLl8tQl4rf1dBZYAfPa56WQrh/UIw4UTY1JkaLfdGt0YPURZ4dnZv1cdKLqMmEh9LZBd
-         kgbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751539632; x=1752144432;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yT116BmQVYQp7TgXBQY166ymvqYjgN3gIl7mlb2d3wM=;
-        b=UYJausX8eSq0pAUPEDKwhXcUsJSPZaSOqYyjSaJloh/tVEuSBerAaFBB36BB8WkVlv
-         VohjShdz7+27T+UHdaWqZqSAu9DKINl0odD318bJ/3Ztns3BHB5RdEo/dirHEhSY0ma/
-         6S5FgBWGzSsVWP5OdAF30Fi0ZYBnD0fOemZIznProKXRqtdnxfGurhb2CYRlGFpCa7hR
-         4kliYk2SeuO5d/coS4A4Hc49AwFJvr+ya0QTECaD0ybiGOh6ZIMfE7Tan6I/nIVz+70b
-         A6VCsZxuAGuAAl3UI1eI7ayRRRWFlIh/1UkUN+5nwjv/5C8KMaWerUnYCue3Ql8EHvpe
-         Cqag==
-X-Forwarded-Encrypted: i=1; AJvYcCVEbrkv7b2GETlohwdySaalXVdlrZQegDUMt8Cz5AqSlTYR+xjWJSj3rR90fOh7NZOl7aoHxcg6x5liReFW@vger.kernel.org, AJvYcCVRoTlSFWIyLy/1bTxSf2i4AVFZxIMHFsAFgQr0Af3hFGc0q/XoCeT+hWho28RKifufxwXcJdgE4enBtkej@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEmUYILDNWNhDuatBWefZcD5Dxullk94aNakAkiOrHC6ysKjk0
-	MybisMmUbp02MV8qMadoXkCOKNHswJZUgMfpD/RAGQ37zYnXyLKHOgJFlAqVKSFj
-X-Gm-Gg: ASbGncskUcZIjhxUaMZojWspxYkLB5HWq4dVdaEZx9rxVnxUIC+1slMzIh0OGdsM+IE
-	p9UAWE3Drzm74ZBw8v7jaKB23C89PR+hq6l5l0PzDaIQPHu55KKzBA27aDhc//jMe5HR0QwyMVk
-	sZcv1r6/WdEDmBXbArNRO4viCXAYNeic+CMTmdmqfQk/cICp6hkYPuD3b5z1UqHfnMXzFZBF2VY
-	vSyQLLC1e9Dx7EvQUKEv/WL57Fnz1zh9nGqbzkLvdXOSB5itdbIN8gqDtfQUhvcXDTFHKULv0iw
-	yfiLP6uGHglxRovsfE++WtT/XDFhpb55blk4pkaeiiXrMx2FXPnx3QeO8Cw++DMh5AUnTvxt3w6
-	+efA=
-X-Google-Smtp-Source: AGHT+IE+BSY2N3Ksp1Ngu882oItJhHDV437LBfkyE/yfOf+Y7Tt3xVRjNgqMrrvyEVdLEqjOCjXpZg==
-X-Received: by 2002:a17:903:1aab:b0:234:f825:b2c3 with SMTP id d9443c01a7336-23c7a1f0e25mr31795975ad.17.1751539632373;
-        Thu, 03 Jul 2025 03:47:12 -0700 (PDT)
-Received: from [30.221.128.104] ([47.246.101.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb39b9f2sm162265655ad.99.2025.07.03.03.47.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 03:47:12 -0700 (PDT)
-Message-ID: <2ee5547a-fa11-49fb-98b7-898d20457d7e@gmail.com>
-Date: Thu, 3 Jul 2025 18:47:08 +0800
+	s=arc-20240116; t=1751541060; c=relaxed/simple;
+	bh=ZABOK8b+QwzZbmAhKCAKLBxM5FjbV2MkqXCb7Nc3FP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWv9BQQdlwpepPZIwBmuRfHAAkniiC0igzSUdgrmkRzBeJyxYWzCHKLdNJovrU/ZmX7j60u9DH6pLb3LtQT/L6rI8kHj2mn/T9lGdMzr1GOiYEochYvIL2Qd9nVQdHYzyuomcUR7GaLF4vByVtDc4+4MYMpNsECmjY1IqvBjZ5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clytzNWR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D6BC4CEE3;
+	Thu,  3 Jul 2025 11:10:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751541059;
+	bh=ZABOK8b+QwzZbmAhKCAKLBxM5FjbV2MkqXCb7Nc3FP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=clytzNWRUzM7fGRu1a0TdGEmSiAxxpwTm9eFWndrSiBjb/4SqqSfxQyKSdJi9hwqM
+	 x6k+Rz+o/uBd/VZjkx/yWx7DH7knP2tuJD56Fi46tOzPJX1nJBo1c6M9IIEn+KgOZW
+	 BtQd7aUKyAYgcVNunZrjSrW6pt8hbyAz878IfkPHbQv+BOzlGHUJk8MYN8Amhrhkvc
+	 M3/72GEujIo9yzbYEPU6yqVAmedeKqxuDCYSVrBvUZs5w3+6LC039HMBjdLKOYkzbw
+	 A52hBG61aZwuJnPaK2J2TpZbYUugN30phe2zm7jUqnMG1eNWTJPqFnKZtp8On3bfWG
+	 xpQCWW+NUM53A==
+Date: Thu, 3 Jul 2025 12:10:54 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 03/11] regmap: get rid of redundant
+ debugfs_file_{get,put}()
+Message-ID: <636f1d77-ebfa-406a-b428-8491dc95dfb7@sirena.org.uk>
+References: <20250702211305.GE1880847@ZenIV>
+ <20250702211408.GA3406663@ZenIV>
+ <20250702211602.GC3406663@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: next-20250626: WARNING fs jbd2 transaction.c start_this_handle
- with ARM64_64K_PAGES
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
- Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4 <linux-ext4@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
- open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- Linux Regressions <regressions@lists.linux.dev>,
- LTP List <ltp@lists.linux.it>, Theodore Ts'o <tytso@mit.edu>,
- Jan Kara <jack@suse.cz>, Anders Roxell <anders.roxell@linaro.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-References: <CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com>
- <2dbc199b-ef22-4c22-9dbd-5e5876e9f9b4@huaweicloud.com>
- <CA+G9fYv5zpLxeVLqYbDLLUOxmAzuXDbaZobvpCBBBuZJKLMpPQ@mail.gmail.com>
-From: Joseph Qi <jiangqi903@gmail.com>
-In-Reply-To: <CA+G9fYv5zpLxeVLqYbDLLUOxmAzuXDbaZobvpCBBBuZJKLMpPQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="T//lWT/MR1DKxAEr"
+Content-Disposition: inline
+In-Reply-To: <20250702211602.GC3406663@ZenIV>
+X-Cookie: Uh-oh!!  I'm having TOO MUCH FUN!!
 
 
+--T//lWT/MR1DKxAEr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2025/7/3 15:26, Naresh Kamboju wrote:
-> On Thu, 26 Jun 2025 at 19:23, Zhang Yi <yi.zhang@huaweicloud.com> wrote:
->>
->> Hi, Naresh!
->>
->> On 2025/6/26 20:31, Naresh Kamboju wrote:
->>> Regressions noticed on arm64 devices while running LTP syscalls mmap16
->>> test case on the Linux next-20250616..next-20250626 with the extra build
->>> config fragment CONFIG_ARM64_64K_PAGES=y the kernel warning noticed.
->>>
->>> Not reproducible with 4K page size.
->>>
->>> Test environments:
->>> - Dragonboard-410c
->>> - Juno-r2
->>> - rk3399-rock-pi-4b
->>> - qemu-arm64
->>>
->>> Regression Analysis:
->>> - New regression? Yes
->>> - Reproducibility? Yes
->>>
->>> Test regression: next-20250626 LTP mmap16 WARNING fs jbd2
->>> transaction.c start_this_handle
->>>
->>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->>
->> Thank you for the report. The block size for this test is 1 KB, so I
->> suspect this is the issue with insufficient journal credits that we
->> are going to resolve.
-> 
-> I have applied your patch set [1] and tested and the reported
-> regressions did not fix.
-> Am I missing anything ?
-> 
-> [1] https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
-> 
+On Wed, Jul 02, 2025 at 10:16:02PM +0100, Al Viro wrote:
+> pointless in ->read()/->write() of file_operations used only via
+> debugfs_create_file()
 
-I can also reproduce the similar warning with xfstests generic/730 under
-64k page size + 4k block size.
+What's the story with dependencies here - does this need to go with the
+rest of the series?  I don't have the cover letter or the rest of the
+series.
 
-Thanks,
-Joseph
+--T//lWT/MR1DKxAEr
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhmZT0ACgkQJNaLcl1U
+h9BEPAf8DB0LFqL5NdaFCsjUFaVUZAtNha6izHLsAORR8wvZ6E3XL4BZIm8qitBt
+JCCHm6wU50gQ/rZlrj2rEqULoLT+OC4JKB/kr7WQy/15mvdZ/HNgPKMwUlbIJ+lO
+47s5rhTkIAcKwmk7wyHooSbw3clpTZS+vEfigkKo8FM6TUe8ZaK1XLqhZkkTQoLj
+652+AyJTsyBgWFuIuwPgIvpko/WhAxc5oJTwaCRBBauxe1DSNno07xK1G7ChGhL2
+IFENR9cvsmnOzaoMo5y61Qcn+0vBjdxOOlG2PPDrAjQ+stmaadx2Q9hzuUv/HphJ
+fDRAb6ViWkWIqa7LoTf8hzYNYa1y4A==
+=XWgq
+-----END PGP SIGNATURE-----
+
+--T//lWT/MR1DKxAEr--
 
