@@ -1,132 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-53984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1453BAF9B63
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 21:58:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49170AF9B7C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 22:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7AE21893026
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 19:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6F6C1CA51EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 20:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562F121638A;
-	Fri,  4 Jul 2025 19:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E57C22CBD8;
+	Fri,  4 Jul 2025 20:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B/pENZnE"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CpLV6wvg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CEF20ED
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 19:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8812147F5
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 20:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751659081; cv=none; b=P5yuEtdQXN7yE4asHECxfwggIUykGmxrPL0Tdkn7JPR3RC8QLCKxFAR9ReiBJ8zyefxOXlxn2qukx0n3yr29/OWe8U1ME3vp5LUqO1OoQZMtXB0Kqbl/ENQ15jLwcc5dqdBn+AnacpqaxazsGPya933wMzoKB8Bmyb6yyMwe8XI=
+	t=1751659833; cv=none; b=kj/Oqu5/bNCxxfPs3j1BUkWxCahBElGm/1mj8PBkH6Fu1rAMocDPsp0Wedmm0Aza6q90VUlSjpPc4KnJWVA0Pfy3W5kympdHyNpsiGh4O8YSHGB8dpnk9YWRoT7VLKMLgIsx2iEwbFiajqo3Jjj1k8nw9A5WW4jkRFP1FVvbTwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751659081; c=relaxed/simple;
-	bh=vDmNgYH27jQ46GuPcGp/vbql8MFmUX33WjOkMO4B3NM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j8x4GxLaCydRUwS4yYzc7hCCUAfefH0tCnuXDyEoGGz3ywFuhg16TWZC3ebcqXASU7QNXYsf+nDlHPySIyYUd4HiteRoKH5ONyWrQXVHTEohbo5oM7Xmg8zcNJxmZWcR/OGjeVYzphp2M7SHYKHrJwYQyYcpem+kKlGjjVwi484=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=B/pENZnE; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae223591067so190532266b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 12:57:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1751659077; x=1752263877; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1BKOcMAgoIl3CyEeLpsaKuCswUQ3lICiZPOc1QxTAbQ=;
-        b=B/pENZnEV8ZXLOe5BFIoiAkhkB4UIhxmtS6Irc17nqNhrk0U+fEN5JW7xxQjkvEjhS
-         5oZoREshI/ZrC5TS7EMdLjQLMA6KfXimwjsg32opPpkNGindsDRcndyQMd+P4uMNK19l
-         KjZfPgBCwU/HSOUXcUqJXWIdHDWLLs9ZP29hk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751659077; x=1752263877;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1BKOcMAgoIl3CyEeLpsaKuCswUQ3lICiZPOc1QxTAbQ=;
-        b=hc0afMZVCZmtKqG93y8Ed3XUB7xxhiRwsIrmI7w6VUp21fouuF42ov7AOk4FR5y3J4
-         3RQcG7IKB8u2DtIMkD4mNdBUzMpS5z7om+0rNlc4QKJOuj8wNCIiXm5EGIJ6kguM9Ovx
-         mNli2zM3JFfJUPGaCmsnEtA67xRSTt99GRsSudPtMLD0KYRPqGIH3UdA5FgkK6SjcwF7
-         jrAIosN+ygy/Ks58cKEIv4+kzSGAMiQJT0da1RwXWWhm6nnP3lIIzqjPbACqWHa0TpmZ
-         gxhSk2l+UWTSPUWbF+5lmmWYT85r8ty6ObXIZKVTgCk4WDReEKY3Z6Yo01izadqt12dd
-         AT4g==
-X-Gm-Message-State: AOJu0YyUQnBhBfET+sQmmAbdVZahq/TzoqKwbZVnvl2Bpe0A/l2pV/+4
-	8ni4RK4VW80US7qchV4hZWnMGG/BL9SyulcU9re62tp4gy9E3es5pjPGl0Mkr4NSpJ0EFTL/kWM
-	gUYPv1os=
-X-Gm-Gg: ASbGnctGkOXBxjCmKi7+lwJezQG0N1QxT1QXc2rzObGagBgxyeW3Kmzu0RhxlwrNdHR
-	NBbKhJtQcrE821HRNXagDzhOuvSjL4pPhLuj7eVjIGthubX8TJC/gc8P1wqUSawbj7g49JcYlK0
-	Q7XUZhqbQ8vLxsyS3KRwLvdeI7q8YD00kO6/LTZqBrl3YwVwEDGagB3dyPCVrg06sBghiVOVImV
-	h4RaDZYYrMthp6VNFb8qP/9BwT66ez6w00XMPINeWmO1x3NUatwUtxkLdgkf2+YudIe9XPPy67D
-	DZJ5/2OJTqY1MECeFHwQA14n94XZgpSvcWJylUCuZKtpY/gHvxK1en7DWv8Z9PorcIghOiRHqlq
-	555DiTlwcHmT+ij3fMkvjHCKlwjG0KdE/YXo8
-X-Google-Smtp-Source: AGHT+IFJqD8Djmc8MyP7LrLBu2/Ly3BnjCCoIy4iYgjOgitaNcbAdVm9j4M05DiEvQBk7nxhfhGdlg==
-X-Received: by 2002:a17:906:584f:b0:ae3:f296:84cf with SMTP id a640c23a62f3a-ae3fbd8b224mr295346466b.30.1751659077068;
-        Fri, 04 Jul 2025 12:57:57 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b02a23sm224185666b.112.2025.07.04.12.57.56
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 12:57:56 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso2394007a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 12:57:56 -0700 (PDT)
-X-Received: by 2002:a05:6402:2683:b0:604:e85d:8bb4 with SMTP id
- 4fb4d7f45d1cf-60fd338632dmr3478983a12.21.1751659075849; Fri, 04 Jul 2025
- 12:57:55 -0700 (PDT)
+	s=arc-20240116; t=1751659833; c=relaxed/simple;
+	bh=73I/4ZDRPg+YXlVyFaN4zU5HfpKtQflbDl5HMS1BLoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oSV9Zf9QMF7u692gxfs6hiZ5qlTan/8qDfapEHTTyFS+VdxoZOHlZTN7DtDpkoY5M/Gd0FQG2SMls0I455YY3UTzyit28ZRRDMOuH0mQWAV2ltLtNnhU+PP8/WgMIPlTgDBfvI//mk9coIIDVW9FGwkZU1VYrMqLe+NrPsK8w4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CpLV6wvg; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=ca8LT9QZTBTIb6HKyszosTRGb2SKtCISAIjzJYBxmQQ=; b=CpLV6wvgzkkexpZDGR2DRlXFY8
+	Cghfjtx/8IfnGNnrztwtHP4hXflY0vRIz7umiO9p3jl+Gw+TXmd5Ajiezkbr+PAW3z7DspMJ19/Sk
+	vlqYUubzHDe0kO8COllXmzt1GGJkTKAcUS26AVrLZzIWNBAbdR6ECA79gp9TsFMnz5nlxg2asEDVB
+	Z/WH5/ftKFSUBua9QNgKEdgumA9ceMZjdHD9KSJqXahcnWkeVWxHX7xo80q59mWzf7rTJ2AQbWwew
+	uOmcyCrG4mvuFvCXm/rR2gyu8zgv9JNHGmQk290Ky5DAnCHMN2cyzXkxTj1lH928l7HrCioUwlbb+
+	HKqDZAWg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXmjr-0000000Eleu-3PnP;
+	Fri, 04 Jul 2025 20:10:27 +0000
+Date: Fri, 4 Jul 2025 21:10:27 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Justin Tee <justintee8345@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, James Smart <james.smart@broadcom.com>,
+	Justin Tee <justin.tee@broadcom.com>,
+	Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 11/11] lpfc: don't use file->f_path.dentry for comparisons
+Message-ID: <20250704201027.GS1880847@ZenIV>
+References: <20250702212917.GK3406663@ZenIV>
+ <b3ff59d4-c6c3-4b48-97e3-d32e98c12de7@broadcom.com>
+ <CAAmqgVMmgW4PWy289P4a8N0FSZA+cHybNkKbLzFx_qBQtu8ZHA@mail.gmail.com>
+ <CABPRKS8+SabBbobxxtY8ZCK7ix_VLVE1do7SpcRQhO3ctTY19Q@mail.gmail.com>
+ <20250704042504.GQ1880847@ZenIV>
+ <CABPRKS89iGUC5nih40yc9uRMkkfjZUafAN59WQBzpGC3vK_MkQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704194414.GR1880847@ZenIV>
-In-Reply-To: <20250704194414.GR1880847@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 4 Jul 2025 12:57:39 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgurLEukSdbUPk28rW=hsVGMxE4zDOCZ3xxY3ee3oGyoQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxygtdRLn7SMmYV2fo9XTnfHt5ss5Vt2k9qjOp1GE39Tvhk8iV_Q8Ucafs
-Message-ID: <CAHk-=wgurLEukSdbUPk28rW=hsVGMxE4zDOCZ3xxY3ee3oGyoQ@mail.gmail.com>
-Subject: Re: [RFC] MNT_WRITE_HOLD mess
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABPRKS89iGUC5nih40yc9uRMkkfjZUafAN59WQBzpGC3vK_MkQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, 4 Jul 2025 at 12:44, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         What if we steal LSB of ->mnt_instance.prev for what MNT_WRITE_HOLD
-> is currently used for?
+On Fri, Jul 04, 2025 at 11:33:09AM -0700, Justin Tee wrote:
+> > Sure, but I'd rather do that as a followup.
+> Yeup, that’s fine.
+> 
+> > Speaking of other fun followups
+> > in the same area: no point storing most of those dentries; debugfs_remove()
+> > takes the entire subtree out, no need to remove them one-by-one and that
+> > was the only use they were left...  Something along the lines of
+> > diff below:
+> Very cool, thanks!  We’ll take that diff too (:
+> 
+> Also, may we actually move this enum declaration to lpfc_debugfs.h
+> instead of lpfc_debugfs.c?
+> enum {
+>         writeGuard = 1,
+>         writeApp,
+>         writeRef,
+>         readGuard,
+>         readApp,
+>         readRef,
+>         InjErrLBA,
+>         InjErrNPortID,
+>         InjErrWWPN,
+> };
 
-Ugh. I don't hate the concept, but if we do this, I think it needs to
-be better abstracted out.
+Sure, no problem...  Your driver, your preferences - it's not as if
+that had any impact outside.
 
-And you may be right that things like list_for_each_entry() won't
-care, but I would not be surprised there is list debugging code that
-could care deeply. Or if anybody uses things like "list_is_first()",
-it will work 99+_% of the time, but then break horribly if the low bit
-of the prev pointer is set.
+While we are at it, handling of debugfs_vport_count looks fishy -
+it's easier to spot with aforementioned delta applied.
+        if (vport->vport_debugfs_root) {
+                debugfs_remove(vport->vport_debugfs_root); /* vportX */
+                vport->vport_debugfs_root = NULL;
+                atomic_dec(&phba->debugfs_vport_count);
+        }
 
-So we obviously use the low bits of pointers in many other situations,
-but I do think that it needs to have some kind of clear abstraction
-and type safety to make sure that people don't use the "normal" list
-handling helpers silently by mistake when they won't actually work.
+        if (atomic_read(&phba->debugfs_vport_count) == 0) {
+		...
+	}
+	return;
+is OK only if all updates of that thing are externally serialized.
+If they are, we don't need atomic; if they are not, this separation
+of decrement and test is racy.
 
-Yes, that tends to involve a fair amount of duplication - exactly like
-<linux/list_bl.h>, which is obviously the exact same thing except it
-uses the low bit of the list head rather than the list entry. But if
-the uses are limited enough - and they obviously need to be limited to
-things that never look at 'prev' - maybe that duplication can also be
-fairly limited.
+Note that if you do *not* have external serialization, there might
+be another problem if you have the last vport removal overlap
+with addition of another vport.  Or, for that matter, if removal
+of the last vport on the last HBA overlaps with addition of a new
+HBA...
 
-I suspect we should also have another level of abstraction - we do
-those "low bits of pointer" things often enough now that we probably
-should have actual helpers for it, rather than have people do the
-whole "cast to unsigned long and extract/insert bits by hand".
-
-But that's a separate issue and largely independent (except that you'd
-introduce a new use-case).
-
-            Linus
+Unless something has drastically changed, binding/unbinding of
+a device to driver should be serialized by drivers/base/* logics;
+no idea about the vports side of things...
 
