@@ -1,78 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-53979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3EE4AF9AEE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 20:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1AEAF9AF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 20:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715B5547B52
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 18:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15A411C81D2F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 18:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576B91DF725;
-	Fri,  4 Jul 2025 18:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4B7217F56;
+	Fri,  4 Jul 2025 18:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BkOsofo+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nkkLNYgu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599512E36EB
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 18:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851F41DE3B5;
+	Fri,  4 Jul 2025 18:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751655333; cv=none; b=UmVjAtK5T3O3EYIaiqdf/+jELbYS73Vt9BdW+oMOhYOdTLyEQ2EcFkaJZGbXSLdLhEt9lcSpI6wt9QjXx0NiJA2r7FcN1pDyxVAfWU8aVlnXw8CSyfjb5BxQziJSOh6rvRCegQnZQFFpFlpdRWfweIpc2lyJtQQ6hFB83HTpL5M=
+	t=1751655537; cv=none; b=QLJp2wy4D/EePYYDKwqVxJNnV+yqkeip/dVtQOiyiotDupUjke4q5+Wmr2yrZXc14znAycF34yFKj+pQ++tr/KmlWOcXHECXpYJ/OlB3EIhf+dXm9D95oesQ1uUioCNI2aVa/Md8NrhGloQW8ADdUhIhDW8Yw5xDjvlH1TvecdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751655333; c=relaxed/simple;
-	bh=Fk5jakoXn2e6nt19R7Pr6NifkZ40uMcZscnajWxh3S8=;
+	s=arc-20240116; t=1751655537; c=relaxed/simple;
+	bh=g/rKyV7VLe4C2HnR5afRx/OqcQOwCYib/qRjPEkH9es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gm5la4awF8fI8JrsP/NnUP2taDAAWrlwypXiqSXoYG8t+iQcePo1K11THLYv8NAhIC+eXJFWfpvPlln/GPwazlH+OWPEmlo2HFUau5eiQjIQtXxWa1niCLWGNoDtpktQp6jjBLNlTNZd26175/xszdf7rnrbF9nWJ7Y/y3dvFQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BkOsofo+; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751655332; x=1783191332;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Fk5jakoXn2e6nt19R7Pr6NifkZ40uMcZscnajWxh3S8=;
-  b=BkOsofo+qBZhnpOHQCEDcCJXLUCr4P1SomODfWGE5tOORF/Kx6It+uEb
-   8eZ0PXOtnIWKtfuFXCBHue5lgCEJeGRmI6eGpjIrecJk7bMFKLGOBw4XP
-   +WN/vCcLPK/nKSi+57IHqWuBn3NLfGYg1S74JRl9T6TVc8ZzR+wxPArBg
-   cc6r3NqXfxwgNBZj38eDQ2doAohexZapkBpgJ0Mp/hu4WfuFu3zcQjYbo
-   yG7WjHVkO9FLvUDxKRWH3/Xaht8vem+Kcyr8rKL9vIunEuQ4ChlOonEiT
-   ZO8+Uyyna63DTVKw5Vb3ciAquWiYEeBCHxK/SMrKHpfsAK6NOWdnMyrDX
-   A==;
-X-CSE-ConnectionGUID: p3NBu0brSD2wNTtWLVTOyA==
-X-CSE-MsgGUID: Wf01ISbBSTqcQUsPe+eECw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="53209019"
-X-IronPort-AV: E=Sophos;i="6.16,288,1744095600"; 
-   d="scan'208";a="53209019"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 11:55:31 -0700
-X-CSE-ConnectionGUID: I2SOwTtXS6CzpSiaIzlm5w==
-X-CSE-MsgGUID: bVfM+X/qRw6J2HQVkeV0Zg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,288,1744095600"; 
-   d="scan'208";a="191869526"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 04 Jul 2025 11:55:29 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uXlZH-00040F-1B;
-	Fri, 04 Jul 2025 18:55:27 +0000
-Date: Sat, 5 Jul 2025 02:55:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jhe2MiIwlT+EEIajFjrXYeZnFh+Fx/CRsPIvqcSLAtrlwa2HoZg+ey4dMyS/I02zuAPNjjBkM9EVBNAyDo9QmbHv1+sDxUnNaa6ecDS273brODPa1m0k8JZVvXaaS9nzQGzNcT1IbgsbK88erJGqcXPfnFAnn7xsoQGMjmyAunM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nkkLNYgu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7bVe6j5MuC+VkuFyICwiR2qNPRIfLIced8O4pJKdKJM=; b=nkkLNYgupLUB0HceleDG4+xZ8K
+	8+rCVo+Wnv1djgMWa/6V0IIKMt61rZR57bumIJwXVxyTvzBmRpWqENoLf9A4rsgK9G8QaCowiYEnX
+	O24sSvtcYTqooU30yfDhfbgQVHJ+sq6gM44CNK2i6w5caEXljf3eOCNknwWrWKAsufevfDcebvsw+
+	ACaIHJEIO3H1mo90JKdImUkUjecb2aYbrBJnQkGA0dMa8oD/aL9DSdy7P14jVtVk+SOpTE7x8j5Hg
+	Bm7puEHd08gAlXZdQ+21n0EwF/CHmzy1G54pkDJctj3LMXIa9LabTK6XGlrLKm/cqHmFgztnpSNsL
+	JbihNqAA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXlcC-00000000PPj-2Fpn;
+	Fri, 04 Jul 2025 18:58:28 +0000
+Date: Fri, 4 Jul 2025 19:58:28 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, John Groves <John@groves.net>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Miklos Szeredi <miklos@szeredb.hu>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
 	Joanne Koong <joannelkoong@gmail.com>,
-	Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/1] fuse: Use filemap_invalidate_pages()
-Message-ID: <202507050209.rVvcbaHY-lkp@intel.com>
-References: <20250703192459.3381327-2-willy@infradead.org>
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 18/18] famfs_fuse: Add documentation
+Message-ID: <aGgkVA81Zms8Xgel@casper.infradead.org>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-19-john@groves.net>
+ <aGcf4AhEZTJXbEg3@archie.me>
+ <87ecuwk83h.fsf@trenco.lwn.net>
+ <aGdQM-lcBo6T5Hog@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,36 +84,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250703192459.3381327-2-willy@infradead.org>
+In-Reply-To: <aGdQM-lcBo6T5Hog@archie.me>
 
-Hi Matthew,
+On Fri, Jul 04, 2025 at 10:53:23AM +0700, Bagas Sanjaya wrote:
+> On Thu, Jul 03, 2025 at 08:22:58PM -0600, Jonathan Corbet wrote:
+> > Bagas.  Stop.
+> > 
+> > John has written documentation, that is great.  Do not add needless
+> > friction to this process.  Seriously.
+> > 
+> > Why do I have to keep telling you this?
+> 
+> Cause I'm more of perfectionist (detail-oriented)...
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on mszeredi-fuse/for-next]
-[also build test ERROR on linus/master v6.16-rc4 next-20250704]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/fuse-Use-filemap_invalidate_pages/20250704-032629
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
-patch link:    https://lore.kernel.org/r/20250703192459.3381327-2-willy%40infradead.org
-patch subject: [PATCH 1/1] fuse: Use filemap_invalidate_pages()
-config: loongarch-defconfig (https://download.01.org/0day-ci/archive/20250705/202507050209.rVvcbaHY-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250705/202507050209.rVvcbaHY-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507050209.rVvcbaHY-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "filemap_invalidate_pages" [fs/fuse/fuse.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviews aren't about you.  They're about producing a better patch.
+Do your reviews produce better patches or do they make the perfect the
+enemy of the good?
 
