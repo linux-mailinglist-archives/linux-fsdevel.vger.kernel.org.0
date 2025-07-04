@@ -1,105 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-53894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FDB5AF87B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 08:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89645AF87C0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 08:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3AF542F10
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 06:10:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C27054A74A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 06:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667E3222561;
-	Fri,  4 Jul 2025 06:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870AF223DEC;
+	Fri,  4 Jul 2025 06:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PTk2Oq3y"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="altmTaNn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354A31DF756;
-	Fri,  4 Jul 2025 06:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE961DE889
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 06:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751609424; cv=none; b=ky/6EvSLtWhV8tZXVbP0w0fyPG2tkvcvKkhb+7ivKIub19u3e6rfnIIcfhdMNM9CzAFZmflIqjjpE8vIzSuPBECoboPQyCXZA2wXnPvLr1qk7UEeZw+QelUuv9Xxrt8WWTYcT0SzyAkzAzqci1bITE2gvGHYgXBPnuO3RiuerBA=
+	t=1751609520; cv=none; b=dZ5NJtKFN78dY+Uzj+y594PVg0KlNPnUMhD8noXY2kDfjsIYqgcAdcQLLNRckEvH0n9THQUMRlgkB4dAKiDZvUyHt59mApCP46Lu6eaAtRPDOQiGuv9ITAVFQjlvjmZyYoQuQEe8Bw2WnlZye1W6DgQoK3ZIjg6VbOifalPi5Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751609424; c=relaxed/simple;
-	bh=CxHAxktoHJAyt0G6QGsxafp1nKxtEgwB3RWi1pJP4bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MjC67l+0zEuowFYvBwMhxfzbDz4gCqiBRJaEyRAPq4YzrFcQf6ulaXGad5NtrUpDOOdBrAmLKhhsx148Mt+aaqf72SkYkxWVF33XwGkwNXNlhy32If5vkbHZ6d0ono2WCKP7ttiqZa1dG7K6XrGKqwhMR+O8O0jqR7nWyg8gJ4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PTk2Oq3y; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=kQKcvzRgFOqKKs8mwcVW/CGTdsDvbDbBCI43oUXv5xU=; b=PTk2Oq3yzW5wUfahuvMqEMtn2k
-	GghuMT40r9jeqjmT4h1NctLafhvKGd4CbVxJykbRO4v4pXft4/cpWJ3F/Nhjk6NMUt0w1Q0ngAfqj
-	CqK1hfuPJHoqJmpdETP3+6raUjM/ROFVBI8paZ0FFeUrK5b0s6v8OAfwWuYGxDV8xDiCEqkj125Bw
-	Wd3hx1+/dnm0gwsgU9vQ8cj159oOB5MSu7ejUyvRBlXzg4B7DMdNsQbVpD6edadUCwsuc27H7LzKz
-	6GvtrXlT1xHBzboxPPPcS7Aqi/xiOdIOJm7Jfd6vFYtOuNqCMrDGFZTsq+pT3c+a+A0VKHub25FXD
-	B40sBv8A==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXZcc-0000000FoJ0-1edk;
-	Fri, 04 Jul 2025 06:10:06 +0000
-Message-ID: <3dfcf93e-ae48-48b4-bfc5-ff3146908adc@infradead.org>
-Date: Thu, 3 Jul 2025 23:09:59 -0700
+	s=arc-20240116; t=1751609520; c=relaxed/simple;
+	bh=hMc+aIJ7kLoH+UQ/kXDlMN+l4/xBGX0Li+n3wuxBfzo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UIPwOjT2Dkn5EsHktv58M/FBfShQ2TMxrrT5ubR9NogqJ649F2zTYLlxFQnCpXCa8SqD3OdpllNedTP/xbmiMqApRx9xLaKD7wqprJ81kpelbTVlNW+wxOAK9dc2UYT9lgmo+ckxSN9IbG2G/FffA4IUoP1JfPf56BkljEbEZo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=altmTaNn; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a58197794eso436761cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Jul 2025 23:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751609518; x=1752214318; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hMc+aIJ7kLoH+UQ/kXDlMN+l4/xBGX0Li+n3wuxBfzo=;
+        b=altmTaNnbkjooZ1sQaftpnXOhxjh6Mxez/rhzOAwQTfYfzEW46eEV5ebvpZ8gJtfSI
+         MloRb/8dmwLzQyjwds02vC5hGjDUkOwBwNBWuvxiO7N86QsYx54BLxhMNG++n94hWGc8
+         SBIooZOXGCXGORr8PLwREEU1mF81ai9GGfbHmEnt+RPUr8ha5+uogTHA/2IBVwBOF40q
+         yqK5eeIrh5U3VM5y4ruBPMubWumfXgbaxhhDe1NujajKWSuiJf2o5hZIkosUJaQ0fulX
+         VL+auRxav6NVMHE/V1zrIEolI5oHTeDuOeXM/a2QjthXGpVDAzf8pNbfDkBZWCrhEP7H
+         xl/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751609518; x=1752214318;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hMc+aIJ7kLoH+UQ/kXDlMN+l4/xBGX0Li+n3wuxBfzo=;
+        b=GO+dPJ0vk8rEXNf8OQZOSUv5LYjV/8yM9sqrZLeAptTpiC70GrTOIEp9AfhosUDdXe
+         2rQyev6K3UDs7ZzrM9Vc3JoOXHVHWH+jiocnFDBXVFrBviLKyE8kNsieS/MqRq60itod
+         wZEHp5bBTUAVZCYfFNKVIBoLZQ2RIRti+EGP8hMtvKGJFfKu1wrogpgUoFPde+i78Bw+
+         zAsfWkpFaYG7Op97fsFeF34WdXOSC002YHBZbANC2gF8+QqI4ws/rt/v1xtPNLFxJGHR
+         ACDoqz0+e/zKzvz/xOuFvUG4CBPcOpKpsgVJue0K4AP8oP61wrRExgeoX3sbZGIX2Tu8
+         4ruQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYSh3sAOSQuj5oE30q5X0yoWnDu9kaJhEqS2gqhCM1VAQhi/DkvrQU5O9s0HJCJ13z1MWIpvuB6UaXPmY9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUITz0tae3ShR6g+TEegG7NEW5cus2bm1Rt2Ha4h1PDW8IfYW9
+	J1zZxQLTqFnd0yYpA9i1UNAOxMqJyn7krX1WM8NWvts1hKepsbTzT5sD42+QqvMqm1U34la1V+D
+	J4VwLYUUikNh4egYLrkwSV4ek78+3WinXkqJzDRD2
+X-Gm-Gg: ASbGnctOfbSGqXbqB3KQjZ4s9mn359SsejSVATTPEVpuEBRVxetVg7G0oImanFoYJvL
+	ZccaZSAELVQNk1J77FwUCKwsvY18kWOBLFX7DdDsOaSI59id3+SxBgE7KaE+Hosqylly9WPhNUG
+	j5scWXyP5xggHPqiGcz4Jk8Yr+wdTk/eciyrD4TbLysNrHoTE/68jlcpIKl1UpruQOYJA3e9uPF
+	g==
+X-Google-Smtp-Source: AGHT+IGGsgK5UrMb+CWNMeCqfh35qQjYAaPkxgrs/2huKaQcGjOWFhk54xqRPjFJ34czRDh4/7okGhbn4if4HaXCIQ4=
+X-Received: by 2002:a05:622a:7291:b0:4a9:95a6:3a69 with SMTP id
+ d75a77b69052e-4a995b57f4amr836381cf.8.1751609517865; Thu, 03 Jul 2025
+ 23:11:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V2 18/18] famfs_fuse: Add documentation
-To: John Groves <John@Groves.net>, Dan Williams <dan.j.williams@intel.com>,
- Miklos Szeredi <miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, "Darrick J . Wong"
- <djwong@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Amir Goldstein <amir73il@gmail.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong
- <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-19-john@groves.net>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250703185032.46568-19-john@groves.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250702135332.291866-1-aha310510@gmail.com> <693725d9-a293-414f-a706-f77446e335b1@redhat.com>
+ <CAJuCfpHrJGrYcfchz93t53gQjhu4nCrcBYK44LTG1DxWywu5Vw@mail.gmail.com>
+In-Reply-To: <CAJuCfpHrJGrYcfchz93t53gQjhu4nCrcBYK44LTG1DxWywu5Vw@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 3 Jul 2025 23:11:47 -0700
+X-Gm-Features: Ac12FXx8vIiJs7EF8OTIFy6KyUzCKGVn2oXdl2K2lmYzi7o71AH39rIWUEsNO5A
+Message-ID: <CAJuCfpHi_Stt4H1DFSgjEJ=pduYbR3keZqAozLcxBReHjjHiNw@mail.gmail.com>
+Subject: Re: [PATCH next] mm/maps: move kmalloc() call location in
+ do_procmap_query() out of RCU critical section
+To: David Hildenbrand <david@redhat.com>
+Cc: Jeongjun Park <aha310510@gmail.com>, akpm@linux-foundation.org, andrii@kernel.org, 
+	osalvador@suse.de, Liam.Howlett@oracle.com, christophe.leroy@csgroup.eu, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	syzbot+6246a83e7bd9f8a3e239@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 2, 2025 at 4:34=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Wed, Jul 2, 2025 at 7:44=E2=80=AFAM David Hildenbrand <david@redhat.co=
+m> wrote:
+> >
+> > On 02.07.25 15:53, Jeongjun Park wrote:
+> > > In do_procmap_query(), we are allocating name_buf as much as name_buf=
+_sz
+> > > with kmalloc().
+> > >
+> > > However, due to the previous commit eff061546ca5
+> > > ("mm/maps: execute PROCMAP_QUERY ioctl under per-vma locks"),
+> > > the location of kmalloc() is located inside the RCU critical section.
+> > >
+> > > This causes might_sleep_if() to be called inside the RCU critical sec=
+tion,
+> > > so we need to move the call location of kmalloc() outside the RCU cri=
+tical
+> > > section to prevent this.
+> > >
+> > > Reported-by: syzbot+6246a83e7bd9f8a3e239@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=3D6246a83e7bd9f8a3e23=
+9
+> > > Fixes: eff061546ca5 ("mm/maps: execute PROCMAP_QUERY ioctl under per-=
+vma locks")
+> >
+> > That commit is not upstream yet (and the commit id is not stable), so i=
+t
+> > should be squashed into the problematic commit.
+> >
+> > As a side note: the patch subject of this and the original patch should
+> > start with "fs/proc/task_mmu", not "mm/maps".
+>
+> Thanks for the fix Jeongjun and thanks for the note David.
+> I'm preparing the next version of my patchset and there is a much
+> simpler fix for this issue which I'll implement there. Planning to
+> post it tomorrow.
 
+v6 of my patchset is posted at
+https://lore.kernel.org/all/20250704060727.724817-1-surenb@google.com/
+I reworked the last patch to address this issue by narrowing down the
+rcu read section to query_vma_find_by_addr() only. That should fix the
+original issue.
 
-On 7/3/25 11:50 AM, John Groves wrote:
-> Add Documentation/filesystems/famfs.rst and update MAINTAINERS
-> 
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  Documentation/filesystems/famfs.rst | 142 ++++++++++++++++++++++++++++
->  Documentation/filesystems/index.rst |   1 +
->  MAINTAINERS                         |   1 +
->  3 files changed, 144 insertions(+)
->  create mode 100644 Documentation/filesystems/famfs.rst
-> 
-
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-
--- 
-~Randy
+> Thanks,
+> Suren.
+>
+> >
+> > --
+> > Cheers,
+> >
+> > David / dhildenb
+> >
 
