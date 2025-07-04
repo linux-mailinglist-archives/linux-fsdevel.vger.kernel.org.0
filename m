@@ -1,233 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-53965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787F7AF940B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 15:26:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C48AF9463
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 15:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0FB63A803F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 13:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD223188AB6E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 13:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBAD2FCFD1;
-	Fri,  4 Jul 2025 13:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C2B2FCFCB;
+	Fri,  4 Jul 2025 13:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fu135VJ8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfEBFn0H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C682FCFC4
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 13:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D02B1DAC92;
+	Fri,  4 Jul 2025 13:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751635362; cv=none; b=QYm0wHf8ahxCbCfMwv93wHAAeEfbt/7Mivr0OaSru4P+LcDOLgcnXYixTDtGDfA+Q4zqVLyk7PuMKGzUG/uEd88ZO5AhqVS+c6eTi1whYu/O1+LzxS4vfXHgCAz+Ww75UQPXWwFsKKsNstIAnfZwqXp7c3zsxc31xVX3KC6Rb04=
+	t=1751636408; cv=none; b=BI8Nz7gl+xnC9+lYVbMSyJAbGmjE+FySsg5yKqB5Ensbo3c5i6rBGgcww/H/rosu1goRxOdtlhSjKlimnhbJuPPyRe8uRvxfPlayuXuMUZ1bHRgwbqGAJDt7lhQtJMxmh9rJTTNyAmhfVQ5UeJZi1I3Y95qwymfzt7VYtV7sP9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751635362; c=relaxed/simple;
-	bh=NZwEDTKG16s4GLu3/3kVH1yKX1Wi2eX9GJGCc1Q3C0E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=P/saVarVBDnkbUqAhVvFHORmfp9igV7DGmZGAapo5Ic5lrGbA8EfZFdvHnkjd7Yr8gTrOBvzfOlO60hp1CwzGyzkyvDu85RPPXaiS1TpLrveGCFpUusSnHg9w+aVytv8zEGACO+i+VpRbHjdZjTkbB/qfLBoR71JPMFgl/aq39k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fu135VJ8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751635360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iS3p25tHU3RM4I/3CZVdnqBFJoVJz2HfsGdXG6RAfbg=;
-	b=fu135VJ8cBm1lPRfgLKh3luJj1wqzmPmCb0DyOTheUuJqOWGOVBF/c2rQs1tkepTxkf/Cf
-	9nIjPgNpHgKghi2TTXW4NHO/doDMOjDCbJxe8BgsMMgh6g91mejEq9+5Vzcpz1IRwf7tbw
-	PnrNsw1BNwIx7juvmrcdOqi+jhCcQA4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-593-vc-CYE-zMaeeB4ulTUp4ZQ-1; Fri, 04 Jul 2025 09:22:33 -0400
-X-MC-Unique: vc-CYE-zMaeeB4ulTUp4ZQ-1
-X-Mimecast-MFC-AGG-ID: vc-CYE-zMaeeB4ulTUp4ZQ_1751635353
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451d5600a54so7710945e9.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 06:22:33 -0700 (PDT)
+	s=arc-20240116; t=1751636408; c=relaxed/simple;
+	bh=x7xVEMSsXXsnT+LLSekeh57Svi1duY+nh1PdFmeqLGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KkWgUwixPymdB5aIl3CTHpVNsbIXXwB+y22ASJYQbIxTvNwSJrY1AFJEsmMouFTcKBziXaua03npA5hEPe1F3W9doUrg28tTRT4PzyXImzAceOjmhVDrI4rxcGP/Yo9cAEk6pqUSqLz2QtTIBYulLd5EHSBNb3aJXqBPYA7s8zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfEBFn0H; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2ea65f5a0easo726354fac.1;
+        Fri, 04 Jul 2025 06:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751636405; x=1752241205; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2ggb97YnCGQscprdaRiD3aA04R3MJar4CeMJyfUEVTY=;
+        b=XfEBFn0H0srLeTRSPK4w37IW6+b3+oBDhpTgp9SCvVnsXWNkS00K8hcH1YV2ol/Q3O
+         LJBECX4gNvNRjI3f5041tgHaQi55k1ImpFXDQsHWfq5FybCGtqfnSYD3hC+DTKy2aQ9q
+         7BZqfvDR92hP0/ikKAQ2F0r1fHsJv1cces0Hv39btwOZeQ0U/LFg4Xa64VpQW0cNBCWG
+         PLlj2ye2TEub1HWAXeW9ghT/RiBb0ycRzlfVC7FnTdLuHYiDlUG6HQA2eesc/swaRBWE
+         trLylb52zRzgT148HUv2jizo9i7zbH+5Ai7T2/ep/RaOQwkLz8S85h9W3kAZuz1VhMTY
+         3gKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751635351; x=1752240151;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iS3p25tHU3RM4I/3CZVdnqBFJoVJz2HfsGdXG6RAfbg=;
-        b=cUNy8SBkbhhSJWz+rWCPBKiz8jI2ZCXseBgs9DL6CECLpbMUPFosNxn1384Uw+uXt2
-         dr/Zy9Zmy3FHphgJex+VAZ8H4dl+BEiwSpCKCM+DEG6r+fgioD2hzP/M0VZ9Y57gkgZD
-         YYOqcIvXr37RDElNC0Uik7zO1QIpUeWzb9xFfvnsx68Bdl2OeSKi74qYzlv7OPz74kfU
-         DmNUncoIDgBUODIUdSgsZucjPerbTa7sciFV7VrqQJrpIMNdvPd/XYtwrt48HY0wOEqH
-         Bimk/qbJgCKSf7X3EVXn/zgJ1LULm8jlESbtNJWwa+p06l9VrOZmYqukm2+KF4+qYqyo
-         TflQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9QF7F5jKpY9NrSOZENuwzR8JOongTz6aNiI959C87cfpffACGgMyoEKh56xFHGIrVlUFpoGeyTdzORm87@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeoENFc4FaKyiwwCRmwdVk6hBFjyyOnkOQ3V7Cvn3RrmRbJJFZ
-	UMxF3V3do9Z5JVYdVWzyTTKcMLjEmLoNR/FzE421hFMzWb8GQMBTa6fSaP2HWLUgH7HnLErNRDL
-	CPbxcGAVhmIZixK9xJDquuubucJ0LVptdxO812AqyrNDsVpKdYnFb+nu5bLC7TQY6TS4=
-X-Gm-Gg: ASbGnct4MtWeXHxpHwMNbXDenx1f2xjFgogiPjGhpHgAF1R6zoKdGM8MmpKFOu/bp69
-	ie/pSrPRbVBWn4KTQnU8Z4OBWELl3ZOHOsJv/mISxSNOrDTXoEEbgne3VosOm2N0d4UF7CzbpX0
-	FbpgKjoHTZz2KVSy/K0CUaVdZGiMrw6z+tI1dNxU696RUClEfX6oZSCFkO1/h6A0ysR1ZhhQJxM
-	eR+jbOKLbI8ZL1InGbqNi4+IiIWiBNzUEfjeR6/r3XChYf2IOrJS6k/HlxDRKexQvNOV0Bw6DEV
-	JqQa7Qa4wLpma9uYCINP6tXOZfJmcBddoGz7ozIdAyWF0f29N13PlOonFUTjNMTLFR9P56yZMea
-	SIknDH/dqqauImtfEuUhXGH7MS8oRWvDgv3jQwuJ2MJLf9VI=
-X-Received: by 2002:adf:eb4d:0:b0:3a4:f787:9b58 with SMTP id ffacd0b85a97d-3b496619e79mr1937388f8f.58.1751635351405;
-        Fri, 04 Jul 2025 06:22:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRARbbUWKXhwf/Qzsz+yNJbGOJQ/fx81Tbz4PDE6rtFVVnp8zr/goOYhsUspYRzJ16F+5PYA==
-X-Received: by 2002:adf:eb4d:0:b0:3a4:f787:9b58 with SMTP id ffacd0b85a97d-3b496619e79mr1937351f8f.58.1751635350955;
-        Fri, 04 Jul 2025 06:22:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2c:5500:988:23f9:faa0:7232? (p200300d82f2c5500098823f9faa07232.dip0.t-ipconnect.de. [2003:d8:2f2c:5500:988:23f9:faa0:7232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9bde954sm54847765e9.33.2025.07.04.06.22.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 06:22:30 -0700 (PDT)
-Message-ID: <36a8f286-1b09-43bd-9efa-5831ef3f315b@redhat.com>
-Date: Fri, 4 Jul 2025 15:22:28 +0200
+        d=1e100.net; s=20230601; t=1751636405; x=1752241205;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ggb97YnCGQscprdaRiD3aA04R3MJar4CeMJyfUEVTY=;
+        b=SMkwwmtHib09y+f3LoZk5uDFkjzNLRpNx4pdabcJqkUrKzgfqoyulyPdqt+SpW91vO
+         Co/C3HoO51zA53eulBmtsiaInty/dvX3rduz8SPEfJNYoCb0mVVQJeQsoW9oVaEyjRFz
+         EuvRhLvYdva3J/AWJkscwnKvC04PGNSLkdNS4lmiYWkDNuYZb0bpskg7pTG7N5LT7y5X
+         +36ICP9Dpxkf8qsnjvbl1HdlkfSpx5TNQgrMeh5tqO3z7eUlXDP/e4MVcLXdyPv98dcy
+         0keoyiFwTIlHUofq0eKjR7CUEAIysLJJNxjcOJZywOsKAS6tt0DOvB30Oxd7/q//XGp1
+         7U7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVd5u1elRgq3ugxvuFE0pMt0Ha47CPjycUk2sqr4XhS0nd1IEUcETAKx2aNcECBTs7ExOQCqxxxxl0=@vger.kernel.org, AJvYcCWZV72f9K7/Wx9Abwb5NTNa4/CY/db9JJv+VeBsVHZEmYZnj/4iB9UrSAV6d22CpVic2NL83NzXBLuLshTM+A==@vger.kernel.org, AJvYcCXUaMpJ8g+AeBA8J/hI1b5vtpaevShpMvdTARUqH4sdaOfntSIO4MEt6YuPx6xyUP30nIU80XD7x2Ka@vger.kernel.org, AJvYcCXXUbOhFk3VqRLG4WhdWrCFSg0C/RhK2QSsRtK0blAc6zsomorDdQ7o6xzTwG7DZi5Ty5y+wQD31U9TwjBT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH7JmbNf5p/OZCfuHKxmo3PmVBdt3Lo0Fdtc3FfaOR0waAd68T
+	qK3eObfjDE+74OnZ/AA1hJOe7HhLd/5r/wkkHM/FOv5s8xkg/dZZcNmi
+X-Gm-Gg: ASbGncuJvyWmQooERHDrPymvcUtharQTSd2Wd+3jiIjO2lJbIcUrtP3wYZlUd2SDQIl
+	2zmtrePq1C254niCNQh3FpTM4zz01Y9vdgzNxmr7v4pTuxB+0nWvJcEd430Alx7FCgBaZfiRevM
+	VYhHlUr5QB/HP/NzvzispSQddn2HbRPIybpfx5v83RPZ+KSEwwvDozGwKxOLPUI6Rsk8biKL8JR
+	HYVmTQpqbX6A+P96G+o/BnHXRtWAKZyl+QH50lsXKIykbkNDv72v2TdMyaC1wbsV1YIDN0lkfee
+	zGpRcltQMvxdbs6DeLYKeShomYxa2ltuFdDDfcoOo0BRbRqNIqgcFCom8LcB7Ngf8iJ9rVUfiQf
+	jbUD7YzIB0g==
+X-Google-Smtp-Source: AGHT+IHTmverQslNh+Of2OQdfM9KG+sNpKYYyXBNG8W5je+VjCNljcNikA0fXeYMh2Zp5w7wNtcx6A==
+X-Received: by 2002:a05:6871:2d02:b0:2b8:b76f:1196 with SMTP id 586e51a60fabf-2f7920cb157mr2219870fac.19.1751636405315;
+        Fri, 04 Jul 2025 06:40:05 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:2db1:5c0d:1659:a3c])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2f78ff40cd6sm514849fac.11.2025.07.04.06.40.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 06:40:01 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Fri, 4 Jul 2025 08:39:59 -0500
+From: John Groves <John@groves.net>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: "Darrick J . Wong" <djwong@kernel.org>, 
+	Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for
+ famfs
+Message-ID: <yhso6jddzt6c7glqadrztrswpisxmuvg7yopc6lp4gn44cxd4m@my4ajaw47q7d>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-11-john@groves.net>
+ <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 07/14] fs/dax: use vmf_insert_folio_pmd() to insert
- the huge zero folio
-From: David Hildenbrand <david@redhat.com>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, nvdimm@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-8-david@redhat.com>
- <cneygxe547b73gcfyjqfgdv2scxjeluwj5cpcsws4gyhx7ejgr@nxkrhie7o2th>
- <74acb38f-da34-448d-9b73-37433a5e342c@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <74acb38f-da34-448d-9b73-37433a5e342c@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
 
-On 25.06.25 11:03, David Hildenbrand wrote:
-> On 24.06.25 03:16, Alistair Popple wrote:
->> On Tue, Jun 17, 2025 at 05:43:38PM +0200, David Hildenbrand wrote:
->>> Let's convert to vmf_insert_folio_pmd().
->>>
->>> In the unlikely case there is already something mapped, we'll now still
->>> call trace_dax_pmd_load_hole() and return VM_FAULT_NOPAGE.
->>>
->>> That should probably be fine, no need to add special cases for that.
->>
->> I'm not sure about that. Consider dax_iomap_pmd_fault() -> dax_fault_iter() ->
->> dax_pmd_load_hole(). It calls split_huge_pmd() in response to VM_FAULT_FALLBACK
->> which will no longer happen, what makes that ok?
+On 25/07/04 09:54AM, Amir Goldstein wrote:
+> On Thu, Jul 3, 2025 at 8:51 PM John Groves <John@groves.net> wrote:
+> >
+> > * FUSE_DAX_FMAP flag in INIT request/reply
+> >
+> > * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
+> >   famfs-enabled connection
+> >
+> > Signed-off-by: John Groves <john@groves.net>
+> > ---
+> >  fs/fuse/fuse_i.h          |  3 +++
+> >  fs/fuse/inode.c           | 14 ++++++++++++++
+> >  include/uapi/linux/fuse.h |  4 ++++
+> >  3 files changed, 21 insertions(+)
+> >
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 9d87ac48d724..a592c1002861 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -873,6 +873,9 @@ struct fuse_conn {
+> >         /* Use io_uring for communication */
+> >         unsigned int io_uring;
+> >
+> > +       /* dev_dax_iomap support for famfs */
+> > +       unsigned int famfs_iomap:1;
+> > +
 > 
-> My reasoning was that this is the exact same behavior other
-> vmf_insert_folio_pmd() users here would result in.
+> pls move up to the bit fields members.
+
+Oops, done, thanks.
+
 > 
-> But let me dig into the details.
+> >         /** Maximum stack depth for passthrough backing files */
+> >         int max_stack_depth;
+> >
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 29147657a99f..e48e11c3f9f3 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+> >                         }
+> >                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
+> >                                 fc->io_uring = 1;
+> > +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
+> > +                           flags & FUSE_DAX_FMAP) {
+> > +                               /* XXX: Should also check that fuse server
+> > +                                * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN,
+> > +                                * since it is directing the kernel to access
+> > +                                * dax memory directly - but this function
+> > +                                * appears not to be called in fuse server
+> > +                                * process context (b/c even if it drops
+> > +                                * those capabilities, they are held here).
+> > +                                */
+> > +                               fc->famfs_iomap = 1;
+> > +                       }
+> 
+> 1. As long as the mapping requests are checking capabilities we should be ok
+>     Right?
 
-Okay, trying to figure out what to do here.
+It depends on the definition of "are", or maybe of "mapping requests" ;)
 
-Assume dax_pmd_load_hole() is called and there is already something. We 
-would have returned VM_FAULT_FALLBACK, now we would return VM_FAULT_NO_PAGE.
+Forgive me if this *is* obvious, but the fuse server capabilities are what
+I think need to be checked here - not the app that it accessing a file.
 
-That obviously only happens when we have not a write fault (otherwise, 
-the shared zeropage does not apply).
+An app accessing a regular file doesn't need permission to do raw access to
+the underlying block dev, but the fuse server does - becuase it is directing
+the kernel to access that for apps.
 
-In dax_iomap_pmd_fault(), we would indeed split_huge_pmd(). In the DAX 
-case (!anon vma), that would simply zap whatever is already mapped there.
+> 2. What's the deal with capable(CAP_SYS_ADMIN) in process_init_limits then?
 
-I guess we would then return VM_FAULT_FALLBACK from huge_fault-> ... -> 
-dax_iomap_fault() and core MM code would fallback to handle_pte_fault() 
-etc. and ... load a single PTE mapping the shared zeropage.
+I *think* that's checking the capabilities of the app that is accessing the
+file, and not the fuse server. But I might be wrong - I have not pulled very
+hard on that thread yet.
 
-BUT
+> 3. Darrick mentioned the need for a synchronic INIT variant for his work on
+>     blockdev iomap support [1]
 
-why is this case handled differently than everything else?
+I'm not sure that's the same thing (Darrick?), but I do think Darrick's
+use case probably needs to check capabilities for a server that is sending
+apps (via files) off to access extents of block devices.
 
-E.g.,
+> 
+> I also wonder how much of your patches and Darrick's patches end up
+> being an overlap?
 
-(1) when we try inserting the shared zeropage through 
-dax_load_hole()->vmf_insert_page_mkwrite() and there is already 
-something ... we return VM_FAULT_NOPAGE.
+Darrick and I spent some time hashing through this, and came to the conclusion
+that the actual overlap is slim-to-none. 
 
-(2) when we try inserting a PTE mapping an ordinary folio through 
-dax_fault_iter()->vmf_insert_page_mkwrite() and there is already 
-something ... we return VM_FAULT_NOPAGE.
+> 
+> Thanks,
+> Amir.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20250613174413.GM6138@frogsfrogsfrogs/
 
-(3) when we try inserting a PMD mapping an ordinary folio through 
-dax_fault_iter()->vmf_insert_folio_pmd() and there is already something 
-... we return VM_FAULT_NOPAGE.
-
-
-So that makes me think ... the VM_FAULT_FALLBACK right now is probably 
-... wrong? And probably cannot be triggered?
-
-If there is already the huge zerofolio mapped, all good.
-
-Anything else is really not expected I would assume?
-
--- 
-Cheers,
-
-David / dhildenb
-
+Thank you!
+John
 
