@@ -1,65 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-53879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC4DAF85C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 04:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C06DAF85BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 04:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0ADE3B5304
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 02:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EDAB3B9516
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 02:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6111DF26A;
-	Fri,  4 Jul 2025 02:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A56D1DDA3E;
+	Fri,  4 Jul 2025 02:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="jOenLqG1"
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="IfZK1LaQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E78D1FC3;
-	Fri,  4 Jul 2025 02:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF98C1FC3;
+	Fri,  4 Jul 2025 02:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751597428; cv=none; b=AwsjgQPk/QkKqALxTvdYdqgdXZeLRopF2s0uS8QNmumtEi9e0BTpL2SqFf0Xou25DghX6ZkmdJdx8L5l+BtfhYuwgtvhiN70xDZwkHuoeCiWjbAFWjOwzulql5DSBNg+Xe4trua8MkKpkIFVzEMRaYw0mdw93Su4plgERw+iCqs=
+	t=1751597371; cv=none; b=OMmu99LBbRhRj8sV9SIkyl2lCI71RGqvDi56gU+Dpcv7WciibgXiNUo82O3R89hDZusgp7o6wqbeEn/RJbspzk898jap9NwJwkBO5zU6ZK3YzvTLJOQSIYpUH9FIeKNumjC3dsYJTiY30s+I6Q4q5q//gCFv/YB8q8fBUdxWlIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751597428; c=relaxed/simple;
-	bh=3kIx5aF6ck51vQf+NJ/6Hu6bYd6KkAM5ELLUCRQeRNg=;
+	s=arc-20240116; t=1751597371; c=relaxed/simple;
+	bh=ze2gvCo92srJ1IEYqrI1nT6REGo4gSNbnkVjXHndL3k=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=NWpA1gbd4DnTz4IvGlfw794zEMIl+s0F75TxFK9bJBBF0DaAcNG5XZHVJmhp1v6IkuUiYWczytuBFqZwga5TTElLaBI+UuYYJ3C2yMwE5FQmh7JmOjoUGuIsIvTFXUA1Y5czvQ5aHwv+K4JRa3BRybnBrm5SsHrqn0X/zts+LkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=jOenLqG1; arc=none smtp.client-ip=162.62.57.87
+	 MIME-Version; b=CuFF5udCjlR7AZXDtNHoaR0SnOJm6FdJv8XlNiY8mMAALNlDKA6JzPF89kPfpCfAOSM0RfAsj7JkhDXrrhdSgB4Zjv1742h5nL6/yctrSkkMNyAe7Ri+d55iERUJvEuqZIl9pORgOSnbOT5IRVjbrtrWoYY6ETX6V4v/3O4drVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=IfZK1LaQ; arc=none smtp.client-ip=162.62.58.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1751597408;
-	bh=60C9crPrlso6i63AWM7qFupPHsU4T1ZcqF61uHig4r0=;
+	s=s201512; t=1751597061;
+	bh=x++/DrPNd44ZCLrC0h0UmG5N3pBOIkWVrED+TUpDaQM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jOenLqG1s0RqR18R147QauwaBSLNkcBibe6tDE/gJUwfoGRNZUseOuXP1k/jkU5zB
-	 72E5fxYWDoHKaFkCvhyccwxqflQb5Nc3PXg15EPtX5TTPYlWs/BQJMqTRvyqVkPEyU
-	 9LGPsdlj5xCw2UYVTiJPdL18uWjncUA7dr2Nfroo=
-Received: from meizu-Precision-3660.meizu.com ([112.91.84.73])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id AFA99AEB; Fri, 04 Jul 2025 10:43:58 +0800
-X-QQ-mid: xmsmtpt1751597038tlheim36w
-Message-ID: <tencent_82716EB4F15F579C738C3CC3AFE62E822207@qq.com>
-X-QQ-XMAILINFO: MeRnHSrEJzCrXBD8vlUlbdOjZ64QGNMuOTs64HRplnflQ2Xw47I1asd051G1Fa
-	 HkAZe+pG5Sbjn05hu2LVcp+KFz4uvh3/PquiaTE+gcX4JARoZoOB0OoJWMJTOolc6FOfBkx6n7XI
-	 omAbVYjDagqD1/Gy1Ln/NNP+1N4UNXOc7/RsczR0Ii36+GXeRzMFw9qVFbxrIdh6h/6H4uI6wQsx
-	 uoQmrzd/UY1LgUVPtHzLNd4V61Zb+11WUYcyfHsa1xFHTeTFvJ/uOjBSZ+4rub0Egmn4ZEpkXw0b
-	 kzd67z5cntmZLn8wDvd3PtusABNFGV7Ba5vl1JcONR5N0HiqXBakTP8E17XujVxLxMn5QbqlHA7h
-	 gFxrgWvnadL8Qz3UEv9J7oMglBfHDGEr2MgdUbdv+wPEO28zZPhszwtvpi4H5bsCzViJuzWYC4XQ
-	 VHiW+RxZkEanaotTY2vkMHp6EuqjTl6ygz7QD58vizIvcIgEhobCM5FuRaz/YrfiuLgMYiXx+jlR
-	 6rK6TfCET9UKwxXsRPKe29bT0qD9FjmVi+3lSXoTR4i4rG7SNJdut6xPrY/6wfYNt1lrZ6kckqn7
-	 Dqps4jlBb7Rtw4OeRRM4AfX28hUeCCRDcRQIrW/dFxoNmqLGc6DyDyq7Av/4wcBUKhx4U96NlGXt
-	 CD4jcM2phCSMvg2sG79ynyCuT5zaHo1RBxHEHfzoO9UoJhbqnzbBpPf5jzLsrd7OZ7K2ge0hMQF/
-	 DadpAYf7N1DyILLPIOxnxfdDRsv1vwjMo3GsjnBaaueRkVbPMsN1UgmspkATWLRFPOGg7E0dR2eN
-	 HLBL690GC+96ltRvV0eJijs+uKtoFtMXsg3i+p6nwxhOUajs1LX9Ij6ffL3aDTWKI7iW3ik/v7AV
-	 WfNdSxbou1CzZ4Dj9b5N2hNyTSpexQ1s+juAg4Lf/JwpxyFNcCtDheDAFlY0hcQlvZxEbcYNoV2f
-	 +IwGVD0K1UrkN0HrkvYzsspuJb6R6euNA01rbt3nxe8aq6uGJf/7ZEC97TBzTopAkXQ1j8GvCA9H
-	 Jon7WENY+5wnQJkfGHVv7K9bjLh3f6LSWRl86vJfWDgod5j3EfaYU7QRvWL6H7iY8bSIu/A0wm0Q
-	 LyzxQylUT5qRMypuU=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+	b=IfZK1LaQ8LrAMVHiKpRLFWl+ULSLM/Cyrs8Z1eOIO1hQOn4NNqNfTXyxUUHe+gD9O
+	 Gv7mWLimuYFqFaAd4xxiN3+khO46my/BJyGtWvwxWXkOxLvvXnBkLBnrdp2yGbozd5
+	 b9tHCh1JPOMYRMvIDp3Q5iQHSXlWTxnRT6MEIX+s=
+Received: from meizu-Precision-3660.meizu.com ([14.21.33.153])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id B1284873; Fri, 04 Jul 2025 10:44:18 +0800
+X-QQ-mid: xmsmtpt1751597058t0px2c030
+Message-ID: <tencent_AF5D3E4566DC2FE381AE03E77779AA5F1F08@qq.com>
+X-QQ-XMAILINFO: Od+6/RRPbeDtRA0hh4DoK7vwOScIr3LPQOoTh0ezLc86jVUia1ShtBvSk+5yPW
+	 QEN149HyuUAaLcy1GGLVLK8Ul+kh7bf/C7E8l2t70SPqNZ7+ttR2pAo2cJAoWuMMiwYjdys5zPLX
+	 2oWDQK1ipH+IW8X8aACvfCAZ5HpbOsAPxIrWWzh1lJFScjOYARClcl9hokgrROHoXmoj4s/sSPAO
+	 EbjkitYz3CVgEYHju4FJng6FxzEFNGHQu+PGdKJo/10pviLH6qfCJoUKu91JWgQhwhbdyPlMB1Px
+	 iLyzbhzPX9MHv1avwL+LGiRY/V59IH5chul1DNWezYi8jD3Ixsg8iXRPbgc9d3AuV/53c+tES5Ei
+	 /WB6TdPXiT/RdFd3ZbeKY/WmWOK6bBpsyS0JXjW5tIhiHvh4CKL9CWQot8F33QiFM/0LuvKPetka
+	 6fF6tNxomqAxCFWrcOFZd0bx1qGEZMgieTOpubXIJ1d3ygjNb/WClb1pMoeCq8RP81arPpi9AiE0
+	 A2byanW0ZvYR98fZXS13uK8NE4luunXfKv856B1kT5xqjYzMFS608NsYWuww1Nn0wZyVwYaZA0TZ
+	 30fwrDy7mQrHBpkFC+Uo0r5iKk2jL7neUiV6Pd7nms70rmx0y6DxJQSm9sVTo2tOFZRwUaEUG6x6
+	 59TtxRoaoh7b5IQq9Kb66cQd96UVvm+uXG8bww6a/HtbMVAND0YVCoKmqwWFnsr/OKjRMy5nNAn3
+	 hxOcKoVd0rXfTDUIGnvQB6yG2ZtVwm45cs7PhE88iiOgTDDRjZrWId+NSSn+pn7O/jFKHy+wf2WS
+	 gZRoqaAr68fxwveMhUcu+pJ+fyck2711HQ3esoiwF45ZswgVFMXJrC8yZ5HS2S362e8/0PDOEuKm
+	 jNULnlejOarUf4mptR5AVJxnS3mZB0AMvQBIOPX8p3s4ZnPoQ7b0s5Pj/CuOqR7rgtkasQDfzBR9
+	 Ss57LmnVgm0xIsww0+1tlVpdv1efbxHf0+NhfbH6gWLzEZ6iktfdMaPkjRNKecE+QkC45cXpSZgH
+	 dSfZcduyz1vMFFq0YSoGeRlMgCntMLiMUB51x2TkS16Ain49wGF22B4SLnX/g=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 From: Yuwen Chen <ywen.chen@foxmail.com>
 To: hch@infradead.org
 Cc: adilger.kernel@dilger.ca,
@@ -73,9 +72,9 @@ Cc: adilger.kernel@dilger.ca,
 	tytso@mit.edu,
 	viro@zeniv.linux.org.uk,
 	ywen.chen@foxmail.com
-Subject: [PATCH v3 1/2] libfs: reduce the number of memory allocations in generic_ci_match
-Date: Fri,  4 Jul 2025 10:43:57 +0800
-X-OQ-MSGID: <20250704024357.4078753-1-ywen.chen@foxmail.com>
+Subject: [PATCH v3 2/2] f2fs: improve the performance of f2fs_lookup
+Date: Fri,  4 Jul 2025 10:44:16 +0800
+X-OQ-MSGID: <20250704024416.4078789-1-ywen.chen@foxmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <aGZFtmIxHDLKL6mc@infradead.org>
 References: <aGZFtmIxHDLKL6mc@infradead.org>
@@ -87,140 +86,219 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-During path traversal, the generic_ci_match function may be called
-multiple times. The number of memory allocations and releases
-in it accounts for a relatively high proportion in the flamegraph.
-This patch significantly reduces the number of memory allocations
-in generic_ci_match through pre - allocation.
+On the Android system, the file creation operation will call
+the f2fs_lookup function. When there are too many files in a
+directory, the generic_ci_match operation will be called
+repeatedly in large quantities. In extreme cases, the file
+creation speed will drop to three times per second.
+
+Use the following program to conduct a file-creation test in
+the private program directory(/data/media/0/Android/data/*)
+of Android.
+
+int main(int argc, char **argv)
+{
+    size_t fcnt = 0;
+    char path[PATH_MAX];
+    char buf[4096] = {0};
+    int i, fd;
+
+    if (argc < 2)
+        return - EINVAL;
+
+    fcnt = atoi(argv[1]);
+    for (i = 0; i < fcnt; i++)
+    {
+        snprintf(path, sizeof(path), "./%d", i);
+        fd = open(path, O_RDWR | O_CREAT, 0600);
+        if (fd < 0)
+            return - 1;
+        write(fd, buf, sizeof(buf));
+        close(fd);
+    }
+    return 0;
+}
+
+The test platform is Snapdragon 8s Gen4, with a kernel version
+of v6.6 and a userdebug version.
+
+Before this submission was merged, when creating 2000 files,
+the performance test results are as follows:
+$ time /data/file_creater 2000
+0m14.83s real     0m00.00s user     0m14.30s system
+0m15.61s real     0m00.00s user     0m15.04s system
+0m14.72s real     0m00.01s user     0m14.18s system
+
+After this submission was merged, the performance is as follows:
+$ time /data/file_creater 2000
+0m08.17s real     0m00.00s user     0m07.86s system
+0m08.16s real     0m00.01s user     0m07.86s system
+0m08.15s real     0m00.00s user     0m07.86s system
+
+It was observed through perf that the generic_ci_match function
+was called a large number of times, which led to most of the
+time being spent on memory allocation and release. Due to a
+flush_dcache operation in the implementation of cts_cbc_decrypt,
+this memory cannot be allocated on the stack.
 
 Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
 ---
- fs/ext4/namei.c    |  2 +-
- fs/f2fs/dir.c      |  2 +-
- fs/libfs.c         | 33 ++++++++++++++++++++++++++++++---
- include/linux/fs.h |  8 +++++++-
- 4 files changed, 39 insertions(+), 6 deletions(-)
+ fs/f2fs/dir.c    | 24 +++++++++++++++++-------
+ fs/f2fs/f2fs.h   |  3 ++-
+ fs/f2fs/inline.c |  3 ++-
+ 3 files changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index a178ac2294895..f235693bd71aa 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1443,7 +1443,7 @@ static bool ext4_match(struct inode *parent,
- 
- 		return generic_ci_match(parent, fname->usr_fname,
- 					&fname->cf_name, de->name,
--					de->name_len) > 0;
-+					de->name_len, NULL) > 0;
- 	}
- #endif
- 
 diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index c36b3b22bfffd..4c6611fbd9574 100644
+index 4c6611fbd9574..ee0cbeb80debd 100644
 --- a/fs/f2fs/dir.c
 +++ b/fs/f2fs/dir.c
-@@ -197,7 +197,7 @@ static inline int f2fs_match_name(const struct inode *dir,
+@@ -176,6 +176,7 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
+ 				struct folio *dentry_folio,
+ 				const struct f2fs_filename *fname,
+ 				int *max_slots,
++				struct decrypted_name_prealloc *prealloc,
+ 				bool use_hash)
+ {
+ 	struct f2fs_dentry_block *dentry_blk;
+@@ -184,12 +185,13 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
+ 	dentry_blk = folio_address(dentry_folio);
+ 
+ 	make_dentry_ptr_block(dir, &d, dentry_blk);
+-	return f2fs_find_target_dentry(&d, fname, max_slots, use_hash);
++	return f2fs_find_target_dentry(&d, fname, max_slots, prealloc, use_hash);
+ }
+ 
+ static inline int f2fs_match_name(const struct inode *dir,
+ 				   const struct f2fs_filename *fname,
+-				   const u8 *de_name, u32 de_name_len)
++				   const u8 *de_name, u32 de_name_len,
++				   struct decrypted_name_prealloc *prealloc)
+ {
+ 	struct fscrypt_name f;
+ 
+@@ -197,7 +199,7 @@ static inline int f2fs_match_name(const struct inode *dir,
  	if (fname->cf_name.name)
  		return generic_ci_match(dir, fname->usr_fname,
  					&fname->cf_name,
--					de_name, de_name_len);
-+					de_name, de_name_len, NULL);
+-					de_name, de_name_len, NULL);
++					de_name, de_name_len, prealloc);
  
  #endif
  	f.usr_fname = fname->usr_fname;
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 9ea0ecc325a81..d2a6b2a4fe11c 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1863,6 +1863,26 @@ static const struct dentry_operations generic_ci_dentry_ops = {
- #endif
- };
+@@ -210,6 +212,7 @@ static inline int f2fs_match_name(const struct inode *dir,
  
-+#define DECRYPTED_NAME_PREALLOC_MIN_LEN 64
-+static inline char *decrypted_name_prealloc_resize(
-+		struct decrypted_name_prealloc *prealloc,
-+		size_t wantlen)
-+{
-+	char *retbuf = NULL;
-+
-+	if (prealloc->name && wantlen >= prealloc->namelen)
-+		return prealloc->name;
-+
-+	retbuf = kmalloc(wantlen + DECRYPTED_NAME_PREALLOC_MIN_LEN, GFP_KERNEL);
-+	if (!retbuf)
-+		return NULL;
-+
-+	kfree(prealloc->name);
-+	prealloc->name = retbuf;
-+	prealloc->namelen = wantlen + DECRYPTED_NAME_PREALLOC_MIN_LEN;
-+	return retbuf;
-+}
-+
- /**
-  * generic_ci_match() - Match a name (case-insensitively) with a dirent.
-  * This is a filesystem helper for comparison with directory entries.
-@@ -1873,6 +1893,7 @@ static const struct dentry_operations generic_ci_dentry_ops = {
-  * @folded_name: Optional pre-folded name under lookup
-  * @de_name: Dirent name.
-  * @de_name_len: dirent name length.
-+ * @prealloc: decrypted name memory buffer
-  *
-  * Test whether a case-insensitive directory entry matches the filename
-  * being searched.  If @folded_name is provided, it is used instead of
-@@ -1884,7 +1905,8 @@ static const struct dentry_operations generic_ci_dentry_ops = {
- int generic_ci_match(const struct inode *parent,
- 		     const struct qstr *name,
- 		     const struct qstr *folded_name,
--		     const u8 *de_name, u32 de_name_len)
-+		     const u8 *de_name, u32 de_name_len,
-+		     struct decrypted_name_prealloc *prealloc)
+ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
+ 			const struct f2fs_filename *fname, int *max_slots,
++			struct decrypted_name_prealloc *prealloc,
+ 			bool use_hash)
  {
- 	const struct super_block *sb = parent->i_sb;
- 	const struct unicode_map *um = sb->s_encoding;
-@@ -1899,7 +1921,11 @@ int generic_ci_match(const struct inode *parent,
- 		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
- 			return -EINVAL;
+ 	struct f2fs_dir_entry *de;
+@@ -236,7 +239,8 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
+ 		if (!use_hash || de->hash_code == fname->hash) {
+ 			res = f2fs_match_name(d->inode, fname,
+ 					      d->filename[bit_pos],
+-					      le16_to_cpu(de->name_len));
++					      le16_to_cpu(de->name_len),
++					      prealloc);
+ 			if (res < 0)
+ 				return ERR_PTR(res);
+ 			if (res)
+@@ -261,6 +265,7 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 					unsigned int level,
+ 					const struct f2fs_filename *fname,
+ 					struct folio **res_folio,
++					struct decrypted_name_prealloc *prealloc,
+ 					bool use_hash)
+ {
+ 	int s = GET_DENTRY_SLOTS(fname->disk_name.len);
+@@ -296,7 +301,8 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 			}
+ 		}
  
--		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-+		if (!prealloc)
-+			decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-+		else
-+			decrypted_name.name = decrypted_name_prealloc_resize(
-+					prealloc, de_name_len);
- 		if (!decrypted_name.name)
- 			return -ENOMEM;
- 		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
-@@ -1928,7 +1954,8 @@ int generic_ci_match(const struct inode *parent,
- 		res = utf8_strncasecmp(um, name, &dirent);
+-		de = find_in_block(dir, dentry_folio, fname, &max_slots, use_hash);
++		de = find_in_block(dir, dentry_folio, fname, &max_slots, prealloc,
++				   use_hash);
+ 		if (IS_ERR(de)) {
+ 			*res_folio = ERR_CAST(de);
+ 			de = NULL;
+@@ -336,6 +342,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 	unsigned int max_depth;
+ 	unsigned int level;
+ 	bool use_hash = true;
++	struct decrypted_name_prealloc prealloc = {0};
  
- out:
--	kfree(decrypted_name.name);
-+	if (!prealloc)
-+		kfree(decrypted_name.name);
- 	if (res < 0 && sb_has_strict_encoding(sb)) {
- 		pr_err_ratelimited("Directory contains filename that is invalid UTF-8");
- 		return 0;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4ec77da65f144..65307c8c11485 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3651,10 +3651,16 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- extern int generic_check_addressable(unsigned, u64);
+ 	*res_folio = NULL;
  
- extern void generic_set_sb_d_ops(struct super_block *sb);
-+
-+struct decrypted_name_prealloc {
-+	char *name;
-+	size_t namelen;
-+};
- extern int generic_ci_match(const struct inode *parent,
- 			    const struct qstr *name,
- 			    const struct qstr *folded_name,
--			    const u8 *de_name, u32 de_name_len);
-+			    const u8 *de_name, u32 de_name_len,
-+			    struct decrypted_name_prealloc *prealloc);
+@@ -343,7 +350,8 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ start_find_entry:
+ #endif
+ 	if (f2fs_has_inline_dentry(dir)) {
+-		de = f2fs_find_in_inline_dir(dir, fname, res_folio, use_hash);
++		de = f2fs_find_in_inline_dir(dir, fname, res_folio, &prealloc,
++					     use_hash);
+ 		goto out;
+ 	}
  
- #if IS_ENABLED(CONFIG_UNICODE)
- int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
+@@ -359,7 +367,8 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 	}
+ 
+ 	for (level = 0; level < max_depth; level++) {
+-		de = find_in_level(dir, level, fname, res_folio, use_hash);
++		de = find_in_level(dir, level, fname, res_folio, &prealloc,
++				   use_hash);
+ 		if (de || IS_ERR(*res_folio))
+ 			break;
+ 	}
+@@ -372,6 +381,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 		goto start_find_entry;
+ 	}
+ #endif
++	kfree(prealloc.name);
+ 	/* This is to increase the speed of f2fs_create */
+ 	if (!de)
+ 		F2FS_I(dir)->task = current;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9333a22b9a01e..dfbd2215310fb 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3673,6 +3673,7 @@ int f2fs_prepare_lookup(struct inode *dir, struct dentry *dentry,
+ void f2fs_free_filename(struct f2fs_filename *fname);
+ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
+ 			const struct f2fs_filename *fname, int *max_slots,
++			struct decrypted_name_prealloc *prealloc,
+ 			bool use_hash);
+ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 			unsigned int start_pos, struct fscrypt_str *fstr);
+@@ -4316,7 +4317,7 @@ int f2fs_write_inline_data(struct inode *inode, struct folio *folio);
+ int f2fs_recover_inline_data(struct inode *inode, struct folio *nfolio);
+ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
+ 		const struct f2fs_filename *fname, struct folio **res_folio,
+-		bool use_hash);
++		struct decrypted_name_prealloc *prealloc, bool use_hash);
+ int f2fs_make_empty_inline_dir(struct inode *inode, struct inode *parent,
+ 			struct folio *ifolio);
+ int f2fs_add_inline_entry(struct inode *dir, const struct f2fs_filename *fname,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 901c630685ced..d02ff6c26d70a 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -353,6 +353,7 @@ int f2fs_recover_inline_data(struct inode *inode, struct folio *nfolio)
+ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
+ 					const struct f2fs_filename *fname,
+ 					struct folio **res_folio,
++					struct decrypted_name_prealloc *prealloc,
+ 					bool use_hash)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
+@@ -370,7 +371,7 @@ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
+ 	inline_dentry = inline_data_addr(dir, ifolio);
+ 
+ 	make_dentry_ptr_inline(dir, &d, inline_dentry);
+-	de = f2fs_find_target_dentry(&d, fname, NULL, use_hash);
++	de = f2fs_find_target_dentry(&d, fname, NULL, prealloc, use_hash);
+ 	folio_unlock(ifolio);
+ 	if (IS_ERR(de)) {
+ 		*res_folio = ERR_CAST(de);
 -- 
 2.34.1
 
