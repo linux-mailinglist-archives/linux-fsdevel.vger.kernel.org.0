@@ -1,175 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-53990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687C2AF9BBA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 22:37:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1453BAF9B63
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 21:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9743AE335
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 20:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7AE21893026
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 19:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FEA246793;
-	Fri,  4 Jul 2025 20:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562F121638A;
+	Fri,  4 Jul 2025 19:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B/pENZnE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sxb1plwbeout05.prod.sxb1.secureserver.net (sxb1plwbeout05.prod.sxb1.secureserver.net [188.121.53.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1341E2E36E7
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 20:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CEF20ED
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 19:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751661420; cv=none; b=m+CkD6C3Y0Z2uvwyfOWFwKKF5uocOGI9t2ELcQZd//L3ltaoIALkHohPV5MX8QIDgWp4bF1DttWRk0RXw638BmRer6E7PGUvy7jAPfMnI5yZdDUnngOsYe8jbg6pS/rdAbSYaCI6O/uuRc72mdEUq0XHaIiUMDYgt6jX2EZtZnM=
+	t=1751659081; cv=none; b=P5yuEtdQXN7yE4asHECxfwggIUykGmxrPL0Tdkn7JPR3RC8QLCKxFAR9ReiBJ8zyefxOXlxn2qukx0n3yr29/OWe8U1ME3vp5LUqO1OoQZMtXB0Kqbl/ENQ15jLwcc5dqdBn+AnacpqaxazsGPya933wMzoKB8Bmyb6yyMwe8XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751661420; c=relaxed/simple;
-	bh=7wt1aA/Y6+bwD+sUGk5sKOMU16N/kgJnFcSB6eZIRW0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=n4tWTfzqF5yxL7vNdrEnm4pAzTaQHJaIIPrJlflwoQTYowcUqeTjvPSqGts+S5/8DyBYSReyRos5GvfzHhPmCtAFrY92gHDhMI0AuT4iIhsU8oTfIwfbBA/AESD3tTdirWGcAMAPyTdGRqOaEPKJ2KVOpI7xXd16Ldmd/mtXJhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-X-MW-NODE: 
-X-CMAE-Analysis: v=2.4 cv=V4N90fni c=1 sm=1 tr=0 ts=686830d2
- a=dFffxkGDbYo3ckkjzRcKYg==:117 a=dFffxkGDbYo3ckkjzRcKYg==:17
- a=ggZhUymU-5wA:10 a=IkcTkHD0fZMA:10 a=8pif782wAAAA:8 a=9qxNCY_qAAAA:8
- a=PCSORCwJg7iORsY_thYA:9 a=QEXdDO2ut3YA:10 a=EebzJV9D4rpJJoWO5PQE:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-X-SID: XmRmuHadriUIv
-Date: Fri, 4 Jul 2025 20:51:46 +0100 (BST)
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: "Joakim Tjernlund (Nokia)" <joakim.tjernlund@nokia.com>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: "phillip.lougher@gmail.com" <phillip.lougher@gmail.com>
-Message-ID: <443821641.1977435.1751658706057@eu1.myprofessionalmail.com>
-In-Reply-To: <88b54d9a1562393526abc4556a6105ef1aca7ace.camel@nokia.com>
-References: <bd03e4e1d56d67644b60b2a58e092a0e3fdcff57.camel@nokia.com>
- <88b54d9a1562393526abc4556a6105ef1aca7ace.camel@nokia.com>
-Subject: Re: squashfs can starve/block apps
+	s=arc-20240116; t=1751659081; c=relaxed/simple;
+	bh=vDmNgYH27jQ46GuPcGp/vbql8MFmUX33WjOkMO4B3NM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j8x4GxLaCydRUwS4yYzc7hCCUAfefH0tCnuXDyEoGGz3ywFuhg16TWZC3ebcqXASU7QNXYsf+nDlHPySIyYUd4HiteRoKH5ONyWrQXVHTEohbo5oM7Xmg8zcNJxmZWcR/OGjeVYzphp2M7SHYKHrJwYQyYcpem+kKlGjjVwi484=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=B/pENZnE; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae223591067so190532266b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 12:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1751659077; x=1752263877; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1BKOcMAgoIl3CyEeLpsaKuCswUQ3lICiZPOc1QxTAbQ=;
+        b=B/pENZnEV8ZXLOe5BFIoiAkhkB4UIhxmtS6Irc17nqNhrk0U+fEN5JW7xxQjkvEjhS
+         5oZoREshI/ZrC5TS7EMdLjQLMA6KfXimwjsg32opPpkNGindsDRcndyQMd+P4uMNK19l
+         KjZfPgBCwU/HSOUXcUqJXWIdHDWLLs9ZP29hk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751659077; x=1752263877;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1BKOcMAgoIl3CyEeLpsaKuCswUQ3lICiZPOc1QxTAbQ=;
+        b=hc0afMZVCZmtKqG93y8Ed3XUB7xxhiRwsIrmI7w6VUp21fouuF42ov7AOk4FR5y3J4
+         3RQcG7IKB8u2DtIMkD4mNdBUzMpS5z7om+0rNlc4QKJOuj8wNCIiXm5EGIJ6kguM9Ovx
+         mNli2zM3JFfJUPGaCmsnEtA67xRSTt99GRsSudPtMLD0KYRPqGIH3UdA5FgkK6SjcwF7
+         jrAIosN+ygy/Ks58cKEIv4+kzSGAMiQJT0da1RwXWWhm6nnP3lIIzqjPbACqWHa0TpmZ
+         gxhSk2l+UWTSPUWbF+5lmmWYT85r8ty6ObXIZKVTgCk4WDReEKY3Z6Yo01izadqt12dd
+         AT4g==
+X-Gm-Message-State: AOJu0YyUQnBhBfET+sQmmAbdVZahq/TzoqKwbZVnvl2Bpe0A/l2pV/+4
+	8ni4RK4VW80US7qchV4hZWnMGG/BL9SyulcU9re62tp4gy9E3es5pjPGl0Mkr4NSpJ0EFTL/kWM
+	gUYPv1os=
+X-Gm-Gg: ASbGnctGkOXBxjCmKi7+lwJezQG0N1QxT1QXc2rzObGagBgxyeW3Kmzu0RhxlwrNdHR
+	NBbKhJtQcrE821HRNXagDzhOuvSjL4pPhLuj7eVjIGthubX8TJC/gc8P1wqUSawbj7g49JcYlK0
+	Q7XUZhqbQ8vLxsyS3KRwLvdeI7q8YD00kO6/LTZqBrl3YwVwEDGagB3dyPCVrg06sBghiVOVImV
+	h4RaDZYYrMthp6VNFb8qP/9BwT66ez6w00XMPINeWmO1x3NUatwUtxkLdgkf2+YudIe9XPPy67D
+	DZJ5/2OJTqY1MECeFHwQA14n94XZgpSvcWJylUCuZKtpY/gHvxK1en7DWv8Z9PorcIghOiRHqlq
+	555DiTlwcHmT+ij3fMkvjHCKlwjG0KdE/YXo8
+X-Google-Smtp-Source: AGHT+IFJqD8Djmc8MyP7LrLBu2/Ly3BnjCCoIy4iYgjOgitaNcbAdVm9j4M05DiEvQBk7nxhfhGdlg==
+X-Received: by 2002:a17:906:584f:b0:ae3:f296:84cf with SMTP id a640c23a62f3a-ae3fbd8b224mr295346466b.30.1751659077068;
+        Fri, 04 Jul 2025 12:57:57 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b02a23sm224185666b.112.2025.07.04.12.57.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 12:57:56 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso2394007a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 12:57:56 -0700 (PDT)
+X-Received: by 2002:a05:6402:2683:b0:604:e85d:8bb4 with SMTP id
+ 4fb4d7f45d1cf-60fd338632dmr3478983a12.21.1751659075849; Fri, 04 Jul 2025
+ 12:57:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.38.73
-X-Originating-Port: 54904
-X-Originating-Client: open-xchange-appsuite
-X-CMAE-Envelope: MS4xfIDb7ALsXEpRYvChPn9kf/c99U137JqsQXB6RV58Dap7mYGjx5oEnSbCvecwl6GLHbGrVedDU4ijB3Yi2tYmKjQuWs+/+2HslQCL2CfZkXQE1aiaOn5J
- mBGvofneMoxlhonNfsuHtGVvxo1HfgpjVccePg/Q9xmxT/+3mbU3BJPMg18z5pbIqfOp0rqX7L2KalAi/lJ+UJ00LfVymjtBDOhoSGiH5K7rpAmfuW9Essd3
- vKz9tSsj7wQjEgpnyJcq89nZ8uHx5BmPKObzWLWbk7/fRbD8uE5IhmlvG9+5jCQM0PjV0o3W7fCzcvuEdKX8sQ==
+References: <20250704194414.GR1880847@ZenIV>
+In-Reply-To: <20250704194414.GR1880847@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 4 Jul 2025 12:57:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgurLEukSdbUPk28rW=hsVGMxE4zDOCZ3xxY3ee3oGyoQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxygtdRLn7SMmYV2fo9XTnfHt5ss5Vt2k9qjOp1GE39Tvhk8iV_Q8Ucafs
+Message-ID: <CAHk-=wgurLEukSdbUPk28rW=hsVGMxE4zDOCZ3xxY3ee3oGyoQ@mail.gmail.com>
+Subject: Re: [RFC] MNT_WRITE_HOLD mess
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-> On 26/06/2025 15:27 BST Joakim Tjernlund (Nokia) <joakim.tjernlund@nokia.=
-com> wrote:
->=20
-> =20
-> On Thu, 2025-06-26 at 10:09 +0200, Joakim Tjernlund wrote:
-> > We have an app running on a squashfs RFS(XZ compressed) and a appfs als=
-o on squashfs.
-> > Whenever we validate an SW update image(stream a image.xz, uncompress i=
-t and on to /dev/null),=20
-> > the apps are starved/blocked and make almost no progress, system time i=
-n top goes up to 99+%
-> > and the console also becomes unresponsive.
-> >=20
-> > This feels like kernel is stuck/busy in a loop and does not let apps ex=
-ecute.
-> >=20
+On Fri, 4 Jul 2025 at 12:44, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         What if we steal LSB of ->mnt_instance.prev for what MNT_WRITE_HOLD
+> is currently used for?
 
-I have been away at the Glastonbury festival, hence the delay in replying. =
-But
-this isn't really anything to do with Squashfs per se, and basic computer
-science theory explains what is going on here.  So I'm surprised no-else ha=
-s
-responded.
+Ugh. I don't hate the concept, but if we do this, I think it needs to
+be better abstracted out.
 
-> > Kernel 5.15.185
-> >=20
-> > Any ideas/pointers ?
+And you may be right that things like list_for_each_entry() won't
+care, but I would not be surprised there is list debugging code that
+could care deeply. Or if anybody uses things like "list_is_first()",
+it will work 99+_% of the time, but then break horribly if the low bit
+of the prev pointer is set.
 
-Yes,
+So we obviously use the low bits of pointers in many other situations,
+but I do think that it needs to have some kind of clear abstraction
+and type safety to make sure that people don't use the "normal" list
+handling helpers silently by mistake when they won't actually work.
 
-> >=20
-> > =C2=A0Jocke
->=20
-> This will reproduce the stuck behaviour we see:
->  > cd /tmp (/tmp is an tmpfs)
->  > wget https://fullImage.xz
+Yes, that tends to involve a fair amount of duplication - exactly like
+<linux/list_bl.h>, which is obviously the exact same thing except it
+uses the low bit of the list head rather than the list entry. But if
+the uses are limited enough - and they obviously need to be limited to
+things that never look at 'prev' - maybe that duplication can also be
+fairly limited.
 
-You've identified the cause here.
+I suspect we should also have another level of abstraction - we do
+those "low bits of pointer" things often enough now that we probably
+should have actual helpers for it, rather than have people do the
+whole "cast to unsigned long and extract/insert bits by hand".
 
->=20
-> So just downloading it to tmpfs will confuse squashfs, seems to
-> me that squashfs somehow see the xz compressed pages in page cache/VFS an=
-d
-> tried to do something with them.
+But that's a separate issue and largely independent (except that you'd
+introduce a new use-case).
 
-But this is the completely wrong conclusion.  Squashfs doesn't "magically"
-see files downloaded into a different filesystem and try to do something
-with them.
-
-What is happening is the system is thrashing, because the page cache doesn'=
-t
-have enough remaining space to contain the working set of the running
-application(s).
-
-See Wikipedia article https://en.wikipedia.org/wiki/Thrashing_(computer_sci=
-ence)
-
-Tmpfs filesystems (/tmp here) are not backed by physical media, and their
-content are stored in the page cache.  So in effect if fullImage.xz takes
-most of the page cache (system RAM), then there is no much space left to st=
-ore
-the pages of the applications that are running, and they constantly replace
-each others pages.
-
-To make it easy, imagine we have two processes A and B, and the page cache
-doesn't have enough space to store both the pages for processes A and B.
-
-Now:
-
-1. Process A starts and demand-pages pages into the page cache from the
-   Squashfs root filesystem.  This takes CPU resources to decompress the pa=
-ges.
-   Process A runs for a while and then gets descheduled.
-
-2. Process B starts and demand-pages pages into the page cache, replacing
-   Process A's pages.  It runs for a while and then gets descheduled.
-
-3 Process A restarts and finds all its pages have gone from page cache, and=
- so
-  it has to re-demand-page the pages back.  This replaces Process B's pages=
-.
-
-4. Process B restarts and finds all its pages have gone from the page cache=
- ...
-
-In effect the system spends all it's time reading pages from the
-Squashfs root filesystem, and doesn't do anything else, and hence it looks
-like it has hung.
-
-This is not a fault with Squashfs, and it will happen with any filesystem
-(ext4 etc) when system memory is too small to contain the working set of
-pages.
-
-Now, to repeat what has caused this is the download of that fullImage.xz
-which has filled most of the page cache (system RAM).  To prevent that
-from happening, there are two obvious solutions:
-
-1. Split fullImage.xz into pieces and only download one piece at a time.  T=
-his
-   will avoid filling up the page cache and the system trashing.
-
-2. Kill all unnecessary applications and processes before downloading
-   fullImage.xz.  In doing that you reduce the working set to RAM available=
-,
-   which will again prevent thrashing.
-
-Hope that helps.
-
-Phillip
+            Linus
 
