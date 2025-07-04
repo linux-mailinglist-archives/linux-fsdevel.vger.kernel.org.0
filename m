@@ -1,206 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-53904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE629AF8C4F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 10:43:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BC2AF8E17
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5055614D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 08:43:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE9567B1E27
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 08:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24C629AB1B;
-	Fri,  4 Jul 2025 08:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3C02868B2;
+	Fri,  4 Jul 2025 08:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2wesZs1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLpy79R3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5826D2882AD;
-	Fri,  4 Jul 2025 08:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4E1328AE4;
+	Fri,  4 Jul 2025 08:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751618247; cv=none; b=JgDOXDB93/hW7sFKfHyQ2QhnLwkRbCpiox45fgtvy1jebbaV6zpXbVLrT+8oy3ElBirqKLRHnaAshjyPCLRhS3A27BMq1sThXJ91y147Qfkqa3a4vQAqdQR3yvmGsCOUyYQ5dtwtb434PX96Faxc2cOzNkb0MqnJKGQtshOz0fo=
+	t=1751618400; cv=none; b=DO+4XH/igW6zNQMj0MVkKegBUBQ5eHX2kwSpIIBpWYNCR67Na0tpeQqzLdMOyHyp2/Cr3r6v7DDQ+HotVFFZE3hpUxgCrku98eRVEvUZK+O28N7aIXDISxzOUUmPW177vHnnVrY0+lL5+Vwf01+U0pLv9VsHbtzdttH9xpMVTFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751618247; c=relaxed/simple;
-	bh=UcVEdWsMgJuOK8h1XyR+xUtQH0ZdYigTqHJT3JO4cLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UrrvlnOq9GZe0rNGdDoUlU6t6I9u7+bNn4lVtG5uzRjjqS40BWkxP05l2Yuz4vhTLy0xPz1Dk85qjVi2kILNSuEoGvTKepPLZre/EbPwV0btQJGVVIp0E2WHOPTyBKCQLBZxh/f5m+XKG6sHON+Zk0Uusykgd9QGgedQYb+2Fm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2wesZs1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C92C4CEE3;
-	Fri,  4 Jul 2025 08:37:25 +0000 (UTC)
+	s=arc-20240116; t=1751618400; c=relaxed/simple;
+	bh=FHas3OLzhcWmJla/w9SVAWfRsC/N5brO1Le2ihalCNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TN2UI3xyCfwRG2Zl3GjjqEP0gUD97Lrde26YuFL2ocVGOzIcKvc4MrsbLy7pOFTOE+SYnfxnbQwcJ/byijjLYkVgyMtM4bvdb/ZaPjiHX6cF53fbz1/XHoGaNUhohKRw6JpXr+sywUrNN/+CZ2gCEdKBEZBuydk+4csAmU3hG+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLpy79R3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11EA7C4CEF0;
+	Fri,  4 Jul 2025 08:39:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751618246;
-	bh=UcVEdWsMgJuOK8h1XyR+xUtQH0ZdYigTqHJT3JO4cLI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=E2wesZs1dzJfJhjcqoa+yxVE6YJwdff8Kl7u4D4xKDxHxJTyYik8cM8E6maaYmazt
-	 71xJJs40ia567tw4hiZzgudx2ar+AnKUcaQfTh1j3Z/3koApKJ+w3LJjUyyrf54Xjd
-	 S2l2gFyfUIaZoA5t/VsKevBpr8Z4S1Y8LH1jbPZxNma7kC67cT2MCR3F8dBXyB4VDj
-	 bjuzWaooWWJgFTFNNtT8xgvbVrC3qzV1+kXioJSvpP4NMmVlwgcJchXz1XAksCJVDn
-	 gO61DpHb71/SUp8EYljp/dUDkikroLLG6a8jxyXeNi7wimsUpthUNYMcUavFJIHqxa
-	 trkC8qxIQkz0w==
+	s=k20201202; t=1751618400;
+	bh=FHas3OLzhcWmJla/w9SVAWfRsC/N5brO1Le2ihalCNg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VLpy79R3WoowQ0dde0FpFT1YyHsXsurqva+SkoBcww5fjPVnQMcwqe87L2wtjyLYi
+	 kRKqWJIQ81p4a1f0xNgpRmdmn+OPlPkQk/4+3lz4NrJRi0wbmnDt4pjvgXFACOvZxO
+	 qU9E5LKN5/hna1bw+wpVR2YB99mwlJCTB2beguJ1mHivp02SKA4At/U4wBW5k3iT/Q
+	 u3HMCjJxxvd2r71zcnuKhwU/Z06IvtD7wFREJ9CXS/1miJCbu6oYZeK5DrvOvTrTgE
+	 IHzvXhhXfrV+PFyTdnHzAjREeo0FCEO0Q5nKDCaILrTwFadudwtNVY/apMjWmKyCd5
+	 QDeadiD91wJeA==
+Date: Fri, 4 Jul 2025 10:39:53 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Fri,  4 Jul 2025 10:36:54 +0200
-Message-ID: <20250704-vfs-fixes-fa31f5ff8c05@brauner>
-X-Mailer: git-send-email 2.47.2
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, 
+	tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com, 
+	chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, martin.petersen@oracle.com, 
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com, 
+	yangerkun@huawei.com, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org, 
+	linux-scsi@vger.kernel.org
+Subject: Re: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
+Message-ID: <20250704-gemein-addieren-62ad4d210c70@brauner>
+References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
+ <20250623-woanders-allabendlich-f87ae2d9c704@brauner>
+ <99010bfd-c968-49c7-b62b-c72b38722c1b@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5415; i=brauner@kernel.org; h=from:subject:message-id; bh=UcVEdWsMgJuOK8h1XyR+xUtQH0ZdYigTqHJT3JO4cLI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSkT1rJy3RN6tvdy2f/i/yZfXXiqx/lgXyPuy5y/fCJS HfePjMhu6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiuxgY/lebhRoEJbuZ7g/Z Vm9rHHdxu4uKts66s6J89npWX6Vk9zAy3I2z/CsplSZwcvHfO54ajWYJMd0X+g62ZZ7ZZCy++kQ mPwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <99010bfd-c968-49c7-b62b-c72b38722c1b@huaweicloud.com>
 
-Hey Linus,
+On Thu, Jul 03, 2025 at 11:35:41AM +0800, Zhang Yi wrote:
+> On 2025/6/23 18:46, Christian Brauner wrote:
+> > On Thu, 19 Jun 2025 19:17:57 +0800, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> Changes since v1:
+> >>  - Rebase codes on 6.16-rc2.
+> >>  - Use max_{hw|user}_wzeroes_unmap_sectors queue limits instead of
+> >>    BLK_FEAT_WRITE_ZEROES_UNMAP feature to represent the status of the
+> >>    unmap write zeroes operation as Christoph and Darrick suggested. This
+> >>    redoes the first 5 patches, so remove all the reviewed-by tags,
+> >>    please review them again.
+> >>  - Simplify the description of FALLOC_FL_WRITE_ZEROES in patch 06 as
+> >>    Darrick suggested.
+> >>  - Revise the check order of FALLOC_FL_WRITE_ZEROES in patch 08 as
+> >>    Christoph suggested.
+> >> Changes since RFC v4:
+> >>  - Rebase codes on 6.16-rc1.
+> >>  - Add a new queue_limit flag, and change the write_zeroes_unmap sysfs
+> >>    interface to RW mode. User can disable the unmap write zeroes
+> >>    operation by writing '0' to it when the operation is slow.
+> >>  - Modify the documentation of write_zeroes_unmap sysfs interface as
+> >>    Martin suggested.
+> >>  - Remove the statx interface.
+> >>  - Make the bdev and ext4 don't allow to submit FALLOC_FL_WRITE_ZEROES
+> >>    if the block device does not enable the unmap write zeroes operation,
+> >>    it should return -EOPNOTSUPP.
+> >> Changes sicne RFC v3:
+> >>  - Rebase codes on 6.15-rc2.
+> >>  - Add a note in patch 1 to indicate that the unmap write zeros command
+> >>    is not always guaranteed as Christoph suggested.
+> >>  - Rename bdev_unmap_write_zeroes() helper and move it to patch 1 as
+> >>    Christoph suggested.
+> >>  - Introduce a new statx attribute flag STATX_ATTR_WRITE_ZEROES_UNMAP as
+> >>    Christoph and Christian suggested.
+> >>  - Exchange the order of the two patches that modified
+> >>    blkdev_fallocate() as Christoph suggested.
+> >> Changes since RFC v2:
+> >>  - Rebase codes on next-20250314.
+> >>  - Add support for nvme multipath.
+> >>  - Add support for NVMeT with block device backing.
+> >>  - Clear FALLOC_FL_WRITE_ZEROES if dm clear
+> >>    limits->max_write_zeroes_sectors.
+> >>  - Complement the counterpart userspace tools(util-linux and xfs_io)
+> >>    and tests(blktests and xfstests), please see below for details.
+> >> Changes since RFC v1:
+> >>  - Switch to add a new write zeroes operation, FALLOC_FL_WRITE_ZEROES,
+> >>    in fallocate, instead of just adding a supported flag to
+> >>    FALLOC_FL_ZERO_RANGE.
+> >>  - Introduce a new flag BLK_FEAT_WRITE_ZEROES_UNMAP to the block
+> >>    device's queue limit features, and implement it on SCSI sd driver,
+> >>    NVMe SSD driver and dm driver.
+> >>  - Implement FALLOC_FL_WRITE_ZEROES on both the ext4 filesystem and
+> >>    block device (bdev).
+> >>
+> >> [...]
+> > 
+> > If needed, the branch can be declared stable and thus be used as base
+> > for other work.
+> > 
+> > ---
+> > 
+> > Applied to the vfs-6.17.fallocate branch of the vfs/vfs.git tree.
+> > Patches in the vfs-6.17.fallocate branch should appear in linux-next soon.
+> > 
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> > 
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> > 
+> > Note that commit hashes shown below are subject to change due to rebase,
+> > trailer updates or similar. If in doubt, please check the listed branch.
+> > 
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs-6.17.fallocate
+> 
+> Hi Christian,
+> 
+> I noticed that this patch series doesn't appear to be merged into this
+> branch. Just wondering if it might have been missed?
 
-This includes a fix for a priority inversion in eventpoll. I did
-consider it a fix and it is a single commit but it is a bit more code
-than we would usually let through after -rc2. If you want me to delay
-that until the merge window that's perfectly fine. You can either just
-revert right after merging this or I can send you a new pull request
-tomorrow.
-
-/* Summary */
-
-This contains another round of fixes for this cycle:
-
-- Fix a regression caused by the anonymous inode rework. Making them
-  regular files causes various places in the kernel to tip over starting
-  with io_uring. Revert to the former status quo and port our assertion
-  to be based on checking the inode so we don't lose the valuable
-  VFS_*_ON_*() assertions that have already helped discover weird
-  behavior our outright bugs.
-
-- Fix the the upper bound calculation in fuse_fill_write_pages().
-
-- Fix priority inversion issues in the eventpoll code.
-
-- Make secretmen use anon_inode_make_secure_inode() to avoid bypassing
-  the LSM layer.
-
-- Fix a netfs hang due to missing case in final DIO read result
-  collection.
-
-- Fix a double put of the netfs_io_request struct.
-
-- Provide some helpers to abstract out NETFS_RREQ_IN_PROGRESS flag
-  wrangling.
-
-- Fix infinite looping in netfs_wait_for_pause/request().
-
-- Fix a netfs ref leak on an extra subrequest inserted into a request's
-  list of subreqs.
-
-- Fix various cifs RPC callbacks to set NETFS_SREQ_NEED_RETRY if a
-  subrequest fails retriably.
-
-- Fix a cifs warning in the workqueue code when reconnecting a channel.
-
-- Fix the updating of i_size in netfs to avoid a race between testing if
-  we should have extended the file with a DIO write and changing i_size.
-
-- Merge the places in netfs that update i_size on write.
-
-- Fix coredump socket selftests.
-
-/* Testing */
-
-gcc (Debian 14.2.0-19) 14.2.0
-Debian clang version 19.1.7 (3)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
-
-  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.16-rc5.fixes
-
-for you to fetch changes up to 1e7ab6f67824343ee3e96f100f0937c393749a8a:
-
-  anon_inode: rework assertions (2025-07-02 14:41:39 +0200)
-
-Please consider pulling these changes from the signed vfs-6.16-rc5.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.16-rc5.fixes
-
-----------------------------------------------------------------
-Christian Brauner (2):
-      Merge patch series "netfs, cifs: Fixes to retry-related code"
-      anon_inode: rework assertions
-
-David Howells (9):
-      netfs: Fix hang due to missing case in final DIO read result collection
-      netfs: Fix double put of request
-      netfs: Provide helpers to perform NETFS_RREQ_IN_PROGRESS flag wangling
-      netfs: Fix looping in wait functions
-      netfs: Fix ref leak on inserted extra subreq in write retry
-      netfs: Fix i_size updating
-      netfs: Merge i_size update functions
-      netfs: Renumber the NETFS_RREQ_* flags to make traces easier to read
-      netfs: Update tracepoints in a number of ways
-
-Joanne Koong (1):
-      fuse: fix fuse_fill_write_pages() upper bound calculation
-
-Nam Cao (2):
-      selftests/coredump: Fix "socket_detect_userspace_client" test failure
-      eventpoll: Fix priority inversion problem
-
-Paulo Alcantara (3):
-      smb: client: set missing retry flag in smb2_writev_callback()
-      smb: client: set missing retry flag in cifs_readv_callback()
-      smb: client: set missing retry flag in cifs_writev_callback()
-
-Shivank Garg (1):
-      fs: export anon_inode_make_secure_inode() and fix secretmem LSM bypass
-
- fs/anon_inodes.c                                  |  23 +-
- fs/eventpoll.c                                    | 458 +++++++---------------
- fs/exec.c                                         |   9 +-
- fs/fuse/file.c                                    |   5 +-
- fs/libfs.c                                        |   8 +-
- fs/namei.c                                        |   2 +-
- fs/netfs/buffered_write.c                         |  38 +-
- fs/netfs/direct_write.c                           |  16 -
- fs/netfs/internal.h                               |  26 +-
- fs/netfs/main.c                                   |   6 +-
- fs/netfs/misc.c                                   |  50 ++-
- fs/netfs/read_collect.c                           |  16 +-
- fs/netfs/write_collect.c                          |  14 +-
- fs/netfs/write_retry.c                            |   3 +-
- fs/smb/client/cifssmb.c                           |  22 ++
- fs/smb/client/smb2pdu.c                           |  27 +-
- include/linux/fs.h                                |   2 +
- include/linux/netfs.h                             |  21 +-
- include/trace/events/netfs.h                      |  29 +-
- mm/secretmem.c                                    |   9 +-
- tools/testing/selftests/coredump/stackdump_test.c |   5 +
- 21 files changed, 351 insertions(+), 438 deletions(-)
+Dammit, my script missed to push the branch. Fixed now. Thanks for
+checking!
 
