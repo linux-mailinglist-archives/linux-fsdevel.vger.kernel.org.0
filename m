@@ -1,174 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-53958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566DEAF9192
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 13:29:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47788AFA1A8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 22:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33F667B9376
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:27:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A24481DDD
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 20:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9322C326E;
-	Fri,  4 Jul 2025 11:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D444E239E85;
+	Sat,  5 Jul 2025 20:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TYF/Ne+g";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J3G1lxAG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mMrF3HJZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nyW5d7U2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9E82C15B1;
-	Fri,  4 Jul 2025 11:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE582E36E2
+	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Jul 2025 20:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751628549; cv=none; b=BQ+AhLsO/M7iFnK4nBFq7I45W6URXyfxF8EDQLTnAauOK3b3ConFa8rJ2LBIC2sZK2wsLza8G7FRrKel/FsCaeoGYiLwOTF7YuBVAFdpJJ+q3hoJNAbcsny9Tv1gVHbGv9sI0JqBsb+mNhdnpJXEXYmjdCWR3C9Hkw6y4uJy+hs=
+	t=1751745664; cv=none; b=GAE6tBYk0r2paowvlv6UnYyYn4Fh58614PjCRH2E5/jDHBd2zJjwX8+pTRg+OOt6dZDnjxTH1AceWT1XjvCZB8nb6aq98/soqMAK0UQFpRyMHS0nH8O7TESoR8PiQP13i9Ud5qHFywK+LqGFyfOrtEP3oVkON0X+L1//tUX4Jgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751628549; c=relaxed/simple;
-	bh=d6izWEeJk2kJa5GSgadR6b2xMlIhvrbazcDk3EqyLmc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Abcb+cBt5GAxFk6sIMslBOczHr2g/O/odPgm/EMYXh5xxEwHV34UHRShrj0/1tIVjLji8C+4+DV74vTmtQvSEUKiK1pX+O0OinIuIXd3a7pMXM1pKzpTckGh9a5GjJBCyNEbNW8TZ7huDdugm946YunIW5WBU5Zn586WnrZTe60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bYW8R3VnVz6L5dh;
-	Fri,  4 Jul 2025 19:08:23 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 36B8E1404C5;
-	Fri,  4 Jul 2025 19:11:22 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Jul
- 2025 13:11:20 +0200
-Date: Fri, 4 Jul 2025 12:11:19 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: John Groves <John@Groves.net>
-CC: Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi
-	<miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>, John Groves
-	<jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, Vishal Verma
-	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Matthew
- Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Darrick J
- . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "Jeff
- Layton" <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>, "Stefan
- Hajnoczi" <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
- Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, Ajay
- Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 03/18] dev_dax_iomap: Save the kva from memremap
-Message-ID: <20250704121119.00002846@huawei.com>
-In-Reply-To: <20250703185032.46568-4-john@groves.net>
-References: <20250703185032.46568-1-john@groves.net>
-	<20250703185032.46568-4-john@groves.net>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1751745664; c=relaxed/simple;
+	bh=KQVDv7vaSa56RILpk9GXU4EE/SRZNSQ/rx09IYPXoVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKKg+hHWxpAMzTHAszaGBKk6BXIZ/F8C0H6Pkm/XmmrajzBhOMfhgLFy85K+K+DB7I8lPp332XnAMBUaYJiovB0EiTtZ9RK+6lMjJoAiEO2PJvNEQ8ziDU/ehdO5545KdlBKl/aOPbjcpqEd5zXLmcaMMGPuKYBzjemoc3ccDHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TYF/Ne+g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J3G1lxAG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mMrF3HJZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nyW5d7U2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E901D21162;
+	Sat,  5 Jul 2025 20:00:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751745653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6Ej3hCCfrQWrt1GFOzYcVms9XxZbLYdzP8GSAojwfQs=;
+	b=TYF/Ne+gm84Jjzu+l1y7Ng3WdT1Zbg2a/G2+meZE/naYB6PpZTtP1lTX7VcI4+YBOSetSg
+	hSbijUk41V5baToNXQUshPu0ii4yHrxxW8Orm4ZqzbRF673AkyVUhgJPFqik2l9EiM0M2c
+	dYOuyw0GudKqq/w87vQg8JelcKV8JDc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751745653;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6Ej3hCCfrQWrt1GFOzYcVms9XxZbLYdzP8GSAojwfQs=;
+	b=J3G1lxAGXomf/SBDfTgumU9R0JnWekvLClbpJ5Ggu/aWU9UFKT6P+0TEuWvOSjS8YVaADg
+	/X+dv0uaU+v7dLCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mMrF3HJZ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nyW5d7U2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751745651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6Ej3hCCfrQWrt1GFOzYcVms9XxZbLYdzP8GSAojwfQs=;
+	b=mMrF3HJZ2uVVpv/4ZDdDcLlzTEKfvndTgpnQTk0mjxoshaKYrj1I7dfCGp7Fd5rlKycztA
+	BpOlwo8U8PO8TOG/r2Ns/KJV4vR3hjLj2gjo24X9K85BuwibfRuMVZMzyhiswwGbBSAIXU
+	HoMlNozXcH3C93LEyoLl4EhVZ7MdL10=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751745651;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6Ej3hCCfrQWrt1GFOzYcVms9XxZbLYdzP8GSAojwfQs=;
+	b=nyW5d7U2IaF6rMG78ShWPMAsBIDGGXHKQ+wPcwKkhyqCNZXPb2wQx1ZpzaQRTu20lIZY69
+	6qnlGcO9gjW4IuBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7A7213757;
+	Sat,  5 Jul 2025 20:00:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0hikNHOEaWiaMgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Sat, 05 Jul 2025 20:00:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id AD57CA0A31; Fri,  4 Jul 2025 13:17:02 +0200 (CEST)
+Date: Fri, 4 Jul 2025 13:17:02 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, 
+	Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, linux-ext4 <linux-ext4@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	LTP List <ltp@lists.linux.it>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: next-20250626: WARNING fs jbd2 transaction.c start_this_handle
+ with ARM64_64K_PAGES
+Message-ID: <c2dvcablaximwjnwg67spegwkntxjgezu6prvyyto4vjnx6rvh@w3xgx4jjq4bb>
+References: <CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com>
+ <2dbc199b-ef22-4c22-9dbd-5e5876e9f9b4@huaweicloud.com>
+ <CA+G9fYv5zpLxeVLqYbDLLUOxmAzuXDbaZobvpCBBBuZJKLMpPQ@mail.gmail.com>
+ <1c7ae5cb-61ad-404c-950a-ba1b5895e6c3@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c7ae5cb-61ad-404c-950a-ba1b5895e6c3@huaweicloud.com>
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DATE_IN_PAST(1.00)[32];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,huaweicloud.com:email,linaro.org:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: E901D21162
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On Thu,  3 Jul 2025 13:50:17 -0500
-John Groves <John@Groves.net> wrote:
-
-> Save the kva from memremap because we need it for iomap rw support.
+On Thu 03-07-25 19:33:32, Zhang Yi wrote:
+> On 2025/7/3 15:26, Naresh Kamboju wrote:
+> > On Thu, 26 Jun 2025 at 19:23, Zhang Yi <yi.zhang@huaweicloud.com> wrote:
+> >> On 2025/6/26 20:31, Naresh Kamboju wrote:
+> >>> Regressions noticed on arm64 devices while running LTP syscalls mmap16
+> >>> test case on the Linux next-20250616..next-20250626 with the extra build
+> >>> config fragment CONFIG_ARM64_64K_PAGES=y the kernel warning noticed.
+> >>>
+> >>> Not reproducible with 4K page size.
+> >>>
+> >>> Test environments:
+> >>> - Dragonboard-410c
+> >>> - Juno-r2
+> >>> - rk3399-rock-pi-4b
+> >>> - qemu-arm64
+> >>>
+> >>> Regression Analysis:
+> >>> - New regression? Yes
+> >>> - Reproducibility? Yes
+> >>>
+> >>> Test regression: next-20250626 LTP mmap16 WARNING fs jbd2
+> >>> transaction.c start_this_handle
+> >>>
+> >>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >>
+> >> Thank you for the report. The block size for this test is 1 KB, so I
+> >> suspect this is the issue with insufficient journal credits that we
+> >> are going to resolve.
+> > 
+> > I have applied your patch set [1] and tested and the reported
+> > regressions did not fix.
+> > Am I missing anything ?
+> > 
+> > [1] https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
+> > 
 > 
-> Prior to famfs, there were no iomap users of /dev/dax - so the virtual
-> address from memremap was not needed.
+> Hmm. It seems that my fix for the insufficient journal credit series
+> cannot handle cases with a page size of 64k. The problem is the folio
+> size can up to 128M, and the 'rsv_blocks' in ext4_do_writepages() can
+> up to 1577 on 1K block size filesystems, this is too large.
+
+Firstly, I think that 128M folios are too big for our current approaches
+(in ext4 at least) to sensibly work. Maybe we could limit max folio order
+in ext4 mappings to max 1024 blocks per folio or something like that? For
+realistic setups with 4k blocksize this means 4M folios which is not really
+limiting for x86. Arm64 or ppc64 could do bigger but the gain for even
+larger folios is diminishingly small anyway.
+
+Secondly, I'm wondering that even with 1577 reserved blocks we shouldn't
+really overflow the journal unless you make it really small. But maybe
+that's what the test does...
+
+> Therefore, at this time, I think we should disable the large folio
+> support for 64K page size. Then, we may need to reserve rsv_blocks
+> for one extent and implement the same journal extension logic for
+> reserved credits.
 > 
-> Also: in some cases dev_dax_probe() is called with the first
-> dev_dax->range offset past the start of pgmap[0].range. In those cases
-> we need to add the difference to virt_addr in order to have the physaddr's
-> in dev_dax->ranges match dev_dax->virt_addr.
-> 
-> This happens with devdax devices that started as pmem and got converted
-> to devdax. I'm not sure whether the offset is due to label storage, or
-> page tables, but this works in all known cases.
+> Ted and Jan, what do you think?
 
-Clearly a question we need to resolve to understand if this is correct
-handling.
+I wouldn't really disable it for 64K page size. I'd rather limit max folio
+order to 1024 blocks. That actually makes sense as a general limitation of
+our current implementation (linked lists of bhs in each folio don't really
+scale). We can use mapping_set_folio_order_range() for that instead of
+mapping_set_large_folios().
 
-> 
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  drivers/dax/dax-private.h |  1 +
->  drivers/dax/device.c      | 15 +++++++++++++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
-> index 0867115aeef2..2a6b07813f9f 100644
-> --- a/drivers/dax/dax-private.h
-> +++ b/drivers/dax/dax-private.h
-> @@ -81,6 +81,7 @@ struct dev_dax_range {
->  struct dev_dax {
->  	struct dax_region *region;
->  	struct dax_device *dax_dev;
-> +	void *virt_addr;
->  	unsigned int align;
->  	int target_node;
->  	bool dyn_id;
-> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index 29f61771fef0..583150478dcc 100644
-> --- a/drivers/dax/device.c
-> +++ b/drivers/dax/device.c
-> @@ -372,6 +372,7 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
->  	struct dax_device *dax_dev = dev_dax->dax_dev;
->  	struct device *dev = &dev_dax->dev;
->  	struct dev_pagemap *pgmap;
-> +	u64 data_offset = 0;
->  	struct inode *inode;
->  	struct cdev *cdev;
->  	void *addr;
-> @@ -426,6 +427,20 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
->  	if (IS_ERR(addr))
->  		return PTR_ERR(addr);
->  
-> +	/* Detect whether the data is at a non-zero offset into the memory */
-> +	if (pgmap->range.start != dev_dax->ranges[0].range.start) {
-
-Using pgmap->range.start here but then getting to the same (I think)
-with  dev_dax->pgmap[0].range.start is rather inconsistent.
-
-Also, perhaps drag the assignment of phys and pgmap_phys out of this
-scope so that you can use them for the condition check above and
-then reuse the same in here.
-
-
-> +		u64 phys = dev_dax->ranges[0].range.start;
-> +		u64 pgmap_phys = dev_dax->pgmap[0].range.start;
-> +		u64 vmemmap_shift = dev_dax->pgmap[0].vmemmap_shift;
-> +
-> +		if (!WARN_ON(pgmap_phys > phys))
-> +			data_offset = phys - pgmap_phys;
-
-In the event of the condition above being false.
-phys == pgmap_phys and data_offset == 0.
-
-So why not do this unconditionally replacing this block with something like
-
-	/* Apply necessary offset */
-
-	dev_dax->virt_addr = addr +
-		(dev_dax->ranges[0].range.start - pgmap->range.start);
-> +
-> +		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx shift=%llx\n",
-> +		       __func__, phys, pgmap_phys, data_offset, vmemmap_shift);
-
-If it's only used in the print, I'd just put the path to vmemmap_shift directly in here
-and probably get to it via pgmap->vmemmap_shift
-
-
-
-> +	}
-> +	dev_dax->virt_addr = addr + data_offset;
-> +
->  	inode = dax_inode(dax_dev);
->  	cdev = inode->i_cdev;
->  	cdev_init(cdev, &dax_fops);
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
