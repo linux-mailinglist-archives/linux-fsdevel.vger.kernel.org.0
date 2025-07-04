@@ -1,156 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-53899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD3BAF8866
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:03:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043D4AF8AF5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 10:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A106C7A409D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 07:01:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFD2C8026BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 08:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A425A27144B;
-	Fri,  4 Jul 2025 07:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D63B2FBFE7;
+	Fri,  4 Jul 2025 07:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFjtH0J3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGHVUoCf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E607263F4A;
-	Fri,  4 Jul 2025 07:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE792F7CE5;
+	Fri,  4 Jul 2025 07:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751612588; cv=none; b=PHWdffFThYu/wTzjU+z5WO3CrsxgZLLoRAkcpH9vFt/djvq/Ba2OMd2QOq4b3ENJOHuE3QIydqevvVG7k4lP4eatCRS7YfHR/91vcKra8On3jBCFVmQqMR+nHsUS6i6XTS71m3jrNNjH98wDgsu5V7bujH/tcYq2xTTyWHOI0VQ=
+	t=1751615715; cv=none; b=OCGHx4cQq3TTGczo+kS5dGShYFaePbW/9MB7q4uJdJ1iop9WUYkbuUgqbYo0oB7iCFATtR74TYngFzV1vvVzd3RlHvvJI2RxyEZSHzXmk653rJ7C5AjvGWlg3MZPQqbNpaRUzxUK64nfjQ2MZ4MjFCex4IL1WMNiEZ8YeJtf2Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751612588; c=relaxed/simple;
-	bh=FAT2JYkIVleheVO+4inwuHTSq5weBsTjw+VPUDu2v5o=;
+	s=arc-20240116; t=1751615715; c=relaxed/simple;
+	bh=g5Qwv3E6Y5AzhAoHAIoso2lcbLsyKVgZSLviisDZlBk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LB/hzO9YAvKjevYXaRqTet9hzV5wM0LUzmGf09eNKgmmZsz4cfuGvZ9Kr1OX6RIjaP9l0lZBrV28bRuvDdZgzZ36JOTqdDR0RxZ1bEPdanTWU0eC1SZZP+/3J1mL5lJ05XZA72lp1d9/xCRIVDbYgQ/ZG/UB0ykw3sXus8LE9uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFjtH0J3; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=nI6iqEhg30pTQKEnge/tko+haZHvQHVhfuWe0d1JVvwprZNnPKeINLrOQrfwQAs3I57Gdg95D2XQiGSx8kUVJomiL1sJ93P1PYyCKTKPp3QrEizcJ52J3vFXtsHOt2TW5oLxjwjTTy9yw2e9CxnV1ozHJTroJOJ/Na/qB8I7zg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGHVUoCf; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae3b336e936so117764866b.3;
-        Fri, 04 Jul 2025 00:03:06 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acb5ec407b1so110868866b.1;
+        Fri, 04 Jul 2025 00:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751612585; x=1752217385; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751615709; x=1752220509; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NaqZISU/6/J0dA6aXHHwQAgG0zenTBPemNnfGP8tRRw=;
-        b=eFjtH0J3c4krziISuy1vAOyGoCktexAKoJ/sqe1zuCXOb6UbROhtg97oQM57tG67rD
-         QhuQ98mEtkLjMim3BRweUEsoLKBFaXIfBRoi7l7rffOITIqevgP1bhLwGlbOnp6oOCtF
-         1ZRQzKSEtQCDSNouAw4rrg3Jh37ncpml67bPZWy4Pr+Ze6sAxl+Pz8Kh+621npCChWPd
-         VpvkqmS0gorb/NFaPktCJfkFn0+fBwlT2TbPMInMuFxLAuKYgVA9JlQ8eUtll6ypgfzR
-         ALboO4OlNlYdQflc+W8RcG4vURCIrR+C+H2c+b5xBP0v8w00LQIYB2XVJ+LWAvT+S9zX
-         E7bw==
+        bh=KqTjHtFUDnwHiahJgAdrD1pVSqjrxzaMh3NEMJveZz8=;
+        b=TGHVUoCfczslT4Cszm3O2JE88Xe+7CM0ElkGVuXMV4t1ZrdpVVHyfGJJie4cTZQmdq
+         pQthGf/GK1Ow8YqzMaB7Nb+V9xNGb39p7pwj9Rq6kjc3SC6Rn8Iexf9JhMrODMtIhC3E
+         ffqO9PlVBobxEdY2bl/D7sedpenn9sSM+zEPEW9A9UgFo/W58//osc1Ysiq6/C2nvgTq
+         v3kJajqirPtVqae7yq1Gy5XvcvM4ol8VEb1V7Tx1Dfc/XVpa9qrxFwwtP9HUUwW4K7p4
+         Jto/Q70qVuhiwbvN1dZiZaa8pcuhMXP1Dx2dOCBH7HmeI4gce+IjcRcV6K8DX1jxY2k8
+         YMZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751612585; x=1752217385;
+        d=1e100.net; s=20230601; t=1751615709; x=1752220509;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NaqZISU/6/J0dA6aXHHwQAgG0zenTBPemNnfGP8tRRw=;
-        b=CdkKVNeqnsYAa+bf87f9EooOItPYpFXVt5MHknpTepj1wK9Uj8TJSbeA2LgNmlwkm1
-         1h8uQ1n1wd6nU+o95+CW9oTCnhixPDVlHRySoJhuiOVy8v5gYqZiC3qFhI4L48ph08Fu
-         PxBah442h73ksZKzGV6y32pb68XnBYzkfcov8J2xwW/Ez7+q7FnT4W76cxaN0jNUIW4G
-         zbMVJNXI0xMVJxwoHTXZGpzcSiSX/moTNzxG+IHRCg3Re2FHxIsNc9+9mWCNOmEqRNv4
-         Xr1NoRXFN2/C43xUrBf5cm2B8wAmJ0txcMsVG39L4ej3dwZCiX614vGtRH9H9o870aPt
-         ofFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp1pxRbiMahAmb0oqQMN+L43t7W6HjJ/rCqJrBjp454cSuv8E5TtnbLEFRvl+jAvZrCxKdMBDIPJvT@vger.kernel.org, AJvYcCVpNqlrK7a1drE+8RQbSZ9bm7BYxd4fQGWstpgKyMCgqQZu3q8xCKj6wmx2U7a0+IQNz4O9i+ZhZEq0BPHx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbArURoR0LM3OMHtDuU7KAs/QAJSaY4oPtg9CZLzECWWRdXC30
-	Ft9bKpvGOI+EnfyRX0pQJfdr6tI1XbhKDsPz902LVYNGu1y7s+tEWBhoQ6+Kic5HRR4+hnOUlf6
-	/0WASOLndxmw0KNF15jhHzIqHZ65Na0w=
-X-Gm-Gg: ASbGncvBJ64zSg59Lp6A0NyDM8QhZkQCojKO/ioh02PNp8JmrQ663r0gz1o12k1WxGg
-	G3ql9Ll1oV3rNhg1UPSMlARizx6R+mzlZyNyOryafUZBAkKsoNRLA1QWoH+GLn6dIZHrCzrItN/
-	6iGJkWBlphtJAyUHiyWTmHubx65Qu9LNHTpoASlnZ6PcTQ1eVovUyr9Fn19+JEhvrXm1tS7csWr
-	vcon/rC1rYeK+Ar
-X-Google-Smtp-Source: AGHT+IFH2+aa5C0AYTaAo7ldMEn47RrhFOI48HXYOTWtH8oGOiUW5l/So1Lz10mwcD0zFkQkk89KO90EiAPC2WiMYa4=
-X-Received: by 2002:a17:907:728e:b0:ae0:a813:1bc0 with SMTP id
- a640c23a62f3a-ae3fe78f7aemr85654066b.53.1751612584190; Fri, 04 Jul 2025
- 00:03:04 -0700 (PDT)
+        bh=KqTjHtFUDnwHiahJgAdrD1pVSqjrxzaMh3NEMJveZz8=;
+        b=Brl26zIt4RmMIx4IIAF1x3C+mTMH1p/DBwbjrorj0ECl51Of+dwraPoIjcBT9EarZZ
+         Rig0yKUlXNERi2+jzxz3PC8sFrQnHB323ElhqMJHPRQm5BwyRBAimyjTQ25Chqkghwro
+         bij2XR265UShP4lL44MsFr78+fJiNvKlN4G+eCNVgRGzzOg8CQWO7jHGywpVL0FeGKuF
+         MtM6GV10dkxeRQkAAWkFgkya1rjwGFXfr2awT1SbwKjgCvF9XOwCl9Ew92S1HecOzpy9
+         JKVB9kRYgu9NowzFNkCxhKoaUOSCiL5c6+Y60/5pWjR5hZ0KQxuNlK3EzSwUfo8eYfZ/
+         m3Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCU08/cWFgwvCVrBn2VKz4ttsTxi3hOHO9uWgWY2qpNKYKDq0wuZE8MtNk9UB61oEbyACyiU61246yvntMOuAQ==@vger.kernel.org, AJvYcCVywHV8WyT03APVzlovESO5z8INVufiMtZ3Xfa3g/NWA0SZ8Dfhbp/qugk9CCO+aZueAHn+Af4C4l2WyLB+@vger.kernel.org, AJvYcCW7CRVzua9sZwP8qBQUb3otz0aNDPWNT+KilDPbbXH6C/ecvHr8SQDbGrsOFdladQZLugSNNynD44NW@vger.kernel.org, AJvYcCWhV6euYQD1pgCxQk+9NVkSFALTqAf925QoEdt0fETnG3ydtFv/n3dreaG33eI3y73HDnnGI7OgQBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtCZUSn6KtOHnaeocUFP8I9aCR9cvC93f8gNZzodU2qLMcIHRY
+	DyL4NQglzVO7RpSPJO9Hb5dv9+1gLvxiPh4sxlW4OXDj4ZLcEmnfdNvYmQzPzUbLxAhlMtUDOsV
+	tl60bf+gjZMhLfko5ETO51G01YZ2jO3Q=
+X-Gm-Gg: ASbGncsvXM1WSs1lnBcNxsO+k/H61mp0klpYXOSLX6XyfdMzRYdR125RweFD6e5l/Yz
+	y0yEwbvJgjKrBwoboI73Yx24TRG3xs5735QlcQ8E2CYCvlwEgFZjEKYinT2+GEP6LVGSCH9WUeP
+	HhFdmHV4dqUaoLlKjpI0vP/v46mvo6t1Nx67+PiL8ebwV03/xRyjJaPA==
+X-Google-Smtp-Source: AGHT+IHbu/7trC65/DeYLqxtEkSBbngCiJCl8lGS3daoUK+l03S1ER+X1QI0bHRXSoe9V0uZOz3GBHDUIYUYwFgLXPA=
+X-Received: by 2002:a17:906:681a:b0:ad2:417b:2ab5 with SMTP id
+ a640c23a62f3a-ae3fbde92a2mr99463566b.60.1751615708510; Fri, 04 Jul 2025
+ 00:55:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250529113215epcas5p2edd67e7b129621f386be005fdba53378@epcas5p2.samsung.com>
- <20250529111504.89912-1-kundan.kumar@samsung.com> <20250529203708.9afe27783b218ad2d2babb0c@linux-foundation.org>
- <CALYkqXqs+mw3sqJg5X2K4wn8uo8dnr4uU0jcnnSTbKK9F4AiBA@mail.gmail.com>
- <20250702184312.GC9991@frogsfrogsfrogs> <20250703130500.GA23864@lst.de>
-In-Reply-To: <20250703130500.GA23864@lst.de>
-From: Kundan Kumar <kundanthebest@gmail.com>
-Date: Fri, 4 Jul 2025 12:32:51 +0530
-X-Gm-Features: Ac12FXwZOjAgWNZaCPF5YBUk5PhxDjzykQsiKelmwtL0Fjc6XgS6xeUIPE87xdw
-Message-ID: <CALYkqXqE1dJj7Arqu_Zi4J5mTVhzJQt=kzwjS9QaY5VaFcV3Lg@mail.gmail.com>
-Subject: Re: [PATCH 00/13] Parallelizing filesystem writeback
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kundan Kumar <kundan.kumar@samsung.com>, jaegeuk@kernel.org, chao@kernel.org, 
-	viro@zeniv.linux.org.uk, Christian Brauner <brauner@kernel.org>, jack@suse.cz, 
-	miklos@szeredi.hu, agruenba@redhat.com, Trond Myklebust <trondmy@kernel.org>, 
-	anna@kernel.org, Matthew Wilcox <willy@infradead.org>, mcgrof@kernel.org, clm@meta.com, 
-	david@fromorbit.com, amir73il@gmail.com, Jens Axboe <axboe@kernel.dk>, 
-	ritesh.list@gmail.com, dave@stgolabs.net, p.raghav@samsung.com, 
-	da.gomez@samsung.com, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev, 
-	linux-nfs@vger.kernel.org, linux-mm@kvack.org, gost.dev@samsung.com
+References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-11-john@groves.net>
+In-Reply-To: <20250703185032.46568-11-john@groves.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 4 Jul 2025 09:54:57 +0200
+X-Gm-Features: Ac12FXx2fL6cg_25gbv1TfaaBei9pa2nMH_xl-QIp40xf5dKMB13gicr8ctumWk
+Message-ID: <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
+Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for famfs
+To: John Groves <John@groves.net>, "Darrick J . Wong" <djwong@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredb.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 3, 2025 at 6:35=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrote=
-:
+On Thu, Jul 3, 2025 at 8:51=E2=80=AFPM John Groves <John@groves.net> wrote:
 >
-> On Wed, Jul 02, 2025 at 11:43:12AM -0700, Darrick J. Wong wrote:
-> > > On a spinning disk, random IO bandwidth remains unchanged, while sequ=
-ential
-> > > IO performance declines. However, setting nr_wb_ctx =3D 1 via configu=
-rable
-> > > writeback(planned in next version) eliminates the decline.
-> > >
-> > > echo 1 > /sys/class/bdi/8:16/nwritebacks
-> > >
-> > > We can fetch the device queue's rotational property and allocate BDI =
-with
-> > > nr_wb_ctx =3D 1 for rotational disks. Hope this is a viable solution =
-for
-> > > spinning disks?
-> >
-> > Sounds good to me, spinning rust isn't known for iops.
-> >
-> > Though: What about a raid0 of spinning rust?  Do you see the same
-> > declines for sequential IO?
+> * FUSE_DAX_FMAP flag in INIT request/reply
 >
-> Well, even for a raid0 multiple I/O streams will degrade performance
-> on a disk.  Of course many real life workloads will have multiple
-> I/O streams anyway.
+> * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
+>   famfs-enabled connection
 >
-> I think the important part is to have:
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+>  fs/fuse/fuse_i.h          |  3 +++
+>  fs/fuse/inode.c           | 14 ++++++++++++++
+>  include/uapi/linux/fuse.h |  4 ++++
+>  3 files changed, 21 insertions(+)
 >
->  a) sane defaults
->  b) an easy way for the file system and/or user to override the default
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 9d87ac48d724..a592c1002861 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -873,6 +873,9 @@ struct fuse_conn {
+>         /* Use io_uring for communication */
+>         unsigned int io_uring;
 >
-> For a) a single thread for rotational is a good default.  For file system
-> that driver multiple spindles independently or do compression multiple
-> threads might still make sense.
->
-> For b) one big issue is that right now the whole writeback handling is
-> per-bdi and not per superblock.  So maybe the first step needs to be
-> to move the writeback to the superblock instead of bdi?
+> +       /* dev_dax_iomap support for famfs */
+> +       unsigned int famfs_iomap:1;
+> +
 
-bdi is tied to the underlying block device, and helps for device
-bandwidth specific throttling, dirty ratelimiting etc. Making it per
-superblock will need duplicating the device specific throttling, ratelimiti=
-ng
-to superblock, which will be difficult.
+pls move up to the bit fields members.
 
-> If someone
-> uses partitions and multiple file systems on spinning rusts these
-> days reducing the number of writeback threads isn't really going to
-> save their day either.
+>         /** Maximum stack depth for passthrough backing files */
+>         int max_stack_depth;
 >
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 29147657a99f..e48e11c3f9f3 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *=
+fm, struct fuse_args *args,
+>                         }
+>                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enab=
+led())
+>                                 fc->io_uring =3D 1;
+> +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
+> +                           flags & FUSE_DAX_FMAP) {
+> +                               /* XXX: Should also check that fuse serve=
+r
+> +                                * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN=
+,
+> +                                * since it is directing the kernel to ac=
+cess
+> +                                * dax memory directly - but this functio=
+n
+> +                                * appears not to be called in fuse serve=
+r
+> +                                * process context (b/c even if it drops
+> +                                * those capabilities, they are held here=
+).
+> +                                */
+> +                               fc->famfs_iomap =3D 1;
+> +                       }
 
-in this case with single wb thread multiple partitions/filesystems use the
-same bdi, we fall back to base case, will that not help ?
+1. As long as the mapping requests are checking capabilities we should be o=
+k
+    Right?
+2. What's the deal with capable(CAP_SYS_ADMIN) in process_init_limits then?
+3. Darrick mentioned the need for a synchronic INIT variant for his work on
+    blockdev iomap support [1]
+
+I also wonder how much of your patches and Darrick's patches end up
+being an overlap?
+
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/linux-fsdevel/20250613174413.GM6138@frogsfrogsf=
+rogs/
 
