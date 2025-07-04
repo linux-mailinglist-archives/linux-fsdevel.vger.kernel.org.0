@@ -1,57 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-53981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85367AF9B46
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 21:44:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88F3AF9B49
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 21:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF7D7A672D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 19:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390DF586D03
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 19:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B152222AF;
-	Fri,  4 Jul 2025 19:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E6B1E9B3D;
+	Fri,  4 Jul 2025 19:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cX1j8QRg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DF6B8xP1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C785A1F418F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 19:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15EB72610;
+	Fri,  4 Jul 2025 19:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751658260; cv=none; b=ni/hrQlNwsAdWUhVCfcqW8hkNkVNXvz3c2kWEv4HrFof9KgFq0awWvDiRqw84fKNhbLgqbxb586XffS1qhA0P5hu+reNN95Y14secuL0KIyoZqD/ve4M0/Uvp97Hu5HPOo8xXuLIi/Y5VXXONr+P+EqgDqL9NoG1yBMEKKbu40I=
+	t=1751658402; cv=none; b=cvJPSqjyaYCLOfpUNB6fDdpo51tPR0ZNWLoZEUAxOBcn2MVidmbjP9mbflvp5J9YHjXHDJsgp9iQ75Li6ugWkCNNhPiRujSlPVoJRxrwRSAkpdWERDlPuc+irmi87TYHY8TOAyCyKFHElas8cYIr13poQoeiJFkWARg6GOq4pcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751658260; c=relaxed/simple;
-	bh=8ASbnQ5WPVsSBJdTvk5qu2nGJ8jAr8Wu+6BtlzbcQEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HFLNarGjpyrVwr2lNmGcsnNwmwYXGGQCzYtr3Ricox3xK93KYmF2O1t2MxG6UH6hlUdzLA1qD0kcFkj+NxUmn3zCEU5yZPja92KW/ioDmCoeVdV8W/lRpB/YhyOB86MxguDBz5IcuyEt3ud3YkhmIEHCpWGTuKFVJnXajGr+WPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cX1j8QRg; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=CRqxQQAiwU26JOAw4HWXi/N9beuhxVU+0SURlzKoOzU=; b=cX1j8QRghaGJuX9EshZlqi2VJf
-	qq2hDN93C4dbD2nazDbOJLfc7G1cfqomvO6T6TWfCBwG5qIT7z2PWrKz4FCcN+CC4VGOk663NIDZx
-	lkpaszoK4fD8wGnrGrVfyfc3Femvb5the22CabmftgKQBaKo4ulrLXdQ7iZWOkKaLJNBzk8LMUSEv
-	YvDZY8vIXLgNT3Fz/HR8TGlF1f7aeLyN0ZfVSi3V09CGnLKb/NQPGNYNk8EP+EELxi94s8+o/wnoc
-	c4yC8v51sXRY2DiXokgiJ/6G+op3eRYYVSLNnKTr8R2Y9XJD2Mgl6F5xxUyADETuRqmHn1afNKePp
-	0zBE50xg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXmKU-0000000EcOb-1qFB;
-	Fri, 04 Jul 2025 19:44:14 +0000
-Date: Fri, 4 Jul 2025 20:44:14 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [RFC] MNT_WRITE_HOLD mess
-Message-ID: <20250704194414.GR1880847@ZenIV>
+	s=arc-20240116; t=1751658402; c=relaxed/simple;
+	bh=7sl222wGYOV12L1PGTz0kanazbA9ydr0iaCDXq1sMUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jsR9VmqkQL24YF59hYnT7JTPmxckOunyuJaWMPd1/QcXnwvQ32GdBOTDOnAEPP1tuBcPSaaOAa5SDkwvcQ+JoLhDa7zFUO2nyyBy8Yrp6uwBWzKzwMKOktDWM8QbojaCpb6JAJhQGCkhEqXtkbd+ug0U9jCxTCkbfA2Lh6F7Ylc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DF6B8xP1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29FF2C4CEE3;
+	Fri,  4 Jul 2025 19:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751658402;
+	bh=7sl222wGYOV12L1PGTz0kanazbA9ydr0iaCDXq1sMUQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DF6B8xP1AOvoVPSuIvbbJCV4Nm44DEXUhr1apKrNzKiF4fWzcs1t5kYcHnmQtivoM
+	 BuX6VZ5m6djFPluF9hyuMTMRt2N8V55A+D0q7Iq/S5Lj741gOM5YIRNdSEnFLjj37q
+	 sFjZbnhe2sIksXc/QH4ybrSe5irWxWumGQIkz91qaoOl3RdqKNv6ReHlLOgh6Xg5jw
+	 9aXrSzBew/qEH9cG+2WaZ+nU2w5kz4CxlSv2eMaoHu+Q4oMh6prSWfvwukWI7NFjat
+	 erRr7+u59iTa12nVWKL47ojbeop/v2N5P759k1p5lq/vc82dE1A/50LdChNQuSy7ke
+	 3P3T+FedgjYcg==
+Date: Fri, 4 Jul 2025 15:46:41 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	keith.mannthey@hammerspace.com
+Subject: Re: [PATCH 1/6] NFSD: add the ability to enable use of RWF_DONTCACHE
+ for all IO
+Message-ID: <aGgvoWo7p0oI90xE@kernel.org>
+References: <4b858fb1-25f6-457f-8908-67339e20318e@oracle.com>
+ <aEnWhlXjzOmRfCJf@kernel.org>
+ <d8d01c41-f37f-42e0-9d46-62a51e95ab82@oracle.com>
+ <aEr5ozy-UnHT90R9@kernel.org>
+ <5dc44ffd-9055-452c-87c6-2572e5a97299@oracle.com>
+ <aFBB_txzX19E-96H@kernel.org>
+ <aFGkV1ILAlmtpGVJ@kernel.org>
+ <45f336e1-ff5a-4ac9-92f0-b458628fd73d@oracle.com>
+ <aFRwvhM-wdQpTDin@kernel.org>
+ <3f91b4eb-6a6b-4a81-bf4e-ba5f4d6b407f@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,207 +68,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <3f91b4eb-6a6b-4a81-bf4e-ba5f4d6b407f@oracle.com>
 
-	Scalable handling of writers count on a mount had been added
-back in 2009, when the counter got split into per-cpu components.
-The tricky part, of course, was on the "make it read-only" side and the
-way it had been done was to add a flag for "we are adding that shit up,
-feel free to increment, but don't get through the mnt_get_write_access()
-until we are finished".
+On Mon, Jun 30, 2025 at 10:50:42AM -0400, Chuck Lever wrote:
+> On 6/19/25 4:19 PM, Mike Snitzer wrote:
+> > On Tue, Jun 17, 2025 at 01:31:23PM -0400, Chuck Lever wrote:
+> >>
+> >> If we were to make all NFS READ operations use O_DIRECT, then of course
+> >> NFSD's splice read should be removed at that point.
+> > 
+> > Yes, that makes sense.  I still need to try Christoph's idea (hope to
+> > do so over next 24hrs):
+> > https://lore.kernel.org/linux-nfs/aEu3o9imaQQF9vyg@infradead.org/
+> > 
+> > But for now, here is my latest NFSD O_DIRECT/DONTCACHE work, think of
+> > the top 6 commits as a preview of what'll be v2 of this series:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/log/?h=kernel-6.12.24/nfsd-testing
+> 
+> I was waiting for a series repost, but in the meantime...
+> 
+> The one thing that caught my eye was the relocation of fh_getattr().
+> 
+> - If fh_getattr() is to be moved to fs/nfsd/vfs.c, then it should be
+>   renamed nfsd_getattr() (or similar) to match the API naming
+>   convention in that file.
+> 
+> - If fh_getattr() is to keep its current name, then it should be
+>   moved to where the other fh_yada() functions reside, in
+>   fs/nfsd/nfsfh.c
+> 
+> In a private tree, I constructed a patch to do the latter. I can
+> post that for comment.
 
-	Details are in mnt_get_write_access() and mnt_{,un}hold_writers().
-Current rules:
-	* mnt_hold_writers()/mnt_unhold_writers() should be in the same
-mount_lock scope.
-	* any successful mnt_hold_writers() must be followed by mnt_unhold_writers()
-within the same scope.
-	* mnt_get_write_access() *MAY* take and release mount_lock, but only
-if there's somebody currently playing with mnt_hold_writers() on the same mount.
+Hi,
 
-	The non-obvious trouble came in 2011 (in 4ed5e82fe77f "vfs: protect
-remounting superblock read-only") when we got sb_prepare_remount_readonly(),
-esssentially doing mnt_hold_writers() for each mount over given superblock.
-I hadn't realized the implications until this year ;-/
+Sure, I can clean it up to take your patch into account.  Please share
+your patch (either pointer to commit in a branch or via email).
 
-	The trouble is, as soon as mount has been added to ->s_mounts
-(currently in vfs_create_mount() and clone_mnt()) it becomes accessible
-to other threads, even if only in a very limited way.
+Tangent to explain why I've fallen off the face of the earth:
+I have just been focused on trying to get client-side misaligned
+O_DIRECT READ IO to be expanded to be DIO-aligned like I did with
+NFSD.  Turns out it is quite involved (took a week of focused
+development to arrive at the fact that NFS client's nfs_page and
+pagelist code's use of memory as an array is entirely incompatiable.
+Discussed with Trond and the way forward would require having NFS
+client fill in xdr_buf's bvec and manage manually.. but that's a
+serious hack.  Better long term goal is to convert xdr_buf over to
+using bio_vec like NFSD is using.
 
-	That breaks very natural assumptions, just lightly enough to make
-the resulting races hard to detect.  Note, for example, this in ovl_get_upper():
-	upper_mnt = clone_private_mount(upperpath);
-	err = PTR_ERR(upper_mnt);
-	if (IS_ERR(upper_mnt)) {
-		pr_err("failed to clone upperpath\n");
-		goto out;
-	}
+So rather than do any of that _now_, I just today implemented an NFS
+LOCALIO fallback to issuing the misaligned DIO READ using remote call
+to NFSD (able to do so on a per-IO basis if READ is misaligned).
+Seems to work really well, but does force LOCALIO to go remote (over
+loopback network) just so it can leverage our new NFSD mode to use
+O_DIRECT and expand misaligned writes, which is enabled with:
+  echo 2 > /sys/kernel/debug/nfsd/io_cache_read
 
-	/* Don't inherit atime flags */
-	upper_mnt->mnt_flags &= ~(MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME);
-See the problem?  upper_mnt has been returned by clone_private_mount() and at
-the moment it has no references to it anywhere other than this local variable.
-It is not a part of any mount tree, it is not hashed, it is not reachable via
-propagation graph, it is not on any expiry lists, etc.  Except that it *is*
-on ->s_mounts of underlying superblock (linked via ->mnt_instance) and should
-anybody try to call sb_prepare_remount_readonly(), we may end up fucking
-the things up in all kinds of interesting ways - e.g.
-	mnt_hold_writers() sets MNT_WRITE_HOLD
-	we fetch ->mnt_flags
-	mnt_unhold_writers() clears MNT_WRITE_HOLD
-	we remove the atime bits and store ->mnt_flags, bringing MNT_WRITE_HOLD
-back.  Makes for a very unhappy mnt_get_write_access() down the road...
+All said, I'll get everything cleaned up and send out v2 of this
+patchset on Monday.  (If you share your patch I can rebase ontop of it
+and hopefully still get v2 out on Monday)
 
-	The races are real.  Some of them can be dealt with by grabbing
-mount_lock around the problematic modifications of ->mnt_flags, but that's
-not an option outside of fs/namespace.c - I really don't want to export
-mount_lock *or* provide a "clear these flags and set these ones" exported
-primitive.
-
-	In any case, the underlying problem is that we have this state
-of struct mount when it's almost, but not entirely thread-local.  That's
-likely to cause future bugs of the same sort.
-
-	I'd been playing with delaying the insertion into ->s_mounts
-and making mnt_get_write_access() fail and complain if mount hasn't been
-inserted yet.  It's... doable, but not pleasant.  However, there's
-another approach that might be better.
-
-	We have ->mnt_instance, which is used only under mount_lock.
-We have two places where we insert, one place where we remove and
-two places (both in sb_prepare_remount_readonly()) where we iterate
-through the list.
-
-	What if we steal LSB of ->mnt_instance.prev for what MNT_WRITE_HOLD
-is currently used for?  list_for_each_entry() won't give a damn;
-list_del() and list_add_tail() are called in mount_lock scopes that do
-not contain any calls of mnt_hold_writers(), so they'll see that LSB
-clear and work as usual.  Loop in mnt_get_write_access() could just
-as easily do
-        while ((unsigned long)READ_ONCE(mnt->mnt_instance.prev) & 1) {
-as the current
-        while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
-and no barriers need to be changed.  We might want to move
-->mnt_instance closer to ->mnt or to ->mnt_pcp, for the sake of
-the number of cachelines we are accessing, but then ->mnt_instance
-is pretty close to ->mnt_pcp as it is.
-
-	Something like the delta below, modulo stale comments, etc.
-AFAICS, that removes this "slightly exposed" state, along with the
-races caused by it.  This is on top of mainline and it should be
-easy to backport.
-
-	Comments?
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 54c59e091919..7e3145baac8f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -506,7 +506,7 @@ int mnt_get_write_access(struct vfsmount *m)
- 	 */
- 	smp_mb();
- 	might_lock(&mount_lock.lock);
--	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
-+	while ((unsigned long)READ_ONCE(mnt->mnt_instance.prev) & 1) {
- 		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
- 			cpu_relax();
- 		} else {
- 			preempt_enable();
--			lock_mount_hash();
--			unlock_mount_hash();
-+			read_seqlock_excl(&mount_lock);
-+			read_sequnlock_excl(&mount_lock);
- 			preempt_disable();
- 		}
- 	}
-@@ -650,6 +650,11 @@ void mnt_drop_write_file(struct file *file)
- }
- EXPORT_SYMBOL(mnt_drop_write_file);
- 
-+static inline unsigned long __mnt_writers_held(const struct mount *m)
-+{
-+	return (unsigned long)m->mnt_instance.prev;
-+}
-+
- /**
-  * mnt_hold_writers - prevent write access to the given mount
-  * @mnt: mnt to prevent write access to
-@@ -670,7 +675,7 @@ EXPORT_SYMBOL(mnt_drop_write_file);
-  */
- static inline int mnt_hold_writers(struct mount *mnt)
- {
--	mnt->mnt.mnt_flags |= MNT_WRITE_HOLD;
-+	mnt->mnt_instance.prev = (void *)(__mnt_writers_held(mnt) | 1);
- 	/*
- 	 * After storing MNT_WRITE_HOLD, we'll read the counters. This store
- 	 * should be visible before we do.
-@@ -718,7 +723,7 @@ static inline void mnt_unhold_writers(struct mount *mnt)
- 	 * that become unheld will see MNT_READONLY.
- 	 */
- 	smp_wmb();
--	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
-+	mnt->mnt_instance.prev = (void *)(__mnt_writers_held(mnt) & ~1);
- }
- 
- static int mnt_make_readonly(struct mount *mnt)
-@@ -755,8 +760,9 @@ int sb_prepare_remount_readonly(struct super_block *sb)
- 	if (!err)
- 		sb_start_ro_state_change(sb);
- 	list_for_each_entry(mnt, &sb->s_mounts, mnt_instance) {
--		if (mnt->mnt.mnt_flags & MNT_WRITE_HOLD)
--			mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
-+		unsigned long v = __mnt_writers_held(mnt);
-+		if (v & 1)
-+			mnt->mnt_instance.prev = (void *)(v & ~1);
- 	}
- 	unlock_mount_hash();
- 
-@@ -1349,7 +1355,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 	}
- 
- 	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
--	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
-+	mnt->mnt.mnt_flags &= ~(MNT_MARKED|MNT_INTERNAL);
- 
- 	atomic_inc(&sb->s_active);
- 	mnt->mnt.mnt_idmap = mnt_idmap_get(mnt_idmap(&old->mnt));
-@@ -4959,7 +4965,7 @@ static int mount_setattr_prepare(struct mount_kattr *kattr, struct mount *mnt)
- 		 */
- 		for (p = mnt; p; p = next_mnt(p, mnt)) {
- 			/* If we had to hold writers unblock them. */
--			if (p->mnt.mnt_flags & MNT_WRITE_HOLD)
-+			if (__mnt_writers_held(mnt) & 1)
- 				mnt_unhold_writers(p);
- 
- 			/*
-@@ -4999,7 +5005,7 @@ static void mount_setattr_commit(struct mount_kattr *kattr, struct mount *mnt)
- 		WRITE_ONCE(m->mnt.mnt_flags, flags);
- 
- 		/* If we had to hold writers unblock them. */
--		if (m->mnt.mnt_flags & MNT_WRITE_HOLD)
-+		if (__mnt_writers_held(mnt) & 1)
- 			mnt_unhold_writers(m);
- 
- 		if (kattr->propagation)
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index 1a508beba446..1728bc50d02b 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -33,7 +33,6 @@ enum mount_flags {
- 	MNT_NOSYMFOLLOW	= 0x80,
- 
- 	MNT_SHRINKABLE	= 0x100,
--	MNT_WRITE_HOLD	= 0x200,
- 
- 	MNT_SHARED	= 0x1000, /* if the vfsmount is a shared mount */
- 	MNT_UNBINDABLE	= 0x2000, /* if the vfsmount is a unbindable mount */
-@@ -64,7 +63,7 @@ enum mount_flags {
- 				  | MNT_READONLY | MNT_NOSYMFOLLOW,
- 	MNT_ATIME_MASK = MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME,
- 
--	MNT_INTERNAL_FLAGS = MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL |
-+	MNT_INTERNAL_FLAGS = MNT_SHARED | MNT_INTERNAL |
- 			     MNT_DOOMED | MNT_SYNC_UMOUNT | MNT_MARKED |
- 			     MNT_LOCKED,
- };
+Thanks, and Happy 4th of July!
+Mike
 
