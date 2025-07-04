@@ -1,153 +1,262 @@
-Return-Path: <linux-fsdevel+bounces-53905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BC2AF8E17
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FC9AF8C94
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 10:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE9567B1E27
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 08:43:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBA03587C9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 08:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3C02868B2;
-	Fri,  4 Jul 2025 08:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8548B285CBC;
+	Fri,  4 Jul 2025 08:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLpy79R3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPMQykqK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4E1328AE4;
-	Fri,  4 Jul 2025 08:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BBE328B1E;
+	Fri,  4 Jul 2025 08:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751618400; cv=none; b=DO+4XH/igW6zNQMj0MVkKegBUBQ5eHX2kwSpIIBpWYNCR67Na0tpeQqzLdMOyHyp2/Cr3r6v7DDQ+HotVFFZE3hpUxgCrku98eRVEvUZK+O28N7aIXDISxzOUUmPW177vHnnVrY0+lL5+Vwf01+U0pLv9VsHbtzdttH9xpMVTFE=
+	t=1751618679; cv=none; b=N7gkmVq50yWpEx1B3V8aRU5l1CWk/ZbC5SuYcJ1R5g1hNDlb7jwDxAd2i3zg42wnDg1pZHgg1L8RBSA8drnWBkLPGuFispugY1CB9KQXb5IGd9mOBpXfa+z6kH3/RyzSSA7e0YWSQL6XwCetiGfUkwQjERPFgS5gI/O5P+M/Wh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751618400; c=relaxed/simple;
-	bh=FHas3OLzhcWmJla/w9SVAWfRsC/N5brO1Le2ihalCNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TN2UI3xyCfwRG2Zl3GjjqEP0gUD97Lrde26YuFL2ocVGOzIcKvc4MrsbLy7pOFTOE+SYnfxnbQwcJ/byijjLYkVgyMtM4bvdb/ZaPjiHX6cF53fbz1/XHoGaNUhohKRw6JpXr+sywUrNN/+CZ2gCEdKBEZBuydk+4csAmU3hG+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLpy79R3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11EA7C4CEF0;
-	Fri,  4 Jul 2025 08:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751618400;
-	bh=FHas3OLzhcWmJla/w9SVAWfRsC/N5brO1Le2ihalCNg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VLpy79R3WoowQ0dde0FpFT1YyHsXsurqva+SkoBcww5fjPVnQMcwqe87L2wtjyLYi
-	 kRKqWJIQ81p4a1f0xNgpRmdmn+OPlPkQk/4+3lz4NrJRi0wbmnDt4pjvgXFACOvZxO
-	 qU9E5LKN5/hna1bw+wpVR2YB99mwlJCTB2beguJ1mHivp02SKA4At/U4wBW5k3iT/Q
-	 u3HMCjJxxvd2r71zcnuKhwU/Z06IvtD7wFREJ9CXS/1miJCbu6oYZeK5DrvOvTrTgE
-	 IHzvXhhXfrV+PFyTdnHzAjREeo0FCEO0Q5nKDCaILrTwFadudwtNVY/apMjWmKyCd5
-	 QDeadiD91wJeA==
-Date: Fri, 4 Jul 2025 10:39:53 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, 
-	tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com, 
-	chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, martin.petersen@oracle.com, 
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com, 
-	yangerkun@huawei.com, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org, 
-	linux-scsi@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
-Message-ID: <20250704-gemein-addieren-62ad4d210c70@brauner>
-References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
- <20250623-woanders-allabendlich-f87ae2d9c704@brauner>
- <99010bfd-c968-49c7-b62b-c72b38722c1b@huaweicloud.com>
+	s=arc-20240116; t=1751618679; c=relaxed/simple;
+	bh=ubkxPX2FW+GZUe3/04Eh7dd0rWb/KcE745/jPL04D+A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lpdm+y+N5nSPlh0DZcvByOhBMwRGfpobiteHJss14hPwXXxGxQhWw+dftq7C7aH/f6qILma2+LA0sorKXwbCenXvLkO6uTAvhVQQZWNpd8TGAqr9qETDAhsIBAnfklcOStK31yMNYJoUCWgAhK/azgI78yRpACgE3htOMy6/pLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPMQykqK; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so1196644a12.2;
+        Fri, 04 Jul 2025 01:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751618675; x=1752223475; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pLxVD++bObx7XIGt1aHIikLchHPfaB8ug5wDwTwQnEE=;
+        b=iPMQykqKQDzJ/qyqwf8UXnEM+QAeQ/FMxrsswA+vRKzBE8LDpCvdyLO5n41ee9nsXI
+         EcN1jLK69K30zD01Hymxd88y+3th6KBcZaBaGAAs2Nu5OihJCKQuxq8qR6T6VYDcp7ma
+         SvXNp/cbZNe2XR0fTV6SlfNYgiLM0eLeQBI7SiMqQtH8WZC4soJLvqiNt4r4SEDJMWE5
+         xhGpWYHMOky90jBejawKzd+VJTkP1XD6D2/5690GX4/zDVQU1Dc6ovzKgdsCwBubqkB0
+         QxlQbhzPmOMFE9r8UFcIci1dKEduETdglQ/aIXDxjH+/hBww1AtZS+pgLLp6QlAKBAeH
+         eTHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751618675; x=1752223475;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pLxVD++bObx7XIGt1aHIikLchHPfaB8ug5wDwTwQnEE=;
+        b=m1j99wHQCJZ9R2cswD6C6lpXV27uYeidgBgqnS7AtXp5POnuFMyetGy2vbhC+DsfkH
+         vHF+pFz93d/f9ZzEFUbSe35ZvLBa172Ia0YGqJ1b1B0f9skjgXU3vQxIRcNv8BZffXAX
+         pzG1MvUWbWRph0+fCXzI9uzTjfvwVas5/f0qlhnLUAkl+0iHwau5Nk+fiQIMle0CV20e
+         2saAjFqLz1Hzh5wG3JT1VeW4NdKJV0c5UmPMfumUQ6DJPKKsJ/kTujKWJHM7hBruzhdj
+         G82O2vMWvnwJ5LM3tEUTyDaEY39Ilg9iucoEMGB0uaCDesnsKJ1kQP2ZfBP06dU2hZ4s
+         qC9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJc2MI22hgReNm4MAS8eZ7YRazNsna6aV68eSvcUzQ3O1GrH4DQTyGQJAxPYO9SGDu1MCIWzJIfis=@vger.kernel.org, AJvYcCVz99qTlXDClG5P9+8XFVtEP4HvfvqS1CryeEpobOhTeuvSug3nRxv/ruDP5VEXtlBSyOQ/1iw38voFMNLdPQ==@vger.kernel.org, AJvYcCWdzH0VOmHblQDyvz+N+KripNDLuED22kjZQTNrJB41X7I5IIsohMBT6alrD57S5cHjCzIlZWTnwTJZLlsO@vger.kernel.org, AJvYcCXW4EfoZbkYkc8Kz+ZJOM6wreIEwJ3p0NUUYfhvT15l+/6fv0h4qtf0GnX8aA7pr9Oas2ifYDNs0tgK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOJTJflQl3gdga1WBxskRDxtM/7BT+MVfgv6uF2ghy9quM6EhJ
+	yt78mjV1jS5QtcRHVOtaNZPPRNhitEyk3pvGE+/9NVJf0brmUnCL2QGTlbiXs9IsXubioWIcrYx
+	8RKJsn36j5HtBKE6kDb/DmBqp7+wboQc=
+X-Gm-Gg: ASbGncu9u47uoOhlybqaw+P67KaOlN/7u3jY++7dI92NiimhXUvSmFKpSK0o549QgVu
+	5Xo9/rPw7sK0aq3S3RclLzVO4EEiqe6a/tlu9OPNx9B81RFELs+XF3E+f75W52hZ58yaHlqkd3W
+	CVfC3piEKFFm5Qn8yNCGqsfyOb/XeiB6NpfoNXRpapPfw=
+X-Google-Smtp-Source: AGHT+IFBDaP8zQxWcQljULEFa6GosLHM1Fr9HgBZPyfuh3qYvt0YaniWVIKCyvoHhchZrszWhCvhEz6VfcNnf1wh2wI=
+X-Received: by 2002:a17:907:7290:b0:ae3:64ec:5eb0 with SMTP id
+ a640c23a62f3a-ae3fbc2896bmr136387066b.11.1751618674841; Fri, 04 Jul 2025
+ 01:44:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <99010bfd-c968-49c7-b62b-c72b38722c1b@huaweicloud.com>
+References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-10-john@groves.net>
+In-Reply-To: <20250703185032.46568-10-john@groves.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 4 Jul 2025 10:44:23 +0200
+X-Gm-Features: Ac12FXxwSwxI5T6ujv-byO1091sUsmVe0O4bcF4RyE_aZllEPVlxUcLQOg0w034
+Message-ID: <CAOQ4uxgqMOL4aRnpm02Q7V8_T1vtgHHxe+QnoLANhS_Vr2-VRw@mail.gmail.com>
+Subject: Re: [RFC V2 09/18] famfs_fuse: Update macro s/FUSE_IS_DAX/FUSE_IS_VIRTIO_DAX/
+To: John Groves <John@groves.net>
+Cc: Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>, Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 03, 2025 at 11:35:41AM +0800, Zhang Yi wrote:
-> On 2025/6/23 18:46, Christian Brauner wrote:
-> > On Thu, 19 Jun 2025 19:17:57 +0800, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> Changes since v1:
-> >>  - Rebase codes on 6.16-rc2.
-> >>  - Use max_{hw|user}_wzeroes_unmap_sectors queue limits instead of
-> >>    BLK_FEAT_WRITE_ZEROES_UNMAP feature to represent the status of the
-> >>    unmap write zeroes operation as Christoph and Darrick suggested. This
-> >>    redoes the first 5 patches, so remove all the reviewed-by tags,
-> >>    please review them again.
-> >>  - Simplify the description of FALLOC_FL_WRITE_ZEROES in patch 06 as
-> >>    Darrick suggested.
-> >>  - Revise the check order of FALLOC_FL_WRITE_ZEROES in patch 08 as
-> >>    Christoph suggested.
-> >> Changes since RFC v4:
-> >>  - Rebase codes on 6.16-rc1.
-> >>  - Add a new queue_limit flag, and change the write_zeroes_unmap sysfs
-> >>    interface to RW mode. User can disable the unmap write zeroes
-> >>    operation by writing '0' to it when the operation is slow.
-> >>  - Modify the documentation of write_zeroes_unmap sysfs interface as
-> >>    Martin suggested.
-> >>  - Remove the statx interface.
-> >>  - Make the bdev and ext4 don't allow to submit FALLOC_FL_WRITE_ZEROES
-> >>    if the block device does not enable the unmap write zeroes operation,
-> >>    it should return -EOPNOTSUPP.
-> >> Changes sicne RFC v3:
-> >>  - Rebase codes on 6.15-rc2.
-> >>  - Add a note in patch 1 to indicate that the unmap write zeros command
-> >>    is not always guaranteed as Christoph suggested.
-> >>  - Rename bdev_unmap_write_zeroes() helper and move it to patch 1 as
-> >>    Christoph suggested.
-> >>  - Introduce a new statx attribute flag STATX_ATTR_WRITE_ZEROES_UNMAP as
-> >>    Christoph and Christian suggested.
-> >>  - Exchange the order of the two patches that modified
-> >>    blkdev_fallocate() as Christoph suggested.
-> >> Changes since RFC v2:
-> >>  - Rebase codes on next-20250314.
-> >>  - Add support for nvme multipath.
-> >>  - Add support for NVMeT with block device backing.
-> >>  - Clear FALLOC_FL_WRITE_ZEROES if dm clear
-> >>    limits->max_write_zeroes_sectors.
-> >>  - Complement the counterpart userspace tools(util-linux and xfs_io)
-> >>    and tests(blktests and xfstests), please see below for details.
-> >> Changes since RFC v1:
-> >>  - Switch to add a new write zeroes operation, FALLOC_FL_WRITE_ZEROES,
-> >>    in fallocate, instead of just adding a supported flag to
-> >>    FALLOC_FL_ZERO_RANGE.
-> >>  - Introduce a new flag BLK_FEAT_WRITE_ZEROES_UNMAP to the block
-> >>    device's queue limit features, and implement it on SCSI sd driver,
-> >>    NVMe SSD driver and dm driver.
-> >>  - Implement FALLOC_FL_WRITE_ZEROES on both the ext4 filesystem and
-> >>    block device (bdev).
-> >>
-> >> [...]
-> > 
-> > If needed, the branch can be declared stable and thus be used as base
-> > for other work.
-> > 
-> > ---
-> > 
-> > Applied to the vfs-6.17.fallocate branch of the vfs/vfs.git tree.
-> > Patches in the vfs-6.17.fallocate branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> > 
-> > Note that commit hashes shown below are subject to change due to rebase,
-> > trailer updates or similar. If in doubt, please check the listed branch.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs-6.17.fallocate
-> 
-> Hi Christian,
-> 
-> I noticed that this patch series doesn't appear to be merged into this
-> branch. Just wondering if it might have been missed?
+On Thu, Jul 3, 2025 at 8:51=E2=80=AFPM John Groves <John@groves.net> wrote:
+>
+> Virtio_fs now needs to determine if an inode is DAX && not famfs.
+>
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+>  fs/fuse/dir.c    |  2 +-
+>  fs/fuse/file.c   | 13 ++++++++-----
+>  fs/fuse/fuse_i.h |  6 +++++-
+>  fs/fuse/inode.c  |  2 +-
+>  fs/fuse/iomode.c |  2 +-
+>  5 files changed, 16 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 8f699c67561f..ad8cdf7b864a 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -1939,7 +1939,7 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct=
+ dentry *dentry,
+>                 is_truncate =3D true;
+>         }
+>
+> -       if (FUSE_IS_DAX(inode) && is_truncate) {
+> +       if (FUSE_IS_VIRTIO_DAX(fi) && is_truncate) {
+>                 filemap_invalidate_lock(mapping);
+>                 fault_blocked =3D true;
+>                 err =3D fuse_dax_break_layouts(inode, 0, -1);
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 754378dd9f71..93b82660f0c8 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -239,7 +239,7 @@ static int fuse_open(struct inode *inode, struct file=
+ *file)
+>         int err;
+>         bool is_truncate =3D (file->f_flags & O_TRUNC) && fc->atomic_o_tr=
+unc;
+>         bool is_wb_truncate =3D is_truncate && fc->writeback_cache;
+> -       bool dax_truncate =3D is_truncate && FUSE_IS_DAX(inode);
+> +       bool dax_truncate =3D is_truncate && FUSE_IS_VIRTIO_DAX(fi);
+>
+>         if (fuse_is_bad(inode))
+>                 return -EIO;
+> @@ -1770,11 +1770,12 @@ static ssize_t fuse_file_read_iter(struct kiocb *=
+iocb, struct iov_iter *to)
+>         struct file *file =3D iocb->ki_filp;
+>         struct fuse_file *ff =3D file->private_data;
+>         struct inode *inode =3D file_inode(file);
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+>
+>         if (fuse_is_bad(inode))
+>                 return -EIO;
+>
+> -       if (FUSE_IS_DAX(inode))
+> +       if (FUSE_IS_VIRTIO_DAX(fi))
+>                 return fuse_dax_read_iter(iocb, to);
+>
+>         /* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
+> @@ -1791,11 +1792,12 @@ static ssize_t fuse_file_write_iter(struct kiocb =
+*iocb, struct iov_iter *from)
+>         struct file *file =3D iocb->ki_filp;
+>         struct fuse_file *ff =3D file->private_data;
+>         struct inode *inode =3D file_inode(file);
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+>
+>         if (fuse_is_bad(inode))
+>                 return -EIO;
+>
+> -       if (FUSE_IS_DAX(inode))
+> +       if (FUSE_IS_VIRTIO_DAX(fi))
+>                 return fuse_dax_write_iter(iocb, from);
+>
+>         /* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
+> @@ -2627,10 +2629,11 @@ static int fuse_file_mmap(struct file *file, stru=
+ct vm_area_struct *vma)
+>         struct fuse_file *ff =3D file->private_data;
+>         struct fuse_conn *fc =3D ff->fm->fc;
+>         struct inode *inode =3D file_inode(file);
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+>         int rc;
+>
+>         /* DAX mmap is superior to direct_io mmap */
+> -       if (FUSE_IS_DAX(inode))
+> +       if (FUSE_IS_VIRTIO_DAX(fi))
+>                 return fuse_dax_mmap(file, vma);
+>
+>         /*
+> @@ -3191,7 +3194,7 @@ static long fuse_file_fallocate(struct file *file, =
+int mode, loff_t offset,
+>                 .mode =3D mode
+>         };
+>         int err;
+> -       bool block_faults =3D FUSE_IS_DAX(inode) &&
+> +       bool block_faults =3D FUSE_IS_VIRTIO_DAX(fi) &&
+>                 (!(mode & FALLOC_FL_KEEP_SIZE) ||
+>                  (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE)));
+>
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 2086dac7243b..9d87ac48d724 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -1426,7 +1426,11 @@ void fuse_free_conn(struct fuse_conn *fc);
+>
+>  /* dax.c */
+>
+> -#define FUSE_IS_DAX(inode) (IS_ENABLED(CONFIG_FUSE_DAX) && IS_DAX(inode)=
+)
+> +/* This macro is used by virtio_fs, but now it also needs to filter for
+> + * "not famfs"
+> + */
+> +#define FUSE_IS_VIRTIO_DAX(fuse_inode) (IS_ENABLED(CONFIG_FUSE_DAX)    \
+> +                                       && IS_DAX(&fuse_inode->inode))
 
-Dammit, my script missed to push the branch. Fixed now. Thanks for
-checking!
+I think we should take this opportunity to make it
+static inline fuse_is_virtio_dax()
+
+and because some of the call site really do want to know if this is dax
+should also leave a helper
+
+static inline fuse_is_dax()
+
+...
+
+>
+>  ssize_t fuse_dax_read_iter(struct kiocb *iocb, struct iov_iter *to);
+>  ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from);
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index e9db2cb8c150..29147657a99f 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -164,7 +164,7 @@ static void fuse_evict_inode(struct inode *inode)
+>         if (inode->i_sb->s_flags & SB_ACTIVE) {
+>                 struct fuse_conn *fc =3D get_fuse_conn(inode);
+>
+> -               if (FUSE_IS_DAX(inode))
+> +               if (FUSE_IS_VIRTIO_DAX(fi))
+>                         fuse_dax_inode_cleanup(inode);
+>                 if (fi->nlookup) {
+>                         fuse_queue_forget(fc, fi->forget, fi->nodeid,
+> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
+> index c99e285f3183..aec4aecb5d79 100644
+> --- a/fs/fuse/iomode.c
+> +++ b/fs/fuse/iomode.c
+> @@ -204,7 +204,7 @@ int fuse_file_io_open(struct file *file, struct inode=
+ *inode)
+>          * io modes are not relevant with DAX and with server that does n=
+ot
+>          * implement open.
+>          */
+> -       if (FUSE_IS_DAX(inode) || !ff->args)
+> +       if (FUSE_IS_VIRTIO_DAX(fi) || !ff->args)
+>                 return 0;
+>
+
+... Like here, later in your patch set you add explicit check for
+!fuse_famfs_file()
+
+If you make this into if (fuse_is_dax(fi)
+it will be easier and nicer in the end.
+
+Thanks,
+Amir.
 
