@@ -1,103 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-53914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90042AF8DB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:10:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB18AF8DD7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107BC5A826D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C43951C859FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1D62EE962;
-	Fri,  4 Jul 2025 09:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328E02F5C38;
+	Fri,  4 Jul 2025 09:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JDEp9Lar";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DIX/Iean";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BK89fQ1K";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0pU6kkZ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfBb4+sH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NM9DKMq5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vDHsu56a";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jEFmAHHO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34ED12ED157
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 09:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41602F5094
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 09:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619711; cv=none; b=RhX9mk8dU8JalONSqdN15y9DRI4OdFMhUVhThgpH+sLgobylKZZWOAPgMkP1kSrN/rtqf0PVdIJgWinQKPnrq01kCrsAOKt9TjoZQVI/86haXwMHfoHcw3fImUa9ByV7kZjQRcBMKl7DjPd4telFA2vAHrqu006vnEzNCCL4IW0=
+	t=1751619934; cv=none; b=YgrC6OK6GwHV7W1Do+9JAY+6OmbVt/5FiEMsi03WJiy/yWGpUjfksHKmGyjBKbfmMpkcN4iS/2HR96WKO+Q6g9kjl8kucjd4Lk31eV164MLFpli7n9kpHqifxYh3wS7p/hF1ABCIiq2YaHTMvD8uO1JOQF4v9ghoVuCuavWmWH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619711; c=relaxed/simple;
-	bh=ydEKA+QLEMdd12HdBkxwdP3XB0EzeWPgDAEnN3RHGf0=;
+	s=arc-20240116; t=1751619934; c=relaxed/simple;
+	bh=hpzUYbJAq1TnWqpU6r5JKq7hljtPojJXaRtJWDUtTFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q42OB4EA+UbHzhE6SpMK5/d9YR7UbkLl04ye1W7Quo6hhE8gnBojuACC5AumPkxNkTyXjSWMxmyMdMml/4QkE922JU7N/P1CLsnytP97D+VWUbLXBhcBCyofrB0GuLm1iSzusxYsAAAIqEBMgmzygMy53kH11vSG2/nVOAH6bm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JDEp9Lar; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DIX/Iean; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BK89fQ1K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0pU6kkZ; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3cU/wXTPyUIuySpklFAhwUUE6okNsEPviybymJ4rr/Kpic5crduw811zUU9yQQULpqi9slRvY0dNm9Ryc+WBbU4mx3HgNKRAV3lDLa+HrDMAZqXxYIar8SPHd/I8frxYVD/APHxQc+NNDyjrVMmnsrXUGcrrV9+AsBLKeyRzzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qfBb4+sH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NM9DKMq5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vDHsu56a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jEFmAHHO; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 776331F45F;
-	Fri,  4 Jul 2025 09:01:45 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C048D21185;
+	Fri,  4 Jul 2025 09:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751619707; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1751619931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=klCPX8FEQ9bESH7wRiQJpDJDT+H9D/V7BJHBzZig22s=;
-	b=JDEp9LarvbP3j8qTU+Ui2y9OnrA2t4axLIQGwAiB00TPeDq4xH3pGjHYWx5Er+Cc9QYVGE
-	Slbf5jdgGMkc+z+V207yzcEbE5YDookhQqXPDri2/4JJjGF2c0MQrPP4sFEVljn9OiRZ8j
-	qlKb/9WiP9IBvwP07pveq+ONrOSoa+A=
+	bh=Om6I5tFyyfcVPangDfbiEU+nIPjPaTL8L4plfMPqXn8=;
+	b=qfBb4+sHK9BfeeWcUjfD5mRPSdttXFRP64KYHtqu+d0Q472yOpgmCOkOrfJ1UgFQBGZHV5
+	OYusvWl+4kvunMmtGzU8NBtDoWEMYAFHmJdnazWbJ0FcpYGBiV30EznAdAyKxRyElrfMjD
+	1Zqhd4b3zVLE67rnzr8Gue23N6nz4IM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751619707;
+	s=susede2_ed25519; t=1751619931;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=klCPX8FEQ9bESH7wRiQJpDJDT+H9D/V7BJHBzZig22s=;
-	b=DIX/IeanBdqmsRfDI5lCQPoqCimaBwELp0Pm2Wi8YlKVhxv6fbD/tK3IuI8ji6NgJl07BS
-	7UqKPVlWIZO8C9Aw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BK89fQ1K;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=r0pU6kkZ
+	bh=Om6I5tFyyfcVPangDfbiEU+nIPjPaTL8L4plfMPqXn8=;
+	b=NM9DKMq5jHqAwl6hKHyll9FNBaFPMblKpdnWRn3dxhn/RQqvOGBnR42lfm3ngX91BzRweD
+	THSzZ6RUelehQfAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751619705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1751619929; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=klCPX8FEQ9bESH7wRiQJpDJDT+H9D/V7BJHBzZig22s=;
-	b=BK89fQ1KKyn6VIooyqcv2NiR2kkmEa/pbXyajf29WEW6i3tGoKUsMESTjvpEi1Bzpedbl0
-	FvffnEVq6G8HvTdiaF+pruCPqy4YHWfO85KJd0P7e5ACPDdIQ/zR9TXTZd36r0HCcia+f1
-	JL680t2cBl5xD/BiaiYmdqZb3bKJDJ4=
+	bh=Om6I5tFyyfcVPangDfbiEU+nIPjPaTL8L4plfMPqXn8=;
+	b=vDHsu56aBWMos2GEDefWTDa1hJ4vdTD/vFFqfy0jbznRGu6ZxhpsLzK6J9A2RnlUC8+oci
+	+lFT4zi7SnLsFdVEHt6jVYYq5rD1F7/PyAn3Y8b66ojk14Ijjv8SAjSNwcAXi3D5hisHhH
+	hqj5gayWwu/9zGgCFuj6ATx8JXyrFC8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751619705;
+	s=susede2_ed25519; t=1751619929;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=klCPX8FEQ9bESH7wRiQJpDJDT+H9D/V7BJHBzZig22s=;
-	b=r0pU6kkZWEyLCCvZgbSDa3IsUeo8ZYUS+vC5k16JswCczrnhvvEYIMIwt2aU7Eqs8R8Z/a
-	LYglozYPOE6gNhDg==
+	bh=Om6I5tFyyfcVPangDfbiEU+nIPjPaTL8L4plfMPqXn8=;
+	b=jEFmAHHOjAnGAPIJL648yH8UYVIw7cG7M41c2+nXbcEkuLgbd3nrWV4Bcgq3KltDpPS/Vl
+	7pA57YOx0PTfq5Bg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 666A913757;
-	Fri,  4 Jul 2025 09:01:45 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CCFB13757;
+	Fri,  4 Jul 2025 09:05:29 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rJfxGHmYZ2jzHQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 04 Jul 2025 09:01:45 +0000
+	id axZDJlmZZ2gGHwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 04 Jul 2025 09:05:29 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 12FA0A0A31; Fri,  4 Jul 2025 11:01:45 +0200 (CEST)
-Date: Fri, 4 Jul 2025 11:01:45 +0200
+	id 4770BA0A31; Fri,  4 Jul 2025 11:05:25 +0200 (CEST)
+Date: Fri, 4 Jul 2025 11:05:25 +0200
 From: Jan Kara <jack@suse.cz>
 To: Qu Wenruo <wqu@suse.com>
 Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org, 
 	linux-f2fs-devel@lists.sourceforge.net, ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] fs: enhance and rename shutdown() callback to
+Subject: Re: [PATCH v4 1/6] fs: enhance and rename shutdown() callback to
  remove_bdev()
-Message-ID: <6iyypjlrkkmh77w2bxujl2j6jesbholmg42tuvxwu6kypssugb@qlfu4ci5zesa>
-References: <cover.1751577459.git.wqu@suse.com>
- <cbe06b06a2fe4c4e0c90fc86503efc06080e6bc8.1751577459.git.wqu@suse.com>
+Message-ID: <3koe4okqyngnl3djuj46xz5jk2hbwnsukmwn4wwpgf3nebn3uh@uxaot4z2wdgc>
+References: <cover.1751589725.git.wqu@suse.com>
+ <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,44 +105,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cbe06b06a2fe4c4e0c90fc86503efc06080e6bc8.1751577459.git.wqu@suse.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
+In-Reply-To: <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[10];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
 X-Spam-Flag: NO
 X-Spam-Level: 
-X-Rspamd-Queue-Id: 776331F45F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+X-Spam-Score: -3.80
 
-On Fri 04-07-25 09:12:14, Qu Wenruo wrote:
+OK, now that you've made me read the changelog :) :
+
+On Fri 04-07-25 10:12:29, Qu Wenruo wrote:
 > Currently all the filesystems implementing the
-> super_opearations::shutdown() call back can not afford losing a device.
-> 
+> super_opearations::shutdown() callback can not afford losing a device.
+        ^^^ operations
+
 > Thus fs_bdev_mark_dead() will just call the shutdown() callback for the
 > involved filesystem.
 > 
@@ -154,22 +147,20 @@ On Fri 04-07-25 09:12:14, Qu Wenruo wrote:
 > To allow those multi-device filesystems to be integrated to use
 > fs_holder_ops:
 > 
-> - Rename shutdown() call back to remove_bdev()
->   To better describe when the call back is called.
+> - Replace super_opearation::shutdown() with
+>   super_opearations::remove_bdev()
+    ^^ again typos in work "operations"
+
+>   To better describe when the callback is called.
 > 
 > - Add a new @bdev parameter to remove_bdev() callback
 >   To allow the fs to determine which device is missing, and do the
 >   proper handling when needed.
 > 
 > For the existing shutdown callback users, the change is minimal.
-> 
 > They only need to follow the rename and the new parameter list.
-> Since the behavior is still to shutdown the fs, they shouldn't change
-> their function names.
-> 
-> This has a good side effect that, a single line like
-> ".remove_bdev = ext4_shutdown," will easily show the fs behavior and
-> indicate the fs will shutdown when a device went missing.
+> The new @bdev parameter can be ignored if the filesystem can not afford
+> losing any device, and continue using the old shutdown behavior.
 > 
 > Btrfs is going to implement the callback soon, which will either
 > shutdown the fs or continue read-write operations.
@@ -181,7 +172,7 @@ On Fri 04-07-25 09:12:14, Qu Wenruo wrote:
 > Cc: linux-xfs@vger.kernel.org
 > Signed-off-by: Qu Wenruo <wqu@suse.com>
 
-Looks good. Feel free to add:
+Still feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
