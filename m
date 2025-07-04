@@ -1,346 +1,686 @@
-Return-Path: <linux-fsdevel+bounces-53915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB18AF8DD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:12:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8112AF8EFB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C43951C859FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:12:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 408F3B61390
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328E02F5C38;
-	Fri,  4 Jul 2025 09:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A452F3644;
+	Fri,  4 Jul 2025 09:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfBb4+sH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NM9DKMq5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vDHsu56a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jEFmAHHO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHJVX2h6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41602F5094
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 09:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B3C2EACEE;
+	Fri,  4 Jul 2025 09:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619934; cv=none; b=YgrC6OK6GwHV7W1Do+9JAY+6OmbVt/5FiEMsi03WJiy/yWGpUjfksHKmGyjBKbfmMpkcN4iS/2HR96WKO+Q6g9kjl8kucjd4Lk31eV164MLFpli7n9kpHqifxYh3wS7p/hF1ABCIiq2YaHTMvD8uO1JOQF4v9ghoVuCuavWmWH8=
+	t=1751620400; cv=none; b=e/OwGbR7B0xSh2azDpF7DrhU5NlzrvBfWfQf9u+Efok0QxjGNA9F6MP8FPvvGwJlBt2sfs8x5suho9yk7ZO99UvIdZJPo0VFSbdrMbjWgiIRyzRR9oj1+oGscIIzceyP6kNdAX1m3PGl0jfDSO0ge+aVr474Up+ByeOvSbsxTlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619934; c=relaxed/simple;
-	bh=hpzUYbJAq1TnWqpU6r5JKq7hljtPojJXaRtJWDUtTFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3cU/wXTPyUIuySpklFAhwUUE6okNsEPviybymJ4rr/Kpic5crduw811zUU9yQQULpqi9slRvY0dNm9Ryc+WBbU4mx3HgNKRAV3lDLa+HrDMAZqXxYIar8SPHd/I8frxYVD/APHxQc+NNDyjrVMmnsrXUGcrrV9+AsBLKeyRzzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qfBb4+sH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NM9DKMq5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vDHsu56a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jEFmAHHO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C048D21185;
-	Fri,  4 Jul 2025 09:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751619931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Om6I5tFyyfcVPangDfbiEU+nIPjPaTL8L4plfMPqXn8=;
-	b=qfBb4+sHK9BfeeWcUjfD5mRPSdttXFRP64KYHtqu+d0Q472yOpgmCOkOrfJ1UgFQBGZHV5
-	OYusvWl+4kvunMmtGzU8NBtDoWEMYAFHmJdnazWbJ0FcpYGBiV30EznAdAyKxRyElrfMjD
-	1Zqhd4b3zVLE67rnzr8Gue23N6nz4IM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751619931;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Om6I5tFyyfcVPangDfbiEU+nIPjPaTL8L4plfMPqXn8=;
-	b=NM9DKMq5jHqAwl6hKHyll9FNBaFPMblKpdnWRn3dxhn/RQqvOGBnR42lfm3ngX91BzRweD
-	THSzZ6RUelehQfAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751619929; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Om6I5tFyyfcVPangDfbiEU+nIPjPaTL8L4plfMPqXn8=;
-	b=vDHsu56aBWMos2GEDefWTDa1hJ4vdTD/vFFqfy0jbznRGu6ZxhpsLzK6J9A2RnlUC8+oci
-	+lFT4zi7SnLsFdVEHt6jVYYq5rD1F7/PyAn3Y8b66ojk14Ijjv8SAjSNwcAXi3D5hisHhH
-	hqj5gayWwu/9zGgCFuj6ATx8JXyrFC8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751619929;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Om6I5tFyyfcVPangDfbiEU+nIPjPaTL8L4plfMPqXn8=;
-	b=jEFmAHHOjAnGAPIJL648yH8UYVIw7cG7M41c2+nXbcEkuLgbd3nrWV4Bcgq3KltDpPS/Vl
-	7pA57YOx0PTfq5Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CCFB13757;
-	Fri,  4 Jul 2025 09:05:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id axZDJlmZZ2gGHwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 04 Jul 2025 09:05:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4770BA0A31; Fri,  4 Jul 2025 11:05:25 +0200 (CEST)
-Date: Fri, 4 Jul 2025 11:05:25 +0200
-From: Jan Kara <jack@suse.cz>
-To: Qu Wenruo <wqu@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] fs: enhance and rename shutdown() callback to
- remove_bdev()
-Message-ID: <3koe4okqyngnl3djuj46xz5jk2hbwnsukmwn4wwpgf3nebn3uh@uxaot4z2wdgc>
-References: <cover.1751589725.git.wqu@suse.com>
- <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
+	s=arc-20240116; t=1751620400; c=relaxed/simple;
+	bh=lkWAbXw9XrHTF1YSFzyGGGV/iywwkb7qRjkgCRr7qoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o4tc9KBJqOo2p1MCALPN8yS0JsVABfaXdHEBHE8evVBIVwztE8D/6i8X8NOkaDyi9COxsWcdZIBgjNjruQdPJiUoq9Tek1I6McASREgZ/wYXNorq8L0Fh3Iu2OC5Yp21Z9y3wB105ny5SIAOApivJ/p5FCEky8CuaqgmucS62BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHJVX2h6; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-453749af004so3214245e9.1;
+        Fri, 04 Jul 2025 02:13:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751620396; x=1752225196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zfZYO4ycbayyFDmrnQEkk1cRUalL8o7u/oDIAURijNE=;
+        b=kHJVX2h6CRLfvk5FQ5uq34sAogpiPA5QmuOhy5ewgioN0NW2CnQmprDfBBsHsB1Sxk
+         vBNguQXjNOmWVZSRoHM23xjrCm8eFjGt1IfJqKBzXyWcO+P4vOwsFpDp+spRpnPBV6M4
+         KOBc9FLag14cb1ncqd750kQCYiHOCCWu46iYBcWnTaC3qRAR8oznmryhNdncu2MywXbZ
+         JRHSa4yu3Io/3/IWxt3Ptvoat3R+dN3aXzBnHWzxB6hjkgp4cfjXmGVYDtQ2mPSY8i7H
+         exfujRD/U1l37EJc9QZztgdth9CEfgwrFIJDea553XBq6eB/1eB5S4f/coj/JWb5ZyG4
+         gNGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751620396; x=1752225196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zfZYO4ycbayyFDmrnQEkk1cRUalL8o7u/oDIAURijNE=;
+        b=m+/1ptXbQtzPYE/TSj02DNBBAgKHRf2UOE9PvVVjc7vOQWZo2Fw11BsSwyzQiEbVrq
+         fzglRmKxGUsWuw9xngddQJD2ZznPZNKRrZGQhAcrt6xtGxTT5+hpkmVh/vy/vIvX97pM
+         mZRaq5qmlKbSIEM7pEHMkhgl3u+91iqZI3KqaJQ9XKo/Qt8svdm09gV5XW0sDNXqG19S
+         3Q14I81Pl1H1+eVURb9/bJFCu7d+crR+FyGLA+zpJRVjJVf8D6iqy1nkvy/6dQ7l5DpO
+         qLNpY+nt3gEHvcObgeVLYvUjdC+b1sz5UKJoPhZ569OUTWqTxL4W79N1j7sjJN2a096S
+         KN5w==
+X-Forwarded-Encrypted: i=1; AJvYcCW4wtuKW8a5SkxaaG1dfimVWjnS2da43jXN/QA7CEQYGgRFUickjuwiMh/s4A8YIGhWSlZRrwbWPbCWtiB/6Q==@vger.kernel.org, AJvYcCWL4S7oGPBtLnuPuBlNcKZ5pkHAPliWuw2MGIXDm4gH8lXAdOz1SpMZ+FGgSI7ApH6kZSSqSVsm6Eo=@vger.kernel.org, AJvYcCXGlWK12YksFmBy/xRfBou+oTdRsnWj5UQomEKi03MpfAcNLe7GEEn8QRsZ1+VxsiU/TvjPmUlFjwdC@vger.kernel.org, AJvYcCXbEzIhM4xhUe+k9sD2MomJ802iGvewpJa+SeF8YlGdP+yVTY8qEIR1yD4G/J4tpjJcgFUhuqNDXm6FuZ2w@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHu64qOgFB8s+0TL4ESEbZ4XnATabOYNgvbLARnb5ILaRbfxsa
+	mH4/PdzRfeI1qIin5LylpwNDS4FZink/2MGh0OIa0WAYBDpztz9A3B4TdJ7JdRi50wUVBd9jKMY
+	CkOO7Bm8cOonm3mPCS+T9Q73bp3TQlaY=
+X-Gm-Gg: ASbGncsOF3XPabL+fIdLmgqxnYdk78nS1PBn7Rru17Hi+3BYczslCCe2X4XNnMkxw4R
+	KPZhy1ZpCpiF3bb9oMcRbCTAwHB0C1JaopIkoewcYHzjNAMc2cN2+H3H92GUMKqGPnIGUbNguVX
+	HE3UykI2WKFcxX6gLE/7wxwip976B7JKZ/McwD9Cm1qok=
+X-Google-Smtp-Source: AGHT+IEnrEQAh4ik8wXWI7DJJ2Dpomun2GN5NrTGMuOpghbsOQfpvgtARmEqC+L/qMwZGKO9xFrv3bfZnsnBbnMSmb0=
+X-Received: by 2002:a05:600c:8506:b0:439:9b2a:1b2f with SMTP id
+ 5b1f17b1804b1-454b306fabbmr17149545e9.3.1751620396089; Fri, 04 Jul 2025
+ 02:13:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-16-john@groves.net>
+In-Reply-To: <20250703185032.46568-16-john@groves.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 4 Jul 2025 11:13:04 +0200
+X-Gm-Features: Ac12FXx8Fhl4lD8hEbxN0FLDrMVkaIWP1KemjpxuFoRhZqjfDAm90Oq3HbQSDD0
+Message-ID: <CAOQ4uxgqXVX8uynEZduNEor0XhgVvch+WK2esiiSJ1G=iy_bcg@mail.gmail.com>
+Subject: Re: [RFC V2 15/18] famfs_fuse: Plumb dax iomap and fuse read/write/mmap
+To: John Groves <John@groves.net>
+Cc: Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>, Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-OK, now that you've made me read the changelog :) :
-
-On Fri 04-07-25 10:12:29, Qu Wenruo wrote:
-> Currently all the filesystems implementing the
-> super_opearations::shutdown() callback can not afford losing a device.
-        ^^^ operations
-
-> Thus fs_bdev_mark_dead() will just call the shutdown() callback for the
-> involved filesystem.
-> 
-> But it will no longer be the case, with multi-device filesystems like
-> btrfs and bcachefs the filesystem can handle certain device loss without
-> shutting down the whole filesystem.
-> 
-> To allow those multi-device filesystems to be integrated to use
-> fs_holder_ops:
-> 
-> - Replace super_opearation::shutdown() with
->   super_opearations::remove_bdev()
-    ^^ again typos in work "operations"
-
->   To better describe when the callback is called.
-> 
-> - Add a new @bdev parameter to remove_bdev() callback
->   To allow the fs to determine which device is missing, and do the
->   proper handling when needed.
-> 
-> For the existing shutdown callback users, the change is minimal.
-> They only need to follow the rename and the new parameter list.
-> The new @bdev parameter can be ignored if the filesystem can not afford
-> losing any device, and continue using the old shutdown behavior.
-> 
-> Btrfs is going to implement the callback soon, which will either
-> shutdown the fs or continue read-write operations.
-> 
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-ext4@vger.kernel.org
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Cc: ntfs3@lists.linux.dev
-> Cc: linux-xfs@vger.kernel.org
-> Signed-off-by: Qu Wenruo <wqu@suse.com>
-
-Still feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Thu, Jul 3, 2025 at 8:51=E2=80=AFPM John Groves <John@groves.net> wrote:
+>
+> This commit fills in read/write/mmap handling for famfs files. The
+> dev_dax_iomap interface is used - just like xfs in fs-dax mode.
+>
+> Signed-off-by: John Groves <john@groves.net>
 > ---
->  fs/exfat/super.c   | 4 ++--
->  fs/ext4/super.c    | 4 ++--
->  fs/f2fs/super.c    | 4 ++--
->  fs/ntfs3/super.c   | 6 +++---
->  fs/super.c         | 4 ++--
->  fs/xfs/xfs_super.c | 7 ++++---
->  include/linux/fs.h | 7 ++++++-
->  7 files changed, 21 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-> index 7ed858937d45..a0e11166b194 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -172,7 +172,7 @@ int exfat_force_shutdown(struct super_block *sb, u32 flags)
->  	return 0;
+>  fs/fuse/famfs.c  | 436 +++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/fuse/file.c   |  14 ++
+>  fs/fuse/fuse_i.h |   3 +
+>  3 files changed, 453 insertions(+)
+>
+> diff --git a/fs/fuse/famfs.c b/fs/fuse/famfs.c
+> index f5e01032b825..1973eb10b60b 100644
+> --- a/fs/fuse/famfs.c
+> +++ b/fs/fuse/famfs.c
+> @@ -585,3 +585,439 @@ famfs_file_init_dax(
+>         return rc;
 >  }
->  
-> -static void exfat_shutdown(struct super_block *sb)
-> +static void exfat_remove_bdev(struct super_block *sb, struct block_device *bdev)
+>
+> +/*********************************************************************
+> + * iomap_operations
+> + *
+> + * This stuff uses the iomap (dax-related) helpers to resolve file offse=
+ts to
+> + * offsets within a dax device.
+> + */
+> +
+> +static ssize_t famfs_file_bad(struct inode *inode);
+> +
+> +static int
+> +famfs_interleave_fileofs_to_daxofs(struct inode *inode, struct iomap *io=
+map,
+> +                        loff_t file_offset, off_t len, unsigned int flag=
+s)
+> +{
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+> +       struct famfs_file_meta *meta =3D fi->famfs_meta;
+> +       struct fuse_conn *fc =3D get_fuse_conn(inode);
+> +       loff_t local_offset =3D file_offset;
+> +       int i;
+> +
+> +       /* This function is only for extent_type INTERLEAVED_EXTENT */
+> +       if (meta->fm_extent_type !=3D INTERLEAVED_EXTENT) {
+> +               pr_err("%s: bad extent type\n", __func__);
+> +               goto err_out;
+> +       }
+> +
+> +       if (famfs_file_bad(inode))
+> +               goto err_out;
+> +
+> +       iomap->offset =3D file_offset;
+> +
+> +       for (i =3D 0; i < meta->fm_niext; i++) {
+> +               struct famfs_meta_interleaved_ext *fei =3D &meta->ie[i];
+> +               u64 chunk_size =3D fei->fie_chunk_size;
+> +               u64 nstrips =3D fei->fie_nstrips;
+> +               u64 ext_size =3D fei->fie_nbytes;
+> +
+> +               ext_size =3D min_t(u64, ext_size, meta->file_size);
+> +
+> +               if (ext_size =3D=3D 0) {
+> +                       pr_err("%s: ext_size=3D%lld file_size=3D%ld\n",
+> +                              __func__, fei->fie_nbytes, meta->file_size=
+);
+> +                       goto err_out;
+> +               }
+> +
+> +               /* Is the data is in this striped extent? */
+> +               if (local_offset < ext_size) {
+> +                       u64 chunk_num       =3D local_offset / chunk_size=
+;
+> +                       u64 chunk_offset    =3D local_offset % chunk_size=
+;
+> +                       u64 stripe_num      =3D chunk_num / nstrips;
+> +                       u64 strip_num       =3D chunk_num % nstrips;
+> +                       u64 chunk_remainder =3D chunk_size - chunk_offset=
+;
+> +                       u64 strip_offset    =3D chunk_offset + (stripe_nu=
+m * chunk_size);
+> +                       u64 strip_dax_ofs =3D fei->ie_strips[strip_num].e=
+xt_offset;
+> +                       u64 strip_devidx =3D fei->ie_strips[strip_num].de=
+v_index;
+> +
+> +                       if (!fc->dax_devlist->devlist[strip_devidx].valid=
+) {
+> +                               pr_err("%s: daxdev=3D%lld invalid\n", __f=
+unc__,
+> +                                       strip_devidx);
+> +                               goto err_out;
+> +                       }
+> +                       iomap->addr    =3D strip_dax_ofs + strip_offset;
+> +                       iomap->offset  =3D file_offset;
+> +                       iomap->length  =3D min_t(loff_t, len, chunk_remai=
+nder);
+> +
+> +                       iomap->dax_dev =3D fc->dax_devlist->devlist[strip=
+_devidx].devp;
+> +
+> +                       iomap->type    =3D IOMAP_MAPPED;
+> +                       iomap->flags   =3D flags;
+> +
+> +                       return 0;
+> +               }
+> +               local_offset -=3D ext_size; /* offset is beyond this stri=
+ped extent */
+> +       }
+> +
+> + err_out:
+> +       pr_err("%s: err_out\n", __func__);
+> +
+> +       /* We fell out the end of the extent list.
+> +        * Set iomap to zero length in this case, and return 0
+> +        * This just means that the r/w is past EOF
+> +        */
+> +       iomap->addr    =3D 0; /* there is no valid dax device offset */
+> +       iomap->offset  =3D file_offset; /* file offset */
+> +       iomap->length  =3D 0; /* this had better result in no access to d=
+ax mem */
+> +       iomap->dax_dev =3D NULL;
+> +       iomap->type    =3D IOMAP_MAPPED;
+> +       iomap->flags   =3D flags;
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * famfs_fileofs_to_daxofs() - Resolve (file, offset, len) to (daxdev, o=
+ffset, len)
+> + *
+> + * This function is called by famfs_fuse_iomap_begin() to resolve an off=
+set in a
+> + * file to an offset in a dax device. This is upcalled from dax from cal=
+ls to
+> + * both  * dax_iomap_fault() and dax_iomap_rw(). Dax finishes the job re=
+solving
+> + * a fault to a specific physical page (the fault case) or doing a memcp=
+y
+> + * variant (the rw case)
+> + *
+> + * Pages can be PTE (4k), PMD (2MiB) or (theoretically) PuD (1GiB)
+> + * (these sizes are for X86; may vary on other cpu architectures
+> + *
+> + * @inode:  The file where the fault occurred
+> + * @iomap:       To be filled in to indicate where to find the right mem=
+ory,
+> + *               relative  to a dax device.
+> + * @file_offset: Within the file where the fault occurred (will be page =
+boundary)
+> + * @len:         The length of the faulted mapping (will be a page multi=
+ple)
+> + *               (will be trimmed in *iomap if it's disjoint in the exte=
+nt list)
+> + * @flags:
+> + *
+> + * Return values: 0. (info is returned in a modified @iomap struct)
+> + */
+> +static int
+> +famfs_fileofs_to_daxofs(struct inode *inode, struct iomap *iomap,
+> +                        loff_t file_offset, off_t len, unsigned int flag=
+s)
+> +{
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+> +       struct famfs_file_meta *meta =3D fi->famfs_meta;
+> +       struct fuse_conn *fc =3D get_fuse_conn(inode);
+> +       loff_t local_offset =3D file_offset;
+> +       int i;
+> +
+> +       if (!fc->dax_devlist) {
+> +               pr_err("%s: null dax_devlist\n", __func__);
+> +               goto err_out;
+> +       }
+> +
+> +       if (famfs_file_bad(inode))
+> +               goto err_out;
+> +
+> +       if (meta->fm_extent_type =3D=3D INTERLEAVED_EXTENT)
+> +               return famfs_interleave_fileofs_to_daxofs(inode, iomap,
+> +                                                         file_offset,
+> +                                                         len, flags);
+> +
+> +       iomap->offset =3D file_offset;
+> +
+> +       for (i =3D 0; i < meta->fm_nextents; i++) {
+> +               /* TODO: check devindex too */
+> +               loff_t dax_ext_offset =3D meta->se[i].ext_offset;
+> +               loff_t dax_ext_len    =3D meta->se[i].ext_len;
+> +               u64 daxdev_idx =3D meta->se[i].dev_index;
+> +
+> +               if ((dax_ext_offset =3D=3D 0) &&
+> +                   (meta->file_type !=3D FAMFS_SUPERBLOCK))
+> +                       pr_warn("%s: zero offset on non-superblock file!!=
+\n",
+> +                               __func__);
+> +
+> +               /* local_offset is the offset minus the size of extents s=
+kipped
+> +                * so far; If local_offset < dax_ext_len, the data of int=
+erest
+> +                * starts in this extent
+> +                */
+> +               if (local_offset < dax_ext_len) {
+> +                       loff_t ext_len_remainder =3D dax_ext_len - local_=
+offset;
+> +                       struct famfs_daxdev *dd;
+> +
+> +                       dd =3D &fc->dax_devlist->devlist[daxdev_idx];
+> +
+> +                       if (!dd->valid || dd->error) {
+> +                               pr_err("%s: daxdev=3D%lld %s\n", __func__=
+,
+> +                                      daxdev_idx,
+> +                                      dd->valid ? "error" : "invalid");
+> +                               goto err_out;
+> +                       }
+> +
+> +                       /*
+> +                        * OK, we found the file metadata extent where th=
+is
+> +                        * data begins
+> +                        * @local_offset      - The offset within the cur=
+rent
+> +                        *                      extent
+> +                        * @ext_len_remainder - Remaining length of ext a=
+fter
+> +                        *                      skipping local_offset
+> +                        * Outputs:
+> +                        * iomap->addr:   the offset within the dax devic=
+e where
+> +                        *                the  data starts
+> +                        * iomap->offset: the file offset
+> +                        * iomap->length: the valid length resolved here
+> +                        */
+> +                       iomap->addr    =3D dax_ext_offset + local_offset;
+> +                       iomap->offset  =3D file_offset;
+> +                       iomap->length  =3D min_t(loff_t, len, ext_len_rem=
+ainder);
+> +
+> +                       iomap->dax_dev =3D fc->dax_devlist->devlist[daxde=
+v_idx].devp;
+> +
+> +                       iomap->type    =3D IOMAP_MAPPED;
+> +                       iomap->flags   =3D flags;
+> +                       return 0;
+> +               }
+> +               local_offset -=3D dax_ext_len; /* Get ready for the next =
+extent */
+> +       }
+> +
+> + err_out:
+> +       pr_err("%s: err_out\n", __func__);
+> +
+> +       /* We fell out the end of the extent list.
+> +        * Set iomap to zero length in this case, and return 0
+> +        * This just means that the r/w is past EOF
+> +        */
+> +       iomap->addr    =3D 0; /* there is no valid dax device offset */
+> +       iomap->offset  =3D file_offset; /* file offset */
+> +       iomap->length  =3D 0; /* this had better result in no access to d=
+ax mem */
+> +       iomap->dax_dev =3D NULL;
+> +       iomap->type    =3D IOMAP_MAPPED;
+> +       iomap->flags   =3D flags;
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * famfs_fuse_iomap_begin() - Handler for iomap_begin upcall from dax
+> + *
+> + * This function is pretty simple because files are
+> + * * never partially allocated
+> + * * never have holes (never sparse)
+> + * * never "allocate on write"
+> + *
+> + * @inode:  inode for the file being accessed
+> + * @offset: offset within the file
+> + * @length: Length being accessed at offset
+> + * @flags:
+> + * @iomap:  iomap struct to be filled in, resolving (offset, length) to
+> + *          (daxdev, offset, len)
+> + * @srcmap:
+> + */
+> +static int
+> +famfs_fuse_iomap_begin(struct inode *inode, loff_t offset, loff_t length=
+,
+> +                 unsigned int flags, struct iomap *iomap, struct iomap *=
+srcmap)
+> +{
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+> +       struct famfs_file_meta *meta =3D fi->famfs_meta;
+> +       size_t size;
+> +
+> +       size =3D i_size_read(inode);
+> +
+> +       WARN_ON(size !=3D meta->file_size);
+> +
+> +       return famfs_fileofs_to_daxofs(inode, iomap, offset, length, flag=
+s);
+> +}
+> +
+> +/* Note: We never need a special set of write_iomap_ops because famfs ne=
+ver
+> + * performs allocation on write.
+> + */
+> +const struct iomap_ops famfs_iomap_ops =3D {
+> +       .iomap_begin            =3D famfs_fuse_iomap_begin,
+> +};
+> +
+> +/*********************************************************************
+> + * vm_operations
+> + */
+> +static vm_fault_t
+> +__famfs_fuse_filemap_fault(struct vm_fault *vmf, unsigned int pe_size,
+> +                     bool write_fault)
+> +{
+> +       struct inode *inode =3D file_inode(vmf->vma->vm_file);
+> +       vm_fault_t ret;
+> +       pfn_t pfn;
+> +
+> +       if (!IS_DAX(file_inode(vmf->vma->vm_file))) {
+> +               pr_err("%s: file not marked IS_DAX!!\n", __func__);
+> +               return VM_FAULT_SIGBUS;
+> +       }
+> +
+> +       if (write_fault) {
+> +               sb_start_pagefault(inode->i_sb);
+> +               file_update_time(vmf->vma->vm_file);
+> +       }
+> +
+> +       ret =3D dax_iomap_fault(vmf, pe_size, &pfn, NULL, &famfs_iomap_op=
+s);
+> +       if (ret & VM_FAULT_NEEDDSYNC)
+> +               ret =3D dax_finish_sync_fault(vmf, pe_size, pfn);
+> +
+> +       if (write_fault)
+> +               sb_end_pagefault(inode->i_sb);
+> +
+> +       return ret;
+> +}
+> +
+> +static inline bool
+> +famfs_is_write_fault(struct vm_fault *vmf)
+> +{
+> +       return (vmf->flags & FAULT_FLAG_WRITE) &&
+> +              (vmf->vma->vm_flags & VM_SHARED);
+> +}
+> +
+> +static vm_fault_t
+> +famfs_filemap_fault(struct vm_fault *vmf)
+> +{
+> +       return __famfs_fuse_filemap_fault(vmf, 0, famfs_is_write_fault(vm=
+f));
+> +}
+> +
+> +static vm_fault_t
+> +famfs_filemap_huge_fault(struct vm_fault *vmf, unsigned int pe_size)
+> +{
+> +       return __famfs_fuse_filemap_fault(vmf, pe_size, famfs_is_write_fa=
+ult(vmf));
+> +}
+> +
+> +static vm_fault_t
+> +famfs_filemap_page_mkwrite(struct vm_fault *vmf)
+> +{
+> +       return __famfs_fuse_filemap_fault(vmf, 0, true);
+> +}
+> +
+> +static vm_fault_t
+> +famfs_filemap_pfn_mkwrite(struct vm_fault *vmf)
+> +{
+> +       return __famfs_fuse_filemap_fault(vmf, 0, true);
+> +}
+> +
+> +static vm_fault_t
+> +famfs_filemap_map_pages(struct vm_fault        *vmf, pgoff_t start_pgoff=
+,
+> +                       pgoff_t end_pgoff)
+> +{
+> +       return filemap_map_pages(vmf, start_pgoff, end_pgoff);
+> +}
+> +
+> +const struct vm_operations_struct famfs_file_vm_ops =3D {
+> +       .fault          =3D famfs_filemap_fault,
+> +       .huge_fault     =3D famfs_filemap_huge_fault,
+> +       .map_pages      =3D famfs_filemap_map_pages,
+> +       .page_mkwrite   =3D famfs_filemap_page_mkwrite,
+> +       .pfn_mkwrite    =3D famfs_filemap_pfn_mkwrite,
+> +};
+> +
+> +/*********************************************************************
+> + * file_operations
+> + */
+> +
+> +/**
+> + * famfs_file_bad() - Check for files that aren't in a valid state
+> + *
+> + * @inode - inode
+> + *
+> + * Returns: 0=3Dsuccess
+> + *          -errno=3Dfailure
+> + */
+> +static ssize_t
+> +famfs_file_bad(struct inode *inode)
+> +{
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+> +       struct famfs_file_meta *meta =3D fi->famfs_meta;
+> +       size_t i_size =3D i_size_read(inode);
+> +
+> +       if (!meta) {
+> +               pr_err("%s: un-initialized famfs file\n", __func__);
+> +               return -EIO;
+> +       }
+> +       if (meta->error) {
+> +               pr_debug("%s: previously detected metadata errors\n", __f=
+unc__);
+> +               return -EIO;
+> +       }
+> +       if (i_size !=3D meta->file_size) {
+> +               pr_warn("%s: i_size overwritten from %ld to %ld\n",
+> +                      __func__, meta->file_size, i_size);
+> +               meta->error =3D true;
+> +               return -ENXIO;
+> +       }
+> +       if (!IS_DAX(inode)) {
+> +               pr_debug("%s: inode %llx IS_DAX is false\n", __func__, (u=
+64)inode);
+> +               return -ENXIO;
+> +       }
+> +       return 0;
+> +}
+> +
+> +static ssize_t
+> +famfs_fuse_rw_prep(struct kiocb *iocb, struct iov_iter *ubuf)
+> +{
+> +       struct inode *inode =3D iocb->ki_filp->f_mapping->host;
+> +       size_t i_size =3D i_size_read(inode);
+> +       size_t count =3D iov_iter_count(ubuf);
+> +       size_t max_count;
+> +       ssize_t rc;
+> +
+> +       rc =3D famfs_file_bad(inode);
+> +       if (rc)
+> +               return rc;
+> +
+> +       max_count =3D max_t(size_t, 0, i_size - iocb->ki_pos);
+> +
+> +       if (count > max_count)
+> +               iov_iter_truncate(ubuf, max_count);
+> +
+> +       if (!iov_iter_count(ubuf))
+> +               return 0;
+> +
+> +       return rc;
+> +}
+> +
+> +ssize_t
+> +famfs_fuse_read_iter(struct kiocb *iocb, struct iov_iter       *to)
+> +{
+> +       ssize_t rc;
+> +
+> +       rc =3D famfs_fuse_rw_prep(iocb, to);
+> +       if (rc)
+> +               return rc;
+> +
+> +       if (!iov_iter_count(to))
+> +               return 0;
+> +
+> +       rc =3D dax_iomap_rw(iocb, to, &famfs_iomap_ops);
+> +
+> +       file_accessed(iocb->ki_filp);
+> +       return rc;
+> +}
+> +
+> +ssize_t
+> +famfs_fuse_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +       ssize_t rc;
+> +
+> +       rc =3D famfs_fuse_rw_prep(iocb, from);
+> +       if (rc)
+> +               return rc;
+> +
+> +       if (!iov_iter_count(from))
+> +               return 0;
+> +
+> +       return dax_iomap_rw(iocb, from, &famfs_iomap_ops);
+> +}
+> +
+> +int
+> +famfs_fuse_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +       struct inode *inode =3D file_inode(file);
+> +       ssize_t rc;
+> +
+> +       rc =3D famfs_file_bad(inode);
+> +       if (rc)
+> +               return (int)rc;
+> +
+> +       file_accessed(file);
+> +       vma->vm_ops =3D &famfs_file_vm_ops;
+> +       vm_flags_set(vma, VM_HUGEPAGE);
+> +       return 0;
+> +}
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 5d205eadb48f..24a14b176510 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1874,6 +1874,8 @@ static ssize_t fuse_file_read_iter(struct kiocb *io=
+cb, struct iov_iter *to)
+>
+>         if (FUSE_IS_VIRTIO_DAX(fi))
+>                 return fuse_dax_read_iter(iocb, to);
+> +       if (fuse_file_famfs(fi))
+> +               return famfs_fuse_read_iter(iocb, to);
+>
+>         /* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
+>         if (ff->open_flags & FOPEN_DIRECT_IO)
+> @@ -1896,6 +1898,8 @@ static ssize_t fuse_file_write_iter(struct kiocb *i=
+ocb, struct iov_iter *from)
+>
+>         if (FUSE_IS_VIRTIO_DAX(fi))
+>                 return fuse_dax_write_iter(iocb, from);
+> +       if (fuse_file_famfs(fi))
+> +               return famfs_fuse_write_iter(iocb, from);
+>
+>         /* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
+>         if (ff->open_flags & FOPEN_DIRECT_IO)
+> @@ -1911,10 +1915,14 @@ static ssize_t fuse_splice_read(struct file *in, =
+loff_t *ppos,
+>                                 unsigned int flags)
 >  {
->  	exfat_force_shutdown(sb, EXFAT_GOING_DOWN_NOSYNC);
+>         struct fuse_file *ff =3D in->private_data;
+> +       struct inode *inode =3D file_inode(in);
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+>
+>         /* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
+>         if (fuse_file_passthrough(ff) && !(ff->open_flags & FOPEN_DIRECT_=
+IO))
+>                 return fuse_passthrough_splice_read(in, ppos, pipe, len, =
+flags);
+> +       else if (fuse_file_famfs(fi))
+> +               return -EIO; /* direct I/O doesn't make sense in dax_ioma=
+p */
+>         else
+>                 return filemap_splice_read(in, ppos, pipe, len, flags);
 >  }
-> @@ -202,7 +202,7 @@ static const struct super_operations exfat_sops = {
->  	.put_super	= exfat_put_super,
->  	.statfs		= exfat_statfs,
->  	.show_options	= exfat_show_options,
-> -	.shutdown	= exfat_shutdown,
-> +	.remove_bdev	= exfat_remove_bdev,
->  };
->  
->  enum {
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index c7d39da7e733..d75b416401ae 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1456,7 +1456,7 @@ static void ext4_destroy_inode(struct inode *inode)
->  			 EXT4_I(inode)->i_reserved_data_blocks);
->  }
->  
-> -static void ext4_shutdown(struct super_block *sb)
-> +static void ext4_remove_bdev(struct super_block *sb, struct block_device *bdev)
+> @@ -1923,10 +1931,14 @@ static ssize_t fuse_splice_write(struct pipe_inod=
+e_info *pipe, struct file *out,
+>                                  loff_t *ppos, size_t len, unsigned int f=
+lags)
 >  {
->         ext4_force_shutdown(sb, EXT4_GOING_FLAGS_NOLOGFLUSH);
+>         struct fuse_file *ff =3D out->private_data;
+> +       struct inode *inode =3D file_inode(out);
+> +       struct fuse_inode *fi =3D get_fuse_inode(inode);
+>
+>         /* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
+>         if (fuse_file_passthrough(ff) && !(ff->open_flags & FOPEN_DIRECT_=
+IO))
+>                 return fuse_passthrough_splice_write(pipe, out, ppos, len=
+, flags);
+> +       else if (fuse_file_famfs(fi))
+> +               return -EIO; /* direct I/O doesn't make sense in dax_ioma=
+p */
+>         else
+>                 return iter_file_splice_write(pipe, out, ppos, len, flags=
+);
 >  }
-> @@ -1620,7 +1620,7 @@ static const struct super_operations ext4_sops = {
->  	.unfreeze_fs	= ext4_unfreeze,
->  	.statfs		= ext4_statfs,
->  	.show_options	= ext4_show_options,
-> -	.shutdown	= ext4_shutdown,
-> +	.remove_bdev	= ext4_remove_bdev,
->  #ifdef CONFIG_QUOTA
->  	.quota_read	= ext4_quota_read,
->  	.quota_write	= ext4_quota_write,
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index bbf1dad6843f..8667af9f76e4 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2640,7 +2640,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->  	return err;
->  }
->  
-> -static void f2fs_shutdown(struct super_block *sb)
-> +static void f2fs_remove_bdev(struct super_block *sb, struct block_device *bdev)
->  {
->  	f2fs_do_shutdown(F2FS_SB(sb), F2FS_GOING_DOWN_NOSYNC, false, false);
->  }
-> @@ -3264,7 +3264,7 @@ static const struct super_operations f2fs_sops = {
->  	.unfreeze_fs	= f2fs_unfreeze,
->  	.statfs		= f2fs_statfs,
->  	.remount_fs	= f2fs_remount,
-> -	.shutdown	= f2fs_shutdown,
-> +	.remove_bdev	= f2fs_remove_bdev,
->  };
->  
->  #ifdef CONFIG_FS_ENCRYPTION
-> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-> index 920a1ab47b63..3e69dc805e3a 100644
-> --- a/fs/ntfs3/super.c
-> +++ b/fs/ntfs3/super.c
-> @@ -762,9 +762,9 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
->  }
->  
->  /*
-> - * ntfs_shutdown - super_operations::shutdown
-> + * ntfs_remove_bdev - super_operations::remove_bdev
->   */
-> -static void ntfs_shutdown(struct super_block *sb)
-> +static void ntfs_remove_bdev(struct super_block *sb, struct block_device *bdev)
->  {
->  	set_bit(NTFS_FLAGS_SHUTDOWN_BIT, &ntfs_sb(sb)->flags);
->  }
-> @@ -821,7 +821,7 @@ static const struct super_operations ntfs_sops = {
->  	.put_super = ntfs_put_super,
->  	.statfs = ntfs_statfs,
->  	.show_options = ntfs_show_options,
-> -	.shutdown = ntfs_shutdown,
-> +	.remove_bdev = ntfs_remove_bdev,
->  	.sync_fs = ntfs_sync_fs,
->  	.write_inode = ntfs3_write_inode,
->  };
-> diff --git a/fs/super.c b/fs/super.c
-> index 80418ca8e215..c972efb38f6a 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1463,8 +1463,8 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
->  		sync_filesystem(sb);
->  	shrink_dcache_sb(sb);
->  	evict_inodes(sb);
-> -	if (sb->s_op->shutdown)
-> -		sb->s_op->shutdown(sb);
-> +	if (sb->s_op->remove_bdev)
-> +		sb->s_op->remove_bdev(sb, bdev);
->  
->  	super_unlock_shared(sb);
->  }
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 0bc4b5489078..8e307b036133 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1276,8 +1276,9 @@ xfs_fs_free_cached_objects(
->  }
->  
->  static void
-> -xfs_fs_shutdown(
-> -	struct super_block	*sb)
-> +xfs_fs_remove_bdev(
-> +	struct super_block	*sb,
-> +	struct block_device	*bdev)
->  {
->  	xfs_force_shutdown(XFS_M(sb), SHUTDOWN_DEVICE_REMOVED);
->  }
-> @@ -1308,7 +1309,7 @@ static const struct super_operations xfs_super_operations = {
->  	.show_options		= xfs_fs_show_options,
->  	.nr_cached_objects	= xfs_fs_nr_cached_objects,
->  	.free_cached_objects	= xfs_fs_free_cached_objects,
-> -	.shutdown		= xfs_fs_shutdown,
-> +	.remove_bdev		= xfs_fs_remove_bdev,
->  	.show_stats		= xfs_fs_show_stats,
->  };
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index b085f161ed22..b08af63d2d4f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2367,7 +2367,12 @@ struct super_operations {
->  				  struct shrink_control *);
->  	long (*free_cached_objects)(struct super_block *,
->  				    struct shrink_control *);
-> -	void (*shutdown)(struct super_block *sb);
-> +	/*
-> +	 * Called when block device @bdev belonging to @sb is removed.
-> +	 *
-> +	 * If the fs can't afford the device loss, it should be shutdown.
-> +	 */
-> +	void (*remove_bdev)(struct super_block *sb, struct block_device *bdev);
->  };
->  
->  /*
-> -- 
-> 2.50.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+This looks odd.
+
+Usually, the methods first check for FUSE_IS_VIRTIO_DAX() and
+fuse_file_famfs() to get this condition out of the way so I never needed
+to think about whether or not the code verifies that fuse_file_passthrough(=
+)
+and fuse_file_famfs() cannot co-exist.
+
+Is there a reason why you did not follow the same pattern here?
+
+Also, your comment makes no sense.
+splice is not the case of direct I/O - quite the contrary.
+
+Thanks,
+Amir.
 
