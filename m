@@ -1,87 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-53959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9EBAF92D0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 14:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D3DAF92EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 14:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12F43B9229
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 12:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79B8A5A5DAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 12:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A31D2E3B0A;
-	Fri,  4 Jul 2025 12:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B9B2D8DAE;
+	Fri,  4 Jul 2025 12:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ehMoiXrC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTyQJgn2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767BA2DE6FB
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 12:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDE22D8DCA
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 12:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751632549; cv=none; b=UpBwAIRqmY+hsul45IcYjtiuQvAFFl8XSy7GQtigNw8TJSOKx5Lmg8LeV+1p+uOz+WeigWTAd16/8byFxLXHcGDl9JYZfNS001r1hqbiH/F88frS5WEFSohqnbubLXER/PqvxJAOBly8X0cpzHUE1yUnR4Lk0G8Xbu8gx4aXdZE=
+	t=1751632838; cv=none; b=mozsgRh40u0otdD6jddpO7iitVBW9lC7/Yovnd+vdfN+Sqhb7fhzmibYY27mXb+N/SE5rRbcXgadC98++eHrs+GCFVp4eg7Hw0xmaWLemwEH10WTzEAKeiCbrfDSpB6WWANu8h/Qjy8h8AZ22iOl5gLqYfeEr+plMsdh8+3OCYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751632549; c=relaxed/simple;
-	bh=25hnLgmD5JD2SLFLVs0Zvjx+Ts3wnoYTUpUdsa0GIxc=;
+	s=arc-20240116; t=1751632838; c=relaxed/simple;
+	bh=ywpSKk+4jgbfLnTnCraPZ4p8zS7O4zdYUvoOnznH2q0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oHgaB0ee0zieIQSRyUE0+wH1agRxgzJny3U1lELbz/SviuhNrHaIqUfmWX8AxhuU6VSFQkrzhxGMUlsIJrikD+An1/A7ZqEuHwGT2bc54hpG+Yx2ENl5EuTXjiYiQZJlMLc0UtUe/3jO4altGry9JyYSeF/5wkp4pik1UOSt38I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ehMoiXrC; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=X49ZwVNy7785UFDhWQTeP/+MsI69dFIA3qAqL3kXBqcWlSoZrAcU/0LG1bY+iJ666eMq0y5BTrTuHqxVoLrpdkcuCzCZZYxuLPVm22VwRWUfq7SVqPFhmtwqB8pGxnQTSUMEClGSWFNc9fLAU/9FHsmhONsEiaTy/j/2rb66b0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTyQJgn2; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751632546;
+	s=mimecast20190719; t=1751632835;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=092ONni6GgjsEVLjubx5R+ZHpI7Bg+FqEWhGmcactVA=;
-	b=ehMoiXrCg1n6Q5CLozsEHT63tO0ZQhv4msmD4O8MYdHRgHJ1CzjEG02Z/fZy0yBt8svMbK
-	yuSCr/qhKrtDv7uQSqBrPYhmPYxmRgllVF7OR0wA7j6ZspQEzPJbVHPoIFlqH4pKdDElDE
-	CaUf4CLMYCfo2jaFdfRXnTnTpL4uLIw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ak2/Fyhw1eMRq1SFCol0klu6FdlkrQPHiLtsaCVkfas=;
+	b=GTyQJgn2PNizJS5q1/Axpy4SwVafagXI+laeVYP5DoHcd4JAQEhOQ9UuUG/FzzyVNU2g+4
+	zTj7hL6HB6ay/eXU/3HsdNlOcdoNtkLpvT/Pz3rMS1E+x7f2qICo7dHeVgAt8B6OlK4lJf
+	MnfL+45yPd/S8QjQu2fr2BA7aXqNRbE=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-70-57QvLaU8NwChQgklBXFlnw-1; Fri, 04 Jul 2025 08:35:45 -0400
-X-MC-Unique: 57QvLaU8NwChQgklBXFlnw-1
-X-Mimecast-MFC-AGG-ID: 57QvLaU8NwChQgklBXFlnw_1751632544
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45311704cdbso6397515e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 05:35:44 -0700 (PDT)
+ us-mta-411-VQlwibw8Nbmpj5WK0f_R_A-1; Fri, 04 Jul 2025 08:40:34 -0400
+X-MC-Unique: VQlwibw8Nbmpj5WK0f_R_A-1
+X-Mimecast-MFC-AGG-ID: VQlwibw8Nbmpj5WK0f_R_A_1751632834
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a579058758so360682f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 05:40:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751632544; x=1752237344;
+        d=1e100.net; s=20230601; t=1751632833; x=1752237633;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=092ONni6GgjsEVLjubx5R+ZHpI7Bg+FqEWhGmcactVA=;
-        b=jvqxU2iy0RiRNIbdIzpbWkaPsd2Hp5CSr3JYT2nK4IsGBKHgvBOC98n0bv1WAdhYxk
-         FbHV9JMouCuX9nP00/yGDyzjUCSSpC6yi8InNac0Q7xPj1wVo6FHEKBpWAn6xowyWZwp
-         r4PdDPuBgFKWOIOV8ddy5dViIySbvXbFYubnIzKo2VdZAnTnkGsj52IqJzMFTkcmUDlQ
-         jrvcXP3SasR60wiW+JMy9rNfG32l+obnRbHQofJwph6DUxIMsQ+IHKApq/FF6p8VfqYq
-         j48FUg9PG5zC4t9vRbP5DLLsExUsTL321pzNsltPdlgeBlfvS0WfcIdaOZSHRCE+11ra
-         mUXg==
-X-Gm-Message-State: AOJu0Yw5kfJM5ERCuC0Dhjfl4fChMp4+1SB+koC9/iFCKSMHcUMh18Kn
-	6zAIqy0lXQOn7gfbOV69OkNoImzdhM+uBQLJ/ZKQ8AhBe44ChZ/2EMeyC8fh9KUlftfA8KePTvu
-	UvCl7eITOP8yxEUtB4r8ikrDZijuCNKsLD2n8KC9Crzi64AtsruwuOki2zaacH1JKlYI=
-X-Gm-Gg: ASbGncsUO5nWtK37E31hf2r9lLokFziz/ZagOe1BZ4Kli130m2yYVSq84ro4d1YHmGI
-	xvnQcoG0msSb/VKRnqT70XID/F++TLLNMJDMn3KgNB/RpWYF/W2lH90dXSfnQqxpYuoNjLjw7wD
-	nuxw2nYawhIaRrcG1tDMPziBYdBxggVk41pwFuSdlGE62UClFr8oET/aa42pCmMnF9pFtHZlK//
-	W1rMAII6u7o4I/a6iWs7ezFfCPyiZpe6zDnUtT4kRcqa6Etn7EvpDHmkqtCe8ExkHxLqZRUWNej
-	9JsgVgAPEPiMx9F+8kgVokNAL0PFmykgD9V6Dn4VKWm+smY5COylID3qD4BdjBJrTvStE49/pO1
-	wiIy6zwlbtlsU75nbnzHK9t0mkENot+RUjBVWNxETXcgjl5Y=
-X-Received: by 2002:a05:600c:8b66:b0:43c:fda5:41e9 with SMTP id 5b1f17b1804b1-454b8081d41mr8460255e9.31.1751632543657;
-        Fri, 04 Jul 2025 05:35:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErTBa5kQ8SumR04QDBcjPXzVbwTdbcNh7VPTM5XAyDTtu/9E0cl/JxQwetoX1xmGUyJZOUYg==
-X-Received: by 2002:a05:600c:8b66:b0:43c:fda5:41e9 with SMTP id 5b1f17b1804b1-454b8081d41mr8459855e9.31.1751632543195;
-        Fri, 04 Jul 2025 05:35:43 -0700 (PDT)
+        bh=ak2/Fyhw1eMRq1SFCol0klu6FdlkrQPHiLtsaCVkfas=;
+        b=l4HoeMtcdialnwtuH/Uw77+Dj9kBSEC63w9dzaxljheg+UMAE4Kg2cgxlucHfk2FG8
+         +u7yzuW2npKe5zFlhBhYjGEJLgtgybByfVzHPNFHdc3hcaeM2ibyAqjKvkAqMowlFcYe
+         Gl4U3pKiwxm6Hld1XA3IxG+e4kClNj3eX4jQ4CwzmTJRASsdddn5jk7Csctr/AWWyq2L
+         bSW+J8a79MXGWKkab0yYLdUSzzzzmU5SSPMsmPlmv3RCbG0gIGfgR+Oq4XACkPjwH1Sn
+         a5owmxou4pQBdSvPUowPVRxLcHUhxyVks1iYybQDu2Ark4toJD72ag+76p2/S1oYerKz
+         T6Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUXqUvkeb8LvUI8q3VEwnGX/kz6OWyfH4idWuIv7CaQ+c4b3GGYmFk3jqDJV09SwThuagflE5vrwxF1Aze@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYc/Je+kTg74X605YOWkFSsbWdvkcTYgfhGWhVUEKYdNMQS40D
+	Iqr/gM8Fs/XwAfkHoWeBtXW/DafsA1bCWan5qU1hHIMLyzA8x8tIGfJF/n+NCX4z59+U7Ek7eD2
+	GL8UxCwcWFCH18g/EY763SfkxdScRf33zSbQb0NCUuAWYaOeKOnWdjsRIZWAYm6lgkus=
+X-Gm-Gg: ASbGncuuy38L6zOHPkm4wcqfK43P2rqewQ0XNuCkzgSS1Q9epH4bQD8ajO0hDVEIQ4c
+	n68ljX+7osuOZLJ9pnZzNrfykbyqQRTYWS+ye/+jWvzxmz91U5J4cDdpTBb+QtZPtZzJqIFlw02
+	dYo54EiwfBXaRcSTToDvomQPKUiL0c8GXNTGvyxLs/tShAKo/ItN3pi2KHMsyxaAJX45lNZgZsS
+	jw7ArSKQEnnkJiFlvgEgJ18zPJL5wH5HWyD9uHR86fIPhIfRbIwAsHRrzUwH/qsGVZNx2pgYPb2
+	kGmgpi2IDvRuhwxqXT0hT+YOCxDlc4YgHpieLzHHUVYwW/dE+KCIR2RBjdv7P88P9QJj9iGERgn
+	fADzf7VrsNcvIZXSqAg4JE2j2Pst2EQCV5rXZYYontsFtg88=
+X-Received: by 2002:a05:6000:4b1a:b0:3a8:2f65:3745 with SMTP id ffacd0b85a97d-3b4964ea6ddmr2074117f8f.51.1751632833469;
+        Fri, 04 Jul 2025 05:40:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFIg15oUrQ2c+JETxyMOmlFtm65ehLI0srUZF8mkb9XFZQu8aUb8ZTEkw+fL1R3rCyYTNVPdA==
+X-Received: by 2002:a05:6000:4b1a:b0:3a8:2f65:3745 with SMTP id ffacd0b85a97d-3b4964ea6ddmr2074080f8f.51.1751632833020;
+        Fri, 04 Jul 2025 05:40:33 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f2c:5500:988:23f9:faa0:7232? (p200300d82f2c5500098823f9faa07232.dip0.t-ipconnect.de. [2003:d8:2f2c:5500:988:23f9:faa0:7232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b1698e24sm25307085e9.34.2025.07.04.05.35.42
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b1687196sm25507335e9.21.2025.07.04.05.40.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 05:35:42 -0700 (PDT)
-Message-ID: <3e21f165-3ca8-408a-9c95-e4698986cefb@redhat.com>
-Date: Fri, 4 Jul 2025 14:35:41 +0200
+        Fri, 04 Jul 2025 05:40:32 -0700 (PDT)
+Message-ID: <b6d79033-b887-4ce7-b8f2-564cad7ec535@redhat.com>
+Date: Fri, 4 Jul 2025 14:40:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,11 +90,33 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: remove BDI_CAP_WRITEBACK_ACCT
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org
-References: <20250703164556.1576674-1-joannelkoong@gmail.com>
- <20250703164556.1576674-2-joannelkoong@gmail.com>
+Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
+ in vm_normal_page()
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Lance Yang <ioworker0@gmail.com>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-2-david@redhat.com>
+ <aFVZCvOpIpBGAf9w@localhost.localdomain>
+ <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
+ <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
+ <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com>
+ <aa977869-f93f-4c2b-a189-f90e2d3bc7da@linux.dev>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -141,18 +164,74 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250703164556.1576674-2-joannelkoong@gmail.com>
+In-Reply-To: <aa977869-f93f-4c2b-a189-f90e2d3bc7da@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03.07.25 18:45, Joanne Koong wrote:
-> There are no users of BDI_CAP_WRITEBACK_ACCT now that fuse doesn't do
-> its own writeback accounting. This commit removes
-> BDI_CAP_WRITEBACK_ACCT.
+On 03.07.25 16:44, Lance Yang wrote:
 > 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> 
+> On 2025/7/3 20:39, David Hildenbrand wrote:
+>> On 03.07.25 14:34, Lance Yang wrote:
+>>> On Mon, Jun 23, 2025 at 10:04 PM David Hildenbrand <david@redhat.com>
+>>> wrote:
+>>>>
+>>>> On 20.06.25 14:50, Oscar Salvador wrote:
+>>>>> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
+>>>>>> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
+>>>>>> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
+>>>>>> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
+>>>>>> readily available.
+>>>>>>
+>>>>>> Nowadays, this is the last remaining highest_memmap_pfn user, and this
+>>>>>> sanity check is not really triggering ... frequently.
+>>>>>>
+>>>>>> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
+>>>>>> simplify and get rid of highest_memmap_pfn. Checking for
+>>>>>> pfn_to_online_page() might be even better, but it would not handle
+>>>>>> ZONE_DEVICE properly.
+>>>>>>
+>>>>>> Do the same in vm_normal_page_pmd(), where we don't even report a
+>>>>>> problem at all ...
+>>>>>>
+>>>>>> What might be better in the future is having a runtime option like
+>>>>>> page-table-check to enable such checks dynamically on-demand.
+>>>>>> Something
+>>>>>> for the future.
+>>>>>>
+>>>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>>>
+>>>>
+>>>> Hi Oscar,
+>>>>
+>>>>> I'm confused, I'm missing something here.
+>>>>> Before this change we would return NULL if e.g: pfn >
+>>>>> highest_memmap_pfn, but
+>>>>> now we just print the warning and call pfn_to_page() anyway.
+>>>>> AFAIK, pfn_to_page() doesn't return NULL?
+>>>>
+>>>> You're missing that vm_normal_page_pmd() was created as a copy from
+>>>> vm_normal_page() [history of the sanity check above], but as we don't
+>>>> have (and shouldn't have ...) print_bad_pmd(), we made the code look
+>>>> like this would be something that can just happen.
+>>>>
+>>>> "
+>>>> Do the same in vm_normal_page_pmd(), where we don't even report a
+>>>> problem at all ...
+>>>> "
+>>>>
+>>>> So we made something that should never happen a runtime sanity check
+>>>> without ever reporting a problem ...
+>>>
+>>> IIUC, the reasoning is that because this case should never happen, we can
+>>> change the behavior from returning NULL to a "warn and continue" model?
+>>
+>> Well, yes. Point is, that check should have never been copy-pasted that
+>> way, while dropping the actual warning :)
+> 
+> Ah, I see your point now. Thanks for clarifying!
 
-Acked-by: David Hildenbrand <david@redhat.com>
+I'll add some of that to the patch description. Thanks!
 
 -- 
 Cheers,
