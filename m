@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-53951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E08BAF9097
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 12:33:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6A3AF90A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 12:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DE04188E0AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 10:33:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3AA546936
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 10:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8D02FD88C;
-	Fri,  4 Jul 2025 10:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9023D2FE330;
+	Fri,  4 Jul 2025 10:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OK56u9HP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="esL/z+PL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A251F2FD893
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 10:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557202FE310
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 10:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751624810; cv=none; b=M2ET0XS+BEcKVTNI8M0BTJ3Ea9AhTtItGFrQyCE+rpttcrYpfxxRZPLp46af/NYrXEKq7k5hUxaZ8usFYJ1d36clpbudwmKXWAk+8PGKUg6jaRAAfixPHIyy2/YI0r0kUKL7dFJ/z0BJyxYe+xc8C3/0qhwYQ04lgzLgPJUKyCU=
+	t=1751624813; cv=none; b=Hkd/6i6XyGp05Qn3PcfJItbjRC5f//w1RWhGMfXQv/UL7t1pW3XGAWjLsa/TUkZBHXX+7zAHAV7t+mNrV7F6yfLVUu4UGePFCRxKaQq2C/FjwHUy3hBovJHLqsxIOZgwSXs33fkPXPw2vNcs2cE1SZhkb0i/Vo6PSdmILsAJhWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751624810; c=relaxed/simple;
-	bh=8rQqgJp11Lk6antrmn+yK+r+00c98BCFbnlbAAQikq0=;
+	s=arc-20240116; t=1751624813; c=relaxed/simple;
+	bh=9t4RJIUzQtVpC+ufH2qeXROpTaW+ImBuVkRcsBTUgQk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=II/aUc2AHkRU44jqQxckFVzYppmzViAMFI/OKodtqV2Jo5iqLnyKuR3sFFIGhBuv4KoBZImgNbHCBZQcnuSfYKDBCl3Fz8+ULQTTLudnpmtgCUmg1CvbkI0ERuXLQj3iVcFbfVmqpcCtEC3WXcM+oZKif9+9odWUDYWTNtfsVOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OK56u9HP; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=aT0FKjN5xiT2mQMuRqyDxe8PMIbEN3CnFRp44qArqDUlFdoZ8sBAr4GeF+H+sIA2totK6s51qxyaaAR09DofbmZvQAUKk5L5aN133Jj3OLyq/x10gtFjC9kF2lilkWYj+pRpUqsV/BEc41X4frYOcJ3fs5/uZt92RG4JPa3EOMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=esL/z+PL; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751624807;
+	s=mimecast20190719; t=1751624810;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=egdaFmDJBU0TtndNYiZ6nPcRML2Mxu7RUt3KjMyWE24=;
-	b=OK56u9HPfDiPZJeQemFNx21e+7OGxwPQ0L4T28kY2Dg9Z8Dc1MA4+8PHaCHeMSH3BWNuZ6
-	V79vqB4VwZOHp+ksLdwtmjKgdL54kFnsAYHOdEq+GFkyvf2j2fD6WiAFcOksrTB8/oNH5+
-	kAC3U6nNFRx72fwqL4e4oj6NE5UIRw8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=mQ0XfChfbxm2lnvJaf8puphZG2XMtd7Fe0eRXg0ZpMo=;
+	b=esL/z+PLls6K2fyxFk0u3ZVkF6qmNw7CaXXHTlLxQifRt4sPsATBRwhw4Nxg07yg0u8rGC
+	x7nj6lOsIsFzlcF7IB3XO05P3YdeoCdslyHBlN1y1ix2pxoLnKP0IB9wU42hdWm0/rf7W7
+	rJ1+VaDkjmQukxeCGROb6yu1OZEPAYQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-578-ZDl7S2VXMESQdzy5tUmwJg-1; Fri, 04 Jul 2025 06:26:46 -0400
-X-MC-Unique: ZDl7S2VXMESQdzy5tUmwJg-1
-X-Mimecast-MFC-AGG-ID: ZDl7S2VXMESQdzy5tUmwJg_1751624805
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so3903435e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 03:26:46 -0700 (PDT)
+ us-mta-80-QH23PCR6PVmy_uoPd9tPyg-1; Fri, 04 Jul 2025 06:26:49 -0400
+X-MC-Unique: QH23PCR6PVmy_uoPd9tPyg-1
+X-Mimecast-MFC-AGG-ID: QH23PCR6PVmy_uoPd9tPyg_1751624808
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso4603165e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 03:26:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751624805; x=1752229605;
+        d=1e100.net; s=20230601; t=1751624808; x=1752229608;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=egdaFmDJBU0TtndNYiZ6nPcRML2Mxu7RUt3KjMyWE24=;
-        b=e+jw5dlRas1Z9fSQ1QWqbdav7f6/IzNUxUos+kmAvrHPc+5g5EDgJkDM7eVy5Pspx1
-         FK+mDe6vIn21BQJ36Am7IcmSZ2l47Q63cMjyX51d8XpbjgNFR6eS3sEOMIWcBIAaUXNR
-         rWtRAUT/UEZEidUgSmGdqisgJtNHY+HMPyqH0TcL39/zHm4ESvl031XUsVG5f74d9+Yj
-         peiM0aIDRVtHxj3s75DV6mWeS17lDsw2A3v+uLILDg3XMj49Jc5lGswgbHEHgElaTFH6
-         ZkbrnjBfYsq5otYzF+6gN9NtPFZOg4IPFJEUDhcuSCxrcV1ya9RfTauU5mTnacqHZ1TG
-         xrNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2cz1KJE/IzK8/tQk/orjTEdp7QYkes46JohlYH5VVbBqw9ggnpwKG6r8qJnagKKYEHTtXnKCJ3/2tddKq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0jVl1x3RVaTMfs5EjEYbI+oLM0bIAloiSZPOpwtUFhDbzk+o8
-	fSFEDtvxrU/6oRMa//T+57/YLxTv+YTw/ogyvI9knOksOgOOj2Y2wLnMIGSHp4Orl/KGz02H4+R
-	ej+dPzUBqy8X2irinjJRZOL70LZ4VC0gwfghpJzL0MLpwQ0lnZTjgtjduWSx5S6weJJ4=
-X-Gm-Gg: ASbGnctFpcdm2vts4/lUFOO7M8UHq7d5sOsH+qA5YQqY5cBkVzn4De19kpK0F6G2NNo
-	Gl4FQM8WYIT7t4FZlLggtPXgfJz2RkoRsg6Q406d1fbUBlgO3uHwepWlvLlCo3pS2xSNvkJN3RJ
-	AxT17odN3KUMmwG3NvjscDr3hDqRJtMV+ZxB7EnkMVdBYL0KZ83RKBYfu7CfItWvLtfx/OpNIGF
-	Y+Emq9ZsG+vFq9kraaDF8miAaft5QAWCJBYwh97t18pSdVsvwEYFVSss6lUQWjdNc2haLpW2XX2
-	Q+MVIHKAqHt/tdF8t9Z+QSqyMf5rSA5ZpiVFj6gZYGJRAvokPnLGm+IswkgQzdsKr4ZZauqmq3N
-	AsOmWhQ==
-X-Received: by 2002:a05:6000:41eb:b0:3b3:a6c2:1a10 with SMTP id ffacd0b85a97d-3b4964eb8c5mr1818974f8f.12.1751624805274;
-        Fri, 04 Jul 2025 03:26:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEReO138rar0bBMYwWljLx+rr/cG2x6KKHBHNt6saeQjtIgYNeV27GRLz6HCnNXsrL9yURvTg==
-X-Received: by 2002:a05:6000:41eb:b0:3b3:a6c2:1a10 with SMTP id ffacd0b85a97d-3b4964eb8c5mr1818905f8f.12.1751624804727;
-        Fri, 04 Jul 2025 03:26:44 -0700 (PDT)
+        bh=mQ0XfChfbxm2lnvJaf8puphZG2XMtd7Fe0eRXg0ZpMo=;
+        b=HuqwzaSIAXuy5AKNdotJ3Kb0rPg8Mv8BdVbdXSS+cEocJScKoeDOWC4jrK8DS8gStN
+         /unpLXeGhU+kkpQouPptKYGIae8G0vubjhaXXz5uIlYd5JhirrcjX/8weE31Q/HEwZRK
+         T2eAfxNPoDDpFDJ9onQURsDMcuU1pmSBJq2xECR+COiNCiTgkZaYNfuWTByNa157bh7J
+         OBcCmwnAfwWpdXIkMt+aJJ4aH4dGnJS7WtGqzEcqVnxgo8d3KhoazT3n6a/jZTWNtXuP
+         8hjoYVg8lw7ZNzT5igfl7SIezL7gQTTNctutZq+PP7qAsDgBAGpdKq/CE15JlF+LesIs
+         vSXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfeTC/tc/xjtxNUmYWPgFMhsnDXFQsR2zk0wEEkKhkLOiXXM2zi6V1ZtHkapVJJ+vxcZ6jDc/EC83iCThW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNzafDjD2lycy8lfsDIJyaPuvitSHkVSI13EKIqYdxVH9hNa+v
+	vFRIxQx7z5IQ4E46uq7W2f/dpX/k2fZTRUYntSf6mTUvpQDup3ejm76AEwEjPxCKSAUjAwyGm53
+	ABBQ5uFFpKisM10XeeDWkhVCpBfSUyu4PfBSlWLekXbU7VmWcwGSpG+ASEtREB7P7xek=
+X-Gm-Gg: ASbGnct8iDELxqPOTQsBd81H+3q+Es/sl7PrTRcMLMosz1FNNkNSYUydvVVg3SByW5J
+	l6jVrjXPZYxDFvWMWhZJyrkIuKTImBWtHNKmkacoploKZ/kqZNqd5T/kus+5dMEKQIK+rvCRpWv
+	X/hD4ByrWuJqvBKW3s9Rvwbvv1MElGiZE+RftTlPAHE1CXOge6V1KbBshB/4RyXy/pDWRGtgVCw
+	Xg31r6yvOGaSHTYGqS5x0TAQ7cXkNMBcUPA8v0ruhkcteiyj9yA3BoNGIFIvtPWS79vlItulKdQ
+	uV3kmhKVRoF2TT6g6xPCLaT26g4C1HjU5PiASznJ0PkjDSbiQCt07FNXU+9IM1xt4RT81YjqSjO
+	ve8NCrg==
+X-Received: by 2002:a05:600c:8219:b0:442:f4a3:a2c0 with SMTP id 5b1f17b1804b1-454b30c46ecmr22270055e9.13.1751624807904;
+        Fri, 04 Jul 2025 03:26:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFDbvyyEAOAh2zTRSLUq2RLyWuJqmjCfdM4cRksQAqvl8abasokMK1aTRkGvgAfFTh32vAJjQ==
+X-Received: by 2002:a05:600c:8219:b0:442:f4a3:a2c0 with SMTP id 5b1f17b1804b1-454b30c46ecmr22269355e9.13.1751624807380;
+        Fri, 04 Jul 2025 03:26:47 -0700 (PDT)
 Received: from localhost (p200300d82f2c5500098823f9faa07232.dip0.t-ipconnect.de. [2003:d8:2f2c:5500:988:23f9:faa0:7232])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b47285c90esm2152102f8f.91.2025.07.04.03.26.42
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b471b9671asm2135708f8f.53.2025.07.04.03.26.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 03:26:44 -0700 (PDT)
+        Fri, 04 Jul 2025 03:26:46 -0700 (PDT)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -135,9 +135,9 @@ Cc: linux-mm@kvack.org,
 	Harry Yoo <harry.yoo@oracle.com>,
 	Qi Zheng <zhengqi.arch@bytedance.com>,
 	Shakeel Butt <shakeel.butt@linux.dev>
-Subject: [PATCH v2 27/29] docs/mm: convert from "Non-LRU page migration" to "movable_ops page migration"
-Date: Fri,  4 Jul 2025 12:25:21 +0200
-Message-ID: <20250704102524.326966-28-david@redhat.com>
+Subject: [PATCH v2 28/29] mm/balloon_compaction: "movable_ops" doc updates
+Date: Fri,  4 Jul 2025 12:25:22 +0200
+Message-ID: <20250704102524.326966-29-david@redhat.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250704102524.326966-1-david@redhat.com>
 References: <20250704102524.326966-1-david@redhat.com>
@@ -149,66 +149,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Let's bring the docs up-to-date.
+Let's bring the docs up-to-date. Setting PG_movable_ops + page->private
+very likely still requires to be performed under documented locks:
+it's complicated.
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
+We will rework this in the future, as we will try avoiding using the
+page lock.
+
 Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- Documentation/mm/page_migration.rst | 39 ++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ include/linux/balloon_compaction.h | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/mm/page_migration.rst b/Documentation/mm/page_migration.rst
-index 519b35a4caf5b..34602b254aa63 100644
---- a/Documentation/mm/page_migration.rst
-+++ b/Documentation/mm/page_migration.rst
-@@ -146,18 +146,33 @@ Steps:
- 18. The new page is moved to the LRU and can be scanned by the swapper,
-     etc. again.
- 
--Non-LRU page migration
--======================
--
--Although migration originally aimed for reducing the latency of memory
--accesses for NUMA, compaction also uses migration to create high-order
--pages.  For compaction purposes, it is also useful to be able to move
--non-LRU pages, such as zsmalloc and virtio-balloon pages.
--
--If a driver wants to make its pages movable, it should define a struct
--movable_operations.  It then needs to call __SetPageMovable() on each
--page that it may be able to move.  This uses the ``page->mapping`` field,
--so this field is not available for the driver to use for other purposes.
-+movable_ops page migration
-+==========================
-+
-+Selected typed, non-folio pages (e.g., pages inflated in a memory balloon,
-+zsmalloc pages) can be migrated using the movable_ops migration framework.
-+
-+The "struct movable_operations" provide callbacks specific to a page type
-+for isolating, migrating and un-isolating (putback) these pages.
-+
-+Once a page is indicated as having movable_ops, that condition must not
-+change until the page was freed back to the buddy. This includes not
-+changing/clearing the page type and not changing/clearing the
-+PG_movable_ops page flag.
-+
-+Arbitrary drivers cannot currently make use of this framework, as it
-+requires:
-+
-+(a) a page type
-+(b) indicating them as possibly having movable_ops in page_has_movable_ops()
-+    based on the page type
-+(c) returning the movable_ops from page_movable_ops() based on the page
-+    type
-+(d) not reusing the PG_movable_ops and PG_movable_ops_isolated page flags
-+    for other purposes
-+
-+For example, balloon drivers can make use of this framework through the
-+balloon-compaction infrastructure residing in the core kernel.
- 
- Monitoring Migration
- =====================
+diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
+index b222b0737c466..2fecfead91d26 100644
+--- a/include/linux/balloon_compaction.h
++++ b/include/linux/balloon_compaction.h
+@@ -4,12 +4,13 @@
+  *
+  * Common interface definitions for making balloon pages movable by compaction.
+  *
+- * Balloon page migration makes use of the general non-lru movable page
++ * Balloon page migration makes use of the general "movable_ops page migration"
+  * feature.
+  *
+  * page->private is used to reference the responsible balloon device.
+- * page->mapping is used in context of non-lru page migration to reference
+- * the address space operations for page isolation/migration/compaction.
++ * That these pages have movable_ops, and which movable_ops apply,
++ * is derived from the page type (PageOffline()) combined with the
++ * PG_movable_ops flag (PageMovableOps()).
+  *
+  * As the page isolation scanning step a compaction thread does is a lockless
+  * procedure (from a page standpoint), it might bring some racy situations while
+@@ -17,12 +18,10 @@
+  * and safely perform balloon's page compaction and migration we must, always,
+  * ensure following these simple rules:
+  *
+- *   i. when updating a balloon's page ->mapping element, strictly do it under
+- *      the following lock order, independently of the far superior
+- *      locking scheme (lru_lock, balloon_lock):
++ *   i. Setting the PG_movable_ops flag and page->private with the following
++ *	lock order
+  *	    +-page_lock(page);
+  *	      +--spin_lock_irq(&b_dev_info->pages_lock);
+- *	            ... page->mapping updates here ...
+  *
+  *  ii. isolation or dequeueing procedure must remove the page from balloon
+  *      device page list under b_dev_info->pages_lock.
 -- 
 2.49.0
 
