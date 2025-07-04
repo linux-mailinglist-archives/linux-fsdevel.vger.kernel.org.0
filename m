@@ -1,70 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-53910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCECFAF8D59
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:03:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA42AAF8D7E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A561C87519
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32775806D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39BC2F49EF;
-	Fri,  4 Jul 2025 08:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430EB2F4A17;
+	Fri,  4 Jul 2025 08:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPW7EHW4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzTOMSo5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286B52F4338;
-	Fri,  4 Jul 2025 08:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1A52F4338;
+	Fri,  4 Jul 2025 08:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619445; cv=none; b=IH44Jqdwa7AdDWmMqoQ4duSqxnvjUssLcqyCMhIb87kkxg2uBStnEronc0YFHkkxUFiLAEZVsxd8ZoO16prI5oZjjsUU07O/BWVVaXFfm3Mv3D1z/glVFJL/6hvsi5kH4fDVwRgOPcpDyw+WPyvodDnkLtcKJBrge3jt/ZbZzxc=
+	t=1751619453; cv=none; b=HiJdDt7+YA42Nlpzgj35PQm38e58pmDhd3k7ZaaZ4pU90RcIw+tuwr1ZUCx9JbLrTFNcW5p13SL9UypZnKDpZZwNDC36ZEYQpFrcYuPx+rggLeAHlvd+C2HODifWzrNEB6fDXJAbA4cAeMEoYviTfn2P0K1eSDmf9qZqpqugQdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619445; c=relaxed/simple;
-	bh=bbjLcmIBW1o+XXxg6tn/23VBSChySRZ8Li0TSIQlJCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u+eehrtjn8kd38dXXqCU96i7bUzP0mb7QMEHoE22It3FdveWIJVF3SvpQwwboM32lv2Qd5nyGWw6NcKQSBV+PvzmhSc19+Ayh8h4wY5N9SeQiips4xa4Ulz4DojKY7mAv0ssxISvUn38Ye47Q+NwKxfqNW32T4qd/8ntHVkF2HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPW7EHW4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38916C4CEE3;
-	Fri,  4 Jul 2025 08:57:23 +0000 (UTC)
+	s=arc-20240116; t=1751619453; c=relaxed/simple;
+	bh=o90RWgAF1Lp2VvgsXOZIKfZyE0Mb8YK3dri/sMUw57c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=clIY+BxpZy3qaP54GFm/8A5s5A5O5737Kyec+VaxFR3OXK7YjMNG2y1JmoYOmNPFsyPUOlpNbJNVfa01oGh5Ve17A/NQRH9xF9gGyjLRlvE4jID3/hlOHSfBODgSmgANkI3jnaC5DcsZVdqL7Blt3ltEofJdWqOiBGiLGichA8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzTOMSo5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0F37C4CEE3;
+	Fri,  4 Jul 2025 08:57:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751619444;
-	bh=bbjLcmIBW1o+XXxg6tn/23VBSChySRZ8Li0TSIQlJCk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sPW7EHW4Mq9zjeLZ6o/FsFlUib8/d7wjibToOI36GWccfn4XDsvB+USa5IgOLSUib
-	 7Qpa1IBRfl87cbMcAmnPsYqotx4grw/Vi+Ibc7NSIY4KrtLAV0c2lv1fsej7Zvy+o3
-	 hajie0Y1znsPD2KPFODM2Lzcl3lLT5J1Wp4qhSzQ5HccVgDCiTwOaGoY71mAzH1WiN
-	 QW9EcM3gnz3Xa44SX99Qy4kTcZmJ/B0AcWa+UClGPQA04yXaaIPIfaDj6zjynR77Hg
-	 dGn5tHdbtDX3hUMmo0wYmBapveO6ySEf16f3TjXwa7HksgX68Q/f6fWBaN8+JlI5ef
-	 Y3rGVHdwPZfyQ==
+	s=k20201202; t=1751619451;
+	bh=o90RWgAF1Lp2VvgsXOZIKfZyE0Mb8YK3dri/sMUw57c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QzTOMSo5YhsDdBmnwvnp4KQANEMPvCDQK+ZGiltALUbRRgDxhH3Uz2gT5k5iRUbMP
+	 3JNW2GRG4PholHPOElxupx8/Rpkar9WCcQBjlnnn1etQry/5Zs+TRKbNhjAbq7Irgq
+	 EYGy9ejAC3iy7ua7JMg4ZH7sEX3DohgMDyGsRrzu47eju+EwUWIY89uRvvY48RFQ5I
+	 IK+EzHIDWvKt88EHv7n61KSjUo2y2VL4CwF0hEbZ6LwkP1dzspephJXEBje+MJnLnA
+	 fgSom+CiLQeLWE+VNLpQsP/B1dFeeeO/tK6bcE+B+WUnyh8Uaqyqka9Wuo31bJaW0z
+	 DWhLLE9q3hK2A==
+Date: Fri, 4 Jul 2025 10:57:27 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	Laura Brehm <laurajfbrehm@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Laura Brehm <laurabrehm@hey.com>,
+To: Laura Brehm <laurajfbrehm@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Laura Brehm <laurabrehm@hey.com>, 
 	linux-fsdevel@vger.kernel.org
-Subject: Re: (subset) [PATCH 2/2] coredump: fix PIDFD_INFO_COREDUMP ioctl check
-Date: Fri,  4 Jul 2025 10:57:18 +0200
-Message-ID: <20250704-erbmaterial-hilflos-962418895b8e@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250703120244.96908-3-laurabrehm@hey.com>
-References: <20250703120244.96908-3-laurabrehm@hey.com>
+Subject: Re: [PATCH 2/2] coredump: fix PIDFD_INFO_COREDUMP ioctl check
+Message-ID: <20250704-badeanstalt-eurem-b944cdc46c4c@brauner>
+References: <20250703120244.96908-1-laurabrehm@hey.com>
+ <20250703120244.96908-3-laurabrehm@hey.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1373; i=brauner@kernel.org; h=from:subject:message-id; bh=bbjLcmIBW1o+XXxg6tn/23VBSChySRZ8Li0TSIQlJCk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSkTy9QfFR6gmXN4UmhWaK6Is7FjVxKV7aELJ/iJnrTa fH3Cb8EO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCEMzwTzlhryBH7oFdxWem MW+zfPV3/+u67kcmmsF7vk3ePj170SuG3+wL7Dj/WYiF96duOPRUYb70HdZi3acmmgnaM99NKn6 1jxkA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250703120244.96908-3-laurabrehm@hey.com>
 
-On Thu, 03 Jul 2025 14:02:44 +0200, Laura Brehm wrote:
+On Thu, Jul 03, 2025 at 02:02:44PM +0200, Laura Brehm wrote:
 > In Commit 1d8db6fd698de1f73b1a7d72aea578fdd18d9a87 ("pidfs,
 > coredump: add PIDFD_INFO_COREDUMP"), the following code was added:
 > 
@@ -80,23 +76,48 @@ On Thu, 03 Jul 2025 14:02:44 +0200, Laura Brehm wrote:
 >         task_unlock(task);
 >     }
 > 
-> [...]
+> The second bit in particular looks off to me - the condition in essence
+> checks whether PIDFD_INFO_COREDUMP was **not** requested, and if so
+> fetches the coredump_mask in kinfo, since it's checking !(kinfo.mask &
+> PIDFD_INFO_COREDUMP), which is unconditionally set in the earlier hunk.
+> 
+> I'm tempted to assume the idea in the second hunk was to calculate the
+> coredump mask if one was requested but fetched in the first hunk, in
+> which case the check should be
+>     if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask))
+> which might be more legibly written as
+>     if ((mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask))
+> 
+> This could also instead be achieved by changing the first hunk to be:
+> 
+>     if (mask & PIDFD_INFO_COREDUMP) {
+> 	kinfo.coredump_mask = READ_ONCE(pidfs_i(inode)->__pei.coredump_mask);
+> 	if (kinfo.coredump_mask)
+> 	    kinfo.mask |= PIDFD_INFO_COREDUMP;
+>     }
+> 
+> and the second hunk to:
+> 
+>     if ((mask & PIDFD_INFO_COREDUMP) && !(kinfo.mask & PIDFD_INFO_COREDUMP)) {
+> 	task_lock(task);
+>         if (task->mm) {
+> 	    kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
+>             kinfo.mask |= PIDFD_INFO_COREDUMP;
+>         }
+>         task_unlock(task);
+>     }
+> 
+> However, when looking at this, the supposition that the second hunk
+> means to cover cases where the coredump info was requested but the first
+> hunk failed to get it starts getting doubtful, so apologies if I'm
+> completely off-base.
+> 
+> This patch addresses the issue by fixing the check in the second hunk.
+> 
+> Signed-off-by: Laura Brehm <laurabrehm@hey.com>
+> Cc: brauner@kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> ---
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[2/2] coredump: fix PIDFD_INFO_COREDUMP ioctl check
-      https://git.kernel.org/vfs/vfs/c/8c0bcafc722c
+Yes, that looks correct to me. Thanks for the fix!
 
