@@ -1,267 +1,368 @@
-Return-Path: <linux-fsdevel+bounces-53956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7F2AF90D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 12:41:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47DCBAF9102
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 12:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7673F167E63
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 10:41:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8511C7A9E12
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 10:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E132EA72F;
-	Fri,  4 Jul 2025 10:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE61289362;
+	Fri,  4 Jul 2025 10:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x2SgVYZ1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AX3f+NW+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2049.outbound.protection.outlook.com [40.107.220.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327FB20C00B;
-	Fri,  4 Jul 2025 10:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751625691; cv=fail; b=fcbzfKqvIFgIHnanBe5/jic+wLH63ZCcEcX0eyZXdc330DXHGdt5EbHKcLFXkIhmv0yGkAIZhtwMKThpjBSy4TYkLJR36L9NBBltqSry/ee1QRESayVmOGo+cFNcGlcavnNNo6WzOeXBFGgfXEcozZB+XXtokgJwY+455D64xYQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751625691; c=relaxed/simple;
-	bh=akbp5+UdU2FW3Bo479NqH76/3egoKE0KrP+5QYI+WvE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JU+PnmUNGRcdIpCIcHDSZraxU0aQOYuOVLnOzwvYxHP78N4LwEWwM/2QHYvd71BlV6wpq4ulp5QqszGi2Uhuz7ylDiZBrBk/JK72H2UGVVP79CquNro0QuP0VLdY7tJ/+XgzjNz928HDZf3Z/xgt4QvwR3i+MGw7rmevLKIl1Qs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x2SgVYZ1; arc=fail smtp.client-ip=40.107.220.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U2vbEOb36JlqhMHp1KyveR7H96Y4TPyK07gu8zsX9Ru/UUV1idp8YTxTKqipikuuymSH8Z13CZCQWGZfp6XPrHKm72g377cWKrglz2Spjqik1U7Z69jmqqfg40jNQQHQi8eh3o64ek4SlkHGS+CiuYrmqC2mpM4gohHUBglwMtGqWXBqgFoARUrwpEAzAN5CXgrfRfGD51XbN6r+jyNjzXiw213po/gG5hfXZhDkUwysGxWIMUN0otVyTfHmmXHmgON18LWWnNoCeUH5+utm9CtV6NiWoamgUgnvnTVTw/4Qt5QkZBWyYVrb70fqFHTIOqsKJG5Jnoe6fORPM1Vu/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NJwuPJmWTTV5cLBJxplctMGHYYyVy9wpGMoKBhgyYB0=;
- b=TUG8u6T1QP68csvhfrohU0d9FAqagM8qx4swtdq2WDI4UpZLqJ36XdCogBAw7bs11IQTT++kwCU4ZQY/QVECGCPX/qsZH+WJdryx3yv3JJUcPWhCAvxUUfolLEiDwEB4/oPE3qzVQExS/Sp52cRsEj2vDGkUJ0RS+sTwkTOzPK8gbsdspjOmwX1NEKhpf8kni6FGPKUgIGF1gaMBO09jdSmBtVOOcgMTYw/tVudro8K4w/bAKxXkK+quV+EZG9YxT+/GCOCFrF03j2NqMkG/M4aBK5ywYI6m1OCjLGN2zF/QdMT0U511SRuLtxUXIT7QT/EfL8LTCVCPHGe25mPKxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NJwuPJmWTTV5cLBJxplctMGHYYyVy9wpGMoKBhgyYB0=;
- b=x2SgVYZ1lwULja6k7i3iocGs49yFGHK2ZL2Gebb79FOQGWWs8Tk1p11G8XKDZplhNBURuNBQW0G5ost0GxgqZ/QsOl5Tv1/9iw+ok31HqDWCfgvTt6PVW5BMFD9bEBIY0yF9WYrbx2J0Ss3bqYoKABm+9/y4jY7Jl7BLNFu/5tc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa) by DM4PR12MB5866.namprd12.prod.outlook.com
- (2603:10b6:8:65::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Fri, 4 Jul
- 2025 10:41:28 +0000
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf%8]) with mapi id 15.20.8722.031; Fri, 4 Jul 2025
- 10:41:27 +0000
-Message-ID: <67c40ef1-8d90-44c5-b071-b130a960ecc4@amd.com>
-Date: Fri, 4 Jul 2025 16:11:16 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] fs: generalize anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-To: Paul Moore <paul@paul-moore.com>, david@redhat.com,
- akpm@linux-foundation.org, brauner@kernel.org, rppt@kernel.org,
- viro@zeniv.linux.org.uk
-Cc: seanjc@google.com, vbabka@suse.cz, willy@infradead.org,
- pbonzini@redhat.com, tabba@google.com, afranji@google.com,
- ackerleytng@google.com, jack@suse.cz, hch@infradead.org,
- cgzones@googlemail.com, ira.weiny@intel.com, roypat@amazon.co.uk,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20250626191425.9645-5-shivankg@amd.com>
- <a888364d0562815ca7e848b4d4f5b629@paul-moore.com>
-Content-Language: en-US
-From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <a888364d0562815ca7e848b4d4f5b629@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4PR01CA0084.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:26d::14) To SA5PPFF1E6547B5.namprd12.prod.outlook.com
- (2603:10b6:80f:fc04::8ea)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0782F19B1
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 10:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751626702; cv=none; b=pTRgHBox0ZS+ED+N3X/jyNRMtWA9boIXcKg5Ae5x76Z10bmMHqLn47mCadaiL3FpHLfVvanag1WsiOorHr4oKJMu2uLBMnFEGGJf7t73NsZnZNOJYfLGWWpB4lvqjlPR7MkAubNWZqYHDfvZqeFmK4m0ZTiTvwa8Sd6l16RKk20=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751626702; c=relaxed/simple;
+	bh=IDGv0ZmFLScEvN6M8fY3n1SlcLy38N4DcGo/wgRxP1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bbPHhXOCam4yQvJr3JnSS0Vwe1oYYnvB2HoakBsnQN8ed82m2g8LHWgZ8fRdOhMateChuOAJajkPKT5RGddepS0Uk4Lc8PrCt28IIKgLABX7MK+0dPABMZeYhzozKTGVdxR8rFhK4o56J+7uljWWdgNSs9AMMQp21T7E/4o1YH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AX3f+NW+; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so4034565e9.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 03:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751626699; x=1752231499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sunxBafORyIYMPPYlAkiwPs7y1d9n3TdsxEodnGzveM=;
+        b=AX3f+NW+fid8jIP0Uj3qx5B6Bdg2NIeg0FIK1G5ed6gCMgEgPlMSiZrpCGvg3Vjrml
+         zgcXNC/acR6l6QIyGLluNi15lpEnfQRbHxWusUEqvnDGt1T4OPNV/bcTta/MxaMfeYRJ
+         2TR3BOegkObN7/S2UuWRjki0lDfL/5DCyRlBjd7QuRsZQso+RpJOTNyoRXPijg9lZHxt
+         /ARuv1h79K00G2WlEkJOGUZxkn465Sh+K3v+n5xDcgUsnoFJiixfoe+XLR4BF8xSotlB
+         d1WZzMV+GYsRHdo05e5oZzomsBmUyxc/W8o5kD+7LU1q05Jya0s8rSOjaztJQy3PzE76
+         vJxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751626699; x=1752231499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sunxBafORyIYMPPYlAkiwPs7y1d9n3TdsxEodnGzveM=;
+        b=aJaRn/79xExB5qUg9d9t+WO5dKbkTt1Y5xOqpdaLRCBGt04R3coxlr0LUzCicV02Ro
+         yShoHjM6zhv+wgIhmLpRYQ2LTRG07+YlotA/IEwSjFAwjb0p/bv7/wCHaQouYteOI431
+         A/nHIutxxIhFAv0/AKSSuZSTzoL5GI7dLRxJ8FTWz0waTXL2wiXn2kkvOr5zswzP+2+z
+         9eY2ybBidoD25E0o3oZQU+wne1gTx48+7X1D/Yqsd0h5RLTf8rdiRKyI0hyCJ0FhdBto
+         jvtFC/QeaAHa1eJbmjuOF1v09kMETCPziUzNrrhwmCi1QNsm9T3zUQYjd5nyn/lD6e0z
+         gtIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUa0AdySjk1VUl6xjeigABaAozYOdtJ6nkqwKMuoy6aBspRdsx2MOnSRYi9H+29PKOshVlKZ9LnuZLPtu5B@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc1B084IXcGwzJPMRVRBrrn6mSxbHqM4Bzx+WCQlkq7Z0BHFgd
+	AxhvJ9Mtm1NXTsu8TBvTyIwZ4mvmvlLnvbgIb8I/6NQpcSksnNEwC8ekpiKnC92eaomheKl1Vrr
+	zHnvxPyrQG6jp9ZVD0rUob6Ql0F/SdLI=
+X-Gm-Gg: ASbGnctvjwyoHZmiN8J/SimwYAtGSUVPBPOVdpSD+YSM1aOfmSbX2HVr05U429ru7oH
+	/I6Jg7tMYWBKiIZPmSyYHd+/TWOQr1Yj4OPylNy1hEJMhXm4H/+i1faqUb05QMkTROitGDwPxZC
+	E0qJzvFa61Q9Yb8Zt61kq5dcLk6AjyCVENhziwqerCq1o=
+X-Google-Smtp-Source: AGHT+IEmo4tGn/rV03PPfwMbcBK9IMSOmuKYyMcbirTLiEvMcwhu6WO2cJZZZR7adhfgnj5RfHyk/Hwq3clD61IuAG8=
+X-Received: by 2002:a05:600c:c4a5:b0:43d:94:2d1e with SMTP id
+ 5b1f17b1804b1-454b3122478mr18785795e9.13.1751626698197; Fri, 04 Jul 2025
+ 03:58:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|DM4PR12MB5866:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84aaf0b9-30c9-499a-5327-08ddbae753e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NFhidjYzQ2xva1ZCekF4Y1F4OFZibTFRMVIzOTY0cHlzMVpUUUg0c05Xcm9Y?=
- =?utf-8?B?RlZheTh6cmhPV05WdzlXakliY1pzelY5d1hHaFJDWWpFVlhQQ2ppanBiMzhD?=
- =?utf-8?B?V0t5MG5zRXdPQUQwN0xzNHhFc2ZxNHUyZGFZbm1TdmI1WHpYa3RLZlJnMGh4?=
- =?utf-8?B?d3dmd09BMEZTUHFrKzRpSXRGeXh0UnM2NEFCM1JacTBFUWgxUnhBNitUZ0Ry?=
- =?utf-8?B?Slk1SUJJZXlXTjJrS1pwbHQxT0pmUXU2TXpkWkVNUFdxZ3pGcURKYnhseVdS?=
- =?utf-8?B?U0g2Q2NzckE4WDNrOVM2Z3NiVE1JOHlRR3l0RjFhSEw0ZldhbnhXM1ozM0dn?=
- =?utf-8?B?OWFRVmg0UkpXZlhOV0JkZ05ZTnpXU0V5cE5leFBkaHJNTE5VLzRhbFl2Ymg2?=
- =?utf-8?B?WngwOWw5dC9FZ0R1T3BnaWk0UDZuZXhZSWQyb284VFcvVTJKZlRhckxSNmNt?=
- =?utf-8?B?NHB4aVB5QjA1VmZUeUJneXVvZzdYVDlUUjJGL3JRYVp2VjJ2bTRGN3lGWW9h?=
- =?utf-8?B?Y2c1clpqK0xnL0JKK3ZjNFN6NDM1SDJzREpuakp2bkJBMHloYUNIZGowOVdT?=
- =?utf-8?B?d3E3YktpNmJMcXpqcmhmd0E3bTZBVzBkL1J1ZERZWFF3V0lIVzdIUWltZHQr?=
- =?utf-8?B?Q1gyUGpHc3YvS2ZrVlVlelFWZ1BHbW5uU29jTmhKTzgxN0NXOVZ1ZExaSHV2?=
- =?utf-8?B?S0E1Z0ExZGFDcnUyWEdTVTBBdy9tQmhnOU5wOVFrUUxoMkN1SWtZbStXZjZO?=
- =?utf-8?B?Q1d6VzdmMEhCUlIzZHdXNVR1WUZyRmJyYnpwcWkyeFhxZUVsaFlaaCtXU1Vl?=
- =?utf-8?B?d051R0FLTTI1SGg0ZFNiN2xHMWlpbXAvNGJISkxoYmNlYlJzNkFsdUY0Z0U0?=
- =?utf-8?B?cTF6K0hBamlXUHJQd2NHeVdXSFphRFd6amRIWWtTbFJIS25xOVJCZndaNFov?=
- =?utf-8?B?WGt5THFzcnJxNW4yRnc0Z0FkdTFndUQ4aFNuVlZmNnA1Y0JXUUdobVBCKzlh?=
- =?utf-8?B?ekhJdUFaU2szQkJZZ3BGSUUrWjRoUFRSbmxMR1BYVWdJcFZYbERIdCtZWERB?=
- =?utf-8?B?M0IvSmI0VzFwYnVtR3IybGZQM2EzV2xrRDhBMFpMRWh5S3NLN0ZHVFF0cEJU?=
- =?utf-8?B?QmYwS05LSHJzQmtqcnIzdzRMVkdZOERiSXRtS21jYjdaV2djT2ozWmdJNzZs?=
- =?utf-8?B?dEJ4TTJkMFhOSk1wakhoeDVZeVpNdnN4Qi9IMjQ0S25CcGJzNzNzcGhER0dr?=
- =?utf-8?B?NTVTUFNZejE0UTlKZlMyc3dVUHkrWFVESEo3U0UwWmV0N3Fja1doVFlvU1Uy?=
- =?utf-8?B?Q0crYVV3TnBvQzFhRWN0TFphVXhoemVQaDhHNnlvbGEwL1h3bzMyY1R1bFFs?=
- =?utf-8?B?ZWhoc1VMREFSN1BzcW1OcXBuOHI4amIxZ2F5ZlRZeG51OUQ5NWR1NnYyWGk1?=
- =?utf-8?B?bXNtOVN5Y2o2Y3Y0d2ZqeWtJZ0dNeWNhNnZ6OGxjZXJKaUI0bllXWFZnMHVV?=
- =?utf-8?B?RzAvdWU1dkhrYmlNVGcyTkJ1SXE4Zmo0QVRwMVU1WUxkeDcxcGJNVDIrMmNn?=
- =?utf-8?B?SWs4QWxDNExJRTVVckhTQTNsbVJGa1ZnaXRnUGRCK1p5ZEZhYjdZelloaE1P?=
- =?utf-8?B?ZWlMSGJmZzZHZG1uWEFVdmhiaFBBcDBUeWx4ZnF0dkVyckIxQzJ4N2tGdGEr?=
- =?utf-8?B?MkZUMCtiVlNoUmphRXM1b25vQThLZDIvQ3RROERMTW1OV1hjMC9KcFZGQWFk?=
- =?utf-8?B?c1R5S29PUHpMQU9yU3NKWnN2Q1NGL1pIT3R0bmFoNEROdUtrWUlRTXJaR1Zo?=
- =?utf-8?B?MVpXYnptYm1FWVI3RTJROGpTaFkxaEJiejVUUm44OERteGpSbkF1Z3FhdUZE?=
- =?utf-8?B?Z0dUY2w2RkFuYldtRWlJUUFMMWRHMlFYU1hvcjFObTBOSjdpb3JSSkUyMmRS?=
- =?utf-8?Q?b/vhC4egp9k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dHEycWVBVUhTSlFmZDVvOFlmbCsrTjdBL1lib09Dc2gwZDlML2t5MjRWNDR0?=
- =?utf-8?B?TTZIdzR0QXNpb0U4M2I0TXUrS1k2cmx3MC9ybmp6L1ZrVzJWOU5vNWFESVND?=
- =?utf-8?B?bVdQSEFYTlRhQVlUbnRZV3YrNnR1QnpwRWdSWXgzVlE1SXpVaVJlU1BQSGxN?=
- =?utf-8?B?L21sa29UTnFIdFlBRXBkeXJIZG5ZbkhQRGNwVlhYaDVtSGszZmlRemZONU5j?=
- =?utf-8?B?RTVQWitxbTVCekUvRVdrV0txSkR4WUZJWjlxQzNzVzA1Y29TcWJid1IvcU5S?=
- =?utf-8?B?Z1lJRFR4VTkybDNNZTdzR2JVR3RiNW4rVE1ocG1OWnZFN2lqeTZnZ0s2eHpJ?=
- =?utf-8?B?dGltT2NpVHpyS1lQVTQ2RWlJb1NlTkppaTJ4engydmRDL01NUlAremxJWUpB?=
- =?utf-8?B?cXNzNXR1UmRyVmw1Q055ekduWFlCRDlFYXNMWFJ2VHdlQUpMdk50NUFueWt2?=
- =?utf-8?B?QW1iWXpTUVh4TXJtNUNVSHZaNU5UOFd6T3RUWjc1akJRNkUyNUxsL01wL05t?=
- =?utf-8?B?N290Q203MTUrTHFrV1BZSmJWaExoNkxYNkF1VjZua2lQNjVjSXVaaUdQMXdU?=
- =?utf-8?B?Ujd2VjhGVmZpZTJUcmcwWnlsb3dKYkFYVGkrcVMySUdTODdCK2JFdHRWNVl5?=
- =?utf-8?B?cHNWM0tFejVYdVdDcXdWMzdyanJ5d2F4aUhFVE9UOXJFam9WV2xHWDZFbG9k?=
- =?utf-8?B?NDBzUnhkVDFYRVZOckk0amxEYzZNeWkrNVdETXJFeFozMEhTSy9PQ3RJbUs4?=
- =?utf-8?B?M2l0SFBUODNvYUliT1hyZ3hnV1h4VXV3dFQweHZMZnlUa1c4M1Q1c2pXUGF3?=
- =?utf-8?B?MERzMFpqemdVVG8zdndkRk9haFZCK2N6cmdHNVVzZGp4emhsS1JHeWdhSlJl?=
- =?utf-8?B?NTEvcytNeFg0RmVSRkdYd2VYVE9sWGJGb0xsNjZmT21UOW9VLzV3QTZ3ZUhz?=
- =?utf-8?B?dENzRFZoR2cyYjlWc1pYd2lVeHJVUiswd2dSblBqa3lGcGNmYSsvTnVXZkxy?=
- =?utf-8?B?RzU3ZXZhRUVqaU9mb1lZakM5WGVoTkRVTnVybXpjcnpVTjh1RUV0Znd2azgv?=
- =?utf-8?B?V1FHSWNHanNBQUZPOEkraHp0T2dUSjR5czJXTFFzT0dXYzhlS1B0TnNiMDZG?=
- =?utf-8?B?Q1F2MWZ5L2xBenRsNEJlYS9keFdEUUJzTjlKVjJGMGNOdkdwenlxS1hTWEJi?=
- =?utf-8?B?U0JtcFVSWnpMdXVzajZxVlB2MVdkNUNrNmUveFFFbElVeWN3Rkhtdi84UlZh?=
- =?utf-8?B?Vlk5T0xaVDZhajc1aHBUbTNpY3JLdzdSUjRJMHNuQjkwQ3AxYmpoeTBVNjJ0?=
- =?utf-8?B?OE9mQ1d3OTEvVGpYeVFJaFgvV2U2RFZPRUFMQVRKaXJaYnZiUExYS2tYUFBB?=
- =?utf-8?B?VDRUK0xZMm85T0dhMFh5cFVDZ1Vzc0s0blpKVERVMTRQcGM1RmxWMUZHcEcr?=
- =?utf-8?B?RE9EZDVwSEpZOWZsdWJuL3hSMnF3QUo5QkdIeUhNK2ZCREdGdlJNNi9HUXdM?=
- =?utf-8?B?V1dVZjBQTUZMSWpYT0hKRVVzK2ppdnlONno4Zkpaako0WWVDRHVHVzlrVzNv?=
- =?utf-8?B?UDVnOTZwbi9NTHZud2V0VmxvbkJSeUhCWktvejFlbzFoa0NCVGNuU2ExU3lo?=
- =?utf-8?B?c0l4VmQ3MldrN0d3ckxXMUJHWVBTMTdaZXdBT2pBdHVEN2N6MWhJYjQ3bHBH?=
- =?utf-8?B?eHF0L3NuTmNQTVdCT0h2MHQ3Y0IvSHhMK1ZRcEw2OEhIeWgwc1N5dlRRUTdq?=
- =?utf-8?B?MzczZjl5eVZGS3RBVW13bG1RT2plVVNaVFo4MHFHY3JXdVZOVVJWdG1SUnpM?=
- =?utf-8?B?UDNSTVJwSXdGTXZYUUhnbi9yUWNSSE5IUXNsT0hYWHBEcmJqNDAvWkJvTkk0?=
- =?utf-8?B?Y1dMdThHalEyYVRjL2RoaS8xQ1ZTdlFjdUduR0U2ZFpua0p4SUxrSTg0ZTh6?=
- =?utf-8?B?ZTM5S01EcEtXNmhRZGU3RnkrMEM4MGkzZndRcy82QzdzNTFVTUtrTVZwVnFp?=
- =?utf-8?B?M2c3K05BQjhoT1JRVDVwUzZkK0wwZmxBMkVzOGdYL0tIWXlDZDlSYkd4VDFr?=
- =?utf-8?B?Y0FTbW9QaW9xTTgxSVZjd2FIMk1UdnJLWHBsUEJwdCsrUUxva1lIczlORE9B?=
- =?utf-8?Q?oc+so9vtQNhOFy0h0G5oDQR7r?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84aaf0b9-30c9-499a-5327-08ddbae753e5
-X-MS-Exchange-CrossTenant-AuthSource: SA5PPFF1E6547B5.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 10:41:27.6989
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uqf4nUg5UHBbBXNySsH40k2lE4AQlyWsDviNL9QBoFXYtyxDRkhZQF3QMQL7mAwmt/RLnUukd5BQMbAYEBZPjA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5866
+References: <20250604160918.2170961-1-amir73il@gmail.com> <e2rcmelzasy6q4vgggukdjb2s2qkczcgapknmnjb33advglc6y@jvi3haw7irxy>
+ <CAOQ4uxg1k7DZazPDRuRfhnHmps_Oc8mmb1cy55eH-gzB9zwyjw@mail.gmail.com>
+ <2dx3pbcnv5w75fxb2ghqtsk6gzl6cuxmd2rinzwbq7xxfjf5z7@3nqidi3mno46>
+ <CAOQ4uxgjHGL4=9LCCbb=o1rFyziK4QTrJKzUYf=b2Ri9bk4ZPA@mail.gmail.com>
+ <uxetof5i2ejhwujegsbhltntnozd4rz6cxtqx3xmtc63xugkyq@53bwknir2ha7>
+ <CAOQ4uxhnXaQRDK=LpdPbAMfUU8EPze17=EHASQmG7bN5NdHWew@mail.gmail.com> <gi5bf6arjqycvzs5trox65ld5xaabnkihh4dp5oycsb2a2katp@46puvf6luehw>
+In-Reply-To: <gi5bf6arjqycvzs5trox65ld5xaabnkihh4dp5oycsb2a2katp@46puvf6luehw>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 4 Jul 2025 12:58:06 +0200
+X-Gm-Features: Ac12FXzahB6DXZF3D3jbDg00DUfaD8L_VXwBaH2GlUn-KKWUEktGNogoDbSRlgY
+Message-ID: <CAOQ4uxhttUt6makW6GZGfBb=rat+gH9QQmparX3cexDJwzhVMw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/3] fanotify HSM events for directories
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 7/3/2025 7:43 AM, Paul Moore wrote:
-> On Jun 26, 2025 Shivank Garg <shivankg@amd.com> wrote:
+On Fri, Jul 4, 2025 at 11:24=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
 >
-...
-> Thanks again for your continued work on this!  I think the patch looks
-> pretty reasonable, but it would be good to hear a bit about how you've
-> tested this before ACK'ing the patch.  For example, have you tested this
-> against any of the LSMs which provide anonymous inode support?
-> 
-> At the very least, the selinux-testsuite has a basic secretmem test, it
-> would be good to know if the test passes with this patch or if any
-> additional work is needed to ensure compatibility.
-> 
-> https://github.com/SELinuxProject/selinux-testsuite
+> On Thu 03-07-25 21:14:11, Amir Goldstein wrote:
+> > On Tue, Jun 17, 2025 at 11:43=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> > > On Mon 16-06-25 19:00:42, Amir Goldstein wrote:
+> > > > On Mon, Jun 16, 2025 at 11:07=E2=80=AFAM Jan Kara <jack@suse.cz> wr=
+ote:
+> > > > > On Tue 10-06-25 17:25:48, Amir Goldstein wrote:
+> > > > > > On Tue, Jun 10, 2025 at 3:49=E2=80=AFPM Jan Kara <jack@suse.cz>=
+ wrote:
+> > > > > > > On Wed 04-06-25 18:09:15, Amir Goldstein wrote:
+> > > > > > > > If we decide that we want to support FAN_PATH_ACCESS from a=
+ll the
+> > > > > > > > path-less lookup_one*() helpers, then we need to support re=
+porting
+> > > > > > > > FAN_PATH_ACCESS event with directory fid.
+> > > > > > > >
+> > > > > > > > If we allow FAN_PATH_ACCESS event from path-less vfs helper=
+s, we still
+> > > > > > > > have to allow setting FAN_PATH_ACCESS in a mount mark/ignor=
+e mask, because
+> > > > > > > > we need to provide a way for HSM to opt-out of FAN_PATH_ACC=
+ESS events
+> > > > > > > > on its "work" mount - the path via which directories are po=
+pulated.
+> > > > > > > >
+> > > > > > > > There may be a middle ground:
+> > > > > > > > - Pass optional path arg to __lookup_slow() (i.e. from walk=
+_component())
+> > > > > > > > - Move fsnotify hook into __lookup_slow()
+> > > > > > > > - fsnotify_lookup_perm() passes optional path data to fsnot=
+ify()
+> > > > > > > > - fanotify_handle_event() returns -EPERM for FAN_PATH_ACCES=
+S without
+> > > > > > > >   path data
+> > > > > > > >
+> > > > > > > > This way, if HSM is enabled on an sb and not ignored on spe=
+cific dir
+> > > > > > > > after it was populated, path lookup from syscall will trigg=
+er
+> > > > > > > > FAN_PATH_ACCESS events and overalyfs/nfsd will fail to look=
+up inside
+> > > > > > > > non-populated directories.
+> > > > > > >
+> > > > > > > OK, but how will this manifest from the user POV? If we have =
+say nfs
+> > > > > > > exported filesystem that is HSM managed then there would have=
+ to be some
+> > > > > > > knowledge in nfsd to know how to access needed files so that =
+HSM can pull
+> > > > > > > them? I guess I'm missing the advantage of this middle-ground=
+ solution...
+> > > > > >
+> > > > > > The advantage is that an admin is able to set up a "lazy popula=
+ted fs"
+> > > > > > with the guarantee that:
+> > > > > > 1. Non-populated objects can never be accessed
+> > > > > > 2. If the remote fetch service is up and the objects are access=
+ed
+> > > > > >     from a supported path (i.e. not overlayfs layer) then the o=
+bjects
+> > > > > >     will be populated on access
+> > > > > >
+> > > > > > This is stronger and more useful than silently serving invalid =
+content IMO.
+> > > > > >
+> > > > > > This is related to the discussion about persistent marks and ho=
+w to protect
+> > > > > > against access to non-populated objects while service is down, =
+but since
+> > > > > > we have at least one case that can result in an EIO error (serv=
+ice down)
+> > > > > > then another case (access from overlayfs) maybe is not a game c=
+hanger(?)
+> > > > >
+> > > > > Yes, reporting error for unpopulated content would be acceptable =
+behavior.
+> > > > > I just don't see this would be all that useful.
+> > > > >
+> > > >
+> > > > Regarding overlayfs, I think there is an even bigger problem.
+> > > > There is the promise that we are not calling the blocking pre-conte=
+nt hook
+> > > > with freeze protection held.
+> > > > In overlayfs it is very common to take the upper layer freeze prote=
+ction
+> > > > for a relatively large scope (e.g. ovl_want_write() in ovl_create_o=
+bject())
+> > > > and perform lookups on upper fs or lower fs within this scope.
+> > > > I am afraid that cleaning that up is not going to be realistic.
+> > > >
+> > > > IMO, it is perfectly reasonable that overlayfs and HSM (at least pr=
+e-dir-access)
+> > > > will be mutually exclusive features.
+> > > >
+> > > > This is quite similar to overlayfs resulting in EIO if lower fs has=
+ an
+> > > > auto mount point.
+> > > >
+> > > > Is it quite common for users to want overlayfs mounted over
+> > > > /var/lib/docker/overlay2
+> > > > on the root fs.
+> > > > HSM is not likely to be running on / and /etc, but likely on a very
+> > > > distinct lazy populated source dir or something.
+> > > > We can easily document and deny mounting overlayfs over subtrees wh=
+ere
+> > > > HSM is enabled (or just pre-path events).
+> > > >
+> > > > This way we can provide HSM lazy dir populate to the users that do =
+not care
+> > > > about overlayfs without having to solve very hard to unsolvable iss=
+ues.
+> > > >
+> > > > I will need to audit all the other users of vfs lookup helpers othe=
+r than
+> > > > overlayfs and nfsd, to estimate how many of them are pre-content ev=
+ent
+> > > > safe and how many are a hopeless case.
+> > > >
+> > > > On the top of my head, trying to make a cachefilesd directory an HS=
+M
+> > > > directory is absolutely insane, so not every user of vfs lookup hel=
+pers
+> > > > should be able to populate HSM content - should should simply fail
+> > > > (with a meaningful kmsg log).
+> > >
+> > > Right. What you write makes a lot of sense. You've convinced me that
+> > > returning error from overlayfs (or similar users) when they try to ac=
+cess
+> > > HSM managed dir is the least painful solution :).
+> > >
+> >
+> > Oh oh, now I need to try to convince you of a solution that is less pai=
+nful
+> > than the least painful solution ;)
+>
+> :)
+>
+> > I have been experimenting with some code and also did a first pass audi=
+t
+> > of the vfs lookup callers.
+> >
+> > First of all, Neil's work to categorize the callers into lookup_noperm*
+> > and lookup_one* really helped this audit. (thanks Neil!)
+> >
+> > The lookup_noperm* callers are not "vfs users" they are internal fs
+> > callers that should not call fsnotify pre-content hooks IMO.
+> >
+> > The lookup_one* callers are vfs callers like ovl,cachefiles, as well
+> > as nfsd,ksmbd.
+> >
+> > Some of the lookup_one() calls are made from locked context, so not
+> > good for pre-content events, but most of them are not relevant anyway
+> > because they are not first access to dir (e.g. readdirplus which alread=
+y
+> > started to iterate dir).
+> >
+> > Adding lookup pre-content hooks to nfsd and ksmbd before the relevant
+> > lookup_one* callers and before fs locks are taken looks doable.
+> >
+> > But the more important observation I had is that allowing access to
+> > dirs with unpopulated content is not that big of a deal.
+> >
+> > Allowing access to files that are sparse files before their content is =
+filled
+> > could have led applications to fault and users to suffer.
+> >
+> > Allowing access to unpopulated dirs, e.g. from overlayfs or even from
+> > nfsd, just results in getting ENOENT or viewing an empty directory.
+>
+> Right. Although if some important files would be missing, you'd still cau=
+se
+> troubles to applications and possible crashes (or app shutdowns). But I
+> take the ENOENT return in this case as a particular implementation of the
+> "just return error to userspace if we have no chance to handle the lookup
+> in this context" policy.
+>
+> > My conclusion is, that if we place the fsnotify lookup hook in
+> > lookup_slow() then the only thing we need to do is:
+> > When doing lookup_one*() from possibly unsafe context,
+> > in a fs that has pre-dir-content watchers,
+> > we always allow the lookup,
+> > but we never let it leave a negative dcache entry.
+> >
+> > If the lookup finds a child entry, then dir is anyway populated.
+> > If dir is not populated, the -ENOENT result will not be cached,
+> > so future lookups of the same name from safe context will call the hook=
+ again,
+> > populate the file or entire directory and create positive/negative dent=
+ry,
+> > and then following lookups of the same name will not call the hook.
+>
+> Yes, this looks pretty much like what we've agreed on before, just now th=
+e
+> implementation is getting more concrete shape. Or am I missing something?
+>
 
-Hi Paul,
+What (I think) we discussed before was to fail *any* lookup from
+internal vfs callers to HSM moderated fs, so ovl would also not be able to
+access a populated directory in that case.
 
-Thank you for pointing me to the selinux-testsuite. I wasn't sure how to properly
-test this patch, so your guidance was very helpful.
+What I am suggesting is to always allow the lookup in HSM fs
+and depending on a negative lookup result do "something".
 
-With the current test policy (test_secretmem.te), I initially encountered the following failures:
+There is a nuance here.
+Obviously, userspace will get ENOENT in this case, but
+does lookup_one() succeed and returns a negative unhashed
+dentry (e.g. to ovl) or does it drop the dentry and fail with -ENOENT?
 
-~/selinux-testsuite/tests/secretmem# ./test
-memfd_secret() failed:  Permission denied
-1..6
-memfd_secret() failed:  Permission denied
-ok 1
-ftruncate failed:  Permission denied
-unable to mmap secret memory:  Permission denied
-not ok 2
-#   Failed test at ./test line 23.
-ftruncate failed:  Permission denied
-unable to mmap secret memory:  Permission denied
-ok 3
-ftruncate failed:  Permission denied
-unable to mmap secret memory:  Permission denied
-ok 4
-memfd_secret() failed:  Permission denied
-ok 5
-ftruncate failed:  Permission denied
-unable to mmap secret memory:  Permission denied
-not ok 6
-#   Failed test at ./test line 37.
-# Looks like you failed 2 tests of 6.
+I was thinking of the former, but I think you are implying the latter,
+which is indeed a bit closer to what we agreed on.
 
-Using ausearch -m avc, I found denials for create, write, map. For instance:
- avc:  denied  { create } for  pid=11956 comm="secretmem" anonclass=[secretmem] 
-...
+For callers that use lookup_one_positive_unlocked()
+like ovl_lookup(), it makes no difference, but for callers that
+create new entries like ovl_create_upper() it means failure to create
+and that is desirable IMO.
 
-To resolve this, I updated test_secretmem.te to add additional required
-permissions {create, read, write, map}
-With this change, all tests now pass successfully:
+I guess, if ovl_mkdir() fails with -ENOENT users would be a bit confused
+but in a way, this parent directory does not fully exist yet, so
+it may be good enough.
 
-diff --git a/policy/test_secretmem.te b/policy/test_secretmem.te
-index 357f41d..4cce076 100644
---- a/policy/test_secretmem.te
-+++ b/policy/test_secretmem.te
-@@ -13,12 +13,12 @@ testsuite_domain_type_minimal(test_nocreate_secretmem_t)
- # Domain allowed to create secret memory with the own domain type
- type test_create_secretmem_t;
- testsuite_domain_type_minimal(test_create_secretmem_t)
--allow test_create_secretmem_t self:anon_inode create;
-+allow test_create_secretmem_t self:anon_inode { create read write map };
+We could also annotate those calls as lookup_one_for_create()
+to return -EROFS in the negative lookup result in HSM moderated dir,
+but not sure that this is needed or if it is less confusing to users.
 
- # Domain allowed to create secret memory with the own domain type and allowed to map WX
- type test_create_wx_secretmem_t;
- testsuite_domain_type_minimal(test_create_wx_secretmem_t)
--allow test_create_wx_secretmem_t self:anon_inode create;
-+allow test_create_wx_secretmem_t self:anon_inode { create read write map };
- allow test_create_wx_secretmem_t self:process execmem;
+What's even nicer is that for overlayfs it is the more likely case that
+only the lower layer fs is HSM moderated, e.g. for a composefs
+"image repository".
 
- # Domain not allowed to create secret memory via a type transition to a private type
-@@ -30,4 +30,4 @@ type_transition test_nocreate_transition_secretmem_t test_nocreate_transition_se
- type test_create_transition_secretmem_t;
- testsuite_domain_type_minimal(test_create_transition_secretmem_t)
- type_transition test_create_transition_secretmem_t test_create_transition_secretmem_t:anon_inode test_secretmem_inode_t "[secretmem]";
--allow test_create_transition_secretmem_t test_secretmem_inode_t:anon_inode create;
-+allow test_create_transition_secretmem_t test_secretmem_inode_t:anon_inode { create read write map };
+Adding safe pre-dir-content hooks for overlayfs lower layer lookup
+may be possible down the road. A lot easier that supporting
+lazy dir populates in a rw layer.
 
-Does this approach look correct to you? Please let me know if my understanding
-makes sense and what should be my next step for patch.
+
+> > The only flaw in this plan is that the users that do not populate
+> > directories can create entries in those directories, which can violate
+> > O_CREAT | O_EXCL and mkdir(), w.r.t to a remote file.
+> >
+> > But this flaw can be reported properly by the HSM daemon when
+> > trying to populate a directory which is marked as unpopulated and
+> > finding files inside it.
+> >
+> > HSM could auto-resolve those conflicts or prompt admin for action
+> > and can return ESTALE error (or a like) to users.
+> >
+> > Was I clear? Does that sound reasonable to you?
+>
+> So far we have only one-way synchronization for files (i.e., we don't
+> expect the HSM client to actually modify the filesystem, the server is th=
+e
+> ultimate source of truth). Aren't we going to do it similarly for
+> directories? It would be weird to try to handle dir modifications without
+> supporting file modifications. And if we aim for one-way synchronization,
+> then I'd expect the HSM service to maybe just expose RO mount to
+> applications (superblock and the private mount used for filling in data
+> have to be obviously RW). If it lets applications write to the fs for
+> whatever reason, it has to keep all the pieces together, I don't think th=
+e
+> kernel is responsible there. Hmm?
+
+My use case is "cloud sync engine" so the users do get a RW mount
+and it's the server's job to keep all the pieces together.
+But for lazy dir populare (subtree never accessed by user), the server
+expects to get an empty dir to and to populate it.
+
+So it is much better if the kernel is able to block creating entries in
+an HSM moderated dir by the non-blocking internal vfs users.
+
+I think the explicit ENOENT for negative lookup results may just be
+enough to get this done, so I will give it a shot.
 
 Thanks,
-Shivank
+Amir.
 
