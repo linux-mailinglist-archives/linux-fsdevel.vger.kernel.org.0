@@ -1,181 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-53920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A757AF8ED4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:38:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F44AF8F49
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 11:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A121CA3D9E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:39:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F11C17B601
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 09:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC95D288519;
-	Fri,  4 Jul 2025 09:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8592877CD;
+	Fri,  4 Jul 2025 09:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fo7RQdSv";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fo7RQdSv"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W8riUqYc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k/5VTpYn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W8riUqYc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k/5VTpYn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9162EAB74
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 09:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8359D29A9ED
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 09:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751621906; cv=none; b=nV7skyEV77u0d+o64Jgo/JFWCDxTUjjE+gIKSXxASezS60XSidHeq2NiNkr6UyHLHNgWBDzxQqSyn4B582oIqbkwHWdfPFMD76Kv4eueT197gNvO/K4O5ev1xU6BoJ7/HU8GaOaHqkGHqwpWW5C2HWFBQVjf4d/jrTho0gu6e4I=
+	t=1751623003; cv=none; b=CGXR05s4NXzbF/yyRaQDwI7XsB3KTapzWRFBnf2onsYqeAfDvX8gVQ0PDH0ok5NjIiHkQ/7KJM0hyx7jEOkzqfzHJtTmlDH+gKMGJPdn6ifRXyQ1usHtcHvqD83zKAd49LAKhDA1NVogq2BjUTsVZFjAHI8i6xRqDybu5VwO7I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751621906; c=relaxed/simple;
-	bh=MZ/m/LzYFtOGPWKutlJERuZ0NK5QCkK48HAfhMZPHHg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jwNOAbLO7EZuQ0lkhkGOu/0S1OQe3+5ntboBdN5LhFLwe5PIWFOPj2PbOk9dHzFAnrvjMAJbqpQTfbuKXIe+iAIwgHSMVlZw7fNJexUPjJwPlMuplhGG+W/FpMi1taw/fa+0oaMa6HIvOYQxNlL6+fG0rFAQR+AFDWsRp7iyM/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fo7RQdSv; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fo7RQdSv; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1751623003; c=relaxed/simple;
+	bh=HbU29xoVa7FiUlQtBhotoF69QXHZlT/HAFJiPJBj65I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhHPBvboCUegE5vdL1YupRT2VVD91D/FwEq9jQoSV54dEDCbmCQuzwy8OhcJEVa/TDAi22VkkUWxdZowFhjyKLDCm5kEpN9HHJVTLQx7OlpPBbOworja3AawCSSCkZOsBBRc63spCR147HnEWcMmvygsTSeWgrv0gOqObfR6Xs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W8riUqYc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k/5VTpYn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W8riUqYc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k/5VTpYn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 86A1921199;
-	Fri,  4 Jul 2025 09:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1751621902; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=mq2KZrki2JpsFHBKkNkaSG8J4L/fqaXVmneFRNcJ/9c=;
-	b=fo7RQdSvXIdo6VoDqNz/c1nqLkNI0ls/OkjlVanhNAeFmSw4piA2C/QNmGSYNtvq4sDgfb
-	9932Gei8StaONn4h5o8ukWL7n65skT17S9wVqY2hVIQ/z/9R2a1JJz2PNLVuBOi3l93ZMn
-	ysaEilnShh03tGRlqtllQ0Wo6xdtEK8=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1751621902; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=mq2KZrki2JpsFHBKkNkaSG8J4L/fqaXVmneFRNcJ/9c=;
-	b=fo7RQdSvXIdo6VoDqNz/c1nqLkNI0ls/OkjlVanhNAeFmSw4piA2C/QNmGSYNtvq4sDgfb
-	9932Gei8StaONn4h5o8ukWL7n65skT17S9wVqY2hVIQ/z/9R2a1JJz2PNLVuBOi3l93ZMn
-	ysaEilnShh03tGRlqtllQ0Wo6xdtEK8=
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7D14A1F456;
+	Fri,  4 Jul 2025 09:56:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751622999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bWa/61o6pgkURWNaeDD+xZfcVGUHR11iGbJ4OVe8nt0=;
+	b=W8riUqYcFlextEGd2ldZVAO5Zzw2Jn7DkfXvT3coY/vHr+TH5WUvuFSCkS6EEjtvowi+48
+	yqN9A4JHOrdQ/kFcsrm4+XN/DjBSMYTr0bVCgW0I0BY3EW4Yz2i3h5Pi+/6poHaBt0ZUAL
+	s3QwkT/7B7SpYZnG1zl2tJo6Wx6cDSo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751622999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bWa/61o6pgkURWNaeDD+xZfcVGUHR11iGbJ4OVe8nt0=;
+	b=k/5VTpYnizqNOP5bkyUEScNo+uObAy94/IOhoI6L9429cL06DanMyzPkmXAO9NviH8hfoI
+	PEYys0CU1+LNasDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=W8riUqYc;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="k/5VTpYn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751622999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bWa/61o6pgkURWNaeDD+xZfcVGUHR11iGbJ4OVe8nt0=;
+	b=W8riUqYcFlextEGd2ldZVAO5Zzw2Jn7DkfXvT3coY/vHr+TH5WUvuFSCkS6EEjtvowi+48
+	yqN9A4JHOrdQ/kFcsrm4+XN/DjBSMYTr0bVCgW0I0BY3EW4Yz2i3h5Pi+/6poHaBt0ZUAL
+	s3QwkT/7B7SpYZnG1zl2tJo6Wx6cDSo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751622999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bWa/61o6pgkURWNaeDD+xZfcVGUHR11iGbJ4OVe8nt0=;
+	b=k/5VTpYnizqNOP5bkyUEScNo+uObAy94/IOhoI6L9429cL06DanMyzPkmXAO9NviH8hfoI
+	PEYys0CU1+LNasDg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86C7E13757;
-	Fri,  4 Jul 2025 09:38:21 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6EBF113757;
+	Fri,  4 Jul 2025 09:56:39 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xltVEg2hZ2g8KQAAD6G6ig
-	(envelope-from <wqu@suse.com>); Fri, 04 Jul 2025 09:38:21 +0000
-From: Qu Wenruo <wqu@suse.com>
-To: linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] btrfs: restrict writes to opened btrfs devices
-Date: Fri,  4 Jul 2025 19:08:03 +0930
-Message-ID: <bf74fa9eee7917030235a8883e0a4ff53d9e0938.1751621865.git.wqu@suse.com>
-X-Mailer: git-send-email 2.50.0
+	id Yb8EG1elZ2hOLwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 04 Jul 2025 09:56:39 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 244AAA0A31; Fri,  4 Jul 2025 11:56:39 +0200 (CEST)
+Date: Fri, 4 Jul 2025 11:56:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Ian Kent <raven@themaw.net>, Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [RFC PATCH] fanotify: add watchdog for permission events
+Message-ID: <eybdb3wqnod644u2nmmasd34uxhnjbvte4p2ued6dyy2vzt3sv@tsc4wysiypvr>
+References: <20250703130539.1696938-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250703130539.1696938-1-mszeredi@redhat.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWO(0.00)[2];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid,imap1.dmz-prg2.suse.org:helo];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,suse.cz,gmail.com,themaw.net,redhat.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
 X-Spam-Flag: NO
-X-Spam-Score: -2.80
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 7D14A1F456
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-[WEIRD FLAG EXCLUSION]
-Commit ead622674df5 ("btrfs: Do not restrict writes to btrfs devices")
-removes the BLK_OPEN_RESTRICT_WRITES flag when opening the devices
-during mount.
+On Thu 03-07-25 15:05:37, Miklos Szeredi wrote:
+> This is to make it easier to debug issues with AV software, which time and
+> again deadlocks with no indication of where the issue comes from, and the
+> kernel being blamed for the deadlock.  Then we need to analyze dumps to
+> prove that the kernel is not in fact at fault.
 
-However there is no filesystem except btrfs excluding this flag, which
-is weird, and lacks a proper explanation why we need such an exception.
+I share the pain. I had to do quite some of these analyses myself :).
+Luckily our support guys have trained to do the analysis themselves over
+the years so it rarely reaches my table anymore.
 
-[REASON TO EXCLUDE THAT FLAG]
-Btrfs needs to call btrfs_scan_one_device() to determine the fsid, no
-matter if we're mounting a new fs or an existing one.
+> With this patch a warning is printed when permission event is received by
+> userspace but not answered for more than 20 seconds.
+> 
+> The timeout is very coarse (20-40s) but I guess it's good enough for the
+> purpose.
 
-But if a fs is already mounted and that BLK_OPEN_RESTRICT_WRITES is
-honored, meaning no other write open is allowed for the block device.
+I'm not opposed to the idea (although I agree with Amir that it should be
+tunable - we have /proc/sys/fs/fanotify/ for similar things). Just I'm not
+sure it will have the desired deterring effect for fanotify users wanting
+to blame the kernel. What usually convinces them is showing where their
+tasks supposed to write reply to permission event (i.e., those that have
+corresponding event fds in their fdtable) are blocked and hence they cannot
+reply. But with some education I suppose it can work. After all the
+messages you print contain the task responsible to answer which is already
+helpful.
 
-Then we want to mount a subvolume of the mounted fs to another mount
-point, we will call btrfs_scan_one_device() again, but it will fail due
-to the BLK_OPEN_RESTRICT_WRITES flag (no more write open allowed),
-causing only one mount point for the fs.
+> +config FANOTIFY_PERM_WATCHDOG
+> +       bool "fanotify permission event watchdog"
+> +       depends on FANOTIFY_ACCESS_PERMISSIONS
+> +       default n
 
-Thus at that time, we have to exclude the BLK_OPEN_RESTRICT_WRITES to
-allow multiple mount points for one fs.
+As Amir wrote, I don't think we need a kconfig for this, configuration
+through /proc/sys/fs/fanotify/ will be much more flexible.
 
-[WHY IT'S SAFE NOW]
-The root problem is, we do not need to nor should use BLK_OPEN_WRITE for
-btrfs_scan_one_device().
-That function is only to read out the super block, no write at all, and
-BLK_OPEN_WRITE is only going to cause problems for such usage.
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index b44e70e44be6..8b60fbb9594f 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -438,10 +438,14 @@ FANOTIFY_ME(struct fanotify_event *event)
+>  struct fanotify_perm_event {
+>  	struct fanotify_event fae;
+>  	struct path path;
+> -	const loff_t *ppos;		/* optional file range info */
+> +	union {
+> +		const loff_t *ppos;	/* optional file range info */
+> +		pid_t pid;		/* pid of task processing the event */
+> +	};
 
-The root problem is fixed by patch "btrfs: always open the device
-read-only in btrfs_scan_one_device", so btrfs_scan_one_device() will
-always work no matter if the device is opened with
-BLK_OPEN_RESTRICT_WRITES.
+I think Amir complained about the generic 'pid' name already. Maybe
+processing_pid? Also I'd just get rid of the union. We don't have *that*
+many permission events that 4 bytes would matter and possible interactions
+between pre-content events and this watchdog using the same space make me
+somewhat uneasy.
 
-[ENHANCEMENT]
-Just remove the btrfs_open_mode(), as the only call site can be replaced
-with regular sb_open_mode().
-
-Signed-off-by: Qu Wenruo <wqu@suse.com>
----
-Changelog:
-v2:
-- Add more details about the original problem
-  And the fix that unintentionally solved the original problem.
----
- fs/btrfs/super.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index dd6e8a50ac39..0587e4973564 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -261,12 +261,6 @@ static const struct fs_parameter_spec btrfs_fs_parameters[] = {
- 	{}
- };
- 
--/* No support for restricting writes to btrfs devices yet... */
--static inline blk_mode_t btrfs_open_mode(struct fs_context *fc)
--{
--	return sb_open_mode(fc->sb_flags) & ~BLK_OPEN_RESTRICT_WRITES;
--}
--
- static bool btrfs_match_compress_type(const char *string, const char *type, bool may_have_level)
- {
- 	const int len = strlen(type);
-@@ -1843,7 +1837,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
- 	struct btrfs_fs_devices *fs_devices = NULL;
- 	struct btrfs_device *device;
- 	struct super_block *sb;
--	blk_mode_t mode = btrfs_open_mode(fc);
-+	blk_mode_t mode = sb_open_mode(fc->sb_flags);
- 	int ret;
- 
- 	btrfs_ctx_to_info(fs_info, ctx);
+								Honza
 -- 
-2.50.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
