@@ -1,184 +1,266 @@
-Return-Path: <linux-fsdevel+bounces-53973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09770AF99E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 19:40:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA91AF99F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 19:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA675C02F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 17:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7496B17347D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 17:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DEE2DEA6A;
-	Fri,  4 Jul 2025 17:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93182D8394;
+	Fri,  4 Jul 2025 17:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="IEoZN18k"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pKspoYDT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30732BE04F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 17:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0492D837F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  4 Jul 2025 17:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751650679; cv=none; b=l4U3N6OCHuYWyQqRbm2/ArTSc8c9i+Gl2cpmqH3N/W9UGMFo0e6d6x12Q4wrXYXcVjvB+6cvMHoTkQT/pcnJeWjTOQ/WDvtmz7BqZKTChVmPpJ7WzFj234l6IPR53BIGK1scO4SbyktM1Nu36Es1eVeIUYANzKtn/ZSTV7GJqK0=
+	t=1751650856; cv=none; b=s7m16rutqV5Qat8bWt/soHJzmbo7grbSszpC7G5Xf9Ib+M1co3j/Odag3wGf49fJcyECDKBdM9YFO0m5Z4TcBG4nIV6nPCz2BgJ++ChSWRNwHlf3xwNZ9sG7Iu0J8aesQNSqWc7DvWOD4A/AnHyBuERYEn7Yj/eg4+QDDkgai38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751650679; c=relaxed/simple;
-	bh=9EALfSFFBRNxRqRk7VUICyoOrPWaEk2Bqic5Nq+c1QU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z29L7htXc4J8SlFJjK2p8fTc1KC7NIu627gROzNpyxwKcQMEjG11x8PSsP6HLNjLpkBdBThO3gAN3OYEprNjZJ7uI761xlF+s+uBVVGw5y+CWX5+EOdbi8J2aPlAUn4lWPx9UfxDWSeJ2xnZj/P2PN7IOWwblaDva6NzD50jvhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=IEoZN18k; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-716ee8947cdso2742817b3.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Jul 2025 10:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1751650676; x=1752255476; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lLUj9yr52QgRuAClbNBOdP/RkbfnWsisubBXRJYh1fQ=;
-        b=IEoZN18kzQIDka8i89xchVuT9VJi5TSDgmA7iajf9iCpKJMdLU/FME99+PaRpUf1/4
-         qc7CsT4GxkO/hGTtDdUPGGNKS4qpG2egKULafSUTVvPUcgooIJHIGchgA20rgyFEvLkW
-         LMohtkvYAdOPNTRoUyxYxOQf/AXi633E4PfqiCHDa2rmOVZvim3U7Z6S2TVRp+WaynWO
-         +/xsSdARGxzVyti2okmY0NBhy1z4jas5mxFbIBrw1kl5sCVK0TltKHA8KmltkZtac+zh
-         VSnXvkt8hdoxeuv/ug7FSpRQL8lyVWNlLnZdqe/4E1DVTG2/EDfWYogE4aytjx/yt7mY
-         fwjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751650676; x=1752255476;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lLUj9yr52QgRuAClbNBOdP/RkbfnWsisubBXRJYh1fQ=;
-        b=T6ilnk8cLb5uniGpm4MjB2zcG4/zZCaVrV2MLutBNvH9foM6xb/uq5Jr4V/9vxuRV1
-         mpCm1ySmQ8XpbSr5XHf4GUYaH/AWjjdccozzHwHgGeNfHLg1dIMtsJ9EO3lm+x+gdQI5
-         VMR3gz2/5qDV2sth+e/LJNRA9edbmDP7v2HP2t8C6446JjK6+hBAKeCKWGBUXk8OkljA
-         sqcZi/pSuX0YX/LS+UcRvIOkd/ZZJ0Fjn9lBsWk9LdfQ8mEJUHKxNdx4QbPhuVZvF14w
-         lV8+CGEhx7Ba4Yv2clysxJ9OhHg8Y6xelfDOLKpA1kkwxoxOQbtgineJNjxB8yT12Ue/
-         4+Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQhobCBD6F9+DLvibRU6zZZpeLN4W8p6txlwC7kjOo1mvacwrxTOTMZV+gmDt6K3U9U210Hvtc3+9Ia4QR@vger.kernel.org
-X-Gm-Message-State: AOJu0YztmfpVnuvC0eNBygE9x/JBT5Dhz4goB62ZtElE00fO9rpRTeK9
-	ZYb/Aa+i2VpQR73nh0xq0co+K8dlZ/aPDZiEBjVkydRVVYzK9TXqTarSvSawMqKtP4A=
-X-Gm-Gg: ASbGncsfIsdbVFxtKteIGn7VuE53XcCL5qGUuC0kM+Cv+ddMFhbwBIUV6inztgq9b/J
-	06K5TdD6aKr1Ob7ZxqunvCOLhYSUwokqHCwL8bbo6iS6m6ALkSc8p0IgpbkhLhhNEbaEnm8OLRs
-	gvRpAVTcQp94UehXGREU0Xa1Df+0XgkzTBPfm3siPLjkU0Y8KZxh5bWwyC0kH9UbrmFpp4NavrS
-	+Jm0Ppnyq7lSRIVFPGJ34Jwh2rQYBp0SLTPUihVt1S0vKWewu8owGtmaU+JW9K9vvlzh1ShXCc3
-	3D9eaZljIOx2Z8e9xvOQi8+vgo1psDL2X83VaiWSjJieO/QRmNGtIgrTTNlwXHDxd6ENsr3rpld
-	gJXSEQw2oZzOKMKDFMX5ny6qtIlox8Ec=
-X-Google-Smtp-Source: AGHT+IG/aHreLeb27PwZvmI50YVh3KULg7kve7WZz2i4AoC208Quitrbot6B7W1w0/7tBwFUvl1n9g==
-X-Received: by 2002:a05:690c:b84:b0:70f:84c8:3105 with SMTP id 00721157ae682-71668d73139mr47948477b3.37.1751650675940;
-        Fri, 04 Jul 2025 10:37:55 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430:f030:281a:9e2c:722? ([2600:1700:6476:1430:f030:281a:9e2c:722])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7166599fc22sm4941937b3.28.2025.07.04.10.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 10:37:55 -0700 (PDT)
-Message-ID: <9d9d7bbab5443bd1c3dfd7d81d9bc91debecf4ef.camel@dubeyko.com>
-Subject: Re: [PATCH 4/4] hfs: enable uncached buffer io support
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Yangtao Li <frank.li@vivo.com>, axboe@kernel.dk,
- aivazian.tigran@gmail.com, 	viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, linkinjeon@kernel.org, 	sj1557.seo@samsung.com,
- yuezhang.mo@sony.com, glaubitz@physik.fu-berlin.de, 	shaggy@kernel.org,
- konishi.ryusuke@gmail.com, 	almaz.alexandrovich@paragon-software.com,
- me@bobcopeland.com, 	willy@infradead.org, josef@toxicpanda.com,
- kovalev@altlinux.org, dave@stgolabs.net, 	mhocko@suse.com,
- chentaotao@didiglobal.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, 
-	ntfs3@lists.linux.dev, linux-karma-devel@lists.sourceforge.net, 
-	bpf@vger.kernel.org
-Date: Fri, 04 Jul 2025 10:37:52 -0700
-In-Reply-To: <20250626173023.2702554-5-frank.li@vivo.com>
-References: <20250626173023.2702554-1-frank.li@vivo.com>
-	 <20250626173023.2702554-5-frank.li@vivo.com>
-Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
- keydata=mQINBGgaTLYBEADaJc/WqWTeunGetXyyGJ5Za7b23M/ozuDCWCp+yWUa2GqQKH40dxRIR
- zshgOmAue7t9RQJU9lxZ4ZHWbi1Hzz85+0omefEdAKFmxTO6+CYV0g/sapU0wPJws3sC2Pbda9/eJ
- ZcvScAX2n/PlhpTnzJKf3JkHh3nM1ACO3jzSe2/muSQJvqMLG2D71ccekr1RyUh8V+OZdrPtfkDam
- V6GOT6IvyE+d+55fzmo20nJKecvbyvdikWwZvjjCENsG9qOf3TcCJ9DDYwjyYe1To8b+mQM9nHcxp
- jUsUuH074BhISFwt99/htZdSgp4csiGeXr8f9BEotRB6+kjMBHaiJ6B7BIlDmlffyR4f3oR/5hxgy
- dvIxMocqyc03xVyM6tA4ZrshKkwDgZIFEKkx37ec22ZJczNwGywKQW2TGXUTZVbdooiG4tXbRBLxe
- ga/NTZ52ZdEkSxAUGw/l0y0InTtdDIWvfUT+WXtQcEPRBE6HHhoeFehLzWL/o7w5Hog+0hXhNjqte
- fzKpI2fWmYzoIb6ueNmE/8sP9fWXo6Av9m8B5hRvF/hVWfEysr/2LSqN+xjt9NEbg8WNRMLy/Y0MS
- p5fgf9pmGF78waFiBvgZIQNuQnHrM+0BmYOhR0JKoHjt7r5wLyNiKFc8b7xXndyCDYfniO3ljbr0j
- tXWRGxx4to6FwARAQABtCZWaWFjaGVzbGF2IER1YmV5a28gPHNsYXZhQGR1YmV5a28uY29tPokCVw
- QTAQoAQQIbAQUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBFXDC2tnzsoLQtrbBDlc2cL
- fhEB1BQJoGl5PAhkBAAoJEDlc2cLfhEB17DsP/jy/Dx19MtxWOniPqpQf2s65enkDZuMIQ94jSg7B
- F2qTKIbNR9SmsczjyjC+/J7m7WZRmcqnwFYMOyNfh12aF2WhjT7p5xEAbvfGVYwUpUrg/lcacdT0D
- Yk61GGc5ZB89OAWHLr0FJjI54bd7kn7E/JRQF4dqNsxU8qcPXQ0wLHxTHUPZu/w5Zu/cO+lQ3H0Pj
- pSEGaTAh+tBYGSvQ4YPYBcV8+qjTxzeNwkw4ARza8EjTwWKP2jWAfA/ay4VobRfqNQ2zLoo84qDtN
- Uxe0zPE2wobIXELWkbuW/6hoQFPpMlJWz+mbvVms57NAA1HO8F5c1SLFaJ6dN0AQbxrHi45/cQXla
- 9hSEOJjxcEnJG/ZmcomYHFneM9K1p1K6HcGajiY2BFWkVet9vuHygkLWXVYZ0lr1paLFR52S7T+cf
- 6dkxOqu1ZiRegvFoyzBUzlLh/elgp3tWUfG2VmJD3lGpB3m5ZhwQ3rFpK8A7cKzgKjwPp61Me0o9z
- HX53THoG+QG+o0nnIKK7M8+coToTSyznYoq9C3eKeM/J97x9+h9tbizaeUQvWzQOgG8myUJ5u5Dr4
- 6tv9KXrOJy0iy/dcyreMYV5lwODaFfOeA4Lbnn5vRn9OjuMg1PFhCi3yMI4lA4umXFw0V2/OI5rgW
- BQELhfvW6mxkihkl6KLZX8m1zcHitCpWaWFjaGVzbGF2IER1YmV5a28gPFNsYXZhLkR1YmV5a29Aa
- WJtLmNvbT6JAlQEEwEKAD4WIQRVwwtrZ87KC0La2wQ5XNnC34RAdQUCaBpd7AIbAQUJA8JnAAULCQ
- gHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRA5XNnC34RAdYjFEACiWBEybMt1xjRbEgaZ3UP5i2bSway
- DwYDvgWW5EbRP7JcqOcZ2vkJwrK3gsqC3FKpjOPh7ecE0I4vrabH1Qobe2N8B2Y396z24mGnkTBbb
- 16Uz3PC93nFN1BA0wuOjlr1/oOTy5gBY563vybhnXPfSEUcXRd28jI7z8tRyzXh2tL8ZLdv1u4vQ8
- E0O7lVJ55p9yGxbwgb5vXU4T2irqRKLxRvU80rZIXoEM7zLf5r7RaRxgwjTKdu6rYMUOfoyEQQZTD
- 4Xg9YE/X8pZzcbYFs4IlscyK6cXU0pjwr2ssjearOLLDJ7ygvfOiOuCZL+6zHRunLwq2JH/RmwuLV
- mWWSbgosZD6c5+wu6DxV15y7zZaR3NFPOR5ErpCFUorKzBO1nA4dwOAbNym9OGkhRgLAyxwpea0V0
- ZlStfp0kfVaSZYo7PXd8Bbtyjali0niBjPpEVZdgtVUpBlPr97jBYZ+L5GF3hd6WJFbEYgj+5Af7C
- UjbX9DHweGQ/tdXWRnJHRzorxzjOS3003ddRnPtQDDN3Z/XzdAZwQAs0RqqXrTeeJrLppFUbAP+HZ
- TyOLVJcAAlVQROoq8PbM3ZKIaOygjj6Yw0emJi1D9OsN2UKjoe4W185vamFWX4Ba41jmCPrYJWAWH
- fAMjjkInIPg7RLGs8FiwxfcpkILP0YbVWHiNAaQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+	s=arc-20240116; t=1751650856; c=relaxed/simple;
+	bh=j1y5fK2pSIFjeIzluaoTZB7LiubY9SK90IFdNX+JcVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jQORxX/vBADa3af/AS4cRkUtDk9M+dcITYmeFUcl50RkMsTrI97imz+VnHhd+oEvPcGPyueGES+uq6DqL4LlAUzbywl+kg7BZGbf7m0ofT9jImhUFSrcyZf3EumoC0SQ5l5KI8A/PxbqFIl/XdWp6Uf+K9j/0JFMZj281EGF5GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pKspoYDT; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2459c10e-d74c-4118-9b6d-c37d05ecec02@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751650841;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xIRcNmmy2VbVp7gJQIkaTFfPIXvag7FLLr7FrIV0lQo=;
+	b=pKspoYDT8P7/dYSLFT3Wcf6V3S1xlnly+2wS8ALTKH+MecAV9raqgDtRFHb0+N2lny17mW
+	Urcm4546PBB3ywrgOhyT2lNXU6S1ODfdsqWVsxtfy8Ky7lG6s44qnb6dsS029GqH9Obmh5
+	BPBmV3Y+sZ0PNlQN6O1PuI38XaEGhZU=
+Date: Fri, 4 Jul 2025 10:40:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+Content-Language: en-GB
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
+ ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org, neil@brown.name
+References: <20250617061116.3681325-1-song@kernel.org>
+ <20250617061116.3681325-2-song@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250617061116.3681325-2-song@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 2025-06-26 at 11:30 -0600, Yangtao Li wrote:
-> Now cont_write_begin() support DONTCACHE mode, let's set
-> FOP_DONTCACHE
-> flag to enable uncached buffer io support for hfs.
->=20
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+
+
+On 6/16/25 11:11 PM, Song Liu wrote:
+> This helper walks an input path to its parent. Logic are added to handle
+> walking across mount tree.
+>
+> This will be used by landlock, and BPF LSM.
+>
+> Suggested-by: Neil Brown <neil@brown.name>
+> Signed-off-by: Song Liu <song@kernel.org>
 > ---
-> =C2=A0fs/hfs/inode.c | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-> index 8409e4412366..a62f45e9745d 100644
-> --- a/fs/hfs/inode.c
-> +++ b/fs/hfs/inode.c
-> @@ -695,6 +695,7 @@ static const struct file_operations
-> hfs_file_operations =3D {
-> =C2=A0	.fsync		=3D hfs_file_fsync,
-> =C2=A0	.open		=3D hfs_file_open,
-> =C2=A0	.release	=3D hfs_file_release,
-> +	.fop_flags	=3D FOP_DONTCACHE,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct inode_operations hfs_file_inode_operations =3D =
+>   fs/namei.c            | 95 +++++++++++++++++++++++++++++++++++--------
+>   include/linux/namei.h |  2 +
+>   2 files changed, 79 insertions(+), 18 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4bb889fc980b..d0557c0b5cc8 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2048,36 +2048,95 @@ static struct dentry *follow_dotdot_rcu(struct nameidata *nd)
+>   	return nd->path.dentry;
+>   }
+>   
+> -static struct dentry *follow_dotdot(struct nameidata *nd)
+> +/**
+> + * __path_walk_parent - Find the parent of the given struct path
+> + * @path  - The struct path to start from
+> + * @root  - A struct path which serves as a boundary not to be crosses.
+> + *        - If @root is zero'ed, walk all the way to global root.
+> + * @flags - Some LOOKUP_ flags.
+> + *
+> + * Find and return the dentry for the parent of the given path
+> + * (mount/dentry). If the given path is the root of a mounted tree, it
+> + * is first updated to the mount point on which that tree is mounted.
+> + *
+> + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new
+> + * mount, the error EXDEV is returned.
+> + *
+> + * If no parent can be found, either because the tree is not mounted or
+> + * because the @path matches the @root, then @path->dentry is returned
+> + * unless @flags contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
+> + *
+> + * Returns: either an ERR_PTR() or the chosen parent which will have had
+> + * the refcount incremented.
+> + */
+> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
+>   {
+> -	struct dentry *parent;
+> -
+> -	if (path_equal(&nd->path, &nd->root))
+> +	if (path_equal(path, root))
+>   		goto in_root;
+> -	if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
+> -		struct path path;
+> +	if (unlikely(path->dentry == path->mnt->mnt_root)) {
+> +		struct path new_path;
+>   
+> -		if (!choose_mountpoint(real_mount(nd->path.mnt),
+> -				       &nd->root, &path))
+> +		if (!choose_mountpoint(real_mount(path->mnt),
+> +				       root, &new_path))
+>   			goto in_root;
+> -		path_put(&nd->path);
+> -		nd->path = path;
+> -		nd->inode = path.dentry->d_inode;
+> -		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
+> +		path_put(path);
+> +		*path = new_path;
+> +		if (unlikely(flags & LOOKUP_NO_XDEV))
+>   			return ERR_PTR(-EXDEV);
+>   	}
+>   	/* rare case of legitimate dget_parent()... */
+> -	parent = dget_parent(nd->path.dentry);
+> +	return dget_parent(path->dentry);
+
+I have some confusion with this patch when crossing mount boundary.
+
+In d_path.c, we have
+
+static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
+                           const struct path *root, struct prepend_buffer *p)
 {
+         while (dentry != root->dentry || &mnt->mnt != root->mnt) {
+                 const struct dentry *parent = READ_ONCE(dentry->d_parent);
 
-Frankly speaking, I am not convinced that HFS really need to support
-this feature. It is old and pretty obsolete file system. The main use-
-case is simply support the capability to mount HFS volume is created
-under Mac OS X, for example, and to access the data there. Of course,
-we can support this feature, but what is the point of this?
+                 if (dentry == mnt->mnt.mnt_root) {
+                         struct mount *m = READ_ONCE(mnt->mnt_parent);
+                         struct mnt_namespace *mnt_ns;
 
-As far as I can see, the goal of RWF_DONTCACHE feature is:
+                         if (likely(mnt != m)) {
+                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
+                                 mnt = m;
+                                 continue;
+                         }
+                         /* Global root */
+                         mnt_ns = READ_ONCE(mnt->mnt_ns);
+                         /* open-coded is_mounted() to use local mnt_ns */
+                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
+                                 return 1;       // absolute root
+                         else
+                                 return 2;       // detached or not attached yet
+                 }
 
-"Common for both reads and writes with RWF_DONTCACHE is that they use
-the page cache for IO. Reads work just like a normal buffered read
-would, with the only exception being that the touched ranges will get
-pruned after data has been copied. For writes, the ranges will get
-writeback kicked off before the syscall returns, and then writeback
-completion will prune the range."
+                 if (unlikely(dentry == parent))
+                         /* Escaped? */
+                         return 3;
 
-So, who would like to see such efficiency in HFS? Do we really need to
-support it in HFS? I think that it is not.
+                 prefetch(parent);
+                 if (!prepend_name(p, &dentry->d_name))
+                         break;
+                 dentry = parent;
+         }
+         return 0;
+}
 
-Thanks,
-Slava. =20
+At the mount boundary and not at root mount, the code has
+	dentry = READ_ONCE(mnt->mnt_mountpoint);
+	mnt = m; /* 'mnt' will be parent mount */
+	continue;
+
+After that, we have
+	const struct dentry *parent = READ_ONCE(dentry->d_parent);
+	if (dentry == mnt->mnt.mnt_root) {
+		/* assume this is false */
+	}
+	...
+	prefetch(parent);
+         if (!prepend_name(p, &dentry->d_name))
+                 break;
+         dentry = parent;
+
+So the prepend_name(p, &dentry->d_name) is actually from mnt->mnt_mountpoint.
+
+In your above code, maybe we should return path->dentry in the below if statement?
+
+         if (unlikely(path->dentry == path->mnt->mnt_root)) {
+                 struct path new_path;
+
+                 if (!choose_mountpoint(real_mount(path->mnt),
+                                        root, &new_path))
+                         goto in_root;
+                 path_put(path);
+                 *path = new_path;
+                 if (unlikely(flags & LOOKUP_NO_XDEV))
+                         return ERR_PTR(-EXDEV);
++		return path->dentry;
+         }
+         /* rare case of legitimate dget_parent()... */
+         return dget_parent(path->dentry);
+
+Also, could you add some selftests cross mount points? This will
+have more coverages with __path_walk_parent().
+
+> +
+> +in_root:
+> +	if (unlikely(flags & LOOKUP_BENEATH))
+> +		return ERR_PTR(-EXDEV);
+> +	return dget(path->dentry);
+> +}
+> +
+> +/**
+> + * path_walk_parent - Walk to the parent of path
+> + * @path: input and output path.
+> + * @root: root of the path walk, do not go beyond this root. If @root is
+> + *        zero'ed, walk all the way to real root.
+> + *
+> + * Given a path, find the parent path. Replace @path with the parent path.
+> + * If we were already at the real root or a disconnected root, @path is
+> + * not changed.
+> + *
+> + * Returns:
+> + *  0  - if @path is updated to its parent.
+> + *  <0 - if @path is already the root (real root or @root).
+> + */
+> +int path_walk_parent(struct path *path, const struct path *root)
+> +{
+> +	struct dentry *parent;
+> +
+> +	parent = __path_walk_parent(path, root, LOOKUP_BENEATH);
+> +
+> +	if (IS_ERR(parent))
+> +		return PTR_ERR(parent);
+> +
+> +	if (parent == path->dentry) {
+> +		dput(parent);
+> +		return -ENOENT;
+> +	}
+> +	dput(path->dentry);
+> +	path->dentry = parent;
+> +	return 0;
+> +}
+> +
+
+[...]
+
 
