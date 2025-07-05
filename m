@@ -1,83 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-53995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-53996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9C8AF9CCA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 01:43:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEAFAF9CD8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 02:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1534565688
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Jul 2025 23:43:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684B71C47730
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 00:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F1D290D8F;
-	Fri,  4 Jul 2025 23:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD60C27713;
+	Sat,  5 Jul 2025 00:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gqm3tahu"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="joGZohuY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FA826D4C6;
-	Fri,  4 Jul 2025 23:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F66800
+	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Jul 2025 00:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751672618; cv=none; b=k1VYg2S5XAlFjOJfOm3ntTqQ6XhHdf82lEOcfALVbwrlXvta4o2K8+LlZjgUFzzT3JVNum7RScEmB5fjicc3Xhfy16T3n0ic4vohYqeEWTPsqkNYOS9vdC+GFfSfbnuGfGjVjjuJg91IfEFLN3wGOg6r8OyCF6AuesRONIll1GE=
+	t=1751673679; cv=none; b=MqQNk5JSkJn9x7hJlFFAJv9KUqwBMcdeJOnO1EYPUX9vCT3Wg5ULdbW1uA5AbxyAiM/z4fmTAauflBxbVtOxx8dRd8UN9VnBJNh7BmwYcyh8tck4aLOLNinj0JDpHWrDv8ACvxiSqi6tOz801EWtulbTM1GZdbD1h2L2wfLxuu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751672618; c=relaxed/simple;
-	bh=ynNo1Z4lyyh6Xq3Mw8cGMe5YNA9OWQ0njpEepLshJxM=;
+	s=arc-20240116; t=1751673679; c=relaxed/simple;
+	bh=yYe4g2ljXCB2coVAvmeE8131zHsqym6PdqUW+tlP7JE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zz1EdONeOY+cu0Ai7z23ANRBXiosW2fWnnplbehlXON9JhMe4qlJ6XTbUxQpqguxgKEC9ndAzVZTU4zRjcRTPRdTXdFhDkyvNPM8aF5oI6bCl8sJo/itlBCo38ay/QE7rgiJfOFdvixns8WtYu5TE8ezDtBgO2Jgi+XXsMyWafQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gqm3tahu; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=ib+RvYWEd6QnjlB19UCuBwyRXPb6GSBRcpoz0snHwcfvfZBS9XknmawKDTdoWCfDT7OznBAwHcpYnd7l5WhwzV25cnfdS1KXXD6NwE37zItnu98Gs2nsw94151tv5/Jm1dnSckJ32WE1wCEpYrIKWk1MGE1CgEgVI2hcFMt+1f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=joGZohuY; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=C6HJ8IcGtBRiubKjaCXVhjsl7fuFELcIKXF72SPTkqQ=; b=gqm3tahumcaChgcx7QDFVmUJvJ
-	KKMr79ur1vJTD9agV0AdSDOuzLZ/tbd3SQ4q+MS9MrbVaLAHYHzxVtU+DS/ZA/27EOs2enqJws+Wz
-	qK13vj/V/hxtKeNv5bhnczcR+tSx6b0cx94RnLDbwgU6GvH45g0XTnrlgwxNhcFp0R94Uor9XyL59
-	Obwza+stWXW+CGjpAcVe9NPjw2NMrph6c6kUws3bQ0NUfNe63YZ68NUsf//f4rJ+UIQKrr0ur5KJ9
-	18qf6UbxmNFuHJdUgXycYM5RhLBLq2qbQ6BiQ7QWdT1lBkf/Ue2+x/b7RmqK0Om65bKPQJe8IycDV
-	TSGbcB9w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXq3q-000000019v0-1vIH;
-	Fri, 04 Jul 2025 23:43:18 +0000
-Date: Sat, 5 Jul 2025 00:43:18 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, John Groves <John@groves.net>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Miklos Szeredi <miklos@szeredb.hu>,
-	Bernd Schubert <bschubert@ddn.com>,
-	John Groves <jgroves@micron.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 18/18] famfs_fuse: Add documentation
-Message-ID: <aGhnFu8C9wVPiXBq@casper.infradead.org>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-19-john@groves.net>
- <aGcf4AhEZTJXbEg3@archie.me>
- <87ecuwk83h.fsf@trenco.lwn.net>
- <aGdQM-lcBo6T5Hog@archie.me>
- <aGgkVA81Zms8Xgel@casper.infradead.org>
- <aGhjv37uw3w4nZ2C@archie.me>
+	bh=9Sh2zTkC4SEZwwIPq+KuwqG9MiNpX1i9csTProGX60c=; b=joGZohuYqPyrR7Hv2Awk952Iqr
+	AVlMDLMKZtJB9Hh0GTlqFBlVX5iw0rQtCu4+IcKQLxNPUdggvgKt9o2pir33nDLFdP8QDJOmdQ0Yh
+	VkHJ5OjD4RN4HLGqPTw0DjAPdhpdmATaLvfmyA7vtzLZ4uIELaLMcsWMkFhuS/IgXHu1HG2+IVffb
+	xPybK/nRx6RaajCPc4cltX450VbcFBKixolpYMhMwHzf0Az3LGmilEuvoRzDT167pX9TzoAXgCeZz
+	h/Sr6x8UPlv+1ZGksxBv9MkdPmCrY+Cg4zPP39pBcBCDD4Qcte3ip2/CXnX+XuqcFau2I6kjuQgu0
+	NANRQDKA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXqLC-0000000G24z-38CE;
+	Sat, 05 Jul 2025 00:01:14 +0000
+Date: Sat, 5 Jul 2025 01:01:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [RFC] MNT_WRITE_HOLD mess
+Message-ID: <20250705000114.GU1880847@ZenIV>
+References: <20250704194414.GR1880847@ZenIV>
+ <CAHk-=wgurLEukSdbUPk28rW=hsVGMxE4zDOCZ3xxY3ee3oGyoQ@mail.gmail.com>
+ <20250704202337.GT1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,30 +62,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aGhjv37uw3w4nZ2C@archie.me>
+In-Reply-To: <20250704202337.GT1880847@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, Jul 05, 2025 at 06:29:03AM +0700, Bagas Sanjaya wrote:
-> On Fri, Jul 04, 2025 at 07:58:28PM +0100, Matthew Wilcox wrote:
-> > On Fri, Jul 04, 2025 at 10:53:23AM +0700, Bagas Sanjaya wrote:
-> > > On Thu, Jul 03, 2025 at 08:22:58PM -0600, Jonathan Corbet wrote:
-> > > > Bagas.  Stop.
-> > > > 
-> > > > John has written documentation, that is great.  Do not add needless
-> > > > friction to this process.  Seriously.
-> > > > 
-> > > > Why do I have to keep telling you this?
-> > > 
-> > > Cause I'm more of perfectionist (detail-oriented)...
-> > 
-> > Reviews aren't about you.  They're about producing a better patch.
-> > Do your reviews produce better patches or do they make the perfect the
-> > enemy of the good?
+On Fri, Jul 04, 2025 at 09:23:37PM +0100, Al Viro wrote:
+> On Fri, Jul 04, 2025 at 12:57:39PM -0700, Linus Torvalds wrote:
 > 
-> I'm looking for any Sphinx warnings, but if there's none, I check for
-> better wording or improving the docs output.
+> > Ugh. I don't hate the concept, but if we do this, I think it needs to
+> > be better abstracted out.
+> > 
+> > And you may be right that things like list_for_each_entry() won't
+> > care, but I would not be surprised there is list debugging code that
+> > could care deeply. Or if anybody uses things like "list_is_first()",
+> > it will work 99+_% of the time, but then break horribly if the low bit
+> > of the prev pointer is set.
+> > 
+> > So we obviously use the low bits of pointers in many other situations,
+> > but I do think that it needs to have some kind of clear abstraction
+> > and type safety to make sure that people don't use the "normal" list
+> > handling helpers silently by mistake when they won't actually work.
+> 
+> Point, but in this case I'd be tempted to turn the damn thing into
+> pointer + unsigned long right in the struct mount, and deal with it
+> explicitly.  And put a big note on it, along the lines of "we might want
+> to abstract that someday".
+> 
+> Backporting would be easier that way, if nothing else...
 
-That's appreciated.  Really.  But what you should be looking for is
-unclear or misleading wording.  Not "this should be 'may' instead of
-'might'".  The review you give is often closer to nitpicking than
-serious review.
+FWIW, several observations around that thing:
+	* mnt_get_write_access(), vfs_create_mount() and clone_mnt()
+definitely do not need to touch the seqcount component of mount_lock.
+read_seqlock_excl() is enough there.
+	* AFAICS, the same goes for sb_prepare_remount_readonly(),
+do_remount() and do_reconfigure_mnt() - no point bumping the seqcount
+side of mount_lock there; only spinlock is needed.
+	* failure exit in mount_setattr_prepare() needs only clearing the
+bit; smp_wmb() is pointless there (especially done for each mount involved).
+	* both vfs_create_mount() and clone_mnt() add mount to the tail
+of ->s_mounts.  Is there any reason why that would be better than adding
+to head?  I don't remember if that had been covered back in 2010/2011
+discussion of per-mount r/o patchset; quick search on lore hasn't turned
+up anything...  Miklos?
 
