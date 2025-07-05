@@ -1,87 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-54015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA91EAFA161
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 21:18:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365A8AFA168
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 21:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E49716FC3F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 19:18:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46B51BC2E6A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 19:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F002192EA;
-	Sat,  5 Jul 2025 19:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2BF21858A;
+	Sat,  5 Jul 2025 19:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HH6nwMIq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWVVhANd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7A61D5CD7;
-	Sat,  5 Jul 2025 19:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2806074BE1;
+	Sat,  5 Jul 2025 19:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751743076; cv=none; b=qlEOwlFQcrRiIiff43Cj5faT1KXfwqolBGP33fqRTGnaw5cYVHJ4DA6U+GkAvoAXqf7gppzrMy2eYdkMPB/27UTF2tmCtmV/oUq34BfOv/C0spJwXCqWjXMzpuS33c0uBSR4NOBlNur1FgszGdQg8yEhZKXTFVQ8dwAWN/iLlns=
+	t=1751743671; cv=none; b=PfICckfrIO6E0StyUI7KyLc+sankj5f2PP7VH2fwGEd7fX2NrG3zV1xH8dtXphN7Yq08ZA5s5svDfVKaSpAhfvuoBW4VC1eZe0tGoZy6xXgfFLUzGNLADFtwhGf2enXHub1g1zCL6BOwLKOXUmFOOMi9Y6CEtmF1WK0I8qgfrCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751743076; c=relaxed/simple;
-	bh=5JfbTDmmRNRU0QSsGXO2ytdUbZn8uJPpIrPMtWAOkpE=;
+	s=arc-20240116; t=1751743671; c=relaxed/simple;
+	bh=noCGX8JTMgk+VkhE3ajHW0gmlbUMW2TalG2eHJ7gQio=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIucNaRq7YPmPEDNT7RxaEkJ+Auh+69XAB6krdbLAQrMRFB/D/ku51dK3ggXH6M/TmvlHUahZqOISMkdAUd4mumKDD8LANmsJK0gvpDhlAdtR8nc4gbj3+fMyBVQoDD1BXiwgIx6b9DgOqw/vN+sAKtutSNXuh1Ig3IglwXAWPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HH6nwMIq; arc=none smtp.client-ip=209.85.160.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=VkvT7t1yvIsZm/2zx2FwNGjoxABZ4NEa5NeeK1eRdcsLafG9FcGtyiJCu79LZMHaS002sVsOsiuO0qWV8G3AcBIii0MRiaG7q/KjaxtVXqqbRtesN1kPa65f12FxDjb0kmU7sSnhmg6F7mGlQCWh7+Tzn17VVv20Z9OPmCE/G9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AWVVhANd; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2ea08399ec8so1619565fac.1;
-        Sat, 05 Jul 2025 12:17:53 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2da3c572a0bso1664078fac.3;
+        Sat, 05 Jul 2025 12:27:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751743073; x=1752347873; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751743668; x=1752348468; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:sender
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=M0tal2TXuoVeMN1NrV/dwk0+DnB3su6E14sOZlFT3SI=;
-        b=HH6nwMIq6eFOGaTT7l8FamT5wksdmVthPjkaMv4+Tv6N6VZX7VqR0yAzHzKqrRRqu3
-         BRn8fbeg6bfx4DuzIrAlKSqKX5z9YnSLKiWT1nYXESluqAiA+5ICxBaUh/VXKbWyaRv3
-         uGnXJPj9bG9emkNL9l7aX7jd2+GxNCjLcNcB95W9jJgkw0RlNI5/4f/G2MtR9g9ASX9Q
-         Ct1hM395LYzwoM6v2qc/U1ArBnohP4C4NuYmGadT7RNNiA1iPNqPclQaoXhClqRmaJIq
-         MMagYI7Thrsp51D7lyrUcTmgoCMGZNTdJ4Gg0tpzmkCikkuYS/jEmOfINmhQhE5eCMd4
-         yisA==
+        bh=8Uvi3Ssl9dhbiyb7WG5zZNIM65dwWn2BHeyM8ec+zc8=;
+        b=AWVVhANdrekj55Kn2rJMbKCt0u1KDNOQ+5du4nAYqgS+LNrn2Nml5IQv5i0hVzpOD/
+         SqvUqJrtdMa5ZeXChJBgM36q3ONv//VdHYvhxl/W4r/41cpkA60mdCZv4uEpwZCJSEMz
+         Dw3GvyVAZr9dOJEqpDMQ4Qzpkz3KjB21ErFkQxVo1IymUXAO0LHVqlKIbNhLUo5qMzJq
+         c6/XKxuz4te+o1IllsYulyeY+x8VORAKs5GkU13WQCl+TkKaSCQiG7mCFpbHoKrSNRcA
+         C9retiz8Eati9DueUYuHuv4fyW2xVldWDSboWYJ7M6PRa9H74R0wjowQGN6oNqAvas52
+         a6vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751743073; x=1752347873;
+        d=1e100.net; s=20230601; t=1751743668; x=1752348468;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:sender
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M0tal2TXuoVeMN1NrV/dwk0+DnB3su6E14sOZlFT3SI=;
-        b=ubvaTfOm7Ma1LD6LAnaKu2D0g/BFsZ+7+QV7l5mikV4nlgYOefJFv/nu3+gJLomHHQ
-         vQmyxCcsTui/VVCmT2HTqFyxlYBDlv1X58n0ay21n0zWCEmT7Jq+han59fDoAN3B4v90
-         st/vfb+VQTmE9R3p5zmi4wyf0eASwSGUtnDzSmAeKc0iHZLMwHqN73KoltlRloD4uRej
-         z0wY9HV+kd5p5y5DPLuS/R+6EU2DOIes+hu9MgrolbeN/Gai4XVeeOwnhXl/G3B23cNZ
-         gN/npNdlBf559HBeqsjfsHccIrZRnBghekX/xyqbK/R2y8yv2Egw9tHZCb7V2E50F63k
-         bbeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgZTbMMs0vJ6cpQEgOv7TgKpGIRDZZVnsGFjOd8z9DAB2KxY215B+cTyfMwpwGcQWhPQ3bmX7jyan3@vger.kernel.org, AJvYcCWQSgajDBGCM43jm/rm6RO9M/w9icQKNippkRSSMoKf8E18kDhNFjbbSwJkkYfsS7VefWoT+xp5OLPbQJxJYA==@vger.kernel.org, AJvYcCXIPYzFKNV53SLEJJtQB8/Ovosj9gAk6hRnrUEDY3G6NnJSE4AxIzBr5mOwevDcneT9LafM4Ez1sqg=@vger.kernel.org, AJvYcCXcTkov0O9vqZY+BoCzHnKpZ+D/F59rBy0coapoBLDUo3nVS66qC3yK0vFjDRzby7hPdYnApOZbk6DFhLQl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx82SVqV/BpQZQxmh90haWZ5LH5OrHv/qb6HLN0ku51H9JHfiW
-	zS+I5kQ+hF+Gk99iS8ljw27LyIIYtYtVNhiSJIbZtgkBhCr3csP/Xfrn
-X-Gm-Gg: ASbGncsNKmuEBMCvtrhJ4NP724ODBdl6k/6jxL1yx4pX817Nd1aUKZ/fid2XXM2fFMI
-	pgQTGgMTeA6hFAbBkuu2MhmsghhCHgOnq9DN0ewH7oLtJdePPKf+HUCbhGCDZLQkFWkQG3ODkwp
-	Kzml+w4iKt/jwmqdAPQjDlGzovcSXQrTXjJo7l3NmT0yAZfHWAYZyADX484K0bM5bgNwckDPq29
-	SfWyB0VP9FxMcQzzq9ooEZoXqSVKkjvkQFLkGRyK9p2AZbW1ycTwEyvFxAelhwpZzJ/6Y77hF6w
-	nW9Xe7r50zqINzETVJSNvrL3Q4FqgvDVFNGDZ1PKRuXPTRnsv3BjR1u4s4gw6o470eb3ZKJs3pC
-	q
-X-Google-Smtp-Source: AGHT+IG5/wHt8NNYOAj0VVdS7ApVEHMemzu+FgEfnNgRE5AVwf3j0dSGHQb81nJIQIly3VlVlBvRsg==
-X-Received: by 2002:a05:6870:5e0d:b0:2d4:dc79:b8b with SMTP id 586e51a60fabf-2f7afda584dmr2430162fac.10.1751743073028;
-        Sat, 05 Jul 2025 12:17:53 -0700 (PDT)
+        bh=8Uvi3Ssl9dhbiyb7WG5zZNIM65dwWn2BHeyM8ec+zc8=;
+        b=ogQcQ1X8LXuiZP8hC72f3CCKkJjh/Z2Vj/0RZey3DH3I+d+PFBhy1CoMhfvPAENLBY
+         hFTYpjUn3BgBEfTjlAU5FHwDyhqaZFiNltNHym2iNydTjxwzp8JBVCFo1wUynrX62gD6
+         Nskblkac3FaLEliG4wVu0XzMaA92kOQLLA/BTEkBEJD5ljvQjL/S5hdn83F+oPVGzVq5
+         ORxVILDj2ygANph7CHqjoJVUnqu3ymiqOoENUZeOEluZWxvaeCIGEBWicpgtQnIVtRTj
+         Z7VWCDWTYrjk6Uz0rm0cZ2tkYqiEmARpjeW3qlY2ZI7Jg0CHUxHURm0EQC0ntcjbyfBf
+         6xMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaMDIGbV+6sTfYvl/93tkrvSVPUr3nxa4gOV+zOOOpQdsv88uctt1W/nouUKq9CICdrSSqmqFwB7g=@vger.kernel.org, AJvYcCVP66nDn5iAiRvMDug7ngneKkukJSevypMWlPx4ylpKf4v4akh2FF6E1Cyk6X39AdAf0mksfKNDkVzI9e5kDA==@vger.kernel.org, AJvYcCVwBns4uXLLZs/xOYpQiCxLavTZD/ZExe1z6u1NKsUmabd8DF/DOfI5TRZ6fwmK03fHRRgekvv2brNv@vger.kernel.org, AJvYcCWMYostwlkjMlgEDUfHGOvBocO6mrJBEO8X+SX8naPEVJuaL4Ap3RI2g22DcZa1l81h10qZCSTVby8oHc6m@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgi0ZYHe7O7jmiP69/1MuEevEQg85AVO3WLmds9OwcreNf16zI
+	HxtIw6dTkDx21AVoKqxPW6OJ36P4tRrpdI3ioV61H5pdp2mhPMbd0MWP
+X-Gm-Gg: ASbGncvV4p8R77o2nP5/ZfgRSXJds6mzaHTRrdYkBJBfcJglbJZ33YO9rYHfRqvdMpi
+	mdiPVqu8dDFeg+kKkE3kKA6S18usGgURKeIeZlv/9h5VMf71S0fJu8mo9B6NdznY9bfD84T6rbl
+	R+f7NzT3CPtUzSIh4n/XDzctFfJgZTrqOk2M3+BEZNkKHUr1udQHUkTdSV9W77piMaYBjPaA1XY
+	VsQ63Zb7amO8vukh/2JQ4v82J7d8e7c5NtIIynCBRUpPnwHuhbxw7whBJDk8k+z1hBCoIawgP40
+	qOIWIgKaRDVkrSlEzugzQoGLlufLRbC/tDinBJVknCecmw8u5MPm/xu7Sm1PJi6GYvoWoeEfSgH
+	J
+X-Google-Smtp-Source: AGHT+IH5/ekfod+dK4/TpB2Sd1DQKASQYJbwHuxsumDvUc8YMsc2FL7gyW2TpiM3j94mzw4K5mpHqw==
+X-Received: by 2002:a05:6870:ae08:b0:29e:3c8d:61a0 with SMTP id 586e51a60fabf-2f7afcf1e5emr2212398fac.8.1751743668059;
+        Sat, 05 Jul 2025 12:27:48 -0700 (PDT)
 Received: from groves.net ([2603:8080:1500:3d89:5c68:c378:f4d3:49a4])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2f7901a35cesm1243246fac.32.2025.07.05.12.17.50
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2f7902dbf5dsm1226132fac.48.2025.07.05.12.27.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Jul 2025 12:17:52 -0700 (PDT)
+        Sat, 05 Jul 2025 12:27:47 -0700 (PDT)
 Sender: John Groves <grovesaustin@gmail.com>
-Date: Sat, 5 Jul 2025 14:17:50 -0500
+Date: Sat, 5 Jul 2025 14:27:45 -0500
 From: John Groves <John@groves.net>
 To: Amir Goldstein <amir73il@gmail.com>
 Cc: Dan Williams <dan.j.williams@intel.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
 	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
 	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
 	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
@@ -89,15 +88,13 @@ Cc: Dan Williams <dan.j.williams@intel.com>,
 	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
 	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
-Message-ID: <xyzi6ymuc4wi3byq4t4bjtdbm2xchrf7vrdmrdagpdawjrgvi2@ncdxgkt6dvjw>
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [RFC V2 13/18] famfs_fuse: Create files with famfs fmaps
+Message-ID: <custjjqmvxt2u3wfjztwjdxvdxr6vbpvcoptt4vvv2itt7d2os@zqg5es4g7xmf>
 References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-13-john@groves.net>
- <CAOQ4uxh-qDahaEpdn2Xs9Q7iBTT0Qx577RK-PrZwzOST_AQqUA@mail.gmail.com>
- <c73wbrsbijzlcfoptr4d6ryuf2mliectblna2hek5pxcuxfgla@7dbxympec26j>
- <gwjcw52itbe4uyr2ttwvv2gjain7xyteicox5jhoqjkr23bhef@xfz6ikusckll>
- <CAOQ4uxhnCh_Mm0DGgqwA5Vr4yySgSovesTqbnNH7Y_PXE9fzpg@mail.gmail.com>
+ <20250703185032.46568-14-john@groves.net>
+ <CAOQ4uxgFoEByjaJPQv_QGMzGHLx=1hZvQcYjxM_ZZi_D063HEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -107,97 +104,64 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhnCh_Mm0DGgqwA5Vr4yySgSovesTqbnNH7Y_PXE9fzpg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgFoEByjaJPQv_QGMzGHLx=1hZvQcYjxM_ZZi_D063HEg@mail.gmail.com>
 
-On 25/07/05 09:58AM, Amir Goldstein wrote:
-> On Sat, Jul 5, 2025 at 2:06 AM John Groves <John@groves.net> wrote:
+On 25/07/04 11:01AM, Amir Goldstein wrote:
+> On Thu, Jul 3, 2025 at 8:51 PM John Groves <John@groves.net> wrote:
 > >
-> > On 25/07/04 03:30PM, John Groves wrote:
-> > > On 25/07/04 10:54AM, Amir Goldstein wrote:
-> > > > On Thu, Jul 3, 2025 at 8:51 PM John Groves <John@groves.net> wrote:
-> > > > >
-> > > > > Upon completion of an OPEN, if we're in famfs-mode we do a GET_FMAP to
-> > > > > retrieve and cache up the file-to-dax map in the kernel. If this
-> > > > > succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
-> > > > >
-> > > > > GET_FMAP has a variable-size response payload, and the allocated size
-> > > > > is sent in the in_args[0].size field. If the fmap would overflow the
-> > > > > message, the fuse server sends a reply of size 'sizeof(uint32_t)' which
-> > > > > specifies the size of the fmap message. Then the kernel can realloc a
-> > > > > large enough buffer and try again.
-> > > > >
-> > > > > Signed-off-by: John Groves <john@groves.net>
-> > > > > ---
-> > > > >  fs/fuse/file.c            | 84 +++++++++++++++++++++++++++++++++++++++
-> > > > >  fs/fuse/fuse_i.h          | 36 ++++++++++++++++-
-> > > > >  fs/fuse/inode.c           | 19 +++++++--
-> > > > >  fs/fuse/iomode.c          |  2 +-
-> > > > >  include/uapi/linux/fuse.h | 18 +++++++++
-> > > > >  5 files changed, 154 insertions(+), 5 deletions(-)
-> > > > >
-> > > > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > > > > index 93b82660f0c8..8616fb0a6d61 100644
-> > > > > --- a/fs/fuse/file.c
-> > > > > +++ b/fs/fuse/file.c
-> > > > > @@ -230,6 +230,77 @@ static void fuse_truncate_update_attr(struct inode *inode, struct file *file)
-> > > > >         fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
-> > > > >  }
-> > > > >
-> > > > > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> > > >
-> > > > We generally try to avoid #ifdef blocks in c files
-> > > > keep them mostly in h files and use in c files
-> > > >    if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
-> > > >
-> > > > also #if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> > > > it a bit strange for a bool Kconfig because it looks too
-> > > > much like the c code, so I prefer
-> > > > #ifdef CONFIG_FUSE_FAMFS_DAX
-> > > > when you have to use it
-> > > >
-> > > > If you need entire functions compiled out, why not put them in famfs.c?
-> > >
-> > > Perhaps moving fuse_get_fmap() to famfs.c is the best approach. Will try that
-> > > first.
-> > >
-> > > Regarding '#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)', vs.
-> > > '#ifdef CONFIG_FUSE_FAMFS_DAX' vs. '#if CONFIG_FUSE_FAMFS_DAX'...
-> > >
-> > > I've learned to be cautious there because the latter two are undefined if
-> > > CONFIG_FUSE_FAMFS_DAX=m. I've been burned by this.
-> 
-> Yes, that's a risk, but as the code is shaping up right now,
-> I do not foresee FAMFS becoming a module(?)
-
-Yeah, I can't think of a good reason to go that way at this point.
-
-> 
-> > >
-> > > My original thinking was that famfs made sense as a module, but I'm leaning
-> > > the other way now - and in this series fs/fuse/Kconfig makes it a bool -
-> > > meaning all three macro tests will work because a bool can't be set to 'm'.
-> > >
-> > > So to the extent that I need conditional compilation macros I can switch
-> > > to '#ifdef...'.
+> > On completion of GET_FMAP message/response, setup the full famfs
+> > metadata such that it's possible to handle read/write/mmap directly to
+> > dax. Note that the devdax_iomap plumbing is not in yet...
 > >
-> > Doh. Spirit of full disclosure: this commit doesn't build if
-> > CONFIG_FUSE_FAMFS_DAX is not set (!=y). So the conditionals are at
-> > risk if getting worse, not better. Working on it...
+> > Update MAINTAINERS for the new files.
 > >
+> > Signed-off-by: John Groves <john@groves.net>
+> > ---
+> >  MAINTAINERS               |   9 +
+> >  fs/fuse/Makefile          |   2 +-
+> >  fs/fuse/famfs.c           | 360 ++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/famfs_kfmap.h     |  63 +++++++
+> >  fs/fuse/file.c            |  15 +-
+> >  fs/fuse/fuse_i.h          |  16 +-
+> >  fs/fuse/inode.c           |   2 +-
+> >  include/uapi/linux/fuse.h |  56 ++++++
+> >  8 files changed, 518 insertions(+), 5 deletions(-)
+> >  create mode 100644 fs/fuse/famfs.c
+> >  create mode 100644 fs/fuse/famfs_kfmap.h
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index c0d5232a473b..02688f27a4d0 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -8808,6 +8808,15 @@ F:       Documentation/networking/failover.rst
+> >  F:     include/net/failover.h
+> >  F:     net/core/failover.c
+> >
+> > +FAMFS
+> > +M:     John Groves <jgroves@micron.com>
+> > +M:     John Groves <John@Groves.net>
+> > +L:     linux-cxl@vger.kernel.org
+> > +L:     linux-fsdevel@vger.kernel.org
+> > +S:     Supported
+> > +F:     fs/fuse/famfs.c
+> > +F:     fs/fuse/famfs_kfmap.h
+> > +
 > 
-> You're probably going to need to add stub inline functions
-> for all the functions from famfs.c and a few more wrappers
-> I guess.
+> I suggest to follow the pattern of MAINTAINERS sub entries
+> FILESYSTEMS [EXPORTFS]
+> FILESYSTEMS [IOMAP]
 > 
-> The right amount of ifdefs in C files is really a matter of judgement,
-> but the fewer the better for code flow clarity.
+> and call this sub entry
+> FUSE [FAMFS]
+> 
+> to order it following FUSE entry
 > 
 > Thanks,
 > Amir.
 
-Right - I've done that now, and it actually looks pretty clean to me.
+Done, and queued to -next
 
-Thanks!
+Thanks,
 John
 
 
