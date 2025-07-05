@@ -1,101 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-54022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7144CAFA24F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jul 2025 00:56:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CC2AFA256
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Jul 2025 01:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12BF1BC23B7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 22:56:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CFF4A04B3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 23:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB5029B77A;
-	Sat,  5 Jul 2025 22:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C6A2C031B;
+	Sat,  5 Jul 2025 23:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwj8HT9t"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="l6QfWN88"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5B21E832A;
-	Sat,  5 Jul 2025 22:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F7D18DB1C
+	for <linux-fsdevel@vger.kernel.org>; Sat,  5 Jul 2025 23:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751756189; cv=none; b=fYvQqEA8NxDNEVuSNFfC+HMuSWceUUAoBUJUZ3uCZ6bASfnO8ZJzRcb1WiZsil3k8mZm2wfw6hgxHqc/Z9BBABtl9mvn+S3kfesrHB94Z/SGwj6N9PzaW/MMTN3ZSPyBeqmEF37stX1Hk0DramPOnWtYfStYJXHLc7VPHs0LcJY=
+	t=1751757987; cv=none; b=Ryl+ve063dJbJMdS8XVXdNQHYQ3jF36Kon+TEEElTmA4R7qZ1ufXaccOhLfofRIUaJx2dTHT8czrjC5mwkOu7WoEbcBulmUniWPoK0r8svmv2i5Vu7jZZ+bPclY408QipR3JcwqDxPU+fVOT+OfLIMQfZ2hc3MAcjm9jbGHIrok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751756189; c=relaxed/simple;
-	bh=a3i4jRGxXCB5XfKRUE99TThgc+EDm/z2Y0g4eZ2mpP8=;
+	s=arc-20240116; t=1751757987; c=relaxed/simple;
+	bh=TT8zbs+eCX2XbTHT/hcGbsXraGVt/tSsOZTS0MfPCWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6kIPoejdwUv50SUiaXXzBPLVTp/23tYMC7eqV7/eeSJxXh3kpKlX3AyA8ThF27KhsD+itsN57zBXrI3sA1yLvyFyK+nLxQ9vZojasHboeUya2OrA5oluOs2QWc3O0AfnLe9bWS4yq1MA1G89Fn0Immoev5VQVUEYZ4DfpEnv+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lwj8HT9t; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-735a6faec9eso1201111a34.3;
-        Sat, 05 Jul 2025 15:56:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751756186; x=1752360986; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nICa9Cy/Ik1mDrNaapm3C7wILSwFMeL/8n8Vc7ARhtA=;
-        b=lwj8HT9twKAz9tI1c2XIWxhcy4LABS5nVEwKhWS75l2eiDFB3xCLQZDeXBMluUW5m8
-         y0e34B8T3EWQFgn3hNri9zc3b5sVnH2g5DJ+lBSSSu2WiOgotUl4HBvWpXgKCz59PWlj
-         j5Fah4/dCz6adhAiACXYwaC+XnYwCaLRhOJ7TLaHdBqT+eMqN/9MwlKopc08FYci4W53
-         lVIFX7gALMBZjnlRlj3dMGt0R/qq7G10fMAaHdzLoEL7MaChWHicjvnV9Qfeqim5CIrC
-         aaavWaKdczM5ZZ+t1/SiJEZfK8RewSkmndZYSRzTZIUwwOUHxGhCN7lovpoOahTfztmk
-         +Wog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751756186; x=1752360986;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nICa9Cy/Ik1mDrNaapm3C7wILSwFMeL/8n8Vc7ARhtA=;
-        b=aCgldi3CLvqW9sxUEWgmApB+Vrkr0gDKZvPKJ4qyJGuAP6fI4xeZ4UMHxrDTbbmEEr
-         WbureXObv6RX4J/sD+sP8prnC+yOoM2/zBJymGEueAgZV30/XYW9QhemX6iCi2fJCniM
-         9m5+/4w6KBLW98lYdaUHpYOAumAU4jy3gu5GgLd9fm2BPsh6CYPYAFzotuHE6hPHUy2E
-         FjHrtXB5PoMkbDH6Jy2riV3s5Fsyv7syoXHt89ceZ7AA+aX3x9fvStoaYIluaajFGNSN
-         coPAlcjxVzqlJqAoqN4EGSiuYIa10/dGmfJ/Rmiu59IWjaCwgUtQYhUIAR8kEWeabfhW
-         4lgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUah21wnZX/PkVKvErhigoBddAUXXvLKvwGNY15+/IZcaSLkQUjAEVSkpbz4BfrgOk6V1bBGCooIVJPMnwn@vger.kernel.org, AJvYcCVBcFklTcw1UqQVp+rWJ5nQa20bqy9l41hQQh6zCY8V43QcNgej8j4ku7OVrlCHiFsMkWoHaiI9EdfXL8d2Wg==@vger.kernel.org, AJvYcCWBkkm1NWTF0lbzvnmBONjdxlSBp1V7QbknAGO1drCZ7BIcrupVv3lQU2Ds103l1sk0BMLCE0pEl6U=@vger.kernel.org, AJvYcCWot9Vn1kXMZBwO5w/oMYi037MleCi3cu/V4Wz2YCavCpsogQSRyGUhqReCr58StzBatwO/wJmnq5xI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA6ceJRu4qCJQephEnaigqRm3YomN1WIzqTA6slh02MYCEcKXE
-	XLQL71xQm6UYQDc1gUn2YuQ0HR1A4XlDWJwk0yAZNZaMmhlsC2LLTA2HlOUNgcjr
-X-Gm-Gg: ASbGnct8ihRmJ01mQR/aHSOdpvXiPNS8TS+RaStzk6qM7LM4gekAsnEV6rOih39UpAk
-	Z1ufvZym5/apLvsRUxC2K6uDVhTMDODFVT08tqDLI20Ddw7aBzB9IJbI1nivLPqlPrsjIGWw5w2
-	kc5o8VhwqzakZ8z0ZIHpXa5qF9veI8dRuvQV4XrTtGVbuPXoIdCILC9TTKOLE/zbvj9IPpTyYRy
-	gFu5njiPy7dLT36Dn6c8hrtCvgC50GgXABkzfzTDod7kGc8lNBBoUFBpqrlMRRB+FIM+kVMOXiI
-	kwPP/TOF0x5o5O0NT3jt+bRH/AWgjzmhMhgS4LxTW/ZjayIHn6D9Li6zILEU+8glEJnQxjiXMYL
-	o
-X-Google-Smtp-Source: AGHT+IHuG5FCYsJhjMJavIVyVhItZa43h5Kj54uCqORVbS+uRUzsxc+GupAT4W0CSWAPweEMZrVidA==
-X-Received: by 2002:a05:6830:348f:b0:73b:1efa:5f43 with SMTP id 46e09a7af769-73ca0fdda45mr5358902a34.0.1751756185894;
-        Sat, 05 Jul 2025 15:56:25 -0700 (PDT)
-Received: from groves.net ([2603:8080:1500:3d89:d5d4:7402:f107:a815])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f75354bsm944468a34.16.2025.07.05.15.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Jul 2025 15:56:25 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Sat, 5 Jul 2025 17:56:23 -0500
-From: John Groves <John@groves.net>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, 
-	Miklos Szeredi <miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 04/18] dev_dax_iomap: Add dax_operations for use by
- fs-dax on devdax
-Message-ID: <ahu24cm4ibrrch4jo2iobhrlxfs3kzyt46ylfovmhy2ztv2qad@upimvr47jvwf>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-5-john@groves.net>
- <20250704134744.00006bcd@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXezgta+hORcm4E12tlId2CmntUHfbK5I/oIdI5AmP8wPhJbOQyimSA1SK0HZntNOsDK/Sg76lC8GP7ygfFgV30DG1t1zJg6i+TISIjXCa4AwPSw58mbGkXXWWNm+b5nRYzzmqCfcHm2MBXFMw2m8Dhv5Bub70DFbOs9VcSGWyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=l6QfWN88; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fyxMmE36ZuZQvBgcB1Oh21WcvH4Wp1UwJ5DH9CT4EOo=; b=l6QfWN88Sf5xo5C9nrEhH+UyjC
+	YoL1EPXIvuOuFOJr8XONQKUwpJ8lnLR5HgY/VSRQtgEXgtg3fg7py8EgcgKdZ16q2MhZE5ejqOlm3
+	r2G7bQgM7zuQgMebHrjWeq82bamKMto3/oduwSNQdwPdJOgQP94QTG4JF9vhnKBihNxwXgESlHAXF
+	fJy/VP5L2OuOAu1B8n9Q+DNr/qJ6XEO/VRI8epVU/ZMXOvd6nZvvpQA5MxvzZ2JnmbS/3U1jx3B8F
+	ikT4X4PBHR0pdarb4FM7Sg/Td7c+Y8X6luf+kFzhp7osaYLySmpj0ayoS1zTUNwndaXBY7QR6rC5r
+	fbXG/CmA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uYCGz-00000006ICk-2vCm;
+	Sat, 05 Jul 2025 23:26:21 +0000
+Date: Sun, 6 Jul 2025 00:26:21 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.com>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC] MNT_WRITE_HOLD mess
+Message-ID: <20250705232621.GA1880847@ZenIV>
+References: <20250704194414.GR1880847@ZenIV>
+ <CAHk-=wgurLEukSdbUPk28rW=hsVGMxE4zDOCZ3xxY3ee3oGyoQ@mail.gmail.com>
+ <20250704202337.GT1880847@ZenIV>
+ <20250705000114.GU1880847@ZenIV>
+ <20250705185359.GZ1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,144 +65,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250704134744.00006bcd@huawei.com>
+In-Reply-To: <20250705185359.GZ1880847@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 25/07/04 01:47PM, Jonathan Cameron wrote:
-> On Thu,  3 Jul 2025 13:50:18 -0500
-> John Groves <John@Groves.net> wrote:
+On Sat, Jul 05, 2025 at 07:53:59PM +0100, Al Viro wrote:
+> On Sat, Jul 05, 2025 at 01:01:14AM +0100, Al Viro wrote:
 > 
-> > Notes about this commit:
-> > 
-> > * These methods are based on pmem_dax_ops from drivers/nvdimm/pmem.c
-> > 
-> > * dev_dax_direct_access() is returns the hpa, pfn and kva. The kva was
-> >   newly stored as dev_dax->virt_addr by dev_dax_probe().
-> > 
-> > * The hpa/pfn are used for mmap (dax_iomap_fault()), and the kva is used
-> >   for read/write (dax_iomap_rw())
-> > 
-> > * dev_dax_recovery_write() and dev_dax_zero_page_range() have not been
-> >   tested yet. I'm looking for suggestions as to how to test those.
-> > 
-> > Signed-off-by: John Groves <john@groves.net>
-> A few trivial things noticed whilst reading through.
+> > FWIW, several observations around that thing:
+> > 	* mnt_get_write_access(), vfs_create_mount() and clone_mnt()
+> > definitely do not need to touch the seqcount component of mount_lock.
+> > read_seqlock_excl() is enough there.
+> > 	* AFAICS, the same goes for sb_prepare_remount_readonly(),
+> > do_remount() and do_reconfigure_mnt() - no point bumping the seqcount
+> > side of mount_lock there; only spinlock is needed.
+> > 	* failure exit in mount_setattr_prepare() needs only clearing the
+> > bit; smp_wmb() is pointless there (especially done for each mount involved).
+> 
+> The following appears to work; writing docs now...
 
-BTW thanks for looking at the dev_dax_iomap part of the series. These are
-basically identical to the two standalone-famfs series' I put out last year,
-but have IIRC not gotten review comments before this.
+	More fun questions in the area: is there any reason we have mnt_want_write()
+doing
+int mnt_want_write(struct vfsmount *m)
+{
+        int ret;
 
-> 
-> > ---
-> >  drivers/dax/bus.c | 120 ++++++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 115 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> > index 9d9a4ae7bbc0..61a8d1b3c07a 100644
-> > --- a/drivers/dax/bus.c
-> > +++ b/drivers/dax/bus.c
-> > @@ -7,6 +7,10 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/dax.h>
-> >  #include <linux/io.h>
-> > +#include <linux/backing-dev.h>
-> > +#include <linux/pfn_t.h>
-> > +#include <linux/range.h>
-> > +#include <linux/uio.h>
-> >  #include "dax-private.h"
-> >  #include "bus.h"
-> >  
-> > @@ -1441,6 +1445,105 @@ __weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
-> >  }
-> >  EXPORT_SYMBOL_GPL(dax_pgoff_to_phys);
-> >  
-> > +#if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)
-> > +
-> > +static void write_dax(void *pmem_addr, struct page *page,
-> > +		unsigned int off, unsigned int len)
-> > +{
-> > +	unsigned int chunk;
-> > +	void *mem;
-> 
-> I'd move these two into the loop - similar to what you have
-> in other cases with more local scope.
+        sb_start_write(m->mnt_sb);
+        ret = mnt_get_write_access(m);
+        if (ret)
+                sb_end_write(m->mnt_sb);
+        return ret;
+}
+rather than
+int mnt_want_write(struct vfsmount *m)
+{
+        int ret = mnt_get_write_access(m);
+	if (!ret)
+		sb_start_write(m->mnt_sb);
+        return ret;
+}
 
-Done, thanks.
+	Note that mnt_want_write_file() on e.g. a regular file opened
+for write will have sb_start_write() done with mnt_get_write_access()
+already in place since open(2).  So the nesting shouldn't be an issue
+here...  The same order (mount then superblock) is used for overlayfs
+copyup, for that matter.
 
-> 
-> > +
-> > +	while (len) {
-> > +		mem = kmap_local_page(page);
-> > +		chunk = min_t(unsigned int, len, PAGE_SIZE - off);
-> > +		memcpy_flushcache(pmem_addr, mem + off, chunk);
-> > +		kunmap_local(mem);
-> > +		len -= chunk;
-> > +		off = 0;
-> > +		page++;
-> > +		pmem_addr += chunk;
-> > +	}
-> > +}
-> > +
-> > +static long __dev_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
-> > +			long nr_pages, enum dax_access_mode mode, void **kaddr,
-> > +			pfn_t *pfn)
-> > +{
-> > +	struct dev_dax *dev_dax = dax_get_private(dax_dev);
-> > +	size_t size = nr_pages << PAGE_SHIFT;
-> > +	size_t offset = pgoff << PAGE_SHIFT;
-> > +	void *virt_addr = dev_dax->virt_addr + offset;
-> > +	u64 flags = PFN_DEV|PFN_MAP;
-> 
-> spaces around the |
-> 
-> Though given it's in just one place, just put these inline next
-> to the question...
+	So if it's a matter of waiting for thaw with mount write
+count already incremented, simple echo foo > pathname would already
+demonstrate the same, no matter of which order mnt_want_write() uses.
+What am I missing there?
 
-Done and done.
-
-> 
-> 
-> > +	phys_addr_t phys;
-> > +	pfn_t local_pfn;
-> > +	size_t dax_size;
-> > +
-> > +	WARN_ON(!dev_dax->virt_addr);
-> > +
-> > +	if (down_read_interruptible(&dax_dev_rwsem))
-> > +		return 0; /* no valid data since we were killed */
-> > +	dax_size = dev_dax_size(dev_dax);
-> > +	up_read(&dax_dev_rwsem);
-> > +
-> > +	phys = dax_pgoff_to_phys(dev_dax, pgoff, nr_pages << PAGE_SHIFT);
-> > +
-> > +	if (kaddr)
-> > +		*kaddr = virt_addr;
-> > +
-> > +	local_pfn = phys_to_pfn_t(phys, flags); /* are flags correct? */
-> > +	if (pfn)
-> > +		*pfn = local_pfn;
-> > +
-> > +	/* This the valid size at the specified address */
-> > +	return PHYS_PFN(min_t(size_t, size, dax_size - offset));
-> > +}
-> 
-> > +static size_t dev_dax_recovery_write(struct dax_device *dax_dev, pgoff_t pgoff,
-> > +		void *addr, size_t bytes, struct iov_iter *i)
-> > +{
-> > +	size_t off;
-> > +
-> > +	off = offset_in_page(addr);
-> 
-> Unused.
-
-Righto. Thanks.
-
-> > +
-> > +	return _copy_from_iter_flushcache(addr, bytes, i);
-> > +}
-> 
-> 
-
-Thanks!
-John
-
+	IIRC, that was Jan's stuff... <checks git log> yep - eb04c28288bb
+"fs: Add freezing handling to mnt_want_write() / mnt_drop_write()" is
+where it came from...
 
