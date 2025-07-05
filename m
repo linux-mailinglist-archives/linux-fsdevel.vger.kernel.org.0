@@ -1,144 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-54004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBF8AF9E9C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 09:10:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FBBAF9EED
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 09:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2529F48820D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 07:10:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFD6A7A47A5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Jul 2025 07:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E2B2741CB;
-	Sat,  5 Jul 2025 07:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40BC2877EE;
+	Sat,  5 Jul 2025 07:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAQeZsOm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690DD1DD0D4;
-	Sat,  5 Jul 2025 07:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C5F285C91;
+	Sat,  5 Jul 2025 07:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751699414; cv=none; b=gBO/SiqAEvz6d3/+XOtxqOCpByCYeKvw/vuK7ERUZeOf9jETPvTvAylIkmaNgEuAW0ahdVkM7ztLPoN7R614COUkPh2+/M2Iob+g6jwm2IJ/7GfQIqg4714LvI8hLyXeCHLkRI3Ed5YHEn5rIyNx0IYtLy2gQsl7ohz912XUiic=
+	t=1751702352; cv=none; b=MemrjG/GshUK5d6dM+9LRAyqi7RmNRFZ7ouYl40NFd8ZYU711AOxeSqGSjjqU02fbqaGthleBPedDwuU+fuvtlPIoGC28TZjRf8LlT4WOzWe4nHgqoE+uNYsoCPl/+f5KYtxMxFgCl7Mv82Kl8VaKYkbXurveRLfF2zUBN9/PBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751699414; c=relaxed/simple;
-	bh=D7TQOOjltjXwEI9gZjZ2pDomlcz9NTXBEIbpgbwlSLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lREKmYpkqq88J2zU9hpiDo9Y4D2P788Ljqkx2ZTI3D50D3fVPNl1ts9cEJ+Jk795RGntlYxuBubHMBxeG798o70yJn4D4t7OCUCPKeJ/TsTq5EyenKmxjMWBAe9bVmR5MzjlYbmRtVZMMdORVwyUH20l8w0K7huTgnueQMtJTYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bZ1q55Hn2zYQtLs;
-	Sat,  5 Jul 2025 15:10:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 8EA471A0847;
-	Sat,  5 Jul 2025 15:10:08 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP3 (Coremail) with SMTP id _Ch0CgBnxyTKz2hoUJLWAg--.53385S3;
-	Sat, 05 Jul 2025 15:10:04 +0800 (CST)
-Message-ID: <094a1420-9060-4dcf-9398-8873193f5f7b@huaweicloud.com>
-Date: Sat, 5 Jul 2025 15:10:02 +0800
+	s=arc-20240116; t=1751702352; c=relaxed/simple;
+	bh=MyvvlUkjHpDb25gllFrtgrhNwHVoB15nnK/0nLDzEpA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OrQhL+aNYwdbmxeDHvAkD+Wfo0lJUuYW8Dllye8JV/YmNE0BpUtFiqQkhP1fAKI15I1SAH7NZpxCRft2MFoQc4jHIKr2KeJ+DsPOYkZPxOf0vDyzVq4/Rsn7Bj/+Wmz5EGcPn8m8bq7a/4QfxFuffgJoezfaUnFG2StJFzXeJJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAQeZsOm; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60bf5a08729so2768128a12.0;
+        Sat, 05 Jul 2025 00:59:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751702349; x=1752307149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2DUPGizcJCKcVSiA1WanuvVCLC1N0ClOoR03LFG1lAw=;
+        b=cAQeZsOmMme7NKeeX539riLeh7lLAINIDOP0gqnBjEmSYw6fu9yEX1d0mbl36cMTVw
+         vCN7q3N7DKja75W2KTac8nLqrIow1trLAQP5nnjc+gchUPM/HUFCL1BxRgbJSoi9NvzX
+         9Jnx0J8T3qhCHQut2/tujk19Qi2mWIPIUnUzKDPhbLAMcEYSPYtFC/YJB7Tg4Yu2UazY
+         0FuEoL7EMl2u+5vnoTqj3OUARn7IkyuttYWxVOKodjWrgVJJxNXJN5JX2OGVzWH/dysn
+         Dy0RJtur64ScO7nUmbVUctsJettbxGoPqp6Mr6tgmKbWpcZBQqomKsqBYb3AnV04e9FU
+         rc5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751702349; x=1752307149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2DUPGizcJCKcVSiA1WanuvVCLC1N0ClOoR03LFG1lAw=;
+        b=N1GRkpDG3N3EE2cJsKN+iP4tui1nB23HayKdbSQAakkaXcV3gZCYIff94E/vxKVtpm
+         V/8pXAo9onj+Fzu3v/ifcSBlTBRafyUrvnBb4YVNRgfIdIMjLeph2pRaj5i78ok+geYu
+         ytm7n6GxD01Z1G6TP7Pa0DSzRsW+iJTHXw+LxqLl0ZUfAP0uhpui7P1YbBYmXeg9cqDG
+         T3GCrq+AttprtAdERrBfeQ3xRPEdbQesivP5K1AfzinfNm7x2CRB4jaq5a5CtJygz+WM
+         O2iMc/MS2Is0bw0ty2T8AYxzFX2PccLSSrSCsSuA8haPFLHWswVud08HNqd2rd3rxo2J
+         UJQw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/OuCM/UICxVq3VMd37ME/mneEr0Kp0tc56dK+oBGFH4BQ4UzmOFj8P8BzOX95Z2H7zA0YU0P5FQ1+Qic8PA==@vger.kernel.org, AJvYcCUIk33d0iYVA9OF3rTopUA05CPDqD6a79lqJ+NX1AXsRKFsshxKSER7FmU1yDPZXUnDRVT58lqVOTU=@vger.kernel.org, AJvYcCV5KsR89cgv3kf4RXot07EQa0NO/SGzdls5PJrwQPzc1BqDA/lKdMhQcVvu45ZFgJx1wSnrOR+CEE9Eg9Sc@vger.kernel.org, AJvYcCXW+Zhljd6Xv9v0MRJ5dDi6iMtHZvz11W+Zp0ZKzMw8P71+gHYA0mOV8iH6DbHIwKzYjcT/ekj6YIFk@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGsll9zv9ABndnSObvHyzTvcI6KJufwB8Pf5YvlLeAYXb+mKKz
+	dSEIPEg1EMJkGDSocFtS5dYrAOxIHCKpVDp8hN9qez8UZ8/9qgl7ZrFii3xbA1tY2WdsIhaf2mg
+	Ue90rNe4VdmIR9pDLkHu9M1d19HKC1BY=
+X-Gm-Gg: ASbGncvvM9PQQQ9xdo0ErQaHslQqvYm5JCyRguhOC3eFUi+3zwN12LZTMGaHOevIUUE
+	XcjH+TNzM4e40pB5hSIzqVPr4esh2T6Rd7jVGWYz1e90UI5x7FDzbSVh7uMMpLahNrsG+CfIEGS
+	vuoOP8PWKvYNplxtFRQ9+FzuzGrdtGJ9Xp5mllVadui3Q=
+X-Google-Smtp-Source: AGHT+IGdvwsNyuJyTecRCTicnpvM7VA0CpzpCj0R6PEmEpr94y/m3eOzdizlm78HEjU0cgum7EREQ9o3ZQ/9Bn0+shk=
+X-Received: by 2002:a17:907:6d04:b0:ae0:34d4:28a5 with SMTP id
+ a640c23a62f3a-ae3fe3dafd3mr490037666b.0.1751702348395; Sat, 05 Jul 2025
+ 00:59:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: next-20250626: WARNING fs jbd2 transaction.c start_this_handle
- with ARM64_64K_PAGES
-To: Joseph Qi <jiangqi903@gmail.com>
-Cc: linux-ext4 <linux-ext4@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
- open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- Linux Regressions <regressions@lists.linux.dev>,
- LTP List <ltp@lists.linux.it>, Theodore Ts'o <tytso@mit.edu>,
- Jan Kara <jack@suse.cz>, Anders Roxell <anders.roxell@linaro.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Naresh Kamboju <naresh.kamboju@linaro.org>
-References: <CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com>
- <2dbc199b-ef22-4c22-9dbd-5e5876e9f9b4@huaweicloud.com>
- <CA+G9fYv5zpLxeVLqYbDLLUOxmAzuXDbaZobvpCBBBuZJKLMpPQ@mail.gmail.com>
- <2ee5547a-fa11-49fb-98b7-898d20457d7e@gmail.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <2ee5547a-fa11-49fb-98b7-898d20457d7e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgBnxyTKz2hoUJLWAg--.53385S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJry3Gr1kKrW8KF1rCryrtFb_yoW8AF4rpa
-	y3Ja4DCF4UGr18JrWIqF1vqw17ta18tr48Xr9xGry5C3Z0yF1xur4SgF1j9F90vr1xuwnY
-	qr4q9a4I9ayjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-13-john@groves.net>
+ <CAOQ4uxh-qDahaEpdn2Xs9Q7iBTT0Qx577RK-PrZwzOST_AQqUA@mail.gmail.com>
+ <c73wbrsbijzlcfoptr4d6ryuf2mliectblna2hek5pxcuxfgla@7dbxympec26j> <gwjcw52itbe4uyr2ttwvv2gjain7xyteicox5jhoqjkr23bhef@xfz6ikusckll>
+In-Reply-To: <gwjcw52itbe4uyr2ttwvv2gjain7xyteicox5jhoqjkr23bhef@xfz6ikusckll>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 5 Jul 2025 09:58:57 +0200
+X-Gm-Features: Ac12FXwv8-5VHpFmc1k0yFgQhA2TPysX4Xc_lFwiFozmpCMZCqpYDc11sx5Oc4k
+Message-ID: <CAOQ4uxhnCh_Mm0DGgqwA5Vr4yySgSovesTqbnNH7Y_PXE9fzpg@mail.gmail.com>
+Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
+To: John Groves <John@groves.net>
+Cc: Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/7/3 18:47, Joseph Qi wrote:
-> 
-> 
-> On 2025/7/3 15:26, Naresh Kamboju wrote:
->> On Thu, 26 Jun 2025 at 19:23, Zhang Yi <yi.zhang@huaweicloud.com> wrote:
->>>
->>> Hi, Naresh!
->>>
->>> On 2025/6/26 20:31, Naresh Kamboju wrote:
->>>> Regressions noticed on arm64 devices while running LTP syscalls mmap16
->>>> test case on the Linux next-20250616..next-20250626 with the extra build
->>>> config fragment CONFIG_ARM64_64K_PAGES=y the kernel warning noticed.
->>>>
->>>> Not reproducible with 4K page size.
->>>>
->>>> Test environments:
->>>> - Dragonboard-410c
->>>> - Juno-r2
->>>> - rk3399-rock-pi-4b
->>>> - qemu-arm64
->>>>
->>>> Regression Analysis:
->>>> - New regression? Yes
->>>> - Reproducibility? Yes
->>>>
->>>> Test regression: next-20250626 LTP mmap16 WARNING fs jbd2
->>>> transaction.c start_this_handle
->>>>
->>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->>>
->>> Thank you for the report. The block size for this test is 1 KB, so I
->>> suspect this is the issue with insufficient journal credits that we
->>> are going to resolve.
->>
->> I have applied your patch set [1] and tested and the reported
->> regressions did not fix.
->> Am I missing anything ?
->>
->> [1] https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
->>
-> 
-> I can also reproduce the similar warning with xfstests generic/730 under
-> 64k page size + 4k block size.
-> 
+On Sat, Jul 5, 2025 at 2:06=E2=80=AFAM John Groves <John@groves.net> wrote:
+>
+> On 25/07/04 03:30PM, John Groves wrote:
+> > On 25/07/04 10:54AM, Amir Goldstein wrote:
+> > > On Thu, Jul 3, 2025 at 8:51=E2=80=AFPM John Groves <John@groves.net> =
+wrote:
+> > > >
+> > > > Upon completion of an OPEN, if we're in famfs-mode we do a GET_FMAP=
+ to
+> > > > retrieve and cache up the file-to-dax map in the kernel. If this
+> > > > succeeds, read/write/mmap are resolved direct-to-dax with no upcall=
+s.
+> > > >
+> > > > GET_FMAP has a variable-size response payload, and the allocated si=
+ze
+> > > > is sent in the in_args[0].size field. If the fmap would overflow th=
+e
+> > > > message, the fuse server sends a reply of size 'sizeof(uint32_t)' w=
+hich
+> > > > specifies the size of the fmap message. Then the kernel can realloc=
+ a
+> > > > large enough buffer and try again.
+> > > >
+> > > > Signed-off-by: John Groves <john@groves.net>
+> > > > ---
+> > > >  fs/fuse/file.c            | 84 +++++++++++++++++++++++++++++++++++=
+++++
+> > > >  fs/fuse/fuse_i.h          | 36 ++++++++++++++++-
+> > > >  fs/fuse/inode.c           | 19 +++++++--
+> > > >  fs/fuse/iomode.c          |  2 +-
+> > > >  include/uapi/linux/fuse.h | 18 +++++++++
+> > > >  5 files changed, 154 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > > > index 93b82660f0c8..8616fb0a6d61 100644
+> > > > --- a/fs/fuse/file.c
+> > > > +++ b/fs/fuse/file.c
+> > > > @@ -230,6 +230,77 @@ static void fuse_truncate_update_attr(struct i=
+node *inode, struct file *file)
+> > > >         fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
+> > > >  }
+> > > >
+> > > > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > >
+> > > We generally try to avoid #ifdef blocks in c files
+> > > keep them mostly in h files and use in c files
+> > >    if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
+> > >
+> > > also #if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > > it a bit strange for a bool Kconfig because it looks too
+> > > much like the c code, so I prefer
+> > > #ifdef CONFIG_FUSE_FAMFS_DAX
+> > > when you have to use it
+> > >
+> > > If you need entire functions compiled out, why not put them in famfs.=
+c?
+> >
+> > Perhaps moving fuse_get_fmap() to famfs.c is the best approach. Will tr=
+y that
+> > first.
+> >
+> > Regarding '#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)', vs.
+> > '#ifdef CONFIG_FUSE_FAMFS_DAX' vs. '#if CONFIG_FUSE_FAMFS_DAX'...
+> >
+> > I've learned to be cautious there because the latter two are undefined =
+if
+> > CONFIG_FUSE_FAMFS_DAX=3Dm. I've been burned by this.
 
-Hi, Joseph!
+Yes, that's a risk, but as the code is shaping up right now,
+I do not foresee FAMFS becoming a module(?)
 
-I cannot reproduce this issue on my machine. Theoretically, the 'rsv_credits'
-should be 113 under 64k page size + 4k block size, I don't think it would
-exceed the max user trans buffers. Could you please give more details?
-What is the configuration of your xfstests? and what does the specific error
-log look like?
+> >
+> > My original thinking was that famfs made sense as a module, but I'm lea=
+ning
+> > the other way now - and in this series fs/fuse/Kconfig makes it a bool =
+-
+> > meaning all three macro tests will work because a bool can't be set to =
+'m'.
+> >
+> > So to the extent that I need conditional compilation macros I can switc=
+h
+> > to '#ifdef...'.
+>
+> Doh. Spirit of full disclosure: this commit doesn't build if
+> CONFIG_FUSE_FAMFS_DAX is not set (!=3Dy). So the conditionals are at
+> risk if getting worse, not better. Working on it...
+>
+
+You're probably going to need to add stub inline functions
+for all the functions from famfs.c and a few more wrappers
+I guess.
+
+The right amount of ifdefs in C files is really a matter of judgement,
+but the fewer the better for code flow clarity.
 
 Thanks,
-Yi.
-
+Amir.
 
