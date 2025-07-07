@@ -1,167 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-54192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D5EAFBE79
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 01:03:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73471AFBE7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 01:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCE7A1AA6E65
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 23:03:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4A7D7A3123
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 23:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4452877FE;
-	Mon,  7 Jul 2025 23:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD112749E6;
+	Mon,  7 Jul 2025 23:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="MxCRig41"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="b2PAma9x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4381F4626
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 23:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99621F4626
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 23:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751929377; cv=none; b=BQCiiTRrtzJv7mKpCx7a7oraR2uSIms1cyUzD7ioNgeqOJgCIX8Vgkz3res1H8Oi90ewZoP0v6ob4S7E6dZCvxF24QQSs3KpSlJWw6iGYKwjcIWFUxkuZw9xUuKRFs1uAnkbip1e72gBFyUUjUoAR2ek6Xa1HlE1wpnhIsZkgok=
+	t=1751929457; cv=none; b=fnJNbq4EhGUYAUS9Ecro7jo7hySsLl9TGFl8m1UZovLU5At0GP4iHUWDDZTl7Evl9CnXI4SCEB6WERfifXUREVJBbSWVuhOHWHQfJPo9G2laI5jlYLLetN5A4L/c2RfdFunjqXsjG7A+a6d30y973mA6hZP2RZM5aoC+YTK5x3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751929377; c=relaxed/simple;
-	bh=venDfP4EzG2xqmDXVnH3VRXG5eR6DtQAF3gSkZjRBT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhG4+hcsJ2jd1wKTAwar0X2CsIuhGEax+QGPggXXPCyjqqXloIEl/737cYbyXe4+X9S6QOp7rpbmvxaxhpbvrH7AoTflHEobMLBWoSHsnkYhI/ddpkLPtHZvWirZ/MrXWgEEOKsfWldUUKDFt6Vyjph+cK3Cht7JVArYvGxt50w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=MxCRig41; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-235e1d710d8so49200795ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 16:02:56 -0700 (PDT)
+	s=arc-20240116; t=1751929457; c=relaxed/simple;
+	bh=iTcscXLpiNPkLALp2XqDRTyYaj6XRnBYFsKRM+hRvp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QcESDhK51DprV4iwdrhn/9tTuwSXGclfRAcbl5k6ERotZEo9PkrAtQ5KzLZqP1pYIz1rUnIYPzGRcd7kpgPqBFQeY5csln3qL1UNGAhY/wLlGjfbvw+DDnoMuleyT7Y55xd4N8H7B0tVpJPL20ZeLXweEvnmqMFDk5lFeo9wprc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=b2PAma9x; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a588da60dfso2479177f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 16:04:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1751929376; x=1752534176; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4pktmlF1vRQduNDQ1SA6N8TiSZQUsg3NAWNf5AHgsY=;
-        b=MxCRig41TeJCa4KM/L6Xz2oFlIdtYCjD3OA6mnEuD5bDPv/IMBE3qkHV8dh3fNz2zk
-         +8loAAi1XyTJh0utYOcYgRaPp6Lq9hHmdj1Ml2Iu1VWbIuVtW+rYgGEvQLUUH2zHU1Bc
-         FZFzWHl0hOzYJ/Keixpf2MV4V2SL1nPOCuJnE6VhX9VZNqH3dwv7PIZHOv1xX1hyYwxH
-         LuBdFhXco5s+r5zoeaU2mPc4AhjyZrrDkFwXmJlzQcwOSx61JiROY3+fI1WVGUXPWPXS
-         m5rRjeSsQGE6irXyLOZyZvEteCvQepQG7+HADZUSi6OO6h2KgCkFfEmgY8SBNPNM7N8R
-         3REg==
+        d=suse.com; s=google; t=1751929454; x=1752534254; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iKJ3IWaVesX53YBHi2MAXOtjvL7dHq4KVlTeOhgVcrY=;
+        b=b2PAma9xgxSovs/6UCOeUOSFf29YA5Gnc2RsgdAfljqDjsp0A3uJhW8vad/CtUzc/C
+         YBzv1QGRH9ZZ4Jm59Pz+vn8bF0R3vyZat+SGyuUc8VVVJpZ+ZlkOcX/Bsd5RC/HzlCQx
+         5xLzFlat9zaqgA/8RtETgaeAwtP1qU0iCxDkke8fcDY2byXPKu0ptPsnNr449ZKHKOK8
+         tvOfFyL/ryRu4vspu5O57OnmP4d/RrSAPsGdZJ7vZW7CH4/H+WVBcIk14/YCX57EGgMP
+         zTU1NIVZ8VssG2yPUfAtMNiRFjqE/0tAjh+7RVAKLmZcKBk+RWSctimdx8MNYnpWniez
+         LEGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751929376; x=1752534176;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1751929454; x=1752534254;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c4pktmlF1vRQduNDQ1SA6N8TiSZQUsg3NAWNf5AHgsY=;
-        b=kHLVDDaobLHPF1jxVBOE0BFIpASqSnW8V7YsP7WUDDcXPIifNyNj7vI6OY3q2jdcJU
-         nIXGED/chJAokhrdlXAh3eDk1Wc85Dq7ZAx1kpBAYCMjQ/M4z80I6lAoYWQ5cQWTPCR9
-         SGy15shaOIEHOHjMvTVSK0OaAIt9NRpBP84izTKYwwZMfmzN5wM+IaR353HEq50rDP8z
-         80p9FMviR88v1uWykP2q+Ds7HUwlPSrGX2J2Q69Z+goMlMGH9jcXP6fP7yAhNHKJXVSy
-         EgnBQUzlmbJMDW6Slin0rjAtryQQ1cZ7P+PdhWu5gRWIOjhv+TIboHJnJ/xUHBJfdvys
-         B4EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAWra7rdG4aqkf2TKi0N5K98skBsgCgN9+7jKV4RE1um56XNfEwl3Gs5UbULjmbhu3I6QApby7YG0j8rOJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMHKftCFzn+clOx25SuYBQSh653ErLVtyFd0c2uZ7MoviF0FGc
-	jEqXvmH3+/KoJyh8WvgVLkwQS80qeTtPChgzFGlXLuth/KWs88TVq/xa5cQ19pggn8Y=
-X-Gm-Gg: ASbGncu+aoHIbT0V5tY5M5X7CJSQIN9baRELULILyTLXE7LdNHP0ePjfJIyOd9nw9ev
-	4C1LoLD95NEJ5TLmFsOwhB7asMIxhnLIkHPP6fQVn0chBsZRzmVNW0E+/PL9q7oz6zziPplca/O
-	1rIxhdIT5T10xqdi+ORWIGe93ljl2mTgddlt9O5RwousFOnmLEOvIIbPpeaPj/n09qlsBbMGClr
-	Sr0/x7fhUv698h3nztAQxaGufgd0jsOM01vku3BECRPSJAya4HWugzMEowfyXZ7HGirUQ4g3GvB
-	ilIiXvqBMF99R8Vns/CrKVQSpQTzzypADRtgkiEBcbVbJAq6CdEkUyJaAIsF8giKdvKqIYv96BI
-	rfl+fQ3a83bft8mcXoyd+jODiqvfjn1XVn2wnjBgfaduglA/T
-X-Google-Smtp-Source: AGHT+IEmTi6zrkNyOcS4BN99ZoRqMQGa5CBIfG1MgDs1BPtD4rrI5GMD5dIJM6aSPlLP7bK+loeCfw==
-X-Received: by 2002:a17:902:ce10:b0:234:8ec1:4ad3 with SMTP id d9443c01a7336-23dd1d5cc19mr6352555ad.40.1751929375710;
-        Mon, 07 Jul 2025 16:02:55 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431a1f0sm102785765ad.32.2025.07.07.16.02.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 16:02:55 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uYurM-00000008CeO-1qLV;
-	Tue, 08 Jul 2025 09:02:52 +1000
-Date: Tue, 8 Jul 2025 09:02:52 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Qu Wenruo <wqu@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] fs: enhance and rename shutdown() callback to
- remove_bdev()
-Message-ID: <aGxSHKeyldrR1Q0T@dread.disaster.area>
-References: <cover.1751589725.git.wqu@suse.com>
- <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
+        bh=iKJ3IWaVesX53YBHi2MAXOtjvL7dHq4KVlTeOhgVcrY=;
+        b=WWYnLXchbV1keCgaHXBio4QPnK/thSQyxCj1mXL2S1MGOdi+s72VD7KpPPycNfQuww
+         EDsvIRjXSA6+78hhC63jZf8Ono7wvKVIphpj0t0R/DMkt+ViaQbPToDSj0yL76jF6kEk
+         iUdN9t1BK9s6Hx0/3CzAnQCWjpap84WU53Ka1Gc4VW/1zR6I4AWvVJVn4kBDM4YBFcRI
+         IksIQ0lGh4CXJEFTS/z0Y96ZFD9y/qIQ6PeFqmtd1R8AOwahDBFekCXHetHSBCgqyNFk
+         s6fIKaGYgfg52xelYFrsQAyk1gy29D+cvNFTc1xwFjUcY538MWK2/ffIzEv2ynEysDah
+         M8lg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Bq69E+/XvmXZaklHGMsO81EtkjpJrWrneHNyJ2Q6rJR1YjDvUToSexgo//Qqk04yLHeHbMfAGbuMHFlZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgZlbfmpVxPdxPFcGFsq9+dNQ/apsBrctjMrztyQGorYA6qXrf
+	UV1w+HAUE+Cwty0SFjNRWNzPnYJg02gFWUTfVYR5SovNFpp45Fo+uuBCXzvsSe92qbI=
+X-Gm-Gg: ASbGncuMZp4GXvZyildnDUGdjWRsZFHHFxo16g6kibiZE5NbxIOSTNRQldLpazrumz/
+	+0Fw+SRWFpG6Vebl5+5rgjk8svdJJlZvFJXH3jXNE19pJS2wQ7e+Jh/+zuxk/vzp4fiP00jdZwo
+	+SXUpiMkPCAxfufI58y+xi3nkrfDSywSpDRUW/V84Xiu0AxTy3GB3/HkOMCHF+nE0q7Al/KNSg9
+	dq+neI+r+nS4r4Za/dXv8xZMnxbxXvSynZRNjReOsYiSelchbsf/uyxOO//ZQduW+L3vgHr5v9x
+	2/mzwKw4HKIy26jiQ5uUQDgm8VPDnUS6GbDPp4qa7u95Wrc2FkZ17r9b4Pzfy23bhJ2u5gqjGtm
+	PIPVqVsK+YzJjAg==
+X-Google-Smtp-Source: AGHT+IGattlpWjGt+2o+RMaSUgOSTRf8EPzXLwte5tyvRPcnP3BvyHxs2B7miIWwAIZD2rhaeoH/YQ==
+X-Received: by 2002:a5d:64e7:0:b0:3a4:ddde:13e4 with SMTP id ffacd0b85a97d-3b4964ee263mr10740028f8f.58.1751929453847;
+        Mon, 07 Jul 2025 16:04:13 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431edb8sm101139545ad.50.2025.07.07.16.04.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 16:04:13 -0700 (PDT)
+Message-ID: <eac924e4-fb2e-42fd-979a-4a0829f67377@suse.com>
+Date: Tue, 8 Jul 2025 08:34:09 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] btrfs: implement shutdown ioctl
+To: dsterba@suse.cz
+Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
+References: <cover.1751589725.git.wqu@suse.com>
+ <5ff44de2d9d7f8c2e59fa3a5fe68d5bb4c71a111.1751589725.git.wqu@suse.com>
+ <20250705142230.GC4453@twin.jikos.cz>
+ <6642f8b5-d357-4fb6-a295-906178a633f9@suse.com>
+ <20250707205125.GI4453@twin.jikos.cz>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20250707205125.GI4453@twin.jikos.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 04, 2025 at 10:12:29AM +0930, Qu Wenruo wrote:
-> Currently all the filesystems implementing the
-> super_opearations::shutdown() callback can not afford losing a device.
+
+
+在 2025/7/8 06:21, David Sterba 写道:
+> On Sun, Jul 06, 2025 at 01:07:19PM +0930, Qu Wenruo wrote:
+>> 在 2025/7/5 23:52, David Sterba 写道:
+>>>> +static int btrfs_emergency_shutdown(struct btrfs_fs_info *fs_info, u32 flags)
+>>>> +{
+>>>> +	int ret = 0;
+>>>> +
+>>>> +	if (flags >= BTRFS_SHUTDOWN_FLAGS_LAST)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	if (btrfs_is_shutdown(fs_info))
+>>>> +		return 0;
+>>>> +
+>>>> +	switch (flags) {
+>>>> +	case BTRFS_SHUTDOWN_FLAGS_LOGFLUSH:
+>>>> +	case BTRFS_SHUTDOWN_FLAGS_DEFAULT:
+>>>> +		ret = freeze_super(fs_info->sb, FREEZE_HOLDER_KERNEL, NULL);
+>>>
+>>> Recently I've looked at scrub blocking filesystem freezing and it does
+>>> not work because it blocks on the semaphore taken in mnt_want_write,
+>>> also taken in freeze_super().
+>>>
+>>> I have an idea for fix, basically pause scrub, undo mnt_want_write
+>>> and then call freeze_super. So we'll need that too for shutdown. Once
+>>> implemented the fixup would be to use btrfs_freeze_super callback here.
+>>
+>> It may not be that simple.
+>>
+>> freeze_super() itself is doing extra works related to the
+>> stage/freeze_owner/etc.
+>>
+>> I'm not sure if it's a good idea to completely skip that part.
+>>
+>> I'd prefer scrub to check the frozen stage, and if it's already in any
+>> FREEZE stages, exit early.
 > 
-> Thus fs_bdev_mark_dead() will just call the shutdown() callback for the
-> involved filesystem.
-> 
-> But it will no longer be the case, with multi-device filesystems like
-> btrfs and bcachefs the filesystem can handle certain device loss without
-> shutting down the whole filesystem.
-> 
-> To allow those multi-device filesystems to be integrated to use
-> fs_holder_ops:
-> 
-> - Replace super_opearation::shutdown() with
->   super_opearations::remove_bdev()
->   To better describe when the callback is called.
+> I have working prototype for pausing scrub that does not need to exit,
+> so far I've tested it with fsfreeze in a VM, I still need to test actual
+> freezing for suspend purposes.
 
-This conflates cause with action.
+Not sure how would you test with running scrub and freeze, but please 
+enable lockdep for the potential reversed lock sequence related to btrfs 
+specific locks and s_umount/s_writers.rw_sem.
 
-The shutdown callout is an action that the filesystem must execute,
-whilst "remove bdev" is a cause notification that might require an
-action to be take.
+But I guess we should have a test case utilizing freeze and scrub.
+Especially that fsstress doesn't include freeze, thus we have to 
+manually do scrub and freeze (maybe with fsstress at the background).
 
-Yes, the cause could be someone doing hot-unplug of the block
-device, but it could also be something going wrong in software
-layers below the filesystem. e.g. dm-thinp having an unrecoverable
-corruption or ENOSPC errors.
+We need such test case no matter if we allow scrub to be paused/canceled.
 
-We already have a "cause" notification: blk_holder_ops->mark_dead().
-
-The generic fs action that is taken by this notification is
-fs_bdev_mark_dead().  That action is to invalidate caches and shut
-down the filesystem.
-
-btrfs needs to do something different to a blk_holder_ops->mark_dead
-notification. i.e. it needs an action that is different to
-fs_bdev_mark_dead().
-
-Indeed, this is how bcachefs already handles "single device
-died" events for multi-device filesystems - see
-bch2_fs_bdev_mark_dead().
-
-Hence Btrfs should be doing the same thing as bcachefs. The
-bdev_handle_ops structure exists precisly because it allows the
-filesystem to handle block device events in the exact manner they
-require....
-
-> - Add a new @bdev parameter to remove_bdev() callback
->   To allow the fs to determine which device is missing, and do the
->   proper handling when needed.
-> 
-> For the existing shutdown callback users, the change is minimal.
-
-Except for the change in API semantics. ->shutdown is an external
-shutdown trigger for the filesystem, not a generic "block device
-removed" notification.
-
-Hooking blk_holder_ops->mark_dead means that btrfs can also provide
-a ->shutdown implementation for when something external other than a
-block device removal needs to shut down the filesystem....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Qu
 
