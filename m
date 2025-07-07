@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-54127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1974DAFB5FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:27:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0B2AFB605
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F9EE4A5ED4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:27:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B47B5602E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643552D979A;
-	Mon,  7 Jul 2025 14:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C155F2DECAD;
+	Mon,  7 Jul 2025 14:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="wp3KZfoK"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ffR+SWki"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100FE2D94AC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1008C2D8DA7;
 	Mon,  7 Jul 2025 14:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751898227; cv=none; b=q0gvn/+qY3AfhVpSQbL46+m+fcXPoymH0fHR8K8mtFChZhaTuUBZu11gWAWGgpBOVzbv5nWcGr5nQ1pJvD8HdhDG70F+4t8nRDc78f8OSh5FM8rG8/SC0an7D62rE1RSrtdsbsitfOWJlHVU1YKQQh2kgXYGWCMxwTHyMOcEDrQ=
+	t=1751898229; cv=none; b=TZ7WKOn0RNtqPvsuMWS7CsnmqP5WNmDUyid74e7sbLzYN6SNzk9HJ4qwQCA2FPCqv+xaZVfZmMaFXGQ7ZJ0YNTsViTPiJn9vqwGAL5yl1FEsbRHBncq9tUvtFXULXECuGfKrUlTDDRbR4XInPeKPCJEC/C3DP5tno+I+riV7qmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751898227; c=relaxed/simple;
-	bh=Yit2Oo5Uv3NUZPX8v4yxQ8Kkxzn/eltUeObd9Yys35U=;
+	s=arc-20240116; t=1751898229; c=relaxed/simple;
+	bh=Ivb4sEJ315yPpA6w6gGkLWI94DbQvOmt61KT3beBg94=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h2zE9Xll2K6/s6vxsvmCtznPDllnlUXsx7gUpDcwHUCxmBB9icNZpqGb/4XP44P86iaL6qvD3N9jYdpBua7bzbhg3fEH5EJsfS7bFv2wJrhXATQHS4YssKS4aGTti8AIQbF7hb651s8hmaWmv4j9bucutfl4iYc8paxdC5c2nJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=wp3KZfoK; arc=none smtp.client-ip=80.241.56.152
+	 MIME-Version; b=CpXdLlGIMGUcnOe3jl6NfSLDwgaFkMhfq0Q9wt9XIruhOCduRcZqQXVT+WRD2CYUwG8crl54Pgo5iLth7DevA/I5tQ5D0B7Z4tdygRZrzhPzU9Yd/WnbVgsRtQviGYiH6a+JYbD33RzO5iw4AxK6w3CDOeW03twUAdvWVnE7e+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ffR+SWki; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bbRLJ1x3pz9tyQ;
-	Mon,  7 Jul 2025 16:23:36 +0200 (CEST)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bbRLQ4bdWz9t1B;
+	Mon,  7 Jul 2025 16:23:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1751898216;
+	s=MBO0001; t=1751898222;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d91pgcDgrRL2JpOOqB781Bo9qwyVwFxGfEFfjYlReNI=;
-	b=wp3KZfoKnF6ITu982GQemk4XaqE9lTE0V+hBMyjHhaiQUaHbr+ZgnuudICs62/+f+pNYJt
-	rpsnAm8HGEE66RB+ZOKlhdeRFUec9kMz7r/+Oa9UmEPuSo8M1tXS0+THT7yYM37KUFc47X
-	hlPW0H9WjuHh5J/5IMS7z5fAuO8uwF+XeFCOrxVhPeZfajkWEdUWFAu5fxbsolNDBA5F0j
-	JJku7U0793nWBiTafdK414V6ecgO5BX20ur8VcX0h8YfsjCYvOWRpC6COpuU4SMQp+PSX4
-	jHT/6YATywrR4R+vs4iV2Kn8shiXQu5VmX8LUBU1OiMcUfN0hAOjO+a6bbOv7w==
+	bh=+6e+PcGOhziaHPv2fooE3Mhq4C1IPp18icg31JFqEy0=;
+	b=ffR+SWkiKB9WbWaNGhqMuxqsE52z254tpTUQZe5jFt8NBzuujnqJZw9d1+45vg6y7eMN92
+	OB9P13fXqYVzkwN4t1wJF0vB4a9wJRhy7WQ0Iiava1lotvj/tQNQE/PFq3GzAxu07Ly+z3
+	6nD8y9sDqHk2IeKXs8KJZUEz5/vvhQnKHAnbGgvVmZLwLaCWFsqYghnAjaf5cTKjxwSDlI
+	ZQegm5oxr43vVDNZYEUtm7TZOiur6dkgIUuvQIpUhha6IrFcBbetxUWEOPY6vOHMfG4vVE
+	YqL61VItf9ZnU9IXw8EcUiwV6XOEjBhjyl3ewfpjOKpQLUHJLAiLTuYmy+fHyQ==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: Suren Baghdasaryan <surenb@google.com>,
 	Ryan Roberts <ryan.roberts@arm.com>,
@@ -81,9 +81,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel@pankajraghav.com,
 	hch@lst.de,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2 1/5] mm: move huge_zero_page declaration from huge_mm.h to mm.h
-Date: Mon,  7 Jul 2025 16:23:15 +0200
-Message-ID: <20250707142319.319642-2-kernel@pankajraghav.com>
+Subject: [PATCH v2 2/5] huge_memory: add huge_zero_page_shrinker_(init|exit) function
+Date: Mon,  7 Jul 2025 16:23:16 +0200
+Message-ID: <20250707142319.319642-3-kernel@pankajraghav.com>
 In-Reply-To: <20250707142319.319642-1-kernel@pankajraghav.com>
 References: <20250707142319.319642-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -96,112 +96,90 @@ Content-Transfer-Encoding: 8bit
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-Move the declaration associated with huge_zero_page from huge_mm.h to
-mm.h. This patch is in preparation for adding static PMD zero page as we
-will be reusing some of the huge_zero_page infrastructure.
+Add huge_zero_page_shrinker_init() and huge_zero_page_shrinker_exit().
+As shrinker will not be needed when static PMD zero page is enabled,
+these two functions can be a no-op.
 
-No functional changes.
+This is a preparation patch for static PMD zero page. No functional
+changes.
 
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- include/linux/huge_mm.h | 31 -------------------------------
- include/linux/mm.h      | 34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+), 31 deletions(-)
+ mm/huge_memory.c | 38 +++++++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 2f190c90192d..3e887374892c 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -478,22 +478,6 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index d3e66136e41a..101b67ab2eb6 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -289,6 +289,24 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
+ }
  
- vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
+ static struct shrinker *huge_zero_page_shrinker;
++static int huge_zero_page_shrinker_init(void)
++{
++	huge_zero_page_shrinker = shrinker_alloc(0, "thp-zero");
++	if (!huge_zero_page_shrinker)
++		return -ENOMEM;
++
++	huge_zero_page_shrinker->count_objects = shrink_huge_zero_page_count;
++	huge_zero_page_shrinker->scan_objects = shrink_huge_zero_page_scan;
++	shrinker_register(huge_zero_page_shrinker);
++	return 0;
++}
++
++static void huge_zero_page_shrinker_exit(void)
++{
++	shrinker_free(huge_zero_page_shrinker);
++	return;
++}
++
  
--extern struct folio *huge_zero_folio;
--extern unsigned long huge_zero_pfn;
--
--static inline bool is_huge_zero_folio(const struct folio *folio)
--{
--	return READ_ONCE(huge_zero_folio) == folio;
--}
--
--static inline bool is_huge_zero_pmd(pmd_t pmd)
--{
--	return pmd_present(pmd) && READ_ONCE(huge_zero_pfn) == pmd_pfn(pmd);
--}
--
--struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
--void mm_put_huge_zero_folio(struct mm_struct *mm);
--
- static inline bool thp_migration_supported(void)
+ #ifdef CONFIG_SYSFS
+ static ssize_t enabled_show(struct kobject *kobj,
+@@ -850,33 +868,31 @@ static inline void hugepage_exit_sysfs(struct kobject *hugepage_kobj)
+ 
+ static int __init thp_shrinker_init(void)
  {
- 	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
-@@ -631,21 +615,6 @@ static inline vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+-	huge_zero_page_shrinker = shrinker_alloc(0, "thp-zero");
+-	if (!huge_zero_page_shrinker)
+-		return -ENOMEM;
++	int ret = 0;
+ 
+ 	deferred_split_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE |
+ 						 SHRINKER_MEMCG_AWARE |
+ 						 SHRINKER_NONSLAB,
+ 						 "thp-deferred_split");
+-	if (!deferred_split_shrinker) {
+-		shrinker_free(huge_zero_page_shrinker);
++	if (!deferred_split_shrinker)
+ 		return -ENOMEM;
+-	}
+-
+-	huge_zero_page_shrinker->count_objects = shrink_huge_zero_page_count;
+-	huge_zero_page_shrinker->scan_objects = shrink_huge_zero_page_scan;
+-	shrinker_register(huge_zero_page_shrinker);
+ 
+ 	deferred_split_shrinker->count_objects = deferred_split_count;
+ 	deferred_split_shrinker->scan_objects = deferred_split_scan;
+ 	shrinker_register(deferred_split_shrinker);
+ 
++	ret = huge_zero_page_shrinker_init();
++	if (ret) {
++		shrinker_free(deferred_split_shrinker);
++		return ret;
++	}
++
  	return 0;
  }
  
--static inline bool is_huge_zero_folio(const struct folio *folio)
--{
--	return false;
--}
--
--static inline bool is_huge_zero_pmd(pmd_t pmd)
--{
--	return false;
--}
--
--static inline void mm_put_huge_zero_folio(struct mm_struct *mm)
--{
--	return;
--}
--
- static inline struct page *follow_devmap_pmd(struct vm_area_struct *vma,
- 	unsigned long addr, pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
+ static void __init thp_shrinker_exit(void)
  {
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0ef2ba0c667a..c8fbeaacf896 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4018,6 +4018,40 @@ static inline bool vma_is_special_huge(const struct vm_area_struct *vma)
+-	shrinker_free(huge_zero_page_shrinker);
++	huge_zero_page_shrinker_exit();
+ 	shrinker_free(deferred_split_shrinker);
+ }
  
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE || CONFIG_HUGETLBFS */
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+extern struct folio *huge_zero_folio;
-+extern unsigned long huge_zero_pfn;
-+
-+static inline bool is_huge_zero_folio(const struct folio *folio)
-+{
-+	return READ_ONCE(huge_zero_folio) == folio;
-+}
-+
-+static inline bool is_huge_zero_pmd(pmd_t pmd)
-+{
-+	return pmd_present(pmd) && READ_ONCE(huge_zero_pfn) == pmd_pfn(pmd);
-+}
-+
-+struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
-+void mm_put_huge_zero_folio(struct mm_struct *mm);
-+
-+#else
-+static inline bool is_huge_zero_folio(const struct folio *folio)
-+{
-+	return false;
-+}
-+
-+static inline bool is_huge_zero_pmd(pmd_t pmd)
-+{
-+	return false;
-+}
-+
-+static inline void mm_put_huge_zero_folio(struct mm_struct *mm)
-+{
-+	return;
-+}
-+#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-+
- #if MAX_NUMNODES > 1
- void __init setup_nr_node_ids(void);
- #else
 -- 
 2.49.0
 
