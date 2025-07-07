@@ -1,202 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-54170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B64AFBC3C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 22:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 964E9AFBC45
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 22:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3057427D93
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 20:03:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4711AA0E71
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 20:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC40F21C188;
-	Mon,  7 Jul 2025 20:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF2221CFF4;
+	Mon,  7 Jul 2025 20:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cDTLZ9TY"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="tmf/p/XE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC2821B9DE
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 20:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF94D1F1315
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 20:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751918504; cv=none; b=QH3Ye+HGgRZxfLOCoMhuGEE76Stm9HJ0ZxkCzLgwCrwFNZ0iQluImro873vTBYMRxAKPbBFpl1ORrczfDhlGZEB6zho788p2h+bM3cfIhAIEFP7ZLIakKKnqyVfaSQYA4S0+Vpc88z6k9ecUXWPuQcLs9CBmpDMm4l9u6rAHG/I=
+	t=1751918621; cv=none; b=rIIofVHqrcW5O1rEkspHtQmJrlIqHD9SyrR1aMuW0poy3kKIqjzPwGl7/iw8Fcva/kHgpR9uWI4QJ8Rcox9yBKJz10jErHCfBbCqMsTYIAtkHSTBTC6VzBUVHQN1liXV9xKz91STfGF5qlWqs2Vw+/SpTQQnS/3w8ElfUWlYfUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751918504; c=relaxed/simple;
-	bh=FdEbLOGjzd4t658A5Peq0X8hOkXjkWfiWfkvvcSRkzc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gjnksR2I4svAasRKh/oRV1OhIfJ3YSRo7rtWMADrpvOU52RxfuEhnN09shVNMK8iP3ljbm7AlhkuHb1wFxnQ1TvNSKqkD3rtRnkexMorpYtl5k3k1z1J7nfi0TlWeJMWPc2DKdGuWzrNDTZFEEPuufu9zh8C5Nm8rL06Ah6JlSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cDTLZ9TY; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71173646662so31652337b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 13:01:41 -0700 (PDT)
+	s=arc-20240116; t=1751918621; c=relaxed/simple;
+	bh=+IdW9IQoph/y/mp6ERLotvI2aGvwZg9qbaIgK75LH0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EzobnYpAoPYsceg3ONCA49k7I3dQxLqVRkoZ4yk3fUMYeI2mopsvt2WfLONTirFIGfhc0ZTue9XmVS6lSszoJrs+yC3Ch+H7oHw2YpH++usfnMQYsA47DkHsk+sqWjmBg7c86spasY3s8S2Z5kXiMorptgpKHv0mAiuNagAS0u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=tmf/p/XE; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-710fd2d0372so34835397b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 13:03:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1751918501; x=1752523301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rKLu5W4g48bt+4yviXuICuogMC7NETqzFrH52NDnWkc=;
-        b=cDTLZ9TYrPqyUZUHPV4652jc20Kjmp0EL8+jEIzcvMMdn7pIqDLFh1Tvh9Os4/PBv8
-         fUdozMNQlDAbUz+Y58iFU3mklwjb4FhT1EJbksqxoxMFn6pa8IiE2v9BH3YNwThAXAUE
-         yfQCA8EIE/3Qx70DBEXLLBw2Z8UhGmmljBDKGJmV4SClH3LRGhUHIC3vOpbTBt9lsm1f
-         oMOrI14nU1bk6yVZlTzpWkYusvKHVHcBEhd4KylzBaaqqNYrlrCAb6TpZo8Up8al0NUn
-         CgVK4KMjKVhBc11UDWZEV7/mFfygXLU64F4YmOEHzNte+S6UY74WKleTSAM3GT/0h4eY
-         CnGQ==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1751918618; x=1752523418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e0nNP1ej16t8D67FbAmnKcWyH7dm/S6OQwG69pUEMbM=;
+        b=tmf/p/XE2W98jTmjF+jRQCHSeJC7rU8SiHByIDaXrHTnBrHRBkVGFd9a5q3w2vKCee
+         S8TxPtelRA0wvCXsCfKBNhsxlW2rsWm82uIhJaXq3o5JjGxRlHSRJyx3sbEKvzBnsoEi
+         xEoNXxafFx5e0q1nyst9qfsYSZ7wde47GxHlwKVPuhvqMZwHxntggg3TeYNvwDIN7NWH
+         12O3pfXeQoK78OGr8N6JY4qx9cnlx9THkuER+uhnYKCjgHs2ELVgeiNCzOHhgm82MRZ4
+         PaMaWXNBaGbAOP/HV/yhrHwNWw6EP9zpvCj/EyxUItWYIuxIzue9WhYegrAmByK6ihlp
+         a6ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751918501; x=1752523301;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rKLu5W4g48bt+4yviXuICuogMC7NETqzFrH52NDnWkc=;
-        b=o6r0YzrWvglERtHKFARKkNqRwjy2onK1dZDQeTZlRcB+NEtW0tDwCrINBVnQ/I7Uiz
-         +B0CetY4fFvVuCs9RAmBfv7E0x2xhRTN4LV/tnYd2Rl76A6W55QjM0qWmaBTnXEnGcA+
-         gTDQ1pMQU4uKITDeRwWR7OU3bGMThISNrK+UqRhTHprptC0LbBNgZJG0hRoZesBoaFpJ
-         sZSRCECi7IdR280N/quHhl90JtHrCr1eBzXMpcLYQ0b2my62kJPBsNuGdqzfN8nXjYrK
-         qhl2Hfepcd6dKvW7y+Ogx91DfdHzLrCHBAFLaGiP3Ae1Ast2pUBiTkrtwaMtqWn9wYgo
-         cqng==
-X-Forwarded-Encrypted: i=1; AJvYcCVjzTjkESP3lciPFGl+4fnteWpC5BHGvrjSWLqbBhNLID+jiAOoEdaqosXRD8zju2omGnPHJDoDXTkebemC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy80w4uu1pG/ypvUFNRMoc2C382GwAEPbgEPyPtVYylnOPmjnHl
-	CaJgUryYpiiEamB9/6sodoyNIfJynxqIvT4DDPyv7G0HiSc5OqMMG6BEd4RfdODGdpMP141Vd1Y
-	zA8jWdpN0v7T7CM1yZfxt2DufY2wEd786DrL1btOQ
-X-Gm-Gg: ASbGncuNID6v2MU/dYMBXDYYS2FZiGjQJm79yEcNux7jP9oYeCQbYQ80n6MQCEbIp/b
-	AlTbb+Jg6F6n8Fy5AdBJ//xXuDsVwuxZ+4w8aCDjMcJrE7UEU44MM95k/+tF68WfxE9rNYhIWe/
-	1IdGqr4LE4LDHyvpKkgpXe2FpJGNqp9EI1ke1Zd0hDCww=
-X-Google-Smtp-Source: AGHT+IHLYTU4kBITzhD3jz6dc9Ywq+TkUQw8uddLaok7bGe3BDRvXBsFsPv9J8pTF74kHSNW6YoQwtEeQTNvu7SccGQ=
-X-Received: by 2002:a05:690c:4507:b0:70e:2ba2:659d with SMTP id
- 00721157ae682-71668ded751mr165544117b3.23.1751918500803; Mon, 07 Jul 2025
- 13:01:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751918618; x=1752523418;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e0nNP1ej16t8D67FbAmnKcWyH7dm/S6OQwG69pUEMbM=;
+        b=ZlxIS3DkzSvwSsU1v40ToWpwygbjJ16ejBcGZTXpMcOJ3swltpPCmW8MuqSq3pYaRE
+         CLvU3oTlZTFzrxhqyGiwv20PO/lGaBmTLkl7LWUqGP9eY0lsr81ZVbHxnsRxdN+PMJF4
+         D+TzSfnUTAKeXNMPq3LFA0EdqCJi912VILP/uKfPP30J9ESqz14F0eF+nLptwpGj2QoY
+         HuZKwLvCCRSMWtt3vPYNdyXaFz320UtKA0VEb/Z+7PlOmWuNlR62p0iV2KqLoOLRm1nu
+         0+3KLEk/Lg4W/KbWrumzsbVvZN0dglKskoJHn111laLAsTMVr1oQtzpaHqW/0f7zXQ4g
+         M2NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzs31mrPOfbGFthR7gAr5qMq8HD/JI/PDbd0SS/EKS5MvSs5C2IlJZxeOUuxzA8/UwBKona4dNl/WFx0GP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZWbIQx1+ghUSd3pd9nkfLX9gxvJEACF8fZWKUxBNKAw414i1a
+	Ce+ForrKC65wh3ojSiPg0E5IYrBQONidVYmuT1VhxC5ANLeKqnGopkuKL+Y5d/GkUPQqBKtxdHC
+	OAJBeB+M=
+X-Gm-Gg: ASbGnctIG5Ln+xyd56qF6MGStddH0xewKUugFsOuaNMZxHOy3blBiX+QSJfe51c1jhF
+	+wB66/bxRE2IsOumba5JSxMK5ca8oY7x6JtI25aEBI0El44Uin9MucnoVAeNeH7soa0JBIY/X66
+	ayDF3vZz8RQ2KoX9TEL5bGb18IHx3c7d3rGxYYs57P65c6D1YxEztk5T9k5zzLWfvS2Bfmsxaud
+	JAsHAxbF0M0QnmzI52ap76yxFj86wqcxK1F5TzDOklzBiFrbwJI0OJURHu/0zwJJ7V9ESdolI6S
+	RxowQ5LPfdnsYaTkN3YCVMjAx0PKi3445+JoT2tQEJ2XAYjWWtn2iNGuuK7Hnof3yb7D12oDn/z
+	xhNC6
+X-Google-Smtp-Source: AGHT+IH1bdcT8Op1UQcJ7y7fuoZa4AobduFgm4XgERU7WTlUpV6uKyPuVHgAEULfklW/n+LzIP5s+w==
+X-Received: by 2002:a05:690c:b9b:b0:712:c295:d01f with SMTP id 00721157ae682-717a0306c58mr558077b3.3.1751918617460;
+        Mon, 07 Jul 2025 13:03:37 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:4607:c111:d285:761d])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71665ae1fb3sm17818227b3.65.2025.07.07.13.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 13:03:36 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH] ceph: refactor wake_up_bit() pattern of calling
+Date: Mon,  7 Jul 2025 13:03:22 -0700
+Message-ID: <20250707200322.533945-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626191425.9645-5-shivankg@amd.com> <a888364d0562815ca7e848b4d4f5b629@paul-moore.com>
- <67c40ef1-8d90-44c5-b071-b130a960ecc4@amd.com>
-In-Reply-To: <67c40ef1-8d90-44c5-b071-b130a960ecc4@amd.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 7 Jul 2025 16:01:29 -0400
-X-Gm-Features: Ac12FXweLS9FMTeg88WL40gFmqBUb7ZnlDziG-m_E-Jv5rzfO0-ilcmo0yLCqmI
-Message-ID: <CAHC9VhTXheV6vxEFMUw4M=fN3mKsT0Ygv2oRFU7Sq_gEcx2iyg@mail.gmail.com>
-Subject: Re: [PATCH v3] fs: generalize anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-To: Shivank Garg <shivankg@amd.com>
-Cc: david@redhat.com, akpm@linux-foundation.org, brauner@kernel.org, 
-	rppt@kernel.org, viro@zeniv.linux.org.uk, seanjc@google.com, vbabka@suse.cz, 
-	willy@infradead.org, pbonzini@redhat.com, tabba@google.com, 
-	afranji@google.com, ackerleytng@google.com, jack@suse.cz, hch@infradead.org, 
-	cgzones@googlemail.com, ira.weiny@intel.com, roypat@amazon.co.uk, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 4, 2025 at 6:41=E2=80=AFAM Shivank Garg <shivankg@amd.com> wrot=
-e:
-> On 7/3/2025 7:43 AM, Paul Moore wrote:
-> > On Jun 26, 2025 Shivank Garg <shivankg@amd.com> wrote:
->
-> ...
->
-> > Thanks again for your continued work on this!  I think the patch looks
-> > pretty reasonable, but it would be good to hear a bit about how you've
-> > tested this before ACK'ing the patch.  For example, have you tested thi=
-s
-> > against any of the LSMs which provide anonymous inode support?
-> >
-> > At the very least, the selinux-testsuite has a basic secretmem test, it
-> > would be good to know if the test passes with this patch or if any
-> > additional work is needed to ensure compatibility.
-> >
-> > https://github.com/SELinuxProject/selinux-testsuite
->
-> Hi Paul,
->
-> Thank you for pointing me to the selinux-testsuite. I wasn't sure how to =
-properly
-> test this patch, so your guidance was very helpful.
->
-> With the current test policy (test_secretmem.te), I initially encountered=
- the following failures:
->
-> ~/selinux-testsuite/tests/secretmem# ./test
-> memfd_secret() failed:  Permission denied
-> 1..6
-> memfd_secret() failed:  Permission denied
-> ok 1
-> ftruncate failed:  Permission denied
-> unable to mmap secret memory:  Permission denied
-> not ok 2
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-...
+The wake_up_bit() is called in ceph_async_unlink_cb(),
+wake_async_create_waiters(), and ceph_finish_async_create().
+It makes sense to switch on clear_bit() function, because
+it makes the code much cleaner and easier to understand.
+More important rework is the adding of smp_mb__after_atomic()
+memory barrier after the bit modification and before
+wake_up_bit() call. It can prevent potential race condition
+of accessing the modified bit in other threads.
 
-> To resolve this, I updated test_secretmem.te to add additional required
-> permissions {create, read, write, map}
-> With this change, all tests now pass successfully:
->
-> diff --git a/policy/test_secretmem.te b/policy/test_secretmem.te
-> index 357f41d..4cce076 100644
-> --- a/policy/test_secretmem.te
-> +++ b/policy/test_secretmem.te
-> @@ -13,12 +13,12 @@ testsuite_domain_type_minimal(test_nocreate_secretmem=
-_t)
->  # Domain allowed to create secret memory with the own domain type
->  type test_create_secretmem_t;
->  testsuite_domain_type_minimal(test_create_secretmem_t)
-> -allow test_create_secretmem_t self:anon_inode create;
-> +allow test_create_secretmem_t self:anon_inode { create read write map };
->
->  # Domain allowed to create secret memory with the own domain type and al=
-lowed to map WX
->  type test_create_wx_secretmem_t;
->  testsuite_domain_type_minimal(test_create_wx_secretmem_t)
-> -allow test_create_wx_secretmem_t self:anon_inode create;
-> +allow test_create_wx_secretmem_t self:anon_inode { create read write map=
- };
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ fs/ceph/dir.c  | 4 +++-
+ fs/ceph/file.c | 8 ++++++--
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-I believe this domain also needs the anon_inode/execute permission.
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index a321aa6d0ed2..7f4d1874a84f 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1261,7 +1261,9 @@ static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
+ 	spin_unlock(&fsc->async_unlink_conflict_lock);
+ 
+ 	spin_lock(&dentry->d_lock);
+-	di->flags &= ~CEPH_DENTRY_ASYNC_UNLINK;
++	clear_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags);
++	/* ensure modified bit is visible */
++	smp_mb__after_atomic();
+ 	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT);
+ 	spin_unlock(&dentry->d_lock);
+ 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index a7254cab44cc..b114b939cdc0 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -580,7 +580,9 @@ static void wake_async_create_waiters(struct inode *inode,
+ 
+ 	spin_lock(&ci->i_ceph_lock);
+ 	if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
+-		ci->i_ceph_flags &= ~CEPH_I_ASYNC_CREATE;
++		clear_bit(CEPH_ASYNC_CREATE_BIT, &ci->i_ceph_flags);
++		/* ensure modified bit is visible */
++		smp_mb__after_atomic();
+ 		wake_up_bit(&ci->i_ceph_flags, CEPH_ASYNC_CREATE_BIT);
+ 
+ 		if (ci->i_ceph_flags & CEPH_I_ASYNC_CHECK_CAPS) {
+@@ -765,7 +767,9 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
+ 	}
+ 
+ 	spin_lock(&dentry->d_lock);
+-	di->flags &= ~CEPH_DENTRY_ASYNC_CREATE;
++	clear_bit(CEPH_DENTRY_ASYNC_CREATE_BIT, &di->flags);
++	/* ensure modified bit is visible */
++	smp_mb__after_atomic();
+ 	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_CREATE_BIT);
+ 	spin_unlock(&dentry->d_lock);
+ 
+-- 
+2.49.0
 
->  allow test_create_wx_secretmem_t self:process execmem;
->
->  # Domain not allowed to create secret memory via a type transition to a =
-private type
-> @@ -30,4 +30,4 @@ type_transition test_nocreate_transition_secretmem_t te=
-st_nocreate_transition_se
->  type test_create_transition_secretmem_t;
->  testsuite_domain_type_minimal(test_create_transition_secretmem_t)
->  type_transition test_create_transition_secretmem_t test_create_transitio=
-n_secretmem_t:anon_inode test_secretmem_inode_t "[secretmem]";
-> -allow test_create_transition_secretmem_t test_secretmem_inode_t:anon_ino=
-de create;
-> +allow test_create_transition_secretmem_t test_secretmem_inode_t:anon_ino=
-de { create read write map };
->
-> Does this approach look correct to you? Please let me know if my understa=
-nding
-> makes sense and what should be my next step for patch.
-
-[NOTE: added selinux@vger and selinux-refpolicy@vger to the To/CC line]
-
-Hi Shivank,
-
-My apologies for not responding earlier, Friday was a holiday and I
-was away over the weekend.  Getting back at it this morning I ran into
-the same failures as you described, and had to make similar changes to
-the selinux-testsuite policy (see the anon_inode/execute comment
-above, I also added the capability/ipc_lock permission as needed).
-
-Strictly speaking this is a regression in the kernel, even if the new
-behavior is correct.  I'm CC'ing the SELinux and Reference Policy
-lists so that the policy devs can take a look and see what impacts
-there might be to the various public SELinux policies.  If this looks
-like it may be a significant issue, we'll need to work around this
-with a SELinux "policy capability" or some other compatibility
-solution.
-
---=20
-paul-moore.com
 
