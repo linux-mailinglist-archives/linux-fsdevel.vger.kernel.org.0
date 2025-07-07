@@ -1,126 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-54176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A21EFAFBCAA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 22:39:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6CEAFBCAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 22:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0838A169C4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 20:39:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8DFD1680C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 20:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D9421FF30;
-	Mon,  7 Jul 2025 20:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E64220F5A;
+	Mon,  7 Jul 2025 20:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t+bucOOz"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="eTIxVTc8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AAD2264AD
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 20:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A62E220F49
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 20:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920764; cv=none; b=qjfUkjftLsRmt81STReL9hEVFcl3ulb6er/L313gQ2/4hUZYlatYv4BEdY8zubdGekNCFUduoAG9CtZx8riq0KCSnYI2yYgx+PCGGWf7UXNN5b9hgub0zr56fqHAZQigCLhN0k0nL2GdhQwOV10EQFZjBY6J3nElulBB9kVTqrE=
+	t=1751920782; cv=none; b=hlamFRu5yI3LMFQNLF/YxbKmQjUOTu4rCFcocaYrR2y4boeeDWW0VFp9VFxKh9TZwynYBOA627Mkn+r7mFOy0f5aBctT/VjWGWrg2Upixy7pId2KvEGFKGbRI2LLsOkhJovPfZMu3sHf1iLgM0m47Mj5qczkwSFmmq79fHFf8AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920764; c=relaxed/simple;
-	bh=rjLa6AXjsim1n4tWgGoYki/voX5t/VWIZIyagSE1kiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rr3KgN4DAi++WuvZn8cZMe6LvaJLrBei/2TywaBGr9tR/jcln0VJm0iUVRupUPTo7u9VCiPbvU5/hFOi5KA3xQD0H64bpyR0op08kVbptrF4UAjmD/+p0q00BORf1r7bB7FoR5SM2z+bYzCLX6HAtkXpKcr7ungu5kA3fwEC4hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t+bucOOz; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 7 Jul 2025 16:39:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751920749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NSj+RrRVg7elakQo//mzU9XNj7ZAPUtOH5WQTGKN4Mk=;
-	b=t+bucOOz7VknLpxUu4hkPRH6/XJdUv9/jJ8EFbA8OvqAzRPn5g2ojdF+U42Qr8FVg5+Ue8
-	EiMR2CzYEgYSsIrOIIcj9PidJtWSdXO1qemTZW/mDkd6bsudq6NNIEXEZgrknXBf/t2mXZ
-	gFIe5weNSrP4vn17Vfa+2Mq+bhIPCIg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: John Stoffel <john@stoffel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kerenl@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
-Message-ID: <r2ibma56tp7mwqepp7ksenmcrildo6n4wnmj3aa7l3vdpyk26r@42azsnav5bm2>
-References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
- <CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
- <xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
- <26723.62463.967566.748222@quad.stoffel.home>
- <gq2c4qlivewr2j5tp6cubfouvr42jww4ilhx3l55cxmbeotejk@emoy2z2ztmi2>
- <26732.10255.420410.321937@quad.stoffel.home>
+	s=arc-20240116; t=1751920782; c=relaxed/simple;
+	bh=DS0Ik4lCY6Q+xvJbyW4/tfkU5AzHV1B2sGMi5QtBO0E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f1yyLKnxHcLHBlarV02dHUz8sZ/5cTPqFxlKOxo/2ZEYmJd2qOZGUhIZ+amrfN1L3EkpWeuGg+DZp0NHXfMwFROv7NMOHemIqqHLVpjYPREdKolwWkO5q13swIQtrq3tuUBCTKwKHW3eWl/WoXeGZJK6UoZ0umpoJWEfPHs5ztc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=eTIxVTc8; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ade5b8aab41so753003766b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 13:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1751920778; x=1752525578; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxneTq/NEhl6VnNWjnUkmFTXqxmN3JS5+IvNj36XqKc=;
+        b=eTIxVTc8hYc5y5tFaRCM1TcOUi0i5U5g9sfFpeDy3uEYriUobPWV2jimNU5n5ZIuPO
+         d4eUVFNsr0Lfoa1t9Dv+ucXu2BFmIlXWBJroX9cAJ7xAHkolqasLbmKC9TfOmUBysb1/
+         CHXtxmnpL1VIKMs3+qtw8zEunLRN1mzhkqcU/7NBDsMfB+IVwlWpWwVVxJUSB1gaDK4y
+         10eVy33W5RKQo7H07NGLVDAEDyNNSutVWhuQ9XFZeJE5A3ReLGkhQpZ4XUpZLu3OHOz6
+         /CnKLfuLgWpg//MMv4EPDuHxu9p21WNuo50Y8FZzIAcNZDEGNyCR8AcnnuYPw9cGZMwp
+         0WrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751920778; x=1752525578;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wxneTq/NEhl6VnNWjnUkmFTXqxmN3JS5+IvNj36XqKc=;
+        b=j89aNr2ba9jDq2zjYRfroK5XXW45eZpVqpyj5L6cXTY6vXKRTho/R/g8eFBIsPxB8m
+         x0MWfI+4uj203sKIccgPHoqOyZTsjrF/d2CZ1EfLNAlizchRTGVBztsMW2X33OaA0PLB
+         BpLD5SemRhep6R8yguTvXg/ImccCnZ8gp1aG6myuMskHA+oXiX7zzrhrEW+s9RyPR4PC
+         NlKmGZSnlQ7tdS/6FgZ+CzjeHO6ZSrFXU3FiPKG/0CMlF9EuT8v5VGYA4J94BIUz8aPJ
+         f5pnZc12hf1s1xPUz9sIYolAqPxYp9uyu0w/GcR38fRHY6w35FGR11VA76KmyvV30/ba
+         fhrw==
+X-Gm-Message-State: AOJu0YxGndwW2FK+DAn/qI6KfpZd6JXfGM45fGuFs6tie/mRPtypignB
+	jcyY5HTDB7k1hH9d5m26thc5iMuJqXnJ2e2f+fzn9wOjJJyOLIWP6k61kZqCDQfEOd9N4LEDiH/
+	v2jfCxRRX+GgNgPgs1nVkHvU7DVfnpzf/ZyIlMUOjtY7h2QoK1xodzY4=
+X-Gm-Gg: ASbGnculEpo40acaOjdXAgWlduSeQze0QHGH1Qd+84OxLV0C5zyDbg2xQmIeZ1XhSVS
+	DSFuGCqz/NoJ9airwmWZWeui4xyzBYmI5GaVROV4XZwS0NK5KMZ6GS5fIEDKUiz14/H0nFV8amv
+	0E85VlnXwg3wXIhq2FOutdeRE5W2RzSGAPgyPXH7G96VGj8TF1LVr+3leVWG/hw2Seg7U1oQM=
+X-Google-Smtp-Source: AGHT+IFD0kxT+rxwBgYryZvBpViuuGbUUU+OvXDXcQVMrFJz/GHF0CiJmFY0JzIyqNJf2bDWYdHKYJMlmYX3uupYorY=
+X-Received: by 2002:a17:907:6ea5:b0:ae3:5e2d:a8bf with SMTP id
+ a640c23a62f3a-ae3fe5bde90mr1373459766b.14.1751920778431; Mon, 07 Jul 2025
+ 13:39:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26732.10255.420410.321937@quad.stoffel.home>
-X-Migadu-Flow: FLOW_OUT
+References: <20231124060200.GR38156@ZenIV> <20231124060422.576198-1-viro@zeniv.linux.org.uk>
+ <20231124060422.576198-20-viro@zeniv.linux.org.uk> <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
+ <20250707172956.GF1880847@ZenIV> <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
+ <20250707180026.GG1880847@ZenIV> <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
+ <20250707193115.GH1880847@ZenIV> <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
+ <20250707203104.GJ1880847@ZenIV>
+In-Reply-To: <20250707203104.GJ1880847@ZenIV>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 7 Jul 2025 22:39:27 +0200
+X-Gm-Features: Ac12FXzvinwPocSJyMmR80b6ITnmJc5FsPq_b5MBTNt-hi1_HdEgvQERnOThAoE
+Message-ID: <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 07, 2025 at 04:03:27PM -0400, John Stoffel wrote:
-> If those users are not prepared to accept the risk of an experimental
-> filesystem, then screw them!  They're idiots and should be treated as
-> such.  
+> Busy loop here means that everything in the tree is either busy or already
+> in process of being torn down *by* *another* *thread*.  And that's already
+> in process - not just selected for it (see collect2 in the same loop).
 
-No, that's not the attitude of a responsible filesystem developer.
+The busy process isn't doing anything. All it does is busy-wait for
+another task to complete the evict() call. A pointless waste of CPU
+cycles.
 
-It doesn't matter what stage of development the code is in, if it's got
-users and they're hitting bugs, those bugs take priority. "Screw the
-user" is no way to develop a filesystem that people will actually want
-to run.
+> The interesting question is what the other thread is doing...
 
-If we want to attain rock solid, bulletproof reliability, then
-reliability, top to bottom, has to be the priority at every stage of
-development. The job is not done until it is working well and verified
-for everyone.
-
-> > Shipping a project as large and complex as a filesystem must be done
-> > incrementally, in stages where we're deploying to gradually increasing
-> > numbers of users, fixing everything they find and assessing where we're
-> > at before opening it up to more users.
-> 
-> Yes!  But that process also has to include rollbacks, which git has
-> made so so so easy.  Just accept that _if_ 6.x-rc[12345] is buggy,
-> then it needs to be rolled back and subbmitted to 6.x+1-rc1 for the
-> next cycle after it's been baked.
-
-I'm very quick to kick out buggy patches; simple regressions where a
-revert is the correct solution almost never hit Linus's tree. This isn't
-the issue we're talking about.
-
-> > Right now we need to be getting those fixes out to users so
-> > they can keep testing and finding the next bug. When someone has
-> > invested time and effort learning how the system works and how to
-> > report bugs, we don't watn them getting frustrated and leaving - we
-> > want to work with them, so they can keep testing and finding new
-> > bugs.
-> 
-> So post patches on your own tree that they can use, nothing stops you! 
-
-That is indeed what it comes down to, isn't it?
-
-I support my code. I triage every bug report, prioritizing the critical
-bugs, and I spend most of my day working with users to track bugs down
-and make sure the fixes work.
-
-That's my job.
-
-If fixes aren't going into Linus's tree, that means the working,
-supported bcachefs tree is no longer his tree, it's mine.
-
-We've been down that road with other subsystems in the past (e.g.
-Lustre), and it doesn't work.
-
-Going down that road means the first thing I have to do with every bug
-report is ask "which tree are you running? stock mainline or mine?" -
-and then we might as well go all the way and go the DKMS route, for the
-sake of everyone's sanity.
+ceph_evict_inode() is waiting for the Ceph server to acknowledge a
+pending I/O operation.
 
