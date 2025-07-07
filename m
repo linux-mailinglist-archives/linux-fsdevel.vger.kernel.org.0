@@ -1,156 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-54172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964E9AFBC45
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 22:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FE1AFBC42
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 22:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4711AA0E71
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 20:04:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 848BA561256
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 20:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF2221CFF4;
-	Mon,  7 Jul 2025 20:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609A7215F48;
+	Mon,  7 Jul 2025 20:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="tmf/p/XE"
+	dkim=pass (2048-bit key) header.d=stoffel.org header.i=@stoffel.org header.b="AznUfHLc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF94D1F1315
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 20:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB782E370C;
+	Mon,  7 Jul 2025 20:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751918621; cv=none; b=rIIofVHqrcW5O1rEkspHtQmJrlIqHD9SyrR1aMuW0poy3kKIqjzPwGl7/iw8Fcva/kHgpR9uWI4QJ8Rcox9yBKJz10jErHCfBbCqMsTYIAtkHSTBTC6VzBUVHQN1liXV9xKz91STfGF5qlWqs2Vw+/SpTQQnS/3w8ElfUWlYfUI=
+	t=1751918618; cv=none; b=pYDYWjdBk4ssggABkcpBSB/VexNjHggTDMgxNynFUADkDYfAphlHhhMzOz3OJSJ0V9drPOdOS6LbR1R2zSiqe05poC9jWl9f6uD8ehYf14chB/u8h9vFt6s4GVfx0Q/Q3VoweTnq6fEETwJzoDp7fA+odIn5cWSaz7sU4BygwK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751918621; c=relaxed/simple;
-	bh=+IdW9IQoph/y/mp6ERLotvI2aGvwZg9qbaIgK75LH0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EzobnYpAoPYsceg3ONCA49k7I3dQxLqVRkoZ4yk3fUMYeI2mopsvt2WfLONTirFIGfhc0ZTue9XmVS6lSszoJrs+yC3Ch+H7oHw2YpH++usfnMQYsA47DkHsk+sqWjmBg7c86spasY3s8S2Z5kXiMorptgpKHv0mAiuNagAS0u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=tmf/p/XE; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-710fd2d0372so34835397b3.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 13:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1751918618; x=1752523418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e0nNP1ej16t8D67FbAmnKcWyH7dm/S6OQwG69pUEMbM=;
-        b=tmf/p/XE2W98jTmjF+jRQCHSeJC7rU8SiHByIDaXrHTnBrHRBkVGFd9a5q3w2vKCee
-         S8TxPtelRA0wvCXsCfKBNhsxlW2rsWm82uIhJaXq3o5JjGxRlHSRJyx3sbEKvzBnsoEi
-         xEoNXxafFx5e0q1nyst9qfsYSZ7wde47GxHlwKVPuhvqMZwHxntggg3TeYNvwDIN7NWH
-         12O3pfXeQoK78OGr8N6JY4qx9cnlx9THkuER+uhnYKCjgHs2ELVgeiNCzOHhgm82MRZ4
-         PaMaWXNBaGbAOP/HV/yhrHwNWw6EP9zpvCj/EyxUItWYIuxIzue9WhYegrAmByK6ihlp
-         a6ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751918618; x=1752523418;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e0nNP1ej16t8D67FbAmnKcWyH7dm/S6OQwG69pUEMbM=;
-        b=ZlxIS3DkzSvwSsU1v40ToWpwygbjJ16ejBcGZTXpMcOJ3swltpPCmW8MuqSq3pYaRE
-         CLvU3oTlZTFzrxhqyGiwv20PO/lGaBmTLkl7LWUqGP9eY0lsr81ZVbHxnsRxdN+PMJF4
-         D+TzSfnUTAKeXNMPq3LFA0EdqCJi912VILP/uKfPP30J9ESqz14F0eF+nLptwpGj2QoY
-         HuZKwLvCCRSMWtt3vPYNdyXaFz320UtKA0VEb/Z+7PlOmWuNlR62p0iV2KqLoOLRm1nu
-         0+3KLEk/Lg4W/KbWrumzsbVvZN0dglKskoJHn111laLAsTMVr1oQtzpaHqW/0f7zXQ4g
-         M2NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzs31mrPOfbGFthR7gAr5qMq8HD/JI/PDbd0SS/EKS5MvSs5C2IlJZxeOUuxzA8/UwBKona4dNl/WFx0GP@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZWbIQx1+ghUSd3pd9nkfLX9gxvJEACF8fZWKUxBNKAw414i1a
-	Ce+ForrKC65wh3ojSiPg0E5IYrBQONidVYmuT1VhxC5ANLeKqnGopkuKL+Y5d/GkUPQqBKtxdHC
-	OAJBeB+M=
-X-Gm-Gg: ASbGnctIG5Ln+xyd56qF6MGStddH0xewKUugFsOuaNMZxHOy3blBiX+QSJfe51c1jhF
-	+wB66/bxRE2IsOumba5JSxMK5ca8oY7x6JtI25aEBI0El44Uin9MucnoVAeNeH7soa0JBIY/X66
-	ayDF3vZz8RQ2KoX9TEL5bGb18IHx3c7d3rGxYYs57P65c6D1YxEztk5T9k5zzLWfvS2Bfmsxaud
-	JAsHAxbF0M0QnmzI52ap76yxFj86wqcxK1F5TzDOklzBiFrbwJI0OJURHu/0zwJJ7V9ESdolI6S
-	RxowQ5LPfdnsYaTkN3YCVMjAx0PKi3445+JoT2tQEJ2XAYjWWtn2iNGuuK7Hnof3yb7D12oDn/z
-	xhNC6
-X-Google-Smtp-Source: AGHT+IH1bdcT8Op1UQcJ7y7fuoZa4AobduFgm4XgERU7WTlUpV6uKyPuVHgAEULfklW/n+LzIP5s+w==
-X-Received: by 2002:a05:690c:b9b:b0:712:c295:d01f with SMTP id 00721157ae682-717a0306c58mr558077b3.3.1751918617460;
-        Mon, 07 Jul 2025 13:03:37 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:4607:c111:d285:761d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71665ae1fb3sm17818227b3.65.2025.07.07.13.03.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 13:03:36 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [PATCH] ceph: refactor wake_up_bit() pattern of calling
-Date: Mon,  7 Jul 2025 13:03:22 -0700
-Message-ID: <20250707200322.533945-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751918618; c=relaxed/simple;
+	bh=EAXmXEFSkhR5sMR6WzduIUePEVRsXKmpJc3JYJWh77Q=;
+	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
+	 In-Reply-To:References; b=l5t8JwWmvAk7LHQ69HmvL27yIcbIBAmYDPy7xeaoKtMjJ9cU5yaKRwJ30xJmtBSKYKzKnRjwngfzXzG83OR2gmMIpd6Xr6cTb/gNMeeAhYtftZjjcb67ZP2jzk0nCdC2Kfj7tAaAzLyY89WXKx7XMYTV0PRqrcDCufPwS1s7hHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; dkim=pass (2048-bit key) header.d=stoffel.org header.i=@stoffel.org header.b=AznUfHLc; arc=none smtp.client-ip=172.104.24.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stoffel.org;
+ i=@stoffel.org; q=dns/txt; s=20250308; t=1751918608; h=mime-version :
+ content-type : content-transfer-encoding : message-id : date : from :
+ to : cc : subject : in-reply-to : references : from;
+ bh=EAXmXEFSkhR5sMR6WzduIUePEVRsXKmpJc3JYJWh77Q=;
+ b=AznUfHLcsVUnKLS0BR7Alh9y9jFccTu07ovVWeYadzPerpnjsN/t4Hp0OyGSkPttTQ2Df
+ qENZWKUsWrkWxndcl3yNyj343eW7cecBBOiAavFmG8SZzM8UbxIDh07nH+q3kLLg/L6v2Sq
+ VBcomRXpSP5wGLl4J2q4qU503GnCZ5OYzNQ4be0PkOVe5zn63Fd8pvwzr5ti9sp8GuxpNfj
+ Zyx9IoPjc4BKZshhhruOLfA1jixPZC2RZRRuPopuZCUhAq4xb2MSNJW/8M86cZVxxxs/APW
+ qRoOQKf/3HWYllxm7AtHsg33MsnDxcLm7Myvw8XsSdC2gXRafEJr6FbaMypg==
+Received: from quad.stoffel.org (syn-097-095-183-072.res.spectrum.com [97.95.183.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by mail.stoffel.org (Postfix) with ESMTPSA id 0C0821E1D8;
+	Mon,  7 Jul 2025 16:03:28 -0400 (EDT)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+	id 6CFADA1111; Mon,  7 Jul 2025 16:03:27 -0400 (EDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-ID: <26732.10255.420410.321937@quad.stoffel.home>
+Date: Mon, 7 Jul 2025 16:03:27 -0400
+From: "John Stoffel" <john@stoffel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: John Stoffel <john@stoffel.org>,
+    Linus Torvalds <torvalds@linux-foundation.org>,
+    linux-bcachefs@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org,
+    linux-kerenl@vger.kernel.org
+X-Clacks-Overhead: GNU Terry Pratchett
+Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
+In-Reply-To: <gq2c4qlivewr2j5tp6cubfouvr42jww4ilhx3l55cxmbeotejk@emoy2z2ztmi2>
+References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
+	<CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
+	<xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
+	<26723.62463.967566.748222@quad.stoffel.home>
+	<gq2c4qlivewr2j5tp6cubfouvr42jww4ilhx3l55cxmbeotejk@emoy2z2ztmi2>
+X-Mailer: VM 8.3.x under 28.2 (x86_64-pc-linux-gnu)
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
 
-The wake_up_bit() is called in ceph_async_unlink_cb(),
-wake_async_create_waiters(), and ceph_finish_async_create().
-It makes sense to switch on clear_bit() function, because
-it makes the code much cleaner and easier to understand.
-More important rework is the adding of smp_mb__after_atomic()
-memory barrier after the bit modification and before
-wake_up_bit() call. It can prevent potential race condition
-of accessing the modified bit in other threads.
+> On Tue, Jul 01, 2025 at 10:43:11AM -0400, John Stoffel wrote:
+>> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+>> 
+>> I wasn't sure if I wanted to chime in here, or even if it would be
+>> worth it.  But whatever.
+>> 
+>> > On Thu, Jun 26, 2025 at 08:21:23PM -0700, Linus Torvalds wrote:
+>> >> On Thu, 26 Jun 2025 at 19:23, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>> >> >
+>> >> > per the maintainer thread discussion and precedent in xfs and btrfs
+>> >> > for repair code in RCs, journal_rewind is again included
+>> >> 
+>> >> I have pulled this, but also as per that discussion, I think we'll be
+>> >> parting ways in the 6.17 merge window.
+>> >> 
+>> >> You made it very clear that I can't even question any bug-fixes and I
+>> >> should just pull anything and everything.
+>> 
+>> > Linus, I'm not trying to say you can't have any say in bcachefs. Not at
+>> > all.
+>> 
+>> > I positively enjoy working with you - when you're not being a dick,
+>> > but you can be genuinely impossible sometimes. A lot of times...
+>> 
+>> Kent, you can be a dick too.  Prime example, the lines above.  And
+>> how you've treated me and others who gave feedback on bcachefs in the
+>> past.  I'm not a programmer, I'm in IT and follow this because it's
+>> interesting, and I've been doing data management all my career.  So
+>> new filesystems are interesting.  
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- fs/ceph/dir.c  | 4 +++-
- fs/ceph/file.c | 8 ++++++--
- 2 files changed, 9 insertions(+), 3 deletions(-)
+> Oh yes, I can be. I apologize if I've been a dick to you personally, I
+> try to be nice to my users and build good working relationships. But
+> kernel development is a high stakes, high pressure, stressful job, as I
+> often remind people. I don't ever take it personally, although sometimes
+> we do need to cool off before we drive each other completely mad :)
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index a321aa6d0ed2..7f4d1874a84f 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1261,7 +1261,9 @@ static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
- 	spin_unlock(&fsc->async_unlink_conflict_lock);
- 
- 	spin_lock(&dentry->d_lock);
--	di->flags &= ~CEPH_DENTRY_ASYNC_UNLINK;
-+	clear_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags);
-+	/* ensure modified bit is visible */
-+	smp_mb__after_atomic();
- 	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT);
- 	spin_unlock(&dentry->d_lock);
- 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index a7254cab44cc..b114b939cdc0 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -580,7 +580,9 @@ static void wake_async_create_waiters(struct inode *inode,
- 
- 	spin_lock(&ci->i_ceph_lock);
- 	if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
--		ci->i_ceph_flags &= ~CEPH_I_ASYNC_CREATE;
-+		clear_bit(CEPH_ASYNC_CREATE_BIT, &ci->i_ceph_flags);
-+		/* ensure modified bit is visible */
-+		smp_mb__after_atomic();
- 		wake_up_bit(&ci->i_ceph_flags, CEPH_ASYNC_CREATE_BIT);
- 
- 		if (ci->i_ceph_flags & CEPH_I_ASYNC_CHECK_CAPS) {
-@@ -765,7 +767,9 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
- 	}
- 
- 	spin_lock(&dentry->d_lock);
--	di->flags &= ~CEPH_DENTRY_ASYNC_CREATE;
-+	clear_bit(CEPH_DENTRY_ASYNC_CREATE_BIT, &di->flags);
-+	/* ensure modified bit is visible */
-+	smp_mb__after_atomic();
- 	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_CREATE_BIT);
- 	spin_unlock(&dentry->d_lock);
- 
--- 
-2.49.0
+I appreciate this, but honestly I'll withhold judgement until I see
+how it goes more long term.  But I'm also NOT a kernel developer, I'm
+an IT professional who does storage and backups and managing data.  So
+my perspective is very definitely one of your users, or users-to-be.
+But I've also got a CS degree and understand programming issues and
+such.  
 
+> If there was something that was unresolved, and you'd like me to
+> look at it again, I'd be more than happy to. If you want to share
+> what you were hitting here, I'll tell you what I know - and if it
+> was from a year or more ago it's most likely been fixed.
+
+Nope, it was over a year ago and it's behind me.  I was trying to
+build the tools on Debian distro when the bcachefs-tools were a real
+pain to build.  It's better now.  
+
+>> Slow down.  
+
+> This is the most critical phase in the 10+ year process of shipping a
+> new filesystem.
+
+Sure, but that's not what I'm trying to say here.  The kernel has, as
+you most certainly know, a standard process for quickly deploying new
+versions.  Linus's entire problem is that you dropped in a big chunk
+of code into the late release process.  
+
+And none of that is critical, because if you have people running 100tb
+of bcachefs right now, they certainly understand that they can lose
+data at any time.  Or at least they should if they have any sort of
+understanding of reliable data.  bcachefs isn't there yet.  It's
+getting close, but Linux has an amazingly complicated VFS and supports
+all kinds of wierd edge cases.  Which sucks from the filesystem
+perspective.
+
+But you know this.  
+
+So when you run into a major bug in the code, or potential data loss
+when -rc2 or later is coming out, just revert.  Pull that code out
+because it's obviously not ready.  So you wait a few months, big deal!
+IT gives you and the code time to stabilize.  
+
+If someone is losing data and you want to give them a patch to try and
+fix it, great, but they can take a patch from you directly.  And post
+it to your mailing list.  Put it on a git branch somewhere.  
+
+But revery from the main linus tree.  For now.  In two months, you'll
+be back with better code.  bcachefs is still listed as experimental,
+so don't feel like you have to keep pushing the absolutely latest code
+into the kernel.  Just slow it down a little to make sure you push
+good code.  
+
+> We're seeing continually increasing usage (hopefully by users who are
+> prepared to accept that risk, but not always!), but we're not yet ready
+> for true widespread deployment.
+
+If those users are not prepared to accept the risk of an experimental
+filesystem, then screw them!  They're idiots and should be treated as
+such.  
+
+I would expect to be fired from my job if I bet my company's data on
+bcachefs currently.  Sure, play around and test it if you like, but if
+it breaks, you get to keep both pieces.  
+
+Same with bleeding edge kernel developement!  I might run pretty
+bleeding edge kernels at home, but only for my own data that I realize
+I might lose.  But I also do backups, have the data on XFS and ext4
+filesystems, which are stable, and I'm not trying to do crazy things
+with it.  
+
+Do I have some test bcachefs volumes?  Sure do.  And I treat them like
+lepers, if they break, I either toss them away, or I file a report,
+but I certainly don't keep ANY data on there I don't want to lose.  
+
+I'm being blunt here.  
+
+> Shipping a project as large and complex as a filesystem must be done
+> incrementally, in stages where we're deploying to gradually increasing
+> numbers of users, fixing everything they find and assessing where we're
+> at before opening it up to more users.
+
+Yes!  But that process also has to include rollbacks, which git has
+made so so so easy.  Just accept that _if_ 6.x-rc[12345] is buggy,
+then it needs to be rolled back and subbmitted to 6.x+1-rc1 for the
+next cycle after it's been baked.
+
+Anyone running such a bleeding edge kernel and finding problems isn't
+going to care about having to hand apply patches, they're already
+doing crazy things!  *grin*
+
+> Working with users, supporting with them, checking in on how it's doing,
+> and getting them the fixes for what they find is how we iterate and
+> improve. The job is not done until it's working well for everyone.
+
+Yes, I agree 100% with all this. 
+
+> Right now, everyone is concerned because this is a hotly anticipated
+> project, and everyone wants to see it done right.
+
+So which is more important?  Ship super fast and break things?  Or be
+willing to revert and ship just a bit slower?  
+
+> And in 6.16, we had two massive pull requests (30+ patches in a
+> week, twice in a row); that also generates concern when people are
+> wondering "is this thing stabilizing?".
+
+Correct!
+
+> 6.16 was largely a case of a few particularly interesting bug
+> reports generating a bunch of fixes (and relatively simple and
+> localized fixes, which is what we like to see) for repair corner
+> cases, the biggest culprit (again) being snapshots.
+
+Sure, fixes are great.  But why did you have to drop them into -rc2 in
+a big bundle?  Why not just roll back what you had submitted and say
+"it's not baked enough, it needs to wait a release"?  
+
+> If you look at the bug tracker, especially rate of incoming bugs and the
+> severity of bug reports (and also other sources of bug reports, like
+> reddit and IRC) - yes, we are stabilizing fast.
+
+Sure, and I'm happy for this.  And so are a bunch of other people!  
+
+> There is still a lot of work to be done, but we're on the right track.
+
+No arguement there.
+
+> "Slowing down" is not something you do without a concrete
+> reason.
+
+And this is where you and Linus are butting heads in my opinion.  You
+want to release big patches at any time.  Linus wants to stabilize
+releases and development for the entire kernel.  You're concentrating
+on your small area which is vitally important to you.  But not
+everyone is as invested.  Others want the latest DRM drivers.  Or the
+latest i2c code, or some other subsystem which they care about.  Linus
+(and the process) is about the entire kernel.  
+
+> Right now we need to be getting those fixes out to users so
+> they can keep testing and finding the next bug. When someone has
+> invested time and effort learning how the system works and how to
+> report bugs, we don't watn them getting frustrated and leaving - we
+> want to work with them, so they can keep testing and finding new
+> bugs.
+
+So post patches on your own tree that they can use, nothing stops you! 
+
+> The signals that would tell me it's time to slow down are:
+
+> - Regressions getting through (quantity, severity, time spent on fixing
+>   them)
+> - Bugs getting through that show that show that something fundamental is
+>   missing (testing, hardening), or broken in our our design.
+> - Frequency of bug reports going up to where I can't keep up (it's been
+>   in steady, gradual decline)
+
+> We actually do not want this to be 100% perfect before it sees users.
+> That would result in a filesystem that's brittle - a glass cannon. We
+> might get it to the point where it works 99% of the time, but then when
+> it breaks we'd be in a panic - and if you discover it then, when it's in
+> the wild, it's too late.
+
+> The processes for how we debug and recover from failures, in the wild,
+> is a huge part (perhaps the majority) of what we're working on now. That
+> stuff has to be baked into the design on a deep level, and like all
+> other complex design it requires continual iteration.
+
+> That is how we'll get the reliability and robustness we hope to achieve.
 
