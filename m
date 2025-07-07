@@ -1,112 +1,277 @@
-Return-Path: <linux-fsdevel+bounces-54183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A69AFBD33
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 23:06:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD91AFBD85
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 23:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5541B561DD1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 21:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91023BCDA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 21:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B20285C8F;
-	Mon,  7 Jul 2025 21:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="WT62MW0i"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F66C26D4C7;
+	Mon,  7 Jul 2025 21:32:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073A828507E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 21:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9F119E97B;
+	Mon,  7 Jul 2025 21:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751922381; cv=none; b=p7j56qobK7v5pg8Jzg49u5KrgHDvNPrCQBSuDXDj6WqapchdssSP7Kwf9ouPdrLrpjEjH/oaOZFbFc+qyJhT5UHF1iL5RbN1FuLbKZ/H0L6i+Up2HljIOVwWxNBZYFqFfzlgBQB+NkvzLWlfJ29t70O249h4nDHZzel9s2k1f18=
+	t=1751923931; cv=none; b=CxDQ9bsm3QnpAgxV2RW2n039BhMjIlJeCkT0GWSeMN9JRkI8WbNSzY/VF6j9eqH1ssXdAhk3HjZObsYmZMVAj/chJmoldzbqVOG5s/kMlSB7xWFjVnnspdD0ijia2MEU9VKq5plD1qyRaSyBuhF8HVtTGL2mXvDO0+Be9dOXeZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751922381; c=relaxed/simple;
-	bh=27bHZ/4eKvwAUCagjp6sf6uz6xVWNuE4Dw+QOys8IA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VdkSq5vRR4ODJMG7BDXfQPw7vsptVOqSQ5g4tXnhTaRnMsEE/AHxDCBvSBClBoVBB2/8JAGIknnO4PPUsR9ZkHDzYd+uA7ffO/rN6m0Ni5Q/Cc1jc3PlWE56yV1qU+RDod3Ew5WvF8bayMnw+FAZxGhNdjjBMp0qnKbJbWAWM80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=WT62MW0i; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so750469766b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 14:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1751922377; x=1752527177; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=10PSMDzHwVgV/mqQhAfZ9cWCULE5QFj3JDa6enCguHg=;
-        b=WT62MW0ies0kcBDB0PTRpFCEoAwXBIjTTWx8qhR9SsnpUaIke1MxEjReXhdVq9o+dR
-         Bl5t6mkaWFPPO+iKTqf3lPddMm4vxXBDeAKwHUwygpfnLoe4u3uJt5CnHV1GPF9q6lRB
-         Nv4CDykOrmkWrWXonoTq4K87G0LzjOz7xLv+dFhVUUBRwwOLeTpyZ1kUSUby0TbpnSMG
-         KlJXulJvqrfFfWhb5zl//5fQo2REHLDpB88Tux9taz24LS9G8bu0n76j0KrbI6bS4KDV
-         YTpN66yBss5t3mQJ0HMbzSHDwW+GeyRKES9a+xWfXMthGRVXtHp+ODUl5ldEX+ynv8dI
-         a1JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751922377; x=1752527177;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=10PSMDzHwVgV/mqQhAfZ9cWCULE5QFj3JDa6enCguHg=;
-        b=jkIvfBi2eFwb3FSBlyZpdNEVLq3gF/+49n549a6RdJgJ8xBtJQR87wrvvqO27G32Su
-         Ah/nmsDYFWRPc1cUV0lvUH3CCPGGquKw6yJYTg8MS96d4FhV8iXNxYyjEBafrhrcl+IU
-         aeomVzN6Yy+wYZ9qJjHTrwys3VENeMYN3LRx3hA/Gc4C8i+7F72PKz2/jmRjet57e5k5
-         oyV6MgJnLuICZ8WkNA+CK6lYpnwjvaSRy8IS6NVPykX0+/H/n+ZPSS5w8I+vBpFYPgjK
-         0JjhcrqB+gYai819A5/AG6tRYFE9osselXbIeIoXbYfDAasQ+ONSa49WhsHLhEf/aLu5
-         XGoQ==
-X-Gm-Message-State: AOJu0YwEwMzSVzsfOddGvC0fqwAy/BaVX2WrxDTOxqxbEHxGDRnqh1QT
-	qECcjaLQLlb8CEnmmZyKe3R4C1gceK93IgTux1OnSM0YfY/jWnzA6PDnWdGFSYe/K6balsMb3Fe
-	g6fCqkZRLlL+l/u6wj/umyxJxhBlotblE4HU+GxU2dA==
-X-Gm-Gg: ASbGncs/hjB+oZFZAeKYRd2H+cRopK0qfmQK01f/pB84uBy2cXTFKRFcebzK5Ev3zE5
-	GXiUzoDNt+enwzqwaE7gfAJOJfu2juw9iOd8MCTWDYDwwmdffUzGUvru8cK65UJbUbmBhibm522
-	/3PGHgGWoruAA2qCjx7vWL4+F3NUjQzUqd4htvjsrenCZaDWWGw5wVBwWYZbRrhH+J7gcyzk8=
-X-Google-Smtp-Source: AGHT+IE43oRWvMb64GujIJJWzdPLDEMjenv4v0Jum7a6AMAGjdiKsKVlgDSBcomtOCCjl6Gzq3fmh8OM1iG4AkHi16w=
-X-Received: by 2002:a17:907:d583:b0:ae0:bf55:5c48 with SMTP id
- a640c23a62f3a-ae6b0048ef1mr71288366b.7.1751922377307; Mon, 07 Jul 2025
- 14:06:17 -0700 (PDT)
+	s=arc-20240116; t=1751923931; c=relaxed/simple;
+	bh=TpVQawQvdak27SL4BCOhp2AJ5369pl16ycvxv7m6UlM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=B6vmwtLrV+FOxsoTyZMy5+r02qosFf3V63aqkILaW1Y51eMXtRo0R+bGt7eDXTrE4EiqdW+Eq6qSGvex8SeC4sjI0FouHIHksR36DoEN++iO9ZR6VeUCRl2BnkxL8EykLJ2ITmk5LbzNOOvVfm6tdhs+u37Th9du9kgTlOXtgSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
+Received: from mail.carlthompson.net (mail.home [10.35.20.252])
+	(Authenticated sender: cet@carlthompson.net)
+	by smtp.carlthompson.net (Postfix) with ESMTPSA id 8EBC51E0EEB51;
+	Mon,  7 Jul 2025 14:32:01 -0700 (PDT)
+Date: Mon, 7 Jul 2025 14:32:01 -0700 (PDT)
+From: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
+To: John Stoffel <john@stoffel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kerenl@vger.kernel.org
+Message-ID: <1228142592.130.1751923921340@mail.carlthompson.net>
+In-Reply-To: <26732.10255.420410.321937@quad.stoffel.home>
+References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
+ <CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
+ <xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
+ <26723.62463.967566.748222@quad.stoffel.home>
+ <gq2c4qlivewr2j5tp6cubfouvr42jww4ilhx3l55cxmbeotejk@emoy2z2ztmi2>
+ <26732.10255.420410.321937@quad.stoffel.home>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707172956.GF1880847@ZenIV> <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
- <20250707180026.GG1880847@ZenIV> <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
- <20250707193115.GH1880847@ZenIV> <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
- <20250707203104.GJ1880847@ZenIV> <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
- <20250707204918.GK1880847@ZenIV> <CAKPOu+9qpqSSr300ZDduXRbj6dwQo8Cp2bskdS=gfehcVx-=ug@mail.gmail.com>
- <20250707205952.GL1880847@ZenIV>
-In-Reply-To: <20250707205952.GL1880847@ZenIV>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 7 Jul 2025 23:06:06 +0200
-X-Gm-Features: Ac12FXy6F50P4NXWOvvKplRVqEF2pMhcw6bU6vdK48DU3ApJChGmWA58w4Y44CU
-Message-ID: <CAKPOu+8zjtLkjYzCCVyyC80YgekMws4vGOvnPLjvUiQ6zWaqaA@mail.gmail.com>
-Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev73
+X-Originating-Client: open-xchange-appsuite
 
-On Mon, Jul 7, 2025 at 10:59=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
-> Umm...  Note that further in that loop we'll be actively stealing the stu=
-ff from that
-> shrink list that hasn't gotten to __dentry_kill().  Does your busy loop g=
-o into
-> if (data.victim) after the second d_walk()?  IOW, does it manage to pull =
-anything out
-> of that shrink list?
+Don't bother. You can't reason with him and you can't "fix" him. He'll keeping sucking up as much of our collective time and energy as we allow so it's time to move on and stop feeding him.
 
-No, I traced this, there is never a "data.victim" because none of the
-dentries has DCACHE_SHRINK_LIST. "data.found" is only ever incremented
-once (per loop iteration) because a "dead" lockref was found. The
-second d_walk() doesn't find anything because it doesn't look for dead
-(dying) dentries. You added that check only to the first call (only to
-select_collect(), but not to select_collect2()).
+Carl
 
-I think we're getting closer to the point I was trying to make :-)
+> On 2025-07-07 1:03 PM PDT John Stoffel <john@stoffel.org> wrote:
+> 
+>  
+> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+> 
+> > On Tue, Jul 01, 2025 at 10:43:11AM -0400, John Stoffel wrote:
+> >> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+> >> 
+> >> I wasn't sure if I wanted to chime in here, or even if it would be
+> >> worth it.  But whatever.
+> >> 
+> >> > On Thu, Jun 26, 2025 at 08:21:23PM -0700, Linus Torvalds wrote:
+> >> >> On Thu, 26 Jun 2025 at 19:23, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >> >> >
+> >> >> > per the maintainer thread discussion and precedent in xfs and btrfs
+> >> >> > for repair code in RCs, journal_rewind is again included
+> >> >> 
+> >> >> I have pulled this, but also as per that discussion, I think we'll be
+> >> >> parting ways in the 6.17 merge window.
+> >> >> 
+> >> >> You made it very clear that I can't even question any bug-fixes and I
+> >> >> should just pull anything and everything.
+> >> 
+> >> > Linus, I'm not trying to say you can't have any say in bcachefs. Not at
+> >> > all.
+> >> 
+> >> > I positively enjoy working with you - when you're not being a dick,
+> >> > but you can be genuinely impossible sometimes. A lot of times...
+> >> 
+> >> Kent, you can be a dick too.  Prime example, the lines above.  And
+> >> how you've treated me and others who gave feedback on bcachefs in the
+> >> past.  I'm not a programmer, I'm in IT and follow this because it's
+> >> interesting, and I've been doing data management all my career.  So
+> >> new filesystems are interesting.  
+> 
+> > Oh yes, I can be. I apologize if I've been a dick to you personally, I
+> > try to be nice to my users and build good working relationships. But
+> > kernel development is a high stakes, high pressure, stressful job, as I
+> > often remind people. I don't ever take it personally, although sometimes
+> > we do need to cool off before we drive each other completely mad :)
+> 
+> I appreciate this, but honestly I'll withhold judgement until I see
+> how it goes more long term.  But I'm also NOT a kernel developer, I'm
+> an IT professional who does storage and backups and managing data.  So
+> my perspective is very definitely one of your users, or users-to-be.
+> But I've also got a CS degree and understand programming issues and
+> such.  
+> 
+> > If there was something that was unresolved, and you'd like me to
+> > look at it again, I'd be more than happy to. If you want to share
+> > what you were hitting here, I'll tell you what I know - and if it
+> > was from a year or more ago it's most likely been fixed.
+> 
+> Nope, it was over a year ago and it's behind me.  I was trying to
+> build the tools on Debian distro when the bcachefs-tools were a real
+> pain to build.  It's better now.  
+> 
+> >> Slow down.  
+> 
+> > This is the most critical phase in the 10+ year process of shipping a
+> > new filesystem.
+> 
+> Sure, but that's not what I'm trying to say here.  The kernel has, as
+> you most certainly know, a standard process for quickly deploying new
+> versions.  Linus's entire problem is that you dropped in a big chunk
+> of code into the late release process.  
+> 
+> And none of that is critical, because if you have people running 100tb
+> of bcachefs right now, they certainly understand that they can lose
+> data at any time.  Or at least they should if they have any sort of
+> understanding of reliable data.  bcachefs isn't there yet.  It's
+> getting close, but Linux has an amazingly complicated VFS and supports
+> all kinds of wierd edge cases.  Which sucks from the filesystem
+> perspective.
+> 
+> But you know this.  
+> 
+> So when you run into a major bug in the code, or potential data loss
+> when -rc2 or later is coming out, just revert.  Pull that code out
+> because it's obviously not ready.  So you wait a few months, big deal!
+> IT gives you and the code time to stabilize.  
+> 
+> If someone is losing data and you want to give them a patch to try and
+> fix it, great, but they can take a patch from you directly.  And post
+> it to your mailing list.  Put it on a git branch somewhere.  
+> 
+> But revery from the main linus tree.  For now.  In two months, you'll
+> be back with better code.  bcachefs is still listed as experimental,
+> so don't feel like you have to keep pushing the absolutely latest code
+> into the kernel.  Just slow it down a little to make sure you push
+> good code.  
+> 
+> > We're seeing continually increasing usage (hopefully by users who are
+> > prepared to accept that risk, but not always!), but we're not yet ready
+> > for true widespread deployment.
+> 
+> If those users are not prepared to accept the risk of an experimental
+> filesystem, then screw them!  They're idiots and should be treated as
+> such.  
+> 
+> I would expect to be fired from my job if I bet my company's data on
+> bcachefs currently.  Sure, play around and test it if you like, but if
+> it breaks, you get to keep both pieces.  
+> 
+> Same with bleeding edge kernel developement!  I might run pretty
+> bleeding edge kernels at home, but only for my own data that I realize
+> I might lose.  But I also do backups, have the data on XFS and ext4
+> filesystems, which are stable, and I'm not trying to do crazy things
+> with it.  
+> 
+> Do I have some test bcachefs volumes?  Sure do.  And I treat them like
+> lepers, if they break, I either toss them away, or I file a report,
+> but I certainly don't keep ANY data on there I don't want to lose.  
+> 
+> I'm being blunt here.  
+> 
+> > Shipping a project as large and complex as a filesystem must be done
+> > incrementally, in stages where we're deploying to gradually increasing
+> > numbers of users, fixing everything they find and assessing where we're
+> > at before opening it up to more users.
+> 
+> Yes!  But that process also has to include rollbacks, which git has
+> made so so so easy.  Just accept that _if_ 6.x-rc[12345] is buggy,
+> then it needs to be rolled back and subbmitted to 6.x+1-rc1 for the
+> next cycle after it's been baked.
+> 
+> Anyone running such a bleeding edge kernel and finding problems isn't
+> going to care about having to hand apply patches, they're already
+> doing crazy things!  *grin*
+> 
+> > Working with users, supporting with them, checking in on how it's doing,
+> > and getting them the fixes for what they find is how we iterate and
+> > improve. The job is not done until it's working well for everyone.
+> 
+> Yes, I agree 100% with all this. 
+> 
+> > Right now, everyone is concerned because this is a hotly anticipated
+> > project, and everyone wants to see it done right.
+> 
+> So which is more important?  Ship super fast and break things?  Or be
+> willing to revert and ship just a bit slower?  
+> 
+> > And in 6.16, we had two massive pull requests (30+ patches in a
+> > week, twice in a row); that also generates concern when people are
+> > wondering "is this thing stabilizing?".
+> 
+> Correct!
+> 
+> > 6.16 was largely a case of a few particularly interesting bug
+> > reports generating a bunch of fixes (and relatively simple and
+> > localized fixes, which is what we like to see) for repair corner
+> > cases, the biggest culprit (again) being snapshots.
+> 
+> Sure, fixes are great.  But why did you have to drop them into -rc2 in
+> a big bundle?  Why not just roll back what you had submitted and say
+> "it's not baked enough, it needs to wait a release"?  
+> 
+> > If you look at the bug tracker, especially rate of incoming bugs and the
+> > severity of bug reports (and also other sources of bug reports, like
+> > reddit and IRC) - yes, we are stabilizing fast.
+> 
+> Sure, and I'm happy for this.  And so are a bunch of other people!  
+> 
+> > There is still a lot of work to be done, but we're on the right track.
+> 
+> No arguement there.
+> 
+> > "Slowing down" is not something you do without a concrete
+> > reason.
+> 
+> And this is where you and Linus are butting heads in my opinion.  You
+> want to release big patches at any time.  Linus wants to stabilize
+> releases and development for the entire kernel.  You're concentrating
+> on your small area which is vitally important to you.  But not
+> everyone is as invested.  Others want the latest DRM drivers.  Or the
+> latest i2c code, or some other subsystem which they care about.  Linus
+> (and the process) is about the entire kernel.  
+> 
+> > Right now we need to be getting those fixes out to users so
+> > they can keep testing and finding the next bug. When someone has
+> > invested time and effort learning how the system works and how to
+> > report bugs, we don't watn them getting frustrated and leaving - we
+> > want to work with them, so they can keep testing and finding new
+> > bugs.
+> 
+> So post patches on your own tree that they can use, nothing stops you! 
+> 
+> > The signals that would tell me it's time to slow down are:
+> 
+> > - Regressions getting through (quantity, severity, time spent on fixing
+> >   them)
+> > - Bugs getting through that show that show that something fundamental is
+> >   missing (testing, hardening), or broken in our our design.
+> > - Frequency of bug reports going up to where I can't keep up (it's been
+> >   in steady, gradual decline)
+> 
+> > We actually do not want this to be 100% perfect before it sees users.
+> > That would result in a filesystem that's brittle - a glass cannon. We
+> > might get it to the point where it works 99% of the time, but then when
+> > it breaks we'd be in a panic - and if you discover it then, when it's in
+> > the wild, it's too late.
+> 
+> > The processes for how we debug and recover from failures, in the wild,
+> > is a huge part (perhaps the majority) of what we're working on now. That
+> > stuff has to be baked into the design on a deep level, and like all
+> > other complex design it requires continual iteration.
+> 
+> > That is how we'll get the reliability and robustness we hope to achieve.
 
