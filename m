@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-54075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4A9AFB10A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 12:20:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071B0AFB125
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 12:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88D3E166486
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 10:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8B63A67CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 10:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F5A292B51;
-	Mon,  7 Jul 2025 10:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20212989BF;
+	Mon,  7 Jul 2025 10:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svZyXDrS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtU3YsPn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D6D2E3712
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 10:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A83298995
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 10:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751883640; cv=none; b=IEg3fHsUxzSLBN46kG46Tq1amcJP2u/8xOhV633GLSlqXSPA9/9w4hYp6Or+IKBPiy13wEnpDdavl/GRa/njGLOx6KMqBPApcg3WOyV9awVfRnkczbEDT2VX8+gTMQbH7aQ4+0CHzXgTulN8V46KLKhrqcvJfEXPgoTxIUW7B7I=
+	t=1751883907; cv=none; b=Zmrk84N5mOJQsp8N6LLBsMjlG7WdSsKtVoJNSC+oQAts1lSWPGrUC5NdUthCFuUBHkAetJZ+k+ApsjGYvwHC63ccXYhCG1xmwnkVt0viZixL9J+7EyyLh39nSdRj/DE3icJoF3eXfivv/saLEWgx3sJ9LDV3ZcrOVDR0NDRQMO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751883640; c=relaxed/simple;
-	bh=X/+JjVDk6jamKn/Gk9Er3ydLQkFJ+z2OMs9ZF1Uo9fA=;
+	s=arc-20240116; t=1751883907; c=relaxed/simple;
+	bh=4L9YecGp7iFrDBCxrR2hAgj7F4m3+DkRgcrdIFevAuo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZm/zgrlUPhDmH8tZe6T4JKX2VdR3Rgy5pi/gvbjXHi5EeW84pZynnIGGbGhQE5BvcXJ+82yonShtVD1O9bcEZRYZ9uon8adEsZVzEtT+FFunRnjvKkZBFSmkMdhcrZQpTczYaC7bbrIPx9p40js+Y2aY55QdSfBXxn5A6YkabU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svZyXDrS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE04C4CEE3;
-	Mon,  7 Jul 2025 10:20:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tr07EcqwZp7dvOaDd1ZSJHFLorLaLO7wWk7BHqDDkgMmsfUpsOems7f5lNpKuHnK5UDXE9qcRNUsFhW6UftpkLxeLxz+lfJwB+jhkfGk+BMHuw+kwtkeF7YaKTkSy7n9A2+CPix18BNuYrbeQ8xIwWCFFtS5cncX4uw/o/Vc0Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtU3YsPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10759C4CEE3;
+	Mon,  7 Jul 2025 10:25:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751883640;
-	bh=X/+JjVDk6jamKn/Gk9Er3ydLQkFJ+z2OMs9ZF1Uo9fA=;
+	s=k20201202; t=1751883906;
+	bh=4L9YecGp7iFrDBCxrR2hAgj7F4m3+DkRgcrdIFevAuo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=svZyXDrSLObnnsoVUyat4YlANST7oab9f8eIg2p31lVys/0EYF12QVZRzL8YiE/+N
-	 XtIFpafKrFnlpqjE0DXfXkCQYGfSf7834XcQmKt7vfXDsNodcYpDl64PTAtTbV5SE8
-	 bhrUbaUZgmpjVbmLnTy/7n7sWEU/fyuBhvcJeg60ksMHUqlWx19SLEoWvothaBbVoy
-	 kbyg9yiNIILkLinm8r8KjzVt07uvdlkIob2fk0B2IbhtJ6IQrOmhQbtHxyAKXY54wI
-	 CWeKARx7Kl3VOvJjmIU+WkaLu10fwgrQt7btGQxdGIMYPrAdJdT9X32THZSMQfRZak
-	 5YJ/A1dtzWBwg==
-Date: Mon, 7 Jul 2025 12:20:36 +0200
+	b=JtU3YsPnJaJykY9a8TnhDJONGZFAtkb451gNB2L+Mow0Ri5ndwiBF4ke8RwjVi+Ow
+	 wTkfAegxScisaFdEDXFAQwDoR0+xP5q8gENcd52eWQ2gUdcfpovofaAhAhhgv6sDod
+	 vOprat3GYcxqSseUttT1DZL2/MnmRSU9mEyWdCAapadnaUZKnvVqNInA3ZfNNtvYMq
+	 CYxhCAgP0HzjVisQ3mzt/ArpwAd3ZguKEQT8PjObfuK7P0kwdTy+qo1tj0UfMLfXmo
+	 SLmUya+tGjJII050xez90DLtCksQb0kwDahXTyI8pgWdZ00uz0350939Pz3F9K8HCN
+	 O0B0nWzTvdxww==
+Date: Mon, 7 Jul 2025 12:25:03 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Jan Polensky <japo@linux.ibm.com>
 Cc: linux-fsdevel@vger.kernel.org
 Subject: Re: [BUG] linux-next: Signal handling and coredump regression in LTP
  coredump_pipe()
-Message-ID: <20250707-irrtum-aufblasbar-5226d9d544ea@brauner>
+Message-ID: <20250707-kahlschlag-nachdenken-6e98737f112e@brauner>
 References: <20250707095539.820317-1-japo@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -99,27 +99,5 @@ On Mon, Jul 07, 2025 at 11:55:39AM +0200, Jan Polensky wrote:
 > Signed-off-by: Jan Polensky <japo@linux.ibm.com>
 > ---
 
-Very odd because I run the coredump tests. Can you please give me the
-exact LTP command so I can make sure I'm running those tests?
-
-> Only a suggestion for a fix:
->  fs/coredump.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index 081b5e9d16e2..f4f7f0a0ae40 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -1019,7 +1019,7 @@ static bool coredump_pipe(struct core_name *cn, struct coredump_params *cprm,
->  	if (!sub_info)
->  		return false;
-> 
-> -	if (!call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC)) {
-> +	if (call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC)) {
->  		coredump_report_failure("|%s pipe failed", cn->corename);
->  		return false;
->  	}
-> --
-> 2.48.1
-> 
+Folded, thank you!
 
