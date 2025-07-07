@@ -1,124 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-54110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C90AFB572
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 15:56:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2057FAFB5CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8810B3AAF63
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 13:56:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA72E4A3128
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E722BD5A1;
-	Mon,  7 Jul 2025 13:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZydXeAik"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B732D9494;
+	Mon,  7 Jul 2025 14:23:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562DC19D880
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 13:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306C82D8375;
+	Mon,  7 Jul 2025 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751896609; cv=none; b=EEF7Q2Hs/qakWg5GvEJnCMT77Q1WvAso78OLqBTFEnHlH55Bu9B+pWRvjl6z+kFm90qie2evY28GYRNo77+ySUhWIwmz1HUBdUuYDPRvcEBRM3MDBeBsyCS23fL2mwn4U/4yGsd3c3MnkV2jbBlvdeYgwyVovVTZmI342KirWUw=
+	t=1751898180; cv=none; b=CIJnPZBhcpTvMjB+uwcOr+vlgZNY+vKT+gvjKsjHL3o+ZyaZBFgfE8s2+kRTdlXVYXiUCpf5V5rTU6l4FDJA5zdnd1SbSvZW8blEJvjerYjSWD9S93vY75KaKJ2JX4FAcNgFdNPkWAEczFqL25q4hV7Nvz/We9bmIrG3xr+4MYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751896609; c=relaxed/simple;
-	bh=ZATC/+FhJgzjlFxxqMKrnL3O6Is7fUT9k6SZQ666z9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6hdLbIBIms0oqQYmC4xAingdujNb20KennxzoIEbcy5w/Oo4ns861XKOqaUn0GPJ7pscLFt3MVg7BPQYHExRSUWU9NQoSgrtsNG6Hv4vH8ennb2u52yQvx1nu5plFbOqhUHPCoN9K5GaQPF1wGGQDwmFnmOWzSTlQMxQjtrGVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZydXeAik; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567B4q4t024638;
-	Mon, 7 Jul 2025 13:56:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=QRv8azdTzXmsiZyUWDcIW/MRUGghOC
-	v0OaLdvpwkm3g=; b=ZydXeAike+8XgGCpNN16ZeZqpDT2QCBOGlTl9N3dgO+LxD
-	ZyexYUxeMvi+V6BnKuGrKvLA0Eyrru6HypbRgqjzMDzaTRnGX9j+2p5f7RO5nRHo
-	bhq8M/TP+bjFsOSU75TNKZDZC5g3RNA0QyEZiSvTbkjjlPHrzmE+8o5Njr2Vvpb7
-	nDr+E4U0pxIQxszY4IA4vK/VSHwGa1CexIPB9wM6pbb4NS7ifpx66yx78Z//58XS
-	cM+t3THdDGZVSEgHmZs1QW6bBIKtepZnexLXRWVqxvdw4q6e2WVlO3wD/Zdgg8xh
-	JtnGmAG709eC3SCWfn4KRIvuOupshKU8Dit9NnzA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ptfyhmrh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 13:56:44 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 567D2tcs025586;
-	Mon, 7 Jul 2025 13:56:44 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47qfcnxaps-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 13:56:44 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 567DugrK22544772
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Jul 2025 13:56:42 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 148E820043;
-	Mon,  7 Jul 2025 13:56:42 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D0D8D20040;
-	Mon,  7 Jul 2025 13:56:41 +0000 (GMT)
-Received: from li-276bd24c-2dcc-11b2-a85c-945b6f05615c.ibm.com (unknown [9.87.129.26])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  7 Jul 2025 13:56:41 +0000 (GMT)
-Date: Mon, 7 Jul 2025 15:56:40 +0200
-From: Jan Polensky <japo@linux.ibm.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [BUG] linux-next: Signal handling and coredump regression in LTP
- coredump_pipe()
-Message-ID: <aGvSGP8zQZDUH1_l@li-276bd24c-2dcc-11b2-a85c-945b6f05615c.ibm.com>
-References: <20250707095539.820317-1-japo@linux.ibm.com>
- <20250707-irrtum-aufblasbar-5226d9d544ea@brauner>
+	s=arc-20240116; t=1751898180; c=relaxed/simple;
+	bh=mwRNkUG9Ads6twT1NddkxxWfD8nyJM5H91oOZh3c1t4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nnULpuRBOTpjmldiXHrQ3Eta4+IrLlBUwzv+iDAp3Fl05ORZCszhi+fe4vGY0VsG5TBhWlfJ5NO2vn1V64ylAloxKiInorQCsAtBxpZgvhJAaeDfYPQgQekRC48L9hBXpHfvAVJwB9yxNlChgKHW4XjGL4M6zoI0af2M9hpHZFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bbRKX4lN0zYQtvZ;
+	Mon,  7 Jul 2025 22:22:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 780E91A0E25;
+	Mon,  7 Jul 2025 22:22:55 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP3 (Coremail) with SMTP id _Ch0CgBnxyQ22GtoNazLAw--.46745S4;
+	Mon, 07 Jul 2025 22:22:53 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ojaswin@linux.ibm.com,
+	sashal@kernel.org,
+	naresh.kamboju@linaro.org,
+	jiangqi903@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v4 00/11] ext4: fix insufficient credits when writing back large folios
+Date: Mon,  7 Jul 2025 22:08:03 +0800
+Message-ID: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707-irrtum-aufblasbar-5226d9d544ea@brauner>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=crubk04i c=1 sm=1 tr=0 ts=686bd21c cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=dWKVyG3mCClnsUYDCHcA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
-X-Proofpoint-ORIG-GUID: KMbsXM_yb25jXu7893vfyMYXKqro7Ubl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA4MCBTYWx0ZWRfX34inArj5qDGZ ExK7as2tzU/VXkBjRRvgiVkbybooDO3HoP6xeA2y9ICtDFfYllZEVM/jv2sDOaUIUlBl1zAiHTW eTVtfQ3iYTg+JPAicZ94SxyKYqwAqOy3csUXvvUKfj65npo9iIrgK+RvRcFW8sUKj4CzsN6VY1F
- 0ns9CZ622g5qu3JKoFNTDqEwr3BzsFasqwN8zvhEaSWW8IdusKokd5vNV0Na/KL0LzyYUsoNaMz UajuOMwjDZPZu/jtuLJ/rUUEzD8iLnki0qFEHmqgbCPMAH6vC1L0y3ksAcNusycJEcXQ8fzh11x cXYRemVi7uCwr19vwF9nUqJf1a4FliJ8TIszrdFX+yaLwFdZAJHlzxCF54Qjj2sAj09jCSXuwXv
- Dnn5vkwF/4WZ8YpUFwf9NOcq2TyWz9pR3fPkc5FYxDe6x7ExpBZPXhMKJDtvZzIVGeM+Q7rb
-X-Proofpoint-GUID: KMbsXM_yb25jXu7893vfyMYXKqro7Ubl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 adultscore=0 suspectscore=0 lowpriorityscore=0
- clxscore=1015 impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507070080
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgBnxyQ22GtoNazLAw--.46745S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFy5tF4kWry5tr1DKFyUJrb_yoWrJF4UpF
+	W3CF15Gr1rZw17Za9rXa18CF1rGan5Cr47Xry3K3s8uayDuFyIkFZaga1Y9FyUArZ3GFy0
+	qr4jyryDCFy5A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFjjgDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon, Jul 07, 2025 at 12:20:36PM +0200, Christian Brauner wrote:
-> On Mon, Jul 07, 2025 at 11:55:39AM +0200, Jan Polensky wrote:
-> > Hi all,
-[skip]
-> > ---
->
-> Very odd because I run the coredump tests. Can you please give me the
-> exact LTP command so I can make sure I'm running those tests?
-I ran them without kirk to avoid testing overhead, e.g.:
+From: Zhang Yi <yi.zhang@huawei.com>
 
-    runltp -f syscalls
-    runltp -f syscalls -s kill11
-    ltp-bin/testcases/bin/kill11
+Changes since v3:
+ - Fix the end_pos assignment in patch 01.
+ - Rename mpage_submit_buffers() to mpage_submit_partial_folio(), and
+   fix a left shift out-of-bounds problem in patch 03.
+ - Fix the spelling errors in patch 04.
+ - Add a comment for NULL 'handle' test in
+   ext4_journal_ensure_extent_credits().
+ - Add patch 11 to limit the maximum order of the folio to 2048 fs
+   blocks, prevent the overestimation of reserve journal credits during
+   folios write-back.
+Changes since v2:
+ - Convert the processing of folios writeback in bytes instead of pages.
+ - Refactor ext4_page_mkwrite() and ensure journal credits in
+   ext4_block_write_begin() instead of in _ext4_get_block().
+ - Enhance tracepoints in ext4_do_writepages().
+ - Replace the outdated ext4_da_writepages_trans_blocks() and
+   ext4_writepage_trans_blocks() with the new helper used to reserve
+   credits for a single extent.
+Changes since v1:
+ - Make the write-back process supports writing a partial folio if it
+   exits the mapping loop prematurely due to insufficient sapce or
+   journal credits, it also fix the potential stale data and
+   inconsistency issues.
+ - Fix the same issue regarding the allocation of blocks in
+   ext4_write_begin() and ext4_page_mkwrite() when delalloc is not
+   enabled.
 
-Some tests may be skipped depending on kernel config, system capabilities, and
-installed software.
-Let me know if you'd prefer a kirk run for comparison.
+v3: https://lore.kernel.org/linux-ext4/20250701130635.4079595-1-yi.zhang@huaweicloud.com/
+v2: https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
+v1: https://lore.kernel.org/linux-ext4/20250530062858.458039-1-yi.zhang@huaweicloud.com/
 
-[skip]
+Original Description
+
+This series addresses the issue that Jan pointed out regarding large
+folios support for ext4[1]. The problem is that the credits calculation
+may insufficient in ext4_meta_trans_blocks() when allocating blocks
+during write back a sufficiently large and discontinuous folio, it
+doesn't involve the credits for updating bitmap and group descriptor
+block. However, if we fix this issue, it may lead to significant
+overestimation on the some filesystems with a lot of block groups.
+
+The solution involves first ensure that the current journal transaction
+has enough credits when we mapping an extent during allocating blocks.
+Then if the credits reach the upper limit, exit the current mapping
+loop, submit the partial folio and restart a new transaction. Finally,
+fix the wrong credits calculation in ext4_meta_trans_blocks(). Please
+see the following patches for details.
+
+[1] https://lore.kernel.org/linux-ext4/ht54j6bvjmiqt62xmcveqlo7bmrunqs4ji7wikfteftdjijzek@7tz5gpejaoen/
+
+Thanks,
+Yi.
+
+Zhang Yi (11):
+  ext4: process folios writeback in bytes
+  ext4: move the calculation of wbc->nr_to_write to mpage_folio_done()
+  ext4: fix stale data if it bail out of the extents mapping loop
+  ext4: refactor the block allocation process of ext4_page_mkwrite()
+  ext4: restart handle if credits are insufficient during allocating
+    blocks
+  ext4: enhance tracepoints during the folios writeback
+  ext4: correct the reserved credits for extent conversion
+  ext4: reserved credits for one extent during the folio writeback
+  ext4: replace ext4_writepage_trans_blocks()
+  ext4: fix insufficient credits calculation in ext4_meta_trans_blocks()
+  ext4: limit the maximum folio order
+
+ fs/ext4/ext4.h              |   4 +-
+ fs/ext4/extents.c           |   6 +-
+ fs/ext4/ialloc.c            |   3 +-
+ fs/ext4/inline.c            |   6 +-
+ fs/ext4/inode.c             | 349 +++++++++++++++++++++++-------------
+ fs/ext4/move_extent.c       |   3 +-
+ fs/ext4/xattr.c             |   2 +-
+ include/trace/events/ext4.h |  47 ++++-
+ 8 files changed, 272 insertions(+), 148 deletions(-)
+
+-- 
+2.46.1
+
 
