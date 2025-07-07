@@ -1,209 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-54198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F04AFBE98
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 01:27:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0550BAFBEC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 01:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 447154A327C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 23:27:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8443E425EE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 23:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB96A2874F4;
-	Mon,  7 Jul 2025 23:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0801328BA9D;
+	Mon,  7 Jul 2025 23:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcFpzgiL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgz/lwlB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B9917DFE7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 23:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BED9288CB2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 23:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751930857; cv=none; b=r8qtNOH7zQJttnR2yCzs64p/wD7ZqR3r8sLHq9SiGR8iT/imFQS2YDFBbFogM4iq50EzvPxuN3FtXaUAsusqWoA5bnF/PpT4AHCd84dMXxCdc+WByfwWXhveeoB1PEAKXI8JPIoxpUw9/hbJ7ZircUv9dxAXsWMe8A2k5neqmKU=
+	t=1751932020; cv=none; b=cjjep+yfXD2PZS0tafQZHiqq416X4muHTj9uPcSd+YfnST7i+pmf+Xyy3qnwUSE+bsse/uZG2zka2lEm0b5mHC/YRrF8xr+A1WUzQCgeFsk4qFWd+DP6BGl5DchFBgbEGc2EGhwEBwJv5U1sXSmE6P92v3iJmVbP79z8eHeyxYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751930857; c=relaxed/simple;
-	bh=GPwPu9gDti3gjYYTt7+8dnpeDy/u3TqH4IBZfgWzizk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O5L6jWMwISSJNjRBz+4p3v0FEwqHYSEcXmK6n0wIgDmRVO4/Vj/Zeamb/IAgHIivQ4q2/Hj+efvtNReYP0uGI8IVWc4TgH/gNzc9t0tzKxleGn4toUT86uaA7QgwH5WKOKNrr5NW8q0QkxUeW+xxL9xsQn8lQgXDDDwmm9JvC3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OcFpzgiL; arc=none smtp.client-ip=209.85.222.180
+	s=arc-20240116; t=1751932020; c=relaxed/simple;
+	bh=4HO8JacwR8tYZm/383eHBp1AIahe9iYZuO/sWaU8sUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EtmTPkastAnvpiBmHHHsYfDcIbLPVwQISkc1SGyF0qDYKi6eR3k46xnxOhgdUuEUhT4lv0u78cKR0YAUM9btetyGWcmfKgtklZBHaV2f7HdLx70ZkMf6e7Oz9od9dMyM+GMtHtwQ8yFTMUV0uoEBqXyR7nleG/7Kt+9JNd6RRmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgz/lwlB; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7d0976776dcso434799285a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 16:27:35 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-236377f00a1so33690175ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 16:46:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751930854; x=1752535654; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yj5J5JAM34i/mqgMn2C+uf1FAWp7yLFStPcOWEzdlmc=;
-        b=OcFpzgiLQJHZuJkT7FVPInm7NdJZUhoJkq7nKx94MSvctoTZnJeNWWcHkHMJfVqVDR
-         MmUi4L7737zofnsygjcOg/xAJC/weN2dxuJx5Q0KzciTfzZDo4nilMiJwQtCkHe0Or8l
-         IMS8zC2/y1SDPO0MiwQ9opJioPSVxGqkXxL6B6eFG5MEgizbaQ7JM2kkF0Wu15apAAgq
-         UCnybGaxiLkqunUuLudT31/8MKsTFGMj/pD5jZ6v3HOmtZtgizvw45lU07IrwZVSD/kE
-         pBezK2Z+pw/o7Xe6Ihlrq+/bbvenXuXwQ5HGrsR265X4lUqmL8kSjURE431g75BZZPZd
-         xjOA==
+        d=gmail.com; s=20230601; t=1751932018; x=1752536818; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v2QkLbl8Y6csFmF74obpk5VAZjfP3MyEBaRP4bps0CM=;
+        b=jgz/lwlBAyCrVjYGFdCJub3QFZ3h4K0MmJTy/OKbregmdJQ0XkDrXC036FSpSbDMep
+         DG2xpyd7Eg36vu1vEnEOoL3FiHG7scyLEoan23mC/9R6kGAs6yDhLhjOqdv/2kJbvDL+
+         g3hpDVIphXLJlWNX7Ua4JxrG5vqCFel1GLDB/izoh18lgf06W2yiZH7ghqdnGubjSios
+         bPbFZodeMgc3fRHt2bTeGEcy/Lb3KVI/T7rAm8uUFwwjUYMJGlFaFA3eEecI7fvVGCiS
+         mFhzsbB5RrqldFOIatnGSQXZAWqay6dYIp6EplvuAiuraCK3lrWQyWqPI0UB+gZBqIhZ
+         b0Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751930854; x=1752535654;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yj5J5JAM34i/mqgMn2C+uf1FAWp7yLFStPcOWEzdlmc=;
-        b=jTfrzbbjqTkMZlpkMFX0cB9G/z99mBpUxliyVZ3KVnvCwOACOfUMg4K1WBLU6iCPaE
-         hcSmeuXDjCHfxbec/Lrsg+TnFwDspJTXwKfmIL7/KOKUXBwiF34Nbrs0irTj9Qz3pWb4
-         JxREyMwEr9FSPK+4sewUNMlxMqstkw8gbn/EYRNiPxgDcjO2pN/4xFlOmpTTtPkrHhIq
-         LWwn1qrLGBQgj1jTxKnGdtA5dOMoFg2Uc9pbL2lPinGbgEAf5cYaA2McQS+Y326hyidJ
-         MIfAvQPAdlSAJfiooe9+W9zOa+9r+XJiyexrUYA1O4DLWsGbuzkteVWFk2Q/F2xthxnz
-         6JPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVT1k+lIznhpHAfNydWDy9raWmghiEDe0SYSvYuhxMPySANzFYC8v1/QeeCC+XnoyqJn7lHjcAiBoiRaU1e@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSEsY2bcPeyrLLt92cUGEBshqKKQjjdKni9aw8mlTyTyUgeNec
-	/qL8i4hBacJJApj9Qc7xRBNf1XbBBsFE2b082EVNNeerZC3LqhuBLwkAEVwfOlX2X96GEKGgeow
-	UIrra9rYF+FBDh+C3z5D+rp1tbQc68II=
-X-Gm-Gg: ASbGncuXHTQxeFWozUuoY3HMZT1AJWm0vEUseO2RcRIw/BqM9PWWukuVgAbm/EHbDlR
-	7MJEi5vgtkvFsJy8twA4mrUYxBBJ8k7WQ17C3mnRWn7xEMz1uaVecO33kxPH46CioxG/3DOjDUq
-	Cm1L7B6mNcZA8WqJ2IT8LS9XooVXapchfZpO7HEXoMrCcYoGmpygVu41SPupg=
-X-Google-Smtp-Source: AGHT+IGutRxMccn3PUfXKG4g/WI5URz/N7x6OfCKLLL8cmIxB51QSCy+lw5sb4M2FkN84Dc2iO7O0FSyqYwdMyoJZw8=
-X-Received: by 2002:ac8:5f8f:0:b0:4a7:14c3:7405 with SMTP id
- d75a77b69052e-4a9987b088amr238466411cf.27.1751930854452; Mon, 07 Jul 2025
- 16:27:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751932018; x=1752536818;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v2QkLbl8Y6csFmF74obpk5VAZjfP3MyEBaRP4bps0CM=;
+        b=cirjdJbjwOCU6Ar3+usZfchGMvkl/73VC1/2tPZZRj3129/em61jI7A45UZwzfvyog
+         GcMST3vxKK62blnWi9vVmPzBuzkGGbvEX8i9dBPikYZrO/cLE6GDY5DIrgJWJJsWh0nB
+         vXIdsMpLaFyIAfTMYeVa3mQ+oFvWdiGTxVzfk1TD18on75PtNSvDLn7pQzdhmzR5F16q
+         XHbUwu2qqpJ4j+kX83PW+uwdDgHouJLyZPzM7FhaP/bHi7Ty7adlqBw3gcm8wpWGfA9P
+         nROG2X2fA78B81k4rpcTJtnjWkdwC1DM3nhjXfRZ/QLbqG0Gn7cSd/vKPGZi0HetvyK4
+         l39A==
+X-Gm-Message-State: AOJu0Yx+1cG3tH1NDiqhOdZNOV2CCGyyowZMU/WioXmSQAm/qhQwqLZB
+	i39ClF1HbMX1eS7qSyk7tHV/kuGD1ru1XQVgyCm6vMez/S7Txmu2raaySiR38A==
+X-Gm-Gg: ASbGncu5H/ZwBfTLVvVJrmgWJk+VEMdPa+H2Xssw6z29q1BEy5B19nlGx2k8WZ9NhFj
+	PDXjE+hqwMEPwFFvQUH6xEt21lJrOuTrWJ7dEOBx2IS5EX7JQb+FWkxQbVM6nskZ5zHhMfm1ntv
+	k+yPRmh2ee+eWbw0vUw/ypfwnju1UAUF9O8+aMnYMsnZaWvC63naTYiXf5h6Xe+XzqF0RBQAnm/
+	jqs+ko5FkY0NmMnnlaokGsNU8gzVIxvANQxlyh413oyl5fc6auimi3HkjmA792FkZMD5aGKRxq3
+	L6Yd4GO+xxgi8QceDTZqtF6hSdcoJ665ZpGzlgaQ1o6eAZMHYOkPyA==
+X-Google-Smtp-Source: AGHT+IFAEOPpGLsNEswIoTM0viOk+q51H5C+AHk+FOjZzGwODKLLXrX5Tj07mV+O46SIRycTH9rETg==
+X-Received: by 2002:a17:903:4b04:b0:234:d7b2:2aa9 with SMTP id d9443c01a7336-23dd1d65108mr7492745ad.29.1751932018123;
+        Mon, 07 Jul 2025 16:46:58 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c845bdd19sm102186685ad.245.2025.07.07.16.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 16:46:57 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org,
+	david@redhat.com,
+	willy@infradead.org,
+	linux-mm@kvack.org
+Subject: [PATCH v2 0/2] fuse/mm: remove BDI_CAP_WRITEBACK_ACCT
+Date: Mon,  7 Jul 2025 16:46:04 -0700
+Message-ID: <20250707234606.2300149-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250426000828.3216220-1-joannelkoong@gmail.com>
- <20250426000828.3216220-11-joannelkoong@gmail.com> <6d9c08dd-c1d0-48bd-aacb-b4300f87d525@redhat.com>
-In-Reply-To: <6d9c08dd-c1d0-48bd-aacb-b4300f87d525@redhat.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 7 Jul 2025 16:27:23 -0700
-X-Gm-Features: Ac12FXyG9BFglLABQ2gx_uPQKw1uMHNQwtb2HfpDZ-C6ELSa63Lb5rOkawRCj94
-Message-ID: <CAJnrk1bTe88hy4XSkj1RSC4r+oA=VZ-=jKymt7uoB1q75KZCYg@mail.gmail.com>
-Subject: Re: [PATCH v5 10/11] fuse: optimize direct io large folios processing
-To: David Hildenbrand <david@redhat.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, jlayton@kernel.org, 
-	jefflexu@linux.alibaba.com, josef@toxicpanda.com, bernd.schubert@fastmail.fm, 
-	willy@infradead.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 4, 2025 at 3:24=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 26.04.25 02:08, Joanne Koong wrote:
-> > Optimize processing folios larger than one page size for the direct io
-> > case. If contiguous pages are part of the same folio, collate the
-> > processing instead of processing each page in the folio separately.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/fuse/file.c | 55 +++++++++++++++++++++++++++++++++++++------------=
--
-> >   1 file changed, 41 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index 9a31f2a516b9..61eaec1c993b 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -1490,7 +1490,8 @@ static int fuse_get_user_pages(struct fuse_args_p=
-ages *ap, struct iov_iter *ii,
-> >       }
-> >
-> >       while (nbytes < *nbytesp && nr_pages < max_pages) {
-> > -             unsigned nfolios, i;
-> > +             struct folio *prev_folio =3D NULL;
-> > +             unsigned npages, i;
-> >               size_t start;
-> >
-> >               ret =3D iov_iter_extract_pages(ii, &pages,
-> > @@ -1502,23 +1503,49 @@ static int fuse_get_user_pages(struct fuse_args=
-_pages *ap, struct iov_iter *ii,
-> >
-> >               nbytes +=3D ret;
-> >
-> > -             nfolios =3D DIV_ROUND_UP(ret + start, PAGE_SIZE);
-> > +             npages =3D DIV_ROUND_UP(ret + start, PAGE_SIZE);
-> >
-> > -             for (i =3D 0; i < nfolios; i++) {
-> > -                     struct folio *folio =3D page_folio(pages[i]);
-> > -                     unsigned int offset =3D start +
-> > -                             (folio_page_idx(folio, pages[i]) << PAGE_=
-SHIFT);
-> > -                     unsigned int len =3D min_t(unsigned int, ret, PAG=
-E_SIZE - start);
-> > +             /*
-> > +              * We must check each extracted page. We can't assume eve=
-ry page
-> > +              * in a large folio is used. For example, userspace may m=
-map() a
-> > +              * file PROT_WRITE, MAP_PRIVATE, and then store to the mi=
-ddle of
-> > +              * a large folio, in which case the extracted pages could=
- be
-> > +              *
-> > +              * folio A page 0
-> > +              * folio A page 1
-> > +              * folio B page 0
-> > +              * folio A page 3
-> > +              *
-> > +              * where folio A belongs to the file and folio B is an an=
-onymous
-> > +              * COW page.
-> > +              */
-> > +             for (i =3D 0; i < npages && ret; i++) {
-> > +                     struct folio *folio;
-> > +                     unsigned int offset;
-> > +                     unsigned int len;
-> > +
-> > +                     WARN_ON(!pages[i]);
-> > +                     folio =3D page_folio(pages[i]);
-> > +
-> > +                     len =3D min_t(unsigned int, ret, PAGE_SIZE - star=
-t);
-> > +
-> > +                     if (folio =3D=3D prev_folio && pages[i] !=3D page=
-s[i - 1]) {
->
-> I don't really understand the "pages[i] !=3D pages[i - 1]" part.
->
-> Why would you have to equal page pointers in there?
->
-
-The pages extracted are user pages from a userspace iovec. AFAICT,
-there's the possibility, eg if userspace mmaps() the file with
-copy-on-write, that the same physical page could back multiple
-contiguous virtual addresses.
-
->
-> Something that might be simpler to understand and implement would be usin=
-g
->
->         num_pages_contiguous()
->
-> from
->
->         https://lore.kernel.org/all/20250704062602.33500-2-lizhe.67@byted=
-ance.com/T/#u
->
-> and then just making sure that we don't exceed the current folio, if we
-> ever get contiguous pages that cross a folio.
-
-Thanks for the link. I think here it's common that the pages array
-would hold pages from multiple different folios, so maybe a new helper
-num_pages_contiguous_folio() would be useful to return back the number
-of contiguous pages that are within the scope of the same folio.
+With the changes in commit 0c58a97f919c ("fuse: remove tmp folio for
+writebacks and internal rb tree") which removed using temp folios for dirty
+page writeback, fuse can now use the default writeback accounting instead of
+doing its own accounting. This allows us to get rid of BDI_CAP_WRITEBACK_ACCT
+altogether.
 
 
-Thanks,
-Joanne
->
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+Changelog
+---------
+v1: https://lore.kernel.org/linux-fsdevel/20250703164556.1576674-1-joannelkoong@gmail.com/
+v1 -> v2:
+* Get rid of unused variable declarations (kernel test robot)
+* Add David's acked-by
+
+
+Joanne Koong (2):
+  fuse: use default writeback accounting
+  mm: remove BDI_CAP_WRITEBACK_ACCT
+
+ fs/fuse/file.c              |  9 +-------
+ fs/fuse/inode.c             |  2 --
+ include/linux/backing-dev.h | 14 +-----------
+ mm/backing-dev.c            |  2 +-
+ mm/page-writeback.c         | 43 ++++++++++++++++---------------------
+ 5 files changed, 21 insertions(+), 49 deletions(-)
+
+-- 
+2.47.1
+
 
