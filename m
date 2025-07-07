@@ -1,105 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-54102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F8FAFB386
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:48:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C307AFB3C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 15:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE941AA41D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 12:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DFFC4A35C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 13:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C2729B20E;
-	Mon,  7 Jul 2025 12:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9382F29C33F;
+	Mon,  7 Jul 2025 13:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="KIwHVVF7"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="40eDqH1T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7605289E05;
-	Mon,  7 Jul 2025 12:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B2129C326;
+	Mon,  7 Jul 2025 13:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751892473; cv=none; b=osWJm3JlU8Q234B1aKy1THMIeNf2QFpdUFEyseeidAQCAsTSfv3Eq8dsUCG5Js5qSawWV8j5Zv5xRO0A86c635SEPg7zDcTBBBC0T3OIcQ9V6mNDdiLTG/XornOCpMzhF/DljAq/H/NAUckKf5JZ+oop8cz7d3GkVAt+mrw/oMs=
+	t=1751893210; cv=none; b=skJW/lpa6R/6NsnvX/rEdHbSIpzBsX+Pw1O+unm0YjRIbsRT+ADIFvO7x6zaoA4SgmZ+KEUpU91HdWWYh2x25TObuXYCubVQxiAPkiiqa2Tyf9hD7fHs1cSn17Ceea/WwUi3BysJEBwt5A7bDZOvH13eg1rycev6fNbOsWbZqiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751892473; c=relaxed/simple;
-	bh=kz6g0RZrjv0pS76XcYVs4XWiln5FXU1dNiOYnrZOlWI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XpoLS/HxhE7ootTvETMySHbT/5yuTBgDxZc67wshdKG0eKv79GvI+EK1rN+Ziv2Z/rVI9eLLhjItFfR38X8gF4hazWSKc3Zn590xXHaz9AZrmAELJ+0vEa4+N5/JKc/Je/kqVN5JLyQPk2X/dMnxb/vyLNeZNjtYAZAY/ea6Ntc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=KIwHVVF7; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 6094C2F4;
-	Mon,  7 Jul 2025 12:46:44 +0000 (UTC)
-Authentication-Results: relayaws-01.paragon-software.com;
-	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=KIwHVVF7;
-	dkim-atps=neutral
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id CB98E1FDF;
-	Mon,  7 Jul 2025 12:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1751892468;
-	bh=4ORtnEo8Lo5/TecHN3+QL+myt9NI3UgcjwgBg3qFVm0=;
-	h=From:To:CC:Subject:Date;
-	b=KIwHVVF7Yk2JiCCLxBvLIn3Y0FxiJRpSZTEvjUQazfMGwFPcN7nAKjtbFqzqjEjtn
-	 osEfC0xkMKCfLt1apfo4OGv94XsWeS09ZngfIv7UGXVMYz6LY6SLhPkeUCEP7gohuQ
-	 LnHQ3MrYfArbSGQuqkPiHEvdqZ/n64d7Vk7h00aY=
-Received: from localhost.localdomain (172.30.20.165) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 7 Jul 2025 15:47:47 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <ntfs3@lists.linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	<syzbot+a5d1c9dfa91705cd2f6d@syzkaller.appspotmail.com>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>
-Subject: [PATCH] Revert "fs/ntfs3: Replace inode_trylock with inode_lock"
-Date: Mon, 7 Jul 2025 14:47:38 +0200
-Message-ID: <20250707124738.6764-1-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751893210; c=relaxed/simple;
+	bh=vzpqH7cwAvt5EfB3DXmRzC/6/YWTutXwvmvDN5nphew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZI3Ky4QYKxsoiyveMV+k/ELw6iEdledTVnYwDHf4ZLtJbqPOQGFyVTwMUXainkJaTapxT806MIdyXS1Qe4BZATYqeBKj5qext7FS7hVwxIwlkdOqgAR/Lb0JGO3+tl/llKz6vxLnaCf5LS72zYnXGBHpS6FuZmSpYBqmdv4FEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=40eDqH1T; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=l9BqN9JWYSkSCj4ALm0oMo2ahkDITzuK7PJIB/RwV+Y=; b=40eDqH1Tpt6pqjoWJoqMb+ZDZ8
+	Eix80QnvxzoKWTucgItsK2bvEHjme85duJ1+kEmPHlqgjO84oY/2HqYd7IgOMciEjhJqvnxIpWTpR
+	rZjW/suaXWN7HijOpVBHlONAUpd91WWK4Mn+6nQ92h7Tnks181om8Jk6o1Jm6AMvrzJ2C74DazQT4
+	9B5LTdFzE1q/kBjA7KSPuS3yX6AAbvVhyQ8NTBqI7lk4NdxcoXWQdWLhFh1/f/Ezk3dP3YMtqzchH
+	ITqXuQeuhtiC6lM0myVIN28zZ+JedOWRLK3XaL9yNaqNBmkLQ5yxLytFzICC620Lnl03PhrGMsHiA
+	u+Txu/ZA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uYlS3-00000002Tjh-2VBZ;
+	Mon, 07 Jul 2025 13:00:07 +0000
+Date: Mon, 7 Jul 2025 06:00:07 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	syzbot+a5d1c9dfa91705cd2f6d@syzkaller.appspotmail.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: Re: [PATCH] Revert "fs/ntfs3: Replace inode_trylock with inode_lock"
+Message-ID: <aGvE1_yre9ayskxu@infradead.org>
+References: <20250707124738.6764-1-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707124738.6764-1-almaz.alexandrovich@paragon-software.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-This reverts commit 69505fe98f198ee813898cbcaf6770949636430b.
+On Mon, Jul 07, 2025 at 02:47:38PM +0200, Konstantin Komarov wrote:
+> This reverts commit 69505fe98f198ee813898cbcaf6770949636430b.
+> 
+> Make lock acquiring conditional to avoid the deadlock.
 
-Make lock acquiring conditional to avoid the deadlock.
-
-Fixes: 69505fe98f19 ("fs/ntfs3: Replace inode_trylock with inode_lock")
-Reported-by: syzbot+a5d1c9dfa91705cd2f6d@syzkaller.appspotmail.com
-Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- fs/ntfs3/file.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 65fb27d1e17c..2e321b84a1ed 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -322,7 +322,10 @@ static int ntfs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 		}
- 
- 		if (ni->i_valid < to) {
--			inode_lock(inode);
-+			if (!inode_trylock(inode)) {
-+				err = -EAGAIN;
-+				goto out;
-+			}
- 			err = ntfs_extend_initialized_size(file, ni,
- 							   ni->i_valid, to);
- 			inode_unlock(inode);
--- 
-2.43.0
+This is not a very useful commit message for a locking change.
+Please explain the problem this solves, and why the original reason
+for the locking change isn't valid any more, or less important than
+the newly arising issue.
 
 
