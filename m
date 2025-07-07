@@ -1,278 +1,470 @@
-Return-Path: <linux-fsdevel+bounces-54137-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0BDAFB6BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 17:03:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EA1AFB776
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 17:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 058117A5A34
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 15:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14FA9188C1FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 15:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14722242D9A;
-	Mon,  7 Jul 2025 15:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8301F1E1E04;
+	Mon,  7 Jul 2025 15:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CJlvCUjV";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="q2EJP8m3"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="V7IWyz8D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC671A239A;
-	Mon,  7 Jul 2025 15:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751900573; cv=fail; b=rwmpv335Hz9SmBLGdSVZOGueSCD9T6GlG7Yph6AlsQZw+eX9CK20sSPuxuH/YhUjQa5gib4/dmZRAaxHZObDDmbahPfqwjUJloIzwPXHFzSKK0AaCUte0uqpE531VQu6agR7fC1SYJWEJBSIBEMrXIg3rjVZkjRyWxlRAx7Kl+M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751900573; c=relaxed/simple;
-	bh=jozERyMiOAJXcPfF+h2bF7qd+I9mDj24twxvF1XL1Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WZJndSp3L3/xNazV6Rl0WE8qydUgEnsnj4qf/s3tiATCuX97sO9SiezLfQ7xc2Fbsm8zBHHrvi/x1tJCgZ845OmTDZzuLkcP6nfhz2xcYFuUHtgOdvfHomYNUAtbH3TxOvgzasIy5Md5oGl4GgMWzB5hEa22IrPezhmQn4WB6/E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CJlvCUjV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=q2EJP8m3; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567ELwGq015116;
-	Mon, 7 Jul 2025 15:01:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=mWG0BxsYC1xmq0YmPI
-	+O9Elij9NFQpVTYIux6olTb2E=; b=CJlvCUjVn2DDpLXiVd2lTnRNZAMkhLE6Ud
-	4AkWqM6xkVgZiSIwwEF6CmGZJcWwVWRotqhlddFl5SIFQJh0OpF0uUUwFnENq2Ba
-	5XlVgjoY0Sl0mtKKn9B1Qx7TX9DauZzbsAg5TIPiZ3t/0CwtspHozHaDjs4nR31d
-	oLvb1omWIt9qe8lQir+nNd5xMd4jBAVMir46bRSH+D0XI00Tsc1qKMgyijaiyxWv
-	iEGFFoYpLm8lhy2gXJBB03F+KtbkEORiFuJbJM9C/3lLnPX/nJYQplCoUhy1UZkr
-	lSMVXTvgW3P/gm+gUtREnsdrSF5vUs6NXHMVOnld6KeoH80jJA/g==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47rfxgr3bu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Jul 2025 15:01:55 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 567EuC74023666;
-	Mon, 7 Jul 2025 15:01:53 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ptg8mb27-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Jul 2025 15:01:53 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VMJBchMLt75wkSDo+hOblWlNhLFlgiwKwaNcnDtwjbGwjNdMjcq6WynLTlCK98FxhzcpqYnnHGm9L+V+lWXucRSpy3/xn/9fQI0/wbozFI6TIG6q7ZZflrNbPHAUF6V8XpVrBAPAg4CdYcaU8noqeLg8mm/LuT8PAqfaXyDbEaycd6I58nZ/WEO8tXzX97LHO4/bcGVDOYZI9diXJMe6eFWUHYn6nC4CmBII2THP10vdmiVD4nitDFzNp6Kict7pOo0PSF94Zaw6wUCutDEQzBZhGQzvjvT5106j0N9AUadRhou90yxZZqMfG2T1nx6iaJBA5dqFzgAY15gDxzEKAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mWG0BxsYC1xmq0YmPI+O9Elij9NFQpVTYIux6olTb2E=;
- b=XJLsyH98AcIlWm7jC/ziRAQWxhUtVOeEzpK+Lc02CYfte592HeVS0ZUS0xcOtPVXYAoD3AU/DE8X35POeqbkdOGOYpaF1sGv3Th62FnvtyZQmv+qy++Qbc2XzSZweKvPWc3SC448CNikWyMm1cdUvY5kqpscsxYKNhgQtA43MLKOcWgrkybTvyslnpuNeHaiJoYtu7lK1wgl5Hd7jCDvfUMfGVu5qZbBlng4NFvFF6IGwOtyN7GnX8Ck+/RVuHteT1Evg747YhUpH2lUqk7Oxjp4kbsN0XPKrL5z5rIj4lPhRjiG2b2R1nGVCkjm/xJJ+G8CEAc4KXSreQkof59KOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mWG0BxsYC1xmq0YmPI+O9Elij9NFQpVTYIux6olTb2E=;
- b=q2EJP8m3av/9kaVKSmTWGMvewbZcN/j2jtXcz74hH1bArfxZzf4vpX3kRJfL7lXXnb2YSUQSvWkRafcUt19VTKcgZI9z/YVlbzBH+xvd30QfRxuxZCchxwxsoxSqCQggHMxExkWs4KCEFT9BZ38lA45Y73Tqjo9o4YYm7RGa5mw=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by MN2PR10MB4384.namprd10.prod.outlook.com (2603:10b6:208:198::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Mon, 7 Jul
- 2025 15:01:43 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8901.024; Mon, 7 Jul 2025
- 15:01:43 +0000
-Date: Mon, 7 Jul 2025 16:01:39 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com,
-        vbabka@suse.cz, peterx@redhat.com, jannh@google.com,
-        hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org,
-        shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org,
-        josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net,
-        willy@infradead.org, osalvador@suse.de, andrii@kernel.org,
-        ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
-        tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v6 6/8] fs/proc/task_mmu: remove conversion of seq_file
- position to unsigned
-Message-ID: <92481011-08b2-468f-888c-f409b9c8e1e5@lucifer.local>
-References: <20250704060727.724817-1-surenb@google.com>
- <20250704060727.724817-7-surenb@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704060727.724817-7-surenb@google.com>
-X-ClientProxiedBy: LO2P265CA0443.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:e::23) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96731DDC18;
+	Mon,  7 Jul 2025 15:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751902471; cv=none; b=KPnWJpxtZQVaEyK/i3h47dk+P315Gj1q1kWlOY8hHGrAI0tnuCpOX9qKlqLY0RvVxUMLiqG79WJxzd7FrFvJsUEXDgdctwkkp/OxwsbBtt2rARFlRHWYu2J/e6QZeKQQ53IDFw+6tvx6YfbVgfT+U9XPNXW5sHwSmp2LqZaVbbU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751902471; c=relaxed/simple;
+	bh=SN/xL8yKBP8HlhBQQQQnh+jf1D5UxAoCxwI6KUFoDD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T3xmfOxTvDNB00CSQeo4zBtL18ryRYDCapjImXL8MtpDxuwdFIdMw5P9JsN9MqJ1iH0giu0/xWBfdZljXI0VC6njEtg9AUObtA7Y2mlhaO2vgnQd1IcQJkHvW27t6sVWwPYsQfZjDQRfHN+D+nnjAVDunIfolZzihOexcyzVDNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=V7IWyz8D; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=VZCZ2Hrknfz1HMaRosugwKH9d/EZdla3A2Jkyh8AqBg=; b=V7IWyz8Dgo2vC+NL4B856hiEwJ
+	kfarTdwPzf25PBVSkNKKbP0kCG3GN7NY/ph7Z11529BJoznVuLuJ9whjqSInpWmfBxS4kbnLUIhTL
+	YmiSiFy7W6uLg5JyZ21Y+2EdAmHy0T2Z1nvCvT2QMvXCb12856ZwKOJJ+Ugcs9/RPKdyHeoqtki93
+	3FKou45PK1cGLCoen0uI/PNuMWvgxlpGNwV7dKjYfb+pZsqDHj+xMfB2xDQ8dGVCHtu3xDIrWDsbS
+	pF5tbYKJ3xl3JH8+jzRzXEcmxFDd4asixvVrlY566nCGmHz6FjKfmYPJRU4IUXJQhxzwczFT9OA0u
+	/1QdTGMQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uYnrJ-00DbhV-7J; Mon, 07 Jul 2025 17:34:21 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>,
+	Laura Promberger <laura.promberger@cern.ch>,
+	Dave Chinner <david@fromorbit.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Matt Harvey <mharvey@jumptrading.com>,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH v4] fuse: new work queue to periodically invalidate expired dentries
+Date: Mon,  7 Jul 2025 16:34:13 +0100
+Message-ID: <20250707153413.19393-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|MN2PR10MB4384:EE_
-X-MS-Office365-Filtering-Correlation-Id: 421bd575-1385-49f7-5d76-08ddbd672f86
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RtoCwdhJw+PdLgxqz2D5dCmsTDf0gx9NF0A2M1OwgwpAiq/AtnoVsod8Mdjo?=
- =?us-ascii?Q?yydIsYXsqnJiXaFAB/db4RAcgI7SvRAwf2og9zkAVoo7bGQK5IJduY6MUt68?=
- =?us-ascii?Q?y1cYVUf4hrB8zQ9xa1RZdmaLC8t8jqROCjkz65HrR/e2SPI0s/QVH5D4U4x/?=
- =?us-ascii?Q?bJ1GhO2GuiTdnlz/eB/r1+q61iHTsghahCteNy1BFV6VWGBVGOpEo+zc0dii?=
- =?us-ascii?Q?Q64n7nY3Vt+1FdjCYYigB1zDDU1KQR24Cyu4e5svYyhT/iKxP1Patkfv3gFy?=
- =?us-ascii?Q?Dtqc+fEbfUGgj/6TNsPqIrvXBMUlzJB2lCiat/HsKjus/zfaI8ktjh8lU5ms?=
- =?us-ascii?Q?htwoAVnac0RhPj6lZ7O4hCgNfKa4Eyk7cWaVWTw67teAzBZDI9wxhisrO8tJ?=
- =?us-ascii?Q?zazh/RreiccFLz0xRts1pRw5a5Ig6VS7+08OAgT6J7l4hFo+cGaDpdRftqKq?=
- =?us-ascii?Q?hnxDQ4bOyU2RBwNdH1cw6R07569L97Zo745DGQJvb68fvRn5Bai7siwm8NI0?=
- =?us-ascii?Q?OAF0UsliRa5dFQcrH3uo9WyHyiTXDlHX323X+9H769Cx79LcN8mj9CfXWTAu?=
- =?us-ascii?Q?9incVtJKIr6b1VUUJQa3CVsr6ardN7BctLot2AfpOwmo0lXxpt64k4hEKC6t?=
- =?us-ascii?Q?blODW0tW+uM0mG/zURvno/DdXvLEB+aS3dKmh0TipCUi6r/RQaHrWFELJabU?=
- =?us-ascii?Q?HME7UTO6OJ4cwDTAgY7nWokYcmWP7GkKDkUV4a3Q2G5jUb00j18981KMYWwm?=
- =?us-ascii?Q?Dyn41kXuA2kkMhktP8P9+8p/M28HLOLGNywwsyde/OFIqQdRj73GD7t/Pvl9?=
- =?us-ascii?Q?F02RFWWcfcszme+LksU1Szb8NrnT/qN8Y+eBp2lY1ezsqyjSxh52aaOJiunV?=
- =?us-ascii?Q?kaWlAOFlYftu1bydvM1aGUUQqLtWv5/r8Lns4ua6C7Z/mXQrhYFIpImGxt/q?=
- =?us-ascii?Q?ezhW4agriPwjAzrcu00sfJ0tzMq5gIxBWsmJSokIGauntYP3y4/kwbEJX24y?=
- =?us-ascii?Q?w/gk87uZu5f5iV/CnIKzlerjHFHuzZh+VyL+KbiO031MaMLvGybT3cnPqdi0?=
- =?us-ascii?Q?PIcJObKAyxGhDJJb7FHrA4HyxAMul/QLaLu/e5mJcK59cVtG4MSdccDt+KUL?=
- =?us-ascii?Q?Ppi8BQXpZsgM0C8toXSVGVHIyoOhl2hRk/8q0j9DzaTonBF1rvaR1dVqzMxo?=
- =?us-ascii?Q?0Nk8ilnXgY5DgT1xelx2A+iHTqm+cvr+DaudqdnA7QgpM+fua2j3T2q1yz26?=
- =?us-ascii?Q?KHeoeeCMiA0PIKBoipDzLNmBCpz4qLLXm8atdFuS/yl34s/qnjkzfC2mzfMp?=
- =?us-ascii?Q?UTr1K0/E1u91g3P9sNCXs6PIzbpNwH2o4vtoccQp/eitxCcqzgPCaEZahGEQ?=
- =?us-ascii?Q?ZF7EeQhwdqaitLYJX/GK3PBrg5dACKP1ww/79d28LPzIHVAxGQmyX6BXAYM4?=
- =?us-ascii?Q?iQPODxPylUA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rByBFhSsaJlJJw05sayx0UoHTg328IPedATQ0VUSaWs9v10aLJEsftbPyqqy?=
- =?us-ascii?Q?G3/Cyr5w3ctTPO49lA0IvLSVb/L9a6GAhtooZvVIHJLtUUKJBZL51vIuIRqe?=
- =?us-ascii?Q?wxo28eXHDWN4Iaj0lQOnuVSOkv1qAuBkYFN0Bhcb7BOrQmd4sm3k8Wg8NUy6?=
- =?us-ascii?Q?tuQr0262Zw6ZQNbs3NEMsa8pOsBvLlfBR9UuSyQIEtsqWE4yi8nTIym1cmC4?=
- =?us-ascii?Q?vKV1L/jfJ/gslwTBvYeNgF8C13C/O7rRYSTVhGyQMEXOcwe0CtXtt+wy9p/r?=
- =?us-ascii?Q?6jiCBiNpjUJJIAf+t0ulT3yo2Aky2AN15kmXT0dm3mhuXtLRRqICToIUC2X9?=
- =?us-ascii?Q?KU1/zmPLzh/x1H170knCSIGSkhNF8jKPsyhTd3p/b8YXkwgoYiTiRRLWXFZb?=
- =?us-ascii?Q?b/+oeyX5AYqv9qOK2qY2Hj+TKN27gLbxp+2LH7X+xrZikt3+7KFrVcLpnwiI?=
- =?us-ascii?Q?8oswQBcUrtIu0xgTZn0PBuFed/Oc2qAbO1lxD2iB+A2rZm6xJg4wrMfLFn05?=
- =?us-ascii?Q?xqk4kLmC+DEr2AdYswJMhc1EtlDa4nBlOmjMrHIg8ayMCdAs25j1xXACJWBd?=
- =?us-ascii?Q?8OUb9+VtdggytAw1lZEs80P1FhtkwP7VUnjlK/g4B/DvrKniDCPPlRVUYogc?=
- =?us-ascii?Q?dnBNBlg1JavFc5gqgyPwnShQoftxpJY585fu6FNFNaRsrapacjt1sYf7vn18?=
- =?us-ascii?Q?Tpmd2WKOoPxyX3ou4BzKvmENyN+msNQzkNkS/B3BaSxK+c357ytjsHpN+azq?=
- =?us-ascii?Q?firjMHPzi3YMNB60fPiYp0/HQxSS/d68MW/R9cl2VuHQWWDhd0PaEBqJkkgJ?=
- =?us-ascii?Q?bWVziYVV1k8puWVyh41YwidOSb4T761y2KugYIQ59GcpEdZoSluEw3z5oJZ+?=
- =?us-ascii?Q?uX0Ek4b+/swFAI/ujWWbxslxOBiACKoFjegOIokjHS7AZ8VWqjyx81+yJbsF?=
- =?us-ascii?Q?yVFTaVEqr9T6XP/sBd9+nL/AP/VsfkSWwCT2uFkHNHQgNjQEqNpGL7AbUXbP?=
- =?us-ascii?Q?4wHWJ1eQBzxJwcywGBxFWIZaMzomWM6+YIw6TtoZ6KbKawQWTU13ums6EEvi?=
- =?us-ascii?Q?xFjjhi5NHfiFs08dJVwTEzVyeYu1ZDx9Rm2zHJNBk3mxWmlBtl9rczJ/pIxg?=
- =?us-ascii?Q?RIKgsC4DSFwQbF+t36Sh/baapi/1vKHBV4yrrlsPHVIzGgbtQr85kCgq4T4k?=
- =?us-ascii?Q?8K2xLBMp5CbZyefV+UjVISjTWqg83Or2rgEZeU0SC5Zv1OQmMqQu9Z6y5ci9?=
- =?us-ascii?Q?nFFDYKGS0UQFl8Xn3/qlTKDSzJkKuGEnzw1DxogDwwPRKcJzdVlY0aB+QA28?=
- =?us-ascii?Q?tVtf34K9S8xWH3Lw+O437IKa0pEkUpIfhXZMpZSicoYuUvWPogdt818ziEZX?=
- =?us-ascii?Q?qG7J5H3BNWuVUcdy30nxMVMVp74obeXDQiFYVRgdzvOz6f0zxRPWC0L+Kzp6?=
- =?us-ascii?Q?cFSE6oqws2TImc16hlaQOlukNp/0u4me/v6dMNt5rx7lGvyWgmLomWFNq8E1?=
- =?us-ascii?Q?fiWAoiTobTAPxCXlKTrLxRKrRphf4ygEF/BHLsEOsJwJP7TpMaqgC8ft452l?=
- =?us-ascii?Q?byaYT63DTTZfhbLajJkLbzA2fmzWEtNgY2FjOLmmDBAhva9ChM8hJObUQ2QV?=
- =?us-ascii?Q?kQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	z2P1MztNd7e7HEFNXLYaKOGcR58TjeXNV29fa+1vMvqC/ZjZcP1RKwXpsLKJFAZYssi687iDMEe0d4Z1n4DxN3NlIbN1o3gptIxx7E1cUlad7tqFirwMVg/C5796W0Mq5XQYFXZ8MV/vchd5tnnxw8JorM/iY8hFGWgiM5VEsJlnIRcJC4ETyN5Dui382I6CS8mNNX9dxh18o8bJHIsCSgOOnjgBSX/re8a7aNmMeCuoTYdM0qZovX0FeJRujFZGpeBNu/tJf65/OWVIDFRq9UN+AUORiN46W58aR2Xe3XQ33u41tqR1+wVwDXRB+gxTUaRgQZydQ45athocafiwuF5L5jFlsJfadxezL0mZG7p2TpsQjUdfBvJTUs7J73OuRVRLRfit1kIPeIv/MLwCTcUY7cekVoa8rSdAPrqTbkLbDXmocd2jqa06SXxu00GZwcGRVlRu3hM5a88ZGuH/so2JQ3oCRjaRmWhcu7xIJGxSUjMi9otN97xLkwNhQXsYQTgDjAvMCjdsmtPs7spsMeIk6owkXKUgwPxI7uwrU4KRimUuvnNXv207zfabx9928avYSpqkE4GSFlTLSKlbf74M9kittoD4WIl/cKQkxZs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 421bd575-1385-49f7-5d76-08ddbd672f86
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 15:01:43.8625
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O98HAMhYfV1EETzcvUyx8fB/NEPh3vCP94jvrVYBbfx2A9u18NMweQ74B+7Vevw72XFqgyACq+/xQailYUp0RZTEoeKxfTQmCjagKMi8QC0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4384
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507070088
-X-Authority-Analysis: v=2.4 cv=YMyfyQGx c=1 sm=1 tr=0 ts=686be163 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=1XWaLZrsAAAA:8 a=yPCof4ZbAAAA:8 a=Y7akAFDJYfq_Ejx0gcgA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: bO5QsmChNfKfl3jvQsfdeOjZY4ydrZly
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA4OSBTYWx0ZWRfXy3gb924oAXX3 oKw7wGFtkIvpw56Rvb2Bgf5MqQwOy/KS0jDkc4qgf3iItEJ+i1NhGtaDxfIXbogSj4sSbsOzUcm ksPTrJY88WIMd9d3DfCdqQFI04oXSDElXBpqfLB1J3qy7z24xpvhTe2a1cdkZr3YPO7aB28VPC0
- ooqeVn1tO7+iw/E5rRNX6dzlCWMAInlTr6s2kB57jVBj/mwYl0H8CECQCbBORERqrmYOhM8HHvj KX9WpVZ+c2CEzc6Ukcm/mtRtq4OdC5HvIySc9lfFCLq94TtXKfLG2IJsiTE5N6sBh0ZEIpyDdlQ YLczQpCPul42vIO+EHyVH8VwaTz30dQ3bpFM0oUrDOiRmptGl+XHfGUi9syk3Sf+vhclflGLjpL
- MK59baVr35rwf1Pr0C0/L9gtZZOcPi9bJl5XwlvQDIrie4tEJ/kRTWBQBHiFBfTlMf8Dpz/q
-X-Proofpoint-GUID: bO5QsmChNfKfl3jvQsfdeOjZY4ydrZly
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 03, 2025 at 11:07:24PM -0700, Suren Baghdasaryan wrote:
-> Back in 2.6 era, last_addr used to be stored in seq_file->version
-> variable, which was unsigned long. As a result, sentinels to represent
-> gate vma and end of all vmas used unsigned values. In more recent
-> kernels we don't used seq_file->version anymore and therefore conversion
-> from loff_t into unsigned type is not needed. Similarly, sentinel values
-> don't need to be unsigned. Remove type conversion for set_file position
-> and change sentinel values to signed.
->
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+This patch adds a new module parameter 'inval_wq' which is used to start a
+work queue that will periodically invalidate expired dentries.  The value
+of this new parameter is the period, in seconds, of the work queue.  When
+it is set, every new dentry will be added to an rbtree, sorted by the
+dentry's expiry time.
 
-Nice spot!
+When the work queue is executed, it will check the dentries in the tree
+and invalidate them if:
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+  - The dentry has timed-out, or
+  - The connection epoch has been incremented.
 
-> ---
->  fs/proc/task_mmu.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 751479eb128f..b8bc06d05a72 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -135,7 +135,7 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
->  	if (vma) {
->  		*ppos = vma->vm_start;
->  	} else {
-> -		*ppos = -2UL;
-> +		*ppos = -2;
->  		vma = get_gate_vma(priv->mm);
->  	}
->
-> @@ -145,11 +145,11 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
->  static void *m_start(struct seq_file *m, loff_t *ppos)
->  {
->  	struct proc_maps_private *priv = m->private;
-> -	unsigned long last_addr = *ppos;
-> +	loff_t last_addr = *ppos;
->  	struct mm_struct *mm;
->
->  	/* See m_next(). Zero at the start or after lseek. */
-> -	if (last_addr == -1UL)
-> +	if (last_addr == -1)
->  		return NULL;
->
->  	priv->task = get_proc_task(priv->inode);
-> @@ -170,9 +170,9 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
->  		return ERR_PTR(-EINTR);
->  	}
->
-> -	vma_iter_init(&priv->iter, mm, last_addr);
-> +	vma_iter_init(&priv->iter, mm, (unsigned long)last_addr);
->  	hold_task_mempolicy(priv);
-> -	if (last_addr == -2UL)
-> +	if (last_addr == -2)
->  		return get_gate_vma(mm);
->
->  	return proc_get_vma(priv, ppos);
-> @@ -180,8 +180,8 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
->
->  static void *m_next(struct seq_file *m, void *v, loff_t *ppos)
->  {
-> -	if (*ppos == -2UL) {
-> -		*ppos = -1UL;
-> +	if (*ppos == -2) {
-> +		*ppos = -1;
->  		return NULL;
->  	}
->  	return proc_get_vma(m->private, ppos);
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
+The work queue will reschedule itself if the dentries tree isn't empty.
+
+The work queue period is set per file system with the 'inval_wq' parameter
+value when it is mounted.  This value can not be smaller than 5 seconds.
+If this module parameter is changed later on, the mounted file systems
+will keep using the old value until they are remounted.
+
+Signed-off-by: Luis Henriques <luis@igalia.com>
+---
+Hi Miklos,
+
+I'm sending v4 without implementing your request to turn the dentries
+trees and work queues into global data structures.  After thinking about
+it a bit more, I'm not sure anymore that it makes sense.  And the reason
+is that the epoch is a per-connection attribute.  I couldn't find an
+elegant way of having a single work queue with a global tree to handle the
+fact that the epoch of a connection may have been incremented.  Any option
+to avoid walking through all the tree dentries when an epoch is
+incremented would be more complex than simply keeping it (and work queue)
+per connection.
+
+Does this make sense?
+
+Changes since v3:
+
+- Use of need_resched() instead of limiting the work queue to run for 5
+  seconds
+- Restore usage of union with rcu_head, in struct fuse_dentry
+- Minor changes in comments (e.g. s/workqueue/work queue/)
+
+Changes since v2:
+
+- Major rework, the dentries tree nodes are now in fuse_dentry and they are
+  tied to the actual dentry lifetime
+- Mount option is now a module parameter
+- workqueue now runs for at most 5 seconds before rescheduling
+
+ fs/fuse/dev.c    |   2 -
+ fs/fuse/dir.c    | 179 +++++++++++++++++++++++++++++++++++++++++------
+ fs/fuse/fuse_i.h |  12 ++++
+ fs/fuse/inode.c  |  21 ++++++
+ 4 files changed, 189 insertions(+), 25 deletions(-)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e80cd8f2c049..2ec7fefcc1a1 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2034,8 +2034,6 @@ static int fuse_notify_resend(struct fuse_conn *fc)
+ /*
+  * Increments the fuse connection epoch.  This will result of dentries from
+  * previous epochs to be invalidated.
+- *
+- * XXX optimization: add call to shrink_dcache_sb()?
+  */
+ static int fuse_notify_inc_epoch(struct fuse_conn *fc)
+ {
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 45b4c3cc1396..7eba86fe52d6 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -34,33 +34,152 @@ static void fuse_advise_use_readdirplus(struct inode *dir)
+ 	set_bit(FUSE_I_ADVISE_RDPLUS, &fi->state);
+ }
+ 
+-#if BITS_PER_LONG >= 64
+-static inline void __fuse_dentry_settime(struct dentry *entry, u64 time)
++struct fuse_dentry {
++	u64 time;
++	union {
++		struct rcu_head rcu;
++		struct rb_node node;
++	};
++	struct dentry *dentry;
++};
++
++static void __fuse_dentry_tree_del_node(struct fuse_conn *fc,
++					struct fuse_dentry *fd)
+ {
+-	entry->d_fsdata = (void *) time;
++	if (!RB_EMPTY_NODE(&fd->node)) {
++		rb_erase(&fd->node, &fc->dentry_tree);
++		RB_CLEAR_NODE(&fd->node);
++	}
+ }
+ 
+-static inline u64 fuse_dentry_time(const struct dentry *entry)
++static void fuse_dentry_tree_del_node(struct dentry *dentry)
+ {
+-	return (u64)entry->d_fsdata;
++	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
++	struct fuse_dentry *fd = dentry->d_fsdata;
++
++	if (!fc->inval_wq)
++		return;
++
++	spin_lock(&fc->dentry_tree_lock);
++	__fuse_dentry_tree_del_node(fc, fd);
++	spin_unlock(&fc->dentry_tree_lock);
+ }
+ 
+-#else
+-union fuse_dentry {
+-	u64 time;
+-	struct rcu_head rcu;
+-};
++static void fuse_dentry_tree_add_node(struct dentry *dentry)
++{
++	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
++	struct fuse_dentry *fd = dentry->d_fsdata;
++	struct fuse_dentry *cur;
++	struct rb_node **p, *parent = NULL;
++	bool start_work = false;
++
++	if (!fc->inval_wq)
++		return;
++
++	spin_lock(&fc->dentry_tree_lock);
++
++	if (!fc->inval_wq) {
++		spin_unlock(&fc->dentry_tree_lock);
++		return;
++	}
++
++	start_work = RB_EMPTY_ROOT(&fc->dentry_tree);
++	__fuse_dentry_tree_del_node(fc, fd);
++
++	p = &fc->dentry_tree.rb_node;
++	while (*p) {
++		parent = *p;
++		cur = rb_entry(*p, struct fuse_dentry, node);
++		if (fd->time > cur->time)
++			p = &(*p)->rb_left;
++		else
++			p = &(*p)->rb_right;
++	}
++	rb_link_node(&fd->node, parent, p);
++	rb_insert_color(&fd->node, &fc->dentry_tree);
++	spin_unlock(&fc->dentry_tree_lock);
++
++	if (start_work)
++		schedule_delayed_work(&fc->dentry_tree_work,
++				      secs_to_jiffies(fc->inval_wq));
++}
++
++void fuse_dentry_tree_prune(struct fuse_conn *fc)
++{
++	struct rb_node *n;
++
++	if (!fc->inval_wq)
++		return;
++
++	fc->inval_wq = 0;
++	cancel_delayed_work_sync(&fc->dentry_tree_work);
++
++	spin_lock(&fc->dentry_tree_lock);
++	while (!RB_EMPTY_ROOT(&fc->dentry_tree)) {
++		n = rb_first(&fc->dentry_tree);
++		rb_erase(n, &fc->dentry_tree);
++		RB_CLEAR_NODE(&rb_entry(n, struct fuse_dentry, node)->node);
++	}
++	spin_unlock(&fc->dentry_tree_lock);
++}
++
++/*
++ * work queue that, when enabled, will periodically check for expired dentries
++ * in the dentries tree.
++ *
++ * A dentry has expired if:
++ *
++ *   1) it has been around for too long (timeout) or if
++ *
++ *   2) the connection epoch has been incremented.
++ *
++ * The work queue will be rescheduled itself as long as the dentries tree is not
++ * empty.
++ */
++void fuse_dentry_tree_work(struct work_struct *work)
++{
++	struct fuse_conn *fc = container_of(work, struct fuse_conn,
++					    dentry_tree_work.work);
++	struct fuse_dentry *fd;
++	struct rb_node *node;
++	u64 start;
++	int epoch;
++	bool reschedule;
++
++	spin_lock(&fc->dentry_tree_lock);
++	start = get_jiffies_64();
++	epoch = atomic_read(&fc->epoch);
++
++	node = rb_first(&fc->dentry_tree);
++	while (node && !need_resched()) {
++		fd = rb_entry(node, struct fuse_dentry, node);
++		if ((fd->dentry->d_time < epoch) || (fd->time < start)) {
++			rb_erase(&fd->node, &fc->dentry_tree);
++			RB_CLEAR_NODE(&fd->node);
++			spin_unlock(&fc->dentry_tree_lock);
++			d_invalidate(fd->dentry);
++			spin_lock(&fc->dentry_tree_lock);
++		} else
++			break;
++		node = rb_first(&fc->dentry_tree);
++	}
++	reschedule = !RB_EMPTY_ROOT(&fc->dentry_tree);
++	spin_unlock(&fc->dentry_tree_lock);
++
++	if (reschedule)
++		schedule_delayed_work(&fc->dentry_tree_work,
++				      secs_to_jiffies(fc->inval_wq));
++}
+ 
+ static inline void __fuse_dentry_settime(struct dentry *dentry, u64 time)
+ {
+-	((union fuse_dentry *) dentry->d_fsdata)->time = time;
++	((struct fuse_dentry *) dentry->d_fsdata)->time = time;
+ }
+ 
+ static inline u64 fuse_dentry_time(const struct dentry *entry)
+ {
+-	return ((union fuse_dentry *) entry->d_fsdata)->time;
++	return ((struct fuse_dentry *) entry->d_fsdata)->time;
+ }
+-#endif
+ 
+ static void fuse_dentry_settime(struct dentry *dentry, u64 time)
+ {
+@@ -81,6 +200,7 @@ static void fuse_dentry_settime(struct dentry *dentry, u64 time)
+ 	}
+ 
+ 	__fuse_dentry_settime(dentry, time);
++	fuse_dentry_tree_add_node(dentry);
+ }
+ 
+ /*
+@@ -283,21 +403,36 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+ 	goto out;
+ }
+ 
+-#if BITS_PER_LONG < 64
+ static int fuse_dentry_init(struct dentry *dentry)
+ {
+-	dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry),
+-				   GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
++	struct fuse_dentry *fd;
++
++	fd = kzalloc(sizeof(struct fuse_dentry),
++			  GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
++	if (!fd)
++		return -ENOMEM;
++
++	fd->dentry = dentry;
++	RB_CLEAR_NODE(&fd->node);
++	dentry->d_fsdata = fd;
++
++	return 0;
++}
++
++static void fuse_dentry_prune(struct dentry *dentry)
++{
++	struct fuse_dentry *fd = dentry->d_fsdata;
+ 
+-	return dentry->d_fsdata ? 0 : -ENOMEM;
++	if (!RB_EMPTY_NODE(&fd->node))
++		fuse_dentry_tree_del_node(dentry);
+ }
++
+ static void fuse_dentry_release(struct dentry *dentry)
+ {
+-	union fuse_dentry *fd = dentry->d_fsdata;
++	struct fuse_dentry *fd = dentry->d_fsdata;
+ 
+ 	kfree_rcu(fd, rcu);
+ }
+-#endif
+ 
+ static int fuse_dentry_delete(const struct dentry *dentry)
+ {
+@@ -331,18 +466,16 @@ static struct vfsmount *fuse_dentry_automount(struct path *path)
+ const struct dentry_operations fuse_dentry_operations = {
+ 	.d_revalidate	= fuse_dentry_revalidate,
+ 	.d_delete	= fuse_dentry_delete,
+-#if BITS_PER_LONG < 64
+ 	.d_init		= fuse_dentry_init,
++	.d_prune	= fuse_dentry_prune,
+ 	.d_release	= fuse_dentry_release,
+-#endif
+ 	.d_automount	= fuse_dentry_automount,
+ };
+ 
+ const struct dentry_operations fuse_root_dentry_operations = {
+-#if BITS_PER_LONG < 64
+ 	.d_init		= fuse_dentry_init,
++	.d_prune	= fuse_dentry_prune,
+ 	.d_release	= fuse_dentry_release,
+-#endif
+ };
+ 
+ int fuse_valid_type(int m)
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index b54f4f57789f..638d62d995a2 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -975,6 +975,15 @@ struct fuse_conn {
+ 		/* Request timeout (in jiffies). 0 = no timeout */
+ 		unsigned int req_timeout;
+ 	} timeout;
++
++	/** Cache dentries tree */
++	struct rb_root dentry_tree;
++	/** Look to protect dentry_tree access */
++	spinlock_t dentry_tree_lock;
++	/** Periodic delayed work to invalidate expired dentries */
++	struct delayed_work dentry_tree_work;
++	/** Period for the invalidation work queue */
++	unsigned int inval_wq;
+ };
+ 
+ /*
+@@ -1259,6 +1268,9 @@ void fuse_wait_aborted(struct fuse_conn *fc);
+ /* Check if any requests timed out */
+ void fuse_check_timeout(struct work_struct *work);
+ 
++void fuse_dentry_tree_prune(struct fuse_conn *fc);
++void fuse_dentry_tree_work(struct work_struct *work);
++
+ /**
+  * Invalidate inode attributes
+  */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 9572bdef49ee..df20ff91898f 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -58,6 +58,20 @@ MODULE_PARM_DESC(max_user_congthresh,
+  "Global limit for the maximum congestion threshold an "
+  "unprivileged user can set");
+ 
++static unsigned __read_mostly inval_wq;
++static int inval_wq_set(const char *val, const struct kernel_param *kp)
++{
++	return param_set_uint_minmax(val, kp, 5, (unsigned int)(-1));
++}
++static const struct kernel_param_ops inval_wq_ops = {
++	.set = inval_wq_set,
++	.get = param_get_uint,
++};
++module_param_cb(inval_wq, &inval_wq_ops, &inval_wq, 0644);
++__MODULE_PARM_TYPE(inval_wq, "uint");
++MODULE_PARM_DESC(inval_wq,
++		 "Dentries invalidation work queue period in secs (>= 5).");
++
+ #define FUSE_DEFAULT_BLKSIZE 512
+ 
+ /** Maximum number of outstanding background requests */
+@@ -963,6 +977,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	memset(fc, 0, sizeof(*fc));
+ 	spin_lock_init(&fc->lock);
+ 	spin_lock_init(&fc->bg_lock);
++	spin_lock_init(&fc->dentry_tree_lock);
+ 	init_rwsem(&fc->killsb);
+ 	refcount_set(&fc->count, 1);
+ 	atomic_set(&fc->dev_count, 1);
+@@ -972,6 +987,8 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	INIT_LIST_HEAD(&fc->bg_queue);
+ 	INIT_LIST_HEAD(&fc->entry);
+ 	INIT_LIST_HEAD(&fc->devices);
++	fc->dentry_tree = RB_ROOT;
++	fc->inval_wq = 0;
+ 	atomic_set(&fc->num_waiting, 0);
+ 	fc->max_background = FUSE_DEFAULT_MAX_BACKGROUND;
+ 	fc->congestion_threshold = FUSE_DEFAULT_CONGESTION_THRESHOLD;
+@@ -1848,6 +1865,9 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+ 	fc->group_id = ctx->group_id;
+ 	fc->legacy_opts_show = ctx->legacy_opts_show;
+ 	fc->max_read = max_t(unsigned int, 4096, ctx->max_read);
++	fc->inval_wq = inval_wq;
++	if (fc->inval_wq > 0)
++		INIT_DELAYED_WORK(&fc->dentry_tree_work, fuse_dentry_tree_work);
+ 	fc->destroy = ctx->destroy;
+ 	fc->no_control = ctx->no_control;
+ 	fc->no_force_umount = ctx->no_force_umount;
+@@ -2052,6 +2072,7 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+ 
+ 	fuse_abort_conn(fc);
+ 	fuse_wait_aborted(fc);
++	fuse_dentry_tree_prune(fc);
+ 
+ 	if (!list_empty(&fc->entry)) {
+ 		mutex_lock(&fuse_mutex);
 
