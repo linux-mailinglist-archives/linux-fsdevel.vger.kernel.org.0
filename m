@@ -1,122 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-54109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 396A8AFB525
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 15:50:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C90AFB572
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 15:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1194A188B3EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 13:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8810B3AAF63
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 13:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3742BDC16;
-	Mon,  7 Jul 2025 13:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E722BD5A1;
+	Mon,  7 Jul 2025 13:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzSGrTOT"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZydXeAik"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F3816CD33;
-	Mon,  7 Jul 2025 13:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562DC19D880
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 13:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751896141; cv=none; b=CDx6LyV9d/ZRoJnWPt6MTqCXX3B+IRy6DTCH+v70D8ooTInmHm8lE7L+m7gKANmoOSvaQWnaAh0e+kZOsPPRNHSN2rEloSSwoVTUCW9BuXuXB93wagzj9kb68/erayVfW2qwzuNnOrZtXMDZ5/cQZlmy64lD2NcgJccJndGAASM=
+	t=1751896609; cv=none; b=EEF7Q2Hs/qakWg5GvEJnCMT77Q1WvAso78OLqBTFEnHlH55Bu9B+pWRvjl6z+kFm90qie2evY28GYRNo77+ySUhWIwmz1HUBdUuYDPRvcEBRM3MDBeBsyCS23fL2mwn4U/4yGsd3c3MnkV2jbBlvdeYgwyVovVTZmI342KirWUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751896141; c=relaxed/simple;
-	bh=iBv6okUseyiTdjt3XFNpy+qoASB9X2reY393kqaQui8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QK9BjwvjGDjKfOUDktP5tZmZpKgrJxDh64t15YEilHZQGS2n2M3Yjd/CrFj8fCIFS605L2WuH/5Xwnn6WIYpu6/WBKl3d/OFIiBa78/KRMHXlvrPAl9Oe+K1VIEWpY5+DAhuHHCXvYS7rCVpS1trnIflJts6Lv25hmv0kQZF7v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YzSGrTOT; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32b3a3a8201so26275511fa.0;
-        Mon, 07 Jul 2025 06:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751896137; x=1752500937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iBv6okUseyiTdjt3XFNpy+qoASB9X2reY393kqaQui8=;
-        b=YzSGrTOTWMH8Pi5gYbdOqfS9bFk17Nsc4qmcPoRSQAP1pX9iP+h0Eh/007a28JXcFO
-         MtMpSieBONvhMrlp0L/TqizKWPiz8R3wRvGmhzj6iaMFGaTlcf1ujt6ZQQviA1iT6fb1
-         wX/H97RIAoHiPEivQbT5wCIYfi202RG5cuj8Hch7BUVLhu8S6dDOHlGw3vy/0uikfix4
-         s80EDIDVQ0G7ylfCTKV6/ROCTMyrz1jhao5aYLeXKhT+ticRzUvMMcZ8U9KE6Y4ILlcq
-         +COcDrQZLlWGRGPOxoPBTk84QqzJU230UVnbG31umrWM+LVkdkD9rST9mXtmJZ0LtQq/
-         rIBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751896137; x=1752500937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iBv6okUseyiTdjt3XFNpy+qoASB9X2reY393kqaQui8=;
-        b=ct+y8/rtDpMBfZiDwpMWohddEmZY3hswfXaI60Zl8EfgPqXNtXM/yj41YWqwbBrJ9U
-         u6NewZEv6hUd87+iJa5JSwQ8TdZW44aQ3Hp4SNp92DdDfb/JySIIrO8ZJsm4IImbGr9H
-         wv18z36lxRg7BQnbOlYGJGF5gmneoqrUPhMBNeeMCc/FatOMOSr+QKaRnzJMCenMP/qw
-         3s8L2p1EZFv4kHmIZVMgUTwJILIRAEQF77v59W1Bt1cpCr8E62MwUMaQRoo1pcljiM7V
-         J0Cxw+4j6Oh4n6r7G5k2Zl2Zdda6ngHPlDo3i21iSlTleFC5uH1G9y/uAFuj2kNfMcyb
-         spqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIbZRvhgMmrzeigCqe+yjQ6cvqXOWVuoNgzLicRMb5/4rNBb2kCXh0k4C9ZcFKmTbYGQ31l97f5VWcE7aE@vger.kernel.org, AJvYcCUZNfA61PoL1KwpRuWEffcCNeztrVXWozUZeEadmNLQtdrdhmNLeCRy2aJbT+UrePAv+nEVAazkGStylaL3@vger.kernel.org, AJvYcCWnnp1VvMzEMSWe4AsF5NOpQ5U79WJQYn2rIUz1yOiqfChXUsmQr4J9Jsr3j7m0Ajq3JLvUsOKFGc47WGvBOTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCA3YNH2u8kE7l96kjBMAmNZTYlwWfMV2AFzbaUxy1EojcvIS2
-	4SUtqT9MJu410hXaVHGiK1zDqPfEWcmFnF1ec0bmM7iVBYcS5AfXz7uA0AJ/xhv7/ANf4Ta9GRX
-	og3AsDgv7FTIbKHcFeWu5Ic0AJ+TcoeA=
-X-Gm-Gg: ASbGnctRJHdX+lTuGR/FlMC0DiQ6pxFjrYVHa9rpOYAlCWoJusjY5xM+vrvP3wVAx/7
-	W/HWUTf6kvKwKN4zyYkl5Mm1E+XlsMJ0JeVT6lnu9D1CBhLKT4JsY8BCEVa3FiZQ+7+s20HJe9a
-	jQCXOJIr5i8papMs9KAZq2x/q3fuuyYO7r+HIrVMq4JgazXY7X4ei6GkoTs5tI7fOZCEwfxT0ZB
-	IwKZLXGX6yNYFk=
-X-Google-Smtp-Source: AGHT+IG6mESRFwHrjMPB8IJhsBDIv7jvEhAZYhXGS/YJrBI7hE2OE3eUCK3Rsd7KBGcxdf0IEh0SQDDfRzDFGBXXLEc=
-X-Received: by 2002:a05:651c:418a:b0:32b:2f4a:35e4 with SMTP id
- 38308e7fff4ca-32e610eae45mr32663681fa.34.1751896136651; Mon, 07 Jul 2025
- 06:48:56 -0700 (PDT)
+	s=arc-20240116; t=1751896609; c=relaxed/simple;
+	bh=ZATC/+FhJgzjlFxxqMKrnL3O6Is7fUT9k6SZQ666z9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g6hdLbIBIms0oqQYmC4xAingdujNb20KennxzoIEbcy5w/Oo4ns861XKOqaUn0GPJ7pscLFt3MVg7BPQYHExRSUWU9NQoSgrtsNG6Hv4vH8ennb2u52yQvx1nu5plFbOqhUHPCoN9K5GaQPF1wGGQDwmFnmOWzSTlQMxQjtrGVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZydXeAik; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567B4q4t024638;
+	Mon, 7 Jul 2025 13:56:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=QRv8azdTzXmsiZyUWDcIW/MRUGghOC
+	v0OaLdvpwkm3g=; b=ZydXeAike+8XgGCpNN16ZeZqpDT2QCBOGlTl9N3dgO+LxD
+	ZyexYUxeMvi+V6BnKuGrKvLA0Eyrru6HypbRgqjzMDzaTRnGX9j+2p5f7RO5nRHo
+	bhq8M/TP+bjFsOSU75TNKZDZC5g3RNA0QyEZiSvTbkjjlPHrzmE+8o5Njr2Vvpb7
+	nDr+E4U0pxIQxszY4IA4vK/VSHwGa1CexIPB9wM6pbb4NS7ifpx66yx78Z//58XS
+	cM+t3THdDGZVSEgHmZs1QW6bBIKtepZnexLXRWVqxvdw4q6e2WVlO3wD/Zdgg8xh
+	JtnGmAG709eC3SCWfn4KRIvuOupshKU8Dit9NnzA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ptfyhmrh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Jul 2025 13:56:44 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 567D2tcs025586;
+	Mon, 7 Jul 2025 13:56:44 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47qfcnxaps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Jul 2025 13:56:44 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 567DugrK22544772
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Jul 2025 13:56:42 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 148E820043;
+	Mon,  7 Jul 2025 13:56:42 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D0D8D20040;
+	Mon,  7 Jul 2025 13:56:41 +0000 (GMT)
+Received: from li-276bd24c-2dcc-11b2-a85c-945b6f05615c.ibm.com (unknown [9.87.129.26])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  7 Jul 2025 13:56:41 +0000 (GMT)
+Date: Mon, 7 Jul 2025 15:56:40 +0200
+From: Jan Polensky <japo@linux.ibm.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [BUG] linux-next: Signal handling and coredump regression in LTP
+ coredump_pipe()
+Message-ID: <aGvSGP8zQZDUH1_l@li-276bd24c-2dcc-11b2-a85c-945b6f05615c.ibm.com>
+References: <20250707095539.820317-1-japo@linux.ibm.com>
+ <20250707-irrtum-aufblasbar-5226d9d544ea@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701-xarray-insert-reserve-v1-0-25df2b0d706a@gmail.com>
- <20250701-xarray-insert-reserve-v1-3-25df2b0d706a@gmail.com>
- <CANiq72nf-h86GszE3=mLpWHi5Db+Tj0TRyUe9ANfjdNbesBEEg@mail.gmail.com> <20250706082904.GB1546990@robin.jannau.net>
-In-Reply-To: <20250706082904.GB1546990@robin.jannau.net>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 7 Jul 2025 09:48:20 -0400
-X-Gm-Features: Ac12FXxKbt56dwBuo7MeSvdevPz34_ZeU8dMdxkb0P_S_eSO5uofzl8509YIRo4
-Message-ID: <CAJ-ks9mkYR118njo9rvFaqZMhEa+uQusUBAYTSH_1gCxTy-2ag@mail.gmail.com>
-Subject: Re: [PATCH 3/3] rust: xarray: add `insert` and `reserve`
-To: Janne Grunau <j@jannau.net>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707-irrtum-aufblasbar-5226d9d544ea@brauner>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=crubk04i c=1 sm=1 tr=0 ts=686bd21c cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=dWKVyG3mCClnsUYDCHcA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-ORIG-GUID: KMbsXM_yb25jXu7893vfyMYXKqro7Ubl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA4MCBTYWx0ZWRfX34inArj5qDGZ ExK7as2tzU/VXkBjRRvgiVkbybooDO3HoP6xeA2y9ICtDFfYllZEVM/jv2sDOaUIUlBl1zAiHTW eTVtfQ3iYTg+JPAicZ94SxyKYqwAqOy3csUXvvUKfj65npo9iIrgK+RvRcFW8sUKj4CzsN6VY1F
+ 0ns9CZ622g5qu3JKoFNTDqEwr3BzsFasqwN8zvhEaSWW8IdusKokd5vNV0Na/KL0LzyYUsoNaMz UajuOMwjDZPZu/jtuLJ/rUUEzD8iLnki0qFEHmqgbCPMAH6vC1L0y3ksAcNusycJEcXQ8fzh11x cXYRemVi7uCwr19vwF9nUqJf1a4FliJ8TIszrdFX+yaLwFdZAJHlzxCF54Qjj2sAj09jCSXuwXv
+ Dnn5vkwF/4WZ8YpUFwf9NOcq2TyWz9pR3fPkc5FYxDe6x7ExpBZPXhMKJDtvZzIVGeM+Q7rb
+X-Proofpoint-GUID: KMbsXM_yb25jXu7893vfyMYXKqro7Ubl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-07_03,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 adultscore=0 suspectscore=0 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507070080
 
-On Sun, Jul 6, 2025 at 4:29=E2=80=AFAM Janne Grunau <j@jannau.net> wrote:
+On Mon, Jul 07, 2025 at 12:20:36PM +0200, Christian Brauner wrote:
+> On Mon, Jul 07, 2025 at 11:55:39AM +0200, Jan Polensky wrote:
+> > Hi all,
+[skip]
+> > ---
 >
-> On Tue, Jul 01, 2025 at 06:56:17PM +0200, Miguel Ojeda wrote:
-> > On Tue, Jul 1, 2025 at 6:27=E2=80=AFPM Tamir Duberstein <tamird@gmail.c=
-om> wrote:
-> > >
-> > > Add `Guard::{insert,reserve}` and `Guard::{insert,reserve}_limit`, wh=
-ich
-> > > are akin to `__xa_{alloc,insert}` in C.
-> >
-> > Who will be using this? i.e. we need to justify adding code, typically
-> > by mentioning the users.
->
-> xa_alloc() / reserve() is used by asahi. It's still using our own
-> abstraction but I'm in the progress of rebase onto the upstream xarray
-> abstractions from v6.16-rc1. Once I'm done I'll reply with "Tested-by:".
->
-> Janne
+> Very odd because I run the coredump tests. Can you please give me the
+> exact LTP command so I can make sure I'm running those tests?
+I ran them without kirk to avoid testing overhead, e.g.:
 
-Thanks Janne. I'll wait for your Tested-by before sending v2.
-Tamir
+    runltp -f syscalls
+    runltp -f syscalls -s kill11
+    ltp-bin/testcases/bin/kill11
+
+Some tests may be skipped depending on kernel config, system capabilities, and
+installed software.
+Let me know if you'd prefer a kirk run for comparison.
+
+[skip]
 
