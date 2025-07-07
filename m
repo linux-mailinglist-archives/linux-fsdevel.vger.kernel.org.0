@@ -1,243 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-54090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D35AFB29B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 13:51:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32297AFB2AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 13:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B00E1AA15DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 11:51:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9884A2057
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 11:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFF329A9E9;
-	Mon,  7 Jul 2025 11:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B4829A333;
+	Mon,  7 Jul 2025 11:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AaQpRX4J"
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="oGh9mnv6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
+Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C11291C23;
-	Mon,  7 Jul 2025 11:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751889057; cv=fail; b=tp9ObugahlmR2rfUDM7g9qT4nPmRbp1liCrfiEzFE8jGTurkbagYVa7ymkQ0SiCAK4OA89ca1PllkbhDnLotowIkD48UjB+5UsvD9RKRJVhFxjqcYFVmLiQ+KvauNS23wV5T2moXqy9+P43fYHX2FzG9BC26u+CAMKG0XHWD3pU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751889057; c=relaxed/simple;
-	bh=I+vMqrjD7BDEk9NSL3pM2aB9BH46hIvRo6bA4PnSAjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bnG2H5WJv8pevK0JHBwRzK2nmykzBKBiklsCc6WBoX8W1J6HaEXR9YeWPWilx+hK/q9tv2LzRSDBAwvn/ChiALbjM0xfr/KvXJHUPa1d3okrvf/q4NdIZftmv6BJxhCneXpw37o6w24kKI5JeAhpRU4qrJI7De276X4eLDtEuFQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AaQpRX4J; arc=fail smtp.client-ip=40.107.93.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xZO+TXhCDU8a67Vy+UXQRljrwF6PY5BPZsFJu1BMgpyFvuy4/GLNQkhr+untl0TKAmWtXeQZHN3HYSxqsONfoe063zI/oRzZ2VGCCU2szDyh+F6c701DulpB7KDAGeNV+ZIjIn9OHfkAmx9aH3GHsProY5SvfHxPrlC6eXR2jRWTBBYiV7JDDyliJYCNdUygiOQCwXDCHt4x0Z15RSfciCLjy1l7Eh0YwAhKQ4LQvc3HQsQ9nzCrdyRuTU/GATRcbkC7CDelYXIG+63MpK0L1alBPkd5oAuPAL9T0j9ORP0nJ5EoZPR8VBwaA6IK4g3g0JCrlaPmCSjBbKXsf1fVGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kY8j+HBOP9fJ0oSF4AJIvN/y44oOF82sXo1hC7Z/bs8=;
- b=HXUS43vH2vqhAv3kicOwKeN/kubG7CW6PpxBIk5yiRMsmpBYfRQLmb26hwVW9W51ip0IcSKtB3VUzIHQzkHiFvb36lKyco3jom67fJt3eIBjYpQmpOw7Xia+eOWJw5ef/sRaJKQMJ8Ff1imfHpA78kzTQ7xnrVyJzX/vdtt2UMIN1VHgrq/KmKoMH8u3yEEbFU10Y6h/8wZrXs+ZFYyordUQdDVn49rch2LF+5QMrmp+l8hhzCndexTURI86iSzAiL9wd3kJCN3lIvuuHCQkKblpAOKEv9AvvRW/AvutF5aDPEC0cEupxKRQ0WjWCBLkchpBRKQEOJ7Ru4xVgaFe3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kY8j+HBOP9fJ0oSF4AJIvN/y44oOF82sXo1hC7Z/bs8=;
- b=AaQpRX4JDYlgwMMNKM8lt6TKxOJCm5czJAwPcIXvKtCZANM+PMeUjcM+E81nHs4tDeKsPc+UcjmoYbuIY9IX8it1mzKyBN0xzAB1p8sx6xYqK1TxflcVWPsUqLTZl30sgkK/6oRzyee43/AuvWYWhbMTrGbN+nAiVnNfsVFX6DAsuNCqRhmFylwl3clnGlwX4PPSyIwpPSebVdQwO7l2zKMGdl1+JikN5+aHAThneUC+2jk0EIGB8A981/QFPfNY4p6JeUsQ+34w4LAN77j/AvXTrZWHsEJIIAsq/OuLAfhIWpSITfLdKducTVHlR/xkxaRPvRT6GZP70l2MMvfrJQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- IA0PR12MB7556.namprd12.prod.outlook.com (2603:10b6:208:43c::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Mon, 7 Jul
- 2025 11:50:52 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8901.023; Mon, 7 Jul 2025
- 11:50:52 +0000
-Date: Mon, 7 Jul 2025 21:50:47 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, nvdimm@lists.linux.dev, 
-	Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>, 
-	Stefano Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>
-Subject: Re: [PATCH RFC 07/14] fs/dax: use vmf_insert_folio_pmd() to insert
- the huge zero folio
-Message-ID: <orevbupi4lg2qficqzcb6qorctdxw6exexa4xqxcmf5g44ybnc@wzgw7reerin4>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-8-david@redhat.com>
- <cneygxe547b73gcfyjqfgdv2scxjeluwj5cpcsws4gyhx7ejgr@nxkrhie7o2th>
- <74acb38f-da34-448d-9b73-37433a5e342c@redhat.com>
- <36a8f286-1b09-43bd-9efa-5831ef3f315b@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <36a8f286-1b09-43bd-9efa-5831ef3f315b@redhat.com>
-X-ClientProxiedBy: CH5PR02CA0013.namprd02.prod.outlook.com
- (2603:10b6:610:1ed::27) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD76CFBF0
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 11:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751889247; cv=none; b=QbzvKay0VpJSRTyQaIY3XyOsmaDKsWBOYG0WGT+6NLCVY62VekMDeWcuc6caJnTa+yJS3aqGyfQGOWOOycZs4U4XtfCh3EXuSA7OgJahkFEpnf/d/piz8a1YXgoU8JIq2EFP1DB1hAzOCrSS3G+0qv1d9TPdiLq5aBWPcRTIXoY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751889247; c=relaxed/simple;
+	bh=/+o64qtRr/puKxhLukrHwjbyUKS6IS+j190RFYFv8qE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KnXL25p/Wj9qwA2M/FKOMkifcjNPzDJS7Zm+Qr463jfsOduDtTBaYmk2WGF7wld9iDsMxFlvil4XQt4uitsXAZ7/G0+fVjYep5Hz64QmgXNhbwYcly6JWQAtcusbQ/5QTbxt7l2WVwkI6yb6QSZBnh1eYk3nsNExy6+pbU1b3Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=oGh9mnv6; arc=none smtp.client-ip=61.135.153.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1751889238;
+	bh=o1dq5Hb9Cv60vUUsdSQmeRd7DsdHTcthm1XraCMT9gY=;
+	h=From:Subject:Date:Message-ID;
+	b=oGh9mnv6+YRfVosWGEUMTgKzKY76OhEocXXp2uabz3OwYHBLI8AyTcd4ugWfD8vqD
+	 D3eX44E7uyFIz8JfDn4gFEZVv1t0HoBPzzZgHKDXUzuzEqzHY3d746DG3dcwealWfZ
+	 WMoiFqVOcamkDQc5Ze8vCwhPd/4Qxecpr4R4mdgQ=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 686BB55000000582; Mon, 7 Jul 2025 19:53:54 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5300836685137
+X-SMAIL-UIID: 110272A30E804528B59A9E6791B2C466-20250707-195354-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+3de83a9efcca3f0412ee@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	kees@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [mm?] [fs?] WARNING in path_noexec
+Date: Mon,  7 Jul 2025 19:53:41 +0800
+Message-ID: <20250707115343.2750-1-hdanton@sina.com>
+In-Reply-To: <686ba948.a00a0220.c7b3.0080.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|IA0PR12MB7556:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7823c01-e52b-4ef6-f634-08ddbd4c8602
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S7G79Azr0MA9CYfSB2ILi/QdA2ufBVN6PIuDl53AYNE7fSV/TtgRLFVOntVb?=
- =?us-ascii?Q?ViZ2puiiNj3Z22WFepDcIEmY5mNOr8z377H9sCJJaJDciRfpgBPUiW5wdVlk?=
- =?us-ascii?Q?9ya7ofFORwPUldKfOp+6CDxL+OSu6k4x6a49UjG9K0daknvRUMJ7uwy6BgIL?=
- =?us-ascii?Q?oBg7mcq8lCg4yNKpG263DJPHBjh7Z2oAq6vPv1mOxYYXh4c+9E8bSSb2rLGd?=
- =?us-ascii?Q?DjZzvRX/SCNp+JqkyvOdx+X4cADxtfFUMcPQMEihvRb/1lSKwoLMXjvXupsE?=
- =?us-ascii?Q?/EDTdtgUR3jlX9Dqk+NMKqwk4+jnxo6IENuHD0moKZvXA49BSPrDUH0P6Kvk?=
- =?us-ascii?Q?ZavOmRNgye11JjjsNbBEIff/NfuvI/mw8YoL+YtsYv8qncFeN7ZIc9NaaNzP?=
- =?us-ascii?Q?SJRSujQbDwvc6gafMXQlOBUMopIFh2+/aYtxyJNPxpM8G4LlxEJjguNplpyQ?=
- =?us-ascii?Q?HM4hZ3ZCv8lHdjiloE/ILpg1aQYOt8CLQ4mipCtUAlprmdyZcnO/M9Xz2euj?=
- =?us-ascii?Q?d5968Z9zYkkthuRqgc1nZYl/M7p0ij2ii+CT9qQ+/0rrS6ZE9EI47LhzHTZK?=
- =?us-ascii?Q?V+XWyk1ur6V9nZBjli+qdgxEdqeS2CyRvOGkv/Vh1LiuXHhWYWlYeD/fyTNB?=
- =?us-ascii?Q?OlVLcSfrUoBeHLcXj1nsQWb7v1pcJ6hesb+6ESRuyQqzbiHWMCrk/vWub0zo?=
- =?us-ascii?Q?A2+GuIEJu0weKiwhw8Zqpgpl9oXVe2DzlQU6djH0SmptmjPJ737sGIYYRmVy?=
- =?us-ascii?Q?dl3lZatDP3vdLlePPcHVmE1rWOkEMGo05dfnACs5HNGBjSwQuNZvD8j5Y71V?=
- =?us-ascii?Q?gUjYJMHKEXhWWki6gpA4p3GOY8wyPqPLYQn+A5o9PtbkEKwYXn/mhuxBk/5R?=
- =?us-ascii?Q?8j6NkX4/DCFxwSlTqJYZ57yaduyd7WkF/yTLPRMa1olTvdB8Oq0RptiFKHFo?=
- =?us-ascii?Q?X8Y14IFCRKAIqXZ7tXWD1qDL8jDl72N1HAqOkClyUdLCvBf4sUmQ2q2ttuc2?=
- =?us-ascii?Q?c1CKC7uS5QAnpUjbfZ8b4BFdU96+wNEt3HBOrYT8sWg8D8DEQreqvXWoYNDk?=
- =?us-ascii?Q?UZKDmMpfGiR3qUyNf/ZQEWOW3AUgPxP+bB6la2XyQtcXwtV4qYPj/zEOR/du?=
- =?us-ascii?Q?8g9F58IYFYBmdsbIgYscMBWRILCubksXOPx4+aF/NHKdDYNXm6V1R6tHSbC2?=
- =?us-ascii?Q?M6GMP7KL6PztMZkponrHoUuGBfl35co/5Kl809owyPv4YLq2CpMQJP5RKC5v?=
- =?us-ascii?Q?JCs28Wg5fPs0QAZv+mzktQPVWBeYTKKn7131v36t8yDQmcaulgFRsy1aQ9Gj?=
- =?us-ascii?Q?xenCoUmYfonA1NUHJOqVi6pvs61Pp9udbcV5ceLU1kz6e6E5zeiSHEgbuPqD?=
- =?us-ascii?Q?wQ0QpKIHp6INPd6iPI1nF/gAli/8rPNIJh7qDuyOgn/bF/2VaTYgxWL0xOyZ?=
- =?us-ascii?Q?EJ8Z4X1BYRU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?iMbmt7egNmcncp5nq1ZD0fCDomSVbOmBt9gbgAwp5Wgq43d3shyDdOvacVr6?=
- =?us-ascii?Q?Zx2RJ1itbp9qfnMkb2sUzSYUft9qg/R8WTurUEgUY72Lporpv9By2P7Vr6bo?=
- =?us-ascii?Q?2eN6MBTS5ssGsDduky+8xmE9B2QMyAUDGJYsvuGkWYnf07RsXJlKJKlx0ljE?=
- =?us-ascii?Q?6YsZsSFc9uXcvnAO0lfVwPxUkGlUgATE8Xv+RCZUlQrqtw1s4POxMvzhcFGH?=
- =?us-ascii?Q?uQ/vOEJOuWmUK0A6u4n9t03EsGKbfZcp9wNPP+XKPcjqe6PqhBbvfpg6zXIL?=
- =?us-ascii?Q?E0aaCV6HSovuH64ngQfgjR+mBuheIddA2GCZEbOT+7TqJi6ipEg99sOMpvT9?=
- =?us-ascii?Q?69C0uWrG5WjQ66K7sQ5SHthwlwS32bO2b8Qd+y91tyOAXvYyqHz9y6bYjeKc?=
- =?us-ascii?Q?QE3GU0OPnjTg47bV1EHlrQtVhhuFU+bC46uVFDu3EsS01GzIcLZ71rRDH/eA?=
- =?us-ascii?Q?wSx9M7VTIvujPieYdZULrKhE5P9Ryo3OshNCvn5ixzVxGI765mRqEHRhjgdy?=
- =?us-ascii?Q?lWZ9b8qrQPi8yFNIendYdCvegxXZ7VMqMCYxS+kEE6gKVPcUpmyRqlqYquoj?=
- =?us-ascii?Q?cpEUx5VLHxT3dwekypIqorbQW7wl4jnJVxdPb1+QhAAn1CaU22w/0fJZMrnn?=
- =?us-ascii?Q?JAA43madD8WLa3LCHtIhnK5lPKT244/6PwHCHlhg3sR9qjlhmEdxIQVgu6CL?=
- =?us-ascii?Q?exXwGX/j7pnF6n3lIYXWcvKTu+nW50HVM83vS9fireR9q7HA3FdJdX9NRbvK?=
- =?us-ascii?Q?34S96hMVZiuRLbKZQDdDEwNwpV2tO7aCi0bUfnWh+vXASYsW7GtS07DMOtwf?=
- =?us-ascii?Q?VtCT3VWFWeqiz4ZwBJY2cH1Iksy1hdMQnZgigjk7pUmAcHm8/0Hyxgv66Nb5?=
- =?us-ascii?Q?QE4v6y5inNw2EEWP7dHjorGG0Jx+26lRsM8C+1EHfZNe87fanu8Qa9v4jVr8?=
- =?us-ascii?Q?d6Z9ZrkhqDDVA1MUzVaFHcvYB03d9sd9ngBMBYmFZsUus+HVaA+zDXaxJV6M?=
- =?us-ascii?Q?2xcqbTtyz5eBQ206vg1CggpNKxRqDi23tsLk1urdNNGBNc/Ud4LtBjKy8yuS?=
- =?us-ascii?Q?OS1PgSA2YOCCg04+WfNblJKbDkQ0nnulh0n9tpq0opuN6AQy9abUm0ecG8gT?=
- =?us-ascii?Q?NL1CIv8rYr3ufiumziQDsUTIo+JiuiPiUH7yZDBhKs0q0RxPbw3WMmKElOFZ?=
- =?us-ascii?Q?1PReCZm2ReQowk0uTz+lxT8p2+ljCfL0TGrR0Z1TRwgIcyjP1s9Bbp+srqCf?=
- =?us-ascii?Q?pWX9mt8ICHYZEP9CajnjDFWUPUnaGx6yEhtsY6j7cF0g1PBvuNqOggnTvCQG?=
- =?us-ascii?Q?WsnqFKhSu0NfNJjSd4gHi6NXvna2UyBLCEyogEeP2ZzkUtcsjyZ6Qf1tvW2y?=
- =?us-ascii?Q?rifv5Tmuph+AE5mabzU01ft9Z5ZzuzI6BBz1dFwsttnFGrBPJaOH6PBX+Rgo?=
- =?us-ascii?Q?XHMkwOs0oe+EScrjzQItmXi3SR8/31pVIVwmikIDcesyQYxWgFiRcnNa2/zl?=
- =?us-ascii?Q?Y4cJkO1+7sSkeIloGGEsj/qI3JpVb9Zqfa2+z8pq6swqG92xwUtzKYHwTTOD?=
- =?us-ascii?Q?23TTKsQ+dm6kZ7BU2BzyU5po+HrtpbOTjqN+Lutl?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7823c01-e52b-4ef6-f634-08ddbd4c8602
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 11:50:52.5541
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ef9FWW5zjYEFbXqKBNio8c8xbK0jcf+3GKU3Cu/txmHzzEFH9cHeYygVH/fN6c2jBfqF/atMPpNreb1iT7dpBg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7556
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 04, 2025 at 03:22:28PM +0200, David Hildenbrand wrote:
-> On 25.06.25 11:03, David Hildenbrand wrote:
-> > On 24.06.25 03:16, Alistair Popple wrote:
-> > > On Tue, Jun 17, 2025 at 05:43:38PM +0200, David Hildenbrand wrote:
-> > > > Let's convert to vmf_insert_folio_pmd().
-> > > > 
-> > > > In the unlikely case there is already something mapped, we'll now still
-> > > > call trace_dax_pmd_load_hole() and return VM_FAULT_NOPAGE.
-> > > > 
-> > > > That should probably be fine, no need to add special cases for that.
-> > > 
-> > > I'm not sure about that. Consider dax_iomap_pmd_fault() -> dax_fault_iter() ->
-> > > dax_pmd_load_hole(). It calls split_huge_pmd() in response to VM_FAULT_FALLBACK
-> > > which will no longer happen, what makes that ok?
-> > 
-> > My reasoning was that this is the exact same behavior other
-> > vmf_insert_folio_pmd() users here would result in.
-> > 
-> > But let me dig into the details.
+> Date: Mon, 07 Jul 2025 04:02:32 -0700
+> Hello,
 > 
-> Okay, trying to figure out what to do here.
+> syzbot found the following issue on:
 > 
-> Assume dax_pmd_load_hole() is called and there is already something. We
-> would have returned VM_FAULT_FALLBACK, now we would return VM_FAULT_NO_PAGE.
+> HEAD commit:    8d6c58332c7a Add linux-next specific files for 20250703
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15788582580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d7dc16394230c170
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3de83a9efcca3f0412ee
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ecb3d4580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153af770580000
 > 
-> That obviously only happens when we have not a write fault (otherwise, the
-> shared zeropage does not apply).
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/ff731adf5dfa/disk-8d6c5833.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5c7a3c57e0a1/vmlinux-8d6c5833.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/2f90e7c18574/bzImage-8d6c5833.xz
 > 
-> In dax_iomap_pmd_fault(), we would indeed split_huge_pmd(). In the DAX case
-> (!anon vma), that would simply zap whatever is already mapped there.
+> The issue was bisected to:
 > 
-> I guess we would then return VM_FAULT_FALLBACK from huge_fault-> ... ->
-> dax_iomap_fault() and core MM code would fallback to handle_pte_fault() etc.
-> and ... load a single PTE mapping the shared zeropage.
+> commit df43ee1b368c791b7042504d2aa90893569b9034
+> Author: Christian Brauner <brauner@kernel.org>
+> Date:   Wed Jul 2 09:23:55 2025 +0000
 > 
-> BUT
+>     anon_inode: rework assertions
 > 
-> why is this case handled differently than everything else?
+Given EPERM [1], this rework looks like a case of overdose.
 
-Hmm. Good question, I will have a bit more of a think about it, but your
-conclusion below is probably correct.
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/mm/mmap.c?id=df43ee1b368c#n474
 
-> E.g.,
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14b373d4580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16b373d4580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12b373d4580000
 > 
-> (1) when we try inserting the shared zeropage through
-> dax_load_hole()->vmf_insert_page_mkwrite() and there is already something
-> ... we return VM_FAULT_NOPAGE.
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+3de83a9efcca3f0412ee@syzkaller.appspotmail.com
+> Fixes: df43ee1b368c ("anon_inode: rework assertions")
 > 
-> (2) when we try inserting a PTE mapping an ordinary folio through
-> dax_fault_iter()->vmf_insert_page_mkwrite() and there is already something
-> ... we return VM_FAULT_NOPAGE.
+> ------------[ cut here ]------------
+> WARNING: fs/exec.c:119 at path_noexec+0x1af/0x200 fs/exec.c:118, CPU#1: syz-executor260/5835
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 5835 Comm: syz-executor260 Not tainted 6.16.0-rc4-next-20250703-syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> RIP: 0010:path_noexec+0x1af/0x200 fs/exec.c:118
+> Code: 02 31 ff 48 89 de e8 f0 b1 89 ff d1 eb eb 07 e8 07 ad 89 ff b3 01 89 d8 5b 41 5e 41 5f 5d c3 cc cc cc cc cc e8 f2 ac 89 ff 90 <0f> 0b 90 e9 48 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c a6
+> RSP: 0018:ffffc90003eefbd8 EFLAGS: 00010293
+> RAX: ffffffff8235f22e RBX: ffff888072be0940 RCX: ffff88807763bc00
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000080000 R08: ffff88807763bc00 R09: 0000000000000003
+> R10: 0000000000000003 R11: 0000000000000000 R12: 0000000000000011
+> R13: 1ffff920007ddf90 R14: 0000000000000000 R15: dffffc0000000000
+> FS:  000055556832d380(0000) GS:ffff888125d1e000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f21e34810d0 CR3: 00000000718a8000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  do_mmap+0xa43/0x10d0 mm/mmap.c:472
+>  vm_mmap_pgoff+0x31b/0x4c0 mm/util.c:579
+>  ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:607
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f21e340a9f9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffd23ca3468 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f21e340a9f9
+> RDX: 0000000000000000 RSI: 0000000000004000 RDI: 0000200000ff9000
+> RBP: 00007f21e347d5f0 R08: 0000000000000003 R09: 0000000000000000
+> R10: 0000000000000011 R11: 0000000000000246 R12: 0000000000000001
+> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
 > 
-> (3) when we try inserting a PMD mapping an ordinary folio through
-> dax_fault_iter()->vmf_insert_folio_pmd() and there is already something ...
-> we return VM_FAULT_NOPAGE.
 > 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 > 
-> So that makes me think ... the VM_FAULT_FALLBACK right now is probably ...
-> wrong? And probably cannot be triggered?
-
-I suspect that's true. At least I just did a full run of xfstest on a XFS DAX
-filesystem and was unable to trigger this path, so it's certainly not easy to
-trigger.
-
-> If there is already the huge zerofolio mapped, all good.
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 > 
-> Anything else is really not expected I would assume?
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
 > 
-> -- 
-> Cheers,
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 > 
-> David / dhildenb
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 > 
 
