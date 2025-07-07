@@ -1,232 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-54142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D1DAFB8B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 18:34:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E616AFB8BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 18:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2610F3A9DF5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997FC16DB8F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0851421E0BE;
-	Mon,  7 Jul 2025 16:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A411224220;
+	Mon,  7 Jul 2025 16:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNOoJrWR"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yjsPy/xn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dfD+s3Ld";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QTTuFMF/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R7XmGQER"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3979F72606
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 16:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E8D155A25
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 16:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906037; cv=none; b=gAni66YgYFIZt8Qp23JibHTRVebu4ghICMNsRBtYbzljYZiiW4LhqTTGCL63CwfxBXU/q5C7b/inwba/Px4QHPIWmm1svEa2TMzvWK2Yv+yk8VZb63k2x8TqIW7N7zkrClFN5MjEWaUgFocZKuhRxX0fMtpGzR54WEkGh4jMmJA=
+	t=1751906273; cv=none; b=bMxOmhI//nVLLiZHBqy76pTNwgYOyFp5KdcIiN1K0kjL9XBoYqTxY5Xd2vWXiS1r/b7s+ONrVg9HMKvTtK4Humomn1K/BqnfJlStHFDrgaMM5b0sqy2Kg5geTlOuF20FNhGc06JXdyMGeDKZTld24K4ks5Z+wzGXoVNGEqfPh1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751906037; c=relaxed/simple;
-	bh=C4XZDj4mNEjRoT6za0k3NhvS1LbfXfuhUnhOuQSUp4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WfCdkvQxULawko0IKgU5duQWlE6JsRkWkxh4AzKAWTxdS5HhRUmM80DSVmXh0zV0nRtvlPHLxw61mPrFMH/l2A/qYg4MOWr2rlaKnWjZCEP5FQGVe8n8CnZQ8DuIur9T71yEfAwmq24HwyWmchnDADIOsNwL2zpfqscAhO9zMsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNOoJrWR; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae361e8ec32so682516466b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 09:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751906033; x=1752510833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W3lAzRlJ5HYbxoDmJxGphh/qlY2sbeo12KY4w59C9x0=;
-        b=NNOoJrWRG7eC4REtHyq/Z5jsIq8zMUCs5V9mKzqdRU+V+r7pA8ufxMWEQ3p6P/xii9
-         +K0GmrG/wg3ZwdUd+G40hyPlgM6ToyRq+O0K6tb80zaXBZflgOefgUQKsfqYno6xVJvp
-         n4EYgrtuw0JSzJsi4sDJvBi8WQWX37eA+/W2Upa5nTEzODjCJ5SYTg2sdVpYfRrP5UpQ
-         KGuGuGWhGCbeJ3M9A/pfRCoEuWUW6tE1g5ZFrWsVRKsJhdIjUAQv4fWR1eCHJ5K3NJUL
-         HuS6X3Fui2kH+lt4y9dnxMihbxoxWLEmwJQ8I+H/inSWWkVsKRptVf5zJFJxYeQocwT6
-         pPIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751906033; x=1752510833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W3lAzRlJ5HYbxoDmJxGphh/qlY2sbeo12KY4w59C9x0=;
-        b=DgJ2LKKvHo/Bgw3KMYNHxSUrXP5LDtrcL0Ww4WYNmOj15f/DC2lxbFHvWBCq5DQgyK
-         E/rdB+b7te31+QwbJvfEI5Jg9T1JGdEidowBMZ+uRezrUr7GUwclXhJApO4MIemQDVOZ
-         wKvoRhC94HKPc31ZESUr910vAQ3LETHr23wS+mD2EyyetJw/uGyY4T0lK5vwE4unUZQ+
-         1X4sLKv2d51owCZlsUbjNk4B/Wr8O8aGlvezvqbs4njRsmiSfqb0j70eFF3VioCf2JiB
-         JO97HXsE883HA+zxkEXcosByhfxcAILRDZ4VcDzPbW1/tBKN6/0FDe/TmU1Ez+aX9isZ
-         Y/zA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgbM31WIEXdn8oAusQPHaIz4gGLFBz9gOE0X3/oEPnsUUeFm7UBuHv8P1UsKxeUwA6jUN+/76rBav4svFZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRkcmD4gxGpD9OmzpGJA4fCD+TOuZ+BSkxPeJlR4VvaCJgnB7q
-	Z+RiojgWYdRAfBZyw90/ig4DC2kVhOP6dmu5y9z2vKAeAI8u1fHxMeMThLnSFjnKtffMR7lKe6z
-	D6NKQC1A4GsTmV3ETnL/zjyKWJ7wxzgw=
-X-Gm-Gg: ASbGnctr2Mc2dB2wtVrjFBlk+yrEY5oF3X24rZI0IBu7cHlVTEvfZeOZ/PHUWiMVqHE
-	qnCm4VExR0CMzUMJoh0GQNPC5P2iyvrokEz+GudCbubdXrHPhBhOW/G0AYkgnZF+zgC26cFIbkI
-	D7folVW0YnW+34CgrL1rtL96r4rHik0nJJNa2vdPZDaXw=
-X-Google-Smtp-Source: AGHT+IF2arsyYwuoh8CjBk/aDPZecFi2NepR+jFcUlbOsZtj/vTsWGLgcHvwKJNJo0zummYCxZh+IafItriKtIEXgLw=
-X-Received: by 2002:a17:907:3f2a:b0:ae3:5e70:32f7 with SMTP id
- a640c23a62f3a-ae4108e5f74mr1000492066b.47.1751906032960; Mon, 07 Jul 2025
- 09:33:52 -0700 (PDT)
+	s=arc-20240116; t=1751906273; c=relaxed/simple;
+	bh=VwalyGaeVSaD6ft++0Zi18Cq60KVfZPG7OmihocJkbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOE+uTcW6OxCausuPbHAsKEvCnuR6AjVz9lAowhzhq0RVl/mcQkBaZWJgs7z5Uoof9yNivGRVjlV2uSFKKqz4F5dVe9ymy6ke290Mm12wE+Z8a60H9Rai67xBl46adJ0Ltdz+EtuGTDbEdapCD0IGcSCpQ/Ku80c1sCIo4NNgD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yjsPy/xn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dfD+s3Ld; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QTTuFMF/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R7XmGQER; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 97A451F44F;
+	Mon,  7 Jul 2025 16:37:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751906269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fltf6s910MP9MfVWU5449hqMFnTjij3rScGtoZavlBg=;
+	b=yjsPy/xn8BHkLwTV/zbM9SOje2MxlKwbycuvW/awc/YrE1Z0Ejwx202c7hhZoUDKleXwVQ
+	UJQ8I6Iu/4cW1G+2NFoXYwqQbAJ+Ol3xC0cxN+Fek+tyv09RN1TfBVRHEYyVTqeeNJLXDM
+	lZfg3/OjPChU0Ghd70aoxEYfODCIXsw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751906269;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fltf6s910MP9MfVWU5449hqMFnTjij3rScGtoZavlBg=;
+	b=dfD+s3LdiY/XdjtBBkjpviBKdmr9bhVhMysDcUU30u8HMyErXjRqIdoIut0YfzZXxYM4Ca
+	MzzfeHNqWBHlV/DA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751906268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fltf6s910MP9MfVWU5449hqMFnTjij3rScGtoZavlBg=;
+	b=QTTuFMF/q2tIlQpiHOJd12NLJDU4nTYFAgxPK/lcQlmY5QnFj46+QfVSujKUkwNMTLV6qZ
+	BPbxAgw0FcJwFSr0X9cq5mZzSddz/UAlRUJjQkcXrK3pKY6gDBNqD1xdjtSgAIU5Qp+ltu
+	4xqmgy8IhiQMt9+wS6HaC0YzZRQG6U8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751906268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fltf6s910MP9MfVWU5449hqMFnTjij3rScGtoZavlBg=;
+	b=R7XmGQER5JL2dE5LqHam+dkwPeXTSdPvLKUj7j0Xw4huO+cT+9xZmL0rfQlhe6tqViycVX
+	LinigTrTkxHx3XCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7817D13757;
+	Mon,  7 Jul 2025 16:37:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YRpNHdz3a2jEWQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 07 Jul 2025 16:37:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CB7E1A098E; Mon,  7 Jul 2025 18:37:47 +0200 (CEST)
+Date: Mon, 7 Jul 2025 18:37:47 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	ojaswin@linux.ibm.com, sashal@kernel.org, naresh.kamboju@linaro.org, 
+	jiangqi903@gmail.com, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
+	yangerkun@huawei.com
+Subject: Re: [PATCH v4 11/11] ext4: limit the maximum folio order
+Message-ID: <h4snda3g6njxlahigv2ca47eknsdall7myeh7b3aw2or6z47qx@m56twof3i5ul>
+References: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
+ <20250707140814.542883-12-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxi8xjfhKLc7T0WGjOmtO4wRQT6b5MLUdaST2KE01BsKBg@mail.gmail.com>
- <20250701072209.1549495-1-ibrahimjirdeh@meta.com>
-In-Reply-To: <20250701072209.1549495-1-ibrahimjirdeh@meta.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 7 Jul 2025 18:33:41 +0200
-X-Gm-Features: Ac12FXyXQ1Ft3d82tFWthAW9LB_sE-UZn8TrQ11EOQ1sa0KkfwzunMBUwcDVk90
-Message-ID: <CAOQ4uxhrbN4k+YMd99h8jGyRc0d_n05H8q-gTuJ35jkO1aLO7A@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: introduce unique event identifier
-To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-Cc: jack@suse.cz, josef@toxicpanda.com, lesha@meta.com, 
-	linux-fsdevel@vger.kernel.org, sargun@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707140814.542883-12-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,linux.ibm.com,kernel.org,linaro.org,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Tue, Jul 1, 2025 at 9:23=E2=80=AFAM Ibrahim Jirdeh <ibrahimjirdeh@meta.c=
-om> wrote:
->
-> On 6/30/25, 9:06 AM, "Amir Goldstein" <amir73il@gmail.com <mailto:amir73i=
-l@gmail.com>> wrote:
-> > On Mon, Jun 30, 2025 at 4:50=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > Hi!
-> > >
-> > > I agree expanding fanotify_event_metadata painful. After all that's t=
-he
-> > > reason why we've invented the additional info records in the first pl=
-ace :).
-> > > So I agree with putting the id either in a separate info record or ov=
-erload
-> > > something in fanotify_event_metadata.
-> > >
-> > > On Sun 29-06-25 08:50:05, Amir Goldstein wrote:
-> > > > I may have mentioned this before, but I'll bring it up again.
-> > > > If we want to overload event->fd with response id I would consider
-> > > > allocating response_id with idr_alloc_cyclic() that starts at 256
-> > > > and then set event->fd =3D -response_id.
-> > > > We want to skip the range -1..-255 because it is used to report
-> > > > fd open errors with FAN_REPORT_FD_ERROR.
-> > >
-> > > I kind of like this. It looks elegant. The only reason I'm hesitating=
- is
-> > > that as you mentioned with persistent notifications we'll likely need
-> > > 64-bit type for identifying event. But OTOH requirements there are un=
-clear
-> > > and I can imagine even userspace assigning the ID. In the worst case =
-we
-> > > could add info record for this persistent event id.
-> >
-> > Yes, those persistent id's are inherently different from the response k=
-ey,
-> > so I am not really worried about duplicity.
-> >
-> > > So ok, let's do it as you suggest.
-> >
-> > Cool.
-> >
-> > I don't think that we even need an explicit FAN_REPORT_EVENT_ID,
-> > because it is enough to say that (fid_mode !=3D 0) always means that
-> > event->fd cannot be >=3D 0 (like it does today), but with pre-content e=
-vents
-> > event->fd can be a key < -255?
-> >
-> > Ibrahim,
-> >
-> > Feel free to post the patches from my branch, if you want
-> > post the event->fd =3D -response_id implementation.
-> >
-> > I also plan to post them myself when I complete the pre-dir-content pat=
-ches.
->
-> Sounds good. I will pull in the FAN_CLASS_PRE_CONTENT | FAN_REPORT_FID br=
-anch
-> and resubmit this patch now that we have consensus on the approach here.
+On Mon 07-07-25 22:08:14, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> In environments with a page size of 64KB, the maximum size of a folio
+> can reach up to 128MB. Consequently, during the write-back of folios,
+> the 'rsv_blocks' will be overestimated to 1,577, which can make
+> pressure on the journal space where the journal is small. This can
+> easily exceed the limit of a single transaction. Besides, an excessively
+> large folio is meaningless and will instead increase the overhead of
+> traversing the bhs within the folio. Therefore, limit the maximum order
+> of a folio to 2048 filesystem blocks.
+> 
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Reported-by: Joseph Qi <jiangqi903@gmail.com>
+> Closes: https://lore.kernel.org/linux-ext4/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-FYI, I pushed some semantic changed to fan_pre_content_fid branch:
+Looks good. Feel free to add:
 
-- Created shortcut macro FAN_CLASS_PRE_CONTENT_FID
-- Created a group priority FSNOTIFY_PRIO_PRE_CONTENT_FID
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Regarding the question whether reporting response_id instead of event->fd
-requires an opt-in, so far my pre-dir-content patches can report event->fd,
-so my preference id the reposonse_id behavior will require opt-in with init
-flag FAN_REPORT_RESPONSE_ID.
+								Honza
 
-I suggest to change the uapi as follows:
-
-@@ -67,6 +67,7 @@
- #define FAN_REPORT_TARGET_FID  0x00001000      /* Report dirent target id =
- */
- #define FAN_REPORT_FD_ERROR    0x00002000      /* event->fd can report err=
-or */
- #define FAN_REPORT_MNT         0x00004000      /* Report mount events */
-+#define FAN_REPORT_RESPONSE_ID 0x00008000      /* event->fd is a response =
-id */
-
- /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
- #define FAN_REPORT_DFID_NAME   (FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
-@@ -144,7 +145,10 @@ struct fanotify_event_metadata {
-        __u8 reserved;
-        __u16 metadata_len;
-        __aligned_u64 mask;
--       __s32 fd;
-+       union {
-+               __s32 fd;
-+               __s32 id; /* FAN_REPORT_RESPONSE_ID */
-+       }
-        __s32 pid;
- };
-
-@@ -228,7 +232,10 @@ struct fanotify_event_info_mnt {
- #define FAN_RESPONSE_INFO_AUDIT_RULE   1
-
- struct fanotify_response {
--       __s32 fd;
-+       union {
-+               __s32 fd;
-+               __s32 id; /* FAN_REPORT_RESPONSE_ID */
-+       }
-        __u32 response;
- };
-
-And to add a check like this:
-
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1583,6 +1583,16 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int,
-flags, unsigned int, event_f_flags)
-            (class | fid_mode) !=3D FAN_CLASS_PRE_CONTENT_FID)
-                return -EINVAL;
-
-+       /*
-+        * With group that reports fid info and allows only pre-content eve=
-nts,
-+        * user may request to get a response id instead of event->fd.
-+        * FAN_REPORT_FD_ERROR does not make sense in this case.
-+        */
-+       if ((flags & FAN_REPORT_RESPONSE_ID) &&
-+           ((flag & FAN_REPORT_FD_ERROR) ||
-+            !fid_mode || class !=3D FAN_CLASS_PRE_CONTENT_FID))
-+               return -EINVAL;
-+
-
-
-This new group mode is safe, because:
-1. event->fd is redundant to target fid
-2. other group priorities allow mixing async events in the same group
-    async event can have negative event->fd which signifies an error
-    to open event->fd
-
-With FAN_CLASS_PRE_CONTENT_FID mode, the value reported in event->id
-can ALWAYS be written to response->id, regardless of FAN_REPORT_RESPONSE_ID
-because it can never be an error value.
-
-Thanks,
-Amir.
+> ---
+>  fs/ext4/ext4.h   |  2 +-
+>  fs/ext4/ialloc.c |  3 +--
+>  fs/ext4/inode.c  | 22 +++++++++++++++++++---
+>  3 files changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index f705046ba6c6..9ac0a7d4fa0c 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3020,7 +3020,7 @@ int ext4_walk_page_buffers(handle_t *handle,
+>  				     struct buffer_head *bh));
+>  int do_journal_get_write_access(handle_t *handle, struct inode *inode,
+>  				struct buffer_head *bh);
+> -bool ext4_should_enable_large_folio(struct inode *inode);
+> +void ext4_set_inode_mapping_order(struct inode *inode);
+>  #define FALL_BACK_TO_NONDELALLOC 1
+>  #define CONVERT_INLINE_DATA	 2
+>  
+> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+> index 79aa3df8d019..df4051613b29 100644
+> --- a/fs/ext4/ialloc.c
+> +++ b/fs/ext4/ialloc.c
+> @@ -1335,8 +1335,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+>  		}
+>  	}
+>  
+> -	if (ext4_should_enable_large_folio(inode))
+> -		mapping_set_large_folios(inode->i_mapping);
+> +	ext4_set_inode_mapping_order(inode);
+>  
+>  	ext4_update_inode_fsync_trans(handle, inode, 1);
+>  
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 4b679cb6c8bd..1bce9ebaedb7 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5181,7 +5181,7 @@ static int check_igot_inode(struct inode *inode, ext4_iget_flags flags,
+>  	return -EFSCORRUPTED;
+>  }
+>  
+> -bool ext4_should_enable_large_folio(struct inode *inode)
+> +static bool ext4_should_enable_large_folio(struct inode *inode)
+>  {
+>  	struct super_block *sb = inode->i_sb;
+>  
+> @@ -5198,6 +5198,22 @@ bool ext4_should_enable_large_folio(struct inode *inode)
+>  	return true;
+>  }
+>  
+> +/*
+> + * Limit the maximum folio order to 2048 blocks to prevent overestimation
+> + * of reserve handle credits during the folio writeback in environments
+> + * where the PAGE_SIZE exceeds 4KB.
+> + */
+> +#define EXT4_MAX_PAGECACHE_ORDER(i)		\
+> +		min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
+> +void ext4_set_inode_mapping_order(struct inode *inode)
+> +{
+> +	if (!ext4_should_enable_large_folio(inode))
+> +		return;
+> +
+> +	mapping_set_folio_order_range(inode->i_mapping, 0,
+> +				      EXT4_MAX_PAGECACHE_ORDER(inode));
+> +}
+> +
+>  struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  			  ext4_iget_flags flags, const char *function,
+>  			  unsigned int line)
+> @@ -5515,8 +5531,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  		ret = -EFSCORRUPTED;
+>  		goto bad_inode;
+>  	}
+> -	if (ext4_should_enable_large_folio(inode))
+> -		mapping_set_large_folios(inode->i_mapping);
+> +
+> +	ext4_set_inode_mapping_order(inode);
+>  
+>  	ret = check_igot_inode(inode, flags, function, line);
+>  	/*
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
