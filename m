@@ -1,143 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-54092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54093-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C446AFB2DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:05:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5C2AFB2E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92FD43AE8EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 12:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790583BBA97
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 12:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AEE29AB10;
-	Mon,  7 Jul 2025 12:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AF4298CDA;
+	Mon,  7 Jul 2025 12:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GUuTeRz/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Eteyubca"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4453525F998
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 12:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313FC285CB8
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 12:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751889918; cv=none; b=PERpXeTCPNpVtF/DicySkY3LAW7lTNrwV14QqBHVZStMO5N8ysk41STdYqnkuZnEhOA6QjvLXFUHP2SUBXUQDfMUS+YjwmpsgS3izrxHQNXImHayCwL6MzKcYzVhkcaOjhhBD0ciMKV03ArA4urJ8eCbUuhaDvh92cLtuV3kIuw=
+	t=1751890054; cv=none; b=iHxfBaJ6kcjfPweXuQ95BB7tqHNmizlJENNrjbZ1orwv5gLQAqcachATunRXLkZqCDGiollFBNzmBO6GWJNyATFguKyX4BUJIpaFQQFeQZHOTsQrpAldx5KuRX5I+LkRamlM0tocyyXuITdCn8IeDGuMKJUP9DkZZXXAyMonnVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751889918; c=relaxed/simple;
-	bh=yShfZ6ILsOBhd6koGDWWiQzQZWiggGZJjghyucsosDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6NG7VOKZTrTRdqFpA9mgzjBN7eUfn82J0eE2cfwPNi6cKvyEcCFfDGk0Z3TzrvoXbTdLQoYVq2NkG8T/+LbGESFbFWZlIicft5KajAcnBOCMjLdHlMdAw70i1ebv/paYb6gbyvQbnbotBd/4hX5qdU6HVJwlaYjlpga70KbNuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GUuTeRz/; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1751890054; c=relaxed/simple;
+	bh=C1+ih40Tadpy0BNCxp2EvqVlFomzZ4FhQLi8Y3RgtOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DEGWcCy81uiL8XKFCkmT+GN9S5toJ7s095QkFTPMAhdvYEPr38ILnGk6JdDHfgT33/az8NqxONhMRYhou9f/ZPYSoFV5XJnXqVz6PeUMFlISDnbp4nFwuwFdp3bngKchYYUx3oAhYb3KZzrCE5gNDmJ1AkMeJdLXE1gq+Dwjf88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Eteyubca; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751889916;
+	s=mimecast20190719; t=1751890051;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2coxbyxFXdSQKENSeYoc+GW9sQUhtsiwwJEzAsI5vW4=;
-	b=GUuTeRz/1jL60rqYhhwFuCF3D8ZgG0DR0ORAgKlB6BHDyYn2EAq/CrVF/ro22+Wg9rDp0x
-	OftMwoOFpRg+AVDThCbZReh2GKWsjZ8yNBdsVLOr1W4sRhOKB9PbQkd+kvj7ywBEL+2Eak
-	YmbSY70crQZigGsQDvZ/eP/q+OSEuQw=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=NSJOwpdnyrqjMFoKJ6QxUC+g+AF2m2vMRHbunnH8SNQ=;
+	b=EteyubcajC5bBjnRSefM6mrByb54ywna4p211xEUNYWdB+TFl3MT+cVOZumfmuEYDdHLV/
+	VD9F+whUR6wrE11+PNBU9yHtGaIxCpjtvOaSun7i1LSO6ONxtgZ7vjfyRZ/F6NOOvb6z8m
+	Oe/LMmxCxnJYzEWVStx0irt6ZGGiDQc=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-549-lDOZsrLDP42PmYw39OAS4g-1; Mon, 07 Jul 2025 08:05:13 -0400
-X-MC-Unique: lDOZsrLDP42PmYw39OAS4g-1
-X-Mimecast-MFC-AGG-ID: lDOZsrLDP42PmYw39OAS4g_1751889912
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a5281ba3a4so1221098f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 05:05:13 -0700 (PDT)
+ us-mta-149-CpZL8MtdP-innKrHUuymzg-1; Mon, 07 Jul 2025 08:07:29 -0400
+X-MC-Unique: CpZL8MtdP-innKrHUuymzg-1
+X-Mimecast-MFC-AGG-ID: CpZL8MtdP-innKrHUuymzg_1751890049
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-478f78ff9beso95123881cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 05:07:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751889912; x=1752494712;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2coxbyxFXdSQKENSeYoc+GW9sQUhtsiwwJEzAsI5vW4=;
-        b=I7G4g3t1uhtYOIppAtFHyl0Cmg8niJSAhhakIsL5pmbt2TKD3buXpdUVUKlhYV90aE
-         8HU3yk0OjTqqZV1Mhwv5u5kjk4tOfQYM6G5PKmDtEhhSJWwVonlCnk86btz7FcR9DPLR
-         Na8tITiO7RLnATvTVWOp71935qcJ3fTY76TlujUwZ8uRA+QSVPuMWhIwkej5gFSaUQ5B
-         aRlxXp5t/aDtzhfG6NfC+Tk/YEmKojbH8e80fZOiN0y2GDKHnuZknLYtOlJjMlPihtzP
-         mIyexauPuH4JVqWtzTta7SqEQ0jmviMepz/qs4zWH3N0+r7C54FW1zflMjb+765n/Tja
-         cp/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXFR9KJ2VNdqlyy+Q7QCOqG6b5toGKGrQJx317mIPGm3Fn9vTaglkB2xLudV+HgYSri8lIB4OmAM4CR+85W@vger.kernel.org
-X-Gm-Message-State: AOJu0YymttYUWsSXcUc6uhnGUlKMCmgeohOlpqgSCzgwMe0SMCy341qj
-	C5h8MKevITMMS7A2/utHq/re75Z5w9LdlZnqxtDOoeOjQmBVWMctCwDzv+knNIXVskqQoI+wBUB
-	C36vlVYQ36E6X1TQQ922gt9iH9vhtGxlXQkKOIq28miJcst4Wv7iE+CX/ugIgAA3LxQ==
-X-Gm-Gg: ASbGncupEMYsipTEAODVUIU0XTOQW/re5crrHUy4y/WhlzReIOdf8o5D75NXriwfiD6
-	f3rKI9Se8bz2rTooeXmYSPiWCTri66yyE+4r16rVXk30OncHwxKVvQXoXdOrXORAk9r64zqGRs7
-	wjjzMkWJ4kYCFxzcAlnV99Oc8s8NhFxzwIXHeNjeVxrQs+TTmbf6vNABRv8fbqR/NFfFmlu4Fj7
-	XQC/KDaTcMfdNo7PLJjBjEJoNyP3fSDbh+/t1y5MZ9CUkmayqRaX7kABC78rZaewfl0j8nx9rkx
-	KJJ3dqhzMIA6emwE9HtfCsecRrC1yNSr+tCAheJqJA==
-X-Received: by 2002:adf:e18c:0:b0:3a4:d274:1d9b with SMTP id ffacd0b85a97d-3b49aa306c7mr7357365f8f.25.1751889912208;
-        Mon, 07 Jul 2025 05:05:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEi5xHzfaruNNWM5Xa5nbbHvwTT5Ypm3IkOF4wO8OCiHtSnJRFyxUTJ6ZrNFQU7wWPBnE0rg==
-X-Received: by 2002:adf:e18c:0:b0:3a4:d274:1d9b with SMTP id ffacd0b85a97d-3b49aa306c7mr7357295f8f.25.1751889911645;
-        Mon, 07 Jul 2025 05:05:11 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b4708d0959sm9902891f8f.27.2025.07.07.05.05.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 05:05:11 -0700 (PDT)
-Date: Mon, 7 Jul 2025 14:05:10 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Jan Kara <jack@suse.cz>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 0/6] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <uzx3pdg2hz44n7qej5rlxejdmb25jny6tbv43as7dos4dit5nv@fyyvminolae6>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250701-quittung-garnieren-ceaf58dcb762@brauner>
+        d=1e100.net; s=20230601; t=1751890049; x=1752494849;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NSJOwpdnyrqjMFoKJ6QxUC+g+AF2m2vMRHbunnH8SNQ=;
+        b=d/w6xA0jcqS4Y133EI7Yw62AQuzG1sNRFhDyq959hwOxryU6Svk/rL4FUnJaCvtRGd
+         GrBViSTCAKRML1TB4T/5ImjZlK6PwhGIvzvPz51XDXwh8cNf6ZUpwhamrtjAH28RXZTW
+         DX+1wRLDKhKeiCYPo910+Er5jfQPZK6z+3vwa11bfrQ3Guv6Js92cMQVt5okhxDfJjZ8
+         F3u9vHd6U00iwlJNmo3M2xF+bp73kans8FeoFtdLCBDBIKluuKCMP9jlLKnriBXv3SsZ
+         XHCPaoJn/a+KIPWC1xlWioqlAzM7DFH5/IwqgREwOXLCoQrJ339tt4zS06ZmmR84ELX3
+         SU4w==
+X-Gm-Message-State: AOJu0Yx6DyfmACMN+LwpFRSbayFKPKbWOc8Pf/0yJbLrH92FcE+n/sqG
+	4hvZ09TLnn10IQ9PIs8YIDX1gnwgQVRJL04byYFYhiKuMecH7nkUHRCuwUK3hpeS7zntgxl9h35
+	S+Pn60UiuXiUX1hU2+xTqb5hQw9ptACQGHf8w2YDE87/27fKCGLdz6fXS6YhlFHYxOvN0bqhSWU
+	o=
+X-Gm-Gg: ASbGncsGMglxlNYyHZgRRcH/mqJKUiMbJ8hhLXsNH0UUFs7Ep2dpV2Ulf4g0LgtQqrj
+	oS9AMTObmccaSrX5AGoNXx5THos0wcC+afMl61A/HxoSVfMLZVIQ/RyJ8KywT86rW7FPCuBCqT/
+	6q3ZtStVP0sU3YgWsUXDMFuucg7jtZYkENE918j+THNJP+NmQhAqKyt7pSMsKE+VwBha2mtWzGm
+	PNpPLvjS45hfyDU6Ltm8cGfDQHUS90tHclUQlDW8iVXQLL5vXlwfK9Qgx4AGy3drIY7ik0LCmMu
+	HFNndq5MXXooRZnddxwvGIRiz8HS9qU72pJpriMseb96hSO69ulExSf1JLYrS7hcFAgh84rA5La
+	TkHRkGA==
+X-Received: by 2002:a05:622a:4249:b0:4a7:fa7a:384a with SMTP id d75a77b69052e-4a9a69f7971mr152347251cf.41.1751890049190;
+        Mon, 07 Jul 2025 05:07:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEuloqczIEZtTInO+MIUqeliEdtCUq5KcClyg7rQkRqJAOivBW+ecCuHosLcRhTE2EHa0pvw==
+X-Received: by 2002:a05:622a:4249:b0:4a7:fa7a:384a with SMTP id d75a77b69052e-4a9a69f7971mr152346591cf.41.1751890048583;
+        Mon, 07 Jul 2025 05:07:28 -0700 (PDT)
+Received: from [192.168.1.167] (cpc76484-cwma10-2-0-cust967.7-3.cable.virginm.net. [82.31.203.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9949e4b58sm61588081cf.16.2025.07.07.05.07.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 05:07:27 -0700 (PDT)
+Message-ID: <8a555790-4707-4b62-a057-11fdcc48acb1@redhat.com>
+Date: Mon, 7 Jul 2025 13:07:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701-quittung-garnieren-ceaf58dcb762@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: refactor the iomap writeback code v2
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+ Andreas Gruenbacher <agruenba@redhat.com>
+References: <20250617105514.3393938-1-hch@lst.de>
+ <07ef2fd5-d4cb-4fc3-8917-4bd6f06501d0@redhat.com>
+ <20250627070240.GA32487@lst.de>
+Content-Language: en-US
+From: Andrew Price <anprice@redhat.com>
+In-Reply-To: <20250627070240.GA32487@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-07-01 14:29:42, Christian Brauner wrote:
-> On Mon, Jun 30, 2025 at 06:20:10PM +0200, Andrey Albershteyn wrote:
-> > This patchset introduced two new syscalls file_getattr() and
-> > file_setattr(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl()
-> > except they use *at() semantics. Therefore, there's no need to open the
-> > file to get a fd.
-> > 
-> > These syscalls allow userspace to set filesystem inode attributes on
-> > special files. One of the usage examples is XFS quota projects.
-> > 
-> > XFS has project quotas which could be attached to a directory. All
-> > new inodes in these directories inherit project ID set on parent
-> > directory.
-> > 
-> > The project is created from userspace by opening and calling
-> > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > with empty project ID. Those inodes then are not shown in the quota
-> > accounting but still exist in the directory. This is not critical but in
-> > the case when special files are created in the directory with already
-> > existing project quota, these new inodes inherit extended attributes.
-> > This creates a mix of special files with and without attributes.
-> > Moreover, special files with attributes don't have a possibility to
-> > become clear or change the attributes. This, in turn, prevents userspace
-> > from re-creating quota project on these existing files.
+On 27/06/2025 08:02, Christoph Hellwig wrote:
+> On Thu, Jun 26, 2025 at 03:59:54PM +0100, Andrew Price wrote:
+>>> This version passes basic testing on xfs, and gets as far as mainline
+>>> for gfs2 (crashes in generic/361).
+>>
+>> I can't get generic/361 to crash per se, but it does fail as it detects the new warning about the missing ->migrate_folio for the gfs2_{rgrp,meta}_aops, which I'm looking at now.
+>>
+>> If you have different results to this, please let me know more about the crash and your test environment.
 > 
-> Only small nits I'm going to comment on that I can fix myself.
-> Otherwise looks great.
+> This is qemu on two virtio_blk devices, 512 byte sector size and the
+> followin mkfs option:
 > 
+> export MKFS_OPTIONS="-O -p lock_nolock"
+> 
+> 
+> generic/361 2s ... [  627.703731] run fstests generic/361 at 2025-06-27 03:28:28
+<snip>
+> [  629.110524] Buffer I/O error on dev loop0, logical block 20279, lost async page write
+> [  629.111725] gfs2: fsid=loop0.0: fatal: I/O error - block = 16708, function = gfs2_ail1_empty_one8
 
-Hi Christian,
+I suspect the reason I'm not seeing this oops is that when the test injects the I/O error, it's always occurring during gfs2_ail1_start_one() for me, instead of gfs2_ail1_empty_one(). That suggests there's some jd_log_bio cleanup missing from the error path from gfs2_ail1_empty_one(), which is present (or unnecessary) in the gfs2_ail1_start_one() case.
 
-Let me know if you would like a new revision with all the comments
-included (and your patch on file_kattr rename) or you good with
-applying them while commit
+So that's a good lead. Hopefully I can find a way to make the test fail for me at the same point or spot what's missing from the error path.
 
--- 
-- Andrey
+Andy
+
+<snip>
+> [  634.259070] ------------[ cut here ]------------
+> [  634.259369] kernel BUG at fs/gfs2/super.c:76!
+> [  634.262243] Oops: invalid opcode: 0000 [#1] SMP NOPTI
+> [  634.263386] CPU: 0 UID: 0 PID: 148595 Comm: umount Tainted: G N  6.16.0-rc3+ #37 
+> [  634.263832] Tainted: [N]=TEST
+> [  634.263956] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04
+> [  634.264332] RIP: 0010:gfs2_jindex_free+0x13e/0x170
+> [  634.264647] Code: 08 e8 56 42 98 ff 48 c7 43 48 00 00 00 00 48 89 df e8 c6 38 90 ff 48 8b 04 24 b
+> [  634.265562] RSP: 0018:ffffc90004ba3df8 EFLAGS: 00010286
+> [  634.265805] RAX: ffff88811a3f41c0 RBX: ffff88811a3f41c0 RCX: 0000000000000000
+> [  634.266141] RDX: 0000000000000001 RSI: ffff88810425c610 RDI: 00000000ffffffff
+> [  634.266454] RBP: ffffc90004ba3df8 R08: ffff8881364f7638 R09: ffff8881364f75e8
+> [  634.266732] R10: 0000000000000000 R11: ffff8881364f7508 R12: dead000000000122
+> [  634.267009] R13: dead000000000100 R14: ffff88810425c620 R15: 0000000000000000
+> [  634.267285] FS:  00007f3f53e6d840(0000) GS:ffff8882b35d7000(0000) knlGS:0000000000000000
+> [  634.267622] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  634.267856] CR2: 00005625aaa38cc0 CR3: 00000001047e6006 CR4: 0000000000772ef0
+> [  634.268128] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [  634.268405] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
+> [  634.268685] PKRU: 55555554
+> [  634.268805] Call Trace:
+> [  634.268913]  <TASK>
+> [  634.269002]  gfs2_put_super+0x165/0x230
+> [  634.269157]  generic_shutdown_super+0x79/0x180
+> [  634.269334]  kill_block_super+0x15/0x40
+> [  634.269578]  deactivate_locked_super+0x2b/0xb0
+> [  634.269788]  cleanup_mnt+0xb5/0x150
+> [  634.269954]  task_work_run+0x54/0x80
+> [  634.270123]  exit_to_user_mode_loop+0xbc/0xc0
+> [  634.270326]  do_syscall_64+0x1bc/0x1e0
+> [  634.270503]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  634.270731] RIP: 0033:0x7f3f54099b37
+> [  634.270899] Code: cf 92 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 8
+> [  634.271717] RSP: 002b:00007ffd63032398 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+> [  634.272052] RAX: 0000000000000000 RBX: 00005630901e2bb8 RCX: 00007f3f54099b37
+> [  634.272371] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00005630901e6b60
+> [  634.272695] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000073
+> [  634.273017] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3f541d4264
+> [  634.273342] R13: 00005630901e6b60 R14: 00005630901e2cd0 R15: 00005630901e2aa0
+> [  634.273703]  </TASK>
+> [  634.273809] Modules linked in: kvm_intel kvm irqbypass [last unloaded: scsi_debug]
+> [  634.274259] ---[ end trace 0000000000000000 ]---
+> [  634.274460] RIP: 0010:gfs2_jindex_free+0x13e/0x170
+> [  634.274753] Code: 08 e8 56 42 98 ff 48 c7 43 48 00 00 00 00 48 89 df e8 c6 38 90 ff 48 8b 04 24 b
+> [  634.275604] RSP: 0018:ffffc90004ba3df8 EFLAGS: 00010286
+> [  634.275857] RAX: ffff88811a3f41c0 RBX: ffff88811a3f41c0 RCX: 0000000000000000
+> [  634.276230] RDX: 0000000000000001 RSI: ffff88810425c610 RDI: 00000000ffffffff
+> [  634.276549] RBP: ffffc90004ba3df8 R08: ffff8881364f7638 R09: ffff8881364f75e8
+> [  634.276896] R10: 0000000000000000 R11: ffff8881364f7508 R12: dead000000000122
+> [  634.277208] R13: dead000000000100 R14: ffff88810425c620 R15: 0000000000000000
+> [  634.277549] FS:  00007f3f53e6d840(0000) GS:ffff8882b35d7000(0000) knlGS:0000000000000000
+> [  634.277948] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  634.278201] CR2: 00005625aaa38cc0 CR3: 00000001047e6006 CR4: 0000000000772ef0
+> [  634.278513] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [  634.278819] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
+> [  634.279127] PKRU: 55555554
+> 
 
 
