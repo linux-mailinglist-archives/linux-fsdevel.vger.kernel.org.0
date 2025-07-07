@@ -1,88 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-54105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284F6AFB449
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 15:19:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4770AAFB4CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 15:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61FCC1646BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 13:19:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD7731896948
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 13:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F315829DB96;
-	Mon,  7 Jul 2025 13:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IfdNoCgb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B8329E0F0;
+	Mon,  7 Jul 2025 13:41:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE62275AFB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 13:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A2B29B78F
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 13:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751894385; cv=none; b=VUoIMkAYMXX9+SwfB1DtmGhbw9a2bovJ250d0j4pwa2rTpC+2D5qSKdH0FJIlBp+Hb4nVrIcOkX8x6apuFdqebzRoHop6S7tsnUKOKMaw2hSDA6fKa79SFOUt6PSZJSSbtS5uo7yws0BcONZVaebMRPAJIy61CEydF/oLWZYU9w=
+	t=1751895661; cv=none; b=n1G9F4WSu3nClrORbQpNrTfQTXZIikPdZn2wcEnglM8HnpkxgfRffS2EJq0iQrK+ib0sf+Kt3+D4ekXHkm9mRq/IBv7jBQ0CvWdFGimus20W+EdXmd67mIDp0jB0tfj9H9s1aLhDWzhNQbareNC8xT5DJDECzFAAofQviic4CpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751894385; c=relaxed/simple;
-	bh=rtct0nDU+j5TyrJZ+m4PVNBMC7iyuPfgezwKp+Qwn8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HKEGRlxHlBMkqjnP+QtuDrZsp66Y8p+IPYIMSRQKk9JLX6J3HP0wbJVNvFxe3lJDNwR3w4Yzr3drHIU7Nzl7ReouwfmnCF/nEHhExrXjAmU2OwybHd4JW4m3LBewE/eBgmDJ3OVLdbMRxrtxucpsID/rMMWJWJVtTW0ynaDpZCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IfdNoCgb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751894382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nXmXDjuLCVo5wU4ylvvDNkZan/QGMn2o2rEiwIbCGFU=;
-	b=IfdNoCgb85epdZI7jINw3ORUby7uqUneZ90mHgDt6FPba6bszyfGFVYjjXvP+ASopX2wnu
-	PS39C4CgJ1bnNE2PGGOcjKuGGzHFGodU1gvRqXoQPJjMqRbIzZCBYVZmProevOzT770Nvg
-	2ZadXx/IXqTBzmipVQg9yXzLGxiEs5Q=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-511-TJ4jsIWjOvS6nPMknzcI7g-1; Mon, 07 Jul 2025 09:19:41 -0400
-X-MC-Unique: TJ4jsIWjOvS6nPMknzcI7g-1
-X-Mimecast-MFC-AGG-ID: TJ4jsIWjOvS6nPMknzcI7g_1751894380
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45359bfe631so16116555e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 06:19:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751894380; x=1752499180;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nXmXDjuLCVo5wU4ylvvDNkZan/QGMn2o2rEiwIbCGFU=;
-        b=b+V+03JOn5taH+9GkXT9eJ5rGMzeqdGtKknF04dBrMcBdeMaXOTK2UO5DP7cSR28f5
-         1WoZ87XXHYjgefTVXOxYPKD2Vp16kjwDllhmz/3kaMA5wABpVNwYRe4dSg6FvVfPEOfT
-         LKabHbHg57kgqu2PNMy8TqF+VY4aHeAnejeUAtxoqV61r0jP91WE4n2n7awdCttEnXhy
-         6v5l4dSseuGCpHuSqEyGwA1Y0/wHIv/SML1+ttJDHDg3k8UhzePMbP9mABGJ4Mwor4eM
-         7SpvrvpQqBKomLbBgkVkb/ZnN5stGO7/DtkWIGYi/3AIdfYhwG4JAD2aqTYXOU8rbnOb
-         NTUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmgpyiHUJrC/UoToTVA13GIt7FobtiKyYFz7j4ZPEEnx58Jk5Sm84SEqrnxPZ2aSg2tZYnVZM0eyYh8Ltr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhHpXyj2xiIkqHqw2SaV8MC+Zazl28bDk0EsDcS7OCXYMnon5l
-	PmY0uIaH9kgTu2bQuSKlklKL5PsxLAz7yk5M6JE3dkWtM/YYipS1auynCuKZEE+OwFHUgrGdL5+
-	TUG0RxQxo2Hc2P1JXFM1ZrKS8yaGXK6amenupdapMn60dTcBCsvMc0wCOMKe4FK5bDSI=
-X-Gm-Gg: ASbGncu6RU0j4aYnSm7f9zO4vLYFgJW6CoeVbnMXYFqOhhA5XEzqIfpMqb3SScJCOWl
-	ZYJUKFnw6DOf+zPEzNH9OaPDkrnwYP592Q3FZJPTceVouc3qnbrdEBaXWowKgcoJ07FgHdYmKk/
-	7g14jLTGj5Rh9ijWdq7unCPd0LTX1pJBpTbjZSdtQeZwNGBejqHHowB+4bI86NMQBCICJQhUWST
-	ioMPXQeeGM1iCGbZOG4g3RDFO9H6I9Nft/B2Fghk+bBmi7E7UVg1KRZvgWGklPFu17nIWcpkwXn
-	nHq/JAuea0awlDzNaf40AgwjjrW9fYCtQNvQFCf/BdxczaPeHlIEaXGlqH/2cLT6a+P/WQGMJfP
-	tUBHxOODJXjWez+Fy/VC5Ene4Ay9GcRMyQiyb5DeTyHKz5G0c0g==
-X-Received: by 2002:a05:600c:3e86:b0:43c:f0ae:da7 with SMTP id 5b1f17b1804b1-454c476aea4mr40553085e9.7.1751894380090;
-        Mon, 07 Jul 2025 06:19:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBfyFuBcaLgbZfGzjnsuMh9lvvAvuC5DlcIKIEAKGMTIqV5yEm9tkEm1VZ5eMoCw4nja+MJw==
-X-Received: by 2002:a05:600c:3e86:b0:43c:f0ae:da7 with SMTP id 5b1f17b1804b1-454c476aea4mr40552695e9.7.1751894379602;
-        Mon, 07 Jul 2025 06:19:39 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f38:1d00:657c:2aac:ecf5:5df8? (p200300d82f381d00657c2aacecf55df8.dip0.t-ipconnect.de. [2003:d8:2f38:1d00:657c:2aac:ecf5:5df8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9beb22asm141802825e9.36.2025.07.07.06.19.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 06:19:39 -0700 (PDT)
-Message-ID: <36dd6b12-f683-48a2-8b9c-c8cd0949dfdc@redhat.com>
-Date: Mon, 7 Jul 2025 15:19:37 +0200
+	s=arc-20240116; t=1751895661; c=relaxed/simple;
+	bh=zUZl0QPFqJC1vfkvYB90pvl8rqyCqoke3AbibMf/wS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XApJY1ptoFdbha8+xE8if8YBTwEw48JL+aDsnD50br3kQRIOu0e/dKW5ZYZSvlUoW9x993MW1CYYBuLtxbsv7ObmC5Tn2vn4XUxDRp2xiwzDWLsroFVwujxB89Hems84VCqmJnMbwLSwDYKONfEAkYBag1IC6OXBIjzfveOTNBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bbPzB1cdcz2qFDT;
+	Mon,  7 Jul 2025 21:21:58 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+	by mail.maildlp.com (Postfix) with ESMTPS id CE5351402CB;
+	Mon,  7 Jul 2025 21:21:00 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 7 Jul 2025 21:21:00 +0800
+Message-ID: <2601f452-5139-4a1b-8a5c-d305b27364c0@huawei.com>
+Date: Mon, 7 Jul 2025 21:20:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,150 +48,1363 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
- in vm_normal_page()
-To: Hugh Dickins <hughd@google.com>
-Cc: Lance Yang <lance.yang@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, nvdimm@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Alistair Popple
- <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
- Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Lance Yang <ioworker0@gmail.com>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-2-david@redhat.com>
- <aFVZCvOpIpBGAf9w@localhost.localdomain>
- <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
- <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
- <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com>
- <aa977869-f93f-4c2b-a189-f90e2d3bc7da@linux.dev>
- <b6d79033-b887-4ce7-b8f2-564cad7ec535@redhat.com>
- <b0984e6e-eabd-ed71-63c3-4c4d362553e8@google.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v4 2/7] f2fs: move the option parser into handle_mount_opt
+To: Chao Yu <chao@kernel.org>, <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <sandeen@redhat.com>,
+	<linux-fsdevel@vger.kernel.org>
+References: <20250602090224.485077-1-lihongbo22@huawei.com>
+ <20250602090224.485077-3-lihongbo22@huawei.com>
+ <12957e9a-df4b-4649-a298-532f874bbc6f@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b0984e6e-eabd-ed71-63c3-4c4d362553e8@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <12957e9a-df4b-4649-a298-532f874bbc6f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 
-On 07.07.25 08:31, Hugh Dickins wrote:
-> On Fri, 4 Jul 2025, David Hildenbrand wrote:
->> On 03.07.25 16:44, Lance Yang wrote:
->>> On 2025/7/3 20:39, David Hildenbrand wrote:
->>>> On 03.07.25 14:34, Lance Yang wrote:
->>>>> On Mon, Jun 23, 2025 at 10:04 PM David Hildenbrand <david@redhat.com>
->>>>> wrote:
->>>>>>
->>>>>> On 20.06.25 14:50, Oscar Salvador wrote:
->>>>>>> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
->>>>>>>> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
->>>>>>>> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
->>>>>>>> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
->>>>>>>> readily available.
->>>>>>>>
->>>>>>>> Nowadays, this is the last remaining highest_memmap_pfn user, and this
->>>>>>>> sanity check is not really triggering ... frequently.
->>>>>>>>
->>>>>>>> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
->>>>>>>> simplify and get rid of highest_memmap_pfn. Checking for
->>>>>>>> pfn_to_online_page() might be even better, but it would not handle
->>>>>>>> ZONE_DEVICE properly.
->>>>>>>>
->>>>>>>> Do the same in vm_normal_page_pmd(), where we don't even report a
->>>>>>>> problem at all ...
->>>>>>>>
->>>>>>>> What might be better in the future is having a runtime option like
->>>>>>>> page-table-check to enable such checks dynamically on-demand.
->>>>>>>> Something
->>>>>>>> for the future.
->>>>>>>>
->>>>>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+
+
+On 2025/7/4 11:27, Chao Yu wrote:
+> On 6/2/25 17:02, Hongbo Li wrote:
+>> In handle_mount_opt, we use fs_parameter to parse each option.
+>> However we're still using the old API to get the options string.
+>> Using fsparams parse_options allows us to remove many of the Opt_
+>> enums, so remove them.
+>>
+>> The checkpoint disable cap (or percent) involves rather complex
+>> parsing; we retain the old match_table mechanism for this, which
+>> handles it well.
+>>
+>> There are some changes about parsing options:
+>>    1. For `active_logs`, `inline_xattr_size` and `fault_injection`,
+>>       we use s32 type according the internal structure to record the
+>>       option's value.
+>>
+>> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+>> [sandeen: forward port, minor fixes and updates]
+>> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+>> [hongbo: minor cleanup]
+>> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+>> ---
+>>   fs/f2fs/super.c | 1068 ++++++++++++++++++-----------------------------
+>>   1 file changed, 413 insertions(+), 655 deletions(-)
+>>
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 996633b8379e..dff2419ba905 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -27,6 +27,7 @@
+>>   #include <linux/part_stat.h>
+>>   #include <linux/zstd.h>
+>>   #include <linux/lz4.h>
+>> +#include <linux/ctype.h>
+>>   #include <linux/fs_parser.h>
+>>   
+>>   #include "f2fs.h"
+>> @@ -126,29 +127,20 @@ enum {
+>>   	Opt_disable_roll_forward,
+>>   	Opt_norecovery,
+>>   	Opt_discard,
+>> -	Opt_nodiscard,
+>>   	Opt_noheap,
+>>   	Opt_heap,
+>>   	Opt_user_xattr,
+>> -	Opt_nouser_xattr,
+>>   	Opt_acl,
+>> -	Opt_noacl,
+>>   	Opt_active_logs,
+>>   	Opt_disable_ext_identify,
+>>   	Opt_inline_xattr,
+>> -	Opt_noinline_xattr,
+>>   	Opt_inline_xattr_size,
+>>   	Opt_inline_data,
+>>   	Opt_inline_dentry,
+>> -	Opt_noinline_dentry,
+>>   	Opt_flush_merge,
+>> -	Opt_noflush_merge,
+>>   	Opt_barrier,
+>> -	Opt_nobarrier,
+>>   	Opt_fastboot,
+>>   	Opt_extent_cache,
+>> -	Opt_noextent_cache,
+>> -	Opt_noinline_data,
+>>   	Opt_data_flush,
+>>   	Opt_reserve_root,
+>>   	Opt_resgid,
+>> @@ -157,21 +149,13 @@ enum {
+>>   	Opt_fault_injection,
+>>   	Opt_fault_type,
+>>   	Opt_lazytime,
+>> -	Opt_nolazytime,
+>>   	Opt_quota,
+>> -	Opt_noquota,
+>>   	Opt_usrquota,
+>>   	Opt_grpquota,
+>>   	Opt_prjquota,
+>>   	Opt_usrjquota,
+>>   	Opt_grpjquota,
+>>   	Opt_prjjquota,
+>> -	Opt_offusrjquota,
+>> -	Opt_offgrpjquota,
+>> -	Opt_offprjjquota,
+>> -	Opt_jqfmt_vfsold,
+>> -	Opt_jqfmt_vfsv0,
+>> -	Opt_jqfmt_vfsv1,
+>>   	Opt_alloc,
+>>   	Opt_fsync,
+>>   	Opt_test_dummy_encryption,
+>> @@ -181,17 +165,15 @@ enum {
+>>   	Opt_checkpoint_disable_cap_perc,
+>>   	Opt_checkpoint_enable,
+>>   	Opt_checkpoint_merge,
+>> -	Opt_nocheckpoint_merge,
+>>   	Opt_compress_algorithm,
+>>   	Opt_compress_log_size,
+>> -	Opt_compress_extension,
+>>   	Opt_nocompress_extension,
+>> +	Opt_compress_extension,
+>>   	Opt_compress_chksum,
+>>   	Opt_compress_mode,
+>>   	Opt_compress_cache,
+>>   	Opt_atgc,
+>>   	Opt_gc_merge,
+>> -	Opt_nogc_merge,
+>>   	Opt_discard_unit,
+>>   	Opt_memory_mode,
+>>   	Opt_age_extent_cache,
+>> @@ -321,83 +303,12 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+>>   	{}
+>>   };
+>>   
+>> -static match_table_t f2fs_tokens = {
+>> -	{Opt_gc_background, "background_gc=%s"},
+>> -	{Opt_disable_roll_forward, "disable_roll_forward"},
+>> -	{Opt_norecovery, "norecovery"},
+>> -	{Opt_discard, "discard"},
+>> -	{Opt_nodiscard, "nodiscard"},
+>> -	{Opt_noheap, "no_heap"},
+>> -	{Opt_heap, "heap"},
+>> -	{Opt_user_xattr, "user_xattr"},
+>> -	{Opt_nouser_xattr, "nouser_xattr"},
+>> -	{Opt_acl, "acl"},
+>> -	{Opt_noacl, "noacl"},
+>> -	{Opt_active_logs, "active_logs=%u"},
+>> -	{Opt_disable_ext_identify, "disable_ext_identify"},
+>> -	{Opt_inline_xattr, "inline_xattr"},
+>> -	{Opt_noinline_xattr, "noinline_xattr"},
+>> -	{Opt_inline_xattr_size, "inline_xattr_size=%u"},
+>> -	{Opt_inline_data, "inline_data"},
+>> -	{Opt_inline_dentry, "inline_dentry"},
+>> -	{Opt_noinline_dentry, "noinline_dentry"},
+>> -	{Opt_flush_merge, "flush_merge"},
+>> -	{Opt_noflush_merge, "noflush_merge"},
+>> -	{Opt_barrier, "barrier"},
+>> -	{Opt_nobarrier, "nobarrier"},
+>> -	{Opt_fastboot, "fastboot"},
+>> -	{Opt_extent_cache, "extent_cache"},
+>> -	{Opt_noextent_cache, "noextent_cache"},
+>> -	{Opt_noinline_data, "noinline_data"},
+>> -	{Opt_data_flush, "data_flush"},
+>> -	{Opt_reserve_root, "reserve_root=%u"},
+>> -	{Opt_resgid, "resgid=%u"},
+>> -	{Opt_resuid, "resuid=%u"},
+>> -	{Opt_mode, "mode=%s"},
+>> -	{Opt_fault_injection, "fault_injection=%u"},
+>> -	{Opt_fault_type, "fault_type=%u"},
+>> -	{Opt_lazytime, "lazytime"},
+>> -	{Opt_nolazytime, "nolazytime"},
+>> -	{Opt_quota, "quota"},
+>> -	{Opt_noquota, "noquota"},
+>> -	{Opt_usrquota, "usrquota"},
+>> -	{Opt_grpquota, "grpquota"},
+>> -	{Opt_prjquota, "prjquota"},
+>> -	{Opt_usrjquota, "usrjquota=%s"},
+>> -	{Opt_grpjquota, "grpjquota=%s"},
+>> -	{Opt_prjjquota, "prjjquota=%s"},
+>> -	{Opt_offusrjquota, "usrjquota="},
+>> -	{Opt_offgrpjquota, "grpjquota="},
+>> -	{Opt_offprjjquota, "prjjquota="},
+>> -	{Opt_jqfmt_vfsold, "jqfmt=vfsold"},
+>> -	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
+>> -	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
+>> -	{Opt_alloc, "alloc_mode=%s"},
+>> -	{Opt_fsync, "fsync_mode=%s"},
+>> -	{Opt_test_dummy_encryption, "test_dummy_encryption=%s"},
+>> -	{Opt_test_dummy_encryption, "test_dummy_encryption"},
+>> -	{Opt_inlinecrypt, "inlinecrypt"},
+>> -	{Opt_checkpoint_disable, "checkpoint=disable"},
+>> -	{Opt_checkpoint_disable_cap, "checkpoint=disable:%u"},
+>> -	{Opt_checkpoint_disable_cap_perc, "checkpoint=disable:%u%%"},
+>> -	{Opt_checkpoint_enable, "checkpoint=enable"},
+>> -	{Opt_checkpoint_merge, "checkpoint_merge"},
+>> -	{Opt_nocheckpoint_merge, "nocheckpoint_merge"},
+>> -	{Opt_compress_algorithm, "compress_algorithm=%s"},
+>> -	{Opt_compress_log_size, "compress_log_size=%u"},
+>> -	{Opt_compress_extension, "compress_extension=%s"},
+>> -	{Opt_nocompress_extension, "nocompress_extension=%s"},
+>> -	{Opt_compress_chksum, "compress_chksum"},
+>> -	{Opt_compress_mode, "compress_mode=%s"},
+>> -	{Opt_compress_cache, "compress_cache"},
+>> -	{Opt_atgc, "atgc"},
+>> -	{Opt_gc_merge, "gc_merge"},
+>> -	{Opt_nogc_merge, "nogc_merge"},
+>> -	{Opt_discard_unit, "discard_unit=%s"},
+>> -	{Opt_memory_mode, "memory=%s"},
+>> -	{Opt_age_extent_cache, "age_extent_cache"},
+>> -	{Opt_errors, "errors=%s"},
+>> -	{Opt_nat_bits, "nat_bits"},
+>> +/* Resort to a match_table for this interestingly formatted option */
+>> +static match_table_t f2fs_checkpoint_tokens = {
+>> +	{Opt_checkpoint_disable, "disable"},
+>> +	{Opt_checkpoint_disable_cap, "disable:%u"},
+>> +	{Opt_checkpoint_disable_cap_perc, "disable:%u%%"},
+>> +	{Opt_checkpoint_enable, "enable"},
+>>   	{Opt_err, NULL},
+>>   };
+>>   
+>> @@ -513,7 +424,7 @@ static void init_once(void *foo)
+>>   static const char * const quotatypes[] = INITQFNAMES;
+>>   #define QTYPE2NAME(t) (quotatypes[t])
+>>   static int f2fs_set_qf_name(struct f2fs_sb_info *sbi, int qtype,
+>> -							substring_t *args)
+>> +			    struct fs_parameter *param)
+>>   {
+>>   	struct super_block *sb = sbi->sb;
+>>   	char *qname;
+>> @@ -528,7 +439,7 @@ static int f2fs_set_qf_name(struct f2fs_sb_info *sbi, int qtype,
+>>   		return 0;
+>>   	}
+>>   
+>> -	qname = match_strdup(args);
+>> +	qname = kmemdup_nul(param->string, param->size, GFP_KERNEL);
+>>   	if (!qname) {
+>>   		f2fs_err(sbi, "Not enough memory for storing quotafile name");
+>>   		return -ENOMEM;
+>> @@ -613,14 +524,9 @@ static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
+>>   #endif
+>>   
+>>   static int f2fs_set_test_dummy_encryption(struct f2fs_sb_info *sbi,
+>> -					  const char *opt,
+>> -					  const substring_t *arg,
+>> +					  const struct fs_parameter *param,
+>>   					  bool is_remount)
+>>   {
+>> -	struct fs_parameter param = {
+>> -		.type = fs_value_is_string,
+>> -		.string = arg->from ? arg->from : "",
+>> -	};
+>>   	struct fscrypt_dummy_policy *policy =
+>>   		&F2FS_OPTION(sbi).dummy_enc_policy;
+>>   	int err;
+>> @@ -646,17 +552,17 @@ static int f2fs_set_test_dummy_encryption(struct f2fs_sb_info *sbi,
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> -	err = fscrypt_parse_test_dummy_encryption(&param, policy);
+>> +	err = fscrypt_parse_test_dummy_encryption(param, policy);
+>>   	if (err) {
+>>   		if (err == -EEXIST)
+>>   			f2fs_warn(sbi,
+>>   				  "Can't change test_dummy_encryption on remount");
+>>   		else if (err == -EINVAL)
+>>   			f2fs_warn(sbi, "Value of option \"%s\" is unrecognized",
+>> -				  opt);
+>> +				  param->key);
+>>   		else
+>>   			f2fs_warn(sbi, "Error processing option \"%s\" [%d]",
+>> -				  opt, err);
+>> +				  param->key, err);
+>>   		return -EINVAL;
+>>   	}
+>>   	f2fs_warn(sbi, "Test dummy encryption mode enabled");
+>> @@ -799,372 +705,269 @@ static int f2fs_set_zstd_level(struct f2fs_sb_info *sbi, const char *str)
+>>   #endif
+>>   #endif
+>>   
+>> -static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remount)
+>> +static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>>   {
+>> -	substring_t args[MAX_OPT_ARGS];
+>> +	struct f2fs_sb_info *sbi = fc->s_fs_info;
+>>   #ifdef CONFIG_F2FS_FS_COMPRESSION
+>>   	unsigned char (*ext)[F2FS_EXTENSION_LEN];
+>>   	unsigned char (*noext)[F2FS_EXTENSION_LEN];
+>>   	int ext_cnt, noext_cnt;
+>> +	char *name;
+>>   #endif
+>> -	char *p, *name;
+>> -	int arg = 0;
+>> -	kuid_t uid;
+>> -	kgid_t gid;
+>> -	int ret;
+>> +	substring_t args[MAX_OPT_ARGS];
+>> +	struct fs_parse_result result;
+>> +	bool is_remount;
+>> +	int token, ret, arg;
+>>   
+>> -	if (!options)
+>> -		return 0;
+>> +	token = fs_parse(fc, f2fs_param_specs, param, &result);
+>> +	if (token < 0)
+>> +		return token;
+>>   
+>> -	while ((p = strsep(&options, ",")) != NULL) {
+>> -		int token;
+>> +	is_remount = fc->purpose == FS_CONTEXT_FOR_RECONFIGURE;
+>>   
+>> -		if (!*p)
+>> -			continue;
+>> -		/*
+>> -		 * Initialize args struct so we know whether arg was
+>> -		 * found; some options take optional arguments.
+>> -		 */
+>> -		args[0].to = args[0].from = NULL;
+>> -		token = match_token(p, f2fs_tokens, args);
+>> -
+>> -		switch (token) {
+>> -		case Opt_gc_background:
+>> -			name = match_strdup(&args[0]);
+>> -
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -			if (!strcmp(name, "on")) {
+>> -				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
+>> -			} else if (!strcmp(name, "off")) {
+>> -				if (f2fs_sb_has_blkzoned(sbi)) {
+>> -					f2fs_warn(sbi, "zoned devices need bggc");
+>> -					kfree(name);
+>> -					return -EINVAL;
+>> -				}
 > 
-> The author of 22b31eec63e5 thinks this is not at all an improvement.
-> Of course the condition is not triggering frequently, of course it
-> should not happen: but it does happen, and it still seems worthwhile
-> to catch it in production with a "Bad page map" than to let it run on
-> to whatever kind of crash it hits instead.
+> Missed to check this condition in f2fs_check_opt_consistency()?
+> 
 
-Well, obviously I don't agree and was waiting for having this discussion :)
+Thanks for pointing this. Yeah, we should add this in 
+f2fs_check_opt_consistency like this:
 
-We catch corruption in a handful of PTE bits, and that's about it. You 
-neither detect corruption of flags nor of PFN bits that result in 
-another valid PFN.
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0a070dadbb42..86938dd5491e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1458,6 +1458,10 @@ static int f2fs_check_opt_consistency(struct 
+fs_context *fc,
+          * devices, but mandatory for host-managed zoned block devices.
+          */
+         if (f2fs_sb_has_blkzoned(sbi)) {
++               if (F2FS_CTX_OPTION(ctx).bggc_mode == BGGC_MODE_OFF) {
++                       f2fs_warn(sbi, "zoned devices need bggc");
++                       return -EINVAL;
++               }
+  #ifdef CONFIG_BLK_DEV_ZONED
+                 if ((ctx->spec_mask & F2FS_SPEC_discard_unit) &&
+                 F2FS_CTX_INFO(ctx).discard_unit != DISCARD_UNIT_SECTION) {
 
-Corruption of the "special" bit might be fun.
+Thanks,
+Hongbo
 
-When I was able to trigger this during development once, the whole 
-machine went down shortly after -- mostly because of use-after-free of 
-something that is now a page table, which is just bad for both users of 
-such a page!
-
-E.g., quit that process and we will happily clear the PTE, corrupting 
-data of the other user. Fun.
-
-I'm sure I could find a way to unify the code while printing some 
-comparable message, but this check as it stands is just not worth it 
-IMHO: trying to handle something gracefully that shouldn't happen, when 
-really we cannot handle it gracefully.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> Thanks,
+> 
+>> -				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_OFF;
+>> -			} else if (!strcmp(name, "sync")) {
+>> -				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_SYNC;
+>> -			} else {
+>> -				kfree(name);
+>> +	switch (token) {
+>> +	case Opt_gc_background:
+>> +		F2FS_OPTION(sbi).bggc_mode = result.uint_32;
+>> +		break;
+>> +	case Opt_disable_roll_forward:
+>> +		set_opt(sbi, DISABLE_ROLL_FORWARD);
+>> +		break;
+>> +	case Opt_norecovery:
+>> +		/* requires ro mount, checked in f2fs_validate_options */
+>> +		set_opt(sbi, NORECOVERY);
+>> +		break;
+>> +	case Opt_discard:
+>> +		if (result.negated) {
+>> +			if (f2fs_hw_should_discard(sbi)) {
+>> +				f2fs_warn(sbi, "discard is required for zoned block devices");
+>>   				return -EINVAL;
+>>   			}
+>> -			kfree(name);
+>> -			break;
+>> -		case Opt_disable_roll_forward:
+>> -			set_opt(sbi, DISABLE_ROLL_FORWARD);
+>> -			break;
+>> -		case Opt_norecovery:
+>> -			/* requires ro mount, checked in f2fs_default_check */
+>> -			set_opt(sbi, NORECOVERY);
+>> -			break;
+>> -		case Opt_discard:
+>> +			clear_opt(sbi, DISCARD);
+>> +		} else {
+>>   			if (!f2fs_hw_support_discard(sbi)) {
+>>   				f2fs_warn(sbi, "device does not support discard");
+>>   				break;
+>>   			}
+>>   			set_opt(sbi, DISCARD);
+>> -			break;
+>> -		case Opt_nodiscard:
+>> -			if (f2fs_hw_should_discard(sbi)) {
+>> -				f2fs_warn(sbi, "discard is required for zoned block devices");
+>> -				return -EINVAL;
+>> -			}
+>> -			clear_opt(sbi, DISCARD);
+>> -			break;
+>> -		case Opt_noheap:
+>> -		case Opt_heap:
+>> -			f2fs_warn(sbi, "heap/no_heap options were deprecated");
+>> -			break;
+>> +		}
+>> +		break;
+>> +	case Opt_noheap:
+>> +	case Opt_heap:
+>> +		f2fs_warn(sbi, "heap/no_heap options were deprecated");
+>> +		break;
+>>   #ifdef CONFIG_F2FS_FS_XATTR
+>> -		case Opt_user_xattr:
+>> -			set_opt(sbi, XATTR_USER);
+>> -			break;
+>> -		case Opt_nouser_xattr:
+>> +	case Opt_user_xattr:
+>> +		if (result.negated)
+>>   			clear_opt(sbi, XATTR_USER);
+>> -			break;
+>> -		case Opt_inline_xattr:
+>> -			set_opt(sbi, INLINE_XATTR);
+>> -			break;
+>> -		case Opt_noinline_xattr:
+>> +		else
+>> +			set_opt(sbi, XATTR_USER);
+>> +		break;
+>> +	case Opt_inline_xattr:
+>> +		if (result.negated)
+>>   			clear_opt(sbi, INLINE_XATTR);
+>> -			break;
+>> -		case Opt_inline_xattr_size:
+>> -			if (args->from && match_int(args, &arg))
+>> -				return -EINVAL;
+>> -			set_opt(sbi, INLINE_XATTR_SIZE);
+>> -			F2FS_OPTION(sbi).inline_xattr_size = arg;
+>> -			break;
+>> +		else
+>> +			set_opt(sbi, INLINE_XATTR);
+>> +		break;
+>> +	case Opt_inline_xattr_size:
+>> +		set_opt(sbi, INLINE_XATTR_SIZE);
+>> +		F2FS_OPTION(sbi).inline_xattr_size = result.int_32;
+>> +		break;
+>>   #else
+>> -		case Opt_user_xattr:
+>> -		case Opt_nouser_xattr:
+>> -		case Opt_inline_xattr:
+>> -		case Opt_noinline_xattr:
+>> -		case Opt_inline_xattr_size:
+>> -			f2fs_info(sbi, "xattr options not supported");
+>> -			break;
+>> +	case Opt_user_xattr:
+>> +	case Opt_inline_xattr:
+>> +	case Opt_inline_xattr_size:
+>> +		f2fs_info(sbi, "%s options not supported", param->key);
+>> +		break;
+>>   #endif
+>>   #ifdef CONFIG_F2FS_FS_POSIX_ACL
+>> -		case Opt_acl:
+>> -			set_opt(sbi, POSIX_ACL);
+>> -			break;
+>> -		case Opt_noacl:
+>> +	case Opt_acl:
+>> +		if (result.negated)
+>>   			clear_opt(sbi, POSIX_ACL);
+>> -			break;
+>> +		else
+>> +			set_opt(sbi, POSIX_ACL);
+>> +		break;
+>>   #else
+>> -		case Opt_acl:
+>> -		case Opt_noacl:
+>> -			f2fs_info(sbi, "acl options not supported");
+>> -			break;
+>> +	case Opt_acl:
+>> +		f2fs_info(sbi, "%s options not supported", param->key);
+>> +		break;
+>>   #endif
+>> -		case Opt_active_logs:
+>> -			if (args->from && match_int(args, &arg))
+>> -				return -EINVAL;
+>> -			if (arg != 2 && arg != 4 &&
+>> -				arg != NR_CURSEG_PERSIST_TYPE)
+>> -				return -EINVAL;
+>> -			F2FS_OPTION(sbi).active_logs = arg;
+>> -			break;
+>> -		case Opt_disable_ext_identify:
+>> -			set_opt(sbi, DISABLE_EXT_IDENTIFY);
+>> -			break;
+>> -		case Opt_inline_data:
+>> +	case Opt_active_logs:
+>> +		if (result.int_32 != 2 && result.int_32 != 4 &&
+>> +			result.int_32 != NR_CURSEG_PERSIST_TYPE)
+>> +			return -EINVAL;
+>> +		F2FS_OPTION(sbi).active_logs = result.int_32;
+>> +		break;
+>> +	case Opt_disable_ext_identify:
+>> +		set_opt(sbi, DISABLE_EXT_IDENTIFY);
+>> +		break;
+>> +	case Opt_inline_data:
+>> +		if (result.negated)
+>> +			clear_opt(sbi, INLINE_DATA);
+>> +		else
+>>   			set_opt(sbi, INLINE_DATA);
+>> -			break;
+>> -		case Opt_inline_dentry:
+>> -			set_opt(sbi, INLINE_DENTRY);
+>> -			break;
+>> -		case Opt_noinline_dentry:
+>> +		break;
+>> +	case Opt_inline_dentry:
+>> +		if (result.negated)
+>>   			clear_opt(sbi, INLINE_DENTRY);
+>> -			break;
+>> -		case Opt_flush_merge:
+>> -			set_opt(sbi, FLUSH_MERGE);
+>> -			break;
+>> -		case Opt_noflush_merge:
+>> +		else
+>> +			set_opt(sbi, INLINE_DENTRY);
+>> +		break;
+>> +	case Opt_flush_merge:
+>> +		if (result.negated)
+>>   			clear_opt(sbi, FLUSH_MERGE);
+>> -			break;
+>> -		case Opt_nobarrier:
+>> +		else
+>> +			set_opt(sbi, FLUSH_MERGE);
+>> +		break;
+>> +	case Opt_barrier:
+>> +		if (result.negated)
+>>   			set_opt(sbi, NOBARRIER);
+>> -			break;
+>> -		case Opt_barrier:
+>> +		else
+>>   			clear_opt(sbi, NOBARRIER);
+>> -			break;
+>> -		case Opt_fastboot:
+>> -			set_opt(sbi, FASTBOOT);
+>> -			break;
+>> -		case Opt_extent_cache:
+>> -			set_opt(sbi, READ_EXTENT_CACHE);
+>> -			break;
+>> -		case Opt_noextent_cache:
+>> +		break;
+>> +	case Opt_fastboot:
+>> +		set_opt(sbi, FASTBOOT);
+>> +		break;
+>> +	case Opt_extent_cache:
+>> +		if (result.negated) {
+>>   			if (f2fs_sb_has_device_alias(sbi)) {
+>>   				f2fs_err(sbi, "device aliasing requires extent cache");
+>>   				return -EINVAL;
+>>   			}
+>>   			clear_opt(sbi, READ_EXTENT_CACHE);
+>> -			break;
+>> -		case Opt_noinline_data:
+>> -			clear_opt(sbi, INLINE_DATA);
+>> -			break;
+>> -		case Opt_data_flush:
+>> -			set_opt(sbi, DATA_FLUSH);
+>> -			break;
+>> -		case Opt_reserve_root:
+>> -			if (args->from && match_int(args, &arg))
+>> -				return -EINVAL;
+>> -			if (test_opt(sbi, RESERVE_ROOT)) {
+>> -				f2fs_info(sbi, "Preserve previous reserve_root=%u",
+>> -					  F2FS_OPTION(sbi).root_reserved_blocks);
+>> -			} else {
+>> -				F2FS_OPTION(sbi).root_reserved_blocks = arg;
+>> -				set_opt(sbi, RESERVE_ROOT);
+>> -			}
+>> -			break;
+>> -		case Opt_resuid:
+>> -			if (args->from && match_int(args, &arg))
+>> -				return -EINVAL;
+>> -			uid = make_kuid(current_user_ns(), arg);
+>> -			if (!uid_valid(uid)) {
+>> -				f2fs_err(sbi, "Invalid uid value %d", arg);
+>> -				return -EINVAL;
+>> -			}
+>> -			F2FS_OPTION(sbi).s_resuid = uid;
+>> -			break;
+>> -		case Opt_resgid:
+>> -			if (args->from && match_int(args, &arg))
+>> -				return -EINVAL;
+>> -			gid = make_kgid(current_user_ns(), arg);
+>> -			if (!gid_valid(gid)) {
+>> -				f2fs_err(sbi, "Invalid gid value %d", arg);
+>> -				return -EINVAL;
+>> -			}
+>> -			F2FS_OPTION(sbi).s_resgid = gid;
+>> -			break;
+>> -		case Opt_mode:
+>> -			name = match_strdup(&args[0]);
+>> -
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -			if (!strcmp(name, "adaptive")) {
+>> -				F2FS_OPTION(sbi).fs_mode = FS_MODE_ADAPTIVE;
+>> -			} else if (!strcmp(name, "lfs")) {
+>> -				F2FS_OPTION(sbi).fs_mode = FS_MODE_LFS;
+>> -			} else if (!strcmp(name, "fragment:segment")) {
+>> -				F2FS_OPTION(sbi).fs_mode = FS_MODE_FRAGMENT_SEG;
+>> -			} else if (!strcmp(name, "fragment:block")) {
+>> -				F2FS_OPTION(sbi).fs_mode = FS_MODE_FRAGMENT_BLK;
+>> -			} else {
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> -			kfree(name);
+>> -			break;
+>> +		} else
+>> +			set_opt(sbi, READ_EXTENT_CACHE);
+>> +		break;
+>> +	case Opt_data_flush:
+>> +		set_opt(sbi, DATA_FLUSH);
+>> +		break;
+>> +	case Opt_reserve_root:
+>> +		if (test_opt(sbi, RESERVE_ROOT)) {
+>> +			f2fs_info(sbi, "Preserve previous reserve_root=%u",
+>> +				  F2FS_OPTION(sbi).root_reserved_blocks);
+>> +		} else {
+>> +			F2FS_OPTION(sbi).root_reserved_blocks = result.int_32;
+>> +			set_opt(sbi, RESERVE_ROOT);
+>> +		}
+>> +		break;
+>> +	case Opt_resuid:
+>> +		F2FS_OPTION(sbi).s_resuid = result.uid;
+>> +		break;
+>> +	case Opt_resgid:
+>> +		F2FS_OPTION(sbi).s_resgid = result.gid;
+>> +		break;
+>> +	case Opt_mode:
+>> +		F2FS_OPTION(sbi).fs_mode = result.uint_32;
+>> +		break;
+>>   #ifdef CONFIG_F2FS_FAULT_INJECTION
+>> -		case Opt_fault_injection:
+>> -			if (args->from && match_int(args, &arg))
+>> -				return -EINVAL;
+>> -			if (f2fs_build_fault_attr(sbi, arg, 0, FAULT_RATE))
+>> -				return -EINVAL;
+>> -			set_opt(sbi, FAULT_INJECTION);
+>> -			break;
+>> +	case Opt_fault_injection:
+>> +		if (f2fs_build_fault_attr(sbi, result.int_32, 0, FAULT_RATE))
+>> +			return -EINVAL;
+>> +		set_opt(sbi, FAULT_INJECTION);
+>> +		break;
+>>   
+>> -		case Opt_fault_type:
+>> -			if (args->from && match_int(args, &arg))
+>> -				return -EINVAL;
+>> -			if (f2fs_build_fault_attr(sbi, 0, arg, FAULT_TYPE))
+>> -				return -EINVAL;
+>> -			set_opt(sbi, FAULT_INJECTION);
+>> -			break;
+>> +	case Opt_fault_type:
+>> +		if (f2fs_build_fault_attr(sbi, 0, result.int_32, FAULT_TYPE))
+>> +			return -EINVAL;
+>> +		set_opt(sbi, FAULT_INJECTION);
+>> +		break;
+>>   #else
+>> -		case Opt_fault_injection:
+>> -		case Opt_fault_type:
+>> -			f2fs_info(sbi, "fault injection options not supported");
+>> -			break;
+>> +	case Opt_fault_injection:
+>> +	case Opt_fault_type:
+>> +		f2fs_info(sbi, "%s options not supported", param->key);
+>> +		break;
+>>   #endif
+>> -		case Opt_lazytime:
+>> -			set_opt(sbi, LAZYTIME);
+>> -			break;
+>> -		case Opt_nolazytime:
+>> +	case Opt_lazytime:
+>> +		if (result.negated)
+>>   			clear_opt(sbi, LAZYTIME);
+>> -			break;
+>> +		else
+>> +			set_opt(sbi, LAZYTIME);
+>> +		break;
+>>   #ifdef CONFIG_QUOTA
+>> -		case Opt_quota:
+>> -		case Opt_usrquota:
+>> -			set_opt(sbi, USRQUOTA);
+>> -			break;
+>> -		case Opt_grpquota:
+>> -			set_opt(sbi, GRPQUOTA);
+>> -			break;
+>> -		case Opt_prjquota:
+>> -			set_opt(sbi, PRJQUOTA);
+>> -			break;
+>> -		case Opt_usrjquota:
+>> -			ret = f2fs_set_qf_name(sbi, USRQUOTA, &args[0]);
+>> -			if (ret)
+>> -				return ret;
+>> -			break;
+>> -		case Opt_grpjquota:
+>> -			ret = f2fs_set_qf_name(sbi, GRPQUOTA, &args[0]);
+>> -			if (ret)
+>> -				return ret;
+>> -			break;
+>> -		case Opt_prjjquota:
+>> -			ret = f2fs_set_qf_name(sbi, PRJQUOTA, &args[0]);
+>> -			if (ret)
+>> -				return ret;
+>> -			break;
+>> -		case Opt_offusrjquota:
+>> -			ret = f2fs_clear_qf_name(sbi, USRQUOTA);
+>> -			if (ret)
+>> -				return ret;
+>> -			break;
+>> -		case Opt_offgrpjquota:
+>> -			ret = f2fs_clear_qf_name(sbi, GRPQUOTA);
+>> -			if (ret)
+>> -				return ret;
+>> -			break;
+>> -		case Opt_offprjjquota:
+>> -			ret = f2fs_clear_qf_name(sbi, PRJQUOTA);
+>> -			if (ret)
+>> -				return ret;
+>> -			break;
+>> -		case Opt_jqfmt_vfsold:
+>> -			F2FS_OPTION(sbi).s_jquota_fmt = QFMT_VFS_OLD;
+>> -			break;
+>> -		case Opt_jqfmt_vfsv0:
+>> -			F2FS_OPTION(sbi).s_jquota_fmt = QFMT_VFS_V0;
+>> -			break;
+>> -		case Opt_jqfmt_vfsv1:
+>> -			F2FS_OPTION(sbi).s_jquota_fmt = QFMT_VFS_V1;
+>> -			break;
+>> -		case Opt_noquota:
+>> +	case Opt_quota:
+>> +		if (result.negated) {
+>>   			clear_opt(sbi, QUOTA);
+>>   			clear_opt(sbi, USRQUOTA);
+>>   			clear_opt(sbi, GRPQUOTA);
+>>   			clear_opt(sbi, PRJQUOTA);
+>> -			break;
+>> +		} else
+>> +			set_opt(sbi, USRQUOTA);
+>> +		break;
+>> +	case Opt_usrquota:
+>> +		set_opt(sbi, USRQUOTA);
+>> +		break;
+>> +	case Opt_grpquota:
+>> +		set_opt(sbi, GRPQUOTA);
+>> +		break;
+>> +	case Opt_prjquota:
+>> +		set_opt(sbi, PRJQUOTA);
+>> +		break;
+>> +	case Opt_usrjquota:
+>> +		if (!*param->string)
+>> +			ret = f2fs_clear_qf_name(sbi, USRQUOTA);
+>> +		else
+>> +			ret = f2fs_set_qf_name(sbi, USRQUOTA, param);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	case Opt_grpjquota:
+>> +		if (!*param->string)
+>> +			ret = f2fs_clear_qf_name(sbi, GRPQUOTA);
+>> +		else
+>> +			ret = f2fs_set_qf_name(sbi, GRPQUOTA, param);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	case Opt_prjjquota:
+>> +		if (!*param->string)
+>> +			ret = f2fs_clear_qf_name(sbi, PRJQUOTA);
+>> +		else
+>> +			ret = f2fs_set_qf_name(sbi, PRJQUOTA, param);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	case Opt_jqfmt:
+>> +		F2FS_OPTION(sbi).s_jquota_fmt = result.uint_32;
+>> +		break;
+>>   #else
+>> -		case Opt_quota:
+>> -		case Opt_usrquota:
+>> -		case Opt_grpquota:
+>> -		case Opt_prjquota:
+>> -		case Opt_usrjquota:
+>> -		case Opt_grpjquota:
+>> -		case Opt_prjjquota:
+>> -		case Opt_offusrjquota:
+>> -		case Opt_offgrpjquota:
+>> -		case Opt_offprjjquota:
+>> -		case Opt_jqfmt_vfsold:
+>> -		case Opt_jqfmt_vfsv0:
+>> -		case Opt_jqfmt_vfsv1:
+>> -		case Opt_noquota:
+>> -			f2fs_info(sbi, "quota operations not supported");
+>> -			break;
+>> +	case Opt_quota:
+>> +	case Opt_usrquota:
+>> +	case Opt_grpquota:
+>> +	case Opt_prjquota:
+>> +	case Opt_usrjquota:
+>> +	case Opt_grpjquota:
+>> +	case Opt_prjjquota:
+>> +		f2fs_info(sbi, "quota operations not supported");
+>> +		break;
+>>   #endif
+>> -		case Opt_alloc:
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -
+>> -			if (!strcmp(name, "default")) {
+>> -				F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_DEFAULT;
+>> -			} else if (!strcmp(name, "reuse")) {
+>> -				F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
+>> -			} else {
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> -			kfree(name);
+>> -			break;
+>> -		case Opt_fsync:
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -			if (!strcmp(name, "posix")) {
+>> -				F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_POSIX;
+>> -			} else if (!strcmp(name, "strict")) {
+>> -				F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_STRICT;
+>> -			} else if (!strcmp(name, "nobarrier")) {
+>> -				F2FS_OPTION(sbi).fsync_mode =
+>> -							FSYNC_MODE_NOBARRIER;
+>> -			} else {
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> -			kfree(name);
+>> -			break;
+>> -		case Opt_test_dummy_encryption:
+>> -			ret = f2fs_set_test_dummy_encryption(sbi, p, &args[0],
+>> -							     is_remount);
+>> -			if (ret)
+>> -				return ret;
+>> -			break;
+>> -		case Opt_inlinecrypt:
+>> +	case Opt_alloc:
+>> +		F2FS_OPTION(sbi).alloc_mode = result.uint_32;
+>> +		break;
+>> +	case Opt_fsync:
+>> +		F2FS_OPTION(sbi).fsync_mode = result.uint_32;
+>> +		break;
+>> +	case Opt_test_dummy_encryption:
+>> +		ret = f2fs_set_test_dummy_encryption(sbi, param, is_remount);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	case Opt_inlinecrypt:
+>>   #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
+>> -			set_opt(sbi, INLINECRYPT);
+>> +		set_opt(sbi, INLINECRYPT);
+>>   #else
+>> -			f2fs_info(sbi, "inline encryption not supported");
+>> +		f2fs_info(sbi, "inline encryption not supported");
+>>   #endif
+>> -			break;
+>> +		break;
+>> +	case Opt_checkpoint:
+>> +		/*
+>> +		 * Initialize args struct so we know whether arg was
+>> +		 * found; some options take optional arguments.
+>> +		 */
+>> +		args[0].from = args[0].to = NULL;
+>> +		arg = 0;
+>> +
+>> +		/* revert to match_table for checkpoint= options */
+>> +		token = match_token(param->string, f2fs_checkpoint_tokens, args);
+>> +		switch (token) {
+>>   		case Opt_checkpoint_disable_cap_perc:
+>>   			if (args->from && match_int(args, &arg))
+>>   				return -EINVAL;
+>> @@ -1185,270 +988,225 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
+>>   		case Opt_checkpoint_enable:
+>>   			clear_opt(sbi, DISABLE_CHECKPOINT);
+>>   			break;
+>> -		case Opt_checkpoint_merge:
+>> -			set_opt(sbi, MERGE_CHECKPOINT);
+>> -			break;
+>> -		case Opt_nocheckpoint_merge:
+>> +		default:
+>> +			return -EINVAL;
+>> +		}
+>> +		break;
+>> +	case Opt_checkpoint_merge:
+>> +		if (result.negated)
+>>   			clear_opt(sbi, MERGE_CHECKPOINT);
+>> -			break;
+>> +		else
+>> +			set_opt(sbi, MERGE_CHECKPOINT);
+>> +		break;
+>>   #ifdef CONFIG_F2FS_FS_COMPRESSION
+>> -		case Opt_compress_algorithm:
+>> -			if (!f2fs_sb_has_compression(sbi)) {
+>> -				f2fs_info(sbi, "Image doesn't support compression");
+>> -				break;
+>> -			}
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -			if (!strcmp(name, "lzo")) {
+>> +	case Opt_compress_algorithm:
+>> +		if (!f2fs_sb_has_compression(sbi)) {
+>> +			f2fs_info(sbi, "Image doesn't support compression");
+>> +			break;
+>> +		}
+>> +		name = param->string;
+>> +		if (!strcmp(name, "lzo")) {
+>>   #ifdef CONFIG_F2FS_FS_LZO
+>> -				F2FS_OPTION(sbi).compress_level = 0;
+>> -				F2FS_OPTION(sbi).compress_algorithm =
+>> -								COMPRESS_LZO;
+>> +			F2FS_OPTION(sbi).compress_level = 0;
+>> +			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZO;
+>>   #else
+>> -				f2fs_info(sbi, "kernel doesn't support lzo compression");
+>> +			f2fs_info(sbi, "kernel doesn't support lzo compression");
+>>   #endif
+>> -			} else if (!strncmp(name, "lz4", 3)) {
+>> +		} else if (!strncmp(name, "lz4", 3)) {
+>>   #ifdef CONFIG_F2FS_FS_LZ4
+>> -				ret = f2fs_set_lz4hc_level(sbi, name);
+>> -				if (ret) {
+>> -					kfree(name);
+>> -					return -EINVAL;
+>> -				}
+>> -				F2FS_OPTION(sbi).compress_algorithm =
+>> -								COMPRESS_LZ4;
+>> +			ret = f2fs_set_lz4hc_level(sbi, name);
+>> +			if (ret)
+>> +				return -EINVAL;
+>> +			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZ4;
+>>   #else
+>> -				f2fs_info(sbi, "kernel doesn't support lz4 compression");
+>> +			f2fs_info(sbi, "kernel doesn't support lz4 compression");
+>>   #endif
+>> -			} else if (!strncmp(name, "zstd", 4)) {
+>> +		} else if (!strncmp(name, "zstd", 4)) {
+>>   #ifdef CONFIG_F2FS_FS_ZSTD
+>> -				ret = f2fs_set_zstd_level(sbi, name);
+>> -				if (ret) {
+>> -					kfree(name);
+>> -					return -EINVAL;
+>> -				}
+>> -				F2FS_OPTION(sbi).compress_algorithm =
+>> -								COMPRESS_ZSTD;
+>> +			ret = f2fs_set_zstd_level(sbi, name);
+>> +			if (ret)
+>> +				return -EINVAL;
+>> +			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_ZSTD;
+>>   #else
+>> -				f2fs_info(sbi, "kernel doesn't support zstd compression");
+>> +			f2fs_info(sbi, "kernel doesn't support zstd compression");
+>>   #endif
+>> -			} else if (!strcmp(name, "lzo-rle")) {
+>> +		} else if (!strcmp(name, "lzo-rle")) {
+>>   #ifdef CONFIG_F2FS_FS_LZORLE
+>> -				F2FS_OPTION(sbi).compress_level = 0;
+>> -				F2FS_OPTION(sbi).compress_algorithm =
+>> -								COMPRESS_LZORLE;
+>> +			F2FS_OPTION(sbi).compress_level = 0;
+>> +			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZORLE;
+>>   #else
+>> -				f2fs_info(sbi, "kernel doesn't support lzorle compression");
+>> +			f2fs_info(sbi, "kernel doesn't support lzorle compression");
+>>   #endif
+>> -			} else {
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> -			kfree(name);
+>> +		} else
+>> +			return -EINVAL;
+>> +		break;
+>> +	case Opt_compress_log_size:
+>> +		if (!f2fs_sb_has_compression(sbi)) {
+>> +			f2fs_info(sbi, "Image doesn't support compression");
+>>   			break;
+>> -		case Opt_compress_log_size:
+>> -			if (!f2fs_sb_has_compression(sbi)) {
+>> -				f2fs_info(sbi, "Image doesn't support compression");
+>> -				break;
+>> -			}
+>> -			if (args->from && match_int(args, &arg))
+>> -				return -EINVAL;
+>> -			if (arg < MIN_COMPRESS_LOG_SIZE ||
+>> -				arg > MAX_COMPRESS_LOG_SIZE) {
+>> -				f2fs_err(sbi,
+>> -					"Compress cluster log size is out of range");
+>> -				return -EINVAL;
+>> -			}
+>> -			F2FS_OPTION(sbi).compress_log_size = arg;
+>> +		}
+>> +		if (result.uint_32 < MIN_COMPRESS_LOG_SIZE ||
+>> +		    result.uint_32 > MAX_COMPRESS_LOG_SIZE) {
+>> +			f2fs_err(sbi,
+>> +				"Compress cluster log size is out of range");
+>> +			return -EINVAL;
+>> +		}
+>> +		F2FS_OPTION(sbi).compress_log_size = result.uint_32;
+>> +		break;
+>> +	case Opt_compress_extension:
+>> +		if (!f2fs_sb_has_compression(sbi)) {
+>> +			f2fs_info(sbi, "Image doesn't support compression");
+>>   			break;
+>> -		case Opt_compress_extension:
+>> -			if (!f2fs_sb_has_compression(sbi)) {
+>> -				f2fs_info(sbi, "Image doesn't support compression");
+>> -				break;
+>> -			}
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -
+>> -			ext = F2FS_OPTION(sbi).extensions;
+>> -			ext_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
+>> -
+>> -			if (strlen(name) >= F2FS_EXTENSION_LEN ||
+>> -				ext_cnt >= COMPRESS_EXT_NUM) {
+>> -				f2fs_err(sbi,
+>> -					"invalid extension length/number");
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> +		}
+>> +		name = param->string;
+>> +		ext = F2FS_OPTION(sbi).extensions;
+>> +		ext_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
+>>   
+>> -			if (is_compress_extension_exist(sbi, name, true)) {
+>> -				kfree(name);
+>> -				break;
+>> -			}
+>> +		if (strlen(name) >= F2FS_EXTENSION_LEN ||
+>> +		    ext_cnt >= COMPRESS_EXT_NUM) {
+>> +			f2fs_err(sbi, "invalid extension length/number");
+>> +			return -EINVAL;
+>> +		}
+>>   
+>> -			ret = strscpy(ext[ext_cnt], name);
+>> -			if (ret < 0) {
+>> -				kfree(name);
+>> -				return ret;
+>> -			}
+>> -			F2FS_OPTION(sbi).compress_ext_cnt++;
+>> -			kfree(name);
+>> +		if (is_compress_extension_exist(sbi, name, true))
+>>   			break;
+>> -		case Opt_nocompress_extension:
+>> -			if (!f2fs_sb_has_compression(sbi)) {
+>> -				f2fs_info(sbi, "Image doesn't support compression");
+>> -				break;
+>> -			}
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -
+>> -			noext = F2FS_OPTION(sbi).noextensions;
+>> -			noext_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
+>>   
+>> -			if (strlen(name) >= F2FS_EXTENSION_LEN ||
+>> -				noext_cnt >= COMPRESS_EXT_NUM) {
+>> -				f2fs_err(sbi,
+>> -					"invalid extension length/number");
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> +		ret = strscpy(ext[ext_cnt], name, F2FS_EXTENSION_LEN);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +		F2FS_OPTION(sbi).compress_ext_cnt++;
+>> +		break;
+>> +	case Opt_nocompress_extension:
+>> +		if (!f2fs_sb_has_compression(sbi)) {
+>> +			f2fs_info(sbi, "Image doesn't support compression");
+>> +			break;
+>> +		}
+>> +		name = param->string;
+>> +		noext = F2FS_OPTION(sbi).noextensions;
+>> +		noext_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
+>>   
+>> -			if (is_compress_extension_exist(sbi, name, false)) {
+>> -				kfree(name);
+>> -				break;
+>> -			}
+>> +		if (strlen(name) >= F2FS_EXTENSION_LEN ||
+>> +			noext_cnt >= COMPRESS_EXT_NUM) {
+>> +			f2fs_err(sbi, "invalid extension length/number");
+>> +			return -EINVAL;
+>> +		}
+>>   
+>> -			ret = strscpy(noext[noext_cnt], name);
+>> -			if (ret < 0) {
+>> -				kfree(name);
+>> -				return ret;
+>> -			}
+>> -			F2FS_OPTION(sbi).nocompress_ext_cnt++;
+>> -			kfree(name);
+>> +		if (is_compress_extension_exist(sbi, name, false))
+>>   			break;
+>> -		case Opt_compress_chksum:
+>> -			if (!f2fs_sb_has_compression(sbi)) {
+>> -				f2fs_info(sbi, "Image doesn't support compression");
+>> -				break;
+>> -			}
+>> -			F2FS_OPTION(sbi).compress_chksum = true;
+>> +
+>> +		ret = strscpy(noext[noext_cnt], name, F2FS_EXTENSION_LEN);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +		F2FS_OPTION(sbi).nocompress_ext_cnt++;
+>> +		break;
+>> +	case Opt_compress_chksum:
+>> +		if (!f2fs_sb_has_compression(sbi)) {
+>> +			f2fs_info(sbi, "Image doesn't support compression");
+>>   			break;
+>> -		case Opt_compress_mode:
+>> -			if (!f2fs_sb_has_compression(sbi)) {
+>> -				f2fs_info(sbi, "Image doesn't support compression");
+>> -				break;
+>> -			}
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -			if (!strcmp(name, "fs")) {
+>> -				F2FS_OPTION(sbi).compress_mode = COMPR_MODE_FS;
+>> -			} else if (!strcmp(name, "user")) {
+>> -				F2FS_OPTION(sbi).compress_mode = COMPR_MODE_USER;
+>> -			} else {
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> -			kfree(name);
+>> +		}
+>> +		F2FS_OPTION(sbi).compress_chksum = true;
+>> +		break;
+>> +	case Opt_compress_mode:
+>> +		if (!f2fs_sb_has_compression(sbi)) {
+>> +			f2fs_info(sbi, "Image doesn't support compression");
+>>   			break;
+>> -		case Opt_compress_cache:
+>> -			if (!f2fs_sb_has_compression(sbi)) {
+>> -				f2fs_info(sbi, "Image doesn't support compression");
+>> -				break;
+>> -			}
+>> -			set_opt(sbi, COMPRESS_CACHE);
+>> +		}
+>> +		F2FS_OPTION(sbi).compress_mode = result.uint_32;
+>> +		break;
+>> +	case Opt_compress_cache:
+>> +		if (!f2fs_sb_has_compression(sbi)) {
+>> +			f2fs_info(sbi, "Image doesn't support compression");
+>>   			break;
+>> +		}
+>> +		set_opt(sbi, COMPRESS_CACHE);
+>> +		break;
+>>   #else
+>> -		case Opt_compress_algorithm:
+>> -		case Opt_compress_log_size:
+>> -		case Opt_compress_extension:
+>> -		case Opt_nocompress_extension:
+>> -		case Opt_compress_chksum:
+>> -		case Opt_compress_mode:
+>> -		case Opt_compress_cache:
+>> -			f2fs_info(sbi, "compression options not supported");
+>> -			break;
+>> +	case Opt_compress_algorithm:
+>> +	case Opt_compress_log_size:
+>> +	case Opt_compress_extension:
+>> +	case Opt_nocompress_extension:
+>> +	case Opt_compress_chksum:
+>> +	case Opt_compress_mode:
+>> +	case Opt_compress_cache:
+>> +		f2fs_info(sbi, "compression options not supported");
+>> +		break;
+>>   #endif
+>> -		case Opt_atgc:
+>> -			set_opt(sbi, ATGC);
+>> -			break;
+>> -		case Opt_gc_merge:
+>> -			set_opt(sbi, GC_MERGE);
+>> -			break;
+>> -		case Opt_nogc_merge:
+>> +	case Opt_atgc:
+>> +		set_opt(sbi, ATGC);
+>> +		break;
+>> +	case Opt_gc_merge:
+>> +		if (result.negated)
+>>   			clear_opt(sbi, GC_MERGE);
+>> -			break;
+>> -		case Opt_discard_unit:
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -			if (!strcmp(name, "block")) {
+>> -				F2FS_OPTION(sbi).discard_unit =
+>> -						DISCARD_UNIT_BLOCK;
+>> -			} else if (!strcmp(name, "segment")) {
+>> -				F2FS_OPTION(sbi).discard_unit =
+>> -						DISCARD_UNIT_SEGMENT;
+>> -			} else if (!strcmp(name, "section")) {
+>> -				F2FS_OPTION(sbi).discard_unit =
+>> -						DISCARD_UNIT_SECTION;
+>> -			} else {
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> -			kfree(name);
+>> -			break;
+>> -		case Opt_memory_mode:
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -			if (!strcmp(name, "normal")) {
+>> -				F2FS_OPTION(sbi).memory_mode =
+>> -						MEMORY_MODE_NORMAL;
+>> -			} else if (!strcmp(name, "low")) {
+>> -				F2FS_OPTION(sbi).memory_mode =
+>> -						MEMORY_MODE_LOW;
+>> -			} else {
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> -			}
+>> -			kfree(name);
+>> -			break;
+>> -		case Opt_age_extent_cache:
+>> -			set_opt(sbi, AGE_EXTENT_CACHE);
+>> -			break;
+>> -		case Opt_errors:
+>> -			name = match_strdup(&args[0]);
+>> -			if (!name)
+>> -				return -ENOMEM;
+>> -			if (!strcmp(name, "remount-ro")) {
+>> -				F2FS_OPTION(sbi).errors =
+>> -						MOUNT_ERRORS_READONLY;
+>> -			} else if (!strcmp(name, "continue")) {
+>> -				F2FS_OPTION(sbi).errors =
+>> -						MOUNT_ERRORS_CONTINUE;
+>> -			} else if (!strcmp(name, "panic")) {
+>> -				F2FS_OPTION(sbi).errors =
+>> -						MOUNT_ERRORS_PANIC;
+>> -			} else {
+>> -				kfree(name);
+>> -				return -EINVAL;
+>> +		else
+>> +			set_opt(sbi, GC_MERGE);
+>> +		break;
+>> +	case Opt_discard_unit:
+>> +		F2FS_OPTION(sbi).discard_unit = result.uint_32;
+>> +		break;
+>> +	case Opt_memory_mode:
+>> +		F2FS_OPTION(sbi).memory_mode = result.uint_32;
+>> +		break;
+>> +	case Opt_age_extent_cache:
+>> +		set_opt(sbi, AGE_EXTENT_CACHE);
+>> +		break;
+>> +	case Opt_errors:
+>> +		F2FS_OPTION(sbi).errors = result.uint_32;
+>> +		break;
+>> +	case Opt_nat_bits:
+>> +		set_opt(sbi, NAT_BITS);
+>> +		break;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remount)
+>> +{
+>> +	struct fs_parameter param;
+>> +	struct fs_context fc;
+>> +	char *key;
+>> +	int ret;
+>> +
+>> +	if (!options)
+>> +		return 0;
+>> +
+>> +	memset(&fc, 0, sizeof(fc));
+>> +	fc.s_fs_info = sbi;
+>> +	if (is_remount)
+>> +		fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
+>> +
+>> +	while ((key = strsep(&options, ",")) != NULL) {
+>> +		if (*key) {
+>> +			size_t v_len = 0;
+>> +			char *value = strchr(key, '=');
+>> +
+>> +			param.type = fs_value_is_flag;
+>> +			param.string = NULL;
+>> +
+>> +			if (value) {
+>> +				if (value == key)
+>> +					continue;
+>> +
+>> +				*value++ = 0;
+>> +				v_len = strlen(value);
+>> +				param.string = kmemdup_nul(value, v_len, GFP_KERNEL);
+>> +				if (!param.string)
+>> +					return -ENOMEM;
+>> +				param.type = fs_value_is_string;
+>>   			}
+>> -			kfree(name);
+>> -			break;
+>> -		case Opt_nat_bits:
+>> -			set_opt(sbi, NAT_BITS);
+>> -			break;
+>> -		default:
+>> -			f2fs_err(sbi, "Unrecognized mount option \"%s\" or missing value",
+>> -				 p);
+>> -			return -EINVAL;
+>> +
+>> +			param.key = key;
+>> +			param.size = v_len;
+>> +
+>> +			ret = handle_mount_opt(&fc, &param);
+>> +			kfree(param.string);
+>> +			if (ret < 0)
+>> +				return ret;
+>>   		}
+>>   	}
+>>   	return 0;
+>>   }
+>>   
+>> -static int f2fs_default_check(struct f2fs_sb_info *sbi)
+>> +static int f2fs_validate_options(struct f2fs_sb_info *sbi)
+>>   {
+>>   #ifdef CONFIG_QUOTA
+>>   	if (f2fs_check_quota_options(sbi))
+>> @@ -2527,7 +2285,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>>   	}
+>>   #endif
+>>   
+>> -	err = f2fs_default_check(sbi);
+>> +	err = f2fs_validate_options(sbi);
+>>   	if (err)
+>>   		goto restore_opts;
+>>   
+>> @@ -4725,7 +4483,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>   	if (err)
+>>   		goto free_options;
+>>   
+>> -	err = f2fs_default_check(sbi);
+>> +	err = f2fs_validate_options(sbi);
+>>   	if (err)
+>>   		goto free_options;
+>>   
+> 
 
