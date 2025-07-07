@@ -1,91 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-54178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB21AFBCCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 22:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DE5AFBCD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 22:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F1C81682D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 20:49:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C098016ED8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 20:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD267220F57;
-	Mon,  7 Jul 2025 20:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCC421FF53;
+	Mon,  7 Jul 2025 20:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SFp8HQFZ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sLWivd0q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mpRK+4mE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sLWivd0q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mpRK+4mE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644853597A;
-	Mon,  7 Jul 2025 20:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7401F3BB5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 20:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751921362; cv=none; b=qDX7GBO2Opzx56jBjJdW8QQ7PQV9zT+xcVIBJGoferlRJmGM8kprRRm8+3U2nPyQzb2hFq7C6FGMBqniIp9+RwfoCy+ha7EIWEogy6iFw0dlJ48Lv2sapgERRdJvOvbipQfp2sVEWsvK64mhrT1wj1m1bjLB2Xvu3a/a02nIHuo=
+	t=1751921493; cv=none; b=czTDFZPvpukHxDgZDkaRg6lj9jx0h+XV0/9+YhhM1ioNS2yAQgOh13ppkCb7y1AsoMYRi4jCBngwMES1EaK5nGnW+owa99O1PbKhjuLdqFjLCxVpzooChBTO07H7M0GSRztqB4LZbT2MCODaQyIItLjXqlpUZMO931iK6zzTtos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751921362; c=relaxed/simple;
-	bh=OPwYRsV2ja4jyraAWVchxj36SMa89ln97ao5fJsFkJI=;
+	s=arc-20240116; t=1751921493; c=relaxed/simple;
+	bh=1yUz1IZbwCWSLVw8uE+AkQXLbxkCX0n8DamyeD87+Yk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFRHmh2EeN4mHqM0Fy0Vdtl9s9DRh2xkX3zNEq2UnPLj1lLJ98JW4F+5UgSmIJPL52TWzBO9+Rbree4VlW4U1IyRdrcf1pvoYScmyIsr5/OLU9I9CwLR+3wCW+bL4RT0F/DPt4W2bWgGzwYy/hEkCzv+nROPRP6dk9NGNBHV+FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SFp8HQFZ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=g0QMBx8KfGZY6hoKAphVq9VC9pOgKSRRzHza0BduFT8=; b=SFp8HQFZS9B6BcK7cJRTTGidpl
-	2yXK35INgDDJW82fCJRD5mNHWCUCOnHkZYmGyLfVMplP0dNWjjW2d3ld+FJ1u25gTTYATnUEyxQ+c
-	HM5BHMx+PD1D/56MBBCe1/ZbcONdRV3XqyyQTfzDrpVAe8o4uWLq5+c1m36LID9Vt/Vkn/6y0bjqe
-	Wn8N9b0+OxF+bozpsBPnRXUg/8HZwTz/Tm9Qkfo+0Jk92bOs5BDkHKKEbNxinHXDWncPdO7fEonDz
-	5OsF0SG45UiFFw99ftjXlJyUxLv9zvhV1wW8h414N0mC5qOOcWeosShyv6U4Y5UTLrbiEbNWYkM8v
-	0ivzN53w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uYsm6-00000003jOm-34RN;
-	Mon, 07 Jul 2025 20:49:18 +0000
-Date: Mon, 7 Jul 2025 21:49:18 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
-Message-ID: <20250707204918.GK1880847@ZenIV>
-References: <20231124060422.576198-20-viro@zeniv.linux.org.uk>
- <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
- <20250707172956.GF1880847@ZenIV>
- <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
- <20250707180026.GG1880847@ZenIV>
- <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
- <20250707193115.GH1880847@ZenIV>
- <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
- <20250707203104.GJ1880847@ZenIV>
- <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+EO6zAYgumAfiPssZ5917mIKtabbFZQjas44hYVmdCMpo1m6bA0EUUC4lIWhWQAti4amisEsAjW0+v8EuKJEtF72G0mbqfrcmY7s3dCcey5pVbfLTIuS+fq13LvC+fKGaKgg6E/Blwer/eTS2FFKcEt0CS5nYvlFezrkqGfCGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sLWivd0q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mpRK+4mE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sLWivd0q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mpRK+4mE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9E28E1F390;
+	Mon,  7 Jul 2025 20:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751921490;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AcipaQzwdaPp/YWmiL2/ORmkl7+h0mq8D8PPxQ9zMi8=;
+	b=sLWivd0qvmSmoeG/jp52UKr40rUglTLzkL4ZuT4e5SlV2in/UiW9Z9EjotHbeSbKz5pfXM
+	Z2nmeXjH3C7WBjSGfxRf9Nxk/RZX0zBwf977kD3gxceOyP2IYIwX2ezFcQKijDPYluGSVw
+	reSpkYdFTpEy1o1tiPyFfLvP0Q/sATs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751921490;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AcipaQzwdaPp/YWmiL2/ORmkl7+h0mq8D8PPxQ9zMi8=;
+	b=mpRK+4mEtto+eImBbboqSLA8VkrmSMk2vCVK8Yy8UhLFLBHNGsDtANKNdg1GLne5LR9bDU
+	z+oxiyxBibYY8uDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751921490;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AcipaQzwdaPp/YWmiL2/ORmkl7+h0mq8D8PPxQ9zMi8=;
+	b=sLWivd0qvmSmoeG/jp52UKr40rUglTLzkL4ZuT4e5SlV2in/UiW9Z9EjotHbeSbKz5pfXM
+	Z2nmeXjH3C7WBjSGfxRf9Nxk/RZX0zBwf977kD3gxceOyP2IYIwX2ezFcQKijDPYluGSVw
+	reSpkYdFTpEy1o1tiPyFfLvP0Q/sATs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751921490;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AcipaQzwdaPp/YWmiL2/ORmkl7+h0mq8D8PPxQ9zMi8=;
+	b=mpRK+4mEtto+eImBbboqSLA8VkrmSMk2vCVK8Yy8UhLFLBHNGsDtANKNdg1GLne5LR9bDU
+	z+oxiyxBibYY8uDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8549813757;
+	Mon,  7 Jul 2025 20:51:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DiBQIFIzbGiLIAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 07 Jul 2025 20:51:30 +0000
+Date: Mon, 7 Jul 2025 22:51:25 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <wqu@suse.com>
+Cc: dsterba@suse.cz, linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz
+Subject: Re: [PATCH v4 5/6] btrfs: implement shutdown ioctl
+Message-ID: <20250707205125.GI4453@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <cover.1751589725.git.wqu@suse.com>
+ <5ff44de2d9d7f8c2e59fa3a5fe68d5bb4c71a111.1751589725.git.wqu@suse.com>
+ <20250705142230.GC4453@twin.jikos.cz>
+ <6642f8b5-d357-4fb6-a295-906178a633f9@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6642f8b5-d357-4fb6-a295-906178a633f9@suse.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.00
 
-On Mon, Jul 07, 2025 at 10:39:27PM +0200, Max Kellermann wrote:
-> > Busy loop here means that everything in the tree is either busy or already
-> > in process of being torn down *by* *another* *thread*.  And that's already
-> > in process - not just selected for it (see collect2 in the same loop).
+On Sun, Jul 06, 2025 at 01:07:19PM +0930, Qu Wenruo wrote:
+> 在 2025/7/5 23:52, David Sterba 写道:
+> >> +static int btrfs_emergency_shutdown(struct btrfs_fs_info *fs_info, u32 flags)
+> >> +{
+> >> +	int ret = 0;
+> >> +
+> >> +	if (flags >= BTRFS_SHUTDOWN_FLAGS_LAST)
+> >> +		return -EINVAL;
+> >> +
+> >> +	if (btrfs_is_shutdown(fs_info))
+> >> +		return 0;
+> >> +
+> >> +	switch (flags) {
+> >> +	case BTRFS_SHUTDOWN_FLAGS_LOGFLUSH:
+> >> +	case BTRFS_SHUTDOWN_FLAGS_DEFAULT:
+> >> +		ret = freeze_super(fs_info->sb, FREEZE_HOLDER_KERNEL, NULL);
+> > 
+> > Recently I've looked at scrub blocking filesystem freezing and it does
+> > not work because it blocks on the semaphore taken in mnt_want_write,
+> > also taken in freeze_super().
+> > 
+> > I have an idea for fix, basically pause scrub, undo mnt_want_write
+> > and then call freeze_super. So we'll need that too for shutdown. Once
+> > implemented the fixup would be to use btrfs_freeze_super callback here.
 > 
-> The busy process isn't doing anything. All it does is busy-wait for
-> another task to complete the evict() call. A pointless waste of CPU
-> cycles.
+> It may not be that simple.
 > 
-> > The interesting question is what the other thread is doing...
+> freeze_super() itself is doing extra works related to the 
+> stage/freeze_owner/etc.
 > 
-> ceph_evict_inode() is waiting for the Ceph server to acknowledge a
-> pending I/O operation.
+> I'm not sure if it's a good idea to completely skip that part.
+> 
+> I'd prefer scrub to check the frozen stage, and if it's already in any 
+> FREEZE stages, exit early.
 
-Yes, but where does that ceph_evict_inode() come from?  What's in its call chain?
-Is it several shrink_dcache_parent() fighting each other on the same tree, or...?
+I have working prototype for pausing scrub that does not need to exit,
+so far I've tested it with fsfreeze in a VM, I still need to test actual
+freezing for suspend purposes.
 
