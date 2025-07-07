@@ -1,154 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-54131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC91FAFB62B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:34:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EE2AFB630
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ACA1188A086
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:34:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B1CA7AEB0B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B5C2D8766;
-	Mon,  7 Jul 2025 14:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="a4rIafs7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB452D9780;
+	Mon,  7 Jul 2025 14:28:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69542BDC2C;
-	Mon,  7 Jul 2025 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4400B2D9484;
+	Mon,  7 Jul 2025 14:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751898847; cv=none; b=eRO/GltdNfK9FiAJmeVtsjWIiZfxui01qEytqkb+4NJoJWFGALBJmq5F3P9GfAWUuU7D5zLfU2mGon5KMEy9WsEiWD0+g843GaKWlwEmxk/wZyGfd9lHenGKg+ql42p3AeaHCM8oaXS567L0XzDIhUcy3E9fqCh5ct47/dXyhrg=
+	t=1751898501; cv=none; b=mYJN+/GXpA1dFJp/azVx4MiVFEVf/WZNj3YB8uiESJoZmrR/czyJwrN7rU4Dlex0extXShJVzVE4lwqUQrfokSPucxscWh9lvMQ2ko37aCCiF7R/bNE0Zp6QargMHEnzjBx/Dmts5DfCrxDY3Bk72noAbV2yf402O1BqKA365ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751898847; c=relaxed/simple;
-	bh=HfEBjhDybxA/lCndKha/gf5kwENN2tgin7s12uZ7/gw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MjKuGXCedRBDpTQIwxDuWG06JRtqHIry3GcxXqr6+nY5nIK9wXbWFRWRVBnc3r4jHLp37lpi7/utWogQmR3+5aod4PO82X3ZR9hIoQWdKo9a8gBFKVbqOJSM5uycB5u+l0bfCHWft3A4mUef2vJmAq70wK7o0MyUXz5QrPEy8Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=a4rIafs7; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bbRLn36V0z9sqV;
-	Mon,  7 Jul 2025 16:24:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1751898241;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=24KDo3KRXZxzAB+MpsSNoPOtleVCAJRJx+y6hk41NC4=;
-	b=a4rIafs7ejMCL/CNvTdRuBlYOowXAqIKjXtP4LS8rmCWE0hVIYMqBPxATAFWTzPY7eKHhY
-	vOZHuibUJbYTQF5RkUjg95/WDGjODG+LS2eqsuQTluKkzxuNuGgFY4JdPIusFIDrranKjQ
-	+Flk3LB7JQlfmkzTS8eQkssBRm22SB28a+4UNq+HVGloMpqEQrg84FH5bJu/xRCLtcMQMQ
-	EES7IR7CXKkDkdUeuygNJ7xJ/LWFp9gvhxgm9lO0YIYFIPDEqZvXY7zXpBqHVScIJMQBEK
-	UKInRCqeEpexdwcfpcP1KLRuPlsBXssNB4gpHZpZRpM/92Mill8wrk8sY7dRFg==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Suren Baghdasaryan <surenb@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	s=arc-20240116; t=1751898501; c=relaxed/simple;
+	bh=oLaPuwfjVO73biwwsB01ZxZBB9jRIqrj9ERo8AWuhBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyBiIaZXAVPaRH53hD7WsbTUl+ZD0nSQXw20rUxfSkKBak6+qpmnf5WMfUr/gV36ZOC7cOudrhgchVWO4vRllYvZpO3fyaZpQbewi2wWf8tHRGadkFFknkzYGNy3Pr9GwZ4RW72uze9ubN9GQPpH7qJDVpqqZC7u/QJCIE0GT7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 6B34E68C7B; Mon,  7 Jul 2025 16:28:09 +0200 (CEST)
+Date: Mon, 7 Jul 2025 16:28:09 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Kundan Kumar <kundanthebest@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Nico Pache <npache@redhat.com>,
-	Dev Jain <dev.jain@arm.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org,
-	willy@infradead.org,
-	linux-mm@kvack.org,
-	x86@kernel.org,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	kernel@pankajraghav.com,
-	hch@lst.de,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2 5/5] block: use largest_zero_folio in __blkdev_issue_zero_pages()
-Date: Mon,  7 Jul 2025 16:23:19 +0200
-Message-ID: <20250707142319.319642-6-kernel@pankajraghav.com>
-In-Reply-To: <20250707142319.319642-1-kernel@pankajraghav.com>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
+	Kundan Kumar <kundan.kumar@samsung.com>, jaegeuk@kernel.org,
+	chao@kernel.org, viro@zeniv.linux.org.uk,
+	Christian Brauner <brauner@kernel.org>, jack@suse.cz,
+	miklos@szeredi.hu, agruenba@redhat.com,
+	Trond Myklebust <trondmy@kernel.org>, anna@kernel.org,
+	Matthew Wilcox <willy@infradead.org>, mcgrof@kernel.org,
+	clm@meta.com, david@fromorbit.com, amir73il@gmail.com,
+	Jens Axboe <axboe@kernel.dk>, ritesh.list@gmail.com,
+	dave@stgolabs.net, p.raghav@samsung.com, da.gomez@samsung.com,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-nfs@vger.kernel.org, linux-mm@kvack.org, gost.dev@samsung.com
+Subject: Re: [PATCH 00/13] Parallelizing filesystem writeback
+Message-ID: <20250707142809.GA31459@lst.de>
+References: <CGME20250529113215epcas5p2edd67e7b129621f386be005fdba53378@epcas5p2.samsung.com> <20250529111504.89912-1-kundan.kumar@samsung.com> <20250529203708.9afe27783b218ad2d2babb0c@linux-foundation.org> <CALYkqXqs+mw3sqJg5X2K4wn8uo8dnr4uU0jcnnSTbKK9F4AiBA@mail.gmail.com> <20250702184312.GC9991@frogsfrogsfrogs> <20250703130500.GA23864@lst.de> <CALYkqXqE1dJj7Arqu_Zi4J5mTVhzJQt=kzwjS9QaY5VaFcV3Lg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bbRLn36V0z9sqV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALYkqXqE1dJj7Arqu_Zi4J5mTVhzJQt=kzwjS9QaY5VaFcV3Lg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On Fri, Jul 04, 2025 at 12:32:51PM +0530, Kundan Kumar wrote:
+> bdi is tied to the underlying block device, and helps for device
+> bandwidth specific throttling, dirty ratelimiting etc. Making it per
+> superblock will need duplicating the device specific throttling, ratelimiting
+> to superblock, which will be difficult.
 
-Use largest_zero_folio() in __blkdev_issue_zero_pages().
+Yes, but my point is that compared to actually having a high performing
+writeback code that doesn't matter.  What is the use case for actually
+having production workloads (vs just a root fs and EFI partition) on
+a single SSD or hard disk?
 
-On systems with CONFIG_STATIC_PMD_ZERO_PAGE enabled, we will end up
-sending larger bvecs instead of multiple small ones.
+> > If someone
+> > uses partitions and multiple file systems on spinning rusts these
+> > days reducing the number of writeback threads isn't really going to
+> > save their day either.
+> >
+> 
+> in this case with single wb thread multiple partitions/filesystems use the
+> same bdi, we fall back to base case, will that not help ?
 
-Noticed a 4% increase in performance on a commercial NVMe SSD which does
-not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
-gains might be bigger if the device supports bigger MDTS.
-
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- block/blk-lib.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index 4c9f20a689f7..70a5700b6717 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -196,6 +196,10 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
- 		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
- 		struct bio **biop, unsigned int flags)
- {
-+	struct folio *zero_folio;
-+
-+	zero_folio = largest_zero_folio();
-+
- 	while (nr_sects) {
- 		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
- 		struct bio *bio;
-@@ -208,15 +212,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
- 			break;
- 
- 		do {
--			unsigned int len, added;
-+			unsigned int len;
- 
--			len = min_t(sector_t,
--				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
--			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
--			if (added < len)
-+			len = min_t(sector_t, folio_size(zero_folio),
-+				    nr_sects << SECTOR_SHIFT);
-+			if (!bio_add_folio(bio, zero_folio, len, 0))
- 				break;
--			nr_sects -= added >> SECTOR_SHIFT;
--			sector += added >> SECTOR_SHIFT;
-+			nr_sects -= len >> SECTOR_SHIFT;
-+			sector += len >> SECTOR_SHIFT;
- 		} while (nr_sects);
- 
- 		*biop = bio_chain_and_submit(*biop, bio);
--- 
-2.49.0
-
+If you multiple file systems sharing a BDI, they can have different
+and potentially very different requirements and they can trivially
+get in the way.  Or in other words we can't do anything remotely
+smart without fully having the file system in charge.
 
