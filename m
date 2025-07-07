@@ -1,115 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-54155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02ABAAFBA12
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 19:44:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF29AFBA29
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 19:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1191818907C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 17:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E6C3A5F83
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 17:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B3A2E7F1E;
-	Mon,  7 Jul 2025 17:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8CB263C8F;
+	Mon,  7 Jul 2025 17:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ZZ6vvviz"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sa/y7kEq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C90188006
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 17:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A14288A2
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 17:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751910246; cv=none; b=fSjpJ4xaKvXLryD2tUhYEpUYC/vusR0unmOjynwc7PkbO/nsTzdhsmBMGr8mlMEfudZfr1sF8Br5RNtBgSEz4Fv3oaGuzHC0GnOTcPvkPuldiKU2LOvgHjl4gbwrgpzXXdXK9tw7FlQBmyxgVXpLPtebvLRnPcv9h42TowaVL2c=
+	t=1751910816; cv=none; b=TZbkIxW/v/ce4pAe0Asbmahro1dGUMMyKn2TGP4D5UqL0uFiATcOioqpY2IUewXjsj4B4GURKPt1HRtSNVImrXv53zKzBZfP9nUr5orxb78T0YSG0CX22BUbqpexu3rqF/vZUle2J6UiJqyeIpF+pkdEaq9O4rzMi2qekXjt4kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751910246; c=relaxed/simple;
-	bh=o/HDZs7XPt+q8MHWK8dAkhY3tq2nEc40nkWYVoPA6DA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k4HcFywFrNJduGmLL1KNP24pM0IswaRwubWBFB0L1ZPY7hO0X5D3eKF+peo6kSO+6vyEpRgPjv3KV4d0ofn07hYfCHMXoZDXO80FYewmqMpOkbJBkUXyvir31QL1VloSwsf5hZ3KzcdqB7nWUJE72tNvSeNC9LsMFcn5Y43Rdas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ZZ6vvviz; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0c571f137so662907966b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 10:44:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1751910243; x=1752515043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z6DAOBmHCUHaxqHYSRkMxeN53Fncoy3XLXn7MalUFJo=;
-        b=ZZ6vvvizpt2uudiiQ4A8FKN+MD6qjVHiHj2geugqLmwv7eUdXLVW+taMGCKrQgAv79
-         X+TIIgMNqkqK1ovNQXpkBqwoLPWCUouJU7EMnhclpTZWXp8OR3fwH9yNOejdCdraW9tG
-         L77KqudpEWo5Xbr16CYOcevyVG12ppMTbmyxfOoeXr8n2NFAQcyjxRmAfc75GxdXFe03
-         ZW/KKdF6gWPTwFZKCUm2AYUj2P0GMfztOiNQaD/0iOlQYWKN2ToQ87CwV0490E0bc1hr
-         jKoWF3RciHSPd2/hPzVqkgtW85076x8LFu9s6pFmXhpGVIwi0ecJ27+VDJLncuQw7KKO
-         Fv/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751910243; x=1752515043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z6DAOBmHCUHaxqHYSRkMxeN53Fncoy3XLXn7MalUFJo=;
-        b=WJm48j/zojUCONQ+WChq6P7ylbxHrvr1KXkgcbt2AVfE5saDq8H4GKGqcQZqtXvqua
-         ym10fEN0SO2tGMQlV4cYy8N11jq5volVxOZSFBTlUNsyIlLemtYzZjfiDkiyzmGkPKLC
-         21h9sStv4yXHl9XBs4DSKGiKfc4iwUkMQng5HE43k4LEe/Kb5NxljlX9MrYtSJrhUlty
-         tJHxG2tccRE5DzJ0W9bSqetSimgvtKEf2EMeC54u+7p9XSgo8mHK8ZapILjGKlDZpN/S
-         AiK7wMDsB9hzzix1Kfkl92hfs+EDHB4zl9ZCpjpxpeEnxLz+T7hj93wfj28R4w7yMbEl
-         W4cg==
-X-Gm-Message-State: AOJu0YwMtawD5HPelHPwdrYawkeMPM7mPtRX8/BAcLwSqLTD2Z/nNREj
-	60rtEsHipeKKfUbHlXRwta7WYVKlcWej1MhSqntMQ9DUV8TAyWBOr8UJligENpfl0E+L3QkTixA
-	dfSyRHlJrMNoU9eEm2Hdei7G2qvQCtg4MU46fZh3Aw8TiXYYIQDZHvrA=
-X-Gm-Gg: ASbGncv57vY1Am0kbOGsLqlLuwVVTYo8Z/hPta9oD98nOIN4Wx2DrC0xoGs5H9UpTHe
-	mgRj5ZYXXDgWqnrsKG7n7Cf+SG2oLLK3OXeSaYYfWisgBlhAFsFlsjBERhvsI0BKvdzBKndwFBD
-	t3FCWn4D8yHyCc142wdHa7Pd0wurPtMz7Aa/58FYdVvXqDANHhj5ypmG3bJniFO30TERoP4Rfyb
-	3/zQZEIng==
-X-Google-Smtp-Source: AGHT+IHansgZkeOlieDK57LFfjlu4rcmUxtW3lZTuC3Ur35sXnZg9qWS5gVNMrBeeSWLdaOlkpMIsGFOiNHbh9ej7Mc=
-X-Received: by 2002:a17:907:3c8e:b0:ae0:da2f:dcf3 with SMTP id
- a640c23a62f3a-ae6b02bf79cmr7436366b.59.1751910242854; Mon, 07 Jul 2025
- 10:44:02 -0700 (PDT)
+	s=arc-20240116; t=1751910816; c=relaxed/simple;
+	bh=PJCUxndDyy9aKoL7TqeI0FjfwhSH8f/NYHniHwJOEvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HnY5izk+srmoMEmU3LplSNwHL67K8QJKLGO/rYDZ+NxHofeqh4pHNJLTfBG8+v1jeLizRZk1EEJczv1FjQjsCWLMXNmq4LkRPhKXPVWWjQTyYjhkDqvfKB0o/fC+nEBHtM4T5SBbQTCVfffroi21GWO2K0x1HWheEbzoWKM5A0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sa/y7kEq; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <74ae6eb2-cea7-4e3e-82eb-72978dd0f101@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751910812;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AQHayfYIL+d6HS8rf76iOroTc9ml4KgNSGNH0xgeoG4=;
+	b=sa/y7kEq3NvAVMCZWcAKa8HALGKl+Ftu6Y9Le6CVHE2UAFzNqMkOaw3FJDpPYTfvRTZzV6
+	NQbTd7RS/k/2lIMK5rIeu8b8VQZjq87jud6HPv7Z6uL8hpftsT0Vuxj3lAG0ewOurVToDl
+	QINEbvKN4Tnwr0RgYmfV/P9vHIcP000=
+Date: Mon, 7 Jul 2025 10:53:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231124060200.GR38156@ZenIV> <20231124060422.576198-1-viro@zeniv.linux.org.uk>
- <20231124060422.576198-20-viro@zeniv.linux.org.uk> <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
- <20250707172956.GF1880847@ZenIV>
-In-Reply-To: <20250707172956.GF1880847@ZenIV>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 7 Jul 2025 19:43:49 +0200
-X-Gm-Features: Ac12FXwa1m6lh5O0rYtmshnvYFRpOLMyvh-XRnRfNKbXLatxwTMpJYQvwe0IrE8
-Message-ID: <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
-Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+Content-Language: en-GB
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "m@maowtm.org" <m@maowtm.org>, "neil@brown.name" <neil@brown.name>
+References: <20250617061116.3681325-1-song@kernel.org>
+ <20250617061116.3681325-2-song@kernel.org>
+ <2459c10e-d74c-4118-9b6d-c37d05ecec02@linux.dev>
+ <58FB95C4-1499-4865-8FA7-3E1F64EB5EDE@meta.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <58FB95C4-1499-4865-8FA7-3E1F64EB5EDE@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jul 7, 2025 at 7:29=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
-> > (It checks for "dead" or "killed" entries, but why aren't you using
-> > __lockref_is_dead() here?)
+
+
+On 7/6/25 4:54 PM, Song Liu wrote:
 >
-> What's the difference?  It checks for dentries currently still going thro=
-ugh
-> ->d_prune()/->d_iput()/->d_release().
+>> On Jul 4, 2025, at 10:40 AM, Yonghong Song <yonghong.song@linux.dev> wrote:
+> [...]
+>>> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
+>>>   {
+>>> - struct dentry *parent;
+>>> -
+>>> - if (path_equal(&nd->path, &nd->root))
+>>> + if (path_equal(path, root))
+>>>    goto in_root;
+>>> - if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
+>>> - struct path path;
+>>> + if (unlikely(path->dentry == path->mnt->mnt_root)) {
+>>> + struct path new_path;
+>>>   - if (!choose_mountpoint(real_mount(nd->path.mnt),
+>>> -       &nd->root, &path))
+>>> + if (!choose_mountpoint(real_mount(path->mnt),
+>>> +       root, &new_path))
+>>>    goto in_root;
+>>> - path_put(&nd->path);
+>>> - nd->path = path;
+>>> - nd->inode = path.dentry->d_inode;
+>>> - if (unlikely(nd->flags & LOOKUP_NO_XDEV))
+>>> + path_put(path);
+>>> + *path = new_path;
+>>> + if (unlikely(flags & LOOKUP_NO_XDEV))
+>>>    return ERR_PTR(-EXDEV);
+>>>    }
+>>>    /* rare case of legitimate dget_parent()... */
+>>> - parent = dget_parent(nd->path.dentry);
+>>> + return dget_parent(path->dentry);
+>> I have some confusion with this patch when crossing mount boundary.
+>>
+>> In d_path.c, we have
+>>
+>> static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
+>>                           const struct path *root, struct prepend_buffer *p)
+>> {
+>>         while (dentry != root->dentry || &mnt->mnt != root->mnt) {
+>>                 const struct dentry *parent = READ_ONCE(dentry->d_parent);
+>>
+>>                 if (dentry == mnt->mnt.mnt_root) {
+>>                         struct mount *m = READ_ONCE(mnt->mnt_parent);
+>>                         struct mnt_namespace *mnt_ns;
+>>
+>>                         if (likely(mnt != m)) {
+>>                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
+>>                                 mnt = m;
+>>                                 continue;
+>>                         }
+>>                         /* Global root */
+>>                         mnt_ns = READ_ONCE(mnt->mnt_ns);
+>>                         /* open-coded is_mounted() to use local mnt_ns */
+>>                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
+>>                                 return 1;       // absolute root
+>>                         else
+>>                                 return 2;       // detached or not attached yet
+>>                 }
+>>
+>>                 if (unlikely(dentry == parent))
+>>                         /* Escaped? */
+>>                         return 3;
+>>
+>>                 prefetch(parent);
+>>                 if (!prepend_name(p, &dentry->d_name))
+>>                         break;
+>>                 dentry = parent;
+>>         }
+>>         return 0;
+>> }
+>>
+>> At the mount boundary and not at root mount, the code has
+>> dentry = READ_ONCE(mnt->mnt_mountpoint);
+>> mnt = m; /* 'mnt' will be parent mount */
+>> continue;
+>>
+>> After that, we have
+>> const struct dentry *parent = READ_ONCE(dentry->d_parent);
+>> if (dentry == mnt->mnt.mnt_root) {
+>> /* assume this is false */
+>> }
+>> ...
+>> prefetch(parent);
+>>         if (!prepend_name(p, &dentry->d_name))
+>>                 break;
+>>         dentry = parent;
+>>
+>> So the prepend_name(p, &dentry->d_name) is actually from mnt->mnt_mountpoint.
+> I am not quite following the question. In the code below:
+>
+>                 if (dentry == mnt->mnt.mnt_root) {
+>                         struct mount *m = READ_ONCE(mnt->mnt_parent);
+>                         struct mnt_namespace *mnt_ns;
+>
+>                         if (likely(mnt != m)) {
+>                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
+>                                 mnt = m;
+>                                 continue;
+> /* We either continue, here */
+>
+>                         }
+>                         /* Global root */
+>                         mnt_ns = READ_ONCE(mnt->mnt_ns);
+>                         /* open-coded is_mounted() to use local mnt_ns */
+>                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
+>                                 return 1;       // absolute root
+>                         else
+>                                 return 2;       // detached or not attached yet
+> /* Or return here */
+>                 }
+>
+> So we will not hit prepend_name(). Does this answer the
+> question?
+>
+>> In your above code, maybe we should return path->dentry in the below if statement?
+>>
+>>         if (unlikely(path->dentry == path->mnt->mnt_root)) {
+>>                 struct path new_path;
+>>
+>>                 if (!choose_mountpoint(real_mount(path->mnt),
+>>                                        root, &new_path))
+>>                         goto in_root;
+>>                 path_put(path);
+>>                 *path = new_path;
+>>                 if (unlikely(flags & LOOKUP_NO_XDEV))
+>>                         return ERR_PTR(-EXDEV);
+>> + return path->dentry;
+>>         }
+>>         /* rare case of legitimate dget_parent()... */
+>>         return dget_parent(path->dentry);
+>>
+>> Also, could you add some selftests cross mount points? This will
+>> have more coverages with __path_walk_parent().
 
-Just clarity. There exists a function and using it would make clearer
-what you're really checking for.
+Looks like __path_walk_parent() works for the root of mounted fs.
+If this is the case, the implementation is correct. It could be
+good to add some comments to clarify.
 
-> What are you using shrink_dcache_parent() for?
+> Yeah, I will try to add more tests in the next revision.
+>
+> Thanks,
+> Song
+>
 
-I don't. It's called by Ceph code, i.e. send_mds_reconnect(). A broken
-Ceph-MDS connection apparently triggered this busy loop.
-
-(I'm not a Ceph developer. I just care for the monthly Ceph regression
-that breaks all of our web servers on each and every Linux kernel
-update. Sad story. However, the Ceph bug I'm really hunting is
-unrelated to this dcache busy loop.)
-
-Max
 
