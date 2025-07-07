@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-54123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DC9AFB5E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28DA9AFB5ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 16:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 955B97A8797
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7723C4255BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF72D2D9EE2;
-	Mon,  7 Jul 2025 14:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B3F2DCF63;
+	Mon,  7 Jul 2025 14:23:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6572DA75A;
-	Mon,  7 Jul 2025 14:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7C12DAFAE;
+	Mon,  7 Jul 2025 14:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751898185; cv=none; b=aFvmOxpMnq2uNSEu9wE5im9QzpWmAEkLr3h8GziHtvVbw93ueQeEvLud/LQcF0x99//EDdoO2zXKnPkwGbKdmFNo1GmGG3iQa5vEiRf+vQVxBOR7UwrktYG4FDzczH0OPQdwntXZO5b2+mBuQZJPecCk3jznp9+GkRWwCNkFZ6E=
+	t=1751898186; cv=none; b=YOCinodBD+HezEDbZwp5pTGKphD9j1YTUffCV/7EqOFXJK7shPrvHtvN6u8YP3L1cIYD0dqcEfq6nfFlr5Ejd+iq//Q38ojQTaJWg4qGmW8gghzWdE6jmHOhKLyrLa/Ws/xLPuyEAeekVElbsnx+PdfdM1ev7Y3pJ4tJzmLyLWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751898185; c=relaxed/simple;
-	bh=FZKwy07XvmKoMENra/1jCtoEiCc4x782o8p/B/1DuME=;
+	s=arc-20240116; t=1751898186; c=relaxed/simple;
+	bh=pD7hY1OcA4uWjfnB809xyY1iSJS5H+vjuHjwhhn46dY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ssx5MvXKgjtGCZjzcfdKbP56FHFZH4LJdVrUK0DhTWopyI5FfK2/UodGSDCxtuWrV+f7gjX1+Asb4QBRuauWNbi8rEK3dFUyG5MPz+9rQ3+lUX9aJABLp4B0KRinewQiWh35qPLx7Oje8kgxune9ifaIpPMk05RoxqUUKMPD3mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=PnuYIMVxRvtmYoxD6IrR8qzovorcyQ/SPiQlUyedTn6wJu7TGH81Z4MacZKJSV+jvwmuGFnVFWYdJkercNxabGrW0/BOKehusxVddjKS9EbIRUBL8yMlrGi/nXXwy5kAj9oMntkbw8fZpOhVLegDY52N/USYRW2Da3ROGqbowVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bbRKf5vr1zKHMbB;
-	Mon,  7 Jul 2025 22:23:02 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bbRKg094BzYQttj;
+	Mon,  7 Jul 2025 22:23:03 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 46A991A12FE;
+	by mail.maildlp.com (Postfix) with ESMTP id CF7661A0CF1;
 	Mon,  7 Jul 2025 22:23:01 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP3 (Coremail) with SMTP id _Ch0CgBnxyQ22GtoNazLAw--.46745S14;
+	by APP3 (Coremail) with SMTP id _Ch0CgBnxyQ22GtoNazLAw--.46745S15;
 	Mon, 07 Jul 2025 22:23:01 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -54,9 +54,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	libaokun1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH v4 10/11] ext4: fix insufficient credits calculation in ext4_meta_trans_blocks()
-Date: Mon,  7 Jul 2025 22:08:13 +0800
-Message-ID: <20250707140814.542883-11-yi.zhang@huaweicloud.com>
+Subject: [PATCH v4 11/11] ext4: limit the maximum folio order
+Date: Mon,  7 Jul 2025 22:08:14 +0800
+Message-ID: <20250707140814.542883-12-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
 References: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
@@ -67,10 +67,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBnxyQ22GtoNazLAw--.46745S14
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFy7Zw48KrW5GFWrCF1fCrg_yoW8Xw4fp3
-	Z5Ca48Gry8Ww409a18Wa12qr48Ka1kGa17WFWfJw15XFZxZryfKrnFq348Aa45tFWSkw1q
-	qF4ayry3Gw1UA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:_Ch0CgBnxyQ22GtoNazLAw--.46745S15
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr4kWw1rtr1xJw4kJF18Xwb_yoW5KFyfpF
+	y7GF1rGr40q3sFgr4xtw47Zr13tayxGrWUA3yfCw43ZFWUX34rtF40kF13Z3WUtrWkXa1S
+	qF42kFyUua13CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -89,43 +89,99 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-The calculation of journal credits in ext4_meta_trans_blocks() should
-include pextents, as each extent separately may be allocated from a
-different group and thus need to update different bitmap and group
-descriptor block.
+In environments with a page size of 64KB, the maximum size of a folio
+can reach up to 128MB. Consequently, during the write-back of folios,
+the 'rsv_blocks' will be overestimated to 1,577, which can make
+pressure on the journal space where the journal is small. This can
+easily exceed the limit of a single transaction. Besides, an excessively
+large folio is meaningless and will instead increase the overhead of
+traversing the bhs within the folio. Therefore, limit the maximum order
+of a folio to 2048 filesystem blocks.
 
-Fixes: 0e32d8617012 ("ext4: correct the journal credits calculations of allocating blocks")
-Reported-by: Jan Kara <jack@suse.cz>
-Closes: https://lore.kernel.org/linux-ext4/nhxfuu53wyacsrq7xqgxvgzcggyscu2tbabginahcygvmc45hy@t4fvmyeky33e/
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Reported-by: Joseph Qi <jiangqi903@gmail.com>
+Closes: https://lore.kernel.org/linux-ext4/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
 ---
- fs/ext4/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ext4/ext4.h   |  2 +-
+ fs/ext4/ialloc.c |  3 +--
+ fs/ext4/inode.c  | 22 +++++++++++++++++++---
+ 3 files changed, 21 insertions(+), 6 deletions(-)
 
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index f705046ba6c6..9ac0a7d4fa0c 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3020,7 +3020,7 @@ int ext4_walk_page_buffers(handle_t *handle,
+ 				     struct buffer_head *bh));
+ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
+ 				struct buffer_head *bh);
+-bool ext4_should_enable_large_folio(struct inode *inode);
++void ext4_set_inode_mapping_order(struct inode *inode);
+ #define FALL_BACK_TO_NONDELALLOC 1
+ #define CONVERT_INLINE_DATA	 2
+ 
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index 79aa3df8d019..df4051613b29 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -1335,8 +1335,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+ 		}
+ 	}
+ 
+-	if (ext4_should_enable_large_folio(inode))
+-		mapping_set_large_folios(inode->i_mapping);
++	ext4_set_inode_mapping_order(inode);
+ 
+ 	ext4_update_inode_fsync_trans(handle, inode, 1);
+ 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 85ad14451b26..4b679cb6c8bd 100644
+index 4b679cb6c8bd..1bce9ebaedb7 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -6214,7 +6214,7 @@ int ext4_meta_trans_blocks(struct inode *inode, int lblocks, int pextents)
- 	int ret;
+@@ -5181,7 +5181,7 @@ static int check_igot_inode(struct inode *inode, ext4_iget_flags flags,
+ 	return -EFSCORRUPTED;
+ }
  
+-bool ext4_should_enable_large_folio(struct inode *inode)
++static bool ext4_should_enable_large_folio(struct inode *inode)
+ {
+ 	struct super_block *sb = inode->i_sb;
+ 
+@@ -5198,6 +5198,22 @@ bool ext4_should_enable_large_folio(struct inode *inode)
+ 	return true;
+ }
+ 
++/*
++ * Limit the maximum folio order to 2048 blocks to prevent overestimation
++ * of reserve handle credits during the folio writeback in environments
++ * where the PAGE_SIZE exceeds 4KB.
++ */
++#define EXT4_MAX_PAGECACHE_ORDER(i)		\
++		min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
++void ext4_set_inode_mapping_order(struct inode *inode)
++{
++	if (!ext4_should_enable_large_folio(inode))
++		return;
++
++	mapping_set_folio_order_range(inode->i_mapping, 0,
++				      EXT4_MAX_PAGECACHE_ORDER(inode));
++}
++
+ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 			  ext4_iget_flags flags, const char *function,
+ 			  unsigned int line)
+@@ -5515,8 +5531,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 		ret = -EFSCORRUPTED;
+ 		goto bad_inode;
+ 	}
+-	if (ext4_should_enable_large_folio(inode))
+-		mapping_set_large_folios(inode->i_mapping);
++
++	ext4_set_inode_mapping_order(inode);
+ 
+ 	ret = check_igot_inode(inode, flags, function, line);
  	/*
--	 * How many index and lead blocks need to touch to map @lblocks
-+	 * How many index and leaf blocks need to touch to map @lblocks
- 	 * logical blocks to @pextents physical extents?
- 	 */
- 	idxblocks = ext4_index_trans_blocks(inode, lblocks, pextents);
-@@ -6223,7 +6223,7 @@ int ext4_meta_trans_blocks(struct inode *inode, int lblocks, int pextents)
- 	 * Now let's see how many group bitmaps and group descriptors need
- 	 * to account
- 	 */
--	groups = idxblocks;
-+	groups = idxblocks + pextents;
- 	gdpblocks = groups;
- 	if (groups > ngroups)
- 		groups = ngroups;
 -- 
 2.46.1
 
