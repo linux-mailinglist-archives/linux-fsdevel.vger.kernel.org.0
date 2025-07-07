@@ -1,184 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-54071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B647EAFAEA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 10:31:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80ED6AFAFBD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 11:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8E24A04EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 08:31:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F104C7A6CAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 09:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AF628AAEE;
-	Mon,  7 Jul 2025 08:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="INDJODQq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z10tIxzR";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="INDJODQq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z10tIxzR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAAB293C59;
+	Mon,  7 Jul 2025 09:30:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446B5199934
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 08:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836AB292B31
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 09:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751877079; cv=none; b=t73lONwQntZQ0rdI/DKdG8J9pEXGSPcoa2+EKT7MB7avKv4bm9soWK1X+qcoRQuZxfrGQ+0CB8UXevxd1t+/bu5UqjPTkbu6KMlu2kMvl0qffK4OLfiRe+1V22/ApDwJ13iJRumwIZh0Y2KZ2p3rFKa8LSKGQyQPscbJpWnvPl0=
+	t=1751880605; cv=none; b=HHi15CYYVZjlf/UHCGYsnVSDGdQ0O4AGyQnStdjFfm40ZYv957bWhd5aZQPy8mXObVzbNCnwRID9mN4i07i40Zy0EmV2ogZKnQhuQGR2wT1X+aTb95pwfcr+hJvFTHnEPKmDq/dwK7ZqsmjCKVSBA0oZt37ULVVOIFHakF38gTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751877079; c=relaxed/simple;
-	bh=raQsBFIaSXKnL2XMPa7Ofruag6TyP/U9z0wS9xmSET8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iItNzWI3icajJKL0sWgvcr4diH+EBN7UWylUm9WV7AMxJNuoIMNPTwEpcCkhNBpM6kzvolYzCDTEyCAcqG+34KuU9LnxQfRdDw+RsekYjaX689gaFqOCOo/ZphT3snBZXTDtPikHkR/opaQr65vBwsjfXurtrBgQytSkkmck0tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=INDJODQq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z10tIxzR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=INDJODQq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z10tIxzR; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0F72D1F38A;
-	Mon,  7 Jul 2025 08:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751877070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wiJGgUGtMR4NLXHH7zg2I8MW2e1KtWX3iqbU2F/fRtI=;
-	b=INDJODQqIb0gRlAO8QUNpWA2gpqpKBH9kwVjhJWGPsLvNzILLnv13c3XmU71KxSINxOrMd
-	Nc1Fo4lizmB7a2ej+sY0H5klbifmDKE2rjkqimrQAZfYvQOmUcavpn6t9GdhYaWjSXM6hB
-	xkZJvEYx6pzwq15RnBAGGO4A3hhjKxI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751877070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wiJGgUGtMR4NLXHH7zg2I8MW2e1KtWX3iqbU2F/fRtI=;
-	b=z10tIxzRluGRyVtwblp/rPlfHDdGZrAOJk/Ki9Zg+1zMtMaD6IOvkI+17B2rd0Xlshw5S9
-	mkulWt5I6DxZiqDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751877070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wiJGgUGtMR4NLXHH7zg2I8MW2e1KtWX3iqbU2F/fRtI=;
-	b=INDJODQqIb0gRlAO8QUNpWA2gpqpKBH9kwVjhJWGPsLvNzILLnv13c3XmU71KxSINxOrMd
-	Nc1Fo4lizmB7a2ej+sY0H5klbifmDKE2rjkqimrQAZfYvQOmUcavpn6t9GdhYaWjSXM6hB
-	xkZJvEYx6pzwq15RnBAGGO4A3hhjKxI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751877070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wiJGgUGtMR4NLXHH7zg2I8MW2e1KtWX3iqbU2F/fRtI=;
-	b=z10tIxzRluGRyVtwblp/rPlfHDdGZrAOJk/Ki9Zg+1zMtMaD6IOvkI+17B2rd0Xlshw5S9
-	mkulWt5I6DxZiqDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0360C13757;
-	Mon,  7 Jul 2025 08:31:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id W1LNAM6Fa2irNAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 07 Jul 2025 08:31:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B2293A0992; Mon,  7 Jul 2025 10:31:09 +0200 (CEST)
-Date: Mon, 7 Jul 2025 10:31:09 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Qu Wenruo <wqu@suse.com>, Jan Kara <jack@suse.cz>, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: restrict writes to opened btrfs devices
-Message-ID: <o22twrini5ofwxdch32ecptztbkp2hjxsqaun5tyxt6yxr2anh@wn267am44avm>
-References: <bf74fa9eee7917030235a8883e0a4ff53d9e0938.1751621865.git.wqu@suse.com>
- <20250707-wogen-karate-68a856159174@brauner>
+	s=arc-20240116; t=1751880605; c=relaxed/simple;
+	bh=pMhlVEkUFYx16frqYD2ys/zp4Vacync+fTFQLO8Y7j8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=msfdcxmLNtcvn8WhllRCToQU/eQhYmV5HRNUG8og2cAKHkEuilPXxtDcVTB+lsjrl9wxFAGe8ZStCLKMbTQ3u+TxFGNc45ysOgHfgs6gU/RztHPgmK0ivP9Xq8y5i6/MPyFGKcNM0Kxl3v4cESFTVyzPmtnKWKZDDl0TxR1Wg1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3df4189cd09so59052755ab.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 02:30:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751880603; x=1752485403;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i3FrwSzkZRQpjEv5ax7x7GcgrRUZI1/BeJkblnIIDas=;
+        b=JB3is4+7UaKBTtXN0VrS3lPuGGpc6gjNJn7Gd4AeR189ADjkD1Spr6Zn2q0FlSWOrW
+         YmsBqqBfBMyzXFx7AhR1RU87bT1vD28JBeOUelJuFNtlmrcKW5NQHOwxeWsVZSM7Z3lV
+         lpnhspk2JeSPx6gZ+LydDi2lPyQIu49r6vhGUyORkcum2zv8rAlNJL3yKYQe3IcN28wE
+         Mw2ge9CmAfa6OiYNV+eGS0v2cogYKWo9gmdaAL8p9jM503W09n33G25UldncBOgeqLI8
+         5de14rZ3N+ybHgc1KOaIdoJOqUfwFX/j3bgHnynb9dCpC2J/UbbKrcpYuyNXy+1qBUgO
+         m4+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW22KnOeYU1gkNmDjyXQns1UZC5LGg9BwcSdosH59aT6RA47S7FYUE61rS02l1R1YMBdebn/vZX87q4bJu5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfANg1UuM/XFPRrlyjtIDwE3egJ5VNwOx0QEUyuHwsg63E4jto
+	WLYXrZwjbyD39oKSnGsxkqaGcTWU35y6V06wYHSAptOLLedmqo/f+AUS9SLHTM6hSEj3av7ln6s
+	TlmT6R8kWUEU0TO3c2iu1XayHweuYLm23BuJL45zta9CAds2Au291vulwnmE=
+X-Google-Smtp-Source: AGHT+IH5hJ99iBdAZ2eUEYhkALrqUM1smJuemUwvFzbEb4CHV+YszENd6TVowh9yRirN1q24ejmtOnIeaAYKcZbBaU/7HfoXhukt
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707-wogen-karate-68a856159174@brauner>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+X-Received: by 2002:a05:6e02:216b:b0:3df:4738:977e with SMTP id
+ e9e14a558f8ab-3e1371d527fmr93550285ab.10.1751880602735; Mon, 07 Jul 2025
+ 02:30:02 -0700 (PDT)
+Date: Mon, 07 Jul 2025 02:30:02 -0700
+In-Reply-To: <67917ed8.050a0220.15cac.02eb.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686b939a.a00a0220.c7b3.007e.GAE@google.com>
+Subject: Re: [syzbot] [fs?] BUG: corrupted list in remove_wait_queue (2)
+From: syzbot <syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, lizhi.xu@windriver.com, mchehab@kernel.org, 
+	standback@126.com, superman.xpt@gmail.com, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon 07-07-25 09:43:29, Christian Brauner wrote:
-> On Fri, Jul 04, 2025 at 07:08:03PM +0930, Qu Wenruo wrote:
-> > [WEIRD FLAG EXCLUSION]
-> > Commit ead622674df5 ("btrfs: Do not restrict writes to btrfs devices")
-> > removes the BLK_OPEN_RESTRICT_WRITES flag when opening the devices
-> > during mount.
-> > 
-> > However there is no filesystem except btrfs excluding this flag, which
-> > is weird, and lacks a proper explanation why we need such an exception.
-> > 
-> > [REASON TO EXCLUDE THAT FLAG]
-> > Btrfs needs to call btrfs_scan_one_device() to determine the fsid, no
-> > matter if we're mounting a new fs or an existing one.
-> > 
-> > But if a fs is already mounted and that BLK_OPEN_RESTRICT_WRITES is
-> > honored, meaning no other write open is allowed for the block device.
-> > 
-> > Then we want to mount a subvolume of the mounted fs to another mount
-> > point, we will call btrfs_scan_one_device() again, but it will fail due
-> > to the BLK_OPEN_RESTRICT_WRITES flag (no more write open allowed),
-> > causing only one mount point for the fs.
-> > 
-> > Thus at that time, we have to exclude the BLK_OPEN_RESTRICT_WRITES to
-> > allow multiple mount points for one fs.
-> > 
-> > [WHY IT'S SAFE NOW]
-> > The root problem is, we do not need to nor should use BLK_OPEN_WRITE for
-> > btrfs_scan_one_device().
-> > That function is only to read out the super block, no write at all, and
-> > BLK_OPEN_WRITE is only going to cause problems for such usage.
-> > 
-> > The root problem is fixed by patch "btrfs: always open the device
-> > read-only in btrfs_scan_one_device", so btrfs_scan_one_device() will
-> > always work no matter if the device is opened with
-> > BLK_OPEN_RESTRICT_WRITES.
-> > 
-> > [ENHANCEMENT]
-> > Just remove the btrfs_open_mode(), as the only call site can be replaced
-> > with regular sb_open_mode().
-> > 
-> > Signed-off-by: Qu Wenruo <wqu@suse.com>
-> > ---
-> 
-> Ok, very nice!
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
+syzbot has bisected this issue to:
 
-Yup, very nice we finally got rid of this exception. Thanks Qu!
+commit 8ffdff6a8cfbdc174a3a390b6f825a277b5bb895
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Wed Apr 14 08:58:10 2021 +0000
 
-								Honza
+    staging: comedi: move out of staging directory
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13009f70580000
+start commit:   05df91921da6 Merge tag 'v6.16-rc4-smb3-client-fixes' of gi..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10809f70580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17009f70580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=45bd916a213c79bb
+dashboard link: https://syzkaller.appspot.com/bug?extid=4e21d5f67b886a692b55
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161cdc8c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d1a582580000
+
+Reported-by: syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com
+Fixes: 8ffdff6a8cfb ("staging: comedi: move out of staging directory")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
