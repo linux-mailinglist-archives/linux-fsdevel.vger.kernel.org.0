@@ -1,202 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-54154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FE7AFBA03
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 19:39:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02ABAAFBA12
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 19:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B58A16B63D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 17:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1191818907C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 17:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D3129ACE6;
-	Mon,  7 Jul 2025 17:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B3A2E7F1E;
+	Mon,  7 Jul 2025 17:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPttIjEn"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ZZ6vvviz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F35E1C7009;
-	Mon,  7 Jul 2025 17:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C90188006
+	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 17:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751909984; cv=none; b=ClkME5EBTtYCS9tK+svig97wczKIwUiLmbhxLm8WQuH5AFEqG+ptRB3GkXH96XczZia6MQuZkTz4cb7U2FPeQynuv3KMiKZTiFRJYKKJeSlb2L9v58KI6kZefy0P8aexV+MNkI2jtaBF4mNGB6MVyg+0OuPupBUJ+n7ReC4+UUI=
+	t=1751910246; cv=none; b=fSjpJ4xaKvXLryD2tUhYEpUYC/vusR0unmOjynwc7PkbO/nsTzdhsmBMGr8mlMEfudZfr1sF8Br5RNtBgSEz4Fv3oaGuzHC0GnOTcPvkPuldiKU2LOvgHjl4gbwrgpzXXdXK9tw7FlQBmyxgVXpLPtebvLRnPcv9h42TowaVL2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751909984; c=relaxed/simple;
-	bh=l+3iXjYGj1UpOXLJrT43d9M5v15VGrgjIsaEmWHnlnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5H6LxHl4/MYBcqt9UVEoZmhLarUnikTdQ2Qh3pzOTswRa2Cof21lWiopDcoZHs55lcShXdeUS/1IByWVom3Nr96zVCITfuMm7P9evLBNDFAmhpGtbfNCEjaV6Au7PzYphpkEcbdABmXw2M3VSPpgM3y9UBF32enkkaY9Wsf5qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPttIjEn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A93C4CEE3;
-	Mon,  7 Jul 2025 17:39:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751909982;
-	bh=l+3iXjYGj1UpOXLJrT43d9M5v15VGrgjIsaEmWHnlnQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HPttIjEnmPAnCKgpeOWt4ktMrN65mudK91LH4ggTI9W1jtedjRId7w5nmq4vHdyTr
-	 CEtduZ+pljjwRe6H66Gc5GHT0y7i3zGZ3uCldWnx+wC8sR4+JIDYYbZTNsNWZLXdE2
-	 15lWasxQTL4GDer73CwNfUPutq3FS6KcjyVZ3Vkrh7/k93R1GDL3AylQulro2TKFmx
-	 kfqsX7Rv2PKmDBdtKF8VGsMAtwhy4xv0dB8erpvX3T4ySF4vY+x9/FfhITDmyiWPEq
-	 9fci7JmKqnt7VFb7xgCcljSQXm6wgbFwfa4hm8sWSmN4yEMXyX7j2Z9pFuiRA5mJ8W
-	 MRfIeNrPqkppw==
-Date: Mon, 7 Jul 2025 10:39:42 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Groves <John@groves.net>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>,
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for
- famfs
-Message-ID: <20250707173942.GC2672029@frogsfrogsfrogs>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-11-john@groves.net>
- <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
- <yhso6jddzt6c7glqadrztrswpisxmuvg7yopc6lp4gn44cxd4m@my4ajaw47q7d>
+	s=arc-20240116; t=1751910246; c=relaxed/simple;
+	bh=o/HDZs7XPt+q8MHWK8dAkhY3tq2nEc40nkWYVoPA6DA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k4HcFywFrNJduGmLL1KNP24pM0IswaRwubWBFB0L1ZPY7hO0X5D3eKF+peo6kSO+6vyEpRgPjv3KV4d0ofn07hYfCHMXoZDXO80FYewmqMpOkbJBkUXyvir31QL1VloSwsf5hZ3KzcdqB7nWUJE72tNvSeNC9LsMFcn5Y43Rdas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ZZ6vvviz; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0c571f137so662907966b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 10:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1751910243; x=1752515043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z6DAOBmHCUHaxqHYSRkMxeN53Fncoy3XLXn7MalUFJo=;
+        b=ZZ6vvvizpt2uudiiQ4A8FKN+MD6qjVHiHj2geugqLmwv7eUdXLVW+taMGCKrQgAv79
+         X+TIIgMNqkqK1ovNQXpkBqwoLPWCUouJU7EMnhclpTZWXp8OR3fwH9yNOejdCdraW9tG
+         L77KqudpEWo5Xbr16CYOcevyVG12ppMTbmyxfOoeXr8n2NFAQcyjxRmAfc75GxdXFe03
+         ZW/KKdF6gWPTwFZKCUm2AYUj2P0GMfztOiNQaD/0iOlQYWKN2ToQ87CwV0490E0bc1hr
+         jKoWF3RciHSPd2/hPzVqkgtW85076x8LFu9s6pFmXhpGVIwi0ecJ27+VDJLncuQw7KKO
+         Fv/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751910243; x=1752515043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z6DAOBmHCUHaxqHYSRkMxeN53Fncoy3XLXn7MalUFJo=;
+        b=WJm48j/zojUCONQ+WChq6P7ylbxHrvr1KXkgcbt2AVfE5saDq8H4GKGqcQZqtXvqua
+         ym10fEN0SO2tGMQlV4cYy8N11jq5volVxOZSFBTlUNsyIlLemtYzZjfiDkiyzmGkPKLC
+         21h9sStv4yXHl9XBs4DSKGiKfc4iwUkMQng5HE43k4LEe/Kb5NxljlX9MrYtSJrhUlty
+         tJHxG2tccRE5DzJ0W9bSqetSimgvtKEf2EMeC54u+7p9XSgo8mHK8ZapILjGKlDZpN/S
+         AiK7wMDsB9hzzix1Kfkl92hfs+EDHB4zl9ZCpjpxpeEnxLz+T7hj93wfj28R4w7yMbEl
+         W4cg==
+X-Gm-Message-State: AOJu0YwMtawD5HPelHPwdrYawkeMPM7mPtRX8/BAcLwSqLTD2Z/nNREj
+	60rtEsHipeKKfUbHlXRwta7WYVKlcWej1MhSqntMQ9DUV8TAyWBOr8UJligENpfl0E+L3QkTixA
+	dfSyRHlJrMNoU9eEm2Hdei7G2qvQCtg4MU46fZh3Aw8TiXYYIQDZHvrA=
+X-Gm-Gg: ASbGncv57vY1Am0kbOGsLqlLuwVVTYo8Z/hPta9oD98nOIN4Wx2DrC0xoGs5H9UpTHe
+	mgRj5ZYXXDgWqnrsKG7n7Cf+SG2oLLK3OXeSaYYfWisgBlhAFsFlsjBERhvsI0BKvdzBKndwFBD
+	t3FCWn4D8yHyCc142wdHa7Pd0wurPtMz7Aa/58FYdVvXqDANHhj5ypmG3bJniFO30TERoP4Rfyb
+	3/zQZEIng==
+X-Google-Smtp-Source: AGHT+IHansgZkeOlieDK57LFfjlu4rcmUxtW3lZTuC3Ur35sXnZg9qWS5gVNMrBeeSWLdaOlkpMIsGFOiNHbh9ej7Mc=
+X-Received: by 2002:a17:907:3c8e:b0:ae0:da2f:dcf3 with SMTP id
+ a640c23a62f3a-ae6b02bf79cmr7436366b.59.1751910242854; Mon, 07 Jul 2025
+ 10:44:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <yhso6jddzt6c7glqadrztrswpisxmuvg7yopc6lp4gn44cxd4m@my4ajaw47q7d>
+References: <20231124060200.GR38156@ZenIV> <20231124060422.576198-1-viro@zeniv.linux.org.uk>
+ <20231124060422.576198-20-viro@zeniv.linux.org.uk> <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
+ <20250707172956.GF1880847@ZenIV>
+In-Reply-To: <20250707172956.GF1880847@ZenIV>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 7 Jul 2025 19:43:49 +0200
+X-Gm-Features: Ac12FXwa1m6lh5O0rYtmshnvYFRpOLMyvh-XRnRfNKbXLatxwTMpJYQvwe0IrE8
+Message-ID: <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 04, 2025 at 08:39:59AM -0500, John Groves wrote:
-> On 25/07/04 09:54AM, Amir Goldstein wrote:
-> > On Thu, Jul 3, 2025 at 8:51 PM John Groves <John@groves.net> wrote:
-> > >
-> > > * FUSE_DAX_FMAP flag in INIT request/reply
-> > >
-> > > * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
-> > >   famfs-enabled connection
-> > >
-> > > Signed-off-by: John Groves <john@groves.net>
-> > > ---
-> > >  fs/fuse/fuse_i.h          |  3 +++
-> > >  fs/fuse/inode.c           | 14 ++++++++++++++
-> > >  include/uapi/linux/fuse.h |  4 ++++
-> > >  3 files changed, 21 insertions(+)
-> > >
-> > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > > index 9d87ac48d724..a592c1002861 100644
-> > > --- a/fs/fuse/fuse_i.h
-> > > +++ b/fs/fuse/fuse_i.h
-> > > @@ -873,6 +873,9 @@ struct fuse_conn {
-> > >         /* Use io_uring for communication */
-> > >         unsigned int io_uring;
-> > >
-> > > +       /* dev_dax_iomap support for famfs */
-> > > +       unsigned int famfs_iomap:1;
-> > > +
-> > 
-> > pls move up to the bit fields members.
-> 
-> Oops, done, thanks.
-> 
-> > 
-> > >         /** Maximum stack depth for passthrough backing files */
-> > >         int max_stack_depth;
-> > >
-> > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > > index 29147657a99f..e48e11c3f9f3 100644
-> > > --- a/fs/fuse/inode.c
-> > > +++ b/fs/fuse/inode.c
-> > > @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
-> > >                         }
-> > >                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
-> > >                                 fc->io_uring = 1;
-> > > +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
-> > > +                           flags & FUSE_DAX_FMAP) {
-> > > +                               /* XXX: Should also check that fuse server
-> > > +                                * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN,
-> > > +                                * since it is directing the kernel to access
-> > > +                                * dax memory directly - but this function
-> > > +                                * appears not to be called in fuse server
-> > > +                                * process context (b/c even if it drops
-> > > +                                * those capabilities, they are held here).
-> > > +                                */
-> > > +                               fc->famfs_iomap = 1;
-> > > +                       }
-> > 
-> > 1. As long as the mapping requests are checking capabilities we should be ok
-> >     Right?
-> 
-> It depends on the definition of "are", or maybe of "mapping requests" ;)
-> 
-> Forgive me if this *is* obvious, but the fuse server capabilities are what
-> I think need to be checked here - not the app that it accessing a file.
-> 
-> An app accessing a regular file doesn't need permission to do raw access to
-> the underlying block dev, but the fuse server does - becuase it is directing
-> the kernel to access that for apps.
-> 
-> > 2. What's the deal with capable(CAP_SYS_ADMIN) in process_init_limits then?
-> 
-> I *think* that's checking the capabilities of the app that is accessing the
-> file, and not the fuse server. But I might be wrong - I have not pulled very
-> hard on that thread yet.
+On Mon, Jul 7, 2025 at 7:29=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+> > (It checks for "dead" or "killed" entries, but why aren't you using
+> > __lockref_is_dead() here?)
+>
+> What's the difference?  It checks for dentries currently still going thro=
+ugh
+> ->d_prune()/->d_iput()/->d_release().
 
-The init reply should be processed in the context of the fuse server.
-At that point the kernel hasn't exposed the fs to user programs, so
-(AFAICT) there won't be any other programs accessing that fuse mount.
+Just clarity. There exists a function and using it would make clearer
+what you're really checking for.
 
-> > 3. Darrick mentioned the need for a synchronic INIT variant for his work on
-> >     blockdev iomap support [1]
-> 
-> I'm not sure that's the same thing (Darrick?), but I do think Darrick's
-> use case probably needs to check capabilities for a server that is sending
-> apps (via files) off to access extents of block devices.
+> What are you using shrink_dcache_parent() for?
 
-I don't know either, Miklos hasn't responded to my questions.  I think
-the motivation for a synchronous 
+I don't. It's called by Ceph code, i.e. send_mds_reconnect(). A broken
+Ceph-MDS connection apparently triggered this busy loop.
 
-As for fuse/iomap, I just only need to ask the kernel if iomap support
-is available before calling ext2fs_open2() because the iomap question
-has some implications for how we open the ext4 filesystem.
+(I'm not a Ceph developer. I just care for the monthly Ceph regression
+that breaks all of our web servers on each and every Linux kernel
+update. Sad story. However, the Ceph bug I'm really hunting is
+unrelated to this dcache busy loop.)
 
-> > I also wonder how much of your patches and Darrick's patches end up
-> > being an overlap?
-> 
-> Darrick and I spent some time hashing through this, and came to the conclusion
-> that the actual overlap is slim-to-none. 
-
-Yeah.  The neat thing about FMAPs is that you can establish repeating
-patterns, which is useful for interleaved DRAM/pmem devices.  Disk
-filesystems don't do repeating patterns, so they'd much rather manage
-non-repeating mappings.
-
---D
-
-> > 
-> > Thanks,
-> > Amir.
-> > 
-> > [1] https://lore.kernel.org/linux-fsdevel/20250613174413.GM6138@frogsfrogsfrogs/
-> 
-> Thank you!
-> John
-> 
+Max
 
