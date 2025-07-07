@@ -1,98 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-54099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CD8AFB337
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:27:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E94AFB355
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 14:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B77144A1C60
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 12:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBF6420450
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Jul 2025 12:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FCC29ACE0;
-	Mon,  7 Jul 2025 12:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805D529B200;
+	Mon,  7 Jul 2025 12:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VWdqClbn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXZjKW+i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273C319F41C
-	for <linux-fsdevel@vger.kernel.org>; Mon,  7 Jul 2025 12:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D909229A31C;
+	Mon,  7 Jul 2025 12:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751891227; cv=none; b=fD81dKXxJF84somULFP3lS8JFzg47vcRX8P6n9bpeyDbNuM7Ie7lamaV64ZcLKAKAXh81O6R46HDMbXE1Mr3yfNbw5L1w8UHIB4nOIxrhbhLTATT95VcjmkKMC1wVdwFTeohHD1bBq5TWGc22qIuCtRSBaGATBe/DnmLV3Lpx6Q=
+	t=1751891565; cv=none; b=JGl55GcK2USJvtKsJhdz/wWVndeuB+RytIpg49CBZbvc6NdOM85A0HVVS9tvn6P8M2SsCrA5mtpXBk8tLD2hHme4nfqvdiIprIyTYQ38KeddNinnyAGRgcQqACmO7nkaxXFx7Sldo10Af2cafz1XGF+ohncKkX6EQn2iKI6GOWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751891227; c=relaxed/simple;
-	bh=N6aIrao9mvKWLRzYYG6kmQNDgyAReKkf4PPJ58kKg+c=;
+	s=arc-20240116; t=1751891565; c=relaxed/simple;
+	bh=CfU0NV7kq+gD9EOLFf/qtz9VpGifBztVaVGA4/ZDusk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovwRE1WGkonIVN2xMim/tfiYEE71X/o7coy3+DTWkoBGZ+t/bcO3pIDmJNWeONxhWK0EkE0YzRo/bepK+mGY5Ij4Z3E4YJCyX/0CszR3WxU/UUBRM4YSxIjoKmzDu3Pa+12aFdAqW9PZdlDpAKKGsXVPgrnecwrKiZicZ94vBJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VWdqClbn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751891225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHTeRzC+GAtalyuC61VSTswPDreUYA10fT25p2FdvD8=;
-	b=VWdqClbnL5DTDavf/VC57iQRyvqmO2pg5i3vlePnJpc9nApNQqLQh10DW4t+IVA/voyP/A
-	yzzWSuHMgADlmqb+8MEsC2abMSWAZ60RvOmLpTQ3hUzIwWpOhrXDpCaViwV8SLxNvgmTOC
-	7Ox+UeoxL87V3z1NImCDxWlSgSmv7O8=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-x0mJo_mOOaO5SLvWWltzzA-1; Mon, 07 Jul 2025 08:27:04 -0400
-X-MC-Unique: x0mJo_mOOaO5SLvWWltzzA-1
-X-Mimecast-MFC-AGG-ID: x0mJo_mOOaO5SLvWWltzzA_1751891223
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ade5b98537dso306396366b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 05:27:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751891223; x=1752496023;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KHTeRzC+GAtalyuC61VSTswPDreUYA10fT25p2FdvD8=;
-        b=MifTxnkHCnfS9x5f/jJiMt7Gu5WGbo6eglHpWM7G0PdWRpKG3ynpeZ4nGQD2ygLU6M
-         m1YA5yyc6nFxtti4Iy117Mrcq9xOD78uawJmTMBG/ij96G6IqMjh8paO6nn3bzDO8ivK
-         HoQTtQs9L18P4aGdnyBDhbh3HxG2cYV36uOJgW5NZvz42dKJ33XBjEjL6QAS9EdNKfRn
-         y/sHrcD7bZCw1A5yINWuYJye/Y2ZsZoRzC2WmhrQwRcPEgZlI30h+t27crzbiC/MhOfy
-         guzfhyG3wQgbEflYKf0mAhLlTXv8u7OorE5GESHw/UowBeX411Xbc1F1J8Iv0tjxY+Dh
-         f6WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9bk/1ZCbWSaUFKU97hfgT4QT+wb9rSY5MEs6EIp4nFUWeyCUSlEs4V4NXNfa7uPn+CGRNtoLlHUWq4wRj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2I7W+mOBM0O2sYoYF1PDnULSkETQ0NFtLOBAhnBOJ02ZLxHrK
-	SN8vZSv2R+eE/aLxH2o28bczTaJbevIcm9uauWZrj+iciGG8kydwlANZ+SxW1Pjw+RaRfOuwUco
-	EQQRuq3dNSRjAe1C2VVc7sRRyJ1aXl/QoPet8ZQZjEOY/+V6rFqxtWebtnmL7QgSNrQ==
-X-Gm-Gg: ASbGncsisDplR7tgBzkDfPFv/YO4b/w/Ko2k/uJQYG/McTBO+BUGRy2aN+TzJ44RU7s
-	sQ+fQ2fxZ5oEhmIrIsnA2pTYT5Eyi0xrIHl1sE6jdgQxd+r5UGq851G5BKCmNLFbYNUJhLmlWfh
-	w576tksDs3h65wCS7xnACiqBWHH9Pv2bjIFJWGBzYsN3BOltXtobvtd1db6ROUHH4J/ZZ4OABjc
-	6ak28gwLx5eD1YNfOk/obqKl1izoSKvuGAp7tzDOsGulCpxbTrXl3gOuoArROpiIBs0tcYmDEVQ
-	7lFnrxeKSOhGRZ1Itid4UJuJdp/5RbfDIVUBfe3NpA==
-X-Received: by 2002:a17:907:1b1c:b0:ae0:d903:2bc1 with SMTP id a640c23a62f3a-ae3fbe32085mr1269373266b.49.1751891222545;
-        Mon, 07 Jul 2025 05:27:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF+xNnEev9UxKSf7lcc6f2ZhivCo6t8UkYaBDX83sSiieaUIILsbAVwreWk30jTRbKc3uqazw==
-X-Received: by 2002:a17:907:1b1c:b0:ae0:d903:2bc1 with SMTP id a640c23a62f3a-ae3fbe32085mr1269369466b.49.1751891222070;
-        Mon, 07 Jul 2025 05:27:02 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d9263sm700724366b.32.2025.07.07.05.27.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 05:27:01 -0700 (PDT)
-Date: Mon, 7 Jul 2025 14:27:00 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuXlmFvpRmlGgGPI7ao5tlLAQoirvf5rKrXf5LYydkUrxBeYjJAfmSjNVwuv4lhiG23uO3XiTSx635MYhXGwHoEY1dp/Oy9bgJJ64N5ysAJbt4b+mqsGePXV6+gdEcEmcFvJMitEPAKR0HVK13XH+YQ3ISwyN45a5dQLLD+Zb3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXZjKW+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15722C4CEE3;
+	Mon,  7 Jul 2025 12:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751891565;
+	bh=CfU0NV7kq+gD9EOLFf/qtz9VpGifBztVaVGA4/ZDusk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RXZjKW+id2OFWIVfXHX4CHZNA7Md963dlYJJJ/M3grO58dvueHgO++FRbQLS3a2SR
+	 Incfbq0yBHgO2PNlGeHafKXwUHMSpexmDIG9+K57+FColmw+wBeF+eNlYwzPtDNWzV
+	 KywVyTYW+Efa/YKezvN3idKUF6rqZrUdp6Cfph3WvHeIWxhuv737A35QU57Y+SKJQP
+	 m6VKPYzQ95s2bSTaq6mpmw7eh+vQL+8O4DhOBsk17B0W3OGJ+uMcfbiiafHhOf9Vke
+	 kWc8n/hqSxNz+IUZ3IwqCTMEBQaasqIgBtF2oIBoyJfKPZSTpzlIA8tbt8tDJeSbna
+	 dtB2rw9Qaf1Sw==
+Date: Mon, 7 Jul 2025 15:32:38 +0300
+From: Mike Rapoport <rppt@kernel.org>
 To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Jan Kara <jack@suse.cz>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 0/6] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <rckjqvax4ciazuasmpiiflk6qgwnkfrcamw6xae4mvtofo3yxk@jj25of6o5ye2>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250701-quittung-garnieren-ceaf58dcb762@brauner>
- <uzx3pdg2hz44n7qej5rlxejdmb25jny6tbv43as7dos4dit5nv@fyyvminolae6>
- <20250707-alben-kaffee-da62c14bb5c3@brauner>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	syzbot <syzbot+3de83a9efcca3f0412ee@syzkaller.appspotmail.com>,
+	jack@suse.cz, kees@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] secretmem: use SB_I_NOEXEC
+Message-ID: <aGu-Zr4ltWloFuEf@kernel.org>
+References: <20250707-tusche-umlaufen-6e96566552d6@brauner>
+ <20250707-heimlaufen-hebamme-d6164bdc5f30@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -101,52 +61,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250707-alben-kaffee-da62c14bb5c3@brauner>
+In-Reply-To: <20250707-heimlaufen-hebamme-d6164bdc5f30@brauner>
 
-On 2025-07-07 14:19:25, Christian Brauner wrote:
-> On Mon, Jul 07, 2025 at 02:05:10PM +0200, Andrey Albershteyn wrote:
-> > On 2025-07-01 14:29:42, Christian Brauner wrote:
-> > > On Mon, Jun 30, 2025 at 06:20:10PM +0200, Andrey Albershteyn wrote:
-> > > > This patchset introduced two new syscalls file_getattr() and
-> > > > file_setattr(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl()
-> > > > except they use *at() semantics. Therefore, there's no need to open the
-> > > > file to get a fd.
-> > > > 
-> > > > These syscalls allow userspace to set filesystem inode attributes on
-> > > > special files. One of the usage examples is XFS quota projects.
-> > > > 
-> > > > XFS has project quotas which could be attached to a directory. All
-> > > > new inodes in these directories inherit project ID set on parent
-> > > > directory.
-> > > > 
-> > > > The project is created from userspace by opening and calling
-> > > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > > > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > > > with empty project ID. Those inodes then are not shown in the quota
-> > > > accounting but still exist in the directory. This is not critical but in
-> > > > the case when special files are created in the directory with already
-> > > > existing project quota, these new inodes inherit extended attributes.
-> > > > This creates a mix of special files with and without attributes.
-> > > > Moreover, special files with attributes don't have a possibility to
-> > > > become clear or change the attributes. This, in turn, prevents userspace
-> > > > from re-creating quota project on these existing files.
-> > > 
-> > > Only small nits I'm going to comment on that I can fix myself.
-> > > Otherwise looks great.
-> > > 
-> > 
-> > Hi Christian,
-> > 
-> > Let me know if you would like a new revision with all the comments
-> > included (and your patch on file_kattr rename) or you good with
-> > applying them while commit
+On Mon, Jul 07, 2025 at 02:10:36PM +0200, Christian Brauner wrote:
+> Anonymous inodes may never ever be exectuable and the only way to
+> enforce this is to raise SB_I_NOEXEC on the superblock which can never
+> be unset. I've made the exec code yell at anyone who does not abide by
+> this rule.
 > 
-> It's all been in -next for a few days already. :)
+> For good measure also kill any pretense that device nodes are supported
+> on the secretmem filesystem.
 > 
+> > WARNING: fs/exec.c:119 at path_noexec+0x1af/0x200 fs/exec.c:118, CPU#1: syz-executor260/5835
+> > Modules linked in:
+> > CPU: 1 UID: 0 PID: 5835 Comm: syz-executor260 Not tainted 6.16.0-rc4-next-20250703-syzkaller #0 PREEMPT(full)
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> > RIP: 0010:path_noexec+0x1af/0x200 fs/exec.c:118
+> > Code: 02 31 ff 48 89 de e8 f0 b1 89 ff d1 eb eb 07 e8 07 ad 89 ff b3 01 89 d8 5b 41 5e 41 5f 5d c3 cc cc cc cc cc e8 f2 ac 89 ff 90 <0f> 0b 90 e9 48 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c a6
+> > RSP: 0018:ffffc90003eefbd8 EFLAGS: 00010293
+> > RAX: ffffffff8235f22e RBX: ffff888072be0940 RCX: ffff88807763bc00
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > RBP: 0000000000080000 R08: ffff88807763bc00 R09: 0000000000000003
+> > R10: 0000000000000003 R11: 0000000000000000 R12: 0000000000000011
+> > R13: 1ffff920007ddf90 R14: 0000000000000000 R15: dffffc0000000000
+> > FS:  000055556832d380(0000) GS:ffff888125d1e000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f21e34810d0 CR3: 00000000718a8000 CR4: 00000000003526f0
+> > Call Trace:
+> >  <TASK>
+> >  do_mmap+0xa43/0x10d0 mm/mmap.c:472
+> >  vm_mmap_pgoff+0x31b/0x4c0 mm/util.c:579
+> >  ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:607
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7f21e340a9f9
+> > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> > RSP: 002b:00007ffd23ca3468 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+> > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f21e340a9f9
+> > RDX: 0000000000000000 RSI: 0000000000004000 RDI: 0000200000ff9000
+> > RBP: 00007f21e347d5f0 R08: 0000000000000003 R09: 0000000000000000
+> > R10: 0000000000000011 R11: 0000000000000246 R12: 0000000000000001
+> > R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+> 
+> Link: https://lore.kernel.org/686ba948.a00a0220.c7b3.0080.GAE@google.com
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Oh sorry, missed that, thanks!
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+> ---
+>  mm/secretmem.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 9a11a38a6770..e042a4a0bc0c 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -261,7 +261,15 @@ SYSCALL_DEFINE1(memfd_secret, unsigned int, flags)
+>  
+>  static int secretmem_init_fs_context(struct fs_context *fc)
+>  {
+> -	return init_pseudo(fc, SECRETMEM_MAGIC) ? 0 : -ENOMEM;
+> +	struct pseudo_fs_context *ctx;
+> +
+> +	ctx = init_pseudo(fc, SECRETMEM_MAGIC);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	fc->s_iflags |= SB_I_NOEXEC;
+> +	fc->s_iflags |= SB_I_NODEV;
+> +	return 0;
+>  }
+>  
+>  static struct file_system_type secretmem_fs = {
+> @@ -279,9 +287,6 @@ static int __init secretmem_init(void)
+>  	if (IS_ERR(secretmem_mnt))
+>  		return PTR_ERR(secretmem_mnt);
+>  
+> -	/* prevent secretmem mappings from ever getting PROT_EXEC */
+> -	secretmem_mnt->mnt_flags |= MNT_NOEXEC;
+> -
+>  	return 0;
+>  }
+>  fs_initcall(secretmem_init);
+> -- 
+> 2.47.2
+> 
 
 -- 
-- Andrey
-
+Sincerely yours,
+Mike.
 
