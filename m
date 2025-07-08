@@ -1,184 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-54290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E446EAFD5B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 19:51:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E52DAFD5ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 20:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805B23B3369
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 17:51:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C93F5852F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 18:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B2B2E6D26;
-	Tue,  8 Jul 2025 17:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75632E5432;
+	Tue,  8 Jul 2025 18:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ux6carKz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006B23398B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 17:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A051721C19F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 18:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751997089; cv=none; b=N4DhZUI2zNTKj/dPOgMwlbDcSgKSg4nzPgg3oSgq+SjMh3uip4FMcQq0ACOqWipIebmAkYP1GPb+xci1J+ZdxNDyNosexqno5WGYN0NeR3jic+0ulk8ZVego8GrVTQ1qMknAkh70vIc7G/fiTITPcNJWY6wKQUuTzLI76nuLEOM=
+	t=1751997809; cv=none; b=JHTTFm4DGTVtttQbHMoJxTMfgDmZl2KkFgeLZIJKJ8d2xCq1OdERIepEjpfs1o2lFnIB8W3+m/CUQ6+JiMsv3V46jkjlHgpFDwCwoaaG5dR6fT6OmJmbesNf1G0Nlo7tRuQZR2BOiTY0wJ/wUf2BEXfIckA9EzwflsHctsPm/9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751997089; c=relaxed/simple;
-	bh=hdC7r70RPgDlmwm1OAeL8pZtkckZQKLu01dxUvP+TxM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qWxmOq8zP5atf40ch2NSSAhr+bw9P7YyNojMcAfLQKqjUML9NgfXnFlO8ptYo/p/4XDwhvWE9yBH9hNJX5CXY4GvwopsXLpL3eFlcRSudirYxWv4MOKJjXVofhiv1Lo6mh6P7DRjRel3kr+QvMmigz5z3NKlUlbYyEeVwdy1QkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3df40226ab7so103055115ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 10:51:27 -0700 (PDT)
+	s=arc-20240116; t=1751997809; c=relaxed/simple;
+	bh=s4RZ8nQJieFScy8n8qpYU1+xTprPbswQodWfgBTVO6c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OIvzot2/5iwmGKX8AVxYBPCtWZtFb+H4lv8MWoe5HdJSEGTWFZxjHuPW0wItAqk31DiK+9D8rOrNguxssopBp/M1YAKdjLLytDW8IR251Lbh12RypQy0OjdKVKY9GT9wzMLYADgyKLBJoA/i8H155A4dH3FUSVLtudjbBItL0TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ux6carKz; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7398d70abbfso6574452b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 11:03:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751997807; x=1752602607; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x10LXm7PeGMN7MOtWLfXfbWmNGz9S10d7VYiV0yVtCU=;
+        b=Ux6carKzEVXp2mCssYyO7weq0585vmPNpUsnYFGzybJ/wowAHWNcLxUgnkKYz2ENB9
+         ypypBSeZSMxOsSegDpKOQsPo5PkFc/MvwoGgFU+dxlHoygIhjPODiCGpaETdVNmNcwMh
+         Lzq60vumwNC4RRZVRCWfdnHK+AzOy9h7mC0WEJ54lYIG3SiUIvLWvLsVczuK/9nlWCZF
+         toXcYjYu1vWUOVOSOOyiuZNaxrVyzm7fUt31WElXqPds/9/R18ckh+tD5X6XvyDT23BR
+         KR5O0+LqJfAksBDJu+NzPqm8tqJEHnsuRuIV/QqAEn/hLTG7ZfbEOvP56EYHBcKUKkIf
+         osDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751997087; x=1752601887;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QivMVPmeSsL39G2UjlsKNrxjQDoPllG4tQvCw+AxOuI=;
-        b=OcKSFqY5+WRdMk0v6sALbLpv23FNPF9uzaEqezM2ZqdZdij+OJHzDUjHmW9OVOM3V8
-         TFFtegvFcKCl9OBqQKmQonLlOH+NOuyRqLsp8JVcollZEgZ9Ypqms6vgVIWSsOyM+Meu
-         y0DClA6vtQzGA2ojFryZzM/cpi3vJ6ebT9H4TAo7+DM0AlPytcFCPVijJdsoicbxiru4
-         XYpSIZIuzNIXU2NCzyEzFatn4+sCELccBUcBryywRUFEKqW3fBYhX/kiudaZheLUWaOn
-         j5eDDDqCu47ok0O4qP8QOL/h0GkCVLY3t/5gCQZuU12npTxvcmyUFcxdEp2/e8IspeVw
-         vbqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGjEOKPK7rPV6Tcf9NiOxj70C9eqaebS6NkRYJPa0+nNTUsdCjn9ULhKPLPaXeI0dKV9OlEZhIiQm/LYTL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvhjS2r46XeZKUsEFYmjsvQop9n4Kl2zAmlWNL5vDehJXuwNlf
-	O3sk2UbaNlnLPCSyiTwHAWEmZ2Y4uG8dzSpJ46xxBRq0O1seKT9teX6og22pfi+9Dk2nHOEAYmS
-	fyG83hGD0GoH+lG31ekVCVx0VgmK2qjTLa2IHhWt6+t1/eEaKxYdNLfaN5y0=
-X-Google-Smtp-Source: AGHT+IFJ0ow357/KvIuZWI/drLIBdqi1OXbTPZEnOICSZU1YqbDRm2C7oA2VPpmOTEpP98i1pp4b0VheqTAHFjQ/EeanlAObkzxr
+        d=1e100.net; s=20230601; t=1751997807; x=1752602607;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=x10LXm7PeGMN7MOtWLfXfbWmNGz9S10d7VYiV0yVtCU=;
+        b=M3WIO1ai15uw0EYS4lTpOBEwh+dizJctu8i8TSViVA3n+DoJZeL7KEcgeuF+hoLk0Y
+         iEx/YsfBaB5ykkfKiuJfAlL93KfLQjec9fSj9xxE839toJmmhDVbdbiIQSTn/kbLBBaN
+         0oowaHoE9TtXAi+oUT/nJitzkj58ISH1nsINIhgkhLg/5jqZcEaGZn4Mz8rGza9aduZV
+         B0dF09Ntj6AcBWh2a9r6YFSqPTA22JOhLlkMaLdDnogGmOQwx0mdqdlTl8XAnH8EiShY
+         jFtFRNztEVIhuGVtNCius0+P0/JpH109FeFUEvfydz8Ku1qRlEWwmHnnb9t4c4/xBGm0
+         sh+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSI+2kWqvBp6wblFZWqnHZF8i/b71y/zBsitBvJmMR5YucUDLPB2XwvNMyixprzgKEiNrj0pbIZvW6SvuX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTxO6v3/Lqize49sFENGugDlpFPat/wsAyOrFX6gf9M0OInMHt
+	rUvDj2Q0wXQVLE00stA+UAfruYJnUH7V7z/DF8HgMmGnR/u9ruLHfqITDP/M5vjYL6tkOxQpaRt
+	w4ggE2A==
+X-Google-Smtp-Source: AGHT+IFe4SBpWGzwWywsUZpN2vnR08oPkVmXJnGtvFDNSO2RDy7ZqC2nSucMyoDDGRjNc9DXvg6wKac3oiE=
+X-Received: from pfbna28.prod.google.com ([2002:a05:6a00:3e1c:b0:748:f98a:d97b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:549d:b0:1f5:717b:46dc
+ with SMTP id adf61e73a8af0-22c7f545df3mr622282637.27.1751997806375; Tue, 08
+ Jul 2025 11:03:26 -0700 (PDT)
+Date: Tue, 8 Jul 2025 11:03:24 -0700
+In-Reply-To: <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1787:b0:3dd:be49:9278 with SMTP id
- e9e14a558f8ab-3e1636d6289mr7374895ab.0.1751997087086; Tue, 08 Jul 2025
- 10:51:27 -0700 (PDT)
-Date: Tue, 08 Jul 2025 10:51:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686d5a9f.050a0220.1ffab7.0015.GAE@google.com>
-Subject: [syzbot] [nilfs?] kernel BUG in may_open (2)
-From: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, konishi.ryusuke@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, mjguzik@gmail.com, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
+ <aGxXWvZCfhNaWISY@google.com> <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
+ <006899ccedf93f45082390460620753090c01914.camel@intel.com>
+ <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+ <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
+ <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com> <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
+Message-ID: <aG1dbD2Xnpi_Cqf_@google.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Vishal Annapurve <vannapurve@google.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	Jun Miao <jun.miao@intel.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
+	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"tabba@google.com" <tabba@google.com>, "amoorthy@google.com" <amoorthy@google.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"keirf@google.com" <keirf@google.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"aik@amd.com" <aik@amd.com>, "usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, Fan Du <fan.du@intel.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "steven.price@arm.com" <steven.price@arm.com>, 
+	"muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Zhiquan1 Li <zhiquan1.li@intel.com>, 
+	"rientjes@google.com" <rientjes@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
+	Erdem Aktas <erdemaktas@google.com>, "david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"hughd@google.com" <hughd@google.com>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
+	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
+	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
+	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
+	"will@kernel.org" <will@kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jul 08, 2025, Rick P Edgecombe wrote:
+> On Tue, 2025-07-08 at 10:16 -0700, Vishal Annapurve wrote:
+> > > Right, I read that. I still don't see why pKVM needs to do normal
+> > > private/shared
+> > > conversion for data provisioning. Vs a dedicated operation/flag to ma=
+ke it a
+> > > special case.
+> >=20
+> > It's dictated by pKVM usecases, memory contents need to be preserved
+> > for every conversion not just for initial payload population.
+>=20
+> We are weighing pros/cons between:
+>  - Unifying this uABI across all gmemfd VM types
+>  - Userspace for one VM type passing a flag for it's special non-shared u=
+se case
+>=20
+> I don't see how passing a flag or not is dictated by pKVM use case.
 
-syzbot found the following issue on:
+Yep.  Baking the behavior of a single usecase into the kernel's ABI is rare=
+ly a
+good idea.  Just because pKVM's current usecases always wants contents to b=
+e
+preserved doesn't mean that pKVM will never change.
 
-HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=107e728c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=72aa0474e3c3b9ac
-dashboard link: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11305582580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10952bd4580000
+As a general rule, KVM should push policy to userspace whenever possible.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/605b3edeb031/disk-d7b8f8e2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a3cb6f3ea4a9/vmlinux-d7b8f8e2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cd9e0c6a9926/bzImage-d7b8f8e2.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2a7ab270a8da/mount_0.gz
+> P.S. This doesn't really impact TDX I think. Except that TDX development =
+needs
+> to work in the code without bumping anything. So just wishing to work in =
+code
+> with less conditionals.
+>=20
+> >=20
+> > >=20
+> > > I'm trying to suggest there could be a benefit to making all gmem VM =
+types
+> > > behave the same. If conversions are always content preserving for pKV=
+M, why
+> > > can't userspace=C2=A0 always use the operation that says preserve con=
+tent? Vs
+> > > changing the behavior of the common operations?
+> >=20
+> > I don't see a benefit of userspace passing a flag that's kind of
+> > default for the VM type (assuming pKVM will use a special VM type).
+>=20
+> The benefit is that we don't need to have special VM default behavior for
+> gmemfd. Think about if some day (very hypothetical and made up) we want t=
+o add a
+> mode for TDX that adds new private data to a running guest (with special =
+accept
+> on the guest side or something). Then we might want to add a flag to over=
+ride
+> the default destructive behavior. Then maybe pKVM wants to add a "don't
+> preserve" operation and it adds a second flag to not destroy. Now gmemfd =
+has
+> lots of VM specific flags. The point of this example is to show how unifi=
+ed uABI
+> can he helpful.
 
-The issue was bisected to:
+Yep again. Pivoting on the VM type would be completely inflexible.  If pKVM=
+ gains
+a usecase that wants to zero memory on conversions, we're hosed.  If SNP or=
+ TDX
+gains the ability to preserve data on conversions, we're hosed.
 
-commit af153bb63a336a7ca0d9c8ef4ca98119c5020030
-Author: Mateusz Guzik <mjguzik@gmail.com>
-Date:   Sun Feb 9 18:55:21 2025 +0000
+The VM type may restrict what is possible, but (a) that should be abstracte=
+d,
+e.g. by defining the allowed flags during guest_memfd creation, and (b) the
+capabilities of the guest_memfd instance need to be communicated to userspa=
+ce.
+=20
+> > Common operations in guest_memfd will need to either check for the
+> > userspace passed flag or the VM type, so no major change in
+> > guest_memfd implementation for either mechanism.
+>=20
+> While we discuss ABI, we should allow ourselves to think ahead. So, is a =
+gmemfd
+> fd tied to a VM?
 
-    vfs: catch invalid modes in may_open()
+Yes.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17f94a8c580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14054a8c580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10054a8c580000
+> I think there is interest in de-coupling it?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com
-Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
+No?  Even if we get to a point where multiple distinct VMs can bind to a si=
+ngle
+guest_memfd, e.g. for inter-VM shared memory, there will still need to be a=
+ sole
+owner of the memory.  AFAICT, fully decoupling guest_memfd from a VM would =
+add
+non-trivial complexity for zero practical benefit.
 
-VFS_BUG_ON_INODE(!IS_ANON_FILE(inode)) encountered for inode ffff8880724735b8
-------------[ cut here ]------------
-kernel BUG at fs/namei.c:3483!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5842 Comm: syz-executor360 Not tainted 6.16.0-rc5-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:may_open+0x4b1/0x4c0 fs/namei.c:3483
-Code: 38 c1 0f 8c 1e fd ff ff 4c 89 e7 e8 69 25 ec ff e9 11 fd ff ff e8 9f cd 8a ff 4c 89 f7 48 c7 c6 40 40 99 8b e8 70 cb f2 fe 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003f87940 EFLAGS: 00010246
-RAX: 000000000000004d RBX: dffffc0000000000 RCX: 158c895b4c6f3300
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000109042 R08: ffffc90003f87667 R09: 1ffff920007f0ecc
-R10: dffffc0000000000 R11: fffff520007f0ecd R12: 0000000000000000
-R13: ffffffff8e29ca80 R14: ffff8880724735b8 R15: 0000000000000006
-FS:  000055555ad6e380(0000) GS:ffff888125c51000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f084598dd30 CR3: 0000000073c6a000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- do_open fs/namei.c:3894 [inline]
- path_openat+0x2d91/0x3830 fs/namei.c:4055
- do_filp_open+0x1fa/0x410 fs/namei.c:4082
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_open fs/open.c:1460 [inline]
- __se_sys_open fs/open.c:1456 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1456
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ffa1ddded59
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcaa4b44f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ffa1ddded59
-RDX: 0000000000000000 RSI: 0000000000109042 RDI: 0000200000000000
-RBP: 00007ffa1de725f0 R08: 000000000001f1b6 R09: 000055555ad6f4c0
-R10: 00007ffcaa4b43c0 R11: 0000000000000246 R12: 00007ffcaa4b4520
-R13: 00007ffcaa4b4748 R14: 431bde82d7b634db R15: 00007ffa1de2803b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:may_open+0x4b1/0x4c0 fs/namei.c:3483
-Code: 38 c1 0f 8c 1e fd ff ff 4c 89 e7 e8 69 25 ec ff e9 11 fd ff ff e8 9f cd 8a ff 4c 89 f7 48 c7 c6 40 40 99 8b e8 70 cb f2 fe 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003f87940 EFLAGS: 00010246
-RAX: 000000000000004d RBX: dffffc0000000000 RCX: 158c895b4c6f3300
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000109042 R08: ffffc90003f87667 R09: 1ffff920007f0ecc
-R10: dffffc0000000000 R11: fffff520007f0ecd R12: 0000000000000000
-R13: ffffffff8e29ca80 R14: ffff8880724735b8 R15: 0000000000000006
-FS:  000055555ad6e380(0000) GS:ffff888125c51000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f084598dd30 CR3: 0000000073c6a000 CR4: 00000000003526f0
+> Is the VM type sticky?
+>=20
+> It seems the more they are separate, the better it will be to not have VM=
+-aware
+> behavior living in gmem.
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Ya.  A guest_memfd instance may have capabilities/features that are restric=
+ted
+and/or defined based on the properties of the owning VM, but we should do o=
+ur
+best to make guest_memfd itself blissly unaware of the VM type.
 
