@@ -1,172 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-54263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B82AFCDDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 16:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D8FAFCDCD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 16:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD0B1C21981
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 14:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55567162778
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 14:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE702E06C9;
-	Tue,  8 Jul 2025 14:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACAD2DEA98;
+	Tue,  8 Jul 2025 14:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mn/oQYIe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfwsoFJs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663321E521B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 14:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB8813957E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 14:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985379; cv=none; b=iwttTv5dbgw9BjafZXDAwpr5UyxKgQfIqJMNdcN+PcPlNJLKm8N5ykwk7j0rQG+2c7OC4SEmio8aP/p/MjjsxMIx6Bt6VzqbwybonJY8PPLzSLi8MZcMNM2XYinlxRBsDDkOYgy0oqELjWsdv4pmYBcFpTQZT40Ioz6NB7KfNkM=
+	t=1751985409; cv=none; b=HSLFb7k6V+Ml7n0tW4iHKVOkvoYoB5Gv4i5QclAAHnKhZ3ulR8mawMAoFFA4i5YX/+Erd5GZQ1LCK3zICuLGtID9DpTmrtWAdgdsjXbKWN4bGQi3w8m7cid9S2cpux/yBSlwkr274bB61PXuXsPb8qpn2d6O70OuAExvsnSI72E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985379; c=relaxed/simple;
-	bh=eItTEC0AS4+h2MpLvRkfrNJoyNuylLvnOE8SHP5q41A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sOr0An5REFo2EDV5YGdR3V5LilGSfRHMvWORi7KqpRKjfq5I3IX6Jw9zYz2H2lnIeggpuT1W1kCtNt/a4gmS0BcbXY/VjyuiV73bS3q9MzOS9vPSpT8pX6ocJLZK8Y/TGQjs8LptEXy2riytji3e2jPjVLQOUfFBGFP4/V4h22A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mn/oQYIe; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1751985409; c=relaxed/simple;
+	bh=AkQyG3gG9KfAFGqEYJu0o/6Iq2snADOYTmejdFYnKhk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YcYGp53FVNxc3X8Y3EkseWf5ZE9ySERdOQbLV1PyGVupytJej1253q8RUms59Os6D1szmSZxZhm48HsAv4lv7kcNwqBeTMy1HJIHArh7roMhy6ybUqOH9as8rNKTN0IE+b/fGXQniZs7ztNezk9KaHBLqGdIptnMJtKVxg5oh3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfwsoFJs; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad572ba1347so679057666b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 07:36:17 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so8705444a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 07:36:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751985376; x=1752590176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mg6hK8IwGMQCITUUgOiCjJbo0MywPHfvrNA1CIQ31xU=;
-        b=Mn/oQYIe/LwnGyUVw6abX6FbGonG86JlrZiIUUBr3/bHg0JKLJXUjZu6GbFEuWxHqf
-         u+wYfDHR4Dz3lbKDCfNkMWz4p+Fo+U9Jq0shyQYooADue8NEOxZtXg69sKaxzN0Kjhdm
-         A2pH5OePeQsuKMLn5jSypHrmKqzNwaSzL4G1qIXMC9/h6KOO5k5SWExTwAfNi9DHnm/x
-         cnhUf4Tt2D7QYVsm88h+I0E0TQRM8YO5x2vrANa4nVJrILi1ZcK2TuxbbHGcYLJpCqNn
-         fDZxZHqZ2wg7lpWzMdVamKlydG3WE04/jo9x8EqVFx0doEXJKexJK3EhGJnPK4VpczM1
-         A31A==
+        d=gmail.com; s=20230601; t=1751985407; x=1752590207; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfYa+MIvBstRB4pWjBQinCREMpT2aEAHSxncmyRtqYs=;
+        b=SfwsoFJszYfEi1PkosPaH6sp2t6GNibWH4MDPSlLPMKaQ4xGmYKnPJc60JaH9y1mAE
+         Ym8teOEA/5Ro3N2gSz0syxxP9u3rJiVjHPauRkOnfn86ZZKOQy3envWW+KLbX3jETgUP
+         nx7xvEJ5wM3+08Pbq9X6FF7w2zAn2KLze1eS5oOaWNk6/scKJ8DDnHDd5DKAGxH41dLr
+         VyleYI0FJxwqyttvGRn00/aRJ2XjNT2f+j5ejoUMDtgSUSuxnrQj+F9DFt0GQ9N5FqgJ
+         dgJN+B6/a6leFnzFa6eWXGrzXEIVaHtd+6lwdLPl/LXOYLbO0LTD6ceDtxL+LrSSJNlZ
+         j1sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751985376; x=1752590176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mg6hK8IwGMQCITUUgOiCjJbo0MywPHfvrNA1CIQ31xU=;
-        b=GeWzXrC8j2BD+Td/ChyjPNoTrwrsa/a9sVqbaKhDz+wLRr5Kq7eB/ULXnos+eCAIhI
-         WYVLnbDH9iBeCV/++Dk5ixaTRrYWENZKb8Sjconl0fV5sbILrbupqkcJO88penfHalnQ
-         KT8JVwSTradUnWLaPe5y6S9RyvSi1UhBf/fVuCCeWPMR12ww7+1toqjFuNoV5UKvetJr
-         KTdr1vdjAKY8guPBqCEVgPOi0N9SnS+oCWo3GwFKU2/bJOXfPZS1FbblfNer/xhhCnjx
-         TtvOBepwA+4Uyia9dVrodmaKztnvMI0Nhdx/EmLIJ/3prFPTcP10a0Odk8usg/dMQhet
-         qy3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWU0XbK9a1IHb9UjubJ8HC9aVYaHtcQwkxPWuMlQ9N8Ei2tC0yKbHnEJhnmRU+TafFmjFQ8rSBu/0TNc9Nx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS4qvv1K/ufb6vAcb4l2raKTVIhPOl9xJHWrMLkBCiNXrg04Wt
-	nT34slWyLfoZSr+XKaZ1mvQkMs4hKsUxG15erbzKMDYkiaB6hBLYqCcHs4AOtat1k7+zg3plZUR
-	Hdx5ACz73n6Pjdxfm5Gm47gmgRgnKOXo=
-X-Gm-Gg: ASbGncsYER+aNkWsdUP/RJmhAk1GYtyjBJAmxztC8RmlEYPAor0alj1dgWii5NjR7yV
-	vfMBlFMQOIkcFXJ/i+cZjHvRhscm6d1h2tBlvSHuD8qCfsG703Vew1qIFVTYbaTj1RWDgVM6mjT
-	TWhgKRf+VWol9R9AqwPux+xtTsIdUGQ+nfYZ9w38qLj+Y=
-X-Google-Smtp-Source: AGHT+IEMxVuWjlKRP7cK8e1gB4nozp44khtN1FIPB/5HLkz4EX7Aqb2EXlV+o1/CDvxjADY04jN8nwIUmL12oirCXjc=
-X-Received: by 2002:a17:907:6ea3:b0:ae3:6744:3680 with SMTP id
- a640c23a62f3a-ae3fe7f4260mr1657071466b.42.1751985374691; Tue, 08 Jul 2025
- 07:36:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751985407; x=1752590207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kfYa+MIvBstRB4pWjBQinCREMpT2aEAHSxncmyRtqYs=;
+        b=sDVfEsqym6BZPOLhp4tBEFqTwKRlFzDoKqIy5BJgG0HYkSI9Xd0mSlBXsOfljmoOwH
+         eQHnOpgWNj1j/GYumVJSzlz7BDcMKYHe9twrlyih6xf8KttZQZJVFHFkwoBZxTU2vJRj
+         i/AocO8eK1OHDUxHR8LD88FjEQONgcvfVsEzWZUjxg8Wc0QVT/AHlTxpTEW8564TNplu
+         HEV+8CVRAcprlEi3kAuZoUorJyY3CkfJARkTg4kmEg/uhj2hWjfp8mMHHRfDIkc0HuxQ
+         osls4glfOzGcTVfFJ96JZtCKLfACoqQb0L481w7t3gw9dKutiL0a2xjKdxoj6pipHbgr
+         2+Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCW11zdvG2REatv8brj/DHJbHljuJYQQfR+Kj4Ij4uXSTyKl7Witk5G4mIRsspYau6PcYpJg479ol2Scx/3l@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfZlBuNshs0bj3Hpema9JpItgIAGWACfjkgHg+JTAkVgHbibw2
+	AhclRege7qZuljqqTIjSG6tg0k2wmgL/9XvVGGWwTGAuomn6Q6wWpdf3
+X-Gm-Gg: ASbGncvCEMJVWvLG67wQkMF9JdLagwIrQ7mAYTtRhixAtCy4Mk1HXwnM3Vw+Tpm1RPi
+	Q8wPtb/AaOzvuwyWHRt23l+m4mtx8NdsW0NlN8UA1CH0eDF3RvhSeeX+vRmmZW1RY7hcyeIYojA
+	3YbP7hPHb1524kXh3OXiVeUpVSwuOVseFrDINj50k+/Ienp8v6SD0oIwY8tkhOFLXClgSoAcUHv
+	DY0p96abiEokBmB320S5pcY0jK/rqoIz5+U0r4XubtZ4JeZHGP+jKU1BYwUsrrYE70kDqadDPH2
+	wzwU2jKCq2uY3eJ9KMmjLArteaXY69tsEIGqJqLxM3/x043ckmMGyclIMl8JkrsjfSlhs9KvK/3
+	WhB1Nxh4u3gS+9aQXQ380P8PmHi9z/F24c79T+KreuemCfxSfsRRb
+X-Google-Smtp-Source: AGHT+IFCYBTnW+gQjlINzUF5Tz0/iqz7/Vc87sTyhWC+MYk+OdUOzAknUPozquW4OLwHJnUdcgf96g==
+X-Received: by 2002:a05:6402:13d1:b0:604:df97:7c2 with SMTP id 4fb4d7f45d1cf-60fd2fb036fmr13909297a12.2.1751985406233;
+        Tue, 08 Jul 2025 07:36:46 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fca696574sm7393068a12.28.2025.07.08.07.36.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 07:36:45 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/2] More fsnotify hook optimizations
+Date: Tue,  8 Jul 2025 16:36:39 +0200
+Message-ID: <20250708143641.418603-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxi8xjfhKLc7T0WGjOmtO4wRQT6b5MLUdaST2KE01BsKBg@mail.gmail.com>
- <20250701072209.1549495-1-ibrahimjirdeh@meta.com> <CAOQ4uxhrbN4k+YMd99h8jGyRc0d_n05H8q-gTuJ35jkO1aLO7A@mail.gmail.com>
- <pcyd4ejepc6akgw3uq2bxuf2e255zhirbpfxxe463zj2m7iyfl@6bgetglt74ei>
- <CAOQ4uxiAtKcdzpBP_ZA2hxpECULri+T9DTQRnT1iOCVJfYcryg@mail.gmail.com> <ggruapqox23obwimkajdj257ffdrhziwk3tbrorqx3wz7qcmm2@epcyf6cqxk27>
-In-Reply-To: <ggruapqox23obwimkajdj257ffdrhziwk3tbrorqx3wz7qcmm2@epcyf6cqxk27>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 8 Jul 2025 16:36:02 +0200
-X-Gm-Features: Ac12FXxJ3eyevk8pYtQfVbVNNhgRIP1WYQtRXrQhz2EVTzs8DhOgg8wCXY8B5as
-Message-ID: <CAOQ4uxjioLNeMV_9vBp94nkjic4D_4zfM-7oru0wTivG=x6+KA@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: introduce unique event identifier
-To: Jan Kara <jack@suse.cz>
-Cc: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, josef@toxicpanda.com, lesha@meta.com, 
-	linux-fsdevel@vger.kernel.org, sargun@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 8, 2025 at 3:43=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 08-07-25 14:58:31, Amir Goldstein wrote:
-> > On Tue, Jul 8, 2025 at 1:40=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > > @@ -1583,6 +1583,16 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int,
-> > > > flags, unsigned int, event_f_flags)
-> > > >             (class | fid_mode) !=3D FAN_CLASS_PRE_CONTENT_FID)
-> > > >                 return -EINVAL;
-> > > >
-> > > > +       /*
-> > > > +        * With group that reports fid info and allows only pre-con=
-tent events,
-> > > > +        * user may request to get a response id instead of event->=
-fd.
-> > > > +        * FAN_REPORT_FD_ERROR does not make sense in this case.
-> > > > +        */
-> > > > +       if ((flags & FAN_REPORT_RESPONSE_ID) &&
-> > > > +           ((flag & FAN_REPORT_FD_ERROR) ||
-> > > > +            !fid_mode || class !=3D FAN_CLASS_PRE_CONTENT_FID))
-> > > > +               return -EINVAL;
-> > > > +
-> > > >
-> > > >
-> > > > This new group mode is safe, because:
-> > > > 1. event->fd is redundant to target fid
-> > > > 2. other group priorities allow mixing async events in the same gro=
-up
-> > > >     async event can have negative event->fd which signifies an erro=
-r
-> > > >     to open event->fd
-> > >
-> > > I'm not sure I follow here. I'd expect:
-> > >
-> > >         if ((flags & FAN_REPORT_RESPONSE_ID) && !fid_mode)
-> > >                 return -EINVAL;
-> > >
-> > > I.e., if you ask for event ids, we don't return fds at all so you bet=
-ter
-> > > had FID enabled to see where the event happened. And then there's no =
-need
-> > > for FAN_CLASS_PRE_CONTENT_FID at all. Yes, you cannot mix async fanot=
-ify
-> > > events with fd with permission events using event id but is that a sa=
-ne
-> > > combination? What case do you have in mind that justifies this
-> > > complication?
-> >
-> > Not sure what complication you are referring to.
-> > Maybe this would have been more clear:
-> >
-> > +       if ((flags & FAN_REPORT_RESPONSE_ID) && (!fid_mode ||
-> > +           ((flag & FAN_REPORT_FD_ERROR) || class =3D=3D FAN_CLASS_NOT=
-IFY))
-> > +               return -EINVAL;
-> > +
->
-> Right, I can understand this easily :) Thanks for clarification.
->
-> > Yes, !fid_mode is the more important check.
-> > The checks in the second line are because the combination of
-> > FAN_REPORT_RESPONSE_ID with those other flags does not make sense.
->
-> But FAN_REPORT_FD_ERROR influences also the behavior of pidfd (whether we
-> report full errno there or only FAN_NOPIDFD / FAN_EPIDFD). Hence I think
-> the exclusion with FAN_REPORT_FD_ERROR is wrong.
+Jan,
 
-I keep forgetting about this one :)
+Following v2 addresses your review comments on v1 [1].
 
-Yeh, better leave it out then.
-That should be enough:
+Changes since v1:
+- Raname macro to FMODE_NOTIFY_ACCESS_PERM()
+- Remove unneeded and unused event set macros
 
-+       if ((flags & FAN_REPORT_RESPONSE_ID) &&
-+            (!fid_mode || class =3D=3D FAN_CLASS_NOTIFY))
-+               return -EINVAL;
+[1] https://lore.kernel.org/linux-fsdevel/20250707170704.303772-1-amir73il@gmail.com/
 
-Thanks,
-Amir.
+Amir Goldstein (2):
+  fsnotify: merge file_set_fsnotify_mode_from_watchers() with open perm
+    hook
+  fsnotify: optimize FMODE_NONOTIFY_PERM for the common cases
+
+ fs/file_table.c          |  2 +-
+ fs/notify/fsnotify.c     | 87 ++++++++++++++++++++++++----------------
+ fs/open.c                |  6 +--
+ include/linux/fs.h       | 12 +++---
+ include/linux/fsnotify.h | 35 +++-------------
+ 5 files changed, 68 insertions(+), 74 deletions(-)
+
+-- 
+2.43.0
+
 
