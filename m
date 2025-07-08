@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-54265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4AEAFCDDD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 16:38:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC86AAFCDCF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 16:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D002418854DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 14:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA8503A757C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 14:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541972DFA37;
-	Tue,  8 Jul 2025 14:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACBC2E03EE;
+	Tue,  8 Jul 2025 14:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ov6ggaU+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+5JoWoo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37D4204583
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 14:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53C92DCF69
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 14:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985410; cv=none; b=Jc35GTNPVujuvTNgXNTorQODyJdjULEQaIVHq066AJe0pRASsBo1NLXnQZOw0FtqKBoklS2dxq81VWSmKvwJUWElYq9ergb7te5fzytDm0/MCtQC4w1j8iENCLyU15L0SCF6cWNfM8eBFfxmaL5xdOmfeuKckIXpAFnUbN81nqk=
+	t=1751985411; cv=none; b=Cdi54+IOelKYluYSyAqIj06FsF/9tTu6uiEUgBCC2SrS7Ijgk6QYPzZ0Ru09aijHWO/GQmW780+WgPglDc+OsiZSI9714EGRzh1rZvZ4m4uMMi6D8x/bpmdlEA/TPvXDZasVlxpfIpWE7CCDBv3FyXt++FlLZtOAPYOB+GezgqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985410; c=relaxed/simple;
-	bh=7dzfgQg2JBiFE78BxTAiwyGkiyrRuSD1MBJj1SCwcyg=;
+	s=arc-20240116; t=1751985411; c=relaxed/simple;
+	bh=bsS3HPmJYVjTetkJVELE+6ta+HXZ1fkN/b76FccwPBM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OcNx2anlj+03A68vXTxh1KmJf8qPxuCBeuaLN8OVtfqRgkj1CiW9dbWrRoU/+vsBf7u+2GoFzAeNhvsw+nTOg8A/1rlgM0YTcYrFJ1jvZC5ReXUZvVH3yNT5M+ht6fV9XM4binDmNv+LvCok7bKrsQjGA6WAg69Cc4S9Kc3G5mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ov6ggaU+; arc=none smtp.client-ip=209.85.218.49
+	 MIME-Version; b=isAFtgPxGKq8hyUjnRP3DS8DF7SeEWbL4cu9OumftGFo6Z2u9SqYuZyBYFEFdyo6l7XzD32RlgARUS86mZc1WtzJcMwrrg90kH9ZjnFSo2IMsjx7GYjn85/FvSB2MjlZYwQV3rkh2AK0f0BR+4haXGYK445nHi+Arez/eRHwUPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+5JoWoo; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ade76b8356cso810985766b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 07:36:48 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso6875508a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 07:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751985407; x=1752590207; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751985408; x=1752590208; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AZf9Smz1pxb3AVnyiuhtq9+Tg8jZ3gcbrAnTUdRmFtw=;
-        b=Ov6ggaU+xTckFQBxI0V3hJgEnmtA0YxnpOoiFugn42iePFi8/tixHyEw/7FiXuAUFS
-         poIWr9mMyuAP6LBzbwDsklDmhWDkbj6LVJpAnJuH3O/SBgEhB8wOx8XFGYi1f3xoYIl6
-         E6sfgOfV2Zg+/BEdpox2wxRMCignP5YnR5woCjRd5BODCitMUQI26c88zXFAeS7K3IMt
-         WFKv9l58CKfSRryOroZz6XmPRk456b2fUh+DEPh4SLzCoLe2+G+U+tDDVaUX/KW+EVis
-         0/kv2W0Z9G1wFGuxFWb9CCPiXX9zFVBiBzb5hN98SBZ7Aj5cWgMDbaMf5Mp7zSDJEfvt
-         fkrg==
+        bh=WHVgvqDx/iassdOkV8iptfaZAs4cjl5RgKKkty6LflM=;
+        b=S+5JoWoo4VHEVfHed4ZHvGW1hyCTgmAWABiwR5UDNPj6Yy3JgW/Gutf1Qt9hrNngnq
+         2+Tru3M3bRhnamosuf0eWPU65epRwGCNW3F1sPyIoJd95aK3/LqmCYuqZ6cWuawq/D38
+         2i4l6rJ57jddUtA0u3UZowpoTLy0z6OTH410IQ8LArXkTe/z977gMJlUcQER/HCTGDNt
+         eEnPoSeIU/80+BwZiDATVCpXR92fHQTWDz96H43LpzSVC8pT54cpO4NMRJ+5p5KRdWJe
+         8lH0a49Ea6O+bncBrfDhnQ4+1UZG656YJ7EVsqKr/XyfFZNkRosEc1UVQmwB0W+XCt0T
+         A8Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751985407; x=1752590207;
+        d=1e100.net; s=20230601; t=1751985408; x=1752590208;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AZf9Smz1pxb3AVnyiuhtq9+Tg8jZ3gcbrAnTUdRmFtw=;
-        b=dxNKQKilWNZXR0q83LRpAAeZEIrl6KEHErExXE2y1eJelAN29QlyaCGT7WKZolWNaA
-         ajNhqlEvsHYEtrLHyjwPsUumApIV6OZWhZgU1peL5LwMoJOv5A2UKX9xJ1m+zZkqyWHu
-         26WFKGvLStcyRUKyvn6srGRnf7vT41OTcrk7p0xoxLIztAxEyDIPIpM2/5FGWljCGYcj
-         QnUZOKNxSgZYqVRUH7+s33IyMbecWeCnbeb3RPiGre+EA00TNu8IRzrUGpeQyo5KJMmX
-         trKwKqFlRdVWvZnYod2htP+bZUcsu8rCSShgQzWjXvTZ07yntbr4FiBXcrtn1zNi/lo9
-         YbLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFrQeybdB6trQV2AwAEY/fEBbXawyrSTRhcED2Z20CEAZ/8Col5FTopeBfRNpv5Y2lcM99HNd7w7+xmkT3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd+9G63mcSk3mD/4SUMxwcPvQnoGdOIhOo0e5BTuyTXNfJS9dV
-	H08BeiEJ+o6meD+4BA3mVRru+d8CDEq8Z38h7mr7UqW0/ine9gDOz7Zn
-X-Gm-Gg: ASbGnct6K0CzUBQSyRkZEsNkh8L8GbNmMfLc01lf3dfiOBjHKPH1QYhJQnp0EIrkzUm
-	72uSjNNkPECiIJ+anKNoXO8I6wM0/O6KxBTqhdKnO1AWwnkp3EdbC8StAAqY+Fm/TF63oHcYU9z
-	BbppH55sTybyEiwzRK+f9WeIyUNMm/WArcE+4od956nzFtpV5dQ/0MhUxlxZYKDDt/HTz88zyLL
-	pBtxahmTtUpAGDzMlXNtNFgfDgIfT71ypYCrfM21+80DST5Iux/UCOtKAJ9kOU/33O9UX/ljhhm
-	5RtZZjYV5GnkIqRaEF/p2wfk5y33bnbaZ0qez6DXEfZaVz5Keib81CwRyPW55PZ2cw+yygcDbjZ
-	4Duxpvlu6kdNUaSAHLoPQ2899DTElwmJUaX71kGTCT4fccLdBrSvM
-X-Google-Smtp-Source: AGHT+IGJbE2lXfYcQRnkSRegCJ+rJgg3wK0K0PYqWdMOlpj7a6snA/7ocMF5HXzr5mnoUrm7gdIlGg==
-X-Received: by 2002:a17:907:d58f:b0:ad8:9c97:c2da with SMTP id a640c23a62f3a-ae3fbe073d1mr1741953766b.40.1751985406777;
-        Tue, 08 Jul 2025 07:36:46 -0700 (PDT)
+        bh=WHVgvqDx/iassdOkV8iptfaZAs4cjl5RgKKkty6LflM=;
+        b=uad0tyIQINe6mW6F4p/X7bhJXP/dPtUt6e5yMHqxXF8S8l7w9C9F4jzaZZos7URYrk
+         25qVaVz5ohVzg0OrUd7APu55nu9aJAdDfowk3kEOs3smpyf9/aWewFdK9d1Sd12a9ntB
+         i7h/rbUEBseQZjG67lWU1eT9KMuSpwbZ4f/00+6nI3IWlsZz3FwCBJ411I9AH/IJUewO
+         aWfl88ga2hdXE1J3lAJEMjzOcetgbV7CA9T0TleYJv6D3JEXgXiueHniqiKS0UV5MMlE
+         1TC16AaeCgsPcpqprLbY8oX418H+YAgrTdVrDo0Ovye3Yd52GuN45Eq9y2u0VkFZsVvH
+         W1KA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYdstfxwOd998SVq+5rIok7z8kPlDsoHmgvCcpUYvN71O7UhIqNMN9gPkq78AbTjT1qZUS/isAAoriP9z3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDSl9tm1cIXvIqHKTIweSAz7KHTDTkzzAByoSrQV+daBejES85
+	r3pmOsmFyckxv9AZfisq6ExLF0oc56p5lrdgnlJu2l2AS9u/wYwLYgLX63aPHxoy
+X-Gm-Gg: ASbGncuGNqzjQdiQ+a/ygFxWjc+Kwoh1hzzCDGnP7iaALBLAnNYlNa1/ed80rAMMUcq
+	tFMrCnzi52t7j/OaDGIGGo4UL4ZqTFrd3X2eNxnPsOKwgtp13QAR1zYBXxvVO6+rndTA1/97eIX
+	i+lNgO7mGkK4va8ZZlDgrfdKMtHN8Lu9Gp6MLH13siqTHWNYi1AOaJq9j+GTHK5Lt6wCDCccBdT
+	JA66i+HNmI/T+mTp5P+YH8nT2oJr40rxbHTU/K2XOjC4AfaKDbzdUTLNixq0B1I0338q0SyGbl7
+	rPx1dclhT4FeEEpQvw1cRijS2AEduE2wG/GeVMNmlH0DrOBaJKYnozNxFA3oc5NyxTyYnt3g686
+	anurLvU1PanCtgBmVdLfKHLTlRLYROy0fK3bqqjYGXlCY6G1f9cUcs4b+O7jiKeo=
+X-Google-Smtp-Source: AGHT+IHe1Y5rCbaNHtvpz5mmVVebiZf55TO+37u+e4BdQb95jAZ/zb9QlT3jQ7MQuzPplrP4J499Og==
+X-Received: by 2002:a05:6402:1e90:b0:607:2d8a:9b3e with SMTP id 4fb4d7f45d1cf-60fd64e3f4amr12690312a12.2.1751985407564;
+        Tue, 08 Jul 2025 07:36:47 -0700 (PDT)
 Received: from amir-ThinkPad-T480.ctera.local (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fca696574sm7393068a12.28.2025.07.08.07.36.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 07:36:46 -0700 (PDT)
+        Tue, 08 Jul 2025 07:36:47 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Jan Kara <jack@suse.cz>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 1/2] fsnotify: merge file_set_fsnotify_mode_from_watchers() with open perm hook
-Date: Tue,  8 Jul 2025 16:36:40 +0200
-Message-ID: <20250708143641.418603-2-amir73il@gmail.com>
+Subject: [PATCH v2 2/2] fsnotify: optimize FMODE_NONOTIFY_PERM for the common cases
+Date: Tue,  8 Jul 2025 16:36:41 +0200
+Message-ID: <20250708143641.418603-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250708143641.418603-1-amir73il@gmail.com>
 References: <20250708143641.418603-1-amir73il@gmail.com>
@@ -91,161 +91,247 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Create helper fsnotify_open_perm_and_set_mode() that moves the
-fsnotify_open_perm() hook into file_set_fsnotify_mode_from_watchers().
+The most unlikely watched permission event is FAN_ACCESS_PERM, because
+at the time that it was introduced there were no evictable ignore mark,
+so subscribing to FAN_ACCESS_PERM would have incured a very high
+overhead.
 
-This will allow some more optimizations.
+Yet, when we set the fmode to FMODE_NOTIFY_HSM(), we never skip trying
+to send FAN_ACCESS_PERM, which is almost always a waste of cycles.
+
+We got to this logic because of bundling open permisson events and access
+permission events in the same category and because FAN_OPEN_PERM is a
+commonly used event.
+
+By open coding fsnotify_open_perm() in fsnotify_open_perm_and_set_mode(),
+we no longer need to regard FAN_OPEN*_PERM when calculating fmode.
+
+This leaves the case of having pre-content events and not having access
+permission events in the object masks a more likely case than the other
+way around.
+
+Rework the fmode macros and code so that their meaning now refers only
+to hooks on an already open file:
+
+- FMODE_NOTIFY_NONE()		skip all events
+- FMODE_NOTIFY_ACCESS_PERM()	send all access permission events
+- FMODE_NOTIFY_HSM()		send pre-conent permission events
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/file_table.c          |  2 +-
- fs/notify/fsnotify.c     | 22 +++++++++++++---------
- fs/open.c                |  6 +++---
- include/linux/fsnotify.h |  8 +++-----
- 4 files changed, 20 insertions(+), 18 deletions(-)
+ fs/notify/fsnotify.c     | 75 ++++++++++++++++++++++++----------------
+ include/linux/fs.h       | 12 +++----
+ include/linux/fsnotify.h | 27 ++-------------
+ 3 files changed, 53 insertions(+), 61 deletions(-)
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index f09d79a98111..81c72576e548 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -199,7 +199,7 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
- 	file_ref_init(&f->f_ref, 1);
- 	/*
- 	 * Disable permission and pre-content events for all files by default.
--	 * They may be enabled later by file_set_fsnotify_mode_from_watchers().
-+	 * They may be enabled later by fsnotify_open_perm_and_set_mode().
- 	 */
- 	file_set_fsnotify_mode(f, FMODE_NONOTIFY_PERM);
- 	return 0;
 diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index e2b4f17a48bb..de7e7425428b 100644
+index de7e7425428b..079b868552c2 100644
 --- a/fs/notify/fsnotify.c
 +++ b/fs/notify/fsnotify.c
-@@ -656,12 +656,12 @@ EXPORT_SYMBOL_GPL(fsnotify);
+@@ -199,8 +199,8 @@ static bool fsnotify_event_needs_parent(struct inode *inode, __u32 mnt_mask,
+ }
  
- #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
- /*
-- * At open time we check fsnotify_sb_has_priority_watchers() and set the
-- * FMODE_NONOTIFY_ mode bits accordignly.
-+ * At open time we check fsnotify_sb_has_priority_watchers(), call the open perm
-+ * hook and set the FMODE_NONOTIFY_ mode bits accordignly.
-  * Later, fsnotify permission hooks do not check if there are permission event
-  * watches, but that there were permission event watches at open time.
-  */
--void file_set_fsnotify_mode_from_watchers(struct file *file)
-+int fsnotify_open_perm_and_set_mode(struct file *file)
+ /* Are there any inode/mount/sb objects that watch for these events? */
+-static inline bool fsnotify_object_watched(struct inode *inode, __u32 mnt_mask,
+-					   __u32 mask)
++static inline __u32 fsnotify_object_watched(struct inode *inode, __u32 mnt_mask,
++					    __u32 mask)
+ {
+ 	__u32 marks_mask = READ_ONCE(inode->i_fsnotify_mask) | mnt_mask |
+ 			   READ_ONCE(inode->i_sb->s_fsnotify_mask);
+@@ -665,7 +665,7 @@ int fsnotify_open_perm_and_set_mode(struct file *file)
  {
  	struct dentry *dentry = file->f_path.dentry, *parent;
  	struct super_block *sb = dentry->d_sb;
-@@ -669,7 +669,7 @@ void file_set_fsnotify_mode_from_watchers(struct file *file)
+-	__u32 mnt_mask, p_mask;
++	__u32 mnt_mask, p_mask = 0;
  
  	/* Is it a file opened by fanotify? */
  	if (FMODE_FSNOTIFY_NONE(file->f_mode))
--		return;
-+		return 0;
- 
- 	/*
- 	 * Permission events is a super set of pre-content events, so if there
-@@ -679,7 +679,7 @@ void file_set_fsnotify_mode_from_watchers(struct file *file)
- 	if (likely(!fsnotify_sb_has_priority_watchers(sb,
- 						FSNOTIFY_PRIO_CONTENT))) {
- 		file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
--		return;
-+		return 0;
+@@ -683,45 +683,60 @@ int fsnotify_open_perm_and_set_mode(struct file *file)
  	}
  
  	/*
-@@ -689,8 +689,9 @@ void file_set_fsnotify_mode_from_watchers(struct file *file)
- 	if ((!d_is_dir(dentry) && !d_is_reg(dentry)) ||
- 	    likely(!fsnotify_sb_has_priority_watchers(sb,
- 						FSNOTIFY_PRIO_PRE_CONTENT))) {
--		file_set_fsnotify_mode(file, FMODE_NONOTIFY | FMODE_NONOTIFY_PERM);
--		return;
-+		file_set_fsnotify_mode(file, FMODE_NONOTIFY |
-+				       FMODE_NONOTIFY_PERM);
-+		goto open_perm;
+-	 * If there are permission event watchers but no pre-content event
+-	 * watchers, set FMODE_NONOTIFY | FMODE_NONOTIFY_PERM to indicate that.
++	 * OK, there are some permission event watchers. Check if anybody is
++	 * watching for permission events on *this* file.
+ 	 */
+-	if ((!d_is_dir(dentry) && !d_is_reg(dentry)) ||
+-	    likely(!fsnotify_sb_has_priority_watchers(sb,
+-						FSNOTIFY_PRIO_PRE_CONTENT))) {
+-		file_set_fsnotify_mode(file, FMODE_NONOTIFY |
+-				       FMODE_NONOTIFY_PERM);
+-		goto open_perm;
++	mnt_mask = READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify_mask);
++	p_mask = fsnotify_object_watched(d_inode(dentry), mnt_mask,
++					 ALL_FSNOTIFY_PERM_EVENTS);
++	if (dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) {
++		parent = dget_parent(dentry);
++		p_mask |= fsnotify_inode_watches_children(d_inode(parent));
++		dput(parent);
  	}
  
  	/*
-@@ -702,7 +703,7 @@ void file_set_fsnotify_mode_from_watchers(struct file *file)
- 				     FSNOTIFY_PRE_CONTENT_EVENTS))) {
- 		/* Enable pre-content events */
+-	 * OK, there are some pre-content watchers. Check if anybody is
+-	 * watching for pre-content events on *this* file.
++	 * Legacy FAN_ACCESS_PERM events have very high performance overhead,
++	 * so unlikely to be used in the wild. If they are used there will be
++	 * no optimizations at all.
+ 	 */
+-	mnt_mask = READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify_mask);
+-	if (unlikely(fsnotify_object_watched(d_inode(dentry), mnt_mask,
+-				     FSNOTIFY_PRE_CONTENT_EVENTS))) {
+-		/* Enable pre-content events */
++	if (unlikely(p_mask & FS_ACCESS_PERM)) {
++		/* Enable all permission and pre-content events */
  		file_set_fsnotify_mode(file, 0);
--		return;
-+		goto open_perm;
+ 		goto open_perm;
  	}
  
- 	/* Is parent watching for pre-content events on this file? */
-@@ -713,11 +714,14 @@ void file_set_fsnotify_mode_from_watchers(struct file *file)
- 		if (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS) {
- 			/* Enable pre-content events */
- 			file_set_fsnotify_mode(file, 0);
--			return;
-+			goto open_perm;
- 		}
+-	/* Is parent watching for pre-content events on this file? */
+-	if (dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) {
+-		parent = dget_parent(dentry);
+-		p_mask = fsnotify_inode_watches_children(d_inode(parent));
+-		dput(parent);
+-		if (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS) {
+-			/* Enable pre-content events */
+-			file_set_fsnotify_mode(file, 0);
+-			goto open_perm;
+-		}
++	/*
++	 * Pre-content events are only supported on regular files.
++	 * If there are pre-content event watchers and no permission access
++	 * watchers, set FMODE_NONOTIFY | FMODE_NONOTIFY_PERM to indicate that.
++	 * That is the common case with HSM service.
++	 */
++	if (d_is_reg(dentry) && (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS)) {
++		file_set_fsnotify_mode(file, FMODE_NONOTIFY |
++					     FMODE_NONOTIFY_PERM);
++		goto open_perm;
  	}
- 	/* Nobody watching for pre-content events from this file */
- 	file_set_fsnotify_mode(file, FMODE_NONOTIFY | FMODE_NONOTIFY_PERM);
+-	/* Nobody watching for pre-content events from this file */
+-	file_set_fsnotify_mode(file, FMODE_NONOTIFY | FMODE_NONOTIFY_PERM);
 +
-+open_perm:
-+	return fsnotify_open_perm(file);
++	/* Nobody watching permission and pre-content events on this file */
++	file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
+ 
+ open_perm:
+-	return fsnotify_open_perm(file);
++	/*
++	 * Send open perm events depending on object masks and regardless of
++	 * FMODE_NONOTIFY_PERM.
++	 */
++	if (file->f_flags & __FMODE_EXEC && p_mask & FS_OPEN_EXEC_PERM) {
++		int ret = fsnotify_path(&file->f_path, FS_OPEN_EXEC_PERM);
++
++		if (ret)
++			return ret;
++	}
++
++	if (p_mask & FS_OPEN_PERM)
++		return fsnotify_path(&file->f_path, FS_OPEN_PERM);
++
++	return 0;
  }
  #endif
  
-diff --git a/fs/open.c b/fs/open.c
-index 7828234a7caa..f240b96ce586 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -943,12 +943,12 @@ static int do_dentry_open(struct file *f,
- 		goto cleanup_all;
- 
- 	/*
--	 * Set FMODE_NONOTIFY_* bits according to existing permission watches.
-+	 * Call fsnotify open permission hook and set FMODE_NONOTIFY_* bits
-+	 * according to existing permission watches.
- 	 * If FMODE_NONOTIFY mode was already set for an fanotify fd or for a
- 	 * pseudo file, this call will not change the mode.
- 	 */
--	file_set_fsnotify_mode_from_watchers(f);
--	error = fsnotify_open_perm(f);
-+	error = fsnotify_open_perm_and_set_mode(f);
- 	if (error)
- 		goto cleanup_all;
- 
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 454d8e466958..8c1fa617d375 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -129,7 +129,7 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
- 
- #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
- 
--void file_set_fsnotify_mode_from_watchers(struct file *file);
-+int fsnotify_open_perm_and_set_mode(struct file *file);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3b074fe4c8a9..81a6463bfd76 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -200,12 +200,12 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
  
  /*
-  * fsnotify_file_area_perm - permission hook before access to file range
-@@ -215,9 +215,6 @@ static inline int fsnotify_open_perm(struct file *file)
- {
- 	int ret;
+  * The two FMODE_NONOTIFY* define which fsnotify events should not be generated
+- * for a file. These are the possible values of (f->f_mode &
+- * FMODE_FSNOTIFY_MASK) and their meaning:
++ * for an open file. These are the possible values of
++ * (f->f_mode & FMODE_FSNOTIFY_MASK) and their meaning:
+  *
+  * FMODE_NONOTIFY - suppress all (incl. non-permission) events.
+  * FMODE_NONOTIFY_PERM - suppress permission (incl. pre-content) events.
+- * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - suppress only pre-content events.
++ * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - suppress only FAN_ACCESS_PERM.
+  */
+ #define FMODE_FSNOTIFY_MASK \
+ 	(FMODE_NONOTIFY | FMODE_NONOTIFY_PERM)
+@@ -213,13 +213,13 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define FMODE_FSNOTIFY_NONE(mode) \
+ 	((mode & FMODE_FSNOTIFY_MASK) == FMODE_NONOTIFY)
+ #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+-#define FMODE_FSNOTIFY_PERM(mode) \
++#define FMODE_FSNOTIFY_HSM(mode) \
+ 	((mode & FMODE_FSNOTIFY_MASK) == 0 || \
+ 	 (mode & FMODE_FSNOTIFY_MASK) == (FMODE_NONOTIFY | FMODE_NONOTIFY_PERM))
+-#define FMODE_FSNOTIFY_HSM(mode) \
++#define FMODE_FSNOTIFY_ACCESS_PERM(mode) \
+ 	((mode & FMODE_FSNOTIFY_MASK) == 0)
+ #else
+-#define FMODE_FSNOTIFY_PERM(mode)	0
++#define FMODE_FSNOTIFY_ACCESS_PERM(mode) 0
+ #define FMODE_FSNOTIFY_HSM(mode)	0
+ #endif
+ 
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index 8c1fa617d375..28a9cb13fbfa 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -147,9 +147,6 @@ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
+ 	if (!(perm_mask & (MAY_READ | MAY_WRITE | MAY_ACCESS)))
+ 		return 0;
  
 -	if (likely(!FMODE_FSNOTIFY_PERM(file->f_mode)))
 -		return 0;
 -
- 	if (file->f_flags & __FMODE_EXEC) {
- 		ret = fsnotify_path(&file->f_path, FS_OPEN_EXEC_PERM);
- 		if (ret)
-@@ -228,8 +225,9 @@ static inline int fsnotify_open_perm(struct file *file)
+ 	/*
+ 	 * read()/write() and other types of access generate pre-content events.
+ 	 */
+@@ -160,7 +157,8 @@ static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
+ 			return ret;
+ 	}
+ 
+-	if (!(perm_mask & MAY_READ))
++	if (!(perm_mask & MAY_READ) ||
++	    likely(!FMODE_FSNOTIFY_ACCESS_PERM(file->f_mode)))
+ 		return 0;
+ 
+ 	/*
+@@ -208,22 +206,6 @@ static inline int fsnotify_file_perm(struct file *file, int perm_mask)
+ 	return fsnotify_file_area_perm(file, perm_mask, NULL, 0);
  }
  
+-/*
+- * fsnotify_open_perm - permission hook before file open
+- */
+-static inline int fsnotify_open_perm(struct file *file)
+-{
+-	int ret;
+-
+-	if (file->f_flags & __FMODE_EXEC) {
+-		ret = fsnotify_path(&file->f_path, FS_OPEN_EXEC_PERM);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	return fsnotify_path(&file->f_path, FS_OPEN_PERM);
+-}
+-
  #else
--static inline void file_set_fsnotify_mode_from_watchers(struct file *file)
-+static inline int fsnotify_open_perm_and_set_mode(struct file *file)
+ static inline int fsnotify_open_perm_and_set_mode(struct file *file)
  {
-+	return 0;
+@@ -251,11 +233,6 @@ static inline int fsnotify_file_perm(struct file *file, int perm_mask)
+ {
+ 	return 0;
  }
+-
+-static inline int fsnotify_open_perm(struct file *file)
+-{
+-	return 0;
+-}
+ #endif
  
- static inline int fsnotify_file_area_perm(struct file *file, int perm_mask,
+ /*
 -- 
 2.43.0
 
