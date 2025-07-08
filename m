@@ -1,227 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-54273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B47AFCF6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 17:39:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8720AAFCF95
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 17:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 433B77B538D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 15:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE69017069F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 15:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115C62E1737;
-	Tue,  8 Jul 2025 15:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7702D9ECD;
+	Tue,  8 Jul 2025 15:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lLFm8dNI"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rad5TNkI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C052DFF04
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 15:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0DB17DFE7
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 15:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751989145; cv=none; b=QFo/SV1qDgP7kl84c/FQBPJf6hBNMRfj8uDOxmWdb+0JrVqyaOyccIu863epgMMopa+uEIllFyT37aiycRrld/Q8rDBMP7GNXgYmM4PX93JMB8ct37FpriV/DNTOIEWxFTJS7zyL/qYn/TnqKjnv/gzKgd/fsIKb1WqWS9AO1m4=
+	t=1751989555; cv=none; b=AGfR8Z+CTUfueEEdMZYgSH9FI55lLNpnR4OY9x9dZAUkAKEONG0O3Ncap4GkxX20ycCa2PzTXTJIGWMJBdf8PI/o5Qv8K0EF9irj9hZdfZYlpwXVwYZtNNw6RwQmq/xCaVLlaeGU0K0OICkKmXc3njq3kJWvyXpvnwBmgQrZItc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751989145; c=relaxed/simple;
-	bh=ay6a3q8ckTPpxsDcQsPqS7Qt5vS8hnlo8TH9PCcpMBY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=R6CSLFYloRhUMezxZthU4vGT5N+NkIIP8xRwSeZO9zEf22tELsI519FI7zsKtxy/VFpE3Rt1copq0pR3epwPX8ZdQuFVO+xOOHT0MN/imCcqvMKAOO6GluyMODJowHrNQPsgT6WF5RoO19PfrPbMQjA+UdW54qc2Zr+I2zXkkxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lLFm8dNI; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2fa1a84566so3147717a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 08:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751989143; x=1752593943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fJ6Trmj44z6pMJddwVQzuI+dtUG3teA4UW/36PaybfA=;
-        b=lLFm8dNIcn48xcNpxryCk91Jy3hZfBJzgSa7rk8Smy8St1K8OA/IsITwtlaZ8mpHA8
-         WCMJuu52xBApDHikBm92hsuwspGJScGqBSTjAYbI5mVrZeTKFeJNRWNN2KNIZsrFobQa
-         9pF4camFheCB5hcaByl31PeH5j8DcPXiBsF0NtSBvA1jVDPIz4hi3MmrIC0pPeqMOKOe
-         U225Zje90EfSqyy9avi7s+GPtRkSDMhXEJjJ837v8sD7+5S+sWtvt62NR9bHX/zyXgJ4
-         JaEbixW+RwO81UpvIL1Kk2e3ngZyOpO6AF1VImxgkQNYTQ7NsK8MKd2rHxUGFU6uELiR
-         WrYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751989143; x=1752593943;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fJ6Trmj44z6pMJddwVQzuI+dtUG3teA4UW/36PaybfA=;
-        b=jSUNQOTzqPwHmLN/CcjGIZdBqGmD40B5X9NfjUgh6+TxHJpyNY/UtT9oTtvDmvjwiV
-         4tXfzvDeOW27Mw8mquFo2p2ohymTgXBmTB3IsIS8CHz2B/khA6cLwuKvOBy4YMbm7R02
-         MYfwujFzlBJ5sQPSO4QzfX5ce7sUUlLn4te8vSfI65Hn7IR5KUzIlpgrEpaUeGd2rg8H
-         wvb1WFfnef9lFCQ6XTnMPg2cCtjlQMWJEhC+QggWoZC0/MoNem2tMhR1tn9jZ9FdZksO
-         Is8qYLqJ/uvJeh9dJhbZnzygcwRshYVrgU2LtBJEQNBPY5Unsn59bNSPoB/F/uQKVn/r
-         ju2w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/IjtdDVB25CIKn0RPe027NaR+l57C8I36To6MjxJMQJJNKkRLoPTYZKhGz79nWuYp/sJJYxphWpHVjJ93@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/qo0P/WuSMREfko6IIfLRNc8wAgS82w34RHUlX/lI/gpP/5yr
-	2YqVyW2iKlXoYS/pkn9yHUP4X59RvaTA12GoDeIDJBwdRjv5zDcbNMJEupZ7tw/GQLaKi+6X9Hq
-	Inpm1VQ==
-X-Google-Smtp-Source: AGHT+IEVTH1cDHrDrkBM9ANruotfYiflC/Rn/GMmhs6k3Qn6zxl4FY9ZL04L/ybWIyiK/dNj58MjPa3dDVo=
-X-Received: from pfbfi39.prod.google.com ([2002:a05:6a00:39a7:b0:747:b682:5cc0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:929e:b0:742:8d52:62f1
- with SMTP id d2e1a72fcca58-74ce6419a9emr28472954b3a.8.1751989142330; Tue, 08
- Jul 2025 08:39:02 -0700 (PDT)
-Date: Tue, 8 Jul 2025 08:38:55 -0700
-In-Reply-To: <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+	s=arc-20240116; t=1751989555; c=relaxed/simple;
+	bh=KVzkriYFcvDBA02Kho+N+/ARUJ5FSOZa48/gA51afA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mhvb6aVMHUsuual0B7wsuxuSgAZbCTTYEM2A6wgiUX5tMNlWHYQ/kq0FCN44VYl0XTZ/7XQJVhcbLeEi7Fo5UHUACEYpZB1XWBUR0NbP5bso53rpR21hyjRy8P6uaKTdh2dwBWm3VFdwHBZ5gQ2TnjMOWoMprPsLRNX7z4OnKtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rad5TNkI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568870wI001507;
+	Tue, 8 Jul 2025 15:45:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=1JI2PYmyw553aCAqVq7NEaFXkIkRMZvGUQ5VSMWzM
+	QI=; b=rad5TNkImvkydFqnR4fpTJtb4PvG4aSts+bn0+MIr/ZWpsopH3muWpKhb
+	lwJDy8iCW1B5pan8jV2uifx4tXvPAJPNv1ZhkiMnRwqezZeJ6Plws5Lcb8U3EcT2
+	B8//EO/fw4KXiMRtITsShywUQqYCbrOT80gZPq0QkbCfR6nXoJaJcOsZeF9MIEZf
+	xpAZfU0YHX5CInq0SwUYrARp2B6yOmzJjFzhTxGCLcj67lvtzUd22Q0VVf+4huAA
+	i1tfymL5zwoYyrTcj9sxZ5Si88pwkw63KGRqOsx2GzfzC+ZrexAkummmf8cHbD/X
+	y5Sic8DuB17LKWjw/rrpm1Y+cPymA==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ptjr0bhv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Jul 2025 15:45:47 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 568EBRm6021566;
+	Tue, 8 Jul 2025 15:45:47 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qectkugm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Jul 2025 15:45:47 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 568Fjjeh59113852
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Jul 2025 15:45:45 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7CC4720043;
+	Tue,  8 Jul 2025 15:45:45 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65F4720040;
+	Tue,  8 Jul 2025 15:45:45 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  8 Jul 2025 15:45:45 +0000 (GMT)
+From: Jan Polensky <japo@linux.ibm.com>
+To: brauner@kernel.org, jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [PATCH v1 1/1] fs: Fix use of incorrect flags with splice() on pipe from/to memfd
+Date: Tue,  8 Jul 2025 17:43:52 +0200
+Message-ID: <20250708154352.3913726-1-japo@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aGIBGR8tLNYtbeWC@yzhao56-desk.sh.intel.com> <CAGtprH-83EOz8rrUjE+O8m7nUDjt=THyXx=kfft1xQry65mtQg@mail.gmail.com>
- <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
- <aGxXWvZCfhNaWISY@google.com> <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
- <006899ccedf93f45082390460620753090c01914.camel@intel.com>
- <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
- <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
-Message-ID: <aG07j4Pfkd5EEobQ@google.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
-	Jun Miao <jun.miao@intel.com>, Kirill Shutemov <kirill.shutemov@intel.com>, 
-	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"amoorthy@google.com" <amoorthy@google.com>, "jack@suse.cz" <jack@suse.cz>, 
-	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "keirf@google.com" <keirf@google.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
-	"tabba@google.com" <tabba@google.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"fvdl@google.com" <fvdl@google.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
-	"bfoster@redhat.com" <bfoster@redhat.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
-	"anup@brainfault.org" <anup@brainfault.org>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "mic@digikod.net" <mic@digikod.net>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, "steven.price@arm.com" <steven.price@arm.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "hughd@google.com" <hughd@google.com>, 
-	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
-	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, Erdem Aktas <erdemaktas@google.com>, 
-	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, Fan Du <fan.du@intel.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
-	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, 
-	Chao P Peng <chao.p.peng@intel.com>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
-	Alexander Graf <graf@amazon.com>, "nikunj@amd.com" <nikunj@amd.com>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
-	Yilun Xu <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
-	Ira Weiny <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
-	"roypat@amazon.co.uk" <roypat@amazon.co.uk>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=GL8IEvNK c=1 sm=1 tr=0 ts=686d3d2c cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=KtyGq2lsQ3Ai_R4cFgEA:9
+X-Proofpoint-ORIG-GUID: XnGzfS5DcVLYgms6EuKc5npvPmwhXa9v
+X-Proofpoint-GUID: XnGzfS5DcVLYgms6EuKc5npvPmwhXa9v
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDEyOSBTYWx0ZWRfXz+8BDq/6xTq5 dVnwwDn8AKaNb/nTFJqcdxiUKInQdsA+1TwY0IdLd13xusOsbDXPk07hyIQlRZB/u8HGbzHsO8E Nl5iNZkOp2G/l9HcODRHIl2AV8GnFzXXZjMGRbzzuyDbRsNU5hmKHky5atabPpUeuhdzdo4h6D6
+ NNUpXEAecWKQwR3nmp6V5uQm7+IsBKOqOF51Q/GNentxFsAuHMixuYLskIi8GHGjbzx6gUaVFVN 0PwKnWMuewoCsWBBhx0D3gRmI0ua3AbPzd6xDyK9tI09OOGehfVK0Vqm98/yx+nRmNPn+fnxHq6 N/83VBNAY6mAeOXCr9xF3SG9BofjP3DulpXuchuJS4H5zCdPvpKEgOdBjvAS1H1D8BJoy6FDs8c
+ z7fYUZuG9Z26BCyogsvlGAhOBcalw/nJbXzjHh9gPTd+hkJ5hD6EJqGCs37XfX2uzZttfJ58
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_04,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ clxscore=1011 impostorscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507080129
 
-On Tue, Jul 08, 2025, Vishal Annapurve wrote:
-> On Tue, Jul 8, 2025 at 7:52=E2=80=AFAM Edgecombe, Rick P
-> <rick.p.edgecombe@intel.com> wrote:
-> >
-> > On Tue, 2025-07-08 at 07:20 -0700, Sean Christopherson wrote:
-> > > > For TDX if we don't zero on conversion from private->shared we will=
- be
-> > > > dependent
-> > > > on behavior of the CPU when reading memory with keyid 0, which was
-> > > > previously
-> > > > encrypted and has some protection bits set. I don't *think* the beh=
-avior is
-> > > > architectural. So it might be prudent to either make it so, or zero=
- it in
-> > > > the
-> > > > kernel in order to not make non-architectual behavior into userspac=
-e ABI.
-> > >
-> > > Ya, by "vendor specific", I was also lumping in cases where the kerne=
-l would
-> > > need to zero memory in order to not end up with effectively undefined
-> > > behavior.
-> >
-> > Yea, more of an answer to Vishal's question about if CC VMs need zeroin=
-g. And
-> > the answer is sort of yes, even though TDX doesn't require it. But we a=
-ctually
-> > don't want to zero memory when reclaiming memory. So TDX KVM code needs=
- to know
-> > that the operation is a to-shared conversion and not another type of pr=
-ivate
-> > zap. Like a callback from gmem, or maybe more simply a kernel internal =
-flag to
-> > set in gmem such that it knows it should zero it.
->=20
-> If the answer is that "always zero on private to shared conversions"
-> for all CC VMs,
+Fix use of incorrect flags when using splice() with pipe ends and
+memfd secret. Ensure that pipe and memfd file descriptors are properly
+recognized and handled to prevent unintended EACCES errors in scenarios
+where EBADF or EINVAL are expected.
 
-pKVM VMs *are* CoCo VMs.  Just because pKVM doesn't rely on third party fir=
-mware
-to provide confidentiality and integrity doesn't make it any less of a CoCo=
- VM.
+This resolves failures in LTP's splice07 test case:
 
-> > >  : And maybe a new flag for KVM_GMEM_CONVERT_PRIVATE for user space t=
-o
-> > >  : explicitly request that the page range is converted to private and=
- the
-> > >  : content needs to be retained. So that TDX can identify which case =
-needs
-> > >  : to call in-place TDH.PAGE.ADD.
-> > >
-> > > If so, I agree with that idea, e.g. add a PRESERVE flag or whatever. =
- That way
-> > > userspace has explicit control over what happens to the data during
-> > > conversion,
-> > > and KVM can reject unsupported conversions, e.g. PRESERVE is only all=
-owed for
-> > > shared =3D> private and only for select VM types.
-> >
-> > Ok, we should POC how it works with TDX.
->=20
-> I don't think we need a flag to preserve memory as I mentioned in [2]. II=
-UC,
-> 1) Conversions are always content-preserving for pKVM.
+    ./ltp-bin/testcases/bin/splice07
+    [skip]
+    splice07.c:54: TFAIL: splice() on pipe read end -> memfd secret expected EBADF, EINVAL: EACCES (13)
+    [skip]
+    splice07.c:54: TFAIL: splice() on memfd secret -> pipe write end expected EBADF, EINVAL: EACCES (13)
+    [skip]
 
-No?  Perserving contents on private =3D> shared is a security vulnerability=
- waiting
-to happen.
+Fixes: cbe4134ea4bc ("fs: export anon_inode_make_secure_inode() and fix secretmem LSM bypass")
 
-> 2) Shared to private conversions are always content-preserving for all
-> VMs as far as guest_memfd is concerned.
+Signed-off-by: Jan Polensky <japo@linux.ibm.com>
+---
+ fs/anon_inodes.c   | 11 +++++++----
+ include/linux/fs.h |  2 +-
+ mm/secretmem.c     |  2 +-
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-There is no "as far as guest_memfd is concerned".  Userspace doesn't care w=
-hether
-code lives in guest_memfd.c versus arch/xxx/kvm, the only thing that matter=
-s is
-the behavior that userspace sees.  I don't want to end up with userspace AB=
-I that
-is vendor/VM specific.
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 1d847a939f29..f4eade76273b 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -104,6 +104,7 @@ static struct file_system_type anon_inode_fs_type = {
+  * @name:	[in]	Name of the class of the newfile (e.g., "secretmem")
+  * @context_inode:
+  *		[in]	Optional parent inode for security inheritance
++ * @secmem	[in]	Indicates wheather the inode should be threaded as secretmem
+  *
+  * The function ensures proper security initialization through the LSM hook
+  * security_inode_init_security_anon().
+@@ -111,7 +112,7 @@ static struct file_system_type anon_inode_fs_type = {
+  * Return:	Pointer to new inode on success, ERR_PTR on failure.
+  */
+ struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
+-					   const struct inode *context_inode)
++					   const struct inode *context_inode, bool secmem)
+ {
+ 	struct inode *inode;
+ 	int error;
+@@ -119,8 +120,10 @@ struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *n
+ 	inode = alloc_anon_inode(sb);
+ 	if (IS_ERR(inode))
+ 		return inode;
+-	inode->i_flags &= ~S_PRIVATE;
+-	inode->i_op = &anon_inode_operations;
++	if (!secmem) {
++		inode->i_flags &= ~S_PRIVATE;
++		inode->i_op = &anon_inode_operations;
++	}
+ 	error =	security_inode_init_security_anon(inode, &QSTR(name),
+ 						  context_inode);
+ 	if (error) {
+@@ -145,7 +148,7 @@ static struct file *__anon_inode_getfile(const char *name,
 
-> 3) Private to shared conversions are not content-preserving for CC VMs
-> as far as guest_memfd is concerned, subject to more discussions.
->=20
-> [2] https://lore.kernel.org/lkml/CAGtprH-Kzn2kOGZ4JuNtUT53Hugw64M-_XMmhz_=
-gCiDS6BAFtQ@mail.gmail.com/
+ 	if (make_inode) {
+ 		inode =	anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
+-						     name, context_inode);
++						     name, context_inode, false);
+ 		if (IS_ERR(inode)) {
+ 			file = ERR_CAST(inode);
+ 			goto err;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 040c0036320f..50a32bee366e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3609,7 +3609,7 @@ extern const struct address_space_operations ram_aops;
+ extern int always_delete_dentry(const struct dentry *);
+ extern struct inode *alloc_anon_inode(struct super_block *);
+ struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
+-					   const struct inode *context_inode);
++					   const struct inode *context_inode, bool secmem);
+ extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
+ extern const struct dentry_operations simple_dentry_operations;
+
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index 9a11a38a6770..d28e1caa8847 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -196,7 +196,7 @@ static struct file *secretmem_file_create(unsigned long flags)
+ 	struct inode *inode;
+ 	const char *anon_name = "[secretmem]";
+
+-	inode = anon_inode_make_secure_inode(secretmem_mnt->mnt_sb, anon_name, NULL);
++	inode = anon_inode_make_secure_inode(secretmem_mnt->mnt_sb, anon_name, NULL, true);
+ 	if (IS_ERR(inode))
+ 		return ERR_CAST(inode);
+
+--
+2.48.1
+
 
