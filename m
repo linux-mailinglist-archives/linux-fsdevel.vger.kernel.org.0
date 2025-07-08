@@ -1,111 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-54220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDC9AFC38E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 09:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8D1AFC3F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 09:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758EA17DE88
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 07:04:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB6833A9BC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 07:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A55223DF5;
-	Tue,  8 Jul 2025 07:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B6E298993;
+	Tue,  8 Jul 2025 07:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="A28G1Ljo"
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="pDaru0nC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-63-194.mail.qq.com (out162-62-63-194.mail.qq.com [162.62.63.194])
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8354321CA0E;
-	Tue,  8 Jul 2025 07:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.63.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8053B188006;
+	Tue,  8 Jul 2025 07:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751958240; cv=none; b=puYfhHhKX0kwbmTxmiHtkLDa+RqXSoSKfHr5zi/D+oKZYJou2FIDm9ep8m7kGH4muuvv5SegLMx3vaPGbz69G/L0aelzZ/Q5N43AUtl9lITOlEAaJLh/EJVvZ5mbaOvTYQU1LwIxOuSsLJW/1Hk7x8CzoyRinya+DFySk7Aevwo=
+	t=1751959539; cv=none; b=PlbmWwpsibhzKrWhgYhuaATkGLCwoT59CN2TbWHDe1elxI5B2V4HviGzds5fC6VX2DVNlqQL7DxcV+1CjRyKmLkxtbNp+Qt3ld5b9SIeqjjIybR2xJO6huk6v6qo1fzBcPLiPSt3GQ18bZqqzByB8a6bdopJaEIHsuQHuf375XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751958240; c=relaxed/simple;
-	bh=OM6K+jZaBXAoTLY0N4NnW3rs077RdjL2OSQEQtpSYZc=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=VPyZqG3/gRHrrh6IiqwyFUMjJTKc2vVtczRKd+AZtqqtJXjVAZ+wQ+DLTB/67EJV2S/qCUxmi07wu+V76BniTDY5LoH0WTpRCNCcoORQIu8ohSnTsb2AHBNN0vj5bNJishIYf/pmEpKGcEBqHoiSWJt3vjX7JYP81HbzxivcTWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=A28G1Ljo; arc=none smtp.client-ip=162.62.63.194
+	s=arc-20240116; t=1751959539; c=relaxed/simple;
+	bh=hTsxhYYXUNl6kQHXHKWGlxUMQwI6ZkobTMVeUv0I7ts=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=A0IYEFUet+2SmoDYncQKInVIhHtLUMBa2hrDLaI9MsTqkbW8beyn3wysPw9JRI6ShWgZMrKCipw3M27zVO9lbeOOygXSte9BXtPsqM7Hgxd5OfwyWJRqqQoEMYuEfUMkFfzVRKsD7p/7Hp8EqurLiE7MEKjuy6b0djYQG0Qi3JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=pDaru0nC; arc=none smtp.client-ip=43.163.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1751957925;
-	bh=OM6K+jZaBXAoTLY0N4NnW3rs077RdjL2OSQEQtpSYZc=;
-	h=From:To:Cc:Subject:Date;
-	b=A28G1LjoZ3HwbAgyXYEvP5rNEuaFQZGqHOmhNsGNpGA2MvIqkYXL3+Yeo8vTaN1+T
-	 4hB9cZ5wul0OC/kjW5F+gmKoVMpQ7gVExHcYJzXYQhCltKQsfSu9P2jSEFA02Q71r9
-	 Dchj7N/pxnynDFj/dmMAjPYeuDKtnnwH/ga+AccE=
-X-QQ-FEAT: 3C1WcPM5lQ4i+tGOZHPx80amo8TvG3to
-X-QQ-SSF: 0000000000000010000000000000
-X-QQ-SPAM: true
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-XMAILINFO: M4kijGgdg8XvD6nB9qq3P51A2cCWZU8jZqnGM52RIwpXp1g0uc2MbUDM5iQFuM
-	 5RTLQjQiV/ny1SMNK6BiXkkbwONwK4byfFEUARK0XYXRx4aUON8oSwOfzVSXR9sk+IEY7DAK1wevk
-	 ik4UzdFQrQdG+cRd3XzZ17I7tMPwMJ3ItGCE8tFguM6UB5W1EIOJvZIXtsSiJJba3LzLiVrPlqhnS
-	 +uuW0FiWmXgKQgVeiGO4OOxQij4erJvlfzDgfZHK1uMEHn4VYCjfkz+xCgQG3I41KMuPclqGg3uyd
-	 Y0P3AClqAjg3qEk12DGHKBUTaZr2ZCt4CJFNrEmPAWQEbjv+go51HUO8yGxt4e7Ezh1NF7sAAuFoK
-	 3WCWXuJj2poDKjBe5mHqvviGnZSVnqkfRK9D9hswqxk9vP0kDv4oA3EuuS2UNZB6/PUpceS4ZEGCK
-	 vhhNMy8QQTbjJIZ2Uwyws3aKu3VQxchJpEcOFh+ey68Hs2FC8Ueg1K1i3t2OfDe+TS0NtPrJW1ixb
-	 KNW26RYYr2mtTfAViOI8VV/g5T1DpJpVLpEgYIdgeg4eaiJI+NPeULdjo9wU1jscTJMDAYhyqqYvM
-	 fRyIRbQT8NFxRcpacleYPGI68v6pRTH1GULo9kKlCDEe40Ac3KgOZY8ssl9SYtXlt6e7iLzJyqbw3
-	 a4DJVjQLYq+6yImHIFikYkIAXFqoqlKdW0Nl/HCNprh84Lz2V8DQRunV/2K8EfvQO65OA0Lg7dtvh
-	 qYcYBdQIMfvld5PK2ed9zfIRa8OvT1R8YGWRY9/bGOydjVcH8nLc35dRYlxjmDyjfayGc8OsWGBAk
-	 fRmdmwonXrSlGEU0PFdngoIma4Z2oE0pNfof71n75llqVsWtX21y4awb+KJkGn0chpiC0kQQLZnGz
-	 7fXukotVuxcuubhYKpiEEOCiWzuQOVp76tZY52j0IviZK1VeeN/0qKnVVr9iZ1Ybid6zIn8TCABer
-	 q8SXzxozxJtwXgielC7qSX3uwlJT8I8cqEPM1mJV/gpSt6tLQ+bh2Gvbafv803AzdVwqw0HBFGd5/
-	 dPzp3OdXaLrx1tuaAUgW+DNhQBBR7H7fwJ6ogu0CeLtzKGcj10h99QO8EXSDyrOJDtWNtifqQvG7w
-	 7KDsg4Zi4BzIGuHix+TBEUMV8c+QidhFfio=
-X-HAS-ATTACH: no
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-STYLE: 
-X-QQ-mid: webmail632t1751957538t2012164
-From: "=?ISO-8859-1?B?eXdlbi5jaGVu?=" <ywen.chen@foxmail.com>
-To: "=?ISO-8859-1?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@infradead.org>, "=?ISO-8859-1?B?RXJpYyBCaWdnZXJz?=" <ebiggers@kernel.org>
-Cc: "=?ISO-8859-1?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@infradead.org>, "=?ISO-8859-1?B?YnJhdW5lcg==?=" <brauner@kernel.org>, "=?ISO-8859-1?B?dHl0c28=?=" <tytso@mit.edu>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?ISO-8859-1?B?bGludXgtZjJmcy1kZXZlbA==?=" <linux-f2fs-devel@lists.sourceforge.net>, "=?ISO-8859-1?B?YWRpbGdlci5rZXJuZWw=?=" <adilger.kernel@dilger.ca>, "=?ISO-8859-1?B?dmlybw==?=" <viro@zeniv.linux.org.uk>, "=?ISO-8859-1?B?bGludXgtZnNkZXZlbA==?=" <linux-fsdevel@vger.kernel.org>, "=?ISO-8859-1?B?amFlZ2V1aw==?=" <jaegeuk@kernel.org>, "=?ISO-8859-1?B?bGludXgtZXh0NA==?=" <linux-ext4@vger.kernel.org>
+	s=s201512; t=1751959525;
+	bh=rgW1EbDqX+O9wPlMcm457ujwjBjyq0KCUjbW0ywG0Dg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=pDaru0nC1KxIf9pkQH+aM7Vs806suMvDW37K8eJfLGZM0AQuEhqmjw8pUGYI8c23i
+	 kD90a8o/QWIApQHp6lcwRjVqHSCyHUXMoVg8ntc2DvHIZm5GTqrsMTRHfvVtdkZrcF
+	 +2ByYUcLJbEgVxqWqOG0Qf0uxTXXBtU3DdKpFdnk=
+Received: from meizu-Precision-3660.meizu.com ([112.91.84.73])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 2E92B483; Tue, 08 Jul 2025 15:11:41 +0800
+X-QQ-mid: xmsmtpt1751958701tlp273eg5
+Message-ID: <tencent_19ABF292BF48BBA08B98B8C3C7BD5D19CE09@qq.com>
+X-QQ-XMAILINFO: NDgMZBR9sMmawRpms6Ue/39BQQ1SRHowQpkx27lg4qRnEyrDKufpEe6JoiwE0s
+	 X4bUjYFCuqPdCbfYYIFhf9vrdN+PzxNOI/ByibxMc60LKkq1AUMsXP/6AcJrxdtQqAq5Q0a0IJkx
+	 NaTDDt2HEJ8CiHe9EOdkaQg5CO1oeqX3d919iGGttuQi7kXVNaq9YNMNQ8QXTsnTq7WOsCx3sF/Y
+	 2iqJm8SS8Hw7wbvdprC6vq2zA/oLeCyS0WpPYfjqEHYSRnrARSXp4ou+eQ+RdvvXG7BuYMHpA/d/
+	 vOYjXICj+D7IVgOL2xnAhpj4gc+zyJPFU8DK7Y4ULYekU378T+x9eye4cRdZrdZ8R86F4PC0Yxf0
+	 GUHK845Y8M/BURpKI/ERfIIxgcHgmceJwZSGud2LahiyT+1kKHg4Lixl0QTrxsZYYssTUi+1olqt
+	 TFm1jgsn0Kq+08J3hM1y2wIYvC0KGnmxG+fbtZ8bbmKCNATl4haAHgSQO8gpVNZnyBCe18tCQqW4
+	 AQf1teH5Q+FQ5osKuP4hCzjXCFSXNcnv+VUcQMZMwryTkz9N7dq3vb4cguh3Kf8L0WVzuuay3BTL
+	 5M/oIIOhYTSwSg2nOISpNaW04R+vvzqb+Ht59wY01WZdkI4uOjdLYcTc61uNs5j+gvURqYiwdFpU
+	 /gip+yblaxFsKwc1I6S9xMpA9YDONR0wB9yAFCFSh1IjwqRALZHRgp/67oasvkvNY8PzV6ilcdwO
+	 idNafDhJ2l94tg95QKmw0SSpxxWfeAZmXyEbhepumU3g6W+POnW59tFGNo2fkyMHwWaA9PVedHsq
+	 ZDO3wxqRQA+Mfb29a3P8Qjx35mO1lMoXbvFcBrTblRVvDdWgKxRL36jD+zJFx4jmD0PP9+hJvspG
+	 U+0K2myUpjwLv6S8iJrwTgWC2l+sW6WIhM4U5ihg4jY4U6VfB9UAURSuVgZxOXgSZ0VZYncVzH8b
+	 wcAj7s5h0lyB4CG3vj/gVRCxQHgaDqtXJYBN9aF1cN0+6fngS+YeK9VhrVR//z5HlizyVog2WO80
+	 fJOz+hfQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Yuwen Chen <ywen.chen@foxmail.com>
+To: hch@infradead.org
+Cc: adilger.kernel@dilger.ca,
+	brauner@kernel.org,
+	ebiggers@kernel.org,
+	jaegeuk@kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	viro@zeniv.linux.org.uk,
+	ywen.chen@foxmail.com
 Subject: Re: [PATCH v3 1/2] libfs: reduce the number of memory allocations in generic_ci_match
+Date: Tue,  8 Jul 2025 15:11:41 +0800
+X-OQ-MSGID: <20250708071141.847557-1-ywen.chen@foxmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aGtatW8g2fV6bFkm@infradead.org>
+References: <aGtatW8g2fV6bFkm@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="ISO-8859-1"
-Content-Transfer-Encoding: base64
-Date: Tue, 8 Jul 2025 14:52:17 +0800
-X-Priority: 3
-Message-ID: <tencent_FCCBB98BA5E88F7B6DFCDC55EC9C23CFF105@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Jmd0OyBCdXQgSSB3b25kZXIgd2h5IGdlbmVyaWNfY2lfbWF0Y2ggaXMgZXZlbiBjYWxsZWQg
-dGhhdCBvZnRlbi4gIEJvdGggZXh0NA0KJmd0OyBhbmQgZjJmcyBzdXBwb3J0IGhhc2hlZCBs
-b29rdXBzLCBzbyB5b3Ugc2hvdWxkIHVzdWFsbHkgb25seSBzZWUgaXQgY2FsbGVkDQomZ3Q7
-IGZvciB0aGUgbWFpbiBtYXRjaCwgcGx1cyB0aGUgb2NjYXNpb25hbCBoYXNoIGZhbHNlIHBv
-c2l0aXZlLCB3aGljaCBzaG91bGQNCiZndDsgYmUgcmF0ZSBpZiB0aGUgaGFzaCB3b3Jrcy4N
-Cg0KDQpBdCBwcmVzZW50LCBpbiB0aGUgbGF0ZXN0IHZlcnNpb24gb2YgTGludXgsIGluIHNv
-bWUgc2NlbmFyaW9zLA0KZjJmcyBzdGlsbCB1c2VzIGxpbmVhciBzZWFyY2guDQoNCg0KVGhl
-IGxvZ2ljIG9mIGxpbmVhciBzZWFyY2ggd2FzIGludHJvZHVjZWQgYnkgQ29tbWl0IDkxYjU4
-N2JhNzllMQ0KKGYyZnM6IEludHJvZHVjZSBsaW5lYXIgc2VhcmNoIGZvciBkZW50cmllcyku
-IENvbW1pdCA5MWI1ODdiYTc5ZTENCndhcyBkZXNpZ25lZCB0byBzb2x2ZSB0aGUgcHJvYmxl
-bSBvZiBpbmNvbnNpc3RlbnQgaGFzaGVzIGJlZm9yZQ0KYW5kIGFmdGVyIHRoZSByb2xsYmFj
-ayBvZiBDb21taXQgNWMyNmQyZjFkM2Y1DQooInVuaWNvZGU6IERvbid0IHNwZWNpYWwgY2Fz
-ZSBpZ25vcmFibGUgY29kZSBwb2ludHMiKSwNCndoaWNoIGxlZCB0byBmaWxlcyBiZWluZyBp
-bmFjY2Vzc2libGUuDQoNCg0KSW4gb3JkZXIgdG8gcmVkdWNlIHRoZSBpbXBhY3Qgb2YgbGlu
-ZWFyIHNlYXJjaCwgaW4gcmVsYXRpdmVseSBuZXcNCnZlcnNpb25zLCB0aGUgbG9naWMgb2Yg
-dHVybmluZyBvZmYgbGluZWFyIHNlYXJjaCBoYXMgYWxzbyBiZWVuDQppbnRyb2R1Y2VkLiBI
-b3dldmVyLCB0aGUgdHJpZ2dlcmluZyBjb25kaXRpb25zIGZvciB0aGlzDQp0dXJuIC0gb2Zm
-IGxvZ2ljIG9uIGYyZnMgYXJlIHJhdGhlciBzdHJpY3Q6DQoNCg0KMS4gVXNlIHRoZSBsYXRl
-c3QgdmVyc2lvbiBvZiB0aGUgZnNjay5mMmZzIHRvb2wgdG8gY29ycmVjdA0KdGhlIGZpbGUg
-c3lzdGVtLg0KMi4gVXNlIGEgcmVsYXRpdmVseSBuZXcgdmVyc2lvbiBvZiB0aGUga2VybmVs
-LiAoRm9yIGV4YW1wbGUsDQpsaW5lYXIgc2VhcmNoIGNhbm5vdCBiZSB0dXJuZWQgb2ZmIGlu
-IHY2LjYpDQoNCg0KVGhlIHBlcmZvcm1hbmNlIGdhaW4gb2YgdGhpcyBjb21taXQgaXMgdmVy
-eSBvYnZpb3VzIGluIHNjZW5hcmlvcw0Kd2hlcmUgbGluZWFyIHNlYXJjaCBpcyBub3QgdHVy
-bmVkIG9mZi4gSW4gc2NlbmFyaW9zIHdoZXJlIGxpbmVhcg0Kc2VhcmNoIGlzIHR1cm5lZCBv
-ZmYsIG5vIHBlcmZvcm1hbmNlIHByb2JsZW1zIHdpbGwgYmUgaW50cm9kdWNlZA0KZWl0aGVy
-Ljxicj4=
-e±
+On Sun, 6 Jul 2025 22:27:17 -0700 Christoph Hellwig wrote:
+> But I wonder why generic_ci_match is even called that often.  Both ext4
+> and f2fs support hashed lookups, so you should usually only see it called
+> for the main match, plus the occasional hash false positive, which should
+> be rate if the hash works.
+
+At present, in the latest version of Linux, in some scenarios,
+f2fs still uses linear search.
+
+The logic of linear search was introduced by Commit 91b587ba79e1
+(f2fs: Introduce linear search for dentries). Commit 91b587ba79e1
+was designed to solve the problem of inconsistent hashes before
+and after the rollback of Commit 5c26d2f1d3f5
+("unicode: Don't special case ignorable code points"),
+which led to files being inaccessible.
+
+In order to reduce the impact of linear search, in relatively new
+versions, the logic of turning off linear search has also been
+introduced. However, the triggering conditions for this
+turn - off logic on f2fs are rather strict:
+
+1. Use the latest version of the fsck.f2fs tool to correct
+the file system.
+2. Use a relatively new version of the kernel. (For example,
+linear search cannot be turned off in v6.6)
+
+The performance gain of this commit is very obvious in scenarios
+where linear search is not turned off. In scenarios where linear
+search is turned off, no performance problems will be introduced
+either.
+
 
