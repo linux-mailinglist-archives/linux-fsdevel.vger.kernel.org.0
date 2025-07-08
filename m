@@ -1,250 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-54276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7473CAFD08A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 18:23:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C20AFD262
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 18:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B759188925C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 16:23:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09838164F89
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 16:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DA52E540C;
-	Tue,  8 Jul 2025 16:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8196B2E540D;
+	Tue,  8 Jul 2025 16:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W5rQ67AQ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dzCuC2vO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359C42E091E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 16:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D022E337A;
+	Tue,  8 Jul 2025 16:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751991784; cv=none; b=Sh/gCc9m1gtKIEIV3syvNrUmPe1QpQkuorULKwVX1wNmHfIho0J8BkcIPV20QFzBQRr8XhmX4577OkBJZKgyZpg9nhzsGZVnP/ZJDfbMcOgTjml9GxqgafBK/S3OWvZP62CT8r9eEXU8mNyvQsbP0dm25acw+p/TL+qc5c8w1Gs=
+	t=1751992995; cv=none; b=nmmD4uUNal+eLvElXQTVHgEchxo4zm8933YisBAVzCfj1f2GFIqEBihsN2s+wThVMQ2jRTiJvnzMrfcM1oQZB/wSfWGeZzn8ulmu2iTBAiIvl2k1q3dZjM2wq/n2cdfd09MSHHbryeTTFslpD/k2z+c9aj4BHD4kYnsJdRBSnYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751991784; c=relaxed/simple;
-	bh=PegidGIXf4VgLnfxOSMFf1lrcQ3ujs0Sqx5iFYA5RE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rz/Heh66rNZ3cXmZw0qQWu4fRThH9DB/nVhVQUrQq+gDxvrQo/mMNMDf2lkDtSa4R2eXVgQSYn5XsGaYgDZpt25x72oFjHlmqUk9zqFKpL3iQ0WIzL4oh1x2/NSPArwrVIZdrI8Suy188TbMVNsNkp5MlmXBJtn2TxJFsVM8Uo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W5rQ67AQ; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a58197794eso215701cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 09:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751991782; x=1752596582; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WXzt9vd5Q0HkrVVprucwZQ4sITBiPzYABNC21pbVYVY=;
-        b=W5rQ67AQuMMOwuE0N8jwqk5cfkTjxnuCxPdwi2kB0/XQ1fA23TSSbPBOrGh7IKol2P
-         wUjMUKoRJjO0Dpp3fl3JLoN0kbnDRmzPZVhzDs7BP0sBwONcW6NERbeqfP3PXwmZs8ps
-         PbKD3YD7J9sRXZxULZgjLHfsd7a4HXMwkHP7ah4XEw/CAn7F9dt9WwdyD+EwBEINuJQ7
-         UC93KMhisIEQn9I0FlxPuGy/LHdGgCSnj/+2xde0KiTvOvJfjd6zACnoY3PuMsK2XM49
-         KG/trApDMt+SQsfV4KHYTU8S4dpm+kK9HH/eBLpBbFJcOPc7K22iID+NzAC2WtaMcrxE
-         W5kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751991782; x=1752596582;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WXzt9vd5Q0HkrVVprucwZQ4sITBiPzYABNC21pbVYVY=;
-        b=VYmDXLtIStzSd9aaIzNHxmW2Wu0Les/aXJMtALaa0b4EJDX57u8EG7pNPyv6dmUKHg
-         pQ7fUllbktsjYGncwTH9Bjc2iAVGC7cCr6BC9Vwt9jF1siKLRWW88UGZFuPaiKK9B1tR
-         r8XLC2h0SiCWhtl1LMg7a1GNPa53p4n7qRcIU5i7sfbJ5ED4cRMxkNd+cEXMYEFdVLZk
-         bfHYm0Lk8mvu3njXWPMqW8WpBXMSWkYkpjcbxYwQW0OTBsnb8qKu288HEHtNXj9CSvKw
-         BUGohbdR1ppT45wUIw0gIG9ZrWcqRpSMxGd/zJfTu10yEeKeSNVZ7KtKgSNDxwZ4D5yZ
-         v4dg==
-X-Forwarded-Encrypted: i=1; AJvYcCWs+CHfuK7u9w4ljeuHkjKOlTaysvhZt+yYilSeyoaSCaBgYb6hi+KDcf9NbCrchLlC45rsKN/2OEkbRIY+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxatZLqnG7Y0ishi1GClcwAue9JL+lC5mf6B+XECxQN2rYLVjf
-	1PvyXBMb9cP7rN+2XckxdeuuHY+MGsZRfFB8vpayS3iT8nrAsMMiVL8SztUyJny82HlUFgLGmi+
-	Ck/J5RlwK1O3qwAYsWV0ppXrcAY49IC/qtdg7Wtms
-X-Gm-Gg: ASbGncu86hjaip3ZoVS2BbucUqcZdfUokLd4n4sfElyFnDKMALWCRSErpTTZh6XKMF4
-	mYIZAYTQ5FqfZfUC6UG51+E0n2icb63dzvwS5VdDRnGgSE7AJO/qHUix0JNSPuk3eU1eJeZsboZ
-	jVhAw1jVy2xcuzS7pJOaXtkZIwuV5/S1XTUjabLvDJwk8=
-X-Google-Smtp-Source: AGHT+IFBdp4zmhdf7sOV/E1kyNsfw2i3sbcpdZXFP2jgFE4TcTJqwsBu6LVphdeOHM8jnyqNvSf2XaBBrOC5QRw3cSY=
-X-Received: by 2002:a05:622a:4fca:b0:4a7:bed9:5251 with SMTP id
- d75a77b69052e-4a9d470e0d3mr2131411cf.9.1751991781275; Tue, 08 Jul 2025
- 09:23:01 -0700 (PDT)
+	s=arc-20240116; t=1751992995; c=relaxed/simple;
+	bh=IKNCQMFSy/+vys7ZqtIGDE3JNL+s+xsJEgG5sYesM10=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Arp1QWDItpYwicJU1NmhK+GbNPQVKkk3SPQjBQHff47f+OX4ZZGRpdZCjJ2XrZKQ5ztQcsUmAxSrEFtYRhK7GRtcvzjw+cwka7/rBpVRo/ltfCe4WH0XtY6koOZWyWf0FC9jiBsL8LKebOE6xM+skuPVpHJUn6bx0KXN6+Fn57k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dzCuC2vO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A6B6C4CEED;
+	Tue,  8 Jul 2025 16:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751992995;
+	bh=IKNCQMFSy/+vys7ZqtIGDE3JNL+s+xsJEgG5sYesM10=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dzCuC2vOBJ0SX97PGF1NPdpG9dZ1tZe3k/h7K/Gfb3GaIE6lxPH+LM7cs6hGXtST8
+	 UktnieAfef+8M/0L8WWsewcDYwuiPGkUjEtfD2GTBNFeND59PidiUhtQURPdg+umSb
+	 qQtO0mN3+4gcsT4K04F6ZjtikzJ81x69g71cBD0A=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com,
+	David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.12 151/232] netfs: Fix oops in write-retry from mis-resetting the subreq iterator
+Date: Tue,  8 Jul 2025 18:22:27 +0200
+Message-ID: <20250708162245.390650881@linuxfoundation.org>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250708162241.426806072@linuxfoundation.org>
+References: <20250708162241.426806072@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aGIBGR8tLNYtbeWC@yzhao56-desk.sh.intel.com> <CAGtprH-83EOz8rrUjE+O8m7nUDjt=THyXx=kfft1xQry65mtQg@mail.gmail.com>
- <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
- <aGxXWvZCfhNaWISY@google.com> <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
- <006899ccedf93f45082390460620753090c01914.camel@intel.com>
- <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
- <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com> <aG07j4Pfkd5EEobQ@google.com>
-In-Reply-To: <aG07j4Pfkd5EEobQ@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 8 Jul 2025 17:22:24 +0100
-X-Gm-Features: Ac12FXyH8_ZC6Lmmr3oQJsEuVEWXw9GEQ3K2NBG0RWnuVToRnCnb4O5e-GjDi3Q
-Message-ID: <CA+EHjTx0UkYSduDxe13dFi4+J5L28H+wB4FBXLsMRC5HaHaaFg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-To: Sean Christopherson <seanjc@google.com>
-Cc: Vishal Annapurve <vannapurve@google.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	"pvorel@suse.cz" <pvorel@suse.cz>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, Jun Miao <jun.miao@intel.com>, 
-	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
-	"vbabka@suse.cz" <vbabka@suse.cz>, "peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"amoorthy@google.com" <amoorthy@google.com>, "jack@suse.cz" <jack@suse.cz>, 
-	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "keirf@google.com" <keirf@google.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"fvdl@google.com" <fvdl@google.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
-	"bfoster@redhat.com" <bfoster@redhat.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
-	"anup@brainfault.org" <anup@brainfault.org>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "mic@digikod.net" <mic@digikod.net>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, "steven.price@arm.com" <steven.price@arm.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "hughd@google.com" <hughd@google.com>, 
-	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
-	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, Erdem Aktas <erdemaktas@google.com>, 
-	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, Fan Du <fan.du@intel.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
-	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, 
-	Chao P Peng <chao.p.peng@intel.com>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
-	Alexander Graf <graf@amazon.com>, "nikunj@amd.com" <nikunj@amd.com>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
-	Yilun Xu <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
-	Ira Weiny <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
-	"roypat@amazon.co.uk" <roypat@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Sean,
+6.12-stable review patch.  If anyone has any objections, please let me know.
 
-On Tue, 8 Jul 2025 at 16:39, Sean Christopherson <seanjc@google.com> wrote:
->
-> On Tue, Jul 08, 2025, Vishal Annapurve wrote:
-> > On Tue, Jul 8, 2025 at 7:52=E2=80=AFAM Edgecombe, Rick P
-> > <rick.p.edgecombe@intel.com> wrote:
-> > >
-> > > On Tue, 2025-07-08 at 07:20 -0700, Sean Christopherson wrote:
-> > > > > For TDX if we don't zero on conversion from private->shared we wi=
-ll be
-> > > > > dependent
-> > > > > on behavior of the CPU when reading memory with keyid 0, which wa=
-s
-> > > > > previously
-> > > > > encrypted and has some protection bits set. I don't *think* the b=
-ehavior is
-> > > > > architectural. So it might be prudent to either make it so, or ze=
-ro it in
-> > > > > the
-> > > > > kernel in order to not make non-architectual behavior into usersp=
-ace ABI.
-> > > >
-> > > > Ya, by "vendor specific", I was also lumping in cases where the ker=
-nel would
-> > > > need to zero memory in order to not end up with effectively undefin=
-ed
-> > > > behavior.
-> > >
-> > > Yea, more of an answer to Vishal's question about if CC VMs need zero=
-ing. And
-> > > the answer is sort of yes, even though TDX doesn't require it. But we=
- actually
-> > > don't want to zero memory when reclaiming memory. So TDX KVM code nee=
-ds to know
-> > > that the operation is a to-shared conversion and not another type of =
-private
-> > > zap. Like a callback from gmem, or maybe more simply a kernel interna=
-l flag to
-> > > set in gmem such that it knows it should zero it.
-> >
-> > If the answer is that "always zero on private to shared conversions"
-> > for all CC VMs,
->
-> pKVM VMs *are* CoCo VMs.  Just because pKVM doesn't rely on third party f=
-irmware
-> to provide confidentiality and integrity doesn't make it any less of a Co=
-Co VM.
+------------------
+
+From: David Howells <dhowells@redhat.com>
+
+[ Upstream commit 4481f7f2b3df123ec77e828c849138f75cff2bf2 ]
+
+Fix the resetting of the subrequest iterator in netfs_retry_write_stream()
+to use the iterator-reset function as the iterator may have been shortened
+by a previous retry.  In such a case, the amount of data to be written by
+the subrequest is not "subreq->len" but "subreq->len -
+subreq->transferred".
+
+Without this, KASAN may see an error in iov_iter_revert():
+
+   BUG: KASAN: slab-out-of-bounds in iov_iter_revert lib/iov_iter.c:633 [inline]
+   BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x443/0x5a0 lib/iov_iter.c:611
+   Read of size 4 at addr ffff88802912a0b8 by task kworker/u32:7/1147
+
+   CPU: 1 UID: 0 PID: 1147 Comm: kworker/u32:7 Not tainted 6.15.0-rc6-syzkaller-00052-g9f35e33144ae #0 PREEMPT(full)
+   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+   Workqueue: events_unbound netfs_write_collection_worker
+   Call Trace:
+    <TASK>
+    __dump_stack lib/dump_stack.c:94 [inline]
+    dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+    print_address_description mm/kasan/report.c:408 [inline]
+    print_report+0xc3/0x670 mm/kasan/report.c:521
+    kasan_report+0xe0/0x110 mm/kasan/report.c:634
+    iov_iter_revert lib/iov_iter.c:633 [inline]
+    iov_iter_revert+0x443/0x5a0 lib/iov_iter.c:611
+    netfs_retry_write_stream fs/netfs/write_retry.c:44 [inline]
+    netfs_retry_writes+0x166d/0x1a50 fs/netfs/write_retry.c:231
+    netfs_collect_write_results fs/netfs/write_collect.c:352 [inline]
+    netfs_write_collection_worker+0x23fd/0x3830 fs/netfs/write_collect.c:374
+    process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+    process_scheduled_works kernel/workqueue.c:3319 [inline]
+    worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+    kthread+0x3c2/0x780 kernel/kthread.c:464
+    ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+    </TASK>
+
+Fixes: cd0277ed0c18 ("netfs: Use new folio_queue data type and iterator instead of xarray iter")
+Reported-by: syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=25b83a6f2c702075fcbc
+Signed-off-by: David Howells <dhowells@redhat.com>
+Link: https://lore.kernel.org/20250519090707.2848510-2-dhowells@redhat.com
+Tested-by: syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/netfs/write_collect.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
+index 412d4da742270..7cb21da40a0a4 100644
+--- a/fs/netfs/write_collect.c
++++ b/fs/netfs/write_collect.c
+@@ -176,9 +176,10 @@ static void netfs_retry_write_stream(struct netfs_io_request *wreq,
+ 			if (test_bit(NETFS_SREQ_FAILED, &subreq->flags))
+ 				break;
+ 			if (__test_and_clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags)) {
+-				struct iov_iter source = subreq->io_iter;
++				struct iov_iter source;
+ 
+-				iov_iter_revert(&source, subreq->len - source.count);
++				netfs_reset_iter(subreq);
++				source = subreq->io_iter;
+ 				__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
+ 				netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
+ 				netfs_reissue_write(stream, subreq, &source);
+-- 
+2.39.5
 
 
 
-> > > >  : And maybe a new flag for KVM_GMEM_CONVERT_PRIVATE for user space=
- to
-> > > >  : explicitly request that the page range is converted to private a=
-nd the
-> > > >  : content needs to be retained. So that TDX can identify which cas=
-e needs
-> > > >  : to call in-place TDH.PAGE.ADD.
-> > > >
-> > > > If so, I agree with that idea, e.g. add a PRESERVE flag or whatever=
-.  That way
-> > > > userspace has explicit control over what happens to the data during
-> > > > conversion,
-> > > > and KVM can reject unsupported conversions, e.g. PRESERVE is only a=
-llowed for
-> > > > shared =3D> private and only for select VM types.
-> > >
-> > > Ok, we should POC how it works with TDX.
-> >
-> > I don't think we need a flag to preserve memory as I mentioned in [2]. =
-IIUC,
-> > 1) Conversions are always content-preserving for pKVM.
->
-> No?  Perserving contents on private =3D> shared is a security vulnerabili=
-ty waiting
-> to happen.
-
-Actually it is one of the requirements for pKVM as well as its current
-behavior. We would like to preserve contents both ways, private <=3D>
-shared, since it is required by some of the potential use cases (e.g.,
-guest handling video encoding/decoding).
-
-To make it clear, I'm talking about explicit sharing from the guest,
-not relinquishing memory back to the host. In the case of
-relinquishing (and guest teardown), relinquished memory is poisoned
-(zeroed) in pKVM.
-
-Cheers,
-/fuad
-
-> > 2) Shared to private conversions are always content-preserving for all
-> > VMs as far as guest_memfd is concerned.
->
-> There is no "as far as guest_memfd is concerned".  Userspace doesn't care=
- whether
-> code lives in guest_memfd.c versus arch/xxx/kvm, the only thing that matt=
-ers is
-> the behavior that userspace sees.  I don't want to end up with userspace =
-ABI that
-> is vendor/VM specific.
->
-> > 3) Private to shared conversions are not content-preserving for CC VMs
-> > as far as guest_memfd is concerned, subject to more discussions.
-> >
-> > [2] https://lore.kernel.org/lkml/CAGtprH-Kzn2kOGZ4JuNtUT53Hugw64M-_XMmh=
-z_gCiDS6BAFtQ@mail.gmail.com/
 
