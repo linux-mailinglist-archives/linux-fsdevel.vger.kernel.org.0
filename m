@@ -1,56 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-54206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBAEAFC084
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 04:10:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE300AFC08F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 04:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D19F4A3BC6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 02:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800AE189F850
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 02:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A6A21B908;
-	Tue,  8 Jul 2025 02:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="aFbYN7eX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8BC21C9E7;
+	Tue,  8 Jul 2025 02:11:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBA621883F;
-	Tue,  8 Jul 2025 02:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48636217F34;
+	Tue,  8 Jul 2025 02:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940617; cv=none; b=bAGy+2Frdvx7UdvHep/snAJ8tW+dbV1qhpLxWAoRqDoZtil1yKwQIyEhKvT7ogKcMJc6NhVXAQCrf8TGFAs6diTrWjiK2nTx7Y+d3RI8BvinUOHxNvosFINrGmtMbBGp7SqyWByxMHWg5a5kN3CHVjwTxNK5NhHEanzVlZ2ZhQM=
+	t=1751940694; cv=none; b=q5/AYbB/Qwn6BJRvDkE1bh8gNDXCx61tFuIxg2ToPF/WuOMBa6RQhhFTMkJY3C7RTGJmSCD2vcb82PJz4sGFSWZdo1o3iLNswy3XuoZapQuJT2k0dg5T/GJV7d4i9o9CS/3xRUJj/vaK4v2HscCKc07hWMUpsJ9satSI/hvotmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940617; c=relaxed/simple;
-	bh=IS2SOsI8AEa2vY4ttEk43WaJKe9m69fh3kSiDj7OMpY=;
+	s=arc-20240116; t=1751940694; c=relaxed/simple;
+	bh=/ZaA0gW2tRVZAnlXgh8+Tgwg9uThks4N84qAFsHXznk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VHtVjmIki/K7LazCLtQbPt7SKa3E8Z5JegOx/zjnIDFJlXu01ChFhPM8f8azzjDSEAZXzBV4/meScNkFHu9kBWBbov+HcXyFyv8I9/vMsEqifI3mOLw/cMU7WwD7fkFiLf2xzSC9iVepxlyl5tXFzI0JRxHe/C2+DlJRoMKAT+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=aFbYN7eX; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1751940590; x=1752545390; i=quwenruo.btrfs@gmx.com;
-	bh=0h5VDs/ZUqYitD9U3zCLJQXOlFnOTO0lH7VNO4yWm1o=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=aFbYN7eXZ1e/aKYoUwoDgU20cCqPFEg5zR7Gs3BrJDK+vrSjkAaL3vqEHxUj37GF
-	 JHVtFZxu93XEl+GNo5x40+aDuTouonHo6szImifyFO2R5EROwsIt4vA4NyOn6mIMs
-	 jDaShxYI31H3BZVkROP68nzx3jc5c1OLwUgCZ+qjv+i1Onq3zAU6YKHy8UFiPXWdn
-	 aMUXokgp+tOHNQHBwg+FtUu9OIxkIsrh/LmuYPD+6JxPcbHDV7teenMsabvoEwJhi
-	 J2gom3jhhscbBpj68ZgVfQBt09tWMml9IMxnEPhUavS7YpXFpVDgtmx5W8cfUef6F
-	 oijnnAoHH32HC4XcdQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MyKHc-1urhS546iy-015pS4; Tue, 08
- Jul 2025 04:09:50 +0200
-Message-ID: <02584a40-a2c0-4565-ab46-50c1a4100b21@gmx.com>
-Date: Tue, 8 Jul 2025 11:39:42 +0930
+	 In-Reply-To:Content-Type; b=OkA/ac/fDBuRZXwImpKVHHrm9JMa4Qpj4bPAQeVkCZZTtc6Qjk9oO8tsgQYx0bIsaBOwo/xYUwGzJVrRP4YDl8LAzI/e2JebP2Gqc6V+NescBxBpelRo4UJaKgzZLG1udNCk2oBP11B9jcGHvEtBcTnsl+n/+KuJ3ZoeY9wnr5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bbl350MKbzYQv0c;
+	Tue,  8 Jul 2025 10:11:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id D5C591A0F85;
+	Tue,  8 Jul 2025 10:11:27 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP3 (Coremail) with SMTP id _Ch0CgA3mSZJfmxoAK0BBA--.64195S3;
+	Tue, 08 Jul 2025 10:11:23 +0800 (CST)
+Message-ID: <683b8d88-0ded-476f-9ed0-bd76a0c3128f@huaweicloud.com>
+Date: Tue, 8 Jul 2025 10:11:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,208 +47,197 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] fs: enhance and rename shutdown() callback to
- remove_bdev()
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>, Qu Wenruo <wqu@suse.com>,
- linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
-References: <cover.1751589725.git.wqu@suse.com>
- <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
- <aGxSHKeyldrR1Q0T@dread.disaster.area>
- <dbd955f7-b9b4-402f-97bf-6b38f0c3237e@gmx.com>
- <20250708004532.GA2672018@frogsfrogsfrogs>
+Subject: Re: next-20250626: WARNING fs jbd2 transaction.c start_this_handle
+ with ARM64_64K_PAGES
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ Joseph Qi <jiangqi903@gmail.com>
+Cc: linux-ext4 <linux-ext4@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ Linux Regressions <regressions@lists.linux.dev>,
+ LTP List <ltp@lists.linux.it>, Theodore Ts'o <tytso@mit.edu>,
+ Jan Kara <jack@suse.cz>, Anders Roxell <anders.roxell@linaro.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+References: <CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com>
+ <2dbc199b-ef22-4c22-9dbd-5e5876e9f9b4@huaweicloud.com>
+ <CA+G9fYv5zpLxeVLqYbDLLUOxmAzuXDbaZobvpCBBBuZJKLMpPQ@mail.gmail.com>
 Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20250708004532.GA2672018@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LtuoZyNaToYftOWmNW8wynAcLNGgt+BTG26KXfqxGFyysSJQjTY
- dGo/srMDXitMVyTRVSmSOtL1PY7v+HCDDQ5vpZsUIIfbSl6Bs7Rni7glh6FXMu0TjDaxYaQ
- yCqbBIQ0ZYlyLA09sy6wJ03IwRa6XFPsuELICG2CuXtgr7Q/P3Su+/HGfif4SkQZxEd//nI
- KGoR/TiIp7+sEKBCSd/2w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wZmAZRbajo0=;PNV3xrk5N3151j3iXOadSy+eecD
- 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
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <CA+G9fYv5zpLxeVLqYbDLLUOxmAzuXDbaZobvpCBBBuZJKLMpPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgA3mSZJfmxoAK0BBA--.64195S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw43Zry5uF17XrWkJFyUAwb_yoWxZFWxpa
+	43tF1UKr40vr1xJrW0q3WFqryUtr1qyFykJrnFqr18GFnFvF18JFWIgryrKF9rJ348u34x
+	Ar4qk3srKr4jy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-
-=E5=9C=A8 2025/7/8 10:15, Darrick J. Wong =E5=86=99=E9=81=93:
-[...]
+On 2025/7/3 15:26, Naresh Kamboju wrote:
+> On Thu, 26 Jun 2025 at 19:23, Zhang Yi <yi.zhang@huaweicloud.com> wrote:
 >>
->> I do not think it's the correct way to go, especially when there is alr=
-eady
->> fs_holder_ops.
+>> Hi, Naresh!
 >>
->> We're always going towards a more generic solution, other than letting =
-the
->> individual fs to do the same thing slightly differently.
->=20
-> On second thought -- it's weird that you'd flush the filesystem and
-> shrink the inode/dentry caches in a "your device went away" handler.
-> Fancy filesystems like bcachefs and btrfs would likely just shift IO to
-> a different bdev, right?  And there's no good reason to run shrinkers on
-> either of those fses, right?
+>> On 2025/6/26 20:31, Naresh Kamboju wrote:
+>>> Regressions noticed on arm64 devices while running LTP syscalls mmap16
+>>> test case on the Linux next-20250616..next-20250626 with the extra build
+>>> config fragment CONFIG_ARM64_64K_PAGES=y the kernel warning noticed.
+>>>
+>>> Not reproducible with 4K page size.
+>>>
+>>> Test environments:
+>>> - Dragonboard-410c
+>>> - Juno-r2
+>>> - rk3399-rock-pi-4b
+>>> - qemu-arm64
+>>>
+>>> Regression Analysis:
+>>> - New regression? Yes
+>>> - Reproducibility? Yes
+>>>
+>>> Test regression: next-20250626 LTP mmap16 WARNING fs jbd2
+>>> transaction.c start_this_handle
+>>>
+>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>
+>> Thank you for the report. The block size for this test is 1 KB, so I
+>> suspect this is the issue with insufficient journal credits that we
+>> are going to resolve.
+> 
+> I have applied your patch set [1] and tested and the reported
+> regressions did not fix.
+> Am I missing anything ?
+> 
+> [1] https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
+> 
 
-That's right, some part of fs_bdev_mark_dead() is not making much sense=20
-if the fs can handle the dev loss.
+Hi, Naresh and Joseph!
 
->=20
->> Yes, the naming is not perfect and mixing cause and action, but the end
->> result is still a more generic and less duplicated code base.
->=20
-> I think dchinner makes a good point that if your filesystem can do
-> something clever on device removal, it should provide its own block
-> device holder ops instead of using fs_holder_ops.
+Thanks to Jan's assistance, I've fixed this issue in my latest series
+and both tests passed on my machine. Could you please give it a try?
 
-Then re-implement a lot of things like bdev_super_lock()?
-
-I'd prefer not.
-
-
-fs_holder_ops solves a lot of things like handling mounting/inactive=20
-fses, and pushing it back again to the fs code is just causing more=20
-duplication.
-
-Not really worthy if we only want a single different behavior.
-
-Thus I strongly prefer to do with the existing fs_holder_ops, no matter=20
-if it's using/renaming the shutdown() callback, or a new callback.
-
->  I don't understand
-> why you need a "generic" solution for btrfs when it's not going to do
-> what the others do anyway.
-
-Because there is only one behavior different.
-
-Other things like freezing/thawing/syncing are all the same.
+https://lore.kernel.org/linux-ext4/20250707140814.542883-1-yi.zhang@huaweicloud.com/
 
 Thanks,
-Qu
+Yi.
 
->=20
-> Awkward naming is often a sign that further thought (or at least
-> separation of code) is needed.
->=20
-> As an aside:
-> 'twould be nice if we could lift the *FS_IOC_SHUTDOWN dispatch out of
-> everyone's ioctl functions into the VFS, and then move the "I am dead"
-> state into super_block so that you could actually shut down any
-> filesystem, not just the seven that currently implement it.
->=20
-> --D
->=20
->>> Hence Btrfs should be doing the same thing as bcachefs. The
->>> bdev_handle_ops structure exists precisly because it allows the
->>> filesystem to handle block device events in the exact manner they
->>> require....
+
 >>>
->>>> - Add a new @bdev parameter to remove_bdev() callback
->>>>     To allow the fs to determine which device is missing, and do the
->>>>     proper handling when needed.
->>>>
->>>> For the existing shutdown callback users, the change is minimal.
+>>> ## Test log
+>>> <6>[   89.498969] loop0: detected capacity change from 0 to 614400
+>>> <3>[   89.609561] operation not supported error, dev loop0, sector
+>>> 20352 op 0x9:(WRITE_ZEROES) flags 0x20000800 phys_seg 0 prio class 0
+>>> <6>[   89.707795] EXT4-fs (loop0): mounted filesystem
+>>> 6786a191-5e0d-472b-8bce-4714e1a4fb44 r/w with ordered data mode. Quota
+>>> mode: none.
+>>> <3>[   90.023985] JBD2: kworker/u8:2 wants too many credits
+>>> credits:416 rsv_credits:21 max:334
+>>> <4>[   90.024973] ------------[ cut here ]------------
+>>> <4>[ 90.025062] WARNING: fs/jbd2/transaction.c:334 at
+>>> start_this_handle+0x4c0/0x4e0, CPU#0: 2/42
+>>> <4>[   90.026661] Modules linked in: btrfs blake2b_generic xor
+>>> xor_neon raid6_pq zstd_compress sm3_ce sha3_ce fuse drm backlight
+>>> ip_tables x_tables
+>>> <4>[   90.027952] CPU: 0 UID: 0 PID: 42 Comm: kworker/u8:2 Not tainted
+>>> 6.16.0-rc3-next-20250626 #1 PREEMPT
+>>> <4>[   90.029043] Hardware name: linux,dummy-virt (DT)
+>>> <4>[   90.029524] Workqueue: writeback wb_workfn (flush-7:0)
+>>> <4>[   90.030050] pstate: 63402009 (nZCv daif +PAN -UAO +TCO +DIT
+>>> -SSBS BTYPE=--)
+>>> <4>[ 90.030311] pc : start_this_handle (fs/jbd2/transaction.c:334
+>>> (discriminator 1))
+>>> <4>[ 90.030481] lr : start_this_handle (fs/jbd2/transaction.c:334
+>>> (discriminator 1))
+>>> <4>[   90.030656] sp : ffffc000805cb650
+>>> <4>[   90.030785] x29: ffffc000805cb690 x28: fff00000dd1f5000 x27:
+>>> ffffde2ec0272000
+>>> <4>[   90.031097] x26: 00000000000001a0 x25: 0000000000000015 x24:
+>>> 0000000000000002
+>>> <4>[   90.031360] x23: 0000000000000015 x22: 0000000000000c40 x21:
+>>> 0000000000000008
+>>> <4>[   90.031618] x20: fff00000c231da78 x19: fff00000c231da78 x18:
+>>> 0000000000000000
+>>> <4>[   90.031875] x17: 0000000000000000 x16: 0000000000000000 x15:
+>>> 0000000000000000
+>>> <4>[   90.032859] x14: 0000000000000000 x13: 00000000ffffffff x12:
+>>> 0000000000000000
+>>> <4>[   90.033225] x11: 0000000000000000 x10: ffffde2ebfba8bd0 x9 :
+>>> ffffde2ebd34e944
+>>> <4>[   90.033607] x8 : ffffc000805cb278 x7 : 0000000000000000 x6 :
+>>> 0000000000000001
+>>> <4>[   90.033971] x5 : ffffde2ebfb29000 x4 : ffffde2ebfb293d0 x3 :
+>>> 0000000000000000
+>>> <4>[   90.034294] x2 : 0000000000000000 x1 : fff00000c04dc080 x0 :
+>>> 000000000000004c
+>>> <4>[   90.034772] Call trace:
+>>> <4>[ 90.035068] start_this_handle (fs/jbd2/transaction.c:334
+>>> (discriminator 1)) (P)
+>>> <4>[ 90.035366] jbd2__journal_start (fs/jbd2/transaction.c:501)
+>>> <4>[ 90.035586] __ext4_journal_start_sb (fs/ext4/ext4_jbd2.c:117)
+>>> <4>[ 90.035807] ext4_do_writepages (fs/ext4/ext4_jbd2.h:242
+>>> fs/ext4/inode.c:2846)
+>>> <4>[ 90.036004] ext4_writepages (fs/ext4/inode.c:2953)
+>>> <4>[ 90.036233] do_writepages (mm/page-writeback.c:2636)
+>>> <4>[ 90.036406] __writeback_single_inode (fs/fs-writeback.c:1680)
+>>> <4>[ 90.036616] writeback_sb_inodes (fs/fs-writeback.c:1978)
+>>> <4>[ 90.036891] wb_writeback (fs/fs-writeback.c:2156)
+>>> <4>[ 90.037122] wb_workfn (fs/fs-writeback.c:2303 (discriminator 1)
+>>> fs/fs-writeback.c:2343 (discriminator 1))
+>>> <4>[ 90.037318] process_one_work (kernel/workqueue.c:3244)
+>>> <4>[ 90.037517] worker_thread (kernel/workqueue.c:3316 (discriminator
+>>> 2) kernel/workqueue.c:3403 (discriminator 2))
+>>> <4>[ 90.037752] kthread (kernel/kthread.c:463)
+>>> <4>[ 90.037903] ret_from_fork (arch/arm64/kernel/entry.S:863)
+>>> <4>[   90.038217] ---[ end trace 0000000000000000 ]---
+>>> <2>[   90.039950] EXT4-fs (loop0): ext4_do_writepages: jbd2_start:
+>>> 9223372036854775807 pages, ino 14; err -28
+>>> <3>[   90.040291] JBD2: kworker/u8:2 wants too many credits
+>>> credits:416 rsv_credits:21 max:334
+>>> <4>[   90.040374] ------------[ cut here ]------------
+>>> <4>[ 90.040386] WARNING: fs/jbd2/transaction.c:334 at
+>>> start_this_handle+0x4c0/0x4e0, CPU#1: 2/42
 >>>
->>> Except for the change in API semantics. ->shutdown is an external
->>> shutdown trigger for the filesystem, not a generic "block device
->>> removed" notification.
->>
->> The problem is, there is no one utilizing ->shutdown() out of
->> fs_bdev_mark_dead().
->>
->> If shutdown ioctl is handled through super_operations::shutdown, it wil=
-l be
->> more meaningful to split shutdown and dev removal.
->>
->> But that's not the case, and different fses even have slightly differen=
-t
->> handling for the shutdown flags (not all fses even utilize journal to
->> protect their metadata).
->>
->> Thanks,
->> Qu
->>
->>
 >>>
->>> Hooking blk_holder_ops->mark_dead means that btrfs can also provide
->>> a ->shutdown implementation for when something external other than a
->>> block device removal needs to shut down the filesystem....
+>>> ## Source
+>>> * Kernel version: 6.16.0-rc3-next-20250626
+>>> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+>>> * Git sha: ecb259c4f70dd5c83907809f45bf4dc6869961d7
+>>> * Git describe: 6.16.0-rc3-next-20250626
+>>> * Project details:
+>>> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250626/
+>>> * Architectures: arm64
+>>> * Toolchains: gcc-13
+>>> * Kconfigs: gcc-13-lkftconfig-64k_page_size
 >>>
->>> -Dave.
+>>> ## Build arm64
+>>> * Test log: https://qa-reports.linaro.org/api/testruns/28894530/log_file/
+>>> * Test LAVA log 1:
+>>> https://lkft.validation.linaro.org/scheduler/job/8331353#L6841
+>>> * Test LAVA log 2:
+>>> https://lkft.validation.linaro.org/scheduler/job/8331352#L8854
+>>> * Test details:
+>>> https://regressions.linaro.org/lkft/linux-next-master/next-20250626/log-parser-test/exception-warning-fsjbd2transaction-at-start_this_handle/
+>>> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2z2V7LhiJecGzINkU7ObVQTwoR1/
+>>> * Kernel config:
+>>> https://storage.tuxsuite.com/public/linaro/lkft/builds/2z2V7LhiJecGzINkU7ObVQTwoR1/config
+>>>
+>>> --
+>>> Linaro LKFT
+>>> https://lkft.linaro.org
+>>>
 >>
->=20
+> 
+> 
 
 
