@@ -1,159 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-54202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A899AFBF24
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 02:14:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E50AFBF67
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 02:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC3B71AA6521
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 00:14:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B81B97AF210
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 00:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8F425771;
-	Tue,  8 Jul 2025 00:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8CD1DA10B;
+	Tue,  8 Jul 2025 00:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fyMOF3hc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="An1g12mb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AC41AAC9
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 00:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF2E145B27;
+	Tue,  8 Jul 2025 00:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751933672; cv=none; b=BStP/6vvrxOmxArjH4qoyjHBT4fXiK1QYKg2ueKJ/iTAKo2V8Tvf1Ai0gdRJaJkGjWIupBanb9csxIgnkJ0ZSdi3urIAGZfJ1QxqUmE7nrr0r4PZA6Dvc7D7DqS+hfyBg/C33K+sbo3uVZqhWrCKsJXZsA/m+1JxQwe0vzO0PcQ=
+	t=1751935533; cv=none; b=ANHkOQBYdrHmDbrhsDAdT1MtTKP0JMfOsgANEslhwSlIVE4830OK/JZR3sIcGdDZHyDLhAWUywF+Tg7yA/FXGOhobf9jg1cdsgJ9pU4fo2Mexr9cR0nDi28dTLnGG89/KTSV5R5ragzU0A5944rLnlzY43b8fz2jHCL01wLlEQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751933672; c=relaxed/simple;
-	bh=Q3YduanZhg5Y0sB2Odh2fAerxegQJGenK+wI+G6lALA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZTsPcgaWKNUaM78FPr10657oAx/tTu2ebT4RIj29QdaD63SmWmnJ53l4eINlNu5d7HEuSTTz+tOxGonIZWaymy66+H4SCIq3C4AkK8FPihBRvMgKnVwqZHxMpJ2HTWEQvdVo+0cy7yfK8bAMDKLQtoY9hKuAKBcWXvzC8vxY/MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fyMOF3hc; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-237f270513bso44835ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 17:14:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751933671; x=1752538471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q3YduanZhg5Y0sB2Odh2fAerxegQJGenK+wI+G6lALA=;
-        b=fyMOF3hcl5vFT3PHgZ0XuS4zOHuRPNH6I6nAmUEHi7hVuZ7Tb6AexApnychhf2SWl9
-         JGImb2iQteaEL+ZC/o7Jv3Fw7PYms7/qPE9+zLIENOph1dJSzqC/9PJIS3MOtqg2CJd+
-         dOz67q2Wv60QWU/iHJ0ONsdCSyb9nX/kBPWESXvwpAIj23FCiTI275YJINlYpIS70Baw
-         TVVE6O/Sc63Lvo2ZwxANe+0hoiGlGcCBQ0OoeFwW676YcMA/SPIWV1a0kDD4aineUAHc
-         DOrZ+2lbhYpXSLRApWEYZe+x7/QqLhQG5Ro44rDEj3W7p/4dXUseDot0iwE662uEf+oX
-         uSHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751933671; x=1752538471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q3YduanZhg5Y0sB2Odh2fAerxegQJGenK+wI+G6lALA=;
-        b=EUkcxY8XKDhkvZ7sssvtcQxqoKoalKKyYZFfmYlCGTXzCzMpmbn6ant7wnXxZpAIxJ
-         bIOZe7vVHgtAwglrrWqThgyyPWJ8N+T5jpJRcJoWM4rLQ+PGAT/K+QPEIbajGPl3mdsJ
-         n5MLWb1aVJkh3+fGEsEjlXX2oIF3DFXNcj58dIvXGFBBxH7FbxumcZgMdrK4Z/lRUd5v
-         jhiLtruNTdLPdKumzmYI0voFXMqj472XUEmyl82wxwvRa2oY4MVdtuuEKhrFuZpdouqF
-         Gsn6bn6oO74PJWLEKeOkFc8h3e808UF02Dk1FNC+yH0zxB4VQhb+EVhKTZJQs+1fNB3m
-         ZJ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUBolycJyyTcgYqEeCor1J4OwpF9YkWUwJpQGMiCBfecG1xMEPN528wJcF5ETIUTk4PH9JH5gTtQtZGSbn0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF4rskDvXKStqM0tXNi3VOKmTWNQtlSrLoqXSI8Qrc0/o2Phf0
-	VXqeBnRaFKwLoAgzzoz4FQ0wgdowxn8wgT3XzD91GT8sEtMdNB0DqqU9y9EY1u+fXivlO6lqUnk
-	hsBYuX8Usfw77SzwO102oNZg0bI0S2qg8O2tuYG+h
-X-Gm-Gg: ASbGncuPBAxJuimS8Bt6qHSlF6iS/al46+kyuDhCIRevAbc7p7ACZhPYW+ARbpAAonM
-	LJY6U4XG4R0rAMIdWUozwk6mUgpONPxIJfqmbBkzQ/e9kkLctYyLnDFbIOxrQR2KHPwVK8kRw3V
-	JspbUbNT7T5zN/x4tIjghvZUGjKUg2KEaPDYZV+yjRxJdIjV+DSTNRWMxuSOtZjWtvu2i+RnKHm
-	g==
-X-Google-Smtp-Source: AGHT+IG6uFwfViV4uRKlN7dtoaYWYJ2cAvUBFCR9zSfu99Vwne4/Ojg06Ia/L5ZZcaIijmv3rovYpa5VMqmmYY4ViY8=
-X-Received: by 2002:a17:903:98c:b0:234:c2e7:a0e7 with SMTP id
- d9443c01a7336-23dd0f66398mr1276695ad.4.1751933670151; Mon, 07 Jul 2025
- 17:14:30 -0700 (PDT)
+	s=arc-20240116; t=1751935533; c=relaxed/simple;
+	bh=SyfWNoh9Z00/hpkgQeKtTe7VULbEcE6tZnu4VonKfXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jeNHgcjnZNtNwbrt3J4ddPZz+9whO3jhU5cjRrsLFBoGadtFOn2dxdvAyWb6CQ24/3/5hXxnWjqwbyh8qDT6hLc9HKuGFYSKB2bcoFtkCyl8ghBX6tMvlC/xwhXW6KSMuCve2PWG1mVwoVa3aBRoMlG0jVuYMy/sVnxRXgw43eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=An1g12mb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4F0C4CEE3;
+	Tue,  8 Jul 2025 00:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751935533;
+	bh=SyfWNoh9Z00/hpkgQeKtTe7VULbEcE6tZnu4VonKfXY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=An1g12mbj+OPThp27l2LzBK6Kea6/V6HUSsPuGBFzUqOcTzLXKzTOESP1Gp8cJb7I
+	 vS8coYw0RH69GLJUnemTExyhystL08DjRV2f88I5+Cg/PMZq/fJqaB8HIAJrZKmYyZ
+	 JVVls6+h1qG4156UWQySe6HTkDhY6zXIqi9hxDd1SL8yJ7UtR22lmk+mSGsm+BIcAf
+	 RTLqBN2/BO+SeJPVIQoMhf7pxvne28//yJVkK4MX34dhu4hLLl6TY2BEeaykR4IMw8
+	 l8ZJYhHrzXu0tiHFh7xJUAIgg+j2RbIg/1Bf4Rks5N17T3tGtjAiM8aMe6QHxE+Z6i
+	 katjEBgQCVkOQ==
+Date: Mon, 7 Jul 2025 17:45:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Dave Chinner <david@fromorbit.com>, Qu Wenruo <wqu@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] fs: enhance and rename shutdown() callback to
+ remove_bdev()
+Message-ID: <20250708004532.GA2672018@frogsfrogsfrogs>
+References: <cover.1751589725.git.wqu@suse.com>
+ <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
+ <aGxSHKeyldrR1Q0T@dread.disaster.area>
+ <dbd955f7-b9b4-402f-97bf-6b38f0c3237e@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <aFPGlAGEPzxlxM5g@yzhao56-desk.sh.intel.com>
- <d15bfdc8-e309-4041-b4c7-e8c3cdf78b26@intel.com> <CAGtprH-Kzn2kOGZ4JuNtUT53Hugw64M-_XMmhz_gCiDS6BAFtQ@mail.gmail.com>
- <aGIBGR8tLNYtbeWC@yzhao56-desk.sh.intel.com> <CAGtprH-83EOz8rrUjE+O8m7nUDjt=THyXx=kfft1xQry65mtQg@mail.gmail.com>
- <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
- <aGxXWvZCfhNaWISY@google.com>
-In-Reply-To: <aGxXWvZCfhNaWISY@google.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Mon, 7 Jul 2025 17:14:17 -0700
-X-Gm-Features: Ac12FXz8PyaRfu4rhO-WaL1IGCmpiHbF9FfbCawryHLn0bG8xOVNVPi0PuKZNZ0
-Message-ID: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
-	aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
-	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
-	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
-	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dbd955f7-b9b4-402f-97bf-6b38f0c3237e@gmx.com>
 
-On Mon, Jul 7, 2025 at 4:25=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> On Tue, Jul 01, 2025, Vishal Annapurve wrote:
-> > I would be curious to understand if we need zeroing on conversion for
-> > Confidential VMs. If not, then the simple rule of zeroing on
-> > allocation only will work for all usecases.
->
-> Unless I'm misunderstanding what your asking, pKVM very specific does NOT=
- want
-> zeroing on conversion, because one of its use cases is in-place conversio=
-n, e.g.
-> to fill a shared buffer and then convert it to private so that the buffer=
- can be
-> processed in the TEE.
+On Tue, Jul 08, 2025 at 08:52:47AM +0930, Qu Wenruo wrote:
+> 
+> 
+> 在 2025/7/8 08:32, Dave Chinner 写道:
+> > On Fri, Jul 04, 2025 at 10:12:29AM +0930, Qu Wenruo wrote:
+> > > Currently all the filesystems implementing the
+> > > super_opearations::shutdown() callback can not afford losing a device.
+> > > 
+> > > Thus fs_bdev_mark_dead() will just call the shutdown() callback for the
+> > > involved filesystem.
+> > > 
+> > > But it will no longer be the case, with multi-device filesystems like
+> > > btrfs and bcachefs the filesystem can handle certain device loss without
+> > > shutting down the whole filesystem.
+> > > 
+> > > To allow those multi-device filesystems to be integrated to use
+> > > fs_holder_ops:
+> > > 
+> > > - Replace super_opearation::shutdown() with
+> > >    super_opearations::remove_bdev()
+> > >    To better describe when the callback is called.
+> > 
+> > This conflates cause with action.
+> > 
+> > The shutdown callout is an action that the filesystem must execute,
+> > whilst "remove bdev" is a cause notification that might require an
+> > action to be take.
+> > 
+> > Yes, the cause could be someone doing hot-unplug of the block
+> > device, but it could also be something going wrong in software
+> > layers below the filesystem. e.g. dm-thinp having an unrecoverable
+> > corruption or ENOSPC errors.
+> > 
+> > We already have a "cause" notification: blk_holder_ops->mark_dead().
+> > 
+> > The generic fs action that is taken by this notification is
+> > fs_bdev_mark_dead().  That action is to invalidate caches and shut
+> > down the filesystem.
+> > 
+> > btrfs needs to do something different to a blk_holder_ops->mark_dead
+> > notification. i.e. it needs an action that is different to
+> > fs_bdev_mark_dead().
+> > 
+> > Indeed, this is how bcachefs already handles "single device
+> > died" events for multi-device filesystems - see
+> > bch2_fs_bdev_mark_dead().
+> 
+> I do not think it's the correct way to go, especially when there is already
+> fs_holder_ops.
+> 
+> We're always going towards a more generic solution, other than letting the
+> individual fs to do the same thing slightly differently.
 
-Yeah, that makes sense. So "just zero on allocation" (and no more
-zeroing during conversion) policy will work for pKVM.
+On second thought -- it's weird that you'd flush the filesystem and
+shrink the inode/dentry caches in a "your device went away" handler.
+Fancy filesystems like bcachefs and btrfs would likely just shift IO to
+a different bdev, right?  And there's no good reason to run shrinkers on
+either of those fses, right?
 
->
-> Some architectures, e.g. SNP and TDX, may effectively require zeroing on =
-conversion,
-> but that's essentially a property of the architecture, i.e. an arch/vendo=
-r specific
-> detail.
+> Yes, the naming is not perfect and mixing cause and action, but the end
+> result is still a more generic and less duplicated code base.
 
-Conversion operation is a unique capability supported by guest_memfd
-files so my intention of bringing up zeroing was to better understand
-the need and clarify the role of guest_memfd in handling zeroing
-during conversion.
+I think dchinner makes a good point that if your filesystem can do
+something clever on device removal, it should provide its own block
+device holder ops instead of using fs_holder_ops.  I don't understand
+why you need a "generic" solution for btrfs when it's not going to do
+what the others do anyway.
 
-Not sure if I am misinterpreting you, but treating "zeroing during
-conversion" as the responsibility of arch/vendor specific
-implementation outside of guest_memfd sounds good to me.
+Awkward naming is often a sign that further thought (or at least
+separation of code) is needed.
+
+As an aside:
+'twould be nice if we could lift the *FS_IOC_SHUTDOWN dispatch out of
+everyone's ioctl functions into the VFS, and then move the "I am dead"
+state into super_block so that you could actually shut down any
+filesystem, not just the seven that currently implement it.
+
+--D
+
+> > Hence Btrfs should be doing the same thing as bcachefs. The
+> > bdev_handle_ops structure exists precisly because it allows the
+> > filesystem to handle block device events in the exact manner they
+> > require....
+> > 
+> > > - Add a new @bdev parameter to remove_bdev() callback
+> > >    To allow the fs to determine which device is missing, and do the
+> > >    proper handling when needed.
+> > > 
+> > > For the existing shutdown callback users, the change is minimal.
+> > 
+> > Except for the change in API semantics. ->shutdown is an external
+> > shutdown trigger for the filesystem, not a generic "block device
+> > removed" notification.
+> 
+> The problem is, there is no one utilizing ->shutdown() out of
+> fs_bdev_mark_dead().
+> 
+> If shutdown ioctl is handled through super_operations::shutdown, it will be
+> more meaningful to split shutdown and dev removal.
+> 
+> But that's not the case, and different fses even have slightly different
+> handling for the shutdown flags (not all fses even utilize journal to
+> protect their metadata).
+> 
+> Thanks,
+> Qu
+> 
+> 
+> > 
+> > Hooking blk_holder_ops->mark_dead means that btrfs can also provide
+> > a ->shutdown implementation for when something external other than a
+> > block device removal needs to shut down the filesystem....
+> > 
+> > -Dave.
+> 
 
