@@ -1,406 +1,267 @@
-Return-Path: <linux-fsdevel+bounces-54289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869D3AFD59F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 19:45:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF215AFD58F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 19:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19E337A297E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 17:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE5A3B73A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 17:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72641DE3DC;
-	Tue,  8 Jul 2025 17:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29142E6D0A;
+	Tue,  8 Jul 2025 17:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FZj9966U"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qZA+P/A2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2K1Ev5W/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZnALy4Dj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Tmsowne"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE90019D8A8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 17:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94AE2E613A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 17:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751996736; cv=none; b=g1imj1kP+bVAFihnjbHgGwhCX9j8hcj4SM0SAiQVtWTT/QgZD0bhfGikqnS5h3k9NKxGPDzCv/IPZElYxfd8VuGiiW7vVG7iyqc0VJ/kS3+B5o8HEXnZd6815gcuYOziOAzdXHKFRYTFSBICt6FmUOfD44xkh071egsxC3XTN+g=
+	t=1751996226; cv=none; b=AzEbmlAK+Mk5cIOOGOlXKg78GSSozq9VAwgavWYB6cQXOfM5VkD9ENXcz8vrEYzjnzSQHckr+jA7CIZ+uyXYqL5BhgPRRBVb9C8U+YKaL7lYqmZ8AKlnL2JXkW7eKhcLdd7VNzGaDKE1DjdYkFDo1Jd0fYpWboefWHLlVBHNCds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751996736; c=relaxed/simple;
-	bh=lceaWOs9hk3V4yzJb6xjhKOfDkznCmQ7z9nUp9joaAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQaU/cG1KVQRlz5uO3HEVxn5yzHYXRc0Wm0fDiEQ0OxGdf7AzgPOWVMTzAIST/b9f91yyLiwOJ5vQtoWS2CReTUTPbmjer6CaDABRygUPypEjJeAfHULW3Kuj5AkEDvDNfQKL8jLV9kmwFxsrAER5tFtjIxZAo9AB2+oqM0PqqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FZj9966U; arc=none smtp.client-ip=185.125.25.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bc7Zz5DhgzlQR;
-	Tue,  8 Jul 2025 19:36:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1751996219;
-	bh=UYan0adPDKbkAsXZN2hQ3hR3txzw6/bynQO0IGUmMB4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FZj9966UvtDyAfty6BcEy5huvNCnsP7kqbEePsUn+ZFx1Nn3k43+nT2Z5WloVB47L
-	 45U43D820NDUvWVGHQdc2WBllO+TdmOP5GZ3/SA+XajxCXFsCxs+f7lHvrfQgfsH5I
-	 QIUnrV5mMQF0vr2LxdeSWlVJfCVjfOggsneR3OsI=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bc7Zy5NMcz9lh;
-	Tue,  8 Jul 2025 19:36:58 +0200 (CEST)
-Date: Tue, 8 Jul 2025 19:36:57 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Xu <jeffxu@google.com>, Ben Scarlato <akhna@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Song Liu <song@kernel.org>, Tingmao Wang <m@maowtm.org>, Jann Horn <jannh@google.com>
-Subject: Re: [RFC PATCH v1 1/2] landlock: Fix handling of disconnected
- directories
-Message-ID: <20250708.puW1Kegh9voo@digikod.net>
-References: <20250701183812.3201231-1-mic@digikod.net>
+	s=arc-20240116; t=1751996226; c=relaxed/simple;
+	bh=3ETbXfuDiIb1rIVsKs72/RN/EWQ8Fs3xt1oJEov4Oos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jLXj5GOzeYgFiPM8bBScz5SxddcoU6YTagj/qSgD+55jyoZwJf9/7k3gXBq49ldLeghSKLWNutzMshqetj1w5ycYh3Tl3sTRAXXa3oTiJidkzUgv+1vKjiVyqOM/aE6yLNCSlRy1xaS48IFD8MXVDo9F4XSnIMCRJWI2M9DcJKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qZA+P/A2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2K1Ev5W/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZnALy4Dj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Tmsowne; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E01E02111F;
+	Tue,  8 Jul 2025 17:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751996222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tH+4qrLbFoh951omgyvvpr8ql1pn4Evyfl1gUPKbjaI=;
+	b=qZA+P/A2RdecqvTOlciyC6KN7axCUlYSQPG2qhRvxoYtO55RTu9DxXWWmAzw9fKZRqPOs6
+	HErbR84LTwKdnzxntSmH5Pe7q1Kl6iYgLWWC3T3m2ATmeHcxFdi7ncr5plYGULqALPX6Zy
+	jSLOsDRlas+u7BwUnXDmqSrg2p5UO1w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751996222;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tH+4qrLbFoh951omgyvvpr8ql1pn4Evyfl1gUPKbjaI=;
+	b=2K1Ev5W/Bta06tEANRaOF89d5Za6W09a/yHiWtGFAN3aIva8HQehA8atJ2relPR7ST4N6/
+	Dr7d2MgkWV1XMICA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751996221; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tH+4qrLbFoh951omgyvvpr8ql1pn4Evyfl1gUPKbjaI=;
+	b=ZnALy4DjQVwUJLSIAn0dOy+Hz4ezfzu7bZk/oFKSTPr/rqGkNnN/amIetP5Of1BmRKzFjP
+	vYfCsiAzIakSbmmGZfRd24Yt7t6RdFtvGfvygMTDhDWGnMPidb3AHfNIXxlWP/57Z3OLev
+	22tzeIAhrswJgEbyVBUm3w04QCqHoCQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751996221;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tH+4qrLbFoh951omgyvvpr8ql1pn4Evyfl1gUPKbjaI=;
+	b=0TmsowneyCfM2N0mNSL/Ne+cG/n8uIkuBz3s2PBsyjjhOLYiX0eFW70dGJ9MuAUHrNehHk
+	JfYokWamikkoMyDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A3F6313A54;
+	Tue,  8 Jul 2025 17:37:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ko5pJz1XbWjoAwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 08 Jul 2025 17:37:01 +0000
+Message-ID: <0e0312c9-9a89-4a1b-a135-4425ea95d6f6@suse.cz>
+Date: Tue, 8 Jul 2025 19:37:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250701183812.3201231-1-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 6/8] fs/proc/task_mmu: remove conversion of seq_file
+ position to unsigned
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
+ peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org,
+ paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com,
+ brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com,
+ linux@weissschuh.net, willy@infradead.org, osalvador@suse.de,
+ andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
+ tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+References: <20250704060727.724817-1-surenb@google.com>
+ <20250704060727.724817-7-surenb@google.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250704060727.724817-7-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	FREEMAIL_CC(0.00)[oracle.com,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
+	RCVD_TLS_ALL(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Tue, Jul 01, 2025 at 08:38:07PM +0200, Mickaël Salaün wrote:
-> We can get disconnected files or directories when they are visible and
-> opened from a bind mount, before being renamed/moved from the source of
-> the bind mount in a way that makes them inaccessible from the mount
-> point (i.e. out of scope).
+On 7/4/25 08:07, Suren Baghdasaryan wrote:
+> Back in 2.6 era, last_addr used to be stored in seq_file->version
+> variable, which was unsigned long. As a result, sentinels to represent
+> gate vma and end of all vmas used unsigned values. In more recent
+> kernels we don't used seq_file->version anymore and therefore conversion
+> from loff_t into unsigned type is not needed. Similarly, sentinel values
+> don't need to be unsigned. Remove type conversion for set_file position
+> and change sentinel values to signed.
 > 
-> Until now, access rights tied to files or directories opened through a
-> disconnected directory were collected by walking the related hierarchy
-> down to the root of this filesystem because the mount point couldn't be
-> found.  This could lead to inconsistent access results, and
-> hard-to-debug renames, especially because such paths cannot be printed.
-> 
-> For a sandboxed task to create a disconnected directory, it needs to
-> have write access (i.e. FS_MAKE_REG, FS_REMOVE_FILE, and FS_REFER) to
-> the underlying source of the bind mount, and read access to the related
-> mount point.  Because a sandboxed task cannot get more access than those
-> defined by its Landlock domain, this could only lead to inconsistent
-> access rights because of missing those that should be inherited from the
-> mount point hierarchy and inheriting from the hierarchy of the mounted
-> filesystem instead.
-> 
-> Landlock now handles files/directories opened from disconnected
-> directories like the mount point these disconnected directories were
-> opened from.  This gives the guarantee that access rights on a
-> file/directory cannot be more than those at open time.  The rationale is
-> that disconnected hierarchies might not be visible nor accessible to a
-> sandboxed task, and relying on the collected access rights from them
-> could introduce unexpected results, especially for rename actions
-> because of the access right comparison between the source and the
-> destination (see LANDLOCK_ACCESS_FS_REFER).  This new behavior is much
-> less surprising to users and safer from an access point of view.
-> 
-> Unlike follow_dotdot(), we don't need to check for each directory if it
-> is part of the mount's root, but instead this is only checked when we
-> reached a root dentry (not a mount point), or when the access
-> request is about to be allowed.  This limits the number of calls to
-> is_subdir() which walks down the hierarchy (again).  This also avoids
-> checking path connection at the beginning of the walk for each mount
-> point, which would be racy.
-> 
-> Make path_connected() public to stay consistent with the VFS.  This
-> helper is used when we are about to allowed an access.
-> 
-> This change increases the stack size with two Landlock layer masks
-> backups that are needed to reset the collected access rights to the
-> latest mount point.
-> 
-> Because opened files have their access rights stored in the related file
-> security properties, their is no impact for disconnected or unlinked
-> files.
-> 
-> A following commit will document handling of disconnected files and
-> directories.
-> 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Song Liu <song@kernel.org>
-> Reported-by: Tingmao Wang <m@maowtm.org>
-> Closes: https://lore.kernel.org/r/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org
-> Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER")
-> Fixes: cb2c7d1a1776 ("landlock: Support filesystem access-control")
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+
+Some stuff in the code gave me a pause but it's out of scope here so just in
+case someone wants to do some extra churn...
+
 > ---
+>  fs/proc/task_mmu.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
-> This replaces this patch:
-> landlock: Remove warning in collect_domain_accesses()
-> https://lore.kernel.org/r/20250618134734.1673254-1-mic@digikod.net
-> 
-> I'll probably split this commit into two to ease backport (same for
-> tests).
-> 
-> This patch series applies on top of my next branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
-> 
-> TODO: Add documentation
-> 
-> TODO: Add Landlock erratum
-> ---
->  fs/namei.c             |   2 +-
->  include/linux/fs.h     |   1 +
->  security/landlock/fs.c | 121 +++++++++++++++++++++++++++++++++++------
->  3 files changed, 105 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4bb889fc980b..7853a876fc1c 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -716,7 +716,7 @@ static bool nd_alloc_stack(struct nameidata *nd)
->   * Rename can sometimes move a file or directory outside of a bind
->   * mount, path_connected allows those cases to be detected.
->   */
-> -static bool path_connected(struct vfsmount *mnt, struct dentry *dentry)
-> +bool path_connected(struct vfsmount *mnt, struct dentry *dentry)
->  {
->  	struct super_block *sb = mnt->mnt_sb;
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 4ec77da65f14..3c0e324a9272 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3252,6 +3252,7 @@ extern struct file * open_exec(const char *);
->  /* fs/dcache.c -- generic fs support functions */
->  extern bool is_subdir(struct dentry *, struct dentry *);
->  extern bool path_is_under(const struct path *, const struct path *);
-> +extern bool path_connected(struct vfsmount *mnt, struct dentry *dentry);
->  
->  extern char *file_path(struct file *, char *, int);
->  
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 1d6c4e728f92..51f03eb82069 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -768,7 +768,9 @@ static bool is_access_to_paths_allowed(
->  	struct path walker_path;
->  	access_mask_t access_masked_parent1, access_masked_parent2;
->  	layer_mask_t _layer_masks_child1[LANDLOCK_NUM_ACCESS_FS],
-> -		_layer_masks_child2[LANDLOCK_NUM_ACCESS_FS];
-> +		_layer_masks_child2[LANDLOCK_NUM_ACCESS_FS],
-> +		_layer_masks_parent1_bkp[LANDLOCK_NUM_ACCESS_FS],
-> +		_layer_masks_parent2_bkp[LANDLOCK_NUM_ACCESS_FS];
->  	layer_mask_t(*layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS] = NULL,
->  	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
->  
-> @@ -800,6 +802,8 @@ static bool is_access_to_paths_allowed(
->  		access_masked_parent1 = access_masked_parent2 =
->  			landlock_union_access_masks(domain).fs;
->  		is_dom_check = true;
-> +		memcpy(&_layer_masks_parent2_bkp, layer_masks_parent2,
-> +		       sizeof(_layer_masks_parent2_bkp));
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 751479eb128f..b8bc06d05a72 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -135,7 +135,7 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
+>  	if (vma) {
+>  		*ppos = vma->vm_start;
 >  	} else {
->  		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
->  			return false;
-> @@ -807,6 +811,8 @@ static bool is_access_to_paths_allowed(
->  		access_masked_parent1 = access_request_parent1;
->  		access_masked_parent2 = access_request_parent2;
->  		is_dom_check = false;
-> +		memcpy(&_layer_masks_parent1_bkp, layer_masks_parent1,
-> +		       sizeof(_layer_masks_parent1_bkp));
+> -		*ppos = -2UL;
+> +		*ppos = -2;
+>  		vma = get_gate_vma(priv->mm);
 >  	}
 >  
->  	if (unlikely(dentry_child1)) {
-> @@ -858,6 +864,14 @@ static bool is_access_to_paths_allowed(
->  				     child1_is_directory, layer_masks_parent2,
->  				     layer_masks_child2,
->  				     child2_is_directory))) {
-> +			/*
-> +			 * Rewinds walk for disconnected directories before any other state
-> +			 * change.
-> +			 */
-> +			if (unlikely(!path_connected(walker_path.mnt,
-> +						     walker_path.dentry)))
-> +				goto reset_to_mount_root;
-> +
->  			/*
->  			 * Now, downgrades the remaining checks from domain
->  			 * handled accesses to requested accesses.
-> @@ -893,14 +907,42 @@ static bool is_access_to_paths_allowed(
->  					  ARRAY_SIZE(*layer_masks_parent2));
->  
->  		/* Stops when a rule from each layer grants access. */
-> -		if (allowed_parent1 && allowed_parent2)
-> +		if (allowed_parent1 && allowed_parent2) {
-> +			/*
-> +			 * Rewinds walk for disconnected directories before any other state
-> +			 * change.
-> +			 */
-> +			if (unlikely(!path_connected(walker_path.mnt,
-> +						     walker_path.dentry)))
-> +				goto reset_to_mount_root;
-> +
->  			break;
-> +		}
-> +
->  jump_up:
->  		if (walker_path.dentry == walker_path.mnt->mnt_root) {
->  			if (follow_up(&walker_path)) {
-> +				/* Saves known good values. */
-> +				memcpy(&_layer_masks_parent1_bkp,
-> +				       layer_masks_parent1,
-> +				       sizeof(_layer_masks_parent1_bkp));
-> +				if (layer_masks_parent2)
-> +					memcpy(&_layer_masks_parent2_bkp,
-> +					       layer_masks_parent2,
-> +					       sizeof(_layer_masks_parent2_bkp));
-> +
->  				/* Ignores hidden mount points. */
->  				goto jump_up;
->  			} else {
-
-> +				/*
-> +				 * Rewinds walk for disconnected directories before any other
-> +				 * state change.
-> +				 */
-> +				if (unlikely(!path_connected(
-> +					    walker_path.mnt,
-> +					    walker_path.dentry)))
-> +					goto reset_to_mount_root;
-> +
-
-This hunk is useless, I'll remove it.
-
->  				/*
->  				 * Stops at the real root.  Denies access
->  				 * because not all layers have granted access.
-> @@ -909,20 +951,51 @@ static bool is_access_to_paths_allowed(
->  			}
->  		}
->  		if (unlikely(IS_ROOT(walker_path.dentry))) {
-> -			/*
-> -			 * Stops at disconnected root directories.  Only allows
-> -			 * access to internal filesystems (e.g. nsfs, which is
-> -			 * reachable through /proc/<pid>/ns/<namespace>).
-> -			 */
->  			if (walker_path.mnt->mnt_flags & MNT_INTERNAL) {
-> +				/*
-> +				 * Stops and allows access when reaching disconnected root
-> +				 * directories that are part of internal filesystems (e.g. nsfs,
-> +				 * which is reachable through /proc/<pid>/ns/<namespace>).
-> +				 */
->  				allowed_parent1 = true;
->  				allowed_parent2 = true;
-> +				break;
-> +			} else {
-> +				/*
-> +				 * Ignores current walk in walker_path.mnt when reaching
-> +				 * disconnected root directories from bind mounts.  Reset the
-> +				 * collected access rights to the latest mount point (or @path)
-> +				 * we walked through, and start again from the current root of
-> +				 * the mount point.  The newly collected access rights will be
-> +				 * less than or equal to those at open time.
-> +				 */
-> +				goto reset_to_mount_root;
->  			}
-> -			break;
->  		}
->  		parent_dentry = dget_parent(walker_path.dentry);
->  		dput(walker_path.dentry);
->  		walker_path.dentry = parent_dentry;
-> +		continue;
-> +
-> +reset_to_mount_root:
-> +		/* Restores latest known good values. */
-> +		memcpy(layer_masks_parent1, &_layer_masks_parent1_bkp,
-> +		       sizeof(_layer_masks_parent1_bkp));
-> +		if (layer_masks_parent2)
-> +			memcpy(layer_masks_parent2, &_layer_masks_parent2_bkp,
-> +			       sizeof(_layer_masks_parent2_bkp));
-> +
-> +		/*
-> +		 * Ignores previous results.  They will be computed again with the next
-> +		 * iteration.
-> +		 */
-> +		allowed_parent1 = false;
-> +		allowed_parent2 = false;
-> +
-> +		/* Restarts with the current mount point. */
-> +		dput(walker_path.dentry);
-> +		walker_path.dentry = walker_path.mnt->mnt_root;
-> +		dget(walker_path.dentry);
->  	}
->  	path_put(&walker_path);
->  
-> @@ -1030,13 +1103,13 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
->   */
->  static bool collect_domain_accesses(
->  	const struct landlock_ruleset *const domain,
-> -	const struct dentry *const mnt_root, struct dentry *dir,
-> +	const struct path *const mnt_dir, struct dentry *dir,
->  	layer_mask_t (*const layer_masks_dom)[LANDLOCK_NUM_ACCESS_FS])
+> @@ -145,11 +145,11 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
+>  static void *m_start(struct seq_file *m, loff_t *ppos)
 >  {
-> -	unsigned long access_dom;
-> +	access_mask_t access_dom;
->  	bool ret = false;
+>  	struct proc_maps_private *priv = m->private;
+> -	unsigned long last_addr = *ppos;
+> +	loff_t last_addr = *ppos;
+>  	struct mm_struct *mm;
 >  
-> -	if (WARN_ON_ONCE(!domain || !mnt_root || !dir || !layer_masks_dom))
-> +	if (WARN_ON_ONCE(!domain || !mnt_dir || !dir || !layer_masks_dom))
->  		return true;
->  	if (is_nouser_or_private(dir))
->  		return true;
-> @@ -1053,6 +1126,10 @@ static bool collect_domain_accesses(
->  		if (landlock_unmask_layers(find_rule(domain, dir), access_dom,
->  					   layer_masks_dom,
->  					   ARRAY_SIZE(*layer_masks_dom))) {
-> +			/* Ignores this walk if we end up in a disconnected directory. */
-> +			if (unlikely(!path_connected(mnt_dir->mnt, dir)))
-> +				goto cancel_walk;
-> +
->  			/*
->  			 * Stops when all handled accesses are allowed by at
->  			 * least one rule in each layer.
-> @@ -1061,13 +1138,23 @@ static bool collect_domain_accesses(
->  			break;
->  		}
+>  	/* See m_next(). Zero at the start or after lseek. */
+> -	if (last_addr == -1UL)
+> +	if (last_addr == -1)
+>  		return NULL;
 >  
-> -		/* Stops at the mount point or disconnected root directories. */
-> -		if (dir == mnt_root || IS_ROOT(dir))
-> +		/* Stops at the mount point. */
-> +		if (dir == mnt_dir->dentry)
->  			break;
->  
-> +		/* Ignores this walk if we end up in a disconnected root directory. */
-> +		if (unlikely(IS_ROOT(dir)))
-> +			goto cancel_walk;
-> +
->  		parent_dentry = dget_parent(dir);
->  		dput(dir);
->  		dir = parent_dentry;
-> +		continue;
-> +
-> +cancel_walk:
-> +		landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
-> +					  layer_masks_dom, LANDLOCK_KEY_INODE);
-> +		break;
+>  	priv->task = get_proc_task(priv->inode);
+> @@ -170,9 +170,9 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
+>  		return ERR_PTR(-EINTR);
 >  	}
->  	dput(dir);
->  	return ret;
-> @@ -1198,13 +1285,11 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->  						      old_dentry->d_parent;
 >  
->  	/* new_dir->dentry is equal to new_dentry->d_parent */
-> -	allow_parent1 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
-> -						old_parent,
-> -						&layer_masks_parent1);
-> -	allow_parent2 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
-> +	allow_parent1 = collect_domain_accesses(
-> +		subject->domain, &mnt_dir, old_parent, &layer_masks_parent1);
-> +	allow_parent2 = collect_domain_accesses(subject->domain, &mnt_dir,
->  						new_dir->dentry,
->  						&layer_masks_parent2);
-> -
->  	if (allow_parent1 && allow_parent2)
->  		return 0;
+> -	vma_iter_init(&priv->iter, mm, last_addr);
+> +	vma_iter_init(&priv->iter, mm, (unsigned long)last_addr);
+
+I wonder if this should rather be done only after dealing with the -2 case
+below. It seems wrong to init the iterator with a bogus address. What if it
+acquires some sanity checks?
+
+>  	hold_task_mempolicy(priv);
+
+It seems suboptimal to do that mempolicy refcount dance for numa_maps sake
+even if we're reading a different /proc file... maybe priv could have a flag
+to determine?
+
+> -	if (last_addr == -2UL)
+> +	if (last_addr == -2)
+>  		return get_gate_vma(mm);
+
+I think only after the above it makes sense to init the iterator?
+
+>  	return proc_get_vma(priv, ppos);
+> @@ -180,8 +180,8 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
 >  
-> -- 
-> 2.50.0
-> 
-> 
+>  static void *m_next(struct seq_file *m, void *v, loff_t *ppos)
+>  {
+> -	if (*ppos == -2UL) {
+> -		*ppos = -1UL;
+> +	if (*ppos == -2) {
+> +		*ppos = -1;
+>  		return NULL;
+>  	}
+>  	return proc_get_vma(m->private, ppos);
+
 
