@@ -1,204 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-54214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E21AFC199
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 06:04:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FC7AFC1BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 06:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2CE3B69DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 04:03:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416FE4205FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 04:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C47123C4E7;
-	Tue,  8 Jul 2025 04:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2976217F33;
+	Tue,  8 Jul 2025 04:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSDQsS9/"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ZQ8X/nWr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B2A1F869E;
-	Tue,  8 Jul 2025 04:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599D41D7E54
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 04:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751947453; cv=none; b=XindnjsgC0eb93FIFjuW4EZXQsD4LEuiy/UvRMLk8dOIo48OsFZmPLbbzSNgfogbUAzCBZ+ftlooh4oFjmVP+wVCgho3p6wjkYaXJba6EmGmAfbAqYu5yIJ3mffJIT8bPWZ337/GBKCnNkpfiTtTKXE5VhTwsiFqsSkSpw2jfIo=
+	t=1751949929; cv=none; b=Nr97eoBiwi4SW3zUBcy2dUD9uYzPCr9IukSVIeUK6RQ0idP72VMjcEtHj6Z6Lw/vUR41HfIqfQMeAwtgskXv81+QyNsTIqQ1AeImXEZ78iKuIrVZHth6dsUEf/RvGU755EyEy+keJaUan2EnXqtf2lHTfIX6/MtTUkFi7BXB/ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751947453; c=relaxed/simple;
-	bh=y20hIvj7FJ+ub26EEZ5MyosVhGj+5NSliq7e+YqImEo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mlYCqJNznEoax1q4KFmpQFgb5QO79oR35bqfaQvX4eQILthGf3GSNIFIxu1lRBZWFkCQg3bLSutT+kUw2EAex8xACWezdrQ8ONd8qSX0XmeQkrbAGLL61vsYYGLs9xpV8lwpVMJl51m0caL05tr87sOjVxM/PhcQ1yqjaL8+09A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSDQsS9/; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b31e0ead80eso2885288a12.0;
-        Mon, 07 Jul 2025 21:04:11 -0700 (PDT)
+	s=arc-20240116; t=1751949929; c=relaxed/simple;
+	bh=cyuVu0Zvm5Ok3FJ6+scXo4j6aYvJ2vTUs+cizbFEfPY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bRpOuRCPW5VVzcEbB7peks74e3RgeKP7FzQN4bNQZHNKI19EKMwuLnIQKpvAkQl2mIwIrHZxYR69C24XagSS0+rik1Fd9J6fvuIthG/xsjse2LPVU0KHdAhT5J3KhHH+vEnYrKF260Dj5jeBfbZMSdouSMnNpUO54+DjQQMLZTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ZQ8X/nWr; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60c4f796446so5769917a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Jul 2025 21:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751947451; x=1752552251; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=ionos.com; s=google; t=1751949926; x=1752554726; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SvGy7UdF6AbgGyEnqmLu7yYn0wddkSFKtO9DiUDvuus=;
-        b=XSDQsS9/JosR1Ev2t8EUFbLshTB7lFQQbAO0aDJXoApMqy6aITcviWqtCdEARseekt
-         2MJkOpFp9bWcfNuBVQUbMYEWtZCNNhqOQR+CUWFo+bkKjYEJiR4CqCm4g4zR4aJhpTeH
-         0hAaK+QCNSjiQOBIcCdLQPzocYwtIDPYh0BZYomC7vGa4bNWjdyaAzokylOT4qao+FcV
-         ZTAFBijK2ZBIpnawNZLJkMUd9/W1SzBa2YDCRozYQ3ic/+zzIErLMoLuCy7lkRbM1Vxw
-         3fJYxK/DtJw5OxtGNaYz7txmG0cTFOIvjGyG35psDJQjyqqYkwd4CtCFBvQ/KUOS6Mcq
-         wJzg==
+        bh=wqNJXRqxCyyydpdXfWSTJ2EExhN9/S2LJXo+S80XU9o=;
+        b=ZQ8X/nWr1S4lafNfxeTSRwt7yIARs1tPBdp39WObmxjVNE04IdA9TfoGvbF6FU8Sk2
+         jUSDQyx/FsQM8XX3B0WGaMd7mmX4aD1GZGoB5/h+uOGFVk5As8sjnoI0y4ZRTZbKkIR4
+         ZAtvVXgoJqgxfIFAXREv68bL0Gh0ihoDHbKqpcFXzIY4RJLD25MuZPi84iA7WPKJamyw
+         FmNRvAE0UqNPlE/m3bs8RrNlCXYRZb9lHklJsKsquhmuhnegic3nHpb8npmWuGprGBsW
+         x3Iu7HvgmhEfzvN9P40ARzm0qncuEpAhtbhPQXSItec2LfOh+WU1XAvWemkSe13tQs2Q
+         zbIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751947451; x=1752552251;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SvGy7UdF6AbgGyEnqmLu7yYn0wddkSFKtO9DiUDvuus=;
-        b=jw2J0y8wNyAcYK/zbxh/8mRSeWiuHIGGP+/seK4vQSdjE1dNxmRSnyo2zj7iVTMkmg
-         prLlUZvaWmpwJJdLVr8fuwsyMmX2NpOURowg68nGIkaIIsACOqbIGv2rOL2fd0Bd2N8N
-         P3HXy7hEVBy9RK5RW6q2WOOsuOuCWQr+ME8IcAIKMRBHGt9pCixIP/ubZQMtXpYUbq4O
-         uKssfjl13PqNVhaVn0xqGeREIYUTaFYD2ZTMZm9HePhOqAc+Op9z1ZsunCxEmH6u6PgE
-         ADTIKQI7V/xuFjfWGeYotjNtkMZAuZZE2wYuBqlVei1BQilbm+2mA1cxQJ+WmV/6SuVw
-         gBfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbH202SuUEsbDdn6HcF2XTmxS0elOPYGCli9lpHXPZMBkIoKwYzWSKLX67eocMyW1QbAVXIRA6YYwH@vger.kernel.org, AJvYcCXvt+z1AHFltcQ5qymgGDpdIaP3FlO21ywpKH3GzAde2A7bl3JW563q1FAmJBMOjXI+Utz5BvHwt1Qs3h+z@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBXdHlnI6vSxwqucj2VCYEsllRwivyBEQveRsti3+kyUl9CFxJ
-	yeeWMASnvaeGeXT/S3rbLp5GQIRkE54wOgg1aDqEVhledLo4c/KIBasM
-X-Gm-Gg: ASbGncsVBgp0pLgf4tDekMz5OD3g0DyrY73yhiNsi2ZNGUN74vm29AoN1eQ/7sKj2aa
-	hD0sBXkUVhmLVrObvhV+VwC68XFKYcpIGluXZSPBZ6G3uKSxUDJY92ZFyiqqu4iqE/8Ag/6MCuZ
-	kU2rddnwgdMxC2srpD+Yxovw4ACnY5OkM/btrZz5CJJyYAed1nRl/BIasfQ7SXUYogjuAr30jZG
-	mQI6OpXivHVGRQiWcngjApFK3k4dXUmEtT73A1D2EiiHcvBJjaOHxhmaOgM6CsgJZQDL8WtXg4a
-	ZYN7u98bWwX5GDjGJ/jF6LlWxRPxfqvvDQFVAYjyGZrDVGMWgXsUcnflJkzK7yL3pYgy2PsaaBU
-	uWmw=
-X-Google-Smtp-Source: AGHT+IFREujPi5EY8W+CcU1CZV4F2U5gLySYjhZNHD4XmStfesLIvGhunk58eYx3OWdIqgxOlskjBg==
-X-Received: by 2002:a17:90b:4a81:b0:313:d79d:87eb with SMTP id 98e67ed59e1d1-31c21e3bdcemr2110996a91.35.1751947451237;
-        Mon, 07 Jul 2025 21:04:11 -0700 (PDT)
-Received: from [30.221.128.116] ([47.246.101.52])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c220ed0f9sm685028a91.0.2025.07.07.21.04.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 21:04:10 -0700 (PDT)
-Message-ID: <17009dd5-fd3e-4d1d-92df-3ba9cdf666cc@gmail.com>
-Date: Tue, 8 Jul 2025 12:04:06 +0800
+        d=1e100.net; s=20230601; t=1751949926; x=1752554726;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wqNJXRqxCyyydpdXfWSTJ2EExhN9/S2LJXo+S80XU9o=;
+        b=xQZUU2TirqxBxUeZ2Da8KxrOuxXp4BXWXmSFhApDRqnnye1Xs1O8FqGlRrlu4ddPx6
+         A2appZNGx2eSKhCVOMm87uIag9SdcrH7H+2bl3DFMVJWYOnwyO+klvlomq6xnbgepWBp
+         +SaiZ05x2+lvgBXI4V/Leut9qFSqF2AELZADZGTDjBDViWlSlKeSUqkr+fgpaFhw4cbJ
+         OFOdewO8OsTU5QgLqnc1C6fXdbsdYdp+rx6fHjPa2bCV2t/lw6U5WzGnjuy+tCrdlloo
+         Yl2fzF/o4G0j6fAR+Hfh5tNvsbtg/kdVBgy3LY5tJI1HebC9UkCcskz176EtOksMCAh5
+         yyMw==
+X-Gm-Message-State: AOJu0YxeBpoZYtEWZeU0uSHeECDvrzQz1GnwtW2cEXR8o3NASRhBAHkk
+	CQLe8tU0Wg1mNU8gcfvBmIqVerS92SbYOLFKR8Jsw1wABWFAor6/hJP8j7QPJ+rT08eC6ZGyQ+S
+	xZYazH2PyEGK9LeVE11r3zyd95871BzelKSO+CiLTLg==
+X-Gm-Gg: ASbGncuSLo3O8IZ/4JQs9JsWKlp/Pnis6PpIRl9XDcIpEpESxe8bOW7UzcwBm5gvWoM
+	VFglVPFkYlfgYr6tetAyPvdkq3T419qnhYPiBvhojut2BLTv9L+aQn2MJBwlVNsJcvZ0ej7P3ee
+	9HD2pCeidwbubJASLnIt3a/MEKACpbmjEEWGpJWJkYkcZCeQpor1XnApBfGhq98A4MBIUFohI=
+X-Google-Smtp-Source: AGHT+IETYFQda78DtHooqQ3BAuCv43WpCt427AA99z9bQ5whlMvxg6MGcxRk/OIADdstlJE+HsC+VdHydGitg9T/H+o=
+X-Received: by 2002:a17:907:9689:b0:ae0:d4f2:dffa with SMTP id
+ a640c23a62f3a-ae6b055ed0fmr158366766b.3.1751949925746; Mon, 07 Jul 2025
+ 21:45:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 11/11] ext4: limit the maximum folio order
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
- ojaswin@linux.ibm.com, sashal@kernel.org, naresh.kamboju@linaro.org,
- yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
- <20250707140814.542883-12-yi.zhang@huaweicloud.com>
-From: Joseph Qi <jiangqi903@gmail.com>
-In-Reply-To: <20250707140814.542883-12-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
+ <20250707203104.GJ1880847@ZenIV> <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
+ <20250707204918.GK1880847@ZenIV> <CAKPOu+9qpqSSr300ZDduXRbj6dwQo8Cp2bskdS=gfehcVx-=ug@mail.gmail.com>
+ <20250707205952.GL1880847@ZenIV> <CAKPOu+8zjtLkjYzCCVyyC80YgekMws4vGOvnPLjvUiQ6zWaqaA@mail.gmail.com>
+ <20250707213214.GM1880847@ZenIV> <CAKPOu+-JxtBnjxiLDXWFNQrD=4dR_KtJbvEdNEzJA33ZqKGuAw@mail.gmail.com>
+ <20250707221917.GO1880847@ZenIV> <20250707223753.GQ1880847@ZenIV>
+In-Reply-To: <20250707223753.GQ1880847@ZenIV>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Tue, 8 Jul 2025 06:45:14 +0200
+X-Gm-Features: Ac12FXxgiii8qUvUobplOId_mZyl2t5XqOzi0KxyTJenDipJp-urULM8ZwIQBAA
+Message-ID: <CAKPOu+9=AV-NxJYXjwiUL4iXPH=oUSF25+6t25M8ujfj2OvHVQ@mail.gmail.com>
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 8, 2025 at 12:37=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+> You are asked to evict everything evictable in there.  It would be rather=
+ odd
+> if you ended up with some dentries sticking around (_still_ with refcount=
+s
+> equal to the number of their surviving children) just because in the midd=
+le
+> of your work a memory pressure had been applied and started evicting one =
+of
+> the leaves in that tree (none of them busy, all leaves have refcount 0, s=
+o
+> all of them are evictable).
 
+They are not evictable, or else you'd be evicting them, but you do not.
+Instead, you busy-wait for the dying dentry to disappear. (Which can
+take a loooong time)
 
-On 2025/7/7 22:08, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> In environments with a page size of 64KB, the maximum size of a folio
-> can reach up to 128MB. Consequently, during the write-back of folios,
-> the 'rsv_blocks' will be overestimated to 1,577, which can make
-> pressure on the journal space where the journal is small. This can
-> easily exceed the limit of a single transaction. Besides, an excessively
-> large folio is meaningless and will instead increase the overhead of
-> traversing the bhs within the folio. Therefore, limit the maximum order
-> of a folio to 2048 filesystem blocks.
-> 
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Reported-by: Joseph Qi <jiangqi903@gmail.com>
-> Closes: https://lore.kernel.org/linux-ext4/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Your explanations do make sense, I understand them, and I think I'm
+getting a slight understanding of the dcache code. But you haven't
+even tried to argue why you implemented busy-waiting in this patch.
+I believe the busy-wait was accidental.
+I've been trying to make you aware that this is effectively a
+busy-wait, one that can take a long time burning CPU cycles, but I
+have a feeling I can't reach you.
 
-Confirmed that this can fix the following jbd2 warning in start_this_handle():
-"JBD2: kworker/u32:0 wants too many credits credits:32 rsv_credits:1577 max:2695"
-
-Tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
-> ---
->  fs/ext4/ext4.h   |  2 +-
->  fs/ext4/ialloc.c |  3 +--
->  fs/ext4/inode.c  | 22 +++++++++++++++++++---
->  3 files changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index f705046ba6c6..9ac0a7d4fa0c 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3020,7 +3020,7 @@ int ext4_walk_page_buffers(handle_t *handle,
->  				     struct buffer_head *bh));
->  int do_journal_get_write_access(handle_t *handle, struct inode *inode,
->  				struct buffer_head *bh);
-> -bool ext4_should_enable_large_folio(struct inode *inode);
-> +void ext4_set_inode_mapping_order(struct inode *inode);
->  #define FALL_BACK_TO_NONDELALLOC 1
->  #define CONVERT_INLINE_DATA	 2
->  
-> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> index 79aa3df8d019..df4051613b29 100644
-> --- a/fs/ext4/ialloc.c
-> +++ b/fs/ext4/ialloc.c
-> @@ -1335,8 +1335,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
->  		}
->  	}
->  
-> -	if (ext4_should_enable_large_folio(inode))
-> -		mapping_set_large_folios(inode->i_mapping);
-> +	ext4_set_inode_mapping_order(inode);
->  
->  	ext4_update_inode_fsync_trans(handle, inode, 1);
->  
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 4b679cb6c8bd..1bce9ebaedb7 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5181,7 +5181,7 @@ static int check_igot_inode(struct inode *inode, ext4_iget_flags flags,
->  	return -EFSCORRUPTED;
->  }
->  
-> -bool ext4_should_enable_large_folio(struct inode *inode)
-> +static bool ext4_should_enable_large_folio(struct inode *inode)
->  {
->  	struct super_block *sb = inode->i_sb;
->  
-> @@ -5198,6 +5198,22 @@ bool ext4_should_enable_large_folio(struct inode *inode)
->  	return true;
->  }
->  
-> +/*
-> + * Limit the maximum folio order to 2048 blocks to prevent overestimation
-> + * of reserve handle credits during the folio writeback in environments
-> + * where the PAGE_SIZE exceeds 4KB.
-> + */
-> +#define EXT4_MAX_PAGECACHE_ORDER(i)		\
-> +		min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
-> +void ext4_set_inode_mapping_order(struct inode *inode)
-> +{
-> +	if (!ext4_should_enable_large_folio(inode))
-> +		return;
-> +
-> +	mapping_set_folio_order_range(inode->i_mapping, 0,
-> +				      EXT4_MAX_PAGECACHE_ORDER(inode));
-> +}
-> +
->  struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
->  			  ext4_iget_flags flags, const char *function,
->  			  unsigned int line)
-> @@ -5515,8 +5531,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
->  		ret = -EFSCORRUPTED;
->  		goto bad_inode;
->  	}
-> -	if (ext4_should_enable_large_folio(inode))
-> -		mapping_set_large_folios(inode->i_mapping);
-> +
-> +	ext4_set_inode_mapping_order(inode);
->  
->  	ret = check_igot_inode(inode, flags, function, line);
->  	/*
-
+Al, please confirm that it was your intention to busy-wait until dying
+dentries disappear!
 
