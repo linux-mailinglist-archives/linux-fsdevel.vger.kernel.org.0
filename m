@@ -1,133 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-54233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC5AAFC56A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 10:24:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150F4AFC73D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 11:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D4B1673A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 08:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F8BE3B6F90
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 09:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5882BCF7F;
-	Tue,  8 Jul 2025 08:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F862652AE;
+	Tue,  8 Jul 2025 09:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKeLe21O"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZYCGyHCI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE9B2BE637;
-	Tue,  8 Jul 2025 08:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEB6263C91;
+	Tue,  8 Jul 2025 09:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962974; cv=none; b=pEAa7/0M2xyUJ4wUg1bJ7M+LW7jU1Zvfe/7o84wDvJ1EwqfpfQmXZs2PNxJoxBnIQk1OTZMzk+ufZFItJ3LlnLSLY4u0ZsPEGGRrlPPNTuWkycj5ZV1MIVkUYLSuq01g5LF2rJgA9tVKs534dv3ux13NwYnK5E+0XQ2eUlAbEBw=
+	t=1751967635; cv=none; b=Pajm5xyt79+2orvbH+bWkPFoqw6HwO1ZIwfN4MkXZ55TF6QwDYO2qF7EWokGJ4uRzbBli2pg2heQVuHctktoaCXHB9XpNmNpoLotf5uTWaXJRVl02y/SkrUGKhpHekCpJKZQCRGxVOfgboPqWwFKdKwUIGDZjS9otZEbrkL/hSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962974; c=relaxed/simple;
-	bh=jualjBCwRjVeX+QgNMtQhdaM5v4JwMGLvjZ44KhUcy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=B6+te/Mz0azKfQp/hdVUDWrPtRXUuDTDFybJGLuh6FpFJulqDKnoWH0+YoVk1bS9ND5VdjARTdqHPr5lQTVPdLbQfOeeSDDsnDInlu4kqUk/kAhbSmfC5rWbZpYKHANlmxU7zQKho8b1D/cfmLPuq+T3N0eSxnwv5XXqRw7sqQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKeLe21O; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae0e0271d82so826948666b.3;
-        Tue, 08 Jul 2025 01:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751962971; x=1752567771; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=924t1oAYx0L0AbJARjwxcHPMhukyHGVh1zX2+tHv7tg=;
-        b=HKeLe21OVJRBTWnZKK7TvGTZE+8YqAqqKcjchc7wXY4LrR2CRJlC2kkM3W0cAsJgfg
-         ZqgLMa62zi81XdDppCE+i9jYkLXB0WR/r4rm4VkZGTAFeOAWKwy1OAIfuu1XLQJ5NQhn
-         ZtvPj/WZ25xcRjH1/t7R+dJSO6KPVJSXRtPC10ho0fxiYCj/xo6Tzzk3j+Da3LzJb3NK
-         CmYeTaeRtrnX+fci7TdyqOJTCW6/m/74pgappP4N+htpQB3SjMof4kBodjKTHvNimW42
-         VnEK/RnRFhFapSiNNEs77EJNwaQvJkAVoo9/9KQcBQJweuJ+Ibf2CYLYNUlL1Cqdkde7
-         I+cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751962971; x=1752567771;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=924t1oAYx0L0AbJARjwxcHPMhukyHGVh1zX2+tHv7tg=;
-        b=WPq7wxIDrSyzBKwGWwc4FtoFiFGkp+II1e/fW3WMyLvWIgPWU43PBGC8xlzD6V9Eo7
-         +VbSsEMmcehbwXQaBItKR5YrKmMILcKI8icnMOQzsWRuT4lUYa4RQxho4zBwJ8Ia3yPZ
-         L2YFsbbqV12ufr3h5b36wIvQfcF3//szPzM3MsSXx5dnxNqWF5qJrBa6eRCTn1vkicVX
-         DsmXHVxvap5SIwymfiefrvEdg5Rce2g4TLmtbaxCi33ZpFnFEeOd02neb6J1Pbv1exg+
-         S4EhU+n4J4RzZWx+dgu0GuSHYSvjQtJ93yr4GE8Rvj+ODoZhZ4wmVYYdAthvtA7Uw1tX
-         2Jsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUurj4a7Sl9FroXhPOZ4zc2mZYcBiGv/rf6kkDuJBCACsSTfVRA+7bitoRGiC81bFj0UUcC/bmkmg==@vger.kernel.org, AJvYcCWi5K0W8TulPoKGSy/npnJ1Rs63VYNmoHdBBqyGMSK854UGvZjnE6tfgbQdyh9E0cDUWHfBeKlkiYWkapLu@vger.kernel.org, AJvYcCXvtyhHHKtUm04NWcTqZ1PXCTpEtp9A7CaagjdF9dsyOxPLOlCOOcVscr+9WgGmOZa/XXetXNEaHuHby4QpdQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUhI1B+6ymj+yGXIS1yo2/TucZfUX5MYIQ13GgB/OMsHjEXZ23
-	BCo2Sa989vWcKxTfYV1wzK8w3iujOR+lS2FqEhTqjmfJfCHvH7wDbx9+
-X-Gm-Gg: ASbGncvw+5ne3L+1xp7lwJRmbBrmRgP/PnGUH9EDUBYDLhusi0YVvz0cq72ULePjLbX
-	Gz9jYxsRgJAw3XZmAOy7KKylQCH5PKR/T6DHVPocApTZhvUubRHJbb2abCP5FhKHkVDLRPCiYTp
-	pJZIPlvkXfKvf2qZgDwrBf6e28vxNliC1gk62njhSiUcmpf6k77PTo2SN/iHFafVu0DbwFKElr+
-	J8ftrbkX83DnlTWVPn2RBgNEfJO/uXV8uJC/NiYpNCZe/IGeNUCsrg45SKJfDfuBqxTf8cHOB6d
-	dKS/El6JDQdNQVx6L5eLWNznrlUplhxMdWZFHOlEDse+nFJ63Qmh5sOqg56L5vwS/VJKhwgdN8o
-	=
-X-Google-Smtp-Source: AGHT+IGMRQ61VwYQ2vN+Uf4NWX9g1lKr9RmLW1NnlHUktgMRBPQgnpFd7IvsAZfTjj5Azpyp5TXuCQ==
-X-Received: by 2002:a17:906:d54c:b0:ae3:a3f7:ad8e with SMTP id a640c23a62f3a-ae6b061b38bmr206333866b.25.1751962971375;
-        Tue, 08 Jul 2025 01:22:51 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:4dfd])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac679esm854716966b.104.2025.07.08.01.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 01:22:50 -0700 (PDT)
-Message-ID: <9bfb10a9-0400-461f-af4d-54946455e74c@gmail.com>
-Date: Tue, 8 Jul 2025 09:24:18 +0100
+	s=arc-20240116; t=1751967635; c=relaxed/simple;
+	bh=nS1QhT41V0UiYsiN3Oegm8d4aaeLmesR6K/FAQd78h4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oL4jOlEo+czpi6oA5TB0LP8GwyaIlw9T7oD9k8ES88PtjB36iUV8OBqvCgA5qXxzlQj4kZxpHHHpLbmTNSmgCvQdG2VQtMq6C/R47TV3TJEc8jXWSqjmE0lb/M87OHnY52Y2vXo/0FLlyH+O6QDRXd4ktvca12nDTfbpsKsJqKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZYCGyHCI; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xMDHjiDJIJmRWu2K0DH66X5hKEZSubxzRhPtX7/C4pc=; b=ZYCGyHCI9fwC/sVJqiGVwq1LTW
+	OqBYDnEuere2uF0W0JI9EuCgjjhn9A8xAFUfoYuht2xQ/OJ12uddmmwEBvb8pcSeGt/oFLGRv3Uwm
+	cyyuk+D9ZZj+53BghS72x9Fvs3iCWRxZX5ABMK3WF50ojQpPLMdJeK3/Lc115vnGijEmfelq0PrIE
+	jwaRLvPn4xK6EWkVmqUh24RBMXywhbYLe3XMPWpSCNZ9w/BZLCyIrbulv0F0269EkYmGfaeHeU49A
+	jdfxi5t4XQoE3V+Er//QbuwevasZVUUA5SuS05nJeY0Nfb9FMnRB9CmJeWSPFLmB13CkbDM0rD5zr
+	RTLgbhag==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZ4oQ-00000004urP-3mvo;
+	Tue, 08 Jul 2025 09:40:30 +0000
+Date: Tue, 8 Jul 2025 02:40:30 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "ywen.chen" <ywen.chen@foxmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>, brauner <brauner@kernel.org>,
+	tytso <tytso@mit.edu>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>,
+	"adilger.kernel" <adilger.kernel@dilger.ca>,
+	viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	jaegeuk <jaegeuk@kernel.org>,
+	linux-ext4 <linux-ext4@vger.kernel.org>
+Subject: Re: =?utf-8?B?5Zue5aSN77yaIFtQQVRDSCB2MyAx?=
+ =?utf-8?B?LzJdIGxpYmZz?= =?utf-8?Q?=3A?= reduce the number of memory
+ allocations in generic_ci_match
+Message-ID: <aGznjhBVCkifc6BD@infradead.org>
+References: <aGZFtmIxHDLKL6mc@infradead.org>
+ <tencent_82716EB4F15F579C738C3CC3AFE62E822207@qq.com>
+ <20250704060259.GB4199@sol>
+ <aGtatW8g2fV6bFkm@infradead.org>
+ <tencent_3B7E5FEB5DB445A5DC50E3F3AE4DE72A7908@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [fs?] INFO: task hung in do_coredump (3)
-To: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>,
- anna-maria@linutronix.de, axboe@kernel.dk, brauner@kernel.org,
- frederic@kernel.org, gregkh@linuxfoundation.org, hdanton@sina.com,
- io-uring@vger.kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org,
- syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org,
- viro@zeniv.linux.org.uk
-References: <686bf556.a70a0220.29fe6c.0b0e.GAE@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <686bf556.a70a0220.29fe6c.0b0e.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_3B7E5FEB5DB445A5DC50E3F3AE4DE72A7908@qq.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 7/7/25 17:27, syzbot wrote:
-> syzbot has bisected this issue to:
+On Tue, Jul 08, 2025 at 10:36:07AM +0800, ywen.chen wrote:
+> 1. Use the latest version of the fsck.f2fs tool to correct
+> the file system.
+> 2. Use a relatively new version of the kernel. (For example,
+> linear search cannot be turned off in v6.6)
 > 
-> commit 2af89abda7d9c2aeb573677e2c498ddb09f8058a
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Thu Aug 24 22:53:32 2023 +0000
 > 
->      io_uring: add option to remove SQ indirection
+> The performance gain of this commit is very obvious in scenarios
+> where linear search is not turned off. In scenarios where linear
+> search is turned off, no performance problems will be introduced
+> either.
 
-Doesn't look like the cause, the previous repro from 28 Oct 2024 didn't
-even have any io_uring, and the patch only reduces sizes of some
-allocations. The common part b/w programs is
-prctl(PR_SET_SYSCALL_USER_DISPATCH_ON), might be related to that.
-
-
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ec9582580000
-> start commit:   05df91921da6 Merge tag 'v6.16-rc4-smb3-client-fixes' of gi..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16ec9582580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12ec9582580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=45bd916a213c79bb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a2228c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d48bd4580000
-> 
-> Reported-by: syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com
-> Fixes: 2af89abda7d9 ("io_uring: add option to remove SQ indirection")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
--- 
-Pavel Begunkov
+Turning off hashed lookups was a stupid idea and should not last.  Hashed
+directory lookups are the one file system improvement that significantly
+improved lookup performance.  So don't work around it, because otherwise
+you will be creating more optimizations to work around the lack of
+hashed lookups.
 
 
