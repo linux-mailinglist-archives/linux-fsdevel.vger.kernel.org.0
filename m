@@ -1,327 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-54245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEE5AFCC45
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 15:37:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2D6AFCC5E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 15:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51095423685
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 13:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482B74A5652
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 13:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B384922F75B;
-	Tue,  8 Jul 2025 13:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CE42D8380;
+	Tue,  8 Jul 2025 13:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOD4uVAz"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cFEYY7Ed";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7hSGj93P";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cFEYY7Ed";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7hSGj93P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B90E17B402
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 13:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010197E107
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 13:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751981553; cv=none; b=gar77vc6WoHPvu09ix4Uk1O6MudRQ1oQkVSctvixg7tPOTl3m40x9L/VFmnCLPLU6sUAg+G1LzFF6iZdJo3grbVDBVCE/qGcDEIUPKFtVpgs02rEPYPbdaPgZI3RmHS6Kl8l6yuJ8yzKvEYh6i7GEvxU6R+n/iWn4O1jGUj53R4=
+	t=1751982222; cv=none; b=Ajm7GZynuAa9wiaQjolmCRnXxDYU3ylPVakMvA8zFzzwoK32LYo3NIKsn7j9pJEdOVOrBRWUQz7zRVn3WXT23uW+BFlLav9TkoF6hhmf4KnJJ76UwRZeN6FVXWYRD4lHkgqQ2ETOsggqHW9iYy/wElH5mFNNcXhFE3gArIz5R34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751981553; c=relaxed/simple;
-	bh=/YL32fXbRHcrdPAWgm8KYyV062UOl83hVC7EN6BjkbY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TkGG96EuMhQ8SGt1fMngN6voOXENsYLfoEW2nCGwzTivDurGVjfYeB388n0nZx5re1qYDmsulrAV8rlV/2v7H3Is+CNzn6iIRLXorvOn5CWWnV+r1IshNtiqi2Hlj6mQ3w/QhQmOE8JBWYwEEX+8g+gTbEEbYPCeccfBJAiNzL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EOD4uVAz; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso6953560a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 06:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751981549; x=1752586349; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TMT1MiUa0TP0jRcSiOza3V4ZFFSoORg7Titx1fk2HKA=;
-        b=EOD4uVAzMsHZaln7VrScOv7M4PrZ8ifn4xBPoOfC7b9vTeFiop+8WLyFVpv2OuMoX/
-         a/2V5M1WRzL0K5yUXusXjKYNFoUbthI+uPaIr7JKK23SZVXnASwTk5uCZeHRfUaDISHp
-         mETznB3CMw2xkJBUpF6RjwaHIi93vl+8uhWhHJg87c023v3f2ooR5AJFG3xr0cFW1SFn
-         oXNJXNValpy4P/Ju8XCvncO82Yv2vtOAAijkpaousquyVC2OWULMCxKMCAG2uyIMAvf6
-         qGaf1t4yDyjYq18wSTj3HO46j+WxK86xaE/26RUyVkMce3X5edLNokPmzJMgfmmD328W
-         1BbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751981549; x=1752586349;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TMT1MiUa0TP0jRcSiOza3V4ZFFSoORg7Titx1fk2HKA=;
-        b=jm+M9lkRuZzKpJhEbcT3Qa5fg+rRhJxhm7KSr/7djwz/2GxjAz9NfLXvtYbPliztTI
-         LvTwgSatlmGyEblPMy+6gMmN3WKLiQBotTTdteYAa3yttxNHqSPZCuZT5Qbemy86+PQ5
-         PsoK7x+UyjaPiugO4mablAWoOJKtNuKQ84FW+hGySi5Xbe/pTgEAfI1oeYJ7ql8ceLAt
-         4+6Imzwo6/Wek52VmSIvbXyiewU3BO2I/n+m2cLW/ZmZ1Cub0VYQSB6KNawefJF44dxw
-         cQPXxEUpym8THUDBvER8ne0gvfBeOSOxf6rk0hFcEpgGr0M+rY1jEtiZZ0lNBO+n6xSn
-         pyMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUC4gHXj6VHoTVW0EjohIxKn+4ITLwQgyqJC8873hN+Hib4hHHh7rF5ihOROQBR4yHRZl7xJVuL2osu/iSw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjaCmcQHdIoW6dK8EUsCQojf1T3YNsFXGKdStxVqiD7yTkPMAy
-	j4uwdErE4roKNu/IzxNuETnZmsG8OoxZogVMuxLOUy03i6ssIcOt77qrRfwcwO/QrzxKs2Nwycx
-	9yIVWrohhutx8Gh6YChsDOErGBLZ6Qws=
-X-Gm-Gg: ASbGncsawc1K9oLWtg33V9D9Oz//Bnie+3R2q+N/YaV9HOI0vxaix6clvtmveIVkpAi
-	FltmSDBRM6mI+9qW/lhV+CGR3U0SjlUO9BM/NMr9fZ2+c9cClLXlJWjemXiAWNfJZHpZSUQNOlO
-	tRcTEZ3/p9AM9931VjLQjxAmj9Zt8wCpPaY+uKs0MFhEs=
-X-Google-Smtp-Source: AGHT+IHhiVq8/yOFeK9AbuOjZLq72hCqNydJff8cn/+Ds56MBC9w2Oi23rG3Lnsr50FdVuNICF8rvcl4XDIEGHei4aU=
-X-Received: by 2002:a17:907:6d26:b0:ae3:6cc8:e426 with SMTP id
- a640c23a62f3a-ae3fbc336f7mr1592394566b.9.1751981548835; Tue, 08 Jul 2025
- 06:32:28 -0700 (PDT)
+	s=arc-20240116; t=1751982222; c=relaxed/simple;
+	bh=nF0+KMniqgdBKRoMm7tnLPAqpXYPBVFXUEdU0h2B6Ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AozNzqtJKQuee/sq3nXvtIvtaB/CTpgyqMmNfyD54OjQ1lVk1IM/zUArCdZewlhvBjUx8qPBnFeMlFMDYY8YZhFIAfI8WABn1jDy8E3TFiW+XNu3KjkuOlxLdrqErtyEXGvvIB2nDblSFIQ/HO9FCCNlZhjyrJIamoP4OnerMaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cFEYY7Ed; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7hSGj93P; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cFEYY7Ed; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7hSGj93P; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 00B4F1F395;
+	Tue,  8 Jul 2025 13:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751982219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rDNz+q3iSeJkTycdDb83Xreebhf6qwgVfO8x6hpINmc=;
+	b=cFEYY7Ed0eYDvTy6O7cjJQnVOFrj8Q5iNAXLbjW/xSkig53bJrtwGrABHWXyMi1bg+BJS4
+	RAsiKsL5GKSkA4KSY41wHl7bgjOQmWk8GUbt5F4yft/SMB7Z9+sDHzVN8PaH5I4YqKOGBq
+	aujdFNgQa5Fd0YrmhJQTnlz+l1PJ6Fw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751982219;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rDNz+q3iSeJkTycdDb83Xreebhf6qwgVfO8x6hpINmc=;
+	b=7hSGj93PLHVX7a6HruTpPRXbWVDgX7RmpkTP/kpZW9piHfirT3iqJkTmwVXqPHcsURzcXt
+	H/CxuO/Lx8sLvrBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751982219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rDNz+q3iSeJkTycdDb83Xreebhf6qwgVfO8x6hpINmc=;
+	b=cFEYY7Ed0eYDvTy6O7cjJQnVOFrj8Q5iNAXLbjW/xSkig53bJrtwGrABHWXyMi1bg+BJS4
+	RAsiKsL5GKSkA4KSY41wHl7bgjOQmWk8GUbt5F4yft/SMB7Z9+sDHzVN8PaH5I4YqKOGBq
+	aujdFNgQa5Fd0YrmhJQTnlz+l1PJ6Fw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751982219;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rDNz+q3iSeJkTycdDb83Xreebhf6qwgVfO8x6hpINmc=;
+	b=7hSGj93PLHVX7a6HruTpPRXbWVDgX7RmpkTP/kpZW9piHfirT3iqJkTmwVXqPHcsURzcXt
+	H/CxuO/Lx8sLvrBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E7E9213A54;
+	Tue,  8 Jul 2025 13:43:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AI+YOIogbWhVOwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 08 Jul 2025 13:43:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 905BFA098F; Tue,  8 Jul 2025 15:43:38 +0200 (CEST)
+Date: Tue, 8 Jul 2025 15:43:38 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, 
+	josef@toxicpanda.com, lesha@meta.com, linux-fsdevel@vger.kernel.org, sargun@meta.com
+Subject: Re: [PATCH] fanotify: introduce unique event identifier
+Message-ID: <ggruapqox23obwimkajdj257ffdrhziwk3tbrorqx3wz7qcmm2@epcyf6cqxk27>
+References: <CAOQ4uxi8xjfhKLc7T0WGjOmtO4wRQT6b5MLUdaST2KE01BsKBg@mail.gmail.com>
+ <20250701072209.1549495-1-ibrahimjirdeh@meta.com>
+ <CAOQ4uxhrbN4k+YMd99h8jGyRc0d_n05H8q-gTuJ35jkO1aLO7A@mail.gmail.com>
+ <pcyd4ejepc6akgw3uq2bxuf2e255zhirbpfxxe463zj2m7iyfl@6bgetglt74ei>
+ <CAOQ4uxiAtKcdzpBP_ZA2hxpECULri+T9DTQRnT1iOCVJfYcryg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707170704.303772-1-amir73il@gmail.com> <20250707170704.303772-3-amir73il@gmail.com>
- <s2a5tw4bzb43jvqn6tzz4tkn4rllaul6xuukna6yglxh6rw7rj@qd5p47ylgyxm>
-In-Reply-To: <s2a5tw4bzb43jvqn6tzz4tkn4rllaul6xuukna6yglxh6rw7rj@qd5p47ylgyxm>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 8 Jul 2025 15:32:16 +0200
-X-Gm-Features: Ac12FXwuZxR7R3jjIKtkzQMihkgSBlzXrDHKgqsNuGW_X2G7KhcqvBjaKk2RyMg
-Message-ID: <CAOQ4uxgtx9v_6-Z+UySmxJ9jD8ptxfd0vtOCVQtRESnDi5J59g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fsnotify: optimize FMODE_NONOTIFY_PERM for the common cases
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiAtKcdzpBP_ZA2hxpECULri+T9DTQRnT1iOCVJfYcryg@mail.gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On Tue, Jul 8, 2025 at 1:26=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 07-07-25 19:07:04, Amir Goldstein wrote:
-> > The most unlikely watched permission event is FAN_ACCESS_PERM, because
-> > at the time that it was introduced there were no evictable ignore mark,
-> > so subscribing to FAN_ACCESS_PERM would have incured a very high
-> > overhead.
+On Tue 08-07-25 14:58:31, Amir Goldstein wrote:
+> On Tue, Jul 8, 2025 at 1:40 PM Jan Kara <jack@suse.cz> wrote:
+> > > --- a/fs/notify/fanotify/fanotify_user.c
+> > > +++ b/fs/notify/fanotify/fanotify_user.c
+> > > @@ -1583,6 +1583,16 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int,
+> > > flags, unsigned int, event_f_flags)
+> > >             (class | fid_mode) != FAN_CLASS_PRE_CONTENT_FID)
+> > >                 return -EINVAL;
+> > >
+> > > +       /*
+> > > +        * With group that reports fid info and allows only pre-content events,
+> > > +        * user may request to get a response id instead of event->fd.
+> > > +        * FAN_REPORT_FD_ERROR does not make sense in this case.
+> > > +        */
+> > > +       if ((flags & FAN_REPORT_RESPONSE_ID) &&
+> > > +           ((flag & FAN_REPORT_FD_ERROR) ||
+> > > +            !fid_mode || class != FAN_CLASS_PRE_CONTENT_FID))
+> > > +               return -EINVAL;
+> > > +
+> > >
+> > >
+> > > This new group mode is safe, because:
+> > > 1. event->fd is redundant to target fid
+> > > 2. other group priorities allow mixing async events in the same group
+> > >     async event can have negative event->fd which signifies an error
+> > >     to open event->fd
 > >
-> > Yet, when we set the fmode to FMODE_NOTIFY_HSM(), we never skip trying
-> > to send FAN_ACCESS_PERM, which is almost always a waste of cycles.
+> > I'm not sure I follow here. I'd expect:
 > >
-> > We got to this logic because of bundling open permisson events and acce=
-ss
-> > permission events in the same category and because FAN_OPEN_PERM is a
-> > commonly used event.
+> >         if ((flags & FAN_REPORT_RESPONSE_ID) && !fid_mode)
+> >                 return -EINVAL;
 > >
-> > By open coding fsnotify_open_perm() in fsnotify_open_perm_and_set_mode(=
-),
-> > we no longer need to regard FAN_OPEN*_PERM when calculating fmode.
-> >
-> > This leaves the case of having pre-content events and not having access
-> > permission events in the object masks a more likely case than the other
-> > way around.
-> >
-> > Rework the fmode macros and code so that their meaning now refers only
-> > to hooks on an already open file:
-> >
-> > - FMODE_NOTIFY_NONE() skip all events
-> > - FMODE_NOTIFY_PERM() send all access permission events
->
-> I was a bit confused here but AFAIU you mean "send pre-content events and
-> FAN_ACCESS_PERM". And perhaps I'd call this macro
-> FMODE_NOTIFY_ACCESS_PERM() because that's the only place where it's going
-> to be used...
+> > I.e., if you ask for event ids, we don't return fds at all so you better
+> > had FID enabled to see where the event happened. And then there's no need
+> > for FAN_CLASS_PRE_CONTENT_FID at all. Yes, you cannot mix async fanotify
+> > events with fd with permission events using event id but is that a sane
+> > combination? What case do you have in mind that justifies this
+> > complication?
+> 
+> Not sure what complication you are referring to.
+> Maybe this would have been more clear:
+> 
+> +       if ((flags & FAN_REPORT_RESPONSE_ID) && (!fid_mode ||
+> +           ((flag & FAN_REPORT_FD_ERROR) || class == FAN_CLASS_NOTIFY))
+> +               return -EINVAL;
+> +
 
-Yes. agree.
+Right, I can understand this easily :) Thanks for clarification.
 
->
-> > - FMODE_NOTIFY_HSM()  send pre-conent permission events
->                                  ^^^ content
->
->
-> Otherwise neat trick, I like it. Some nitty comments below.
+> Yes, !fid_mode is the more important check.
+> The checks in the second line are because the combination of
+> FAN_REPORT_RESPONSE_ID with those other flags does not make sense.
 
-Thanks.
+But FAN_REPORT_FD_ERROR influences also the behavior of pidfd (whether we
+report full errno there or only FAN_NOPIDFD / FAN_EPIDFD). Hence I think
+the exclusion with FAN_REPORT_FD_ERROR is wrong. I agree with
+FAN_CLASS_NOTIFY bit.
 
->
-> > @@ -683,45 +683,70 @@ int fsnotify_open_perm_and_set_mode(struct file *=
-file)
-> >       }
-> >
-> >       /*
-> > -      * If there are permission event watchers but no pre-content even=
-t
-> > -      * watchers, set FMODE_NONOTIFY | FMODE_NONOTIFY_PERM to indicate=
- that.
-> > +      * OK, there are some permission event watchers. Check if anybody=
- is
-> > +      * watching for permission events on *this* file.
-> >        */
-> > -     if ((!d_is_dir(dentry) && !d_is_reg(dentry)) ||
-> > -         likely(!fsnotify_sb_has_priority_watchers(sb,
-> > -                                             FSNOTIFY_PRIO_PRE_CONTENT=
-))) {
-> > -             file_set_fsnotify_mode(file, FMODE_NONOTIFY |
-> > -                                    FMODE_NONOTIFY_PERM);
-> > +     mnt_mask =3D READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify=
-_mask);
-> > +     p_mask =3D fsnotify_object_watched(d_inode(dentry), mnt_mask,
-> > +                                      ALL_FSNOTIFY_PERM_EVENTS);
-> > +     if (dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) {
-> > +             parent =3D dget_parent(dentry);
-> > +             p_mask |=3D fsnotify_inode_watches_children(d_inode(paren=
-t));
-> > +             dput(parent);
-> > +     }
-> > +
-> > +     /*
-> > +      * Without any access permission events, we only need to call the
-> > +      * open perm hook and no further permission hooks on the open fil=
-e.
-> > +      * That is the common case with Anti-Malware protection service.
-> > +      */
-> > +     if (likely(!(p_mask & FSNOTIFY_ACCESS_PERM_EVENTS))) {
-> > +             file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
-> >               goto open_perm;
-> >       }
->
-> Why is the above if needed? It seems to me all the cases are properly
-> handled below already? And they are very cheap to check...
->
-> >       /*
-> > -      * OK, there are some pre-content watchers. Check if anybody is
-> > -      * watching for pre-content events on *this* file.
-> > +      * Legacy FAN_ACCESS_PERM events have very high performance overh=
-ead,
-> > +      * so unlikely to be used in the wild. If they are used there wil=
-l be
-> > +      * no optimizations at all.
-> >        */
-> > -     mnt_mask =3D READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify=
-_mask);
-> > -     if (unlikely(fsnotify_object_watched(d_inode(dentry), mnt_mask,
-> > -                                  FSNOTIFY_PRE_CONTENT_EVENTS))) {
-> > -             /* Enable pre-content events */
-> > +     if (unlikely(p_mask & FS_ACCESS_PERM)) {
-> > +             /* Enable all permission and pre-content events */
-> >               file_set_fsnotify_mode(file, 0);
-> >               goto open_perm;
-> >       }
-> >
-> > -     /* Is parent watching for pre-content events on this file? */
-> > -     if (dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) {
-> > -             parent =3D dget_parent(dentry);
-> > -             p_mask =3D fsnotify_inode_watches_children(d_inode(parent=
-));
-> > -             dput(parent);
-> > -             if (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS) {
-> > -                     /* Enable pre-content events */
-> > -                     file_set_fsnotify_mode(file, 0);
-> > -                     goto open_perm;
-> > -             }
-> > +     /*
-> > +      * Pre-content events are only supported on regular files.
-> > +      * If there are pre-content event watchers and no permission acce=
-ss
-> > +      * watchers, set FMODE_NONOTIFY | FMODE_NONOTIFY_PERM to indicate=
- that.
-> > +      * That is the common case with HSM service.
-> > +      */
-> > +     if (d_is_reg(dentry) && (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS)) {
-> > +             file_set_fsnotify_mode(file, FMODE_NONOTIFY |
-> > +                                          FMODE_NONOTIFY_PERM);
-> > +             goto open_perm;
-> >       }
-> > -     /* Nobody watching for pre-content events from this file */
-> > -     file_set_fsnotify_mode(file, FMODE_NONOTIFY | FMODE_NONOTIFY_PERM=
-);
-> > +
-> > +     /* Nobody watching permission and pre-content events on this file=
- */
-> > +     file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
->
-> <snip>
->
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 45fe8f833284..1d54d323d9de 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -205,7 +205,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff=
-_t offset,
-> >   *
-> >   * FMODE_NONOTIFY - suppress all (incl. non-permission) events.
-> >   * FMODE_NONOTIFY_PERM - suppress permission (incl. pre-content) event=
-s.
-> > - * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - suppress only pre-content ev=
-ents.
-> > + * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - .. (excl. pre-content) event=
-s.
->                                              ^^ I'd write here "suppress
-> FAN_ACCESS_PERM" to be explicit what this is about.
-
-ok.
-
->
-> > @@ -213,10 +213,10 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, lo=
-ff_t offset,
-> >  #define FMODE_FSNOTIFY_NONE(mode) \
-> >       ((mode & FMODE_FSNOTIFY_MASK) =3D=3D FMODE_NONOTIFY)
-> >  #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
-> > -#define FMODE_FSNOTIFY_PERM(mode) \
-> > +#define FMODE_FSNOTIFY_HSM(mode) \
-> >       ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0 || \
-> >        (mode & FMODE_FSNOTIFY_MASK) =3D=3D (FMODE_NONOTIFY | FMODE_NONO=
-TIFY_PERM))
-> > -#define FMODE_FSNOTIFY_HSM(mode) \
-> > +#define FMODE_FSNOTIFY_PERM(mode) \
-> >       ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0)
->
-> As mentioned above I'd call this FMODE_FSNOTIFY_ACCESS_PERM().
-
-ok.
-
->
-> > diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_=
-backend.h
-> > index 832d94d783d9..557f9b127960 100644
-> > --- a/include/linux/fsnotify_backend.h
-> > +++ b/include/linux/fsnotify_backend.h
-> > @@ -87,14 +87,18 @@
-> >  /* Mount namespace events */
-> >  #define FSNOTIFY_MNT_EVENTS (FS_MNT_ATTACH | FS_MNT_DETACH)
-> >
-> > +#define FSNOTIFY_OPEN_PERM_EVENTS    (FS_OPEN_PERM | FS_OPEN_EXEC_PERM=
-)
-> >  /* Content events can be used to inspect file content */
-> > -#define FSNOTIFY_CONTENT_PERM_EVENTS (FS_OPEN_PERM | FS_OPEN_EXEC_PERM=
- | \
-> > +#define FSNOTIFY_CONTENT_PERM_EVENTS (FSNOTIFY_OPEN_PERM_EVENTS | \
-> >                                     FS_ACCESS_PERM)
->
-> You don't use FSNOTIFY_OPEN_PERM_EVENTS anywhere. If anything I'd drop
-
-Right, I will drop it.
-
-> FSNOTIFY_CONTENT_PERM_EVENTS completely as that has only single use in
-> ALL_FSNOTIFY_PERM_EVENTS instead of adding more practically unused define=
-s.
->
-
-It is going to be used down the road.
-In my followup fa_pre_dir_access patches, I split the dir/file macros:
-
-#define FSNOTIFY_PRE_CONTENT_EVENTS \
-                                 (FSNOTIFY_PRE_FILE_CONTENT_EVENTS | \
-                                  FSNOTIFY_PRE_DIR_CONTENT_EVENTS)
-
-Because the pre-dir-content events are not applicable ON_CHILD:
-
-#define FS_EVENTS_POSS_ON_CHILD   (FSNOTIFY_CONTENT_PERM_EVENTS | \
-                                   FSNOTIFY_PRE_FILE_CONTENT_EVENTS | \
-
-> >  /* Pre-content events can be used to fill file content */
-> >  #define FSNOTIFY_PRE_CONTENT_EVENTS  (FS_PRE_ACCESS)
-> >
-> >  #define ALL_FSNOTIFY_PERM_EVENTS (FSNOTIFY_CONTENT_PERM_EVENTS | \
-> >                                 FSNOTIFY_PRE_CONTENT_EVENTS)
-> > +/* Access permission events determine FMODE_NONOTIFY_PERM mode */
-> > +#define FSNOTIFY_ACCESS_PERM_EVENTS (FS_ACCESS_PERM | \
-> > +                                  FSNOTIFY_PRE_CONTENT_EVENTS)
->
-> I don't think this define is needed either so I'd drop it for now...
-
-ok. v2 soon...
-
-Thanks,
-Amir.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
