@@ -1,106 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-54238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BBEAFC9C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 13:40:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BC2AFCA02
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 14:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA87A564652
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 11:40:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E60B37A9C7B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 12:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2732D9ED4;
-	Tue,  8 Jul 2025 11:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A1B2DA76D;
+	Tue,  8 Jul 2025 12:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PUZD10zD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GCKHGtsI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PUZD10zD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GCKHGtsI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMyr/6Jd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A4D25E828
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 11:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6343126B08F;
+	Tue,  8 Jul 2025 12:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751974809; cv=none; b=ULePhZb8P2fOZQoHGj7r96iGeBFs1YVPzOO3BoUv28fGa53faPqg6Sx83apkXHgXXLljE2fZ2JZkp9kCqlpg5l6dSfNTLp4kqQOLeGMvjo6EP+gHvAX09u7W1kD4cZULwMBwOPwKBUWW4rMgRzdU2Gx9exsUDsF7TBq/foRqr/Y=
+	t=1751976130; cv=none; b=C3qtb2lHWfszcfQDhE4zGhze2s7xs1kAUH2Lrn7h7MPq9LckXsx/l4NkUmMi1aSUvcAW7qWszFPcNzxb//HX8lrdsvFnwsBJB5pIdVIRQeypBDnXByPrudn1JjvMowxJ86CU4LqXbXlBOY7GPiQ/qZckKUsnsUbl1FhRlxe+MKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751974809; c=relaxed/simple;
-	bh=fH3KiuImjrjoK1V5mqJgQtITke8YfINetATCAuDN2dM=;
+	s=arc-20240116; t=1751976130; c=relaxed/simple;
+	bh=Jn8hrsRg86sOLVXHmouC0yMQPqN2iUaDm1mOlavqijo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUtJR2RSh3MFZqbTo6iV56axsHNl1LbuKD57tn91Xy2j3RcU96fNenp4PntL8n2OnOZ7zQTUbKG7LnN793nIJPjR+pm82CdYIvo/CZRbfvqZBiC3xFSF/+nyzvCCEnDcALAIe4PUrrfnw625rOR1gN/rr4tdZJUOl7wy2G8amg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PUZD10zD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GCKHGtsI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PUZD10zD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GCKHGtsI; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B9982117C;
-	Tue,  8 Jul 2025 11:40:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751974805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LDUaD6llVPcuJQkCo8BDWrwMHFrqWPeP9tmChMPue6I=;
-	b=PUZD10zDXrpRSyxTrKEfu/qAKvGgZFbEloDmvtEGr/XWke0dirDBTNWYFkY4k7VZ7+J2F0
-	m3F0WphjIQvKUbjl5uArVBECMt3XDK8tRQZ6sUVDQzvoGepPTcEuIeMTWuz/Dusd9X4jov
-	84EPh2SuGTD6lpKqNzwCASYvESI+D/I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751974805;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LDUaD6llVPcuJQkCo8BDWrwMHFrqWPeP9tmChMPue6I=;
-	b=GCKHGtsIxT/ucuR7u4pb/QXaj03l4i+868wZURnQrxvOopNzN8f6R6tQsf82PzaY7B7DcE
-	n2Fm9Y67X/1u9iAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=PUZD10zD;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=GCKHGtsI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751974805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LDUaD6llVPcuJQkCo8BDWrwMHFrqWPeP9tmChMPue6I=;
-	b=PUZD10zDXrpRSyxTrKEfu/qAKvGgZFbEloDmvtEGr/XWke0dirDBTNWYFkY4k7VZ7+J2F0
-	m3F0WphjIQvKUbjl5uArVBECMt3XDK8tRQZ6sUVDQzvoGepPTcEuIeMTWuz/Dusd9X4jov
-	84EPh2SuGTD6lpKqNzwCASYvESI+D/I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751974805;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LDUaD6llVPcuJQkCo8BDWrwMHFrqWPeP9tmChMPue6I=;
-	b=GCKHGtsIxT/ucuR7u4pb/QXaj03l4i+868wZURnQrxvOopNzN8f6R6tQsf82PzaY7B7DcE
-	n2Fm9Y67X/1u9iAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 19A4D13A54;
-	Tue,  8 Jul 2025 11:40:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QIE9BpUDbWg8FAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 08 Jul 2025 11:40:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 99576A098F; Tue,  8 Jul 2025 13:40:04 +0200 (CEST)
-Date: Tue, 8 Jul 2025 13:40:04 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, jack@suse.cz, 
-	josef@toxicpanda.com, lesha@meta.com, linux-fsdevel@vger.kernel.org, sargun@meta.com
-Subject: Re: [PATCH] fanotify: introduce unique event identifier
-Message-ID: <pcyd4ejepc6akgw3uq2bxuf2e255zhirbpfxxe463zj2m7iyfl@6bgetglt74ei>
-References: <CAOQ4uxi8xjfhKLc7T0WGjOmtO4wRQT6b5MLUdaST2KE01BsKBg@mail.gmail.com>
- <20250701072209.1549495-1-ibrahimjirdeh@meta.com>
- <CAOQ4uxhrbN4k+YMd99h8jGyRc0d_n05H8q-gTuJ35jkO1aLO7A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GVTlxj7a1x71wtqqalgaJgpFp8qBn+t2cQNEiJoIp8u5yMLtZQ1MJ/QogcZGEkvieOUN3n91MoYui3GRHsplAmZ36qJTFsSzhsmLIhvc1PcmWGv2yh2YIp2WhEQ7qD8pl5FnyqQMM7Lv3KFWxBoiDnXE7vKwMDNU28zNwAS5hRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMyr/6Jd; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72c14138668so1412302a34.2;
+        Tue, 08 Jul 2025 05:02:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751976127; x=1752580927; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2uGq9fv0o0kRTxTwHbXLzg/jeWoB7j9lh1A3UENkLmc=;
+        b=ZMyr/6JdOKDjNPne4UeCPBd3rQS7HHUF9cEsQEZoR9VuHizr2LFIOSIOeI6rZvpGel
+         LALDpzC3kl/uvRumqmwfyP+jKn6jBsbjTocNV7b0suHGL1Uob+ZamO3PMcU14TgjHmSo
+         Wb5/UX20UdqIgbqZZToTx3+BYfBqf+0V7ZSmGHjaMdybVSbKOetsZu9SpvmcsRmgZ4jp
+         FzkaY9Ythk/fKfygruiJ4RPAWSy7xsGopYyIBvJ+9a9Di5oRO8r22z7sTBmxBnnhsA5/
+         IqoR0iLqPkwfRADQ+8p3olYaqL7do+B6ivyZCIpa7+ZnYNH7WGKHrkxSi1b5wO4P1acb
+         MfhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751976127; x=1752580927;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2uGq9fv0o0kRTxTwHbXLzg/jeWoB7j9lh1A3UENkLmc=;
+        b=mdtaQ72dfSS5rmMsB1SmI9X9KIfE60aiL1B84yeomNp8q0oK58LlWg1P67/Cvw7hZl
+         d+cr/zV3KRHCH2eCR+vwyh0QFSb/xHX78TYfQx2LJcwTmVKbqr9nomtvYbNpP52GMhca
+         M9kFXvMtNn1Pj3M5cZF29b0HX6USHVcK58X9awB/6qwpSc89PvIC+P+8FWCtqs1E8LoE
+         V/h/ucJfCbHGLGzUjQFQqGUjY8FgYmX+aSFSvVAoTXaiGlBs9pra2zj0geP8xvLCwCz/
+         bO7LFhA8gMkXseV+mu5X7Jn976GlaNLr2fMkqGSA6Jnxy2bSg1sF1G0dJ1w382PT/OSE
+         fYIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYxPsL3jGFR+x31A3N5kENPfAdfmWO4uUpz1cvzZ24kV63kHkYH5uhOiBJ8iGN9qJR3I5BjvDHLP4=@vger.kernel.org, AJvYcCWeBtaSz7XryJ5N/PbJeYmKaaDrr9YSoQtLF+l7MZ0nRGWIdpi4bNLmClP9tCFf3XgjHifdZeyvjuuotzck@vger.kernel.org, AJvYcCWpzwg4wdy84f9DOrDRDOYB8f/2WwK9bOv+rLhtLdCJNxNPSqvVijUCEr/kMnOKsaSde+AGlDyVLZkgj2YR0g==@vger.kernel.org, AJvYcCWrlXU1X+TgBilFGQrlKDZQGR+OhhjO8nf0nwWmPbE3RPEbkt30zMoyAK1WWA+8R8PZOHF+wHRyS/Rk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxayKCDLfatQQjvvuzbknexxW9O4rTWnarUWB0cLBqc620ddtNR
+	v+r7IG+WiYIDEynXJ+oluDNLoWGVIxFkq9g6sYZ+yB65CeV17R4CKIAr
+X-Gm-Gg: ASbGncsGFGSkpA3JtvIjjimuuAQOaGD9q/ZhUEMQB86ZeWCtwyXcSTTH5V826c8+MPG
+	pyA9cTL+IxUXioMdSKcbFaJqyh11cC+Qgu+xWABHBccwlHx62FhZaBUF7ghE2TAWbbXOziZ/I6c
+	sPdxIcK70T4dg8riUgAodSW3SorUz3pKbpI4skapOXjrzpj5sRoSyHNKCS2ruw2VVP07sMRErMk
+	ygMrU8pm4WB3mK1cwW+ZTE2QfyHwgOrepDIZj2pCkoZGTmekfN6AlxEuwuLeYz4aCM7j6BCs/23
+	7A0NbcC4BxxcyP0SeWckrRV6nnblNcsQdA3cnlAjbyBkjlg6zNadgLVtcwI5O9YbwLLMaLy6YJ1
+	o
+X-Google-Smtp-Source: AGHT+IE/EwQcJny5luA2L1jmlPqgPI2OAQPJnI9paMkK4frs6m/TZ8wBkc3niX9u+apPS0vL9gnf0g==
+X-Received: by 2002:a05:6808:4442:b0:40b:4208:8440 with SMTP id 5614622812f47-4110de96df3mr2403977b6e.3.1751976126686;
+        Tue, 08 Jul 2025 05:02:06 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:a416:8b40:fe30:49a3])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40d02aeed45sm1630594b6e.50.2025.07.08.05.02.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 05:02:05 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Tue, 8 Jul 2025 07:02:03 -0500
+From: John Groves <John@groves.net>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for
+ famfs
+Message-ID: <ueepqz3oqeqzwiidk2wlf3f7enxxte4ws27gtxhakfmdiq4t26@cvfmozym5rme>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-11-john@groves.net>
+ <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
+ <yhso6jddzt6c7glqadrztrswpisxmuvg7yopc6lp4gn44cxd4m@my4ajaw47q7d>
+ <20250707173942.GC2672029@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,172 +106,144 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhrbN4k+YMd99h8jGyRc0d_n05H8q-gTuJ35jkO1aLO7A@mail.gmail.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 3B9982117C
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+In-Reply-To: <20250707173942.GC2672029@frogsfrogsfrogs>
 
-On Mon 07-07-25 18:33:41, Amir Goldstein wrote:
-> On Tue, Jul 1, 2025 at 9:23 AM Ibrahim Jirdeh <ibrahimjirdeh@meta.com> wrote:
-> > On 6/30/25, 9:06 AM, "Amir Goldstein" <amir73il@gmail.com <mailto:amir73il@gmail.com>> wrote:
-> > > On Mon, Jun 30, 2025 at 4:50 PM Jan Kara <jack@suse.cz> wrote:
-> > > > I agree expanding fanotify_event_metadata painful. After all that's the
-> > > > reason why we've invented the additional info records in the first place :).
-> > > > So I agree with putting the id either in a separate info record or overload
-> > > > something in fanotify_event_metadata.
+On 25/07/07 10:39AM, Darrick J. Wong wrote:
+> On Fri, Jul 04, 2025 at 08:39:59AM -0500, John Groves wrote:
+> > On 25/07/04 09:54AM, Amir Goldstein wrote:
+> > > On Thu, Jul 3, 2025 at 8:51 PM John Groves <John@groves.net> wrote:
 > > > >
-> > > > On Sun 29-06-25 08:50:05, Amir Goldstein wrote:
-> > > > > I may have mentioned this before, but I'll bring it up again.
-> > > > > If we want to overload event->fd with response id I would consider
-> > > > > allocating response_id with idr_alloc_cyclic() that starts at 256
-> > > > > and then set event->fd = -response_id.
-> > > > > We want to skip the range -1..-255 because it is used to report
-> > > > > fd open errors with FAN_REPORT_FD_ERROR.
+> > > > * FUSE_DAX_FMAP flag in INIT request/reply
 > > > >
-> > > > I kind of like this. It looks elegant. The only reason I'm hesitating is
-> > > > that as you mentioned with persistent notifications we'll likely need
-> > > > 64-bit type for identifying event. But OTOH requirements there are unclear
-> > > > and I can imagine even userspace assigning the ID. In the worst case we
-> > > > could add info record for this persistent event id.
-> > >
-> > > Yes, those persistent id's are inherently different from the response key,
-> > > so I am not really worried about duplicity.
-> > >
-> > > > So ok, let's do it as you suggest.
-> > >
-> > > Cool.
-> > >
-> > > I don't think that we even need an explicit FAN_REPORT_EVENT_ID,
-> > > because it is enough to say that (fid_mode != 0) always means that
-> > > event->fd cannot be >= 0 (like it does today), but with pre-content events
-> > > event->fd can be a key < -255?
-> > >
-> > > Ibrahim,
-> > >
-> > > Feel free to post the patches from my branch, if you want
-> > > post the event->fd = -response_id implementation.
-> > >
-> > > I also plan to post them myself when I complete the pre-dir-content patches.
-> >
-> > Sounds good. I will pull in the FAN_CLASS_PRE_CONTENT | FAN_REPORT_FID branch
-> > and resubmit this patch now that we have consensus on the approach here.
+> > > > * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
+> > > >   famfs-enabled connection
+> > > >
+> > > > Signed-off-by: John Groves <john@groves.net>
+> > > > ---
+> > > >  fs/fuse/fuse_i.h          |  3 +++
+> > > >  fs/fuse/inode.c           | 14 ++++++++++++++
+> > > >  include/uapi/linux/fuse.h |  4 ++++
+> > > >  3 files changed, 21 insertions(+)
+> > > >
+> > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > > index 9d87ac48d724..a592c1002861 100644
+> > > > --- a/fs/fuse/fuse_i.h
+> > > > +++ b/fs/fuse/fuse_i.h
+> > > > @@ -873,6 +873,9 @@ struct fuse_conn {
+> > > >         /* Use io_uring for communication */
+> > > >         unsigned int io_uring;
+> > > >
+> > > > +       /* dev_dax_iomap support for famfs */
+> > > > +       unsigned int famfs_iomap:1;
+> > > > +
+> > > 
+> > > pls move up to the bit fields members.
+> > 
+> > Oops, done, thanks.
+> > 
+> > > 
+> > > >         /** Maximum stack depth for passthrough backing files */
+> > > >         int max_stack_depth;
+> > > >
+> > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > > index 29147657a99f..e48e11c3f9f3 100644
+> > > > --- a/fs/fuse/inode.c
+> > > > +++ b/fs/fuse/inode.c
+> > > > @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+> > > >                         }
+> > > >                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
+> > > >                                 fc->io_uring = 1;
+> > > > +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
+> > > > +                           flags & FUSE_DAX_FMAP) {
+> > > > +                               /* XXX: Should also check that fuse server
+> > > > +                                * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN,
+> > > > +                                * since it is directing the kernel to access
+> > > > +                                * dax memory directly - but this function
+> > > > +                                * appears not to be called in fuse server
+> > > > +                                * process context (b/c even if it drops
+> > > > +                                * those capabilities, they are held here).
+> > > > +                                */
+> > > > +                               fc->famfs_iomap = 1;
+> > > > +                       }
+> > > 
+> > > 1. As long as the mapping requests are checking capabilities we should be ok
+> > >     Right?
+> > 
+> > It depends on the definition of "are", or maybe of "mapping requests" ;)
+> > 
+> > Forgive me if this *is* obvious, but the fuse server capabilities are what
+> > I think need to be checked here - not the app that it accessing a file.
+> > 
+> > An app accessing a regular file doesn't need permission to do raw access to
+> > the underlying block dev, but the fuse server does - becuase it is directing
+> > the kernel to access that for apps.
+> > 
+> > > 2. What's the deal with capable(CAP_SYS_ADMIN) in process_init_limits then?
+> > 
+> > I *think* that's checking the capabilities of the app that is accessing the
+> > file, and not the fuse server. But I might be wrong - I have not pulled very
+> > hard on that thread yet.
 > 
-> FYI, I pushed some semantic changed to fan_pre_content_fid branch:
-> 
-> - Created shortcut macro FAN_CLASS_PRE_CONTENT_FID
-> - Created a group priority FSNOTIFY_PRIO_PRE_CONTENT_FID
-> 
-> Regarding the question whether reporting response_id instead of event->fd
-> requires an opt-in, so far my pre-dir-content patches can report event->fd,
-> so my preference id the response_id behavior will require opt-in with init
-> flag FAN_REPORT_RESPONSE_ID.
+> The init reply should be processed in the context of the fuse server.
+> At that point the kernel hasn't exposed the fs to user programs, so
+> (AFAICT) there won't be any other programs accessing that fuse mount.
 
-No problem with the FAN_REPORT_RESPONSE_ID feature flag, just we'll see
-whether the classical fd-based events are useful enough with
-pre-dir-content events to justify their existence ;).
+Hmm. It would be good if you're right about that. My fuse server *is* running
+as root, and when I check those capabilities in process_init_reply(), I
+find those capabilities. So far so good.
 
-> @@ -67,6 +67,7 @@
->  #define FAN_REPORT_TARGET_FID  0x00001000      /* Report dirent target id  */
->  #define FAN_REPORT_FD_ERROR    0x00002000      /* event->fd can report error */
->  #define FAN_REPORT_MNT         0x00004000      /* Report mount events */
-> +#define FAN_REPORT_RESPONSE_ID 0x00008000      /* event->fd is a response id */
-> 
->  /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
->  #define FAN_REPORT_DFID_NAME   (FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
-> @@ -144,7 +145,10 @@ struct fanotify_event_metadata {
->         __u8 reserved;
->         __u16 metadata_len;
->         __aligned_u64 mask;
-> -       __s32 fd;
-> +       union {
-> +               __s32 fd;
-> +               __s32 id; /* FAN_REPORT_RESPONSE_ID */
-> +       }
->         __s32 pid;
->  };
-> 
-> @@ -228,7 +232,10 @@ struct fanotify_event_info_mnt {
->  #define FAN_RESPONSE_INFO_AUDIT_RULE   1
-> 
->  struct fanotify_response {
-> -       __s32 fd;
-> +       union {
-> +               __s32 fd;
-> +               __s32 id; /* FAN_REPORT_RESPONSE_ID */
-> +       }
->         __u32 response;
->  };
-> 
-> And to add a check like this:
-> 
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -1583,6 +1583,16 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int,
-> flags, unsigned int, event_f_flags)
->             (class | fid_mode) != FAN_CLASS_PRE_CONTENT_FID)
->                 return -EINVAL;
-> 
-> +       /*
-> +        * With group that reports fid info and allows only pre-content events,
-> +        * user may request to get a response id instead of event->fd.
-> +        * FAN_REPORT_FD_ERROR does not make sense in this case.
-> +        */
-> +       if ((flags & FAN_REPORT_RESPONSE_ID) &&
-> +           ((flag & FAN_REPORT_FD_ERROR) ||
-> +            !fid_mode || class != FAN_CLASS_PRE_CONTENT_FID))
-> +               return -EINVAL;
-> +
-> 
-> 
-> This new group mode is safe, because:
-> 1. event->fd is redundant to target fid
-> 2. other group priorities allow mixing async events in the same group
->     async event can have negative event->fd which signifies an error
->     to open event->fd
+Then I added code to my fuse server to drop those capabilities prior to
+starting the fuse session (prctl(PR_CAPBSET_DROP, CAP_SYS_RAWIO) and 
+prctl(PR_CAPBSET_DROP, CAP_SYS_ADMIN). I expected (hoped?) to see those 
+capabilities disappear in process_init_reply() - but they did not disappear.
 
-I'm not sure I follow here. I'd expect:
+I'm all ears if somebody can see a flaw in my logic here. Otherwise, the
+capabilities need to be stashed away before the reply is processsed, when 
+fs/fuse *is* running in fuse server context.
 
-	if ((flags & FAN_REPORT_RESPONSE_ID) && !fid_mode)
-		return -EINVAL;
+I'm somewhat surprised if that isn't already happening somewhere...
 
-I.e., if you ask for event ids, we don't return fds at all so you better
-had FID enabled to see where the event happened. And then there's no need
-for FAN_CLASS_PRE_CONTENT_FID at all. Yes, you cannot mix async fanotify
-events with fd with permission events using event id but is that a sane
-combination? What case do you have in mind that justifies this
-complication?
+> 
+> > > 3. Darrick mentioned the need for a synchronic INIT variant for his work on
+> > >     blockdev iomap support [1]
+> > 
+> > I'm not sure that's the same thing (Darrick?), but I do think Darrick's
+> > use case probably needs to check capabilities for a server that is sending
+> > apps (via files) off to access extents of block devices.
+> 
+> I don't know either, Miklos hasn't responded to my questions.  I think
+> the motivation for a synchronous 
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+?
+
+> 
+> As for fuse/iomap, I just only need to ask the kernel if iomap support
+> is available before calling ext2fs_open2() because the iomap question
+> has some implications for how we open the ext4 filesystem.
+> 
+> > > I also wonder how much of your patches and Darrick's patches end up
+> > > being an overlap?
+> > 
+> > Darrick and I spent some time hashing through this, and came to the conclusion
+> > that the actual overlap is slim-to-none. 
+> 
+> Yeah.  The neat thing about FMAPs is that you can establish repeating
+> patterns, which is useful for interleaved DRAM/pmem devices.  Disk
+> filesystems don't do repeating patterns, so they'd much rather manage
+> non-repeating mappings.
+
+Right. Interleaving is critical to how we use memory, so fmaps are designed
+to support it.
+
+Tangent: at some point a broader-than-just-me discussion of how block devices
+have the device mapper, but memory has no such layout tools, might be good
+to have. Without such a thing (which might or might not be possible/practical),
+it's essential that famfs do the interleaving. Lacking a mapper layer also
+means that we need dax to provide a clean "device abstraction" (meaning
+a single CXL allocation [which has a uuid/tag] needs to appear as a single
+dax device whether or not it's HPA-contiguous).
+
+Cheers,
+John
+
 
