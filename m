@@ -1,169 +1,327 @@
-Return-Path: <linux-fsdevel+bounces-54244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BF2AFCBC6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 15:23:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEE5AFCC45
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 15:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADDE83A6389
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 13:22:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51095423685
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 13:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4632E2DC32E;
-	Tue,  8 Jul 2025 13:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B384922F75B;
+	Tue,  8 Jul 2025 13:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="JRsgXRez"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOD4uVAz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8008215F6C;
-	Tue,  8 Jul 2025 13:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B90E17B402
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 13:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980938; cv=none; b=t3591crjQY2wWVstvToiLGrrEYy+q5F5HJ9Udmhgigs5yhXybRk2p2nY+YvQ5hPZTLa34H067ULHpvsuA8cvyvPQ9voMVu7yIcV8DfKnyLUKHzhdZslsL4v+Se9Oth0y3iiSyW/c5VY2R9s+fkKRwz4MeCZn1R9kPt9H3/n8yX4=
+	t=1751981553; cv=none; b=gar77vc6WoHPvu09ix4Uk1O6MudRQ1oQkVSctvixg7tPOTl3m40x9L/VFmnCLPLU6sUAg+G1LzFF6iZdJo3grbVDBVCE/qGcDEIUPKFtVpgs02rEPYPbdaPgZI3RmHS6Kl8l6yuJ8yzKvEYh6i7GEvxU6R+n/iWn4O1jGUj53R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980938; c=relaxed/simple;
-	bh=Et+QSwwJrfokDLvMmKeuMgFeMSBuywiC/GR3rgxX5eY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JUBBJZy5neCmbnjbUMG970MLW13MGJ4w6wmJ0APkYICg/2TRv2iUpLPNRUwISjNsrl4Fh0TRVskv5EwnKSEB1RuYvubnN+4MoZaOQ7VKJzPxycMGbOcWTm1ePDJGZx6uxMF1hdjT4qyfzmMtlq/nxo6/N/WPcVQkzTsi/4RGnMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=JRsgXRez; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bc1x04WFXz9tDq;
-	Tue,  8 Jul 2025 15:22:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1751980932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5wp1NxkC5MDj7tCsOv6NJvGRhBxexqsejX9b5t8bGnI=;
-	b=JRsgXRezT3rCzZETwYUseY95mRP0oxo8RM7AZGxGq1e5xCG7cHWtzAGozRdQEjbDEzL8W8
-	oX2qm0AfuzaFszCNThfoX6TEmIfoy6ofQboDn1KXpEVpEi/Lsc+QxKJNiwL+3ysP+mnG8r
-	qdrY18OTlPrJIrUl5t0QJNIYduzBEEvEVZNEJ9A2DCOg4ss67+cQgFfVztPwldJJATDG7q
-	rgAw7rdJ1nMv9XjGfFYYYOkKeCYHe1V3dLKfKGZZMWLWJT73IIrinoxGPXGsoiFF11Jki+
-	F8p4bVdaK/lH90c/jgoR0bcXIsnWPDgaJR3KqtzMqXmXaOeU8hZbk/DTlPI6GA==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Tue, 08 Jul 2025 23:21:51 +1000
-Subject: [PATCH] uapi: export PROCFS_ROOT_INO
+	s=arc-20240116; t=1751981553; c=relaxed/simple;
+	bh=/YL32fXbRHcrdPAWgm8KYyV062UOl83hVC7EN6BjkbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TkGG96EuMhQ8SGt1fMngN6voOXENsYLfoEW2nCGwzTivDurGVjfYeB388n0nZx5re1qYDmsulrAV8rlV/2v7H3Is+CNzn6iIRLXorvOn5CWWnV+r1IshNtiqi2Hlj6mQ3w/QhQmOE8JBWYwEEX+8g+gTbEEbYPCeccfBJAiNzL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EOD4uVAz; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso6953560a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 06:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751981549; x=1752586349; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TMT1MiUa0TP0jRcSiOza3V4ZFFSoORg7Titx1fk2HKA=;
+        b=EOD4uVAzMsHZaln7VrScOv7M4PrZ8ifn4xBPoOfC7b9vTeFiop+8WLyFVpv2OuMoX/
+         a/2V5M1WRzL0K5yUXusXjKYNFoUbthI+uPaIr7JKK23SZVXnASwTk5uCZeHRfUaDISHp
+         mETznB3CMw2xkJBUpF6RjwaHIi93vl+8uhWhHJg87c023v3f2ooR5AJFG3xr0cFW1SFn
+         oXNJXNValpy4P/Ju8XCvncO82Yv2vtOAAijkpaousquyVC2OWULMCxKMCAG2uyIMAvf6
+         qGaf1t4yDyjYq18wSTj3HO46j+WxK86xaE/26RUyVkMce3X5edLNokPmzJMgfmmD328W
+         1BbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751981549; x=1752586349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TMT1MiUa0TP0jRcSiOza3V4ZFFSoORg7Titx1fk2HKA=;
+        b=jm+M9lkRuZzKpJhEbcT3Qa5fg+rRhJxhm7KSr/7djwz/2GxjAz9NfLXvtYbPliztTI
+         LvTwgSatlmGyEblPMy+6gMmN3WKLiQBotTTdteYAa3yttxNHqSPZCuZT5Qbemy86+PQ5
+         PsoK7x+UyjaPiugO4mablAWoOJKtNuKQ84FW+hGySi5Xbe/pTgEAfI1oeYJ7ql8ceLAt
+         4+6Imzwo6/Wek52VmSIvbXyiewU3BO2I/n+m2cLW/ZmZ1Cub0VYQSB6KNawefJF44dxw
+         cQPXxEUpym8THUDBvER8ne0gvfBeOSOxf6rk0hFcEpgGr0M+rY1jEtiZZ0lNBO+n6xSn
+         pyMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUC4gHXj6VHoTVW0EjohIxKn+4ITLwQgyqJC8873hN+Hib4hHHh7rF5ihOROQBR4yHRZl7xJVuL2osu/iSw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjaCmcQHdIoW6dK8EUsCQojf1T3YNsFXGKdStxVqiD7yTkPMAy
+	j4uwdErE4roKNu/IzxNuETnZmsG8OoxZogVMuxLOUy03i6ssIcOt77qrRfwcwO/QrzxKs2Nwycx
+	9yIVWrohhutx8Gh6YChsDOErGBLZ6Qws=
+X-Gm-Gg: ASbGncsawc1K9oLWtg33V9D9Oz//Bnie+3R2q+N/YaV9HOI0vxaix6clvtmveIVkpAi
+	FltmSDBRM6mI+9qW/lhV+CGR3U0SjlUO9BM/NMr9fZ2+c9cClLXlJWjemXiAWNfJZHpZSUQNOlO
+	tRcTEZ3/p9AM9931VjLQjxAmj9Zt8wCpPaY+uKs0MFhEs=
+X-Google-Smtp-Source: AGHT+IHhiVq8/yOFeK9AbuOjZLq72hCqNydJff8cn/+Ds56MBC9w2Oi23rG3Lnsr50FdVuNICF8rvcl4XDIEGHei4aU=
+X-Received: by 2002:a17:907:6d26:b0:ae3:6cc8:e426 with SMTP id
+ a640c23a62f3a-ae3fbc336f7mr1592394566b.9.1751981548835; Tue, 08 Jul 2025
+ 06:32:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-uapi-procfs-root-ino-v1-1-6ae61e97c79b@cyphar.com>
-X-B4-Tracking: v=1; b=H4sIAG4bbWgC/x3MPQqAMAxA4atIZgNV8Pcq4hBs1CxNSVUE8e4Wx
- 29474HEJpxgLB4wviSJhoyqLGDZKWyM4rOhdnXjOtfjSVEwmi5rQlM9UIIiVb3zzUADtR5yGo1
- Xuf/tNL/vB29v9fFmAAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3296; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=Et+QSwwJrfokDLvMmKeuMgFeMSBuywiC/GR3rgxX5eY=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWTkStdZT/t0U59d5kJHbGtKNsv9xcIr3d+9YE+OqjMxq
- xaRedPVUcrCIMbFICumyLLNzzN00/zFV5I/rWSDmcPKBDKEgYtTACay7Ssjw1XZD3Pfbl9yc0VM
- 2v1Z/hMlAjpfVLPey7pQ2Cvmc/H811pGhg1Lot8wbNZ8sqPIaTkv3y0/FYOP9U3f5uY33Q787rb
- AiB8A
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+References: <20250707170704.303772-1-amir73il@gmail.com> <20250707170704.303772-3-amir73il@gmail.com>
+ <s2a5tw4bzb43jvqn6tzz4tkn4rllaul6xuukna6yglxh6rw7rj@qd5p47ylgyxm>
+In-Reply-To: <s2a5tw4bzb43jvqn6tzz4tkn4rllaul6xuukna6yglxh6rw7rj@qd5p47ylgyxm>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 8 Jul 2025 15:32:16 +0200
+X-Gm-Features: Ac12FXwuZxR7R3jjIKtkzQMihkgSBlzXrDHKgqsNuGW_X2G7KhcqvBjaKk2RyMg
+Message-ID: <CAOQ4uxgtx9v_6-Z+UySmxJ9jD8ptxfd0vtOCVQtRESnDi5J59g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fsnotify: optimize FMODE_NONOTIFY_PERM for the common cases
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The root inode of /proc having a fixed inode number has been part of the
-core kernel ABI since its inception, and recently some userspace
-programs (mainly container runtimes) have started to explicitly depend
-on this behaviour.
+On Tue, Jul 8, 2025 at 1:26=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 07-07-25 19:07:04, Amir Goldstein wrote:
+> > The most unlikely watched permission event is FAN_ACCESS_PERM, because
+> > at the time that it was introduced there were no evictable ignore mark,
+> > so subscribing to FAN_ACCESS_PERM would have incured a very high
+> > overhead.
+> >
+> > Yet, when we set the fmode to FMODE_NOTIFY_HSM(), we never skip trying
+> > to send FAN_ACCESS_PERM, which is almost always a waste of cycles.
+> >
+> > We got to this logic because of bundling open permisson events and acce=
+ss
+> > permission events in the same category and because FAN_OPEN_PERM is a
+> > commonly used event.
+> >
+> > By open coding fsnotify_open_perm() in fsnotify_open_perm_and_set_mode(=
+),
+> > we no longer need to regard FAN_OPEN*_PERM when calculating fmode.
+> >
+> > This leaves the case of having pre-content events and not having access
+> > permission events in the object masks a more likely case than the other
+> > way around.
+> >
+> > Rework the fmode macros and code so that their meaning now refers only
+> > to hooks on an already open file:
+> >
+> > - FMODE_NOTIFY_NONE() skip all events
+> > - FMODE_NOTIFY_PERM() send all access permission events
+>
+> I was a bit confused here but AFAIU you mean "send pre-content events and
+> FAN_ACCESS_PERM". And perhaps I'd call this macro
+> FMODE_NOTIFY_ACCESS_PERM() because that's the only place where it's going
+> to be used...
 
-The main reason this is useful to userspace is that by checking that a
-suspect /proc handle has fstype PROC_SUPER_MAGIC and is PROCFS_ROOT_INO,
-they can then use openat2(RESOLVE_{NO_{XDEV,MAGICLINK},BENEATH}) to
-ensure that there isn't a bind-mount that replaces some procfs file with
-a different one. This kind of attack has lead to security issues in
-container runtimes in the past (such as CVE-2019-19921) and libraries
-like libpathrs[1] use this feature of procfs to provide safe procfs
-handling functions.
+Yes. agree.
 
-There was also some trailing whitespace in the "struct proc_dir_entry"
-initialiser, so fix that up as well.
+>
+> > - FMODE_NOTIFY_HSM()  send pre-conent permission events
+>                                  ^^^ content
+>
+>
+> Otherwise neat trick, I like it. Some nitty comments below.
 
-[1]: https://github.com/openSUSE/libpathrs
+Thanks.
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- fs/proc/root.c          | 10 +++++-----
- include/linux/proc_ns.h |  1 -
- include/uapi/linux/fs.h | 11 +++++++++++
- 3 files changed, 16 insertions(+), 6 deletions(-)
+>
+> > @@ -683,45 +683,70 @@ int fsnotify_open_perm_and_set_mode(struct file *=
+file)
+> >       }
+> >
+> >       /*
+> > -      * If there are permission event watchers but no pre-content even=
+t
+> > -      * watchers, set FMODE_NONOTIFY | FMODE_NONOTIFY_PERM to indicate=
+ that.
+> > +      * OK, there are some permission event watchers. Check if anybody=
+ is
+> > +      * watching for permission events on *this* file.
+> >        */
+> > -     if ((!d_is_dir(dentry) && !d_is_reg(dentry)) ||
+> > -         likely(!fsnotify_sb_has_priority_watchers(sb,
+> > -                                             FSNOTIFY_PRIO_PRE_CONTENT=
+))) {
+> > -             file_set_fsnotify_mode(file, FMODE_NONOTIFY |
+> > -                                    FMODE_NONOTIFY_PERM);
+> > +     mnt_mask =3D READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify=
+_mask);
+> > +     p_mask =3D fsnotify_object_watched(d_inode(dentry), mnt_mask,
+> > +                                      ALL_FSNOTIFY_PERM_EVENTS);
+> > +     if (dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) {
+> > +             parent =3D dget_parent(dentry);
+> > +             p_mask |=3D fsnotify_inode_watches_children(d_inode(paren=
+t));
+> > +             dput(parent);
+> > +     }
+> > +
+> > +     /*
+> > +      * Without any access permission events, we only need to call the
+> > +      * open perm hook and no further permission hooks on the open fil=
+e.
+> > +      * That is the common case with Anti-Malware protection service.
+> > +      */
+> > +     if (likely(!(p_mask & FSNOTIFY_ACCESS_PERM_EVENTS))) {
+> > +             file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
+> >               goto open_perm;
+> >       }
+>
+> Why is the above if needed? It seems to me all the cases are properly
+> handled below already? And they are very cheap to check...
+>
+> >       /*
+> > -      * OK, there are some pre-content watchers. Check if anybody is
+> > -      * watching for pre-content events on *this* file.
+> > +      * Legacy FAN_ACCESS_PERM events have very high performance overh=
+ead,
+> > +      * so unlikely to be used in the wild. If they are used there wil=
+l be
+> > +      * no optimizations at all.
+> >        */
+> > -     mnt_mask =3D READ_ONCE(real_mount(file->f_path.mnt)->mnt_fsnotify=
+_mask);
+> > -     if (unlikely(fsnotify_object_watched(d_inode(dentry), mnt_mask,
+> > -                                  FSNOTIFY_PRE_CONTENT_EVENTS))) {
+> > -             /* Enable pre-content events */
+> > +     if (unlikely(p_mask & FS_ACCESS_PERM)) {
+> > +             /* Enable all permission and pre-content events */
+> >               file_set_fsnotify_mode(file, 0);
+> >               goto open_perm;
+> >       }
+> >
+> > -     /* Is parent watching for pre-content events on this file? */
+> > -     if (dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) {
+> > -             parent =3D dget_parent(dentry);
+> > -             p_mask =3D fsnotify_inode_watches_children(d_inode(parent=
+));
+> > -             dput(parent);
+> > -             if (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS) {
+> > -                     /* Enable pre-content events */
+> > -                     file_set_fsnotify_mode(file, 0);
+> > -                     goto open_perm;
+> > -             }
+> > +     /*
+> > +      * Pre-content events are only supported on regular files.
+> > +      * If there are pre-content event watchers and no permission acce=
+ss
+> > +      * watchers, set FMODE_NONOTIFY | FMODE_NONOTIFY_PERM to indicate=
+ that.
+> > +      * That is the common case with HSM service.
+> > +      */
+> > +     if (d_is_reg(dentry) && (p_mask & FSNOTIFY_PRE_CONTENT_EVENTS)) {
+> > +             file_set_fsnotify_mode(file, FMODE_NONOTIFY |
+> > +                                          FMODE_NONOTIFY_PERM);
+> > +             goto open_perm;
+> >       }
+> > -     /* Nobody watching for pre-content events from this file */
+> > -     file_set_fsnotify_mode(file, FMODE_NONOTIFY | FMODE_NONOTIFY_PERM=
+);
+> > +
+> > +     /* Nobody watching permission and pre-content events on this file=
+ */
+> > +     file_set_fsnotify_mode(file, FMODE_NONOTIFY_PERM);
+>
+> <snip>
+>
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 45fe8f833284..1d54d323d9de 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -205,7 +205,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff=
+_t offset,
+> >   *
+> >   * FMODE_NONOTIFY - suppress all (incl. non-permission) events.
+> >   * FMODE_NONOTIFY_PERM - suppress permission (incl. pre-content) event=
+s.
+> > - * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - suppress only pre-content ev=
+ents.
+> > + * FMODE_NONOTIFY | FMODE_NONOTIFY_PERM - .. (excl. pre-content) event=
+s.
+>                                              ^^ I'd write here "suppress
+> FAN_ACCESS_PERM" to be explicit what this is about.
 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 06a297a27ba3..ed86ac710384 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -363,12 +363,12 @@ static const struct inode_operations proc_root_inode_operations = {
-  * This is the root "inode" in the /proc tree..
-  */
- struct proc_dir_entry proc_root = {
--	.low_ino	= PROC_ROOT_INO, 
--	.namelen	= 5, 
--	.mode		= S_IFDIR | S_IRUGO | S_IXUGO, 
--	.nlink		= 2, 
-+	.low_ino	= PROCFS_ROOT_INO,
-+	.namelen	= 5,
-+	.mode		= S_IFDIR | S_IRUGO | S_IXUGO,
-+	.nlink		= 2,
- 	.refcnt		= REFCOUNT_INIT(1),
--	.proc_iops	= &proc_root_inode_operations, 
-+	.proc_iops	= &proc_root_inode_operations,
- 	.proc_dir_ops	= &proc_root_operations,
- 	.parent		= &proc_root,
- 	.subdir		= RB_ROOT,
-diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
-index 6258455e49a4..4b20375f3783 100644
---- a/include/linux/proc_ns.h
-+++ b/include/linux/proc_ns.h
-@@ -40,7 +40,6 @@ extern const struct proc_ns_operations timens_for_children_operations;
-  * We always define these enumerators
-  */
- enum {
--	PROC_ROOT_INO		= 1,
- 	PROC_IPC_INIT_INO	= IPC_NS_INIT_INO,
- 	PROC_UTS_INIT_INO	= UTS_NS_INIT_INO,
- 	PROC_USER_INIT_INO	= USER_NS_INIT_INO,
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 3d7bb6580cfb..0bd678a4a10e 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -60,6 +60,17 @@
- #define RENAME_EXCHANGE		(1 << 1)	/* Exchange source and dest */
- #define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
- 
-+/*
-+ * The root inode of procfs is guaranteed to always have the same inode number.
-+ * For programs that make heavy use of procfs, verifying that the root is a
-+ * real procfs root and using openat2(RESOLVE_{NO_{XDEV,MAGICLINKS},BENEATH})
-+ * will allow you to make sure you are never tricked into operating on the
-+ * wrong procfs file.
-+ */
-+enum procfs_ino {
-+	PROCFS_ROOT_INO = 1,
-+};
-+
- struct file_clone_range {
- 	__s64 src_fd;
- 	__u64 src_offset;
+ok.
 
----
-base-commit: 40e87bc3b0e06018c908c338b73268ca12e28d89
-change-id: 20250708-uapi-procfs-root-ino-a180d59a9a6d
+>
+> > @@ -213,10 +213,10 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, lo=
+ff_t offset,
+> >  #define FMODE_FSNOTIFY_NONE(mode) \
+> >       ((mode & FMODE_FSNOTIFY_MASK) =3D=3D FMODE_NONOTIFY)
+> >  #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+> > -#define FMODE_FSNOTIFY_PERM(mode) \
+> > +#define FMODE_FSNOTIFY_HSM(mode) \
+> >       ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0 || \
+> >        (mode & FMODE_FSNOTIFY_MASK) =3D=3D (FMODE_NONOTIFY | FMODE_NONO=
+TIFY_PERM))
+> > -#define FMODE_FSNOTIFY_HSM(mode) \
+> > +#define FMODE_FSNOTIFY_PERM(mode) \
+> >       ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0)
+>
+> As mentioned above I'd call this FMODE_FSNOTIFY_ACCESS_PERM().
 
-Best regards,
--- 
-Aleksa Sarai <cyphar@cyphar.com>
+ok.
 
+>
+> > diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_=
+backend.h
+> > index 832d94d783d9..557f9b127960 100644
+> > --- a/include/linux/fsnotify_backend.h
+> > +++ b/include/linux/fsnotify_backend.h
+> > @@ -87,14 +87,18 @@
+> >  /* Mount namespace events */
+> >  #define FSNOTIFY_MNT_EVENTS (FS_MNT_ATTACH | FS_MNT_DETACH)
+> >
+> > +#define FSNOTIFY_OPEN_PERM_EVENTS    (FS_OPEN_PERM | FS_OPEN_EXEC_PERM=
+)
+> >  /* Content events can be used to inspect file content */
+> > -#define FSNOTIFY_CONTENT_PERM_EVENTS (FS_OPEN_PERM | FS_OPEN_EXEC_PERM=
+ | \
+> > +#define FSNOTIFY_CONTENT_PERM_EVENTS (FSNOTIFY_OPEN_PERM_EVENTS | \
+> >                                     FS_ACCESS_PERM)
+>
+> You don't use FSNOTIFY_OPEN_PERM_EVENTS anywhere. If anything I'd drop
+
+Right, I will drop it.
+
+> FSNOTIFY_CONTENT_PERM_EVENTS completely as that has only single use in
+> ALL_FSNOTIFY_PERM_EVENTS instead of adding more practically unused define=
+s.
+>
+
+It is going to be used down the road.
+In my followup fa_pre_dir_access patches, I split the dir/file macros:
+
+#define FSNOTIFY_PRE_CONTENT_EVENTS \
+                                 (FSNOTIFY_PRE_FILE_CONTENT_EVENTS | \
+                                  FSNOTIFY_PRE_DIR_CONTENT_EVENTS)
+
+Because the pre-dir-content events are not applicable ON_CHILD:
+
+#define FS_EVENTS_POSS_ON_CHILD   (FSNOTIFY_CONTENT_PERM_EVENTS | \
+                                   FSNOTIFY_PRE_FILE_CONTENT_EVENTS | \
+
+> >  /* Pre-content events can be used to fill file content */
+> >  #define FSNOTIFY_PRE_CONTENT_EVENTS  (FS_PRE_ACCESS)
+> >
+> >  #define ALL_FSNOTIFY_PERM_EVENTS (FSNOTIFY_CONTENT_PERM_EVENTS | \
+> >                                 FSNOTIFY_PRE_CONTENT_EVENTS)
+> > +/* Access permission events determine FMODE_NONOTIFY_PERM mode */
+> > +#define FSNOTIFY_ACCESS_PERM_EVENTS (FS_ACCESS_PERM | \
+> > +                                  FSNOTIFY_PRE_CONTENT_EVENTS)
+>
+> I don't think this define is needed either so I'd drop it for now...
+
+ok. v2 soon...
+
+Thanks,
+Amir.
 
