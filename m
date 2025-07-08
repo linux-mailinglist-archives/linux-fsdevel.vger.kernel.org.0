@@ -1,225 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-54219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61E6AFC2FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 08:43:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDC9AFC38E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 09:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5707A3A8873
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 06:42:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758EA17DE88
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 07:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9E922578C;
-	Tue,  8 Jul 2025 06:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A55223DF5;
+	Tue,  8 Jul 2025 07:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="mI7aBuKv"
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="A28G1Ljo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
+Received: from out162-62-63-194.mail.qq.com (out162-62-63-194.mail.qq.com [162.62.63.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2224B221579;
-	Tue,  8 Jul 2025 06:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8354321CA0E;
+	Tue,  8 Jul 2025 07:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.63.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751956933; cv=none; b=BftD4WROdcqsdMUE3voI7fWOmJuETq3QjhDTA3rdypsgUmsACLCMrgShtlgJ6RR9lhra39xpSc5eEh/Et1gSkohyTm1aNeNEWrGypr7WSTojZZ5ymbyNhF/kIHKksO4zOEDWA2CJez/m1KuGRgtSb2WaHcnvqO5xeSk4qbWTVl4=
+	t=1751958240; cv=none; b=puYfhHhKX0kwbmTxmiHtkLDa+RqXSoSKfHr5zi/D+oKZYJou2FIDm9ep8m7kGH4muuvv5SegLMx3vaPGbz69G/L0aelzZ/Q5N43AUtl9lITOlEAaJLh/EJVvZ5mbaOvTYQU1LwIxOuSsLJW/1Hk7x8CzoyRinya+DFySk7Aevwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751956933; c=relaxed/simple;
-	bh=e9lWMzUorQ1Xy+szibNpC6r2jnMweK5HHXxTyIE1Y78=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=gvQF+dNsaJ1fQwdvASnLI8RFqCHgXdcQ/KRmhAtVifbwajqH+HgxKNH07aL8RHr4xD/cCtWPS8Gg1opRPibMp+U+cdjBhyik/M50F6rH2OqswoQlJuuRnP2K0EQ0NYC7eM3SkvWjq2DDo2BJS6+IJtlVZEO+yuTs1VWaJA4CQTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=mI7aBuKv; arc=none smtp.client-ip=203.205.221.153
+	s=arc-20240116; t=1751958240; c=relaxed/simple;
+	bh=OM6K+jZaBXAoTLY0N4NnW3rs077RdjL2OSQEQtpSYZc=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=VPyZqG3/gRHrrh6IiqwyFUMjJTKc2vVtczRKd+AZtqqtJXjVAZ+wQ+DLTB/67EJV2S/qCUxmi07wu+V76BniTDY5LoH0WTpRCNCcoORQIu8ohSnTsb2AHBNN0vj5bNJishIYf/pmEpKGcEBqHoiSWJt3vjX7JYP81HbzxivcTWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=A28G1Ljo; arc=none smtp.client-ip=162.62.63.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1751956923;
-	bh=vdIyDvJNm1JguBw4F+puzOvkcznPiEpm8HbrDr1/ue4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=mI7aBuKvGvOXvPD2OOqVTOXl5AWl74Tc0Bmd3BPeWlRKGzA/xUp14R2qzUYcdhPXy
-	 nvrWdikVU51As5z9kUFxwG99Y8PZ/NzXabUkLVLb4jYLvCypvODNnJyitg8rSeYcbd
-	 SdQevvBDUd3KC5Lp6xNZyt38YyVfvnaRTfbTh0H4=
-Received: from meizu-Precision-3660.meizu.com ([112.91.84.73])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id A6890ACF; Tue, 08 Jul 2025 14:41:40 +0800
-X-QQ-mid: xmsmtpt1751956900tianq68yj
-Message-ID: <tencent_5A2FE78BA54BA148917B62FCC4B5E4FC2505@qq.com>
-X-QQ-XMAILINFO: Mm/8i8/T4yne9o+Gb8aezNKf5Psbb6m1VxRKSa2JVhARcEcyjV0y21AATnjgl7
-	 oizaZTfuyqmRXnTMmfneAkENDMc6Vu1RT/u8y9XIcloKbgBjkaXNPNPyOdWZTtKQRknWjxdHD2AW
-	 Sxgq2JvE7RtnIPYwfGSnNyH1mB1OwRZuGMtOQLvCqC8xovQ9tTe4k6GZOTarq55quNN9JBvAwcx7
-	 qOOrO8zFVVOtW8ByOD/9YbFHisQllOFlMfxdZfKTHY7kfUA5b3iNz7IH5iekXOfv05fNAUos0KO4
-	 hG4bRM9n5Y1MMg+BCnvNLaLAEfpZFdbe7LtFQ6PMmt8I+JlYm8wWKKmc44W15m8vwTX6/ajAxNoK
-	 pJ7x01omadan2ex1F6frWPgiNrQ0jtrISb2TecrhIYkIPne4VzgpS984JHYZ+BqkiEEXOM2wRVNW
-	 TziMC+RzIXO92IOj7DDAb2t23XrnZQVN4GfRybb168MKM9QMZprVF+2aDDn0qtZBsUkFz7qqOrZK
-	 Jhz0cP1tY3My2A+Vt4BFYCD6IeAeZamAMf/mngWvv6j3Ea7tT/d77Uam4W7nlPnDjTaj262LmeLx
-	 zSs8fWTrGFAPEabL7LEOgyla55q6+dUSE8/GRAwF7fbyTTxEn6YNA0q7FeJocUjtIvy3l+b33H3R
-	 +OZAyL3Zj1qn3xR9aOw8E7SNXqT8rnbqkvjY79yCyW0w/rNQNHRmiWXVWV9V/0u4JgtLWhnIjRhL
-	 AeVKW7P90HPwCCAzsjEISF5L1Voz8SYgIiX/vRxbnGNZzkiKMpdsjHavXPxgIav54NVD4WcDWAgu
-	 VlSobte6LbHPRN4QJEYUJOZKvlfPrOl8Xc2S9yoXvnv4omGu/+E2Vo/86vTKrUmh3aA83Fzhc0Gt
-	 JBDpm2iPOgnR2TB9x+3rTsAune/cMl1qz/rA1Oriqev5G5LbttRZCHsz0Kyas4SqSpRrkH2Exqap
-	 CGb4v1Y7Zz4kAt1OMWipz5zkHocBmrKjEOAIYte+QXcFDqtKzaerx4H+9mQ+iR7A5wMR8cIuW+i0
-	 u5Z93q4jO5MGvWsSKKw5qxS3dDfwHRVht2RKF/Dw==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Yuwen Chen <ywen.chen@foxmail.com>
-To: ywen.chen@foxmail.com
-Cc: adilger.kernel@dilger.ca,
-	brauner@kernel.org,
-	chao@kernel.org,
-	jaegeuk@kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH v4 1/2] libfs: reduce the number of memory allocations in generic_ci_match
-Date: Tue,  8 Jul 2025 14:41:35 +0800
-X-OQ-MSGID: <20250708064135.844552-1-ywen.chen@foxmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <tencent_0D8BB6ABAB0880DB7BFCCE35EDBC3DCFF505@qq.com>
-References: <tencent_0D8BB6ABAB0880DB7BFCCE35EDBC3DCFF505@qq.com>
+	s=s201512; t=1751957925;
+	bh=OM6K+jZaBXAoTLY0N4NnW3rs077RdjL2OSQEQtpSYZc=;
+	h=From:To:Cc:Subject:Date;
+	b=A28G1LjoZ3HwbAgyXYEvP5rNEuaFQZGqHOmhNsGNpGA2MvIqkYXL3+Yeo8vTaN1+T
+	 4hB9cZ5wul0OC/kjW5F+gmKoVMpQ7gVExHcYJzXYQhCltKQsfSu9P2jSEFA02Q71r9
+	 Dchj7N/pxnynDFj/dmMAjPYeuDKtnnwH/ga+AccE=
+X-QQ-FEAT: 3C1WcPM5lQ4i+tGOZHPx80amo8TvG3to
+X-QQ-SSF: 0000000000000010000000000000
+X-QQ-SPAM: true
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-XMAILINFO: M4kijGgdg8XvD6nB9qq3P51A2cCWZU8jZqnGM52RIwpXp1g0uc2MbUDM5iQFuM
+	 5RTLQjQiV/ny1SMNK6BiXkkbwONwK4byfFEUARK0XYXRx4aUON8oSwOfzVSXR9sk+IEY7DAK1wevk
+	 ik4UzdFQrQdG+cRd3XzZ17I7tMPwMJ3ItGCE8tFguM6UB5W1EIOJvZIXtsSiJJba3LzLiVrPlqhnS
+	 +uuW0FiWmXgKQgVeiGO4OOxQij4erJvlfzDgfZHK1uMEHn4VYCjfkz+xCgQG3I41KMuPclqGg3uyd
+	 Y0P3AClqAjg3qEk12DGHKBUTaZr2ZCt4CJFNrEmPAWQEbjv+go51HUO8yGxt4e7Ezh1NF7sAAuFoK
+	 3WCWXuJj2poDKjBe5mHqvviGnZSVnqkfRK9D9hswqxk9vP0kDv4oA3EuuS2UNZB6/PUpceS4ZEGCK
+	 vhhNMy8QQTbjJIZ2Uwyws3aKu3VQxchJpEcOFh+ey68Hs2FC8Ueg1K1i3t2OfDe+TS0NtPrJW1ixb
+	 KNW26RYYr2mtTfAViOI8VV/g5T1DpJpVLpEgYIdgeg4eaiJI+NPeULdjo9wU1jscTJMDAYhyqqYvM
+	 fRyIRbQT8NFxRcpacleYPGI68v6pRTH1GULo9kKlCDEe40Ac3KgOZY8ssl9SYtXlt6e7iLzJyqbw3
+	 a4DJVjQLYq+6yImHIFikYkIAXFqoqlKdW0Nl/HCNprh84Lz2V8DQRunV/2K8EfvQO65OA0Lg7dtvh
+	 qYcYBdQIMfvld5PK2ed9zfIRa8OvT1R8YGWRY9/bGOydjVcH8nLc35dRYlxjmDyjfayGc8OsWGBAk
+	 fRmdmwonXrSlGEU0PFdngoIma4Z2oE0pNfof71n75llqVsWtX21y4awb+KJkGn0chpiC0kQQLZnGz
+	 7fXukotVuxcuubhYKpiEEOCiWzuQOVp76tZY52j0IviZK1VeeN/0qKnVVr9iZ1Ybid6zIn8TCABer
+	 q8SXzxozxJtwXgielC7qSX3uwlJT8I8cqEPM1mJV/gpSt6tLQ+bh2Gvbafv803AzdVwqw0HBFGd5/
+	 dPzp3OdXaLrx1tuaAUgW+DNhQBBR7H7fwJ6ogu0CeLtzKGcj10h99QO8EXSDyrOJDtWNtifqQvG7w
+	 7KDsg4Zi4BzIGuHix+TBEUMV8c+QidhFfio=
+X-HAS-ATTACH: no
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-STYLE: 
+X-QQ-mid: webmail632t1751957538t2012164
+From: "=?ISO-8859-1?B?eXdlbi5jaGVu?=" <ywen.chen@foxmail.com>
+To: "=?ISO-8859-1?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@infradead.org>, "=?ISO-8859-1?B?RXJpYyBCaWdnZXJz?=" <ebiggers@kernel.org>
+Cc: "=?ISO-8859-1?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@infradead.org>, "=?ISO-8859-1?B?YnJhdW5lcg==?=" <brauner@kernel.org>, "=?ISO-8859-1?B?dHl0c28=?=" <tytso@mit.edu>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?ISO-8859-1?B?bGludXgtZjJmcy1kZXZlbA==?=" <linux-f2fs-devel@lists.sourceforge.net>, "=?ISO-8859-1?B?YWRpbGdlci5rZXJuZWw=?=" <adilger.kernel@dilger.ca>, "=?ISO-8859-1?B?dmlybw==?=" <viro@zeniv.linux.org.uk>, "=?ISO-8859-1?B?bGludXgtZnNkZXZlbA==?=" <linux-fsdevel@vger.kernel.org>, "=?ISO-8859-1?B?amFlZ2V1aw==?=" <jaegeuk@kernel.org>, "=?ISO-8859-1?B?bGludXgtZXh0NA==?=" <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] libfs: reduce the number of memory allocations in generic_ci_match
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="ISO-8859-1"
+Content-Transfer-Encoding: base64
+Date: Tue, 8 Jul 2025 14:52:17 +0800
+X-Priority: 3
+Message-ID: <tencent_FCCBB98BA5E88F7B6DFCDC55EC9C23CFF105@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
 
-During path traversal, the generic_ci_match function may be called
-multiple times. The number of memory allocations and releases
-in it accounts for a relatively high proportion in the flamegraph.
-This patch significantly reduces the number of memory allocations
-in generic_ci_match through pre - allocation.
-
-Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
----
- fs/ext4/namei.c    |  2 +-
- fs/f2fs/dir.c      |  2 +-
- fs/libfs.c         | 33 ++++++++++++++++++++++++++++++---
- include/linux/fs.h |  8 +++++++-
- 4 files changed, 39 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index a178ac2294895..f235693bd71aa 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1443,7 +1443,7 @@ static bool ext4_match(struct inode *parent,
- 
- 		return generic_ci_match(parent, fname->usr_fname,
- 					&fname->cf_name, de->name,
--					de->name_len) > 0;
-+					de->name_len, NULL) > 0;
- 	}
- #endif
- 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index c36b3b22bfffd..4c6611fbd9574 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -197,7 +197,7 @@ static inline int f2fs_match_name(const struct inode *dir,
- 	if (fname->cf_name.name)
- 		return generic_ci_match(dir, fname->usr_fname,
- 					&fname->cf_name,
--					de_name, de_name_len);
-+					de_name, de_name_len, NULL);
- 
- #endif
- 	f.usr_fname = fname->usr_fname;
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 9ea0ecc325a81..293b605971bbf 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1863,6 +1863,26 @@ static const struct dentry_operations generic_ci_dentry_ops = {
- #endif
- };
- 
-+#define DECRYPTED_NAME_PREALLOC_MIN_LEN 64
-+static inline char *decrypted_name_prealloc_resize(
-+		struct decrypted_name_prealloc *prealloc,
-+		size_t wantlen)
-+{
-+	char *retbuf = NULL;
-+
-+	if (prealloc->name && wantlen <= prealloc->namelen)
-+		return prealloc->name;
-+
-+	retbuf = kmalloc(wantlen + DECRYPTED_NAME_PREALLOC_MIN_LEN, GFP_KERNEL);
-+	if (!retbuf)
-+		return NULL;
-+
-+	kfree(prealloc->name);
-+	prealloc->name = retbuf;
-+	prealloc->namelen = wantlen + DECRYPTED_NAME_PREALLOC_MIN_LEN;
-+	return retbuf;
-+}
-+
- /**
-  * generic_ci_match() - Match a name (case-insensitively) with a dirent.
-  * This is a filesystem helper for comparison with directory entries.
-@@ -1873,6 +1893,7 @@ static const struct dentry_operations generic_ci_dentry_ops = {
-  * @folded_name: Optional pre-folded name under lookup
-  * @de_name: Dirent name.
-  * @de_name_len: dirent name length.
-+ * @prealloc: decrypted name memory buffer
-  *
-  * Test whether a case-insensitive directory entry matches the filename
-  * being searched.  If @folded_name is provided, it is used instead of
-@@ -1884,7 +1905,8 @@ static const struct dentry_operations generic_ci_dentry_ops = {
- int generic_ci_match(const struct inode *parent,
- 		     const struct qstr *name,
- 		     const struct qstr *folded_name,
--		     const u8 *de_name, u32 de_name_len)
-+		     const u8 *de_name, u32 de_name_len,
-+		     struct decrypted_name_prealloc *prealloc)
- {
- 	const struct super_block *sb = parent->i_sb;
- 	const struct unicode_map *um = sb->s_encoding;
-@@ -1899,7 +1921,11 @@ int generic_ci_match(const struct inode *parent,
- 		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
- 			return -EINVAL;
- 
--		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-+		if (!prealloc)
-+			decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-+		else
-+			decrypted_name.name = decrypted_name_prealloc_resize(
-+					prealloc, de_name_len);
- 		if (!decrypted_name.name)
- 			return -ENOMEM;
- 		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
-@@ -1928,7 +1954,8 @@ int generic_ci_match(const struct inode *parent,
- 		res = utf8_strncasecmp(um, name, &dirent);
- 
- out:
--	kfree(decrypted_name.name);
-+	if (!prealloc)
-+		kfree(decrypted_name.name);
- 	if (res < 0 && sb_has_strict_encoding(sb)) {
- 		pr_err_ratelimited("Directory contains filename that is invalid UTF-8");
- 		return 0;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4ec77da65f144..65307c8c11485 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3651,10 +3651,16 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- extern int generic_check_addressable(unsigned, u64);
- 
- extern void generic_set_sb_d_ops(struct super_block *sb);
-+
-+struct decrypted_name_prealloc {
-+	char *name;
-+	size_t namelen;
-+};
- extern int generic_ci_match(const struct inode *parent,
- 			    const struct qstr *name,
- 			    const struct qstr *folded_name,
--			    const u8 *de_name, u32 de_name_len);
-+			    const u8 *de_name, u32 de_name_len,
-+			    struct decrypted_name_prealloc *prealloc);
- 
- #if IS_ENABLED(CONFIG_UNICODE)
- int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
--- 
-2.34.1
-
+Jmd0OyBCdXQgSSB3b25kZXIgd2h5IGdlbmVyaWNfY2lfbWF0Y2ggaXMgZXZlbiBjYWxsZWQg
+dGhhdCBvZnRlbi4gIEJvdGggZXh0NA0KJmd0OyBhbmQgZjJmcyBzdXBwb3J0IGhhc2hlZCBs
+b29rdXBzLCBzbyB5b3Ugc2hvdWxkIHVzdWFsbHkgb25seSBzZWUgaXQgY2FsbGVkDQomZ3Q7
+IGZvciB0aGUgbWFpbiBtYXRjaCwgcGx1cyB0aGUgb2NjYXNpb25hbCBoYXNoIGZhbHNlIHBv
+c2l0aXZlLCB3aGljaCBzaG91bGQNCiZndDsgYmUgcmF0ZSBpZiB0aGUgaGFzaCB3b3Jrcy4N
+Cg0KDQpBdCBwcmVzZW50LCBpbiB0aGUgbGF0ZXN0IHZlcnNpb24gb2YgTGludXgsIGluIHNv
+bWUgc2NlbmFyaW9zLA0KZjJmcyBzdGlsbCB1c2VzIGxpbmVhciBzZWFyY2guDQoNCg0KVGhl
+IGxvZ2ljIG9mIGxpbmVhciBzZWFyY2ggd2FzIGludHJvZHVjZWQgYnkgQ29tbWl0IDkxYjU4
+N2JhNzllMQ0KKGYyZnM6IEludHJvZHVjZSBsaW5lYXIgc2VhcmNoIGZvciBkZW50cmllcyku
+IENvbW1pdCA5MWI1ODdiYTc5ZTENCndhcyBkZXNpZ25lZCB0byBzb2x2ZSB0aGUgcHJvYmxl
+bSBvZiBpbmNvbnNpc3RlbnQgaGFzaGVzIGJlZm9yZQ0KYW5kIGFmdGVyIHRoZSByb2xsYmFj
+ayBvZiBDb21taXQgNWMyNmQyZjFkM2Y1DQooInVuaWNvZGU6IERvbid0IHNwZWNpYWwgY2Fz
+ZSBpZ25vcmFibGUgY29kZSBwb2ludHMiKSwNCndoaWNoIGxlZCB0byBmaWxlcyBiZWluZyBp
+bmFjY2Vzc2libGUuDQoNCg0KSW4gb3JkZXIgdG8gcmVkdWNlIHRoZSBpbXBhY3Qgb2YgbGlu
+ZWFyIHNlYXJjaCwgaW4gcmVsYXRpdmVseSBuZXcNCnZlcnNpb25zLCB0aGUgbG9naWMgb2Yg
+dHVybmluZyBvZmYgbGluZWFyIHNlYXJjaCBoYXMgYWxzbyBiZWVuDQppbnRyb2R1Y2VkLiBI
+b3dldmVyLCB0aGUgdHJpZ2dlcmluZyBjb25kaXRpb25zIGZvciB0aGlzDQp0dXJuIC0gb2Zm
+IGxvZ2ljIG9uIGYyZnMgYXJlIHJhdGhlciBzdHJpY3Q6DQoNCg0KMS4gVXNlIHRoZSBsYXRl
+c3QgdmVyc2lvbiBvZiB0aGUgZnNjay5mMmZzIHRvb2wgdG8gY29ycmVjdA0KdGhlIGZpbGUg
+c3lzdGVtLg0KMi4gVXNlIGEgcmVsYXRpdmVseSBuZXcgdmVyc2lvbiBvZiB0aGUga2VybmVs
+LiAoRm9yIGV4YW1wbGUsDQpsaW5lYXIgc2VhcmNoIGNhbm5vdCBiZSB0dXJuZWQgb2ZmIGlu
+IHY2LjYpDQoNCg0KVGhlIHBlcmZvcm1hbmNlIGdhaW4gb2YgdGhpcyBjb21taXQgaXMgdmVy
+eSBvYnZpb3VzIGluIHNjZW5hcmlvcw0Kd2hlcmUgbGluZWFyIHNlYXJjaCBpcyBub3QgdHVy
+bmVkIG9mZi4gSW4gc2NlbmFyaW9zIHdoZXJlIGxpbmVhcg0Kc2VhcmNoIGlzIHR1cm5lZCBv
+ZmYsIG5vIHBlcmZvcm1hbmNlIHByb2JsZW1zIHdpbGwgYmUgaW50cm9kdWNlZA0KZWl0aGVy
+Ljxicj4=
+e±
 
