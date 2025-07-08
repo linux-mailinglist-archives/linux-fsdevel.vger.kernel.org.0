@@ -1,289 +1,303 @@
-Return-Path: <linux-fsdevel+bounces-54284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3868CAFD506
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 19:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 134F6AFD522
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 19:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456361AA3E17
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 17:17:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF09A1AA3E5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Jul 2025 17:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146212E6D12;
-	Tue,  8 Jul 2025 17:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F099C2E6D03;
+	Tue,  8 Jul 2025 17:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jL8ULSCI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRZ2RsTc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDB82E6106
-	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 17:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E892E6D12
+	for <linux-fsdevel@vger.kernel.org>; Tue,  8 Jul 2025 17:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751994986; cv=none; b=E5rk1Ng7md9WGdUD6JhpfjZtLJu3MJAyIbYJGvTRXmwcNQlpJXGH3lNpPMrYw8DM1GTRD9rERZ2hoX8jWIU45dlWX+jpA4fwUpjkQ1J5uAzHyNR5ZsABrFDTUKbnQQu2VhtgUsdjIr/IYb06NwWLgws3QywjMrYXZZKNGXr/ezU=
+	t=1751995121; cv=none; b=A3pDp/OSO3bqnPBbO2gOiTU2xkz7+QjTVhmKhR7nOqgLQyWCp0elxwK8tbdF8vJJUlN2jdU4boiEnMPF1IJweTevXG0e+qurUCHdxCKsFiEQ9N/4o5nG49EDQaGNr4gfe+PEyLEcCAUI4RuL7udi0+KWurJ0iS5eesTd/f2OQgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751994986; c=relaxed/simple;
-	bh=EfXYtz6eCgxEu7KRQ0if/ac+m6kwM9iQSLD1UYKujqQ=;
+	s=arc-20240116; t=1751995121; c=relaxed/simple;
+	bh=Vr/EWWEkyyInoAlkIk7ZoimQuzxfPlJt1CXpCF6W9Aw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=To9G6dQgIjGyyqU98RKM8EXWwNIMrqvM/ohKhd9A5cR1k5sTRtmk+aoxhzOlIe1J4f6YEXkVHO0PSi2dja3JEVCCcnTSujyINHQ8yMmTdUyfftzzIcXuAWAhMHr4+qe80+1sSU244Ua3yLlPHFnkC0QysJdS+elRheIn+QE5c2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jL8ULSCI; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-23dd9ae5aacso9515ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 10:16:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=fZGI+5vvPnkV0rZ39aowROaiNJJJ8qYbDcl16ljqJ9+hKpn91D8fM/BLRMjldr3Zw2IfrR9LYHoyKGMVdbnBdLJ6tw0DsScpdSL0egpLE1Q8eaOLLHTB5hS0o1Shj3tJK/Y9/Bjx1kUPB6VM+UUwzZuI5ZdejJjvdrTSGMzjRqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRZ2RsTc; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e740a09eae0so4673016276.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 10:18:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751994984; x=1752599784; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w/vdXYRsw5z4df1ZBivhz/DTkNGF2DjR6MZbntX/+a4=;
-        b=jL8ULSCIDGMONc5vbg05Hdq/VDVxDARi63OK5EUBZZxfT5Ry1uWCH+qtvdXEMhPwjV
-         G1VE82uB69LPHr1qpvVrQcAabri42WC7Y2V4/QpNl7368pd+03nERsKfgbLZHBD6wlwg
-         nYuXrjBmYgsf8uLx1iSrPnYPBW5YxkC40n7E8+sjwcH1LwxEL//Z/cSiD98/meeQuwLT
-         nGlZo7eyT7UZ6ZPBWToBH93yOCoZSJaFcs1ZUwrxTnJ7XKIEHMQpJ4v+yNGkIJWJd2zI
-         3vnMUscChGgl/feVKUyS88UVqoWH2DcqddV7Ox8X38+d1THn2HMJMk71qS0I25IZ5V/o
-         gnfQ==
+        d=gmail.com; s=20230601; t=1751995118; x=1752599918; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qc9rBPSIEJF0OIvz6/34bSnoOIIBxdIHXjKLVLFRiwI=;
+        b=QRZ2RsTc+TnQPp4q6prZeck1+WJ7iP7A9GHhQ9yXxIhWjyrYz4rUlCZiKpE18tdSAs
+         MyReCtogCV1ZcHgL2L6UdRzUPdnDpeRMHHZamOCA7TZXTSV0cHDPedNiKux/ZU/ynXQD
+         iamowYHLCiiq7DGKXSveLVQ866uM/E9bbnGcJiQIesuffxOG9okzyOGcmwJGJ3jQRs2u
+         5M25ne2MhiSv/R7OqzSawm5HrQYsImKwmFZjcAiF26xPqKmCBJMyDWMJ/qJgrkQjQ6wC
+         nAuLhP8eBA1dY4DYDjMoDfHBZGj2Dem+KDjDGCWX3BcZUqwnY5mWURKODfZdj27EAZLr
+         J3Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751994984; x=1752599784;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w/vdXYRsw5z4df1ZBivhz/DTkNGF2DjR6MZbntX/+a4=;
-        b=LhmuHC281wfhZbh6CAqmFnrluMB2k/RDPRCZ3z4Gl6rtgoqQqmjtgppnyIcM0bn776
-         VN1CqM4aVosiOCibGwIYtjkw+UGRWkluUPr+bF6oAYAbRaFV3i4t1PaUC25ym7c1Uop1
-         Pfe2tf65wORMnsN2PboL1Kw1kxzvW0Dvj8/8nDPihwefuE7AAd1npsCzwwjBqxSTaj52
-         8aomA+bFj5JQFHOsofYzw8E9aJUglybU84jNldBoJS4VOYFukkD6QvFgP0PdWuvgtQJc
-         aceSZhi0Qk5mdXj/rwfp2I3Ohw1XKciJLnmLqHtN5wuUVb4IsBcz4/z5sH+M5VwR1WWu
-         +BCw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8CgaqHz0RrLmHBuHJDxc0Ar/fNNdx3QTKfL7/Z2BS9tz99Dnu9KPqvsR8A/bkpFeqbUg4uJCfrvfCEv20@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFoW2sg6UnKt0xHQU+TcQuJha0MvslLlHtdZpfBauNa9rLTdyr
-	9ctagvMnn5w/hM77Oaz4Xqw/j3W/OkLDcW3yP2YkBOLuzfxge9MmgjUlvLNRIu25rNtbr/WpI7I
-	Zo39Yv1u47zLFJYJCm+KlmxSVnA00/RTi5+NJh1Lr
-X-Gm-Gg: ASbGncvXQZbfqe6/0UeMQio/yqADha+hjS0JmYZi3e962LtMys8n8HFrBeLaET2jCjf
-	Rxj3xbEr2r9EWY+rTFM1Xhk5A7nWTuP8mNUJBnaMH9rYcvYHG813MvEhOIWidvzaMNThMXZB9yI
-	xcyyjmR9LcQYnq4Mj6TPObtYej4ppur2uz0wJ2YT9iItVZjZH9N/Qr9RMIvhfMjPgQejqexhhZZ
-	A==
-X-Google-Smtp-Source: AGHT+IGkv22D/tXO6gyejl8aGvoee4XRPTMlaDRFSvv3esIwSJ6T6kZ4z2wkxktBHm+oP1e/SApNkNTiB8aBohhkips=
-X-Received: by 2002:a17:902:dacd:b0:236:7079:fb10 with SMTP id
- d9443c01a7336-23dda158b72mr87435ad.3.1751994982637; Tue, 08 Jul 2025 10:16:22
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751995118; x=1752599918;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qc9rBPSIEJF0OIvz6/34bSnoOIIBxdIHXjKLVLFRiwI=;
+        b=s0bow8GyC2/gk7gpCD0Ibg0s8N15+S5Rj1ZLR/nxrGbdfNKY/H7KjgeqCnfT3qp8NX
+         wcog9WdPp0QAGcYuNm2K3Jk9GqnoykFbzJS4acA0IvXteZYOVS5KcDgo24QhXYqxyKo8
+         /cAicN7QkpiEIMkgdkc4WnMk1yVMawePss3r4Kno3UdmA++xpocNOJ/8/PLLdYrNpOoI
+         B0an4sEb3W6QHjp36C/in2fI/kGhTN7XinPzvBDAU7GLWDRsykprUiwv8yJljinKUex+
+         R0EHfADEGkyU9O7BOa86B0PWjv/CtTxzl/EoJT09ZbJS+VkJEoJu7NPMi8gIITD/rcQW
+         ds/Q==
+X-Gm-Message-State: AOJu0YxYEyN+3E9y54n2Wnb9NwZtSjMC+ZnW0GrFuoASMuGv0V+MNH/I
+	4RMmL5x5H+Seu5Eup3EU0TtKDCu7CXe7vTt0+JzxIDRyle+pMZq9hVkcXgp9aISFVybVP6WWtjg
+	G0e5YIO5A68OFpqnQWzu0XVJrqnRPRlTN22Zu
+X-Gm-Gg: ASbGncucb83mHlAaGIztuILB7EBZpLXRSAw0MzxY2XqzuBh98MoYzdbz61wdK+aMnS6
+	XkedUMJvR4xQLK5KX57GLnrLH7CQ+/hWAR8Y2rf1CSKNRKb9JfUT6dCFnGCHfVDiF7fpJFFXhkm
+	dfo0P5XCOjwGBseAZxxZlW2V4vpB7O2hJgi9U4eUA/LnDf
+X-Google-Smtp-Source: AGHT+IGF9BLh9pm/p3DwezMbKpO8QqTVdky/4dSDa3ochgG1g7x3q5YgOqKNJFF7Ru6Ppr4cq2Y5U1d9aFI2LDgrkk0=
+X-Received: by 2002:a05:690c:6d10:b0:70d:f237:6a53 with SMTP id
+ 00721157ae682-717adfc2edcmr9914877b3.9.1751995118152; Tue, 08 Jul 2025
+ 10:18:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aFPGlAGEPzxlxM5g@yzhao56-desk.sh.intel.com> <d15bfdc8-e309-4041-b4c7-e8c3cdf78b26@intel.com>
- <CAGtprH-Kzn2kOGZ4JuNtUT53Hugw64M-_XMmhz_gCiDS6BAFtQ@mail.gmail.com>
- <aGIBGR8tLNYtbeWC@yzhao56-desk.sh.intel.com> <CAGtprH-83EOz8rrUjE+O8m7nUDjt=THyXx=kfft1xQry65mtQg@mail.gmail.com>
- <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
- <aGxXWvZCfhNaWISY@google.com> <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
- <006899ccedf93f45082390460620753090c01914.camel@intel.com>
- <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
- <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com> <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
-In-Reply-To: <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Tue, 8 Jul 2025 10:16:08 -0700
-X-Gm-Features: Ac12FXwUqBw2naxHJ41VuiRvkgNlNHoN7o2IpurfkihYeV5Xw345ab2C4M7MZQQ
-Message-ID: <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "pvorel@suse.cz" <pvorel@suse.cz>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "Miao, Jun" <jun.miao@intel.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
-	"steven.price@arm.com" <steven.price@arm.com>, "peterx@redhat.com" <peterx@redhat.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "amoorthy@google.com" <amoorthy@google.com>, 
-	"tabba@google.com" <tabba@google.com>, "quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, 
-	"jack@suse.cz" <jack@suse.cz>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "keirf@google.com" <keirf@google.com>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, "Wang, Wei W" <wei.w.wang@intel.com>, 
-	"rppt@kernel.org" <rppt@kernel.org>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
-	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, "fvdl@google.com" <fvdl@google.com>, 
-	"quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, "Shutemov, Kirill" <kirill.shutemov@intel.com>, 
-	"vbabka@suse.cz" <vbabka@suse.cz>, "anup@brainfault.org" <anup@brainfault.org>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mic@digikod.net" <mic@digikod.net>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "Du, Fan" <fan.du@intel.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>, 
-	"rientjes@google.com" <rientjes@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
-	"Aktas, Erdem" <erdemaktas@google.com>, "david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"willy@infradead.org" <willy@infradead.org>, "hughd@google.com" <hughd@google.com>, 
-	"Xu, Haibo1" <haibo1.xu@intel.com>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"jthoughton@google.com" <jthoughton@google.com>, "will@kernel.org" <will@kernel.org>, 
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
-	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, "Huang, Kai" <kai.huang@intel.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Peng, Chao P" <chao.p.peng@intel.com>, 
-	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, "Graf, Alexander" <graf@amazon.com>, 
-	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
-	"jgowans@amazon.com" <jgowans@amazon.com>, "Xu, Yilun" <yilun.xu@intel.com>, 
-	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"roypat@amazon.co.uk" <roypat@amazon.co.uk>
+References: <20250702212917.GK3406663@ZenIV> <b3ff59d4-c6c3-4b48-97e3-d32e98c12de7@broadcom.com>
+ <CAAmqgVMmgW4PWy289P4a8N0FSZA+cHybNkKbLzFx_qBQtu8ZHA@mail.gmail.com>
+ <CABPRKS8+SabBbobxxtY8ZCK7ix_VLVE1do7SpcRQhO3ctTY19Q@mail.gmail.com>
+ <20250704042504.GQ1880847@ZenIV> <CABPRKS89iGUC5nih40yc9uRMkkfjZUafAN59WQBzpGC3vK_MkQ@mail.gmail.com>
+ <20250704201027.GS1880847@ZenIV> <CABPRKS_hSYbJHid=GJo4r9RGUjNWMYA04CwM+M=yPHY5kQXUTw@mail.gmail.com>
+ <20250708025734.GT1880847@ZenIV>
+In-Reply-To: <20250708025734.GT1880847@ZenIV>
+From: Justin Tee <justintee8345@gmail.com>
+Date: Tue, 8 Jul 2025 10:17:37 -0700
+X-Gm-Features: Ac12FXw55PC55WpfpC74K1iMp4QoKxCMM1P6JviVbowTmya1zFJ-c3j7ZrG55II
+Message-ID: <CABPRKS_ARbZbfhG4f1hxWx9j8ZSATd9bkZJu6kq7_dSDF-pHig@mail.gmail.com>
+Subject: Re: [PATCH 11/11] lpfc: don't use file->f_path.dentry for comparisons
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, James Smart <james.smart@broadcom.com>, 
+	Justin Tee <justin.tee@broadcom.com>, Greg KH <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 8, 2025 at 8:31=E2=80=AFAM Edgecombe, Rick P
-<rick.p.edgecombe@intel.com> wrote:
+> [PATCH v2] lpfc: don't use file->f_path.dentry for comparisons
 >
-> On Tue, 2025-07-08 at 08:07 -0700, Vishal Annapurve wrote:
-> > On Tue, Jul 8, 2025 at 7:52=E2=80=AFAM Edgecombe, Rick P
-> > <rick.p.edgecombe@intel.com> wrote:
-> > >
-> > > On Tue, 2025-07-08 at 07:20 -0700, Sean Christopherson wrote:
-> > > > > For TDX if we don't zero on conversion from private->shared we wi=
-ll be
-> > > > > dependent
-> > > > > on behavior of the CPU when reading memory with keyid 0, which wa=
-s
-> > > > > previously
-> > > > > encrypted and has some protection bits set. I don't *think* the b=
-ehavior is
-> > > > > architectural. So it might be prudent to either make it so, or ze=
-ro it in
-> > > > > the
-> > > > > kernel in order to not make non-architectual behavior into usersp=
-ace ABI.
-> > > >
-> > > > Ya, by "vendor specific", I was also lumping in cases where the ker=
-nel would
-> > > > need to zero memory in order to not end up with effectively undefin=
-ed
-> > > > behavior.
-> > >
-> > > Yea, more of an answer to Vishal's question about if CC VMs need zero=
-ing. And
-> > > the answer is sort of yes, even though TDX doesn't require it. But we=
- actually
-> > > don't want to zero memory when reclaiming memory. So TDX KVM code nee=
-ds to know
-> > > that the operation is a to-shared conversion and not another type of =
-private
-> > > zap. Like a callback from gmem, or maybe more simply a kernel interna=
-l flag to
-> > > set in gmem such that it knows it should zero it.
-> >
-> > If the answer is that "always zero on private to shared conversions"
-> > for all CC VMs, then does the scheme outlined in [1] make sense for
-> > handling the private -> shared conversions? For pKVM, there can be a
-> > VM type check to avoid the zeroing during conversions and instead just
-> > zero on allocations. This allows delaying zeroing until the fault time
-> > for CC VMs and can be done in guest_memfd centrally. We will need more
-> > inputs from the SEV side for this discussion.
-> >
-> > [1] https://lore.kernel.org/lkml/CAGtprH-83EOz8rrUjE+O8m7nUDjt=3DTHyXx=
-=3Dkfft1xQry65mtQg@mail.gmail.com/
+> If you want a home-grown switch, at least use enum for selector...
 >
-> It's nice that we don't double zero (since TDX module will do it too) for
-> private allocation/mapping. Seems ok to me.
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
+> index 3fd1aa5cc78c..42d138ec11b4 100644
+> --- a/drivers/scsi/lpfc/lpfc_debugfs.c
+> +++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+> @@ -2375,32 +2375,32 @@ static ssize_t
+>  lpfc_debugfs_dif_err_read(struct file *file, char __user *buf,
+>         size_t nbytes, loff_t *ppos)
+>  {
+> -       struct dentry *dent = file->f_path.dentry;
+>         struct lpfc_hba *phba = file->private_data;
+> +       int kind = debugfs_get_aux_num(file);
+>         char cbuf[32];
+>         uint64_t tmp = 0;
+>         int cnt = 0;
 >
-> >
-> > >
-> > > >
-> > > > > Up the thread Vishal says we need to support operations that use =
-in-place
-> > > > > conversion (overloaded term now I think, btw). Why exactly is pKV=
-M using
-> > > > > private/shared conversion for this private data provisioning?
-> > > >
-> > > > Because it's literally converting memory from shared to private?  A=
-nd IICU,
-> > > > it's
-> > > > not a one-time provisioning, e.g. memory can go:
-> > > >
-> > > >   shared =3D> fill =3D> private =3D> consume =3D> shared =3D> fill =
-=3D> private =3D> consume
-> > > >
-> > > > > Instead of a special provisioning operation like the others? (Xia=
-oyao's
-> > > > > suggestion)
-> > > >
-> > > > Are you referring to this suggestion?
-> > >
-> > > Yea, in general to make it a specific operation preserving operation.
-> > >
-> > > >
-> > > >  : And maybe a new flag for KVM_GMEM_CONVERT_PRIVATE for user space=
- to
-> > > >  : explicitly request that the page range is converted to private a=
-nd the
-> > > >  : content needs to be retained. So that TDX can identify which cas=
-e needs
-> > > >  : to call in-place TDH.PAGE.ADD.
-> > > >
-> > > > If so, I agree with that idea, e.g. add a PRESERVE flag or whatever=
-.  That way
-> > > > userspace has explicit control over what happens to the data during
-> > > > conversion,
-> > > > and KVM can reject unsupported conversions, e.g. PRESERVE is only a=
-llowed for
-> > > > shared =3D> private and only for select VM types.
-> > >
-> > > Ok, we should POC how it works with TDX.
-> >
-> > I don't think we need a flag to preserve memory as I mentioned in [2]. =
-IIUC,
-> > 1) Conversions are always content-preserving for pKVM.
-> > 2) Shared to private conversions are always content-preserving for all
-> > VMs as far as guest_memfd is concerned.
-> > 3) Private to shared conversions are not content-preserving for CC VMs
-> > as far as guest_memfd is concerned, subject to more discussions.
-> >
-> > [2] https://lore.kernel.org/lkml/CAGtprH-Kzn2kOGZ4JuNtUT53Hugw64M-_XMmh=
-z_gCiDS6BAFtQ@mail.gmail.com/
+> -       if (dent == phba->debug_writeGuard)
+> +       if (kind == writeGuard)
+>                 cnt = scnprintf(cbuf, 32, "%u\n", phba->lpfc_injerr_wgrd_cnt);
+> -       else if (dent == phba->debug_writeApp)
+> +       else if (kind == writeApp)
+>                 cnt = scnprintf(cbuf, 32, "%u\n", phba->lpfc_injerr_wapp_cnt);
+> -       else if (dent == phba->debug_writeRef)
+> +       else if (kind == writeRef)
+>                 cnt = scnprintf(cbuf, 32, "%u\n", phba->lpfc_injerr_wref_cnt);
+> -       else if (dent == phba->debug_readGuard)
+> +       else if (kind == readGuard)
+>                 cnt = scnprintf(cbuf, 32, "%u\n", phba->lpfc_injerr_rgrd_cnt);
+> -       else if (dent == phba->debug_readApp)
+> +       else if (kind == readApp)
+>                 cnt = scnprintf(cbuf, 32, "%u\n", phba->lpfc_injerr_rapp_cnt);
+> -       else if (dent == phba->debug_readRef)
+> +       else if (kind == readRef)
+>                 cnt = scnprintf(cbuf, 32, "%u\n", phba->lpfc_injerr_rref_cnt);
+> -       else if (dent == phba->debug_InjErrNPortID)
+> +       else if (kind == InjErrNPortID)
+>                 cnt = scnprintf(cbuf, 32, "0x%06x\n",
+>                                 phba->lpfc_injerr_nportid);
+> -       else if (dent == phba->debug_InjErrWWPN) {
+> +       else if (kind == InjErrWWPN) {
+>                 memcpy(&tmp, &phba->lpfc_injerr_wwpn, sizeof(struct lpfc_name));
+>                 tmp = cpu_to_be64(tmp);
+>                 cnt = scnprintf(cbuf, 32, "0x%016llx\n", tmp);
+> -       } else if (dent == phba->debug_InjErrLBA) {
+> +       } else if (kind == InjErrLBA) {
+>                 if (phba->lpfc_injerr_lba == (sector_t)(-1))
+>                         cnt = scnprintf(cbuf, 32, "off\n");
+>                 else
+> @@ -2417,8 +2417,8 @@ static ssize_t
+>  lpfc_debugfs_dif_err_write(struct file *file, const char __user *buf,
+>         size_t nbytes, loff_t *ppos)
+>  {
+> -       struct dentry *dent = file->f_path.dentry;
+>         struct lpfc_hba *phba = file->private_data;
+> +       int kind = debugfs_get_aux_num(file);
+>         char dstbuf[33];
+>         uint64_t tmp = 0;
+>         int size;
+> @@ -2428,7 +2428,7 @@ lpfc_debugfs_dif_err_write(struct file *file, const char __user *buf,
+>         if (copy_from_user(dstbuf, buf, size))
+>                 return -EFAULT;
 >
-> Right, I read that. I still don't see why pKVM needs to do normal private=
-/shared
-> conversion for data provisioning. Vs a dedicated operation/flag to make i=
-t a
-> special case.
+> -       if (dent == phba->debug_InjErrLBA) {
+> +       if (kind == InjErrLBA) {
+>                 if ((dstbuf[0] == 'o') && (dstbuf[1] == 'f') &&
+>                     (dstbuf[2] == 'f'))
+>                         tmp = (uint64_t)(-1);
+> @@ -2437,23 +2437,23 @@ lpfc_debugfs_dif_err_write(struct file *file, const char __user *buf,
+>         if ((tmp == 0) && (kstrtoull(dstbuf, 0, &tmp)))
+>                 return -EINVAL;
+>
+> -       if (dent == phba->debug_writeGuard)
+> +       if (kind == writeGuard)
+>                 phba->lpfc_injerr_wgrd_cnt = (uint32_t)tmp;
+> -       else if (dent == phba->debug_writeApp)
+> +       else if (kind == writeApp)
+>                 phba->lpfc_injerr_wapp_cnt = (uint32_t)tmp;
+> -       else if (dent == phba->debug_writeRef)
+> +       else if (kind == writeRef)
+>                 phba->lpfc_injerr_wref_cnt = (uint32_t)tmp;
+> -       else if (dent == phba->debug_readGuard)
+> +       else if (kind == readGuard)
+>                 phba->lpfc_injerr_rgrd_cnt = (uint32_t)tmp;
+> -       else if (dent == phba->debug_readApp)
+> +       else if (kind == readApp)
+>                 phba->lpfc_injerr_rapp_cnt = (uint32_t)tmp;
+> -       else if (dent == phba->debug_readRef)
+> +       else if (kind == readRef)
+>                 phba->lpfc_injerr_rref_cnt = (uint32_t)tmp;
+> -       else if (dent == phba->debug_InjErrLBA)
+> +       else if (kind == InjErrLBA)
+>                 phba->lpfc_injerr_lba = (sector_t)tmp;
+> -       else if (dent == phba->debug_InjErrNPortID)
+> +       else if (kind == InjErrNPortID)
+>                 phba->lpfc_injerr_nportid = (uint32_t)(tmp & Mask_DID);
+> -       else if (dent == phba->debug_InjErrWWPN) {
+> +       else if (kind == InjErrWWPN) {
+>                 tmp = cpu_to_be64(tmp);
+>                 memcpy(&phba->lpfc_injerr_wwpn, &tmp, sizeof(struct lpfc_name));
+>         } else
+> @@ -6160,60 +6160,51 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
+>                         phba->debug_dumpHostSlim = NULL;
+>
+>                 /* Setup DIF Error Injections */
+> -               snprintf(name, sizeof(name), "InjErrLBA");
+>                 phba->debug_InjErrLBA =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("InjErrLBA", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, InjErrLBA, &lpfc_debugfs_op_dif_err);
+>                 phba->lpfc_injerr_lba = LPFC_INJERR_LBA_OFF;
+>
+> -               snprintf(name, sizeof(name), "InjErrNPortID");
+>                 phba->debug_InjErrNPortID =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("InjErrNPortID", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, InjErrNPortID, &lpfc_debugfs_op_dif_err);
+>
+> -               snprintf(name, sizeof(name), "InjErrWWPN");
+>                 phba->debug_InjErrWWPN =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("InjErrWWPN", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, InjErrWWPN, &lpfc_debugfs_op_dif_err);
+>
+> -               snprintf(name, sizeof(name), "writeGuardInjErr");
+>                 phba->debug_writeGuard =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("writeGuardInjErr", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, writeGuard, &lpfc_debugfs_op_dif_err);
+>
+> -               snprintf(name, sizeof(name), "writeAppInjErr");
+>                 phba->debug_writeApp =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("writeAppInjErr", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, writeApp, &lpfc_debugfs_op_dif_err);
+>
+> -               snprintf(name, sizeof(name), "writeRefInjErr");
+>                 phba->debug_writeRef =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("writeRefInjErr", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, writeRef, &lpfc_debugfs_op_dif_err);
+>
+> -               snprintf(name, sizeof(name), "readGuardInjErr");
+>                 phba->debug_readGuard =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("readGuardInjErr", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, readGuard, &lpfc_debugfs_op_dif_err);
+>
+> -               snprintf(name, sizeof(name), "readAppInjErr");
+>                 phba->debug_readApp =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("readAppInjErr", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, readApp, &lpfc_debugfs_op_dif_err);
+>
+> -               snprintf(name, sizeof(name), "readRefInjErr");
+>                 phba->debug_readRef =
+> -                       debugfs_create_file(name, S_IFREG|S_IRUGO|S_IWUSR,
+> +                       debugfs_create_file_aux_num("readRefInjErr", 0644,
+>                         phba->hba_debugfs_root,
+> -                       phba, &lpfc_debugfs_op_dif_err);
+> +                       phba, readRef, &lpfc_debugfs_op_dif_err);
+>
+>                 /* Setup slow ring trace */
+>                 if (lpfc_debugfs_max_slow_ring_trc) {
+> diff --git a/drivers/scsi/lpfc/lpfc_debugfs.h b/drivers/scsi/lpfc/lpfc_debugfs.h
+> index 8d2e8d05bbc0..f319f3af0400 100644
+> --- a/drivers/scsi/lpfc/lpfc_debugfs.h
+> +++ b/drivers/scsi/lpfc/lpfc_debugfs.h
+> @@ -322,6 +322,17 @@ enum {
+>                                                  * discovery */
+>  #endif /* H_LPFC_DEBUG_FS */
+>
+> +enum {
+> +       writeGuard = 1,
+> +       writeApp,
+> +       writeRef,
+> +       readGuard,
+> +       readApp,
+> +       readRef,
+> +       InjErrLBA,
+> +       InjErrNPortID,
+> +       InjErrWWPN,
+> +};
+>
+>  /*
+>   * Driver debug utility routines outside of debugfs. The debug utility
 
-It's dictated by pKVM usecases, memory contents need to be preserved
-for every conversion not just for initial payload population.
+Reviewed-by: Justin Tee <justin.tee@broadcom.com>
 
->
-> I'm trying to suggest there could be a benefit to making all gmem VM type=
-s
-> behave the same. If conversions are always content preserving for pKVM, w=
-hy
-> can't userspace  always use the operation that says preserve content? Vs
-> changing the behavior of the common operations?
-
-I don't see a benefit of userspace passing a flag that's kind of
-default for the VM type (assuming pKVM will use a special VM type).
-Common operations in guest_memfd will need to either check for the
-userspace passed flag or the VM type, so no major change in
-guest_memfd implementation for either mechanism.
-
->
-> So for all VM types, the user ABI would be:
-> private->shared          - Always zero's page
-> shared->private          - Always destructive
-> shared->private (w/flag) - Always preserves data or return error if not p=
-ossible
->
->
-> Do you see a problem?
->
+Regards,
+Justin
 
