@@ -1,185 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-54339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE01AFE389
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 11:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7994DAFE38D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 11:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6A571C24945
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 09:05:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E9B93B54C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 09:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C418D283151;
-	Wed,  9 Jul 2025 09:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83C4283FC8;
+	Wed,  9 Jul 2025 09:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="SkoQt1Ur"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cx+zArjn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zNNEUKhS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cx+zArjn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zNNEUKhS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B57478F36;
-	Wed,  9 Jul 2025 09:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5B2235072
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 09:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752051908; cv=none; b=BlYcayKMcHC7zINgUJ7bJ0ZSXLPP7WvFzzKL7bb4lk1wzQ1yl+w0m4BUwhtbfG8s1Ddfcen7vc6xoTAzWC+scwhgaAKOXAFkUIi9DTpW2CwIylMWJRAgLJ8DAJwb2oGfbQHt7kybm9ddYrlZHFj1iOYDqChc6+giNqd2HoJPf9k=
+	t=1752052014; cv=none; b=Z4iwYJKT7bfzDuySkLdU6aBdeMiyRgFP4zSs4DQ/xQuEU/9e5CgRkfWwv50EBVmZN08PWWj9X64csc4Wf+f4x2r8E2iElOI8gnRrU5mCeJtVBBok+KcO9pabJaODZ0iI44RAcZniP3YQpKOPugVkp/hRhqEceNcLzAzFU9olK2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752051908; c=relaxed/simple;
-	bh=naos+ztsM462dlUt3nnLFc74Mtmx6bRL1OC1kvlTzF0=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=owZ/RRbEAwlb67QX+1zW/GiPe156GeuzIi9V/7ss4+aCPK19vSABKSvYUuH77Iz90JyFeWVT+EhgBuF7za6vdOKtRBUCXOOa+HZhpHHS9RZJctC917NB6GD4U58MGA6/iKNd2N1yupqhgVi/hNPHJnERh0yVBPgOkIu/VIHbMi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=SkoQt1Ur; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1752051903; x=1752656703; i=quwenruo.btrfs@gmx.com;
-	bh=t4+CgnpsKZh4/GcF8WEpqmkQtOZhdGm5Eecfk+/kx7k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
-	 Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=SkoQt1UrCmEe/v3R9esyEoQdU8sxEWp6SJo80QeNZC4u6yDUDl3lOBYqbx5Qjo5j
-	 5t4pZh8zsq4s5YhrYH7Chfq6p2GXWIY3KiJFXtRFXk7pL/RuOJng2mQvQ8pCq8wgA
-	 e+etCUytDi6hgJDxPahTTqEyhescHXpqx3ME2VR/t4A84qlTz71UfKSJIhJcrZu+0
-	 tB61PbWdFRaj/NLJ8oFMAIRedZy4fRvF6GOgdiP7DDFZcjtiWh8pvDFWHQht/4dfF
-	 dK2EScHuLQObPu1/Q6k3lUwVCYI+h4jb2dzrZtHnIZWn0lgK1MN8D8FzoKzqHjSKD
-	 k/wX0O12J448WeR/qQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MiaYJ-1vBmQ40N9D-00qDTK; Wed, 09
- Jul 2025 11:05:03 +0200
-Message-ID: <5459cd6d-3fdb-4a4e-b5c7-00ef74f17f7d@gmx.com>
-Date: Wed, 9 Jul 2025 18:35:00 +0930
+	s=arc-20240116; t=1752052014; c=relaxed/simple;
+	bh=Penqcx0t3pCRDs+XuohRlzFB5huLcTaPeIJ6wHI0VTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nR674lSjvtGYRRekTJhWqgr9q+BDDlKrAoC2qu+fpTnERDp5CnW54QUDyOo/9pu4JgCNQnskYU54MrGq0Lcgu/9pnXLUvGb98lyV6QEm40bKWAq6VPErCLmluJ7TU16CDO1enkHxVpLF+5cODdJLtjA3yWr9FXkiSJ0GWmlAweo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cx+zArjn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zNNEUKhS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cx+zArjn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zNNEUKhS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 64C8021180;
+	Wed,  9 Jul 2025 09:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752052010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=wz6QWTl2RAyxXqOfbyDOg5K9lbLzWP0Lc9JJjD8EiN8=;
+	b=cx+zArjnPXf+GxPbwSHDJAYEchvo54W4pYiVirOEiiD24iasUDRSCE4XhqewsnaTihP7Rb
+	w9gREanopwDfMzH4C7BlDrV46HTe02/EtR1YRTa/ycDctHakNVFPcFC9YoJ8QuCO+5ZS/p
+	OKqqz0sku9wPaLhkGPda5D8FFN8GiXg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752052010;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=wz6QWTl2RAyxXqOfbyDOg5K9lbLzWP0Lc9JJjD8EiN8=;
+	b=zNNEUKhSJ0YOZuxQyTnptrxhrVZX+AxBvc1FwxHUO4BQjSlOywMnOvsBGaI40IRvCdi6fp
+	3euED5rKb8rNBYDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cx+zArjn;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zNNEUKhS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752052010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=wz6QWTl2RAyxXqOfbyDOg5K9lbLzWP0Lc9JJjD8EiN8=;
+	b=cx+zArjnPXf+GxPbwSHDJAYEchvo54W4pYiVirOEiiD24iasUDRSCE4XhqewsnaTihP7Rb
+	w9gREanopwDfMzH4C7BlDrV46HTe02/EtR1YRTa/ycDctHakNVFPcFC9YoJ8QuCO+5ZS/p
+	OKqqz0sku9wPaLhkGPda5D8FFN8GiXg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752052010;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=wz6QWTl2RAyxXqOfbyDOg5K9lbLzWP0Lc9JJjD8EiN8=;
+	b=zNNEUKhSJ0YOZuxQyTnptrxhrVZX+AxBvc1FwxHUO4BQjSlOywMnOvsBGaI40IRvCdi6fp
+	3euED5rKb8rNBYDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5988E136DC;
+	Wed,  9 Jul 2025 09:06:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tFDWFSoxbmiDBgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 09 Jul 2025 09:06:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0003BA09D7; Wed,  9 Jul 2025 11:06:49 +0200 (CEST)
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+	<linux-fsdevel@vger.kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] vfs: Remove unnecessary list_for_each_entry_safe() from evict_inodes()
+Date: Wed,  9 Jul 2025 11:06:36 +0200
+Message-ID: <20250709090635.26319-2-jack@suse.cz>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- linux-btrfs <linux-btrfs@vger.kernel.org>,
- Matthew Wilcox <willy@infradead.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: Why a lot of fses are using bdev's page cache to do super block
- read/write?
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NMqfGCd5DuW+6E9+fcb0Yb4wonnLM6P8Yb90GJcq5vVAM64T+qp
- /NehyB5mHUqgv/fbohhagjsizuLxEsJ4S6H7MDqfuXL1DDCKjQLMUqbngH6z8O55GfYVl9v
- +RAzhsyNu0fXGtZrNoQoTTx7WKXMW++67YvcuvNONC+VfRg/2gXRJpbbkGWSbevG3fi5pxe
- FsyKfgj2az3dz3WnyyqNQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1139; i=jack@suse.cz; h=from:subject; bh=Penqcx0t3pCRDs+XuohRlzFB5huLcTaPeIJ6wHI0VTs=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBobjEbiNZtnRESiRB0rPPXvRAamRM0UPI/77MoDAnF gzSP1jWJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaG4xGwAKCRCcnaoHP2RA2XG+CA DrIxnVw+tvGNbOrCh6NhvlXPr38Kx8iChS7J3Q8IZIf0P1ngg9yJgCBE6ud+tncky79jbEx44hbqND uONChSuBfZChOWzQmlHWqJT+0WeY2cydZgt3C+fT4bYyvt+N4oiDUyBKIYkKa56ImqbZEk2kR65AKW WHd2dcYG1ZTsphPDaRkGdP/smePhCXitYLJxTQjpE2X/cs4Sht6YmKvjJQzy4+vFtI31wHCc8ZzlcV PsuhwARkPp5Ip0rwKLWUksYvo/gcIdB++oUEbSZ/8AcX+zNqu87Xty6i/kDdwtAaVW0gpatr76ygF0 o+5+zhvkANeIqv5ulXi3kCqclzBhiV
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[suse.cz:+]
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UYaz9elAtTQ=;/zSFRBJ4zDk9KQB7sq8I2uL3poy
- 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
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 64C8021180
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-Hi,
+evict_inodes() uses list_for_each_entry_safe() to iterate sb->s_inodes
+list. However, since we use i_lru list entry for our local temporary
+list of inodes to destroy, the inode is guaranteed to stay in
+sb->s_inodes list while we hold sb->s_inode_list_lock. So there is no
+real need for safe iteration variant and we can use
+list_for_each_entry() just fine.
 
-Recently I'm trying to remove direct bdev's page cache usage from btrfs=20
-super block IOs.
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-And replace it with common bio interface (mostly with bdev_rw_virt()).
+Small cleanup I have sitting in my tree for ages and which I think is still
+worth it.
 
-However I'm hitting random generic/492 failure where sometimes blkid=20
-failed to detect any useful super block signature of btrfs.
+diff --git a/fs/inode.c b/fs/inode.c
+index 99318b157a9a..3e990330bb05 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -865,12 +865,12 @@ static void dispose_list(struct list_head *head)
+  */
+ void evict_inodes(struct super_block *sb)
+ {
+-	struct inode *inode, *next;
++	struct inode *inode;
+ 	LIST_HEAD(dispose);
+ 
+ again:
+ 	spin_lock(&sb->s_inode_list_lock);
+-	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
++	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+ 		if (atomic_read(&inode->i_count))
+ 			continue;
+ 
+-- 
+2.43.0
 
-
-This leads more digging, and to my surprise using bdev's page cache to=20
-do superblock IOs is not an exception, in fact f2fs is doing exactly the=
-=20
-same thing.
-
-
-This makes me wonder:
-
-- Should a fs use bdev's page cache directly?
-   I thought a fs shouldn't do this, and bio interface should be
-   enough for most if not all cases.
-
-   Or am I wrong in the first place?
-
-- What is keeping fs super block update from racing with user space
-   device scan?
-
-   I guess it's the regular page/folio locking of the bdev page cache.
-   But that also means, pure bio based IO will always race with buffered
-   read of a block device.
-
-- If so, is there any special bio flag to prevent such race?
-   So far I am unable to find out such flag.
-
-Thanks,
-Qu
 
