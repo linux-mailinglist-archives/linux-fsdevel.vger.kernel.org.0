@@ -1,186 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-54379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D78BAFF01F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 19:49:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72214AFF039
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 19:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9C755A7A84
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 17:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4941895C4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 17:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E47D2356CB;
-	Wed,  9 Jul 2025 17:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED7B23F41A;
+	Wed,  9 Jul 2025 17:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nxOYpGdf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hq/EJK38"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5F522687C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 17:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1993B23CEE5;
+	Wed,  9 Jul 2025 17:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752083379; cv=none; b=DirFN3yH15nmdqA3w4kecXDsnwlfxWYgAut5sP2yavmP8VB4egzU0qlRzh+RW6vVaYWvCqrMyO4y4QoHzu8UB122A62wPXfXeUtgf+nR4tLfGimDLwJFH/zA0d9Cjxj+DBfrtwtFF1/SOwxRk2bmipjOiSDrLIl8yifMaVkHEwU=
+	t=1752083600; cv=none; b=Mx58a8p5DYnDCR1XX6b5ZHXZxAJpjM/mt6+KPu/3aXjqIRqRvFDxTeaqdooITRsrDdGrRmNT48sqpPwRmk0UMZNiqCCldHK5mM2BLILL8hGS7AD6tEoT4+gthJUwR2Q3yGUKvyksn7H1TyxdPFQtd01anmSezz//x+sajRx1OHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752083379; c=relaxed/simple;
-	bh=O2COwCVuJdzgOw6OpvXMgyjCNr+fnukRUw64/d9W5ek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmbgJ3v1Qd+Gi7RYxL2S8i702pfrjOn0qBctgIAKPyO1/npGG7xuON+SbBrd13SoJrILR3Wel/QeBUm29rsGjdkHhDIawnspnT7HGhdliBk3y5JnfYwoVUCcgHRPShGDJ/rrQHj5BSUlzU+jPzK2/xMERhSJH1Q0hjgzNfcqw8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nxOYpGdf; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 9 Jul 2025 13:49:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752083364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqDUS4BBDM+csIlPWx+TszLLC9bq/xJu9mUJf/EWg0s=;
-	b=nxOYpGdfTMPJVXG5huvcmm3wX800iKwgvi9EibH7o8WPbGD0IbJnuT8Xfh49BzCs2NNRiI
-	l7YWbWGNS8/XY+4jyd7qjYN5zK+VF2fi6LvcD3n2iQlxfIicgfoo+0Ab8aH3ZqPTI1/j4M
-	/GaxGdzpYELaL0glMe+tv7VhZuKHsRo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>, 
-	Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Qu Wenruo <quwenruo.btrfs@gmx.com>, Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] fs: enhance and rename shutdown() callback to
- remove_bdev()
-Message-ID: <y2rpp6u6pksjrzgxsn5rtcsl2vspffkcbtu6tfzgo7thn7g23p@7quhaixfx5yh>
-References: <343vlonfhw76mnbjnysejihoxsjyp2kzwvedhjjjml4ccaygbq@72m67s3e2ped>
+	s=arc-20240116; t=1752083600; c=relaxed/simple;
+	bh=cZHhkkKoQxfdiwhShrVfsLlYDQveqtG/P5pJwSmN728=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g7sn5h8kAZ9R7yZ4bmWibN3RS84GRyXIzmXi7h67lfkZPt/OZAohNOBljyejWumrSRQNQzqCLJUwrL6qy3V78+gmgxxloWCU2qdxHyQ40qys933s+bumtofz/PJihp8+e7K1mmx301WHyD6FXvhy6i1XfJkbvMMXZ5PDpJ6qfl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hq/EJK38; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a752944794so1885411cf.3;
+        Wed, 09 Jul 2025 10:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752083597; x=1752688397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=chdWduo0xuyTSA7hGxJ9MzGIosMpOq6sLEcgGmEUqho=;
+        b=Hq/EJK38qyfH9u4qt6mYJ2LCGwOPMFZ6kQGrLVllKpzYqJBmWeoHzwj9Am3cIopW7g
+         QA+WRp1itL+lODt2KSOMzUX7mtQmYowjdBzMlgvYTrCFMs04VvPNyMwUipVrPfMghlbM
+         hR6RNK3MB1tSmQ9BZeJKp9wuYmP8VD/nTlBWPcpPgBVT7o+84i/GZGy8U8fPB+RBtV3k
+         1BENpXdUFABHy654344a1SeMis9mNMX8+XU5Fe4IQJz3FDRK7fj24Q9jypTOAH2fa80C
+         5VlMmKYl3LZy/DaZczm9X+PTrcrlz/j2RwTFXIawY7nKpOE+3MRUxXu6w9izDXc4b7x8
+         Es9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752083597; x=1752688397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=chdWduo0xuyTSA7hGxJ9MzGIosMpOq6sLEcgGmEUqho=;
+        b=wCBCfBbQdoFELVLGfD5oJ4r2hqplsvPFKvbjrCFqRJhIs9+bOmEEUT+gcul6mEwvPW
+         27dxhDs7K8tw2WLomZuhqX4sqsRj+SdDgUZSKAegYF6vm4m5VS9TYWbxoJo9iVDJf18J
+         Of0vZZ5eeN8jIpIwWnlzIvK2p4k6CiKoDYD2QJyUJRaJYTZ9wFm2GkZK1x+bnRLcXRF0
+         bkhE06qkc1ofyWm6iXTjiy6sj4kOZAFmSp0HomFz++ZwWFITWW2pJZK0v0vcFS/zAaYX
+         xd+4gvokvS7gmC13x2MzgsIoPn4NoXwZcWzChjoIcqAJII/3Vfyv5NtnZn6i6Lwn+kne
+         k/Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFKyFV5a8p3lLpVSj4sT3cbDUtbmpw7A8UMyGhmDWjR++ZIkcyo2En1hsRmmRvwW8/kbpbUY6/1MzuZluF9A==@vger.kernel.org, AJvYcCVQzdwAmg0GJ3GxG0dWV5cyLicu7dLOIgmHCHUOdknDlVBsIScWp2k48bReVuIfc3cSvxoead1KpDoS@vger.kernel.org, AJvYcCVxKH3qOMjeMwjEecuUW4L7DWy1gG2tDG04nLrp85zztLoph0WsM0nr+l+ZN7xuwkih1NaZsevGN2D/Gw==@vger.kernel.org, AJvYcCXxjwYeHzU/neM7057uGVHb8oeGHOsrT3u712lbzmEaFaIbeWI8yNUfSk0B6YEh+ArxWp+PZfydfcBv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIQ9ChFnrmexfbxzmAyOPijAwxsxNsK0R40VaTpZIPoTEsEaML
+	lPpl/QSPAcwb0qB9JZclp6hr/Vmi8udlxSprDcmW72N0vd0o2LXAPPfxbeo0Xi4irgTEdApa7+f
+	Ew+aMd4fzR4oiPcM/kQn7U8lrw3fVP+U=
+X-Gm-Gg: ASbGncsnVjJGug+GeEXiXXlfIPhASOiyrbYXfbjRAuwxVlgs/xtTgrLkI4Ut1tCg6cI
+	udldWWuTRt1xe8l1awGqcRfWHeDWECQ1V5xx+pCmWyY3gIPZ3+LVrET/Zab7PKIGnHLSkM4nabe
+	L2oRaBp/53WiRb2luaKdBYVvFewI/IPzNbnML/ZQvz5CE=
+X-Google-Smtp-Source: AGHT+IGkscAnB4QMpdxgxygggoSbOo5Dbwl3HdhbBvnA4GtflSqoDUUggCyQ2Ui8pU012OkwACWTD3Kn2ubKI0WOy04=
+X-Received: by 2002:ac8:5756:0:b0:472:1d98:c6df with SMTP id
+ d75a77b69052e-4a9ded485d6mr51084801cf.52.1752083596844; Wed, 09 Jul 2025
+ 10:53:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <343vlonfhw76mnbjnysejihoxsjyp2kzwvedhjjjml4ccaygbq@72m67s3e2ped>
-X-Migadu-Flow: FLOW_OUT
+References: <20250708135132.3347932-2-hch@lst.de> <202507091656.dMTKUTBY-lkp@intel.com>
+In-Reply-To: <202507091656.dMTKUTBY-lkp@intel.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 9 Jul 2025 10:53:06 -0700
+X-Gm-Features: Ac12FXzmT0rdR0DNiEi-ua93g95fceSTbfERwsHSYCOm31aBpdD657n_w-OLo_M
+Message-ID: <CAJnrk1ajT+OdZiSPOQ5Bv1HdtWqpjz773t8Q5=Om7zcroVXaGg@mail.gmail.com>
+Subject: Re: [PATCH 01/14] iomap: header diet
+To: kernel test robot <lkp@intel.com>
+Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>, oe-kbuild-all@lists.linux.dev, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2025 at 07:23:07PM +0200, Jan Kara wrote:
-> On Wed 09-07-25 08:59:42, Dave Chinner wrote:
-> > This means that device removal processing can be performed
-> > without global filesystem/VFS locks needing to be held. Hence issues
-> > like re-entrancy deadlocks when there are concurrent/cascading
-> > device failures (e.g. a HBA dies, taking out multiple devices
-> > simultaneously) are completely avoided...
-> 
-> Funnily enough how about:
-> 
-> bch2_fs_bdev_mark_dead()		umount()
->   bdev_get_fs()
->     bch2_ro_ref_tryget() -> grabs bch_fs->ro_ref
->     mutex_unlock(&bdev->bd_holder_lock);
-> 					deactivate_super()
-> 					  down_write(&sb->s_umount);
-> 					  deactivate_locked_super()
-> 					    bch2_kill_sb()
-> 					      generic_shutdown_super()
-> 					        bch2_put_super()
-> 						  __bch2_fs_stop()
-> 						    bch2_ro_ref_put()
-> 						    wait_event(c->ro_ref_wait, !refcount_read(&c->ro_ref));
->   sb = c->vfs_sb;
->   down_read(&sb->s_umount); -> deadlock
-> 
-> Which is a case in point why I would like to have a shared infrastructure
-> for bdev -> sb transition that's used as widely as possible. Because it
-> isn't easy to get the lock ordering right given all the constraints in the
-> VFS and block layer code paths for this transition that's going contrary to
-> the usual ordering sb -> bdev. And yes I do realize bcachefs grabs s_umount
-> not because it itself needs it but because it calls some VFS helpers
-> (sync_filesystem()) which expect it to be held so the pain is inflicted
-> by VFS here but that just demostrates the fact that VFS and FS locking are
-> deeply intertwined and you can hardly avoid dealing with VFS locking rules
-> in the filesystem itself.
+On Wed, Jul 9, 2025 at 2:10=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
+ote:
+>
+> Hi Christoph,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on brauner-vfs/vfs.all]
+> [also build test ERROR on xfs-linux/for-next gfs2/for-next linus/master v=
+6.16-rc5 next-20250708]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Christoph-Hellwig/=
+iomap-pass-more-arguments-using-the-iomap-writeback-context/20250708-225155
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.a=
+ll
+> patch link:    https://lore.kernel.org/r/20250708135132.3347932-2-hch%40l=
+st.de
+> patch subject: [PATCH 01/14] iomap: header diet
+> config: arc-randconfig-001-20250709 (https://download.01.org/0day-ci/arch=
+ive/20250709/202507091656.dMTKUTBY-lkp@intel.com/config)
+> compiler: arc-linux-gcc (GCC) 8.5.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20250709/202507091656.dMTKUTBY-lkp@intel.com/reproduce)
+>
 
-Getting rid of the s_umount use looks like the much saner and easier
-fix - like the comment notes, it's only taken to avoid the warning in
-sync_filesystem, we don't actually need it.
-
-Locking gets easier when locks are private to individual subsystems,
-protecting specific data structures that are private to those
-subsystems.
-
-> > It also avoids the problem of ->mark_dead events being generated
-> > from a context that holds filesystem/vfs locks and then deadlocking
-> > waiting for those locks to be released.
-> > 
-> > IOWs, a multi-device filesystem should really be implementing
-> > ->mark_dead itself, and should not be depending on being able to
-> > lock the superblock to take an active reference to it.
-> > 
-> > It should be pretty clear that these are not issues that the generic
-> > filesystem ->mark_dead implementation should be trying to
-> > handle.....
-> 
-> Well, IMO every fs implementation needs to do the bdev -> sb transition and
-> make sb somehow stable. It may be that grabbing s_umount and active sb
-> reference is not what everybody wants but AFAIU btrfs as the second
-> multi-device filesystem would be fine with that and for bcachefs this
-> doesn't work only because they have special superblock instantiation
-> behavior on mount for independent reasons (i.e., not because active ref
-> + s_umount would be problematic for them) if I understand Kent right.
-> So I'm still not fully convinced each multi-device filesystem should be
-> shipping their special method to get from device to stable sb reference.
-
-Honestly, the sync_filesystem() call seems bogus.
-
-If the block device is truly dead, what's it going to accomplish?
-
-It's not like we get callbacks for "this device is going to be going
-away soon", we only get that in reaction to something that's already
-happened.
-
-> > > The shutdown method is implemented only by block-based filesystems and
-> > > arguably shutdown was always a misnomer because it assumed that the
-> > > filesystem needs to actually shut down when it is called.
-> > 
-> > Shutdown was not -assumed- as the operation that needed to be
-> > performed. That was the feature that was *required* to fix
-> > filesystem level problems that occur when the device underneath it
-> > disappears.
-> > 
-> > ->mark_dead() is the abstract filesystem notification from the block
-> > device, fs_bdfev_mark_dead() is the -generic implementation- of the
-> > functionality required by single block device filesystems. Part of
-> > that functionality is shutting down the filesystem because it can
-> > *no longer function without a backing device*.
-> > 
-> > multi-block device filesystems require compeltely different
-> > implementations, and we already have one that -does not use active
-> > superblock references-. IOWs, even if we add ->remove_bdev(sb)
-> > callout, bcachefs will continue to use ->mark_dead() because low
-> > level filesystem device management isn't (and shouldn't be!)
-> > dependent on high level VFS structure reference counting....
-> 
-> I have to admit I don't get why device management shouldn't be dependent on
-> VFS refcounts / locking. IMO it is often dependent although I agree with
-> multiple devices you likely have to do *additional* locking. And yes, I can
-> imagine VFS locking could get in your way but the only tangible example we
-> have is bcachefs and btrfs seems to be a counter example showing even multi
-> device filesystem can live with VFS locking. So I don't think the case is
-> as clear as you try to frame it.
-
-Individual devices coming and going has nothing to do with the VFS. If a
-single device goes away and we're continuing in RW mode, _no_ VFS state
-is affected whatsoever.
-
-The only thing that's needed is a ref to prevent the filesystem from
-going away, not a lock. But again given that a bch_fs doesn't
-necessarily even have a VFS superblock it's not something we'd use
-directly in .mark_dead, that synchronization is handled directly via
-kill_sb -> generic_shutdown_super -> and all that...
-
-We don't want bch_fs to outlive the VFS superblock if we do have a VFS
-sb, because asynchronous shutdown and releasing of resources causes very
-real problems (which already exist for other reasons...)
+Adding #include <linux/writeback.h> and #include <linux/swap.h> (for
+folio_mark_accessed()) back to buffered-io.c fixes it for this config.
 
