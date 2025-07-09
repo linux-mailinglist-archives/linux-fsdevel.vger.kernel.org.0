@@ -1,160 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-54326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DCDAFDE1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 05:30:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75E1AFDEA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 05:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5097E7ADE92
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 03:29:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB3963AE887
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 03:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993F51FBCAA;
-	Wed,  9 Jul 2025 03:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8817D23B63D;
+	Wed,  9 Jul 2025 03:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6nPG+fJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+F+jf7e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E78BE8;
-	Wed,  9 Jul 2025 03:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29661E47BA;
+	Wed,  9 Jul 2025 03:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752031847; cv=none; b=lF7obTtJF8Koays+hmUApnm0qJx08DKRJntSS0udP3wLE1sc6vb8ctjPyeohz3rxrbNHQF0j4WtYdObGWnr0jOXR4D18LeSrW6jPyEa31PVIpQ6Uc+CSqFReZwsMaeKCawCSOraL7OXC6xqJHiSqLTMGJ5S1jAnIYBFSYkQKK9w=
+	t=1752033553; cv=none; b=kFi7TIjA8Iwp76o+owiNIxuOxCv0h9OLJI0rXRZIK1vY0xcwD79j5pnHQxxyJe2XQ9AjD+qoZwlN0SIvDrjkBY2HHi7qu4EYYZXWMlgd7qMajsvsW+lGrMZWZXFqBdTIpNsl/UJ+heMPIsMuS3DbXUSQ8fIy48dMiS1PiEkD+Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752031847; c=relaxed/simple;
-	bh=sRl4Hjt7dCHQsKRKroSHXOw0yql/z4y4NaV3OQKumdU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MJA17IP4Mh61TNixERmIUQwvrjSis1x5d81r8/E/ldUggnI2gN+jOj/6C0KKntypoaxvYMqGxQq1c+/e3IzhGWKX6rrXivl6NNutv1z7jlmbpwFO1794MXqCYpL5ax02y1iOrHv2GRbqvvn1UDvUf0OlxzPMatHltybp0w8wDuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6nPG+fJ; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23c8a505177so35307775ad.2;
-        Tue, 08 Jul 2025 20:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752031845; x=1752636645; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8mu6qUOHQ62RBIp+xk62nasWAenaXUSglvP48pK3Jf0=;
-        b=g6nPG+fJp3W/33ss/wafFGOSR9VEDssebNt15UcEB9gcJrD4zcOgOj27jaziku7DwX
-         24vB1JUD/fx3F+sltAoJttMD9IbscgqeHr5jXqQLSTZzMqkvKe6uLpgN4CGqlpohsrzL
-         cRU52VXPy9CfBkYqNGYjY1o/mQ0rxX6VY4rUFmcJVOtOG7c2DIE1dQUOo+7VymjzwyiB
-         vw3c7CsDhEnBl6mkEKTG+sOi61bpP0LRxFRMKiIBYofrtxblz2KCky/Ntz0VfEe4mZHK
-         KrK09UC3ZKL2Iisxjib6bHyiagi5mt0f+IWBj5Qd1W3GNgOPqJe8iXFyoZbdTn99KcOe
-         7WFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752031845; x=1752636645;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8mu6qUOHQ62RBIp+xk62nasWAenaXUSglvP48pK3Jf0=;
-        b=c6lTY0ZsxDBqJSRPe9OKVb4OqOuEfxMzXm5TJM3l/wyzxx2+dB1dLdekjBD07UpeLA
-         0DsbjiRRbLuPJkPO8Hy8qM/28ZZ7qH8wE2x5DC9B/sm7j2YzSvsSRL7IOmOhz+krXbHM
-         GJ1tOiLmbBhSGpkmx4uXXApBukU769banPGu8buX45eO91q7vJD+lz17FhwidXsZY/6Y
-         +klO1OJQsxVOxMWDDzSm9HClJEYcD46/q+TqUOntpwEQFOdym2NIB+oLsUrjc45AYNDp
-         IK1d+2dSoGMpi2y+exjglwPgD2UeHoqN7dZKIXYZ9A5+xqNDJ5tc2NAWAQJks1uW5auV
-         Pewg==
-X-Forwarded-Encrypted: i=1; AJvYcCUX1ttpxm2oOesfZSDlV3YUkABLMcRvz7Bs5aLLSEnTbYk555iDQ11+VL8XtInjpile5+t3m8NPBAUFPH0L@vger.kernel.org, AJvYcCUZfC+sYeHUeFokgFHNEJdaWIru6JPFff70B5fZeQMATFRR3z+EHm7Gl2uPRVZPKHpTEnTfVZdvpQoK@vger.kernel.org, AJvYcCWZOxeVqCihAVQmTmE6nwbXM2TY0ynB2WZjeGmUFNEIzl2yd/UISW+6541dU6LKS3289v0JcWPoditExEEL@vger.kernel.org
-X-Gm-Message-State: AOJu0YySB2I/Ru+QxPazIxjtD7Y+xrX7U3Gp4vUpTaF1ODQ/Qju1c5ia
-	Z5+QPV4y21lzEvpuX9l83RIwPcoFeY6d9aHspUZu97y3nW7pHxkqnw+k
-X-Gm-Gg: ASbGnctmu7mWlGwYXftn6TmX1Sj/1Iswt77hOwH6NH1BtfEkhtMbGyDEPOB8PvZMoEL
-	L+0iUbHgAS0wSsXcqJP/CAl0Hhyl3uEC0dD2d8zcDZRN/hmk/0OvuvMl0m0juDbv1OjcTjekEPV
-	mglI7P0liZp6FRZayHT6OkpQz/vXOWt3jfRM9dmtOsdC9saelgN6rwuXEqk/SgMt8blVDZVorbO
-	M+M13hmB1xBQOdrRPSc1TnEpcP/TW7ZidK43UFVlgAGlWqamQQ9id7zm0DCsZbbsM6Kp+UqhRbR
-	NXDU5srZ2M+yVNREZVq8Cob5nEW6N1o+MaCKMSmWEihe3cyEHLhqMI/FMzJLYcRZ/KBAqlOhSlU
-	=
-X-Google-Smtp-Source: AGHT+IG7aZWTUwn23SxMC3eQ/hg09TylcFKw+KpHm/fuTh5OjVZqgq1jP2PLgDc/JKXSil+HGnCm7A==
-X-Received: by 2002:a17:903:2a85:b0:235:2e0:aa9 with SMTP id d9443c01a7336-23ddb1a6e5bmr17280675ad.14.1752031844730;
-        Tue, 08 Jul 2025 20:30:44 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3017ca59sm666369a91.27.2025.07.08.20.30.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 20:30:44 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: hch@infradead.org
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with locks
-Date: Wed,  9 Jul 2025 11:30:42 +0800
-Message-ID: <20250709033042.249954-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <aGaLLHq3pRjGlO2W@infradead.org>
-References: <aGaLLHq3pRjGlO2W@infradead.org>
+	s=arc-20240116; t=1752033553; c=relaxed/simple;
+	bh=QytHeqnrZC2ddp9eJpzCiJaHZYXcVEL3Y7kDVMmL3JU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNynulNp1nVqZ7n6WgRN09PuQ0gAgvUc0faVYlAOdJ3XUu9DriFDIofuEIkRVDoBecM9PApTn3bvxmHyrGzMs7x9rbiV+l8hrZl1zwO5L5nYRsurFnUekMIgWeTUax9N2KkmHjXOjln3M9md5GlRJCqVheZMgD3cFAeGB5JUyqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+F+jf7e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF41C4CEF0;
+	Wed,  9 Jul 2025 03:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752033552;
+	bh=QytHeqnrZC2ddp9eJpzCiJaHZYXcVEL3Y7kDVMmL3JU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G+F+jf7eTJoZeBlRdUxYZgi+fL8+T8t834jF3yNHRTd+OhJ9Yhg1I7wAX/yFH/YAZ
+	 uGEqYwpAHDcuvT+QqSM7ZjOLnKbKQv1VPVw/lENIbTX+RcNEmUeUpQtR/QqLpWIBkO
+	 TCXgKk7DaR2RRSE0oL7eS1SwgASxr1S1j08W1YF80X/zYAUFmgn3UgXqZGeIX5q1YL
+	 jYrTN3fmIhWhOQpxCRHTZnUNNz6Xx1i1GF7WgnqLk4XJF43bWhzKXS3hwm41CkT85S
+	 xHCbc8zmhN76MMR7xG6O2puO8kSf+UDTdAFeeU8qtxqcyXxa1unEsk/ZLQSE2+vRGI
+	 59myGqc7C424Q==
+Date: Tue, 8 Jul 2025 20:59:11 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Groves <John@groves.net>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Miklos Szeredi <miklos@szeredb.hu>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 11/18] famfs_fuse: Basic famfs mount opts
+Message-ID: <20250709035911.GE2672029@frogsfrogsfrogs>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-12-john@groves.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250703185032.46568-12-john@groves.net>
 
-On Thu, 3 Jul 2025 06:52:44 -0700, Christoph Hellwig wrote:
-> On Tue, Jul 01, 2025 at 10:48:47PM +0800, alexjlzheng@gmail.com wrote:
-> > From: Jinliang Zheng <alexjlzheng@tencent.com>
-> > 
-> > In the buffer write path, iomap_set_range_uptodate() is called every
-> > time iomap_end_write() is called. But if folio_test_uptodate() holds, we
-> > know that all blocks in this folio are already in the uptodate state, so
-> > there is no need to go deep into the critical section of state_lock to
-> > execute bitmap_set().
-> > 
-> > Although state_lock may not have significant lock contention due to
-> > folio lock, this patch at least reduces the number of instructions.
+On Thu, Jul 03, 2025 at 01:50:25PM -0500, John Groves wrote:
+> * -o shadow=<shadowpath>
+
+What is a shadow?
+
+> * -o daxdev=<daxdev>
+
+And, uh, if there's a FUSE_GET_DAXDEV command, then what does this mount
+option do?  Pre-populate the first element of that set?
+
+--D
+
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+>  fs/fuse/fuse_i.h |  8 +++++++-
+>  fs/fuse/inode.c  | 28 +++++++++++++++++++++++++++-
+>  2 files changed, 34 insertions(+), 2 deletions(-)
 > 
-> That means the uptodate bitmap is stale in that case.  That would
-
-Hi, after days of silence, I re-read this email thread to make sure I
-didn't miss something important.
-
-I realized that maybe we are not aligned and I didn't understand your
-sentence above. Would you mind explaining your meaning in more detail?
-
-In addition, what I want to say is that once folio_test_uptodate() is
-true, all bits in ifs->state are in the uptodate state. So there is no
-need to acquire the lock and set it again. This repeated setting happens
-in __iomap_write_end().
-
-thanks,
-Jinliang Zheng. :)
-
-> only matter if we could clear the folio uptodate bit and still
-> expect the page content to survive.  Which sounds dubious and I could
-> not find anything relevant grepping the tree, but I'm adding the
-> linux-mm list just in case.
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index a592c1002861..f4ee61046578 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -583,9 +583,11 @@ struct fuse_fs_context {
+>  	unsigned int blksize;
+>  	const char *subtype;
+>  
+> -	/* DAX device, may be NULL */
+> +	/* DAX device for virtiofs, may be NULL */
+>  	struct dax_device *dax_dev;
+>  
+> +	const char *shadow; /* famfs - null if not famfs */
+> +
+>  	/* fuse_dev pointer to fill in, should contain NULL on entry */
+>  	void **fudptr;
+>  };
+> @@ -941,6 +943,10 @@ struct fuse_conn {
+>  	/**  uring connection information*/
+>  	struct fuse_ring *ring;
+>  #endif
+> +
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	char *shadow;
+> +#endif
+>  };
+>  
+>  /*
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index e48e11c3f9f3..a7e1cf8257b0 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -766,6 +766,9 @@ enum {
+>  	OPT_ALLOW_OTHER,
+>  	OPT_MAX_READ,
+>  	OPT_BLKSIZE,
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	OPT_SHADOW,
+> +#endif
+>  	OPT_ERR
+>  };
+>  
+> @@ -780,6 +783,9 @@ static const struct fs_parameter_spec fuse_fs_parameters[] = {
+>  	fsparam_u32	("max_read",		OPT_MAX_READ),
+>  	fsparam_u32	("blksize",		OPT_BLKSIZE),
+>  	fsparam_string	("subtype",		OPT_SUBTYPE),
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	fsparam_string("shadow",		OPT_SHADOW),
+> +#endif
+>  	{}
+>  };
+>  
+> @@ -875,6 +881,15 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
+>  		ctx->blksize = result.uint_32;
+>  		break;
+>  
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	case OPT_SHADOW:
+> +		if (ctx->shadow)
+> +			return invalfc(fsc, "Multiple shadows specified");
+> +		ctx->shadow = param->string;
+> +		param->string = NULL;
+> +		break;
+> +#endif
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -888,6 +903,7 @@ static void fuse_free_fsc(struct fs_context *fsc)
+>  
+>  	if (ctx) {
+>  		kfree(ctx->subtype);
+> +		kfree(ctx->shadow);
+>  		kfree(ctx);
+>  	}
+>  }
+> @@ -919,7 +935,10 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
+>  	else if (fc->dax_mode == FUSE_DAX_INODE_USER)
+>  		seq_puts(m, ",dax=inode");
+>  #endif
+> -
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	if (fc->shadow)
+> +		seq_printf(m, ",shadow=%s", fc->shadow);
+> +#endif
+>  	return 0;
+>  }
+>  
+> @@ -1017,6 +1036,9 @@ void fuse_conn_put(struct fuse_conn *fc)
+>  		}
+>  		if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+>  			fuse_backing_files_free(fc);
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +		kfree(fc->shadow);
+> +#endif
+>  		call_rcu(&fc->rcu, delayed_release);
+>  	}
+>  }
+> @@ -1834,6 +1856,10 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>  	sb->s_root = root_dentry;
+>  	if (ctx->fudptr)
+>  		*ctx->fudptr = fud;
+> +
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	fc->shadow = kstrdup(ctx->shadow, GFP_KERNEL);
+> +#endif
+>  	mutex_unlock(&fuse_mutex);
+>  	return 0;
+>  
+> -- 
+> 2.49.0
 > 
-> > 
-> > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> > ---
-> >  fs/iomap/buffered-io.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 3729391a18f3..fb4519158f3a 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -71,6 +71,9 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
-> >  	unsigned long flags;
-> >  	bool uptodate = true;
-> >  
-> > +	if (folio_test_uptodate(folio))
-> > +		return;
-> > +
-> >  	if (ifs) {
-> >  		spin_lock_irqsave(&ifs->state_lock, flags);
-> >  		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
-> > -- 
-> > 2.49.0
-> > 
-> > 
-> ---end quoted text---
+> 
 
