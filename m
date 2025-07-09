@@ -1,41 +1,41 @@
-Return-Path: <linux-fsdevel+bounces-54402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6172AFF4BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 00:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB30AFF4A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 00:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C5753B4597
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 22:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7542F64520F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 22:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A732475CD;
-	Wed,  9 Jul 2025 22:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37072459F8;
+	Wed,  9 Jul 2025 22:24:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BB6156237;
-	Wed,  9 Jul 2025 22:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C04242D76;
+	Wed,  9 Jul 2025 22:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752100481; cv=none; b=OqoHub95zpLLIMx0JoJbcwM8Mi6nccfxuc4pBoZAhx2Ls+cKU+7xhylOqA7DK5EtqPSCp164tRPrurpA/079XjyRpgUHj/cwKl8yV01DuuorC0RIzamgfme0XjdkD967I+yir+3A+FZnnPV8LwlZrJENMm32Wmso4Q9Tx/2ZgmQ=
+	t=1752099860; cv=none; b=tDS/CysrFgGLqjG5HiSN5WBtC9eZrHnYfK7Ax6OeTi0smK0to4OltcR9YKywYITP0aePVqfijLLnt63GNV1+yEMrMej6+GRvVBlajiTXOpcnkBNDhe0E2qpnggj74bfN9XtjDp1izKo4J1poFxborvk7UY1bjnP02ultVIeHg9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752100481; c=relaxed/simple;
-	bh=MY2Vx9zpExNRGPVZnEiH82ov0uFOe4OTJxBtVTuPRIg=;
+	s=arc-20240116; t=1752099860; c=relaxed/simple;
+	bh=CbHFJShFE8DpTC/MzdtDKAEYS5cu2PsOLLa0V3B56V4=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=aos+ih7+Nxw2h/uOrgTKoAI7NmU/Z1yiCizEu4CTFetOknu8wc7wTLKEXJzvegTLisfnngQWNJHOqGp2hAI8ZF/kJgk/jyzEjVgMhQk57oLWeDNDySb2FQETtsQMDZ2mFPoeQghtwWaV30bcSr5wG+aUy3beA826pl7OYkP7lVI=
+	 References:Date:Message-id; b=JBGDSquBvGiOmtEPrVuzDpdZ1fFH1Aar2bEvipFA9Lf2ZRpuwHgstHQKACmd/YGhA0885J4+7zSe71f62Hz1+Rw+XxxC+RgsYt37CDasVvAcBIxl8lce0c7MpNzPcbQMKxbIxUEPW1p99mlKPGfSbjOpwpbONioDKPGcgSxUMeo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1uZd3M-001GCq-6w;
-	Wed, 09 Jul 2025 22:14:13 +0000
+	id 1uZdD3-001GGv-Iu;
+	Wed, 09 Jul 2025 22:24:15 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -44,8 +44,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "NeilBrown" <neil@brown.name>
 To: "Song Liu" <songliubraving@meta.com>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Tingmao Wang" <m@maowtm.org>,
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+Cc: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ "Christian Brauner" <brauner@kernel.org>, "Tingmao Wang" <m@maowtm.org>,
  "Song Liu" <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -58,129 +58,108 @@ Cc: "Christian Brauner" <brauner@kernel.org>, "Tingmao Wang" <m@maowtm.org>,
  "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
  "jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
  "mattbobrowski@google.com" <mattbobrowski@google.com>,
- =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>
+ =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>,
+ "Jann Horn" <jannh@google.com>
 Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-In-reply-to: <40D24586-5EC7-462A-9940-425182F2972A@meta.com>
-References: <>, <40D24586-5EC7-462A-9940-425182F2972A@meta.com>
-Date: Thu, 10 Jul 2025 08:14:13 +1000
-Message-id: <175209925346.2234665.15385484299365186166@noble.neil.brown.name>
+In-reply-to: <C8FA6AFF-704B-4F8D-AE88-68E6046FBE01@meta.com>
+References: <>, <C8FA6AFF-704B-4F8D-AE88-68E6046FBE01@meta.com>
+Date: Thu, 10 Jul 2025 08:24:14 +1000
+Message-id: <175209985487.2234665.6008354090530669455@noble.neil.brown.name>
 
-On Tue, 08 Jul 2025, Song Liu wrote:
-> Hi Christian,=20
->=20
-> Thanks for your comments!=20
->=20
-> > On Jul 7, 2025, at 4:17=E2=80=AFAM, Christian Brauner <brauner@kernel.org=
-> wrote:
->=20
+On Thu, 10 Jul 2025, Song Liu wrote:
+> 
+> 
+> > On Jul 9, 2025, at 9:06 AM, Mickaël Salaün <mic@digikod.net> wrote:\
+> 
 > [...]
->=20
-> >>> 3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the callba=
-ck.
-> >>=20
-> >> I think that's fine.
-> >=20
-> > Ok, sorry for the delay but there's a lot of different things going on
-> > right now and this one isn't exactly an easy thing to solve.
-> >=20
-> > I mentioned this before and so did Neil: the lookup implementation
-> > supports two modes sleeping and non-sleeping. That api is abstracted
-> > away as heavily as possible by the VFS so that non-core code will not be
-> > exposed to it other than in exceptional circumstances and doesn't have
-> > to care about it.
-> >=20
-> > It is a conceptual dead-end to expose these two modes via separate APIs
-> > and leak this implementation detail into non-core code. It will not
-> > happen as far as I'm concerned.
-> >=20
-> > I very much understand the urge to get the refcount step-by-step thing
-> > merged asap. Everyone wants their APIs merged fast. And if it's
-> > reasonable to move fast we will (see the kernfs xattr thing).
-> >=20
-> > But here are two use-cases that ask for the same thing with different
-> > constraints that closely mirror our unified approach. Merging one
-> > quickly just to have something and then later bolting the other one on
-> > top, augmenting, or replacing, possible having to deprecate the old API
-> > is just objectively nuts. That's how we end up with a spaghetthi helper
-> > collection. We want as little helper fragmentation as possible.
-> >=20
-> > We need a unified API that serves both use-cases. I dislike
-> > callback-based APIs generally but we have precedent in the VFS for this
-> > for cases where the internal state handling is delicate enough that it
-> > should not be exposed (see __iterate_supers() which does exactly work
-> > like Neil suggested down to the flag argument itself I added).
-> >=20
-> > So I'm open to the callback solution.
-> >=20
-> > (Note for really absurd perf requirements you could even make it work
-> > with static calls I'm pretty sure.)
->=20
-> I guess we will go with Micka=C3=ABl=E2=80=99s idea:
->=20
-> > int vfs_walk_ancestors(struct path *path,
-> >                       bool (*walk_cb)(const struct path *ancestor, void *=
-data),
-> >                       void *data, int flags)
-> >=20
-> > The walk continue while walk_cb() returns true.  walk_cb() can then
-> > check if @ancestor is equal to a @root, or other properties.  The
-> > walk_cb() return value (if not bool) should not be returned by
-> > vfs_walk_ancestors() because a walk stop doesn't mean an error.
->=20
-> If necessary, we hide =E2=80=9Croot" inside @data. This is good.=20
->=20
-> > @path would be updated with latest ancestor path (e.g. @root).
->=20
-> Update @path to the last ancestor and hold proper references.=20
-> I missed this part earlier. With this feature, vfs_walk_ancestors=20
-> should work usable with open-codeed bpf path iterator.=20
+> 
+> >> If necessary, we hide “root" inside @data. This is good. 
+> >> 
+> >>> @path would be updated with latest ancestor path (e.g. @root).
+> >> 
+> >> Update @path to the last ancestor and hold proper references. 
+> >> I missed this part earlier. With this feature, vfs_walk_ancestors 
+> >> should work usable with open-codeed bpf path iterator. 
+> >> 
+> >> I have a question about this behavior with RCU walk. IIUC, RCU 
+> >> walk does not hold reference to @ancestor when calling walk_cb().
+> > 
+> > I think a reference to the mount should be held, but not necessarily to
+> > the dentry if we are still in the same mount as the original path.
+> 
+> If we update @path and do path_put() after the walk, we have to hold 
+> reference to both the mnt and the dentry, no? 
+> 
+> > 
+> >> If walk_cb() returns false, shall vfs_walk_ancestors() then
+> >> grab a reference on @ancestor? This feels a bit weird to me.
+> > 
+> > If walk_cb() checks for a root, it will return false when the path will
+> > match, and the caller would expect to get this root path, right?
+> 
+> If the user want to walk to the global root, walk_cb() may not 
+> return false at all, IIUC. walk_cb() may also return false on 
+> other conditions. 
+> 
+> > 
+> > In general, it's safer to always have the same behavior when holding or
+> > releasing a reference.  I think the caller should then always call
+> > path_put() after vfs_walk_ancestors() whatever the return code is.
+> > 
+> >> Maybe “updating @path to the last ancestor” should only apply to
+> >> LOOKUP_RCU==false case? 
+> >> 
+> >>> @flags could contain LOOKUP_RCU or not, which enables us to have
+> >>> walk_cb() not-RCU compatible.
+> >>> 
+> >>> When passing LOOKUP_RCU, if the first call to vfs_walk_ancestors()
+> >>> failed with -ECHILD, the caller can restart the walk by calling
+> >>> vfs_walk_ancestors() again but without LOOKUP_RCU.
+> >> 
+> >> 
+> >> Given we want callers to handle -ECHILD and call vfs_walk_ancestors
+> >> again without LOOKUP_RCU, I think we should keep @path not changed
+> >> With LOOKUP_RCU==true, and only update it to the last ancestor 
+> >> when LOOKUP_RCU==false.
+> > 
+> > As Neil said, we don't want to explicitly pass LOOKUP_RCU as a public
+> > flag.  Instead, walk_cb() should never sleep (and then potentially be
+> > called under RCU by the vfs_walk_ancestors() implementation).
+> 
+> How should the user handle -ECHILD without LOOKUP_RCU flag? Say the
+> following code in landlocked:
+> 
+> /* Try RCU walk first */
+> err = vfs_walk_ancestors(path, ll_cb, data, LOOKUP_RCU);
+> 
+> if (err == -ECHILD) {
+> 	struct path walk_path = *path;
+> 
+> 	/* reset any data changed by the walk */
+> 	reset_data(data);
+> 	
+> 	/* now do ref-walk */
+> 	err = vfs_walk_ancestors(&walk_path, ll_cb, data, 0);
+> }
+> 
+> Or do you mean vfs_walk_ancestors will never return -ECHILD?
+> Then we need vfs_walk_ancestors to call reset_data logic, right?
 
-I don't think path should be updated.  That adds complexity which might
-not be needed.  The original (landlock) requirements were only to look
-at each ancestor, not to take a reference to any of them.
+It isn't clear to me that vfs_walk_ancestors() needs to return anything.
+All the communication happens through walk_cb()
 
-If the caller needs a reference to any of the ancestors I think that
-walk_cb() needs to take that reference and store it in data.
-Note that attempting to take the reference might fail.  See
-legitimize_path() in fs/namei.c.
+walk_cb() is called with a path, the data, and a "may_sleep" flag.
+If it needs to sleep but may_sleep is not set, it returns "-ECHILD"
+which causes the walk to restart and use refcounts.
+If it wants to stop, it returns 0.
+If it wants to continue, it returns 1.
+If it wants a reference to the path then it can use (new)
+vfs_legitimize_path() which might fail.
+If it wants a reference to the path and may_sleep is true, it can use
+path_get() which won't fail.
 
-It isn't yet clear to me what would be a good API for requesting the
-reference.
-One option would be for vfs_walk_ancestors() to pass another void* to
-walk_cb(), and it passed it on to vfs_legitimize_path() which extracts
-the seq numbers from there.
-Another might be that the path passed to walk_cb is always
-nameidata.path, and so when that is passed to vfs_legitimize_path() path
-it can use container_of() to find the seq numbers.
-
-If vfs_legitimize_path() fail, walk_cb() might want to ask for the walk
-to be restarted.
-
->=20
-> I have a question about this behavior with RCU walk. IIUC, RCU=20
-> walk does not hold reference to @ancestor when calling walk_cb().
-> If walk_cb() returns false, shall vfs_walk_ancestors() then
-> grab a reference on @ancestor? This feels a bit weird to me.=20
-> Maybe =E2=80=9Cupdating @path to the last ancestor=E2=80=9D should only app=
-ly to
-> LOOKUP_RCU=3D=3Dfalse case?=20
->=20
-> > @flags could contain LOOKUP_RCU or not, which enables us to have
-> > walk_cb() not-RCU compatible.
-> >=20
-> > When passing LOOKUP_RCU, if the first call to vfs_walk_ancestors()
-> > failed with -ECHILD, the caller can restart the walk by calling
-> > vfs_walk_ancestors() again but without LOOKUP_RCU.
->=20
->=20
-> Given we want callers to handle -ECHILD and call vfs_walk_ancestors
-> again without LOOKUP_RCU, I think we should keep @path not changed
-> With LOOKUP_RCU=3D=3Dtrue, and only update it to the last ancestor=20
-> when LOOKUP_RCU=3D=3Dfalse.=20
-
-No, we really don't want to pass a LOOKUP_RCU() flag to
-vfs_walk_ancestors().
-vfs_walk_ancestors() might choose to pass that flag to walk_cb().
+When returning -ECHILD (either because of a need to sleep or because
+vfs_legitimize_path() fails), walk_cb() would reset_data().
 
 NeilBrown
 
