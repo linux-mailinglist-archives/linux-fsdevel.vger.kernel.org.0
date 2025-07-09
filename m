@@ -1,178 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-54390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05DA2AFF311
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 22:32:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF15AFF336
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 22:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0AD3AFBB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 20:31:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D26317B7E62
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 20:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A7F24677E;
-	Wed,  9 Jul 2025 20:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5A245005;
+	Wed,  9 Jul 2025 20:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GzVYg66v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iT/xiKGb"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="QfxLRjgb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57C23BD13;
-	Wed,  9 Jul 2025 20:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9793B202F8F;
+	Wed,  9 Jul 2025 20:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752093076; cv=none; b=oPH6fxGyy8JiFclfUyqL2TxD6xxaWDAz7GMMx8QE3+FGiK/ytSMJnNfaTkDN+sTJ7dRMAH2w9IW8PT3L7MQ9jArl28orlM+5j+6VJhN2P6CnW0cXzeyv4XBc0hKtDoROuu+6QOdwyEgRlZ4wLbl/w4vCqv8Vh43Ob3s2/s58D5s=
+	t=1752093616; cv=none; b=Uv+g7AyPfk79iybiA4XIz3a5anMqJXMA6JD86P6nSjvVcvfTAEPMBlrXVWy1XbpMUrNkAWOynxNHi2kEXKCNBgHdxMJMFUSSr8PdK9TgHK09GMLBe/7FRrVaBkCfhtOWcMYr9tzZZsHaUTT7nBXkWxlrH06/yklMFYs8Xdj53Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752093076; c=relaxed/simple;
-	bh=6Tz614NpehH6aczQmxQyMihVZ7CmfcI4Z562x5DJW+s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=u6Qe+mMPcFWGkXUgnB+kwDC4FvZsjKWgGPiIXQ+8bMq8EfQ/FBYfB4KlbsrB9ove4iAiajt0jPkd8wt6LB36WSX/DrLzOp1bivpzhzVdst252IdcWwueHs3ecEcVPLLiq6qsyBsc/4+5PRLeexAWV7W5wFjRwd2DQ4JiAMU8XQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GzVYg66v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iT/xiKGb; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id E3B4C7A0026;
-	Wed,  9 Jul 2025 16:31:11 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 09 Jul 2025 16:31:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752093071;
-	 x=1752179471; bh=llWN7pp7aG8O86Zdueocuq+HHi9GtObRXw5Q6xFES9w=; b=
-	GzVYg66v0Kt4dpjX55f7iOuq5EVY2oP4JgRptCTQcb5nzz3i7Fjzvyh3AyTS8jrR
-	xkJds4514NzxlftiOAQpGI5K3wqlL/qh4bsRR3szkwbGi2O5eFuXLBng8WxtxBYt
-	OM8rvADWIEHyGFofs+2Rz9YRWoNLLET3/PzjPuOAX+pUuX++sanAquruw8OXeaOP
-	p4bEJft9Q2krlf4ZzegRYZtecJ+xUZp9TwMAZDNRhQ9M+glyO29X4mTEggx2vUkD
-	gOMuYAvRqfIwNP6BsWlSoE2M6+YjBiabBIziatnKcIZcLOpUCqGiQ8JljIooc62v
-	p7J7qS1FsgoOgBu0+VAygw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752093071; x=
-	1752179471; bh=llWN7pp7aG8O86Zdueocuq+HHi9GtObRXw5Q6xFES9w=; b=i
-	T/xiKGbREElYeICO1GVUd8Wbc9/JdYb7S4JmpTpoWkZIga+XJ+7Cym/uMEvqNLCp
-	pQVrO1GfTBYwku6kWCcjkoPbb/Aw82ibuV8b4NVGYT2oGnzfli2qSJW46Yo0nU4h
-	4OzgEiAi+LGy13vMdyjNViFQNSgQVS5tvaORatsyWgcMoA2dBoWphLJ1fO59TYjs
-	JnxS650QpAD2JO68ruY8FbQJsKbNoGLJhY/DI+8hXoP9lBeyvGghdCWoqDFMdbm9
-	u5ILFbAdPFZfuW32a7xSs7rU9OkgCLXkNtqnB9FO9g1YJ+0yCBWN7SJX2QUonbGE
-	Bz7jQQi/r713VZiqLSaiA==
-X-ME-Sender: <xms:jtFuaEelBli-5kOnOZB6hhPcG6fCxWVNB6rHWs67jQaJpKUZKB6dew>
-    <xme:jtFuaGNFvKphXetz-u55UIOwy3Z_psjqLhWAqia69D2hjdFWgNg_8mjjLLqNgKr1H
-    ch_E6h4MhZoJ_xSa3Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefkeehfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprgguohgsrhhihigrnhesghhmrghilhdrtghomhdprhgtphhtthhope
-    grshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopegvsghighhg
-    vghrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrd
-    gukhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghr
-    rghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughjfihonhhgsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrnhguvghrshdrrhhogigvlhhlsehlihhnrghrohdr
-    ohhrghdprhgtphhtthhopegsvghnjhgrmhhinhdrtghophgvlhgrnhgusehlihhnrghroh
-    drohhrgh
-X-ME-Proxy: <xmx:jtFuaO6_FMAkDNEIbADE6FHbTV5t3LEdm25z6UdKWn1S2P48ExFB_A>
-    <xmx:jtFuaNCADNtE1ya6ZR9w3QASJia8WSPQujdxLUarZzB7CgJvkqnpog>
-    <xmx:jtFuaAaQnxw7iVxXR1yNvntVrGI-hWB1n-KYgVMrIbWGx8ES2RChyg>
-    <xmx:jtFuaBL_Kbi20z6ONoLdImTLKa8rvSCSVC8ruSu5T5Go51WmS-C6Rg>
-    <xmx:j9FuaKudRgcrBp3K67bNCujH_k1ZtWuyRy2tn6FLgBReOHoOiMT8hM4b>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 65A0A700065; Wed,  9 Jul 2025 16:31:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752093616; c=relaxed/simple;
+	bh=6bCNaAgvFnAoxUXkG51sXFPAF2A8790czG/Stio24hM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p5AQJFGa9r0YWXG/KJ0M2IhEytQYIPIJSIu6Dl5NhuLBgi3j10FeX+M/DIYOA25oq40OTRk757CkCiUU4GWC3blKo+1iltFeHqXPVBjWKMdT6e/jJVqQKTHaFH4xnoOKlaw2i3K5dNEd4+Sw6lj8EH4NKEKJj/1CdPQduTzR9Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=QfxLRjgb; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1752093611; x=1752698411; i=quwenruo.btrfs@gmx.com;
+	bh=7u2SCYDTY11+D5/U+Iljw8ciYu2Uiz0x7huvA6oXWLk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=QfxLRjgbeW9fw+ryxzK3IEmk+g/btYHPl5UyumVoUAs5upPG53DzeE/wjjwiSKGb
+	 0nUtKC14xBELfzjutFkcFTktfDlF/0/bpjuIcIFH9Tdxs0FAMdKJYGx7pg2XrLnSr
+	 TnurZ4S6L/MDVLMoqMFmyu3sjRXSvurVymXBaxNi42DKNuZ4p3I2tcTsw8jqEXrJO
+	 gBcsAGkLBKaYTEFXsq8RcOWRlU9m6sWOcc7xGNc/7D/aHTKPeqDmkrQBIQoiIZFfq
+	 W1i/GRWJ7td7D0ZrWQNt0pzjLi4AQGcLyyGdligArZ1e6VdO3d6jI2PKWJSSzmXd2
+	 bP+aArDPexNtpGyOvQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MulqD-1uqifC06F9-00tCD2; Wed, 09
+ Jul 2025 22:40:09 +0200
+Message-ID: <02bf24f8-c7f1-4f70-8af0-73b9656c00b6@gmx.com>
+Date: Thu, 10 Jul 2025 06:10:04 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tfdac8457399410f6
-Date: Wed, 09 Jul 2025 22:30:40 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Darrick J. Wong" <djwong@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- "Anuj Gupta" <anuj20.g@samsung.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- "Kanchan Joshi" <joshi.k@samsung.com>, "LTP List" <ltp@lists.linux.it>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Benjamin Copeland" <benjamin.copeland@linaro.org>, rbm@suse.com,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Pavel Begunkov" <asml.silence@gmail.com>,
- "Christian Brauner" <brauner@kernel.org>,
- "Alexey Dobriyan" <adobriyan@gmail.com>,
- "Eric Biggers" <ebiggers@google.com>, linux-kernel@vger.kernel.org
-Message-Id: <290c17df-1bf2-45b8-b0c2-7a1865585d0a@app.fastmail.com>
-In-Reply-To: <20250709182706.GF2672070@frogsfrogsfrogs>
-References: <20250709181030.236190-1-arnd@kernel.org>
- <20250709182706.GF2672070@frogsfrogsfrogs>
-Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Why a lot of fses are using bdev's page cache to do super block
+ read/write?
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ Catherine Hoang <catherine.hoang@oracle.com>
+References: <5459cd6d-3fdb-4a4e-b5c7-00ef74f17f7d@gmx.com>
+ <20250709150436.GG2672029@frogsfrogsfrogs>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <20250709150436.GG2672029@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Q9rIlRXjKpYAgjC74tvIkGsQsrpvVxzXlsF1wqz+4UcDpQihmRo
+ 3oauzGxaDGcMb1L7KHASr2KCg70fAjRVit8Pg3eDZS26/XONjQ4QrLg9L3Ecfbv5eIzlZ/Y
+ 1zS0x0s10ipZQPY9u7DfzBaJBqnYNQTXLkbiR5oX9veY1ZHlqrF61kssNJspFap2qGPBKqz
+ JfBnHWGUVbglNJIKyI/jg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Xx+WpaXSmis=;f6jgJDkIMFVbz687wCPHdDzgSxy
+ T/RtOFvIqS7qqjwfAp/UDoo/7A3qjOtEJ2qAAhJu9VMLy70UL745+dWUDR2X8gMeg0s0Q+Arc
+ ka+7eg2mCTA3r8M+ElXsLgQgEnnYHToCLIawH77t2OvINAZSBuIoaSX+YDm1weNFZsbBS/qJ0
+ 3Q57uOQGtT45OLnGuDoJ/unQw+b2mm4xI9sL0RcEM4ca+BcPJKwtXweTk4UJ4ipUmYnFQqLXa
+ FT1Napdn1Ky8MCGo/6K6BMd21a/2NiQGfzw1Ss4kFXAC5k08of71KIQmd8dEiLUMtHheOCFcP
+ XFScvfJTYpVir84J6U53f8AUpEnf3mZLMhpjM59LqoWRcqxboH1psF0i7YhiWKZZ6ckE4q9jQ
+ iqGa5fFcEdT85cUjup1CIDdvZ8uumTbE25uDBS0GEvFFaByYaj18W17sb1D8hxvcXbQdWbUnt
+ bJNCUwFHAO5nAOKIR80wRrcSEmQZb9eVWtsR8lBeatremdrk3SnSF3CRqDcPnsysEGWtYut4J
+ yRYPVFV21G8GtcFv0sHsZs19ycZpeyKNfLKObIwnuU509brKfWdHimIqBjTILFY3/57heEMV9
+ 6hMqv95grSP4wSGwGB0+u+FZKYMhrHrUHg/ZeNtSUW0hq/hDBMDOKVk41s6sFyj1xhkil/WBC
+ JZGSKCPAPLoFoN4OXPCWR4w4yruaYPM8s7I+/7i4zfuPzRyDrI+ocByjATg8Pck1nR0Yn0o4z
+ k6qTQnai4uug6wdUro7G+Amwlz0rcpjZX2wWvwzYpC5m0KuQAAATqGI1N2RW4hwCkBK+83JJ2
+ LTaiXmjhargs7WHHpy6KlB+NqG3vK/fT34Mg1UXik86bvG7CtwEmIntrg2OSL+ZC5QFKT9I8Y
+ q1Yu3+U9mUwGUPC+FRFFC0j93t9vehuydPRZwnui8s5vqtzMcMYgKSia9m5AJ3EJ7ozlmZKhw
+ +r6JJvaqLt687+OgRJl3HzrBBBNwJMXpvqwOE2xSW+e0AaOX4+0Xf55HHJg19DRZGhMAcjSxs
+ 37+y4X1Cwb9uu7TGiRNWvzVBr24Me5JW9WiU7a5A4UGsyJhsh9Lh3hT+h2cbez8xw+s5iD7UN
+ trs6E0F39nR5B+uGF02rXorkxj+ESskHnq+ub9drRtL6OMLMixq85RxKbFyTeNz2jGrU8D3z9
+ Gyuf5/eNrEjUjJk+8syYwl55vpC0atd6hBkA3SY9OFKQRkoNtiuIGwejvlt47HrxXmi6+T8qE
+ VlN5EqLPI41MvU3/jZykcGIRglYS7y7Pbt3iCZJ1sHtOn3Gnzqogj1dmZ+qXVCt1eM1sDvPLM
+ mx8GX1JOLhf+J86QxLLLLCPVBUKT2sxCL2ENqteLIo9n6Br4W9v1Fyi4X8NuRikkRR7p0vCvt
+ oTYtmAVWVdzerS8uvPqjGgdoPWLrTj5D6ZoFLysQow3AGYKkND7UHgqS2l/u3Wr5kqXYMA4PJ
+ 3NPw7VWri2NiukPpnK5yagLfeFrXv8C7g8VB6E5UDa3evAPtPFb8jpaRBljxiyke/15wiE0gn
+ 8hSQl/WlAckQ34YsSQAEbl+acdgSJt5NGTpk/wQSP/gA3xFMJeRFzj0LnmpBD785nm7HwUwnY
+ 00reQfjGNTZmpsHjq+Pj0MNbpukgfy6vYP330hvZzgHlXxPcXJfVYt78KOMqmpXtlYAHpviRo
+ vc9U/LmT1J2alb/oUkkk5K6TTYRdOhVwE4DzJ7zvISFEnltMCzXHW6lWh36syOMtXBAqXpN6O
+ 2HNobXx+SjQBXMa6uWunwCkEIIWFn9k6i3exCEpOXUfTmCTgAf00QvRWkcflUF1JDO7GpH4gk
+ +q72fzJF9ODVIvlFJGUgwOiBcSp7u9Kyi4qimJpRdMA4+S+BAV7F2wMOGBw46o4KCbawQeG92
+ pCvUclUuxu0yBCEEkgZmdBOaLIyy/GHvnU8APbvqCG69CYu3BPMxy6ddZpqvW6ycyd4nl+ZZY
+ 0HfXf0JMGKnq7TiR7l+YRC4yGtzcU5FonIWusSvr9FArDjbNUjoQwSPn5T59y+oFOWC2Mf+O9
+ hsIaMpPqATxQgSoCFVncdTz0S7ghVvSZdVIHACmh/+jv/wbQF9gxfmbkDo8nuE4KWp37buwaX
+ VGLIXbfE9LML0s9OWwq+vsjbZq6SOLGNb8+Y/KoqRqHnPiANOYoXu/FZRr9djnNyxw8gNmeIr
+ 2UDUVSf4nrRW48k33cBqhZlvYfZ1dmzNe3M4o4kXnb67EtO9ZzUF5rdAnxl29N3jHbTWAVJSd
+ 2NXpg4w/aL3gU27QUjlsRs6b/KDy9LyvIhzQ2xrtXWmyyG44LmVqiRlYBxCYZQL5JewGWyJKC
+ sjV+03m6QE58U2DsDyo/CQurm/If7Gq9lBlNbCsu0TZLfiBRttdWBF36XiBvPoyjMFNkWScrh
+ DgEfRjC4hsBgAd+15I6NdQbDzJPrpnQoNrkZhGKClNJOd8RS2ZoM0nSiBrjNvamwbCzcL9bhg
+ cJMEG57rr7yiFS0zII69sMzMCJ3CzT6GtH+S7xXTfwm/77Onb86ra7ibZ2Zy+d+FHUL1icXxL
+ FcvlsaAnPm8d0rcuLHGOwt8kAg6tXx2hovoqqZcMAvAuDaj9eZBDjNVx/gSXOUJHa+XP10+wR
+ B8NYH7hkv/PHmL3Bi/8UgbbK32iE1BzwoZG1LngeuZFEeNeFCBG3edtrhl5+2ecND5DtotVka
+ GWY9BtY/zJbUlUZo02TtId4ZnkZUCOtRZtiPtrOw9sxInSEzchDunh5UHPOPpU8ahQ7uobW3j
+ l7yqttBk5YsiaZLVJEF/FDEGizrrz+lz71LRgY+JBiWQ3tlsgw2BUIUvAmUAOvkutU4hNADDH
+ jzEOD24BLOi5COGWnI6MeDxIrOmaDWBonhEAqbgdkUgxHfAZV49S1ORkZEUcChMYx3X2pDAP3
+ kuamcI25ys2DmMSdJMsgb3dtvRp5HfQvS2yHGHeFE2OLsf4a53fnwbKz7vrvRiKPzyQFCMtDk
+ 8O1PEhyU9BNTsu9Ayy7NfvRdRAh+dPpuaPYuFlcbyMTT/WCP45TrVnb61PyNAi7T2gtiZMRfm
+ M9fhkdtG0S/7yd2GxRoBiNJmDbe+lxal8g/YWxlf7pHN8ECqh88kSb4IPyUMxfTpHT7hbE2nM
+ S18Utx+xbhUZYnW54E3Xbr9uKxf3kOJVNOsRPl2oqDZLcypvDJCD5Q7SyHgzo3BbcJPCl+Wcl
+ wvoy3ILJH55Ix035gAT7ueMH5zTnGXwJSgcc0pJKUYyPkgZABh7SCyaHiVjVPHIMCJYtbshGv
+ N9G9f+DUguewryxVmsmpljqVzsWuTnDcMMcoRezNKYVqVJDjwkG6F5MAsLDv/GwxmKngThubr
+ n1amke/nOsVJFmlu5QLiKlr3AgauDxB14pVdfSfks7qSycBDIqcI7FMiay352kxs7jbr9TPCq
+ 25Q1D33SPpSKBMABMlKfJk7Mcjma1nKoV5KkJkljUtuA8a7zM4AnUw3oYeFl6mZTI3WXrMqS4
+ 7j8KXOTIiLk+Q0tE8R7pkmxI6/ElamVUs63fqn9PkMs0dwqV6ywrLPQOkWtFWpoXMop8ttC37
+ uemXQZNk5j8qoM8cf80FNx4=
 
-On Wed, Jul 9, 2025, at 20:27, Darrick J. Wong wrote:
-> On Wed, Jul 09, 2025 at 08:10:14PM +0200, Arnd Bergmann wrote:
 
-> though we probably want a helper or something to encapsulate those three
-> comparisons to avoid the SOMETHING_SOMETHING part:
->
-> #define IOC_DISPATCH(c) \
-> 	((c) & ~(_IOC(0, 0, 0, _IOC_SIZE(_IOC_SIZEMASK))))
->
-> 	switch (IOC_DISPATCH(cmd)) {
-> 	case IOC_DISPATCH(FS_IOC_FSGETXATTR):
-> 		return ioctl_fsgetxattr(filp, cmd, argp);
->
-> Assuming that ioctl_fsgetxattr derives size from @cmd and rejects values
-> that it doesn't like.  Hrm?
 
-This may work in specific cases, but it adds a lot of complexity
-and room for error if we try to do this in more places:
+=E5=9C=A8 2025/7/10 00:34, Darrick J. Wong =E5=86=99=E9=81=93:
+> On Wed, Jul 09, 2025 at 06:35:00PM +0930, Qu Wenruo wrote:
+>> Hi,
+>>
+>> Recently I'm trying to remove direct bdev's page cache usage from btrfs
+>> super block IOs.
+>>
+>> And replace it with common bio interface (mostly with bdev_rw_virt()).
+>>
+>> However I'm hitting random generic/492 failure where sometimes blkid fa=
+iled
+>> to detect any useful super block signature of btrfs.
+>=20
+> Yes, you need to invalidate_bdev() after writing the superblock directly
+> to disk via submit_bio.
 
-Ignoring the 'size' argument as above would mean that
-each case now has to add an extra size check in each 'case',
-which then defeats the entire purpose.
+Since invalidate_bdev() is invaliding the whole page cache of the bdev,=20
+it may increase the latency of super block writeback, which may bring=20
+unexpected performance change.
 
-I should maybe dig out my notes for table-driver ioctl
-handlers, if we want to improve the way that drivers define
-their ioctl implementations, I'm sure there is some
-infrastructure we can come up with that can help here,
-but I don't think 'same as before but more macros' is the
-answer.
+All we want is only to ensure the content of folio where our sb is,
+so it looks like we're better sticking with the existing bdev page cache=
+=20
+usage.
+Although the btrfs' super block writeback is still doing something out=20
+of normal, and will be properly addressed.
 
-joydev_ioctl_common() is an existing example doing something
-like it and gets it right, while snd_compr_ioctl() is an
-example that looks completely broken to me.
+Thanks Matthew and Darrick for this detailed explanation,
+Qu
 
->> +	    _IOC_SIZE(cmd) >= LBMD_SIZE_VER0 &&
->> +	    _IOC_SIZE(cmd) <= _IOC_SIZE(FS_IOC_GETLBMD_CAP))
->
-> blk_get_meta_cap already checks this.
+>=20
+>> This leads more digging, and to my surprise using bdev's page cache to =
+do
+>> superblock IOs is not an exception, in fact f2fs is doing exactly the s=
+ame
+>> thing.
+>>
+>>
+>> This makes me wonder:
+>>
+>> - Should a fs use bdev's page cache directly?
+>>    I thought a fs shouldn't do this, and bio interface should be
+>>    enough for most if not all cases.
+>>
+>>    Or am I wrong in the first place?
+>=20
+> As willy said, most filesystems use the bdev pagecache because then they
+> don't have to implement their own (metadata) buffer cache.  The downside
+> is that any filesystem that does so must be prepared to handle the
+> buffer_head contents changing any time they cycle the bh lock because
+> anyone can write to the block device of a mounted fs ala tune2fs.
+>=20
+> Effectively this means that you have to (a) revalidate the entire buffer
+> contents every time you lock_buffer(); and (b) you can't make decisions
+> based on superblock feature bits in the superblock bh directly.
+>=20
+> I made that mistake when adding metadata_csum support to ext4 -- we'd
+> only connect to the crc32c "crypto" module if checksums were enabled in
+> the ondisk super at mount time, but then there were a couple of places
+> that looked at the ondisk super bits at runtime, so you could flip the
+> bit on and crash the kernel almost immediately.
+>=20
+> Nowadays you could protect against malicious writes with the
+> BLK_DEV_WRITE_MOUNTED=3Dn so at least that's mitigated a little bit.
+> Note (a) implies that the use of BH_Verified is a giant footgun.
+>=20
+> Catherine Hoang [now cc'd] has prototyped a generic buffer cache so that
+> we can fix these vulnerabilities in ext2:
+> https://lore.kernel.org/linux-ext4/20250326014928.61507-1-catherine.hoan=
+g@oracle.com/
+>=20
+>> - What is keeping fs super block update from racing with user space
+>>    device scan?
+>>
+>>    I guess it's the regular page/folio locking of the bdev page cache.
+>>    But that also means, pure bio based IO will always race with buffere=
+d
+>>    read of a block device.
+>=20
+> Right.  In theory you could take the posix advisory lock (aka flock)
+> from inside the kernel for the duration of the sb write, and that would
+> prevent libblkid/udev from seeing torn/stale contents because they take
+> LOCK_SH.
+>=20
+>> - If so, is there any special bio flag to prevent such race?
+>>    So far I am unable to find out such flag.
+>=20
+> No.
+>=20
+> --D
+>=20
+>> Thanks,
+>> Qu
+>>
+>=20
 
-I had thought about removing it there, but decided against that.
-Maybe a better way would be to have the full check inside of 
-blk_get_meta_cap() and use the -ENOIOCTLCMD return code
-to keep the caller simple:
-
-   switch(cmd) {
-   ...
-   default:
-         break;
-   }
-   ret = blk_get_meta_cap(bdev, cmd, argp);
-   if (ret != -ENOIOCTLCMD)
-        return ret;
-   ...
-   return -ENOIOCTLCMD;
-
-       Arnd
 
