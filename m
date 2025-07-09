@@ -1,146 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-54334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2196AFE1DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 10:05:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1963AFE29B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 10:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20674189380A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 08:05:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126E2581DB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 08:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CA023C4EC;
-	Wed,  9 Jul 2025 08:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE8227511F;
+	Wed,  9 Jul 2025 08:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="XX6tE8mN"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Be+jc9tF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tS8aZpEc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Be+jc9tF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tS8aZpEc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEEB2222C3;
-	Wed,  9 Jul 2025 08:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC2D274B48
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 08:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752048256; cv=none; b=MvyIuoHtxQkKV75frKMJB6PFZkgs/LPrRxEOEvBmgei+9dN7NTnelN1caxrZza86eGUUgrHMqFIxsbFECdQ+udw4FPqa/jadY2yByyby0RDgyWl0uPh4McT19BzPN+UYlb5kOL9xSOWzEeYWwU+dmqIXVUx+YjIpgU7ZTL3ZzcQ=
+	t=1752049816; cv=none; b=r2ZbqO/D1B289884+laSVtsN9wx0PvIP6/76vgzgt6TLcA8jsI0ZJqhMPcY5cFAkSfUSjCbwkVq6g3/wcq+7g/csVYS3gwZKBS7SFTg41heaT3lxAslrq2xsVH18EvdCCS+UCw0tghWNn2aQLTj0P/kwdbrFMffxsg5DCo3zO4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752048256; c=relaxed/simple;
-	bh=4dvYtEbOtmwJ+1IDZR1sB8eZS1Ly2JkBVTnZJvK2PIQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VynYzggDkhbBGBUlE+hdwkt22HMwOjBl3qj7CTiLzf4icX9im4M+XYg0pWhJnsCUJJACpUvhWmfSNbC+WOMdsfkjTzFZ1aEjwRdTxLgAQj92DxFwuRAIM8fjOdwZtEaTvfH5kfzdhVJmuEXDFfA2tT3UWsuQycAnooFkfCGL0Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=XX6tE8mN; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	s=arc-20240116; t=1752049816; c=relaxed/simple;
+	bh=kSih1qJ7i7xKYn9F9RDk2G/u7x1nadVnoP9/M0XEcKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=soVwhGzMuxMB3lqbTU4G6vM56GAypePyqn3FN0QLoG496kpaNaHATQDi0R9YjT893DzGzYe75uU5pLFPNdz6UJEDzL43WJcE2DK39rHTbrSqtbB1jjvVr4qSmfyziHeYWpEwRIrG6zp877g3SBSEjdUmeIN+NoVmFI0ibJ2HP94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Be+jc9tF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tS8aZpEc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Be+jc9tF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tS8aZpEc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bcVqT1NHrz9v7v;
-	Wed,  9 Jul 2025 10:04:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1752048245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2B14F1F451;
+	Wed,  9 Jul 2025 08:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752049813; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ALSg0QD8uRphF8/oxSCVKyEeBf8l1V1KzIwjcnUWqG4=;
-	b=XX6tE8mNF+WRKfctp233Q8R5d91TxrSW4Wp3rGRmG54yh6tmy+CFbWrPNd+Zxh3E6r61oW
-	AAO6pSiq3hgyjQoPgOTVlYVSaYOYmU0sHh464sOvk/a8L4wxIviL21atL97v2h7wb+4qQT
-	N1dgVpUunhtHFZt8zr1YzsAVmBchkWdqzASoGoLxpiMma+IRXD7ZxSjyIEcwkYGIGdv9/C
-	NoumHmmkQIUWS37PTQQuspEbghG9yPS8SeNO8KamONfeHEG/6kw/Zbmw+35SnHmKojck1Q
-	L9EpOxY1u8Z3e0xocCbgBoOKqGbTR/enWahc5qCdqO4Uj9URDKeGtsDgMOkhgw==
-Message-ID: <ad876991-5736-4d4c-9f19-6076832d0c69@pankajraghav.com>
-Date: Wed, 9 Jul 2025 10:03:51 +0200
+	bh=LBtMeClq9et3DEqdyjTbORBR+uMKXpuRTSSshQUU8BE=;
+	b=Be+jc9tFF949Eqs0IlZGKfYGnmZOuITNhKADSaOR1D7/e3fVkN3foBlRIW0E9X1y13Ml0p
+	QWQH+KjEJ4/9I2rwpxBlpGC8MTdOdiamenqItI2Jy4AAM8tBWf2uxL9UjnMwoLphD9T2mi
+	C+aRPaCKt6ahbQntXDS2GT9ihRLnPRw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752049813;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LBtMeClq9et3DEqdyjTbORBR+uMKXpuRTSSshQUU8BE=;
+	b=tS8aZpEcl35FTprEbjA9f4nCiIEVM0X3VCiIVSTtOVCSjUWr9QOenH+UzAdx2EXj98+wn4
+	eqKElJ/SxszzbiDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752049813; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LBtMeClq9et3DEqdyjTbORBR+uMKXpuRTSSshQUU8BE=;
+	b=Be+jc9tFF949Eqs0IlZGKfYGnmZOuITNhKADSaOR1D7/e3fVkN3foBlRIW0E9X1y13Ml0p
+	QWQH+KjEJ4/9I2rwpxBlpGC8MTdOdiamenqItI2Jy4AAM8tBWf2uxL9UjnMwoLphD9T2mi
+	C+aRPaCKt6ahbQntXDS2GT9ihRLnPRw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752049813;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LBtMeClq9et3DEqdyjTbORBR+uMKXpuRTSSshQUU8BE=;
+	b=tS8aZpEcl35FTprEbjA9f4nCiIEVM0X3VCiIVSTtOVCSjUWr9QOenH+UzAdx2EXj98+wn4
+	eqKElJ/SxszzbiDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1B24E13757;
+	Wed,  9 Jul 2025 08:30:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bWubBpUobmhSeQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 09 Jul 2025 08:30:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C184AA099A; Wed,  9 Jul 2025 10:30:12 +0200 (CEST)
+Date: Wed, 9 Jul 2025 10:30:12 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, konishi.ryusuke@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	mjguzik@gmail.com, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, ntfs3@lists.linux.dev, Dave Kleikamp <shaggy@kernel.org>, 
+	jfs-discussion@lists.sourceforge.net
+Subject: Re: [syzbot] [nilfs?] kernel BUG in may_open (2)
+Message-ID: <xrpmf6yj32iirfaumpbal6qxph7mkmgwtra7p4hpbvzozlp4zr@2bzl4p5ejgfj>
+References: <686d5a9f.050a0220.1ffab7.0015.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Pankaj Raghav <kernel@pankajraghav.com>
-Subject: Re: [PATCH v2 0/5] add static PMD zero page support
-To: Zi Yan <ziy@nvidia.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- willy@infradead.org, linux-mm@kvack.org, x86@kernel.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <F8FE3338-F0E9-4C1B-96A3-393624A6E904@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <F8FE3338-F0E9-4C1B-96A3-393624A6E904@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <686d5a9f.050a0220.1ffab7.0015.GAE@google.com>
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=72aa0474e3c3b9ac];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,storage.googleapis.com:url,syzkaller.appspot.com:url,appspotmail.com:email];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[895c23f6917da440ed0d];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,gmail.com,vger.kernel.org,googlegroups.com,zeniv.linux.org.uk,paragon-software.com,lists.linux.dev,lists.sourceforge.net];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,storage.googleapis.com:url,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -1.30
 
-Hi Zi,
+Hi!
 
->> Add a config option STATIC_PMD_ZERO_PAGE that will always allocate the huge_zero_folio via 
->> memblock, and it will never be freed.
+On Tue 08-07-25 10:51:27, syzbot wrote:
+> syzbot found the following issue on:
 > 
-> Do the above users want a PMD sized zero page or a 2MB zero page? Because on systems with non 
-> 4KB base page size, e.g., ARM64 with 64KB base page, PMD size is different. ARM64 with 64KB base 
-> page has 512MB PMD sized pages. Having STATIC_PMD_ZERO_PAGE means losing half GB memory. I am 
-> not sure if it is acceptable.
+> HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=107e728c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=72aa0474e3c3b9ac
+> dashboard link: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11305582580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10952bd4580000
 > 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/605b3edeb031/disk-d7b8f8e2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a3cb6f3ea4a9/vmlinux-d7b8f8e2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/cd9e0c6a9926/bzImage-d7b8f8e2.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/2a7ab270a8da/mount_0.gz
+> 
+> The issue was bisected to:
+> 
+> commit af153bb63a336a7ca0d9c8ef4ca98119c5020030
+> Author: Mateusz Guzik <mjguzik@gmail.com>
+> Date:   Sun Feb 9 18:55:21 2025 +0000
+> 
+>     vfs: catch invalid modes in may_open()
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17f94a8c580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=14054a8c580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10054a8c580000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com
+> Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
+> 
+> VFS_BUG_ON_INODE(!IS_ANON_FILE(inode)) encountered for inode ffff8880724735b8
 
-That is a good point. My intial RFC patches allocated 2M instead of a PMD sized
-page.
+FWIW the reproducer just mounts a filesystem image and opens a file there
+which crashes because the inode type is invalid. Which suggests there's
+insufficient validation of inode metadata (in particular the inode mode)
+being loaded from the disk... There are reproducers in the syzbot dashboard
+for nilfs2, ntfs3, isofs, jfs. I'll take care of isofs, added other
+filesystem maintainers to CC.
 
-But later David wanted to reuse the memory we allocate here with huge_zero_folio. So
-if this config is enabled, we simply just use the same pointer for huge_zero_folio.
-
-Since that happened, I decided to go with PMD sized page.
-
-This config is still opt in and I would expect the users with 64k page size systems to not enable
-this.
-
-But to make sure we don't enable this for those architecture, I could do a per-arch opt in with
-something like this[1] that I did in my previous patch:
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 340e5468980e..c3a9d136ec0a 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -153,6 +153,7 @@ config X86
- 	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
- 	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
- 	select ARCH_WANTS_THP_SWAP		if X86_64
-+	select ARCH_HAS_STATIC_PMD_ZERO_PAGE	if X86_64
- 	select ARCH_HAS_PARANOID_L1D_FLUSH
- 	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
- 	select BUILDTIME_TABLE_SORT
-
-
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 781be3240e21..fd1c51995029 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -826,6 +826,19 @@ config ARCH_WANTS_THP_SWAP
- config MM_ID
- 	def_bool n
-
-+config ARCH_HAS_STATIC_PMD_ZERO_PAGE
-+	def_bool n
-+
-+config STATIC_PMD_ZERO_PAGE
-+	bool "Allocate a PMD page for zeroing"
-+	depends on ARCH_HAS_STATIC_PMD_ZERO_PAGE
-<snip>
-
-Let me know your thoughts.
-
-[1] https://lore.kernel.org/linux-mm/20250612105100.59144-4-p.raghav@samsung.com/#Z31mm:Kconfig
---
-Pankaj
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
