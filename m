@@ -1,435 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-54338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D30AAFE368
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 11:01:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE01AFE389
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 11:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1810A7AE590
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 08:59:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6A571C24945
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 09:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B620626B778;
-	Wed,  9 Jul 2025 09:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C418D283151;
+	Wed,  9 Jul 2025 09:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsfrsXgz"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="SkoQt1Ur"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE64C281525
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 09:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B57478F36;
+	Wed,  9 Jul 2025 09:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752051657; cv=none; b=TY3YWCCs7ZEVhQKKj5JnqMUD0sgRYff73sURaJH4EM4jGeWuFmNlZ1eUaqWwfp6OsxP6K5WDjc5RHtxatU8HnXV3+SEuN/nDgfpWJeyUIxiWmhkFrYRIDIDvxQoZWsiOXeilAwde7rquUDJ9Y/D9FupBJMLh+ZTX6n+7X2eqr1s=
+	t=1752051908; cv=none; b=BlYcayKMcHC7zINgUJ7bJ0ZSXLPP7WvFzzKL7bb4lk1wzQ1yl+w0m4BUwhtbfG8s1Ddfcen7vc6xoTAzWC+scwhgaAKOXAFkUIi9DTpW2CwIylMWJRAgLJ8DAJwb2oGfbQHt7kybm9ddYrlZHFj1iOYDqChc6+giNqd2HoJPf9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752051657; c=relaxed/simple;
-	bh=3SS7fczBg0FUuCdrHjcd8+2Aj+813nRjZwYkKQNvONI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ij2kZR5tnbgPDkNF89WIE5EPzvINA5m7Zh9piTJIThHCtL3tBxDPFbZi0TMb8H/MleMCH2UQHAkKx6m2Yq6QHkDDshKlVHxeeSkyx+RV3+B9Wv4dQaPAatjvY14a0anwQEWD48/FACdo5vCKl3+oQf0YDk91tQnJ60pBtRXzl1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsfrsXgz; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so905803866b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jul 2025 02:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752051653; x=1752656453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zz++lXVZZRg85V8nKOrpOvqejfIfLzDK/+6R1g01Te0=;
-        b=YsfrsXgzUt76QvAI5R141U+ogzyIkYKnBrpCz/DD4znNdfxnp5GlD4cK1b6cBsqCZ0
-         D9VsshUSs8t35ePUtIs2NriegL+ibCverChm399eB94BHaaiCThgFL/CcCdau1MS5ypz
-         FYinVerUQPb33AXVgs6IRFrqonISYmtT8T0rEcRFPGtzUe73FGh+HjUUhuX/s0lz54mO
-         iqZsLTnblyEhObTPPjnjWUH1DozEprqm/KI6I9eIecizs2n0kvt6OD7mzM3x7yY6mUe/
-         PphEzyAOjfZVYOjjUVJUcXPyEd318gvT0RpkWcZXU/7gnKX1v6KKWumD+5R77RXK9ETq
-         b9Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752051653; x=1752656453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zz++lXVZZRg85V8nKOrpOvqejfIfLzDK/+6R1g01Te0=;
-        b=P4rxSt45uMKfDqnnbColLA3qXhPtOGTjKWa+CpRUZNSzfqYCdUHDUiurYUzrp2Zi/r
-         +POXCuidT9iI+0D90lTClZ94iudrZCqDek2lwk7CUC8TFjeSD250pLiId6LegGv1Da/j
-         Qzy9MQJuxgkCWf8zcK9MCadTM5hJTZToVhcYdzZGNJEwWcJ8VPV3Etw5ek21I3ZSNUId
-         w7rlUyqqoaOcyp2RxOFTU6BC6OKSdN/KB1q6YLxAvlju6D3RYuANp/DLbsWvquylbaBj
-         Qxi7Ao6++BwH4VR3qbXdmkaw1C2l9LibFR+e+TtMm/a2Qd1EgF34SukUgXufGdp/aKlk
-         EAgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyfk0Sx25CYpmSX2jbeIQa4Ny/PGeCJNak3rPm/+4QAVx/0r3fnwTKzbLOXmfZswM8Y4WJA2bp3exLpj5P@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiMAA6hjnhU+1d7/yoD37CM6rfpyH4o18MxfGmSgBwqhrNYQh1
-	R9NWDCg+riSMIh+iFRfn4NI74iNtzDO/4+bYa+9tCfM7DILjC2J9joGx/MWUTyHhIbNOP2O4ccP
-	vO91hFdFeTN4pvulewrglcGOF5t3niVY=
-X-Gm-Gg: ASbGncv3cvOWEiCTZac9dQVq2QPajTcZnfywpF2ul5QciquPB1NOt/hTn7PTwOwNDZz
-	1QEvlC3p3v804o+BRDzas43zORdllnY8olS0sE30MaNQ6ZLyfmp82aE+K/cgpdC6lFkxpcQvUy7
-	z099JyJ0NAr3L61paVLfuhpDsnTXtOJEvYR55nyQJZOMGgshHZ+AkSrA==
-X-Google-Smtp-Source: AGHT+IEQHhUlqAlqNU6carduPGmBsodkSwQll1a2fT4tVuWHdD9lczISDXMUZ1pf2OcxHiAahmOHtvCysqAONEWHG5g=
-X-Received: by 2002:a17:907:9704:b0:ad8:a935:b8e8 with SMTP id
- a640c23a62f3a-ae6cf526a63mr169848466b.5.1752051652275; Wed, 09 Jul 2025
- 02:00:52 -0700 (PDT)
+	s=arc-20240116; t=1752051908; c=relaxed/simple;
+	bh=naos+ztsM462dlUt3nnLFc74Mtmx6bRL1OC1kvlTzF0=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=owZ/RRbEAwlb67QX+1zW/GiPe156GeuzIi9V/7ss4+aCPK19vSABKSvYUuH77Iz90JyFeWVT+EhgBuF7za6vdOKtRBUCXOOa+HZhpHHS9RZJctC917NB6GD4U58MGA6/iKNd2N1yupqhgVi/hNPHJnERh0yVBPgOkIu/VIHbMi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=SkoQt1Ur; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1752051903; x=1752656703; i=quwenruo.btrfs@gmx.com;
+	bh=t4+CgnpsKZh4/GcF8WEpqmkQtOZhdGm5Eecfk+/kx7k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SkoQt1UrCmEe/v3R9esyEoQdU8sxEWp6SJo80QeNZC4u6yDUDl3lOBYqbx5Qjo5j
+	 5t4pZh8zsq4s5YhrYH7Chfq6p2GXWIY3KiJFXtRFXk7pL/RuOJng2mQvQ8pCq8wgA
+	 e+etCUytDi6hgJDxPahTTqEyhescHXpqx3ME2VR/t4A84qlTz71UfKSJIhJcrZu+0
+	 tB61PbWdFRaj/NLJ8oFMAIRedZy4fRvF6GOgdiP7DDFZcjtiWh8pvDFWHQht/4dfF
+	 dK2EScHuLQObPu1/Q6k3lUwVCYI+h4jb2dzrZtHnIZWn0lgK1MN8D8FzoKzqHjSKD
+	 k/wX0O12J448WeR/qQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MiaYJ-1vBmQ40N9D-00qDTK; Wed, 09
+ Jul 2025 11:05:03 +0200
+Message-ID: <5459cd6d-3fdb-4a4e-b5c7-00ef74f17f7d@gmx.com>
+Date: Wed, 9 Jul 2025 18:35:00 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604160918.2170961-1-amir73il@gmail.com> <e2rcmelzasy6q4vgggukdjb2s2qkczcgapknmnjb33advglc6y@jvi3haw7irxy>
- <CAOQ4uxg1k7DZazPDRuRfhnHmps_Oc8mmb1cy55eH-gzB9zwyjw@mail.gmail.com>
- <2dx3pbcnv5w75fxb2ghqtsk6gzl6cuxmd2rinzwbq7xxfjf5z7@3nqidi3mno46>
- <CAOQ4uxgjHGL4=9LCCbb=o1rFyziK4QTrJKzUYf=b2Ri9bk4ZPA@mail.gmail.com>
- <uxetof5i2ejhwujegsbhltntnozd4rz6cxtqx3xmtc63xugkyq@53bwknir2ha7>
- <CAOQ4uxhnXaQRDK=LpdPbAMfUU8EPze17=EHASQmG7bN5NdHWew@mail.gmail.com>
- <gi5bf6arjqycvzs5trox65ld5xaabnkihh4dp5oycsb2a2katp@46puvf6luehw>
- <CAOQ4uxhttUt6makW6GZGfBb=rat+gH9QQmparX3cexDJwzhVMw@mail.gmail.com> <CAOQ4uxiZ=UH+Dp974pecpUq1V8OwJBrzb-gtDRDDEGXL=0nVpA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiZ=UH+Dp974pecpUq1V8OwJBrzb-gtDRDDEGXL=0nVpA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 9 Jul 2025 11:00:40 +0200
-X-Gm-Features: Ac12FXw-5S571KyvebXeXwZP4dhd4oZSpMOVrDa3grfREskBbP15FfGaUyuMp4A
-Message-ID: <CAOQ4uxjNsY4jyeBFGY9Pu=qV2k_oMjC0LM6k9uk0X_6mQH9OoA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/3] fanotify HSM events for directories
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Why a lot of fses are using bdev's page cache to do super block
+ read/write?
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:NMqfGCd5DuW+6E9+fcb0Yb4wonnLM6P8Yb90GJcq5vVAM64T+qp
+ /NehyB5mHUqgv/fbohhagjsizuLxEsJ4S6H7MDqfuXL1DDCKjQLMUqbngH6z8O55GfYVl9v
+ +RAzhsyNu0fXGtZrNoQoTTx7WKXMW++67YvcuvNONC+VfRg/2gXRJpbbkGWSbevG3fi5pxe
+ FsyKfgj2az3dz3WnyyqNQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UYaz9elAtTQ=;/zSFRBJ4zDk9KQB7sq8I2uL3poy
+ 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
 
-On Tue, Jul 8, 2025 at 5:32=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
-wrote:
->
-> On Fri, Jul 4, 2025 at 12:58=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > On Fri, Jul 4, 2025 at 11:24=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Thu 03-07-25 21:14:11, Amir Goldstein wrote:
-> > > > On Tue, Jun 17, 2025 at 11:43=E2=80=AFAM Jan Kara <jack@suse.cz> wr=
-ote:
-> > > > > On Mon 16-06-25 19:00:42, Amir Goldstein wrote:
-> > > > > > On Mon, Jun 16, 2025 at 11:07=E2=80=AFAM Jan Kara <jack@suse.cz=
-> wrote:
-> > > > > > > On Tue 10-06-25 17:25:48, Amir Goldstein wrote:
-> > > > > > > > On Tue, Jun 10, 2025 at 3:49=E2=80=AFPM Jan Kara <jack@suse=
-.cz> wrote:
-> > > > > > > > > On Wed 04-06-25 18:09:15, Amir Goldstein wrote:
-> > > > > > > > > > If we decide that we want to support FAN_PATH_ACCESS fr=
-om all the
-> > > > > > > > > > path-less lookup_one*() helpers, then we need to suppor=
-t reporting
-> > > > > > > > > > FAN_PATH_ACCESS event with directory fid.
-> > > > > > > > > >
-> > > > > > > > > > If we allow FAN_PATH_ACCESS event from path-less vfs he=
-lpers, we still
-> > > > > > > > > > have to allow setting FAN_PATH_ACCESS in a mount mark/i=
-gnore mask, because
-> > > > > > > > > > we need to provide a way for HSM to opt-out of FAN_PATH=
-_ACCESS events
-> > > > > > > > > > on its "work" mount - the path via which directories ar=
-e populated.
-> > > > > > > > > >
-> > > > > > > > > > There may be a middle ground:
-> > > > > > > > > > - Pass optional path arg to __lookup_slow() (i.e. from =
-walk_component())
-> > > > > > > > > > - Move fsnotify hook into __lookup_slow()
-> > > > > > > > > > - fsnotify_lookup_perm() passes optional path data to f=
-snotify()
-> > > > > > > > > > - fanotify_handle_event() returns -EPERM for FAN_PATH_A=
-CCESS without
-> > > > > > > > > >   path data
-> > > > > > > > > >
-> > > > > > > > > > This way, if HSM is enabled on an sb and not ignored on=
- specific dir
-> > > > > > > > > > after it was populated, path lookup from syscall will t=
-rigger
-> > > > > > > > > > FAN_PATH_ACCESS events and overalyfs/nfsd will fail to =
-lookup inside
-> > > > > > > > > > non-populated directories.
-> > > > > > > > >
-> > > > > > > > > OK, but how will this manifest from the user POV? If we h=
-ave say nfs
-> > > > > > > > > exported filesystem that is HSM managed then there would =
-have to be some
-> > > > > > > > > knowledge in nfsd to know how to access needed files so t=
-hat HSM can pull
-> > > > > > > > > them? I guess I'm missing the advantage of this middle-gr=
-ound solution...
-> > > > > > > >
-> > > > > > > > The advantage is that an admin is able to set up a "lazy po=
-pulated fs"
-> > > > > > > > with the guarantee that:
-> > > > > > > > 1. Non-populated objects can never be accessed
-> > > > > > > > 2. If the remote fetch service is up and the objects are ac=
-cessed
-> > > > > > > >     from a supported path (i.e. not overlayfs layer) then t=
-he objects
-> > > > > > > >     will be populated on access
-> > > > > > > >
-> > > > > > > > This is stronger and more useful than silently serving inva=
-lid content IMO.
-> > > > > > > >
-> > > > > > > > This is related to the discussion about persistent marks an=
-d how to protect
-> > > > > > > > against access to non-populated objects while service is do=
-wn, but since
-> > > > > > > > we have at least one case that can result in an EIO error (=
-service down)
-> > > > > > > > then another case (access from overlayfs) maybe is not a ga=
-me changer(?)
-> > > > > > >
-> > > > > > > Yes, reporting error for unpopulated content would be accepta=
-ble behavior.
-> > > > > > > I just don't see this would be all that useful.
-> > > > > > >
-> > > > > >
-> > > > > > Regarding overlayfs, I think there is an even bigger problem.
-> > > > > > There is the promise that we are not calling the blocking pre-c=
-ontent hook
-> > > > > > with freeze protection held.
-> > > > > > In overlayfs it is very common to take the upper layer freeze p=
-rotection
-> > > > > > for a relatively large scope (e.g. ovl_want_write() in ovl_crea=
-te_object())
-> > > > > > and perform lookups on upper fs or lower fs within this scope.
-> > > > > > I am afraid that cleaning that up is not going to be realistic.
-> > > > > >
-> > > > > > IMO, it is perfectly reasonable that overlayfs and HSM (at leas=
-t pre-dir-access)
-> > > > > > will be mutually exclusive features.
-> > > > > >
-> > > > > > This is quite similar to overlayfs resulting in EIO if lower fs=
- has an
-> > > > > > auto mount point.
-> > > > > >
-> > > > > > Is it quite common for users to want overlayfs mounted over
-> > > > > > /var/lib/docker/overlay2
-> > > > > > on the root fs.
-> > > > > > HSM is not likely to be running on / and /etc, but likely on a =
-very
-> > > > > > distinct lazy populated source dir or something.
-> > > > > > We can easily document and deny mounting overlayfs over subtree=
-s where
-> > > > > > HSM is enabled (or just pre-path events).
-> > > > > >
-> > > > > > This way we can provide HSM lazy dir populate to the users that=
- do not care
-> > > > > > about overlayfs without having to solve very hard to unsolvable=
- issues.
-> > > > > >
-> > > > > > I will need to audit all the other users of vfs lookup helpers =
-other than
-> > > > > > overlayfs and nfsd, to estimate how many of them are pre-conten=
-t event
-> > > > > > safe and how many are a hopeless case.
-> > > > > >
-> > > > > > On the top of my head, trying to make a cachefilesd directory a=
-n HSM
-> > > > > > directory is absolutely insane, so not every user of vfs lookup=
- helpers
-> > > > > > should be able to populate HSM content - should should simply f=
-ail
-> > > > > > (with a meaningful kmsg log).
-> > > > >
-> > > > > Right. What you write makes a lot of sense. You've convinced me t=
-hat
-> > > > > returning error from overlayfs (or similar users) when they try t=
-o access
-> > > > > HSM managed dir is the least painful solution :).
-> > > > >
-> > > >
-> > > > Oh oh, now I need to try to convince you of a solution that is less=
- painful
-> > > > than the least painful solution ;)
-> > >
-> > > :)
-> > >
-> > > > I have been experimenting with some code and also did a first pass =
-audit
-> > > > of the vfs lookup callers.
-> > > >
-> > > > First of all, Neil's work to categorize the callers into lookup_nop=
-erm*
-> > > > and lookup_one* really helped this audit. (thanks Neil!)
-> > > >
-> > > > The lookup_noperm* callers are not "vfs users" they are internal fs
-> > > > callers that should not call fsnotify pre-content hooks IMO.
-> > > >
-> > > > The lookup_one* callers are vfs callers like ovl,cachefiles, as wel=
-l
-> > > > as nfsd,ksmbd.
-> > > >
-> > > > Some of the lookup_one() calls are made from locked context, so not
-> > > > good for pre-content events, but most of them are not relevant anyw=
-ay
-> > > > because they are not first access to dir (e.g. readdirplus which al=
-ready
-> > > > started to iterate dir).
-> > > >
-> > > > Adding lookup pre-content hooks to nfsd and ksmbd before the releva=
-nt
-> > > > lookup_one* callers and before fs locks are taken looks doable.
-> > > >
-> > > > But the more important observation I had is that allowing access to
-> > > > dirs with unpopulated content is not that big of a deal.
-> > > >
-> > > > Allowing access to files that are sparse files before their content=
- is filled
-> > > > could have led applications to fault and users to suffer.
-> > > >
-> > > > Allowing access to unpopulated dirs, e.g. from overlayfs or even fr=
-om
-> > > > nfsd, just results in getting ENOENT or viewing an empty directory.
-> > >
-> > > Right. Although if some important files would be missing, you'd still=
- cause
-> > > troubles to applications and possible crashes (or app shutdowns). But=
- I
-> > > take the ENOENT return in this case as a particular implementation of=
- the
-> > > "just return error to userspace if we have no chance to handle the lo=
-okup
-> > > in this context" policy.
-> > >
-> > > > My conclusion is, that if we place the fsnotify lookup hook in
-> > > > lookup_slow() then the only thing we need to do is:
-> > > > When doing lookup_one*() from possibly unsafe context,
-> > > > in a fs that has pre-dir-content watchers,
-> > > > we always allow the lookup,
-> > > > but we never let it leave a negative dcache entry.
-> > > >
-> > > > If the lookup finds a child entry, then dir is anyway populated.
-> > > > If dir is not populated, the -ENOENT result will not be cached,
-> > > > so future lookups of the same name from safe context will call the =
-hook again,
-> > > > populate the file or entire directory and create positive/negative =
-dentry,
-> > > > and then following lookups of the same name will not call the hook.
-> > >
-> > > Yes, this looks pretty much like what we've agreed on before, just no=
-w the
-> > > implementation is getting more concrete shape. Or am I missing someth=
-ing?
-> > >
-> >
-> > What (I think) we discussed before was to fail *any* lookup from
-> > internal vfs callers to HSM moderated fs, so ovl would also not be able=
- to
-> > access a populated directory in that case.
-> >
-> > What I am suggesting is to always allow the lookup in HSM fs
-> > and depending on a negative lookup result do "something".
-> >
-> > There is a nuance here.
-> > Obviously, userspace will get ENOENT in this case, but
-> > does lookup_one() succeed and returns a negative unhashed
-> > dentry (e.g. to ovl) or does it drop the dentry and fail with -ENOENT?
-> >
-> > I was thinking of the former, but I think you are implying the latter,
-> > which is indeed a bit closer to what we agreed on.
-> >
-> > For callers that use lookup_one_positive_unlocked()
-> > like ovl_lookup(), it makes no difference, but for callers that
-> > create new entries like ovl_create_upper() it means failure to create
-> > and that is desirable IMO.
-> >
-> > I guess, if ovl_mkdir() fails with -ENOENT users would be a bit confuse=
-d
-> > but in a way, this parent directory does not fully exist yet, so
-> > it may be good enough.
-> >
-> > We could also annotate those calls as lookup_one_for_create()
-> > to return -EROFS in the negative lookup result in HSM moderated dir,
-> > but not sure that this is needed or if it is less confusing to users.
-> >
-> > What's even nicer is that for overlayfs it is the more likely case that
-> > only the lower layer fs is HSM moderated, e.g. for a composefs
-> > "image repository".
-> >
-> > Adding safe pre-dir-content hooks for overlayfs lower layer lookup
-> > may be possible down the road. A lot easier that supporting
-> > lazy dir populates in a rw layer.
-> >
-> >
->
-> FYI, here is a WIP branch for the scheme that we discussed here:
->
-> https://github.com/amir73il/linux/commits/fan_pre_dir_access/
->
+Hi,
 
-Some more commentary of design choices in this WIP patch set.
+Recently I'm trying to remove direct bdev's page cache usage from btrfs=20
+super block IOs.
 
-We have discussed in the context of page fault events the concept of
-a "handle once" HSM event per file range, where events are not
-generated if page cache pages are already populated, even if said
-page cache pages were populated before the HSM marks were set up.
+And replace it with common bio interface (mostly with bdev_rw_virt()).
 
-The pre-content events on page fault did not happen eventually,
-but as far as API documentation is concerned, we are still allowed
-to suppress multiple pre-content events on the same file range.
+However I'm hitting random generic/492 failure where sometimes blkid=20
+failed to detect any useful super block signature of btrfs.
 
-A similar concept was applied to pre-dir-content events w.r.t dcache,
-but with a few nuances.
 
-The pre-dir-content event from lookup on NAME in DIR is only generated
-in lookup_slow() when the dcache entry of NAME is not populated.
-If a positive/negative dentry was created before setup of HSM mark,
-the event will not be generated.
+This leads more digging, and to my surprise using bdev's page cache to=20
+do superblock IOs is not an exception, in fact f2fs is doing exactly the=
+=20
+same thing.
 
-***This is the new part that we did not discuss that I implemented:***
-When a pre-dir-content event WITHOUT a NAME (i.e. from readdir)
-is handled by HSM (i.e. FAN_ALLOW response), the dentry is marked
-DCACHE_HSM_ONCE and no further pre-dir-content events are generated
-on that directory.
-The DCACHE_HSM_ONCE flag is not set when there are no HSM marks
-or when a directory has an HSM ignore mark!
-***
 
-IMO this behavior is inline with the former "handle once" strategy.
+This makes me wonder:
 
-> There is an LTP branch of the same name that passes tests.
->
-> I also added two simple patches for nfsd support for pre-dir-content even=
-ts
-> but they are optional, to demonstrate that internal users could be
-> supported later.
->
+- Should a fs use bdev's page cache directly?
+   I thought a fs shouldn't do this, and bio interface should be
+   enough for most if not all cases.
 
-The "handle once" design helps with the implementation of nfsd
-pre-dir-content hook.
-For simplification, those hooks were implemented in the permission check in=
-side
-fh_verify(fhp, NFSD_MAY_EXEC) which is called before every nfsd lookup_one(=
-)
-operation. fhp is the context for the entire "transaction", and this
-hook position
-is usually [*] safe w.r.t held fs locks.
+   Or am I wrong in the first place?
 
-The DCACHE_HSM_ONCE design, guarantees that there will be a single
-"safe context" pre-dir-content event in fh_verify(fhp, NFSD_MAY_EXEC)
-and the latter hooks in lookup_one() with freeze protection held will be
-suppressed.
+- What is keeping fs super block update from racing with user space
+   device scan?
 
-However, the nfsd "safe" pre-dir-content hooks are not a must for merging
-the pre-dir-content event feature.
+   I guess it's the regular page/folio locking of the bdev page cache.
+   But that also means, pure bio based IO will always race with buffered
+   read of a block device.
 
-If the nfsd "safe" hooks are not merged, nfsd (as will overlayfs) will stil=
-l be
-able to safely do lookup_one() on directories where HSM marks exist
-with some caveats:
-- A directory that was already populated (DCACHE_HSM_ONCE)
-  will be fully accessible (read/write) for nfsd
-- An existing child name (positive dentry) can be looked up by nfsd
-- A lookup of non-existing name lookup will return -ENOENT
-  as it should (without leaving a negative dentry behind)
-- An attempt to create a positive dentry (create/rename) will fail
-  with -ENOENT (as if directory is IS_DEADDIR)
-
-[*] in nfsd_create_locked() the fh_verify(fhp, NFSD_MAY_EXEC) is not
-in safe context, so there is also a preemptive hook also in fh_want_write(f=
-hp)
-in nfsd_create().
-CC nfsd guys to explain to me why nfsd_create() has a NFSD_MAY_NOP
-access permission and not NFSD_MAY_EXEC.
+- If so, is there any special bio flag to prevent such race?
+   So far I am unable to find out such flag.
 
 Thanks,
-Amir.
+Qu
 
