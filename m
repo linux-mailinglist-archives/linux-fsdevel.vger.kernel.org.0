@@ -1,109 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-54392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABF3AFF417
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 23:44:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC57AFF456
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 00:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C99A5A7F0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 21:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D6C175C30
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 22:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DDE23C514;
-	Wed,  9 Jul 2025 21:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="M+Vjkmar"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D842E23C501;
+	Wed,  9 Jul 2025 22:03:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2B923E344
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 21:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A02E13D2B2;
+	Wed,  9 Jul 2025 22:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752097457; cv=none; b=iBVGUbZy81TP3Kr7uSw6e7a09Q6u3WcyEOxrmTZJqqeC9uIpfiNyLuYDJzaQYHv0llFeiAdj3o3thZBQpn3MjxBeX1yuecqRIYuPBjPcifHqaBBWuJeDe6eCT6OqWj9xg4cdKci6Vevzc8xwVpYNRQsnsBjFvKLyRZxR5iBxye0=
+	t=1752098622; cv=none; b=L+mwFj4D59ORqY4FJKJsvWoLtdFjWSOxqOs1UoIIwTYZQIkL8vIHDKLZfehQuT7MaR38lbtkrfZB2LgkQwdMm782h0u0iW74btyz26pmkYpS813LsSbJ4iurHM9U6mNabtuK3YEqOHZ1uXocTp6kVSQfwPE351GZ21gR5VFqjqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752097457; c=relaxed/simple;
-	bh=QM3ZwKzZ3tmooQKRsyzdW8dMI+e0bgrGReSxQbsBbz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nhxf74pud0eo8E+W1LTwvAqhKAf+NVi3iKyR9aUidPGr5o2V6nnbRqS9DVvWLxoGhBYTY/zA21OUSfoLHlfT2rpSUymHJCQgF7O3zTht5bjD98gS3MsQwVsh/k9PmXlaBUXEClD4QeTUnm2l+FopTYgg1ytRrZTXK/tjG3sHSPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=M+Vjkmar; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae223591067so44563366b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jul 2025 14:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1752097453; x=1752702253; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J2oOfilMeJ3fSH+1jR5dPS+6bpms3vDBaMx9PS7L2n8=;
-        b=M+Vjkmar2DZR01VBbGidpjLsj5WkhccV4HkYK/+hg7utLrEMINgnjypBRimA/63N9Z
-         yYsj7DHfmQMKO1QAv71VK0sNBQkM9peUJhNd+uT1+KdZik4D91/04Eja8bsYuFfp0NYO
-         FQ3oMpJJIDemPPNuxCCNSfbuS55si7hddv+RnXQA0b+5DhFQB8Z7rNyJQXBnKOOuK4Rl
-         95Iib0HNh/m9cbmeeGI8t7IUpxYr+cfY+DNwK7eo7gUezPshoSEvsBIeAy7Pg6vTmmhV
-         h3t0qqhwOB/bMwwUqNpEiS29wNroRRQR/3a4uP4NUgAMh9KoBsErPHFfXlzrhjWBnwHO
-         DNkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752097453; x=1752702253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J2oOfilMeJ3fSH+1jR5dPS+6bpms3vDBaMx9PS7L2n8=;
-        b=w5d8vvZW5EMALGJaOb2T0b3g47sevruP+JmHYVbP5f9Ixb8lUlBU91kIVwVccQlzPS
-         fO+6+dhUz9tIR3tTbEksq+e+DCpYh3SiNP1YvhpEPzZcbHgMbyDADxvJ+AZlKtIDd+UI
-         2YFPn7r3OkXZkdEFEJP8XK41fDopQ4m/NWgB2fLqjmseJjb2qUj+KknKbpgJH0IkD+mC
-         4EThEkfr/gxKh5d/uQC0KdfI4Ekbuz7CajuJoVrt6pr+zSbgS2rONCaEWFVzKzsXH1k9
-         w+qvlV6kYmXOugdcoqBTAIyXVMbUsUDYlBLiwwvj1t2gBY8uQHs+0BTZlFgGJH++x4OS
-         mLmg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9FoDd3uE4AZT29Aa752+hupO9w9BSNpC0N9imVi8iyQHQ85e5e5Ubr7GBw1/qzcObkB684pnrukyLGCtK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm01R6jKPEZmvzS7+snyGV8XBFel/xLRYvPNOPSaUI8JhNxiV6
-	F9x47x+eqJcZhDeG+MSBJ0fXJp4BMvjgWl1IT00H81H7chX0YPaBz5runusLmbL5UEHPGqn9CQf
-	UbrkYM8aHuPc1ZlMrLw5pykCSTa0M6c/CRQ1v1lwYjQ==
-X-Gm-Gg: ASbGncsNKrA7AmuVBoDytXF1uyn+sQ07LgGec5HSHg6+2SrJwOge9F22MRu68bEpkdh
-	BfoVOgLT85aIChkvM9/EuID8QIy2lATQUIBb+DaXNEpSlrBC7I82QSZQ/l3dTewm8mrnCmRRzBl
-	P+aI1jyDRbGp7UMXCRNs8e5U1R6uEmCyeCJjb+DpfvOGyhVRydJhvRO/HcPLaLVDhGw6cobT8=
-X-Google-Smtp-Source: AGHT+IHRfBgI+JpvIFW5bdEhu8EMbBsinsmaICn0S2xVCrLK7zPglEC6AbVpvLywHBFg/8fSMjerPI4gbWHSZhnMN/4=
-X-Received: by 2002:a17:906:46d9:b0:ae3:d1fe:f953 with SMTP id
- a640c23a62f3a-ae6e7099e16mr25848366b.43.1752097453229; Wed, 09 Jul 2025
- 14:44:13 -0700 (PDT)
+	s=arc-20240116; t=1752098622; c=relaxed/simple;
+	bh=OSlNipfL8acGfxBPuYcCjdhJaWK0Nj+mUkPNpzpq8h0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BJhcPXycDi5/1xJ2ofrPi6W4X4OxeF8BgfpCvOEKsyEZsY+sb2Ne8X5qfVz1vuqORInZ6DpEBiqdyIvR/tZnayBXUdA81e7rXcqX19uGIH3Cq5so+1oRLsPOaCYqnto4+QQ+YTvC8yJc35sDu3gnc3eM7IDySOzAuTmxn+C4E0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 569M3Kc1078763;
+	Thu, 10 Jul 2025 07:03:20 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 569M3KgL078760
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 10 Jul 2025 07:03:20 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
+Date: Thu, 10 Jul 2025 07:03:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com>
- <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com>
- <2738562.1752092552@warthog.procyon.org.uk>
-In-Reply-To: <2738562.1752092552@warthog.procyon.org.uk>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 9 Jul 2025 23:44:02 +0200
-X-Gm-Features: Ac12FXwGyOaYIBhD6kJLi5Rdp0KMSI4jWTqWW8bY_UVcRj5P-WQCdanG6BjA4Q0
-Message-ID: <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com>
-Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev, linux-afs@lists.infradead.org, 
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hfsplus: don't use BUG_ON() in
+ hfsplus_create_attributes_file()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
+ <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
+ <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
+ <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
+ <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
+ <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
+ <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
 
-On Wed, Jul 9, 2025 at 10:22=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
-> > (The above was 6.15.5 plus all patches in this PR.)
->
-> Can you check that, please?  If you have patch 12 applied, then the flags
-> should be renumbered and there shouldn't be a NETFS_RREQ_ flag with 13, b=
-ut
-> f=3D80002020 would seem to have 0x2000 (ie. bit 13) set in it.
+On 2025/07/10 3:33, Viacheslav Dubeyko wrote:
+> My worry that we could have a race condition here. Let's imagine that two
+> threads are trying to call __hfsplus_setxattr() and both will try to create the
+> Attributes File. Potentially, we could end in situation when inode could have
+> not zero size during hfsplus_create_attributes_file() in one thread because
+> another thread in the middle of Attributes File creation. Could we double check
+> that we don't have the race condition here? Otherwise, we need to make much
+> cleaner fix of this issue.
 
-Oh, I was slightly wrong, I merged only 12 patches, omitting the
-renumbering patch because it had conflicts with my branch, and it was
-only a cosmetic change, not relevant for the bug. Sorry for the
-confusion!
+I think that there is some sort of race window, for
+https://elixir.bootlin.com/linux/v6.15.5/source/fs/hfsplus/xattr.c#L145
+explains that if more than one thread concurrently reached
+
+	if (!HFSPLUS_SB(inode->i_sb)->attr_tree) {
+		err = hfsplus_create_attributes_file(inode->i_sb);
+		if (unlikely(err))
+			goto end_setxattr;
+	}
+
+path, all threads except one thread will fail with -EAGAIN.
+
 
