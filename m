@@ -1,244 +1,293 @@
-Return-Path: <linux-fsdevel+bounces-54360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BCC8AFEBB6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 16:23:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33021AFEBFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 16:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7571D1CA0C37
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 14:16:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60AE41615DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 14:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16362E0B7C;
-	Wed,  9 Jul 2025 14:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AE22E5417;
+	Wed,  9 Jul 2025 14:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qoLnH+8p";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="n5TO/kcP"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jkl2KRat"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50230258CD3;
-	Wed,  9 Jul 2025 14:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070589; cv=fail; b=gVdrVwJ/uYRNsHwkDoX1PMfkiW08pWXkPrBgBE+M8dhQsI1DcC2fG8SKn5le3t3JmCbbwY+Wsfr4BoMGsx28cF/T1QrjJC23U6YfbM3oYCHWfjVOf1G9COPjj0fzLNTOpcJsd3joerpTV+25QFVELwe6FRjO1jgySAuHlcqa5Zk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070589; c=relaxed/simple;
-	bh=DXCfCMHL3AvhMx0THDLFtDguiaDg04AePYfs+6g16uA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=erfIMse1yyrQiv2pVe2A6NrYZZOg5r7bS5f7FmoSkcqc0sB6sfaaT3zTM0Th5rYamAphg5Qyhy5DuVIw5DXjRpLVBAv9iGkI+GDlmC64b6GPeHJIcxy8WZKgHd6644mPViyNiWW2g9yt+UhTfa5GbvEeDEaDR6YFgiLwi6vjV8w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qoLnH+8p; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=n5TO/kcP; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569E6pnj027411;
-	Wed, 9 Jul 2025 14:16:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=9zgIbkVo9mLiVm1Zdw
-	SzscPhBXxdWg+YVERS2NOzSEw=; b=qoLnH+8p+ANfMMEmtz/0XeCJII+nQwo8G4
-	1cnthdZSb1TF/jlpDYaZt4KJPgHp1QA+kz+qN3/B7jzS3US9+6hXwMp/EikOJ0Ik
-	affzUSE7wCA/OjtmY/mHzgwbysMQ1NGQNgf2ZgfeqhTCuimpsxPkAzSLqJSzUGQ/
-	Cln2TrZBSWTnUuAXcAvPhIST1JaXktvJ0iIeQ0/HzHLxeGARq64ACTm7MgRDQO2D
-	fbKXBifwbmDCMgN1c5zY7LOUy56Rb9sxkI15scYXqFNoBPuYKoLGdTjsNWGCIlwA
-	QCsG6uddjtYvb05XG3v5EHb2eAQ+gPULEA35+FFa2LLixp244Mrw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ssw68124-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Jul 2025 14:16:21 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 569E2POa024608;
-	Wed, 9 Jul 2025 14:16:20 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2064.outbound.protection.outlook.com [40.107.243.64])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgb9jan-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Jul 2025 14:16:20 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hvibsN8b31e3/YdtyUuvJLX81qz8VyXTteqhhe9Tn67ptdpkuB7CvMdSR1sFo3tR1Mm2L05M2fDhhW5UGDaMHx6GCk8OzKvNcgVvYoH6jodXO+X6fD7WXqj2wigaI5WExJfzihqY0OI+jqYI4kHlq6IFFEwaMOFRCDKHMmj7BTpdhUakbIKrR+ZtOdimwTkIpT2qI2FIH7RYlUiHxFBmrAGd8aerT1RhflU75bhTqGKFJsAUuOXt4qTuH2VZkx2fWV7IwVMnkElS83khbLmawCr3g/cFjt1UjRNnMPqKl1348AZdW7es6LV+ut0bfdqGmR2Hu3vegkmWl6cdSGsOKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9zgIbkVo9mLiVm1ZdwSzscPhBXxdWg+YVERS2NOzSEw=;
- b=f+fwdMfIGO7MQPsFv9+hzfP72iE/Af2B/li0wa08sIZNx+kvSZfpvQbWaqcjTOHABZ6rF0dfx6zp8rzwsflvfjFC7DJVvIPYHG+zq0JUszwa5BYJJ4yGYpvesFHQCfy2Lxy9Evyfb91WEGh1ob3pQS9WgCbW9h3gbW+4VuKeS4Fc0vgvrIbdBrM5b5UyB9Db8TtLYHxqrldYZ+E9vruAvHJXH2xcXZ2xObXflSCXa/piqPwkRFBaGzhXRnj+iOoC7zrmJv+1xlwJt7gVQQFPtSO+aqQ+uo648u+OEsnENk0Umm7W9vVJK5upQHpFqeDSwHfmSi7hBHYlTlJ75368oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0B62E2658
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 14:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752071343; cv=none; b=eX0aPEk48WPANteNjgKtnLyT+d3d46AlKREdYg4O28Sz8vehioW7BBTJ0OjSEgXBhcp74QlT5EH56dgS3fek1Fgj8WZvSoFJCOUw/h9B/kmE1a/4EEhxS+WzpTdwnJJGSxV+88d8L4K0bAAejkFP1Dmwnr0CvriLhz9S+lcinNk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752071343; c=relaxed/simple;
+	bh=W7s40s+PfnHkEfrZ9uqQOxuCwAKK3oCV4Tf1biTsg8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fbSkSQly/xMFVPheKw2Nc9XgaWL3ZostS9zOuVQcZe1DE0TxkFFvXY6AzV7sGyTSpqRSHP+SXuJz/Vsr1RxzgxVSbofM//8rV43GaHRHE/JvPRhoj+gD0ovVWpeCYLjQ24rV4NWcix3+c0bwpyeFY9YXyZTT6sRp8tCLa8MCZWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jkl2KRat; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-235e389599fso216105ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jul 2025 07:29:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9zgIbkVo9mLiVm1ZdwSzscPhBXxdWg+YVERS2NOzSEw=;
- b=n5TO/kcPJPUCdzb/XiQrKC0FbVxb57e3CiZxm/dFlr0sscPfXPwJw/yFoz2PLbPVTnGPz9nNobcIHvvtqt8LMJeBOPkJc8tvHxEsOHVaiIe84547fNFh10u8QgNt5nkmYLFUePceaLa4Of1FVc89qlN2h9jwl+ajJ/nPJi+Xr8M=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by BL3PR10MB6257.namprd10.prod.outlook.com (2603:10b6:208:38c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Wed, 9 Jul
- 2025 14:16:11 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
- 14:16:11 +0000
-Date: Wed, 9 Jul 2025 15:16:07 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+a91fcdbd2698f99db8f4@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] Revert "fs/ntfs3: Replace inode_trylock with
- inode_lock"
-Message-ID: <8dcd40e6-5cf3-4886-b91c-e693b38a2d17@lucifer.local>
-References: <d18a4aa3-bd7d-4c4b-a34c-48ba7f907ecf@lucifer.local>
- <20250708075709.5688-1-almaz.alexandrovich@paragon-software.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708075709.5688-1-almaz.alexandrovich@paragon-software.com>
-X-ClientProxiedBy: LO4P123CA0519.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:272::6) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=google.com; s=20230601; t=1752071341; x=1752676141; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=otqsPDt5osEXqjc5euk3u1KgCdwLcQ8YUxZOr7B7LAY=;
+        b=Jkl2KRatCfbuD0/wXDThvA/ceDPQMsmpJlCa5Zabksrp+egx9Hh6fbixeqUP8PYA8o
+         A7gHnZVnyyCHWiXR/toyRNLk0FVYn6mxwfaQ4J1u0VxiA3fufwIWoQeFBgCxsh+LGUEp
+         PVKbuzVAnTMQzMwVgctEV8l/0nDfsAG7YRZV4702tmRgGfvvN6doNaYUt6sFkc5Q6uc6
+         bLQO3h7X883lCkX+Cs4nV40QNi5iBL+cF597lwy/n3Rxh79e3JCwhDUo6ei0ROqn7AG3
+         xtNpQaXq9aq/AVK5TdlKsKLDKQiQMk0OMCPy0iegIVJyzZen5ZTUErO4uOj1kbqX/MNs
+         eRtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752071341; x=1752676141;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=otqsPDt5osEXqjc5euk3u1KgCdwLcQ8YUxZOr7B7LAY=;
+        b=KbhEC0Kpn8r4eyCqZofvMOjjclFaXl5tTLjyplk/U8Y3Tim7TdlW2xG6NE3GsG2n2B
+         XZeAcG7P/fI4G7TeqW4b1viXUlsRyaPVB6Cusg3FGGS7LxfMMEef8noqEZorrkM9GDWn
+         TSH3POLyMGKE3AS/s+b5L5Wn1FLEoxerRMH/8XTHPQ2nMosZmZfe/deuT65b9MfAjaVF
+         iqQ0hs1EnnfhxARdX+BbjD1/HgSXP3vxS+KM7x3N/5lJJ+wEtR2Hp2pwdKBvHGCsghTR
+         2XevXIw3CGHbz8ZY+gHy3Rn9ZYxYF4olrlq72o0d3pJuCZ0LCWuv1n3cYymYPpAaIuJP
+         Bdyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuYkXtFIGJEYm/6sYJ4kMd5KklXBPgZqkQKLWMMun4ZRwuxvL88xJSqVeBatX/9k/h2AROCi3I2iIpfbB3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCcXnHNYspr1i44bE3iy9o3/yRGhItJbpTxl7frtjNrRE/zymQ
+	JSgVKrAp9HR0gl/R2m7lXIpV8rDeohBO0YTxkv6Qg+zerstxHFvWh7SwWBjttwE6t3elaguDGne
+	FHO9caZ7wbKyOtU/z5blwvX24Du+uo3cVTUS/5b5t
+X-Gm-Gg: ASbGncsZtYpu6In/7aQQw1hoRdsiKa3IysNan50I6NixrwSTGyR5SyweJPcY0elpFBP
+	1iCHQEjTprnZkXSeM8Q7eBwjSqVc29NTQyijHzmRYgkeflntRKF2cer804/GnnsMW8WdOCHYVZg
+	lWACowdgbkpxY4UJqeFci9QIj8Eu5sqdU0fZeBux7MMyu1mcTabI06wPS+UisWrn9OFP2shC3Fx
+	yhL
+X-Google-Smtp-Source: AGHT+IHZnJT8IPYNYYlq8IZWbrFrKSERazCCUgk/PYCXPT2eafZj+EWruKSZR2KdLOBmcVX/Dr9qFLZcvU+hjVe4mck=
+X-Received: by 2002:a17:903:234a:b0:22e:4509:cb86 with SMTP id
+ d9443c01a7336-23ddae070d9mr2349035ad.19.1752071340735; Wed, 09 Jul 2025
+ 07:29:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BL3PR10MB6257:EE_
-X-MS-Office365-Filtering-Correlation-Id: dde968b3-ffa8-4b01-c6b8-08ddbef327b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?s6cLyOn7hXueqWOhsEc5IrnHyJxpKzt68n7K4kcK6lLjgv9L0ePWw1/QUxd/?=
- =?us-ascii?Q?JheYk8W4bnO3dPJTuTcL5CtTI0mC4vLDtgQLGb9+rNk1uY11chkXh5HchfkJ?=
- =?us-ascii?Q?PAjkHGdGd2FIT8uKZ1xrcDlEo19/FElbkqTvBbMOVkdxygr1TorZTW9ffQVH?=
- =?us-ascii?Q?xHOSR7XMQt5ECyj2o2zg53oDnRI3AsXUiNVx8zH216AjpCDFFsS8EaS9u+HU?=
- =?us-ascii?Q?YAJjXvyzYoOUs2AW9wo1Ix3lMu5b4RiykE7BuR0/oJ+3QwzK5Sgwlghr8Ix9?=
- =?us-ascii?Q?SLNMppVeu/yEOPoO0qICg/XFpnrDaOo6rK1S8/sY/Aj9gZtFoSsAc+DR4CKe?=
- =?us-ascii?Q?sVl/aTKnWnXCcniSf2LQhMpK8G+hApQluWp9d5VrrCnMawPHklJ8SvofAyyx?=
- =?us-ascii?Q?jja1AgFaHCEMsddNKU8riqgZ5a3tiT5k8ELuX7Yn+lrVfsnCTO8n/gmP/hyP?=
- =?us-ascii?Q?b4BOS98awGtNjUC/h68wQ4wGX37XG/8pvhZLLYlN2DBUFFCQhLzMAbJ6WPqC?=
- =?us-ascii?Q?ZS38qO8Dhu0jUCl2JEVG+ZrKs7GUaRH/pzc4wOMavfStP+EkXDGwYSYDyZ6g?=
- =?us-ascii?Q?YeXxHt7aPu9O+P7fl7Aig43SLE1MmZXUmMx3S0wtOBrLTXTpODdjz0nRbbfa?=
- =?us-ascii?Q?cFVCKaESGw7TQx6V1c1jseCL8IObInfr6QdShxNOylUw3JBmjtaSLZfvjzk9?=
- =?us-ascii?Q?C40M6Ygef8B+kZAUz6ncOgV+WatnFh8LWfzTJ8bMkDgGVWUo5PYf3owqyXxw?=
- =?us-ascii?Q?iH7RUtpMiokOFH5Vns4PXp7oSn621yQNRYHtQeTnf0zswQ2fAQAg6BTtrgFv?=
- =?us-ascii?Q?3QVkpAFh6FAkr5Z/5zfdIgJlHe2x5jyrrFTORl9AXX0SIjMlC8H6OpkFaKQ0?=
- =?us-ascii?Q?8l8ybLqVI6wJ/LhmYxPy1LJwQMZFPulATFH5S9uedyryTORA/o9hLxEi6z7K?=
- =?us-ascii?Q?fV5BxlzM6a2x2OW2yNS4yJOx2Nm3Dm+/KjeXJ1RTBwmj6mqub2GB6e66D6Xk?=
- =?us-ascii?Q?ScfhynBfODDAiLjFkAxACchLECVOH1+ligejW2bhZr3dBjyvf3WJ5DBn1dlo?=
- =?us-ascii?Q?xygyvFSQmqGxPX236mYBTjeWCQCNhWdzlliZucFwT3Szj5zOwvNLcfqC726O?=
- =?us-ascii?Q?qzEYMcYyyScmb34QloRmZmgWrHyj3aWxGUuJv4WCH+T7kgHWK9mFQuSBz0Hu?=
- =?us-ascii?Q?7gWF8UAfr/iudn27XA2OAoRjk2JZg1XuWI4kr28iNeJ+VG91g00s6UFLjQjr?=
- =?us-ascii?Q?LtBbRNSh6TS2qZhGxv7x+BA2U9M77WJREw440Nd1eyT8OMkVKf3LB5cUexU8?=
- =?us-ascii?Q?GcrDPdOEmYFn/vIQSqPpkZTamwAN/tdiGi26D/R4bHAkbifcr+E/2JvenA0r?=
- =?us-ascii?Q?+f5D56hZkbRpsb00Aq2x7zgFvDN5JiTXjD7cW7tENyMRe7AYSA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oZ4k99EIV86wZjTMkFcNQzHv/wpdrmVLMNqLv8zjrpfi8D9eFjqluV7Ai0DG?=
- =?us-ascii?Q?a/aZOiERMHzCqZbC2wYMSmRMfdWgkpwFCCeeVYUxMGWPCLRScjK/sRhY/IeX?=
- =?us-ascii?Q?3AJg+DMXl8oUlCqkmERP1XqGPYkzbf/cVytkIpvqFKlQH9Wm81AIcWdobbDv?=
- =?us-ascii?Q?kjSn6CrB4SPVOv+u/wgIlkX8ZfzFFSyVqkKOb4ZtYqUPLETstdt155ER5XCM?=
- =?us-ascii?Q?NAYY2FwMhC1eh6QaS/oPVSxMQICzePKcXhBTsA6ddwlJ5oWnn6Ot4mc/34yo?=
- =?us-ascii?Q?EznyglxDCIAofDdhPKE0Pfxsk7g0gqo69I1j31RJIA+v5Z/0KXtHyBxodeDC?=
- =?us-ascii?Q?m01Zc7BcGk/Q1YUBlMs2lsc5K5pKlM70n26E2w4u+KbcZGSB36Y3gNaajUHn?=
- =?us-ascii?Q?3Yi9ScAO6hSWF370BTkRYGFzmChNchzaNTqFLuk7oOQpSgDkxpM70fd7XDaf?=
- =?us-ascii?Q?CRhUXGnDRwqBNAI49mv4vP5ltMC5j4FxVl7/2HmqBZ2kohQdGg6DBoL3qDU/?=
- =?us-ascii?Q?zQd0IZEau0hCJXCdRQvyRksBH7b3zoV8s+3XBuPLSgt24tGp4nUUF3t9JYII?=
- =?us-ascii?Q?Fq+Kz7x4u9TKC4vtz5YwNoOMTC/9Ww9oBPnkca/1F8mbqO0w6iDGaB22ZVnn?=
- =?us-ascii?Q?IJUmgUt4ml3L7tCEKJn2bIgz+rVK4BAyOel23FjjLKqsCzAlIxz1Dti7NISD?=
- =?us-ascii?Q?2qb36yNW27F8vagG/dfj9nNDNYlA3mG+54aeA4F9IfcrYyNWh1BzTzMD/OgB?=
- =?us-ascii?Q?Zgqf0X7eopQCd2bEUHsyeoNy/iZhZ1tuBrwk7pbe8jt22ktMaQDA3255f59f?=
- =?us-ascii?Q?Oi4ANEcy/MgYutXF9972+LW/I9/E9VXkSAHK9nheUV+5NaaZy7Rrs+wG1OZv?=
- =?us-ascii?Q?pavoUMkYyijbdKTx4foU9h+gpOc/Lj/aI3eVMCc06DAJx4R1vSElyjPqTCrL?=
- =?us-ascii?Q?zsR4PIk0tEPzGOjdRybAJu+aTnBwC1XkVjczQhe5V2Le+IBA2WUcO6bZQzW4?=
- =?us-ascii?Q?AU42FElpvNDyc7uq76hwapfAtP5nssBaGHvVR/uq//6SdXaGADyvH87JWCmH?=
- =?us-ascii?Q?sqdPJSXy/nA8iEhWWbKH/JBzFdlZg4XIUX5uuYUQdDH+GRrxQxI2nDka3IP8?=
- =?us-ascii?Q?8EyerrKQbrkpEggvViY9/RCMCo7SsDv2BEr9OqnwM54onb3uRJQxCY0rDu1g?=
- =?us-ascii?Q?skWLQHDWEHUxDfuW1m27cLVxEx+48M17JizUG8nWplPL8833N10FoQorwDwp?=
- =?us-ascii?Q?dIHr2kAR+LoSFdglCh/sQl+BKwoyUYRxdIlpL9rg5TJPs8awWJyq4sISL4dk?=
- =?us-ascii?Q?NdNdtj+TagwYpGTjA9F+2rqSGlMNWJwWZiQofj92yJeSF37wtT89+IJwp9DU?=
- =?us-ascii?Q?zAvm6aehqmKENL+4lrB8RFgYgzZMyB3/+geZvlZYVz0c2dL3Lzmz/1UaYKKK?=
- =?us-ascii?Q?JaAKXpronpybuXsYJp3T8KF7/1/Utjp90prf12828wHCYAw07dHbfOBIVAyf?=
- =?us-ascii?Q?2IkYRVIM2WjRLIalOqgtpg4rLiJW1KkdFVlRg3rj68qIjGMnzzQoGBmbi3o0?=
- =?us-ascii?Q?BYWKBlAw5XzTjjqEMbdxwYZC9oS3WUGcHVP4LID0+Tmk7QFnu5I9IaKB3sfZ?=
- =?us-ascii?Q?uA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	qgA2/Bkq+IjH/2kYB81J3M2xZ6dZCCQd9pfTAqt8XMr9M/3Vs7RDYw22qRBLUE1nQ4/wCqSXzYGx7R5D45kBxhUa3W1iHakX5U+GSQgen8aUaGjOMwKWca1YGu+T7QZizPjyfZkABKLYUMUptq919RQ7+tRs5Jd49Nzm4ZG8pCiIKcGacqyHRUg/z9m6yNgMUStNlsXqTIAJyq6iNXcV5S7959e/qlafcsEtXBWJFOF+3aXK/HiJPpiEFzy4jCWSK7Y8+Sc2zQqYadWUQM+JWWpi8itBcRF7Y61nqP2C2QyhZnMGmINlXNdhzZojiH38SSLHAS4CXToEH0dmimgxdatHslmo1dyDtZtTzKX0taOJEDdduAArtlcwQ64tVuAwrcKQ3OqgD6pNBn9X3QzSbcT/2X5nx45jtdbp8Q4fdirZ5bznqvQuAhNym0pwAfqdk7KIpowoiC4xAmv+9b2B1uAhIHVFiuuiSJG3dclmMYz5NCVgFo3V/WhUK1QQYcSV2DlEwWXuawhSx9dMhkhzn8HJct3Y23WuLG+tNMF3EF7LifCOxGJk4MGmFid5vrMNAuTCz6K3xhcelPTHxRNDshn0C+jYOFzMLPIMItaFJYw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dde968b3-ffa8-4b01-c6b8-08ddbef327b8
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 14:16:11.0117
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +gJc75BDPXeELiQG/0HKmNOkCtrV4IeCH4o9BvuUSbcoZj2oPffgu4ioAG9K5mHeLavHvWb3pD0NACAaI1BRix8Q5Mejc69BDEjtH8Lfwns=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR10MB6257
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_03,2025-07-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507090128
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDEyOSBTYWx0ZWRfXw2pDmO2idQbi 4WOlDeDiX/OuhiMFg9baAtRYGYJKMQPBrB0nNfKThryWIXJ/ujFAOrYc1pQC2ZRuCYNW0eQOPem b+wRxrDUe0nWdz+jnczy2s6xssuT5lvxKTq1hNluK7X0eApRt/UEIT1tmb4bObvcF9RjF9P3bZm
- 2/M24UZojXjtXNGhkRInKJoOPvpExZj9pp/rQgZEv77gtAQWtmbzNPpQoEKMcDOx9a1s+xN55za mIsfa9nBLoJaAjbhDhvWYHzQkaKvlm7rasvFZlJC1ZoFJcZ++9u6bS87TrbdCwJKxPRY8KEIeu4 CVEGJcxGEjrBHxbmZxFdsdPt2gcL0DYuRadsdWM0JHeNJr41hQCRN4mSIJ/4qNYkVS1XF5Wkr+F
- PAJyYqoLLGpM1iBYjX32fncShw2zzJyk0pFuXa9dUisd3TLNIuLhcsh0nJvtvukYYsI7WaV+
-X-Proofpoint-GUID: m_hVDlgAY0nriKzujyNH5cUmkKF3_pU2
-X-Authority-Analysis: v=2.4 cv=KZrSsRYD c=1 sm=1 tr=0 ts=686e79b5 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=hSkVLCK3AAAA:8 a=yPCof4ZbAAAA:8 a=GFCt93a2AAAA:8 a=dr-cWorOyDwCWFR40oMA:9 a=CjuIK1q_8ugA:10 a=cQPPKAXgyycSBL8etih5:22 a=0UNspqPZPZo5crgNHNjb:22
-X-Proofpoint-ORIG-GUID: m_hVDlgAY0nriKzujyNH5cUmkKF3_pU2
+References: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
+ <006899ccedf93f45082390460620753090c01914.camel@intel.com>
+ <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+ <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
+ <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
+ <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
+ <aG1dbD2Xnpi_Cqf_@google.com> <5decd42b3239d665d5e6c5c23e58c16c86488ca8.camel@intel.com>
+ <aG1ps4uC4jyr8ED1@google.com>
+In-Reply-To: <aG1ps4uC4jyr8ED1@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Wed, 9 Jul 2025 07:28:48 -0700
+X-Gm-Features: Ac12FXzvLP7atWaiCB-cuaA1xwFEC8dxkhwp1kDPwptSswG_7FLCPsdSJrQ6QBQ
+Message-ID: <CAGtprH86N7XgEXq0UyOexjVRXYV1KdOguURVOYXTnQzsTHPrJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+To: Sean Christopherson <seanjc@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	Jun Miao <jun.miao@intel.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "tabba@google.com" <tabba@google.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "maz@kernel.org" <maz@kernel.org>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	Fan Du <fan.du@intel.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"jack@suse.cz" <jack@suse.cz>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	Kirill Shutemov <kirill.shutemov@intel.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"steven.price@arm.com" <steven.price@arm.com>, "anup@brainfault.org" <anup@brainfault.org>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "keirf@google.com" <keirf@google.com>, 
+	"mic@digikod.net" <mic@digikod.net>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	Erdem Aktas <erdemaktas@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "hughd@google.com" <hughd@google.com>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"jarkko@kernel.org" <jarkko@kernel.org>, "quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
+	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
+	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
+	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"hch@infradead.org" <hch@infradead.org>, "will@kernel.org" <will@kernel.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 08, 2025 at 09:57:09AM +0200, Konstantin Komarov wrote:
-> This reverts commit 69505fe98f198ee813898cbcaf6770949636430b.
+On Tue, Jul 8, 2025 at 11:55=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
 >
-> Initially, conditional lock acquisition was removed to fix an xfstest bug
-> that was observed during internal testing. The deadlock reported by syzbot
-> is resolved by reintroducing conditional acquisition. The xfstest bug no
-> longer occurs on kernel version 6.16-rc1 during internal testing. I
-> assume that changes in other modules may have contributed to this.
+> On Tue, Jul 08, 2025, Rick P Edgecombe wrote:
+> > On Tue, 2025-07-08 at 11:03 -0700, Sean Christopherson wrote:
+> > > > I think there is interest in de-coupling it?
+> > >
+> > > No?
+> >
+> > I'm talking about the intra-host migration/reboot optimization stuff. A=
+nd not
+> > doing a good job, sorry.
+> >
+> > >   Even if we get to a point where multiple distinct VMs can bind to a=
+ single
+> > > guest_memfd, e.g. for inter-VM shared memory, there will still need t=
+o be a
+> > > sole
+> > > owner of the memory.  AFAICT, fully decoupling guest_memfd from a VM =
+would add
+> > > non-trivial complexity for zero practical benefit.
+> >
+> > I'm talking about moving a gmem fd between different VMs or something u=
+sing
+> > KVM_LINK_GUEST_MEMFD [0]. Not advocating to try to support it. But tryi=
+ng to
+> > feel out where the concepts are headed. It kind of allows gmem fds (or =
+just
+> > their source memory?) to live beyond a VM lifecycle.
+>
+> I think the answer is that we want to let guest_memfd live beyond the "st=
+ruct kvm"
+> instance, but not beyond the Virtual Machine.  From a past discussion on =
+this topic[*].
+>
+>  : No go.  Because again, the inode (physical memory) is coupled to the v=
+irtual machine
+>  : as a thing, not to a "struct kvm".  Or more concretely, the inode is c=
+oupled to an
+>  : ASID or an HKID, and there can be multiple "struct kvm" objects associ=
+ated with a
+>  : single ASID.  And at some point in the future, I suspect we'll have mu=
+ltiple KVM
+>  : objects per HKID too.
+>  :
+>  : The current SEV use case is for the migration helper, where two KVM ob=
+jects share
+>  : a single ASID (the "real" VM and the helper).  I suspect TDX will end =
+up with
+>  : similar behavior where helper "VMs" can use the HKID of the "real" VM.=
+  For KVM,
+>  : that means multiple struct kvm objects being associated with a single =
+HKID.
+>  :
+>  : To prevent use-after-free, KVM "just" needs to ensure the helper insta=
+nces can't
+>  : outlive the real instance, i.e. can't use the HKID/ASID after the owni=
+ng virtual
+>  : machine has been destroyed.
+>  :
+>  : To put it differently, "struct kvm" is a KVM software construct that _=
+usually_,
+>  : but not always, is associated 1:1 with a virtual machine.
+>  :
+>  : And FWIW, stashing the pointer without holding a reference would not b=
+e a complete
+>  : solution, because it couldn't guard against KVM reusing a pointer.  E.=
+g. if a
+>  : struct kvm was unbound and then freed, KVM could reuse the same memory=
+ for a new
+>  : struct kvm, with a different ASID/HKID, and get a false negative on th=
+e rebinding
+>  : check.
+>
+> Exactly what that will look like in code is TBD, but the concept/logic ho=
+lds up.
 
-Great to have additional info about xfstest there.
+I think we can simplify the role of guest_memfd in line with discussion [1]=
+:
+1) guest_memfd is a memory provider for userspace, KVM, IOMMU.
+         - It allows fallocate to populate/deallocate memory
+2) guest_memfd supports the notion of private/shared faults.
+3) guest_memfd supports memory access control:
+         - It allows shared faults from userspace, KVM, IOMMU
+         - It allows private faults from KVM, IOMMU
+4) guest_memfd supports changing access control on its ranges between
+shared/private.
+         - It notifies the users to invalidate their mappings for the
+ranges getting converted/truncated.
+
+Responsibilities that ideally should not be taken up by guest_memfd:
+1) guest_memfd can not initiate pre-faulting on behalf of it's users.
+2) guest_memfd should not be directly communicating with the
+underlying architecture layers.
+         - All communication should go via KVM/IOMMU.
+3) KVM should ideally associate the lifetime of backing
+pagetables/protection tables/RMP tables with the lifetime of the
+binding of memslots with guest_memfd.
+         - Today KVM SNP logic ties RMP table entry lifetimes with how
+long the folios are mapped in guest_memfd, which I think should be
+revisited.
+
+Some very early thoughts on how guest_memfd could be laid out for the long =
+term:
+1) guest_memfd code ideally should be built-in to the kernel.
+2) guest_memfd instances should still be created using KVM IOCTLs that
+carry specific capabilities/restrictions for its users based on the
+backing VM/arch.
+3) Any outgoing communication from guest_memfd to it's users like
+userspace/KVM/IOMMU should be via notifiers to invalidate similar to
+how MMU notifiers work.
+4) KVM and IOMMU can implement intermediate layers to handle
+interaction with guest_memfd.
+     - e.g. there could be a layer within kvm that handles:
+             - creating guest_memfd files and associating a
+kvm_gmem_context with those files.
+             - memslot binding
+                       - kvm_gmem_context will be used to bind kvm
+memslots with the context ranges.
+             - invalidate notifier handling
+                        - kvm_gmem_context will be used to intercept
+guest_memfd callbacks and
+                          translate them to the right GPA ranges.
+             - linking
+                        - kvm_gmem_context can be linked to different
+KVM instances.
+
+This line of thinking can allow cleaner separation between
+guest_memfd/KVM/IOMMU [2].
+
+[1] https://lore.kernel.org/lkml/CAGtprH-+gPN8J_RaEit=3DM_ErHWTmFHeCipC6viT=
+6PHhG3ELg6A@mail.gmail.com/#t
+[2] https://lore.kernel.org/lkml/31beeed3-b1be-439b-8a5b-db8c06dadc30@amd.c=
+om/
+
+
 
 >
-> Fixes: 69505fe98f19 ("fs/ntfs3: Replace inode_trylock with inode_lock")
-> Reported-by: syzbot+a91fcdbd2698f99db8f4@syzkaller.appspotmail.com
-
-Thanks for swapping out the reported-by!
-
-> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-
-LGTM so:
-
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-> ---
->  fs/ntfs3/file.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> [*] https://lore.kernel.org/all/ZOO782YGRY0YMuPu@google.com
 >
-> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-> index 65fb27d1e17c..2e321b84a1ed 100644
-> --- a/fs/ntfs3/file.c
-> +++ b/fs/ntfs3/file.c
-> @@ -322,7 +322,10 @@ static int ntfs_file_mmap(struct file *file, struct vm_area_struct *vma)
->  		}
->
->  		if (ni->i_valid < to) {
-> -			inode_lock(inode);
-> +			if (!inode_trylock(inode)) {
-> +				err = -EAGAIN;
-> +				goto out;
-> +			}
->  			err = ntfs_extend_initialized_size(file, ni,
->  							   ni->i_valid, to);
->  			inode_unlock(inode);
-> --
-> 2.43.0
->
+> > [0] https://lore.kernel.org/all/cover.1747368092.git.afranji@google.com=
+/
+> > https://lore.kernel.org/kvm/cover.1749672978.git.afranji@google.com/
 
