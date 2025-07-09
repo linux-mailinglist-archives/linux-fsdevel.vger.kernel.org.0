@@ -1,166 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-54333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E44AFE1CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 10:04:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2196AFE1DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 10:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84A621BC3A22
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 08:04:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20674189380A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 08:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C09231C91;
-	Wed,  9 Jul 2025 08:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CA023C4EC;
+	Wed,  9 Jul 2025 08:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="reNW3Ye/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c8c3klp9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="reNW3Ye/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c8c3klp9"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="XX6tE8mN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C09222539E
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 08:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEEB2222C3;
+	Wed,  9 Jul 2025 08:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752048184; cv=none; b=i8JvbOjG/gK5jCnyiv1Y27CnXzlJnRkxvdAxHNKBKt4XH+rBVH9quiJCI02COrjpSnqtOUabNN23KkjQVR7kDEX62EvcJ8UoOhAi4kbz87MWfVsaH/6xVGKsQo9WCnEyujCugjDuJ/HVsV+U4iHFf0pJv3fMlz9m9vjC0lzyIf0=
+	t=1752048256; cv=none; b=MvyIuoHtxQkKV75frKMJB6PFZkgs/LPrRxEOEvBmgei+9dN7NTnelN1caxrZza86eGUUgrHMqFIxsbFECdQ+udw4FPqa/jadY2yByyby0RDgyWl0uPh4McT19BzPN+UYlb5kOL9xSOWzEeYWwU+dmqIXVUx+YjIpgU7ZTL3ZzcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752048184; c=relaxed/simple;
-	bh=2hVj3WPJGTOI5ttR0BXZCu36RqDG3d5KvV84aozwaT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIke2bhfOxXUHmQ1SkflMowTAvGIEA0zRh8BgLVffjYOWyTRup4jBhogkQuOQ9MYZgHaRCdlbhnc8UmszMjOU0Of9miy6ycmjEv/pxr1J+5W27Um+4NaKKuo/Gssp6PhTA/V0aInrztyFhW2ALTFxfku0HxuIZqTv+hHZddPIKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=reNW3Ye/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c8c3klp9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=reNW3Ye/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c8c3klp9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1752048256; c=relaxed/simple;
+	bh=4dvYtEbOtmwJ+1IDZR1sB8eZS1Ly2JkBVTnZJvK2PIQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VynYzggDkhbBGBUlE+hdwkt22HMwOjBl3qj7CTiLzf4icX9im4M+XYg0pWhJnsCUJJACpUvhWmfSNbC+WOMdsfkjTzFZ1aEjwRdTxLgAQj92DxFwuRAIM8fjOdwZtEaTvfH5kfzdhVJmuEXDFfA2tT3UWsuQycAnooFkfCGL0Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=XX6tE8mN; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 225041F456;
-	Wed,  9 Jul 2025 08:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752048180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bcVqT1NHrz9v7v;
+	Wed,  9 Jul 2025 10:04:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1752048245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=D4USnKXLWVvhNtIXh9OCfgW10nJLrrVasICrkzTcF/Q=;
-	b=reNW3Ye/JT4pOFyNnb3qTzur+8DixYMTxo571yrPPJxKPb8xUG38sGALu1M0JH/Wfh6+dW
-	6mCFd0KHhGJ/Yp/bHGLKM3n8sGhukmRTvvLY9sqW4lk+lGVQcEKklIpQAcfAr+9YTjpQmo
-	iXytIYfW9/RMDEijl9WAHc6QsCXJRwc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752048180;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D4USnKXLWVvhNtIXh9OCfgW10nJLrrVasICrkzTcF/Q=;
-	b=c8c3klp9cDCWCfI97Eg9wnwr6nrRBHxrlacDL9GIsyMnEk4/H9RTfbFTddu9IzrRQ1+v9a
-	SruPFGtSC+YHR6Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752048180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D4USnKXLWVvhNtIXh9OCfgW10nJLrrVasICrkzTcF/Q=;
-	b=reNW3Ye/JT4pOFyNnb3qTzur+8DixYMTxo571yrPPJxKPb8xUG38sGALu1M0JH/Wfh6+dW
-	6mCFd0KHhGJ/Yp/bHGLKM3n8sGhukmRTvvLY9sqW4lk+lGVQcEKklIpQAcfAr+9YTjpQmo
-	iXytIYfW9/RMDEijl9WAHc6QsCXJRwc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752048180;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D4USnKXLWVvhNtIXh9OCfgW10nJLrrVasICrkzTcF/Q=;
-	b=c8c3klp9cDCWCfI97Eg9wnwr6nrRBHxrlacDL9GIsyMnEk4/H9RTfbFTddu9IzrRQ1+v9a
-	SruPFGtSC+YHR6Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16A0B136DC;
-	Wed,  9 Jul 2025 08:03:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xdqCBTQibmgpcAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 09 Jul 2025 08:03:00 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AABEFA0A48; Wed,  9 Jul 2025 10:02:55 +0200 (CEST)
-Date: Wed, 9 Jul 2025 10:02:55 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] More fsnotify hook optimizations
-Message-ID: <bq6zo74rqcxrxsvna2brbijh6vspvpqhnfspl7qor3cm5vicoi@habq7bbppcxa>
-References: <20250708143641.418603-1-amir73il@gmail.com>
+	bh=ALSg0QD8uRphF8/oxSCVKyEeBf8l1V1KzIwjcnUWqG4=;
+	b=XX6tE8mNF+WRKfctp233Q8R5d91TxrSW4Wp3rGRmG54yh6tmy+CFbWrPNd+Zxh3E6r61oW
+	AAO6pSiq3hgyjQoPgOTVlYVSaYOYmU0sHh464sOvk/a8L4wxIviL21atL97v2h7wb+4qQT
+	N1dgVpUunhtHFZt8zr1YzsAVmBchkWdqzASoGoLxpiMma+IRXD7ZxSjyIEcwkYGIGdv9/C
+	NoumHmmkQIUWS37PTQQuspEbghG9yPS8SeNO8KamONfeHEG/6kw/Zbmw+35SnHmKojck1Q
+	L9EpOxY1u8Z3e0xocCbgBoOKqGbTR/enWahc5qCdqO4Uj9URDKeGtsDgMOkhgw==
+Message-ID: <ad876991-5736-4d4c-9f19-6076832d0c69@pankajraghav.com>
+Date: Wed, 9 Jul 2025 10:03:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708143641.418603-1-amir73il@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+From: Pankaj Raghav <kernel@pankajraghav.com>
+Subject: Re: [PATCH v2 0/5] add static PMD zero page support
+To: Zi Yan <ziy@nvidia.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+ willy@infradead.org, linux-mm@kvack.org, x86@kernel.org,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250707142319.319642-1-kernel@pankajraghav.com>
+ <F8FE3338-F0E9-4C1B-96A3-393624A6E904@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <F8FE3338-F0E9-4C1B-96A3-393624A6E904@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello!
+Hi Zi,
 
-On Tue 08-07-25 16:36:39, Amir Goldstein wrote:
-> Following v2 addresses your review comments on v1 [1].
+>> Add a config option STATIC_PMD_ZERO_PAGE that will always allocate the huge_zero_folio via 
+>> memblock, and it will never be freed.
 > 
-> Changes since v1:
-> - Raname macro to FMODE_NOTIFY_ACCESS_PERM()
-> - Remove unneeded and unused event set macros
+> Do the above users want a PMD sized zero page or a 2MB zero page? Because on systems with non 
+> 4KB base page size, e.g., ARM64 with 64KB base page, PMD size is different. ARM64 with 64KB base 
+> page has 512MB PMD sized pages. Having STATIC_PMD_ZERO_PAGE means losing half GB memory. I am 
+> not sure if it is acceptable.
 > 
-> [1] https://lore.kernel.org/linux-fsdevel/20250707170704.303772-1-amir73il@gmail.com/
-> 
-> Amir Goldstein (2):
->   fsnotify: merge file_set_fsnotify_mode_from_watchers() with open perm
->     hook
->   fsnotify: optimize FMODE_NONOTIFY_PERM for the common cases
 
-Thanks! I've merged the patches to my tree (after fixing up some typos).
+That is a good point. My intial RFC patches allocated 2M instead of a PMD sized
+page.
 
-								Honza
+But later David wanted to reuse the memory we allocate here with huge_zero_folio. So
+if this config is enabled, we simply just use the same pointer for huge_zero_folio.
 
-> 
->  fs/file_table.c          |  2 +-
->  fs/notify/fsnotify.c     | 87 ++++++++++++++++++++++++----------------
->  fs/open.c                |  6 +--
->  include/linux/fs.h       | 12 +++---
->  include/linux/fsnotify.h | 35 +++-------------
->  5 files changed, 68 insertions(+), 74 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Since that happened, I decided to go with PMD sized page.
+
+This config is still opt in and I would expect the users with 64k page size systems to not enable
+this.
+
+But to make sure we don't enable this for those architecture, I could do a per-arch opt in with
+something like this[1] that I did in my previous patch:
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 340e5468980e..c3a9d136ec0a 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -153,6 +153,7 @@ config X86
+ 	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
+ 	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
+ 	select ARCH_WANTS_THP_SWAP		if X86_64
++	select ARCH_HAS_STATIC_PMD_ZERO_PAGE	if X86_64
+ 	select ARCH_HAS_PARANOID_L1D_FLUSH
+ 	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
+ 	select BUILDTIME_TABLE_SORT
+
+
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 781be3240e21..fd1c51995029 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -826,6 +826,19 @@ config ARCH_WANTS_THP_SWAP
+ config MM_ID
+ 	def_bool n
+
++config ARCH_HAS_STATIC_PMD_ZERO_PAGE
++	def_bool n
++
++config STATIC_PMD_ZERO_PAGE
++	bool "Allocate a PMD page for zeroing"
++	depends on ARCH_HAS_STATIC_PMD_ZERO_PAGE
+<snip>
+
+Let me know your thoughts.
+
+[1] https://lore.kernel.org/linux-mm/20250612105100.59144-4-p.raghav@samsung.com/#Z31mm:Kconfig
+--
+Pankaj
 
