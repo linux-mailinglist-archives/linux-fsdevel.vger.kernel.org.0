@@ -1,97 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-54393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC57AFF456
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 00:03:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5CAAFF46F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 00:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D6C175C30
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 22:03:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ED251C4737A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 22:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D842E23C501;
-	Wed,  9 Jul 2025 22:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971C124467A;
+	Wed,  9 Jul 2025 22:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEYguPYA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A02E13D2B2;
-	Wed,  9 Jul 2025 22:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06D5801
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 22:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752098622; cv=none; b=L+mwFj4D59ORqY4FJKJsvWoLtdFjWSOxqOs1UoIIwTYZQIkL8vIHDKLZfehQuT7MaR38lbtkrfZB2LgkQwdMm782h0u0iW74btyz26pmkYpS813LsSbJ4iurHM9U6mNabtuK3YEqOHZ1uXocTp6kVSQfwPE351GZ21gR5VFqjqc=
+	t=1752099060; cv=none; b=OBiSfjM+6VYBiYaRP9l0VXPOU+3Zju4NIfxqMtLAQ5Tj+nWB/OfwStbGhA4DDtBsQ+G24tcDVj6fYQ9358x1MSTRo4cuYo+H25fz4leY1RgmAM/a7opflPS1PeEreMOwIpPhtW7ByTabd8owfK3NiNV/icezMcNlBfz9N88Q55k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752098622; c=relaxed/simple;
-	bh=OSlNipfL8acGfxBPuYcCjdhJaWK0Nj+mUkPNpzpq8h0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BJhcPXycDi5/1xJ2ofrPi6W4X4OxeF8BgfpCvOEKsyEZsY+sb2Ne8X5qfVz1vuqORInZ6DpEBiqdyIvR/tZnayBXUdA81e7rXcqX19uGIH3Cq5so+1oRLsPOaCYqnto4+QQ+YTvC8yJc35sDu3gnc3eM7IDySOzAuTmxn+C4E0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 569M3Kc1078763;
-	Thu, 10 Jul 2025 07:03:20 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 569M3KgL078760
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 10 Jul 2025 07:03:20 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
-Date: Thu, 10 Jul 2025 07:03:18 +0900
+	s=arc-20240116; t=1752099060; c=relaxed/simple;
+	bh=nULHYjX1W5eiGu8qdupjd/JRBoZOql9PAKMTs4lmsIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tyhjEA6W86iaLuQE2BmA+dnA/KkREujUievwlT8JTGCrdBkmgPmaoWLlQPF6OqV0w6HqxtwH82rl2+ErM9gOTU+OYzGjvl21jMARit32MV3aavJcJpRJ5C6ktEIQnPPNsVKfmUozHVSGP0ma6cL1zDOW18R9HUCxqBVD9R35/Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEYguPYA; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b34a6d0c9a3so474353a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jul 2025 15:10:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752099058; x=1752703858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fn8hgossccLU9KZ2m+rsG2cDY8iLwi+mA3X82SYrXCk=;
+        b=ZEYguPYAO9WUQGnkZcxVFQVFNlZp4Wpn7COXAddReXuAvIxMbcmmxFy43KHoUg+s/h
+         fLvyQuAJDsz4ZOSP1eLt3KdfTeG6+pHS2d/N1MDUdNOIYTqGSobZtR+TvC2NmntV4+CV
+         d+8/MduU6Kr6Wt6z7DOw05srlsVjsuVPWzH2bdcFsqrbPB6+nV4LfOc8A54k7UquCS/6
+         rj2co+14Ad/hOAUQEJ50pafb42ulX+M/X2HXszhzO0Ppunk+uZxRdrkgR6EfrIB9Tx31
+         w2D/2sfd1MJZ8VNbSen8BNloJbCluYsYmhiI+YyBaqN9lgk5LkzxePFUYfsgodWQ0kRP
+         c3gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752099058; x=1752703858;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fn8hgossccLU9KZ2m+rsG2cDY8iLwi+mA3X82SYrXCk=;
+        b=KLUiV0ldGCwsjowv52COlDd5OUPVE8O0VXWpUX5HXHsczFXS2dAc5jkg2mJ6uUIihW
+         0nqiQZnH8KP0MFkUQAXHhg827XVFTP3rV/49E78XEqMOPSBUQq53SvrNHXYeiGji6F9b
+         ME90ZjbgSDqu/IpcSiO/9gi8wftITPGXOekXv5JoSL8ZTzp8CosS3YvPDejA18bg5IFQ
+         fExSenUEKKXSsD/SvUblSiLQwe0ROUEbFPtCk9fQ0XQsK5+YXGEYg+QDfs0KUCL1ypdK
+         8rBk1xKbGgkmisM0ZlGcbdTD2SXVyDu8iBDrJg3gHwd+6l1FzoMl2K7YCOTfqGtP4FIx
+         /OkQ==
+X-Gm-Message-State: AOJu0YzSjXmiOqVQ57UwPAnDHO2RDnVlwo6sDpXO/SDG/DPXalnC9LSQ
+	J3NZghZnHNWIK6PjHDrysipct8eWmCsCVeikbLb7AtVnB6TfWhbHkMpTKkzX8A==
+X-Gm-Gg: ASbGnctPvN1+klB5bwJARQqE2+3mFcBmvBVAZNUlgJp020v6HQV7Ti0SLqjDvoqoNI7
+	/W/eGQ+HvE0/P6sbAD6JFEOhglwuKVWxOBAeovJ30ZSTZmaa2QA/haQKV1DSXKZib787LH0V6Bi
+	khTLLsIp67e/F8gRmYxITebl5fnJ65MrrSau5+4hBa9c9ka6vF3OEgvM2qHEh/cj+OkjWSSYVRb
+	Sw2chv+XHyvzGmc+7iu2V9Jf7CA9cOGf8VymHwIQqiJght1tVjRBVxbikHClnBrokOLqFKEo1mT
+	YVkb5MDMU0lrlG6qZKw+FZDcqA0+Y1zy+u8gMRFR5lTq+l7hgLT7i+H2hHQ1W17UKkQLWg0=
+X-Google-Smtp-Source: AGHT+IGvmm4Vcohh5zFx0K4CRa7uPQiz4MkOKJRXMJnwZtKo12Yx5EuPWWCzdMAbLLsN17hcJGh7TA==
+X-Received: by 2002:a17:90b:3508:b0:311:c970:c9c0 with SMTP id 98e67ed59e1d1-31c3f002473mr275891a91.22.1752099057246;
+        Wed, 09 Jul 2025 15:10:57 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:6::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de434200csm1817195ad.175.2025.07.09.15.10.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 15:10:56 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: hch@lst.de,
+	miklos@szeredi.hu,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	anuj20.g@samsung.com,
+	kernel-team@meta.com
+Subject: [PATCH v4 0/5] fuse: use iomap for buffered writes + writeback
+Date: Wed,  9 Jul 2025 15:10:18 -0700
+Message-ID: <20250709221023.2252033-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfsplus: don't use BUG_ON() in
- hfsplus_create_attributes_file()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
- <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
- <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
- <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
- <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
- <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
- <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
+Content-Transfer-Encoding: 8bit
 
-On 2025/07/10 3:33, Viacheslav Dubeyko wrote:
-> My worry that we could have a race condition here. Let's imagine that two
-> threads are trying to call __hfsplus_setxattr() and both will try to create the
-> Attributes File. Potentially, we could end in situation when inode could have
-> not zero size during hfsplus_create_attributes_file() in one thread because
-> another thread in the middle of Attributes File creation. Could we double check
-> that we don't have the race condition here? Otherwise, we need to make much
-> cleaner fix of this issue.
+This series adds fuse iomap support for buffered writes and dirty folio
+writeback. This is needed so that granular uptodate and dirty tracking can
+be used in fuse when large folios are enabled. This has two big advantages.
+For writes, instead of the entire folio needing to be read into the page
+cache, only the relevant portions need to be. For writeback, only the
+dirty portions need to be written back instead of the entire folio.
 
-I think that there is some sort of race window, for
-https://elixir.bootlin.com/linux/v6.15.5/source/fs/hfsplus/xattr.c#L145
-explains that if more than one thread concurrently reached
+This patchset is on top of Christoph's iomap patchset [1] which is in his git
+tree git://git.infradead.org/users/hch/misc.git iomap-writeback-refactor.
 
-	if (!HFSPLUS_SB(inode->i_sb)->attr_tree) {
-		err = hfsplus_create_attributes_file(inode->i_sb);
-		if (unlikely(err))
-			goto end_setxattr;
-	}
+The changes in this patchset can be found in this git tree, 
+https://github.com/joannekoong/linux/commits/fuse_iomap/
 
-path, all threads except one thread will fail with -EAGAIN.
+Please note that this patchset does not enable large folios yet. That will be
+sent out in a separate future patchset.
+
+Thanks,
+Joanne
+
+[1] https://lore.kernel.org/linux-fsdevel/20250708135132.3347932-1-hch@lst.de/
+
+
+Changeset
+-------
+v3 -> v4:
+* Get rid of writethrough goto (Miklos)
+* Move iomap_start_folio_write call to after error check (Darrick)
+* Tidy up args for fuse_writepage_need_send() (me)
+v3:
+https://lore.kernel.org/linux-fsdevel/20250624022135.832899-1-joannelkoong@gmail.com/
+
+v2 -> v3:
+* Fix up fuse patches to use iomap APIs from Christoph's patches
+* Drop CONFIG_BLOCK patches
+* Add patch to use iomap for invalidation and partial uptodateness check
+* Add patch for refactoring fuse writeback to use iomap_writepage_ctx inode
+v2:
+https://lore.kernel.org/linux-fsdevel/20250613214642.2903225-1-joannelkoong@gmail.com/
+
+v1 -> v2:
+* Drop IOMAP_IN_MEM type and just use IOMAP_MAPPED for fuse
+* Separate out new helper functions added to iomap into separate commits
+* Update iomap documentation
+* Clean up iomap_writeback_dirty_folio() locking logic w/ christoph's
+  recommendation 
+* Refactor ->map_blocks() to generic ->writeback_folio()
+* Refactor ->submit_ioend() to generic ->writeback_complete()
+* Add patch for changing 'count' to 'async_writeback'
+* Rebase commits onto linux branch instead of fuse branch
+v1:
+https://lore.kernel.org/linux-fsdevel/20250606233803.1421259-1-joannelkoong@gmail.com/
+
+
+Joanne Koong (5):
+  fuse: use iomap for buffered writes
+  fuse: use iomap for writeback
+  fuse: use iomap for folio laundering
+  fuse: hook into iomap for invalidating and checking partial
+    uptodateness
+  fuse: refactor writeback to use iomap_writepage_ctx inode
+
+ fs/fuse/Kconfig |   1 +
+ fs/fuse/file.c  | 339 +++++++++++++++++++++---------------------------
+ 2 files changed, 148 insertions(+), 192 deletions(-)
+
+-- 
+2.47.1
 
 
