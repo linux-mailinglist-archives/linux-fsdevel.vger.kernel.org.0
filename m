@@ -1,118 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-54324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32836AFDD97
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 04:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BCFAFDE16
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 05:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8EF3BF11E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 02:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C543B380A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 03:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731731D8DFB;
-	Wed,  9 Jul 2025 02:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818791F9F47;
+	Wed,  9 Jul 2025 03:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XiaZ0XsF"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="KXQxlaqY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1251C32FF;
-	Wed,  9 Jul 2025 02:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529A81F3BA4
+	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 03:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752028952; cv=none; b=Vep14L8kszlLu+mhxCY9eEPAytP0sGEF5QkCLmoREdViu990W2Ctu/QMKqCgsFoRERFRvd/Ir2/ra3fS8j/ZoA+LWKvQ2/NiQwwPGzuBqAAa8QtIzXc57E0dDgqUe02JwEVHnPjJIbTkIFIkUsljyi+wZnvahWDArTzjUiR7Ja0=
+	t=1752031626; cv=none; b=ZSbeeaFmQLalzLKexiUztooZuG+zq9DPeGEYaonDEAmmhqeL18ua0jcPhkDR3Wa6VDVuqdIjEhynNCHfzm96zMktAB9ySwxRtHFdkBz5dp0zgOlqOMDlpKT4GdldY8mlkdVsu2BX7Y+LRQP+eP5rBhx6kXA1oDBXAdcqE7vpKh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752028952; c=relaxed/simple;
-	bh=xglNHnUKEdCNHWEZUbyP1kgYRLDTNgnIgCGRAbmV9TY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVX8+WMklpTv+UGAWdz0hEA5qTnOhTrgDKXl3rgxTQ9qYctCnG3WLa6jD57QKvd5qLx1qyhmGQfJngYNq5V/wJkGrIHHGRJUg733mbyppElJomVhoPSR7KtV14jva2kPhr3kZKsXOGm2UUfB+PHJPsN31hk0aRpmwv47cgJGDsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XiaZ0XsF; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752028951; x=1783564951;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xglNHnUKEdCNHWEZUbyP1kgYRLDTNgnIgCGRAbmV9TY=;
-  b=XiaZ0XsFlZdrVXZKf6axemcA1BeWynOkjxaDjNcXA26aqWZBeaS5rqsh
-   5hvY3VCx2Agsj+rlvGSDDaxFcuv5TuN7R51mvp/ZAUQ5wwgsG478Z4nfn
-   1FR48p+t+DlbUJjBMJlx92MFJzO6XWIA9I+rMTtoorxZF6sdn25Xmrdcx
-   SjW1Z0MrZza2ok7hYfZFQ5Koip6n5VaiSVa8GcFDKQ86cHJwuGFp+F/AZ
-   wOcQ5wBUK0oQzmC7hphMdKY+09myTPpM9n/kXjdROOmaIFFVAxf27TQTt
-   aNEMxxXBM1c59i/4XgOFCEob+TcmmkwDuUgrKNAUUqJkooJhQPHjyJ1fv
-   Q==;
-X-CSE-ConnectionGUID: DXkI2VHrTAqqoZ8WFmJprQ==
-X-CSE-MsgGUID: nQ/0cMemRyG3SLd9qhqrNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71861557"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="71861557"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 19:42:30 -0700
-X-CSE-ConnectionGUID: tytLHidlQRG86rBxSg+7Kw==
-X-CSE-MsgGUID: TUVthDdhTX+U4YWnIEJPfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="161204389"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 08 Jul 2025 19:42:27 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uZKlN-0002zX-0w;
-	Wed, 09 Jul 2025 02:42:25 +0000
-Date: Wed, 9 Jul 2025 10:42:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yuwen Chen <ywen.chen@foxmail.com>, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, Yuwen Chen <ywen.chen@foxmail.com>
-Subject: Re: [PATCH] f2fs: improve the performance of f2fs_lookup
-Message-ID: <202507091026.yb48YXt5-lkp@intel.com>
-References: <tencent_0D8BB6ABAB0880DB7BFCCE35EDBC3DCFF505@qq.com>
+	s=arc-20240116; t=1752031626; c=relaxed/simple;
+	bh=zw/fej0GkXW5A++Ge3FEYjbMmbv+hTBMbj5gw+U4//w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LP3gaKTmvYfdE/KqK+cVWJe3cJiq9xeeDO+/zybhAHfVdHsOGmQ6vJ8dbxoKoXuF291LRiTcbJyaQCcNNH8kiLUhg0yQFSKOEUD7rWDnETiTSACtXMeJVQ7Eunql+r0vz1ObavW1u+zV8GI9CxsyARrwqNUv8VeCd4PViGf9xxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=KXQxlaqY; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a77ea7ed49so6837481cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Jul 2025 20:27:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1752031624; x=1752636424; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zw/fej0GkXW5A++Ge3FEYjbMmbv+hTBMbj5gw+U4//w=;
+        b=KXQxlaqYQfw0jkMx0UszkFkz6yZAkJym2Y4XdWw6DJwfxo7h8FDx3GciGZ4GfjpWq7
+         2by7ourxfJDrIk221f12+zzD98YK2TkxAwAEVam8W15bHr1Mj1EDYPPa85YXU51sAsSQ
+         /b/56IISOz1C8GvDDn5t0r5YCFfLOOHuTQUNo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752031624; x=1752636424;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zw/fej0GkXW5A++Ge3FEYjbMmbv+hTBMbj5gw+U4//w=;
+        b=emaiBmceGSJlFAzV5GHokF+WTmI2wJJg3bqdGEjxadeKuiqyYOEtFCEOGWXsFi2gtC
+         MXK/RF+QlPlaCpLE/iYGa0txp22O2DlvLtvauV6HNg848aKDw+SMCBYWiBxPNKZr2TyN
+         DOiE1WT6UxdTUzlLhonsN46oG/aASTbQjATWXF5LfAw8bnFLSA2ZXB7w5HeC+/uiZ8G3
+         ry8kblL6Buh67jTZLNu9zoyB7fb5mA7UW7ucURwc9UgMlvfDV3WEf9PafkvJ04v5k21k
+         CbcQmegz8rs8GZNXtMqR3oAgzYd3NwhrlPv0212BiwtrNHzEjQk3x+JvFS5MIIcINA42
+         h9Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFy+GDKKKzloGZysz1L4zjXrL8BxyMt19ZgNLylyTYI1+HWW9GkaATUEbZbI/VJ2BjhCSKqJvWPDWDqqxW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWXqpPSjnx0tPbyWc/yEBNz9doHDZtoxuFq5FKVpbNTMFdqXH7
+	hJNNGlEWIJVPQZgKAhqTJT4la6xEk0fUaWodFgzskhfgT3976Qv4P8rzeaU5be5UmU2PVhaVxeV
+	FeQbKjtUWvor/VKdRJNj56cXyk+G9lQORWbNSZ7kb2w==
+X-Gm-Gg: ASbGncs729oqXQr6ddGEOnnMm4Ogf6p4Yup0sW/CpqbWHN4MHpPwk3P0CC3nKO8o4/D
+	jWbGDTGeHGN5co64haE87NARcqwrYbm4HTvBcRHLN5Td8prJZCGrNPLMnwRo6/Xj4KIs/smHFHV
+	XXApzpuzEsLXzPufzotNDKOxsrMAD7eWSfWqdjUqj3Naa0
+X-Google-Smtp-Source: AGHT+IEbfuPtiB8SJ8mM3IIy/0e+1oWhx4UxNRjIANMV3UTN0UVNRrT4FqNMCrH6Q0szGd55OwaVpm23wRX15i4H4tQ=
+X-Received: by 2002:ac8:6f19:0:b0:4a9:8b58:6300 with SMTP id
+ d75a77b69052e-4a9ce5bbb43mr86267521cf.16.1752031623903; Tue, 08 Jul 2025
+ 20:27:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_0D8BB6ABAB0880DB7BFCCE35EDBC3DCFF505@qq.com>
+References: <20250703185032.46568-1-john@groves.net> <os4kk3dq6pyntqgcm4kmzb2tvzpywooim2qi5esvsyvn5mjkmt@zpzxxbzuw3lq>
+In-Reply-To: <os4kk3dq6pyntqgcm4kmzb2tvzpywooim2qi5esvsyvn5mjkmt@zpzxxbzuw3lq>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 9 Jul 2025 05:26:53 +0200
+X-Gm-Features: Ac12FXw6hgYHynMi-MN39oWlDifPLmPqesU1MFQWRlURFDaTLnL4XYV-SQPgaEw
+Message-ID: <CAJfpeguOAZ0np25+pv2P-AHPOepMn+ycQeMwiqnPs4e0kmWwuQ@mail.gmail.com>
+Subject: Re: [RFC V2 00/18] famfs: port into fuse
+To: John Groves <John@groves.net>
+Cc: Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Yuwen,
+On Thu, 3 Jul 2025 at 20:56, John Groves <John@groves.net> wrote:
+>
+> DERP: I did it again; Miklos' email is wrong in this series.
 
-kernel test robot noticed the following build warnings:
+linux-fsdevel also lands in my inbox, so I don't even notice.
 
-[auto build test WARNING on jaegeuk-f2fs/dev-test]
-[also build test WARNING on jaegeuk-f2fs/dev brauner-vfs/vfs.all linus/master v6.16-rc5 next-20250708]
-[cannot apply to tytso-ext4/dev]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I won't get to review this until August, sorry about that.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yuwen-Chen/f2fs-improve-the-performance-of-f2fs_lookup/20250708-184528
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-patch link:    https://lore.kernel.org/r/tencent_0D8BB6ABAB0880DB7BFCCE35EDBC3DCFF505%40qq.com
-patch subject: [PATCH] f2fs: improve the performance of f2fs_lookup
-config: arc-randconfig-001-20250709 (https://download.01.org/0day-ci/archive/20250709/202507091026.yb48YXt5-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250709/202507091026.yb48YXt5-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507091026.yb48YXt5-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: fs/libfs.c:1908 function parameter 'prealloc' not described in 'generic_ci_match'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Miklos
 
