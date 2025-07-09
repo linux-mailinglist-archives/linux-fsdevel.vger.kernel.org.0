@@ -1,222 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-54365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917C1AFED19
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 17:07:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98D1AFED27
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 17:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D341894C73
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 15:04:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E624170A8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Jul 2025 15:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8963156F4A;
-	Wed,  9 Jul 2025 15:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5B52E5B3E;
+	Wed,  9 Jul 2025 15:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HL0FVgbS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="578NOeXT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HL0FVgbS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="578NOeXT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0l0/d75"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687501D54F7
-	for <linux-fsdevel@vger.kernel.org>; Wed,  9 Jul 2025 15:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C386F1D54F7;
+	Wed,  9 Jul 2025 15:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752073416; cv=none; b=tS6YJY+kz1xmswhEc1AtMpWkhInLoyeqlPwl2C3+kxCVybd2WbFpb6YQQ60FZctXvAW8476mvfZ6uEOQdY+kDecLxqfQPkt6N6cBMAYNhb6NiYbwg6z5xhnETzOssaWZa59N/Uy5xSYsNxaOlAJMBl0dnSCEsYUQpC2ohL7SZRk=
+	t=1752073478; cv=none; b=cmuaJErzzRK3JemJpknINRUeLkkD4MpST4qdS7RAk89vLFe94Ko6PyqqvLGg4MtC01xTHD+Sf2yM0yRR7e2pDEeW3aMtDBZXJvsfJ1obd7wfwc+f7qJsUfus/7aSfyUVVZD/xUfs8JgYS46VNbIOgF7Q6qtIbF8x7ZIpewlhg7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752073416; c=relaxed/simple;
-	bh=MBBQf/0UghRo70up+nIV6zw+wi9JwWF4GdvQF4Y2E8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WZqvjoD1LyOnkOc7DSyvWg+Qnp1p6kWRcZhIkQQdmIAZ704P7QRvzDrXZrgsxEuhzxVZCnqWS7jcs1/ubaFtp9VK2CNvgCCBdZO8tFmYvjbbz9kWWNiD7UhIdg/1oq7FGpW5FwGus+nKb08H3KxO+RAd9HvDcG0nnU8y0i+X1t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HL0FVgbS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=578NOeXT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HL0FVgbS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=578NOeXT; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AF5BF1F443;
-	Wed,  9 Jul 2025 15:03:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752073412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=urLwYX9yvt4SUAQ+O+nSg2SIj8MHrRTMuAlo1NhWJiU=;
-	b=HL0FVgbSYbNO8jlYCbs/AWaCts/mvGVtwsheY1mk37h2AXo89vRwvnSv6trFk54zSTY4h0
-	R2bWZZasuYnBBXWeNT2UCAX/EXPhAJCI1BeyFha00bPyKElPJHjSKjxuMQCcvpoUph0pdT
-	y2sRfDSih1+3hfw5IgIoL3CxOq267M0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752073412;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=urLwYX9yvt4SUAQ+O+nSg2SIj8MHrRTMuAlo1NhWJiU=;
-	b=578NOeXTln/4XCzqn7cWjzHlAlxbqgbTdDKFnIQt8l4+rKfG8YzC2HiepRF2Hgjnj8vQd7
-	K8NdlF6aW1h+GaCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752073412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=urLwYX9yvt4SUAQ+O+nSg2SIj8MHrRTMuAlo1NhWJiU=;
-	b=HL0FVgbSYbNO8jlYCbs/AWaCts/mvGVtwsheY1mk37h2AXo89vRwvnSv6trFk54zSTY4h0
-	R2bWZZasuYnBBXWeNT2UCAX/EXPhAJCI1BeyFha00bPyKElPJHjSKjxuMQCcvpoUph0pdT
-	y2sRfDSih1+3hfw5IgIoL3CxOq267M0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752073412;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=urLwYX9yvt4SUAQ+O+nSg2SIj8MHrRTMuAlo1NhWJiU=;
-	b=578NOeXTln/4XCzqn7cWjzHlAlxbqgbTdDKFnIQt8l4+rKfG8YzC2HiepRF2Hgjnj8vQd7
-	K8NdlF6aW1h+GaCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 81B3D13757;
-	Wed,  9 Jul 2025 15:03:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eMzSHsSEbmjFegAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 09 Jul 2025 15:03:32 +0000
-Message-ID: <3b3521f6-30c8-419e-9615-9228f539251e@suse.cz>
-Date: Wed, 9 Jul 2025 17:03:32 +0200
+	s=arc-20240116; t=1752073478; c=relaxed/simple;
+	bh=AlzZ6o1HrNfQ09llKHDD4OoK91Jxu8FYl9PqkkdFCCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AmZ1zGJZ2qf+cAf5jy+sfBvkoNBCBGIgg5wdLgzfJ3wMVKboHn+480J87RsjzN3cuGgY/SFHxcP2tdjalsq8CgbVAZ6hn1/dV5vh2v51l7eDRie6pklbPtXBzD4KgkbOqA4S+tzAikupyRKVzUsRR0/NyKsC7LHwDhcde9hd5BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0l0/d75; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D61BC4CEEF;
+	Wed,  9 Jul 2025 15:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752073478;
+	bh=AlzZ6o1HrNfQ09llKHDD4OoK91Jxu8FYl9PqkkdFCCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l0l0/d75LHIF0xW8U158TUbCa7E8JtYOQi9eCPBSNFGB8rD8rmZKa/J/fIIMRwu6L
+	 2WDkCTegAmZ31jUzETf42XnYTqvhizdEdfSFdSbgFONBtlqWCEpXQC701VeLjxkkkZ
+	 JfM/kvk9ukvN6I/NDevJggC/aPNrjypWokwm63LRBA0zkBc+sEuSaL6HGIOUX8F5Pf
+	 fTARs1NcvzjSZBTCpKyjq4p2S28r4clr9LdrnT2N5GZYKnRCLq8IDJjm5sT2qD/GRS
+	 RgksmrQWJT7RPcbWzYLfO+anaiVlmzATMwktQeiYDMx5bJ5yV+S9MUmv5Xb3pReZ1H
+	 q0FHL4GPV9cdw==
+Date: Wed, 9 Jul 2025 08:04:36 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	linux-btrfs <linux-btrfs@vger.kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	Catherine Hoang <catherine.hoang@oracle.com>
+Subject: Re: Why a lot of fses are using bdev's page cache to do super block
+ read/write?
+Message-ID: <20250709150436.GG2672029@frogsfrogsfrogs>
+References: <5459cd6d-3fdb-4a4e-b5c7-00ef74f17f7d@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma
- lock
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org,
- Liam.Howlett@oracle.com, david@redhat.com, peterx@redhat.com,
- jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org,
- shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org,
- josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net,
- willy@infradead.org, osalvador@suse.de, andrii@kernel.org,
- ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com,
- kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-References: <20250704060727.724817-1-surenb@google.com>
- <20250704060727.724817-8-surenb@google.com>
- <f532558b-b19a-40ea-b594-94d1ba92188d@lucifer.local>
- <CAJuCfpGegZkgmnGd_kAsR8Wh5SRv_gtDxKbfHdjpG491u5U5fA@mail.gmail.com>
- <f60a932f-71c0-448f-9434-547caa630b72@suse.cz>
- <CAJuCfpE2H9-kRz6xSC43Ja0dmW+drcJa29hwQwQ53HRsuqRnwg@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAJuCfpE2H9-kRz6xSC43Ja0dmW+drcJa29hwQwQ53HRsuqRnwg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,linux-foundation.org,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5459cd6d-3fdb-4a4e-b5c7-00ef74f17f7d@gmx.com>
 
-On 7/9/25 16:43, Suren Baghdasaryan wrote:
-> On Wed, Jul 9, 2025 at 1:57 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> On 7/8/25 01:10, Suren Baghdasaryan wrote:
->> >>> +     rcu_read_unlock();
->> >>> +     vma = lock_vma_under_mmap_lock(mm, iter, address);
->> >>> +     rcu_read_lock();
->> >> OK I guess we hold the RCU lock the whole time as we traverse except when
->> >> we lock under mmap lock.
->> > Correct.
->>
->> I wonder if it's really necessary? Can't it be done just inside
->> lock_next_vma()? It would also avoid the unlock/lock dance quoted above.
->>
->> Even if we later manage to extend this approach to smaps and employ rcu
->> locking to traverse the page tables, I'd think it's best to separate and
->> fine-grain the rcu lock usage for vma iterator and page tables, if only to
->> avoid too long time under the lock.
+On Wed, Jul 09, 2025 at 06:35:00PM +0930, Qu Wenruo wrote:
+> Hi,
 > 
-> I thought we would need to be in the same rcu read section while
-> traversing the maple tree using vma_next() but now looking at it,
-> maybe we can indeed enter only while finding and locking the next
-> vma...
-> Liam, would that work? I see struct ma_state containing a node field.
-> Can it be freed from under us if we find a vma, exit rcu read section
-> then re-enter rcu and use the same iterator to find the next vma?
+> Recently I'm trying to remove direct bdev's page cache usage from btrfs
+> super block IOs.
+> 
+> And replace it with common bio interface (mostly with bdev_rw_virt()).
+> 
+> However I'm hitting random generic/492 failure where sometimes blkid failed
+> to detect any useful super block signature of btrfs.
 
-If the rcu protection needs to be contigous, and patch 8 avoids the issue by
-always doing vma_iter_init() after rcu_read_lock() (but does it really avoid
-the issue or is it why we see the syzbot reports?) then I guess in the code
-quoted above we also need a vma_iter_init() after the rcu_read_lock(),
-because although the iterator was used briefly under mmap_lock protection,
-that was then unlocked and there can be a race before the rcu_read_lock().
+Yes, you need to invalidate_bdev() after writing the superblock directly
+to disk via submit_bio.
+
+> This leads more digging, and to my surprise using bdev's page cache to do
+> superblock IOs is not an exception, in fact f2fs is doing exactly the same
+> thing.
+> 
+> 
+> This makes me wonder:
+> 
+> - Should a fs use bdev's page cache directly?
+>   I thought a fs shouldn't do this, and bio interface should be
+>   enough for most if not all cases.
+> 
+>   Or am I wrong in the first place?
+
+As willy said, most filesystems use the bdev pagecache because then they
+don't have to implement their own (metadata) buffer cache.  The downside
+is that any filesystem that does so must be prepared to handle the
+buffer_head contents changing any time they cycle the bh lock because
+anyone can write to the block device of a mounted fs ala tune2fs.
+
+Effectively this means that you have to (a) revalidate the entire buffer
+contents every time you lock_buffer(); and (b) you can't make decisions
+based on superblock feature bits in the superblock bh directly.
+
+I made that mistake when adding metadata_csum support to ext4 -- we'd
+only connect to the crc32c "crypto" module if checksums were enabled in
+the ondisk super at mount time, but then there were a couple of places
+that looked at the ondisk super bits at runtime, so you could flip the
+bit on and crash the kernel almost immediately.
+
+Nowadays you could protect against malicious writes with the
+BLK_DEV_WRITE_MOUNTED=n so at least that's mitigated a little bit.
+Note (a) implies that the use of BH_Verified is a giant footgun.
+
+Catherine Hoang [now cc'd] has prototyped a generic buffer cache so that
+we can fix these vulnerabilities in ext2:
+https://lore.kernel.org/linux-ext4/20250326014928.61507-1-catherine.hoang@oracle.com/
+
+> - What is keeping fs super block update from racing with user space
+>   device scan?
+> 
+>   I guess it's the regular page/folio locking of the bdev page cache.
+>   But that also means, pure bio based IO will always race with buffered
+>   read of a block device.
+
+Right.  In theory you could take the posix advisory lock (aka flock)
+from inside the kernel for the duration of the sb write, and that would
+prevent libblkid/udev from seeing torn/stale contents because they take
+LOCK_SH.
+
+> - If so, is there any special bio flag to prevent such race?
+>   So far I am unable to find out such flag.
+
+No.
+
+--D
+
+> Thanks,
+> Qu
+> 
 
