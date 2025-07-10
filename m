@@ -1,114 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-54438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC09AFFB2E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 09:42:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB789AFFB35
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 09:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62851C48234
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 07:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3DB3A83A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 07:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB1F28B3E7;
-	Thu, 10 Jul 2025 07:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBB528B4FA;
+	Thu, 10 Jul 2025 07:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRavN8q+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bCmiUOr+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A33928A1CC;
-	Thu, 10 Jul 2025 07:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F1F28B3E8;
+	Thu, 10 Jul 2025 07:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133339; cv=none; b=EAwbdVfQT6RobVR0hSqNdKBLYMNLhN1DGWLXRygG+vnN3oVdTKLFyr2Rq4/YcskDXcrK7S8s6bEE4Gwvsr4hk8tdXuXIs+SC9W9u4vWmwE8ahDHOMUo3C/+7blnZWrRXdiaF+8xLzyyyLKvFNgbdXx9PFoNkR69+kv1OTXHr6rY=
+	t=1752133461; cv=none; b=KYOoWUYXcR8xalI28elXQM22H/wYHnbTPoODKyu1HY4hjmZcl56y2j68I+tsQjAMx4cTqPSYLEDLv0vJ5pKdeEItt7jpXB9ETuC9xMUVdCsfOi+9p4a/L8EztKukSCgH4SCXwMF43VmBcoDdJ+6rzYIcZR8BeMx6DCjATNTmwZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133339; c=relaxed/simple;
-	bh=5HRCIqpzoAh0WXlu0yZBnyBN2sSTIllnMwkUl+dRio4=;
+	s=arc-20240116; t=1752133461; c=relaxed/simple;
+	bh=3Vm0VZ3wEkG0QEaQt9fIUezZhLrgJE9wx8IMAceyI44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFGvqXbd0RIKNL2osxKK162ZZms1kqJs7D5vP+X7Dj82IdHKxSRqaf/HmuIg5+aDkrAJSGybQ7jFy/tF1XsOTjnCOdlHrSKDL2vvGd+LYSQT8u1M5YMz2eJsD10J8aABnkHZb72+uxuP9GWIaSqxJoGGjb522V7EOg5rVs8kCBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRavN8q+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49ABAC4CEE3;
-	Thu, 10 Jul 2025 07:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752133339;
-	bh=5HRCIqpzoAh0WXlu0yZBnyBN2sSTIllnMwkUl+dRio4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JRavN8q+200eZihwvBuXy+p6Yd11P7b3U0n8eZwyaoiShn+t9JXXPAQ5Y253hDyqT
-	 GhaS7V//zKvEN8EGuh5P5FRlL6LlSV90ia7TbemMqDTZZ5MK3RQqxxn6mdPBr/2/MY
-	 +WdtKlYfkRPZpSKh7pOxF0yQ57i51p3EQnKDyVUFYwLgWjl8fdzKDWXGXhG2viBUxh
-	 U/VRFE9EbXmHupE4x1u+gtPN3gXYfi2tG/p8amSgfjdYcNTfUeOGPZh7pdOOvJdJFW
-	 ueoHDoApOKisedgJCmPmY/G7QWUTAwLLDvuQ5tr46xaUcVtUMXCQi3C6FOCXOIdoFz
-	 a28AcikNG37Mg==
-Date: Thu, 10 Jul 2025 09:42:13 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>, 
-	konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, mjguzik@gmail.com, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
-	ntfs3@lists.linux.dev, Dave Kleikamp <shaggy@kernel.org>, 
-	jfs-discussion@lists.sourceforge.net
-Subject: Re: [syzbot] [nilfs?] kernel BUG in may_open (2)
-Message-ID: <20250710-getrunken-fazit-74e068b05c16@brauner>
-References: <686d5a9f.050a0220.1ffab7.0015.GAE@google.com>
- <xrpmf6yj32iirfaumpbal6qxph7mkmgwtra7p4hpbvzozlp4zr@2bzl4p5ejgfj>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTSG88687hbJdsDQZ+J9VgoJ+juNnlYpvXOzBgA1ddImnnFhuXBf6CNaQ7MOyMFuoEv1aPQUCZ+uehWPrtNvD0pM0kON7KH7YFuVvj7HAqf3JYywOSYm9//vntSCXMS3xgD3kx+fNc6B3tJ48Zzyu1xVTEI11Q/20AItjgJNVjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bCmiUOr+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VYH1DxCcwh7lYgHK/JJ26eAVuS5Jac8v4dkVPNJ3/R4=; b=bCmiUOr+02evOGelfQHFyIrP/a
+	ZbDJNVNcahc3+lvk2qHy8JLr3wAfIjuL9Iddq4Z9b7oCYDnj4SCeQ9ot0ZKuSE8KUATkiAQVSDvdj
+	qrQMVnejZvHH4tIfXRNpQpAd2CcT6T5p7SWr3Ex/LH3p9xjp0oI9HMDzuiKq0jyJg2+M3oPqmgZ3J
+	BXqwFeWvK/TX8KBshVKFw/WEhVDZZg5zmh5i8nA9vkc1ikexLUUKoJKvlVhzQ2ePrqOSRYxXf1g4Y
+	AQTI8EFpu9IRiYGI/B5oSIInSeySQIA6Pj0OozJrMoZN9FkoE9pST8socIagcwoCqERRoaQ5UqaLt
+	+k1p4Mgg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZlx3-0000000B3TH-24Be;
+	Thu, 10 Jul 2025 07:44:17 +0000
+Date: Thu, 10 Jul 2025 00:44:17 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Mike Snitzer <snitzer@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 4/8] lib/iov_iter: remove piecewise bvec length
+ checking in iov_iter_aligned_bvec
+Message-ID: <aG9vUTfMkiT_-uMG@infradead.org>
+References: <20250708160619.64800-1-snitzer@kernel.org>
+ <20250708160619.64800-5-snitzer@kernel.org>
+ <aG9qtlHCmSztOsFo@infradead.org>
+ <aG9scyDn-rxDnwn3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xrpmf6yj32iirfaumpbal6qxph7mkmgwtra7p4hpbvzozlp4zr@2bzl4p5ejgfj>
+In-Reply-To: <aG9scyDn-rxDnwn3@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Jul 09, 2025 at 10:30:12AM +0200, Jan Kara wrote:
-> Hi!
-> 
-> On Tue 08-07-25 10:51:27, syzbot wrote:
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
-> > git tree:       upstream
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=107e728c580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=72aa0474e3c3b9ac
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-> > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11305582580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10952bd4580000
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/605b3edeb031/disk-d7b8f8e2.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/a3cb6f3ea4a9/vmlinux-d7b8f8e2.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/cd9e0c6a9926/bzImage-d7b8f8e2.xz
-> > mounted in repro: https://storage.googleapis.com/syzbot-assets/2a7ab270a8da/mount_0.gz
-> > 
-> > The issue was bisected to:
-> > 
-> > commit af153bb63a336a7ca0d9c8ef4ca98119c5020030
-> > Author: Mateusz Guzik <mjguzik@gmail.com>
-> > Date:   Sun Feb 9 18:55:21 2025 +0000
-> > 
-> >     vfs: catch invalid modes in may_open()
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17f94a8c580000
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=14054a8c580000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=10054a8c580000
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com
-> > Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
-> > 
-> > VFS_BUG_ON_INODE(!IS_ANON_FILE(inode)) encountered for inode ffff8880724735b8
-> 
-> FWIW the reproducer just mounts a filesystem image and opens a file there
-> which crashes because the inode type is invalid. Which suggests there's
-> insufficient validation of inode metadata (in particular the inode mode)
-> being loaded from the disk... There are reproducers in the syzbot dashboard
-> for nilfs2, ntfs3, isofs, jfs. I'll take care of isofs, added other
-> filesystem maintainers to CC.
+On Thu, Jul 10, 2025 at 03:32:03AM -0400, Mike Snitzer wrote:
+> The first time I posted this series I did a better job of sending this
+> patch to Andrew and Al iirc.  In any case, I can pull this fix out to
+> front of series.  But also iov_iter_aligned_iovec() appear to have the
+> same issue.
 
-I'm certainly happy to have added that assert.
+Maybe send a series just addressing the two for now to kick off the
+discussion.
+
 
