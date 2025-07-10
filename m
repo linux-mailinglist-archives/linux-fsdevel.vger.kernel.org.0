@@ -1,140 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-54406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B246AFF638
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 02:59:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BD3AFF65E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 03:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316E1544251
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 00:58:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDA0F7B4DE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 01:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87A814C588;
-	Thu, 10 Jul 2025 00:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6433926E6E5;
+	Thu, 10 Jul 2025 01:10:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72F72636;
-	Thu, 10 Jul 2025 00:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999E825C810;
+	Thu, 10 Jul 2025 01:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752109119; cv=none; b=WDKopYji/7mW1InflJHpEkTp4a4xkzTT7Phxd2M38fORi3qMPie75U5fAgWbbvWboOZ5ev0UDZwFfnFSp/FGASW5Ozc82T0cV0pe+DL1kwcbWLFLofqKwi3+EmOCIj6l8RmBBmXAsfhI3ZMhZKxwAFXaEqc+vsThpC6wCOhMy7Q=
+	t=1752109855; cv=none; b=RzwMJuqx/PS/VtLwaOfBNAqOag2sT1GSjTXxX0au3v1JgFojcjT50TpJTcZcrOjEwsjl0dWv5cV0LFaidDbgq5DpaVeuXH5LDCnsh08XJJ4bsrXEu61ixGdkBgu3dWnLkA2dG5Hyk3+P9tjmZ8dbc79lv76jkqa9mXFvVq6X14c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752109119; c=relaxed/simple;
-	bh=XZbKtfqPPiCgKWUAMA7ouwhZLt7x2jDpVVWpB+SmN5A=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=W8TJ5CFubTiR/l3KmHo3EFuQOBpBeE7EmP0H6/uXJLddJghT9Mh/XvxdzZzRIKR/qWk3MQxxrTPOBxIZzbSf/VBET9H9mrEsCxODoaxQw8uGSJWVbn2y4NMXbp2R22vC6wbcSRQBAF0EosAjvldQlnMXzpKAYYAyU6cr/chuLGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uZfcO-001H9r-LD;
-	Thu, 10 Jul 2025 00:58:34 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1752109855; c=relaxed/simple;
+	bh=polTNEeOS/4T+OqPkd+JBjFkgMdpjkKbeSJ8JtsidBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K9xnDmMsUCiBiqDaVykVlQy6xMB2fvsc84LJBVkz9h7BImLn75sDF6pNwY1paM1BNXHCm3LsvqvnpIvc7nWipIMUYE70/w5tEOYjm/LWu9C+WkjQYhwEEUrCbToiVPx+HzTmaO0G4IfFVgWVG6JXqNWRvlBqzhgMjsxWevgvB7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bcxcC2fzqzYQvLP;
+	Thu, 10 Jul 2025 09:10:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 3074E1A1546;
+	Thu, 10 Jul 2025 09:10:50 +0800 (CST)
+Received: from [10.174.176.88] (unknown [10.174.176.88])
+	by APP3 (Coremail) with SMTP id _Ch0CgBXBCIYE29ovh7bBA--.17693S3;
+	Thu, 10 Jul 2025 09:10:49 +0800 (CST)
+Message-ID: <886b55b4-162f-4acd-a5ec-6114e6239a89@huaweicloud.com>
+Date: Thu, 10 Jul 2025 09:10:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Song Liu" <songliubraving@meta.com>
-Cc: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- "Christian Brauner" <brauner@kernel.org>, "Tingmao Wang" <m@maowtm.org>,
- "Song Liu" <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "Kernel Team" <kernel-team@meta.com>,
- "andrii@kernel.org" <andrii@kernel.org>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,
- "martin.lau@linux.dev" <martin.lau@linux.dev>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
- "mattbobrowski@google.com" <mattbobrowski@google.com>,
- =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>,
- "Jann Horn" <jannh@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-In-reply-to: <474C8D99-6946-4CFF-A925-157329879DA9@meta.com>
-References: <>, <474C8D99-6946-4CFF-A925-157329879DA9@meta.com>
-Date: Thu, 10 Jul 2025 10:58:33 +1000
-Message-id: <175210911389.2234665.8053137657588792026@noble.neil.brown.name>
-
-On Thu, 10 Jul 2025, Song Liu wrote:
-> 
-> 
-> > On Jul 9, 2025, at 3:24 PM, NeilBrown <neil@brown.name> wrote:
-> [...]
-> >> 
-> >> How should the user handle -ECHILD without LOOKUP_RCU flag? Say the
-> >> following code in landlocked:
-> >> 
-> >> /* Try RCU walk first */
-> >> err = vfs_walk_ancestors(path, ll_cb, data, LOOKUP_RCU);
-> >> 
-> >> if (err == -ECHILD) {
-> >> struct path walk_path = *path;
-> >> 
-> >> /* reset any data changed by the walk */
-> >> reset_data(data);
-> >> 
-> >> /* now do ref-walk */
-> >> err = vfs_walk_ancestors(&walk_path, ll_cb, data, 0);
-> >> }
-> >> 
-> >> Or do you mean vfs_walk_ancestors will never return -ECHILD?
-> >> Then we need vfs_walk_ancestors to call reset_data logic, right?
-> > 
-> > It isn't clear to me that vfs_walk_ancestors() needs to return anything.
-> > All the communication happens through walk_cb()
-> > 
-> > walk_cb() is called with a path, the data, and a "may_sleep" flag.
-> > If it needs to sleep but may_sleep is not set, it returns "-ECHILD"
-> > which causes the walk to restart and use refcounts.
-> > If it wants to stop, it returns 0.
-> > If it wants to continue, it returns 1.
-> > If it wants a reference to the path then it can use (new)
-> > vfs_legitimize_path() which might fail.
-> > If it wants a reference to the path and may_sleep is true, it can use
-> > path_get() which won't fail.
-> > 
-> > When returning -ECHILD (either because of a need to sleep or because
-> > vfs_legitimize_path() fails), walk_cb() would reset_data().
-> 
-> This might actually work. 
-> 
-> My only concern is with vfs_legitimize_path. It is probably safer if 
-> we only allow taking references with may_sleep==true, so that path_get
-> won’t fail. In this case, we will not need walk_cb() to call 
-> vfs_legitimize_path. If the user want a reference, the walk_cb will 
-> first return -ECHILD, and call path_get when may_sleep is true. 
-
-What is your concern with vfs_legitimize_path() ??
-
-I've since realised that always restarting in response to -ECHILD isn't
-necessary and isn't how normal path-walk works.  Restarting might be
-needed, but the first response to -ECHILD is to try legitimize_path().
-If that succeeds, then it is safe to sleep.
-So returning -ECHILD might just result in vfs_walk_ancestors() calling
-legitimize_path() and then calling walk_cb() again.  Why not have
-walk_cb() do the vfs_legitimize_path() call (which will almost always
-succeed in practice).
-
-NeilBrown
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cachefiles: Fix the incorrect return value in
+ __cachefiles_write()
+To: David Howells <dhowells@redhat.com>, Zizhi Wo <wozizhi@huaweicloud.com>
+Cc: netfs@lists.linux.dev, jlayton@kernel.org, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ libaokun1@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com
+References: <20250703024418.2809353-1-wozizhi@huaweicloud.com>
+ <2731907.1752077037@warthog.procyon.org.uk>
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+In-Reply-To: <2731907.1752077037@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgBXBCIYE29ovh7bBA--.17693S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYv7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r
+	1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
 
+
+在 2025/7/10 0:03, David Howells 写道:
+> I think this should only affect erofs, right?
 > 
-> Does this make sense? Did I miss any cases? 
-> 
-> Thanks,
-> Song
+> David
 > 
 > 
+
+Yes, currently other callers don't rely on the return value of
+__cachefiles_write(); instead, they determine success or failure through
+cachefiles_write_complete().
+
+Therefore, resetting "ret" to 0 in __cachefiles_write() might be
+unnecessary? When this step is removed, the outer
+cachefiles_ondemand_fd_write_iter() can also correctly update the offset
+based on ret.
+
+Thanks,
+Zizhi Wo
 
 
