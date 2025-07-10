@@ -1,256 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-54536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD94DB008CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 18:33:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D381B008D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 18:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7191C25639
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 16:33:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF36D3AE901
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 16:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDE717A303;
-	Thu, 10 Jul 2025 16:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4638F274B54;
+	Thu, 10 Jul 2025 16:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LJjthCTq"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="jkoHW/o8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6364A2EFDA7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 16:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3E32248B3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 16:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752165111; cv=none; b=ocrdjRqW1xRPi2XSwNfVopooxJwRGmbpMxFsA3mkKpJYStqbnFxLsejPxJ8sAgW0USkbstd4OR/S+MMAoKZsITjXfxq91Sb4VaACEpiKqdLu4dhzcIKhkoT5A3273hM1Zk4nmIHMP2Ac8EfVOCTp7UbsU8/Ng85MAj4evao3wz0=
+	t=1752165248; cv=none; b=HvYiJysOpL6aqZ+CIoKRA8PNGA7Ii+Pv5gQUCmDfXR6Pr+I11LLvuk0kL6RnaFBq0+5XnX66uxy+F2R8lLR/08cbyXt6x9G6mfVDm1Bq3nM05/sMmnM6gu/FAKe9CqQf7o4zC1kF2aEZtCjHk0J1Iqmkb9E84iRb7Pfh47NJOQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752165111; c=relaxed/simple;
-	bh=0/7e0fhDD+nhfhomUm5QCNroWeBizuBJN14rsfB0VjY=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=oRySyu1AxdDDA+0CuTcZRZbVVkFGpASQN3UwRehEWbN/fZiu1BWYbcpc1dCgS5WUtmYEWWH+Wop2VtyBU8CaDTZoVerGZqXhEpj8lfFlO5TkCE3ikPSLZ5u0z22uoc8NINtABCiqtnaG9H151A+B2ygBwGPPwGzeprcIw7U/kUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LJjthCTq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752165108;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XbVgBYU1j7RlLF0+RFun00uhaSaH2KoCdahv4lEZ8ho=;
-	b=LJjthCTqLZGGYTopfGNiF1LBZRzU8KSHnfIXK//AfLpKmy0gefvFV/Fw9TVu5PAQ2kd7Jm
-	D2vdA1a1NvvXLRk7nLMiis2SX8RCPgBpn8Fjx9Vcp4BvXzHnwUTg1tSk3b7KNzh1y62KM8
-	X2RHkogL2qE5eurSqIoyH68Eu58YTIU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-416-77Io-M4CMMG3K5g-BpBdDw-1; Thu,
- 10 Jul 2025 12:31:46 -0400
-X-MC-Unique: 77Io-M4CMMG3K5g-BpBdDw-1
-X-Mimecast-MFC-AGG-ID: 77Io-M4CMMG3K5g-BpBdDw_1752165099
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F8AF18001D1;
-	Thu, 10 Jul 2025 16:31:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6CC423000221;
-	Thu, 10 Jul 2025 16:31:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <2904424.1752161530@warthog.procyon.org.uk>
-References: <2904424.1752161530@warthog.procyon.org.uk> <CAKPOu+9TN4hza48+uT_9W5wEYhZGLc2F57xxKDiyhy=pay5XAw@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <2738562.1752092552@warthog.procyon.org.uk> <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com> <2807750.1752144428@warthog.procyon.org.uk>
-Cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
-    Christian Brauner <christian@brauner.io>,
-    Viacheslav Dubeyko <slava@dubeyko.com>,
-    Alex Markuze <amarkuze@redhat.com>, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
+	s=arc-20240116; t=1752165248; c=relaxed/simple;
+	bh=Iyx/rY3um5foq2UdmVnt2T9K+tytX3EZTYmOTemq+Co=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eCC6+Wp4GuDbg+BcWqGuIF9GBlCJMy0iwVLCpq0UR+QMerWgUOqJvc8rVZh7c8jqNNM7mL+iQ2+Jkd6PdOwppuN9sQgUdSWjiKMDWUKb5npplf6Lq9+Zv/7uyG7pMdNVgNhmVGdXCB6c1p4vIgMCYYtP0au99s7CsVkQ8zq2vWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=jkoHW/o8; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56AGBTTh013811
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 09:34:06 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=fLWc5sDtQr4fdfwzMmBd3PXfsLS6ZqtHFE2nBMh8Eps=; b=jkoHW/o89ZSs
+	89YmkOk9lB+lhSHW7AZakM9CldA4TZu9TYL9U9zo7c8pFL2HWCsS8hjkL1KT5ivN
+	4CbCM24lr58n+hDuKAwgZSqsyrWJb3sapqu5Huf6YOCAnXmr03gsaGMeenX82xwi
+	gRIfM4LWOmosh+ElKzqI9lAJ8hLRxdk3xFKofdpSWz/hN//DckvDlS9Tm0swVfEQ
+	vOoTW6rZjONYfVibKNITvCEV97ag+Zl1vmJmcjvSzMJG0qEeXBtZNwMYMoXq8ugY
+	UFIRoPsvhz+BsdJlG+FPjClmtlZKrnJULHrQDuI6gpmZL0692us7Wa/M7Kw/VQ7H
+	xxYRrgzh1g==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47t81cuqmb-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 09:34:06 -0700 (PDT)
+Received: from twshared57752.46.prn1.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.24; Thu, 10 Jul 2025 16:34:04 +0000
+Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
+	id CD93931F1B857; Thu, 10 Jul 2025 09:33:57 -0700 (PDT)
+From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
+To: <amir73il@gmail.com>
+CC: <ibrahimjirdeh@fb.com>, <ibrahimjirdeh@meta.com>, <jack@suse.cz>,
+        <josef@toxicpanda.com>, <lesha@meta.com>,
+        <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>
+Subject: Re: [PATCH 3/3] [PATCH v2 3/3] fanotify: introduce event response identifier
+Date: Thu, 10 Jul 2025 09:33:31 -0700
+Message-ID: <20250710163331.3888821-1-ibrahimjirdeh@meta.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <CAOQ4uxiSqm5Uso_J1+4efAgefdUJDhwGQOt8WDd8NFkB6Y1RcQ@mail.gmail.com>
+References: <CAOQ4uxiSqm5Uso_J1+4efAgefdUJDhwGQOt8WDd8NFkB6Y1RcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2919958.1752165094.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 10 Jul 2025 17:31:34 +0100
-Message-ID: <2919959.1752165094@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE0MSBTYWx0ZWRfXxCSjTjVW+bIH 69cXvKdjmI0vBcDzw5guFKjQ4ymHg1kuXei54RE2mie9COcr9AQCoC/315Ht/FIKdrBmgcYbwq6 3PiuWVsl2qbLeFstSP7xw1U3edo2L8gmsvTDrG7CFOMLqJGp/w+U4k3G7+AqubV6rt/J2hov0l6
+ qlE2X+bFHlgGq4J75XilrZTm5LoS4llGur3MifFpl4qATdjvpulj1Ce6V8veE+5CZlqMzoNOoWp t2GubqUkBC9mLdg+3dBKN2mAxuMiFR90vifwrlPGy48+gK6g7YsUCs+tRS0TKiEcvMJFaRtydKU Nn5Nc2TDUCT8aLzydArDlqhWDbzpKcwEr0D0WUGw2XkWj3+MmzOG4QblFHec7hiGMqQDUIWSYyj
+ jEuzfE1fD3GhRXvNfcKGBJ5QcEXVqwqwiJ0N93EHaXbQwsMGEH+k8qRPTEUTNKOzNb3Fz3m3
+X-Authority-Analysis: v=2.4 cv=ecA9f6EH c=1 sm=1 tr=0 ts=686feb7e cx=c_pps a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=tm-JOOCgNrQRJpHM-h4A:9
+X-Proofpoint-GUID: 5cK84QwILqSQkYW3_v1jkrklYplnZ0Zc
+X-Proofpoint-ORIG-GUID: 5cK84QwILqSQkYW3_v1jkrklYplnZ0Zc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
 
-David Howells <dhowells@redhat.com> wrote:
+On 7/10/25, 1:45 AM, "Amir Goldstein" <amir73il@gmail.com <mailto:amir73i=
+l@gmail.com>> wrote:
+> > IMO, this is shorter and nicer after assigning fd =3D -ret; above:
+> >
+> >        if (FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR |
+> >
+> > FAN_REPORT_RESPONSE_ID))
+> >                metadata.fd =3D fd;
+> >        else
+> >                metadata.fd =3D fd >=3D 0 ? fd : FAN_NOFD;
+> >
+>
+> And above this code is also a good place to place the build assertion:
+>
+> BUILD_BUG_ON(sizeof(metadata.id) !=3D sizeof(metadata.fd));
+> BUILD_BUG_ON(offsetof(struct fanotity_event_metadata, id) !=3D offsetof=
+(struct
+> fanotity_event_metadata, fd));
+>
+> Which provides the justification to use the union fields interchangeabl=
+y
+> in this simplified code.
+>
+> Thanks,
+> Amir.
 
-> Depending on what you're doing on ceph, you might need the attached patc=
-h as
-> well.  I managed to reproduce it by doing a git clone and kernel build o=
-n a
-> ceph mount with cachefiles active.
-
-Here's a version of the patch that conditionally does the needed wakeup.  =
-I
-don't want to force processing if there's no need.
-
-David
----
-commit 1fe42a9a7f0b2f51107574f0b8e151d13dc766cc
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Jul 10 15:02:57 2025 +0100
-
-    netfs: Fix race between cache write completion and ALL_QUEUED being se=
-t
-    =
-
-    When netfslib is issuing subrequests, the subrequests start processing
-    immediately and may complete before we reach the end of the issuing
-    function.  At the end of the issuing function we set NETFS_RREQ_ALL_QU=
-EUED
-    to indicate to the collector that we aren't going to issue any more su=
-breqs
-    and that it can do the final notifications and cleanup.
-    =
-
-    Now, this isn't a problem if the request is synchronous
-    (NETFS_RREQ_OFFLOAD_COLLECTION is unset) as the result collection will=
- be
-    done in-thread and we're guaranteed an opportunity to run the collecto=
-r.
-    =
-
-    However, if the request is asynchronous, collection is primarily trigg=
-ered
-    by the termination of subrequests queuing it on a workqueue.  Now, a r=
-ace
-    can occur here if the app thread sets ALL_QUEUED after the last subreq=
-uest
-    terminates.
-    =
-
-    This can happen most easily with the copy2cache code (as used by Ceph)
-    where, in the collection routine of a read request, an asynchronous wr=
-ite
-    request is spawned to copy data to the cache.  Folios are added to the
-    write request as they're unlocked, but there may be a delay before
-    ALL_QUEUED is set as the write subrequests may complete before we get
-    there.
-    =
-
-    If all the write subreqs have finished by the ALL_QUEUED point, no fur=
-ther
-    events happen and the collection never happens, leaving the request
-    hanging.
-    =
-
-    Fix this by queuing the collector after setting ALL_QUEUED.  This is a=
- bit
-    heavy-handed and it may be sufficient to do it only if there are no ex=
-tant
-    subreqs.
-    =
-
-    Also add a tracepoint to cross-reference both requests in a copy-to-re=
-quest
-    operation and add a trace to the netfs_rreq tracepoint to indicate the
-    setting of ALL_QUEUED.
-    =
-
-    Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only =
-use one work item")
-    Reported-by: Max Kellermann <max.kellermann@ionos.com>
-    Link: https://lore.kernel.org/r/CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=3DshxyGLw=
-fe-L7AV3DhebS3w@mail.gmail.com/
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Paulo Alcantara <pc@manguebit.org>
-    cc: Viacheslav Dubeyko <slava@dubeyko.com>
-    cc: Alex Markuze <amarkuze@redhat.com>
-    cc: Ilya Dryomov <idryomov@gmail.com>
-    cc: netfs@lists.linux.dev
-    cc: ceph-devel@vger.kernel.org
-    cc: linux-fsdevel@vger.kernel.org
-    cc: stable@vger.kernel.org
-
-diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
-index 080d2a6a51d9..8097bc069c1d 100644
---- a/fs/netfs/read_pgpriv2.c
-+++ b/fs/netfs/read_pgpriv2.c
-@@ -111,6 +111,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_co=
-py_to_cache(
- 		goto cancel_put;
- =
-
- 	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &creq->flags);
-+	trace_netfs_copy2cache(rreq, creq);
- 	trace_netfs_write(creq, netfs_write_trace_copy_to_cache);
- 	netfs_stat(&netfs_n_wh_copy_to_cache);
- 	rreq->copy_to_cache =3D creq;
-@@ -155,6 +156,9 @@ void netfs_pgpriv2_end_copy_to_cache(struct netfs_io_r=
-equest *rreq)
- 	netfs_issue_write(creq, &creq->io_streams[1]);
- 	smp_wmb(); /* Write lists before ALL_QUEUED. */
- 	set_bit(NETFS_RREQ_ALL_QUEUED, &creq->flags);
-+	trace_netfs_rreq(rreq, netfs_rreq_trace_end_copy_to_cache);
-+	if (list_empty_careful(&creq->io_streams[1].subrequests))
-+		netfs_wake_collector(creq);
- =
-
- 	netfs_put_request(creq, netfs_rreq_trace_put_return);
- 	creq->copy_to_cache =3D NULL;
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index 73e96ccbe830..64a382fbc31a 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -55,6 +55,7 @@
- 	EM(netfs_rreq_trace_copy,		"COPY   ")	\
- 	EM(netfs_rreq_trace_dirty,		"DIRTY  ")	\
- 	EM(netfs_rreq_trace_done,		"DONE   ")	\
-+	EM(netfs_rreq_trace_end_copy_to_cache,	"END-C2C")	\
- 	EM(netfs_rreq_trace_free,		"FREE   ")	\
- 	EM(netfs_rreq_trace_ki_complete,	"KI-CMPL")	\
- 	EM(netfs_rreq_trace_recollect,		"RECLLCT")	\
-@@ -559,6 +560,35 @@ TRACE_EVENT(netfs_write,
- 		      __entry->start, __entry->start + __entry->len - 1)
- 	    );
- =
-
-+TRACE_EVENT(netfs_copy2cache,
-+	    TP_PROTO(const struct netfs_io_request *rreq,
-+		     const struct netfs_io_request *creq),
-+
-+	    TP_ARGS(rreq, creq),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,		rreq)
-+		    __field(unsigned int,		creq)
-+		    __field(unsigned int,		cookie)
-+		    __field(unsigned int,		ino)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    struct netfs_inode *__ctx =3D netfs_inode(rreq->inode);
-+		    struct fscache_cookie *__cookie =3D netfs_i_cookie(__ctx);
-+		    __entry->rreq	=3D rreq->debug_id;
-+		    __entry->creq	=3D creq->debug_id;
-+		    __entry->cookie	=3D __cookie ? __cookie->debug_id : 0;
-+		    __entry->ino	=3D rreq->inode->i_ino;
-+			   ),
-+
-+	    TP_printk("R=3D%08x CR=3D%08x c=3D%08x i=3D%x ",
-+		      __entry->rreq,
-+		      __entry->creq,
-+		      __entry->cookie,
-+		      __entry->ino)
-+	    );
-+
- TRACE_EVENT(netfs_collect,
- 	    TP_PROTO(const struct netfs_io_request *wreq),
- =
-
+I will simplify the code to use union fields interchangeably + add the
+suggested build assertions and resubmit these soon. It gives a chance
+to fix the various formatting issues :)
 
