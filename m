@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-54570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22C8B00F8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 01:22:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9236CB00F8D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 01:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54641CA3643
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 23:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCCF562A64
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 23:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F582D3A6A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D52D3A8A;
 	Thu, 10 Jul 2025 23:21:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2AC2C15B0;
-	Thu, 10 Jul 2025 23:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF252C376B;
+	Thu, 10 Jul 2025 23:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752189692; cv=none; b=F4vs/unduqq94fkXanEzNGpkPhyq1j7+UmtsTJFQrK/AE6HCaxrrAJg/qtY0D3PKgmifykrclMflvj0OqAC9R/GzEUPLKMYle20oVjCzTsnx7e8DehbD2AmJFj4NKtCpIYVOHYgYzQBocDjkpK5sCxstM6KyDSrLTbIG32YlXOY=
+	t=1752189693; cv=none; b=ZMJsPM/ool+8Afw/7SbPyE+OoF7QB27wm4cL/LnBqgQNfASoxZntmHZNInwI9k/cj1gKx32tXPhVsTrsv06mLo3mmfTccQzb+Dbyj8CkN3sQ2gn6mtaBxBRLFGK/7dxZvNY1qIeyLTuQQ/uofdxhJplNiwYPySHi+0mJzJZEfhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752189692; c=relaxed/simple;
-	bh=t6rNcM2Mrk8jSgNeFGuvGiEydXKLNrVReYRKGHDkMB4=;
+	s=arc-20240116; t=1752189693; c=relaxed/simple;
+	bh=Jg+1K49fVGdw2qf5ft0GXoLFodLfWMhLVl8OQfhDvOA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NYU69IIfNymOUXi5CuVJ1AuCoHhSyuGXucfs1IhQdJM7y+w2KFMFdejrpkZVKNyVhA8PWV9dX94mrWk/z6j6hpVi4tZrgxfd3Tps82faOzVsJi/RPYBgMpu7cpY6gpJJ+PgzR3aQUb9HpVJKhCr/jvT9vKuBnmSm0UJtivPbvco=
+	 MIME-Version; b=VpBvUJlCw79K7y00LnVsnDmtJEwxlD7O2Eb+691hTxsaWH75KsQp9KlEv5GmZ/2VvzGI2M/kfemUmb/EuLr1tiC0AZ9iy30r1OZP7IeHs/keq83lhzhL7HgEdzAtoKooCXITdJILmlN5fdD8t1wiw+i2AkuDBDha8tWqbqZPfig=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1ua0Zt-001XGU-Cr;
+	id 1ua0Zt-001XGa-Rn;
 	Thu, 10 Jul 2025 23:21:23 +0000
 From: NeilBrown <neil@brown.name>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Amir Goldstein <amir73il@gmail.com>
 Cc: linux-unionfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 09/20] ovl: narrow locking in ovl_cleanup_whiteouts()
-Date: Fri, 11 Jul 2025 09:03:39 +1000
-Message-ID: <20250710232109.3014537-10-neil@brown.name>
+Subject: [PATCH 10/20] ovl: narrow locking in ovl_cleanup_index()
+Date: Fri, 11 Jul 2025 09:03:40 +1000
+Message-ID: <20250710232109.3014537-11-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250710232109.3014537-1-neil@brown.name>
 References: <20250710232109.3014537-1-neil@brown.name>
@@ -53,51 +53,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rather than lock the directory for the whole operation, use
-ovl_lookup_upper_unlocked() and ovl_cleanup_unlocked() to take the lock
-only when needed.
+ovl_cleanup_index() takes a lock on the directory and then does a lookup
+and possibly one of two different cleanups.
+This patch narrows the locking to use the _unlocked() versions of the
+lookup and one cleanup, and just takes the lock for the other cleanup.
 
-This makes way for future changes where locks are taken on individual
-dentries rather than the whole directory.
+A subsequent patch will take the lock into the cleanup.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/overlayfs/readdir.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/overlayfs/util.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index 68cca52ae2ac..2a222b8185a3 100644
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -1034,14 +1034,13 @@ void ovl_cleanup_whiteouts(struct ovl_fs *ofs, struct dentry *upper,
- {
- 	struct ovl_cache_entry *p;
- 
--	inode_lock_nested(upper->d_inode, I_MUTEX_CHILD);
- 	list_for_each_entry(p, list, l_node) {
- 		struct dentry *dentry;
- 
- 		if (WARN_ON(!p->is_whiteout || !p->is_upper))
- 			continue;
- 
--		dentry = ovl_lookup_upper(ofs, p->name, upper, p->len);
-+		dentry = ovl_lookup_upper_unlocked(ofs, p->name, upper, p->len);
- 		if (IS_ERR(dentry)) {
- 			pr_err("lookup '%s/%.*s' failed (%i)\n",
- 			       upper->d_name.name, p->len, p->name,
-@@ -1049,10 +1048,9 @@ void ovl_cleanup_whiteouts(struct ovl_fs *ofs, struct dentry *upper,
- 			continue;
- 		}
- 		if (dentry->d_inode)
--			ovl_cleanup(ofs, upper->d_inode, dentry);
-+			ovl_cleanup_unlocked(ofs, upper, dentry);
- 		dput(dentry);
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 9ce9fe62ef28..7369193b11ec 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -1107,21 +1107,20 @@ static void ovl_cleanup_index(struct dentry *dentry)
+ 		goto out;
  	}
--	inode_unlock(upper->d_inode);
- }
  
- static bool ovl_check_d_type(struct dir_context *ctx, const char *name,
+-	inode_lock_nested(dir, I_MUTEX_PARENT);
+-	index = ovl_lookup_upper(ofs, name.name, indexdir, name.len);
++	index = ovl_lookup_upper_unlocked(ofs, name.name, indexdir, name.len);
+ 	err = PTR_ERR(index);
+ 	if (IS_ERR(index)) {
+ 		index = NULL;
+ 	} else if (ovl_index_all(dentry->d_sb)) {
+ 		/* Whiteout orphan index to block future open by handle */
++		inode_lock_nested(dir, I_MUTEX_PARENT);
+ 		err = ovl_cleanup_and_whiteout(OVL_FS(dentry->d_sb),
+ 					       indexdir, index);
++		inode_unlock(dir);
+ 	} else {
+ 		/* Cleanup orphan index entries */
+-		err = ovl_cleanup(ofs, dir, index);
++		err = ovl_cleanup_unlocked(ofs, indexdir, index);
+ 	}
+-
+-	inode_unlock(dir);
+ 	if (err)
+ 		goto fail;
+ 
 -- 
 2.49.0
 
