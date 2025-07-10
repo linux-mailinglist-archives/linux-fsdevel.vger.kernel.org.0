@@ -1,65 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-54420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D145AFF7F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 06:22:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322B7AFF7F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 06:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98B31C47C45
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 04:22:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7415D5A3D9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 04:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC1D2820B7;
-	Thu, 10 Jul 2025 04:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3564283FE8;
+	Thu, 10 Jul 2025 04:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="kb5tv91w"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="GzBunswk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D5F28002B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 04:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6556F280CC1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 04:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752121341; cv=none; b=gGvcS3zqGGMSrSI32IxTNFIHKPhexG3zlndlJ8Uap+kI48c0QXq241+rraFh+3UPjCPO5rKTV7iFocqYotvD3SYFVYddwJYqHWO/0XBD0daTveFLfQ/HnfL6iM535IEzdvYsoNF1d6jvaS9/5IWvXjZ1PO2RJFS3srutjNeKCxY=
+	t=1752121341; cv=none; b=UBrJgh5DhNzDLmyZUFENgSVuztphvejX8J0R4ltv6Y6eXhs1pwFZnbKH3nieIgTxwfuYp39GjQn8To8bN/XBV/kcZ7RsACxim642x0LHZ3AEkN3At0i74yyjbB7BLQrWVeKcLoevAOB8qkGmLVzXj3sPrURW7d9n1cJQ/WVl/dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752121341; c=relaxed/simple;
-	bh=LMHxhBmoaZQ/c+yevPK1I6iZH/F7VZcV6QKJEgKjpGU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kavyldYdPjhuGWf5aSCjGTixpkxaTH+HpZnB5bMCdYs1CvMghkU+h3bXEIFk8EzNZGQripaun8PCHq9Cwd6Gmeur/R1c/AHnDZE5acEBs+EiBqf3IomI31jLZOn3kWRCa8165X/6LmONyn3J7jhsUwWcxKcQLs5gQEXKFkdrp/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=kb5tv91w; arc=none smtp.client-ip=67.231.145.42
+	bh=DeY0DFEUYqiccw8R2sDFAMbNk1DKH36geh8NTQ8bKYY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OFc1oaO9V+e2gLPtveN3hMI5oQmo54NOLDFdHOPQZ+V2MRLlEFTuFzya4kIcjVQRUmR0pzSeUfCGm2f1g8yph9OAIDuxPB+Kfp7g1oBnFlNWKeZrFwD+wmHPONwb/PiELNtT1itkp+QSWvZmrSbLy8SBK02jrJWbO2DcKQOaVuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=GzBunswk; arc=none smtp.client-ip=67.231.145.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
 Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A0oKVD005491
-	for <linux-fsdevel@vger.kernel.org>; Wed, 9 Jul 2025 21:22:18 -0700
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A0oKVE005491
+	for <linux-fsdevel@vger.kernel.org>; Wed, 9 Jul 2025 21:22:19 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=s2048-2025-q2; bh=RaOBH78yCW9De2wZ43
-	+NGMOmY+Rr7VK2fvpWOcGXYi8=; b=kb5tv91wNy7+Vut0H9TkFF5HTWQFJofTM8
-	kdIl1hvjbH0XFUsJGqPNuOQUdsOhPgk4R0GJiIkce7qxoy83txfw8nPBb0Cm7LpQ
-	eaiombzbq6txvWuYBDmYYHrsyllSIf4JWTaazJU5Qzau2ApJ4aoWQObYasquKWVM
-	U1GZxDKfri1cC0OvY/NCtNHYf/WXPR7v8xBZAnRpuC+AgEVNgK05k+GgZj8f4fjo
-	H0HFxuYYZ/JGZjxpk68ZXWSylpGoxEJT4Gt/t6KQUyZI+Mro+2v33bUYKHn8Qn/f
-	oDoKprFXSyPiEbAdaoGRW2BqEwXM+HcsW1h67DJxNam9aPlqAjig==
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=Jobj9SBEmPckFPsfoGErsMMnOVliL4G/ImX8i3bXCag=; b=GzBunswkWNpz
+	8wdjN0ZzS0V78K3wDrf3hbocg12tVoAhJSfTdQLdR8QO+LESqaOg4GMiQSdl2k2p
+	L0rhb4vBurVd5Y2uEuuef/F+cbYWbvc0a2ktnJwUUsMY6FBehl3slehpQJXJHpds
+	zgLpTxFwq/V82OXgfwNLIDdoNZpVQMOI0jsoCMx2iCHWLv37n6+FKLR0lZ5vMIhy
+	MznTGI/4oP9FagHXGbk+1ImDyw72hoAEOmyFRoHqoOwoegQaRRde8SuZZBc/7d/P
+	7pFzV9roUO3nu5mtzVsfCqu8laOcaWy3Mh+FlmkZDFcF95Y8mAyTItPLu0ecI6l2
+	xqlgLNZWWA==
 Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47t16dsjp5-2
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47t16dsjp5-3
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jul 2025 21:22:17 -0700 (PDT)
-Received: from twshared26876.17.frc2.facebook.com (2620:10d:c0a8:1b::30) by
+	for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jul 2025 21:22:18 -0700 (PDT)
+Received: from twshared26876.17.frc2.facebook.com (2620:10d:c0a8:1b::8e35) by
  mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.2.1748.24; Thu, 10 Jul 2025 04:22:16 +0000
 Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
-	id 3819B31E90A60; Wed,  9 Jul 2025 21:19:04 -0700 (PDT)
+	id A39DE31E90A9B; Wed,  9 Jul 2025 21:19:07 -0700 (PDT)
 From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
 To: <ibrahimjirdeh@meta.com>
 CC: <jack@suse.cz>, <=amir73il@gmail.com>, <josef@toxicpanda.com>,
-        <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>
-Subject: [PATCH v2 0/3] fanotify: introduce response identifier
-Date: Wed, 9 Jul 2025 21:18:32 -0700
-Message-ID: <20250710041835.3692987-1-ibrahimjirdeh@meta.com>
+        <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>,
+        ibrahimjirdeh <ibrahimjirdeh@fb.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH 1/3] [PATCH v2 1/3] fanotify: add support for a variable length permission event
+Date: Wed, 9 Jul 2025 21:18:33 -0700
+Message-ID: <20250710041835.3692987-2-ibrahimjirdeh@meta.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250710041835.3692987-1-ibrahimjirdeh@meta.com>
+References: <20250710041835.3692987-1-ibrahimjirdeh@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,62 +75,287 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDAzNCBTYWx0ZWRfX2v9ZxBRkdaA2 iNgvSF/Ck4ewt7AEQNWQey0k1XAnzodFgYIwXJCMA5QpWvJLCWHmyuuywpOwQI6gDO6x14wpCzu 1e7Zoyk4ffxbQWSV054WkyZifoR60f937K9HmHMbhWrZyE8nB5mwlQnnvqaE/m35CHOD1nfiqSZ
- D5HVisraKxWhw6gJKRtQ8eTFEZNmcQ1hZw3M7qWFTeOA7S0V7dQn8nL0/l87FR7dg8mSDnMxrNd czgGrFpdIaV/XZ40v0+CksYWtlTzASG9WlNZNvAfbLGYFfM7MGtBEF5gYYWwu3S+0OYxl29zs0i zoSNR2U/JF+1ectM3vNPOMph9SGA1b//r6lfiNiAw0Qxea8afuuFXweXCaZHkHvS0jrnFJu7WJj
- 1n215Jl1DXFM/vAV9xwKDLMYIGKEXCII4Xjl1Hwvpqc4dS5oE4JkFE2X7YPs2C68XbH1st+6
-X-Proofpoint-GUID: deEYkRDrdV0Ci2ocOhdRMwqD4lzHDE4B
-X-Proofpoint-ORIG-GUID: deEYkRDrdV0Ci2ocOhdRMwqD4lzHDE4B
-X-Authority-Analysis: v=2.4 cv=GIMIEvNK c=1 sm=1 tr=0 ts=686f3ffa cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=VabnemYjAAAA:8 a=pGLkceISAAAA:8 a=NEAV23lmAAAA:8 a=3aefDxiWVug-mi2EcFgA:9
- a=gKebqoRLp9LExxC7YDUY:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDAzNCBTYWx0ZWRfXxB9srtG23zmC 7w1NWauaulE38DuiYUHBmFojAK0LnTxsNsBRCykObj4fU8Y9PldH9jwqgmeEhJ2uPLp0CSWy3CA XNOZq7bsBcV6qNEmGku1F/aXScbT3CDnOkO6VzERdn1iA051LOltZiejApzAcUc47gICHt52eoF
+ g5pvJflmUXJPSd+ZfAigA4HlQnwrkSPlgJUcL6yWpbrG2UUrx0hIg/joEYHdxuxzE/NoWaQruab CwuWJYElZ9Pu4/IkYNMFO90tGNxgaIWZmDeFoMkZelaR9DmAKrfLpvbrGrOYIgiKD/4JfLxjyPa zLpwNCdq6AwYPTI8FG1pWxbQXQijAwSjo09KKq15ohy/kQ2yfCWGGKDEmvvfxPaL55JbKVBjk2q
+ b1M77OFvFskZi74ZvjdZQBWmnoJHLzeJUY1uJReg1g2R01JMlPgfS6zxiixBG3wUgS54SbNP
+X-Proofpoint-GUID: jZhVTzGJRPslqeyyU-dp8L0Dh-pi_J5G
+X-Proofpoint-ORIG-GUID: jZhVTzGJRPslqeyyU-dp8L0Dh-pi_J5G
+X-Authority-Analysis: v=2.4 cv=GIMIEvNK c=1 sm=1 tr=0 ts=686f3ffa cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=Wb1JkmetP80A:10 a=FOH2dFAWAAAA:8 a=pGLkceISAAAA:8 a=lPxGRcK3HGJCSv4Oa_kA:9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
 
-These patches are in order to add an identifier other than fd which
-can be used to respond to fanotify permission events. This is useful
-for HSM use cases which are backed by a daemon to respond reliably
-[1] and also for reporting pre-dir-content events without an event->fd [2=
-]
+From: ibrahimjirdeh <ibrahimjirdeh@fb.com>
 
-The first few patches in the series are pulled in from Amir's work to
-add support for pre-dir-content events.
+Summary:
+From Amir Goldstein <amir73il@gmail.com>
 
-In terms of testing, there are some additional LTP test cases to go with
-these patches which exercise responding to events via response identifier
-[3]
+In preparation for pre-content events that report fid info + name,
+we need a new event type that is both variable length and can be
+put on a user response wait list.
 
-Changes v1 =3D> v2:
+Create an event type FANOTIFY_EVENT_TYPE_FID_NAME_PERM with is a
+combination of the variable length fanotify_name_event prefixed
+with a fix length fanotify_perm_event and they share the common
+fanotify_event memeber.
 
-Moved away from adding a unique event identifier, and instead overload
-event->fd to support a response identifier for now for FAN_REPORT_FID
-setting.
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/notify/fanotify/fanotify.c | 76 +++++++++++++++++++++++++++--------
+ fs/notify/fanotify/fanotify.h | 19 ++++++---
+ 2 files changed, 74 insertions(+), 21 deletions(-)
 
-v1: https://lore.kernel.org/linux-fsdevel/20250623193631.2780278-1-ibrahi=
-mjirdeh@meta.com/
-
-[1] https://lore.kernel.org/all/CAMp4zn8aXNPzq1i8KYmbRfwDBvO5Qefa4isSyS1b=
-wYuvkuBsHg@mail.gmail.com/
-[2] https://lore.kernel.org/linux-fsdevel/2dx3pbcnv5w75fxb2ghqtsk6gzl6cux=
-md2rinzwbq7xxfjf5z7@3nqidi3mno46/
-[3] https://github.com/ibrahim-jirdeh/ltp/commit/4cdb1ac3b22be7b332cc18ff=
-193686f2be7ea69d
-
-Amir Goldstein (2):
-  fanotify: add support for a variable length permission event
-  fanotify: allow pre-content events with fid info
-
-Ibrahim Jirdeh (1):
-  fanotify: introduce event response identifier
-
- fs/notify/fanotify/fanotify.c       |  81 ++++++++---
- fs/notify/fanotify/fanotify.h       |  26 +++-
- fs/notify/fanotify/fanotify_user.c  | 201 +++++++++++++++++++---------
- include/linux/fanotify.h            |   3 +-
- include/linux/fsnotify_backend.h    |   2 +
- include/uapi/linux/fanotify.h       |  15 ++-
- tools/include/uapi/linux/fanotify.h |  15 ++-
- 7 files changed, 249 insertions(+), 94 deletions(-)
-
---
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
+c
+index 3083643b864b..34acb7c16e8b 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -454,7 +454,13 @@ static int fanotify_encode_fh(struct fanotify_fh *fh=
+, struct inode *inode,
+ 	dwords =3D fh_len >> 2;
+ 	type =3D exportfs_encode_fid(inode, buf, &dwords);
+ 	err =3D -EINVAL;
+-	if (type <=3D 0 || type =3D=3D FILEID_INVALID || fh_len !=3D dwords << =
+2)
++	/*
++	 * Unlike file_handle, type and len of struct fanotify_fh are u8.
++	 * Traditionally, filesystem return handle_type < 0xff, but there
++	 * is no enforecement for that in vfs.
++	 */
++	BUILD_BUG_ON(MAX_HANDLE_SZ > 0xff || FILEID_INVALID > 0xff);
++	if (type <=3D 0 || type >=3D FILEID_INVALID || fh_len !=3D dwords << 2)
+ 		goto out_err;
+=20
+ 	fh->type =3D type;
+@@ -576,20 +582,13 @@ static struct fanotify_event *fanotify_alloc_mnt_ev=
+ent(u64 mnt_id, gfp_t gfp)
+ 	return &pevent->fae;
+ }
+=20
+-static struct fanotify_event *fanotify_alloc_perm_event(const void *data=
+,
+-							int data_type,
+-							gfp_t gfp)
++static void fanotify_init_perm_event(struct fanotify_perm_event *pevent,
++				     const void *data, int data_type)
+ {
+ 	const struct path *path =3D fsnotify_data_path(data, data_type);
+ 	const struct file_range *range =3D
+ 			    fsnotify_data_file_range(data, data_type);
+-	struct fanotify_perm_event *pevent;
+-
+-	pevent =3D kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
+-	if (!pevent)
+-		return NULL;
+=20
+-	pevent->fae.type =3D FANOTIFY_EVENT_TYPE_PATH_PERM;
+ 	pevent->response =3D 0;
+ 	pevent->hdr.type =3D FAN_RESPONSE_INFO_NONE;
+ 	pevent->hdr.pad =3D 0;
+@@ -600,6 +599,20 @@ static struct fanotify_event *fanotify_alloc_perm_ev=
+ent(const void *data,
+ 	pevent->ppos =3D range ? &range->pos : NULL;
+ 	pevent->count =3D range ? range->count : 0;
+ 	path_get(path);
++}
++
++static struct fanotify_event *fanotify_alloc_perm_event(const void *data=
+,
++							int data_type,
++							gfp_t gfp)
++{
++	struct fanotify_perm_event *pevent;
++
++	pevent =3D kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
++	if (!pevent)
++		return NULL;
++
++	pevent->fae.type =3D FANOTIFY_EVENT_TYPE_PATH_PERM;
++	fanotify_init_perm_event(pevent, data, data_type);
+=20
+ 	return &pevent->fae;
+ }
+@@ -630,11 +643,12 @@ static struct fanotify_event *fanotify_alloc_name_e=
+vent(struct inode *dir,
+ 							struct inode *child,
+ 							struct dentry *moved,
+ 							unsigned int *hash,
+-							gfp_t gfp)
++							gfp_t gfp, bool perm)
+ {
+ 	struct fanotify_name_event *fne;
+ 	struct fanotify_info *info;
+ 	struct fanotify_fh *dfh, *ffh;
++	struct fanotify_perm_event *pevent;
+ 	struct inode *dir2 =3D moved ? d_inode(moved->d_parent) : NULL;
+ 	const struct qstr *name2 =3D moved ? &moved->d_name : NULL;
+ 	unsigned int dir_fh_len =3D fanotify_encode_fh_len(dir);
+@@ -652,11 +666,26 @@ static struct fanotify_event *fanotify_alloc_name_e=
+vent(struct inode *dir,
+ 		size +=3D FANOTIFY_FH_HDR_LEN + dir2_fh_len;
+ 	if (child_fh_len)
+ 		size +=3D FANOTIFY_FH_HDR_LEN + child_fh_len;
++	if (perm) {
++		BUILD_BUG_ON(offsetof(struct fanotify_perm_event, fae) +
++			     sizeof(struct fanotify_event) !=3D sizeof(*pevent));
++		size +=3D offsetof(struct fanotify_perm_event, fae);
++	}
+ 	fne =3D kmalloc(size, gfp);
+ 	if (!fne)
+ 		return NULL;
+=20
+-	fne->fae.type =3D FANOTIFY_EVENT_TYPE_FID_NAME;
++	/*
++	 * fanotify_name_event follows fanotify_perm_event and they share the
++	 * fae member.
++	 */
++	if (perm) {
++		pevent =3D (void *)fne;
++		fne =3D FANOTIFY_NE(&pevent->fae);
++		fne->fae.type =3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM;
++	} else {
++		fne->fae.type =3D FANOTIFY_EVENT_TYPE_FID_NAME;
++	}
+ 	fne->fsid =3D *fsid;
+ 	*hash ^=3D fanotify_hash_fsid(fsid);
+ 	info =3D &fne->info;
+@@ -751,6 +780,7 @@ static struct fanotify_event *fanotify_alloc_event(
+ 	struct inode *dirid =3D fanotify_dfid_inode(mask, data, data_type, dir)=
+;
+ 	const struct path *path =3D fsnotify_data_path(data, data_type);
+ 	u64 mnt_id =3D fsnotify_data_mnt_id(data, data_type);
++	bool perm =3D fanotify_is_perm_event(mask);
+ 	struct mem_cgroup *old_memcg;
+ 	struct dentry *moved =3D NULL;
+ 	struct inode *child =3D NULL;
+@@ -836,14 +866,18 @@ static struct fanotify_event *fanotify_alloc_event(
+ 	/* Whoever is interested in the event, pays for the allocation. */
+ 	old_memcg =3D set_active_memcg(group->memcg);
+=20
+-	if (fanotify_is_perm_event(mask)) {
++	if (name_event && (file_name || moved || child || perm)) {
++		event =3D fanotify_alloc_name_event(dirid, fsid, file_name, child,
++						  moved, &hash, gfp, perm);
++		if (event && perm) {
++			fanotify_init_perm_event(FANOTIFY_PERM(event),
++						 data, data_type);
++		}
++	} else if (perm) {
+ 		event =3D fanotify_alloc_perm_event(data, data_type, gfp);
+ 	} else if (fanotify_is_error_event(mask)) {
+ 		event =3D fanotify_alloc_error_event(group, fsid, data,
+ 						   data_type, &hash);
+-	} else if (name_event && (file_name || moved || child)) {
+-		event =3D fanotify_alloc_name_event(dirid, fsid, file_name, child,
+-						  moved, &hash, gfp);
+ 	} else if (fid_mode) {
+ 		event =3D fanotify_alloc_fid_event(id, fsid, &hash, gfp);
+ 	} else if (path) {
+@@ -1031,6 +1065,13 @@ static void fanotify_free_perm_event(struct fanoti=
+fy_event *event)
+ 	kmem_cache_free(fanotify_perm_event_cachep, FANOTIFY_PERM(event));
+ }
+=20
++static void fanotify_free_name_perm_event(struct fanotify_event *event)
++{
++	path_put(fanotify_event_path(event));
++	/* Variable length perm event */
++	kfree(FANOTIFY_PERM(event));
++}
++
+ static void fanotify_free_fid_event(struct fanotify_event *event)
+ {
+ 	struct fanotify_fid_event *ffe =3D FANOTIFY_FE(event);
+@@ -1078,6 +1119,9 @@ static void fanotify_free_event(struct fsnotify_gro=
+up *group,
+ 	case FANOTIFY_EVENT_TYPE_FID_NAME:
+ 		fanotify_free_name_event(event);
+ 		break;
++	case FANOTIFY_EVENT_TYPE_FID_NAME_PERM:
++		fanotify_free_name_perm_event(event);
++		break;
+ 	case FANOTIFY_EVENT_TYPE_OVERFLOW:
+ 		kfree(event);
+ 		break;
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.=
+h
+index b78308975082..f6d25fcf8692 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -240,6 +240,7 @@ static inline void fanotify_info_copy_name2(struct fa=
+notify_info *info,
+ enum fanotify_event_type {
+ 	FANOTIFY_EVENT_TYPE_FID, /* fixed length */
+ 	FANOTIFY_EVENT_TYPE_FID_NAME, /* variable length */
++	FANOTIFY_EVENT_TYPE_FID_NAME_PERM, /* variable length perm event */
+ 	FANOTIFY_EVENT_TYPE_PATH,
+ 	FANOTIFY_EVENT_TYPE_PATH_PERM,
+ 	FANOTIFY_EVENT_TYPE_OVERFLOW, /* struct fanotify_event */
+@@ -326,7 +327,8 @@ static inline __kernel_fsid_t *fanotify_event_fsid(st=
+ruct fanotify_event *event)
+ {
+ 	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID)
+ 		return &FANOTIFY_FE(event)->fsid;
+-	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME)
++	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME ||
++		 event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM)
+ 		return &FANOTIFY_NE(event)->fsid;
+ 	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FS_ERROR)
+ 		return &FANOTIFY_EE(event)->fsid;
+@@ -339,7 +341,8 @@ static inline struct fanotify_fh *fanotify_event_obje=
+ct_fh(
+ {
+ 	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID)
+ 		return &FANOTIFY_FE(event)->object_fh;
+-	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME)
++	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME ||
++		 event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM)
+ 		return fanotify_info_file_fh(&FANOTIFY_NE(event)->info);
+ 	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FS_ERROR)
+ 		return &FANOTIFY_EE(event)->object_fh;
+@@ -350,7 +353,8 @@ static inline struct fanotify_fh *fanotify_event_obje=
+ct_fh(
+ static inline struct fanotify_info *fanotify_event_info(
+ 						struct fanotify_event *event)
+ {
+-	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME)
++	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME ||
++	    event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM)
+ 		return &FANOTIFY_NE(event)->info;
+ 	else
+ 		return NULL;
+@@ -435,7 +439,6 @@ FANOTIFY_ME(struct fanotify_event *event)
+  * user response.
+  */
+ struct fanotify_perm_event {
+-	struct fanotify_event fae;
+ 	struct path path;
+ 	const loff_t *ppos;		/* optional file range info */
+ 	size_t count;
+@@ -446,6 +449,11 @@ struct fanotify_perm_event {
+ 		struct fanotify_response_info_header hdr;
+ 		struct fanotify_response_info_audit_rule audit_rule;
+ 	};
++	/*
++	 * Overlaps with fanotify_name_event::fae when type is
++	 * FANOTIFY_EVENT_TYPE_FID_NAME_PERM - Keep at the end!
++	 */
++	struct fanotify_event fae;
+ };
+=20
+ static inline struct fanotify_perm_event *
+@@ -487,7 +495,8 @@ static inline const struct path *fanotify_event_path(=
+struct fanotify_event *even
+ {
+ 	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_PATH)
+ 		return &FANOTIFY_PE(event)->path;
+-	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_PATH_PERM)
++	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_PATH_PERM ||
++		 event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM)
+ 		return &FANOTIFY_PERM(event)->path;
+ 	else
+ 		return NULL;
+--=20
 2.47.1
+
 
