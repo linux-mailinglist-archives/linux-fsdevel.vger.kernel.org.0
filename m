@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-54419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322B7AFF7F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 06:22:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB64AFF7F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 06:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7415D5A3D9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 04:22:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448581C440D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 04:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3564283FE8;
-	Thu, 10 Jul 2025 04:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39686284678;
+	Thu, 10 Jul 2025 04:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="GzBunswk"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="c215Wuwt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6556F280CC1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 04:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B5019E7D1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 04:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752121341; cv=none; b=UBrJgh5DhNzDLmyZUFENgSVuztphvejX8J0R4ltv6Y6eXhs1pwFZnbKH3nieIgTxwfuYp39GjQn8To8bN/XBV/kcZ7RsACxim642x0LHZ3AEkN3At0i74yyjbB7BLQrWVeKcLoevAOB8qkGmLVzXj3sPrURW7d9n1cJQ/WVl/dA=
+	t=1752121334; cv=none; b=b6sW8hlh4X81cAifIokXZoC6w55bPZ3rsFuY132wOgYs6osZacpzX4bTs2aiNhm4KvuDpxvEPwV4MHkqKlbstnjJbpUFL0FOzGt/qjo+Cdp9A1BcTeBMUBEWHZ6Kd3CgicyAe7kSdxtIHr6V6sEDaFetvI3uFPOT8i0seMYV39w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752121341; c=relaxed/simple;
-	bh=DeY0DFEUYqiccw8R2sDFAMbNk1DKH36geh8NTQ8bKYY=;
+	s=arc-20240116; t=1752121334; c=relaxed/simple;
+	bh=jAitch/h/pQcm57RxIuj1pWG39Laccn7Aqk9tDih6wc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OFc1oaO9V+e2gLPtveN3hMI5oQmo54NOLDFdHOPQZ+V2MRLlEFTuFzya4kIcjVQRUmR0pzSeUfCGm2f1g8yph9OAIDuxPB+Kfp7g1oBnFlNWKeZrFwD+wmHPONwb/PiELNtT1itkp+QSWvZmrSbLy8SBK02jrJWbO2DcKQOaVuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=GzBunswk; arc=none smtp.client-ip=67.231.145.42
+	 MIME-Version:Content-Type; b=EQ/VpLNi/PTK9gQ6n0l85t8/DS4YsUIEwizCF6Foip+hCnLRpfw+P+qM+p9YvEoOkzbZNV+3xWmbUfcLZT6xmn6iqB6HEeXbBWpa9jOr6oi6tvEdwTPyn9GNtBgEfIumCHse0g+YRTX4Bch61/ahAXxsbg0voD6AbPcUOFHktYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=c215Wuwt; arc=none smtp.client-ip=67.231.145.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A0oKVE005491
-	for <linux-fsdevel@vger.kernel.org>; Wed, 9 Jul 2025 21:22:19 -0700
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A2q0Cu006287
+	for <linux-fsdevel@vger.kernel.org>; Wed, 9 Jul 2025 21:22:12 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=Jobj9SBEmPckFPsfoGErsMMnOVliL4G/ImX8i3bXCag=; b=GzBunswkWNpz
-	8wdjN0ZzS0V78K3wDrf3hbocg12tVoAhJSfTdQLdR8QO+LESqaOg4GMiQSdl2k2p
-	L0rhb4vBurVd5Y2uEuuef/F+cbYWbvc0a2ktnJwUUsMY6FBehl3slehpQJXJHpds
-	zgLpTxFwq/V82OXgfwNLIDdoNZpVQMOI0jsoCMx2iCHWLv37n6+FKLR0lZ5vMIhy
-	MznTGI/4oP9FagHXGbk+1ImDyw72hoAEOmyFRoHqoOwoegQaRRde8SuZZBc/7d/P
-	7pFzV9roUO3nu5mtzVsfCqu8laOcaWy3Mh+FlmkZDFcF95Y8mAyTItPLu0ecI6l2
-	xqlgLNZWWA==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47t16dsjp5-3
+	 bh=PiNnD+zXUq34RWglD9nvaoXqy/rpa7SUOrv/Hd58fx4=; b=c215Wuwto37n
+	ySZ7cBnTQcG8znZuMDywS5g4ivtcEJKibYCtuy2egnoYDAWDli9p4OWXTEGjK7w0
+	bSmpQmk3sOragSSt08MWLoeCIdKNKDBRk2cqOoAe7lF6TWQ8vz3W49hAwhJFoedz
+	DQH+9Sb5jqKBvWF8UigusAUcz1UEQbhClR8AkIuoWjlg+U41kivbOF1X4E8SA3Zm
+	GQr1LFXoF5Vgz3lWWTV6jkPv6otlBmM6FldODI70DR7+AVX6S8g2S6ylUuMYGEPw
+	AG833E9Wp9gW4KcO9NmX0yBkDY2vrFqG6bW3pFY63UvD9xqCBYiUr7MaCcJcTHU5
+	OPHVCMmeVQ==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47t53jrbag-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jul 2025 21:22:18 -0700 (PDT)
-Received: from twshared26876.17.frc2.facebook.com (2620:10d:c0a8:1b::8e35) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+	for <linux-fsdevel@vger.kernel.org>; Wed, 09 Jul 2025 21:22:12 -0700 (PDT)
+Received: from twshared57752.46.prn1.facebook.com (2620:10d:c085:208::7cb7) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.24; Thu, 10 Jul 2025 04:22:16 +0000
+ 15.2.1748.24; Thu, 10 Jul 2025 04:22:10 +0000
 Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
-	id A39DE31E90A9B; Wed,  9 Jul 2025 21:19:07 -0700 (PDT)
+	id 1422531E90ACE; Wed,  9 Jul 2025 21:19:11 -0700 (PDT)
 From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
 To: <ibrahimjirdeh@meta.com>
 CC: <jack@suse.cz>, <=amir73il@gmail.com>, <josef@toxicpanda.com>,
         <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>,
         ibrahimjirdeh <ibrahimjirdeh@fb.com>,
         Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH 1/3] [PATCH v2 1/3] fanotify: add support for a variable length permission event
-Date: Wed, 9 Jul 2025 21:18:33 -0700
-Message-ID: <20250710041835.3692987-2-ibrahimjirdeh@meta.com>
+Subject: [PATCH 2/3] [PATCH v2 2/3] fanotify: allow pre-content events with fid info
+Date: Wed, 9 Jul 2025 21:18:34 -0700
+Message-ID: <20250710041835.3692987-3-ibrahimjirdeh@meta.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250710041835.3692987-1-ibrahimjirdeh@meta.com>
 References: <20250710041835.3692987-1-ibrahimjirdeh@meta.com>
@@ -75,12 +75,12 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDAzNCBTYWx0ZWRfXxB9srtG23zmC 7w1NWauaulE38DuiYUHBmFojAK0LnTxsNsBRCykObj4fU8Y9PldH9jwqgmeEhJ2uPLp0CSWy3CA XNOZq7bsBcV6qNEmGku1F/aXScbT3CDnOkO6VzERdn1iA051LOltZiejApzAcUc47gICHt52eoF
- g5pvJflmUXJPSd+ZfAigA4HlQnwrkSPlgJUcL6yWpbrG2UUrx0hIg/joEYHdxuxzE/NoWaQruab CwuWJYElZ9Pu4/IkYNMFO90tGNxgaIWZmDeFoMkZelaR9DmAKrfLpvbrGrOYIgiKD/4JfLxjyPa zLpwNCdq6AwYPTI8FG1pWxbQXQijAwSjo09KKq15ohy/kQ2yfCWGGKDEmvvfxPaL55JbKVBjk2q
- b1M77OFvFskZi74ZvjdZQBWmnoJHLzeJUY1uJReg1g2R01JMlPgfS6zxiixBG3wUgS54SbNP
-X-Proofpoint-GUID: jZhVTzGJRPslqeyyU-dp8L0Dh-pi_J5G
-X-Proofpoint-ORIG-GUID: jZhVTzGJRPslqeyyU-dp8L0Dh-pi_J5G
-X-Authority-Analysis: v=2.4 cv=GIMIEvNK c=1 sm=1 tr=0 ts=686f3ffa cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=Wb1JkmetP80A:10 a=FOH2dFAWAAAA:8 a=pGLkceISAAAA:8 a=lPxGRcK3HGJCSv4Oa_kA:9
+X-Proofpoint-ORIG-GUID: oZ5DAi5UKqzMjUCvR_yCGLLVqYhjvZD5
+X-Authority-Analysis: v=2.4 cv=e48GSbp/ c=1 sm=1 tr=0 ts=686f3ff4 cx=c_pps a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17 a=Wb1JkmetP80A:10 a=FOH2dFAWAAAA:8 a=pGLkceISAAAA:8 a=F9UTiOOtMm9Vir6t1p8A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDAzNCBTYWx0ZWRfX8bNUkNvMynX/ kAqYSiNe0gZ0229KodjW/p/PuMfTPA2SBLjYcPOgmOtNXyH9KoAP/IjfB2up96XEBFKsngkb4ef S9l4iRnp42GxhcNmn/DSQpSO3RbyVYLExoU7P5TQymr2odVtCrx0WF3vZEXLNFXo+dgwEoE5dvQ
+ zxnuhaoKxfUm47tSHrRiJf7pcnIm6wkDnwHAyBl3mG6GDIv2os7DR3DJmPR3pYZ+JzIEElFMF2Z WVNtlx5RuPUXGWYv/P3itIK53jtkB+wh3YSM5LPmeW6Hs5T98Fwzpad7ssM7XfPYDcTuN3Y1Lwr xjML3txfDnTkAO47dIOZzRI9tzpKHd0bvb1VvcP0bJXPjtKpPdG1nbR+FV+o10yTqvFYHKTj15u
+ 34CBCq97JBLSkjE7prylNasJBHm/y5tH7QZan5vyZo9hq27IcJQsd5vFN9N1o4AZWRsMxU/f
+X-Proofpoint-GUID: oZ5DAi5UKqzMjUCvR_yCGLLVqYhjvZD5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
@@ -90,271 +90,244 @@ From: ibrahimjirdeh <ibrahimjirdeh@fb.com>
 Summary:
 From Amir Goldstein <amir73il@gmail.com>
 
-In preparation for pre-content events that report fid info + name,
-we need a new event type that is both variable length and can be
-put on a user response wait list.
+Until now, the high priority classes (FAN_CLASS_*CONTENT), which are
+required for permission and pre-content events, were not allowed to
+report events with fid info.
 
-Create an event type FANOTIFY_EVENT_TYPE_FID_NAME_PERM with is a
-combination of the variable length fanotify_name_event prefixed
-with a fix length fanotify_perm_event and they share the common
-fanotify_event memeber.
+This is partly because the event->fd is used as a key for the the
+permission response and partly because we needed to chose between
+allocating a permission event of fid event struct.
+
+Allow reporting fid info with pre-content class with some restrictions:
+1. Only pre-content events are allowed with such groups
+2. No event flags are allowed (i.e. FAN_EVENT_ON_CHILD)
+
+The flag FAN_EVENT_ON_CHILD is anyway ignored on sb/mount marks and
+on an non-dir inode mark.
+
+On a directory inode mark, FAN_PRE_ACCESS makes no sense without
+FAN_EVENT_ON_CHILD, so in this case, this flag is implied.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c | 76 +++++++++++++++++++++++++++--------
- fs/notify/fanotify/fanotify.h | 19 ++++++---
- 2 files changed, 74 insertions(+), 21 deletions(-)
+ fs/notify/fanotify/fanotify_user.c  | 70 ++++++++++++++++++++++-------
+ include/linux/fsnotify_backend.h    |  1 +
+ include/uapi/linux/fanotify.h       |  4 +-
+ tools/include/uapi/linux/fanotify.h |  4 +-
+ 4 files changed, 62 insertions(+), 17 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
-c
-index 3083643b864b..34acb7c16e8b 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -454,7 +454,13 @@ static int fanotify_encode_fh(struct fanotify_fh *fh=
-, struct inode *inode,
- 	dwords =3D fh_len >> 2;
- 	type =3D exportfs_encode_fid(inode, buf, &dwords);
- 	err =3D -EINVAL;
--	if (type <=3D 0 || type =3D=3D FILEID_INVALID || fh_len !=3D dwords << =
-2)
-+	/*
-+	 * Unlike file_handle, type and len of struct fanotify_fh are u8.
-+	 * Traditionally, filesystem return handle_type < 0xff, but there
-+	 * is no enforecement for that in vfs.
-+	 */
-+	BUILD_BUG_ON(MAX_HANDLE_SZ > 0xff || FILEID_INVALID > 0xff);
-+	if (type <=3D 0 || type >=3D FILEID_INVALID || fh_len !=3D dwords << 2)
- 		goto out_err;
-=20
- 	fh->type =3D type;
-@@ -576,20 +582,13 @@ static struct fanotify_event *fanotify_alloc_mnt_ev=
-ent(u64 mnt_id, gfp_t gfp)
- 	return &pevent->fae;
- }
-=20
--static struct fanotify_event *fanotify_alloc_perm_event(const void *data=
-,
--							int data_type,
--							gfp_t gfp)
-+static void fanotify_init_perm_event(struct fanotify_perm_event *pevent,
-+				     const void *data, int data_type)
- {
- 	const struct path *path =3D fsnotify_data_path(data, data_type);
- 	const struct file_range *range =3D
- 			    fsnotify_data_file_range(data, data_type);
--	struct fanotify_perm_event *pevent;
--
--	pevent =3D kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
--	if (!pevent)
--		return NULL;
-=20
--	pevent->fae.type =3D FANOTIFY_EVENT_TYPE_PATH_PERM;
- 	pevent->response =3D 0;
- 	pevent->hdr.type =3D FAN_RESPONSE_INFO_NONE;
- 	pevent->hdr.pad =3D 0;
-@@ -600,6 +599,20 @@ static struct fanotify_event *fanotify_alloc_perm_ev=
-ent(const void *data,
- 	pevent->ppos =3D range ? &range->pos : NULL;
- 	pevent->count =3D range ? range->count : 0;
- 	path_get(path);
-+}
-+
-+static struct fanotify_event *fanotify_alloc_perm_event(const void *data=
-,
-+							int data_type,
-+							gfp_t gfp)
-+{
-+	struct fanotify_perm_event *pevent;
-+
-+	pevent =3D kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
-+	if (!pevent)
-+		return NULL;
-+
-+	pevent->fae.type =3D FANOTIFY_EVENT_TYPE_PATH_PERM;
-+	fanotify_init_perm_event(pevent, data, data_type);
-=20
- 	return &pevent->fae;
- }
-@@ -630,11 +643,12 @@ static struct fanotify_event *fanotify_alloc_name_e=
-vent(struct inode *dir,
- 							struct inode *child,
- 							struct dentry *moved,
- 							unsigned int *hash,
--							gfp_t gfp)
-+							gfp_t gfp, bool perm)
- {
- 	struct fanotify_name_event *fne;
- 	struct fanotify_info *info;
- 	struct fanotify_fh *dfh, *ffh;
-+	struct fanotify_perm_event *pevent;
- 	struct inode *dir2 =3D moved ? d_inode(moved->d_parent) : NULL;
- 	const struct qstr *name2 =3D moved ? &moved->d_name : NULL;
- 	unsigned int dir_fh_len =3D fanotify_encode_fh_len(dir);
-@@ -652,11 +666,26 @@ static struct fanotify_event *fanotify_alloc_name_e=
-vent(struct inode *dir,
- 		size +=3D FANOTIFY_FH_HDR_LEN + dir2_fh_len;
- 	if (child_fh_len)
- 		size +=3D FANOTIFY_FH_HDR_LEN + child_fh_len;
-+	if (perm) {
-+		BUILD_BUG_ON(offsetof(struct fanotify_perm_event, fae) +
-+			     sizeof(struct fanotify_event) !=3D sizeof(*pevent));
-+		size +=3D offsetof(struct fanotify_perm_event, fae);
-+	}
- 	fne =3D kmalloc(size, gfp);
- 	if (!fne)
- 		return NULL;
-=20
--	fne->fae.type =3D FANOTIFY_EVENT_TYPE_FID_NAME;
-+	/*
-+	 * fanotify_name_event follows fanotify_perm_event and they share the
-+	 * fae member.
-+	 */
-+	if (perm) {
-+		pevent =3D (void *)fne;
-+		fne =3D FANOTIFY_NE(&pevent->fae);
-+		fne->fae.type =3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM;
-+	} else {
-+		fne->fae.type =3D FANOTIFY_EVENT_TYPE_FID_NAME;
-+	}
- 	fne->fsid =3D *fsid;
- 	*hash ^=3D fanotify_hash_fsid(fsid);
- 	info =3D &fne->info;
-@@ -751,6 +780,7 @@ static struct fanotify_event *fanotify_alloc_event(
- 	struct inode *dirid =3D fanotify_dfid_inode(mask, data, data_type, dir)=
-;
- 	const struct path *path =3D fsnotify_data_path(data, data_type);
- 	u64 mnt_id =3D fsnotify_data_mnt_id(data, data_type);
-+	bool perm =3D fanotify_is_perm_event(mask);
- 	struct mem_cgroup *old_memcg;
- 	struct dentry *moved =3D NULL;
- 	struct inode *child =3D NULL;
-@@ -836,14 +866,18 @@ static struct fanotify_event *fanotify_alloc_event(
- 	/* Whoever is interested in the event, pays for the allocation. */
- 	old_memcg =3D set_active_memcg(group->memcg);
-=20
--	if (fanotify_is_perm_event(mask)) {
-+	if (name_event && (file_name || moved || child || perm)) {
-+		event =3D fanotify_alloc_name_event(dirid, fsid, file_name, child,
-+						  moved, &hash, gfp, perm);
-+		if (event && perm) {
-+			fanotify_init_perm_event(FANOTIFY_PERM(event),
-+						 data, data_type);
-+		}
-+	} else if (perm) {
- 		event =3D fanotify_alloc_perm_event(data, data_type, gfp);
- 	} else if (fanotify_is_error_event(mask)) {
- 		event =3D fanotify_alloc_error_event(group, fsid, data,
- 						   data_type, &hash);
--	} else if (name_event && (file_name || moved || child)) {
--		event =3D fanotify_alloc_name_event(dirid, fsid, file_name, child,
--						  moved, &hash, gfp);
- 	} else if (fid_mode) {
- 		event =3D fanotify_alloc_fid_event(id, fsid, &hash, gfp);
- 	} else if (path) {
-@@ -1031,6 +1065,13 @@ static void fanotify_free_perm_event(struct fanoti=
-fy_event *event)
- 	kmem_cache_free(fanotify_perm_event_cachep, FANOTIFY_PERM(event));
- }
-=20
-+static void fanotify_free_name_perm_event(struct fanotify_event *event)
-+{
-+	path_put(fanotify_event_path(event));
-+	/* Variable length perm event */
-+	kfree(FANOTIFY_PERM(event));
-+}
-+
- static void fanotify_free_fid_event(struct fanotify_event *event)
- {
- 	struct fanotify_fid_event *ffe =3D FANOTIFY_FE(event);
-@@ -1078,6 +1119,9 @@ static void fanotify_free_event(struct fsnotify_gro=
-up *group,
- 	case FANOTIFY_EVENT_TYPE_FID_NAME:
- 		fanotify_free_name_event(event);
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
+tify_user.c
+index b192ee068a7a..19d3f2d914fe 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -353,7 +353,7 @@ static int process_access_response(struct fsnotify_gr=
+oup *group,
  		break;
-+	case FANOTIFY_EVENT_TYPE_FID_NAME_PERM:
-+		fanotify_free_name_perm_event(event);
+ 	case FAN_DENY:
+ 		/* Custom errno is supported only for pre-content groups */
+-		if (errno && group->priority !=3D FSNOTIFY_PRIO_PRE_CONTENT)
++		if (errno && group->priority < FSNOTIFY_PRIO_PRE_CONTENT)
+ 			return -EINVAL;
+=20
+ 		/*
+@@ -1383,6 +1383,16 @@ static int fanotify_group_init_error_pool(struct f=
+snotify_group *group)
+ 					 sizeof(struct fanotify_error_event));
+ }
+=20
++/* Check for forbidden events/flags combinations */
++static bool fanotify_mask_is_valid(__u64 mask)
++{
++	/* Pre-content events do not support event flags */
++	if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
++		return false;
++
++	return true;
++}
++
+ static int fanotify_may_update_existing_mark(struct fsnotify_mark *fsn_m=
+ark,
+ 					     __u32 mask, unsigned int fan_flags)
+ {
+@@ -1411,9 +1421,9 @@ static int fanotify_may_update_existing_mark(struct=
+ fsnotify_mark *fsn_mark,
+ 	    fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
+ 		return -EEXIST;
+=20
+-	/* For now pre-content events are not generated for directories */
++	/* Check for forbidden event combinations after update */
+ 	mask |=3D fsn_mark->mask;
+-	if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
++	if (!fanotify_mask_is_valid(mask))
+ 		return -EEXIST;
+=20
+ 	return 0;
+@@ -1564,7 +1574,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags=
+, unsigned int, event_f_flags)
+ 		return -EINVAL;
+ 	}
+=20
+-	if (fid_mode && class !=3D FAN_CLASS_NOTIF)
++	/*
++	 * Async events support any fid report mode.
++	 * Permission events do not support any fid report mode.
++	 * Pre-content events support only FAN_REPORT_DFID_NAME_TARGET mode.
++	 */
++	if (fid_mode && class !=3D FAN_CLASS_NOTIF &&
++	    (class | fid_mode) !=3D FAN_CLASS_PRE_CONTENT_FID)
+ 		return -EINVAL;
+=20
+ 	/*
+@@ -1633,7 +1649,12 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags=
+, unsigned int, event_f_flags)
+ 		group->priority =3D FSNOTIFY_PRIO_CONTENT;
+ 		break;
+ 	case FAN_CLASS_PRE_CONTENT:
+-		group->priority =3D FSNOTIFY_PRIO_PRE_CONTENT;
++		/*
++		 * FAN_CLASS_PRE_CONTENT_FID is exclusively for pre-content
++		 * events, so it gets a higher priority.
++		 */
++		group->priority =3D fid_mode ? FSNOTIFY_PRIO_PRE_CONTENT_FID :
++					     FSNOTIFY_PRIO_PRE_CONTENT;
+ 		break;
+ 	default:
+ 		fd =3D -EINVAL;
+@@ -1750,6 +1771,9 @@ static int fanotify_events_supported(struct fsnotif=
+y_group *group,
+ 				 (mask & FAN_RENAME) ||
+ 				 (flags & FAN_MARK_IGNORE);
+=20
++	if (!fanotify_mask_is_valid(mask))
++		return -EINVAL;
++
+ 	/*
+ 	 * Filesystems need to opt-into pre-content evnets (a.k.a HSM)
+ 	 * and they are only supported on regular files and directories.
+@@ -1911,13 +1935,27 @@ static int do_fanotify_mark(int fanotify_fd, unsi=
+gned int flags, __u64 mask,
+ 	/*
+ 	 * Permission events are not allowed for FAN_CLASS_NOTIF.
+ 	 * Pre-content permission events are not allowed for FAN_CLASS_CONTENT.
++	 * Only pre-content events are allowed for FAN_CLASS_PRE_CONTENT_FID.
+ 	 */
+-	if (mask & FANOTIFY_PERM_EVENTS &&
+-	    group->priority =3D=3D FSNOTIFY_PRIO_NORMAL)
+-		return -EINVAL;
+-	else if (mask & FANOTIFY_PRE_CONTENT_EVENTS &&
+-		 group->priority =3D=3D FSNOTIFY_PRIO_CONTENT)
++	fid_mode =3D FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
++	switch (group->priority) {
++	case FSNOTIFY_PRIO_NORMAL:
++		if (mask & FANOTIFY_PERM_EVENTS)
++			return -EINVAL;
 +		break;
- 	case FANOTIFY_EVENT_TYPE_OVERFLOW:
- 		kfree(event);
- 		break;
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.=
-h
-index b78308975082..f6d25fcf8692 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -240,6 +240,7 @@ static inline void fanotify_info_copy_name2(struct fa=
-notify_info *info,
- enum fanotify_event_type {
- 	FANOTIFY_EVENT_TYPE_FID, /* fixed length */
- 	FANOTIFY_EVENT_TYPE_FID_NAME, /* variable length */
-+	FANOTIFY_EVENT_TYPE_FID_NAME_PERM, /* variable length perm event */
- 	FANOTIFY_EVENT_TYPE_PATH,
- 	FANOTIFY_EVENT_TYPE_PATH_PERM,
- 	FANOTIFY_EVENT_TYPE_OVERFLOW, /* struct fanotify_event */
-@@ -326,7 +327,8 @@ static inline __kernel_fsid_t *fanotify_event_fsid(st=
-ruct fanotify_event *event)
- {
- 	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID)
- 		return &FANOTIFY_FE(event)->fsid;
--	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME)
-+	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME ||
-+		 event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM)
- 		return &FANOTIFY_NE(event)->fsid;
- 	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FS_ERROR)
- 		return &FANOTIFY_EE(event)->fsid;
-@@ -339,7 +341,8 @@ static inline struct fanotify_fh *fanotify_event_obje=
-ct_fh(
- {
- 	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID)
- 		return &FANOTIFY_FE(event)->object_fh;
--	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME)
-+	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME ||
-+		 event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM)
- 		return fanotify_info_file_fh(&FANOTIFY_NE(event)->info);
- 	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FS_ERROR)
- 		return &FANOTIFY_EE(event)->object_fh;
-@@ -350,7 +353,8 @@ static inline struct fanotify_fh *fanotify_event_obje=
-ct_fh(
- static inline struct fanotify_info *fanotify_event_info(
- 						struct fanotify_event *event)
- {
--	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME)
-+	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME ||
-+	    event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM)
- 		return &FANOTIFY_NE(event)->info;
- 	else
- 		return NULL;
-@@ -435,7 +439,6 @@ FANOTIFY_ME(struct fanotify_event *event)
-  * user response.
-  */
- struct fanotify_perm_event {
--	struct fanotify_event fae;
- 	struct path path;
- 	const loff_t *ppos;		/* optional file range info */
- 	size_t count;
-@@ -446,6 +449,11 @@ struct fanotify_perm_event {
- 		struct fanotify_response_info_header hdr;
- 		struct fanotify_response_info_audit_rule audit_rule;
- 	};
-+	/*
-+	 * Overlaps with fanotify_name_event::fae when type is
-+	 * FANOTIFY_EVENT_TYPE_FID_NAME_PERM - Keep at the end!
-+	 */
-+	struct fanotify_event fae;
++	case FSNOTIFY_PRIO_CONTENT:
++		if (mask & FANOTIFY_PRE_CONTENT_EVENTS)
++			return -EINVAL;
++		break;
++	case FSNOTIFY_PRIO_PRE_CONTENT:
++		break;
++	case FSNOTIFY_PRIO_PRE_CONTENT_FID:
++		if (mask & ~FANOTIFY_PRE_CONTENT_EVENTS)
++			return -EINVAL;
++		break;
++	default:
+ 		return -EINVAL;
++	}
+=20
+ 	if (mask & FAN_FS_ERROR &&
+ 	    mark_type !=3D FAN_MARK_FILESYSTEM)
+@@ -1938,7 +1976,6 @@ static int do_fanotify_mark(int fanotify_fd, unsign=
+ed int flags, __u64 mask,
+ 	 * carry enough information (i.e. path) to be filtered by mount
+ 	 * point.
+ 	 */
+-	fid_mode =3D FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+ 	if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_MOUNT_EVENTS|FANOTIFY_EVENT_FL=
+AGS) &&
+ 	    (!fid_mode || mark_type =3D=3D FAN_MARK_MOUNT))
+ 		return -EINVAL;
+@@ -1951,10 +1988,6 @@ static int do_fanotify_mark(int fanotify_fd, unsig=
+ned int flags, __u64 mask,
+ 	if (mask & FAN_RENAME && !(fid_mode & FAN_REPORT_NAME))
+ 		return -EINVAL;
+=20
+-	/* Pre-content events are not currently generated for directories. */
+-	if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
+-		return -EINVAL;
+-
+ 	if (mark_cmd =3D=3D FAN_MARK_FLUSH) {
+ 		fsnotify_clear_marks_by_group(group, obj_type);
+ 		return 0;
+@@ -2041,6 +2074,13 @@ static int do_fanotify_mark(int fanotify_fd, unsig=
+ned int flags, __u64 mask,
+ 		if ((fid_mode & FAN_REPORT_DIR_FID) &&
+ 		    (flags & FAN_MARK_ADD) && !ignore)
+ 			mask |=3D FAN_EVENT_ON_CHILD;
++	} else if (fid_mode && (mask & FANOTIFY_PRE_CONTENT_EVENTS)) {
++		/*
++		 * Pre-content events on directory inode mask implies that
++		 * we are watching access to children.
++		 */
++		mask |=3D FAN_EVENT_ON_CHILD;
++		umask =3D FAN_EVENT_ON_CHILD;
+ 	}
+=20
+ 	/* create/update an inode mark */
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_ba=
+ckend.h
+index d4034ddaf392..832d94d783d9 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -201,6 +201,7 @@ enum fsnotify_group_prio {
+ 	FSNOTIFY_PRIO_NORMAL =3D 0,	/* normal notifiers, no permissions */
+ 	FSNOTIFY_PRIO_CONTENT,		/* fanotify permission events */
+ 	FSNOTIFY_PRIO_PRE_CONTENT,	/* fanotify pre-content events */
++	FSNOTIFY_PRIO_PRE_CONTENT_FID,	/* fanotify pre-content events with fid =
+*/
+ 	__FSNOTIFY_PRIO_NUM
  };
 =20
- static inline struct fanotify_perm_event *
-@@ -487,7 +495,8 @@ static inline const struct path *fanotify_event_path(=
-struct fanotify_event *even
- {
- 	if (event->type =3D=3D FANOTIFY_EVENT_TYPE_PATH)
- 		return &FANOTIFY_PE(event)->path;
--	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_PATH_PERM)
-+	else if (event->type =3D=3D FANOTIFY_EVENT_TYPE_PATH_PERM ||
-+		 event->type =3D=3D FANOTIFY_EVENT_TYPE_FID_NAME_PERM)
- 		return &FANOTIFY_PERM(event)->path;
- 	else
- 		return NULL;
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.=
+h
+index e710967c7c26..3201d8d6c51a 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -73,7 +73,9 @@
+ /* Convenience macro - FAN_REPORT_TARGET_FID requires all other FID flag=
+s */
+ #define FAN_REPORT_DFID_NAME_TARGET (FAN_REPORT_DFID_NAME | \
+ 				     FAN_REPORT_FID | FAN_REPORT_TARGET_FID)
+-
++/* Convenience macro - FAN_CLASS_PRE_CONTENT requires all or no FID flag=
+s */
++#define FAN_CLASS_PRE_CONTENT_FID   (FAN_CLASS_PRE_CONTENT | \
++	FAN_REPORT_DFID_NAME_TARGET)
+ /* Deprecated - do not use this in programs and do not add new flags her=
+e! */
+ #define FAN_ALL_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
+ 				 FAN_ALL_CLASS_BITS | FAN_UNLIMITED_QUEUE |\
+diff --git a/tools/include/uapi/linux/fanotify.h b/tools/include/uapi/lin=
+ux/fanotify.h
+index e710967c7c26..3201d8d6c51a 100644
+--- a/tools/include/uapi/linux/fanotify.h
++++ b/tools/include/uapi/linux/fanotify.h
+@@ -73,7 +73,9 @@
+ /* Convenience macro - FAN_REPORT_TARGET_FID requires all other FID flag=
+s */
+ #define FAN_REPORT_DFID_NAME_TARGET (FAN_REPORT_DFID_NAME | \
+ 				     FAN_REPORT_FID | FAN_REPORT_TARGET_FID)
+-
++/* Convenience macro - FAN_CLASS_PRE_CONTENT requires all or no FID flag=
+s */
++#define FAN_CLASS_PRE_CONTENT_FID   (FAN_CLASS_PRE_CONTENT | \
++	FAN_REPORT_DFID_NAME_TARGET)
+ /* Deprecated - do not use this in programs and do not add new flags her=
+e! */
+ #define FAN_ALL_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
+ 				 FAN_ALL_CLASS_BITS | FAN_UNLIMITED_QUEUE |\
 --=20
 2.47.1
 
