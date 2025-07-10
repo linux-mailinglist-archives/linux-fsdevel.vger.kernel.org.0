@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-54435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72237AFFB0E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 09:38:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC22CAFFB1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 09:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5E187A5CDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 07:36:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42EF3ADDC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 07:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C170289809;
-	Thu, 10 Jul 2025 07:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B1328A40D;
+	Thu, 10 Jul 2025 07:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cK1Z9b1L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCr+4WYv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40A19E7D1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 07:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF12128982D;
+	Thu, 10 Jul 2025 07:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133090; cv=none; b=X7nkGtvwZg/jxXe5mDNU2r4Lmtl0aWPRv5Op9cQ9P+VP3D4MJ52d4WZoeL5FDU1qgD1GwZw+Vr2pT9xzb+VRgxOWQfoc29V8qjJusMsf9iiDMn0y63lNBz2nafVOM8PK3HvjbDYoNFlHTF64qN9DLD0JFoSs+qg+epb/LRsRx30=
+	t=1752133180; cv=none; b=GkGOYTO9tUFb/C5cJIhTgvwEQmZC7cPl+OeJQtSJfMzUtazu0OZTFi4Ljcpo+uHscwU9IrhdRetEvDtE9XT0RB9VDSqvsemrDUM+DFeQ5tBFI0FLbrTLVKto83VfGs7LWef7ODqo/X36oj1qC5EJvtxaHq5bF7MLDNhHBe/jfoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133090; c=relaxed/simple;
-	bh=ZXkEYQSmrea8vlwoTme0ywkxaTaq14YYEUzmB1emUJA=;
+	s=arc-20240116; t=1752133180; c=relaxed/simple;
+	bh=8JPfNGHBDa0dopf0Zq7Rous3CrwqV1gjb+xsOTSkYKQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=INUsuLgVJko6UByOykQEPbIpRQgV+MzQOH37koKeIFV07LSg7bQ314TBFJBQ03lZ9jF2ri5I0qhASmKcW/G20pigNeOwpRfN7LpZTmZ518XnCrZTruBzewC1/S3KnNeLW9EYIdj5Dfsj4LyXokTyX9CXKQ9CflrDHMfGHA6xeXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cK1Z9b1L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E50FC4CEE3;
-	Thu, 10 Jul 2025 07:38:09 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CjBcRob8zvDa35DtQ311lHo8rq4kQPLmRqYjcPZApuj5w5gjFrbCZ3cOkTzggcy2zF2J6mrqNbRlZ/8mVPPZ8Y62G8h+y0jaoXeuH7qijOtlO2o9K0fFb44r9kJRVirHFOOdizlg9x0lRurAcH6eC+t4XOvvMcZ+3kFFPAfx9M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCr+4WYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5ABAC4CEE3;
+	Thu, 10 Jul 2025 07:39:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752133090;
-	bh=ZXkEYQSmrea8vlwoTme0ywkxaTaq14YYEUzmB1emUJA=;
+	s=k20201202; t=1752133180;
+	bh=8JPfNGHBDa0dopf0Zq7Rous3CrwqV1gjb+xsOTSkYKQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cK1Z9b1L8HJpKEJAdnMCXc1Zz3GolNXG3x0rpp5iqB1OhNOKiogVfuTAbAohYS5XI
-	 TFoucLXORyJvtOe9ZiSarGM5pMscqjfnVQlnWAfDkc3MxzXMpAhF8uJF2VbXdmGTzZ
-	 nqRoa+eFhj9hor7VrGpcL7a3gi8ndZ9365hUfjArddy6wH0uPuKcl5ojXjWuUxFHl5
-	 caOSGRc/e1I4SVAa93+Y63S0Bm3P1jcOu66b8GfEKM9Cx5NRBXvAtkrsoLLuWYR4NT
-	 j+AixYA39KU+dpB407m/GIJ0xu9BBrcSdds5v16Csmn6QRLXCRameLavtIhOqXGG15
-	 MaEc/abregyPg==
+	b=pCr+4WYvP4nzsyrxh6/hPYYBIJtDCG+WxbvX1bfdyV5BouLa9P0WJyFZc7QGy6wh1
+	 JTpBPkmWczMP5bbhB+Qfl/GVdQVrXkPbKaT77LeC04zxNP54BpwLZd4NGyMAhAF2op
+	 wSV8OhE12dW2unnEiSpm3/8t8mNDNkPR1NupY1uMHQsf6VNNzS3eyJZ/F5QJEMz8Uy
+	 pbJBfqZRiC6HmTf78tMoc2lbPMaCXxblc5lp/RZn7Fw/s8Rr2OWQrx8/6wrgNibwKr
+	 XWMyVpUmZaCnkHLYv9We/RiqtJi2IYZZsd6oJcAsjFCXqphQDUe42VkMh4XEwLxLRS
+	 /hoal9QrvqyaQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
+To: Aleksa Sarai <cyphar@cyphar.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@ZenIV.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Remove unnecessary list_for_each_entry_safe() from evict_inodes()
-Date: Thu, 10 Jul 2025 09:38:05 +0200
-Message-ID: <20250710-zersetzen-erdgeschichte-c54403fa9602@brauner>
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] uapi: export PROCFS_ROOT_INO
+Date: Thu, 10 Jul 2025 09:39:29 +0200
+Message-ID: <20250710-visuell-joghurt-c76814720040@brauner>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250709090635.26319-2-jack@suse.cz>
-References: <20250709090635.26319-2-jack@suse.cz>
+In-Reply-To: <20250708-uapi-procfs-root-ino-v1-1-6ae61e97c79b@cyphar.com>
+References: <20250708-uapi-procfs-root-ino-v1-1-6ae61e97c79b@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,22 +61,29 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1238; i=brauner@kernel.org; h=from:subject:message-id; bh=ZXkEYQSmrea8vlwoTme0ywkxaTaq14YYEUzmB1emUJA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTk594tWnzmi2DMvUShBhueTcdWu8V5rG248kvC9YPEy 4dt1w3mdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkwlOGf8q3jgZXaohGMemd 5uo+xFrAu6TN6k5X0VXtmvkZHhX/fzMyXAgMvDdhl2LXyr+b+dd/fXB3ztQJ68rC/QVFzrZMufm wngkA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1604; i=brauner@kernel.org; h=from:subject:message-id; bh=8JPfNGHBDa0dopf0Zq7Rous3CrwqV1gjb+xsOTSkYKQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTk55nPYij6/PfuT/tyxvu170tqbKZFtq+16XVbLLE2d qrib8+jHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPx/MrIMKmWa71tkJrSYi9V yyTxkNd8WUmPI1Uddto2LHsd7OXhzfDP+FfuhDIZXt/CVauM+SZxKCW2fW0Q46u74j/xE//Ue1n 8AA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Wed, 09 Jul 2025 11:06:36 +0200, Jan Kara wrote:
-> evict_inodes() uses list_for_each_entry_safe() to iterate sb->s_inodes
-> list. However, since we use i_lru list entry for our local temporary
-> list of inodes to destroy, the inode is guaranteed to stay in
-> sb->s_inodes list while we hold sb->s_inode_list_lock. So there is no
-> real need for safe iteration variant and we can use
-> list_for_each_entry() just fine.
+On Tue, 08 Jul 2025 23:21:51 +1000, Aleksa Sarai wrote:
+> The root inode of /proc having a fixed inode number has been part of the
+> core kernel ABI since its inception, and recently some userspace
+> programs (mainly container runtimes) have started to explicitly depend
+> on this behaviour.
+> 
+> The main reason this is useful to userspace is that by checking that a
+> suspect /proc handle has fstype PROC_SUPER_MAGIC and is PROCFS_ROOT_INO,
+> they can then use openat2(RESOLVE_{NO_{XDEV,MAGICLINK},BENEATH}) to
+> ensure that there isn't a bind-mount that replaces some procfs file with
+> a different one. This kind of attack has lead to security issues in
+> container runtimes in the past (such as CVE-2019-19921) and libraries
+> like libpathrs[1] use this feature of procfs to provide safe procfs
+> handling functions.
 > 
 > [...]
 
-Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.misc branch should appear in linux-next soon.
+Applied to the vfs-6.17.nsfs branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.nsfs branch should appear in linux-next soon.
 
 Please report any outstanding bugs that were missed during review in a
 new review to the original patch series allowing us to drop it.
@@ -86,8 +95,8 @@ Note that commit hashes shown below are subject to change due to rebase,
 trailer updates or similar. If in doubt, please check the listed branch.
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.misc
+branch: vfs-6.17.nsfs
 
-[1/1] vfs: Remove unnecessary list_for_each_entry_safe() from evict_inodes()
-      https://git.kernel.org/vfs/vfs/c/3bc4e4410830
+[1/1] uapi: export PROCFS_ROOT_INO
+      https://git.kernel.org/vfs/vfs/c/76fdb7eb4e1c
 
