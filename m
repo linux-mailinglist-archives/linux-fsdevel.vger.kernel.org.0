@@ -1,206 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-54481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2334FB00150
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 14:12:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CEADB00164
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 14:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30541C8673A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 12:12:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 645725815E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 12:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E2A2512D5;
-	Thu, 10 Jul 2025 12:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0z6+ZSD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85591255E34;
+	Thu, 10 Jul 2025 12:15:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6676244EA1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 12:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EE521FF42
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 12:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752149537; cv=none; b=LOvWYlClj3hDkToNFJ++0b1xYio6j+xzYlwPlEs+doUS9PeAbxMmwOApowFGQQPn4C3h81+D5eQILW5EG2j0JcxWaX3d6NkTaYMGLBDPZKvJlTgUZSohfbnTWI6ucmevTWmQRW6UKEMFv092By7qRJVEF5+thvDTuJwsdMJjPUM=
+	t=1752149749; cv=none; b=anQzJsIuCyw04ntX39yxPZVqZvthyygtpiGBZjRZDYMLV0HBm+DvuPvoSznpnsMMfw54Cp86Xfpb62VCQoIBoqcaPnFN9buSYIhhtWQiXcsqe18jyepBUkfLggpU5JQcuRXjEX1i28K/1GdNogCpmPaCZBnB2FPDuaijkmE67RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752149537; c=relaxed/simple;
-	bh=AH8PUv+euepMKRWca/8bFoBxDHoGj+7/UhyCSRJViVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I76HQx3rJ+ihO4F2hhzl517svkbB4rHMSV04mVLK3HbHmdH3lz/CZLW1TCQ8hQQydqV009dMOiClW6wHFE23r3SwHtfE6EGzVakOIyBOU6VxaQewSgFaOOV+rWCCkFswwwc1JlB7qCPzDZpfdLZ6XX7Q1nEtJPE4yUprYBraqQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q0z6+ZSD; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b350704f506so800034a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 05:12:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752149534; x=1752754334; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=l5fKQkJlzxFNzCa91Lb1dJiWX0paIysgWrqFRDcZl1w=;
-        b=Q0z6+ZSDn4TJj2ibUp7xPOIQ0pr02Ehy7lyQZmOtlkicQYFomWdbjABfE8sP/+v0HQ
-         vHIvwUxBz4jnYkWGlzOXaF7Yjyt62QJJdUMDFWHn20RNoE5AluQOXn1xj7yC5Mrvv7EI
-         33V/YXu0xp06NiG96NeZEV/GrOuLdR1hbI+NfqjeVS3qhdbsmFn0dANubS24d60q/XEt
-         jEpCZ7itKrDB806FGrK6zyBuNiTFz8Pmhouhh8PIeBiLGZlV0wO03LzZ7xUkk7eU0R0z
-         tJIKNeKCn4EYw6MQEKnBuZY6vd3i58lbsKPNd4Dlpoa6NwK9dBWuijnO2d96j0tzRt5X
-         u3dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752149534; x=1752754334;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l5fKQkJlzxFNzCa91Lb1dJiWX0paIysgWrqFRDcZl1w=;
-        b=UBUzol4HU7W+SzkZqywAoeXEYb1x3zILnr7GUzT3u82IdmDPRHiWtTQmMOWrH0PQcs
-         pAls6iUXLSxvy3YK7smRo7xZYNlZ2pSXQnmr7bLih2IxJzZ2pAdvhpYPDljZuCdLoezx
-         RkDlNTyEmwtMmQR/4jH0YtT6vQjWRCdIb5RX6DXXEngoA5Nt+4c8hupl/O6pe0EuVNJu
-         wh5eLIAU9CPKKwIpUUBNYdlSSCPBTzyOb4z/OemJNw6y1OeFb45TgJh4otXi1It5ZXXK
-         wboxPmuvy+QA3+MVV+Vm1B45i0XGnuiEX4QdfiK+0CF61yYyc/kRIjreFqhc9Ax1sdgf
-         9vGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxc3tSVEffwiZGpZSv95/vaSCfDj/NQ9aFp4Vxj3sG2vNXFewV+IpStL82z/rlzzJRwapgr7NQ6cmmaxRZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG47dkM5mmNhchcnvmUTKq9ISyMfuZASViw+W8ZfZJZk9uENFs
-	t/LMeoz0SMOmLprT2Vj4CWUdYJBZBnuwsrKu0LlSlvFasA3erKeU/yZ4bZZgZ+3UnjDo/8T6c2Y
-	J2IXOpwhBnuJKQOo2rKm5qlOB0InEuLL1iVM2yxWttw==
-X-Gm-Gg: ASbGncvSB6Zxe1B2CyW+vPsJtFu6Z7PNwID3EBzFLsByfPtjZxX9tpoGX73K+n9tnEL
-	itsbdOnJQp+05CENVUs2cTqnkIVjKSYMBQGLkAVyukRCBu1uuUyQBCDxugFA8I6IZq3MTTMO3Ri
-	3HIuiTDiKij8iG0ZLS807pd8CLhlfLKnH3Pm33W7J32POyM/x4eeU8QX4UapRWayWqOcsyw7Nhe
-	I/v
-X-Google-Smtp-Source: AGHT+IFcdBu3ShGiBGJn+ltA7oFTW8H9YPFMEt2jDVSnZb+bs7admyDliyazn/63MyRc/plsPEFqBEjlFwltytTTDLQ=
-X-Received: by 2002:a17:90a:d40c:b0:313:d361:73d7 with SMTP id
- 98e67ed59e1d1-31c3cf9aaffmr4844081a91.13.1752149533668; Thu, 10 Jul 2025
- 05:12:13 -0700 (PDT)
+	s=arc-20240116; t=1752149749; c=relaxed/simple;
+	bh=CWu7FlHBojLGm5tuTQDLic7+B61OTrI5Fe5paZlyHYE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BWppeptWX+8oPIrhqSvImZVOYOvXK1/uWG9Cw3PgaTan9f1vmVQY+8tEsz2wh1Wy4VOR4r2/8vKvmU4UZXpSe1NKPTo2nqKGFmakY/WwX+SSOSPWsaPuWbXdd3zEc6C6ppf1pi7IvnvxFzO3CZVFgYnRB4yzVabS0TZGOiB7FPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bdDG73tTyzXf6s;
+	Thu, 10 Jul 2025 20:11:11 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+	by mail.maildlp.com (Postfix) with ESMTPS id CBC6F180B3F;
+	Thu, 10 Jul 2025 20:15:37 +0800 (CST)
+Received: from huawei.com (10.67.174.162) by kwepemo500009.china.huawei.com
+ (7.202.194.199) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Jul
+ 2025 20:15:37 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-fsdevel@vger.kernel.org>,
+	<lihongbo22@huawei.com>, <sandeen@redhat.com>
+Subject: [PATCH v5 0/7] f2fs: new mount API conversion
+Date: Thu, 10 Jul 2025 12:14:08 +0000
+Message-ID: <20250710121415.628398-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.22.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707140814.542883-1-yi.zhang@huaweicloud.com> <20250707140814.542883-12-yi.zhang@huaweicloud.com>
-In-Reply-To: <20250707140814.542883-12-yi.zhang@huaweicloud.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 10 Jul 2025 17:42:02 +0530
-X-Gm-Features: Ac12FXxqcUh80kkxN_CSIp8V6OeaHoAn1HkqXzhs7QI6_m3OzxtvkLSTuknIS9Q
-Message-ID: <CA+G9fYtFSzngosVVY=Ps+L=ER4mtMn7eAbpLfMdKMnZNqN4pkA@mail.gmail.com>
-Subject: Re: [PATCH v4 11/11] ext4: limit the maximum folio order
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, ojaswin@linux.ibm.com, sashal@kernel.org, jiangqi903@gmail.com, 
-	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
-	yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 
-On Mon, 7 Jul 2025 at 19:53, Zhang Yi <yi.zhang@huaweicloud.com> wrote:
->
-> From: Zhang Yi <yi.zhang@huawei.com>
->
-> In environments with a page size of 64KB, the maximum size of a folio
-> can reach up to 128MB. Consequently, during the write-back of folios,
-> the 'rsv_blocks' will be overestimated to 1,577, which can make
-> pressure on the journal space where the journal is small. This can
-> easily exceed the limit of a single transaction. Besides, an excessively
-> large folio is meaningless and will instead increase the overhead of
-> traversing the bhs within the folio. Therefore, limit the maximum order
-> of a folio to 2048 filesystem blocks.
->
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Reported-by: Joseph Qi <jiangqi903@gmail.com>
-> Closes: https://lore.kernel.org/linux-ext4/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+In this version, we have finished the issues pointed in v4.
+First, I'd like to express my sincere thanks to Jaegeuk and Chao
+for reviewing this patch series and providing corrections. I also
+appreciate Eric for rebasing the patches onto the latest branch to
+ensure forward compatibility.
 
-I have applied this patch set on top of the Linux next tree and performed
-testing. The previously reported regressions [a] are no longer observed.
-Thank you for providing the fix.
+The latest patch series has addressed all the issues mentioned in
+the previous set. For modified patches, I've re-added Signed-off-by
+tags (SOB) and uniformly removed all Reviewed-by tags.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+v5:
+  - Add check for bggc_mode(off) with sb blkzone case.
+  - Fix the 0day-ci robot reports.
 
-Reference link:
-[a] https://lore.kernel.org/all/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
+v4: https://lore.kernel.org/all/20250602090224.485077-1-lihongbo22@huawei.com/
+  - Change is_remount as bool type in patch 2.
+  - Remove the warning reported by Dan for patch 5.
+  - Enhance sanity check and fix some coding style suggested by
+    Jaegeuk in patch 5.
+  - Change the log info when compression option conflicts in patch 5.
+  - Fix the issues reported by code-reviewing in patch 5.
+  - Context modified in patch 7.
 
-> ---
->  fs/ext4/ext4.h   |  2 +-
->  fs/ext4/ialloc.c |  3 +--
->  fs/ext4/inode.c  | 22 +++++++++++++++++++---
->  3 files changed, 21 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index f705046ba6c6..9ac0a7d4fa0c 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3020,7 +3020,7 @@ int ext4_walk_page_buffers(handle_t *handle,
->                                      struct buffer_head *bh));
->  int do_journal_get_write_access(handle_t *handle, struct inode *inode,
->                                 struct buffer_head *bh);
-> -bool ext4_should_enable_large_folio(struct inode *inode);
-> +void ext4_set_inode_mapping_order(struct inode *inode);
->  #define FALL_BACK_TO_NONDELALLOC 1
->  #define CONVERT_INLINE_DATA     2
->
-> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> index 79aa3df8d019..df4051613b29 100644
-> --- a/fs/ext4/ialloc.c
-> +++ b/fs/ext4/ialloc.c
-> @@ -1335,8 +1335,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
->                 }
->         }
->
-> -       if (ext4_should_enable_large_folio(inode))
-> -               mapping_set_large_folios(inode->i_mapping);
-> +       ext4_set_inode_mapping_order(inode);
->
->         ext4_update_inode_fsync_trans(handle, inode, 1);
->
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 4b679cb6c8bd..1bce9ebaedb7 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5181,7 +5181,7 @@ static int check_igot_inode(struct inode *inode, ext4_iget_flags flags,
->         return -EFSCORRUPTED;
->  }
->
-> -bool ext4_should_enable_large_folio(struct inode *inode)
-> +static bool ext4_should_enable_large_folio(struct inode *inode)
->  {
->         struct super_block *sb = inode->i_sb;
->
-> @@ -5198,6 +5198,22 @@ bool ext4_should_enable_large_folio(struct inode *inode)
->         return true;
->  }
->
-> +/*
-> + * Limit the maximum folio order to 2048 blocks to prevent overestimation
-> + * of reserve handle credits during the folio writeback in environments
-> + * where the PAGE_SIZE exceeds 4KB.
-> + */
-> +#define EXT4_MAX_PAGECACHE_ORDER(i)            \
-> +               min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
-> +void ext4_set_inode_mapping_order(struct inode *inode)
-> +{
-> +       if (!ext4_should_enable_large_folio(inode))
-> +               return;
-> +
-> +       mapping_set_folio_order_range(inode->i_mapping, 0,
-> +                                     EXT4_MAX_PAGECACHE_ORDER(inode));
-> +}
-> +
->  struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
->                           ext4_iget_flags flags, const char *function,
->                           unsigned int line)
-> @@ -5515,8 +5531,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
->                 ret = -EFSCORRUPTED;
->                 goto bad_inode;
->         }
-> -       if (ext4_should_enable_large_folio(inode))
-> -               mapping_set_large_folios(inode->i_mapping);
-> +
-> +       ext4_set_inode_mapping_order(inode);
->
->         ret = check_igot_inode(inode, flags, function, line);
->         /*
-> --
-> 2.46.1
->
+V3: https://lore.kernel.org/all/20250423170926.76007-1-sandeen@redhat.com/
+- Rebase onto git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+  dev branch
+- Fix up some 0day robot warnings
 
---
-Linaro LKFT
-https://lkft.linaro.org
+(Here is the origianl cover letter:)
+
+Since many filesystems have done the new mount API conversion,
+we introduce the new mount API conversion in f2fs.
+
+The series can be applied on top of the current mainline tree
+and the work is based on the patches from Lukas Czerner (has
+done this in ext4[1]). His patch give me a lot of ideas.
+
+Here is a high level description of the patchset:
+
+1. Prepare the f2fs mount parameters required by the new mount
+API and use it for parsing, while still using the old API to
+get mount options string. Split the parameter parsing and
+validation of the parse_options helper into two separate
+helpers.
+
+  f2fs: Add fs parameter specifications for mount options
+  f2fs: move the option parser into handle_mount_opt
+
+2. Remove the use of sb/sbi structure of f2fs from all the
+parsing code, because with the new mount API the parsing is
+going to be done before we even get the super block. In this
+part, we introduce f2fs_fs_context to hold the temporary
+options when parsing. For the simple options check, it has
+to be done during parsing by using f2fs_fs_context structure.
+For the check which needs sb/sbi, we do this during super
+block filling.
+
+  f2fs: Allow sbi to be NULL in f2fs_printk
+  f2fs: Add f2fs_fs_context to record the mount options
+  f2fs: separate the options parsing and options checking
+
+3. Switch the f2fs to use the new mount API for mount and
+remount.
+
+  f2fs: introduce fs_context_operation structure
+  f2fs: switch to the new mount api
+
+[1] https://lore.kernel.org/all/20211021114508.21407-1-lczerner@redhat.com/
+
+Hongbo Li (7):
+  f2fs: Add fs parameter specifications for mount options
+  f2fs: move the option parser into handle_mount_opt
+  f2fs: Allow sbi to be NULL in f2fs_printk
+  f2fs: Add f2fs_fs_context to record the mount options
+  f2fs: separate the options parsing and options checking
+  f2fs: introduce fs_context_operation structure
+  f2fs: switch to the new mount api
+
+ fs/f2fs/super.c | 2101 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 1190 insertions(+), 911 deletions(-)
+
+-- 
+2.33.0
+
 
