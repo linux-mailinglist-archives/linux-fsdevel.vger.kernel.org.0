@@ -1,149 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-54477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42304B000C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 13:47:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D81B000D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 13:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EFB01C22CA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 11:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38BA3AD408
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 11:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E95624A05D;
-	Thu, 10 Jul 2025 11:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D77424DCF8;
+	Thu, 10 Jul 2025 11:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmy2T+mx"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H5g/QZFU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OPezGPcZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9A1946F;
-	Thu, 10 Jul 2025 11:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BD3248F7D;
+	Thu, 10 Jul 2025 11:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752148012; cv=none; b=ji8mdKpBBG0aJtQ+7iUEJq3yK9oVhz2+0g1KJT7TDXDbcByiaIjZogJP6480tiRgV0JkprbJLJPbjLG9G0CSrBeO7oMAhtML7JFEICeQSbBCmpuKEdpmYrFVGcjsciwf1SkeiGE1AeVUXJO64g4vEO6rTGVZIaOIVHplenxpzr8=
+	t=1752148403; cv=none; b=pqMDoxN3IQoEjkW+a5rEnB09FO6oLp0yi7AfUhdt1jnOqrm1wKtAh2pNbW1Jq3JyPZE1U8aeDNo7hFsb/SJRSzfPtlEHTqablUVI5Bt/o7QCX4Sb28ogFzO+UFzxqVNaiyFvswGK1HZWiS5oRO3E3dX53Yn5iLHaq3Wbtn9cAc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752148012; c=relaxed/simple;
-	bh=t/OeAvIh8DyOgjIIocAvYTIOO6EsHiE6fqTQPT+2lQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BeA+5v6uDYHW/GYQ7pIRaTJ0vy7J27tgju/GkAa6w+SVjhpDZPAdmGRXtorH19xgKuFAvjDVJqq5fYbSrD9LN9SJTZnkYNDjQs41AlMi+oA8c3j/X4NbAdBJrpgM6vGtljLitwUDpFNGSuMPPb0SjwEN6IRAVOtDYASwjy8FFLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmy2T+mx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C78A4C4CEE3;
-	Thu, 10 Jul 2025 11:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752148012;
-	bh=t/OeAvIh8DyOgjIIocAvYTIOO6EsHiE6fqTQPT+2lQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kmy2T+mxE+7xOOMDTL8TRFHexoTeE0G4VAikvj3fcRgN4jfOqsJtdyjMyzE46/SXt
-	 u3fVlUmIO/B6hi2vHg9m8YC8Bqyvilj+TJVzLDeK7wFYDMBo5MtFtW/EvXYZAF8tn3
-	 w2b6s3ETa3JNlIUg2Wk74516+WI08ZvVDCQVnBxTUg+o/zokk4qZDp7dL2G480vhX9
-	 nZY+InRMFy3JgfTByCWsPrSdorvtM+3Jzy35IC5jLmWWtjSenXTHNTzjNL0UoPJCNW
-	 nBDBboyVOf0dPPH4SRBEmKwamyu1YjdIWZQlzEuZQrxfDxcsVspPgnKBs2rpsxE0k4
-	 m6Mao47ynwhDQ==
-Date: Thu, 10 Jul 2025 13:46:42 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"tomoyo-users_en@lists.sourceforge.net" <tomoyo-users_en@lists.sourceforge.net>, 
-	"tomoyo-users_ja@lists.sourceforge.net" <tomoyo-users_ja@lists.sourceforge.net>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "jack@suse.cz" <jack@suse.cz>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
-	"jlayton@kernel.org" <jlayton@kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, 
-	"m@maowtm.org" <m@maowtm.org>, "john.johansen@canonical.com" <john.johansen@canonical.com>, 
-	"john@apparmor.net" <john@apparmor.net>, 
-	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, "omosnace@redhat.com" <omosnace@redhat.com>, 
-	"takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
-	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>, "enlightened@chromium.org" <enlightened@chromium.org>
-Subject: Re: [RFC] vfs: security: Parse dev_name before calling
- security_sb_mount
-Message-ID: <20250710-roden-hosen-ba7f215706bb@brauner>
-References: <20250708230504.3994335-1-song@kernel.org>
- <20250709102410.GU1880847@ZenIV>
- <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
- <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
+	s=arc-20240116; t=1752148403; c=relaxed/simple;
+	bh=0rNi0NWwAGS/m3tH+/mj7RHCQBBaydL72v9Fg5u9Ueg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=b7xEH8shOpIEjSp/03vE93wecRIMZ14aE5qplVHg+BLzjU3KLfhTpNKTc2FObca0xeF2PtPeSd43ZXTzi0vD+9eoCD5CWtyTiRxP76MqxDmdyB8TmJVPVB/3mCGZ8537m0a+0urMrjVcZpAxi/9jWB5Q9NITWot8a/zbmFHiAz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H5g/QZFU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OPezGPcZ; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 240371D000FD;
+	Thu, 10 Jul 2025 07:53:19 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 10 Jul 2025 07:53:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752148398;
+	 x=1752234798; bh=sje5hVMNJ8lPTMZdAUbJxjg9+p9H/ddbEIFabV5Qvsk=; b=
+	H5g/QZFUxQ7xVn9yddlLHQ0YjxLDnqSf1BIV8mBUShvFeRMBDKhXER5GYcjHDGHd
+	1fu88NUSLA5oyMVQRmQWMz1B7+4l9ejbI+srWjmtrTrLWXDQOpKyDL9MmErGWz61
+	Se0y3wkbZ8xrJG8Dux+VBRUXWjvTMER0jxMNvpSriT8f/nY6/YURf69x7/YA0veZ
+	jNolUp6MYMkGsJzyWOMrD52NUhyxW7XFRDftUTHcjHTnnFHB5YPw5Hh1aNA/R1nC
+	+xDVH6GSJwS6MFWri1nJVOm58y+5ng76NnLNtWAXAgAWHLErjF2+Su5HLSNwkDim
+	xRvgj/F+iSQg7w4UZ5BakQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752148398; x=
+	1752234798; bh=sje5hVMNJ8lPTMZdAUbJxjg9+p9H/ddbEIFabV5Qvsk=; b=O
+	PezGPcZCPi7/YI6RyX0H7hEWY6gO8J+wGDeVAv8ZJNDoAK9DK5xH5s7hL8PxkjCA
+	2Q2Had7guZJC/veJIiFvpld6N2QkbQVd5zUkX/6kwgL+XLSgVa1/Pu6sxiiu/AZO
+	Ug/3hVOYqetr6DcvUbuGcKkvTlgiuFJ4Ny7pSsK8z7nUnsOQxYd2fBVvrDwxM+tj
+	6e6XjA9stwjgjlsXj++o68ZAOUMgn4UBQiCR1EwpXoEdKl9ysMIxh9BDEOxR/IY8
+	1gzoFt6GaFcLmqtEFZSLiyEnWZyO8iTEa+nOCgT1kRGw0ZFzhTCt4Dr2Lh5RZNwm
+	1HeSxPKYkwIXtnyfgio4g==
+X-ME-Sender: <xms:rqlvaIL-OWtGobJ1BygHkArXG8NxhDInoaWQkevKsHA7E038cYk2Pw>
+    <xme:rqlvaIJFKGavDtgfz1irQKtYLyk-9KN7jUFP1eDfAaVXq-jOCmvuWO7bN7R70Nt6-
+    SB2zWaItmBeF_FGN9k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdefjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvtddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheprgguohgsrhhihigrnhesghhmrghilhdrtghomhdprhgtphhtthhope
+    grshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopegvsghighhg
+    vghrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrug
+    drohhrghdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohep
+    rghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegujhifohhngheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheprghnuggvrhhsrdhrohigvghllheslhhinhgrrhhordhorhhg
+X-ME-Proxy: <xmx:rqlvaJgth2K4VWfvfXK_ydRAItC1dpGByAKUCbDdSiaZcbVLkOagTA>
+    <xmx:rqlvaLuyELow4oH9maxfs-PYJk0tTRDa9z1vpUQQNzGdumf9o2makg>
+    <xmx:rqlvaDiyb-hS6MjVhM7nn1HGTWos7O7P53HGbsfC_EI6u9pCX8xfmw>
+    <xmx:rqlvaGdTFzdFQOPw6oZ3qgf08FBCwlB89Uvp3NIzEqAQUoD-Mo747Q>
+    <xmx:rqlvaE2LP-vm7ChxAYptsC5zW5BZrB0ztKgF6gt4f-68g-j3q0sERj7d>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id F28FA700065; Thu, 10 Jul 2025 07:53:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
+X-ThreadId: Tfdac8457399410f6
+Date: Thu, 10 Jul 2025 13:52:57 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christoph Hellwig" <hch@infradead.org>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Arnd Bergmann" <arnd@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, "Anuj Gupta" <anuj20.g@samsung.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "Kanchan Joshi" <joshi.k@samsung.com>, "LTP List" <ltp@lists.linux.it>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Benjamin Copeland" <benjamin.copeland@linaro.org>, rbm@suse.com,
+ "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>, "Jens Axboe" <axboe@kernel.dk>,
+ "Pavel Begunkov" <asml.silence@gmail.com>,
+ "Alexey Dobriyan" <adobriyan@gmail.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, "Eric Biggers" <ebiggers@google.com>,
+ linux-kernel@vger.kernel.org
+Message-Id: <50e77c3f-4704-4fb8-a3ac-9686d76fad30@app.fastmail.com>
+In-Reply-To: <aG-dI2wJDl-HfzFG@infradead.org>
+References: <20250709181030.236190-1-arnd@kernel.org>
+ <20250710-passen-petersilie-32f6f1e9a1fc@brauner>
+ <aG92abpCeyML01E1@infradead.org>
+ <14865b4a-dfad-4336-9113-b70d65c9ad52@app.fastmail.com>
+ <aG-dI2wJDl-HfzFG@infradead.org>
+Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 05:06:36PM +0000, Song Liu wrote:
-> Hi Al and Paul, 
-> 
-> Thanks for your comments!
-> 
-> > On Jul 9, 2025, at 8:19 AM, Paul Moore <paul@paul-moore.com> wrote:
-> > 
-> > On Wed, Jul 9, 2025 at 6:24 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >> On Tue, Jul 08, 2025 at 04:05:04PM -0700, Song Liu wrote:
-> >>> security_sb_mount handles multiple types of mounts: new mount, bind
-> >>> mount, etc. When parameter dev_name is a path, it need to be parsed
-> >>> with kern_path.
-> > 
-> > ...
-> > 
-> >> security_sb_mount() is and had always been a mind-boggling trash of an API.
-> >> 
-> >> It makes no sense in terms of operations being requested.  And any questions
-> >> regarding its semantics had been consistently met with blanket "piss off,
-> >> LSM gets to do whatever it wants to do, you are not to question the sanity
-> >> and you are not to request any kind of rules - give us the fucking syscall
-> >> arguments and let us at it".
-> > 
-> > I'm not going to comment on past remarks made by other devs, but I do
-> > want to make it clear that I am interested in making sure we have LSM
-> > hooks which satisfy both the needs of the existing in-tree LSMs while
-> > also presenting a sane API to the kernel subsystems in which they are
-> > placed.  I'm happy to revisit any of our existing LSM hooks to
-> > restructure them to better fit these goals; simply send some patches
-> > and let's discuss them.
-> > 
-> >> Come up with a saner API.  We are done accomodating that idiocy.  The only
-> >> changes you get to make in fs/namespace.c are "here's our better-defined
-> >> hooks, please call <this hook> when you do <that>".
-> 
-> Right now, we have security_sb_mount and security_move_mount, for 
-> syscall “mount” and “move_mount” respectively. This is confusing 
-> because we can also do move mount with syscall “mount”. How about 
-> we create 5 different security hooks:
-> 
-> security_bind_mount
-> security_new_mount
-> security_reconfigure_mount
-> security_remount
-> security_change_type_mount
-> 
-> and remove security_sb_mount. After this, we will have 6 hooks for
-> each type of mount (the 5 above plus security_move_mount).
+On Thu, Jul 10, 2025, at 12:59, Christoph Hellwig wrote:
+>> I think the variant from commit 1b6d968de22b ("xfs: bump
+>> XFS_IOC_FSGEOMETRY to v5 structures") where the old structure
+>> gets renamed and the existing macro refers to a different
+>> command code is more problematic. We used to always require
+>> userspace to be built against the oldest kernel headers it could run
+>> on. This worked fine in the past but it appears that userspace
+>> (in particular glibc) has increasingly expected to also work
+>> on older kernels when building against new headers.
+>
+> This is what I meant.  Note that the userspace in this case also keeps a
+> case trying the old structure, but that does indeed require keeping the
+> userspace somewhat in lockstep if you do the renaming as in this example.
 
-I've multiple times pointed out that the current mount security hooks
-aren't working and basically everything in the new mount api is
-unsupervised from an LSM perspective.
+Right, it's fine for applications that keep a copy of the uapi
+header file, because they can implement both versions when they
+update to the new version of that file.
 
-My recommendation is make a list of all the currently supported
-security_*() hooks in the mount code (I certainly don't have them in my
-head). Figure out what each of them allow to mediate effectively and how
-the callchains are related.
+Redefining the ioctl command code does break if you have an
+unmodified application source tree that unintentionally uses
+the updated /usr/include/linux/*.h file. In this case there is
+no benefit from the new header because it isn't aware of the
+new struct member but it still ends up failing on old kernels.
 
-Then make a proposal how to replace them with something that a) doesn't
-cause regressions which is probably something that the LSMs care about
-and b) that covers the new mount API sufficiently to be properly
-mediated.
-
-I'll happily review proposals. Fwiw, I'm pretty sure that this is
-something that Mickael is interested in as well.
+   Arnd
 
