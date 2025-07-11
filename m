@@ -1,172 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-54576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21AEB00FC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 01:34:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEE8B010AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 03:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FDFF761B27
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Jul 2025 23:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C9D5A0ACE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 01:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA57D2BEFF3;
-	Thu, 10 Jul 2025 23:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796F67E0E4;
+	Fri, 11 Jul 2025 01:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ica1XMWk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLGbzQgj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE441FBEA2
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 23:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC7B746E;
+	Fri, 11 Jul 2025 01:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752190412; cv=none; b=QgP1or+MPubn58VeG8pCxEBUXJXA0nf2uqV/XFu64FaOwuzw+OmWrETCjbxCZtx+pEAANzYx9IwI978bnQHotqjjffQLdoDiMYYUAk3hq39aCmekBADuw6a8bn/3LHNcjR64/a4Hsr9ysbvj7nQjTHSPaf26OyMuagWIaNKxtW8=
+	t=1752196732; cv=none; b=KJkxRB0QPGP03YUk4tTm5YcUFqazglYFqP4gxWDZ0NUTEibAZF6qTn2nPZowTinxyUlLKpd17jJxGLjDqzaOXAZSVKg2dx/DAPwX7EhQqllOB1DIRlbBYl3e7nW17s6o5YV1rjxkVSKrZM7/i3OzkgXb5vuqTGdPOtwQeNiZcNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752190412; c=relaxed/simple;
-	bh=fs/stzFOkuNqoivUoaT1zQiwHUcb7MvE90+6wUsGHiY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EmxpE+vr1Q7bZJDd5TBin/wqTVgUmxU2HNqJxQVUoDlrMGjDIJij6H86UUdASDX2IeBXF7NuKYMDssw4V3Uj4cVd9dQ+SdnA7Rq27kciosgILUs5z2OJWZFq6TngEo3z36qFMFvQA+kJf5JFDmEpMOqpQV1wk9kRcl8ldmc2i+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ica1XMWk; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3141a9a6888so1478778a91.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 16:33:30 -0700 (PDT)
+	s=arc-20240116; t=1752196732; c=relaxed/simple;
+	bh=R8AABabAlWYs5sROsKxYgIr8UcUVRhflbLr2PL7WTUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QCR2DDJkDBlcKGFLeGKRvhpAmVWuGzDWvZmWMKlfbXx6M83yW2xTYjx6w1+aH7yEbv1foQaD3ZQ2MMfUnNMJPw/UxkqqKTpLetSJZNT0g8McRx9JGG11//aosvgGcgx+uR3F0ijdhg1xXLuUHp8fX/o/UP8sonzYVRLf/tMlkv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLGbzQgj; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-611e20dd2ffso526834eaf.2;
+        Thu, 10 Jul 2025 18:18:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752190410; x=1752795210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1752196730; x=1752801530; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7xMGtELqGDIVKylpj3gkVi9KRmy7ceHP1p00FimnrPg=;
-        b=Ica1XMWkCzYcBkJEr0u3ixopYfpMkzZlafhw9nFOZuU+u76A5nunV8D92YHzAhbNPs
-         XaDxvgU0X74Xxo/q7aRyoGdnjjUpAa2eRYYzEuwmLiLI0IZOYhd1KiiuR7mKbFaNe19Y
-         vXU8ohrTiIVx1y/KcREPbO5rIpNlKHA1N5bgSJr0rg+liRvBkaF1GCd/f95TR8sdKk6p
-         Pg9cy0lDRoUTQPvvk2dPETWknEVCuqyVlbWdb5u45tuP2pzw6XcgAxbNe4nV3XRoR/zT
-         pZUYhTKJUaBdV8y/OPerVz/8ffo7VVCiO67v41pPEGRIiRv55KmC0PG5iyXBfV3grTv2
-         2vrg==
+        bh=2g0KFXDxtk/APA3qVySJRW2x29mZCIrc20VuPGvJudw=;
+        b=NLGbzQgj+NmTc55XOejmp+5lX3sI0mSh+dKlRVf/Z8ZPU8foxVFFOoiBbUV/6rJSPu
+         K/VwmK2HevBQvt+SYkB2ESFfj61jxfCk1K1ph+6sIebRMYAXQaXHj95R1hQW6iKf0xOh
+         XvshEAx+7wiIQC4szwbYHyROS3rOo2wA6feKZXTH6bqUjXwFOoVOpwOy0UUx7cIiEMfi
+         UBuW+pI5I8vd4sKbYQcJMzjkSkny8G0XFFaC8rCyq/Ki/Eq/X6w9dY9GspWFRkny9Qoe
+         wZzONqbUTjcivs3m4RW5yJdVeK9gA3R3nX6PnuRnbYYUZiraN9ho19fgoGm4jC3pPMQ+
+         cDiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752190410; x=1752795210;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7xMGtELqGDIVKylpj3gkVi9KRmy7ceHP1p00FimnrPg=;
-        b=WBRhrkoudbPtHLJBpzPeNvPdIw+Dul/WCsjs92iE2Cad2GzLWhB5Sn8SjQMGwHiGOn
-         WiHhQ3U0QBSOO6o/TnR9SJCHB81YRORx7N/0nrslb9XofSl35oX4xniqCtzzQ7tllX5z
-         fIsU+hRjQv4mRoIe/kmvLZMJS8H7gMaUwkEZ3qC/Amwq3teV8muNNP0GbcBmUlVzBbfi
-         H12cl2J2mk0jSI09VPFyVAd8HrdQegqnRs6uplqEzrgZ33XWL3/BE/2zRbmtn+OYB9jI
-         6UvG4A8hgnC3mTP4EA9DjRmP8g500S1+pTfe6Xp4JptidT0I8aRc3Ga7ukZXaspD9IUh
-         YXhA==
-X-Forwarded-Encrypted: i=1; AJvYcCURBFWeuegKOSD/AXWemZU2SDwY4PdIlpXUOEP6WOkBdFxq0P4bLPPbkb4G1i1Od05/6u329dTfBq//gllI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJn90e7HKyu3aTYgXaFJGxrN9bU9AN4S+m4NLTTBbkLd3OniDc
-	CaPFFet/+gIL93HG/SHRyXBD1c0Osu3AjTWlT8znxW33OwIWZLzUIKJThopOZJ9z7jUFw9VOPGz
-	zHfpuhw==
-X-Google-Smtp-Source: AGHT+IEjkpnTRHviySEJP6oNLJNYcaCJfnt+ly8nM389x4kL3s2cpQb6nNjPDRQ5qUt24OyTevtzQci/lmQ=
-X-Received: from pjbqo12.prod.google.com ([2002:a17:90b:3dcc:b0:312:ea08:fa64])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e4c:b0:30e:5c7f:5d26
- with SMTP id 98e67ed59e1d1-31c50e2c4dcmr205822a91.24.1752190409836; Thu, 10
- Jul 2025 16:33:29 -0700 (PDT)
-Date: Thu, 10 Jul 2025 16:33:28 -0700
-In-Reply-To: <CAGtprH_DY=Sjeh32NCc7Y3t2Vug8LKz+-=df4oSw09cRbb6QZw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1752196730; x=1752801530;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2g0KFXDxtk/APA3qVySJRW2x29mZCIrc20VuPGvJudw=;
+        b=BzaWJCDf39eTLRdXL2LnuNFe674j0RK2RDaSMQjorUI+oqRt4y2hgy1WvqAwrGd8wk
+         YtzJ1+pc9dvBhh/LJgLmaDBe9t5GREUkktyPoNdd78nIKhFtqbZXG4HRT1SraNjcE38e
+         B2b3HMPUc6lJF4hb8f75aJ0Dm7co+QzYGB/1HeAVXVsgbCJT1kiQ4NeN1Lvx9XAOpyYO
+         bwDup/MAA4c8YjozHCNJG7FxqdWzjN2yh2CsdUUo67k+fwCoeuVQVWWAz4FRSzWIjnyb
+         dsGOyuT9bh50d8NFlHqePtGmQ6Io6wPxS/yU5uxTMcWsKYtZIiI3kUz0b/TvFfWA0XG6
+         f31g==
+X-Forwarded-Encrypted: i=1; AJvYcCVq6WIcQ3/jJC3iRocKtE8yOsNHnMlyLvD3JGGfn03QsDnNToZlmZWAmbN4zSJ7vQ+X4Ph5F0xTxuvU@vger.kernel.org, AJvYcCWLa0ENFY78XvLGqwYAnHSMBAhenS/gBN7l7aOIuty7vdEpy1HJmIolBdVD8bZtEdGobL1T+a2v9bAYSEB2yw==@vger.kernel.org, AJvYcCWecTC33XPCZfiERaqRyrVKOzb9pfICgrSbmnvNXBYWAcBnMFeldqviO3WrQ0R06tuWmP1biHtyc5X1GHJM@vger.kernel.org, AJvYcCXc8S8p/lWVN/C9ae6YBepjuo3umfbsjhunFlwqV662a8/rCffyh84ozMn6hKB2oNJHzp46dFQH21k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNefcEcmym96Rt5+O4vZJNC9VVr7aGDw681wCJivTl+7E07nKf
+	/6zn8CcrU2nJb54RI2lQOHUaWBSvJvCwhgzlb87USoE96qVE8dEuI2qj
+X-Gm-Gg: ASbGncuE/xOiGGxLJ3KVU2RbIGsLdpwX//9TwIe5pmS0oDJ4gxpPp2sG65OjLf1dFPO
+	qN7HOa8W1PftSjqxGRke5nu6dX/FbIe484yzRjXGiENl/9MuCfdywxTc6sB9T6qDvIzx9ohftra
+	hqOxk26tX082tRwMt0Y2lnx1pIazVQ9+0YF+bpsBo1NhRpeNSC6BC2fqi4KTFqISQug3ICZzFhC
+	NGtVDCq7n4l1oobA7Dw1MZvZzZI1rfjmUxDrqK2AczwWbZwCLRTJA4ucWHG+fLyqnMODuaR4pB7
+	J0TPS7GtKBN/FTze89XzqsuaYWjotuAc8eL+/rk9f85+b6pP9za//bRPrYvrafnIs8f6Zsfm2kt
+	4arqj5O25Q+WDya8BC1h9RZqSkBw4S9BCI6iM
+X-Google-Smtp-Source: AGHT+IGJCnaqGvb/J1NAhW1XcF8WESVSsXDnoLdvhZ4+00xo2gwgbnca4tl65tWGfO6KVztDNniiVg==
+X-Received: by 2002:a05:6830:6c0d:b0:727:3957:8522 with SMTP id 46e09a7af769-73cf9f2c45emr1252973a34.20.1752196730333;
+        Thu, 10 Jul 2025 18:18:50 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:25b0:db8a:a7d3:ffe1])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73cf108af60sm396801a34.21.2025.07.10.18.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 18:18:49 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Thu, 10 Jul 2025 20:18:47 -0500
+From: John Groves <John@groves.net>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 00/18] famfs: port into fuse
+Message-ID: <qcro3gfcssyvto7rtqkykurb6uh5kqslse4zllosk6bukaualp@xmy6jchvm65p>
+References: <20250703185032.46568-1-john@groves.net>
+ <os4kk3dq6pyntqgcm4kmzb2tvzpywooim2qi5esvsyvn5mjkmt@zpzxxbzuw3lq>
+ <CAJfpeguOAZ0np25+pv2P-AHPOepMn+ycQeMwiqnPs4e0kmWwuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
- <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
- <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
- <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
- <aG1dbD2Xnpi_Cqf_@google.com> <5decd42b3239d665d5e6c5c23e58c16c86488ca8.camel@intel.com>
- <aG1ps4uC4jyr8ED1@google.com> <CAGtprH86N7XgEXq0UyOexjVRXYV1KdOguURVOYXTnQzsTHPrJQ@mail.gmail.com>
- <aG6D9NqG0r6iKPL0@google.com> <CAGtprH_DY=Sjeh32NCc7Y3t2Vug8LKz+-=df4oSw09cRbb6QZw@mail.gmail.com>
-Message-ID: <aHBNyEabRZVp7vtl@google.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
-	Jun Miao <jun.miao@intel.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"amoorthy@google.com" <amoorthy@google.com>, "tabba@google.com" <tabba@google.com>, 
-	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "maz@kernel.org" <maz@kernel.org>, 
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, Wei W Wang <wei.w.wang@intel.com>, 
-	Fan Du <fan.du@intel.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
-	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, "fvdl@google.com" <fvdl@google.com>, 
-	"jack@suse.cz" <jack@suse.cz>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
-	Kirill Shutemov <kirill.shutemov@intel.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"steven.price@arm.com" <steven.price@arm.com>, "anup@brainfault.org" <anup@brainfault.org>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "keirf@google.com" <keirf@google.com>, 
-	"mic@digikod.net" <mic@digikod.net>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
-	Erdem Aktas <erdemaktas@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
-	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "hughd@google.com" <hughd@google.com>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
-	"jarkko@kernel.org" <jarkko@kernel.org>, "quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
-	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
-	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
-	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
-	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
-	"hch@infradead.org" <hch@infradead.org>, "will@kernel.org" <will@kernel.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguOAZ0np25+pv2P-AHPOepMn+ycQeMwiqnPs4e0kmWwuQ@mail.gmail.com>
 
-On Wed, Jul 09, 2025, Vishal Annapurve wrote:
-> On Wed, Jul 9, 2025 at 8:00=E2=80=AFAM Sean Christopherson <seanjc@google=
-.com> wrote:
+On 25/07/09 05:26AM, Miklos Szeredi wrote:
+> On Thu, 3 Jul 2025 at 20:56, John Groves <John@groves.net> wrote:
 > >
-> > On Wed, Jul 09, 2025, Vishal Annapurve wrote:
-> > > I think we can simplify the role of guest_memfd in line with discussi=
-on [1]:
-> >
-> > I genuinely don't understand what you're trying to "simplify".  We need=
- to define
-> > an ABI that is flexible and robust, but beyond that most of these guide=
-lines boil
-> > down to "don't write bad code".
->=20
-> My goal for bringing this discussion up is to see if we can better
-> define the role of guest_memfd and how it interacts with other layers,
-> as I see some scenarios that can be improved like kvm_gmem_populate[1]
-> where guest_memfd is trying to fault in pages on behalf of KVM.
+> > DERP: I did it again; Miklos' email is wrong in this series.
+> 
+> linux-fsdevel also lands in my inbox, so I don't even notice.
+> 
+> I won't get to review this until August, sorry about that.
+> 
+> Thanks,
+> Miklos
 
-Ah, gotcha.  From my perspective, it's all just KVM, which is why I'm not f=
-eeling
-the same sense of urgency to formally define anything.  We want to encapsul=
-ate
-code, have separate of concerns, etc., but I don't see that as being anythi=
-ng
-unique or special to guest_memfd.  We try to achieve the same for all major=
- areas
-of KVM, though obviously with mixed results :-)
+Thanks Miklos. I'll probably get one more update out to this series by
+August. Best possible case, I will have fixed the poisoned page problem - 
+but I haven't worked out what the fix is yet, so that's an aspiration.
+
+Regards,
+John
+
 
