@@ -1,55 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-54591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D0EB0159F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 10:13:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C83FB015CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 10:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F661C83D72
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 08:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD8716435AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 08:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E3120DD52;
-	Fri, 11 Jul 2025 08:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E17218593;
+	Fri, 11 Jul 2025 08:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i4/hmafo"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R9viDCNt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7180D1FF1C4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 08:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC33215179;
+	Fri, 11 Jul 2025 08:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221443; cv=none; b=d4lov7MCTTAWEwRSule7ge3GImoKCy4aa/TMJRoE2tAvMyyGQ1y99x37JSHtLC+oq+BEcP4NO5qcrX6xj3ihvNfcuvt4Pvwdsr3zRIl3EzaSL54zct8/6h0TU69mkHigzPkPqClUMLCewTRpvlLHrt+8TJWZgyh3F8tUhC0V5RQ=
+	t=1752221515; cv=none; b=SRHxKOqPDerx9aXMUA6lwPi9yuRHqcXCX7sD36tz/FfuQAA111CU4UCNXq49ywZPpdjgZXWNwv8v1TpnN8sEuU8P4AaIV6z0ZZtvin95p7BMbJ0fSUvQg2zntMLEPc4dyW7bctMb8ZSRMDJNtIrPirjJifAvMY/ASNJ96Wodp5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221443; c=relaxed/simple;
-	bh=Kwgs7HmejVuybbwSsO6Dj/TOdsQlamsOK+4m7YKIwXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GYIFDa5k5Ec7kRxDC2EV5mUp4XV2KjotqZcrrf3+qoyeE+PY8niTDfQ2CIk7JgQyhjzjyqpbE9pVpu8O5q+OlvWKIyNfNmcBEX9Dv+A79mWcgT4pIso/3ZMnd5n8PQ0iYHEZU10MWdZ/EKWbTjp9t+UttT1Mn9E5jtntomS0Rj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i4/hmafo; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1752221515; c=relaxed/simple;
+	bh=OCr0c7dyekem0VO6jnILOOdUC6Pj+RqeiVt7hdJ5DOk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EOXCoX28qcLT8UVY6Us3RKp/usPUFCKES+ZuTxpFTdkCVFDg0ELwJMWe+37Tegz8uveaCNs5raLV/T0h7bLv1aqV6HM1sAuvcy7yiKbQFf+ZTiuC4O9PQuYXZGjPq59s0k+LmYQ7lfUh7tKJKnH3H4a0to29XvARCfgqQUSEna0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R9viDCNt; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
 	Content-ID:Content-Description:In-Reply-To:References;
-	bh=qnEs5arKDmF5W6dQLKY2snkfgpJoEDpuVkxrl3AZkNI=; b=i4/hmafoYCLznRDLfdHPUU1lU7
-	rr/XuXOlx2gDrOb58fTb/28CoBd7vJbQdJHeIzE+lNcUqiqqzK3GkAMmsxy3yD0Pnu6uMSff1lj43
-	6qGiaMkIKtkjWT+rIP5N9GNrIJR2zs3Px4/b/Bq8u4uqJkigBt7rxE08gMr2GEk6ATdV4sCMTOOxL
-	FzNqWhUZecBCkbxcEfVSj1lcsEdeS2pS8d7qw81fEAtwF8wBI6QEBM26E+oKwqvRQ2+FuP/I7S8L7
-	m4C8TagyAfu2355ri/ujRN8RafYWOLF5xI7t7fs/HD80LNa1XXfSGayAePdzjPrp8uxmh0wxVsn0M
-	y+x8j82w==;
+	bh=eTEjEPn2OOOUGAVKb34lTzQhJl34ux1rQiUak37BLyo=; b=R9viDCNtI5cxg4e1dB4aWx5Ah7
+	RD1/54Mq00owc9WRi39tC7Rf+0GUyv65hIwl2ltfisgx6a7ERvUGpVdGzxqrqlgjAyx1wXf35qxil
+	xZh8kDPIIyIPEttIwSffxeX5dwm8GnLy+b8UNNmyvrRPYxmYDZQ00sEzOeAYkAn0lR+wwGoGJ0BRj
+	yUtWqqqfeYD1ypKQBbBX6pBJKTVlcnVZhBIInzkh/X43gEkzmn9JWAZggo1M/1ehnH20twiJJc9MW
+	mftsrfjBeFJ6rEgs1xYFwIzaN0zTCw1bgfz4IotL1KEor7zWdr3zrT4zAdtgGXYpSs1MeowAV7G8u
+	+N1w6aow==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ua8q8-0000000E5Uj-1tNF;
-	Fri, 11 Jul 2025 08:10:41 +0000
+	id 1ua8rI-0000000E5kj-2qI5;
+	Fri, 11 Jul 2025 08:11:53 +0000
 From: Christoph Hellwig <hch@lst.de>
-To: jack@suse.com
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [PATCH] udf: stop using write_cache_pages
-Date: Fri, 11 Jul 2025 10:10:36 +0200
-Message-ID: <20250711081036.564232-1-hch@lst.de>
+To: almaz.alexandrovich@paragon-software.com
+Cc: ntfs3@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] ntfs3: stop using write_cache_pages
+Date: Fri, 11 Jul 2025 10:11:50 +0200
+Message-ID: <20250711081150.564592-1-hch@lst.de>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -61,64 +62,46 @@ Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
 Stop using the obsolete write_cache_pages and use writeback_iter directly.
-Use the chance to refactor the inacb writeback code to not have a separate
-writeback helper.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/udf/inode.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ fs/ntfs3/inode.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 4386dd845e40..c0975d5dec25 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -181,19 +181,23 @@ static void udf_write_failed(struct address_space *mapping, loff_t to)
- 	}
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 0f0d27d4644a..0a6a7a343aa1 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -871,9 +871,9 @@ int ntfs_set_size(struct inode *inode, u64 new_size)
  }
  
--static int udf_adinicb_writepage(struct folio *folio,
--				 struct writeback_control *wbc, void *data)
-+static int udf_adinicb_writepages(struct address_space *mapping,
-+		      struct writeback_control *wbc)
+ static int ntfs_resident_writepage(struct folio *folio,
+-				   struct writeback_control *wbc, void *data)
++				   struct writeback_control *wbc)
  {
--	struct inode *inode = folio->mapping->host;
-+	struct inode *inode = mapping->host;
- 	struct udf_inode_info *iinfo = UDF_I(inode);
-+	struct folio *folio = NULL;
-+	int error = 0;
-+
-+	while ((folio = writeback_iter(mapping, wbc, folio, &error))) {
-+		BUG_ON(!folio_test_locked(folio));
-+		BUG_ON(folio->index != 0);
-+		memcpy_from_file_folio(iinfo->i_data + iinfo->i_lenEAttr, folio,
-+				0, i_size_read(inode));
-+		folio_unlock(folio);
-+	}
- 
--	BUG_ON(!folio_test_locked(folio));
--	BUG_ON(folio->index != 0);
--	memcpy_from_file_folio(iinfo->i_data + iinfo->i_lenEAttr, folio, 0,
--		       i_size_read(inode));
--	folio_unlock(folio);
- 	mark_inode_dirty(inode);
--
- 	return 0;
- }
- 
-@@ -203,9 +207,9 @@ static int udf_writepages(struct address_space *mapping,
+-	struct address_space *mapping = data;
++	struct address_space *mapping = folio->mapping;
  	struct inode *inode = mapping->host;
- 	struct udf_inode_info *iinfo = UDF_I(inode);
+ 	struct ntfs_inode *ni = ntfs_i(inode);
+ 	int ret;
+@@ -899,9 +899,14 @@ static int ntfs_writepages(struct address_space *mapping,
+ 	if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
+ 		return -EIO;
  
--	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB)
--		return mpage_writepages(mapping, wbc, udf_get_block_wb);
--	return write_cache_pages(mapping, wbc, udf_adinicb_writepage, NULL);
-+	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB)
-+		return udf_adinicb_writepages(mapping, wbc);
-+	return mpage_writepages(mapping, wbc, udf_get_block_wb);
+-	if (is_resident(ntfs_i(inode)))
+-		return write_cache_pages(mapping, wbc, ntfs_resident_writepage,
+-					 mapping);
++	if (is_resident(ntfs_i(inode))) {
++		struct folio *folio = NULL;
++		int error;
++
++		while ((folio = writeback_iter(mapping, wbc, folio, &error)))
++			error = ntfs_resident_writepage(folio, wbc);
++		return error;
++	}
+ 	return mpage_writepages(mapping, wbc, ntfs_get_block);
  }
  
- static void udf_adinicb_read_folio(struct folio *folio)
 -- 
 2.47.2
 
