@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-54733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BA0B02729
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 00:51:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2807B02771
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 01:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668001C27897
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 22:51:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BAD13B30A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 23:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5965221FB4;
-	Fri, 11 Jul 2025 22:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E426722256B;
+	Fri, 11 Jul 2025 23:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="CM2GR0u0"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="Zywchama"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FDC1DD529;
-	Fri, 11 Jul 2025 22:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06781A3145;
+	Fri, 11 Jul 2025 23:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752274287; cv=none; b=FzJXqz7hpKPnP81OfolvciuHFW+qDKxqMqCCuuedudARQfs6gvY+J8pXYkdV2uLbZNCDpNf9dOJfcXQzjgpV0+lKqRlUL3MfuAg9qZ2D2fOJPVquVAjRvz79ztpHOLzl+uwm2q6j45dhlak3Y4lsMhx7XKJ9xDJ0B3fCAP9u7/w=
+	t=1752275400; cv=none; b=D6VCTbWWbDbmWe/cQuEquClrwtwgWHzOnKzvZA263b7Ncl7lKA4k7wN+/ca1VxW3FSBSbhwQEvhtvMwQBV0L5/yjVl47OQZwiPlS5PMiBHucmcJtq2YIrCnvYJtsAk0ubC6mdOVW9+Q+XvDW4pOPClb4THKCO9xv4ggpxbnQY5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752274287; c=relaxed/simple;
-	bh=XR+N0TYld89We+7KIK+St0uRfgNZFBQ16AqZ53rbp1g=;
+	s=arc-20240116; t=1752275400; c=relaxed/simple;
+	bh=P8DxHIiuL1dzD5uW3PpeBQ4K2PYTs3toENSF5I8DPZU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lZr0DkJMX4nZ97+m5PQU+k4mHluk0G09dDIESuTA8mMWsZbYnCR3bXFpsxaJSwlDZTQAvXWJW88L8zywoz9UZovtaHweb8mplS59wTT4ob/6NBoyFZBnbQwXr3C60ngp8Rtqvru1OzV0cKnZ4i1YK3jiAuD51laPIxTMPZ1MwRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=CM2GR0u0; arc=none smtp.client-ip=212.227.17.20
+	 In-Reply-To:Content-Type; b=YMDeDjULn2YmvM8BPjoRNgmN8kID7+scxCOyBbqUOS6Rt2CbJ5d5v0//nnXTv+PCjBOkL+K+p1JOQm7rKPdOI0KKOgUPVF4kmhFZcfETB+LHHJ/xrCSGv0GvkY69jXTuD7xIiJypyAccO/5f1QTd7AySqrPfkZumoH1FX8QCwmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=Zywchama; arc=none smtp.client-ip=212.227.17.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1752274281; x=1752879081; i=quwenruo.btrfs@gmx.com;
-	bh=2xUhhWixjLebMMC35oQavOhcJjwoY+k9yJ2cQdafVHg=;
+	s=s31663417; t=1752275395; x=1752880195; i=quwenruo.btrfs@gmx.com;
+	bh=P8DxHIiuL1dzD5uW3PpeBQ4K2PYTs3toENSF5I8DPZU=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=CM2GR0u0gV748BeRUVhLvtkjYbBqS31EYqkdHtQozeUSMZonus82HAPBzAtmiiMa
-	 FeWQ8AITHls/wDm1SzxCTwSNuJJsCRJ53kehNyZrye8HrVfC1zkWCCXBgkmxtHVHd
-	 acZw0KY1nPGc4wZ1MU66IoEviUywslo4CHGV4SHm+UwZ7IcV6DjA/2AjTOd/6Zt5F
-	 sWmOK3vgHmgxzaij4V/DlBR2eNaUHHjynU4r5+C+vIQ4cEnSr2WpUYKTp8BbEwY8y
-	 wmG219qH1t/vL/Xdlr/9yfhLnlfUyR815aN2aOBg3ENkq5E47aUizKj0x9Ls89Ymp
-	 u/P5hFYPm8MLM8Swlg==
+	b=ZywchamaA0dwMGvYMeGh+hw61jwI6XiYJEVuou59bBo6NP/MVLlxw6e68J96whAE
+	 GO4YqxjTcntcM9L0TxerXg8T4DOX0bjlOn+sjUJ81pZ0p9QUOeqeU2nkBLpZIerEm
+	 5gcVmJHwRMNPwny+mmXwRNqeYSsB18Rj7WACmt9l7B4x98tv9Ad7k9M8Mu1XfR9RA
+	 4RlOm9CWZhofIOudUKRhZh+HXq6a4vE12LiUR7Kk9Rs2usTfhAjtpf3sjg18lt356
+	 6AiUfFz+tDq//GK/woyiZKKMG1BO1AU0Wy72n6Uh6+9otHXPr35rjiwIKU5gA07I4
+	 ZYdBsmTxaYTdnJxmOw==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from [172.16.0.219] ([159.196.52.54]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MdNY8-1v9QM40UCW-00j8wL; Sat, 12
- Jul 2025 00:51:20 +0200
-Message-ID: <6bb8c4f4-bf17-471a-aa5f-ce26c8566a17@gmx.com>
-Date: Sat, 12 Jul 2025 08:21:15 +0930
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MDysm-1uShuh08nc-00095I; Sat, 12
+ Jul 2025 01:09:55 +0200
+Message-ID: <a90a8a32-ea3a-4915-b98b-f52c51444aa5@gmx.com>
+Date: Sat, 12 Jul 2025 08:39:51 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,6 +65,7 @@ Cc: David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
 References: <20250708132540.28285-1-dsterba@suse.com>
  <72fe27cf-b912-4459-bae6-074dd86e843b@gmx.com>
  <20250711191521.GF22472@twin.jikos.cz>
+ <6bb8c4f4-bf17-471a-aa5f-ce26c8566a17@gmx.com>
 Content-Language: en-US
 From: Qu Wenruo <quwenruo.btrfs@gmx.com>
 Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
@@ -91,169 +92,144 @@ Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
  Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
  +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
  HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20250711191521.GF22472@twin.jikos.cz>
+In-Reply-To: <6bb8c4f4-bf17-471a-aa5f-ce26c8566a17@gmx.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TguN6Xci06zgbTRcQzFqT3D6r7xwGyQUqknL3451sGR2B8L+GO1
- sqDEVWr9sOSkavXUt3rUx+U+fco/735uU7X/HK+kVoZ35c31+7C0qY0Eo8Rn3rdfFwt8UJe
- bTzv67+Z/m6j/+rmpScQIADOdMaaPFAiTgKPe7qaxYAJWTba6H1Tu4PWTY+I/1XABipIN1h
- 9Szk8U11ROMRUCL/u1NSA==
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:8BIQKkpm9GEPMAlxEGU1p2xRpJ2yE/s6wJyinka/NzyZtv2T6s9
+ 7bhnLbvSw7u3UtIXX7rQzWuunLcREv9B9+Edi7FoING61JxbYFL/iDxe5ho9ph+JxNF7Qrr
+ 554z/kOIIS3jpfijP9jf6YQ6lmm0uhHcwB346yNvNTGTk+fPovvKktgZwmGDTIISbj/3js+
+ bRZJ3WcWFIq9VYWNx66Ug==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nWLO6P0VEvM=;HJofD2Yoc3KzG6td88lRw8+wTw5
- 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
- dHz/trpe0X14siN2Zp10I3k=
+UI-OutboundReport: notjunk:1;M01:P0:aBArS0tFtTo=;ITOJyqv0l7mGjLAqo3woMIete1D
+ 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
+ QVoQDqdrXImtNrdt9xvWsLE=
 
-
-
-=E5=9C=A8 2025/7/12 04:45, David Sterba =E5=86=99=E9=81=93:
-> On Wed, Jul 09, 2025 at 07:33:56AM +0930, Qu Wenruo wrote:
->>
->>
->> =E5=9C=A8 2025/7/8 22:55, David Sterba =E5=86=99=E9=81=93:
->>> Implement sb->freeze_super that can instruct our threads to pause
->>> themselves. In case of (read-write) scrub this means to undo
->>> mnt_want_write, implemented as sb_start_write()/sb_end_write().
->>> The freeze_super callback is necessary otherwise the call
->>> sb_want_write() inside the generic implementation hangs.
->>
->> I don't this this is really going to work.
->>
->> The main problem is out of btrfs, it's all about the s_writer.rw_sem.
->>
->> If we have a running scrub, it holds the mnt_want_write_file(), which i=
-s
->> a read lock on the rw_sem.
->>
->> Then we start freezing, which will call sb_wait_write(), which will do =
-a
->> write lock on the rw_sem, waiting for the scrub to finish.
->>
->> However the ->freeze() callback is only called when freeze_super() got
->> the write lock on the rw_sem.
->=20
-> Note there are 2 callbacks for freeze, sb::freeze_super and
-> sb::freeze_fs.
->=20
-> ioctl_fsfreeze
->    if fs->freeze_super
->      call fs_freeze_super()
-
-Oh I forgot you implemented a new callback, ->freeze_super() to do the=20
-extra btrfs specific handling.
-
-But this means, we're exposing ourselves to all the extra VFS handling,
-I'm not sure if this is the preferred way, nor if the extra btrfs=20
-handling is good enough to cover what's done inside freeze_super()=20
-function (I guess not though).
-
-The only user of ->freeze_super() callback is GFS2, and I didn't think=20
-we have enough locking/protection compared to either GFS2 nor VFS.
-
-
-In that case, I still don't believe it's the correct way to go.
-
-Add fsdevel list to see if it's even recommended to use ->freeze_super()=
-=20
-callback.
-
-Thanks,
-Qu
-
->    else
->      freeze_super()
->        sb_wait_write()
->        if (sb->freeze_fs)
->          call sb->freeze_fs()
->=20
-> What you describe matches the 'else' branch as this unconditionally
-> blocks on the sb_wait_write and never gets to our callback. This is what
-> I observed too.
->=20
-> To fix that I've added the sb::freeze_super so it can do something
-> to avoid the lockup in sb_wait_write(), because we must at some point
-> call freeze_super().
->=20
-> Schematically it goes like this:
->=20
->             Freeze thread                         Scrub
->=20
-> 	                                  btrfs_ioctl_scrub
-> 					    mnt_want_write_file (effectively sb_want_write())
-> ioctl_fsfreeze
->    fs->freeze_super
->      set fs->flags FREEZING
->      freeze_super
->        sb_wait_freeze()
->        (BLOCKS)
->                                                (chunk loop)
->                                                  scrub_simple_mirror()
->                                                    if fs->flags
-> 						    sb_end_write()
-> 						      wait_on_bit fs->flags FREEZING
-> 						      (BLOCKS)
->        (UNBLOCKS)
->        ...
->=20
->=20
-> Unfreezing is basically the same in reverse:
->=20
-> ioctl_fsthaw
->    fs->thaw_super
->      thaw_super()
->      unset fs->flags FREEZING
->                                                       (UNBLOCKS)
-> 						     sb_want_write()
-> 						     ...
->=20
-> So if you see a problem in that please let me know, I've tested the
-> patch and it worked but I might me missing something.
-
+DQoNCuWcqCAyMDI1LzcvMTIgMDg6MjEsIFF1IFdlbnJ1byDlhpnpgZM6DQo+IA0KPiANCj4g5Zyo
+IDIwMjUvNy8xMiAwNDo0NSwgRGF2aWQgU3RlcmJhIOWGmemBkzoNCj4+IE9uIFdlZCwgSnVsIDA5
+LCAyMDI1IGF0IDA3OjMzOjU2QU0gKzA5MzAsIFF1IFdlbnJ1byB3cm90ZToNCj4+Pg0KPj4+DQo+
+Pj4g5ZyoIDIwMjUvNy84IDIyOjU1LCBEYXZpZCBTdGVyYmEg5YaZ6YGTOg0KPj4+PiBJbXBsZW1l
+bnQgc2ItPmZyZWV6ZV9zdXBlciB0aGF0IGNhbiBpbnN0cnVjdCBvdXIgdGhyZWFkcyB0byBwYXVz
+ZQ0KPj4+PiB0aGVtc2VsdmVzLiBJbiBjYXNlIG9mIChyZWFkLXdyaXRlKSBzY3J1YiB0aGlzIG1l
+YW5zIHRvIHVuZG8NCj4+Pj4gbW50X3dhbnRfd3JpdGUsIGltcGxlbWVudGVkIGFzIHNiX3N0YXJ0
+X3dyaXRlKCkvc2JfZW5kX3dyaXRlKCkuDQo+Pj4+IFRoZSBmcmVlemVfc3VwZXIgY2FsbGJhY2sg
+aXMgbmVjZXNzYXJ5IG90aGVyd2lzZSB0aGUgY2FsbA0KPj4+PiBzYl93YW50X3dyaXRlKCkgaW5z
+aWRlIHRoZSBnZW5lcmljIGltcGxlbWVudGF0aW9uIGhhbmdzLg0KPj4+DQo+Pj4gSSBkb24ndCB0
+aGlzIHRoaXMgaXMgcmVhbGx5IGdvaW5nIHRvIHdvcmsuDQo+Pj4NCj4+PiBUaGUgbWFpbiBwcm9i
+bGVtIGlzIG91dCBvZiBidHJmcywgaXQncyBhbGwgYWJvdXQgdGhlIHNfd3JpdGVyLnJ3X3NlbS4N
+Cj4+Pg0KPj4+IElmIHdlIGhhdmUgYSBydW5uaW5nIHNjcnViLCBpdCBob2xkcyB0aGUgbW50X3dh
+bnRfd3JpdGVfZmlsZSgpLCB3aGljaCBpcw0KPj4+IGEgcmVhZCBsb2NrIG9uIHRoZSByd19zZW0u
+DQo+Pj4NCj4+PiBUaGVuIHdlIHN0YXJ0IGZyZWV6aW5nLCB3aGljaCB3aWxsIGNhbGwgc2Jfd2Fp
+dF93cml0ZSgpLCB3aGljaCB3aWxsIGRvIGENCj4+PiB3cml0ZSBsb2NrIG9uIHRoZSByd19zZW0s
+IHdhaXRpbmcgZm9yIHRoZSBzY3J1YiB0byBmaW5pc2guDQo+Pj4NCj4+PiBIb3dldmVyIHRoZSAt
+PmZyZWV6ZSgpIGNhbGxiYWNrIGlzIG9ubHkgY2FsbGVkIHdoZW4gZnJlZXplX3N1cGVyKCkgZ290
+DQo+Pj4gdGhlIHdyaXRlIGxvY2sgb24gdGhlIHJ3X3NlbS4NCj4+DQo+PiBOb3RlIHRoZXJlIGFy
+ZSAyIGNhbGxiYWNrcyBmb3IgZnJlZXplLCBzYjo6ZnJlZXplX3N1cGVyIGFuZA0KPj4gc2I6OmZy
+ZWV6ZV9mcy4NCj4+DQo+PiBpb2N0bF9mc2ZyZWV6ZQ0KPj4gwqDCoCBpZiBmcy0+ZnJlZXplX3N1
+cGVyDQo+PiDCoMKgwqDCoCBjYWxsIGZzX2ZyZWV6ZV9zdXBlcigpDQo+IA0KPiBPaCBJIGZvcmdv
+dCB5b3UgaW1wbGVtZW50ZWQgYSBuZXcgY2FsbGJhY2ssIC0+ZnJlZXplX3N1cGVyKCkgdG8gZG8g
+dGhlIA0KPiBleHRyYSBidHJmcyBzcGVjaWZpYyBoYW5kbGluZy4NCj4gDQo+IEJ1dCB0aGlzIG1l
+YW5zLCB3ZSdyZSBleHBvc2luZyBvdXJzZWx2ZXMgdG8gYWxsIHRoZSBleHRyYSBWRlMgaGFuZGxp
+bmcsDQo+IEknbSBub3Qgc3VyZSBpZiB0aGlzIGlzIHRoZSBwcmVmZXJyZWQgd2F5LCBub3IgaWYg
+dGhlIGV4dHJhIGJ0cmZzIA0KPiBoYW5kbGluZyBpcyBnb29kIGVub3VnaCB0byBjb3ZlciB3aGF0
+J3MgZG9uZSBpbnNpZGUgZnJlZXplX3N1cGVyKCkgDQo+IGZ1bmN0aW9uIChJIGd1ZXNzIG5vdCB0
+aG91Z2gpLg0KDQpNeSBiYWQsIGl0J3MgY2FsbGluZyBiYWNrIGludG8gZnJlZXplX3N1cGVyKCkg
+ZnVuY3Rpb24sIHNvIGl0J3MgZmluZS4NCg0KVGhlIHJlbWFpbmluZyBjb25jZXJuIGlzIGp1c3Qg
+c2hvdWxkIHdlIGRvIHRoaXMgYnkgdXNpbmcNCi0+ZnJlZXplX3N1cGVyKCkgY2FsbGJhY2ssIG9y
+IGRvIHRoZSBmMmZzJyB3YXkgYnkgcG9raW5nIGludG8gDQpzX3dyaXRlci5mcm96ZW4uDQoNCkkn
+ZCBwcmVmZXIgdGhlIGxhdGVyIG9uZSwgYXMgdGhhdCdzIGFscmVhZHkgZXhwb3NlZCB0byBmaWxl
+c3lzdGVtcyBhbmQgDQp3ZSBkbyBub3QgbmVlZCBleHRyYSBjYWxsYmFjayBmdW5jdGlvbnMgZXNw
+ZWNpYWxseSB3aGVuIGl0J3Mgbm90IHdpZGVseSANCnVzZWQuDQoNClRoYW5rcywNClF1DQoNCj4g
+DQo+IFRoZSBvbmx5IHVzZXIgb2YgLT5mcmVlemVfc3VwZXIoKSBjYWxsYmFjayBpcyBHRlMyLCBh
+bmQgSSBkaWRuJ3QgdGhpbmsgDQo+IHdlIGhhdmUgZW5vdWdoIGxvY2tpbmcvcHJvdGVjdGlvbiBj
+b21wYXJlZCB0byBlaXRoZXIgR0ZTMiBub3IgVkZTLg0KPiANCj4gDQo+IEluIHRoYXQgY2FzZSwg
+SSBzdGlsbCBkb24ndCBiZWxpZXZlIGl0J3MgdGhlIGNvcnJlY3Qgd2F5IHRvIGdvLg0KPiANCj4g
+QWRkIGZzZGV2ZWwgbGlzdCB0byBzZWUgaWYgaXQncyBldmVuIHJlY29tbWVuZGVkIHRvIHVzZSAt
+PmZyZWV6ZV9zdXBlcigpIA0KPiBjYWxsYmFjay4NCj4gDQo+IFRoYW5rcywNCj4gUXUNCj4gDQo+
+PiDCoMKgIGVsc2UNCj4+IMKgwqDCoMKgIGZyZWV6ZV9zdXBlcigpDQo+PiDCoMKgwqDCoMKgwqAg
+c2Jfd2FpdF93cml0ZSgpDQo+PiDCoMKgwqDCoMKgwqAgaWYgKHNiLT5mcmVlemVfZnMpDQo+PiDC
+oMKgwqDCoMKgwqDCoMKgIGNhbGwgc2ItPmZyZWV6ZV9mcygpDQo+Pg0KPj4gV2hhdCB5b3UgZGVz
+Y3JpYmUgbWF0Y2hlcyB0aGUgJ2Vsc2UnIGJyYW5jaCBhcyB0aGlzIHVuY29uZGl0aW9uYWxseQ0K
+Pj4gYmxvY2tzIG9uIHRoZSBzYl93YWl0X3dyaXRlIGFuZCBuZXZlciBnZXRzIHRvIG91ciBjYWxs
+YmFjay4gVGhpcyBpcyB3aGF0DQo+PiBJIG9ic2VydmVkIHRvby4NCj4+DQo+PiBUbyBmaXggdGhh
+dCBJJ3ZlIGFkZGVkIHRoZSBzYjo6ZnJlZXplX3N1cGVyIHNvIGl0IGNhbiBkbyBzb21ldGhpbmcN
+Cj4+IHRvIGF2b2lkIHRoZSBsb2NrdXAgaW4gc2Jfd2FpdF93cml0ZSgpLCBiZWNhdXNlIHdlIG11
+c3QgYXQgc29tZSBwb2ludA0KPj4gY2FsbCBmcmVlemVfc3VwZXIoKS4NCj4+DQo+PiBTY2hlbWF0
+aWNhbGx5IGl0IGdvZXMgbGlrZSB0aGlzOg0KPj4NCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+RnJlZXplIHRocmVhZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBTY3J1Yg0KPj4NCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJ0cmZzX2lvY3RsX3NjcnViDQo+
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1udF93YW50
+X3dyaXRlX2ZpbGUgKGVmZmVjdGl2ZWx5IHNiX3dhbnRfd3JpdGUoKSkNCj4+IGlvY3RsX2ZzZnJl
+ZXplDQo+PiDCoMKgIGZzLT5mcmVlemVfc3VwZXINCj4+IMKgwqDCoMKgIHNldCBmcy0+ZmxhZ3Mg
+RlJFRVpJTkcNCj4+IMKgwqDCoMKgIGZyZWV6ZV9zdXBlcg0KPj4gwqDCoMKgwqDCoMKgIHNiX3dh
+aXRfZnJlZXplKCkNCj4+IMKgwqDCoMKgwqDCoCAoQkxPQ0tTKQ0KPj4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgKGNodW5rIGxvb3ApDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgc2NydWJfc2ltcGxlX21pcnJvcigpDQo+PiDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIGZzLT5mbGFncw0KPj4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNiX2VuZF93
+cml0ZSgpDQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHdhaXRfb25fYml0IGZzLT5mbGFncyBGUkVFWklORw0KPj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAoQkxPQ0tT
+KQ0KPj4gwqDCoMKgwqDCoMKgIChVTkJMT0NLUykNCj4+IMKgwqDCoMKgwqDCoCAuLi4NCj4+DQo+
+Pg0KPj4gVW5mcmVlemluZyBpcyBiYXNpY2FsbHkgdGhlIHNhbWUgaW4gcmV2ZXJzZToNCj4+DQo+
+PiBpb2N0bF9mc3RoYXcNCj4+IMKgwqAgZnMtPnRoYXdfc3VwZXINCj4+IMKgwqDCoMKgIHRoYXdf
+c3VwZXIoKQ0KPj4gwqDCoMKgwqAgdW5zZXQgZnMtPmZsYWdzIEZSRUVaSU5HDQo+PiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIChVTkJMT0NLUykNCj4+
+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHNiX3dhbnRfd3JpdGUoKQ0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgLi4uDQo+Pg0KPj4gU28gaWYgeW91IHNlZSBhIHByb2JsZW0g
+aW4gdGhhdCBwbGVhc2UgbGV0IG1lIGtub3csIEkndmUgdGVzdGVkIHRoZQ0KPj4gcGF0Y2ggYW5k
+IGl0IHdvcmtlZCBidXQgSSBtaWdodCBtZSBtaXNzaW5nIHNvbWV0aGluZy4NCj4gDQo+IA0KDQo=
 
