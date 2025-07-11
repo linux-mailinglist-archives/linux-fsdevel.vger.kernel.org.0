@@ -1,197 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-54662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451DDB0204C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 17:19:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A953B02068
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 17:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8719816F184
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 15:19:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18435485F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 15:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E610E2EA723;
-	Fri, 11 Jul 2025 15:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151232EA48D;
+	Fri, 11 Jul 2025 15:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QD24POin"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTFYiGsH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9687D1552E0;
-	Fri, 11 Jul 2025 15:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E42274658;
+	Fri, 11 Jul 2025 15:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752247175; cv=none; b=eCc4o/pnYWfC8/tdm1ygTWhsx1t3lW41tQRKTFGHp7wUlyMO2i0+51QZnlUYBbTeQqHXZU5mVY0PYtKv2aU0WPNDuxTOgyjtOnCJOUKde4Ym1fLq2p3Tyw6qs2fHLeGx5LvIcXHEC074x5etXYA7C/6AWmMMc3txCDhjlohXsJQ=
+	t=1752247706; cv=none; b=kjhZXjX/CSBAFa8WR1ecZsD9Q/AvRF41qEowajVXori6v5RBu9HV+Hqdbixf1XfMW1o9+YG7CotEGKSwSOKc3Km++AuMFR93J1aMT9uDw0e3F/jkLbTo+35ttHO/t5adBQPK3YD1Whs8N/I3pmoWwtidq7fjOcCzrCF1A9RJn9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752247175; c=relaxed/simple;
-	bh=H6PRdMETs9WfkrtyxZ6tOAgx6ngf8YBak9TCrKYdhvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MqcAZcS8D/IHcJheapKRFyhDIwZSmKMVkRZ2/dGuCp4Zq3JysrZvEZds9T2e5L5laKUWdCxi6bAmdLcZwIJZrdx71+ctSw9aMvaDnrqFvh1RHKo527umi0eAuAKZARAm45zXKEx8W63pjt/2m/ot1VkkkeW+HQbt2Y7ElsJrGNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QD24POin; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1752247706; c=relaxed/simple;
+	bh=jJsQMAM8FiXHMdKty5y/XyaVhDgU86KQ3YEd2qZWf5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NmzmP1xVEN+jH+cXYdjybrNJMLWQXxduGHC35Em9le3+S95TKSk8r7ge4FPwuNls8UfUH+F2BrvULaxy5i6mt11YnJHSkBEa8Cmf8ELk1qKiGJ8cax3f1I+HNeIMY9uj4gZzHLsYKL2v9Jzqgf4GKfoBKJIIGLufIS3lwvoubRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTFYiGsH; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0d7b32322so355841166b.2;
-        Fri, 11 Jul 2025 08:19:33 -0700 (PDT)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2ef461b9daeso1440786fac.2;
+        Fri, 11 Jul 2025 08:28:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752247172; x=1752851972; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=43s3Zf5sbN7meVuCdv71m2W/YBnDSo0JrFNR/OZwvj0=;
-        b=QD24POinPAGwGi1rLOam6L0uGkEFueHvHWa4OKlPeJRLTm2GGoyn3ZzDE/Qobc1IIY
-         seVW9RaAIqDCUXMGDGhYqqLXTvXLE2jnRudtrDvDazFAYZuZBZs6c4d/FQAyBRDD8p7Q
-         ZOV86gW2+PZPLei7zVCbcK0R4FKHBV7cx/CAfV5GUxIVcSVO9lUX6UFlGT40tLJygjMg
-         T7vRAA5p7T0Iq6Hd0SvVnau7nFY0jOsrLpChQbijHf5M5mRaWbCfKhTxea3oH07j37rD
-         b6djojILMGC9hFU2mtU192LlaTL3zSmc9Gysiz1qrydNpgfIWzk5slVbLLbel6cdySPc
-         XC0Q==
+        d=gmail.com; s=20230601; t=1752247703; x=1752852503; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RCT28qnij7KcqmnQf/Iz1goywJwPmt6gNk4a8gqOzGQ=;
+        b=kTFYiGsHLvnJeVjc79Pke84Q8yHizUDJeO/XjGFccOpz3HxyKyhs1dMvty3KNe1j21
+         qMwq5UQLkeo8sbwhrzvgzTw+ZXOs+D7pL/eEKRHRDEE/o1RkanG4H1+2n63CZK3KwGsz
+         AJtuQuJVUaPNxgGqpPJjQJm71GoTtq4BYgilY6vlPXgjRVzPs4qCBQWVly6rhoFvGo+1
+         sRQc4eNn0xnSvHB8npRt/q/FSGUmwwOv4WOIILrHSYJL6hPEre8BcpX+NQFeqDg2UEvu
+         UHNFE+IEZLDEI9dR4IOqqEVEZ2QhLFdoy16f6zAdk56Nt9n+5urLxk9yroVxxmg5wirN
+         JF9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752247172; x=1752851972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752247703; x=1752852503;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=43s3Zf5sbN7meVuCdv71m2W/YBnDSo0JrFNR/OZwvj0=;
-        b=XbE4AiIg6vozb0K62M3WXKsrYHr5kHHXYMQ0/MmKm5ZMprBDHzXYv2PHh97LEkCIue
-         sYkl0heV8RneQgZY5/let4fAZE6qGs5K9ANeR6JG0JoDcZp+LnAfw3L1BHrotxoT4xN/
-         KWggNWUhpIU3Y6PhuDGNKC2PH5Ik5YTbQrWuZcfcXFG6JIe6pz7dk/RbjIEQPQ+OzDew
-         sIUF3QbKhzNgcU+f10oS9sNCtoITPSzGJExbZFiqjfjrU/ag0+nMwHsD6ME95Mq7KQkH
-         KgjruEAJNsCYjwUYwSJ/b574GWMg1MxgOhIswRcZMYS8FPQr7ZfI/vX4AtYRxmiExR/z
-         C9Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRv/Hnb/xg21JxXMjV0fR80sA1O/IQPSiwnxmONzFxgPfF7t9aZawvdgF3csuTYZiCSc6TRPn6TazUgaUhwQ==@vger.kernel.org, AJvYcCXX7U830hP6N+c7BddymBZ/AMPrdG5JiAM9ZMKihBlIxJD+yYkvSYQjmDpOXQidPArHnC4u4OBcEiCknOf/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLlp6HTznzTRrV6wAwXBE3XDiRPb9Go2+mOsWVTa2+vi2FP1rT
-	WIKoBxXvEdTiVno5EJ1MTOlaAyBUeIktHmxrcVtZFAznEhXSSXRleLedndRWakhWTDK6O0UDHjA
-	aS2WOZwOna456qb450yskBCyQae3uvI4=
-X-Gm-Gg: ASbGncsqReB2y/UorEARXRglFbu+6VAqUCx8dfh16MnbQM3u1Ha4dUnecLzPA2PgK8V
-	jfjXKC46ITxJ9Q3s5MlXQIAkdtLKdcWuxdxpT9LGfRKFQdEac6s3imTrattA+10EyI/iRlatrHZ
-	cWVo8gP75BSyrc7qzrTMCe2O+6zU4xWD+iwc4zlWYGRSCEvclNaOT8/roxqy1/lrjUyQWogdl8W
-	ETbKFo=
-X-Google-Smtp-Source: AGHT+IHnc0diKX5c5qW3t56ApqIuvBNiUNCKJNP06F/PrsU0Zy/kuVf5iW8cOx9/wb1XelPyBj9zo7LD4riEALDTK/o=
-X-Received: by 2002:a17:907:fdcc:b0:ae0:e123:605f with SMTP id
- a640c23a62f3a-ae6fc219d10mr363648966b.39.1752247171582; Fri, 11 Jul 2025
- 08:19:31 -0700 (PDT)
+        bh=RCT28qnij7KcqmnQf/Iz1goywJwPmt6gNk4a8gqOzGQ=;
+        b=kht+7pqBOO7Z0fVZZvbKgdHFDOfj1MmP9D5ECg0DO8vzsTYHuaFHnpCq9/0RGZPOmX
+         0NbkTBqLR8ebKroy1VA4mP4yO3sYwZBlJk58kRKoL7xJ5ZOTinl3stCzYUm/jmyMsohK
+         p6xhTS6Wym1CTWO1j34C//l+YYUZA+459qtPorgiPxV6IaPG/g1KxbM6s/i/5B8TcUrx
+         rNjcLel94kCFutACXfswMGyPqkV0vfIHef7b+8DYBaAIsrecjz10cLpdb/Ua0AyovSLI
+         kaK83W7qjiKnAfDHGRfeHPVy0/4crOSIiZKIJZ2rtaH+0f2u3eMGWKUJKgB5GDUtgUF8
+         ki1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUP+B7TyO433zQ/LVrb9cRItbQUsFEctWbFKDn8lnKRg8oYNMz9Gu1ZW4oJb+4NHXWIwjAs+dpGIqxSqOR/@vger.kernel.org, AJvYcCUkGfNyZaacuSQ8eBdVxijASVuQbefmLfL14sLnctq7na3NeuObPj5JmvutmEYpV3M0ZRx7wa8FkUP+@vger.kernel.org, AJvYcCUpZBivixWXTUHxY2E4W0C/YptvjFfPDIwfGHwuOKcwrk+wwsLuda/QZMSbshM0UB/Pq3ezH/lJh0Q=@vger.kernel.org, AJvYcCVaND/CMv9y1L5yG84+LdR/Z+z1oO3JSoDWAKY5iRegl09MReb2zuWFoC0er3SCB5LVPjTh1Jbnorcmo2mbhA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwahcPFeOr0CIBRNmwJW/V6/rfKg95q5+wsR5BmVL5tuD9iCxBO
+	gfjvalZMsg+DHobNfGZBLaNuWrevHzVK/gHKXLSOYS0Yy5CN8siqWMPT
+X-Gm-Gg: ASbGncuSk0fE6q4hG8gw9w/5JWgUmB2sa9dC67qRwrOmPqIytAndPBOCnsMO8kZycRL
+	oZpUacBbBMuGiFRuggDcRi+uKLoU2bI+uQT3EJbO4ztg0TbUq7+MBV5CHHJidO8gsFJAS6u9AN8
+	BpXyJcCdavOGC3/v1mkcHuVaTeAnP/1tlBny0WYcYGEyAKtroXhiuHYEWwsfHWp7FAiUXgHvfsl
+	M17oAx9iLmdqHdAfHqy6o6W3L4SPthSq+e+0dMfoEuJtxXD6TBH/QpBh+HTZ36DdZF2rR4z+nTd
+	ycMVilv9sGx62SYZzM3zE6xcmel0WH2RCvbk+uIovK7HOeQJWMRzkkbALsGhaFHCktAyk3t22p+
+	Z0DNggIXd9Ox2XYKwTuVvk523MJnc2vje5KjEAkP6HhoCSUE=
+X-Google-Smtp-Source: AGHT+IGzBgxg7rIzuTtcrrEUrQvsX4CkyLDr3x3XrSAFIZzmksXTQyVmWxDZllhKHdsEcj10mjoRIg==
+X-Received: by 2002:a05:6870:6c14:b0:2d5:2955:aa6b with SMTP id 586e51a60fabf-2ff2b4d9b3fmr1955440fac.5.1752247703301;
+        Fri, 11 Jul 2025 08:28:23 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:25b0:db8a:a7d3:ffe1])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff1172e579sm762537fac.45.2025.07.11.08.28.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 08:28:22 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Fri, 11 Jul 2025 10:28:20 -0500
+From: John Groves <John@groves.net>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 11/18] famfs_fuse: Basic famfs mount opts
+Message-ID: <ttjh3gqk3fmykwrb7dg6xaqhkpxk7g773fkvuzvbdlefimpseg@l5ermgxixeen>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-12-john@groves.net>
+ <20250709035911.GE2672029@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710232109.3014537-1-neil@brown.name> <20250710232109.3014537-18-neil@brown.name>
-In-Reply-To: <20250710232109.3014537-18-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 11 Jul 2025 17:19:19 +0200
-X-Gm-Features: Ac12FXxyZ4zqc_LVAKTPDbPXIdvQzyg2Q3huZWbcZEEv83iA82_JOMTwpzBSuZo
-Message-ID: <CAOQ4uxgHAun6Z3q_adGSs0GqE+WpZfYCpXejuC3DrUS9mF2rwQ@mail.gmail.com>
-Subject: Re: [PATCH 17/20] ovl: narrow locking in ovl_whiteout()
-To: NeilBrown <neil@brown.name>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709035911.GE2672029@frogsfrogsfrogs>
 
-On Fri, Jul 11, 2025 at 1:21=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
->
-> ovl_whiteout() relies on the workdir i_rwsem to provide exclusive access
-> to ofs->whiteout which it manipulates.  Rather than depending on this,
-> add a new mutex, "whiteout_lock" to explicitly provide the required
-> locking.  Use guard(mutex) for this so that we can return without
-> needing to explicitly unlock.
->
-> Then take the lock on workdir only when needed - to lookup the temp name
-> and to do the whiteout or link.
->
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/overlayfs/dir.c       | 49 +++++++++++++++++++++-------------------
->  fs/overlayfs/ovl_entry.h |  1 +
->  fs/overlayfs/params.c    |  2 ++
->  3 files changed, 29 insertions(+), 23 deletions(-)
->
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 086719129be3..fd89c25775bd 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -84,41 +84,44 @@ static struct dentry *ovl_whiteout(struct ovl_fs *ofs=
-)
->         struct dentry *workdir =3D ofs->workdir;
->         struct inode *wdir =3D workdir->d_inode;
->
-> -       inode_lock_nested(wdir, I_MUTEX_PARENT);
-> +       guard(mutex)(&ofs->whiteout_lock);
-> +
->         if (!ofs->whiteout) {
-> +               inode_lock_nested(wdir, I_MUTEX_PARENT);
->                 whiteout =3D ovl_lookup_temp(ofs, workdir);
-> -               if (IS_ERR(whiteout))
-> -                       goto out;
-> -
-> -               err =3D ovl_do_whiteout(ofs, wdir, whiteout);
-> -               if (err) {
-> -                       dput(whiteout);
-> -                       whiteout =3D ERR_PTR(err);
-> -                       goto out;
-> +               if (!IS_ERR(whiteout)) {
-> +                       err =3D ovl_do_whiteout(ofs, wdir, whiteout);
-> +                       if (err) {
-> +                               dput(whiteout);
-> +                               whiteout =3D ERR_PTR(err);
-> +                       }
->                 }
-> +               inode_unlock(wdir);
-> +               if (IS_ERR(whiteout))
-> +                       return whiteout;
->                 ofs->whiteout =3D whiteout;
->         }
->
->         if (!ofs->no_shared_whiteout) {
-> +               inode_lock_nested(wdir, I_MUTEX_PARENT);
->                 whiteout =3D ovl_lookup_temp(ofs, workdir);
-> -               if (IS_ERR(whiteout))
-> -                       goto out;
-> -
-> -               err =3D ovl_do_link(ofs, ofs->whiteout, wdir, whiteout);
-> -               if (!err)
-> -                       goto out;
-> -
-> -               if (err !=3D -EMLINK) {
-> -                       pr_warn("Failed to link whiteout - disabling whit=
-eout inode sharing(nlink=3D%u, err=3D%i)\n",
-> -                               ofs->whiteout->d_inode->i_nlink, err);
-> -                       ofs->no_shared_whiteout =3D true;
-> +               if (!IS_ERR(whiteout)) {
-> +                       err =3D ovl_do_link(ofs, ofs->whiteout, wdir, whi=
-teout);
-> +                       if (err) {
-> +                               dput(whiteout);
-> +                               whiteout =3D ERR_PTR(err);
-> +                       }
->                 }
-> -               dput(whiteout);
-> +               inode_unlock(wdir);
-> +               if (!IS_ERR(whiteout) || PTR_ERR(whiteout) !=3D -EMLINK)
-> +                       return whiteout;
+On 25/07/08 08:59PM, Darrick J. Wong wrote:
+> On Thu, Jul 03, 2025 at 01:50:25PM -0500, John Groves wrote:
+> > * -o shadow=<shadowpath>
+> 
+> What is a shadow?
+> 
+> > * -o daxdev=<daxdev>
 
-+               if (!IS_ERR(whiteout))
-+                       return whiteout;
+Derp - OK, that's a stale commit message. Here is the one for the -next
+version of this patch:
 
-> +
-> +               pr_warn("Failed to link whiteout - disabling whiteout ino=
-de sharing(nlink=3D%u, err=3D%i)\n",
-> +                       ofs->whiteout->d_inode->i_nlink, err);
-> +               ofs->no_shared_whiteout =3D true;
+    famfs_fuse: Basic famfs mount opt: -o shadow=<shadowpath>
 
-Logic was changed.
-The above pr_warn and no_shared_whiteout =3D true and for the case of
-PTR_ERR(whiteout) !=3D -EMLINK
+    The shadow path is a (usually tmpfs) file system area used by the famfs 
+    user space to commuicate with the famfs fuse server. There is a minor 
+    dilemma that the user space tools must be able to resolve from a mount 
+    point path to a shadow path. The shadow path is exposed via /proc/mounts, 
+    but otherwise not used by the kernel. User space gets the shadow path 
+    from /proc/mounts...
 
->         }
->         whiteout =3D ofs->whiteout;
->         ofs->whiteout =3D NULL;
 
-The outcome is the same with all errors - we return and reset
-ofs->whiteout, but with EMLINK this is expected and not a warning
-with other errors unexpected and warning and we do not try again
-to hardlink to singleton whiteout.
+> 
+> And, uh, if there's a FUSE_GET_DAXDEV command, then what does this mount
+> option do?  Pre-populate the first element of that set?
+> 
+> --D
+> 
 
-Thanks,
-Amir.
+I took out -o daxdev, but had failed to update the commit msg.
+
+The logic is this: The general model requires the FUSE_GET_DAXDEV message /
+response, so passing in the primary daxdev as a -o arg creates two ways to
+do the same thing.
+
+The only initial heartburn about this was one could imagine a case where a
+mount happens, but no I/O happens for a while so the mount could "succeed",
+only to fail later if the primary daxdev could not be accessed.
+
+But this can't happen with famfs, because the mount procedure includes 
+creating "meta files" - .meta/.superblock and .meta/.log and accessing them
+immediately. So it is guaranteed that FUSE_GET_DAXDEV will be sent right away,
+and if it fails, the mount will be unwound.
+
+Thanks Darrick!
+John
+
+<snip>
+
 
