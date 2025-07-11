@@ -1,76 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-54639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5D9B01C5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 14:48:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43F0B01CCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 15:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBF131C2823A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 12:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E1A6427DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 13:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AF12C3255;
-	Fri, 11 Jul 2025 12:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B681D2D9481;
+	Fri, 11 Jul 2025 13:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cuphRwMD"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OmYJ6K1Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BE32C1594
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 12:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E225528A73A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 13:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752238113; cv=none; b=pOjuuNLZgDHgH5hZHZJW/q8WgEZ5K/cowW3Ohvp7QOsuudeHBlpF4qWL2U1rvVtwg9UyoSh8Zy6tTWZznZLmRzCEbURlgdfv+yK7OPv6KzwjTjS7bcMP+yEHllmxUF6Qc7C6bkVo+F3niECGNDJaOORHcb4bkZUgVaZF8l+TY4g=
+	t=1752238919; cv=none; b=Q99kIVbTHopRJAjqet9oH0BG6BVWyYEnuRa1TAZoXpGczdK/Mop4OnbndUW5C4nBUQP6OkyOWQ9VlKiNhYr/UBk8Brj2GUHvRSQzPysZ1EjI0BTDTE3vyLwrkP+In7MISiSFQmP2jIMng8NZmxRLLOAfqS1Y+J0+RuaJFPq2QGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752238113; c=relaxed/simple;
-	bh=S7S78l4v222Q4IGIJjEUnEsZH89aUnWzpOVZ4kXzKvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+vCTr+e1VGykJeCwETjdn17GcRRFdCjQ6+mB1QJIMRm/gebuLyVugZuz/taNOhcJSD2CgeSAT4NcgYveOL3UcD2pNnOntSS3zfK7luYhdjbmJ9vzaIGsfndH1NVTbnyWJgVabxL79ao/TWDusl1heKvZ9gZBvzsMN52K30+mhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cuphRwMD; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752238111; x=1783774111;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S7S78l4v222Q4IGIJjEUnEsZH89aUnWzpOVZ4kXzKvs=;
-  b=cuphRwMD4Jx3TA0HuxCVHAkEKJzv9PfBlkx3nUVAsDkbx4Qkqi+K7yzW
-   pmtZ4GHsjfolcEy5Ocbf1Y3feEoFkh86DYNWCawEN8xKJLVsdelDbeXjZ
-   oXtVsD/P0P/pV5kFRB1ILxsc7ul2raWGb9fIvuMm4sCxXa7+3oBxiuFLh
-   Vr4nFa0yEhERtSaavdJgXY1fdcM+frZYTYKBFC4NsavbM3D+DMXN8hyhJ
-   dkMYQE3jkOv0zXTwgko4s9HL2aET1ntlPpX7b/O2Y3aNjiQjiVB9I+9eI
-   RleJDnfMFh0ou6/zxeYq0Kb2g6zG0+xhrXUr/O5AlB4By31wQRgnIuoa8
-   A==;
-X-CSE-ConnectionGUID: XaBJvX/QSwSdguTNKi95wg==
-X-CSE-MsgGUID: vI4037NwSECT+N+S6iIPVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54664526"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="54664526"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 05:48:30 -0700
-X-CSE-ConnectionGUID: u+4H4nOUQ2uflIFrEbnxjQ==
-X-CSE-MsgGUID: 95GDk8pzTUSSAk2fohjHkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="156922090"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 11 Jul 2025 05:48:28 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uaDAw-0006MB-2L;
-	Fri, 11 Jul 2025 12:48:26 +0000
-Date: Fri, 11 Jul 2025 20:47:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-Cc: oe-kbuild-all@lists.linux.dev, jack@suse.cz, amir73il@gmail.com,
-	josef@toxicpanda.com, lesha@meta.com, linux-fsdevel@vger.kernel.org,
-	sargun@meta.com
-Subject: Re: [PATCH v3 3/3] fanotify: introduce event response identifier
-Message-ID: <202507112012.xU84okDN-lkp@intel.com>
-References: <20250711023604.593885-4-ibrahimjirdeh@meta.com>
+	s=arc-20240116; t=1752238919; c=relaxed/simple;
+	bh=kaHpIrjthIMGw2TBEO1IrXfDZC1hZusz0sJu/um5pRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DKFzjvPhHd6s3d+/eWqSpGtV8eBWdediXzHSQDQZGkM3D7nz1XU34pCZA7gRBzARpgOfXz+UXYF9MurSJ202xX/LHNy/XJgMYNwPpZZHatl/QNiL02LPbCyi1KPyS1QGpx1myoi2umgqx9H51gvzbQhS14gU1AI2MZ/U0nVZSd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OmYJ6K1Z; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 11 Jul 2025 09:01:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752238913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=Gwn/uM09PhMoKe21jSonSM0ZWV8k8BCb3km4eW+IlO8=;
+	b=OmYJ6K1ZDMIByYcXvLJiEu8bmh/4AXez3IKKaQuCuDHMu4iuNer8/LjUdHG4eyuRCxMN75
+	zCBDAqG17UPH9944D6gGeFygK3IVL3fdq31NaSRcva2hekl9tg1KHfFxt2l1IwGsA+z3Fx
+	76hwoUzY8zxSzR0qFGQHsoiAKptXdEQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.16-rc6
+Message-ID: <hmihnrl4tzezjnhp56c7eipq5ntgyadvy6uyfxgytenqfbzzov@swfpjfb2qkw5>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,51 +55,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711023604.593885-4-ibrahimjirdeh@meta.com>
-
-Hi Ibrahim,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on jack-fs/fsnotify]
-[also build test ERROR on linus/master v6.16-rc5 next-20250711]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ibrahim-Jirdeh/fanotify-add-support-for-a-variable-length-permission-event/20250711-103820
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
-patch link:    https://lore.kernel.org/r/20250711023604.593885-4-ibrahimjirdeh%40meta.com
-patch subject: [PATCH v3 3/3] fanotify: introduce event response identifier
-config: csky-randconfig-002-20250711 (https://download.01.org/0day-ci/archive/20250711/202507112012.xU84okDN-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250711/202507112012.xU84okDN-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507112012.xU84okDN-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/notify/fdinfo.c:8:
-   fs/notify/fanotify/fanotify.h: In function 'fanotify_is_valid_response_id':
->> include/linux/fanotify.h:9:19: error: 'struct fsnotify_group' has no member named 'fanotify_data'; did you mean 'inotify_data'?
-       9 |         ((group)->fanotify_data.flags & (flag))
-         |                   ^~~~~~~~~~~~~
-   fs/notify/fanotify/fanotify.h:566:13: note: in expansion of macro 'FAN_GROUP_FLAG'
-     566 |         if (FAN_GROUP_FLAG(group, FAN_REPORT_RESPONSE_ID))
-         |             ^~~~~~~~~~~~~~
+X-Migadu-Flow: FLOW_OUT
 
 
-vim +9 include/linux/fanotify.h
+The following changes since commit 94426e4201fbb1c5ea4a697eb62a8b7cd7dfccbf:
 
-ff0b16a9850e8a Eric Paris     2009-12-17   7  
-96a71f21ef1fcc Amir Goldstein 2018-09-21   8  #define FAN_GROUP_FLAG(group, flag) \
-96a71f21ef1fcc Amir Goldstein 2018-09-21  @9  	((group)->fanotify_data.flags & (flag))
-96a71f21ef1fcc Amir Goldstein 2018-09-21  10  
+  bcachefs: opts.casefold_disabled (2025-07-01 19:33:46 -0400)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+are available in the Git repository at:
+
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-07-11
+
+for you to fetch changes up to fec5e6f97dae5fbd628c444148b77728eae3bb93:
+
+  bcachefs: Don't set BCH_FS_error on transaction restart (2025-07-08 15:24:15 -0400)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.16-rc6
+
+----------------------------------------------------------------
+Kent Overstreet (10):
+      bcachefs: bch2_fpunch_snapshot()
+      bcachefs: Fix bch2_io_failures_to_text()
+      bcachefs: Fix btree for nonexistent tree depth
+      bcachefs: Tweak btree cache helpers for use by btree node scan
+      bcachefs: btree node scan no longer uses btree cache
+      bcachefs: btree read retry fixes
+      bcachefs: Fix bch2_btree_transactions_read() synchronization
+      bcachefs: Don't schedule non persistent passes persistently
+      bcachefs: Fix additional misalignment in journal space calculations
+      bcachefs: Don't set BCH_FS_error on transaction restart
+
+ fs/bcachefs/btree_cache.c     | 26 +++++++-------
+ fs/bcachefs/btree_cache.h     |  1 +
+ fs/bcachefs/btree_io.c        |  8 ++---
+ fs/bcachefs/btree_node_scan.c | 84 +++++++++++++++++++++----------------------
+ fs/bcachefs/debug.c           | 11 ++++--
+ fs/bcachefs/errcode.h         |  1 -
+ fs/bcachefs/error.c           |  6 ++--
+ fs/bcachefs/extents.c         | 16 ++++-----
+ fs/bcachefs/fsck.c            | 33 ++++-------------
+ fs/bcachefs/io_misc.c         | 27 ++++++++++++++
+ fs/bcachefs/io_misc.h         |  2 ++
+ fs/bcachefs/journal_reclaim.c |  6 ++++
+ fs/bcachefs/recovery.c        | 23 ++++++++----
+ fs/bcachefs/recovery_passes.c |  2 +-
+ 14 files changed, 138 insertions(+), 108 deletions(-)
 
