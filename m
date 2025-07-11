@@ -1,913 +1,1034 @@
-Return-Path: <linux-fsdevel+bounces-54726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4B6B02573
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 21:57:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3683DB0261E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 23:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E25C3A76B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 19:54:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75EA15C3C4D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 21:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD6A301144;
-	Fri, 11 Jul 2025 19:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054961B414E;
+	Fri, 11 Jul 2025 21:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="mM9VQWSA"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dCCBydV+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86612FF49D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 19:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F14E288CC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 21:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752263260; cv=none; b=atr8qioLZ4Edwbp7hLPZ2SCgguSAHONkrT69D3cnSV3H7RUjOJPZDOuAskNNQjYfzcuKx7+sJuEPnC3YyNiIX+01mjtLbtitHrLP51SMVqWBt0PNLq0UhMhrpSxqy6mp8ZFrQN5N49OJMNwDnqJUFDE6kjlq6xX0p1X5iR3hgNs=
+	t=1752267940; cv=none; b=Ydiy5yOR2jgLXepbVwm/hVxqxM6Dt1akQZ7TmRGK0WO5A1nFWmEaupvkeCjw28AhyFMTWuRly25qdiBGXdMN8/inQG7LOP9kn4VOcIDe5L4YiZE9eZltEfl0U/8lWPtKs9P9QvlV8AliuYgKcFa9TRhrlOzNVG2Lh6efncu/GsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752263260; c=relaxed/simple;
-	bh=lU90yAzVrmdZTEFZnF9vDU0rwQqgpOpnn/welasyifg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aQ6proxhMjqmqXy2gN6go/osIJaJf6PXSFZn9OlVgkQ+cRcMrA8s6ROM23yF29XSGmee2qsTWQI1C2FxYg5MtjZ5gaxASzh5HoucB9Y6fyjoMrIM4EfkbxZI+6TUdRhdupIHay8BBmfdNAVVvADKSWUxZkVQyhgftaPJxqFmOxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=mM9VQWSA; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74924255af4so2180769b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 12:47:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1752263257; x=1752868057; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tiO9C5CKCCKloBn/52mfoKbE3jtuDM2WhM6jV239TRE=;
-        b=mM9VQWSAeL1gyS6BgbPN3b+1ywliU3TcouBawxGlBeY5kMaZpbpq4H1qhG1xJu4pVf
-         Xx0I/cdXbHvNRO2mk5NRgOYTkaiuR7bQeiit39Z2B/d6ZiOohrwOGW15abHdotLOh1xL
-         Lk9m/5Xi3qskjvHlXQ3Sw2e08+dCUPvFaDwGC9yCwn5mHVhmsoY5FG8AtXibKclvWkAa
-         DcjniMzsDy+aLjbdcZ4/j6QXPjnrwGj2bN2H5Rz55dXg1U7G21VcCl4g+BfJyivHefD1
-         ButTmciOqKuEf8FhgMoCqmHaNU8X6xOSfTcjZdykGZn4rg1yvima455q5Q7gaQReWLAx
-         UVFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752263257; x=1752868057;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tiO9C5CKCCKloBn/52mfoKbE3jtuDM2WhM6jV239TRE=;
-        b=cNFDHcPQg23D2ao9ObxVs4nEbKgXB8WFCj3zbHWnOqZOqQofNbwgZ3YNTyhoEYIm/a
-         GfU+qQTFW3f9fgQ6jwfZ0mNroJhAvODyMHWJek2GnQry+V7wwfW0rZhTXGMbq/o2blf3
-         4CLJscdaoRWSinc2Lenkm51dEwrJIwXLRbFSooTwMc0Sm8r9io1kt+MAB8oYXHnBkxoS
-         YZf9G1uR89LVoNX9E/APm+qTBfQ+JzYeaKjDWh6ZCW/99kYgU+kQ4kABOd7SIWGnWoHV
-         ZwYZh8MIOU7rC98dSVfVQDF7kfXvLqW8ztaZRYfL4AzP5/Pzfnw9aAWmPZkvrEC5Lwov
-         4w5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUH4oMhpe0etQDEFmmhY1NkQvI9aGQ8Zb6uKyr6RGiXrfkXkLYnnCb0diM6yjvYXRxuCfufJgCcx92EvZXA@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHTcIgq6v/+jKWbxEXAwRP6msMWNsEAsRGtyubsRl98pbT1i66
-	4IE8i/rHWqMmETvV58RZ8/7CEjKeIcI7pnrzNWs9Ot+EQbEYjlzEUx+nuTYr01gr0Jw=
-X-Gm-Gg: ASbGncuscbK6C1EtwLB0kn+YxjQ65jSj4PgeMCp91PS4eg8M5gwJMO2rn2Nuyklbk3p
-	MfQ1xF5glhoi+2Tvmdr1LXc5pbD8blSdFE2MiYKOCkDkFUS+GHwnVKwM4kpYBWFehdaL4gQaCK0
-	f188fa4/8TSwj7ylU5hTa3YwyRa1n4nxBh01ZPBoJYujg/bGZksNGe0wwvNce1a3HpJYh1ISyI2
-	4r+Jz+NvvaGgxSoLHotnO8TplIZIm53rtRJEInkK08g23MpPnqQgImj48uPc7TJvrYWxxCE/LMa
-	wasyKjIOaxrVgBNOqXrVmcTdkD1Cx3utlA3CBB5xjHouQdkmNuIgzTNwxizxEhiK8HMpypdVixN
-	GvbSqywIdRys6FZ74+6dTGnY6MBWSo2RX
-X-Google-Smtp-Source: AGHT+IEyWq/DNfkiiBZD97n7/9aM/8yKtaLVxw3A5RgQ059Im/mVgN7bRUJBqXwgreyAMxIf2ny7rA==
-X-Received: by 2002:a05:6a00:1141:b0:73e:970:731 with SMTP id d2e1a72fcca58-74ee2949c61mr5925480b3a.16.1752263256899;
-        Fri, 11 Jul 2025 12:47:36 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9e06995sm5840977b3a.38.2025.07.11.12.47.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 12:47:36 -0700 (PDT)
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Fri, 11 Jul 2025 12:46:32 -0700
-Subject: [PATCH v18 27/27] kselftest/riscv: kselftest for user mode cfi
+	s=arc-20240116; t=1752267940; c=relaxed/simple;
+	bh=u+fuHsd8aiupSZm/EpJg3Zc6SG8fV2K7EmMdoZc8Buw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rij+I5dYhMlZ64tB3e7XRdGIKO6u2GmevGyaP3zNEa0IjhQMj1DCKzrFAr1jLoY5Hg7vsa4bcnO7VWKrZUv2+tEsMeZ9zsDXFyTIGaGGY7evLLk/wEQkOFE9/Z5qqH2HnQHqppykH+8BdadIpxXyCLVpbYIRf6/+MnyQpOmx51E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dCCBydV+; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bf1kS2mcHzh4v;
+	Fri, 11 Jul 2025 21:20:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1752261600;
+	bh=oRfZr2eVObyp1Ky0GI4SjTuz3/cBmluJh01IjStwxY4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dCCBydV+jJYeaNbExVic9U4j85MJGtyI7FtOW4DbNsU3d3GuIW3mGMOJifMsd/ms4
+	 syKEOs4OJB1WTzjHT0NX39Bal5Emgp2m92XBnls7P5Rwha3yJBItszPzCz+ze9pu9g
+	 zVoUcY3HHTfMDQkWU/rOognTYlBukdP2UjOSDbkU=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bf1kR5JjqzJZk;
+	Fri, 11 Jul 2025 21:19:59 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Ben Scarlato <akhna@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	NeilBrown <neil@brown.name>,
+	Paul Moore <paul@paul-moore.com>,
+	Song Liu <song@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v2 3/3] selftests/landlock: Add disconnected leafs and branch test suites
+Date: Fri, 11 Jul 2025 21:19:35 +0200
+Message-ID: <20250711191938.2007175-4-mic@digikod.net>
+In-Reply-To: <20250711191938.2007175-1-mic@digikod.net>
+References: <20250711191938.2007175-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-v5_user_cfi_series-v18-27-a8ee62f9f38e@rivosinc.com>
-References: <20250711-v5_user_cfi_series-v18-0-a8ee62f9f38e@rivosinc.com>
-In-Reply-To: <20250711-v5_user_cfi_series-v18-0-a8ee62f9f38e@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Deepak Gupta <debug@rivosinc.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-Adds kselftest for RISC-V control flow integrity implementation for user
-mode. There is not a lot going on in kernel for enabling landing pad for
-user mode. cfi selftest are intended to be compiled with zicfilp and
-zicfiss enabled compiler. Thus kselftest simply checks if landing pad /
-shadow stack for the process are enabled or not and executes ptrace
-selftests on cfi. selftest then register a signal handler for SIGSEGV.
-Any control flow violation are reported as SIGSEGV with si_code =
-SEGV_CPERR. Test will fail on receiving any SEGV_CPERR. Shadow stack part
-has more changes in kernel and thus there are separate tests for that
+Test disconnected directories with two test suites and 31 variants to
+cover the main corner cases.
 
-- Exercise `map_shadow_stack` syscall
-- `fork` test to make sure COW works for shadow stack pages
-- gup tests
-  Kernel uses FOLL_FORCE when access happens to memory via
-  /proc/<pid>/mem. Not breaking that for shadow stack.
-- signal test. Make sure signal delivery results in token creation on
-  shadow stack and consumes (and verifies) token on sigreturn
-- shadow stack protection test. attempts to write using regular store
-  instruction on shadow stack memory must result in access faults
-- ptrace test: adds landing pad violation, clears ELP and continues
+These tests are complementary to the previous commit.
 
-In case toolchain doesn't support cfi extension, cfi kselftest wont
-get built.
+Add test_renameat() and test_exchangeat() helpers.
 
-Test outut
-==========
+Test coverage for security/landlock is 92.1% of 1956 lines according to
+LLVM v20.
 
-"""
-TAP version 13
-1..5
-  This is to ensure shadow stack is indeed enabled and working
-  This is to ensure shadow stack is indeed enabled and working
-ok 1 shstk fork test
-ok 2 map shadow stack syscall
-ok 3 shadow stack gup tests
-ok 4 shadow stack signal tests
-ok 5 memory protections of shadow stack memory
-"""
-
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-Suggested-by: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>
+Cc: Tingmao Wang <m@maowtm.org>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- tools/testing/selftests/riscv/Makefile             |   2 +-
- tools/testing/selftests/riscv/cfi/.gitignore       |   3 +
- tools/testing/selftests/riscv/cfi/Makefile         |  16 +
- tools/testing/selftests/riscv/cfi/cfi_rv_test.h    |  82 +++++
- tools/testing/selftests/riscv/cfi/riscv_cfi_test.c | 173 +++++++++
- tools/testing/selftests/riscv/cfi/shadowstack.c    | 385 +++++++++++++++++++++
- tools/testing/selftests/riscv/cfi/shadowstack.h    |  27 ++
- 7 files changed, 687 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/riscv/Makefile b/tools/testing/selftests/riscv/Makefile
-index 099b8c1f46f8..5671b4405a12 100644
---- a/tools/testing/selftests/riscv/Makefile
-+++ b/tools/testing/selftests/riscv/Makefile
-@@ -5,7 +5,7 @@
- ARCH ?= $(shell uname -m 2>/dev/null || echo not)
+Changes since v1:
+- Rename layout4_disconnected to layout4_disconnected_leafs.
+- Fix variable names.
+- Add layout5_disconnected_branch test suite with 19 variants to cover
+  potential implementation issues.
+---
+ tools/testing/selftests/landlock/fs_test.c | 912 +++++++++++++++++++++
+ 1 file changed, 912 insertions(+)
+
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 5312698927ea..21dd95aaf5e4 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -2267,6 +2267,22 @@ static int test_exchange(const char *const oldpath, const char *const newpath)
+ 	return 0;
+ }
  
- ifneq (,$(filter $(ARCH),riscv))
--RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector
-+RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector cfi
- else
- RISCV_SUBTARGETS :=
- endif
-diff --git a/tools/testing/selftests/riscv/cfi/.gitignore b/tools/testing/selftests/riscv/cfi/.gitignore
-new file mode 100644
-index 000000000000..82545863bac6
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/.gitignore
-@@ -0,0 +1,3 @@
-+cfitests
-+riscv_cfi_test
-+shadowstack
-diff --git a/tools/testing/selftests/riscv/cfi/Makefile b/tools/testing/selftests/riscv/cfi/Makefile
-new file mode 100644
-index 000000000000..55165a93845f
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/Makefile
-@@ -0,0 +1,16 @@
-+CFLAGS += -I$(top_srcdir)/tools/include
-+
-+CFLAGS += -march=rv64gc_zicfilp_zicfiss -fcf-protection=full
-+
-+ifeq ($(shell $(CC) $(CFLAGS) -nostdlib -xc /dev/null -o /dev/null > /dev/null 2>&1; echo $$?),0)
-+TEST_GEN_PROGS := cfitests
-+
-+include ../../lib.mk
-+
-+$(OUTPUT)/cfitests: riscv_cfi_test.c shadowstack.c
-+	$(CC) -o$@ $(CFLAGS) $(LDFLAGS) $^
-+else
-+include ../../lib.mk
-+
-+$(shell echo "Toolchain doesn't support CFI, skipping CFI kselftest." >&2)
-+endif
-diff --git a/tools/testing/selftests/riscv/cfi/cfi_rv_test.h b/tools/testing/selftests/riscv/cfi/cfi_rv_test.h
-new file mode 100644
-index 000000000000..1c8043f2b778
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/cfi_rv_test.h
-@@ -0,0 +1,82 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef SELFTEST_RISCV_CFI_H
-+#define SELFTEST_RISCV_CFI_H
-+#include <stddef.h>
-+#include <sys/types.h>
-+#include "shadowstack.h"
-+
-+#define CHILD_EXIT_CODE_SSWRITE		10
-+#define CHILD_EXIT_CODE_SIG_TEST	11
-+
-+#define my_syscall5(num, arg1, arg2, arg3, arg4, arg5)			\
-+({									\
-+	register long _num  __asm__ ("a7") = (num);			\
-+	register long _arg1 __asm__ ("a0") = (long)(arg1);		\
-+	register long _arg2 __asm__ ("a1") = (long)(arg2);		\
-+	register long _arg3 __asm__ ("a2") = (long)(arg3);		\
-+	register long _arg4 __asm__ ("a3") = (long)(arg4);		\
-+	register long _arg5 __asm__ ("a4") = (long)(arg5);		\
-+									\
-+	__asm__ volatile(						\
-+		"ecall\n"						\
-+		: "+r"							\
-+		(_arg1)							\
-+		: "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_arg5),	\
-+		  "r"(_num)						\
-+		: "memory", "cc"					\
-+	);								\
-+	_arg1;								\
-+})
-+
-+#define my_syscall3(num, arg1, arg2, arg3)				\
-+({									\
-+	register long _num  __asm__ ("a7") = (num);			\
-+	register long _arg1 __asm__ ("a0") = (long)(arg1);		\
-+	register long _arg2 __asm__ ("a1") = (long)(arg2);		\
-+	register long _arg3 __asm__ ("a2") = (long)(arg3);		\
-+									\
-+	__asm__ volatile(						\
-+		"ecall\n"						\
-+		: "+r" (_arg1)						\
-+		: "r"(_arg2), "r"(_arg3),				\
-+		  "r"(_num)						\
-+		: "memory", "cc"					\
-+	);								\
-+	_arg1;								\
-+})
-+
-+#ifndef __NR_prctl
-+#define __NR_prctl 167
-+#endif
-+
-+#ifndef __NR_map_shadow_stack
-+#define __NR_map_shadow_stack 453
-+#endif
-+
-+#define CSR_SSP 0x011
-+
-+#ifdef __ASSEMBLY__
-+#define __ASM_STR(x)    x
-+#else
-+#define __ASM_STR(x)    #x
-+#endif
-+
-+#define csr_read(csr)							\
-+({									\
-+	register unsigned long __v;					\
-+	__asm__ __volatile__ ("csrr %0, " __ASM_STR(csr)		\
-+				: "=r" (__v) :				\
-+				: "memory");				\
-+	__v;								\
-+})
-+
-+#define csr_write(csr, val)						\
-+({									\
-+	unsigned long __v = (unsigned long)(val);			\
-+	__asm__ __volatile__ ("csrw " __ASM_STR(csr) ", %0"		\
-+				: : "rK" (__v)				\
-+				: "memory");				\
-+})
-+
-+#endif
-diff --git a/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c b/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c
-new file mode 100644
-index 000000000000..486a2e779053
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c
-@@ -0,0 +1,173 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "../../kselftest.h"
-+#include <sys/signal.h>
-+#include <asm/ucontext.h>
-+#include <linux/prctl.h>
-+#include <errno.h>
-+#include <linux/ptrace.h>
-+#include <sys/wait.h>
-+#include <linux/elf.h>
-+#include <sys/uio.h>
-+#include <asm-generic/unistd.h>
-+
-+#include "cfi_rv_test.h"
-+
-+/* do not optimize cfi related test functions */
-+#pragma GCC push_options
-+#pragma GCC optimize("O0")
-+
-+void sigsegv_handler(int signum, siginfo_t *si, void *uc)
++static int test_renameat(int olddirfd, const char *oldpath, int newdirfd,
++			 const char *newpath)
 +{
-+	struct ucontext *ctx = (struct ucontext *)uc;
-+
-+	if (si->si_code == SEGV_CPERR) {
-+		ksft_print_msg("Control flow violation happened somewhere\n");
-+		ksft_print_msg("PC where violation happened %lx\n", ctx->uc_mcontext.gregs[0]);
-+		exit(-1);
-+	}
-+
-+	/* all other cases are expected to be of shadow stack write case */
-+	exit(CHILD_EXIT_CODE_SSWRITE);
-+}
-+
-+bool register_signal_handler(void)
-+{
-+	struct sigaction sa = {};
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+	sa.sa_flags = SA_SIGINFO;
-+	if (sigaction(SIGSEGV, &sa, NULL)) {
-+		ksft_print_msg("Registering signal handler for landing pad violation failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+long ptrace(int request, pid_t pid, void *addr, void *data);
-+
-+bool cfi_ptrace_test(void)
-+{
-+	pid_t pid;
-+	int status, ret = 0;
-+	unsigned long ptrace_test_num = 0, total_ptrace_tests = 2;
-+
-+	struct user_cfi_state cfi_reg;
-+	struct iovec iov;
-+
-+	pid = fork();
-+
-+	if (pid == -1) {
-+		ksft_exit_fail_msg("%s: fork failed\n", __func__);
-+		exit(1);
-+	}
-+
-+	if (pid == 0) {
-+		/* allow to be traced */
-+		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-+		raise(SIGSTOP);
-+		asm volatile (
-+		"la a5, 1f\n"
-+		"jalr a5 \n"
-+		"nop \n"
-+		"nop \n"
-+		"1: nop\n"
-+		: : : "a5");
-+		exit(11);
-+		/* child shouldn't go beyond here */
-+	}
-+
-+	/* parent's code goes here */
-+	iov.iov_base = &cfi_reg;
-+	iov.iov_len = sizeof(cfi_reg);
-+
-+	while (ptrace_test_num < total_ptrace_tests) {
-+		memset(&cfi_reg, 0, sizeof(cfi_reg));
-+		waitpid(pid, &status, 0);
-+		if (WIFSTOPPED(status)) {
-+			errno = 0;
-+			ret = ptrace(PTRACE_GETREGSET, pid, (void *)NT_RISCV_USER_CFI, &iov);
-+			if (ret == -1 && errno)
-+				ksft_exit_fail_msg("%s: PTRACE_GETREGSET failed\n", __func__);
-+		} else
-+			ksft_exit_fail_msg("%s: child didn't stop, failed\n", __func__);
-+
-+		switch (ptrace_test_num) {
-+#define CFI_ENABLE_MASK (PTRACE_CFI_LP_EN_STATE |	\
-+			PTRACE_CFI_SS_EN_STATE |	\
-+			PTRACE_CFI_SS_PTR_STATE)
-+		case 0:
-+			if ((cfi_reg.cfi_status.cfi_state & CFI_ENABLE_MASK) != CFI_ENABLE_MASK)
-+				ksft_exit_fail_msg("%s: ptrace_getregset failed, %llu\n", __func__,
-+				cfi_reg.cfi_status.cfi_state);
-+			if (!cfi_reg.shstk_ptr)
-+				ksft_exit_fail_msg("%s: NULL shadow stack pointer, test failed\n",
-+				__func__);
-+			break;
-+		case 1:
-+			if (!(cfi_reg.cfi_status.cfi_state & PTRACE_CFI_ELP_STATE))
-+				ksft_exit_fail_msg("%s: elp must have been set\n", __func__);
-+			/* clear elp state. not interested in anything else */
-+			cfi_reg.cfi_status.cfi_state = 0;
-+
-+			ret = ptrace(PTRACE_SETREGSET, pid, (void *)NT_RISCV_USER_CFI, &iov);
-+			if (ret == -1 && errno)
-+				ksft_exit_fail_msg("%s: PTRACE_GETREGSET failed\n", __func__);
-+			break;
-+		default:
-+			ksft_exit_fail_msg("%s: unreachable switch case\n", __func__);
-+			break;
-+		}
-+		ptrace(PTRACE_CONT, pid, NULL, NULL);
-+		ptrace_test_num++;
-+	}
-+
-+	waitpid(pid, &status, 0);
-+	if (WEXITSTATUS(status) != 11)
-+		ksft_print_msg("%s, bad return code from child\n", __func__);
-+
-+	ksft_print_msg("%s, ptrace test succeeded\n", __func__);
-+	return true;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int ret = 0;
-+	unsigned long lpad_status = 0, ss_status = 0;
-+
-+	ksft_print_header();
-+
-+	ksft_print_msg("Starting risc-v tests\n");
-+
-+	/*
-+	 * Landing pad test. Not a lot of kernel changes to support landing
-+	 * pad for user mode except lighting up a bit in senvcfg via a prctl
-+	 * Enable landing pad through out the execution of test binary
-+	 */
-+	ret = my_syscall5(__NR_prctl, PR_GET_INDIR_BR_LP_STATUS, &lpad_status, 0, 0, 0);
-+	if (ret)
-+		ksft_exit_fail_msg("Get landing pad status failed with %d\n", ret);
-+
-+	if (!(lpad_status & PR_INDIR_BR_LP_ENABLE))
-+		ksft_exit_fail_msg("Landing pad is not enabled, should be enabled via glibc\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret)
-+		ksft_exit_fail_msg("Get shadow stack failed with %d\n", ret);
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_exit_fail_msg("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	if (!register_signal_handler())
-+		ksft_exit_fail_msg("Registering signal handler for SIGSEGV failed\n");
-+
-+	ksft_print_msg("Landing pad and shadow stack are enabled for binary\n");
-+	cfi_ptrace_test();
-+
-+	execute_shadow_stack_tests();
-+
++	if (renameat2(olddirfd, oldpath, newdirfd, newpath, 0))
++		return errno;
 +	return 0;
 +}
 +
-+#pragma GCC pop_options
-diff --git a/tools/testing/selftests/riscv/cfi/shadowstack.c b/tools/testing/selftests/riscv/cfi/shadowstack.c
-new file mode 100644
-index 000000000000..53387dbd9cf5
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/shadowstack.c
-@@ -0,0 +1,385 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++static int test_exchangeat(int olddirfd, const char *oldpath, int newdirfd,
++			   const char *newpath)
++{
++	if (renameat2(olddirfd, oldpath, newdirfd, newpath, RENAME_EXCHANGE))
++		return errno;
++	return 0;
++}
 +
-+#include "../../kselftest.h"
-+#include <sys/wait.h>
-+#include <signal.h>
-+#include <fcntl.h>
-+#include <asm-generic/unistd.h>
-+#include <sys/mman.h>
-+#include "shadowstack.h"
-+#include "cfi_rv_test.h"
+ TEST_F_FORK(layout1, rename_file)
+ {
+ 	const struct rule rules[] = {
+@@ -5205,6 +5221,902 @@ TEST_F_FORK(layout1_bind, path_disconnected_link)
+ 	}
+ }
+ 
++/*
++ * layout4_disconnected_leafs with bind mount and renames:
++ *
++ * tmp
++ * ├── s1d1
++ * │   └── s1d2 [source of the bind mount]
++ * │       ├── s1d31
++ * │       │   └── s1d41 [now renamed beneath s3d1]
++ * │       │       ├── f1
++ * │       │       └── f2
++ * │       └── s1d32
++ * │           └── s1d42 [now renamed beneath s4d1]
++ * │               ├── f3
++ * │               └── f4
++ * ├── s2d1
++ * │   └── s2d2 [bind mount of s1d2]
++ * │       ├── s1d31
++ * │       │   └── s1d41 [opened FD, now renamed beneath s3d1]
++ * │       │       ├── f1
++ * │       │       └── f2
++ * │       └── s1d32
++ * │           └── s1d42 [opened FD, now renamed beneath s4d1]
++ * │               ├── f3
++ * │               └── f4
++ * ├── s3d1
++ * │   └── s1d41 [renamed here]
++ * │       ├── f1
++ * │       └── f2
++ * └── s4d1
++ *     └── s1d42 [renamed here]
++ *         ├── f3
++ *         └── f4
++ */
++/* clang-format off */
++FIXTURE(layout4_disconnected_leafs) {
++	int s2d2_fd;
++};
++/* clang-format on */
 +
-+static struct shadow_stack_tests shstk_tests[] = {
-+	{ "shstk fork test\n", shadow_stack_fork_test },
-+	{ "map shadow stack syscall\n", shadow_stack_map_test },
-+	{ "shadow stack gup tests\n", shadow_stack_gup_tests },
-+	{ "shadow stack signal tests\n", shadow_stack_signal_test},
-+	{ "memory protections of shadow stack memory\n", shadow_stack_protection_test }
++FIXTURE_SETUP(layout4_disconnected_leafs)
++{
++	prepare_layout(_metadata);
++
++	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d31/s1d41/f1");
++	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d31/s1d41/f2");
++	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d32/s1d42/f3");
++	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d32/s1d42/f4");
++	create_directory(_metadata, TMP_DIR "/s2d1/s2d2");
++	create_directory(_metadata, TMP_DIR "/s3d1");
++	create_directory(_metadata, TMP_DIR "/s4d1");
++
++	self->s2d2_fd =
++		open(TMP_DIR "/s2d1/s2d2", O_DIRECTORY | O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, self->s2d2_fd);
++
++	set_cap(_metadata, CAP_SYS_ADMIN);
++	ASSERT_EQ(0, mount(TMP_DIR "/s1d1/s1d2", TMP_DIR "/s2d1/s2d2", NULL,
++			   MS_BIND, NULL));
++	clear_cap(_metadata, CAP_SYS_ADMIN);
++}
++
++FIXTURE_TEARDOWN_PARENT(layout4_disconnected_leafs)
++{
++	/* umount(TMP_DIR "/s2d1") is handled by namespace lifetime. */
++
++	/* Removes files after renames. */
++	remove_path(TMP_DIR "/s3d1/s1d41/f1");
++	remove_path(TMP_DIR "/s3d1/s1d41/f2");
++	remove_path(TMP_DIR "/s4d1/s1d42/f1");
++	remove_path(TMP_DIR "/s4d1/s1d42/f3");
++	remove_path(TMP_DIR "/s4d1/s1d42/f4");
++	remove_path(TMP_DIR "/s4d1/s1d42/f5");
++
++	cleanup_layout(_metadata);
++}
++
++FIXTURE_VARIANT(layout4_disconnected_leafs)
++{
++	/*
++	 * Parent of the bind mount source.  It should always be ignored when
++	 * testing against files under the s1d41 or s1d42 disconnected directories.
++	 */
++	const __u64 allowed_s1d1;
++	/*
++	 * Source of bind mount (to s2d2).  It should always be enforced when
++	 * testing against files under the s1d41 or s1d42 disconnected directories.
++	 */
++	const __u64 allowed_s1d2;
++	/*
++	 * Original parent of s1d41.  It should always be ignored when testing
++	 * against files under the s1d41 disconnected directory.
++	 */
++	const __u64 allowed_s1d31;
++	/*
++	 * Original parent of s1d42.  It should always be ignored when testing
++	 * against files under the s1d42 disconnected directory.
++	 */
++	const __u64 allowed_s1d32;
++	/*
++	 * Opened and disconnected source directory.  It should always be enforced
++	 * when testing against files under the s1d41 disconnected directory.
++	 */
++	const __u64 allowed_s1d41;
++	/*
++	 * Opened and disconnected source directory.  It should always be enforced
++	 * when testing against files under the s1d42 disconnected directory.
++	 */
++	const __u64 allowed_s1d42;
++	/*
++	 * File in the s1d41 disconnected directory.  It should always be enforced
++	 * when testing against itself under the s1d41 disconnected directory.
++	 */
++	const __u64 allowed_f1;
++	/*
++	 * File in the s1d41 disconnected directory.  It should always be enforced
++	 * when testing against itself under the s1d41 disconnected directory.
++	 */
++	const __u64 allowed_f2;
++	/*
++	 * File in the s1d42 disconnected directory.  It should always be enforced
++	 * when testing against itself under the s1d42 disconnected directory.
++	 */
++	const __u64 allowed_f3;
++	/*
++	 * Parent of the bind mount destination.  It should always be enforced when
++	 * testing against files under the s1d41 or s1d42 disconnected directories.
++	 */
++	const __u64 allowed_s2d1;
++	/*
++	 * Directory covered by the bind mount.  It should always be ignored when
++	 * testing against files under the s1d41 or s1d42 disconnected directories.
++	 */
++	const __u64 allowed_s2d2;
++	/*
++	 * New parent of the renamed s1d41.  It should always be ignored when
++	 * testing against files under the s1d41 disconnected directory.
++	 */
++	const __u64 allowed_s3d1;
++	/*
++	 * New parent of the renamed s1d42.  It should always be ignored when
++	 * testing against files under the s1d42 disconnected directory.
++	 */
++	const __u64 allowed_s4d1;
++
++	/* Expected result of the call to open([fd:s1d41]/f1, O_RDONLY). */
++	const int expected_read_result;
++	/* Expected result of the call to renameat([fd:s1d41]/f1, [fd:s1d42]/f1). */
++	const int expected_rename_result;
++	/*
++	 * Expected result of the call to renameat([fd:s1d41]/f2, [fd:s1d42]/f3,
++	 * RENAME_EXCHANGE).
++	 */
++	const int expected_exchange_result;
++	/* Expected result of the call to renameat([fd:s1d42]/f4, [fd:s1d42]/f5). */
++	const int expected_same_dir_rename_result;
 +};
 +
-+#define RISCV_SHADOW_STACK_TESTS ARRAY_SIZE(shstk_tests)
-+
-+/* do not optimize shadow stack related test functions */
-+#pragma GCC push_options
-+#pragma GCC optimize("O0")
-+
-+void zar(void)
-+{
-+	unsigned long ssp = 0;
-+
-+	ssp = csr_read(CSR_SSP);
-+	ksft_print_msg("Spewing out shadow stack ptr: %lx\n"
-+			"  This is to ensure shadow stack is indeed enabled and working\n",
-+			ssp);
-+}
-+
-+void bar(void)
-+{
-+	zar();
-+}
-+
-+void foo(void)
-+{
-+	bar();
-+}
-+
-+void zar_child(void)
-+{
-+	unsigned long ssp = 0;
-+
-+	ssp = csr_read(CSR_SSP);
-+	ksft_print_msg("Spewing out shadow stack ptr: %lx\n"
-+			"  This is to ensure shadow stack is indeed enabled and working\n",
-+			ssp);
-+}
-+
-+void bar_child(void)
-+{
-+	zar_child();
-+}
-+
-+void foo_child(void)
-+{
-+	bar_child();
-+}
-+
-+typedef void (call_func_ptr)(void);
-+/*
-+ * call couple of functions to test push pop.
-+ */
-+int shadow_stack_call_tests(call_func_ptr fn_ptr, bool parent)
-+{
-+	ksft_print_msg("dummy calls for sspush and sspopchk in context of %s\n",
-+		       parent ? "parent" : "child");
-+
-+	(fn_ptr)();
-+
-+	return 0;
-+}
-+
-+/* forks a thread, and ensure shadow stacks fork out */
-+bool shadow_stack_fork_test(unsigned long test_num, void *ctx)
-+{
-+	int pid = 0, child_status = 0, parent_pid = 0, ret = 0;
-+	unsigned long ss_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack fork test\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret) {
-+		ksft_exit_skip("Shadow stack get status prctl failed with errorcode %d\n", ret);
-+		return false;
-+	}
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_exit_skip("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	parent_pid = getpid();
-+	pid = fork();
-+
-+	if (pid) {
-+		ksft_print_msg("Parent pid %d and child pid %d\n", parent_pid, pid);
-+		shadow_stack_call_tests(&foo, true);
-+	} else {
-+		shadow_stack_call_tests(&foo_child, false);
-+	}
-+
-+	if (pid) {
-+		ksft_print_msg("Waiting on child to finish\n");
-+		wait(&child_status);
-+	} else {
-+		/* exit child gracefully */
-+		exit(0);
-+	}
-+
-+	if (pid && WIFSIGNALED(child_status)) {
-+		ksft_print_msg("Child faulted, fork test failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/* exercise `map_shadow_stack`, pivot to it and call some functions to ensure it works */
-+#define SHADOW_STACK_ALLOC_SIZE 4096
-+bool shadow_stack_map_test(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr;
-+	int ret = 0;
-+
-+	ksft_print_msg("Exercising shadow stack map test\n");
-+
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n",
-+			       (int)shdw_addr);
-+		return false;
-+	}
-+
-+	ret = munmap((void *)shdw_addr, SHADOW_STACK_ALLOC_SIZE);
-+
-+	if (ret) {
-+		ksft_print_msg("munmap failed with error code %d\n", ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * shadow stack protection tests. map a shadow stack and
-+ * validate all memory protections work on it
-+ */
-+bool shadow_stack_protection_test(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr;
-+	unsigned long *write_addr = NULL;
-+	int ret = 0, pid = 0, child_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack protection test (WPT)\n");
-+
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n",
-+			       (int)shdw_addr);
-+		return false;
-+	}
-+
-+	write_addr = (unsigned long *)shdw_addr;
-+	pid = fork();
-+
-+	/* no child was created, return false */
-+	if (pid == -1)
-+		return false;
-+
-+	/*
-+	 * try to perform a store from child on shadow stack memory
-+	 * it should result in SIGSEGV
-+	 */
-+	if (!pid) {
-+		/* below write must lead to SIGSEGV */
-+		*write_addr = 0xdeadbeef;
-+	} else {
-+		wait(&child_status);
-+	}
-+
-+	/* test fail, if 0xdeadbeef present on shadow stack address */
-+	if (*write_addr == 0xdeadbeef) {
-+		ksft_print_msg("Shadow stack WPT failed\n");
-+		return false;
-+	}
-+
-+	/* if child reached here, then fail */
-+	if (!pid) {
-+		ksft_print_msg("Shadow stack WPT failed: child reached unreachable state\n");
-+		return false;
-+	}
-+
-+	/* if child exited via signal handler but not for write on ss */
-+	if (WIFEXITED(child_status) &&
-+	    WEXITSTATUS(child_status) != CHILD_EXIT_CODE_SSWRITE) {
-+		ksft_print_msg("Shadow stack WPT failed: child wasn't signaled for write\n");
-+		return false;
-+	}
-+
-+	ret = munmap(write_addr, SHADOW_STACK_ALLOC_SIZE);
-+	if (ret) {
-+		ksft_print_msg("Shadow stack WPT failed: munmap failed, error code %d\n",
-+			       ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+#define SS_MAGIC_WRITE_VAL 0xbeefdead
-+
-+int gup_tests(int mem_fd, unsigned long *shdw_addr)
-+{
-+	unsigned long val = 0;
-+
-+	lseek(mem_fd, (unsigned long)shdw_addr, SEEK_SET);
-+	if (read(mem_fd, &val, sizeof(val)) < 0) {
-+		ksft_print_msg("Reading shadow stack mem via gup failed\n");
-+		return 1;
-+	}
-+
-+	val = SS_MAGIC_WRITE_VAL;
-+	lseek(mem_fd, (unsigned long)shdw_addr, SEEK_SET);
-+	if (write(mem_fd, &val, sizeof(val)) < 0) {
-+		ksft_print_msg("Writing shadow stack mem via gup failed\n");
-+		return 1;
-+	}
-+
-+	if (*shdw_addr != SS_MAGIC_WRITE_VAL) {
-+		ksft_print_msg("GUP write to shadow stack memory failed\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+bool shadow_stack_gup_tests(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr = 0;
-+	unsigned long *write_addr = NULL;
-+	int fd = 0;
-+	bool ret = false;
-+
-+	ksft_print_msg("Exercising shadow stack gup tests\n");
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n", (int)shdw_addr);
-+		return false;
-+	}
-+
-+	write_addr = (unsigned long *)shdw_addr;
-+
-+	fd = open("/proc/self/mem", O_RDWR);
-+	if (fd == -1)
-+		return false;
-+
-+	if (gup_tests(fd, write_addr)) {
-+		ksft_print_msg("gup tests failed\n");
-+		goto out;
-+	}
-+
-+	ret = true;
-+out:
-+	if (shdw_addr && munmap(write_addr, SHADOW_STACK_ALLOC_SIZE)) {
-+		ksft_print_msg("munmap failed with error code %d\n", ret);
-+		ret = false;
-+	}
-+
-+	return ret;
-+}
-+
-+volatile bool break_loop;
-+
-+void sigusr1_handler(int signo)
-+{
-+	break_loop = true;
-+}
-+
-+bool sigusr1_signal_test(void)
-+{
-+	struct sigaction sa = {};
-+
-+	sa.sa_handler = sigusr1_handler;
-+	sa.sa_flags = 0;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGUSR1, &sa, NULL)) {
-+		ksft_print_msg("Registering signal handler for SIGUSR1 failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * shadow stack signal test. shadow stack must be enabled.
-+ * register a signal, fork another thread which is waiting
-+ * on signal. Send a signal from parent to child, verify
-+ * that signal was received by child. If not test fails
-+ */
-+bool shadow_stack_signal_test(unsigned long test_num, void *ctx)
-+{
-+	int pid = 0, child_status = 0, ret = 0;
-+	unsigned long ss_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack signal test\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret) {
-+		ksft_print_msg("Shadow stack get status prctl failed with errorcode %d\n", ret);
-+		return false;
-+	}
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_print_msg("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	/* this should be caught by signal handler and do an exit */
-+	if (!sigusr1_signal_test()) {
-+		ksft_print_msg("Registering sigusr1 handler failed\n");
-+		exit(-1);
-+	}
-+
-+	pid = fork();
-+
-+	if (pid == -1) {
-+		ksft_print_msg("Signal test: fork failed\n");
-+		goto out;
-+	}
-+
-+	if (pid == 0) {
-+		while (!break_loop)
-+			sleep(1);
-+
-+		exit(11);
-+		/* child shouldn't go beyond here */
-+	}
-+
-+	/* send SIGUSR1 to child */
-+	kill(pid, SIGUSR1);
-+	wait(&child_status);
-+
-+out:
-+
-+	return (WIFEXITED(child_status) &&
-+		WEXITSTATUS(child_status) == 11);
-+}
-+
-+int execute_shadow_stack_tests(void)
-+{
-+	int ret = 0;
-+	unsigned long test_count = 0;
-+	unsigned long shstk_status = 0;
-+	bool test_pass = false;
-+
-+	ksft_print_msg("Executing RISC-V shadow stack self tests\n");
-+	ksft_set_plan(RISCV_SHADOW_STACK_TESTS);
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &shstk_status, 0, 0, 0);
-+
-+	if (ret != 0)
-+		ksft_exit_fail_msg("Get shadow stack status failed with %d\n", ret);
-+
-+	/*
-+	 * If we are here that means get shadow stack status succeeded and
-+	 * thus shadow stack support is baked in the kernel.
-+	 */
-+	while (test_count < RISCV_SHADOW_STACK_TESTS) {
-+		test_pass = (*shstk_tests[test_count].t_func)(test_count, NULL);
-+		ksft_test_result(test_pass, shstk_tests[test_count].name);
-+		test_count++;
-+	}
-+
-+	ksft_finished();
-+
-+	return 0;
-+}
-+
-+#pragma GCC pop_options
-diff --git a/tools/testing/selftests/riscv/cfi/shadowstack.h b/tools/testing/selftests/riscv/cfi/shadowstack.h
-new file mode 100644
-index 000000000000..0be510167de3
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/shadowstack.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef SELFTEST_SHADOWSTACK_TEST_H
-+#define SELFTEST_SHADOWSTACK_TEST_H
-+#include <stddef.h>
-+#include <linux/prctl.h>
-+
-+/*
-+ * a cfi test returns true for success or false for fail
-+ * takes a number for test number to index into array and void pointer.
-+ */
-+typedef bool (*shstk_test_func)(unsigned long test_num, void *);
-+
-+struct shadow_stack_tests {
-+	char *name;
-+	shstk_test_func t_func;
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s1d1_mount_src_parent) {
++	/* clang-format on */
++	.allowed_s1d1 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
 +};
 +
-+bool shadow_stack_fork_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_map_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_protection_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_gup_tests(unsigned long test_num, void *ctx);
-+bool shadow_stack_signal_test(unsigned long test_num, void *ctx);
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s1d2_mount_src_refer) {
++	/* clang-format on */
++	.allowed_s1d2 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_READ_FILE,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
 +
-+int execute_shadow_stack_tests(void);
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s1d2_mount_src_create) {
++	/* clang-format on */
++	.allowed_s1d2 = LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = EXDEV,
++	.expected_exchange_result = EXDEV,
++};
 +
-+#endif
-
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s1d2_mount_src_rename) {
++	/* clang-format on */
++	.allowed_s1d2 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = 0,
++	.expected_exchange_result = 0,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s1d31_s1d32_old_parent) {
++	/* clang-format on */
++	.allowed_s1d31 = LANDLOCK_ACCESS_FS_REFER |
++			 LANDLOCK_ACCESS_FS_READ_FILE |
++			 LANDLOCK_ACCESS_FS_EXECUTE |
++			 LANDLOCK_ACCESS_FS_MAKE_REG,
++	.allowed_s1d32 = LANDLOCK_ACCESS_FS_REFER |
++			 LANDLOCK_ACCESS_FS_READ_FILE |
++			 LANDLOCK_ACCESS_FS_EXECUTE |
++			 LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s1d41_s1d42_disconnected) {
++	/* clang-format on */
++	.allowed_s1d41 = LANDLOCK_ACCESS_FS_REFER |
++			 LANDLOCK_ACCESS_FS_READ_FILE |
++			 LANDLOCK_ACCESS_FS_EXECUTE |
++			 LANDLOCK_ACCESS_FS_MAKE_REG,
++	.allowed_s1d42 = LANDLOCK_ACCESS_FS_REFER |
++			 LANDLOCK_ACCESS_FS_READ_FILE |
++			 LANDLOCK_ACCESS_FS_EXECUTE |
++			 LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s2d1_mount_dst_parent_create) {
++	/* clang-format on */
++	.allowed_s2d1 = LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = EXDEV,
++	.expected_exchange_result = EXDEV,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s2d1_mount_dst_parent_refer) {
++	/* clang-format on */
++	.allowed_s2d1 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_READ_FILE,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s2d1_mount_dst_parent_mini) {
++	/* clang-format on */
++	.allowed_s2d1 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = 0,
++	.expected_exchange_result = 0,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s2d2_covered_by_mount) {
++	/* clang-format on */
++	.allowed_s2d2 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* Tests collect_domain_accesses(). */
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, s3d1_s4d1_new_parent) {
++	/* clang-format on */
++	.allowed_s3d1 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.allowed_s4d1 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout4_disconnected_leafs, f1_f2_f3) {
++	/* clang-format on */
++	.allowed_f1 = LANDLOCK_ACCESS_FS_READ_FILE,
++	.allowed_f2 = LANDLOCK_ACCESS_FS_READ_FILE,
++	.allowed_f3 = LANDLOCK_ACCESS_FS_READ_FILE,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++TEST_F_FORK(layout4_disconnected_leafs, read_rename_exchange)
++{
++	const __u64 handled_access =
++		LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_READ_FILE |
++		LANDLOCK_ACCESS_FS_EXECUTE | LANDLOCK_ACCESS_FS_MAKE_REG;
++	const struct rule rules[] = {
++		{
++			.path = TMP_DIR "/s1d1",
++			.access = variant->allowed_s1d1,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2",
++			.access = variant->allowed_s1d2,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2/s1d31",
++			.access = variant->allowed_s1d31,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2/s1d32",
++			.access = variant->allowed_s1d32,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2/s1d31/s1d41",
++			.access = variant->allowed_s1d41,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2/s1d32/s1d42",
++			.access = variant->allowed_s1d42,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2/s1d31/s1d41/f1",
++			.access = variant->allowed_f1,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2/s1d31/s1d41/f2",
++			.access = variant->allowed_f2,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2/s1d32/s1d42/f3",
++			.access = variant->allowed_f3,
++		},
++		{
++			.path = TMP_DIR "/s2d1",
++			.access = variant->allowed_s2d1,
++		},
++		/* s2d2_fd */
++		{
++			.path = TMP_DIR "/s3d1",
++			.access = variant->allowed_s3d1,
++		},
++		{
++			.path = TMP_DIR "/s4d1",
++			.access = variant->allowed_s4d1,
++		},
++		{},
++	};
++	int ruleset_fd, s1d41_bind_fd, s1d42_bind_fd;
++
++	ruleset_fd = create_ruleset(_metadata, handled_access, rules);
++	ASSERT_LE(0, ruleset_fd);
++
++	/* Adds rule for the covered directory. */
++	if (variant->allowed_s2d2) {
++		ASSERT_EQ(0, landlock_add_rule(
++				     ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
++				     &(struct landlock_path_beneath_attr){
++					     .parent_fd = self->s2d2_fd,
++					     .allowed_access =
++						     variant->allowed_s2d2,
++				     },
++				     0));
++	}
++	EXPECT_EQ(0, close(self->s2d2_fd));
++
++	s1d41_bind_fd = open(TMP_DIR "/s2d1/s2d2/s1d31/s1d41",
++			     O_DIRECTORY | O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, s1d41_bind_fd);
++	s1d42_bind_fd = open(TMP_DIR "/s2d1/s2d2/s1d32/s1d42",
++			     O_DIRECTORY | O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, s1d42_bind_fd);
++
++	/* Disconnects and checks source and destination directories. */
++	EXPECT_EQ(0, test_open_rel(s1d41_bind_fd, "..", O_DIRECTORY));
++	EXPECT_EQ(0, test_open_rel(s1d42_bind_fd, "..", O_DIRECTORY));
++	/* Renames to make it accessible through s3d1/s1d41 */
++	ASSERT_EQ(0, test_renameat(AT_FDCWD, TMP_DIR "/s1d1/s1d2/s1d31/s1d41",
++				   AT_FDCWD, TMP_DIR "/s3d1/s1d41"));
++	/* Renames to make it accessible through s4d1/s1d42 */
++	ASSERT_EQ(0, test_renameat(AT_FDCWD, TMP_DIR "/s1d1/s1d2/s1d32/s1d42",
++				   AT_FDCWD, TMP_DIR "/s4d1/s1d42"));
++	EXPECT_EQ(ENOENT, test_open_rel(s1d41_bind_fd, "..", O_DIRECTORY));
++	EXPECT_EQ(ENOENT, test_open_rel(s1d42_bind_fd, "..", O_DIRECTORY));
++
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++
++	EXPECT_EQ(variant->expected_read_result,
++		  test_open_rel(s1d41_bind_fd, "f1", O_RDONLY));
++
++	EXPECT_EQ(variant->expected_rename_result,
++		  test_renameat(s1d41_bind_fd, "f1", s1d42_bind_fd, "f1"));
++	EXPECT_EQ(variant->expected_exchange_result,
++		  test_exchangeat(s1d41_bind_fd, "f2", s1d42_bind_fd, "f3"));
++
++	EXPECT_EQ(variant->expected_same_dir_rename_result,
++		  test_renameat(s1d42_bind_fd, "f4", s1d42_bind_fd, "f5"));
++}
++
++/*
++ * layout5_disconnected_branch before rename:
++ *
++ * tmp
++ * ├── s1d1
++ * │   └── s1d2 [source of the first bind mount]
++ * │       └── s1d3
++ * │           ├── s1d41
++ * │           │   ├── f1
++ * │           │   └── f2
++ * │           └── s1d42
++ * │               ├── f3
++ * │               └── f4
++ * ├── s2d1
++ * │   └── s2d2 [source of the second bind mount]
++ * │       └── s2d3
++ * │           └── s2d4 [first s1d2 bind mount]
++ * │               └── s1d3
++ * │                   ├── s1d41
++ * │                   │   ├── f1
++ * │                   │   └── f2
++ * │                   └── s1d42
++ * │                       ├── f3
++ * │                       └── f4
++ * ├── s3d1
++ * │   └── s3d2 [second s2d2 bind mount]
++ * │       └── s2d3
++ * │           └── s2d4 [first s1d2 bind mount]
++ * │               └── s1d3
++ * │                   ├── s1d41
++ * │                   │   ├── f1
++ * │                   │   └── f2
++ * │                   └── s1d42
++ * │                       ├── f3
++ * │                       └── f4
++ * └── s4d1
++ *
++ * After rename:
++ *
++ * tmp
++ * ├── s1d1
++ * │   └── s1d2 [source of the first bind mount]
++ * │       └── s1d3
++ * │           ├── s1d41
++ * │           │   ├── f1
++ * │           │   └── f2
++ * │           └── s1d42
++ * │               ├── f3
++ * │               └── f4
++ * ├── s2d1
++ * │   └── s2d2 [source of the second bind mount]
++ * ├── s3d1
++ * │   └── s3d2 [second s2d2 bind mount]
++ * └── s4d1
++ *     └── s2d3 [renamed here]
++ *         └── s2d4 [first s1d2 bind mount]
++ *             └── s1d3
++ *                 ├── s1d41
++ *                 │   ├── f1
++ *                 │   └── f2
++ *                 └── s1d42
++ *                     ├── f3
++ *                     └── f4
++ *
++ * Decision path: s1d3 -> s1d2 -> s2d2 -> s3d1 -> tmp
++ * s2d3 is ignored, as well as the directories under the mount points.
++ */
++
++/* clang-format off */
++FIXTURE(layout5_disconnected_branch) {
++	int s2d4_fd, s3d2_fd;
++};
++/* clang-format on */
++
++FIXTURE_SETUP(layout5_disconnected_branch)
++{
++	prepare_layout(_metadata);
++
++	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d3/s1d41/f1");
++	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d3/s1d41/f2");
++	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d3/s1d42/f3");
++	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d3/s1d42/f4");
++	create_directory(_metadata, TMP_DIR "/s2d1/s2d2/s2d3/s2d4");
++	create_directory(_metadata, TMP_DIR "/s3d1/s3d2");
++	create_directory(_metadata, TMP_DIR "/s4d1");
++
++	self->s2d4_fd = open(TMP_DIR "/s2d1/s2d2/s2d3/s2d4",
++			     O_DIRECTORY | O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, self->s2d4_fd);
++
++	self->s3d2_fd =
++		open(TMP_DIR "/s3d1/s3d2", O_DIRECTORY | O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, self->s3d2_fd);
++
++	set_cap(_metadata, CAP_SYS_ADMIN);
++	ASSERT_EQ(0, mount(TMP_DIR "/s1d1/s1d2", TMP_DIR "/s2d1/s2d2/s2d3/s2d4",
++			   NULL, MS_BIND, NULL));
++	ASSERT_EQ(0, mount(TMP_DIR "/s2d1/s2d2", TMP_DIR "/s3d1/s3d2", NULL,
++			   MS_BIND | MS_REC, NULL));
++	clear_cap(_metadata, CAP_SYS_ADMIN);
++}
++
++FIXTURE_TEARDOWN_PARENT(layout5_disconnected_branch)
++{
++	/* Bind mounts are handled by namespace lifetime. */
++
++	/* Removes files after renames. */
++	remove_path(TMP_DIR "/s1d1/s1d2/s1d3/s1d41/f1");
++	remove_path(TMP_DIR "/s1d1/s1d2/s1d3/s1d41/f2");
++	remove_path(TMP_DIR "/s1d1/s1d2/s1d3/s1d42/f1");
++	remove_path(TMP_DIR "/s1d1/s1d2/s1d3/s1d42/f3");
++	remove_path(TMP_DIR "/s1d1/s1d2/s1d3/s1d42/f4");
++	remove_path(TMP_DIR "/s1d1/s1d2/s1d3/s1d42/f5");
++
++	cleanup_layout(_metadata);
++}
++
++FIXTURE_VARIANT(layout5_disconnected_branch)
++{
++	/*
++	 * Parent of all files.  It should always be enforced when testing against
++	 * files under the s1d41 or s1d42 disconnected directories.
++	 */
++	const __u64 allowed_base;
++	/*
++	 * Parent of the first bind mount source.  It should always be ignored when
++	 * testing against files under the s1d41 or s1d42 disconnected directories.
++	 */
++	const __u64 allowed_s1d1;
++	const __u64 allowed_s1d2;
++	const __u64 allowed_s1d3;
++	const __u64 allowed_s2d1;
++	const __u64 allowed_s2d2;
++	const __u64 allowed_s2d3;
++	const __u64 allowed_s2d4;
++	const __u64 allowed_s3d1;
++	const __u64 allowed_s3d2;
++	const __u64 allowed_s4d1;
++
++	/* Expected result of the call to open([fd:s1d3]/s1d41/f1, O_RDONLY). */
++	const int expected_read_result;
++	/*
++	 * Expected result of the call to renameat([fd:s1d3]/s1d41/f1,
++	 * [fd:s1d3]/s1d42/f1).
++	 */
++	const int expected_rename_result;
++	/*
++	 * Expected result of the call to renameat([fd:s1d3]/s1d41/f2,
++	 * [fd:s1d3]/s1d42/f3,  RENAME_EXCHANGE).
++	 */
++	const int expected_exchange_result;
++	/*
++	 * Expected result of the call to renameat([fd:s1d3]/s1d42/f4,
++	 * [fd:s1d3]/s1d42/f5).
++	 */
++	const int expected_same_dir_rename_result;
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s1d1_mount1_src_parent) {
++	/* clang-format on */
++	.allowed_s1d1 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s1d2_mount1_src_refer) {
++	/* clang-format on */
++	.allowed_s1d2 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_READ_FILE,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s1d2_mount1_src_create) {
++	/* clang-format on */
++	.allowed_s1d2 = LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = EXDEV,
++	.expected_exchange_result = EXDEV,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s1d2_mount1_src_rename) {
++	/* clang-format on */
++	.allowed_s1d2 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = 0,
++	.expected_exchange_result = 0,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s1d3_fd_refer) {
++	/* clang-format on */
++	.allowed_s1d3 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_READ_FILE,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s1d3_fd_create) {
++	/* clang-format on */
++	.allowed_s1d3 = LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = EXDEV,
++	.expected_exchange_result = EXDEV,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s1d3_fd_rename) {
++	/* clang-format on */
++	.allowed_s1d3 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = 0,
++	.expected_exchange_result = 0,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s1d3_fd_full) {
++	/* clang-format on */
++	.allowed_s1d3 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = 0,
++	.expected_exchange_result = 0,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s2d1_mount2_src_parent) {
++	/* clang-format on */
++	.allowed_s2d1 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s2d2_mount2_src_refer) {
++	/* clang-format on */
++	.allowed_s2d2 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_READ_FILE,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s2d2_mount2_src_create) {
++	/* clang-format on */
++	.allowed_s2d2 = LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = EXDEV,
++	.expected_exchange_result = EXDEV,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s2d2_mount2_src_rename) {
++	/* clang-format on */
++	.allowed_s2d2 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = 0,
++	.expected_exchange_result = 0,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s2d3_mount1_dst_parent) {
++	/* clang-format on */
++	.allowed_s2d3 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s2d4_mount1_dst) {
++	/* clang-format on */
++	.allowed_s2d4 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s3d1_mount2_dst_parent_refer) {
++	/* clang-format on */
++	.allowed_s3d1 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_READ_FILE,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s3d1_mount2_dst_parent_create) {
++	/* clang-format on */
++	.allowed_s3d1 = LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = 0,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = EXDEV,
++	.expected_exchange_result = EXDEV,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s3d1_mount2_dst_parent_rename) {
++	/* clang-format on */
++	.allowed_s3d1 = LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = 0,
++	.expected_rename_result = 0,
++	.expected_exchange_result = 0,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s3d2_mount1_dst) {
++	/* clang-format on */
++	.allowed_s3d2 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(layout5_disconnected_branch, s4d1_rename_parent) {
++	/* clang-format on */
++	.allowed_s4d1 = LANDLOCK_ACCESS_FS_REFER |
++			LANDLOCK_ACCESS_FS_READ_FILE |
++			LANDLOCK_ACCESS_FS_EXECUTE |
++			LANDLOCK_ACCESS_FS_MAKE_REG,
++	.expected_read_result = EACCES,
++	.expected_same_dir_rename_result = EACCES,
++	.expected_rename_result = EACCES,
++	.expected_exchange_result = EACCES,
++};
++
++TEST_F_FORK(layout5_disconnected_branch, read_rename_exchange)
++{
++	const __u64 handled_access =
++		LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_READ_FILE |
++		LANDLOCK_ACCESS_FS_EXECUTE | LANDLOCK_ACCESS_FS_MAKE_REG;
++	const struct rule rules[] = {
++		{
++			.path = TMP_DIR "/s1d1",
++			.access = variant->allowed_s1d1,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2",
++			.access = variant->allowed_s1d2,
++		},
++		{
++			.path = TMP_DIR "/s1d1/s1d2/s1d3",
++			.access = variant->allowed_s1d3,
++		},
++		{
++			.path = TMP_DIR "/s2d1",
++			.access = variant->allowed_s2d1,
++		},
++		{
++			.path = TMP_DIR "/s2d1/s2d2",
++			.access = variant->allowed_s2d2,
++		},
++		{
++			.path = TMP_DIR "/s2d1/s2d2/s2d3",
++			.access = variant->allowed_s2d3,
++		},
++		/* s2d4_fd */
++		{
++			.path = TMP_DIR "/s3d1",
++			.access = variant->allowed_s3d1,
++		},
++		/* s3d2_fd */
++		{
++			.path = TMP_DIR "/s4d1",
++			.access = variant->allowed_s4d1,
++		},
++		{},
++	};
++	int ruleset_fd, s1d3_bind_fd;
++
++	ruleset_fd = create_ruleset(_metadata, handled_access, rules);
++	ASSERT_LE(0, ruleset_fd);
++
++	/* Adds rules for the covered directories. */
++	if (variant->allowed_s2d4) {
++		ASSERT_EQ(0, landlock_add_rule(
++				     ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
++				     &(struct landlock_path_beneath_attr){
++					     .parent_fd = self->s2d4_fd,
++					     .allowed_access =
++						     variant->allowed_s2d4,
++				     },
++				     0));
++	}
++	EXPECT_EQ(0, close(self->s2d4_fd));
++
++	if (variant->allowed_s3d2) {
++		ASSERT_EQ(0, landlock_add_rule(
++				     ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
++				     &(struct landlock_path_beneath_attr){
++					     .parent_fd = self->s3d2_fd,
++					     .allowed_access =
++						     variant->allowed_s3d2,
++				     },
++				     0));
++	}
++	EXPECT_EQ(0, close(self->s3d2_fd));
++
++	s1d3_bind_fd = open(TMP_DIR "/s3d1/s3d2/s2d3/s2d4/s1d3",
++			    O_DIRECTORY | O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, s1d3_bind_fd);
++
++	/* Disconnects and checks source and destination directories. */
++	EXPECT_EQ(0, test_open_rel(s1d3_bind_fd, "../../..", O_DIRECTORY));
++	/* Renames to make it accessible through s3d1/s1d41 */
++	ASSERT_EQ(0, test_renameat(AT_FDCWD, TMP_DIR "/s2d1/s2d2/s2d3",
++				   AT_FDCWD, TMP_DIR "/s4d1/s2d3"));
++	EXPECT_EQ(ENOENT, test_open_rel(s1d3_bind_fd, "../../..", O_DIRECTORY));
++
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++
++	EXPECT_EQ(variant->expected_read_result,
++		  test_open_rel(s1d3_bind_fd, "s1d41/f1", O_RDONLY));
++
++	EXPECT_EQ(variant->expected_rename_result,
++		  test_renameat(s1d3_bind_fd, "s1d41/f1", s1d3_bind_fd,
++				"s1d42/f1"));
++	EXPECT_EQ(variant->expected_exchange_result,
++		  test_exchangeat(s1d3_bind_fd, "s1d41/f2", s1d3_bind_fd,
++				  "s1d42/f3"));
++
++	EXPECT_EQ(variant->expected_same_dir_rename_result,
++		  test_renameat(s1d3_bind_fd, "s1d42/f4", s1d3_bind_fd,
++				"s1d42/f5"));
++}
++
+ #define LOWER_BASE TMP_DIR "/lower"
+ #define LOWER_DATA LOWER_BASE "/data"
+ static const char lower_fl1[] = LOWER_DATA "/fl1";
 -- 
-2.43.0
+2.50.1
 
 
