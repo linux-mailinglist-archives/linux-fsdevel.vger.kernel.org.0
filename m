@@ -1,190 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-54658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20460B01EF3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 16:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9B3B02019
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 17:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ED6C646A45
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 14:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34EDF544551
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 15:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A7E2E6122;
-	Fri, 11 Jul 2025 14:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC912EA492;
+	Fri, 11 Jul 2025 15:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iX1o9G0t";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZczmLcnk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Q0gC33a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zb1CZyGS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q1+RXhgB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9333A2E499A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 14:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C3C2EA16B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 15:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752243633; cv=none; b=pY3B5ew/A5AzQZp6BEL8d3RTATkWd/OUee+C2GOjhDF1AL9/v0EO+GGMXCOL8aPZFd4Q9hg3MEkaQkuxXJM/lGuFkYdG3ptjKF3JtaG2zMPLjB+ZcNOLXGjvakhhOs5OsvmewdjC6Yyx557b/gQdQfx6UatmIIIzYyDnRHWI4YY=
+	t=1752246620; cv=none; b=l/lamUxjRO7QUMVZrVHwo5S7D+1PH0w21Rvtx/v2fRnFCc2KDPMEyNyc6NmeJ3/ojxFTtcvya0fZssyDQbbJ3G0miHpQeZQ2ChngWdt3hLz+5navFiOEVPaUW2m9MQwaRK2EOYvdRPB84wwrO9FNmOJ5oe3vdrPG2MH7I3j4xIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752243633; c=relaxed/simple;
-	bh=7s+5lhis6FojblF1jV+jgSnHEfFQLJl9si9HXVwN8ho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0eTNLNOOac9Thg9oYEvzJ/i6so6Mrc4rCEXsg+dA9TZHEngSDPbHU4y0aCrZvsZiy81tAI7M20FB+2IKwDa9bV4FluW3A9K3x295IzYkcRaH0LPmqu4RWn+YJeqjZmrY8x4G0AAMSfOmWN/TfVx4Eh6QBpsMsaDGnsXkC6C9Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iX1o9G0t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZczmLcnk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Q0gC33a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zb1CZyGS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1752246620; c=relaxed/simple;
+	bh=vl5/+yZjr/5bLFxQsllWnUlwlQ8txEkCdIKXTXUNMmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MM5OoHYLNonaztopsmiF064Ym/ZBgs8Y5ZpkQCTQDZ/8YmEG8ubdyKkp2RGzWrMIOyDC0NEFqaKF0VziqCyohabDOrO0dv+S78mK2ZBlmpACFukMW24oRwH1UI24dAvoSoViouRmJKdE3kOoRQdpicmhBsivpxZVilH7E7j/hJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q1+RXhgB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752246618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1Wi1ac6epZO5NoWEvSel2tFSY9RY1xohxrC8k+pRSGw=;
+	b=Q1+RXhgBgxauyO3b+0gjlaUdcnvW5MNYBL6tgOA32Dk1c8OPqYSC9yZDHQkQTG+P4ni36e
+	04SYNVaqbUSQIqpAMl8I/r9+B1sVfwt6gK+eEgVpNriYEcOZ7D738mD6ovRwh2Hbq4a2ec
+	6VJCEuP42qC0fDp1rpBqsZT5ZmkfHDE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-13-8CWVbDW_MRW249P7RwTGIw-1; Fri,
+ 11 Jul 2025 11:10:15 -0400
+X-MC-Unique: 8CWVbDW_MRW249P7RwTGIw-1
+X-Mimecast-MFC-AGG-ID: 8CWVbDW_MRW249P7RwTGIw_1752246612
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ED3021F451;
-	Fri, 11 Jul 2025 14:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752243630; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=;
-	b=iX1o9G0tQdGrIsFeduAag1UKYp0cCjcMneL5vkrGGsPO92IZ2wxRp3jlmkahOOPG6WWUdv
-	kphrQqTmuCs0hFXOYtVS/MTvH2l2OLesUm41gQ9wmp2cCzNfPFtwMVQvJjSqo+rsQgFnL2
-	AMVwa6gD0pvN07DATLyiZYLUdKljBsQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752243630;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=;
-	b=ZczmLcnkQK5dNLlNTg8btwaNoh3cOk1Vp66mW8PYqJOkMEfNWn+8CqQJvQTp6bEmbseXU7
-	uZsBkQaJmbIzZ5CQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752243629; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=;
-	b=0Q0gC33a1LGOhCbS2e7YuGBLzHB9x14F4WpfW+gopjwadYEbCJBLsXBX1lrlouwrAzrte8
-	Ja2l7L3cX4rIo5fBm9TI3OIj2eDgYJhQcbpHguaCI/kUbudLCh5yRivfoo+5PhBxoWhjQZ
-	cz2QUREuEnRdT0PPcT2EjFDPWJ86WlE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752243629;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=;
-	b=zb1CZyGS3J1toAy5quPu7DqexLZJc5vm8joEbFL90hWTmpTZCle3U5zFrK6F+5uIBXY376
-	tOkCVn3qxUstlVCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D9000138A5;
-	Fri, 11 Jul 2025 14:20:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qT+vNK0dcWjEUQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 11 Jul 2025 14:20:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 57DE8A099A; Fri, 11 Jul 2025 16:20:24 +0200 (CEST)
-Date: Fri, 11 Jul 2025 16:20:24 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>, 
-	Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Qu Wenruo <quwenruo.btrfs@gmx.com>, Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] fs: enhance and rename shutdown() callback to
- remove_bdev()
-Message-ID: <icnwgogkmgui2kzshst23dujkqdghiwpd62giipxyrbdkyf6bo@lf52wyqpnxn2>
-References: <343vlonfhw76mnbjnysejihoxsjyp2kzwvedhjjjml4ccaygbq@72m67s3e2ped>
- <y2rpp6u6pksjrzgxsn5rtcsl2vspffkcbtu6tfzgo7thn7g23p@7quhaixfx5yh>
- <kgolzhhd47x3iqkdrwyzh65ng4mm6cauxdjgiao2otztncyc3f@rskadwaph2l5>
- <5xno4s25lsd2sqq6judn7moorgy2h3konejgassnzlccfa6jsf@ez6ciofy3bwp>
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DFC2D18011EE;
+	Fri, 11 Jul 2025 15:10:11 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.2])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7CAB71956094;
+	Fri, 11 Jul 2025 15:10:08 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Alex Markuze <amarkuze@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] netfs: Fix use of fscache with ceph
+Date: Fri, 11 Jul 2025 16:09:59 +0100
+Message-ID: <20250711151005.2956810-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5xno4s25lsd2sqq6judn7moorgy2h3konejgassnzlccfa6jsf@ez6ciofy3bwp>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmx.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,fromorbit.com,kernel.org,gmx.com,suse.com,vger.kernel.org,zeniv.linux.org.uk,lists.sourceforge.net,lists.linux.dev];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu 10-07-25 14:41:18, Kent Overstreet wrote:
-> On Thu, Jul 10, 2025 at 03:10:04PM +0200, Jan Kara wrote:
-> > On Wed 09-07-25 13:49:12, Kent Overstreet wrote:
-> > > On Wed, Jul 09, 2025 at 07:23:07PM +0200, Jan Kara wrote:
-> > > > > It also avoids the problem of ->mark_dead events being generated
-> > > > > from a context that holds filesystem/vfs locks and then deadlocking
-> > > > > waiting for those locks to be released.
-> > > > > 
-> > > > > IOWs, a multi-device filesystem should really be implementing
-> > > > > ->mark_dead itself, and should not be depending on being able to
-> > > > > lock the superblock to take an active reference to it.
-> > > > > 
-> > > > > It should be pretty clear that these are not issues that the generic
-> > > > > filesystem ->mark_dead implementation should be trying to
-> > > > > handle.....
-> > > > 
-> > > > Well, IMO every fs implementation needs to do the bdev -> sb transition and
-> > > > make sb somehow stable. It may be that grabbing s_umount and active sb
-> > > > reference is not what everybody wants but AFAIU btrfs as the second
-> > > > multi-device filesystem would be fine with that and for bcachefs this
-> > > > doesn't work only because they have special superblock instantiation
-> > > > behavior on mount for independent reasons (i.e., not because active ref
-> > > > + s_umount would be problematic for them) if I understand Kent right.
-> > > > So I'm still not fully convinced each multi-device filesystem should be
-> > > > shipping their special method to get from device to stable sb reference.
-> > > 
-> > > Honestly, the sync_filesystem() call seems bogus.
-> > > 
-> > > If the block device is truly dead, what's it going to accomplish?
-> > 
-> > Notice that fs_bdev_mark_dead() calls sync_filesystem() only in case
-> > 'surprise' argument is false - meaning this is actually a notification
-> > *before* the device is going away. I.e., graceful device hot unplug when
-> > you can access the device to clean up as much as possible.
-> 
-> That doesn't seem to be hooked up to anything?
+Hi Christian,
 
-__del_gendisk()
-  if (!test_bit(GD_DEAD, &disk->state))
-    blk_report_disk_dead(disk, false);
+Here are a couple of patches that fix the use of fscaching with ceph:
 
-Is the path which results in "surprise" to be false. I have to admit I
-didn't check deeper into drivers whether this is hooked up properly but
-del_gendisk() is a standard call to tear down a disk so it would seem so
-from the first glance.
+ (1) Fix the read collector to mark the write request that it creates to copy
+     data to the cache with NETFS_RREQ_OFFLOAD_COLLECTION so that it will run
+     the write collector on a workqueue as it's meant to run in the background
+     and the app isn't going to wait for it.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ (2) Fix the read collector to wake up the copy-to-cache write request after
+     it sets NETFS_RREQ_ALL_QUEUED if the write request doesn't have any
+     subrequests left on it.  ALL_QUEUED indicates that there won't be any
+     more subreqs coming and the collector should clean up - except that an
+     event is needed to trigger that, but it only gets events from subreq
+     termination and so the last event can beat us to setting ALL_QUEUED.
+
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
+
+Thanks,
+David
+
+David Howells (2):
+  netfs: Fix copy-to-cache so that it performs collection with
+    ceph+fscache
+  netfs: Fix race between cache write completion and ALL_QUEUED being
+    set
+
+ fs/netfs/read_pgpriv2.c      |  5 +++++
+ include/trace/events/netfs.h | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
+
 
