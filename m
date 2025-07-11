@@ -1,88 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-54668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8077EB02141
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 18:09:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F60B02178
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 18:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F778585603
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 16:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80AE418869AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 16:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA62B2EF293;
-	Fri, 11 Jul 2025 16:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36012EF2BD;
+	Fri, 11 Jul 2025 16:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WtmlqoxA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aCFRpgJv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A3E2EF28C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 16:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2D2D29B1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 16:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752250143; cv=none; b=JQU/4VY3HNKtJpwgHD+rrEyoKsE5CPZQKA0wxtvhd+PQGByuDVyzY6PIc9dy9Tkf67XESzVFe1BYZZbQhnVNfHId8Qsp5/6HYDDaYlgY1VNb621fnfy7NJaBU3Gr2159N75VD+p6eaktSf/dTqm1srrJxBh9rtu0UQzThzQsh8w=
+	t=1752250561; cv=none; b=EZFkM95fM/A/2hmvoXpez+gufO7LrUmDpHMEKmFUGuhV8Wt8b5AYC6maGeagl2XqXt2+SgYZag0os/Uq+7cp4iCS4OM7R+zGqR+IKe3PHxyeb9XuOar2dL0GLuJyQl9w5oHRx97ni73cDKs0bo4yh7qtW1VvPhYvEDsaybRucuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752250143; c=relaxed/simple;
-	bh=JPB6gAXGCTid4CIekWWwDK3Km+g1N9mMWAgfD/eRVeg=;
+	s=arc-20240116; t=1752250561; c=relaxed/simple;
+	bh=GaTXTSHhNy3zov9cV9sYYuEC/xhj+9jFrbDYc2p4QMU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWsSsB2XzaTBgB6Q3OiOvRBiqCXnOu78RQzmbIndIx5Nt4OWGs5ACh16WCLxYWLo1TcUJ0xL5Z9Rd8+zs3FaSVlWjYnDuQn1ypAsnnmwrVIRajYOZKTxZDfpHjzOmrnaE2mTVjFPdIv+muHjsRUervyfrd5p6KpPE0I7k/xvhKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WtmlqoxA; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=mYw8s+ye0vC3DUPLn4gqYognk712kiAdlvQGO2ssJ/RAf3JM+oGFXE0rFwRdFo/58lvkAdhW4VkT5bbBPfmcU82wAFcHChsLKKNXVr13gAFWqupmJknRzyU95M9GM2a5WhwizWo8TzU2GV1CIKM6ZxbawGOASbPL+tPXJh+NA9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aCFRpgJv; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752250140;
+	s=mimecast20190719; t=1752250558;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sWRifwM6LmNFYsjOSVY+1cdnVJWlu7pGI1FDkTerRIs=;
-	b=WtmlqoxASsJCkQlzWcfIZ9t/Mn1HzurmTx1v6OsPYls5G78INQ8555Q4UpDGYwgCQP0ydE
-	k79baHjkZHrqJl4G44okgi5cx+YrejHBewMBFvnE7B/LO7QjeS6VODzazVtU/pSfJ0crqB
-	yW5oqKb+wyINAK5IrhamjOeoBqqQuWg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=B4PdbUTlAoNvyMFKR6OePMk99FSDqKOEu6bezLg3CZ0=;
+	b=aCFRpgJvJI0fSTC4JCmHVnCCMOo91Fxfe3RHl2oIwzjVN/MooPnsUoXk295CtEMTNCtjyF
+	gBMJLULU38jUDbJOo3E4VfdXgvG7EP8b8Ra7ncV6sIGsSXxvo4IZMDKmxHrS49DuIMn1Ic
+	qhciAY8TXc5CR23EgisreC4NUBFbrbQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-182-zUfDnnWaPs2ndr_9nd1AgQ-1; Fri, 11 Jul 2025 12:08:59 -0400
-X-MC-Unique: zUfDnnWaPs2ndr_9nd1AgQ-1
-X-Mimecast-MFC-AGG-ID: zUfDnnWaPs2ndr_9nd1AgQ_1752250137
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-450df53d461so17615395e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 09:08:57 -0700 (PDT)
+ us-mta-80-SbErz1ANMXqwLPLFewWYwQ-1; Fri, 11 Jul 2025 12:15:56 -0400
+X-MC-Unique: SbErz1ANMXqwLPLFewWYwQ-1
+X-Mimecast-MFC-AGG-ID: SbErz1ANMXqwLPLFewWYwQ_1752250555
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-455f79a2a16so2935895e9.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 09:15:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752250137; x=1752854937;
+        d=1e100.net; s=20230601; t=1752250555; x=1752855355;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=sWRifwM6LmNFYsjOSVY+1cdnVJWlu7pGI1FDkTerRIs=;
-        b=tUYuSJz5KZYl4fWjSRN1MDx98hMOUgERraQV1uXToeNX8sk0NDQvpST6IaZWabSmkJ
-         VPH89J+g270AxifFC+x3YQFUDEntCqQ6h3XXRxAzOmUAiKDHm7cW4lhNkhlSxvrf+xgV
-         XEbaJgPanbgYL3SuNrcCdtuZPqC9KGYebDXFQ1JoBh2DEkywp2z8krlsY0CDKB6nB8z7
-         0lqeY8JPDf1LJdvR97+IBafWxEcErWsQ9g8iTavjSP7dUXZ+2u4JlZCw5vGhUqAj7mVu
-         4rQUcuu43SDLbLLJ03vzQIOjZLLAYfh1IoTIvsyiZ/2dyZfPH9nBb6qBZVmo48i8RX6q
-         1LEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLziZZnJ6UVxNKbn4343enGpXiozpdP+x4wiC3J3/DUqtJ6ImXgoiwrgnu0/ZwoAqeFB1iU0uiqZkoBt7S@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpa0MSWshm52Le3kHKU6p3MiKXzlX5jVzdWnselFTtbqzK2LZq
-	aPPqDWo8qQrvg7ccIdY8Iw4Y1cX2GGYWAkXD0I98CDHIBXO0KFAWdisLYOmo3OhRtycTrMLOhWz
-	UGRTOZM2/nflWjTsF0OTo7IZLQlXAXvkI0oMzVn2MLaW1jMATueFm9A6bCXMb6hmyDUA=
-X-Gm-Gg: ASbGncuEn5adYV6QFyT1EJtn4gaOujbQjVNdOYl6iEjRL4yfi82XedGpqHCc+0W3FvS
-	sgh/gUcB/jZCFt9omZgdOv/bsxn9eTUV/gO/9AbNlgPOCcWPmq08EYyFtoeyipqnnU9aSzCI6aV
-	/RIyotjSC2G3MRxQ4EfPzmyD9d/cb4RA1gIE+aENn1SK9eniaiBrz7l1P9ux9rZXn58smU4U17B
-	p12Qfgojt9kT6sBZk+8Lp/1ORtMCAQf1KA+dBWNwYzrfjl3xKPjk1UjvkWvqV/Mh2qDf/glN6lK
-	5A2TuBb99n+BrFoZ4sfE6OwHz++G+jdFu8sYyXoabhGneF4ToLcJEnbC+5cOnRrRuaeSqbuB1I7
-	mIsdDMcc8ZLZHG36uFleNMZsKgfNLiJbxlkPxNcCwMuZuGlRN90tXFV5MkCtvtWoYl9Q=
-X-Received: by 2002:a05:6000:2106:b0:3a0:9dfc:da4 with SMTP id ffacd0b85a97d-3b5f18e8186mr2457644f8f.42.1752250136521;
-        Fri, 11 Jul 2025 09:08:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGrdLCVxQFXDZoHWBaArvI/JWAko/gQrTQgMVVG+YPHP+uyYAD1kv7dPFG807wqoEEoqy7oPQ==
-X-Received: by 2002:a05:6000:2106:b0:3a0:9dfc:da4 with SMTP id ffacd0b85a97d-3b5f18e8186mr2457608f8f.42.1752250135821;
-        Fri, 11 Jul 2025 09:08:55 -0700 (PDT)
+        bh=B4PdbUTlAoNvyMFKR6OePMk99FSDqKOEu6bezLg3CZ0=;
+        b=brfrdBqm9aC85KFKKatKThw5oRZfY4VI1X55R2Vm3SOgtZ4PMHbTpHOmxho8SGefkR
+         pHN2dA3FLJ6lbRmUuw6moyj0WJr3zGmK6pO5GWIyIzFnW9UpFtBohgjDArkR9Z6znjT/
+         Khwc6yIC7Lm6gzvJcKOg9/GJMivLF3VZL6EYqBlsN3/5SXPxddVKOzoADRHi0xb97s9D
+         k791V9CzJrarxmHTbvdalb6OW6f18UET/QkHET9F4YC1A9HlyjXo/ZgdJr2bvZ0Q8hvX
+         Yx8hMItmPscu7K2/D5YQcr8iEpRpHP0qwfvO2s+u9vs8NdgxCmySgySkocqj6IfbJw4M
+         B8Zg==
+X-Gm-Message-State: AOJu0YyejDMGj1uzlABsbNzj7tuiGwWHUtT01uY7O77ORhAEO0qaa8WR
+	4nnf1/1Ynv5baEHFqmei/IKrQASrWbt0Q2eNTVQxTHz3Nkh0jQLM7xlvqfrON0btHNcHeI522ca
+	gF55zoPrQCASuuXrYP81+6lRftGKMfkKBACd1tY9y3j8mSdbG3Joda4wF+V/ljLIGo0w=
+X-Gm-Gg: ASbGncsr/mYmxYyWosGc1Y5CakYTDoy53tOm5/ynTIe5zWpkHUNzEg5GiAQ+cCuGvl8
+	3ag5YO6xFXca80PDyDT6Jgwos7w7MAvNYk+z8V4bNJIvCho5i7DNdWXcRLoJuNggDmQnxrGPXkx
+	Zn4dgIkp69q5DWF4lGNEZbwnM8jsvP9jc9Rpt6zsa6M4jKJnKrMCONCR16/4IZt5o5yWSKZtS+a
+	FQAEQjVg3W8Pp7/tMxcg6p3wZuokzBYVCdFHQLuNdvYmO6eT4pXrLftWrtK5hRGhLdRQk5rvxbi
+	Ka3q0cnemEydWiJ924NojgsOYVPff2a19ICEkj6HpO79A2LT7GFEw9qw6sHoN62y1Vdz5bMMjZT
+	axNlm/GgO07nsiZf4On+Oo9meKnAOPOpTj65xY+28pb8DcnIoL4lrAkj0Grj81ycPFzg=
+X-Received: by 2002:a05:600c:4684:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-454ec276b88mr40690225e9.18.1752250554856;
+        Fri, 11 Jul 2025 09:15:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1a5E76BIpgezsbveDVnmxTjzk9mC3/6Cc7fl4zhaGnS7tXf6VRuARN3jKkYuVE7SAT26gyA==
+X-Received: by 2002:a05:600c:4684:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-454ec276b88mr40689655e9.18.1752250554433;
+        Fri, 11 Jul 2025 09:15:54 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd537785sm52075745e9.23.2025.07.11.09.08.54
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d5f5sm4888486f8f.56.2025.07.11.09.15.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 09:08:54 -0700 (PDT)
-Message-ID: <e80c3fdd-782e-4857-810e-5b7384448154@redhat.com>
-Date: Fri, 11 Jul 2025 18:08:53 +0200
+        Fri, 11 Jul 2025 09:15:54 -0700 (PDT)
+Message-ID: <479b493c-92c4-424a-a5c0-1c29a4325d15@redhat.com>
+Date: Fri, 11 Jul 2025 18:15:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,15 +89,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/filemap: Align last_index to folio size
-To: Youling Tang <youling.tang@linux.dev>,
- Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, chizhiling@163.com,
- Youling Tang <tangyouling@kylinos.cn>, Chi Zhiling <chizhiling@kylinos.cn>,
+Subject: Re: [PATCH] readahead: Use folio_nr_pages() instead of shift
+ operation
+To: Chi Zhiling <chizhiling@163.com>, willy@infradead.org,
+ akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>,
  Ryan Roberts <ryan.roberts@arm.com>
-References: <20250711055509.91587-1-youling.tang@linux.dev>
+References: <20250710060451.3535957-1-chizhiling@163.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -146,151 +144,38 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250711055509.91587-1-youling.tang@linux.dev>
+In-Reply-To: <20250710060451.3535957-1-chizhiling@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-CCing Ryan, who recently fiddled with readahead.
-
-
-On 11.07.25 07:55, Youling Tang wrote:
-> From: Youling Tang <tangyouling@kylinos.cn>
+On 10.07.25 08:04, Chi Zhiling wrote:
+> From: Chi Zhiling <chizhiling@kylinos.cn>
 > 
-> On XFS systems with pagesize=4K, blocksize=16K, and CONFIG_TRANSPARENT_HUGEPAGE
-> enabled, We observed the following readahead behaviors:
->   # echo 3 > /proc/sys/vm/drop_caches
->   # dd if=test of=/dev/null bs=64k count=1
->   # ./tools/mm/page-types -r -L -f  /mnt/xfs/test
->   foffset	offset	flags
->   0	136d4c	__RU_l_________H______t_________________F_1
->   1	136d4d	__RU_l__________T_____t_________________F_1
->   2	136d4e	__RU_l__________T_____t_________________F_1
->   3	136d4f	__RU_l__________T_____t_________________F_1
->   ...
->   c	136bb8	__RU_l_________H______t_________________F_1
->   d	136bb9	__RU_l__________T_____t_________________F_1
->   e	136bba	__RU_l__________T_____t_________________F_1
->   f	136bbb	__RU_l__________T_____t_________________F_1   <-- first read
->   10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
->   11	13c2cd	___U_l__________T_____t______________I__F_1
->   12	13c2ce	___U_l__________T_____t______________I__F_1
->   13	13c2cf	___U_l__________T_____t______________I__F_1
->   ...
->   1c	1405d4	___U_l_________H______t_________________F_1
->   1d	1405d5	___U_l__________T_____t_________________F_1
->   1e	1405d6	___U_l__________T_____t_________________F_1
->   1f	1405d7	___U_l__________T_____t_________________F_1
->   [ra_size = 32, req_count = 16, async_size = 16]
+> folio_nr_pages() is faster helper function to get the number of pages
+> when NR_PAGES_IN_LARGE_FOLIO is enabled.
 > 
->   # echo 3 > /proc/sys/vm/drop_caches
->   # dd if=test of=/dev/null bs=60k count=1
->   # ./page-types -r -L -f  /mnt/xfs/test
->   foffset	offset	flags
->   0	136048	__RU_l_________H______t_________________F_1
->   ...
->   c	110a40	__RU_l_________H______t_________________F_1
->   d	110a41	__RU_l__________T_____t_________________F_1
->   e	110a42	__RU_l__________T_____t_________________F_1   <-- first read
->   f	110a43	__RU_l__________T_____t_________________F_1   <-- first readahead flag
->   10	13e7a8	___U_l_________H______t_________________F_1
->   ...
->   20	137a00	___U_l_________H______t_______P______I__F_1   <-- second readahead flag (20 - 2f)
->   21	137a01	___U_l__________T_____t_______P______I__F_1
->   ...
->   3f	10d4af	___U_l__________T_____t_______P_________F_1
->   [first readahead: ra_size = 32, req_count = 15, async_size = 17]
-> 
-> When reading 64k data (same for 61-63k range, where last_index is page-aligned
-> in filemap_get_pages()), 128k readahead is triggered via page_cache_sync_ra()
-> and the PG_readahead flag is set on the next folio (the one containing 0x10 page).
-> 
-> When reading 60k data, 128k readahead is also triggered via page_cache_sync_ra().
-> However, in this case the readahead flag is set on the 0xf page. Although the
-> requested read size (req_count) is 60k, the actual read will be aligned to
-> folio size (64k), which triggers the readahead flag and initiates asynchronous
-> readahead via page_cache_async_ra(). This results in two readahead operations
-> totaling 256k.
-> 
-> The root cause is that when the requested size is smaller than the actual read
-> size (due to folio alignment), it triggers asynchronous readahead. By changing
-> last_index alignment from page size to folio size, we ensure the requested size
-> matches the actual read size, preventing the case where a single read operation
-> triggers two readahead operations.
-> 
-> After applying the patch:
->   # echo 3 > /proc/sys/vm/drop_caches
->   # dd if=test of=/dev/null bs=60k count=1
->   # ./page-types -r -L -f  /mnt/xfs/test
->   foffset	offset	flags
->   0	136d4c	__RU_l_________H______t_________________F_1
->   1	136d4d	__RU_l__________T_____t_________________F_1
->   2	136d4e	__RU_l__________T_____t_________________F_1
->   3	136d4f	__RU_l__________T_____t_________________F_1
->   ...
->   c	136bb8	__RU_l_________H______t_________________F_1
->   d	136bb9	__RU_l__________T_____t_________________F_1
->   e	136bba	__RU_l__________T_____t_________________F_1   <-- first read
->   f	136bbb	__RU_l__________T_____t_________________F_1
->   10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
->   11	13c2cd	___U_l__________T_____t______________I__F_1
->   12	13c2ce	___U_l__________T_____t______________I__F_1
->   13	13c2cf	___U_l__________T_____t______________I__F_1
->   ...
->   1c	1405d4	___U_l_________H______t_________________F_1
->   1d	1405d5	___U_l__________T_____t_________________F_1
->   1e	1405d6	___U_l__________T_____t_________________F_1
->   1f	1405d7	___U_l__________T_____t_________________F_1
->   [ra_size = 32, req_count = 16, async_size = 16]
-> 
-> The same phenomenon will occur when reading from 49k to 64k. Set the readahead
-> flag to the next folio.
-> 
-> Because the minimum order of folio in address_space equals the block size (at
-> least in xfs and bcachefs that already support bs > ps), having request_count
-> aligned to block size will not cause overread.
-> 
-> Co-developed-by: Chi Zhiling <chizhiling@kylinos.cn>
 > Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 > ---
->   include/linux/pagemap.h | 6 ++++++
->   mm/filemap.c            | 5 +++--
->   2 files changed, 9 insertions(+), 2 deletions(-)
+>   mm/readahead.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index e63fbfbd5b0f..447bb264fd94 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -480,6 +480,12 @@ mapping_min_folio_nrpages(struct address_space *mapping)
->   	return 1UL << mapping_min_folio_order(mapping);
->   }
->   
-> +static inline unsigned long
-> +mapping_min_folio_nrbytes(struct address_space *mapping)
-> +{
-> +	return mapping_min_folio_nrpages(mapping) << PAGE_SHIFT;
-> +}
-> +
->   /**
->    * mapping_align_index() - Align index for this mapping.
->    * @mapping: The address_space.
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 765dc5ef6d5a..56a8656b6f86 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2584,8 +2584,9 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
->   	unsigned int flags;
->   	int err = 0;
->   
-> -	/* "last_index" is the index of the page beyond the end of the read */
-> -	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
-> +	/* "last_index" is the index of the folio beyond the end of the read */
-> +	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
-> +	last_index >>= PAGE_SHIFT;
->   retry:
->   	if (fatal_signal_pending(current))
->   		return -EINTR;
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index 95a24f12d1e7..406756d34309 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -649,7 +649,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
+>   	 * Ramp up sizes, and push forward the readahead window.
+>   	 */
+>   	expected = round_down(ra->start + ra->size - ra->async_size,
+> -			1UL << folio_order(folio));
+> +			folio_nr_pages(folio));
+>   	if (index == expected) {
+>   		ra->start += ra->size;
+>   		/*
 
+This should probably get squashed in Ryans commit?
+
+LGTM
 
 -- 
 Cheers,
