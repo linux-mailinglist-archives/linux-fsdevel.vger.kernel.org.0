@@ -1,100 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-54677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0919AB021F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 18:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BB1B0220C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 18:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18510162ABD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 16:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E715A710D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 16:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D3B2EF9AD;
-	Fri, 11 Jul 2025 16:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF652EF29A;
+	Fri, 11 Jul 2025 16:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e04bJeVL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haAK98Co"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31722EF66A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 16:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D3F1A4F12;
+	Fri, 11 Jul 2025 16:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752251936; cv=none; b=sz2hikmOFdUuwtqAf1AonYK/HzJYlkB2UigoR/8pnFLdG5Ni3pCHKouFlEpFAIV/T2gZjxN0QGqr5CMckNFNnAUEaqNnXeXeeHa28lg8OIFHqNrPpmGCenJVp9QImbkwN+rABY5xB9XZkEj6D+gCt7JB4cj5l1LyNSGLsXXYJMk=
+	t=1752252093; cv=none; b=Jo5B2n4nwZDpqMuydiBIQD14UV/bwv7KLx+e7Mf9JdqQp7tOMX1CmwWFI8FpRCyNqr1o9cI1IG79BXO5bi5nJdIaOJVtJAGwuInI/0oO4kMcDa7QKOz9cCMdamB1u5Jv8fPj2R67XJYnAgHYGnpo4nFgNH0FrBnjDrtGOJXtK7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752251936; c=relaxed/simple;
-	bh=GUHNdNzh4MVenPnIJ3b3PJlz94KSj55El0YY2Y5dRbo=;
+	s=arc-20240116; t=1752252093; c=relaxed/simple;
+	bh=9rTcGgjVO2euGtYJImM1UGsSk8RY4Ol9x0NC5uoFEDM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JDuRbKmBdEI5ZxPHV+evJ39aUnkDpDsQ1ev7DNDTGt8OHXN9tV1TrGObfjaieT4RZSJ22pXs47cV4MeG3g2VzwFTC5tfyBT6PFI5cOO+8LPE+zN1T/aBIX6wbbZ4nP22oIiudVtnMbX0iovodIYQ74E23Fc7WMUueELJaQ7g3Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e04bJeVL; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-611d32903d5so261a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 09:38:54 -0700 (PDT)
+	 To:Cc:Content-Type; b=swYUCQoMEMr8RLwP6Pztyxedamu5yeKZ9raFt8pZwuN/Q+lFO/JhDx9EpcNh7iAEhdibEOMTRrY3Pt9tMA0FcwA/4AHjxsHwpOJ/lJFuTMyLAMt9DT/7S+HdRXddm4uWA0zvkTxk5scE79D9qvlI+So6J4FSmSwKKLKbdADoKhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haAK98Co; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae0c4945c76so367854866b.3;
+        Fri, 11 Jul 2025 09:41:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752251933; x=1752856733; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752252090; x=1752856890; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GUHNdNzh4MVenPnIJ3b3PJlz94KSj55El0YY2Y5dRbo=;
-        b=e04bJeVLhcRswe4mTIUzewlyQiA64c3rHvgp7J4vnEC8jv6gMUPdTIaaeqljIRXeMq
-         ttWFcFx0W7Me790mThOJdd5YNZCUYPPHGZjb/H0i7nUf8uf1xunGps8iWlCTbx5mtOmt
-         3FzXhKD3AOlvw51G30chEbIKtssSNuj12q4fECjRzDsa4XLq3X+H0z8wiBaOhVjyfDnY
-         Ghk9LVCnMgYMcvnPREauQcmj5wHeVOwnGqpDkKoXH3dHw/wC4RZ++kixW4H6hB1iQ5it
-         gdTpdLD/ozQFUkIiBKOEAQaU1AXDWkdAsWuZglaXz2IsygngyJHUh7QdZtGWVUo+v2jv
-         GsFg==
+        bh=sUG7Y34gLC/mpyqzJddNeDobUu/PZFQb7DYFa2YBA7A=;
+        b=haAK98Cod94/ErfVWXrtXoaLN08pNUVoFLREJgWRj2kc3KP4Eaxm9FSHxybEVXkuy+
+         99PS5kS+UpCdXOd6a3oM962WXH3GpbgL8o0uMVSbIXgFUNILs8evX5Y6Aw4jPUwGm3Us
+         ZqICot+R6zByR6w3nOcz6dn2AEdjz4872TcA18HX9fj6nhVAaRH9kmXHYRgGxLCYtq0W
+         IWmNUe87u0udQsXt6/sPcLQPqq1xCm/gv1yQwZClN/YhXvsLnPYmn1rWLQD6dsZxinRs
+         IyPLsxvHRJmhKIpvSbG0tV+HdgTrZm7mRWdup3xe2LrM0vAo7Z4iPJf7xVZw69rOPoGy
+         /T9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752251933; x=1752856733;
+        d=1e100.net; s=20230601; t=1752252090; x=1752856890;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GUHNdNzh4MVenPnIJ3b3PJlz94KSj55El0YY2Y5dRbo=;
-        b=U06yr0+NR2oRZsD2Lnge/usPv2Ul8TEuh/Z2L9vH/eUVEHlrgMF3jy9JxEK24S2m3G
-         td7itRVO2VvJ3e0DFrAOYAcNDhKfZ85tT2fF5zS/VJA9sUun71ALLdoAQFsx+qO5sXmw
-         yI1nx4+azOpDFrNuLKhel+b6odd1qvLVQ34Tq1jXleM4S669UECTywrdrM/23CCrhCFz
-         Gqs+cit0GRtWf9xW3goJJZ3VQiyYiXHz2VZJ77yzISNEHc8+fN0UGgG1CbTrIerHXhgz
-         3MeO6tfSwHgFLzOVa7D16HI9yYCVYqQrViyGnMA94wOSUeFNAtpCYmqfQ/GFedeONeGE
-         7ajg==
-X-Gm-Message-State: AOJu0Yx9BaVRoxwGDnkA2gXo9NfKvDlzb6K3IBfKAsv2H8jur8IdX0or
-	5WK4ivminmfSky9hoG7nK1VjrRTU7Tj2w+iGPfvXhHIsJ1tx/mZjYoJYxF3GLJze/Wr7Cw0D7Bi
-	h38gEoSveOHR55o4roRIhGvv2MDQOUy3E2YJJ5qp6
-X-Gm-Gg: ASbGncu0+q7ISruhTyjx7uZIr2BPDNHI95vZjI632oRvxthM5Tt1BG3i38MOU5J9sC6
-	iJhvoeMCCMKbVKFe9ol0ldWCc+2Gu2EFuSHG99l45G3nq2Ifannrokc3u4e+/Q6/T0a+jUXfBH3
-	ZKVAUdvavlvMLSVtHchYKfRm2FUI63hHY2lVGT3/xYx71Gu/bRFeDQUH2uk8PurAwTJZUCQ3nlQ
-	/T+VVOmgHQ/uQ4WhXsaNjzXJAP6787Ajw==
-X-Google-Smtp-Source: AGHT+IFMqWeUnIhM2GUfvqZasar43+JRQEzyaYqWWnI+VEdWQL/yjU8uiXyK3Tt6lYFu66zeKZ//khzG9Fk7nhUZTPA=
-X-Received: by 2002:a05:6402:5519:b0:606:f77b:7943 with SMTP id
- 4fb4d7f45d1cf-611e66b19acmr119955a12.0.1752251932816; Fri, 11 Jul 2025
- 09:38:52 -0700 (PDT)
+        bh=sUG7Y34gLC/mpyqzJddNeDobUu/PZFQb7DYFa2YBA7A=;
+        b=PQ6hJxZVrV+syCj2wtYNuDrzOoW5T3RaS2dqb41kXI5KbhR74iXS2nHyQwU5Wnbn6T
+         qa9Kd1mcMNEqB2f891ZxAfkAVsg2wEJtKSTQTFpgHJ4XqdXfFW6c2s/JQ9hmSoH43eAx
+         hR9UtjBSAt8sjoGPFVy9Sbd3Nsaj3/fuxEidVn4f7SFq4abbywxHX0cD8R3d7YaqKgbj
+         0aYSIqSw13zE4F2+/TJLhILyONKbCGql+qcpICkIrGaol8Pqc/2I3BtY0Wj4LG5csMW/
+         vzioFlHyZz0FroiADs3Yy98Ph+shayByKEXQpeGrqY7qezxmZ7A79bZnu8PE25wGunMc
+         6aiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnZI067/ekTXKUZ3INkUkOXeTyJHBBNfZNuVjZf0Iqh8w9ZwkVvCpabvqeSvDWgfN0yi7u+8VWgsA5htaU@vger.kernel.org, AJvYcCXALB6/zIINS7hUJ/Ria6WZ4mBmKTUrjhmIekSZYICDmBu8zFZxHQPK2k5+gwY/86ezJzE70gQW73z3XFk48Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUIhbpfg5lRceeFqV/ojcedom12vQBfCR1Wu8n08+xAwrtAc5S
+	iG2IqdprHlCI9jVw0Qv0rNLARC8Xx3Lss59ieIn72o6DtnEy75S7UTUZOn2wYlpeetpmQzJI7jq
+	pqtVo1K7Z37iAnowmaRUCAfzcC6orsGEXF2Emq/4=
+X-Gm-Gg: ASbGncvu6T02+Q68FikJmRV5LwYQiDbUmHuXCSB39xgll7DV8dCaTZT7AkBgWmP/kXb
+	VeXqnVqtnt+krMoIhs8OoXkiybrfF4hXq0CFwiU9YxVOG37aVzygwv1uWu/tc6d8lEq6JJJ1/CO
+	mXZlk6koHtWp/ooanHm7WjRvqKD/ly+YjV0LnIhOR0OLqfw9XK1X6Ps96FasGI1Zn0BbDWWwnOf
+	I4gUdk=
+X-Google-Smtp-Source: AGHT+IFijcGR1Y+5RKwHmpeH47ZTRec8Nj/Xfbeylsd2imFmQeI5F5l//K9wmMUEHuljGI6eIkiOoA+WHVvamuqqoZQ=
+X-Received: by 2002:a17:907:d582:b0:ae0:b49d:9cd with SMTP id
+ a640c23a62f3a-ae6fc402e82mr432004466b.58.1752252089256; Fri, 11 Jul 2025
+ 09:41:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
-In-Reply-To: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 11 Jul 2025 18:38:16 +0200
-X-Gm-Features: Ac12FXxBR0x-gWBXPHgR-w1y-RdUePMpUnV9bTKOU1Vmk9DbTBaD1sVhfK-yPDI
-Message-ID: <CAG48ez0fWFjw8-RCLfKGXR4aNaRfZ37-GdDH=Rw2TFupAhocVg@mail.gmail.com>
-Subject: Re: [PATCH] eventpoll: Fix semi-unbounded recursion
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
+References: <20250710232109.3014537-1-neil@brown.name>
+In-Reply-To: <20250710232109.3014537-1-neil@brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 11 Jul 2025 18:41:17 +0200
+X-Gm-Features: Ac12FXxou1X0l3Xw1PUZOQIzv3pzanNzSto6zoYkBqJgWejGKMDI9RvAE_D4XYk
+Message-ID: <CAOQ4uxhC_ARYQ=mPMEX9pLQTeXcBcJGqn8RK-tmE26W8pGChKA@mail.gmail.com>
+Subject: Re: [PATCH 00/20 v2] ovl: narrow regions protected by i_rw_sem
+To: NeilBrown <neil@brown.name>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 6:33=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
-> A more thorough check is done in reverse_path_check() after the new graph
-> edge has already been created; this checks, among other things, that no
-> paths going upwards from any non-epoll file with a length of more than 5
-> edges exist. However, this check does not apply to non-epoll files.
+On Fri, Jul 11, 2025 at 1:21=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> This is a revised set of patches following helpful feedback.  There are
+> now more patches, but they should be a lot easier to review.
 
-... of course directly after sending this I notice that I put one too
-many negations in this sentence.
+I confirm that this set was "reviewable" :)
 
-s/does not apply to non-epoll files/does not apply to epoll files/
+No major comments on my part, mostly petty nits.
+
+I would prefer to see parent_lock/unlock helpers in vfs for v3,
+but if you prefer to keep the prep patches internal to ovl, that's fine too=
+.
+In that case I'd prefer to use ovl_parent_lock/unlock, but if that's too
+painful, don't bother.
+
+Thanks,
+Amir.
+
+>
+> These patches are all in a git tree at
+>    https://github.com/neilbrown/linux/commits/pdirops
+> though there a lot more patches there too - demonstrating what is to come=
+.
+> 0eaa1c629788 ovl: rename ovl_cleanup_unlocked() to ovl_cleanup()
+> is the last in the series posted here.
+>
+> I welcome further review.
+>
+> Original description:
+>
+> This series of patches for overlayfs is primarily focussed on preparing
+> for some proposed changes to directory locking.  In the new scheme we
+> will lock individual dentries in a directory rather than the whole
+> directory.
+>
+> ovl currently will sometimes lock a directory on the upper filesystem
+> and do a few different things while holding the lock.  This is
+> incompatible with the new scheme.
+>
+> This series narrows the region of code protected by the directory lock,
+> taking it multiple times when necessary.  This theoretically open up the
+> possibilty of other changes happening on the upper filesytem between the
+> unlock and the lock.  To some extent the patches guard against that by
+> checking the dentries still have the expect parent after retaking the
+> lock.  In general, I think ovl would have trouble if upperfs were being
+> changed independantly, and I don't think the changes here increase the
+> problem in any important way.
+>
+> I have tested this with fstests, both generic and unionfs tests.  I
+> wouldn't be surprised if I missed something though, so please review
+> carefully.
+>
+> After this series (with any needed changes) lands I will resubmit my
+> change to vfs_rmdir() behaviour to have it drop the lock on error.  ovl
+> will be much better positioned to handle that change.  It will come with
+> the new "lookup_and_lock" API that I am proposing.
+>
+> Thanks,
+> NeilBrown
+>
+>
+>  [PATCH 01/20] ovl: simplify an error path in ovl_copy_up_workdir()
+>  [PATCH 02/20] ovl: change ovl_create_index() to take write and dir
+>  [PATCH 03/20] ovl: Call ovl_create_temp() without lock held.
+>  [PATCH 04/20] ovl: narrow the locked region in ovl_copy_up_workdir()
+>  [PATCH 05/20] ovl: narrow locking in ovl_create_upper()
+>  [PATCH 06/20] ovl: narrow locking in ovl_clear_empty()
+>  [PATCH 07/20] ovl: narrow locking in ovl_create_over_whiteout()
+>  [PATCH 08/20] ovl: narrow locking in ovl_rename()
+>  [PATCH 09/20] ovl: narrow locking in ovl_cleanup_whiteouts()
+>  [PATCH 10/20] ovl: narrow locking in ovl_cleanup_index()
+>  [PATCH 11/20] ovl: narrow locking in ovl_workdir_create()
+>  [PATCH 12/20] ovl: narrow locking in ovl_indexdir_cleanup()
+>  [PATCH 13/20] ovl: narrow locking in ovl_workdir_cleanup_recurse()
+>  [PATCH 14/20] ovl: change ovl_workdir_cleanup() to take dir lock as
+>  [PATCH 15/20] ovl: narrow locking on ovl_remove_and_whiteout()
+>  [PATCH 16/20] ovl: change ovl_cleanup_and_whiteout() to take rename
+>  [PATCH 17/20] ovl: narrow locking in ovl_whiteout()
+>  [PATCH 18/20] ovl: narrow locking in ovl_check_rename_whiteout()
+>  [PATCH 19/20] ovl: change ovl_create_real() to receive dentry parent
+>  [PATCH 20/20] ovl: rename ovl_cleanup_unlocked() to ovl_cleanup()
 
