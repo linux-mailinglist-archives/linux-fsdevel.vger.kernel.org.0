@@ -1,176 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-54653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6492DB01E87
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 16:02:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E675FB01E84
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 16:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15156B63136
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 13:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0121A1CC0977
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 14:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B9C2DC34A;
-	Fri, 11 Jul 2025 13:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0972D46A0;
+	Fri, 11 Jul 2025 14:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4b/+2ba"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AyP2paRy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CCA210F53;
-	Fri, 11 Jul 2025 13:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0657345948;
+	Fri, 11 Jul 2025 14:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752242067; cv=none; b=qTz4g9MBQWaPnB1cfJGcg2SshGOSlHzx1X6mZp1PVEhYPNOtgJZVxT1ZSIc0Le+3B/3ABHOFR4L/qqTdZwChvUVatpymNjvwprUrMrVw+ZfusL74qrwkHw/wewozfxQND5eYPrmPwO9JGRQ/d+FoUGaqKUkzIalB/jTwSA/CUqI=
+	t=1752242491; cv=none; b=soLzqQisGLYlSl923dN3Fw+q3dAQqgDKA9yTkNYzcVO9jkdGjuypyB3zZwz2CqQCy3Sa9KzHHdp3PAMXF4Sd0fUlm+2uC+X/tbuhuUV4B340W3kG7KN6eF1rsDxXAJZrVyqrh0sfPGZgTV2Cge4lrbbVt+cpPCKkzgqRf3w9+Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752242067; c=relaxed/simple;
-	bh=Aq0UWMxuzgcAo0TZpLzDQyCfr27z64BIWG+3rs/BcMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GSSfGFcxRQydUIw/5MM+OFLaS6Wi7hsOy+iuRbxGjtzY/q6fKFdJBpcdf+syyNjIWC53A0Yf+wmVFX725UzWMByC9NDdLTWe+yvr4pceE7kSvevhUys6tCYvGHga+NgqFZqxUCiUdJS2tdVXm5Ci0p58xCFfMYHblGXdpMbeejs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4b/+2ba; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso3431396a12.2;
-        Fri, 11 Jul 2025 06:54:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752242064; x=1752846864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rKNmqbM1Io9kr6tHHswOc/RmHHXRZahen59U6vlxIVE=;
-        b=S4b/+2bap8r7d8aIP6CPVBC6fWUlCotsoajgNbJHWJoEntqNRs/HF0MVDz/v6FHQbt
-         XIYkJYuV+RieyyV+obwZ2ySPHcAY6lJoQc3P7/rMHO7xcS1XZlStGPIWPNW2et58Abox
-         6rqA6gtJd5oXADlNQTZDSFcUARQxjsmdNreAgq/rRu/Pd8vWFs1kMkA1mhRzrkuuQQFh
-         1hMehmwnoC+vjRspJfkmKK846ujFUDn5+smUNUmuJskasNRs08aojwopacKRSISlhaG/
-         Ub2iZCyeaLHIjtGvCfuIxr92DQdOKZERxRtB99v/d4pdMk+QEES6soI61THtB6hCJoNs
-         qJkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752242064; x=1752846864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rKNmqbM1Io9kr6tHHswOc/RmHHXRZahen59U6vlxIVE=;
-        b=sW7i9No3eVXnnIyrPndi4T3/i0EEvd7SQmVgsIdamazw1yIKAlKetrWW8Zs8RrWe5r
-         4VpVBbE3CzRoeFWXV/beE1HoXWWswlG/oFRNcVAw1K4eKfBJO4How/DwJboj3ziq9YHm
-         bmTBOF11MgeA9ElNC5yphTua3knRbsaLu71HrCt5MAhtljj/hs0+ojmq4GYkKbvnUxyE
-         60dmU6JQ4qzqxlsWGRsgGZCgjgFNSy3pl+a0s+56xYSeDeP0prb6vum7jtP9jYU0b8MJ
-         gTDVNukAIx9qrVvb1iLljAB/jeRrwp/ck8h30I7snrjmArSqurCxuoEmS8sMsx9ZlPeH
-         tp4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU+ZVrHkd+8k9L30esfl4Rbp2lMKiXCdvnbbpl9/CD7FHPoC4Goq8GVXpfUgRucCEtLd1gUnns2ADKezXDC@vger.kernel.org, AJvYcCVChml5UrTAJuujhY6wUofKdf2RWL+m/xjwutZ/u35IFptjd0qhyKYyRSheMH5pUAsD9X/nh5Le6ZXovIh1oQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1KBZ0BJ8qpjOGAJPMfktJlNqE8rONZwpyQp3XBF27pEt2wlsR
-	bxaoJAcH5vR4Wh4q3e+6i26ktnMTnFEMfyWEneDnXvHXjfz3yBAMYzLw67AcnMEOVl9z65ULfLa
-	PUMXl9rP/mRhd0417lqeIYhxXGAsHhvsfj8OxD9F30w==
-X-Gm-Gg: ASbGncta2IUuZoE/8zrPV2wOxyKhHpVDRjI0AkiDTq6P50/nYIhwTn0UAFS+bfcmz3J
-	XzzExjIH1S8Fy5RsqBQHRYQ/u2EJR9EuQ15qYbrgxtgA49xbNAx5pSeS+WfZ/T2OKeCWIjJ7qe/
-	OEDdk9NzEhy2VrLebIpVkJaCiHWKHCzJyVSRjx+PCVR55r+FtIvuZZrvoQWjYES0jQI1sovizq7
-	1rtDH0=
-X-Google-Smtp-Source: AGHT+IH5COpSP/1rq3izI15zC6kQuwgQpZVSYuqKrU3pO/F3QBwQHJFmK8hAOh2gXvUCq0odx6xDw8XNvfLaYeR/a/4=
-X-Received: by 2002:a17:907:3d02:b0:ae0:b604:894c with SMTP id
- a640c23a62f3a-ae6fcad2f4emr331824466b.48.1752242063432; Fri, 11 Jul 2025
- 06:54:23 -0700 (PDT)
+	s=arc-20240116; t=1752242491; c=relaxed/simple;
+	bh=D9FK4N3hM4sbjnM/Ff4mnlQAXWongJe55IDek2YkNW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEw8hwwFGpqmcc5JbzoGjHFbExpuTLJmoGcFsgK4+QJTTb1FPZJhBBjMyp0lYFYRbaFrK/bnIk+MnlhP9oX2hJy0twuL4hJy1yMja5tYyVYJKNyp2ju53qVStnf6ipL17gSzeCHYZ+kNwaIOp3Lij2RkAJSWPMvRmu2tMnjy/18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AyP2paRy; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BB7eVO015362;
+	Fri, 11 Jul 2025 14:01:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=D/TxXPoBPeCkGtl2Jec4I0MqJ5jitp
+	2Yb5CeKqPQMiY=; b=AyP2paRyw61iAW85rXNDcBnsH5mM9p3O3poZgHa32APo6W
+	ZfQJaHgK0nB04JjRx/dEvEvmlj4qTYy5FRaq0TrwQ2Hh+ih2wmGlJFThQCP/M7qL
+	Ba593mq3fjgd5d1hgWHCtVeySYi4E/UbQUJt69hH0Pkl+AtTOVujWnIDwYgEG0wt
+	ngP/RXfm4Do1zm5z0QFNo3nP8TphyhDfo8/wWbhczxqHojbeB83cXmCaL9ax/umA
+	0beyGtpYecB/rpVt5/25XpIrK0uGNFStRlb9z2B2DJjQvIMPvOoZrCM0uvxte5Q0
+	5JlEK8qdzZVKxl9DpZ5M+zu9UK7iP3218OMxDZOw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47t3xdh9kx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 14:01:18 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56BA8WA6021561;
+	Fri, 11 Jul 2025 14:01:17 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qecu37e8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 14:01:17 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56BE1FBM34800170
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 14:01:15 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 985E720043;
+	Fri, 11 Jul 2025 14:01:15 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 068D620040;
+	Fri, 11 Jul 2025 14:01:15 +0000 (GMT)
+Received: from li-276bd24c-2dcc-11b2-a85c-945b6f05615c.ibm.com (unknown [9.87.156.131])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 11 Jul 2025 14:01:14 +0000 (GMT)
+Date: Fri, 11 Jul 2025 16:01:13 +0200
+From: Jan Polensky <japo@linux.ibm.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] fs: Fix use of incorrect flags with splice() on
+ pipe from/to memfd
+Message-ID: <aHEZKb-kdpIjABQu@li-276bd24c-2dcc-11b2-a85c-945b6f05615c.ibm.com>
+References: <20250708154352.3913726-1-japo@linux.ibm.com>
+ <20250710-geburt-aufbegehren-07813aabf939@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710232109.3014537-1-neil@brown.name> <20250710232109.3014537-19-neil@brown.name>
-In-Reply-To: <20250710232109.3014537-19-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 11 Jul 2025 15:54:12 +0200
-X-Gm-Features: Ac12FXy4O2938nlEwEcZZV16F6s3PB5hr-0N5rK_-62XnL80rjr25-CRoGYHDvg
-Message-ID: <CAOQ4uxiopGbM9FECQLbvB1+x4Mz9KufEgSWoMKs4UC+tFVB2_Q@mail.gmail.com>
-Subject: Re: [PATCH 18/20] ovl: narrow locking in ovl_check_rename_whiteout()
-To: NeilBrown <neil@brown.name>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710-geburt-aufbegehren-07813aabf939@brauner>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: NPKe22MGOaSS_tJqN0PlMQVzjMIMgC2c
+X-Authority-Analysis: v=2.4 cv=MLRgmNZl c=1 sm=1 tr=0 ts=6871192e cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=K96QQe1A4WfBV4HAJsgA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: NPKe22MGOaSS_tJqN0PlMQVzjMIMgC2c
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA5OCBTYWx0ZWRfXxLECziYPmq2f Nw1AvJLsTETGdj0VEwpauH6SPtQTgYh5xZC06uood2TUvFKi4QwZTs1nKz+3DNeGsq3hrJ/tTlI INHqH4EV/mHJ3AvlYPD71xU7dfzwdkqD8d5fGn6hyR5V0OUAvjFfBYsc9POZy9Q5LoIKDOIAuAt
+ x5t7xctFFr0dwWpTgr9yuZERpVV+FkzeXGm0tOPfQsqUr1RuGCGHx5jhtVa3m+cgMVUbJWjGaun AR9sDqBBsW1A5RYkM2cH5PVwF497s9tfWNzC+cEqtdIR+cYie9fhUv3OrhtvRByLheZgtWk0Gi9 6fKg4mkAe0xkU+O9q2KjlD4SRdT7crsv3i5a9TxqAkg55mh0BrNXz6T2gETizGKJTxn/1/clsRM
+ JGyvrfiRRM5Acx5yMCrulhx1LLFBqhMn8soZfNctMptgZ7wBfBjJCxOA5RPps0N4XPMM7zuA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ adultscore=0 priorityscore=1501 mlxscore=0 clxscore=1011 impostorscore=0
+ malwarescore=0 mlxlogscore=627 lowpriorityscore=0 phishscore=0 spamscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507110098
 
-On Fri, Jul 11, 2025 at 1:21=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+On Thu, Jul 10, 2025 at 01:34:12PM +0200, Christian Brauner wrote:
+> On Tue, Jul 08, 2025 at 05:43:52PM +0200, Jan Polensky wrote:
+> > Fix use of incorrect flags when using splice() with pipe ends and
+[skip]
+> > +	}
 >
-> ovl_check_rename_whiteout() now only holds the directory lock when
-> needed, and takes it again if necessary.
+> That hides secret memory inodes from LSMs which is the exact opposite of
+> what the original commit was there to fix. I'm pretty sure that the
+> EACCES comes from the LSM layer because the relevant refpolicy or
+> however that works hasn't been updated to allow secret memory files to
+> use splice().
 >
-> This makes way for future changes where locks are taken on individual
-> dentries rather than the whole directory.
->
-> Signed-off-by: NeilBrown <neil@brown.name>
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks,
-Amir.
-
-> ---
->  fs/overlayfs/super.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 23f43f8131dd..78f4fcfb9ff6 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -559,7 +559,6 @@ static int ovl_get_upper(struct super_block *sb, stru=
-ct ovl_fs *ofs,
->  static int ovl_check_rename_whiteout(struct ovl_fs *ofs)
->  {
->         struct dentry *workdir =3D ofs->workdir;
-> -       struct inode *dir =3D d_inode(workdir);
->         struct dentry *temp;
->         struct dentry *dest;
->         struct dentry *whiteout;
-> @@ -580,19 +579,22 @@ static int ovl_check_rename_whiteout(struct ovl_fs =
-*ofs)
->         err =3D PTR_ERR(dest);
->         if (IS_ERR(dest)) {
->                 dput(temp);
-> -               goto out_unlock;
-> +               parent_unlock(workdir);
-> +               return err;
->         }
->
->         /* Name is inline and stable - using snapshot as a copy helper */
->         take_dentry_name_snapshot(&name, temp);
->         err =3D ovl_do_rename(ofs, workdir, temp, workdir, dest, RENAME_W=
-HITEOUT);
-> +       parent_unlock(workdir);
->         if (err) {
->                 if (err =3D=3D -EINVAL)
->                         err =3D 0;
->                 goto cleanup_temp;
->         }
->
-> -       whiteout =3D ovl_lookup_upper(ofs, name.name.name, workdir, name.=
-name.len);
-> +       whiteout =3D ovl_lookup_upper_unlocked(ofs, name.name.name,
-> +                                            workdir, name.name.len);
->         err =3D PTR_ERR(whiteout);
->         if (IS_ERR(whiteout))
->                 goto cleanup_temp;
-> @@ -601,18 +603,15 @@ static int ovl_check_rename_whiteout(struct ovl_fs =
-*ofs)
->
->         /* Best effort cleanup of whiteout and temp file */
->         if (err)
-> -               ovl_cleanup(ofs, dir, whiteout);
-> +               ovl_cleanup_unlocked(ofs, workdir, whiteout);
->         dput(whiteout);
->
->  cleanup_temp:
-> -       ovl_cleanup(ofs, dir, temp);
-> +       ovl_cleanup_unlocked(ofs, workdir, temp);
->         release_dentry_name_snapshot(&name);
->         dput(temp);
->         dput(dest);
->
-> -out_unlock:
-> -       parent_unlock(workdir);
-> -
->         return err;
->  }
->
-> --
-> 2.49.0
->
+> This is a chicken-and-egg problem withy anything that strips S_PRIVATE
+> from things that were previously S_PRIVATE.
+Yes, agree. I've already send a fix to LTP.
+Thank you for your reply.
 
