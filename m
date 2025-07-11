@@ -1,426 +1,238 @@
-Return-Path: <linux-fsdevel+bounces-54583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A12B0114D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 04:37:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75908B01154
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 04:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110A95C031D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 02:37:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 886F77BD03C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 02:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6664718DF6E;
-	Fri, 11 Jul 2025 02:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB9D190477;
+	Fri, 11 Jul 2025 02:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="krgiJkZm"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="pe64xcqb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012030.outbound.protection.outlook.com [40.107.75.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165B910E9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 02:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752201413; cv=none; b=eb+gf+ZNfuhN9CHGZKX48vo4cNIYczG8lp9F/npzRDvkN8YEs0dx8Y5H9kIy+alI3dbHXF39+KV73FR9WN7xaE8uBxOK8CnJYkWe+2cYFhgXzhmKCHdresnWP44PO18MvsjHsvHCsR6AIsByHStuIkNvm1C8zTY7Mn1ZySxOkXo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752201413; c=relaxed/simple;
-	bh=6vxxdEWNuCtZo1HGJf8cmz5Jh6VkSh2IzEI+SkF7sIo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D+wxI4aOYAQYwoE12GBOsxFMpGyeDR08U6Y5xB0OMPtWANtTUj8f5yqWjCUTbm4SAh+1XEiU16sAKNMh7fna76e6HEtQUetFRNlrIYuQMZCa13XpviAiJk5XkWX+XEFiAU4qMsHxg1E5P4rRWjs61XCpeBRdIpqpJIDzNvldQoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=krgiJkZm; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ANO0d8029778
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 19:36:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=yokyKGwumsqFIhA7wRrh+TYRzjAAZbf40x3OMCszS44=; b=krgiJkZmqlsd
-	2EMjlnmBT0hUfZ1DPJKnCkLc95OdC2ejM5UwJIQZZ2n8UzRKJqZlSWwUOXyp5rQu
-	fssUIJJtAqvd3MbEKJ3thWUAWCbZWC4kt4SnZnMd41mCoO2kHDmxqsClAIbEz63c
-	bfB1kzy8iGwpSWlJBgWIkpmgEMWqcYB6teTa/rnZcfYqX56oAGx5u7ExU/+8RLkG
-	yTNFZ3QA2K5dv6AHo/lkCEiJ18zD+0Sr3I2AWBpCJGuWa9ayFXSkN/DwwJ9jDvDP
-	wXprgti5P8iElGkgAC1N7Z0JAutKymyHmQ64aia2RXLAxBljyRmLj2llsw8lrFp/
-	bnDntj/jbQ==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47t81cyxme-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Jul 2025 19:36:51 -0700 (PDT)
-Received: from twshared7571.34.frc3.facebook.com (2620:10d:c0a8:1b::30) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.24; Fri, 11 Jul 2025 02:36:47 +0000
-Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
-	id 481EE3200EF56; Thu, 10 Jul 2025 19:36:44 -0700 (PDT)
-From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-To: <ibrahimjirdeh@meta.com>
-CC: <jack@suse.cz>, <amir73il@gmail.com>, <josef@toxicpanda.com>,
-        <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>
-Subject: [PATCH v3 3/3] fanotify: introduce event response identifier
-Date: Thu, 10 Jul 2025 19:36:04 -0700
-Message-ID: <20250711023604.593885-4-ibrahimjirdeh@meta.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250711023604.593885-1-ibrahimjirdeh@meta.com>
-References: <20250711023604.593885-1-ibrahimjirdeh@meta.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF88155C87
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 02:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752201674; cv=fail; b=E3vF67g9FGNyc1ixUU3xVhv7NGDJ2XcLZVTqhfjsZQ0RP2Qga6w1JVu+KfU0geDNsWLM0v3LX+/ajquRlgbjiNujarnWtFkoDjNK1TwpCJUbuWrzjLAiH5mmS12ISJnGZY3rqVoNFzo3CRZdeTITouqWdpYBiasMFikmFoOxer4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752201674; c=relaxed/simple;
+	bh=YtXfYLgChp0C5g/G8WoOe7ByXRlnzHidnePMqiyLSuI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kHpP47yrpV80jFVWFve/aCXvpwsOcxP+jtMhaRF6Te4k8XSuzy+S4HjCkdghxoeepI5rtcfTnytQ1/rQOPI77OzMoejfgcqTjDHo0QMvLDysLPYIwYnGQslS+Ex4Z+/ZFHgsVdxjVE9FHUEvkmAiKKHt1qusAdJBpfYZmtu03K8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=pe64xcqb; arc=fail smtp.client-ip=40.107.75.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AzAA4Sy5yr0QUyF7Uou7a4FhfrabOxVGPtfU4HExGQCNy6Qf2TfpH3SUDCKGvPNYsDv5yKope2t4W2OzxA/1kl8nwC0RDnVknF2VLDamh+Pdg/AS5DiL+39KWE/IrACWUtQrHIVksOvIbGOv7zCr4ZXaiOg+1OPszeOmgkoWiXclLTiEMO8kuHfaY9gTif9yon4qgm9Ase5N7BISVs60A+/GZo7NSOMc8pQhqtvuOYINjXVF1vTAdp+HHF3E3xfAEEBy9z/2l8hYLOsgbgVe4mF38ImPcfndCvJwYxR1iYK8QE2uVMoGwN8w3qMITSQn8TpOVDdakgGHlj75UrZQTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JJqOOpvz+vPPxss8M6Au96lX7maPY1tfLdGRIkxdfWI=;
+ b=h8BFkRB1lzZTOFoy9ZIt18TvLpsbaWG6V3T6lFJ7JHLrWYefwA7P8FbQydeLKogw/gAJ8BLqONd52J2ubCqEcauLbDA98phFc5z1YsaO5TM2eOvLuRDY0UIy5JheP1s3/HS1SpGWIJNpLnEa3GKmT/EqPPEzpJSMqGsqKwk1Hk+0VKAF63BQlMHn4uDa+74fniIFs5V7KD27FWo7LJxbVSegBgrb3ic2QKknAp37vEO5htsXpGoR9LZq+9ZZDD4tFquoOEoxz0mqE1SPnh/JKBpHaOIR+YYL5kQ9wRTeIomsoucdcRxFNd87lY5paWClJGOxuGD146vO2ARuckNToA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JJqOOpvz+vPPxss8M6Au96lX7maPY1tfLdGRIkxdfWI=;
+ b=pe64xcqb341rjq/XY6gQOnUftydyVunnZ7UgcG8CuaCxTqzGpcNcPcDc1sWL6U/duyz2sJfCutV+skBjpGmj+BM8uYEP17q0lWs8zUpKCGw9c0VH089X0c+uRe2RSfaOi6s0cwZgxKeIa9gk+vPyZjYVnNY5nxZlckynodHZpx3WlIpiO7cvMWKnkddY4z6VCAtzqyybxj4jNh+RhHUOPGdsSCKqRLY6Ml3d/PAt0NRlpanR6HonGZXHXn4lhKBd20HGhjiFddlYKbkqr1QoXB8U8WGD76XDH3IpaPhey4Uq/uyNzrs97upnpsMowrPxFgpzCy2AKZ4F6F6skTKSlA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TYZPR06MB7253.apcprd06.prod.outlook.com (2603:1096:405:ad::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Fri, 11 Jul
+ 2025 02:41:08 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%4]) with mapi id 15.20.8922.023; Fri, 11 Jul 2025
+ 02:41:07 +0000
+Message-ID: <a52e690c-ba13-40c5-b2c5-4f871e737f72@vivo.com>
+Date: Fri, 11 Jul 2025 10:41:04 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] hfs/hfsplus: rework debug output subsystem
+To: Viacheslav Dubeyko <slava@dubeyko.com>, glaubitz@physik.fu-berlin.de,
+ linux-fsdevel@vger.kernel.org, Johannes.Thumshirn@wdc.com
+Cc: Slava.Dubeyko@ibm.com
+References: <20250710221600.109153-1-slava@dubeyko.com>
+Content-Language: en-US
+From: Yangtao Li <frank.li@vivo.com>
+In-Reply-To: <20250710221600.109153-1-slava@dubeyko.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2P153CA0023.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::6)
+ To SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDAxNyBTYWx0ZWRfX5kWiO1qliY7D alShTuC+zSk4RFD0ulyayTmgajawVnx7JbodtgmSWIcy8LvSb3gbUqormlBFBa6MpvBdvtxPXWy c+zGw0VRxoy+biwVEOo80rMYs3bx38AoTDL5r4bb56s6mVNOILnp07lhWuUBd1Ccpt4oYT4aF9g
- iVCTf+K7acKHsEoIxEcP4pXUvas87v/jjIvHEC2i5/RnZZ8HbHfTO7vwJ3vGJ9yyTji07n6iPHI 6oI6A0AM3N5D2rDKt7uOfcBl0GvEGfrulLVKOJNAKICki+qWAraLKdP4+TtVcRGmBHsRb/p8S/X bYjz4fRlcGA1+hqeWzD8s2ZJIg/ot17h0WO2NiTVCFal8bP4CLlahWxic4hsKprOnHqy5Ydc6vN
- G1W2rX5DreEzN6R93GAPKhpZabpL6PxXPEf/41k4i04r7qzBxWR7/EXx3Aiv8Lg1qbJajE98
-X-Authority-Analysis: v=2.4 cv=ecA9f6EH c=1 sm=1 tr=0 ts=687078c3 cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=VabnemYjAAAA:8 a=ChkzHjXy8z1_0ozgDZ8A:9 a=gKebqoRLp9LExxC7YDUY:22
-X-Proofpoint-GUID: M40NeEZWLOVNbkhkYLedDZkCQxUjeLZG
-X-Proofpoint-ORIG-GUID: M40NeEZWLOVNbkhkYLedDZkCQxUjeLZG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_01,2025-07-09_01,2025-03-28_01
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYZPR06MB7253:EE_
+X-MS-Office365-Filtering-Correlation-Id: e95d92ae-2608-4765-0070-08ddc0246360
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ODYxeVlmSzdaMXZZa2NTUWZyT29tNXFiYUxBOWsvdmFYNmY2OFJOcUdWay84?=
+ =?utf-8?B?Y1U3NlJ2YnR5ekF6NEFzTGlFNE9Odk1oRk1BS0NnRHZaMzhFQVlvZGVRcDNG?=
+ =?utf-8?B?elI3T0x1RlU3Y2VxVjZsWVJoejVhNTdMa0JUUEw3VjFvS3pZL3RHKzBCdWww?=
+ =?utf-8?B?YUQzWm11L1NPWlNybEs1czYreTRIYTNmKzlWZG5IQ3VzWDVpSmlyS3kvM0Fy?=
+ =?utf-8?B?S1VQcHpKNHg1TElOa2Z4REE2dk1PajdUdHdKVWNWUGlSTGlDVnRLZVNLNXBn?=
+ =?utf-8?B?ejNucEdpVGdmendhK3VZK2xWZHhrQ2tCYit5Kzh6NTJDN0g2TUFwcmhPZGhq?=
+ =?utf-8?B?OXFROUt6MWNDdnBpNURwY2wwVERqcDViTzhaakFBYm9WeFZuOUxIZnRVaEZk?=
+ =?utf-8?B?OGFMSHUyTmxYaG44SmNtMWRmQzlSY2s1VHZQVDFCaGJYR0EyMEJBWGJvM2FU?=
+ =?utf-8?B?Um1VRGZWdUphbGlwNzRvbnM5aUZGVnZmVFJidUdvM21lcmNZUUp5U3FLNHNF?=
+ =?utf-8?B?S01VZ1NCR1RBRzJCMURXYVJsRkE0bnVIUmxVU2VTSlhCWDI1aUFTY0ZXT01B?=
+ =?utf-8?B?Mmh4cUJyV3hXUk9mUEhmM2NPWXRXeXFPMC9mQ0ZGTzNPTGl2QVNkRmQvWmND?=
+ =?utf-8?B?dzB1b2RMNk5sOFp5MkpVdUZOUDFDVGVYbURIQndCeUYvYTdGdFRJYUsyWWh1?=
+ =?utf-8?B?TGxWSEFZOFpwcHJiYW9ML0JIOHRtRXhSMDlSUnZRUGMwMjVvMWNBQ2hueVgy?=
+ =?utf-8?B?VUdYYUZ5NE1FQmxJMWRWNGtQbDI1aWtLcURqcDNQMXZoczRlY0ZKZDNNc3cz?=
+ =?utf-8?B?RTZWN0UrUEdRZUpUN3ppR3BBbDA1UWR2ZU1QdFdCbjVyVC82YVlHNTNwUDl4?=
+ =?utf-8?B?aUZMTVNqZ2MwT0dBOWthVEx1anJRMFEwa0gzTWg2dXp6VlNxa3pIcFZPVDJl?=
+ =?utf-8?B?em15cXRwQU9udW5FV2RJdTBlUnRWR2owRjdjM1QvTWxkc2VpS0lLSHROWnc4?=
+ =?utf-8?B?Sml1L3FwNlJrd2x2b3Qzc2JyOG9KU3AvMTI2ejR6SHpiUis0QU1IYVBxNXlJ?=
+ =?utf-8?B?WlJ3ZzMzdldCWmgwVTBlandjRjVnWEdmQ3lOMVIvMHB6QkU1aXdraU9jOGFr?=
+ =?utf-8?B?RFdSeEFhcjFPTW9TQWNUWTA4UG9mZDc3VXZ4aDJSTnVROHJXK3BJLzNFTjF1?=
+ =?utf-8?B?S2xKSTExUzc4Z1VCdElvZHJHczJWdnlCeXVKcGNBeUdzd284U0NnRm1tWVZl?=
+ =?utf-8?B?N1hydEUzY2pvUWJIenJydDZFVFo2YkNxcWdoM1FaRFlDTXVEbmxkNTI3RUlh?=
+ =?utf-8?B?c25vTitqQjFBbXlqc3BWRTNWdkNyQU5lSnBTV3lEckJyNGNGNFM4Y2x6WkVI?=
+ =?utf-8?B?Y3ZBcEhXVXdhWUpxTmlNU2h2K3JTNCthT3ZLSXg0RlBZT3NSWVBVZEFKdDN5?=
+ =?utf-8?B?dUlpRW4vVlJzcVFMUHFWUFk0V0czMlMrTUYzbmw4T1RmSTFWZG4zRU5MZEg2?=
+ =?utf-8?B?VSttVWpYZ1Y3b3V6emtudU9yMS9IZWhhWGd6OUtaM0FON01tNFA3WlZrUkV4?=
+ =?utf-8?B?aVlLcGVocUE0c0RUMjVIMzFORWN1Tms1emViQjQ3WEU0WXM3UkRGcC9JUXFP?=
+ =?utf-8?B?anUzcnRuRWREY0xkSzFQa3BQaUpYcGM4b2haS083dEtIdEVtbWM4Nm1pUGIw?=
+ =?utf-8?B?aXI3cFdkeGJpZVRNRzIzT1VHMGVlWkNYYmovVU5CamNuWFNMcktxU2NmK25U?=
+ =?utf-8?B?VzQ5SG9jMXRKaGJYeW5CL0V0RVV5cS9ic0N0UUV1TzBKZkJLbG9pb1l2T1RZ?=
+ =?utf-8?B?NzZoVmsyak52L0RMVlJyczZFNWNCQjlwUmc1Yk5jelZaWkFZMWx6aEI3dEk1?=
+ =?utf-8?B?Y1g3bVV6b05neFVGVzl5YmtEdURSK2I1aVlUb1puNnF3YkswZVJWQjY0eFZ3?=
+ =?utf-8?Q?2HHkrG7ZmWc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZTFUeVU3b2ptS0R3c1JFZSs4MjhxdWwwRllpUUpnYmtlb3BUeXcxNGlSZTcw?=
+ =?utf-8?B?MUNpM1FGZG9DQnkwUnRSd1JIbVVTbVdwWnhLOVpURm1qM2YrbERzMVNZRFgv?=
+ =?utf-8?B?cDlpTTk5VFphNlJTNUROQWdqZTZLN0lnUmpJc1lMZ0JNd3FXWloyWE1VK0U2?=
+ =?utf-8?B?QW1kQjRTTWxmaENEbW1XTXE3UGZsME9PNlhLcjl0NXBSSWJpa01RdWpBeisw?=
+ =?utf-8?B?eGhWektGL1ZtNUcrTG1VR1Y5ay8rTmxRa3dtVmtSeSs1eHlMK3dKSy85OXUz?=
+ =?utf-8?B?cG9UYW5qeWJzMVRjMExpT1hPSXRwdEhoWEhrREVBcFVUTGloT0V3dU9oOGhZ?=
+ =?utf-8?B?eXQweWpOR1g2UDVvdnUyVnFHRkcyQlFRUzdxY2RkVDJlc0UzK1VzdTR1NG1X?=
+ =?utf-8?B?N0pLek9xT0o0bDJRa1BScFBNbUc2WFVoMkJuYm1OOElQU00rMDV4ajIxem1p?=
+ =?utf-8?B?NkY3OWFXbWZ4K3gvS2xTWGlzWDJ6MjhCQitqeWRDMXdhWXIyNEt1TCt5cE9h?=
+ =?utf-8?B?M2FKVXRsVmdPeUpmQ3dEbHl2WlRybXBxK2FHZTJ2Qk5TM2c1RHIzOElxSEFY?=
+ =?utf-8?B?ZDJKR09iaE1GZ2xlZTNJM0xkNzBLK25EdTlRSmtpRXN1T3l1b1lBMnZyWmRI?=
+ =?utf-8?B?bDNvOWFhWVVqM2RtaVlkNFgyY3ZSTFV3Z3VMQ2d0Y2hISVl5amd5TUd1Ti9p?=
+ =?utf-8?B?cm54K3QzY2pDRXRVZWdhbGNVYUMzeUt5SXpib2p2MnA5V3lDbjFmTlNLQ1Vq?=
+ =?utf-8?B?L28xNHdFL3F6ZGFMdXJWUm1jcm9MS0Y4T3U4aUVDNWVaRTU3eklDNFlKRFNw?=
+ =?utf-8?B?MzNDMGppaDJjRGZvZ2s1TjZsTUdONGxxSWRDL0VIZGVTYU5jVE1qOGVqWkQr?=
+ =?utf-8?B?cnRvN2NNSFRRZjJGeCs3b2YrVXVGbUw5UXBZRk5FQnhyQTNvVExyM1ZyWXJh?=
+ =?utf-8?B?RmgxVDI3aFB5TGs2QzdxUzRDdzZIUmh0WTN1emhKaWlCR1l4aU1xNElkK0c1?=
+ =?utf-8?B?K0twdXZ0bXpLUjdJWVBuUyt6TFlsamhFekhlZGhHQmVSZk5vVXhKd1lTbkIy?=
+ =?utf-8?B?K3c1UzUyZmRpOFgwTWZiV3BXMEs5RkZlQXJrZFh1ZXIyakdQVjBkZFdkMFFP?=
+ =?utf-8?B?V1VtWm5ERmJmMGFHejlueHJLSVc4cnVGR2pWQjRTejZwR3BMbk03dDN5S3hl?=
+ =?utf-8?B?cDhkUnNWbm5PbXdrdVRMQjI2VDVVT2haRGg1Q09xbG9PemIyM2JZQmJGdVNE?=
+ =?utf-8?B?RGd5RGtFcDdJaTNEVzhjWWZhVE9hVnRzNEZsVmp5UzBIRVJPWlhoNmRaemdw?=
+ =?utf-8?B?RVZWZk9UeHpyOVB3SENndEhjNVRLR3d6OVd0Q0Q1RUt5djdjTVBualJoUkRz?=
+ =?utf-8?B?bjNrQTdTTmsydm1STXRabFdPVWI0SGx3OWVFNTNuWTE3cmozZEtZaWpxQXVH?=
+ =?utf-8?B?NWxHdHNwdlgvYWxFVmoxV2EwM2t3cW1ML1gwMzAzUUFUNjNYZE1CdkUyT3Z5?=
+ =?utf-8?B?MXlPb3V1a3hEZmw1K2FUaW9LM2oyZS8xZjdVaGpZTlJNSXRXbTREY0s1ZW81?=
+ =?utf-8?B?c3pHWUVGNCt0UjBqb2xaZmhBd1pvekw3NmtqQzlPUUdCSURWWUxjc2c1VDZB?=
+ =?utf-8?B?MWJkalRka1dTOTBRS2RKZmlDY2swanBFdUVVbDhHd2paTHdyVmduZ0czaFdK?=
+ =?utf-8?B?WEdIT3pNZEc1Ry84QzhXTUduMlhaWlRkakhwNDNHcHIwbHBwTWR4NHZoOEpr?=
+ =?utf-8?B?SzFXSk5ucnpVNVJOa1hXR0tXTERHQitORjhoMjdGT2YrdG9JMkRRaFNSd1Nx?=
+ =?utf-8?B?R2JKNjRvSURTaCtRWjBPSE1ZWHpGSldITGg3NkVZOHVYdEM3WHBUd1BkL2Uw?=
+ =?utf-8?B?VlRGU3d5K1l4ait0SC9Eck9rTjJpb2k3K1V1bFFNZDExR2JVMkFCMjErUHZB?=
+ =?utf-8?B?TTZIcG5XZldVMUZoM1pIK1I0SE5uaVgvNDlnM0h4cUdzbnNMeWlpWXZERTQ0?=
+ =?utf-8?B?UTNtV3dNR0dpYlZuQzBZMTJXU3pibm8rRzR2WWJROGRLdlMxd1NtVXFhZFpZ?=
+ =?utf-8?B?NTJkYm5mYzBTdHpKVW9ZdzNxc2U3aDBiNHZqYnU0RXNOZm9GS1lMdWpJUktx?=
+ =?utf-8?Q?iJuY/IW60JoSuUs8jdTaKO6WM?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e95d92ae-2608-4765-0070-08ddc0246360
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 02:41:07.7235
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 54WQWDbrErkWPrBOwnRrfSpQATXYJ6XVcvWchLqa1oQt2NfIsHYbLNrhA2DOnYfQucBBWCU92l5xzflnnLvsMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7253
 
-This adds support for responding to events via response identifier. This
-prevents races if there are multiple processes backing the same fanotify
-group (eg. handover of fanotify group to new instance of a backing daemon=
-).
-It is also useful for reporting pre-dir-content events without an
-event->fd:
-https://lore.kernel.org/linux-fsdevel/2dx3pbcnv5w75fxb2ghqtsk6gzl6cuxmd2r=
-inzwbq7xxfjf5z7@3nqidi3mno46/.
+Hi Slava,
 
-Rather than introducing a new event identifier field and extending
-fanotify_event_metadata, we have opted to overload event->fd and restrict
-this functionality to use-cases which are using file handle apis
-(FAN_REPORT_FID).
+在 2025/7/11 06:16, Viacheslav Dubeyko 写道:
+> Currently, HFS/HFS+ has very obsolete and inconvenient
+> debug output subsystem. Also, the code is duplicated
+> in HFS and HFS+ driver. This patch introduces
+> linux/hfs_common.h for gathering common declarations,
+> inline functions, and common short methods. Currently,
+> this file contains only hfs_dbg() function that
+> employs pr_debug() with the goal to print a debug-level
+> messages conditionally.
+> 
+> So, now, it is possible to enable the debug output
+> by means of:
+> 
+> echo 'file extent.c +p' > /proc/dynamic_debug/control
+> echo 'func hfsplus_evict_inode +p' > /proc/dynamic_debug/control
+> 
+> And debug output looks like this:
+> 
+> hfs: pid 5831:fs/hfs/catalog.c:228 hfs_cat_delete(): delete_cat: m00,48
+> hfs: pid 5831:fs/hfs/extent.c:484 hfs_file_truncate(): truncate: 48, 409600 -> 0
+> hfs: pid 5831:fs/hfs/extent.c:212 hfs_dump_extent():
+> hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():  78:4
+> hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():  0:0
+> hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():  0:0
+> 
+> Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+> cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> cc: Yangtao Li <frank.li@vivo.com>
+> cc: linux-fsdevel@vger.kernel.org
+> cc: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+> ---
+>   fs/hfs/bfind.c             |  4 ++--
+>   fs/hfs/bitmap.c            |  4 ++--
+>   fs/hfs/bnode.c             | 28 ++++++++++++++--------------
+>   fs/hfs/brec.c              |  8 ++++----
+>   fs/hfs/btree.c             |  2 +-
+>   fs/hfs/catalog.c           |  6 +++---
+>   fs/hfs/extent.c            | 18 +++++++++---------
+>   fs/hfs/hfs_fs.h            | 33 +--------------------------------
+>   fs/hfs/inode.c             |  4 ++--
+>   fs/hfsplus/attributes.c    |  8 ++++----
+>   fs/hfsplus/bfind.c         |  4 ++--
+>   fs/hfsplus/bitmap.c        | 10 +++++-----
+>   fs/hfsplus/bnode.c         | 28 ++++++++++++++--------------
+>   fs/hfsplus/brec.c          | 10 +++++-----
+>   fs/hfsplus/btree.c         |  4 ++--
+>   fs/hfsplus/catalog.c       |  6 +++---
+>   fs/hfsplus/extents.c       | 24 ++++++++++++------------
+>   fs/hfsplus/hfsplus_fs.h    | 35 +----------------------------------
+>   fs/hfsplus/super.c         |  8 ++++----
+>   fs/hfsplus/xattr.c         |  4 ++--
+>   include/linux/hfs_common.h | 20 ++++++++++++++++++++
 
-In terms of how response ids are allocated, we use an idr for allocation
-and restrict the id range to below -255 to ensure there is no overlap wit=
-h
-existing fd-as-identifier usage. We can also leverage the added idr for
-more efficient lookup when handling response although that is not done
-in this patch.
+For include/linux/hfs_common.h, it seems like to be a good start to 
+seperate common stuff for hfs&hfsplus.
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxheeLXdTLLWrixnTJcxVP+B=
-V4ViXijbvERHPenzgDMUTA@mail.gmail.com/
-Signed-off-by: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
----
- fs/notify/fanotify/fanotify.c       |  3 ++
- fs/notify/fanotify/fanotify.h       | 11 ++++-
- fs/notify/fanotify/fanotify_user.c  | 63 ++++++++++++++++++++---------
- include/linux/fanotify.h            |  1 +
- include/linux/fsnotify_backend.h    |  1 +
- include/uapi/linux/fanotify.h       | 11 ++++-
- tools/include/uapi/linux/fanotify.h | 11 ++++-
- 7 files changed, 77 insertions(+), 24 deletions(-)
+Colud we rework msg to add value description?
+There're too much values to identify what it is.
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
-c
-index 34acb7c16e8b..d9aebd359199 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -1106,6 +1106,9 @@ static void fanotify_free_event(struct fsnotify_gro=
-up *group,
-=20
- 	event =3D FANOTIFY_E(fsn_event);
- 	put_pid(event->pid);
-+	if (fanotify_is_perm_event(event->mask) &&
-+	    FAN_GROUP_FLAG(group, FAN_REPORT_RESPONSE_ID))
-+		idr_remove(&group->response_idr, -FANOTIFY_PERM(event)->id);
- 	switch (event->type) {
- 	case FANOTIFY_EVENT_TYPE_PATH:
- 		fanotify_free_path_event(event);
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.=
-h
-index f6d25fcf8692..b6a414f44acc 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -444,7 +444,7 @@ struct fanotify_perm_event {
- 	size_t count;
- 	u32 response;			/* userspace answer to the event */
- 	unsigned short state;		/* state of the event */
--	int fd;		/* fd we passed to userspace for this event */
-+	int id;		/* id we passed to userspace for this event */
- 	union {
- 		struct fanotify_response_info_header hdr;
- 		struct fanotify_response_info_audit_rule audit_rule;
-@@ -559,3 +559,12 @@ static inline u32 fanotify_get_response_errno(int re=
-s)
- {
- 	return (res >> FAN_ERRNO_SHIFT) & FAN_ERRNO_MASK;
- }
-+
-+static inline bool fanotify_is_valid_response_id(struct fsnotify_group *=
-group,
-+						 int id)
-+{
-+	if (FAN_GROUP_FLAG(group, FAN_REPORT_RESPONSE_ID))
-+		return id < -255;
-+
-+	return id >=3D 0;
-+}
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
-tify_user.c
-index 19d3f2d914fe..2e14db38d298 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -330,14 +330,19 @@ static int process_access_response(struct fsnotify_=
-group *group,
- 				   size_t info_len)
- {
- 	struct fanotify_perm_event *event;
--	int fd =3D response_struct->fd;
-+	int id =3D response_struct->id;
- 	u32 response =3D response_struct->response;
- 	int errno =3D fanotify_get_response_errno(response);
- 	int ret =3D info_len;
- 	struct fanotify_response_info_audit_rule friar;
-=20
--	pr_debug("%s: group=3D%p fd=3D%d response=3D%x errno=3D%d buf=3D%p size=
-=3D%zu\n",
--		 __func__, group, fd, response, errno, info, info_len);
-+	BUILD_BUG_ON(sizeof(response_struct->id) !=3D
-+		     sizeof(response_struct->fd));
-+	BUILD_BUG_ON(offsetof(struct fanotify_response, id) !=3D
-+		     offsetof(struct fanotify_response, fd));
-+
-+	pr_debug("%s: group=3D%p id=3D%d response=3D%x errno=3D%d buf=3D%p size=
-=3D%zu\n",
-+		 __func__, group, id, response, errno, info, info_len);
- 	/*
- 	 * make sure the response is valid, if invalid we do nothing and either
- 	 * userspace can send a valid response or we will clean it up after the
-@@ -385,19 +390,18 @@ static int process_access_response(struct fsnotify_=
-group *group,
- 		ret =3D process_access_response_info(info, info_len, &friar);
- 		if (ret < 0)
- 			return ret;
--		if (fd =3D=3D FAN_NOFD)
-+		if (id =3D=3D FAN_NOFD)
- 			return ret;
- 	} else {
- 		ret =3D 0;
- 	}
--
--	if (fd < 0)
-+	if (!fanotify_is_valid_response_id(group, id))
- 		return -EINVAL;
-=20
- 	spin_lock(&group->notification_lock);
- 	list_for_each_entry(event, &group->fanotify_data.access_list,
- 			    fae.fse.list) {
--		if (event->fd !=3D fd)
-+		if (event->id !=3D id)
- 			continue;
-=20
- 		list_del_init(&event->fae.fse.list);
-@@ -765,14 +769,20 @@ static ssize_t copy_event_to_user(struct fsnotify_g=
-roup *group,
- 	    task_tgid(current) !=3D event->pid)
- 		metadata.pid =3D 0;
-=20
--	/*
--	 * For now, fid mode is required for an unprivileged listener and
--	 * fid mode does not report fd in events.  Keep this check anyway
--	 * for safety in case fid mode requirement is relaxed in the future
--	 * to allow unprivileged listener to get events with no fd and no fid.
--	 */
--	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
--	    path && path->mnt && path->dentry) {
-+	if (FAN_GROUP_FLAG(group, FAN_REPORT_RESPONSE_ID)) {
-+		ret =3D idr_alloc_cyclic(&group->response_idr, event, 256,
-+				       INT_MAX, GFP_NOWAIT);
-+		if (ret < 0)
-+			return ret;
-+		fd =3D -ret;
-+	} else if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) && path &&
-+		   path->mnt && path->dentry) {
-+		/*
-+		 * For now, fid mode is required for an unprivileged listener and
-+		 * fid mode does not report fd in events.  Keep this check anyway
-+		 * for safety in case fid mode requirement is relaxed in the future
-+		 * to allow unprivileged listener to get events with no fd and no fid.
-+		 */
- 		fd =3D create_fd(group, path, &f);
- 		/*
- 		 * Opening an fd from dentry can fail for several reasons.
-@@ -803,7 +813,11 @@ static ssize_t copy_event_to_user(struct fsnotify_gr=
-oup *group,
- 			}
- 		}
- 	}
--	if (FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR))
-+
-+	BUILD_BUG_ON(sizeof(metadata.id) !=3D sizeof(metadata.fd));
-+	BUILD_BUG_ON(offsetof(struct fanotify_event_metadata, id) !=3D
-+		     offsetof(struct fanotify_event_metadata, fd));
-+	if (FAN_GROUP_FLAG(group, FAN_REPORT_FD_ERROR | FAN_REPORT_RESPONSE_ID)=
-)
- 		metadata.fd =3D fd;
- 	else
- 		metadata.fd =3D fd >=3D 0 ? fd : FAN_NOFD;
-@@ -859,7 +873,7 @@ static ssize_t copy_event_to_user(struct fsnotify_gro=
-up *group,
- 		fd_install(pidfd, pidfd_file);
-=20
- 	if (fanotify_is_perm_event(event->mask))
--		FANOTIFY_PERM(event)->fd =3D fd;
-+		FANOTIFY_PERM(event)->id =3D fd;
-=20
- 	return metadata.event_len;
-=20
-@@ -944,7 +958,9 @@ static ssize_t fanotify_read(struct file *file, char =
-__user *buf,
- 		if (!fanotify_is_perm_event(event->mask)) {
- 			fsnotify_destroy_event(group, &event->fse);
- 		} else {
--			if (ret <=3D 0 || FANOTIFY_PERM(event)->fd < 0) {
-+			if (ret <=3D 0 ||
-+			    !fanotify_is_valid_response_id(
-+				    group, FANOTIFY_PERM(event)->id)) {
- 				spin_lock(&group->notification_lock);
- 				finish_permission_event(group,
- 					FANOTIFY_PERM(event), FAN_DENY, NULL);
-@@ -1584,6 +1600,14 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags=
-, unsigned int, event_f_flags)
- 		return -EINVAL;
-=20
- 	/*
-+     * With group that reports fid info and allows pre-content events,
-+     * user may request to get a response id instead of event->fd.
-+     */
-+	if ((flags & FAN_REPORT_RESPONSE_ID) &&
-+	    (!fid_mode || class =3D=3D FAN_CLASS_NOTIF))
-+		return -EINVAL;
-+
-+	/*
- 	 * Child name is reported with parent fid so requires dir fid.
- 	 * We can report both child fid and dir fid with or without name.
- 	 */
-@@ -1660,6 +1684,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags,=
- unsigned int, event_f_flags)
- 		fd =3D -EINVAL;
- 		goto out_destroy_group;
- 	}
-+	idr_init(&group->response_idr);
-=20
- 	BUILD_BUG_ON(!(FANOTIFY_ADMIN_INIT_FLAGS & FAN_UNLIMITED_QUEUE));
- 	if (flags & FAN_UNLIMITED_QUEUE) {
-@@ -2145,7 +2170,7 @@ static int __init fanotify_user_setup(void)
- 				     FANOTIFY_DEFAULT_MAX_USER_MARKS);
-=20
- 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) !=3D 14);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) !=3D 15);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) !=3D 11);
-=20
- 	fanotify_mark_cache =3D KMEM_CACHE(fanotify_mark,
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 879cff5eccd4..85fce0a15005 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -37,6 +37,7 @@
- 					 FAN_REPORT_TID | \
- 					 FAN_REPORT_PIDFD | \
- 					 FAN_REPORT_FD_ERROR | \
-+					 FAN_REPORT_RESPONSE_ID | \
- 					 FAN_UNLIMITED_QUEUE | \
- 					 FAN_UNLIMITED_MARKS)
-=20
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_ba=
-ckend.h
-index 832d94d783d9..83c82331866b 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -232,6 +232,7 @@ struct fsnotify_group {
- 	unsigned int max_events;		/* maximum events allowed on the list */
- 	enum fsnotify_group_prio priority;	/* priority for sending events */
- 	bool shutdown;		/* group is being shut down, don't queue more events */
-+	struct idr response_idr; /* used for response id allocation */
-=20
- #define FSNOTIFY_GROUP_USER	0x01 /* user allocated group */
- #define FSNOTIFY_GROUP_DUPS	0x02 /* allow multiple marks per object */
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.=
-h
-index 28074ab3e794..e705dda14dfc 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -67,6 +67,7 @@
- #define FAN_REPORT_TARGET_FID	0x00001000	/* Report dirent target id  */
- #define FAN_REPORT_FD_ERROR	0x00002000	/* event->fd can report error */
- #define FAN_REPORT_MNT		0x00004000	/* Report mount events */
-+#define FAN_REPORT_RESPONSE_ID		0x00008000 /* event->fd is a response id=
- */
-=20
- /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
- #define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
-@@ -144,7 +145,10 @@ struct fanotify_event_metadata {
- 	__u8 reserved;
- 	__u16 metadata_len;
- 	__aligned_u64 mask;
--	__s32 fd;
-+	union {
-+		__s32 fd;
-+		__s32 id; /* FAN_REPORT_RESPONSE_ID */
-+	};
- 	__s32 pid;
- };
-=20
-@@ -228,7 +232,10 @@ struct fanotify_event_info_mnt {
- #define FAN_RESPONSE_INFO_AUDIT_RULE	1
-=20
- struct fanotify_response {
--	__s32 fd;
-+	union {
-+		__s32 fd;
-+		__s32 id; /* FAN_REPORT_RESPONSE_ID */
-+	};
- 	__u32 response;
- };
-=20
-diff --git a/tools/include/uapi/linux/fanotify.h b/tools/include/uapi/lin=
-ux/fanotify.h
-index e710967c7c26..6a3ada7c4abf 100644
---- a/tools/include/uapi/linux/fanotify.h
-+++ b/tools/include/uapi/linux/fanotify.h
-@@ -67,6 +67,7 @@
- #define FAN_REPORT_TARGET_FID	0x00001000	/* Report dirent target id  */
- #define FAN_REPORT_FD_ERROR	0x00002000	/* event->fd can report error */
- #define FAN_REPORT_MNT		0x00004000	/* Report mount events */
-+#define FAN_REPORT_RESPONSE_ID		0x00008000 /* event->fd is a response id=
- */
-=20
- /* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
- #define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
-@@ -141,7 +142,10 @@ struct fanotify_event_metadata {
- 	__u8 reserved;
- 	__u16 metadata_len;
- 	__aligned_u64 mask;
--	__s32 fd;
-+	union {
-+		__s32 fd;
-+		__s32 id; /* FAN_REPORT_RESPONSE_ID */
-+	};
- 	__s32 pid;
- };
-=20
-@@ -225,7 +229,10 @@ struct fanotify_event_info_mnt {
- #define FAN_RESPONSE_INFO_AUDIT_RULE	1
-=20
- struct fanotify_response {
--	__s32 fd;
-+	union {
-+		__s32 fd;
-+		__s32 id; /* FAN_REPORT_RESPONSE_ID */
-+	};
- 	__u32 response;
- };
-=20
---=20
-2.47.1
+You ignore those msg type, maybe we don't need it?
+
+Thx,
+Yangtao
 
 
