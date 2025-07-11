@@ -1,310 +1,407 @@
-Return-Path: <linux-fsdevel+bounces-54649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDBBB01E2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 15:46:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D1BB01E2E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 15:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FC93A8154
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 13:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28EA3AC707
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 13:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC83C2D8385;
-	Fri, 11 Jul 2025 13:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3E92D839E;
+	Fri, 11 Jul 2025 13:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MUoakGBn";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZKku8bID"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mf0OK7zo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D26129AAF5;
-	Fri, 11 Jul 2025 13:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752241605; cv=fail; b=Ex5REPohEkzOE3HVghRMC+1WkviSes2sjv3ncGDgtEUGG7J2iVtqJUP6ENu5EvmUnWY/J2XGGcT+549N7AbjHzsv2/5aUZJ6vbhMyYFMeFf5lP1Hndm9lmaU2BRgGh4yzY1ETT276vMHp7dSZyP6/DqGobhdXGFh/XJkxYkTBSE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752241605; c=relaxed/simple;
-	bh=pTJPpyFa0UTePYgOG45/blDUInVk2FAKaE+wNxaWjH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SENCNT9+5saJY+/wDz585vfY9fc5/86Djna2YzrBfOy/X1Fw7x4sEa7nzXMa1MSn6JHl7ijufNUEdT5SNyGUvtNtDJImTktbPk5ycuhH9UT/jvfOwqx+YssRj0mMItwTaYrQIFW7WNGw7WIjWBnowYxATIIOQV4MM96jsev6GMw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MUoakGBn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZKku8bID; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BDR9E9004552;
-	Fri, 11 Jul 2025 13:46:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=ndLSRQZvz3+L+TkUjA
-	yX9cDjTFXXcUShMRGHzW329s8=; b=MUoakGBnKXqsLdF0AHSfq2XEuyNKdy2lrP
-	/2n6MEgMONcEQ0dLUGC9tj8od007sfkZm2SGPatv4Ll8BbeG/CegtUlWZ6zV0Sgx
-	7hMXCJYfls5fUcodubLdn5yXGBLu57QnVXgV529any/mTUooQHtIYydnlR0sBwLh
-	fBf6pEeini2UZpSDMEnfBPAqbPrej2sV2fOCFtP3SxWidajEjjpEGGBnl8Y2lNgW
-	Bs5Qsuaiyn+63sXGw3ibMzVoQ+25SELMb7GFcXiTUV79jxlh7OPMLPOGh3E0OGSQ
-	980tFbHuiw0u4KOPRqDXz++FXKUTHEBipKeYL/dfzOBM9Jb8x7dw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47u3gk814q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 13:46:05 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56BBhfJW014439;
-	Fri, 11 Jul 2025 13:46:04 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2076.outbound.protection.outlook.com [40.107.94.76])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgec1rn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 13:46:04 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PYa+eav60ZG/WLtgsm4WrYNEqtfBy4DaIVBrV+gDKb9XIqcmri3uJ7CFiN8A7mcC3ibAod5sIPq/qQtite6nyrH0BKh/xKqTtusJdiXr7jvYSnC16sQTZjuq6LXyb1v9IEuwmPzCJbiqjAbk/OGhwE3ZV5/SH47S5s/QXyfnniE7tHzx8WkKLHlGpeUWuTbA+NUIqYWDJpATT/a+ZMhy4x/7ZPVaOtJHhx8d9H8JS4w7oGRi9E89sGlfd4QsqUQi2UbCZAc+XkdpZ1UGggtRjUQoOfWKg1i/dxMyHf9aEDfg0nSlYVVAgQdMgblLzzcMJLRpgDoR0pcPEs6RVNvgtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ndLSRQZvz3+L+TkUjAyX9cDjTFXXcUShMRGHzW329s8=;
- b=pRBHZR8IrLjrTJNKtLOXUqW3qM8lqc56UttbpMim/NEbWXNi4+HN24/W1Rd1YXXJ4fgUrS9O+mlHaDw7O7I8H00E33HRHXI9GBklAVNVom/7006TmDxuGWcAnd67u0Cj/GbEgkjoYWMBnJizmpTLH5TcTjevkwy3cNXk7CDF8vuT7f/0jRRWn7ev+h+cjCv2gkzRles8J9knirZ2Nnx44N5XSNM3DHiHa08Byniva4LP11G7E+ARPjc6yv0r/FUtrqC3kERGRHczWaJjGLhBRbPrnuG4hjw1ESLvd+9/9ya3PZHkUCXUAS36DuPWs1gcsxTfD1m1jl1f+Hp1WNEzJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BFE29B23E;
+	Fri, 11 Jul 2025 13:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752241621; cv=none; b=exwsip2haQAZPHUC94wjM1ZVccYMA45tbMcA7UFMIPIXWh4ms5W6RDqFGl5cuZe6cM3sVJH/I7T2Q3nz4P6G5QtEDet2Gzcsy/JwE+jBOoQpeAhLiYKsC64DzmaYYueuF0rLPf55B+9wdyEqE0H6VbVThXmJnHLj3BNzELFSkN4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752241621; c=relaxed/simple;
+	bh=rU03N2HhMy2BaScWgGYe/Q97rekeyCC3P9NomOCiiJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XrkfTxsIIWyFjGKNcqIVqgq8h6YZpHnJlK29dUl21mQHawQrvkvgOIM28ZD1S2TiemuOANnfW1sT1Q08sp+leNYTIngiNxCPK3vXXWUWyCjUfvwtXFIecGZpzUPPXBr8279hP9YRNuaQbrnMUUo14UdVGgyJJJXWFxYWNLVxSGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mf0OK7zo; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7387f21daadso1660208a34.0;
+        Fri, 11 Jul 2025 06:46:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ndLSRQZvz3+L+TkUjAyX9cDjTFXXcUShMRGHzW329s8=;
- b=ZKku8bIDKXjeJi/p3evrd5/rw0/UF6v+Z7AYjsHYVsLEtOond3bkDNTf8+6fBxwtk0p+ATQ6VN79finmdTlKV5q1AdCSzYZeHFJYQMbstLpA6Rgqs6nRxC/Q6ug/Fyl04gTaZLRA8TxTc6hPyD9HMaP+tf9sGkmeBNwIIPNMbew=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB7399.namprd10.prod.outlook.com (2603:10b6:8:11c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Fri, 11 Jul
- 2025 13:46:00 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8922.023; Fri, 11 Jul 2025
- 13:46:00 +0000
-Date: Fri, 11 Jul 2025 14:45:58 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 00/10] mm/mremap: permit mremap() move of multiple VMAs
-Message-ID: <eceb2cce-07bf-4187-af50-acb34525f856@lucifer.local>
-References: <cover.1752232673.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1752232673.git.lorenzo.stoakes@oracle.com>
-X-ClientProxiedBy: LO4P123CA0601.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:295::21) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1752241618; x=1752846418; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/GPuleXeBHMAWgXuPdR3B4XK+IiQDyEEXPlfp+HEtyk=;
+        b=mf0OK7zo+DUa2gPjT3xfUUUvaTxejwdxCLJzDoeLhi4XKsmiMKC4t3n9GBuX7+08io
+         Jpv3QMltT4vKY3wsUkDW6AKE5LLEP+9W6hXXPaioRSoOCMERoEd6CMzQ50plPbxrnQVu
+         wRlXLSlX+CGwi3TiRQfLy/JINRya9Psvy5TBI8VmwEPNKheXcu7lW1BGi/6qugFP3xTF
+         uK0yhkKWnvkXIiOcs2rNk7RhLCln4RcMQJHpRlGL4gMLX7ya61VN+pZRkx+p7W3J1GcR
+         vAiOoNfZLUB7u4YzGNakXCBKIOf1XoJCLR7duqo3pCG5d9E6TYLfsDrooX6PuhzVDGcF
+         ugCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752241618; x=1752846418;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/GPuleXeBHMAWgXuPdR3B4XK+IiQDyEEXPlfp+HEtyk=;
+        b=P6awErtvFsqgGbwDQfaVG9o8pIEdTayFh3kgxbwIzV5Jo1l9RE45NNlrVjHpyrHHBt
+         7PxZUbJdBkRjsiUYDLXfwv0NoKK1ZHv5Gj+KHPwEod9rZC96EyQwh2xHUri3M0gVkIYQ
+         QRlO0Gaj+8kfWavm+8I2xAsaKbAVZsbqikR7b+N+OIhZeu7g4qxun1iYorrV/W3s9HFq
+         r7tJhSUoFVycYDu6X/PYoHjTdr6KKrpOXOVhvM/Yu2ZOpPjrP0YQODmXm76qdXsIaW1D
+         dDmXyhGGJpJm/6qN7L7R9F9qKsxre1Lob+oGCINJvffKTwGOHwFqVSr596kacbmTHEf3
+         3wfA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1tGpkPNHWtmayi5boAcqzFld4yySRPwispnOwruTm6akCixLRGO8yoqOQR6WPGS2E+deEBxOM1PRhzhEbOg==@vger.kernel.org, AJvYcCVYr47vS8Oa6+ctBDKPFHF+ZqfDIU8fiOMONNcC5bCk7HTd7XruCiU3wwQSU+8jSBOWa0B6qNz/+3dJGpPH@vger.kernel.org, AJvYcCVp01YgQmSqzLFKdc9nEawX8QgQ0r2jC8CRYlWz4TviR4wUUkKLsMpva7SIoghiSEpu8nojCXsGj7Pq@vger.kernel.org, AJvYcCXAX0HufPGMuvo3JNaExYREELpaZBlUnxA2YxH6+FfpOJeddNMUhMp28ZTAXbtypKSbSk4rxvqXxAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjH577CQOAqMs5bRik3bYB4P5e33jbNWJnbsxoD+HC4w6Bd4hk
+	U2XqYkCl3DnIgRD4RUy+DvaaGAImHJFJqJsaRrri7giCNUKh6Nrlkdbs
+X-Gm-Gg: ASbGncuIB7VOazDCPtkvvCRSsxFnxi9sYUrST+34UA5ohkUrWjHnWeueSh9x/kbtGme
+	0OWypMlEGgDxHiLchG/xM5EN67p81JfFgLmu/jukjzPpL9/IFVvgDheVeLSOJ7NQgJw+2YTlT5W
+	f3kWHUWZeWmf06QWIl/h+RkF/e6HOKxEzUsm0ls6eh5YBqAItI/M3rw0J94S5Ev7Sx1UkLPik08
+	2y4N5tUJ/OuoRbB1iVzo8wzVv+cwXQtxPK3AUbqyWZ8Yiwggj9ilcRbCT6rEsb4/A7vYNAqf3TW
+	InIpwxdXNHdub1Z5z7jwLaP6r/hTG4YE1pC/PXBi5HlvhFaiE2InQ49U05hVL4igD1UeL5rpxA2
+	dVSsZQAlzRjc8cqPhs/a1zIIspySuIlLX71ye
+X-Google-Smtp-Source: AGHT+IEe2XPLigbUHcncB2xlw3olBXm4plTDrY+NsL1YHY2kqGP5ueQ/yK2JyL3sv4JtTRMyN4WCtA==
+X-Received: by 2002:a05:6830:b85:b0:73b:1efa:5f5c with SMTP id 46e09a7af769-73cfa28914dmr2857648a34.8.1752241617517;
+        Fri, 11 Jul 2025 06:46:57 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:25b0:db8a:a7d3:ffe1])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73cf12a6ea1sm559465a34.49.2025.07.11.06.46.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 06:46:56 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Fri, 11 Jul 2025 08:46:54 -0500
+From: John Groves <John@groves.net>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+	Miklos Szeredi <miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
+Message-ID: <2vkgyxe3mnyamj33axiwthmqo32akdakfgv3vfauziakjnzqtj@vr3erk5wdshq>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-13-john@groves.net>
+ <20250709042713.GF2672029@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB7399:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50f7f615-fef8-4516-1963-08ddc08145a2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eLwGyUQfr4OszWJLUuDg4c2Ne3wrhbkuRU0Z+5G7K9mMIFFGRdUxOYS/H1qp?=
- =?us-ascii?Q?ga2972oo9n5DreSDaa9RFNBwhQ/A58lVK0XIdhRNyTAvMP7LX1Aw4XEsAJ6M?=
- =?us-ascii?Q?U9HPJ8AVLpDRXXouFU53v+IzJKYUbKR3qPrN7PzTEHBRzYeZN3LmLGTspJS3?=
- =?us-ascii?Q?leaxInuaigtQqSPs/OMYXOAr6e/dbdMxtd/fy2jCMABxfj7qeqMafBba5j6F?=
- =?us-ascii?Q?XP6RTr1f8TLV54TAxB1nfAATAnBFtxK2czOlKDj9g20/PrjpMgGXKzxIoOxF?=
- =?us-ascii?Q?GDdkiA7O2ZhpENqUqqNVwqyXvuCEpboe/SDrtkUB1gRsKNLIyII2mVdlpIS8?=
- =?us-ascii?Q?1rjO4hu32RIzkKoyFurRrdbweGkJo3c8FYVHUAEyPIucoNa2BcDBK1qCnpKd?=
- =?us-ascii?Q?yuzzbGp52dzAxjHEbWSdX7EZqk/foefaHobIGMTKQ/ugk95cs2YMjSDy5mQm?=
- =?us-ascii?Q?JcWa7xtbtA40SKve5ZL7Mpo0yl+6UrMFvOU3FwEh5UH1tF8Z/cnJfbFvaj3e?=
- =?us-ascii?Q?m2gCM7Dc4yLd/wWLRFECUSvr/G35glSSa6MMwJsOtYPqr4fVy+uE922ka8cT?=
- =?us-ascii?Q?umJmRIC+1zMOqukLhN5l8q5AUZvOt3dtgfHpzCKUE8p/8ZiCf4J6r7zFyJIM?=
- =?us-ascii?Q?Oh3X2jCjWfpsdP2acb8DABuKEKPp0l+OUxcqcDe/k4KTR/Wv7VNEig3hLIBw?=
- =?us-ascii?Q?qB4r/EADSUCZZ98WCK2NEyk3fjfBVYEqhmi58m9mBuFTxH74PoXH//LgZWVj?=
- =?us-ascii?Q?/CwpW2QwZSfVW4oLtn8610K9Tua88U1mesJs/N26kC7VvOpE9Z2sNfx31CUw?=
- =?us-ascii?Q?gfWdjr9B2T86NyvE6kE2vnxs3fxGeXPXHlJZsm2g8eB+H6qFC5AbEtvVmpV0?=
- =?us-ascii?Q?9JUKow1u6YoAAOZFsSQRj8mM65arMOMOSw9goDxHgw6fzUE12i0I2S5wc6WF?=
- =?us-ascii?Q?IC9onFANttJ3roT56AF3eo/+AE5A9WErVf7ExHgT1eSWP48AkdkjvU0BF7Bs?=
- =?us-ascii?Q?vtNQlvlGaue4hIoE2XTAI03AbIh6lMc6xY6NFMUeeTCsnJxIHrcLFoOS3oT5?=
- =?us-ascii?Q?OlNA+HSWTpInAAYGZmfzvh4yOwonmbpMPkcnwgIOxE/csdttLwhbDh7Nsg+Z?=
- =?us-ascii?Q?QBLwW+B9hiwz4uLpPD6lEiWWDa9f8NdXixk8u8HnoAZTUWW9/SzYqqLP9TIO?=
- =?us-ascii?Q?9WNvDm2NpefXDdUhzz5lgRc8hM+XoWP0QjV4j/5Iz+R498mc4akYntTG1elB?=
- =?us-ascii?Q?x7A84iltCZRTOoDYoD5uPx62IMaSV1y9Oj+hL9Mv+4OEriBQg1Wdo0/RK9NH?=
- =?us-ascii?Q?RYyH828L0jQNx2HpzR8Kr27S2sTKzOdPD9pjJoeTPTqZ5cHezOp63E9QecOS?=
- =?us-ascii?Q?yiXJ4Pi5FO7ew/LE8ChLKmYT+2GszGs9O3xOqXzilSdB3aeWVRsplUiJLhd0?=
- =?us-ascii?Q?QLvQVmtJ+wQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?iQVRqLKYqeJmiJh1VFNcm60vi+7EaA+hI3tyQ/dm4D4ggZEMbEW7/2PYO3ql?=
- =?us-ascii?Q?bwACjckb6UrvE9fQcagAA0ukdgSj4/jL2y7ZWUgkmllJD5RmwbxI/yGEMq1H?=
- =?us-ascii?Q?wCspjl2juxv5oxqQ+Oj4qWlZQOqBi3I39C3md69buaOGvils6mrIheduRA4J?=
- =?us-ascii?Q?EI72bFNTaUspSiHrgOETXNiDPKlZ9fAjgLJ5gPtmFxewcPPpLpODUabQFF38?=
- =?us-ascii?Q?aJzLqls7KCu3DpQ5qdp4l8EbrR+z19AWv20My0UOVJiIdGFCRG32kpgWEof3?=
- =?us-ascii?Q?UbYz6wPRPrJkKElC/6lfP+/a/yMLrB3A/fzt58CCNMUAPlMVuQmsrVZMpooA?=
- =?us-ascii?Q?4cWu4e65Clp5PSIjR0gVAv1Kw9AvjxJ29Y7X+mt2b6wYnHTuJwXd6YAHmWc+?=
- =?us-ascii?Q?+xabxnhwwz9aP2iDgDxy4qJIlDtYsGqr+PAI+rU8IjfN/Qq+elIcybRqvkAF?=
- =?us-ascii?Q?UGLwOLC9s9704SSIWroebZNJKmKt5/gLBn8xrArAxPKdY5YXWoIKFj87uNgv?=
- =?us-ascii?Q?AXOOLCMQl2nGAyzre1uOmMQZHCCMjdGVJ9B+tUsaPT4+JDpnpzJQlXvWAYwM?=
- =?us-ascii?Q?g9G0UgXA/+wKPE4KVxiANv2P6YdO0YzILyIP5PkQR5nCnwIM6KM/Xc0ZPsFv?=
- =?us-ascii?Q?2FXf3eaPT++jGv/hcOc+yU2bxu363hT8UyFsNt8Zfj+rnQpgMILeIScm1fmm?=
- =?us-ascii?Q?ZLPr/CKIWSef92SO2wc9Drsg9/cjx6wwJn+NkcXh8SHiqUPntIMOjX9GKapK?=
- =?us-ascii?Q?uaW+CVe/4P6njFpZl3il+kjKVdaWNDns6Lc6JioVAb+OpgAYqTZxA6pxDYbo?=
- =?us-ascii?Q?B/qjiGIYYjcdgQSIqZZoz463w28VluHf1m7IRbnM0tJ4t9N5s17Pj/56am2V?=
- =?us-ascii?Q?c0HFxz4LUWNqptu76P2I2hRn012iIjIVHkXGme55KwtYZLQmTb2idHz3chpx?=
- =?us-ascii?Q?tghijOE1U6SmLKy520JYeoNgRu9NODDEEvLibrWUOTXwrBuPf2pwoCh40k5m?=
- =?us-ascii?Q?qZP57Dyw6Fu0WApBv2wnqGU50slfEzL1NMes2UYcfwc+59Gmyn8TD1YDp7V4?=
- =?us-ascii?Q?NnmhXczw/UqZXDOr8amgfE4MBbYTYsfNMSgz1uC3FAMY/NtuY0Q6ISWEQ/6X?=
- =?us-ascii?Q?abyJp0Gb+IkzRat0+Mao/X13BljggYcHUn2PSTRWtGnn3QWqMiX64Ucs6PuS?=
- =?us-ascii?Q?jTpyLh1qqQrycrqeirws/puu7cRDwmBNmJeKnrUosDArMF8lYhtuMUVDUXrx?=
- =?us-ascii?Q?M+uLFy7sl3rbr0zo9DTtsnvygTN489yGjfEMs7dOlOn9XF7mGKDGB8/kT64D?=
- =?us-ascii?Q?k88AevKEgLcORrTh3JDHqFds7tDH2776dwsA962yKBJtojGuoP+fFDe8obLu?=
- =?us-ascii?Q?oGkabWSY9E3Vlv9K0EFICtricDLz6RfkCHp+g4ymiUMbCtOl4OGi07J1uZ+J?=
- =?us-ascii?Q?prTLqGtlYzy/rrobHQVYD1J+SaPWs1X5ziV5GX1W5z+30zCdUyuGvcwQXJLG?=
- =?us-ascii?Q?aNsUc+UwIZZpNI2sM08wcCGl6NaptSYyoan2mVxODHZxzBkKv7K68Ikt4CMK?=
- =?us-ascii?Q?Iy5IrtHDu11PUaiWaKHuWTIZE6aw+m2TaVvQoVS/6xANd5qlPEMnEvzcj81g?=
- =?us-ascii?Q?KA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	zQr16NpA9BSQwAycO+qFN0DVFpUeZth8Gfw1DcBxLhgsn5Mdp2+l5+TDlSoBvu0xSGboSTDe1XSAGHqeyaLKgEbPkifffna8Xu2cFACNZEruKF8LNpg7SvI+iPFiUEi1/VrRNTgcenq95Tgefhwf3oa2GYIwURc8ZUxRA2Gws6DtF07DMF4ZOmHo/h7DZa/30fG+lJefQTjLzNqiVyQvKWLqolVca3SaFniItrHRTrdEIsYRzM9MJ/6xjWyGgMP1qAuEayId+qVLDrQfJm49hYUJjZuzSdlkD5mkAops8tYCZfo4IR0PnnK4TYuMss5wZEUNqVkRtP/85a055tX289uZ0LuWOfagZIEeRjyIpUP2rOSm9Ub/Ty8x2gCZNbBvIRK7iSdP0w1D/c7mbzqew0LO8h7fNQVqtBWOXZfPfkG335UxB/L7UsLZd5r01vQHovpHP5R+Hxdsqho4bVSvu8e4Mmj6RxpDzk2dj78AMbj3eJTOLlxVVW9Hnyuie0JqhDc0YiZlkz5mElGoW+b6sw0+C0uhZaWAygmE6G9Zw7ndTfMq/NhdTmnlkfUuQ9QegTdFO47h7cOC3IwTMPIXcuAXC9TSsLJO/sckwYRSyr8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50f7f615-fef8-4516-1963-08ddc08145a2
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 13:46:00.8908
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ldMAeAE7Z+tPOifeoWoJSn620M+8jUx5TawoVCnC0tkd1/NfIeORq0s+yfMojIwNrrMTKnQXcmDJSUtkNoHvH2xFmzn9VB02rMDmujFDXog=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7399
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
- phishscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507110097
-X-Proofpoint-ORIG-GUID: Y08li79oL_E03ffOSxRYC7onLdla8zDG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA5NyBTYWx0ZWRfX25VFszGT8muO /+MvzgjomUx5Ib/WsJaBTJrngE0M6FXrqbYxfN8Uwgt4vSJQ/AQixVIigWAyhb3WhnVQEFyLmly vSEDxNGPGyY6IZ4aN2R6JyXaDxa832NtMAFpZNTTZcbl3zsqkP4xZ/0QxLyMCMNrDz3mNl4FEJB
- gGpHK7hC4VASqNNFktDfBpYgd2YHH41842E9gukma4dgvLZiceKrpXivRParr0iT/nk5+ykyHqu /ahW2K5e6HzibtwYqH7TGEYBzKSXf9OglXjan2syznSXXYNvhLeIpu4pt1JuRgx9tOBLh0Jy+O9 I3ee5LpkY5X3nBnAo55Ow79I7SivOeLjr3euiGAwYt+ugP2gQO3vmVVGncsE821LbihBfz1MFqu
- U7S6UNWIWObk/riOCdMO30pPFfcK6eQsV5zt6jWftGi+ZKDtv0HIRxWpsQyV7t6drlp5f3Qq
-X-Authority-Analysis: v=2.4 cv=eK0TjGp1 c=1 sm=1 tr=0 ts=6871159d b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=KDkriMuAvPMAm80rOkcA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13600
-X-Proofpoint-GUID: Y08li79oL_E03ffOSxRYC7onLdla8zDG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709042713.GF2672029@frogsfrogsfrogs>
 
-Apologies, I've done it again... :) Friday eh?
+On 25/07/08 09:27PM, Darrick J. Wong wrote:
+> On Thu, Jul 03, 2025 at 01:50:26PM -0500, John Groves wrote:
+> > Upon completion of an OPEN, if we're in famfs-mode we do a GET_FMAP to
+> > retrieve and cache up the file-to-dax map in the kernel. If this
+> > succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
+> > 
+> > GET_FMAP has a variable-size response payload, and the allocated size
+> > is sent in the in_args[0].size field. If the fmap would overflow the
+> > message, the fuse server sends a reply of size 'sizeof(uint32_t)' which
+> > specifies the size of the fmap message. Then the kernel can realloc a
+> > large enough buffer and try again.
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
+> > ---
+> >  fs/fuse/file.c            | 84 +++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/fuse_i.h          | 36 ++++++++++++++++-
+> >  fs/fuse/inode.c           | 19 +++++++--
+> >  fs/fuse/iomode.c          |  2 +-
+> >  include/uapi/linux/fuse.h | 18 +++++++++
+> >  5 files changed, 154 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index 93b82660f0c8..8616fb0a6d61 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -230,6 +230,77 @@ static void fuse_truncate_update_attr(struct inode *inode, struct file *file)
+> >  	fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
+> >  }
+> >  
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +
+> > +#define FMAP_BUFSIZE 4096
+> 
+> PAGE_SIZE ?
 
-+cc linux-api - FYI guys.
+Like it. Queued to -next
 
-I will update manpage to reflect this change of course also.
+> 
+> > +
+> > +static int
+> > +fuse_get_fmap(struct fuse_mount *fm, struct inode *inode, u64 nodeid)
+> > +{
+> > +	struct fuse_get_fmap_in inarg = { 0 };
+> > +	size_t fmap_bufsize = FMAP_BUFSIZE;
+> > +	ssize_t fmap_size;
+> > +	int retries = 1;
+> > +	void *fmap_buf;
+> > +	int rc;
+> > +
+> > +	FUSE_ARGS(args);
+> > +
+> > +	fmap_buf = kcalloc(1, FMAP_BUFSIZE, GFP_KERNEL);
+> > +	if (!fmap_buf)
+> > +		return -EIO;
+> > +
+> > + retry_once:
+> > +	inarg.size = fmap_bufsize;
+> > +
+> > +	args.opcode = FUSE_GET_FMAP;
+> > +	args.nodeid = nodeid;
+> > +
+> > +	args.in_numargs = 1;
+> > +	args.in_args[0].size = sizeof(inarg);
+> > +	args.in_args[0].value = &inarg;
+> > +
+> > +	/* Variable-sized output buffer
+> > +	 * this causes fuse_simple_request() to return the size of the
+> > +	 * output payload
+> > +	 */
+> > +	args.out_argvar = true;
+> > +	args.out_numargs = 1;
+> > +	args.out_args[0].size = fmap_bufsize;
+> > +	args.out_args[0].value = fmap_buf;
+> > +
+> > +	/* Send GET_FMAP command */
+> > +	rc = fuse_simple_request(fm, &args);
+> > +	if (rc < 0) {
+> > +		pr_err("%s: err=%d from fuse_simple_request()\n",
+> > +		       __func__, rc);
+> > +		return rc;
+> > +	}
+> > +	fmap_size = rc;
+> > +
+> > +	if (retries && fmap_size == sizeof(uint32_t)) {
+> > +		/* fmap size exceeded fmap_bufsize;
+> > +		 * actual fmap size returned in fmap_buf;
+> > +		 * realloc and retry once
+> > +		 */
+> > +		fmap_bufsize = *((uint32_t *)fmap_buf);
+> > +
+> > +		--retries;
+> > +		kfree(fmap_buf);
+> > +		fmap_buf = kcalloc(1, fmap_bufsize, GFP_KERNEL);
+> > +		if (!fmap_buf)
+> > +			return -EIO;
+> > +
+> > +		goto retry_once;
+> > +	}
+> > +
+> > +	/* Will call famfs_file_init_dax() when that gets added */
+> 
+> Hard to say what this does without looking further down in the patchset.
+> :)
 
-On Fri, Jul 11, 2025 at 12:38:14PM +0100, Lorenzo Stoakes wrote:
-> Historically we've made it a uAPI requirement that mremap() may only
-> operate on a single VMA at a time.
->
-> For instances where VMAs need to be resized, this makes sense, as it
-> becomes very difficult to determine what a user actually wants should they
-> indicate a desire to expand or shrink the size of multiple VMAs (truncate?
-> Adjust sizes individually? Some other strategy?).
->
-> However, in instances where a user is moving VMAs, it is restrictive to
-> disallow this.
->
-> This is especially the case when anonymous mapping remap may or may not be
-> mergeable depending on whether VMAs have or have not been faulted due to
-> anon_vma assignment and folio index alignment with vma->vm_pgoff.
->
-> Often this can result in surprising impact where a moved region is faulted,
-> then moved back and a user fails to observe a merge from otherwise
-> compatible, adjacent VMAs.
->
-> This change allows such cases to work without the user having to be
-> cognizant of whether a prior mremap() move or other VMA operations has
-> resulted in VMA fragmentation.
->
-> In order to do this, this series performs a large amount of refactoring,
-> most pertinently - grouping sanity checks together, separately those that
-> check input parameters and those relating to VMAs.
->
-> we also simplify the post-mmap lock drop processing for uffd and mlock()'d
-> VMAs.
->
-> With this done, we can then fairly straightforwardly implement this
-> functionality.
->
-> This works exclusively for mremap() invocations which specify
-> MREMAP_FIXED. It is not compatible with VMAs which use userfaultfd, as the
-> notification of the userland fault handler would require us to drop the
-> mmap lock.
->
-> It is also not compatible with file-backed mappings with customised
-> get_unmapped_area() handlers as these may not honour MREMAP_FIXED.
->
-> The input and output addresses ranges must not overlap. We carefully
-> account for moves which would result in VMA iterator invalidation.
->
-> While there can be gaps between VMAs in the input range, there can be no
-> gap before the first VMA in the range.
->
->
-> v3:
-> * Disallowed move operation except for MREMAP_FIXED.
-> * Disallow gap at start of aggregate range to avoid confusion.
-> * Disallow any file-baked VMAs with custom get_unmapped_area.
-> * Renamed multi_vma to seen_vma to be clearer. Stop reusing new_addr, use
->   separate target_addr var to track next target address.
-> * Check if first VMA fails multi VMA check, if so we'll allow one VMA but
->   not multiple.
-> * Updated the commit message for patch 9 to be clearer about gap behaviour.
-> * Removed accidentally included debug goto statement in test (doh!). Test
->   was and is passing regardless.
-> * Unmap target range in test, previously we ended up moving additional VMAs
->   unintentionally. This still all passed :) but was not what was intended.
-> * Removed self-merge check - there is absolutely no way this can happen
->   across multiple VMAs, as there is no means of moving VMAs such that a VMA
->   merges with itself.
->
-> v2:
-> * Squashed uffd stub fix into series.
-> * Propagated tags, thanks!
-> * Fixed param naming in patch 4 as per Vlastimil.
-> * Renamed vma_reset to vmi_needs_reset + dropped reset on unmap as per
->   Liam.
-> * Correctly return -EFAULT if no VMAs in input range.
-> * Account for get_unmapped_area() disregarding MAP_FIXED and returning an
->   altered address.
-> * Added additional explanatatory comment to the remap_move() function.
-> https://lore.kernel.org/all/cover.1751865330.git.lorenzo.stoakes@oracle.com/
->
-> v1:
-> https://lore.kernel.org/all/cover.1751865330.git.lorenzo.stoakes@oracle.com/
->
->
-> Lorenzo Stoakes (10):
->   mm/mremap: perform some simple cleanups
->   mm/mremap: refactor initial parameter sanity checks
->   mm/mremap: put VMA check and prep logic into helper function
->   mm/mremap: cleanup post-processing stage of mremap
->   mm/mremap: use an explicit uffd failure path for mremap
->   mm/mremap: check remap conditions earlier
->   mm/mremap: move remap_is_valid() into check_prep_vma()
->   mm/mremap: clean up mlock populate behaviour
->   mm/mremap: permit mremap() move of multiple VMAs
->   tools/testing/selftests: extend mremap_test to test multi-VMA mremap
->
->  fs/userfaultfd.c                         |  15 +-
->  include/linux/userfaultfd_k.h            |   5 +
->  mm/mremap.c                              | 553 +++++++++++++++--------
->  tools/testing/selftests/mm/mremap_test.c | 146 +++++-
->  4 files changed, 518 insertions(+), 201 deletions(-)
->
-> --
-> 2.50.0
+New comment:
+	/* We retrieved the "fmap" (the file's map to memory), but
+	 * we haven't used it yet. A call to famfs_file_init_dax() will be added
+	 * here in a subsequent patch, when we add the ability to attach
+	 * fmaps to files.
+	 */
+
+> 
+> > +	kfree(fmap_buf);
+> > +	return 0;
+> > +}
+> > +#endif
+> > +
+> >  static int fuse_open(struct inode *inode, struct file *file)
+> >  {
+> >  	struct fuse_mount *fm = get_fuse_mount(inode);
+> > @@ -263,6 +334,19 @@ static int fuse_open(struct inode *inode, struct file *file)
+> >  
+> >  	err = fuse_do_open(fm, get_node_id(inode), file, false);
+> >  	if (!err) {
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +		if (fm->fc->famfs_iomap) {
+> > +			if (S_ISREG(inode->i_mode)) {
+> 
+> /me wonders if you want to turn this into a dumb helper to reduce the
+> indenting levels?
+> 
+> #if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> static inline bool fuse_is_famfs_file(struct inode *inode)
+> {
+> 	return fm->fc->famfs_iomap && S_ISREG(inode->i_mode);
+> }
+> #else
+> # define fuse_is_famfs_file(...)	(false)
+> #endif
+> 
+> 	if (!err) {
+> 		if (fuse_is_famfs_file(inode)) {
+> 			rc = fuse_get_fmap(fm, inode);
+> 			...
+> 		}
+> 	}
+> 
+
+I've already refactored helpers and simplified this logic in the -next 
+branch, including losing the conditrional code here in file.c:
+
+	if (!err) {
+		if ((fm->fc->famfs_iomap) && (S_ISREG(inode->i_mode))) {
+			int rc;
+			/* Get the famfs fmap */
+			rc = fuse_get_fmap(fm, inode);
+			...
+		}
+		...
+	}
+
+So I think it's quite a bit cleaner... will send out an updated patch
+pretty soon (probably next week, without the poisoned page fixes yet).
+
+> > +				int rc;
+> > +				/* Get the famfs fmap */
+> > +				rc = fuse_get_fmap(fm, inode,
+> > +						   get_node_id(inode));
+> 
+> Just get_node_id inside fuse_get_fmap to reduce the parameter count.
+
+Done, thanks
+
+> 
+> > +				if (rc)
+> > +					pr_err("%s: fuse_get_fmap err=%d\n",
+> > +					       __func__, rc);
+> > +			}
+> > +		}
+> > +#endif
+> >  		ff = file->private_data;
+> >  		err = fuse_finish_open(inode, file);
+> >  		if (err)
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index f4ee61046578..e01d6e5c6e93 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -193,6 +193,10 @@ struct fuse_inode {
+> >  	/** Reference to backing file in passthrough mode */
+> >  	struct fuse_backing *fb;
+> >  #endif
+> > +
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +	void *famfs_meta;
+> > +#endif
+> 
+> What gets stored in here?
+
+Explanatory comment added:
+	/* Pointer to the file's famfs metadata. Primary content is the
+	 * in-memory version of the fmap - the map from file's offset range
+	 * to DAX memory
+	 */
+
+> 
+> >  };
+> >  
+> >  /** FUSE inode state bits */
+> > @@ -945,6 +949,8 @@ struct fuse_conn {
+> >  #endif
+> >  
+> >  #if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +	struct rw_semaphore famfs_devlist_sem;
+> > +	struct famfs_dax_devlist *dax_devlist;
+> >  	char *shadow;
+> >  #endif
+> >  };
+> > @@ -1435,11 +1441,14 @@ void fuse_free_conn(struct fuse_conn *fc);
+> >  
+> >  /* dax.c */
+> >  
+> > +static inline int fuse_file_famfs(struct fuse_inode *fi); /* forward */
+> > +
+> >  /* This macro is used by virtio_fs, but now it also needs to filter for
+> >   * "not famfs"
+> >   */
+> >  #define FUSE_IS_VIRTIO_DAX(fuse_inode) (IS_ENABLED(CONFIG_FUSE_DAX)	\
+> > -					&& IS_DAX(&fuse_inode->inode))
+> > +					&& IS_DAX(&fuse_inode->inode)	\
+> > +					&& !fuse_file_famfs(fuse_inode))
+> >  
+> >  ssize_t fuse_dax_read_iter(struct kiocb *iocb, struct iov_iter *to);
+> >  ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from);
+> > @@ -1550,4 +1559,29 @@ extern void fuse_sysctl_unregister(void);
+> >  #define fuse_sysctl_unregister()	do { } while (0)
+> >  #endif /* CONFIG_SYSCTL */
+> >  
+> > +/* famfs.c */
+> > +static inline struct fuse_backing *famfs_meta_set(struct fuse_inode *fi,
+> > +						       void *meta)
+> > +{
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +	return xchg(&fi->famfs_meta, meta);
+> > +#else
+> > +	return NULL;
+> > +#endif
+> > +}
+> > +
+> > +static inline void famfs_meta_free(struct fuse_inode *fi)
+> > +{
+> > +	/* Stub wil be connected in a subsequent commit */
+> > +}
+> > +
+> > +static inline int fuse_file_famfs(struct fuse_inode *fi)
+> > +{
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +	return (READ_ONCE(fi->famfs_meta) != NULL);
+> > +#else
+> > +	return 0;
+> > +#endif
+> > +}
+> 
+> ...or maybe this is the predicate you want to see if you really need to
+> fmapping related stuff?
+> 
+> > +
+> >  #endif /* _FS_FUSE_I_H */
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index a7e1cf8257b0..b071d16f7d04 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -117,6 +117,9 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
+> >  	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> >  		fuse_inode_backing_set(fi, NULL);
+> >  
+> > +	if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
+> > +		famfs_meta_set(fi, NULL);
+> > +
+> >  	return &fi->inode;
+> >  
+> >  out_free_forget:
+> > @@ -138,6 +141,13 @@ static void fuse_free_inode(struct inode *inode)
+> >  	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> >  		fuse_backing_put(fuse_inode_backing(fi));
+> >  
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +	if (S_ISREG(inode->i_mode) && fi->famfs_meta) {
+> > +		famfs_meta_free(fi);
+> > +		famfs_meta_set(fi, NULL);
+> 
+> _free should null out the pointer, no?
+
+Good point - will do
+
+<snip>
+
+Thanks Darrick!
+John
+
 
