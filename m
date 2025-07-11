@@ -1,88 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-54684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4DBB02287
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 19:24:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C88B02298
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 19:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177E83B3FA9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 17:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F94E1C24AE8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 17:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7C12F0051;
-	Fri, 11 Jul 2025 17:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1F42F0C78;
+	Fri, 11 Jul 2025 17:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="hE4tT+ZS"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="vOUSXjQd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930D123BD13
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 17:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211CC2EF9A3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 17:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752254652; cv=none; b=DRWEDpBAPQ+FBy7m4GklqCERS2nzIv+QzZPEeMPKxEQkSXIvyFvT6f3wXDLcZSTgm+uCveMf2yhfoER5sqtDvdiz0XU+5dnNxIZOEOGtoquSEvUeOcZDIhI1aLpqDORqgPfOBjMkAsjk8XAGmgFv1+NmCaeWQesyHRm9pgXLF/s=
+	t=1752254830; cv=none; b=Jn7WOdH7UR9c9J6EPrHN0rIe3TWtbjDBrhA4uegWkKn4qXZLVRr3Jsp3B45LZABzegg85cTVNGrH/zJyB+gMDeBvKzJfrp/77iV8KypKUkv8ZpOcHe/5rZPdMIisT8//ExvaeV/snV32hHQtUqPj6783+cWT6UNfqL7RNCA7uk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752254652; c=relaxed/simple;
-	bh=rFvnXqzG1GLjrHgSVAb22Q0N/7iZ9QhWuDvqrzKaiFI=;
+	s=arc-20240116; t=1752254830; c=relaxed/simple;
+	bh=NXPxDdnToXsvlM/Pe3nLpQltyVh2+b18fYCsZP5uBBg=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bQ16TvxNm0UwUG5LU5g2l2GsVg2t/4l94qbz6nKObPW/wvyg5YhjS44+tC1qEtM/03JYj/ajA8q9kkkQ2rpa9EpMvHkLgobvRku43i6ZuOUQE7h8UweVFv7Q7S9zEDnPZcNAqusCFF01HVAyJuuYHpAOu3JWt7hXhBWS18Nkpj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=hE4tT+ZS; arc=none smtp.client-ip=209.85.219.175
+	 Content-Type:MIME-Version; b=DMmgSZf0BKWmpDA9kjSp17aLTTRmVfl932YiB9SEFP/C6HrbZamEuefOzxWdzUGhtHPG3FhDIb/4ugKwYDcybfhJp0Lt4U8OBMQ+4s5LB7EqXxiStGo7aXOfkwzLAnuPVVKb9bUIy/amafzFUsC+Ghbzn8uwiCZbVbS21BXM8h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=vOUSXjQd; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e81749142b3so2159124276.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 10:24:10 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-70e302191a3so22737607b3.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 10:27:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1752254649; x=1752859449; darn=vger.kernel.org;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1752254827; x=1752859627; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:autocrypt
          :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=rFvnXqzG1GLjrHgSVAb22Q0N/7iZ9QhWuDvqrzKaiFI=;
-        b=hE4tT+ZSl4/b02+I9nHagGijHkWkk33b2dP5e3H8AwIHjp2VaFlrINdb3y5y+GC+0t
-         Ye5giZ8fVOaJPKWCUCnDIPfL9tViHmTGDwE8IAqyenUt5q8nkFRJ0bgH7v67h7OR7G9w
-         zUMCL7qRoZc/1IU/ad5vMXFrK9roGWA9mnxSXw0QssZB/dw+o+CzpN0gtouJgGPticGJ
-         PN7bw9jOsS0hwhB92gQBcniSpkOsUwuLTzN3HhVluODGoGSLaa6soBprf5ehSibK55vO
-         SMB4cEjeIPAFUqmBIsIiFDIlFayQI2ZHHEDigjHf13i8Z+U5f6Ig8yMYry7ofvSz297z
-         1TyA==
+        bh=LeIPKgkEGq/UfE4sAkv99gFd75Ph0aAhVgiLPkPf4F0=;
+        b=vOUSXjQdAR6meK4BQuetSg97HZKK/lrJNJ2DmBEl2OFNSKK45u2qQUod6ehpNWHpN7
+         ywS3JxcUWxKw0NgDT8Vo510+pguG5+wsRynFVwtZmgaC1ocHRIRMtFjqtAoHmqIAX4X8
+         Pa+GSjrNIPzW5b6hBEHrA2JEcDbnzuBTQG5FVu92ZFG+mYhHIVM/g3H4vunUHvBXsVXR
+         iBI9tGgSuQE7XKdw94k9pGmDTftV88rCWBpOwjxWZnC0o7xKe8MN+GwEBJ34v+G583wf
+         m2ncgfyQze8DDRUO5sqHr9cmkHJ8nRFfxz+R3xY4XqbxoCqbL4tCraNCQSvpvFuLNMgr
+         w9bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752254649; x=1752859449;
+        d=1e100.net; s=20230601; t=1752254827; x=1752859627;
         h=mime-version:user-agent:content-transfer-encoding:autocrypt
          :references:in-reply-to:date:cc:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFvnXqzG1GLjrHgSVAb22Q0N/7iZ9QhWuDvqrzKaiFI=;
-        b=JVaEdaGf2f5Z6r9solxYrDp1E0d0lnNtN4cs0tEFiEbmzRFgQ9F/ESb2Kv+CrkrzOq
-         7SXwf6T4XTq9fapAEzwGwNQeNJbZgfDSxEYmATYYmQ99gKX5QGeBKnJ2/XJIKV+Qc+UH
-         Lud1fNjufX2tmDVEIJ6U1CpvxQ4d44ywSOgvdrQIAvnz44WEk1C7d1IQ2lO9WJmBa5yk
-         nE58OtSqy+MfVpYAJHYiH2vAciNHVgXcyUv05rI4GULipHP/zUkWuqz4/xKuipAFBV5H
-         cQUcbqYo7UyrZ9l0Rqr0pQ788KgnffwqnsB1blURem6EWKZuY2GekyKWHbngwyUA4OkN
-         mVug==
-X-Forwarded-Encrypted: i=1; AJvYcCUUZW9e9zJhFrT4XCY2mwiqZLcvw7k0lfRa7A0XNUZ8wLZV+msydQ2kvsw9zPuJ3cYoYd6VFG1uFgj9FqMN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx40ZIQiPJx9OMU7Zd75jp4Whtvn4JapzC7U4dVt8SSbNWEvMvB
-	/soKzIwIC3xHqmqnHYnXy6CuYPRcr1Y5KE2h36tUx5tmHGr0A7JvBI1YX2L5f8Qp9iM=
-X-Gm-Gg: ASbGncseKYSACgAbXka+jNTooVbAP6CQp86egdfmRcoWrwnSeYrB8oXJLSc0WXE8Zxy
-	g+/LjZuVESgxBTqjDg/uquj+L4co+kPZixw2jL6t+p5eh4F+Bh/405RzxYYFcfx8rzTao4XQGTv
-	cGaifiKHw36mgTVLBYTadjwk0OupTB4nlfWha75um85pLzqqNSQ4xBnrdk4NR74IJRFVnLurqsY
-	+5ZhJ+lrwx3iGB6o1LLVQZHmklSBCUgD71iI+LTY/ScJsf4rdjXLzGgwwptKerp+wkPVL0Omx9i
-	WXklPijGRZBqlP0l+3KwCXRyRgyJXa7vmmsr7EFNxH/lkRSx218tOqh5YCYA/HzC7Hpayg7BqOQ
-	kas37myxN4p6EzoQKYfA9AjSonH99zSqkX2e/bl3XzlvdJzTO/e+fZqjea5H9wENIrBA=
-X-Google-Smtp-Source: AGHT+IGMb9ihHRytHbgn/783bZ0yoc3M3OCg0uG4q1zkpN2Mkg3KAXJrXgpScYLLmiXaZCXRqMbphA==
-X-Received: by 2002:a05:6902:5089:b0:e8b:75d5:aa0a with SMTP id 3f1490d57ef6-e8b85b2987cmr3669801276.36.1752254649155;
-        Fri, 11 Jul 2025 10:24:09 -0700 (PDT)
+        bh=LeIPKgkEGq/UfE4sAkv99gFd75Ph0aAhVgiLPkPf4F0=;
+        b=CtTTFrNat7T73kHwK/j1DXo4C8GUClxiTVcHKV19APu4Tq1pEIQYxDwq2FCEbNVf8g
+         +Bht7ZjN7tlRD2ux3atcMMzn4fCA/7nMgxAmAFHDIsgBvvTw14tjeq7aH0/WNK1LeRsg
+         LeJKAdqmvQ4CqXxM9pCTMh4X6E4Mo1pF4LvT+VYV+0bW8Fj29YFGOL4hsfBABl8NYVxQ
+         B0k4GiBipxOx6SFoAC1PRLsp5FUzt+b8X4AUQm6b/avHynaqB/qyh5pZM7brJI2y7o51
+         +56+WbvSEIlIAMOqegdPSkFJ/1ynoClGM3oL8TaoVGtO812GZP0OeLVyvYgFqRj2cwp6
+         Q96w==
+X-Forwarded-Encrypted: i=1; AJvYcCXaPfkw1oOZkBFyWXsY1ip383Yd2vpYVeWX1fj0+9iEFFXbdnXkY0/FgUGh9Eo4khW6PPOKwUD+akgZVCWe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9SZbFRf1K/tv0eScr6Fx6XsST3z23YamDpawR4dXZKzXX7Hiu
+	JPaCM1wYPZpJHpeEUgkQKrvribQqGlKOH6tIZP1rdEniuW5BFcVtBYDfQsehTlD5zpc=
+X-Gm-Gg: ASbGncs/9yqxbrmr9HvY6AIPgYvy4HkYLOwk8Jc0JGAG3nNf1Il/oCrVKE+fwGZ+xq7
+	9Fg2G5nztotKTl/CZ3QfbESoHwGKJ8q1t/2WGCWab8FvvfWS/vWr2Odq/DuZoAmbnV6txHCZZvZ
+	iu2F2gyD55h0gSwdqzTdbklnaAorhajj3ERoWjo3dXssRbgykmqGQ9xkUluL+xtqO5ldenZ1sab
+	oNjtpR/qxi4OEkJnZ0n4MxfkQNjk3M/OlBOq6YeKSTekWjgdfHw4Mk14iOxsPjsPWOkunQkuLWK
+	VHsnH2Ro/pHbIGsRBAQrZ7fSnWx4vYahAHJEPgAa0N8pVnTVZF5lLXP9vqTOXukq6CF8i41kGgR
+	DbcypwYjATYzSKQT8y8W+wgxK8qJQ3WzQ8wa3rWuLKHRbc06KpJidtYezN3FmkHTEk/M=
+X-Google-Smtp-Source: AGHT+IErhYtTh+ro15FdSFKU3hYJpJqIIv5SMGFYJbMz8mnzD00YKX4qbqing5IGyumXO/kQZ0kFMg==
+X-Received: by 2002:a05:690c:94:b0:710:f0fb:dc46 with SMTP id 00721157ae682-717dac309a1mr43137117b3.7.1752254826592;
+        Fri, 11 Jul 2025 10:27:06 -0700 (PDT)
 Received: from ?IPv6:2600:1700:6476:1430:afb0:402c:a1d5:c65? ([2600:1700:6476:1430:afb0:402c:a1d5:c65])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8b7aff3f6esm1225397276.51.2025.07.11.10.24.07
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-717c5d70373sm8272847b3.35.2025.07.11.10.27.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 10:24:08 -0700 (PDT)
-Message-ID: <9f9489e0577f7162cfe4f44670114cec357be873.camel@dubeyko.com>
-Subject: Re: [PATCH v2] hfs/hfsplus: rework debug output subsystem
+        Fri, 11 Jul 2025 10:27:05 -0700 (PDT)
+Message-ID: <563c7c2bbae666f2bfc53d72fa1c44b34299ef7a.camel@dubeyko.com>
+Subject: Re: [PATCH v2] hfsplus: fix slab-out-of-bounds read in
+ hfsplus_uni2asc()
 From: Viacheslav Dubeyko <slava@dubeyko.com>
 To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, Johannes.Thumshirn@wdc.com
+	linux-fsdevel@vger.kernel.org, wenzhi.wang@uwaterloo.ca,
+ liushixin2@huawei.com
 Cc: Slava.Dubeyko@ibm.com
-Date: Fri, 11 Jul 2025 10:24:07 -0700
-In-Reply-To: <a52e690c-ba13-40c5-b2c5-4f871e737f72@vivo.com>
-References: <20250710221600.109153-1-slava@dubeyko.com>
-	 <a52e690c-ba13-40c5-b2c5-4f871e737f72@vivo.com>
+Date: Fri, 11 Jul 2025 10:27:04 -0700
+In-Reply-To: <92b8b763-45a6-4e57-b6b1-88432e70040e@vivo.com>
+References: <20250710230830.110500-1-slava@dubeyko.com>
+	 <92b8b763-45a6-4e57-b6b1-88432e70040e@vivo.com>
 Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
  keydata=mQINBGgaTLYBEADaJc/WqWTeunGetXyyGJ5Za7b23M/ozuDCWCp+yWUa2GqQKH40dxRIR
  zshgOmAue7t9RQJU9lxZ4ZHWbi1Hzz85+0omefEdAKFmxTO6+CYV0g/sapU0wPJws3sC2Pbda9/eJ
@@ -137,96 +139,214 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2025-07-11 at 10:41 +0800, Yangtao Li wrote:
-> Hi Slava,
->=20
-> =E5=9C=A8 2025/7/11 06:16, Viacheslav Dubeyko =E5=86=99=E9=81=93:
-> > Currently, HFS/HFS+ has very obsolete and inconvenient
-> > debug output subsystem. Also, the code is duplicated
-> > in HFS and HFS+ driver. This patch introduces
-> > linux/hfs_common.h for gathering common declarations,
-> > inline functions, and common short methods. Currently,
-> > this file contains only hfs_dbg() function that
-> > employs pr_debug() with the goal to print a debug-level
-> > messages conditionally.
+On Fri, 2025-07-11 at 10:35 +0800, Yangtao Li wrote:
+> =E5=9C=A8 2025/7/11 07:08, Viacheslav Dubeyko =E5=86=99=E9=81=93:
+> > The hfsplus_readdir() method is capable to crash by calling
+> > hfsplus_uni2asc():
 > >=20
-> > So, now, it is possible to enable the debug output
-> > by means of:
+> > [=C2=A0 667.121659][ T9805]
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > [=C2=A0 667.122651][ T9805] BUG: KASAN: slab-out-of-bounds in
+> > hfsplus_uni2asc+0x902/0xa10
+> > [=C2=A0 667.123627][ T9805] Read of size 2 at addr ffff88802592f40c by
+> > task repro/9805
+> > [=C2=A0 667.124578][ T9805]
+> > [=C2=A0 667.124876][ T9805] CPU: 3 UID: 0 PID: 9805 Comm: repro Not
+> > tainted 6.16.0-rc3 #1 PREEMPT(full)
+> > [=C2=A0 667.124886][ T9805] Hardware name: QEMU Ubuntu 24.04 PC (i440FX
+> > + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> > [=C2=A0 667.124890][ T9805] Call Trace:
+> > [=C2=A0 667.124893][ T9805]=C2=A0 <TASK>
+> > [=C2=A0 667.124896][ T9805]=C2=A0 dump_stack_lvl+0x10e/0x1f0
+> > [=C2=A0 667.124911][ T9805]=C2=A0 print_report+0xd0/0x660
+> > [=C2=A0 667.124920][ T9805]=C2=A0 ? __virt_addr_valid+0x81/0x610
+> > [=C2=A0 667.124928][ T9805]=C2=A0 ? __phys_addr+0xe8/0x180
+> > [=C2=A0 667.124934][ T9805]=C2=A0 ? hfsplus_uni2asc+0x902/0xa10
+> > [=C2=A0 667.124942][ T9805]=C2=A0 kasan_report+0xc6/0x100
+> > [=C2=A0 667.124950][ T9805]=C2=A0 ? hfsplus_uni2asc+0x902/0xa10
+> > [=C2=A0 667.124959][ T9805]=C2=A0 hfsplus_uni2asc+0x902/0xa10
+> > [=C2=A0 667.124966][ T9805]=C2=A0 ? hfsplus_bnode_read+0x14b/0x360
+> > [=C2=A0 667.124974][ T9805]=C2=A0 hfsplus_readdir+0x845/0xfc0
+> > [=C2=A0 667.124984][ T9805]=C2=A0 ? __pfx_hfsplus_readdir+0x10/0x10
+> > [=C2=A0 667.124994][ T9805]=C2=A0 ? stack_trace_save+0x8e/0xc0
+> > [=C2=A0 667.125008][ T9805]=C2=A0 ? iterate_dir+0x18b/0xb20
+> > [=C2=A0 667.125015][ T9805]=C2=A0 ? trace_lock_acquire+0x85/0xd0
+> > [=C2=A0 667.125022][ T9805]=C2=A0 ? lock_acquire+0x30/0x80
+> > [=C2=A0 667.125029][ T9805]=C2=A0 ? iterate_dir+0x18b/0xb20
+> > [=C2=A0 667.125037][ T9805]=C2=A0 ? down_read_killable+0x1ed/0x4c0
+> > [=C2=A0 667.125044][ T9805]=C2=A0 ? putname+0x154/0x1a0
+> > [=C2=A0 667.125051][ T9805]=C2=A0 ? __pfx_down_read_killable+0x10/0x10
+> > [=C2=A0 667.125058][ T9805]=C2=A0 ? apparmor_file_permission+0x239/0x3e=
+0
+> > [=C2=A0 667.125069][ T9805]=C2=A0 iterate_dir+0x296/0xb20
+> > [=C2=A0 667.125076][ T9805]=C2=A0 __x64_sys_getdents64+0x13c/0x2c0
+> > [=C2=A0 667.125084][ T9805]=C2=A0 ? __pfx___x64_sys_getdents64+0x10/0x1=
+0
+> > [=C2=A0 667.125091][ T9805]=C2=A0 ? __x64_sys_openat+0x141/0x200
+> > [=C2=A0 667.125126][ T9805]=C2=A0 ? __pfx_filldir64+0x10/0x10
+> > [=C2=A0 667.125134][ T9805]=C2=A0 ? do_user_addr_fault+0x7fe/0x12f0
+> > [=C2=A0 667.125143][ T9805]=C2=A0 do_syscall_64+0xc9/0x480
+> > [=C2=A0 667.125151][ T9805]=C2=A0 entry_SYSCALL_64_after_hwframe+0x77/0=
+x7f
+> > [=C2=A0 667.125158][ T9805] RIP: 0033:0x7fa8753b2fc9
+> > [=C2=A0 667.125164][ T9805] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0=
+f
+> > 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 48
+> > [=C2=A0 667.125172][ T9805] RSP: 002b:00007ffe96f8e0f8 EFLAGS: 00000217
+> > ORIG_RAX: 00000000000000d9
+> > [=C2=A0 667.125181][ T9805] RAX: ffffffffffffffda RBX: 0000000000000000
+> > RCX: 00007fa8753b2fc9
+> > [=C2=A0 667.125185][ T9805] RDX: 0000000000000400 RSI: 00002000000063c0
+> > RDI: 0000000000000004
+> > [=C2=A0 667.125190][ T9805] RBP: 00007ffe96f8e110 R08: 00007ffe96f8e110
+> > R09: 00007ffe96f8e110
+> > [=C2=A0 667.125195][ T9805] R10: 0000000000000000 R11: 0000000000000217
+> > R12: 0000556b1e3b4260
+> > [=C2=A0 667.125199][ T9805] R13: 0000000000000000 R14: 0000000000000000
+> > R15: 0000000000000000
+> > [=C2=A0 667.125207][ T9805]=C2=A0 </TASK>
+> > [=C2=A0 667.125210][ T9805]
+> > [=C2=A0 667.145632][ T9805] Allocated by task 9805:
+> > [=C2=A0 667.145991][ T9805]=C2=A0 kasan_save_stack+0x20/0x40
+> > [=C2=A0 667.146352][ T9805]=C2=A0 kasan_save_track+0x14/0x30
+> > [=C2=A0 667.146717][ T9805]=C2=A0 __kasan_kmalloc+0xaa/0xb0
+> > [=C2=A0 667.147065][ T9805]=C2=A0 __kmalloc_noprof+0x205/0x550
+> > [=C2=A0 667.147448][ T9805]=C2=A0 hfsplus_find_init+0x95/0x1f0
+> > [=C2=A0 667.147813][ T9805]=C2=A0 hfsplus_readdir+0x220/0xfc0
+> > [=C2=A0 667.148174][ T9805]=C2=A0 iterate_dir+0x296/0xb20
+> > [=C2=A0 667.148549][ T9805]=C2=A0 __x64_sys_getdents64+0x13c/0x2c0
+> > [=C2=A0 667.148937][ T9805]=C2=A0 do_syscall_64+0xc9/0x480
+> > [=C2=A0 667.149291][ T9805]=C2=A0 entry_SYSCALL_64_after_hwframe+0x77/0=
+x7f
+> > [=C2=A0 667.149809][ T9805]
+> > [=C2=A0 667.150030][ T9805] The buggy address belongs to the object at
+> > ffff88802592f000
+> > [=C2=A0 667.150030][ T9805]=C2=A0 which belongs to the cache kmalloc-2k=
+ of
+> > size 2048
+> > [=C2=A0 667.151282][ T9805] The buggy address is located 0 bytes to the
+> > right of
+> > [=C2=A0 667.151282][ T9805]=C2=A0 allocated 1036-byte region
+> > [ffff88802592f000, ffff88802592f40c)
+> > [=C2=A0 667.152580][ T9805]
+> > [=C2=A0 667.152798][ T9805] The buggy address belongs to the physical
+> > page:
+> > [=C2=A0 667.153373][ T9805] page: refcount:0 mapcount:0
+> > mapping:0000000000000000 index:0x0 pfn:0x25928
+> > [=C2=A0 667.154157][ T9805] head: order:3 mapcount:0 entire_mapcount:0
+> > nr_pages_mapped:0 pincount:0
+> > [=C2=A0 667.154916][ T9805] anon flags:
+> > 0xfff00000000040(head|node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> > [=C2=A0 667.155631][ T9805] page_type: f5(slab)
+> > [=C2=A0 667.155997][ T9805] raw: 00fff00000000040 ffff88801b442f00
+> > 0000000000000000 dead000000000001
+> > [=C2=A0 667.156770][ T9805] raw: 0000000000000000 0000000080080008
+> > 00000000f5000000 0000000000000000
+> > [=C2=A0 667.157536][ T9805] head: 00fff00000000040 ffff88801b442f00
+> > 0000000000000000 dead000000000001
+> > [=C2=A0 667.158317][ T9805] head: 0000000000000000 0000000080080008
+> > 00000000f5000000 0000000000000000
+> > [=C2=A0 667.159088][ T9805] head: 00fff00000000003 ffffea0000964a01
+> > 00000000ffffffff 00000000ffffffff
+> > [=C2=A0 667.159865][ T9805] head: ffffffffffffffff 0000000000000000
+> > 00000000ffffffff 0000000000000008
+> > [=C2=A0 667.160643][ T9805] page dumped because: kasan: bad access
+> > detected
+> > [=C2=A0 667.161216][ T9805] page_owner tracks the page as allocated
+> > [=C2=A0 667.161732][ T9805] page last allocated via order 3, migratetyp=
+e
+> > Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN9
+> > [=C2=A0 667.163566][ T9805]=C2=A0 post_alloc_hook+0x1c0/0x230
+> > [=C2=A0 667.164003][ T9805]=C2=A0 get_page_from_freelist+0xdeb/0x3b30
+> > [=C2=A0 667.164503][ T9805]=C2=A0 __alloc_frozen_pages_noprof+0x25c/0x2=
+460
+> > [=C2=A0 667.165040][ T9805]=C2=A0 alloc_pages_mpol+0x1fb/0x550
+> > [=C2=A0 667.165489][ T9805]=C2=A0 new_slab+0x23b/0x340
+> > [=C2=A0 667.165872][ T9805]=C2=A0 ___slab_alloc+0xd81/0x1960
+> > [=C2=A0 667.166313][ T9805]=C2=A0 __slab_alloc.isra.0+0x56/0xb0
+> > [=C2=A0 667.166767][ T9805]=C2=A0 __kmalloc_cache_noprof+0x255/0x3e0
+> > [=C2=A0 667.167255][ T9805]=C2=A0 psi_cgroup_alloc+0x52/0x2d0
+> > [=C2=A0 667.167693][ T9805]=C2=A0 cgroup_mkdir+0x694/0x1210
+> > [=C2=A0 667.168118][ T9805]=C2=A0 kernfs_iop_mkdir+0x111/0x190
+> > [=C2=A0 667.168568][ T9805]=C2=A0 vfs_mkdir+0x59b/0x8d0
+> > [=C2=A0 667.168956][ T9805]=C2=A0 do_mkdirat+0x2ed/0x3d0
+> > [=C2=A0 667.169353][ T9805]=C2=A0 __x64_sys_mkdir+0xef/0x140
+> > [=C2=A0 667.169784][ T9805]=C2=A0 do_syscall_64+0xc9/0x480
+> > [=C2=A0 667.170195][ T9805]=C2=A0 entry_SYSCALL_64_after_hwframe+0x77/0=
+x7f
+> > [=C2=A0 667.170730][ T9805] page last free pid 1257 tgid 1257 stack
+> > trace:
+> > [=C2=A0 667.171304][ T9805]=C2=A0 __free_frozen_pages+0x80c/0x1250
+> > [=C2=A0 667.171770][ T9805]=C2=A0 vfree.part.0+0x12b/0xab0
+> > [=C2=A0 667.172182][ T9805]=C2=A0 delayed_vfree_work+0x93/0xd0
+> > [=C2=A0 667.172612][ T9805]=C2=A0 process_one_work+0x9b5/0x1b80
+> > [=C2=A0 667.173067][ T9805]=C2=A0 worker_thread+0x630/0xe60
+> > [=C2=A0 667.173486][ T9805]=C2=A0 kthread+0x3a8/0x770
+> > [=C2=A0 667.173857][ T9805]=C2=A0 ret_from_fork+0x517/0x6e0
+> > [=C2=A0 667.174278][ T9805]=C2=A0 ret_from_fork_asm+0x1a/0x30
+> > [=C2=A0 667.174703][ T9805]
+> > [=C2=A0 667.174917][ T9805] Memory state around the buggy address:
+> > [=C2=A0 667.175411][ T9805]=C2=A0 ffff88802592f300: 00 00 00 00 00 00 0=
+0 00
+> > 00 00 00 00 00 00 00 00
+> > [=C2=A0 667.176114][ T9805]=C2=A0 ffff88802592f380: 00 00 00 00 00 00 0=
+0 00
+> > 00 00 00 00 00 00 00 00
+> > [=C2=A0 667.176830][ T9805] >ffff88802592f400: 00 04 fc fc fc fc fc fc
+> > fc fc fc fc fc fc fc fc
+> > [=C2=A0 667.177547][ T9805]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 ^
+> > [=C2=A0 667.177933][ T9805]=C2=A0 ffff88802592f480: fc fc fc fc fc fc f=
+c fc
+> > fc fc fc fc fc fc fc fc
+> > [=C2=A0 667.178640][ T9805]=C2=A0 ffff88802592f500: fc fc fc fc fc fc f=
+c fc
+> > fc fc fc fc fc fc fc fc
+> > [=C2=A0 667.179350][ T9805]
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > >=20
-> > echo 'file extent.c +p' > /proc/dynamic_debug/control
-> > echo 'func hfsplus_evict_inode +p' > /proc/dynamic_debug/control
+> > The hfsplus_uni2asc() method operates by struct hfsplus_unistr:
 > >=20
-> > And debug output looks like this:
+> > struct hfsplus_unistr {
+> > 	__be16 length;
+> > 	hfsplus_unichr unicode[HFSPLUS_MAX_STRLEN];
+> > } __packed;
 > >=20
-> > hfs: pid 5831:fs/hfs/catalog.c:228 hfs_cat_delete(): delete_cat:
-> > m00,48
-> > hfs: pid 5831:fs/hfs/extent.c:484 hfs_file_truncate(): truncate:
-> > 48, 409600 -> 0
-> > hfs: pid 5831:fs/hfs/extent.c:212 hfs_dump_extent():
-> > hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():=C2=A0 78:4
-> > hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():=C2=A0 0:0
-> > hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():=C2=A0 0:0
+> > where HFSPLUS_MAX_STRLEN is 255 bytes. The issue happens if length
+> > of the structure instance has value bigger than 255 (for example,
+> > 65283). In such case, pointer on unicode buffer is going beyond of
+> > the allocated memory.
 > >=20
+> > The patch fixes the issue by checking the length value of
+> > hfsplus_unistr instance and using 255 value in the case if length
+> > value is bigger than HFSPLUS_MAX_STRLEN. Potential reason of such
+> > situation could be a corruption of Catalog File b-tree's node.
+> >=20
+> > Reported-by: Wenzhi Wang <wenzhi.wang@uwaterloo.ca>
+> > Signed-off-by: Liu Shixin <liushixin2@huawei.com>
 > > Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 > > cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 > > cc: Yangtao Li <frank.li@vivo.com>
 > > cc: linux-fsdevel@vger.kernel.org
-> > cc: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-> > ---
-> > =C2=A0 fs/hfs/bfind.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > =C2=A0 fs/hfs/bitmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > =C2=A0 fs/hfs/bnode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 28 ++++++++++++++--------------
-> > =C2=A0 fs/hfs/brec.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++++----
-> > =C2=A0 fs/hfs/btree.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > =C2=A0 fs/hfs/catalog.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0 6 +++---
-> > =C2=A0 fs/hfs/extent.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 18 +++++++++---------
-> > =C2=A0 fs/hfs/hfs_fs.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 33 +--------------------------------
-> > =C2=A0 fs/hfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > =C2=A0 fs/hfsplus/attributes.c=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++++----
-> > =C2=A0 fs/hfsplus/bfind.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 4 ++--
-> > =C2=A0 fs/hfsplus/bitmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
-10 +++++-----
-> > =C2=A0 fs/hfsplus/bnode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 28 ++++++++++++++--------------
-> > =C2=A0 fs/hfsplus/brec.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 10 +++++-----
-> > =C2=A0 fs/hfsplus/btree.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 4 ++--
-> > =C2=A0 fs/hfsplus/catalog.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
- 6 +++---
-> > =C2=A0 fs/hfsplus/extents.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 24 ++=
-++++++++++------------
-> > =C2=A0 fs/hfsplus/hfsplus_fs.h=C2=A0=C2=A0=C2=A0 | 35 +----------------=
-----------------
-> > --
-> > =C2=A0 fs/hfsplus/super.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 8 ++++----
-> > =C2=A0 fs/hfsplus/xattr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 4 ++--
-> > =C2=A0 include/linux/hfs_common.h | 20 ++++++++++++++++++++
 >=20
-> For include/linux/hfs_common.h, it seems like to be a good start to=20
-> seperate common stuff for hfs&hfsplus.
+> Reviewed-by: Yangtao Li <frank.li@vivo.com>
 >=20
-> Colud we rework msg to add value description?
-> There're too much values to identify what it is.
+> BTW, how about to add add errors=3Dro,panic,continue,repair mount opt?
+>=20
+> User counld choose error mode, convert to readonly node, quickly
+> panic,
+> ignore error or repair it.
+>=20
 >=20
 
-What do you mean by value description?
-
-> You ignore those msg type, maybe we don't need it?
-
-Could you please explain what do you mean here? :)
+Do you mean that HFS+ doesn't support errors=3Dro,panic,continue,repair
+mount options? Or do you mean to change pr_err() on another type of
+error reporting?
 
 Thanks,
 Slava.
