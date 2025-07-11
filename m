@@ -1,88 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-54643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5565B01D73
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 15:28:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA44B01E01
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 15:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EFA3B51D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 13:28:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5F50B477D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 13:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07F72D3750;
-	Fri, 11 Jul 2025 13:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23B02DAFD7;
+	Fri, 11 Jul 2025 13:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T8VX+6Cg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGZoAiF6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6454F2D3747;
-	Fri, 11 Jul 2025 13:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7922D46B1;
+	Fri, 11 Jul 2025 13:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240528; cv=none; b=j5BNOpuEA2quX4PVda4CpKW8dh3Ru+d/3DcfuDO0JwEIEdsgW32BBhCTvDU0Ljy8o4WKUC11D+vC+w6nVa0bI/3bzq16+XJz/QfQuX9zOXV6dJqTfrf9COzVEaSQUbGNSJlbMRozjVwJ56Qvdnetp5LuEA62DfTQetwmSGeQaSE=
+	t=1752240764; cv=none; b=GGu1F5IFlmDAcP4B19QQyy4jCfRCPEu+66BR39YIJB/lJl/22k0yz1JPhA63Gug+1YALix6C/gNgpXAtAKgcRZmYVFh9d5yWM76xn82kBkDEB64eqHjvgffju/wwa82zP81L6xSD/RS1bHJVovd5mlS+0/ehBhtejx2lqJYCfPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240528; c=relaxed/simple;
-	bh=5HaL4EbHnJghoOi08JLadYxh/25z0kOc8VxK4LholdI=;
+	s=arc-20240116; t=1752240764; c=relaxed/simple;
+	bh=9/srNi5NxPYHuLuMzs350rL4Qi4M8bj4/4SNn/kQIkE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XUTABGbSuiXio/G8JaBjE5vTn6MlHbfdCm1FSnMuHhvfbvWLrXn+MuaddkTnqY4Gm6YSdmNk6jPbk70qyPmVvTdagMmfIK7Eau0ljHWwMIhOIItwJDG0VmNNnz3Qf98rk6xZFZH21IgsnYrBrBhDl6FD+76wjAnQRxS+JK0rPNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T8VX+6Cg; arc=none smtp.client-ip=209.85.218.54
+	 To:Cc:Content-Type; b=pXwTu3SIEdngj8Hz5ZIeC2PCiXDMl8auf+wilVYgJsgZj5QVIYADGdnR+Uu1XEZG5VBvpBFG7vC70ssXLjsHDyEGVlG/FNNe2Jtjcvp7s4xWnaujjEUbL6xgBuEjVs7uwD66VIMqPB3Djvl46cFMTVmjt7hd/YqXOok9IKdJmHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGZoAiF6; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae0df6f5758so376553366b.0;
-        Fri, 11 Jul 2025 06:28:46 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae0de1c378fso331319566b.3;
+        Fri, 11 Jul 2025 06:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752240525; x=1752845325; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752240760; x=1752845560; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2h8SYkSmPLok+tWuAZWsvxqrpIO329lLu72xBDWCUQQ=;
-        b=T8VX+6CgoZmOQ04XbPufLgELyvG4H534Vl+NGxU/9CN/NnW5YBffXC64ZGyj4NRlFB
-         58mXH0Ah8h27BA6BDowwfS1/NbWJno3oPuaO411XyW0iwgKMl36Or6EdsQU/rpkS4Jxb
-         VtBfnNUqRZxZhsjENDgAbKeVnlDDW0lRuV3HAVI8dEr9glPhqZq2nXj8YciEYEK943wQ
-         y+b1O4/5r7bSVKgyGH/gd7LVWhi7tt075SX7W1874VwnqdB9++TEixftgwjai5UX3//k
-         CZHDwgLhTYy6alSaoECkLheGRcbe00LJGKuOIwrzoB74U0MCGJoxMUXr5AA0FjZ2nsdw
-         jQDA==
+        bh=oUYmGjn8b+ni+3oA2uqaVvOpchRrlznYPwlaR45MpqY=;
+        b=FGZoAiF6Ao+kJyfjuZlO9FuvLjoVefT4UbHJxdWZvGuVxGWsU755219bpLFk10oAc8
+         YaimgpkCiNEWSzx1SpZrlZbYfd3c2yt6JmD+eYdN5WhjkSs/ifp33GwQ25y6Rk/1QYrf
+         9Xcn1rNyHgR0viQ6MpCclDwdfCPRBFFjwcoV7dvtTcqvR8Oz/bfnMC/HbJ90ktJqN+NL
+         3a3Egov/+MZYmhfmZUqtlcLm4/xp/7xS7mZ+ZRj/4SrzTJKyykyySE3X0CGGVMEoFTbi
+         E0k65MOIkqBAPe0HB3lenbsivtcsakiDu6KbpxkGccAPO/FfE7ZSkGdViak+sa0LNg4/
+         Lt5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752240525; x=1752845325;
+        d=1e100.net; s=20230601; t=1752240760; x=1752845560;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2h8SYkSmPLok+tWuAZWsvxqrpIO329lLu72xBDWCUQQ=;
-        b=jIEVIKT7RCTLuieWoab/tbJq7mCm/1E4jk2BVtaWYghSewvmJnGb5z0TCyu46Y9ZVS
-         fMtFzJL5iZvHBY/caxj0qyCQJfNlIisQIrIpoyBVWpFqSRJVSfNPrAa1PxiJHCtwJr6K
-         /InjdoYZgPCEtYPTsKE11HKx/n/ki8qKtgUkprr6ZJbyr8AvJ+xUv48x7qGDpQ30mLtg
-         +Is+aMk6ngGJJ2e4N154eDS04xPZ/39iCY+e4QdLN9vmq1T8AAbyY+iPHr+vPNSxGqFK
-         tDegqiUKoRvW7sX2UCdAT7xGf/meETrCUcbV90loo6E3+4mDDElk9oOBgjbkmKPYVQuD
-         1IrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUB8M0OEkMDyQe21eY6zcYeETF27kh2+wzmf5GRYcahSCshP9R9GbaViMVYnx0jF843bs1O23SnfDZrWVQa@vger.kernel.org, AJvYcCV4Wt1cn6Z17/VUcx2LHhAOg7IMd578JZ5BNC7ma1AO4LQaqK+1fK4TdkGV+lGg4tewwebIQmwBhUcFRPV6fQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxINxDbAgO1JfRJxCNa7RZ9cg0+RBNSt10wIj9p/pnDj3VwocfO
-	N30NNCxqEzpvcO+/vVnm0fxwR/3t9WHQxOSF5SouLzxDa3wOJPxoY6CNSztfUgXf8aXO+2CR+0m
-	WkaHey8RYMreb0EA9lkTCFpBZ4dpnGBcpw3J4NLI=
-X-Gm-Gg: ASbGncs4xMJYCbkq4d2+h4i8OPUXaH8zCtJuqVuuW1GTM7NBzK0+YIoUnRCVWM0BIMA
-	3LdEPadJBgoEI2ZU0sr3ogvdnPF1nANdI9X4vzJOnmGeUvdR/meVcot7bYFvbiXWlMa6u95YUIZ
-	K4SOpFf0/5/DDHtbuM2kxZ1xQAT80deD72cF6MIPfiJlIDXaFd8zyVrZezdAlpXeeMmkxXnoguU
-	Ho73R0=
-X-Google-Smtp-Source: AGHT+IHHKUmW0pEOIW8uyvREUZX9l8RQ24inhFPdX5cHoy47KiKshuemM2K3zCSR/D5slwUAgUolCIOG6tUdk85zDVk=
-X-Received: by 2002:a17:907:f1cf:b0:ade:2e4b:50d1 with SMTP id
- a640c23a62f3a-ae6fc1fc5b3mr346862766b.29.1752240524287; Fri, 11 Jul 2025
- 06:28:44 -0700 (PDT)
+        bh=oUYmGjn8b+ni+3oA2uqaVvOpchRrlznYPwlaR45MpqY=;
+        b=h3LsiVVvVYVzeSKhivmFlasUROrWtMgovzji6fVnjyzei0vGGcF7QcXlSi5exEpGGJ
+         7uttbKLxb96ROppwEJQHDdWJG0AaeqICiWPPI6ss7f74vjydBQ/nWUGAj+hj1Jf1nk9y
+         E5qbHCeY2mnc5XadEGWyNSn1Mehe2GwantIAeko6kyHKB7XjMHOhDt+CujBZCO7GOPLO
+         mEQfrhlCaDm88yu51DTgHh2g5pPnVu5jrpD6PQ2WPsKApr4Eq3Sv+LMrbz8jYWLdyHLD
+         VaipS0f8Lo753bT8rt5CzVGqDSXG4i6i1HegXmv/lHN2G3G1LcXRO6JnThwGgYcSpZoO
+         O/qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCXh8DZUvJDqprgMPlOwGFLuFoxk/FqLQ7c3hsMKZdJMw5A3A7ET4zsFbfWLiXEVKep3ocAEQVckPKWpeGWA==@vger.kernel.org, AJvYcCXbqfP1EHPxkrUEMDSWR7hT++Vh3lM58xs64mAfuN7VEQkdNs1Q7ZkD1Cv8rR35RIwtLP/aicI0zC2J/34y@vger.kernel.org
+X-Gm-Message-State: AOJu0YzymYzGwhocR5qgPoxtt8TN8eL/qh81Njk5D+tVEm8VnoEUFGJY
+	tTCLxQHsPdHH5EB81GGBKNZsOOBe8jzAQY+fmufejkB10Qn31anfYGAhMA01VQdN85ACvGVH5st
+	eGiAmTRcOUk+pFGmhAjil7OY01i0eqFk=
+X-Gm-Gg: ASbGncsm2dUHi3o5wB98VAFyZjHj4N00bXHV9bIUan+TQI58hlA3C1JgytxwWBJvjoV
+	b0sX159l7xvdxef+PLioUMbO4VRmhi76q3IQcJmkmQ9dgRte8SbwAdr12RH/P+2BnuimZNrGF8u
+	dCYZlw2yd0+I7isNvocM47ScIlq6VvyAS1ZC/b7JQboUc8nHp8/IsZ/sR8apSLCHdYONfZz/1Ld
+	MF5NB8=
+X-Google-Smtp-Source: AGHT+IF41jQGXyNgBt2vwTomqSVB1R19b6Vi1exWf22EWsG/zfk7jsounVM8c/84zTB1qM//19ILh6zfkC7rZgrBm7I=
+X-Received: by 2002:a17:907:709:b0:ae3:c521:db6 with SMTP id
+ a640c23a62f3a-ae6fc1158c9mr313938066b.58.1752240759676; Fri, 11 Jul 2025
+ 06:32:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710232109.3014537-1-neil@brown.name> <20250710232109.3014537-15-neil@brown.name>
-In-Reply-To: <20250710232109.3014537-15-neil@brown.name>
+References: <20250710232109.3014537-1-neil@brown.name> <20250710232109.3014537-12-neil@brown.name>
+In-Reply-To: <20250710232109.3014537-12-neil@brown.name>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 11 Jul 2025 15:28:32 +0200
-X-Gm-Features: Ac12FXxFnlJ6oaYabeeoHxoNa4ZO_b-tCX6m0kjhEpmLF9PD7NA0z7ZEbT0Ux4I
-Message-ID: <CAOQ4uxgnwa8_CEYa03vy+exje8iM7fEUJ=ToRq-2ya2Twp5vQQ@mail.gmail.com>
-Subject: Re: [PATCH 14/20] ovl: change ovl_workdir_cleanup() to take dir lock
- as needed.
+Date: Fri, 11 Jul 2025 15:32:28 +0200
+X-Gm-Features: Ac12FXzenOCIVsjYTWoK-zSP6WNJmNtPIi_iv0sD8TBvW7NKCPOQvVgfmCwcseA
+Message-ID: <CAOQ4uxjwgoPAmu7M+6+-McrvnrUjYQ4eK6ZWZcLnn5RS+seArQ@mail.gmail.com>
+Subject: Re: [PATCH 11/20] ovl: narrow locking in ovl_workdir_create()
 To: NeilBrown <neil@brown.name>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org
@@ -91,144 +90,95 @@ Content-Transfer-Encoding: quoted-printable
 
 On Fri, Jul 11, 2025 at 1:21=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
 >
-> Rather than calling ovl_workdir_cleanup() with the dir already locked,
-> change it to take the dir lock only when needed.
+> In ovl_workdir_create() don't hold the dir lock for the whole time, but
+> only take it when needed.
+>
+> It now gets taken separately for ovl_workdir_cleanup().  A subsequent
+> patch will move the locking into that function.
 >
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  fs/overlayfs/overlayfs.h |  2 +-
->  fs/overlayfs/readdir.c   | 30 +++++++++++++-----------------
->  fs/overlayfs/super.c     |  4 +---
->  3 files changed, 15 insertions(+), 21 deletions(-)
+>  fs/overlayfs/super.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
 >
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index ec804d6bb2ef..ca74be44dddd 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -738,7 +738,7 @@ void ovl_cleanup_whiteouts(struct ovl_fs *ofs, struct=
- dentry *upper,
->  void ovl_cache_free(struct list_head *list);
->  void ovl_dir_cache_free(struct inode *inode);
->  int ovl_check_d_type_supported(const struct path *realpath);
-> -int ovl_workdir_cleanup(struct ovl_fs *ofs, struct inode *dir,
-> +int ovl_workdir_cleanup(struct ovl_fs *ofs, struct dentry *parent,
->                         struct vfsmount *mnt, struct dentry *dentry, int =
-level);
->  int ovl_indexdir_cleanup(struct ovl_fs *ofs);
->
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index b3d44bf56c78..6cc5f885e036 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -1096,7 +1096,6 @@ static int ovl_workdir_cleanup_recurse(struct ovl_f=
-s *ofs, const struct path *pa
->                                        int level)
->  {
->         int err;
-> -       struct inode *dir =3D path->dentry->d_inode;
->         LIST_HEAD(list);
->         struct ovl_cache_entry *p;
->         struct ovl_readdir_data rdd =3D {
-> @@ -1139,11 +1138,9 @@ static int ovl_workdir_cleanup_recurse(struct ovl_=
-fs *ofs, const struct path *pa
->                 dentry =3D ovl_lookup_upper_unlocked(ofs, p->name, path->=
-dentry, p->len);
->                 if (IS_ERR(dentry))
->                         continue;
-> -               if (dentry->d_inode) {
-> -                       inode_lock_nested(dir, I_MUTEX_PARENT);
-> -                       err =3D ovl_workdir_cleanup(ofs, dir, path->mnt, =
-dentry, level);
-> -                       inode_unlock(dir);
-> -               }
-> +               if (dentry->d_inode)
-> +                       err =3D ovl_workdir_cleanup(ofs, path->dentry, pa=
-th->mnt,
-> +                                                 dentry, level);
->                 dput(dentry);
->                 if (err)
->                         break;
-> @@ -1153,24 +1150,25 @@ static int ovl_workdir_cleanup_recurse(struct ovl=
-_fs *ofs, const struct path *pa
->         return err;
->  }
->
-> -int ovl_workdir_cleanup(struct ovl_fs *ofs, struct inode *dir,
-> +int ovl_workdir_cleanup(struct ovl_fs *ofs, struct dentry *parent,
->                         struct vfsmount *mnt, struct dentry *dentry, int =
-level)
->  {
->         int err;
->
-> -       if (!d_is_dir(dentry) || level > 1) {
-> -               return ovl_cleanup(ofs, dir, dentry);
-> -       }
-> +       if (!d_is_dir(dentry) || level > 1)
-> +               return ovl_cleanup_unlocked(ofs, parent, dentry);
->
-> -       err =3D ovl_do_rmdir(ofs, dir, dentry);
-> +       err =3D parent_lock(parent, dentry);
-> +       if (err)
-> +               return err;
-> +       err =3D ovl_do_rmdir(ofs, parent->d_inode, dentry);
-> +       parent_unlock(parent);
-
-At this point, the code looks correct,
-but it replaces unsafe uses of inode_lock_nested() with correct use of
-parent_lock().
-
-Please fix patches 11-13
-
-Thanks,
-Amir.
-
->         if (err) {
->                 struct path path =3D { .mnt =3D mnt, .dentry =3D dentry }=
-;
->
-> -               inode_unlock(dir);
->                 err =3D ovl_workdir_cleanup_recurse(ofs, &path, level + 1=
-);
-> -               inode_lock_nested(dir, I_MUTEX_PARENT);
->                 if (!err)
-> -                       err =3D ovl_cleanup(ofs, dir, dentry);
-> +                       err =3D ovl_cleanup_unlocked(ofs, parent, dentry)=
-;
->         }
->
->         return err;
-> @@ -1210,9 +1208,7 @@ int ovl_indexdir_cleanup(struct ovl_fs *ofs)
->                 }
->                 /* Cleanup leftover from index create/cleanup attempt */
->                 if (index->d_name.name[0] =3D=3D '#') {
-> -                       inode_lock_nested(dir, I_MUTEX_PARENT);
-> -                       err =3D ovl_workdir_cleanup(ofs, dir, path.mnt, i=
-ndex, 1);
-> -                       inode_unlock(dir);
-> +                       err =3D ovl_workdir_cleanup(ofs, indexdir, path.m=
-nt, index, 1);
->                         if (err)
->                                 break;
->                         goto next;
 > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 239ae1946edf..23f43f8131dd 100644
+> index 9cce3251dd83..239ae1946edf 100644
 > --- a/fs/overlayfs/super.c
 > +++ b/fs/overlayfs/super.c
-> @@ -319,9 +319,7 @@ static struct dentry *ovl_workdir_create(struct ovl_f=
+> @@ -299,8 +299,8 @@ static struct dentry *ovl_workdir_create(struct ovl_f=
 s *ofs,
->                                 goto out;
+>         int err;
+>         bool retried =3D false;
+>
+> -       inode_lock_nested(dir, I_MUTEX_PARENT);
+>  retry:
+> +       inode_lock_nested(dir, I_MUTEX_PARENT);
+>         work =3D ovl_lookup_upper(ofs, name, ofs->workbasedir, strlen(nam=
+e));
+>
+>         if (!IS_ERR(work)) {
+> @@ -311,23 +311,27 @@ static struct dentry *ovl_workdir_create(struct ovl=
+_fs *ofs,
+>
+>                 if (work->d_inode) {
+>                         err =3D -EEXIST;
+> +                       inode_unlock(dir);
+>                         if (retried)
+>                                 goto out_dput;
+>
+>                         if (persist)
+> -                               goto out_unlock;
+> +                               goto out;
 >
 >                         retried =3D true;
-> -                       inode_lock_nested(dir, I_MUTEX_PARENT);
-> -                       err =3D ovl_workdir_cleanup(ofs, dir, mnt, work, =
+> +                       inode_lock_nested(dir, I_MUTEX_PARENT);
+
+Feels like this should be parent_lock(ofs->workbasedir, work)
+and parent_lock(ofs->workbasedir, NULL) in retry:
+
+>                         err =3D ovl_workdir_cleanup(ofs, dir, mnt, work, =
 0);
-> -                       inode_unlock(dir);
-> +                       err =3D ovl_workdir_cleanup(ofs, ofs->workbasedir=
-, mnt, work, 0);
+> +                       inode_unlock(dir);
 >                         dput(work);
 >                         if (err =3D=3D -EINVAL) {
 >                                 work =3D ERR_PTR(err);
-> --
-> 2.49.0
+> -                               goto out_unlock;
+> +                               goto out;
+>                         }
+>                         goto retry;
+>                 }
 >
+>                 work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
+> +               inode_unlock(dir);
+>                 err =3D PTR_ERR(work);
+>                 if (IS_ERR(work))
+>                         goto out_err;
+> @@ -365,11 +369,11 @@ static struct dentry *ovl_workdir_create(struct ovl=
+_fs *ofs,
+>                 if (err)
+>                         goto out_dput;
+>         } else {
+> +               inode_unlock(dir);
+>                 err =3D PTR_ERR(work);
+>                 goto out_err;
+>         }
+> -out_unlock:
+> -       inode_unlock(dir);
+> +out:
+>         return work;
+>
+>  out_dput:
+> @@ -378,7 +382,7 @@ static struct dentry *ovl_workdir_create(struct ovl_f=
+s *ofs,
+>         pr_warn("failed to create directory %s/%s (errno: %i); mounting r=
+ead-only\n",
+>                 ofs->config.workdir, name, -err);
+>         work =3D NULL;
+> -       goto out_unlock;
+> +       goto out;
+
+might as well be return NULL now.
+
+Thanks,
+Amir.
 
