@@ -1,225 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-54585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A841B0125B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 06:40:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4EAB01267
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 06:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073A7648395
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 04:40:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EBB1C83B7E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 04:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C961AD3E5;
-	Fri, 11 Jul 2025 04:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1467B1B0420;
+	Fri, 11 Jul 2025 04:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K85h6idU"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="qTIAOxcm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969AA2110E;
-	Fri, 11 Jul 2025 04:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB4D1AA7BF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 04:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752208841; cv=none; b=ES5wgPZkTvs+DRWCf3wTlfZWLPGIbQ3sj0O4O3nB6Fenv/RjK9+rw88NFSfutr/70Bojp12o6UsiaZni/6TwoMWRt+ZSeHUnDIb/ui2CV8BKLqzNn+wW1XR9XXLfM209tyElNOxRI/Y3Z+SEx8mfc62krwMQs0QpGFt5lS9jx38=
+	t=1752209588; cv=none; b=qlzb6/ziFKYMQ8dxDKJgvH72IghUjuLV1g/AEw6JHi9Q8hnhhtxP6Y9ARHrcMkP0iDpxw7FbXzNqFKW4J4iBlf+YolKlioncJ4qxkFEqpaR2wQfjvTjl8uh+UNXOal39oxnsnoGjJ6MfMlu195WwsEJdivTUchCsi2xrY1BhGwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752208841; c=relaxed/simple;
-	bh=R0JRR0jPdWQFsnHeDQicLF6rapHJfa6O3V7xWIsXrEc=;
+	s=arc-20240116; t=1752209588; c=relaxed/simple;
+	bh=vga/2vJW0ShfaMf5blGwQhDIQddCnbrc2+8Ck8lgIJY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Udax6gMvKaOzPyFZyNq+FKz86YXA/mlsrlStnbExoffT7z3ccjfYbbe1n9sVpeU+jRzw5q96WVPbuDCQgUTPDt5wo75tqWyJxqiib7LYKdN16iB78rgvCQf1hEWMzN77shzuiVC7ik7YQErTCbwQSUhVF3q6z669rYS23+pH0ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K85h6idU; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752208839; x=1783744839;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=R0JRR0jPdWQFsnHeDQicLF6rapHJfa6O3V7xWIsXrEc=;
-  b=K85h6idUoBtLsGi5lSWunJa0dJvcpH9JYg+dKP8+tBTdpb8h2tpTFxPz
-   +snXLecMl10+glYDwvnba07lRSnoWl+SF8YFIqJbRGZotKwgOoR2a8fVl
-   IzXAMJl3z2VfaFpKLkMb7/QKyR2lByrXJBLPEM6UMtM6ajf1F60xdMdSG
-   Wc9Kr0WIbxjZglYvIBbG8WYGu7w7yBmdWWLJ9drHWJF9UGGVt8UFdGP4h
-   FyvwAsB1qhtVYWVejZT/FcwNPreSiaPQqaahsKm28i3MxPYncwI4lHuR5
-   SeYBBiYn8K3VvECw1s/frY2NoPj/C1+1mg6MHG/Br+58bXmzv/c0LV2tg
-   w==;
-X-CSE-ConnectionGUID: m9Fs2OH/S5a2uC2hAIa5wg==
-X-CSE-MsgGUID: //vb/Z5rR0GOLIrBNVKXRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="79934940"
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="79934940"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 21:40:38 -0700
-X-CSE-ConnectionGUID: klaS2TZATH+2blf4tv6DUQ==
-X-CSE-MsgGUID: uYwPD74pRiG2cr/33/gDWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="155685771"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa010.jf.intel.com with ESMTP; 10 Jul 2025 21:40:19 -0700
-Date: Fri, 11 Jul 2025 12:31:56 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Vishal Annapurve <vannapurve@google.com>,
-	Yan Zhao <yan.y.zhao@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
-	Fuad Tabba <tabba@google.com>,
-	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, amoorthy@google.com,
-	anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
-	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
-	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
-	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
-	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
-	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
-	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-Message-ID: <aHCTvAAtvE4Mofy2@yilunxu-OptiPlex-7050>
-References: <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
- <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
- <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
- <CAGtprH9-njcgQjGZvGbbVX+i8D-qPUOkKFHbOWA20962niLTcw@mail.gmail.com>
- <20250702141321.GC904431@ziepe.ca>
- <CAGtprH948W=5fHSB1UnE_DbB0L=C7LTC+a7P=g-uP0nZwY6fxg@mail.gmail.com>
- <aG+a4XRRc2fMrEZc@yilunxu-OptiPlex-7050>
- <20250710175449.GA1870174@ziepe.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFTW1j1wd6YvXP+OObOw9qHNHS8501N+Xb0dxMht6ggdRxdiyXEfsId6fvyNVSIhc7g00zb3rgsaFxzceaNCdpNph8dbnV+UDCsWNFqMETWasDjpp/GEIODRXN4FhDsDeBOgUsnycximdt3hRjJesKnMJDcVjazxM74kp+JCzAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=qTIAOxcm; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-128-230.bstnma.fios.verizon.net [173.48.128.230])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56B4qQvY014681
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 00:52:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1752209549; bh=U5Ns4wPmD+L7n4vdJW299ED8vP7EdSRntB8yrpUtteQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=qTIAOxcm4KTDYa3xzWBtm3ydOSr2jXwGhFsbJ1hBYXwAolptYhMvn0h27T7gdbkL0
+	 gUVeCTuj4WW6i5v5fRhlZr/vlFoa9GDSpBrVDJutkCKDOaOSZESJqYyDGx5/RkNS3J
+	 nVztbWpz5tKWGAaelugzkCo+ktRvUR82DdkjstxjxRlgUArkbWsTay5THlHl2yyLRf
+	 vwwZvm8UBTv6LCI8OwfocxDgvuWOyVFXdTYlFQ4nrzokp+MKR7IOAN0uqsLN4Fbl4L
+	 u6qT0CQfw/qJMYhMzk7M9Cztf4ZId4lrttuGd7IEzPPudnvDQhbWjB3SD8zq7Rv7Da
+	 0QWtd/KuzyOQw==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id E54DA2E00D5; Fri, 11 Jul 2025 00:52:25 -0400 (EDT)
+Date: Fri, 11 Jul 2025 00:52:25 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jan Kara <jack@suse.cz>
+Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+        Jan Kara <jack@suse.com>, Tao Ma <boyu.mt@taobao.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Eric Biggers <ebiggers@google.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-dev@igalia.com,
+        syzbot+0c89d865531d053abb2d@syzkaller.appspotmail.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: inline: convert when mmap is called, not when
+ page is written
+Message-ID: <20250711045225.GA245049@mit.edu>
+References: <20250526-ext4_inline_page_mkwrite-v2-1-aa96d9bc287d@igalia.com>
+ <ko3bgsd2wdluordh6phnmou3232yqlqsehxte6bvq34udq5in7@4phfw73mywjo>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250710175449.GA1870174@ziepe.ca>
+In-Reply-To: <ko3bgsd2wdluordh6phnmou3232yqlqsehxte6bvq34udq5in7@4phfw73mywjo>
 
-On Thu, Jul 10, 2025 at 02:54:49PM -0300, Jason Gunthorpe wrote:
-> On Thu, Jul 10, 2025 at 06:50:09PM +0800, Xu Yilun wrote:
-> > On Wed, Jul 02, 2025 at 07:32:36AM -0700, Vishal Annapurve wrote:
-> > > On Wed, Jul 2, 2025 at 7:13 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > >
-> > > > On Wed, Jul 02, 2025 at 06:54:10AM -0700, Vishal Annapurve wrote:
-> > > > > On Wed, Jul 2, 2025 at 1:38 AM Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > > >
-> > > > > > On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
-> > > > > > > On Tue, Jun 24, 2025 at 6:08 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
-> > > > > > > >
-> > > > > > > > > Now, I am rebasing my RFC on top of this patchset and it fails in
-> > > > > > > > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
-> > > > > > > > > folios in my RFC.
-> > > > > > > > >
-> > > > > > > > > So what is the expected sequence here? The userspace unmaps a DMA
-> > > > > > > > > page and maps it back right away, all from the userspace? The end
-> > > > > > > > > result will be the exactly same which seems useless. And IOMMU TLB
-> > > > > > >
-> > > > > > >  As Jason described, ideally IOMMU just like KVM, should just:
-> > > > > > > 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
-> > > > > > > by IOMMU stack
-> > > > > > In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to inform
-> > > > > > TDX module about which pages are used by it for DMAs purposes.
-> > > > > > So, if a page is regarded as pinned by TDs for DMA, the TDX module will fail the
-> > > > > > unmap of the pages from S-EPT.
-> > > >
-> > > > I don't see this as having much to do with iommufd.
-> > > >
-> > > > iommufd will somehow support the T=1 iommu inside the TDX module but
-> > > > it won't have an IOAS for it since the VMM does not control the
-> > > > translation.
-> > 
-> > I partially agree with this.
-> > 
-> > This is still the DMA Silent drop issue for security.  The HW (Also
-> > applicable to AMD/ARM) screams out if the trusted DMA path (IOMMU
-> > mapping, or access control table like RMP) is changed out of TD's
-> > expectation. So from HW POV, it is the iommu problem.
+On Mon, May 26, 2025 at 06:20:11PM +0200, Jan Kara wrote:
 > 
-> I thought the basic idea was that the secure world would sanity check
-> what the insecure is doing and if it is not OK then it blows up. So if
-
-Yes. The secure world checks. But it let alone the unexpected change on
-CPU path cause CPU is synchronous and VM just pends on the fault, no
-security concern. While DMA is asynchronous and the secure world must
-blow up.
-
-> the DMA fails because the untrusted world revoked sharability when it
-> should not have then this is correct and expected?
-
-OK. From secure world POV the failing is correct & expected.
-
+> So I would *love* to do this and was thinking about this as well. But the
+> trouble is that this causes lock inversion as well because ->mmap callback
+> is called with mmap_lock held and so we cannot acquire inode_lock here
+> either.
 > 
-> > For SW, if we don't blame iommu, maybe we rephrase as gmemfd can't
-> > invalidate private pages unless TD agrees.
-> 
-> I think you mean guestmemfd in the kernel cannot autonomously change
-> 'something' unless instructed to explicitly by userspace.
-> 
-> The expectation is the userspace will only give such instructions
-> based on the VM telling it to do a shared/private change.
-> 
-> If userspace gives an instruction that was not agreed with the guest
-> then the secure world can police the error and blow up.
+> Recent changes which switch from ->mmap to ->mmap_prepare callback are
+> actually going in a suitable direction but we'd need a rather larger
+> rewrite to get from under mmap_lock and I'm not sure that's justified.
 
-Yes.
+This came up in discussions at this week's ext4 video conference, and
+afterwards, I started thinking.  I suspect the best solution is one
+where we avoid using write_begin/write_end calls entirely.  Instead,
+we allocate a single block using ext4_mb_new_block() (see what
+ext4_new_meta_blocks does for an example); then we write the contents
+into the newly allocated blocks; and if the allocate and the write are
+successful, only then do we start a jbd2 handle, to zero the
+i_blocks[] array and then set logical block 0 to point at the newly
+allocated data block, and then close the handle.
 
->  
-> > Just to be clear. With In-place conversion, it is not KVM gives pages
-> > to become secure, it is gmemfd. Or maybe you mean gmemfd is part of KVM.
-> 
-> Yeah, I mean part of.
-> 
-> > > > Obviously in a mode where there is a vPCI device we will need all the
-> > > > pages to be pinned in the guestmemfd to prevent any kind of
-> > > > migrations. Only shared/private conversions should change the page
-> > > > around.
-> > 
-> > Only *guest permitted* conversion should change the page. I.e only when
-> > VMM is dealing with the KVM_HC_MAP_GPA_RANGE hypercall. Not sure if we
-> > could just let QEMU ensure this or KVM/guestmemfd should ensure this.
-> 
-> I think it should not be part of the kernel, no need. From a kernel
-> perspective userspace has requested a shared/private conversion and if
-> it wasn't agreed with the VM then it will explode.
+Splitting the block allocation from the "update the logical->physical
+mapping", which is currently done in ext4_map_blocks(), into two
+separate operations has been one of the things I had been wanting to
+do for a while, since it would allow us to replace the current
+dioread_nolock buffered write pqth, where we call ext4_map_blocks() to
+allocate the blocks but mark the blocks as uninitialized, and then we
+write the data blocks, and then we do a second ext4_map_blocks() call
+to clear the uninitialized flag.
 
-I'm OK with it now. It's simple if we don't try to recover from the
-explosion. Although I see the after explosion processing in kernel is
-complex and not sure how it will advance.
+So it's a bit more involved since it requires refactoring parts of
+ext4_map_blocks() to create a new function, ext4_set_blocks() which
+updates the extent tree or indirect block map using block(s) that were
+allocated separately.  But this would be useful for things besides
+just the inline file conversion operation, so it's worth the effort.
 
-Thanks,
-Yilun
+Cheers,
 
-> 
-> Jason
+						- Ted
 
