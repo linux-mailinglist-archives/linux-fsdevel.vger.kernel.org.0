@@ -1,103 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-54608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E962B018C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 11:51:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5993EB018C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 11:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 467AF7B5D13
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 09:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D47831CA549D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Jul 2025 09:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0A627EFEA;
-	Fri, 11 Jul 2025 09:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C683327FB02;
+	Fri, 11 Jul 2025 09:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K0O2EOHu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zXNl0BF8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeDPm+Zr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251C427E075;
-	Fri, 11 Jul 2025 09:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E8C27D781;
+	Fri, 11 Jul 2025 09:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227413; cv=none; b=c/+q3ptxpmKTQprKLqHKmhHOgX4TQSmqkEOfz+fMZ4WvnGX4Q94sfJ7gwai1N4AEcodpSW8VCB+bBpxRiVGZoBHpiTgoeC41skwyLw1AtTpHM/jNv4O59vIINuPjq2QjLmySRS+ZXwEfFXyIOZzkJ55wr/1P80zZtfGh0m8/yik=
+	t=1752227427; cv=none; b=BuoH0rwZuvB6UFWjtpJJ7tl+AkajJ2UGFOdP18jUwwLEJmDzeI67/OWRs4ymo0uY3i2KOWgtILGafYTvcsdOXMCKSmKnnhK3ZLHzU3drDkgrva3DvlQ7a48ikQZ+HAd0AAzyRfcW+BD0urhOxBmygJ+IzEwakuDcGoh2xlYBYk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227413; c=relaxed/simple;
-	bh=fW1NnlF1yw7WFSGTMF/b4xSOPsEU5pODFRCx1PUeiqs=;
+	s=arc-20240116; t=1752227427; c=relaxed/simple;
+	bh=S68Sdm3hdWr54+bPb5x8Y8IVtYlBfiSa2mWJPoASf20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZR81sKDdaosse/qnahkuZDT8m1TjZYggGetvzp4/SqRh8+qCoehjldQg0IPYi/aGtB63N+DSv8mJ4V/tu8N8jExDWbqrV6EFddzxSIrrj2EUhmI4A7VA5vyVaXvfIeNTTQcHQHcbICn9P0+WQducbTJvNkQYZV0nBlJdIS4JEis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K0O2EOHu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zXNl0BF8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 11 Jul 2025 11:50:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752227410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fW1NnlF1yw7WFSGTMF/b4xSOPsEU5pODFRCx1PUeiqs=;
-	b=K0O2EOHuzUPWhmP4zny1ofpcedMSdv09xdBGpVDp+2UC92dcsT/yy8jRi4D5aYgZ3EvW47
-	yvmNsI//YfkM1yjSdHvXDHbHqrbU0S1PH3iofcOEmNqcQPqy4bHBCLIWfXe6J3n9NQoA6D
-	B4mqWUKUJ6eBlkf8MUDbmLHtJ0DJAgLxOWCg/qpUp7Faa1/yz4ypRHGog/91fRpFaYrerV
-	6uXmqi2FRTMSGPnq2uHDdPpHIe0XI7RSuty6CRG9V9svZTUJ8o5tKw3NFGHKJPwPH5RHli
-	jeVaCBhpwjmaw9V5pRpmnTHsHunZWE55oha8RW/DS7tqkABSdrz143Ohf+mFjw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752227410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fW1NnlF1yw7WFSGTMF/b4xSOPsEU5pODFRCx1PUeiqs=;
-	b=zXNl0BF85i9QM+tSVf/L8Qg0ITyOSVteI6J79Cp/fXCOJAXs2c64Yz5vwd3mIfu5wYMgC2
-	wc7ysHst148kgRAg==
-From: Nam Cao <namcao@linutronix.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Xi Ruoyao <xry111@xry111.site>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-Message-ID: <20250711095008.lBxtWQh6@linutronix.de>
-References: <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
- <20250710034805.4FtG7AHC@linutronix.de>
- <20250710040607.GdzUE7A0@linutronix.de>
- <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
- <20250710062127.QnaeZ8c7@linutronix.de>
- <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
- <20250710083236.V8WA6EFF@linutronix.de>
- <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
- <20250711050217.OMtx7Cz6@linutronix.de>
- <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EKVBOzo4xAeGwxPQUXP46KnY74Wfe/RGft7GFynJTez38NuMEv7F5hKoeS8nqCtMLh1BztQ/1JTYln9tzfYEHhG1OlEodvsA9RGeniWC80222YCly1Us5YhUEpyCF/bgIOylWj8wQaqWyckiclETC8RkNir9QXyL6sCs6xXTONY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeDPm+Zr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93771C4CEED;
+	Fri, 11 Jul 2025 09:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752227426;
+	bh=S68Sdm3hdWr54+bPb5x8Y8IVtYlBfiSa2mWJPoASf20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NeDPm+ZrFrTcdefpS7XvoMofuc20g1V4u+g04xPrAMaMqlNolELtQgO7XCkbKbBlE
+	 aX2+hZi57GYv0uXAfwg7W6hkynfftmQEvHO0nMx5ZQZDaF5GMJ6mDHmHfmpvwooVRf
+	 KawJBQ3F0dhHNmH7DTm5LRm8xcyMQ06BjxYkT0Nq7wfsFPX1H4+K7ccAbO2HVZd82o
+	 Qa4a9ZyNbVsYBQ174vRSHeY8hqcjZeMLLHjGgDDMjMLmAr2YCLL6pCdbFEvnaLIDS3
+	 Ws3Ao9qi6y3Ky2KtcfInoiOv9oO3U0PJYH/Vi/NFhGz0hMcagF+kW6EbyJO5MwA+pn
+	 gg5X0I+tb7dCA==
+Date: Fri, 11 Jul 2025 11:50:22 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, 
+	Joanne Koong <joannelkoong@gmail.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-block@vger.kernel.org, gfs2@lists.linux.dev
+Subject: Re: refactor the iomap writeback code v5
+Message-ID: <20250711-arten-randlage-1a867323e2ce@brauner>
+References: <20250710133343.399917-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+In-Reply-To: <20250710133343.399917-1-hch@lst.de>
 
-On Fri, Jul 11, 2025 at 11:44:28AM +0200, Christian Brauner wrote:
-> I think we should revert the fix so we have time to fix it properly
-> during v6.17+. This patch was a bit too adventurous for a fix in the
-> first place tbh.
+On Thu, Jul 10, 2025 at 03:33:24PM +0200, Christoph Hellwig wrote:
+> Hi all,
+> 
+> this is an alternative approach to the writeback part of the
+> "fuse: use iomap for buffered writes + writeback" series from Joanne.
+> It doesn't try to make the code build without CONFIG_BLOCK yet.
 
-Agreed. I did feel a bit uneasy when I saw the patch being applied to
-vfs.fixes.
-
-Let me know if you want me to send a patch, otherwise I assume you will do
-the revert yourself.
-
-Nam
+I'm confused, the last commit in the series makes the code built with
+!CONFIG_BLOCK? So this is ready to go?
 
