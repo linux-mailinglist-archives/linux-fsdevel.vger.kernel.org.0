@@ -1,130 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-54766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2DAB02CF7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 22:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA1AB02D76
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 00:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44AC54A5093
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 20:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E6CA1AA16E0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 22:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFB1226D14;
-	Sat, 12 Jul 2025 20:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99E922F74E;
+	Sat, 12 Jul 2025 22:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EVeS4Pdo"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Rj8D72HC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1C9226533
-	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Jul 2025 20:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270E01DE89A;
+	Sat, 12 Jul 2025 22:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752353547; cv=none; b=fSZ/Yp7xUq14KFIQ0gAlrcq4YdiIqDsbkb/AHWolS+m3Snnwtdaf7RbJmzDHb5kS3XUUM/PPOKakkil6q2qzem6BQsHKxxujAANIStFxT9vhwsIKnH6YwkpK4xX8K3mRPrf6LXCunVb+8cG3VIM+TLsqxQ7ctN/UySWsItZv4g0=
+	t=1752359147; cv=none; b=b82E6NsqLi/3vpyHs8VqVR9nt+729PTPhlNfqVqkxLcyJIOqxotujoEsVrJe/1lZvDhwmuHiMUO5RqJitpGYo9lL/o/hQrIA3Dlh+S+T5wfS9VTE75yQ1uS8owWbJwOmU85rBXdVs3iFmE3lFHX4ObsQr2bKF2+bUKxfeOQUeZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752353547; c=relaxed/simple;
-	bh=el3QB5FzgTGqMoLQ2O4Y0t2EM+WD4U0n+5F7KR57zzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=trKnreJX5O1YNYdx2NEb+3NmlyJd5kDv+qxO0HZWWwl4wl7F+YsN0lA2jmKcxSOvyeZfwmd+ZZ3PgNseW3noUBwQiPZuZ3MMdMdePBM6SYtea182CLPLz0yzylZjLbPPNHtjMp9OZvkQX/jKb7BL9vt3w2VCZHHYRu29IXs1GZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EVeS4Pdo; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752353545; x=1783889545;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=el3QB5FzgTGqMoLQ2O4Y0t2EM+WD4U0n+5F7KR57zzo=;
-  b=EVeS4PdoNOHXYVfFoL+fIwMThH9lf9wOK+DGmdhNO6umDW+lDUfCXwxg
-   gjFkhpvN/GJpLqUpH4uNXCcu2lq5IMiNlNzupIjmWeB0AdAv+G3oaMIn+
-   uF3CeF2WXGZI+OBsov1yXSeF7J6Nw2g2jeWz+KvkMygY3espKsM1k8sdl
-   H2U6N935bJ+BhPgpz8J3xKX6dgw1iu/GWw0OnkgcFTMp0nr6n5Vjmfypw
-   ktFnWA8zqaG3HQGlFtlrcKNqMwsCEqKnORnF+qoL9vGOXz7ukf6xUZLSv
-   VJQadP7QTmZljcV8k4gGHbsYSclg2+1BqwCHyvzDECxaZCX0jRQ9xxygb
-   Q==;
-X-CSE-ConnectionGUID: u6n9WbnLQ22inMHT2tIcaA==
-X-CSE-MsgGUID: FXpLLQWyS4eRSLVZPJFgzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="77146230"
-X-IronPort-AV: E=Sophos;i="6.16,307,1744095600"; 
-   d="scan'208";a="77146230"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2025 13:52:25 -0700
-X-CSE-ConnectionGUID: vfJ3frt3QBKZa7aN3nZkDQ==
-X-CSE-MsgGUID: /IL16pcTTPe0heuf+KGUqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,307,1744095600"; 
-   d="scan'208";a="156425241"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 12 Jul 2025 13:52:23 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uahCm-0007gB-18;
-	Sat, 12 Jul 2025 20:52:20 +0000
-Date: Sun, 13 Jul 2025 04:51:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jack@suse.cz,
-	amir73il@gmail.com, josef@toxicpanda.com, lesha@meta.com,
-	linux-fsdevel@vger.kernel.org, sargun@meta.com
-Subject: Re: [PATCH v4 3/3] fanotify: introduce event response identifier
-Message-ID: <202507130418.Prp26RtQ-lkp@intel.com>
-References: <20250711183101.4074140-4-ibrahimjirdeh@meta.com>
+	s=arc-20240116; t=1752359147; c=relaxed/simple;
+	bh=pSh3mjR//rnmlWfjJ4Z9nm0B9/qkk0CHM9jWwGNd7xM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ITbhNKPBaa1gabQST12FTEVStJ8iNxvjVf9XMKUZ4heJM6TjItyrb5uN3p562VPBd4ScwTUKo9vwDGlmD5MhZi+PdESgzOzrBf8tou6Blg5rUtpzLfLmcXhPYqbNKG9TMJRGZhQjvsM85qH75akZJZu0sMral2BQU45f+/122f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Rj8D72HC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E61AC4CEEF;
+	Sat, 12 Jul 2025 22:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752359145;
+	bh=pSh3mjR//rnmlWfjJ4Z9nm0B9/qkk0CHM9jWwGNd7xM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Rj8D72HCwyU0hobnlvR8EllAN81WGIaQzcA/OOUokRki5KcSppE8ZQ4zJZP8sRRCL
+	 IZqboHhtLhHRWRGAV0+HN6g2u9MK+MHF0fN9iUk1/kYu8upJ3/IKvrMQF5QJxz5EiX
+	 DzV+NN2maEYxcUNc68LkbXq2sravQEDTdudSmmTg=
+Date: Sat, 12 Jul 2025 15:25:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Chi Zhiling <chizhiling@163.com>
+Cc: David Hildenbrand <david@redhat.com>, willy@infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>, Ryan
+ Roberts <ryan.roberts@arm.com>
+Subject: Re: [PATCH] readahead: Use folio_nr_pages() instead of shift
+ operation
+Message-Id: <20250712152544.07f236ec277290c70a2a862f@linux-foundation.org>
+In-Reply-To: <661ccfa4-a5ad-4370-a7f5-e17968d8a46e@163.com>
+References: <20250710060451.3535957-1-chizhiling@163.com>
+	<479b493c-92c4-424a-a5c0-1c29a4325d15@redhat.com>
+	<661ccfa4-a5ad-4370-a7f5-e17968d8a46e@163.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711183101.4074140-4-ibrahimjirdeh@meta.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ibrahim,
+On Sat, 12 Jul 2025 10:23:32 +0800 Chi Zhiling <chizhiling@163.com> wrote:
 
-kernel test robot noticed the following build errors:
+> On 2025/7/12 00:15, David Hildenbrand wrote:
+> > On 10.07.25 08:04, Chi Zhiling wrote:
+> >> From: Chi Zhiling <chizhiling@kylinos.cn>
+> >>
+> >> folio_nr_pages() is faster helper function to get the number of pages
+> >> when NR_PAGES_IN_LARGE_FOLIO is enabled.
+> >>
+> >> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+> >> ---
+> >> =A0 mm/readahead.c | 2 +-
+> >> =A0 1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/mm/readahead.c b/mm/readahead.c
+> >> index 95a24f12d1e7..406756d34309 100644
+> >> --- a/mm/readahead.c
+> >> +++ b/mm/readahead.c
+> >> @@ -649,7 +649,7 @@ void page_cache_async_ra(struct readahead_control=
+=20
+> >> *ractl,
+> >> =A0=A0=A0=A0=A0=A0 * Ramp up sizes, and push forward the readahead win=
+dow.
+> >> =A0=A0=A0=A0=A0=A0 */
+> >> =A0=A0=A0=A0=A0 expected =3D round_down(ra->start + ra->size - ra->asy=
+nc_size,
+> >> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 1UL << folio_order(folio));
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 folio_nr_pages(folio));
+> >> =A0=A0=A0=A0=A0 if (index =3D=3D expected) {
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 ra->start +=3D ra->size;
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 /*
+> >=20
+> > This should probably get squashed in Ryans commit?
+>=20
+> I have no objection, it's up to Ryan.
 
-[auto build test ERROR on jack-fs/fsnotify]
-[also build test ERROR on linus/master v6.16-rc5 next-20250711]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ibrahim-Jirdeh/fanotify-add-support-for-a-variable-length-permission-event/20250712-023425
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
-patch link:    https://lore.kernel.org/r/20250711183101.4074140-4-ibrahimjirdeh%40meta.com
-patch subject: [PATCH v4 3/3] fanotify: introduce event response identifier
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20250713/202507130418.Prp26RtQ-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250713/202507130418.Prp26RtQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507130418.Prp26RtQ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/notify/fdinfo.c:17:
->> fs/notify/fanotify/fanotify.h:566:6: error: no member named 'fanotify_data' in 'struct fsnotify_group'
-     566 |         if (FAN_GROUP_FLAG(group, FAN_REPORT_RESPONSE_ID))
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/fanotify.h:9:12: note: expanded from macro 'FAN_GROUP_FLAG'
-       9 |         ((group)->fanotify_data.flags & (flag))
-         |          ~~~~~~~  ^
-   1 error generated.
+"Ryans commit" is now c4602f9fa77f ("mm/readahead: store folio order in
+struct file_ra_state") in mm-stable.  I'd prefer not to rebase for this!
 
 
-vim +566 fs/notify/fanotify/fanotify.h
 
-   562	
-   563	static inline bool fanotify_is_valid_response_id(struct fsnotify_group *group,
-   564							 int id)
-   565	{
- > 566		if (FAN_GROUP_FLAG(group, FAN_REPORT_RESPONSE_ID))
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
