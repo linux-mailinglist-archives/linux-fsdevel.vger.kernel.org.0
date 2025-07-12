@@ -1,109 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-54739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D25B028F3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 04:24:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C41B02901
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 04:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CE1A47B8E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 02:24:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00471C82E82
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 02:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78CB185B73;
-	Sat, 12 Jul 2025 02:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5B91EDA02;
+	Sat, 12 Jul 2025 02:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="av1TVmsw"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bD3T+j/v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338F413A3F7;
-	Sat, 12 Jul 2025 02:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80AA1E5711
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Jul 2025 02:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752287077; cv=none; b=CZGDjiVnbFDRIQDe59h/UJW+zzaCMda2FvKMMZu3EZAHoJPng5BLvYwrMzcMIiNnKLpwboVg0jVxwZPaM+/EzTSQDPjFGf0sfpuDObxyKNNuNgxo9OhVrZmL0E7DUEaEo97NTeD3ETn3avfKMetY30iVHmJhYKy37NbfY4Xz5Bc=
+	t=1752288010; cv=none; b=E+61WImGvdg3LCfAIkTztz1KmU6XaOcMde+deIvM4G/lRFBiX+9hTlKJF9A4Ne5yy7PEOBR48kBG8aK37z4sSVj6Ob5XdL6SLoOFOF1D9gx13o8QFdhDjqOHmvwocBcVkfqyu1xOgkKduKqoEg7QatmWAstqY39Mko8nlweuDnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752287077; c=relaxed/simple;
-	bh=srwbuo6oLhtB2Y60QESeAranhfADJUl4Ui29kqh/wTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rkEMUFw4G6eQMDwQln4O/Bm2E53xLsa53DmdJL8rlUYDvZWJhsBDNyKcNN6xAn0tBVTndx2H/wncsnCNkWYdxvqAtxZwf4A0B/X25DI7J5JZhG44E/g6teOE5/lCffVkmwEzOSC4/enY4iumBv8CTPv7waQTNIj34rVqBAXXlGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=av1TVmsw; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=wPO8Xs4Ept5FLbMOvFJphq0xBYZ+N64aVMADpTngs70=;
-	b=av1TVmswuDHTkJHp/SrcJInub1m4E5hmHgvp110jWjOYqC51q0ighkaNVwAHce
-	63yLoxXf44Q9a2P93JBZMbUZAJZJoGPd/Wa/ZqbFWm8mx3WbrCeU5LGRMAvIQY79
-	D7b2KYiBl+s5CX5LmS6yWETMeMUqXaZQMdBljCoine5eY=
-Received: from [10.42.12.6] (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDX96Ykx3Fo9tMsEQ--.9104S2;
-	Sat, 12 Jul 2025 10:23:33 +0800 (CST)
-Message-ID: <661ccfa4-a5ad-4370-a7f5-e17968d8a46e@163.com>
-Date: Sat, 12 Jul 2025 10:23:32 +0800
+	s=arc-20240116; t=1752288010; c=relaxed/simple;
+	bh=zpLNea46eqilpaXHIo3ln75NHPKf5uwXU7dO1N3gFWY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RBib4Iywrtct3elTp4yh0awMJw7dhziz/F4uNxO3JuJHs4RL4D5YYlyaodB2MjoeYEqAm1cD3YUBBD9iSMkMWj7hghHeeUOmLPjt/yAaywRxspvb/EbOf82gLvDa+hTRgp/v2KCMD0ApYZj8yD24itPl6FWs0xhQNizmmFLBWIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bD3T+j/v; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3df303e45d3so8753885ab.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Jul 2025 19:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752288006; x=1752892806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z4WImu2NtZSrJkqdjdhLHzSmNsrp14bAane9ntQopr8=;
+        b=bD3T+j/v2y6zVjf5basTwu9vTyfO8gGAS1p6rFgBHVW+yw6535bl2frtNTYj+SmLNH
+         O7oDpBHe+4uZ1d3NEZ3ik1z/EXPAgmzkibO1qZ2IazJuqk8N5W4Gpq0ddIYZ7iGBljMG
+         S45Oh0/lNg+M60VjAMVuo1SccwcepSXm6aMzvK3Tf1QS/n1gm7A+VX6z0YFlC/JFSS02
+         px2vnDrtHx2t2NZATHzRnzgRAPmioxQ7K3u3zQjI8S5cZCZquYAJf1a+ADxwyxSWeeQU
+         fj3mRLAvKtWlaKFg01/UAJg+3Pc4UpRsRsB2I3Y39Hfnt1wUDSzgx+lyV/5bEyDYviGJ
+         HTKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752288006; x=1752892806;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z4WImu2NtZSrJkqdjdhLHzSmNsrp14bAane9ntQopr8=;
+        b=HVhNAqwcu+EBIMjegVizaAsuUKI+14Q0LiBe3a/+I8gNkylZdTnZCaYwLCj6fe+tH4
+         ukgr/fLcZj2vTwlcTdm3hf/8xVyF2hkGU2t9yBrtZhVzBwj0JVu6++w1Wn15lr7EOmUM
+         9CsPgxjuN65foZjYVUX/d8AF0F+VmUmtszuGm4gE8w8DI5k5sqFW7YQjlv/8DN7gp5yk
+         f4iZPnr784H60KUWguCk3S4jNm5uiMlxsWjoIOAJSmWOOHtcK+35qwZzT40oXQEgw7m4
+         aIndlJ0gae+yJyzP82543quWrMY9pOVJnTpDV77YaLg6mE7S1IK0slvPMuafUtssg1fD
+         wCLg==
+X-Gm-Message-State: AOJu0YzscgqJzNF6g8/zuqnof8ok5mY8HdzNutPYb7eGp5S4hCK4PXTK
+	cT/79PruugnqQCRfbbVprFLGB175UNa9FtZ9PHzqVQBwX2L1EpLtGKlpOo2FvCpNMriNCQaN8wf
+	KkdNI
+X-Gm-Gg: ASbGncu0s4I4ZNmk8CtSfvDUejIn39KPib9YeniRtyV+vTmOHmt3B7ljnvn3HEH4yej
+	ae3zyASF0Ty1CdmH3UloxG4xmNE+q4foMXv2hil0BhWMCKQRW2HqqIYob3HOBxEoLPQpBWwI4dd
+	OZaiwh2qBulXfTTCqq8H6bPqelYfk/GT8mRS+eU7DXYptCGPIflx9cwxlCd4rPn3BgKViohUvEx
+	/MHufrtCKxhygDSJ5K91Au6RhRzpxTPAhU13CXoEFgpi+3x+m6As7Q4/m+Sgv6rAl5lG03js/a9
+	4hkJSVqWwRHL1Pd9c1koxe5GrYY6IXcSfEmr4VLs9FqOTmheWCKSGZeV94f5diMmE13fQsXUeMP
+	rrKM6lPEqNYIVfQ==
+X-Google-Smtp-Source: AGHT+IEpxYkdBcisV7HP3p3UR14Bkj/gzDXrJtNLWIvqBII+yXOz6A2rCxpTknGn2X7a/ulxOaJs8g==
+X-Received: by 2002:a05:6602:1354:b0:876:d18f:fb06 with SMTP id ca18e2360f4ac-87977ea916amr685927139f.0.1752288006313;
+        Fri, 11 Jul 2025 19:40:06 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8796bc34395sm126333739f.32.2025.07.11.19.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 19:40:04 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+ syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
+In-Reply-To: <20250711163202.19623-2-jack@suse.cz>
+References: <20250711163202.19623-2-jack@suse.cz>
+Subject: Re: [PATCH] loop: Avoid updating block size under exclusive owner
+Message-Id: <175228800423.1597338.7519956192674264145.b4-ty@kernel.dk>
+Date: Fri, 11 Jul 2025 20:40:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] readahead: Use folio_nr_pages() instead of shift
- operation
-To: David Hildenbrand <david@redhat.com>, willy@infradead.org,
- akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>,
- Ryan Roberts <ryan.roberts@arm.com>
-References: <20250710060451.3535957-1-chizhiling@163.com>
- <479b493c-92c4-424a-a5c0-1c29a4325d15@redhat.com>
-Content-Language: en-US
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <479b493c-92c4-424a-a5c0-1c29a4325d15@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX96Ykx3Fo9tMsEQ--.9104S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruFWUurW8Ary3Gw1UJFWDJwb_yoWDWrb_WF
-	40yrn29F4UWF4Sga15GFZ3GFZYgws5CryUXrWDZryIq3yrWas7Z3Z0vr1Svr1DJr1akr43
-	Jwn3XFWDuF13ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUj3fH5UUUUU==
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiTxCInWhxvFTGRgAAs7
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On 2025/7/12 00:15, David Hildenbrand wrote:
-> On 10.07.25 08:04, Chi Zhiling wrote:
->> From: Chi Zhiling <chizhiling@kylinos.cn>
->>
->> folio_nr_pages() is faster helper function to get the number of pages
->> when NR_PAGES_IN_LARGE_FOLIO is enabled.
->>
->> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
->> ---
->>   mm/readahead.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/mm/readahead.c b/mm/readahead.c
->> index 95a24f12d1e7..406756d34309 100644
->> --- a/mm/readahead.c
->> +++ b/mm/readahead.c
->> @@ -649,7 +649,7 @@ void page_cache_async_ra(struct readahead_control 
->> *ractl,
->>        * Ramp up sizes, and push forward the readahead window.
->>        */
->>       expected = round_down(ra->start + ra->size - ra->async_size,
->> -            1UL << folio_order(folio));
->> +            folio_nr_pages(folio));
->>       if (index == expected) {
->>           ra->start += ra->size;
->>           /*
+
+On Fri, 11 Jul 2025 18:32:03 +0200, Jan Kara wrote:
+> Syzbot came up with a reproducer where a loop device block size is
+> changed underneath a mounted filesystem. This causes a mismatch between
+> the block device block size and the block size stored in the superblock
+> causing confusion in various places such as fs/buffer.c. The particular
+> issue triggered by syzbot was a warning in __getblk_slow() due to
+> requested buffer size not matching block device block size.
 > 
-> This should probably get squashed in Ryans commit?
+> [...]
 
-I have no objection, it's up to Ryan.
+Applied, thanks!
 
-> 
-> LGTM
+[1/1] loop: Avoid updating block size under exclusive owner
+      commit: 7e49538288e523427beedd26993d446afef1a6fb
 
-Thanks,
+Best regards,
+-- 
+Jens Axboe
 
-> 
+
 
 
