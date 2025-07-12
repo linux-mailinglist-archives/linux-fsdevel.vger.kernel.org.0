@@ -1,55 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-54744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95450B02970
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 07:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59150B02971
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 07:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9E41BC8331
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 05:03:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33F21C20046
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 05:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304C11BFE00;
-	Sat, 12 Jul 2025 05:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4BE1FBE8A;
+	Sat, 12 Jul 2025 05:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="g3fBSqL3"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bs+yfsuG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204AA139B
-	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Jul 2025 05:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE10F149DE8
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Jul 2025 05:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752296558; cv=none; b=htyjMNoCq6BlV0BAQwQK87xyeaR7lgVLf2fP7Inn/y8iIm4wm9u4Wkp018Pk31I2b/0pNu4ZEgB0jZUdUcUPb50NMpjIP6coeziCbEW8U/pMUpDaMgbyrQl+UrMuoEHma6VFZAxCDr4vd3FrXZcnY7Lr+/xEauA5EjAeM8DHuS0=
+	t=1752296961; cv=none; b=RnO1zqiabDHRfnhkHptkLky4IHEC4TwKNa5NWtdvd+IOvMjyFhaYj3XUd4cpLdHOWEahCKbukjByBaYWhu9XjMHf4Yj6bneov1NOd0gOTF5DVUO6+r9T49fnXr+aBB6WcO+4GF81HJ5HptUq7YaC/EZomALlNx1bC5OJxB+UbTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752296558; c=relaxed/simple;
-	bh=g+JNRFJjoktcPHfNrrnvKFPIRHtD7ycBqTBN1fViQpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qTDF3iNhZdlCZ2XNM9Mcv03sSf+F5G1rhbmnDHjC0SmTtyf5w8xjI/w3aaYfiwbXU+jwSyph07cYuhrOFmrLskdwPL1iskEzLPj1WCZA5fL1WkgMKOF6QmiH2xWJkSmOc8d6YHLwsxx5VdNW1AtnJGiB76p5jkb+i/BZ/EmkZ4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=g3fBSqL3; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1752296961; c=relaxed/simple;
+	bh=2xb0zpZVAIjPxxxkd7c8i9PksMLHEjiqxCqO4EgHE0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DII6G8v2ndacBFg4SrwqATBUIXziEEMXaLLWM18yazN7T4mAZrhJLWunOS1+Zi+RiwLiAHsH/Qx+DkPMHAijPmHJ1/ntF9yW/ORhMF0PTziX9U6Au7Jq0XqmiOp6+PUdSpMR8nLc7wKYYHdl+UfI3+3clKv5EiOSy8DPO2k+wdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bs+yfsuG; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=Voc1d95P04gWZr1fFgrqInE7JwmLx8U8/J8TlOkmays=; b=g3fBSqL3v2KAOak+Z1fGiIfC6U
-	b51uMUe3zSDhR8aTW0cM/NHK1xv8uDlYOFx/yDCprVViCylMvfienjvRCU5R8k+/+n2LsBYc4oMzf
-	HPAWa/2Vx9wbzdaCr6P2xxT7UKhjAN7Z7mUFWINiGbenVY7RXrmS2RgwoTHRWcCZCC8MYgoRSKG2y
-	AIN+ufbcRmpp13ya2edOIfyXBaHizz8bISZBwf44IGh4zLBllW9h3+sQhAcFUssxWYPh02tEVo5TQ
-	wQAZBqF/GbcKw12axcvttN14XGqXC2yYUkeON/KmNxMdzp7GegFzwNXAmEqYWEvlPx5/gXrPZ45Gt
-	xTSzU/2A==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=l4nwspgTz+l9sR3355o4FMkPkNZdY9hGjiuSmrLjNKU=; b=bs+yfsuG7XRj1XO/uN9MEmhgnk
+	kRzQL0dv2QpI5YIms7g6hHjuC4wqhfKIik6IBzc8/sfbylyMg8dKMuRFsrAgi+PMreOCQ21wosqLk
+	wp4m1EZO9cIXpTqEGkvnoP+B4XTaXc7NREarbT0f1BiYOEu/E2vL72V2cBgcSGB8esTK+qlHDKYZz
+	symoirS4r9mfFmCDWqmOjzi/mn2c2lKigTAPwCH7yNqU2QJTjI6isKuOjjw0WsDUYkOHcBhKubim8
+	2YBMuBFKZ9E4f+CbFpCDVNqgyCs5wmv0GdFF69YZ6lCGKWlG9PSC5e7kKf/bqBqHyfoO3mnts7DBi
+	7PCNmGAw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uaSNb-00000004bfX-0Kue;
-	Sat, 12 Jul 2025 05:02:31 +0000
-Date: Sat, 12 Jul 2025 06:02:31 +0100
+	id 1uaSU8-00000004dvA-2G9U;
+	Sat, 12 Jul 2025 05:09:17 +0000
+Date: Sat, 12 Jul 2025 06:09:16 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Ofir Bitton <obitton@habana.ai>
-Subject: [PATCH 1/2] habanalabs: fix UAF in export_dmabuf()
-Message-ID: <20250712050231.GX1880847@ZenIV>
+Cc: Juergen Gross <jgross@suse.com>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Subject: [PATCH 2/2] xen: fix UAF in dmabuf_exp_from_pages()
+Message-ID: <20250712050916.GY1880847@ZenIV>
+References: <20250712050231.GX1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,10 +60,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250712050231.GX1880847@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
 [dma_buf_fd() fixes; no preferences regarding the tree it goes through -
-up to dri folks]
+up to xen folks]
 
 As soon as we'd inserted a file reference into descriptor table, another
 thread could close it.  That's fine for the case when all we are doing is
@@ -72,80 +75,74 @@ destroyed on close (be it the struct file itself or anything destroyed
 by its ->release()), we have a UAF.
 
 dma_buf_fd() is a combination of reserving a descriptor and fd_install().
-habanalabs export_dmabuf() calls it and then proceeds to access the
-objects destroyed on close.  In particular, it grabs an extra reference to
-another struct file that will be dropped as part of ->release() for ours;
-that "will be" is actually "might have already been".
+gntdev dmabuf_exp_from_pages() calls it and then proceeds to access the
+objects destroyed on close - starting with gntdev_dmabuf itself.
 
-Fix that by reserving descriptor before anything else and do fd_install()
-only when everything had been set up.  As a side benefit, we no longer
-have the failure exit with file already created, but reference to
-underlying file (as well as ->dmabuf_export_cnt, etc.) not grabbed yet;
-unlike dma_buf_fd(), fd_install() can't fail.
+Fix that by doing reserving descriptor before anything else and do
+fd_install() only when everything had been set up.
 
-Fixes: db1a8dd916aa ("habanalabs: add support for dma-buf exporter")
+Fixes: a240d6e42e28 ("xen/gntdev: Implement dma-buf export functionality")
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/accel/habanalabs/common/memory.c | 23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+ drivers/xen/gntdev-dmabuf.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/accel/habanalabs/common/memory.c b/drivers/accel/habanalabs/common/memory.c
-index 601fdbe70179..61472a381904 100644
---- a/drivers/accel/habanalabs/common/memory.c
-+++ b/drivers/accel/habanalabs/common/memory.c
-@@ -1829,9 +1829,6 @@ static void hl_release_dmabuf(struct dma_buf *dmabuf)
- 	struct hl_dmabuf_priv *hl_dmabuf = dmabuf->priv;
- 	struct hl_ctx *ctx;
- 
--	if (!hl_dmabuf)
--		return;
--
- 	ctx = hl_dmabuf->ctx;
- 
- 	if (hl_dmabuf->memhash_hnode)
-@@ -1859,7 +1856,12 @@ static int export_dmabuf(struct hl_ctx *ctx,
+diff --git a/drivers/xen/gntdev-dmabuf.c b/drivers/xen/gntdev-dmabuf.c
+index 5453d86324f6..82855105ab85 100644
+--- a/drivers/xen/gntdev-dmabuf.c
++++ b/drivers/xen/gntdev-dmabuf.c
+@@ -357,8 +357,11 @@ struct gntdev_dmabuf_export_args {
+ static int dmabuf_exp_from_pages(struct gntdev_dmabuf_export_args *args)
  {
  	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
- 	struct hl_device *hdev = ctx->hdev;
--	int rc, fd;
-+	CLASS(get_unused_fd, fd)(flags);
+-	struct gntdev_dmabuf *gntdev_dmabuf;
+-	int ret;
++	struct gntdev_dmabuf *gntdev_dmabuf __free(kfree) = NULL;
++	CLASS(get_unused_fd, ret)(O_CLOEXEC);
 +
-+	if (fd < 0) {
-+		dev_err(hdev->dev, "failed to get a file descriptor for a dma-buf, %d\n", fd);
-+		return fd;
-+	}
++	if (ret < 0)
++		return ret;
  
- 	exp_info.ops = &habanalabs_dmabuf_ops;
- 	exp_info.size = total_size;
-@@ -1872,13 +1874,6 @@ static int export_dmabuf(struct hl_ctx *ctx,
- 		return PTR_ERR(hl_dmabuf->dmabuf);
- 	}
+ 	gntdev_dmabuf = kzalloc(sizeof(*gntdev_dmabuf), GFP_KERNEL);
+ 	if (!gntdev_dmabuf)
+@@ -383,32 +386,21 @@ static int dmabuf_exp_from_pages(struct gntdev_dmabuf_export_args *args)
+ 	exp_info.priv = gntdev_dmabuf;
  
--	fd = dma_buf_fd(hl_dmabuf->dmabuf, flags);
--	if (fd < 0) {
--		dev_err(hdev->dev, "failed to get a file descriptor for a dma-buf, %d\n", fd);
--		rc = fd;
--		goto err_dma_buf_put;
+ 	gntdev_dmabuf->dmabuf = dma_buf_export(&exp_info);
+-	if (IS_ERR(gntdev_dmabuf->dmabuf)) {
+-		ret = PTR_ERR(gntdev_dmabuf->dmabuf);
+-		gntdev_dmabuf->dmabuf = NULL;
+-		goto fail;
 -	}
 -
- 	hl_dmabuf->ctx = ctx;
- 	hl_ctx_get(hl_dmabuf->ctx);
- 	atomic_inc(&ctx->hdev->dmabuf_export_cnt);
-@@ -1890,13 +1885,9 @@ static int export_dmabuf(struct hl_ctx *ctx,
- 	get_file(ctx->hpriv->file_priv->filp);
+-	ret = dma_buf_fd(gntdev_dmabuf->dmabuf, O_CLOEXEC);
+-	if (ret < 0)
+-		goto fail;
++	if (IS_ERR(gntdev_dmabuf->dmabuf))
++		return PTR_ERR(gntdev_dmabuf->dmabuf);
  
- 	*dmabuf_fd = fd;
-+	fd_install(take_fd(fd), hl_dmabuf->dmabuf->file);
+ 	gntdev_dmabuf->fd = ret;
+ 	args->fd = ret;
  
- 	return 0;
--
--err_dma_buf_put:
--	hl_dmabuf->dmabuf->priv = NULL;
--	dma_buf_put(hl_dmabuf->dmabuf);
--	return rc;
+ 	pr_debug("Exporting DMA buffer with fd %d\n", ret);
+ 
++	get_file(gntdev_dmabuf->priv->filp);
+ 	mutex_lock(&args->dmabuf_priv->lock);
+ 	list_add(&gntdev_dmabuf->next, &args->dmabuf_priv->exp_list);
+ 	mutex_unlock(&args->dmabuf_priv->lock);
+-	get_file(gntdev_dmabuf->priv->filp);
+-	return 0;
+ 
+-fail:
+-	if (gntdev_dmabuf->dmabuf)
+-		dma_buf_put(gntdev_dmabuf->dmabuf);
+-	kfree(gntdev_dmabuf);
+-	return ret;
++	fd_install(take_fd(ret), no_free_ptr(gntdev_dmabuf)->dmabuf->file);
++	return 0;
  }
  
- static int validate_export_params_common(struct hl_device *hdev, u64 addr, u64 size, u64 offset)
+ static struct gntdev_grant_map *
 -- 
 2.39.5
 
