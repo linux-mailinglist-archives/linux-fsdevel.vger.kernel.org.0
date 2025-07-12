@@ -1,145 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-54755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3C2B02A85
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 12:58:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FFC0B02A90
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 13:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD86E168AEB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 10:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F1121C21EE9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 11:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4C275844;
-	Sat, 12 Jul 2025 10:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccAoL6d3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BA52750E4;
+	Sat, 12 Jul 2025 11:22:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC494A59;
-	Sat, 12 Jul 2025 10:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E1322154A;
+	Sat, 12 Jul 2025 11:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752317889; cv=none; b=kNDm4wzQ2Oqzn49rrmIu/kBqa8bzEQTzDyFxaE7PZzLInsM4fbZulXT+BJMkUP89BRO1rpIA0cOg/QY5Aqi+oOYAB+DrdkI1eh0+0bFCZs+m9ZW3kvLvhwAMcwt+TuQojyeFR/J68kN4oGjjLl29704aCxuxns2xVqWNSPele5Q=
+	t=1752319371; cv=none; b=n+g4K7L4phg8dUqHVaD8igmTp4c5YjjQcItl8i83iwrJmXGszzF6P2B9wHRRUu4M557k6awqXntald51QEPBoarQ6HtMuTjCZxDF7Sma6rIjBaC7c84Dbgc5GPZxkvpudVVYbTTCZRj2KhwJi9D9nG+evs8Zsp1Ymg27ZixchG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752317889; c=relaxed/simple;
-	bh=fcie66mWvwOJ6YpAcZs+i1R6TJHgjxefFvTTseHjrac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l3L5WrDNf0vdopgTlZD3U2u2QTq7VGeYTFftvHlttkUtLPTB7bHB/sRGnMMzjH7dZP1LB2f2j5fdGVegA8LDLgd4JT+rfBCxoc2jigi7RRpWV6bg4Z/J80vt0ueVugUsFQ1kNLYXz/EWJaUj7Xk+RdSqjwoa0HY8lHCrYo3jWLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccAoL6d3; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so1897001f8f.0;
-        Sat, 12 Jul 2025 03:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752317886; x=1752922686; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kq31oy/tF7ji6FEBX3VPLuFkrFDumCL1oq4Tw5MVgnI=;
-        b=ccAoL6d32CJV/7MOQinY+wX7DkzDCHdsuJVUBTLYotmnHtpxshE/0Tq2Ft9OFt6zru
-         M9bTtkxj9MCWpboaJRe7LKccxUai+ClKSskf3KnqkL0Bl/XjM6nYM9CCXd9nPkAKvxe5
-         UVYQXroU5XX6g9t9wjTKt/E53/DGy6u9lMuDKSIzYsYjrE3MWr+t47mJfujVBseetoRU
-         Zw8064wb2NVq29KSPCMqHOMIdiSFdr2UuCNQLwQVo8vjsfiEQSccOyHlRDbBtXOBgOEX
-         vUDuopQnEFhRGrstdhyifeD6XeZpdzJxaBaq2o2FvGfHSJkavDbt4JLdMDlUSuBmgjVQ
-         hcaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752317886; x=1752922686;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kq31oy/tF7ji6FEBX3VPLuFkrFDumCL1oq4Tw5MVgnI=;
-        b=Az/fTUxd+bCNYbBMQppwrUj4Wu+TN9xOZu5lNivkM+Cw84+UKQheI351SBAetliyW+
-         UInjUce+2S/lkr0p+vOKdQWYMhTWiLTwtt9QMMvvZm5VljhwZRtUYCLkVN2aX9GcaNNl
-         mv9XmU2BnRXE5QKIdkc2fbLUVy/aUjH0LonD3V67bOHhna/NnBgrljapClsCWQMSW3z+
-         1fy3F0VTJlnzWHpof+d0Fnt6DlP4XBEHGyAuFz5nvUxu+bIPtgTimKHdHOySAvnDW0e6
-         j7/XttldE2KNi6maDap7qmnrtnfDGW3U5doEF47aXVNuuxqZgB7G8Yv9my6G/FoWwA/v
-         T2zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWe8fC5cGZiNPA+eL9J6Oog6sf+TJrAMZG3TXpa3dlVMU5sf6TL8UqxomwKFNmL8pnFvPLc8jnrYOK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf7HNeWmlmMXqsgSVBp1Kj12lz9YxxOCpRqX+MquPMCAdCdjeX
-	OpVHS4p/tYQFVnzf+nxw3ITuHYyN8GtDrTddmwAqzYxrZUpSrPHvYWa8hMoYTwlWbSF6lkDSXlT
-	WMfCDz+DnPNVvuRPAEfIT+qtm8bN6eco=
-X-Gm-Gg: ASbGnct76sTMKYejRB4Pm61THNZc20Z89Pe8CtU7Kqvw87zkOFzT6fll8OUvbYPs3K4
-	ucg2PSke9v5l1D5MapZJrH9lDnxrb/mWGTkxO1bQ8/jr3F5qTjeV4ditNORhycvLDyaEgNGout+
-	2HNrtR0o9DYPquTUgo3bjp7JRsMT54Cw8wTjTTswsVniuvUl0WyGBcPcg7ANrKHiFia3MqnawO1
-	KM9p+U=
-X-Google-Smtp-Source: AGHT+IEH8XVA4Dbd1XVWRumbmfyNno76vxcb3Jvk4QDfFtuh3jCMqVQvGbZu+bvosgMEZGxLi/KdgxM3VlelbHQbn1o=
-X-Received: by 2002:a5d:6f1d:0:b0:3a3:64b9:773 with SMTP id
- ffacd0b85a97d-3b5f1c726admr5744274f8f.10.1752317885736; Sat, 12 Jul 2025
- 03:58:05 -0700 (PDT)
+	s=arc-20240116; t=1752319371; c=relaxed/simple;
+	bh=koT6WX80uO3QGziHota+YoACtGCCfZs+tuAmuCq2f8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dx+5DaJ6LgIJlDIeQuYnabg33nOg5oAJriGiQ4UWSD5fZU0EkWJAFEadGgxT4OkK3T+dWRqa9TD5LMRjGJq/QJVX/oXvpaiW3HpbAHqv0FefYf2/tDCaCr6HOAsz7zK6HA/2qknmaNS3tgrhTfbKVrLTGMcrCvYZFoxGxgVntUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56CBMLhC020769;
+	Sat, 12 Jul 2025 20:22:21 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56CBMLlU020766
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 12 Jul 2025 20:22:21 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b6da38b0-dc7e-4fdc-b99c-f4fbd2a20168@I-love.SAKURA.ne.jp>
+Date: Sat, 12 Jul 2025 20:22:20 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521235837.GB9688@frogsfrogsfrogs> <CAOQ4uxh3vW5z_Q35DtDhhTWqWtrkpFzK7QUsw3MGLPY4hqUxLw@mail.gmail.com>
- <20250529164503.GB8282@frogsfrogsfrogs> <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 12 Jul 2025 12:57:53 +0200
-X-Gm-Features: Ac12FXy4aqVq-PS4EwmQxehOdSXtpELetqRZGIC420RrnVT6jgdkfCA_90IVY4c
-Message-ID: <CAOQ4uxhp3Zs-J92jcXPAD=VjY=t0s0=kf2bOMo50E-Lk6tWJgA@mail.gmail.com>
-Subject: Re: [RFC[RAP]] fuse: use fs-iomap for better performance so we can
- containerize ext4
-To: "Darrick J. Wong" <djwong@kernel.org>, Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net, bernd@bsbernd.com, 
-	miklos@szeredi.hu, joannelkoong@gmail.com, Josef Bacik <josef@toxicpanda.com>, 
-	linux-ext4 <linux-ext4@vger.kernel.org>, "Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hfsplus: don't use BUG_ON() in
+ hfsplus_create_attributes_file()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
+ <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
+ <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
+ <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
+ <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
+ <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
+ <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
+ <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
+ <244c8da9-4c5e-42ed-99c7-ceee3e039a9c@I-love.SAKURA.ne.jp>
+ <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
 
-> On Thu, May 29, 2025 at 6:45=E2=80=AFPM Darrick J. Wong <djwong@kernel.or=
-g> wrote:
-...
-> > So I /think/ we could ask the fuse server at inode instantiation time
-> > (which, if I'm reading the code correctly, is when iget5_locked gives
-> > fuse an INEW inode and calls fuse_init_inode) provided it's ok to upcal=
-l
-> > to userspace at that time.  Alternately I guess we could extend struct
-> > fuse_attr with another FUSE_ATTR_ flag, I think?
-> >
->
-> The latter. Either extend fuse_attr or struct fuse_entry_out,
-> which is in the responses of FUSE_LOOKUP,
-> FUSE_READDIRPLUS, FUSE_CREATE, FUSE_TMPFILE.
-> which instantiate fuse inodes.
->
+On 2025/07/12 2:21, Viacheslav Dubeyko wrote:
+> Frankly speaking, I still don't see the whole picture here. If we have created
+> the Attribute File during mount operation, then why should we try to create the
+> Attributes File during __hfsplus_setxattr() call? If we didn't create the
+> Attributes File during the mount time and HFSPLUS_SB(inode->i_sb)->attr_tree is
+> NULL, then how i_size_read(attr_file) != 0? Even if we are checking vhdr-
+>> attr_file.total_blocks, then it doesn't provide guarantee that
+> i_size_read(attr_file) is zero too. Something is wrong in this situation and
+> more stricter mount time validation cannot guarantee against the situation that
+> you are trying to solve in the issue. We are missing something here.
 
-Update:
-I went to look at this extension for my inode ops passthrough patches.
+I still don't see what you are missing.
 
-What I saw is that while struct fuse_attr and struct fuse_entry_out
-are designed to be extended and have been extended in the past:
- * 7.9:
- *  - add blksize field to fuse_attr
+When hfsplus_iget(sb, HFSPLUS_ATTR_CNID) is called from hfsplus_create_attributes_file(sb),
+hfsplus_system_read_inode(inode) from hfsplus_iget(HFSPLUS_ATTR_CNID) calls
+hfsplus_inode_read_fork(inode, &vhdr->attr_file). Since hfsplus_inode_read_fork() calls
+inode_set_bytes(), it is natural that i_size_read(attr_file) != 0 when returning from
+hfsplus_iget(sb, HFSPLUS_ATTR_CNID).
 
-Later on, struct fuse_direntplus was introduced
- * 7.21
- *  - add FUSE_READDIRPLUS
+At this point, the only question should be why hfsplus_inode_read_fork() from
+hfsplus_system_read_inode(inode) from hfsplus_iget() is not called from hfsplus_fill_super()
+when the Attributes File already exists and its size is not 0. And the reason is that
+hfsplus_iget(sb, HFSPLUS_ATTR_CNID) from hfs_btree_open(sb, HFSPLUS_ATTR_CNID) is called
+only when vhdr->attr_file.total_blocks != 0.
 
-With struct struct fuse_entry_out/fuse_attr embedded in the middle
-and I don't see any code in the kernel/lib that is prepared to handle
-a change in the FUSE_NAME_OFFSET_DIRENTPLUS constant
-(maybe it's there and I am missing it)
+That is, when "vhdr" contains erroneous values (in the reproducer, vhdr->attr_file.total_blocks
+is 0) that do not reflect the actual state of the filesystem (in the reproducer, inode_set_bytes()
+sets non-zero value despite vhdr->attr_file.total_blocks is 0), hfsplus_fill_super() fails to call
+hfs_btree_open(sb, HFSPLUS_ATTR_CNID) at mount time.
 
-So for my own use, which only requires passing a single int backing_id
-I was tempted to try and overload attr_valid{,_nsec} which are
-not relevant for passthrough getattr case,
-something like {attr_valid =3D backing_id, attr_valid_nsec =3D UTIME_OMIT}.
+You can easily reproduce this problem by compiling and running the reproducer
+at https://syzkaller.appspot.com/text?tag=ReproC&x=15f6b9d4580000 after you run
+"losetup -f" which creates /dev/loop0 needed by the reproducer.
 
-In the meanwhile, as an example I used a hole in struct fuse_attr_out
-to implement backing file setup in reply to GETATTR in the wip branch [1].
+I noticed that the reason fsck.hfsplus could not detect errors is that the filesystem
+image in the reproducer was compressed. If I run fsck.hfsplus on uncompressed image,
+fsck.hfsplus generated the following messages.
 
-Bernd,
+# fsck.hfsplus hfsplus.img
+** hfsplus.img
+   Executing fsck_hfs (version 540.1-Linux).
+** Checking non-journaled HFS Plus Volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+   Invalid extent entry
+(4, 1)
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** Repairing volume.
+   Look for links to corrupt files in DamagedFiles directory.
+** Rechecking volume.
+** Checking non-journaled HFS Plus Volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+   Volume bitmap needs minor repair for under-allocation
+** Checking volume information.
+   Invalid volume free block count
+   (It should be 179 instead of 180)
+** Repairing volume.
+** Rechecking volume.
+** Checking non-journaled HFS Plus Volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume untitled was repaired successfully.
 
-I wonder if I am missing something w.r.t the intended extensibility of
-struct fuse_entry_out/fuse_attr and current readdirplus code?
-
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/linux/commits/fuse-backing-inode-wip/
 
