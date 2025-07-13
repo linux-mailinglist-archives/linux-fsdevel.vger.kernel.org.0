@@ -1,77 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-54768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF126B02D82
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 01:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662ACB02EAE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 07:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC7BA40FB7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Jul 2025 23:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93520189B9D6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 05:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5942309B2;
-	Sat, 12 Jul 2025 23:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QRy83B1i"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB71219D09C;
+	Sun, 13 Jul 2025 05:16:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C522F42;
-	Sat, 12 Jul 2025 23:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013D013C82E
+	for <linux-fsdevel@vger.kernel.org>; Sun, 13 Jul 2025 05:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752362150; cv=none; b=ktP8hpevimy3HgO3desJXyzg/vR1kLZuq3NKv3NcAuyGuZDZ+zsTK0zf0vI0mJzzz47s61bUteXyqZWkrRHwc3u9yfJaGq/Jajcu8WtXrUImgtOgRN3s1CRqw1tt7cklACRs2WbW5TX5QxAT4u2p0qGl4tniYMULEL9wx/NcPJ0=
+	t=1752383764; cv=none; b=HDOV/WfedtVmSDGq10S3wX48mF3bKz/H5it1mIuEjbotO6JIYtDDXSXhzExyFzdN/GAHDrZHDa+u7DiZCynUkTLPJDN0OtITSoMazZnYiM1L9XRsuQZ29JZsSNi2CXpYstN/29rgmZpY0gzGRjX0e39JMF0BSNWBATPusVBY6wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752362150; c=relaxed/simple;
-	bh=2MJWq3RmhQmgqXM2aU0Pq/CmLUzN9TdeDAtXB6evE4M=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Vrkj+w+HO176svDHNhnYxFck9idLnp8kyE+NL3ogcInoocERp1VhmTJUiCinddHZGWxEp6NZr7AFQJd/msEjtM4trvumtUx7skq5cn2V+R8JmzWuzR9Oxf/Ol6TkDpOIZTtFa6HhVJ5LyNmz3lTMLt2NfqimwliInMeZW65UOWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QRy83B1i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC6D1C4CEEF;
-	Sat, 12 Jul 2025 23:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752362150;
-	bh=2MJWq3RmhQmgqXM2aU0Pq/CmLUzN9TdeDAtXB6evE4M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QRy83B1iBNvfnB1WaNW66DVIyBe/2/Ic4O75Wc4Z1VVoIjLXCH0dIdQZxBlbH1aNC
-	 Cy26o4YsijoyL1UU7n5Ql971KyvCAAi9IbteQJ3rDAdWhq24qk9UwTzQHXbWdfb9mA
-	 t4baJlRCs63k8QZSkBvv/zkD9Rhla9LyDiPDFZ70=
-Date: Sat, 12 Jul 2025 16:15:49 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-mm@kvack.org, "David S. Miller" <davem@davemloft.net>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- x86@kernel.org, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
- ARCH_SUPPORTS_HUGETLBFS
-Message-Id: <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
-In-Reply-To: <20250711102934.2399533-1-anshuman.khandual@arm.com>
-References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752383764; c=relaxed/simple;
+	bh=KaX8JZDBQRrknH5V1BiCsjLxPQHPtL4K/I4ePVO5df0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=snxaE7G9IUcTdJQVnIiYgAyq8LHa94el6WW1EUjgQfZQh8TJ5n0w0uqsKLlEQOb8TrpDlkEr3OCNrvmcyFKCjl0tohyxOgZgzr/ELuHktsOi1CAsSUDZoqgtbF4AQ1wKD9yA05T2NCoj3Wezt6Gh6PbOCezwHi+QhAyPUdcjpmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-876a65a7157so309289839f.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Jul 2025 22:16:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752383762; x=1752988562;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tgpX6hD7GrjQcqjiIlbZW6vXkUDki5U8wW6v/gISqd0=;
+        b=dqvKDdppMSlRmK0bGHQTetlf7WFLw+AIstg5c2H/ZRv/ZH7yYc+c+9kCxGAG9qCi7P
+         URBuC1Not7BiLME4FJaIyQKw8WgepeiAyTYoD9iLnjutozaYCbZuL4+6WozeSklpqmtQ
+         dpzgx9g6UjHaR5zIhm+y+sZVwaSoyBaw0KuxdrPAbQzPR8QDS5TrazhdCve4u1msdz+R
+         q5J97kilNdp/sA3xjctnkUgWPY2SlkS2py1DjgwlHuNdkz2idn3ROc1yJE2HFUDmD4js
+         hdAWPCeIXUSGkcB4pihT0LUaKGL7zrkGsWNfMzCyA7oRmhKBBk++AxwJjXGETYcwaD5o
+         CZNA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6vy+19vawjdf5jz8/5ZedYiU/wm0zJFl9nx0xVJWOcvWLoWp4SV2UewrxgxrKLKCWpnPfM01R+Gbew5I+@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh9b9OOROh3uZ8gdHjtvFiP6GHjRXEy4XL5MYByF3wjmUbaN9l
+	8yGh5o1gUVeEeeQ+3F+dOrscyr21ouDKsZnJ58BpIXk48QZixaTiNli+Nm/R+lIjdyUMiVTEIRB
+	dTV9d7iDkmpx9oRND3vZod1mmQc2coOOM92p8ikEBXkKZH/JfjcVxh4Jfc1Q=
+X-Google-Smtp-Source: AGHT+IE5TAj6ixNXi3mwMFFkvM1B20dWMHYj8zdo+DgdUZ+dVVXcK6/2wL3n9BrJ2Wqj1AVmU6DrbMY60n+7W6uE/VpW/4b4J7xJ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a5d:8553:0:b0:86a:441:25ca with SMTP id
+ ca18e2360f4ac-87966fd24aemr1318525839f.6.1752383762008; Sat, 12 Jul 2025
+ 22:16:02 -0700 (PDT)
+Date: Sat, 12 Jul 2025 22:16:01 -0700
+In-Reply-To: <6824d556.a00a0220.104b28.0012.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68734111.a70a0220.3b380f.0020.GAE@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in do_move_mount (3)
+From: syzbot <syzbot+799d4cf78a7476483ba2@syzkaller.appspotmail.com>
+To: brauner@kernel.org, cem@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, lis@redhat.com, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 11 Jul 2025 15:59:34 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+syzbot suspects this issue was fixed by commit:
 
-> Enable HUGETLBFS only when platform subscrbes via ARCH_SUPPORTS_HUGETLBFS.
-> Hence select ARCH_SUPPORTS_HUGETLBFS on existing x86 and sparc for their
-> continuing HUGETLBFS support.
+commit 3b5260d12b1fe76b566fe182de8abc586b827ed0
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Fri May 23 23:20:36 2025 +0000
 
-Looks nice.
+    Don't propagate mounts into detached trees
 
-> While here also just drop existing 'BROKEN' dependency.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160a018c580000
+start commit:   bec6f00f120e Merge tag 'usb-6.15-rc6' of git://git.kernel...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b9683d529ec1b880
+dashboard link: https://syzkaller.appspot.com/bug?extid=799d4cf78a7476483ba2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17eb1670580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17794cf4580000
 
-Why?
+If the result looks correct, please mark the issue as fixed by replying with:
 
-What is BROKEN for, anyway?  I don't recall having dealt with it
-before.  It predates kernel git and we forgot to document it.
+#syz fix: Don't propagate mounts into detached trees
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
