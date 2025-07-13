@@ -1,168 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-54770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74014B02FE8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 10:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE27B030EC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 14:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C486189A65E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 08:31:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CEE23BC840
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 12:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56251EF39F;
-	Sun, 13 Jul 2025 08:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6093827815C;
+	Sun, 13 Jul 2025 12:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0Cphgb7W"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAPSa+Z/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C51B81E;
-	Sun, 13 Jul 2025 08:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B492259CBC;
+	Sun, 13 Jul 2025 12:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752395475; cv=none; b=LjcPVxjIsUpVnP89OfJFTaJrRbBKCuRuVxJ3BrXkOA2Z73hCPBRJr+Nxc2Hc5XJhCefnrOPNzzj0IJL9X7mj5CrqltNAt+OE8D+n/NGtOGBpqQ9CkgwG4jLIUrq+zw3p3pCeoo/k2Vl4WTYbPrjWQMLbhaPmljUZcgpvLQSRgIE=
+	t=1752408371; cv=none; b=GM4NCOUgJuILCMbx+l2plreNQL59V9Yv+00vg2EksLPstlqLdvSrAPRMWI974dHW8zTKEKypdnK8l7/zVNxUioCIFIV9HvND3c+pyVP23Ovt7H2hU1fgRf/WeQst1heQdw/gwlzYn9eZTZ6VAMVdoFMXbeSQFkM2VJvalHxhxvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752395475; c=relaxed/simple;
-	bh=DviaSuoXmayTy4YQ15jZXOKVUswO0Wwo8H6L9yw9d44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MXhJZKFEpCESK749tq9vIKLJq8YdsOvQv/5UxHp1Ydu9lAK3XhASKxxCBOamlvLWT/sYf+tNsV5IiJRH/aFYo+MECk+5VP3WcOU67v1aYYYDjXw9tf0n+N0jEj3jWnnCLCFmp1Aj14ENZl1wc/Ao65s8zGPcuJs4m/5YC1egg0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0Cphgb7W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 217C5C4CEE3;
-	Sun, 13 Jul 2025 08:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752395473;
-	bh=DviaSuoXmayTy4YQ15jZXOKVUswO0Wwo8H6L9yw9d44=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0Cphgb7WrKAiXcydPZO58ngLsJAfacm88KLsBfuRkrEgaGKK/uANwfhuNfzvTIeml
-	 e0eTmaPN9olhPyegm6fkp3v/KLxUW38Pb5c7cyvfQ4cBkfD9BS31FqevGhBVnNXhck
-	 f/erCtI2iUBiYiGam4QB97iLAfqL96J9G5VXRbTo=
-Date: Sun, 13 Jul 2025 10:31:10 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Matthias Maennich <maennich@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Shivank Garg <shivankg@amd.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-Message-ID: <2025071355-debunk-sprang-e1ad@gregkh>
-References: <20250711-export_modules-v2-1-b59b6fad413a@suse.cz>
- <b9b74600-4467-4c76-aa41-0a36b1cce1f4@kernel.org>
+	s=arc-20240116; t=1752408371; c=relaxed/simple;
+	bh=8A2CU0aMX1NF93vpyoZnL0IilMix88STLXyIo8C2Tjk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iZGvFhgBQQsFcf/ZwJdC4HMQg02GP4qn2q8HtJJOONmkas7wsvMiSA5xscSh3SInv1eyQg83AoZFXtshxb02WlFd6rpj/TKr7by7g5TIGIhKI8X+G0leLe6clZLi1bC7DF4iS0dMlmLh74TCzlJ3jf3QLHU/wqDE0tXtgXzoEas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAPSa+Z/; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a7a8c2b7b9so47773391cf.1;
+        Sun, 13 Jul 2025 05:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752408369; x=1753013169; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5wY5DLkzyddb5MO5enn9Zdp3qtWqv34wIpy+C05jFQ=;
+        b=AAPSa+Z/VQu+/Jtxickb9oTma2bGOZFXSiQ4YBfwzbbJwcT+RbEMEYN0MFLHSbkR+o
+         3iF2l9o1pogCZv3cq0bpWq3JAQUsb6Mdicpm0wMYJMMB+PShcfPii7lYTlajy2Olamnr
+         fK0cV+K+y2jTe9vahPbhJjD3OCRjONcU3ZTwdI2mSCM1wdFD4J1ozR/HgZhq1cpdKY/8
+         09Ngv+6P2sRGMpXa2giCcoYmvQZY5G4++AjDL1PmvMHaZe75uWuENiHfnGlNJluTW5Lk
+         mRh3+C53xZ7tOlAm71H4FuSSMDA0IMvLsd0ELmhZmPiOYcIQtPO6X1d46gRIl9ksjSc/
+         WBqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752408369; x=1753013169;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G5wY5DLkzyddb5MO5enn9Zdp3qtWqv34wIpy+C05jFQ=;
+        b=ad9QfU8nkV9iPLKVAPJyYOH3Uw4sB+qgmfHhLEN18FDdndLzYM6sfrRDAmjKwZHABM
+         v3t5c/yxh3u+PrvT6PN8yDOCttKmRcdX7K6cLx0BCcoVE9oCVY/5mveM6REtZh4pVubA
+         Je589hxxOFSx1eVZ5GnzqU+rNoceRXkF9mzxVkwHQaJ93Y1VbBUfdMWDLj3vLYHCL95A
+         Hkb3QsAwUxpV377dmR67HrOLsHhH0sbEaXRyRsXc9ialOXCPeZHRceEJVVmCA8Xvuqss
+         MsYFhBSkwhg08qbp3oKhIAk3Zo0nBTB4BkueKPZ0a6dZl14bEpG5VfthrNNSDkUcpvO4
+         GMYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCFoU/SKbHddAkWKtUvdkTrSMjeNSGZYSQAbusMX2GGxRClIkpVOhilpcc6MDK6gMUEx43b4jW/goZjARI@vger.kernel.org, AJvYcCXejHoPfx7mSdA+D7LXnzM4dAdO3Z+p4uJe+O3p+Z789U8Vltjw/JM39koAMU7ONwS+QQpsRgjB/LkwTY9t@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqNEMcP2oCDv5lNQftdNEFuU1rSRSkFgjrfwdO1q4hHYY3ZWFO
+	cMeV8aAo08zZ+TnWNojjkI5tL3JluXOumsXhixaujZakuY257dqaQuVc
+X-Gm-Gg: ASbGncs97V7obDLl4ps3z+f/MOlXv76bgnd+hjyjChcfjKKXv1e5E7UE8ukWdy5fAhp
+	uwzSHzlsSyTqIV4tqCZDVOklrVKF8+sk94U7v3rrGFhpSsAhoHIW7LGTu4v7LkCzSmz+8jAJAC/
+	xpiZJCzlVEyxvcbLMXRaPFCIpnDcaeepYT2q5XISMpONB0oSZpq9oyHXZcTLMRhP9Ub0Z0f+4yA
+	ggiYAHulJ/UnWAlh02W1LYlUXTFVoGvjddMa9I/8mWoJt4KczUM4YTpqrW8lratBJq4KotvjxnT
+	uVdsl3EbW8ReUhJmA4TK1by7mhIKebxuJPa1fa1OiIaqKZVSIaT7AgvwJeyV6/h6RfEwu1U/kNI
+	iSRibBclaYbqM2jQx6vv7+U3Agt9/9DPBEg==
+X-Google-Smtp-Source: AGHT+IEyr8Bot4bW7ek0wTRHNCSY4sqQt/8tvDYlyRMheS1Dz5VYhBnyP0aHQxUJftLbaXZJYFAVJw==
+X-Received: by 2002:a05:620a:1a29:b0:7e1:9c2d:a862 with SMTP id af79cd13be357-7e19c3ceb60mr453735885a.39.1752408368922;
+        Sun, 13 Jul 2025 05:06:08 -0700 (PDT)
+Received: from [192.168.1.156] ([2600:4041:5c29:e400:78d6:5625:d350:50d1])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edeee2desm39706261cf.72.2025.07.13.05.06.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jul 2025 05:06:08 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v2 0/3] rust: xarray: add `insert` and `reserve`
+Date: Sun, 13 Jul 2025 08:05:46 -0400
+Message-Id: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b9b74600-4467-4c76-aa41-0a36b1cce1f4@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABqhc2gC/4WNQQqDMBBFryKz7pQkVC1d9R7FxWhGHahaJhIUy
+ d2beoGuPu/D+/+AwCoc4FEcoBwlyDJncJcCupHmgVF8ZnDGlaY2FjdSpR1lzuKKyjkiY+vv1pK
+ /VWQ9ZPej3Mt27r6azKOEddH9vIn21/5bjBYNutL3rjW+NhU9h4nkfe2WCZqU0hf+n31kugAAA
+ A==
+X-Change-ID: 20250701-xarray-insert-reserve-bd811ad46a1d
+To: Andreas Hindborg <a.hindborg@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Matthew Wilcox <willy@infradead.org>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@gmail.com>, Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1752408365; l=1285;
+ i=tamird@gmail.com; h=from:subject:message-id;
+ bh=8A2CU0aMX1NF93vpyoZnL0IilMix88STLXyIo8C2Tjk=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QCLoTgBvEHahT2dYa7MEWkkhIGj4Uc/WV9TbQJ6JuXLaIkLgXIa/FLUOskUmEMkZwWLJGTUGXNm
+ 6xcYENA76RgY=
+X-Developer-Key: i=tamird@gmail.com; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-On Sat, Jul 12, 2025 at 08:26:17PM +0200, Daniel Gomez wrote:
-> On 11/07/2025 16.05, Vlastimil Babka wrote:
-> > Christoph suggested that the explicit _GPL_ can be dropped from the
-> > module namespace export macro, as it's intended for in-tree modules
-> > only. It would be possible to resrict it technically, but it was pointed
-> > out [2] that some cases of using an out-of-tree build of an in-tree
-> > module with the same name are legitimate. But in that case those also
-> > have to be GPL anyway so it's unnecessary to spell it out.
-> > 
-> > Link: https://lore.kernel.org/all/aFleJN_fE-RbSoFD@infradead.org/ [1]
-> > Link: https://lore.kernel.org/all/CAK7LNATRkZHwJGpojCnvdiaoDnP%2BaeUXgdey5sb_8muzdWTMkA@mail.gmail.com/ [2]
-> > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > Reviewed-by: Shivank Garg <shivankg@amd.com>
-> > Acked-by: Christian Brauner <brauner@kernel.org>
-> > Acked-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > ---
-> > Christian asked [1] for EXPORT_SYMBOL_FOR_MODULES() without the _GPL_
-> > part to avoid controversy converting selected existing EXPORT_SYMBOL().
-> > Christoph argued [2] that the _FOR_MODULES() export is intended for
-> > in-tree modules and thus GPL is implied anyway and can be simply dropped
-> > from the export macro name. Peter agreed [3] about the intention for
-> > in-tree modules only, although nothing currently enforces it.
-> > 
-> > It seemed straightforward to add this enforcement, so v1 did that. But
-> > there were concerns of breaking the (apparently legitimate) usecases of
-> > loading an updated/development out of tree built version of an in-tree
-> > module.
-> > 
-> > So leave out the enforcement part and just drop the _GPL_ from the
-> > export macro name and so we're left with EXPORT_SYMBOL_FOR_MODULES()
-> > only. Any in-tree module used in an out-of-tree way will have to be GPL
-> > anyway by definition.
-> > 
-> > Current -next has some new instances of EXPORT_SYMBOL_GPL_FOR_MODULES()
-> > in drivers/tty/serial/8250/8250_rsa.c by commit b20d6576cdb3 ("serial:
-> > 8250: export RSA functions"). Hopefully it's resolvable by a merge
-> > commit fixup and we don't need to provide a temporary alias.
-> > 
-> > [1] https://lore.kernel.org/all/20250623-warmwasser-giftig-ff656fce89ad@brauner/
-> > [2] https://lore.kernel.org/all/aFleJN_fE-RbSoFD@infradead.org/
-> > [3] https://lore.kernel.org/all/20250623142836.GT1613200@noisy.programming.kicks-ass.net/
-> > ---
-> > Changes in v2:
-> > - drop the patch to restrict module namespace export for in-tree modules
-> > - fix a pre-existing documentation typo (Nicolas Schier)
-> > - Link to v1: https://patch.msgid.link/20250708-export_modules-v1-0-fbf7a282d23f@suse.cz
-> > ---
-> >  Documentation/core-api/symbol-namespaces.rst | 8 ++++----
-> >  fs/anon_inodes.c                             | 2 +-
-> >  include/linux/export.h                       | 2 +-
-> >  3 files changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
-> > index 32fc73dc5529e8844c2ce2580987155bcd13cd09..6f7f4f47d43cdeb3b5008c795d254ca2661d39a6 100644
-> > --- a/Documentation/core-api/symbol-namespaces.rst
-> > +++ b/Documentation/core-api/symbol-namespaces.rst
-> > @@ -76,8 +76,8 @@ A second option to define the default namespace is directly in the compilation
-> >  within the corresponding compilation unit before the #include for
-> >  <linux/export.h>. Typically it's placed before the first #include statement.
-> >  
-> > -Using the EXPORT_SYMBOL_GPL_FOR_MODULES() macro
-> > ------------------------------------------------
-> > +Using the EXPORT_SYMBOL_FOR_MODULES() macro
-> > +-------------------------------------------
-> >  
-> >  Symbols exported using this macro are put into a module namespace. This
-> >  namespace cannot be imported.
-> 
-> The new naming makes sense, but it breaks the pattern with _GPL suffix:
-> 
-> * EXPORT_SYMBOL(sym)
-> * EXPORT_SYMBOL_GPL(sym)
-> * EXPORT_SYMBOL_NS(sym, ns)
-> * EXPORT_SYMBOL_NS_GPL(sym, ns)
-> * EXPORT_SYMBOL_FOR_MODULES(sym, mods)
-> 
-> So I think when reading this one may forget about the _obvious_ reason. That's
-> why I think clarifying that in the documentation would be great. Something like:
-> 
-> Symbols exported using this macro are put into a module namespace. This
-> namespace cannot be imported. And it's implicitly GPL-only as it's only intended
-> for in-tree modules.
+The reservation API is used by asahi; currently they use their own
+abstractions but intend to use these when available.
 
-s/implicitly/explicitly/
+Rust Binder intends to use the reservation API as well.
 
-thanks,
+Daniel Almeida mentions a use case for `insert_limit`, but didn't name
+it specifically.
 
-greg k-h
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v2:
+- Explain the need to disambiguate `Iterator::chain`. (Boqun Feng)
+- Mention what `Guard::alloc` does in the doc comment. (Miguel Ojeda)
+- Include new APIs in the module-level example. (Miguel Ojeda)
+- Mention users of these APIs in the cover letter.
+- Link to v1: https://lore.kernel.org/r/20250701-xarray-insert-reserve-v1-0-25df2b0d706a@gmail.com
+
+---
+Tamir Duberstein (3):
+      rust: xarray: use the prelude
+      rust: xarray: implement Default for AllocKind
+      rust: xarray: add `insert` and `reserve`
+
+ include/linux/xarray.h |   2 +
+ lib/xarray.c           |  28 ++-
+ rust/helpers/xarray.c  |   5 +
+ rust/kernel/xarray.rs  | 533 ++++++++++++++++++++++++++++++++++++++++++++++---
+ 4 files changed, 536 insertions(+), 32 deletions(-)
+---
+base-commit: 2009a2d5696944d85c34d75e691a6f3884e787c0
+change-id: 20250701-xarray-insert-reserve-bd811ad46a1d
+
+Best regards,
+--  
+Tamir Duberstein <tamird@gmail.com>
+
 
