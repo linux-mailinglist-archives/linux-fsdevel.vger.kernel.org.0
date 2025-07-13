@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-54778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E45B03274
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 19:49:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741D7B03276
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 19:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4F0D1892C08
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 17:49:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19C687A5655
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Jul 2025 17:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BBF286D5C;
-	Sun, 13 Jul 2025 17:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEF6288C09;
+	Sun, 13 Jul 2025 17:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="X5zs9+Pc"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lJXmeMy+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2045.outbound.protection.outlook.com [40.107.95.45])
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2058.outbound.protection.outlook.com [40.107.102.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EED6278E6A;
-	Sun, 13 Jul 2025 17:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87E019D07A;
+	Sun, 13 Jul 2025 17:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.58
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752428925; cv=fail; b=lCPHyg3gSyqPE3UeA/MfDjBC0b9OTmQdnWbij6B4S6tWjyM8Th3LJzl3k4WdEVKWGFSJ/RsTJv38FbWC9lF9PCN4nD39owyou9VlzKvqsp/bzXEihPFrBQTglfZfgmM/RXMOtqzOrL8ls7rwARhuoAoU/PqAJLs0F6M/cIvA+FE=
+	t=1752428936; cv=fail; b=q/e268QyID+pqyQOORipmPr6q3xlHp5XVa75vfThb0kyOmFUPl4KIC5nmNYcRY1b9DZsRmhXI4f7A2r4VCz4XdFTNszsDOxvqKBQrhUdjP8LckD65MVeLQKKKMp/T2AJZq3ROGgMaVA625VN/iCOA2pyUt3RpVi5ib5bJsrESak=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752428925; c=relaxed/simple;
-	bh=gfNYMfnLukmF73ZJ2Z7VWI+hQCHRZHri0RiDELXFSRs=;
+	s=arc-20240116; t=1752428936; c=relaxed/simple;
+	bh=iE9d4Den1dvoDhkkaVMmJJQpP+gH/Fs5HtXiiqSJvgg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a0wywGx9rf0rMePU7lSbsrarAIeueLj7djqMEsCSCJZEtN09EbshXzHT0D/vVKSGXfcLNXf1POLJFe0G0BIpDGejcB+qqxXVzzsQAOdhtGMzwdo3IpTgQjwbs1+pZZyhz2x5wheJ0MZDxGMmb9Sc7495/tA9E62S9EfRQHhfsWQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=X5zs9+Pc; arc=fail smtp.client-ip=40.107.95.45
+	 MIME-Version:Content-Type; b=U4GW+MYpnM4aHmWO3tdGzrCtBF5ddXgrcarWBZgAxf8yH2gjI5yB4BOAKfFWIJNHSWKcnSYUvkU/Zh5AKccD7HHAKdRuVZSUqfO2h6E+mIo5IsQkAyfms6URT5AHA9UAjGTagMs5s60wC2UJ7kkpERJ/KL5d4UkS7oYbdizwnp0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lJXmeMy+; arc=fail smtp.client-ip=40.107.102.58
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tH6Q/6qALBqv9vEv2INjcc/Q4tpMVJbHgYemGz/x4QTH+EcUa9+UOiezSuE6AeyBQTT1ZrCtNw6vTssRYR6khqGPxZ/27rvi9/2Gjmj0zAar9DgNx1OIPf/1RIZCcwKpyZMxSX/n9n/Y9ev/VUDcCPtPz+fvhJFqXIM/eUbP85+9wuUzFyBRCUrp0L2++kdJIy25F4xSfU0pBXxBXvs/kwUTbFe7Go1INkelE+W8Vha17a9K5kVuNYVpECY/fr8X6pfejqFBHShIvjSN3qK/MvMCFBwCccEGYcdQfZGJ3J8gudVHMfSSPCeLq4dqjteWErxCsKDXyj3YItjMn+/OFA==
+ b=hIH4FGemcONA2X50RnSnHVm6Qrz0wcJ5LtnvsixlIr63dYQvwphzTd8tzQLtD8SJrnAkj9FOKZ79OQ1yvBRfxrocWwuMHa1zwlLX6s43C8ZDR3wnPOFMfQHDO3q7gRLEaVxmM4i8r3rvoULQqfTGPl9lOLJOBAMg42Sb3U1vgkAI5HaQajLaXyZVC6dc2Z+AoKpavG4bTC6yGgvZudpQEH60zACrCNhui9xCPCesb1OkvtMthk/wQbRpnPqBitUSpIdgnyx8aOeTeIATeKtmF9+IKVe8g42totdBnn6aL4hQwllExdYDSvcogAU2vgxqyW9qkGV3KfBMbaZWCcMItg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g/oQjyIjfSR+3rbrkG9B6F+18QPCmeaIjmYcygmhV4w=;
- b=qkhHBicW11JayPHGp7c/gr3sTaxI8PFxSOLskFm63hPNNS48nsHhOEorCBx8lLBvSkOj7yoAQKRqwtjYofAW4ZR7jqUtV8hF6QKFceM+ERDn1oLzBJTVkrnb2GjRof64Gcmww0OFMPgUc0Pk8e2hxHQ2DIH5UDosqDZDKwlYG9p23z+jK+R49lKTRQf7ym9b5H5hfwgF5h31Aaw2xqU16YkrIodDNmpxZ/uYo58Zw/Fmfi5lpkOqiQ95cFf5FgVxSwT9Jje/5k8x7UkuBI+EK9TI+aEb5pkBwWEixzv8BJ1lpynFSblAivJwyTL2SO2tUHT7jcAekI0bm9lTtwrYiQ==
+ bh=dTjj+lVZp0RixDQuYKs/TN0YmDJpa6lnG98n9bmpL9k=;
+ b=WKcJMapWzKTig6eTaqocdYxzM6ocA+QErXcukVYJPiV849XTg/RxQEkYMoOt/hSognDmZB6XIjP+rhFz67sHi5EnzkOsHyVGbW9Sl7glBDPhWnDii+SKOnlrTDslKahIjXQkY9+wNcNEIM08IoJ2cJ8jUW9dSEsVpk3Pfv3l50AFtv4Jn8kOCjf7BwaVqrUe0yFk2pVhjfWnjSE4t9aae9CfmgChVKgotKwab2thOspkJns+bKQhQfvuA554CL+X07H+bQ7wwBx3OGBbGsMzp64vQ7/btajKHPRRvhMKl8g9G+GyOZa9u9DjiwcUuVvyikCAkOaLLyX0yBrQYiiYbw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g/oQjyIjfSR+3rbrkG9B6F+18QPCmeaIjmYcygmhV4w=;
- b=X5zs9+PcdMsleoSlkmFmWuBq4zwYAQsEnR0Bnx7Hr+tIXjca56eYsraTTvovuGymIG6P4Xd3Qg+HoaPiuit+w+R8xILUg9Pfxa7eu/1iwrsUnIQm2Fcg0mVuhSME3J5b78j6bYDPyhp2nJzm2wTdEMAHvrLzTZMsjCkjQa4x4DU=
-Received: from SJ0P220CA0015.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::19)
- by MN6PR12MB8469.namprd12.prod.outlook.com (2603:10b6:208:46e::19) with
+ bh=dTjj+lVZp0RixDQuYKs/TN0YmDJpa6lnG98n9bmpL9k=;
+ b=lJXmeMy+9kZ4XigTJzOfAvOsfmVXqL4wAGi0G5kpzcBTTNms44WjkUgpQck1Lk5OMfD9OXJnmQmiL/LMrnocD19sqGwSQKMB3fjhr/CY0UKTQv2gCoPO+DsSBJw+h09uc8yFUSMdPB2M7Dem5pdjPYex3k2BAl9kiEwWrOu1g0I=
+Received: from BY5PR03CA0027.namprd03.prod.outlook.com (2603:10b6:a03:1e0::37)
+ by BY5PR12MB4081.namprd12.prod.outlook.com (2603:10b6:a03:20e::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Sun, 13 Jul
- 2025 17:48:36 +0000
-Received: from SJ5PEPF000001CE.namprd05.prod.outlook.com
- (2603:10b6:a03:41b:cafe::94) by SJ0P220CA0015.outlook.office365.com
- (2603:10b6:a03:41b::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.30 via Frontend Transport; Sun,
- 13 Jul 2025 17:48:36 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.23; Sun, 13 Jul
+ 2025 17:48:51 +0000
+Received: from SJ5PEPF000001CA.namprd05.prod.outlook.com
+ (2603:10b6:a03:1e0:cafe::81) by BY5PR03CA0027.outlook.office365.com
+ (2603:10b6:a03:1e0::37) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.27 via Frontend Transport; Sun,
+ 13 Jul 2025 17:48:51 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -63,13 +63,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001CE.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SJ5PEPF000001CA.mail.protection.outlook.com (10.167.242.39) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Sun, 13 Jul 2025 17:48:36 +0000
+ 15.20.8922.22 via Frontend Transport; Sun, 13 Jul 2025 17:48:51 +0000
 Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 13 Jul
- 2025 12:48:20 -0500
+ 2025 12:48:35 -0500
 From: Shivank Garg <shivankg@amd.com>
 To: <seanjc@google.com>, <david@redhat.com>, <vbabka@suse.cz>,
 	<willy@infradead.org>, <akpm@linux-foundation.org>, <shuah@kernel.org>,
@@ -95,9 +95,9 @@ CC: <ackerleytng@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
 	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
 	<linux-security-module@vger.kernel.org>, <kvm@vger.kernel.org>,
 	<linux-kselftest@vger.kernel.org>, <linux-coco@lists.linux.dev>
-Subject: [PATCH V9 3/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
-Date: Sun, 13 Jul 2025 17:43:37 +0000
-Message-ID: <20250713174339.13981-6-shivankg@amd.com>
+Subject: [PATCH V9 4/7] mm/mempolicy: Export memory policy symbols
+Date: Sun, 13 Jul 2025 17:43:38 +0000
+Message-ID: <20250713174339.13981-7-shivankg@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250713174339.13981-2-shivankg@amd.com>
 References: <20250713174339.13981-2-shivankg@amd.com>
@@ -113,143 +113,121 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CE:EE_|MN6PR12MB8469:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66623946-be79-4824-efa5-08ddc2357e49
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CA:EE_|BY5PR12MB4081:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2bf1582-9468-4c11-e590-08ddc2358742
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QPEWqFe1CjLvoMKck3A5FdJ4sFwwSdGlz2wtIW5R6jk2q8hK0KF8Nnj22Xts?=
- =?us-ascii?Q?F7pcypr/1VcwCx+yR2c+0UvN4jBFJUKbSqmQ5Z40YrqkCDhkdU2Mt6kzbTpu?=
- =?us-ascii?Q?TKWYkzgGgKLqRtxeT72e4M/T5o8ag+4/bGr3W1ESR+9hjEYLGP/YEfxIxLra?=
- =?us-ascii?Q?Y9rwktGisdiLyZDNLyYit0aBeS0sxgg6XmnjyBvSSe1SNHNxFbRBqIdLxDsx?=
- =?us-ascii?Q?A+z9nvjkxt1rieCBgX/7BrMFg9iTN9kMGz6QHFe5till3C/vUc5UWKKZrAeT?=
- =?us-ascii?Q?82WEx6gNfZaMlpzBuHBnFjmRXE6ATwaLCufMHIcrjuNdEPydtDKlOUYG9maq?=
- =?us-ascii?Q?GoFcUXLNh9IsRPIMbXZau49GDuSDt5MSOKEik7vII+qx234WBb+48vwiOgXH?=
- =?us-ascii?Q?aI7FTYUnXhjl/tTRVGmBsGNaUv0cJobQZGQ7TzU50eW/0Tdx3Bz0G/ZiH/N1?=
- =?us-ascii?Q?aiqly2LESIDysouYcZp08PUhro7MkKEnCx0/pRint1jsfpzTsui/rI1v++VO?=
- =?us-ascii?Q?uk0b1mWByRs7Qgvd+9nRZnNXDLjTC9w0cCkksk41JNSYo9/s5FOYPmvI7/L8?=
- =?us-ascii?Q?g+9CGpRnpm7NP0vZSEjormN4LlSyrO/Q/BbcW6XSifXXs0COwhqx953S8Cx3?=
- =?us-ascii?Q?kabTh3zySL3yRRdmWQMeh6tXIHyCF3wnnqD87TkOuJ/ixVGHhKQRP34cgeZY?=
- =?us-ascii?Q?Q9+P0uIOCHILKzbUAR5iGLbLL9rWB5uPxSbm1ZVmH31oGD8NNRIl8kYhh39m?=
- =?us-ascii?Q?WwbyMrIgizPyS1RhwfTShLvIsn/jXhesnCPDjt9Wt7O398xOC7sTi5hvdJ+x?=
- =?us-ascii?Q?/oAo5l9uy1EJQrswXONV6DuOcHMFvQCVAWELyzH9gJyLHr8sWIO17T9gpkZI?=
- =?us-ascii?Q?CD9pipM9KQj3NNZfTUXhbbs7o7iQIhfFZYYdBSfhZrzt+UBM24TdTSga27D3?=
- =?us-ascii?Q?w4SDgkeTqi4Ua5X5c02j5W0Ofm565cNrTvqZ8MWnVTncLdEYoF+eCS0q9dSa?=
- =?us-ascii?Q?2txw6l5pm2nPqJ1zF31xkdgL37HL2pS7kx/wdP+tB4WadxTofILwWo6+Tbry?=
- =?us-ascii?Q?BMIv6dzae8iIkAaIxTZfjeih+5K4RPZV+F5VMZxjWuNShprSI//depoSVFZz?=
- =?us-ascii?Q?Nwi1Y6xrt7mmsl7hPUK2Ny2zp1UlszrWofgzF93YUVOhLDjFxCoZHUnTiowZ?=
- =?us-ascii?Q?9QZfSDtIZe5VbLFY7iqfHQrnR4XFzEZ7Aycna3r05Mf5iOeFtEp7ndMdkVnG?=
- =?us-ascii?Q?CN4QgGBrNpavEmlURONLpd/Ija9j1BzVZrAgQ1ygq2W4RzxC1ZfJbyAHMdGn?=
- =?us-ascii?Q?mAEMNqbbSayn8hYg4h4M6tPZD2dBe/ZmvPdVrpRDp2YRiqdN2HvmniJyIMnk?=
- =?us-ascii?Q?F9qVfNl+FK20hd/aCMzeNqwbgNeirYHqFXHwWv//FM/eVugt8taT1Na3QucO?=
- =?us-ascii?Q?j3+QqYumqFCLn8QuL5ttyWxKQSrpD3NeaBBonPkIW51KPetOYutaIWFhAqf6?=
- =?us-ascii?Q?Ln3cRSyl/CDC+aPHUBfSMtN48Jp8Rv2XBvCf?=
+	=?us-ascii?Q?np14MBrIx0sY7627s80IPmyH58CZ75QiahyJk/ra8k3Keue+wT+kKJmXDBH2?=
+ =?us-ascii?Q?zkL+PwKZfhNXF6SXmJXsiOQOtGTrfbDmr8MP+9lHfkNIyQKx7Fzr+Y+6eBAX?=
+ =?us-ascii?Q?Pb11eInX8ojSy6i2zbpziVEbDYOEWYDGzrhauq7uiBDXgFulo5pNqblVHb3J?=
+ =?us-ascii?Q?1aueakYVLvH/UI3Xx3hEa+HfamfiT2SEPgmZseKWSm9D9AdGYU54UUTnhICf?=
+ =?us-ascii?Q?3Q4+wJtwEVyIHzIbEczDQBSLic5dPF7S0M0AGZLa5GqYt4GEjCirLDEbJRTP?=
+ =?us-ascii?Q?P8eIysxmkU2aimcMlSNf9YMpd72zGi8XU9zfTl7ISi3tixQe0RuuVUqnlsSc?=
+ =?us-ascii?Q?FkLFG3sRbAnPAPqL2pQwpZBDonne0cDLUOH5cmo6BtTKq/p5br/tCiHzs+aP?=
+ =?us-ascii?Q?UKDw24W1VfMwFBpUnFiTN0XHExIyduFfaglDY9oTuBbMIC/EuoUvRhnIzHfR?=
+ =?us-ascii?Q?h/Q3UpiLAdwC4eV1oy7Bo8SMurbKPrCqtIIMJBrvP1+2ybCwHW3NqmgLZIqH?=
+ =?us-ascii?Q?j/iFkxu0fZ8V13VTB2OjoZzYYRGctgms2GSdS2LQ1RBAYMCp3njL5fCiFBB2?=
+ =?us-ascii?Q?7Ii0B+xlV4hM5yVy7V6OiicxU5SzbkQw4gkxX/kbO8wYSI2Ar2V94ClUWVQf?=
+ =?us-ascii?Q?NwcEaSFFwqYGdySOYxo6i3lKq9yiiuXnnU4omUXvlMYo7MvCazcyJleEDqlE?=
+ =?us-ascii?Q?iWA0DFSF3agkAHKg4Bqq2EItz1+TI2Wvr2qC+DwZB6YB4tpcHLKjHPZZLRvd?=
+ =?us-ascii?Q?JZhGHVNBv9p+JOrCL2QwRvL0Y+W8tNWUG7fs1d9znjo6ea26X2Bt1d9s10xf?=
+ =?us-ascii?Q?GPEdQhhtNYrH0A8XqJ5EEfnYM8k0AQ8rsfv1LbbdaRmWFatIb9G+qP6QIVCC?=
+ =?us-ascii?Q?jyz/OC2ToxAkyVbxbsdFWBqoe4Yg73AwVHkzOvQvfV7SET4c8HRPccVdCTg9?=
+ =?us-ascii?Q?hjZTYGWQlXGrikU+pd6qe8iNcu6v7FQtXhiFvyu4wcXI5Zcr3DpbGEU9ODP4?=
+ =?us-ascii?Q?thzW6QadD7yok0nKp6skIn95c5OrbzzcfnWS7WWZK/aDIpZk2KAOO6F4Ohli?=
+ =?us-ascii?Q?grOkFLTt56z6MeFekZSTmSSVyjVCho6T8e5EUBM/qdCjl0ztFjzW8M1p8H3l?=
+ =?us-ascii?Q?swG7FWmpQsVwVm+Sbz5aYVy56UPOXFeHdkiY6G85v3KjHL8FeervSIZibHEf?=
+ =?us-ascii?Q?Vg4xjOLcGfrzGs4vJ7aAjBHDRhzylznWKVOuhX2u0UwEvNVEDcl2TRnYTj2A?=
+ =?us-ascii?Q?yDsENV+8QwpE15jeZ9qgk1ukaUKEmp5vgWwDu/vbLBDV8Xxunis64iqqhHaX?=
+ =?us-ascii?Q?uZ3U02R0ZxA4BwMB54cj0Siq5wWJpVkHGmX8ZzrS/izXeA2dCi5s9Qpd7q17?=
+ =?us-ascii?Q?mbbaJD4KTEEiRrB9KZ52LTQglWWOnPLPrkx2yToxWMsdvGiqS9uSNy8QgO6v?=
+ =?us-ascii?Q?L3lAXus7fbbsUR8VjscVjdViB2uO6yjo4P3uECXcNVd1ju86haKGWyZVVtOV?=
+ =?us-ascii?Q?w5oKwf1Iq13v/oUv1JV75KQOwOUMKz/4FGc+?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2025 17:48:36.2965
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2025 17:48:51.3488
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66623946-be79-4824-efa5-08ddc2357e49
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2bf1582-9468-4c11-e590-08ddc2358742
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CE.namprd05.prod.outlook.com
+	SJ5PEPF000001CA.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8469
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4081
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+KVM guest_memfd wants to implement support for NUMA policies just like
+shmem already does using the shared policy infrastructure. As
+guest_memfd currently resides in KVM module code, we have to export the
+relevant symbols.
 
-Extend __filemap_get_folio() to support NUMA memory policies by
-renaming the implementation to __filemap_get_folio_mpol() and adding
-a mempolicy parameter. The original function becomes a static inline
-wrapper that passes NULL for the mempolicy.
+In the future, guest_memfd might be moved to core-mm, at which point the
+symbols no longer would have to be exported. When/if that happens is
+still unclear.
 
-This infrastructure will enable future support for NUMA-aware page cache
-allocations in guest_memfd memory backend KVM guests.
-
-Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Shivank Garg <shivankg@amd.com>
 ---
- include/linux/pagemap.h | 10 ++++++++--
- mm/filemap.c            | 11 ++++++-----
- 2 files changed, 14 insertions(+), 7 deletions(-)
+ mm/mempolicy.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 78ea357d2077..981ff97b4445 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -747,11 +747,17 @@ static inline fgf_t fgf_set_order(size_t size)
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 3b1dfd08338b..a502e06cfaa2 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -354,6 +354,7 @@ struct mempolicy *get_task_policy(struct task_struct *p)
+ 
+ 	return &default_policy;
  }
++EXPORT_SYMBOL_GPL_FOR_MODULES(get_task_policy, "kvm");
  
- void *filemap_get_entry(struct address_space *mapping, pgoff_t index);
--struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
--		fgf_t fgp_flags, gfp_t gfp);
-+struct folio *__filemap_get_folio_mpol(struct address_space *mapping,
-+		pgoff_t index, fgf_t fgf_flags, gfp_t gfp, struct mempolicy *policy);
- struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
- 		fgf_t fgp_flags, gfp_t gfp);
- 
-+static inline struct folio *__filemap_get_folio(struct address_space *mapping,
-+		pgoff_t index, fgf_t fgf_flags, gfp_t gfp)
-+{
-+	return __filemap_get_folio_mpol(mapping, index, fgf_flags, gfp, NULL);
-+}
-+
- /**
-  * filemap_get_folio - Find and get a folio.
-  * @mapping: The address_space to search.
-diff --git a/mm/filemap.c b/mm/filemap.c
-index a30cd4dd085a..ec7de38c17c1 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1896,11 +1896,12 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
+ static const struct mempolicy_operations {
+ 	int (*create)(struct mempolicy *pol, const nodemask_t *nodes);
+@@ -487,6 +488,7 @@ void __mpol_put(struct mempolicy *pol)
+ 		return;
+ 	kmem_cache_free(policy_cache, pol);
  }
++EXPORT_SYMBOL_GPL_FOR_MODULES(__mpol_put, "kvm");
  
- /**
-- * __filemap_get_folio - Find and get a reference to a folio.
-+ * __filemap_get_folio_mpol - Find and get a reference to a folio.
-  * @mapping: The address_space to search.
-  * @index: The page index.
-  * @fgp_flags: %FGP flags modify how the folio is returned.
-  * @gfp: Memory allocation flags to use if %FGP_CREAT is specified.
-+ * @policy: NUMA memory allocation policy to follow.
-  *
-  * Looks up the page cache entry at @mapping & @index.
-  *
-@@ -1911,8 +1912,8 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
-  *
-  * Return: The found folio or an ERR_PTR() otherwise.
-  */
--struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
--		fgf_t fgp_flags, gfp_t gfp)
-+struct folio *__filemap_get_folio_mpol(struct address_space *mapping,
-+		pgoff_t index, fgf_t fgp_flags, gfp_t gfp, struct mempolicy *policy)
+ static void mpol_rebind_default(struct mempolicy *pol, const nodemask_t *nodes)
  {
- 	struct folio *folio;
- 
-@@ -1982,7 +1983,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 			err = -ENOMEM;
- 			if (order > min_order)
- 				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
--			folio = filemap_alloc_folio(alloc_gfp, order, NULL);
-+			folio = filemap_alloc_folio(alloc_gfp, order, policy);
- 			if (!folio)
- 				continue;
- 
-@@ -2029,7 +2030,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 		folio_clear_dropbehind(folio);
- 	return folio;
+@@ -2888,6 +2890,7 @@ struct mempolicy *mpol_shared_policy_lookup(struct shared_policy *sp,
+ 	read_unlock(&sp->lock);
+ 	return pol;
  }
--EXPORT_SYMBOL(__filemap_get_folio);
-+EXPORT_SYMBOL(__filemap_get_folio_mpol);
++EXPORT_SYMBOL_GPL_FOR_MODULES(mpol_shared_policy_lookup, "kvm");
  
- static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
- 		xa_mark_t mark)
+ static void sp_free(struct sp_node *n)
+ {
+@@ -3173,6 +3176,7 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
+ 		mpol_put(mpol);	/* drop our incoming ref on sb mpol */
+ 	}
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(mpol_shared_policy_init, "kvm");
+ 
+ int mpol_set_shared_policy(struct shared_policy *sp,
+ 			struct vm_area_struct *vma, struct mempolicy *pol)
+@@ -3191,6 +3195,7 @@ int mpol_set_shared_policy(struct shared_policy *sp,
+ 		sp_free(new);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(mpol_set_shared_policy, "kvm");
+ 
+ /* Free a backing policy store on inode delete. */
+ void mpol_free_shared_policy(struct shared_policy *sp)
+@@ -3209,6 +3214,7 @@ void mpol_free_shared_policy(struct shared_policy *sp)
+ 	}
+ 	write_unlock(&sp->lock);
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(mpol_free_shared_policy, "kvm");
+ 
+ #ifdef CONFIG_NUMA_BALANCING
+ static int __initdata numabalancing_override;
 -- 
 2.43.0
 
