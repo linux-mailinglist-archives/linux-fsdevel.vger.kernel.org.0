@@ -1,84 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-54830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935ADB03BB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 12:14:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98691B03BB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 12:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C3F189B611
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 10:14:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB5E27A3084
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 10:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA131244669;
-	Mon, 14 Jul 2025 10:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230C5244667;
+	Mon, 14 Jul 2025 10:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hR1+mZFQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1CXlaM7n"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ap/pMeF7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HN9v3Utl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ap/pMeF7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HN9v3Utl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ABC218AA0;
-	Mon, 14 Jul 2025 10:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0B923C8C7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 10:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752488056; cv=none; b=CnxycQY6apHcMgZhFiyE9ua6itRxW9LmzYMiCFnAhcFn2J3huFaEb+akhINL9ZVrznk29SjL3EIOjMpEGr3atjN+Hc3SCCWJGvO+IKe84LShmeCygMuWxjGUxxPCNYar84Xu7xkDReM2wNrhA46vGlcvDGkiY1vIFSqSCPCd/6w=
+	t=1752488082; cv=none; b=qkuOA/CKaIzoyrHpcvX5vTOZrT5yqQzy484es+bfz5b4/A6MSCeWIINxZBkcGgbbyIrEn7FW8d4ca/a3vUuEP4kQCiiUzMkF4OPKEfaUK6uFLXQZeSfCASPOgS/jj9qD6pD9rwKAAs59vnqyzcwqZ89ZtR3YNsdxg+MmNIobnzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752488056; c=relaxed/simple;
-	bh=cOpEyTSiBLUg150TjbxK79lmnioNTJJemNhL2gS6kZ0=;
+	s=arc-20240116; t=1752488082; c=relaxed/simple;
+	bh=bxPCPZkBqygcjQUJ8wCl7ybAhFRpP9YPcYzUs3KI4VM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lEaM5UyaYOsUUPXF2E5NAS/EeDdHLCOcs9tq5yzakfsT2MZ+e3uLvgV23i6Sf8VYMJYnzGFBKTayhtQW0y4m/s+GrIsbqinxAYqy5yOr3gn2t+zdhCzCgL7Rdc4/ZaSfg2dgvIyg0O6OZ9j2b2ZeEdZcZW1CG6HO06kyIFnyfDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hR1+mZFQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1CXlaM7n; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 14 Jul 2025 12:14:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752488052;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j4lrZwy1j5tsLgwoQ4Aqdxds2YQOKKcFp3lBcPklGhXjxzlPq7KRK/h8tCUHtpD1ghioX+cepQc3FCB8qTlohobUmgRtqh/dfuSAyJYm2k6Plqp3HZT/Zta3Gp7Ek+dHA7aOfO4uOpRXfT1o2uWlYmaT8NjfccZbNCLa4UcmOOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ap/pMeF7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HN9v3Utl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ap/pMeF7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HN9v3Utl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 085082123C;
+	Mon, 14 Jul 2025 10:14:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752488079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cOpEyTSiBLUg150TjbxK79lmnioNTJJemNhL2gS6kZ0=;
-	b=hR1+mZFQsXh07BTP0mr4H6/1n2IrQRgS2o0EIL2eytqFrc6ehL8mLh0OTJFWJSGNZcIF1T
-	8mLPa4aDKRNR1TGEjGTFqJ5EIY/00c8SFW9z39s0i/YC5ZoryvglfDI+AkjtHM2MtKFH/E
-	W2x3jd63FF297o3XQrrpFba1tC+NKbCUC/BbAVy/L/yM8Tb+6xnhFuqoKVSLDkcO8Mk8bh
-	QxOGPigbkoI/sd/FMgA9vZWOXEirlmNwBy7KmvhIYAqr4eswSj1LqQhq+iuTa//gCKz0dx
-	ubA+vRM2hXGL2BrtESUW+f8AX4a2Cog77ZLOLboU/IYZW8zOLnNlHvSg0u1APw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752488052;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=21gKFNfrYdVgl2DpNmazOhXhXWUvteXiX68c7Wn1jkk=;
+	b=ap/pMeF7jPIptu1igxuOLsLkOCZ/IcC0Jr0NXexYTNPGgCGnyVJVZ0k/vrjUO4AmytP4Qd
+	2HtfcFfNQkKtPuwmVBeBLsZDtJGpAoIhJU1TsjbTfWYj7ErWaQvryFh4LFMdYRS5ztaN6G
+	d6bpSnP7KpQxzH+bIoxk7c5EKdL2M8I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752488079;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cOpEyTSiBLUg150TjbxK79lmnioNTJJemNhL2gS6kZ0=;
-	b=1CXlaM7nBkSJCEFlqjOb1kUplpzguYM6FkOGWrXWpL5Jt5rhN4NahG5M83kHFYnUEPfGpQ
-	H3cgbrFzGHNsqRDg==
-From: Nam Cao <namcao@linutronix.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-Message-ID: <20250714101410.Su0CwBrb@linutronix.de>
-References: <20250710040607.GdzUE7A0@linutronix.de>
- <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
- <20250710062127.QnaeZ8c7@linutronix.de>
- <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
- <20250710083236.V8WA6EFF@linutronix.de>
- <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
- <20250711050217.OMtx7Cz6@linutronix.de>
- <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
- <20250711095008.lBxtWQh6@linutronix.de>
- <20250714-leumund-sinnen-44309048c53d@brauner>
+	bh=21gKFNfrYdVgl2DpNmazOhXhXWUvteXiX68c7Wn1jkk=;
+	b=HN9v3UtlviZnprco4sJRJ+E6X2AXRFL0Ue4mC9jzu/Wlzpq8cndMr61na38Y8mwzoz/qYL
+	Els/jbGJVDlikrCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752488079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=21gKFNfrYdVgl2DpNmazOhXhXWUvteXiX68c7Wn1jkk=;
+	b=ap/pMeF7jPIptu1igxuOLsLkOCZ/IcC0Jr0NXexYTNPGgCGnyVJVZ0k/vrjUO4AmytP4Qd
+	2HtfcFfNQkKtPuwmVBeBLsZDtJGpAoIhJU1TsjbTfWYj7ErWaQvryFh4LFMdYRS5ztaN6G
+	d6bpSnP7KpQxzH+bIoxk7c5EKdL2M8I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752488079;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=21gKFNfrYdVgl2DpNmazOhXhXWUvteXiX68c7Wn1jkk=;
+	b=HN9v3UtlviZnprco4sJRJ+E6X2AXRFL0Ue4mC9jzu/Wlzpq8cndMr61na38Y8mwzoz/qYL
+	Els/jbGJVDlikrCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F2C2913306;
+	Mon, 14 Jul 2025 10:14:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dkA8O47YdGjkTwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Jul 2025 10:14:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A055EA0802; Mon, 14 Jul 2025 12:14:38 +0200 (CEST)
+Date: Mon, 14 Jul 2025 12:14:38 +0200
+From: Jan Kara <jack@suse.cz>
+To: Qu Wenruo <wqu@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
+Subject: Re: [PATCH v5 1/6] fs: add a new remove_bdev() callback
+Message-ID: <cshm6g2qr4r5tmkrcitdvlwz3bdf2yo4a3opd57ndjcgabq3hz@w7vvckwuitxq>
+References: <cover.1752470276.git.wqu@suse.com>
+ <09909fcff7f2763cc037fec97ac2482bdc0a12cb.1752470276.git.wqu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,19 +103,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714-leumund-sinnen-44309048c53d@brauner>
+In-Reply-To: <09909fcff7f2763cc037fec97ac2482bdc0a12cb.1752470276.git.wqu@suse.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	URIBL_BLOCKED(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Mon, Jul 14, 2025 at 10:59:58AM +0200, Christian Brauner wrote:
-> My lesson from this is that touching epoll without a really really good
-> and urgent reason always end up a complete mess. So going forward we'll
-> just be very careful here.
+On Mon 14-07-25 14:55:57, Qu Wenruo wrote:
+> Currently all filesystems which implement super_operations::shutdown()
+> can not afford losing a device.
+> 
+> Thus fs_bdev_mark_dead() will just call the ->shutdown() callback for the
+> involved filesystem.
+> 
+> But it will no longer be the case, as multi-device filesystems like
+> btrfs and bcachefs can handle certain device loss without the need to
+> shutdown the whole filesystem.
+> 
+> To allow those multi-device filesystems to be integrated to use
+> fs_holder_ops:
+> 
+> - Add a new super_operations::remove_bdev() callback
+> 
+> - Try ->remove_bdev() callback first inside fs_bdev_mark_dead()
+>   If the callback returned 0, meaning the fs can handling the device
+						   ^^^ handle
 
-And my lesson is that lockless is hard. I still have no clue what is the
-bug in this patch.
+>   loss, then exit without doing anything else.
+> 
+>   If there is no such callback or the callback returned non-zero value,
+>   continue to shutdown the filesystem as usual.
+> 
+> This means the new remove_bdev() should only do the check on whether the
+> operation can continue, and if so do the fs specific handlings.
+> The shutdown handling should still be handled by the existing
+	       ^^^^ I'd remove this word.
 
-I am implementing a new solution now, completely ditching this old
-approach. It survives some basic testing, and the numbers look promising. I
-may post it later this week.
+> ->shutdown() callback.
+> 
+> For all existing filesystems with shutdown callback, there is no change
+> to the code nor behavior.
+> 
+> Btrfs is going to implement both the ->remove_bdev() and ->shutdown()
+> callbacks soon.
+> 
+> Signed-off-by: Qu Wenruo <wqu@suse.com>
 
-Nam
+Besides the spelling fixes looks good to me. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+> ---
+>  fs/super.c         | 11 +++++++++++
+>  include/linux/fs.h |  9 +++++++++
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 80418ca8e215..7f876f32343a 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1459,6 +1459,17 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
+>  	if (!sb)
+>  		return;
+>  
+> +	if (sb->s_op->remove_bdev) {
+> +		int ret;
+> +
+> +		ret = sb->s_op->remove_bdev(sb, bdev);
+> +		if (!ret) {
+> +			super_unlock_shared(sb);
+> +			return;
+> +		}
+> +		/* Fallback to shutdown. */
+> +	}
+> +
+>  	if (!surprise)
+>  		sync_filesystem(sb);
+>  	shrink_dcache_sb(sb);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index b085f161ed22..6a8a5e63a5d4 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2367,6 +2367,15 @@ struct super_operations {
+>  				  struct shrink_control *);
+>  	long (*free_cached_objects)(struct super_block *,
+>  				    struct shrink_control *);
+> +	/*
+> +	 * If a filesystem can support graceful removal of a device and
+> +	 * continue read-write operations, implement this callback.
+> +	 *
+> +	 * Return 0 if the filesystem can continue read-write.
+> +	 * Non-zero return value or no such callback means the fs will be shutdown
+> +	 * as usual.
+> +	 */
+> +	int (*remove_bdev)(struct super_block *sb, struct block_device *bdev);
+>  	void (*shutdown)(struct super_block *sb);
+>  };
+>  
+> -- 
+> 2.50.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
