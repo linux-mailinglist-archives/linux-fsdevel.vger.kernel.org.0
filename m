@@ -1,292 +1,269 @@
-Return-Path: <linux-fsdevel+bounces-54801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6723B035BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 07:27:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C31ACB0362E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 07:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA6C189ACE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 05:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3D8189AFCE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 05:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919BD2153E7;
-	Mon, 14 Jul 2025 05:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F307226CF1;
+	Mon, 14 Jul 2025 05:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Te2xiKL3";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Te2xiKL3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dk2qIZme"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444EC1FCF7C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 05:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8775B1EFF9B;
+	Mon, 14 Jul 2025 05:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752470817; cv=none; b=aaLpNxz1E1/kftaDnd8pNjypklRZQROqXwXCgp36s6/eRW1mWNNI2T3RodZNF1KLpoRAPuHzV6vV8olVMRRPzBNMYwAQ/gvJEfOwEBu0ajnTVjx8q/cWGMFLxd4ThCwk2xXTFzhSBfvLiX9jgXpYfI0wX0+1TAROh4rNiW6aCcI=
+	t=1752471765; cv=none; b=pmNEkrfzFWZa7Nabb8KZsHhIMzShUCN8FwgE/qaODXjfONCpM8mJifF/nEuiQbPl3lRCdOhf4U3No9RNoTSVPNUD4rIH+NR3w9vdyiwRsBIIbIihOGgl4jR7WZwzm6R4zlQhbGa2WRPswQSd+Acf07nNOmVISGAcMowzRfj5/TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752470817; c=relaxed/simple;
-	bh=E40unYsQEphDx2QOGiY39PECJdHwICqE9NqgU3882hU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aVZmNnxPywQSfnUrrzqfTd8JE/QmwnKPsJ7D43zjuzi9ZlwjCje6Vv7vSKPVXNww0l/fMBURFNYRgr5ZMd+/wcmfm/GOBWUdl3cC/0UvsTUQY8uagkBDTPEqAHsFLGNxbgAyw3cvgxcmraBNnKcUmANeEyInB6ygsM2ERdHMjk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Te2xiKL3; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Te2xiKL3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 478251F390;
-	Mon, 14 Jul 2025 05:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1752470798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4u1JhpSr9iXaXUGE7NJF1c10K3+rW9i50b80wP1akTQ=;
-	b=Te2xiKL32h/RkGzQvPMGVQ6ebnlfogVm09UB8Qj+KjNd3t1i3qiafviXBYgX+++gSTOE75
-	g4+AhIJKCaDrjDsyc20IG1+mp5HH86fsxM0YAqi22jy43CQazLhK+s7Sq1naVhtoMIE8no
-	LKsLmOViS7en3HG1dwQlpJNvJeC6XJA=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=Te2xiKL3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1752470798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4u1JhpSr9iXaXUGE7NJF1c10K3+rW9i50b80wP1akTQ=;
-	b=Te2xiKL32h/RkGzQvPMGVQ6ebnlfogVm09UB8Qj+KjNd3t1i3qiafviXBYgX+++gSTOE75
-	g4+AhIJKCaDrjDsyc20IG1+mp5HH86fsxM0YAqi22jy43CQazLhK+s7Sq1naVhtoMIE8no
-	LKsLmOViS7en3HG1dwQlpJNvJeC6XJA=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4CFF6138A1;
-	Mon, 14 Jul 2025 05:26:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8NsrAwyVdGhadQAAD6G6ig
-	(envelope-from <wqu@suse.com>); Mon, 14 Jul 2025 05:26:36 +0000
-From: Qu Wenruo <wqu@suse.com>
-To: linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Subject: [PATCH v5 6/6] btrfs: implement remove_bdev and shutdown super operation callbacks
-Date: Mon, 14 Jul 2025 14:56:02 +0930
-Message-ID: <85faf081c038c5c4a501529b5ed52deea69c58ce.1752470276.git.wqu@suse.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <cover.1752470276.git.wqu@suse.com>
-References: <cover.1752470276.git.wqu@suse.com>
+	s=arc-20240116; t=1752471765; c=relaxed/simple;
+	bh=RT0pp7iFDoxCUwPaOyuV44gIHWNJekmnqvt3HmpQ0zA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H4Ak6GiC1Aj5N1x0dkBsS0IDXELSdaHwFOMtd/5eVBgm+qNFVV/va22ytqyLAcFglAA1H1NN4aMIyNOSJ4ijfzzB1iOtKVtyZXO4NIOJ018Imxyk1QkCyn+0HpqZASVYZNmFsnBDubZC27lm2nthFEDl+ULMzytuBlDjNUrZ7Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dk2qIZme; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad572ba1347so538247066b.1;
+        Sun, 13 Jul 2025 22:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752471762; x=1753076562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IN51k3PG7P1PxKfyDC1D6YDwvqOFAxcGIBO3H1d/nuA=;
+        b=Dk2qIZmeVjAL5I30ANB+Ul6GWg532+ntWXwJrw2eE8cGQWh7q8DduRQGmHTGtwnZYV
+         LAbOyJ5s4brzT0ytxKOqSDKSzUtNxDBPVmFe6mAXILTvg72QD1PE2u5LNsFGTHJRgHqa
+         0jCPtY8NjQ2DwGuNou35YQraE7qy1EOH2OYpwJf7yknnJa2xvu+29YYXH3ZRcxjedxE6
+         5+qxaPKwLVsa5VbMjY9lt+5oChctH5FL6fefZogxGLHFAQ/F2LXTcjsnTvPs09UnjU0+
+         bnSuFhWmw2B8cUjg4N7MhrYhiLROC/m/ZImL22/W6KKeXzuHcc6iM5fKYdSn8MtHbfyF
+         V3HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752471762; x=1753076562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IN51k3PG7P1PxKfyDC1D6YDwvqOFAxcGIBO3H1d/nuA=;
+        b=jwC8IBDoIyjDGz/htQXeSe5O7pathq2Bjc6wcnZ8ikGcSEEep00Yz2mIi7E23KpMyr
+         GOSohPu5EyOppz8eh99aYSuJlUZS+uK+Y34vydP5lDWznTvZ20ZnLhom9BBWI2ybaM+q
+         4gVfKKLj+HjH5KR2Do4SD+QZabOK9YODnsOTekyR3REjqAYOqL4YbL7xsYUswO+xAzHb
+         ZAyNRTNBD8Fa0p8oAUDPHACtPnmucl0GXJoC96SvwwO0RYTAcOKiYIzzP+bL4CRjd+zR
+         VpI5wlsJVCRL/cYmqHqAsYjeT01nReOKhEGKsVTsMe0UQzWv1tkRip+otIog/4BrlEoC
+         b6RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUljYqoNBL9Um0l7ZgSM4CW5wzejpmUqjMOdHiTwYbiBkDsFZ3kYpJdMr+c7Crnn7t7B/qSkBVpnDJmiGSw@vger.kernel.org, AJvYcCWPjSV5iTyYcxGuEvnfMYww+dOrwRulgUTClMJYQrh3z6GgK4tM4ENv1KCg56g2uTb6tv/DEMRnqVWsdzbL/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaVJtDmJ5UiWs657cDw4KjeLtTWXUuXV9hU0au4wHqZOqlGsWN
+	OjGa57VnWx7fkQ5OQCW77Ad7gqbMe0j9hSogndW9/P9HWh9z2AFDG8DTwuxLXM5VSSxwbBlSWlx
+	n38nB/B/lBMunZV8HCnebt4o8JPulSn4=
+X-Gm-Gg: ASbGncttWMX+0qonVOgyXtymwvPrsFQa9YW9EHEDVJYalIOoOxbj6dyGgXbjC7AbMrS
+	uuRqrpq0kmJv7xJrNoppE9OGv9o2bIn2lMXoC35j0GG6OZTThnCu0Nyb1FN2W/Muxsx9qtMYP4K
+	G/31KGMV+tvnPjEf9f2D2crmylvZozD0mAcoBDNxMditukhwsaWSiJ2nDW+NCM0Sd7I4L4TFPfy
+	6Mg3W4=
+X-Google-Smtp-Source: AGHT+IF0NgrPv+wmrzyAGg8A04hpjzuc+YNcIgh/JfG9JoS988gB4qYFs7ce7ZRs/sGGJyysOtMIHyI9mzXGG9z+ImU=
+X-Received: by 2002:a17:906:c14b:b0:ae3:d108:afa with SMTP id
+ a640c23a62f3a-ae6fcacc9bbmr1096111466b.45.1752471761242; Sun, 13 Jul 2025
+ 22:42:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_NONE(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:mid,suse.com:dkim,suse.com:email];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 478251F390
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+References: <CAOQ4uxh6fb6GQcC0_mj=Ft5NbLco7Nb0brhn9d3f7LzMLkRYaw@mail.gmail.com>
+ <175245198838.2234665.15268828706322164079@noble.neil.brown.name>
+In-Reply-To: <175245198838.2234665.15268828706322164079@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 14 Jul 2025 07:42:30 +0200
+X-Gm-Features: Ac12FXy4Kd3GNjyQqz3oWyiBROvmU0sSUqzQzKXkeOJ7TZQhJNSO9t1JehjcjVQ
+Message-ID: <CAOQ4uxjf=ig-t4GFPXzmKn1C26F3L9UAt1WKapLQ=nXbE8fOTQ@mail.gmail.com>
+Subject: Re: parent_lock/unlock (Was: [PATCH 01/20] ovl: simplify an error
+ path in ovl_copy_up_workdir())
+To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, overlayfs <linux-unionfs@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For the ->remove_bdev() callback, btrfs will:
+[CC vfs maintainers who were not personally CCed on your patches
+and changed the subject to focus on the topic at hand.]
 
-- Mark the target device as missing
+On Mon, Jul 14, 2025 at 2:13=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> On Fri, 11 Jul 2025, Amir Goldstein wrote:
+> > On Fri, Jul 11, 2025 at 1:21=E2=80=AFAM NeilBrown <neil@brown.name> wro=
+te:
+> > >
+> > > If ovl_copy_up_data() fails the error is not immediately handled but =
+the
+> > > code continues on to call ovl_start_write() and lock_rename(),
+> > > presumably because both of these locks are needed for the cleanup.
+> > > On then (if the lock was successful) is the error checked.
+> > >
+> > > This makes the code a little hard to follow and could be fragile.
+> > >
+> > > This patch changes to handle the error immediately.  A new
+> > > ovl_cleanup_unlocked() is created which takes the required directory
+> > > lock (though it doesn't take the write lock on the filesystem).  This
+> > > will be used extensively in later patches.
+> > >
+> > > In general we need to check the parent is still correct after taking =
+the
+> > > lock (as ovl_copy_up_workdir() does after a successful lock_rename())=
+ so
+> > > that is included in ovl_cleanup_unlocked() using new lock_parent() an=
+d
+> > > unlock_parent() calls (it is planned to move this API into VFS code
+> > > eventually, though in a slightly different form).
+> >
+> > Since you are not planning to move it to VFS with this name
+> > AND since I assume you want to merge this ovl cleanup prior
+> > to the rest of of patches, please use an ovl helper without
+> > the ovl_ namespace prefix and you have a typo above
+> > its parent_lock() not lock_parent().
+>
+> I think you mean "with" rather than "without" ?
 
-- Go degraded if the fs can afford it
+Yeh.
 
-- Return error other wise
-  Thus falls back to the shutdown callback
+> But you separately say you would much rather this go into the VFS code
+> first.
 
-For the ->shutdown callback, btrfs will:
+On second thought. no strong feeling either way.
+Using an internal ovl helper without ovl_ prefix is not good practice,
+but I can also live with that for a short while, or at the very least
+I am willing to defer the decision to the vfs maintainers.
 
-- Set the SHUTDOWN flag
-  Which will reject all new incoming operations, and make all writeback
-  to fail.
+Pasting the helper here for context:
 
-  The behavior is the same as the NOLOGFLUSH behavior.
+> > > +
+> > > +int parent_lock(struct dentry *parent, struct dentry *child)
+> > > +{
+> > > +       inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> > > +       if (!child || child->d_parent =3D=3D parent)
+> > > +               return 0;
+> > > +
+> > > +       inode_unlock(parent->d_inode);
+> > > +       return -EINVAL;
+> > > +}
 
-To support the lookup from bdev to a btrfs_device,
-btrfs_dev_lookup_args is enhanced to have a new @devt member.
-If set, we should be able to use that @devt member to uniquely locating a
-btrfs device.
+FWIW, as I mentioned before, this helper could be factored out
+of the first part of lock_rename_child().
 
-I know the shutdown can be a little overkilled, if one has a RAID1
-metadata and RAID0 data, in that case one can still read data with 50%
-chance to got some good data.
+>
+> For me a core issue is how the patches will land.  If you are happy for
+> these patches (once they are all approved of course) to land via the vfs
+> tree, then I can certainly submit the new interfaces in VFS code first,
+> then the ovl cleanups that use them.
+>
+> However I assumed that they were so substantial that you would want them
+> to land via an ovl tree.  In that case I wouldn't want to have to wait
+> for a couple of new interfaces to land in VFS before you could take the
+> cleanups.
+>
+> What process do you imagine?
+>
 
-But a filesystem returning -EIO for half of the time is not really
-considered usable.
-Further it can also be as bad as the only device went missing for a single
-device btrfs.
+Whatever process we choose is going to be collaborated with the vfs
+maintainers.
 
-So here we go safe other than sorry when handling missing device.
+Right now, there are a few ovl patches on Cristian's vfs-6.17.file
+branch and zero patches on overlayfs-next branch.
 
-And the remove_bdev callback will be hidden behind experimental features
-for now, the reasons are:
+What I would like to do is personally apply and test your patches
+(based on vfs-6.17.file).
 
-- There are not enough btrfs specific bdev removal test cases
-  The existing test cases are all removing the only device, thus only
-  exercises the ->shutdown() behavior.
+Then I will either send a PR to Christian before the merge window
+or send the PR to Linux during the merge window and after vfs-6.17.file
+PR lands.
 
-- Not yet determined what's the expected behavior
-  Although the current auto-degrade behavior is no worse than the old
-  behavior, it may not always be what the end users want.
+Within these options we have plenty of freedom to decide if we want
+to keep parent_lock/unlock internal ovl helpers or vfs helpers.
+It's really up to the vfs maintainers.
 
-  Before there is a concrete interface, better hide the new feature
-  from end users.
+> >
+> > And apropos lock helper names, at the tip of your branch
 
-Signed-off-by: Qu Wenruo <wqu@suse.com>
----
- fs/btrfs/super.c   | 66 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/volumes.c |  2 ++
- fs/btrfs/volumes.h |  5 ++++
- 3 files changed, 73 insertions(+)
+Reference for people who just joined:
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 466d0450269c..79f6ad1d44de 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2413,6 +2413,68 @@ static long btrfs_free_cached_objects(struct super_block *sb, struct shrink_cont
- 	return 0;
- }
- 
-+#ifdef CONFIG_BTRFS_EXPERIMENTAL
-+static int btrfs_remove_bdev(struct super_block *sb, struct block_device *bdev)
-+{
-+	struct btrfs_fs_info *fs_info = btrfs_sb(sb);
-+	struct btrfs_device *device;
-+	struct btrfs_dev_lookup_args lookup_args = { .devt = bdev->bd_dev };
-+	bool can_rw;
-+
-+	mutex_lock(&fs_info->fs_devices->device_list_mutex);
-+	device = btrfs_find_device(fs_info->fs_devices, &lookup_args);
-+	if (!device) {
-+		mutex_unlock(&fs_info->fs_devices->device_list_mutex);
-+		/* Device not found, should not affect the running fs, just give a warning. */
-+		btrfs_warn(fs_info, "unable to find btrfs device for block device '%pg'",
-+			   bdev);
-+		return 0;
-+	}
-+	/*
-+	 * The to-be-removed device is already missing?
-+	 *
-+	 * That's weird but no special handling needed and can exit right now.
-+	 */
-+	if (unlikely(test_and_set_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))) {
-+		mutex_unlock(&fs_info->fs_devices->device_list_mutex);
-+		btrfs_warn(fs_info, "btrfs device id %llu is already missing",
-+			   device->devid);
-+		return 0;
-+	}
-+
-+	device->fs_devices->missing_devices++;
-+	if (test_and_clear_bit(BTRFS_DEV_STATE_WRITEABLE, &device->dev_state)) {
-+		list_del_init(&device->dev_alloc_list);
-+		WARN_ON(device->fs_devices->rw_devices < 1);
-+		device->fs_devices->rw_devices--;
-+	}
-+	can_rw = btrfs_check_rw_degradable(fs_info, device);
-+	mutex_unlock(&fs_info->fs_devices->device_list_mutex);
-+	/*
-+	 * Now device is considered missing, btrfs_device_name() won't give a
-+	 * meaningful result anymore, so only output the devid.
-+	 */
-+	if (!can_rw) {
-+		btrfs_crit(fs_info,
-+		"btrfs device id %llu has gone missing, can not maintain read-write",
-+			   device->devid);
-+		return -EIO;
-+	}
-+	btrfs_warn(fs_info,
-+		   "btrfs device id %llu has gone missing, continue as degraded",
-+		   device->devid);
-+	btrfs_set_opt(fs_info->mount_opt, DEGRADED);
-+	return 0;
-+}
-+
-+static void btrfs_shutdown(struct super_block *sb)
-+{
-+	struct btrfs_fs_info *fs_info = btrfs_sb(sb);
-+
-+	btrfs_force_shutdown(fs_info);
-+}
-+#endif
-+
- static const struct super_operations btrfs_super_ops = {
- 	.drop_inode	= btrfs_drop_inode,
- 	.evict_inode	= btrfs_evict_inode,
-@@ -2428,6 +2490,10 @@ static const struct super_operations btrfs_super_ops = {
- 	.unfreeze_fs	= btrfs_unfreeze,
- 	.nr_cached_objects = btrfs_nr_cached_objects,
- 	.free_cached_objects = btrfs_free_cached_objects,
-+#ifdef CONFIG_BTRFS_EXPERIMENTAL
-+	.remove_bdev	= btrfs_remove_bdev,
-+	.shutdown	= btrfs_shutdown,
-+#endif
- };
- 
- static const struct file_operations btrfs_ctl_fops = {
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index fa7a929a0461..89a82b2a5a7a 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -6802,6 +6802,8 @@ static bool dev_args_match_fs_devices(const struct btrfs_dev_lookup_args *args,
- static bool dev_args_match_device(const struct btrfs_dev_lookup_args *args,
- 				  const struct btrfs_device *device)
- {
-+	if (args->devt)
-+		return device->devt == args->devt;
- 	if (args->missing) {
- 		if (test_bit(BTRFS_DEV_STATE_IN_FS_METADATA, &device->dev_state) &&
- 		    !device->bdev)
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index a56e873a3029..78003c9b8abd 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -662,6 +662,11 @@ struct btrfs_dev_lookup_args {
- 	u64 devid;
- 	u8 *uuid;
- 	u8 *fsid;
-+	/*
-+	 * If devt is specified, all other members will be ignored as it is
-+	 * enough to uniquely locate a device.
-+	 */
-+	dev_t devt;
- 	bool missing;
- };
- 
--- 
-2.50.0
+   https://github.com/neilbrown/linux/commits/pdirops
 
+> > the lock helpers used in ovl_cleanup() are named:
+> > lock_and_check_dentry()/dentry_unlock()
+> >
+> > I have multiple comments on your choice of names for those helpers:
+> > 1. Please use a consistent name pattern for lock/unlock.
+> >     The pattern <obj-or-lock-type>_{lock,unlock}_* is far more common
+> >     then the pattern lock_<obj-or-lock-type> in the kernel, but at leas=
+t
+> >     be consistent with dentry_lock_and_check() or better yet
+> >     parent_lock() and later parent_lock_get_child()
+>
+> dentry_lock_and_check() does make sense - thanks.
+>
+> > 2. dentry_unlock() is a very strange name for a helper that
+> >     unlocks the parent. The fact that you document what it does
+> >     in Kernel-doc does not stop people reading the code using it
+> >     from being confused and writing bugs.
+>
+> The plan is that dentry_lookup_and_lock() will only lock the parent durin=
+g a
+> short interim period.  Maybe there will be one full release where that
+> is the case.  As soon a practical (and we know this sort of large change
+> cannot move quickly) dentry_lookup_and_lock() etc will only lock the
+> dentry, not the directory.  The directory will only get locked
+> immediately before call the inode_operations - for filesystems that
+> haven't opted out.  Thus patches in my git tree don't full reflect this
+> yet (Though the hints are there are the end) but that is my current
+> plan, based on most recent feedback from Al Viro.
+>
+> > 3. Why not call it parent_unlock() like I suggested and like you
+> >     used in this patch set and why not introduce it in VFS to begin wit=
+h?
+> >     For that matter parent_unlock_{put,return}_child() is more clear IM=
+O.
+>
+> Because, as I say about, it is only incidentally about the parent. It is
+> primarily about the dentry.
+
+When you have a helper named dentry_unlock() that unlocks the
+parent inode, it's not good naming IMO.
+
+When you have a helper called parent_unlock_put_child()
+or dentry_put_and_unlock_parent() there is no ambiguity about
+the subject of the operations.
+
+>
+> > 4. The name dentry_unlock_rename(&rd) also does not balance nicely with
+> >     the name lookup_and_lock_rename(&rd) and has nothing to do with the
+> >     dentry_ prefix. How about lookup_done_and_unlock_rename(&rd)?
+>
+> The is probably my least favourite name....  I did try some "done"
+> variants (following one from done_path_create()).  But if felt it should
+> be "done_$function-that-started-this-interaction()" and that resulted in
+>    done_dentry_lookup_and_lock()
+> or similar, and having "lock" in an unlock function was weird.
+> Your "done_and_unlock" addresses this but results and long name that
+> feels clumsy to me.
+>
+> I chose the dentry_ prefix before I decided to pass the renamedata
+> around (and I'm really happy about that latter choice).  So
+> reconsidering the name is definitely appropriate.
+> Maybe  renamedata_lock() and renamedata_unlock() ???
+> renamedata_lock() can do lookups as well as locking, but maybe that is
+> implied by the presense of old_last and new_last in renamedata...
+>
+
+My biggest complaint was about the non balanced lock/unlock name pattern.
+renamedata_lock/unlock() is fine by me and aligns very well with existing
+lock helper name patterns.
+
+Thanks,
+Amir.
 
