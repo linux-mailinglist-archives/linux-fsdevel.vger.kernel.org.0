@@ -1,176 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-54789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4D5B03432
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 03:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFE5B03437
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 03:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3FD176049
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 01:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A9363B723F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 01:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BF519D88F;
-	Mon, 14 Jul 2025 01:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402451A5B8A;
+	Mon, 14 Jul 2025 01:42:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EAD2E630;
-	Mon, 14 Jul 2025 01:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B54F17B50F;
+	Mon, 14 Jul 2025 01:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752456904; cv=none; b=WV7n0xN2DP3j05mulksv5wIOx+QrHznW7w4XUWwk9TsTrBXcFW1XHHUcfM4Q1m/DOe2EXOInLX/fgLB3yQEegNifqts9BZmogn+RgIlqydZ/JCGXOIae2hsu4fLlZBCrUHQXmvQN6NMDSBrozzJRrMuSICcuHAuIuLoLVn1p85U=
+	t=1752457362; cv=none; b=MMXlaetbLnHBE4yuR0O+hpg1qzdqfdOWIg6bvorouSE8+2qMUA4oKYU2RZ03EiN68onUyo4Z4tMEU/3stjtP1m3ByhEmEQKXgI0LgzDuauqdcZKr7gnyK50mUib/aRzsvTjt6lZU5hIJGDPi9KpriT6eQDGtvD9enlc0+NvkOM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752456904; c=relaxed/simple;
-	bh=NHU1kztA7ZfgcTYXnt2QUKFhgqcNjIzYlmVZojQchaI=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=QiwKFIgUe8Kktdwm1f5gGNk386hMZK0kC5XyMCWwkA9HSmt6HN43NxR2rPE67FaDcoA0v6P86yCUotIkrMSin2NHMXuHgobwMAFKsUk2qEZH/XYhvC+m0POZWDKSJqnDWD/VNGXalT16Gm6Iqf8+xccsI8x/mSHws+9Wb9IIcYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1ub85r-001w49-Cn;
-	Mon, 14 Jul 2025 01:35:01 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1752457362; c=relaxed/simple;
+	bh=Ig2mW+5iqgiYPqiUeW1n6f3E0LqQ+vCx9U52+gFjSac=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Sf3hij9mfkPvsILoSIrRKoxAak8lzaMggxGkQ+HXfNbay4InmOpQEsc06KdMli44zQ9SKJqC92Ic+vUo0k7JSOePT8N+G7UbZVMIpS1WBT7YnA1+oJ6Q/ofx7DA7oKc2LzMUPfA1sYgN/RkOS3uHQkODjKkOj0ZBfdTYy5YevYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bgQ6x0TDfzKHMrL;
+	Mon, 14 Jul 2025 09:42:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 99A3C1A07FA;
+	Mon, 14 Jul 2025 09:42:31 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgB3QBGGYHRosQjDAA--.28839S3;
+	Mon, 14 Jul 2025 09:42:31 +0800 (CST)
+Subject: Re: [PATCH RFC] mm/readahead: improve randread performance with
+ readahead disabled
+To: Yu Kuai <yukuai1@huaweicloud.com>, willy@infradead.org,
+ akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250701110834.3237307-1-yukuai1@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <19b73b35-1e16-cb7d-d32f-d054d3e66fa0@huaweicloud.com>
+Date: Mon, 14 Jul 2025 09:42:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Miklos Szeredi" <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 15/20] ovl: narrow locking on ovl_remove_and_whiteout()
-In-reply-to:
- <CAOQ4uxiv+UeEsGAihjGUajyOfX6P0QQ=xt9bMxZv+-WQM4rYjQ@mail.gmail.com>
-References:
- <>, <CAOQ4uxiv+UeEsGAihjGUajyOfX6P0QQ=xt9bMxZv+-WQM4rYjQ@mail.gmail.com>
-Date: Mon, 14 Jul 2025 11:35:00 +1000
-Message-id: <175245690090.2234665.5628796793048465986@noble.neil.brown.name>
+In-Reply-To: <20250701110834.3237307-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3QBGGYHRosQjDAA--.28839S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF4rWF4fGr43AFyxCrWUtwb_yoW8ZF15pF
+	W3Can2yr1xXryfArWxJ3WUXF4SgFsaqF4fJFy5J345CrnxGrWakr9agr4DWFWqyrn7Xw4U
+	Zr4DZF9xZrWqvrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, 11 Jul 2025, Amir Goldstein wrote:
-> On Fri, Jul 11, 2025 at 1:21=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
-> >
-> > Normally it is ok to include a lookup with the subsequent operation on
-> > the result.  However in this case ovl_cleanup_and_whiteout() already
-> > (potentially) creates a whiteout inode so we need separate locking.
->=20
-> The change itself looks fine and simple, but I didn't understand the text a=
-bove.
->=20
-> Can you please explain?
+Hi,
 
-Maybe that was really a note to myself - at first glance the change
-looked a little misguided.
+ÔÚ 2025/07/01 19:08, Yu Kuai Ð´µÀ:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> We have a workload of random 4k-128k read on a HDD, from iostat we observed
+> that average request size is 256k+ and bandwidth is 100MB+, this is because
+> readahead waste lots of disk bandwidth. Hence we disable readahead and
+> performance from user side is indeed much better(2x+), however, from
+> iostat we observed request size is just 4k and bandwidth is just around
+> 40MB.
+> 
+> Then we do a simple dd test and found out if readahead is disabled,
+> page_cache_sync_ra() will force to read one page at a time, and this
+> really doesn't make sense because we can just issue user requested size
+> request to disk.
+> 
+> Fix this problem by removing the limit to read one page at a time from
+> page_cache_sync_ra(), this way the random read workload can get better
+> performance with readahead disabled.
+> 
+> PS: I'm not sure if I miss anything, so this version is RFC
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   mm/readahead.c | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
 
-While it is possible to perform the lookups outside the directory lock,
-the take the lock, check the parents, perform the operation, it is
-generally better to combine the lookup with the lock (hence my proposed
-lookup_and_lock operations).
+Friendly ping ...
 
-In the current locking scheme, performing the lookup and the operation
-under the one lock avoids some races.
-In my new code we don't avoid the race but the lookup-and-lock can
-detect the race and repeat the lookup.
-
-So in generally we can avoid returning the -EINVAL if the parent check
-fails.
-
-So changing code that did a lookup and rename in the same lock to code
-which takes the lock twice seems wrong.  I wanted to justify it, and the
-justification is the need to create the whiteout between the lookup and
-the rename.
-
-A different way to do this might be the create the whiteout before doing
-the lookup_upper.  That would require a larger refactoring that probably
-isn't justified.
-
-I've changed it to:
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-This code:
-  performs a lookup_upper
-  created a whiteout object
-  renames the whiteout over the result of the lookup
-
-The create and the rename must be locked separated for proposed
-directory locking changes.  This patch takes a first step of moving the
-lookup out of the locked region.
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Thanks,
-NeilBrown
-
-
->=20
-> Thanks,
-> Amir.
->=20
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> > ---
-> >  fs/overlayfs/dir.c | 17 ++++++++---------
-> >  1 file changed, 8 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index d01e83f9d800..8580cd5c61e4 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -769,15 +769,11 @@ static int ovl_remove_and_whiteout(struct dentry *d=
-entry,
-> >                         goto out;
-> >         }
-> >
-> > -       err =3D ovl_lock_rename_workdir(workdir, NULL, upperdir, NULL);
-> > -       if (err)
-> > -               goto out_dput;
-> > -
-> > -       upper =3D ovl_lookup_upper(ofs, dentry->d_name.name, upperdir,
-> > -                                dentry->d_name.len);
-> > +       upper =3D ovl_lookup_upper_unlocked(ofs, dentry->d_name.name, upp=
-erdir,
-> > +                                         dentry->d_name.len);
-> >         err =3D PTR_ERR(upper);
-> >         if (IS_ERR(upper))
-> > -               goto out_unlock;
-> > +               goto out_dput;
-> >
-> >         err =3D -ESTALE;
-> >         if ((opaquedir && upper !=3D opaquedir) ||
-> > @@ -786,6 +782,10 @@ static int ovl_remove_and_whiteout(struct dentry *de=
-ntry,
-> >                 goto out_dput_upper;
-> >         }
-> >
-> > +       err =3D ovl_lock_rename_workdir(workdir, NULL, upperdir, upper);
-> > +       if (err)
-> > +               goto out_dput_upper;
-> > +
-> >         err =3D ovl_cleanup_and_whiteout(ofs, upperdir, upper);
-> >         if (err)
-> >                 goto out_d_drop;
-> > @@ -793,10 +793,9 @@ static int ovl_remove_and_whiteout(struct dentry *de=
-ntry,
-> >         ovl_dir_modified(dentry->d_parent, true);
-> >  out_d_drop:
-> >         d_drop(dentry);
-> > +       unlock_rename(workdir, upperdir);
-> >  out_dput_upper:
-> >         dput(upper);
-> > -out_unlock:
-> > -       unlock_rename(workdir, upperdir);
-> >  out_dput:
-> >         dput(opaquedir);
-> >  out:
-> > --
-> > 2.49.0
-> >
->=20
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index 20d36d6b055e..1df85ccba575 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -561,13 +561,21 @@ void page_cache_sync_ra(struct readahead_control *ractl,
+>   	 * Even if readahead is disabled, issue this request as readahead
+>   	 * as we'll need it to satisfy the requested range. The forced
+>   	 * readahead will do the right thing and limit the read to just the
+> -	 * requested range, which we'll set to 1 page for this case.
+> +	 * requested range.
+>   	 */
+> -	if (!ra->ra_pages || blk_cgroup_congested()) {
+> +	if (blk_cgroup_congested()) {
+>   		if (!ractl->file)
+>   			return;
+> +		/*
+> +		 * If the cgroup is congested, ensure to do at least 1 page of
+> +		 * readahead to make progress on the read.
+> +		 */
+>   		req_count = 1;
+>   		do_forced_ra = true;
+> +	} else if (!ra->ra_pages) {
+> +		if (!ractl->file)
+> +			return;
+> +		do_forced_ra = true;
+>   	}
+>   
+>   	/* be dumb */
+> 
 
 
