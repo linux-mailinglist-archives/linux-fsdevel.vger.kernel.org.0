@@ -1,125 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-54829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F124FB03B4E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 11:49:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935ADB03BB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 12:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D78717AAC0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 09:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C3F189B611
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 10:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3260C242930;
-	Mon, 14 Jul 2025 09:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA131244669;
+	Mon, 14 Jul 2025 10:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="P6KUVfql"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hR1+mZFQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1CXlaM7n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF81E47A8;
-	Mon, 14 Jul 2025 09:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ABC218AA0;
+	Mon, 14 Jul 2025 10:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752486570; cv=none; b=lONzpPNfIXFZx9mPNMfAwsKW4W07/3mhvkRDlZAPnwpb2Xi/YTdGjDv7GJln6Aq7S4oh0rn/VF0VEAOV4vFCZAtgqqrEbPaBNFNf7KBaogyP8777siPcA/7W6g4rIdmwPsQfklZN7nK5QXYHd+2/TaqWAZKIlO0Xdg2VV8HbZ0c=
+	t=1752488056; cv=none; b=CnxycQY6apHcMgZhFiyE9ua6itRxW9LmzYMiCFnAhcFn2J3huFaEb+akhINL9ZVrznk29SjL3EIOjMpEGr3atjN+Hc3SCCWJGvO+IKe84LShmeCygMuWxjGUxxPCNYar84Xu7xkDReM2wNrhA46vGlcvDGkiY1vIFSqSCPCd/6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752486570; c=relaxed/simple;
-	bh=fSQmqTmFXiJr35bumTDLx/6khX6zLKHvHySYlt9rJ/A=;
+	s=arc-20240116; t=1752488056; c=relaxed/simple;
+	bh=cOpEyTSiBLUg150TjbxK79lmnioNTJJemNhL2gS6kZ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0uaOxl9mbcWB9l3jg1pkD47m4AwYl6vMaIuV+hsIKnztKxdH2FAUok9HBMQLtScStAhMRs0gISjsi6GKtPe07E8UjkBFXEw0tNiGE+pZGPd+IrUcp9VW8l7k46TxJiRxB+28wSRLBJjiP2WAmmr/tXzZ1ZVEazKF+1A6oSaLy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=P6KUVfql; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B6B2840E01FD;
-	Mon, 14 Jul 2025 09:49:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id KFiAFINQwJ0H; Mon, 14 Jul 2025 09:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752486560; bh=u5N4pTc0wlCZb0vYn03d8qHPb6wSiN52lq5zu+DU4g0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P6KUVfqlDJpHL8iXfV0Zb8Zb8VVTaZqCLrbVPIOHc6mS7eNPKWJHRJQF/cKT0kh2P
-	 rYd9LpHOKx8gXD6eIiydUO7tOTwzeWd290HvFVePOgZBbdkOGNCiWdfzeqf9T71CMU
-	 +NHCX9LCQtuMsQ+csYIG7YBa39hJoxRfUZcTQM2fUEw7IBS57aFekVNeF6uLbHYcQQ
-	 6xnqzcPVIGo6sqFy50hHMHy0AbnAVQe/Xvr5e8T3adTdjrDTQu2EhrUGlte0ptPJPD
-	 liTHkTl7Rw3wXwp3DL7S/PgVZbLo0iehAaWmWV8hkk59FLT9kfGS+EXflqef11FBJY
-	 nlHYIoTZS1y0dGOORy+c2KMMcBFNxZemsnjHh33CL7eRDj7eT1OMerBtq4uzaLUbgL
-	 kQXXAFJt4lDgBGTxmo6PBYWzoQjLKwdJ7ESJjX5LmUliipPFv5bC4qLEWrKlcEoXGb
-	 UQksxvwe2sw6bOVlC5Eh0EeO3ip0VqOfkKlD4DG1IUEvlUIKw2uiVTvoCBCGL4BnNI
-	 H/q5YDErGMlg76r4KA6G5srs+IOdKUr/nvUwX3kVUQKljaoZurHz7payTElBRJYz1v
-	 EmD+uwPBLg604CGalyObU3zogXYOAwT+qw3CoQpU3evEFeEYdw+xsOtkNUz0P7VzrM
-	 Xslq/7/PVoUAiHXRNy+oybGs=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A1B3940E00CE;
-	Mon, 14 Jul 2025 09:49:10 +0000 (UTC)
-Date: Mon, 14 Jul 2025 11:49:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
- ARCH_SUPPORTS_HUGETLBFS
-Message-ID: <20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
-References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
- <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
- <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lEaM5UyaYOsUUPXF2E5NAS/EeDdHLCOcs9tq5yzakfsT2MZ+e3uLvgV23i6Sf8VYMJYnzGFBKTayhtQW0y4m/s+GrIsbqinxAYqy5yOr3gn2t+zdhCzCgL7Rdc4/ZaSfg2dgvIyg0O6OZ9j2b2ZeEdZcZW1CG6HO06kyIFnyfDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hR1+mZFQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1CXlaM7n; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 14 Jul 2025 12:14:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752488052;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cOpEyTSiBLUg150TjbxK79lmnioNTJJemNhL2gS6kZ0=;
+	b=hR1+mZFQsXh07BTP0mr4H6/1n2IrQRgS2o0EIL2eytqFrc6ehL8mLh0OTJFWJSGNZcIF1T
+	8mLPa4aDKRNR1TGEjGTFqJ5EIY/00c8SFW9z39s0i/YC5ZoryvglfDI+AkjtHM2MtKFH/E
+	W2x3jd63FF297o3XQrrpFba1tC+NKbCUC/BbAVy/L/yM8Tb+6xnhFuqoKVSLDkcO8Mk8bh
+	QxOGPigbkoI/sd/FMgA9vZWOXEirlmNwBy7KmvhIYAqr4eswSj1LqQhq+iuTa//gCKz0dx
+	ubA+vRM2hXGL2BrtESUW+f8AX4a2Cog77ZLOLboU/IYZW8zOLnNlHvSg0u1APw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752488052;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cOpEyTSiBLUg150TjbxK79lmnioNTJJemNhL2gS6kZ0=;
+	b=1CXlaM7nBkSJCEFlqjOb1kUplpzguYM6FkOGWrXWpL5Jt5rhN4NahG5M83kHFYnUEPfGpQ
+	H3cgbrFzGHNsqRDg==
+From: Nam Cao <namcao@linutronix.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+Message-ID: <20250714101410.Su0CwBrb@linutronix.de>
+References: <20250710040607.GdzUE7A0@linutronix.de>
+ <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
+ <20250710062127.QnaeZ8c7@linutronix.de>
+ <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
+ <20250710083236.V8WA6EFF@linutronix.de>
+ <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+ <20250711050217.OMtx7Cz6@linutronix.de>
+ <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+ <20250711095008.lBxtWQh6@linutronix.de>
+ <20250714-leumund-sinnen-44309048c53d@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
+In-Reply-To: <20250714-leumund-sinnen-44309048c53d@brauner>
 
-On Mon, Jul 14, 2025 at 08:05:31AM +0530, Anshuman Khandual wrote:
-> The original first commit had added 'BROKEN', although currently there
-> are no explanations about it in the tree.
+On Mon, Jul 14, 2025 at 10:59:58AM +0200, Christian Brauner wrote:
+> My lesson from this is that touching epoll without a really really good
+> and urgent reason always end up a complete mess. So going forward we'll
+> just be very careful here.
 
-commit c0dde7404aff064bff46ae1d5f1584d38e30c3bf
-Author: Linus Torvalds <torvalds@home.osdl.org>
-Date:   Sun Aug 17 21:23:57 2003 -0700
+And my lesson is that lockless is hard. I still have no clue what is the
+bug in this patch.
 
-    Add CONFIG_BROKEN (default 'n') to hide known-broken drivers.
+I am implementing a new solution now, completely ditching this old
+approach. It survives some basic testing, and the numbers look promising. I
+may post it later this week.
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 0d1629e23398..5c012aeb2a8f 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -32,6 +32,17 @@ config EXPERIMENTAL
- 	  you say Y here, you will be offered the choice of using features or
- 	  drivers that are currently considered to be in the alpha-test phase.
- 
-+config BROKEN
-+	bool "Prompt for old and known-broken drivers"
-+	depends on EXPERIMENTAL
-+	default n
-+	help
-+	  This option allows you to choose whether you want to try to
-+	  compile (and fix) old drivers that haven't been updated to
-+	  new infrastructure.
-+
-+	  If unsure, say N.
-+
- endmenu
- 
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Nam
 
