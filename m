@@ -1,95 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-54834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07C0B03EE0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 14:39:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23484B03EEA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 14:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EDD37A5729
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 12:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6473C1737B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 12:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C30221B91F;
-	Mon, 14 Jul 2025 12:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD21248F59;
+	Mon, 14 Jul 2025 12:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="TtF2tmFq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c9emcqzR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0iNEsHw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040FE225771;
-	Mon, 14 Jul 2025 12:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44391991B6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 12:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752496761; cv=none; b=R/1QW1lEj3JdhpGSKGkPqZlcepmWWr/tIgUTODVfBfeJ8NYE8vAwVICL2pzF3b8Ss8JfF0DkTjcGX+MBj0nsO62zUSjQT4oNQ3fhDd8Vs5yAF7aIV7NcaFglXnY3aGVeTnva3JyGlJp6Bh3qjzXsMBjygctKnRPhMpFf0sCc6VE=
+	t=1752496881; cv=none; b=jZsOL9PJpeK5p4DhGJrOhSwVGUmAegI6FmA+kcHbRVtiYEttxmuUVRV5KbXpSf36zCbRBdrV1lvioMycy6WVXnN7aEINJVPMVH+/7iA16oZb3a7TLFSWoN/KlNJUUlZOcie5QNh9t0n88Uf/cYaK5tlnOS0ba2PLuUfHeWzWubM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752496761; c=relaxed/simple;
-	bh=ufQPPQAeS3SL8o9K6fDayVHLOOrkXJg0re8Mkzhvteg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mdFMLz/62qnCNzsO0DMq1Fl3QVjJEMrttCHvyxRY5QvG7oVLu5z+iNnbrcspvlDyRk5/lxoggsgaWruZq0C3nzH9UwrASA+XWpzZ7dGeSOTdvHKjrJ4MmO5HVmlvaRbHeFQbjtuDNN61MWiO1cJolRasdFL1WC+8ZdT6XUuUUxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=TtF2tmFq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c9emcqzR; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B16857A0312;
-	Mon, 14 Jul 2025 08:39:15 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Mon, 14 Jul 2025 08:39:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1752496755;
-	 x=1752583155; bh=eZfhrIe15WfzMr12qujZXH4iMPdEaqg6OoXlBqW0VY0=; b=
-	TtF2tmFqPlhlcORKvtT1/MLgxbN0nF5eCmF68Gpcmp57eJSnVAGPBJx5gLS+XZLG
-	l0pgWBB8fA5Ji999Bsdbgf3MXlDUcyxpz1nBphtdK1OlbnSN/idUXEO82/LKl5F4
-	AyiUO0iFhjcISItadYybu5AtJrXm9BsRhEtOtNgDmU8v1lKdBw8kItd5t6IGV/u+
-	vNwgedE+oJTuS7cZdwJPBrlB8KJtxxrUf8LLu2EwK1n3GiwVfR0zJIr4imz0T76A
-	gUuDtb1VQbIoG+h7XKK43G7AbSeCN6vGGLo3N4NBrpg6WlLMXUNsqLdNevIwwq+9
-	82oyvXsnlsOkMyMzTgjxJQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752496755; x=
-	1752583155; bh=eZfhrIe15WfzMr12qujZXH4iMPdEaqg6OoXlBqW0VY0=; b=c
-	9emcqzRJmAjlUQQ7zOG5ApNJTlbosrRZdXFHiUcRMLmbIgYc9cez4Nv4fSdqDSWx
-	YSWN76XvlJAsOgM+nrNqQDcOr0mzM0/RY+BIkWmwNydIwseRj7p82Twe68NnWWPl
-	Z/fh4MTX+n1mC0pb3SSs/l6CJGzfq8hzQrSerUKROrh/DobWab7IF06hyd15UcNB
-	KlSv2bVmLYsKEQfI7+cImpp9ueENB8L+BQc6H/g/wUgoKH0qAyo+by73z6A8AdwR
-	GavuRhzw4UpgZOTg4P6blsc0Mt1OimzNK3BEjl+jkEK2szp5xR9M0s5QRCJ7thqL
-	b4Rt4Es5mKmj+wob01kRg==
-X-ME-Sender: <xms:cvp0aAKHH-ku2OryCEs4mZ4TpuWWjzgzc7Dwc1Jk3_PST51IIp8utA>
-    <xme:cvp0aOrP-uYCLICFh2c_jwBH-RKcwzck-wfW_7MIVFq1QTx7YAu_CGdxZ0-HkToei
-    K3Vs6O0z6pVq8qhdqE>
-X-ME-Received: <xmr:cvp0aMMBbeV39AjvWi6Zxj45Nji9df9OBm22dRy_l2GH3dT1uu6H7MhrLDpu5NNsCLuAn-8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehudeljecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
-    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpedvge
-    duuefgudejgfdtteffudejjeelleeiudekueejudehtefghfegvdetveffueenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
-    drohhrghdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgoh
-    hoghhlvgdrtghomhdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhr
-    ghdruhhkpdhrtghpthhtoheprghkhhhnrgesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
-    epsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggsuhhrghgvnhgv
-    rheslhhinhhugidrmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehjrghnnhhhse
-    hgohhoghhlvgdrtghomhdprhgtphhtthhopehjvghffhiguhesghhoohhglhgvrdgtohhm
-    pdhrtghpthhtohepnhgvihhlsegsrhhofihnrdhnrghmvg
-X-ME-Proxy: <xmx:cvp0aHiFPjujrbJgZ_JvBWIG1FQepDAbUwiktFTrswz03ZHQi9QZXw>
-    <xmx:cvp0aAYkCcE8vj0trDYIyxyuU_-yEwNlGT-Qdne5021RRWQE7ZFVIA>
-    <xmx:cvp0aLhLhRMbUjdNny2fg2fjpIBrQc6phNDOXzp3TJQzAt5KZhYCZA>
-    <xmx:cvp0aCainfZ0q54rgwdoEFzS9lRgis6PGVNCQGVFyLQJIWZ_5z245w>
-    <xmx:c_p0aH9sKTit0XrXeVvwCfhOrvjAjvyyWQf_AXwoCPGjtRudaePZgRoO>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Jul 2025 08:39:12 -0400 (EDT)
-Message-ID: <4d23784f-03de-4053-a326-96a0fa833456@maowtm.org>
-Date: Mon, 14 Jul 2025 13:39:12 +0100
+	s=arc-20240116; t=1752496881; c=relaxed/simple;
+	bh=EU/9ZDtsuN6eH1IZPhEa5PdVZBdPTGac/TKiXXM/Z6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HElT6scRmr/7h8eDhBDSuK/zv1b69b/hVII+UFjzZZ7IGp4Z1o4XarAnK+q9HrWdqyPJhyp2loTuiJWCUg1c79IeWaNEiRMc074uhKX+z/i+4T+dovy/8qKUB8RtbTiPc0DrTM1x5Xb7GqmL8Lpsd0cdjm3n2B8rCAYXfpWNric=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0iNEsHw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752496878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=AlhL0g61tcP/asJxs4tblcpuvuh9N/0WRyDkg4z1yL8=;
+	b=Z0iNEsHwII3b56o/rIda4+nA919eARHJgZA3LhHVPOeO+p438yb1hz4YO+PmleiBWAloMS
+	Hf8c1Oxt2RhG3TTmtJpoREy3xNGZsc5J3a2WzMk2fXpepwbBOPQ1NG2MkXeY1QU2j42iUE
+	i0NhB0JOri1k+uGEMBpZRvPxiquzofA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-531-sxaLh95BO5qStZhxatu5iA-1; Mon, 14 Jul 2025 08:41:16 -0400
+X-MC-Unique: sxaLh95BO5qStZhxatu5iA-1
+X-Mimecast-MFC-AGG-ID: sxaLh95BO5qStZhxatu5iA_1752496875
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso24684405e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 05:41:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752496875; x=1753101675;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AlhL0g61tcP/asJxs4tblcpuvuh9N/0WRyDkg4z1yL8=;
+        b=l1ARW9q2NkNg1OZXcd9F72agzJUeJQq2LUTXUlhBN8WBvK4H46JS64sQ+amBUBnbOa
+         02ILNM+R0HAauaScXDWNxUPG0+HS4nuNhgDZsNvu0YRiv2zz4Kp2MKW9tMUAUrLnEMla
+         gjQtHCxg0PYxwIXDeLCaEvq0JR94YolYvKadhFuE/aZnTKl/1K44EzS2IJ4JlwNFjusp
+         R+p5cKSGM7bDymjVld9WSfCs2rcDdh88ceEb+hWxCh/DxHDEvfW2M813bT9VNrCTkCgp
+         06HcXnSF0dQN/jjWhpknjASACyRjiDTgOcfMVvLDrWQvXQc9qAWwggAv2Ni/zLfp4p03
+         +PfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXiL/9kS1iTbz6TOmfQ3gitcanArmeZw5nja7hZtRB1tbIdcHiTv5/VVxpm2gunpXYXYbkpjyi3JUXaUjS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPKrDISw0uhy50F1GgplOGcBVdeUCU++8VLmsFxxFbvVzF8hYH
+	Z1mh0s/pOwO7rOI2MqwdI7jEQLoqGD8pIQSHTvV2J3xlkItCVtZkCj1dcAn4AKHG+iYFNvfpYDw
+	XADL+c/uPXV83UKWs5VJ1E6tygi65gqm4huNDWyiRDuYksuS7qG4PM+97XvpLh68CwU0=
+X-Gm-Gg: ASbGncs/dZvLSaq05OVZ1fnku1azy9OlSYFS/K8+DRy0mruqbyelU+QUCCzf/hAery+
+	jdwnkYAn33QcSLqbGhg4jStn3wmixroUR2XfXcP0eEmGbvyY0/rRyj2Sl7iKIjIT97GCCCbV6Eg
+	sHuHlRq49mbZlgvna+xHrVc4UmKmR7zNbNQv8HlZw5x//LmvVwhHNZi+vmgjUbiIdwwoY7vkdqD
+	IXpm0yqCM0fuSavMSgZNYwUcKg5szxRxwVI2GxZ5R+5ZfsulYXTCJrsePVCMaG8gAlxiOx9XHNK
+	kHdueuu8KQdEsUwkaH+xo/Tc1U6AbF8Yenf5afMZxZi+5JjOA4Okholczz/j5sCpk4kd4G6xjCI
+	K91wuHZmlK3siFUvQGtGPnQ/z4DNgFewIq5bZ5C9lAnMqd6xqMnxLoBOwtLYHFjr/
+X-Received: by 2002:a05:600c:3f07:b0:456:15a1:9ae0 with SMTP id 5b1f17b1804b1-45615a19f78mr50490825e9.13.1752496875386;
+        Mon, 14 Jul 2025 05:41:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7DuhvnhvQSDasJMYJlX2NuMhbqjgqBZ9IwWcjRy08mrRHLkhE2Ly+4rRmtT0k0blUgZ5iBg==
+X-Received: by 2002:a05:600c:3f07:b0:456:15a1:9ae0 with SMTP id 5b1f17b1804b1-45615a19f78mr50490335e9.13.1752496874860;
+        Mon, 14 Jul 2025 05:41:14 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f38:ca00:ca3a:83da:653e:234? (p200300d82f38ca00ca3a83da653e0234.dip0.t-ipconnect.de. [2003:d8:2f38:ca00:ca3a:83da:653e:234])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd466154sm129926275e9.12.2025.07.14.05.41.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 05:41:14 -0700 (PDT)
+Message-ID: <3db65a9c-4ee4-4bba-ba8b-f1171f942766@redhat.com>
+Date: Mon, 14 Jul 2025 14:41:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,91 +90,113 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Tingmao Wang <m@maowtm.org>
-Subject: Re: [PATCH v2 1/3] landlock: Fix handling of disconnected directories
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>,
- Christian Brauner <brauner@kernel.org>,
- Daniel Burgener <dburgener@linux.microsoft.com>, Jann Horn
- <jannh@google.com>, Jeff Xu <jeffxu@google.com>, NeilBrown
- <neil@brown.name>, Paul Moore <paul@paul-moore.com>,
- Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-References: <20250711191938.2007175-1-mic@digikod.net>
- <20250711191938.2007175-2-mic@digikod.net>
+Subject: Re: [PATCH RFC 08/14] mm/huge_memory: mark PMD mappings of the huge
+ zero folio special
+To: Oscar Salvador <osalvador@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-9-david@redhat.com>
+ <aFu0H_AgdM2W2-R_@localhost.localdomain>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20250711191938.2007175-2-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aFu0H_AgdM2W2-R_@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 7/11/25 20:19, Mickaël Salaün wrote:
-> [...]
-> @@ -800,6 +802,8 @@ static bool is_access_to_paths_allowed(
->  		access_masked_parent1 = access_masked_parent2 =
->  			landlock_union_access_masks(domain).fs;
->  		is_dom_check = true;
-> +		memcpy(&_layer_masks_parent2_bkp, layer_masks_parent2,
-> +		       sizeof(_layer_masks_parent2_bkp));
->  	} else {
->  		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
->  			return false;
-> @@ -807,6 +811,8 @@ static bool is_access_to_paths_allowed(
->  		access_masked_parent1 = access_request_parent1;
->  		access_masked_parent2 = access_request_parent2;
->  		is_dom_check = false;
-> +		memcpy(&_layer_masks_parent1_bkp, layer_masks_parent1,
-> +		       sizeof(_layer_masks_parent1_bkp));
+On 25.06.25 10:32, Oscar Salvador wrote:
+> On Tue, Jun 17, 2025 at 05:43:39PM +0200, David Hildenbrand wrote:
+>> The huge zero folio is refcounted (+mapcounted -- is that a word?)
+>> differently than "normal" folios, similarly (but different) to the ordinary
+>> shared zeropage.
+>>
+>> For this reason, we special-case these pages in
+>> vm_normal_page*/vm_normal_folio*, and only allow selected callers to
+>> still use them (e.g., GUP can still take a reference on them).
+>>
+>> vm_normal_page_pmd() already filters out the huge zero folio. However,
+>> so far we are not marking it as special like we do with the ordinary
+>> shared zeropage. Let's mark it as special, so we can further refactor
+>> vm_normal_page_pmd() and vm_normal_page().
+>>
+>> While at it, update the doc regarding the shared zero folios.
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> 
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> 
+> While doing this, would it make sense to update vm_normal_page_pmd()
+> comments to refelect that pmd_special will also catch huge_zero_folio()?
+> It only mentions huge pfnmaps.
+> 
+> It might not be worth doing since you remove that code later on, but
+> maybe if someone stares at this commit alone..
 
-Is this memcpy meant to be in this else branch?  If parent2 is set, we
-will leave _layer_masks_parent1_bkp uninitialized right?
+Yes, it should be removed in this patch, thanks!
 
->  	}
->  
->  	if (unlikely(dentry_child1)) {
-> @@ -858,6 +864,14 @@ static bool is_access_to_paths_allowed(
->  				     child1_is_directory, layer_masks_parent2,
->  				     layer_masks_child2,
->  				     child2_is_directory))) {
-> +			/*
-> +			 * Rewinds walk for disconnected directories before any other state
-> +			 * change.
-> +			 */
-> +			if (unlikely(!path_connected(walker_path.mnt,
-> +						     walker_path.dentry)))
-> +				goto reset_to_mount_root;
-> +
->  			/*
->  			 * Now, downgrades the remaining checks from domain
->  			 * handled accesses to requested accesses.
+-- 
+Cheers,
 
-I think reasoning about how the domain check interacts with
-reset_to_mount_root was very tricky, and I wonder if you could add some
-more comments explaining the various cases?  For example, one fact which
-took me a while to realize is that for renames, this function will never
-see the bottom-most child being disconnected with its mount, since we
-start walking from the mountpoint, and so it is really only handling the
-case of the mountpoint itself being disconnected.
+David / dhildenb
 
-Also, it was not very clear to me whether it would always be correct to
-reset to the backed up layer mask, if the backup was taken when we were
-still in domain check mode (and thus have the domain handled access bits
-set, not just the requested ones), but we then exit domain check mode, and
-before reaching the next mountpoint we suddenly found out the current path
-is disconnected, and thus resetting to the backup (but without going back
-into domain check mode, since we don't reset that).
-
-Because of the !path_connected check within the if(is_dom_check ...)
-branch itself, the above situation would only happen in some race
-condition tho.
-
-I also wonder if there's another potential issue (although I've not tested
-it), where if the file being renamed itself is disconnected from its
-mountpoint, when we get to is_access_to_paths_allowed, the passed in
-layer_masks_parent1 would be empty (which is correct), but when we do the
-no_more_access check, we're still using layer_masks_child{1,2} which has
-access bits set according to rules attached directly to the child. I think
-technically if the child is disconnected from its mount, we're supposed to
-ignore any access rules it has on itself as well?  And so this
-no_more_access check would be a bit inconsistent, I think.
 
