@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-54898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738CBB04BA8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 01:09:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1385B04BC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 01:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91B73ACCC2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 23:09:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF33916FABC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 23:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7DA28A1CA;
-	Mon, 14 Jul 2025 23:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DA5291C37;
+	Mon, 14 Jul 2025 23:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/oHoe9n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdO1olvO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9826F2877C9;
-	Mon, 14 Jul 2025 23:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92118289E04;
+	Mon, 14 Jul 2025 23:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752534390; cv=none; b=gGcvqNrvOMyBr4q8u/7469ho2I/O2PVGZ5QyI7WoZlwMrlMi8v3hxxa+Nf4V18ja2yanCGARpAT/bWkvo3DC2uQMi8W4ts114WcLWM3zf2jEjtagjhzMP0N/eRURYE0nifgSSNfd6lfr9udXWNi8h279XzTHGNcS7LkYeeCH1xY=
+	t=1752534447; cv=none; b=dq2235yTFAiw7oIPzohKl/zyLZy9JPKHOyVgHd61JAdqoPpciOx2MmgZCDe4caiRkHNzfVOqMwwnIrOF9DWK30sfTKQFwOT5p/Zqrcdy8RNwheN8kyIOcCiXavY7SOzB5M62GGbRZ2cmAUDX6uX8JA00b3wRlPZxyNnFv4dqEu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752534390; c=relaxed/simple;
-	bh=BEjk0Qvi23pJ09wJJWW31oqfaoR9guSSS/s6cw6VDmI=;
+	s=arc-20240116; t=1752534447; c=relaxed/simple;
+	bh=C3YSGA0GHf5P3aiy3SL3haqM0r7Yv2Yx0Klwafo79UM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d0ZQZrd/zphm5UJulTfKdEhRVWHsJ8sjIPjQcaHrmKJ+PYYv7KrqaLz1pk+9OZ0ZrlUGP8mwzuzVcnUGhUBoSHvK0mpciLCsAk9fTAGck7yyJSjwylO5yh14MtHWPSZnlA1OoSqsoGlRyqcEstXUE9lhoLzTncGScECreLjPn2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/oHoe9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A16C4CEF0;
-	Mon, 14 Jul 2025 23:06:29 +0000 (UTC)
+	 MIME-Version:Content-Type; b=HBSsdMssaX+FKTUKFbu5BXNfoNAZFfns9ddRgWdoP87cI8pRC6JlrPkaYiOXodS7uZayPw34ZHBNLW9DEWcnM156lu5Dr+slkLqqQkZuDY7Z0GShGGZ2xRSmPjNmbdT16fLFMay4DCdHcI3cfGF6Q0ztpjJjuqUmSdSIjuUU0eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdO1olvO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF88C4CEF0;
+	Mon, 14 Jul 2025 23:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752534390;
-	bh=BEjk0Qvi23pJ09wJJWW31oqfaoR9guSSS/s6cw6VDmI=;
+	s=k20201202; t=1752534447;
+	bh=C3YSGA0GHf5P3aiy3SL3haqM0r7Yv2Yx0Klwafo79UM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F/oHoe9n7S0RFb0OryswLF1JyIxh8ZryQwBqwyTlKc8X/nptQz1m9+G0wfj9QaELB
-	 yfBNc405ZeO9dLbt9HKJK4K5eCGW1yfV/27Ok76KVy+XHbIF8d9diXl2hHg13TuDkg
-	 rXikAXfcVv8Sv08UbwxwniioOgPu7OYuELe7KZ3Qme9uISJmVNY6OJAw0ANddAHFcI
-	 OuBzfJPMk2f32wj4Xfzi1A0/Dgq4Q3Cw3g5Wion79OZQW+ODXJjWP7S+5TBzyEAmuq
-	 8vkIcegvFKAYB0ZFLt9t+SZ7WlTBfmEQWo7bFTOjQElpphXj7RWovn9S3mSZySq6Wp
-	 1/ieiLdB7nwUQ==
+	b=UdO1olvOYUYUh+TgVMrOX1mUSB6cFnozMxOwLkZMhS9wrOxF3GPPCi/D5lYl3Wysy
+	 05rL5J459DvxwVia+9pa5gkL3EMtScEzh/OLCM0IATdk5fLbQQtx4agbo8bFxVvLfB
+	 2nejqg2M3DuhGEkdfAhSXCW4Xdddu9+DKZc6icDQKkgOzzPiG5RY8+kClWmUY9LhFt
+	 Pe+GgCpcxsE5svjQy1OtfdK0Wfz3lGF4bIyP31j6x89+P4Rmhg1Xx7gsIbRilSybB1
+	 0EiHDp35IIk+aUpfhEMyhySYJHdVIyUpMN7zkonMD5vKXjX2KX/J2qw+2jIe1ZLT++
+	 omdpUBa4J5KEQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -51,12 +51,12 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Jan Kara <jack@suse.cz>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.15 06/15] eventpoll: don't decrement ep refcount while still holding the ep mutex
-Date: Mon, 14 Jul 2025 19:06:07 -0400
-Message-Id: <20250714230616.3709521-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 05/12] eventpoll: don't decrement ep refcount while still holding the ep mutex
+Date: Mon, 14 Jul 2025 19:07:08 -0400
+Message-Id: <20250714230715.3710039-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250714230616.3709521-1-sashal@kernel.org>
-References: <20250714230616.3709521-1-sashal@kernel.org>
+In-Reply-To: <20250714230715.3710039-1-sashal@kernel.org>
+References: <20250714230715.3710039-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.15.6
+X-stable-base: Linux 6.12.38
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
@@ -216,10 +216,10 @@ crashes.
  1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index d4dbffdedd08e..0fbf5dfedb24e 100644
+index 1a06e462b6efb..99eed91d03ebe 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -883,7 +883,7 @@ static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
+@@ -854,7 +854,7 @@ static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
  	kfree_rcu(epi, rcu);
  
  	percpu_counter_dec(&ep->user->epoll_watches);
@@ -228,7 +228,7 @@ index d4dbffdedd08e..0fbf5dfedb24e 100644
  }
  
  /*
-@@ -891,14 +891,14 @@ static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
+@@ -862,14 +862,14 @@ static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
   */
  static void ep_remove_safe(struct eventpoll *ep, struct epitem *epi)
  {
@@ -245,7 +245,7 @@ index d4dbffdedd08e..0fbf5dfedb24e 100644
  
  	/* We need to release all tasks waiting for these file */
  	if (waitqueue_active(&ep->poll_wait))
-@@ -931,10 +931,8 @@ static void ep_clear_and_put(struct eventpoll *ep)
+@@ -902,10 +902,8 @@ static void ep_clear_and_put(struct eventpoll *ep)
  		cond_resched();
  	}
  
@@ -257,7 +257,7 @@ index d4dbffdedd08e..0fbf5dfedb24e 100644
  		ep_free(ep);
  }
  
-@@ -1137,7 +1135,7 @@ void eventpoll_release_file(struct file *file)
+@@ -1108,7 +1106,7 @@ void eventpoll_release_file(struct file *file)
  		dispose = __ep_remove(ep, epi, true);
  		mutex_unlock(&ep->mtx);
  
