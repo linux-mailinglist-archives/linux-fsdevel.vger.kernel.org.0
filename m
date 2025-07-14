@@ -1,48 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-54792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F10B03473
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 04:27:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8723CB03487
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 04:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DF993B1E38
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 02:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0266174E2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 02:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C381D54EE;
-	Mon, 14 Jul 2025 02:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McCMGcjq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7391DE2BD;
+	Mon, 14 Jul 2025 02:35:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D875163CB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 02:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E669EAE7;
+	Mon, 14 Jul 2025 02:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752460048; cv=none; b=Bqy9O/SpMs3cnWU3CZ9tDC0ME89pAylZc/9uZnn+vln6UVAWax1G3589wBG/xFKzxAreO1VpUlk7bz+JPbXTzRNV9QAOgeX5Pa5RHGPw2SQKVQjWm8+siQaNx8PgGcQzoEGCFQbnmNTi7i9EnOZdOzS/0WyhBMPc53DNAk3nweE=
+	t=1752460546; cv=none; b=kFCDa7FYVnbRZlkLLRU7Kjy9j8ZxOBdz0nRed8p1231H8x0j4/iQgsW3J2WD4OjEVKPRSUit7ysrlpMTonDgqvvzWYDoZxpZ4S574otIo32GvxvUcH8yNhOguMkIjsV5mmAEyCG6FPmbloWV0hqkP86FmiWRN5zMBhl222agYBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752460048; c=relaxed/simple;
-	bh=7Axe8joyugX6kQZ14NmROgtOmkdcODhNEvwCi5eQuUw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eHaMWLe0ovM9Z300XcXF0g1lG1/twgZjWFHRMx0all+/WB/y/EmIpvTuM2dV8Wz2TDXel37eWShp2HXkNbgBfYiac67FWi3b/FjL0XA7SwLAMrMGQkgQxoBKH9ZlBcAe+5Og2K1z5x5CaAltiaLRtk4mivBELKlmC5gaKQdOJDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McCMGcjq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8016C4CEE3;
-	Mon, 14 Jul 2025 02:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752460048;
-	bh=7Axe8joyugX6kQZ14NmROgtOmkdcODhNEvwCi5eQuUw=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=McCMGcjqjDqC9Qoqo15VRZ3U+4XZPPudj4x6AKoVdcPIfyJFrDRKDESZ0GnGv7Cec
-	 J6PeYfxTmPJK/l9RxQM3XUZPq21SPKrQKHktOpYjEl/bHM44hbU99mh5E1K/YddZNP
-	 dK/ULCyuwhv00tBB9LVp15c+4ztq/foLQBrFTbP3DsH5uZvwGr11m4Vu0aed1Px6lx
-	 KJoeys1Mo8Wv6y+SWrOlZW1t/fFU3yYa3591bNKdV2pgPzR+qRHYxMtOJdTkp0/DML
-	 jHb3RyjPFN+IkbkjcrxcY/VXZaQY2eJvTeBLP7BfjudZELyA+zYXxrfsVAOnZEau6S
-	 PYBQGO0so2GLA==
-Message-ID: <b12d791e-a9f6-4b9d-a299-858821ebc1b5@kernel.org>
-Date: Mon, 14 Jul 2025 10:27:24 +0800
+	s=arc-20240116; t=1752460546; c=relaxed/simple;
+	bh=KQAzMGUQ+c04oHNp9H4UZyGi84UC9o6J3V2jj3rwhp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y2HSyR33cUUvDmXnRjQbEW+vBMi6t+QncGbjC9dUMsoRSrImc/hMFiq7iHmdxxujQbkwGjUhdNyLaCpGVL7p+csifvRq6jOVOy1USgGf9iBDE9Mv5M0GJGbqR2yDOE4JZE1jJrNg9fHtcdfbu2lCi7QCyBUh6D3T8XY49WgjI8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 476A912FC;
+	Sun, 13 Jul 2025 19:35:28 -0700 (PDT)
+Received: from [10.164.146.15] (J09HK2D2RT.blr.arm.com [10.164.146.15])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A1303F6A8;
+	Sun, 13 Jul 2025 19:35:34 -0700 (PDT)
+Message-ID: <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
+Date: Mon, 14 Jul 2025 08:05:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,105 +42,107 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, sandeen@redhat.com
-Subject: Re: [PATCH v5 0/7] f2fs: new mount API conversion
-To: Hongbo Li <lihongbo22@huawei.com>, jaegeuk@kernel.org
-References: <20250710121415.628398-1-lihongbo22@huawei.com>
+Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
+ ARCH_SUPPORTS_HUGETLBFS
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, "David S. Miller" <davem@davemloft.net>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ x86@kernel.org, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
+ <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250710121415.628398-1-lihongbo22@huawei.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/10/25 20:14, Hongbo Li wrote:
-> In this version, we have finished the issues pointed in v4.
-> First, I'd like to express my sincere thanks to Jaegeuk and Chao
-> for reviewing this patch series and providing corrections. I also
-> appreciate Eric for rebasing the patches onto the latest branch to
-> ensure forward compatibility.
-> 
-> The latest patch series has addressed all the issues mentioned in
-> the previous set. For modified patches, I've re-added Signed-off-by
-> tags (SOB) and uniformly removed all Reviewed-by tags.
-> 
-> v5:
->   - Add check for bggc_mode(off) with sb blkzone case.
->   - Fix the 0day-ci robot reports.
 
-Looks good to me, feel free to add to all patches:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+On 13/07/25 4:45 AM, Andrew Morton wrote:
+> On Fri, 11 Jul 2025 15:59:34 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+>> Enable HUGETLBFS only when platform subscrbes via ARCH_SUPPORTS_HUGETLBFS.
+>> Hence select ARCH_SUPPORTS_HUGETLBFS on existing x86 and sparc for their
+>> continuing HUGETLBFS support.
+> 
+> Looks nice.
+> 
+>> While here also just drop existing 'BROKEN' dependency.
+> 
+> Why?
+> 
+> What is BROKEN for, anyway?  I don't recall having dealt with it
+> before.  It predates kernel git and we forgot to document it.
 
-Thanks,
+The original first commit had added 'BROKEN', although currently there
+are no explanations about it in the tree. But looks like this might be
+used for feature gating (selectively disabling features) etc. But I am
+not much aware about it.
 
-> 
-> v4: https://lore.kernel.org/all/20250602090224.485077-1-lihongbo22@huawei.com/
->   - Change is_remount as bool type in patch 2.
->   - Remove the warning reported by Dan for patch 5.
->   - Enhance sanity check and fix some coding style suggested by
->     Jaegeuk in patch 5.
->   - Change the log info when compression option conflicts in patch 5.
->   - Fix the issues reported by code-reviewing in patch 5.
->   - Context modified in patch 7.
-> 
-> V3: https://lore.kernel.org/all/20250423170926.76007-1-sandeen@redhat.com/
-> - Rebase onto git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
->   dev branch
-> - Fix up some 0day robot warnings
-> 
-> (Here is the origianl cover letter:)
-> 
-> Since many filesystems have done the new mount API conversion,
-> we introduce the new mount API conversion in f2fs.
-> 
-> The series can be applied on top of the current mainline tree
-> and the work is based on the patches from Lukas Czerner (has
-> done this in ext4[1]). His patch give me a lot of ideas.
-> 
-> Here is a high level description of the patchset:
-> 
-> 1. Prepare the f2fs mount parameters required by the new mount
-> API and use it for parsing, while still using the old API to
-> get mount options string. Split the parameter parsing and
-> validation of the parse_options helper into two separate
-> helpers.
-> 
->   f2fs: Add fs parameter specifications for mount options
->   f2fs: move the option parser into handle_mount_opt
-> 
-> 2. Remove the use of sb/sbi structure of f2fs from all the
-> parsing code, because with the new mount API the parsing is
-> going to be done before we even get the super block. In this
-> part, we introduce f2fs_fs_context to hold the temporary
-> options when parsing. For the simple options check, it has
-> to be done during parsing by using f2fs_fs_context structure.
-> For the check which needs sb/sbi, we do this during super
-> block filling.
-> 
->   f2fs: Allow sbi to be NULL in f2fs_printk
->   f2fs: Add f2fs_fs_context to record the mount options
->   f2fs: separate the options parsing and options checking
-> 
-> 3. Switch the f2fs to use the new mount API for mount and
-> remount.
-> 
->   f2fs: introduce fs_context_operation structure
->   f2fs: switch to the new mount api
-> 
-> [1] https://lore.kernel.org/all/20211021114508.21407-1-lczerner@redhat.com/
-> 
-> Hongbo Li (7):
->   f2fs: Add fs parameter specifications for mount options
->   f2fs: move the option parser into handle_mount_opt
->   f2fs: Allow sbi to be NULL in f2fs_printk
->   f2fs: Add f2fs_fs_context to record the mount options
->   f2fs: separate the options parsing and options checking
->   f2fs: introduce fs_context_operation structure
->   f2fs: switch to the new mount api
-> 
->  fs/f2fs/super.c | 2101 +++++++++++++++++++++++++++--------------------
->  1 file changed, 1190 insertions(+), 911 deletions(-)
-> 
+commit 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 (tag: v2.6.12-rc2)
+Author: Linus Torvalds <torvalds@ppc970.osdl.org>
+Date:   Sat Apr 16 15:20:36 2005 -0700
 
+    Linux-2.6.12-rc2
+
+    Initial git repository build. I'm not bothering with the full history,
+    even though we have it. We can create a separate "historical" git
+    archive of that later if we want to, and in the meantime it's about
+    3.2GB when imported into git - space that would just make the early
+    git days unnecessarily complicated, when we don't have a lot of good
+    infrastructure for it.
+
+    Let it rip!
+
+BROKEN still gets used for multiple config options.
+
+git grep "depends on BROKEN"
+
+arch/m68k/Kconfig.devices:      depends on BROKEN && (Q40 || SUN3X)
+arch/mips/loongson64/Kconfig:   depends on BROKEN
+arch/parisc/Kconfig:    depends on BROKEN
+arch/powerpc/lib/crypto/Kconfig:        depends on BROKEN # Needs to be fixed to work in softirq context
+drivers/edac/Kconfig:   depends on BROKEN
+drivers/edac/Kconfig:   depends on BROKEN
+drivers/gpu/drm/Kconfig.debug:  depends on BROKEN
+drivers/gpu/drm/amd/display/Kconfig:    depends on BROKEN || !CC_IS_CLANG || ARM64 || LOONGARCH || RISCV || SPARC64 || X86_64
+drivers/gpu/drm/i915/Kconfig.debug:     depends on BROKEN
+drivers/net/wireless/intel/iwlwifi/Kconfig:     depends on BROKEN
+drivers/s390/block/Kconfig:     depends on BROKEN
+drivers/staging/gpib/TODO:- fix device drivers that are broken ("depends on BROKEN" in Kconfig)
+drivers/tty/Kconfig:    depends on BROKEN
+drivers/virtio/Kconfig:        depends on BROKEN
+init/Kconfig:   depends on BROKEN || !SMP
+init/Kconfig:   depends on BROKEN
+lib/Kconfig.ubsan:      depends on BROKEN
+
+git grep "&& BROKEN"
+
+arch/parisc/Kconfig:    depends on PA8X00 && BROKEN && !KFENCE
+arch/parisc/Kconfig:    depends on PA8X00 && BROKEN && !KFENCE
+arch/powerpc/platforms/amigaone/Kconfig:        depends on PPC_BOOK3S_32 && BROKEN_ON_SMP
+arch/powerpc/platforms/embedded6xx/Kconfig:     depends on PPC_BOOK3S_32 && BROKEN_ON_SMP
+arch/sh/Kconfig.debug:  depends on DEBUG_KERNEL && BROKEN
+drivers/gpu/drm/Kconfig.debug:  depends on DRM && EXPERT && BROKEN
+drivers/i2c/busses/Kconfig:     depends on ISA && HAS_IOPORT_MAP && BROKEN_ON_SMP
+drivers/leds/Kconfig:   depends on LEDS_CLASS && BROKEN
+drivers/net/wireless/broadcom/b43/Kconfig:      depends on B43 && BROKEN
+drivers/net/wireless/broadcom/b43/Kconfig:      depends on B43 && B43_BCMA && BROKEN
+drivers/pps/generators/Kconfig: depends on PARPORT && BROKEN
+drivers/staging/greybus/Kconfig:        depends on MEDIA_SUPPORT && LEDS_CLASS_FLASH && BROKEN
+drivers/video/fbdev/Kconfig:    depends on FB && ((AMIGA && BROKEN) || PCI)
+fs/quota/Kconfig:       depends on QUOTA && BROKEN
+fs/smb/client/Kconfig:  depends on CIFS && BROKEN
+net/ax25/Kconfig:       depends on AX25_DAMA_SLAVE && BROKEN
+
+git grep "|| BROKEN"
+
+arch/sh/Kconfig.debug:  depends on DEBUG_KERNEL && (MMU || BROKEN) && !PAGE_SIZE_64KB
+drivers/misc/Kconfig:   depends on X86_64 || BROKEN
+drivers/net/ethernet/faraday/Kconfig:   depends on !64BIT || BROKEN
+drivers/net/ethernet/faraday/Kconfig:   depends on !64BIT || BROKEN
+drivers/net/ethernet/intel/Kconfig:     depends on PCI && (!SPARC32 || BROKEN)
+drivers/usb/gadget/udc/Kconfig: depends on !64BIT || BROKEN
+kernel/power/Kconfig:           if ARCH_WANTS_FREEZER_CONTROL || BROKEN
 
