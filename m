@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-54882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29158B048B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 22:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0913B048B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 22:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0857A3B3A72
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 20:37:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7AA166B53
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 20:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2703A238C0A;
-	Mon, 14 Jul 2025 20:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2B023ABB9;
+	Mon, 14 Jul 2025 20:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OgoFwo2d"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FR1dc8PT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0D92367DE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 20:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14B5238C2A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 20:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752525470; cv=none; b=MD8rso/oxZQ+38rrEyZbXesJZr4iPEW2NI2/Y/knVS3vg0vZClEokA5ohJ9y6tkBWPdaMH0u3wL2vGuXjJy2HoRpqT9Vw+mVhTmJVWgg5c6ePExzV76d1T5/qFqmFZ1BR257lgqa6CjXp9ElmWXXbCXdKRUnJKqldRfvJ0yAnQM=
+	t=1752525474; cv=none; b=k/POOMkeZuYxPkdlytJ4o1voiTCXSSRSVtKL+yQmSNJ3GNO9mG1c+3gadE+XUQtMnGwY0UBwFUd/bbBmPpOe62B/mcFdtWYGFpbRtXiYTCMnkowsiBp/t7vXXGe7oGWyV6mVcNtUdqdqNQI2wjiCD1ajS+LDvmZtWKa+748B/R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752525470; c=relaxed/simple;
-	bh=o6lxpyRDhsKyt1kSzcpl+YFoFNmOOt4Bd/BQbj/e+Ro=;
+	s=arc-20240116; t=1752525474; c=relaxed/simple;
+	bh=TRiaionfJobNImoiMJWNErN7LpKtss3cejHSwUe8J+U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WUc+oI0o6kMQYVg0gvySPwicLeKl5oyumpalaqDgg8M89i45c+soqC/J0uzqVarmqxS3ngJcTajhqVazjd00rNBiKV3FF71Ld4Xie+x2v0mutuJz/0/DmDx/9mrEvg22qesItEeVnunN5SrpODOtcrPNaw3+s9GWpkYhBmnSS6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OgoFwo2d; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=PREKnZCqlsm1GGr0pD48CS/kTv01lv/jheK9nQbWZcsDl49ZZ7ACuGDTrL6WkIffawgGUjkg/66M9OX3w5V1kOGanUWk4oVWYX2r6N9s8/IJHMHKAcTFjiXf/oTtAEA0W/F4wNLkRtmCR1xflhChBSJiydnBc6k8wEK/LshAiVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FR1dc8PT; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752525467;
+	s=mimecast20190719; t=1752525470;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XLdZRvcQL8LOEfVl5rHLuZ7anpsrEIqyRbvnEXKnMtw=;
-	b=OgoFwo2dET5XHlUauEp/nBZGQAOFsXG3QQtOXdEzC8orQI5mMpUiJnN0EP3DbM1onEjYCn
-	N/+AL5haBc89ReCNxGr6IjIa6m6kEBZX0QpnGDX59xxSJC9BAqdxL+VnnpK8kSmFivYwMP
-	YHzcnWsDnfyCBHIp+Lnl4kss7N10CnU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=G2oilnYSWpKLUb4WBjfIpxHb6dcWw7CrnL7tLxGTlgo=;
+	b=FR1dc8PT2VtrxYBjxtgD8jtWU98tYb0T7U/8zcN2iWoDI4Yig/pfUQNRoht7+S/y4SJqIk
+	CBk5K9xRq7Rl+W+bA0M/EFU/hyr2dNGdikuBjhlOLRBJ3ijS7xHChf0Y0beclHOdTs/IKG
+	sGN94mN+rNy4VMj5u+c3wKwq6HS7Hzc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-586-j6dcRWlsONyj34yYaO-DtA-1; Mon,
- 14 Jul 2025 16:37:45 -0400
-X-MC-Unique: j6dcRWlsONyj34yYaO-DtA-1
-X-Mimecast-MFC-AGG-ID: j6dcRWlsONyj34yYaO-DtA_1752525464
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-317-VhtFJ8xJN8OJXh7wlBBIgA-1; Mon,
+ 14 Jul 2025 16:37:47 -0400
+X-MC-Unique: VhtFJ8xJN8OJXh7wlBBIgA-1
+X-Mimecast-MFC-AGG-ID: VhtFJ8xJN8OJXh7wlBBIgA_1752525465
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4EDBD180120C;
-	Mon, 14 Jul 2025 20:37:44 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BE4FC1800366;
+	Mon, 14 Jul 2025 20:37:45 +0000 (UTC)
 Received: from bfoster.redhat.com (unknown [10.22.64.43])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2333C19560A3;
-	Mon, 14 Jul 2025 20:37:41 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9171D19560B2;
+	Mon, 14 Jul 2025 20:37:44 +0000 (UTC)
 From: Brian Foster <bfoster@redhat.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-xfs@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: linux-xfs@vger.kernel.org,
 	hch@infradead.org,
 	djwong@kernel.org,
 	willy@infradead.org
-Subject: [PATCH v3 1/7] filemap: add helper to look up dirty folios in a range
-Date: Mon, 14 Jul 2025 16:41:16 -0400
-Message-ID: <20250714204122.349582-2-bfoster@redhat.com>
+Subject: [PATCH v3 2/7] iomap: remove pos+len BUG_ON() to after folio lookup
+Date: Mon, 14 Jul 2025 16:41:17 -0400
+Message-ID: <20250714204122.349582-3-bfoster@redhat.com>
 In-Reply-To: <20250714204122.349582-1-bfoster@redhat.com>
 References: <20250714204122.349582-1-bfoster@redhat.com>
 Precedence: bulk
@@ -79,106 +79,40 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Add a new filemap_get_folios_dirty() helper to look up existing dirty
-folios in a range and add them to a folio_batch. This is to support
-optimization of certain iomap operations that only care about dirty
-folios in a target range. For example, zero range only zeroes the subset
-of dirty pages over unwritten mappings, seek hole/data may use similar
-logic in the future, etc.
-
-Note that the helper is intended for use under internal fs locks.
-Therefore it trylocks folios in order to filter out clean folios.
-This loosely follows the logic from filemap_range_has_writeback().
+The bug checks at the top of iomap_write_begin() assume the pos/len
+reflect exactly the next range to process. This may no longer be the
+case once the get folio path is able to process a folio batch from
+the filesystem. On top of that, len is already trimmed to within the
+iomap/srcmap by iomap_length(), so these checks aren't terribly
+useful. Remove the unnecessary BUG_ON() checks.
 
 Signed-off-by: Brian Foster <bfoster@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/pagemap.h |  2 ++
- mm/filemap.c            | 58 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
+ fs/iomap/buffered-io.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index e63fbfbd5b0f..fb83ddf26621 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -941,6 +941,8 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
- 		pgoff_t *start, pgoff_t end, struct folio_batch *fbatch);
- unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch);
-+unsigned filemap_get_folios_dirty(struct address_space *mapping,
-+		pgoff_t *start, pgoff_t end, struct folio_batch *fbatch);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 3729391a18f3..38da2fa6e6b0 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -805,15 +805,12 @@ static int iomap_write_begin(struct iomap_iter *iter, struct folio **foliop,
+ {
+ 	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+-	loff_t pos = iter->pos;
++	loff_t pos;
+ 	u64 len = min_t(u64, SIZE_MAX, iomap_length(iter));
+ 	struct folio *folio;
+ 	int status = 0;
  
- /*
-  * Returns locked page at given index in given cache, creating it if needed.
-diff --git a/mm/filemap.c b/mm/filemap.c
-index bada249b9fb7..2171b7f689b0 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2334,6 +2334,64 @@ unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
- }
- EXPORT_SYMBOL(filemap_get_folios_tag);
+ 	len = min_not_zero(len, *plen);
+-	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
+-	if (srcmap != &iter->iomap)
+-		BUG_ON(pos + len > srcmap->offset + srcmap->length);
  
-+/**
-+ * filemap_get_folios_dirty - Get a batch of dirty folios
-+ * @mapping:	The address_space to search
-+ * @start:	The starting folio index
-+ * @end:	The final folio index (inclusive)
-+ * @fbatch:	The batch to fill
-+ *
-+ * filemap_get_folios_dirty() works exactly like filemap_get_folios(), except
-+ * the returned folios are presumed to be dirty or undergoing writeback. Dirty
-+ * state is presumed because we don't block on folio lock nor want to miss
-+ * folios. Callers that need to can recheck state upon locking the folio.
-+ *
-+ * This may not return all dirty folios if the batch gets filled up.
-+ *
-+ * Return: The number of folios found.
-+ * Also update @start to be positioned for traversal of the next folio.
-+ */
-+unsigned filemap_get_folios_dirty(struct address_space *mapping, pgoff_t *start,
-+			pgoff_t end, struct folio_batch *fbatch)
-+{
-+	XA_STATE(xas, &mapping->i_pages, *start);
-+	struct folio *folio;
-+
-+	rcu_read_lock();
-+	while ((folio = find_get_entry(&xas, end, XA_PRESENT)) != NULL) {
-+		if (xa_is_value(folio))
-+			continue;
-+		if (folio_trylock(folio)) {
-+			bool clean = !folio_test_dirty(folio) &&
-+				     !folio_test_writeback(folio);
-+			folio_unlock(folio);
-+			if (clean) {
-+				folio_put(folio);
-+				continue;
-+			}
-+		}
-+		if (!folio_batch_add(fbatch, folio)) {
-+			unsigned long nr = folio_nr_pages(folio);
-+			*start = folio->index + nr;
-+			goto out;
-+		}
-+	}
-+	/*
-+	 * We come here when there is no folio beyond @end. We take care to not
-+	 * overflow the index @start as it confuses some of the callers. This
-+	 * breaks the iteration when there is a folio at index -1 but that is
-+	 * already broke anyway.
-+	 */
-+	if (end == (pgoff_t)-1)
-+		*start = (pgoff_t)-1;
-+	else
-+		*start = end + 1;
-+out:
-+	rcu_read_unlock();
-+
-+	return folio_batch_count(fbatch);
-+}
-+
- /*
-  * CD/DVDs are error prone. When a medium error occurs, the driver may fail
-  * a _large_ part of the i/o request. Imagine the worst scenario:
+ 	if (fatal_signal_pending(current))
+ 		return -EINTR;
 -- 
 2.50.0
 
