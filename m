@@ -1,155 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-54806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4480B03780
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 09:02:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E80B03781
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 09:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F18118977EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 07:02:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C65175BD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Jul 2025 07:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D5622F772;
-	Mon, 14 Jul 2025 07:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B076622E3FA;
+	Mon, 14 Jul 2025 07:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="dst9lwGT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyJRr3Io"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF1B226D10
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 07:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B4A2AD11;
+	Mon, 14 Jul 2025 07:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752476549; cv=none; b=ZDGqGGEzqzmLtsLY85mjMTraraR/AiIX65/gD3lWawllXcIO6R7MhXqjwEyu6tNy9Z0Skb7ceW7WbTzr1KsDZsxIkhUtbXi36uXL83MKrPMWkuykHTSRAmXJNy/7huWzuXo2AA9CfA9GKzM71ONE6xiLx/OkRAA8s31cthA2mPE=
+	t=1752476669; cv=none; b=Ko50zKc5VJU75/r3Cuuq/TKwrvsFDqWlMBaabpwiX28ktEzeXiFSBlc9WYQdbCLVg1sfKmqYp1u6LxrtKcH/GgL6L8aEWcyS2YBqfOC1AlQPeBAafaRjpWY00mZxNieIxJXYgTCP0igx1/9zRu0b9QlyaJ10Y2GImFnvwgxsA6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752476549; c=relaxed/simple;
-	bh=lNtkY3NYXX1v8HrdAoHSY6DeBH3W8OxJaFIqU7hY0x8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Giv6skSaOmRg4J1kWyvXw0+RrgCHh1imgxLwMNImft9jNlHS/8HLuOC/rZfAl70ACuc5EcmY5E4sBbbq3goDrlh+lTCuXBmeebieuokiyA6VAFeaAu5G3Y6/VgN0QVOGVkZVF9N5iRlytWDJUzIDap2cDZaTe8FVttQ3FqOOihU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=dst9lwGT; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56DMO1nN011347
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 00:02:27 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=lNtkY3NYXX1v8HrdAoHSY6DeBH3W8OxJaFIqU7hY0x8=; b=dst9lwGTOo0m
-	P7EKU1k0Vn7VLk+UbiOr2nobzWcgXjJzkH8n3Gm8pCwhrNrjwr6jjLhYdKYNfoZm
-	Yw2cv1Bbef2qR3bX3CR7Xty9aw6A9tkCWPyuTuP74ptVXt+703zM1C/huZk993ot
-	z1nrCMml2ElXH2eRJIvjy4nh2rIVm9/aX07Sxx4pYerf8mT9KY/zECh4mZwrWZFA
-	xLDh1F4q2JxYOq3Ce6MglKvxr+9a/EQjpXelLXjaSkhq8/UfYGgoLvbiHIj+K+bd
-	fabcIfV8UZLAi7Px62VU9ikDYdb9caYU616WuZe1z3SsFhbf1SXkGLIdbzQdsnLP
-	cBpicg1AYg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47vnj5sr4m-11
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Jul 2025 00:02:26 -0700 (PDT)
-Received: from twshared11388.32.frc3.facebook.com (2620:10d:c085:208::7cb7) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.24; Mon, 14 Jul 2025 07:02:25 +0000
-Received: by devvm18334.vll0.facebook.com (Postfix, from userid 202792)
-	id 4BF39323B0244; Mon, 14 Jul 2025 00:02:21 -0700 (PDT)
-From: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>
-To: <amir73il@gmail.com>
-CC: <ibrahimjirdeh@meta.com>, <jack@suse.cz>, <josef@toxicpanda.com>,
-        <lesha@meta.com>, <linux-fsdevel@vger.kernel.org>, <sargun@meta.com>
-Subject: Re: [PATCH] fanotify: support custom default close response
-Date: Mon, 14 Jul 2025 00:01:13 -0700
-Message-ID: <20250714070113.1690928-1-ibrahimjirdeh@meta.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <CAOQ4uxhN6ok6BCBGbxeUt9ULq6g=qL6=_2_QGi8MqTHv5ZN7Vg@mail.gmail.com>
-References: <CAOQ4uxhN6ok6BCBGbxeUt9ULq6g=qL6=_2_QGi8MqTHv5ZN7Vg@mail.gmail.com>
+	s=arc-20240116; t=1752476669; c=relaxed/simple;
+	bh=S+d+uDOVmZMeGwAb3G8dI6hH7XghKaZlr8ojUnkqvQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kV3vNMR4VANVXtF0DfUa0uMD5ZS8cRtfoKH3PMefktjKPHRGtbVBkHKAvnf3cj/OVOySLL8Px0fvV6Pa/qCH020rejoSr6pUpfb1if9KN4tNFmcusorXtDUpQQ6Dbm4Gx3PO50MatfszYph29PJdWy2W+anca/4+KIXVVzzWQ7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SyJRr3Io; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-748d982e92cso2493541b3a.1;
+        Mon, 14 Jul 2025 00:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752476667; x=1753081467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DXySA/F3TyrII8A8Wc+3P9gLDgYeryVPrBWtmOEb9+c=;
+        b=SyJRr3Io9NXTPLeJPE+ufaIR2YXFh40YhtWD13NN4WuPxSoWAIRDhaWKygplZ8EXC7
+         RkxY4UMtXv1JQgUCijGQ+ra5GBKoJXLbVYDW86HSkpS+YTXu8UoilU31JgSDmspOW73m
+         PDfYLgWt3eYb1WazBE9c5yTdmuhB1UZdjA6ZOArDi6KBtXeXHEqv10XDS+OM8lKtmwMo
+         gxXYKFr40qPlJHHhXgluR/fby6y3HzBNd9/eEkYoTKzVMqtePmHs3mHxAluXmT42xtI/
+         4nev5jTPzIVkokxUEI2uKJzfhm7Uvz7WU6D0nJNOI+3XtUI6RFYuCNdbJsuYBF9Nx1ke
+         U3aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752476667; x=1753081467;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DXySA/F3TyrII8A8Wc+3P9gLDgYeryVPrBWtmOEb9+c=;
+        b=H9gsT7IUxkaQ/xO8vi9puKwMAXdXgmrmgWVZirDmh+Y7epYlH93OEeKGrqU/NZ/kY1
+         trMXhASI7tazUAgepWF15ePEc5HD/laIdKxTBubaNh58BWmBrmi3iKoCyLLCARjMPUEQ
+         91Ba9Hv0ckA4illE/H/3gHrOre27wwUJJMJf4KNwkeYPkCm+90TmfxF+wtsqY7l9RUVj
+         yysKJZLgaD+AFruXQ5gYgzmkd3XoSGBZwGM7UJdvoqPvY/3JGKGSQhW5ZTtiKmeyy4tO
+         6NfEA/vU+cRzZDwCZN+nMAP0/9r6GRFskt2a7Hrp3EUDQFjvgqUy7Vnhb1d7YMR4iVPD
+         C4vw==
+X-Gm-Message-State: AOJu0YyRuAqwvdO5rVA4D3pCb/oKVj+iEJ+EgK4LmmeTi6m6BjmVDmqo
+	dxsg0GJYYeGaLK0lzsF4C05qjRkEAXKPSCrH/tYDqkLRrbl3vRc3sKfzzPb9NVbN
+X-Gm-Gg: ASbGncs85y4VX5DQUG72Si/ncB9W27stmPt2OCuTR8w2ettZD20BMqRm7cmm7BCnyQr
+	iCbEwsf5cx/pm+m2sGyaoiwz6S2Tl2IfyJ19HF7k3TNHbGjydDXXt9syCubeXf0zuHykFsT2eN4
+	dJUoyvfldq4FUuxp1JeZSe2dHLmy6mxknld/m2A+EPJVXXO/M0DxEGx9AD8hgJDNgmAW/PXpVUc
+	WDSiJenySXpQTwKFImdYk3D8EC10tQuPLQwY185gx7zV8fPnS75wuXVAiIOeqXRQ+Q5g6V9jH4l
+	1yGxJ06QxNuoXkoGRM6wmgBlERIUK7U2za082HICxhu2hk6imO4Y3fCt+O482DGdZPBUs+/GDUr
+	tI8llTHvaCjt6PrR7F49e8DWEG8HqGqkF8OyBVt/nPbyoewp4dZiK9WZFkFcqSIsMw3V3
+X-Google-Smtp-Source: AGHT+IGq8vrmOng+X1/5gThNMlUcVO0qTpfTQHbvHaFS8/ljmJLHwIagTjIijz1Xj31UAeWHUIAxvQ==
+X-Received: by 2002:a05:6a00:3928:b0:736:4e67:d631 with SMTP id d2e1a72fcca58-74ee333d0cdmr16915181b3a.23.1752476666451;
+        Mon, 14 Jul 2025 00:04:26 -0700 (PDT)
+Received: from oslab.amer.dell.com.oslab.amer.dell.com ([132.237.156.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f46a57sm9216003b3a.112.2025.07.14.00.04.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 00:04:26 -0700 (PDT)
+From: Prabhakar Pujeri <prabhakar.pujeri@gmail.com>
+X-Google-Original-From: Prabhakar Pujeri <prabhakar.pujeri@dell.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	prabhakar.pujeri@gmail.com,
+	Prabhakar Pujeri <prabhakar.pujeri@dell.com>
+Subject: [PATCH] fs: warn on mount propagation in unprivileged user namespaces
+Date: Mon, 14 Jul 2025 03:05:56 -0400
+Message-ID: <20250714070556.343824-1-prabhakar.pujeri@dell.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA0MCBTYWx0ZWRfX/RyIial2+ItC o0S1i/l9BAwGgepfvADJyiWiqZwvu3/fqsZZiT27pBcrbGPeW18ok7e5TWKkrvWABjiU9WPAj41 5cwbkybGzgVfCnE7RxTcyAKP/KcjPIpcZA7RLnOCEs2eAEqplY4p70w/BJvhmHcLZIPViBuWyrg
- oVUTiSXGHF3W7cZPrfCKthze9eEVJzEOL3/y4QYhmoNZaUh/Jm6gj2cF2/Tt8vOiIej21CzfyRd u0H8jF5kxXBv6gGTfif25rYG0BdGpjrlpdQPwXttPMX0yFN8t2VAwk4KrF/oo4D34ARHLVX1lo/ GyvBi9t5LCDjaTJTSGJwCXKqf8U/RCjFlTvX7bE/Qfat3AXUpHMotqXx/XfjKDW/93kjLofle7i
- i6+yNTnb+cfkVFkpHyVgJl0QoJSdYGnbza1XL66MZURrQkq5YL2Vl5KRL+vumzogBbQVEE2+
-X-Authority-Analysis: v=2.4 cv=RtnFLDmK c=1 sm=1 tr=0 ts=6874ab82 cx=c_pps a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=W3ChRxnkwNDwZ3SZYBYA:9
-X-Proofpoint-GUID: gPSF-98tIehK30vUxlLS5fyZVejT1qyi
-X-Proofpoint-ORIG-GUID: gPSF-98tIehK30vUxlLS5fyZVejT1qyi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_01,2025-07-09_01,2025-03-28_01
+Content-Transfer-Encoding: 8bit
 
-On 7/12/25, 1:08 AM, "Amir Goldstein" <amir73il@gmail.com <mailto:amir73i=
-l@gmail.com>> wrote:
+Mount propagation operations in unprivileged user namespaces can bypass isolation. Add a pr_warn_once warning in mount(2) and mount_setattr(2) when MS_SHARED, MS_SLAVE, or MS_UNBINDABLE propagation flags are used without CAP_SYS_ADMIN. Document the warning in sharedsubtree.rst with an explanation why it is emitted and how to avoid it.
+---
+ Documentation/filesystems/sharedsubtree.rst | 13 ++++++++++++-
+ fs/namespace.c                              | 17 +++++++++++++++++
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
-> Regarding the ioctl, it occured to me that it may be a foot gun.
-> Once the new group interrupts all the in-flight events,
-> if due to a userland bug, this is done without full collaboration
-> with old group, there could be nasty races of both old and new
-> groups responding to the same event, and with recyclable
-> ida response ids that could cause a real mess.
+diff --git a/Documentation/filesystems/sharedsubtree.rst b/Documentation/filesystems/sharedsubtree.rst
+index 1cf56489ed48..714f2ac1cdda 100644
+--- a/Documentation/filesystems/sharedsubtree.rst
++++ b/Documentation/filesystems/sharedsubtree.rst
+@@ -717,7 +717,18 @@ replicas continue to be exactly same.
+ 
+ 			mkdir -p /tmp/m1
+ 
+-			mount --rbind /root /tmp/m1
++		mount --rbind /root /tmp/m1
++
++	Q4. Why do I sometimes see a kernel warning when using --make-shared,
++	    --make-slave, or --make-unbindable in an unprivileged user namespace?
++
++	    In an unprivileged user namespace (where CAP_SYS_ADMIN is not held),
++	    mount propagation operations can inadvertently bypass namespace
++	    isolation by sharing mount events with other namespaces. To help
++	    prevent subtle security or isolation issues, the kernel emits a
++	    one-time warning (pr_warn_once) when it detects propagation flags
++	    in such contexts. Avoid propagation flags or perform mounts in a
++	    properly privileged namespace to suppress this warning.
+ 
+ 		      the new tree now looks like this::
+ 
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 54c59e091919..e2f3911c2878 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4447,6 +4447,15 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+ 	if (IS_ERR(options))
+ 		goto out_data;
+ 
++	/*
++	 * Warn when using mount propagation flags in an unprivileged user namespace.
++	 * Propagation operations in an unprivileged namespace can bypass isolation.
++	 */
++	if (!ns_capable(current_user_ns(), CAP_SYS_ADMIN) &&
++	    (flags & (MS_SHARED | MS_SLAVE | MS_UNBINDABLE))) {
++		pr_warn_once("mount: unprivileged mount propagation may bypass namespace isolation\n");
++	}
++
+ 	ret = do_mount(kernel_dev, dir_name, kernel_type, flags, options);
+ 
+ 	kfree(options);
+@@ -5275,6 +5284,14 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
+ 	if (err <= 0)
+ 		return err;
+ 
++	/*
++	 * Warn when changing mount propagation in an unprivileged user namespace.
++	 */
++	if (!ns_capable(current_user_ns(), CAP_SYS_ADMIN) &&
++	    (kattr.propagation & MOUNT_SETATTR_PROPAGATION_FLAGS)) {
++		pr_warn_once("mount: unprivileged mount propagation may bypass namespace isolation\n");
++	}
++
+ 	err = user_path_at(dfd, path, kattr.lookup_flags, &target);
+ 	if (!err) {
+ 		err = do_mount_setattr(&target, &kattr);
+-- 
+2.49.0
 
-Makes sense. I had only considered an "ideal" usage where the resend
-ioctl is synchronized. Sounds reasonable to provide stronger guarantees
-within the surfaced api.
-
-> If we implement the control-fd/queue-fd design, we would
-> not have this problem.
-> The ioctl to open an event-queue-fd would fail it a queue
-> handler fd is already open.
-
-I had a few questions around the control-fd/queue-fd api you outlined.
-Most basically, in the new design, do we now only allow reading events /
-writing responses through the issued queue-fd.
-
-> The control fd API means that when a *queue* fd is released,
-> events remain in pending state until a new queue fd is opened
-> and can also imply the retry unanswered behavior,
-> when the *control* fd is released.
-
-It may match what you are saying, but is it safe to simply trigger the
-retry unanswered flow for pending events (events that are read but not
-answered) on queue fd release. And similarly the control fd release would
-just match the current release flow of allowing / resending all queued
-events + destroying group.
-
-And in terms of api usage does something like the following look
-reasonable for the handover:
-
-- Control fd is still kept in fd store just like current setup
-- Queue fd is not. This way on daemon restart/crash we will always resend
-any pending events via the queue fd release
-- On daemon startup always call ioctl to reissue a new queue fd
-
-> Because I do not see an immediate use case for
-> FAN_REPORT_RESPONSE_ID without handover,
-> I would start by only allowing them together and consider relaxing
-> later if such a use case is found.
->
-> I will even consider taking this further and start with
-> FAN_CLASS_PRE_CONTENT_FID requiring
-> both the new feature flags.
-
-The feature dependence sounds reasonable to me. We will need both
-FAN_REPORT_RESPONSE_ID and retry behavior + something like proposed
-control fd api to robustly handle pending events.
-
-> Am I missing anything about meta use cases
-> or the risks in the resend pending events ioctl?
-
-I don't think theres any other complications related to pending events in
-our use case. And based on my understanding of the api you proposed, it
-should address our case well. I can just briefly mention why its desirabl=
-e
-to have some mechanism to trigger resend while still using the same
-group, I might have added this in a previous discussion. Apart from
-interested (mounts of) directories, we are also adding ignore marks for
-all populated files. So we would need to recreate this state if just
-relying on retry behavior triggering on group close. Its doable on the
-use case side but probably a bit tricky versus being able to continue
-to use the existing group which has proper state.
 
