@@ -1,96 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-55042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA99B069E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 01:31:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FA2B069EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 01:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 745817B36E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 23:30:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AEDC16E99A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 23:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB752C3265;
-	Tue, 15 Jul 2025 23:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7142D63E6;
+	Tue, 15 Jul 2025 23:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="njE2Om+U"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="foYLwkng"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9249460;
-	Tue, 15 Jul 2025 23:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BDB2AD0C;
+	Tue, 15 Jul 2025 23:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752622288; cv=none; b=dWRKa2+bqahaDcOJ1zioG8EGf2FN6rJQSGKTR2AP+zJ9Ua8ZJYI64Bi7b+cfI9tUyqHWYNPiQibb/BGuz0nDT9Qs6ih7aX6gJ/SX1IEoYz1UkL6ngmafjmrfXXAR53g/S+j9AWVroBc9TZ3FWn3QkYmwm5nr1XgcMVsZplrJZWg=
+	t=1752622345; cv=none; b=gKprirQfkwdEwM7WNBnXNXKhJx3xdQD0KMVF09XVZyrYsYBJAupJ5UfvQL8eU0C7WSQ2EpqD02ibVZyPep5y/7AYMx7S4K1dngnkrznASTev2v28ZKYZEfDIS3ciBGbPd6lubh2TPihiT14+mMX2mlMFL91/7tG4eWGHSsshw8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752622288; c=relaxed/simple;
-	bh=U39fUGdLgfuWmXMQrKansqzCV/he0S+4iRMuquTPLgE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ksEkgWBLgNya3Syzf4H8sJYE5TZsdDQQjHrY7fuT8xNoKdv43l63BPm98PaQEdTdizece61rkAD+1/345VNckeu+yP8HrJAPArMfJh1mgzOIxCmlkHDLPTz7gC4eWgAF+VdGhXkQdnkesJCwH5zqAz+K+Wra02PxDr5CqfS/ez0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=njE2Om+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA551C4CEE3;
-	Tue, 15 Jul 2025 23:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752622287;
-	bh=U39fUGdLgfuWmXMQrKansqzCV/he0S+4iRMuquTPLgE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=njE2Om+U5qOoZlUOcNHAaw5KV8Txr5jep5D4NRYQTxK+LCyfS1ZyTansCOlWs/QTh
-	 o483VQOOj5Pbf5Yuy10wFbVwdz9hwu0VyEpSj2VAi4NEcpviRCc64s0V8sqj06MGoR
-	 Das6Gqqfd4hmfgzrT+6WuicQTiTx9Ld+Y7D/BROI=
-Date: Tue, 15 Jul 2025 16:31:26 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
- nvdimm@lists.linux.dev, Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, Ryan
- Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, Hugh Dickins <hughd@google.com>, Oscar Salvador
- <osalvador@suse.de>, Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH v1 0/9] mm: vm_normal_page*() improvements
-Message-Id: <20250715163126.7bcaca25364dd68835bd9c8b@linux-foundation.org>
-In-Reply-To: <20250715132350.2448901-1-david@redhat.com>
-References: <20250715132350.2448901-1-david@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752622345; c=relaxed/simple;
+	bh=XiWC8Sf5y4F6iv4CG0GS88ZI3bnXxVegBbJcvsyC144=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=El4nT+DvwTaTFW+8Xx0m7zcgOpg576JGrNuq4ku42+1SiOMcqhn5YtXICXtXF4t/ctV/64p7VkfORo5K+VttYOygv3UiUtNEABzsaug/ayuDnu2GpoRDEhgvgSTV/91StCktdnCxcjcP3raPcfOoShd/csRre3PYqLqNXB79ZcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=foYLwkng; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752622335; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=nUy4PEMS4CazYHiywIu/1adtHnlC3QRDbiuwxgypLnQ=;
+	b=foYLwkngtxAcCNclAv3NgyQLrrd3+GvGKJd/1yCSBLqHX+hl375L0fPC2ATk6/qkINjWggYd5RukK0NZaPVSnrs92uOnqvqZtwngFNE4Aq+/0r9pWNv15OBkFZHiF/fufdl5FVziQD7bbR83d3yCBS/YliwMd1ru+UU1NRa9qmQ=
+Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wj1gQiN_1752622331 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Jul 2025 07:32:12 +0800
+Message-ID: <e5165052-ead3-47f4-88f6-84eb23dc34df@linux.alibaba.com>
+Date: Wed, 16 Jul 2025 07:32:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Compressed files & the page cache
+To: Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ linux-erofs@lists.ozlabs.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+ Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+ David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
+ Paulo Alcantara <pc@manguebit.org>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ ntfs3@lists.linux.dev, Steve French <sfrench@samba.org>,
+ linux-cifs@vger.kernel.org, Phillip Lougher <phillip@squashfs.org.uk>,
+ Hailong Liu <hailong.liu@oppo.com>, Barry Song <21cnbao@gmail.com>
+References: <aHa8ylTh0DGEQklt@casper.infradead.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <aHa8ylTh0DGEQklt@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 15 Jul 2025 15:23:41 +0200 David Hildenbrand <david@redhat.com> wrote:
+Hi Matthew,
 
-> Based on mm/mm-new. I dropped the CoW PFNMAP changes for now, still
-> working on a better way to sort all that out cleanly.
+On 2025/7/16 04:40, Matthew Wilcox wrote:
+> I've started looking at how the page cache can help filesystems handle
+> compressed data better.  Feedback would be appreciated!  I'll probably
+> say a few things which are obvious to anyone who knows how compressed
+> files work, but I'm trying to be explicit about my assumptions.
 > 
-> Cleanup and unify vm_normal_page_*() handling, also marking the
-> huge zerofolio as special in the PMD. Add+use vm_normal_page_pud() and
-> cleanup that XEN vm_ops->find_special_page thingy.
-> 
-> There are plans of using vm_normal_page_*() more widely soon.
-> 
-> Briefly tested on UML (making sure vm_normal_page() still works as expected
-> without pte_special() support) and on x86-64 with a bunch of tests.
+> First, I believe that all filesystems work by compressing fixed-size
+> plaintext into variable-sized compressed blocks.  This would be a good
+> point to stop reading and tell me about counterexamples.
 
-When I was but a wee little bairn, my mother would always tell me
-"never merge briefly tested patches when you're at -rc6".  But three
-weeks in -next should shake things out.
+At least the typical EROFS compresses variable-sized plaintext (at least
+one block, e.g. 4k, but also 4k+1, 4k+2, ...) into fixed-sized compressed
+blocks for efficient I/Os, which is really useful for small compression
+granularity (e.g. 4KiB, 8KiB) because use cases like Android are usually
+under memory pressure so large compression granularity is almost
+unacceptable in the low memory scenarios, see:
+https://erofs.docs.kernel.org/en/latest/design.html
 
-However the series rejects due to the is_huge_zero_pmd ->
-is_huge_zero_pfn changes in Luiz's "mm: introduce snapshot_page() v3"
-series, so could we please have a redo against present mm-new?
+Currently EROFS works pretty well on these devices and has been
+successfully deployed in billions of real devices.
+
+> 
+>  From what I've been reading in all your filesystems is that you want to
+> allocate extra pages in the page cache in order to store the excess data
+> retrieved along with the page that you're actually trying to read.  That's
+> because compressing in larger chunks leads to better compression.
+> 
+> There's some discrepancy between filesystems whether you need scratch
+> space for decompression.  Some filesystems read the compressed data into
+> the pagecache and decompress in-place, while other filesystems read the
+> compressed data into scratch pages and decompress into the page cache.
+> 
+> There also seems to be some discrepancy between filesystems whether the
+> decompression involves vmap() of all the memory allocated or whether the
+> decompression routines can handle doing kmap_local() on individual pages.
+> 
+> So, my proposal is that filesystems tell the page cache that their minimum
+> folio size is the compression block size.  That seems to be around 64k,
+> so not an unreasonable minimum allocation size.  That removes all the
+> extra code in filesystems to allocate extra memory in the page cache.> It means we don't attempt to track dirtiness at a sub-folio granularity
+> (there's no point, we have to write back the entire compressed bock
+> at once).  We also get a single virtually contiguous block ... if you're
+> willing to ditch HIGHMEM support.  Or there's a proposal to introduce a
+> vmap_file() which would give us a virtually contiguous chunk of memory
+> (and could be trivially turned into a noop for the case of trying to
+> vmap a single large folio).
+
+I don't see this will work for EROFS because EROFS always supports
+variable uncompressed extent lengths and that will break typical
+EROFS use cases and on-disk formats.
+
+Other thing is that large order folios (physical consecutive) will
+caused "increase the latency on UX task with filemap_fault()"
+because of high-order direct reclaims, see:
+https://android-review.googlesource.com/c/kernel/common/+/3692333
+so EROFS will not set min-order and always support order-0 folios.
+
+I think EROFS will not use this new approach, vmap() interface is
+always the case for us.
+
+Thanks,
+Gao Xiang
+
+> 
 
 
