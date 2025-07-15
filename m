@@ -1,138 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-54943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010B2B0588B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 13:14:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1CEB058E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 13:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F5D03B971B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 11:13:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75CA97B71C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 11:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154F42D94A8;
-	Tue, 15 Jul 2025 11:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aQ+S4PrH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327702DEA84;
+	Tue, 15 Jul 2025 11:30:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9FA2D8DB0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 11:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAB42DE708;
+	Tue, 15 Jul 2025 11:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752578032; cv=none; b=NyiUXDfBqXEoGlAIyZrVg4c0jYaeNh6B7+Nfa2szzDhiEgWpZXSU6rrNJxsF304qsvqk7yXocaurc0zaiP9TVKAPiIa5frexZkJF8G0hA39eOb+IQSUkaKDD0huvA721lcI42DgzD7ef1fedSTlAo1PrSn0bFY0zcwNadVwPGnI=
+	t=1752579000; cv=none; b=jNfd/xMs5jeEcvGhzqic7scBO5wVACCsD+zeGOoHLpLKcSfeXS32cahOlZLe43FwDO98g/U3iGrKo0Q/RPpnJJTA+CwasJXYG9zfByEiwKtI/a7YWl3EXJ9yL1Rc1gU6J4eSFgc1EDZH+vjKKUYNiCJjIX+JwgJJBCreKIKP2+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752578032; c=relaxed/simple;
-	bh=0Psq+LF0fFXBjFzE7pcErI5N1pXJT4eRpt7sxYHTe/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qr67RdpJZK+pG0Rx+gCRpx6xsuatwZYzvcaMDpjJrYQ3ofTYqf1zSdXME738qoPmQryFxrY7OpcaGIRTjD6oFyWB8O5Peo535MDMg7/kEFeeULsnVkBDyuUEtTtWhJpaFxSdXi937Epcbwl2XAUmk61DZuVACYCNvmOChzmoK9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aQ+S4PrH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752578029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UOL35FYxBgi0boRyCseienvrlvRyobXfNrbobxVWpFo=;
-	b=aQ+S4PrHGWd4cqwDie/BgMlbRjcIgYoLU8ERQRpgGTd7s2Wl9Z2cqNSFCTnH/u+HS3JFha
-	LCs5G8QDr9r+VSJSX3lUaTUfIrpx2rou96A1Brchaf9vZ4JG86nlN1Qjl+MBJOZxJBU7LY
-	BA6OlV9UYzbkCpsYGHkPcqQPqqFE3H8=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-DO3pQRFFOKmoboErK2M4LA-1; Tue, 15 Jul 2025 07:13:48 -0400
-X-MC-Unique: DO3pQRFFOKmoboErK2M4LA-1
-X-Mimecast-MFC-AGG-ID: DO3pQRFFOKmoboErK2M4LA_1752578027
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-23689228a7fso76788445ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 04:13:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752578027; x=1753182827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UOL35FYxBgi0boRyCseienvrlvRyobXfNrbobxVWpFo=;
-        b=PUSsDRk9bdke1XKdcooKZbc0DIrw2RI67yM1ouGCveSccmMzTcP/Sjr3fOczGiIobQ
-         DXhsh3tpYGVYz/OU8a7kvQCXqbSFDz9SGMBR/pt6nCsLQRizPL84IOS8TYSmSRjjgz9P
-         upUZvEiboUjkctmCzf+QXkO8rj7hb3K4daH7E3v1COOv/dguvD20uPJCdCfZZ6LcObXW
-         Wz0sGoP+SuFsTmtpPhvM5iZfVov8XG35t3Ttf2z3mzOLfnDl7MXOnDu9U4Fgda/fJAWc
-         L5JWnE7ZS798nkTTWI+vQYhodwlKgJBRjGbSPuds4bQc30HWSlJW+47Pg239hwY5lgB9
-         XHWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfNOB2mvpr/sYHYU6SL0WillAv9ILEjeb62LNf2Lyh0zNBfI9r6tPuOC2/W/YA72NONVpHvosPDyVZ7dxm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMkqbvLfJob3Cco/Siz5+MCybleSOtZjqDGLShrw08OlKeeDJJ
-	1PbOH7GOj/wUGD9eAapFbw+2egxJWdSAIjwWlbLMhxNUqIx+xylbEpfZdyCnDpSAb7IftoF9vun
-	H1VPVnSUrixFdziOyPz9YseTzBQmmlOEcEmddBzpbX+s2Gv2fqkMw4IG67nOrfxAjxKraEPttDj
-	qTaq2Zfx7CmeUL8Z+CTKAyHeg/zbXk6hD3xDA+Brezvw==
-X-Gm-Gg: ASbGncuM15T2aB7e6JM9BUfyoezPD/WVDtYGy+F0ypkFUURzlAr8HAgsPu+vp63WOix
-	wgopNOQKB34bctnaGeDt4Hv/fPmPdBTelF6JiTEQjbOUGVH2grDtqZqigB1IULktZppgpff2IIx
-	G7KzJDoc7nlIMrvyXxXS8=
-X-Received: by 2002:a17:902:f98f:b0:23c:7b9e:1638 with SMTP id d9443c01a7336-23dede8c409mr183252835ad.35.1752578027103;
-        Tue, 15 Jul 2025 04:13:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFF20jPBqkCK5sC7WCGmfd+awMU214WUALxZwme8+8AHshin2FxLGCsX8aAVtc4qUtWoxelwIAVEpM1d5uqJBI=
-X-Received: by 2002:a17:902:f98f:b0:23c:7b9e:1638 with SMTP id
- d9443c01a7336-23dede8c409mr183252615ad.35.1752578026726; Tue, 15 Jul 2025
- 04:13:46 -0700 (PDT)
+	s=arc-20240116; t=1752579000; c=relaxed/simple;
+	bh=VXwmsqgSfWxVX5uChNhzzWPLyJcdsR25XqZonD2JA+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mdbWQs3qdX8TrIvhDlldeOQSuOWIBTgSfWqxxu+PJi0V5gHxxw/7vIyZj5jGfKRSdhueltNZPgzgNPBcwI3UGybqaHI1MHKpfIZTx+ZFVwi8iqs5K3Jk4PNEeYrobM6bExjtKQ6lFQRWVX/Ul3dZWXWhwiaTr9uYw+Ks8am5Sq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id CB097227AB3; Tue, 15 Jul 2025 13:29:52 +0200 (CEST)
+Date: Tue, 15 Jul 2025 13:29:52 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, John Garry <john.g.garry@oracle.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: Do we need an opt-in for file systems use of hw atomic writes?
+Message-ID: <20250715112952.GA23935@lst.de>
+References: <20250714131713.GA8742@lst.de> <6c3e1c90-1d3d-4567-a392-85870226144f@oracle.com> <aHULEGt3d0niAz2e@infradead.org> <6babdebb-45d1-4f33-b8b5-6b1c4e381e35@oracle.com> <20250715060247.GC18349@lst.de> <20250715-rundreise-resignieren-34550a8d92e3@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714165459.54771-1-anprice@redhat.com>
-In-Reply-To: <20250714165459.54771-1-anprice@redhat.com>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Tue, 15 Jul 2025 13:13:35 +0200
-X-Gm-Features: Ac12FXyu0WcA3bhI3kVxis6z3U10Kd9CzdAwCQ4I1WlglQCtZFNFnmFITUbiot0
-Message-ID: <CAHc6FU7sGV4OJ5EpEqzHXmCdN07uW8hFDirvoqgJeZVOySXmsw@mail.gmail.com>
-Subject: Re: [PATCH] gfs2: Set .migrate_folio in gfs2_{rgrp,meta}_aops
-To: Andrew Price <anprice@redhat.com>
-Cc: gfs2@lists.linux.dev, willy@infradead.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715-rundreise-resignieren-34550a8d92e3@brauner>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Jul 14, 2025 at 6:55=E2=80=AFPM Andrew Price <anprice@redhat.com> w=
-rote:
-> Clears up the warning added in 7ee3647243e5 ("migrate: Remove call to
-> ->writepage") that occurs in various xfstests, causing "something found
-> in dmesg" failures.
->
-> [  341.136573] gfs2_meta_aops does not implement migrate_folio
-> [  341.136953] WARNING: CPU: 1 PID: 36 at mm/migrate.c:944 move_to_new_fo=
-lio+0x2f8/0x300
->
-> Signed-off-by: Andrew Price <anprice@redhat.com>
-> ---
->  fs/gfs2/meta_io.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
-> index 9dc8885c95d07..66ee10929736f 100644
-> --- a/fs/gfs2/meta_io.c
-> +++ b/fs/gfs2/meta_io.c
-> @@ -103,6 +103,7 @@ const struct address_space_operations gfs2_meta_aops =
-=3D {
->         .invalidate_folio =3D block_invalidate_folio,
->         .writepages =3D gfs2_aspace_writepages,
->         .release_folio =3D gfs2_release_folio,
-> +       .migrate_folio =3D buffer_migrate_folio_norefs,
->  };
->
->  const struct address_space_operations gfs2_rgrp_aops =3D {
-> @@ -110,6 +111,7 @@ const struct address_space_operations gfs2_rgrp_aops =
-=3D {
->         .invalidate_folio =3D block_invalidate_folio,
->         .writepages =3D gfs2_aspace_writepages,
->         .release_folio =3D gfs2_release_folio,
-> +       .migrate_folio =3D buffer_migrate_folio_norefs,
->  };
->
->  /**
+On Tue, Jul 15, 2025 at 12:02:06PM +0200, Christian Brauner wrote:
+> > I'm not sure a XFLAG is all that useful.  It's not really a per-file
+> > persistent thing.  It's more of a mount option, or better persistent
+> > mount-option attr like we did for autofsck.
+> 
+> If we were to make this a mount option it would be really really ugly.
+> Either it is a filesystem specific mount option and then we have the
+> problem that we're ending up with different mount option names
+> per-filesystem.
 
-Thanks, I've added this to for-next.
+Not that I'm arguing for a mount option (this should be sticky), but
+we've had plenty of fs parsed mount options with common semantics.
 
-Andreas
+> It feels like this is something that needs to be done on the block
+> layer. IOW, maybe add generic block layer ioctls or a per-device sysfs
+> entry that allows to turn atomic writes on or off. That information
+> would then also potentially available to the filesystem to e.g.,
+> generate an info message during mount that hardware atomics are used or
+> aren't used. Because ultimately the block layer is where the decision
+> needs to be made.
 
+The block layer just passes things through.
 
