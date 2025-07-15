@@ -1,115 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-54910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB46DB050CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 07:19:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B1AB050D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 07:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C57343B1288
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 05:18:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D63416B8E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 05:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0025525A323;
-	Tue, 15 Jul 2025 05:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DA02D3751;
+	Tue, 15 Jul 2025 05:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5VIZ9u+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE39260580;
-	Tue, 15 Jul 2025 05:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB7023C8A1;
+	Tue, 15 Jul 2025 05:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752556708; cv=none; b=PmNHT5iMPMKFC+TjysFNxxJdcGnvL7Udkz3muF3Pd6rn+mosILx8RN59+hMX/WJpCu7HOH10Et2Dz24PJOxbV2BZS3Fgpsr1CJW8rtAR5JI9Jrx8DKUI8De15v2X+v5T2wdFk993qPf06BUE8+DQsiLLKfECXyTzyRJPp0JQPt8=
+	t=1752556812; cv=none; b=pzlGsj6Nmch2bR6lA7aCEeVO0oCQmMXld285oawaZegdyuA2u9rdQUQ8EdiVhHKKGwerZ38cXJFcLHPImzeQanBu+ydfCEU4A5CFG7UqA44JLk2yW6UXistxHD52LUfCd8EsiF7N1xGUJStYLcPbAcuEFaDkrjy6r2fvZlk7X1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752556708; c=relaxed/simple;
-	bh=V7YR6XFnZpQsMgISoY1pYpl1rtvTcBvxb02xYS0bsz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZLpMIODKBhKZr2ULkL7BeVhxp6S2gjuM4ypYe9ZbJjMJq8rnBGHVYFRQrAoODQSvETxshq5pJ+RI/X6Z5vDGLvRRexSSFQT5efLVUWvXczIMlZsSMkREPZScXOFBrMZLvV56j/fSUi1I5TfUW6bQuRYlVJl/BDgYSgnCEiWMxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56F5Hvnw089690;
-	Tue, 15 Jul 2025 14:17:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56F5HvkX089687
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 15 Jul 2025 14:17:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <7b587d24-c8a1-4413-9b9a-00a33fbd849f@I-love.SAKURA.ne.jp>
-Date: Tue, 15 Jul 2025 14:17:56 +0900
+	s=arc-20240116; t=1752556812; c=relaxed/simple;
+	bh=EUM3Bv+Y3HYOMRHJNG6hn45eJHccsRF1nJ4qkDSEuuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKYQiFciXE13z6RF9OGips2AtBnhKIMn3DpjXTNrO8+PluZ4xQ5W2kQ6spqmxPklglfdZWzUNBLX6ItT1LmeQ9294GRs7KzqYA3zeGftsEQnYBqQbjUoWjOEp+D60PnMI014N5ebo/qypI3Cuj1Qan10Mb777bHZOs5lCGimI6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5VIZ9u+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A4DC4CEE3;
+	Tue, 15 Jul 2025 05:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752556811;
+	bh=EUM3Bv+Y3HYOMRHJNG6hn45eJHccsRF1nJ4qkDSEuuw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q5VIZ9u+L5P6mMTmOgiRE7K/UyoIGYM9fqi/9MEvDCSfJiAe5zuiZPJY5OluFuO12
+	 IH5BlYOjWzaJVxHOEzE2+0ezKVoEh3U4xeg41m8oLa+X+LAdhdOvL6+5PghX+20EdG
+	 ThT2IWAyuSyHKY36m+lB93t7tzOCNbMJAbWm1TAuuujOCBKbjJ5nWdDJLvYWcDMq00
+	 p1p6R47mzfiMpIQxVnJk6Bf3riDO0o8GMX0bCj1DhcJXNQzkM1hrWVKDqTBChtRBe9
+	 CdXjPxonJsk0CHTN09EWQW6QXf/iFLoCd2CSXZAw4pslWEAOW8Pqr7r6wr8vKSmFd0
+	 n8NSvaYzD/asA==
+Date: Mon, 14 Jul 2025 22:20:11 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, hch@infradead.org, willy@infradead.org
+Subject: Re: [PATCH v3 1/7] filemap: add helper to look up dirty folios in a
+ range
+Message-ID: <20250715052011.GN2672049@frogsfrogsfrogs>
+References: <20250714204122.349582-1-bfoster@redhat.com>
+ <20250714204122.349582-2-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] hfsplus: don't use BUG_ON() in
- hfsplus_create_attributes_file()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
- <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
- <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
- <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
- <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
- <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
- <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
- <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
- <244c8da9-4c5e-42ed-99c7-ceee3e039a9c@I-love.SAKURA.ne.jp>
- <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
- <b6da38b0-dc7e-4fdc-b99c-f4fbd2a20168@I-love.SAKURA.ne.jp>
- <22cddf1f1db9a6c9efdf21f8b3197f858d37ec70.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <22cddf1f1db9a6c9efdf21f8b3197f858d37ec70.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714204122.349582-2-bfoster@redhat.com>
 
-When the volume header contains erroneous values that do not reflect
-the actual state of the filesystem, hfsplus_fill_super() assumes that
-the attributes file is not yet created, which later results in hitting
-BUG_ON() when hfsplus_create_attributes_file() is called. Replace this
-BUG_ON() with -EIO error with a message to suggest running fsck tool.
+On Mon, Jul 14, 2025 at 04:41:16PM -0400, Brian Foster wrote:
+> Add a new filemap_get_folios_dirty() helper to look up existing dirty
+> folios in a range and add them to a folio_batch. This is to support
+> optimization of certain iomap operations that only care about dirty
+> folios in a target range. For example, zero range only zeroes the subset
+> of dirty pages over unwritten mappings, seek hole/data may use similar
+> logic in the future, etc.
+> 
+> Note that the helper is intended for use under internal fs locks.
+> Therefore it trylocks folios in order to filter out clean folios.
+> This loosely follows the logic from filemap_range_has_writeback().
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Reported-by: syzbot <syzbot+1107451c16b9eb9d29e6@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/hfsplus/xattr.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+This seems correct to me, though like hch said, I'd like to hear from
+willy.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 9a1a93e3888b..18dc3d254d21 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -172,7 +172,11 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
- 		return PTR_ERR(attr_file);
- 	}
- 
--	BUG_ON(i_size_read(attr_file) != 0);
-+	if (i_size_read(attr_file) != 0) {
-+		err = -EIO;
-+		pr_err("detected inconsistent attributes file, running fsck.hfsplus is recommended.\n");
-+		goto end_attr_file_creation;
-+	}
- 
- 	hip = HFSPLUS_I(attr_file);
- 
--- 
-2.50.1
+--D
 
-
+> ---
+>  include/linux/pagemap.h |  2 ++
+>  mm/filemap.c            | 58 +++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 60 insertions(+)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index e63fbfbd5b0f..fb83ddf26621 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -941,6 +941,8 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
+>  		pgoff_t *start, pgoff_t end, struct folio_batch *fbatch);
+>  unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
+>  		pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch);
+> +unsigned filemap_get_folios_dirty(struct address_space *mapping,
+> +		pgoff_t *start, pgoff_t end, struct folio_batch *fbatch);
+>  
+>  /*
+>   * Returns locked page at given index in given cache, creating it if needed.
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index bada249b9fb7..2171b7f689b0 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2334,6 +2334,64 @@ unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
+>  }
+>  EXPORT_SYMBOL(filemap_get_folios_tag);
+>  
+> +/**
+> + * filemap_get_folios_dirty - Get a batch of dirty folios
+> + * @mapping:	The address_space to search
+> + * @start:	The starting folio index
+> + * @end:	The final folio index (inclusive)
+> + * @fbatch:	The batch to fill
+> + *
+> + * filemap_get_folios_dirty() works exactly like filemap_get_folios(), except
+> + * the returned folios are presumed to be dirty or undergoing writeback. Dirty
+> + * state is presumed because we don't block on folio lock nor want to miss
+> + * folios. Callers that need to can recheck state upon locking the folio.
+> + *
+> + * This may not return all dirty folios if the batch gets filled up.
+> + *
+> + * Return: The number of folios found.
+> + * Also update @start to be positioned for traversal of the next folio.
+> + */
+> +unsigned filemap_get_folios_dirty(struct address_space *mapping, pgoff_t *start,
+> +			pgoff_t end, struct folio_batch *fbatch)
+> +{
+> +	XA_STATE(xas, &mapping->i_pages, *start);
+> +	struct folio *folio;
+> +
+> +	rcu_read_lock();
+> +	while ((folio = find_get_entry(&xas, end, XA_PRESENT)) != NULL) {
+> +		if (xa_is_value(folio))
+> +			continue;
+> +		if (folio_trylock(folio)) {
+> +			bool clean = !folio_test_dirty(folio) &&
+> +				     !folio_test_writeback(folio);
+> +			folio_unlock(folio);
+> +			if (clean) {
+> +				folio_put(folio);
+> +				continue;
+> +			}
+> +		}
+> +		if (!folio_batch_add(fbatch, folio)) {
+> +			unsigned long nr = folio_nr_pages(folio);
+> +			*start = folio->index + nr;
+> +			goto out;
+> +		}
+> +	}
+> +	/*
+> +	 * We come here when there is no folio beyond @end. We take care to not
+> +	 * overflow the index @start as it confuses some of the callers. This
+> +	 * breaks the iteration when there is a folio at index -1 but that is
+> +	 * already broke anyway.
+> +	 */
+> +	if (end == (pgoff_t)-1)
+> +		*start = (pgoff_t)-1;
+> +	else
+> +		*start = end + 1;
+> +out:
+> +	rcu_read_unlock();
+> +
+> +	return folio_batch_count(fbatch);
+> +}
+> +
+>  /*
+>   * CD/DVDs are error prone. When a medium error occurs, the driver may fail
+>   * a _large_ part of the i/o request. Imagine the worst scenario:
+> -- 
+> 2.50.0
+> 
+> 
 
