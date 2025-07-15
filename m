@@ -1,98 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-54946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A73B0590C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 13:41:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8ABB05976
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 14:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2CC73A6B85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 11:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E51179185
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 12:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBAF2D949D;
-	Tue, 15 Jul 2025 11:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3602DE704;
+	Tue, 15 Jul 2025 11:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZRO1XpW"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="j3mm3jeG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A192F2D;
-	Tue, 15 Jul 2025 11:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971A02DCF79
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 11:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579666; cv=none; b=u+Q1C7hN4xsvvdpbz9Jwh+/S/UmNWmUUPbvn/tuuKbeFZ2UHRgyx8h+9cd5meBdIAPOOHd2D2godz/+WaTwPLZDcapKtUHtkEq0NXDODFVqacVXE3m82v2yesfjSSceuMH8VWdC+b8V5VHjuyZzlmn/geqXdS1nPEUS+O5BPgAU=
+	t=1752580795; cv=none; b=qc3ns6w45GdXrP0cx9ADXYBEyxzYEJgkadRYIexyyr0gzWGaTERA/ZfYH6RB67cbpjq06Bn7qfKGU48U3lCv5ceA6pV/5+WXCKzPOG6S7vslIedgtIV6wDbCTFyP3ZRBvqdqzTBHA9Je9xqNuFK4ma64VF2gAdCGHwNZ0vuTX0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579666; c=relaxed/simple;
-	bh=d/zXpWCmDJBuYxB5Sq07QsJCqtYmuGrasATKrTs8fI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l9gmRREvRMr9oDAcUp91Di+U8iUKFc0xD15JP65f1Vq8RhZlwwWFFrW0RSwUKnv4L4D8bCs1O0jren/EyQfk3ctnVC9Ct1OwmQjbg36fKR6bwBm0vASPn1MPG2kF1oXTuKcWCUn9s+906oC4uZsDNMchka30GeY3IYim5s/eUgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZRO1XpW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C897C4CEE3;
-	Tue, 15 Jul 2025 11:41:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752579665;
-	bh=d/zXpWCmDJBuYxB5Sq07QsJCqtYmuGrasATKrTs8fI8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AZRO1XpWhh57n2nYZVGcT0ZSXM5pmU9NzDM9FLw9VxRN3W2B82aSvam/fv7xuFO61
-	 Zq2rFpTYU4hN6EFvFB7DM4k+elbUIzqzhc0qn1fHVgmkgv1+bznxgW3E/BBP54G70h
-	 bx35O6upsK/wn9YPCa+rVAN1l/tzrE2J1ASbiHgTLJlY+X0yUVQiBCbzW4rUb5um4K
-	 VyX+ySQjSJVjJxEKYOA6+Dk6REaaEqjkkEFKPTp8rWsQ2UO5BvvzwLvDtYpKTu7ktE
-	 +tNnJGo29O1xLGV5iTvej7qV+ZaOyaqWLK2R3JsXfEv60DSDNmiDzTn0iTBKlxTAN8
-	 197sDouZRjbvg==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Qu Wenruo <wqu@suse.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz
-Subject: Re: (subset) [PATCH v5 1/6] fs: add a new remove_bdev() callback
-Date: Tue, 15 Jul 2025 13:40:58 +0200
-Message-ID: <20250715-ehebett-eigelb-f99ccbebf252@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <09909fcff7f2763cc037fec97ac2482bdc0a12cb.1752470276.git.wqu@suse.com>
-References: <09909fcff7f2763cc037fec97ac2482bdc0a12cb.1752470276.git.wqu@suse.com>
+	s=arc-20240116; t=1752580795; c=relaxed/simple;
+	bh=vL/vgtRATM1D0f4Q2K1rsI7XfAnXTv5RbrFlttDJT+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fj+bvi1djtHdiIKAYpD2Qs6xI10glVbY4uwSd49ELGnQHtBVJC8Fffvh1hKBKASzoiMq5Pi3ebFYvcfzB8ipEQSSARb4sRZdBXy9MnpFTu6WwQym8FSRBnivFguB2NfqcGXX57t/kpNEa8a2ssBQUPc+z9rFdiFq5FTKec0OSAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=j3mm3jeG; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-108-26-156-131.bstnma.fios.verizon.net [108.26.156.131])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56FBwvGV022147
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 07:58:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1752580740; bh=A33SYO1f1TFl7htpYmaPxVOHkIHPGGsvvyVdiUx7m+o=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=j3mm3jeGrGK+8Z/OG4HSOTiPwSeWSrcJACXPh3387iNdNwoAYIWZ2Oj56Q1dRwA8S
+	 uzhoiNRZG9T5yd3OWgqQ9qfbOn4CVJv3wyBmOIkyePTLlrb965tDVxtxuC6gfQuCDa
+	 iX18lC+Ysz8hHwIE6yngVRXnukfg7fLORJQ8ol3BsDcX/M56ESyKn23vdLzSHOOpm7
+	 mHZ3vD4S1nxtrdWwTve9K5eZxlHORc3CAoIpZf4SiG/BqeNTDGxRjnu57adwGsqHHa
+	 RUT7zlDvkRiI+oktOgSnz5a7pmhTphnLMhKMFLPXwx9eF6NUYKBkani0Q6QW0/gjBu
+	 /XoPjbgXKWk4A==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 773342E00D5; Tue, 15 Jul 2025 07:58:57 -0400 (EDT)
+Date: Tue, 15 Jul 2025 07:58:57 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, John Garry <john.g.garry@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: Re: Do we need an opt-in for file systems use of hw atomic writes?
+Message-ID: <20250715115857.GB74698@mit.edu>
+References: <20250714131713.GA8742@lst.de>
+ <6c3e1c90-1d3d-4567-a392-85870226144f@oracle.com>
+ <aHULEGt3d0niAz2e@infradead.org>
+ <6babdebb-45d1-4f33-b8b5-6b1c4e381e35@oracle.com>
+ <20250715060247.GC18349@lst.de>
+ <20250715-rundreise-resignieren-34550a8d92e3@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1229; i=brauner@kernel.org; h=from:subject:message-id; bh=d/zXpWCmDJBuYxB5Sq07QsJCqtYmuGrasATKrTs8fI8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSU2fkKRq5ZUahqf+FJgdIVl+7GWNaVfnz/P1QHnwl+s UYjJGh/RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERcjRgZJhzSe1Wr1Wc6P/a0 jWuT7SWDhxYGe74ttvKSarX+OEFuPiND64Ovb3665JtsmLomu7hoEuPTR/tF5/x+KafI6VjkMu0 MLwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715-rundreise-resignieren-34550a8d92e3@brauner>
 
-On Mon, 14 Jul 2025 14:55:57 +0930, Qu Wenruo wrote:
-> Currently all filesystems which implement super_operations::shutdown()
-> can not afford losing a device.
+On Tue, Jul 15, 2025 at 12:02:06PM +0200, Christian Brauner wrote:
 > 
-> Thus fs_bdev_mark_dead() will just call the ->shutdown() callback for the
-> involved filesystem.
-> 
-> But it will no longer be the case, as multi-device filesystems like
-> btrfs and bcachefs can handle certain device loss without the need to
-> shutdown the whole filesystem.
-> 
-> [...]
+> It feels like this is something that needs to be done on the block
+> layer. IOW, maybe add generic block layer ioctls or a per-device sysfs
+> entry that allows to turn atomic writes on or off. That information
+> would then also potentially available to the filesystem to e.g.,
+> generate an info message during mount that hardware atomics are used or
+> aren't used. Because ultimately the block layer is where the decision
+> needs to be made.
 
-Applied to the vfs-6.17.super branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.super branch should appear in linux-next soon.
+I'd really like it if we can edit the atomic write granularity by
+writing to the sysfs file to make it easier to test the atomic write
+codepaths in the file system.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+So I'd suggest combining this with John Garry's suggestion to allow
+atomic writes by default on NVMe devices that report NAWUPF, not to
+ignore AWUPF.  If system admistrators need to make atomic writes on
+legacy devices that only report AWUPF, they can manually set the
+atomic write granulairty.  And if they screw up --- well, that's on
+them.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+And file system developers who don't care about data safety on power
+failure (which we can't directly test via fstests anyway), but just
+want to test the code paths, we can manually write to the sysfs file
+as well.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Cheers,
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.super
-
-[1/6] fs: add a new remove_bdev() callback
-      https://git.kernel.org/vfs/vfs/c/d9c37a4904ec
+						- Ted
 
