@@ -1,292 +1,338 @@
-Return-Path: <linux-fsdevel+bounces-54924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031BFB05474
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 10:15:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1E8B05484
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 10:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4C377AFEB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 08:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BDF7562B72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 08:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C0C2749FE;
-	Tue, 15 Jul 2025 08:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41062749C3;
+	Tue, 15 Jul 2025 08:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ontBzc2w"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C8g3Sfl2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UPo4wR8H";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C8g3Sfl2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UPo4wR8H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012021.outbound.protection.outlook.com [52.101.126.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF3626FD9B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 08:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752567303; cv=fail; b=j+4OywNVEvkAxGFDXGokGXSGYMJpnMuIZR33udbMeWiJi1iaivtRQipkKuF0m2ptJot/SPCUNtUyiYPJShnbS1CBVd5kVY3agTyLacBexZT4pzVdp45ZLx5gPQ+3g2LdF10O1/8ai3TKkRbvD2xhxPzdIgprx8uhPTLpTaaan28=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752567303; c=relaxed/simple;
-	bh=C8G854hKhXUZpiIhQqPnOG4t0Bq+0EVoQwpnTsaU01k=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AR64xr3Leunm0kui8FUa596TBsqpadniQ6+UryxZGhfxWfEneofz/JTZusqycVRiVGotmzP844es0ParbDgkl0Xs9j49+qg+s1vGpv5cK3OakZCDX6cRsEK4EyY9eP675nkN9CWOlWr1Kf6ZLwa6+lHDlAKPYtbihgHuoqUzC/o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ontBzc2w; arc=fail smtp.client-ip=52.101.126.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ubN4ZMtlsamzdbcwBnLwu3choJwsASA402HcrjH0XmJ6RPruxt6IUPtzHazPz46LjoaduWzLqbPdYqMpaAGBw62bE/jlH0nlL0xiM5uT9vNV0BonYjwqANoB4BwfFfixV3R9pkHlmexU565arZlgIuyRw7E0NuN12jw2cKa/HofYWLIupCyUyZgsvcXZ6OvTmtqsmowM7hAPrDSWWVDAZfF9aTDXyLj5kGilvND2CV6gNH6Ue1DYo9mnpfqnBu84nHHb7VQaL9VqtMdexdjwUN1TQjMzIMV1u1QvYbgZwyMg5xdZQWElQ2mISMmqSp7GJdfn5nxd/ep4TYUQeHm2mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FZeEQfVM+l/Bp6RvGPhyOpU8PXaW6Xak3js/F+SrT9Q=;
- b=LZYgi2zYtwkPr+wIh7S4wTLT4/a5y6ls8JSs88tDd9PD3ftriENB2Nk5LKPQMYw+6erWwr57RTqGRc4NVOI6mRl0SDO7dZZy62tjxogD8UlZaTaJcLVzsh7qeLg0+52bs4FjkbZtkJuxOGDqsllFRmM7o1uy6dJ1O1CNIcNuyb7zie4T1PpB1KyomnOAPseXCP/W6E0kxsFX9oT4KKkKoZgjqH5RHADK44+Fsi4A7XTE25LTuOOaypxWu6Snwv70NDv/Xk5JMHWtOl705qUzn5z05koq+EW4CFT81kvgadtln70Yv1025D6+GMrgWuHt4UjvJsH3u27Qv6F2ddy+Lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZeEQfVM+l/Bp6RvGPhyOpU8PXaW6Xak3js/F+SrT9Q=;
- b=ontBzc2wk0nBlRSwO/EXvXGcSkaWSL+SxDuJ3JTl6/gTD++OM1rTsVqUu/5PiTE3q6/22fBk23PvrQFxtoJQkn/huEmRWrWu1nipCYJ7kiKMen2vVQx3SFH86gWgbOnlKSqMjxHU28qd5hHNf8tTPwzCfnpyMQR+5t9ZuMMkuJko1glFfu9HNjOKY2MSRTG0J57cfHjFJuHm4dRttrZPhwuxQNIhIADKIKW4ZIS+O0KepvYIc0eEcNvf/hrbRPiKn5ptFGC+QOEliKfvJkpu6WyfW4aoEjMfGWTGVn2wtxWCrodJfh2GccHvilUZORcKjc0ueZdFAy3xpTNmUdSphA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by KUZPR06MB8026.apcprd06.prod.outlook.com (2603:1096:d10:4a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
- 2025 08:14:55 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%4]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
- 08:14:55 +0000
-Message-ID: <ae8ea217-92c6-4294-a8ad-3414893d927d@vivo.com>
-Date: Tue, 15 Jul 2025 16:14:51 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfs: add logic of correcting a next unused CNID
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
- "slava@dubeyko.com" <slava@dubeyko.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20250610231609.551930-1-slava@dubeyko.com>
- <6c3edb07-7e3d-4113-8e57-395cfb0c0798@vivo.com>
- <3025bb40a113737b71d43d2da028fdc47e4ca940.camel@ibm.com>
-Content-Language: en-US
-From: Yangtao Li <frank.li@vivo.com>
-In-Reply-To: <3025bb40a113737b71d43d2da028fdc47e4ca940.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR02CA0023.apcprd02.prod.outlook.com
- (2603:1096:4:195::11) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27568230997
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 08:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752567406; cv=none; b=IrD8xjmNWCf1fLcw2V0midV/G8OPI7OQwoV/yEWydcbGQavg++3NBoNizByhainLkKNU6mS4/5Wh7doRKuBBAm1GbxSQiISzxdLlrlo/jwF68h5hp5pPsSpZ4Ona7a4u5i9GemH5mWSJtkzY/lkxY9rlBE6dRAFUwOWsbx4B5KA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752567406; c=relaxed/simple;
+	bh=Kc5Ck2YaJ/u+yCjsjcMZAxotpvBaW4P83qAee+003/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ex6eYWeg+B9INSbbaqwEU0qaHowMOMzE1WCZk2DStk25x0cgwj+M8rELkxJ0Pqu8ajT4z4UDnzVZ5JL4MzELtGyuYLDiP4Z+f2zy/0zt/UYaBEslcJK83QJ6IeAQ1KToBv78xLdMZdT2AwbywCPcw86aajk9Mo53sqY9w8uymmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C8g3Sfl2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UPo4wR8H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C8g3Sfl2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UPo4wR8H; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 586861F38F;
+	Tue, 15 Jul 2025 08:16:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752567402; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zPfmNj0iCM8IvXmZLlLMYpTjRoB1uOjo4A9Jy09OjAs=;
+	b=C8g3Sfl2DnDW83e+ItE0Hh/46Mfu2gVp2AtLV1O9gYk4z/qAbrDsMkEYcXfnOiG+P7aNnE
+	dcy+1F1qeDwAWydzMU/M/n8zW2i5J4tGcijP0lpy1PYEzqV8M9WM3coFtE8Mz5rjWpveg7
+	J0Zdu7cqb0q6vVMG0jlE5fLuh/KDkls=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752567402;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zPfmNj0iCM8IvXmZLlLMYpTjRoB1uOjo4A9Jy09OjAs=;
+	b=UPo4wR8HdpTGkjPTF74sBDvcmXAcFPt1is6XLIIwXSKeaCxj8vg3gDMdggPrYlcJAjLcLt
+	4mgOpPOk0ZWKeFDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=C8g3Sfl2;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UPo4wR8H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752567402; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zPfmNj0iCM8IvXmZLlLMYpTjRoB1uOjo4A9Jy09OjAs=;
+	b=C8g3Sfl2DnDW83e+ItE0Hh/46Mfu2gVp2AtLV1O9gYk4z/qAbrDsMkEYcXfnOiG+P7aNnE
+	dcy+1F1qeDwAWydzMU/M/n8zW2i5J4tGcijP0lpy1PYEzqV8M9WM3coFtE8Mz5rjWpveg7
+	J0Zdu7cqb0q6vVMG0jlE5fLuh/KDkls=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752567402;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zPfmNj0iCM8IvXmZLlLMYpTjRoB1uOjo4A9Jy09OjAs=;
+	b=UPo4wR8HdpTGkjPTF74sBDvcmXAcFPt1is6XLIIwXSKeaCxj8vg3gDMdggPrYlcJAjLcLt
+	4mgOpPOk0ZWKeFDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 273E013306;
+	Tue, 15 Jul 2025 08:16:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2OdBCWoOdmjbUAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 15 Jul 2025 08:16:42 +0000
+Message-ID: <5ec10376-6a5f-4a94-9880-e59f1b6d425f@suse.cz>
+Date: Tue, 15 Jul 2025 10:16:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|KUZPR06MB8026:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15376494-e3ff-494d-d8bf-08ddc377adfb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UE1oTFdRcEQzSGhBM21mZGJERFNud1BZeG1yK1VIR1l0aWtFd1padndzQUNw?=
- =?utf-8?B?eXp2azdDbVlSZEpvRkl0M0FhZHFxa1BFNnkxNGJLaXM1aFdLdFJUNTBWeTQ4?=
- =?utf-8?B?dFZqZEczd3U1ZlpFc1N6TEJSZHg5MmphTnVUelVIUFBJSkpYdGx5OG44RUc0?=
- =?utf-8?B?VlQ0UGRJWmVnbk8yVGhyMDVvSGZqS1k3S0ozekJWREkxakFMMUZNMitQZG9G?=
- =?utf-8?B?VTlrTGZzaDEyanhHL3pUSDRXY3VCL280RU1CVGFJRGxybExaaTZRT3JrVXg5?=
- =?utf-8?B?RGk5MHFxSzliNlNwRVRPZUgvUmN6MU9PTnV0Vi9vTU9RbE9jN3JrNGl2eGZR?=
- =?utf-8?B?bCtrTzBob1RLeUdaMnhUdnNlcmFEandOZHdDOW5tZmQ1bG4wSStmMmoyZEdB?=
- =?utf-8?B?c0NEUEFUUGNhUlRVUEl4ZzFibnRKaU13Qm5qQlpub2lUYjdBMDZGNTcrR3Yz?=
- =?utf-8?B?OEhvNDliL011WlZORGRBNlN0WTZSQ3RTdUtneWJjSGR3Z1Z4WVh6VEhsSm9W?=
- =?utf-8?B?UW9QOUZxOGsyQlpYYTlhZnBCS0U5Wnc5bVBaVTMvN2t3eXBpZkNyVXhKV0Rm?=
- =?utf-8?B?N05wRnlXQ3kyMjIxRitpSWdjQjUwMVpNaEdxNXBHZXIyQ2NqZGxucG9BUHla?=
- =?utf-8?B?VkxiSDhhL1ZoL3FhYiszRTYvak9NWTdXM1JBM3BPOXgzWU1wZFZVM3JrSTZM?=
- =?utf-8?B?b1JsT0tESkNVSnJ2eWJzUGxKQjJYRVY4NlAxT1lhQStvNUxnVDUwdGZlTnZi?=
- =?utf-8?B?RmhLU1lFZTJ6elQ4OHJueDJaUk5DOUNYaE45dUJTeWRaaFl5ZEpaNmZVeHVv?=
- =?utf-8?B?N1JacWM0ZWlvQXRQWUJ3U3JRRFordXdmc1FYNXRHL0tocitxVmUzZi9qNzFz?=
- =?utf-8?B?cUlKYUVZazQwODZhaUVaVkwwY1JIN0prSDZnZDlQaHFiQ0M1TllTT3A2UUww?=
- =?utf-8?B?UUM0amNjMzhCSldINmlTQ1g0OHdRSTVHTm1mUmlBclZoZ0hwNThyRzFzRGF4?=
- =?utf-8?B?Q25PbTBkMURnUXd4TVQwQkM4ZVBXeTU2T0txZndRUVd6MDFLUk4vcGpZZjN6?=
- =?utf-8?B?TTVvbWt4TmFQK1lzR1FVWkwxYTBFUVJseFRNSng4OENnYnRobXA4WFZMZVV3?=
- =?utf-8?B?YUlFcUxiTWN1d0dNK2hjQlJzQnZBYm1mVFdpcVk0QlR6TjN1YnkzdUQ0dmp3?=
- =?utf-8?B?dDI2dVJPOGtqRDN1c09MWmdNb3F1U0Uydzk1SVhRZi9xdUFuRzNEanlvcVZC?=
- =?utf-8?B?c3VZanNwSFhkVFlKcEdQMHd4bzBCVVJjSm9yRm1aanEzT2FMbE4zVFBVa05h?=
- =?utf-8?B?dHdzbUxmN05GeE8xSVY1eTVaeFBwL2FGWVJMb0x4VDZZRFBkN3NDeW5kenhq?=
- =?utf-8?B?cXo1SDJ3QUZpc3NwUWhmUFQxd2czN3hEdkRhM1BrdFZCcEVKRG5mWkNBdG5G?=
- =?utf-8?B?T3lLeTRxMk9JQkd1bUdIT0J1bXI1UmtNTUU2S0ZOYnhFT3JvbVdpZ2l4QlRj?=
- =?utf-8?B?TDJUZCt3bENhOExyUTdrajQ3OENtV3VjNlZVTkJVQ0dGY0Z2blo4UkpETWdX?=
- =?utf-8?B?dDJKQmtZSHc5Q3prMWpaOVkwWTJGSkNhNnB5aFNSZDZ4WkhaRlllUnJOaGd6?=
- =?utf-8?B?SU5rWkE5NUpEN3pXNzUvczhqUVpqT09keTYzVzNmZWRya2xYZmdOUzVubUNk?=
- =?utf-8?B?dHc3bERSQ3NCTU5TMEJRQ1p2eGVpd211ZFhLenIwMmdKbXFKK2lnOUF4Nm50?=
- =?utf-8?B?dEphSElmc29UR3lHQ0pKa0NzZnJ3WWdBZkQyb2lrZVFNYkVoOGRvdU5NUW9N?=
- =?utf-8?B?NjFTSDNUMjZXWmJLSFpSMUx1YTk0TnZ1TDdnaWl3MFd1SDdMMVBwdzZhUVk1?=
- =?utf-8?B?b3BtTWZMYzlBc280anZQZ0ErZXh2MlptaEdld3l5WTI0WFFqU0JXb1FkVWJa?=
- =?utf-8?Q?pVbMZWxhK+w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b1NZWFVwNzB1ay9SNkkzTWVZNkxwdzZkUVVwOCtINmtSUWJKWGFaZC82MW56?=
- =?utf-8?B?NkJYYUlpdGY0L1Fvb2szZHdtV2ZNc2pSekZZKzFnVU9ZaVZIOWloV3UxUFk5?=
- =?utf-8?B?UGd5NEhEMHR1akdDcnVKSzR2VWdINUVNZkMxZmR6cGlLYUlFMzB3TWxUMWZu?=
- =?utf-8?B?MHFjM3FPVUMwcnF1U0VDaThQU1diaHoxUVdzSTkvdkNWL2VUbDlvY3NTQlhn?=
- =?utf-8?B?SnRJNlRvUndFRXNkTnBtOUFUOUZZUURXL21DVVo0Rk16R0F5QTBiK0QydjBl?=
- =?utf-8?B?QlpJTnpVVEtsVDl4dmdxemQ3cVBLdVU5M1hzL0J3cmRaNllyTEFIM1JPM1ky?=
- =?utf-8?B?b2NsNlc4ZStuc3Jzc2xSSEpYWVpMckZiampudXNta1hGeW5kUWpLUklYWEN2?=
- =?utf-8?B?ajZGb0J1UmxLZys5SHBocHFWRFZDa3ZQb1VneHJOcU0wSGJ5NWgweEZ1N014?=
- =?utf-8?B?bUhidkdaRytJOEk2ZlpwR1pmYmVWL0JSQ3BUanJkUmtQaFpoM0F1V1ByVXVT?=
- =?utf-8?B?bXo5TUJtNkdpN0VZQ2pOdzk0MmcxS1dLN2h0eHJ0cWx4ZkFOMDVhRUZZbGxn?=
- =?utf-8?B?Z2hCbXBlcHlnTnZ6Y09SbmhOVHJUY2ZnKzRJc0ZxZXNvck82eWUySTJIazlL?=
- =?utf-8?B?TitGZkp1WWI5OTV4d3l5dnNQSUJ6VE9BdmhLNWQrL01uNU1SdndnQzBtcjl4?=
- =?utf-8?B?cjdkZjUyMkpZNTh5d0FwKzdIUzZDQ2lwQzZSWk84TGRrc3JLbmVDNVF2OElG?=
- =?utf-8?B?azU4eU9RaXVVZ1NxYmNscG1KU1hocXZudXZINTNoUFVCaTcyVTRXaGduZ3Fv?=
- =?utf-8?B?ck0wMmtJTU1LSnFKeUlZSk1PZENNUTcydmZROHFuVksxOTRrcDZsMlNZTWFp?=
- =?utf-8?B?K0p1UTlsUy9OTDNwRk5WRUIzSU5naTVSeW1YQUc5MFJ1UTd2bWExbG5XNklJ?=
- =?utf-8?B?ZklRREZxdkVqckxsWEsyb3YwUS9lT1lEcCtCQzdXbzY5NEMwd3I1V2FzSnB5?=
- =?utf-8?B?R3JKdlcwM2NJWHBSYVQyVDlTdFMvUkJ0OXF0Nk1HK0pmR0d2MmxUL3J5aHFO?=
- =?utf-8?B?Y0hzSk5KNzBCemo2cy83WUt0VUc3ZXczQVJrZEN3ekcwMDlFR0dVMWdjbEpQ?=
- =?utf-8?B?RVFjN3owcnY0L0FrMk5HRktnOHlEa3M5SXZBWFJhTXcwQnRSVzNNRlZsQTdi?=
- =?utf-8?B?Tlo5WmZsYTVVNUhGa3lVYlFqRFNIb2t1aSthM0V3SE9NNUVlOEI5YnVtNVNs?=
- =?utf-8?B?YjRPWTkza3RJOXJkM2pidkVDRU1JOTFtS2FPeExFSlRsbm10bCtKMlMrNUUr?=
- =?utf-8?B?Mk9ybEhZMDNxVnRJYkNkTjdLZWpYRWVTQ01mZmYwQnBucTVYTHhFVm44cU05?=
- =?utf-8?B?ZGRhcDZLV3JoQnkvQUNrNWdFL3NTWDFYc2FKYzM3TXVBMW5BcURzcVdqVzNk?=
- =?utf-8?B?ODlNanY0V0VnTFRpK0srOHRtcHRFQzZveENqRjVHNllFRDI4akpxdDdpaVdK?=
- =?utf-8?B?a1lQZ1hUYUY0bzJUcUdrS2kwcXNCZ242NXpsSzBBS2tkdUdNaG42WndpRnhD?=
- =?utf-8?B?dkMzL3YwbnpBSXpGVlBPbUI1dXNhZ0JkOFJxY1YvK2tNaThodWxwY0JCZDAw?=
- =?utf-8?B?aGRXbmowd3NNY3dvOXFyc08vdXRLbnNDZ29PbGxNam8rZFEyRlo4V0FaaWlH?=
- =?utf-8?B?dDZIUXVyWkRRakFIUnk5Qzl4RWc2dVlOZHhqbkpTNzZ0RnJyQ25HWklZa0E3?=
- =?utf-8?B?OWpadklkWkFNdi9PbVN1a3U3UmVpVDBJTlBQVms2Q0RycTVmK1R2OGdyQUlz?=
- =?utf-8?B?S0xMcXhvNlJmYXEwdjEzMGR5dFEwek5tOTU0Mk5oc25RNjJJUVlFM01Ob0Qx?=
- =?utf-8?B?REtxZzN4UENPYjAxSWRERFRMR1NXR3ZQaThJSktJTFhEK3hTdzUrYk9xNExu?=
- =?utf-8?B?T3lSSGhubFJhZDQ0blluYndFZFN0YUgwSlVGOXVpbXBEd20yemw0L2ZtY3R2?=
- =?utf-8?B?d3hMR2tqWGRvZjNVNXZEdWR6NVRDUGpRRWlHN0pTN1NuL3JsU1VOL1V3WFJ2?=
- =?utf-8?B?SUJYWExQL3crYk1wWFRQa2hldjhRa0RvUFBkdEdoZ3V4OG9MQ2Rwd1RmM0tU?=
- =?utf-8?Q?COym/xYS2qSyUJ519zsw3pEt9?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15376494-e3ff-494d-d8bf-08ddc377adfb
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 08:14:54.8058
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eFoflmhao4ZIGzw1g3NvMKCHLYqJfqlHfS7Vp/zzL/SCCdOgFNShWHmoD5R5sIzEYNYLii46ZNmY1FfN01DwuA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR06MB8026
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma
+ lock
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org,
+ david@redhat.com, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org,
+ mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org,
+ adobriyan@gmail.com, brauner@kernel.org, josef@toxicpanda.com,
+ yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org,
+ osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com,
+ christophe.leroy@csgroup.eu, tjmercier@google.com, kaleshsingh@google.com,
+ aha310510@gmail.com, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org
+References: <20250704060727.724817-1-surenb@google.com>
+ <20250704060727.724817-8-surenb@google.com>
+ <f532558b-b19a-40ea-b594-94d1ba92188d@lucifer.local>
+ <CAJuCfpGegZkgmnGd_kAsR8Wh5SRv_gtDxKbfHdjpG491u5U5fA@mail.gmail.com>
+ <f60a932f-71c0-448f-9434-547caa630b72@suse.cz>
+ <CAJuCfpE2H9-kRz6xSC43Ja0dmW+drcJa29hwQwQ53HRsuqRnwg@mail.gmail.com>
+ <3b3521f6-30c8-419e-9615-9228f539251e@suse.cz>
+ <CAJuCfpEgwdbEXKoMyMFiTHJMV15_g77-7N-m6ykReHLjD9rFLQ@mail.gmail.com>
+ <bulkje7nsdfikukca4g6lqnwda6ll7eu2pcdn5bdhkqeyl7auh@yzzc6xkqqllm>
+ <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com>
+ <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
+ <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 586861F38F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[google.com,oracle.com,linux-foundation.org,redhat.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLfsxmn1qwoupcjwdqfx65548p)];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,bootlin.com:url,oracle.com:email,suse.cz:dkim,suse.cz:mid,suse.cz:email]
+X-Spam-Score: -4.51
 
-Hi Slava,
-
-在 2025/7/1 03:36, Viacheslav Dubeyko 写道:
-> Hi Yangtao,
+On 7/10/25 19:02, Suren Baghdasaryan wrote:
+> On Thu, Jul 10, 2025 at 12:03 AM Suren Baghdasaryan <surenb@google.com> wrote:
+>>
+>> On Wed, Jul 9, 2025 at 10:47 AM Suren Baghdasaryan <surenb@google.com> wrote:
+>> >
+>> > On Wed, Jul 9, 2025 at 4:12 PM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
+>> > >
+>> > > * Suren Baghdasaryan <surenb@google.com> [250709 11:06]:
+>> > > > On Wed, Jul 9, 2025 at 3:03 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>> > > > >
+>> > > > > On 7/9/25 16:43, Suren Baghdasaryan wrote:
+>> > > > > > On Wed, Jul 9, 2025 at 1:57 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>> > > > > >>
+>> > > > > >> On 7/8/25 01:10, Suren Baghdasaryan wrote:
+>> > > > > >> >>> +     rcu_read_unlock();
+>> > > > > >> >>> +     vma = lock_vma_under_mmap_lock(mm, iter, address);
+>> > > > > >> >>> +     rcu_read_lock();
+>> > > > > >> >> OK I guess we hold the RCU lock the whole time as we traverse except when
+>> > > > > >> >> we lock under mmap lock.
+>> > > > > >> > Correct.
+>> > > > > >>
+>> > > > > >> I wonder if it's really necessary? Can't it be done just inside
+>> > > > > >> lock_next_vma()? It would also avoid the unlock/lock dance quoted above.
+>> > > > > >>
+>> > > > > >> Even if we later manage to extend this approach to smaps and employ rcu
+>> > > > > >> locking to traverse the page tables, I'd think it's best to separate and
+>> > > > > >> fine-grain the rcu lock usage for vma iterator and page tables, if only to
+>> > > > > >> avoid too long time under the lock.
+>> > > > > >
+>> > > > > > I thought we would need to be in the same rcu read section while
+>> > > > > > traversing the maple tree using vma_next() but now looking at it,
+>> > > > > > maybe we can indeed enter only while finding and locking the next
+>> > > > > > vma...
+>> > > > > > Liam, would that work? I see struct ma_state containing a node field.
+>> > > > > > Can it be freed from under us if we find a vma, exit rcu read section
+>> > > > > > then re-enter rcu and use the same iterator to find the next vma?
+>> > > > >
+>> > > > > If the rcu protection needs to be contigous, and patch 8 avoids the issue by
+>> > > > > always doing vma_iter_init() after rcu_read_lock() (but does it really avoid
+>> > > > > the issue or is it why we see the syzbot reports?) then I guess in the code
+>> > > > > quoted above we also need a vma_iter_init() after the rcu_read_lock(),
+>> > > > > because although the iterator was used briefly under mmap_lock protection,
+>> > > > > that was then unlocked and there can be a race before the rcu_read_lock().
+>> > > >
+>> > > > Quite true. So, let's wait for Liam's confirmation and based on his
+>> > > > answer I'll change the patch by either reducing the rcu read section
+>> > > > or adding the missing vma_iter_init() after we switch to mmap_lock.
+>> > >
+>> > > You need to either be under rcu or mmap lock to ensure the node in the
+>> > > maple state hasn't been freed (and potentially, reallocated).
+>> > >
+>> > > So in this case, in the higher level, we can hold the rcu read lock for
+>> > > a series of walks and avoid re-walking the tree then the performance
+>> > > would be better.
+>> >
+>> > Got it. Thanks for confirming!
+>> >
+>> > >
+>> > > When we return to userspace, then we should drop the rcu read lock and
+>> > > will need to vma_iter_set()/vma_iter_invalidate() on return.  I thought
+>> > > this was being done (through vma_iter_init()), but syzbot seems to
+>> > > indicate a path that was missed?
+>> >
+>> > We do that in m_start()/m_stop() by calling
+>> > lock_vma_range()/unlock_vma_range() but I think I have two problems
+>> > here:
+>> > 1. As Vlastimil mentioned I do not reset the iterator when falling
+>> > back to mmap_lock and exiting and then re-entering rcu read section;
+>> > 2. I do not reset the iterator after exiting rcu read section in
+>> > m_stop() and re-entering it in m_start(), so the later call to
+>> > lock_next_vma() might be using an iterator with a node that was freed
+>> > (and possibly reallocated).
+>> >
+>> > >
+>> > > This is the same thing that needed to be done previously with the mmap
+>> > > lock, but now under the rcu lock.
+>> > >
+>> > > I'm not sure how to mitigate the issue with the page table, maybe we
+>> > > guess on the number of vmas that we were doing for 4k blocks of output
+>> > > and just drop/reacquire then.  Probably a problem for another day
+>> > > anyways.
+>> > >
+>> > > Also, I think you can also change the vma_iter_init() to vma_iter_set(),
+>> > > which is slightly less code under the hood.  Vlastimil asked about this
+>> > > and it's probably a better choice.
+>> >
+>> > Ack.
+>> > I'll update my series with these fixes and all comments I received so
+>> > far, will run the reproducers to confirm no issues and repost them
+>> > later today.
+>>
+>> I have the patchset ready but would like to test it some more. Will
+>> post it tomorrow.
 > 
-> On Thu, 2025-06-26 at 15:42 +0800, Yangtao Li wrote:
->> Hi Slava,
->>
->> 在 2025/6/11 07:16, Viacheslav Dubeyko 写道:
->>> The generic/736 xfstest fails for HFS case:
->>>
->>> BEGIN TEST default (1 test): hfs Mon May 5 03:18:32 UTC 2025
->>> DEVICE: /dev/vdb
->>> HFS_MKFS_OPTIONS:
->>> MOUNT_OPTIONS: MOUNT_OPTIONS
->>> FSTYP -- hfs
->>> PLATFORM -- Linux/x86_64 kvm-xfstests 6.15.0-rc4-xfstests-g00b827f0cffa #1 SMP PREEMPT_DYNAMIC Fri May 25
->>> MKFS_OPTIONS -- /dev/vdc
->>> MOUNT_OPTIONS -- /dev/vdc /vdc
->>>
->>> generic/736 [03:18:33][ 3.510255] run fstests generic/736 at 2025-05-05 03:18:33
->>> _check_generic_filesystem: filesystem on /dev/vdb is inconsistent
->>> (see /results/hfs/results-default/generic/736.full for details)
->>> Ran: generic/736
->>> Failures: generic/736
->>> Failed 1 of 1 tests
->>>
->>> The HFS volume becomes corrupted after the test run:
->>>
->>> sudo fsck.hfs -d /dev/loop50
->>> ** /dev/loop50
->>> Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
->>> Executing fsck_hfs (version 540.1-Linux).
->>> ** Checking HFS volume.
->>> The volume name is untitled
->>> ** Checking extents overflow file.
->>> ** Checking catalog file.
->>> ** Checking catalog hierarchy.
->>> ** Checking volume bitmap.
->>> ** Checking volume information.
->>> invalid MDB drNxtCNID
->>> Master Directory Block needs minor repair
->>> (1, 0)
->>> Verify Status: VIStat = 0x8000, ABTStat = 0x0000 EBTStat = 0x0000
->>> CBTStat = 0x0000 CatStat = 0x00000000
->>> ** Repairing volume.
->>> ** Rechecking volume.
->>> ** Checking HFS volume.
->>> The volume name is untitled
->>> ** Checking extents overflow file.
->>> ** Checking catalog file.
->>> ** Checking catalog hierarchy.
->>> ** Checking volume bitmap.
->>> ** Checking volume information.
->>> ** The volume untitled was repaired successfully.
->>>
->>> The main reason of the issue is the absence of logic that
->>> corrects mdb->drNxtCNID/HFS_SB(sb)->next_id (next unused
->>> CNID) after deleting a record in Catalog File. This patch
->>> introduces a hfs_correct_next_unused_CNID() method that
->>> implements the necessary logic. In the case of Catalog File's
->>> record delete operation, the function logic checks that
->>> (deleted_CNID + 1) == next_unused_CNID and it finds/sets the new
->>> value of next_unused_CNID.
->>
->> Sorry for the late reply.
->>
->> I got you now, and I did some research. And It's a problem of CNID
->> usage. Catalog tree identification number is a type of u32.
->>
->> And there're some ways to reuse cnid.
->> If cnid reachs U32_MAX, kHFSCatalogNodeIDsReusedMask(apple open source
->> code) is marked to reuse unused cnid.
->> And we can use HFSIOC_CHANGE_NEXTCNID ioctl to make use of unused cnid.
->>
->>
->> What confused me is that fsck for hfsplus ignore those unused cnid[1],
->> but fsck for hfs only ignore those unused cnid if mdbP->drNxtCNID <=
->> (vcb->vcbNextCatalogID + 4096(which means over 4096 unused cnid)[2]?
->>
->> And I didn't find code logic of changind cnid in apple source code when
->> romove file.
->>
->> So I think your idea is good, but it looks like that's not what the
->> original code did? If I'm wrong, please correct me.
->>
->>
+> Ok, I found a couple of issues using the syzbot reproducer [1] (which
+> is awesome BTW!):
+> 1. rwsem_acquire_read() inside vma_start_read() at [2] should be moved
+> after the last check, otherwise the lock is considered taken on
+> vma->vm_refcnt overflow;
+
+I think it's fine because if the last check fails there's a
+vma_refcount_put() that includes rwsem_release(), no?
+
+> 2. query_matching_vma() is missing unlock_vma() call when it does
+> "goto next_vma;" and re-issues query_vma_find_by_addr(). The previous
+> vma is left locked;
 > 
-> I think you missed what is the problem here. It's not about reaching U32_MAX
-> threshold. The generic/736 test simply creates some number of files and, then,
-> deletes it. We increment mdb->drNxtCNID/HFS_SB(sb)->next_id on every creation of
-> file or folder because we assign the next unused CNID to the created file or
-> folder. But when we delete the file or folder, then we never correct the mdb-
->> drNxtCNID/HFS_SB(sb)->next_id. And fsck tool expects that next unused CNID
-> should be equal to the last allocated/used CNID + 1. Let's imagine that we
-> create four files, then file1 has CNID 16, file2 has CNID 17, file3 has CNID 18,
-> file4 has CNID 19, and next unused CNID should be 20. If we delete file1, then
-> next unused CNID should be 20 because file4 still exists. And if we deleted all
-> files, then next unused CNID should be 16 again. This is what fsck tool expects
-> to see.
+> [1] https://syzkaller.appspot.com/x/repro.c?x=101edf70580000
+> [2] https://elixir.bootlin.com/linux/v6.15.5/source/include/linux/mm.h#L747
+> 
+> After these fixes it's much harder to fail but I still get one more
+> error copied below. I will continue the investigation and will hold
+> off reposting until this is fixed. That will be next week since I'll
+> be out of town the rest of this week.
+> 
+> Andrew, could you please remove this patchset from mm-unstable for now
+> until I fix the issue and re-post the new version?
 
-I got it. If we deleted all files, then next unused CNID should be 16, 
-which sounds reasonable. In fact, then next unused CNID will keep be 20 
-for both hfs and hfsplus.
+Andrew can you do that please? We keep getting new syzbot reports.
 
-It confused me whther changing CNID after remove operation is the best 
-way for hfs. Because I didn't find such logic from apple's hfs code.
+> The error I got after these fixes is:
 
-And only hfs failed generic/736, which related to fsck for hfsplus 
-ignore unused CNID. Could we ignore unused CNID for hfs too?
-Those unused CNID might be reused after setting 
-kHFSCatalogNodeIDsReusedMask flag.
+I suspect the root cause is the ioctls are not serialized against each other
+(probably not even against read()) and yet we treat m->private as safe to
+work on. Now we have various fields that are dangerous to race on - for
+example locked_vma and iter races would explain a lot of this.
 
-Thx,
-Yangtao
-
+I suspect as long as we used purely seq_file workflow, it did the right
+thing for us wrt serialization, but the ioctl addition violates that. We
+should rather recheck even the code before this series, if dangerous ioctl
+vs read() races are possible. And the ioctl implementation should be
+refactored to use an own per-ioctl-call private context, not the seq_file's
+per-file-open context.
 
