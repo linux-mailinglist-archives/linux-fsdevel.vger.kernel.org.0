@@ -1,68 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-55033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7493B067D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 22:41:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BD4B0682F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 22:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E268C561CF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 20:41:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3110F7B3FA6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 20:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9979927F183;
-	Tue, 15 Jul 2025 20:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5917C2BE7D9;
+	Tue, 15 Jul 2025 20:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rkI+4BNO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAgPb5sS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F4E19ABC3;
-	Tue, 15 Jul 2025 20:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF0F1F0E24;
+	Tue, 15 Jul 2025 20:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752612057; cv=none; b=oys7k8LKnehpDxUSbVpSK+KE7jvu/juWrJzEtpUvAdW7ikbGQolO4jF6lYbFlbTkoCDaT3+DxSPonw9NeVWtEiaZw4q//eewP5HczK88dTjuLBbgehH0J8Fwd3U+qflArKSmw+WPiep/wsBEZvIHWmTrOODH2UrgEAtb/x64FZM=
+	t=1752612967; cv=none; b=DJavZePG0VKMzZOzM4nmQpXtaszkhz7UagdAXih+/QDpOlvgZLMJUmsFckkt/zeLA3Ho4RCQL3YNw8YRzx2w6A8H71jvs7jQxshI03K/ArXgmCzePhpcHqUknlBbZmavzJHtR3Z/vfo/vntrkCN5goLF9OLqd72DSOLaKPFBSvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752612057; c=relaxed/simple;
-	bh=bjgYAM2QLmUopNUDY1m+jMaK0QwGYud5GRBrIM2R+Hc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lurG8QA/4vbRPS22aJa6b7hJEGnROOp3htwmsfdMZzj8dFOEv2Zy3eqLJwCnDq9qGX1jSHOD2k2VGmXX0yNd7B3E09U+kff47XiRZhG0wLd08GfN6DS+F9URAZjiq3VisG02eYPOHtNeP/jFksSLnTou5n08ulHE1TYw9GZ/MWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rkI+4BNO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-	Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=SYy7+JhvSNYS+NgaNxt53BfDsD6DTcsBMQgVgtXAnMw=; b=rkI+4BNOMXmHOlYzssTyZGMoyL
-	aI4+mtJLryNxKiCc4W+ld08C0+bphxREcY/dxe5wfC8vq1Jm/gkORw00fkrVN1wN9ZebXvUZdsASi
-	zm/TWcijb+f/QGxCr7JAj8hN/eD1ZF8y8US+BmVKcsXKcioWHpvbobjpz6cJAgAK7CUS1qNhk4uFL
-	tjWrM8+Ywd756Z75jpjjjhA98m3aZFKJrVLHToG44C24SvMEzbGkUiMb11sHEeqIF4vneMyjl5vwU
-	TzrTkImLRsy3P+dQk+EBbDZjxoBwbifTvRQpCJk58iDMe6EFuJx0uQ/0H2pK8Hk2W4Z21ZbGxiHf4
-	6wuu3xaA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubmSA-0000000DkmQ-22ck;
-	Tue, 15 Jul 2025 20:40:42 +0000
-Date: Tue, 15 Jul 2025 21:40:42 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	Nicolas Pitre <nico@fluxnic.net>, Gao Xiang <xiang@kernel.org>,
-	Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-	David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
-	Paulo Alcantara <pc@manguebit.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	ntfs3@lists.linux.dev, Steve French <sfrench@samba.org>,
-	linux-cifs@vger.kernel.org,
-	Phillip Lougher <phillip@squashfs.org.uk>
-Subject: Compressed files & the page cache
-Message-ID: <aHa8ylTh0DGEQklt@casper.infradead.org>
+	s=arc-20240116; t=1752612967; c=relaxed/simple;
+	bh=BypLHT8P3y7WLcxpAqRf9nezS1MXJSKqpoWXatLi35Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwM3cgZGp7vTJ1fIUFVhwLvjcw7yRjxZl34kuGXMdW0i9FaTsvmFkACshM+cE3x2Xmy0ebtshA7KU8HdQqcSvBmD59GP4XoRhkn+oqAheC9yMG74JaSnWFk9HONv4dLDjWS5a68ytbj/OHklv25WjrepOpfce/VFdXzakk0mnho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAgPb5sS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC9BC4CEE3;
+	Tue, 15 Jul 2025 20:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752612967;
+	bh=BypLHT8P3y7WLcxpAqRf9nezS1MXJSKqpoWXatLi35Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gAgPb5sSG955z0OLvwZTks1uWTR0zFbzL+bgn37yNPO9OwCbjWyZenxB2NhU9PjEK
+	 2nWUmDRao/DnjxwrGOKGCopYuqmXp5ayTa31AnSCS7eJDn5LQ4+uMFKCleJoWTT2S8
+	 rXtFFVJQLFcf/k1KI7+rlsN6jNlj/774pp24ThYNdEjBonSXFG43QamgWrp9Gpe3sl
+	 jlwU1bKkMxYBR2vx29ZCNEgaCZtfJ/2zgbJ/zTOUmlAOg3OtD3I5ytGaTSdYmjsFA2
+	 8mtVnEu0K64YvnY5WsHSwP/3eV7MjGMPai0FcDwYWWWQOC85+m+9JVNVX3raJGWwcm
+	 sYESA+iKvoLFA==
+Date: Tue, 15 Jul 2025 14:56:04 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: John Garry <john.g.garry@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: Do we need an opt-in for file systems use of hw atomic writes?
+Message-ID: <aHbAZBf12kiEdXfH@kbusch-mbp>
+References: <20250714131713.GA8742@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,40 +59,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250714131713.GA8742@lst.de>
 
-I've started looking at how the page cache can help filesystems handle
-compressed data better.  Feedback would be appreciated!  I'll probably
-say a few things which are obvious to anyone who knows how compressed
-files work, but I'm trying to be explicit about my assumptions.
+On Mon, Jul 14, 2025 at 03:17:13PM +0200, Christoph Hellwig wrote:
+> Is is just me, or would it be a good idea to require an explicit
+> opt-in to user hardware atomics?
 
-First, I believe that all filesystems work by compressing fixed-size
-plaintext into variable-sized compressed blocks.  This would be a good
-point to stop reading and tell me about counterexamples.
+IMO, if the block device's limits reports atomic capabilities, it's fair
+game for any in kernel use. These are used outside of filesystems too,
+like through raw block fops.
 
-From what I've been reading in all your filesystems is that you want to
-allocate extra pages in the page cache in order to store the excess data
-retrieved along with the page that you're actually trying to read.  That's
-because compressing in larger chunks leads to better compression.
-
-There's some discrepancy between filesystems whether you need scratch
-space for decompression.  Some filesystems read the compressed data into
-the pagecache and decompress in-place, while other filesystems read the
-compressed data into scratch pages and decompress into the page cache.
-
-There also seems to be some discrepancy between filesystems whether the
-decompression involves vmap() of all the memory allocated or whether the
-decompression routines can handle doing kmap_local() on individual pages.
-
-So, my proposal is that filesystems tell the page cache that their minimum
-folio size is the compression block size.  That seems to be around 64k,
-so not an unreasonable minimum allocation size.  That removes all the
-extra code in filesystems to allocate extra memory in the page cache.
-It means we don't attempt to track dirtiness at a sub-folio granularity
-(there's no point, we have to write back the entire compressed bock
-at once).  We also get a single virtually contiguous block ... if you're
-willing to ditch HIGHMEM support.  Or there's a proposal to introduce a
-vmap_file() which would give us a virtually contiguous chunk of memory
-(and could be trivially turned into a noop for the case of trying to
-vmap a single large folio).
-
+We've already settled on discarding problematic nvme attributes from
+consideration. Is there something beyond that you've really found? If
+so, maybe we should continue down the path of splitting more queue
+limits into "hardware" and "user" values, and make filesystems subscribe
+to the udev value where it defaults to "unsupported" for untrusted
+devices.
 
