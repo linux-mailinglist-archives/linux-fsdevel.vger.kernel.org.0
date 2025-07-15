@@ -1,108 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-54948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-54949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26DCB0599E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 14:11:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6434B059DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 14:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED4F33A672C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 12:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE0916F98C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Jul 2025 12:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7182F533D6;
-	Tue, 15 Jul 2025 12:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFE02DA750;
+	Tue, 15 Jul 2025 12:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i43V6tij";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NbbyxiNS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i43V6tij";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NbbyxiNS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hzZNBylO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC4D26CE31
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 12:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F092CCC5;
+	Tue, 15 Jul 2025 12:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752581494; cv=none; b=iOMEB63cmD6NHW+jUpJwTQ7ZAk4Y9Bqx0jovzwVdNfVpD73k1FN6B4+fXsd8KefZm+8nBWHe7uYajXQEq1HYiVYPfKPeaUROxfep3UnnoBSQNgHS8wuw+1D2ZrfNwiKU6aMBn5tFEKThRalTwkoPH+d6WRKET6m9V83+MT6aEZk=
+	t=1752582041; cv=none; b=shpogM62T4ZH9rMiQT/5rC/9cZOhyrmBIB11A2GXczjvHOuBIL3FXjHf9vJvDms+WwRBEjRF1zbui2LDKMh0X/Xsl18eKRDpjqM4MupM6SHukKFPJ2pcCSmj6JsgTAOtTBWS65VVS5FaEYvEsB9J09kLbKaxH5ep05MZToMNacY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752581494; c=relaxed/simple;
-	bh=1IXXqTZAgpGbOrPLX2uW9FfJhvCinAG+pPHtfq/E9V0=;
+	s=arc-20240116; t=1752582041; c=relaxed/simple;
+	bh=tMl1JvlwlYhUCWAJRzNllyLX2xjK9CnGH96Qoit7K4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VVyw2j6yOhMWBItj2S8kODhnfHoMobVZI+28CBj2HXSLol4NBEg6dc0lmwDEzqxruw2RP9lS2S0U98aGl7AeHgce3JYXCjeb4b2fq6HLbCIaDWqB1GX+CROTZ4hHkzH069cUsyAgTvtdwXm2z0bz/Gbqy7oJDkd3SUlpz8OiVsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=i43V6tij; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NbbyxiNS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=i43V6tij; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NbbyxiNS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 07D452124F;
-	Tue, 15 Jul 2025 12:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752581491; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/PPPpjjJHrfsTExege3o0O2P13HHKLAkALpweQSfj5k=;
-	b=i43V6tijXA6scBGSsqOMtFAj+gr4tDymlTD7NEx4OHW3nPl1JprGpqtjf2yu47AeiJc66g
-	CRVaiGDvcpoxyDpypY70+RfQHzJLNx42AVkioQV4FFdYfgKtqrBMB4qGCKRyKd9Vviod+G
-	TzVdLrlza9lW/K4aKaQoUHUSp9j4zbE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752581491;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/PPPpjjJHrfsTExege3o0O2P13HHKLAkALpweQSfj5k=;
-	b=NbbyxiNSfNt2NLNEwrLEqe263byBEcX4q2mB5qtrxkPjgQj+cBzg3dLJJo5FE5XjU9c4Fw
-	Nw3qjoMl6ccGDZBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=i43V6tij;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NbbyxiNS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752581491; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/PPPpjjJHrfsTExege3o0O2P13HHKLAkALpweQSfj5k=;
-	b=i43V6tijXA6scBGSsqOMtFAj+gr4tDymlTD7NEx4OHW3nPl1JprGpqtjf2yu47AeiJc66g
-	CRVaiGDvcpoxyDpypY70+RfQHzJLNx42AVkioQV4FFdYfgKtqrBMB4qGCKRyKd9Vviod+G
-	TzVdLrlza9lW/K4aKaQoUHUSp9j4zbE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752581491;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/PPPpjjJHrfsTExege3o0O2P13HHKLAkALpweQSfj5k=;
-	b=NbbyxiNSfNt2NLNEwrLEqe263byBEcX4q2mB5qtrxkPjgQj+cBzg3dLJJo5FE5XjU9c4Fw
-	Nw3qjoMl6ccGDZBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB7BC13A68;
-	Tue, 15 Jul 2025 12:11:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id utt5OXJFdmhaHQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 15 Jul 2025 12:11:30 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7A31DA0993; Tue, 15 Jul 2025 14:11:30 +0200 (CEST)
-Date: Tue, 15 Jul 2025 14:11:30 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, 
-	josef@toxicpanda.com, lesha@meta.com, linux-fsdevel@vger.kernel.org, sargun@meta.com
-Subject: Re: [PATCH] fanotify: support custom default close response
-Message-ID: <f5xtqk4gpbeowtnbiegbfosnpjr4ge42rfebjgyz66cxxzmhse@fjn44egzgdpt>
-References: <CAOQ4uxjd1tPFoV6CrsktJK8yr+ZMBptTMK-qH_+ADjiK7voYOw@mail.gmail.com>
- <20250711223041.1249535-1-ibrahimjirdeh@meta.com>
- <CAOQ4uxhN6ok6BCBGbxeUt9ULq6g=qL6=_2_QGi8MqTHv5ZN7Vg@mail.gmail.com>
- <sx5g7pmkchjqucfbzi77xh7wx4wua5nteqi5bsa2hfqgxua2a2@v7x6ja3gsirn>
- <CAOQ4uxj6EF5G=0RAE45ovVLqbro9TJP-WdP-ixwAgnr7zg-2wA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/EsgYzxAdjRM3J0N/wcEG6DOSX9LNBv9L88vn3MnIu6E9WH1y8K6kGfQpoSRU+2AOGpOsZqcyBj5upFJVKBgoQRNwffQ1jvcCZ0CgrUt92xvO76kKoC07oR3LPJJmbD+oP8bURtcm4RSRWgQVx3eOVaA249b8aO72Mm3bTlkEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hzZNBylO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34CDEC4CEE3;
+	Tue, 15 Jul 2025 12:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752582041;
+	bh=tMl1JvlwlYhUCWAJRzNllyLX2xjK9CnGH96Qoit7K4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hzZNBylOhtaXDKpYwRumyL4AAGY6tVlnbwOdsYIS8EypLyTy3KxtuC/R4rZiHxD9t
+	 dBOCAsI+w41ty6KcfglTwCv2GwgEm4cVvSamDN2wJ3Pgmh+b4XC2VaFIE7GoEVQJha
+	 GFQhcxa490toVKN3yXsydwKx/Rh7IEkT5fLieqa2KcSzq1BQkfWXi/U4d3rCP3UaPp
+	 MRRtlnKyYWWMNdGhfwRaesKaWvq3glrI1vZ4K5r3eYeFFhu6u+Gl7rd6aNQVkFIOqO
+	 IKoQjOpJuifXqHNUh1+O7oGPETsDEdt4V9l7IX/w0Ro2FgBOQM05ijKCPwhuUxsRrd
+	 dnmKYyY/xUkuA==
+Date: Tue, 15 Jul 2025 14:20:36 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: John Garry <john.g.garry@oracle.com>, 
+	Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-nvme@lists.infradead.org
+Subject: Re: Do we need an opt-in for file systems use of hw atomic writes?
+Message-ID: <20250715-gekapert-einsam-4645671c7555@brauner>
+References: <20250714131713.GA8742@lst.de>
+ <6c3e1c90-1d3d-4567-a392-85870226144f@oracle.com>
+ <aHULEGt3d0niAz2e@infradead.org>
+ <6babdebb-45d1-4f33-b8b5-6b1c4e381e35@oracle.com>
+ <20250715060247.GC18349@lst.de>
+ <20250715-rundreise-resignieren-34550a8d92e3@brauner>
+ <20250715112952.GA23935@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -111,114 +65,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj6EF5G=0RAE45ovVLqbro9TJP-WdP-ixwAgnr7zg-2wA@mail.gmail.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 07D452124F
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -4.01
+In-Reply-To: <20250715112952.GA23935@lst.de>
 
-On Mon 14-07-25 21:59:22, Amir Goldstein wrote:
-> On Mon, Jul 14, 2025 at 7:25 PM Jan Kara <jack@suse.cz> wrote:
-> > > I don't think there is much to lose from this retry behavior.
-> > > The only reason we want to opt-in for it is to avoid surprises of
-> > > behavior change in existing deployments.
-> > >
-> > > While we could have FAN_RETRY_UNANSWERED as an
-> > > independent feature without a handover ioctl,
-> > > In order to avoid test matrix bloat, at least for a start (we can relax later),
-> > > I don't think that we should allow it as an independent feature
-> > > and especially not for legacy modes (i.e. for Anti-Virus) unless there
-> > > is a concrete user requesting/testing these use cases.
-> >
-> > With queue-fd design I agree there's no reason not to have the "resend
-> > pending events" behavior from the start.
-> >
-> > > Going on about feature dependency.
-> > >
-> > > Practically, a handover ioctl is useless without
-> > > FAN_REPORT_RESPONSE_ID, so for sure we need to require
-> > > FAN_REPORT_RESPONSE_ID for the handover ioctl feature.
-> > >
-> > > Because I do not see an immediate use case for
-> > > FAN_REPORT_RESPONSE_ID without handover,
-> > > I would start by only allowing them together and consider relaxing
-> > > later if such a use case is found.
-> >
-> > We can tie them together but I think queue-fd design doesn't require
-> > FAN_REPORT_RESPONSE_ID. Since we resend events anyway, we'd generate new
-> > fds for events as well and things would just work AFAICT.
-> >
+On Tue, Jul 15, 2025 at 01:29:52PM +0200, Christoph Hellwig wrote:
+> On Tue, Jul 15, 2025 at 12:02:06PM +0200, Christian Brauner wrote:
+> > > I'm not sure a XFLAG is all that useful.  It's not really a per-file
+> > > persistent thing.  It's more of a mount option, or better persistent
+> > > mount-option attr like we did for autofsck.
+> > 
+> > If we were to make this a mount option it would be really really ugly.
+> > Either it is a filesystem specific mount option and then we have the
+> > problem that we're ending up with different mount option names
+> > per-filesystem.
 > 
-> Right. hmm.
-> I'd still like to consider the opportunity of the new-ish API for
-> deprecating some old legacy API baggage.
+> Not that I'm arguing for a mount option (this should be sticky), but
+> we've had plenty of fs parsed mount options with common semantics.
 > 
-> For example: do you consider the fact that async events are mixed
-> together with permission/pre-content events in the same queue
-> an historic mistake or a feature?
- 
-So far I do consider it a feature although not a particularly useful one.
-Given fanotify doesn't guarantee ordering of events and async events can
-arbitrarily skip over the permission events there's no substantial
-difference to having two notification groups. If you can make a good case
-of what would be simpler if we disallowed that I'm open to consider
-disallowing that.
+> > It feels like this is something that needs to be done on the block
+> > layer. IOW, maybe add generic block layer ioctls or a per-device sysfs
+> > entry that allows to turn atomic writes on or off. That information
+> > would then also potentially available to the filesystem to e.g.,
+> > generate an info message during mount that hardware atomics are used or
+> > aren't used. Because ultimately the block layer is where the decision
+> > needs to be made.
+> 
+> The block layer just passes things through.
 
-> I'm tempted, as we split the control fd from the queue fd to limit
-> a queue to events of the same "type".
-> Maybe an O_RDONLY async queue fd
-> or an O_RDWR permission events queue fd
-> or only allow the latter with the new API?
+We already have bdev_can_atomic_write() which checks whether the
+underlying device is capable of hardware assisted atomic writes. If
+that's the case the filesystem currently just uses them, fine.
 
-There's value in restricting unneeded functionality and there's also value
-in having features not influencing one another so the balance has to be
-found :). So far I don't find that disallowing async events with queue fd
-or restricting fd mode for queue fd would simplify our life in a
-significant way but maybe I'm missing something.
+So it is possible to implement an ioctl() that allows an administrator
+to mark a device as untrusted for hardware assisted atomic writes.
 
-> Please note that FAN_CLOEXEC and FAN_NONBLOCK
-> currently apply to the control fd.
-> I guess they can also apply to the queue fd,
-> Anyway the control fd should not be O_RDWR
-> probably O_RDONLY even though it's not for reading.
+This is also nice is because this can be integrated with udev easily. If
+a device is know to have broken hardware assisted atomic writes then add
+the device into systemd-udev's hardware database (hwdb).
 
-I guess the ioctl to create queue fd can take desired flags for the queue
-fd so we don't have to second guess what the application wants.
+When systemd-udev sees that device show up during boot it will
+automatically mark that device as having broken atomic write support and
+any mount of that device will have the filesystem immediately see the
+broken hardware assisted atomic write support in bdev_can_atomic_write()
+and not use it.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Fwiw, this pattern is already used for other stuff. For example for the
+iocost stuff that udev will auto-apply if known. The broken atomic write
+stuff would fit very well in there. Either it's an allowlist or a
+denylist.
+
+commit 6b8e90545e918a4653281b3672a873e948f12b65
+Author:     Gustavo Noronha Silva <gustavo.noronha@collabora.com>
+AuthorDate: Mon May 2 14:02:23 2022 -0300
+Commit:     Lennart Poettering <lennart@poettering.net>
+CommitDate: Thu Apr 20 16:45:57 2023 +0200
+
+    Apply known iocost solutions to block devices
+
+    Meta's resource control demo project[0] includes a benchmark tool that can
+    be used to calculate the best iocost solutions for a given SSD.
+
+      [0]: https://github.com/facebookexperimental/resctl-demo
+
+    A project[1] has now been started to create a publicly available database
+    of results that can be used to apply them automatically.
+
+      [1]: https://github.com/iocost-benchmark/iocost-benchmarks
+
+    This change adds a new tool that gets triggered by a udev rule for any
+    block device and queries the hwdb for known solutions. The format for
+    the hwdb file that is currently generated by the github action looks like
+    this:
+
+      # This file was auto-generated on Tue, 23 Aug 2022 13:03:57 +0000.
+      # From the following commit:
+      # https://github.com/iocost-benchmark/iocost-benchmarks/commit/ca82acfe93c40f21d3b513c055779f43f1126f88
+      #
+      # Match key format:
+      # block:<devpath>:name:<model name>:
+
+      # 12 points, MOF=[1.346,1.346], aMOF=[1.249,1.249]
+      block:*:name:HFS256GD9TNG-62A0A:fwver:*:
+        IOCOST_SOLUTIONS=isolation isolated-bandwidth bandwidth naive
+        IOCOST_MODEL_ISOLATION=rbps=1091439492 rseqiops=52286 rrandiops=63784 wbps=192329466 wseqiops=12309 wrandiops=16119
+        IOCOST_QOS_ISOLATION=rpct=0.00 rlat=8807 wpct=0.00 wlat=59023 min=100.00 max=100.00
+        IOCOST_MODEL_ISOLATED_BANDWIDTH=rbps=1091439492 rseqiops=52286 rrandiops=63784 wbps=192329466 wseqiops=12309 wrandiops=16119
+        IOCOST_QOS_ISOLATED_BANDWIDTH=rpct=0.00 rlat=8807 wpct=0.00 wlat=59023 min=100.00 max=100.00
+        IOCOST_MODEL_BANDWIDTH=rbps=1091439492 rseqiops=52286 rrandiops=63784 wbps=192329466 wseqiops=12309 wrandiops=16119
+        IOCOST_QOS_BANDWIDTH=rpct=0.00 rlat=8807 wpct=0.00 wlat=59023 min=100.00 max=100.00
+        IOCOST_MODEL_NAIVE=rbps=1091439492 rseqiops=52286 rrandiops=63784 wbps=192329466 wseqiops=12309 wrandiops=16119
+        IOCOST_QOS_NAIVE=rpct=99.00 rlat=8807 wpct=99.00 wlat=59023 min=75.00 max=100.00
+
+    The IOCOST_SOLUTIONS key lists the solutions available for that device
+    in the preferred order for higher isolation, which is a reasonable
+    default for most client systems. This can be overriden to choose better
+    defaults for custom use cases, like the various data center workloads.
+
+    The tool can also be used to query the known solutions for a specific
+    device or to apply a non-default solution (say, isolation or bandwidth).
+
+    Co-authored-by: Santosh Mahto <santosh.mahto@collabora.com>
 
