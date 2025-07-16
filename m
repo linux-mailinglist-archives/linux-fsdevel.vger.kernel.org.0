@@ -1,251 +1,256 @@
-Return-Path: <linux-fsdevel+bounces-55184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37069B07E13
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 21:39:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33749B07EB5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 22:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330993AA8AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 19:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5637A4A7D4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 20:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2F92BE7A3;
-	Wed, 16 Jul 2025 19:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC522C08A8;
+	Wed, 16 Jul 2025 20:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="k9jUedKN";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JiAOvvGd"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kmThNzHO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8560228F51E;
-	Wed, 16 Jul 2025 19:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752694626; cv=fail; b=ewZM26oFyl134m0Y4vLE/5TDwh0xZqntoKo7ZTuLKBJZxPCRU92pUugKVc+zK9B0RruUlEPkLbfoSfcCKfRfBtxNUTVk/8DDezCbrYpYoc15zJDWnI7HmdQb15Avw7Qpotz+ikpom2EHWTlURm6DyDS89sunogntr5LzzwMwZq4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752694626; c=relaxed/simple;
-	bh=tSSSrJB1KngA15NOLmnFMq6OR9LFlOE5XJa9MN844eI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tLBXS5LGSsQ3wYp3R+XrgZsv+eCJMA8ZtDBAGMDByb730faXLd4UagaG2B3R/0zhEOz8aAij5uV+XyIVljPpbmT93d4wWrRCiuzmAUJu8wXT4lWlFuVFZxyYrc7ZOWBJDzj4J04wFnVK3chE3mEViEDEMd7l7khicUWy6r/regM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=k9jUedKN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JiAOvvGd; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GHfoch028678;
-	Wed, 16 Jul 2025 19:36:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=taIjO+Qzgkhs6LoRPF
-	P4Wjmu+qymbHV5malh5rS07+Q=; b=k9jUedKN49nKrD14lZRmx7U7A49CiwNuw+
-	RtQeSSHVtODGAKuILJsuENG6jMXdNI1Zq0USo45gWf5G3VIB7wkbkFuz+UDOKlpU
-	Tbq/CjPMrmy+ZllVYxqMSoVUlwiMbtXzhpxMxPF1Jo6IUsH2wLEb/uJpy487Q9mv
-	a/Z4fyydbHh7G/UvUWoMTrlq4ZGcH2sNtmpO1Jpb0JirCOQtWQRZyGqjgivyOL0I
-	bGeusTnxVi9LK9EsAOiGYAQsRwc/XsxLWJJtcJO2ttrIaE5x4CYeB+JJqYhHCwl9
-	1iTif2uTZzvm/N5mxEaQeUP6CxCg5lknMGLjD9dh+WZhIlPIV3BQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47uhx81uxn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Jul 2025 19:36:29 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56GJAi0T013024;
-	Wed, 16 Jul 2025 19:36:29 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2080.outbound.protection.outlook.com [40.107.243.80])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ue5b9ut8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Jul 2025 19:36:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P0NkVbFZF6/fOaeMCRLBw/gjoR98tvDX/xiJN3PqJclCK2FEx3gP/16xVoQa+RL61lYbZ5qb3qfwgPDo6D1hoD2VaKIug+aQqjkCXvbM4wcHY4TlDUAgPPZsWEHe8kzPOWIzXEFo9+tXarW4wMAqLk+seLCOorq8d13Hyc7H8EjH+d4pivHWOrvEA3CHeJsa9QLMOhyOkboelzBWDhpCCfjpRdqjD+VBGQnXma2A6BYK7PYMqbSrtegbm3vhJKQulLez+0SFDzSozEOWlcCVreGxTVyYrpenRKtlGGPwNGevE7yKFO/5LF3dxppJ5fNhFVwEwLr2FGCuwY+fGVbndg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=taIjO+Qzgkhs6LoRPFP4Wjmu+qymbHV5malh5rS07+Q=;
- b=juZPL3sOc2+BkSeOCiYwv7L4VuNTc3Md8umAqJ+Pbslb0NQNSjTYSM7vQXvWrRWJx1YLPe/zmooNabDrvqeX3albxtA/0uimHjhP5foiWzZjLh/OboCJbh2lUAOU2dBznq6iExU2AzNCEfYEGvhKrWtGfdnywjEwTBXfAv3F7AbKIFsyX2qO9hFwOz7PnSYZKMZhwKSrrFb+CCXVOEU1wId4vJRr7MZE0YcRjykRElBVUTDA40PdV89irmqXL0aCMnt4Cl3XkBZt9rijb8JxctKg12nMGTtpV97CWzxRz+F11biy5jlEqptNEuMZEgistDsYA46zPoKyO8e0hoLImw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=taIjO+Qzgkhs6LoRPFP4Wjmu+qymbHV5malh5rS07+Q=;
- b=JiAOvvGdOb54+/ub324uSiGoxqgiJgwDwErHGbK27+wGgjnrJ60k8vP5cXxFYrLPP5j/y5VasZNbqz0PHUp1pr9IKKpgYmB9fSbzsEDbNvQ/eqKqRYZ7JKeaQf9FngezKbsLji13AvplYzHurCOAqG4lNwMfd1RkMgiP9DOE/GI=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by DS0PR10MB7979.namprd10.prod.outlook.com (2603:10b6:8:1ab::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 16 Jul
- 2025 19:36:26 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%3]) with mapi id 15.20.8901.036; Wed, 16 Jul 2025
- 19:36:26 +0000
-Date: Wed, 16 Jul 2025 20:36:24 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 09/10] mm/mremap: permit mremap() move of multiple VMAs
-Message-ID: <4fbf4271-6ab9-49c0-b30f-c8716bf19f09@lucifer.local>
-References: <cover.1752232673.git.lorenzo.stoakes@oracle.com>
- <8f41e72b0543953d277e96d5e67a52f287cdbac3.1752232673.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f41e72b0543953d277e96d5e67a52f287cdbac3.1752232673.git.lorenzo.stoakes@oracle.com>
-X-ClientProxiedBy: LO0P265CA0014.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:355::16) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1937DC2D1;
+	Wed, 16 Jul 2025 20:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752697121; cv=none; b=XxKgLJvOBysLZnoSaNLnWBi9sdRHQKPUfFSZehKeV8x63CJcU8Cw8TTR5tfnKf2WVH8kuPy2d+JpdZPaCA6wYQnm3i9GUm+ItNB3Zei9TNdmogxjEEpVYjRUKuS6LoBopaQ/r8oK3W07ltQzNOJ1X18SJduiHbB8SyBRZfVKKT4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752697121; c=relaxed/simple;
+	bh=H/xM4Z0MjVRix0+b1Fuw+636XMoUie55Y/s9OTooSgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KSt9qpdFi1Pp/m3Onpah1yYXUon1ubHBUg9Ho5IAnyj5bN+KBsaTjxmpUAQ5QoH316GO+U6eudOO8cATvv5w+54kKSZfWzKFRoNqc783Lkk6N+gOnSsLaFDCEPdPHdTrWu2oQLq/L8FlQHA3sPVpIxtlcy+72paWtjLzb4jv8XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kmThNzHO; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hN5UcNOceAW9gJ/Y8MIabvr/9qWRaAS173z8GQgYkMI=; b=kmThNzHOvISsdaYQElDiHi8q5Q
+	CwMCw5ANyqqa8r1lg+P+8naMfvfrJIkC/CWnWEQyqcFxuKeUJObRs7MriLA5B+cdBY9gPn1zIGH5E
+	lnhtujB8iEsamDUPd7uNmY5vEFLqxUFpveusUW4xjZvcgeVxQ/pn0n9Mb5tHa4kilZXkEAFQ6XI42
+	8vACu5Yd512HTgNJXam34PFAWkrLc+hEIrAT4qxyDoMF7GylRRZru68eUVyllh+TrBbxfHNn321E3
+	O7CyIhXxOHXlRLYOyG227XMg+fwBp6x1lNWh/cFgFfeTvvLHtw3Bsy40e/GX9KVZE3v10/SSvZUQj
+	NyRdXUjw==;
+Received: from [223.233.66.171] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uc8aA-00HTUe-A4; Wed, 16 Jul 2025 22:18:26 +0200
+Message-ID: <c6a0b682-a1a5-f19c-acf5-5b08abf80a24@igalia.com>
+Date: Thu, 17 Jul 2025 01:48:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|DS0PR10MB7979:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee4b5aff-480b-4fbf-0610-08ddc4a00e0c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3mgdPvfpc5402XnlIldHkyqc/z7WHUXXmLUxS2R9x5Qw5/JDp+LE1bbanlE+?=
- =?us-ascii?Q?29m2/EMUmuW/fV3CrgMaHvklrpKxZz63vkfn+LAOhMDO44yqjhIUIp14Roxo?=
- =?us-ascii?Q?LAJfSvTQXD11nDY+PpWGesEN3KgjDV3yMebxe2IxqUhWU/3JehXNycL9oXpi?=
- =?us-ascii?Q?N6ifUru2JbyTOLGsP7zgb+M/Te5XSTq3v8NovFRS7ibpWC/NdpU/5hJ7bchu?=
- =?us-ascii?Q?qMToCZrKAg5pfBnnicLxMjqpyJLKe2i0fcJN882NccNv34jSlMC8SXDu3tVp?=
- =?us-ascii?Q?TJzxxy6j2y9y6akhioUqnuR9/qw0ZV3wIdJ1vI6QvVcOVKFyR2IxxiicDdp5?=
- =?us-ascii?Q?tEDjc+14t9/khtAkaHvGyQ7xzuslaY8LitVAY0qoC9VS/qJTzqfEqxh4Um0c?=
- =?us-ascii?Q?qtoFzB+GWBYDc/gPjRQDXcQ5hKV3UH7XE4r5+jqqJSMN/syJ1NEGtWcVeNcq?=
- =?us-ascii?Q?gnzOqCsiXaRrPkermSb3Gi5of9ap8/EPK46OMmZwHXZmrBx1DNpSy/aiCSp2?=
- =?us-ascii?Q?+fNp12sWlwhmuZJkJlfjh+bOU0+bCGLUl4VGeM/QpZanrzLXQPqPO/SiJ/et?=
- =?us-ascii?Q?x4tI4VHSmpx1rObak8iiSYe9igNdF6QxdDsHZC2fY7tIvPJ0iY8P0poKlF3z?=
- =?us-ascii?Q?GtsPewYj6UUuEd3sPXkLE+vK/NOEFGAqYAi1tvRyozY67sOnbDrNWrsvQAzG?=
- =?us-ascii?Q?S9a4N7ydNgH1xwZBUPk4FZmAskym89Qnqi8Vp8r4QdCg1iqC/TxtivG5TlOH?=
- =?us-ascii?Q?eGWEGVotmuOJ59/UUhqBSm1Nqn4yeqUDb6oPO6o+nUFc9WhMerPWDwpJp6DG?=
- =?us-ascii?Q?N3CeFM2QQQO5tt7amYIEs1rV5oRftHMOTAkGl5W68WpgTpBOC3vANOZ+IeI7?=
- =?us-ascii?Q?pu2gcTXZzu9kmO62JOq1u2+GCX1NIaT68I3I2EzM8s5E99CXLWIpzzk5tYnQ?=
- =?us-ascii?Q?Go5EaBSk7oanLL9Ebf97CptHRLcoBrz9NEpdSy5GSisQqucTgxJ2HRjoJDVc?=
- =?us-ascii?Q?YWeoxFvywFsk3XfcH6NUxmuJ03xnXlDQSk4P5amy+rJvmF5HPY/lOtgd+1v5?=
- =?us-ascii?Q?goQF7l6LEde1Gf7E3umeta7ChQy/web1/ETisnhAia2Kl2dQfnMifCkclNVG?=
- =?us-ascii?Q?3x/d0GyxoxxxFXSkMJUIf0dYBGXua5W0wKxNvdAkg/Zg8rNS3y0csRr4urf2?=
- =?us-ascii?Q?/d5xJC8dvx/p6m4UHly71ydUxorxPejf+CGp6DrBOM22J8SmvQyMZZgbzgaD?=
- =?us-ascii?Q?RPuhY4JW/eFBhAhGLMHwbT2gCRBfikwlzyVRT7NloP80vJ9ljTyu0iDqyvaN?=
- =?us-ascii?Q?H4uDsFGudq8caoeeIrRot/rLRBwd3bC4oPPzU0DisGw/7OGqghtZcylt4P6U?=
- =?us-ascii?Q?nJNqRzzSF2iWzMchDUz22g0GAFHTnbYvHtkJHNQ13ep1BjHDoqoG8pTzKLef?=
- =?us-ascii?Q?0/wYiv08dRI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zeYa4CHeCdO6DmQxAA5sEyfvivvsv/W62cD7AZ2/gyEuS13lUCJgtWK4HF6L?=
- =?us-ascii?Q?/jQB0XszSJVZ7V8r57g1HaChl4CdpOPmCwvNqS1dtkE8vPAIwPehN/jsJ4v7?=
- =?us-ascii?Q?9EvTwh+m2S2b1CDIVJDmioTYFTMKZWym2oT8CTFO7EfOwOaouODGXjTKc2yZ?=
- =?us-ascii?Q?adnEcuLMvcOiEAiwdYB7glLUGwklE3cf19fMZr+XmP96SEd94w2n/GYvyMjK?=
- =?us-ascii?Q?mg6XFZJiOkKBnSybCu08VZefsya5malh9ys1PlCxq1LJUEPLyRyzhFMXI2Hx?=
- =?us-ascii?Q?ML1K+OT/Px0UYpZspvTe+WM1MIHSCKmJ0yXGGwfwhob/cuGj54q7FCgR05K+?=
- =?us-ascii?Q?er0bCxfgH/LLSgH/uLBSpUhWOdTni7O+jRJ04WJkO7Ej00N4zQu5hnS5LHHP?=
- =?us-ascii?Q?4p/9kUNRaRLftc1tOkeabyXeLj4ruYv56Qv4yNQeOA/bKH6/tXZztOQByNLf?=
- =?us-ascii?Q?P0BaW+pVo/mzPhSrXiwpZ2KpbYYsS0OmUlrXOsAPhRVXWfpW5aeCxmhkO6gt?=
- =?us-ascii?Q?8Ykqvh/7Xr7wQQX4/wxsgrq7hRSi7WR64GnBGlWBrV9igFtYbOfRi73hDqrS?=
- =?us-ascii?Q?iEPm0MXGNyCHg3PIZpg/8Ju3GM46fiTk1f4MBpop5P5Ga+R1apN4Fqd98r23?=
- =?us-ascii?Q?/7g3jP+4hiCgbIJBxHSwq/e1sb6pAflkX+P1tejuB1GBmc2+ti4t7n5rCNq6?=
- =?us-ascii?Q?O9tmD4jxn5n5JCDT8m1IF3ezq5YrgHKBYApI4h3FXaoXk3jWqYBdqgdznQ/d?=
- =?us-ascii?Q?4EgOBCAIOAFsvamDBDVlYBZFm/gvO5eA0Ydd4y0JJZKffXi+vNZrfkd9aEI4?=
- =?us-ascii?Q?whmlm6Y9gvMBj8ZRhppXtW0HolMzsSjoIV+jZfAn6A2WueCFQFB6Acnk9UfM?=
- =?us-ascii?Q?2IbrZ4LRPPWdvReLpRa7InUrX88e3ZCx7Bm//nvq7hXop+ZU/M+DTWHILDhq?=
- =?us-ascii?Q?2MPLlpOZ57N5PAXZRXpFMBK04G5BdEemP7l5J9Jt6Ce+SsbzU4PZ4wvvbYJZ?=
- =?us-ascii?Q?fPlxY8AGLMUy9BeqSiSQoQX9AVrtu9HHDNbwnunQ8y4QF1ZyTiB2eM8fE98S?=
- =?us-ascii?Q?g3W880pzcsbmMfBFP2NktWi79fyBfPJ8ziHrxR7TlQ49qykYCBqyb5QuHYej?=
- =?us-ascii?Q?mLhPid7lQ8VnxvkIgBHaeZfc+gFEOcqfBmGUxj1yykNM47KlITUYPT+c98nG?=
- =?us-ascii?Q?jRyo3KAFxWog97Dvu5q4rr5qZB2d5qIWXLFhs8ow1LlhpZ9TSLsnvaAjWsM9?=
- =?us-ascii?Q?npoC/7om8tWExRkSVrhxrJA5uQCl6Pg/ALcEHl2pyhJTj8cr6wsJSoKWhobO?=
- =?us-ascii?Q?w/Ir37tKzyqNhJnTtmD6448SqlXEtknA4nZL8i7Ho0ul4Rc4y3YYlMb05vMF?=
- =?us-ascii?Q?JHQ9de/b7u5cCpeNBZpM2l36cFsMcyr4Dnbo2CdUWYjcUZPN9hLCUStZAgO5?=
- =?us-ascii?Q?UWAm4JsbdYARxHtYOYoCAjc29+I4JdCDX0UFgA3YCd0kPg2YQFz4dG5wNg+0?=
- =?us-ascii?Q?GI3IkD0x85Yi1ap56kJQ7KWaNWMVzRUcSWadnAuri19Os5idZrynFJzEN3mH?=
- =?us-ascii?Q?JHnXZLF7jvZrypWQr8lx8MEuSdpC/kx39yow3IDZ7Vw1X2ShtoVyagZdWwaF?=
- =?us-ascii?Q?CA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	JDncMVh+YPTpy1622+S4f9iZq2vhsCbr38soHUipBPiVaGKv/c2JECQcYn9rcjnSq9G2tDlm0qs9U26QvtjjKohzIR4/Ip4tCMs0tv5lo0W5614MfbEDR4kEx9w6K/2XccOFJ5SJlcTYs/YFvSgMCJsI9xTjfPK3COxn/1ZwDyThy8dKLW3jJwYtyodSO/dDaJS1c+W53qDOYSFzdT53SPYSOkotc5r0H6OwdCwvb8XgakswL9eASjgdNC9OrPRaaSO1Eh8PhSTPTXlSxRy1wP6AgSO4XH9ilw/oJ9Ww9qSC0C4Y62iBki16Ynnv69k94km6UFAeMoLX0wcunFT3fHgDr54hPYpT6zRxfY8RlqgAd0TbEaVFJDWkl2MoMamBKroC1ftXK47BGx24T/MEHrCNNVQqHYWyL7iLe85yeI1feUSpvbVit0jm4xGcZBjMH/yW6BrHsm9bbzJ034dRkIqR8EzW5rU2PBk9lvQZvxAxH4vWjSyRxaBkYVk4WwtOegi1Lsq96Z3N+FfcfkZLfXoFFEuj91qcaPIoFkMp6gA1fERdr0oK1ZTdqOt+4qrnhQfHyGHTI79QrgvA6H8oSch0Oj3X0rSwKrI3MwTRW30=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee4b5aff-480b-4fbf-0610-08ddc4a00e0c
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 19:36:26.6668
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h87vJCAjqVx64w2GdtphsQc20uSpTlcU32LXc1xiXzC/ZxZW8uQ/4kBPjaLibRZAhgrC+YsNKV6dFO2EkCmAmSfwhHT/RtRPG5zINXgTuF4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7979
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_03,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
- phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507160176
-X-Authority-Analysis: v=2.4 cv=auKyCTZV c=1 sm=1 tr=0 ts=6877ff3d b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=TKIclwkbeNPyZvKG4icA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12061
-X-Proofpoint-ORIG-GUID: 8u_TlcGuZxRORkDkRSyA7kk1n0KHbPFK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDE3NiBTYWx0ZWRfX2kXaD7aXJPCP RegYiObxl5W9K92m1EoJpiv9soiPA5tiGNtwOhyFuJuVi7UsTl4GMS5t2HXBnGP8eKVoaGgHbnW Z6ozt/JT2qBqC+c/DoPc0Cujimh11289+WGHXW0I53iQlx+Z3ERIDVUSDGlhSf1pvs1Y31Hiecx
- PIyz3rXc81xgmE8vXMt74qeXBu74tvGdaHyr/h5b9v/ae72Kdzn2NLsvAuTQ8UjPd/l1TCUzq+0 OX8XcOuWeepTWH2THqu+zrpaSCnbLeppmV9cjkaK6Tz5IOvCS9NVudCah8+KQj9EcdH5ClxQysz M0+J1HGSe74E9xuPPiN0KB1voiQUlidwwjH86KjxsPefp1PFlNUkqtoafbePpNHV27YbHgamHRv
- kIeDxNlYHAKb+OpVl1oLeWhNPCwsW1bs6okiWGnmdMy4BoYow/Zc/VDwS/12dHcfH5nL8BbK
-X-Proofpoint-GUID: 8u_TlcGuZxRORkDkRSyA7kk1n0KHbPFK
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v5 3/3] treewide: Switch from tsk->comm to tsk->comm_str
+ which is 64 bytes long
+Content-Language: en-US
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, mirq-linux@rere.qmqm.pl, peterz@infradead.org,
+ willy@infradead.org, david@redhat.com, viro@zeniv.linux.org.uk,
+ keescook@chromium.org, ebiederm@xmission.com, brauner@kernel.org,
+ jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, linux-trace-kernel@vger.kernel.org,
+ kees@kernel.org, torvalds@linux-foundation.org
+References: <20250716123916.511889-1-bhupesh@igalia.com>
+ <20250716123916.511889-4-bhupesh@igalia.com>
+ <CAEf4BzaGRz6A1wzBa2ZyQWY_4AvUHvLgBF36iCxc9wJJ1ppH0g@mail.gmail.com>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <CAEf4BzaGRz6A1wzBa2ZyQWY_4AvUHvLgBF36iCxc9wJJ1ppH0g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Andrew,
+On 7/16/25 11:40 PM, Andrii Nakryiko wrote:
+> On Wed, Jul 16, 2025 at 5:40 AM Bhupesh <bhupesh@igalia.com> wrote:
+>> Historically due to the 16-byte length of TASK_COMM_LEN, the
+>> users of 'tsk->comm' are restricted to use a fixed-size target
+>> buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
+>>
+>> To fix the same, Kees suggested in [1] that we can replace tsk->comm,
+>> with tsk->comm_str, inside 'task_struct':
+>>         union {
+>>                 char    comm_str[TASK_COMM_EXT_LEN];
+>>         };
+>>
+>> where TASK_COMM_EXT_LEN is 64-bytes.
+> Do we absolutely have to rename task->comm field? I understand as an
+> intermediate step to not miss any existing users in the kernel
+> sources, but once that all is done, we can rename that back to comm,
+> right?
+>
+> The reason I'm asking is because accessing task->comm is *very common*
+> with all sorts of BPF programs and scripts. Yes, we have way to deal
+> with that with BPF CO-RE, but every single use case would need to be
+> updated now to work both with task->comm name on old kernels and
+> task->comm_str on new kernels (because BPF programs are written in
+> more or less kernel version agnostic way, so they have to handle many
+> kernel releases).
+>
+> So, unless absolutely necessary, can we please keep the field name the
+> same? Changing the size of that field is not really a problem for BPF,
+> so no objections against that.
 
-Just a quick fix to address issues raised by syzkaller. I removed this code
-previously based on misinterpreting review feedback as indicating that I
-could do so...
+So, as a background we have had several previous discussions regarding 
+renaming the 'tsk->comm' to 'task->comm_str' on the list (please see [1] 
+and [2] for details), and as per Kees's recommendations we have taken 
+this approach in the v5 patchset (may be Kees can add further details if 
+I have missed adding something in the log message above).
 
-In any case I have tested this against the repro (a well-placed RCU barrier
-causes reliable repro it turns out) and confirmed it fixes the issue.
+That being said, ideally one would not like to break any exiting ABI 
+(which includes existing / older BPF programs). I was having a look at 
+the BPF CO_RE reference guide (see [3]), and was able to make out that 
+BPF CO_RE has a definition of |s||truct task_struct|which doesn't need 
+to match the kernel's struct task_struct definition exactly (as [3] 
+mentions -> only a necessary subset of fields have to be present and 
+compatible):
 
-Thanks, Lorenzo
+|struct task_struct { intpid; charcomm[16]; struct 
+task_struct*group_leader; } __attribute__((preserve_access_index)); |
 
-----8<----
-From 4e07d53c6627af21847752ec71f5ecd00afab03b Mon Sep 17 00:00:00 2001
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Date: Wed, 16 Jul 2025 20:29:54 +0100
-Subject: [PATCH] mm/mremap: reset VMI on unmap
+So, if we add a check here to add  '|charcomm[16]' or||charcomm_str[16]' 
+to BPF CO RE's internal 'struct task_struct' on basis of the underlying 
+kernel version being used (something like using  'KERNEL_VERSION(x, y, 
+0)' for example), will that suffice? I have ||used and seen these checks 
+being used in the user-space applications (for example, see [4]) at 
+several occasions.
 
-Any separate VMA iterator may become invalidated when VMAs are unmapped at
-nodes in proximity to the current position of the iterator.
+Please let me know your views.
 
-Therefore, reset the iterator at each point where this occurs on a mremap
-move.
+|[1]. https://lore.kernel.org/all/202505222041.B639D482FB@keescook/
+[2]. 
+https://lore.kernel.org/all/ba4ddf27-91e7-0ecc-95d5-c139f6978812@igalia.com/
+[3]. https://nakryiko.com/posts/bpf-core-reference-guide/
+[4]. 
+https://github.com/crash-utility/crash/blob/master/memory_driver/crash.c#L41C25-L41C49
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- mm/mremap.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks.
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 7a2e7022139a..15cbd41515ed 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -1113,6 +1113,7 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
+>> And then modify 'get_task_comm()' to pass 'tsk->comm_str'
+>> to the existing users.
+>>
+>> This would mean that ABI is maintained while ensuring that:
+>>
+>> - Existing users of 'get_task_comm'/ 'set_task_comm' will get 'tsk->comm_str'
+>>    truncated to a maximum of 'TASK_COMM_LEN' (16-bytes) to maintain ABI,
+>> - New / Modified users of 'get_task_comm'/ 'set_task_comm' will get
+>>   'tsk->comm_str' supported for a maximum of 'TASK_COMM_EXTLEN' (64-bytes).
+>>
+>> Note, that the existing users have not been modified to migrate to
+>> 'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
+>> dealing with only a 'TASK_COMM_LEN' long 'tsk->comm_str'.
+>>
+>> [1]. https://lore.kernel.org/all/202505231346.52F291C54@keescook/
+>>
+>> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+>> ---
+>>   arch/arm64/kernel/traps.c        |  2 +-
+>>   arch/arm64/kvm/mmu.c             |  2 +-
+>>   block/blk-core.c                 |  2 +-
+>>   block/bsg.c                      |  2 +-
+>>   drivers/char/random.c            |  2 +-
+>>   drivers/hid/hid-core.c           |  6 +++---
+>>   drivers/mmc/host/tmio_mmc_core.c |  6 +++---
+>>   drivers/pci/pci-sysfs.c          |  2 +-
+>>   drivers/scsi/scsi_ioctl.c        |  2 +-
+>>   drivers/tty/serial/serial_core.c |  2 +-
+>>   drivers/tty/tty_io.c             |  8 ++++----
+>>   drivers/usb/core/devio.c         | 16 ++++++++--------
+>>   drivers/usb/core/message.c       |  2 +-
+>>   drivers/vfio/group.c             |  2 +-
+>>   drivers/vfio/vfio_iommu_type1.c  |  2 +-
+>>   drivers/vfio/vfio_main.c         |  2 +-
+>>   drivers/xen/evtchn.c             |  2 +-
+>>   drivers/xen/grant-table.c        |  2 +-
+>>   fs/binfmt_elf.c                  |  2 +-
+>>   fs/coredump.c                    |  4 ++--
+>>   fs/drop_caches.c                 |  2 +-
+>>   fs/exec.c                        |  8 ++++----
+>>   fs/ext4/dir.c                    |  2 +-
+>>   fs/ext4/inode.c                  |  2 +-
+>>   fs/ext4/namei.c                  |  2 +-
+>>   fs/ext4/super.c                  | 12 ++++++------
+>>   fs/hugetlbfs/inode.c             |  2 +-
+>>   fs/ioctl.c                       |  2 +-
+>>   fs/iomap/direct-io.c             |  2 +-
+>>   fs/jbd2/transaction.c            |  2 +-
+>>   fs/locks.c                       |  2 +-
+>>   fs/netfs/internal.h              |  2 +-
+>>   fs/proc/base.c                   |  2 +-
+>>   fs/read_write.c                  |  2 +-
+>>   fs/splice.c                      |  2 +-
+>>   include/linux/coredump.h         |  2 +-
+>>   include/linux/filter.h           |  2 +-
+>>   include/linux/ratelimit.h        |  2 +-
+>>   include/linux/sched.h            | 11 ++++++++---
+>>   init/init_task.c                 |  2 +-
+>>   ipc/sem.c                        |  2 +-
+>>   kernel/acct.c                    |  2 +-
+>>   kernel/audit.c                   |  4 ++--
+>>   kernel/auditsc.c                 | 10 +++++-----
+>>   kernel/bpf/helpers.c             |  2 +-
+>>   kernel/capability.c              |  4 ++--
+>>   kernel/cgroup/cgroup-v1.c        |  2 +-
+>>   kernel/cred.c                    |  4 ++--
+>>   kernel/events/core.c             |  2 +-
+>>   kernel/exit.c                    |  6 +++---
+>>   kernel/fork.c                    |  9 +++++++--
+>>   kernel/freezer.c                 |  4 ++--
+>>   kernel/futex/waitwake.c          |  2 +-
+>>   kernel/hung_task.c               | 10 +++++-----
+>>   kernel/irq/manage.c              |  2 +-
+>>   kernel/kthread.c                 |  2 +-
+>>   kernel/locking/rtmutex.c         |  2 +-
+>>   kernel/printk/printk.c           |  2 +-
+>>   kernel/sched/core.c              | 22 +++++++++++-----------
+>>   kernel/sched/debug.c             |  4 ++--
+>>   kernel/signal.c                  |  6 +++---
+>>   kernel/sys.c                     |  6 +++---
+>>   kernel/sysctl.c                  |  2 +-
+>>   kernel/time/itimer.c             |  4 ++--
+>>   kernel/time/posix-cpu-timers.c   |  2 +-
+>>   kernel/tsacct.c                  |  2 +-
+>>   kernel/workqueue.c               |  6 +++---
+>>   lib/dump_stack.c                 |  2 +-
+>>   lib/nlattr.c                     |  6 +++---
+>>   mm/compaction.c                  |  2 +-
+>>   mm/filemap.c                     |  4 ++--
+>>   mm/gup.c                         |  2 +-
+>>   mm/memfd.c                       |  2 +-
+>>   mm/memory-failure.c              | 10 +++++-----
+>>   mm/memory.c                      |  2 +-
+>>   mm/mmap.c                        |  4 ++--
+>>   mm/oom_kill.c                    | 18 +++++++++---------
+>>   mm/page_alloc.c                  |  4 ++--
+>>   mm/util.c                        |  2 +-
+>>   net/core/sock.c                  |  2 +-
+>>   net/dns_resolver/internal.h      |  2 +-
+>>   net/ipv4/raw.c                   |  2 +-
+>>   net/ipv4/tcp.c                   |  2 +-
+>>   net/socket.c                     |  2 +-
+>>   security/lsm_audit.c             |  4 ++--
+>>   85 files changed, 171 insertions(+), 161 deletions(-)
+>>
+> [...]
 
- 	err = do_vmi_munmap(&vmi, mm, addr, len, vrm->uf_unmap, /* unlock= */false);
- 	vrm->vma = NULL; /* Invalidated. */
-+	vrm->vmi_needs_reset = true;
- 	if (err) {
- 		/* OOM: unable to split vma, just get accounts right */
- 		vm_acct_memory(len >> PAGE_SHIFT);
-@@ -1367,6 +1368,7 @@ static unsigned long mremap_to(struct vma_remap_struct *vrm)
- 		err = do_munmap(mm, vrm->new_addr, vrm->new_len,
- 				vrm->uf_unmap_early);
- 		vrm->vma = NULL; /* Invalidated. */
-+		vrm->vmi_needs_reset = true;
- 		if (err)
- 			return err;
-
---
-2.50.1
 
