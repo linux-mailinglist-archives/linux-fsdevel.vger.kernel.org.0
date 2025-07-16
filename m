@@ -1,169 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-55176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C61AB07814
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 16:30:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D8B07845
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 16:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820A34A4886
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 14:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8623B356C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 14:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9587F25C704;
-	Wed, 16 Jul 2025 14:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20BC25F998;
+	Wed, 16 Jul 2025 14:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CB8+OILg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+IlrLYS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2090220F2F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 14:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7D8233156
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 14:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676196; cv=none; b=lvTC/k5EzLMWlWJFhr3DpDdsEtFNwvWHN9za3flJnetDo/tSUWU1I0lKo0tDcZswVKusDv+LO+0xSmK+6814MWXZLZXLMWBipWAuExACFahPhLDDEIZJNYld9kDLkY9+59r2eflt/+1U1Hwq2MH1LGpu5yrY1/sL2S9LxLyGUNA=
+	t=1752676720; cv=none; b=LC7FpWM0k3OrIkFrBfaqcOy/J3EoBM70HdNlkPteRq8VDpX3jagsQXZXl4SOSyyATnFEHVhZbI232DJxYO5Y0CaYUXxeXEhQqWal6Znsp+0LCri3SWDdJrTUVpJwIhzuY+NrbuTENc4kxzeuxUi6Ud+Tw2yg94xsd22f8SoOR5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676196; c=relaxed/simple;
-	bh=01PZ/xKuO5lByV/sYsB5ZFdAMbt7OpQEfhoPNdSub8E=;
+	s=arc-20240116; t=1752676720; c=relaxed/simple;
+	bh=fEwyBD9zCqEXpn46h74QUriNhRgeE1cfi2HsWwNkHXw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mF9L8AXoTgEbW5WaOHuP/dZnV8z669WSx71Mu3bIINvB42V5Ia36jJ/02lngabNgjkKErtfCxT75/P5OEcz3y71+QpQTSOikmjKsp8Prd+WwXxKr1TSCYSfobWQGU2gMdEmB6Lw4P5bEBa4nbaIYvR+mjpdCe/tKaJxKNcLGkcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CB8+OILg; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab86a29c98so482681cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 07:29:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=Rwygued4VvFEuohRZ8lj1hAklu7HpSdnL0MA3KBY8mKdQh2V57k9ftX+GMVAnCpBWGVlorGKoitk8y1glMSxuIYRpXSRRroevgvyuKIJYiM4UECA4EhuVUSJzy4RC9PjM0vJmPHesmkMgPgCCaS+mUNzpmrVrKbdV6thlB7Eje8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+IlrLYS; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-70e767ce72eso62046327b3.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 07:38:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752676193; x=1753280993; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752676718; x=1753281518; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v9dJcIYNmFLt97FV6TaWcTMU/S/O8suqtyZyGxaHRnM=;
-        b=CB8+OILgwaZ4T539JjNAnDn/MaCIONMJ0tfXFUFpoFMzLhHrZAfbWb/tvBL11Krtv2
-         LfZQAoMSDdcwXOoe30pHwRlCkn9vdtmpsjQgiyWTyWGJumzQWpVTbv7qY1GasFOF5eOb
-         OBiF/Gc0Y/fjVSQZrEWHOgVgFaBbuMDypNhikVMyMpByS63JFHS99DzeRhJ2j9eCaZni
-         PDWNIZu2Byb73uk61duti0xNI6Dv8ydo8mb7g8oWhAeCS+wdiB/0rd7HiecGmgE5655m
-         PpGZN236WNDqc5DS5mb5C2rw3J27hXJ3RZvz3M7b5pnVnN9XWe1SkdyYTNzudFPRi42S
-         5QPg==
+        bh=BhcQjFBNlhjayD3fSHczSWZCPQ2aWrX+mQKIALmy0JA=;
+        b=E+IlrLYSalBnaf5KzFJPMGU9IZ1ZjJS5PndrBBcZPgE0+0fspzxPoaST1l1C/RB4er
+         ojifP/lxJAX4T0BjvjV1VUbNH3ngRcQkrP832aQ0yyGeee29bTwNSZp1CY+FwbeJ8nYO
+         TkMgeu/0cAIOwml27Y4PYAoQh/BDakaRO4iuJMchG92T9DdMSWDDR30gNJr+AqWn84/U
+         W8ct1YNeXOljzPK6eUKkE7FUAZg0U/Vz0d1++e+m7yFVIDDfzhMVAnbQS0zwvxxIUP2w
+         uTywHddKPHJKu7B+EKF+uNsPNRyFiKbVv9rwJPAbkJyCurNQieJf8qOJmA6aERLx8Ixc
+         jjcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752676193; x=1753280993;
+        d=1e100.net; s=20230601; t=1752676718; x=1753281518;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v9dJcIYNmFLt97FV6TaWcTMU/S/O8suqtyZyGxaHRnM=;
-        b=Ef1E7KnQHoH0sxl43LxB22GtnDl2dH7M+OcpjLfB/Nz2dv5LoxhKjfCk8s3XlEaiLY
-         p9dyzljLNMtv8eTHVrIBa7P2xL0lEJrtRgSN/Ln+88fVwUO2VS8h33PU6hWZRmOfwpGe
-         oZsiAvmLeQj14KozkyCznOn4UUEpmqYxFgbkVoMf/QdbZnBx4V5DIObSJFhh3GKNBUJv
-         Fr9ffNptt/k/jjPqpa5b+mhjgf0V/5yROqoI1exx5GA5sCEKhVMVToo9cqudQejBQ5mo
-         7QSYvDbzSI0KHwE76fO+TeK8e9TcxNy8ryoQkf/Wo0Hdmc1bxS7hG55ndL+gyd+LNE3j
-         0SjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmQ1CKDXfk9AhGeN75MtWY3nepBB9NUamJXGJ4VEGkvVpfqX+XXOH4mU23x1U/QqkS+kNRYU8cCPdKSqQ4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFGOHd/6yDgNDclslreC8AEACYlBn9+r/9YHWIZsTfB30ala1P
-	Dx9f+kzO2kC00eCG+ylYXK2AbA7iL1vX3kg2Zegv9ZOKgkNv2GR5v9EmPjP7eBWzvFLoyKyt5f4
-	RSUjcjPsi2QxG+f2+0MoT5UsVSWZC9Sz4WR3uGpYw
-X-Gm-Gg: ASbGncv81cdz33EdE5LXXDvt1X9ZCjhgigD3WHbgHFt2lVS2waaa4BoNWzzuHJeiYsS
-	cVmPj+er6HexYmcosjGpYXzs4l6wpVRZYPUtXTxbSysqfq12ITMsJmgsoKNprg4Cc1Q43lHMN1l
-	BPq4oTTZA2LzO3rfikrJjTU1MXVxJCuFiU/gLgt0lfn3h+31Agp/rKbvF5ohRaiEr79/qEF/ng6
-	IBv4LU0uMeH6hnMI0poktUTtV29AoUR+3Tn
-X-Google-Smtp-Source: AGHT+IF1jgIoyk5R1Kif1z4ud/Iv9ltObgmGNfl91kkWVCZZHs4vDHtmbDAOFhVoWxeWru8tTtLk2fMmer7cvrmEICE=
-X-Received: by 2002:a05:622a:1aa0:b0:4a9:d263:dbc5 with SMTP id
- d75a77b69052e-4ab954da1cfmr2945571cf.20.1752676192219; Wed, 16 Jul 2025
- 07:29:52 -0700 (PDT)
+        bh=BhcQjFBNlhjayD3fSHczSWZCPQ2aWrX+mQKIALmy0JA=;
+        b=rf/4KGzFC+jvHB05BW94IlEYTYjmvOdWThHgFdQYHOqhmsSHVu1w/RoP7e0saoC9z/
+         If6GxcQNnja3ibWP49GsATP1tGYeGVqQL9G52o2HSQ7SJJoPEpau9s1yQPZFFDNvbyCv
+         mOBZaQswZvLlZdGi/cMX6zWyVjitymJRAOe8POXUkwItrBPCMrhQLnA4FV5O12EVSnYH
+         +D0Qewbuyd03CM8i/EM9bWC8qlGIsrGWhju5UWDqzcCZ/+DE+55CuWXEUI0WPW9Xvt99
+         tkTAgg9jEHd9cnrql710lgms5pDJOzvoY0LfciNkCxtgyQ++nLu1+fbUgn7nH7/UtnZb
+         39Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4EfjE/WQGV800OVFuFTxtDRdULT+KPVpfAVojoIg8GVKNU/I4j25Uhj9qCsIdHVlE+M5/Z1HCMyfM36VU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvtnymiNQFOnsKTMuhwNVmaGv3fiChRphDzHndMksXh4c7oJ+q
+	Ru1jlZanMyOWo1RtmrG0Rvm07Qs4yJvDlKxMDjcgiTnF/VG5Lx4PcCC2yHTXf6ptSedIOAOQhFo
+	k907ex/Xat+NBLeGFC7kW2f/4AmSDaY8=
+X-Gm-Gg: ASbGncv9R+C0Zt6IDbzZn0kLgu6ep9o/qG6RxPTqR+q/kM9SabUZBg7QlPJsdK8KlO8
+	6tmINz0ndtEHrtKJTSXhYGdJqOuLVRuTvHpcVThK7Mkg2VI0IL337HiCCMwkQp7844EgpzbrqSj
+	afdh8nuJl3fSzn9Gk5yM9UJcuFQh33PAJ64MSmgfKgCshqOgj0bsN7fgOAoM+3RwStGSXhKPakG
+	0fll9vfmg==
+X-Google-Smtp-Source: AGHT+IERFUSvc/25Bal7wiLrTZp7YAi91jAOxvoJ3JJxwSwFFZMAgwRW59DBHY5ZqkEFUfL5m/1DmPFFZcNOL7Sh6iA=
+X-Received: by 2002:a05:690c:dc1:b0:70e:326:6ae8 with SMTP id
+ 00721157ae682-71836cab40emr46122597b3.2.1752676717626; Wed, 16 Jul 2025
+ 07:38:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716030557.1547501-1-surenb@google.com> <20250716030557.1547501-8-surenb@google.com>
- <dd88b2fc-6963-454b-8cc0-7bd3360a562e@suse.cz>
-In-Reply-To: <dd88b2fc-6963-454b-8cc0-7bd3360a562e@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 16 Jul 2025 07:29:41 -0700
-X-Gm-Features: Ac12FXzno4zj4-9Yms3LsC7vLEmlFKsL-np6yaN8ehs9Whc_WjCHA4V2guD--iU
-Message-ID: <CAJuCfpGRAL6YPqTR9SpPPuTamGJLdg4OEGmPUMERYDgjQCHAiA@mail.gmail.com>
-Subject: Re: [PATCH v7 7/7] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, david@redhat.com, peterx@redhat.com, 
-	jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
-	shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
-	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
+References: <20250716125304.1189790-1-alex.fcyrx@gmail.com>
+ <20250716131250.GC2580412@ZenIV> <CAKawSAmp668+zUcaThnnhMtU8hmyTOKifHqxfE02WKYYpWxVHg@mail.gmail.com>
+ <aHesCjzSInq8w757@casper.infradead.org> <CAKawSAkQd_V9wJn6fiQQWVguTB0e7vDNnQqjuZRUZ1VwzXuvog@mail.gmail.com>
+ <aHev2X8439xaamsX@casper.infradead.org>
+In-Reply-To: <aHev2X8439xaamsX@casper.infradead.org>
+From: Alex <alex.fcyrx@gmail.com>
+Date: Wed, 16 Jul 2025 22:38:26 +0800
+X-Gm-Features: Ac12FXwN7R8G3PHsDxOXu9DQZ83ftwYkM2Xyx9ZzLfLZnvubAPZMSEDPFzo1kzU
+Message-ID: <CAKawSAk6heeCBCnaeBmfMWaiUPqk91KV26v=WdkkpHOv_iziag@mail.gmail.com>
+Subject: Re: [PATCH] fs: Remove obsolete logic in i_size_read/write
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, jack@suse.cz, 
+	torvalds@linux-foundation.org, paulmck@kernel.org, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 6:57=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
+On Wed, Jul 16, 2025 at 9:57=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
 >
-> On 7/16/25 05:05, Suren Baghdasaryan wrote:
-> > With maple_tree supporting vma tree traversal under RCU and per-vma
-> > locks, /proc/pid/maps can be read while holding individual vma locks
-> > instead of locking the entire address space.
-> > A completely lockless approach (walking vma tree under RCU) would be
-> > quite complex with the main issue being get_vma_name() using callbacks
-> > which might not work correctly with a stable vma copy, requiring
-> > original (unstable) vma - see special_mapping_name() for example.
+> On Wed, Jul 16, 2025 at 09:44:31PM +0800, Alex wrote:
+> > On Wed, Jul 16, 2025 at 9:41=E2=80=AFPM Matthew Wilcox <willy@infradead=
+.org> wrote:
+> > >
+> > > On Wed, Jul 16, 2025 at 09:28:29PM +0800, Alex wrote:
+> > > > On Wed, Jul 16, 2025 at 9:12=E2=80=AFPM Al Viro <viro@zeniv.linux.o=
+rg.uk> wrote:
+> > > > >
+> > > > > On Wed, Jul 16, 2025 at 08:53:04PM +0800, Alex wrote:
+> > > > > > The logic is used to protect load/store tearing on 32 bit platf=
+orms,
+> > > > > > for example, after i_size_read returned, there is no guarantee =
+that
+> > > > > > inode->size won't be changed. Therefore, READ/WRITE_ONCE suffic=
+e, which
+> > > > > > is already implied by smp_load_acquire/smp_store_release.
+> > > > >
+> > > > > Sorry, what?  The problem is not a _later_ change, it's getting t=
+he
+> > > > > upper and lower 32bit halves from different values.
+> > > > >
+> > > > > Before: position is 0xffffffff
+> > > > > After: position is 0x100000000
+> > > > > The value that might be returned by your variant: 0x1ffffffff.
+> > > >
+> > > > I mean the sequence lock here is used to only avoid load/store tear=
+ing,
+> > > > smp_load_acquire/smp_store_release already protects that.
+> > >
+> > > Why do you think that?  You're wrong, but it'd be useful to understan=
+d
+> > > what misled you into thinking that.
 > >
-> > When per-vma lock acquisition fails, we take the mmap_lock for reading,
-> > lock the vma, release the mmap_lock and continue. This fallback to mmap
-> > read lock guarantees the reader to make forward progress even during
-> > lock contention. This will interfere with the writer but for a very
-> > short time while we are acquiring the per-vma lock and only when there
-> > was contention on the vma reader is interested in.
+> > smp_load_acquire/smp_store_release implies READ_ONCE/WRITE_ONCE,
+> > and READ_ONCE/WRITE_ONCE avoid load/store tearing.
 > >
-> > We shouldn't see a repeated fallback to mmap read locks in practice, as
-> > this require a very unlikely series of lock contentions (for instance
-> > due to repeated vma split operations). However even if this did somehow
-> > happen, we would still progress.
-> >
-> > One case requiring special handling is when a vma changes between the
-> > time it was found and the time it got locked. A problematic case would
-> > be if a vma got shrunk so that its vm_start moved higher in the address
-> > space and a new vma was installed at the beginning:
-> >
-> > reader found:               |--------VMA A--------|
-> > VMA is modified:            |-VMA B-|----VMA A----|
-> > reader locks modified VMA A
-> > reader reports VMA A:       |  gap  |----VMA A----|
-> >
-> > This would result in reporting a gap in the address space that does not
-> > exist. To prevent this we retry the lookup after locking the vma, howev=
-er
-> > we do that only when we identify a gap and detect that the address spac=
-e
-> > was changed after we found the vma.
-> >
-> > This change is designed to reduce mmap_lock contention and prevent a
-> > process reading /proc/pid/maps files (often a low priority task, such
-> > as monitoring/data collection services) from blocking address space
-> > updates. Note that this change has a userspace visible disadvantage:
-> > it allows for sub-page data tearing as opposed to the previous mechanis=
-m
-> > where data tearing could happen only between pages of generated output
-> > data. Since current userspace considers data tearing between pages to b=
-e
-> > acceptable, we assume is will be able to handle sub-page data tearing
-> > as well.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > What am I missing here?
 >
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
->
-> Nit: the previous patch changed lines with e.g. -2UL to -2 and this seems
-> changing the same lines to add a comment e.g. *ppos =3D -2; /* -2 indicat=
-es
-> gate vma */
->
-> That comment could have been added in the previous patch already. Also if
-> you feel the need to add the comments, maybe it's time to just name those
-> special values with a #define or something :)
+> They only avoid tearing for sizes <=3D word size.  If you have a 32-bit
+> CPU, they cannot avoid tearing for 64-bit loads/stores.
 
-Good point. I'll see if I can fit that into the next version.
+You=E2=80=99re right, I got that wrong.
 
->
+Thanks for the clarification!
 
