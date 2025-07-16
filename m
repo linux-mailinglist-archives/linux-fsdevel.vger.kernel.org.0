@@ -1,306 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-55068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92992B06AE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 02:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D301B06AF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 02:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3BC74A0D22
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 00:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356BC3B8FB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 00:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABF31D5151;
-	Wed, 16 Jul 2025 00:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A9921A434;
+	Wed, 16 Jul 2025 00:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KJPKw71X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A56191F91;
-	Wed, 16 Jul 2025 00:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016681311AC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 00:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752626868; cv=none; b=qrwim6qvWmV1MQUaVF5hZOuJn5+oXTZ+NZ+ctQzCyB0G7gRUWJ9G5spRG4ZAwLtu/LmeKuyMYxZjAvn+zpgW9YS7dHT3OxSo9AbmCJUOxdHfpIdcdbjQtKQ2wgUUDB4R+4+fIdd6Oy7P6C2RFvEygQjCuwVfIzw1Ao4EMQBqDh0=
+	t=1752627440; cv=none; b=T7xjxdNycWSevbmQPWNQxV56sGl3/6BQ5J72Q2vrdifVNEALklbfmd8GzcbgW3N74K7mmDXvrLdu8gUYucgmU9lkZ+nVj6A8Cwd+F3Kmnv6g0jySozoV6AgOkwYmTy8xwcZKAlViBStQ8N01DugBTxbuBvMp4yCjYSpb2B+K+G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752626868; c=relaxed/simple;
-	bh=c6Mt4Lk1PjH9Jsh9NbGPjoFSR5VJjwwXA/5IhSwrUg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KUF0AL4+kFPJxZzuyR+I+2d1OxdBGUC1zbIOkuWf6DiQF9256sw47QrvBmmfg8z2d1mgEff2SC0VnaNSM4VBCfh3FhLAWdIaIkRfv/4CkEwoCWWeZ6jE9px9XKGtBpl7XmD76hHHw3vrFYzbLJB9hH8Hs3kPXqFR9l9HveauS28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1ubqJD-002ACL-JN;
-	Wed, 16 Jul 2025 00:47:45 +0000
-From: NeilBrown <neil@brown.name>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>
-Cc: linux-unionfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 21/21] ovl: rename ovl_cleanup_unlocked() to ovl_cleanup()
-Date: Wed, 16 Jul 2025 10:44:32 +1000
-Message-ID: <20250716004725.1206467-22-neil@brown.name>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250716004725.1206467-1-neil@brown.name>
-References: <20250716004725.1206467-1-neil@brown.name>
+	s=arc-20240116; t=1752627440; c=relaxed/simple;
+	bh=DnkgAXwceu4ogzX9h4y+PJ+cCWlhlR7NXhfTMcsrSIA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fS/5V2qZWc+90cY2wnZ1AJKGSV2oJpQfFXhTtUZ1rqTyGdgWvIsJDxrNcwemt21h0CsM2BTmfwvCwtsdsrK8paNaPhv8jdEHVUVeIgslMu0oGyodQZwp1vwu5O2nw5pEY1pHHVEv+oK4M3qp/q6VqKXj2k7l4awucxvh4uWhBsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KJPKw71X; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a6f2c6715fso4731419f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 17:57:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752627436; x=1753232236; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KacZvyW/+D5c+CkKTBWmhK+loj5fkAU60jNANOTBA8M=;
+        b=KJPKw71XX4J5Y/umUZ51FKNB0noehXPX30hHj6yhZn8nl3DB2MsUI/JVdkahVsYGqK
+         u/SBo3kEiv7dGJXC3xYtZpQ3hsCF0kAG4kXb+tG6057PDDnkGE8cVUukUJnLpkjpfVAk
+         2rxXKSHAfT3jO+7di160ASV04HNDKMYLCO2ZTUtVZwgkl2hAIbXHuC2zT684p4tVQZ9f
+         A7uGpWOVyfqc/uJZENza7++ezYU7mZylTjXAQO8jhjXZRZUPMyIdfagi29e1OBn5SikR
+         4gZf7SnyBWvzWBdZ8vZoDn8pJimoPPqtc4GVatn+qbp/8v97OzVOO+2dRpZ53FsdFfTa
+         CMTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752627436; x=1753232236;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KacZvyW/+D5c+CkKTBWmhK+loj5fkAU60jNANOTBA8M=;
+        b=mWIjKqE52qSDQeyNJZu+GLtluK82q5Dk33QSOph/YdR5VJ/EP6kIUvgcl2/9bwwaXc
+         RFvaH8YvK7wUs/8W5bdaHryr7TBxOgajx7b4oZFqEDh1RlLKJEpDo/iBWluQ4yYMOdwy
+         sXeihbYW0EMEF0th6Np27kDP9ksu34qezoON90W810D89dV2296HLSBmGFcO+A9Ldp65
+         jMN0Af06gArGRY3NGayg9pEb0MQToB8ieSKJLrBETYBrAmF9oaj0LkKP39+1TMZXD99v
+         O4ekNSBW9zmNIYjEkabYQ4lUJVv2htZ/hGtLkqyERrvb6wHQJKfVEd1e1QSxq3XdT3eA
+         mdKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbKfDAlxGOQI16mKyidqmnU500QBBMj8zlMSZUOaQMEyF7vhKl6IWroguLQIxcQrHaz4g2scGfHGrSK+gP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz2BR0hlrrmEACYPaWyAsb97f/dKetf3jfVcQRi4+LXrj78EXw
+	xKRvc2zfiywd8eRdUXua9KjxE7YylHKMsFwtEJ81aw2ymoepHkikB2ZKFT5S5X9W7D0=
+X-Gm-Gg: ASbGnctpfhFLzdAjeN7Pd8+ojMZI2RRJAxoBzpgSO2zfOeKV2lXwPfE0qElruTmPlt+
+	aOLFZDMjsM7tMk6czFZl/7WMwU/hBZe56msALcszdsXgsob09nmLfnMxLbLtuWcw5mCP3fA50/2
+	vKZ4uikIIHJqsfne4Bg/yDewfhKQMftFDG2ZFOZUOTdeuT1ij0+2qdO110pAZUBVLrhK/mFeuVv
+	7rkSldZQGcSGnDcX0PTiLdlLYv/THM1vUpdKkYhsJQ0KDp5l9dBLamftPjVLvz05PU5aFrDoXb7
+	r9N/wNwH2dLGtC5ezy592CnrBCsSNjpnjHoQLvKr1mSiYKJ4dKHNx1VDIMqMM+TiP9A1ccewFP+
+	c49h6/hoEyGFBuJCUXMEbELe5ZEejfKqmP1h8BrEK43TKFuVyDg==
+X-Google-Smtp-Source: AGHT+IGmM0n20dxhtQ6vMPJL8jS+hYaNOO5Rpe4CXLe7RvspyCFw9ZMsMSHoEA6/McxI5CdSoNbUKg==
+X-Received: by 2002:a05:6000:3ce:b0:3b6:d6d:dd2 with SMTP id ffacd0b85a97d-3b60e4cb532mr348001f8f.25.1752627436011;
+        Tue, 15 Jul 2025 17:57:16 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4332cdcsm114942995ad.145.2025.07.15.17.57.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 17:57:15 -0700 (PDT)
+Message-ID: <2806a1f3-3861-49df-afd4-f7ac0beae43c@suse.com>
+Date: Wed, 16 Jul 2025 10:27:05 +0930
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Compressed files & the page cache
+To: Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ linux-erofs@lists.ozlabs.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+ Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+ David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
+ Paulo Alcantara <pc@manguebit.org>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ ntfs3@lists.linux.dev, Steve French <sfrench@samba.org>,
+ linux-cifs@vger.kernel.org, Phillip Lougher <phillip@squashfs.org.uk>
+References: <aHa8ylTh0DGEQklt@casper.infradead.org>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <aHa8ylTh0DGEQklt@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The only remaining user of ovl_cleanup() is ovl_cleanup_locked(), so we
-no longer need both.
 
-This patch renames ovl_cleanup() to ovl_cleanup_locked() and makes it
-static.
-ovl_cleanup_unlocked() is renamed to ovl_cleanup().
 
-Signed-off-by: NeilBrown <neil@brown.name>
----
- fs/overlayfs/copy_up.c   |  4 ++--
- fs/overlayfs/dir.c       | 27 ++++++++++++++-------------
- fs/overlayfs/overlayfs.h |  3 +--
- fs/overlayfs/readdir.c   | 10 +++++-----
- fs/overlayfs/super.c     |  4 ++--
- fs/overlayfs/util.c      |  2 +-
- 6 files changed, 25 insertions(+), 25 deletions(-)
+在 2025/7/16 06:10, Matthew Wilcox 写道:
+> I've started looking at how the page cache can help filesystems handle
+> compressed data better.  Feedback would be appreciated!  I'll probably
+> say a few things which are obvious to anyone who knows how compressed
+> files work, but I'm trying to be explicit about my assumptions.
+> 
+> First, I believe that all filesystems work by compressing fixed-size
+> plaintext into variable-sized compressed blocks.  This would be a good
+> point to stop reading and tell me about counterexamples.
 
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 8f8dbe8a1d54..c4d7c281d473 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -569,7 +569,7 @@ static int ovl_create_index(struct dentry *dentry, const struct ovl_fh *fh,
- 	ovl_parent_unlock(indexdir);
- out:
- 	if (err)
--		ovl_cleanup_unlocked(ofs, indexdir, temp);
-+		ovl_cleanup(ofs, indexdir, temp);
- 	dput(temp);
- free_name:
- 	kfree(name.name);
-@@ -854,7 +854,7 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
- cleanup:
- 	unlock_rename(c->workdir, c->destdir);
- cleanup_unlocked:
--	ovl_cleanup_unlocked(ofs, c->workdir, temp);
-+	ovl_cleanup(ofs, c->workdir, temp);
- 	dput(temp);
- 	goto out;
- }
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index dedf89546e5f..30619777f0f6 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -24,7 +24,8 @@ MODULE_PARM_DESC(redirect_max,
- 
- static int ovl_set_redirect(struct dentry *dentry, bool samedir);
- 
--int ovl_cleanup(struct ovl_fs *ofs, struct inode *wdir, struct dentry *wdentry)
-+static int ovl_cleanup_locked(struct ovl_fs *ofs, struct inode *wdir,
-+			      struct dentry *wdentry)
- {
- 	int err;
- 
-@@ -43,8 +44,8 @@ int ovl_cleanup(struct ovl_fs *ofs, struct inode *wdir, struct dentry *wdentry)
- 	return err;
- }
- 
--int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir,
--			 struct dentry *wdentry)
-+int ovl_cleanup(struct ovl_fs *ofs, struct dentry *workdir,
-+		struct dentry *wdentry)
- {
- 	int err;
- 
-@@ -52,7 +53,7 @@ int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir,
- 	if (err)
- 		return err;
- 
--	ovl_cleanup(ofs, workdir->d_inode, wdentry);
-+	ovl_cleanup_locked(ofs, workdir->d_inode, wdentry);
- 	ovl_parent_unlock(workdir);
- 
- 	return 0;
-@@ -149,14 +150,14 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, struct dentry *dir,
- 	if (err)
- 		goto kill_whiteout;
- 	if (flags)
--		ovl_cleanup_unlocked(ofs, ofs->workdir, dentry);
-+		ovl_cleanup(ofs, ofs->workdir, dentry);
- 
- out:
- 	dput(whiteout);
- 	return err;
- 
- kill_whiteout:
--	ovl_cleanup_unlocked(ofs, ofs->workdir, whiteout);
-+	ovl_cleanup(ofs, ofs->workdir, whiteout);
- 	goto out;
- }
- 
-@@ -351,7 +352,7 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
- 	return 0;
- 
- out_cleanup:
--	ovl_cleanup_unlocked(ofs, upperdir, newdentry);
-+	ovl_cleanup(ofs, upperdir, newdentry);
- 	dput(newdentry);
- 	return err;
- }
-@@ -411,7 +412,7 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
- 		goto out_cleanup_unlocked;
- 
- 	ovl_cleanup_whiteouts(ofs, upper, list);
--	ovl_cleanup_unlocked(ofs, workdir, upper);
-+	ovl_cleanup(ofs, workdir, upper);
- 
- 	/* dentry's upper doesn't match now, get rid of it */
- 	d_drop(dentry);
-@@ -421,7 +422,7 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
- out_cleanup:
- 	unlock_rename(workdir, upperdir);
- out_cleanup_unlocked:
--	ovl_cleanup_unlocked(ofs, workdir, opaquedir);
-+	ovl_cleanup(ofs, workdir, opaquedir);
- 	dput(opaquedir);
- out:
- 	return ERR_PTR(err);
-@@ -516,7 +517,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
- 		if (err)
- 			goto out_cleanup_unlocked;
- 
--		ovl_cleanup_unlocked(ofs, workdir, upper);
-+		ovl_cleanup(ofs, workdir, upper);
- 	} else {
- 		err = ovl_do_rename(ofs, workdir, newdentry, upperdir, upper, 0);
- 		unlock_rename(workdir, upperdir);
-@@ -526,7 +527,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
- 	ovl_dir_modified(dentry->d_parent, false);
- 	err = ovl_instantiate(dentry, inode, newdentry, hardlink, NULL);
- 	if (err) {
--		ovl_cleanup_unlocked(ofs, upperdir, newdentry);
-+		ovl_cleanup(ofs, upperdir, newdentry);
- 		dput(newdentry);
- 	}
- out_dput:
-@@ -541,7 +542,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
- out_cleanup:
- 	unlock_rename(workdir, upperdir);
- out_cleanup_unlocked:
--	ovl_cleanup_unlocked(ofs, workdir, newdentry);
-+	ovl_cleanup(ofs, workdir, newdentry);
- 	dput(newdentry);
- 	goto out_dput;
- }
-@@ -1268,7 +1269,7 @@ static int ovl_rename(struct mnt_idmap *idmap, struct inode *olddir,
- 		goto out_revert_creds;
- 
- 	if (cleanup_whiteout)
--		ovl_cleanup_unlocked(ofs, old_upperdir, newdentry);
-+		ovl_cleanup(ofs, old_upperdir, newdentry);
- 
- 	if (overwrite && d_inode(new)) {
- 		if (new_is_dir)
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index b1e31e060157..56de6e83d24e 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -857,8 +857,7 @@ struct ovl_cattr {
- struct dentry *ovl_create_real(struct ovl_fs *ofs,
- 			       struct dentry *parent, struct dentry *newdentry,
- 			       struct ovl_cattr *attr);
--int ovl_cleanup(struct ovl_fs *ofs, struct inode *dir, struct dentry *dentry);
--int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir, struct dentry *dentry);
-+int ovl_cleanup(struct ovl_fs *ofs, struct dentry *workdir, struct dentry *dentry);
- struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, struct dentry *workdir);
- struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdir,
- 			       struct ovl_cattr *attr);
-diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index ecbf39a49d57..b65cdfce31ce 100644
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -1048,7 +1048,7 @@ void ovl_cleanup_whiteouts(struct ovl_fs *ofs, struct dentry *upper,
- 			continue;
- 		}
- 		if (dentry->d_inode)
--			ovl_cleanup_unlocked(ofs, upper, dentry);
-+			ovl_cleanup(ofs, upper, dentry);
- 		dput(dentry);
- 	}
- }
-@@ -1156,7 +1156,7 @@ int ovl_workdir_cleanup(struct ovl_fs *ofs, struct dentry *parent,
- 	int err;
- 
- 	if (!d_is_dir(dentry) || level > 1)
--		return ovl_cleanup_unlocked(ofs, parent, dentry);
-+		return ovl_cleanup(ofs, parent, dentry);
- 
- 	err = ovl_parent_lock(parent, dentry);
- 	if (err)
-@@ -1168,7 +1168,7 @@ int ovl_workdir_cleanup(struct ovl_fs *ofs, struct dentry *parent,
- 
- 		err = ovl_workdir_cleanup_recurse(ofs, &path, level + 1);
- 		if (!err)
--			err = ovl_cleanup_unlocked(ofs, parent, dentry);
-+			err = ovl_cleanup(ofs, parent, dentry);
- 	}
- 
- 	return err;
-@@ -1217,7 +1217,7 @@ int ovl_indexdir_cleanup(struct ovl_fs *ofs)
- 			goto next;
- 		} else if (err == -ESTALE) {
- 			/* Cleanup stale index entries */
--			err = ovl_cleanup_unlocked(ofs, indexdir, index);
-+			err = ovl_cleanup(ofs, indexdir, index);
- 		} else if (err != -ENOENT) {
- 			/*
- 			 * Abort mount to avoid corrupting the index if
-@@ -1233,7 +1233,7 @@ int ovl_indexdir_cleanup(struct ovl_fs *ofs)
- 			err = ovl_cleanup_and_whiteout(ofs, indexdir, index);
- 		} else {
- 			/* Cleanup orphan index entries */
--			err = ovl_cleanup_unlocked(ofs, indexdir, index);
-+			err = ovl_cleanup(ofs, indexdir, index);
- 		}
- 
- 		if (err)
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 9fd0b3acd1a4..4afa91882075 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -600,11 +600,11 @@ static int ovl_check_rename_whiteout(struct ovl_fs *ofs)
- 
- 	/* Best effort cleanup of whiteout and temp file */
- 	if (err)
--		ovl_cleanup_unlocked(ofs, workdir, whiteout);
-+		ovl_cleanup(ofs, workdir, whiteout);
- 	dput(whiteout);
- 
- cleanup_temp:
--	ovl_cleanup_unlocked(ofs, workdir, temp);
-+	ovl_cleanup(ofs, workdir, temp);
- 	release_dentry_name_snapshot(&name);
- 	dput(temp);
- 	dput(dest);
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 3df0f3efe592..62f809cf8ba9 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -1116,7 +1116,7 @@ static void ovl_cleanup_index(struct dentry *dentry)
- 					       indexdir, index);
- 	} else {
- 		/* Cleanup orphan index entries */
--		err = ovl_cleanup_unlocked(ofs, indexdir, index);
-+		err = ovl_cleanup(ofs, indexdir, index);
- 	}
- 	if (err)
- 		goto fail;
--- 
-2.49.0
+I don't think it's the case for btrfs, unless your "fixed-size" means 
+block size, and in that case, a single block won't be compressed at all...
+
+In btrfs, we support compressing the plaintext from 2 blocks to 128KiB 
+(the 128KiB limit is an artificial one).
+
+> 
+>  From what I've been reading in all your filesystems is that you want to
+> allocate extra pages in the page cache in order to store the excess data
+> retrieved along with the page that you're actually trying to read.  That's
+> because compressing in larger chunks leads to better compression.
+
+We don't. We just grab dirty pages up to 128KiB, and we can handle 
+smaller ranges, as small as two blocks.
+
+> 
+> There's some discrepancy between filesystems whether you need scratch
+> space for decompression.  Some filesystems read the compressed data into
+> the pagecache and decompress in-place, while other filesystems read the
+> compressed data into scratch pages and decompress into the page cache.
+
+Btrfs goes the scratch pages way. Decompression in-place looks a little 
+tricky to me. E.g. what if there is only one compressed page, and it 
+decompressed to 4 pages.
+
+Won't the plaintext over-write the compressed data halfway?
+
+> 
+> There also seems to be some discrepancy between filesystems whether the
+> decompression involves vmap() of all the memory allocated or whether the
+> decompression routines can handle doing kmap_local() on individual pages.
+
+Btrfs is the later case.
+
+All the decompression/compression routines all support swapping 
+input/output buffer when one of them is full.
+So kmap_local() is completely feasible.
+
+Thanks,
+Qu
+
+> 
+> So, my proposal is that filesystems tell the page cache that their minimum
+> folio size is the compression block size.  That seems to be around 64k,
+> so not an unreasonable minimum allocation size.  That removes all the
+> extra code in filesystems to allocate extra memory in the page cache.
+> It means we don't attempt to track dirtiness at a sub-folio granularity
+> (there's no point, we have to write back the entire compressed bock
+> at once).  We also get a single virtually contiguous block ... if you're
+> willing to ditch HIGHMEM support.  Or there's a proposal to introduce a
+> vmap_file() which would give us a virtually contiguous chunk of memory
+> (and could be trivially turned into a noop for the case of trying to
+> vmap a single large folio).
+> 
+> 
 
 
