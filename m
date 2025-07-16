@@ -1,1029 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-55127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A2AB07114
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 11:03:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37D7B07154
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 11:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AE6A189ED4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 09:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B92A16D945
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 09:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E772F0E57;
-	Wed, 16 Jul 2025 09:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BD22F430F;
+	Wed, 16 Jul 2025 09:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NBOjVs4P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wga44eKK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4CF2F002C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 09:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64C72F3C37;
+	Wed, 16 Jul 2025 09:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752656564; cv=none; b=m/c5r+EORg9nHFMjywueufn/4g+bcd8bbFSTX/3jwQofMunb+S7LTDPFm6j92YSPlYEoZN+Wqg7GsP27jgH3Am59x4DyAWeLCURM0Z2/tAiCbuspiulzcoA0h0gkTTAi0Bzop7bAGEp6QWJ8BiYvgwxYRdJlChXE21R2zZSw6Ao=
+	t=1752656981; cv=none; b=QxqcNrWtUtMo9zE5qItqq3QF5lQj2mvWQAURALz1ebAim7T9elpV6bRVpX1D/K/PZAOWXJyr9KoPd1PTsna8IrbuPp5n2ONATWgafQwcH+F2Zy8BR0nbV6zt9tMHkVoE8rmocdNWgkTsR0/y+VTpIozXRBrLlyxu2kjDV+cCUGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752656564; c=relaxed/simple;
-	bh=oDaI/jo3ZCvj/vIr/+oeO3G0jKNdN+UtwygdeaCQhVs=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=h1psc5IbRWWS39KQV686TeMTtQdVMQ4vMRjO8kKaYId+73u97dV4nkthp0dtW+ys8R9v9f6qSSmgXxF1AcuFkaeJkJ/avbUWPQNQUvKFUhhd8+m4jdDObqRHUq0iWl0t88ESsNHHyveu2ZWPurK1aLx4k86NvwyNTHqvRXA8yLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NBOjVs4P; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752656560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fe4rfrp79Imqd4+3k1AW8vrG1Mm0Zmq187aPdxE2ukM=;
-	b=NBOjVs4PJzlLWkoOaWPQcH5dDl18DKh8NTewGjRpYl5ffOqozrvJEFF8iPrTaM0WXZhAtl
-	P3gye2ZEOFosB+UFV71HGVPSXgV9S2zZapJIzc6Y7RUQSQQ1hb7wDqGg52uNiAH5RiWPSX
-	BbZKXX60Xv//uS/7Wv4E9Gj1zkxEHdA=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-328-vd69yrtwMKyovkNNMCTGHA-1; Wed,
- 16 Jul 2025 05:02:34 -0400
-X-MC-Unique: vd69yrtwMKyovkNNMCTGHA-1
-X-Mimecast-MFC-AGG-ID: vd69yrtwMKyovkNNMCTGHA_1752656553
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2D53918001DD;
-	Wed, 16 Jul 2025 09:02:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0E9951801723;
-	Wed, 16 Jul 2025 09:02:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v3] afs: Add support for RENAME_NOREPLACE and RENAME_EXCHANGE
+	s=arc-20240116; t=1752656981; c=relaxed/simple;
+	bh=GEEVZpyyyvUI0P8FsVR+okBxk/TQKqapbni6lSlYRrw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jzlO9ji/j4wCBk4U7qqlT4K4gAGWODxMYTPCCrJs00CK5mVZEIq7/CACSikDEWS7LXR76vWpritfUfTILMe+65pPC3GtrE9lpaSFm65aJqbCJy3CtjUVF+CtGZxYdWpcTgGSMb7SE+2yjMOQeXo8IubwAd5QBJSrb+vXsO+EvGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wga44eKK; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60c51860bf5so10586987a12.1;
+        Wed, 16 Jul 2025 02:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752656978; x=1753261778; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GEEVZpyyyvUI0P8FsVR+okBxk/TQKqapbni6lSlYRrw=;
+        b=Wga44eKK6Ijg7I29QS+SbePeTrl2vCReql8yCaP2hXL+a4LAOHG7vYVnavQl2hThSL
+         6ZMz/WRA2KmhNSymygK9ubxvqor2owbhKDF0h4sdTmArcjMmq9AsnwttjoCuY7TY62mT
+         9cDu5GxYYAOfQtW2+tAEHfl03s0OkDl6CdWz5Bi6U8SdPaOQgv3IDQu3c7y29C/6jUYj
+         x5YB8l1A1Y6gE7JLzWXwwvBZoXsbfe9RnRcdXwaOJrNEsiY3ex3MIwe1aNbUzbWIWPSt
+         tJluc8OKRzwT8gSGItpsEKKZzG1keYEUbDNi2hvYyjsAEiiRSul3vz7ErmgMxFslrOgx
+         IjMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752656978; x=1753261778;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GEEVZpyyyvUI0P8FsVR+okBxk/TQKqapbni6lSlYRrw=;
+        b=mwMO4l3Fjfi4GRcU4LWNHislYdcVewBchT1ojyD7bqKej7qrjurvVMZEYtY8ex091X
+         RBzFqgZPG2Gy5ijCeA5fakgD+hJh1cABbgvM2jGY9zM8zml1k9xgKyi3GvwW5+676wR4
+         Bw4jOJq7ogxZPOoVK2V5IO6s2WqA58yB4+bzc9wcZ2buemdhmGB2urfE1eBmbAHbqYhS
+         lnqSTetSMgGF1XVyckc3gUcXnIgb/spdRpSdHx3czZ4ukDc6eswox/Fp7SUj88tZqU6e
+         N+giVPW4G9pBMrLfS6J9SLBRxEdoKQFlgB5E2ODGmQgrXmFaWsoZnBgy2E52n7Go5Jio
+         kR+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUm87IfAKMtGKylyaournn+kioQcJazh56Z8nvixy+4psU6UPf0Bpqdlh1uDpHEksmSsn6J83ooRJw9zluI@vger.kernel.org, AJvYcCV34ZSizU3XoHbxupBYAgkyzGwEvzST5Id3CGQ7lLoE+SWaVJYFjgBJupZhyqxyEa1g6VcvEIzm1mHGNbeCzQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnjqFDnTE9c8pBRSVygKmEJCI/I3IbBCh4Df/Rs7nCYg0/hhW1
+	c0bTMUWPZTxs8QW/uv/7ulHuM6oXLnpyS3gOXsqRiQhBgQEyw1qkGhK0pt8baOOk3R2LF4iFpvG
+	sET+C6OM7G5bZiuoaZWjbwEzGL7yqsSw=
+X-Gm-Gg: ASbGncvwhKVFGoJbg18sjFQ0kRSvcQxECdt0X21gX0iGJJCxFYwGVABY4+fKjGrBsrM
+	+dLlPKLdN+d0FujrRb/5z1frZbW7QRzRDmbBdEVBlMETS4HHDMm7OK1KmZDpaDfRYeRnsGfBGYA
+	Wos3PaGEnWpITE+cjxxqdRWWUTqC699kfk9DN7x7wiuSLMfNrkiq/pKri9HMnKM8jKPL21+e6ku
+	XmE7hk=
+X-Google-Smtp-Source: AGHT+IG/a+IHRmG4SCgHl2avPCS43BlYaqU3FXcq3gGNJ0FOlgRfHWn75YyY9qb3qnnqT5kOyTXPdiJmyReQIGVl3A8=
+X-Received: by 2002:a17:907:7252:b0:ae3:5e70:32f7 with SMTP id
+ a640c23a62f3a-ae9c9b72f2cmr262706266b.47.1752656977505; Wed, 16 Jul 2025
+ 02:09:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3482105.1752656546.1@warthog.procyon.org.uk>
+References: <CAOQ4uxiHNyBmJUSwFxpvkor_-h=GJEeZuD4Kkxus-1X81bgVEQ@mail.gmail.com>
+ <175265310294.2234665.3973700598223000667@noble.neil.brown.name>
+In-Reply-To: <175265310294.2234665.3973700598223000667@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 16 Jul 2025 11:09:26 +0200
+X-Gm-Features: Ac12FXzAElWjiiin4RG-BKjz0ujRw1ltr7G1hEgHVXNV0p3t_wph2ke5n0Q_scU
+Message-ID: <CAOQ4uxgDqJdPxugDRh0yrKudmx_eJYekhXBY7NSzmkGauO8i=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 00/21] ovl: narrow regions protected by i_rw_sem
+To: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 16 Jul 2025 10:02:26 +0100
-Message-ID: <3482106.1752656546@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-    =
+On Wed, Jul 16, 2025 at 10:05=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> On Wed, 16 Jul 2025, Amir Goldstein wrote:
+> > On Wed, Jul 16, 2025 at 9:19=E2=80=AFAM NeilBrown <neil@brown.name> wro=
+te:
+> > >
+> > > On Wed, 16 Jul 2025, Amir Goldstein wrote:
+> > > > On Wed, Jul 16, 2025 at 2:47=E2=80=AFAM NeilBrown <neil@brown.name>=
+ wrote:
+> > > > >
+> > > > > More excellent review feedback - more patches :-)
+> > > > >
+> > > > > I've chosen to use ovl_parent_lock() here as a temporary and leav=
+e the
+> > > > > debate over naming for the VFS version of the function until all =
+the new
+> > > > > names are introduced later.
+> > > >
+> > > > Perfect.
+> > > >
+> > > > Please push v3 patches to branch pdirops, or to a clean branch
+> > > > based on vfs-6.17.file, so I can test them.
+> > >
+> > > There is a branch "ovl" which is based on vfs.all as I depend on a
+> > > couple of other vfs changes.
+> >
+> > ok I will test this one.
+> >
+> > Do you mean that ovl branch depends on other vfs changes or that pdirop=
+s
+> > which is based on ovl branch depends on other vfs changes?
+>
+> ovl branch depends on
+>
+> Commit bc9241367aac ("VFS: change old_dir and new_dir in struct renamedat=
+a to dentrys")
 
-Add support for RENAME_NOREPLACE and RENAME_EXCHANGE, if the server
-supports them.
+I see.
 
-The default is translated to YFS.Rename_Replace, falling back to
-YFS.Rename; RENAME_NOREPLACE is translated to YFS.Rename_NoReplace and
-RENAME_EXCHANGE to YFS.Rename_Exchange, both of which fall back to
-reporting EINVAL.
+Anyway, testing looks good on your branch.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
----
-    Changes
-    =3D=3D=3D=3D=3D=3D=3D
-    ver #3)
-     - Make sillyrename provide the info needed for the advanced rename to
-       avoid generic/011 oopsing.
-    =
+Christian,
 
-    ver #2)
-     - Suppress some debugging output.
-     - Return EINVAL rather than EOPNOTSUPP if not supported.
+From eyeballing the changes on vfs.all, I do not see any apparent dependenc=
+y
+of the commit above with any of the commits in other vfs branches.
 
- fs/afs/dir.c               |  223 +++++++++++++++++++++++++++++++--------=
--
- fs/afs/dir_edit.c          |   18 +--
- fs/afs/dir_silly.c         |   11 +
- fs/afs/internal.h          |   15 +-
- fs/afs/misc.c              |    1 =
+Since vfs-6.17.file currently has two ovl patches and one vfs patch which i=
+s a
+prep patch for ovl, may I propose to collect all ovl patches and ovl
+prep patches
+on a single branch for 6.17:
 
- fs/afs/protocol_yfs.h      |    3 =
+1. Rename vfs-6.17.file to vfs-6.17.ovl (or not up to you)
+2. Move commit bc9241367aac from vfs-6.17.misc to vfs-6.17.ovl
+3. Apply Neil's patches from this series (all have my RVB)
 
- fs/afs/rotate.c            |   11 +
- fs/afs/yfsclient.c         |  249 +++++++++++++++++++++++++++++++++++++++=
-++++++
- fs/dcache.c                |    1 =
+Logically, these changes could be broken up to more than 1 PR,
+but that's up to you. I can also do the ovl-only PR myself if we agree on
+a stable vfs branch and its content.
 
- include/trace/events/afs.h |    6 +
- 10 files changed, 477 insertions(+), 61 deletions(-)
+WDYT?
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index bfb69e066672..89d36e3e5c79 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -1823,7 +1823,8 @@ static int afs_symlink(struct mnt_idmap *idmap, stru=
-ct inode *dir,
- =
-
- static void afs_rename_success(struct afs_operation *op)
- {
--	struct afs_vnode *vnode =3D AFS_FS_I(d_inode(op->dentry));
-+	struct afs_vnode *vnode =3D op->more_files[0].vnode;
-+	struct afs_vnode *new_vnode =3D op->more_files[1].vnode;
- =
-
- 	_enter("op=3D%08x", op->debug_id);
- =
-
-@@ -1834,22 +1835,40 @@ static void afs_rename_success(struct afs_operatio=
-n *op)
- 		op->ctime =3D op->file[1].scb.status.mtime_client;
- 		afs_vnode_commit_status(op, &op->file[1]);
- 	}
-+	if (op->more_files[0].scb.have_status)
-+		afs_vnode_commit_status(op, &op->more_files[0]);
-+	if (op->more_files[1].scb.have_status)
-+		afs_vnode_commit_status(op, &op->more_files[1]);
- =
-
- 	/* If we're moving a subdir between dirs, we need to update
- 	 * its DV counter too as the ".." will be altered.
- 	 */
--	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
--	    op->file[0].vnode !=3D op->file[1].vnode) {
--		u64 new_dv;
-+	if (op->file[0].vnode !=3D op->file[1].vnode) {
-+		if (S_ISDIR(vnode->netfs.inode.i_mode)) {
-+			u64 new_dv;
- =
-
--		write_seqlock(&vnode->cb_lock);
-+			write_seqlock(&vnode->cb_lock);
- =
-
--		new_dv =3D vnode->status.data_version + 1;
--		trace_afs_set_dv(vnode, new_dv);
--		vnode->status.data_version =3D new_dv;
--		inode_set_iversion_raw(&vnode->netfs.inode, new_dv);
-+			new_dv =3D vnode->status.data_version + 1;
-+			trace_afs_set_dv(vnode, new_dv);
-+			vnode->status.data_version =3D new_dv;
-+			inode_set_iversion_raw(&vnode->netfs.inode, new_dv);
- =
-
--		write_sequnlock(&vnode->cb_lock);
-+			write_sequnlock(&vnode->cb_lock);
-+		}
-+
-+		if ((op->rename.rename_flags & RENAME_EXCHANGE) &&
-+		    S_ISDIR(new_vnode->netfs.inode.i_mode)) {
-+			u64 new_dv;
-+
-+			write_seqlock(&new_vnode->cb_lock);
-+
-+			new_dv =3D new_vnode->status.data_version + 1;
-+			new_vnode->status.data_version =3D new_dv;
-+			inode_set_iversion_raw(&new_vnode->netfs.inode, new_dv);
-+
-+			write_sequnlock(&new_vnode->cb_lock);
-+		}
- 	}
- }
- =
-
-@@ -1900,8 +1919,8 @@ static void afs_rename_edit_dir(struct afs_operation=
- *op)
- 	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
- 	    new_dvnode !=3D orig_dvnode &&
- 	    test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
--		afs_edit_dir_update_dotdot(vnode, new_dvnode,
--					   afs_edit_dir_for_rename_sub);
-+		afs_edit_dir_update(vnode, &dotdot_name, new_dvnode,
-+				    afs_edit_dir_for_rename_sub);
- =
-
- 	new_inode =3D d_inode(new_dentry);
- 	if (new_inode) {
-@@ -1915,9 +1934,6 @@ static void afs_rename_edit_dir(struct afs_operation=
- *op)
- =
-
- 	/* Now we can update d_fsdata on the dentries to reflect their
- 	 * new parent's data_version.
--	 *
--	 * Note that if we ever implement RENAME_EXCHANGE, we'll have
--	 * to update both dentries with opposing dir versions.
- 	 */
- 	afs_update_dentry_version(op, new_dvp, op->dentry);
- 	afs_update_dentry_version(op, new_dvp, op->dentry_2);
-@@ -1930,6 +1946,67 @@ static void afs_rename_edit_dir(struct afs_operatio=
-n *op)
- 		fscache_end_operation(&new_cres);
- }
- =
-
-+static void afs_rename_exchange_edit_dir(struct afs_operation *op)
-+{
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	struct afs_vnode *orig_dvnode =3D orig_dvp->vnode;
-+	struct afs_vnode *new_dvnode =3D new_dvp->vnode;
-+	struct afs_vnode *old_vnode =3D op->more_files[0].vnode;
-+	struct afs_vnode *new_vnode =3D op->more_files[1].vnode;
-+	struct dentry *old_dentry =3D op->dentry;
-+	struct dentry *new_dentry =3D op->dentry_2;
-+
-+	_enter("op=3D%08x", op->debug_id);
-+
-+	if (new_dvnode =3D=3D orig_dvnode) {
-+		down_write(&orig_dvnode->validate_lock);
-+		if (test_bit(AFS_VNODE_DIR_VALID, &orig_dvnode->flags) &&
-+		    orig_dvnode->status.data_version =3D=3D orig_dvp->dv_before + orig_=
-dvp->dv_delta) {
-+			afs_edit_dir_update(orig_dvnode, &old_dentry->d_name,
-+					    new_vnode, afs_edit_dir_for_rename_0);
-+			afs_edit_dir_update(orig_dvnode, &new_dentry->d_name,
-+					    old_vnode, afs_edit_dir_for_rename_1);
-+		}
-+
-+		d_exchange(old_dentry, new_dentry);
-+		up_write(&orig_dvnode->validate_lock);
-+	} else {
-+		down_write(&orig_dvnode->validate_lock);
-+		if (test_bit(AFS_VNODE_DIR_VALID, &orig_dvnode->flags) &&
-+		    orig_dvnode->status.data_version =3D=3D orig_dvp->dv_before + orig_=
-dvp->dv_delta)
-+			afs_edit_dir_update(orig_dvnode, &old_dentry->d_name,
-+					    new_vnode, afs_edit_dir_for_rename_0);
-+
-+		up_write(&orig_dvnode->validate_lock);
-+		down_write(&new_dvnode->validate_lock);
-+
-+		if (test_bit(AFS_VNODE_DIR_VALID, &new_dvnode->flags) &&
-+		    new_dvnode->status.data_version =3D=3D new_dvp->dv_before + new_dvp=
-->dv_delta)
-+			afs_edit_dir_update(new_dvnode, &new_dentry->d_name,
-+					    old_vnode, afs_edit_dir_for_rename_1);
-+
-+		if (S_ISDIR(old_vnode->netfs.inode.i_mode) &&
-+		    test_bit(AFS_VNODE_DIR_VALID, &old_vnode->flags))
-+			afs_edit_dir_update(old_vnode, &dotdot_name, new_dvnode,
-+					    afs_edit_dir_for_rename_sub);
-+
-+		if (S_ISDIR(new_vnode->netfs.inode.i_mode) &&
-+		    test_bit(AFS_VNODE_DIR_VALID, &new_vnode->flags))
-+			afs_edit_dir_update(new_vnode, &dotdot_name, orig_dvnode,
-+					    afs_edit_dir_for_rename_sub);
-+
-+		/* Now we can update d_fsdata on the dentries to reflect their
-+		 * new parents' data_version.
-+		 */
-+		afs_update_dentry_version(op, new_dvp, old_dentry);
-+		afs_update_dentry_version(op, orig_dvp, new_dentry);
-+
-+		d_exchange(old_dentry, new_dentry);
-+		up_write(&new_dvnode->validate_lock);
-+	}
-+}
-+
- static void afs_rename_put(struct afs_operation *op)
- {
- 	_enter("op=3D%08x", op->debug_id);
-@@ -1948,6 +2025,32 @@ static const struct afs_operation_ops afs_rename_op=
-eration =3D {
- 	.put		=3D afs_rename_put,
- };
- =
-
-+#if 0 /* Autoswitched in yfs_fs_rename_replace(). */
-+static const struct afs_operation_ops afs_rename_replace_operation =3D {
-+	.issue_afs_rpc	=3D NULL,
-+	.issue_yfs_rpc	=3D yfs_fs_rename_replace,
-+	.success	=3D afs_rename_success,
-+	.edit_dir	=3D afs_rename_edit_dir,
-+	.put		=3D afs_rename_put,
-+};
-+#endif
-+
-+static const struct afs_operation_ops afs_rename_noreplace_operation =3D =
-{
-+	.issue_afs_rpc	=3D NULL,
-+	.issue_yfs_rpc	=3D yfs_fs_rename_noreplace,
-+	.success	=3D afs_rename_success,
-+	.edit_dir	=3D afs_rename_edit_dir,
-+	.put		=3D afs_rename_put,
-+};
-+
-+static const struct afs_operation_ops afs_rename_exchange_operation =3D {
-+	.issue_afs_rpc	=3D NULL,
-+	.issue_yfs_rpc	=3D yfs_fs_rename_exchange,
-+	.success	=3D afs_rename_success,
-+	.edit_dir	=3D afs_rename_exchange_edit_dir,
-+	.put		=3D afs_rename_put,
-+};
-+
- /*
-  * rename a file in an AFS filesystem and/or move it between directories
-  */
-@@ -1956,10 +2059,10 @@ static int afs_rename(struct mnt_idmap *idmap, str=
-uct inode *old_dir,
- 		      struct dentry *new_dentry, unsigned int flags)
- {
- 	struct afs_operation *op;
--	struct afs_vnode *orig_dvnode, *new_dvnode, *vnode;
-+	struct afs_vnode *orig_dvnode, *new_dvnode, *vnode, *new_vnode =3D NULL;
- 	int ret;
- =
-
--	if (flags)
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
- 		return -EINVAL;
- =
-
- 	/* Don't allow silly-rename files be moved around. */
-@@ -1969,6 +2072,8 @@ static int afs_rename(struct mnt_idmap *idmap, struc=
-t inode *old_dir,
- 	vnode =3D AFS_FS_I(d_inode(old_dentry));
- 	orig_dvnode =3D AFS_FS_I(old_dir);
- 	new_dvnode =3D AFS_FS_I(new_dir);
-+	if (d_is_positive(new_dentry))
-+		new_vnode =3D AFS_FS_I(d_inode(new_dentry));
- =
-
- 	_enter("{%llx:%llu},{%llx:%llu},{%llx:%llu},{%pd}",
- 	       orig_dvnode->fid.vid, orig_dvnode->fid.vnode,
-@@ -1989,6 +2094,11 @@ static int afs_rename(struct mnt_idmap *idmap, stru=
-ct inode *old_dir,
- 	if (ret < 0)
- 		goto error;
- =
-
-+	ret =3D -ENOMEM;
-+	op->more_files =3D kvcalloc(2, sizeof(struct afs_vnode_param), GFP_KERNE=
-L);
-+	if (!op->more_files)
-+		goto error;
-+
- 	afs_op_set_vnode(op, 0, orig_dvnode);
- 	afs_op_set_vnode(op, 1, new_dvnode); /* May be same as orig_dvnode */
- 	op->file[0].dv_delta =3D 1;
-@@ -1997,46 +2107,63 @@ static int afs_rename(struct mnt_idmap *idmap, str=
-uct inode *old_dir,
- 	op->file[1].modification =3D true;
- 	op->file[0].update_ctime =3D true;
- 	op->file[1].update_ctime =3D true;
-+	op->more_files[0].vnode		=3D vnode;
-+	op->more_files[0].speculative	=3D true;
-+	op->more_files[1].vnode		=3D new_vnode;
-+	op->more_files[1].speculative	=3D true;
-+	op->nr_files =3D 4;
- =
-
- 	op->dentry		=3D old_dentry;
- 	op->dentry_2		=3D new_dentry;
-+	op->rename.rename_flags	=3D flags;
- 	op->rename.new_negative	=3D d_is_negative(new_dentry);
--	op->ops			=3D &afs_rename_operation;
- =
-
--	/* For non-directories, check whether the target is busy and if so,
--	 * make a copy of the dentry and then do a silly-rename.  If the
--	 * silly-rename succeeds, the copied dentry is hashed and becomes the
--	 * new target.
--	 */
--	if (d_is_positive(new_dentry) && !d_is_dir(new_dentry)) {
--		/* To prevent any new references to the target during the
--		 * rename, we unhash the dentry in advance.
-+	if (flags & RENAME_NOREPLACE) {
-+		op->ops		=3D &afs_rename_noreplace_operation;
-+	} else if (flags & RENAME_EXCHANGE) {
-+		op->ops		=3D &afs_rename_exchange_operation;
-+		d_drop(new_dentry);
-+	} else {
-+		/* If we might displace the target, we might need to do silly
-+		 * rename.
- 		 */
--		if (!d_unhashed(new_dentry)) {
--			d_drop(new_dentry);
--			op->rename.rehash =3D new_dentry;
--		}
-+		op->ops	=3D &afs_rename_operation;
- =
-
--		if (d_count(new_dentry) > 2) {
--			/* copy the target dentry's name */
--			op->rename.tmp =3D d_alloc(new_dentry->d_parent,
--						 &new_dentry->d_name);
--			if (!op->rename.tmp) {
--				afs_op_nomem(op);
--				goto error;
-+		/* For non-directories, check whether the target is busy and if
-+		 * so, make a copy of the dentry and then do a silly-rename.
-+		 * If the silly-rename succeeds, the copied dentry is hashed
-+		 * and becomes the new target.
-+		 */
-+		if (d_is_positive(new_dentry) && !d_is_dir(new_dentry)) {
-+			/* To prevent any new references to the target during
-+			 * the rename, we unhash the dentry in advance.
-+			 */
-+			if (!d_unhashed(new_dentry)) {
-+				d_drop(new_dentry);
-+				op->rename.rehash =3D new_dentry;
- 			}
- =
-
--			ret =3D afs_sillyrename(new_dvnode,
--					      AFS_FS_I(d_inode(new_dentry)),
--					      new_dentry, op->key);
--			if (ret) {
--				afs_op_set_error(op, ret);
--				goto error;
-+			if (d_count(new_dentry) > 2) {
-+				/* copy the target dentry's name */
-+				op->rename.tmp =3D d_alloc(new_dentry->d_parent,
-+							 &new_dentry->d_name);
-+				if (!op->rename.tmp) {
-+					afs_op_nomem(op);
-+					goto error;
-+				}
-+
-+				ret =3D afs_sillyrename(new_dvnode,
-+						      AFS_FS_I(d_inode(new_dentry)),
-+						      new_dentry, op->key);
-+				if (ret) {
-+					afs_op_set_error(op, ret);
-+					goto error;
-+				}
-+
-+				op->dentry_2 =3D op->rename.tmp;
-+				op->rename.rehash =3D NULL;
-+				op->rename.new_negative =3D true;
- 			}
--
--			op->dentry_2 =3D op->rename.tmp;
--			op->rename.rehash =3D NULL;
--			op->rename.new_negative =3D true;
- 		}
- 	}
- =
-
-@@ -2052,6 +2179,8 @@ static int afs_rename(struct mnt_idmap *idmap, struc=
-t inode *old_dir,
- 	d_drop(old_dentry);
- =
-
- 	ret =3D afs_do_sync_operation(op);
-+	if (ret =3D=3D -ENOTSUPP)
-+		ret =3D -EINVAL;
- out:
- 	afs_dir_unuse_cookie(orig_dvnode, ret);
- 	if (new_dvnode !=3D orig_dvnode)
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index 60a549f1d9c5..4b1342c72089 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -522,11 +522,11 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
- }
- =
-
- /*
-- * Edit a subdirectory that has been moved between directories to update =
-the
-- * ".." entry.
-+ * Edit an entry in a directory to update the vnode it refers to.  This i=
-s also
-+ * used to update the ".." entry in a directory.
-  */
--void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
--				enum afs_edit_dir_reason why)
-+void afs_edit_dir_update(struct afs_vnode *vnode, const struct qstr *name=
-,
-+			 struct afs_vnode *new_dvnode, enum afs_edit_dir_reason why)
- {
- 	union afs_xdr_dir_block *block;
- 	union afs_xdr_dirent *de;
-@@ -557,7 +557,7 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnod=
-e, struct afs_vnode *new_d
- 		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
- 			goto already_invalidated;
- =
-
--		slot =3D afs_dir_scan_block(block, &dotdot_name, b);
-+		slot =3D afs_dir_scan_block(block, name, b);
- 		if (slot >=3D 0)
- 			goto found_dirent;
- =
-
-@@ -566,7 +566,7 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnod=
-e, struct afs_vnode *new_d
- =
-
- 	/* Didn't find the dirent to clobber.  Download the directory again. */
- 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_nodd,
--			   0, 0, 0, 0, "..");
-+			   0, 0, 0, 0, name->name);
- 	afs_invalidate_dir(vnode, afs_dir_invalid_edit_upd_no_dd);
- 	goto out;
- =
-
-@@ -576,7 +576,7 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnod=
-e, struct afs_vnode *new_d
- 	de->u.unique =3D htonl(new_dvnode->fid.unique);
- =
-
- 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_dd, b, slot,
--			   ntohl(de->u.vnode), ntohl(de->u.unique), "..");
-+			   ntohl(de->u.vnode), ntohl(de->u.unique), name->name);
- =
-
- 	kunmap_local(block);
- 	netfs_single_mark_inode_dirty(&vnode->netfs.inode);
-@@ -589,12 +589,12 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vn=
-ode, struct afs_vnode *new_d
- already_invalidated:
- 	kunmap_local(block);
- 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_inval,
--			   0, 0, 0, 0, "..");
-+			   0, 0, 0, 0, name->name);
- 	goto out;
- =
-
- error:
- 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_error,
--			   0, 0, 0, 0, "..");
-+			   0, 0, 0, 0, name->name);
- 	goto out;
- }
- =
-
-diff --git a/fs/afs/dir_silly.c b/fs/afs/dir_silly.c
-index 0b80eb93fa40..014495d4b868 100644
---- a/fs/afs/dir_silly.c
-+++ b/fs/afs/dir_silly.c
-@@ -69,6 +69,12 @@ static int afs_do_silly_rename(struct afs_vnode *dvnode=
-, struct afs_vnode *vnode
- 	if (IS_ERR(op))
- 		return PTR_ERR(op);
- =
-
-+	op->more_files =3D kvcalloc(2, sizeof(struct afs_vnode_param), GFP_KERNE=
-L);
-+	if (!op->more_files) {
-+		afs_put_operation(op);
-+		return -ENOMEM;
-+	}
-+
- 	afs_op_set_vnode(op, 0, dvnode);
- 	afs_op_set_vnode(op, 1, dvnode);
- 	op->file[0].dv_delta =3D 1;
-@@ -77,6 +83,11 @@ static int afs_do_silly_rename(struct afs_vnode *dvnode=
-, struct afs_vnode *vnode
- 	op->file[1].modification =3D true;
- 	op->file[0].update_ctime =3D true;
- 	op->file[1].update_ctime =3D true;
-+	op->more_files[0].vnode		=3D AFS_FS_I(d_inode(old));
-+	op->more_files[0].speculative	=3D true;
-+	op->more_files[1].vnode		=3D AFS_FS_I(d_inode(new));
-+	op->more_files[1].speculative	=3D true;
-+	op->nr_files =3D 4;
- =
-
- 	op->dentry		=3D old;
- 	op->dentry_2		=3D new;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 1124ea4000cb..444a3ea4fdf6 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -562,6 +562,7 @@ struct afs_server {
- #define AFS_SERVER_FL_NO_IBULK	17		/* Fileserver doesn't support FS.Inlin=
-eBulkStatus */
- #define AFS_SERVER_FL_NO_RM2	18		/* Fileserver doesn't support YFS.Remove=
-File2 */
- #define AFS_SERVER_FL_HAS_FS64	19		/* Fileserver supports FS.{Fetch,Store=
-}Data64 */
-+#define AFS_SERVER_FL_NO_RENAME2 20		/* YFS Fileserver doesn't support en=
-hanced rename */
- 	refcount_t		ref;		/* Object refcount */
- 	atomic_t		active;		/* Active user count */
- 	u32			addr_version;	/* Address list version */
-@@ -891,9 +892,10 @@ struct afs_operation {
- 			bool	need_rehash;
- 		} unlink;
- 		struct {
--			struct dentry *rehash;
--			struct dentry *tmp;
--			bool	new_negative;
-+			struct dentry	*rehash;
-+			struct dentry	*tmp;
-+			unsigned int	rename_flags;
-+			bool		new_negative;
- 		} rename;
- 		struct {
- 			struct netfs_io_subrequest *subreq;
-@@ -1100,8 +1102,8 @@ int afs_single_writepages(struct address_space *mapp=
-ing,
- extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct af=
-s_fid *,
- 			     enum afs_edit_dir_reason);
- extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum a=
-fs_edit_dir_reason);
--void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
--				enum afs_edit_dir_reason why);
-+void afs_edit_dir_update(struct afs_vnode *vnode, const struct qstr *name=
-,
-+			 struct afs_vnode *new_dvnode, enum afs_edit_dir_reason why);
- void afs_mkdir_init_dir(struct afs_vnode *dvnode, struct afs_vnode *paren=
-t_vnode);
- =
-
- /*
-@@ -1693,6 +1695,9 @@ extern void yfs_fs_remove_dir(struct afs_operation *=
-);
- extern void yfs_fs_link(struct afs_operation *);
- extern void yfs_fs_symlink(struct afs_operation *);
- extern void yfs_fs_rename(struct afs_operation *);
-+void yfs_fs_rename_replace(struct afs_operation *op);
-+void yfs_fs_rename_noreplace(struct afs_operation *op);
-+void yfs_fs_rename_exchange(struct afs_operation *op);
- extern void yfs_fs_store_data(struct afs_operation *);
- extern void yfs_fs_setattr(struct afs_operation *);
- extern void yfs_fs_get_volume_status(struct afs_operation *);
-diff --git a/fs/afs/misc.c b/fs/afs/misc.c
-index 8f2b3a177690..c8a7f266080d 100644
---- a/fs/afs/misc.c
-+++ b/fs/afs/misc.c
-@@ -131,6 +131,7 @@ int afs_abort_to_error(u32 abort_code)
- 	case KRB5_PROG_KEYTYPE_NOSUPP:	return -ENOPKG;
- =
-
- 	case RXGEN_OPCODE:	return -ENOTSUPP;
-+	case RX_INVALID_OPERATION:	return -ENOTSUPP;
- =
-
- 	default:		return -EREMOTEIO;
- 	}
-diff --git a/fs/afs/protocol_yfs.h b/fs/afs/protocol_yfs.h
-index e4cd89c44c46..b2f06c1917c2 100644
---- a/fs/afs/protocol_yfs.h
-+++ b/fs/afs/protocol_yfs.h
-@@ -50,6 +50,9 @@ enum YFS_FS_Operations {
- 	YFSREMOVEACL		=3D 64171,
- 	YFSREMOVEFILE2		=3D 64173,
- 	YFSSTOREOPAQUEACL2	=3D 64174,
-+	YFSRENAME_REPLACE	=3D 64176,
-+	YFSRENAME_NOREPLACE	=3D 64177,
-+	YFSRENAME_EXCHANGE	=3D 64187,
- 	YFSINLINEBULKSTATUS	=3D 64536, /* YFS Fetch multiple file statuses with =
-errors */
- 	YFSFETCHDATA64		=3D 64537, /* YFS Fetch file data */
- 	YFSSTOREDATA64		=3D 64538, /* YFS Store file data */
-diff --git a/fs/afs/rotate.c b/fs/afs/rotate.c
-index a1c24f589d9e..f5dd3555226b 100644
---- a/fs/afs/rotate.c
-+++ b/fs/afs/rotate.c
-@@ -432,6 +432,16 @@ bool afs_select_fileserver(struct afs_operation *op)
- 			afs_op_set_error(op, -EDQUOT);
- 			goto failed_but_online;
- =
-
-+		case RX_INVALID_OPERATION:
-+		case RXGEN_OPCODE:
-+			/* Handle downgrading to an older operation. */
-+			afs_op_set_error(op, -ENOTSUPP);
-+			if (op->flags & AFS_OPERATION_DOWNGRADE) {
-+				op->flags &=3D ~AFS_OPERATION_DOWNGRADE;
-+				goto go_again;
-+			}
-+			goto failed_but_online;
-+
- 		default:
- 			afs_op_accumulate_error(op, error, abort_code);
- 		failed_but_online:
-@@ -620,6 +630,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 	op->addr_index =3D addr_index;
- 	set_bit(addr_index, &op->addr_tried);
- =
-
-+go_again:
- 	op->volsync.creation =3D TIME64_MIN;
- 	op->volsync.update =3D TIME64_MIN;
- 	op->call_responded =3D false;
-diff --git a/fs/afs/yfsclient.c b/fs/afs/yfsclient.c
-index 257af259c04a..febf13a49f0b 100644
---- a/fs/afs/yfsclient.c
-+++ b/fs/afs/yfsclient.c
-@@ -1042,6 +1042,9 @@ void yfs_fs_rename(struct afs_operation *op)
- =
-
- 	_enter("");
- =
-
-+	if (!test_bit(AFS_SERVER_FL_NO_RENAME2, &op->server->flags))
-+		return yfs_fs_rename_replace(op);
-+
- 	call =3D afs_alloc_flat_call(op->net, &yfs_RXYFSRename,
- 				   sizeof(__be32) +
- 				   sizeof(struct yfs_xdr_RPCFlags) +
-@@ -1070,6 +1073,252 @@ void yfs_fs_rename(struct afs_operation *op)
- 	afs_make_op_call(op, call, GFP_NOFS);
- }
- =
-
-+/*
-+ * Deliver reply data to a YFS.Rename_NoReplace operation.  This does not
-+ * return the status of a displaced target inode as there cannot be one.
-+ */
-+static int yfs_deliver_fs_rename_1(struct afs_call *call)
-+{
-+	struct afs_operation *op =3D call->op;
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	struct afs_vnode_param *old_vp =3D &op->more_files[0];
-+	const __be32 *bp;
-+	int ret;
-+
-+	_enter("{%u}", call->unmarshall);
-+
-+	ret =3D afs_transfer_reply(call);
-+	if (ret < 0)
-+		return ret;
-+
-+	bp =3D call->buffer;
-+	/* If the two dirs are the same, we have two copies of the same status
-+	 * report, so we just decode it twice.
-+	 */
-+	xdr_decode_YFSFetchStatus(&bp, call, &orig_dvp->scb);
-+	xdr_decode_YFSFid(&bp, &old_vp->fid);
-+	xdr_decode_YFSFetchStatus(&bp, call, &old_vp->scb);
-+	xdr_decode_YFSFetchStatus(&bp, call, &new_dvp->scb);
-+	xdr_decode_YFSVolSync(&bp, &op->volsync);
-+	_leave(" =3D 0 [done]");
-+	return 0;
-+}
-+
-+/*
-+ * Deliver reply data to a YFS.Rename_Replace or a YFS.Rename_Exchange
-+ * operation.  These return the status of the displaced target inode if t=
-here
-+ * was one.
-+ */
-+static int yfs_deliver_fs_rename_2(struct afs_call *call)
-+{
-+	struct afs_operation *op =3D call->op;
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	struct afs_vnode_param *old_vp =3D &op->more_files[0];
-+	struct afs_vnode_param *new_vp =3D &op->more_files[1];
-+	const __be32 *bp;
-+	int ret;
-+
-+	_enter("{%u}", call->unmarshall);
-+
-+	ret =3D afs_transfer_reply(call);
-+	if (ret < 0)
-+		return ret;
-+
-+	bp =3D call->buffer;
-+	/* If the two dirs are the same, we have two copies of the same status
-+	 * report, so we just decode it twice.
-+	 */
-+	xdr_decode_YFSFetchStatus(&bp, call, &orig_dvp->scb);
-+	xdr_decode_YFSFid(&bp, &old_vp->fid);
-+	xdr_decode_YFSFetchStatus(&bp, call, &old_vp->scb);
-+	xdr_decode_YFSFetchStatus(&bp, call, &new_dvp->scb);
-+	xdr_decode_YFSFid(&bp, &new_vp->fid);
-+	xdr_decode_YFSFetchStatus(&bp, call, &new_vp->scb);
-+	xdr_decode_YFSVolSync(&bp, &op->volsync);
-+	_leave(" =3D 0 [done]");
-+	return 0;
-+}
-+
-+static void yfs_done_fs_rename_replace(struct afs_call *call)
-+{
-+	if (call->error =3D=3D -ECONNABORTED &&
-+	    (call->abort_code =3D=3D RX_INVALID_OPERATION ||
-+	     call->abort_code =3D=3D RXGEN_OPCODE)) {
-+		set_bit(AFS_SERVER_FL_NO_RENAME2, &call->op->server->flags);
-+		call->op->flags |=3D AFS_OPERATION_DOWNGRADE;
-+	}
-+}
-+
-+/*
-+ * YFS.Rename_Replace operation type
-+ */
-+static const struct afs_call_type yfs_RXYFSRename_Replace =3D {
-+	.name		=3D "FS.Rename_Replace",
-+	.op		=3D yfs_FS_Rename_Replace,
-+	.deliver	=3D yfs_deliver_fs_rename_2,
-+	.done		=3D yfs_done_fs_rename_replace,
-+	.destructor	=3D afs_flat_call_destructor,
-+};
-+
-+/*
-+ * YFS.Rename_NoReplace operation type
-+ */
-+static const struct afs_call_type yfs_RXYFSRename_NoReplace =3D {
-+	.name		=3D "FS.Rename_NoReplace",
-+	.op		=3D yfs_FS_Rename_NoReplace,
-+	.deliver	=3D yfs_deliver_fs_rename_1,
-+	.destructor	=3D afs_flat_call_destructor,
-+};
-+
-+/*
-+ * YFS.Rename_Exchange operation type
-+ */
-+static const struct afs_call_type yfs_RXYFSRename_Exchange =3D {
-+	.name		=3D "FS.Rename_Exchange",
-+	.op		=3D yfs_FS_Rename_Exchange,
-+	.deliver	=3D yfs_deliver_fs_rename_2,
-+	.destructor	=3D afs_flat_call_destructor,
-+};
-+
-+/*
-+ * Rename a file or directory, replacing the target if it exists.  The st=
-atus
-+ * of a displaced target is returned.
-+ */
-+void yfs_fs_rename_replace(struct afs_operation *op)
-+{
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	const struct qstr *orig_name =3D &op->dentry->d_name;
-+	const struct qstr *new_name =3D &op->dentry_2->d_name;
-+	struct afs_call *call;
-+	__be32 *bp;
-+
-+	_enter("");
-+
-+	call =3D afs_alloc_flat_call(op->net, &yfs_RXYFSRename_Replace,
-+				   sizeof(__be32) +
-+				   sizeof(struct yfs_xdr_RPCFlags) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(orig_name->len) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(new_name->len),
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSVolSync));
-+	if (!call)
-+		return afs_op_nomem(op);
-+
-+	/* Marshall the parameters. */
-+	bp =3D call->request;
-+	bp =3D xdr_encode_u32(bp, YFSRENAME_REPLACE);
-+	bp =3D xdr_encode_u32(bp, 0); /* RPC flags */
-+	bp =3D xdr_encode_YFSFid(bp, &orig_dvp->fid);
-+	bp =3D xdr_encode_name(bp, orig_name);
-+	bp =3D xdr_encode_YFSFid(bp, &new_dvp->fid);
-+	bp =3D xdr_encode_name(bp, new_name);
-+	yfs_check_req(call, bp);
-+
-+	call->fid =3D orig_dvp->fid;
-+	trace_afs_make_fs_call2(call, &orig_dvp->fid, orig_name, new_name);
-+	afs_make_op_call(op, call, GFP_NOFS);
-+}
-+
-+/*
-+ * Rename a file or directory, failing if the target dirent exists.
-+ */
-+void yfs_fs_rename_noreplace(struct afs_operation *op)
-+{
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	const struct qstr *orig_name =3D &op->dentry->d_name;
-+	const struct qstr *new_name =3D &op->dentry_2->d_name;
-+	struct afs_call *call;
-+	__be32 *bp;
-+
-+	_enter("");
-+
-+	call =3D afs_alloc_flat_call(op->net, &yfs_RXYFSRename_NoReplace,
-+				   sizeof(__be32) +
-+				   sizeof(struct yfs_xdr_RPCFlags) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(orig_name->len) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(new_name->len),
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSVolSync));
-+	if (!call)
-+		return afs_op_nomem(op);
-+
-+	/* Marshall the parameters. */
-+	bp =3D call->request;
-+	bp =3D xdr_encode_u32(bp, YFSRENAME_NOREPLACE);
-+	bp =3D xdr_encode_u32(bp, 0); /* RPC flags */
-+	bp =3D xdr_encode_YFSFid(bp, &orig_dvp->fid);
-+	bp =3D xdr_encode_name(bp, orig_name);
-+	bp =3D xdr_encode_YFSFid(bp, &new_dvp->fid);
-+	bp =3D xdr_encode_name(bp, new_name);
-+	yfs_check_req(call, bp);
-+
-+	call->fid =3D orig_dvp->fid;
-+	trace_afs_make_fs_call2(call, &orig_dvp->fid, orig_name, new_name);
-+	afs_make_op_call(op, call, GFP_NOFS);
-+}
-+
-+/*
-+ * Exchange a pair of files directories.
-+ */
-+void yfs_fs_rename_exchange(struct afs_operation *op)
-+{
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	const struct qstr *orig_name =3D &op->dentry->d_name;
-+	const struct qstr *new_name =3D &op->dentry_2->d_name;
-+	struct afs_call *call;
-+	__be32 *bp;
-+
-+	_enter("");
-+
-+	call =3D afs_alloc_flat_call(op->net, &yfs_RXYFSRename_Exchange,
-+				   sizeof(__be32) +
-+				   sizeof(struct yfs_xdr_RPCFlags) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(orig_name->len) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(new_name->len),
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSVolSync));
-+	if (!call)
-+		return afs_op_nomem(op);
-+
-+	/* Marshall the parameters. */
-+	bp =3D call->request;
-+	bp =3D xdr_encode_u32(bp, YFSRENAME_EXCHANGE);
-+	bp =3D xdr_encode_u32(bp, 0); /* RPC flags */
-+	bp =3D xdr_encode_YFSFid(bp, &orig_dvp->fid);
-+	bp =3D xdr_encode_name(bp, orig_name);
-+	bp =3D xdr_encode_YFSFid(bp, &new_dvp->fid);
-+	bp =3D xdr_encode_name(bp, new_name);
-+	yfs_check_req(call, bp);
-+
-+	call->fid =3D orig_dvp->fid;
-+	trace_afs_make_fs_call2(call, &orig_dvp->fid, orig_name, new_name);
-+	afs_make_op_call(op, call, GFP_NOFS);
-+}
-+
- /*
-  * YFS.StoreData64 operation type.
-  */
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 03d58b2d4fa3..0ccf5d17a26f 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2899,6 +2899,7 @@ void d_exchange(struct dentry *dentry1, struct dentr=
-y *dentry2)
- =
-
- 	write_sequnlock(&rename_lock);
- }
-+EXPORT_SYMBOL(d_exchange);
- =
-
- /**
-  * d_ancestor - search for an ancestor
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index 7f83d242c8e9..1b3c48b5591d 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -69,6 +69,9 @@ enum afs_fs_operation {
- 	yfs_FS_RemoveACL		=3D 64171,
- 	yfs_FS_RemoveFile2		=3D 64173,
- 	yfs_FS_StoreOpaqueACL2		=3D 64174,
-+	yfs_FS_Rename_Replace		=3D 64176,
-+	yfs_FS_Rename_NoReplace		=3D 64177,
-+	yfs_FS_Rename_Exchange		=3D 64187,
- 	yfs_FS_InlineBulkStatus		=3D 64536, /* YFS Fetch multiple file statuses =
-with errors */
- 	yfs_FS_FetchData64		=3D 64537, /* YFS Fetch file data */
- 	yfs_FS_StoreData64		=3D 64538, /* YFS Store file data */
-@@ -300,6 +303,9 @@ enum yfs_cm_operation {
- 	EM(yfs_FS_RemoveACL,			"YFS.RemoveACL") \
- 	EM(yfs_FS_RemoveFile2,			"YFS.RemoveFile2") \
- 	EM(yfs_FS_StoreOpaqueACL2,		"YFS.StoreOpaqueACL2") \
-+	EM(yfs_FS_Rename_Replace,		"YFS.Rename_Replace") \
-+	EM(yfs_FS_Rename_NoReplace,		"YFS.Rename_NoReplace") \
-+	EM(yfs_FS_Rename_Exchange,		"YFS.Rename_Exchange") \
- 	EM(yfs_FS_InlineBulkStatus,		"YFS.InlineBulkStatus") \
- 	EM(yfs_FS_FetchData64,			"YFS.FetchData64") \
- 	EM(yfs_FS_StoreData64,			"YFS.StoreData64") \
-
+Thanks,
+Amir.
 
