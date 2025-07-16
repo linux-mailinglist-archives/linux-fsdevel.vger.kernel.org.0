@@ -1,145 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-55070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECE4B06B09
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 03:16:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71145B06B50
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 03:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C78F1A658EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 01:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AC34A5B18
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 01:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60E9233156;
-	Wed, 16 Jul 2025 01:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D7B2E36F9;
+	Wed, 16 Jul 2025 01:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TF+gvzGg"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fs2/xm5T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CC716EB42;
-	Wed, 16 Jul 2025 01:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2966A26E179
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 01:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752628585; cv=none; b=DQUPwE4jPYxyGe1SHJ4rQxej8FjZ+qKbT517P1wlR1K9Jv9+jYHipdkWyeZJ6HP2nuNBiGXl8Pars6iWWAlJ6ykSVmmGvwgL0mntjYqbUmW3FEbst6KyYb0MhqfcTmrAU7+zZVgVmWzfsSZmziDbkb1thgJ5evIOGTTBAUfEC38=
+	t=1752630635; cv=none; b=WrDk9EHtTHjHQ88RWTY8Wax+t+rOD2twO9l4fkBWfTQQzH/hHL/hTs4wv0Q7PGiTuiraItBujxk7O0Lq1h6iovALJZWPr0/dfaYjaGKGknnGsjd/SamkMiskbfQOwDrEXp/6DGcBe65y68WhL967zlLiir+ea49TrDrGdAYHNAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752628585; c=relaxed/simple;
-	bh=77AnnyuZa1o+SszL3U2bIAmQVwUlngsW+1sVL6AGjRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sVzvma2c6AfCbdmJ9vYjWRlTiCUjvMX9L85lFUhXcCR87I0G0n+ZhMEay7ERqyzVpD1ncmrLBv3X8NjtskPFyHK/S0S6y2xy4OceJWBFmur+6o7f10t3VA6aSRlfCKI++/rWZd+IKICR6td0j5GuhUMuJPBv9nLRlKJUxZlfvdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TF+gvzGg; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752628579; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=kNCZo6e03bIhaM3yJ6Z7GsBUCWM2xE3LHwyTmkn0gfM=;
-	b=TF+gvzGg2d58lKvRZ2S5a+bvKJPJJOAMn0t2htCHO+6EWOmOXU+pWkxr6mqQ4MAG4c9+BG7+x8rV0Hkx6QG8+mlNJisUhHesMKQ1bx1VUN/xuMdMr3I9NErnOjpI2eBbUlLai9hkwyBPAzvCvvELnsXzFTz9wc1RmdAUvaPw1ek=
-Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wj1sJXu_1752628575 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 16 Jul 2025 09:16:17 +0800
-Message-ID: <eeee0704-9e76-4152-bb8e-b5a0e096ec18@linux.alibaba.com>
-Date: Wed, 16 Jul 2025 09:16:14 +0800
+	s=arc-20240116; t=1752630635; c=relaxed/simple;
+	bh=ulR2r4497/Knb1dtpDQYAGcd1xmbs3Ul1QUB5HiAxTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fMZYLnsewPAJ5kAwM54SLE12iSJBTgVS+hIjir6ikqv7QMkSbhmKwKyeHoKU7ip2Hu1blalJTverJF5UAmbvQOM0bnxEsGrnBiEPGpxVdxBfs2g4S2yaTgWkT0GEpepon5jwmEoM3FfXKXAnh8TV+zzQXSs1fBhaWbfx6EuBePQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fs2/xm5T; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab86a29c98so246561cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 18:50:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752630633; x=1753235433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PI+BpmLhrBZFyCshwZnktNusgYyVbEvS1xUVnNwBsk0=;
+        b=fs2/xm5TN2QMZsm6Pg6eQefSs+ddRsmyoDXrOiRisD/bREIA51q/EYyUzsaQEx/BpH
+         FgjyUAeTl9s05lTEtTpBMdVuBcWuVQYLe8EDMiXdNqJa0kK6SBTUqbXmxkSJ09rChCn1
+         n3pf93/4b6abSbrZNvhmpISWnYW1sxQ8igizLXXd1B4lfJ7NMWGSL/ryhKIZN8w6KEAW
+         6xKvcUD18gcCBBAUvBa3VRfCZWdXtgxZQAMlX6XKHmrZwvII8d5Pxn/4ob9jk/4ZJ5K6
+         /IAetKg/1jupdtdYqxzFBw98+gtFphftJCZYATtM0PjMsKDa0KwBGfNJV8MJe8XE4Vby
+         2UUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752630633; x=1753235433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PI+BpmLhrBZFyCshwZnktNusgYyVbEvS1xUVnNwBsk0=;
+        b=mWi/mdaD6U6oY7WvSdOuXSTtrGA0Syo17xoTgwX7i+zl509bH2kwSJQiJjNb3WtCus
+         NP0P1DUzv/a6401RbhVRHZvDL840OSNTK/+rtbi2prvq2jEW72PLj5ep2pXadsmNlRWX
+         mDY4+Sl8O0M11+LAjX2l0/Da5RcfxCCPzwW0aLDOnmZMO1ovkx7UAwrnR+Vpu00UlwJx
+         bbq1loybxhfLjUpyLeIPaZaFtz7dpuroqHUJ1WpTahx60dQd5LzcpojulCvXRfgrS+vT
+         tPRRAhonJPtppqTxDoXsjKxyalQ/80wqILxLAaR89LRpmP/sTUwi6jijpGswp/Xl8P61
+         H4tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOz/MeyuA6cfzpCHiCuOQK9nyu3J13XNB0pv8aiMFEQkRfkzGyU18YX3M2NbA7wLTJPHt30o1Qb111WquN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9df/kpGOGFXE7KlgdNAJ63x0skDLliEJ1zURSt32KYuO9YsWH
+	P7iE1AVp5ERUJIh52R76upABJiuOdqtMyA2DW1UEcQAvjUrdzzVXS9ezUVlXjtTVMDS19hEYvVr
+	Kk/I26IoXXpBieErzjhJOqzl2RcqDH+aZmjZEEwGt
+X-Gm-Gg: ASbGncv+/zeXQMuO1t6EKxeNhmI2sbMulB1GJLIVMPzgAttawD5xZlqYEobQ9JsVJSp
+	bfivlS6r1gYEuwMM6a+/dSGfYHrRWJ1xtcHwLlfRY5rxDMZc4vG9gc4UoglVNS+pZgpH/F0B7Mb
+	HsiJSTlROkvcBydDnlky0/J08fvCzNuzBt0g4twBeXlhpCnE6nq4fQvgv9bCpiRqjTm8XiNB7U/
+	HGMnlGoTKy5rVAU/RpC3kaE47UidXnb3Y4q
+X-Google-Smtp-Source: AGHT+IE6S/geSCvAIOHME6wPTf87Pj245hn8wrq94Y+u/3lJJQqVVGTcUSg58tpAQ1CgaWAS+29p2Kj+iGhdGbbkHEY=
+X-Received: by 2002:a05:622a:8d01:b0:4a9:95a6:3a69 with SMTP id
+ d75a77b69052e-4ab953ab2b0mr763871cf.8.1752630632631; Tue, 15 Jul 2025
+ 18:50:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Compressed files & the page cache
-To: Qu Wenruo <wqu@suse.com>, Matthew Wilcox <willy@infradead.org>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- Nicolas Pitre <nico@fluxnic.net>, Gao Xiang <xiang@kernel.org>,
- Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
- David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
- linux-mtd@lists.infradead.org, David Howells <dhowells@redhat.com>,
- netfs@lists.linux.dev, Paulo Alcantara <pc@manguebit.org>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- ntfs3@lists.linux.dev, Steve French <sfrench@samba.org>,
- linux-cifs@vger.kernel.org, Phillip Lougher <phillip@squashfs.org.uk>
-References: <aHa8ylTh0DGEQklt@casper.infradead.org>
- <2806a1f3-3861-49df-afd4-f7ac0beae43c@suse.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <2806a1f3-3861-49df-afd4-f7ac0beae43c@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com>
+ <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
+ <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
+ <5ec10376-6a5f-4a94-9880-e59f1b6d425f@suse.cz> <19d46c33-bd5e-41d1-88ad-3db071fa1bed@lucifer.local>
+ <0b8617c1-a150-426f-8fa6-9ab3b5bcfa1e@redhat.com> <8026c455-6237-47e3-98af-e3acb90dba25@suse.cz>
+ <5f8d3100-a0dd-4da3-8797-f097e063ca97@lucifer.local> <CAEf4BzaEouFx8EuZF_PUKdc5wsq-5FYNyAE19VRxV7_YJkrfww@mail.gmail.com>
+ <7568edfa-6992-452d-9eb2-2497221cb22a@lucifer.local> <7d878566-f445-4fc2-9d04-eb8b38024c9b@lucifer.local>
+ <CAEf4BzYDktFt9R78tQifMrJ7okzA+1LhhiqCi+SpSdq3h4zKyw@mail.gmail.com> <CAJuCfpFx1vcv-a5Eez3AhoCUM2+jM6Sh0s9ms8FCWqZ8tFkTQg@mail.gmail.com>
+In-Reply-To: <CAJuCfpFx1vcv-a5Eez3AhoCUM2+jM6Sh0s9ms8FCWqZ8tFkTQg@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 15 Jul 2025 18:50:21 -0700
+X-Gm-Features: Ac12FXyGHcEwj0dROFdwa9pljKXvmZP0XFWCivJTUTBRwHJhx-DGskIWSfL3dJQ
+Message-ID: <CAJuCfpEvH4vHXQ5YRWRdiFVXwyAcpcXEncOAWd1Zp4LahrxT_g@mail.gmail.com>
+Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	David Hildenbrand <david@redhat.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
+	peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, 
+	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
+	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-...
+On Tue, Jul 15, 2025 at 1:18=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Tue, Jul 15, 2025 at 10:29=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Tue, Jul 15, 2025 at 10:21=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > On Tue, Jul 15, 2025 at 06:10:16PM +0100, Lorenzo Stoakes wrote:
+> > > > > For PROCMAP_QUERY, we need priv->mm, but the newly added locked_v=
+ma
+> > > > > and locked_vma don't need to be persisted between ioctl calls. So=
+ we
+> > > > > can just add those two fields into a small struct, and for seq_fi=
+le
+> > > > > case have it in priv, but for PROCMAP_QUERY just have it on the s=
+tack.
+> > > > > The code can be written to accept this struct to maintain the sta=
+te,
+> > > > > which for PROCMAP_QUERY ioctl will be very short-lived on the sta=
+ck
+> > > > > one.
+> > > > >
+> > > > > Would that work?
+> > > >
+> > > > Yeah that's a great idea actually, the stack would obviously give u=
+s the
+> > > > per-query invocation thing. Nice!
+> > > >
+> > > > I am kicking myself because I jokingly suggested (off-list) that a =
+helper
+> > > > struct would be the answer to everything (I do love them) and of
+> > > > course... here we are :P
+> > >
+> > > Hm but actually we'd have to invert things I think, what I mean is - =
+since
+> > > these fields can be updated at any time by racing threads, we can't h=
+ave
+> > > _anything_ in the priv struct that is mutable.
+> > >
+> >
+> > Exactly, and I guess I was just being incomplete with just listing two
+> > of the fields that Suren make use of in PROCMAP_QUERY. See below.
+> >
+> > > So instead we should do something like:
+> > >
+> > > struct proc_maps_state {
+> > >         const struct proc_maps_private *priv;
+> > >         bool mmap_locked;
+> > >         struct vm_area_struct *locked_vma;
+> > >         struct vma_iterator iter;
+> > >         loff_t last_pos;
+> > > };
+> > >
+> > > static long procfs_procmap_ioctl(struct file *file, unsigned int cmd,=
+ unsigned long arg)
+> > > {
+> > >         struct seq_file *seq =3D file->private_data;
+> > >         struct proc_maps_private *priv =3D seq->private;
+> > >         struct proc_maps_state state =3D {
+> > >                 .priv =3D priv,
+> > >         };
+> > >
+> > >         switch (cmd) {
+> > >         case PROCMAP_QUERY:
+> > >                 return do_procmap_query(state, (void __user *)arg);
+> >
+> > I guess it's a matter of preference, but I'd actually just pass
+> > seq->priv->mm and arg into do_procmap_query(), which will make it
+> > super obvious that priv is not used or mutated, and all the new stuff
+> > that Suren needs for lockless VMA iteration, including iter (not sure
+> > PROCMAP_QUERY needs last_pos, tbh), I'd just put into this new struct,
+> > which do_procmap_query() can keep private to itself.
+> >
+> > Ultimately, I think we are on the same page, it's just a matter of
+> > structuring code and types.
+>
+> That sounds cleaner to me too.
+> I'll post a new version of my patchset today without the last patch to
+> keep PROCMAP_QUERY changes separate, and then a follow-up patch that
+> does this refactoring and changes PROCMAP_QUERY to use per-vma locks.
+>
+> Thanks folks! It's good to be back from vacation with the problem
+> already figured out for you :)
 
-> 
->>
->> There's some discrepancy between filesystems whether you need scratch
->> space for decompression.  Some filesystems read the compressed data into
->> the pagecache and decompress in-place, while other filesystems read the
->> compressed data into scratch pages and decompress into the page cache.
-> 
-> Btrfs goes the scratch pages way. Decompression in-place looks a little tricky to me. E.g. what if there is only one compressed page, and it decompressed to 4 pages.
-
-Decompression in-place mainly optimizes full decompression (so that CPU
-cache line won't be polluted by temporary buffers either), in fact,
-EROFS supports the hybird way.
-
-> 
-> Won't the plaintext over-write the compressed data halfway?
-
-Personally I'm very familiar with LZ4, LZMA, and DEFLATE
-algorithm internals, and I also have experience to build LZMA,
-DEFLATE compressors.
-
-It's totally workable for LZ4, in short it will read the compressed
-data at the end of the decompressed buffers, and the proper margin
-can make this almost always succeed.  In practice, many Android
-devices already use EROFS for almost 7 years and it works very well
-to reduce extra memory overhead and help overall runtime performance.
-
-In short, I don't think EROFS will change since it's already
-optimal and gaining more and more users.
-
-> 
->>
->> There also seems to be some discrepancy between filesystems whether the
->> decompression involves vmap() of all the memory allocated or whether the
->> decompression routines can handle doing kmap_local() on individual pages.
-> 
-> Btrfs is the later case.
-> 
-> All the decompression/compression routines all support swapping input/output buffer when one of them is full.
-> So kmap_local() is completely feasible.
-
-I think one of the btrfs supported algorithm LZO is not, because the
-fastest LZ77-family algorithms like LZ4, LZO just operates on virtual
-consecutive buffers and treat the decompressed buffer as LZ77 sliding
-window.
-
-So that either you need to allocate another temporary consecutive
-buffer (I believe that is what btrfs does) or use vmap() approach,
-EROFS is interested in the vmap() one.
-
+Yes, Vlastimil was correct. Once I refactored the last patch so that
+do_procmap_query() does not use seq->private at all, the reproducer
+stopped failing.
+I'll post the patchset without the last patch shortly and once Andrew
+takes it into mm-unstable, will post the last patch as a follow-up.
 Thanks,
-Gao Xiang
+Suren.
 
-> 
-> Thanks,
-> Qu
-> 
->>
->> So, my proposal is that filesystems tell the page cache that their minimum
->> folio size is the compression block size.  That seems to be around 64k,
->> so not an unreasonable minimum allocation size.  That removes all the
->> extra code in filesystems to allocate extra memory in the page cache.
->> It means we don't attempt to track dirtiness at a sub-folio granularity
->> (there's no point, we have to write back the entire compressed bock
->> at once).  We also get a single virtually contiguous block ... if you're
->> willing to ditch HIGHMEM support.  Or there's a proposal to introduce a
->> vmap_file() which would give us a virtually contiguous chunk of memory
->> (and could be trivially turned into a noop for the case of trying to
->> vmap a single large folio).
->>
->>
-
+>
+> >
+> > >         default:
+> > >                 return -ENOIOCTLCMD;
+> > >         }
+> > > }
+> > >
+> > > And then we have a stack-based thing with the bits that change and a
+> > > read-only pointer to the bits that must remain static. And we can enf=
+orce
+> > > that with const...
+> > >
+> > > We'd have to move the VMI and last_pos out too to make it const.
+> > >
+> > > Anyway the general idea should work!
 
