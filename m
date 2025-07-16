@@ -1,105 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-55087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151B7B06D35
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 07:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A52FB06D4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 07:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A561AA7767
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 05:31:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 305DA1AA7174
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 05:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960CF2E2F1C;
-	Wed, 16 Jul 2025 05:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8CC2E764B;
+	Wed, 16 Jul 2025 05:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="22B1OU6p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4idTolZ/"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oeT1Nyqj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EF22E266C;
-	Wed, 16 Jul 2025 05:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390EE48CFC;
+	Wed, 16 Jul 2025 05:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752643851; cv=none; b=uhJ1Y5fYymDedv2Gj4rreJgI8pSfHFa2W046mjb+lsiBGmo80fHcu0x2w+Pa7bXreYK6qWMRTCVdKqIySQYlohw3mwDmW8Nqqc5+1ni41wTyG1e3Y/gQTkukKZPxMV2u9uW4xbB+suHtT+a6JgZ5fTRFGhtT8UDVYPVvsXVUixw=
+	t=1752644412; cv=none; b=DbQE0fNRm6jT1MfVKaYHKgbF7y1Ob0DFvQRyDb+1LeEVhlNtlUyJjE0APtvJrQbF3Mt+oTk3Y8uCf3YdCom1zC5Pj190CoE5Oj/+2vicUHaOQskabfHSLWpL0AEr+CrGbljUG21cFIK+Jpf3oJlEQA8aeE7EPlg4/EZn7WixUtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752643851; c=relaxed/simple;
-	bh=v9qQLU/BJWXqPyZKzovvW05GyhD99N/9jPNz+XBBLog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CqGkPeTCVe6MxpBevnaZe+cUGaZEkSAf9BR12+0Zzbtc52AOGohA1iG6HDddiercNAA+kq9HeoWbTq+VOVrORM5vj/iA4hu9SD5KeADpxWgfjeX5n24QakV40WDrlc/OTo2b0hq8gphB7kvHGK8LW9ntq0fWgXf633SWo2FTY2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=22B1OU6p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4idTolZ/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 07:30:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752643847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=597Uwv/nwiJEMg3K3zUxrHDVxe9LBCiZrOEhEZo5dRo=;
-	b=22B1OU6pS5tefu3luqPb6fEOSXD/6CwZa27JZz1GRbDCqje6uLI9E0etqx/LLmz90gTXHW
-	XYCrHB3YsLs6gWMu6cil3228xEI/XVmNuAOe72G98Vsymx4b2Pw441B/ttpXtrE/tfm90S
-	bHmF5MlDbfxgHJFda1PEdaI2oHwxxwWzMI3TIZ3AeuVZ/fTbt2+jjqEIRldq8V6FL1+aUm
-	fJPvKI2EIT/UQt/xkGSvU88tDYIEtGyuvfw9IRlNTrCzLuOT9fTAVu1FvTv9yZXN6gs9uI
-	+C9J4umDr8d6FlZpAzd52VsK5HiOShXhMPDtwWDh6xhqrTM1S1eVCcYMMgPWlg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752643847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=597Uwv/nwiJEMg3K3zUxrHDVxe9LBCiZrOEhEZo5dRo=;
-	b=4idTolZ/c/zsXRlNtYQJpqLSXlkJIPkOsaCx9Me1aK5BRbgFAcrGLsASCjJ0SK+8HEr1vE
-	gzll8GyMnjdvsZAQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Al Viro <viro@zeniv.linux.org.uk>, 
-	Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
- KUnit UAPI support
-Message-ID: <20250716072228-2dc39361-80b4-4603-8c20-4670a41e06ec@linutronix.de>
-References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
- <20250626-kunit-kselftests-v4-6-48760534fef5@linutronix.de>
- <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
- <20250711154423.GW1880847@ZenIV>
- <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
+	s=arc-20240116; t=1752644412; c=relaxed/simple;
+	bh=rZBG7DQM33GlZMGKj4mp03qZwHVbPzsqeifBB1LM3js=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rWZsIOkzysITSSuYJJP3g8AVpV1HVDvoVhRStDEnKePaYDxgBtWqOidT9n+qxE7nNTE8nNguKhghVXJE9PzqV83j24Vv09+ypBopsh2FTPImPx9yZdO/PATCyc35ilvIrlTZg+uXnttLiTm+QiW179GUW/I+iFndLt8WYEztWRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oeT1Nyqj; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752644406; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=/qADFoeOXBnAEHP6o81g96cI4IF1HJRJHWKwBGouJpA=;
+	b=oeT1NyqjfjzJ2YmhyWz+Hq0lkl9JUfQCtaQFx8hH6YXWYCgfH64BMXKh8sJpQGi7JInaf2W6P8tWyemCvsUmbktNUNpPOSD3n6jok1RgbrHkKsZ2LA/TR9xnJfl9YduELmT8pgwEOO0pEYWw+VT/gXQJwNw/XyDLIlKYYzYw3Hs=
+Received: from 30.221.131.131(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wj2mLXU_1752644403 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Jul 2025 13:40:04 +0800
+Message-ID: <e143f730-6ae7-491e-985e-cc021411edd8@linux.alibaba.com>
+Date: Wed, 16 Jul 2025 13:40:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Compressed files & the page cache
+To: Qu Wenruo <wqu@suse.com>, Matthew Wilcox <willy@infradead.org>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ Nicolas Pitre <nico@fluxnic.net>, Gao Xiang <xiang@kernel.org>,
+ Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+ David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
+ linux-mtd@lists.infradead.org, David Howells <dhowells@redhat.com>,
+ netfs@lists.linux.dev, Paulo Alcantara <pc@manguebit.org>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ ntfs3@lists.linux.dev, Steve French <sfrench@samba.org>,
+ linux-cifs@vger.kernel.org, Phillip Lougher <phillip@squashfs.org.uk>
+References: <aHa8ylTh0DGEQklt@casper.infradead.org>
+ <2806a1f3-3861-49df-afd4-f7ac0beae43c@suse.com>
+ <eeee0704-9e76-4152-bb8e-b5a0e096ec18@linux.alibaba.com>
+ <b43fe06d-204b-4f47-a7ff-0c405365bc48@suse.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <b43fe06d-204b-4f47-a7ff-0c405365bc48@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
 
-On Mon, Jul 14, 2025 at 07:52:28AM +0200, Thomas Wei�schuh wrote:
-> On Fri, Jul 11, 2025 at 04:44:23PM +0100, Al Viro wrote:
 
-(...)
 
-> > On Fri, Jul 11, 2025 at 12:35:59PM +0200, Thomas Wei�schuh wrote:
-> > > could you take a look at these new symbol exports?
-> > 
-> > > > +EXPORT_SYMBOL_GPL_FOR_MODULES(put_filesystem, "kunit-uapi");
-> > 
-> > What's that one for???
+On 2025/7/16 12:54, Qu Wenruo wrote:
 > 
-> What are you referring to?
+> 
+> 在 2025/7/16 10:46, Gao Xiang 写道:
+>> ...
+>>
+>>>
+>>>>
+>>>> There's some discrepancy between filesystems whether you need scratch
+>>>> space for decompression.  Some filesystems read the compressed data into
+>>>> the pagecache and decompress in-place, while other filesystems read the
+>>>> compressed data into scratch pages and decompress into the page cache.
+>>>
+>>> Btrfs goes the scratch pages way. Decompression in-place looks a little tricky to me. E.g. what if there is only one compressed page, and it decompressed to 4 pages.
+>>
+>> Decompression in-place mainly optimizes full decompression (so that CPU
+>> cache line won't be polluted by temporary buffers either), in fact,
+>> EROFS supports the hybird way.
+>>
+>>>
+>>> Won't the plaintext over-write the compressed data halfway?
+>>
+>> Personally I'm very familiar with LZ4, LZMA, and DEFLATE
+>> algorithm internals, and I also have experience to build LZMA,
+>> DEFLATE compressors.
+>>
+>> It's totally workable for LZ4, in short it will read the compressed
+>> data at the end of the decompressed buffers, and the proper margin
+>> can make this almost always succeed.
+> 
+> I guess that's why btrfs can not go that way.
+> 
+> Due to data COW, we're totally possible to hit a case that we only want to read out one single plaintext block from a compressed data extent (the compressed size can even be larger than one block).
+> 
+> In that case such in-place decompression will definitely not work.
 
-Reading this again you probably asked why put_filesystem() is exported.
+Ok, I think it's mainly due to btrfs compression design.  Another point
+is that decompression inplace can also be used for multi-shot interfaces
+(as you said, "swapping input/ output buffer when one of them is full")
+like deflate, lzma and zstd. Because you can know when the decompressed
+buffers and compressed buffers are overlapped since APIs are multi-shot,
+and only copy the overlapped compressed data to some additional temprary
+buffers (and they can be shared among multiple compressed extents).
 
-As I see it, that should be called after being done with the return value of
-get_fs_type(). Not that it does anything for the always built-in ramfs.
-The alternatives I see are a commented-out variant with an explanation or
-making put_filesystem() into an inline function.
+It has less overhead than allocating temporary buffers to keep compressed
+data during the whole I/O process (again, because it just uses very small
+number buffers during decompression process), especially for slow (even
+network) storage devices.
 
+I do understand Btrfs may not consider this because of different target
+users, but one of EROFS main use cases is low overhead decompression
+under the memory pressure (maybe + cheap storage), LZ4 + inplace
+decompression is useful.
 
-Thomas
+Anyway, I'm not advocating inplace decompression in any case.  I think
+unlike plain text, encoded data has various approaches to organize
+on disk and utilize page cache.  Due to different on-disk design and
+target users, there will be different usage mode.
+
+As for EROFS, we already natively supports compressed large folios
+since 6.11, and order-0 folio is always our use cases, so I don't
+think this will give extra benefits to users.
+
+> 
+> [...]
+> 
+>>> All the decompression/compression routines all support swapping input/ output buffer when one of them is full.
+>>> So kmap_local() is completely feasible.
+>>
+>> I think one of the btrfs supported algorithm LZO is not,
+> 
+> It is, the tricky part is btrfs is implementing its own TLV structure for LZO compression.
+> 
+> And btrfs does extra padding to ensure no TLV (compressed data + header) structure will cross block boundary.
+> 
+> So btrfs LZO compression is still able to swap out input/output halfway, mostly due to the btrfs' specific design.
+
+Ok, it seems much like a btrfs-specific design, because it's much
+like per-block compression for LZO instead, and it will increase
+the compressed size, I know btrfs may not care, but it's not the
+EROFS case anyway.
+
+Thanks,
+Gao Xiang
+
+> 
+> Thanks,
+> Qu
 
