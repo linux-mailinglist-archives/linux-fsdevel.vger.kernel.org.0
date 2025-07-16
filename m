@@ -1,87 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-55100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E4BB06EA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 09:16:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A951B06EA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 09:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ABDA501C28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 07:15:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE7B5566A63
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 07:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E44728B3EF;
-	Wed, 16 Jul 2025 07:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6491B28A737;
+	Wed, 16 Jul 2025 07:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTCWW9Sk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQifZAeb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8180289E03;
-	Wed, 16 Jul 2025 07:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F383533D6;
+	Wed, 16 Jul 2025 07:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752650094; cv=none; b=guqe/vEadu/V/1Lf6AixzXI0xWLvhoaw9xIRhZyDmaeWa+3o96EJJKELb7+iRcUikzTypBBGdoWrhoAN3SJdON8UnIHfEoDEq1TugtYjMks1EFQDeR1gnAXHY/BfNbbKds8TpowyIUo0z8epB9bUSQxWvL3VqKk7tPl4EToGxS8=
+	t=1752650119; cv=none; b=HAZvnaODccPybPxUl0LGCIT8c6B4vQNbJmObDX4XiDRGVcTIvzlXc5/RUUdxyZ8hGsMyNY6NKp3DZHc3YiLL8alU8TOBdTx+gwb2t5LiltSBwW3Zfv3VIZXB0gP51/Yk2ddUVaoHN28Bif+uL5W4HuYRTYI9gA1sytrHJIWiIwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752650094; c=relaxed/simple;
-	bh=jbYSwYq/LrNQC5RrA3+i4aSqmoLMCmK9jiU6GIW3XA0=;
+	s=arc-20240116; t=1752650119; c=relaxed/simple;
+	bh=RjgcebwwwoKLs3HiOuMAnbRKB8sodnlHCQwxdp34oqs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SI7km4jhjDItyGj0XWB+048+0Ir155PFcXfJ7ysejGHB0rPMAwH9oNBtjkcUR3MfJUudvKdNNmTEaK/u2vxvBnoWpKWFoSOGtPjXLqJHTTUZ0JljxvBL1JLaCsIyjQSYB9vD1sl6reKvarZanr7kAK0Qjdy5dch0IGustGrqu1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTCWW9Sk; arc=none smtp.client-ip=209.85.208.45
+	 To:Cc:Content-Type; b=llHPyPCBQYZPwPdO9eJ+TJ7zvgTo6ZOKmJQHqDMBYS9bM0lcfXXFVUFhy7MUuo/PtyJN7D7Qb4o656wK3GyKKigA50lpb8kTftrmmtI/8p6u+o5gkKOOhMH4Jcx1eYgSjs0K5et34vdMOORTaxwj6iW3lBsJVWsYYpD2cal0AcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQifZAeb; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60780d74c85so9198555a12.2;
-        Wed, 16 Jul 2025 00:14:52 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0bc7aa21bso1306333266b.2;
+        Wed, 16 Jul 2025 00:15:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752650091; x=1753254891; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752650116; x=1753254916; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PVpSzoalFSkAUuoDNylavvpUDY4sFeCO3gIKEnRxr5E=;
-        b=JTCWW9Sk4cPVTSiWbgWyDIdl6iYdToLOeV4psh0TAO1RMm83YTsCvtiCRUBwd+MGpP
-         EedhqSvqKctFC98DaURQ+StQ4k5yyzhSpqd5sxTo+2nXvOOH6QYt9GlKGUs7FS6WQoJA
-         uUMPIXElNHkc1FJsvVArRKBfmKiVddoOlkOUeoOFg+/iLxAqcYqng7rlMsnyHkBmhlWL
-         FMP3cEMNU7B/KnxqX9vBRqSYrTval7hZZxFFcBwZa0uXvR1Uroad03RAusD+FDAJUYrM
-         Xu4rgnLV6U5+x4G/QzcFWSYnuOIwkL+NOW9eDDEflYyrXKU7HT779EdXvIhZbo9Vw1hZ
-         Ogdw==
+        bh=9R+4DoLDIyvQ7kd1oQGB3MH7O5ovXFZwVco0qELFYek=;
+        b=aQifZAebMX8Gv2kYd5wq7NV+t8t6nXJaRIbOYx3HX8D7YDbCrqHNh/Sc8QVtXhfXE+
+         w0Rv5+cwcFmPoRf/oIJLPZscM3il1sBKftUo0iuVto3XY8CWZRPBpCHhCRGBJwWNWjvT
+         A8AoB5W5qavSBRi8UPMcrVYNx4wB69jVtbm2vFiR+1SOfJWMVJ7RKkTYCCzYdNLjVFzG
+         QyYuTkPYs/Eh1LhXyPPBAShdERXjxO0vdUl8A11Y9CQ2FzdKTJZGXiQNA1zuuOufmHVh
+         FNZ8cqLQ568q098XN9r+pDQ0ffB3XGwcDRLfS13/cwKS0X+laZB31dCi/mB8ZZPsH77h
+         5ZBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752650091; x=1753254891;
+        d=1e100.net; s=20230601; t=1752650116; x=1753254916;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PVpSzoalFSkAUuoDNylavvpUDY4sFeCO3gIKEnRxr5E=;
-        b=TCNY53DUXT9Bj0sbjUBueNjKDhq+bVWiJr4QjhgomqM3bSK+4hLm7p+SXGhN4hdheo
-         p7UToH++Qku38XqAAZH7HG50bDOfEGlZlDhSXoInSpUKBIr/LClTT0wDdDcbGY2f+skq
-         tEP5iz+5KQkxkDKqOEQLv5iFKPOoctzNZCFiDpiF7hP1kHxA2d9923wgCF0s0EUIQyrg
-         aVuvxVdgcuorjQzLap82kyNvYbB+8UI8s7XoeWG/MD6c97xfDDOBUNOwayqbWdp2SOul
-         CKAO8vaHomil0XjbU/FrMO+uDKMMsjBKgwrNglUQCT3LbnLK5EOY4gp4Jwll7S6JpsGQ
-         lhsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVf1i1j6VXVOgFu4XuTiSYZBN3Nr6hycdWHxl6pY95XUWE1/oKkjngdkfN5/aPS42UZdRKz1TPvqxbw5DwkPQ==@vger.kernel.org, AJvYcCXrTcxXAEa+fcCR6JbsJEzYok3rlS3tY4VxIbFsPHwNqh1iEwXlR1h2mEs4+e4Mxv3m311ZAZ2TTh66NsRe@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRoKP9jFQ1fkPvPnQRadXKFWE7jIuYygYtfEX4u+mgf+rzWGvh
-	g6QL86EGf8vRd/N+PJ/9xYzqIlmp5bbX/t9Ujb+kZLUE0m70n+wU1bXI1AJd8Y8SuMgQg2moSJ/
-	OH9wVceXW/SURmUreo9NJ+Kq4Qnrv1Zk=
-X-Gm-Gg: ASbGnctCvZ+tZGn5ny0rwCnAun92hTF0csU/9O2SgSftNIzSXF2YC3HbbSKJm9Qi1Lv
-	iwG8C0gLiV4Fu2xsBYo5UXUr0/OCuys9GsyvqoZEHM7YuhiYU3T1DCD6Q69vdmvn6FItVUfTSkh
-	hIo9mWObs+8Ow48As9J4jmBoRON8cILowHH1tbTeTlxU1EVdCBUbSA2cFHyv4qV6fkUz+qII/Xb
-	Uzu4mU=
-X-Google-Smtp-Source: AGHT+IH1MkGmKPTz2JdzhzEFtUehI9hgAHStWeOT4xdJYTEfnJ78AVllDK2PiYGi9rJCvNYtt3MWW3CKefSvFF7JPoo=
-X-Received: by 2002:a17:906:c106:b0:ad8:9d41:371e with SMTP id
- a640c23a62f3a-ae9c9ac1696mr244436066b.36.1752650090725; Wed, 16 Jul 2025
- 00:14:50 -0700 (PDT)
+        bh=9R+4DoLDIyvQ7kd1oQGB3MH7O5ovXFZwVco0qELFYek=;
+        b=AnJYybwJNsyPQnFLQDipXpH0LvpjyWjXeWObeJU1Zt2er8BmwR9PJF8hpjo3CoVigW
+         kQLrgkTETo7NR/4HqeuQk64vsCPx8Q7rNUgHK0EyJG9aYjYszDE5SdUIrQyJ9JZ8FAZ0
+         EMPjGqp9ryBNmp+40ypzVpzOSnzLpauI3tB5DQGE0TxDqscxJuRJ9pefuXh+jXWDmPAg
+         NMQ44SW1c6WtJbu1f4babHvgqriPazRosTTaIMrpeUHrljUosVki+qmA0HX2MEWKJ7dH
+         Uxvy8Ezy9LuX+wFiJblUH7/SjKn+t/7x5ph0wHQCvE6axJ5MJolh9tTZ7piivkB/YsBE
+         H3Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCW9KsSI6ecAYkIe/ycHiqKRrjVyLmXWFaMDe96OBIv0fEEBrPjVnDZ5iSg8sGU5pJk/p04+18Ti9M5+k2JW6w==@vger.kernel.org, AJvYcCXC4SaxDwpjsuWI1cieX+duxJqvscr9priE+YX5dCmRbabVciQ/9G4lHifefhv9XvWqTo4y9YbcWg7bGDgr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJyQplUHVbPV5UuJhykzkxmj6o75lCw6YXg8Zthy+1eiEPnTOb
+	E+0Sr48ffAEt7xPwNkc8tIpOGlDchlu3FAW+MwOKceU+VI7r5KOeoXbf7Z5pQbnrQHs8YT4Yhkt
+	g9rwAzK1tbpBYrPLfwBV/uySMlnekKTA=
+X-Gm-Gg: ASbGncuhtAlYFV2MWWkXFnTMUOQHgMRG2zvfby+cWbVJrkKX29YSV1vQsJMB3fYPrTk
+	Swj7oJk3VoqcTseTaDFSqKJk4YbJEI+iHgNbFD4ejihQsBgQNQOmreaMWi1YgpVkMGPBduSDgkD
+	VVlUrtZJoSq0HUS0i1Cn487gan/0XToWQTjvRA/SwFNvk5ntfED3sG7Pu0OKu3fKSEjYwjwCnwJ
+	majohE=
+X-Google-Smtp-Source: AGHT+IF6i0B9HfbXuJ2x2GoQNBEGp+aVwSvJOCuq9OF9bDopo/XI4L01lTgoPxgZ5dGkBmhTDPG0qEx19fZ1bMcSugg=
+X-Received: by 2002:a17:907:3cc6:b0:ae0:b847:435 with SMTP id
+ a640c23a62f3a-ae9ce14a734mr181833666b.49.1752650116062; Wed, 16 Jul 2025
+ 00:15:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716004725.1206467-1-neil@brown.name> <20250716004725.1206467-22-neil@brown.name>
-In-Reply-To: <20250716004725.1206467-22-neil@brown.name>
+References: <20250716004725.1206467-1-neil@brown.name> <20250716004725.1206467-19-neil@brown.name>
+In-Reply-To: <20250716004725.1206467-19-neil@brown.name>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 16 Jul 2025 09:14:39 +0200
-X-Gm-Features: Ac12FXzHQ8QXwm1OMjdpujggW250y4Q6xmzdAauv0funwD6oOYUMtqOXcDp-Dmc
-Message-ID: <CAOQ4uxjjrkSrVZ9sWjfZ1tG4XH8tuCwoD_YXaHFZYqOZSCKYvA@mail.gmail.com>
-Subject: Re: [PATCH v3 21/21] ovl: rename ovl_cleanup_unlocked() to ovl_cleanup()
+Date: Wed, 16 Jul 2025 09:15:04 +0200
+X-Gm-Features: Ac12FXzz9NzQRNvwP6FmPFr3XDjtvJwPAvKXj03mnt6YAicdNgtAniLNGdQ9lZo
+Message-ID: <CAOQ4uxhW5iEHAT7bZcG20fjBYwRF-6Rwoa14oQuj81DQMqPb_w@mail.gmail.com>
+Subject: Re: [PATCH v3 18/21] ovl: narrow locking in ovl_whiteout()
 To: NeilBrown <neil@brown.name>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org
@@ -90,286 +90,122 @@ Content-Transfer-Encoding: quoted-printable
 
 On Wed, Jul 16, 2025 at 2:47=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
 >
-> The only remaining user of ovl_cleanup() is ovl_cleanup_locked(), so we
-> no longer need both.
+> ovl_whiteout() relies on the workdir i_rwsem to provide exclusive access
+> to ofs->whiteout which it manipulates.  Rather than depending on this,
+> add a new mutex, "whiteout_lock" to explicitly provide the required
+> locking.  Use guard(mutex) for this so that we can return without
+> needing to explicitly unlock.
 >
-> This patch renames ovl_cleanup() to ovl_cleanup_locked() and makes it
-> static.
-> ovl_cleanup_unlocked() is renamed to ovl_cleanup().
+> Then take the lock on workdir only when needed - to lookup the temp name
+> and to do the whiteout or link.
 >
 > Signed-off-by: NeilBrown <neil@brown.name>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
 > ---
->  fs/overlayfs/copy_up.c   |  4 ++--
->  fs/overlayfs/dir.c       | 27 ++++++++++++++-------------
->  fs/overlayfs/overlayfs.h |  3 +--
->  fs/overlayfs/readdir.c   | 10 +++++-----
->  fs/overlayfs/super.c     |  4 ++--
->  fs/overlayfs/util.c      |  2 +-
->  6 files changed, 25 insertions(+), 25 deletions(-)
+>  fs/overlayfs/dir.c       | 44 ++++++++++++++++++++++------------------
+>  fs/overlayfs/ovl_entry.h |  1 +
+>  fs/overlayfs/params.c    |  2 ++
+>  3 files changed, 27 insertions(+), 20 deletions(-)
 >
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index 8f8dbe8a1d54..c4d7c281d473 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -569,7 +569,7 @@ static int ovl_create_index(struct dentry *dentry, co=
-nst struct ovl_fh *fh,
->         ovl_parent_unlock(indexdir);
->  out:
->         if (err)
-> -               ovl_cleanup_unlocked(ofs, indexdir, temp);
-> +               ovl_cleanup(ofs, indexdir, temp);
->         dput(temp);
->  free_name:
->         kfree(name.name);
-> @@ -854,7 +854,7 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx=
- *c)
->  cleanup:
->         unlock_rename(c->workdir, c->destdir);
->  cleanup_unlocked:
-> -       ovl_cleanup_unlocked(ofs, c->workdir, temp);
-> +       ovl_cleanup(ofs, c->workdir, temp);
->         dput(temp);
->         goto out;
->  }
 > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index dedf89546e5f..30619777f0f6 100644
+> index 6a70faeee6fa..7eb806a4e5f8 100644
 > --- a/fs/overlayfs/dir.c
 > +++ b/fs/overlayfs/dir.c
-> @@ -24,7 +24,8 @@ MODULE_PARM_DESC(redirect_max,
->
->  static int ovl_set_redirect(struct dentry *dentry, bool samedir);
->
-> -int ovl_cleanup(struct ovl_fs *ofs, struct inode *wdir, struct dentry *w=
-dentry)
-> +static int ovl_cleanup_locked(struct ovl_fs *ofs, struct inode *wdir,
-> +                             struct dentry *wdentry)
->  {
->         int err;
->
-> @@ -43,8 +44,8 @@ int ovl_cleanup(struct ovl_fs *ofs, struct inode *wdir,=
- struct dentry *wdentry)
->         return err;
->  }
->
-> -int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir,
-> -                        struct dentry *wdentry)
-> +int ovl_cleanup(struct ovl_fs *ofs, struct dentry *workdir,
-> +               struct dentry *wdentry)
->  {
->         int err;
->
-> @@ -52,7 +53,7 @@ int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct den=
-try *workdir,
->         if (err)
->                 return err;
->
-> -       ovl_cleanup(ofs, workdir->d_inode, wdentry);
-> +       ovl_cleanup_locked(ofs, workdir->d_inode, wdentry);
->         ovl_parent_unlock(workdir);
->
->         return 0;
-> @@ -149,14 +150,14 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
-ruct dentry *dir,
->         if (err)
->                 goto kill_whiteout;
->         if (flags)
-> -               ovl_cleanup_unlocked(ofs, ofs->workdir, dentry);
-> +               ovl_cleanup(ofs, ofs->workdir, dentry);
->
->  out:
->         dput(whiteout);
->         return err;
->
->  kill_whiteout:
-> -       ovl_cleanup_unlocked(ofs, ofs->workdir, whiteout);
-> +       ovl_cleanup(ofs, ofs->workdir, whiteout);
->         goto out;
->  }
->
-> @@ -351,7 +352,7 @@ static int ovl_create_upper(struct dentry *dentry, st=
-ruct inode *inode,
->         return 0;
->
->  out_cleanup:
-> -       ovl_cleanup_unlocked(ofs, upperdir, newdentry);
-> +       ovl_cleanup(ofs, upperdir, newdentry);
->         dput(newdentry);
->         return err;
->  }
-> @@ -411,7 +412,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
-dentry,
->                 goto out_cleanup_unlocked;
->
->         ovl_cleanup_whiteouts(ofs, upper, list);
-> -       ovl_cleanup_unlocked(ofs, workdir, upper);
-> +       ovl_cleanup(ofs, workdir, upper);
->
->         /* dentry's upper doesn't match now, get rid of it */
->         d_drop(dentry);
-> @@ -421,7 +422,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
-dentry,
->  out_cleanup:
->         unlock_rename(workdir, upperdir);
->  out_cleanup_unlocked:
-> -       ovl_cleanup_unlocked(ofs, workdir, opaquedir);
-> +       ovl_cleanup(ofs, workdir, opaquedir);
->         dput(opaquedir);
->  out:
->         return ERR_PTR(err);
-> @@ -516,7 +517,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
-ntry, struct inode *inode,
->                 if (err)
->                         goto out_cleanup_unlocked;
->
-> -               ovl_cleanup_unlocked(ofs, workdir, upper);
-> +               ovl_cleanup(ofs, workdir, upper);
->         } else {
->                 err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, =
-upper, 0);
->                 unlock_rename(workdir, upperdir);
-> @@ -526,7 +527,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
-ntry, struct inode *inode,
->         ovl_dir_modified(dentry->d_parent, false);
->         err =3D ovl_instantiate(dentry, inode, newdentry, hardlink, NULL)=
-;
->         if (err) {
-> -               ovl_cleanup_unlocked(ofs, upperdir, newdentry);
-> +               ovl_cleanup(ofs, upperdir, newdentry);
->                 dput(newdentry);
->         }
->  out_dput:
-> @@ -541,7 +542,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
-ntry, struct inode *inode,
->  out_cleanup:
->         unlock_rename(workdir, upperdir);
->  out_cleanup_unlocked:
-> -       ovl_cleanup_unlocked(ofs, workdir, newdentry);
-> +       ovl_cleanup(ofs, workdir, newdentry);
->         dput(newdentry);
->         goto out_dput;
->  }
-> @@ -1268,7 +1269,7 @@ static int ovl_rename(struct mnt_idmap *idmap, stru=
-ct inode *olddir,
->                 goto out_revert_creds;
->
->         if (cleanup_whiteout)
-> -               ovl_cleanup_unlocked(ofs, old_upperdir, newdentry);
-> +               ovl_cleanup(ofs, old_upperdir, newdentry);
->
->         if (overwrite && d_inode(new)) {
->                 if (new_is_dir)
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index b1e31e060157..56de6e83d24e 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -857,8 +857,7 @@ struct ovl_cattr {
->  struct dentry *ovl_create_real(struct ovl_fs *ofs,
->                                struct dentry *parent, struct dentry *newd=
-entry,
->                                struct ovl_cattr *attr);
-> -int ovl_cleanup(struct ovl_fs *ofs, struct inode *dir, struct dentry *de=
-ntry);
-> -int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir, str=
-uct dentry *dentry);
-> +int ovl_cleanup(struct ovl_fs *ofs, struct dentry *workdir, struct dentr=
-y *dentry);
->  struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r);
->  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r,
->                                struct ovl_cattr *attr);
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index ecbf39a49d57..b65cdfce31ce 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -1048,7 +1048,7 @@ void ovl_cleanup_whiteouts(struct ovl_fs *ofs, stru=
-ct dentry *upper,
->                         continue;
->                 }
->                 if (dentry->d_inode)
-> -                       ovl_cleanup_unlocked(ofs, upper, dentry);
-> +                       ovl_cleanup(ofs, upper, dentry);
->                 dput(dentry);
->         }
->  }
-> @@ -1156,7 +1156,7 @@ int ovl_workdir_cleanup(struct ovl_fs *ofs, struct =
-dentry *parent,
->         int err;
->
->         if (!d_is_dir(dentry) || level > 1)
-> -               return ovl_cleanup_unlocked(ofs, parent, dentry);
-> +               return ovl_cleanup(ofs, parent, dentry);
->
->         err =3D ovl_parent_lock(parent, dentry);
->         if (err)
-> @@ -1168,7 +1168,7 @@ int ovl_workdir_cleanup(struct ovl_fs *ofs, struct =
-dentry *parent,
->
->                 err =3D ovl_workdir_cleanup_recurse(ofs, &path, level + 1=
-);
->                 if (!err)
-> -                       err =3D ovl_cleanup_unlocked(ofs, parent, dentry)=
-;
-> +                       err =3D ovl_cleanup(ofs, parent, dentry);
->         }
->
->         return err;
-> @@ -1217,7 +1217,7 @@ int ovl_indexdir_cleanup(struct ovl_fs *ofs)
->                         goto next;
->                 } else if (err =3D=3D -ESTALE) {
->                         /* Cleanup stale index entries */
-> -                       err =3D ovl_cleanup_unlocked(ofs, indexdir, index=
-);
-> +                       err =3D ovl_cleanup(ofs, indexdir, index);
->                 } else if (err !=3D -ENOENT) {
->                         /*
->                          * Abort mount to avoid corrupting the index if
-> @@ -1233,7 +1233,7 @@ int ovl_indexdir_cleanup(struct ovl_fs *ofs)
->                         err =3D ovl_cleanup_and_whiteout(ofs, indexdir, i=
-ndex);
->                 } else {
->                         /* Cleanup orphan index entries */
-> -                       err =3D ovl_cleanup_unlocked(ofs, indexdir, index=
-);
-> +                       err =3D ovl_cleanup(ofs, indexdir, index);
->                 }
->
->                 if (err)
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 9fd0b3acd1a4..4afa91882075 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -600,11 +600,11 @@ static int ovl_check_rename_whiteout(struct ovl_fs =
-*ofs)
->
->         /* Best effort cleanup of whiteout and temp file */
->         if (err)
-> -               ovl_cleanup_unlocked(ofs, workdir, whiteout);
-> +               ovl_cleanup(ofs, workdir, whiteout);
->         dput(whiteout);
->
->  cleanup_temp:
-> -       ovl_cleanup_unlocked(ofs, workdir, temp);
-> +       ovl_cleanup(ofs, workdir, temp);
->         release_dentry_name_snapshot(&name);
->         dput(temp);
->         dput(dest);
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 3df0f3efe592..62f809cf8ba9 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -1116,7 +1116,7 @@ static void ovl_cleanup_index(struct dentry *dentry=
+> @@ -84,41 +84,45 @@ static struct dentry *ovl_whiteout(struct ovl_fs *ofs=
 )
->                                                indexdir, index);
->         } else {
->                 /* Cleanup orphan index entries */
-> -               err =3D ovl_cleanup_unlocked(ofs, indexdir, index);
-> +               err =3D ovl_cleanup(ofs, indexdir, index);
+>         struct dentry *workdir =3D ofs->workdir;
+>         struct inode *wdir =3D workdir->d_inode;
+>
+> -       inode_lock_nested(wdir, I_MUTEX_PARENT);
+> +       guard(mutex)(&ofs->whiteout_lock);
+> +
+>         if (!ofs->whiteout) {
+> +               inode_lock_nested(wdir, I_MUTEX_PARENT);
+>                 whiteout =3D ovl_lookup_temp(ofs, workdir);
+> -               if (IS_ERR(whiteout))
+> -                       goto out;
+> -
+> -               err =3D ovl_do_whiteout(ofs, wdir, whiteout);
+> -               if (err) {
+> -                       dput(whiteout);
+> -                       whiteout =3D ERR_PTR(err);
+> -                       goto out;
+> +               if (!IS_ERR(whiteout)) {
+> +                       err =3D ovl_do_whiteout(ofs, wdir, whiteout);
+> +                       if (err) {
+> +                               dput(whiteout);
+> +                               whiteout =3D ERR_PTR(err);
+> +                       }
+>                 }
+> +               inode_unlock(wdir);
+> +               if (IS_ERR(whiteout))
+> +                       return whiteout;
+>                 ofs->whiteout =3D whiteout;
 >         }
->         if (err)
->                 goto fail;
+>
+>         if (!ofs->no_shared_whiteout) {
+> +               inode_lock_nested(wdir, I_MUTEX_PARENT);
+>                 whiteout =3D ovl_lookup_temp(ofs, workdir);
+> -               if (IS_ERR(whiteout))
+> -                       goto out;
+> -
+> -               err =3D ovl_do_link(ofs, ofs->whiteout, wdir, whiteout);
+> -               if (!err)
+> -                       goto out;
+> -
+> -               if (err !=3D -EMLINK) {
+> +               if (!IS_ERR(whiteout)) {
+> +                       err =3D ovl_do_link(ofs, ofs->whiteout, wdir, whi=
+teout);
+> +                       if (err) {
+> +                               dput(whiteout);
+> +                               whiteout =3D ERR_PTR(err);
+> +                       }
+> +               }
+> +               inode_unlock(wdir);
+> +               if (!IS_ERR(whiteout))
+> +                       return whiteout;
+> +               if (PTR_ERR(whiteout) !=3D -EMLINK) {
+>                         pr_warn("Failed to link whiteout - disabling whit=
+eout inode sharing(nlink=3D%u, err=3D%i)\n",
+>                                 ofs->whiteout->d_inode->i_nlink, err);
+>                         ofs->no_shared_whiteout =3D true;
+>                 }
+> -               dput(whiteout);
+>         }
+>         whiteout =3D ofs->whiteout;
+>         ofs->whiteout =3D NULL;
+> -out:
+> -       inode_unlock(wdir);
+>         return whiteout;
+>  }
+>
+> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+> index afb7762f873f..4c1bae935ced 100644
+> --- a/fs/overlayfs/ovl_entry.h
+> +++ b/fs/overlayfs/ovl_entry.h
+> @@ -88,6 +88,7 @@ struct ovl_fs {
+>         /* Shared whiteout cache */
+>         struct dentry *whiteout;
+>         bool no_shared_whiteout;
+> +       struct mutex whiteout_lock;
+>         /* r/o snapshot of upperdir sb's only taken on volatile mounts */
+>         errseq_t errseq;
+>  };
+> diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+> index f42488c01957..cb1a17c066cd 100644
+> --- a/fs/overlayfs/params.c
+> +++ b/fs/overlayfs/params.c
+> @@ -797,6 +797,8 @@ int ovl_init_fs_context(struct fs_context *fc)
+>         fc->s_fs_info           =3D ofs;
+>         fc->fs_private          =3D ctx;
+>         fc->ops                 =3D &ovl_context_ops;
+> +
+> +       mutex_init(&ofs->whiteout_lock);
+>         return 0;
+>
+>  out_err:
 > --
 > 2.49.0
 >
