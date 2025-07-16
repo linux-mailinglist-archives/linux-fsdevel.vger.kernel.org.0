@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-55057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56156B06AD2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 02:48:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C94B06AD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 02:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 700043BDCCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 00:47:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D67189F5F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 00:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E251A9B24;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9122114A09C;
 	Wed, 16 Jul 2025 00:47:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090521A239A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A07E1A704B;
 	Wed, 16 Jul 2025 00:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752626859; cv=none; b=r/Qm0CCiuTER4CPNsfqfPGhwLeZ8kdCk/m5SzbUC8KWRmm/2eOEGgs1vobbEhV/lGg3J1Ow1ihX3J+tLfGzbHdIVIbeCnUfbuKBZxRvOcAk3GXfvgDtZzNj/fQybCIF9guOF+2VV3GUQWZyejCjbEfI3K2pR1kegnWJJvvfn1Sc=
+	t=1752626860; cv=none; b=o+PJ2Wo/dXTxjYKwL86kXI68/Lvx8/WBneLXHj9brY43U8tRScvO2duOFSTvaEZIoOpoPviOFyVRifWPyX26OcDNX3vutYQpARcUJ6XtDKPcD5zVtLUmTj8O2sXTMOfO2sghB/acLt6tM0E6pMegRAHrsqKPzYwphsMce30pV70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752626859; c=relaxed/simple;
-	bh=Z3HqspT2JxawNktWBWEcsQs9ty5Icy4vJeirqknBlp8=;
+	s=arc-20240116; t=1752626860; c=relaxed/simple;
+	bh=A7BXoxhpGLRrqGuDvhijandWTKFSaR5IOkHAsIhGqL8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CGUV/zlHfX5EBYJ0J2yISsmV7YEdR7cDOCsaSnGJWmQYTBvVgxoxo/5JEmm+/rXf8N3WSPOYq9wi7/6ApnSdR57+FCg9ECPQ15akGpVMEdAT+ZCtaHpecEYW8/5TfMzcBdCoKSmG3gU75Pr4jmIh7bFxsob6fgH1ibN6t6JHgtc=
+	 MIME-Version; b=J+ForO22ux8yDMsr5mRs70Xu25WogBJOx9xuWTjhKKE6emAvutskj/xmPhnZ74AFU4RtsyY/znT3ime0Cpp+273uVQ1DdEcb8B4LoJW4MOmf3ph++aaDJkCk3aemg3p/kfsskzj/y1H/bnfpZ4ZPlg5N5hd1k1TLnO7uYgovWEk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1ubqJ4-002ABE-Gm;
-	Wed, 16 Jul 2025 00:47:36 +0000
+	id 1ubqJ5-002ABM-BL;
+	Wed, 16 Jul 2025 00:47:37 +0000
 From: NeilBrown <neil@brown.name>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Amir Goldstein <amir73il@gmail.com>
 Cc: linux-unionfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 11/21] ovl: narrow locking in ovl_cleanup_index()
-Date: Wed, 16 Jul 2025 10:44:22 +1000
-Message-ID: <20250716004725.1206467-12-neil@brown.name>
+Subject: [PATCH v3 12/21] ovl: narrow locking in ovl_workdir_create()
+Date: Wed, 16 Jul 2025 10:44:23 +1000
+Message-ID: <20250716004725.1206467-13-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250716004725.1206467-1-neil@brown.name>
 References: <20250716004725.1206467-1-neil@brown.name>
@@ -53,60 +53,89 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ovl_cleanup_index() takes a lock on the directory and then does a lookup
-and possibly one of two different cleanups.
-This patch narrows the locking to use the _unlocked() versions of the
-lookup and one cleanup, and just takes the lock for the other cleanup.
+In ovl_workdir_create() don't hold the dir lock for the whole time, but
+only take it when needed.
 
-A subsequent patch will take the lock into the cleanup.
+It now gets taken separately for ovl_workdir_cleanup().  A subsequent
+patch will move the locking into that function.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/overlayfs/util.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/overlayfs/super.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index fc229f5fb4e9..b06136bbe170 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -1071,7 +1071,6 @@ static void ovl_cleanup_index(struct dentry *dentry)
- {
- 	struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
- 	struct dentry *indexdir = ovl_indexdir(dentry->d_sb);
--	struct inode *dir = indexdir->d_inode;
- 	struct dentry *lowerdentry = ovl_dentry_lower(dentry);
- 	struct dentry *upperdentry = ovl_dentry_upper(dentry);
- 	struct dentry *index = NULL;
-@@ -1107,21 +1106,22 @@ static void ovl_cleanup_index(struct dentry *dentry)
- 		goto out;
- 	}
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 2e6b25bde83f..cb2551a155d8 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -299,8 +299,8 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+ 	int err;
+ 	bool retried = false;
  
 -	inode_lock_nested(dir, I_MUTEX_PARENT);
--	index = ovl_lookup_upper(ofs, name.name, indexdir, name.len);
-+	index = ovl_lookup_upper_unlocked(ofs, name.name, indexdir, name.len);
- 	err = PTR_ERR(index);
- 	if (IS_ERR(index)) {
- 		index = NULL;
- 	} else if (ovl_index_all(dentry->d_sb)) {
- 		/* Whiteout orphan index to block future open by handle */
--		err = ovl_cleanup_and_whiteout(OVL_FS(dentry->d_sb),
--					       indexdir, index);
-+		err = ovl_parent_lock(indexdir, index);
-+		if (!err) {
-+			err = ovl_cleanup_and_whiteout(OVL_FS(dentry->d_sb),
-+						       indexdir, index);
-+			ovl_parent_unlock(indexdir);
-+		}
- 	} else {
- 		/* Cleanup orphan index entries */
--		err = ovl_cleanup(ofs, dir, index);
-+		err = ovl_cleanup_unlocked(ofs, indexdir, index);
- 	}
--
--	inode_unlock(dir);
- 	if (err)
- 		goto fail;
+ retry:
++	inode_lock_nested(dir, I_MUTEX_PARENT);
+ 	work = ovl_lookup_upper(ofs, name, ofs->workbasedir, strlen(name));
  
+ 	if (!IS_ERR(work)) {
+@@ -311,23 +311,28 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+ 
+ 		if (work->d_inode) {
+ 			err = -EEXIST;
++			inode_unlock(dir);
+ 			if (retried)
+ 				goto out_dput;
+ 
+ 			if (persist)
+-				goto out_unlock;
++				return work;
+ 
+ 			retried = true;
+-			err = ovl_workdir_cleanup(ofs, dir, mnt, work, 0);
+-			dput(work);
+-			if (err == -EINVAL) {
+-				work = ERR_PTR(err);
+-				goto out_unlock;
++			err = ovl_parent_lock(ofs->workbasedir, work);
++			if (!err) {
++				err = ovl_workdir_cleanup(ofs, dir, mnt, work, 0);
++				ovl_parent_unlock(ofs->workbasedir);
+ 			}
++			dput(work);
++			if (err == -EINVAL)
++				return ERR_PTR(err);
++
+ 			goto retry;
+ 		}
+ 
+ 		work = ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
++		inode_unlock(dir);
+ 		err = PTR_ERR(work);
+ 		if (IS_ERR(work))
+ 			goto out_err;
+@@ -365,11 +370,10 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+ 		if (err)
+ 			goto out_dput;
+ 	} else {
++		inode_unlock(dir);
+ 		err = PTR_ERR(work);
+ 		goto out_err;
+ 	}
+-out_unlock:
+-	inode_unlock(dir);
+ 	return work;
+ 
+ out_dput:
+@@ -377,8 +381,7 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+ out_err:
+ 	pr_warn("failed to create directory %s/%s (errno: %i); mounting read-only\n",
+ 		ofs->config.workdir, name, -err);
+-	work = NULL;
+-	goto out_unlock;
++	return NULL;
+ }
+ 
+ static int ovl_check_namelen(const struct path *path, struct ovl_fs *ofs,
 -- 
 2.49.0
 
