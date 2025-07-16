@@ -1,134 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-55123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A41B070C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 10:40:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4259B07377
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 12:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9A0017A0AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 08:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D37562EC3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 10:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1426C2EE99B;
-	Wed, 16 Jul 2025 08:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45084233722;
+	Wed, 16 Jul 2025 10:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dbXVzg49"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WegJomiq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817F428C872
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 08:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98E194A60
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 10:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752655247; cv=none; b=qsfBUZ9HPOEvFVEVYMU6uW4Sw+XY5kuApNhDATBmZDDutii91f8PiVb6bVJgtPGue9UoFKCP6EbIOH72pRw5/xzITWBGg8OVUjoEpeMLHq++2VUYucjCCXlbsMQnTpO6huW6Mf4j9kySs0wW18iUcsVTU7q1NfhN9qSZ9zqwlCo=
+	t=1752661916; cv=none; b=DWSPTg92p1ZlxsdOSi6aBj4wJOb13gc9dK4a4pP1ebLv+tLsA0j6MKTjBegaflzCuzF/ogJXkzJxllkp+2VkELqViZ7Trtu24to30jWlOlapE2662H4w/gb/LXWeNwK/Sgno+sjeJudWw4evS6Rowdi+jJKnadmLwSSUlB2LAFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752655247; c=relaxed/simple;
-	bh=qrMBhDY0wRYT8PuFs9DrrojFLigfaPzRLRSNGcKBjFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fjXbSXewLytA+xFVcXvSWbw6X8Hij0a0yJMvRgF6Hx6mp2gFlHXxux+wIOOMyQmh5YO6ZuraYIDi5zmkLgF0jktK541VkHlO8Rp2KYHfvlitpGkTpOc8h+fWMmesEJpCn6zOnjWJ/z+xUPoCgCUBhfSD1N17NXjY//P7EbbN2oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dbXVzg49; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a54700a46eso3964412f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 01:40:45 -0700 (PDT)
+	s=arc-20240116; t=1752661916; c=relaxed/simple;
+	bh=gr5QG0YH2UpPzGHX1KHPcof2oOLL8zjJpR3OXyrugsw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p+mpYIVGynjCUgxl1er5JIQMyNEyCN+SSeZqQ5tL/I7SfeeQlzRjl162laYM3QqviNkqUBl0FN1EN9H0Ix2gJQVFc+ORrEGMKLUDUQ37dlQeY5pPZHwkP1INFGM5/mTJXJUeJ7jkQyHj6kzzko+BGzbL4xOY8wjEXch/eaVFHyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WegJomiq; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so1240874666b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 03:31:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752655244; x=1753260044; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BJWUrIQdaBC7NQriNJZiQ1JQak1bftewdlMIEM95H+4=;
-        b=dbXVzg49eBEzGaya6EjZx4Hre9mk4xnYTxI07b4nCnTr3J6OJpNbizsW+yBnf/EpA8
-         X+v0Z4azBJSsjij0ezjnbeq8PPDQ5oYDjx0mVz0X4GDtpFZ1tDi1y2aVPZexejJDR4dd
-         Vddcy3CD2ZfXCT4t35uPpL6Y0QADd9Ytz8tZEw71W+xpwd8xontFd53Mo7MSeyA9+Lct
-         IGURggFZpuSErG1rNlLe2FwP08C0pLpU01rrlGiIrUR0haBKWDqnQN9gAT0QvQELnJfy
-         1IdJdYB6xf+ofsVKdIg9lDlL06sYMPp0tMDAgFjhdeZzmXZy2+8R07XHitmD7aw5eTmT
-         Vyjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752655244; x=1753260044;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752661913; x=1753266713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BJWUrIQdaBC7NQriNJZiQ1JQak1bftewdlMIEM95H+4=;
-        b=O7cBLomllJTxXPWnVZs+S3rdV1xLAR4+OEcJvhc68xMp2ZGCVgmphCPVyXgmAH/DRV
-         DFxocOFXwIRo7UuiGvBKvW3vfgh7DuAUltP8taNcvJX8NS+lEE954reFpKtS08Ih/asM
-         g72LxXidQvIrbbMd3IMK5M51nCmEF1Z20QUiyChyWdwjWIl07f1ftX4EB1fHlfaNzYey
-         quNYfUdSaGFtRnwqOYRI2TQ7WRFKk/6Lf0PEMrhErp91Wl42v1WRucuafDPSNjGnHodd
-         /m5X55FeMu+i89nBHDnZ279RsK4u/3FXkCQjmJCBGcVbBcydeX/nLujNtFwo2R9x0z+N
-         zofQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQPIISkwgFosuJMeeyUW16pSQgeKms5I5PsZhqyh3HNATRSfbMKcGrFJLXGA3GMXWvDfKVM5sF1wMZgNC3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOLf45BVEFORANjs0L8M+YwMu24zENtQvIIq8cf1/mtS1Ixqm3
-	yzcSVRrUBfDihOaBAqFRUeFtkeIpeuQjm3Jd5L6CpL7JRC/v0FNEfhvwuzXZ3F2rPw==
-X-Gm-Gg: ASbGnct59gTzkjTMEH68G+dprSZgVaxg2h80MohdM/fJKbh6t4hD7zrr7s8Yvpaf4jG
-	zCb3eDsmOaIB2E/O4XfhfHEjkinK1evx/xaJWVKDaY3/zOFmxUGlXbtoGS/PuTq+VifuZPeJ6BX
-	4vhD0OcyfRSRMUDW2KXm5eKq3AickXCH8gGSSKEA7Z4A7K9OEyf7Wrz8kdF+w9KRezj20nocXk2
-	QV6+iT42ZY0DvXC3vJqy7u5suP8g9yqc1epFh5H609SUoeaK8ij2mtT9SImWkoGLRnnI0lexMd1
-	UFHpjoULE2uIItzh7lAN82xjvRljB9KDa47OmR69I6hy3z+ApkUU+Gpy/MGE445WPJDu9+WBwRq
-	CsuoDzDAYayN/YMCxkrf+ug==
-X-Google-Smtp-Source: AGHT+IG2JVIKdbXCgSujNuX8MaJwzxKIn3RGftig+Rl8Or93NssoDRwCfiPvHo1nvu0ecatAz1qVHQ==
-X-Received: by 2002:a5d:560a:0:b0:3a4:e844:745d with SMTP id ffacd0b85a97d-3b60dd8e738mr1521605f8f.56.1752655243702;
-        Wed, 16 Jul 2025 01:40:43 -0700 (PDT)
-Received: from MiWiFi-CR6608-srv ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de434c9cbsm126694355ad.202.2025.07.16.01.40.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 01:40:43 -0700 (PDT)
-Date: Wed, 16 Jul 2025 16:39:56 -0400
-From: Wei Gao <wegao@suse.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Brahmajit Das <brahmajit.xyz@gmail.com>,
-	Andrei Vagin <avagin@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/proc: Use inode_get_dev() for device numbers in
- procmap_query
-Message-ID: <aHgOHMWnTsYgsj7C@MiWiFi-CR6608-srv>
-References: <20250716142732.3385310-1-wegao@suse.com>
+        bh=YhL2AoE2ythlEoecizp5TatYHcmxLK30nxCN89DwVmc=;
+        b=WegJomiqrI0zY3IwqDfr2tCeJyCYMkYt1oAhWo3PAfc0H0LL2S1Lt7Y+SLaviimpiu
+         0r9PKXUDPkrUlXWSDp7L4hwLxQ5hSNH4SSmaOPv1fJoixoKEv+xTWKPRI8yiYS8ZSJXz
+         RF3oZFIe9cmxsRlafmbXEISEgwa/gIjoTruAIvSfBjLjO+Pa6xLg/sxRQqRgUjox8bZx
+         EbPDvHx6uEhIRgTBDwVwArY2ve/ZdA4T1qfcTe86mA99CRhJlLqk6xsb21nQItkZjWzk
+         Nrvb3oNtldTSDE0LAUC9IEa+ECrrlsypxW3VsasHGQseawfPfAGDKTZbGaF/T7DXWutE
+         3dRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752661913; x=1753266713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YhL2AoE2ythlEoecizp5TatYHcmxLK30nxCN89DwVmc=;
+        b=gtJVxxMJWMXPnieyzOt16wlSZ9KqrTTxVuRj0Yi3NurBxtglP7NrcTCLeHOZ/Htdh5
+         J80KmtimJK45uiWiVTUENGXc0k1Cp/w1scXflT3KWczacMJEm0qFVxEBRLATIuX8Xzyu
+         UO9WEJJNh1d2tqiae7dsWfErsf0lP3TymxCeRyh8dvevRuJOqdsRxf7VMXgwMb1ivKmK
+         pJdcM95qUosIJMYGKzSf2jQ15AtjqiE3XlpNwxymIyp96FAj+JUr4MbeWqsWJLule1Pa
+         QTKHwg6Y1czCslNfEGI8SWsd5j7tVKXzWRWO+tSJQ0FlqHJD9lv8hI+ZtX73fh3tEJtz
+         insA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0XaK6NOTTqDRKm8Z1hv14q2+U7emk3Nvj1CkU/d/axQAZ6Rtv1CvlTP8xiQSSa5JcrQoMAL0PgrC5Z5mC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfvVov0v5l67eUDc83RnJ7/mP4yACjZO2tNI4LmAoH1MsM06Mk
+	f776/Nml3DqNT6fGHBtJCbPZltL4RDt/YHyCfeGGFwbgtN1Jak8w5JLrMOIJXh2wM46EbCGlx6t
+	nFZZZROgbNYGTZyqfhMetopBN5q+ppgk=
+X-Gm-Gg: ASbGncuXbpI3VNw+KNZd7vrhn3Ke1gqyvge3BDJ2vdTwvxe0EfTVm7Lcg47mi+01k5n
+	rNfjQgtWMEaQxh6NC+CcO+sD+qYEdGowFe30+ZMZu3VyPU96kn/eXpuqAE/Do4QVZ+2xuEbjaLr
+	yBX+SOrnOCelE420C3NJOIT2a9snyeHRczB2IWtEEJSUmFXv//nyz7nBOfrPuaD/ugdX3r9fOxs
+	t6xr+g=
+X-Google-Smtp-Source: AGHT+IEYwTjsWEgRbWLzxeUWWCvDsAKwlVBlmYPkETt+WzHGwh6xYuKPf6KwZE35YRWWGSO0Qd5K3T+NUK5wD5hPG+8=
+X-Received: by 2002:a17:907:f1e9:b0:ae0:635c:a400 with SMTP id
+ a640c23a62f3a-ae9ce196c5fmr186168466b.51.1752661912602; Wed, 16 Jul 2025
+ 03:31:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716142732.3385310-1-wegao@suse.com>
+References: <CAOQ4uxjd1tPFoV6CrsktJK8yr+ZMBptTMK-qH_+ADjiK7voYOw@mail.gmail.com>
+ <20250711223041.1249535-1-ibrahimjirdeh@meta.com> <CAOQ4uxhN6ok6BCBGbxeUt9ULq6g=qL6=_2_QGi8MqTHv5ZN7Vg@mail.gmail.com>
+ <sx5g7pmkchjqucfbzi77xh7wx4wua5nteqi5bsa2hfqgxua2a2@v7x6ja3gsirn>
+ <CAOQ4uxj6EF5G=0RAE45ovVLqbro9TJP-WdP-ixwAgnr7zg-2wA@mail.gmail.com>
+ <f5xtqk4gpbeowtnbiegbfosnpjr4ge42rfebjgyz66cxxzmhse@fjn44egzgdpt>
+ <CAOQ4uxiPwaq5J9iDAjEQuP4QSXfxi8993ShpAJRfYQA3Dd0Vrg@mail.gmail.com> <fiur7goc4ber7iwzkvm6ufbnulxkvdlfwqe2wjq3w3zcw73eit@cvhs5ndfkhcq>
+In-Reply-To: <fiur7goc4ber7iwzkvm6ufbnulxkvdlfwqe2wjq3w3zcw73eit@cvhs5ndfkhcq>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 16 Jul 2025 12:31:41 +0200
+X-Gm-Features: Ac12FXzDqDGvmkvFpRR5-il3my963mQfFaQtmGMadIdmywMwlYD1g-Oe9BaomWc
+Message-ID: <CAOQ4uxhwQaDaq+LUtMggY9bkPECNHDYQKgh8Dfe0-iDm7FiLbA@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: support custom default close response
+To: Jan Kara <jack@suse.cz>
+Cc: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, josef@toxicpanda.com, lesha@meta.com, 
+	linux-fsdevel@vger.kernel.org, sargun@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 10:27:32AM -0400, Wei Gao wrote:
-> This ensures consistency and proper abstraction when accessing device
-> information associated with an inode.
-> 
-> Signed-off-by: Wei Gao <wegao@suse.com>
-> ---
->  fs/proc/task_mmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 751479eb128f..b113a274f814 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -518,8 +518,8 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
->  		const struct inode *inode = file_user_inode(vma->vm_file);
->  
->  		karg.vma_offset = ((__u64)vma->vm_pgoff) << PAGE_SHIFT;
-> -		karg.dev_major = MAJOR(inode->i_sb->s_dev);
-> -		karg.dev_minor = MINOR(inode->i_sb->s_dev);
-> +		karg.dev_major = MAJOR(inode_get_dev(inode));
-> +		karg.dev_minor = MINOR(inode_get_dev(inode));
->  		karg.inode = inode->i_ino;
->  	} else {
->  		karg.vma_offset = 0;
-> -- 
-> 2.49.0
-> 
+On Wed, Jul 16, 2025 at 10:55=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 15-07-25 16:50:00, Amir Goldstein wrote:
+> > On Tue, Jul 15, 2025 at 2:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > > On Mon 14-07-25 21:59:22, Amir Goldstein wrote:
+> > > > On Mon, Jul 14, 2025 at 7:25=E2=80=AFPM Jan Kara <jack@suse.cz> wro=
+te:
+> > > > > > I don't think there is much to lose from this retry behavior.
+> > > > > > The only reason we want to opt-in for it is to avoid surprises =
+of
+> > > > > > behavior change in existing deployments.
+> > > > > >
+> > > > > > While we could have FAN_RETRY_UNANSWERED as an
+> > > > > > independent feature without a handover ioctl,
+> > > > > > In order to avoid test matrix bloat, at least for a start (we c=
+an relax later),
+> > > > > > I don't think that we should allow it as an independent feature
+> > > > > > and especially not for legacy modes (i.e. for Anti-Virus) unles=
+s there
+> > > > > > is a concrete user requesting/testing these use cases.
+> > > > >
+> > > > > With queue-fd design I agree there's no reason not to have the "r=
+esend
+> > > > > pending events" behavior from the start.
+> > > > >
+> > > > > > Going on about feature dependency.
+> > > > > >
+> > > > > > Practically, a handover ioctl is useless without
+> > > > > > FAN_REPORT_RESPONSE_ID, so for sure we need to require
+> > > > > > FAN_REPORT_RESPONSE_ID for the handover ioctl feature.
+> > > > > >
+> > > > > > Because I do not see an immediate use case for
+> > > > > > FAN_REPORT_RESPONSE_ID without handover,
+> > > > > > I would start by only allowing them together and consider relax=
+ing
+> > > > > > later if such a use case is found.
+> > > > >
+> > > > > We can tie them together but I think queue-fd design doesn't requ=
+ire
+> > > > > FAN_REPORT_RESPONSE_ID. Since we resend events anyway, we'd gener=
+ate new
+> > > > > fds for events as well and things would just work AFAICT.
+> > > > >
+> > > >
+> > > > Right. hmm.
+> > > > I'd still like to consider the opportunity of the new-ish API for
+> > > > deprecating some old legacy API baggage.
+> > > >
+> > > > For example: do you consider the fact that async events are mixed
+> > > > together with permission/pre-content events in the same queue
+> > > > an historic mistake or a feature?
+> > >
+> > > So far I do consider it a feature although not a particularly useful =
+one.
+> > > Given fanotify doesn't guarantee ordering of events and async events =
+can
+> > > arbitrarily skip over the permission events there's no substantial
+> > > difference to having two notification groups.
+> >
+> > I am not sure I understand your claim.
+> > It sounds like you are arguing for my case, because mixing
+> > mergeable async events and non-mergeable permission events
+> > in the same queue can be very confusing.
+> > Therefore, I consider it an anti-feature.
+> > Users can get the same functionality from having two groups,
+> > with much more sane semantics.
+>
+> I'd say with the same semantics but less expectations about possibly nice=
+r
+> semantics :). But we agree two groups are a cleaner way to achieve the
+> same and give userspace more flexibility with handling the events at the
+> same time.
+>
+> > > > I'm tempted, as we split the control fd from the queue fd to limit
+> > > > a queue to events of the same "type".
+> > > > Maybe an O_RDONLY async queue fd
+> > > > or an O_RDWR permission events queue fd
+> > > > or only allow the latter with the new API?
+> > >
+> > > There's value in restricting unneeded functionality and there's also =
+value
+> > > in having features not influencing one another so the balance has to =
+be
+> > > found :).
+> >
+> > <nod>
+> >
+> > > So far I don't find that disallowing async events with queue fd
+> > > or restricting fd mode for queue fd would simplify our life in a
+> > > significant way but maybe I'm missing something.
+> > >
+> >
+> > It only simplifies our life if we are going to be honest about test cov=
+erage.
+> > When we return a pending permission events to the head of the queue
+> > when queue fd is closed, does it matter if the queue has async events
+> > or other permission events or a mix of them?
+> >
+> > Logically, it shouldn't matter, but assuming that for tests is not the
+> > best practice.
+>
+> Agreed.
+>
+> > Thus, reducing the test matrix for a new feature by removing a
+> > configuration that I consider misguided feels like a good idea, but I a=
+m
+> > also feeling that my opinion on this matter is very biased, so I'd be
+> > happy if you can provide a more objective decision about the
+> > restrictions.
+>
+> Heh, nobody is objective :). We are all biased by our past experiences.
+> Which is why discussing things together is so beneficial. I agree about
+> the benefit of simplier testing and that hardly anybody is going to miss
+> the functionality, what still isn't 100% clear to me how the restrictions
+> would be implemented in the API. So user creates fanotify_group() with
+> control fd feature flag. Now will he have to specify in advance whether t=
+he
+> group is for permission events or not? Already when creating the group
+> (i.e., another feature flag? Or infered from group priority?)? Or when
+> creating queue fd? Or will the group switch based on marks being placed t=
+o
+> it? I think explicit selection is less confusing than implicit by placed
+> marks. Using group priority looks appealing at first sight but currently
+> group priorities also have implications about order in which we deliver
+> events (both async and permission) to groups and it would be also somewha=
+t
+> confusing that FAN_CLASS_PRE_CONTENT groups may still likely use
+> FAN_OPEN_PERM event. So maybe it's not that great fit. Hum... Or we can
+> have a single feature flag (good name needed!) that will create group wit=
+h
+> control fd *and* restricted to permission events only. That actually seem=
+s
+> like the least confusing option to me now.
 
-Sorry for my mistake, this patch is not correct since upstream has no inode_get_dev function,
-Only suse downstream code defines this function. Please SKIP this patch.
+I was thinking inferred from group priority along with control fd feature f=
+lag,
+but I agree that being more explicit is better.
+
+How about tying the name to your FAN_RETRY patch
+and including its functionality along with the control fd:
+
+FAN_RESTARTABLE_EVENTS
+       Events for fanotify groups initialized with this flag will be restar=
+ted
+       if the group file descriptor is closed after reading the
+permission events
+       and before responding to the event.
+       This means that if an event handler program gets stuck, a new event
+       handler can be started before killing the old event handler,
+without missing
+       the permission event.
+       The file descriptor returned from fanotify_init() cannot be
+used to read and
+       respond to permission events, only to configure marks.
+       The IOC_FAN_OPEN_QUEUE_FD ioctl is required to acquire a secondary
+       event queue file descriptor.  This event queue file descriptor is us=
+ed to
+       read the permission events and respond to them.
+       When the queue file descriptor is closed, events that were read from=
+ the
+       queue but not responded to, are returned to the queue and can be han=
+dled
+       by another instance of the program that opens a new queue file
+descriptor.
+       The use of either FAN_CLASS_CONTENT or FAN_CLASS_PRE_CONTENT
+       is required along with this flag.
+       Only permission events and pre-content events are allowed to be
+set in mark
+       masks of a group that was initialized with this flag.
+
+Thanks,
+Amir.
 
