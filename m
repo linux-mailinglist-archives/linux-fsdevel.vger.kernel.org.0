@@ -1,179 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-55118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E77FB0705D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 10:23:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E94DB0709D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 10:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71A9C7ADD77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 08:21:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B8D41881973
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 08:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11D92EAB85;
-	Wed, 16 Jul 2025 08:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E192EE982;
+	Wed, 16 Jul 2025 08:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yc7y2C6O";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fOdMwmH8";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SKtCDwxJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VQapEGWN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjGFTVb7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6AD2EAB78
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 08:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110A12EA749;
+	Wed, 16 Jul 2025 08:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654174; cv=none; b=kiwJ3EFvwDzetpm46mPdo56of4yOEp4yagm3E3YN/IvOgWVFvhdojK4xoU6xjxif0+ZIPALmVUFC+5fIq+tKKccJzs+tXLaon8uTPQgvklT2jZrm1QA758xrMZR4h+R4uLnmXeruA6XhtHhM858lH/qP1W7DoWDTkLwoq/Gwq44=
+	t=1752654724; cv=none; b=LTYaCrc7jaZNRT3jOS+miyLLaounv2F9IzWDOJFMeNaZ6Z6ZtkEy5x0scIRgDQ0iWqfOLNPjQgJRfY6p4g5nX3zkbMTAYpEdXVoy9aad5r8ux9Yv++bZeDOo8eCcxQlzogy8qwjhj6YgRsmdIvSPMZ+Qs0ogbdyd0CRGpDc9/JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654174; c=relaxed/simple;
-	bh=GRbjXPqZddzfIVVRIyFz7ZuTyQNfw9VoCi18wCUi1Wc=;
+	s=arc-20240116; t=1752654724; c=relaxed/simple;
+	bh=pixhDAk3NXF+ez/UC4sCfxH4mfu5c2ZCe/3FOrSKxmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZ0855A1+mCcf5zioM7R+Bq5j4UWlgkmyusmHpYV5q/LcOd/6QQgpDA4RppUXz9M2iBjNp6PJ8WseZTVQShyG6Eobx6MXXXPbiBtRIEIHf+hPCOWGggbc4by2e7MMpJ6Xnv6arbgUvGnItTl0/BxQsFrVWTPU38ppXxQXDsZYEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yc7y2C6O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fOdMwmH8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SKtCDwxJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VQapEGWN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9648F1F38E;
-	Wed, 16 Jul 2025 08:22:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752654170; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eYaQzTxO2EXAgTj5Tmh3qSEBV9qTyqV769ionVDxydo=;
-	b=yc7y2C6OOZgd4x9WIB5Fsl5oTCcbpQz4jm9Kq+EoQ9QCutH+KbLCj+1v0aHvRp1LeurUkI
-	FRfAMBG3EYJvSVy/R8oTFZl4/s2L/BXL5ak5CEHwZqwepHvnP8qYDdwm2w1DImdMO8wo5W
-	9xerIS40xW1fufGncx8MwTgRWWJmQy0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752654170;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eYaQzTxO2EXAgTj5Tmh3qSEBV9qTyqV769ionVDxydo=;
-	b=fOdMwmH8kyrOPeSCUT5zBSuQ4lVq/Id6NVZseDv1XtbuqIDi6Ll775JTt4ecNanN5XH1Ew
-	GQ5E28xqUI+nL6DQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=SKtCDwxJ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=VQapEGWN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752654169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eYaQzTxO2EXAgTj5Tmh3qSEBV9qTyqV769ionVDxydo=;
-	b=SKtCDwxJo8nPlZdaW/yBPWECZgSEX/cx5Irqq/nvAQZvIzEYHdR2l6HG4Wp3ZpYwuAws+5
-	VowBBx1gQ5vvxwv7gamBKohfkbdqAIm5hoyZKQri15D6GihKP3XFHBoIhCJ/xqvsK3tK9L
-	COaG7EuEkg8Syz/YKsGgM+fDj8uaQvQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752654169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eYaQzTxO2EXAgTj5Tmh3qSEBV9qTyqV769ionVDxydo=;
-	b=VQapEGWNmv38Ig5isE+uVRHaUwcAwA70C/LQrjGZLGVEAwj5qiXZ7Nl9qdWIWHjMFl73fN
-	RWNDObOLEczLSQDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E588A138D2;
-	Wed, 16 Jul 2025 08:22:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WqVdNVdhd2icEgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 16 Jul 2025 08:22:47 +0000
-Date: Wed, 16 Jul 2025 10:22:46 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-	Hugh Dickins <hughd@google.com>, Lance Yang <lance.yang@linux.dev>,
-	David Vrabel <david.vrabel@citrix.com>
-Subject: Re: [PATCH v1 9/9] mm: rename vm_ops->find_special_page() to
- vm_ops->find_normal_page()
-Message-ID: <aHdhVpGzOYHiDEq8@localhost.localdomain>
-References: <20250715132350.2448901-1-david@redhat.com>
- <20250715132350.2448901-10-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1JbmuQZwm0092RdX2YZ7GlHmrhDEIqFhdeWHDlSm+awzmxhyD68HsrB2c7vYn225sVKi8QFggtfDiGmfjasHezQ8Gj3OmuuvlFpEMH4AZSBThLlweJE8h+a3LAx3cn0aZ236m9eugpMK/vr2L4oBIZQo19KVEHtNN7kjqgCQfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjGFTVb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC1AC4CEF0;
+	Wed, 16 Jul 2025 08:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752654723;
+	bh=pixhDAk3NXF+ez/UC4sCfxH4mfu5c2ZCe/3FOrSKxmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TjGFTVb7WA8CXJ6fa9ZunnX0H7E3pACvrqlm6U6kufhsPuFT7/qKNj+2PuK4rf422
+	 +/Vz5U7FyZF1IKEu6uwNqPHz+FJaWsNVM3NJmGFvApIa55S4kznSr5h0dOm9jqrvcS
+	 ZPWl1dYW0SDaotH84/KEdVcBl9HWmemC76mRyRv1mFee8RuPfM+aSSgy4AsWsR0Jtt
+	 2428KtOR29kVeXOrvqufoE3TflupQjHHf5sr6r2T2XqQCjsHhG0vGUZPWgvobe7gw3
+	 YiaNk0muRgqqvpTWNR8BqdV5pCZV+sLz8AY6vym0qlT1Prz0py2hxARudlILw5soG7
+	 GJGCOYu1gVsYQ==
+Date: Wed, 16 Jul 2025 10:31:53 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
+	"tomoyo-users_en@lists.sourceforge.net" <tomoyo-users_en@lists.sourceforge.net>, 
+	"tomoyo-users_ja@lists.sourceforge.net" <tomoyo-users_ja@lists.sourceforge.net>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
+	"jlayton@kernel.org" <jlayton@kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, 
+	"m@maowtm.org" <m@maowtm.org>, "john.johansen@canonical.com" <john.johansen@canonical.com>, 
+	"john@apparmor.net" <john@apparmor.net>, 
+	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, "omosnace@redhat.com" <omosnace@redhat.com>, 
+	"takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
+	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>, "enlightened@chromium.org" <enlightened@chromium.org>
+Subject: Re: [RFC] vfs: security: Parse dev_name before calling
+ security_sb_mount
+Message-ID: <20250716-unsolidarisch-sagst-e70630ddf6b7@brauner>
+References: <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
+ <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
+ <20250710-roden-hosen-ba7f215706bb@brauner>
+ <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
+ <20250711-pfirsich-worum-c408f9a14b13@brauner>
+ <4EE690E2-4276-41E6-9D8C-FBF7E90B9EB3@meta.com>
+ <20250714-ansonsten-shrimps-b4df1566f016@brauner>
+ <3ACFCAB1-9FEC-4D4E-BFB0-9F37A21AA204@meta.com>
+ <20250715-knattern-hochklassig-ddc27ddd4557@brauner>
+ <B2872298-BC9C-4BFD-8C88-CED88E0B7E3A@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250715132350.2448901-10-david@redhat.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 9648F1F38E
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[32];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL88oxspsx4bg3gu1yybyqiqt4)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[localhost.localdomain:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email]
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <B2872298-BC9C-4BFD-8C88-CED88E0B7E3A@meta.com>
 
-On Tue, Jul 15, 2025 at 03:23:50PM +0200, David Hildenbrand wrote:
-> ... and hide it behind a kconfig option. There is really no need for
-> any !xen code to perform this check.
+On Tue, Jul 15, 2025 at 10:31:39PM +0000, Song Liu wrote:
 > 
-> The naming is a bit off: we want to find the "normal" page when a PTE
-> was marked "special". So it's really not "finding a special" page.
+> > On Jul 15, 2025, at 3:18 AM, Christian Brauner <brauner@kernel.org> wrote:
+> > On Mon, Jul 14, 2025 at 03:10:57PM +0000, Song Liu wrote:
 > 
-> Improve the documentation, and add a comment in the code where XEN ends
-> up performing the pte_mkspecial() through a hypercall. More details can
-> be found in commit 923b2919e2c3 ("xen/gntdev: mark userspace PTEs as
-> special on x86 PV guests").
 > 
-> Cc: David Vrabel <david.vrabel@citrix.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> [...]
+> 
+> >>> If you place a new security hook into __do_loopback() the only thing
+> >>> that I'm not excited about is that we're holding the global namespace
+> >>> semaphore at that point. And I want to have as little LSM hook calls
+> >>> under the namespace semaphore as possible.
+> >> 
+> >> do_loopback() changed a bit since [1]. But if we put the new hook 
+> >> in do_loopback() before lock_mount(), we don’t have the problem with
+> >> the namespace semaphore, right? Also, this RFC doesn’t seem to have 
+> >> this issue either.
+> > 
+> > While the mount isn't locked another mount can still be mounted on top
+> > of it. lock_mount() will detect this and lookup the topmost mount and
+> > use that. IOW, the value of old_path->mnt may have changed after
+> > lock_mount().
+> 
+> I am probably confused. Do you mean path->mnt (instead of old_path->mnt) 
+> may have changed after lock_mount()? 
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+I mean the target path. I forgot that the code uses @old_path to mean
+the source path not the target path. And you're interested in the source
+path, not the target path.
 
- 
+> 
+> > If you have 1000 containers each calling into
+> >>> security_something_something_bind_mount() and then you do your "walk
+> >>> upwards towards the root stuff" and that root is 100000 directories away
+> >>> you've introduced a proper DOS or at least a severe new bottleneck into
+> >>> the system. And because of mount namespace propagation that needs to be
+> >>> serialized across all mount namespaces the namespace semaphore isn't
+> >>> something we can just massage away.
+> >> 
+> >> AFAICT, a poorly designed LSM can easily DoS a system. Therefore, I 
+> >> don’t think we need to overthink about a LSM helper causing DoS in 
+> >> some special scenarios. The owner of the LSM, either built-in LSM or 
+> >> BPF LSM, need to be aware of such risks and design the LSM rules 
+> >> properly to avoid DoS risks. For example, if the path tree is really 
+> >> deep, the LSM may decide to block the mount after walking a preset 
+> >> number of steps.
+> > 
+> > The scope of the lock matters _a lot_. If a poorly designed LSM happens
+> > to take exorbitant amount of time under the inode_lock() it's annoying:
+> > to anyone else wanting to grab the inode_lock() _for that single inode_.
+> > 
+> > If a poorly designed LSM does broken stuff under the namespace semaphore
+> > any mount event on the whole system will block, effectively deadlocking
+> > the system in an instant. For example, if anything even glances at
+> > /proc/<pid>/mountinfo it's game over. It's already iffy that we allow
+> > security_sb_statfs() under there but that's at least guaranteed to be
+> > fast.
+> > 
+> > If you can make it work so that we don't have to place security_*()
+> > under the namespace semaphore and you can figure out how to deal with a
+> > potential overmount racing you then this would be ideal for everyone.
+> 
+> I am trying to understand all the challenges here. 
 
--- 
-Oscar Salvador
-SUSE Labs
+As long as you're only interested in the source path's mount, you're
+fine.
+
+> 
+> It appears to me that do_loopback() has the tricky issue:
+> 
+> static int do_loopback(struct path *path, ...)
+> {
+> 	...
+> 	/* 
+> 	 * path may still change, so not a good point to add
+> 	 * security hook 
+> 	 */
+> 	mp = lock_mount(path);
+> 	if (IS_ERR(mp)) {
+> 		/* ... */
+> 	}
+> 	/* 
+> 	 * namespace_sem is locked, so not a good point to add
+> 	 * security hook
+> 	 */
+> 	...
+> }
+> 
+> Basically, without major work with locking, there is no good 
+> spot to insert a security hook into do_loopback(). Or, maybe 
+> we can add a hook somewhere in lock_mount()? 
+
+You can't really because the lookup_mnt() call in lock_mount() happens
+under the namespace semaphore already and if it's the topmost mount it
+won't be dropped again and you can't drop it again without risking
+overmounts again.
+
+But again, as long as you are interested in the source mount you should
+be fine.
 
