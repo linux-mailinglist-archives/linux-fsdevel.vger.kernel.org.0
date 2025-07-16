@@ -1,194 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-55150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E13DB075D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 14:38:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D70FB075DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 14:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0AB1890CC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 12:38:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C0E1892B8D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 12:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198802F4A07;
-	Wed, 16 Jul 2025 12:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2112F530B;
+	Wed, 16 Jul 2025 12:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3ilDNC/"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Dc82ryHz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5F62E371C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 12:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D2A19CC37;
+	Wed, 16 Jul 2025 12:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669490; cv=none; b=hXGxwiV7RjazVXqhOg5MPlLVan+fK4y0ux+jfncb2Q1rPu8OUt6q5qZ43ucLCQZl+7B8F1FKYzxvU7Obc0bdheyZUI15YwcjJm7Cy3vDtA34hfPnYOQ+S1YWPIcJZAcjYNsVI1oblU29BwChGItw5EJdl9QDLaCindv4XKfLiHI=
+	t=1752669597; cv=none; b=lNkD8lHUpNi47qRo0c8ZFeqg/3iPBVuDF5hs6+1m+C06wKbzqNskDPHyfb/xkUFXpyeNJAx7vlXbiM1pYR5DUP8JqBykV/RVmqFmz5ogwBbmK8Ttmpj3u9z6hgFBTeUQhuTAsr1SZDnAI+JveL0tXRk784+n3AYKR+dos5mfZp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669490; c=relaxed/simple;
-	bh=jt5j705pwztz5zxEkMfN4LDt88efhqhk1+i0KZJy7nA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JbW755gOWutgmS/tKhMk3ouKftbU4VcaGZ01GbAdt9hmEOqfT0/KcbaDNKik8wdaAsPvd7Mvh+qbHesdZ9Xr4dsVb3+V0L/EFBxq0QQto2/6zCJI9z2B3oNWP8QtjxUbgr7JYz5rVwZWclyGldYlPS4NpuSO1Qvcvjj5YdE8RJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3ilDNC/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A88C4CEF0;
-	Wed, 16 Jul 2025 12:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752669490;
-	bh=jt5j705pwztz5zxEkMfN4LDt88efhqhk1+i0KZJy7nA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=k3ilDNC/wmQUp2mlgcmrLSn3VqtBazJZAfRP6frqiHpaepcUoiLFfyZfsaFccxrDp
-	 XYbNlF0qCCMVQU/2DOIjCdYWqtqXXDTqtp6/ActH+c8stRKUCSZJeEsxvVGX9jYUUQ
-	 PqIJ/JXQ6w1yICYr1mit7bt7LwowgLubWlnVuyn7zk2HCmqmhFNDEFDtcQ0LucvMDZ
-	 rmS+8L3GIzK/iBDoktCiX2VuUg8bseRrxccvt4ZDnjgVVBxQQdIALbus3jwz+c1Pap
-	 Hy+A626eJDr9MNJnOzA7SSGne43w9YRssSw63Cc0yU7tALmL1q1dJQNPEB955dTk+I
-	 HVe9UZ6XrKe2w==
-Message-ID: <a24e87f111509bed526dd0a1650399edda9b75c0.camel@kernel.org>
-Subject: Re: [PATCH RFC DRAFT DOESNOTBUILD] inode: free up more space
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>, 
- Jan Kara <jack@suse.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org
-Date: Wed, 16 Jul 2025 08:38:08 -0400
-In-Reply-To: <20250716-unwahr-dumpf-835be7215e4c@brauner>
-References: <20250715-work-inode-fscrypt-v1-1-aa3ef6f44b6b@kernel.org>
-	 <20250716112149.GA29673@lst.de>
-	 <20250716-unwahr-dumpf-835be7215e4c@brauner>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1752669597; c=relaxed/simple;
+	bh=ciov7ehAjBjREuTpZUcsqXWJtPxPQ5hAirxi/yh5GH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N9FrZM26m8QaTIS8kRmu/gt15RElOemH4HOrabyd75Eq0Sm360782u7dydtOpw5BZq/KJdZdJzA8R4dozmaJiw7iUBSHUNnme2DqLs3tFsFZ6t2wTrJshMlocPH/54Ea3s8INHYUnp+3TskxiGsY1H4MY9DGoATUpr3I5BCAt9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Dc82ryHz; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=WxtQsAj1GDvGzyz67FLJJ/sJh6tOfzGHe6iz6EfWQaQ=; b=Dc82ryHz4DrgMI1c7c5pAHLF2e
+	0UZJw7dqr96ryh4mY4vD50skzSL5q6YCve8aVi+QN1n2TxoChUl32+Rx3E9mlleAlNbKte0ElyEH2
+	1vToEsK1Qb+QLlAIlXkiSC0rNNNgJ/vM+lXxgKIrnRfNK5XVz6Hi3Xor1OVuVTWEA87VlcCy4rSiZ
+	oY4Elw4TV9wCI+Q1ODazw1rqfuIgghImjpv4DvTX5kyxu4v1yq0Q5uAcL5PGvyCRqLxj+ViE1PDyl
+	acHQyWD5QN9bdOW6idXoqgZcFiHcBKUod2DTDilljCy1tQDmJMSjg8jAzCev2dEHdonQoq/egkzs1
+	o50Jj01w==;
+Received: from [223.233.66.171] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uc1QB-00HJWV-Q0; Wed, 16 Jul 2025 14:39:40 +0200
+From: Bhupesh <bhupesh@igalia.com>
+To: akpm@linux-foundation.org
+Cc: bhupesh@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	oliver.sang@intel.com,
+	lkp@intel.com,
+	laoar.shao@gmail.com,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org,
+	willy@infradead.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	ebiederm@xmission.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-trace-kernel@vger.kernel.org,
+	kees@kernel.org,
+	torvalds@linux-foundation.org
+Subject: [PATCH v5 0/3] Add support for long task name
+Date: Wed, 16 Jul 2025 18:09:13 +0530
+Message-Id: <20250716123916.511889-1-bhupesh@igalia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-07-16 at 14:19 +0200, Christian Brauner wrote:
-> On Wed, Jul 16, 2025 at 01:21:49PM +0200, Christoph Hellwig wrote:
-> > On Tue, Jul 15, 2025 at 04:35:24PM +0200, Christian Brauner wrote:
-> > > Unless there are severe performance penalties for the extra pointer
-> > > dereferences getting our hands on 16 bytes is a good reason to at lea=
-st
-> > > consider doing this.
-> > >=20
-> > > I've drafted one way of doing this using ext4 as my victim^wexample. =
-I'd
-> > > like to hear some early feedback whether this is something we would w=
-ant
-> > > to pursue.
-> >=20
-> > I like getting rid of the fields.  But adding all these indirect calls
-> > is a bit nasty.
-> >=20
-> > Given that all these fields should be in the file system specific inode
-> > that also embeddeds the vfs struct inode, what about just putting the
-> > relative offset into struct inode_operations.
-> >=20
-> > e.g. something like
-> >=20
-> > 	struct inode_operations {
-> > 		...
-> > 		ptrdiff_t		i_crypto_offset;
-> > 	}
-> >=20
-> > struct inode_operations foofs_iops {
-> > 	...
-> >=20
-> > 	.i_crypto_offset =3D offsetoff(struct foofs_inode), vfs_inode) -
-> > 		offsetoff(struct foofs_inode, crypt_info);
-> > }
-> >=20
-> > static inline struct fscrypt_inode_info CRYPT_I(struct inode *inode)
-> > {
-> > 	return ((void *)inode) - inode->i_op->i_cryto_offset;
-> > }
->=20
-> Sheesh, ugly in a different way imho. I could live with it. I'll let
-> @Jan be the tie-breaker.
->=20
-> I've started working on this so best tell me soon... :)
+Changes since v4:
+================
+- v4 can be seen here: https://lore.kernel.org/lkml/20250507110444.963779-1-bhupesh@igalia.com/
+- As suggested by Kees, replaced tsk->comm with tsk->comm_str, inside 'task_struct'
+  where TASK_COMM_EXT_LEN is 64-bytes.
 
-I agree with HCH. Both of these methods are equally ugly, but we
-eliminate extra function call by just storing the offset.
+Changes since v3:
+================
+- v3 can be seen here: https://lore.kernel.org/lkml/20250507110444.963779-1-bhupesh@igalia.com/
+- As suggested by Petr and Steven, used 'comm_ext' name instead of
+  'real_comm'. Correspondingly the macro name is changed to 'TASK_COMM_EXT_LEN'
+  for the 64-byte extended comm.
+- Rebased this patchset on linux-next/master, which contain the following patch from
+  Steven now:
+       155fd6c3e2f0 ("tracing/sched: Use __string() instead of fixed lengths for task->comm")
+- Accordingly, v4 drops the changes done for 'trace/sched' events in v3,
+  but retains the 'safe' memcpy' changes for other kernel trace users.
 
-It may also make things simpler for debugging with drgn and the like
-too. You can just do the pointer math with the info inside struct inode
-instead of having to track down an extra function call, etc.
+Changes since v2:
+================
+- v2 can be seen here: https://lore.kernel.org/lkml/20250331121820.455916-1-bhupesh@igalia.com/
+- As suggested by Yafang and Kees, picked Linus' suggested approach for
+  this version (see: <https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/>).
+- Dropped kthreads patch from this version. It would be sent out
+  separately, if we have a consensus on this approach.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Changes since v1:
+================
+- v1 can be seen here: https://lore.kernel.org/lkml/20250314052715.610377-1-bhupesh@igalia.com/
+- As suggested by Kees, added [PATCH 3/3] to have a consistent
+  'full_name' entry inside 'task_struct' which both tasks and
+  kthreads can use.
+- Fixed the commit message to indicate that the existing ABI
+  '/proc/$pid/task/$tid/comm' remains untouched and a parallel
+  '/proc/$pid/task/$tid/full_name' ABI for new (interested) users.
+
+While working with user-space debugging tools which work especially
+on linux gaming platforms, I found that the task name is truncated due
+to the limitation of TASK_COMM_LEN.
+
+Now, during debug tracing, seeing truncated names is not very useful,
+especially on gaming platforms where the number of tasks running can
+be very high.
+
+This patchset does not touch 'TASK_COMM_LEN' at all, i.e.
+'TASK_COMM_LEN' and the 16-byte design remains untouched.
+
+Via this patchset, as Kees suggested 'tsk->comm' is replaced
+with 'tsk->comm_str', inside 'task_struct':
+       union {
+               char    comm_str[TASK_COMM_EXT_LEN];
+       };
+
+where TASK_COMM_EXT_LEN is 64-bytes.
+
+And then 'get_task_comm()' to pass 'tsk->comm_str'
+to the existing users.
+
+This would mean that ABI is maintained while ensuring that:
+
+- Existing users of 'get_task_comm'/ 'set_task_comm' will get 'tsk->comm_str'
+  truncated to a maximum of 'TASK_COMM_LEN' (16-bytes) to maintain ABI,
+- New / Modified users of 'get_task_comm'/ 'set_task_comm' will get
+ 'tsk->comm_str' supported for a maximum of 'TASK_COMM_EXTLEN' (64-bytes).
+
+Note, that the existing users have not been modified to migrate to
+'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
+dealing with only a 'TASK_COMM_LEN' long 'tsk->comm_str'.
+
+After this change, gdb is able to show full name of the task, using a
+simple app which generates threads with long names [see 1]:
+  # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+  # cat log
+
+  NameThatIsTooLongForComm[4662]
+
+[1]. https://github.com/lostgoat/tasknames
+
+Bhupesh (3):
+  exec: Remove obsolete comments
+  treewide: Switch memcpy() users of 'task->comm' to a more safer
+    implementation
+  treewide: Switch from tsk->comm to tsk->comm_str which is 64 bytes
+    long
+
+ arch/arm64/kernel/traps.c        |  2 +-
+ arch/arm64/kvm/mmu.c             |  2 +-
+ block/blk-core.c                 |  2 +-
+ block/bsg.c                      |  2 +-
+ drivers/char/random.c            |  2 +-
+ drivers/hid/hid-core.c           |  6 +++---
+ drivers/mmc/host/tmio_mmc_core.c |  6 +++---
+ drivers/pci/pci-sysfs.c          |  2 +-
+ drivers/scsi/scsi_ioctl.c        |  2 +-
+ drivers/tty/serial/serial_core.c |  2 +-
+ drivers/tty/tty_io.c             |  8 ++++----
+ drivers/usb/core/devio.c         | 16 ++++++++--------
+ drivers/usb/core/message.c       |  2 +-
+ drivers/vfio/group.c             |  2 +-
+ drivers/vfio/vfio_iommu_type1.c  |  2 +-
+ drivers/vfio/vfio_main.c         |  2 +-
+ drivers/xen/evtchn.c             |  2 +-
+ drivers/xen/grant-table.c        |  2 +-
+ fs/binfmt_elf.c                  |  2 +-
+ fs/coredump.c                    |  4 ++--
+ fs/drop_caches.c                 |  2 +-
+ fs/exec.c                        |  8 ++++----
+ fs/ext4/dir.c                    |  2 +-
+ fs/ext4/inode.c                  |  2 +-
+ fs/ext4/namei.c                  |  2 +-
+ fs/ext4/super.c                  | 12 ++++++------
+ fs/hugetlbfs/inode.c             |  2 +-
+ fs/ioctl.c                       |  2 +-
+ fs/iomap/direct-io.c             |  2 +-
+ fs/jbd2/transaction.c            |  2 +-
+ fs/locks.c                       |  2 +-
+ fs/netfs/internal.h              |  2 +-
+ fs/proc/base.c                   |  2 +-
+ fs/read_write.c                  |  2 +-
+ fs/splice.c                      |  2 +-
+ include/linux/coredump.h         |  3 ++-
+ include/linux/filter.h           |  2 +-
+ include/linux/ratelimit.h        |  2 +-
+ include/linux/sched.h            | 17 ++++++++++-------
+ include/trace/events/block.h     |  5 +++++
+ include/trace/events/oom.h       |  1 +
+ include/trace/events/osnoise.h   |  1 +
+ include/trace/events/signal.h    |  1 +
+ include/trace/events/task.h      |  2 ++
+ init/init_task.c                 |  2 +-
+ ipc/sem.c                        |  2 +-
+ kernel/acct.c                    |  2 +-
+ kernel/audit.c                   |  4 ++--
+ kernel/auditsc.c                 | 10 +++++-----
+ kernel/bpf/helpers.c             |  2 +-
+ kernel/capability.c              |  4 ++--
+ kernel/cgroup/cgroup-v1.c        |  2 +-
+ kernel/cred.c                    |  4 ++--
+ kernel/events/core.c             |  2 +-
+ kernel/exit.c                    |  6 +++---
+ kernel/fork.c                    |  9 +++++++--
+ kernel/freezer.c                 |  4 ++--
+ kernel/futex/waitwake.c          |  2 +-
+ kernel/hung_task.c               | 10 +++++-----
+ kernel/irq/manage.c              |  2 +-
+ kernel/kthread.c                 |  2 +-
+ kernel/locking/rtmutex.c         |  2 +-
+ kernel/printk/printk.c           |  2 +-
+ kernel/sched/core.c              | 22 +++++++++++-----------
+ kernel/sched/debug.c             |  4 ++--
+ kernel/signal.c                  |  6 +++---
+ kernel/sys.c                     |  6 +++---
+ kernel/sysctl.c                  |  2 +-
+ kernel/time/itimer.c             |  4 ++--
+ kernel/time/posix-cpu-timers.c   |  2 +-
+ kernel/tsacct.c                  |  2 +-
+ kernel/workqueue.c               |  6 +++---
+ lib/dump_stack.c                 |  2 +-
+ lib/nlattr.c                     |  6 +++---
+ mm/compaction.c                  |  2 +-
+ mm/filemap.c                     |  4 ++--
+ mm/gup.c                         |  2 +-
+ mm/memfd.c                       |  2 +-
+ mm/memory-failure.c              | 10 +++++-----
+ mm/memory.c                      |  2 +-
+ mm/mmap.c                        |  4 ++--
+ mm/oom_kill.c                    | 18 +++++++++---------
+ mm/page_alloc.c                  |  4 ++--
+ mm/util.c                        |  2 +-
+ net/core/sock.c                  |  2 +-
+ net/dns_resolver/internal.h      |  2 +-
+ net/ipv4/raw.c                   |  2 +-
+ net/ipv4/tcp.c                   |  2 +-
+ net/socket.c                     |  2 +-
+ security/lsm_audit.c             |  4 ++--
+ 90 files changed, 184 insertions(+), 165 deletions(-)
+
+-- 
+2.38.1
+
 
