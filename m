@@ -1,215 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-55071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71145B06B50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 03:50:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E87B06B9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 04:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AC34A5B18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 01:50:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06DE07B3244
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 02:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D7B2E36F9;
-	Wed, 16 Jul 2025 01:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2475D272811;
+	Wed, 16 Jul 2025 02:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fs2/xm5T"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="DSjdlGhS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2966A26E179
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 01:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1FD265288
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 02:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752630635; cv=none; b=WrDk9EHtTHjHQ88RWTY8Wax+t+rOD2twO9l4fkBWfTQQzH/hHL/hTs4wv0Q7PGiTuiraItBujxk7O0Lq1h6iovALJZWPr0/dfaYjaGKGknnGsjd/SamkMiskbfQOwDrEXp/6DGcBe65y68WhL967zlLiir+ea49TrDrGdAYHNAU=
+	t=1752631604; cv=none; b=qSAzqX1Ke7nIqrijkLKeZpYvrB+PE6vyFbyymhKSvt2yHtKlrkRo+a8BeiAt5o3UXE86vxXmfpvreHeAtc1IPSZ6Z3t3UYZPnis2hBBzBdIOGYZ/l1a8G6iSbLiBwLIyefmQ0Ay5s63R8TG3L5tb6am2V+sHdZ2rcAx3VagqvL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752630635; c=relaxed/simple;
-	bh=ulR2r4497/Knb1dtpDQYAGcd1xmbs3Ul1QUB5HiAxTo=;
+	s=arc-20240116; t=1752631604; c=relaxed/simple;
+	bh=TPISs9NBFDN53Y3aUroY0WGCUZDIWplP0R+8uYAH4bo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fMZYLnsewPAJ5kAwM54SLE12iSJBTgVS+hIjir6ikqv7QMkSbhmKwKyeHoKU7ip2Hu1blalJTverJF5UAmbvQOM0bnxEsGrnBiEPGpxVdxBfs2g4S2yaTgWkT0GEpepon5jwmEoM3FfXKXAnh8TV+zzQXSs1fBhaWbfx6EuBePQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fs2/xm5T; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab86a29c98so246561cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 18:50:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=IQPh9ZIWxfKCwbdnFAygDRZLSkBFOxXvXXkB2j7OiH+/EzTyfEWah+6C9iUFM2OIRujHZRzTwuhV1BfKsQZTjV1es5Z06yU2nblYzTNHscY48LGs8n80wQA4XP4a7G6ljEXwATVGEpsoGT5kk50brm4YKAm8yE8UiZfMIJIQbkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=DSjdlGhS; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3df30d542caso26927295ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Jul 2025 19:06:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752630633; x=1753235433; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1752631601; x=1753236401; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PI+BpmLhrBZFyCshwZnktNusgYyVbEvS1xUVnNwBsk0=;
-        b=fs2/xm5TN2QMZsm6Pg6eQefSs+ddRsmyoDXrOiRisD/bREIA51q/EYyUzsaQEx/BpH
-         FgjyUAeTl9s05lTEtTpBMdVuBcWuVQYLe8EDMiXdNqJa0kK6SBTUqbXmxkSJ09rChCn1
-         n3pf93/4b6abSbrZNvhmpISWnYW1sxQ8igizLXXd1B4lfJ7NMWGSL/ryhKIZN8w6KEAW
-         6xKvcUD18gcCBBAUvBa3VRfCZWdXtgxZQAMlX6XKHmrZwvII8d5Pxn/4ob9jk/4ZJ5K6
-         /IAetKg/1jupdtdYqxzFBw98+gtFphftJCZYATtM0PjMsKDa0KwBGfNJV8MJe8XE4Vby
-         2UUA==
+        bh=5j+F9L1888D1/lTB0yjly7TVvzjMYjvETcZUaJXOGrM=;
+        b=DSjdlGhSODTU8fT6Aw9TLtMH3N/iEdSvZKxeVopfidb1K6wf7w5EDQ9Ap3T3hXmmm3
+         dbqTd+uHD6nWju+4hClirXyxT7tqwI1ClajTD27h2T+M20IeDnCBeUhVFFckars8M4Te
+         0tyqlNrmqeFfY//U9hCdO1XKgFiZurvto1vcWpZNHJFyoOwzcuGTn3aA3Pg4q+ioYjea
+         QaGfk09z9+T3438UoawbjtztZvyh8QXV+peewcAhO5zZyUQqPmyFm2ar2wVep5OrtEGB
+         GIMv1tx/LjrNBhHkjj1FMJFbD9C7zVsllD0sUJNs4zVrAS8X21N0MXCyaXGODKcnluG2
+         sv0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752630633; x=1753235433;
+        d=1e100.net; s=20230601; t=1752631601; x=1753236401;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PI+BpmLhrBZFyCshwZnktNusgYyVbEvS1xUVnNwBsk0=;
-        b=mWi/mdaD6U6oY7WvSdOuXSTtrGA0Syo17xoTgwX7i+zl509bH2kwSJQiJjNb3WtCus
-         NP0P1DUzv/a6401RbhVRHZvDL840OSNTK/+rtbi2prvq2jEW72PLj5ep2pXadsmNlRWX
-         mDY4+Sl8O0M11+LAjX2l0/Da5RcfxCCPzwW0aLDOnmZMO1ovkx7UAwrnR+Vpu00UlwJx
-         bbq1loybxhfLjUpyLeIPaZaFtz7dpuroqHUJ1WpTahx60dQd5LzcpojulCvXRfgrS+vT
-         tPRRAhonJPtppqTxDoXsjKxyalQ/80wqILxLAaR89LRpmP/sTUwi6jijpGswp/Xl8P61
-         H4tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOz/MeyuA6cfzpCHiCuOQK9nyu3J13XNB0pv8aiMFEQkRfkzGyU18YX3M2NbA7wLTJPHt30o1Qb111WquN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9df/kpGOGFXE7KlgdNAJ63x0skDLliEJ1zURSt32KYuO9YsWH
-	P7iE1AVp5ERUJIh52R76upABJiuOdqtMyA2DW1UEcQAvjUrdzzVXS9ezUVlXjtTVMDS19hEYvVr
-	Kk/I26IoXXpBieErzjhJOqzl2RcqDH+aZmjZEEwGt
-X-Gm-Gg: ASbGncv+/zeXQMuO1t6EKxeNhmI2sbMulB1GJLIVMPzgAttawD5xZlqYEobQ9JsVJSp
-	bfivlS6r1gYEuwMM6a+/dSGfYHrRWJ1xtcHwLlfRY5rxDMZc4vG9gc4UoglVNS+pZgpH/F0B7Mb
-	HsiJSTlROkvcBydDnlky0/J08fvCzNuzBt0g4twBeXlhpCnE6nq4fQvgv9bCpiRqjTm8XiNB7U/
-	HGMnlGoTKy5rVAU/RpC3kaE47UidXnb3Y4q
-X-Google-Smtp-Source: AGHT+IE6S/geSCvAIOHME6wPTf87Pj245hn8wrq94Y+u/3lJJQqVVGTcUSg58tpAQ1CgaWAS+29p2Kj+iGhdGbbkHEY=
-X-Received: by 2002:a05:622a:8d01:b0:4a9:95a6:3a69 with SMTP id
- d75a77b69052e-4ab953ab2b0mr763871cf.8.1752630632631; Tue, 15 Jul 2025
- 18:50:32 -0700 (PDT)
+        bh=5j+F9L1888D1/lTB0yjly7TVvzjMYjvETcZUaJXOGrM=;
+        b=IENCOg31nEdyo1VJuzQIrNVhMwbPoKvLgXUwFEkMImKWmurPx0zn7oPbsXpb66rjTR
+         ETSlx8D3aC6inYm22V2IcHZGimg+WR3j/PeeL4+LqcmKI+gSfguUv40xGgzBGH7elSYt
+         BBKyYo69j7FgyC7ILVj539mCuIYxOJBSz2VyfVwVXW2XMMa22kxEtvEWkCNPzxU8qdDZ
+         j+eCo+yXenz+EH6ndyLtI4lJUFx+2l8NiBh0NCiyjDbdHB+Xw7RQisdLRjhPWFxICj3A
+         XKx54Lf4jdB4wUCaWgPw+3RSWw1YGrgp/j4aHNn6MYAsA3V3/aRlBvf+vuCEh1wb9wC0
+         zq6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU9vV6ivEhClTxntH4+rTnJ2aXMYcfMh/oW5MV20Wyix5+XfcC0mQOmontHSSIhqFz+f8Rzz4epxlCefVnV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTpXNIZM2ZVcsSaj9cA9Rm8ubEnqxQjrDjRc3UEHy+2r+j8X23
+	MZmTc62cHj6NvTjC5Fk9VpHxHNekTkDDkYehqQAO1qjQkHcEkTHfT578pCPQYeNHBoj6MSmI6tQ
+	SB2UGvKB/ZvIGDOlHSaDFNSwp4KpygAhDexjLdHg3dQ==
+X-Gm-Gg: ASbGnctN/GDrzo+HL/qaVpSpFK676Jq6v6K2TF0z+pAuMOFf6GbJ9Qh+Ylgjg5cP/6I
+	eGn5jovqKeH4ZJR3KgdRhgPdKWgMKbvvpyXDqayx7C1AB46LDprJ2lYunzVgKwEOwsYqjWZ3/xt
+	bxKzR+eTpV1BgLYZUcMxAtd7k0EmHzvMv3qvZPffBu1H5tTJIgOTGhuroIraBt0PntKxvP/fys5
+	2+coHhLJ4eR9oaATsgi
+X-Google-Smtp-Source: AGHT+IH9/HXYsLu/DJVcgXHmyW23optDc6uoRoN2rcWn2HHkb7B7VzOcj2uDSKGa9qQvekhhenVwxhU+VuPhiZoGO+E=
+X-Received: by 2002:a05:6e02:1aa3:b0:3df:3886:ad6e with SMTP id
+ e9e14a558f8ab-3e282e65b61mr10740485ab.12.1752631601151; Tue, 15 Jul 2025
+ 19:06:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com>
- <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
- <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
- <5ec10376-6a5f-4a94-9880-e59f1b6d425f@suse.cz> <19d46c33-bd5e-41d1-88ad-3db071fa1bed@lucifer.local>
- <0b8617c1-a150-426f-8fa6-9ab3b5bcfa1e@redhat.com> <8026c455-6237-47e3-98af-e3acb90dba25@suse.cz>
- <5f8d3100-a0dd-4da3-8797-f097e063ca97@lucifer.local> <CAEf4BzaEouFx8EuZF_PUKdc5wsq-5FYNyAE19VRxV7_YJkrfww@mail.gmail.com>
- <7568edfa-6992-452d-9eb2-2497221cb22a@lucifer.local> <7d878566-f445-4fc2-9d04-eb8b38024c9b@lucifer.local>
- <CAEf4BzYDktFt9R78tQifMrJ7okzA+1LhhiqCi+SpSdq3h4zKyw@mail.gmail.com> <CAJuCfpFx1vcv-a5Eez3AhoCUM2+jM6Sh0s9ms8FCWqZ8tFkTQg@mail.gmail.com>
-In-Reply-To: <CAJuCfpFx1vcv-a5Eez3AhoCUM2+jM6Sh0s9ms8FCWqZ8tFkTQg@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 15 Jul 2025 18:50:21 -0700
-X-Gm-Features: Ac12FXyGHcEwj0dROFdwa9pljKXvmZP0XFWCivJTUTBRwHJhx-DGskIWSfL3dJQ
-Message-ID: <CAJuCfpEvH4vHXQ5YRWRdiFVXwyAcpcXEncOAWd1Zp4LahrxT_g@mail.gmail.com>
-Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	David Hildenbrand <david@redhat.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
-	peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, 
-	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
-	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+References: <20250604-v5_user_cfi_series-v17-0-4565c2cf869f@rivosinc.com>
+ <20250604-v5_user_cfi_series-v17-15-4565c2cf869f@rivosinc.com>
+ <CANXhq0pRXX_OMW2g2ui-k7Z_ZT+5a8Sra8oE28nBh5B9K2L5bQ@mail.gmail.com>
+ <CANXhq0p3MVLMsr_r0RWMti476pT0EMx61PQArjo2fUauTdpXaQ@mail.gmail.com> <CAKC1njRNkSfb_0pUQoH0RwJQhWTsz9sdg_3o08w-NuSO5WypcA@mail.gmail.com>
+In-Reply-To: <CAKC1njRNkSfb_0pUQoH0RwJQhWTsz9sdg_3o08w-NuSO5WypcA@mail.gmail.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Wed, 16 Jul 2025 10:06:28 +0800
+X-Gm-Features: Ac12FXxQabhbT3gOiwtrnSWdGCnuEDBYfeHbjfUOFZRTxM5oaqlSklQMtx6WBCk
+Message-ID: <CANXhq0oZz=TTT=py=1BO3OZf45Wg=-bFyNpn+JRLNufHceLjcQ@mail.gmail.com>
+Subject: Re: [PATCH v17 15/27] riscv/traps: Introduce software check exception
+ and uprobe handling
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 1:18=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+On Wed, Jul 16, 2025 at 5:34=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
+rote:
+>
+> Hi Zong,
+>
+>
+> On Thu, Jun 19, 2025 at 7:16=E2=80=AFPM Zong Li <zong.li@sifive.com> wrot=
+e:
+> >
+> > On Mon, Jun 16, 2025 at 3:31=E2=80=AFPM Zong Li <zong.li@sifive.com> wr=
+ote:
+> > >
+> > > On Thu, Jun 5, 2025 at 1:17=E2=80=AFAM Deepak Gupta <debug@rivosinc.c=
 om> wrote:
->
-> On Tue, Jul 15, 2025 at 10:29=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Tue, Jul 15, 2025 at 10:21=E2=80=AFAM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> > >
-> > > On Tue, Jul 15, 2025 at 06:10:16PM +0100, Lorenzo Stoakes wrote:
-> > > > > For PROCMAP_QUERY, we need priv->mm, but the newly added locked_v=
-ma
-> > > > > and locked_vma don't need to be persisted between ioctl calls. So=
- we
-> > > > > can just add those two fields into a small struct, and for seq_fi=
-le
-> > > > > case have it in priv, but for PROCMAP_QUERY just have it on the s=
-tack.
-> > > > > The code can be written to accept this struct to maintain the sta=
-te,
-> > > > > which for PROCMAP_QUERY ioctl will be very short-lived on the sta=
-ck
-> > > > > one.
-> > > > >
-> > > > > Would that work?
 > > > >
-> > > > Yeah that's a great idea actually, the stack would obviously give u=
-s the
-> > > > per-query invocation thing. Nice!
+> > > > zicfiss / zicfilp introduces a new exception to priv isa `software =
+check
+> > > > exception` with cause code =3D 18. This patch implements software c=
+heck
+> > > > exception.
 > > > >
-> > > > I am kicking myself because I jokingly suggested (off-list) that a =
-helper
-> > > > struct would be the answer to everything (I do love them) and of
-> > > > course... here we are :P
-> > >
-> > > Hm but actually we'd have to invert things I think, what I mean is - =
-since
-> > > these fields can be updated at any time by racing threads, we can't h=
-ave
-> > > _anything_ in the priv struct that is mutable.
-> > >
-> >
-> > Exactly, and I guess I was just being incomplete with just listing two
-> > of the fields that Suren make use of in PROCMAP_QUERY. See below.
-> >
-> > > So instead we should do something like:
-> > >
-> > > struct proc_maps_state {
-> > >         const struct proc_maps_private *priv;
-> > >         bool mmap_locked;
-> > >         struct vm_area_struct *locked_vma;
-> > >         struct vma_iterator iter;
-> > >         loff_t last_pos;
-> > > };
-> > >
-> > > static long procfs_procmap_ioctl(struct file *file, unsigned int cmd,=
- unsigned long arg)
-> > > {
-> > >         struct seq_file *seq =3D file->private_data;
-> > >         struct proc_maps_private *priv =3D seq->private;
-> > >         struct proc_maps_state state =3D {
-> > >                 .priv =3D priv,
-> > >         };
-> > >
-> > >         switch (cmd) {
-> > >         case PROCMAP_QUERY:
-> > >                 return do_procmap_query(state, (void __user *)arg);
-> >
-> > I guess it's a matter of preference, but I'd actually just pass
-> > seq->priv->mm and arg into do_procmap_query(), which will make it
-> > super obvious that priv is not used or mutated, and all the new stuff
-> > that Suren needs for lockless VMA iteration, including iter (not sure
-> > PROCMAP_QUERY needs last_pos, tbh), I'd just put into this new struct,
-> > which do_procmap_query() can keep private to itself.
-> >
-> > Ultimately, I think we are on the same page, it's just a matter of
-> > structuring code and types.
+> .....
 >
-> That sounds cleaner to me too.
-> I'll post a new version of my patchset today without the last patch to
-> keep PROCMAP_QUERY changes separate, and then a follow-up patch that
-> does this refactoring and changes PROCMAP_QUERY to use per-vma locks.
+> > > When a user mode CFI violation occurs, the ELP state should be 1, and
+> > > the system traps into supervisor mode. During this trap, sstatus.SPEL=
+P
+> > > is set to 1, and the ELP state is reset to 0. If we don=E2=80=99t cle=
+ar
+> > > sstatus.SPELP, the ELP state will become 1 again after executing the
+> > > sret instruction. As a result, the system might trigger another
+> > > forward CFI violation upon executing the next instruction in the user
+> > > program, unless it happens to be a lpad instruction.
+> > >
+> > > The previous patch was tested on QEMU, but QEMU does not set the
+> > > sstatus.SPELP bit to 1 when a forward CFI violation occurs. Therefore=
+,
+> > > I suspect that QEMU might also require some fixes.
+> >
+> > Hi Deepak,
+> > The issue with QEMU was that the sw-check exception bit in medeleg
+> > couldn't be set. This has been fixed in the latest QEMU mainline. I
+> > have re-tested the latest QEMU version, and it works.
 >
-> Thanks folks! It's good to be back from vacation with the problem
-> already figured out for you :)
+> What was this issue, can you point me to the patch in mainline?
 
-Yes, Vlastimil was correct. Once I refactored the last patch so that
-do_procmap_query() does not use seq->private at all, the reproducer
-stopped failing.
-I'll post the patchset without the last patch shortly and once Andrew
-takes it into mm-unstable, will post the last patch as a follow-up.
-Thanks,
-Suren.
+Hi Deepak
+The issue was that my QEMU setup somehow missed the change of
+`target/riscv/csr.c` in your following patch:
+https://github.com/qemu/qemu/commit/6031102401ae8a69a87b20fbec2aae666625d96=
+a
+After I upgraded to the latest QEMU source, I found the kernel issue
+if we didn't clear sstatus.SPELP in the handler
+Thanks
 
 >
 > >
-> > >         default:
-> > >                 return -ENOIOCTLCMD;
-> > >         }
-> > > }
 > > >
-> > > And then we have a stack-based thing with the bits that change and a
-> > > read-only pointer to the bits that must remain static. And we can enf=
-orce
-> > > that with const...
+> > > Thanks
 > > >
-> > > We'd have to move the VMI and last_pos out too to make it const.
-> > >
-> > > Anyway the general idea should work!
+> > > > +
+> > > > +       if (is_fcfi || is_bcfi) {
+> > > > +               do_trap_error(regs, SIGSEGV, SEGV_CPERR, regs->epc,
+> > > > +                             "Oops - control flow violation");
+> > > > +               return true;
+> > > > +       }
+> > > > +
+> > > > +       return false;
+> > > > +}
+> > > > +
+> > > > +/*
+> > > > + * software check exception is defined with risc-v cfi spec. Softw=
+are check
+> > > > + * exception is raised when:-
+> > > > + * a) An indirect branch doesn't land on 4 byte aligned PC or `lpa=
+d`
+> > > > + *    instruction or `label` value programmed in `lpad` instr does=
+n't
+> > > > + *    match with value setup in `x7`. reported code in `xtval` is =
+2.
+> > > > + * b) `sspopchk` instruction finds a mismatch between top of shado=
+w stack (ssp)
+> > > > + *    and x1/x5. reported code in `xtval` is 3.
+> > > > + */
+> > > > +asmlinkage __visible __trap_section void do_trap_software_check(st=
+ruct pt_regs *regs)
+> > > > +{
+> > > > +       if (user_mode(regs)) {
+> > > > +               irqentry_enter_from_user_mode(regs);
+> > > > +
+> > > > +               /* not a cfi violation, then merge into flow of unk=
+nown trap handler */
+> > > > +               if (!handle_user_cfi_violation(regs))
+> > > > +                       do_trap_unknown(regs);
+> > > > +
+> > > > +               irqentry_exit_to_user_mode(regs);
+> > > > +       } else {
+> > > > +               /* sw check exception coming from kernel is a bug i=
+n kernel */
+> > > > +               die(regs, "Kernel BUG");
+> > > > +       }
+> > > > +}
+> > > > +
+> > > >  #ifdef CONFIG_MMU
+> > > >  asmlinkage __visible noinstr void do_page_fault(struct pt_regs *re=
+gs)
+> > > >  {
+> > > >
+> > > > --
+> > > > 2.43.0
+> > > >
 
