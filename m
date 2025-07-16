@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-55048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3B5B06AC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 02:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9CCB06AC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 02:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C4F3A2B7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 00:47:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5C0316EF62
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 00:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39E418FC80;
-	Wed, 16 Jul 2025 00:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235D919258E;
+	Wed, 16 Jul 2025 00:47:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1821E86E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C256433AC;
 	Wed, 16 Jul 2025 00:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752626854; cv=none; b=HQTCkEweVwf8xdaslLDBsQDuecaoAygDMIeXiRARVtapUUVD0OX2GzFSKwsylT/40CAacqecc2wAKNGCgWkxIypq6tMG6D+VJDM/V2eJ8fllQbDsEsqdzf5vCLRKUE61zf48fAYuCSVUL49ZLS0npUOYgG5iP51azYF7yntUq3Q=
+	t=1752626854; cv=none; b=tZ7I3Dl1/Kd+Wmzd7hEaLAwNLSpcaLYJDIYFd0EuiQLL5/rxoKmLa+IPCCamjqk21D/eO2dPGzZQNMlzqs0f9dSuBEr/MXpA9+vW6S+wvIGOzj2Cnm/8d16PlPEgRHVw7KZu8mpOx8CokzhTR9IiqEJZrpdA7TBaYLIQf7fHXq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752626854; c=relaxed/simple;
-	bh=lxBcVG0R0VOH/NGmtnN/Djfma256EQURgN06rwyC5TY=;
+	bh=J62N3+B0RaIkSohgwPybKCNylYiIgs3bEDDAnuYL3LI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ra588HonRaYZW7OyjSw0U6BZuvk50bITosk3H4ZUlS1pxuwLUYauIDFAXm+E0VJYMRM2ZQyt7SfI5Wf68HIBfVYCMQH82LdKYqLbtgdY30WA9TjPtZE2XbtTeCF4hjTHM4kEQGWTKKJ51nUtHfRdU1Eon4RIHgS7vIsYqOtK/Bo=
+	 MIME-Version; b=YkqCiKKi6+676EVpsQPPyKxDVDDJZZFKiq98HZ1NQ32hhb/HxR5zBUfvyGOpdvpbzZhCGt3hWUDUE+Whl0S/UcDgNUvNh94VRCtfGVeh6RXdGBQIUOIMRGnO8NW65M88suHU3m69e1enyqIBFRte1XDJN3QnZYiuY5ZUH0BR4nc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1ubqIz-002AAH-A8;
+	id 1ubqIz-002AAN-Ok;
 	Wed, 16 Jul 2025 00:47:31 +0000
 From: NeilBrown <neil@brown.name>
 To: Miklos Szeredi <miklos@szeredi.hu>,
 	Amir Goldstein <amir73il@gmail.com>
 Cc: linux-unionfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 01/21] ovl: simplify an error path in ovl_copy_up_workdir()
-Date: Wed, 16 Jul 2025 10:44:12 +1000
-Message-ID: <20250716004725.1206467-2-neil@brown.name>
+Subject: [PATCH v3 02/21] ovl: change ovl_create_index() to take dir locks
+Date: Wed, 16 Jul 2025 10:44:13 +1000
+Message-ID: <20250716004725.1206467-3-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250716004725.1206467-1-neil@brown.name>
 References: <20250716004725.1206467-1-neil@brown.name>
@@ -53,157 +53,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If ovl_copy_up_data() fails the error is not immediately handled but the
-code continues on to call ovl_start_write() and lock_rename(),
-presumably because both of these locks are needed for the cleanup.
-Only then (if the lock was successful) is the error checked.
+ovl_copy_up_workdir() currently take a rename lock on two directories,
+then use the lock to both create a file in one directory, perform a
+rename, and possibly unlink the file for cleanup.  This is incompatible
+with proposed changes which will lock just the dentry of objects being
+acted on.
 
-This makes the code a little hard to follow and could be fragile.
+This patch moves the call to ovl_create_index() earlier in
+ovl_copy_up_workdir() to before the lock is taken.
 
-This patch changes to handle the error after the ovl_start_write()
-(which cannot fail, so there aren't multiple errors to deail with).  A
-new ovl_cleanup_unlocked() is created which takes the required directory
-lock.  This will be used extensively in later patches.
+ovl_create_index() then takes the required lock only when needed.
 
-In general we need to check the parent is still correct after taking the
-lock (as ovl_copy_up_workdir() does after a successful lock_rename()) so
-that is included in ovl_cleanup_unlocked() using new ovl_parent_lock()
-and ovl_parent_unlock() calls (it is planned to move this API into VFS code
-eventually, though in a slightly different form).
-
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/overlayfs/copy_up.c   | 20 +++++++++++---------
- fs/overlayfs/dir.c       | 15 +++++++++++++++
- fs/overlayfs/overlayfs.h |  6 ++++++
- fs/overlayfs/util.c      | 10 ++++++++++
- 4 files changed, 42 insertions(+), 9 deletions(-)
+ fs/overlayfs/copy_up.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 8a3c0d18ec2e..79f41ef6ffa7 100644
+index 79f41ef6ffa7..d485bd7edd8f 100644
 --- a/fs/overlayfs/copy_up.c
 +++ b/fs/overlayfs/copy_up.c
-@@ -794,23 +794,24 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
- 	 */
- 	path.dentry = temp;
- 	err = ovl_copy_up_data(c, &path);
-+	ovl_start_write(c->dentry);
+@@ -517,8 +517,6 @@ static int ovl_set_upper_fh(struct ovl_fs *ofs, struct dentry *upper,
+ 
+ /*
+  * Create and install index entry.
+- *
+- * Caller must hold i_mutex on indexdir.
+  */
+ static int ovl_create_index(struct dentry *dentry, const struct ovl_fh *fh,
+ 			    struct dentry *upper)
+@@ -550,7 +548,9 @@ static int ovl_create_index(struct dentry *dentry, const struct ovl_fh *fh,
+ 	if (err)
+ 		return err;
+ 
++	inode_lock(dir);
+ 	temp = ovl_create_temp(ofs, indexdir, OVL_CATTR(S_IFDIR | 0));
++	inode_unlock(dir);
+ 	err = PTR_ERR(temp);
+ 	if (IS_ERR(temp))
+ 		goto free_name;
+@@ -559,6 +559,9 @@ static int ovl_create_index(struct dentry *dentry, const struct ovl_fh *fh,
+ 	if (err)
+ 		goto out;
+ 
++	err = ovl_parent_lock(indexdir, temp);
 +	if (err)
-+		goto cleanup_unlocked;
++		goto out;
+ 	index = ovl_lookup_upper(ofs, name.name, indexdir, name.len);
+ 	if (IS_ERR(index)) {
+ 		err = PTR_ERR(index);
+@@ -566,9 +569,10 @@ static int ovl_create_index(struct dentry *dentry, const struct ovl_fh *fh,
+ 		err = ovl_do_rename(ofs, indexdir, temp, indexdir, index, 0);
+ 		dput(index);
+ 	}
++	ovl_parent_unlock(indexdir);
+ out:
+ 	if (err)
+-		ovl_cleanup(ofs, dir, temp);
++		ovl_cleanup_unlocked(ofs, indexdir, temp);
+ 	dput(temp);
+ free_name:
+ 	kfree(name.name);
+@@ -798,6 +802,12 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
+ 	if (err)
+ 		goto cleanup_unlocked;
+ 
++	if (S_ISDIR(c->stat.mode) && c->indexed) {
++		err = ovl_create_index(c->dentry, c->origin_fh, temp);
++		if (err)
++			goto cleanup_unlocked;
++	}
 +
  	/*
  	 * We cannot hold lock_rename() throughout this helper, because of
  	 * lock ordering with sb_writers, which shouldn't be held when calling
- 	 * ovl_copy_up_data(), so lock workdir and destdir and make sure that
- 	 * temp wasn't moved before copy up completion or cleanup.
- 	 */
--	ovl_start_write(c->dentry);
- 	trap = lock_rename(c->workdir, c->destdir);
- 	if (trap || temp->d_parent != c->workdir) {
- 		/* temp or workdir moved underneath us? abort without cleanup */
- 		dput(temp);
- 		err = -EIO;
--		if (IS_ERR(trap))
--			goto out;
--		goto unlock;
--	} else if (err) {
--		goto cleanup;
-+		if (!IS_ERR(trap))
-+			unlock_rename(c->workdir, c->destdir);
-+		goto out;
- 	}
+@@ -818,12 +828,6 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
+ 	if (err)
+ 		goto cleanup;
  
- 	err = ovl_copy_up_metadata(c, temp);
-@@ -846,7 +847,6 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
- 	ovl_inode_update(inode, temp);
- 	if (S_ISDIR(inode->i_mode))
- 		ovl_set_flag(OVL_WHITEOUTS, inode);
--unlock:
- 	unlock_rename(c->workdir, c->destdir);
- out:
- 	ovl_end_write(c->dentry);
-@@ -854,9 +854,11 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
- 	return err;
- 
- cleanup:
--	ovl_cleanup(ofs, wdir, temp);
-+	unlock_rename(c->workdir, c->destdir);
-+cleanup_unlocked:
-+	ovl_cleanup_unlocked(ofs, c->workdir, temp);
- 	dput(temp);
--	goto unlock;
-+	goto out;
- }
- 
- /* Copyup using O_TMPFILE which does not require cross dir locking */
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 4fc221ea6480..67cad3dba8ad 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -43,6 +43,21 @@ int ovl_cleanup(struct ovl_fs *ofs, struct inode *wdir, struct dentry *wdentry)
- 	return err;
- }
- 
-+int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir,
-+			 struct dentry *wdentry)
-+{
-+	int err;
-+
-+	err = ovl_parent_lock(workdir, wdentry);
-+	if (err)
-+		return err;
-+
-+	ovl_cleanup(ofs, workdir->d_inode, wdentry);
-+	ovl_parent_unlock(workdir);
-+
-+	return 0;
-+}
-+
- struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, struct dentry *workdir)
- {
- 	struct dentry *temp;
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 42228d10f6b9..6737a4692eb2 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -416,6 +416,11 @@ static inline bool ovl_open_flags_need_copy_up(int flags)
- }
- 
- /* util.c */
-+int ovl_parent_lock(struct dentry *parent, struct dentry *child);
-+static inline void ovl_parent_unlock(struct dentry *parent)
-+{
-+	inode_unlock(parent->d_inode);
-+}
- int ovl_get_write_access(struct dentry *dentry);
- void ovl_put_write_access(struct dentry *dentry);
- void ovl_start_write(struct dentry *dentry);
-@@ -843,6 +848,7 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs,
- 			       struct inode *dir, struct dentry *newdentry,
- 			       struct ovl_cattr *attr);
- int ovl_cleanup(struct ovl_fs *ofs, struct inode *dir, struct dentry *dentry);
-+int ovl_cleanup_unlocked(struct ovl_fs *ofs, struct dentry *workdir, struct dentry *dentry);
- struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, struct dentry *workdir);
- struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdir,
- 			       struct ovl_cattr *attr);
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 2b4754c645ee..f4944f11d5eb 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -1544,3 +1544,13 @@ void ovl_copyattr(struct inode *inode)
- 	i_size_write(inode, i_size_read(realinode));
- 	spin_unlock(&inode->i_lock);
- }
-+
-+int ovl_parent_lock(struct dentry *parent, struct dentry *child)
-+{
-+	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-+	if (!child || child->d_parent == parent)
-+		return 0;
-+
-+	inode_unlock(parent->d_inode);
-+	return -EINVAL;
-+}
+-	if (S_ISDIR(c->stat.mode) && c->indexed) {
+-		err = ovl_create_index(c->dentry, c->origin_fh, temp);
+-		if (err)
+-			goto cleanup;
+-	}
+-
+ 	upper = ovl_lookup_upper(ofs, c->destname.name, c->destdir,
+ 				 c->destname.len);
+ 	err = PTR_ERR(upper);
 -- 
 2.49.0
 
