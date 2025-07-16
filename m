@@ -1,161 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-55164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CF2B076D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 15:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D51A4B076EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 15:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B3D563852
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 13:24:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B814616CE75
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 13:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116D01AF4D5;
-	Wed, 16 Jul 2025 13:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC3E1BE871;
+	Wed, 16 Jul 2025 13:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="zwVpBnPN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQ5iknWv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA4B19F12D;
-	Wed, 16 Jul 2025 13:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521F91B983F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 13:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672276; cv=none; b=neaisK2AbbT0FAHWuhtMLlkMKyu/jqzrlaesf9tHgrDwSAwJ6nuT7eGPWNpw7qFaEtEqipTuWk9QM/0KSyBCzd/Tw+ZkQrAQqAFqA/rvEf4Qt2tvqbhfIgu3iOzfMI7qWOXy47av1nML9xBlTql7GbkVVohNy2YrtlwEQt7BNOQ=
+	t=1752672523; cv=none; b=jo1ECg6dFj/jaWIrdGGxizUku5jQj+qo2grU3I/fp87R0TZWqN5fTY77iAz33A+Sr5tVO791NhtMQGI70COFf5xV9vky96ff3dhv1ij0a70uvbwn5gf+lQhO++g0kbqyhrUnVgV0b9kaWPYoFRVHGmKIL6l3Bs8bysCfRI6IJIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672276; c=relaxed/simple;
-	bh=Ycwee0KUkPIlMLpAT8kxcS0EgasHZ2db48sjv7B7q6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ppo5fxhVwmszY8EHSFENDn7f5/7YTV+PyKCM4ENTFEXU35e4rlw5E2UuL34O8NW5mYCDL6oDW2NNdHTWLXqd2ZrpWMTZzho/vYLsKTUvXleir5bJwOER5IXF3H40zI8sYvJWP7jMhxhItGOr9esWewzBiAeRtniwrr2wTlyc3t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=zwVpBnPN; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bhxby5ZxHz9t8l;
-	Wed, 16 Jul 2025 15:24:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1752672270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHp5F9+QAl3YKyU3XfG8xzFMXFlv6fbOmGfaI4nwnt4=;
-	b=zwVpBnPNzovwfOdVnSWLfhcYGiGiJEXhxzQrhRqGFn2d1MYmkECMGNYtM1hjRJDwn7SnmX
-	dK+0aG/gqVEyChEP3hSDpXmH3A/iPGHUHxe5aLCH/jTVmee5f+NKtIwrXSO76ZUSKbWNu0
-	Pi+6w/vmUhzQW6+w1b5p2334kGkEuol3d6r7XqPRKT5U3vMp6A30G9eKmGjFMAXqGHnfjH
-	6oSQdLm6uSsGZpMAO0vaGjeyi1YnaJN9kngf+/RAwASAD4oDPv1lbZWYU0eO36C4xP7cHv
-	v9vD+x4EHnlJZydg33row3vnk06ulMTou2I0K0BcvEvyNO7xOlBmLDJ4zv+ksQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Wed, 16 Jul 2025 15:24:16 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2 5/5] block: use largest_zero_folio in
- __blkdev_issue_zero_pages()
-Message-ID: <ugprcoay3meavw4malotv5ebxlghyyrnh3jcqbrkbzfeoo22jj@cqpfvjso6spb>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <20250707142319.319642-6-kernel@pankajraghav.com>
- <f7ad4e56-7634-400d-9e7c-3c3b65f9b1d0@lucifer.local>
+	s=arc-20240116; t=1752672523; c=relaxed/simple;
+	bh=ZvnQZzT/0ERc65pIF5ph5o3wVOBy6yH9acH53bXE+/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MmxyXKKIKN3yrDFK7uEjTjINePWrB0ZiIyH0Y4evwVVJS321BYh+a0DeaheGDgrczDtyU6aTpaDuFKHQiJWjH8pJ0kxkc/LHJo+gW1ZwukU29kz2R1P6n3oxy78gu+4mw1ZRhfduKzCtUNz0Y6xw4pNzQ/ikoygyy8GSZd33X9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQ5iknWv; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e8b3cc12dceso4782740276.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 06:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752672521; x=1753277321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YgYvlMgntF/mXkjZyec0wmh/bim6VIeOCoxNtvZSME4=;
+        b=fQ5iknWv35IQWGonZhgQtXjfTlmvzhB5CoVN12cBqjX5dfglb9Af0W5tzYU1Rh4oqL
+         SUGsODvvukRudfk662/BYAF3Vu2R304to8O30/fQE7Ovg+SoVSqrOtjwFsizK7oYyu0p
+         hYsimyJkYlpm28VEuea4MoVBsSJzDPLjtHmTMxjkO+6ocb9nEvVO2bq4PIgBmZBxGc4U
+         WNguVWuhtaTqOfLCMUQUaNBFV0j0r+kYZsXTYILD0i6ySLHzuJ/ZoaSsg/FLbHaMbz5V
+         3P4VoHWwpK8Yn9daDL/e2bkOoGvLyELGCrqWksP0lCfc6KvdLs86lqDRk/7ylRgVEpS9
+         sk5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752672521; x=1753277321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YgYvlMgntF/mXkjZyec0wmh/bim6VIeOCoxNtvZSME4=;
+        b=QQPdGtlQDMB4pvV1vbL66xXRQDdjtsiKZp1a3qIeejMetOvmdIReZnX21NVFJcmich
+         Djio8NoBX4DvfhxzVCECJ3R1ZPRYWGwrjj/PlT6TeAoSloeYpP7WCr6JlP3zUYljI1dX
+         RANe4jXCeH+nPmv8Wf0DQfLuUCCOPkI/Fft6OMzvbBeTr3yyFZBcJmVC0uctheIhAh2q
+         bwrqGRl9Qy9KsoBAUk41ShjTz93NxgbLUsvToD+kSrX7AeOzKs4zkcZyTS8HEBcofSui
+         ipuYg6+hfPHoIA+Hvqo0bfKFx+QS2TpCFxghiRvlamzIQbeRD1+L5cLCYzGkOuEmrw04
+         gIcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFxnJAyDdC3zcEgWn+Wj91pGAvDW1CnBa7DYPI6It6oE2fKyX1p/WByjz8DQ2OsTBdeg2XChfTTHwUcqpv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHz6Q+6EYOc5ghdNP3goZTrprRoGTiqQlllopZu5evusMmqqDC
+	jtMeRvJt+UbCeDqGyQZ0hWd1DriXE4j5jULj7KrCzwyIwKtBARfKjR/8VPv0vD9diabS7yufkaV
+	Bw2w8v4lDyeCJlm7qUgfOf7HLbHZlh3A=
+X-Gm-Gg: ASbGncutnZ89y6OY0dfaJ4ckFAVPXDTz/MnEySwQm6dp7LU16Mcj4SVUwqUjaZ4Rd4g
+	C2oFrAAYkl0PEdOUahngepJsBUOx4frdNpGvr7I4+WmyNhRa589M+c89O4YY/7cSFKmFaJImFj7
+	aoCsNEOdKBO1MZHbMmDwVR/qzEub0b6LFBQ+PNAIw/cR0HxcR3HKO5qfsQ6otCjX//V8JEgfU=
+X-Google-Smtp-Source: AGHT+IGwK78wKd/jRQ8fmyIYziWonzdPwhNYbWeY5KEYv3E6krIIrR+65tuNe/zM+rnW781q5VriZMebLr2ZNeGL6FU=
+X-Received: by 2002:a05:6902:6905:b0:e8b:c571:cc76 with SMTP id
+ 3f1490d57ef6-e8bc571cf56mr1570492276.38.1752672520914; Wed, 16 Jul 2025
+ 06:28:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7ad4e56-7634-400d-9e7c-3c3b65f9b1d0@lucifer.local>
-X-Rspamd-Queue-Id: 4bhxby5ZxHz9t8l
+References: <20250716125304.1189790-1-alex.fcyrx@gmail.com> <20250716131250.GC2580412@ZenIV>
+In-Reply-To: <20250716131250.GC2580412@ZenIV>
+From: Alex <alex.fcyrx@gmail.com>
+Date: Wed, 16 Jul 2025 21:28:29 +0800
+X-Gm-Features: Ac12FXztMNTC3LV9qemKaqoCXN4ZCUYn0s1d7Q1rGCjF2Xg8tzyhtttfF5d64hs
+Message-ID: <CAKawSAmp668+zUcaThnnhMtU8hmyTOKifHqxfE02WKYYpWxVHg@mail.gmail.com>
+Subject: Re: [PATCH] fs: Remove obsolete logic in i_size_read/write
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, torvalds@linux-foundation.org, 
+	paulmck@kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 05:19:54PM +0100, Lorenzo Stoakes wrote:
-> On Mon, Jul 07, 2025 at 04:23:19PM +0200, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> >
-> > Use largest_zero_folio() in __blkdev_issue_zero_pages().
-> >
-> > On systems with CONFIG_STATIC_PMD_ZERO_PAGE enabled, we will end up
-> > sending larger bvecs instead of multiple small ones.
-> >
-> > Noticed a 4% increase in performance on a commercial NVMe SSD which does
-> > not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
-> > gains might be bigger if the device supports bigger MDTS.
-> >
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > ---
-> >  block/blk-lib.c | 17 ++++++++++-------
-> >  1 file changed, 10 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/block/blk-lib.c b/block/blk-lib.c
-> > index 4c9f20a689f7..70a5700b6717 100644
-> > --- a/block/blk-lib.c
-> > +++ b/block/blk-lib.c
-> > @@ -196,6 +196,10 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
-> >  		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
-> >  		struct bio **biop, unsigned int flags)
-> >  {
-> > +	struct folio *zero_folio;
-> > +
-> > +	zero_folio = largest_zero_folio();
-> 
-> Just assign this in the decl :)
-Yeah!
-> 
-> > +
-> >  	while (nr_sects) {
-> >  		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
-> >  		struct bio *bio;
-> > @@ -208,15 +212,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
-> >  			break;
-> >
-> >  		do {
-> > -			unsigned int len, added;
-> > +			unsigned int len;
-> >
-> > -			len = min_t(sector_t,
-> > -				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
-> > -			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
-> > -			if (added < len)
-> > +			len = min_t(sector_t, folio_size(zero_folio),
-> > +				    nr_sects << SECTOR_SHIFT);
-> > +			if (!bio_add_folio(bio, zero_folio, len, 0))
-> 
-> Hmm, will this work if nr_sects << SECTOR_SHIFT size isn't PMD-aligned?
+On Wed, Jul 16, 2025 at 9:12=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Wed, Jul 16, 2025 at 08:53:04PM +0800, Alex wrote:
+> > The logic is used to protect load/store tearing on 32 bit platforms,
+> > for example, after i_size_read returned, there is no guarantee that
+> > inode->size won't be changed. Therefore, READ/WRITE_ONCE suffice, which
+> > is already implied by smp_load_acquire/smp_store_release.
+>
+> Sorry, what?  The problem is not a _later_ change, it's getting the
+> upper and lower 32bit halves from different values.
+>
+> Before: position is 0xffffffff
+> After: position is 0x100000000
+> The value that might be returned by your variant: 0x1ffffffff.
 
-Yeah, that should not be a problem as long as (nr_sects << SECTOR_SHIFT) < PMD_SIZED
-folio.
-
-> 
-> I guess it actually just copies individual pages in the folio as needed?
-> 
-> Does this actually result in a significant performance improvement? Do we
-> have numbers for this to justify the series?
-I put it in my commit message:
-```
-Noticed a 4% increase in performance on a commercial NVMe SSD which does
-not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
-gains might be bigger if the device supports bigger MDTS.
-```
-
-Even though it is more of a synthetic benchmark, but this goes to show the
-effects of adding multiple bio_vecs with ZERO_PAGE instead of single
-PMD_ZERO_PAGE.
-
---
-Pankaj
+I mean the sequence lock here is used to only avoid load/store tearing,
+smp_load_acquire/smp_store_release already protects that.
 
