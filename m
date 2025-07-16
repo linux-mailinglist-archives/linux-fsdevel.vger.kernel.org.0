@@ -1,75 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-55193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683D1B080BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 00:55:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F958B080D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 01:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D828D1AA0E83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 22:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739DB1C2621F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Jul 2025 23:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26A42EE994;
-	Wed, 16 Jul 2025 22:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466752EF64D;
+	Wed, 16 Jul 2025 23:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="xJ/u4t0W"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0NvWwdvM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CDD264604;
-	Wed, 16 Jul 2025 22:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4526D2D8387
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 23:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752706547; cv=none; b=e4d0C+vwDx4FuUH9V7ArIOOyffWlRbloJcvonMb+jq6vF0Rb1c/Tn2i1nyZ2wbaVGSmSVXmj66RJ+nh+kXRL8keSLp1FrOfAICu/HELk3agnLD+2hrvpUDxtpAouSL2v023+VkXjc8zDtJJ+oIEKR/XNwJKHBMGaVN97IYqvT2g=
+	t=1752707177; cv=none; b=W3kIDt0faBfo8W7A8e3aBAOQxAVo3Irs7coCwR6phYottinOqeW89uUgbnP08yT/UEVozXdWRdTUiMhkfBp8gZeZjr5KWblsogz+QBEHhymCxZg/vWmgwnz5mu56sy0WaVbFK0FNhGMegWETW0phJEBAVzg+6o+Udn4Ko+CaIYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752706547; c=relaxed/simple;
-	bh=M15hhWxvkrQ1L1CucvfJyp93jR83Hf419GuFwWEd5SI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qQ/nUiPmii872T8ZcQkPVx+Liy/z/erVwhWg1FjwxShb5kl5aikQuHj8+kO76+9/FIosv0O2u+ye+rZ+4XIabYGIWIkCd/1OwPK5sT3Jf9J9ERp/y/y6iqmNT2WD2Csp8dlINeWkGVUDlvZqilXkyYsHzrd/YkX1jhzUSz+KBTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=xJ/u4t0W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6095C4CEE7;
-	Wed, 16 Jul 2025 22:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752706546;
-	bh=M15hhWxvkrQ1L1CucvfJyp93jR83Hf419GuFwWEd5SI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=xJ/u4t0W6LZyLuQhgQBYJts0DqKsJKkQrPIegf3swDXWAgKsQUQA+pDgZBEl0rlMe
-	 NRi7NpMVQ/mXuW+yNL7vdueD5pKEJSG6QV4aghESMZSEbFiMmU9MxQ9DNBMzpGF8Ns
-	 p7NInuja5l3/ZPEfS0/FPbWAQymGGXImQ/VFhN+U=
-Date: Wed, 16 Jul 2025 15:55:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
- vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org,
- mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org,
- adobriyan@gmail.com, brauner@kernel.org, josef@toxicpanda.com,
- yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org,
- osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com,
- christophe.leroy@csgroup.eu, tjmercier@google.com, kaleshsingh@google.com,
- aha310510@gmail.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v7 0/7] use per-vma locks for /proc/pid/maps reads
-Message-Id: <20250716155545.ad2efdd41c85d6812bf328bb@linux-foundation.org>
-In-Reply-To: <20250716030557.1547501-1-surenb@google.com>
-References: <20250716030557.1547501-1-surenb@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752707177; c=relaxed/simple;
+	bh=6zRY70nEbDsA1kkyqfI9kHtVCDHZXeIjCB38pisAjpQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JwBgvgxHietv3EJFCWIbmNAjnL/MpUOSvI2ovk0PGqzft6CxKbv4IZ01XFKUCOgEq6/gkTBlFlQ7wA/T3NlMvqGzJPP7Twc3Obo9+3BXyQq68R3apSZ1xmczm6GaP+pnnnJrit3KidN/7E6yMX9kzFzLOlON2UVzwXEpzMkY8Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0NvWwdvM; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-748d96b974cso312025b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Jul 2025 16:06:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752707175; x=1753311975; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=adcqncZXuKWrstQvgpFavoHNK5nsVYpbKX4vNDqmYr8=;
+        b=0NvWwdvMmmcuC9OJC9hGWen4CUzG+dntzVMaKVZEOYUDG+qv18qneC+czlCElGqwe4
+         lYNBPc9bb0CejnN+b0qUwccSMZzl++O/sWjhU+iAJDMqaSBLlxVKsuI5+Tb+zEUNUik+
+         5J35OUVfc3J+RgVgHzxFweioou3uz6cSUuuEKBQA10uw0xcKuypT7uCe5GqoRCHN2PIl
+         6A03mn5YmdVVmEf1LndmqK2WAuTILmnBZ9NhCnbQ03AMNTtJcyDXDs7i+3Vj1jqcZzmu
+         T8mlDPkg+TGGvJOjDg5WyZZhNjYEnD5on8PUdrCKfdu5bl4xMdDy7Duz97QA4jqwAIJv
+         nFqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752707175; x=1753311975;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=adcqncZXuKWrstQvgpFavoHNK5nsVYpbKX4vNDqmYr8=;
+        b=Vth7TPlAIDvAuuaj8TYSRtXdZxLbR3UhcNM4LHhycDjoH21YMiAM4hRvn8WxEhXdrM
+         n0hJ2mJQlVSX+vsSbd/VKhequUcG/23CN77mLCWvh604hJkZ07DtngoFNlBZwS2Km2mn
+         s3FdmhMtid9X9aSpH1OizNXjMD2fZfAHy3Mnr2kUL9EMTANnXunL/3iKUsqEPTbrmNtH
+         wstriGXx2c2e/jllwe0aH1FPhNU19ar9uanRxBZSWtbj1+rldJp5rKUbW3IW9WwlLr+u
+         haMlEefk/VWqeJQKpJl8GmM7rmWlTe1JdqNVhIgXo731SKne4AIRGhEAscoyunG6rIVf
+         4hrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiPxsmrFHO0dcT1Gidwzx1+kaX7R90kEIZ2la6tDV6MXIJcsRsIKgvhYx6z8qDzjBQTQqnARcGIm/OTdUn@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp/2JuKw37z0XfhXXFIlIMBG+9cAHgyqW7WIS5hgBQKGkQSblw
+	x6ZV45g5bHFxQ7NbinJsT2A/XfktJpVzjcbptdvx68lKH0T1yIHW5EPmDQW9KJ5Y0xbJ96Hq3jD
+	6MR53THR9mk2/o9qz9wkxP9FM/g==
+X-Google-Smtp-Source: AGHT+IEkMWa2Fbym2vWCv7D3Erwky7+KyVGpa/foKNybzbL0WNkaHxozAp9QYAhPJYnoNy6cgJaknHtaJQ+s/tVRNw==
+X-Received: from pfxa17.prod.google.com ([2002:a05:6a00:1d11:b0:756:c6cf:2462])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:92a7:b0:74d:f997:1b45 with SMTP id d2e1a72fcca58-756e81a0b16mr8759465b3a.8.1752707175027;
+ Wed, 16 Jul 2025 16:06:15 -0700 (PDT)
+Date: Wed, 16 Jul 2025 16:06:13 -0700
+In-Reply-To: <CA+EHjTzQwt4Xux7AtB_eiuerKXeCmann2PFBoJTDZ8+qvFuX+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
+ <aGxXWvZCfhNaWISY@google.com> <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
+ <006899ccedf93f45082390460620753090c01914.camel@intel.com>
+ <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+ <aG07j4Pfkd5EEobQ@google.com> <CA+EHjTx0UkYSduDxe13dFi4+J5L28H+wB4FBXLsMRC5HaHaaFg@mail.gmail.com>
+ <aG1UenipkaGyVUz-@google.com> <CA+EHjTzQwt4Xux7AtB_eiuerKXeCmann2PFBoJTDZ8+qvFuX+w@mail.gmail.com>
+Message-ID: <diqz5xfrhh22.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>
+Cc: Vishal Annapurve <vannapurve@google.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	"pvorel@suse.cz" <pvorel@suse.cz>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, Jun Miao <jun.miao@intel.com>, 
+	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
+	"vbabka@suse.cz" <vbabka@suse.cz>, "peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "keirf@google.com" <keirf@google.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"fvdl@google.com" <fvdl@google.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
+	"bfoster@redhat.com" <bfoster@redhat.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, "steven.price@arm.com" <steven.price@arm.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "hughd@google.com" <hughd@google.com>, 
+	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, Erdem Aktas <erdemaktas@google.com>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, Fan Du <fan.du@intel.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, 
+	Chao P Peng <chao.p.peng@intel.com>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
+	Alexander Graf <graf@amazon.com>, "nikunj@amd.com" <nikunj@amd.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
+	Yilun Xu <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
+	Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
+	"roypat@amazon.co.uk" <roypat@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 15 Jul 2025 20:05:49 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+Fuad Tabba <tabba@google.com> writes:
 
-> This patchset switches from holding mmap_lock while reading /proc/pid/maps
-> to taking per-vma locks as we walk the vma tree.
+> On Tue, 8 Jul 2025 at 18:25, Sean Christopherson <seanjc@google.com> wrote:
+>>
+>> On Tue, Jul 08, 2025, Fuad Tabba wrote:
+>> > > > I don't think we need a flag to preserve memory as I mentioned in [2]. IIUC,
+>> > > > 1) Conversions are always content-preserving for pKVM.
+>> > >
+>> > > No?  Perserving contents on private => shared is a security vulnerability waiting
+>> > > to happen.
+>> >
+>> > Actually it is one of the requirements for pKVM as well as its current
+>> > behavior. We would like to preserve contents both ways, private <=>
+>> > shared, since it is required by some of the potential use cases (e.g.,
+>> > guest handling video encoding/decoding).
+>> >
+>> > To make it clear, I'm talking about explicit sharing from the guest,
+>> > not relinquishing memory back to the host. In the case of
+>> > relinquishing (and guest teardown), relinquished memory is poisoned
+>> > (zeroed) in pKVM.
+>>
+>> I forget, what's the "explicit sharing" flow look like?  E.g. how/when does pKVM
+>> know it's ok to convert memory from private to shared?  I think we'd still want
+>> to make data preservation optional, e.g. to avoid potential leakage with setups
+>> where memory is private by default, but a flag in KVM's uAPI might not be a good
+>> fit since whether or not to preserve data is more of a guest decision (or at least
+>> needs to be ok'd by the guest).
+>
+> In pKVM all sharing and unsharing is triggered by the guest via
+> hypercalls. The host cannot unshare.
 
-Thanks, I added this v7 series to mm-new.  Which I usually push out
-mid-evening California time.
+In pKVM's case, would the conversion ioctl be disabled completely, or
+would the ioctl be allowed, but conversion always checks with pKVM to
+see if the guest had previously requested a unshare?
+
+> That said, making data
+> preservation optional works for pKVM and is a good idea, for the
+> reasons that you've mentioned.
+>
+> Cheers,
+> /fuad
 
