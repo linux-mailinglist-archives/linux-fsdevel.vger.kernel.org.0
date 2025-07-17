@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-55371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76127B0984C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF8EB0984E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41C65802AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:41:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8A55817B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08715242D7F;
-	Thu, 17 Jul 2025 23:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C387242927;
+	Thu, 17 Jul 2025 23:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLpda7+v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjHMAsST"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667C8FBF6;
-	Thu, 17 Jul 2025 23:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C6EFBF6;
+	Thu, 17 Jul 2025 23:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795672; cv=none; b=cnKRqCgdOwE1ar4Yk+GuZefZBAyeXMiUMzBZfreXC84ICPvVoi/P+3G1CuBBDC1A7jFJJ4mDQ5GkbawBkgIygs4WgCYKfv4fz7FhEWUc3Lj5HR++fgw6wXSye9cnQ5Yxl1TOYwNdEBdqEycc7lDpvuQFJviPnco36EOLX5iZdU0=
+	t=1752795688; cv=none; b=dcI2Ds2y92UMgNOpW76S4uT0AX1a5vJ+cjMOgOYPd3zrNp7XRmX6qwAQNvCiMC8Ba6XU2NGqKuCdoh8M/jnuOfWU4xAUMmqw6oOWolVi5I+icWy2/IGHgKpDFPQLDxLwQ2l5otgqBZHAUNohxjuNR/3LtJAt2Yv9MAbeVtCYr2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795672; c=relaxed/simple;
-	bh=gpwqj29tQ3/KzHW12jDfHZu6Pz59nuxYKv9oCToKUmE=;
+	s=arc-20240116; t=1752795688; c=relaxed/simple;
+	bh=vWm+jS101oedCHKeA50zAj6J7Eu+cBK42m9IVJhrEaU=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dW1yQrh8J1GHx9TQ7UeS8vWVR4MS7I5k9Q5fvZ6RBxkqv8EIzTJ8a99qvjTlAt2e3DMGURJIcvTgX7G7jFGmY3tl6/bNWCcMRdvv0N4gq/aGGtFD5Mz11Kv4gewduhH1eaX4SYr6F+RvxS5+jDfQiMYiNiE92VFN/Tf2QdDxLcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLpda7+v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA0F2C4CEE3;
-	Thu, 17 Jul 2025 23:41:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=rFde6vx1ZCtoKW5TAgLyvKWpgkGAenYESl5yZ1JXKo0E1HPDvb+PAT4jIYPLP/YLxeTcfkzyKKlqz/exyLp7RRVa4Y9HQPjLkaJ2336fZ0Sl3RQzRRnvJwQIYKiVVQHW637EfBiL1KKFOU02H7lQQrvM/CqSkG1EXTqkuXAA3vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjHMAsST; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86BAEC4CEE3;
+	Thu, 17 Jul 2025 23:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752795671;
-	bh=gpwqj29tQ3/KzHW12jDfHZu6Pz59nuxYKv9oCToKUmE=;
+	s=k20201202; t=1752795687;
+	bh=vWm+jS101oedCHKeA50zAj6J7Eu+cBK42m9IVJhrEaU=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=RLpda7+vMtQchkjbPi3Ej5ycDB42DKRHTgetChKyg4RuDMAw3GwORJDxhIE+GvA1K
-	 tWDgc/WG2uB6zcgybYtOA02PV+1SjzOoav+ycvenI1Y9If+EymcIBl11fdPnV0KkV6
-	 lBDJsIKvx8aiKhIYdxnGEZ7/FHpIQZWM/wtc6IpAlRTBTLn5rqI0xhP0H32aU/KGe0
-	 fCybziqGBmy2cKDMPYp6p7A6N9lUUF1UR39PxH5YnSu0esafCw3BPuTHaw/5RwlfP9
-	 JvGxuC8VSB8HFNy+gcDiOKWUv7Kz7XjfuZgDenn3rKgdpReA5g0MNnpZIcNdjAYP5J
-	 GQXxoUxH2xdWA==
-Date: Thu, 17 Jul 2025 16:41:11 -0700
-Subject: [PATCH 07/22] fuse2fs: use tagged block IO for zeroing sub-block
- regions
+	b=QjHMAsSThUyuGVYjgK2YmeIlsS8GRa+BBHVUe9LawabcedJ0j5dlsge8MMUVm2xDH
+	 flMCky9c7Y7BtEKKq5fnfol4/H20OLfnbP82JGnblhoHX1hvz7hWkuY7iVWh6jYjcL
+	 U5sB1YaefAu779yJ0QL+l9pxefd6kl5Ff1jvEVXiQYn1Wbgd5/d9jAgLuLLMcFuHgo
+	 /lOj7Dfuud80EEeCc44QuhbjMUDSbc5aHUmiHjtcc3kKePbSXheSSMKQo5cTDVLpkA
+	 ORH+qWShkzvCx3OLNmkyb6he6eo5FfcZtqGcMxvAd/Jit6fhUm1RGg6DQU7c8BGSUL
+	 ufngWmp9likMA==
+Date: Thu, 17 Jul 2025 16:41:27 -0700
+Subject: [PATCH 08/22] fuse2fs: only flush the cache for the file under
+ directio read
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: joannelkoong@gmail.com, miklos@szeredi.hu, John@groves.net,
  linux-fsdevel@vger.kernel.org, bernd@bsbernd.com, linux-ext4@vger.kernel.org,
  neal@gompa.dev
-Message-ID: <175279461160.715479.13568163826938358865.stgit@frogsfrogsfrogs>
+Message-ID: <175279461178.715479.16479332905031345778.stgit@frogsfrogsfrogs>
 In-Reply-To: <175279460935.715479.15460687085573767955.stgit@frogsfrogsfrogs>
 References: <175279460935.715479.15460687085573767955.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -63,54 +63,27 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Change the punch hole helpers to use the tagged block IO commands now
-that libext2fs uses tagged block IO commands for file IO.  We'll need
-this in the next patch when we turn on selective IO manager cache
-clearing and invalidation.
+We only need to flush the io_channel's cache for the file that's being
+read directly, not everything else.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ misc/fuse2fs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 209858aeb9307c..64aca0f962daaf 100644
+index 64aca0f962daaf..88b71af417c0d7 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -4675,13 +4675,13 @@ static errcode_t clean_block_middle(struct fuse2fs *ff, ext2_ino_t ino,
- 	if (!blk || (retflags & BMAP_RET_UNINIT))
- 		return 0;
+@@ -5179,7 +5179,7 @@ static int fuse2fs_iomap_begin_read(struct fuse2fs *ff, ext2_ino_t ino,
+ 		return -ENOSYS;
  
--	err = io_channel_read_blk(fs->io, blk, 1, *buf);
-+	err = io_channel_read_tagblk(fs->io, ino, blk, 1, *buf);
+ 	/* flush dirty io_channel buffers to disk before iomap reads them */
+-	err = io_channel_flush(ff->fs->io);
++	err = io_channel_flush_tag(ff->fs->io, ino);
  	if (err)
- 		return err;
+ 		return translate_error(ff->fs, ino, err);
  
- 	memset(*buf + residue, 0, len);
- 
--	return io_channel_write_blk(fs->io, blk, 1, *buf);
-+	return io_channel_write_tagblk(fs->io, ino, blk, 1, *buf);
- }
- 
- static errcode_t clean_block_edge(struct fuse2fs *ff, ext2_ino_t ino,
-@@ -4709,7 +4709,7 @@ static errcode_t clean_block_edge(struct fuse2fs *ff, ext2_ino_t ino,
- 	if (err)
- 		return err;
- 
--	err = io_channel_read_blk(fs->io, blk, 1, *buf);
-+	err = io_channel_read_tagblk(fs->io, ino, blk, 1, *buf);
- 	if (err)
- 		return err;
- 	if (!blk || (retflags & BMAP_RET_UNINIT))
-@@ -4720,7 +4720,7 @@ static errcode_t clean_block_edge(struct fuse2fs *ff, ext2_ino_t ino,
- 	else
- 		memset(*buf + residue, 0, fs->blocksize - residue);
- 
--	return io_channel_write_blk(fs->io, blk, 1, *buf);
-+	return io_channel_write_tagblk(fs->io, ino, blk, 1, *buf);
- }
- 
- static int fuse2fs_punch_range(struct fuse2fs *ff,
 
 
