@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-55385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD92B09878
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8436B09877
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9DD41C46055
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:45:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96485A2937
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04712561A8;
-	Thu, 17 Jul 2025 23:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F48825D917;
+	Thu, 17 Jul 2025 23:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFdGWV+N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjBO1kHD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2929E22FAC3;
-	Thu, 17 Jul 2025 23:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09446246793;
+	Thu, 17 Jul 2025 23:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795892; cv=none; b=CEez61i8bUZDdWQF0ZbkI1nHszKak76wc/1WpKPfCuIF7Icbr/994Jfxsz8tD/NoFDJhc9lmF33Vhdywqf7DsqCqMtup+LhtZJZLi5GWExI19Hbb6d6105s1Uwkt/iCSRZDJx6vcAvDHYD5D0vVqclycsWpi/FGPSYYbrVd9FSg=
+	t=1752795908; cv=none; b=WWEtZLP79RWyAZbE1qyi0u898WOZD3nTLDGVUTjJthFwutPzUiLBoHOWDe9R0JM08ee+PLQFTEexs8dLwq7rkvr3hG8QnqeEsi26oIlXD7JGzr6+V39ntarRh8SP8SDbw6Da1wGS7lBwBciEphiHyy4aLhQbDEG2M/xIvcUpkjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795892; c=relaxed/simple;
-	bh=fdH+PN4ioZbDGhOA4EW8kuvRR8kaYAiMgHqXbNT/HPw=;
+	s=arc-20240116; t=1752795908; c=relaxed/simple;
+	bh=P0NTt4284QAop+DB9kLz3QRupL5QWs6foHQzGxZHa9M=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=riPVLPkRM2d81FMN/4bG7NZXoA/a7gvH7PGeNi0bOeztsfZUlMlhHg2ZZVfH1EQjLhi8uEMTDDeTk/U8b6cRim7XMtqQbl47S/JNlRdgxWV93N87g1MuwLdLPdCGYid0a2f04/uyz68B7uP8ecg70Ql5qLVf51e+NJl69uZtYZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFdGWV+N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02750C4CEE3;
-	Thu, 17 Jul 2025 23:44:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=MOceD9niB48MnKMkOo97cUhLSIog/U1yxnQNmzYDWUXZX20F3rE+qoW/sgH+nyhTH27SBz/E8rA2ZUQmQzeX1uNfKVPFmtYGyIpNkhDRcsWyYmEsRAbq+XV3m6WiU30vIqUVGMa1FWiZbJLcBN8G6cr/gZ9FBGX12YarhUtH5YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjBO1kHD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D60B8C4CEEB;
+	Thu, 17 Jul 2025 23:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752795892;
-	bh=fdH+PN4ioZbDGhOA4EW8kuvRR8kaYAiMgHqXbNT/HPw=;
+	s=k20201202; t=1752795907;
+	bh=P0NTt4284QAop+DB9kLz3QRupL5QWs6foHQzGxZHa9M=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=cFdGWV+NXk0OFdTY4eTDxWmhFKLLS55H8zEyynXl8TWEiM81ydovioS07s2ayO7Wx
-	 Sk2ViIgRKO73XqB/saf/g5v0wHGroZ/xlCmd7U40gSgI8uWAi3nBJtcXJkeN5XytWp
-	 95uvHbDvVyRkoiSmOF8UQ+xRz8dBNl7Gv8nCQLIZWfEJLIUlIT7pF4KjDgNFF3eXHj
-	 p99P0d3ZbjVNInDXBXBF12L4UfSW0khSZTE8J95WKQCo7A69ZRgjfL12VgchsPuFvH
-	 eya4OPWI8sHJo4etfgo6BITLPylCnEtOwa3FUSFWa4FxLOx4JcYfQFxq5wAwJxv43s
-	 x8QqOBxy0YHUA==
-Date: Thu, 17 Jul 2025 16:44:51 -0700
-Subject: [PATCH 21/22] fuse2fs: add strictatime/lazytime mount options
+	b=HjBO1kHDAf5izG61OczfdoHroEO4Sx4fOsoMlgKZQDzANNd4f3vJs5oDszor38CDU
+	 fOTDyx1bmOX93PTvIwhni4oVXlNqyIbPcKnwWzLarRMj4NnAvP0WlqQ2rksSlQMqX9
+	 /oqKAtZ3yq3C/3DNHwgs0ECvoFPNQgn+nbATNqH7jr0Ke34ipCljyZRy0A+SkeXile
+	 ZZr2GXQvOtGDqNApL2i41kahUNyiU0/sQApwDAichyIYneEthCOO0A8DwcjSwwkUPc
+	 nKC7/ysdN20OWIffh8Qkhp4pQ40RK9yuggcpBTqUCZEM3+QR2gybeGD/d6Ui7HwlUa
+	 jd3ecj8CjrzpA==
+Date: Thu, 17 Jul 2025 16:45:07 -0700
+Subject: [PATCH 22/22] fuse2fs: configure block device block size
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: joannelkoong@gmail.com, miklos@szeredi.hu, John@groves.net,
  linux-fsdevel@vger.kernel.org, bernd@bsbernd.com, linux-ext4@vger.kernel.org,
  neal@gompa.dev
-Message-ID: <175279461413.715479.7362461117350070043.stgit@frogsfrogsfrogs>
+Message-ID: <175279461430.715479.13971213588209519937.stgit@frogsfrogsfrogs>
 In-Reply-To: <175279460935.715479.15460687085573767955.stgit@frogsfrogsfrogs>
 References: <175279460935.715479.15460687085573767955.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,76 +62,73 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-In iomap mode, we can support the strictatime/lazytime mount options.
-Add them to fuse2fs.
+Set the blocksize of the block device to the filesystem blocksize.
+This prevents the bdev pagecache from caching file data blocks that
+iomap will read and write directly.  Cache duplication is dangerous.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ misc/fuse2fs.c |   40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index e71fcbaeeaf0c6..b5f665ada36991 100644
+index b5f665ada36991..d0478af036a25e 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -262,6 +262,7 @@ struct fuse2fs {
- 	uint8_t unmount_in_destroy;
- 	uint8_t noblkdev;
- 	uint8_t can_hardlink;
-+	uint8_t iomap_passthrough_options;
+@@ -5683,6 +5683,42 @@ static off_t fuse2fs_max_size(struct fuse2fs *ff, off_t upper_limit)
+ 	return res;
+ }
  
- 	enum fuse2fs_opstate opstate;
- 	int blocklog;
-@@ -1370,6 +1371,10 @@ static void *op_init(struct fuse_conn_info *conn
- 		err_printf(ff, "%s\n", _("could not enable iomap."));
- 		goto mount_fail;
- 	}
-+	if (ff->iomap_passthrough_options && !fuse2fs_iomap_enabled(ff)) {
-+		err_printf(ff, "%s\n", _("some mount options require iomap."));
-+		goto mount_fail;
-+	}
- #endif
- #if defined(HAVE_FUSE_IOMAP) && defined(FUSE_CAP_IOMAP_DIRECTIO)
- 	if (fuse2fs_iomap_enabled(ff))
-@@ -6228,6 +6233,7 @@ enum {
- 	FUSE2FS_ERRORS_BEHAVIOR,
- #ifdef HAVE_FUSE_IOMAP
- 	FUSE2FS_IOMAP,
-+	FUSE2FS_IOMAP_PASSTHROUGH,
- #endif
- };
- 
-@@ -6251,6 +6257,17 @@ static struct fuse_opt fuse2fs_opts[] = {
- 	FUSE2FS_OPT("lockfile=%s",	lockfile,		0),
- 	FUSE2FS_OPT("noblkdev",		noblkdev,		1),
- 
-+#ifdef HAVE_FUSE_IOMAP
-+#ifdef MS_LAZYTIME
-+	FUSE_OPT_KEY("lazytime",	FUSE2FS_IOMAP_PASSTHROUGH),
-+	FUSE_OPT_KEY("nolazytime",	FUSE2FS_IOMAP_PASSTHROUGH),
-+#endif
-+#ifdef MS_STRICTATIME
-+	FUSE_OPT_KEY("strictatime",	FUSE2FS_IOMAP_PASSTHROUGH),
-+	FUSE_OPT_KEY("nostrictatime",	FUSE2FS_IOMAP_PASSTHROUGH),
-+#endif
-+#endif
++/*
++ * Set the block device's blocksize to the fs blocksize.
++ *
++ * This is required to avoid creating uptodate bdev pagecache that aliases file
++ * data blocks because iomap reads and writes directly to file data blocks.
++ */
++static int fuse2fs_set_bdev_blocksize(struct fuse2fs *ff, int fd)
++{
++	int blocksize = ff->fs->blocksize;
++	int set_error;
++	int ret;
 +
- 	FUSE_OPT_KEY("user_xattr",	FUSE2FS_IGNORED),
- 	FUSE_OPT_KEY("noblock_validity", FUSE2FS_IGNORED),
- 	FUSE_OPT_KEY("nodelalloc",	FUSE2FS_IGNORED),
-@@ -6277,6 +6294,12 @@ static int fuse2fs_opt_proc(void *data, const char *arg,
- 	struct fuse2fs *ff = data;
++	ret = ioctl(fd, BLKBSZSET, &blocksize);
++	if (!ret)
++		return 0;
++
++	/*
++	 * Save the original errno so we can report that if the block device
++	 * blocksize isn't set in an agreeable way.
++	 */
++	set_error = errno;
++
++	ret = ioctl(fd, BLKBSZGET, &blocksize);
++	if (ret)
++		goto out_bad;
++
++	if (blocksize > ff->fs->blocksize)
++		set_error = -EINVAL;
++
++	return 0;
++out_bad:
++	err_printf(ff, "%s: cannot set blocksize %u: %s\n", __func__,
++		   blocksize, strerror(set_error));
++	return -EIO;
++}
++
+ static errcode_t fuse2fs_iomap_config_devices(struct fuse_context *ctxt,
+ 					      struct fuse2fs *ff)
+ {
+@@ -5695,6 +5731,10 @@ static errcode_t fuse2fs_iomap_config_devices(struct fuse_context *ctxt,
+ 	if (err)
+ 		return err;
  
- 	switch (key) {
-+#ifdef HAVE_FUSE_IOMAP
-+	case FUSE2FS_IOMAP_PASSTHROUGH:
-+		ff->iomap_passthrough_options = 1;
-+		/* pass through to libfuse */
-+		return 1;
-+#endif
- 	case FUSE2FS_DIRSYNC:
- 		ff->dirsync = 1;
- 		/* pass through to libfuse */
++	ret = fuse2fs_set_bdev_blocksize(ff, fd);
++	if (ret)
++		return ret;
++
+ 	ret = fuse_iomap_add_device(se, fd, 0);
+ 
+ 	dbg_printf(ff, "%s: registering iomap dev fd=%d ret=%d iomap_dev=%u\n",
 
 
