@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-55375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B42EDB09854
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:42:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FDBB09856
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01F35867AF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C50D3B1424
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E118241676;
-	Thu, 17 Jul 2025 23:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD9C241676;
+	Thu, 17 Jul 2025 23:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tw59p4WB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dk5JOIEn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7D5BE46;
-	Thu, 17 Jul 2025 23:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CE4BE46;
+	Thu, 17 Jul 2025 23:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795736; cv=none; b=T7V8Z+r+/Y+P8wPp620hR2cLnS2GSwkETXCafdDQwGfZOt8aIz2/IlmEsD/xDEQLMoN6VC/nqzqVjRX0/6a6L3VgXU4/bmppjvCaq65NTw4X8tTWfy2WlAJg22ZU4tz4aElF6EgMOzyV+WK7uLgqB7ix3/XB/k/92s66QKDeiKU=
+	t=1752795750; cv=none; b=Z24lmqs9IT0qxc0peHFTU1wyqx4RQAlss2XKObUgBp3PBPqC4Gvdl972h/m8opS/2nlG+j/Rwj7HoVT4DvGuvtUmgeadSHZROCXaZOJ8WoxWyR0H+6Sb/n+GXN1EZ1vrFZ8xBbqGsc6m2dPI2Ql0uRr+4C9T+Jsvfm475ecVets=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795736; c=relaxed/simple;
-	bh=IAW0Ql1Kc5Z6LjL9S+fETaN2wjwriL0nTBGXdZSlxic=;
+	s=arc-20240116; t=1752795750; c=relaxed/simple;
+	bh=CRnBU2YC3za5UyTpDZ3AliXABheext3bxeXnsoyBHE4=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X3z/qj7ztCVVpQlZHwGalPhsoLxWr/W3S0T53h4d+69ildy2vAJ9Hr4yRP13D7MqLPS++BWgOD2j7JMH/NRXijpz93DbAb9hkQFmihmdOpzP1EB+bNKs0F03fNp0Rh77aU2YyKqvaPndNtQqbNatv1pAFS9lyjKnKANFRaIYHio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tw59p4WB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68BE3C4CEE3;
-	Thu, 17 Jul 2025 23:42:14 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Rh8wSQRck2wYZ3YNJ3+QZdnpE0/oE6+HUwB/tfM/fSQCqGmDzcj9KQgsWsTSj5/zJLEqPx+HB/+E2tmOPQG3KenLZDsbKoJeaeCsntVAiC8edKlNuO5Im4xPpiUg7R0/yBGWAiS8FjvkO1fxN2Q7TjORLwnp7qE3mVvqR8yYA8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dk5JOIEn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04AA6C4CEE3;
+	Thu, 17 Jul 2025 23:42:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752795734;
-	bh=IAW0Ql1Kc5Z6LjL9S+fETaN2wjwriL0nTBGXdZSlxic=;
+	s=k20201202; t=1752795750;
+	bh=CRnBU2YC3za5UyTpDZ3AliXABheext3bxeXnsoyBHE4=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=tw59p4WBXYUiyPKjDEWMlzhyZ1zan0kIJmcPtItHPDa9KICLrR2kX15j4haG0XXV6
-	 SHDnfOguxTTRCumDiGU1IaEsbVCrFgxcO2cGKdrTRyrkqtkiKoyxKr53ID1fZSplOO
-	 PhzqhVjS/SO2Z2tU9yQk9nwNPMp/QCY9hyDdmpiqgVkoj4MMpcmeyCstJwkYejyd5n
-	 HLGcuLfGFUsKK3RJYO4fwSn8hwc4yOFKhZeiOBa75m8ojAQWWTE0L4jqvb7LKyr/9r
-	 bXLZaPsJl99/Rwj3VEZQak63pRhSlYvR/eK+0tCNcPFnvCHHuE8GI8SWBCEUJKTv8D
-	 pF9zMMTTjIUUA==
-Date: Thu, 17 Jul 2025 16:42:14 -0700
-Subject: [PATCH 11/22] fuse2fs: turn on iomap for pagecache IO
+	b=dk5JOIEnZcOg/SuNntIblwxyEAnO7Mvff4eUOYKK4/eSnI91A3dKEIkneICMW1StZ
+	 S5m46wa8R+vRqaIr1JBOyH7kA3hUfAq1epQK2XpJrGxcmKMCerFCdfSoIaCdH36PHg
+	 cfqWcnyKq2xfyfpmcHDYl0GdC274CS8QurMdJbk5V6c71t8llg8bhHDJS8O0+TtvQc
+	 nM4iNFY3xK9AateNZ5UZIxy6bHDr0Dqdk+RWy80Bl8v70GMxVYDdZkPv/+rD4PlRRt
+	 QAAb5mZaTEVmcszX8WvGvkG4AYKY5h70/Ze8tpp8QekT0N0YXdmpGJcQxQOXP+UB/3
+	 Q6WoMwcJlrTBw==
+Date: Thu, 17 Jul 2025 16:42:29 -0700
+Subject: [PATCH 12/22] fuse2fs: improve tracing for fallocate
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: joannelkoong@gmail.com, miklos@szeredi.hu, John@groves.net,
  linux-fsdevel@vger.kernel.org, bernd@bsbernd.com, linux-ext4@vger.kernel.org,
  neal@gompa.dev
-Message-ID: <175279461232.715479.2021022656537276961.stgit@frogsfrogsfrogs>
+Message-ID: <175279461250.715479.6969062418820124769.stgit@frogsfrogsfrogs>
 In-Reply-To: <175279460935.715479.15460687085573767955.stgit@frogsfrogsfrogs>
 References: <175279460935.715479.15460687085573767955.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,123 +62,79 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Turn on iomap for pagecache IO to regular files.
+Improve the tracing for fallocate by reporting the inode number and the
+file range in all tracepoints.  Make the ranges hexadecimal to make it
+easier for the programmer to convert bytes to block numbers and back.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |   65 ++++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 58 insertions(+), 7 deletions(-)
+ misc/fuse2fs.c |   23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
 
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index 8c3cc7adc72579..a8fb18650ec080 100644
+index a8fb18650ec080..f7d17737459c11 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -1346,6 +1346,10 @@ static void *op_init(struct fuse_conn_info *conn
- 	if (fuse2fs_iomap_enabled(ff))
- 		fuse_set_feature_flag(conn, FUSE_CAP_IOMAP_DIRECTIO);
- #endif
-+#if defined(HAVE_FUSE_IOMAP) && defined(FUSE_CAP_IOMAP_FILEIO)
-+	if (fuse2fs_iomap_enabled(ff))
-+		fuse_set_feature_flag(conn, FUSE_CAP_IOMAP_FILEIO);
-+#endif
+@@ -4683,8 +4683,8 @@ static int fuse2fs_allocate_range(struct fuse2fs *ff,
  
- 	/*
- 	 * If we're mounting in iomap mode, we need to unmount in op_destroy
-@@ -5239,9 +5243,6 @@ static int fuse2fs_iomap_begin_read(struct fuse2fs *ff, ext2_ino_t ino,
- {
- 	errcode_t err;
+ 	start = FUSE2FS_B_TO_FSBT(ff, offset);
+ 	end = FUSE2FS_B_TO_FSBT(ff, offset + len - 1);
+-	dbg_printf(ff, "%s: ino=%d mode=0x%x start=%llu end=%llu\n", __func__,
+-		   fh->ino, mode, start, end);
++	dbg_printf(ff, "%s: ino=%d mode=0x%x offset=0x%jx len=0x%jx start=%llu end=%llu\n",
++		   __func__, fh->ino, mode, offset, len, start, end);
+ 	if (!fs_can_allocate(ff, FUSE2FS_B_TO_FSB(ff, len)))
+ 		return -ENOSPC;
  
--	if (!(opflags & FUSE_IOMAP_OP_DIRECT))
--		return -ENOSYS;
--
- 	/* fall back to slow path for inline data reads */
- 	if (inode->i_flags & EXT4_INLINE_DATA_FL)
- 		return -ENOSYS;
-@@ -5322,9 +5323,6 @@ static int fuse2fs_iomap_begin_write(struct fuse2fs *ff, ext2_ino_t ino,
- 	errcode_t err;
- 	int ret;
+@@ -4751,6 +4751,7 @@ static errcode_t clean_block_middle(struct fuse2fs *ff, ext2_ino_t ino,
+ 	if (err)
+ 		return err;
  
--	if (!(opflags & FUSE_IOMAP_OP_DIRECT))
--		return -ENOSYS;
--
- 	if (pos >= max_size)
- 		return -EFBIG;
++	dbg_printf(ff, "%s: ino=%d offset=0x%jx len=0x%jx\n", __func__, ino, offset + residue, len);
+ 	memset(*buf + residue, 0, len);
  
-@@ -5422,12 +5420,51 @@ static int op_iomap_begin(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 	return ret;
- }
+ 	return io_channel_write_tagblk(fs->io, ino, blk, 1, *buf);
+@@ -4787,10 +4788,15 @@ static errcode_t clean_block_edge(struct fuse2fs *ff, ext2_ino_t ino,
+ 	if (!blk || (retflags & BMAP_RET_UNINIT))
+ 		return 0;
  
-+static int fuse2fs_iomap_append_setsize(struct fuse2fs *ff, ext2_ino_t ino,
-+					loff_t newsize)
-+{
-+	ext2_filsys fs = ff->fs;
-+	struct ext2_inode_large inode;
-+	ext2_off64_t isize;
-+	errcode_t err;
-+
-+	dbg_printf(ff, "%s: ino=%u newsize=%llu\n", __func__, ino,
-+		   (unsigned long long)newsize);
-+
-+	err = fuse2fs_read_inode(fs, ino, &inode);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	isize = EXT2_I_SIZE(&inode);
-+	if (newsize <= isize)
-+		return 0;
-+
-+	dbg_printf(ff, "%s: ino=%u oldsize=%llu newsize=%llu\n", __func__, ino,
-+		   (unsigned long long)isize,
-+		   (unsigned long long)newsize);
-+
-+	/*
-+	 * XXX cheesily update the ondisk size even though we only want to do
-+	 * the incore size until writeback happens
-+	 */
-+	err = ext2fs_inode_size_set(fs, EXT2_INODE(&inode), newsize);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	err = fuse2fs_write_inode(fs, ino, &inode);
-+	if (err)
-+		return translate_error(fs, ino, err);
-+
-+	return 0;
-+}
-+
- static int op_iomap_end(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 			off_t pos, uint64_t count, uint32_t opflags,
- 			ssize_t written, const struct fuse_iomap *iomap)
- {
- 	struct fuse_context *ctxt = fuse_get_context();
- 	struct fuse2fs *ff = (struct fuse2fs *)ctxt->private_data;
-+	int ret = 0;
- 
- 	FUSE2FS_CHECK_CONTEXT(ff);
- 
-@@ -5442,7 +5479,21 @@ static int op_iomap_end(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 		   written,
- 		   iomap->flags);
- 
--	return 0;
-+	fuse2fs_start(ff);
-+
-+	/* XXX is this really necessary? */
-+	if ((opflags & FUSE_IOMAP_OP_WRITE) &&
-+	    !(opflags & FUSE_IOMAP_OP_DIRECT) &&
-+	    (iomap->flags & FUSE_IOMAP_F_SIZE_CHANGED) &&
-+	    written > 0) {
-+		ret = fuse2fs_iomap_append_setsize(ff, attr_ino, pos + written);
-+		if (ret)
-+			goto out_unlock;
+-	if (clean_before)
++	if (clean_before) {
++		dbg_printf(ff, "%s: ino=%d before offset=0x%jx len=0x%jx\n",
++			   __func__, ino, offset, residue);
+ 		memset(*buf, 0, residue);
+-	else
++	} else {
++		dbg_printf(ff, "%s: ino=%d after offset=0x%jx len=0x%jx\n",
++			   __func__, ino, offset, fs->blocksize - residue);
+ 		memset(*buf + residue, 0, fs->blocksize - residue);
 +	}
-+
-+out_unlock:
-+	fuse2fs_finish(ff, ret);
-+	return ret;
- }
  
- /*
+ 	return io_channel_write_tagblk(fs->io, ino, blk, 1, *buf);
+ }
+@@ -4805,9 +4811,6 @@ static int fuse2fs_punch_range(struct fuse2fs *ff,
+ 	errcode_t err;
+ 	char *buf = NULL;
+ 
+-	dbg_printf(ff, "%s: offset=%jd len=%jd\n", __func__,
+-		   (intmax_t) offset, (intmax_t) len);
+-
+ 	/* kernel ext4 punch requires this flag to be set */
+ 	if (!(mode & FL_KEEP_SIZE_FLAG))
+ 		return -EINVAL;
+@@ -4900,6 +4903,12 @@ static int op_fallocate(const char *path EXT2FS_ATTR((unused)), int mode,
+ 		ret = -EROFS;
+ 		goto out;
+ 	}
++
++	dbg_printf(ff, "%s: ino=%d mode=0x%x start=0x%llx end=0x%llx\n", __func__,
++		   fh->ino, mode,
++		   (unsigned long long)offset,
++		   (unsigned long long)offset + len);
++
+ 	if (mode & FL_ZERO_RANGE_FLAG)
+ 		ret = fuse2fs_zero_range(ff, fh, mode, offset, len);
+ 	else if (mode & FL_PUNCH_HOLE_FLAG)
 
 
