@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-55307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E14B09736
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:25:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8302BB09744
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C49297B480D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640054A6FF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF1B247291;
-	Thu, 17 Jul 2025 23:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D52624633C;
+	Thu, 17 Jul 2025 23:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+nYNybA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OP8bT6Ja"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8732AEF5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 23:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801F1242D7C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 23:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752794686; cv=none; b=iLf1+7uXF4+mBjoEdhgvAUwUzu8Z9m25/3kdUaahVlsC9v375WcoffWMuCdYKvluLun7PJOVT97SdnNf8Keb/nH36MREDzc1/cxZ/OC/Fk1YGPK4nC5Wxm1FnNmwx0atTt6cAxL3djYntmXmYrYAVRVJstgBcLBGoGontPRRwvw=
+	t=1752794702; cv=none; b=Zp7orFM7mQbFwgUtFNlLekLYpSWTQAfl8iF2Y+5AlI3NKS9FpIu460ApKhnFf+2pLm74vznxnS9mIbl/kY4LtP+n6YOeFvJxr+oldWPhtg75VDKtMVRxfBFo/4PvJw4Vxgm5UYbsdAviSB77P/rHMDb+dhEIToYES8xxHXwlRGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752794686; c=relaxed/simple;
-	bh=aAW1efw2m7OfKpi37pUj44ui/eDMkfoWgDJ/rI0qnYQ=;
+	s=arc-20240116; t=1752794702; c=relaxed/simple;
+	bh=9cMy7yx+JX850KqlLwnbADM2zKTMP/MjP5qyrFJKLTI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oe/+C7Vz8XvoA6ExHeFO4qbEngTWe6Ke1fLN3osjbp2WkjUt/HRT+mVsA9ogazuDoxAU/T04t80MT1bN6EmT6aLsxAbIa8Z7HYzgImAkkYvL699ERUaQ81y8s+mD1eaLbNtjFVB912148brtO1N9bDfC906+0NS0yHg20kaNIlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+nYNybA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B62C4CEE3;
-	Thu, 17 Jul 2025 23:24:46 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Sqg63B0Ht7sEFm5wWvc2phzgL+Qqry59qk6v3RbFHTds/dySvXsBQY44jypAmP0j+/wu86ufo+zX2j/o+5ujEh0ux4nw4v/9OTPujPA0nu+VLuDS6NG13XAKX6W031jxPq7OZRdbGdtypXBZuoqZs7n4wGDoQVVuKJsD6rzrUCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OP8bT6Ja; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE6BFC4CEE3;
+	Thu, 17 Jul 2025 23:25:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752794686;
-	bh=aAW1efw2m7OfKpi37pUj44ui/eDMkfoWgDJ/rI0qnYQ=;
+	s=k20201202; t=1752794701;
+	bh=9cMy7yx+JX850KqlLwnbADM2zKTMP/MjP5qyrFJKLTI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=P+nYNybAWsX5Irb9Ce6OsVCM5HAwPLGcAbO7xAQ0Z5nPinNzE1+Ei+lxblaoRucKA
-	 t0MDudOmLwnAWpuuNsnPG0xTE+SBDdpORTONqBBNIZauEX37v3KDnWs+QlPgihq/es
-	 Sw9VUksOhSdP/K1wTt0QTr0JavJsHTEjhM9rdqP6w7paH0BXY8L+XOjcpDTYdntQ1L
-	 JKmeCCrid3g3s6tTcDddlKoW7aGgyN+nvqSMImmNQ/xk9/qXBksbePLqtf4wdXv26M
-	 NX0XF8aWLv0No29dfoYu6ZTdfj5Yv1hZiorKSYcW0ryO+TdXwnB5EJiFuoLIxQmASH
-	 IawDzEE/MuvgQ==
-Date: Thu, 17 Jul 2025 16:24:45 -0700
-Subject: [PATCHSET RFC v3 4/4] fuse: handle timestamps and ACLs correctly when
- iomap is enabled
+	b=OP8bT6Ja/sATWQ0kAppbsPeF0qtXwONAmIfLpwxex0Sq+VSA3o+hTAaTmNQFbafe4
+	 ARFQ36tZsyAaZbwhTMdvMMzrvfPj16/yyoQ5W6qGz/ZpJrrLYq4uPfqN/B5AUB/Ytb
+	 LnenA1t0x8Q2StBMwByrgJoZNQAehoDcQvvn3e2gxqMLijcU6f5ZfQDyZ61Wn8zil6
+	 WDe1mXEl0QCZpTlEdyM2wd6VQXoyl2rxY9v42g5USN2UR3TiI62Uw+/8MHVZZYgjws
+	 nJRf62QFGSu1cXIP3G283oTd/lu1//KBAZZNsDzJr7m2sY6/YrUx5brq800B+ZYRZj
+	 nGJy1ntw5er1A==
+Date: Thu, 17 Jul 2025 16:25:01 -0700
+Subject: [PATCHSET RFC v3 1/3] libfuse: allow servers to use iomap for better
+ file IO performance
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
- miklos@szeredi.hu, bernd@bsbernd.com, joannelkoong@gmail.com
-Message-ID: <175279450745.713693.16690872492281672288.stgit@frogsfrogsfrogs>
+To: djwong@kernel.org, bschubert@ddn.com
+Cc: John@groves.net, joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
+ bernd@bsbernd.com, neal@gompa.dev, miklos@szeredi.hu
+Message-ID: <175279459673.714161.10658209239262310420.stgit@frogsfrogsfrogs>
 In-Reply-To: <20250717231038.GQ2672029@frogsfrogsfrogs>
 References: <20250717231038.GQ2672029@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,52 +62,49 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-When iomap is enabled for a fuse file, we try to keep as much of the
-file IO path in the kernel as we possibly can.  That means no calling
-out to the fuse server in the IO path when we can avoid it.  However,
-the existing FUSE architecture defers all file attributes to the fuse
-server -- [cm]time updates, ACL metadata management, set[ug]id removal,
-and permissions checking thereof, etc.
-
-We'd really rather do all these attribute updates in the kernel, and
-only push them to the fuse server when it's actually necessary (e.g.
-fsync).  Furthermore, the POSIX ACL code has the weird behavior that if
-the access ACL can be represented entirely by i_mode bits, it will
-change the mode and delete the ACL, which fuse servers generally don't
-seem to implement.
-
-IOWs, we want consistent and correct (as defined by fstests) behavior
-of file attributes in iomap mode.  Let's make the kernel manage all that
-and push the results to userspace as needed.  This improves performance
-even further, since it's sort of like writeback_cache mode but more
-aggressive.
+This series connects libfuse to the iomap-enabled fuse driver in Linux to get
+fuse servers out of the business of handling file I/O themselves.  By keeping
+the IO path mostly within the kernel, we can dramatically improve the speed of
+disk-based filesystems.  This enables us to move all the filesystem metadata
+parsing code out of the kernel and into userspace, which means that we can
+containerize them for security without losing a lot of performance.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
 
-This has been running on the djcloud for months with no problems.  Enjoy!
+With a bit of luck, this should all go splendidly.
 Comments and questions are, as always, welcome.
 
 --D
 
 kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-attrs
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap
 ---
 Commits in this patchset:
- * fuse: force a ctime update after a fileattr_set call when in iomap mode
- * fuse: synchronize inode->i_flags after fileattr_[gs]et
- * fuse: cache atime when in iomap mode
- * fuse: update file mode when updating acls
- * fuse: propagate default and file acls on creation
- * fuse: let the kernel handle KILL_SUID/KILL_SGID for iomap filesystems
- * fuse: update ctime when updating acls on an iomap inode
+ * libfuse: add kernel gates for FUSE_IOMAP and bump libfuse api version
+ * libfuse: add fuse commands for iomap_begin and end
+ * libfuse: add upper level iomap commands
+ * libfuse: add a notification to add a new device to iomap
+ * libfuse: add iomap ioend low level handler
+ * libfuse: add upper level iomap ioend commands
+ * libfuse: add a reply function to send FUSE_ATTR_* to the kernel
+ * libfuse: connect high level fuse library to fuse_reply_attr_iflags
+ * libfuse: add FUSE_IOMAP_DIRECTIO
+ * libfuse: add FUSE_IOMAP_FILEIO
+ * libfuse: allow discovery of the kernel's iomap capabilities
+ * libfuse: add lower level iomap_config implementation
+ * libfuse: add upper level iomap_config implementation
+ * libfuse: add strictatime/lazytime mount options
 ---
- fs/fuse/fuse_i.h     |    5 ++
- fs/fuse/fuse_trace.h |  103 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/acl.c        |  104 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/dir.c        |  113 ++++++++++++++++++++++++++++++++++++++------------
- fs/fuse/inode.c      |   20 ++++++++-
- fs/fuse/ioctl.c      |  100 ++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 415 insertions(+), 30 deletions(-)
+ include/fuse.h          |   41 +++++
+ include/fuse_common.h   |  118 ++++++++++++++
+ include/fuse_kernel.h   |  118 +++++++++++++-
+ include/fuse_lowlevel.h |  207 +++++++++++++++++++++++-
+ lib/fuse.c              |  408 ++++++++++++++++++++++++++++++++++++++++++-----
+ lib/fuse_lowlevel.c     |  294 ++++++++++++++++++++++++++++++++--
+ lib/fuse_versionscript  |    9 +
+ lib/meson.build         |    2 
+ lib/mount.c             |   18 ++
+ 9 files changed, 1147 insertions(+), 68 deletions(-)
 
 
