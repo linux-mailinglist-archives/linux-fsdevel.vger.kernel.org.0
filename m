@@ -1,88 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-55299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66CDB095BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 22:31:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085EBB096C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 00:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC1CA568728
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 20:31:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF423B1CC6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 22:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AD321ABAE;
-	Thu, 17 Jul 2025 20:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039DA2AEF5;
+	Thu, 17 Jul 2025 22:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UbCdS9x5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M33lgyf6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F706FB9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 20:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D308C1C6FFD;
+	Thu, 17 Jul 2025 22:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752784297; cv=none; b=RL2KTjfMCfrvWhtQncWggdn73qNGXc3XT0nGd6fF9lN8nWWFco8XQ7t4ajsdRlknnEq0+RP2Uy5Nk05ObmqIGFOU8E5qdRE6Wch9OE8dT3xWsmdnH6lRwk6u2okTc5ew4PJBzZoGG4JKXUC+GLos79fiMoLhE/dcs8ASRVDBGbg=
+	t=1752790030; cv=none; b=nbxU03qSPbOWPUU9gfBPBrcEcnQmtP/X47r/TfBDFgiqJ4klciSnDVyOB3J2XClssub3xA0ZAwSsEJWKt/Cve2edQbt+BFip6UcRmR4qTdUTnrJFeQie18i5TmEw8Xl18nCGsRjJ/maFYKleVPKzqNxUxidLzLwE64d0P2QGN7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752784297; c=relaxed/simple;
-	bh=pFPFJKnPh+LxRAPYyWV0RCCGoZ/H3zxmjWKAYb/1YDg=;
+	s=arc-20240116; t=1752790030; c=relaxed/simple;
+	bh=CDJlSE7VNER2P7wgY0kxcl8XvcDE28evpbxEgMszzns=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZYYRaLfjR5kc4imgaqUjH7f3xo5rC45Ik1Qw9SiIJ8xnA6C339VUqo4Poqv01nTEPHmWlvJkbu5NuN0hs3r0V0wcFPu7SL8cqHBnOZWYx4NiFutwk8E+eds3fDbjNu+wEFkcbzSYBNHV53umQKWmvrKVdSItK75YOu4c4/J3os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UbCdS9x5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752784294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wdJcKQDQ4sesr9sR1PHs3Eav2q9b1afpxqhEJb8a738=;
-	b=UbCdS9x5DoSAxDqxzkrwZEd6Cqc5uwohWLqFDEXPG1FR+cz8tH+wwGekf1zoVTKwb/ltp8
-	NeMC5W9FRlOkQuVx9vWOoaCapjg0pyyhzpHNLou9a3gNbfzbOYjpXzOy/Pq55oQ5hxYqGo
-	sMa9PkJcfPQyAnStmMqoauVF4WORz3w=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-211-oi4nTC5EN46i-ETLtb-dQA-1; Thu, 17 Jul 2025 16:31:32 -0400
-X-MC-Unique: oi4nTC5EN46i-ETLtb-dQA-1
-X-Mimecast-MFC-AGG-ID: oi4nTC5EN46i-ETLtb-dQA_1752784292
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a6d90929d6so557727f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 13:31:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752784291; x=1753389091;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+	 In-Reply-To:Content-Type; b=EeX0OqXtQSYvsta3aSSVX1FS8CTDhLvW74KCI9LhersmRMjK1wWpe44i9fEQbkT3fzY9/wfbZGpq44S81W6mOBNSF6/1AaS7m7EQ8GJJeogIu+uPikxqgi4MAmGAyRvhQvuH5t4NxRzc40rVKR2ViJqwnu2/6Mfnc2LWV2pJeyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M33lgyf6; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ab5aec969eso27169001cf.3;
+        Thu, 17 Jul 2025 15:07:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752790028; x=1753394828; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=wdJcKQDQ4sesr9sR1PHs3Eav2q9b1afpxqhEJb8a738=;
-        b=xVA3kdFGzvQCrHKQlU2U1PbzHHJO3k3zRsmi6YLSqLsP7+9TCbHk/iuHCle0NhpJsP
-         sbZejR4rD0+syg96eK0uD9Z9kqYysWt7+PXDfBvlxYPJoZUzCl1wsLDzZEsv34pfllJt
-         v7+6FQHDNq5f0PeAxOIuGS3WgWkaUvUh4ZVGDM/65/Hi0IDcGtyOopH3Gka7XlbwbXSv
-         qbfstVqxf3RMaR/SfOWQYAg9bdmB69bk640Tt1Q4mCWaQocpvCPNj545jA2gURSqjdub
-         azLLpSmilLrR1HW2a6d6cqK09Gws0505LX7TiUDte84wFjqpTZVFmp/A39PkhynmHRmJ
-         9ilw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6+0PmHbiH6v8pkU3DqGwrxaTr8zCtLA7diTN6UW9Knxoa18MrrrDOve4/HbJc96gaoYiFhVu/4TNMINPR@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyBi0UEL+LxwsdwsJm1mJhoTMX7kmseijWUK0HLWbAGRMpFvOa
-	vP1n3nmGQkRaklBLVpR48jWEoEtl9jO5eK1IA97Jrt4VRaQ5J30NzUkO9F55T45ve2FGfnlII5R
-	FHXzF3SHs3369d6KjKxGZTBFpfBk1wEVbN2nvLtdA4L15+cRewEGrMbTOmipNuCyZGV4=
-X-Gm-Gg: ASbGncsUe9oyYFJzOrLEr+WIaOCDUuDP1+XT5OELD7h6Tev301ZvFIJyDa+lF2S3Gnk
-	hyaLICqc40WThXw7KuzEq9drBaEorp7ychw8AoP3h0gT18IBBjBrP2a1rFMHRcH3Ulqgo6arFcB
-	oFUolhQYdgxMafXcdoH5RYcGI/E8uXhb5NHt4Z/5H0+V8u5Z1YEdt3dZd6yLJQ5WqHxF11Jme4w
-	rmPS+gslwqSxjY6ZMzOpA7v9q/fceWUNzbBjiYP/VEZH8Abh8ASF5vfeh+iTrAZyfogVyLWn9M9
-	rze3G70tHFLMqpoEBfjqM3fsyB1X8AMRU/nQwCHa/m3UKweYHz43MXNs57Tz7bc0CixpEjaTAS7
-	sXIQAg4MbXLc2kSBVOXDrmtLA2LFmhtFxJ0B7gMya6tOQeG+/tZTocheSD4D1/KK+
-X-Received: by 2002:a05:6000:490c:b0:3a4:d02e:84af with SMTP id ffacd0b85a97d-3b60e5531d6mr5325008f8f.58.1752784291441;
-        Thu, 17 Jul 2025 13:31:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIXuB/mCdSLCE80mgA6xcOKmEIZL5NFnU1Qt11L0ORhR2cLptcTnShZQeEWrqbZqx0e0NMtA==
-X-Received: by 2002:a05:6000:490c:b0:3a4:d02e:84af with SMTP id ffacd0b85a97d-3b60e5531d6mr5324966f8f.58.1752784290908;
-        Thu, 17 Jul 2025 13:31:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae? (p200300d82f352b00b1a5704a6a0c09ae.dip0.t-ipconnect.de. [2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f4289sm60881935e9.7.2025.07.17.13.31.29
+        bh=i7BRxVgXDk5dYzgY9RMPqFRWzkfU7l6PtXKt81xpEmw=;
+        b=M33lgyf6tQOGDsWV7GcEWqTEWLRU4Ghyh5K44xGUzDKLqcCHrd5UK8T8Oz0kD3r2OV
+         znhFKhPgiHjVodKqmpcuRs2aGC2fIll/Si3LnhXvZr7K/deaCJ7Wenkg7i1Qt9vC8NFk
+         nqTuInePyRNEpX6X3lilSj2VMRrGBsI6j/G7DvW9sbzs2lgZby1N4FEXtnF2HVrXbaFf
+         A8Cqu7fN0fXhjWB5Eh/cPOH8sY0YkCrSEAi0wJblYq5NUgOrzECu5ouykQvbsFpTYWJ+
+         D/mOpyO9ZqwlhejEAWfA+MhcMaO4a5msefSf92vvERhZlZm8XASEq5i2k1EfLMR1Gdeo
+         jDGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752790028; x=1753394828;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i7BRxVgXDk5dYzgY9RMPqFRWzkfU7l6PtXKt81xpEmw=;
+        b=Uz8BSrIV3Ibfhl/tqu29psh1pJz+4aQDq51PJTA6B2UPetxsHLEpucJcQ63xe32Cme
+         64lWUe33vIXgJl9SlsyX0DmI7br7c7kd31dr12jvjey5BJ03Zv3bFCrzJJCthboPfoCU
+         KUT0hQZlaFNyvQG2NmXHCOw5Pf+SFS/2CtNyyfcLykGtV6HCadT3vPayH7QMcR/TA1Ne
+         IlsmyfIDTAPuaeKhv8xtpxOZhiC1o0SDlNNH26kDNg9U8CpHUPA9xxUdDWLuegvadqD+
+         IEZW0IpRS7KxjdsS6dYkfxi3qgoY9YrTejwhffz3F15YfLZHn6NXnzPD+h4vh9WPC5PN
+         +lpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMV1Os9lGcYw0bCLwgck0FsAaVQ4T4IwsRfFxkPGmz3Ec3i6VoxHynSTBNuZHzgo+ZfFymUfixT2ghI6bc@vger.kernel.org, AJvYcCXFNRVKjt/w4j8vIlZgI6PY31HSGUxdWiCiCDQpao5DueY45CB3m3rP9Mj0PGner3E9DPKGjsMszohEuDZU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwosuqkPC5cKz5jxQilK02xxWpFFtOX7QA4TaqT7PhDpVkdIIWF
+	nNdVVVOU8kWFTl56OHo2yd7MWWAFoYQVuEW3xBw5O8KDu+h+fOX7ZKxJEaq+f6MH
+X-Gm-Gg: ASbGncvDmfPHfnWtkolI281kCxTV5HKLutBA0PbBZpOBOJokgtXOOLjIQfv7gvV8ImO
+	WT6ltRPf7ADKrOouNYwfXPe7PHh1tNBZUi9lx+TdGn4svVI1Ixao894faubzMpdGFw7wO7QyvV4
+	GhMFbX4qwkax2eWfAmLfzON/ka8LEtgBOqouTnZez5GPpUpMwljWOyNJAi8e0SpTX4BJXF4ikIE
+	TS+jfTZmY4b2CiqlYrNtAV77iip5/i7KSux4cyDC1yhylsmrGzpdCKoe1ksTBeSaXCO2fGEdB1R
+	TQfkf4BSaAudV6RLWm+hTgAsqTXhoLmw4rB/k5qN7vSyfESxgHt8SwYc0pmu46PwS63FP+jrX/q
+	SRaMxuYH+P3ETw45s3gX9UWOkT/vNY5T7d/8jpg==
+X-Google-Smtp-Source: AGHT+IE/S+XEoX9m2D+U6HfftFEZfN7ljpCvq35JAayatrZXXtjFxeO1y96sE8zn7ScPxF/IBm2UGw==
+X-Received: by 2002:ac8:5910:0:b0:4ab:76d2:1982 with SMTP id d75a77b69052e-4abb2c7b45fmr10825911cf.2.1752790027399;
+        Thu, 17 Jul 2025 15:07:07 -0700 (PDT)
+Received: from [10.138.10.6] ([89.187.178.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4b204cdsm294881cf.56.2025.07.17.15.07.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 13:31:30 -0700 (PDT)
-Message-ID: <7701f2e8-ae17-4367-b260-925d1d3cd4df@redhat.com>
-Date: Thu, 17 Jul 2025 22:31:28 +0200
+        Thu, 17 Jul 2025 15:07:06 -0700 (PDT)
+Message-ID: <30268c21-a907-43d9-ac12-f6215cd95d03@gmail.com>
+Date: Thu, 17 Jul 2025 18:06:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,19 +82,19 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] mm/huge_memory: mark PMD mappings of the huge zero
- folio special
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
- nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>,
+Subject: Re: [PATCH v2 6/9] mm/memory: convert print_bad_pte() to
+ print_bad_page_map()
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, xen-devel@lists.xenproject.org,
+ linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
  Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
  Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
  <willy@infradead.org>, Jan Kara <jack@suse.cz>,
  Alexander Viro <viro@zeniv.linux.org.uk>,
  Christian Brauner <brauner@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
  <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
  Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
@@ -113,221 +105,322 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
  Lance Yang <lance.yang@linux.dev>
 References: <20250717115212.1825089-1-david@redhat.com>
- <20250717115212.1825089-6-david@redhat.com>
- <46c9a90c-46b8-4136-9890-b9b2b97ee1bb@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+ <20250717115212.1825089-7-david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <46c9a90c-46b8-4136-9890-b9b2b97ee1bb@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Demi Marie Obenour <demiobenour@gmail.com>
+Autocrypt: addr=demiobenour@gmail.com; keydata=
+ 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
+ +MYSfkEjBz0E8CLOcAw7JIwAaeBT
+In-Reply-To: <20250717115212.1825089-7-david@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------SHjgOg5Jql0bG0wbh87Oeqfj"
 
-On 17.07.25 20:29, Lorenzo Stoakes wrote:
-> On Thu, Jul 17, 2025 at 01:52:08PM +0200, David Hildenbrand wrote:
->> The huge zero folio is refcounted (+mapcounted -- is that a word?)
->> differently than "normal" folios, similarly (but different) to the ordinary
->> shared zeropage.
-> 
-> Yeah, I sort of wonder if we shouldn't just _not_ do any of that with zero
-> pages?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------SHjgOg5Jql0bG0wbh87Oeqfj
+Content-Type: multipart/mixed; boundary="------------yIjP8WLJtOljwEWqY45CvJcF";
+ protected-headers="v1"
+From: Demi Marie Obenour <demiobenour@gmail.com>
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, xen-devel@lists.xenproject.org,
+ linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+ Lance Yang <lance.yang@linux.dev>
+Message-ID: <30268c21-a907-43d9-ac12-f6215cd95d03@gmail.com>
+Subject: Re: [PATCH v2 6/9] mm/memory: convert print_bad_pte() to
+ print_bad_page_map()
+References: <20250717115212.1825089-1-david@redhat.com>
+ <20250717115212.1825089-7-david@redhat.com>
+In-Reply-To: <20250717115212.1825089-7-david@redhat.com>
+Autocrypt-Gossip: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
 
-I wish we could get rid of the weird refcounting of the huge zero folio 
-and get rid of the shrinker. But as long as the shrinker exists, I'm 
-afraid that weird per-process refcounting must stay.
+--------------yIjP8WLJtOljwEWqY45CvJcF
+Content-Type: multipart/mixed; boundary="------------8g3eOtYBs5ZvfjQ3PpbBaTNy"
 
-> 
-> But for some reason the huge zero page wants to exist or not exist based on
-> usage for one. Which is stupid to me.
+--------------8g3eOtYBs5ZvfjQ3PpbBaTNy
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I will try at some point (once we have the static huge zero folio) 
-to remove the shrinker part and make it always static. Well, at least 
-for reasonable architectures.
+On 7/17/25 07:52, David Hildenbrand wrote:
+> print_bad_pte() looks like something that should actually be a WARN
+> or similar, but historically it apparently has proven to be useful to
+> detect corruption of page tables even on production systems -- report
+> the issue and keep the system running to make it easier to actually det=
+ect
+> what is going wrong (e.g., multiple such messages might shed a light).
+>=20
+> As we want to unify vm_normal_page_*() handling for PTE/PMD/PUD, we'll =
+have
+> to take care of print_bad_pte() as well.
+>=20
+> Let's prepare for using print_bad_pte() also for non-PTEs by adjusting =
+the
+> implementation and renaming the function -- we'll rename it to what
+> we actually print: bad (page) mappings. Maybe it should be called
+> "print_bad_table_entry()"? We'll just call it "print_bad_page_map()"
+> because the assumption is that we are dealing with some (previously)
+> present page table entry that got corrupted in weird ways.
+>=20
+> Whether it is a PTE or something else will usually become obvious from =
+the
+> page table dump or from the dumped stack. If ever required in the futur=
+e,
+> we could pass the entry level type similar to "enum rmap_level". For no=
+w,
+> let's keep it simple.
+>=20
+> To make the function a bit more readable, factor out the ratelimit chec=
+k
+> into is_bad_page_map_ratelimited() and place the dumping of page
+> table content into __dump_bad_page_map_pgtable(). We'll now dump
+> information from each level in a single line, and just stop the table
+> walk once we hit something that is not a present page table.
+>=20
+> Use print_bad_page_map() in vm_normal_page_pmd() similar to how we do i=
+t
+> for vm_normal_page(), now that we have a function that can handle it.
+>=20
+> The report will now look something like (dumping pgd to pmd values):
+>=20
+> [   77.943408] BUG: Bad page map in process XXX  entry:80000001233f5867=
 
-> 
->>
->> For this reason, we special-case these pages in
->> vm_normal_page*/vm_normal_folio*, and only allow selected callers to
->> still use them (e.g., GUP can still take a reference on them).
->>
->> vm_normal_page_pmd() already filters out the huge zero folio. However,
->> so far we are not marking it as special like we do with the ordinary
->> shared zeropage. Let's mark it as special, so we can further refactor
->> vm_normal_page_pmd() and vm_normal_page().
->>
->> While at it, update the doc regarding the shared zero folios.
-> 
-> Hmm I wonder how this will interact with the static PMD series at [0]?
+> [   77.944077] addr:00007fd84bb1c000 vm_flags:08100071 anon_vma: ...
+> [   77.945186] pgd:10a89f067 p4d:10a89f067 pud:10e5a2067 pmd:105327067
+>=20
+> Not using pgdp_get(), because that does not work properly on some arm
+> configs where pgd_t is an array. Note that we are dumping all levels
+> even when levels are folded for simplicity.
+>=20
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-No, it shouldn't.
+Should this still use a WARN?  If the admin sets panic-on-warn they
+have asked for "crash if anything goes wrong" and so that is what
+they should get.  Otherwise the system will still stay up.
+--=20
+Sincerely,
+Demi Marie Obenour (she/her/hers)
+--------------8g3eOtYBs5ZvfjQ3PpbBaTNy
+Content-Type: application/pgp-keys; name="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> I wonder if more use of that might result in some weirdness with refcounting
-> etc.?
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-I don't think so.
+xsFNBFp+A0oBEADffj6anl9/BHhUSxGTICeVl2tob7hPDdhHNgPR4C8xlYt5q49y
+B+l2nipdaq+4Gk6FZfqC825TKl7eRpUjMriwle4r3R0ydSIGcy4M6eb0IcxmuPYf
+bWpr/si88QKgyGSVZ7GeNW1UnzTdhYHuFlk8dBSmB1fzhEYEk0RcJqg4AKoq6/3/
+UorR+FaSuVwT7rqzGrTlscnTDlPWgRzrQ3jssesI7sZLm82E3pJSgaUoCdCOlL7M
+MPCJwI8JpPlBedRpe9tfVyfu3euTPLPxwcV3L/cfWPGSL4PofBtB8NUU6QwYiQ9H
+zx4xOyn67zW73/G0Q2vPPRst8LBDqlxLjbtx/WLR6h3nBc3eyuZ+q62HS1pJ5EvU
+T1vjyJ1ySrqtUXWQ4XlZyoEFUfpJxJoN0A9HCxmHGVckzTRl5FMWo8TCniHynNXs
+BtDQbabt7aNEOaAJdE7to0AH3T/Bvwzcp0ZJtBk0EM6YeMLtotUut7h2Bkg1b//r
+6bTBswMBXVJ5H44Qf0+eKeUg7whSC9qpYOzzrm7+0r9F5u3qF8ZTx55TJc2g656C
+9a1P1MYVysLvkLvS4H+crmxA/i08Tc1h+x9RRvqba4lSzZ6/Tmt60DPM5Sc4R0nS
+m9BBff0Nm0bSNRS8InXdO1Aq3362QKX2NOwcL5YaStwODNyZUqF7izjK4QARAQAB
+zTxEZW1pIE9iZW5vdXIgKElUTCBFbWFpbCBLZXkpIDxhdGhlbmFAaW52aXNpYmxl
+dGhpbmdzbGFiLmNvbT7CwY4EEwEIADgWIQR2h02fEza6IlkHHHGyiLVf/5wiwQUC
+X6YJvQIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRCyiLVf/5wiwWRhD/0Y
+R+YYC5Kduv/2LBgQJIygMsFiRHbR4+tWXuTFqgrxxFSlMktZ6gQrQCWe38WnOXkB
+oY6n/5lSJdfnuGd2UagZ/9dkaGMUkqt+5WshLFly4BnP7pSsWReKgMP7etRTwn3S
+zk1OwFx2lzY1EnnconPLfPBc6rWG2moA6l0WX+3WNR1B1ndqpl2hPSjT2jUCBWDV
+rGOUSX7r5f1WgtBeNYnEXPBCUUM51pFGESmfHIXQrqFDA7nBNiIVFDJTmQzuEqIy
+Jl67pKNgooij5mKzRhFKHfjLRAH4mmWZlB9UjDStAfFBAoDFHwd1HL5VQCNQdqEc
+/9lZDApqWuCPadZN+pGouqLysesIYsNxUhJ7dtWOWHl0vs7/3qkWmWun/2uOJMQh
+ra2u8nA9g91FbOobWqjrDd6x3ZJoGQf4zLqjmn/P514gb697788e573WN/MpQ5XI
+Fl7aM2d6/GJiq6LC9T2gSUW4rbPBiqOCeiUx7Kd/sVm41p9TOA7fEG4bYddCfDsN
+xaQJH6VRK3NOuBUGeL+iQEVF5Xs6Yp+U+jwvv2M5Lel3EqAYo5xXTx4ls0xaxDCu
+fudcAh8CMMqx3fguSb7Mi31WlnZpk0fDuWQVNKyDP7lYpwc4nCCGNKCj622ZSocH
+AcQmX28L8pJdLYacv9pU3jPy4fHcQYvmTavTqowGnM08RGVtaSBNYXJpZSBPYmVu
+b3VyIChsb3ZlciBvZiBjb2RpbmcpIDxkZW1pb2Jlbm91ckBnbWFpbC5jb20+wsF4
+BBMBAgAiBQJafgNKAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCyiLVf
+/5wiwYa/EACv8a2+MMou9cSCNoZBQaU+fTmyzft9hUE+0d5W2UY1RY3OsjFIzm9R
+/4SVccfsqOYLEo+S0vQMIIIqFEq3FCpXXwPzyimotps05VA8U3Bd7yseojFygOgK
+sAMOAee2RCaDDOnoJue01dfZMzzHPO/TVdp3OvnpWipfv5G1Xg96rwbhMLE3tg6N
+xwAHa31Bv4/Xq8CJOoIWvx6fcmZQpz01/lSvsYn0KrfEbTKkuUf0vM9JrCTCP2oz
+VNN5BYzqaq2M4r+jmSyeXLim922VOWqGkUEQ85BSEemqrRS06IU6NtEMsF8EWt/b
+hWjk/9GDKTcnpdJHTrMxTspExBiNrvpI2t+YPU5B/dJJAUxvmhFrbSIbdB8umBZs
+I3AMYrEmpAbh5x7jEjoskUC7uN3o9vpg1oCLS2ePDLtAtyBtbHnkA4xGD7ar8mem
+xpH9lY/i+sC6CyyIUWcUDnnagKyJP0m9ks0GLsTeOCA0bft2XA6rD6aaCnMUsndT
+ctrab42CV5XypjmC4U1rPJ8JQJUh1/3P48/8sMH+3krxpJ06KNWNFaUbaMTGiltZ
+7x9DngklSYrX0T+2G4kVXNmjaljwkoLahwLla2gUWwBSyofXdqyhQdwZsp01KXNQ
+UCyT/Pg+aDcm/E7OMV3d4lf7g/CSxiX2GSEe6BlhSz+Lmd7ZJ3g32M1ARGVtaSBN
+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
+EtJuZYM5blWncBOJCoWMnBEcTEo/viU3GgcVRw=3D=3D
+=3Dx94R
+-----END PGP PUBLIC KEY BLOCK-----
 
-> 
-> Also, that series was (though I reviewed against it) moving stuff that
-> references the huge zero folio out of there, but also generally allows
-> access and mapping of this folio via largest_zero_folio() so not only via
-> insert_pmd().
-> 
-> So we're going to end up with mappings of this that are not marked special
-> that are potentially going to have refcount/mapcount manipulation that
-> contradict what you're doing here perhaps?
+--------------8g3eOtYBs5ZvfjQ3PpbBaTNy--
 
-I don't think so. It's just like having the existing static (small) 
-shared zeropage where the same rules about refcounting+mapcounting apply.
+--------------yIjP8WLJtOljwEWqY45CvJcF--
 
-> 
-> [0]: https://lore.kernel.org/all/20250707142319.319642-1-kernel@pankajraghav.com/
-> 
->>
->> Reviewed-by: Oscar Salvador <osalvador@suse.de>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> I looked thorugh places that use vm_normal_page_pm() (other than decl of
-> function):
-> 
-> fs/proc/task_mmu.c - seems to handle NULL page correctly + still undertsands zero page
-> mm/pagewalk.c - correctly handles NULL page + huge zero page
-> mm/huge_memory.c - can_change_pmd_writable() correctly returns false.
-> 
-> And all seems to work wtih this change.
-> 
-> Overall, other than concerns above + nits below LGTM, we should treat all
-> the zero folios the same in this regard, so:
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+--------------SHjgOg5Jql0bG0wbh87Oeqfj
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-Thanks!
+-----BEGIN PGP SIGNATURE-----
 
-> 
->> ---
->>   mm/huge_memory.c |  5 ++++-
->>   mm/memory.c      | 14 +++++++++-----
->>   2 files changed, 13 insertions(+), 6 deletions(-)
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index db08c37b87077..3f9a27812a590 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -1320,6 +1320,7 @@ static void set_huge_zero_folio(pgtable_t pgtable, struct mm_struct *mm,
->>   {
->>   	pmd_t entry;
->>   	entry = folio_mk_pmd(zero_folio, vma->vm_page_prot);
->> +	entry = pmd_mkspecial(entry);
->>   	pgtable_trans_huge_deposit(mm, pmd, pgtable);
->>   	set_pmd_at(mm, haddr, pmd, entry);
->>   	mm_inc_nr_ptes(mm);
->> @@ -1429,7 +1430,9 @@ static vm_fault_t insert_pmd(struct vm_area_struct *vma, unsigned long addr,
->>   	if (fop.is_folio) {
->>   		entry = folio_mk_pmd(fop.folio, vma->vm_page_prot);
->>
->> -		if (!is_huge_zero_folio(fop.folio)) {
->> +		if (is_huge_zero_folio(fop.folio)) {
->> +			entry = pmd_mkspecial(entry);
->> +		} else {
->>   			folio_get(fop.folio);
->>   			folio_add_file_rmap_pmd(fop.folio, &fop.folio->page, vma);
->>   			add_mm_counter(mm, mm_counter_file(fop.folio), HPAGE_PMD_NR);
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 92fd18a5d8d1f..173eb6267e0ac 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -537,7 +537,13 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
->>    *
->>    * "Special" mappings do not wish to be associated with a "struct page" (either
->>    * it doesn't exist, or it exists but they don't want to touch it). In this
->> - * case, NULL is returned here. "Normal" mappings do have a struct page.
->> + * case, NULL is returned here. "Normal" mappings do have a struct page and
->> + * are ordinarily refcounted.
->> + *
->> + * Page mappings of the shared zero folios are always considered "special", as
->> + * they are not ordinarily refcounted. However, selected page table walkers
->> + * (such as GUP) can still identify these mappings and work with the
->> + * underlying "struct page".
-> 
-> I feel like we need more detail or something more explicit about what 'not
-> ordinary' refcounting constitutes. This is a bit vague.
+iQIzBAEBCAAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmh5dAAACgkQszaHOrMp
+8lM8vA/+Mo3M94bCYFSgBdkwqEyfcTvdrfIsxDPbZ/VjK+kVLcgcDbzffsYQDTVz
+6Q8k0b4fDdIkhchWPzkZc2Bwi4qbRNRZMjPLP7qzlKsjpswCddq/p9kx7k8+KdSr
+CaSbowhDN2MGpqPM44QI3F6suxHUalZdX+h9dWJTwid02eb8o0TK9vwDTLpgKqq6
+qbCcYCR6P4iOGMIiDAunQU/pyPW9d0xB1Ogqu1Bovwciae/WVEEUDB3FQ82AmKmU
+kKCsEYRe9KiWdG5Qw2M9hdcO1cDKslQY4xsgQyeZuIlR4I8dms7X2yXVYSq6dB++
+UnomO239Hd8L1IDyVNyNzUWAaPdjYtDfu2wQ/WWvM7oFaF2sdbbhUx8b27oF358W
+dpVQObz780qseY2GtUJHNanMyPLhVdhQS034Yl9r/F7G3eDTcuZ0RLzpAbfyzNpd
+6O8bWHlxywcxgWpnWCepzYwe8dNuANa2Koen0FH60K6YbZeYj18+HpsREl5ibCy2
+sQxj/ivyBYBXrC5QfScfbTXIL7hpYv77vddtqPQsXDQAnyHpVs4XQlUzHfsW+iVU
+HyatakCBD5GgPmywvgSBLoe7MtWZ7B7RbiQ7FhF3HVCm+EOlyml42LNyxeUL53+I
+XJNQ2JJp9g/Z+s0rgaUIKG2eczw1q74XKHL3OOyi5gEDYPjNFog=
+=NNjd
+-----END PGP SIGNATURE-----
 
-Hm, I am not sure this is the correct place to document that. But let me 
-see if I can come up with something reasonable
-
-(like, the refcount and mapcount of these folios is never adjusted when 
-mapping them into page tables)
-
-> 
->>    *
->>    * There are 2 broad cases. Firstly, an architecture may define a pte_special()
->>    * pte bit, in which case this function is trivial. Secondly, an architecture
->> @@ -567,9 +573,8 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
->>    *
->>    * VM_MIXEDMAP mappings can likewise contain memory with or without "struct
->>    * page" backing, however the difference is that _all_ pages with a struct
->> - * page (that is, those where pfn_valid is true) are refcounted and considered
->> - * normal pages by the VM. The only exception are zeropages, which are
->> - * *never* refcounted.
->> + * page (that is, those where pfn_valid is true, except the shared zero
->> + * folios) are refcounted and considered normal pages by the VM.
->>    *
->>    * The disadvantage is that pages are refcounted (which can be slower and
->>    * simply not an option for some PFNMAP users). The advantage is that we
->> @@ -649,7 +654,6 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
-> 
-> You know I"m semi-ashamed to admit I didn't even know this function
-> exists. But yikes that we have a separate function like this just for PMDs.
-
-It's a bit new-ish :)
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+--------------SHjgOg5Jql0bG0wbh87Oeqfj--
 
