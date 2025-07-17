@@ -1,111 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-55234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65451B08976
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 11:39:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C1EB08AD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 12:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95784A410B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 09:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E862F16F3C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 10:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB89B28A414;
-	Thu, 17 Jul 2025 09:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20C5299955;
+	Thu, 17 Jul 2025 10:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q805g09k"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="PTBFI/qq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50100635;
-	Thu, 17 Jul 2025 09:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC64120A5EC;
+	Thu, 17 Jul 2025 10:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752745146; cv=none; b=ipm+M3xjbrpdn5yPYPAOasIvE+utTaD3VNIsgtCvw0qyQu6shMyKgcIB9zU0qdzxqnernlhv2Y3t2sM9z3Fp7+mVfS8eyPvYRImLZNvau/loY8PxoFsgmiwaXTqSNthOFjgAdjt06BjzVezI8VGWEgslk3KQuKdB6KsVJKx2OLQ=
+	t=1752748518; cv=none; b=TWEPJu9FgNnwazW+kG7Q+Tj/8itznR6tDOA1petM1MaLHZmW4yl0Ufn3RrtortRIsqHAlX6qvUQ820naYRRo09oP5sdPXTusoXeWNgqoMlohc136XBOITDHhw3NAWjHxl5x+dHjQ28egFsqc2LQmF+gpxTvyJUStLFbaKO9s87k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752745146; c=relaxed/simple;
-	bh=9uI15GL8gVspXEZVKQI3SAdKV/w7tSf4KXFJRdUExB4=;
+	s=arc-20240116; t=1752748518; c=relaxed/simple;
+	bh=D6Tx1yBFt3vqcbflTNUDgS5x8I66WBUE28pdk6FNMzE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDvgp007qGVluHqylIoFYAt5dz5oTA8Vr/Pzno+Rb3Lccz10q5H8Q9P8F9p0FLb129aKmSCHU8hiGUNirWHEvpUAxtKMI4hCVygW2vEhMQcA29oDYdy5f3oJX9QH+Jk0R53sGxZMwCV55KqiaGWsI+6IlnnO32ulw8rsndCucsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q805g09k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7FE7C4CEE3;
-	Thu, 17 Jul 2025 09:39:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752745145;
-	bh=9uI15GL8gVspXEZVKQI3SAdKV/w7tSf4KXFJRdUExB4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q805g09kb9jP5uXTxCqyKS/f50AQe3cWZA1S2mUjHl8AnLP2gxEXNCbZjqv6avCzx
-	 sV7FfjoN8JQP5zmULyfSCqGcR8iafgZqaZSwrPV8B1yCay67tKR53bG6kckj53Be/y
-	 m3SuUmZjfmd/3/FK0YtQxIroEGpqVuFpUDKtTGJWHhteBBBWQ7IX1mZIh72+grqpqA
-	 3+FeW597Ckg26RxFq7d/C/jj1xpMBrNuU0waRQhPduZYR3x/YM/8J3irbdpjSMLUQk
-	 RbE/HQ0Ru/nNTe7T7i2ISgMSOMflhRoxzVUuzx3c/EdhIk4lZQXbiW7nCqKjf1ecdC
-	 26hzgwHEwpLww==
-Date: Thu, 17 Jul 2025 11:39:01 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Zizhi Wo <wozizhi@huawei.com>, hch@lst.de
-Cc: jack@suse.com, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [bug report] A filesystem abnormal mount issue
-Message-ID: <20250717-friseur-aufrollen-60e89dbd9c89@brauner>
-References: <20250717091150.2156842-1-wozizhi@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7nlAxsh6kokexbCUSg3n88cFWHZVJul60QRwOeLT9K5smktYGYpQnqJ9RXKQUbDCGU+lFXpy0pUWo1yr84a0BN8LmLC+LySpmhGhLY5/iCBGgGzUMBQhO5BsHJNuS4Ep/5jARGESybuyruxMQv+/lN+C1OBvj0WtoqjtwHHvdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=PTBFI/qq; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bjTp30TXJz9ts1;
+	Thu, 17 Jul 2025 12:35:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1752748507;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RuP79Xyo9eJ/apZgJi9+2FlBvxVF/diDTxrd2884YVw=;
+	b=PTBFI/qqJGNPenVj+XFELY2yRz4Py/dcj5Uc2u5m4EWXK5EvJ1sHGngRd54qNz8owNZUAx
+	ROuzQvf5C5VY+6OEBlGKepXpItXbJrSxcvsFTsgFSOvT+m35xpyUyeA4+6dfsBixnI0jb/
+	9H3VZKjhyvNK1stDtc9of5bqJLR+rxkDSN78QbhKOW641J4/8U/H55lkRhCzuPuQrzjRrx
+	95ccHrsyat8to0Jhhf9c9CbImwlSboSXRPIOdIwnJ2yhNYry5teg0Lp0Pup4k6TjB1ZF3u
+	b0010M5oo6Ve6bHo67wgiWczCQr1bjIax1dSvB+j7YctmWD3xvIzhwGfbgsm7Q==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Date: Thu, 17 Jul 2025 12:34:51 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
+	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v2 3/5] mm: add static PMD zero page
+Message-ID: <gr6zfputin56222rjxbvnsacvuhh3ghabjbk6dgf4mcvgm2bs6@w7jak5ywgskw>
+References: <20250707142319.319642-1-kernel@pankajraghav.com>
+ <20250707142319.319642-4-kernel@pankajraghav.com>
+ <26fded53-b79d-4538-bc56-3d2055eb5d62@redhat.com>
+ <fbcb6038-43a9-4d47-8cf7-f5ca32824079@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250717091150.2156842-1-wozizhi@huawei.com>
+In-Reply-To: <fbcb6038-43a9-4d47-8cf7-f5ca32824079@redhat.com>
+X-Rspamd-Queue-Id: 4bjTp30TXJz9ts1
 
-On Thu, Jul 17, 2025 at 05:11:50PM +0800, Zizhi Wo wrote:
-> Currently, we have the following test scenario:
+> > Then, we'd only need a config option to allow for that to happen.
 > 
-> disk_container=$(
->     ${docker} run...kata-runtime...io.kubernets.docker.type=container...
-> )
-> docker_id=$(
->     ${docker} run...kata-runtime...io.kubernets.docker.type=container...
->     io.katacontainers.disk_share="{"src":"/dev/sdb","dest":"/dev/test"}"...
-> )
+> Something incomplete and very hacky just to give an idea. It would try allocating
+> it if there is actual code running that would need it, and then have it
+> stick around forever.
 > 
-> ${docker} stop "$disk_container"
-> ${docker} exec "$docker_id" mount /dev/test /tmp -->success!!
-> 
-> When the "disk_container" is started, a series of block devices are
-> created. During the startup of "docker_id", /dev/test is created using
-> mknod. After "disk_container" is stopped, the created sda/sdb/sdc disks
-> are deleted, but mounting /dev/test still succeeds.
-> 
-> The reason is that runc calls unshare, which triggers clone_mnt(),
-> increasing the "sb->s_active" reference count. As long as the "docker_id"
-> does not exit, the superblock still has a reference count.
-> 
-> So when mounting, the old superblock is reused in sget_fc(), and the mount
-> succeeds, even if the actual device no longer exists. The whole process can
-> be simplified as follows:
-> 
-> mkfs.ext4 -F /dev/sdb
-> mount /dev/sdb /mnt
-> mknod /dev/test b 8 16    # [sdb 8:16]
-> echo 1 > /sys/block/sdb/device/delete
-> mount /dev/test /mnt1    # -> mount success
-> 
-> The overall change was introduced by: aca740cecbe5 ("fs: open block device
-> after superblock creation"). Previously, we would open the block device
-> once. Now, if the old superblock can be reused, the block device won't be
-> opened again.
-> 
-> Would it be possible to additionally open the block device in read-only
-> mode in super_s_dev_test() for verification? Or is there any better way to
-> avoid this issue?
+Thanks a lot for this David :) I think this is a much better idea and
+reduces the amount code and reuse the existing infrastructure.
 
-As long as you use the new mount api you should pass
-FSCONFIG_CMD_CREATE_EXCL which will refuse to mount if a superblock for
-the device already exists. IOW, it ensure that you cannot silently reuse
-a superblock.
+I will try this approach in the next version.
 
-Other than that I think a blkdev_get_no_open(dev, false) after
-lookup_bdev() should sort the issue out. Christoph?
+<snip>
+> +       /*
+> +        * Our raised reference will prevent the shrinker from ever having
+> +        * success -> static.
+> +        */
+> +       if (atomic_read(&huge_zero_folio_is_static))
+> +               return huge_zero_folio;
+> +       /* TODO: memblock allocation if buddy is not up yet? Or Reject that earlier. */
+
+Do we need memblock allocation? At least the use cases I forsee for
+static pmd zero page are all after the mm is up. So I don't see why we
+need to allocate it via memblock.
+
+> +       if (!get_huge_zero_page())
+> +               return NULL;
+> +       if (atomic_cmpxchg(&huge_zero_folio_is_static, 0, 1) != 0)
+> +               put_huge_zero_page();
+> +       return huge_zero_folio;
+> +
+> +}
+> +#endif /* CONFIG_STATIC_HUGE_ZERO_FOLIO */
+> +
+>  static unsigned long shrink_huge_zero_page_count(struct shrinker *shrink,
+>                                         struct shrink_control *sc)
+>  {
+> 
+
+--
+Pankaj
 
