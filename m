@@ -1,35 +1,35 @@
-Return-Path: <linux-fsdevel+bounces-55222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2AFB08855
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 10:50:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8179B08859
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 10:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7040F4A85D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 08:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E633D1AA7214
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 08:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256D828B3EE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2684D28B511;
 	Thu, 17 Jul 2025 08:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0r1anL2X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BY10f4Cv"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d8oTzFqJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HZ6uFZe1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9AE285418;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BED728030E;
 	Thu, 17 Jul 2025 08:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742146; cv=none; b=D0WPskpitWv85rUzCkxT0Tw8vNcwrZbrQP1AJEVSur+qPdiX95LO1UBesMLgklEpd7/2fEa5KHZXtxwq/1i2S3ftYUmFqNRfqcAiYihBA1Lyd7XUaXxTlkmr9U1SlcCPp1ryPTlOxnSCjbWoMyBy5tsWGHLAeXM3iwL++17Sfnc=
+	t=1752742146; cv=none; b=XldYuDdIfmzKhS4iP+PpYI6+EyZ4mJy+uW9sMJJdeTM4L8LQUMkATAbZVWEt54AAE7U1ulZT/6VCzlxabeGLl79/I8lkLjRP7fWvlot0Dzzv+pH674bprUQeh49mWt3i2Qgqps6breg46vIBl4iFcUgmAIP/Rzr5zYgOtl+7E+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752742146; c=relaxed/simple;
-	bh=jzd2GUyiQxguW35ue6s9/EhpHIGuMVbD761YRMKAxLU=;
+	bh=e5INoDiN3Ni8QRATpOXYa4LnNZtNpkknNpkiBqwwmSY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FJt0iAdx0xO7TRBTz+GO5ZsN6+wJXEvbjk3P/zn1ieGiiREIK1WSiVAHYXzP11+ajNGwNUUHqcEs3Seu4wIQAYTWqR3sI3+AXBz8jLvVsAaiS9M6SZkmFBeP5335iB/taKijHpnFjrT1mf9pVkCaFu/k8jG+bs6gx8NbhagTvOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0r1anL2X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BY10f4Cv; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=DQ+aCHwa+tvrmvQgYd1DlktDFa//5/MLH46/klwjhgl6l9Z64wb6WsFV5ZhxSe89hBNUOs5FV4/I7XqlPlkPSFr1/e/Ps/80ihva5eJpgOw6yg78sxCnFl0ZPf+V9C/d9PjoS7dP89vNBaflvIBwp+b4nGrhrfo+mxY9T8GwloI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d8oTzFqJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HZ6uFZe1; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
@@ -39,23 +39,24 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZBDQvUHybVGdnxlnUf0GHbOvIvdhQLf7DfYi3dD2ndo=;
-	b=0r1anL2XdznoHnt0YQNzoHoVPgouB7uPz0KjE2zGIk0E/YL1f49fBnD8gB/zF7on6U2IFc
-	I7f7ZzsaeLfPBHbQgnvz5qw/FvYYnv+YsTLzm64rR2mzWZxbJQdHm+sg4ivTr3Efyl8jIu
-	UyLHVFLT/RAXXhxsRI5LHn7Cye5b+h05WJY6UpnZ4XahvvJo0ADVob9j3D+81Z9QxvLVYM
-	Lveq1/WEZMSxEqvMvxfaeJ35+eo5rUfzA0rSopge68bAjTIBAsqPwROKlTbsijE1PBb5h2
-	3mRt3my3r+LdEY9DtR8DE3ThSjB1bqyxOLZHGDUM0cz4z/laJ2WcvRO61wgPzw==
+	bh=7MpYHuvMjFWWKu6Z/zYB3Mv8gm+e0pCu+LkUQrZSY3U=;
+	b=d8oTzFqJXGnBOvO4zb6cDa5rul2gJUTTSkcahTe/BRpx/iywuRWwT4xroLXY6VNdnh3QZO
+	RHV/IsU6AgdRkJxSFPZ7vIZP6F6jO33pX5kuHPHJGKUTJZYBPdGiDBtIJ/XHMAGEm/x4s2
+	ywLUAaHuzknRTE+wI83TTNrERZ7Rl1Ved/qv0OIMfaJd8jW9PdCqSZ9lR5xkQZZzGwVy2y
+	n1fL3jCk/xaG/3+VrkeFrvHhEMimW3KwNzytnF1TI0iPHaKMHAL5z7oBRJSv9QM/cxO9q8
+	MPecXmf0A+I+NgNkN0GmLg8gxNIvH46QRwHVzubjmX+YMeVg9WnQ/9nUqa0oxA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1752742135;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZBDQvUHybVGdnxlnUf0GHbOvIvdhQLf7DfYi3dD2ndo=;
-	b=BY10f4Cvo0dik2q5QxTr5XWE8yAT2Bjh0+VuB/YSdoYqzwursG5yWt8pBlvUwfel/bM2PB
-	Olx3ZbtWGa2Ge7Ag==
-Date: Thu, 17 Jul 2025 10:48:07 +0200
-Subject: [PATCH v5 05/15] init: add nolibc build support
+	bh=7MpYHuvMjFWWKu6Z/zYB3Mv8gm+e0pCu+LkUQrZSY3U=;
+	b=HZ6uFZe1pV6FRTSkcaX2SUoimPLdA9eDlpPYStwgYkLBSXHxZvPT4cQryUWLjvl4xnegwW
+	BtIPfJ3KSAFlMtAg==
+Date: Thu, 17 Jul 2025 10:48:08 +0200
+Subject: [PATCH v5 06/15] fs,fork,exit: export symbols necessary for KUnit
+ UAPI support
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +65,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250717-kunit-kselftests-v5-5-442b711cde2e@linutronix.de>
+Message-Id: <20250717-kunit-kselftests-v5-6-442b711cde2e@linutronix.de>
 References: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
 In-Reply-To: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
 To: Masahiro Yamada <masahiroy@kernel.org>, 
@@ -85,97 +86,165 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
  linux-fsdevel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
  Nicolas Schier <nicolas.schier@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752742130; l=3172;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752742130; l=4941;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=jzd2GUyiQxguW35ue6s9/EhpHIGuMVbD761YRMKAxLU=;
- b=dmf4tJQr/51uuhkxdme9I0cExjnXB3IbgezIgvUWGaA7uD3N5c2wOPXgZ2+kxEhd8DOop2TGb
- 1ZHq7+H/KUDDVgv3r0H8ACgHCzcWbBg4ShFzTvi32/oMIT08FYCpnTG
+ bh=e5INoDiN3Ni8QRATpOXYa4LnNZtNpkknNpkiBqwwmSY=;
+ b=wfPAfz0Y4PnhHoB3TtD/RceiqTS+353VN2/ItMuXvqsLsEeUYNcSU3SR921UGRtIT0MxXYMPk
+ 5poxQGlxv/wBEgVJPydBHOSY4lgE3Iw4v8Bg9/g2pPQIzqWk9ZPNFN8
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Building userspace applications through the kbuild "userprogs" framework
-requires a libc. Kernel toolchains often do not contain a libc.
-In this case it is useful to use the nolibc library from the kernel tree.
-Nolibc does not support all architectures and requires compiler flags.
+The KUnit UAPI infrastructure starts userspace processes.
+As it should be able to be built as a module, export the necessary symbols.
 
-Add a kconfig option, so users can know where it is available and provide a
-variable for common options.
-
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
 Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- MAINTAINERS          |  2 ++
- init/Kconfig         |  2 ++
- init/Kconfig.nolibc  | 15 +++++++++++++++
- init/Makefile.nolibc | 13 +++++++++++++
- 4 files changed, 32 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa163f9fe8fe3f04bf66426f9a894409..e806158cc6798cf97a4aab58c038fb5351d469aa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17702,6 +17702,8 @@ M:	Willy Tarreau <w@1wt.eu>
- M:	Thomas Weißschuh <linux@weissschuh.net>
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git
-+F:	init/Kconfig.nolibc
-+F:	init/Makefile.nolibc
- F:	tools/include/nolibc/
- F:	tools/testing/selftests/nolibc/
+---
+For details on how these are used, see patch 12:
+"kunit: Introduce UAPI testing framework".
+Any ideas on how to make this work without new exports are very welcome.
+---
+ fs/exec.c        | 2 ++
+ fs/file.c        | 1 +
+ fs/filesystems.c | 2 ++
+ fs/fs_struct.c   | 1 +
+ fs/pipe.c        | 2 ++
+ kernel/exit.c    | 3 +++
+ kernel/fork.c    | 2 ++
+ 7 files changed, 13 insertions(+)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 1f5fdd2e096e392b342f122d35aba4cf035441c7..13f7f27641942eddcb179bdd93d99b799d155813 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -68,6 +68,7 @@
+ #include <linux/user_events.h>
+ #include <linux/rseq.h>
+ #include <linux/ksm.h>
++#include <linux/export.h>
  
-diff --git a/init/Kconfig b/init/Kconfig
-index 26cafbad4f1560fb56b4bef31ae29baf54175661..0af62f135192e0470e16eb6bb2fbb45ac38f4b81 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -92,6 +92,8 @@ config CC_CAN_LINK_STATIC
- 	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(USERCFLAGS) $(USERLDFLAGS) $(m64-flag) -static) if 64BIT
- 	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(USERCFLAGS) $(USERLDFLAGS) $(m32-flag) -static)
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -1919,6 +1920,7 @@ int kernel_execve(const char *kernel_filename,
+ 	putname(filename);
+ 	return retval;
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(kernel_execve, "kunit-uapi");
  
-+source "init/Kconfig.nolibc"
-+
- # Fixed in GCC 14, 13.3, 12.4 and 11.5
- # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921
- config GCC_ASM_GOTO_OUTPUT_BROKEN
-diff --git a/init/Kconfig.nolibc b/init/Kconfig.nolibc
-new file mode 100644
-index 0000000000000000000000000000000000000000..29cbc5437e70cbc5e256f00b74d0ab4801b40de7
---- /dev/null
-+++ b/init/Kconfig.nolibc
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+config ARCH_HAS_NOLIBC
-+	bool
-+	default y if ARM
-+	default y if ARM64
-+	default y if LOONGARCH
-+	default y if M68K
-+	default y if MIPS
-+	default y if PPC
-+	default y if RISCV
-+	default y if S390
-+	default y if SPARC
-+	default y if UML_X86
-+	default y if X86
-diff --git a/init/Makefile.nolibc b/init/Makefile.nolibc
-new file mode 100644
-index 0000000000000000000000000000000000000000..dacc78ab4c81c93f3a24ebeb70e34253842f9a53
---- /dev/null
-+++ b/init/Makefile.nolibc
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Compiler flags, which are necessary to build userspace applications with the
-+# in-kernel libc "nolibc".
-+
-+ifeq ($(and $(CONFIG_ARCH_HAS_NOLIBC),$(CONFIG_HEADERS_INSTALL)),y)
-+
-+NOLIBC_USERCFLAGS := -nostdlib -nostdinc -static -ffreestanding \
-+		     -fno-asynchronous-unwind-tables -fno-stack-protector \
-+		     -I$(objtree)/usr/include -I$(srctree)/tools/include/nolibc/
-+
-+NOLIBC_USERLDFLAGS := -nostdlib -nostdinc -static
-+
-+endif # CONFIG_ARCH_HAS_NOLIBC && CONFIG_HEADERS_INSTALL
+ static int do_execve(struct filename *filename,
+ 	const char __user *const __user *__argv,
+diff --git a/fs/file.c b/fs/file.c
+index 3a3146664cf37115624e12f7f06826d48827e9d7..89d07feb9c328337451ce40cb0f368b6cb986c2c 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1317,6 +1317,7 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+ 	spin_unlock(&files->file_lock);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(replace_fd, "kunit-uapi");
+ 
+ /**
+  * receive_fd() - Install received file into file descriptor table
+diff --git a/fs/filesystems.c b/fs/filesystems.c
+index 95e5256821a53494d88f496193305a2e50e04444..a3a588f387bbd8268246d1026389deaadf265d0b 100644
+--- a/fs/filesystems.c
++++ b/fs/filesystems.c
+@@ -17,6 +17,7 @@
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ #include <linux/fs_parser.h>
++#include <linux/export.h>
+ 
+ /*
+  * Handling of filesystem drivers list.
+@@ -45,6 +46,7 @@ void put_filesystem(struct file_system_type *fs)
+ {
+ 	module_put(fs->owner);
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(put_filesystem, "kunit-uapi");
+ 
+ static struct file_system_type **find_filesystem(const char *name, unsigned len)
+ {
+diff --git a/fs/fs_struct.c b/fs/fs_struct.c
+index 64c2d0814ed6889cc12603410e6e9dc44089586f..26340d225deba3f2ec30252293fdf417235a6a4a 100644
+--- a/fs/fs_struct.c
++++ b/fs/fs_struct.c
+@@ -46,6 +46,7 @@ void set_fs_pwd(struct fs_struct *fs, const struct path *path)
+ 	if (old_pwd.dentry)
+ 		path_put(&old_pwd);
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(set_fs_pwd, "kunit-uapi");
+ 
+ static inline int replace_path(struct path *p, const struct path *old, const struct path *new)
+ {
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 45077c37bad154ef146b047834d35d489fcc4d8d..d6cb743d2cfc041f08b498a5a764e9a96dc34069 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -27,6 +27,7 @@
+ #include <linux/watch_queue.h>
+ #include <linux/sysctl.h>
+ #include <linux/sort.h>
++#include <linux/export.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/ioctls.h>
+@@ -971,6 +972,7 @@ int create_pipe_files(struct file **res, int flags)
+ 	file_set_fsnotify_mode(res[1], FMODE_NONOTIFY_PERM);
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(create_pipe_files, "kunit-uapi");
+ 
+ static int __do_pipe_flags(int *fd, struct file **files, int flags)
+ {
+diff --git a/kernel/exit.c b/kernel/exit.c
+index bd743900354ca5fc6c550f80e30393a632eb9a4e..610dffb1276ac60b475708587ca053f315fea9c3 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -70,6 +70,7 @@
+ #include <linux/user_events.h>
+ #include <linux/uaccess.h>
+ #include <linux/pidfs.h>
++#include <linux/export.h>
+ 
+ #include <uapi/linux/wait.h>
+ 
+@@ -1005,6 +1006,7 @@ void __noreturn do_exit(long code)
+ 	lockdep_free_task(tsk);
+ 	do_task_dead();
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(do_exit, "kunit-uapi");
+ 
+ void __noreturn make_task_dead(int signr)
+ {
+@@ -1887,6 +1889,7 @@ int kernel_wait(pid_t pid, int *stat)
+ 	put_pid(wo.wo_pid);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(kernel_wait, "kunit-uapi");
+ 
+ SYSCALL_DEFINE4(wait4, pid_t, upid, int __user *, stat_addr,
+ 		int, options, struct rusage __user *, ru)
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 1ee8eb11f38bae1d2eb6de9494aea94b7a19e6c3..5de7a9bc005ade6dcfbdfe1a63cadbef8782658c 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -105,6 +105,7 @@
+ #include <uapi/linux/pidfd.h>
+ #include <linux/pidfs.h>
+ #include <linux/tick.h>
++#include <linux/export.h>
+ 
+ #include <asm/pgalloc.h>
+ #include <linux/uaccess.h>
+@@ -2676,6 +2677,7 @@ pid_t user_mode_thread(int (*fn)(void *), void *arg, unsigned long flags)
+ 
+ 	return kernel_clone(&args);
+ }
++EXPORT_SYMBOL_GPL_FOR_MODULES(user_mode_thread, "kunit-uapi");
+ 
+ #ifdef __ARCH_WANT_SYS_FORK
+ SYSCALL_DEFINE0(fork)
 
 -- 
 2.50.0
