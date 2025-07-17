@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-55362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24BDB09832
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:38:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAD5B09834
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D5CB1C262F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4CD4A1CC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660C523ABB7;
-	Thu, 17 Jul 2025 23:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1492459DA;
+	Thu, 17 Jul 2025 23:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIl4mT6I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baZC0rSM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A6B1FCFF8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 23:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B328244690
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 23:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795531; cv=none; b=GayW8e3T1xrYlOxT+MB+la7pATkcPL+JZEx3jiT5hJhAq9fprD3/y2AE3FhzGtBR2gV5m0ND9lW3SpVbX4Buleint6WiSV5rbX+ijZLToHxPerQeNmgtuGZCSFPkpI4HtYRky/zlVwj3o3QadrxgpL64MNOKfMMm2w7WeseWmns=
+	t=1752795547; cv=none; b=pXX3P35MYm2Z+Emk7YR/jbzTvi6sADAtYe0faVGFfVaSV6AaYMz4ioVtkWmaDOMOf4koKkCBiARbP+WQAbug3KlWhrHMihetUYatz4ukT5SdZOn85TGOJnorOjOUFOiWNJ95++i3BImVPjTfL7FM5G+T0Vsho1enONQlYz3grFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795531; c=relaxed/simple;
-	bh=IPNuJAFZ5b2mWf028/PxVeA2RNq9js8Oy7BRE284i3o=;
+	s=arc-20240116; t=1752795547; c=relaxed/simple;
+	bh=Xlly4JGh8YrVwwI+SXeUbfAKl/4ACKoB/uMMsUDlUD0=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uzrjRaOcLygCRVvikcSSG+3Hbb/fUpNT7Saz1wfYf4mWbUTOLWIYc+xlr8kvpcd4x/YIorBfMVjICT5PrJBfScSqZB9XFL6PteNMWGIlalgeBnSXKuWIBXuoy7OpXa8VhKvqMKlPQnGw5IQmOhMRvh3jYK7LzS9GEHANgaymN48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIl4mT6I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A30C4CEE3;
-	Thu, 17 Jul 2025 23:38:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RWVpCNhB+2rsfu9cOCF8Qoh00WDKqpfhRmJOZLYrQS5Y/lgZ5hOsbamawucQld16cFCCRTaSBo/pq87xMWtc/KwFvNJDGrRsopeqmRzMxcfbx/YBzkWVanmmT1hnaqjwKj1Z/aJfC5xqyjGPtJJDbPf86D/WnqzlrhfabPA4bXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baZC0rSM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF65C4CEF0;
+	Thu, 17 Jul 2025 23:39:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752795531;
-	bh=IPNuJAFZ5b2mWf028/PxVeA2RNq9js8Oy7BRE284i3o=;
+	s=k20201202; t=1752795546;
+	bh=Xlly4JGh8YrVwwI+SXeUbfAKl/4ACKoB/uMMsUDlUD0=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=fIl4mT6Ipnouo2O/VdqcWVGrW0O/Hp8J0nfOH0eJyn5LfKejFtdxg/KIlgTOK9qyS
-	 iUjdRQjocf/MDBmAoQ5sy5+p9M7xsIJEphOInHCkpCWYbGpIqwUg7Mj6NmxIN1Tx7m
-	 m0yfmE7mk0+VaMNdt6C6YyhypENcZJFFel1taX8ZgibQo47BN3h0YzDmEm45B9xR0h
-	 3Vjvyksbe0ah87a+QirffWEszjr9QXsRNZGwt/vjo9dTzJsOMYvXssrqMVswJie2JZ
-	 xIUA7bTtlhGzby2vKWOyweyif4Uxa7IOS7RbT4Dy5mwki2upvchw0ox2UYejf49nth
-	 7wQz34a1d+o/Q==
-Date: Thu, 17 Jul 2025 16:38:50 -0700
-Subject: [PATCH 2/4] libfuse: add syncfs support to the upper library
+	b=baZC0rSMNCmx8Ir1DFhNXtlRxnqSZzDW1wUBepXXAvp5r9/RGXNd8u+RP8MqgG5pz
+	 hlKBeK0uF6c3Z+5JTm1iCoKRhepn5YAX8JGt/bxil0t0CajldPkhL1ko1wBoL4x9yk
+	 N1SSoXl3EZ22vnOvkuUPvtmJuV8hcqe+1oI7tvazSbNkwU4MAuDUgsnH9skIkB19kt
+	 HdEzN8jwflz0xrcE+ghPzx7HDYtkrfJyD1+1++waQAlzBrVT8ICcrP2t0DVuOYWkA2
+	 aof8ysuWtzBLNmndkpzoItZtjCTI2eijpNVQNbBqXNNaCpGtCajmcrYigYoq+M+Dxg
+	 39PKYy7IzZYGw==
+Date: Thu, 17 Jul 2025 16:39:06 -0700
+Subject: [PATCH 3/4] libfuse: add statx support to the lower level library
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: John@groves.net, joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
  bernd@bsbernd.com, neal@gompa.dev, miklos@szeredi.hu
-Message-ID: <175279460412.714831.14947365915190175591.stgit@frogsfrogsfrogs>
+Message-ID: <175279460430.714831.6251867847811735740.stgit@frogsfrogsfrogs>
 In-Reply-To: <175279460363.714831.9608375779453686904.stgit@frogsfrogsfrogs>
 References: <175279460363.714831.9608375779453686904.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,86 +61,212 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Support syncfs in the upper level library.
+Add statx support to the lower level fuse library.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse.h |    5 +++++
- lib/fuse.c     |   31 +++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ include/fuse_lowlevel.h |   37 ++++++++++++++++++
+ lib/fuse_lowlevel.c     |   97 +++++++++++++++++++++++++++++++++++++++++++++++
+ lib/fuse_versionscript  |    2 +
+ 3 files changed, 136 insertions(+)
 
 
-diff --git a/include/fuse.h b/include/fuse.h
-index 6ce6ccfd102386..a59f43e0701e1a 100644
---- a/include/fuse.h
-+++ b/include/fuse.h
-@@ -890,6 +890,11 @@ struct fuse_operations {
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index 77685e433e4f7d..f4d62cee22870a 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -1416,6 +1416,26 @@ struct fuse_lowlevel_ops {
+ 	 * @param ino the inode number
  	 */
- 	int (*iomap_config) (uint32_t flags, off_t maxbytes,
- 			     struct fuse_iomap_config *cfg);
+ 	void (*syncfs) (fuse_req_t req, fuse_ino_t ino);
 +
 +	/**
-+	 * Flush the entire filesystem to disk.
++	 * Fetch extended stat information about a file
++	 *
++	 * If this request is answered with an error code of ENOSYS, this is
++	 * treated as a permanent failure, i.e. all future statx() requests
++	 * will fail with the same error code without being sent to the
++	 * filesystem process.
++	 *
++	 * Valid replies:
++	 *   fuse_reply_statx
++	 *   fuse_reply_err
++	 *
++	 * @param req request handle
++	 * @param statx_flags AT_STATX_* flags
++	 * @param statx_mask desired STATX_* attribute mask
++	 * @param fi file information
 +	 */
-+	int (*syncfs) (const char *path);
++	void (*statx) (fuse_req_t req, fuse_ino_t ino, uint32_t statx_flags,
++		       uint32_t statx_mask, struct fuse_file_info *fi);
  #endif /* FUSE_USE_VERSION >= 318 */
  };
  
-diff --git a/lib/fuse.c b/lib/fuse.c
-index b722a1b526e3de..c3fa6dad589cb0 100644
---- a/lib/fuse.c
-+++ b/lib/fuse.c
-@@ -2887,6 +2887,16 @@ static int fuse_fs_iomap_config(struct fuse_fs *fs, uint32_t flags,
- 	return fs->op.iomap_config(flags, maxbytes, cfg);
+@@ -1897,6 +1917,23 @@ int fuse_reply_iomap_begin(fuse_req_t req, const struct fuse_iomap *read_iomap,
+  * @return zero for success, -errno for failure to send reply
+  */
+ int fuse_reply_iomap_config(fuse_req_t req, const struct fuse_iomap_config *cfg);
++
++struct statx;
++
++/**
++ * Reply with statx attributes
++ *
++ * Possible requests:
++ *   statx
++ *
++ * @param req request handle
++ * @param statx the attributes
++ * @param size the size of the statx structure
++ * @param attr_timeout	validity timeout (in seconds) for the attributes
++ * @return zero for success, -errno for failure to send reply
++ */
++int fuse_reply_statx(fuse_req_t req, const struct statx *statx, size_t size,
++		     double attr_timeout);
+ #endif /* FUSE_USE_VERSION >= 318 */
+ 
+ /* ----------------------------------------------------------- *
+diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
+index ec30ebc4cdd074..8eeb6a8547da91 100644
+--- a/lib/fuse_lowlevel.c
++++ b/lib/fuse_lowlevel.c
+@@ -144,6 +144,43 @@ static void convert_attr(const struct fuse_setattr_in *attr, struct stat *stbuf)
+ 	ST_CTIM_NSEC_SET(stbuf, attr->ctimensec);
  }
  
-+static int fuse_fs_syncfs(struct fuse_fs *fs, const char *path)
++#ifdef STATX_BASIC_STATS
++static int convert_statx(struct fuse_statx *stbuf, const struct statx *stx,
++			 size_t size)
 +{
-+	fuse_get_context()->private_data = fs->user_data;
-+	if (!fs->op.syncfs)
-+		return -ENOSYS;
-+	if (fs->debug)
-+		fuse_log(FUSE_LOG_DEBUG, "syncfs[%s]\n", path);
-+	return fs->op.syncfs(path);
++	if (sizeof(struct statx) != size)
++		return EOPNOTSUPP;
++
++	stbuf->mask = stx->stx_mask & (STATX_BASIC_STATS | STATX_BTIME);
++	stbuf->blksize		= stx->stx_blksize;
++	stbuf->attributes	= stx->stx_attributes;
++	stbuf->nlink		= stx->stx_nlink;
++	stbuf->uid		= stx->stx_uid;
++	stbuf->gid		= stx->stx_gid;
++	stbuf->mode		= stx->stx_mode;
++	stbuf->ino		= stx->stx_ino;
++	stbuf->size		= stx->stx_size;
++	stbuf->blocks		= stx->stx_blocks;
++	stbuf->attributes_mask	= stx->stx_attributes_mask;
++	stbuf->rdev_major	= stx->stx_rdev_major;
++	stbuf->rdev_minor	= stx->stx_rdev_minor;
++	stbuf->dev_major	= stx->stx_dev_major;
++	stbuf->dev_minor	= stx->stx_dev_minor;
++
++	stbuf->atime.tv_sec	= stx->stx_atime.tv_sec;
++	stbuf->btime.tv_sec	= stx->stx_btime.tv_sec;
++	stbuf->ctime.tv_sec	= stx->stx_ctime.tv_sec;
++	stbuf->mtime.tv_sec	= stx->stx_mtime.tv_sec;
++
++	stbuf->atime.tv_nsec	= stx->stx_atime.tv_nsec;
++	stbuf->btime.tv_nsec	= stx->stx_btime.tv_nsec;
++	stbuf->ctime.tv_nsec	= stx->stx_ctime.tv_nsec;
++	stbuf->mtime.tv_nsec	= stx->stx_mtime.tv_nsec;
++
++	return 0;
 +}
++#endif
 +
- static void fuse_lib_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
- 			     int valid, struct fuse_file_info *fi)
+ static	size_t iov_length(const struct iovec *iov, size_t count)
  {
-@@ -4673,6 +4683,26 @@ static void fuse_lib_iomap_config(fuse_req_t req, uint32_t flags,
- 	fuse_reply_iomap_config(req, &cfg);
+ 	size_t seg;
+@@ -2653,6 +2690,64 @@ static void do_syncfs(fuse_req_t req, const fuse_ino_t nodeid, const void *inarg
+ 	_do_syncfs(req, nodeid, inarg, NULL);
  }
  
-+static void fuse_lib_syncfs(fuse_req_t req, fuse_ino_t ino)
++#ifdef STATX_BASIC_STATS
++int fuse_reply_statx(fuse_req_t req, const struct statx *statx, size_t size,
++		     double attr_timeout)
 +{
-+	struct fuse *f = req_fuse_prepare(req);
-+	struct fuse_intr_data d;
-+	char *path;
-+	int err;
++	struct fuse_statx_out arg = {
++		.attr_valid = calc_timeout_sec(attr_timeout),
++		.attr_valid_nsec = calc_timeout_nsec(attr_timeout),
++	};
 +
-+	err = get_path(f, ino, &path);
++	int err = convert_statx(&arg.stat, statx, size);
 +	if (err) {
-+		reply_err(req, err);
-+		return;
++		fuse_reply_err(req, err);
++		return err;
 +	}
 +
-+	fuse_prepare_interrupt(f, req, &d);
-+	err = fuse_fs_syncfs(f->fs, path);
-+	fuse_finish_interrupt(f, req, &d);
-+	free_path(f, ino, path);
-+	reply_err(req, err);
++	return send_reply_ok(req, &arg, sizeof(arg));
 +}
 +
- static int clean_delay(struct fuse *f)
++static void _do_statx(fuse_req_t req, const fuse_ino_t nodeid,
++		      const void *op_in, const void *in_payload)
++{
++	(void)in_payload;
++	const struct fuse_statx_in *arg = op_in;
++	struct fuse_file_info *fip = NULL;
++	struct fuse_file_info fi;
++
++	if (arg->getattr_flags & FUSE_GETATTR_FH) {
++		memset(&fi, 0, sizeof(fi));
++		fi.fh = arg->fh;
++		fip = &fi;
++	}
++
++	if (req->se->op.statx)
++		req->se->op.statx(req, nodeid, arg->sx_flags, arg->sx_mask,
++				  fip);
++	else
++		fuse_reply_err(req, ENOSYS);
++}
++#else
++int fuse_reply_statx(fuse_req_t req, const struct statx *statx,
++		     double attr_timeout)
++{
++	fuse_reply_err(req, ENOSYS);
++	return -ENOSYS;
++}
++
++static void _do_statx(fuse_req_t req, const fuse_ino_t nodeid,
++		      const void *op_in, const void *in_payload)
++{
++	fuse_reply_err(req, ENOSYS);
++}
++#endif /* STATX_BASIC_STATS */
++
++static void do_statx(fuse_req_t req, const fuse_ino_t nodeid, const void *inarg)
++{
++	_do_statx(req, nodeid, inarg, NULL);
++}
++
+ static bool want_flags_valid(uint64_t capable, uint64_t want)
  {
- 	/*
-@@ -4771,6 +4801,7 @@ static struct fuse_lowlevel_ops fuse_path_ops = {
- 	.fallocate = fuse_lib_fallocate,
- 	.copy_file_range = fuse_lib_copy_file_range,
- 	.lseek = fuse_lib_lseek,
-+	.syncfs = fuse_lib_syncfs,
- 	.iomap_begin = fuse_lib_iomap_begin,
- 	.iomap_end = fuse_lib_iomap_end,
- 	.iomap_ioend = fuse_lib_iomap_ioend,
+ 	uint64_t unknown_flags = want & (~capable);
+@@ -3627,6 +3722,7 @@ static struct {
+ 	[FUSE_COPY_FILE_RANGE] = { do_copy_file_range, "COPY_FILE_RANGE" },
+ 	[FUSE_LSEEK]	   = { do_lseek,       "LSEEK"	     },
+ 	[FUSE_SYNCFS]	   = { do_syncfs,	"SYNCFS"     },
++	[FUSE_STATX]	   = { do_statx,       "STATX"	     },
+ 	[FUSE_IOMAP_CONFIG]= { do_iomap_config, "IOMAP_CONFIG" },
+ 	[FUSE_IOMAP_BEGIN] = { do_iomap_begin,	"IOMAP_BEGIN" },
+ 	[FUSE_IOMAP_END]   = { do_iomap_end,	"IOMAP_END" },
+@@ -3686,6 +3782,7 @@ static struct {
+ 	[FUSE_COPY_FILE_RANGE]	= { _do_copy_file_range, "COPY_FILE_RANGE" },
+ 	[FUSE_LSEEK]		= { _do_lseek,		"LSEEK" },
+ 	[FUSE_SYNCFS]		= { _do_syncfs,		"SYNCFS" },
++	[FUSE_STATX]		= { _do_statx,		"STATX" },
+ 	[FUSE_IOMAP_CONFIG]	= { _do_iomap_config,	"IOMAP_CONFIG" },
+ 	[FUSE_IOMAP_BEGIN]	= { _do_iomap_begin,	"IOMAP_BEGIN" },
+ 	[FUSE_IOMAP_END]	= { _do_iomap_end,	"IOMAP_END" },
+diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
+index dc9fa2428b5325..a67b1802770335 100644
+--- a/lib/fuse_versionscript
++++ b/lib/fuse_versionscript
+@@ -223,6 +223,8 @@ FUSE_3.18 {
+ 		fuse_reply_iomap_config;
+ 		fuse_lowlevel_notify_iomap_upsert;
+ 		fuse_lowlevel_notify_iomap_inval;
++
++		fuse_reply_statx;
+ } FUSE_3.17;
+ 
+ # Local Variables:
 
 
