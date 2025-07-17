@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-55332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB9EB09818
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7885DB09819
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3D273A5483
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:32:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9A94A37C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12042690ED;
-	Thu, 17 Jul 2025 23:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A77E23FC4C;
+	Thu, 17 Jul 2025 23:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pS++2BdW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHFWyyhY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3865F2451C8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 23:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D756524169A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 23:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795062; cv=none; b=n5GC+suSvNJAZT2Ry74QDe7fkqMVXSNydl0lJN2l4O5ECKvm2bfJkD7wy7QOrYGkk+/iHChOKLaWpLvVwJU4Xs1x38Kl9Y8ORG677YJx/VuX1ZGlBNItvxV8uqVAYdA091AiuPK7PY2YmeHn7ri45QQ2pkSNYL5amShpjexvaLQ=
+	t=1752795077; cv=none; b=ClqD/bGfkAAJQszfkE0e1mdj2w/MbkU5Y+2XXAzm4c50MJ0C8kja8lnUS5nXQ5VrqcxN3HFHhfzupSv/pQIfddjkaasAGRTgzWDmyZSy+qLpBGaZ296DIFtMaa24LaPtm8TOAoQ0g284m0N4/q84sNjv6Fffc4oAJUOtRxau0Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795062; c=relaxed/simple;
-	bh=TcLybbdhWaoTL3fy+gsMg0L6r+W6o9oN+39bCSLKm1w=;
+	s=arc-20240116; t=1752795077; c=relaxed/simple;
+	bh=WIZtdjUL+al/tqXsu2ixGFzZU2wvi8OnN82UeMSCbkc=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kVZFJL70Qm5nFTwy+wc3QrEo4ihfPfzqT1TAQt9hxpdGsSa4p6EELRVMP1lhh2E+2YXwuk2wkpwIQFGVgFfSTqavP5EAE5Zk3Zg1iNVG3sLUYcHV9iJUtLIfVGEa6beaTy3r9JIGlPn6IiRjMtBD2bryZbIbmuPoNEPzMWEvmsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pS++2BdW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14749C4CEE3;
-	Thu, 17 Jul 2025 23:31:02 +0000 (UTC)
+	 MIME-Version:Content-Type; b=bEvuYpVnLDRzpLAF81290OI/U9+L7LkAD1PemMS5+n2Qwj7x87WrvmeMuM9ES7GdQ7NNGy7VtladHIT/ke2xvtC4lsO6qYV4+sdokfQjBg6TYQUWwZNTkFTv4yEpyL6+5BskwtfIPVpDd4nBR+Fve1+5gXO93fylgs6CJ/6LB70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHFWyyhY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B26A3C4CEE3;
+	Thu, 17 Jul 2025 23:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752795062;
-	bh=TcLybbdhWaoTL3fy+gsMg0L6r+W6o9oN+39bCSLKm1w=;
+	s=k20201202; t=1752795077;
+	bh=WIZtdjUL+al/tqXsu2ixGFzZU2wvi8OnN82UeMSCbkc=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=pS++2BdWAGYDgCbTQPqEblwG2k5PhyU58nTbZK2ClUOmqtI5B46uhbxZg0TociW9Q
-	 3skF+aOgb3lGcc4Mpu4s0hh9RGtqxRxlVfWq8UWASHGRGJ+TP27tLaTy5Dnr9qmDAF
-	 aqXHxPEQfRHTsDkvBeEESH5FvvcHrI4/V00Iblj9nNWY7Y6ny7FPNmubO7jbluqUlP
-	 RdKby+O23KShl/aplZbAyLcqog+ux8Esx8F4gdRF3gidUlYNEcW5WPLPqClkFZkm3d
-	 +n+dFoVfCBlMF9EILbUSdxsT1K+oWK3QBUA7kRoUk1+Cx8+KC4+Wynt0ZIMXN7iJU7
-	 QrZ1mDVcPHYyA==
-Date: Thu, 17 Jul 2025 16:31:01 -0700
-Subject: [PATCH 11/13] fuse: query filesystem geometry when using iomap
+	b=gHFWyyhY7cpWz2A/qxyIXfCph2NJlds1k/rKiDOVN0aBijbHb+sNg9CIGP3Nf8U3u
+	 FBA2TJcFljsHuHFu0Ve6GvTnwjLW5a+ex5NjZn0abe7+pmV5rEo30NXRcC1pv2C+/S
+	 ewbwBrLrf6VtmqiicUQV16JEcF9GMryjnOjiHwB4DY8giicax2b9BSNAROlK9Zx0OC
+	 Ly2yaM+d2kDQ4lHRi+niRD7fTJlunam+/Mwoejz2nFMfGQJHqbxVLfoZD9n4tjAZTO
+	 dAZFe4Urfjb/4vlt755oWZGTHihS1be5LKM5eiPq3aJ2qmGDU+tDsA05A6nViyscgl
+	 +dsFBW6EjpLzw==
+Date: Thu, 17 Jul 2025 16:31:17 -0700
+Subject: [PATCH 12/13] fuse: implement fadvise for iomap files
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
  miklos@szeredi.hu, bernd@bsbernd.com, joannelkoong@gmail.com
-Message-ID: <175279450173.711291.4593676996499991502.stgit@frogsfrogsfrogs>
+Message-ID: <175279450194.711291.2927492386627016697.stgit@frogsfrogsfrogs>
 In-Reply-To: <175279449855.711291.17231562727952977187.stgit@frogsfrogsfrogs>
 References: <175279449855.711291.17231562727952977187.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,259 +61,84 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add a new upcall to the fuse server so that the kernel can request
-filesystem geometry bits when iomap mode is in use.
+If userspace asks us to perform readahead on a file, take i_rwsem so
+that it can't race with hole punching or writes.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_trace.h      |   48 +++++++++++++++++++++++
- include/uapi/linux/fuse.h |   38 +++++++++++++++++++
- fs/fuse/file_iomap.c      |   92 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 178 insertions(+)
+ fs/fuse/fuse_i.h     |    3 +++
+ fs/fuse/file.c       |    1 +
+ fs/fuse/file_iomap.c |   20 ++++++++++++++++++++
+ 3 files changed, 24 insertions(+)
 
 
-diff --git a/fs/fuse/fuse_trace.h b/fs/fuse/fuse_trace.h
-index 5d9b5a4e93fca5..0078a9ad2a2871 100644
---- a/fs/fuse/fuse_trace.h
-+++ b/fs/fuse/fuse_trace.h
-@@ -58,6 +58,7 @@
- 	EM( FUSE_SYNCFS,		"FUSE_SYNCFS")		\
- 	EM( FUSE_TMPFILE,		"FUSE_TMPFILE")		\
- 	EM( FUSE_STATX,			"FUSE_STATX")		\
-+	EM( FUSE_IOMAP_CONFIG,		"FUSE_IOMAP_CONFIG")	\
- 	EM( FUSE_IOMAP_BEGIN,		"FUSE_IOMAP_BEGIN")	\
- 	EM( FUSE_IOMAP_END,		"FUSE_IOMAP_END")	\
- 	EM( FUSE_IOMAP_IOEND,		"FUSE_IOMAP_IOEND")	\
-@@ -198,6 +199,14 @@ TRACE_DEFINE_ENUM(FUSE_I_IOMAP_FILEIO);
- 	{ IOMAP_IOEND_BOUNDARY,			"boundary" }, \
- 	{ IOMAP_IOEND_DIRECT,			"direct" }
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 136b9e5aabaf51..5fba84c75f4a64 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1714,6 +1714,8 @@ int fuse_iomap_flush_unmap_range(struct inode *inode, loff_t pos,
  
-+#define FUSE_IOMAP_CONFIG_STRINGS \
-+	{ FUSE_IOMAP_CONFIG_SID,		"sid" }, \
-+	{ FUSE_IOMAP_CONFIG_UUID,		"uuid" }, \
-+	{ FUSE_IOMAP_CONFIG_BLOCKSIZE,		"blocksize" }, \
-+	{ FUSE_IOMAP_CONFIG_MAX_LINKS,		"max_links" }, \
-+	{ FUSE_IOMAP_CONFIG_TIME,		"time" }, \
-+	{ FUSE_IOMAP_CONFIG_MAXBYTES,		"maxbytes" }
+ int fuse_dev_ioctl_iomap_support(struct file *file,
+ 				 struct fuse_iomap_support __user *argp);
 +
- TRACE_EVENT(fuse_iomap_begin,
- 	TP_PROTO(const struct inode *inode, loff_t pos, loff_t count,
- 		 unsigned opflags),
-@@ -1184,6 +1193,45 @@ TRACE_EVENT(fuse_iomap_fallocate,
- 		  __entry->isize, __entry->mode, __entry->offset,
- 		  __entry->length, __entry->newsize)
- );
-+
-+TRACE_EVENT(fuse_iomap_config,
-+	TP_PROTO(const struct fuse_mount *fm,
-+		 const struct fuse_iomap_config_out *outarg),
-+	TP_ARGS(fm, outarg),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,			connection)
-+
-+		__field(uint32_t,		flags)
-+		__field(uint32_t,		blocksize)
-+		__field(uint32_t,		max_links)
-+		__field(uint32_t,		time_gran)
-+
-+		__field(int64_t,		time_min)
-+		__field(int64_t,		time_max)
-+		__field(int64_t,		maxbytes)
-+		__field(uint8_t,		uuid_len)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->connection	=	fm->fc->dev;
-+		__entry->flags		=	outarg->flags;
-+		__entry->blocksize	=	outarg->s_blocksize;
-+		__entry->max_links	=	outarg->s_max_links;
-+		__entry->time_gran	=	outarg->s_time_gran;
-+		__entry->time_min	=	outarg->s_time_min;
-+		__entry->time_max	=	outarg->s_time_max;
-+		__entry->maxbytes	=	outarg->s_maxbytes;
-+		__entry->uuid_len	=	outarg->s_uuid_len;
-+	),
-+
-+	TP_printk("connection %u flags (%s) blocksize 0x%x max_links %u time_gran %u time_min %lld time_max %lld maxbytes 0x%llx uuid_len %u",
-+		  __entry->connection,
-+		  __print_flags(__entry->flags, "|", FUSE_IOMAP_CONFIG_STRINGS),
-+		  __entry->blocksize, __entry->max_links, __entry->time_gran,
-+		  __entry->time_min, __entry->time_max, __entry->maxbytes,
-+		  __entry->uuid_len)
-+);
- #endif /* CONFIG_FUSE_IOMAP */
++int fuse_iomap_fadvise(struct file *file, loff_t start, loff_t end, int advice);
+ #else
+ # define fuse_iomap_enabled(...)		(false)
+ # define fuse_has_iomap(...)			(false)
+@@ -1742,6 +1744,7 @@ int fuse_dev_ioctl_iomap_support(struct file *file,
+ # define fuse_iomap_fallocate(...)		(-ENOSYS)
+ # define fuse_iomap_flush_unmap_range(...)	(-ENOSYS)
+ # define fuse_dev_ioctl_iomap_support(...)	(-EOPNOTSUPP)
++# define fuse_iomap_fadvise			NULL
+ #endif
  
- #endif /* _TRACE_FUSE_H */
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index cd484de60a7c09..2aac5a0c4cef0a 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -242,6 +242,7 @@
-  *  - add FUSE_DEV_IOC_IOMAP_DEV_ADD to configure block devices for iomap
-  *  - add FUSE_IOMAP_DIRECTIO/FUSE_ATTR_IOMAP_DIRECTIO for direct I/O support
-  *  - add FUSE_IOMAP_FILEIO/FUSE_ATTR_IOMAP_FILEIO for buffered I/O support
-+ *  - add FUSE_IOMAP_CONFIG so the fuse server can configure more fs geometry
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -676,6 +677,7 @@ enum fuse_opcode {
- 	FUSE_TMPFILE		= 51,
- 	FUSE_STATX		= 52,
- 
-+	FUSE_IOMAP_CONFIG	= 4092,
- 	FUSE_IOMAP_IOEND	= 4093,
- 	FUSE_IOMAP_BEGIN	= 4094,
- 	FUSE_IOMAP_END		= 4095,
-@@ -1424,4 +1426,40 @@ struct fuse_iomap_ioend_in {
- 	uint32_t reserved1;	/* zero */
+ #endif /* _FS_FUSE_I_H */
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 207836e2e09cc4..78e776878427e3 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -3236,6 +3236,7 @@ static const struct file_operations fuse_file_operations = {
+ 	.poll		= fuse_file_poll,
+ 	.fallocate	= fuse_file_fallocate,
+ 	.copy_file_range = fuse_copy_file_range,
++	.fadvise	= fuse_iomap_fadvise,
  };
  
-+struct fuse_iomap_config_in {
-+	uint64_t flags;		/* zero for now */
-+	int64_t maxbytes;	/* maximum supported file size */
-+};
-+
-+/* Which fields are set in fuse_iomap_config_out? */
-+#define FUSE_IOMAP_CONFIG_SID		(1 << 0ULL)
-+#define FUSE_IOMAP_CONFIG_UUID		(1 << 1ULL)
-+#define FUSE_IOMAP_CONFIG_BLOCKSIZE	(1 << 2ULL)
-+#define FUSE_IOMAP_CONFIG_MAX_LINKS	(1 << 3ULL)
-+#define FUSE_IOMAP_CONFIG_TIME		(1 << 4ULL)
-+#define FUSE_IOMAP_CONFIG_MAXBYTES	(1 << 5ULL)
-+
-+struct fuse_iomap_config_out {
-+	uint64_t flags;		/* FUSE_IOMAP_CONFIG_* */
-+
-+	char s_id[32];		/* Informational name */
-+	char s_uuid[16];	/* UUID */
-+
-+	uint8_t s_uuid_len;	/* length of s_uuid */
-+
-+	uint8_t s_pad[3];	/* must be zeroes */
-+
-+	uint32_t s_blocksize;	/* fs block size */
-+	uint32_t s_max_links;	/* max hard links */
-+
-+	/* Granularity of c/m/atime in ns (cannot be worse than a second) */
-+	uint32_t s_time_gran;
-+
-+	/* Time limits for c/m/atime in seconds */
-+	int64_t s_time_min;
-+	int64_t s_time_max;
-+
-+	int64_t s_maxbytes;	/* max file size */
-+};
-+
- #endif /* _LINUX_FUSE_H */
+ static const struct address_space_operations fuse_file_aops  = {
 diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-index 673647ddda0ccd..5253f7ef88c110 100644
+index 5253f7ef88c110..3f6e0496c4744b 100644
 --- a/fs/fuse/file_iomap.c
 +++ b/fs/fuse/file_iomap.c
-@@ -575,12 +575,104 @@ static struct fuse_iomap_dev *fuse_iomap_dev_alloc(struct file *file)
- 	return fb;
+@@ -8,6 +8,7 @@
+ #include <linux/iomap.h>
+ #include <linux/pagemap.h>
+ #include <linux/falloc.h>
++#include <linux/fadvise.h>
+ 
+ static bool __read_mostly enable_iomap =
+ #if IS_ENABLED(CONFIG_FUSE_IOMAP_BY_DEFAULT)
+@@ -1831,3 +1832,22 @@ int fuse_dev_ioctl_iomap_support(struct file *file,
+ 		return -EFAULT;
+ 	return 0;
  }
- 
-+#define FUSE_IOMAP_CONFIG_ALL (FUSE_IOMAP_CONFIG_SID | \
-+			       FUSE_IOMAP_CONFIG_UUID | \
-+			       FUSE_IOMAP_CONFIG_BLOCKSIZE | \
-+			       FUSE_IOMAP_CONFIG_MAX_LINKS | \
-+			       FUSE_IOMAP_CONFIG_TIME | \
-+			       FUSE_IOMAP_CONFIG_MAXBYTES)
 +
-+static int fuse_iomap_config(struct fuse_mount *fm)
++int fuse_iomap_fadvise(struct file *file, loff_t start, loff_t end, int advice)
 +{
-+	struct fuse_iomap_config_in inarg = {
-+		.maxbytes = MAX_LFS_FILESIZE,
-+	};
-+	struct fuse_iomap_config_out outarg = { };
-+	FUSE_ARGS(args);
-+	struct super_block *sb = fm->sb;
-+	int err;
++	struct inode *inode = file_inode(file);
++	bool needlock = advice == POSIX_FADV_WILLNEED &&
++			fuse_has_iomap_fileio(inode);
++	int ret;
 +
-+	args.opcode = FUSE_IOMAP_CONFIG;
-+	args.nodeid = 0;
-+	args.in_numargs = 1;
-+	args.in_args[0].size = sizeof(inarg);
-+	args.in_args[0].value = &inarg;
-+	args.out_numargs = 1;
-+	args.out_args[0].size = sizeof(outarg);
-+	args.out_args[0].value = &outarg;
-+	args.force = true;
-+	args.nocreds = true;
-+	err = fuse_simple_request(fm, &args);
-+	if (err == -ENOSYS)
-+		return 0;
-+	if (err)
-+		return err;
-+
-+	trace_fuse_iomap_config(fm, &outarg);
-+
-+	if (outarg.flags & ~FUSE_IOMAP_CONFIG_ALL)
-+		return -EINVAL;
-+
-+	if (outarg.s_uuid_len > sizeof(outarg.s_uuid))
-+		return -EINVAL;
-+
-+	if (memchr_inv(outarg.s_pad, 0, sizeof(outarg.s_pad)))
-+		return -EINVAL;
-+
-+	if (outarg.flags & FUSE_IOMAP_CONFIG_BLOCKSIZE) {
-+		if (sb->s_bdev) {
-+#ifdef CONFIG_BLOCK
-+			if (!sb_set_blocksize(sb, outarg.s_blocksize))
-+				return -EINVAL;
-+#else
-+			/*
-+			 * XXX: how do we have a bdev filesystem without
-+			 * CONFIG_BLOCK???
-+			 */
-+			return -EINVAL;
-+#endif
-+		} else {
-+			sb->s_blocksize = outarg.s_blocksize;
-+			sb->s_blocksize_bits = blksize_bits(outarg.s_blocksize);
-+		}
-+	}
-+
-+	if (outarg.flags & FUSE_IOMAP_CONFIG_SID)
-+		memcpy(sb->s_id, outarg.s_id, sizeof(sb->s_id));
-+
-+	if (outarg.flags & FUSE_IOMAP_CONFIG_UUID) {
-+		memcpy(&sb->s_uuid, outarg.s_uuid, outarg.s_uuid_len);
-+		sb->s_uuid_len = outarg.s_uuid_len;
-+	}
-+
-+	if (outarg.flags & FUSE_IOMAP_CONFIG_MAX_LINKS)
-+		sb->s_max_links = outarg.s_max_links;
-+
-+	if (outarg.flags & FUSE_IOMAP_CONFIG_TIME) {
-+		sb->s_time_gran = outarg.s_time_gran;
-+		sb->s_time_min = outarg.s_time_min;
-+		sb->s_time_max = outarg.s_time_max;
-+	}
-+
-+	if (outarg.flags & FUSE_IOMAP_CONFIG_MAXBYTES)
-+		sb->s_maxbytes = outarg.s_maxbytes;
-+
-+	return 0;
++	/*
++	 * Operations creating pages in page cache need protection from hole
++	 * punching and similar ops
++	 */
++	if (needlock)
++		inode_lock_shared(inode);
++	ret = generic_fadvise(file, start, end, advice);
++	if (needlock)
++		inode_unlock_shared(inode);
++	return ret;
 +}
-+
- bool fuse_iomap_fill_super(struct fuse_mount *fm)
- {
- 	struct fuse_conn *fc = fm->fc;
- 	struct super_block *sb = fm->sb;
- 	int res;
- 
-+	res = fuse_iomap_config(fm);
-+	if (res) {
-+		printk(KERN_ERR "%s: could not configure iomap, err=%d",
-+		       sb->s_id, res);
-+		return false;
-+	}
-+
- 	if (sb->s_bdev) {
- 		/*
- 		 * Try to install s_bdev as the first iomap device, if this
 
 
