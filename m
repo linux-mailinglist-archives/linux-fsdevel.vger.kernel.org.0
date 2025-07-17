@@ -1,65 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-55196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF688B0815D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 02:25:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FD7B08192
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 02:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4DCA4A7084
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 00:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6B31C28729
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 00:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B25F64A8F;
-	Thu, 17 Jul 2025 00:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E7F143C61;
+	Thu, 17 Jul 2025 00:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fe3DokBH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OR14Cmbo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0231A288;
-	Thu, 17 Jul 2025 00:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14D8273FE;
+	Thu, 17 Jul 2025 00:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752711889; cv=none; b=WG4u2eiGHTLCyWMGjGrs6PcBM1b7IvVQbIeWdoGBeIeQjPm8xp5AdoCzRiVd3I7HX5c2kXAIBYzOzzdSqljTcrIEuR6lCxEDtEiE4off4r575Bkav+UdbnOf3dfYT7Jl2C7q38E1dfFNovnVAwgkTMYNM+/AAI1bgavkgCphN7s=
+	t=1752712976; cv=none; b=lwdayvY1Et6GiFJy5vdRyh0V0v+C8gwschBUr/iN0FKg0/XgrUJ7jQStm32LLJOieQC5wFTtEUa610JN3UwGnuKYL5rgDc/Z5msjk67sof5Rc77g9H806rxG7CNbwV6n1zeaCqOKXyII6sNbfgZnc22qDN+kbdQg2BSgtC3yF8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752711889; c=relaxed/simple;
-	bh=5gJmgbTRrQMfVWOy1sX72w6ivNAjJeQUJjNgPHr1Dck=;
+	s=arc-20240116; t=1752712976; c=relaxed/simple;
+	bh=a1a2m+qTgsqOTVd7tUMA7nLBD9q1KSnyxnULxLgpT04=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hR1iOC7tkftsAe9KnCgCd06qHFPZY7Sy2Vz9uwjfaf7PcfaPIAFpg6ct+S0o7SKsfwwJsmKvyxNjoiblkcJzdF2uiSQQRWuHl2H9wxpAmuaQTb0OPJ0yJ4xf4Bhk5oFdaBeVUMOyCdiycuioQG+FttiAwMYqpNiFY/fFoysu398=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fe3DokBH; arc=none smtp.client-ip=192.198.163.17
+	 In-Reply-To:Content-Type; b=r/sLzXFIBRoBF+y7J8sxxyTt9nSnS4nHwl9ItK8nSO7AXqjZTzpntMFqNP95bH4eU/aYLqIrKfxpv8cogXDu08/pD4tvmt4FRPQ2CZAf05qS5Y5BfDyTIwHcCouE4Hq6kswKxhQrv0UdSWtZi/U5G2k9Wc/gIze5oM1BsFxJ+b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OR14Cmbo; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752711887; x=1784247887;
+  t=1752712974; x=1784248974;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=5gJmgbTRrQMfVWOy1sX72w6ivNAjJeQUJjNgPHr1Dck=;
-  b=fe3DokBHYcocJ9s14QzsMHKIU6c/0FV1pX20ZnnoYV8+nE8SWJY2MexL
-   WGBA32C/sQcrklEJfJ7tlQ3F+u3eyRi/iAiPPPKWK7BH1bWnEB1x+Rp0n
-   hvovFKc3kgEFcekcMa0wlai/vBA+PF9l/TFsTUmKqR4gb2dqUMYw/3Dk7
-   DgZz1eltlMfXkVsikvwUvOm6ECBm597jgxc8QrVWHI1i5YrbiQOY8huIA
-   yJxpk+CukM2NuXPv3JnKSdvxRQzYBGZJJfOI2q/XktSAlucOqWpcEYMHn
-   9L7Cs02nbs50lmqjjg0NfQlPT1uJmsWgYkD9PnOGfstRJ5G1KJl9/S9Cm
-   Q==;
-X-CSE-ConnectionGUID: W/2UIa+yQK6fh1LGEud3ww==
-X-CSE-MsgGUID: 0f/tOMzkSgOOU2dU63MIuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54911304"
+  bh=a1a2m+qTgsqOTVd7tUMA7nLBD9q1KSnyxnULxLgpT04=;
+  b=OR14Cmboo/StSDO6u7XNa10GxKG/p1BgVbHgbxnS3hjDRvtwyTum0O9W
+   F84dWHP4bIACKyVeOE+KVJ7sIEFDQggmTHVMDbST59YFbwn/4+GBfKLZK
+   75eRuwY1qMnvObdkkQLS5b5UZACfEyagc/PeJXwVTpU7Rb5iR/7AA557d
+   DqHYFZPUitnVptTHazw84+KriJGOFYw+K4q9TNCUqMUp6Pg3UIIqJ++G2
+   L6bEnIn+0n2k+w9mYb3N+i2d1ixxlc9GHwbM0j23Gwy/qtLuigKTxLI7j
+   S4G+NdDjW/TH0LgupKqVlCm+/t2veccT9DtPY1iYMuQDrABMI/YPOpSic
+   g==;
+X-CSE-ConnectionGUID: aJFgo7nYQtmaQ4gKCnw6Sw==
+X-CSE-MsgGUID: 4QUXR7PiTH+Xs//HxNRzxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="55123475"
 X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="54911304"
+   d="scan'208";a="55123475"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 17:24:46 -0700
-X-CSE-ConnectionGUID: EZpvW2tBQRSPAf8btuT1fw==
-X-CSE-MsgGUID: oz9icJBnQB+Fr7++Lp2gSw==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 17:42:54 -0700
+X-CSE-ConnectionGUID: rQa7ZAQtRDqTc7/WqMZ6rw==
+X-CSE-MsgGUID: D3FN+HCrT4uUEFuqsRHt9w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="188593018"
+   d="scan'208";a="188597232"
 Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.111.193]) ([10.125.111.193])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 17:24:44 -0700
-Message-ID: <f4ec25ff-9f7e-464e-ae39-924e810b74c8@intel.com>
-Date: Wed, 16 Jul 2025 17:24:41 -0700
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 17:42:52 -0700
+Message-ID: <622fa915-4e3e-43fd-a6f5-9a2d8bad7925@intel.com>
+Date: Wed, 16 Jul 2025 17:42:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,8 +67,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/7] cxl/acpi: Add background worker to coordinate with
- cxl_mem probe completion
+Subject: Re: [PATCH v5 4/7] cxl/region: Introduce SOFT RESERVED resource
+ removal on region teardown
 To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
  linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
  nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
@@ -91,144 +91,276 @@ Cc: Davidlohr Bueso <dave@stgolabs.net>,
  PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
  Zhijian Li <lizhijian@fujitsu.com>
 References: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250715180407.47426-4-Smita.KoralahalliChannabasappa@amd.com>
+ <20250715180407.47426-5-Smita.KoralahalliChannabasappa@amd.com>
 Content-Language: en-US
 From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250715180407.47426-4-Smita.KoralahalliChannabasappa@amd.com>
+In-Reply-To: <20250715180407.47426-5-Smita.KoralahalliChannabasappa@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 7/15/25 11:04 AM, Smita Koralahalli wrote:
-> Introduce a background worker in cxl_acpi to delay SOFT RESERVE handling
-> until the cxl_mem driver has probed at least one device. This coordination
-> ensures that DAX registration or fallback handling for soft-reserved
-> regions is not triggered prematurely.
+> Reworked from a patch by Alison Schofield <alison.schofield@intel.com>
 > 
-> The worker waits on cxl_wait_queue, which is signaled via
-> cxl_mem_active_inc() during cxl_mem_probe(). Once at least one memory
-> device probe is confirmed, the worker invokes wait_for_device_probe()
-> to allow the rest of the CXL device hierarchy to complete initialization.
+> Previously, when CXL regions were created through autodiscovery and their
+> resources overlapped with SOFT RESERVED ranges, the soft reserved resource
+> remained in place after region teardown. This left the HPA range
+> unavailable for reuse even after the region was destroyed.
 > 
-> Additionally, it also handles initialization order issues where
-> cxl_acpi_probe() may complete before other drivers such as cxl_port or
-> cxl_mem have loaded, especially when cxl_acpi and cxl_port are built-in
-> and cxl_mem is a loadable module. In such cases, using only
-> wait_for_device_probe() is insufficient, as it may return before all
-> relevant probes are registered.
+> Enhance the logic to reliably remove SOFT RESERVED resources associated
+> with a region, regardless of alignment or hierarchy in the iomem tree.
 > 
-> While region creation happens in cxl_port_probe(), waiting on
-> cxl_mem_active() would be sufficient as cxl_mem_probe() can only succeed
-> after the port hierarchy is in place. Furthermore, since cxl_mem depends
-> on cxl_pci, this also guarantees that cxl_pci has loaded by the time the
-> wait completes.
-> 
-> As cxl_mem_active() infrastructure already exists for tracking probe
-> activity, cxl_acpi can use it without introducing new coordination
-> mechanisms.
-> 
-> Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+> Link: https://lore.kernel.org/linux-cxl/29312c0765224ae76862d59a17748c8188fb95f1.1692638817.git.alison.schofield@intel.com/
+> Co-developed-by: Alison Schofield <alison.schofield@intel.com>
+> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
 > Co-developed-by: Terry Bowman <terry.bowman@amd.com>
 > Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 > Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 > ---
->  drivers/cxl/acpi.c             | 18 ++++++++++++++++++
->  drivers/cxl/core/probe_state.c |  5 +++++
->  drivers/cxl/cxl.h              |  2 ++
->  3 files changed, 25 insertions(+)
+>  drivers/cxl/acpi.c        |   2 +
+>  drivers/cxl/core/region.c | 124 ++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h         |   2 +
+>  include/linux/ioport.h    |   1 +
+>  kernel/resource.c         |  34 +++++++++++
+>  5 files changed, 163 insertions(+)
 > 
 > diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index ca06d5acdf8f..3a27289e669b 100644
+> index 3a27289e669b..9eb8a9587dee 100644
 > --- a/drivers/cxl/acpi.c
 > +++ b/drivers/cxl/acpi.c
-> @@ -823,6 +823,20 @@ static int pair_cxl_resource(struct device *dev, void *data)
+> @@ -829,6 +829,8 @@ static void cxl_softreserv_mem_work_fn(struct work_struct *work)
+>  		pr_debug("Timeout waiting for cxl_mem probing");
+>  
+>  	wait_for_device_probe();
+> +
+> +	cxl_region_softreserv_update();
+>  }
+>  static DECLARE_WORK(cxl_sr_work, cxl_softreserv_mem_work_fn);
+>  
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 6e5e1460068d..95951a1f1cab 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3486,6 +3486,130 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_add_to_region, "CXL");
+>  
+> +static int add_soft_reserved(resource_size_t start, resource_size_t len,
+> +			     unsigned long flags)
+> +{
+> +	struct resource *res = kzalloc(sizeof(*res), GFP_KERNEL);
+> +	int rc;
+> +
+> +	if (!res)
+> +		return -ENOMEM;
+> +
+> +	*res = DEFINE_RES_NAMED_DESC(start, len, "Soft Reserved",
+> +				     flags | IORESOURCE_MEM,
+> +				     IORES_DESC_SOFT_RESERVED);
+> +
+> +	rc = insert_resource(&iomem_resource, res);
+> +	if (rc) {
+> +		kfree(res);
+> +		return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void remove_soft_reserved(struct cxl_region *cxlr, struct resource *soft,
+> +				 resource_size_t start, resource_size_t end)
+> +{
+> +	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
+> +	resource_size_t new_start, new_end;
+> +	int rc;
+> +
+> +	guard(mutex)(&cxlrd->range_lock);
+> +
+> +	if (soft->start == start && soft->end == end) {
+> +		/*
+> +		 * Exact alignment at both start and end. The entire region is
+> +		 * removed below.
+> +		 */
+> +
+> +	} else if (soft->start == start || soft->end == end) {
+> +		/* Aligns at either resource start or end */
+> +		if (soft->start == start) {
+> +			new_start = end + 1;
+> +			new_end = soft->end;
+> +		} else {
+> +			new_start = soft->start;
+> +			new_end = start - 1;
+> +		}
+> +
+> +		/*
+> +		 * Reuse original flags as the trimmed portion retains the same
+> +		 * memory type and access characteristics.
+> +		 */
+> +		rc = add_soft_reserved(new_start, new_end - new_start + 1,
+> +				       soft->flags);
+> +		if (rc)
+> +			dev_warn(&cxlr->dev,
+> +				 "cannot add new soft reserved resource at %pa\n",
+> +				 &new_start);
+> +
+> +	} else {
+> +		/* No alignment - Split into two new soft reserved regions */
+> +		new_start = soft->start;
+> +		new_end = soft->end;
+> +
+> +		rc = add_soft_reserved(new_start, start - new_start,
+> +				       soft->flags);
+> +		if (rc)
+> +			dev_warn(&cxlr->dev,
+> +				 "cannot add new soft reserved resource at %pa\n",
+> +				 &new_start);
+> +
+> +		rc = add_soft_reserved(end + 1, new_end - end, soft->flags);
+> +		if (rc)
+> +			dev_warn(&cxlr->dev,
+> +				 "cannot add new soft reserved resource at %pa + 1\n",
+> +				 &end);
+> +	}
+> +
+> +	rc = remove_resource(soft);
+> +	if (rc)
+> +		dev_warn(&cxlr->dev, "cannot remove soft reserved resource %pr\n",
+> +			 soft);
+> +}
+> +
+> +static int __cxl_region_softreserv_update(struct resource *soft,
+> +					  void *_cxlr)
+> +{
+> +	struct cxl_region *cxlr = _cxlr;
+> +	struct resource *res = cxlr->params.res;
+> +
+> +	/* Skip non-intersecting soft-reserved regions */
+> +	if (soft->end < res->start || soft->start > res->end)
+> +		return 0;
+> +
+> +	soft = normalize_resource(soft);
+> +	if (!soft)
+> +		return -EINVAL;
+> +
+> +	remove_soft_reserved(cxlr, soft, res->start, res->end);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_region_softreserv_update_cb(struct device *dev, void *data)
+> +{
+> +	struct cxl_region *cxlr;
+> +
+> +	if (!is_cxl_region(dev))
+> +		return 0;
+> +
+> +	cxlr = to_cxl_region(dev);
+> +
+> +	walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED, IORESOURCE_MEM, 0, -1,
+> +			    cxlr, __cxl_region_softreserv_update);
+
+No checking return value of walk_iomem_res_desc()?
+
+> +
+> +	return 0;
+> +}
+> +
+> +void cxl_region_softreserv_update(void)
+> +{
+> +	bus_for_each_dev(&cxl_bus_type, NULL, NULL,
+> +			 cxl_region_softreserv_update_cb);
+
+No checking return value of bus_for_each_dev()? Is it ok to ignore all errors?
+
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_region_softreserv_update, "CXL");
+> +
+>  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa)
+>  {
+>  	struct cxl_region_ref *iter;
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 3117136f0208..9f173467e497 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -862,6 +862,7 @@ struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
+>  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
+>  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
+>  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
+> +void cxl_region_softreserv_update(void);
+>  #else
+>  static inline bool is_cxl_pmem_region(struct device *dev)
+>  {
+> @@ -884,6 +885,7 @@ static inline u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint,
+>  {
 >  	return 0;
 >  }
+> +static inline void cxl_region_softreserv_update(void) { }
+>  #endif
 >  
-> +static void cxl_softreserv_mem_work_fn(struct work_struct *work)
-> +{
-> +	if (!wait_event_timeout(cxl_wait_queue, cxl_mem_active(), 30 * HZ))
-> +		pr_debug("Timeout waiting for cxl_mem probing");
-> +
-> +	wait_for_device_probe();
-> +}
-> +static DECLARE_WORK(cxl_sr_work, cxl_softreserv_mem_work_fn);
-> +
-> +static void cxl_softreserv_mem_update(void)
-> +{
-> +	schedule_work(&cxl_sr_work);
-> +}
-> +
->  static int cxl_acpi_probe(struct platform_device *pdev)
->  {
->  	int rc = 0;
-> @@ -903,6 +917,9 @@ static int cxl_acpi_probe(struct platform_device *pdev)
->  	cxl_bus_rescan();
+>  void cxl_endpoint_parse_cdat(struct cxl_port *port);
+> diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+> index e8b2d6aa4013..8693e095d32b 100644
+> --- a/include/linux/ioport.h
+> +++ b/include/linux/ioport.h
+> @@ -233,6 +233,7 @@ struct resource_constraint {
+>  extern struct resource ioport_resource;
+>  extern struct resource iomem_resource;
 >  
->  out:
-> +	/* Update SOFT RESERVE resources that intersect with CXL regions */
-> +	cxl_softreserv_mem_update();
+> +extern struct resource *normalize_resource(struct resource *res);
+>  extern struct resource *request_resource_conflict(struct resource *root, struct resource *new);
+>  extern int request_resource(struct resource *root, struct resource *new);
+>  extern int release_resource(struct resource *new);
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index 8d3e6ed0bdc1..3d8dc2a59cb2 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -50,6 +50,40 @@ EXPORT_SYMBOL(iomem_resource);
+>  
+>  static DEFINE_RWLOCK(resource_lock);
+>  
+> +/*
+> + * normalize_resource
+> + *
+> + * The walk_iomem_res_desc() returns a copy of a resource, not a reference
+> + * to the actual resource in the iomem_resource tree. As a result,
+> + * __release_resource() which relies on pointer equality will fail.
+> + *
+> + * This helper walks the children of the resource's parent to find and
+> + * return the original resource pointer that matches the given resource's
+> + * start and end addresses.
+> + *
+> + * Return: Pointer to the matching original resource in iomem_resource, or
+> + *         NULL if not found or invalid input.
+> + */
+> +struct resource *normalize_resource(struct resource *res)
+> +{
+> +	if (!res || !res->parent)
+> +		return NULL;
+> +
+> +	read_lock(&resource_lock);
 
-Can you please squash 1/7 with this patch since both are fairly small? Otherwise it leaves the reviewer wonder what the changes in 1/7 would result in.
+May as well go with below for consistency:
+guard(read_lock)(&resource_lock);
 
 DJ
 
+> +	for (struct resource *res_iter = res->parent->child; res_iter != NULL;
+> +	     res_iter = res_iter->sibling) {
+> +		if ((res_iter->start == res->start) &&
+> +		    (res_iter->end == res->end)) {
+> +			read_unlock(&resource_lock);
+> +			return res_iter;
+> +		}
+> +	}
 > +
->  	return rc;
->  }
->  
-> @@ -934,6 +951,7 @@ static int __init cxl_acpi_init(void)
->  
->  static void __exit cxl_acpi_exit(void)
->  {
-> +	cancel_work_sync(&cxl_sr_work);
->  	platform_driver_unregister(&cxl_acpi_driver);
->  	cxl_bus_drain();
->  }
-> diff --git a/drivers/cxl/core/probe_state.c b/drivers/cxl/core/probe_state.c
-> index 5ba4b4de0e33..3089b2698b32 100644
-> --- a/drivers/cxl/core/probe_state.c
-> +++ b/drivers/cxl/core/probe_state.c
-> @@ -2,9 +2,12 @@
->  /* Copyright(c) 2022 Intel Corporation. All rights reserved. */
->  #include <linux/atomic.h>
->  #include <linux/export.h>
-> +#include <linux/wait.h>
->  #include "cxlmem.h"
->  
->  static atomic_t mem_active;
-> +DECLARE_WAIT_QUEUE_HEAD(cxl_wait_queue);
-> +EXPORT_SYMBOL_NS_GPL(cxl_wait_queue, "CXL");
->  
->  bool cxl_mem_active(void)
->  {
-> @@ -13,10 +16,12 @@ bool cxl_mem_active(void)
->  
->  	return false;
->  }
-> +EXPORT_SYMBOL_NS_GPL(cxl_mem_active, "CXL");
->  
->  void cxl_mem_active_inc(void)
->  {
->  	atomic_inc(&mem_active);
-> +	wake_up(&cxl_wait_queue);
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_mem_active_inc, "CXL");
->  
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 3f1695c96abc..3117136f0208 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -903,6 +903,8 @@ void cxl_coordinates_combine(struct access_coordinate *out,
->  
->  bool cxl_endpoint_decoder_reset_detected(struct cxl_port *port);
->  
-> +extern wait_queue_head_t cxl_wait_queue;
+> +	read_unlock(&resource_lock);
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(normalize_resource, "CXL");
 > +
 >  /*
->   * Unit test builds overrides this to __weak, find the 'strong' version
->   * of these symbols in tools/testing/cxl/.
+>   * Return the next node of @p in pre-order tree traversal.  If
+>   * @skip_children is true, skip the descendant nodes of @p in
 
 
