@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-55386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8436B09877
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:45:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4725B0987C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96485A2937
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 889361C465BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F48825D917;
-	Thu, 17 Jul 2025 23:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A15E247284;
+	Thu, 17 Jul 2025 23:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjBO1kHD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PN2G1ymn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09446246793;
-	Thu, 17 Jul 2025 23:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F2A23FC4C;
+	Thu, 17 Jul 2025 23:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795908; cv=none; b=WWEtZLP79RWyAZbE1qyi0u898WOZD3nTLDGVUTjJthFwutPzUiLBoHOWDe9R0JM08ee+PLQFTEexs8dLwq7rkvr3hG8QnqeEsi26oIlXD7JGzr6+V39ntarRh8SP8SDbw6Da1wGS7lBwBciEphiHyy4aLhQbDEG2M/xIvcUpkjo=
+	t=1752795924; cv=none; b=RSYa7wFx0aeI0QZnPeoFT3iGp2+KwC8r7LxlEeIzEirtTmY/pqScugplqWDfy1UPygeaCjWvSU4KIbhDqR3qgGwaCpFgQ++D/kq+0NgXcNGFOKHMus42puNHhbeQ6CfB1a7lTlDMlCckp/NtCHqAMJQ1vpSf3lai139s7Ocluqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795908; c=relaxed/simple;
-	bh=P0NTt4284QAop+DB9kLz3QRupL5QWs6foHQzGxZHa9M=;
+	s=arc-20240116; t=1752795924; c=relaxed/simple;
+	bh=iwLkr4oHges3cdhq/4LZpn9dEqVs5lsdu0XWOG1DYco=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MOceD9niB48MnKMkOo97cUhLSIog/U1yxnQNmzYDWUXZX20F3rE+qoW/sgH+nyhTH27SBz/E8rA2ZUQmQzeX1uNfKVPFmtYGyIpNkhDRcsWyYmEsRAbq+XV3m6WiU30vIqUVGMa1FWiZbJLcBN8G6cr/gZ9FBGX12YarhUtH5YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjBO1kHD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D60B8C4CEEB;
-	Thu, 17 Jul 2025 23:45:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=q91/+pnSpRsqUuzHS/hXBSVVSB05RzQmkhDbjzIXQKeK0oh9wFEOaMVS/hQ8zNbbjx/lXPbnSiRy1YGsOQfCcRuVv85tJFTtobS1sAOPYMDte+1c3l1MDrJ+xKXUrrkv0p59iE+q0qtjFpEZkT4bsxGBUsD0r/O6k7VRDivi88s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PN2G1ymn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75957C4CEE3;
+	Thu, 17 Jul 2025 23:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752795907;
-	bh=P0NTt4284QAop+DB9kLz3QRupL5QWs6foHQzGxZHa9M=;
+	s=k20201202; t=1752795923;
+	bh=iwLkr4oHges3cdhq/4LZpn9dEqVs5lsdu0XWOG1DYco=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=HjBO1kHDAf5izG61OczfdoHroEO4Sx4fOsoMlgKZQDzANNd4f3vJs5oDszor38CDU
-	 fOTDyx1bmOX93PTvIwhni4oVXlNqyIbPcKnwWzLarRMj4NnAvP0WlqQ2rksSlQMqX9
-	 /oqKAtZ3yq3C/3DNHwgs0ECvoFPNQgn+nbATNqH7jr0Ke34ipCljyZRy0A+SkeXile
-	 ZZr2GXQvOtGDqNApL2i41kahUNyiU0/sQApwDAichyIYneEthCOO0A8DwcjSwwkUPc
-	 nKC7/ysdN20OWIffh8Qkhp4pQ40RK9yuggcpBTqUCZEM3+QR2gybeGD/d6Ui7HwlUa
-	 jd3ecj8CjrzpA==
-Date: Thu, 17 Jul 2025 16:45:07 -0700
-Subject: [PATCH 22/22] fuse2fs: configure block device block size
+	b=PN2G1ymn1dv22oBkYVcLxi4F6iJsKrLaoVSR+F5q+qR2R3yd7RytO78mrNJQVVN9d
+	 lAtCXbKSLBU96TXmoPHo3JDUHVMg07enzQhpoMioLOaiTarleHwu6Y1sAvbUgRUEjE
+	 NIgrepcc0qqTRW9KY+x0LiRnOT2DfW4Zjr0Z11H2/BXNCNrYLewMWn7RIRgoXVxIZe
+	 /PdMsga+o9p2trieWdJY18bLWd8J5rFzuq8DGyG1GG9X4VcAfno2nQRmMADmlQfvGI
+	 xo6xHMetfbDQ4Juo7u7czNibxd7J6YilEYzwxXAzMMwoJVEIEz3WhjfbezocYv/7Lb
+	 Cz6AW7UhyCFKw==
+Date: Thu, 17 Jul 2025 16:45:23 -0700
+Subject: [PATCH 1/1] fuse2fs: enable caching of iomaps
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: joannelkoong@gmail.com, miklos@szeredi.hu, John@groves.net,
  linux-fsdevel@vger.kernel.org, bernd@bsbernd.com, linux-ext4@vger.kernel.org,
  neal@gompa.dev
-Message-ID: <175279461430.715479.13971213588209519937.stgit@frogsfrogsfrogs>
-In-Reply-To: <175279460935.715479.15460687085573767955.stgit@frogsfrogsfrogs>
-References: <175279460935.715479.15460687085573767955.stgit@frogsfrogsfrogs>
+Message-ID: <175279461563.716336.4159682025419490591.stgit@frogsfrogsfrogs>
+In-Reply-To: <175279461545.716336.14157351878342981972.stgit@frogsfrogsfrogs>
+References: <175279461545.716336.14157351878342981972.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,73 +62,50 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Set the blocksize of the block device to the filesystem blocksize.
-This prevents the bdev pagecache from caching file data blocks that
-iomap will read and write directly.  Cache duplication is dangerous.
+Cache the iomaps we generate in the kernel for better performance.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |   40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ misc/fuse2fs.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index b5f665ada36991..d0478af036a25e 100644
+index d0478af036a25e..f863042a4db074 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -5683,6 +5683,42 @@ static off_t fuse2fs_max_size(struct fuse2fs *ff, off_t upper_limit)
- 	return res;
- }
- 
-+/*
-+ * Set the block device's blocksize to the fs blocksize.
-+ *
-+ * This is required to avoid creating uptodate bdev pagecache that aliases file
-+ * data blocks because iomap reads and writes directly to file data blocks.
-+ */
-+static int fuse2fs_set_bdev_blocksize(struct fuse2fs *ff, int fd)
-+{
-+	int blocksize = ff->fs->blocksize;
-+	int set_error;
-+	int ret;
-+
-+	ret = ioctl(fd, BLKBSZSET, &blocksize);
-+	if (!ret)
-+		return 0;
-+
-+	/*
-+	 * Save the original errno so we can report that if the block device
-+	 * blocksize isn't set in an agreeable way.
-+	 */
-+	set_error = errno;
-+
-+	ret = ioctl(fd, BLKBSZGET, &blocksize);
-+	if (ret)
-+		goto out_bad;
-+
-+	if (blocksize > ff->fs->blocksize)
-+		set_error = -EINVAL;
-+
-+	return 0;
-+out_bad:
-+	err_printf(ff, "%s: cannot set blocksize %u: %s\n", __func__,
-+		   blocksize, strerror(set_error));
-+	return -EIO;
-+}
-+
- static errcode_t fuse2fs_iomap_config_devices(struct fuse_context *ctxt,
- 					      struct fuse2fs *ff)
+@@ -5505,6 +5505,7 @@ static int op_iomap_begin(const char *path, uint64_t nodeid, uint64_t attr_ino,
  {
-@@ -5695,6 +5731,10 @@ static errcode_t fuse2fs_iomap_config_devices(struct fuse_context *ctxt,
- 	if (err)
- 		return err;
+ 	struct fuse_context *ctxt = fuse_get_context();
+ 	struct fuse2fs *ff = (struct fuse2fs *)ctxt->private_data;
++	struct fuse_session *se = fuse_get_session(ctxt->fuse);
+ 	struct ext2_inode_large inode;
+ 	ext2_filsys fs;
+ 	errcode_t err;
+@@ -5560,6 +5561,24 @@ static int op_iomap_begin(const char *path, uint64_t nodeid, uint64_t attr_ino,
+ 		}
+ 	}
  
-+	ret = fuse2fs_set_bdev_blocksize(ff, fd);
-+	if (ret)
-+		return ret;
++	/*
++	 * Cache the mapping in the kernel so that we can reuse them for
++	 * subsequent IO.  Note that we have to return NULL mappings to the
++	 * kernel to prompt it to re-try the cache.
++	 */
++	write_iomap->type = FUSE_IOMAP_TYPE_NULL;
++	err = fuse_lowlevel_notify_iomap_upsert(se, nodeid, attr_ino,
++						read_iomap, write_iomap);
++	if (err) {
++		ret = translate_error(fs, attr_ino, err);
++		goto out_unlock;
++	}
 +
- 	ret = fuse_iomap_add_device(se, fd, 0);
- 
- 	dbg_printf(ff, "%s: registering iomap dev fd=%d ret=%d iomap_dev=%u\n",
++	/* Null out the read mapping to encourage a retry. */
++	read_iomap->type = FUSE_IOMAP_TYPE_NULL;
++	read_iomap->dev = FUSE_IOMAP_DEV_NULL;
++	read_iomap->addr = FUSE_IOMAP_NULL_ADDR;
++
+ out_unlock:
+ 	fuse2fs_finish(ff, ret);
+ 	return ret;
 
 
