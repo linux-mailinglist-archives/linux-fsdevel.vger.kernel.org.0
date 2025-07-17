@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-55349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B5DB09823
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AA9B09824
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 01:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A1543A9812
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:35:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F5D3A8C22
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Jul 2025 23:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2741023FC4C;
-	Thu, 17 Jul 2025 23:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA36A24110F;
+	Thu, 17 Jul 2025 23:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulNZkGxi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sk+taIh7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886901FCFF8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 23:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1870B233D85
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Jul 2025 23:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795328; cv=none; b=gpjEFnKci6Lzczzs8lgL/srchYtuzuurQa7ORLcG7oxARMoy9kzkihw+YhjGlAXSmuCou7heKy+iCFBojE+Hjjh/LeARZmvWF+XuHluNzOIgFfiHePoSxm+7Y7FoleFZL31xhjxgEaFt2xT1qRwE0zD8G5edN69KDvqtP2Fb/Ck=
+	t=1752795344; cv=none; b=FPW2UoLxTZ9m8hmJFhvZuaDaUDvkYB9d4Tlk0py+SA5uWO2weXX61SS40T2YMbIxnxakKyrxdL/GQ5n5C1u/Rm+JiSdHMhHOGjISOLBC9JjDgKAwE4DbLKdTD5Wtbxdbqk6gtAhFTEZQcy85AVJMFQ6sQKDN3+Gy3ecFfOR4RTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795328; c=relaxed/simple;
-	bh=n4rSzJAA46wcGTxcE6g0/EXC6xV/IoUZGmkwSup24Yg=;
+	s=arc-20240116; t=1752795344; c=relaxed/simple;
+	bh=zLFBdyUB8Ps/HSe+Xg4w/vOiOGMgpNvnAip73xIfluo=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H4Cj7QebJjrc3HiVvdBy7RTCmAlfRc+HR8MRfKlTf9IQ0NP58Zg48gp+tyeGBWBCiP74qK3kUnTnaA3z74oeBCg/xQQVKiLBhZMR7wrcuTiItiYM2eKTHck9Lzk7d/p5vbhCXEq3ba32SYYZ/XB0YE/zYWX2dkffYIb/ihlb4po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulNZkGxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDCDDC4CEE3;
-	Thu, 17 Jul 2025 23:35:27 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hjZdLThdUVnv80zyekcdAOVDeEKkqqEzZUOn+mpL1Pb+dzMdzHTagWEh2iN0Oliq+ymstzHGiA0CP3rRHkLDdD7yQrjAjYlcm7jdEvTjGlWSMHv8WR2Sb8nbVRvWt6+0XM8LJTwHj7khyQd67hAdkbB6d0+QGtWpTAVleQ0123c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sk+taIh7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A06C4CEEB;
+	Thu, 17 Jul 2025 23:35:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752795328;
-	bh=n4rSzJAA46wcGTxcE6g0/EXC6xV/IoUZGmkwSup24Yg=;
+	s=k20201202; t=1752795343;
+	bh=zLFBdyUB8Ps/HSe+Xg4w/vOiOGMgpNvnAip73xIfluo=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=ulNZkGxi0l4x5TmYx2cDUsmFyM3mwtpeG58OGSclLwwyYAiirylGiWn6GD9Lhu1eI
-	 wClJICjZJCRZPBVwSFKpLUg19AxUWnQHwmX7Ny9Hn0M+ninsOaw63nXS89H3N/jDKf
-	 VufQ8PQfXwDCuCy+oyTtgoPuNwuwWH+VERxnoNVcWcF9FDo8J74/NN69GtgMd/jAue
-	 GelBsu2UP9iXwxF0EEx9rbbN6FMbDakYelMYm0ohaCwKl4Ex3IPHn7sz4a37eiRfVR
-	 7edzqSY4VDeIkExBza56/cxBoqvcV2BL3mIxiRglcatqbD5t484TPyi92WOkIzRXi7
-	 Px+im6FTv/Agw==
-Date: Thu, 17 Jul 2025 16:35:27 -0700
-Subject: [PATCH 04/14] libfuse: add a notification to add a new device to
- iomap
+	b=sk+taIh7PMNn84NL/8g5eiaCw7BQ5J/O4tOIsW/TkjIbaUoF123xMasva5ses1IB4
+	 1zwVF/EH8vdAaK88rW5zLfwf5QxjEfgJm51VIYrz8noWHP6rXhWA1xh7Dhe84dEtdN
+	 J2pqjF/ZLSuBJomXpcjOBLtvkG5m1XD6i8y7bMUnkOSdJ3guGB1IVtjUUvtqxardMr
+	 y/DtfrtnXqAgZfa5HMcbx8FxsBXin/RVQ9EsmrV9m9dHJpD+0WFuzz8MNNQTyGavde
+	 +CHUizdVUrcRsWdeme7mPPw6OnIbtwBGRxtvBVSESP0ryTj/8PvwnPE/mpXewxqX63
+	 pX/wlF0eGM39g==
+Date: Thu, 17 Jul 2025 16:35:43 -0700
+Subject: [PATCH 05/14] libfuse: add iomap ioend low level handler
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, bschubert@ddn.com
 Cc: John@groves.net, joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
  bernd@bsbernd.com, neal@gompa.dev, miklos@szeredi.hu
-Message-ID: <175279459803.714161.8814424637325014212.stgit@frogsfrogsfrogs>
+Message-ID: <175279459821.714161.1192992166087050782.stgit@frogsfrogsfrogs>
 In-Reply-To: <175279459673.714161.10658209239262310420.stgit@frogsfrogsfrogs>
 References: <175279459673.714161.10658209239262310420.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,107 +61,157 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Plumb in the pieces needed to attach block devices to a fuse+iomap mount
-for use with iomap operations.  This enables us to have filesystems
-where the metadata could live somewhere else, but the actual file IO
-goes to locally attached storage.
+Teach the low level library about the iomap ioend handler, which gets
+called by the kernel when we finish a file write that isn't a pure
+overwrite operation.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_kernel.h   |    3 +++
- include/fuse_lowlevel.h |   16 ++++++++++++++++
- lib/fuse_lowlevel.c     |   17 +++++++++++++++++
- lib/fuse_versionscript  |    1 +
- 4 files changed, 37 insertions(+)
+ include/fuse_common.h   |   13 +++++++++++++
+ include/fuse_kernel.h   |   12 ++++++++++++
+ include/fuse_lowlevel.h |   20 ++++++++++++++++++++
+ lib/fuse_lowlevel.c     |   24 +++++++++++++++++++++++-
+ 4 files changed, 68 insertions(+), 1 deletion(-)
 
 
-diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index eb59ff687b2e7d..97ca55f0114b1d 100644
---- a/include/fuse_kernel.h
-+++ b/include/fuse_kernel.h
-@@ -239,6 +239,7 @@
-  *  7.99
-  *  - add FUSE_IOMAP and iomap_{begin,end,ioend} handlers for FIEMAP and
-  *    SEEK_{DATA,HOLE} support
-+ *  - add FUSE_DEV_IOC_IOMAP_DEV_ADD to configure block devices for iomap
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -1136,6 +1137,8 @@ struct fuse_backing_map {
- #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
- 					     struct fuse_backing_map)
- #define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
-+#define FUSE_DEV_IOC_IOMAP_DEV_ADD	_IOW(FUSE_DEV_IOC_MAGIC, 3, \
-+					     struct fuse_backing_map)
- 
- struct fuse_lseek_in {
- 	uint64_t	fh;
-diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-index d3de87897c47b8..d3e505ed52815b 100644
---- a/include/fuse_lowlevel.h
-+++ b/include/fuse_lowlevel.h
-@@ -1962,6 +1962,22 @@ int fuse_lowlevel_notify_store(struct fuse_session *se, fuse_ino_t ino,
- int fuse_lowlevel_notify_retrieve(struct fuse_session *se, fuse_ino_t ino,
- 				  size_t size, off_t offset, void *cookie);
- 
-+#if FUSE_USE_VERSION >= FUSE_MAKE_VERSION(3, 18)
-+/**
-+ * Attach an open file descriptor to a fuse+iomap mount.  Currently must be
-+ * a block device.
-+ *
-+ * Added in FUSE protocol version 7.99. If the kernel does not support
-+ * this (or a newer) version, the function will return -ENOSYS and do
-+ * nothing.
-+ *
-+ * @param se the session object
-+ * @param fd file descriptor of an open block device
-+ * @param flags flags for the operation; none defined so far
-+ * @return positive device id for success, zero for failure
-+ */
-+int fuse_iomap_add_device(struct fuse_session *se, int fd, unsigned int flags);
-+#endif
+diff --git a/include/fuse_common.h b/include/fuse_common.h
+index f48724b0d1ea0f..66c25afe15ec76 100644
+--- a/include/fuse_common.h
++++ b/include/fuse_common.h
+@@ -1197,6 +1197,19 @@ struct fuse_iomap {
+ 	uint16_t flags;		/* FUSE_IOMAP_F_* */
+ 	uint32_t dev;		/* device cookie */
+ };
++
++/* out of place write extent */
++#define FUSE_IOMAP_IOEND_SHARED		(1U << 0)
++/* unwritten extent */
++#define FUSE_IOMAP_IOEND_UNWRITTEN	(1U << 1)
++/* don't merge into previous ioend */
++#define FUSE_IOMAP_IOEND_BOUNDARY	(1U << 2)
++/* is direct I/O */
++#define FUSE_IOMAP_IOEND_DIRECT		(1U << 3)
++
++/* is append ioend */
++#define FUSE_IOMAP_IOEND_APPEND		(1U << 15)
++
+ #endif /* FUSE_USE_VERSION >= 318 */
  
  /* ----------------------------------------------------------- *
-  * Utility functions					       *
+diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
+index 97ca55f0114b1d..a06c16243a7885 100644
+--- a/include/fuse_kernel.h
++++ b/include/fuse_kernel.h
+@@ -666,6 +666,7 @@ enum fuse_opcode {
+ 	FUSE_TMPFILE		= 51,
+ 	FUSE_STATX		= 52,
+ 
++	FUSE_IOMAP_IOEND	= 4093,
+ 	FUSE_IOMAP_BEGIN	= 4094,
+ 	FUSE_IOMAP_END		= 4095,
+ 
+@@ -1341,4 +1342,15 @@ struct fuse_iomap_end_in {
+ 	uint32_t map_dev;	/* device cookie */
+ };
+ 
++struct fuse_iomap_ioend_in {
++	uint16_t ioendflags;	/* FUSE_IOMAP_IOEND_* */
++	uint16_t reserved;	/* zero */
++	int32_t error;		/* negative errno or 0 */
++	uint64_t attr_ino;	/* matches fuse_attr:ino */
++	uint64_t pos;		/* file position, in bytes */
++	uint64_t new_addr;	/* disk offset of new mapping, in bytes */
++	uint32_t written;	/* bytes processed */
++	uint32_t reserved1;	/* zero */
++};
++
+ #endif /* _LINUX_FUSE_H */
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index d3e505ed52815b..1b856431de0a60 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -1362,6 +1362,26 @@ struct fuse_lowlevel_ops {
+ 	void (*iomap_end) (fuse_req_t req, fuse_ino_t nodeid, uint64_t attr_ino,
+ 			   off_t pos, uint64_t count, uint32_t opflags,
+ 			   ssize_t written, const struct fuse_iomap *iomap);
++
++	/**
++	 * Complete an iomap IO operation
++	 *
++	 * Valid replies:
++	 *   fuse_reply_err
++	 *
++	 * @param req request handle
++	 * @param nodeid the inode number
++	 * @param attr_ino inode number as told by fuse_attr::ino
++	 * @param pos position in file, in bytes
++	 * @param written number of bytes processed, or a negative errno
++	 * @param ioendflags mask of FUSE_IOMAP_IOEND_ flags specifying operation
++	 * @param error errno code of what went wrong
++	 * @param new_addr disk address of new mapping, in bytes
++	 */
++	void (*iomap_ioend) (fuse_req_t req, fuse_ino_t nodeid,
++			     uint64_t attr_ino, off_t pos, size_t written,
++			     uint32_t ioendflags, int error,
++			     uint64_t new_addr);
+ #endif /* FUSE_USE_VERSION >= 318 */
+ };
+ 
 diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index 875d2345461251..5df0cdd4ac461a 100644
+index 5df0cdd4ac461a..d26043fa54c036 100644
 --- a/lib/fuse_lowlevel.c
 +++ b/lib/fuse_lowlevel.c
-@@ -580,6 +580,23 @@ int fuse_passthrough_close(fuse_req_t req, int backing_id)
- 	return ret;
+@@ -2515,6 +2515,27 @@ static void do_iomap_end(fuse_req_t req, const fuse_ino_t nodeid,
+ 	_do_iomap_end(req, nodeid, inarg, NULL);
  }
  
-+int fuse_iomap_add_device(struct fuse_session *se, int fd, unsigned int flags)
++static void _do_iomap_ioend(fuse_req_t req, const fuse_ino_t nodeid,
++			    const void *op_in, const void *in_payload)
 +{
-+	struct fuse_backing_map map = {
-+		.fd = fd,
-+		.flags = flags,
-+	};
-+	int ret;
++	const struct fuse_iomap_ioend_in *arg = op_in;
++	(void)in_payload;
++	(void)nodeid;
 +
-+	ret = ioctl(se->fd, FUSE_DEV_IOC_IOMAP_DEV_ADD, &map);
-+	if (ret <= 0) {
-+		fuse_log(FUSE_LOG_ERR, "fuse: iomap_dev_add: %s\n", strerror(errno));
-+		return 0;
-+	}
-+
-+	return ret;
++	if (req->se->op.iomap_ioend)
++		req->se->op.iomap_ioend(req, nodeid, arg->attr_ino, arg->pos,
++					arg->written, arg->ioendflags,
++					arg->error, arg->new_addr);
++	else
++		fuse_reply_err(req, 0);
 +}
 +
- int fuse_reply_open(fuse_req_t req, const struct fuse_file_info *f)
++static void do_iomap_ioend(fuse_req_t req, const fuse_ino_t nodeid,
++			   const void *inarg)
++{
++	_do_iomap_ioend(req, nodeid, inarg, NULL);
++}
++
+ static bool want_flags_valid(uint64_t capable, uint64_t want)
  {
- 	struct fuse_open_out arg;
-diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
-index 2b4c16abdaf519..4cdae6a6a42051 100644
---- a/lib/fuse_versionscript
-+++ b/lib/fuse_versionscript
-@@ -214,6 +214,7 @@ FUSE_3.18 {
- 		fuse_convert_to_conn_want_ext;
+ 	uint64_t unknown_flags = want & (~capable);
+@@ -2713,7 +2734,6 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
+ 			se->conn.capable_ext |= FUSE_CAP_OVER_IO_URING;
+ 		if (inargflags & FUSE_IOMAP)
+ 			se->conn.capable_ext |= FUSE_CAP_IOMAP;
+-
+ 	} else {
+ 		se->conn.max_readahead = 0;
+ 	}
+@@ -3395,6 +3415,7 @@ static struct {
+ 	[FUSE_LSEEK]	   = { do_lseek,       "LSEEK"	     },
+ 	[FUSE_IOMAP_BEGIN] = { do_iomap_begin,	"IOMAP_BEGIN" },
+ 	[FUSE_IOMAP_END]   = { do_iomap_end,	"IOMAP_END" },
++	[FUSE_IOMAP_IOEND] = { do_iomap_ioend,	"IOMAP_IOEND" },
+ 	[CUSE_INIT]	   = { cuse_lowlevel_init, "CUSE_INIT"   },
+ };
  
- 		fuse_reply_iomap_begin;
-+		fuse_iomap_add_device;
- } FUSE_3.17;
+@@ -3451,6 +3472,7 @@ static struct {
+ 	[FUSE_LSEEK]		= { _do_lseek,		"LSEEK" },
+ 	[FUSE_IOMAP_BEGIN]	= { _do_iomap_begin,	"IOMAP_BEGIN" },
+ 	[FUSE_IOMAP_END]	= { _do_iomap_end,	"IOMAP_END" },
++	[FUSE_IOMAP_IOEND]	= { _do_iomap_ioend,	"IOMAP_IOEND" },
+ 	[CUSE_INIT]		= { _cuse_lowlevel_init, "CUSE_INIT" },
+ };
  
- # Local Variables:
 
 
