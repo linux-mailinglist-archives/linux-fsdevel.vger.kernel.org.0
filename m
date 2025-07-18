@@ -1,501 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-55434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E630FB0A5DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 16:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CAEB0A5F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 16:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ADAE189C4E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 14:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BCD71C80689
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 14:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E81221287;
-	Fri, 18 Jul 2025 14:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BAD2DAFA5;
+	Fri, 18 Jul 2025 14:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="noeL11wq"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="mjuTHAEj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE0D14F9D6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 14:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7618F126BF1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 14:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752847837; cv=none; b=kUHAPLp9AxBhqem8hBqGpSzEFCY+qMuCs9tU4sOG8P+qnpW20mO8hF3iO3Z+5zblVbAjWQkbGAjLeVMfR5YpSJRk/XsFu9Pyvt9lMdlNP4BQpZYukskWh77vbt2zvMyCiwxA+8QPZfgee6TVJtxNTBpEtKSeEGYQ3BjMBpmXwzc=
+	t=1752848164; cv=none; b=qYQJ3D58UyIne2HR4KkQMIvdauJCydayMD7FzeQmAboQx6XU7hVhIKpOkABnxBqxF3iST9GpFQ+7c2VEh/sP5ZHpT5QmpYlWJC5zbI/70ALjSzZ6ay6JrNZ/63fgVlamA2BtV2v2xZ8CY86MwnV9sm0CJedYNYs1Qm7fSQxTuzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752847837; c=relaxed/simple;
-	bh=NY/e3VzIfKsf0YhP6gw92NcsqMqrw9XsxzVIG4H5sCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dBrBksAHpVzQCS+7bSCAfKvGoCdux2tAmHUnc8PMrUZmA/gW4hbvmVTVEi/VAd2vOM4eP9anJwVQnCqG9UkoyrqExFLVJHrfKK+xJ6jke927TarbUdXdBcUhUB+y72TfdHmGwkHhhsf8mBrhbqi/aUizjCYzix1Ud5Tl8FzDnW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=noeL11wq; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aec5a714ae9so223861066b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 07:10:34 -0700 (PDT)
+	s=arc-20240116; t=1752848164; c=relaxed/simple;
+	bh=5XaE7447C9RAX+GCeN/Jf+zei+sDppnkuDDAOZmhiks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s7FKayYxzxgdwwYsvgSxihJKVJLwmCA1teZnYDNDOM4k++IM72Jgh0MAg2/ZG5h9Klb2K/cVeH/aK/WOZ+qWTP5/boVVWcQ9YjdMASigzezdkHvcFDr0S/HrNXx1QV3o1DOo+Z9O0bA1oElp3/9XGEGUK3oGqQwPz7KccbvtCOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=mjuTHAEj; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7dfff5327fbso281827785a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 07:16:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752847833; x=1753452633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UkN9aPcvYz/qb6vFGZxfCAAVlQx6qI5OlpQ02L5C/QI=;
-        b=noeL11wqXr9on86Pjx9oeZFCTGj1d2zU67AfxSdpgnzwX2tSBGOesUzokYLdHbHHfh
-         jPhY9qmaljl6PqepmwIrljqP2GhZyF/r8Eaj5MbEyGepTnKO2agKA6VeJUYesCPAJQaN
-         K9fxQmtiU1VLLNQMgbXSbu8Bb7FVj82uMumiMQbeMMxG9atbhvWuwtLEqk5FvLKt1BgS
-         +ls/QSzqemWuUGzixokqhB3n76VK6gpqKdWAiNOfW3V9JECqNnmFSnO2yhTUBBB51fqc
-         hrz4qQ84Uq5R4zoDy0jT782uWApbUptQd0XGUVl+JHwYLAPQHOtks8bzIjEUgMkmrPmp
-         Yfng==
+        d=ziepe.ca; s=google; t=1752848161; x=1753452961; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hJjLE0UVkZ2mMP5n5MQpEv3lHcI2vw7mI8TTF/9jzI8=;
+        b=mjuTHAEjVq9p5tT8aL15EowHfiE0HRBl1kHUhR4vjvid5WGvdE1A4t0A5Z8qr6I6QW
+         /z/f7E3OQ32u+SyRmENMHHZzyOTH7GxekIJw3eirlyDwQEPXOFZ6qJFrSddBUIxLNOyM
+         +vZpu1BZ/94olJTltKu1beswOjBohsX3XseZnNgakttKudd1QONXGAwPoc4sVMsh12qy
+         lfoQeA67xQlCaOJboBLwqomDfcqvggK31eJGO1RKMlCd5WA0UNbLZ8rcLmVhYXE6ivU1
+         bEz518hj1PxuEOCjb9CZe4MvyWIrsNgzCQ6gQPaTrglgCIVPIAAbQQIQaWoAutow7MPV
+         hfFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752847833; x=1753452633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UkN9aPcvYz/qb6vFGZxfCAAVlQx6qI5OlpQ02L5C/QI=;
-        b=cAefkc2SA/CiA/Y04Fz7/3ASbIV55UYfTB8EpFexVWkxCdZrZ/3nRCTbZIvPRXuPgq
-         SpR8N76/3Vi3/hCsNU538LihxNb0rpPKl46PF+rt8SibA+GrHYslyJVnCIFHMFGx+vyp
-         /cmCNkdtHSgewIfFeO6R8oq879jBJV94Ryav/dfIWIXagfPHW6FjkcNC8n12hXqRZAT3
-         di0UJHRUdbouh0NTm/wPCUKUh1rkI4rpakUWob86mt+LxbjDLWJzQOol9TyOlRZtMQdh
-         hUukHQ5TIP9cxSl+gQZoin0IU3qVbaamje9EKgSr21b/yLn+nM86SXTkh6q1io4po4PF
-         u8YA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR7f8g1JVqSoDM9InKZl80i5JycIGX1O0Cyn9xx/KdqX/UEl4r3sDCUnMwiKFohGwrUO9CqvXy0WQ6WbTx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2cMUARHijm642GgYBBShFioii9Cm9wcD8n0TPGRTSBo+Lrll/
-	ubgSHDS4sGRIwE161h6thcvh0ZP+cjyinSr4XbtkJvGAGh7X6bw7Xv1Zqezw0Q0j3/k0grIPUyJ
-	Vcth8EJWqzqmBPu1qAw3mhOiF9WrZNp0=
-X-Gm-Gg: ASbGnctsRJbSElZj+EzmadazHWXTFvGrTxVs77iQAHYoJ12e51kKztk5d6yJgcxpB3+
-	Kp5RdnP4mFL+Q84+/R1YytL1SBI1gQZ7h1KhJc/AurXmUgUSvh1L3MW6RQ/tkpikxyyA3uLDYT1
-	17JND2pLBsKfDhsyR9yfpuMMaoKB8H+peDluVkfRQ8L0GRzrI9AIGgaO2Msj1uZtBo3fmShnx33
-	6Wg5OI=
-X-Google-Smtp-Source: AGHT+IFIcP07/Xkkjnspxakw8Pqn2XLoqcwH1MuNdXUc8oXRztvqzeWBk/GU8gCc1pLwTX4q8bEIqx1t3YwOcTh4zjo=
-X-Received: by 2002:a17:907:86ab:b0:ade:6e3:7c4 with SMTP id
- a640c23a62f3a-ae9c99884edmr1081901466b.23.1752847832688; Fri, 18 Jul 2025
- 07:10:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752848161; x=1753452961;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hJjLE0UVkZ2mMP5n5MQpEv3lHcI2vw7mI8TTF/9jzI8=;
+        b=aPnKNPber9ZMYBcr9CGyUkEShXC/k7/XUYwx9+iNf5xDm9E7yO7MptyiHxoKeZHEiN
+         7UOs0HqqBFngDoR9+22eb8lalnbyCA1NLiDySZJhvelmy8ttmoySU5r/Joq60g7453lQ
+         INc/Onv7Bk2u+FRgDkv/GQQQolgbdAwbDGYgbMlAeU94OczYDSW1/flrEqDSrVOnvt1L
+         efcNXCEoo2wxqcsYLLxFWUKIp2rghYWKcQVDUkh5Uwr+T8y3ubihoICu1XjjykKUSFi7
+         jbTz5wbmQPMyHFua2ptxS/G38CepTb8N3kEgFRX73/ckmthxzT210g2H7uwHWJSjo4AS
+         XmNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXx4lf3YpuBwH+EA+4ms8aPwwzeLYPx1KVZ8pitzZm8IK7dq1JSaL1nmLYvcJI+kbxDcYwgY4flveD11Wkf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8jMZtU6/Eiv7bGicxfPAyaMmkwbsUO1W221jNORjA+USuB3vn
+	bWaYzDQflRZ2izA0A6SENI3XDZ2YnKRbHAQ/wrG1ir+eUpAHbaNZpalC4wSMdOy3cA0=
+X-Gm-Gg: ASbGnctyLFTVQUjk3EFKpaPAqGNf505uAQ7pN1SOFsq42/44P0m2DGMHflDSAN+qC+H
+	Q6aIZUezVMJIO3P593Vso55ijBSMk/yYZBw1n+hQJjvGiQgU77N9U98CJ6RM1OeabyvseNwKBto
+	Nn8XaKeZ3L6RJX/5R7hKaLpp26BYY8VpI6F482nExXB1TV3F4siP/XUvczrP7ToWmTUoBZsAtp1
+	4p/vY4UU8U7ffxmRt/R/Sh8YZy7E/UWa+5p6YF/8MD2FLkaXhCMSuUzNqs1iAmQ8bdGXznf+WBb
+	lVZT0NCodn7kqjBPcM8j0E2h9XM+tNW1NB2uEz7ihfsjBvSZKTY07v/KztLq1PC0Y++bjiXUkRW
+	LYkz250VK+H0OxHsBsvPKofFTJtG3HzToZ//+aRyJBPPCpBVIfmLRseeRhv0EZqsUf+sv3wz/DA
+	==
+X-Google-Smtp-Source: AGHT+IH83itoUa8qKHB+I069li42G5fh0+8tV6hdT0Ya4bqMV1JxQTP8HGjKpE/oLQZTw/kkZxIAXw==
+X-Received: by 2002:a05:620a:4410:b0:7e1:9769:97c4 with SMTP id af79cd13be357-7e343613265mr1502291985a.47.1752848160939;
+        Fri, 18 Jul 2025 07:16:00 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c649c0sm91045985a.73.2025.07.18.07.16.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 07:16:00 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uclsV-00000009zBs-2Dun;
+	Fri, 18 Jul 2025 11:15:59 -0300
+Date: Fri, 18 Jul 2025 11:15:59 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, Yan Zhao <yan.y.zhao@intel.com>,
+	Vishal Annapurve <vannapurve@google.com>,
+	Alexey Kardashevskiy <aik@amd.com>, Fuad Tabba <tabba@google.com>,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
+	akpm@linux-foundation.org, amoorthy@google.com,
+	anthony.yznaga@oracle.com, anup@brainfault.org,
+	aou@eecs.berkeley.edu, bfoster@redhat.com,
+	binbin.wu@linux.intel.com, brauner@kernel.org,
+	catalin.marinas@arm.com, chao.p.peng@intel.com,
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
+	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
+	rick.p.edgecombe@intel.com, rientjes@google.com,
+	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
+	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
+	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
+	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+Message-ID: <20250718141559.GF2206214@ziepe.ca>
+References: <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
+ <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
+ <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
+ <20250624130811.GB72557@ziepe.ca>
+ <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
+ <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
+ <diqz8qknhj3l.fsf@ackerleytng-ctop.c.googlers.com>
+ <aHjDIxxbv0DnqI6S@yilunxu-OptiPlex-7050>
+ <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
+ <aHm2F95XwzdD7nod@yilunxu-OptiPlex-7050>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175279459673.714161.10658209239262310420.stgit@frogsfrogsfrogs> <175279459857.714161.8213814053864249949.stgit@frogsfrogsfrogs>
-In-Reply-To: <175279459857.714161.8213814053864249949.stgit@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 18 Jul 2025 16:10:18 +0200
-X-Gm-Features: Ac12FXzimVqGddF1wlh4iIUG_pcKe4WT29hqe_IQ9ZX6gh4Txh8GhwpkpOU7PPA
-Message-ID: <CAOQ4uxjM6A1DpB+r+J6NU3Zj7zhGmh4138RFS8c3T6hL067fcQ@mail.gmail.com>
-Subject: Re: [PATCH 07/14] libfuse: add a reply function to send FUSE_ATTR_*
- to the kernel
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bschubert@ddn.com, John@groves.net, joannelkoong@gmail.com, 
-	linux-fsdevel@vger.kernel.org, bernd@bsbernd.com, neal@gompa.dev, 
-	miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHm2F95XwzdD7nod@yilunxu-OptiPlex-7050>
 
-On Fri, Jul 18, 2025 at 1:36=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> Create new fuse_reply_{attr,create,entry}_iflags functions so that we
-> can send FUSE_ATTR_* flags to the kernel when instantiating an inode.
-> Servers are expected to send FUSE_IFLAG_* values, which will be
-> translated into what the kernel can understand.
->
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
->  include/fuse_common.h   |    3 ++
->  include/fuse_lowlevel.h |   87 +++++++++++++++++++++++++++++++++++++++++=
-++++--
->  lib/fuse_lowlevel.c     |   69 ++++++++++++++++++++++++++++++-------
->  lib/fuse_versionscript  |    4 ++
->  4 files changed, 146 insertions(+), 17 deletions(-)
->
->
-> diff --git a/include/fuse_common.h b/include/fuse_common.h
-> index 66c25afe15ec76..11eb22d011896c 100644
-> --- a/include/fuse_common.h
-> +++ b/include/fuse_common.h
-> @@ -1210,6 +1210,9 @@ struct fuse_iomap {
->  /* is append ioend */
->  #define FUSE_IOMAP_IOEND_APPEND                (1U << 15)
->
-> +/* enable fsdax */
-> +#define FUSE_IFLAG_DAX                 (1U << 0)
-> +
->  #endif /* FUSE_USE_VERSION >=3D 318 */
->
->  /* ----------------------------------------------------------- *
-> diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-> index 1b856431de0a60..07748abcf079cf 100644
-> --- a/include/fuse_lowlevel.h
-> +++ b/include/fuse_lowlevel.h
-> @@ -240,6 +240,7 @@ struct fuse_lowlevel_ops {
->          *
->          * Valid replies:
->          *   fuse_reply_entry
-> +        *   fuse_reply_entry_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -299,6 +300,7 @@ struct fuse_lowlevel_ops {
->          *
->          * Valid replies:
->          *   fuse_reply_attr
-> +        *   fuse_reply_attr_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -334,6 +336,7 @@ struct fuse_lowlevel_ops {
->          *
->          * Valid replies:
->          *   fuse_reply_attr
-> +        *   fuse_reply_attr_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -364,7 +367,7 @@ struct fuse_lowlevel_ops {
->          * socket node.
->          *
->          * Valid replies:
-> -        *   fuse_reply_entry
-> +        *   fuse_reply_entry_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -380,7 +383,7 @@ struct fuse_lowlevel_ops {
->          * Create a directory
->          *
->          * Valid replies:
-> -        *   fuse_reply_entry
-> +        *   fuse_reply_entry_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -429,7 +432,7 @@ struct fuse_lowlevel_ops {
->          * Create a symbolic link
->          *
->          * Valid replies:
-> -        *   fuse_reply_entry
-> +        *   fuse_reply_entry_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -477,7 +480,7 @@ struct fuse_lowlevel_ops {
->          * Create a hard link
->          *
->          * Valid replies:
-> -        *   fuse_reply_entry
-> +        *   fuse_reply_entry_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -969,6 +972,7 @@ struct fuse_lowlevel_ops {
->          *
->          * Valid replies:
->          *   fuse_reply_create
-> +        *   fuse_reply_create_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -1315,6 +1319,7 @@ struct fuse_lowlevel_ops {
->          *
->          * Valid replies:
->          *   fuse_reply_create
-> +        *   fuse_reply_create_iflags
->          *   fuse_reply_err
->          *
->          * @param req request handle
-> @@ -1435,6 +1440,23 @@ void fuse_reply_none(fuse_req_t req);
->   */
->  int fuse_reply_entry(fuse_req_t req, const struct fuse_entry_param *e);
->
-> +/**
-> + * Reply with a directory entry and FUSE_IFLAG_*
-> + *
-> + * Possible requests:
-> + *   lookup, mknod, mkdir, symlink, link
-> + *
-> + * Side effects:
-> + *   increments the lookup count on success
-> + *
-> + * @param req request handle
-> + * @param e the entry parameters
-> + * @param iflags       FUSE_IFLAG_*
-> + * @return zero for success, -errno for failure to send reply
-> + */
-> +int fuse_reply_entry_iflags(fuse_req_t req, const struct fuse_entry_para=
-m *e,
-> +                           unsigned int iflags);
-> +
->  /**
->   * Reply with a directory entry and open parameters
->   *
-> @@ -1456,6 +1478,29 @@ int fuse_reply_entry(fuse_req_t req, const struct =
-fuse_entry_param *e);
->  int fuse_reply_create(fuse_req_t req, const struct fuse_entry_param *e,
->                       const struct fuse_file_info *fi);
->
-> +/**
-> + * Reply with a directory entry, open parameters and FUSE_IFLAG_*
-> + *
-> + * currently the following members of 'fi' are used:
-> + *   fh, direct_io, keep_cache, cache_readdir, nonseekable, noflush,
-> + *   parallel_direct_writes
-> + *
-> + * Possible requests:
-> + *   create
-> + *
-> + * Side effects:
-> + *   increments the lookup count on success
-> + *
-> + * @param req request handle
-> + * @param e the entry parameters
-> + * @param iflags       FUSE_IFLAG_*
-> + * @param fi file information
-> + * @return zero for success, -errno for failure to send reply
-> + */
-> +int fuse_reply_create_iflags(fuse_req_t req, const struct fuse_entry_par=
-am *e,
-> +                            unsigned int iflags,
-> +                            const struct fuse_file_info *fi);
-> +
->  /**
->   * Reply with attributes
->   *
-> @@ -1470,6 +1515,21 @@ int fuse_reply_create(fuse_req_t req, const struct=
- fuse_entry_param *e,
->  int fuse_reply_attr(fuse_req_t req, const struct stat *attr,
->                     double attr_timeout);
->
-> +/**
-> + * Reply with attributes and FUSE_IFLAG_* flags
-> + *
-> + * Possible requests:
-> + *   getattr, setattr
-> + *
-> + * @param req request handle
-> + * @param attr the attributes
-> + * @param attr_timeout validity timeout (in seconds) for the attributes
-> + * @param iflags       set of FUSE_IFLAG_* flags
-> + * @return zero for success, -errno for failure to send reply
-> + */
-> +int fuse_reply_attr_iflags(fuse_req_t req, const struct stat *attr,
-> +                          unsigned int iflags, double attr_timeout);
-> +
->  /**
->   * Reply with the contents of a symbolic link
->   *
-> @@ -1697,6 +1757,25 @@ size_t fuse_add_direntry_plus(fuse_req_t req, char=
- *buf, size_t bufsize,
->                               const char *name,
->                               const struct fuse_entry_param *e, off_t off=
-);
->
-> +/**
-> + * Add a directory entry and FUSE_IFLAG_* to the buffer with the attribu=
-tes
-> + *
-> + * See documentation of `fuse_add_direntry_plus()` for more details.
-> + *
-> + * @param req request handle
-> + * @param buf the point where the new entry will be added to the buffer
-> + * @param bufsize remaining size of the buffer
-> + * @param name the name of the entry
-> + * @param iflags       FUSE_IFLAG_*
-> + * @param e the directory entry
-> + * @param off the offset of the next entry
-> + * @return the space needed for the entry
-> + */
-> +size_t fuse_add_direntry_plus_iflags(fuse_req_t req, char *buf, size_t b=
-ufsize,
-> +                                    const char *name, unsigned int iflag=
-s,
-> +                                    const struct fuse_entry_param *e,
-> +                                    off_t off);
-> +
->  /**
->   * Reply to ask for data fetch and output buffer preparation.  ioctl
->   * will be retried with the specified input data fetched and output
-> diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-> index d26043fa54c036..568db13502a7d7 100644
-> --- a/lib/fuse_lowlevel.c
-> +++ b/lib/fuse_lowlevel.c
-> @@ -102,7 +102,8 @@ static void trace_request_reply(uint64_t unique, unsi=
-gned int len,
->  }
->  #endif
->
-> -static void convert_stat(const struct stat *stbuf, struct fuse_attr *att=
-r)
-> +static void convert_stat(const struct stat *stbuf, struct fuse_attr *att=
-r,
-> +                        unsigned int iflags)
->  {
->         attr->ino       =3D stbuf->st_ino;
->         attr->mode      =3D stbuf->st_mode;
-> @@ -119,6 +120,10 @@ static void convert_stat(const struct stat *stbuf, s=
-truct fuse_attr *attr)
->         attr->atimensec =3D ST_ATIM_NSEC(stbuf);
->         attr->mtimensec =3D ST_MTIM_NSEC(stbuf);
->         attr->ctimensec =3D ST_CTIM_NSEC(stbuf);
-> +
-> +       attr->flags     =3D 0;
-> +       if (iflags & FUSE_IFLAG_DAX)
-> +               attr->flags |=3D FUSE_ATTR_DAX;
->  }
->
->  static void convert_attr(const struct fuse_setattr_in *attr, struct stat=
- *stbuf)
-> @@ -438,7 +443,8 @@ static unsigned int calc_timeout_nsec(double t)
->  }
->
->  static void fill_entry(struct fuse_entry_out *arg,
-> -                      const struct fuse_entry_param *e)
-> +                      const struct fuse_entry_param *e,
-> +                      unsigned int iflags)
->  {
->         arg->nodeid =3D e->ino;
->         arg->generation =3D e->generation;
-> @@ -446,14 +452,15 @@ static void fill_entry(struct fuse_entry_out *arg,
->         arg->entry_valid_nsec =3D calc_timeout_nsec(e->entry_timeout);
->         arg->attr_valid =3D calc_timeout_sec(e->attr_timeout);
->         arg->attr_valid_nsec =3D calc_timeout_nsec(e->attr_timeout);
-> -       convert_stat(&e->attr, &arg->attr);
-> +       convert_stat(&e->attr, &arg->attr, iflags);
->  }
->
->  /* `buf` is allowed to be empty so that the proper size may be
->     allocated by the caller */
-> -size_t fuse_add_direntry_plus(fuse_req_t req, char *buf, size_t bufsize,
-> -                             const char *name,
-> -                             const struct fuse_entry_param *e, off_t off=
-)
-> +size_t fuse_add_direntry_plus_iflags(fuse_req_t req, char *buf, size_t b=
-ufsize,
-> +                                    const char *name, unsigned int iflag=
-s,
-> +                                    const struct fuse_entry_param *e,
-> +                                    off_t off)
->  {
->         (void)req;
->         size_t namelen;
-> @@ -468,7 +475,7 @@ size_t fuse_add_direntry_plus(fuse_req_t req, char *b=
-uf, size_t bufsize,
->
->         struct fuse_direntplus *dp =3D (struct fuse_direntplus *) buf;
->         memset(&dp->entry_out, 0, sizeof(dp->entry_out));
-> -       fill_entry(&dp->entry_out, e);
-> +       fill_entry(&dp->entry_out, e, iflags);
->
->         struct fuse_dirent *dirent =3D &dp->dirent;
->         dirent->ino =3D e->attr.st_ino;
-> @@ -481,6 +488,14 @@ size_t fuse_add_direntry_plus(fuse_req_t req, char *=
-buf, size_t bufsize,
->         return entlen_padded;
->  }
->
-> +size_t fuse_add_direntry_plus(fuse_req_t req, char *buf, size_t bufsize,
-> +                             const char *name,
-> +                             const struct fuse_entry_param *e, off_t off=
-)
-> +{
-> +       return fuse_add_direntry_plus_iflags(req, buf, bufsize, name, 0, =
-e,
-> +                                            off);
-> +}
-> +
->  static void fill_open(struct fuse_open_out *arg,
->                       const struct fuse_file_info *f)
->  {
-> @@ -503,7 +518,8 @@ static void fill_open(struct fuse_open_out *arg,
->                 arg->open_flags |=3D FOPEN_PARALLEL_DIRECT_WRITES;
->  }
->
-> -int fuse_reply_entry(fuse_req_t req, const struct fuse_entry_param *e)
-> +int fuse_reply_entry_iflags(fuse_req_t req, const struct fuse_entry_para=
-m *e,
-> +                           unsigned int iflags)
->  {
->         struct fuse_entry_out arg;
->         size_t size =3D req->se->conn.proto_minor < 9 ?
-> @@ -515,12 +531,18 @@ int fuse_reply_entry(fuse_req_t req, const struct f=
-use_entry_param *e)
->                 return fuse_reply_err(req, ENOENT);
->
->         memset(&arg, 0, sizeof(arg));
-> -       fill_entry(&arg, e);
-> +       fill_entry(&arg, e, iflags);
->         return send_reply_ok(req, &arg, size);
->  }
->
-> -int fuse_reply_create(fuse_req_t req, const struct fuse_entry_param *e,
-> -                     const struct fuse_file_info *f)
-> +int fuse_reply_entry(fuse_req_t req, const struct fuse_entry_param *e)
-> +{
-> +       return fuse_reply_entry_iflags(req, e, 0);
-> +}
-> +
-> +int fuse_reply_create_iflags(fuse_req_t req, const struct fuse_entry_par=
-am *e,
-> +                            unsigned int iflags,
-> +                            const struct fuse_file_info *f)
->  {
->         alignas(uint64_t) char buf[sizeof(struct fuse_entry_out) + sizeof=
-(struct fuse_open_out)];
->         size_t entrysize =3D req->se->conn.proto_minor < 9 ?
-> @@ -529,12 +551,18 @@ int fuse_reply_create(fuse_req_t req, const struct =
-fuse_entry_param *e,
->         struct fuse_open_out *oarg =3D (struct fuse_open_out *) (buf + en=
-trysize);
->
->         memset(buf, 0, sizeof(buf));
-> -       fill_entry(earg, e);
-> +       fill_entry(earg, e, iflags);
->         fill_open(oarg, f);
->         return send_reply_ok(req, buf,
->                              entrysize + sizeof(struct fuse_open_out));
->  }
->
-> +int fuse_reply_create(fuse_req_t req, const struct fuse_entry_param *e,
-> +                     const struct fuse_file_info *f)
-> +{
-> +       return fuse_reply_create_iflags(req, e, 0, f);
-> +}
-> +
->  int fuse_reply_attr(fuse_req_t req, const struct stat *attr,
->                     double attr_timeout)
->  {
-> @@ -545,7 +573,22 @@ int fuse_reply_attr(fuse_req_t req, const struct sta=
-t *attr,
->         memset(&arg, 0, sizeof(arg));
->         arg.attr_valid =3D calc_timeout_sec(attr_timeout);
->         arg.attr_valid_nsec =3D calc_timeout_nsec(attr_timeout);
-> -       convert_stat(attr, &arg.attr);
-> +       convert_stat(attr, &arg.attr, 0);
-> +
-> +       return send_reply_ok(req, &arg, size);
-> +}
-> +
-> +int fuse_reply_attr_iflags(fuse_req_t req, const struct stat *attr,
-> +                          unsigned int iflags, double attr_timeout)
-> +{
-> +       struct fuse_attr_out arg;
-> +       size_t size =3D req->se->conn.proto_minor < 9 ?
-> +               FUSE_COMPAT_ATTR_OUT_SIZE : sizeof(arg);
-> +
-> +       memset(&arg, 0, sizeof(arg));
-> +       arg.attr_valid =3D calc_timeout_sec(attr_timeout);
-> +       arg.attr_valid_nsec =3D calc_timeout_nsec(attr_timeout);
-> +       convert_stat(attr, &arg.attr, iflags);
->
->         return send_reply_ok(req, &arg, size);
->  }
+On Fri, Jul 18, 2025 at 10:48:55AM +0800, Xu Yilun wrote:
+> > If by the time KVM gets the conversion request, the page is unpinned,
+> > then we're all good, right?
+> 
+> Yes, unless guest doesn't unpin the page first by mistake. Guest would
+> invoke a fw call tdg.mem.page.release to unpin the page before
+> KVM_HC_MAP_GPA_RANGE.
 
-I wonder why fuse_reply_attr() is not implemented as a wrapper to
-fuse_reply_attr_iflags()?
+What does guest pinning mean?
 
-FWIW, the flags field was added in minor version 23 for
-FUSE_ATTR_SUBMOUNT, but I guess that doesn't matter here.
-
-Thanks,
-Amir.
+Jason
 
