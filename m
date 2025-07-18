@@ -1,285 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-55469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C00B0AABF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 21:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C43EB0AACC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 21:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE241C41CD2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 19:35:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89205A1FC3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 19:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA5121579F;
-	Fri, 18 Jul 2025 19:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF991E3772;
+	Fri, 18 Jul 2025 19:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOBgDYRY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOiuup7U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435C616DEB3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 19:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2671519E806
+	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 19:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752867287; cv=none; b=hphuDzPVxYSxaH5pTKSzNNIVNHpaq+bblsoSymalWRx+1y1A9/WkUYGS4GfmrTD9iNJs7otDNNmFKrAdQl+GFQW8F/wWSaWGNiK1TUpqsRGkc3cdl+2OXsO86hAYS6E05meGgQ5hTlH4CPiOGtdau1+JEK+k9IBTgZfXDd6+uXg=
+	t=1752867933; cv=none; b=D1ZHt4lK/hcRVG9ofdkl0eGofdqOqIGUlANmQnxML2ycIh+oSGFI6hR/wSPIz8uKcOuYN0QGj5CaadhVMa/bsSWFBW3g6lxl/p3iw9ClRLayDv446A2PlffTxgs5i9f/LA7t8MvHIpAM+mTrJLwxvO5udwG6fcryRiITxvcaEDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752867287; c=relaxed/simple;
-	bh=2pdXGeg/FED1EgEUxQJOicrcFHkqRA1qQ62lUpH0Exg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6Pu2wwFgNrUkjTRF+MgdFy/SfzviQoQ5JLwed0SaDyshLGGalm7ksHen9D8iUgLhdkui45NZYu5mDueMAfBEK52MhQk2ial0EqyH9AE5LgtB1QiJIwAum0iymyti3x67NJNpvYS+zA+srFOQnVctruYI2JbU+LCKWx3uW2kRzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOBgDYRY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F85C4CEEB;
-	Fri, 18 Jul 2025 19:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752867286;
-	bh=2pdXGeg/FED1EgEUxQJOicrcFHkqRA1qQ62lUpH0Exg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BOBgDYRYjZr0AJ997uG/MxyzRk3zbN8uNHv38pvlhwuoBnisyYGRpVtO5jKnVtrUz
-	 s90uzv9OTIpYeTU6zS4lEesE9CintPG1sV6cV70Qd5RcXAGqzq7oNP4+I/fFqXSJ8t
-	 WSdoaKo5dWXxpxaSlfTLP47Dt0ESDwvIVAN42nLxzVvgEKgC3KQyhU3avCsMMUkitz
-	 H8r7VyApCs+NMjofR4E4T5nQgI/0jAgAa9VgkByVqlENlhY0m8nuWPZlLX+UJ1Cn3T
-	 RjF5rrXcBzGi1xdkN/WaEClEiq3QB2y5Pnr/FljeOtNP5PqE0biOxwztTaH/TIbE14
-	 deckxd2FChv3Q==
-Date: Fri, 18 Jul 2025 12:34:46 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
-	miklos@szeredi.hu, joannelkoong@gmail.com,
-	Horst Birthelmer <hbirthelmer@ddn.com>
-Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the
- connection
-Message-ID: <20250718193446.GD2672029@frogsfrogsfrogs>
-References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
- <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
- <286e65f0-a54c-46f0-86b7-e997d8bbca21@bsbernd.com>
- <71f7e629-13ed-4320-a9c1-da2a16b2e26d@bsbernd.com>
+	s=arc-20240116; t=1752867933; c=relaxed/simple;
+	bh=k3aWrMFghdwanSFAJSBqsD+FpoXngkP6ZiEnjXuNe6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I2lKS2OBe/9g5u/scWa3NVmVCyfZXejjR8dNU9OQQxYv+IUv64VVkw7CZPrDrSGbNIltNfp1C+9MAPMrnZlDPZQ+U+lJsPjPirgI6zS+gKm12Z+fR30SBiB7FE8DGTFMhUbxin8KMi4vDwEI97QcuROvLCW8HuBUKYBKz5YnPI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOiuup7U; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-612bc52ac2bso3087252a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 12:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752867929; x=1753472729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ETglIWDiKkxQuv5Ghgd64oOaxgf8+3/w+RMl+dHzmWc=;
+        b=cOiuup7UQg3aebCwVxDLnlLwjQ9Er7ArurrvGUVs7axzmETXOq1MctQeOq4/ifQjXM
+         til6wI3+tBNrb/LM+zAcfzkIftWTJ9hwGYKmXnDOa6FUmDkWCTN/fzd0TbvyqbFzIUc1
+         3quKVKoZuXCh0jjeLBbjfGmQT5Sx8Hwf9omS8eYXGIMHBzGmaXxNxXeCpKzl+cjo+xGR
+         7BAGeF1HyZs6VC/U5dBj0obnFCi4qHXoh/Rn88Y1h4ctAvHkUM+idaWqOEuEFbN5o7kQ
+         pFJ2FPeV6ULHzph9TS9xQNyJJJ2j5hc2XuH/NPdMRjf0DvmUCFDz67GcLOSsoZFBSMnK
+         m7GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752867929; x=1753472729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ETglIWDiKkxQuv5Ghgd64oOaxgf8+3/w+RMl+dHzmWc=;
+        b=JU5o0eMXAE4WPgLEsF7NMJEvlP2QyqakyERMPe3GcW93dDBxi+j6s9F684K38dLT7c
+         wwkoz2G9c/Hs3Sa+P50Ou2IE+HAfiK3WzKXGQdNy72JcmBnAPzcJ+mThCPs1avjvp3br
+         LAZiaj/nkq6BZc18T+bCDoMnJU+xgn01VQZIpbV+dxk+yyvrWCG6LUAEE/RD+UNi7QDq
+         jyCy+Gt7xuvSudVmOE2GpyqDttdjOWOdJk2UJ5v97L5bBf6GdqPEvlNFLMYrrrPvaqE+
+         jYGay1Zhi2R6OYeydsmA3X7qVqugqlTM77TLBKwxYXe5ZZ1QLXNg5tftcQ71CJvDmEGr
+         /StA==
+X-Gm-Message-State: AOJu0YyEzBZ0OMUvH6v99y2k91HPGXfqqlfX99JZpMiih6YO1oII+HaZ
+	7DbfON7P6LE8CE0B1tou+f9B+Irr/OG6i79w8eIcsOxtpDBqhDoFVSzD3O0ZodVl5urWKs175Io
+	3HyEcTwFzcZ8wF7oEIrMRj25Rco2j/T4=
+X-Gm-Gg: ASbGncu1hM4wsDyUgqrn4hCOFBN55D32kb1C5/BWVLn8SDvtl5DdR4E7sTzdXy8SkvL
+	95IpSuQ8ltFGS7hiVEN9l/9Gp/e6WYsvRJ7hfLM0UrtVvZMa/NsiuAeq5ZnbqASNZXyCJJ+bslx
+	43rNu/bQaPrrckD43WA1iN1Acq9nowcdPuJKWfeUfACPHcbceA0yQ4fXkI3CjvWdXMvKfDWzd8+
+	CAJYpg=
+X-Google-Smtp-Source: AGHT+IESGENlps6XTUZoU1g5bjjYuFnNMXIFv4UuPqBacse7gHXSEPPNdxIgFrSxxtauEIgWAOY7dPWHfOfc7DTOaP4=
+X-Received: by 2002:a17:906:7f02:b0:ae8:e6f9:7cf with SMTP id
+ a640c23a62f3a-ae9cde23acbmr827346366b.23.1752867929010; Fri, 18 Jul 2025
+ 12:45:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <71f7e629-13ed-4320-a9c1-da2a16b2e26d@bsbernd.com>
+References: <175279449855.711291.17231562727952977187.stgit@frogsfrogsfrogs>
+ <175279450066.711291.11325657475144563199.stgit@frogsfrogsfrogs>
+ <CAOQ4uxjfTp0My7xv39BA1_nD95XLQd-TqERAMG-C4V3UFYpX8w@mail.gmail.com> <20250718180121.GV2672029@frogsfrogsfrogs>
+In-Reply-To: <20250718180121.GV2672029@frogsfrogsfrogs>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 18 Jul 2025 21:45:17 +0200
+X-Gm-Features: Ac12FXyzu87OIy1Xd_bwZeQpBGBczXDGUAj2gsE7cMM6Ju_LMp4lGSz6kTClWOg
+Message-ID: <CAOQ4uxjBhFeksGKpvpSb0qzaOP=zzwQSRGPjb4JRAytnTDQrXg@mail.gmail.com>
+Subject: Re: [PATCH 06/13] fuse: implement buffered IO with iomap
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net, 
+	miklos@szeredi.hu, bernd@bsbernd.com, joannelkoong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 18, 2025 at 08:07:30PM +0200, Bernd Schubert wrote:
-> 
-> > 
-> > Please see the two attached patches, which are needed for fuse-io-uring.
-> > I can also send them separately, if you prefer.
-> 
-> We (actually Horst) is just testing it as Horst sees failing xfs tests in
-> our branch with tmp page removal
-> 
-> Patch 2 needs this addition (might be more, as I didn't test). 
-> I had it in first, but then split the patch and missed that.
+On Fri, Jul 18, 2025 at 8:01=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Fri, Jul 18, 2025 at 05:10:14PM +0200, Amir Goldstein wrote:
+> > On Fri, Jul 18, 2025 at 1:32=E2=80=AFAM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> > >
+> > > From: Darrick J. Wong <djwong@kernel.org>
+> > >
+> > > Implement pagecache IO with iomap, complete with hooks into truncate =
+and
+> > > fallocate so that the fuse server needn't implement disk block zeroin=
+g
+> > > of post-EOF and unaligned punch/zero regions.
+> > >
+> > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > ---
+> > >  fs/fuse/fuse_i.h          |   46 +++
+> > >  fs/fuse/fuse_trace.h      |  391 ++++++++++++++++++++++++
+> > >  include/uapi/linux/fuse.h |    5
+> > >  fs/fuse/dir.c             |   23 +
+> > >  fs/fuse/file.c            |   90 +++++-
+> > >  fs/fuse/file_iomap.c      |  723 +++++++++++++++++++++++++++++++++++=
+++++++++++
+> > >  fs/fuse/inode.c           |   14 +
+> > >  7 files changed, 1268 insertions(+), 24 deletions(-)
+> > >
+> > >
+> > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > index 67e428da4391aa..f33b348d296d5e 100644
+> > > --- a/fs/fuse/fuse_i.h
+> > > +++ b/fs/fuse/fuse_i.h
+> > > @@ -161,6 +161,13 @@ struct fuse_inode {
+> > >
+> > >                         /* waitq for direct-io completion */
+> > >                         wait_queue_head_t direct_io_waitq;
+> > > +
+> > > +#ifdef CONFIG_FUSE_IOMAP
+> > > +                       /* pending io completions */
+> > > +                       spinlock_t ioend_lock;
+> > > +                       struct work_struct ioend_work;
+> > > +                       struct list_head ioend_list;
+> > > +#endif
+> > >                 };
+> >
+> > This union member you are changing is declared for
+> > /* read/write io cache (regular file only) */
+> > but actually it is also for parallel dio and passthrough mode
+> >
+> > IIUC, there should be zero intersection between these io modes and
+> >  /* iomap cached fileio (regular file only) */
+> >
+> > Right?
+>
+> Right.  iomap will get very very confused if you switch file IO paths on
+> a live file.  I think it's /possible/ to switch if you flush and
+> truncate the whole page cache while holding inode_lock() but I don't
+> think anyone has ever tried.
+>
+> > So it can use its own union member without increasing fuse_inode size.
+> >
+> > Just need to be carefull in fuse_init_file_inode(), fuse_evict_inode() =
+and
+> > fuse_file_io_release() which do not assume a specific inode io mode.
+>
+> Yes, I think it's possible to put the iomap stuff in a separate struct
+> within that union so that we're not increasing the fuse_inode size
+> unnecessarily.  That's desirable for something to do before merging,
+> but for now prototyping is /much/ easier if I don't have to do that.
+>
 
-Aha, I noticed that the flush didn't quite work when uring was enabled.
-I don't generally enable uring for testing because I already wrote a lot
-of shaky code and uring support is new.
+understood. you can deal with that later. I just wanted to leave a TODO not=
+e.
 
-Though I'm afraid I have no opinion on this, because I haven't looked
-deeply into dev_uring.c.
+> Making that change will require a lot of careful auditing, first I want
+> to make sure you all agree with the iomap approach because it's much
+> different from what I see in the other fuse IO paths. :)
+>
 
---D
+Indeed a good audit will be required, but
+*if* you can guarantee to configure iomap alway at inode initiation
+then in fuse_init_file_inode() it is clear, which member of the union
+is being initialized and this mode has to stick with the inode until
+evict anyway.
 
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index eca457d1005e..acf11eadbf3b 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -123,6 +123,9 @@ void fuse_uring_flush_bg(struct fuse_conn *fc)
->         struct fuse_ring_queue *queue;
->         struct fuse_ring *ring = fc->ring;
->  
-> +       if (!ring)
-> +               return;
-> +
->         for (qid = 0; qid < ring->nr_queues; qid++) {
->                 queue = READ_ONCE(ring->queues[qid]);
->                 if (!queue)
-> 
-> 
+So basically, all you need to do is never allow configuring iomap on an
+already initialized inode.
 
-> fuse: Refactor io-uring bg queue flush and queue abort
-> 
-> From: Bernd Schubert <bschubert@ddn.com>
-> 
-> This is a preparation to allow fuse-io-uring bg queue
-> flush from flush_bg_queue()
-> 
-> This does two function renames:
-> fuse_uring_flush_bg -> fuse_uring_flush_queue_bg
-> fuse_uring_abort_end_requests -> fuse_uring_flush_bg
-> 
-> And fuse_uring_abort_end_queue_requests() is moved to
-> fuse_uring_stop_queues().
-> 
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->  fs/fuse/dev_uring.c   |   14 +++++++-------
->  fs/fuse/dev_uring_i.h |    4 ++--
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 249b210becb1..eca457d1005e 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -47,7 +47,7 @@ static struct fuse_ring_ent *uring_cmd_to_ring_ent(struct io_uring_cmd *cmd)
->  	return pdu->ent;
->  }
->  
-> -static void fuse_uring_flush_bg(struct fuse_ring_queue *queue)
-> +static void fuse_uring_flush_queue_bg(struct fuse_ring_queue *queue)
->  {
->  	struct fuse_ring *ring = queue->ring;
->  	struct fuse_conn *fc = ring->fc;
-> @@ -88,7 +88,7 @@ static void fuse_uring_req_end(struct fuse_ring_ent *ent, struct fuse_req *req,
->  	if (test_bit(FR_BACKGROUND, &req->flags)) {
->  		queue->active_background--;
->  		spin_lock(&fc->bg_lock);
-> -		fuse_uring_flush_bg(queue);
-> +		fuse_uring_flush_queue_bg(queue);
->  		spin_unlock(&fc->bg_lock);
->  	}
->  
-> @@ -117,11 +117,11 @@ static void fuse_uring_abort_end_queue_requests(struct fuse_ring_queue *queue)
->  	fuse_dev_end_requests(&req_list);
->  }
->  
-> -void fuse_uring_abort_end_requests(struct fuse_ring *ring)
-> +void fuse_uring_flush_bg(struct fuse_conn *fc)
->  {
->  	int qid;
->  	struct fuse_ring_queue *queue;
-> -	struct fuse_conn *fc = ring->fc;
-> +	struct fuse_ring *ring = fc->ring;
->  
->  	for (qid = 0; qid < ring->nr_queues; qid++) {
->  		queue = READ_ONCE(ring->queues[qid]);
-> @@ -133,10 +133,9 @@ void fuse_uring_abort_end_requests(struct fuse_ring *ring)
->  		WARN_ON_ONCE(ring->fc->max_background != UINT_MAX);
->  		spin_lock(&queue->lock);
->  		spin_lock(&fc->bg_lock);
-> -		fuse_uring_flush_bg(queue);
-> +		fuse_uring_flush_queue_bg(queue);
->  		spin_unlock(&fc->bg_lock);
->  		spin_unlock(&queue->lock);
-> -		fuse_uring_abort_end_queue_requests(queue);
->  	}
->  }
->  
-> @@ -475,6 +474,7 @@ void fuse_uring_stop_queues(struct fuse_ring *ring)
->  		if (!queue)
->  			continue;
->  
-> +		fuse_uring_abort_end_queue_requests(queue);
->  		fuse_uring_teardown_entries(queue);
->  	}
->  
-> @@ -1326,7 +1326,7 @@ bool fuse_uring_queue_bq_req(struct fuse_req *req)
->  	fc->num_background++;
->  	if (fc->num_background == fc->max_background)
->  		fc->blocked = 1;
-> -	fuse_uring_flush_bg(queue);
-> +	fuse_uring_flush_queue_bg(queue);
->  	spin_unlock(&fc->bg_lock);
->  
->  	/*
-> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> index 51a563922ce1..55f52508de3c 100644
-> --- a/fs/fuse/dev_uring_i.h
-> +++ b/fs/fuse/dev_uring_i.h
-> @@ -138,7 +138,7 @@ struct fuse_ring {
->  bool fuse_uring_enabled(void);
->  void fuse_uring_destruct(struct fuse_conn *fc);
->  void fuse_uring_stop_queues(struct fuse_ring *ring);
-> -void fuse_uring_abort_end_requests(struct fuse_ring *ring);
-> +void fuse_uring_flush_bg(struct fuse_conn *fc);
->  int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags);
->  void fuse_uring_queue_fuse_req(struct fuse_iqueue *fiq, struct fuse_req *req);
->  bool fuse_uring_queue_bq_req(struct fuse_req *req);
-> @@ -153,7 +153,7 @@ static inline void fuse_uring_abort(struct fuse_conn *fc)
->  		return;
->  
->  	if (atomic_read(&ring->queue_refs) > 0) {
-> -		fuse_uring_abort_end_requests(ring);
-> +		fuse_uring_flush_bg(fc);
->  		fuse_uring_stop_queues(ring);
->  	}
->  }
+> Eeeyiks, struct fuse_inode shrinks from 1272 bytes to 1152 if I push the
+> iomap stuff into its own union struct.
+>
+> > Was it your intention to allow filesystems to configure some inodes to =
+be
+> > in file_iomap mode and other inodes to be in regular cached/direct/pass=
+through
+> > io modes?
+>
+> That was a deliberate design decision on my part -- maybe a fuse server
+> would be capable of serving up some files from a local disk, and others
+> from (say) a network filesystem.  Or maybe it would like to expose an
+> administrative fd for the filesystem (like the xfs_healer event stream)
+> that isn't backed by storage.
+>
 
-> fuse: Flush the io-uring bg queue from fuse_uring_flush_bg
-> 
-> From: Bernd Schubert <bschubert@ddn.com>
-> 
-> This is useful to have a unique API to flush background requests.
-> For example when the bg queue gets flushed before
-> the remaining of fuse_conn_destroy().
-> 
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->  fs/fuse/dev.c         |    2 ++
->  fs/fuse/dev_uring.c   |    3 +++
->  fs/fuse/dev_uring_i.h |   10 +++++++---
->  3 files changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 5387e4239d6a..3f5f168cc28a 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -426,6 +426,8 @@ static void flush_bg_queue(struct fuse_conn *fc)
->  		fc->active_background++;
->  		fuse_send_one(fiq, req);
->  	}
-> +
-> +	fuse_uring_flush_bg(fc);
->  }
->  
->  /*
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index eca457d1005e..acf11eadbf3b 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -123,6 +123,9 @@ void fuse_uring_flush_bg(struct fuse_conn *fc)
->  	struct fuse_ring_queue *queue;
->  	struct fuse_ring *ring = fc->ring;
->  
-> +	if (!ring)
-> +		return;
-> +
->  	for (qid = 0; qid < ring->nr_queues; qid++) {
->  		queue = READ_ONCE(ring->queues[qid]);
->  		if (!queue)
-> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> index 55f52508de3c..fca2184e8d94 100644
-> --- a/fs/fuse/dev_uring_i.h
-> +++ b/fs/fuse/dev_uring_i.h
-> @@ -152,10 +152,10 @@ static inline void fuse_uring_abort(struct fuse_conn *fc)
->  	if (ring == NULL)
->  		return;
->  
-> -	if (atomic_read(&ring->queue_refs) > 0) {
-> -		fuse_uring_flush_bg(fc);
-> +	/* Assumes bg queues were already flushed before */
-> +
-> +	if (atomic_read(&ring->queue_refs) > 0)
->  		fuse_uring_stop_queues(ring);
-> -	}
->  }
->  
->  static inline void fuse_uring_wait_stopped_queues(struct fuse_conn *fc)
-> @@ -206,6 +206,10 @@ static inline bool fuse_uring_request_expired(struct fuse_conn *fc)
->  	return false;
->  }
->  
-> +static inline void fuse_uring_flush_bg(struct fuse_conn *fc)
-> +{
-> +}
-> +
->  #endif /* CONFIG_FUSE_IO_URING */
->  
->  #endif /* _FS_FUSE_DEV_URING_I_H */
+Understood.
 
+But the filesystem should be able to make the decision on inode
+initiation time (lookup)
+and once made, this decision sticks throughout the inode lifetime. Right?
+
+> > I can't say that I see a big benefit in allowing such setups.
+> > It certainly adds a lot of complication to the test matrix if we allow =
+that.
+> > My instinct is for initial version, either allow only opening files in
+> > FILE_IOMAP or
+> > DIRECT_IOMAP to inodes for a filesystem that supports those modes.
+>
+> I was thinking about combining FUSE_ATTR_IOMAP_(DIRECTIO|FILEIO) for the
+> next RFC because I can't imagine any scenario where you don't want
+> directio support if you already use iomap for the pagecache.  fuse iomap
+> requires directio write support for writeback, so the server *must*
+> support IOMAP_WRITE|IOMAP_DIRECT.
+>
+> > Perhaps later we can allow (and maybe fallback to) FOPEN_DIRECT_IO
+> > (without parallel dio) if a server does not configure IOMAP to some ino=
+de
+> > to allow a server to provide the data for a specific inode directly.
+>
+> Hrmm.  Is FOPEN_DIRECT_IO the magic flag that fuse passes to the fuse
+> server to tell it that a file is open in directio mode?  There's a few
+> fstests that initiate aio+dio writes to a dm-error device that currently
+> fail in non-iomap mode because fuse2fs writes everything to the bdev
+> pagecache.
+>
+
+Not exactly, but nevermind, you can use a much simpler logic for what
+you described:
+iomap has to be configured on inode instantiation and never changed afterwa=
+rds.
+Other inodes are not going to be affected by iomap at all from that point o=
+n.
+
+> > fuse_file_io_open/release() can help you manage those restrictions and
+> > set ff->iomode =3D IOM_FILE_IOMAP when a file is opened for file iomap.
+> > I did not look closely enough to see if file_iomap code ends up setting
+> > ff->iomode =3D IOM_CACHED/UNCACHED or always remains IOM_NONE.
+>
+> I don't touch ff->iomode because iomap is a per-inode property, not a
+> per-file property... but I suppose that would be a good place to look.
+>
+
+Right, with cached/direct/passthrough the inode may change the iomode
+after all files are closed, but we *do* keep the mode in the inode,
+so we know that files cannot be opened in conflicting modes on the same ino=
+de.
+
+The purpose of ff->iomode is to know if the file contributes to cached mode
+positive iocachectr or to a negative passthrough mode refcount.
+
+So setting ff->iomode =3D IOM_IOMAP just helps for annotating how the
+file was opened, in case we are tracing it. There is no functional need to
+define and set this mode on the file when the mode of the inode is const.
+
+Thanks,
+Amir.
 
