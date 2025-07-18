@@ -1,152 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-55478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A13CDB0AB40
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 23:03:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D981FB0AB90
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 23:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22AA11C48425
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 21:04:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87B015C0958
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 21:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4222215773;
-	Fri, 18 Jul 2025 21:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BF7221286;
+	Fri, 18 Jul 2025 21:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="mFX9cJZc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mURAj0sm"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="QZ5S+p32"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9756518E20
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 21:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F7F1F4623;
+	Fri, 18 Jul 2025 21:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752872619; cv=none; b=QPg267xq2nhLlcKV/1j3SZONALRX1Zjs/Rsb4vGXMmsn409myTva9By2DiyWA/mbbf7SuHEspK3cgxkRmSVUs6bPNfGMJlzq+tZvj7gFyZBktWHvHKRNsvK1m2bV8D+SdMJzEjMJCAIF1Taptlco2/TtNY3lSgqfbs6RTIYBJnM=
+	t=1752874519; cv=none; b=fs5HxK2hWRchQntrtAO+SAEFmTXWUB0wLt1aYXRXBpZRTQPGCnywOJ9p2Z1TOCUWBW+d4BtfF2B/rvSRbwx2Co4hQAjAa3J7/dJx5bA47zcgaGVzI5ahhZaB5KyqnlIeitgPltU7Dhsq0yd8QInznHUUZj6Wk7H/xSs7H7MrZrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752872619; c=relaxed/simple;
-	bh=6sUDuY4uVAoj2B6pfXZJd6V7Wh1mOF1QgC96k5JdABk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nvz+BdP79cXMWh7V38suUP1xPOiqbz2vH05MQZT1uRO8Eq5XIHBeThXSI3yw5kYnTkrsMG3OdDBejqjMJGMUjGzBxbGMj7wk4cY5LCk3OZY8YSWUoJXYh0Oc5uGUfJwD6reMVbTE/T1JkPN5WHJX4VRciWlxQuV9Ou7vIfAgfjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=mFX9cJZc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mURAj0sm; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id A8038EC009F;
-	Fri, 18 Jul 2025 17:03:36 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Fri, 18 Jul 2025 17:03:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752872616;
-	 x=1752959016; bh=IjJ/bLuE5hMKzpwd2091GJM9l+Z8d3Hun0Ag0Ei7Wu8=; b=
-	mFX9cJZc64qem42k50xl69zp2ppkpK+Em5JK8V3bvWkrgfKJNTV9SijWxW+o8tcK
-	qY6ALrDGc9ofu9/2DhhMCTHdGI0DhFjfFwqSD9ZNSNgIaNitkye+/qvFR1ntFSBp
-	yJDNBtyyV0FAPTQ2Nnlk3hnRIokynHzqSaXklrqG48DPwf3TmCK/3Vq7Pa1RrFL5
-	c6rTG7LCrmtNoS5jgFEQRO6lvYRebp8wQrCSXyBIn+fhVO/fK2eRLe47Af3k8kAK
-	dWbXd3/xAFrrBXJ99Gu7IevzEY3j1SxueEV1iEuE3z/iJ+3WlZQAgkfFx5QGYU5s
-	l+Flja/rxE+xdM5yuge1fg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752872616; x=
-	1752959016; bh=IjJ/bLuE5hMKzpwd2091GJM9l+Z8d3Hun0Ag0Ei7Wu8=; b=m
-	URAj0sm1Z7Uwzs8YeFhlVFsZpR5KemsWruiW5e/c5a3Z5OdtAiZLFYUncIo7Sz1+
-	QTeoWwjUU117A1iY0Ceoq/lDnKhRfaMlxqEE79tUzxUys6oq5UKIfK3umN/gILz6
-	nOC/ubGENtOfx4VVpJBnSnLCDBS/gviL/qlCYKcgrAZWgjWznje9rGkjOkkvJ3HL
-	I+C4JrGkRjt2P/66klxeVrB84FsdrZHrCPZvfEXjPRgAXHGt2rdnowfrxv9Vs8eg
-	APpUHemvFfD1UlK+SW0i3TsT6cX2PyJ2sSN7pZkNGoAnx8S18J1VKd15boRZ3Vva
-	L5ULLIWi3rdt9BDytjjQw==
-X-ME-Sender: <xms:p7Z6aO97WiKRlmzyqn-zeSLW2xphbBGTZ_Figag8BNutHxuWJouMGw>
-    <xme:p7Z6aMRad1mfLVtpI_FDn5Ul1FMuTWfPp5Ulo1fzsP5MAwUimgajGOToi4BWR7POP
-    fjpbyyNNJ-pR1Lp>
-X-ME-Received: <xmr:p7Z6aKcrvYZjxNLnpSyNMZtU512aV2HcMg8REKU8_b05fQsQetqTv4wrHAjw0aV-cCKA6VCZF183DmsaK-tZ_kwfY56VB9Mv86IWYm-S5nIes2SeJcNQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeigeegkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhnugcu
-    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
-    htvghrnhephefhjeeujeelhedtheetfedvgfdtleffuedujefhheegudefvdfhheeuvedu
-    ueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
-    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepnhgvrghlsehgohhmphgrrdguvghvpdhrtghpthhtohepjhhohhhnsehgrh
-    hovhgvshdrnhgvthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
-    tghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    ephhgsihhrthhhvghlmhgvrhesuggunhdrtghomh
-X-ME-Proxy: <xmx:qLZ6aIB0bKvRDxR9kBirgHS7XuYVoegOXI-zm_fzF4Qpowx1BP2eHA>
-    <xmx:qLZ6aEn6JSZ6K0KS0osLhRciNlL5Qq6lP8FPs9EORJE9nDfQ60t0Qw>
-    <xmx:qLZ6aLeCL9q8Do9QD6fBQ45uTUMFRrzqmNAQ4IhjFFkpS10SvbG9Bg>
-    <xmx:qLZ6aAQNyFbo20om33QaCJhh3gLvEuvWo4JeJlcuimrJLllMbdc6yA>
-    <xmx:qLZ6aOQ5qn-xAFiMt0ItGtKAK-d2YLZDbTkSz4IEAv_L_CJXhMAYs-13>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 18 Jul 2025 17:03:34 -0400 (EDT)
-Message-ID: <2dbf4c64-bd4d-4368-9805-855fdc32e0d0@bsbernd.com>
-Date: Fri, 18 Jul 2025 23:03:33 +0200
+	s=arc-20240116; t=1752874519; c=relaxed/simple;
+	bh=e26wcrCpgtY0ThMsVaf6VETi8cowQt0T8Wlu/NYupfY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gkGQpYbbQFaSRkij1qYGboUgUzCvhqlGk4imPGu6LD50C4C6ZgrtNr50ekoA2/WYnMpa0pNJk4O9yIost630fj2y54L2l/DvT+Gj1/ZT+R4VpnYDIPvTvVsbfxHBHrExEtIY8zUUUXd0NXE4AAZiQKjwDO7zaGsyPG0ihc/t8Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=QZ5S+p32; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from mail.zytor.com ([IPv6:2601:646:8081:9482:197f:c1e5:8ae9:2d06])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56ILX0si2795198
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Fri, 18 Jul 2025 14:33:00 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56ILX0si2795198
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1752874388;
+	bh=gldC6YCEbu9Wrkqgglu65d8d6ydEAjRPt571KpQxh08=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QZ5S+p32GsU27K2XDsJHVIHXIncdLYMVx9WkzgY9upJ2iSoAd8fOE6NLZvS2z8pHx
+	 prhlzCi6T6l62vb9elhydX5NGbcUOL15dyvEwc51AyEsiTYSDTmUgUZzGm0Jpifvg0
+	 p4Pb2759nqiqNKXHrvRbkNlUhkGC+y3LpLGwlZ6No42OS0Kq7x+ONSxKb+AgGAGM2j
+	 Iazr3VxtTbJ+oPkfc1/FSKWp7rpY/KwlZkkLO56MZTHbhHz4JNPcfsS9E02xOWOanE
+	 rr9BJ0ie8/pESWhCvoLLLxODingDn66IzCZnsV2qSKV8NUMyX9IqT3Uo48ddW3zo4v
+	 W9YbGSw7reB9Q==
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: 
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Alexei Starovoitov <ast@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Cong Wang <cong.wang@bytedance.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        David Lechner <dlechner@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>,
+        Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+        Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Kees Cook <kees@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Marc Herbert <Marc.Herbert@linux.intel.com>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>,
+        Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+        NeilBrown <neil@brown.name>, Peter Zijlstra <peterz@infradead.org>,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+        Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>,
+        Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thorsten Blum <thorsten.blum@linux.dev>,
+        Uros Bizjak <ubizjak@gmail.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Yafang Shao <laoar.shao@gmail.com>, Ye Bin <yebin10@huawei.com>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
+        virtualization@lists.linux.dev, x86@kernel.org
+Subject: [PATCH 0/7] Replace "__auto_type" with "auto"
+Date: Fri, 18 Jul 2025 14:32:43 -0700
+Message-ID: <20250718213252.2384177-1-hpa@zytor.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the
- connection
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
- miklos@szeredi.hu, joannelkoong@gmail.com,
- Horst Birthelmer <hbirthelmer@ddn.com>
-References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
- <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
- <286e65f0-a54c-46f0-86b7-e997d8bbca21@bsbernd.com>
- <71f7e629-13ed-4320-a9c1-da2a16b2e26d@bsbernd.com>
- <20250718193446.GD2672029@frogsfrogsfrogs>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250718193446.GD2672029@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+"auto" was defined as a keyword back in the K&R days, but as a storage
+type specifier.  No one ever used it, since it was and is the default
+storage type for local variables.
 
+C++11 recycled the keyword to allow a type to be declared based on the
+type of an initializer.  This was finally adopted into standard C in
+C23.
 
-On 7/18/25 21:34, Darrick J. Wong wrote:
-> On Fri, Jul 18, 2025 at 08:07:30PM +0200, Bernd Schubert wrote:
->>
->>>
->>> Please see the two attached patches, which are needed for fuse-io-uring.
->>> I can also send them separately, if you prefer.
->>
->> We (actually Horst) is just testing it as Horst sees failing xfs tests in
->> our branch with tmp page removal
->>
->> Patch 2 needs this addition (might be more, as I didn't test). 
->> I had it in first, but then split the patch and missed that.
-> 
-> Aha, I noticed that the flush didn't quite work when uring was enabled.
-> I don't generally enable uring for testing because I already wrote a lot
-> of shaky code and uring support is new.
+gcc and clang provide the "__auto_type" alias keyword as an extension
+for pre-C23, however, there is no reason to pollute the bulk of the
+source base with this temporary keyword; instead define "auto" as a
+macro unless the compiler is running in C23+ mode.
 
-Yeah, I can understand.
+This macro is added in <linux/compiler_types.h> because that header is
+included in some of the tools headers, wheres <linux/compiler.h> is
+not as it has a bunch of very kernel-specific things in it.
 
-> 
-> Though I'm afraid I have no opinion on this, because I haven't looked
-> deeply into dev_uring.c.
-
-The updates patches in my branch seem to work. Going to post them
-separately, but with reference to your series tomorrow. Difference is
-that we cannot call fuse_uring_flush_bg() from flush_bg_queue(), because
-the latter is also called from fuse_request_end() - result in double
-lock and even it wouldn't flush over all queues is not desirable.
-
-
-Thanks,
-Bernd
-
-
+--- 
+ arch/nios2/include/asm/uaccess.h                        |  4 ++--
+ arch/x86/include/asm/bug.h                              |  2 +-
+ arch/x86/include/asm/string_64.h                        |  6 +++---
+ arch/x86/include/asm/uaccess_64.h                       |  2 +-
+ fs/proc/inode.c                                         | 16 ++++++++--------
+ include/linux/cleanup.h                                 |  4 ++--
+ include/linux/compiler.h                                |  2 +-
+ include/linux/compiler_types.h                          | 13 +++++++++++++
+ include/linux/minmax.h                                  |  6 +++---
+ tools/testing/selftests/bpf/prog_tests/socket_helpers.h |  9 +++++++--
+ tools/virtio/linux/compiler.h                           |  2 +-
+ 11 files changed, 42 insertions(+), 24 deletions(-)
 
