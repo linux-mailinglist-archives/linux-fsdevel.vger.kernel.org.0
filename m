@@ -1,256 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-55448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B12B0A8E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 18:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64102B0A92A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 19:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D0B3ACC9C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 16:49:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB4CA862A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 17:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4162E62AF;
-	Fri, 18 Jul 2025 16:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1772E6D2C;
+	Fri, 18 Jul 2025 17:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lGCt+VKt"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="a83fcaS4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WxqD7b8p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7002E5B29
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 16:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9392E6D00
+	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 17:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752857377; cv=none; b=BMlZUSWhyYlKlpYuEy7neUUzzpPRXod4nk4TMDH6BwfuXijXAzz29WzPxcUY5KE27xtc3lrYZXmg4JFHQkremJE4p/bnm8pQiyKCtOuwgGtbbqYyUXJNJ6TTF6RcFgJGfLd4vCzs+etbH8ida2sub1shD9zDnIktnoTeQuyG1rQ=
+	t=1752858642; cv=none; b=M+bDdnj0Fpfd7HCyLYCrySDjJRZeIq9b/n+33++8L66ytTkRFz0RGMtNpUbzB/aG+cit33DMWcBzLbYfq3bGrjIK9E9W7HmMR6zgH0kF1mrO85ocB2BjxDhZxtpHOlX7IlEucTyf2zWmWqTrQUSNLJVViL+IT16YSGPUCxElPr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752857377; c=relaxed/simple;
-	bh=YYkFrLXQNcF/LRzXFAq83sA1w2G3tvd/U+OLCef/WXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mWU8Ooh2Rn1SuLsvH/0ulBXxM3VBglOtkyqf5eUgXLQDsxV8lWFamJj24kqVN0/iYQEA99nq75OOlJ/qTVQ64yn/ni+93+JSXxQeyHhj6qKQqXbLTMeD2filxGapbF6YCWhDYk/yS113Qqv8dqlXIefB9ymaEm0eUr2I+ITO+z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lGCt+VKt; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so178a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 09:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752857374; x=1753462174; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zdFQmiTCtyQu/zHhNrg0B+XyPur8yXji78Rwk2BnkTc=;
-        b=lGCt+VKtC9uaLgOoITxVUkGzORTgYA/s0GCk2GJ73Ttegz2xKc/kIBLwN75X8YvJyr
-         0983tRmGEuEgLdEuNoXFAASzEOTAJaXxKLFLb06/+dA2h4Wt7VLI/u+nNEKcjzumPFXn
-         S9G65x8RBemmlEQQFUbjppPodzzWL/TpZVr6kUYOnw4BSqK1R4ydEiskAs1hU0ujtri8
-         uf0EBbdCXvTniTFd89oODWxVMTd18q4Fbx1GnChzofWuxp0lUYKWQM2jMGTqbFpa7w40
-         0GSyGwbFBV0lD2U1svhyCnZUnlshk2zqDOHYx4vtje9jbhghRfD6tDIJ1KMkAzgrSoV+
-         IHpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752857374; x=1753462174;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zdFQmiTCtyQu/zHhNrg0B+XyPur8yXji78Rwk2BnkTc=;
-        b=Qxgq1C3d28quBwmxBMV6HmagcJfvXOxgQjLXHW1PMfqiNyD5386cqI9cHdoNEbCd9O
-         toW13OkhaiRpfWnspYvIbRhJ+5IyUNRxx7qNgIfwtkMOr7EF6rRxBXrBZ+lBLgn2THPR
-         PlyHgEXnhudoHOCtojl0uTrVVgMgQEGAGSOccC7m4z55oDHQy6cDpU8i/Cjus2yP0tM1
-         +VeIPkA8e51cWqkexAo5WXLAQEUdRqNbKcPhNx20tGJ8ZbjXn3qIFov/Ju38E4fduwH1
-         E2SlZ9mGtN13zQFZ5dmsImdB9UTmPEDR94H48dOQIwfXcRTcSjnFlXhmgXidg8SdEfc7
-         2bJg==
-X-Gm-Message-State: AOJu0Yy7qS6Rui9eE2kHVT7sciagTR8YnnOdwOxWJmeToODKPhOonk0K
-	Osr4839NgItjDhgS+YtKcQ9CaOetebIbA2A7piih0NXiv5EMn+TefVXvn/JvaziJWy7u6Hmt1xc
-	ILLu+xuiz4QyrGpfAUtH5+sRz7pazI/1E3a/6rUM5
-X-Gm-Gg: ASbGnctTk32lGeqewisj559vp5iGo9/Zk0EIRf5A8xQZdylcveoleWwDkr0YcOZi8Ya
-	LfJmfXsHmini0oopmuBv76WMuINX4eqnSxU94E5vZTpimNO2uZ1NryqCPugLB0BlR62ZqABdT94
-	uUDxTPJe18J6BDYb4lkz1zhdbawzfQPbyAyvnmMla/h6SerbpNgweEorwcK/KrDg3Z3ufgwUbMQ
-	vNN0sh3NTVLV874co4YkB3e7Iz4AcDvQL0=
-X-Google-Smtp-Source: AGHT+IEKipZ75dFcHQSQPERCSjZrzcx9z2eXpEQd6YxCy6qM2F3cG0oanco6kN4MAL7MZ/V/SEtL/XNR5ChXhILWj8A=
-X-Received: by 2002:a50:d6c6:0:b0:612:bec2:cf22 with SMTP id
- 4fb4d7f45d1cf-612c2317b32mr104875a12.4.1752857372727; Fri, 18 Jul 2025
- 09:49:32 -0700 (PDT)
+	s=arc-20240116; t=1752858642; c=relaxed/simple;
+	bh=ccoktd/JcTj8KLLnlR1IKrDfymInNKbBYwVHrsc8VaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ktfpgneWTpp/1w/c+5GCm4RJRnRPOCC+KtJlwXWzjcTx1UP2PM6YQ6S48+23IxuONTpO8S0HXI9CU7Ct28nWJ5EY4B5oB46ceKp9oByHKDPBrVodx3u/F5o4/aRRYvRafrfkM0SmFRuD2PTdeQlE0Ms+Q76e8xYctgOuUy3NoPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=a83fcaS4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WxqD7b8p; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 9F6297A0144;
+	Fri, 18 Jul 2025 13:10:39 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Fri, 18 Jul 2025 13:10:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752858639;
+	 x=1752945039; bh=5apDdwG/sHF4rKP/j0HvLRqQdpdoz2t+ySR7NjE7IPY=; b=
+	a83fcaS48ontHEurBXJ4N4DOVCA3hRBVn/LghIsTnHCdv2nQNeWHpbGT3801z3QH
+	+Oz2NALW4P4U/XosX2tYPXw3YWudZii3PfLykkIcP3A/svcPj2WdGM3Y/pP7LM8o
+	d7UyqFOJHq8wCbzo7XpWvxewPu1nVeY2DAO3fwRAaH6q8g36EkoOIGY3FKaCzSFU
+	R8YhL4y1JQgzVVVvobhlyhXo+u+O6mBXChLqgtmH2x6DWqjf0AA6vdJ4mKr87HJl
+	3tVhaWioUwqo4ETRWSq4UTY+wr/iZF0n1i1i3SbwnFR++lHKPnnF7bM4qm4+DCg/
+	aMBR/SS+dG4P2RCl1171Lg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752858639; x=
+	1752945039; bh=5apDdwG/sHF4rKP/j0HvLRqQdpdoz2t+ySR7NjE7IPY=; b=W
+	xqD7b8pdWmBlw54kqLBJU87OOm2ZfZvk3LoxNuvu1+aAS9KHboIj1b0WDRY5gVkg
+	FkBev8q+Gu8hBHw9P1OOzVjhVYcGLqjlR5/UI9KkexCJPJJcDIic9po+IoXnZkuN
+	Zic9tcRaZs+W/Ef975z7MzGSEgCvRb8en89Y0c7r0Z2jfoI8fbadD26lQySjkSpL
+	J0WVJtCokg36hZY3w6ei3USSNW/9ScnY7LQv2beWXe4Op7+vgGEEY8N3t+OF7GO4
+	bRtVQ+C3hWftBPnvD98sxpZQxTXSkgPvh5ymHTXHEg9huR0ZaWZNToFBNVhkNTrk
+	I0/E/LFkEmJ8Z85BsjyFg==
+X-ME-Sender: <xms:D4B6aOLRSzBGqh-n3vRWiheeiHL3Zr-g_lWTTVnMfErvgBPTCr1XwQ>
+    <xme:D4B6aOnD9G8-58VAaeTEC8pECxWFISLtZ4HrHcprqJgQMgk2TZmprmpiYRKF8gs95
+    mwmV_enMGRFlYYN>
+X-ME-Received: <xmr:D4B6aPIv9B_OpF29X5bZqDQK4zu-cdI7g5asRAUVPbs4KpxdmI_xj12YlhX8oAr7QVPS2Qwvwugy9ISeC0IZ8sjk_6AuKCVLNU2ce9UpMIaaMajjsGDH>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeigedtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhnugcu
+    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
+    htvghrnheptdeghffgueduvdeuuedutdduhfevteeiiefhtddvueffhfevffefieeuhedu
+    kedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnuges
+    sghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
+    ihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epnhgvrghlsehgohhmphgrrdguvghvpdhrtghpthhtohepjhhohhhnsehgrhhovhgvshdr
+    nhgvthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoh
+    epjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:D4B6aD6lmXNs_MKIP3gLYLiezGWfw5WR4tVOU2q6rvdcZuMya73Mtw>
+    <xmx:D4B6aD0uOeuoCm9VpHHoEkkfFlP16xYZxxcy8ZjJRPVAtNWW9OSg1w>
+    <xmx:D4B6aJf0JxvgzPdIvpla9_bZz-LOu5lJYtk4B6bI12hxqBMFwX5h-g>
+    <xmx:D4B6aJfSxOEY3ztbNlopfmEXxHswVzGuqDZ7ha6LOOkuAf-KYRIqMQ>
+    <xmx:D4B6aJHr8YJVj5jbCXXbUtZ-vNnXsuanbxpNW617tfsvRVo_wAk2ebf9>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Jul 2025 13:10:38 -0400 (EDT)
+Message-ID: <3f65b1e1-828a-4023-9c1d-0535caf7c4be@bsbernd.com>
+Date: Fri, 18 Jul 2025 19:10:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718-hidepid_fix-v1-1-3fd5566980bc@ssi.gouv.fr>
- <CAG48ez3u09TK=Ju3xdEKzKuM_-sO_y9150NBx3Drs8T1G-V9AQ@mail.gmail.com> <s7no7daeq6nmkwrf5w63srpmxzzqk5uor2kxdvrvrskoahh7un@h6kubn7qxli2>
-In-Reply-To: <s7no7daeq6nmkwrf5w63srpmxzzqk5uor2kxdvrvrskoahh7un@h6kubn7qxli2>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 18 Jul 2025 18:48:54 +0200
-X-Gm-Features: Ac12FXwHhnJM27H3F2j0R9jH8PM46wRLA_SIP9MxHGaFT7dpoUWY-oXaYWfBUR4
-Message-ID: <CAG48ez1ERkkwd+cJPmLmVj4JKpj5Uq=LaUEpb6_TgC4PRXosUw@mail.gmail.com>
-Subject: Re: [PATCH] fs: hidepid: Fixes hidepid non dumpable behavior
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] fuse: capture the unique id of fuse commands being
+ sent
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
+ miklos@szeredi.hu, joannelkoong@gmail.com
+References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
+ <175279449522.710975.4006041367649303770.stgit@frogsfrogsfrogs>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <175279449522.710975.4006041367649303770.stgit@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 18, 2025 at 5:47=E2=80=AFPM Nicolas Bouchinet
-<nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
-> Hi Jann, thanks for your review !
->
-> On Fri, Jul 18, 2025 at 04:45:15PM +0200, Jann Horn wrote:
-> > On Fri, Jul 18, 2025 at 10:47=E2=80=AFAM <nicolas.bouchinet@oss.cyber.g=
-ouv.fr> wrote:
-> > > The hidepid mount option documentation defines the following modes:
-> > >
-> > > - "noaccess": user may not access any `/proc/<pid>/ directories but
-> > >   their own.
-> > > - "invisible": all `/proc/<pid>/` will be fully invisible to other us=
-ers.
-> > > - "ptraceable": means that procfs should only contain `/proc/<pid>/`
-> > >   directories that the caller can ptrace.
-> > >
-> > > We thus expect that with "noaccess" and "invisible" users would be ab=
-le to
-> > > see their own processes in `/proc/<pid>/`.
-> >
-> > "their own" is very fuzzy and could be interpreted many ways.
-> >
-> > > The implementation of hidepid however control accesses using the
-> > > `ptrace_may_access()` function in any cases. Thus, if a process set
-> > > itself as non-dumpable using the `prctl(PR_SET_DUMPABLE,
-> > > SUID_DUMP_DISABLE)` it becomes invisible to the user.
-> >
-> > As Aleksa said, a non-dumpable processes is essentially like a setuid
-> > process (even if its UIDs match yours, it may have some remaining
-> > special privileges you don't have), so it's not really "your own".
-> >
->
-> Also replying to  :
->
-> > What's the background here - do you have a specific usecase that
-> > motivated this patch?
->
-> The case I encountered is using the zathura-sandbox pdf viewer which
-> sandboxes itself with Landlock and set itself as non-dumpable.
 
-It kind of sounds like an issue with your PDF viewer if that just sets
-the non-dumpable flag for no reason...
 
-> If my PDF viewer freezes and I want to kill it as an unprivileged user,
-> I'm not able to get its PID from `/proc` since its fully invisible to my
-> user.
->
-> > > This patch fixes the `has_pid_permissions()` function in order to mak=
-e
-> > > its behavior to match the documentation.
-> >
-> > I don't think "it doesn't match the documentation" is good enough
-> > reason to change how the kernel works.
-> >
-> > > Note that since `ptrace_may_access()` is not called anymore with
-> > > "noaccess" and "invisible", the `security_ptrace_access_check()` will=
- no
-> > > longer be called either.
-> > >
-> > > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> > > ---
-> > >  fs/proc/base.c | 27 ++++++++++++++++++++++++---
-> > >  1 file changed, 24 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > > index c667702dc69b8ca2531e88e12ed7a18533f294dd..fb128cb5f95fe65016fce=
-96c75aee18c762a30f2 100644
-> > > --- a/fs/proc/base.c
-> > > +++ b/fs/proc/base.c
-> > > @@ -746,9 +746,12 @@ static bool has_pid_permissions(struct proc_fs_i=
-nfo *fs_info,
-> > >                                  struct task_struct *task,
-> > >                                  enum proc_hidepid hide_pid_min)
-> > >  {
-> > > +       const struct cred *cred =3D current_cred(), *tcred;
-> > > +       kuid_t caller_uid;
-> > > +       kgid_t caller_gid;
-> > >         /*
-> > > -        * If 'hidpid' mount option is set force a ptrace check,
-> > > -        * we indicate that we are using a filesystem syscall
-> > > +        * If 'hidepid=3Dptraceable' mount option is set, force a ptr=
-ace check.
-> > > +        * We indicate that we are using a filesystem syscall
-> > >          * by passing PTRACE_MODE_READ_FSCREDS
-> > >          */
-> > >         if (fs_info->hide_pid =3D=3D HIDEPID_NOT_PTRACEABLE)
-> > > @@ -758,7 +761,25 @@ static bool has_pid_permissions(struct proc_fs_i=
-nfo *fs_info,
-> > >                 return true;
-> > >         if (in_group_p(fs_info->pid_gid))
-> > >                 return true;
-> > > -       return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
-> > > +
-> > > +       task_lock(task);
-> > > +       rcu_read_lock();
-> > > +       caller_uid =3D cred->fsuid;
-> > > +       caller_gid =3D cred->fsgid;
-> > > +       tcred =3D __task_cred(task);
-> > > +       if (uid_eq(caller_uid, tcred->euid) &&
-> > > +           uid_eq(caller_uid, tcred->suid) &&
-> > > +           uid_eq(caller_uid, tcred->uid)  &&
-> > > +           gid_eq(caller_gid, tcred->egid) &&
-> > > +           gid_eq(caller_gid, tcred->sgid) &&
-> > > +           gid_eq(caller_gid, tcred->gid)) {
-> > > +               rcu_read_unlock();
-> > > +               task_unlock(task);
-> > > +               return true;
-> > > +       }
-> > > +       rcu_read_unlock();
-> > > +       task_unlock(task);
-> > > +       return false;
-> > >  }
-> >
-> > I think this is a bad idea for several reasons:
-> >
-> > 1. It duplicates existing logic.
-> I open to work on that.
->
-> > 2. I think it prevents a process with euid!=3Druid from introspecting
-> > itself through procfs.
-> Great question, I'll test that and write some hidepid tests to check that=
-.
->
-> > 3. I think it prevents root from viewing all processes through procfs.
-> Yes only if combined with yama=3D"no attach", and IMHO, that would make s=
-ense.
+On 7/18/25 01:27, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
+> 
+> The fuse_request_{send,end} tracepoints capture the value of
+> req->in.h.unique in the trace output.  It would be really nice if we
+> could use this to match a request to its response for debugging and
+> latency analysis, but the call to trace_fuse_request_send occurs before
+> the unique id has been set:
+> 
+> fuse_request_send:    connection 8388608 req 0 opcode 1 (FUSE_LOOKUP) len 107
+> fuse_request_end:     connection 8388608 req 6 len 16 error -2
+> 
+> Move the callsites to trace_fuse_request_send to after the unique id has
+> been set, or right before we decide to cancel a request having not set
+> one.
 
-Why only if combined with yama? Doesn't your code always "return
-false" on a UID/GID mismatch?
+Sorry, my fault, I have a branch for that already. Just occupied and
+then just didn't send v4.
 
-> > 4. It allows processes to view metadata about each other when that was
-> > previously blocked by the combination of hidepid and an LSM such as
-> > Landlock or SELinux.
-> Arf, you're absolutely right about this, my bad.
->
-> > 5. It ignores capabilities held by the introspected process but not
-> > the process doing the introspection (which is currently checked by
-> > cap_ptrace_access_check()).
-> As suggested by Aleksa, I can add some capabilities checks here.
->
-> >
-> > What's the background here - do you have a specific usecase that
-> > motivated this patch?
->
-> The second motivation is that the "ptraceable" mode didn't worked with
-> the yama LSM, which doesn't care about `PTRACE_MODE_READ_FSCREDS` trace
-> mode. Thus, using hidepid "ptraceable" mode with yama "restricted",
-> "admin-only" or "no attach" modes doesn't do much.
->
-> As you have seen, I also have submited a fix to yama in order to make it
-> take into account `PTRACE_MODE_READ_FSCREDS` traces.
+https://lore.kernel.org/all/20250403-fuse-io-uring-trace-points-v3-0-35340aa31d9c@ddn.com/
 
-I don't think that's really a fix - that's more of a new feature
-you're proposing. Yama currently explicitly only restricts ATTACH-mode
-ptrace access (which can read all process memory or modify the state
-of a process), and it doesn't restrict less invasive introspection
-that uses READ-mode ptrace checks.
+The updated branch is here
 
-> I have to admit I'm not really found of the fact that those two patch
-> are so tightly linked.
->
-> Thanks again for your review,
->
-> Nicolas
+https://github.com/bsbernd/linux/commits/fuse-io-uring-trace-points/
+
+Objections if we go with that version, as it adds a few more tracepoints
+and removes the lock to get the unique ID.
+
+Thanks,
+Bernd
+
 
