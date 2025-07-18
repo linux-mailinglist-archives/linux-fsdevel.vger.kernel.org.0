@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-55486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625CEB0ABAA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 23:36:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84A5B0AB9F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 23:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C331B1C825F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 21:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10635C0AB6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 21:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA782264D0;
-	Fri, 18 Jul 2025 21:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17DA222568;
+	Fri, 18 Jul 2025 21:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DSCKhfYx"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="V5Z//aag"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B645A1E832E;
-	Fri, 18 Jul 2025 21:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4ADA42AA4;
+	Fri, 18 Jul 2025 21:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752874521; cv=none; b=bHXFPmokQw3ZlqJCcEshzdTl+ycmhUxTRETb56qZWb5gn7M8KXQWe/7kpQEjiO9CJRMzmKEygeLcv8Xeh5vGOdAPq11X84jpCdLrmkFsCuSIgMRuZ+bw9EPmIdTZ2VZbUo2O0beHxTRtc6Nuf8z7Cvv46Gn3Nr28/uAzpDZZyOU=
+	t=1752874520; cv=none; b=Nrora2z5ktDGIjMVOkFkGWZ5Lf1XWa5uxrJBjS7bJ5m/SVMFfR0IHqcbZteyz2v+8KXpZgXblfECAaoPqxWh0HxiW79ukVaA6x+vj9oEimJ2kQY9abIYPbLqEJjeCxADTA5+GE9amc1cGM3XyQD4Nz1UnI/iujeovS9T9rf3FQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752874521; c=relaxed/simple;
-	bh=NXPmr3BOE2u5fhRNvI0cqLh8kd9rVIcOhU8I/rc0IfU=;
+	s=arc-20240116; t=1752874520; c=relaxed/simple;
+	bh=lBKUGA6zNqcsPATDf41Ebh8yrcRzfOT5mMVIGxIAdVs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ffc3lpriEMgoChkwa7kiRMFadiRn6FU4wcRs3cqt4n6iVzbIuKbLvkOxWdnNrc9RXw65MhEhVBPl/mTmCrIasMXuSDulxlOpuVpak1lPsBeHovc1NzEWEwU0ZN9uzLiBC9j5V0ww+4SbQyf6iWBFPmn/yn8En6Wx5i+ZwHjd9H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DSCKhfYx; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=YdahYm7V1DM7bopythFAoqQgqJkZ6Deu/FU5D6JB+bxkZfhErmdXebq93z+yZYiMolhX32soyNFCSgT6qGAIaqBIhtQCkzX+o+as1aF7u/s2NpAhZl+37Oe3mt5ZqP9aML/DV54Oj+wWtk/rFqjBP3hbsRVBuSxzqQVbuWOua4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=V5Z//aag; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from mail.zytor.com ([IPv6:2601:646:8081:9482:197f:c1e5:8ae9:2d06])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56ILX0sl2795198
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56ILX0sm2795198
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 18 Jul 2025 14:33:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56ILX0sl2795198
+	Fri, 18 Jul 2025 14:33:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56ILX0sm2795198
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752874399;
-	bh=NhtjXHm8n19JlB0jzDbzbq1BDP9/2sJrEr7ZMM4ZOgY=;
+	s=2025062101; t=1752874403;
+	bh=jOYLooryEKHScahs/oq1OSMQ5trl6tIglcozgM03cmk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DSCKhfYxOzSL+px0MZ4TAnvg9uQlNuCGi4G73+n+wLx8Q7YavwZc2Px2zSXZTQto3
-	 1plvjh0/sLhIWPgZ22widI7khU7thmRtxGpmZ8Vozu1xui9m2wBFjOpBYeIPY3sW0v
-	 LIxvVM/18kTHW4mYpl9cD6VppG2BnuROjoT9VWHPmo+4hEPK8d551nRF9Xzr7B1Zdz
-	 bgBYSod1ouE0y6Zq9mS6sYis6nfVI2XP6tVkzVjrqavrvI2lGuHnjfJA9Nmvn0yURT
-	 ExMFs5//bPncOz5SZVUb0vdGel503WRCiJcGv/42xy9Cau2hsrD3sETZgg1DtC4ffC
-	 nhPb+bff8AJ6g==
+	b=V5Z//aagl38qTHkyKVLjtRYpQg6NLFKlGhO4PTrXNQ+X5WlkCRSfUKB8e2A3YoZ9C
+	 6bf3/7kfIkGso1z32JhBGAFS9WqaGkYL84wlFTTFIVb0f3t24PPSHDMczaXVzUZKlD
+	 1hBIlHdmZtg1ELHdMO3eX1lzbmqGZZiZG9RMV9MALm5IuUA2GXvk7mZRsQnC4MchvN
+	 peq3QRvYPRphYqYX3+Zxyf4UXYjOVs0umThbe4E6PvXQuYappn97AzFeAG+ZZCHh9t
+	 0xU5RxTb+3BCZg47mZp5WG6FWvOYUrZgb/aRzR85G4MN49aqicMrwuy0oUkbBtpZcp
+	 0mMeiaVOOH6ow==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: 
 Cc: "H. Peter Anvin" <hpa@zytor.com>,
@@ -94,9 +94,9 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
         virtualization@lists.linux.dev, x86@kernel.org
-Subject: [PATCH 3/7] fs/proc: replace "__auto_type" with "auto"
-Date: Fri, 18 Jul 2025 14:32:46 -0700
-Message-ID: <20250718213252.2384177-4-hpa@zytor.com>
+Subject: [PATCH 4/7] arch/nios: replace "__auto_type" with "auto"
+Date: Fri, 18 Jul 2025 14:32:47 -0700
+Message-ID: <20250718213252.2384177-5-hpa@zytor.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250718213252.2384177-1-hpa@zytor.com>
 References: <20250718213252.2384177-1-hpa@zytor.com>
@@ -108,89 +108,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace uses of "__auto_type" in fs/proc/inode.c with "auto".
+Replace uses of "__auto_type" in arch/nios2/include/asm/uaccess.h with
+"auto".
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 ---
- fs/proc/inode.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/nios2/include/asm/uaccess.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 3604b616311c..e5b150e70166 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -303,7 +303,7 @@ static ssize_t proc_reg_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+diff --git a/arch/nios2/include/asm/uaccess.h b/arch/nios2/include/asm/uaccess.h
+index b8299082adbe..fa9b06a7d7c6 100644
+--- a/arch/nios2/include/asm/uaccess.h
++++ b/arch/nios2/include/asm/uaccess.h
+@@ -172,14 +172,14 @@ do {									\
  
- static ssize_t pde_read(struct proc_dir_entry *pde, struct file *file, char __user *buf, size_t count, loff_t *ppos)
- {
--	__auto_type read = pde->proc_ops->proc_read;
-+	auto read = pde->proc_ops->proc_read;
- 	if (read)
- 		return read(file, buf, count, ppos);
- 	return -EIO;
-@@ -325,7 +325,7 @@ static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count,
+ #define __put_user(x, ptr)						\
+ ({									\
+-	__auto_type __pu_ptr = (ptr);					\
++	auto __pu_ptr = (ptr);					\
+ 	typeof(*__pu_ptr) __pu_val = (typeof(*__pu_ptr))(x);		\
+ 	__put_user_common(__pu_val, __pu_ptr);				\
+ })
  
- static ssize_t pde_write(struct proc_dir_entry *pde, struct file *file, const char __user *buf, size_t count, loff_t *ppos)
- {
--	__auto_type write = pde->proc_ops->proc_write;
-+	auto write = pde->proc_ops->proc_write;
- 	if (write)
- 		return write(file, buf, count, ppos);
- 	return -EIO;
-@@ -347,7 +347,7 @@ static ssize_t proc_reg_write(struct file *file, const char __user *buf, size_t
- 
- static __poll_t pde_poll(struct proc_dir_entry *pde, struct file *file, struct poll_table_struct *pts)
- {
--	__auto_type poll = pde->proc_ops->proc_poll;
-+	auto poll = pde->proc_ops->proc_poll;
- 	if (poll)
- 		return poll(file, pts);
- 	return DEFAULT_POLLMASK;
-@@ -369,7 +369,7 @@ static __poll_t proc_reg_poll(struct file *file, struct poll_table_struct *pts)
- 
- static long pde_ioctl(struct proc_dir_entry *pde, struct file *file, unsigned int cmd, unsigned long arg)
- {
--	__auto_type ioctl = pde->proc_ops->proc_ioctl;
-+	auto ioctl = pde->proc_ops->proc_ioctl;
- 	if (ioctl)
- 		return ioctl(file, cmd, arg);
- 	return -ENOTTY;
-@@ -392,7 +392,7 @@ static long proc_reg_unlocked_ioctl(struct file *file, unsigned int cmd, unsigne
- #ifdef CONFIG_COMPAT
- static long pde_compat_ioctl(struct proc_dir_entry *pde, struct file *file, unsigned int cmd, unsigned long arg)
- {
--	__auto_type compat_ioctl = pde->proc_ops->proc_compat_ioctl;
-+	auto compat_ioctl = pde->proc_ops->proc_compat_ioctl;
- 	if (compat_ioctl)
- 		return compat_ioctl(file, cmd, arg);
- 	return -ENOTTY;
-@@ -414,7 +414,7 @@ static long proc_reg_compat_ioctl(struct file *file, unsigned int cmd, unsigned
- 
- static int pde_mmap(struct proc_dir_entry *pde, struct file *file, struct vm_area_struct *vma)
- {
--	__auto_type mmap = pde->proc_ops->proc_mmap;
-+	auto mmap = pde->proc_ops->proc_mmap;
- 	if (mmap)
- 		return mmap(file, vma);
- 	return -EIO;
-@@ -497,7 +497,7 @@ static int proc_reg_open(struct inode *inode, struct file *file)
- 	if (!use_pde(pde))
- 		return -ENOENT;
- 
--	__auto_type release = pde->proc_ops->proc_release;
-+	auto release = pde->proc_ops->proc_release;
- 	if (release) {
- 		pdeo = kmem_cache_alloc(pde_opener_cache, GFP_KERNEL);
- 		if (!pdeo) {
-@@ -534,7 +534,7 @@ static int proc_reg_release(struct inode *inode, struct file *file)
- 	struct pde_opener *pdeo;
- 
- 	if (pde_is_permanent(pde)) {
--		__auto_type release = pde->proc_ops->proc_release;
-+		auto release = pde->proc_ops->proc_release;
- 		if (release) {
- 			return release(inode, file);
- 		}
+ #define put_user(x, ptr)						\
+ ({									\
+-	__auto_type __pu_ptr = (ptr);					\
++	auto __pu_ptr = (ptr);					\
+ 	typeof(*__pu_ptr) __pu_val = (typeof(*__pu_ptr))(x);		\
+ 	access_ok(__pu_ptr, sizeof(*__pu_ptr)) ?			\
+ 		__put_user_common(__pu_val, __pu_ptr) :			\
 -- 
 2.50.1
 
