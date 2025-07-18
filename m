@@ -1,124 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-55456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DEDB0AA07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 20:13:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0224B0AA08
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 20:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096794E5E21
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 18:12:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC15D17BC13
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 18:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203102E7F13;
-	Fri, 18 Jul 2025 18:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062CF2E7F06;
+	Fri, 18 Jul 2025 18:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHRMq9In"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="wAem9llr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="j9JeDdF5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3C22E7639
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 18:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E11915D1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 18:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752862393; cv=none; b=omBs/oLyDqvh063slGdtJZxz7hidurRW02HQDO8qqN2SighHgCQwqHQiXKlNankPsuLe6q1YBIh6usxScslqnMeLCWNEndXUv5OsXtD+ZB7lKI5d1aB3wFyAA8PuJHmpqhsgHdS+kw4wWvVIx7at5/kuBj6HeP72oMplkDAj4XY=
+	t=1752862425; cv=none; b=uSbeVUCPQv3a2QZ/RT6EseIX3Y3J/Jr7SY3ZyV3W65T0OS//xE8uRUzEDkwmQR+XWolgvzxlB70xLIGdtgrAOLsFX3fojyDsMpi4ABFy4MCfeMufNy3HfDqJXAaoeo9srJMnST7YV5yy58NFzc3NFskSYXu5ab1C3nO7ZHRCC6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752862393; c=relaxed/simple;
-	bh=iabhphZdA6yjsH6AiWTq1+qubzhuR7rJTmmw9YR656Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/PcwfmOOlns3SB9rViwif5ivdNkuHMZaxS67HtsgwzO4QNVa/PxyVJh/LIocxUX1lzA7BuI2ufjxOCGzVklFM7M5XkkvJLFgfa1BQw5jhqEOiHQZ1jdw308hNi0GnV9GtcTGFBsKmhd6jUOfeazTr2Leq48afH4ieYHM3nShY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHRMq9In; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5D52C4CEEB;
-	Fri, 18 Jul 2025 18:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752862393;
-	bh=iabhphZdA6yjsH6AiWTq1+qubzhuR7rJTmmw9YR656Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SHRMq9Inmh9sUioxEmlIiyGPCCk5zZPfLwjPbuEr3gEHIb2RFZff8VmI9aaL+V41t
-	 k89qAg17+5BPMqmceFSldwQy2BBxGi4AfL03zf9yVVNazw9LwQnr0JOGbZhKC0jzh/
-	 ZPwUW0B2xF4py31HLg8SOx7Tf7Vw1hVzuXnc8Opdc7V/vBDR8ZyfR9UrMKciS9Cspa
-	 Q+yti+EQNZqJxEGnSjdlQSyZqOAL3xDlpuTV5RtcBS2mSEgAwB4d7Bg0uTVuSADZD0
-	 JWY+gQB2CW870dK+7TR50F6pc3WRgS2x4LDExNHZ6voXMT3sIDJf96s4MFFA9vWIhG
-	 dP3tv6BLBSzqg==
-Date: Fri, 18 Jul 2025 11:13:12 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
-	miklos@szeredi.hu, joannelkoong@gmail.com
-Subject: Re: [PATCH 3/7] fuse: capture the unique id of fuse commands being
- sent
-Message-ID: <20250718181312.GW2672029@frogsfrogsfrogs>
-References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
- <175279449522.710975.4006041367649303770.stgit@frogsfrogsfrogs>
- <3f65b1e1-828a-4023-9c1d-0535caf7c4be@bsbernd.com>
+	s=arc-20240116; t=1752862425; c=relaxed/simple;
+	bh=agHDwEgrnEbftTSeCux74paEeYRoG+BBWPgtOE2Xn2w=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b00ByH1/O4WlCjeOqorCOSZvFFcO5EP+lYlHBiBpzob+1yhZssKockGpXNubq8WwBa/pIToe5UgzUjRXBNsjNUKaB6Ad90GxSskZ6NNfgx44P4yt9pN+OtHsdNyKRNVFhoOJJNuOwFlTjkPY/8H9K+A2LPLJjHA+9s4bL15LEVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=wAem9llr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=j9JeDdF5; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 5935914000B0;
+	Fri, 18 Jul 2025 14:13:41 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Fri, 18 Jul 2025 14:13:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752862421;
+	 x=1752948821; bh=7NGqIFOzA4jdfN4xsUz+72qPeK4J2og0DGu/R/0V8Ck=; b=
+	wAem9llrOx2kCI3Sm59UXWKsf2rKuDEmNXKoIFlddNYFEZLnAW3uwgP9th5LHnHb
+	s7kwgPePtkKQPgzG8GuFXfTfQKOTeZUKKEIbKNCuLxBtMeTStI4K6LNADQXZiBDA
+	+xQu1ttnZxqKsNFI3TwIkL4/f8KdSy81STIhx+MDfs/JCyeu3T7ei203mb0tsaHz
+	kL1lHMd2ygFkVAHZ0S7KCTwEb53+4X6KNoBNiw5yHITHtxKQknZgpRXFQrd58svn
+	EwpQ4sj85pOVcUeFYJtJFjhMXua7vUndhC4/w++1uJaIxFTSPdWJ0V6ZoZVpGtxw
+	+Eb8d7N+YEdvRwvzurueuA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752862421; x=
+	1752948821; bh=7NGqIFOzA4jdfN4xsUz+72qPeK4J2og0DGu/R/0V8Ck=; b=j
+	9JeDdF55+8dROwGy0Y/sfsbnGn7a7hHdpjcv0nmY0dVRul9MP/hwHJAOLBB1NFB7
+	CHqVlUd92Rkw6SuUnOqaNge3DvkucLzB6TNcaAIEnfB2Ba5vEEXVNaTI7t7d2ZoX
+	c1vmTQOTGDLKf75snMN2GyuVMHJgvIrO9uxMoGiymJBjPGfdTg/xqbkmNWjSKOSW
+	JcoD+OzDPafKnNXlCUhkqhRy3ONaBK269HJiVSgmI3mXnBg9PBGZ24iGMXB+NLU8
+	gYfnmCpVydV8q4zIikvoWj0Ow5fGJ29Rq3jXrU1w/60gUsd6kz/knB98aUcsmb43
+	zYZnqWAROou++9Qf4yqVA==
+X-ME-Sender: <xms:1Y56aHVDN4K5X3_0ESenVA_b8_VqMPgF97n9R1LjgQQuwZIoAa5L2w>
+    <xme:1Y56aNKyQqnQMOVCAu-QkoGmOiYF-CDupDYZgYGTx_PovYpikS-0aaIUMqjSsYSU2
+    5SlkYio_NdWR_cz>
+X-ME-Received: <xmr:1Y56aJ09VoIFM-68wVgSOBaN3Bd3W0z1Z_mfnO5KExswa23fHbMZ177rl_CrkNLQilCYqtZidcNFin46r7UvvbD9OevgD63V8zonV-aqL_M4j_hmX8Fv>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeigeduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuhffvvehfjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhnugcu
+    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
+    htvghrnhepleelgeduudeuffduvdetgeffheduueeiffeltdduheekheffgeetgeefheev
+    tdetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepnhgvrghlsehgohhmphgrrdguvghvpdhrtghpthhtohepjhhohhhnsehgrh
+    hovhgvshdrnhgvthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
+    tghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    ephhgsihhrthhhvghlmhgvrhesuggunhdrtghomh
+X-ME-Proxy: <xmx:1Y56aD4ehDT2YFexbL7cOQkQI-ickjtuXI6SU0jmxbUmDU1cvbuTfw>
+    <xmx:1Y56aC_04Qa0FYjtS3CYLWhqfmeSeYJDOg70jBJp25gMBheAEWKm3A>
+    <xmx:1Y56aKWNxUDcvFkDbJWOv5BAtB7W6G2YF3xjylGChMNSG88NoUns5w>
+    <xmx:1Y56aFqI5EnslPtInHFyTdO9jxFsTEXh35-h92Y0mzKR1fs7vRokVw>
+    <xmx:1Y56aKs0Ms5EwIxaX8th0hMWozOOVL0BHhXdLfWZDO6hd84MdXn483Z_>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Jul 2025 14:13:40 -0400 (EDT)
+Message-ID: <40110b4b-f317-4a36-b00b-798c023a4014@bsbernd.com>
+Date: Fri, 18 Jul 2025 20:13:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f65b1e1-828a-4023-9c1d-0535caf7c4be@bsbernd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the
+ connection
+From: Bernd Schubert <bernd@bsbernd.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
+ miklos@szeredi.hu, joannelkoong@gmail.com,
+ Horst Birthelmer <hbirthelmer@ddn.com>
+References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
+ <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
+ <286e65f0-a54c-46f0-86b7-e997d8bbca21@bsbernd.com>
+ <71f7e629-13ed-4320-a9c1-da2a16b2e26d@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <71f7e629-13ed-4320-a9c1-da2a16b2e26d@bsbernd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 18, 2025 at 07:10:37PM +0200, Bernd Schubert wrote:
+
+
+On 7/18/25 20:07, Bernd Schubert wrote:
 > 
+>>
+>> Please see the two attached patches, which are needed for fuse-io-uring.
+>> I can also send them separately, if you prefer.
 > 
-> On 7/18/25 01:27, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > The fuse_request_{send,end} tracepoints capture the value of
-> > req->in.h.unique in the trace output.  It would be really nice if we
-> > could use this to match a request to its response for debugging and
-> > latency analysis, but the call to trace_fuse_request_send occurs before
-> > the unique id has been set:
-> > 
-> > fuse_request_send:    connection 8388608 req 0 opcode 1 (FUSE_LOOKUP) len 107
-> > fuse_request_end:     connection 8388608 req 6 len 16 error -2
-> > 
-> > Move the callsites to trace_fuse_request_send to after the unique id has
-> > been set, or right before we decide to cancel a request having not set
-> > one.
+> We (actually Horst) is just testing it as Horst sees failing xfs tests in
+> our branch with tmp page removal
 > 
-> Sorry, my fault, I have a branch for that already. Just occupied and
-> then just didn't send v4.
+> Patch 2 needs this addition (might be more, as I didn't test). 
+> I had it in first, but then split the patch and missed that.
 > 
-> https://lore.kernel.org/all/20250403-fuse-io-uring-trace-points-v3-0-35340aa31d9c@ddn.com/
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index eca457d1005e..acf11eadbf3b 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -123,6 +123,9 @@ void fuse_uring_flush_bg(struct fuse_conn *fc)
+>         struct fuse_ring_queue *queue;
+>         struct fuse_ring *ring = fc->ring;
+>  
+> +       if (!ring)
+> +               return;
+> +
+>         for (qid = 0; qid < ring->nr_queues; qid++) {
+>                 queue = READ_ONCE(ring->queues[qid]);
+>                 if (!queue)
 
-(Aha, that was before I started paying attention to the fuse patches on
-fsdevel.)
 
-> The updated branch is here
-> 
-> https://github.com/bsbernd/linux/commits/fuse-io-uring-trace-points/
-> 
-> Objections if we go with that version, as it adds a few more tracepoints
-> and removes the lock to get the unique ID.
-
-Let me look through the branch --
-
- * fuse: Make the fuse unique value a per-cpu counter
-
-Is there any reason you didn't use percpu_counter_init() ?  It does the
-same per-cpu batching that (I think) your version does.
-
- * fuse: Set request unique on allocation
- * fuse: {io-uring} Avoid _send code dup
-
-Looks good,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
- * fuse: fine-grained request ftraces
-
-Are these three new tracepoints exactly identical except in name?
-If you declare an event class for them, that will save a lot of memory
-(~5K per tracepoint according to rostedt) over definining them
-individually.
-
- * per cpu cntr fix
-
-I think you can avoid this if you use the kernel struct percpu_counter.
-
---D
+More changes needed, we don't want to iterate over all queues in
+fuse_request_end, dev_uring.c already handles the queue that ends
+a request.
 
