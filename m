@@ -1,168 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-55491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7E2B0AC74
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 01:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 866AFB0ACD3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 02:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC683B7616
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Jul 2025 23:06:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F163BFF36
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 00:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C35225A24;
-	Fri, 18 Jul 2025 23:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06BA27462;
+	Sat, 19 Jul 2025 00:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Xb0eyiHE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqZHhR4c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3D17D098
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 23:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5033623DE
+	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Jul 2025 00:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752880015; cv=none; b=A7bkHMxYl8BdhMwZMfLTpaNjHiCPUPsqZ0LIQw/ZtqvFnbd9j/Y+hB1bmLbsHWWo7CG7zwlutW2DVPJ366wcOUM+Q+ryIXGa6+pcUrsAauzbtZm53h4Bu9H2OH75e2sk14pma6oP9VrZzC8zwcFTmy8NmlUz9SBHgjcWEVKpSsc=
+	t=1752885136; cv=none; b=t6shmagK3FYfw5/0C66RTC93YtpSXpkx4NTIKHaKh3OvdAGKEyZN+Ofl4gfz6j6qLiv3GMS7eEF2Mc24R+eHfhObe8hY5wcli820t16v8vJ1acmyeGIMvTLZ7MUKSiLOzpdUT7rewFzJVz2VxrlenJM3C4gRcXKdZgz+6ZT+rLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752880015; c=relaxed/simple;
-	bh=H40tep0Rv0U6gqMR0evT7Pj2Me2Gk77w4/2xIDdHb+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m69x2itU0xaKgcC9wfpVZOtZMyKI0Fho07WWLXPFKwNrrS81LODXm5Z56rQJ6UE0P1GY+ypP2KnerRIp76GZn7NDPBu04+IhEdmt8vLKgoiVrL1hVPzoONcjMBBykJ1Qq9MszZNSsyCFJ2Y0DvGV5vyliSc1kEAvEzhJ01Kl/h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Xb0eyiHE; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aec5a714ae9so284757066b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 16:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1752880011; x=1753484811; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=p0G8yeUdMDA9tVTNUd0r33p22vJCTOHruEzV0haxXnE=;
-        b=Xb0eyiHEVm2Ow8vG6dsBHLmY7GYHDorpf6tlMmOawhRoanAw/PvZGD83cMhwIosyqp
-         MF6RloTO4W71gMwlhRpnS7BT5WLMnQDQ3poo5VJWugcxS2/CtrEHuQxBLSs5AlJ3qJGm
-         HVCzT4qyBZ2Ao1YfZXwD0y6dROoFJDjpA07JA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752880011; x=1753484811;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p0G8yeUdMDA9tVTNUd0r33p22vJCTOHruEzV0haxXnE=;
-        b=UI0dNqP8NCOhbMR78ZLnOnGyJRngboHQ3YnO5yRLFvAk6FNYgwf5Dj2IPd4IRxoYmn
-         q1CmxuBkOxjjs3SeIAaEyWLUu/cM7zpduNXj6ucKsFK2krr1TQ5oFQbA11q0OVofeeoF
-         mgaVT1Abo6mfQqX67vreJbcgMBtwunCrTGTVFbfpLtD3yux0S4nP7Qw1qESPQipHKDBp
-         2IQ709bIXqAIIxJcSQu1o3Yi6Rp4xiC1jcyZgZ3Z5qat70OiO8Y9B6EXRRg4S1W9IgrK
-         jrDKWut1ZJWd+/7MeYlkarsetwjCDG8Mz3FQ3JBAEz8Z2q9wMptIM0Y8d4dzDotlJOyQ
-         YOVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXg9WzFT2PQ+VQfsl0AiO+xObaSziDkLHKiDq4vQHdNNeZteFOvnIC450A9LFtvBBMx7JfFQe8Zcwc7BWbt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjy2CBvT/VBqcyVbXoWTpeRIrLKZPM5tls8SBftUZlRcEdGIeU
-	ykKiTeodxFC6SBT6cOK1zaBVj5j82SGj6ZVxW8VvTIuKcfNh1SFvMEHZn+U5g380NYpdXQuaoEb
-	GNfmPhgJW6A==
-X-Gm-Gg: ASbGncvr/Dg2aKad9ZWyUN3awRO804VfvL1Q4dPyVRPxAPEY38umqahweShKM7BYpHn
-	9S6l3lBQ64gsqZ1/91BqFhZ5KtXz/s3SeMleyW4cioDJgJigkBaJYn61S4saCK2/N3R9CbAONSR
-	tBbZd56Xg+kCnBQ2mVrixniUjMrrFSM5cvWb2dMbUNB42Pf2iGgvkdCXIU2C29ZtyLom1IcVAeH
-	yUUH4AmEKlgKqwxTzD1Fs0hE1LZ3cHRakI7dzfGak3X8EuxJPDqYgGtsLeeWvU2C7rhV+liea6E
-	3po5WXjE2/vcQoFXw+uYLfWTxYBh3ffZ8SbrJUv+1HViBacrVymyuRzB7HTZWwnwBX1TChx+P9q
-	NNN87vhGYiSqvy+4o5AT9PgLYOpsR9K7KkKY4fBj/oQSBGf9qO3kPOcdN4/BjBQGEPrTtrku0
-X-Google-Smtp-Source: AGHT+IGJoG9ysLCXsxFpXi1jrbHyJjEhsWhL59E0E1eOxhKonZp+Q3+L2huAVkJGQBa0KTuPZ/JiIA==
-X-Received: by 2002:a17:907:7e88:b0:ae3:a78d:a08a with SMTP id a640c23a62f3a-ae9c99442demr1272435166b.6.1752880011089;
-        Fri, 18 Jul 2025 16:06:51 -0700 (PDT)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com. [209.85.128.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d6cfesm197506266b.54.2025.07.18.16.06.50
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 16:06:50 -0700 (PDT)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4563cfac19cso12625205e9.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Jul 2025 16:06:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVHKFE+ttxmv/qEDvByd/tKUeKHAeVX9UAF9etVyQw4FWsjWuYsMymQO8groJiGoxXcBoTjzMA9RJ7HdLZ0@vger.kernel.org
-X-Received: by 2002:a05:6402:510f:b0:607:6097:2faa with SMTP id
- 4fb4d7f45d1cf-61281ebe074mr11282976a12.8.1752879516873; Fri, 18 Jul 2025
- 15:58:36 -0700 (PDT)
+	s=arc-20240116; t=1752885136; c=relaxed/simple;
+	bh=7zKDnECApyThuAZh8hSalI1w5zNo74qJh8V69d4AeRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PeCVldHirED+MqzqxZR6zrs8095b0kHXE8j2aQIA+JcNAxsb3F0p6mQrW7GkvyseLabqz6lYcTeBhKERpnTh5Pt4mKjpXpBLvwH59oc1yprMGdZ7VEbcVxSgYxpZZy2QLySj2rpBPV/tZkKVndH8UEzFRW1yXsU4idE4jqsmuQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqZHhR4c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC29DC4CEEB;
+	Sat, 19 Jul 2025 00:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752885135;
+	bh=7zKDnECApyThuAZh8hSalI1w5zNo74qJh8V69d4AeRQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SqZHhR4comGN3h5G2asI6Lug9s2/UQBZ5bEFcwlDnUKB/uB1tOec8ahOGL40V9Wf2
+	 gdkAoxz51KtwRqeHWq4BCwaZANL/d0kiUIFBj/5OSdi/+tSR8M2J4PvaQi3BI2n8tY
+	 3Vuf47JjD3f8TCaFFWbVQTJyQGkzg4FQGudPNabFkXPUNmplfG726VL8XeCgf7GBh/
+	 KnQIeNSd6K9HxIDnzHfFMoyJcR2XSnB8nzEY3hrG9nJ+9H4ZWgQ3oM7I1uY1JmVN5q
+	 gqB3FINH+AulwHIPV7zdI4UUPrUKLg58ZJipChv41Zn9XXSY+CmT3s8J2Nj0FhDN0m
+	 +QoI3XHHYEJtQ==
+Date: Fri, 18 Jul 2025 17:32:15 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
+	miklos@szeredi.hu, bernd@bsbernd.com
+Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the
+ connection
+Message-ID: <20250719003215.GG2672029@frogsfrogsfrogs>
+References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
+ <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
+ <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718213252.2384177-1-hpa@zytor.com> <20250718213252.2384177-5-hpa@zytor.com>
- <CAHk-=whGcopJ_wewAtzfTS7=cG1yvpC90Y-xz5t-1Aw0ew682w@mail.gmail.com> <CAHk-=whrbqBn_rCnPNwtLuoGHwjkqsLgDXYgjA0NW2ShAwqNkw@mail.gmail.com>
-In-Reply-To: <CAHk-=whrbqBn_rCnPNwtLuoGHwjkqsLgDXYgjA0NW2ShAwqNkw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 18 Jul 2025 15:58:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whiL-ieTm19zuPqC9HLHh_-L_3pSMRUwsaN4Czp0PW6iA@mail.gmail.com>
-X-Gm-Features: Ac12FXzEvcUEKGC31NKbtJTOHrioow4MaXx8l9_sG1eUWxP_1nSQ3xv-ujuWcb8
-Message-ID: <CAHk-=whiL-ieTm19zuPqC9HLHh_-L_3pSMRUwsaN4Czp0PW6iA@mail.gmail.com>
-Subject: Re: [PATCH 4/7] arch/nios: replace "__auto_type" with "auto"
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Alexei Starovoitov <ast@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>, Cong Wang <cong.wang@bytedance.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Laight <David.Laight@aculab.com>, 
-	David Lechner <dlechner@baylibre.com>, Dinh Nguyen <dinguyen@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Gatlin Newhouse <gatlin.newhouse@gmail.com>, 
-	Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Jakub Sitnicki <jakub@cloudflare.com>, Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>, 
-	Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Marc Herbert <Marc.Herbert@linux.intel.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>, 
-	Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>, NeilBrown <neil@brown.name>, 
-	Peter Zijlstra <peterz@infradead.org>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thorsten Blum <thorsten.blum@linux.dev>, Uros Bizjak <ubizjak@gmail.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Yafang Shao <laoar.shao@gmail.com>, 
-	Ye Bin <yebin10@huawei.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com>
 
-On Fri, 18 Jul 2025 at 15:48, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> And while looking at this, I think we have a similar mis-feature / bug
-> on x86 too: the unsafe_put_user() macro does exactly that cast:
->
->   #define unsafe_put_user(x, ptr, label)  \
->         __put_user_size((__typeof__(*(ptr)))(x), ..
->
-> and I think that cast is wrong.
->
-> I wonder if it's actively hiding some issue with unsafe_put_user(), or
-> if I'm just missing something.
+On Fri, Jul 18, 2025 at 03:23:30PM -0700, Joanne Koong wrote:
+> On Thu, Jul 17, 2025 at 4:26 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > From: Darrick J. Wong <djwong@kernel.org>
+> >
+> > generic/488 fails with fuse2fs in the following fashion:
+> >
+> > generic/488       _check_generic_filesystem: filesystem on /dev/sdf is inconsistent
+> > (see /var/tmp/fstests/generic/488.full for details)
+> >
+> > This test opens a large number of files, unlinks them (which really just
+> > renames them to fuse hidden files), closes the program, unmounts the
+> > filesystem, and runs fsck to check that there aren't any inconsistencies
+> > in the filesystem.
+> >
+> > Unfortunately, the 488.full file shows that there are a lot of hidden
+> > files left over in the filesystem, with incorrect link counts.  Tracing
+> > fuse_request_* shows that there are a large number of FUSE_RELEASE
+> > commands that are queued up on behalf of the unlinked files at the time
+> > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
+> > aborted, the fuse server would have responded to the RELEASE commands by
+> > removing the hidden files; instead they stick around.
+> 
+> Tbh it's still weird to me that FUSE_RELEASE is asynchronous instead
+> of synchronous. For example for fuse servers that cache their data and
+> only write the buffer out to some remote filesystem when the file gets
+> closed, it seems useful for them to (like nfs) be able to return an
+> error to the client for close() if there's a failure committing that
 
-... and I decided to try to look into it by just removing the cast.
+I don't think supplying a return value for close() is as helpful as it
+seems -- the manage says that there is no guarantee that data has been
+flushed to disk; and if the file is removed from the process' fd table
+then the operation succeeded no matter the return value. :P
 
-And yes indeed, there's a reason for the cast - or at least it's
-hiding problems:
+(Also C programmers tend to be sloppy and not check the return value.)
 
-arch/x86/kernel/signal_64.c:128:
-        unsafe_put_user(fpstate, (unsigned long __user *)&sc->fpstate, Efault);
+> data; that also has clearer API semantics imo, eg users are guaranteed
+> that when close() returns, all the processing/cleanup for that file
+> has been completed.  Async FUSE_RELEASE also seems kind of racy, eg if
+> the server holds local locks that get released in FUSE_RELEASE, if a
 
-arch/x86/kernel/signal_64.c:188:
-        unsafe_put_user(ksig->ka.sa.sa_restorer, &frame->pretcode, Efault);
+Yes.  I think it's only useful for the case outined in that patch, which
+is that a program started an asyncio operation and then closed the fd.
+In that particular case the program unambiguously doesn't care about the
+return value of close so it's ok to perform the release asynchronously.
 
-arch/x86/kernel/signal_64.c:332:
-        unsafe_put_user(restorer, (unsigned long __user
-*)&frame->pretcode, Efault);
+> subsequent FUSE_OPEN happens before FUSE_RELEASE then depends on
+> grabbing that lock, then we end up deadlocked if the server is
+> single-threaded.
 
-The one on line 188 at least makes some sense. The other ones are
-literally hiding the fact that we explicitly cast things to the wrong
-pointer.
+Hrm.  I suppose if you had a script that ran two programs one after the
+other, each of which expected to be able to open and lock the same file,
+then you could run into problems if the lock isn't released by the time
+the second program is ready to open the file.
 
-I suspect it's just very old historical "we have been lazy and mixing
-'unsigned long' and 'pointer value'" issues.
+But having said that, some other program could very well open and lock
+the file as soon as the lock drops.
 
-Oh well. None of these are actual *bugs*, they are more just ugly. And
-the cast that is hiding this ugliness might be hiding other things.
+> I saw in your first patch that sending FUSE_RELEASE synchronously
+> leads to a deadlock under AIO but AFAICT, that happens because we
+> execute req->args->end() in fuse_request_end() synchronously; I think
+> if we execute that release asynchronously on a worker thread then that
+> gets rid of the deadlock.
 
-Not worth the churn at least late in the release cycle, but one of
-those "this might be worth cleaning up some day" issues.
+<nod> Last time I think someone replied that maybe they should all be
+asynchronous.
 
-              Linus
+> If FUSE_RELEASE must be asynchronous though, then your approach makes
+> sense to me.
+
+I think it only has to be asynchronous for the weird case outlined in
+that patch (fuse server gets stuck closing its own client's fds).
+Personally I think release ought to be synchronous at least as far as
+the kernel doing all the stuff that close() says it has to do (removal
+of record locks, deleting the fd table entry).
+
+Note that doesn't necessarily mean that the kernel has to be completely
+done with all the work that entails.  XFS defers freeing of unlinked
+files until a background garbage collector gets around to doing that.
+Other filesystems will actually make you wait while they free all the
+data blocks and the inode.  But the kernel has no idea what the fuse
+server actually does.
+
+> > Create a function to push all the background requests to the queue and
+> > then wait for the number of pending events to hit zero, and call this
+> > before fuse_abort_conn.  That way, all the pending events are processed
+> > by the fuse server and we don't end up with a corrupt filesystem.
+> >
+> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > ---
+> >  fs/fuse/fuse_i.h |    6 ++++++
+> >  fs/fuse/dev.c    |   38 ++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/inode.c  |    1 +
+> >  3 files changed, 45 insertions(+)
+> >
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > +/*
+> > + * Flush all pending requests and wait for them.  Only call this function when
+> > + * it is no longer possible for other threads to add requests.
+> > + */
+> > +void fuse_flush_requests(struct fuse_conn *fc, unsigned long timeout)
+> 
+> It might be worth renaming this to something like
+> 'fuse_flush_bg_requests' to make it more clear that this only flushes
+> background requests
+
+Hum.  Did I not understand the code correctly?  I thought that
+flush_bg_queue puts all the background requests onto the active queue
+and issues them to the fuse server; and the wait_event_timeout sits
+around waiting for all the requests to receive their replies?
+
+I could be mistaken though.  This is my rough understanding of what
+happens to background requests:
+
+1. Request created
+2. Put request on bg_queue
+3. <wait>
+4. Request removed from bg_queue
+5. Request sent
+6. <wait>
+7. Reply received
+8. Request ends and is _put.
+
+Non-background (foreground?) requests skip steps 2-4.  Meanwhile,
+fc->waiting tracks the number of requests that are anywhere between the
+end of step 1 and the start of step 8.
+
+In any case, I want to push all the bg requests and wait until there are
+no more requests in the system.
+
+--D
 
