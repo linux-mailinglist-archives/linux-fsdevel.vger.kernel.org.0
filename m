@@ -1,372 +1,564 @@
-Return-Path: <linux-fsdevel+bounces-55506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8AD1B0AF7A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 13:08:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB73B0AFE2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 14:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7445FAA07E0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 11:07:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56BB188E80F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 12:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F71823644F;
-	Sat, 19 Jul 2025 11:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E453286419;
+	Sat, 19 Jul 2025 12:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="MQaVL1vm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8E5186A;
-	Sat, 19 Jul 2025 11:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382A01E7C10
+	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Jul 2025 12:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752923279; cv=none; b=oS5qi8Ese/8nOvmN8vEh3mcU/aCHduFQB8ImFCNB1/dnBr2xmsbOkPuKKUNHIPrLJTIAxxbWB7GELx3Z1uMiGUmAypFlOnLCvho3xP5KbiEy6yv81pCjLlEf4Sl0sA0lRW+aTFo9eOzEYCIWjEu9TCzpvd6PnuGw3hek1JqT1r4=
+	t=1752928195; cv=none; b=sRNq+BVcpI1GZOVZaJH/SAHH47NZhgtlFzel+eFhePpRWF9IZ0fusY7un1K5+oVU7SvuUWVXMKD3xj4zXYe7yrSLg/RyuYzrN+pv5PITb+nIslA82HYhGVLECQabNKcz5ajfIMlAH/EgaF1/+ohWbL9VkxM3HWgaw3qMiGyqNGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752923279; c=relaxed/simple;
-	bh=Xc0grl9qHmOD4ZY2QL0e0OajYYm6NlyLGu+WZ22lVYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HRhP6oncvLClOk+rwASM3PaebYnRFmKe6m118W3lYkQ5oaoPe8EA16omr98iXqOFSujNBPu+hh7JZiDDt+F/swSc4EJwDehrAlKFj4qlNKPnoX6ItzR29ciByfEyooLUUNZWT8joV9QLYcLkv2LQE1CdytRfxEnW+/YNX5dolOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bkkQr3XLHzKHMq6;
-	Sat, 19 Jul 2025 19:07:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 26A321A1787;
-	Sat, 19 Jul 2025 19:07:47 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBHERJ_fHto+vAgAw--.23813S3;
-	Sat, 19 Jul 2025 19:07:45 +0800 (CST)
-Message-ID: <09b7c1cf-7bfa-4798-b9de-f49620046664@huaweicloud.com>
-Date: Sat, 19 Jul 2025 19:07:43 +0800
+	s=arc-20240116; t=1752928195; c=relaxed/simple;
+	bh=jsFP/cC7LSyD4yWX7gcmFWTXD2Das9qiyzH/j9oJj2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tGF/CyfcW9l3tnyhCotlmQvWNMgJDVnqGBY1XeM5Fno8nhFRQSIRWPVKHjlDZJaLYY2/fqukNAbTI+VlAzSTGZzz+YT0k9zgnuJ4rp2DJG/SH5ddfJVpfYjYVtz4BhQYLm9rWjlrXOXA1oZr3YB16CHAAbR1SAHvGnEc4DRM6XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=MQaVL1vm; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bkjsJ0knqzmr0;
+	Sat, 19 Jul 2025 12:42:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1752921731;
+	bh=s6m/0uV/lv4emo5k39B8GYaIE91d3n98toAlYU9eO6Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MQaVL1vmllN03FyoducTZNhg8xTRt57iKY2OaqRaeJbH68KU70JjyF3rmKUQ0yFAr
+	 mtT6+xpFtofZUtBljdjt9lIrJYTSMaiFaweCbu2+VZBaIk4JlXsKeNXaZd8iD7g1f1
+	 Ma+tnBTntUtlRH3xRrTFqL/Srfg3b7sHhIrjwZDQ=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bkjsH2wpkztc7;
+	Sat, 19 Jul 2025 12:42:11 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Tingmao Wang <m@maowtm.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Ben Scarlato <akhna@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	NeilBrown <neil@brown.name>,
+	Paul Moore <paul@paul-moore.com>,
+	Ryan Sullivan <rysulliv@redhat.com>,
+	Song Liu <song@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Subject: [PATCH v3 3/4] selftests/landlock: Add tests for access through disconnected paths
+Date: Sat, 19 Jul 2025 12:42:02 +0200
+Message-ID: <20250719104204.545188-4-mic@digikod.net>
+In-Reply-To: <20250719104204.545188-1-mic@digikod.net>
+References: <20250719104204.545188-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] iomap: optional zero range dirty folio processing
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, hch@infradead.org, willy@infradead.org,
- "Darrick J. Wong" <djwong@kernel.org>,
- Ext4 Developers List <linux-ext4@vger.kernel.org>
-References: <20250714204122.349582-1-bfoster@redhat.com>
- <20250714204122.349582-4-bfoster@redhat.com>
- <20250715052259.GO2672049@frogsfrogsfrogs>
- <e6333d2d-cc30-44d3-8f23-6a6c5ea0134d@huaweicloud.com>
- <aHpQxq6mDyLL1Nfj@bfoster>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <aHpQxq6mDyLL1Nfj@bfoster>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBHERJ_fHto+vAgAw--.23813S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3uw15WF17KrWxAr47uw48Zwb_yoWkCF1UpF
-	W5KF45CrsrX34I9r4xta1kXr1Fy34ft3yUWry3Gr98Z3s0qryxKF18K3WY9Fy5Wr4xGF1j
-	qF4jy34xWF15AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On 2025/7/18 21:48, Brian Foster wrote:
-> On Fri, Jul 18, 2025 at 07:30:10PM +0800, Zhang Yi wrote:
->> On 2025/7/15 13:22, Darrick J. Wong wrote:
->>> On Mon, Jul 14, 2025 at 04:41:18PM -0400, Brian Foster wrote:
->>>> The only way zero range can currently process unwritten mappings
->>>> with dirty pagecache is to check whether the range is dirty before
->>>> mapping lookup and then flush when at least one underlying mapping
->>>> is unwritten. This ordering is required to prevent iomap lookup from
->>>> racing with folio writeback and reclaim.
->>>>
->>>> Since zero range can skip ranges of unwritten mappings that are
->>>> clean in cache, this operation can be improved by allowing the
->>>> filesystem to provide a set of dirty folios that require zeroing. In
->>>> turn, rather than flush or iterate file offsets, zero range can
->>>> iterate on folios in the batch and advance over clean or uncached
->>>> ranges in between.
->>>>
->>>> Add a folio_batch in struct iomap and provide a helper for fs' to
->>>
->>> /me confused by the single quote; is this supposed to read:
->>>
->>> "...for the fs to populate..."?
->>>
->>> Either way the code changes look like a reasonable thing to do for the
->>> pagecache (try to grab a bunch of dirty folios while XFS holds the
->>> mapping lock) so
->>>
->>> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
->>>
->>> --D
->>>
->>>
->>>> populate the batch at lookup time. Update the folio lookup path to
->>>> return the next folio in the batch, if provided, and advance the
->>>> iter if the folio starts beyond the current offset.
->>>>
->>>> Signed-off-by: Brian Foster <bfoster@redhat.com>
->>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
->>>> ---
->>>>  fs/iomap/buffered-io.c | 89 +++++++++++++++++++++++++++++++++++++++---
->>>>  fs/iomap/iter.c        |  6 +++
->>>>  include/linux/iomap.h  |  4 ++
->>>>  3 files changed, 94 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->>>> index 38da2fa6e6b0..194e3cc0857f 100644
->>>> --- a/fs/iomap/buffered-io.c
->>>> +++ b/fs/iomap/buffered-io.c
->> [...]
->>>> @@ -1398,6 +1452,26 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->>>>  	return status;
->>>>  }
->>>>  
->>>> +loff_t
->>>> +iomap_fill_dirty_folios(
->>>> +	struct iomap_iter	*iter,
->>>> +	loff_t			offset,
->>>> +	loff_t			length)
->>>> +{
->>>> +	struct address_space	*mapping = iter->inode->i_mapping;
->>>> +	pgoff_t			start = offset >> PAGE_SHIFT;
->>>> +	pgoff_t			end = (offset + length - 1) >> PAGE_SHIFT;
->>>> +
->>>> +	iter->fbatch = kmalloc(sizeof(struct folio_batch), GFP_KERNEL);
->>>> +	if (!iter->fbatch)
->>
->> Hi, Brian!
->>
->> I think ext4 needs to be aware of this failure after it converts to use
->> iomap infrastructure. It is because if we fail to add dirty folios to the
->> fbatch, iomap_zero_range() will flush those unwritten and dirty range.
->> This could potentially lead to a deadlock, as most calls to
->> ext4_block_zero_page_range() occur under an active journal handle.
->> Writeback operations under an active journal handle may result in circular
->> waiting within journal transactions. So please return this error code, and
->> then ext4 can interrupt zero operations to prevent deadlock.
->>
-> 
-> Hi Yi,
-> 
-> Thanks for looking at this.
-> 
-> Huh.. so the reason for falling back like this here is just that this
-> was considered an optional optimization, with the flush in
-> iomap_zero_range() being default fallback behavior. IIUC, what you're
-> saying means that the current zero range behavior without this series is
-> problematic for ext4-on-iomap..? 
+From: Tingmao Wang <m@maowtm.org>
 
-Yes.
+This adds tests for the edge case discussed in [1], with specific ones
+for rename and link operations when the operands are through
+disconnected paths, as that go through a separate code path in Landlock.
 
-> If so, have you observed issues you can share details about?
+This has resulted in a warning, due to collect_domain_accesses() not
+expecting to reach a different root from path->mnt:
 
-Sure.
+  #  RUN           layout1_bind.path_disconnected ...
+  #            OK  layout1_bind.path_disconnected
+  ok 96 layout1_bind.path_disconnected
+  #  RUN           layout1_bind.path_disconnected_rename ...
+  [..] ------------[ cut here ]------------
+  [..] WARNING: CPU: 3 PID: 385 at security/landlock/fs.c:1065 collect_domain_accesses
+  [..] ...
+  [..] RIP: 0010:collect_domain_accesses (security/landlock/fs.c:1065 (discriminator 2) security/landlock/fs.c:1031 (discriminator 2))
+  [..] current_check_refer_path (security/landlock/fs.c:1205)
+  [..] ...
+  [..] hook_path_rename (security/landlock/fs.c:1526)
+  [..] security_path_rename (security/security.c:2026 (discriminator 1))
+  [..] do_renameat2 (fs/namei.c:5264)
+  #            OK  layout1_bind.path_disconnected_rename
+  ok 97 layout1_bind.path_disconnected_rename
 
-Before delving into the specific details of this issue, I would like
-to provide some background information on the rule that ext4 cannot
-wait for writeback in an active journal handle. If you are aware of
-this background, please skip this paragraph. During ext4 writing back
-the page cache, it may start a new journal handle to allocate blocks,
-update the disksize, and convert unwritten extents after the I/O is
-completed. When starting this new journal handle, if the current
-running journal transaction is in the process of being submitted or
-if the journal space is insufficient, it must wait for the ongoing
-transaction to be completed, but the prerequisite for this is that all
-currently running handles must be terminated. However, if we flush the
-page cache under an active journal handle, we cannot stop it, which
-may lead to a deadlock.
+Move the const char definitions a bit above so that we can use the path
+for s4d1 in cleanup code.
 
-Now, the issue I have observed occurs when I attempt to use
-iomap_zero_range() within ext4_block_zero_page_range(). My current
-implementation are below(based on the latest fs-next).
+Cc: Günther Noack <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>
+Link: https://lore.kernel.org/r/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org [1]
+Signed-off-by: Tingmao Wang <m@maowtm.org>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 28547663e4fd..1a21667f3f7c 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4147,6 +4147,53 @@ static int ext4_iomap_buffered_da_write_end(struct inode *inode, loff_t offset,
- 	return 0;
+Changes since v1:
+- Integrate this patch into my patch series, and change the result for
+  two tests with updated comments.  Diff here:
+  https://lore.kernel.org/r/20250701183812.3201231-2-mic@digikod.net
+- Replace most ASSERT with EXPECT, add extra checks, massage commit
+  message and comments.
+- Squash Tingmao's patches:
+  https://lore.kernel.org/r/09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org
+  https://lore.kernel.org/r/8ed0bfcd-aefa-44bd-86b6-e12583779187@maowtm.org
+  https://lore.kernel.org/r/3080e512-64b0-42cf-b379-8f52cfeff78a@maowtm.org
+---
+ tools/testing/selftests/landlock/fs_test.c | 405 ++++++++++++++++++++-
+ 1 file changed, 402 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index fa0f18ec62c4..5312698927ea 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -4561,6 +4561,18 @@ TEST_F_FORK(ioctl, handle_file_access_file)
+ FIXTURE(layout1_bind) {};
+ /* clang-format on */
+ 
++static const char bind_dir_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3";
++static const char bind_file1_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f1";
++
++/* Move targets for disconnected path tests. */
++static const char dir_s4d1[] = TMP_DIR "/s4d1";
++static const char file1_s4d1[] = TMP_DIR "/s4d1/f1";
++static const char file2_s4d1[] = TMP_DIR "/s4d1/f2";
++static const char dir_s4d2[] = TMP_DIR "/s4d1/s4d2";
++static const char file1_s4d2[] = TMP_DIR "/s4d1/s4d2/f1";
++static const char file1_name[] = "f1";
++static const char file2_name[] = "f2";
++
+ FIXTURE_SETUP(layout1_bind)
+ {
+ 	prepare_layout(_metadata);
+@@ -4576,14 +4588,14 @@ FIXTURE_TEARDOWN_PARENT(layout1_bind)
+ {
+ 	/* umount(dir_s2d2)) is handled by namespace lifetime. */
+ 
++	remove_path(file1_s4d1);
++	remove_path(file2_s4d1);
++
+ 	remove_layout1(_metadata);
+ 
+ 	cleanup_layout(_metadata);
  }
-
-+static int ext4_iomap_buffered_zero_begin(struct inode *inode, loff_t offset,
-+			loff_t length, unsigned int flags, struct iomap *iomap,
-+			struct iomap *srcmap)
+ 
+-static const char bind_dir_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3";
+-static const char bind_file1_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f1";
+-
+ /*
+  * layout1_bind hierarchy:
+  *
+@@ -4806,6 +4818,393 @@ TEST_F_FORK(layout1_bind, reparent_cross_mount)
+ 	ASSERT_EQ(0, rename(bind_file1_s1d3, file1_s2d2));
+ }
+ 
++/*
++ * Make sure access to file through a disconnected path works as expected.
++ * This test moves s1d3 to s4d1.
++ */
++TEST_F_FORK(layout1_bind, path_disconnected)
 +{
-+	struct iomap_iter *iter = container_of(iomap, struct iomap_iter, iomap);
-+	struct ext4_map_blocks map;
-+	u8 blkbits = inode->i_blkbits;
-+	int ret;
++	const struct rule layer1_allow_all[] = {
++		{
++			.path = TMP_DIR,
++			.access = ACCESS_ALL,
++		},
++		{},
++	};
++	const struct rule layer2_allow_just_f1[] = {
++		{
++			.path = file1_s1d3,
++			.access = LANDLOCK_ACCESS_FS_READ_FILE,
++		},
++		{},
++	};
++	const struct rule layer3_only_s1d2[] = {
++		{
++			.path = dir_s1d2,
++			.access = LANDLOCK_ACCESS_FS_READ_FILE,
++		},
++		{},
++	};
 +
-+	ret = ext4_emergency_state(inode->i_sb);
-+	if (unlikely(ret))
-+		return ret;
++	/* Landlock should not deny access just because it is disconnected. */
++	int ruleset_fd_l1 =
++		create_ruleset(_metadata, ACCESS_ALL, layer1_allow_all);
 +
-+	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
-+		return -EINVAL;
++	/* Creates the new ruleset now before we move the dir containing the file. */
++	int ruleset_fd_l2 =
++		create_ruleset(_metadata, ACCESS_RW, layer2_allow_just_f1);
++	int ruleset_fd_l3 =
++		create_ruleset(_metadata, ACCESS_RW, layer3_only_s1d2);
++	int bind_s1d3_fd;
 +
-+	/* Calculate the first and last logical blocks respectively. */
-+	map.m_lblk = offset >> blkbits;
-+	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
-+			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
++	ASSERT_LE(0, ruleset_fd_l1);
++	ASSERT_LE(0, ruleset_fd_l2);
++	ASSERT_LE(0, ruleset_fd_l3);
 +
-+	ret = ext4_map_blocks(NULL, inode, &map, 0);
-+	if (ret < 0)
-+		return ret;
++	enforce_ruleset(_metadata, ruleset_fd_l1);
++	EXPECT_EQ(0, close(ruleset_fd_l1));
 +
-+	/*
-+	 * Look up dirty folios for unwritten mappings within EOF. Providing
-+	 * this bypasses the flush iomap uses to trigger extent conversion
-+	 * when unwritten mappings have dirty pagecache in need of zeroing.
-+	 */
-+	if ((map.m_flags & EXT4_MAP_UNWRITTEN) &&
-+	    map.m_lblk < EXT4_B_TO_LBLK(inode, i_size_read(inode))) {
-+		loff_t end;
++	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, bind_s1d3_fd);
 +
-+		end = iomap_fill_dirty_folios(iter, map.m_lblk << blkbits,
-+					      map.m_len << blkbits);
-+		if ((end >> blkbits) < map.m_lblk + map.m_len)
-+			map.m_len = (end >> blkbits) - map.m_lblk;
++	/* Tests access is possible before we move. */
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file2_name, O_RDONLY));
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, "..", O_RDONLY | O_DIRECTORY));
++
++	/* Makes it disconnected. */
++	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d1))
++	{
++		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d1,
++		       strerror(errno));
 +	}
 +
-+	ext4_set_iomap(inode, iomap, &map, offset, length, flags);
-+	return 0;
++	/* Tests that access is still possible. */
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file2_name, O_RDONLY));
++
++	/*
++	 * Tests that ".." is not possible (not because of Landlock, but just
++	 * because it's disconnected).
++	 */
++	EXPECT_EQ(ENOENT,
++		  test_open_rel(bind_s1d3_fd, "..", O_RDONLY | O_DIRECTORY));
++
++	/* This should still work with a narrower rule. */
++	enforce_ruleset(_metadata, ruleset_fd_l2);
++	EXPECT_EQ(0, close(ruleset_fd_l2));
++
++	EXPECT_EQ(0, test_open(file1_s4d1, O_RDONLY));
++	/*
++	 * Accessing a file through a disconnected file descriptor is not allowed
++	 * when it is no longer visible in its mount point.
++	 */
++	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file2_name, O_RDONLY));
++
++	/*
++	 * But if we only allow access to under the original dir, then it
++	 * should be denied.
++	 */
++	enforce_ruleset(_metadata, ruleset_fd_l3);
++	EXPECT_EQ(0, close(ruleset_fd_l3));
++	EXPECT_EQ(EACCES, test_open(file1_s4d1, O_RDONLY));
++	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file2_name, O_RDONLY));
 +}
 +
-+const struct iomap_ops ext4_iomap_buffered_zero_ops = {
-+	.iomap_begin = ext4_iomap_buffered_zero_begin,
-+};
-
- const struct iomap_ops ext4_iomap_buffered_write_ops = {
- 	.iomap_begin = ext4_iomap_buffered_write_begin,
-@@ -4611,6 +4658,17 @@ static int __ext4_block_zero_page_range(handle_t *handle,
- 	return err;
- }
-
-+static inline int ext4_iomap_zero_range(struct inode *inode, loff_t from,
-+					loff_t length)
++/*
++ * Test that renameat with disconnected paths works under Landlock.  This test
++ * moves s1d3 to s4d2, so that we can have a rule allowing refers on the move
++ * target's immediate parent.
++ */
++TEST_F_FORK(layout1_bind, path_disconnected_rename)
 +{
-+	WARN_ON_ONCE(!inode_is_locked(inode) &&
-+		     !rwsem_is_locked(&inode->i_mapping->invalidate_lock));
++	const struct rule layer1[] = {
++		{
++			.path = dir_s1d2,
++			.access = LANDLOCK_ACCESS_FS_REFER |
++				  LANDLOCK_ACCESS_FS_MAKE_DIR |
++				  LANDLOCK_ACCESS_FS_REMOVE_DIR |
++				  LANDLOCK_ACCESS_FS_MAKE_REG |
++				  LANDLOCK_ACCESS_FS_REMOVE_FILE |
++				  LANDLOCK_ACCESS_FS_READ_FILE,
++		},
++		{
++			.path = dir_s4d1,
++			.access = LANDLOCK_ACCESS_FS_REFER |
++				  LANDLOCK_ACCESS_FS_MAKE_DIR |
++				  LANDLOCK_ACCESS_FS_REMOVE_DIR |
++				  LANDLOCK_ACCESS_FS_MAKE_REG |
++				  LANDLOCK_ACCESS_FS_REMOVE_FILE |
++				  LANDLOCK_ACCESS_FS_READ_FILE,
++		},
++		{}
++	};
 +
-+	return iomap_zero_range(inode, from, length, NULL,
-+				&ext4_iomap_buffered_zero_ops,
-+				&ext4_iomap_write_ops, NULL);
++	/* This layer only handles LANDLOCK_ACCESS_FS_READ_FILE. */
++	const struct rule layer2_only_s1d2[] = {
++		{
++			.path = dir_s1d2,
++			.access = LANDLOCK_ACCESS_FS_READ_FILE,
++		},
++		{},
++	};
++	int ruleset_fd_l1, ruleset_fd_l2;
++	pid_t child_pid;
++	int bind_s1d3_fd, status;
++
++	ASSERT_EQ(0, mkdir(dir_s4d1, 0755))
++	{
++		TH_LOG("Failed to create %s: %s", dir_s4d1, strerror(errno));
++	}
++	ruleset_fd_l1 = create_ruleset(_metadata, ACCESS_ALL, layer1);
++	ruleset_fd_l2 = create_ruleset(_metadata, LANDLOCK_ACCESS_FS_READ_FILE,
++				       layer2_only_s1d2);
++	ASSERT_LE(0, ruleset_fd_l1);
++	ASSERT_LE(0, ruleset_fd_l2);
++
++	enforce_ruleset(_metadata, ruleset_fd_l1);
++	EXPECT_EQ(0, close(ruleset_fd_l1));
++
++	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, bind_s1d3_fd);
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++
++	/* Tests ENOENT priority over EACCES for disconnected directory. */
++	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, "..", O_DIRECTORY));
++	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
++	{
++		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
++		       strerror(errno));
++	}
++	EXPECT_EQ(ENOENT, test_open_rel(bind_s1d3_fd, "..", O_DIRECTORY));
++
++	/*
++	 * The file is no longer under s1d2 but we should still be able to access it
++	 * with layer 2 because its mount point is evaluated as the first valid
++	 * directory because it was initially a parent.  Do a fork to test this so
++	 * we don't prevent ourselves from renaming it back later.
++	 */
++	child_pid = fork();
++	ASSERT_LE(0, child_pid);
++	if (child_pid == 0) {
++		enforce_ruleset(_metadata, ruleset_fd_l2);
++		EXPECT_EQ(0, close(ruleset_fd_l2));
++		EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++		EXPECT_EQ(EACCES, test_open(file1_s4d2, O_RDONLY));
++
++		/*
++		 * Tests that access widening checks indeed prevents us from renaming it
++		 * back.
++		 */
++		EXPECT_EQ(-1, rename(dir_s4d2, dir_s1d3));
++		EXPECT_EQ(EXDEV, errno);
++
++		/*
++		 * Including through the now disconnected fd (but it should return
++		 * EXDEV).
++		 */
++		EXPECT_EQ(-1, renameat(bind_s1d3_fd, file1_name, AT_FDCWD,
++				       file1_s2d2));
++		EXPECT_EQ(EXDEV, errno);
++		_exit(_metadata->exit_code);
++		return;
++	}
++
++	EXPECT_EQ(child_pid, waitpid(child_pid, &status, 0));
++	EXPECT_EQ(1, WIFEXITED(status));
++	EXPECT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
++
++	ASSERT_EQ(0, rename(dir_s4d2, dir_s1d3))
++	{
++		TH_LOG("Failed to rename %s back to %s: %s", dir_s4d1, dir_s1d3,
++		       strerror(errno));
++	}
++
++	/* Now checks that we can access it under l2. */
++	child_pid = fork();
++	ASSERT_LE(0, child_pid);
++	if (child_pid == 0) {
++		enforce_ruleset(_metadata, ruleset_fd_l2);
++		EXPECT_EQ(0, close(ruleset_fd_l2));
++		EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++		EXPECT_EQ(0, test_open(file1_s1d3, O_RDONLY));
++		_exit(_metadata->exit_code);
++		return;
++	}
++
++	EXPECT_EQ(child_pid, waitpid(child_pid, &status, 0));
++	EXPECT_EQ(1, WIFEXITED(status));
++	EXPECT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
++
++	/*
++	 * Also test that we can rename via a disconnected path.  We move the
++	 * dir back to the disconnected place first, then we rename file1 to
++	 * file2 through our dir fd.
++	 */
++	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
++	{
++		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
++		       strerror(errno));
++	}
++	ASSERT_EQ(0,
++		  renameat(bind_s1d3_fd, file1_name, bind_s1d3_fd, file2_name))
++	{
++		TH_LOG("Failed to rename %s to %s within disconnected %s: %s",
++		       file1_name, file2_name, bind_dir_s1d3, strerror(errno));
++	}
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file2_name, O_RDONLY));
++	ASSERT_EQ(0, renameat(bind_s1d3_fd, file2_name, AT_FDCWD, file1_s2d2))
++	{
++		TH_LOG("Failed to rename %s to %s through disconnected %s: %s",
++		       file2_name, file1_s2d2, bind_dir_s1d3, strerror(errno));
++	}
++	EXPECT_EQ(0, test_open(file1_s2d2, O_RDONLY));
++	EXPECT_EQ(0, test_open(file1_s1d2, O_RDONLY));
++
++	/* Move it back using the disconnected path as the target. */
++	ASSERT_EQ(0, renameat(AT_FDCWD, file1_s2d2, bind_s1d3_fd, file1_name))
++	{
++		TH_LOG("Failed to rename %s to %s through disconnected %s: %s",
++		       file1_s1d2, file1_name, bind_dir_s1d3, strerror(errno));
++	}
++
++	/* Now make it connected again. */
++	ASSERT_EQ(0, rename(dir_s4d2, dir_s1d3))
++	{
++		TH_LOG("Failed to rename %s back to %s: %s", dir_s4d2, dir_s1d3,
++		       strerror(errno));
++	}
++
++	/* Checks again that we can access it under l2. */
++	enforce_ruleset(_metadata, ruleset_fd_l2);
++	EXPECT_EQ(0, close(ruleset_fd_l2));
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++	EXPECT_EQ(0, test_open(file1_s1d3, O_RDONLY));
 +}
 +
- /*
-  * ext4_block_zero_page_range() zeros out a mapping of length 'length'
-  * starting from file offset 'from'.  The range to be zero'd must
-@@ -4636,6 +4694,8 @@ static int ext4_block_zero_page_range(handle_t *handle,
- 	if (IS_DAX(inode)) {
- 		return dax_zero_range(inode, from, length, NULL,
- 				      &ext4_iomap_ops);
-+	} else if (ext4_test_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP)) {
-+		return ext4_iomap_zero_range(inode, from, length);
- 	}
- 	return __ext4_block_zero_page_range(handle, mapping, from, length);
- }
-
-The problem is most calls to ext4_block_zero_page_range() occur under
-an active journal handle, so I can reproduce the deadlock issue easily
-without this series.
-
-> 
-> FWIW, I think your suggestion is reasonable, but I'm also curious what
-> the error handling would look like in ext4. Do you expect to the fail
-> the higher level operation, for example? Cycle locks and retry, etc.?
-
-Originally, I wanted ext4_block_zero_page_range() to return a failure
-to the higher level operation. However, unfortunately, after my testing
-today, I discovered that even though we implement this, this series still
-cannot resolve the issue. The corner case is:
-
-Assume we have a dirty folio covers both hole and unwritten mappings.
-
-   |- dirty folio  -|
-   [hhhhhhhhuuuuuuuu]                h:hole, u:unwrtten
-
-If we punch the range of the hole, ext4_punch_hole()->
-ext4_zero_partial_blocks() will zero out the first half of the dirty folio.
-Then, ext4_iomap_buffered_zero_begin() will skip adding this dirty folio
-since the target range is a hole. Finally, iomap_zero_range() will still
-flush this whole folio and lead to deadlock during writeback the latter
-half of the folio.
-
-> 
-> The reason I ask is because the folio_batch handling has come up through
-> discussions on this series. My position so far has been to keep it as a
-> separate allocation and to keep things simple since it is currently
-> isolated to zero range, but that may change if the usage spills over to
-> other operations (which seems expected at this point). I suspect that if
-> a filesystem actually depends on this for correct behavior, that is
-> another data point worth considering on that topic.
-> 
-> So that has me wondering if it would be better/easier here to perhaps
-> embed the batch in iomap_iter, or maybe as an incremental step put it on
-> the stack in iomap_zero_range() and initialize the iomap_iter pointer
-> there instead of doing the dynamic allocation (then the fill helper
-> would set a flag to indicate the fs did pagecache lookup). Thoughts on
-> something like that?
-> 
-> Also IIUC ext4-on-iomap is still a WIP and review on this series seems
-> to have mostly wound down. Any objection if the fix for that comes along
-> as a followup patch rather than a rework of this series?
-
-It seems that we don't need to modify this series, we need to consider
-other solutions to resolve this deadlock issue.
-
-In my v1 ext4-on-iomap series [1], I resolved this issue by moving all
-instances of ext4_block_zero_page_range() out of the running journal
-handle(please see patch 19-21). But I don't think this is a good solution
-since it's complex and fragile. Besides, after commit c7fc0366c6562
-("ext4: partial zero eof block on unaligned inode size extension"), you
-added more invocations of ext4_zero_partial_blocks(), and the situation
-has become more complicated (Althrough I think the calls in the three
-write_end callbacks can be removed).
-
-Besides, IIUC, it seems that ext4 doesn't need to flush dirty folios
-over unwritten mappings before zeroing partial blocks. This is because
-ext4 always zeroes the in-memory page cache before zeroing(e.g, in
-ext4_setattr() and ext4_punch_hole()), it means if the target range is
-still dirty and unwritten when calling ext4_block_zero_page_range(), it
-must has already been zeroed. Was I missing something? Therefore, I was
-wondering if there are any ways to prevent flushing in
-iomap_zero_range()? Any ideas?
-
-[1] https://lore.kernel.org/linux-ext4/20241022111059.2566137-1-yi.zhang@huaweicloud.com/
-
-> 
-> Brian
-> 
-> P.S., I'm heading on vacation so it will likely be a week or two before
-> I follow up from here, JFYI.
-
-Wishing you a wonderful time! :-)
-
-Best regards,
-Yi.
-
->>
->>>> +		return offset + length;
->>>> +	folio_batch_init(iter->fbatch);
->>>> +
->>>> +	filemap_get_folios_dirty(mapping, &start, end, iter->fbatch);
->>>> +	return (start << PAGE_SHIFT);
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(iomap_fill_dirty_folios);
->>
++/*
++ * Test that linkat(2) with disconnected paths works under Landlock. This
++ * test moves s1d3 to s4d1.
++ */
++TEST_F_FORK(layout1_bind, path_disconnected_link)
++{
++	/* Ruleset to be applied after renaming s1d3 to s4d1. */
++	const struct rule layer1[] = {
++		{
++			.path = dir_s4d1,
++			.access = LANDLOCK_ACCESS_FS_REFER |
++				  LANDLOCK_ACCESS_FS_READ_FILE |
++				  LANDLOCK_ACCESS_FS_MAKE_REG |
++				  LANDLOCK_ACCESS_FS_REMOVE_FILE,
++		},
++		{
++			.path = dir_s2d2,
++			.access = LANDLOCK_ACCESS_FS_REFER |
++				  LANDLOCK_ACCESS_FS_READ_FILE |
++				  LANDLOCK_ACCESS_FS_MAKE_REG |
++				  LANDLOCK_ACCESS_FS_REMOVE_FILE,
++		},
++		{}
++	};
++	int ruleset_fd, bind_s1d3_fd;
++
++	/* Removes unneeded files created by layout1, otherwise it will EEXIST. */
++	ASSERT_EQ(0, unlink(file1_s1d2));
++	ASSERT_EQ(0, unlink(file2_s1d3));
++
++	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, bind_s1d3_fd);
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
++
++	/* Disconnects bind_s1d3_fd. */
++	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d1))
++	{
++		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d1,
++		       strerror(errno));
++	}
++
++	/* Need this later to test different parent link. */
++	ASSERT_EQ(0, mkdir(dir_s4d2, 0755))
++	{
++		TH_LOG("Failed to create %s: %s", dir_s4d2, strerror(errno));
++	}
++
++	ruleset_fd = create_ruleset(_metadata, ACCESS_ALL, layer1);
++	ASSERT_LE(0, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++
++	/* From disconnected to connected. */
++	ASSERT_EQ(0, linkat(bind_s1d3_fd, file1_name, AT_FDCWD, file1_s2d2, 0))
++	{
++		TH_LOG("Failed to link %s to %s via disconnected %s: %s",
++		       file1_name, file1_s2d2, bind_dir_s1d3, strerror(errno));
++	}
++
++	/* Tests that we can access via the new link... */
++	EXPECT_EQ(0, test_open(file1_s2d2, O_RDONLY))
++	{
++		TH_LOG("Failed to open newly linked %s: %s", file1_s2d2,
++		       strerror(errno));
++	}
++
++	/* ...as well as the old one. */
++	EXPECT_EQ(0, test_open(file1_s4d1, O_RDONLY))
++	{
++		TH_LOG("Failed to open original %s: %s", file1_s4d1,
++		       strerror(errno));
++	}
++
++	/* From connected to disconnected. */
++	ASSERT_EQ(0, unlink(file1_s4d1));
++	ASSERT_EQ(0, linkat(AT_FDCWD, file1_s2d2, bind_s1d3_fd, file2_name, 0))
++	{
++		TH_LOG("Failed to link %s to %s via disconnected %s: %s",
++		       file1_s2d2, file2_name, bind_dir_s1d3, strerror(errno));
++	}
++	EXPECT_EQ(0, test_open(file2_s4d1, O_RDONLY));
++	ASSERT_EQ(0, unlink(file1_s2d2));
++
++	/* From disconnected to disconnected (same parent). */
++	ASSERT_EQ(0,
++		  linkat(bind_s1d3_fd, file2_name, bind_s1d3_fd, file1_name, 0))
++	{
++		TH_LOG("Failed to link %s to %s within disconnected %s: %s",
++		       file2_name, file1_name, bind_dir_s1d3, strerror(errno));
++	}
++	EXPECT_EQ(0, test_open(file1_s4d1, O_RDONLY))
++	{
++		TH_LOG("Failed to open newly linked %s: %s", file1_s4d1,
++		       strerror(errno));
++	}
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY))
++	{
++		TH_LOG("Failed to open %s through newly created link under disconnected path: %s",
++		       file1_name, strerror(errno));
++	}
++	ASSERT_EQ(0, unlink(file2_s4d1));
++
++	/* From disconnected to disconnected (different parent). */
++	ASSERT_EQ(0,
++		  linkat(bind_s1d3_fd, file1_name, bind_s1d3_fd, "s4d2/f1", 0))
++	{
++		TH_LOG("Failed to link %s to %s within disconnected %s: %s",
++		       file1_name, "s4d2/f1", bind_dir_s1d3, strerror(errno));
++	}
++	EXPECT_EQ(0, test_open(file1_s4d2, O_RDONLY))
++	{
++		TH_LOG("Failed to open %s after link: %s", file1_s4d2,
++		       strerror(errno));
++	}
++	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, "s4d2/f1", O_RDONLY))
++	{
++		TH_LOG("Failed to open %s through disconnected path after link: %s",
++		       "s4d2/f1", strerror(errno));
++	}
++}
++
+ #define LOWER_BASE TMP_DIR "/lower"
+ #define LOWER_DATA LOWER_BASE "/data"
+ static const char lower_fl1[] = LOWER_DATA "/fl1";
+-- 
+2.50.1
 
 
