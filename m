@@ -1,121 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-55493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6DEB0AD81
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 04:50:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B401AB0ADEA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 06:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E749F586708
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 02:50:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 486DA1AA63F3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 04:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEA0195FE8;
-	Sat, 19 Jul 2025 02:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC21191F89;
+	Sat, 19 Jul 2025 04:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bP3FJ5Aa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6008C9476;
-	Sat, 19 Jul 2025 02:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A63AD24;
+	Sat, 19 Jul 2025 04:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752893420; cv=none; b=KBaKbTm0edUjcpQSK9njoS2xMlbHnShyJ84Br3YJnL0Tpvz6fjkW1Y5oRL6JmhjiipMLpW+aR+TWgx9CIDoE5i6usQJMw77CfFDtd99rG+YJVKERfd4ARmsNTvVh3SiIgZSVs3pmO3MAxef39iZS5bLOX9+UhvgzH6c5X8ACglU=
+	t=1752898641; cv=none; b=CPzhdTgQ5Mqp+Tm+hfMfjWnC5hv7sXJ6ggApeCbUoOXospO+1fdli5hSIUhXY6Iy7nrf7sQutdOxTIZXuqB29FGl2W/bJ2/0O9uyuXR4RriA0gqr+0ffKaBPq2lihvKejrCAwaHr3gCQwbBfnpknknDYFm7C8fpv23q0VvJb8Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752893420; c=relaxed/simple;
-	bh=t9Py5tL8Dk6bAJwADZccNx+0tjERFwe/Vl3OBS1dYig=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ev1AlkTa60RNG7XetsuGs2XEXc6xoG1QnL9NZUU7vGmGNTCpJ0vh5wU5KWBPG36q7E79tyO6odGNI4x1E/oSIhoEsRLZSMCSUOp3Vv9ZHcjWETt4+MW8lbHxdxYT0qcIoA65zdyGmueEmg1mgJeSHeXx1Aj7fje717GcBlWf+Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bkWKP5NP4z13MRv;
-	Sat, 19 Jul 2025 10:47:21 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2C792180468;
-	Sat, 19 Jul 2025 10:50:13 +0800 (CST)
-Received: from localhost.localdomain (10.175.101.6) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 19 Jul 2025 10:50:12 +0800
-From: Zizhi Wo <wozizhi@huawei.com>
-To: <viro@zeniv.linux.org.uk>, <jack@suse.com>, <brauner@kernel.org>,
-	<axboe@kernel.dk>, <hch@lst.de>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wozizhi@huawei.com>, <yukuai3@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH] fs: Add additional checks for block devices during mount
-Date: Sat, 19 Jul 2025 10:44:03 +0800
-Message-ID: <20250719024403.3452285-1-wozizhi@huawei.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1752898641; c=relaxed/simple;
+	bh=8Mupvjh8C3CjS9E8BGBz7fLYIr+7QB6sQWXmscgCUGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGprlvfTczIfMMBN7y5BWMV0UneIWnosD1mhVV6aFutQvIhpYkYYxuAJEhqBDCCJFJi4Jo1GaMJkucKE8ea4vGcd2mG5XbAaM4ckebb5fK6zwBvtrNopAqjtoie7sJfoJlOT1MSG1uVPPAmaJrCBYsQKY37shP2uaSoGIcg0Dfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bP3FJ5Aa; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YENCZnGysDyoXLTiMskCs9m24InAyieLb39es5sSD2s=; b=bP3FJ5Aa30BKFT9OQVwhQS1IMb
+	3U7GtwYiXRTLHxK7QpjXsdAVcanA6itY9TZLPFFEtqz48JtQbUW6KP6tHmqyIuqt/nGGqWR4tztxx
+	zwv5UQbhTNwGNyFKi/ED7osXcFML9PjICMYvFZSf46AIQ8YCMeTvePgN7HBgbLGrQXPpn4/s7oLCv
+	sPXtuy3T9wKI78Ct9R2aVl8D3KF4iEwJdcooGnl1kl2gxQZju6A/cJPDK35oSRdovljbhCvyAdE5m
+	SuTZjGAkvzR6YhCu6t1DMVKtHMaxwAOxMeq+0q5uNebz1Rl8RNIxFvhh0iVyjB+VaAGbrBD5p7omo
+	N2SYm6Hg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ucz0X-0000000HFdr-1mze;
+	Sat, 19 Jul 2025 04:17:09 +0000
+Date: Sat, 19 Jul 2025 05:17:09 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: jack@suse.com, brauner@kernel.org, axboe@kernel.dk, hch@lst.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
+Message-ID: <20250719041709.GI2580412@ZenIV>
+References: <20250719024403.3452285-1-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719024403.3452285-1-wozizhi@huawei.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-A filesystem abnormal mount issue was found during current testing:
+On Sat, Jul 19, 2025 at 10:44:03AM +0800, Zizhi Wo wrote:
 
-disk_container=$(...kata-runtime...io.kubernets.docker.type=container...)
-docker_id=$(...kata-runtime...io.katacontainers.disk_share=
-            "{"src":"/dev/sdb","dest":"/dev/test"}"...)
-${docker} stop "$disk_container"
-${docker} exec "$docker_id" mount /dev/test /tmp -->success!!
+> mkfs.ext4 -F /dev/sdb
+> mount /dev/sdb /mnt
+> mknod /dev/test b 8 16    # [sdb 8:16]
+> echo 1 > /sys/block/sdb/device/delete
+> mount /dev/test /mnt1    # -> mount success
+> 
+> Therefore, it is necessary to add an extra check. Solve this problem by
+> checking disk_live() in super_s_dev_test().
 
-When the "disk_container" is stopped, the created sda/sdb/sdc disks are
-already deleted, but inside the "docker_id", /dev/test can still be mounted
-successfully. The reason is that runc calls unshare, which triggers
-clone_mnt(), increasing the "sb->s_active" reference count. As long as the
-"docker_id" does not exit, the superblock still has a reference count.
-
-So when mounting, the old superblock is reused in sget_fc(), and the mount
-succeeds, even if the actual device no longer exists. The whole process can
-be simplified as follows:
-
-mkfs.ext4 -F /dev/sdb
-mount /dev/sdb /mnt
-mknod /dev/test b 8 16    # [sdb 8:16]
-echo 1 > /sys/block/sdb/device/delete
-mount /dev/test /mnt1    # -> mount success
-
-Therefore, it is necessary to add an extra check. Solve this problem by
-checking disk_live() in super_s_dev_test().
-
-Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
-Link: https://lore.kernel.org/all/20250717091150.2156842-1-wozizhi@huawei.com/
-Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
----
- fs/super.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/fs/super.c b/fs/super.c
-index 80418ca8e215..8030fb519eb5 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1376,8 +1376,16 @@ static int super_s_dev_set(struct super_block *s, struct fs_context *fc)
- 
- static int super_s_dev_test(struct super_block *s, struct fs_context *fc)
- {
--	return !(s->s_iflags & SB_I_RETIRED) &&
--		s->s_dev == *(dev_t *)fc->sget_key;
-+	if (s->s_iflags & SB_I_RETIRED)
-+		return false;
-+
-+	if (s->s_dev != *(dev_t *)fc->sget_key)
-+		return false;
-+
-+	if (s->s_bdev && !disk_live(s->s_bdev->bd_disk))
-+		return false;
-+
-+	return true;
- }
- 
- /**
--- 
-2.39.2
-
+That smells like a wrong approach...  You are counting upon the failure
+of setup_bdev_super() after the thing is forced on the "no reuse" path,
+and that's too convoluted and brittle...
 
