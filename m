@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-55515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D3AB0B169
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 20:31:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52EC1B0B167
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 20:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD0D1890A8F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 18:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F569AA7288
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 18:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FFF28AB02;
-	Sat, 19 Jul 2025 18:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2E228B4E7;
+	Sat, 19 Jul 2025 18:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r4B8tRBW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y36oTUK3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFA528A1EA
-	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Jul 2025 18:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A54228A714
+	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Jul 2025 18:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752949749; cv=none; b=r+JR75zJWCJJbeSEcRdN6iHyiW2iQVg7X/TzDOwSSbbWyhfNw99qZvhUVfWJVnHvtym0VmjMOUkMxBGSQ4g4Oji1wSRZiRDv3mGPJ83gXHEAtSPz5+ds0Y62QzJEjlCBbq6KHXNPFEVJVmkYZNqCMPvszK3Hopc7uad2EuBKg8I=
+	t=1752949750; cv=none; b=rKaoy0/jcDbqwXluuQBhTIHjup8HNf8ozSH3hoLp/VVlahDoTBHT6ihkCWuzb0bd2eaaZrPZVLt2Z7Uiz29VBC7o9xUMRIYjUzRBwz9Y/7T+tlcBAAEA/LtEEkHTJ4WTp3ey/orPqodB9/lVc6a1QkgupZGsxCzhi2oNV2P7xTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752949749; c=relaxed/simple;
-	bh=tUZ4dqdiz+tH/IQ6l3F06JbQsd9hzO5wedZNYL8/80U=;
+	s=arc-20240116; t=1752949750; c=relaxed/simple;
+	bh=SGDFTeiKPGTkAuerpbJP68A8Byp9ih/c04po0z++Ajw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Nr92+Fvzd5giNHEl0s7KGbqml8vZAM8suKcCh65fjYxZ3ojTq1vEh/eXGnsMOG86SOZSOfm0739fiZOHRxKONGb3xEeX2KNRkZnmCWt/ub54fqBKTxzlgtgWcHE0KRbsyU6LP0mbInVJDXqmF4BMi9adTt6Z42xrUGP5ze9WcdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r4B8tRBW; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=XoHnOeKt43ScWXWnxDi1nNnKBV7FPiHe8CO2xO5cj19pFITD/VzGum3YVUCHSrjarEBFGuxnxj0HADfcFClHsewpjTrg3eV09yS5hyodeeEfJpz+H0VOZJcH57dVvjpAx42NmwaOToqhBNsjL8pm/32helnUQJX5jenzB9st9Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y36oTUK3; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b00e4358a34so2044449a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Jul 2025 11:29:06 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311e7337f26so3265630a91.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Jul 2025 11:29:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752949745; x=1753554545; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752949748; x=1753554548; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kldXOAzG4so78dmLm2qHj9lFsFg2dD4gGV3mKFtJSPI=;
-        b=r4B8tRBWOz6hR5cBJow/uxBimhZEQJ6TUwbsl9nimtIWlvHF/DlHg67lp/U6GjJVMD
-         psWzlTLLAq5lBGycOHDlHhyZ+QqBaR7OuTGZZwhKGSC/5aYJ8myEWUM6sG/PQtdm2VGD
-         PkQjJXRkO7Ws9vUOq5PiTl6g+rBd9wWJKQRfedI72RVTHqck1G9teYJvmga3PG3lpXsG
-         z6o7Ghi0f9OPzjlnQyL2+c4DL5c93L/ZUEqqHNbs/HuSM5NmgRRix6fvcoFbZ74/DhSR
-         bzP97ytS7T6xAWbJZhiYiclPQHMV08JBEOchM99ljAh3JBm1N1/HBPm41ppgsT+YcCfF
-         WgFQ==
+        bh=Wv6Rc6knLCwk0bVTU7Jho39C3VrUJugHZkg7EchZAig=;
+        b=y36oTUK3Lqho/mcc5c7FGvkg46be4SDijV0330fmrmHSt9iiEHkqqQfM3/9Khh8w8c
+         SIDNztaKU9GROBXGCvnwqnXGNH5lZSMeIV7qSGt1RJQ0bjABypM/PoZ7LCULZVCoLEYA
+         bKZeut1WUnChEMV7dEcd8/SXgNXlJNbAQujVM3TkaYmLXk3+YF6ymg4hp0Iu80Ncfnyv
+         +4N4NMkHC+KxFCZsAght6TO65cAiAhF6coMTjtgsgUwDf6nutM8+1Q0ocXwqZpMagolq
+         dzFhDhEjFJIWnChcq0w5QeUp8UBM0lMpkyEmQA2JTf+Y0+IE7nhqNHjVXyPy9XrM3m6Q
+         xdJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752949745; x=1753554545;
+        d=1e100.net; s=20230601; t=1752949748; x=1753554548;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kldXOAzG4so78dmLm2qHj9lFsFg2dD4gGV3mKFtJSPI=;
-        b=mFz2nm9NFy6kY8C9qeHwBq0pQuWmcgdkVJYGvC2JNRpDPN6+tG5RzhE1ebwFo3Kx/q
-         q3k9FlqAwaVoS+3ElI9/Ny/yHTCdA+3IIl9wqxdqLewdzmWw1U3m6NJLdbcvkMC6euda
-         MJxnefDN1M6bVTJ/T2LV6aQZa6JwkI2U6jUtJczT37v3z5YJmC4QpuXUYiLUZ89FeVcA
-         4hwlWBHeiCdNw9N2Tf1DFqaUfkF6Kj3wpXeEmQsZ1arrFDXvRQQshFUanLVhboqlun3I
-         6IU7zVh59AbT0JZEoEPRmyuwhWWFzLwIlbIJf5sRFfd8gg6j2lHj4VT+QKtUoPNOerP6
-         6Xlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlAgXo0ZmM+FKl0n3c1iK07TY3/cr5DGtd3ioQqZtzHbkwc5gh/ea0Cp+KrjPv8j3y5NMhVR9NiYAS28/E@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmz2ft8hZCcdJeThzx7YXT5oD5rYkiB2vUvv6ZWJh9Mb5yNuN/
-	xOY6ejGArsRZU6OgN90qoa1rMqTjooYp/z/yVr+ji0FpHKCAoiZtv+hMBqZDk7BpwDJXWAJtCrJ
-	6hWLtVA==
-X-Google-Smtp-Source: AGHT+IFAkxSoila/fwaGlvNf2qW0QBDiOSpGMxIR79yLqlqjemU3z0o2eWLkFLAs8M7qaglNQyc8/iazA7g=
-X-Received: from pjh16.prod.google.com ([2002:a17:90b:3f90:b0:312:eaf7:aa0d])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce8f:b0:234:c86d:4572
- with SMTP id d9443c01a7336-23e2572aaf4mr203386885ad.30.1752949745541; Sat, 19
- Jul 2025 11:29:05 -0700 (PDT)
-Date: Sat, 19 Jul 2025 11:28:52 -0700
+        bh=Wv6Rc6knLCwk0bVTU7Jho39C3VrUJugHZkg7EchZAig=;
+        b=UOKoqxv+m9C1nn3EPGoQODkSYiDVBUa4IGN4XpNWrYjFBYcrs60rSWnFHWfQNGFAtw
+         8tjaGfDTJNpgeT2CWVUv4/rJxnXj9zj9sUbp6oVLLjtqN/HiXpAEPTxpvDeX1xxki0W+
+         xbKMe3bPsJzw7p7cbghi2POtVLY/7qCaD+rSJUH0IDpc3pJIrDBQAQ007Xnl2siT1kXd
+         p/M7cto2FxClogHcVFjLgcuUEGXPpCdF4Bas+o9G2iWZ8IwYJpjR53ANguMg53of9DYF
+         Ny2yBAx+BEMp+2L6x61UiQr+DUKnLpQKwx+OOuxEMFpaohJ+6bx/6cfZ/CK52APTCxhb
+         hNng==
+X-Forwarded-Encrypted: i=1; AJvYcCXvX5+Yzk46H1m0R4WSwiv9ZqDGi1tNy+sdZB0lqd1i/vQtCCRxIMGg/z2oGM0S4mcNmj2SNY+ru9l87Wpp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8n2gllFC9Dbg0XcGGf9mpvqZyL/ncy3coRo7ENWpIWRJi0OmG
+	qe/JSjg1LRkwU31PNtFR//s+ERDZRl5sM8xm716IBwmwUjoH80picxt8wKF2kaCqZtfIs/m+wja
+	oFuutJw==
+X-Google-Smtp-Source: AGHT+IFF+l8YOMdVgdfAKyd00OGIBIw32C6yb0RlsDUFxpfFgJAmPbDpH0QnnK8+9k8e/WhkoyFB5zF8/XQ=
+X-Received: from pjmm4.prod.google.com ([2002:a17:90b:5804:b0:312:3b05:5f44])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:48c8:b0:315:b07a:ac12
+ with SMTP id 98e67ed59e1d1-31c9e6f71b8mr24466775a91.14.1752949747704; Sat, 19
+ Jul 2025 11:29:07 -0700 (PDT)
+Date: Sat, 19 Jul 2025 11:28:53 -0700
 In-Reply-To: <20250719182854.3166724-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,9 +74,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250719182854.3166724-1-surenb@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250719182854.3166724-5-surenb@google.com>
-Subject: [PATCH v8 4/6] selftests/proc: add verbose mode for /proc/pid/maps
- tearing tests
+Message-ID: <20250719182854.3166724-6-surenb@google.com>
+Subject: [PATCH v8 5/6] fs/proc/task_mmu: remove conversion of seq_file
+ position to unsigned
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
@@ -90,306 +90,83 @@ Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
 	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-Add verbose mode to the /proc/pid/maps tearing tests to print debugging
-information. VERBOSE environment variable is used to enable it.
-
-Usage example: VERBOSE=1 ./proc-maps-race
+Back in 2.6 era, last_addr used to be stored in seq_file->version
+variable, which was unsigned long. As a result, sentinels to represent
+gate vma and end of all vmas used unsigned values. In more recent
+kernels we don't used seq_file->version anymore and therefore conversion
+from loff_t into unsigned type is not needed. Similarly, sentinel values
+don't need to be unsigned. Remove type conversion for set_file position
+and change sentinel values to signed. While at it, change the hardcoded
+sentinel values with named definitions for better documentation.
 
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: David Hildenbrand <david@redhat.com>
 ---
- tools/testing/selftests/proc/proc-maps-race.c | 153 ++++++++++++++++--
- 1 file changed, 141 insertions(+), 12 deletions(-)
+ fs/proc/task_mmu.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/tools/testing/selftests/proc/proc-maps-race.c b/tools/testing/selftests/proc/proc-maps-race.c
-index bc614a2d944a..66773685a047 100644
---- a/tools/testing/selftests/proc/proc-maps-race.c
-+++ b/tools/testing/selftests/proc/proc-maps-race.c
-@@ -77,6 +77,7 @@ FIXTURE(proc_maps_race)
- 	int shared_mem_size;
- 	int page_size;
- 	int vma_count;
-+	bool verbose;
- 	int maps_fd;
- 	pid_t pid;
- };
-@@ -188,12 +189,104 @@ static void stop_vma_modifier(struct vma_modifier_info *mod_info)
- 	signal_state(mod_info, SETUP_MODIFY_MAPS);
- }
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 751479eb128f..90237df1ed33 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -29,6 +29,9 @@
+ #include <asm/tlbflush.h>
+ #include "internal.h"
  
-+static void print_first_lines(char *text, int nr)
-+{
-+	const char *end = text;
++#define SENTINEL_VMA_END	-1
++#define SENTINEL_VMA_GATE	-2
 +
-+	while (nr && (end = strchr(end, '\n')) != NULL) {
-+		nr--;
-+		end++;
-+	}
-+
-+	if (end) {
-+		int offs = end - text;
-+
-+		text[offs] = '\0';
-+		printf(text);
-+		text[offs] = '\n';
-+		printf("\n");
-+	} else {
-+		printf(text);
-+	}
-+}
-+
-+static void print_last_lines(char *text, int nr)
-+{
-+	const char *start = text + strlen(text);
-+
-+	nr++; /* to ignore the last newline */
-+	while (nr) {
-+		while (start > text && *start != '\n')
-+			start--;
-+		nr--;
-+		start--;
-+	}
-+	printf(start);
-+}
-+
-+static void print_boundaries(const char *title, FIXTURE_DATA(proc_maps_race) *self)
-+{
-+	if (!self->verbose)
-+		return;
-+
-+	printf("%s", title);
-+	/* Print 3 boundary lines from each page */
-+	print_last_lines(self->page1.data, 3);
-+	printf("-----------------page boundary-----------------\n");
-+	print_first_lines(self->page2.data, 3);
-+}
-+
-+static bool print_boundaries_on(bool condition, const char *title,
-+				FIXTURE_DATA(proc_maps_race) *self)
-+{
-+	if (self->verbose && condition)
-+		print_boundaries(title, self);
-+
-+	return condition;
-+}
-+
-+static void report_test_start(const char *name, bool verbose)
-+{
-+	if (verbose)
-+		printf("==== %s ====\n", name);
-+}
-+
-+static struct timespec print_ts;
-+
-+static void start_test_loop(struct timespec *ts, bool verbose)
-+{
-+	if (verbose)
-+		print_ts.tv_sec = ts->tv_sec;
-+}
-+
-+static void end_test_iteration(struct timespec *ts, bool verbose)
-+{
-+	if (!verbose)
-+		return;
-+
-+	/* Update every second */
-+	if (print_ts.tv_sec == ts->tv_sec)
-+		return;
-+
-+	printf(".");
-+	fflush(stdout);
-+	print_ts.tv_sec = ts->tv_sec;
-+}
-+
-+static void end_test_loop(bool verbose)
-+{
-+	if (verbose)
-+		printf("\n");
-+}
-+
- static bool capture_mod_pattern(FIXTURE_DATA(proc_maps_race) *self,
- 				struct line_content *mod_last_line,
- 				struct line_content *mod_first_line,
- 				struct line_content *restored_last_line,
- 				struct line_content *restored_first_line)
+ #define SEQ_PUT_DEC(str, val) \
+ 		seq_put_decimal_ull_width(m, str, (val) << (PAGE_SHIFT-10), 8)
+ void task_mem(struct seq_file *m, struct mm_struct *mm)
+@@ -135,7 +138,7 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
+ 	if (vma) {
+ 		*ppos = vma->vm_start;
+ 	} else {
+-		*ppos = -2UL;
++		*ppos = SENTINEL_VMA_GATE;
+ 		vma = get_gate_vma(priv->mm);
+ 	}
+ 
+@@ -145,11 +148,11 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
+ static void *m_start(struct seq_file *m, loff_t *ppos)
  {
-+	print_boundaries("Before modification", self);
-+
- 	signal_state(self->mod_info, SETUP_MODIFY_MAPS);
- 	wait_for_state(self->mod_info, SETUP_MAPS_MODIFIED);
+ 	struct proc_maps_private *priv = m->private;
+-	unsigned long last_addr = *ppos;
++	loff_t last_addr = *ppos;
+ 	struct mm_struct *mm;
  
-@@ -201,6 +294,8 @@ static bool capture_mod_pattern(FIXTURE_DATA(proc_maps_race) *self,
- 	if (!read_boundary_lines(self, mod_last_line, mod_first_line))
- 		return false;
+ 	/* See m_next(). Zero at the start or after lseek. */
+-	if (last_addr == -1UL)
++	if (last_addr == SENTINEL_VMA_END)
+ 		return NULL;
  
-+	print_boundaries("After modification", self);
-+
- 	signal_state(self->mod_info, SETUP_RESTORE_MAPS);
- 	wait_for_state(self->mod_info, SETUP_MAPS_RESTORED);
+ 	priv->task = get_proc_task(priv->inode);
+@@ -170,9 +173,9 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
+ 		return ERR_PTR(-EINTR);
+ 	}
  
-@@ -208,6 +303,8 @@ static bool capture_mod_pattern(FIXTURE_DATA(proc_maps_race) *self,
- 	if (!read_boundary_lines(self, restored_last_line, restored_first_line))
- 		return false;
+-	vma_iter_init(&priv->iter, mm, last_addr);
++	vma_iter_init(&priv->iter, mm, (unsigned long)last_addr);
+ 	hold_task_mempolicy(priv);
+-	if (last_addr == -2UL)
++	if (last_addr == SENTINEL_VMA_GATE)
+ 		return get_gate_vma(mm);
  
-+	print_boundaries("After restore", self);
-+
- 	if (!self->mod_info->vma_mod_check(mod_last_line, mod_first_line,
- 					   restored_last_line, restored_first_line))
- 		return false;
-@@ -295,6 +392,7 @@ static inline bool check_remap_result(struct line_content *mod_last_line,
+ 	return proc_get_vma(priv, ppos);
+@@ -180,8 +183,8 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
  
- FIXTURE_SETUP(proc_maps_race)
+ static void *m_next(struct seq_file *m, void *v, loff_t *ppos)
  {
-+	const char *verbose = getenv("VERBOSE");
- 	const char *duration = getenv("DURATION");
- 	struct vma_modifier_info *mod_info;
- 	pthread_mutexattr_t mutex_attr;
-@@ -303,6 +401,7 @@ FIXTURE_SETUP(proc_maps_race)
- 	char fname[32];
- 
- 	self->page_size = (unsigned long)sysconf(_SC_PAGESIZE);
-+	self->verbose = verbose && !strncmp(verbose, "1", 1);
- 	duration_sec = duration ? atol(duration) : 0;
- 	self->duration_sec = duration_sec ? duration_sec : 5UL;
- 
-@@ -444,6 +543,7 @@ TEST_F(proc_maps_race, test_maps_tearing_from_split)
- 	mod_info->vma_restore = merge_vma;
- 	mod_info->vma_mod_check = check_split_result;
- 
-+	report_test_start("Tearing from split", self->verbose);
- 	ASSERT_TRUE(capture_mod_pattern(self, &split_last_line, &split_first_line,
- 					&restored_last_line, &restored_first_line));
- 
-@@ -455,6 +555,7 @@ TEST_F(proc_maps_race, test_maps_tearing_from_split)
- 	struct timespec start_ts, end_ts;
- 
- 	clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
-+	start_test_loop(&start_ts, self->verbose);
- 	do {
- 		bool last_line_changed;
- 		bool first_line_changed;
-@@ -472,12 +573,18 @@ TEST_F(proc_maps_race, test_maps_tearing_from_split)
- 			 * In that case new first line will be the same as the
- 			 * last restored line.
- 			 */
--			ASSERT_FALSE(strcmp(new_first_line.text, split_first_line.text) &&
--				     strcmp(new_first_line.text, restored_last_line.text));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_first_line.text, split_first_line.text) &&
-+					strcmp(new_first_line.text, restored_last_line.text),
-+					"Split result invalid", self));
- 		} else {
- 			/* The vmas should be consistent with merge results */
--			ASSERT_FALSE(strcmp(new_last_line.text, restored_last_line.text));
--			ASSERT_FALSE(strcmp(new_first_line.text, restored_first_line.text));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_last_line.text, restored_last_line.text),
-+					"Merge result invalid", self));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_first_line.text, restored_first_line.text),
-+					"Merge result invalid", self));
- 		}
- 		/*
- 		 * First and last lines should change in unison. If the last
-@@ -489,7 +596,9 @@ TEST_F(proc_maps_race, test_maps_tearing_from_split)
- 		ASSERT_EQ(last_line_changed, first_line_changed);
- 
- 		clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
-+		end_test_iteration(&end_ts, self->verbose);
- 	} while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
-+	end_test_loop(self->verbose);
- 
- 	/* Signal the modifyer thread to stop and wait until it exits */
- 	signal_state(mod_info, TEST_DONE);
-@@ -513,6 +622,7 @@ TEST_F(proc_maps_race, test_maps_tearing_from_resize)
- 	mod_info->vma_restore = expand_vma;
- 	mod_info->vma_mod_check = check_shrink_result;
- 
-+	report_test_start("Tearing from resize", self->verbose);
- 	ASSERT_TRUE(capture_mod_pattern(self, &shrunk_last_line, &shrunk_first_line,
- 					&restored_last_line, &restored_first_line));
- 
-@@ -524,6 +634,7 @@ TEST_F(proc_maps_race, test_maps_tearing_from_resize)
- 	struct timespec start_ts, end_ts;
- 
- 	clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
-+	start_test_loop(&start_ts, self->verbose);
- 	do {
- 		ASSERT_TRUE(read_boundary_lines(self, &new_last_line, &new_first_line));
- 
-@@ -537,16 +648,24 @@ TEST_F(proc_maps_race, test_maps_tearing_from_resize)
- 			 * again. In that case new first line will be the same
- 			 * as the last restored line.
- 			 */
--			ASSERT_FALSE(strcmp(new_first_line.text, shrunk_first_line.text) &&
--				     strcmp(new_first_line.text, restored_last_line.text));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_first_line.text, shrunk_first_line.text) &&
-+					strcmp(new_first_line.text, restored_last_line.text),
-+					"Shrink result invalid", self));
- 		} else {
- 			/* The vmas should be consistent with the original/resored state */
--			ASSERT_FALSE(strcmp(new_last_line.text, restored_last_line.text));
--			ASSERT_FALSE(strcmp(new_first_line.text, restored_first_line.text));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_last_line.text, restored_last_line.text),
-+					"Expand result invalid", self));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_first_line.text, restored_first_line.text),
-+					"Expand result invalid", self));
- 		}
- 
- 		clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
-+		end_test_iteration(&end_ts, self->verbose);
- 	} while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
-+	end_test_loop(self->verbose);
- 
- 	/* Signal the modifyer thread to stop and wait until it exits */
- 	signal_state(mod_info, TEST_DONE);
-@@ -570,6 +689,7 @@ TEST_F(proc_maps_race, test_maps_tearing_from_remap)
- 	mod_info->vma_restore = patch_vma;
- 	mod_info->vma_mod_check = check_remap_result;
- 
-+	report_test_start("Tearing from remap", self->verbose);
- 	ASSERT_TRUE(capture_mod_pattern(self, &remapped_last_line, &remapped_first_line,
- 					&restored_last_line, &restored_first_line));
- 
-@@ -581,6 +701,7 @@ TEST_F(proc_maps_race, test_maps_tearing_from_remap)
- 	struct timespec start_ts, end_ts;
- 
- 	clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
-+	start_test_loop(&start_ts, self->verbose);
- 	do {
- 		ASSERT_TRUE(read_boundary_lines(self, &new_last_line, &new_first_line));
- 
-@@ -594,16 +715,24 @@ TEST_F(proc_maps_race, test_maps_tearing_from_remap)
- 			 * again. In that case new first line will be the same
- 			 * as the last restored line.
- 			 */
--			ASSERT_FALSE(strcmp(new_first_line.text, remapped_first_line.text) &&
--				     strcmp(new_first_line.text, restored_last_line.text));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_first_line.text, remapped_first_line.text) &&
-+					strcmp(new_first_line.text, restored_last_line.text),
-+					"Remap result invalid", self));
- 		} else {
- 			/* The vmas should be consistent with the original/resored state */
--			ASSERT_FALSE(strcmp(new_last_line.text, restored_last_line.text));
--			ASSERT_FALSE(strcmp(new_first_line.text, restored_first_line.text));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_last_line.text, restored_last_line.text),
-+					"Remap restore result invalid", self));
-+			ASSERT_FALSE(print_boundaries_on(
-+					strcmp(new_first_line.text, restored_first_line.text),
-+					"Remap restore result invalid", self));
- 		}
- 
- 		clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
-+		end_test_iteration(&end_ts, self->verbose);
- 	} while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
-+	end_test_loop(self->verbose);
- 
- 	/* Signal the modifyer thread to stop and wait until it exits */
- 	signal_state(mod_info, TEST_DONE);
+-	if (*ppos == -2UL) {
+-		*ppos = -1UL;
++	if (*ppos == SENTINEL_VMA_GATE) {
++		*ppos = SENTINEL_VMA_END;
+ 		return NULL;
+ 	}
+ 	return proc_get_vma(m->private, ppos);
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
