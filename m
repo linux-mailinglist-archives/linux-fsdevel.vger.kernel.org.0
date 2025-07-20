@@ -1,91 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-55543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFACB0B841
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 23:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F6EB0B844
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 23:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7CC3165820
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 21:00:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CF4172CD8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 21:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB02239E84;
-	Sun, 20 Jul 2025 20:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9A6226D0A;
+	Sun, 20 Jul 2025 20:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fIUMteZ/"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="NGuYvOyK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D4B224B14;
-	Sun, 20 Jul 2025 20:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753045098; cv=none; b=YhELWm2h6JY+4SNYqU6cnlAo648OVSUBTbfUg8CSbqkqWIuSjspBogub6VKci82TgyNbw026xExk4Q9eCTGkSIFzr7RlaSqxOnpvwHWdVWtPP3+BrMsmj9jPx7AnJvMz3eqxmfLUcHh9fixbnvR2mGdbHokvlkNAm9ySxj6Eguo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753045098; c=relaxed/simple;
-	bh=3VpNrGSLDTgpaTVBXL34gCyZusAFCU/AunfM3eAf/Tk=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B098F2264B7;
+	Sun, 20 Jul 2025 20:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753045146; cv=pass; b=RH6wXeTLy0c7/mZ9H3EIT0XO5FvV7HQxPDiU9nliXfsxHwbX7yq3/VZXdQPjrkPBug0KMgHz3VMugEM2uVl9EopaE+m9pbEfyQzshu+N1y6kgZmtZx2L96uVBzj+LbJAxEGgN0jkkekdr9yIPoYaOxhz3c0SWPBS1m8SL7CMphM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753045146; c=relaxed/simple;
+	bh=/CqFDWX3ltRC3T3uCgwyoDkSy6A157X3LAUK/JbCBis=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=erYfAr+JyzOpV+MMfV6BYQyjYndiA2661S11jyllPZ6TUEZEt+VfJn5C5V07ALjK6lf09Ng2Xiywbv4Sg9e/ktDtTxiW7cuvV1xRr4FluoOIZMWH4C2ROhX43/S3Gt3NtzXRG62bEeFTLV1AA5kuLL9uWB8LebltWweB7f1fSVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fIUMteZ/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KJs8Ri005549;
-	Sun, 20 Jul 2025 20:58:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=8pcU36a3QVQA9/SFF
-	vKQWwkrB68bBongYrNmMfiIH5k=; b=fIUMteZ/03+wHObeB2BxJ8UZRsrO3SyiB
-	d7c9OwQKzlgFveN93k109oKqoB9kyROYBs2GfL9m1B+7po7oQB4gGZNiHnrZ6deA
-	w4J+KFpaCNa+Vi2srnBd3Y53th/S6wR7g8DujAo8aztVeVXl8W1u7snAuIE3W2eK
-	+nwzm2BqIueD9nAS8uWOATM0gDJYui76Qix7PP3JDhaEAc90n8DEllSdwJm+XEZb
-	Q7y25rIatypkTcYVTdGerVmzIyJ2dJdUGT5PFOg2mhnD2CrQP7mcykD+wNJy1Pk1
-	mQ0dmpgkq9f6t+P8tzCnJHuKeJ4WmLGlj2s2/dPl+ok1/0gm8ODPw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v5jxm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:58:00 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56KKvx6U021062;
-	Sun, 20 Jul 2025 20:58:00 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v5jxj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:57:59 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56KH84TG014391;
-	Sun, 20 Jul 2025 20:57:58 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480ppnu8mq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:57:58 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56KKvusH47710508
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 20 Jul 2025 20:57:56 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 97BAB20043;
-	Sun, 20 Jul 2025 20:57:56 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 595A220040;
-	Sun, 20 Jul 2025 20:57:54 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.16.241])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 20 Jul 2025 20:57:54 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
-        linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC v4 7/7] ext4: add ext4_map_blocks_extsize() wrapper to handle overwrites
-Date: Mon, 21 Jul 2025 02:27:33 +0530
-Message-ID: <4531e266d4b26b1c3d51da732ff305869e56dcf3.1753044253.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1753044253.git.ojaswin@linux.ibm.com>
-References: <cover.1753044253.git.ojaswin@linux.ibm.com>
+	 MIME-Version; b=HOCU2YGTe0DTvWR75t8SxDzN0LuohIQcjXmD9qOD5MnVBYHalwsR3cFxtlFmiR2W/H+GptN9YoUs4ybHlGeqgy13c8HJeOxrDYXR02ubgZLbY8MXa7etvyusr1Pb9xCorVAQzgrcxv9Ovajlw8tSXZg+MpP3l1lDsI7BeW2X+mQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=NGuYvOyK; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753045127; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CkaUFh4QX4ZftFDfiWj678Oqc7QtT5gedGKCWV4zFFJUgstZL33pSxlcWZ9wKXjgYcNafNtO+kdKXaYgj+EfSnwkvCITEGZpdd/FqlBJL8nY3I6ijkMTSOAAUEbhhXkOGYbw1+ZPREaBkC1U2v1NarkhT7OzxwboROz/IgIpaZM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753045127; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/CqFDWX3ltRC3T3uCgwyoDkSy6A157X3LAUK/JbCBis=; 
+	b=Jp8j75+PTE22DGMcI4BupgYz/mzoroVunlEB8iDeoTnvzBZ78rOAlqwV02hcr5wbOMVvHNxsiPP/dY5nZdl/QMAgUW0jt7nkc9i9JZ5TgiavHJ8FrbJgWFCy9trj8FX3rHWqoZF83dNBkWD93i2EnRlD9t2uhbnyPd6dRR3EBUs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753045127;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=/CqFDWX3ltRC3T3uCgwyoDkSy6A157X3LAUK/JbCBis=;
+	b=NGuYvOyK2/NJewIxZNic1flrYbpk3vaQ2XXsEGd/X6PQd/2cXSWi+s1sa4kD/JIV
+	tPdSfKHq/ZjOE3WhdEPMx9D2gQFlW93k4mqsw9Abdh1mrK02ICv19Or5L4Z1rgGtM0S
+	czxvQVw+VHaouTcUdQXaHUALfPk2KnIQlx4D4xdM=
+Received: by mx.zohomail.com with SMTPS id 17530451261573.681567831038933;
+	Sun, 20 Jul 2025 13:58:46 -0700 (PDT)
+From: Askar Safin <safinaskar@zohomail.com>
+To: senozhatsky@chromium.org
+Cc: bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	juri.lelli@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	miklos@szeredi.hu,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	tfiga@chromium.org,
+	vincent.guittot@linaro.org
+Subject: Re: [PATCHv2 1/2] sched/wait: Add wait_event_state_exclusive()
+Date: Sun, 20 Jul 2025 23:58:39 +0300
+Message-ID: <20250720205839.2919-1-safinaskar@zohomail.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250610045321.4030262-1-senozhatsky@chromium.org>
+References: <20250610045321.4030262-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,126 +77,27 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=QLdoRhLL c=1 sm=1 tr=0 ts=687d5858 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=XbQIVu7OBCAAiYVp_M0A:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDE5OCBTYWx0ZWRfXykg1hwk4nAgb
- xROE1waIrLTo/2VPt7oXhC1aLbWJ7xHHgc23el/aJOjGxUkh8rSRR3MhNj57I6X01jmcdHpsgYd
- vYIv8IAZoYUK8UxYg3pIdGSGx/x/IHtDZho12S0f1+RSoBd23vASha+ZQNhpY64QM1caSRpWQs8
- EeEK9XBEMaWb66+Sb5Kn8LPDajYMYzhgJd5XoNzZYX6zetfq5s40iLM+odGXn/3Qv8Nhd6hC4r0
- 6v4jiaG3jIeFhCUsKfZwdHjzydTzAAAzfEZudaNNmmA8gr7599f2neTzwgfSMhGymKPzdb48Iag
- MXvofVTuRH1/7ni4R2qc3yi/Go3tEEEdLowQ0s/iCKy8GvuItmksMo26YgXUuDaIQCobP3ViDNE
- 8Hk9z9i3TmL//Rdx47uSS7pC7MDoUeYUp78vOmiMhEfBst3YXfIlNZhDR93NvYeoe7Wk7lDr
-X-Proofpoint-ORIG-GUID: KLoetVI8SyMxBp_7bMGJaqXj6PEX-jwy
-X-Proofpoint-GUID: 7NDJ-ZzSSvuTUBxfCTHBipT0Ep8YrumW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-20_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 bulkscore=0 malwarescore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999 clxscore=1011
- adultscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507200198
+Feedback-ID: rr08011227ee1686b54db1c6c590ae89290000ca616dc1aea20be69767ef38ffba0f7c99e32901e7f1609326:zu0801122709d8ceb129b8b11557267ae80000f16242d1eca93fedd3befda2251b594a97482ef41b97f220bb:rf0801122c7821590fd9737fd0c9f973fc00003514f0ff9467287cab3ea0e1f29370acd1b5491d640cb41ab20ab8c96111:ZohoMail
+X-ZohoMailClient: External
 
-Currently, with the extsize hints, if we consider a scenario where
-the hint is set to 16k and we do a write of (0,4k) we get the below
-mapping:
+I just tested this patch on my laptop. It doesn't work!
 
-[  4k written ] [       12k unwritten      ]
+Here is my setup.
 
-Now, if we do a (4k,4k) write, ext4_map_blocks will again try for a
-extsize aligned write, adjust the range to (0, 16k) and then run into
-issues since the new range is already has a mapping in it. Although this
-does not lead to a failure since we eventually fallback to a non extsize
-allocation, this is not a good approach.
+I compiled kernel f0e84022479b4700609e874cf220b5d7d0363403 from branch "for-next" from git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git , which seems to contain this patchset.
 
-Hence, implement a wrapper over ext4_map_blocks() which detects if a
-mapping already exists for an extsize based allocation and then reuses
-the same mapping.
+I booted into it.
 
-In case the mapping completely covers the original request we simply
-disable extsize allocation and call map_blocks to correctly process the
-mapping and set the map flags. Otherwise, if there is a hole or partial
-mapping, then we just let ext4_map_blocks() handle the allocation.
+I mounted sshfs filesystem (it is FUSE).
 
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/inode.c | 45 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 2 deletions(-)
+I disabled network.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 1b60e45a593e..010ca890b29c 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -772,6 +772,41 @@ static inline void ext4_extsize_reset_map(struct ext4_map_blocks *map,
- 	map->m_flags = 0;
- }
- 
-+static int ext4_map_blocks_extsize(handle_t *handle, struct inode *inode,
-+		    struct ext4_map_blocks *map, int flags)
-+{
-+	int orig_mlen = map->m_len;
-+	int ret = 0;
-+	int tmp_flags;
-+
-+	WARN_ON(!ext4_inode_get_extsize(EXT4_I(inode)));
-+	WARN_ON(!(flags & EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT));
-+
-+	/*
-+	 * First check if there are any existing allocations
-+	 */
-+	ret = ext4_map_blocks(handle, inode, map, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * the present mapping fully covers the requested range. In this
-+	 * case just go for a non extsize based allocation. Note that we won't
-+	 * really be allocating new blocks but the call to ext4_map_blocks is
-+	 * important to ensure things like extent splitting and proper map flags
-+	 * are taken care of. For all other cases, just let ext4_map_blocks handle
-+	 * the allocations
-+	 */
-+	if (ret > 0 && map->m_len == orig_mlen)
-+		tmp_flags = flags & ~EXT4_GET_BLOCKS_EXTSIZE;
-+	else
-+		tmp_flags = flags;
-+
-+	ret = ext4_map_blocks(handle, inode, map, tmp_flags);
-+
-+	return ret;
-+}
-+
- /*
-  * The ext4_map_blocks() function tries to look up the requested blocks,
-  * and returns if the blocks are already mapped.
-@@ -1153,8 +1188,12 @@ static int _ext4_get_block(struct inode *inode, sector_t iblock,
- 	map.m_lblk = iblock;
- 	map.m_len = orig_mlen;
- 
--	ret = ext4_map_blocks(ext4_journal_current_handle(), inode, &map,
--			      flags);
-+	if ((flags & EXT4_GET_BLOCKS_CREATE) && ext4_should_use_extsize(inode))
-+		ret = ext4_map_blocks_extsize(ext4_journal_current_handle(), inode,
-+				      &map, flags);
-+	else
-+		ret = ext4_map_blocks(ext4_journal_current_handle(), inode,
-+				      &map, flags);
- 	if (ret > 0) {
- 		map_bh(bh, inode->i_sb, map.m_pblk);
- 		ext4_update_bh_state(bh, map.m_flags);
-@@ -4016,6 +4055,8 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
- 	if (flags & IOMAP_ATOMIC)
- 		ret = ext4_map_blocks_atomic_write(handle, inode, map, m_flags,
- 						   &force_commit);
-+	else if (ext4_should_use_extsize(inode))
-+		ret = ext4_map_blocks_extsize(handle, inode, map, m_flags);
- 	else
- 		ret = ext4_map_blocks(handle, inode, map, m_flags);
- 
--- 
-2.49.0
+I did "ls". "ls" hanged, because network is down.
 
+Then I did suspend, and suspend didn't work.
+
+I'm available for further testing.
+
+--
+Askar Safin
 
