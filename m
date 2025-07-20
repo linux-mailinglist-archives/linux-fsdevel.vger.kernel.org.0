@@ -1,74 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-55518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07153B0B2BB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 01:18:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12438B0B3F3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF8FAA371A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Jul 2025 23:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA75A1724DF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02ED28A730;
-	Sat, 19 Jul 2025 23:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1138E1DFDB8;
+	Sun, 20 Jul 2025 06:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kHZjQLdQ"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YmW1K6X8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0D72E659;
-	Sat, 19 Jul 2025 23:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA661C5F2C;
+	Sun, 20 Jul 2025 06:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752967129; cv=none; b=aIIOtKfCMXTKv8mEkzazD5zWM0o0X9FTRC+C5ukJ3+Dw5Shwa1R6FEQFxpPWeU9nBh2MkCzx8ph9pNk/Srk+v5+DHTt8CLOZdFXSyTvnVA144uUXdfagC2TYmV8A2/zPsss7RLnko1I+BV47u6wzY5H26ou6EyDYK0ZQzRxFsMk=
+	t=1752994385; cv=none; b=MIqdEzJy+Zf3kKN3LTEvOYF93oZghmTH23FiBmpOPMk5alMPSUV8XCfjkkEn8QSI5ikbRClvh+6eaOSESvpNwtKxPhHPQZ1BaYy1kUnzlTqQDL5piTaqlddmOZwH7PQxQIYadQ4HvAUO+7yPZGV6QWoj87xocehrNFK8TFDyx/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752967129; c=relaxed/simple;
-	bh=HyoTfwEg4C9wFU+VWZw2N+JdhbGSMa6Fwx18HRuaSdw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=k8gHF1ceehBqK4qmK69qzPxvDZSFtMSdu6YriS8xzcMPI73G5X7nijV3+bA0XIpMLZAuYz2yxR48NvAVCIU2IFoE4xMeh7gZl+qjJiPZJ9lbzjyvHvyaAur3gvwL/8guhq5j8TQYyrpOh0v1OReIHTUTLeXU7iLCUitE5JkdfeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kHZjQLdQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20885C4CEE3;
-	Sat, 19 Jul 2025 23:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752967129;
-	bh=HyoTfwEg4C9wFU+VWZw2N+JdhbGSMa6Fwx18HRuaSdw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kHZjQLdQm8Xd5WDVH+rbSCpn4w/crzJeE7U0jVXaAHh85IQb4ymFyKBdkdb2JtxgA
-	 IV0yh3LTSj+yqNFLN3FGXtRnfnCuMF4hi2YhV/1zB5NTX6RJ53fTleakMXnP4t9kuP
-	 E2riMY89gRTBvzLWewW0lNyvJDahQVYHYbysuiSA=
-Date: Sat, 19 Jul 2025 16:18:47 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
- vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org,
- mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org,
- adobriyan@gmail.com, brauner@kernel.org, josef@toxicpanda.com,
- yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org,
- osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com,
- christophe.leroy@csgroup.eu, tjmercier@google.com, kaleshsingh@google.com,
- aha310510@gmail.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v8 0/6] use per-vma locks for /proc/pid/maps reads
-Message-Id: <20250719161847.d09abb0c9a0db0b94c4daa23@linux-foundation.org>
-In-Reply-To: <20250719182854.3166724-1-surenb@google.com>
-References: <20250719182854.3166724-1-surenb@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752994385; c=relaxed/simple;
+	bh=6AF1DrYAjh9UiBobvuPlLao7ekzQEI/5JlPKdx9Vvu4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DJGPEj97MFMT0CVbRjJM/lAt3qGefWA2cTmGI8h5pnxyQ6hWQ+IKcQmpu+IRvtHAFTvtV7BrRzb/1UIV40ghQVdbisKm7ESopQZd+aw8yKNl94m4FxsXgZnreixAhJCPxtQe8I2NMC/2Ts9OiENDlRZF7rDxhgUBQGOr5iwBO7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YmW1K6X8; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from mail.zytor.com ([IPv6:2601:646:8081:9484:f04a:f27d:fd66:5c61])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0X3555973
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Sat, 19 Jul 2025 23:50:53 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0X3555973
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1752994260;
+	bh=rTdzYvwFHc/obNMmPtvKZfNfhBVjDuwkEkiFsct/pho=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YmW1K6X8nh5gvx+/lSaLL/0uVHsAorsxD+AVsaUyPiomu4l2Jbf0BfVqyQpPxeoO9
+	 kr5smMv1P2CI6IH4hiMwDx1+VV5DzlIMt8CxJShOD63VVlIfqYpUZYD7StXNc1s+as
+	 TlEMiqy2G350jxTX+x1Y2Ql+ORTOydINiaJq9CGtdg6A11P5c+PhVpuWEf5f5W1Q3O
+	 am/ZAB0HJioLUUtB4/sAiRstoaTRokISJSjRNjfFBOWIc5W5hlAH03xyxYGC+Z23Y0
+	 DEipT/5KCZeI5RAXsfCvHLzmp9kPkp3m0uETy1p5uCRXQ3MHxcJZAVKZdSLBLVbSG6
+	 nuRE85ysqy4ew==
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: 
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Alexei Starovoitov <ast@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        David Lechner <dlechner@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>,
+        Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+        Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Kees Cook <kees@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Marc Herbert <Marc.Herbert@linux.intel.com>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>,
+        Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+        NeilBrown <neil@brown.name>, Peter Zijlstra <peterz@infradead.org>,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+        Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>,
+        Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thorsten Blum <thorsten.blum@linux.dev>,
+        Uros Bizjak <ubizjak@gmail.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Yafang Shao <laoar.shao@gmail.com>, Ye Bin <yebin10@huawei.com>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
+        virtualization@lists.linux.dev, x86@kernel.org
+Subject: [PATCH v2 0/7] Replace "__auto_type" with "auto"
+Date: Sat, 19 Jul 2025 23:50:37 -0700
+Message-ID: <20250720065045.2859105-1-hpa@zytor.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 19 Jul 2025 11:28:48 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+"auto" was defined as a keyword back in the K&R days, but as a storage
+type specifier.  No one ever used it, since it was and is the default
+storage type for local variables.
 
-> This patchset switches from holding mmap_lock while reading /proc/pid/maps
-> to taking per-vma locks as we walk the vma tree.
+C++11 recycled the keyword to allow a type to be declared based on the
+type of an initializer.  This was finally adopted into standard C in
+C23.
 
-Thanks, I updated mm-new to this v8 series.
+gcc and clang provide the "__auto_type" alias keyword as an extension
+for pre-C23, however, there is no reason to pollute the bulk of the
+source base with this temporary keyword; instead define "auto" as a
+macro unless the compiler is running in C23+ mode.
+
+This macro is added in <linux/compiler_types.h> because that header is
+included in some of the tools headers, wheres <linux/compiler.h> is
+not as it has a bunch of very kernel-specific things in it.
+
+Changes in v2:
+
+- Restore indentation of macro backslashes (David Laight)
+- arch/nios2: Replace an adjacent typeof() with a similar "auto" construct
+  (Linus Torvalds)
+- fs/proc/inode.c: change "__auto_type" to "const auto" (Alexey Dobriyan)
+
+--- 
+ arch/nios2/include/asm/uaccess.h                        |  8 ++++----
+ arch/x86/include/asm/bug.h                              |  2 +-
+ arch/x86/include/asm/string_64.h                        |  6 +++---
+ arch/x86/include/asm/uaccess_64.h                       |  2 +-
+ fs/proc/inode.c                                         | 16 ++++++++--------
+ include/linux/cleanup.h                                 |  6 +++---
+ include/linux/compiler.h                                |  2 +-
+ include/linux/compiler_types.h                          | 13 +++++++++++++
+ include/linux/minmax.h                                  |  6 +++---
+ tools/testing/selftests/bpf/prog_tests/socket_helpers.h |  9 +++++++--
+ tools/virtio/linux/compiler.h                           |  2 +-
+ 11 files changed, 45 insertions(+), 27 deletions(-)
 
