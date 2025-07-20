@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-55523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BF5B0B3F5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:54:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C3FB0B3F9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD760173A29
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:53:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37CB73BF7CD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3181E1C02;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AEA1D5141;
 	Sun, 20 Jul 2025 06:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WbPJ5jDG"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="FktW2hKM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA782192598;
-	Sun, 20 Jul 2025 06:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267841C5F35;
+	Sun, 20 Jul 2025 06:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752994385; cv=none; b=TiDwVodWW3p0Fl6iRXzht0zKBhboneZD1F2vWfcxhjntJIKZR2Loh0oCk/DPLSDGayk1mXTHHk5YGigfnKTKzVeM3ExP5yMpiBjhkGJuvWgkZULocSKLgXVn5Z/KmBA0E1cFO+Nyj0ERLX0h5The4olhL2japaYO1RapWrGj3ho=
+	t=1752994385; cv=none; b=bC0b6dWJW4EaxQ5v7IFgCXGtFzYZNCj+fdNKD5veRQCs4GUmkPxSTZZKmzU6BOnm27SI10Op+WJFcIebQqoxfX79LQy6xWxgKtsJBUio9WFriutBJ/awEf2o/b1HOQ0OYBia9EeE5ZTyNCzSHSuycFmKxXGCFTRmkO3/+QStkqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752994385; c=relaxed/simple;
-	bh=xSzAA2gv0ibDrNTKlxM9ctRGuuU7YJyBmHWCcxfeOeY=;
+	bh=hbvAwknEuBZZy8wzM2rrw6C9ssd7Qd2r3sI2ZSM6FRc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=idHZ9p3Zi2IxzyFDjPayt2ahbEW97cuMhER+nPCLq3neSGHSBxwqUxiBxhQxzbqdnC2anO3Xa06QTTjIm39+HBQpYw3RQfGER2/vEsZUrwEagf8K8Zolkfh8WIBS3Vr8FSDAAha2jb2t3FEdpEMjiEq6XS6cFuCCL4MSsyRu+Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WbPJ5jDG; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=trJB/hn/P4lKOwfCeqgY5yOW9X16sIiZMFQacTkNco1Brfg+pHPMAUcwMSV7JpnmzP6AJo2JPtYZjgWiBG1IW2kQFnIyPMLDgkziKg1NYo94p+x5DiuRZ5uJcMpuLlO76x7l/Xb79UjX9zs7HCh0kBFy10SJV5fJbWNxc5KKwvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=FktW2hKM; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from mail.zytor.com ([IPv6:2601:646:8081:9484:f04a:f27d:fd66:5c61])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0d3555973
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0e3555973
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Sat, 19 Jul 2025 23:51:18 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0d3555973
+	Sat, 19 Jul 2025 23:51:22 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0e3555973
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752994282;
-	bh=D2ugkTWHSXT0lgY/l81pjC122eFLTRxMlbXL6ZHS8/U=;
+	s=2025062101; t=1752994285;
+	bh=is1xGlkfyHt70hEGiHhmNMzkwdIVhZyUiA44BEc8nvs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WbPJ5jDG6RivnIGPGdH7tAxTfD9XHzmh0bmqjk3F973Xb5FIbCaOvDyDyN0WiLW+c
-	 tAy5g/9v8RqOIbjCNSInPta52bvotaWD5hPRM2K4tYGULsfe821h/r4HdujoW8rdGn
-	 9EFmbltCfQLyLdRDItbhgPJ53ZPZCGhW9HCQnawRm07kUSSfwL45JVPL9XpFRKMy2D
-	 2hEyzbhiOW+lCYQ3FyZ2P2GRpqPNw/1YfkCVJZKyzBpSVwn52GICIvNqCBCCqxkzGf
-	 FrZ/9vdEL1jhvq2l9eNoQhYhFkql9Vhx4htZWEqN/Ersst18Dlw9Y8kG++tO6qOW3y
-	 MmwLHD5lW3ing==
+	b=FktW2hKMjcrEahQ4BX+tnQYpnVrlQ0KHypZy5Z6dQU+OtvbravrDm40vu8FXR4g8H
+	 xbCM/ysi7vqQh6gNwfRz4t52FBII1ke1vd0E83TOBa6FeyoVzvi4tuqeEbYhDHfsUq
+	 tKZC4cywsDIyDVp8aHVNxDfNeooea1dYznAMQh8tZvGy1q1JAJCGRPVLWK7bYXu3Cl
+	 19V6FZZCYpobZ4DD5XRnnV+JrEendA569OUpmtttbVpcCaqaelNI6vdaSzVH08LDUM
+	 snW6ecw1wTrRCUnkpjzR8rw5F7Cf4oQToZgwDTuMRprULu9l1rp9zgbU46IPbH4Nim
+	 lXHN2zQagbwqg==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: 
 Cc: "H. Peter Anvin" <hpa@zytor.com>,
@@ -94,9 +94,9 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
         virtualization@lists.linux.dev, x86@kernel.org
-Subject: [PATCH v2 6/7] selftests/bpf: replace "__auto_type" with "auto"
-Date: Sat, 19 Jul 2025 23:50:43 -0700
-Message-ID: <20250720065045.2859105-7-hpa@zytor.com>
+Subject: [PATCH v2 7/7] tools/virtio: replace "__auto_type" with "auto"
+Date: Sat, 19 Jul 2025 23:50:44 -0700
+Message-ID: <20250720065045.2859105-8-hpa@zytor.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250720065045.2859105-1-hpa@zytor.com>
 References: <20250720065045.2859105-1-hpa@zytor.com>
@@ -108,42 +108,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace instances of "__auto_type" with "auto" in:
+Replace one instance of "__auto_type" with "auto" in:
 
-	tools/testing/selftests/bpf/prog_tests/socket_helpers.h
+	tools/virtio/linux/compiler.h
 
-This file does not seem to be including <linux/compiler_types.h>
-directly or indirectly, so copy the definition but guard it with
-!defined(auto).
+This file *does* include <linux/compiler_types.h> directly, so there
+is no need to duplicate the definition.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 ---
- tools/testing/selftests/bpf/prog_tests/socket_helpers.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ tools/virtio/linux/compiler.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/socket_helpers.h b/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
-index e02cabcc814e..0d59503a0c73 100644
---- a/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
-+++ b/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
-@@ -17,11 +17,16 @@
- #define VMADDR_CID_LOCAL 1
- #endif
+diff --git a/tools/virtio/linux/compiler.h b/tools/virtio/linux/compiler.h
+index 204ef0e9f542..725b93bfeee1 100644
+--- a/tools/virtio/linux/compiler.h
++++ b/tools/virtio/linux/compiler.h
+@@ -31,7 +31,7 @@
+  */
+ #define data_race(expr)							\
+ ({									\
+-	__auto_type __v = (expr);					\
++	auto __v = (expr);						\
+ 	__v;								\
+ })
  
-+/* include/linux/compiler_types.h */
-+#if __STDC_VERSION__ < 202311L && !defined(auto)
-+# define auto __auto_type
-+#endif
-+
- /* include/linux/cleanup.h */
- #define __get_and_null(p, nullvalue)                                           \
- 	({                                                                     \
--		__auto_type __ptr = &(p);                                      \
--		__auto_type __val = *__ptr;                                    \
-+		auto __ptr = &(p);					       \
-+		auto __val = *__ptr;                                           \
- 		*__ptr = nullvalue;                                            \
- 		__val;                                                         \
- 	})
 -- 
 2.50.1
 
