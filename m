@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-55541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0A9B0B83C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 22:59:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAFACB0B841
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 23:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64DEF188F76E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 21:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7CC3165820
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 21:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD3E2376FC;
-	Sun, 20 Jul 2025 20:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB02239E84;
+	Sun, 20 Jul 2025 20:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M7GZZbJ9"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fIUMteZ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EC722069A;
-	Sun, 20 Jul 2025 20:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D4B224B14;
+	Sun, 20 Jul 2025 20:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753045094; cv=none; b=d4/SxThP9yAEsCRgxjyJOQFxHSozMNkkMrjhlxN+F2yHlV5y+010oP2RpQddR072+sIbLQq3YOn6T/ZD3ncFSGtNbINYuflZLEJfRfVW/cG9ld5F1RM3VSbSc+wTZaKkGdq9sJoNqMYWszpCrpG+uhM6glUYtIwYLfO+HYtEbEg=
+	t=1753045098; cv=none; b=YhELWm2h6JY+4SNYqU6cnlAo648OVSUBTbfUg8CSbqkqWIuSjspBogub6VKci82TgyNbw026xExk4Q9eCTGkSIFzr7RlaSqxOnpvwHWdVWtPP3+BrMsmj9jPx7AnJvMz3eqxmfLUcHh9fixbnvR2mGdbHokvlkNAm9ySxj6Eguo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753045094; c=relaxed/simple;
-	bh=zPlbxH78VXxZ1Fd44pBywx7cXWN+Y9Fz/uLQUm7sreU=;
+	s=arc-20240116; t=1753045098; c=relaxed/simple;
+	bh=3VpNrGSLDTgpaTVBXL34gCyZusAFCU/AunfM3eAf/Tk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OUtY6PcCj3bRTdS/lLEc0Y4OsQ6euhAuE+rSgPz3FPv6c4vUPfaQ9cwgOILBMTBEIyCSA9ZES2B/7wyOG7VmokDhbyJWGBtfO0XdBYS3nlKjJqhGSJpsV4QJ/53lmBEFkhHSfBzkCqHS3epcRY0du9Mr/KvniGIDzBX0UPBLvwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M7GZZbJ9; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=erYfAr+JyzOpV+MMfV6BYQyjYndiA2661S11jyllPZ6TUEZEt+VfJn5C5V07ALjK6lf09Ng2Xiywbv4Sg9e/ktDtTxiW7cuvV1xRr4FluoOIZMWH4C2ROhX43/S3Gt3NtzXRG62bEeFTLV1AA5kuLL9uWB8LebltWweB7f1fSVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fIUMteZ/; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KJjbkq030009;
-	Sun, 20 Jul 2025 20:57:57 GMT
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KJs8Ri005549;
+	Sun, 20 Jul 2025 20:58:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=xx9d5OUwWdIyY+yXB
-	JW4VLQQ9V8gvlQn5d5t5pjUOe0=; b=M7GZZbJ9Lg6kJKXitSzPCDVkB/Ep0Qtzu
-	i4/KYwDN90Yp1hgoyJ004gFjzj0EyXfSYJsyRWkXzhZGr4ZX6DPKBuku+UZ37TCp
-	cDLlTvzgTQahEE9dwceRGDDnUJRCQTY+3/1DhSG7DXFLaPoTBc8LZiyKyfMtaKls
-	JtzSNk0ZSouixHs3DwTT0fEvhjfvPsY6B0l5HJgKYOoj4k5xckqqVCjD68lcow2F
-	Q9NKIb+Fv8hdzpHPtGXTD68QPvkiJHk0Iv9KYG8nxDTQIkIOzOxIFZeJouGD99FJ
-	E4osLsw++q6BBv6QwOfNyRD2jus1e/2cP9XHrvyifdQrueOohx8hQ==
+	:mime-version:references:subject:to; s=pp1; bh=8pcU36a3QVQA9/SFF
+	vKQWwkrB68bBongYrNmMfiIH5k=; b=fIUMteZ/03+wHObeB2BxJ8UZRsrO3SyiB
+	d7c9OwQKzlgFveN93k109oKqoB9kyROYBs2GfL9m1B+7po7oQB4gGZNiHnrZ6deA
+	w4J+KFpaCNa+Vi2srnBd3Y53th/S6wR7g8DujAo8aztVeVXl8W1u7snAuIE3W2eK
+	+nwzm2BqIueD9nAS8uWOATM0gDJYui76Qix7PP3JDhaEAc90n8DEllSdwJm+XEZb
+	Q7y25rIatypkTcYVTdGerVmzIyJ2dJdUGT5PFOg2mhnD2CrQP7mcykD+wNJy1Pk1
+	mQ0dmpgkq9f6t+P8tzCnJHuKeJ4WmLGlj2s2/dPl+ok1/0gm8ODPw==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v5kk0-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v5jxm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:57:57 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56KKvuat026625;
-	Sun, 20 Jul 2025 20:57:56 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v5kjw-1
+	Sun, 20 Jul 2025 20:58:00 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56KKvx6U021062;
+	Sun, 20 Jul 2025 20:58:00 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v5jxj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:57:56 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56KIiGpo024704;
-	Sun, 20 Jul 2025 20:57:55 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 480rd22ydv-1
+	Sun, 20 Jul 2025 20:57:59 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56KH84TG014391;
+	Sun, 20 Jul 2025 20:57:58 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480ppnu8mq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:57:55 +0000
+	Sun, 20 Jul 2025 20:57:58 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56KKvr9V10289428
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56KKvusH47710508
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 20 Jul 2025 20:57:54 GMT
+	Sun, 20 Jul 2025 20:57:56 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D107C20043;
-	Sun, 20 Jul 2025 20:57:53 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 97BAB20043;
+	Sun, 20 Jul 2025 20:57:56 +0000 (GMT)
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 79D6E20040;
-	Sun, 20 Jul 2025 20:57:51 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 595A220040;
+	Sun, 20 Jul 2025 20:57:54 +0000 (GMT)
 Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.16.241])
 	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 20 Jul 2025 20:57:51 +0000 (GMT)
+	Sun, 20 Jul 2025 20:57:54 +0000 (GMT)
 From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
 Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
         Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
         linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [RFC v4 6/7] ext4: make extsize work with EOF allocations
-Date: Mon, 21 Jul 2025 02:27:32 +0530
-Message-ID: <eb56b39b6315acc8bdaa04ee3a821bda3b9a0b3a.1753044253.git.ojaswin@linux.ibm.com>
+Subject: [RFC v4 7/7] ext4: add ext4_map_blocks_extsize() wrapper to handle overwrites
+Date: Mon, 21 Jul 2025 02:27:33 +0530
+Message-ID: <4531e266d4b26b1c3d51da732ff305869e56dcf3.1753044253.git.ojaswin@linux.ibm.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1753044253.git.ojaswin@linux.ibm.com>
 References: <cover.1753044253.git.ojaswin@linux.ibm.com>
@@ -94,103 +94,124 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: oEiUvRUmALhPJFXyH_7BowBpQj3B_cIC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDE5OCBTYWx0ZWRfX+tzFQjeZ1okv
- hjdGPPZJo8srVifuEw1oLFOKRki6yOy2ee6ag6YfG6pw+d2N7qaox7RZp7tAW3AFBsphWTygkbt
- GiAy+le/XUHxWb7zr2Ge6Ku63J6CyGbuaGjo/QpAVzuQ07WIWVKBNS0KppnLNDZSh8apsAYGWaX
- XqX1gAJEuLl0sVKzWnl3yjp9JQHb39GGjpR3QmyjemNMi2NNJIiXmB7/R8pC9NCJ96D2hqdboUp
- CwE3pf3lfoomGJ3qr/MzNOAfXcD+sfPHgXzKInVTEZohq7PtxFk0KkE/Q/ANQ1GJoiLMsA8qPpG
- 2xGSC1Vw42CELmyza3KuG/hYDAn2oUz6VWTnKbQToX1L7aFN/E5BNzlU+05DHNq5UdoAKjNk7q5
- Y83W0NKdY+umhnb/FLm7oQBRXZTTBtqSuPZvnzWEzFi1Wgl+r91bXNWuHRwLi1f2i6bWQTep
-X-Proofpoint-ORIG-GUID: UL9ftHSosS7Tq5Cr1-Q7UGWSJKENMB8R
-X-Authority-Analysis: v=2.4 cv=JJQ7s9Kb c=1 sm=1 tr=0 ts=687d5855 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=pvUrSPAteZZR1bcYYl4A:9
+X-Authority-Analysis: v=2.4 cv=QLdoRhLL c=1 sm=1 tr=0 ts=687d5858 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=XbQIVu7OBCAAiYVp_M0A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDE5OCBTYWx0ZWRfXykg1hwk4nAgb
+ xROE1waIrLTo/2VPt7oXhC1aLbWJ7xHHgc23el/aJOjGxUkh8rSRR3MhNj57I6X01jmcdHpsgYd
+ vYIv8IAZoYUK8UxYg3pIdGSGx/x/IHtDZho12S0f1+RSoBd23vASha+ZQNhpY64QM1caSRpWQs8
+ EeEK9XBEMaWb66+Sb5Kn8LPDajYMYzhgJd5XoNzZYX6zetfq5s40iLM+odGXn/3Qv8Nhd6hC4r0
+ 6v4jiaG3jIeFhCUsKfZwdHjzydTzAAAzfEZudaNNmmA8gr7599f2neTzwgfSMhGymKPzdb48Iag
+ MXvofVTuRH1/7ni4R2qc3yi/Go3tEEEdLowQ0s/iCKy8GvuItmksMo26YgXUuDaIQCobP3ViDNE
+ 8Hk9z9i3TmL//Rdx47uSS7pC7MDoUeYUp78vOmiMhEfBst3YXfIlNZhDR93NvYeoe7Wk7lDr
+X-Proofpoint-ORIG-GUID: KLoetVI8SyMxBp_7bMGJaqXj6PEX-jwy
+X-Proofpoint-GUID: 7NDJ-ZzSSvuTUBxfCTHBipT0Ep8YrumW
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-20_01,2025-07-17_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 impostorscore=0 clxscore=1015 mlxscore=0 spamscore=0
- malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507200198
+ phishscore=0 priorityscore=1501 bulkscore=0 malwarescore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999 clxscore=1011
+ adultscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507200198
 
-Make extsize hints work with EOF allocations. We deviate from XFS here
-because in case we have blocks left past EOF, we don't truncate them.
-There are 2 main reasons:
+Currently, with the extsize hints, if we consider a scenario where
+the hint is set to 16k and we do a write of (0,4k) we get the below
+mapping:
 
-1. Since the user is opting for extsize allocations, chances are
-that they will use the blocks in future.
+[  4k written ] [       12k unwritten      ]
 
-2. If we start truncating all EOF blocks in ext4_release_file like
-XFS, then we will have to always truncate blocks even if they
-have been intentionally preallocated using fallocate w/ KEEP_SIZE
-which might cause confusion for users. This is mainly because
-ext4 doesn't have a way to distinguish if the blocks beyond EOF
-have been allocated intentionally. We can work around this by
-using an ondisk inode flag like XFS (XFS_DIFLAG_PREALLOC) but
-that would be an overkill. It's much simpler to just let the EOF
-blocks stick around.
+Now, if we do a (4k,4k) write, ext4_map_blocks will again try for a
+extsize aligned write, adjust the range to (0, 16k) and then run into
+issues since the new range is already has a mapping in it. Although this
+does not lead to a failure since we eventually fallback to a non extsize
+allocation, this is not a good approach.
 
-NOTE:
-One thing that changes in this patch is that for direct IO we need to
-pass the EXT4_GET_BLOCKS_IO_CREATE_EXT even if we are allocating beyond
-i_size.
+Hence, implement a wrapper over ext4_map_blocks() which detects if a
+mapping already exists for an extsize based allocation and then reuses
+the same mapping.
+
+In case the mapping completely covers the original request we simply
+disable extsize allocation and call map_blocks to correctly process the
+mapping and set the map flags. Otherwise, if there is a hole or partial
+mapping, then we just let ext4_map_blocks() handle the allocation.
 
 Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 ---
- fs/ext4/inode.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+ fs/ext4/inode.c | 45 +++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 43 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 385fbd745e12..1b60e45a593e 100644
+index 1b60e45a593e..010ca890b29c 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -861,7 +861,6 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
- 		 * ext4_extents.h here?
- 		 */
- 		int max_unwrit_len = ((1UL << 15) - 1);
--		loff_t end;
+@@ -772,6 +772,41 @@ static inline void ext4_extsize_reset_map(struct ext4_map_blocks *map,
+ 	map->m_flags = 0;
+ }
  
- 		align = orig_map->m_lblk % extsize;
- 		len = orig_map->m_len + align;
-@@ -870,18 +869,6 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
- 		extsize_map.m_len =
- 			max_t(unsigned int, roundup_pow_of_two(len), extsize);
++static int ext4_map_blocks_extsize(handle_t *handle, struct inode *inode,
++		    struct ext4_map_blocks *map, int flags)
++{
++	int orig_mlen = map->m_len;
++	int ret = 0;
++	int tmp_flags;
++
++	WARN_ON(!ext4_inode_get_extsize(EXT4_I(inode)));
++	WARN_ON(!(flags & EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT));
++
++	/*
++	 * First check if there are any existing allocations
++	 */
++	ret = ext4_map_blocks(handle, inode, map, 0);
++	if (ret < 0)
++		return ret;
++
++	/*
++	 * the present mapping fully covers the requested range. In this
++	 * case just go for a non extsize based allocation. Note that we won't
++	 * really be allocating new blocks but the call to ext4_map_blocks is
++	 * important to ensure things like extent splitting and proper map flags
++	 * are taken care of. For all other cases, just let ext4_map_blocks handle
++	 * the allocations
++	 */
++	if (ret > 0 && map->m_len == orig_mlen)
++		tmp_flags = flags & ~EXT4_GET_BLOCKS_EXTSIZE;
++	else
++		tmp_flags = flags;
++
++	ret = ext4_map_blocks(handle, inode, map, tmp_flags);
++
++	return ret;
++}
++
+ /*
+  * The ext4_map_blocks() function tries to look up the requested blocks,
+  * and returns if the blocks are already mapped.
+@@ -1153,8 +1188,12 @@ static int _ext4_get_block(struct inode *inode, sector_t iblock,
+ 	map.m_lblk = iblock;
+ 	map.m_len = orig_mlen;
  
--		/*
--		 * For now allocations beyond EOF don't use extsize hints so
--		 * that we can avoid dealing with extra blocks allocated past
--		 * EOF. We have inode lock since extsize allocations are
--		 * non-delalloc so i_size can be accessed safely
--		 */
--		end = (extsize_map.m_lblk + (loff_t)extsize_map.m_len) << inode->i_blkbits;
--		if (end > inode->i_size) {
--			flags = orig_flags & ~EXT4_GET_BLOCKS_EXTSIZE;
--			goto set_map;
--		}
--
- 		/* Fallback to normal allocation if we go beyond max len */
- 		if (extsize_map.m_len >= max_unwrit_len) {
- 			flags = orig_flags & ~EXT4_GET_BLOCKS_EXTSIZE;
-@@ -4011,10 +3998,13 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
- 	 * i_disksize out to i_size. This could be beyond where direct I/O is
- 	 * happening and thus expose allocated blocks to direct I/O reads.
- 	 *
--	 * NOTE for extsize hints: We only support it for writes inside
--	 * EOF (for now) to not have to deal with blocks past EOF
-+	 * NOTE: For extsize hint based EOF allocations, we still need
-+	 * IO_CREATE_EXT flag because we will be allocating more than the write
-+	 * hence the extra blocks need to be marked unwritten and split before
-+	 * the I/O.
- 	 */
--	else if (((loff_t)map->m_lblk << blkbits) >= i_size_read(inode))
-+	else if (((loff_t)map->m_lblk << blkbits) >= i_size_read(inode) &&
-+		 !ext4_should_use_extsize(inode))
- 		m_flags = EXT4_GET_BLOCKS_CREATE;
- 	else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
- 		m_flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
+-	ret = ext4_map_blocks(ext4_journal_current_handle(), inode, &map,
+-			      flags);
++	if ((flags & EXT4_GET_BLOCKS_CREATE) && ext4_should_use_extsize(inode))
++		ret = ext4_map_blocks_extsize(ext4_journal_current_handle(), inode,
++				      &map, flags);
++	else
++		ret = ext4_map_blocks(ext4_journal_current_handle(), inode,
++				      &map, flags);
+ 	if (ret > 0) {
+ 		map_bh(bh, inode->i_sb, map.m_pblk);
+ 		ext4_update_bh_state(bh, map.m_flags);
+@@ -4016,6 +4055,8 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
+ 	if (flags & IOMAP_ATOMIC)
+ 		ret = ext4_map_blocks_atomic_write(handle, inode, map, m_flags,
+ 						   &force_commit);
++	else if (ext4_should_use_extsize(inode))
++		ret = ext4_map_blocks_extsize(handle, inode, map, m_flags);
+ 	else
+ 		ret = ext4_map_blocks(handle, inode, map, m_flags);
+ 
 -- 
 2.49.0
 
