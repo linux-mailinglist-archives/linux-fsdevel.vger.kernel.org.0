@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-55520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEEA2B0B3E7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253B4B0B3F8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C19189C461
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F633BDF9C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD001DE4CA;
-	Sun, 20 Jul 2025 06:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923BA1E521F;
+	Sun, 20 Jul 2025 06:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="IyaoOebw"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Q68R1ure"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C581917ED;
-	Sun, 20 Jul 2025 06:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2672717AE11;
+	Sun, 20 Jul 2025 06:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752994385; cv=none; b=BVg2InmxzawkC/kdxPE642ANGK1Q9ZDUq8yybvfmODbXziTnsXSh7YilDJIRDoyBC8UV8ZVoHjPu7XpxxBK+gFF4tnorUewrBSB/mkoUQbEyzwgUOrK9Xfkown2iGc5IEIS827U5HgPJosiQiHjnbEGpd8FGTSv9ZTT3nVfmeFs=
+	t=1752994385; cv=none; b=mmqGq600NLvlwCGSH9doDZnfad2Fvb23opW0HXmOOs2OTu9IRts+ygCpLYFMoIpGBAwGUh8td0QuIfgpwK+QNwmBSb2cuzlFBnlYXnlm+ElFpWwzugA7L2SLrWtd0Si14PAKCRY0MJkDzq3xeQnnZpxwQtrjo26hjNVGDuFXgOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752994385; c=relaxed/simple;
-	bh=QJYX1MFqg9BEnLun28Yp5CaUuKwFY/3raKGCnx2LRNk=;
+	bh=fMOnU1vIlgsMCZglmwZ0ph96wItjQj2xjA0Cfh/E07w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uB5FZeze9saFzNd+LJsl+HFQN3Ef++0/xDEUpB2I0j2raVEQbogvYOZ9k3mEDDvSA/2tet6tGdEN7f+Q0dyCZOxPQKpX2WzcVsK2VVprHhtef0ArkNHrMTpNZliYoYz5mooOtPENvNeh07m1biVBu7P/+ux0g2K1/O85PeyHI7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=IyaoOebw; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=nAEWdym53arz25mxehhN6pjHBHRXJ4kqQCTiewv80PNrfmBB67niLMveJ/tnjutaF5wlgfIhlgOMcPea6BJXDVc2phoqWA5vo1mXUWkJ7e1AIf8xlDBJqPxVR6LqWTllbUSVw8lGs7pi+JlXK9mqqQxAW/Yf6mMtKGKxsbzU58Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Q68R1ure; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from mail.zytor.com ([IPv6:2601:646:8081:9484:f04a:f27d:fd66:5c61])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0Z3555973
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0a3555973
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Sat, 19 Jul 2025 23:51:04 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0Z3555973
+	Sat, 19 Jul 2025 23:51:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0a3555973
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752994267;
-	bh=ELa2jqTmRsp27qDcEQ9Wkl+L9BhxZJU1zyGapTBoOEw=;
+	s=2025062101; t=1752994271;
+	bh=i1EZz1OSt3xG8CoWOY7eDgddm0jsJfUpAwtxMUdpTU0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IyaoOebwCvNMxsbv8ant0kY7MOMwXoHKo25+4RBG5+U3uhKvfmj5aVg2EaAOi2yxd
-	 alZKTjrWigRHG3wWOvHyRHl158c/jnUUc2kx+rfHgVF7ytc+keMlp1f6UJaPZWLhBS
-	 xYNPr1xvNLrPoZ7nihezY/kliWsi1cStyLblbAPF+seEOt4BrdHQUmAwW4NDYzWYSx
-	 ybSlFTvxXT8TbUWZg2OlgUDSXzSl3Yi/aJ7/q5zUQB78Dqns8DXZfDV6gON/faQHjH
-	 cUDK6QX//Mp+t1HPJui7r42qiQC2FJtW0me/gkCx100dbyZg5bJV7Be97Om3sakIm0
-	 a1SG8Lt8KPPpw==
+	b=Q68R1ure0GwuzF4YIqOSL83GEH/lWXB6KFfNBH0xpmFPSZukTpkm3VEj33YET0zis
+	 NkKHKcK9XpBx5SELo5EevjrEMnDlZ4h2Yds9RqEvVfP4kdxSTO4u16aKnRSMO6ElZT
+	 tMlgQ9gypvEKLNdKnuD66J6qoWjNyQrfHOiSCKAQIcIXING6Mf5YidmEINGqnGlJwi
+	 yBREITLC7W7A5HJNBM8N2TLew3bTlw+hrmYEKyJFMIbcwSsniSe75OOa0mmDxZU+3S
+	 yika893X8LfexsYEiA5FNVEco0u/ocDaroyJpB8dMMrjGUxXLu2tRURNbzp3yVlZAf
+	 sRjCmIt2TbmVw==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: 
 Cc: "H. Peter Anvin" <hpa@zytor.com>,
@@ -94,9 +94,9 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
         virtualization@lists.linux.dev, x86@kernel.org
-Subject: [PATCH v2 2/7] include/linux: change "__auto_type" to "auto"
-Date: Sat, 19 Jul 2025 23:50:39 -0700
-Message-ID: <20250720065045.2859105-3-hpa@zytor.com>
+Subject: [PATCH v2 3/7] fs/proc: replace "__auto_type" with "const auto"
+Date: Sat, 19 Jul 2025 23:50:40 -0700
+Message-ID: <20250720065045.2859105-4-hpa@zytor.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250720065045.2859105-1-hpa@zytor.com>
 References: <20250720065045.2859105-1-hpa@zytor.com>
@@ -108,77 +108,91 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace instances of "__auto_type" with "auto" in include/linux.
+Replace use of "__auto_type" in fs/proc/inode.c with "const auto".
 
+Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- include/linux/cleanup.h  | 6 +++---
- include/linux/compiler.h | 2 +-
- include/linux/minmax.h   | 6 +++---
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ fs/proc/inode.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index 7093e1d08af0..c7f3031ae400 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -199,10 +199,10 @@
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 3604b616311c..1afa2dd2285b 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -303,7 +303,7 @@ static ssize_t proc_reg_read_iter(struct kiocb *iocb, struct iov_iter *iter)
  
- #define __free(_name)	__cleanup(__free_##_name)
+ static ssize_t pde_read(struct proc_dir_entry *pde, struct file *file, char __user *buf, size_t count, loff_t *ppos)
+ {
+-	__auto_type read = pde->proc_ops->proc_read;
++	const auto read = pde->proc_ops->proc_read;
+ 	if (read)
+ 		return read(file, buf, count, ppos);
+ 	return -EIO;
+@@ -325,7 +325,7 @@ static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count,
  
--#define __get_and_null(p, nullvalue)   \
-+#define __get_and_null(p, nullvalue)	    \
- 	({                                  \
--		__auto_type __ptr = &(p);   \
--		__auto_type __val = *__ptr; \
-+		auto __ptr = &(p);	    \
-+		auto __val = *__ptr;	    \
- 		*__ptr = nullvalue;         \
- 		__val;                      \
- 	})
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 6f04a1d8c720..7fef5cd41dfc 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -186,7 +186,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- #define data_race(expr)							\
- ({									\
- 	__kcsan_disable_current();					\
--	__auto_type __v = (expr);					\
-+	auto __v = (expr);						\
- 	__kcsan_enable_current();					\
- 	__v;								\
- })
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index eaaf5c008e4d..a0158db54a04 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -89,7 +89,7 @@
- 	__cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+ static ssize_t pde_write(struct proc_dir_entry *pde, struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+ {
+-	__auto_type write = pde->proc_ops->proc_write;
++	auto write = pde->proc_ops->proc_write;
+ 	if (write)
+ 		return write(file, buf, count, ppos);
+ 	return -EIO;
+@@ -347,7 +347,7 @@ static ssize_t proc_reg_write(struct file *file, const char __user *buf, size_t
  
- #define __careful_cmp_once(op, x, y, ux, uy) ({		\
--	__auto_type ux = (x); __auto_type uy = (y);	\
-+	auto ux = (x); auto uy = (y);			\
- 	BUILD_BUG_ON_MSG(!__types_ok(ux, uy),		\
- 		#op"("#x", "#y") signedness error");	\
- 	__cmp(op, ux, uy); })
-@@ -129,7 +129,7 @@
- 	__careful_cmp(max, (x) + 0u + 0ul + 0ull, (y) + 0u + 0ul + 0ull)
+ static __poll_t pde_poll(struct proc_dir_entry *pde, struct file *file, struct poll_table_struct *pts)
+ {
+-	__auto_type poll = pde->proc_ops->proc_poll;
++	auto poll = pde->proc_ops->proc_poll;
+ 	if (poll)
+ 		return poll(file, pts);
+ 	return DEFAULT_POLLMASK;
+@@ -369,7 +369,7 @@ static __poll_t proc_reg_poll(struct file *file, struct poll_table_struct *pts)
  
- #define __careful_op3(op, x, y, z, ux, uy, uz) ({			\
--	__auto_type ux = (x); __auto_type uy = (y);__auto_type uz = (z);\
-+	auto ux = (x); auto uy = (y); auto uz = (z);			\
- 	BUILD_BUG_ON_MSG(!__types_ok3(ux, uy, uz),			\
- 		#op"3("#x", "#y", "#z") signedness error");		\
- 	__cmp(op, ux, __cmp(op, uy, uz)); })
-@@ -203,7 +203,7 @@
-  * This macro checks @val/@lo/@hi to make sure they have compatible
-  * signedness.
-  */
--#define clamp(val, lo, hi) __careful_clamp(__auto_type, val, lo, hi)
-+#define clamp(val, lo, hi) __careful_clamp(auto, val, lo, hi)
+ static long pde_ioctl(struct proc_dir_entry *pde, struct file *file, unsigned int cmd, unsigned long arg)
+ {
+-	__auto_type ioctl = pde->proc_ops->proc_ioctl;
++	auto ioctl = pde->proc_ops->proc_ioctl;
+ 	if (ioctl)
+ 		return ioctl(file, cmd, arg);
+ 	return -ENOTTY;
+@@ -392,7 +392,7 @@ static long proc_reg_unlocked_ioctl(struct file *file, unsigned int cmd, unsigne
+ #ifdef CONFIG_COMPAT
+ static long pde_compat_ioctl(struct proc_dir_entry *pde, struct file *file, unsigned int cmd, unsigned long arg)
+ {
+-	__auto_type compat_ioctl = pde->proc_ops->proc_compat_ioctl;
++	auto compat_ioctl = pde->proc_ops->proc_compat_ioctl;
+ 	if (compat_ioctl)
+ 		return compat_ioctl(file, cmd, arg);
+ 	return -ENOTTY;
+@@ -414,7 +414,7 @@ static long proc_reg_compat_ioctl(struct file *file, unsigned int cmd, unsigned
  
- /**
-  * clamp_t - return a value clamped to a given range using a given type
+ static int pde_mmap(struct proc_dir_entry *pde, struct file *file, struct vm_area_struct *vma)
+ {
+-	__auto_type mmap = pde->proc_ops->proc_mmap;
++	auto mmap = pde->proc_ops->proc_mmap;
+ 	if (mmap)
+ 		return mmap(file, vma);
+ 	return -EIO;
+@@ -497,7 +497,7 @@ static int proc_reg_open(struct inode *inode, struct file *file)
+ 	if (!use_pde(pde))
+ 		return -ENOENT;
+ 
+-	__auto_type release = pde->proc_ops->proc_release;
++	auto release = pde->proc_ops->proc_release;
+ 	if (release) {
+ 		pdeo = kmem_cache_alloc(pde_opener_cache, GFP_KERNEL);
+ 		if (!pdeo) {
+@@ -534,7 +534,7 @@ static int proc_reg_release(struct inode *inode, struct file *file)
+ 	struct pde_opener *pdeo;
+ 
+ 	if (pde_is_permanent(pde)) {
+-		__auto_type release = pde->proc_ops->proc_release;
++		auto release = pde->proc_ops->proc_release;
+ 		if (release) {
+ 			return release(inode, file);
+ 		}
 -- 
 2.50.1
 
