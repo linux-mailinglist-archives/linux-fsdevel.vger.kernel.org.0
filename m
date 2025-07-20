@@ -1,51 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-55522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12438B0B3F3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5EFB0B3EF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA75A1724DF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:53:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661B8174B58
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1138E1DFDB8;
-	Sun, 20 Jul 2025 06:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43321DF73A;
+	Sun, 20 Jul 2025 06:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YmW1K6X8"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="ZyDBDKwJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA661C5F2C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA101C2437;
 	Sun, 20 Jul 2025 06:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752994385; cv=none; b=MIqdEzJy+Zf3kKN3LTEvOYF93oZghmTH23FiBmpOPMk5alMPSUV8XCfjkkEn8QSI5ikbRClvh+6eaOSESvpNwtKxPhHPQZ1BaYy1kUnzlTqQDL5piTaqlddmOZwH7PQxQIYadQ4HvAUO+7yPZGV6QWoj87xocehrNFK8TFDyx/w=
+	t=1752994385; cv=none; b=bvCxIWPEBRIbfKub72e/XNoXaP22bDC2Si1FaJ1o9ye+j9fcqFQgwlFfmidP/2MJK1zIyg8BStGgarJ9rW+yRiPTenH2fvCALgDuBUPJNkQn03yMRwJokg23rRHgZ3zIaSyBpVMs8Qyivl5eDkxaqi1zK2wlog25DzJo7xMwp38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752994385; c=relaxed/simple;
-	bh=6AF1DrYAjh9UiBobvuPlLao7ekzQEI/5JlPKdx9Vvu4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DJGPEj97MFMT0CVbRjJM/lAt3qGefWA2cTmGI8h5pnxyQ6hWQ+IKcQmpu+IRvtHAFTvtV7BrRzb/1UIV40ghQVdbisKm7ESopQZd+aw8yKNl94m4FxsXgZnreixAhJCPxtQe8I2NMC/2Ts9OiENDlRZF7rDxhgUBQGOr5iwBO7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YmW1K6X8; arc=none smtp.client-ip=198.137.202.136
+	bh=+dM1bld6YqFuWFqTeVy2M0W6B7tgTC8OPQdbIxYR2qs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=U2IiYFpX82fGke3nE1OvNmiPLjbE0YC/yKB4f5jBncSTxojBXTAKKsMWh9vRnmle53FwaAG6I1a+wZC3skcjTHKXi7Er3RIAd8FFRMe4aJUhpBjNq+N7XYVGKfafgxkMB5A6GqXtTWw1jZlj56dzRNjNQFID+0NQLIn+TBW5qpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=ZyDBDKwJ; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from mail.zytor.com ([IPv6:2601:646:8081:9484:f04a:f27d:fd66:5c61])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0X3555973
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0Y3555973
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Sat, 19 Jul 2025 23:50:53 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0X3555973
+	Sat, 19 Jul 2025 23:51:00 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0Y3555973
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752994260;
-	bh=rTdzYvwFHc/obNMmPtvKZfNfhBVjDuwkEkiFsct/pho=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YmW1K6X8nh5gvx+/lSaLL/0uVHsAorsxD+AVsaUyPiomu4l2Jbf0BfVqyQpPxeoO9
-	 kr5smMv1P2CI6IH4hiMwDx1+VV5DzlIMt8CxJShOD63VVlIfqYpUZYD7StXNc1s+as
-	 TlEMiqy2G350jxTX+x1Y2Ql+ORTOydINiaJq9CGtdg6A11P5c+PhVpuWEf5f5W1Q3O
-	 am/ZAB0HJioLUUtB4/sAiRstoaTRokISJSjRNjfFBOWIc5W5hlAH03xyxYGC+Z23Y0
-	 DEipT/5KCZeI5RAXsfCvHLzmp9kPkp3m0uETy1p5uCRXQ3MHxcJZAVKZdSLBLVbSG6
-	 nuRE85ysqy4ew==
+	s=2025062101; t=1752994264;
+	bh=vsGxPzzTTwhbkBTwSIw4sMhUPUpWMkx20cB75uEuQgk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZyDBDKwJ82kVHavnoOkwuOs1qV0y87AnM33njIS0JfpbC5KvDYtNpaF7gvZsBf0xV
+	 nVSq1R9fnrUmhCTKA1CoMUmcFc+doBbPDDA2tHj5kZmv6IcbSb6ib2YcxjMKh28I7G
+	 rKiEuAN8wWXPJWzxX1uQQLcZNbkUQOx8WJ29nOD3QSVDNWfXIaXz4tpC24uIVuq9ej
+	 oEAS2eBXkRn8ZimKfJutIoG7rn5fnjmZW+taM70aqT6aBc7FcoKRYDmXHYBg3Q2ZDS
+	 sFYPEyqjn16JROYOoPEb6WPcYXBQxczMapwNEKfsf2l6PlSWVUKL7mw/otFBLJ38Ys
+	 R0BeVUxJwySsQ==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: 
 Cc: "H. Peter Anvin" <hpa@zytor.com>,
@@ -93,10 +94,12 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
         virtualization@lists.linux.dev, x86@kernel.org
-Subject: [PATCH v2 0/7] Replace "__auto_type" with "auto"
-Date: Sat, 19 Jul 2025 23:50:37 -0700
-Message-ID: <20250720065045.2859105-1-hpa@zytor.com>
+Subject: [PATCH v2 1/7] compiler_types.h: add "auto" as a macro for "__auto_type"
+Date: Sat, 19 Jul 2025 23:50:38 -0700
+Message-ID: <20250720065045.2859105-2-hpa@zytor.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250720065045.2859105-1-hpa@zytor.com>
+References: <20250720065045.2859105-1-hpa@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -122,24 +125,36 @@ This macro is added in <linux/compiler_types.h> because that header is
 included in some of the tools headers, wheres <linux/compiler.h> is
 not as it has a bunch of very kernel-specific things in it.
 
-Changes in v2:
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+---
+ include/linux/compiler_types.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-- Restore indentation of macro backslashes (David Laight)
-- arch/nios2: Replace an adjacent typeof() with a similar "auto" construct
-  (Linus Torvalds)
-- fs/proc/inode.c: change "__auto_type" to "const auto" (Alexey Dobriyan)
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 2b77d12e07b2..c8b1ee37934e 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -13,6 +13,19 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++/*
++ * C23 introduces "auto" as a standard way to define type-inferred
++ * variables, but "auto" has been a (useless) keyword even since K&R C,
++ * so it has always been "namespace reserved."
++ *
++ * Until at some future time we require C23 support, we need the gcc
++ * extension __auto_type, but there is no reason to put that elsewhere
++ * in the source code.
++ */
++#if __STDC_VERSION__ < 202311L
++# define auto __auto_type
++#endif
++
+ /*
+  * Skipped when running bindgen due to a libclang issue;
+  * see https://github.com/rust-lang/rust-bindgen/issues/2244.
+-- 
+2.50.1
 
---- 
- arch/nios2/include/asm/uaccess.h                        |  8 ++++----
- arch/x86/include/asm/bug.h                              |  2 +-
- arch/x86/include/asm/string_64.h                        |  6 +++---
- arch/x86/include/asm/uaccess_64.h                       |  2 +-
- fs/proc/inode.c                                         | 16 ++++++++--------
- include/linux/cleanup.h                                 |  6 +++---
- include/linux/compiler.h                                |  2 +-
- include/linux/compiler_types.h                          | 13 +++++++++++++
- include/linux/minmax.h                                  |  6 +++---
- tools/testing/selftests/bpf/prog_tests/socket_helpers.h |  9 +++++++--
- tools/virtio/linux/compiler.h                           |  2 +-
- 11 files changed, 45 insertions(+), 27 deletions(-)
 
