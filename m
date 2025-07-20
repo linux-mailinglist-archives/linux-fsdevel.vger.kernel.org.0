@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-55536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4405AB0B82E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 22:58:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE1EB0B839
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 22:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39631898511
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 20:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D583018940C0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 20:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1230D2248B0;
-	Sun, 20 Jul 2025 20:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5349D23506A;
+	Sun, 20 Jul 2025 20:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RPUvnvuw"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cq//Y9k3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8421AA7BF;
-	Sun, 20 Jul 2025 20:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03DC22A813;
+	Sun, 20 Jul 2025 20:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753045080; cv=none; b=LwMNRBKWdeuV0tDQqqM7J4no35RdmMmp2m/rDpEHumds+8aqD9yJaVbTq9rfUZrD6q6G8yMVLjdzJEL20gQel5K78Dp2fuCAXopKDx/QbZGZtOPpvo6lcUAVBVXlwyJ+mbQrLRX3kHtX1kAWM11agVLvP2jQbn+NcRBzsyt63Lg=
+	t=1753045084; cv=none; b=VF7OKMIZfzRNRlDGyoQCXSWM0CrsF2CP9nQZO5uNPP29HTpLiJv24uuXBXiL9vhLPVx6NnWxTVpDthpOFhHVowjv0F5rsSXUqu9CDzSwMCCaJHVXJY0HPf5oLwQ9a+VbwpkATmfNiM6Ku6Kuf9HjMHALLJ9iE2NWqej5/LCDssg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753045080; c=relaxed/simple;
-	bh=/GU7vBQ6UjTG90MT4vm51Z5Nxn6PZNIxjeSGR6/InMI=;
+	s=arc-20240116; t=1753045084; c=relaxed/simple;
+	bh=dMWXZEpMPzPvqB8x+sjy03HPUuoNIXkVVXOj8G5xmpg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bKJuY2YKj59gyxXqg1wgDLc5SwM5OROqOezGXKedwJ1h+ibpfqlOh/XuBpyIneXfwyt71HBcYVbNy1B91PXahCReC3oPrWukwwsXV1WbImaPmXOptoOHedaSxewkDpgOkwEh+4Ub/0eQmvYHQdwAVa5evCGUomnKsyi8dx5vxic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RPUvnvuw; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=HW4yuei8WtM5Pz6RrlaQ0tjqd5nrerUbxyt9MLIlE0EcAO4S17BfuerZd80a3nQloXQrA37cg5yi0tTEkZ6zt7OD/TqBPBFBj9UWVJnAuhQwzRjeKQVEK4JSmrntGusT3YUXe5w+okNoQ5w2Cm73Qa3wHxTYYaA6PY3iTgALGSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cq//Y9k3; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KJrJnT003936;
-	Sun, 20 Jul 2025 20:57:46 GMT
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KCTmtJ021072;
+	Sun, 20 Jul 2025 20:57:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=B7QWFolN+U1nGufxS
-	wbE6IB2XagE9Okr3SaoODqxGDQ=; b=RPUvnvuwIZte/HA2GIvJtcY56y/YX0OXY
-	BiYbAKO6qCmSFlOPYrW6xLHTpLlx/+Do9RvymFlGtCNH/UnsYxoMCvGwHK2YnLr8
-	13VvRMwByDkbbvlNbGb+Hqx+yJDLbx9pYw9DXPAkz862hHSVVmh7y3jU+pun5O0q
-	YnJn5+wLSvXCBUpDL7fS6pMis9tZbTNOutKHhBDqgF1dLKIHVfad6rvi+2f8X/UZ
-	cazQzxyf+sFDtSTBZG6J4ojgxiph/mRZbmDzONOiib8mbuSIJ/e4yQWcB67L/NMm
-	MkiwDXapMDWpooIXDmclQDA/acVBsWl4gHzbF//XXlyzkam4yAzKA==
+	:mime-version:references:subject:to; s=pp1; bh=HdaDUyEXubSkBMogF
+	soBBTRu8f8w+09MeBodlYXydAs=; b=cq//Y9k3MnPj/wcWqVYOF0DpD5teHDdgk
+	5NKqwPRgGsyDJVQVtiULg3xfoQO4CucYixKDekDGl3kC/m6WL1vUR2pa3TASB1W5
+	rdJBAgVBu3aD081CZbG+f3cOA0KB6UmBVeHFoD4uNtxfmJGKgSgxigv41QtGWdjF
+	nDIkhxzx/bujQ83utOXJ4+vO1lWwoMGaz1B4H892Afm7g1IVmkBFxQUKQlsam4b+
+	ObWJKV9pS4zPdEtiT2+3XRzqOW9eRoC4SsSUuDPVDVROdCv+qEU1dhDBa/08YHpJ
+	mNwfwzMU1+EsJkw7UWnSyU+4iF6vK5BeXZmc6Bi34PvYlUJaUu3ww==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v5jx4-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfnhsg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:57:45 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56KKvjsa020982;
-	Sun, 20 Jul 2025 20:57:45 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v5jx1-1
+	Sun, 20 Jul 2025 20:57:48 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56KKvmfZ020577;
+	Sun, 20 Jul 2025 20:57:48 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfnhse-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:57:45 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56KIgIAj024744;
-	Sun, 20 Jul 2025 20:57:44 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 480rd22ydj-1
+	Sun, 20 Jul 2025 20:57:48 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56KH303Z005057;
+	Sun, 20 Jul 2025 20:57:47 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480u8fjcey-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 20:57:44 +0000
+	Sun, 20 Jul 2025 20:57:47 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56KKvg9g49283336
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56KKvjE335127780
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 20 Jul 2025 20:57:42 GMT
+	Sun, 20 Jul 2025 20:57:45 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AC6E420043;
-	Sun, 20 Jul 2025 20:57:42 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 5787E20043;
+	Sun, 20 Jul 2025 20:57:45 +0000 (GMT)
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D2CB20040;
-	Sun, 20 Jul 2025 20:57:40 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 1778D20040;
+	Sun, 20 Jul 2025 20:57:43 +0000 (GMT)
 Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.16.241])
 	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 20 Jul 2025 20:57:40 +0000 (GMT)
+	Sun, 20 Jul 2025 20:57:42 +0000 (GMT)
 From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
 Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
         Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
         linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [RFC v4 2/7] ext4: allow inode preallocation for aligned alloc
-Date: Mon, 21 Jul 2025 02:27:28 +0530
-Message-ID: <7dd90fa157d865b0352f15ff7cceb167d9d87f17.1753044253.git.ojaswin@linux.ibm.com>
+Subject: [RFC v4 3/7] ext4: support for extsize hint using FS_IOC_FS(GET/SET)XATTR
+Date: Mon, 21 Jul 2025 02:27:29 +0530
+Message-ID: <24053b9376e369be0ffffea0d91eb22b7634aed4.1753044253.git.ojaswin@linux.ibm.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1753044253.git.ojaswin@linux.ibm.com>
 References: <cover.1753044253.git.ojaswin@linux.ibm.com>
@@ -94,228 +94,345 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=QLdoRhLL c=1 sm=1 tr=0 ts=687d584a cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=8OuK9DH78nEBFM-xf5kA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDE5OCBTYWx0ZWRfXzB4UWaSVEl+G
- PA4t+aJ6EBUEX7kpeDD9ZbJXmOYz3PC6Td+JpQDSNVGmStUkQmfsvkK2CxPk57cDq8Llu3Yuh6V
- ffYg01j+Rv3bHP2u3mQ8u/lsRJFyyJZ9WVU/XS103e58crEZ1sf8JweEeakQb4lOHCNSIXYVy5b
- rJbMJTA70nW+B/naF7nTV9cstV3aPJbC2+rYgtY7Cirukt21q7zcineLqPTy6JOCwBU3627qILi
- NxTMhR1imR/Uauw3kju0PynCQZo1vZJ6MnwMPwa66mQWr8jhfyPQH1/eNxYbKO1UlO5HuOhWeNY
- tERGPrQHK+pfjSCtBW3Swu8TtBYX8oaR1li8J8r3zfFI2OolSFqhfHIxdt42VbQAeClqEXgGpAk
- TP+T7CfOm3LvGulI2NMZ/E9yVAWR77Pw9IiyFE/Jy1ZTA5fc+RKfH069z9E6UEjqZJ/q4FCO
-X-Proofpoint-ORIG-GUID: hlmlj8mqjmmu6NtPNnXN6UniW2sacPPl
-X-Proofpoint-GUID: CPoxY56B42-anEzAEF5v01MPK1-AwZyy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDE5OCBTYWx0ZWRfXyPhEcTMOWmnr
+ 8J2sY9G6vqOq4/hylG/BsRA77xDre9+NzTSkR3gHkN/B8bJPFCqxIs2kZha+rdQeQRyx+/xV1/k
+ esWLYQdBbrzCcLN0lxh9xBpMtwyOmREq8t4GUdEroPVmSDVkcoQ5BibzTizOGdnqSQBbVdtUtZH
+ iWM3aWp5iRQVi6aQL7r94v7FzVDdsI03hMrgdcGzWLAqlafIJ68lQ5G9u6HqCAyHfsCEhFIyfy+
+ K+mgGb+kn2NxpkFffdX0o9MNmUL0HO3BInDvCBKSG2uoVbXHmNALACTnoLZyvN+vBm7cPTEU7jF
+ QjnzuQFLoVr/BJoGXnVo/NFZunqrwoFKFWI6Jkm+tTehDUKJZOzMCnTXcBfQOkoH13+YkUtXsfE
+ oR5MpFkiEI4HgAQnnqWpW7k3/2iOVGorg1C237ijaWRPKQ/x7RrJe6qYbVa5oYe5Rro9VImV
+X-Proofpoint-GUID: naCah_AFQ0-zCT2pSK7zzV29cGqO6XuK
+X-Proofpoint-ORIG-GUID: F3UjfYlAQvjdf-9BjXQlLu6fTJ6mIMSS
+X-Authority-Analysis: v=2.4 cv=X9RSKHTe c=1 sm=1 tr=0 ts=687d584c cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=Pq_v2OHg8FMu9Aes55EA:9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-20_01,2025-07-17_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 bulkscore=0 malwarescore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999 clxscore=1015
- adultscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507200198
+ impostorscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 clxscore=1015 mlxscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507200198
 
-Enable inode preallocation support for aligned allocations. Inode
-preallocation will only be used if the preallocated blocks are able to
-satisfy the length and alignment requirements of the allocations, else
-we disable preallocation for this particular allocation and proceed as
-usual. Disabling inode preallocation is required otherwise we might end
-up with overlapping preallocated ranges which can trigger a BUG() later.
+This patch adds support for getting and setting extsize hint using
+FS_IOC_GETXATTR and FS_IOC_SETXATTR interface. The extsize is stored
+in xattr of type EXT4_XATTR_INDEX_SYSTEM.
 
-Further, during normalizing, we usually try to round it up to a power of
-2 which can still give us aligned allocation. We also make sure not
-change the goal start so aligned allocation is more straightforward. If for
-whatever reason the goal is not power of 2 or doesn't contain the original
-request, then we throw a warning and proceed as normal.
+Restrictions on setting extsize:
 
-For now, group preallocation is disabled for aligned allocations.
+1. extsize can't be set on files with data
+2. extsize can't be set on non regular files
+3. extsize hint can't be used with bigalloc (yet)
+4. extsize (in blocks) should be power-of-2 for simplicity.
+5. extsize must be a multiple of block size
+
+The ioctl behavior has been kept as close to the XFS equivalent
+as possible.
 
 Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 ---
- fs/ext4/mballoc.c | 96 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 63 insertions(+), 33 deletions(-)
+ fs/ext4/ext4.h  |   6 +++
+ fs/ext4/inode.c |  89 +++++++++++++++++++++++++++++++++++
+ fs/ext4/ioctl.c | 122 ++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ext4/super.c |   1 +
+ 4 files changed, 218 insertions(+)
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index d8d9aa717a26..090564b6e6d4 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -2178,8 +2178,6 @@ static void ext4_mb_use_best_found(struct ext4_allocation_context *ac,
- 	 * space in a special descriptor.
- 	 */
- 	if (ac->ac_o_ex.fe_len < ac->ac_b_ex.fe_len) {
--		/* Aligned allocation doesn't have preallocation support */
--		WARN_ON(ac->ac_flags & EXT4_MB_HINT_ALIGNED);
- 		ext4_mb_new_preallocation(ac);
- 	}
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 7b353d1af580..d00870cb15f2 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1199,6 +1199,8 @@ struct ext4_inode_info {
+ 	__u32 i_csum_seed;
  
-@@ -3024,8 +3022,7 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
- 
- 		WARN_ON_ONCE(!is_power_of_2(len));
- 		WARN_ON_ONCE(start % len);
--		/* We don't support preallocation yet */
--		WARN_ON_ONCE(ac->ac_b_ex.fe_len != ac->ac_o_ex.fe_len);
-+		WARN_ON_ONCE(ac->ac_b_ex.fe_len < ac->ac_o_ex.fe_len);
- 	}
- 
-  exit:
-@@ -4474,13 +4471,6 @@ ext4_mb_normalize_request(struct ext4_allocation_context *ac,
- 	if (ac->ac_flags & EXT4_MB_HINT_NOPREALLOC)
- 		return;
- 
--	/*
--	 * caller may have strict alignment requirements. In this case, avoid
--	 * normalization since it is not alignment aware.
--	 */
--	if (ac->ac_flags & EXT4_MB_HINT_ALIGNED)
--		return;
--
- 	if (ac->ac_flags & EXT4_MB_HINT_GROUP_ALLOC) {
- 		ext4_mb_normalize_group_request(ac);
- 		return ;
-@@ -4537,6 +4527,21 @@ ext4_mb_normalize_request(struct ext4_allocation_context *ac,
- 		size	  = (loff_t) EXT4_C2B(sbi,
- 					      ac->ac_o_ex.fe_len) << bsbits;
- 	}
-+
-+	/*
-+	 * For aligned allocations, we need to ensure 2 things:
-+	 *
-+	 * 1. The start should remain same as original start so that finding
-+	 * aligned physical blocks for it is straight forward.
-+	 *
-+	 * 2. The new_size should not be less than the original len. This
-+	 * can sometimes happen due to the way we predict size above.
-+	 */
-+	if (ac->ac_flags & EXT4_MB_HINT_ALIGNED) {
-+		start_off = ac->ac_o_ex.fe_logical << bsbits;
-+		size = max_t(loff_t, size,
-+				 EXT4_C2B(sbi, ac->ac_o_ex.fe_len) << bsbits);
-+	}
- 	size = size >> bsbits;
- 	start = start_off >> bsbits;
- 
-@@ -4787,32 +4792,46 @@ ext4_mb_check_group_pa(ext4_fsblk_t goal_block,
- }
+ 	kprojid_t i_projid;
++	/* The extentsize hint for the inode in blocks */
++	ext4_grpblk_t i_extsize;
+ };
  
  /*
-- * check if found pa meets EXT4_MB_HINT_GOAL_ONLY
-+ * check if found pa meets EXT4_MB_HINT_GOAL_ONLY or EXT4_MB_HINT_ALIGNED
-  */
- static bool
--ext4_mb_pa_goal_check(struct ext4_allocation_context *ac,
-+ext4_mb_pa_check(struct ext4_allocation_context *ac,
- 		      struct ext4_prealloc_space *pa)
+@@ -3081,6 +3083,10 @@ extern void ext4_da_update_reserve_space(struct inode *inode,
+ 					int used, int quota_claim);
+ extern int ext4_issue_zeroout(struct inode *inode, ext4_lblk_t lblk,
+ 			      ext4_fsblk_t pblk, ext4_lblk_t len);
++int ext4_inode_xattr_get_extsize(struct inode *inode);
++int ext4_inode_xattr_set_extsize(struct inode *inode, ext4_grpblk_t extsize);
++ext4_grpblk_t ext4_inode_get_extsize(struct ext4_inode_info *ei);
++void ext4_inode_set_extsize(struct ext4_inode_info *ei, ext4_grpblk_t extsize);
+ 
+ static inline bool is_special_ino(struct super_block *sb, unsigned long ino)
  {
- 	struct ext4_sb_info *sbi = EXT4_SB(ac->ac_sb);
- 	ext4_fsblk_t start;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 8bdf2029ebc7..664218228fd5 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5432,6 +5432,20 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 		}
+ 	}
  
--	if (likely(!(ac->ac_flags & EXT4_MB_HINT_GOAL_ONLY)))
-+	if (likely(!(ac->ac_flags & EXT4_MB_HINT_GOAL_ONLY ||
-+		     ac->ac_flags & EXT4_MB_HINT_ALIGNED)))
- 		return true;
- 
--	/*
--	 * If EXT4_MB_HINT_GOAL_ONLY is set, ac_g_ex will not be adjusted
--	 * in ext4_mb_normalize_request and will keep same with ac_o_ex
--	 * from ext4_mb_initialize_context. Choose ac_g_ex here to keep
--	 * consistent with ext4_mb_find_by_goal.
--	 */
--	start = pa->pa_pstart +
--		(ac->ac_g_ex.fe_logical - pa->pa_lstart);
--	if (ext4_grp_offs_to_block(ac->ac_sb, &ac->ac_g_ex) != start)
--		return false;
-+	if (ac->ac_flags & EXT4_MB_HINT_GOAL_ONLY) {
-+		/*
-+		 * If EXT4_MB_HINT_GOAL_ONLY is set, ac_g_ex will not be adjusted
-+		 * in ext4_mb_normalize_request and will keep same with ac_o_ex
-+		 * from ext4_mb_initialize_context. Choose ac_g_ex here to keep
-+		 * consistent with ext4_mb_find_by_goal.
-+		 */
-+		start = pa->pa_pstart +
-+			(ac->ac_g_ex.fe_logical - pa->pa_lstart);
-+		if (ext4_grp_offs_to_block(ac->ac_sb, &ac->ac_g_ex) != start)
-+			return false;
- 
--	if (ac->ac_g_ex.fe_len > pa->pa_len -
--	    EXT4_B2C(sbi, ac->ac_g_ex.fe_logical - pa->pa_lstart))
--		return false;
-+		if (ac->ac_g_ex.fe_len >
-+		    pa->pa_len - EXT4_B2C(sbi, ac->ac_g_ex.fe_logical -
-+						       pa->pa_lstart))
-+			return false;
-+	} else if (ac->ac_flags & EXT4_MB_HINT_ALIGNED) {
-+		start = pa->pa_pstart +
-+			(ac->ac_g_ex.fe_logical - pa->pa_lstart);
-+		if (start % EXT4_C2B(sbi, ac->ac_g_ex.fe_len))
-+			return false;
-+
-+		if (EXT4_C2B(sbi, ac->ac_g_ex.fe_len) >
-+		    (EXT4_C2B(sbi, pa->pa_len) -
-+		     (ac->ac_g_ex.fe_logical - pa->pa_lstart)))
-+			return false;
++	ret = ext4_inode_xattr_get_extsize(&ei->vfs_inode);
++	if (ret >= 0) {
++		ei->i_extsize = ret;
++	} else if (ret == -ENODATA) {
++		/* extsize is not set */
++		ei->i_extsize = 0;
++	} else {
++		ext4_error_inode(
++			inode, function, line, 0,
++			"iget: error while retrieving extsize from xattr: %ld", ret);
++		ret = -EFSCORRUPTED;
++		goto bad_inode;
 +	}
- 
- 	return true;
- }
-@@ -4835,10 +4854,6 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
- 	if (!(ac->ac_flags & EXT4_MB_HINT_DATA))
- 		return false;
- 
--	/* using preallocated blocks is not alignment aware. */
--	if (ac->ac_flags & EXT4_MB_HINT_ALIGNED)
--		return false;
--
- 	/*
- 	 * first, try per-file preallocation by searching the inode pa rbtree.
- 	 *
-@@ -4944,7 +4959,7 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
- 		goto try_group_pa;
- 	}
- 
--	if (tmp_pa->pa_free && likely(ext4_mb_pa_goal_check(ac, tmp_pa))) {
-+	if (tmp_pa->pa_free && likely(ext4_mb_pa_check(ac, tmp_pa))) {
- 		atomic_inc(&tmp_pa->pa_count);
- 		ext4_mb_use_inode_pa(ac, tmp_pa);
- 		spin_unlock(&tmp_pa->pa_lock);
-@@ -4979,6 +4994,19 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
- 		 * pa_free == 0.
- 		 */
- 		WARN_ON_ONCE(tmp_pa->pa_free == 0);
 +
+ 	EXT4_INODE_GET_CTIME(inode, raw_inode);
+ 	EXT4_INODE_GET_ATIME(inode, raw_inode);
+ 	EXT4_INODE_GET_MTIME(inode, raw_inode);
+@@ -6779,3 +6793,78 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+ 	sb_end_pagefault(inode->i_sb);
+ 	return ret;
+ }
++
++/*
++ * Returns positive extsize if set, 0 if not set else error
++ */
++ext4_grpblk_t ext4_inode_xattr_get_extsize(struct inode *inode)
++{
++	char *buf;
++	int size, ret = 0;
++	ext4_grpblk_t extsize = 0;
++
++	size = ext4_xattr_get(inode, EXT4_XATTR_INDEX_SYSTEM, "extsize", NULL, 0);
++
++	if (size == -ENODATA || size == 0) {
++		return 0;
++	} else if (size < 0) {
++		ret = size;
++		goto exit;
++	}
++
++	buf = kmalloc(size + 1, GFP_KERNEL);
++	if (!buf) {
++		ret = -ENOMEM;
++		goto exit;
++	}
++
++	size = ext4_xattr_get(inode, EXT4_XATTR_INDEX_SYSTEM, "extsize", buf,
++			      size);
++	if (size == -ENODATA)
++		/* No extsize is set */
++		extsize = 0;
++	else if (size < 0)
++		ret = size;
++	else {
++		buf[size] = '\0';
++		ret = kstrtoint(buf, 10, &extsize);
++	}
++
++	kfree(buf);
++exit:
++	if (ret)
++		return ret;
++	return extsize;
++}
++
++int ext4_inode_xattr_set_extsize(struct inode *inode, ext4_grpblk_t extsize)
++{
++	int err = 0;
++	/* max value of extsize should fit within 11 chars */
++	char extsize_str[11];
++
++	err = snprintf(extsize_str, 10, "%u", extsize);
++	if (err < 0)
++		return err;
++
++	/* Try to replace the xattr if it exists, else try to create it */
++	err = ext4_xattr_set(inode, EXT4_XATTR_INDEX_SYSTEM, "extsize",
++			     extsize_str, strlen(extsize_str), XATTR_REPLACE);
++
++	if (err == -ENODATA)
++		err = ext4_xattr_set(inode, EXT4_XATTR_INDEX_SYSTEM, "extsize",
++				     extsize_str, strlen(extsize_str),
++				     XATTR_CREATE);
++
++	return err;
++}
++
++ext4_grpblk_t ext4_inode_get_extsize(struct ext4_inode_info *ei)
++{
++	return ei->i_extsize;
++}
++
++void ext4_inode_set_extsize(struct ext4_inode_info *ei, ext4_grpblk_t extsize)
++{
++	ei->i_extsize = extsize;
++}
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index 5668a17458ae..64a394869317 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -708,6 +708,93 @@ static int ext4_ioctl_setflags(struct inode *inode,
+ 	return err;
+ }
+ 
++static u32 ext4_ioctl_getextsize(struct inode *inode)
++{
++	ext4_grpblk_t extsize;
++
++	extsize = ext4_inode_get_extsize(EXT4_I(inode));
++
++	return (u32) extsize << inode->i_blkbits;
++}
++
++
++static int ext4_ioctl_setextsize(struct inode *inode, u32 extsize, u32 xflags)
++{
++	int err;
++	ext4_grpblk_t extsize_blks = extsize >> inode->i_blkbits;
++	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
++	int blksize = 1 << inode->i_blkbits;
++	char *msg = NULL;
++
++	if (!S_ISREG(inode->i_mode)) {
++		msg = "Cannot set extsize on non regular file";
++		err = -EOPNOTSUPP;
++		goto error;
++	}
++
++	/*
++	 *  We are okay with a non-zero i_size as long as there is no data.
++	 */
++	if (ext4_has_inline_data(inode) ||
++	    READ_ONCE(EXT4_I(inode)->i_disksize) ||
++	    EXT4_I(inode)->i_reserved_data_blocks) {
++		msg = "Cannot set extsize on file with data";
++		err = -EINVAL;
++		goto error;
++	}
++
++	if (extsize % blksize) {
++		msg = "extsize must be multiple of blocksize";
++		err = -EINVAL;
++		goto error;
++	}
++
++	if (sbi->s_cluster_ratio > 1) {
++		msg = "Can't use extsize hint with bigalloc";
++		err = -EINVAL;
++		goto error;
++	}
++
++	if ((xflags & FS_XFLAG_EXTSIZE) && extsize == 0) {
++		msg = "fsx_extsize can't be 0 if FS_XFLAG_EXTSIZE is passed";
++		err = -EINVAL;
++		goto error;
++	}
++
++	if (extsize_blks > sbi->s_blocks_per_group) {
++		msg = "extsize cannot exceed number of bytes in block group";
++		err = -EINVAL;
++		goto error;
++	}
++
++	if (extsize && !is_power_of_2(extsize_blks)) {
++		msg = "extsize must be either power-of-2 in fs blocks or 0";
++		err = -EINVAL;
++		goto error;
++	}
++
++	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
++		msg = "extsize can't be set on non-extent based files";
++		err = -EINVAL;
++		goto error;
++	}
++
++	/* update the extsize in inode xattr */
++	err = ext4_inode_xattr_set_extsize(inode, extsize_blks);
++	if (err < 0)
++		return err;
++
++	/* Update the new extsize in the in-core inode */
++	ext4_inode_set_extsize(EXT4_I(inode), extsize_blks);
++	return 0;
++
++error:
++	if (msg)
++		ext4_warning_inode(inode, "%s\n", msg);
++
++	return err;
++}
++
+ #ifdef CONFIG_QUOTA
+ static int ext4_ioctl_setproject(struct inode *inode, __u32 projid)
+ {
+@@ -985,6 +1072,7 @@ int ext4_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ 	struct inode *inode = d_inode(dentry);
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	u32 flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
++	u32 extsize = 0;
+ 
+ 	if (S_ISREG(inode->i_mode))
+ 		flags &= ~FS_PROJINHERIT_FL;
+@@ -993,6 +1081,13 @@ int ext4_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ 	if (ext4_has_feature_project(inode->i_sb))
+ 		fa->fsx_projid = from_kprojid(&init_user_ns, ei->i_projid);
+ 
++	extsize = ext4_ioctl_getextsize(inode);
++	/* Flag is only set if extsize is non zero */
++	if (extsize > 0) {
++		fa->fsx_extsize = extsize;
++		fa->fsx_xflags |= FS_XFLAG_EXTSIZE;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1022,6 +1117,33 @@ int ext4_fileattr_set(struct mnt_idmap *idmap,
+ 	if (err)
+ 		goto out;
+ 	err = ext4_ioctl_setproject(inode, fa->fsx_projid);
++	if (err)
++		goto out;
++
++	if (fa->fsx_xflags & FS_XFLAG_EXTSIZE) {
++		err = ext4_ioctl_setextsize(inode, fa->fsx_extsize,
++					    fa->fsx_xflags);
++		if (err)
++			goto out;
++	} else if (fa->fsx_extsize == 0) {
 +		/*
-+		 * If, for any reason, we reach here then we need to disable PA
-+		 * because otherwise ext4_mb_normalize_request() will try to
-+		 * allocate a new PA for this logical range where another PA
-+		 * already exists. This is not allowed and will trigger BUG_ONs.
-+		 * Hence, as a workaround we disable PA.
-+		 *
-+		 * NOTE: ideally we would want to have some logic to take care
-+		 * of the unusable PA. Maybe a more fine grained discard logic
-+		 * that could allow us to discard only specific PAs.
++		 * Even when user explicitly passes extsize=0 the flag is cleared in
++		 * fileattr_set_prepare().
 +		 */
-+		ac->ac_flags |= EXT4_MB_HINT_NOPREALLOC;
- 	}
- 	spin_unlock(&tmp_pa->pa_lock);
- try_group_pa:
-@@ -5785,6 +5813,7 @@ static void ext4_mb_group_or_file(struct ext4_allocation_context *ac)
- 	int bsbits = ac->ac_sb->s_blocksize_bits;
- 	loff_t size, isize;
- 	bool inode_pa_eligible, group_pa_eligible;
-+	bool is_aligned = (ac->ac_flags & EXT4_MB_HINT_ALIGNED);
- 
- 	if (!(ac->ac_flags & EXT4_MB_HINT_DATA))
- 		return;
-@@ -5792,7 +5821,8 @@ static void ext4_mb_group_or_file(struct ext4_allocation_context *ac)
- 	if (unlikely(ac->ac_flags & EXT4_MB_HINT_GOAL_ONLY))
- 		return;
- 
--	group_pa_eligible = sbi->s_mb_group_prealloc > 0;
-+	/* Aligned allocation does not support group pa */
-+	group_pa_eligible = (!is_aligned && sbi->s_mb_group_prealloc > 0);
- 	inode_pa_eligible = true;
- 	size = extent_logical_end(sbi, &ac->ac_o_ex);
- 	isize = (i_size_read(ac->ac_inode) + ac->ac_sb->s_blocksize - 1)
++		if (ext4_inode_get_extsize(EXT4_I(inode)) != 0) {
++			err = ext4_ioctl_setextsize(inode, fa->fsx_extsize,
++						    fa->fsx_xflags);
++			if (err)
++				goto out;
++		}
++
++	} else {
++		/* Unexpected usage, reset extsize to 0 */
++		err = ext4_ioctl_setextsize(inode, 0, fa->fsx_xflags);
++		if (err)
++			goto out;
++		fa->fsx_xflags = 0;
++	}
+ out:
+ 	return err;
+ }
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index c7d39da7e733..2237cb2240f8 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1409,6 +1409,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
+ 	spin_lock_init(&ei->i_completed_io_lock);
+ 	ei->i_sync_tid = 0;
+ 	ei->i_datasync_tid = 0;
++	ei->i_extsize = 0;
+ 	INIT_WORK(&ei->i_rsv_conversion_work, ext4_end_io_rsv_work);
+ 	ext4_fc_init_inode(&ei->vfs_inode);
+ 	spin_lock_init(&ei->i_fc_lock);
 -- 
 2.49.0
 
