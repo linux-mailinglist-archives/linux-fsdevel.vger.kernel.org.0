@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-55526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF62EB0B3FC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:55:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BF5B0B3F5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 08:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A48188E3D7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:54:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD760173A29
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 06:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86011EEA5F;
-	Sun, 20 Jul 2025 06:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3181E1C02;
+	Sun, 20 Jul 2025 06:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Ry7MIVIx"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WbPJ5jDG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EF11D5ACE;
-	Sun, 20 Jul 2025 06:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA782192598;
+	Sun, 20 Jul 2025 06:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752994387; cv=none; b=LXww5cRQlpUZj9qO4UT3HkUUJV9CIrqiIzP4NNTBk+SQEENs5Krfw6B1L4/oWHiuFXmY1eNUAuCGchSuHUR9OULTgwp6AU1kuj43a9AaseuYWT9sn3j+RA4Npr5FeE8EpRpe65l4O4hft2yWyY1LnvRL05/wKfH/IK/cTAM0mv4=
+	t=1752994385; cv=none; b=TiDwVodWW3p0Fl6iRXzht0zKBhboneZD1F2vWfcxhjntJIKZR2Loh0oCk/DPLSDGayk1mXTHHk5YGigfnKTKzVeM3ExP5yMpiBjhkGJuvWgkZULocSKLgXVn5Z/KmBA0E1cFO+Nyj0ERLX0h5The4olhL2japaYO1RapWrGj3ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752994387; c=relaxed/simple;
-	bh=9B/wZBYPyvWNFbB8mrngMegZ+e9l8dZ1E6sWkULHdTM=;
+	s=arc-20240116; t=1752994385; c=relaxed/simple;
+	bh=xSzAA2gv0ibDrNTKlxM9ctRGuuU7YJyBmHWCcxfeOeY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YKUb4h2NcU+Unxq2WuS3ouhX+LC+poyC8ZvSSciMTBFskIjGHbmmBdu0D2uXlLtnrms/I5YxSkhgZW5IhnBzyy8keUk8VLY8GNn7mdvSRJtApkrZ2TtWFru4cqz3VuY2QqN4hFPWt1jjByoxstodABOnr/mJqeGLzgTeNTcw+KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Ry7MIVIx; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=idHZ9p3Zi2IxzyFDjPayt2ahbEW97cuMhER+nPCLq3neSGHSBxwqUxiBxhQxzbqdnC2anO3Xa06QTTjIm39+HBQpYw3RQfGER2/vEsZUrwEagf8K8Zolkfh8WIBS3Vr8FSDAAha2jb2t3FEdpEMjiEq6XS6cFuCCL4MSsyRu+Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WbPJ5jDG; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from mail.zytor.com ([IPv6:2601:646:8081:9484:f04a:f27d:fd66:5c61])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0c3555973
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0d3555973
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Sat, 19 Jul 2025 23:51:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0c3555973
+	Sat, 19 Jul 2025 23:51:18 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0d3555973
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752994278;
-	bh=V2V/3vlTdgN2wHrrKIvEmPjf5zfLF1VkrRaHOul8IRg=;
+	s=2025062101; t=1752994282;
+	bh=D2ugkTWHSXT0lgY/l81pjC122eFLTRxMlbXL6ZHS8/U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ry7MIVIxeKq+bj1PugdLx+b8KBvlRo2m387QkOsip2r+oO1aleuLsDvEAwrWBPWCl
-	 OdvIjWMaHy3VUCBee13XBWTDHBNQk9UpWZRS+ds/TcUJBLkE6B9GLHulITRZXpgXaa
-	 0O7dvDWhugfiJMB1TBSBzQkpCnWO4oiAR9RSYf1gTh3OMPlvqPimJRYFZTPNNHrXQ3
-	 8+a1A0iEhQj6vsucmJxNflT/DTHC3PMVnaVKmRBxFUc93sNR1C7B7RJ9XVpqx8I/W/
-	 juEN8cuZkNcgwyw0gwqoEozoqnQOX8hagcQTGejl2AhZGO3ngUumGLDSdsZEz3zInc
-	 OTV6hW0uZGYJQ==
+	b=WbPJ5jDG6RivnIGPGdH7tAxTfD9XHzmh0bmqjk3F973Xb5FIbCaOvDyDyN0WiLW+c
+	 tAy5g/9v8RqOIbjCNSInPta52bvotaWD5hPRM2K4tYGULsfe821h/r4HdujoW8rdGn
+	 9EFmbltCfQLyLdRDItbhgPJ53ZPZCGhW9HCQnawRm07kUSSfwL45JVPL9XpFRKMy2D
+	 2hEyzbhiOW+lCYQ3FyZ2P2GRpqPNw/1YfkCVJZKyzBpSVwn52GICIvNqCBCCqxkzGf
+	 FrZ/9vdEL1jhvq2l9eNoQhYhFkql9Vhx4htZWEqN/Ersst18Dlw9Y8kG++tO6qOW3y
+	 MmwLHD5lW3ing==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: 
 Cc: "H. Peter Anvin" <hpa@zytor.com>,
@@ -94,9 +94,9 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
         virtualization@lists.linux.dev, x86@kernel.org
-Subject: [PATCH v2 5/7] arch/x86: replace "__auto_type" with "auto"
-Date: Sat, 19 Jul 2025 23:50:42 -0700
-Message-ID: <20250720065045.2859105-6-hpa@zytor.com>
+Subject: [PATCH v2 6/7] selftests/bpf: replace "__auto_type" with "auto"
+Date: Sat, 19 Jul 2025 23:50:43 -0700
+Message-ID: <20250720065045.2859105-7-hpa@zytor.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250720065045.2859105-1-hpa@zytor.com>
 References: <20250720065045.2859105-1-hpa@zytor.com>
@@ -110,74 +110,40 @@ Content-Transfer-Encoding: 8bit
 
 Replace instances of "__auto_type" with "auto" in:
 
-	arch/x86/include/asm/bug.h
-	arch/x86/include/asm/string_64.h
-	arch/x86/include/asm/uaccess_64.h
+	tools/testing/selftests/bpf/prog_tests/socket_helpers.h
+
+This file does not seem to be including <linux/compiler_types.h>
+directly or indirectly, so copy the definition but guard it with
+!defined(auto).
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 ---
- arch/x86/include/asm/bug.h        | 2 +-
- arch/x86/include/asm/string_64.h  | 6 +++---
- arch/x86/include/asm/uaccess_64.h | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/socket_helpers.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index f0e9acf72547..05e166faf9a6 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -94,7 +94,7 @@ do {								\
-  */
- #define __WARN_FLAGS(flags)					\
- do {								\
--	__auto_type __flags = BUGFLAG_WARNING|(flags);		\
-+	auto __flags = BUGFLAG_WARNING|(flags);			\
- 	instrumentation_begin();				\
- 	_BUG_FLAGS(ASM_UD2, __flags, ANNOTATE_REACHABLE(1b));	\
- 	instrumentation_end();					\
-diff --git a/arch/x86/include/asm/string_64.h b/arch/x86/include/asm/string_64.h
-index 79e9695dc13e..4635616863f5 100644
---- a/arch/x86/include/asm/string_64.h
-+++ b/arch/x86/include/asm/string_64.h
-@@ -31,7 +31,7 @@ KCFI_REFERENCE(__memset);
- #define __HAVE_ARCH_MEMSET16
- static inline void *memset16(uint16_t *s, uint16_t v, size_t n)
- {
--	const __auto_type s0 = s;
-+	const auto s0 = s;
- 	asm volatile (
- 		"rep stosw"
- 		: "+D" (s), "+c" (n)
-@@ -44,7 +44,7 @@ static inline void *memset16(uint16_t *s, uint16_t v, size_t n)
- #define __HAVE_ARCH_MEMSET32
- static inline void *memset32(uint32_t *s, uint32_t v, size_t n)
- {
--	const __auto_type s0 = s;
-+	const auto s0 = s;
- 	asm volatile (
- 		"rep stosl"
- 		: "+D" (s), "+c" (n)
-@@ -57,7 +57,7 @@ static inline void *memset32(uint32_t *s, uint32_t v, size_t n)
- #define __HAVE_ARCH_MEMSET64
- static inline void *memset64(uint64_t *s, uint64_t v, size_t n)
- {
--	const __auto_type s0 = s;
-+	const auto s0 = s;
- 	asm volatile (
- 		"rep stosq"
- 		: "+D" (s), "+c" (n)
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index c8a5ae35c871..b0e4533ce625 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -72,7 +72,7 @@ static inline void __user *mask_user_address(const void __user *ptr)
- 	return ret;
- }
- #define masked_user_access_begin(x) ({				\
--	__auto_type __masked_ptr = (x);				\
-+	auto __masked_ptr = (x);				\
- 	__masked_ptr = mask_user_address(__masked_ptr);		\
- 	__uaccess_begin(); __masked_ptr; })
+diff --git a/tools/testing/selftests/bpf/prog_tests/socket_helpers.h b/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
+index e02cabcc814e..0d59503a0c73 100644
+--- a/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
++++ b/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
+@@ -17,11 +17,16 @@
+ #define VMADDR_CID_LOCAL 1
+ #endif
  
++/* include/linux/compiler_types.h */
++#if __STDC_VERSION__ < 202311L && !defined(auto)
++# define auto __auto_type
++#endif
++
+ /* include/linux/cleanup.h */
+ #define __get_and_null(p, nullvalue)                                           \
+ 	({                                                                     \
+-		__auto_type __ptr = &(p);                                      \
+-		__auto_type __val = *__ptr;                                    \
++		auto __ptr = &(p);					       \
++		auto __val = *__ptr;                                           \
+ 		*__ptr = nullvalue;                                            \
+ 		__val;                                                         \
+ 	})
 -- 
 2.50.1
 
