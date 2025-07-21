@@ -1,122 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-55549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C25B0BB45
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 05:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 105D7B0BB48
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 05:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F00E18972D2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 03:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0D318961AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 03:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C597E1FAC48;
-	Mon, 21 Jul 2025 03:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DCE1D9324;
+	Mon, 21 Jul 2025 03:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WIlMh/K4"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IL6shCeH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61F11E0DEA;
-	Mon, 21 Jul 2025 03:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E352F41
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 03:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753067659; cv=none; b=H2cgxKbHqh7C6JaOSHdysJ1er/5xnnMWDzw9mJ0gBWBQ0NLSwpU5kZezwE2wsUcKrlm4WVcHRRKJQPyNQdrxWZSGzBJB79rm/KvG93i/Kpk5khno0CcUKYj1nLitl1Hif5fmIhqZ+G0tGCZ38O23+FRTHJd162bNQ9LISfuQru4=
+	t=1753067770; cv=none; b=aSKAGD7TSK2R6K99Sj+/vw82afJpv2ZOhn/w5uBncQenm0dvE6y1eoyHu0Pvycqt9C0MnWN0pQ6D73F8mneyrJKsqk4U+pa2DS2AXcFD2tztyb445QRywG5J0hhlxcoilHz7S0cx8h+xkti9ZxAOT4vydCMgyTXvX3QYxHvQsi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753067659; c=relaxed/simple;
-	bh=KcIuPHoEk9AuwbE4824NkZYgCzpBO0ssry4Gl0Uvdlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nvKwJkVNSpNb5D90CdxVUlHDBaIhPc97RUK6mVP/sBqnGlXojqUzutS+sXz4NpR8Y2WnUU2P3EXbKQ1xO2fSPvmpNqN3w5RKDGT991sqmfrLE9Hwa68ezZIGan9GkJz/PC7hozfKuQ7ytKZCXBgU8NznT2Wk96vOeDv6clROKtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WIlMh/K4; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753067649; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=lCr7ru8zjyenyzhIwOzkZiA0apFYT5PO1pQKlR1f6Gw=;
-	b=WIlMh/K4n+3t+sVE+jy0ALadodWkNQy8OAtmzfR8Ss184gs6ZnsxY/onLFH5kIM24BWM72cX42JJXu0BAYGEHTd8VYqwiU2L7aYgGUIPxQELw3gF/Af3hhrM17g/bOlFjxODPJ54TDKEnKM9KyugPesZxcb70OLews/+Bce16nw=
-Received: from 30.221.132.193(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WjIdN4u_1753067645 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 21 Jul 2025 11:14:06 +0800
-Message-ID: <7ea73f49-df4b-4f88-8b23-c917b4a9bd8a@linux.alibaba.com>
-Date: Mon, 21 Jul 2025 11:14:02 +0800
+	s=arc-20240116; t=1753067770; c=relaxed/simple;
+	bh=rSWv4zFTb3j8yRwlcqRSKbpvUIhdonFOb2X4SLSxZX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aA7PypZQGvgByAx1eCjGtYUp0ddpATLQZwFXMR/pMuMrtvTPymgc6zSEkx0Jv0m3blvXoPaN7h9ycbj/Fcp+KiqmQB3Kp5E/wbMxv3q3nYRIqA4Rher+65k2ZrZTvK47iWROvXY/yPh6MaqYdpw2Uplnf7VKurSHoxlKOlFSUZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IL6shCeH; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-235ef62066eso45257725ad.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Jul 2025 20:16:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753067767; x=1753672567; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tEHkdm832hTynzS/xLG26Wf+TEMODMOzVO5dM74VcWw=;
+        b=IL6shCeHXNOsBpeqbbluC5+N5doybmEtbV4/8YrqamyfGnA30RBwcT0QlsKzM/4n/4
+         5gc+8IC72JNJC+UXKMdmg+NY71d6hknL2yLRrZQmQist4G4RhQIkfswk3vygkIlgTbwL
+         4TlNj4ZOSHjausxv+Wm/hEgJ/X3wAQmifd6XU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753067767; x=1753672567;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tEHkdm832hTynzS/xLG26Wf+TEMODMOzVO5dM74VcWw=;
+        b=jJqCKyORkxkqaLIAcjtZd3UyQcGcNnjHzZHMT/SuZZHNVB8KrqcMgLputsv7mAOBJ1
+         coteh/aV3tH09F77Hp3X/IKB4WoaS4eMaS8PA9bwVbBVw8//jh/AjpZXnYuhaxGMKIDO
+         aEoGtJqFebnxXvVYwxt5nui490HQFUwSDB17aZZeGygfcMq46xJmxeO1rPcBaOvC6fR9
+         u6xrM/3PKGpAkDeDB+jz89fBU8By6vNkS0NEpNbbJzFWfiGOoE3Y9eYb81LVZqh3Ds9F
+         WDoKKpXT73sbYbIJz/+WgpegIX1YvyBv/15zTESxGQayP5x84mUyUQDeJ38jGyAxRb2u
+         h2xA==
+X-Forwarded-Encrypted: i=1; AJvYcCVy6ZUAyH8yzJ6Ly78UkkS0hoITUV4NoZq5/GDzDYxk/OfEP2+FBDYuPh87nr+X8FY/0MJWut6h60GjeIas@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwF8OXW64gll0guugzXILdWSg3jLpqU4i6wHVJRkoWOhz4UqSS
+	Z6jHpRCFySP0Gnaw8LprKjFjSgbtRqnZJMrA/kOB3Gtcwu7iNEJit1qzUBVcVnycLg==
+X-Gm-Gg: ASbGncsIhqKDikYZZykzmf6ZJ2bZ/uArJ29nEndYU+ZscMKiI6UyMkVNDyWLiJrSCwt
+	T0J/VSx71v6M4X+QF87O28Q684m3qmKoFC8JFU5L4pcwowPxwk/PygznKtiKZn9kYVa5loUrZeq
+	R8dVVRDmnCmSFmYofSi7z+TGB3h63/uF7dFY1fHw12EWvE1FHYs7qZJh37eSmdeVt4XAP+NnDN8
+	wYg5LjwZV2NaDFrxYFAIkNEcqECJqeOfVs7KGpEJulS1NXshdKv6KpASTrOoM35oVen3Rv8Z+fd
+	Ly37wXZ3jp9WwgbLiKmYKXplq0KENv1KqFr3JliowQTvgrTI8fDdiHIXVROQgkseg7FbZwS5mZx
+	QPfpre4cVXei1ZkoBKYoKPYxfqg==
+X-Google-Smtp-Source: AGHT+IHBqV5AH7e/4eflt9c3XJvhjaEBjyadSkqKL/UtcHHt794JhemiQyNSy8Uct295fuP8sS1m9w==
+X-Received: by 2002:a17:902:d584:b0:234:f1ac:c036 with SMTP id d9443c01a7336-23e3038155bmr199322855ad.50.1753067766876;
+        Sun, 20 Jul 2025 20:16:06 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:ca29:2ade:bb46:a1fb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6b55ebsm48127505ad.103.2025.07.20.20.16.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 20:16:06 -0700 (PDT)
+Date: Mon, 21 Jul 2025 12:16:01 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: senozhatsky@chromium.org, bsegall@google.com, dietmar.eggemann@arm.com, 
+	juri.lelli@redhat.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, 
+	tfiga@chromium.org, vincent.guittot@linaro.org
+Subject: Re: [PATCHv2 1/2] sched/wait: Add wait_event_state_exclusive()
+Message-ID: <ofvya3en67l6gxw7sxzl6qsga2x46mdsusrx5az57kw7eihwoz@m5jyjhdsssit>
+References: <20250610045321.4030262-1-senozhatsky@chromium.org>
+ <20250720205839.2919-1-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Compressed files & the page cache
-To: Barry Song <21cnbao@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- linux-btrfs@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>,
- Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
- linux-erofs@lists.ozlabs.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
- Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
- David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
- Paulo Alcantara <pc@manguebit.org>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- ntfs3@lists.linux.dev, Steve French <sfrench@samba.org>,
- linux-cifs@vger.kernel.org, Phillip Lougher <phillip@squashfs.org.uk>,
- Hailong Liu <hailong.liu@oppo.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>
-References: <aHa8ylTh0DGEQklt@casper.infradead.org>
- <e5165052-ead3-47f4-88f6-84eb23dc34df@linux.alibaba.com>
- <b61c4b7f-4bb1-4551-91ba-a0e0ffd19e75@linux.alibaba.com>
- <CAGsJ_4xJjwsvMpeBV-QZFoSznqhiNSFtJu9k6da_T-T-a6VwNw@mail.gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAGsJ_4xJjwsvMpeBV-QZFoSznqhiNSFtJu9k6da_T-T-a6VwNw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250720205839.2919-1-safinaskar@zohomail.com>
 
-Hi Barry,
-
-On 2025/7/21 09:02, Barry Song wrote:
-> On Wed, Jul 16, 2025 at 8:28 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>
-
-...
-
->>
->> ... high-order folios can cause side effects on embedded devices
->> like routers and IoT devices, which still have MiBs of memory (and I
->> believe this won't change due to their use cases) but they also use
->> Linux kernel for quite long time.  In short, I don't think enabling
->> large folios for those devices is very useful, let alone limiting
->> the minimum folio order for them (It would make the filesystem not
->> suitable any more for those users.  At least that is what I never
->> want to do).  And I believe this is different from the current LBS
->> support to match hardware characteristics or LBS atomic write
->> requirement.
+On (25/07/20 23:58), Askar Safin wrote:
+> I booted into it.
 > 
-> Given the difficulty of allocating large folios, it's always a good
-> idea to have order-0 as a fallback. While I agree with your point,
-> I have a slightly different perspective — enabling large folios for
-> those devices might be beneficial, but the maximum order should
-> remain small. I'm referring to "small" large folios.
-
-Yeah, agreed. Having a way to limit the maximum order for those small
-devices (rather than disabling it completely) would be helpful.  At
-least "small" large folios could still provide benefits when memory
-pressure is light.
-
-Thanks,
-Gao Xiang
-
+> I mounted sshfs filesystem (it is FUSE).
 > 
-> Still, even with those, allocation can be difficult — especially
-> since so many other allocations (which aren't large folios) can cause
-> fragmentation. So having order-0 as a fallback remains important.
+> I disabled network.
 > 
-> It seems we're missing a mechanism to enable "small" large folios
-> for files. For anon large folios, we do have sysfs knobs—though they
-> don’t seem to be universally appreciated. :-)
+> I did "ls". "ls" hanged, because network is down.
 > 
-> Thanks
-> Barry
+> Then I did suspend, and suspend didn't work.
 
+The patch is for background requests, e.g. for those that
+are issued on a not fully initialized fuse connection.
+
+You probably tested one the wait_event-s in request_wait_answer()
+instead (as a guess.)
 
