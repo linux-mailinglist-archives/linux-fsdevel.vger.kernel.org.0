@@ -1,472 +1,497 @@
-Return-Path: <linux-fsdevel+bounces-55604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA00B0C696
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 16:39:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDE9B0C6D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 16:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B6276C04D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 14:38:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0AAA1C200F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 14:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA45A286D64;
-	Mon, 21 Jul 2025 14:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF372DFF12;
+	Mon, 21 Jul 2025 14:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ij1tLv6y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyo83ChQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB2222FE08
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 14:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11762DCBEC;
+	Mon, 21 Jul 2025 14:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753108757; cv=none; b=RJjW8JDE7Y5MDG3J7QpcoRmOtI1s0y/EXT6kZi42m7/pXlvoZm5QQEeuXK8i+lkQBwT9U8X/anhc5XOQRztY0VtQVpPWptEWReIUUkfaAsJRKupdmzCbuULDCuSm4pUKWD7wthRhHVtibkmCzGvEGhsir21pDjFUxeC7mvIgbd0=
+	t=1753109166; cv=none; b=HEMMXkhjI46DzWg8Drlh+7vopHrV7p/BWf7k08eeH9z65BnMSgE3WxwszAFYIlY6yxGx+/u3gKQ3VA4Ozmm9GB0dNhKbjpJuBd8MAQMuZI7VbaPK3RW2azt23JwDrg62VcIjlEX4ptFh34MrVqoxj2qq0lGusLgsx+9fR5vz2KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753108757; c=relaxed/simple;
-	bh=G+c/TlNOS3jJTgyl3Nflox4D4gS2l1ucS9SxXA86ljQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FHZNhLopMhCT/iQCMF2wrD+aV6C5DcssYoMKWuVE9HhjuYuSC7j8RRT7HXOFLo2afMhQ5lucYRT9keJazVF/jwdfTMgPnQTitIcPsAbYUxlGQ06uHoiXCof+XxzErhwk8kmHJREIYEu+roW1GxjjRxV8QLikE9DkdiqNKyLsK1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ij1tLv6y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753108753;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hcQicqR8pWhi54pYA2CCTCgwLgxgBUS5Et0jONJVtLc=;
-	b=Ij1tLv6ylkolddSe9KuIx5rPAL8txg06Iy3vAvvB6UrftBtDhavaLCo0Vly0vb2abnF6k0
-	B2Tnt3BkcqNmVcTsMoqTNfZtZCDb1zvQGMiOvuj56Yi019WQw/lpnZG5XXrkQdPF0ucFq2
-	KQoi/ytgmDfhKfK30ifCgeRk+IKFjOc=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-Q-BDd5NkM1-TdAdHOJz1eA-1; Mon, 21 Jul 2025 10:39:12 -0400
-X-MC-Unique: Q-BDd5NkM1-TdAdHOJz1eA-1
-X-Mimecast-MFC-AGG-ID: Q-BDd5NkM1-TdAdHOJz1eA_1753108751
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f7ebfd00so1919162f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 07:39:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753108751; x=1753713551;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hcQicqR8pWhi54pYA2CCTCgwLgxgBUS5Et0jONJVtLc=;
-        b=hfl4faQFm/MjNgRjZYSeEihBUHis5cFdZRjFDTojYZmG0tq+RSU6H+X0QjvvCl6nPj
-         EhVKBEa7miWZeJ5FdTskVlhlNM4yOGdF6/rw2VDJVTnGYfpkE6cHeMOG/E8mxfCHoYOX
-         EqSirzrMLB5OCL1KPWnHw4fkIjcmLwlvlesSH8mMjI28EZzM/PEqsYyfcCDxqDw+ADuF
-         Ya9e9HlOXWrUGwnr2Q1cJctMypv6bOog/fd/5wx25byOYmCSzbJadCa/coUcuQSSSDpD
-         j6oC0aoDatgm9P3CBteyzvssNftquTfHOV6FdrlpA2nHhVpCo2p8NLuEHDDc0IrDlJrA
-         9kmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWr1j5hHGz44esBFGbl4N9CUaUTYZBj7GnpnXYDEJ6ALAivP9qshZEIxyIyzq9DVt/2llmmp8rEhK6od7rt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu/32yHmtZUrz/3HY+ZVtrUIKFcHHYSBeR/EFMnUgwrpO49/pJ
-	aNTHvi3DMkbBFpKLma2UeE6TOiTV8MdL1wNoDUOYdxGEYEKo8tbZB2RhOKHSwrsKAbj30Lb2tV6
-	K+pmLph/YdzDUQAjM7EX1R7DbDnnUwVSyz0bMgbzrzceRfzt4MGoLx9LhCm+xU9/fwZg=
-X-Gm-Gg: ASbGncvsflSjerWN+6co7gI6KrMnooGQZYD5WRWUOojLRGmYLDyvQ7p+0MK5ygAw7Nn
-	NTotUKp6RcWIGx8IfULawTjNXk8v/Dbgl0l+s/V9M6eLWvdlQ5K4DbTJUZUy49Jy7cBO/w5uuuu
-	x0IwK2grL/umM4IHFdf2Ay/wLgM/7BtiYZ7Oa8RMgEwfVM6t55dd2XFAcYg9JsTD3W1thylHvJ+
-	LMCZmNONvPbCNkeJVPMg3tTQoK+For4xmaWm8Q6x0DiOScp+u10ibQkaiRElB/QRXPG+LQPAl38
-	XjbZPOTwdPEo4ihzoH6lCwVIyyLKIhsXuhAl4vuA8G54vRqNDZI+5DtG8oV7aqlpA6QJDUk2ogM
-	NEB8Swpv50h+p5Yhjufpmlo1v2QSlQfBkkg6yFM8GeqQOcaKpb9bG7Eblncy5wTmv
-X-Received: by 2002:a05:6000:41ed:b0:3a3:6e62:d8e8 with SMTP id ffacd0b85a97d-3b613eab461mr13055533f8f.55.1753108750840;
-        Mon, 21 Jul 2025 07:39:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHd/BEozKWNQb4XV80/bHyTLAPcbI5dj6IOAUADBKINgEM9wyT3XARPgEGmapMgN+VE2Jeorg==
-X-Received: by 2002:a05:6000:41ed:b0:3a3:6e62:d8e8 with SMTP id ffacd0b85a97d-3b613eab461mr13055487f8f.55.1753108750165;
-        Mon, 21 Jul 2025 07:39:10 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4c:df00:a9f5:b75b:33c:a17f? (p200300d82f4cdf00a9f5b75b033ca17f.dip0.t-ipconnect.de. [2003:d8:2f4c:df00:a9f5:b75b:33c:a17f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5d266sm10549499f8f.91.2025.07.21.07.39.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 07:39:09 -0700 (PDT)
-Message-ID: <c5942226-2102-48bd-949e-2369437e8599@redhat.com>
-Date: Mon, 21 Jul 2025 16:39:07 +0200
+	s=arc-20240116; t=1753109166; c=relaxed/simple;
+	bh=ay/dYox8e980gAgMaXCl20FznyRWYXV/WCWTf+Z3Zn0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W0ZOYUnfSpOrW33096dTwubY9VvdMftkQjbTBReMXh6Qbm0AgGek1lamcoeLwW+Xa5UPECsrnrZE5agT+LrZONzDuPf8IV6hZFS4ghc8ALEHs8S/4CHGfoFTjKkO55Xl1u7BJbmKzBBVi43qC0gIlRQTfLa2w8j7T4UAppT4mrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyo83ChQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D9AC4CEED;
+	Mon, 21 Jul 2025 14:46:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753109166;
+	bh=ay/dYox8e980gAgMaXCl20FznyRWYXV/WCWTf+Z3Zn0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=kyo83ChQa5jPeEXxbcVQmOS69a39jktO0Wuc9v/TVbHncBNPHRVfb+Ws/IcrlbqhC
+	 xE84yn9+LtjuGT0HnAKFAnGGRm9JVY8G9+1dA8AkK5Vd53w7Caxn4aE2GnmLo4i+GV
+	 Zyw3/yqTI3rjuAoPliP9mmdBWykXlTLgG55hX4IYBIG36Bn7yj7OEvXHSV/sfHL75o
+	 l9lBVAIPXqpAMvd4yknYc9oJEcQONz+uwdPbI8itY+3wkv8W+GfYyd6aHZud+qTPyJ
+	 S28ijNAr/zmuVvkXTvLXEuskHkWrux5iAzaNAYmulTVrvI0kQcj3l0HiYumUUl9hEo
+	 OMai6Adg4JDrg==
+Message-ID: <15970691ac14728701c4e94e91cb3614caf5b503.camel@kernel.org>
+Subject: Re: [PATCH 3/7] VFS: Change vfs_mkdir() to unlock on failure.
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>, Linus Torvalds
+ <torvalds@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 21 Jul 2025 10:46:04 -0400
+In-Reply-To: <20250721084412.370258-4-neil@brown.name>
+References: <20250721084412.370258-1-neil@brown.name>
+	 <20250721084412.370258-4-neil@brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
- Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-References: <20250721090942.274650-1-david@redhat.com>
- <4d9d25b0-49ee-438d-8698-59c835506cbd@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <4d9d25b0-49ee-438d-8698-59c835506cbd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+On Mon, 2025-07-21 at 17:59 +1000, NeilBrown wrote:
+> Proposed changes to directory-op locking will lock the dentry rather
+> than the whole directory.  So the dentry will need to be unlocked.
+>=20
+> vfs_mkdir() consumes the dentry on error, so there will be no dentry to
+> be unlocked.
+>=20
+> So this patch changes vfs_mkdir() to unlock on error as well as
+> releasing the dentry.  This requires various other functions in various
+> callers to also unlock on error.
+>=20
+> At present this results in some clumsy code.  Once the transition to
+> dentry locking is complete the clumsiness will be gone.
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/cachefiles/namei.c    |  9 +++++----
+>  fs/ecryptfs/inode.c      |  3 ++-
+>  fs/namei.c               | 24 ++++++++++++++++--------
+>  fs/nfsd/nfs4recover.c    | 12 +++++-------
+>  fs/nfsd/vfs.c            | 12 ++++++++++--
+>  fs/overlayfs/dir.c       | 13 +++++++------
+>  fs/overlayfs/overlayfs.h |  1 +
+>  fs/overlayfs/super.c     |  5 +++--
+>  fs/xfs/scrub/orphanage.c |  2 +-
+>  9 files changed, 50 insertions(+), 31 deletions(-)
+>=20
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index d1edb2ac3837..732d78911bed 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -131,8 +131,11 @@ struct dentry *cachefiles_get_directory(struct cache=
+files_cache *cache,
+>  		ret =3D cachefiles_inject_write_error();
+>  		if (ret =3D=3D 0)
+>  			subdir =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
+> -		else
+> +		else {
+> +			/* vfs_mkdir() unlocks on failure so we must too */
+> +			inode_unlock(d_inode(dir));
+>  			subdir =3D ERR_PTR(ret);
+> +		}
+>  		if (IS_ERR(subdir)) {
+>  			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
+>  						   cachefiles_trace_mkdir_error);
+> @@ -196,9 +199,7 @@ struct dentry *cachefiles_get_directory(struct cachef=
+iles_cache *cache,
+>  	return ERR_PTR(-EBUSY);
+> =20
+>  mkdir_error:
+> -	inode_unlock(d_inode(dir));
+> -	if (!IS_ERR(subdir))
+> -		dput(subdir);
+> +	done_dentry_lookup(subdir);
+>  	pr_err("mkdir %s failed with error %d\n", dirname, ret);
+>  	return ERR_PTR(ret);
+> =20
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index abd954c6a14e..5d8cb042aa57 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -520,7 +520,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap=
+ *idmap, struct inode *dir,
+>  				 lower_dentry, mode);
+>  	rc =3D PTR_ERR(lower_dentry);
+>  	if (IS_ERR(lower_dentry))
+> -		goto out;
+> +		goto out_unlocked;
+>  	rc =3D 0;
+>  	if (d_unhashed(lower_dentry))
+>  		goto out;
+> @@ -532,6 +532,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap=
+ *idmap, struct inode *dir,
+>  	set_nlink(dir, lower_dir->i_nlink);
+>  out:
+>  	inode_unlock(lower_dir);
+> +out_unlocked:
+>  	if (d_really_is_negative(dentry))
+>  		d_drop(dentry);
+>  	return ERR_PTR(rc);
+> diff --git a/fs/namei.c b/fs/namei.c
+> index da160a01e23d..950a0d0d54da 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1723,13 +1723,18 @@ EXPORT_SYMBOL(lookup_one_qstr_excl);
+>   * rmdir) a dentry.  After this, done_dentry_lookup() can be used to bot=
+h
+>   * unlock the parent directory and dput() the dentry.
+>   *
+> + * If the dentry is an error - as can happen after vfs_mkdir() -
+> + * the unlock is skipped as unneeded.
+> + *
+>   * This interface allows a smooth transition from parent-dir based
+>   * locking to dentry based locking.
+>   */
+>  void done_dentry_lookup(struct dentry *dentry)
+>  {
+> -	inode_unlock(dentry->d_parent->d_inode);
+> -	dput(dentry);
+> +	if (!IS_ERR(dentry)) {
+> +		inode_unlock(dentry->d_parent->d_inode);
+> +		dput(dentry);
+> +	}
 
->> (B) Makes prctl(PR_GET_THP_DISABLE) return 3 if
->>      PR_THP_DISABLE_EXCEPT_ADVISED was set while disabling.
->>
->>      For now, it would return 1 if THPs were disabled completely. Now
->>      it essentially returns the set flags as well.
->>
-> 
-> No strong opinion, but maybe we have it return 2 (i.e. bit 1 set)?
-> 
-> I know that you are returning bit 1 set to indicate the flag, and I know that
-> everyone dislikes prctl so its likely no more flags will be added :),
-> but in the off chance there are extra flags, than it can make the return
-> value weird?
+nit: could you introduce these versions of done_dentry_lookup() and
+done_dentry_lookup_return() in patch #2, even if not strictly needed
+yet? Better to introduce it as ERR_PTR-safe from the start.=20
 
-Well, never say never, so I decided to just return the set flags :)
+>  }
+>  EXPORT_SYMBOL(done_dentry_lookup);
+> =20
+> @@ -1742,12 +1747,16 @@ EXPORT_SYMBOL(done_dentry_lookup);
+>   * rmdir) a dentry.  After this, done_dentry_lookup_return() can be used=
+ to
+>   * unlock the parent directory.  The dentry is returned for further use.
+>   *
+> + * If the dentry is an error - as can happen after vfs_mkdir() -
+> + * the unlock is skipped as unneeded.
+> + *
+>   * This interface allows a smooth transition from parent-dir based
+>   * locking to dentry based locking.
+>   */
+>  struct dentry *done_dentry_lookup_return(struct dentry *dentry)
+>  {
+> -	inode_unlock(dentry->d_parent->d_inode);
+> +	if (!IS_ERR(dentry))
+> +		inode_unlock(dentry->d_parent->d_inode);
+>  	return dentry;
+>  }
+>  EXPORT_SYMBOL(done_dentry_lookup_return);
+> @@ -4210,9 +4219,7 @@ EXPORT_SYMBOL(kern_path_create);
+> =20
+>  void done_path_create(struct path *path, struct dentry *dentry)
+>  {
+> -	if (!IS_ERR(dentry))
+> -		dput(dentry);
+> -	inode_unlock(path->dentry->d_inode);
+> +	done_dentry_lookup(dentry);
+>  	mnt_drop_write(path->mnt);
+>  	path_put(path);
+>  }
+> @@ -4375,7 +4382,8 @@ SYSCALL_DEFINE3(mknod, const char __user *, filenam=
+e, umode_t, mode, unsigned, d
+>   * negative or unhashes it and possibly splices a different one returnin=
+g it,
+>   * the original dentry is dput() and the alternate is returned.
+>   *
+> - * In case of an error the dentry is dput() and an ERR_PTR() is returned=
+.
+> + * In case of an error the dentry is dput(), the parent is unlocked, and
+> + * an ERR_PTR() is returned.
+>   */
+>  struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  			 struct dentry *dentry, umode_t mode)
+> @@ -4413,7 +4421,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, s=
+truct inode *dir,
+>  	return dentry;
+> =20
+>  err:
+> -	dput(dentry);
+> +	done_dentry_lookup(dentry);
+>  	return ERR_PTR(error);
+>  }
+>  EXPORT_SYMBOL(vfs_mkdir);
+> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> index 82785db730d9..693fa95fa678 100644
+> --- a/fs/nfsd/nfs4recover.c
+> +++ b/fs/nfsd/nfs4recover.c
+> @@ -222,7 +222,8 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
+>  	dentry =3D lookup_one(&nop_mnt_idmap, &QSTR(dname), dir);
+>  	if (IS_ERR(dentry)) {
+>  		status =3D PTR_ERR(dentry);
+> -		goto out_unlock;
+> +		inode_unlock(d_inode(dir));
+> +		goto out;
+>  	}
+>  	if (d_really_is_positive(dentry))
+>  		/*
+> @@ -233,15 +234,12 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
+>  		 * In the 4.0 case, we should never get here; but we may
+>  		 * as well be forgiving and just succeed silently.
+>  		 */
+> -		goto out_put;
+> +		goto out;
+>  	dentry =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, S_IRWXU);
+>  	if (IS_ERR(dentry))
+>  		status =3D PTR_ERR(dentry);
+> -out_put:
+> -	if (!status)
+> -		dput(dentry);
+> -out_unlock:
+> -	inode_unlock(d_inode(dir));
+> +out:
+> +	done_dentry_lookup(dentry);
+>  	if (status =3D=3D 0) {
+>  		if (nn->in_grace)
+>  			__nfsd4_create_reclaim_record_grace(clp, dname,
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index a21940cadede..e85195e858a2 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1489,7 +1489,9 @@ nfsd_check_ignore_resizing(struct iattr *iap)
+>  		iap->ia_valid &=3D ~ATTR_SIZE;
+>  }
+> =20
+> -/* The parent directory should already be locked: */
+> +/* The parent directory should already be locked.  The lock
+> + * will be dropped on error.
+> + */
+>  __be32
+>  nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  		   struct nfsd_attrs *attrs,
+> @@ -1555,8 +1557,11 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct =
+svc_fh *fhp,
+>  	err =3D nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
+> =20
+>  out:
+> -	if (!IS_ERR(dchild))
+> +	if (!IS_ERR(dchild)) {
+> +		if (err)
+> +			inode_unlock(dirp);
+>  		dput(dchild);
+> +	}
+>  	return err;
+> =20
+>  out_nfserr:
+> @@ -1613,6 +1618,9 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *=
+fhp,
+>  	if (err !=3D nfs_ok)
+>  		goto out_unlock;
+>  	err =3D nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
+> +	if (err)
+> +		/* lock will have been dropped */
+> +		return err;
+>  	fh_fill_post_attrs(fhp);
+>  out_unlock:
+>  	inode_unlock(dentry->d_inode);
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 30619777f0f6..74b52595ea0e 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -161,14 +161,17 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
+ruct dentry *dir,
+>  	goto out;
+>  }
+> =20
+> +/* dir will be unlocked on return */
+>  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *parent=
+,
+>  			       struct dentry *newdentry, struct ovl_cattr *attr)
+>  {
+>  	struct inode *dir =3D parent->d_inode;
+>  	int err;
+> =20
+> -	if (IS_ERR(newdentry))
+> +	if (IS_ERR(newdentry)) {
+> +		inode_unlock(dir);
+>  		return newdentry;
+> +	}
+> =20
+>  	err =3D -ESTALE;
+>  	if (newdentry->d_inode)
+> @@ -213,11 +216,11 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, =
+struct dentry *parent,
+>  	}
+>  out:
+>  	if (err) {
+> -		if (!IS_ERR(newdentry))
+> -			dput(newdentry);
+> +		done_dentry_lookup(newdentry);
+>  		return ERR_PTR(err);
+> +	} else {
+> +		return done_dentry_lookup_return(newdentry);
+>  	}
+> -	return newdentry;
+>  }
+> =20
+>  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdi=
+r,
+> @@ -227,7 +230,6 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, st=
+ruct dentry *workdir,
+>  	inode_lock(workdir->d_inode);
+>  	ret =3D ovl_create_real(ofs, workdir,
+>  			      ovl_lookup_temp(ofs, workdir), attr);
+> -	inode_unlock(workdir->d_inode);
+>  	return ret;
+>  }
+> =20
+> @@ -335,7 +337,6 @@ static int ovl_create_upper(struct dentry *dentry, st=
+ruct inode *inode,
+>  				    ovl_lookup_upper(ofs, dentry->d_name.name,
+>  						     upperdir, dentry->d_name.len),
+>  				    attr);
+> -	inode_unlock(udir);
+>  	if (IS_ERR(newdentry))
+>  		return PTR_ERR(newdentry);
+> =20
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 4f84abaa0d68..238c26142318 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -250,6 +250,7 @@ static inline struct dentry *ovl_do_mkdir(struct ovl_=
+fs *ofs,
+> =20
+>  	ret =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
+>  	pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, PTR_ERR_OR_ZERO(ret=
+));
+> +	/* Note: dir will have been unlocked on failure */
+>  	return ret;
+>  }
+> =20
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 4afa91882075..df99a6fa17ef 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -328,11 +328,11 @@ static struct dentry *ovl_workdir_create(struct ovl=
+_fs *ofs,
+>  		}
+> =20
+>  		work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
+> -		inode_unlock(dir);
+>  		err =3D PTR_ERR(work);
+>  		if (IS_ERR(work))
+>  			goto out_err;
+> =20
+> +		done_dentry_lookup_return(work);
+>  		/* Weird filesystem returning with hashed negative (kernfs)? */
+>  		err =3D -EINVAL;
+>  		if (d_really_is_negative(work))
+> @@ -623,7 +623,8 @@ static struct dentry *ovl_lookup_or_create(struct ovl=
+_fs *ofs,
+>  	child =3D ovl_lookup_upper(ofs, name, parent, len);
+>  	if (!IS_ERR(child) && !child->d_inode)
+>  		child =3D ovl_create_real(ofs, parent, child, OVL_CATTR(mode));
+> -	inode_unlock(parent->d_inode);
+> +	else
+> +		inode_unlock(parent->d_inode);
+>  	dput(parent);
+> =20
+>  	return child;
+> diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
+> index 9c12cb844231..c95bded4e8a7 100644
+> --- a/fs/xfs/scrub/orphanage.c
+> +++ b/fs/xfs/scrub/orphanage.c
+> @@ -170,7 +170,7 @@ xrep_orphanage_create(
+>  					     orphanage_dentry, 0750);
+>  		error =3D PTR_ERR(orphanage_dentry);
+>  		if (IS_ERR(orphanage_dentry))
+> -			goto out_unlock_root;
+> +			goto out_dput_root;
+>  	}
+> =20
+>  	/* Not a directory? Bail out. */
 
-> If instead we return a value with only a single bit set, might be better?
-> 
-> Again, no strong opinion here.
-
-I prefer the current approach, until there is good reason not do do it.
-
-IOW, set bit-0 if something is disabled, and specify using flag what 
-exectly (provided flags).
-
-> 
->> (C) Renames MMF_DISABLE_THP to MMF_DISABLE_THP_COMPLETELY, to express
->>      the semantics clearly.
->>
->>      Fortunately, there are only two instances outside of prctl() code.
->>
->> (D) Adds MMF_DISABLE_THP_EXCEPT_ADVISED to express "no THP except for VMAs
->>      with VM_HUGEPAGE" -- essentially "thp=madvise" behavior
->>
->>      Fortunately, we only have to extend vma_thp_disabled().
->>
->> (E) Indicates "THP_enabled: 0" in /proc/pid/status only if THPs are not
->>      disabled completely
->>
->>      Only indicating that THPs are disabled when they are really disabled
->>      completely, not only partially.
->>
->> The documented semantics in the man page for PR_SET_THP_DISABLE
->> "is inherited by a child created via fork(2) and is preserved across
->> execve(2)" is maintained. This behavior, for example, allows for
->> disabling THPs for a workload through the launching process (e.g.,
->> systemd where we fork() a helper process to then exec()).
->>
->> There is currently not way to prevent that a process will not issue
->> PR_SET_THP_DISABLE itself to re-enable THP. We could add a "seal" option
->> to PR_SET_THP_DISABLE through another flag if ever required. The known
->> users (such as redis) really use PR_SET_THP_DISABLE to disable THPs, so
->> that is not added for now.
->>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->> Cc: Nico Pache <npache@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Mike Rapoport <rppt@kernel.org>
->> Cc: Suren Baghdasaryan <surenb@google.com>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Usama Arif <usamaarif642@gmail.com>
->> Cc: SeongJae Park <sj@kernel.org>
->> Cc: Jann Horn <jannh@google.com>
->> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
->> Cc: Yafang Shao <laoar.shao@gmail.com>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->>
->> ---
->>
->> At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
->> think there might be real use cases where we want to disable any THPs --
->> in particular also around debugging THP-related problems, and
->> "THP=never" not meaning ... "never" anymore. PR_SET_THP_DISABLE will
->> also block MADV_COLLAPSE, which can be very helpful. Of course, I thought
->> of having a system-wide config to change PR_SET_THP_DISABLE behavior, but
->> I just don't like the semantics.
->>
->> "prctl: allow overriding system THP policy to always"[1] proposed
->> "overriding policies to always", which is just the wrong way around: we
->> should not add mechanisms to "enable more" when we already have an
->> interface/mechanism to "disable" them (PR_SET_THP_DISABLE). It all gets
->> weird otherwise.
->>
->> "[PATCH 0/6] prctl: introduce PR_SET/GET_THP_POLICY"[2] proposed
->> setting the default of the VM_HUGEPAGE, which is similarly the wrong way
->> around I think now.
->>
->> The proposals by Lorenzo to extend process_madvise()[3] and mctrl()[4]
->> similarly were around the "default for VM_HUGEPAGE" idea, but after the
->> discussion, I think we should better leave VM_HUGEPAGE untouched.
->>
->> Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
->> we essentially want to say "leave advised regions alone" -- "keep THP
->> enabled for advised regions",
->>
->> The only thing I really dislike about this is using another MMF_* flag,
->> but well, no way around it -- and seems like we could easily support
->> more than 32 if we want to, or storing this thp information elsewhere.
->>
->> I think this here (modifying an existing toggle) is the only prctl()
->> extension that we might be willing to accept. In general, I agree like
->> most others, that prctl() is a very bad interface for that -- but
->> PR_SET_THP_DISABLE is already there and is getting used.
->>
->> Long-term, I think the answer will be something based on bpf[5]. Maybe
->> in that context, I there could still be value in easily disabling THPs for
->> selected workloads (esp. debugging purposes).
->>
->> Jann raised valid concerns[6] about new flags that are persistent across
->> exec[6]. As this here is a relaxation to existing PR_SET_THP_DISABLE I
->> consider it having a similar security risk as our existing
->> PR_SET_THP_DISABLE, but devil is in the detail.
->>
->> This is *completely* untested and might be utterly broken. It merely
->> serves as a PoC of what I think could be done. If this ever goes upstream,
->> we need some kselftests for it, and extensive tests.
->>
->> [1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
->> [2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
->> [3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
->> [4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
->> [5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
->> [6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
->>
->> ---
->>   Documentation/filesystems/proc.rst |  5 +--
->>   fs/proc/array.c                    |  2 +-
->>   include/linux/huge_mm.h            | 20 ++++++++---
->>   include/linux/mm_types.h           | 13 +++----
->>   include/uapi/linux/prctl.h         |  7 ++++
->>   kernel/sys.c                       | 58 +++++++++++++++++++++++-------
->>   mm/khugepaged.c                    |  2 +-
->>   7 files changed, 78 insertions(+), 29 deletions(-)
->>
->> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
->> index 2971551b72353..915a3e44bc120 100644
->> --- a/Documentation/filesystems/proc.rst
->> +++ b/Documentation/filesystems/proc.rst
->> @@ -291,8 +291,9 @@ It's slow but very precise.
->>    HugetlbPages                size of hugetlb memory portions
->>    CoreDumping                 process's memory is currently being dumped
->>                                (killing the process may lead to a corrupted core)
->> - THP_enabled		     process is allowed to use THP (returns 0 when
->> -			     PR_SET_THP_DISABLE is set on the process
->> + THP_enabled                 process is allowed to use THP (returns 0 when
->> +                             PR_SET_THP_DISABLE is set on the process to disable
->> +                             THP completely, not just partially)
->>    Threads                     number of threads
->>    SigQ                        number of signals queued/max. number for queue
->>    SigPnd                      bitmap of pending signals for the thread
->> diff --git a/fs/proc/array.c b/fs/proc/array.c
->> index d6a0369caa931..c4f91a784104f 100644
->> --- a/fs/proc/array.c
->> +++ b/fs/proc/array.c
->> @@ -422,7 +422,7 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
->>   	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
->>   
->>   	if (thp_enabled)
->> -		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
->> +		thp_enabled = !test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
->>   	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
->>   }
->>   
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index e0a27f80f390d..c4127104d9bc3 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -323,16 +323,26 @@ struct thpsize {
->>   	(transparent_hugepage_flags &					\
->>   	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
->>   
->> +/*
->> + * Check whether THPs are explicitly disabled through madvise or prctl, or some
->> + * architectures may disable THP for some mappings, for example, s390 kvm.
->> + */
->>   static inline bool vma_thp_disabled(struct vm_area_struct *vma,
->>   		vm_flags_t vm_flags)
->>   {
->> +	/* Are THPs disabled for this VMA? */
->> +	if (vm_flags & VM_NOHUGEPAGE)
->> +		return true;
->> +	/* Are THPs disabled for all VMAs in the whole process? */
->> +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
->> +		return true;
->>   	/*
->> -	 * Explicitly disabled through madvise or prctl, or some
->> -	 * architectures may disable THP for some mappings, for
->> -	 * example, s390 kvm.
->> +	 * Are THPs disabled only for VMAs where we didn't get an explicit
->> +	 * advise to use them?
->>   	 */
->> -	return (vm_flags & VM_NOHUGEPAGE) ||
->> -	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
->> +	if (vm_flags & VM_HUGEPAGE)
->> +		return false;
->> +	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
->>   }
->>   
->>   static inline bool thp_disabled_by_hw(void)
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index 1ec273b066915..a999f2d352648 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -1743,19 +1743,16 @@ enum {
->>   #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
->>   #define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
->>   
->> -/*
->> - * This one-shot flag is dropped due to necessity of changing exe once again
->> - * on NFS restore
->> - */
->> -//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
->> +#define MMF_HUGE_ZERO_PAGE	18      /* mm has ever used the global huge zero page */
->>   
->>   #define MMF_HAS_UPROBES		19	/* has uprobes */
->>   #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
->>   #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
->>   #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
->> -#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
->> -#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
->> -#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
->> +#define MMF_DISABLE_THP_EXCEPT_ADVISED	23	/* no THP except for VMAs with VM_HUGEPAGE */
->> +#define MMF_DISABLE_THP_COMPLETELY	24	/* no THP for all VMAs */
->> +#define MMF_DISABLE_THP_MASK	((1 << MMF_DISABLE_THP_COMPLETELY) |\
->> +				 (1 << MMF_DISABLE_THP_EXCEPT_ADVISED))
->>   #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
->>   #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
->>   /*
->> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
->> index 43dec6eed559a..1949bb9270d48 100644
->> --- a/include/uapi/linux/prctl.h
->> +++ b/include/uapi/linux/prctl.h
->> @@ -177,7 +177,14 @@ struct prctl_mm_map {
->>   
->>   #define PR_GET_TID_ADDRESS	40
->>   
->> +/*
->> + * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
->> + * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
->> + * specified for PR_SET_THP_DISABLE.
->> + */
->>   #define PR_SET_THP_DISABLE	41
->> +/* Don't disable THPs when explicitly advised (MADV_HUGEPAGE / VM_HUGEPAGE). */
->> +# define PR_THP_DISABLE_EXCEPT_ADVISED	(1 << 1)
->>   #define PR_GET_THP_DISABLE	42
->>   
->>   /*
->> diff --git a/kernel/sys.c b/kernel/sys.c
->> index b153fb345ada2..2a34b2f708900 100644
->> --- a/kernel/sys.c
->> +++ b/kernel/sys.c
->> @@ -2423,6 +2423,50 @@ static int prctl_get_auxv(void __user *addr, unsigned long len)
->>   	return sizeof(mm->saved_auxv);
->>   }
->>   
->> +static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
->> +				 unsigned long arg4, unsigned long arg5)
->> +{
->> +	unsigned long *mm_flags = &current->mm->flags;
->> +
->> +	if (arg2 || arg3 || arg4 || arg5)
->> +		return -EINVAL;
->> +
->> +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags))
->> +		return 1;
->> +	else if (test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags))
->> +		return 1 | PR_THP_DISABLE_EXCEPT_ADVISED;
->> +	return 0;
->> +}
->> +
->> +static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
->> +				 unsigned long arg4, unsigned long arg5)
->> +{
->> +	unsigned long *mm_flags = &current->mm->flags;
->> +
->> +	if (arg4 || arg5)
->> +		return -EINVAL;
->> +
->> +	/* Flags are only allowed when disabling. */
->> +	if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
-> 
-> 
-> I think you meant over here?
-> 
-> 	if (!thp_disable && (flags & PR_THP_DISABLE_EXCEPT_ADVISED))
-> 
-
-
-When re-enabling, we don't allow flags, otherwise we only allow the 
-supported (PR_THP_DISABLE_EXCEPT_ADVISED) flag.
-
-So I think it should probably be something like
-
-if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+This does make for some awkward code. Fortunately there aren't that
+many vfs_mkdir() callers.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
