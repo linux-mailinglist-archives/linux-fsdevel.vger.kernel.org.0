@@ -1,103 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-55544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F6EB0B844
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 23:00:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD3FB0B9A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 02:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CF4172CD8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Jul 2025 21:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4136E7A1BB6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 00:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9A6226D0A;
-	Sun, 20 Jul 2025 20:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A6F149DE8;
+	Mon, 21 Jul 2025 00:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="NGuYvOyK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSWnaIAC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B098F2264B7;
-	Sun, 20 Jul 2025 20:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753045146; cv=pass; b=RH6wXeTLy0c7/mZ9H3EIT0XO5FvV7HQxPDiU9nliXfsxHwbX7yq3/VZXdQPjrkPBug0KMgHz3VMugEM2uVl9EopaE+m9pbEfyQzshu+N1y6kgZmtZx2L96uVBzj+LbJAxEGgN0jkkekdr9yIPoYaOxhz3c0SWPBS1m8SL7CMphM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753045146; c=relaxed/simple;
-	bh=/CqFDWX3ltRC3T3uCgwyoDkSy6A157X3LAUK/JbCBis=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HOCU2YGTe0DTvWR75t8SxDzN0LuohIQcjXmD9qOD5MnVBYHalwsR3cFxtlFmiR2W/H+GptN9YoUs4ybHlGeqgy13c8HJeOxrDYXR02ubgZLbY8MXa7etvyusr1Pb9xCorVAQzgrcxv9Ovajlw8tSXZg+MpP3l1lDsI7BeW2X+mQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=NGuYvOyK; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753045127; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=CkaUFh4QX4ZftFDfiWj678Oqc7QtT5gedGKCWV4zFFJUgstZL33pSxlcWZ9wKXjgYcNafNtO+kdKXaYgj+EfSnwkvCITEGZpdd/FqlBJL8nY3I6ijkMTSOAAUEbhhXkOGYbw1+ZPREaBkC1U2v1NarkhT7OzxwboROz/IgIpaZM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753045127; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=/CqFDWX3ltRC3T3uCgwyoDkSy6A157X3LAUK/JbCBis=; 
-	b=Jp8j75+PTE22DGMcI4BupgYz/mzoroVunlEB8iDeoTnvzBZ78rOAlqwV02hcr5wbOMVvHNxsiPP/dY5nZdl/QMAgUW0jt7nkc9i9JZ5TgiavHJ8FrbJgWFCy9trj8FX3rHWqoZF83dNBkWD93i2EnRlD9t2uhbnyPd6dRR3EBUs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753045127;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=/CqFDWX3ltRC3T3uCgwyoDkSy6A157X3LAUK/JbCBis=;
-	b=NGuYvOyK2/NJewIxZNic1flrYbpk3vaQ2XXsEGd/X6PQd/2cXSWi+s1sa4kD/JIV
-	tPdSfKHq/ZjOE3WhdEPMx9D2gQFlW93k4mqsw9Abdh1mrK02ICv19Or5L4Z1rgGtM0S
-	czxvQVw+VHaouTcUdQXaHUALfPk2KnIQlx4D4xdM=
-Received: by mx.zohomail.com with SMTPS id 17530451261573.681567831038933;
-	Sun, 20 Jul 2025 13:58:46 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: senozhatsky@chromium.org
-Cc: bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	juri.lelli@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	miklos@szeredi.hu,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	tfiga@chromium.org,
-	vincent.guittot@linaro.org
-Subject: Re: [PATCHv2 1/2] sched/wait: Add wait_event_state_exclusive()
-Date: Sun, 20 Jul 2025 23:58:39 +0300
-Message-ID: <20250720205839.2919-1-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250610045321.4030262-1-senozhatsky@chromium.org>
-References: <20250610045321.4030262-1-senozhatsky@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70024128395;
+	Mon, 21 Jul 2025 00:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753058645; cv=none; b=lOIIArzRLDpV/pqRQy+K7jVnoSP3NwrFelQ+Hmovw/N8T5I64lWfTbnbj9prJTKlVjc3iyLhx4nzvNGWi00IqXCAqtx5QA3ZXvA/i7okLHLs5GyXlyOPAqOCLnhKtFJ02Hf0BMBiMOwouIaQr6v4qeDevwdpH3RrTvXCrL2oML4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753058645; c=relaxed/simple;
+	bh=sZh7nAa2H+zz6Rw4iCplFxXECYnUeug3lpaO6Yshh1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qz00Wclb4UkaU6D8od1fwIH9l4kQbtb4WRQ03YBR4Ztgv8LUlr2zyWEubecSdTp3YJzeMXRKkCA22WZVu4pQ4z5H84G3p1cqI8YXrQCWyaKwc2SGVJE8+BugKWaWX19Vc/BY07w5+uIqwhJuNDFNYHhQ8FMAiTWcR3RY7Ut+pFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSWnaIAC; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-87ec5e1cd4aso2320973241.0;
+        Sun, 20 Jul 2025 17:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753058643; x=1753663443; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CtTXofz3YZU8ZHZgSXsRm5LIUyeVOephgcfaxbmgBHg=;
+        b=hSWnaIACmfhsUu78WwLqZ29mQfEJcw1E5ycwuZ+10TnBNKOXW6fwJ3ZkEmYR5/6AgM
+         qUHOqC/rEqOOojGFf3lo04FkC+ZbjFIhgcxePeDfr4yQYOhp0HBMX2C55+s1x0OlWRke
+         Szp2h/Pm2G5oagxRpBCdw9Zl837/R1L4xfClFPpolPcAvCYHokAxpfmrxzzCHshFe0Yz
+         VDvbY/ffPCg0XNtl0yen6HbfsMWvXcf5aiFDHSCs/JGB+yO7O1br+RYslEztnpRgb5QX
+         YXP8Pc6AuT12dVyzzpfIdyE7U3fvw7ImqxVVBOhAs/s/Yoy+dDAPEoAPcklN0gUXXB1k
+         wbzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753058643; x=1753663443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CtTXofz3YZU8ZHZgSXsRm5LIUyeVOephgcfaxbmgBHg=;
+        b=rlB+IhiSKq5201bekJp0bEa0g/YHHHTwQLerpRcuruqiV6rBcYYEgOuWZSV44cQvlX
+         pCKd0J69GQCuRSrCBRh1IRuRvlr72MmYMhjgc+9SkzMcuRCBP6hrHz9FqEGQDIsIOgsl
+         icJkmpSt27BycslqtzlgrmLtjY2oi8hwg2D1FbxIpSMuhB+tE/1UxE0n8mwB+EmCt3yE
+         V2kpy60akxPWkx33SucdSTGhDfnHaR0lbmJLw+H2ErIax6A80umOFqpU7RV9l1wuDeiF
+         7h3GZwYTPzlnIpcByIIoD+hJa4siIAblrlNUzehClRkB5GIrwb6LV0IrZiPmW/hgjBME
+         NnXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYH9+BtoBiYfMqSipiP1KdvavbjCLq26Q0clfE8sIRSoOCgigQ2dgGSuN8hcsYQM4sYhBmQVJvM5DCCw==@vger.kernel.org, AJvYcCUzKDPRjqyfRH+NsYQpWrar0d4+3Tqk4G5vfG0K1p6+kEL6Hfbjay478IvTAL4PjumWDEMGHdRJUTyAC8N8lw==@vger.kernel.org, AJvYcCVw5jtHZZGDbFmrwhcnaWeMn413necaiwidwCrauwknImLfLXhE69OlUF6TF9tPkmw+0eo7+XPumFRnbA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHsOKs2JWD6MEMuW0Zp0sMdPbcckBiEYtblx3Hy9hYW+RRqa6H
+	ISrEE3XSawAqI3dR4Jq9yR2RpRUDMoet0BNl+hYFSl4NIxW7WDmtx9FvGh69UrLfiPXI5TzXfaD
+	eNu8eFsGNv9kdi8kzReZY4U7mnEJgX4M=
+X-Gm-Gg: ASbGncszqqa2hjqL/XaAmagFeFIcV+gBrNRIkO6NvggIc198n6NozVqSDgoYPvAIuVC
+	6dqrqN7akMbY0AVbC3wijxNlXTElf9DFX0peSdahN0JnG13PrOGtE0wCLBs0INtfCTclYGJ3xFH
+	fJxA6Fz6HI+D8b4gzr1d/XVLqZCt7RplxjOeg8+DPdPnJkiQHZPLCoTRYEbo++P4DrLnzi6pmSc
+	/s6rVg=
+X-Google-Smtp-Source: AGHT+IGFRYyrS35WTP3i9Qe8TXmZslY6x6nCRq1gIJA/O9dosgodOs3uPYD7WXYU49lcEb5mCGS05wblqRqGVV/3QiI=
+X-Received: by 2002:a05:6102:6316:10b0:4f9:6a91:cc95 with SMTP id
+ ada2fe7eead31-4f96a91cec6mr5610145137.27.1753058643165; Sun, 20 Jul 2025
+ 17:44:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227ee1686b54db1c6c590ae89290000ca616dc1aea20be69767ef38ffba0f7c99e32901e7f1609326:zu0801122709d8ceb129b8b11557267ae80000f16242d1eca93fedd3befda2251b594a97482ef41b97f220bb:rf0801122c7821590fd9737fd0c9f973fc00003514f0ff9467287cab3ea0e1f29370acd1b5491d640cb41ab20ab8c96111:ZohoMail
-X-ZohoMailClient: External
+References: <aHa8ylTh0DGEQklt@casper.infradead.org> <e5165052-ead3-47f4-88f6-84eb23dc34df@linux.alibaba.com>
+In-Reply-To: <e5165052-ead3-47f4-88f6-84eb23dc34df@linux.alibaba.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 21 Jul 2025 08:43:51 +0800
+X-Gm-Features: Ac12FXzyFbI4GjwypQZFYPLAZaBnNxcXr0fPPaJY0y3WB9_zSNUgD719YOscIeg
+Message-ID: <CAGsJ_4wOeBwm2=1CbtZk+gHXe0wVyAYZuV-RZcV-wXe4Rj+h7g@mail.gmail.com>
+Subject: Re: Compressed files & the page cache
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, 
+	Nicolas Pitre <nico@fluxnic.net>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
+	linux-erofs@lists.ozlabs.org, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	linux-f2fs-devel@lists.sourceforge.net, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, 
+	Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, 
+	David Howells <dhowells@redhat.com>, netfs@lists.linux.dev, 
+	Paulo Alcantara <pc@manguebit.org>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, ntfs3@lists.linux.dev, 
+	Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, 
+	Phillip Lougher <phillip@squashfs.org.uk>, Hailong Liu <hailong.liu@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I just tested this patch on my laptop. It doesn't work!
+On Wed, Jul 16, 2025 at 7:32=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.=
+com> wrote:
+[...]
+>
+> I don't see this will work for EROFS because EROFS always supports
+> variable uncompressed extent lengths and that will break typical
+> EROFS use cases and on-disk formats.
+>
+> Other thing is that large order folios (physical consecutive) will
+> caused "increase the latency on UX task with filemap_fault()"
+> because of high-order direct reclaims, see:
+> https://android-review.googlesource.com/c/kernel/common/+/3692333
+> so EROFS will not set min-order and always support order-0 folios.
 
-Here is my setup.
+Regarding Hailong's Android hook, it's essentially a complaint about
+the GFP mask used to allocate large folios for files. I'm wondering
+why the page cache hasn't adopted the same approach that's used for
+anon large folios:
 
-I compiled kernel f0e84022479b4700609e874cf220b5d7d0363403 from branch "for-next" from git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git , which seems to contain this patchset.
+    gfp =3D vma_thp_gfp_mask(vma);
 
-I booted into it.
+Another concern might be that the allocation order is too large,
+which could lead to memory fragmentation and waste. Ideally, we'd
+have "small" large folios=E2=80=94say, with order <=3D 4=E2=80=94to strike =
+a better
+balance.
 
-I mounted sshfs filesystem (it is FUSE).
+>
+> I think EROFS will not use this new approach, vmap() interface is
+> always the case for us.
+>
+> Thanks,
+> Gao Xiang
+>
+> >
+>
 
-I disabled network.
-
-I did "ls". "ls" hanged, because network is down.
-
-Then I did suspend, and suspend didn't work.
-
-I'm available for further testing.
-
---
-Askar Safin
+Thanks
+Barry
 
