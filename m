@@ -1,215 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-55546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4E9B0B9AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 03:03:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AEDB0B9BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 03:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85D4317808A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 01:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33F78189557B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 01:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54B6146D6A;
-	Mon, 21 Jul 2025 01:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iksADA5D"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F1717A31E;
+	Mon, 21 Jul 2025 01:20:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BE0163;
-	Mon, 21 Jul 2025 01:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD9272604;
+	Mon, 21 Jul 2025 01:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753059780; cv=none; b=sZIRwYDSpPhk9v7ogM3FUnjMrgLg/a9st4eVPivamED6JLwAuyAxVJUuJVkIg0p42sJpnyAP7uHI54vVbRXYI/7NvnNMyyls6pVoArTRcDUvSxzRToVSUXYkBh0cVVJ6b2Uki1XtgTLqcNdxKPtvvuEUXJYIK3C3d+JWV8NAOyI=
+	t=1753060846; cv=none; b=p0xM6HrtJtw3jZsVDfbp81wAIx2zcPxU853kVDYprJLJ1CuW2GFinLelFBwNahJnKcIrRDvPMwMtu/H8ef72wQo6WUeXvHtUGaWZgO2cnv7rbOfgP6/tKXkkdZRMvQhiUGYait38CHMtNwyyBSHwDTHvv7Dg/dDebJvaLKMQH8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753059780; c=relaxed/simple;
-	bh=2Hbmk494c/hTDYfl/ELDOh+V9j3g5RYfmcC8Wuk0EM8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AhY/n2/GIbBvfFiJYIZ8S3nY9+LnieJuEs580IiuOdNrU6bqVFuMlzqf8KeJ4qNJpWpu4FH+QBxMEPHvfcpZxGl8dfNN/5aXenEEjAOclElquyhHPglDF5M3vuS8+Y844eV/EKPU3R4sK4TiS2OzzOo6MUkGA3aX7NeaCCe5+as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iksADA5D; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-87f32826f22so5254307241.0;
-        Sun, 20 Jul 2025 18:02:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753059777; x=1753664577; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TUWA5dQohEpiNzIiLQ5yB5KcDd7NwkYx6hF+GZtItHM=;
-        b=iksADA5D21tNrtpKIhFSaNgp1anoZoUbxxOGUgA2nx4DClyds4JclDsw5/gl0+5+sH
-         nyxFUc+MSOAhr50D8ucceQMztwaqVtxXdOgq/4I5WRHclj8HHKQ6AHsFdacgmprqm5m4
-         25TE3Ow3vib4o75haT82Lir3i0OCYtiNxoZEcw4Ei4T2x3/T2Jmlbv05EkmD3r+jAXh1
-         xKYzlFLlNioUnYALBSpxez3Ef44FRDGffPGYDdMm2mLDrbfSElnBWkcNKLQteAdcndk6
-         qwIRiGs7l6tehasSRvL3zmYMovatN37/q5jxUpn/l1UIZlKB5Gv/c8C7+we5vnRfgQdB
-         RwmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753059777; x=1753664577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TUWA5dQohEpiNzIiLQ5yB5KcDd7NwkYx6hF+GZtItHM=;
-        b=C2Y4b21nWDYUFny8eSbOxphbRLoHe+hwTb1GGc+42JY6HDDzZtZLVtPYfNq1X5VZOI
-         1ZptwXFzR3TWZd0unbNzurnuExlfF6uQNbGTqp1RTKbkRi94CjBmG0zKoCmrj2XQj9td
-         yC7X7vIDQuR0GUVa5jFDoGTE9ke6YY8q39SPdkvVSqVnaJh+b+5VDL1OaS62rWWnrYwn
-         9USso09/Yi4XsqLaIUay+j4XVYlmISKXOWwZiWO/WSA9l5wxo0ilN5pQBXUJpLCepKbs
-         jIQb8E/cfNL4ym+/nAsUqmkbIOcywW5qCJCbYVEKNozXfrGzDrD8e6UKy1Ptf0cpApX8
-         ZEUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUa1o5I6jBD4DLKzFeo6qiGHDkLxqvf+PHACoAOdrSmIyVo7pxrfyOwYX4nZZl7ojaEEBFW78kQniUMgQ==@vger.kernel.org, AJvYcCVw0IjjFPwubkXMW4AJMhJX5hqFG75fEE5aBduF9Y3Q80MEglQi3WDI/QglCYhE763mf6Wjaf0BGitNWQ==@vger.kernel.org, AJvYcCWF9T+70CY1jzYfxs3VxW8+OKyxmgT7viAYYHjyArzMlQg3cpeV/YbbC9RvPPzncuG5xAdzQk0lBOGwVUpq3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN+jmbnriSSpjGfSqXRGl7YzK164GYMkz4TjN2+VgKrttUc2FJ
-	smzf7QkRNo8INa0FSGN0Lj68JxP/kc/fiuY6oW4i05rW5DTSVThjxHbvbj4wClMFAgvjlUUH/tV
-	agsyQVCg9uBxngQUhcavF//I2pvkXO0I=
-X-Gm-Gg: ASbGncufzxWv2SQTUi41X6AS9pfxwKpu9L7Gpf008peEtMHLoaPdj0RGv1SuCwXfZqi
-	8mxvR07Pa8L1sS6M2iNMqMbA+dcjWdeY1nIzWEDbhHuD9i8XjdYbQ8Jy4OUZsyj+fBtq4dxGiTF
-	8gtmvrjfvXbx5ke/edMj+mYcAv6QdZek9dn2wIU8Q3psSC6DkOkrjejwzYa1GTo3haoZxY/jsfQ
-	wlZKYs=
-X-Google-Smtp-Source: AGHT+IEmfqw92aWBN5S+l0I76SU0igPCpvqCsAsKehe4/Ig+tf7XCtcGuzfl8boXl3T7O5lTenPtedOe1kc4xTvXkm8=
-X-Received: by 2002:a05:6102:30c8:10b0:4e9:9221:46d5 with SMTP id
- ada2fe7eead31-4f9a863ff9fmr3911618137.3.1753059777443; Sun, 20 Jul 2025
- 18:02:57 -0700 (PDT)
+	s=arc-20240116; t=1753060846; c=relaxed/simple;
+	bh=BNkQIjOZSKu9ZGwc4tHzEhkbq/LUxVSJG18QsLj5xUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TBwjpIZxb6qwtnlwMLnAovYAol9PmKdqBAl3poJmyB5pqnygzH8TsQJ3VaaLJNsHD7oB3YiXSGRS73KF0+T9pHtxls1gCWl6VWwpxPG+GGcJu4DYkcJQNDlBvf3fQ+5WhUfPILDiBRf/ry55b4xX/3YOdZDm8Towuz17OUouNms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bljJL4g3szYQv78;
+	Mon, 21 Jul 2025 09:20:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5FF3B1A0ADC;
+	Mon, 21 Jul 2025 09:20:33 +0800 (CST)
+Received: from [10.174.176.88] (unknown [10.174.176.88])
+	by APP4 (Coremail) with SMTP id gCh0CgDnYhPblX1o4WHSAw--.16917S3;
+	Mon, 21 Jul 2025 09:20:29 +0800 (CST)
+Message-ID: <b60e4ef2-0128-4e56-a15f-ea85194a3af0@huaweicloud.com>
+Date: Mon, 21 Jul 2025 09:20:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aHa8ylTh0DGEQklt@casper.infradead.org> <e5165052-ead3-47f4-88f6-84eb23dc34df@linux.alibaba.com>
- <b61c4b7f-4bb1-4551-91ba-a0e0ffd19e75@linux.alibaba.com>
-In-Reply-To: <b61c4b7f-4bb1-4551-91ba-a0e0ffd19e75@linux.alibaba.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 21 Jul 2025 09:02:45 +0800
-X-Gm-Features: Ac12FXxvyCQ0eeZOJnljUPiNW1hOMFbnyUUqpvxURHtPLurlhEFVPbwv81doELM
-Message-ID: <CAGsJ_4xJjwsvMpeBV-QZFoSznqhiNSFtJu9k6da_T-T-a6VwNw@mail.gmail.com>
-Subject: Re: Compressed files & the page cache
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, 
-	Nicolas Pitre <nico@fluxnic.net>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
-	linux-erofs@lists.ozlabs.org, Jaegeuk Kim <jaegeuk@kernel.org>, 
-	linux-f2fs-devel@lists.sourceforge.net, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, 
-	Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, 
-	David Howells <dhowells@redhat.com>, netfs@lists.linux.dev, 
-	Paulo Alcantara <pc@manguebit.org>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, ntfs3@lists.linux.dev, 
-	Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, 
-	Phillip Lougher <phillip@squashfs.org.uk>, Hailong Liu <hailong.liu@oppo.com>, 
-	Qu Wenruo <quwenruo.btrfs@gmx.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
+To: kernel test robot <lkp@intel.com>, viro@zeniv.linux.org.uk,
+ jack@suse.com, brauner@kernel.org, axboe@kernel.dk, hch@lst.de
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250719024403.3452285-1-wozizhi@huawei.com>
+ <202507192025.N75TF4Gp-lkp@intel.com>
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+In-Reply-To: <202507192025.N75TF4Gp-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnYhPblX1o4WHSAw--.16917S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFyxuFW8XF15AFy8Ww18Grg_yoW8ZFyDpa
+	yrC39xtryrWr1rWa97KrWq9w1Yqws5JwnxGF18Cw47ZFWqvF17WrWI9r43Jryqqr1vgrWU
+	Jr9rurykKw1UAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
-On Wed, Jul 16, 2025 at 8:28=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.=
-com> wrote:
->
->
->
-> On 2025/7/16 07:32, Gao Xiang wrote:
-> > Hi Matthew,
-> >
-> > On 2025/7/16 04:40, Matthew Wilcox wrote:
-> >> I've started looking at how the page cache can help filesystems handle
-> >> compressed data better.  Feedback would be appreciated!  I'll probably
-> >> say a few things which are obvious to anyone who knows how compressed
-> >> files work, but I'm trying to be explicit about my assumptions.
-> >>
-> >> First, I believe that all filesystems work by compressing fixed-size
-> >> plaintext into variable-sized compressed blocks.  This would be a good
-> >> point to stop reading and tell me about counterexamples.
-> >
-> > At least the typical EROFS compresses variable-sized plaintext (at leas=
-t
-> > one block, e.g. 4k, but also 4k+1, 4k+2, ...) into fixed-sized compress=
-ed
-> > blocks for efficient I/Os, which is really useful for small compression
-> > granularity (e.g. 4KiB, 8KiB) because use cases like Android are usuall=
-y
-> > under memory pressure so large compression granularity is almost
-> > unacceptable in the low memory scenarios, see:
-> > https://erofs.docs.kernel.org/en/latest/design.html
-> >
-> > Currently EROFS works pretty well on these devices and has been
-> > successfully deployed in billions of real devices.
-> >
-> >>
-> >>  From what I've been reading in all your filesystems is that you want =
-to
-> >> allocate extra pages in the page cache in order to store the excess da=
-ta
-> >> retrieved along with the page that you're actually trying to read.  Th=
-at's
-> >> because compressing in larger chunks leads to better compression.
-> >>
-> >> There's some discrepancy between filesystems whether you need scratch
-> >> space for decompression.  Some filesystems read the compressed data in=
-to
-> >> the pagecache and decompress in-place, while other filesystems read th=
-e
-> >> compressed data into scratch pages and decompress into the page cache.
-> >>
-> >> There also seems to be some discrepancy between filesystems whether th=
-e
-> >> decompression involves vmap() of all the memory allocated or whether t=
-he
-> >> decompression routines can handle doing kmap_local() on individual pag=
-es.
-> >>
-> >> So, my proposal is that filesystems tell the page cache that their min=
-imum
-> >> folio size is the compression block size.  That seems to be around 64k=
-,
-> >> so not an unreasonable minimum allocation size.  That removes all the
-> >> extra code in filesystems to allocate extra memory in the page cache.>=
- It means we don't attempt to track dirtiness at a sub-folio granularity
-> >> (there's no point, we have to write back the entire compressed bock
-> >> at once).  We also get a single virtually contiguous block ... if you'=
-re
-> >> willing to ditch HIGHMEM support.  Or there's a proposal to introduce =
-a
-> >> vmap_file() which would give us a virtually contiguous chunk of memory
-> >> (and could be trivially turned into a noop for the case of trying to
-> >> vmap a single large folio).
-> >
-> > I don't see this will work for EROFS because EROFS always supports
-> > variable uncompressed extent lengths and that will break typical
-> > EROFS use cases and on-disk formats.
-> >
-> > Other thing is that large order folios (physical consecutive) will
-> > caused "increase the latency on UX task with filemap_fault()"
-> > because of high-order direct reclaims, see:
-> > https://android-review.googlesource.com/c/kernel/common/+/3692333
-> > so EROFS will not set min-order and always support order-0 folios.
-> >
-> > I think EROFS will not use this new approach, vmap() interface is
-> > always the case for us.
->
-> ... high-order folios can cause side effects on embedded devices
-> like routers and IoT devices, which still have MiBs of memory (and I
-> believe this won't change due to their use cases) but they also use
-> Linux kernel for quite long time.  In short, I don't think enabling
-> large folios for those devices is very useful, let alone limiting
-> the minimum folio order for them (It would make the filesystem not
-> suitable any more for those users.  At least that is what I never
-> want to do).  And I believe this is different from the current LBS
-> support to match hardware characteristics or LBS atomic write
-> requirement.
 
-Given the difficulty of allocating large folios, it's always a good
-idea to have order-0 as a fallback. While I agree with your point,
-I have a slightly different perspective =E2=80=94 enabling large folios for
-those devices might be beneficial, but the maximum order should
-remain small. I'm referring to "small" large folios.
 
-Still, even with those, allocation can be difficult =E2=80=94 especially
-since so many other allocations (which aren't large folios) can cause
-fragmentation. So having order-0 as a fallback remains important.
+在 2025/7/19 20:32, kernel test robot 写道:
+> Hi Zizhi,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on brauner-vfs/vfs.all]
+> [also build test ERROR on jack-fs/for_next linus/master v6.16-rc6 next-20250718]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Zizhi-Wo/fs-Add-additional-checks-for-block-devices-during-mount/20250719-105053
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+> patch link:    https://lore.kernel.org/r/20250719024403.3452285-1-wozizhi%40huawei.com
+> patch subject: [PATCH] fs: Add additional checks for block devices during mount
+> config: i386-buildonly-randconfig-001-20250719 (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/config)
+> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507192025.N75TF4Gp-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> ld.lld: error: undefined symbol: disk_live
+>     >>> referenced by super.c:1385 (fs/super.c:1385)
+>     >>>               fs/super.o:(super_s_dev_test) in archive vmlinux.a
+> 
 
-It seems we're missing a mechanism to enable "small" large folios
-for files. For anon large folios, we do have sysfs knobs=E2=80=94though the=
-y
-don=E2=80=99t seem to be universally appreciated. :-)
+Sorry, disk_live() is only declared but not defined when CONFIG_BLOCK is
+not set...
 
-Thanks
-Barry
+Perhaps, as hch suggests, it can be verified through GD_DEAD?
+
+Thanks,
+Zizhi Wo
+
 
