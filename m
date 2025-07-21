@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-55629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F158B0CE1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 01:27:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A682B0CE5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 01:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC3B17D3E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 23:27:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B3C1AA3202
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 23:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B0024676B;
-	Mon, 21 Jul 2025 23:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2877242D66;
+	Mon, 21 Jul 2025 23:48:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91781D63E8;
-	Mon, 21 Jul 2025 23:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823812E7F;
+	Mon, 21 Jul 2025 23:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753140448; cv=none; b=T+GZjMS4xU4UzLNzRiz9mTwzaolAVf2rlLZZnLA73BUOW4BfwpLmkcNFMHhqEASFAQ3LjbPnVN2NVZGrwJ/vw3XEzGiZpv/tpLKnqke3oz7FOBxjqY+W1+r6tCnogEBH9vqcmqM4fiYPSr+JuZddOcGi1dT4ADzeD0+lr4yjB9U=
+	t=1753141705; cv=none; b=DIGIN+o/BZHkacP48fOmodoIPkR8AjZ5eAnhEjv0plj84EphxEOu2zHb49NEQ+DcPQvh4mDSIjViFVjTdWhJH2Zhhcr54ry+m6+Tx30dojDBoOgKU+5w51WgrOUo3MjWGcVG+HAorGQL5WsjTwYqxp0vWvbzDdi1ZuV1+MbBpvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753140448; c=relaxed/simple;
-	bh=wu6r7SueNbSDs+99zByyvGTNFeG15Yh/QQupmUTFrKs=;
+	s=arc-20240116; t=1753141705; c=relaxed/simple;
+	bh=bLkisddWz2MdV99qRBHcQ8LvMB5+/8ZBftwoAJTqlMM=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=PIXj1sON3DDuICkXBX00USKLQEGCsSilT42MV7K85DTqZR5EALDtKOGQT+7g3vC/YNrR5oEpEb9B4NML9ZhHkq4fW96pu4Dugi7ZpdJ0Jm88kixNQSOq9Arzx3nEh50LyPNgzULbtzKo4JgSiTozN2ehcXHD4zHZBtVD4zCNOp8=
+	 References:Date:Message-id; b=eq9wdNy3ZRE+bHTCVIWIWsGb0uUGppZwXx67LxOwAWFbGvuHnFzzs/dHzF3wFVuuxN5QiUFsiDFKLvB1NuJHvraDadmK6VXb752znawgu4pdKy76NMV8X9rzLYGjDhrzchrmB3PNunIG5XQdnqT7/6skZSHi4svlAuU/ivbOS0Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1udzuk-002uhe-1f;
-	Mon, 21 Jul 2025 23:27:23 +0000
+	id 1ue0F1-002unJ-5B;
+	Mon, 21 Jul 2025 23:48:20 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -48,132 +48,188 @@ Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
  "Alexander Viro" <viro@zeniv.linux.org.uk>,
  "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] VFS: introduce dentry_lookup() and friends
+Subject: Re: [PATCH 0/7 RFC] New APIs for name lookup and lock for directory
+ operations
 In-reply-to:
- <CAOQ4uxhiDNWjZXGhE31ZBPC_gUStETh4gyE8WxCRgiefiTCjCg@mail.gmail.com>
-References:
- <>, <CAOQ4uxhiDNWjZXGhE31ZBPC_gUStETh4gyE8WxCRgiefiTCjCg@mail.gmail.com>
-Date: Tue, 22 Jul 2025 09:27:23 +1000
-Message-id: <175314044347.2234665.1726134532379221703@noble.neil.brown.name>
+ <CAOQ4uxgd=POQATEhPdwqyX-hCQAHCTcxJsvyOS6=2yojMh399Q@mail.gmail.com>
+References: <20250721084412.370258-1-neil@brown.name>,
+ <CAOQ4uxgd=POQATEhPdwqyX-hCQAHCTcxJsvyOS6=2yojMh399Q@mail.gmail.com>
+Date: Tue, 22 Jul 2025 09:48:20 +1000
+Message-id: <175314170043.2234665.2076268504915475261@noble.neil.brown.name>
 
 On Mon, 21 Jul 2025, Amir Goldstein wrote:
-> On Mon, Jul 21, 2025 at 10:55=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+> On Mon, Jul 21, 2025 at 10:46=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
 > >
-> > dentry_lookup() combines locking the directory and performing a lookup
-> > prior to a change to the directory.
-> > Abstracting this prepares for changing the locking requirements.
+> > Hi,
 > >
-> > dentry_lookup_noperm() does the same without needing a mnt_idmap and
-> > without checking permissions.  This is useful for internal filesystem
-> > management (e.g.  creating virtual files in response to events) and in
-> > other cases similar to lookup_noperm().
+> >  these patches (against vfs.all) primarily introduce new APIs for
+> >  preparing dentries for create, remove, rename.  The goal is to
+> >  centralise knowledge of how we do locking (currently by locking the
+> >  directory) so that we can eventually change the mechanism (e.g.  to
+> >  locking just the dentry).
 > >
-> > dentry_lookup_hashed() also does no permissions checking and assumes
-> > that the hash of the name has already been stored in the qstr.
+> >  Naming is difficult and I've changed my mind several times. :-)
 >=20
-> That's a very confusing choice of name because _hashed() (to me) sounds
-> like the opposite of d_unhashed() which is not at all the case.
-
-True.  But maybe the confusion what already there.
-You can "d_add()" a dentry and later "d_drop()" the dentry and if the
-dentry isn't between those two operations, then it is "d_unhashed()"
-which leaks out the implementation detail (hash table) for dentry
-lookup. Maybe d_unhashed() should be d_added() with inverted meaning?
-
-There is only one user of this interface outside of namei.c so I could
-unexported to keep the confusion local.  That would mean
-ksmbd_vfs_path_lookup() would hav to use dentry_lookup_noperm() which
-would recalculate the hash which vfs_path_parent_lookup() already
-calculated (and we cannot simply tell it not to bother calculating).
-Actually it already uses lookup_noperm_unlocked() in the
-don't-need-a-lock-branch which recalculates the hash.....
-
-Would making that name static ease your concern?
-
+> Indeed it is.
+> I generally like the done_ approach that you took.
+> Few minor naming comments follow.
 >=20
-> > This is useful following filename_parentat().
 > >
-> > These are intended to be paired with done_dentry_lookup() which provides
-> > the inverse of putting the dentry and unlocking.
+> >  The basic approach is to return a dentry which can be passed to
+> >  vfs_create(), vfs_unlink() etc, and subsequently to release that
+> >  dentry.  The closest analogue to this in the VFS is kern_path_create()
+> >  which is paired with done_path_create(), though there is also
+> >  kern_path_locked() which is paired with explicit inode_unlock() and
+> >  dput().  So my current approach uses "done_" for finishing up.
 > >
-> > Like lookup_one_qstr_excl(), dentry_lookup() returns -ENOENT if
-> > LOOKUP_CREATE was NOT given and the name cannot be found,, and returns
-> > -EEXIST if LOOKUP_EXCL WAS given and the name CAN be found.
-> >
-> > These functions replace all uses of lookup_one_qstr_excl() in namei.c
-> > except for those used for rename.
-> >
-> > Some of the variants should possibly be inlines in a header.
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> > ---
-> >  fs/namei.c            | 158 ++++++++++++++++++++++++++++++------------
-> >  include/linux/namei.h |   8 ++-
-> >  2 files changed, 119 insertions(+), 47 deletions(-)
-> >
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 950a0d0d54da..f292df61565a 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -1714,17 +1714,98 @@ struct dentry *lookup_one_qstr_excl(const struct =
-qstr *name,
-> >  }
-> >  EXPORT_SYMBOL(lookup_one_qstr_excl);
-> >
-> > +/**
-> > + * dentry_lookup_hashed - lookup and lock a name prior to dir ops
-> > + * @last: the name in the given directory
-> > + * @base: the directory in which the name is to be found
-> > + * @lookup_flags: %LOOKUP_xxx flags
-> > + *
-> > + * The name is looked up and necessary locks are taken so that
-> > + * the name can be created or removed.
-> > + * The "necessary locks" are currently the inode node lock on @base.
-> > + * The name @last is expected to already have the hash calculated.
-> > + * No permission checks are performed.
-> > + * Returns: the dentry, suitably locked, or an ERR_PTR().
-> > + */
-> > +struct dentry *dentry_lookup_hashed(struct qstr *last,
-> > +                                   struct dentry *base,
-> > +                                   unsigned int lookup_flags)
-> > +{
-> > +       struct dentry *dentry;
-> > +
-> > +       inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
-> > +
-> > +       dentry =3D lookup_one_qstr_excl(last, base, lookup_flags);
-> > +       if (IS_ERR(dentry))
-> > +               inode_unlock(base->d_inode);
-> > +       return dentry;
-> > +}
-> > +EXPORT_SYMBOL(dentry_lookup_hashed);
+> >  I have:
+> >    dentry_lookup() dentry_lookup_noperm() dentry_lookup_hashed()
 >=20
-> Observation:
+> As I wrote on the patch that introduces them I find dentry_lookup_hashed()
+> confusing because the dentry is not hashed (only the hash is calculated).
 >=20
-> This part could be factored out of
-> __kern_path_locked()/kern_path_locked_negative()
+> Looking at another precedent of _noperm() vfs API we have:
+>=20
+> vfs_setxattr()
+>   __vfs_setxattr_locked()
+>     __vfs_setxattr_noperm()
+>       __vfs_setxattr()
+>=20
+> Do I'd say for lack of better naming __dentry_lookup() could makes sense
+> for the bare lock&dget and it could also be introduced earlier along with
+> introducing done_dentry_lookup()
+>=20
+> >    dentry_lookup_killable()
+> >  paired with
+> >    done_dentry_lookup()
+> >
+> >  and also
+> >    rename_lookup() rename_lookup_noperm() rename_lookup_hashed()
+> >  paired with
+> >    done_rename_lookup()
+> >  (these take a "struct renamedata *" to which some qstrs are added.
+> >
+> >  There is also "dentry_lock_in()" which is used instead of
+> >  dentry_lookup() when you already have the dentry and want to lock it.
+> >  So you "lock" it "in" a given parent.  I'm not very proud of this name,
+> >  but I don't want to use "dentry_lock" as I want to save that for
+> >  low-level locking primitives.
+>=20
+> Very strange name :)
 
-This patch does exactly that....
+I wanted to encourage people to comment !!
 
 >=20
-> If you do that in patch 2 while introducing done_dentry_lookup() then
-> it also makes
-> a lot of sense to balance the introduced done_dentry_lookup() with the
-> factored out
-> helper __dentry_lookup_locked() or whatever its name is.
+> What's wrong with dentry_lock_parent()?
 
-I don't think I want a __dentry_lookup_locked().  The lock and the
-lookup need to be tightly connected.
-But maybe I cold introduce dentry_lookup_hashed() in patch 2 ...
-Or maybe call it __dentry_lookup() ??
+That sounds like we are locking the parent, but we are conceptually locking
+the dentry (Though at first we do that by locking the whole directory).
+
+>=20
+> Although I think that using the verb _lock_ for locking and dget is
+> actively confusing, so something along the lines of
+> resume_dentry_lookup()/dentry_lookup_reacquire() might serve the
+> readers of the code better.
+
+Hmmm....  there is certainly potential there.  dentry_lookup_continue()
+???
+
+>=20
+> >
+> >  There is also done_dentry_lookup_return() which doesn't dput() the
+> >  dentry but returns it instread.  In about 1/6 of places where I need
+> >  done_dentry_lookup() the code makes use of the dentry afterwards.  Only
+> >  in half the places where done_dentry_lookup_return() is used is the
+> >  returned value immediately returned by the calling function.  I could
+> >  do a dget() before done_dentry_lookup(), but that looks awkward and I
+> >  think having the _return version is justified.  I'm happy to hear other
+> >  opinions.
+>=20
+> The name is not very descriptive IMO, but I do not have a better suggestion.
+> Unless you can describe it for the purpose that it is used for, e.g.
+> yeild_dentry_lookup() that can be followed with resume_dentry_lookup(),
+> but I do not know if those are your intentions for the return API.
+
+The intention is that a few places (maybe a dozen) need to keep a
+reference to the dentry after the operation completes.  Typically this
+is a mkdir or a create.  The caller might then want to create another
+file in the directory so it holds on to the dentry.
+A fairly common case is that virtual filesystems hold an extra reference
+to everything they create so the dcache becomes the primary store.
+
+I suspect that in the latter case it is better to have an explicit
+dget() with a comment saying "preserve in cache until explicitly
+removed" or similar.
+For the former case it might be better to introduce a new dentry
+variable.
+
+ dentry =3D dentry_lookup(....);
+ dentry =3D vfs_mkdir(dir, dentry);
+ if (!IS_ERR(dentry))
+        returnval =3D dget(dentry);
+ done_dentry_lookup(dentry)
+
+ return returnval;
+
+Maybe I should enhance dget() to pass through errors as well as NULL.
+
+Maybe the above would look even better as
+
+ struct dentry *dentry __free(lookup) =3D dentry_lookup(.....);
+ /* handle error */
+ dentry =3D vfs_mkdir(dir, dentry);
+ return dget(dentry);
+
+So I'll try dropping the _return version, enhancing dget, and adding a
+DEFINE_FREE.
 
 Thanks,
 NeilBrown
 
 
+
 >=20
 > Thanks,
 > Amir.
+>=20
+> >
+> >  In order for this dentry-focussed API to work we need to have the
+> >  dentry to unlock.  vfs_rmdir() currently consumes the dentry on
+> >  failure, so we don't have it unless we clumsily keep a copy.  So an
+> >  early patch changes vfs_rmdir() to both consume the dentry and drop the
+> >  lock on failure.
+> >
+> >  After these new APIs are refined, agreed, and applied I will have a
+> >  collection of patches to roll them out throughout the kernel.  Then we
+> >  can start/continue discussing a new approach to locking which allows
+> >  directory operations to proceed in parallel.
+> >
+> >  If you want a sneak peek at some of this future work - for context
+> >  mostly - my current devel code is at https://github.com/neilbrown/linux.=
+git
+> >  in a branch "pdirops".  Be warned that a lot of the later code is under
+> >  development, is known to be wrong, and doesn't even compile.  Not today
+> >  anyway.  The rolling out of the new APIs is fairly mature though.
+> >
+> >  Please review and suggest better names, or tell me that my choices are a=
+dequate.
+> >  And find the bugs in the code too :-)
+> >
+> >  I haven't cc:ed the maintains of the non-VFS code that the patches
+> >  touch.  I can do that once the approach and names have been approved.
+> >
+> > Thanks,
+> > NeilBrown
+> >
+> >
+> >  [PATCH 1/7] VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
+> >  [PATCH 2/7] VFS: introduce done_dentry_lookup()
+> >  [PATCH 3/7] VFS: Change vfs_mkdir() to unlock on failure.
+> >  [PATCH 4/7] VFS: introduce dentry_lookup() and friends
+> >  [PATCH 5/7] VFS: add dentry_lookup_killable()
+> >  [PATCH 6/7] VFS: add rename_lookup()
+> >  [PATCH 7/7] VFS: introduce dentry_lock_in()
+> >
 >=20
 
 
