@@ -1,37 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-55567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D92B0BF53
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:46:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDE6B0BF54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE23189D3AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1033B769D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC04288CA7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CC1288CB6;
 	Mon, 21 Jul 2025 08:45:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B132A28726D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16512877E1;
 	Mon, 21 Jul 2025 08:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753087539; cv=none; b=m6ogK/k44g7RkANT5OWfd5eskTd8GF1ot024sVwp4cYSsOWChzsPsHKYO02xBC+9y34Gi4oz5M7rVExSZRI64QoXp6DxGbKdFcayIut7O5S8IF7qjn+AY30gAUIeEMwWmNBeKiGIZb/vYaFkf6AFofH/6j5pN4EQvpF0gnUAgFw=
+	t=1753087539; cv=none; b=rO9Zcnmpv/oN1tt9ZEs2cO+577svM5VxORjG4SAO5H3am0sA2PesIU4kAes7Pa/f5bCWT4wnlHbvAGTIrr3VPBIFTT4iXOSJb0XtPTLQNn8NpuDPwucQ6hL6g9/JRFx2LUJZD21sDz60pBpunastcyd+foV0FeDjSrkls53hPHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753087539; c=relaxed/simple;
-	bh=tVhz7aa+gDULlGGs3PX3fYP2uhmioG7/Jx/wlcvS6dA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aJyKgrKtRRltpo70v4o6nTQjs6lLlq9JBUiRAb6qO2t4vIZoLeQ1qnX6DM9jMjywTvnUyl0l8/1VM4KxVq4LWsw0k1khtYEUBGnvYe4pUVY89iNcX1tXk7W+YiMZ38FEV75mWodyiF0Y06jKR0bmlPsaUmGDL0EKL3ec8XdY2zw=
+	bh=YItLhh9CIpvXNfKExgtCqj8sAANAfdZnArN08IzlHEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t1nTuGZXt89jYqG75lue6ChorTHy8G5PPpUXmm6zl26uhsXhrHQR7j3yq3bDGKmDBcHBxsEMQKEtAPXDeXiSE8ZxV5TVQN8tN+ZlKQN5FN2lrX2KClgTnjbYFeZ5LrLtcBRJKN0iPuQDhdIpQMATlBFJSmm2n2G1sci6lOrXDiw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1udm9F-002pfn-BK;
+	id 1udm9F-002pfp-Rn;
 	Mon, 21 Jul 2025 08:45:27 +0000
 From: NeilBrown <neil@brown.name>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -40,10 +41,12 @@ To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Jan Kara <jack@suse.cz>
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7 RFC] New APIs for name lookup and lock for directory operations
-Date: Mon, 21 Jul 2025 17:59:56 +1000
-Message-ID: <20250721084412.370258-1-neil@brown.name>
+Subject: [PATCH 1/7] VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
+Date: Mon, 21 Jul 2025 17:59:57 +1000
+Message-ID: <20250721084412.370258-2-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250721084412.370258-1-neil@brown.name>
+References: <20250721084412.370258-1-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,82 +55,200 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+A rename can only rename with a single mount.  Callers of vfs_rename()
+must and do ensure this is the case.
 
- these patches (against vfs.all) primarily introduce new APIs for
- preparing dentries for create, remove, rename.  The goal is to
- centralise knowledge of how we do locking (currently by locking the
- directory) so that we can eventually change the mechanism (e.g.  to
- locking just the dentry).
+So there is no point in having two mnt_idmaps in renamedata as they are
+always the same.  Only of of them is passed to ->rename in any case.
 
- Naming is difficult and I've changed my mind several times. :-)
+This patch replaces both with a single "mnt_idmap" and changes all
+callers.
 
- The basic approach is to return a dentry which can be passed to
- vfs_create(), vfs_unlink() etc, and subsequently to release that
- dentry.  The closest analogue to this in the VFS is kern_path_create()
- which is paired with done_path_create(), though there is also
- kern_path_locked() which is paired with explicit inode_unlock() and
- dput().  So my current approach uses "done_" for finishing up.
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/cachefiles/namei.c    |  3 +--
+ fs/ecryptfs/inode.c      |  3 +--
+ fs/namei.c               | 17 ++++++++---------
+ fs/nfsd/vfs.c            |  3 +--
+ fs/overlayfs/overlayfs.h |  3 +--
+ fs/smb/server/vfs.c      |  3 +--
+ include/linux/fs.h       |  6 ++----
+ 7 files changed, 15 insertions(+), 23 deletions(-)
 
- I have:
-   dentry_lookup() dentry_lookup_noperm() dentry_lookup_hashed()
-   dentry_lookup_killable()
- paired with
-   done_dentry_lookup()
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index 91dfd0231877..d1edb2ac3837 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -387,10 +387,9 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 		cachefiles_io_error(cache, "Rename security error %d", ret);
+ 	} else {
+ 		struct renamedata rd = {
+-			.old_mnt_idmap	= &nop_mnt_idmap,
++			.mnt_idmap	= &nop_mnt_idmap,
+ 			.old_parent	= dir,
+ 			.old_dentry	= rep,
+-			.new_mnt_idmap	= &nop_mnt_idmap,
+ 			.new_parent	= cache->graveyard,
+ 			.new_dentry	= grave,
+ 		};
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index 72fbe1316ab8..abd954c6a14e 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -634,10 +634,9 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 		goto out_lock;
+ 	}
+ 
+-	rd.old_mnt_idmap	= &nop_mnt_idmap;
++	rd.mnt_idmap		= &nop_mnt_idmap;
+ 	rd.old_parent		= lower_old_dir_dentry;
+ 	rd.old_dentry		= lower_old_dentry;
+-	rd.new_mnt_idmap	= &nop_mnt_idmap;
+ 	rd.new_parent		= lower_new_dir_dentry;
+ 	rd.new_dentry		= lower_new_dentry;
+ 	rc = vfs_rename(&rd);
+diff --git a/fs/namei.c b/fs/namei.c
+index cd43ff89fbaa..1c80445693d4 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -5024,20 +5024,20 @@ int vfs_rename(struct renamedata *rd)
+ 	if (source == target)
+ 		return 0;
+ 
+-	error = may_delete(rd->old_mnt_idmap, old_dir, old_dentry, is_dir);
++	error = may_delete(rd->mnt_idmap, old_dir, old_dentry, is_dir);
+ 	if (error)
+ 		return error;
+ 
+ 	if (!target) {
+-		error = may_create(rd->new_mnt_idmap, new_dir, new_dentry);
++		error = may_create(rd->mnt_idmap, new_dir, new_dentry);
+ 	} else {
+ 		new_is_dir = d_is_dir(new_dentry);
+ 
+ 		if (!(flags & RENAME_EXCHANGE))
+-			error = may_delete(rd->new_mnt_idmap, new_dir,
++			error = may_delete(rd->mnt_idmap, new_dir,
+ 					   new_dentry, is_dir);
+ 		else
+-			error = may_delete(rd->new_mnt_idmap, new_dir,
++			error = may_delete(rd->mnt_idmap, new_dir,
+ 					   new_dentry, new_is_dir);
+ 	}
+ 	if (error)
+@@ -5052,13 +5052,13 @@ int vfs_rename(struct renamedata *rd)
+ 	 */
+ 	if (new_dir != old_dir) {
+ 		if (is_dir) {
+-			error = inode_permission(rd->old_mnt_idmap, source,
++			error = inode_permission(rd->mnt_idmap, source,
+ 						 MAY_WRITE);
+ 			if (error)
+ 				return error;
+ 		}
+ 		if ((flags & RENAME_EXCHANGE) && new_is_dir) {
+-			error = inode_permission(rd->new_mnt_idmap, target,
++			error = inode_permission(rd->mnt_idmap, target,
+ 						 MAY_WRITE);
+ 			if (error)
+ 				return error;
+@@ -5126,7 +5126,7 @@ int vfs_rename(struct renamedata *rd)
+ 		if (error)
+ 			goto out;
+ 	}
+-	error = old_dir->i_op->rename(rd->new_mnt_idmap, old_dir, old_dentry,
++	error = old_dir->i_op->rename(rd->mnt_idmap, old_dir, old_dentry,
+ 				      new_dir, new_dentry, flags);
+ 	if (error)
+ 		goto out;
+@@ -5269,10 +5269,9 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 
+ 	rd.old_parent	   = old_path.dentry;
+ 	rd.old_dentry	   = old_dentry;
+-	rd.old_mnt_idmap   = mnt_idmap(old_path.mnt);
++	rd.mnt_idmap	   = mnt_idmap(old_path.mnt);
+ 	rd.new_parent	   = new_path.dentry;
+ 	rd.new_dentry	   = new_dentry;
+-	rd.new_mnt_idmap   = mnt_idmap(new_path.mnt);
+ 	rd.delegated_inode = &delegated_inode;
+ 	rd.flags	   = flags;
+ 	error = vfs_rename(&rd);
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 7d522e426b2d..a21940cadede 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1940,10 +1940,9 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
+ 		goto out_dput_old;
+ 	} else {
+ 		struct renamedata rd = {
+-			.old_mnt_idmap	= &nop_mnt_idmap,
++			.mnt_idmap	= &nop_mnt_idmap,
+ 			.old_parent	= fdentry,
+ 			.old_dentry	= odentry,
+-			.new_mnt_idmap	= &nop_mnt_idmap,
+ 			.new_parent	= tdentry,
+ 			.new_dentry	= ndentry,
+ 		};
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index bb0d7ded8e76..4f84abaa0d68 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -361,10 +361,9 @@ static inline int ovl_do_rename(struct ovl_fs *ofs, struct dentry *olddir,
+ {
+ 	int err;
+ 	struct renamedata rd = {
+-		.old_mnt_idmap	= ovl_upper_mnt_idmap(ofs),
++		.mnt_idmap	= ovl_upper_mnt_idmap(ofs),
+ 		.old_parent	= olddir,
+ 		.old_dentry	= olddentry,
+-		.new_mnt_idmap	= ovl_upper_mnt_idmap(ofs),
+ 		.new_parent	= newdir,
+ 		.new_dentry	= newdentry,
+ 		.flags		= flags,
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 49e731dd0529..bfd62a21e75c 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -770,10 +770,9 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 		goto out4;
+ 	}
+ 
+-	rd.old_mnt_idmap	= mnt_idmap(old_path->mnt),
++	rd.mnt_idmap		= mnt_idmap(old_path->mnt),
+ 	rd.old_parent		= old_parent,
+ 	rd.old_dentry		= old_child,
+-	rd.new_mnt_idmap	= mnt_idmap(new_path.mnt),
+ 	rd.new_parent		= new_path.dentry,
+ 	rd.new_dentry		= new_dentry,
+ 	rd.flags		= flags,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 1948b2c828d3..d3e27da8a6aa 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2005,20 +2005,18 @@ int vfs_unlink(struct mnt_idmap *, struct inode *, struct dentry *,
+ 
+ /**
+  * struct renamedata - contains all information required for renaming
+- * @old_mnt_idmap:     idmap of the old mount the inode was found from
++ * @mnt_idmap:     idmap of the mount in which the rename is happening.
+  * @old_parent:        parent of source
+  * @old_dentry:                source
+- * @new_mnt_idmap:     idmap of the new mount the inode was found from
+  * @new_parent:        parent of destination
+  * @new_dentry:                destination
+  * @delegated_inode:   returns an inode needing a delegation break
+  * @flags:             rename flags
+  */
+ struct renamedata {
+-	struct mnt_idmap *old_mnt_idmap;
++	struct mnt_idmap *mnt_idmap;
+ 	struct dentry *old_parent;
+ 	struct dentry *old_dentry;
+-	struct mnt_idmap *new_mnt_idmap;
+ 	struct dentry *new_parent;
+ 	struct dentry *new_dentry;
+ 	struct inode **delegated_inode;
+-- 
+2.49.0
 
- and also
-   rename_lookup() rename_lookup_noperm() rename_lookup_hashed()
- paired with
-   done_rename_lookup()
- (these take a "struct renamedata *" to which some qstrs are added.
-
- There is also "dentry_lock_in()" which is used instead of
- dentry_lookup() when you already have the dentry and want to lock it.
- So you "lock" it "in" a given parent.  I'm not very proud of this name,
- but I don't want to use "dentry_lock" as I want to save that for
- low-level locking primitives.
-
- There is also done_dentry_lookup_return() which doesn't dput() the
- dentry but returns it instread.  In about 1/6 of places where I need
- done_dentry_lookup() the code makes use of the dentry afterwards.  Only
- in half the places where done_dentry_lookup_return() is used is the
- returned value immediately returned by the calling function.  I could
- do a dget() before done_dentry_lookup(), but that looks awkward and I
- think having the _return version is justified.  I'm happy to hear other
- opinions.
-
- In order for this dentry-focussed API to work we need to have the
- dentry to unlock.  vfs_rmdir() currently consumes the dentry on
- failure, so we don't have it unless we clumsily keep a copy.  So an
- early patch changes vfs_rmdir() to both consume the dentry and drop the
- lock on failure.
-
- After these new APIs are refined, agreed, and applied I will have a
- collection of patches to roll them out throughout the kernel.  Then we
- can start/continue discussing a new approach to locking which allows
- directory operations to proceed in parallel.
-
- If you want a sneak peek at some of this future work - for context
- mostly - my current devel code is at https://github.com/neilbrown/linux.git
- in a branch "pdirops".  Be warned that a lot of the later code is under
- development, is known to be wrong, and doesn't even compile.  Not today
- anyway.  The rolling out of the new APIs is fairly mature though.
-
- Please review and suggest better names, or tell me that my choices are adequate.
- And find the bugs in the code too :-)
-
- I haven't cc:ed the maintains of the non-VFS code that the patches
- touch.  I can do that once the approach and names have been approved.
-
-Thanks,
-NeilBrown
-
-
- [PATCH 1/7] VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
- [PATCH 2/7] VFS: introduce done_dentry_lookup()
- [PATCH 3/7] VFS: Change vfs_mkdir() to unlock on failure.
- [PATCH 4/7] VFS: introduce dentry_lookup() and friends
- [PATCH 5/7] VFS: add dentry_lookup_killable()
- [PATCH 6/7] VFS: add rename_lookup()
- [PATCH 7/7] VFS: introduce dentry_lock_in()
 
