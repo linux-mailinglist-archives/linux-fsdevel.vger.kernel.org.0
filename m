@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-55564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA13B0BF3C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:45:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FADB0BF45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA4F6189AC6B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CB843B6E4B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB459289364;
-	Mon, 21 Jul 2025 08:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2DA289E37;
+	Mon, 21 Jul 2025 08:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="C8pHkJ+A"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="kv5YexTN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F4628725A;
-	Mon, 21 Jul 2025 08:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7119428983B;
+	Mon, 21 Jul 2025 08:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753087501; cv=none; b=NjBCGYQLuRvwsWwrCl8nWZBn/ZimTBpwGerHry/0lNgBCNucx01QNEws2THKpH2DwLyRiGop+qSVU2E6EL82J7cGAwQ+kqP9xMbO+4Am4N1Mc5iz92s0LuKZqgHQ3ufHOwOPrsljUttC7t79t2InclJKQtLM5kt5zm6DbVzGPLI=
+	t=1753087507; cv=none; b=Sczv/hn1AAGNwLSD3XMrZPMysHKQG5R0UFmG/gTHkcDqJIt00lFaeAF1BPU744oUTkKsQh5zyORzjzLESGdv7r/Dc+5TZRDdCxMIz1Q/2zyzZ8j5qYSYot2HUnpaXr//IbR16vmchToP9Bv1ZKnuejaBqPoUCEumv4w3nUqlH2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753087501; c=relaxed/simple;
-	bh=AEvujwBUjRTmHReBUwGHeNu6tYPvFq7/igA3xCswtkY=;
+	s=arc-20240116; t=1753087507; c=relaxed/simple;
+	bh=VDUvhCyC74lM9Wn9zyyY7zzmasB5eWfkNk+iC9mxqfM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gq9Ys+lQWjBSsiOoDwxX/+5QTHQLRL384x8SNZfFp3TgszK1RRQKRPeZasS6hEUFb3hWvIKpc4wmVUBUbofi4MLBW5vZlZeQMP4rOlf+wjdtIUykrSVcSLZiKETpyqMVYMyFSPYysbK6LW3GO+dhpM6JAZK7sTr1wJaLrT4X0sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=C8pHkJ+A; arc=none smtp.client-ip=80.241.56.171
+	 In-Reply-To:To:Cc; b=EY6DEFjH22544usgMEb1zeyqojFA+a3XsLnG3Tjbu20vyaCh+t730Xyj/ePUL7GAU8x6yg52NC47I5AsshWWt1cPIalZQHx1jGa9mTdMfZ5//PpiQZh9yeuD7x/HVuXpeyMW+GFC/Jsgprxy4wOz/5nwwy103Tc5LStX/U2+ApI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=kv5YexTN; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4blv93734kz9st4;
-	Mon, 21 Jul 2025 10:44:55 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4blv995h4Sz9spn;
+	Mon, 21 Jul 2025 10:45:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1753087496;
+	t=1753087501;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sKANVQjFFkeVoyvMJ4VBA7OL+5rWrKofQzXQlRR9R/0=;
-	b=C8pHkJ+Awd/FYZ4yOxQAcf1Uv6XS8s9brBayCd143sYWU9yMPhnFhPNq3Un980FvQNQUeR
-	k27hbfOLAquSu57Xattp7LplP1UouOpcYpW36IV5REkJBIEQtBT6cIidNd5OXZ8jiUAZay
-	/mw3D0X23+fqOq0Pzh8zQqZW+KlAt9MJsdCsG8hMe2SccsSFdWomJ0uJ0IVUSOTClv9Dp4
-	xKUPvpCFj4winaycviD1ZtDKzuYXipjtOfGb5Xkmo0ZZj3Jy4FFSm/uGCcLZ5mJMhhhtHx
-	PzZuA+fiH3nuCLJwrfjbubBCMNJsIcBGvhu8//Og+dEeoIBGUAQE+6EYvqHENg==
+	bh=VeipYVnusBOwdX61rjwa47m9ibpcdMacHHxPihfaDm8=;
+	b=kv5YexTNwCM3tRGGO3uyUB6GteAnuDJPur89GZ4fdCP3deIYQYnzvC0KLwkLtwTUuec36i
+	OPb09CP346CRcoaJRIUC+gpXN1Bo28HW34W/JVXPaZu3dwIqKNx9cKpMERosga84s/rfHQ
+	k7akG9KVlp4HzH1cMJK3fT+axMkXksu5lAWiL9p0hA6oeKH4l7i4KoQrCtbIrfnrhVeHL/
+	4jOyXoTL6sIKT81zdOfj1W9BeNfoo7nxxxfJj37AKQ+XT01MypQLkZG6atTrzhd36LTiHW
+	CNXCbzn12IgP9dD7sgLxLJhvssLP+AgTQhWC3krdtjKT/piMUJmqXePyVWy3Rw==
 Authentication-Results: outgoing_mbo_mout;
 	dkim=none;
 	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
 From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Mon, 21 Jul 2025 18:44:12 +1000
-Subject: [PATCH RFC 2/4] procfs: add pidns= mount option
+Date: Mon, 21 Jul 2025 18:44:13 +1000
+Subject: [PATCH RFC 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-procfs-pidns-api-v1-2-5cd9007e512d@cyphar.com>
+Message-Id: <20250721-procfs-pidns-api-v1-3-5cd9007e512d@cyphar.com>
 References: <20250721-procfs-pidns-api-v1-0-5cd9007e512d@cyphar.com>
 In-Reply-To: <20250721-procfs-pidns-api-v1-0-5cd9007e512d@cyphar.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -72,180 +72,149 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
  linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5544; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=AEvujwBUjRTmHReBUwGHeNu6tYPvFq7/igA3xCswtkY=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWTU/v2Qr/PwJhd71N87f5L+lsvnWLpqt/35VVizVv8P/
- 6YaubSLHaUsDGJcDLJiiizb/DxDN81ffCX500o2mDmsTCBDGLg4BWAi9e8YGZ60FxnIBt+8U6wZ
- s/vUmy3pjn2mV7Z9M3IqKxBhEOL1/snwP3BHGUvThJAbj0tVNkpMCRV9N7V3v8D1E58jAudOip8
- yhQkA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4941; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=VDUvhCyC74lM9Wn9zyyY7zzmasB5eWfkNk+iC9mxqfM=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWTU/v0wj31npZ+X6u/Kuszn3cGfLLyjV2hc5wpc9cHt+
+ 80Ke42+jlIWBjEuBlkxRZZtfp6hm+YvvpL8aSUbzBxWJpAhDFycAjCRX/sY/rtk6Mb+sTm5JTjY
+ RO9E6pRGGaXzMzkkepOmhb+/N0n5uxHD/+SWuWkT2HdELL5wj2HS859M0p7vbggJL3utVSiV8uK
+ jBy8A
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4blv93734kz9st4
+X-Rspamd-Queue-Id: 4blv995h4Sz9spn
 
-Since the introduction of pid namespaces, their interaction with procfs
-has been entirely implicit in ways that require a lot of dancing around
-by programs that need to construct sandboxes with different PID
-namespaces.
+/proc has historically had very opaque semantics about PID namespaces,
+which is a little unfortunate for container runtimes and other programs
+that deal with switching namespaces very often. One common issue is that
+of converting between PIDs in the process's namespace and PIDs in the
+namespace of /proc.
 
-Being able to explicitly specify the pid namespace to use when
-constructing a procfs super block will allow programs to no longer need
-to fork off a process which does then does unshare(2) / setns(2) and
-forks again in order to construct a procfs in a pidns.
+In principle, it is possible to do this today by opening a pidfd with
+pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
+contain a PID value translated to the pid namespace associated with that
+procfs superblock).
+
+However, allocating a new file for each PID to be converted is less than
+ideal for programs that may need to scan procfs, and it is generally
+useful for userspace to be able to finally get this information from
+procfs. This also acts as a sister feature to the pidns= mount option,
+finally allowing userspace full control of the pid namespaces associated
+with /proc instances.
 
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- Documentation/filesystems/proc.rst |  6 +++
- fs/proc/root.c                     | 80 +++++++++++++++++++++++++++++++++++---
- 2 files changed, 80 insertions(+), 6 deletions(-)
+ Documentation/filesystems/proc.rst |  4 +++
+ fs/proc/root.c                     | 52 ++++++++++++++++++++++++++++++++++++--
+ include/uapi/linux/fs.h            |  3 +++
+ 3 files changed, 57 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 5236cb52e357..c520b9f8a3fd 100644
+index c520b9f8a3fd..506383273c9d 100644
 --- a/Documentation/filesystems/proc.rst
 +++ b/Documentation/filesystems/proc.rst
-@@ -2360,6 +2360,7 @@ The following mount options are supported:
- 	hidepid=	Set /proc/<pid>/ access mode.
- 	gid=		Set the group authorized to learn processes information.
- 	subset=		Show only the specified subset of procfs.
-+	pidns=		Specify a the namespace used by this procfs.
- 	=========	========================================================
+@@ -2398,6 +2398,10 @@ pidns= specifies a pid namespace (either as a string path to something like
+ will be used by the procfs instance when translating pids. By default, procfs
+ will use the calling process's active pid namespace.
  
- hidepid=off or hidepid=0 means classic mode - everybody may access all
-@@ -2392,6 +2393,11 @@ information about processes information, just add identd to this group.
- subset=pid hides all top level files and directories in the procfs that
- are not related to tasks.
- 
-+pidns= specifies a pid namespace (either as a string path to something like
-+`/proc/$pid/ns/pid`, or a file descriptor when using `FSCONFIG_SET_FD`) that
-+will be used by the procfs instance when translating pids. By default, procfs
-+will use the calling process's active pid namespace.
++Processes can check which pid namespace is used by a procfs instance by using
++the `PROCFS_GET_PID_NAMESPACE` ioctl() on the root directory of the procfs
++instance.
 +
  Chapter 5: Filesystem behavior
  ==============================
  
 diff --git a/fs/proc/root.c b/fs/proc/root.c
-index ed86ac710384..10ca94be0eef 100644
+index 10ca94be0eef..ee90749ccd8e 100644
 --- a/fs/proc/root.c
 +++ b/fs/proc/root.c
-@@ -38,12 +38,14 @@ enum proc_param {
- 	Opt_gid,
- 	Opt_hidepid,
- 	Opt_subset,
-+	Opt_pidns,
- };
+@@ -23,8 +23,10 @@
+ #include <linux/cred.h>
+ #include <linux/magic.h>
+ #include <linux/slab.h>
++#include <linux/ptrace.h>
  
- static const struct fs_parameter_spec proc_fs_parameters[] = {
--	fsparam_u32("gid",	Opt_gid),
-+	fsparam_u32("gid",		Opt_gid),
- 	fsparam_string("hidepid",	Opt_hidepid),
- 	fsparam_string("subset",	Opt_subset),
-+	fsparam_file_or_string("pidns",	Opt_pidns),
- 	{}
- };
+ #include "internal.h"
++#include "../internal.h"
  
-@@ -109,11 +111,65 @@ static int proc_parse_subset_param(struct fs_context *fc, char *value)
- 	return 0;
+ struct proc_fs_context {
+ 	struct pid_namespace	*pid_ns;
+@@ -408,15 +410,61 @@ static int proc_root_readdir(struct file *file, struct dir_context *ctx)
+ 	return proc_pid_readdir(file, ctx);
  }
  
-+static int proc_parse_pidns_param(struct fs_context *fc,
-+				  struct fs_parameter *param,
-+				  struct fs_parse_result *result)
++static long int proc_root_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 +{
-+	struct proc_fs_context *ctx = fc->fs_private;
-+	struct pid_namespace *target, *active = task_active_pid_ns(current);
-+	struct ns_common *ns;
-+	struct file *ns_filp __free(fput) = NULL;
++	switch (cmd) {
++	case PROCFS_GET_PID_NAMESPACE: {
++		struct pid_namespace *active = task_active_pid_ns(current);
++		struct pid_namespace *ns = proc_pid_ns(file_inode(filp)->i_sb);
++		bool can_access_pidns = false;
 +
-+	switch (param->type) {
-+	case fs_value_is_file:
-+		/* came throug fsconfig, steal the file reference */
-+		ns_filp = param->file;
-+		param->file = NULL;
-+		break;
-+	case fs_value_is_string:
-+		ns_filp = filp_open(param->string, O_RDONLY, 0);
-+		break;
++		/*
++		 * If we are in an ancestors of the pidns, or have join
++		 * privileges (CAP_SYS_ADMIN), then it makes sense that we
++		 * would be able to grab a handle to the pidns.
++		 *
++		 * Otherwise, if there is a root process, then being able to
++		 * access /proc/$pid/ns/pid is equivalent to this ioctl and so
++		 * we should probably match the permission model. For empty
++		 * namespaces it seems unlikely for there to be a downside to
++		 * allowing unprivileged users to open a handle to it (setns
++		 * will fail for unprivileged users anyway).
++		 */
++		can_access_pidns = pidns_is_ancestor(ns, active) ||
++				   ns_capable(ns->user_ns, CAP_SYS_ADMIN);
++		if (!can_access_pidns) {
++			bool cannot_ptrace_pid1 = false;
++
++			read_lock(&tasklist_lock);
++			if (ns->child_reaper)
++				cannot_ptrace_pid1 = ptrace_may_access(ns->child_reaper,
++								       PTRACE_MODE_READ_FSCREDS);
++			read_unlock(&tasklist_lock);
++			can_access_pidns = !cannot_ptrace_pid1;
++		}
++		if (!can_access_pidns)
++			return -EPERM;
++
++		/* open_namespace() unconditionally consumes the reference. */
++		get_pid_ns(ns);
++		return open_namespace(to_ns_common(ns));
++	}
 +	default:
-+		WARN_ON_ONCE(true);
-+		break;
++		return -ENOIOCTLCMD;
 +	}
-+	if (!ns_filp)
-+		ns_filp = ERR_PTR(-EBADF);
-+	if (IS_ERR(ns_filp)) {
-+		errorfc(fc, "could not get file from pidns argument");
-+		return PTR_ERR(ns_filp);
-+	}
-+
-+	if (!proc_ns_file(ns_filp))
-+		return invalfc(fc, "pidns argument is not an nsfs file");
-+	ns = get_proc_ns(file_inode(ns_filp));
-+	if (ns->ops->type != CLONE_NEWPID)
-+		return invalfc(fc, "pidns argument is not a pidns file");
-+	target = container_of(ns, struct pid_namespace, ns);
-+
-+	/*
-+	 * pidns= is shorthand for joining the pidns to get a fsopen fd, so the
-+	 * permission model should be the same as pidns_install().
-+	 */
-+	if (!ns_capable(target->user_ns, CAP_SYS_ADMIN)) {
-+		errorfc(fc, "insufficient permissions to set pidns");
-+		return -EPERM;
-+	}
-+	if (!pidns_is_ancestor(target, active))
-+		return invalfc(fc, "cannot set pidns to non-descendant pidns");
-+
-+	put_pid_ns(ctx->pid_ns);
-+	ctx->pid_ns = get_pid_ns(target);
-+	put_user_ns(fc->user_ns);
-+	fc->user_ns = get_user_ns(ctx->pid_ns->user_ns);
-+	return 0;
 +}
 +
- static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct proc_fs_context *ctx = fc->fs_private;
- 	struct fs_parse_result result;
--	int opt;
-+	int opt, err;
+ /*
+  * The root /proc directory is special, as it has the
+  * <pid> directories. Thus we don't use the generic
+  * directory handling functions for that..
+  */
+ static const struct file_operations proc_root_operations = {
+-	.read		 = generic_read_dir,
+-	.iterate_shared	 = proc_root_readdir,
++	.read		= generic_read_dir,
++	.iterate_shared	= proc_root_readdir,
+ 	.llseek		= generic_file_llseek,
++	.unlocked_ioctl = proc_root_ioctl,
++	.compat_ioctl   = compat_ptr_ioctl,
+ };
  
- 	opt = fs_parse(fc, proc_fs_parameters, param, &result);
- 	if (opt < 0)
-@@ -125,13 +181,21 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		break;
+ /*
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 0bd678a4a10e..aa642cb48feb 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -437,6 +437,9 @@ typedef int __bitwise __kernel_rwf_t;
  
- 	case Opt_hidepid:
--		if (proc_parse_hidepid_param(fc, param))
--			return -EINVAL;
-+		err = proc_parse_hidepid_param(fc, param);
-+		if (err)
-+			return err;
- 		break;
+ #define PROCFS_IOCTL_MAGIC 'f'
  
- 	case Opt_subset:
--		if (proc_parse_subset_param(fc, param->string) < 0)
--			return -EINVAL;
-+		err = proc_parse_subset_param(fc, param->string);
-+		if (err)
-+			return err;
-+		break;
++/* procfs root ioctls */
++#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 1)
 +
-+	case Opt_pidns:
-+		err = proc_parse_pidns_param(fc, param, &result);
-+		if (err)
-+			return err;
- 		break;
+ /* Pagemap ioctl */
+ #define PAGEMAP_SCAN	_IOWR(PROCFS_IOCTL_MAGIC, 16, struct pm_scan_arg)
  
- 	default:
-@@ -154,6 +218,10 @@ static void proc_apply_options(struct proc_fs_info *fs_info,
- 		fs_info->hide_pid = ctx->hidepid;
- 	if (ctx->mask & (1 << Opt_subset))
- 		fs_info->pidonly = ctx->pidonly;
-+	if (ctx->mask & (1 << Opt_pidns)) {
-+		put_pid_ns(fs_info->pid_ns);
-+		fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
-+	}
- }
- 
- static int proc_fill_super(struct super_block *s, struct fs_context *fc)
 
 -- 
 2.50.0
