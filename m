@@ -1,140 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-55548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7F6B0B9DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 03:56:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C25B0BB45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 05:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A09317A5198
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 01:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F00E18972D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 03:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8944D18BC0C;
-	Mon, 21 Jul 2025 01:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C597E1FAC48;
+	Mon, 21 Jul 2025 03:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="OtZ+xECl"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WIlMh/K4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6F98F40;
-	Mon, 21 Jul 2025 01:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61F11E0DEA;
+	Mon, 21 Jul 2025 03:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753062953; cv=none; b=NSDhRalSXiKYMGL5CyYG1T5A+w4lyLnIBYaX8rBvMVHK7fIACPgfIw7vPeV0RnRjFXtsEHpfOwgKAx+2MHmcpEKLDmLLcHJBTO+IvwejT6U/DBiEGJLq0m9jHmIvRnd8A5fPDkxKHhbyu4ebd5k2iR/rJnW3vaWN7f+28gaWE3g=
+	t=1753067659; cv=none; b=H2cgxKbHqh7C6JaOSHdysJ1er/5xnnMWDzw9mJ0gBWBQ0NLSwpU5kZezwE2wsUcKrlm4WVcHRRKJQPyNQdrxWZSGzBJB79rm/KvG93i/Kpk5khno0CcUKYj1nLitl1Hif5fmIhqZ+G0tGCZ38O23+FRTHJd162bNQ9LISfuQru4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753062953; c=relaxed/simple;
-	bh=VAKaSJmtNmzgSVuSIxO04Qedewfp7qeQAq6n5kMBBVk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qKvQxaMeeYFNbFzsZTs6ZOUwyZRYZFXk0XB0jeqngDWQ/PLcM3HnBmUdJplaI9/lExANPttTm8YmWNbqX0Nigdl+f3lwlj+YOtAWyIwrO6KMbFlzZeGfQ6HTqNizzOeEINLPKTiVsjEeKAelCZWlvgAqb3vQyWXxlgkXEVmKtVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=OtZ+xECl; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4blk4y70qSz9ssn;
-	Mon, 21 Jul 2025 03:55:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1753062947;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EEI9/Md4eBKhgsbhNrEczfjHWuVAnYhWLgaDPG7L3mM=;
-	b=OtZ+xEClrgggEL2GJWGMT/1tXSqI7U0/ntdPZyf7jWd+sULr0SDOdr9qSw3PDG1eex2LHX
-	il+hU/JAXyZX1uUU9U093LgZz1fKc/pzXPN1HKq0l/RZsRpvg/k672+wr8+0qa7AcIwdbQ
-	ulTEhrzeabr0D8WAso3OlOWifSKcp5ovEZHbJxqZMSQJaLg3QXS24+aub2dUJn4XyhQSCL
-	/asqtfhGQbS/hRd26QS6lfxRZHPdMP7DiLH86S2YTrqOsvPBwfvzs9u2jL7PvE/ZaneysQ
-	Petc19SYDfXQhjyn2Cpt6PcMyGG59rtUEzouWHaTrOa8qo7y+ztBcwktcrEktg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Mon, 21 Jul 2025 11:55:36 +1000
-Subject: [PATCH] openat2.2: update HISTORY to include epilogue about
- FreeBSD
+	s=arc-20240116; t=1753067659; c=relaxed/simple;
+	bh=KcIuPHoEk9AuwbE4824NkZYgCzpBO0ssry4Gl0Uvdlg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nvKwJkVNSpNb5D90CdxVUlHDBaIhPc97RUK6mVP/sBqnGlXojqUzutS+sXz4NpR8Y2WnUU2P3EXbKQ1xO2fSPvmpNqN3w5RKDGT991sqmfrLE9Hwa68ezZIGan9GkJz/PC7hozfKuQ7ytKZCXBgU8NznT2Wk96vOeDv6clROKtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WIlMh/K4; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753067649; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=lCr7ru8zjyenyzhIwOzkZiA0apFYT5PO1pQKlR1f6Gw=;
+	b=WIlMh/K4n+3t+sVE+jy0ALadodWkNQy8OAtmzfR8Ss184gs6ZnsxY/onLFH5kIM24BWM72cX42JJXu0BAYGEHTd8VYqwiU2L7aYgGUIPxQELw3gF/Af3hhrM17g/bOlFjxODPJ54TDKEnKM9KyugPesZxcb70OLews/+Bce16nw=
+Received: from 30.221.132.193(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WjIdN4u_1753067645 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 21 Jul 2025 11:14:06 +0800
+Message-ID: <7ea73f49-df4b-4f88-8b23-c917b4a9bd8a@linux.alibaba.com>
+Date: Mon, 21 Jul 2025 11:14:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-openat2-history-v1-1-994936dd224a@cyphar.com>
-X-B4-Tracking: v=1; b=H4sIABeefWgC/x3MQQqAIBBA0avIrBN0IqyuEi3MppyNhkYU4d2Tl
- m/x/wuZElOGUbyQ6OLMMVToRoDzNuwkea0GVNgpg1rGg4I9UXrOZ0yPRNtvRruB2kVBrY5EG9/
- /cZpL+QBIhgYmYQAAAA==
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1980; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=VAKaSJmtNmzgSVuSIxO04Qedewfp7qeQAq6n5kMBBVk=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWTUzpN1uBqj+PnQPt8MGbtX6+K5d4WsPbx30ZVX2VUML
- p+uvdm3t6OUhUGMi0FWTJFlm59n6Kb5i68kf1rJBjOHlQlkCAMXpwBMZP8shr+CxpJyp56cWNE2
- ++5f40WSJu+zEjU6NiZpiPx1b6vpDudl+J/8lDdZXIVh2hr3e2zPa3u7anuumU/IfqjZl7i/Ydb
- OWg4A
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4blk4y70qSz9ssn
+User-Agent: Mozilla Thunderbird
+Subject: Re: Compressed files & the page cache
+To: Barry Song <21cnbao@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ linux-erofs@lists.ozlabs.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+ Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+ David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
+ Paulo Alcantara <pc@manguebit.org>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ ntfs3@lists.linux.dev, Steve French <sfrench@samba.org>,
+ linux-cifs@vger.kernel.org, Phillip Lougher <phillip@squashfs.org.uk>,
+ Hailong Liu <hailong.liu@oppo.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>
+References: <aHa8ylTh0DGEQklt@casper.infradead.org>
+ <e5165052-ead3-47f4-88f6-84eb23dc34df@linux.alibaba.com>
+ <b61c4b7f-4bb1-4551-91ba-a0e0ffd19e75@linux.alibaba.com>
+ <CAGsJ_4xJjwsvMpeBV-QZFoSznqhiNSFtJu9k6da_T-T-a6VwNw@mail.gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <CAGsJ_4xJjwsvMpeBV-QZFoSznqhiNSFtJu9k6da_T-T-a6VwNw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-While RESOLVE_BENEATH was based on FreeBSD's O_BENEATH, there was a
-well-known safety issue in O_BENEATH that we explicitly avoided
-replicating -- FreeBSD would only verify whether the lookup escaped the
-dirfd *at the end of the path lookup*.
+Hi Barry,
 
-This meant that even with O_BENEATH, an attacker could gain information
-about the structure of the filesystem outside of the dirfd through
-timing attacks or other side-channels.
+On 2025/7/21 09:02, Barry Song wrote:
+> On Wed, Jul 16, 2025 at 8:28 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+>>
 
-Once Linux had RESOLVE_BENEATH, FreeBSD implemented O_RESOLVE_BENEATH to
-mimic the same behaviour[1] and eventually removed O_BENEATH entirely
-from their system[2]. It seems prudent to provide this epilogue in the
-HISTORY section of the openat2(2) man page (the FreeBSD man page does
-for open(2) not reference this historical connection with Linux at all,
-as far as I can tell).
+...
 
-[1]: https://reviews.freebsd.org/D25886
-[2]: https://reviews.freebsd.org/D28907
+>>
+>> ... high-order folios can cause side effects on embedded devices
+>> like routers and IoT devices, which still have MiBs of memory (and I
+>> believe this won't change due to their use cases) but they also use
+>> Linux kernel for quite long time.  In short, I don't think enabling
+>> large folios for those devices is very useful, let alone limiting
+>> the minimum folio order for them (It would make the filesystem not
+>> suitable any more for those users.  At least that is what I never
+>> want to do).  And I believe this is different from the current LBS
+>> support to match hardware characteristics or LBS atomic write
+>> requirement.
+> 
+> Given the difficulty of allocating large folios, it's always a good
+> idea to have order-0 as a fallback. While I agree with your point,
+> I have a slightly different perspective — enabling large folios for
+> those devices might be beneficial, but the maximum order should
+> remain small. I'm referring to "small" large folios.
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- man/man2/openat2.2 | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Yeah, agreed. Having a way to limit the maximum order for those small
+devices (rather than disabling it completely) would be helpful.  At
+least "small" large folios could still provide benefits when memory
+pressure is light.
 
-diff --git a/man/man2/openat2.2 b/man/man2/openat2.2
-index e7d400920049..53687e676ae5 100644
---- a/man/man2/openat2.2
-+++ b/man/man2/openat2.2
-@@ -478,7 +478,20 @@ Linux 5.6.
- The semantics of
- .B RESOLVE_BENEATH
- were modeled after FreeBSD's
-+.BR O_BENEATH ,
-+but avoided a well-known correctness bug in FreeBSD's implementation that
-+rendered it effectively insecure.
-+Later, FreeBSD 13 introduced
-+.BR O_RESOLVE_BENEATH
-+to replace the insecure
- .BR O_BENEATH .
-+.\" https://reviews.freebsd.org/D25886
-+.\" https://reviews.freebsd.org/D28907
-+FreeBSD's
-+.BR O_RESOLVE_BENEATH
-+semantics are based on Linux's
-+.BR RESOLVE_BENEATH
-+and the two are now functionally equivalent.
- .SH NOTES
- .SS Extensibility
- In order to allow for future extensibility,
+Thanks,
+Gao Xiang
 
----
-base-commit: 5d53969e60c484673745ed47d6015a1f09c8641e
-change-id: 20250721-openat2-history-2a8f71c9e3b0
-
-Best regards,
--- 
-Aleksa Sarai <cyphar@cyphar.com>
+> 
+> Still, even with those, allocation can be difficult — especially
+> since so many other allocations (which aren't large folios) can cause
+> fragmentation. So having order-0 as a fallback remains important.
+> 
+> It seems we're missing a mechanism to enable "small" large folios
+> for files. For anon large folios, we do have sysfs knobs—though they
+> don’t seem to be universally appreciated. :-)
+> 
+> Thanks
+> Barry
 
 
