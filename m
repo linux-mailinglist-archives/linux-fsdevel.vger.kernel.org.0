@@ -1,111 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-55560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB70B0BE20
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 09:53:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D92B0BF53
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284FD18977B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 07:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE23189D3AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257492853EE;
-	Mon, 21 Jul 2025 07:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aGlaKLem"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC04288CA7;
+	Mon, 21 Jul 2025 08:45:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57C127FD76;
-	Mon, 21 Jul 2025 07:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B132A28726D;
+	Mon, 21 Jul 2025 08:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753084390; cv=none; b=qYn2tWdw/DgjRNwIuTT6xfnxBI5S6eb0CHNnHHiMDi45m8LOca9rjNhMPOb6ZD/NNbE6VRP9HPN40OdSyKMqkEk49bhMR8FpznV3tAWFhf4Zlx3RfEaUyV+zejUJpVqhJ/spGYBvJv+IlJImGrGaDfw+auU6D1tHFP1pdEps3ms=
+	t=1753087539; cv=none; b=m6ogK/k44g7RkANT5OWfd5eskTd8GF1ot024sVwp4cYSsOWChzsPsHKYO02xBC+9y34Gi4oz5M7rVExSZRI64QoXp6DxGbKdFcayIut7O5S8IF7qjn+AY30gAUIeEMwWmNBeKiGIZb/vYaFkf6AFofH/6j5pN4EQvpF0gnUAgFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753084390; c=relaxed/simple;
-	bh=6taZzycaUnmHgAcgE9pvQL2MRMhKwSli5kcHkJ69U6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bf1Q3GSLa9BYTAVPldX20iiw0YIjcLW8QidGcMpXiUgBuomOmEGQPDsiKN6cUim3zpN7qeHR6f4lsCQZc3l3HzFdjfJzOZGqcsAOAIJ7AV1J5+sT8FVd+yxsis55rp/ahML3X6GWFb0ODxeF2RMszfJ1JvtJ9GM5P753wAkUXII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aGlaKLem; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6taZzycaUnmHgAcgE9pvQL2MRMhKwSli5kcHkJ69U6g=; b=aGlaKLem6J+XfYUM9Fc5fbVt+/
-	UAoJiuIIlJG4wXgEBf+dXbaqOxifwsCMXZ7LIAvzykycbIqinXszaA9AOm89V7OlkQLtwygpjL4ju
-	4C91B8gB6cqeMmsa+lPd9B3pdeaEYqTg33b3gR1dimXsRR2DLa9x77qMIU/oKnrMLxzd3pJFWAyHx
-	k43YLwydDIUHuo9Yqc7GhrH+csHkLdxtuV0TvzEHufzNZrgazTveW/0oreUtP0+wchRDtET7v3YdK
-	2FfTVRlVHhdCIJex/P2TLm5QNAnndXXa3xo6FPNorA6lL4ErDGCTJdbYCk07uKW/WueAC87vogO4a
-	ODUhYsPw==;
-Received: from [223.233.69.100] (helo=[192.168.1.12])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1udlKU-001cLF-Jl; Mon, 21 Jul 2025 09:52:58 +0200
-Message-ID: <46d2007d-7318-ba57-7908-12c144cdd17a@igalia.com>
-Date: Mon, 21 Jul 2025 13:22:49 +0530
+	s=arc-20240116; t=1753087539; c=relaxed/simple;
+	bh=tVhz7aa+gDULlGGs3PX3fYP2uhmioG7/Jx/wlcvS6dA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aJyKgrKtRRltpo70v4o6nTQjs6lLlq9JBUiRAb6qO2t4vIZoLeQ1qnX6DM9jMjywTvnUyl0l8/1VM4KxVq4LWsw0k1khtYEUBGnvYe4pUVY89iNcX1tXk7W+YiMZ38FEV75mWodyiF0Y06jKR0bmlPsaUmGDL0EKL3ec8XdY2zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1udm9F-002pfn-BK;
+	Mon, 21 Jul 2025 08:45:27 +0000
+From: NeilBrown <neil@brown.name>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7 RFC] New APIs for name lookup and lock for directory operations
+Date: Mon, 21 Jul 2025 17:59:56 +1000
+Message-ID: <20250721084412.370258-1-neil@brown.name>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v5 3/3] treewide: Switch from tsk->comm to tsk->comm_str
- which is 64 bytes long
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org,
- kernel-dev@igalia.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
- laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
- alexei.starovoitov@gmail.com, mirq-linux@rere.qmqm.pl, peterz@infradead.org,
- willy@infradead.org, david@redhat.com, viro@zeniv.linux.org.uk,
- keescook@chromium.org, ebiederm@xmission.com, brauner@kernel.org,
- jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, linux-trace-kernel@vger.kernel.org,
- kees@kernel.org
-References: <20250716123916.511889-1-bhupesh@igalia.com>
- <20250716123916.511889-4-bhupesh@igalia.com>
- <CAEf4BzaGRz6A1wzBa2ZyQWY_4AvUHvLgBF36iCxc9wJJ1ppH0g@mail.gmail.com>
- <c6a0b682-a1a5-f19c-acf5-5b08abf80a24@igalia.com>
- <CAEf4BzaJiCLH8nwWa5eM4D+n1nyCn3X-v0+W4-CwLg7hB2Wthg@mail.gmail.com>
- <CAHk-=whCDEuSH7w=zQBpGkustvis26O=_6cEdjwCanz=ig8=4g@mail.gmail.com>
-From: Bhupesh Sharma <bhsharma@igalia.com>
-In-Reply-To: <CAHk-=whCDEuSH7w=zQBpGkustvis26O=_6cEdjwCanz=ig8=4g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Hi,
 
-On 7/18/25 12:05 AM, Linus Torvalds wrote:
-> On Wed, 16 Jul 2025 at 13:47, Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
->> But given how frequently task->comm is referenced (pretty much any
->> profiler or tracer will capture this), it's just the widespread nature
->> of accessing task->comm in BPF programs/scripts that will cause a lot
->> of adaptation churn. And given the reason for renaming was to catch
->> missing cases during refactoring, my ask was to do this renaming
->> locally, validate all kernel code was modified, and then switch the
->> field name back to "comm" (which you already did, so the remaining
->> part would be just to rename comm_str back to comm).
-> Yes. Please.
->
-> Renaming the field is a great way to have the compiler scream loudly
-> of any missed cases, but keep it local (without committing it), and
-> rename it back after checking everything.
->
->
+ these patches (against vfs.all) primarily introduce new APIs for
+ preparing dentries for create, remove, rename.  The goal is to
+ centralise knowledge of how we do locking (currently by locking the
+ directory) so that we can eventually change the mechanism (e.g.  to
+ locking just the dentry).
 
-Sure, I will send v6 with the above suggested change.
+ Naming is difficult and I've changed my mind several times. :-)
 
-Thanks.
+ The basic approach is to return a dentry which can be passed to
+ vfs_create(), vfs_unlink() etc, and subsequently to release that
+ dentry.  The closest analogue to this in the VFS is kern_path_create()
+ which is paired with done_path_create(), though there is also
+ kern_path_locked() which is paired with explicit inode_unlock() and
+ dput().  So my current approach uses "done_" for finishing up.
+
+ I have:
+   dentry_lookup() dentry_lookup_noperm() dentry_lookup_hashed()
+   dentry_lookup_killable()
+ paired with
+   done_dentry_lookup()
+
+ and also
+   rename_lookup() rename_lookup_noperm() rename_lookup_hashed()
+ paired with
+   done_rename_lookup()
+ (these take a "struct renamedata *" to which some qstrs are added.
+
+ There is also "dentry_lock_in()" which is used instead of
+ dentry_lookup() when you already have the dentry and want to lock it.
+ So you "lock" it "in" a given parent.  I'm not very proud of this name,
+ but I don't want to use "dentry_lock" as I want to save that for
+ low-level locking primitives.
+
+ There is also done_dentry_lookup_return() which doesn't dput() the
+ dentry but returns it instread.  In about 1/6 of places where I need
+ done_dentry_lookup() the code makes use of the dentry afterwards.  Only
+ in half the places where done_dentry_lookup_return() is used is the
+ returned value immediately returned by the calling function.  I could
+ do a dget() before done_dentry_lookup(), but that looks awkward and I
+ think having the _return version is justified.  I'm happy to hear other
+ opinions.
+
+ In order for this dentry-focussed API to work we need to have the
+ dentry to unlock.  vfs_rmdir() currently consumes the dentry on
+ failure, so we don't have it unless we clumsily keep a copy.  So an
+ early patch changes vfs_rmdir() to both consume the dentry and drop the
+ lock on failure.
+
+ After these new APIs are refined, agreed, and applied I will have a
+ collection of patches to roll them out throughout the kernel.  Then we
+ can start/continue discussing a new approach to locking which allows
+ directory operations to proceed in parallel.
+
+ If you want a sneak peek at some of this future work - for context
+ mostly - my current devel code is at https://github.com/neilbrown/linux.git
+ in a branch "pdirops".  Be warned that a lot of the later code is under
+ development, is known to be wrong, and doesn't even compile.  Not today
+ anyway.  The rolling out of the new APIs is fairly mature though.
+
+ Please review and suggest better names, or tell me that my choices are adequate.
+ And find the bugs in the code too :-)
+
+ I haven't cc:ed the maintains of the non-VFS code that the patches
+ touch.  I can do that once the approach and names have been approved.
+
+Thanks,
+NeilBrown
+
+
+ [PATCH 1/7] VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
+ [PATCH 2/7] VFS: introduce done_dentry_lookup()
+ [PATCH 3/7] VFS: Change vfs_mkdir() to unlock on failure.
+ [PATCH 4/7] VFS: introduce dentry_lookup() and friends
+ [PATCH 5/7] VFS: add dentry_lookup_killable()
+ [PATCH 6/7] VFS: add rename_lookup()
+ [PATCH 7/7] VFS: introduce dentry_lock_in()
 
