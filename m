@@ -1,467 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-55597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96C6B0C4F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 15:16:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98445B0C538
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 15:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D89A5171C35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 13:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49013A47E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 13:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDB02D663B;
-	Mon, 21 Jul 2025 13:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA1F2D9792;
+	Mon, 21 Jul 2025 13:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LRDaqCur";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xc/fbJgM"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oqtSgejU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yTE9LxRL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oqtSgejU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yTE9LxRL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D32146A66;
-	Mon, 21 Jul 2025 13:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753103796; cv=fail; b=W/fjY0ug+rIc3m8KCOGxoaLQHG1fWpx6fJ7VcXnDQGu+cg78DLodTeS7haY+/U8TH+EA2/8MnxyS05C10haWLZNoHf/uwZPsqTymT2ryS7y1HmUhlYWS1lfcsIzwrMYFiBn3b57tm7um3uqwcFIhgwxR9Gwubq5Wyh/bgDheTTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753103796; c=relaxed/simple;
-	bh=PUaETVANWyPHHHLi2JuXHFy1rftiHs6xhBtRzJDs+Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UWPA0n8fJvLSuxQhAXTqDMH/Yq7wwmL9yFuMJjcmWT7GyOWVpYzpjYDAk+q0BQEHb5gOkwhu4F/TohgoCCOic91ZirfjH3r2MW8N1jjbC47ddaI26Nsm8pkkbCfSyzXmlz7dPW1jLb/X+JXP8zCmkYhxIPnMjSWCo0OYJzirb8M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LRDaqCur; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xc/fbJgM; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LCNCaY028651;
-	Mon, 21 Jul 2025 13:16:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=vcSjdx+9L0nxNpOCGN
-	Y184HxgVlzp0meBngnd/9yMF4=; b=LRDaqCurPKApvaqvAwac61FD911ZOxJJH/
-	Ebd7wO4tCHK9aOOA+E4g+xdAqVd08ZXJwId1fg/mN+HOa+ESgaqDblrBsy9EZAhD
-	jhDvqC1PmG7GCbh5tykmmYvqz6BqewZlsVzvnsoMEW36681nYbg40IHO0QQqs4r0
-	Yhb380MRFwjIMaHQwsWpZU54fW5D6wgTz4PiVaJl3qwsk+G33qjRy2dvuvfTmksd
-	c7qybDnt/lszGlkUKAT3r7UAa8Y+AOBhajShu9+eeIDpXx5hQxxEkS/h3yp5MoUQ
-	bNmRn4PrOQGar88dZlwz18nUzLgALpZuCy1bYesKGaLbir/rFPlg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48057qtnak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Jul 2025 13:16:00 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56LCUOah014657;
-	Mon, 21 Jul 2025 13:16:00 GMT
-Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013053.outbound.protection.outlook.com [40.107.201.53])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tea9wu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Jul 2025 13:16:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r6ZJQS2AG+sY4s/3lgeRwJcok1WbiCwnguPISk4jbrDRIHsNjMxWuo8NUiZWKOY2jSwVAdM/2zZgSh2PFLkKIZuyW/AmmWx4kPvA7S6fhGfGQVp1/nmW2FkVslDVY9CI8FF9379cjcffA6kF4mXEhmSOX1aAuWGhDXfE7mDatCIanIvvLQy2YB51yCt2/PX+nLwbJ8Y13zzrv6TNiVFgg1DtKLVWCmQXX/iVBzzXsayWKNYbFA6wIycoTBeIXweRNFgnJLldF13WIvhfR2WQVhda81oc7LNjFXcEC3qJhcjOOVadAx0m7BOZBcbBgj2GW9wY/zvB6OnLf0WMfwhyBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vcSjdx+9L0nxNpOCGNY184HxgVlzp0meBngnd/9yMF4=;
- b=Q5zkT/zTmljldiricIrKSI9jSYKTSn4RUoq0qFLi15rp55RvoyckFmA6fy7gNxBItGjDvgdsmctoamGUeK1tYayl81YpxYZlP28vjGXK/ySgHF3zSNgHxYV6RVftcaC3p3ilA0QXHnX9dEZBmc9O3zN1XK7LIaP/anxNXwi9na/r+z2VPkwdwg4f2WKeRtZHedAb6t0FfILKkvwd7uxlhTHCe73TTz42EZd+9QQXJu/DOG4YieUEKhC74dZblkj7/+Tlrcf70v74PMeO7D5Ull5WBJUfyCc4qQh2+rpLMlFi8vo1ae6YWZvHMWR7C0lmXkxMriDZkDGrxO8p9yEUCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vcSjdx+9L0nxNpOCGNY184HxgVlzp0meBngnd/9yMF4=;
- b=xc/fbJgMOhfXM6hbgfJpT+9kEB5yQTSqAvaOm/Svs2U8uEkzVkb6kcHMIN90aLAQWWJi7E8jyJNTLnvWqWwCVsNskm73pQA2Mv96ddGmx48wmTyV48NJVtecUBW6jNf9xt3M8BsYdGGgwmbCAoAuZqVPIXr9GfTDdgTHc922Nw8=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH7PR10MB7694.namprd10.prod.outlook.com (2603:10b6:510:2e5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 13:15:57 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 13:15:57 +0000
-Date: Mon, 21 Jul 2025 14:15:54 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Usama Arif <usamaarif642@gmail.com>, SeongJae Park <sj@kernel.org>,
-        Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-Message-ID: <803a927e-1c36-4934-9cda-a700acdaad0d@lucifer.local>
-References: <20250721090942.274650-1-david@redhat.com>
- <686d2658-a06e-46cb-af22-440b75ac34ed@lucifer.local>
- <ff53959b-a402-4030-b11a-dc19fe36ee4e@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff53959b-a402-4030-b11a-dc19fe36ee4e@redhat.com>
-X-ClientProxiedBy: LO4P123CA0667.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:316::20) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846DC6F06B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 13:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753104624; cv=none; b=Phaf3NdMOamUsWybaygmuTURMFJwGhMq6Y4dTGA1lHjA6qdLWOhB5mVNttbSvhYZF7WfXFYHZuDKCqoU7QyjRfmNEzEUOEk7/JIGdjlPA2RkOPs9sKbKV+ZY8gKiu2z0ViKZuxysG5eGBONkVH7NEBcJIYJR7WEpLq5aP7a8+JA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753104624; c=relaxed/simple;
+	bh=Xf3tL8TpHMcwIYWXK+Cl3ZYOiJTLp6Car2XMD35q4Yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJdmQjLJHyDLSn4TKLGpQkSoNA0JhbgGvZPxpiuYvUW1xhOftJBZxP37JyRfGVBgUkSlBwkCacPcEKM3U0K4m080DlIdC5mOfzWlq/ZHsJ7Ta1yerL568njrK/9AtSzaEri+toA4N5uYRRRFOqX4l8leswvKRNky1uL+ZPuX+Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oqtSgejU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yTE9LxRL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oqtSgejU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yTE9LxRL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A5B7921B86;
+	Mon, 21 Jul 2025 13:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753104619; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
+	b=oqtSgejUTICJzhBKlkFyj8Tv6TBZ7b5g3f3pRqU00nqdP1pQZ9RYGgTbwWRP6bl3Ag5Q06
+	lNs65MNLmQSy2Ff6Hs0GVZm4tPio2688eBdEYgwOH8hL3HdC0pWQZxmAYyFS2/+RTjwvMS
+	j3hqomOAFHTsaSMg7P5cpqCNdD6gQwY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753104619;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
+	b=yTE9LxRLSxYvDfmv3jiW9tAHZ8xAAUcvWzT0IN4zAmkD+N8A8Z+CY7t30wiXUzWjokPN1k
+	UAwX92wHByIDrtAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753104619; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
+	b=oqtSgejUTICJzhBKlkFyj8Tv6TBZ7b5g3f3pRqU00nqdP1pQZ9RYGgTbwWRP6bl3Ag5Q06
+	lNs65MNLmQSy2Ff6Hs0GVZm4tPio2688eBdEYgwOH8hL3HdC0pWQZxmAYyFS2/+RTjwvMS
+	j3hqomOAFHTsaSMg7P5cpqCNdD6gQwY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753104619;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
+	b=yTE9LxRLSxYvDfmv3jiW9tAHZ8xAAUcvWzT0IN4zAmkD+N8A8Z+CY7t30wiXUzWjokPN1k
+	UAwX92wHByIDrtAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3FB1D136A8;
+	Mon, 21 Jul 2025 13:30:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fQA/D+tAfmikUwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 21 Jul 2025 13:30:19 +0000
+Message-ID: <651d0f59-990d-460e-829b-be5cb1ee7fe7@suse.cz>
+Date: Mon, 21 Jul 2025 15:30:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH7PR10MB7694:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc868047-340d-4b08-6981-08ddc858babf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nQCK9kUg/Dh0mEaTm4e8EUko0dWc2j64jC0hiUcGVIuH1xc2wSGbLFIO5/xP?=
- =?us-ascii?Q?zkt2QweHXb73rjg6iEHxp5Lmv46vcrpJpjyzvhEWNehpviwVjQhZZK/1LHyi?=
- =?us-ascii?Q?DScWi36MEK8wTs7bs374oi0XcH/em2UcJbe/Amgk2gCzGRPOfIrKRM6f7H9P?=
- =?us-ascii?Q?ANfon658LS02UKkYAM7Q7EemTJeZBVSvbIWq6+6eHI3qS6+Z4P4zFC9dWQ22?=
- =?us-ascii?Q?oiKQaii51DIdW3GFBtWVaD2RE8Chuul4EAIpa0dr3STznTjNpG3nv29XKXdM?=
- =?us-ascii?Q?JpSUNu3YAAJhQQQORE+bM52HeLULp0fINldlf8PeJjwO36SLGePDAhGuCzQw?=
- =?us-ascii?Q?iC7QiVD9TrWsyw4+DisdoQJIzUXjJ4WjzKGZALbG/W04BE2tD0DB2IdcZtgO?=
- =?us-ascii?Q?7mSf0gc0WhCCzjgrsyuI4KQ4GotMxTLe5xqjDQnx3d1iyb2/kCc8/jBX8NLv?=
- =?us-ascii?Q?sfzZ37O+eLygd9PYermh8sfbOZg/Pyv4F8PUWnrtYIbyv7fMcY80RfvIvOm7?=
- =?us-ascii?Q?rAUlFHuHX2wEyXKMRgmaao76HMdtnLdbxvqP6zRd9P+RVkoOklcGdKPIXWYO?=
- =?us-ascii?Q?Vwj3xEnxag7pSzYfVeeDsZw+1/uoRqS+5K/+h7nUq/19jqu5dAD9dl+Wqzdc?=
- =?us-ascii?Q?wgJTaR5oclL87/sgyOIdcLykpq8VpAMDgN8XQOCUczi0gbSRiFrTqwKrfXfo?=
- =?us-ascii?Q?N1uQpS7Qu61qwvPrvDyyt21rRdLYvGo7eTR5StnoXgNucXLAc2iI7T8yUyip?=
- =?us-ascii?Q?ujIaixlaoHAWISRtFdaN91azAfPiq63LS9BXXtMTflZ0bi7WLF30HhJd8IqI?=
- =?us-ascii?Q?PZohfg5mTfuwITflh3rimKru/InioV40ww7cHKgfVZJKgDADWkL/fD5q+bu2?=
- =?us-ascii?Q?BL/mhpyC7vmiqi8pg1GvHAQACBB4NDKRqkgUjQeswGUxbFplHxhjQX4KACGi?=
- =?us-ascii?Q?To2RLf9+XccbJ4JN7SVgV4f21sIc9nB96PRF+hw7bkpkq+Z2CO/KFFGC7MJZ?=
- =?us-ascii?Q?hGxB3DMCPOp9ctevfSC3dFQgMduNvRTKBdbxjER7Gn+Nj4cALspnPtM7mU46?=
- =?us-ascii?Q?0dUPwZ3lkQKL2K9BrnN6niFv45O7qijhoNl3qiZX2j3LGcDRi8FWjFSgp7hJ?=
- =?us-ascii?Q?Qy9v12qx7ZZifHP0YInSgG03eh8H7C0lnNcoP3hJRpLjqmeHpwXFnVtEpuHP?=
- =?us-ascii?Q?1L31kGobK3O4k45u4AenBhbfMMPmUVq3rm/YH3Ciir/Y3kybRdS7UGi57OyI?=
- =?us-ascii?Q?fXZvm/8gB4Q6jKfUXhT620yCw+2zjCiSvGV7zAdxafopkbRNBYQ1F6IgyEMU?=
- =?us-ascii?Q?6tZv38aHangeLnRZ8X4F03WgSuKIeaX2agOi0aie1CkyWPffvs/m04ZaZeK5?=
- =?us-ascii?Q?0Q2ns5ACA6y3ayZOt4GIsvhRIcsL73sxpGIIf8BQGBfEh2e486+isbVS//EG?=
- =?us-ascii?Q?eduSJTm4Q5I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rtmCu+G0+rt09sQgkPxu8A2a2m/LBkRsotzNq4dZUxt1P11fcsHzb0ZnNk/f?=
- =?us-ascii?Q?OuuUoXl6YzBz3/PoOEWTaH6H0G/hfSKOaQO4rO0Gfoz3XjAH6kTxeux1U/WA?=
- =?us-ascii?Q?U59SrtoT7MawT2njetFkvjeq6caP8KvK9d5zTf6qh9SvkO/cyzdvGtK8ZlQu?=
- =?us-ascii?Q?DqadAuwPRHN6bFvYIK64ALabpdBcCXZpixT37fV9UVACQcNZFu2t3YhlsD1h?=
- =?us-ascii?Q?2UiFZHApq6aHB9zTNxE8loOrAYwqTqLQvCIL15A1fxi/QrEUYoWgFg45ieCi?=
- =?us-ascii?Q?Wrbo5t/NvNf+/qIVtaKNzKGzdUI+/ErP+xHgFEHCGRsrg2ZyYLyiTOhkEYkK?=
- =?us-ascii?Q?zILdgEHoNKneY4LbVUzgkKSstNN+IPOQ1w+29+ecHsXGCY1vcHsWVDzEz/8j?=
- =?us-ascii?Q?nmqDhcrp2HYaG1t5SsnHQITXmpN0E3w2BqL09aW3i+kNBqIYUA1qHSykgTXc?=
- =?us-ascii?Q?SzxhLftDR750Yt0PpvBFZlLtOmM4N3uiI5E3RySjqliBILfto2IpEubaihZ/?=
- =?us-ascii?Q?anpGvGfTzZAxZ6ZcwHHcRNQ0IgrdC2J7nfOomv74fdm7BCFuA8TER95vlxAH?=
- =?us-ascii?Q?lUqt5RLpzMepFBdWE3QPt6QkvvQdxu/PGmVn8/z5A6ZGoUZjATovbf8oJHP9?=
- =?us-ascii?Q?pYf8kHYcwBeKR5euGMDazBkyD+Hhprxhd8Q75r0nm91vZ51udZ17b+y1sTta?=
- =?us-ascii?Q?xlSfeZ1MnLr5fZwVuLXgG0vZ75jjSNjrU/Si6s+a+Rq5O6ZG7mi5xBYqtwNm?=
- =?us-ascii?Q?F0/O/mOQrUMXRzuMpyGDX4zoc9KOj3ktcSBcAq6VFSxXkdHDv6iDbYIbWQ0p?=
- =?us-ascii?Q?27DTffME3+5jM+p8zQA8rng2O5OWICjoKm70qcZwAUpEgcBNPN00YAU5Njt+?=
- =?us-ascii?Q?rhSPlsDOEIOhFCBavPgBRYAbrkQ90dM/t/xBLXwbLvfmWDR++5b27PUTIYK2?=
- =?us-ascii?Q?/oB1mFf68fEK5qnO9XNJ/iURTyhX8OJ0CozB/BQFsCJ/llzKt3oF5+YqYrcW?=
- =?us-ascii?Q?kbZ0t7RoAb6tkd63na3dcX8kihkwxyoam2Pnd7cGa0JiWM0VU74RKU8WuLJ0?=
- =?us-ascii?Q?RF3OQSvsx1pyR891oaCH8uCf5ZNSr5C2DVi2luEEgDrHXQyAfN8nmHN+m+oj?=
- =?us-ascii?Q?plV8Y0tWb4o1QkqCXgO1t4wqJjdxrhtqfB09GcESPJYXE0iwcH1ZoYI+b1eL?=
- =?us-ascii?Q?3/fxi4u1WPdklHUUZNqxpC1d2oa1kLkVXTbUhLjxOuD65HhR0pEgKHDvo4Bd?=
- =?us-ascii?Q?LL7/4JjmRFN+v/FR1j+dcJdDDNm5fh51f34Wj8ks3TcPX2QVQYAVqp1Rgm2I?=
- =?us-ascii?Q?dweCcRmxxZgTLqVHyqg5B2oGFLUYC1F3SgynljuG65Rpc/ofR8UJRUzDZSsd?=
- =?us-ascii?Q?TCZ7n/js1le9wRQDQkmLCSP9WS0utQxJH96nbOG9AOaZ7+JzChjuMsXXuHZR?=
- =?us-ascii?Q?21BcbrwymzkVOnCalc5ZHZEUgT5341BCAxg69M0ozDR4anknumpkCtM7Uha6?=
- =?us-ascii?Q?yV/3K1EvMOVs8j9zZAnNeuq/9W/jNIq1OX/NjhMa0xS3bkY7Fs84kjbo9DOx?=
- =?us-ascii?Q?pxnLFzEz6GYKYx0ZlkM44XZj9C2k+VGtfY0P701qDmEh2lR9d2XivO3hi/8C?=
- =?us-ascii?Q?iQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	be3CHJ9V5rPb8fsfXUMWEXy5CYeEc3NZlkJs1jHfFhZkjcdb5sdFs0ml7Rj/kCEAg58Bhxfi28I7nwcOqJzak3hD8bUujfMB6xK+UJA2LYenhJ8pE+CFAHyOY1xS/u77rqFqapiXCSmNz76w/TXAVt/kfQ68Qn7p5d3uvl5qTo3lSwPB/CXu0ImqbgMngL+Vgtt4pqIRuPzpdlnl/xZWvzIFRWtZ8olSZZ4hDCiGNi3QvC1AIveppirObgFNHV1JtbCMZeQpUcXDyCv4Keee1MxNGFjr19b4HcGIdiS1Gnq6MJh2SGTFTd62qAZFhBYJxoi1yO9IXan4mKbmHSw3xnpndjcgfRaAMa1paz4xjowjNtRJv/7AMNY8s4tyaUohNzgklWxUUDQCQgg1y9xE9L/2yZXDenUsWd7o9t9DaUts/nhZVTc7r2/5TPevW877cs+shJ6IYvfoNT+5+4d2IsXGJqUyTsEm7LqiVflJVsynFR1rE7yYqxsUJ++L4bZu0o8HDVWC7xiwkbxFBclDzphH5REVDLvtjduv4KVAxRR4CDkAuwMWquYBOVRUMIx9g/v7pf9c3f8ogiMnOUufhMLSgF1r+++B4/n7lOzoHaE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc868047-340d-4b08-6981-08ddc858babf
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 13:15:57.4139
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aU9Tum+quZvpzvm3wfVmgaHRVOmg/T4pHHdK3G3dF/kGlv2znQ1CiAl0fC2xDPT7FzAoFjayox+BuMagnHKOsOsVspp3u8HJfOSS5UvIrNs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7694
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_03,2025-07-21_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 bulkscore=0
- suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507210114
-X-Authority-Analysis: v=2.4 cv=MNRgmNZl c=1 sm=1 tr=0 ts=687e3d91 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=4qlYrgqfQ3gvM0pljQkA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12061
-X-Proofpoint-ORIG-GUID: gdH79BSLNc6SJ928eye_aGF_qkd5TxM8
-X-Proofpoint-GUID: gdH79BSLNc6SJ928eye_aGF_qkd5TxM8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDExOCBTYWx0ZWRfX8eHu/h4QjHty
- koWiYX4kctTvJoeUAoDvTUDh6maKhrABezd8y2s+TcIpyxaelJJPu34NAu7D9hQQ60oO8GMoNZL
- GieFeMMg5Nr1Qf9mX50rX1aCH2LLtw8+bTBYuOw4yH+k9JC72AL09g9rVvg/xILUxdXOlxgZo81
- WziheIUhIzmNWzKzqzlIqSuh60xh65oh/UVazwsoxjHNqg1MZGXUV+vqbIWkHZ90nqwUncZNA6A
- 7J+izETMtCuVxs9tz3qgY3AO3dLeDhBR7AvccGKdd2Jlm3GNn7+iT7UL2MmdbAYJ35cUFskI0AN
- +PlLRIxByBMqSIoGW0S04NbyCyQrd1SYLeDiZR3xBliNPMZVBlg1JZLK5BaIPCXthvNeUsvQqCn
- ETxMK4B7bS4khKAXVDhDMngXuTJg3m21sFpVqeMUjctgH92k/nJ19c+jRF7G8W1UyAFWzayn
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 6/7] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy
+Content-Language: en-US
+To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com,
+ willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+ pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
+Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
+ vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
+ jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
+ yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250713174339.13981-2-shivankg@amd.com>
+ <20250713174339.13981-9-shivankg@amd.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250713174339.13981-9-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,paul-moore.com,namei.org,hallyn.com,suse.cz,redhat.com,intel.com,amd.com,nvidia.com,amazon.com,kernel.org,infradead.org,googlemail.com,amazon.co.uk,gmail.com,sk.com,gourry.net,linux.dev,linux.alibaba.com,arm.com,quicinc.com,vger.kernel.org,kvack.org,lists.linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[66];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On Mon, Jul 21, 2025 at 01:45:18PM +0200, David Hildenbrand wrote:
-> > >
-> > > (2) Stay at THP=none, but have "madvise" or "always" behavior for
-> > >      selected workloads.
-> > >
-> > > (3) Switch from THP=madvise to THP=always, but keep the old behavior
-> > >      (THP only when advised) for selected workloads.
-> > >
-> > > (4) Stay at THP=madvise, but have "always" behavior for selected
-> > >      workloads.
-> > >
-> > > In essence, (2) can be emulated through (1), by setting THP!=none while
-> > > disabling THPs for all processes that don't want THPs. It requires
-> > > configuring all workloads, but that is a user-space problem to sort out.
-> >
-> > NIT: Delete 'In essence' here.
->
-> I wanted "something" there to not make it look like the list keeps going on
-> in a weird way ;)
+On 7/13/25 19:43, Shivank Garg wrote:
+> Previously, guest-memfd allocations followed local NUMA node id in absence
+> of process mempolicy, resulting in arbitrary memory allocation.
+> Moreover, mbind() couldn't be used  by the VMM as guest memory wasn't
+> mapped into userspace when allocation occurred.
+> 
+> Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
+> operation. This allows the VMM to map the memory and use mbind() to set the
+> desired NUMA policy. The policy is stored in the inode structure via
+> kvm_gmem_inode_info, as memory policy is a property of the memory (struct
+> inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
+> and passed to filemap_grab_folio_mpol() to ensure that allocations follow
+> the specified memory policy.
+> 
+> This enables the VMM to control guest memory NUMA placement by calling
+> mbind() on the mapped memory regions, providing fine-grained control over
+> guest memory allocation across NUMA nodes.
+> 
+> The policy change only affect future allocations and does not migrate
+> existing memory. This matches mbind(2)'s default behavior which affects
+> only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
+> flags, which are not supported for guest_memfd as it is unmovable.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
 
-I mean it's not a big deal :P just have memories of English teachers telling me
-off for repetition of such phrases...
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-> > > While we could emulate (3)+(4) through (1)+(2) by simply disabling THPs
-> > > completely for these processes, this scares many THPs in our system
-> > > because they could no longer get allocated where they used to be allocated
-> > > for: regions flagged as VM_HUGEPAGE. Apparently, that imposes a
-> > > problem for relevant workloads, because "not THPs" is certainly worse
-> > > than "THPs only when advised".
-> >
-> > I don't know what you mean by 'scares' many THPs? :P
->
-> They are very afraid of not getting allocated :)
-
-Haha they sound cute!
-
-> >
-> > > of having a system-wide config to change PR_SET_THP_DISABLE behavior, but
-> > > I just don't like the semantics.
-> >
-> > What do you mean?
->
-> Kconfig option to change the behavior etc. In summary, I don't want to go
-> down that path, it all gets weird.
-
-Yeah please don't! :>)
-
-
-> > > Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
-> > > we essentially want to say "leave advised regions alone" -- "keep THP
-> > > enabled for advised regions",
-> >
-> > Seems OK to me. I guess the one point of confusion could be people being
-> > confused between the THP toggle 'madvise' vs. actually having MADV_HUGEPAGE
-> > set, but that's moot, because 'madvise' mode only enables THP if the region
-> > has had MADV_HUGEPAGE set.
->
-> Right, whatever ends up setting VM_HUGEPAGE.
-
-Yeah this naming is fine iMO.
-
->
-> >
-> > >
-> > > The only thing I really dislike about this is using another MMF_* flag,
-> > > but well, no way around it -- and seems like we could easily support
-> > > more than 32 if we want to, or storing this thp information elsewhere.
-> >
-> > Yes my exact thoughts. But I will be adding a series to change this for VMA
-> > flags soon enough, and can potentially do mm flags at the same time...
-> >
-> > So this shouldn't in the end be as much of a problem.
-> >
-> > Maybe it's worth holding off on this until I've done that? But at any rate
-> > I intend to do those changes next cycle, and this will be a next cycle
-> > thing at the earliest anyway.
->
-> I don't think this series must be blocked by that. Using a bitmap instead of
-> a single "unsigned long" should be fairly easy later -- I did not identify
-> any big blockers.
-
-Yeah that's fine. And I don't know when I will get the bitmap changes done, so
-let's not block this with that!
-
-> > > This is *completely* untested and might be utterly broken. It merely
-> > > serves as a PoC of what I think could be done. If this ever goes upstream,
-> > > we need some kselftests for it, and extensive tests.
-> >
-> > Well :) I mean we should definitely try this out in anger and it _MUST_
-> > have self tests and put under some pressure.
-> >
-> > Usama, can you attack this and see?
->
-> Yes, that's what I am hoping for.
-
-Cool. And of course Usama is best placed to experiment with this approach,
-as he can experiment with workloads relevant to this requirement.
-
->
-> >
-> > >
-> > > [1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
-> > > [2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
-> > > [3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
-> > > [4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
-> > > [5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
-> > > [6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
-> > >
-> > > ---
-> > >   Documentation/filesystems/proc.rst |  5 +--
-> > >   fs/proc/array.c                    |  2 +-
-> > >   include/linux/huge_mm.h            | 20 ++++++++---
-> > >   include/linux/mm_types.h           | 13 +++----
-> > >   include/uapi/linux/prctl.h         |  7 ++++
-> > >   kernel/sys.c                       | 58 +++++++++++++++++++++++-------
-> > >   mm/khugepaged.c                    |  2 +-
-> > >   7 files changed, 78 insertions(+), 29 deletions(-)
-> > >
-> > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> > > index 2971551b72353..915a3e44bc120 100644
-> > > --- a/Documentation/filesystems/proc.rst
-> > > +++ b/Documentation/filesystems/proc.rst
-> > > @@ -291,8 +291,9 @@ It's slow but very precise.
-> > >    HugetlbPages                size of hugetlb memory portions
-> > >    CoreDumping                 process's memory is currently being dumped
-> > >                                (killing the process may lead to a corrupted core)
-> > > - THP_enabled		     process is allowed to use THP (returns 0 when
-> > > -			     PR_SET_THP_DISABLE is set on the process
-> > > + THP_enabled                 process is allowed to use THP (returns 0 when
-> > > +                             PR_SET_THP_DISABLE is set on the process to disable
-> > > +                             THP completely, not just partially)
-> >
-> > Hmm but this means we have no way of knowing if it's set for partial
->
-> Yes. I briefly thought about indicating another member, but then I thought
-> (a) it's ugly and (b) "who cares".
->
-> I also thought about just printing "partial" instead of "1", but not sure if
-> that would break any parser.
-
-Hm and >1 could break a user who expects this to be 0, 1. We can always add
-a new entry if needed.
-
-> > >   {
-> > > +	/* Are THPs disabled for this VMA? */
-> > > +	if (vm_flags & VM_NOHUGEPAGE)
-> > > +		return true;
-> > > +	/* Are THPs disabled for all VMAs in the whole process? */
-> > > +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
-> > > +		return true;
-> > >   	/*
-> > > -	 * Explicitly disabled through madvise or prctl, or some
-> > > -	 * architectures may disable THP for some mappings, for
-> > > -	 * example, s390 kvm.
-> > > +	 * Are THPs disabled only for VMAs where we didn't get an explicit
-> > > +	 * advise to use them?
-> >
-> > Probably fine to drop the rather pernickety reference to s390 kvm here, I
-> > mean we don't need to spell out massively specific details in a general
-> > handler.
->
-> No strong opinion.
-
-I mean what I'm saying is this is fine :P Got no problem wtih removing this
-bit of the comment.
-
->
-> >
-> > >   	 */
-> > > -	return (vm_flags & VM_NOHUGEPAGE) ||
-> > > -	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
-> > > +	if (vm_flags & VM_HUGEPAGE)
-> > > +		return false;
-> > > +	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
-> > >   }
-> > >
-> > >   static inline bool thp_disabled_by_hw(void)
-> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > > index 1ec273b066915..a999f2d352648 100644
-> > > --- a/include/linux/mm_types.h
-> > > +++ b/include/linux/mm_types.h
-> > > @@ -1743,19 +1743,16 @@ enum {
-> > >   #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
-> > >   #define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
-> > >
-> > > -/*
-> > > - * This one-shot flag is dropped due to necessity of changing exe once again
-> > > - * on NFS restore
-> > > - */
-> > > -//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
-> > > +#define MMF_HUGE_ZERO_PAGE	18      /* mm has ever used the global huge zero page */
-> > >
-> > >   #define MMF_HAS_UPROBES		19	/* has uprobes */
-> > >   #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
-> > >   #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
-> > >   #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
-> > > -#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
-> > > -#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
-> > > -#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
-> > > +#define MMF_DISABLE_THP_EXCEPT_ADVISED	23	/* no THP except for VMAs with VM_HUGEPAGE */
-> > > +#define MMF_DISABLE_THP_COMPLETELY	24	/* no THP for all VMAs */
-> > > +#define MMF_DISABLE_THP_MASK	((1 << MMF_DISABLE_THP_COMPLETELY) |\
-> > > +				 (1 << MMF_DISABLE_THP_EXCEPT_ADVISED))
-> >
-> > It feels a bit sigh to have to use up low-supply mm flags for this. But
-> > again, I should be attacking this shortage soon enough.
-> >
-> > Are we not going ahead with Barry's series that was going to use one of
-> > these in the end?
->
-> Whoever gets acked first ;)
-
-;)
-
->
-> >
-> > >   #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
-> > >   #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
-> > >   /*
-> > > diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> > > index 43dec6eed559a..1949bb9270d48 100644
-> > > --- a/include/uapi/linux/prctl.h
-> > > +++ b/include/uapi/linux/prctl.h
-> > > @@ -177,7 +177,14 @@ struct prctl_mm_map {
-> > >
-> > >   #define PR_GET_TID_ADDRESS	40
-> > >
-> > > +/*
-> > > + * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
-> > > + * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
-> > > + * specified for PR_SET_THP_DISABLE.
-> > > + */
-> >
-> > Probably worth specifying that you're just returning the flags here.
->
-> Yes.
->
-> Thanks!
-
-Cheers!
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
-
-Cheers, Lorenzo
 
