@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-55570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D06B0BF57
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:46:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881C4B0BF56
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DE4A17A6AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950293B754C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0F728A40A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C60220F069;
 	Mon, 21 Jul 2025 08:45:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14EE2877DD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13CF287500;
 	Mon, 21 Jul 2025 08:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753087540; cv=none; b=FDmFLhc0jYExYUl4kGiURne8mnfbuREI3Gb1b6mYqt+Lb75zAoWc6TsEcVhRXSfibeYzlx+vCrhrKf30aDoeKqLTBouIF2K2Qiq+vnW9S4gv27UluoiH6wjZEMovezbtS9GrLveKE5IANZ5hact5sRK0kcVT1KNQsdUvUAPPhTg=
+	t=1753087539; cv=none; b=tKQDDWTA7s/fZkBWG+gjrIpmA9wkPBrX6qdPbFv3afQfDNhIr/L0W1QwQW9r0SsrVIQsjy1oOJessNDrWDt2L6AN68j4byRDxhyTkI+LhuodIhgx5UVQQwDSIJg1roh+Z/fRt2sM1OwMrZ2XKMAjnvkNtinIvzzXl7MnDOupchY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753087540; c=relaxed/simple;
-	bh=x12wTCgNX61cbCA8ZuNPRpQgNjL9DwU8174S+N2rU1Q=;
+	s=arc-20240116; t=1753087539; c=relaxed/simple;
+	bh=WsiREpDyD5e2M1t4P4tsfE0wG9bWYJ1PAILyyKiMj/k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YRk0QTl4Ev5KkHYhvIk6GMiJVzJlXLcpgLKYg5TLGfegfIDX3GkWB8WPLTr1YA5tx0P8QEd1ZUlLN22rTgvr7MO++G0Py5GjKxHyA1/7Nl5coRU3fAQBDYG4jSNZw6cO3k5SNRzpdG4TwXxpyPbl2VJUaaBRWthv4doEjNmOpOY=
+	 MIME-Version; b=gVp0AKGuncpk5U6B1LvGtrUjaBD7sRtADhjHurKWlrqaW5x0Zsms8/0A1PaD6oi5x32+N3XVV2+buenQvcazMKXyAVbHlWUJREbBnoQtoI66UJixwixsrcFshQ45Gsxn921IiS/kFWrbU1gY9FoXcJwnkrK9wISBxhH0z1iX6tg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
 Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
 	by neil.brown.name with esmtp (Exim 4.95)
 	(envelope-from <mr@neil.brown.name>)
-	id 1udm9G-002pfr-C9;
+	id 1udm9G-002pft-Tr;
 	Mon, 21 Jul 2025 08:45:28 +0000
 From: NeilBrown <neil@brown.name>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -41,9 +41,9 @@ To: Linus Torvalds <torvalds@linux-foundation.org>,
 	Jan Kara <jack@suse.cz>
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] VFS: introduce done_dentry_lookup()
-Date: Mon, 21 Jul 2025 17:59:58 +1000
-Message-ID: <20250721084412.370258-3-neil@brown.name>
+Subject: [PATCH 3/7] VFS: Change vfs_mkdir() to unlock on failure.
+Date: Mon, 21 Jul 2025 17:59:59 +1000
+Message-ID: <20250721084412.370258-4-neil@brown.name>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250721084412.370258-1-neil@brown.name>
 References: <20250721084412.370258-1-neil@brown.name>
@@ -55,186 +55,331 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-done_dentry_lookup() is the first step in introducing a new API for
-locked operation on names in directories - those that create or remove
-names.  Rename operations will also be part of this API but will
-use separate interfaces.
+Proposed changes to directory-op locking will lock the dentry rather
+than the whole directory.  So the dentry will need to be unlocked.
 
-The plan is to lock just the dentry (or dentries), not the whole
-directory.  A "dentry_lookup()" operation will perform the locking and
-lookup with a corresponding "done_dentry_lookup()" releasing the
-resulting dentry and dropping any locks.
+vfs_mkdir() consumes the dentry on error, so there will be no dentry to
+be unlocked.
 
-This done_dentry_lookup() can immediately be used to complete updates
-started with kern_path_locked() (much as done_path_create() already
-completes operations started with kern_path_create()).
+So this patch changes vfs_mkdir() to unlock on error as well as
+releasing the dentry.  This requires various other functions in various
+callers to also unlock on error.
 
-So this patch adds done_dentry_lookup() and uses it where
-kern_path_locked() is used.  It also adds done_dentry_lookup_return()
-which returns a reference to the dentry rather than dropping it.  This
-is a less common need in existing code, but still worth its own interface.
+At present this results in some clumsy code.  Once the transition to
+dentry locking is complete the clumsiness will be gone.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- drivers/base/devtmpfs.c |  7 ++-----
- fs/bcachefs/fs-ioctl.c  |  3 +--
- fs/namei.c              | 38 ++++++++++++++++++++++++++++++++++++++
- include/linux/namei.h   |  3 +++
- kernel/audit_fsnotify.c |  9 ++++-----
- kernel/audit_watch.c    |  3 +--
- 6 files changed, 49 insertions(+), 14 deletions(-)
+ fs/cachefiles/namei.c    |  9 +++++----
+ fs/ecryptfs/inode.c      |  3 ++-
+ fs/namei.c               | 24 ++++++++++++++++--------
+ fs/nfsd/nfs4recover.c    | 12 +++++-------
+ fs/nfsd/vfs.c            | 12 ++++++++++--
+ fs/overlayfs/dir.c       | 13 +++++++------
+ fs/overlayfs/overlayfs.h |  1 +
+ fs/overlayfs/super.c     |  5 +++--
+ fs/xfs/scrub/orphanage.c |  2 +-
+ 9 files changed, 50 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index 31bfb3194b4c..47bee8166c8d 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -265,8 +265,7 @@ static int dev_rmdir(const char *name)
- 	else
- 		err = -EPERM;
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index d1edb2ac3837..732d78911bed 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -131,8 +131,11 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
+ 		ret = cachefiles_inject_write_error();
+ 		if (ret == 0)
+ 			subdir = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
+-		else
++		else {
++			/* vfs_mkdir() unlocks on failure so we must too */
++			inode_unlock(d_inode(dir));
+ 			subdir = ERR_PTR(ret);
++		}
+ 		if (IS_ERR(subdir)) {
+ 			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
+ 						   cachefiles_trace_mkdir_error);
+@@ -196,9 +199,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
+ 	return ERR_PTR(-EBUSY);
  
--	dput(dentry);
--	inode_unlock(d_inode(parent.dentry));
-+	done_dentry_lookup(dentry);
- 	path_put(&parent);
- 	return err;
- }
-@@ -349,9 +348,7 @@ static int handle_remove(const char *nodename, struct device *dev)
- 		if (!err || err == -ENOENT)
- 			deleted = 1;
- 	}
--	dput(dentry);
--	inode_unlock(d_inode(parent.dentry));
--
-+	done_dentry_lookup(dentry);
- 	path_put(&parent);
- 	if (deleted && strchr(nodename, '/'))
- 		delete_path(nodename);
-diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
-index 4e72e654da96..8077ddf4ddc4 100644
---- a/fs/bcachefs/fs-ioctl.c
-+++ b/fs/bcachefs/fs-ioctl.c
-@@ -351,8 +351,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_fs *c, struct file *filp,
- 		d_invalidate(victim);
- 	}
- err:
--	inode_unlock(dir);
--	dput(victim);
-+	done_dentry_lookup(victim);
- 	path_put(&path);
- 	return ret;
- }
+ mkdir_error:
+-	inode_unlock(d_inode(dir));
+-	if (!IS_ERR(subdir))
+-		dput(subdir);
++	done_dentry_lookup(subdir);
+ 	pr_err("mkdir %s failed with error %d\n", dirname, ret);
+ 	return ERR_PTR(ret);
+ 
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index abd954c6a14e..5d8cb042aa57 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -520,7 +520,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 				 lower_dentry, mode);
+ 	rc = PTR_ERR(lower_dentry);
+ 	if (IS_ERR(lower_dentry))
+-		goto out;
++		goto out_unlocked;
+ 	rc = 0;
+ 	if (d_unhashed(lower_dentry))
+ 		goto out;
+@@ -532,6 +532,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	set_nlink(dir, lower_dir->i_nlink);
+ out:
+ 	inode_unlock(lower_dir);
++out_unlocked:
+ 	if (d_really_is_negative(dentry))
+ 		d_drop(dentry);
+ 	return ERR_PTR(rc);
 diff --git a/fs/namei.c b/fs/namei.c
-index 1c80445693d4..da160a01e23d 100644
+index da160a01e23d..950a0d0d54da 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1714,6 +1714,44 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+@@ -1723,13 +1723,18 @@ EXPORT_SYMBOL(lookup_one_qstr_excl);
+  * rmdir) a dentry.  After this, done_dentry_lookup() can be used to both
+  * unlock the parent directory and dput() the dentry.
+  *
++ * If the dentry is an error - as can happen after vfs_mkdir() -
++ * the unlock is skipped as unneeded.
++ *
+  * This interface allows a smooth transition from parent-dir based
+  * locking to dentry based locking.
+  */
+ void done_dentry_lookup(struct dentry *dentry)
+ {
+-	inode_unlock(dentry->d_parent->d_inode);
+-	dput(dentry);
++	if (!IS_ERR(dentry)) {
++		inode_unlock(dentry->d_parent->d_inode);
++		dput(dentry);
++	}
  }
- EXPORT_SYMBOL(lookup_one_qstr_excl);
+ EXPORT_SYMBOL(done_dentry_lookup);
  
-+/**
-+ * done_dentry_lookup - finish a lookup used for create/delete
-+ * @dentry:  the target dentry
+@@ -1742,12 +1747,16 @@ EXPORT_SYMBOL(done_dentry_lookup);
+  * rmdir) a dentry.  After this, done_dentry_lookup_return() can be used to
+  * unlock the parent directory.  The dentry is returned for further use.
+  *
++ * If the dentry is an error - as can happen after vfs_mkdir() -
++ * the unlock is skipped as unneeded.
 + *
-+ * After locking the directory and lookup or validating a dentry
-+ * an attempt can be made to create (including link) or remove (including
-+ * rmdir) a dentry.  After this, done_dentry_lookup() can be used to both
-+ * unlock the parent directory and dput() the dentry.
-+ *
-+ * This interface allows a smooth transition from parent-dir based
-+ * locking to dentry based locking.
-+ */
-+void done_dentry_lookup(struct dentry *dentry)
-+{
-+	inode_unlock(dentry->d_parent->d_inode);
-+	dput(dentry);
-+}
-+EXPORT_SYMBOL(done_dentry_lookup);
-+
-+/**
-+ * done_dentry_lookup_return - finish a lookup sequence, returning the dentry
-+ * @dentry:  the target dentry
-+ *
-+ * After locking the directory and lookup or validating a dentry
-+ * an attempt can be made to create (including link) or remove (including
-+ * rmdir) a dentry.  After this, done_dentry_lookup_return() can be used to
-+ * unlock the parent directory.  The dentry is returned for further use.
-+ *
-+ * This interface allows a smooth transition from parent-dir based
-+ * locking to dentry based locking.
-+ */
-+struct dentry *done_dentry_lookup_return(struct dentry *dentry)
-+{
-+	inode_unlock(dentry->d_parent->d_inode);
-+	return dentry;
-+}
-+EXPORT_SYMBOL(done_dentry_lookup_return);
-+
- /**
-  * lookup_fast - do fast lockless (but racy) lookup of a dentry
-  * @nd: current nameidata
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 5d085428e471..e097f11587c9 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -81,6 +81,9 @@ struct dentry *lookup_one_positive_unlocked(struct mnt_idmap *idmap,
- 					    struct qstr *name,
- 					    struct dentry *base);
+  * This interface allows a smooth transition from parent-dir based
+  * locking to dentry based locking.
+  */
+ struct dentry *done_dentry_lookup_return(struct dentry *dentry)
+ {
+-	inode_unlock(dentry->d_parent->d_inode);
++	if (!IS_ERR(dentry))
++		inode_unlock(dentry->d_parent->d_inode);
+ 	return dentry;
+ }
+ EXPORT_SYMBOL(done_dentry_lookup_return);
+@@ -4210,9 +4219,7 @@ EXPORT_SYMBOL(kern_path_create);
  
-+void done_dentry_lookup(struct dentry *dentry);
-+struct dentry *done_dentry_lookup_return(struct dentry *dentry);
-+
- extern int follow_down_one(struct path *);
- extern int follow_down(struct path *path, unsigned int flags);
- extern int follow_up(struct path *);
-diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-index c565fbf66ac8..170836c3520f 100644
---- a/kernel/audit_fsnotify.c
-+++ b/kernel/audit_fsnotify.c
-@@ -85,8 +85,8 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct audit_krule *krule, char *pa
- 	dentry = kern_path_locked(pathname, &path);
- 	if (IS_ERR(dentry))
- 		return ERR_CAST(dentry); /* returning an error */
--	inode = path.dentry->d_inode;
--	inode_unlock(inode);
-+	inode = igrab(dentry->d_inode);
+ void done_path_create(struct path *path, struct dentry *dentry)
+ {
+-	if (!IS_ERR(dentry))
+-		dput(dentry);
+-	inode_unlock(path->dentry->d_inode);
 +	done_dentry_lookup(dentry);
+ 	mnt_drop_write(path->mnt);
+ 	path_put(path);
+ }
+@@ -4375,7 +4382,8 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
+  * negative or unhashes it and possibly splices a different one returning it,
+  * the original dentry is dput() and the alternate is returned.
+  *
+- * In case of an error the dentry is dput() and an ERR_PTR() is returned.
++ * In case of an error the dentry is dput(), the parent is unlocked, and
++ * an ERR_PTR() is returned.
+  */
+ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 			 struct dentry *dentry, umode_t mode)
+@@ -4413,7 +4421,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	return dentry;
  
- 	audit_mark = kzalloc(sizeof(*audit_mark), GFP_KERNEL);
- 	if (unlikely(!audit_mark)) {
-@@ -97,17 +97,16 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct audit_krule *krule, char *pa
- 	fsnotify_init_mark(&audit_mark->mark, audit_fsnotify_group);
- 	audit_mark->mark.mask = AUDIT_FS_EVENTS;
- 	audit_mark->path = pathname;
--	audit_update_mark(audit_mark, dentry->d_inode);
-+	audit_update_mark(audit_mark, inode);
- 	audit_mark->rule = krule;
+ err:
+-	dput(dentry);
++	done_dentry_lookup(dentry);
+ 	return ERR_PTR(error);
+ }
+ EXPORT_SYMBOL(vfs_mkdir);
+diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+index 82785db730d9..693fa95fa678 100644
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@ -222,7 +222,8 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
+ 	dentry = lookup_one(&nop_mnt_idmap, &QSTR(dname), dir);
+ 	if (IS_ERR(dentry)) {
+ 		status = PTR_ERR(dentry);
+-		goto out_unlock;
++		inode_unlock(d_inode(dir));
++		goto out;
+ 	}
+ 	if (d_really_is_positive(dentry))
+ 		/*
+@@ -233,15 +234,12 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
+ 		 * In the 4.0 case, we should never get here; but we may
+ 		 * as well be forgiving and just succeed silently.
+ 		 */
+-		goto out_put;
++		goto out;
+ 	dentry = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, S_IRWXU);
+ 	if (IS_ERR(dentry))
+ 		status = PTR_ERR(dentry);
+-out_put:
+-	if (!status)
+-		dput(dentry);
+-out_unlock:
+-	inode_unlock(d_inode(dir));
++out:
++	done_dentry_lookup(dentry);
+ 	if (status == 0) {
+ 		if (nn->in_grace)
+ 			__nfsd4_create_reclaim_record_grace(clp, dname,
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index a21940cadede..e85195e858a2 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1489,7 +1489,9 @@ nfsd_check_ignore_resizing(struct iattr *iap)
+ 		iap->ia_valid &= ~ATTR_SIZE;
+ }
  
--	ret = fsnotify_add_inode_mark(&audit_mark->mark, inode, 0);
-+	ret = fsnotify_add_inode_mark(&audit_mark->mark, path.dentry->d_inode, 0);
- 	if (ret < 0) {
- 		audit_mark->path = NULL;
- 		fsnotify_put_mark(&audit_mark->mark);
- 		audit_mark = ERR_PTR(ret);
+-/* The parent directory should already be locked: */
++/* The parent directory should already be locked.  The lock
++ * will be dropped on error.
++ */
+ __be32
+ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 		   struct nfsd_attrs *attrs,
+@@ -1555,8 +1557,11 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	err = nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
+ 
+ out:
+-	if (!IS_ERR(dchild))
++	if (!IS_ERR(dchild)) {
++		if (err)
++			inode_unlock(dirp);
+ 		dput(dchild);
++	}
+ 	return err;
+ 
+ out_nfserr:
+@@ -1613,6 +1618,9 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	if (err != nfs_ok)
+ 		goto out_unlock;
+ 	err = nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
++	if (err)
++		/* lock will have been dropped */
++		return err;
+ 	fh_fill_post_attrs(fhp);
+ out_unlock:
+ 	inode_unlock(dentry->d_inode);
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 30619777f0f6..74b52595ea0e 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -161,14 +161,17 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, struct dentry *dir,
+ 	goto out;
+ }
+ 
++/* dir will be unlocked on return */
+ struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *parent,
+ 			       struct dentry *newdentry, struct ovl_cattr *attr)
+ {
+ 	struct inode *dir = parent->d_inode;
+ 	int err;
+ 
+-	if (IS_ERR(newdentry))
++	if (IS_ERR(newdentry)) {
++		inode_unlock(dir);
+ 		return newdentry;
++	}
+ 
+ 	err = -ESTALE;
+ 	if (newdentry->d_inode)
+@@ -213,11 +216,11 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *parent,
  	}
  out:
--	dput(dentry);
- 	path_put(&path);
- 	return audit_mark;
+ 	if (err) {
+-		if (!IS_ERR(newdentry))
+-			dput(newdentry);
++		done_dentry_lookup(newdentry);
+ 		return ERR_PTR(err);
++	} else {
++		return done_dentry_lookup_return(newdentry);
+ 	}
+-	return newdentry;
  }
-diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-index 0ebbbe37a60f..f6ecac2109d4 100644
---- a/kernel/audit_watch.c
-+++ b/kernel/audit_watch.c
-@@ -359,8 +359,7 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
- 		watch->ino = d_backing_inode(d)->i_ino;
+ 
+ struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdir,
+@@ -227,7 +230,6 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdir,
+ 	inode_lock(workdir->d_inode);
+ 	ret = ovl_create_real(ofs, workdir,
+ 			      ovl_lookup_temp(ofs, workdir), attr);
+-	inode_unlock(workdir->d_inode);
+ 	return ret;
+ }
+ 
+@@ -335,7 +337,6 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
+ 				    ovl_lookup_upper(ofs, dentry->d_name.name,
+ 						     upperdir, dentry->d_name.len),
+ 				    attr);
+-	inode_unlock(udir);
+ 	if (IS_ERR(newdentry))
+ 		return PTR_ERR(newdentry);
+ 
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 4f84abaa0d68..238c26142318 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -250,6 +250,7 @@ static inline struct dentry *ovl_do_mkdir(struct ovl_fs *ofs,
+ 
+ 	ret = vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
+ 	pr_debug("mkdir(%pd2, 0%o) = %i\n", dentry, mode, PTR_ERR_OR_ZERO(ret));
++	/* Note: dir will have been unlocked on failure */
+ 	return ret;
+ }
+ 
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 4afa91882075..df99a6fa17ef 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -328,11 +328,11 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+ 		}
+ 
+ 		work = ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
+-		inode_unlock(dir);
+ 		err = PTR_ERR(work);
+ 		if (IS_ERR(work))
+ 			goto out_err;
+ 
++		done_dentry_lookup_return(work);
+ 		/* Weird filesystem returning with hashed negative (kernfs)? */
+ 		err = -EINVAL;
+ 		if (d_really_is_negative(work))
+@@ -623,7 +623,8 @@ static struct dentry *ovl_lookup_or_create(struct ovl_fs *ofs,
+ 	child = ovl_lookup_upper(ofs, name, parent, len);
+ 	if (!IS_ERR(child) && !child->d_inode)
+ 		child = ovl_create_real(ofs, parent, child, OVL_CATTR(mode));
+-	inode_unlock(parent->d_inode);
++	else
++		inode_unlock(parent->d_inode);
+ 	dput(parent);
+ 
+ 	return child;
+diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
+index 9c12cb844231..c95bded4e8a7 100644
+--- a/fs/xfs/scrub/orphanage.c
++++ b/fs/xfs/scrub/orphanage.c
+@@ -170,7 +170,7 @@ xrep_orphanage_create(
+ 					     orphanage_dentry, 0750);
+ 		error = PTR_ERR(orphanage_dentry);
+ 		if (IS_ERR(orphanage_dentry))
+-			goto out_unlock_root;
++			goto out_dput_root;
  	}
  
--	inode_unlock(d_backing_inode(parent->dentry));
--	dput(d);
-+	done_dentry_lookup(d);
- 	return 0;
- }
- 
+ 	/* Not a directory? Bail out. */
 -- 
 2.49.0
 
