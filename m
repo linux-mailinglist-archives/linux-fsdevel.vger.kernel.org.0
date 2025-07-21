@@ -1,200 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-55583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0998EB0C0FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 12:12:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51B6B0C12C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 12:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C0AC18C2695
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA76E4E3B1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F23028DB4F;
-	Mon, 21 Jul 2025 10:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94E528DF3E;
+	Mon, 21 Jul 2025 10:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g52yxrs7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHY3M5Ku"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318A428D8F2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 10:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A9328DEF9;
+	Mon, 21 Jul 2025 10:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753092644; cv=none; b=WJtcY4A972xZIo/9RtReJvU61R1KqkDHLPSxiZI2uSc6FcinJHzr5kTbI9JgO2NT3AHWfd7LDhfuF7icaBNlKkcsw7mOQBXJJdjXaiqX4ltfilwyqfo+SbngvZCKUrP5hTElT/QlSFZethmO54uikGmI3lIYVa2B61+xGibI55w=
+	t=1753093229; cv=none; b=WJ6h3VC2MUgJOUWehAC/iYFxkVW0nK5RDN6PfMV2LCsDhQMa/qNfI+kzB5aH+KAMK0FLv54/ALDstQf42eQG9SqyYsBevP/ZkgR0jiB7UsEwuQPO4bcMoiEU4AVtD8dpsOvtqSOW96bscfGZg6Wa7FslbqWnOFKEc6U94fGJZds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753092644; c=relaxed/simple;
-	bh=7QET8QCnNLYs3jbtPVbIvk6HIXzvVH/bTeiHZw5lSao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qBNBs2IUiTBXwDnbjZ3I6dWR/f+t5KW2k65UFdJtv2rSS17NxqMks/s5VldxbDMiY6Xdv7Tp89SJpK8ns8Jq+Em4OaAuTQe20+hxNRbEzhnXibLccwh+i6W0JzGC4oRHtj/PbRDqC+8S1nSXeFK+GFQBGHD8iYhs5wmWamcu2Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g52yxrs7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753092641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x0NugjdIePzRcMM8ZGljv12Jg4kfxteOSlIrE85rj4U=;
-	b=g52yxrs7jNS6UrV52iN/0rAUMhVNeuo/TOwqiHFgGDjVGwIIwFesHX0vXmY9/PF7xN6vmQ
-	fdyEkul3QVUOnx6DAg1OYgNkkTbgCmSZ08Yxwn0u70piWj7ze02BM+zrnF7xnTEh4v00CU
-	0us8tO9WOYoXFl8ysPQOJ390G/gobyk=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-VJ7dzg41MVm227bF_SqkdQ-1; Mon, 21 Jul 2025 06:10:39 -0400
-X-MC-Unique: VJ7dzg41MVm227bF_SqkdQ-1
-X-Mimecast-MFC-AGG-ID: VJ7dzg41MVm227bF_SqkdQ_1753092639
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a5281ba3a4so1764766f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 03:10:39 -0700 (PDT)
+	s=arc-20240116; t=1753093229; c=relaxed/simple;
+	bh=3YgMPI03O6Q9TFHH0OJ35uPeIyJWvyS3MOD+GMcK5P0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GzsWUfX/tOCisSmzUyPItEzvROIbvt3ctJOg8IMe53DesSUp7VTkjdB0kUXE7YbFHKGJ3bDtXF/ekewKsXk3F95IGFTGo7+GHdIyZMjlG8+Mdr4lSTm6r9OA8Ey9DWxMHvitx0/OhISOtyVGUwNQZFV1LISWlNruESzt1BcznYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHY3M5Ku; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae3a604b43bso697217266b.0;
+        Mon, 21 Jul 2025 03:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753093226; x=1753698026; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mEkvSgl/X/bWkRHK67wzwvPOEwMXPHWGX/kAxaYeLOk=;
+        b=QHY3M5Ku2y3pdL4F7AodygniLpje3Hiw77xLdF2dFFFfPT1MdztNPSzO8Mz9JLOvOp
+         uIucgi7xPfAFq54aONXgk01HWRuPM7GrjV/hvdTP+3K22jjyY3p7eFdoy8U43eNvWA4w
+         RzGaQe1XrFwgmInKJeQgwswkelr6yayDGJfbwS05hIiWftaCZxrVZ4dniGbUQoeG8YBj
+         rstR70bsEdHErcARkzVcuCywcq/Evl6tKCISY9ZRRvT4EO9NvN8BC555ckEHeRJ0BEY4
+         U/0YciaefXBrnCFuLyRdygQvOPAAg+Vnh6TaXz+ZTPAHkEeBzJemxRFN2mKFATTPRYFe
+         pK/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753092638; x=1753697438;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=x0NugjdIePzRcMM8ZGljv12Jg4kfxteOSlIrE85rj4U=;
-        b=kbyorGht4hay6oc4fRjkb03zpVtkw7cJmycZq2Ri8Pfr7gIiCy9G4oejiN1DppSXd8
-         vSYBj3VmpQM25wy/frrX3ffl2r9sCkfxVxhF778JxggiBzJXFvxAVLRV/Swj0SEvJjpH
-         4kBINb6RhrdksxytkCz+m/Jxc8zPrAMt8Y8YZxwxHNI9TCDznA6hZCJGetwoQplK+r0E
-         FIc1N0oYuEZJbmur7CVSMHkGWk7gFagRMeAs7W1GodLqnGiHyuJkNsPDSaUE29Q9eGqr
-         1EeAzjDlYaGZkT9idnPTgLeRBj2YosYZE83NHwvAPyD9Iu41TTVonGrf9zmmAyAYGzm9
-         4izg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeQc5B5G9kWeXSQB6v/i8pmcJob+KSoLgTLCdhWLGMRNDH8bDGIOsqjCQ4LSZUzZedcZ4ORtZ599D+dgEu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzCAeyTPM/UUwoUB7n6v44nh1lX58S1FTmbkttGSDTkkqCaIDV
-	se7ijlawVHzi/xdCz7Tm+7nyTlhrb/hKaUf+EXksv+hKmFMnA/2CKJq6BdnJ/GKwGQqWS4rV6On
-	CBWP10N0Kr0vWxpcDg4nkJYjfSzOVaMdvP15Ta4Ddh1a3oBkTQs8PWu8Uym1cT6KA3NM=
-X-Gm-Gg: ASbGncs0WYtnoSPJhy6FtlNex1XBBTah377YCvKfmRunYqJlsf2Qj8eMlz9O4tybiPG
-	1i+uwZGKEQBhNxz3RjhnRMiblwhjlNqkY+AHn2ts4GO8RB1gkM/OazqX1Rh+JVoue41NQq1nmH4
-	F3T098PhSyQ3uC7iTnc1qIId3UkXXwQIhiKswyPg4rvhehTma2l6KeXwx5fXx+drRXkf53b6hYI
-	A6uzRkqeiWiRnDY3aJrEReDTbAhG3RI0tMgcdJXyI/R7uDGDkKQBe5WEfI345GroIMN+YQWvFes
-	qG3fE45w4rCJ6lniSHw+2UgfiGx2M0cmtiWBBo2c91Er0bQV9BFUUVtol8x02JB5uOPWGR9OpVv
-	l54s0GFkpPGJjhBKL8wEuMtuG4oqOv/7TMDEUGjl4M56mVsZkCGyyCil8+OJDGY/0
-X-Received: by 2002:a5d:5885:0:b0:3a4:eecd:f4d2 with SMTP id ffacd0b85a97d-3b61b2188bdmr9213718f8f.38.1753092638522;
-        Mon, 21 Jul 2025 03:10:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEr9Bj7npF3emkZ6nnaN3iiQO29Uc95teKauJtipnBERj6xbTMIzTBxhnuJwBBOmhGP/0a7rw==
-X-Received: by 2002:a5d:5885:0:b0:3a4:eecd:f4d2 with SMTP id ffacd0b85a97d-3b61b2188bdmr9213656f8f.38.1753092637918;
-        Mon, 21 Jul 2025 03:10:37 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4c:df00:a9f5:b75b:33c:a17f? (p200300d82f4cdf00a9f5b75b033ca17f.dip0.t-ipconnect.de. [2003:d8:2f4c:df00:a9f5:b75b:33c:a17f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48719sm10064791f8f.47.2025.07.21.03.10.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 03:10:37 -0700 (PDT)
-Message-ID: <5dffdbca-c576-489c-b84a-ec2747cfbc21@redhat.com>
-Date: Mon, 21 Jul 2025 12:10:36 +0200
+        d=1e100.net; s=20230601; t=1753093226; x=1753698026;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mEkvSgl/X/bWkRHK67wzwvPOEwMXPHWGX/kAxaYeLOk=;
+        b=nweXSeYPQPa23zp+NaFHaitAk4kpdXAJKjaIw+3ziFguytR3XtdXirXKZPcfKcSC+E
+         +P88f4jZTGn8mMZ1GLcD5z9aRKAKAq+/xl/7aNXpVRBV0JrjS+4tJJWEfmyjHrdjKHmV
+         EywTjsvyB0+wB0090j63UU1pzeWqGleGlZ0HyQmrV2IJlXYgWhd2gMSEtaCZTvf16PVI
+         ww8Yeb86qIfi2QjuzERIO7rSqJE9cJqGavWw2ff1ESVSrK5NWcCIaLTXDQP6pcZ4VL7O
+         6dytQ5okKUT/5Iy5r0XZ1IsMPPrO+6rDtcO3Uc5MSPwc2DPoVlGPMKLmXOAKFI8ey/CM
+         ecmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkvNoAAC252kR4WPX6Ne3P+1hGpWLQc9nEZWpNVSH6ibq/QkXSO1nO8rOzMp9Y+1vAsyCphj4Q+u3koxuF@vger.kernel.org, AJvYcCXQdKo2oZ7ButWBGh3Kh+HKm7F910WC4y3APskq3It+DYsw7vE5/auLb0kkvkUl9V7N6gzqGVXlakibhVsK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhvsmqu8ZJ639lGXgQEFpW9Uc/tPHdpNWIwbDmbqjAMZycUbJV
+	jhS86Lh1ywLKhXaK6ZzXXCGG5yvsiqthjkrA5D1mfGkIQJaFu658j7upyHUiJQUqq8xwBdqoJuE
+	45vRmXrEhH3AZ2eNC7auaCQNi8s8N3Aw=
+X-Gm-Gg: ASbGnctYhEEUo/SqgpcYX46TOdxwRrvmhdl/yCWaxlvhSruQblpxhRZ1D2FaupeW/Tj
+	4vT6+kZnr817f88N0O2sUXsvBGrEsbvJdrVFXMUoRppwnC81SAyq8abnNyPUryZXtoyL8X//8DQ
+	5oGaeekzFbrIxr5kN/l6Hon+w6wAR+Vu2oiZBXF1FXv70SOF32Qq5KIEChcnGH+xpQ4OPVtu8gB
+	Kiar24=
+X-Google-Smtp-Source: AGHT+IECwG9KpInpUUTUfL1ZufRwhXd7XnVOImrGIaqCKUWnoqFI8PBJPZ5FRE8r5TJ5oxnN80iuA4xF8KGlJ5g8A+k=
+X-Received: by 2002:a17:907:d508:b0:add:ed3a:e792 with SMTP id
+ a640c23a62f3a-ae9ce11c674mr1857320166b.47.1753093225389; Mon, 21 Jul 2025
+ 03:20:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Usama Arif <usamaarif642@gmail.com>,
- SeongJae Park <sj@kernel.org>, Jann Horn <jannh@google.com>,
- Yafang Shao <laoar.shao@gmail.com>, Matthew Wilcox <willy@infradead.org>
-References: <20250721090942.274650-1-david@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250721090942.274650-1-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250721084412.370258-1-neil@brown.name> <20250721084412.370258-5-neil@brown.name>
+In-Reply-To: <20250721084412.370258-5-neil@brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 21 Jul 2025 12:20:14 +0200
+X-Gm-Features: Ac12FXyX3UswuCZXfkC-RxeL1SPw0biPJRSYlaLZQm4ll8hui8Mb-5dCGEAPxMo
+Message-ID: <CAOQ4uxhiDNWjZXGhE31ZBPC_gUStETh4gyE8WxCRgiefiTCjCg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] VFS: introduce dentry_lookup() and friends
+To: NeilBrown <neil@brown.name>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Two additions:
+On Mon, Jul 21, 2025 at 10:55=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> dentry_lookup() combines locking the directory and performing a lookup
+> prior to a change to the directory.
+> Abstracting this prepares for changing the locking requirements.
+>
+> dentry_lookup_noperm() does the same without needing a mnt_idmap and
+> without checking permissions.  This is useful for internal filesystem
+> management (e.g.  creating virtual files in response to events) and in
+> other cases similar to lookup_noperm().
+>
+> dentry_lookup_hashed() also does no permissions checking and assumes
+> that the hash of the name has already been stored in the qstr.
 
-> 
-> (E) Indicates "THP_enabled: 0" in /proc/pid/status only if THPs are not
->      disabled completely
+That's a very confusing choice of name because _hashed() (to me) sounds
+like the opposite of d_unhashed() which is not at all the case.
 
+> This is useful following filename_parentat().
+>
+> These are intended to be paired with done_dentry_lookup() which provides
+> the inverse of putting the dentry and unlocking.
+>
+> Like lookup_one_qstr_excl(), dentry_lookup() returns -ENOENT if
+> LOOKUP_CREATE was NOT given and the name cannot be found,, and returns
+> -EEXIST if LOOKUP_EXCL WAS given and the name CAN be found.
+>
+> These functions replace all uses of lookup_one_qstr_excl() in namei.c
+> except for those used for rename.
+>
+> Some of the variants should possibly be inlines in a header.
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/namei.c            | 158 ++++++++++++++++++++++++++++++------------
+>  include/linux/namei.h |   8 ++-
+>  2 files changed, 119 insertions(+), 47 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 950a0d0d54da..f292df61565a 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1714,17 +1714,98 @@ struct dentry *lookup_one_qstr_excl(const struct =
+qstr *name,
+>  }
+>  EXPORT_SYMBOL(lookup_one_qstr_excl);
+>
+> +/**
+> + * dentry_lookup_hashed - lookup and lock a name prior to dir ops
+> + * @last: the name in the given directory
+> + * @base: the directory in which the name is to be found
+> + * @lookup_flags: %LOOKUP_xxx flags
+> + *
+> + * The name is looked up and necessary locks are taken so that
+> + * the name can be created or removed.
+> + * The "necessary locks" are currently the inode node lock on @base.
+> + * The name @last is expected to already have the hash calculated.
+> + * No permission checks are performed.
+> + * Returns: the dentry, suitably locked, or an ERR_PTR().
+> + */
+> +struct dentry *dentry_lookup_hashed(struct qstr *last,
+> +                                   struct dentry *base,
+> +                                   unsigned int lookup_flags)
+> +{
+> +       struct dentry *dentry;
+> +
+> +       inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
+> +
+> +       dentry =3D lookup_one_qstr_excl(last, base, lookup_flags);
+> +       if (IS_ERR(dentry))
+> +               inode_unlock(base->d_inode);
+> +       return dentry;
+> +}
+> +EXPORT_SYMBOL(dentry_lookup_hashed);
 
-As raised off-list, this should be "only if THPs are disabled completely"
+Observation:
 
-> 
->      Only indicating that THPs are disabled when they are really disabled
->      completely, not only partially.
- > > The documented semantics in the man page for PR_SET_THP_DISABLE
-> "is inherited by a child created via fork(2) and is preserved across
-> execve(2)" is maintained. This behavior, for example, allows for
-> disabling THPs for a workload through the launching process (e.g.,
-> systemd where we fork() a helper process to then exec()).
-> 
-> There is currently not way to prevent that a process will not issue
-> PR_SET_THP_DISABLE itself to re-enable THP. We could add a "seal" option
-> to PR_SET_THP_DISABLE through another flag if ever required. The known
-> users (such as redis) really use PR_SET_THP_DISABLE to disable THPs, so
-> that is not added for now.
+This part could be factored out of
+__kern_path_locked()/kern_path_locked_negative()
 
-I don't think there is any user that would try re-enabling THPs through 
-that interface. It's kind-of against the original purpose (man page): 
-"Setting  this  flag  provides a method for disabling transparent huge 
-pages for jobs where the code cannot be modified ..."
+If you do that in patch 2 while introducing done_dentry_lookup() then
+it also makes
+a lot of sense to balance the introduced done_dentry_lookup() with the
+factored out
+helper __dentry_lookup_locked() or whatever its name is.
 
-So if ever really required, one could investigate forbidding re-enabling 
-once disabled. But that obviously needs more investigation.
-
-(also, if a workload ever enables THPs through that mechanism, probably 
-it is to blame)
-
--- 
-Cheers,
-
-David / dhildenb
-
+Thanks,
+Amir.
 
