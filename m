@@ -1,345 +1,467 @@
-Return-Path: <linux-fsdevel+bounces-55596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4424BB0C4E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 15:09:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96C6B0C4F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 15:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5301D4E79E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 13:08:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D89A5171C35
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 13:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DB52DA74C;
-	Mon, 21 Jul 2025 13:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDB02D663B;
+	Mon, 21 Jul 2025 13:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGU8si6A"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LRDaqCur";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xc/fbJgM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1786E2D9EFE;
-	Mon, 21 Jul 2025 13:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753103173; cv=none; b=um3oi2Q0VFQyzRh6jCGvAUYjhO/xRZA2EeDdvbgTTO6afy1d2Gtg4wt6l/87FYPPDGz2+oPebiVhAgYNiXEXVXxaN4AynKxJ4gnDJEKJebSsI0QxllLjlCnkZAoQ+dF/D+wCi2YImOXLjw1leJbAaOLjw5pIRxS/pYfNom138S4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753103173; c=relaxed/simple;
-	bh=xyw89wIDKFU4tFQDfgeIs0pqjAgTgF7cZy6rg36LWJ0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LlXIgojTiVEd6XCifJO03yMlOKmxNHqzqwPeBWZPDRWHfRClJZw6tKtBoIIdTKHrehwpNILkyxHZV4SjiQ0XThtrSTLpHueoNqPrVZ6VeYX7576YrdyPTcOU3FTG/W0YDIyUezFyCvIv52IGwtOaYICQodtx6PHo91FANdb9OC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGU8si6A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C5A1C4CEED;
-	Mon, 21 Jul 2025 13:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753103172;
-	bh=xyw89wIDKFU4tFQDfgeIs0pqjAgTgF7cZy6rg36LWJ0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=EGU8si6AC5gKmeXirsUvt/MIIlUxlYJFZmA5WgcKG05okpCr7zGeFfHHWkyBki/WR
-	 cLkMC6nyTUZzOJ/nRg2WOETf14fey3KLA/24Vya0YGC/fwak+PP5vTM03j6BA5UF+R
-	 dYHUMNybQCH6MN9IoXtlRC0ktbzgp9cPM/QzNPRkMvcRSU2d3kFIQl510sR7riZC77
-	 0srDzziGlsq9IbNMx0AR6ZoZ6iGN13d0qzV6QjeQzgzV8J3gjmX8OO5AGGSk9dmbOY
-	 cBJurCu3+6G2/yLn872EUCO6PJ8olghH0A9AfnXkwHGbFgymN9uPJUargYvn86AX2D
-	 uqurkY/3R1tCQ==
-Message-ID: <c3cd7afa8a319d7e45266d30741acb582b0085b0.camel@kernel.org>
-Subject: Re: [PATCH 1/7] VFS: unify old_mnt_idmap and new_mnt_idmap in
- renamedata
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>, Linus Torvalds
- <torvalds@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 21 Jul 2025 09:06:10 -0400
-In-Reply-To: <20250721084412.370258-2-neil@brown.name>
-References: <20250721084412.370258-1-neil@brown.name>
-	 <20250721084412.370258-2-neil@brown.name>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D32146A66;
+	Mon, 21 Jul 2025 13:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753103796; cv=fail; b=W/fjY0ug+rIc3m8KCOGxoaLQHG1fWpx6fJ7VcXnDQGu+cg78DLodTeS7haY+/U8TH+EA2/8MnxyS05C10haWLZNoHf/uwZPsqTymT2ryS7y1HmUhlYWS1lfcsIzwrMYFiBn3b57tm7um3uqwcFIhgwxR9Gwubq5Wyh/bgDheTTY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753103796; c=relaxed/simple;
+	bh=PUaETVANWyPHHHLi2JuXHFy1rftiHs6xhBtRzJDs+Us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UWPA0n8fJvLSuxQhAXTqDMH/Yq7wwmL9yFuMJjcmWT7GyOWVpYzpjYDAk+q0BQEHb5gOkwhu4F/TohgoCCOic91ZirfjH3r2MW8N1jjbC47ddaI26Nsm8pkkbCfSyzXmlz7dPW1jLb/X+JXP8zCmkYhxIPnMjSWCo0OYJzirb8M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LRDaqCur; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xc/fbJgM; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LCNCaY028651;
+	Mon, 21 Jul 2025 13:16:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=vcSjdx+9L0nxNpOCGN
+	Y184HxgVlzp0meBngnd/9yMF4=; b=LRDaqCurPKApvaqvAwac61FD911ZOxJJH/
+	Ebd7wO4tCHK9aOOA+E4g+xdAqVd08ZXJwId1fg/mN+HOa+ESgaqDblrBsy9EZAhD
+	jhDvqC1PmG7GCbh5tykmmYvqz6BqewZlsVzvnsoMEW36681nYbg40IHO0QQqs4r0
+	Yhb380MRFwjIMaHQwsWpZU54fW5D6wgTz4PiVaJl3qwsk+G33qjRy2dvuvfTmksd
+	c7qybDnt/lszGlkUKAT3r7UAa8Y+AOBhajShu9+eeIDpXx5hQxxEkS/h3yp5MoUQ
+	bNmRn4PrOQGar88dZlwz18nUzLgALpZuCy1bYesKGaLbir/rFPlg==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48057qtnak-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Jul 2025 13:16:00 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56LCUOah014657;
+	Mon, 21 Jul 2025 13:16:00 GMT
+Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013053.outbound.protection.outlook.com [40.107.201.53])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tea9wu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Jul 2025 13:16:00 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r6ZJQS2AG+sY4s/3lgeRwJcok1WbiCwnguPISk4jbrDRIHsNjMxWuo8NUiZWKOY2jSwVAdM/2zZgSh2PFLkKIZuyW/AmmWx4kPvA7S6fhGfGQVp1/nmW2FkVslDVY9CI8FF9379cjcffA6kF4mXEhmSOX1aAuWGhDXfE7mDatCIanIvvLQy2YB51yCt2/PX+nLwbJ8Y13zzrv6TNiVFgg1DtKLVWCmQXX/iVBzzXsayWKNYbFA6wIycoTBeIXweRNFgnJLldF13WIvhfR2WQVhda81oc7LNjFXcEC3qJhcjOOVadAx0m7BOZBcbBgj2GW9wY/zvB6OnLf0WMfwhyBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vcSjdx+9L0nxNpOCGNY184HxgVlzp0meBngnd/9yMF4=;
+ b=Q5zkT/zTmljldiricIrKSI9jSYKTSn4RUoq0qFLi15rp55RvoyckFmA6fy7gNxBItGjDvgdsmctoamGUeK1tYayl81YpxYZlP28vjGXK/ySgHF3zSNgHxYV6RVftcaC3p3ilA0QXHnX9dEZBmc9O3zN1XK7LIaP/anxNXwi9na/r+z2VPkwdwg4f2WKeRtZHedAb6t0FfILKkvwd7uxlhTHCe73TTz42EZd+9QQXJu/DOG4YieUEKhC74dZblkj7/+Tlrcf70v74PMeO7D5Ull5WBJUfyCc4qQh2+rpLMlFi8vo1ae6YWZvHMWR7C0lmXkxMriDZkDGrxO8p9yEUCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vcSjdx+9L0nxNpOCGNY184HxgVlzp0meBngnd/9yMF4=;
+ b=xc/fbJgMOhfXM6hbgfJpT+9kEB5yQTSqAvaOm/Svs2U8uEkzVkb6kcHMIN90aLAQWWJi7E8jyJNTLnvWqWwCVsNskm73pQA2Mv96ddGmx48wmTyV48NJVtecUBW6jNf9xt3M8BsYdGGgwmbCAoAuZqVPIXr9GfTDdgTHc922Nw8=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH7PR10MB7694.namprd10.prod.outlook.com (2603:10b6:510:2e5::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 13:15:57 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
+ 13:15:57 +0000
+Date: Mon, 21 Jul 2025 14:15:54 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Usama Arif <usamaarif642@gmail.com>, SeongJae Park <sj@kernel.org>,
+        Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
+ exclude VM_HUGEPAGE
+Message-ID: <803a927e-1c36-4934-9cda-a700acdaad0d@lucifer.local>
+References: <20250721090942.274650-1-david@redhat.com>
+ <686d2658-a06e-46cb-af22-440b75ac34ed@lucifer.local>
+ <ff53959b-a402-4030-b11a-dc19fe36ee4e@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ff53959b-a402-4030-b11a-dc19fe36ee4e@redhat.com>
+X-ClientProxiedBy: LO4P123CA0667.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:316::20) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH7PR10MB7694:EE_
+X-MS-Office365-Filtering-Correlation-Id: cc868047-340d-4b08-6981-08ddc858babf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nQCK9kUg/Dh0mEaTm4e8EUko0dWc2j64jC0hiUcGVIuH1xc2wSGbLFIO5/xP?=
+ =?us-ascii?Q?zkt2QweHXb73rjg6iEHxp5Lmv46vcrpJpjyzvhEWNehpviwVjQhZZK/1LHyi?=
+ =?us-ascii?Q?DScWi36MEK8wTs7bs374oi0XcH/em2UcJbe/Amgk2gCzGRPOfIrKRM6f7H9P?=
+ =?us-ascii?Q?ANfon658LS02UKkYAM7Q7EemTJeZBVSvbIWq6+6eHI3qS6+Z4P4zFC9dWQ22?=
+ =?us-ascii?Q?oiKQaii51DIdW3GFBtWVaD2RE8Chuul4EAIpa0dr3STznTjNpG3nv29XKXdM?=
+ =?us-ascii?Q?JpSUNu3YAAJhQQQORE+bM52HeLULp0fINldlf8PeJjwO36SLGePDAhGuCzQw?=
+ =?us-ascii?Q?iC7QiVD9TrWsyw4+DisdoQJIzUXjJ4WjzKGZALbG/W04BE2tD0DB2IdcZtgO?=
+ =?us-ascii?Q?7mSf0gc0WhCCzjgrsyuI4KQ4GotMxTLe5xqjDQnx3d1iyb2/kCc8/jBX8NLv?=
+ =?us-ascii?Q?sfzZ37O+eLygd9PYermh8sfbOZg/Pyv4F8PUWnrtYIbyv7fMcY80RfvIvOm7?=
+ =?us-ascii?Q?rAUlFHuHX2wEyXKMRgmaao76HMdtnLdbxvqP6zRd9P+RVkoOklcGdKPIXWYO?=
+ =?us-ascii?Q?Vwj3xEnxag7pSzYfVeeDsZw+1/uoRqS+5K/+h7nUq/19jqu5dAD9dl+Wqzdc?=
+ =?us-ascii?Q?wgJTaR5oclL87/sgyOIdcLykpq8VpAMDgN8XQOCUczi0gbSRiFrTqwKrfXfo?=
+ =?us-ascii?Q?N1uQpS7Qu61qwvPrvDyyt21rRdLYvGo7eTR5StnoXgNucXLAc2iI7T8yUyip?=
+ =?us-ascii?Q?ujIaixlaoHAWISRtFdaN91azAfPiq63LS9BXXtMTflZ0bi7WLF30HhJd8IqI?=
+ =?us-ascii?Q?PZohfg5mTfuwITflh3rimKru/InioV40ww7cHKgfVZJKgDADWkL/fD5q+bu2?=
+ =?us-ascii?Q?BL/mhpyC7vmiqi8pg1GvHAQACBB4NDKRqkgUjQeswGUxbFplHxhjQX4KACGi?=
+ =?us-ascii?Q?To2RLf9+XccbJ4JN7SVgV4f21sIc9nB96PRF+hw7bkpkq+Z2CO/KFFGC7MJZ?=
+ =?us-ascii?Q?hGxB3DMCPOp9ctevfSC3dFQgMduNvRTKBdbxjER7Gn+Nj4cALspnPtM7mU46?=
+ =?us-ascii?Q?0dUPwZ3lkQKL2K9BrnN6niFv45O7qijhoNl3qiZX2j3LGcDRi8FWjFSgp7hJ?=
+ =?us-ascii?Q?Qy9v12qx7ZZifHP0YInSgG03eh8H7C0lnNcoP3hJRpLjqmeHpwXFnVtEpuHP?=
+ =?us-ascii?Q?1L31kGobK3O4k45u4AenBhbfMMPmUVq3rm/YH3Ciir/Y3kybRdS7UGi57OyI?=
+ =?us-ascii?Q?fXZvm/8gB4Q6jKfUXhT620yCw+2zjCiSvGV7zAdxafopkbRNBYQ1F6IgyEMU?=
+ =?us-ascii?Q?6tZv38aHangeLnRZ8X4F03WgSuKIeaX2agOi0aie1CkyWPffvs/m04ZaZeK5?=
+ =?us-ascii?Q?0Q2ns5ACA6y3ayZOt4GIsvhRIcsL73sxpGIIf8BQGBfEh2e486+isbVS//EG?=
+ =?us-ascii?Q?eduSJTm4Q5I=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rtmCu+G0+rt09sQgkPxu8A2a2m/LBkRsotzNq4dZUxt1P11fcsHzb0ZnNk/f?=
+ =?us-ascii?Q?OuuUoXl6YzBz3/PoOEWTaH6H0G/hfSKOaQO4rO0Gfoz3XjAH6kTxeux1U/WA?=
+ =?us-ascii?Q?U59SrtoT7MawT2njetFkvjeq6caP8KvK9d5zTf6qh9SvkO/cyzdvGtK8ZlQu?=
+ =?us-ascii?Q?DqadAuwPRHN6bFvYIK64ALabpdBcCXZpixT37fV9UVACQcNZFu2t3YhlsD1h?=
+ =?us-ascii?Q?2UiFZHApq6aHB9zTNxE8loOrAYwqTqLQvCIL15A1fxi/QrEUYoWgFg45ieCi?=
+ =?us-ascii?Q?Wrbo5t/NvNf+/qIVtaKNzKGzdUI+/ErP+xHgFEHCGRsrg2ZyYLyiTOhkEYkK?=
+ =?us-ascii?Q?zILdgEHoNKneY4LbVUzgkKSstNN+IPOQ1w+29+ecHsXGCY1vcHsWVDzEz/8j?=
+ =?us-ascii?Q?nmqDhcrp2HYaG1t5SsnHQITXmpN0E3w2BqL09aW3i+kNBqIYUA1qHSykgTXc?=
+ =?us-ascii?Q?SzxhLftDR750Yt0PpvBFZlLtOmM4N3uiI5E3RySjqliBILfto2IpEubaihZ/?=
+ =?us-ascii?Q?anpGvGfTzZAxZ6ZcwHHcRNQ0IgrdC2J7nfOomv74fdm7BCFuA8TER95vlxAH?=
+ =?us-ascii?Q?lUqt5RLpzMepFBdWE3QPt6QkvvQdxu/PGmVn8/z5A6ZGoUZjATovbf8oJHP9?=
+ =?us-ascii?Q?pYf8kHYcwBeKR5euGMDazBkyD+Hhprxhd8Q75r0nm91vZ51udZ17b+y1sTta?=
+ =?us-ascii?Q?xlSfeZ1MnLr5fZwVuLXgG0vZ75jjSNjrU/Si6s+a+Rq5O6ZG7mi5xBYqtwNm?=
+ =?us-ascii?Q?F0/O/mOQrUMXRzuMpyGDX4zoc9KOj3ktcSBcAq6VFSxXkdHDv6iDbYIbWQ0p?=
+ =?us-ascii?Q?27DTffME3+5jM+p8zQA8rng2O5OWICjoKm70qcZwAUpEgcBNPN00YAU5Njt+?=
+ =?us-ascii?Q?rhSPlsDOEIOhFCBavPgBRYAbrkQ90dM/t/xBLXwbLvfmWDR++5b27PUTIYK2?=
+ =?us-ascii?Q?/oB1mFf68fEK5qnO9XNJ/iURTyhX8OJ0CozB/BQFsCJ/llzKt3oF5+YqYrcW?=
+ =?us-ascii?Q?kbZ0t7RoAb6tkd63na3dcX8kihkwxyoam2Pnd7cGa0JiWM0VU74RKU8WuLJ0?=
+ =?us-ascii?Q?RF3OQSvsx1pyR891oaCH8uCf5ZNSr5C2DVi2luEEgDrHXQyAfN8nmHN+m+oj?=
+ =?us-ascii?Q?plV8Y0tWb4o1QkqCXgO1t4wqJjdxrhtqfB09GcESPJYXE0iwcH1ZoYI+b1eL?=
+ =?us-ascii?Q?3/fxi4u1WPdklHUUZNqxpC1d2oa1kLkVXTbUhLjxOuD65HhR0pEgKHDvo4Bd?=
+ =?us-ascii?Q?LL7/4JjmRFN+v/FR1j+dcJdDDNm5fh51f34Wj8ks3TcPX2QVQYAVqp1Rgm2I?=
+ =?us-ascii?Q?dweCcRmxxZgTLqVHyqg5B2oGFLUYC1F3SgynljuG65Rpc/ofR8UJRUzDZSsd?=
+ =?us-ascii?Q?TCZ7n/js1le9wRQDQkmLCSP9WS0utQxJH96nbOG9AOaZ7+JzChjuMsXXuHZR?=
+ =?us-ascii?Q?21BcbrwymzkVOnCalc5ZHZEUgT5341BCAxg69M0ozDR4anknumpkCtM7Uha6?=
+ =?us-ascii?Q?yV/3K1EvMOVs8j9zZAnNeuq/9W/jNIq1OX/NjhMa0xS3bkY7Fs84kjbo9DOx?=
+ =?us-ascii?Q?pxnLFzEz6GYKYx0ZlkM44XZj9C2k+VGtfY0P701qDmEh2lR9d2XivO3hi/8C?=
+ =?us-ascii?Q?iQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	be3CHJ9V5rPb8fsfXUMWEXy5CYeEc3NZlkJs1jHfFhZkjcdb5sdFs0ml7Rj/kCEAg58Bhxfi28I7nwcOqJzak3hD8bUujfMB6xK+UJA2LYenhJ8pE+CFAHyOY1xS/u77rqFqapiXCSmNz76w/TXAVt/kfQ68Qn7p5d3uvl5qTo3lSwPB/CXu0ImqbgMngL+Vgtt4pqIRuPzpdlnl/xZWvzIFRWtZ8olSZZ4hDCiGNi3QvC1AIveppirObgFNHV1JtbCMZeQpUcXDyCv4Keee1MxNGFjr19b4HcGIdiS1Gnq6MJh2SGTFTd62qAZFhBYJxoi1yO9IXan4mKbmHSw3xnpndjcgfRaAMa1paz4xjowjNtRJv/7AMNY8s4tyaUohNzgklWxUUDQCQgg1y9xE9L/2yZXDenUsWd7o9t9DaUts/nhZVTc7r2/5TPevW877cs+shJ6IYvfoNT+5+4d2IsXGJqUyTsEm7LqiVflJVsynFR1rE7yYqxsUJ++L4bZu0o8HDVWC7xiwkbxFBclDzphH5REVDLvtjduv4KVAxRR4CDkAuwMWquYBOVRUMIx9g/v7pf9c3f8ogiMnOUufhMLSgF1r+++B4/n7lOzoHaE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc868047-340d-4b08-6981-08ddc858babf
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 13:15:57.4139
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aU9Tum+quZvpzvm3wfVmgaHRVOmg/T4pHHdK3G3dF/kGlv2znQ1CiAl0fC2xDPT7FzAoFjayox+BuMagnHKOsOsVspp3u8HJfOSS5UvIrNs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7694
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_03,2025-07-21_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 bulkscore=0
+ suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507210114
+X-Authority-Analysis: v=2.4 cv=MNRgmNZl c=1 sm=1 tr=0 ts=687e3d91 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=4qlYrgqfQ3gvM0pljQkA:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:12061
+X-Proofpoint-ORIG-GUID: gdH79BSLNc6SJ928eye_aGF_qkd5TxM8
+X-Proofpoint-GUID: gdH79BSLNc6SJ928eye_aGF_qkd5TxM8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDExOCBTYWx0ZWRfX8eHu/h4QjHty
+ koWiYX4kctTvJoeUAoDvTUDh6maKhrABezd8y2s+TcIpyxaelJJPu34NAu7D9hQQ60oO8GMoNZL
+ GieFeMMg5Nr1Qf9mX50rX1aCH2LLtw8+bTBYuOw4yH+k9JC72AL09g9rVvg/xILUxdXOlxgZo81
+ WziheIUhIzmNWzKzqzlIqSuh60xh65oh/UVazwsoxjHNqg1MZGXUV+vqbIWkHZ90nqwUncZNA6A
+ 7J+izETMtCuVxs9tz3qgY3AO3dLeDhBR7AvccGKdd2Jlm3GNn7+iT7UL2MmdbAYJ35cUFskI0AN
+ +PlLRIxByBMqSIoGW0S04NbyCyQrd1SYLeDiZR3xBliNPMZVBlg1JZLK5BaIPCXthvNeUsvQqCn
+ ETxMK4B7bS4khKAXVDhDMngXuTJg3m21sFpVqeMUjctgH92k/nJ19c+jRF7G8W1UyAFWzayn
 
-On Mon, 2025-07-21 at 17:59 +1000, NeilBrown wrote:
-> A rename can only rename with a single mount.  Callers of vfs_rename()
-> must and do ensure this is the case.
->=20
-> So there is no point in having two mnt_idmaps in renamedata as they are
-> always the same.  Only of of them is passed to ->rename in any case.
->=20
-> This patch replaces both with a single "mnt_idmap" and changes all
-> callers.
->=20
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/cachefiles/namei.c    |  3 +--
->  fs/ecryptfs/inode.c      |  3 +--
->  fs/namei.c               | 17 ++++++++---------
->  fs/nfsd/vfs.c            |  3 +--
->  fs/overlayfs/overlayfs.h |  3 +--
->  fs/smb/server/vfs.c      |  3 +--
->  include/linux/fs.h       |  6 ++----
->  7 files changed, 15 insertions(+), 23 deletions(-)
->=20
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index 91dfd0231877..d1edb2ac3837 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -387,10 +387,9 @@ int cachefiles_bury_object(struct cachefiles_cache *=
-cache,
->  		cachefiles_io_error(cache, "Rename security error %d", ret);
->  	} else {
->  		struct renamedata rd =3D {
-> -			.old_mnt_idmap	=3D &nop_mnt_idmap,
-> +			.mnt_idmap	=3D &nop_mnt_idmap,
->  			.old_parent	=3D dir,
->  			.old_dentry	=3D rep,
-> -			.new_mnt_idmap	=3D &nop_mnt_idmap,
->  			.new_parent	=3D cache->graveyard,
->  			.new_dentry	=3D grave,
->  		};
-> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-> index 72fbe1316ab8..abd954c6a14e 100644
-> --- a/fs/ecryptfs/inode.c
-> +++ b/fs/ecryptfs/inode.c
-> @@ -634,10 +634,9 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inod=
-e *old_dir,
->  		goto out_lock;
->  	}
-> =20
-> -	rd.old_mnt_idmap	=3D &nop_mnt_idmap;
-> +	rd.mnt_idmap		=3D &nop_mnt_idmap;
->  	rd.old_parent		=3D lower_old_dir_dentry;
->  	rd.old_dentry		=3D lower_old_dentry;
-> -	rd.new_mnt_idmap	=3D &nop_mnt_idmap;
->  	rd.new_parent		=3D lower_new_dir_dentry;
->  	rd.new_dentry		=3D lower_new_dentry;
->  	rc =3D vfs_rename(&rd);
-> diff --git a/fs/namei.c b/fs/namei.c
-> index cd43ff89fbaa..1c80445693d4 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -5024,20 +5024,20 @@ int vfs_rename(struct renamedata *rd)
->  	if (source =3D=3D target)
->  		return 0;
-> =20
-> -	error =3D may_delete(rd->old_mnt_idmap, old_dir, old_dentry, is_dir);
-> +	error =3D may_delete(rd->mnt_idmap, old_dir, old_dentry, is_dir);
->  	if (error)
->  		return error;
-> =20
->  	if (!target) {
-> -		error =3D may_create(rd->new_mnt_idmap, new_dir, new_dentry);
-> +		error =3D may_create(rd->mnt_idmap, new_dir, new_dentry);
->  	} else {
->  		new_is_dir =3D d_is_dir(new_dentry);
-> =20
->  		if (!(flags & RENAME_EXCHANGE))
-> -			error =3D may_delete(rd->new_mnt_idmap, new_dir,
-> +			error =3D may_delete(rd->mnt_idmap, new_dir,
->  					   new_dentry, is_dir);
->  		else
-> -			error =3D may_delete(rd->new_mnt_idmap, new_dir,
-> +			error =3D may_delete(rd->mnt_idmap, new_dir,
->  					   new_dentry, new_is_dir);
->  	}
->  	if (error)
-> @@ -5052,13 +5052,13 @@ int vfs_rename(struct renamedata *rd)
->  	 */
->  	if (new_dir !=3D old_dir) {
->  		if (is_dir) {
-> -			error =3D inode_permission(rd->old_mnt_idmap, source,
-> +			error =3D inode_permission(rd->mnt_idmap, source,
->  						 MAY_WRITE);
->  			if (error)
->  				return error;
->  		}
->  		if ((flags & RENAME_EXCHANGE) && new_is_dir) {
-> -			error =3D inode_permission(rd->new_mnt_idmap, target,
-> +			error =3D inode_permission(rd->mnt_idmap, target,
->  						 MAY_WRITE);
->  			if (error)
->  				return error;
-> @@ -5126,7 +5126,7 @@ int vfs_rename(struct renamedata *rd)
->  		if (error)
->  			goto out;
->  	}
-> -	error =3D old_dir->i_op->rename(rd->new_mnt_idmap, old_dir, old_dentry,
-> +	error =3D old_dir->i_op->rename(rd->mnt_idmap, old_dir, old_dentry,
->  				      new_dir, new_dentry, flags);
->  	if (error)
->  		goto out;
-> @@ -5269,10 +5269,9 @@ int do_renameat2(int olddfd, struct filename *from=
-, int newdfd,
-> =20
->  	rd.old_parent	   =3D old_path.dentry;
->  	rd.old_dentry	   =3D old_dentry;
-> -	rd.old_mnt_idmap   =3D mnt_idmap(old_path.mnt);
-> +	rd.mnt_idmap	   =3D mnt_idmap(old_path.mnt);
->  	rd.new_parent	   =3D new_path.dentry;
->  	rd.new_dentry	   =3D new_dentry;
-> -	rd.new_mnt_idmap   =3D mnt_idmap(new_path.mnt);
->  	rd.delegated_inode =3D &delegated_inode;
->  	rd.flags	   =3D flags;
->  	error =3D vfs_rename(&rd);
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index 7d522e426b2d..a21940cadede 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1940,10 +1940,9 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh =
-*ffhp, char *fname, int flen,
->  		goto out_dput_old;
->  	} else {
->  		struct renamedata rd =3D {
-> -			.old_mnt_idmap	=3D &nop_mnt_idmap,
-> +			.mnt_idmap	=3D &nop_mnt_idmap,
->  			.old_parent	=3D fdentry,
->  			.old_dentry	=3D odentry,
-> -			.new_mnt_idmap	=3D &nop_mnt_idmap,
->  			.new_parent	=3D tdentry,
->  			.new_dentry	=3D ndentry,
->  		};
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index bb0d7ded8e76..4f84abaa0d68 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -361,10 +361,9 @@ static inline int ovl_do_rename(struct ovl_fs *ofs, =
-struct dentry *olddir,
->  {
->  	int err;
->  	struct renamedata rd =3D {
-> -		.old_mnt_idmap	=3D ovl_upper_mnt_idmap(ofs),
-> +		.mnt_idmap	=3D ovl_upper_mnt_idmap(ofs),
->  		.old_parent	=3D olddir,
->  		.old_dentry	=3D olddentry,
-> -		.new_mnt_idmap	=3D ovl_upper_mnt_idmap(ofs),
->  		.new_parent	=3D newdir,
->  		.new_dentry	=3D newdentry,
->  		.flags		=3D flags,
-> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-> index 49e731dd0529..bfd62a21e75c 100644
-> --- a/fs/smb/server/vfs.c
-> +++ b/fs/smb/server/vfs.c
-> @@ -770,10 +770,9 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const =
-struct path *old_path,
->  		goto out4;
->  	}
-> =20
-> -	rd.old_mnt_idmap	=3D mnt_idmap(old_path->mnt),
-> +	rd.mnt_idmap		=3D mnt_idmap(old_path->mnt),
->  	rd.old_parent		=3D old_parent,
->  	rd.old_dentry		=3D old_child,
-> -	rd.new_mnt_idmap	=3D mnt_idmap(new_path.mnt),
->  	rd.new_parent		=3D new_path.dentry,
->  	rd.new_dentry		=3D new_dentry,
->  	rd.flags		=3D flags,
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 1948b2c828d3..d3e27da8a6aa 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2005,20 +2005,18 @@ int vfs_unlink(struct mnt_idmap *, struct inode *=
-, struct dentry *,
-> =20
->  /**
->   * struct renamedata - contains all information required for renaming
-> - * @old_mnt_idmap:     idmap of the old mount the inode was found from
-> + * @mnt_idmap:     idmap of the mount in which the rename is happening.
->   * @old_parent:        parent of source
->   * @old_dentry:                source
-> - * @new_mnt_idmap:     idmap of the new mount the inode was found from
->   * @new_parent:        parent of destination
->   * @new_dentry:                destination
->   * @delegated_inode:   returns an inode needing a delegation break
->   * @flags:             rename flags
->   */
->  struct renamedata {
-> -	struct mnt_idmap *old_mnt_idmap;
-> +	struct mnt_idmap *mnt_idmap;
->  	struct dentry *old_parent;
->  	struct dentry *old_dentry;
-> -	struct mnt_idmap *new_mnt_idmap;
->  	struct dentry *new_parent;
->  	struct dentry *new_dentry;
->  	struct inode **delegated_inode;
+On Mon, Jul 21, 2025 at 01:45:18PM +0200, David Hildenbrand wrote:
+> > >
+> > > (2) Stay at THP=none, but have "madvise" or "always" behavior for
+> > >      selected workloads.
+> > >
+> > > (3) Switch from THP=madvise to THP=always, but keep the old behavior
+> > >      (THP only when advised) for selected workloads.
+> > >
+> > > (4) Stay at THP=madvise, but have "always" behavior for selected
+> > >      workloads.
+> > >
+> > > In essence, (2) can be emulated through (1), by setting THP!=none while
+> > > disabling THPs for all processes that don't want THPs. It requires
+> > > configuring all workloads, but that is a user-space problem to sort out.
+> >
+> > NIT: Delete 'In essence' here.
+>
+> I wanted "something" there to not make it look like the list keeps going on
+> in a weird way ;)
 
-Nice cleanup.
+I mean it's not a big deal :P just have memories of English teachers telling me
+off for repetition of such phrases...
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > > While we could emulate (3)+(4) through (1)+(2) by simply disabling THPs
+> > > completely for these processes, this scares many THPs in our system
+> > > because they could no longer get allocated where they used to be allocated
+> > > for: regions flagged as VM_HUGEPAGE. Apparently, that imposes a
+> > > problem for relevant workloads, because "not THPs" is certainly worse
+> > > than "THPs only when advised".
+> >
+> > I don't know what you mean by 'scares' many THPs? :P
+>
+> They are very afraid of not getting allocated :)
+
+Haha they sound cute!
+
+> >
+> > > of having a system-wide config to change PR_SET_THP_DISABLE behavior, but
+> > > I just don't like the semantics.
+> >
+> > What do you mean?
+>
+> Kconfig option to change the behavior etc. In summary, I don't want to go
+> down that path, it all gets weird.
+
+Yeah please don't! :>)
+
+
+> > > Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
+> > > we essentially want to say "leave advised regions alone" -- "keep THP
+> > > enabled for advised regions",
+> >
+> > Seems OK to me. I guess the one point of confusion could be people being
+> > confused between the THP toggle 'madvise' vs. actually having MADV_HUGEPAGE
+> > set, but that's moot, because 'madvise' mode only enables THP if the region
+> > has had MADV_HUGEPAGE set.
+>
+> Right, whatever ends up setting VM_HUGEPAGE.
+
+Yeah this naming is fine iMO.
+
+>
+> >
+> > >
+> > > The only thing I really dislike about this is using another MMF_* flag,
+> > > but well, no way around it -- and seems like we could easily support
+> > > more than 32 if we want to, or storing this thp information elsewhere.
+> >
+> > Yes my exact thoughts. But I will be adding a series to change this for VMA
+> > flags soon enough, and can potentially do mm flags at the same time...
+> >
+> > So this shouldn't in the end be as much of a problem.
+> >
+> > Maybe it's worth holding off on this until I've done that? But at any rate
+> > I intend to do those changes next cycle, and this will be a next cycle
+> > thing at the earliest anyway.
+>
+> I don't think this series must be blocked by that. Using a bitmap instead of
+> a single "unsigned long" should be fairly easy later -- I did not identify
+> any big blockers.
+
+Yeah that's fine. And I don't know when I will get the bitmap changes done, so
+let's not block this with that!
+
+> > > This is *completely* untested and might be utterly broken. It merely
+> > > serves as a PoC of what I think could be done. If this ever goes upstream,
+> > > we need some kselftests for it, and extensive tests.
+> >
+> > Well :) I mean we should definitely try this out in anger and it _MUST_
+> > have self tests and put under some pressure.
+> >
+> > Usama, can you attack this and see?
+>
+> Yes, that's what I am hoping for.
+
+Cool. And of course Usama is best placed to experiment with this approach,
+as he can experiment with workloads relevant to this requirement.
+
+>
+> >
+> > >
+> > > [1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
+> > > [2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
+> > > [3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
+> > > [4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
+> > > [5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
+> > > [6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
+> > >
+> > > ---
+> > >   Documentation/filesystems/proc.rst |  5 +--
+> > >   fs/proc/array.c                    |  2 +-
+> > >   include/linux/huge_mm.h            | 20 ++++++++---
+> > >   include/linux/mm_types.h           | 13 +++----
+> > >   include/uapi/linux/prctl.h         |  7 ++++
+> > >   kernel/sys.c                       | 58 +++++++++++++++++++++++-------
+> > >   mm/khugepaged.c                    |  2 +-
+> > >   7 files changed, 78 insertions(+), 29 deletions(-)
+> > >
+> > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> > > index 2971551b72353..915a3e44bc120 100644
+> > > --- a/Documentation/filesystems/proc.rst
+> > > +++ b/Documentation/filesystems/proc.rst
+> > > @@ -291,8 +291,9 @@ It's slow but very precise.
+> > >    HugetlbPages                size of hugetlb memory portions
+> > >    CoreDumping                 process's memory is currently being dumped
+> > >                                (killing the process may lead to a corrupted core)
+> > > - THP_enabled		     process is allowed to use THP (returns 0 when
+> > > -			     PR_SET_THP_DISABLE is set on the process
+> > > + THP_enabled                 process is allowed to use THP (returns 0 when
+> > > +                             PR_SET_THP_DISABLE is set on the process to disable
+> > > +                             THP completely, not just partially)
+> >
+> > Hmm but this means we have no way of knowing if it's set for partial
+>
+> Yes. I briefly thought about indicating another member, but then I thought
+> (a) it's ugly and (b) "who cares".
+>
+> I also thought about just printing "partial" instead of "1", but not sure if
+> that would break any parser.
+
+Hm and >1 could break a user who expects this to be 0, 1. We can always add
+a new entry if needed.
+
+> > >   {
+> > > +	/* Are THPs disabled for this VMA? */
+> > > +	if (vm_flags & VM_NOHUGEPAGE)
+> > > +		return true;
+> > > +	/* Are THPs disabled for all VMAs in the whole process? */
+> > > +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
+> > > +		return true;
+> > >   	/*
+> > > -	 * Explicitly disabled through madvise or prctl, or some
+> > > -	 * architectures may disable THP for some mappings, for
+> > > -	 * example, s390 kvm.
+> > > +	 * Are THPs disabled only for VMAs where we didn't get an explicit
+> > > +	 * advise to use them?
+> >
+> > Probably fine to drop the rather pernickety reference to s390 kvm here, I
+> > mean we don't need to spell out massively specific details in a general
+> > handler.
+>
+> No strong opinion.
+
+I mean what I'm saying is this is fine :P Got no problem wtih removing this
+bit of the comment.
+
+>
+> >
+> > >   	 */
+> > > -	return (vm_flags & VM_NOHUGEPAGE) ||
+> > > -	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
+> > > +	if (vm_flags & VM_HUGEPAGE)
+> > > +		return false;
+> > > +	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
+> > >   }
+> > >
+> > >   static inline bool thp_disabled_by_hw(void)
+> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > > index 1ec273b066915..a999f2d352648 100644
+> > > --- a/include/linux/mm_types.h
+> > > +++ b/include/linux/mm_types.h
+> > > @@ -1743,19 +1743,16 @@ enum {
+> > >   #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
+> > >   #define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
+> > >
+> > > -/*
+> > > - * This one-shot flag is dropped due to necessity of changing exe once again
+> > > - * on NFS restore
+> > > - */
+> > > -//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
+> > > +#define MMF_HUGE_ZERO_PAGE	18      /* mm has ever used the global huge zero page */
+> > >
+> > >   #define MMF_HAS_UPROBES		19	/* has uprobes */
+> > >   #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
+> > >   #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
+> > >   #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
+> > > -#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
+> > > -#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+> > > -#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+> > > +#define MMF_DISABLE_THP_EXCEPT_ADVISED	23	/* no THP except for VMAs with VM_HUGEPAGE */
+> > > +#define MMF_DISABLE_THP_COMPLETELY	24	/* no THP for all VMAs */
+> > > +#define MMF_DISABLE_THP_MASK	((1 << MMF_DISABLE_THP_COMPLETELY) |\
+> > > +				 (1 << MMF_DISABLE_THP_EXCEPT_ADVISED))
+> >
+> > It feels a bit sigh to have to use up low-supply mm flags for this. But
+> > again, I should be attacking this shortage soon enough.
+> >
+> > Are we not going ahead with Barry's series that was going to use one of
+> > these in the end?
+>
+> Whoever gets acked first ;)
+
+;)
+
+>
+> >
+> > >   #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
+> > >   #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
+> > >   /*
+> > > diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> > > index 43dec6eed559a..1949bb9270d48 100644
+> > > --- a/include/uapi/linux/prctl.h
+> > > +++ b/include/uapi/linux/prctl.h
+> > > @@ -177,7 +177,14 @@ struct prctl_mm_map {
+> > >
+> > >   #define PR_GET_TID_ADDRESS	40
+> > >
+> > > +/*
+> > > + * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
+> > > + * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
+> > > + * specified for PR_SET_THP_DISABLE.
+> > > + */
+> >
+> > Probably worth specifying that you're just returning the flags here.
+>
+> Yes.
+>
+> Thanks!
+
+Cheers!
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Cheers, Lorenzo
 
