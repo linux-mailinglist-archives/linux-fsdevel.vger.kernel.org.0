@@ -1,162 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-55607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D86B1B0C730
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 17:04:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62986B0C75F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 17:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD6BC1689D3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 15:04:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70E7A16DDB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 15:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3398D2DECAF;
-	Mon, 21 Jul 2025 15:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A560C2DEA96;
+	Mon, 21 Jul 2025 15:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="cns5b2SS"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ZqA5dv5G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F93F2DCF40;
-	Mon, 21 Jul 2025 15:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753110229; cv=pass; b=Q4oZLHMwEw++nChZQIdI0MQZtq4jNheP7daMTCCTaLz5jtKqMQG+EgoC/4zJpIG3lR3d+40kMJae1yIsP4WESmek9ggudQDwGaEpBbplC9ohh6+UII5K5NDnqbwEPl/p6LpalzhaoBcsYXw0goOpcpYPU4p+qXYhavo7SPGcQPU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753110229; c=relaxed/simple;
-	bh=9K4lw/XMZeIUf9v7pVcB+F+T8QW+D9xUBI96viQ+x6I=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=APBW22cWm8YFAwYGq51qyLEBf2VypojBZJgbosSjceVgxGDHCXENHsnl2hRCzf00kFowWMIaiwi+f4/5Xa2HOl7mvZTamYZSyOmHSticEKD8fUZ2NPdhHrnG2kSRwzpttnLhxLeyMytgvLeRDYHtlDQgbDofuQ/g1FofO3XZN00=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=cns5b2SS; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753110202; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QCVVXnMzFu9pFEarDQ1bWyJn604xPEXVwGQEC27mpJl49p1S+DlJKlmKQTR6GLRdTm1Zjd9uIpIaaWnf1FVGgiy+2KYn6HaigbJZ84B6aOpZPYIDHdBOLd9GzmvX4u+wIEO+ebc9nR75AQ76nA2/CgwZEqVkqOGzi5Z/ESWeZLk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753110202; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=WT1g3j1al7fNVHqvRJ6a0NdHyHIFMIEnZ27MnZdoupA=; 
-	b=K8L5/hVWczEqoHwf2I794N4HhbUoCUb2hKoiw1WY5Ltrc3RN1SB5EGIWbHl2eMq8sbIfMbCgJ2SxvWLdT6WvkvFR6sm6E92LXnobFlajsE5tWhMrr0+rgSPPUoM+We0TkmMddsGYFvQP58G1jYt1khSUBvxfjn331MEHmcq31eA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753110202;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=WT1g3j1al7fNVHqvRJ6a0NdHyHIFMIEnZ27MnZdoupA=;
-	b=cns5b2SSbQkU8PB4BLTHp2yIrG1ax/Op5APklDtxHvhRzcyLVHM6oTAoJszSowcB
-	LLHq3+Nh5r0ZyZ/8iPZ8VHtY9g6fglULNtpQIaQ+/HI3OACQunhXdKx4/rRdVfB4/vO
-	lKLMXA536dphwJCydms3SNph/wv+ghbGI9x9kylE=
-Received: by mx.zohomail.com with SMTPS id 1753110197686692.922859769268;
-	Mon, 21 Jul 2025 08:03:17 -0700 (PDT)
-Message-ID: <766ef20e-7569-46f3-aa3c-b576e4bab4c6@collabora.com>
-Date: Mon, 21 Jul 2025 20:03:12 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B1C5383;
+	Mon, 21 Jul 2025 15:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753111161; cv=none; b=POUHlNSk0HNM1eKNSBBjulqvihlbWDvwSF8enOdnAOjbXlHZQEXK+1lsla8eWk5ktqDAlGrpIrtUTuEEWsSAdVHvUarydwkkEU7dhE8Yzau4nYuDEN9B9/gMAo4S52T+lhFsUquihLw4VT3oKWmljsHju6086hXwx2Ly4UrS1jw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753111161; c=relaxed/simple;
+	bh=lR9DhaHkYhiIlmXUci5r2sc4oWISTeQIQOFn7N7h9C4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FuFDaAOPXJA5MaBepXenO+9wE3pFsYOWXlGAECpXt+zG7qWEs32LrUA2Crglz+ZiXiPthu8f/4cFJq3s5C4MMAlwCZIqVWYZxI+v4UcPhhjDFGdIHIjYSSyGdLHIV79sVR5KEq2FSOr1/qBoGr/2tbe2gqndBADa1vQKRSjC2ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ZqA5dv5G; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bm3w24T6Qz9thl;
+	Mon, 21 Jul 2025 17:19:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1753111154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=27ePGKfk1IpGb39mFKtSkLv7SdmqONl0QJ7+stsT6hM=;
+	b=ZqA5dv5GvcMVj639SK6l4HlrSwxA4acrTPV6xpW3cmG5jX7uUkBvVlG8JBoTWgyFx9Fox3
+	0o8ddFzdXjEUYc49+If0V+I6aRC34Ryq5bb8uZR9CSVOFrQ+BpuUKFrOaV2QoUB3sUPdrp
+	cej4+6ndOPbS6REA8Z+dtgzVYzLMAxXeXu2ZCmqdaMIQwoRTZ+cs5tD2fV1EoPKYisna6b
+	uK3BzSzHfNuNAXNOgSKCfr8jkUSQebithqevIrG4l7lLOC1w+D+jndmfxlcpxfIHfc5tdr
+	ObuATqX4b6E5RRCqomu5+WEP4bN4dSx0KJCcCp9N+LeZoLyGcFRlNPpKTEl+3g==
+Date: Tue, 22 Jul 2025 01:19:00 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC 0/4] procfs: make reference pidns more user-visible
+Message-ID: <20250721.150803-lavish.ninja.rigid.racism-OCjeOw80sO9@cyphar.com>
+References: <20250721-procfs-pidns-api-v1-0-5cd9007e512d@cyphar.com>
+ <CALCETrVo+Mdj7as2R0R+FqTBbjqwTkXu5Zkj=dg8EVM9xRhBPw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Excessive page cache occupies DMA32 memory
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
- usama.anjum@collabora.com, Andrew Morton <akpm@linux-foundation.org>,
- kernel@collabora.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4hmpcw27chbaxqg4"
+Content-Disposition: inline
+In-Reply-To: <CALCETrVo+Mdj7as2R0R+FqTBbjqwTkXu5Zkj=dg8EVM9xRhBPw@mail.gmail.com>
 
-Hello,
 
-When 10-12GB our of total 16GB RAM is being used as page cache
-(active_file + inactive_file) at suspend time, the drivers fail to allocate
-dma memory at resume as dma memory is either occupied by the page cache or
-fragmented. Example:
+--4hmpcw27chbaxqg4
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC 0/4] procfs: make reference pidns more user-visible
+MIME-Version: 1.0
 
-kworker/u33:5: page allocation failure: order:7, mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
-CPU: 1 UID: 0 PID: 7693 Comm: kworker/u33:5 Not tainted 6.11.11-valve17-1-neptune-611-g027868a0ac03 #1 3843143b92e9da0fa2d3d5f21f51beaed15c7d59
-Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
-Workqueue: mhi_hiprio_wq mhi_pm_st_worker [mhi]
-Call Trace:
- <TASK>
- dump_stack_lvl+0x4e/0x70
- warn_alloc+0x164/0x190
- ? srso_return_thunk+0x5/0x5f
- ? __alloc_pages_direct_compact+0xaf/0x360
- __alloc_pages_slowpath.constprop.0+0xc75/0xd70
- __alloc_pages_noprof+0x321/0x350
- __dma_direct_alloc_pages.isra.0+0x14a/0x290
- dma_direct_alloc+0x70/0x270
- mhi_fw_load_handler+0x126/0x340 [mhi a96cb91daba500cc77f86bad60c1f332dc3babdf]
- mhi_pm_st_worker+0x5e8/0xac0 [mhi a96cb91daba500cc77f86bad60c1f332dc3babdf]
- ? srso_return_thunk+0x5/0x5f
- process_one_work+0x17e/0x330
- worker_thread+0x2ce/0x3f0
- ? __pfx_worker_thread+0x10/0x10
- kthread+0xd2/0x100
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x34/0x50
- ? __pfx_kthread+0x10/0x10
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-Mem-Info:
-active_anon:513809 inactive_anon:152 isolated_anon:0
-active_file:359315 inactive_file:2487001 isolated_file:0
-unevictable:637 dirty:19 writeback:0
-slab_reclaimable:160391 slab_unreclaimable:39729
-mapped:175836 shmem:51039 pagetables:4415
-sec_pagetables:0 bounce:0
-kernel_misc_reclaimable:0
-free:125666 free_pcp:0 free_cma:0
-Node 0 active_anon:2055236kB inactive_anon:608kB active_file:1437260kB inactive_file:9948004kB unevictable:2548kB isolated(anon):0kB isolated(file):0kB mapped:703344kB dirty:76kB writeback:0kB shmem:204156kB shmem_thp:0kB shmem_pmdmapped:0kB anon_thp:495616kB writeback_tmp:0kB kernel_stack:9440kB pagetables:17660kB sec_pagetables:0kB all_unreclaimable? no
-Node 0 DMA free:68kB boost:0kB min:68kB low:84kB high:100kB reserved_highatomic:0KB active_anon:8kB inactive_anon:0kB active_file:0kB inactive_file:13232kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-lowmem_reserve[]: 0 1808 14772 0 0
-Node 0 DMA32 free:9796kB boost:0kB min:8264kB low:10328kB high:12392kB reserved_highatomic:0KB active_anon:14148kB inactive_anon:88kB active_file:128kB inactive_file:1757192kB unevictable:0kB writepending:0kB present:1935736kB managed:1867440kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-lowmem_reserve[]: 0 0 12964 0 0
-Node 0 DMA: 5*4kB (U) 0*8kB 1*16kB (U) 1*32kB (U) 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 68kB
-Node 0 DMA32: 103*4kB (UME) 52*8kB (UME) 43*16kB (UME) 58*32kB (UME) 35*64kB (UME) 23*128kB (UME) 5*256kB (ME) 0*512kB 0*1024kB 0*2048kB 0*4096kB = 9836kB
-Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
-Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
-2897795 total pagecache pages
-0 pages in swap cache
-Free swap  = 8630724kB
-Total swap = 8630776kB
-3892604 pages RAM
-0 pages HighMem/MovableOnly
-101363 pages reserved
-0 pages cma reserved
-0 pages hwpoisoned
+On 2025-07-21, Andy Lutomirski <luto@amacapital.net> wrote:
+> On Mon, Jul 21, 2025 at 1:44=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com> =
+wrote:
+> >
+> > Ever since the introduction of pid namespaces, procfs has had very
+> > implicit behaviour surrounding them (the pidns used by a procfs mount is
+> > auto-selected based on the mounting process's active pidns, and the
+> > pidns itself is basically hidden once the mount has been constructed).
+> > This has historically meant that userspace was required to do some
+> > special dances in order to configure the pidns of a procfs mount as
+> > desired. Examples include:
+> >
+> >  * In order to bypass the mnt_too_revealing() check, Kubernetes creates
+> >    a procfs mount from an empty pidns so that user namespaced containers
+> >    can be nested (without this, the nested containers would fail to
+> >    mount procfs). But this requires forking off a helper process because
+> >    you cannot just one-shot this using mount(2).
+> >
+> >  * Container runtimes in general need to fork into a container before
+> >    configuring its mounts, which can lead to security issues in the case
+> >    of shared-pidns containers (a privileged process in the pidns can
+> >    interact with your container runtime process). While
+> >    SUID_DUMP_DISABLE and user namespaces make this less of an issue, the
+> >    strict need for this due to a minor uAPI wart is kind of unfortunate.
+> >
+> > Things would be much easier if there was a way for userspace to just
+> > specify the pidns they want. Patch 1 implements a new "pidns" argument
+> > which can be set using fsconfig(2):
+> >
+> >     fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+> >     fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid",=
+ 0);
+> >
+> > or classic mount(2) / mount(8):
+> >
+> >     // mount -t proc -o pidns=3D/proc/self/ns/pid proc /tmp/proc
+> >     mount("proc", "/tmp/proc", "proc", MS_..., "pidns=3D/proc/self/ns/p=
+id");
+> >
+> > The initial security model I have in this RFC is to be as conservative
+> > as possible and just mirror the security model for setns(2) -- which
+> > means that you can only set pidns=3D... to pid namespaces that your
+> > current pid namespace is a direct ancestor of. This fulfils the
+> > requirements of container runtimes, but I suspect that this may be too
+> > strict for some usecases.
+> >
+> > The pidns argument is not displayed in mountinfo -- it's not clear to me
+> > what value it would make sense to show (maybe we could just use ns_dname
+> > to provide an identifier for the namespace, but this number would be
+> > fairly useless to userspace). I'm open to suggestions.
+> >
+> > In addition, being able to figure out what pid namespace is being used
+> > by a procfs mount is quite useful when you have an administrative
+> > process (such as a container runtime) which wants to figure out the
+> > correct way of mapping PIDs between its own namespace and the namespace
+> > for procfs (using NS_GET_{PID,TGID}_{IN,FROM}_PIDNS). There are
+> > alternative ways to do this, but they all rely on ancillary information
+> > that third-party libraries and tools do not necessarily have access to.
+> >
+> > To make this easier, add a new ioctl (PROCFS_GET_PID_NAMESPACE) which
+> > can be used to get a reference to the pidns that a procfs is using.
+> >
+> > It's not quite clear what is the correct security model for this API,
+> > but the current approach I've taken is to:
+> >
+> >  * Make the ioctl only valid on the root (meaning that a process without
+> >    access to the procfs root -- such as only having an fd to a procfs
+> >    file or some open_tree(2)-like subset -- cannot use this API).
+> >
+> >  * Require that the process requesting either has access to
+> >    /proc/1/ns/pid anyway (i.e. has ptrace-read access to the pidns
+> >    pid1), has CAP_SYS_ADMIN access to the pidns (i.e. has administrative
+> >    access to it and can join it if they had a handle), or is in a pidns
+> >    that is a direct ancestor of the target pidns (i.e. all of the pids
+> >    are already visible in the procfs for the current process's pidns).
+>=20
+> What's the motivation for the ptrace-read option?  While I don't see
+> an attack off the top of my head, it seems like creating a procfs
+> mount may give write-ish access to things in the pidns (because the
+> creator is likely to have CAP_DAC_OVERRIDE, etc) and possibly even
+> access to namespace-wide things that aren't inherently visible to
+> PID1.
 
-As you can see above, the ~11 GB of page cache has consumed DMA32 pages,
-leaving only 9.8MB free but heavily fragmented with no contiguous blocks
-≥512KB. Its hard to reproduce by a test. We have received several reports
-for v6.11 kernel. As we don't have reliable reproducer yet, we cannot test
-if other kernels are also affected.
+This latter section is about the privilege model for
+ioctl(PROCFS_GET_PID_NAMESPACE), not the pidns=3D mount flag. pidns=3D
+requires CAP_SYS_ADMIN for pidns->user_ns, in addition to the same
+restrictions as pidns_install() (must be a direct ancestor). Maybe I
+should add some headers in this cover letter for v2...
 
-Current mitigations are:
-1 Pre-allocate buffer in drivers and don't free them even if they are only
-  used during during initialization at boot and resume. But it wastes memory
-  and unacceptable even if its just 2-4MB.
-2 Drop caches at suspend. But it causes latency during suspension and
-  slowness on resume. There is no way to drop only couple of GB of page
-  cache as that wouldn't take long at suspend time.
+For the ioctl -- if the user can ptrace-read pid1 in the pidns, they can
+open a handle to /proc/1/ns/pid which is exactly the same thing they'd
+get from PROCFS_GET_PID_NAMESPACE.
 
-Greg dislikes 1 and rejects it which is understandable. [1]:
-> It should be reclaiming this, as it's just cache, not really used
-> memory.
+> Even the ancestor check seems dicey.  Imagine that uid 1000 makes an
+> unprivileged container complete with a userns.  Then uid 1001 (outside
+> the container) makes its own userns and mountns but stays in the init
+> pidns and then mounts (and owns, with all filesystem-related
+> capabilities) that mount.  Is this really safe?
 
-Would it be reasonable to add a mechanism to limit page cache growth?
-I think, there should be some watermark or similar by which we can
-indicate to page cache to don't go above it. Or at suspend, drop only
-a part of of the page cache and not the entire page cache. What other
-options are available? 
+As for the ancestor check (for the ioctl), the logic I had was that
+being in an ancestor pidns means that you already can see all of the
+subprocesses in your own pidns, so it seems strange to not be able to
+get a handle to their pidns. Maybe this isn't quite right, idk.
 
-[1] https://lore.kernel.org/all/2025071722-panther-legwarmer-d2be@gregkh 
+Ultimately there isn't too much you can do with a pidns fd if you don't
+have privileges to join it (the only thing I can think of is that you
+could bind-mount it, which could maybe be used to trick an
+administrative process if they trusted your mountns for some reason).
 
-Thanks,
-Muhammad Usama Anjum
+> CAP_SYS_ADMIN seems about right.
+
+For pidns=3D, sure. For the ioctl, I think this is overkill.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--4hmpcw27chbaxqg4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaH5aYwAKCRAol/rSt+lE
+bxwJAPsExwFlCYmv56CAhmcD4tOiYjdj4rRodrWoLlDHqXc2QwD+OcuhtT7gwFY5
+kPb4AgmTUiYufiAlBeMVvO42bxZK/A8=
+=EH6N
+-----END PGP SIGNATURE-----
+
+--4hmpcw27chbaxqg4--
 
