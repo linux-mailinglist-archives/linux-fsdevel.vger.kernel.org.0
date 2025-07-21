@@ -1,209 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-55617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F26B0CB2D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 21:51:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D10B0B0CB48
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 22:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0DE6177951
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 19:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF067542B22
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 20:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F28A238C29;
-	Mon, 21 Jul 2025 19:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DC6239E65;
+	Mon, 21 Jul 2025 20:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NqqKaLGV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/eK7e00"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC4223770D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 19:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B4DEAC6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 20:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753127502; cv=none; b=rF2bRmvDh6SDRvM7ArpNDANg0BGB5ornUEEjY93Cjx4VzhEfXDFpYnz9Ek6bJe6BjupnCt3/m09OPvkC5+jHPb8sC8btut3JB4r7to8rwSiErDqIUv5JL+2DmY7WWqneyGTXbuNGbRo3tNmPjFtWnM7bUbi+m7sTkb/WZEvFXic=
+	t=1753128316; cv=none; b=FyTewxP8uMjRX7GYNVRid/LG6vaTcBsUl0lKeNZnxeRTnFLEtcAHr6OARlDvq5YTwyywiFAPCJ6hND4TVlmCVQFj52lqeKhWf1kWvuWQRFKoHmL15jOwKJyPw0isw9uPqxhEEuwgkijUri8rnH6ACjq8DKGG6XjbTOamcnOv/dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753127502; c=relaxed/simple;
-	bh=FSkb//Un9XYOBLbpZuVIKlWqK+ESfLKx8dGomUzDgw8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Dgrwqz3g5FuAHJy4EI4aSE1hz9yMhEo5531iBN3OsmpQ3Lt6tjpcEQEC01kUGe7Gd13NNYvrvkfCpS+8BY2qB9NjRZTpFWFXOQN3rt4XOey0wRJxpVUZf5QFa/fH1/uDzApnQKvfr/ekSIL4usayLC053ETeK5WImBLlSAphijY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NqqKaLGV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753127496;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bUkM9bKpl7dkgWKCxuTwvfTXC4FOX6e2F+2YtIt3kYI=;
-	b=NqqKaLGVc/86eUgLF6gLC/3NCXPJ6x2h6BE1ACX8xUMigN7G2bR+g3N+MfCFAy3xArMRE2
-	9PZGO8RBcKws3hEyGdhg/ZLGZ7Jx8WFb3Nq37nq9PfIROzbmNZDbpDninTsJ4Dhj7rWUG5
-	PZcK/5zGfcmQzNUgZov2PVCWAtBZ+8o=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-C2Uutw5IPIutBAyRTG451Q-1; Mon,
- 21 Jul 2025 15:51:32 -0400
-X-MC-Unique: C2Uutw5IPIutBAyRTG451Q-1
-X-Mimecast-MFC-AGG-ID: C2Uutw5IPIutBAyRTG451Q_1753127491
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83BC919560AA;
-	Mon, 21 Jul 2025 19:51:31 +0000 (UTC)
-Received: from [10.22.80.24] (unknown [10.22.80.24])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 34D3D19560A3;
-	Mon, 21 Jul 2025 19:51:30 +0000 (UTC)
-Date: Mon, 21 Jul 2025 21:51:22 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Antoni Pokusinski <apokusinski01@gmail.com>
-cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-Subject: Re: [PATCH] hpfs: add checks for ea addresses
-In-Reply-To: <20250720142218.145320-1-apokusinski01@gmail.com>
-Message-ID: <784a100e-c848-3a9c-74ef-439fa12df53c@redhat.com>
-References: <20250720142218.145320-1-apokusinski01@gmail.com>
+	s=arc-20240116; t=1753128316; c=relaxed/simple;
+	bh=74RpbiNARy5I8QMBe4QXTHNQ33XHrtQ4VNqLN5P9868=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ahrzHIKtJuIfZ3drmcaoLSzzyIqvPZgIjaHkHvFCL8SoFH6mGzayG38xnijFTzBMjVmgNxL7TeynLshoEkNqHK4iA6GKIwtOpISGQ2jBGZlvA9HD/U6wvgUyE30dDTGqCtPahnX7kEycI8n1rQrfozdF3oXEIlqhYB626vI+3ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U/eK7e00; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ab5953f5dcso49472481cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 13:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753128313; x=1753733113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LBX8V/+8DvQNYAdpuKWkUSxtQEyo22tkhOckHWPHiX8=;
+        b=U/eK7e002nnrAAybn5GOBCpo3dP4aK/pi80M7QCsgflgCDdLQJgl/f07OFv6svAGWD
+         V+NkowBY1xZRi1e0A3V8tedsI5LgoMN79fQGNsvS5fHK9f4NIbHRU2lzktyC+zbxH5RA
+         /U9cIXrDebrfjs/QguoVqso4ksNS2XHweVySqVm9DUVYqR6veMDQN+J1vqihbhtLhna/
+         W/8vW7zm4EKlDF2b5Erg/MX2H9TCM9cq1hv0ln+j+WEMc643km+YUmQ3S7av5I6pUL3y
+         S88Bmw9A7/d304IyRXBE+VJTyi2LZ2kx+al9OuWAnJy2VvlmjzyghsPIWOf4K47bm/b6
+         /X/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753128313; x=1753733113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LBX8V/+8DvQNYAdpuKWkUSxtQEyo22tkhOckHWPHiX8=;
+        b=FnV+Y4aENAjMSJkaxkofRB/2XEXD6NlOnbT8+kZcwKT/i4KE2n36VF9hD5UMBYCcsY
+         1+PupzJ0BDFM5Nx6aU70tQs1aZa0+9YCoG+i9cXvfqXyFZv+FQkL13o+PD8Ci3ft7WFO
+         r+3FXK6cmt6/mQbZCXx2E1NhGhS7d9+RdSGYNoJaPhmRfCechwqymgcqWXuB8jIMMxer
+         UeOsri6Y56ktxH5WFWyd0S5/v0ez+Kkwwd0IWZGY7AyTyrQgm62LGXJQU/0kXVYM6ViX
+         zne0cWRlmUafDnmpCMAMVvT5IbDEfBI1+IwbrKwy59GDeJpyoWQxoAKMuHAKpgUh+DcZ
+         Elvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnWsCT2bcPIOJragj3cw+LM1tMTRv4bTrXa5Ss+iBs/dzm6lIhPE9xbDXfvCPSKU+GSqq214IZV90Qvc7w@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdqwJ3Wr1eq50BHBhAR8teWqXXaFbZjQ0vvuaDOrsy6aIeqYjP
+	JxUT7ehkqYdo3bWyCZmnVLSpBscPdCy/xy8cdi8aiEcNcQbB4ZOFsCFyT5fZOAez7f257hhfA8S
+	l+gocXZ4P9VmcZ91tfO5ljPauRyqCXpo=
+X-Gm-Gg: ASbGncvH8hJBTf0bFsHxrfop49+VBe7mUxFLfQv/VA3V61t/cj0gad5gkj0awga+2gw
+	xjSAvK1cfj9crVx5foYI87U1Po+QO3BglVEkZ5I64Z5+34FMET6tuU55s60xhK7P1B2L3H6bVVb
+	jCDl/eGa0+WcwITI3Ps0e1gAF6GgS7EU4GoPbYKQ0d00VdNKLbuuXOHvRqEfioHRuAWDmOoG8eD
+	CwGH4Y0V0hu7ltbVjzvtw==
+X-Google-Smtp-Source: AGHT+IEa8BgaJ7iJYA6pQ+EITDiEmHkFLsE/ueXidJwjFR2j6MP1Om8J0CnZs8Lk/KOfckoWjdpx6OYegnmw4g4cAM0=
+X-Received: by 2002:ac8:5d43:0:b0:4ab:8862:7fed with SMTP id
+ d75a77b69052e-4ab93d47dccmr266435591cf.30.1753128313232; Mon, 21 Jul 2025
+ 13:05:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
+ <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
+ <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com> <CAOQ4uxj1GB_ZneEeRqUT=fc2nNL8qF6AyLmU4QCfYqoxuZauPw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj1GB_ZneEeRqUT=fc2nNL8qF6AyLmU4QCfYqoxuZauPw@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 21 Jul 2025 13:05:02 -0700
+X-Gm-Features: Ac12FXyE7KgM1aUD9fK4gRCMPhTKyr8XcJLAUyf8skDL68B4PXWDd-qe0wrI0Eo
+Message-ID: <CAJnrk1bE2ZHPNf-Pu+DBnOyqQWU=GZjvB+V-wvguszSwZTF0cQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the connection
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, neal@gompa.dev, 
+	John@groves.net, miklos@szeredi.hu, bernd@bsbernd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+On Sat, Jul 19, 2025 at 12:18=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> On Sat, Jul 19, 2025 at 12:23=E2=80=AFAM Joanne Koong <joannelkoong@gmail=
+.com> wrote:
+> >
+> > On Thu, Jul 17, 2025 at 4:26=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> > >
+> > > From: Darrick J. Wong <djwong@kernel.org>
+> > >
+> > > generic/488 fails with fuse2fs in the following fashion:
+> > >
+> > > Unfortunately, the 488.full file shows that there are a lot of hidden
+> > > files left over in the filesystem, with incorrect link counts.  Traci=
+ng
+> > > fuse_request_* shows that there are a large number of FUSE_RELEASE
+> > > commands that are queued up on behalf of the unlinked files at the ti=
+me
+> > > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
+> > > aborted, the fuse server would have responded to the RELEASE commands=
+ by
+> > > removing the hidden files; instead they stick around.
+> >
+> > Tbh it's still weird to me that FUSE_RELEASE is asynchronous instead
+> > of synchronous. For example for fuse servers that cache their data and
+> > only write the buffer out to some remote filesystem when the file gets
+> > closed, it seems useful for them to (like nfs) be able to return an
+> > error to the client for close() if there's a failure committing that
+> > data; that also has clearer API semantics imo, eg users are guaranteed
+> > that when close() returns, all the processing/cleanup for that file
+> > has been completed.  Async FUSE_RELEASE also seems kind of racy, eg if
+> > the server holds local locks that get released in FUSE_RELEASE, if a
+> > subsequent FUSE_OPEN happens before FUSE_RELEASE then depends on
+> > grabbing that lock, then we end up deadlocked if the server is
+> > single-threaded.
+> >
+>
+> There is a very good reason for keeping FUSE_FLUSH and FUSE_RELEASE
+> (as well as those vfs ops) separate.
 
-I've got an email that shows these syslog lines:
+Oh interesting, I didn't realize FUSE_FLUSH gets also sent on the
+release path. I had assumed FUSE_FLUSH was for the sync()/fsync()
+case. But I see now that you're right, close() makes a call to
+filp_flush() in the vfs layer. (and I now see there's FUSE_FSYNC for
+the fsync() case)
 
-hpfs: filesystem error: warning: spare dnodes used, try chkdsk
-hpfs: You really don't want any checks? You are crazy...
-hpfs: hpfs_map_sector(): read error
-hpfs: code page support is disabled
-==================================================================
-BUG: KASAN: use-after-free in strcmp+0x6f/0xc0 lib/string.c:283
-Read of size 1 at addr ffff8880116728a6 by task syz-executor411/6741
+>
+> A filesystem can decide if it needs synchronous close() (not release).
+> And with FOPEN_NOFLUSH, the filesystem can decide that per open file,
+> (unless it conflicts with a config like writeback cache).
+>
+> I have a filesystem which can do very slow io and some clients
+> can get stuck doing open;fstat;close if close is always synchronous.
+> I actually found the libfuse feature of async flush (FUSE_RELEASE_FLUSH)
+> quite useful for my filesystem, so I carry a kernel patch to support it.
+>
+> The issue of racing that you mentioned sounds odd.
+> First of all, who runs a single threaded fuse server?
+> Second, what does it matter if release is sync or async,
+> FUSE_RELEASE will not be triggered by the same
+> task calling FUSE_OPEN, so if there is a deadlock, it will happen
+> with sync release as well.
 
+If the server is single-threaded, I think the FUSE_RELEASE would have
+to happen on the same task as FUSE_OPEN, so if the release is
+synchronous, this would avoid the deadlock because that guarantees the
+FUSE_RELEASE happens before the next FUSE_OPEN.
 
-It seems that you deliberately turned off checking by using the parameter 
-check=none.
+However now that you pointed out FUSE_FLUSH gets sent on the release
+path, that addresses my worry about async FUSE_RELEASE returning
+before the server has gotten a chance to write out their local buffer
+cache.
 
-The HPFS driver will not check metadata for corruption if "check=none" is 
-used, you should use the default "check=normal" or enable extra 
-time-consuming checks using "check=strict".
-
-The code that checks extended attributes in the fnode is in the function 
-hpfs_map_fnode, the branch "if ((fnode = hpfs_map_sector(s, ino, bhp, 
-FNODE_RD_AHEAD))) { if (hpfs_sb(s)->sb_chk) {" - fixes for checking 
-extended attributes should go there.
-
-If you get a KASAN warning when using "check=normal" or "check=strict", 
-report it and I will fix it; with "check=none" it is not supposed to work.
-
-Mikulas
-
-
-
-On Sun, 20 Jul 2025, Antoni Pokusinski wrote:
-
-> The addresses of the extended attributes are computed using the
-> fnode_ea() and next_ea() functions which refer to the fields residing in
-> a given fnode. There are no sanity checks for the returned values, so in
-> the case of corrupted data in the fnode, the ea addresses are invalid.
-> 
-> Fix the bug by adding ea_valid_addr() function which checks if a given
-> extended attribute resides within the range of the ea array of a given
-> fnode.
-> 
-> Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
-> Tested-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
-> 
-> ---
->  fs/hpfs/anode.c   | 2 +-
->  fs/hpfs/ea.c      | 6 +++---
->  fs/hpfs/hpfs_fn.h | 5 +++++
->  fs/hpfs/map.c     | 2 +-
->  4 files changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/hpfs/anode.c b/fs/hpfs/anode.c
-> index c14c9a035ee0..f347cdd94a5c 100644
-> --- a/fs/hpfs/anode.c
-> +++ b/fs/hpfs/anode.c
-> @@ -488,7 +488,7 @@ void hpfs_remove_fnode(struct super_block *s, fnode_secno fno)
->  	if (!fnode_is_dir(fnode)) hpfs_remove_btree(s, &fnode->btree);
->  	else hpfs_remove_dtree(s, le32_to_cpu(fnode->u.external[0].disk_secno));
->  	ea_end = fnode_end_ea(fnode);
-> -	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-> +	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
->  		if (ea_indirect(ea))
->  			hpfs_ea_remove(s, ea_sec(ea), ea_in_anode(ea), ea_len(ea));
->  	hpfs_ea_ext_remove(s, le32_to_cpu(fnode->ea_secno), fnode_in_anode(fnode), le32_to_cpu(fnode->ea_size_l));
-> diff --git a/fs/hpfs/ea.c b/fs/hpfs/ea.c
-> index 102ba18e561f..d7ada7f5a7ae 100644
-> --- a/fs/hpfs/ea.c
-> +++ b/fs/hpfs/ea.c
-> @@ -80,7 +80,7 @@ int hpfs_read_ea(struct super_block *s, struct fnode *fnode, char *key,
->  	char ex[4 + 255 + 1 + 8];
->  	struct extended_attribute *ea;
->  	struct extended_attribute *ea_end = fnode_end_ea(fnode);
-> -	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-> +	for (ea = fnode_ea(fnode); ea < ea_end  && ea_valid_addr(fnode, ea); ea = next_ea(ea))
->  		if (!strcmp(ea->name, key)) {
->  			if (ea_indirect(ea))
->  				goto indirect;
-> @@ -135,7 +135,7 @@ char *hpfs_get_ea(struct super_block *s, struct fnode *fnode, char *key, int *si
->  	secno a;
->  	struct extended_attribute *ea;
->  	struct extended_attribute *ea_end = fnode_end_ea(fnode);
-> -	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-> +	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
->  		if (!strcmp(ea->name, key)) {
->  			if (ea_indirect(ea))
->  				return get_indirect_ea(s, ea_in_anode(ea), ea_sec(ea), *size = ea_len(ea));
-> @@ -198,7 +198,7 @@ void hpfs_set_ea(struct inode *inode, struct fnode *fnode, const char *key,
->  	unsigned char h[4];
->  	struct extended_attribute *ea;
->  	struct extended_attribute *ea_end = fnode_end_ea(fnode);
-> -	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-> +	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
->  		if (!strcmp(ea->name, key)) {
->  			if (ea_indirect(ea)) {
->  				if (ea_len(ea) == size)
-> diff --git a/fs/hpfs/hpfs_fn.h b/fs/hpfs/hpfs_fn.h
-> index 237c1c23e855..c65ce60d7d9a 100644
-> --- a/fs/hpfs/hpfs_fn.h
-> +++ b/fs/hpfs/hpfs_fn.h
-> @@ -152,6 +152,11 @@ static inline struct extended_attribute *next_ea(struct extended_attribute *ea)
->  	return (struct extended_attribute *)((char *)ea + 5 + ea->namelen + ea_valuelen(ea));
->  }
->  
-> +static inline bool ea_valid_addr(struct fnode *fnode, struct extended_attribute *ea)
-> +{
-> +	return ((char *)ea >= (char *)&fnode->ea) && ((char *)ea < (char *)&fnode->ea + sizeof(fnode->ea));
-> +}
-> +
->  static inline secno ea_sec(struct extended_attribute *ea)
->  {
->  	return le32_to_cpu(get_unaligned((__le32 *)((char *)ea + 9 + ea->namelen)));
-> diff --git a/fs/hpfs/map.c b/fs/hpfs/map.c
-> index ecd9fccd1663..0016dcbf1b1f 100644
-> --- a/fs/hpfs/map.c
-> +++ b/fs/hpfs/map.c
-> @@ -202,7 +202,7 @@ struct fnode *hpfs_map_fnode(struct super_block *s, ino_t ino, struct buffer_hea
->  			}
->  			ea = fnode_ea(fnode);
->  			ea_end = fnode_end_ea(fnode);
-> -			while (ea != ea_end) {
-> +			while (ea != ea_end && ea_valid_addr(fnode, ea)) {
->  				if (ea > ea_end) {
->  					hpfs_error(s, "bad EA in fnode %08lx",
->  						(unsigned long)ino);
-> -- 
-> 2.25.1
-> 
-
+Thanks,
+Joanne
+>
+> Thanks,
+> Amir.
 
