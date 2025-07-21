@@ -1,145 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-55552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B25B0BC6B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:20:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C34B0BCE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 08:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3543A7A7BA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 06:19:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2246E189B0D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 06:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D335426E6FF;
-	Mon, 21 Jul 2025 06:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E003927FB3B;
+	Mon, 21 Jul 2025 06:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YUKuj6sU"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bDfUUXio";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GqCH6LtS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC44026E6EF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 06:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DB927F187;
+	Mon, 21 Jul 2025 06:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753078844; cv=none; b=gujPE4Uj7Nv4+EEsZ7dKThzwMuF8YAzc+W/+J1DNsBhj2wb+kB1uen4hkZu3CZIDdSN5mDjDqIuGuRBT16BxT/2mDva8pHjLA6SwZuFQT/wme25W9N6q/ro1yeIrm9HfpAZ6tocjjXzRG4DUDUV8p0vHHTyLoWzsl7fTR5JGDXQ=
+	t=1753080167; cv=none; b=QWioLANpvkpcEs4yuHpXIqD/UpkS64uqzHIl0uUZJyd+SAAFE2fXWt5adgpzYUoWV1Gli9VQk/GTKvEyeNj9RTCNMrvUmqgedJ5mSBUHLQ4M20jbYFhngJuLPRMu+oTvkwfaoAFCfj+Cybt9Ln0mOIH++92BdF8Mjle3G4AeZaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753078844; c=relaxed/simple;
-	bh=fQk6nSWeQuF0vCVcMA4Ltmv16D5fu/QW6hFWoM8Z/G0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=HRKQERIPczb+stnDZcrseuVsi3V7bG1RwM66mFJHN4P8PbJpF//JLqRBZtB6wVys1AQZgT+D0IfMw1d02kvS7kRQZVf3uToP+El5Sgh0N/3oKu6EzibbQaPF3jlBM/hC/D90tEC4GhdUr/KwBzTHqruIY9Vi4BqqxEzFxbyDqt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YUKuj6sU; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250721062039epoutp03c39eec7863f8a651976864e2f02a3a59~UL_qieey80646006460epoutp03J
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 06:20:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250721062039epoutp03c39eec7863f8a651976864e2f02a3a59~UL_qieey80646006460epoutp03J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753078839;
-	bh=/XDvTMExPc0Dk39AQxulHgbEVBf+0npFbOQqjpCb3KM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=YUKuj6sUvf7gsaAK5mqAKjZIZEAsIkwQA6JuY1EZvAeLkB2S6heUWo5dBUfZ11lEC
-	 DqF6BoS7SX87q6WTnt07sRET2DQ8e1Gcg6GvTBl/llizIKJESuLxYh0zWDiYGZkhuV
-	 zQlXwhoeXs/jH5JhZ3zdbx5GMJTrcknoUxSj4ICQ=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250721062039epcas2p231de33c9e10289860dec2211b5db9ca6~UL_p7L4xK0939509395epcas2p2P;
-	Mon, 21 Jul 2025 06:20:39 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.36.68]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4blqyZ3ZDHz2SSKf; Mon, 21 Jul
-	2025 06:20:38 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3~UL_ouoOxF0449004490epcas2p24;
-	Mon, 21 Jul 2025 06:20:37 +0000 (GMT)
-Received: from rack03.dsn.sec.samsung.com (unknown [10.229.95.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250721062037epsmtip18cc76bfe8dac1a5b8d8cb913d91e9f0d~UL_opJvV50948009480epsmtip1K;
-	Mon, 21 Jul 2025 06:20:37 +0000 (GMT)
-From: "hy50.seo" <hy50.seo@samsung.com>
-To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, beanhuo@micron.com, bvanassche@acm.org,
-	kwangwon.min@samsung.com, kwmad.kim@samsung.com, cpgs@samsung.com,
-	h10.kim@samsung.com, willdeacon@google.com, jaegeuk@google.com,
-	chao@kernel.org, linux-fsdevel@vger.kernel.org
-Cc: "hy50.seo" <hy50.seo@samsung.com>
-Subject: [PATCH v1] writback: remove WQ_MEM_RECLAIM flag in bdi_wq
-Date: Mon, 21 Jul 2025 15:40:24 +0900
-Message-Id: <20250721064024.113841-1-hy50.seo@samsung.com>
-X-Mailer: git-send-email 2.26.0
+	s=arc-20240116; t=1753080167; c=relaxed/simple;
+	bh=Y87bhy5daZH8/4KCjU0hN1yCQ/40lLvGcZ4NSSiWxvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rzg+V14IR86TPkjy3arSv9iaMw7Aacdois8YoOQ5IAOanc22+mbry0MWpF3+3QPs71hfe52GdrIYdER1eDAAoSHHJ1gnQ8c7hNxwQ8UpCtMQtJbq9Nz4531ak6Glnq4HRhxs/rH4e/2HYvmx1l6lngH//GaS8Xb/6frT6oiSw2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bDfUUXio; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GqCH6LtS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 21 Jul 2025 08:42:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753080163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tyczl2pXIS5un450KeY12IY1AEuLzrL/JOTCmCTx0/Y=;
+	b=bDfUUXioek9CJPvHOobeJUFRkzBLUB4SxeE7NHC9ODhWlWmij0QEEU8AaC+a4Y8vHB+v/r
+	vjqq+jqE5ZJPQU9dvC9XKUfiDg9mOwznhjswrKSpysrWTHy5bRLE8uikKkLAD5Zj0iFTjz
+	YXKOIGPO6+m9pAIAi/Nk6QdDKFHyxPdQvI8ZCZgn0G+D8O2rGhRAhX4avhjPm65L3mMfhM
+	eLvE5drLzj0rJJtQaAS8tyxQnx5wSj6EFvrjmz8b2CZyh0b1b4xFdszwhisYWCEd4xlKfm
+	pCtRWmAXiLHgtnDgqW1LBlID3Jn6KiabOxhgfhscrpLFti4df0DlUCjKu7wZSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753080163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tyczl2pXIS5un450KeY12IY1AEuLzrL/JOTCmCTx0/Y=;
+	b=GqCH6LtSDPllEmiW8hSXADeWdGxHElcJ8pEB2JVXeLV0OpRpMGQktzjDkwXz4EWuGmvo5Z
+	z33lXSs4UrMWhWAA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Kees Cook <kees@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, workflows@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 06/15] fs,fork,exit: export symbols necessary for
+ KUnit UAPI support
+Message-ID: <20250721075849-b3cf33b6-2516-4707-bab6-53fe95afbffa@linutronix.de>
+References: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
+ <20250717-kunit-kselftests-v5-6-442b711cde2e@linutronix.de>
+ <20250718164412.GD2580412@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3
-References: <CGME20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3@epcas2p2.samsung.com>
+In-Reply-To: <20250718164412.GD2580412@ZenIV>
 
-if it write with the write back option with f2fs, kernel panic occurs.
-Because the write back function uses bdi_wq and WQ_MEM_RECLAIM flag
-is included and created.
-However, this function calls f2fs_do_quota() of f2fs and finally tries to
-perform quota_release_work.
-the quota_release_work is performed in the events_unbound workqueue,
-but the WQ_MEM_RECLAIM flag is not included.
-Therefore, it causes warn_on_panic.
+On Fri, Jul 18, 2025 at 05:44:12PM +0100, Al Viro wrote:
+> On Thu, Jul 17, 2025 at 10:48:08AM +0200, Thomas Weiﬂschuh wrote:
+> > The KUnit UAPI infrastructure starts userspace processes.
+> > As it should be able to be built as a module, export the necessary symbols.
+> > 
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
+> No.  This is just plain wrong.  This is way too low-level; teach kernel/umh.c
+> to provide what you need, but do *not* add more kernel_execve() callers.
 
-workqueue: WQ_MEM_RECLAIM writeback:wb_workfn is flushing !WQ_MEM_RECLAIM events_unbound:quota_release_workfn
-Workqueue: writeback wb_workfn (flush-8:0)
-Call trace:
- check_flush_dependency+0x160/0x16c
- __flush_work+0x168/0x738
- flush_delayed_work+0x58/0x70
- dquot_writeback_dquots+0x90/0x4bc
- f2fs_do_quota_sync+0x120/0x284
- f2fs_write_checkpoint+0x58c/0xe18
- f2fs_gc+0x3e8/0xd78
- f2fs_balance_fs+0x204/0x284
- f2fs_write_single_data_page+0x700/0xaf0
- f2fs_write_data_pages+0xe94/0x15bc
- do_writepages+0x170/0x3f8
- __writeback_single_inode+0xa0/0x8c4
- writeback_sb_inodes+0x2ac/0x708
- __writeback_inodes_wb+0xc0/0x118
- wb_writeback+0x1f4/0x664
- wb_workfn+0x62c/0x900
- process_one_work+0x3f8/0x968
- worker_thread+0x610/0x794
- kthread+0x1c4/0x1e4
- ret_from_fork+0x10/0x20
+Sounds good.
 
-Signed-off-by: hy50.seo <hy50.seo@samsung.com>
----
- mm/backing-dev.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> And the situation with ramfs needs cleaning up, but "export put_filesystem()"
+> is not a solution.
 
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 783904d8c5ef..6ef5f23810fc 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -491,8 +491,7 @@ postcore_initcall(bdi_class_init);
- 
- static int __init default_bdi_init(void)
- {
--	bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_UNBOUND |
--				 WQ_SYSFS, 0);
-+	bdi_wq = alloc_workqueue("writeback", WQ_UNBOUND | WQ_SYSFS, 0);
- 	if (!bdi_wq)
- 		return -ENOMEM;
- 	return 0;
--- 
-2.26.0
+Cleaning up would mean to stop calling put_filesystem(), as it is a no-op
+here anyways, right?
 
+
+This would still leave the exports for replace_fd(), create_pipe_files()
+and set_fs_pwd(). Instead of using kernel/umh.c, I can also extend
+kernel/usermode_driver.c to provide these in a way that works for me.
+But kernel/usermode_driver.c is dead code, unused since commit
+98e20e5e13d2 ("bpfilter: remove bpfilter")
+Would it be fine to export those symbols? And delete usermode_driver.c,
+as carrying around an unused generic framework seems pointless.
+
+
+Thomas
 
