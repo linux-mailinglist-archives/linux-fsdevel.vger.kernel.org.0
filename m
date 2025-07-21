@@ -1,179 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-55584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51B6B0C12C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 12:20:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2489AB0C13C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 12:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA76E4E3B1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EFA317F9A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Jul 2025 10:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94E528DF3E;
-	Mon, 21 Jul 2025 10:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E88328F933;
+	Mon, 21 Jul 2025 10:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHY3M5Ku"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GGCpmZZg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TiuaNzkK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GGCpmZZg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TiuaNzkK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A9328DEF9;
-	Mon, 21 Jul 2025 10:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553B728F523
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Jul 2025 10:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753093229; cv=none; b=WJ6h3VC2MUgJOUWehAC/iYFxkVW0nK5RDN6PfMV2LCsDhQMa/qNfI+kzB5aH+KAMK0FLv54/ALDstQf42eQG9SqyYsBevP/ZkgR0jiB7UsEwuQPO4bcMoiEU4AVtD8dpsOvtqSOW96bscfGZg6Wa7FslbqWnOFKEc6U94fGJZds=
+	t=1753093559; cv=none; b=TCNMFjnaS8/Wcc498yyzMSHJj7VlObRSRg3VZDA2IXeilihbSS0OB14Qsd5RZkojVda82LrNMEgioIucL5RczIOjOYbECfz1ZzP0xoiU8JWNImybWzZQ5ki4XR1ipbnW53kS845aiOJBCmF4nxM3qGlGRrwaQPADdWyogJxEK+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753093229; c=relaxed/simple;
-	bh=3YgMPI03O6Q9TFHH0OJ35uPeIyJWvyS3MOD+GMcK5P0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GzsWUfX/tOCisSmzUyPItEzvROIbvt3ctJOg8IMe53DesSUp7VTkjdB0kUXE7YbFHKGJ3bDtXF/ekewKsXk3F95IGFTGo7+GHdIyZMjlG8+Mdr4lSTm6r9OA8Ey9DWxMHvitx0/OhISOtyVGUwNQZFV1LISWlNruESzt1BcznYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHY3M5Ku; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae3a604b43bso697217266b.0;
-        Mon, 21 Jul 2025 03:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753093226; x=1753698026; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mEkvSgl/X/bWkRHK67wzwvPOEwMXPHWGX/kAxaYeLOk=;
-        b=QHY3M5Ku2y3pdL4F7AodygniLpje3Hiw77xLdF2dFFFfPT1MdztNPSzO8Mz9JLOvOp
-         uIucgi7xPfAFq54aONXgk01HWRuPM7GrjV/hvdTP+3K22jjyY3p7eFdoy8U43eNvWA4w
-         RzGaQe1XrFwgmInKJeQgwswkelr6yayDGJfbwS05hIiWftaCZxrVZ4dniGbUQoeG8YBj
-         rstR70bsEdHErcARkzVcuCywcq/Evl6tKCISY9ZRRvT4EO9NvN8BC555ckEHeRJ0BEY4
-         U/0YciaefXBrnCFuLyRdygQvOPAAg+Vnh6TaXz+ZTPAHkEeBzJemxRFN2mKFATTPRYFe
-         pK/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753093226; x=1753698026;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mEkvSgl/X/bWkRHK67wzwvPOEwMXPHWGX/kAxaYeLOk=;
-        b=nweXSeYPQPa23zp+NaFHaitAk4kpdXAJKjaIw+3ziFguytR3XtdXirXKZPcfKcSC+E
-         +P88f4jZTGn8mMZ1GLcD5z9aRKAKAq+/xl/7aNXpVRBV0JrjS+4tJJWEfmyjHrdjKHmV
-         EywTjsvyB0+wB0090j63UU1pzeWqGleGlZ0HyQmrV2IJlXYgWhd2gMSEtaCZTvf16PVI
-         ww8Yeb86qIfi2QjuzERIO7rSqJE9cJqGavWw2ff1ESVSrK5NWcCIaLTXDQP6pcZ4VL7O
-         6dytQ5okKUT/5Iy5r0XZ1IsMPPrO+6rDtcO3Uc5MSPwc2DPoVlGPMKLmXOAKFI8ey/CM
-         ecmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkvNoAAC252kR4WPX6Ne3P+1hGpWLQc9nEZWpNVSH6ibq/QkXSO1nO8rOzMp9Y+1vAsyCphj4Q+u3koxuF@vger.kernel.org, AJvYcCXQdKo2oZ7ButWBGh3Kh+HKm7F910WC4y3APskq3It+DYsw7vE5/auLb0kkvkUl9V7N6gzqGVXlakibhVsK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhvsmqu8ZJ639lGXgQEFpW9Uc/tPHdpNWIwbDmbqjAMZycUbJV
-	jhS86Lh1ywLKhXaK6ZzXXCGG5yvsiqthjkrA5D1mfGkIQJaFu658j7upyHUiJQUqq8xwBdqoJuE
-	45vRmXrEhH3AZ2eNC7auaCQNi8s8N3Aw=
-X-Gm-Gg: ASbGnctYhEEUo/SqgpcYX46TOdxwRrvmhdl/yCWaxlvhSruQblpxhRZ1D2FaupeW/Tj
-	4vT6+kZnr817f88N0O2sUXsvBGrEsbvJdrVFXMUoRppwnC81SAyq8abnNyPUryZXtoyL8X//8DQ
-	5oGaeekzFbrIxr5kN/l6Hon+w6wAR+Vu2oiZBXF1FXv70SOF32Qq5KIEChcnGH+xpQ4OPVtu8gB
-	Kiar24=
-X-Google-Smtp-Source: AGHT+IECwG9KpInpUUTUfL1ZufRwhXd7XnVOImrGIaqCKUWnoqFI8PBJPZ5FRE8r5TJ5oxnN80iuA4xF8KGlJ5g8A+k=
-X-Received: by 2002:a17:907:d508:b0:add:ed3a:e792 with SMTP id
- a640c23a62f3a-ae9ce11c674mr1857320166b.47.1753093225389; Mon, 21 Jul 2025
- 03:20:25 -0700 (PDT)
+	s=arc-20240116; t=1753093559; c=relaxed/simple;
+	bh=Z/K6Ye2yVremOud0OLYhMdZovDfpcmMfzOvsRX4VC50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KqSJ34e2Yjx9jAsf7nCHgo0MLOvb3eDh9DRHS1eSiC+pFkeubCMYhZurbK4+5yGDBFvZBrUR55D6skdxEtSzbVCsZ23mrZyYkCfl+LE2mxvpxUPn+eX9S9X56BWkWgrIkiytRouzvS4hZaalg2wMzwn7mTWbEeVrdOHI5i5u0f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GGCpmZZg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TiuaNzkK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GGCpmZZg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TiuaNzkK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 51A1E1F397;
+	Mon, 21 Jul 2025 10:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753093555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=baH6ow82NzmU1jGwAd7SMMrxH3jdioo5q/Xo9G5hG+4=;
+	b=GGCpmZZgbAB5XlOhPaT/l0zeSwhiqSn6JbNbcSAdSIrsIWr7T0Mc7Nurq9TLL5MlDIKSzb
+	G3mxxnF5X/WFL2F9PDn8NfEprPokB+uugrjkHFG+jVRlyIUBsFn+89vrEh51dQKAspuIIa
+	bOQxVSvP+dassyYss7hQFywZfgAWP9Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753093555;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=baH6ow82NzmU1jGwAd7SMMrxH3jdioo5q/Xo9G5hG+4=;
+	b=TiuaNzkKooiGvnBZgx/DGGdlv5vk/tkXPxkZgwh1y7czyZp1RZa8jl8Z3vpXSlkZ0+KbS8
+	LZDo/WglGtJ31cBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GGCpmZZg;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TiuaNzkK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753093555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=baH6ow82NzmU1jGwAd7SMMrxH3jdioo5q/Xo9G5hG+4=;
+	b=GGCpmZZgbAB5XlOhPaT/l0zeSwhiqSn6JbNbcSAdSIrsIWr7T0Mc7Nurq9TLL5MlDIKSzb
+	G3mxxnF5X/WFL2F9PDn8NfEprPokB+uugrjkHFG+jVRlyIUBsFn+89vrEh51dQKAspuIIa
+	bOQxVSvP+dassyYss7hQFywZfgAWP9Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753093555;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=baH6ow82NzmU1jGwAd7SMMrxH3jdioo5q/Xo9G5hG+4=;
+	b=TiuaNzkKooiGvnBZgx/DGGdlv5vk/tkXPxkZgwh1y7czyZp1RZa8jl8Z3vpXSlkZ0+KbS8
+	LZDo/WglGtJ31cBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3453C13A88;
+	Mon, 21 Jul 2025 10:25:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Lyt7DLMVfmi/GgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 21 Jul 2025 10:25:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5D047A0884; Mon, 21 Jul 2025 12:25:54 +0200 (CEST)
+Date: Mon, 21 Jul 2025 12:25:54 +0200
+From: Jan Kara <jack@suse.cz>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Barry Song <21cnbao@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>, 
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, 
+	Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, 
+	David Howells <dhowells@redhat.com>, netfs@lists.linux.dev, Paulo Alcantara <pc@manguebit.org>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, ntfs3@lists.linux.dev, Steve French <sfrench@samba.org>, 
+	linux-cifs@vger.kernel.org, Phillip Lougher <phillip@squashfs.org.uk>, 
+	Hailong Liu <hailong.liu@oppo.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Re: Compressed files & the page cache
+Message-ID: <z2ule3ilnnpoevo5mvt3intvjtuyud7vg3pbfauon47fhr4owa@giaehpbie4a5>
+References: <aHa8ylTh0DGEQklt@casper.infradead.org>
+ <e5165052-ead3-47f4-88f6-84eb23dc34df@linux.alibaba.com>
+ <b61c4b7f-4bb1-4551-91ba-a0e0ffd19e75@linux.alibaba.com>
+ <CAGsJ_4xJjwsvMpeBV-QZFoSznqhiNSFtJu9k6da_T-T-a6VwNw@mail.gmail.com>
+ <7ea73f49-df4b-4f88-8b23-c917b4a9bd8a@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721084412.370258-1-neil@brown.name> <20250721084412.370258-5-neil@brown.name>
-In-Reply-To: <20250721084412.370258-5-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 21 Jul 2025 12:20:14 +0200
-X-Gm-Features: Ac12FXyX3UswuCZXfkC-RxeL1SPw0biPJRSYlaLZQm4ll8hui8Mb-5dCGEAPxMo
-Message-ID: <CAOQ4uxhiDNWjZXGhE31ZBPC_gUStETh4gyE8WxCRgiefiTCjCg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] VFS: introduce dentry_lookup() and friends
-To: NeilBrown <neil@brown.name>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ea73f49-df4b-4f88-8b23-c917b4a9bd8a@linux.alibaba.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 51A1E1F397
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL76kpr34nasjgd69zbi7paxtw)];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,infradead.org,fb.com,toxicpanda.com,suse.com,vger.kernel.org,fluxnic.net,kernel.org,lists.ozlabs.org,lists.sourceforge.net,suse.cz,nod.at,lists.infradead.org,redhat.com,lists.linux.dev,manguebit.org,paragon-software.com,samba.org,squashfs.org.uk,oppo.com,gmx.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -4.01
 
-On Mon, Jul 21, 2025 at 10:55=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
->
-> dentry_lookup() combines locking the directory and performing a lookup
-> prior to a change to the directory.
-> Abstracting this prepares for changing the locking requirements.
->
-> dentry_lookup_noperm() does the same without needing a mnt_idmap and
-> without checking permissions.  This is useful for internal filesystem
-> management (e.g.  creating virtual files in response to events) and in
-> other cases similar to lookup_noperm().
->
-> dentry_lookup_hashed() also does no permissions checking and assumes
-> that the hash of the name has already been stored in the qstr.
+On Mon 21-07-25 11:14:02, Gao Xiang wrote:
+> Hi Barry,
+> 
+> On 2025/7/21 09:02, Barry Song wrote:
+> > On Wed, Jul 16, 2025 at 8:28 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+> > > 
+> 
+> ...
+> 
+> > > 
+> > > ... high-order folios can cause side effects on embedded devices
+> > > like routers and IoT devices, which still have MiBs of memory (and I
+> > > believe this won't change due to their use cases) but they also use
+> > > Linux kernel for quite long time.  In short, I don't think enabling
+> > > large folios for those devices is very useful, let alone limiting
+> > > the minimum folio order for them (It would make the filesystem not
+> > > suitable any more for those users.  At least that is what I never
+> > > want to do).  And I believe this is different from the current LBS
+> > > support to match hardware characteristics or LBS atomic write
+> > > requirement.
+> > 
+> > Given the difficulty of allocating large folios, it's always a good
+> > idea to have order-0 as a fallback. While I agree with your point,
+> > I have a slightly different perspective — enabling large folios for
+> > those devices might be beneficial, but the maximum order should
+> > remain small. I'm referring to "small" large folios.
+> 
+> Yeah, agreed. Having a way to limit the maximum order for those small
+> devices (rather than disabling it completely) would be helpful.  At
+> least "small" large folios could still provide benefits when memory
+> pressure is light.
 
-That's a very confusing choice of name because _hashed() (to me) sounds
-like the opposite of d_unhashed() which is not at all the case.
+Well, in the page cache you can tune not only the minimum but also the
+maximum order of a folio being allocated for each inode. Btrfs and ext4
+already use this functionality. So in principle the functionality is there,
+it is "just" a question of proper user interfaces or automatic logic to
+tune this limit.
 
-> This is useful following filename_parentat().
->
-> These are intended to be paired with done_dentry_lookup() which provides
-> the inverse of putting the dentry and unlocking.
->
-> Like lookup_one_qstr_excl(), dentry_lookup() returns -ENOENT if
-> LOOKUP_CREATE was NOT given and the name cannot be found,, and returns
-> -EEXIST if LOOKUP_EXCL WAS given and the name CAN be found.
->
-> These functions replace all uses of lookup_one_qstr_excl() in namei.c
-> except for those used for rename.
->
-> Some of the variants should possibly be inlines in a header.
->
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/namei.c            | 158 ++++++++++++++++++++++++++++++------------
->  include/linux/namei.h |   8 ++-
->  2 files changed, 119 insertions(+), 47 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 950a0d0d54da..f292df61565a 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1714,17 +1714,98 @@ struct dentry *lookup_one_qstr_excl(const struct =
-qstr *name,
->  }
->  EXPORT_SYMBOL(lookup_one_qstr_excl);
->
-> +/**
-> + * dentry_lookup_hashed - lookup and lock a name prior to dir ops
-> + * @last: the name in the given directory
-> + * @base: the directory in which the name is to be found
-> + * @lookup_flags: %LOOKUP_xxx flags
-> + *
-> + * The name is looked up and necessary locks are taken so that
-> + * the name can be created or removed.
-> + * The "necessary locks" are currently the inode node lock on @base.
-> + * The name @last is expected to already have the hash calculated.
-> + * No permission checks are performed.
-> + * Returns: the dentry, suitably locked, or an ERR_PTR().
-> + */
-> +struct dentry *dentry_lookup_hashed(struct qstr *last,
-> +                                   struct dentry *base,
-> +                                   unsigned int lookup_flags)
-> +{
-> +       struct dentry *dentry;
-> +
-> +       inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
-> +
-> +       dentry =3D lookup_one_qstr_excl(last, base, lookup_flags);
-> +       if (IS_ERR(dentry))
-> +               inode_unlock(base->d_inode);
-> +       return dentry;
-> +}
-> +EXPORT_SYMBOL(dentry_lookup_hashed);
-
-Observation:
-
-This part could be factored out of
-__kern_path_locked()/kern_path_locked_negative()
-
-If you do that in patch 2 while introducing done_dentry_lookup() then
-it also makes
-a lot of sense to balance the introduced done_dentry_lookup() with the
-factored out
-helper __dentry_lookup_locked() or whatever its name is.
-
-Thanks,
-Amir.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
