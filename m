@@ -1,241 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-55739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098BBB0E440
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 21:28:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C51B0E46E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 21:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDB91C8062B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 19:29:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811E83BDFDE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 19:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6894F28507E;
-	Tue, 22 Jul 2025 19:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88C4285069;
+	Tue, 22 Jul 2025 19:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggdvy9XM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CCObwCDj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6937288D2;
-	Tue, 22 Jul 2025 19:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B58A244679
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 19:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753212511; cv=none; b=UuRia02zi6/W61QVBY2XuQ8T3xow+enYvKnzkad2UvVILKpAZJgnf3hWRFt75urCi0bqQGr+FTdveVjIDSt4NJ67PXyPh79I97YTZUBbZq4LWsH44CBnOCtgFicusutflPcfv5+9D0P3++Lie35YXF1kg0e413p3qC28nLGGWnQ=
+	t=1753214080; cv=none; b=BQIVvD2a+YR1GaOIcU+q7qzoItXKk5PScpVllNEXFcpM083XBDcRWYQ6Vzxwm1tWehP/bTbuCmHRRh1/oc1PAjHTkZjQdJ9QP7ATanlxncpk2eXx/Fk9uc1UAdR6xLHAiKnAh98RxTU0lXcwRra70ohF5+0fmK2n+XJ6xj3Dzf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753212511; c=relaxed/simple;
-	bh=DRZ2vdTQ3TRi7gxntkHblYSP+EXYsdrOXKMaPrssick=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BzgZM76wA5xAvEJSimHmUixsLECSrF22aXGOlreIkZRb3sbsDqm1Q0wf2vvM6UMbQ0cA9USUmLnsNB2buXVcPt85c2ch67NcCQK5mWlecnN9sKTjI5dH1CKxgOC7pKzXLafgPpA/yqxDw9wrh8iA5XAwH9OjnshHO8Os53/YN0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggdvy9XM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3216BC4CEEB;
-	Tue, 22 Jul 2025 19:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753212511;
-	bh=DRZ2vdTQ3TRi7gxntkHblYSP+EXYsdrOXKMaPrssick=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ggdvy9XMJi7SXkDvIKHnAK6mFxjVkritCrd7XJAe8h/NGWr6bg6Hkwiw6myco2CH5
-	 jY4PgJwoCI5Gjn8rrHz6GAptxJKi3G5XLM5dvoBUnLopok7TH7oM/O9pfRNMB+I5zC
-	 XMj9vHgVLZqJMLeTryC7Gm4x8PM6ZOzhP1a8WLlp5DqGaRmyCMUAg3ZWbk9JLnacLT
-	 AHVXAsUPdatdKUcAO5ohet4YgQrKOHjY1LMh9vmFjiHyVlKm9iyB0rcyzwgzVc75vG
-	 xrOR1KqoUxRszcLRxxUjVPvYkVS+0+LGFikpYC1XjU6pG1VW2/fAffY8CEQ9ef8qiZ
-	 y8o64HdA/jmhA==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	linux-fsdevel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	fsverity@lists.linux.dev
-Subject: [PATCH v3 13/13] fs: drop i_verity_info from struct inode
-Date: Tue, 22 Jul 2025 21:27:31 +0200
-Message-ID: <20250722-work-inode-fscrypt-v3-13-bdc1033420a0@kernel.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250722-work-inode-fscrypt-v3-0-bdc1033420a0@kernel.org>
-References: <20250722-work-inode-fscrypt-v3-0-bdc1033420a0@kernel.org>
+	s=arc-20240116; t=1753214080; c=relaxed/simple;
+	bh=Xf06Ii7Dp/U7cTysoIicuOfxrAypKNqDC57ouQ2O3Fw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PFbWRlR5ANvK08qXk9v6JSZ5Z+oGVZBxx+0aXfDxwtETKRksgoVth53yvhv+AS+xaz0Nw9DXEkW0A6gROGvekgTlPHe2Z3vFmoitJxjjpfFsp26eOsAI3BZqN4yLE1vJCJpLYEeuOsctkaSpMt8UxZwmemtd9ddpo1ZYg6KiNo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CCObwCDj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753214077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hJEsJDHhhwgP15Evw5sJRye4NRXtior93RLURfMCjSk=;
+	b=CCObwCDjPQX+11BvwXoK8Qq9QY1E1ltgNn4stLCErU164e7EngRk19E0jaFjaEyEUWAed4
+	tJ5ecKifmjUTrev942ytivNS4MpHyUsm5gBWSWWAWhSJzJk0CjgDntdHMHWPiA5ec4STBU
+	uYTh0nEBmKXB4c9kII4Pu87oR2HmvfE=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-646-EFfTcZy8P3qDMEckBQkXCA-1; Tue, 22 Jul 2025 15:54:34 -0400
+X-MC-Unique: EFfTcZy8P3qDMEckBQkXCA-1
+X-Mimecast-MFC-AGG-ID: EFfTcZy8P3qDMEckBQkXCA_1753214073
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4561611dc2aso52555715e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 12:54:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753214073; x=1753818873;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hJEsJDHhhwgP15Evw5sJRye4NRXtior93RLURfMCjSk=;
+        b=MRm8zj7DoT/HlfVL4O+cwrnrycPkogKzl6YSEJHHwkvsTzisuLtFT9JXw/fUTGSL65
+         5HKGwENcepNk5ZUTt/5WzcRTV9krAVYBrMuCavGooUkEYqE+SRWwxl2pSMLiEcPLV8NA
+         0cjFL9uWVih+UjwFfU4emX08IP0XNSJpaP/3+cLaf1OWAmANvtpR/5pZ8tXOAWxFLfxw
+         Bkj9uHM9qd6A+BdVl2XAx1cUtSCX5f41kJm7U4M9IsUsEtfGs56jwRVOB4EMilxtEO4r
+         vvUxT8DzmbaGNS/odiJ0pxf2YG0p8dsKy4XQFAKixsYI20ZSqeGTwidFZkhF0Iu0AYSt
+         Dhgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU18lm84rVhq1d0dDgHfqnKWncSy2YVJgdkFkIfBHwaueJLaS+Mj10cUMjocEkPByfp8g8/qxcjBMAq32lJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPR2N20hHqAQhrKEsTXoH8akDQd4UCGXtcJgnEkR0Rhzy5yajL
+	5KCNY4NHKNdnT2s/C7UvvaOGkC8sgWY7N+iD+3GCRRZ3HCrBV9DZpQhraj0EWRGl5DK5UC77cC3
+	cTlVQu9MM+iEOIni3dkIgrPJ3YR/f3VsFhaJDRGHu2qWoEBO1Ovk7fC1SaRkq2ypMJC9OkbimpW
+	A9lg==
+X-Gm-Gg: ASbGncs2578zqu/bl1xgP62Ark5wNwjiSQNetXgc4uw5R572FBp+smm6A5PO+XP4WTB
+	gS1P7PyaWPX/kN6Ir7kAGW8yVBrsSJsYnOTu7msYOwj3Fxe7Qx2MKu8YrjH8Vav2QlYLdN41qlU
+	KCpKcoOrxZyGoDZkFOck3Mz5uLtj7/0MKpUajukTbfTtDKu7D1lBxByAfVucD2ArW1b79Opb/p1
+	felMAguI9SbEmv6dzMnIh7ib1Pgp4gRuMbKoK/DycHGQvj9EQCFsNQ/LHpB5VU8jPYtABEgs7b6
+	kp8WiAV1jpEucY37PxgvuZ9fsbcl1OGay0dsYJEUuaMPGBgZKvtg1zbosPc1XhaKD/Rw4Jt8J6i
+	BP/VJriV+vDCmXHjXjYz2RgO/vN/s82TwTSf7Dz3pgK/IY32HdDuIl6r9XN7Zz4ZaP7Y=
+X-Received: by 2002:a05:600c:8b09:b0:455:ed0f:e8d4 with SMTP id 5b1f17b1804b1-45868c97796mr1266105e9.10.1753214072876;
+        Tue, 22 Jul 2025 12:54:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHy8bjruloOQcKDEXBOSsxE2UZXnksvKYgU7LFIJ6YJhSijB+BvbfxvrDV+WVoYprggwmv3nA==
+X-Received: by 2002:a05:600c:8b09:b0:455:ed0f:e8d4 with SMTP id 5b1f17b1804b1-45868c97796mr1265835e9.10.1753214072410;
+        Tue, 22 Jul 2025 12:54:32 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:de00:1efe:3ea4:63ba:1713? (p200300d82f28de001efe3ea463ba1713.dip0.t-ipconnect.de. [2003:d8:2f28:de00:1efe:3ea4:63ba:1713])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48719sm14470065f8f.47.2025.07.22.12.54.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 12:54:31 -0700 (PDT)
+Message-ID: <551c7f1f-93f2-48ff-ba00-259bb2c391d7@redhat.com>
+Date: Tue, 22 Jul 2025 21:54:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6739; i=brauner@kernel.org; h=from:subject:message-id; bh=DRZ2vdTQ3TRi7gxntkHblYSP+EXYsdrOXKMaPrssick=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTUP5PXC3YR2FjLLLqrkKF7uhnbwRn3VM5vzJ2VMf2Rx KMZbPotHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpLmb4Z79M9Z2JY0Ll/FN6 OZLxK2T8Q+v9dP5vkFLTrz4oOnPhLIb/6dNyFPLKf/pmVJcu2M569ST//rPvHOcLpTfHLeyqrAt gAgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 1/4] mm: rename huge_zero_page_shrinker to
+ huge_zero_folio_shrinker
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Zi Yan <ziy@nvidia.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+ x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250722094215.448132-1-kernel@pankajraghav.com>
+ <20250722094215.448132-2-kernel@pankajraghav.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250722094215.448132-2-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Now that all filesystems store the fsverity data pointer in their
-private inode, drop the data pointer from struct inode itself freeing up
-8 bytes.
+On 22.07.25 11:42, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
+> 
+> As we already moved from exposing huge_zero_page to huge_zero_folio,
+> change the name of the shrinker to reflect that.
+> 
+> No functional changes.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/verity/enable.c           |  2 +-
- fs/verity/fsverity_private.h |  2 +-
- fs/verity/open.c             | 19 +++++--------------
- include/linux/fs.h           |  4 ----
- include/linux/fsverity.h     | 14 +++++++-------
- 5 files changed, 14 insertions(+), 27 deletions(-)
-
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index c284f46d1b53..255cf73f6c03 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -287,7 +287,7 @@ static int enable_verity(struct file *filp,
- 		/* Successfully enabled verity */
- 
- 		/*
--		 * Readers can start using ->i_verity_info immediately, so it
-+		 * Readers can start using ->i_fsverity_info immediately, so it
- 		 * can't be rolled back once set.  So don't set it until just
- 		 * after the filesystem has successfully enabled verity.
- 		 */
-diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index b3506f56e180..358cbc3aa7ea 100644
---- a/fs/verity/fsverity_private.h
-+++ b/fs/verity/fsverity_private.h
-@@ -58,7 +58,7 @@ struct merkle_tree_params {
-  * fsverity_info - cached verity metadata for an inode
-  *
-  * When a verity file is first opened, an instance of this struct is allocated
-- * and stored in ->i_verity_info; it remains until the inode is evicted.  It
-+ * and stored in ->i_fsverity_info; it remains until the inode is evicted.  It
-  * caches information about the Merkle tree that's needed to efficiently verify
-  * data read from the file.  It also caches the file digest.  The Merkle tree
-  * pages themselves are not cached here, but the filesystem may cache them.
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 9368eeac6fb6..20c6020d59fa 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -250,24 +250,17 @@ struct fsverity_info *fsverity_create_info(const struct inode *inode,
- 
- void fsverity_set_info(struct inode *inode, struct fsverity_info *vi)
- {
--	void *p;
--
- 	/*
--	 * Multiple tasks may race to set ->i_verity_info, so use
-+	 * Multiple tasks may race to set ->i_fsverity_info, so use
- 	 * cmpxchg_release().  This pairs with the smp_load_acquire() in
--	 * fsverity_get_info().  I.e., here we publish ->i_verity_info with a
-+	 * fsverity_get_info().  I.e., here we publish ->i_fsverity_info with a
- 	 * RELEASE barrier so that other tasks can ACQUIRE it.
- 	 */
--
--	if (inode->i_sb->s_op->i_fsverity)
--		p = cmpxchg_release(fsverity_addr(inode), NULL, vi);
--	else
--		p = cmpxchg_release(&inode->i_verity_info, NULL, vi);
--	if (p != NULL) {
-+	if (cmpxchg_release(fsverity_addr(inode), NULL, vi) != NULL) {
- 		/* Lost the race, so free the fsverity_info we allocated. */
- 		fsverity_free_info(vi);
- 		/*
--		 * Afterwards, the caller may access ->i_verity_info directly,
-+		 * Afterwards, the caller may access ->i_fsverity_info directly,
- 		 * so make sure to ACQUIRE the winning fsverity_info.
- 		 */
- 		(void)fsverity_get_info(inode);
-@@ -364,7 +357,7 @@ int fsverity_get_descriptor(struct inode *inode,
- 	return 0;
- }
- 
--/* Ensure the inode has an ->i_verity_info */
-+/* Ensure the inode has an ->i_fsverity_info */
- static int ensure_verity_info(struct inode *inode)
- {
- 	struct fsverity_info *vi = fsverity_get_info(inode);
-@@ -412,8 +405,6 @@ void __fsverity_cleanup_inode(struct inode *inode)
- 	struct fsverity_info **vi;
- 
- 	vi = fsverity_addr(inode);
--	if (!*vi)
--		vi = &inode->i_verity_info;
- 	fsverity_free_info(*vi);
- 	*vi = NULL;
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f7acf17550f1..a9031a937959 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -778,10 +778,6 @@ struct inode {
- 	struct fsnotify_mark_connector __rcu	*i_fsnotify_marks;
- #endif
- 
--#ifdef CONFIG_FS_VERITY
--	struct fsverity_info	*i_verity_info;
--#endif
--
- 	void			*i_private; /* fs or device private pointer */
- } __randomize_layout;
- 
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 341cb1ec73f8..7c876d149a63 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -133,13 +133,13 @@ static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- {
- 	/*
- 	 * Pairs with the cmpxchg_release() in fsverity_set_info().
--	 * I.e., another task may publish ->i_verity_info concurrently,
-+	 * I.e., another task may publish ->i_fsverity_info concurrently,
- 	 * executing a RELEASE barrier.  We need to use smp_load_acquire() here
- 	 * to safely ACQUIRE the memory the other task published.
- 	 */
- 	if (inode->i_sb->s_op->i_fsverity)
- 		return smp_load_acquire(fsverity_addr(inode));
--	return smp_load_acquire(&inode->i_verity_info);
-+	return NULL;
- }
- 
- /* enable.c */
-@@ -163,11 +163,11 @@ void __fsverity_cleanup_inode(struct inode *inode);
-  * fsverity_cleanup_inode() - free the inode's verity info, if present
-  * @inode: an inode being evicted
-  *
-- * Filesystems must call this on inode eviction to free ->i_verity_info.
-+ * Filesystems must call this on inode eviction to free ->i_fsverity_info.
-  */
- static inline void fsverity_cleanup_inode(struct inode *inode)
- {
--	if (inode->i_verity_info || inode->i_sb->s_op->i_fsverity)
-+	if (inode->i_sb->s_op->i_fsverity)
- 		__fsverity_cleanup_inode(inode);
- }
- 
-@@ -274,12 +274,12 @@ static inline bool fsverity_verify_page(struct page *page)
-  * fsverity_active() - do reads from the inode need to go through fs-verity?
-  * @inode: inode to check
-  *
-- * This checks whether ->i_verity_info has been set.
-+ * This checks whether ->i_fsverity_info has been set.
-  *
-  * Filesystems call this from ->readahead() to check whether the pages need to
-  * be verified or not.  Don't use IS_VERITY() for this purpose; it's subject to
-  * a race condition where the file is being read concurrently with
-- * FS_IOC_ENABLE_VERITY completing.  (S_VERITY is set before ->i_verity_info.)
-+ * FS_IOC_ENABLE_VERITY completing.  (S_VERITY is set before ->i_fsverity_info.)
-  *
-  * Return: true if reads need to go through fs-verity, otherwise false
-  */
-@@ -294,7 +294,7 @@ static inline bool fsverity_active(const struct inode *inode)
-  * @filp: the struct file being set up
-  *
-  * When opening a verity file, deny the open if it is for writing.  Otherwise,
-- * set up the inode's ->i_verity_info if not already done.
-+ * set up the inode's ->i_fsverity_info if not already done.
-  *
-  * When combined with fscrypt, this must be called after fscrypt_file_open().
-  * Otherwise, we won't have the key set up to decrypt the verity metadata.
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-2.47.2
+Cheers,
+
+David / dhildenb
 
 
