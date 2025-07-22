@@ -1,114 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-55705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB20B0E212
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 18:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7DEB0E266
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 19:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 870247A65A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 16:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9501D1C83610
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 17:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2E227E066;
-	Tue, 22 Jul 2025 16:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2E46AA7;
+	Tue, 22 Jul 2025 17:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGebIkmi"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="BpTzgyIv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A2227AC57;
-	Tue, 22 Jul 2025 16:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC424264626
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 17:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753202454; cv=none; b=tHuIIxVUEgaoR5bxmUJ4lG+sgY5PGTuaAP1/yiBl2zDK3Py3GrhzHUM0AR3c3r7B8DlD7b/33L9WHm/bmx/90H9BF/DZXcXBbF+xjQutLG7dpmNM78nwtQr0JnjlKxI9CKmySPoSwL3Y6mDg8RSSbPCN8weOY0TVHCfTPV/Oa00=
+	t=1753204105; cv=none; b=Lu1uU3ZmAhKePik7GlNctcWHBxyaxLaAu3ChBXJaFL0c4Dvo+C5bx9JvvCfVexayzi591Tcq/UhkrVA/dJ8CATXPSAEMH+skb4X7qY/SU8jxoLQ2nC+44Og68j0fuSlo7nfP6snCN7ONkLAPkpA4SZdPJ8KJrvFB9BprKfHP5UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753202454; c=relaxed/simple;
-	bh=airQyOAZ1Bb21STyZQ/0koQyH4JJ9mEFvxRJ/K+2RGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sRVUNNU45A9igqkMhlSnZttR51sbwr9P8yrQqaHLaHCWJPXrwYJnUF/lideqH8OtdDXypoKX52CZ9PjhXcwImyAe5E2o/Z+hMNIxyMeccps1Uqm6I5cwgegfVsh+vlmMTxWGtNnEujgpSktU96tciTptlxY5y8H8bBtweHTvvm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGebIkmi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB47C4CEF1;
-	Tue, 22 Jul 2025 16:40:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753202453;
-	bh=airQyOAZ1Bb21STyZQ/0koQyH4JJ9mEFvxRJ/K+2RGs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HGebIkmivaIby4umGllHirYAZa1/fB0/I7hv187bGX1UyQ4JpVveA2is/M55Fsp2I
-	 bGEmvYBKodu6AqzK+KmTuf9s2S3b8crnHDVQOaiwtmKzFBZpm5d0z6eUgw9DCqdiRc
-	 UqY1GL2TbDfkZN/te2DQPyNVzcyXkUrbVtrXQjngaZyKTk6C8A9daClKSTYsdnrjNv
-	 niRoioWJu/pZB6ruZEguQcWOpbj0xqP5CjKDjF04PM0NDDJZG7NmcLkEpdJa6tkAo/
-	 N557ktHd1Ww9Bf+TK7w8EhXF2S1TzwzDNskE5qLu9iLwSWCCh8bbw0Nl5eCM5UvaTT
-	 /Z8Ylz0g0WRvg==
-Message-ID: <c73d2b1c-5f19-4e03-935c-71f68aa8bca7@kernel.org>
-Date: Tue, 22 Jul 2025 11:40:47 -0500
+	s=arc-20240116; t=1753204105; c=relaxed/simple;
+	bh=978GbEPG+xXIx1MSYHSlwMCgP2YjVw9X66Q7T0J611c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C2amae6rFG63wo/LhB/FZ1JSSPUCZNSLtxUAHJNagP+/bUot2iYJG74p2GvIhcMtF5uNrSFmRs/To56SQ+bc1sBS9kblEMoaFgTZasqgYxPntNNILxd1w9Is9lOBZujzLiUCAvqmqGmImIN4Espc8a4t29O4QPpOx4HwyK8GygA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=BpTzgyIv; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-710fd2d0372so993517b3.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 10:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753204103; x=1753808903; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=978GbEPG+xXIx1MSYHSlwMCgP2YjVw9X66Q7T0J611c=;
+        b=BpTzgyIvJ8UwX9DkRMd1Hg6FA8FCpYhBvaglYNUKPuS3ccQJaAhott9sOrHUVXUpqe
+         aTsIAHDTaop+bIM2LbHf78psU7c5QQN2jodU2C1/03xULZCf4VJIxCD6oiKC3X6sGrnO
+         As2CvLpbh51ahhVS6vrCGoYm9AK/Jk5SuLBbkC5Ig2R1k5xfwiiycumAduoJdjF75jKD
+         FbEVL/yZnq+gMpWcsheC5SVOKi6kk8wt+3Coehqb5Cp6jBoeYufkadWZL5Dy9Phx1Poh
+         k4euKKW2R+fyBMBL0MVdAWu4/lKYClFiv5WkthF7oOwrxgH2MlX9+sMmTCNeRn9eK6rA
+         L20A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753204103; x=1753808903;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=978GbEPG+xXIx1MSYHSlwMCgP2YjVw9X66Q7T0J611c=;
+        b=kMoNkorBtztezET+rmBJS1WQEjwLZk7PCVzXXfUweiO9YC8tSX43YzEFpsprkFasyt
+         yvqfd3SRpQAL5nWXU1C9Z0JeUv9mkQL1qlBN6Ke3Rfxi8DNuhFfozSvkUBetJlj5FSMv
+         02+yzfW17vjFLCxf+ag9f4MhQLFdTiDk/5+1lOKfDsfQzWb8BZ+EsH/JPimksZLgtpIA
+         u8T6OtrorULwIjk2SGcM/GdRBYuIp1lhGBxXEmndFznhWzEJPBIhcRPyapHfCl+abJEz
+         xG3iWFBj7eBhhyXp2uGtE9f1y+YzFw+YDSjfLa3rp0dORD9Fx31YM8EslLKm13F9wWa3
+         XllQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOFeCxdi3GLspV8V1HNhgYEfT4po9z4rTcJ2XKWL7tiPL0XlTHU4a3wGuLufI9Kky+m8XCV/ZcaOW9xoig@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEYGjD4VAFGzPVBJ5wUGYS/T3fS2ayaBVm8Rw67VzSvU0d+H7F
+	llgKqudMoWmqMUATlf+MqN7DKPBRARtvPZU7k/Shcs37VWKF+yK5v+tDGRC0rZB1Klw=
+X-Gm-Gg: ASbGncvxzArFB2rGQsLkst9fwzVkiHQRt4eRGS3XP0YuAzt6tLRUxNLsl/Nyck7YWib
+	7RvKT+MRAolRNy0EaOW524wut3soTeWQUjKKwz45LpAyRG3GzrTsG8ZIUhsUAgqkYGSJltHzsPd
+	gpBKmzeT9EM0W3iI9FZ77u3VBNW6Rwrh3zZyOLB8QmbKh7NU6jvaSYj9XjNBG/4yiyRj8QHkscJ
+	bfDfXYdCxJYKgvX/DL8DrK/eIUvWeJy6rKS8hE61IZszDNlxZ5k4oI99vAxBP6qDWFoHEvhHqav
+	Sx/4MMtVR2awH/9uCjEAvdaE32rhseUkehXqfdOdw6mDnCS8Y2nOzYx8GnNgTHtuOxYQDiDDIhe
+	BmWhNL/6eJy45IR8oNd47+d/Clpk+gYVqL/EJQJkJ1tP/303eIWSv8rb4jQl0o9TWj8l4ATCq4Q
+	yX4Pkc
+X-Google-Smtp-Source: AGHT+IGY1G3HrbiCpbrrdm7GLTE6gZs8zkI6sqGbC9NdngVg16dzHUoZ9jfWZuCOMN4WWlWR5iaFuw==
+X-Received: by 2002:a05:690c:660e:b0:712:c55c:4e54 with SMTP id 00721157ae682-719a0a32c31mr66496677b3.4.1753204102464;
+        Tue, 22 Jul 2025 10:08:22 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83? ([2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7195310b038sm24813607b3.16.2025.07.22.10.08.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 10:08:21 -0700 (PDT)
+Message-ID: <cdeca96e29969fbac462acca4e6e2b60e103b4c4.camel@dubeyko.com>
+Subject: Re: [PATCH] ceph: cleanup of processing ci->i_ceph_flags bits in
+ caps.c
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Date: Tue, 22 Jul 2025 10:08:20 -0700
+In-Reply-To: <CAO8a2ShpORYPW6XewdgaBCvc8qW=FJ_AwJj--foGJcx2UG9LtA@mail.gmail.com>
+References: <20250721221606.1011604-1-slava@dubeyko.com>
+	 <CAO8a2ShpORYPW6XewdgaBCvc8qW=FJ_AwJj--foGJcx2UG9LtA@mail.gmail.com>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] arch/nios2: replace "__auto_type" and adjacent
- equivalent with "auto"
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Alexei Starovoitov <ast@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Laight <David.Laight@ACULAB.COM>, David Lechner
- <dlechner@baylibre.com>, Eduard Zingerman <eddyz87@gmail.com>,
- Gatlin Newhouse <gatlin.newhouse@gmail.com>, Hao Luo <haoluo@google.com>,
- Ingo Molnar <mingo@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Jakub Sitnicki <jakub@cloudflare.com>, Jan Hendrik Farr <kernel@jfarr.cc>,
- Jason Wang <jasowang@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>,
- Kees Cook <kees@kernel.org>, Luc Van Oostenryck
- <luc.vanoostenryck@gmail.com>, Marc Herbert <Marc.Herbert@linux.intel.com>,
- Martin KaFai Lau <martin.lau@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>,
- Michal Luczaj <mhal@rbox.co>, Miguel Ojeda <ojeda@kernel.org>,
- Mykola Lysenko <mykolal@fb.com>, NeilBrown <neil@brown.name>,
- Peter Zijlstra <peterz@infradead.org>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Thomas Gleixner <tglx@linutronix.de>, Thorsten Blum
- <thorsten.blum@linux.dev>, Uros Bizjak <ubizjak@gmail.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Yafang Shao <laoar.shao@gmail.com>,
- Ye Bin <yebin10@huawei.com>, Yonghong Song <yonghong.song@linux.dev>,
- Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
- virtualization@lists.linux.dev, x86@kernel.org
-References: <20250720065045.2859105-1-hpa@zytor.com>
- <20250720065045.2859105-5-hpa@zytor.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250720065045.2859105-5-hpa@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 7/20/25 01:50, H. Peter Anvin wrote:
-> Replace uses of "__auto_type" in arch/nios2/include/asm/uaccess.h with
-> "auto", and equivalently convert an adjacent cast to the analogous
-> form.
-> 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-> ---
->   arch/nios2/include/asm/uaccess.h | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
+On Tue, 2025-07-22 at 16:19 +0400, Alex Markuze wrote:
+> Hi Slava,
+>=20
+> Thanks for the patch.
+>=20
+> The fix for the race condition in ceph_check_delayed_caps() is
+> correct
+> and necessary. The systematic change to use atomic bit operations
+> like
+> set_bit() and clear_bit() with the proper memory barriers is a
+> significant improvement for safety and readability.
+>=20
+> One minor critique for a follow-up patch:
+>=20
+> The refactoring in fs/ceph/super.h to use named _BIT definitions is a
+> great idea, but the cleanup is incomplete. Several definitions were
+> not converted and still use hardcoded bit-shift numbers . For
+> example,
+>=20
+> CEPH_I_POOL_RD, CEPH_I_POOL_WR, and CEPH_I_ODIRECT still use (1 <<
+> 4),
+> (1 << 5), and (1 << 11) respectively. It would be good to finish this
+> refactoring for consistency.
+>=20
+>=20
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+Makes sense. Let me rework the patch.
 
+Thanks,
+Slava.
 
