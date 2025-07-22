@@ -1,55 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-55707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBA3B0E29E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 19:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E2DB0E2B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 19:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A331567F29
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 17:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9B46C4C38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 17:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CA627E056;
-	Tue, 22 Jul 2025 17:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A68D28031D;
+	Tue, 22 Jul 2025 17:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BShZqh2i"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JM+DQetD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC595234
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 17:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5894280324
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 17:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753205485; cv=none; b=uHLuzKGDYXfyVDTeMay4W8f3mklayKHFvURbooBp5o1KdK1N0e38NgIbt5LGA6btR/AOPPSREOTEJbBvr70FKnN884/6jrth1i3JTPFAhKdK80Fth3tWUJcphiWYP6PKZyGz3y4+obnF4M/URxSHibOJiiMOkLjDRMYjobfffFM=
+	t=1753206014; cv=none; b=B441UDzaaRamELaCNJSLYnXyzIaeQrflkyO+0CiXk22ZylZXxO2ey6KfP83+Z8TltKEaOF1dBETIVu/9FSG0uBvdoD1vQJ/6n4pI2+WPd9w1Wh5cyBI2GHeqYyaAHLl8J4q4EMNk4bJ4HBkrpy1Bpws/NplyvAUjEZqB1FwiYRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753205485; c=relaxed/simple;
-	bh=PrQAZTg14IOAm+DRtwIuL1ZvBzxMtVGxSxhr7HUmZVs=;
+	s=arc-20240116; t=1753206014; c=relaxed/simple;
+	bh=G544crZeW9MhbQnLNJckY+oD9HiLEHArzKIYOrFmDQ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AmmQZ27dvxvemNLtyZdtHUUbOk6fq8MRB71ymqNhfEeLpdhARBPbMHE3pqz86NedJpMuESG0HQ+dPGlXddNcsTyuAU/zJT2Bh3oXd48xIvHRREe23LygxR2brxbPt8/WfDlJ6Dow5JIzM1Cj/Lj9pCjwz4bYSSHjssxRZMMcrLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BShZqh2i; arc=none smtp.client-ip=91.218.175.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=awxQMXCLUeKT4/tBAh+5XW1MlRqNKFT34RmQOBCgbcYz/69yuiDYdyHl2hsgf6IUTIsLFwODFLlFW+3jLXQN96o/uzbAzek+mCbZJnXhhIl3HXWNhXPNsVU2MxputfPCiIrB62LIT38oIltN4GZEU8mYjI9zI9xhK/cYUaaJoCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JM+DQetD; arc=none smtp.client-ip=91.218.175.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Jul 2025 13:31:03 -0400
+Date: Tue, 22 Jul 2025 13:40:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753205470;
+	t=1753206007;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XpnmGx8Qe1HEPsT1JE8ns7neS7sOfpbPECAjbCeJMzg=;
-	b=BShZqh2iCTxQIRMFWJ5QzeiI9riLGBk5t7ICvYSx3yCv/eu1n+iaCEAb8EC7JQf/zGcJ02
-	nXKXIZoosXwz1sLODbgtr1YwwF6v3r6yspD0ZysAqjeMJ0IgOMt+Fj/Germb3C4mrKnNIO
-	2zwQgN0tSdLyQ1Dk3sDXVX/oe8lNKE8=
+	bh=gvYIA+VGWvhvGgjg5orgfiMgKFaL0oYtvTMHPEkGFtM=;
+	b=JM+DQetDzCNV2Q3spPzFGoO9L6t6ZDs7+h6mDVvFgZqh6pl5+W1ZNhijuyVNj2wuP5cubU
+	xmwvdDGhfczThg1UJYhhkUH09bxV157rwaeyIx9hC0OnjaygjeXvafvkCvn9ak9gBfwJLf
+	z4855kylI9LRQn0jpiFtHmEiX+OkQG8=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tj@kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [kernfs?] INFO: task hung in fdget_pos
-Message-ID: <cu7oc32pbuz42gsd3bsmwjns54bqhtlpdi5xlimnjx4rebp3yz@fps6oycum3rf>
-References: <670658e6.050a0220.22840d.0012.GAE@google.com>
+To: syzbot <syzbot+760777ae7038cad77437@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, phillip@squashfs.org.uk, 
+	squashfs-devel@lists.sourceforge.net, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [bcachefs?] [squashfs?] INFO: task hung in
+ truncate_inode_pages_final (2)
+Message-ID: <gmycktnchukrybhfdc2isnijr6n3hjsf7jjdeg2qerdoqcbhna@6gmx55nv4a6b>
+References: <68765304.a00a0220.105e77.0000.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,103 +59,117 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <670658e6.050a0220.22840d.0012.GAE@google.com>
+In-Reply-To: <68765304.a00a0220.105e77.0000.GAE@google.com>
 X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 09, 2024 at 03:20:22AM -0700, syzbot wrote:
+On Tue, Jul 15, 2025 at 06:09:24AM -0700, syzbot wrote:
 > Hello,
 > 
 > syzbot found the following issue on:
 > 
-> HEAD commit:    fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=110fb307980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9775e9a1af839423
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d0a79f980000
+> HEAD commit:    ec4801305969 Merge branches 'for-next/core' and 'for-next/..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1323ba8c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9e99b6fcd403d050
+> dashboard link: https://syzkaller.appspot.com/bug?extid=760777ae7038cad77437
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d38d82580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130ba0f0580000
 > 
 > Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/64ef5d6cfda3/disk-fc20a3e5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/42c0ee676795/vmlinux-fc20a3e5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/a3072d6383ea/bzImage-fc20a3e5.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/a8f928c45431/mount_0.gz
+> disk image: https://storage.googleapis.com/syzbot-assets/64d8dc107d9d/disk-ec480130.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/31280b2dee28/vmlinux-ec480130.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/b3f9fb3d09f8/Image-ec480130.gz.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/9b3f4e51e5f9/mount_0.gz
 > 
 > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com
+> Reported-by: syzbot+760777ae7038cad77437@syzkaller.appspotmail.com
 > 
-> INFO: task syz.2.17:5434 blocked for more than 159 seconds.
->       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+> INFO: task syz-executor:6656 blocked for more than 143
+> INFO: task syz-executor:6656 blocked for more than 143 seconds.
+>       Not tainted 6.16.0-rc5-syzkaller-gec4801305969 #0
 > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.2.17        state:D stack:27424 pid:5434  tgid:5432  ppid:5316   flags:0x00000004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5315 [inline]
->  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
->  __schedule_loop kernel/sched/core.c:6752 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6767
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
->  fdget_pos+0x24e/0x320 fs/file.c:1160
->  ksys_read+0x7e/0x2b0 fs/read_write.c:703
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f993c77dff9
-> RSP: 002b:00007f993d54e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 00007f993c936058 RCX: 00007f993c77dff9
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-> RBP: 00007f993c7f0296 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000001 R14: 00007f993c936058 R15: 00007fffb8436518
->  </TASK>
-> INFO: task syz.3.18:5439 blocked for more than 167 seconds.
->       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.3.18        state:D stack:27424 pid:5439  tgid:5436  ppid:5317   flags:0x00000004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5315 [inline]
->  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
->  __schedule_loop kernel/sched/core.c:6752 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6767
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
->  fdget_pos+0x24e/0x320 fs/file.c:1160
->  ksys_read+0x7e/0x2b0 fs/read_write.c:703
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f1134d7dff9
-> RSP: 002b:00007f1135adc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 00007f1134f36058 RCX: 00007f1134d7dff9
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-> RBP: 00007f1134df0296 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000001 R14: 00007f1134f36058 R15: 00007ffe6e122188
->  </TASK>
-> INFO: task syz.4.19:5441 blocked for more than 168 seconds.
->       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.4.19        state:D stack:27424 pid:5441  tgid:5438  ppid:5327   flags:0x00000004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5315 [inline]
->  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
->  __schedule_loop kernel/sched/core.c:6752 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6767
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
->  fdget_pos+0x24e/0x320 fs/file.c:1160
->  ksys_read+0x7e/0x2b0 fs/read_write.c:703
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f4c9ad7dff9
-> RSP: 002b:00007f4c9bc43038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> task:syz-executor    state:D stack:0     pid:6656  tgid:6656  ppid:1      task_flags:0x400140 flags:0x00000019
+> Call trace:
+>  __switch_to+0x414/0x834 arch/arm64/kernel/process.c:742 (T)
+>  context_switch kernel/sched/core.c:5401 [inline]
+>  __schedule+0x1414/0x2a28 kernel/sched/core.c:6790
+>  __schedule_loop kernel/sched/core.c:6868 [inline]
+>  schedule+0xb4/0x230 kernel/sched/core.c:6883
+>  io_schedule+0x84/0xf0 kernel/sched/core.c:7728
+>  folio_wait_bit_common+0x56c/0x9e0 mm/filemap.c:1317
+>  __folio_lock mm/filemap.c:1675 [inline]
+>  folio_lock include/linux/pagemap.h:1114 [inline]
+>  __filemap_get_folio+0x1ec/0xc38 mm/filemap.c:1928
+>  truncate_inode_pages_range+0x38c/0xe18 mm/truncate.c:388
+>  truncate_inode_pages mm/truncate.c:460 [inline]
+>  truncate_inode_pages_final+0x8c/0xbc mm/truncate.c:495
+>  evict+0x420/0x928 fs/inode.c:812
+>  dispose_list fs/inode.c:852 [inline]
+>  evict_inodes+0x650/0x6e8 fs/inode.c:906
+>  generic_shutdown_super+0xa0/0x2b8 fs/super.c:628
+>  kill_block_super+0x44/0x90 fs/super.c:1755
+>  deactivate_locked_super+0xc4/0x12c fs/super.c:474
+>  deactivate_super+0xe0/0x100 fs/super.c:507
+>  cleanup_mnt+0x31c/0x3ac fs/namespace.c:1417
+>  __cleanup_mnt+0x20/0x30 fs/namespace.c:1424
+>  task_work_run+0x1dc/0x260 kernel/task_work.c:227
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  do_notify_resume+0x174/0x1f4 arch/arm64/kernel/entry-common.c:155
+>  exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:173 [inline]
+>  exit_to_user_mode arch/arm64/kernel/entry-common.c:182 [inline]
+>  el0_svc+0xb8/0x180 arch/arm64/kernel/entry-common.c:880
+>  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+>  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+> 
+> Showing all locks held in the system:
+> 3 locks held by kworker/u8:1/14:
+> 1 lock held by khungtaskd/32:
+>  #0: ffff80008f8599c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48 include/linux/rcupdate.h:330
+> 2 locks held by pr/ttyAMA0/43:
+> 2 locks held by getty/6289:
+>  #0: ffff0000d314d0a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
+>  #1: ffff80009ba2e2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x34c/0xfa4 drivers/tty/n_tty.c:2222
+> 1 lock held by syz-executor/6656:
+>  #0: ffff0000c8c7e0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000c8c7e0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000c8c7e0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 1 lock held by syz-executor/6739:
+>  #0: ffff0000dbe180e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000dbe180e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000dbe180e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 1 lock held by syz-executor/6760:
+>  #0: ffff0000c90c20e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000c90c20e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000c90c20e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 1 lock held by syz-executor/6787:
+>  #0: ffff0000d3e2a0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000d3e2a0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000d3e2a0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 1 lock held by syz-executor/6808:
+>  #0: ffff0000d89180e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000d89180e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000d89180e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 1 lock held by syz-executor/6839:
+>  #0: ffff0000f2aba0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000f2aba0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000f2aba0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 1 lock held by syz-executor/6876:
+>  #0: ffff0000dd8f40e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000dd8f40e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000dd8f40e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 1 lock held by syz-executor/6909:
+>  #0: ffff0000eac320e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000eac320e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000eac320e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 1 lock held by syz-executor/6942:
+>  #0: ffff0000d65fa0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff0000d65fa0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff0000d65fa0e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xd8/0x100 fs/super.c:506
+> 
+> =============================================
+> 
 > 
 > 
 > ---
@@ -174,7 +189,13 @@ On Wed, Oct 09, 2024 at 03:20:22AM -0700, syzbot wrote:
 > 
 > If you want to overwrite report's subsystems, reply with:
 
-Someone assigned this to bcachefs, and it's clearly not:
+#syz set subsystems: arm
 
-#syz set subsystems: fs kernfs
+Per the console log, bcachefs wasn't even being tested - very curious
+how this got flagged as potentially bcachefs.
+
+But, all the reports have been from the arm tree, not upstream.
+
+I wouldn't be surprised if it's a lost wakeup, those hit arm first due
+to looser memory ordering.
 
