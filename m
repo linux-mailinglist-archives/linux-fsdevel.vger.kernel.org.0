@@ -1,335 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-55669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D7BB0D9CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:38:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8BFB0DA38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54B52161A55
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 12:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA4F6C2FF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 12:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243532BF012;
-	Tue, 22 Jul 2025 12:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12A92E9EA9;
+	Tue, 22 Jul 2025 12:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAMvyCFG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKpQkyQg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85209288518
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 12:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2902C2E92BB;
+	Tue, 22 Jul 2025 12:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753187891; cv=none; b=Rv5zA/NZiYWZUsU0PiHsAsepIzr7+mM//hGw2wJicHVD/uHoEoWhLvOBoaKctzfjaAL7hZHtTk2ZQEfe9OtFI8XNMYvcApAhEZ++dxJWHklmdJ6kFAE7UaSnu2m4DB7A/ruPnIfkFQbWZgoohQ6wQVHIzC39aSEZvJLwYMAf2h4=
+	t=1753189066; cv=none; b=Y9SA3aG+WH2lcKK9Zc5UPhqj2AZrC2KZiB7lmLiXhZD34455pE3DPO3nv3IkTi27ubAYYime3AWyVf6vF7nLqYn9EzIC7D3Lv/B7PaPIRleJTxo8H/LlS8j5AoECE9vIRnnzXJ4bNYJlL9SpjjefFA5m3NIngCi7qt9FcsGwMu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753187891; c=relaxed/simple;
-	bh=F3ClWSNNLynQ0Cd80K3FU4mpETHrc7w6orCD9fHLppA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yaq+7P/xvPUoV5fT1SliqiPNwRNQros9XgG4gn5fIxtazIhZ8u9E94WiT7DkB3Xro0N9yGg3uvLJxmDx88OnG1hIHRELCDxEokQX2nGoOWNWuqRxmD1GnwLkzQN9CX6idq7gsvQIh/KfOhWH56AEm3fwwifZvSk7kMM17C53tjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAMvyCFG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74551C4CEEB;
-	Tue, 22 Jul 2025 12:38:09 +0000 (UTC)
+	s=arc-20240116; t=1753189066; c=relaxed/simple;
+	bh=bARCOiL08uAQyeDe2f2/r8lHI1O0I1oEsRX/5nIpCN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T+TCBX33hVVr0cbdSlDbuB9oq9uGJwqd3kATkJfcdL39okyfNIl4EsiZhsJtmZ/uK7cuhjTYz+ZBs55ht0b5SKdVu1bBvFnVcyEdpX5RLhlo09kNvjzadF0zqzPWfzjYVT14bc9jydcKEzTANiSLQbrRVbPNhyAaaYr/ri1Swm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKpQkyQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B20DC4CEEB;
+	Tue, 22 Jul 2025 12:57:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753187890;
-	bh=F3ClWSNNLynQ0Cd80K3FU4mpETHrc7w6orCD9fHLppA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=EAMvyCFGVWBPpISgNZSviZDIIE13bQX4H4NqT5yHr9CJjJ1Y9h79JjwysHO6yh2gB
-	 TJNH4oL0up0qisYx9LncJV6MLpoPuzWlwpwg1Yx2dIy7kFgPhgpW1AmiSDVIoVvCim
-	 oST6RPWJdrQUVm5f4aA7p6C8e8Je68AQC8CkBc3hPnzq4wFypSRWbQGfIn+lhN1t1L
-	 14W8R051zSGszUc2lmIurT+F666mzSAXy7E3f//COTZYGRh+eF43rjtOeDMd3Q7ooj
-	 WFcH+Vmz4Vbi9TR2gnGJAw5rigdkhgQCxbru36dKvNU5l9iCSbSrmjJ6V6kRkfYCu+
-	 PVeLSWGYfgmyw==
-Message-ID: <fda653661ea160cc65bd217c450c5291a7d3f3b1.camel@kernel.org>
-Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the
- connection
-From: Jeff Layton <jlayton@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>, Joanne Koong
- <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net, 
-	miklos@szeredi.hu, bernd@bsbernd.com
-Date: Tue, 22 Jul 2025 08:38:08 -0400
-In-Reply-To: <5ba49b0ff30f4e4f44440d393359a06a2515ab20.camel@kernel.org>
-References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
-		 <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
-		 <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com>
-		 <20250719003215.GG2672029@frogsfrogsfrogs>
-	 <5ba49b0ff30f4e4f44440d393359a06a2515ab20.camel@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=k20201202; t=1753189065;
+	bh=bARCOiL08uAQyeDe2f2/r8lHI1O0I1oEsRX/5nIpCN4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cKpQkyQgnbLAvYwJJegHOhFRALLQmD30v4UVCKw0DK3+04FRo1JiV7hldvrUwiaDU
+	 uLbZcIYdN8zqRC0MSK8WGpXn+kb8pfCw/h0IMIDCsqbxXgTeskdoEyaWNPq+VTPEQ+
+	 zEFagTD655Kl2AWHzZXB5kv8t2YvemtOgDg5G4oF5sw51z3zkJSuFmSMHd91jno3In
+	 BtIrQ7j4FzE+DUemV7WKkdTWfxy3VlYaN661KiQMrROo6ClxJrJwW2sOpuACwKJB8Z
+	 LO73x0F1/xOyA/sArZzFPhpZhP1l2oBGgYDVKZCgJ5I1YMIvA06VmXLRtWuUHZnDpZ
+	 nhyCmcbZ5oKIQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Josef Bacik <josef@toxicpanda.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	linux-fsdevel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	fsverity@lists.linux.dev
+Subject: [PATCH RFC DRAFT v2 00/13] Move fscrypt and fsverity out of struct inode
+Date: Tue, 22 Jul 2025 14:57:06 +0200
+Message-ID: <20250722-work-inode-fscrypt-v2-0-782f1fdeaeba@kernel.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <fhppu2rnsykr5obrib3btw7wemislq36wufnbl67salvoguaof@kkxaosrv3oho>
+References: <fhppu2rnsykr5obrib3btw7wemislq36wufnbl67salvoguaof@kkxaosrv3oho>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20250715-work-inode-fscrypt-2b63b276e793
+X-Mailer: b4 0.15-dev-a9b2a
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6684; i=brauner@kernel.org; h=from:subject:message-id; bh=bARCOiL08uAQyeDe2f2/r8lHI1O0I1oEsRX/5nIpCN4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTUd2287uroEXgkRHPB3b9LuR/P71gUxHHP8NTVqRG/Z i0qXnbIraOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiN3sZGfZrbo6K8T52xSNB kFE8VmXFtiN8DXcmxRX9f/bvVPbU4uuMDDO3yx2N+G+utsvX6NCcTd6fTJjuLRUtXanNxzNHw6e +iQ8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-07-22 at 08:30 -0400, Jeff Layton wrote:
-> On Fri, 2025-07-18 at 17:32 -0700, Darrick J. Wong wrote:
-> > On Fri, Jul 18, 2025 at 03:23:30PM -0700, Joanne Koong wrote:
-> > > On Thu, Jul 17, 2025 at 4:26=E2=80=AFPM Darrick J. Wong <djwong@kerne=
-l.org> wrote:
-> > > >=20
-> > > > From: Darrick J. Wong <djwong@kernel.org>
-> > > >=20
-> > > > generic/488 fails with fuse2fs in the following fashion:
-> > > >=20
-> > > > generic/488       _check_generic_filesystem: filesystem on /dev/sdf=
- is inconsistent
-> > > > (see /var/tmp/fstests/generic/488.full for details)
-> > > >=20
-> > > > This test opens a large number of files, unlinks them (which really=
- just
-> > > > renames them to fuse hidden files), closes the program, unmounts th=
-e
-> > > > filesystem, and runs fsck to check that there aren't any inconsiste=
-ncies
-> > > > in the filesystem.
-> > > >=20
-> > > > Unfortunately, the 488.full file shows that there are a lot of hidd=
-en
-> > > > files left over in the filesystem, with incorrect link counts.  Tra=
-cing
-> > > > fuse_request_* shows that there are a large number of FUSE_RELEASE
-> > > > commands that are queued up on behalf of the unlinked files at the =
-time
-> > > > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection n=
-ot
-> > > > aborted, the fuse server would have responded to the RELEASE comman=
-ds by
-> > > > removing the hidden files; instead they stick around.
-> > >=20
-> > > Tbh it's still weird to me that FUSE_RELEASE is asynchronous instead
-> > > of synchronous. For example for fuse servers that cache their data an=
-d
-> > > only write the buffer out to some remote filesystem when the file get=
-s
-> > > closed, it seems useful for them to (like nfs) be able to return an
-> > > error to the client for close() if there's a failure committing that
-> >=20
-> > I don't think supplying a return value for close() is as helpful as it
-> > seems -- the manage says that there is no guarantee that data has been
-> > flushed to disk; and if the file is removed from the process' fd table
-> > then the operation succeeded no matter the return value. :P
-> >=20
-> > (Also C programmers tend to be sloppy and not check the return value.)
-> >=20
->=20
-> The POSIX spec and manpage for close(2) make no mention of writeback
-> errors, so it's not 100% clear that returning them there is at all OK.
-> Everyone sort of assumes that it makes sense to do so, but it can be
-> actively harmful.
->=20
+Hey,
 
-Actually, they do mention this, but I still argue that it's not a good
-idea to do so. If you want writeback errors use fsync() (or maybe the
-new ioctl() that someone was plumbing in that scrapes errors without
-doing writeback).
+This is a POC. We're still discussing alternatives and I want to provide
+some useful data on what I learned about using offsets to drop fscrypt
+and fsverity from struct inode.
 
-> Suppose we do this:
->=20
-> open() =3D 1
-> write(1)
-> close(1)=C2=A0
-> open() =3D 2
-> fsync(2) =3D ???
->=20
-> Now, assume there was a writeback error that happens either before or
-> after the close.
->=20
-> With the way this works today, you will get back an error on that final
-> fsync() even if fd 2 was opened _after_ the writeback error occurred,
-> because nothing will have scraped it yet.
->=20
-> If you scrape the error to return it on the close though, then the
-> result of that fsync() would be inconclusive. If the error happens
-> before the close(), then fsync() will return 0. If it fails after the
-> close(), then the fsync() will see an error.
->=20
-> > > data; that also has clearer API semantics imo, eg users are guarantee=
-d
-> > > that when close() returns, all the processing/cleanup for that file
-> > > has been completed.  Async FUSE_RELEASE also seems kind of racy, eg i=
-f
-> > > the server holds local locks that get released in FUSE_RELEASE, if a
-> >=20
-> > Yes.  I think it's only useful for the case outined in that patch, whic=
-h
-> > is that a program started an asyncio operation and then closed the fd.
-> > In that particular case the program unambiguously doesn't care about th=
-e
-> > return value of close so it's ok to perform the release asynchronously.
-> >=20
-> > > subsequent FUSE_OPEN happens before FUSE_RELEASE then depends on
-> > > grabbing that lock, then we end up deadlocked if the server is
-> > > single-threaded.
-> >=20
-> > Hrm.  I suppose if you had a script that ran two programs one after the
-> > other, each of which expected to be able to open and lock the same file=
-,
-> > then you could run into problems if the lock isn't released by the time
-> > the second program is ready to open the file.
-> >=20
-> > But having said that, some other program could very well open and lock
-> > the file as soon as the lock drops.
-> >=20
-> > > I saw in your first patch that sending FUSE_RELEASE synchronously
-> > > leads to a deadlock under AIO but AFAICT, that happens because we
-> > > execute req->args->end() in fuse_request_end() synchronously; I think
-> > > if we execute that release asynchronously on a worker thread then tha=
-t
-> > > gets rid of the deadlock.
-> >=20
-> > <nod> Last time I think someone replied that maybe they should all be
-> > asynchronous.
-> >=20
-> > > If FUSE_RELEASE must be asynchronous though, then your approach makes
-> > > sense to me.
-> >=20
-> > I think it only has to be asynchronous for the weird case outlined in
-> > that patch (fuse server gets stuck closing its own client's fds).
-> > Personally I think release ought to be synchronous at least as far as
-> > the kernel doing all the stuff that close() says it has to do (removal
-> > of record locks, deleting the fd table entry).
-> >=20
-> > Note that doesn't necessarily mean that the kernel has to be completely
-> > done with all the work that entails.  XFS defers freeing of unlinked
-> > files until a background garbage collector gets around to doing that.
-> > Other filesystems will actually make you wait while they free all the
-> > data blocks and the inode.  But the kernel has no idea what the fuse
-> > server actually does.
-> >=20
-> > > > Create a function to push all the background requests to the queue =
-and
-> > > > then wait for the number of pending events to hit zero, and call th=
-is
-> > > > before fuse_abort_conn.  That way, all the pending events are proce=
-ssed
-> > > > by the fuse server and we don't end up with a corrupt filesystem.
-> > > >=20
-> > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > > > ---
-> > > >  fs/fuse/fuse_i.h |    6 ++++++
-> > > >  fs/fuse/dev.c    |   38 ++++++++++++++++++++++++++++++++++++++
-> > > >  fs/fuse/inode.c  |    1 +
-> > > >  3 files changed, 45 insertions(+)
-> > > >=20
-> > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > > > +/*
-> > > > + * Flush all pending requests and wait for them.  Only call this f=
-unction when
-> > > > + * it is no longer possible for other threads to add requests.
-> > > > + */
-> > > > +void fuse_flush_requests(struct fuse_conn *fc, unsigned long timeo=
-ut)
-> > >=20
-> > > It might be worth renaming this to something like
-> > > 'fuse_flush_bg_requests' to make it more clear that this only flushes
-> > > background requests
-> >=20
-> > Hum.  Did I not understand the code correctly?  I thought that
-> > flush_bg_queue puts all the background requests onto the active queue
-> > and issues them to the fuse server; and the wait_event_timeout sits
-> > around waiting for all the requests to receive their replies?
-> >=20
-> > I could be mistaken though.  This is my rough understanding of what
-> > happens to background requests:
-> >=20
-> > 1. Request created
-> > 2. Put request on bg_queue
-> > 3. <wait>
-> > 4. Request removed from bg_queue
-> > 5. Request sent
-> > 6. <wait>
-> > 7. Reply received
-> > 8. Request ends and is _put.
-> >=20
-> > Non-background (foreground?) requests skip steps 2-4.  Meanwhile,
-> > fc->waiting tracks the number of requests that are anywhere between the
-> > end of step 1 and the start of step 8.
-> >=20
-> > In any case, I want to push all the bg requests and wait until there ar=
-e
-> > no more requests in the system.
-> >=20
-> > --D
+As discussed, this moves the fscrypt and fsverity pointers out of struct
+inode shrinking it by 16 bytes. The pointers move into the individual
+filesystems that actually do make use of them.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+In order to find the fscrypt and fsverity data pointers offsets from the
+embedded struct inode in the filesystem's private inode data are
+stored in struct inode_operations. This means we get fast access to the
+data pointers without having to rely on indirect calls.
+
+Bugs & Issues
+=============
+
+* For fscrypt specifically the biggest issue is
+  fscrypt_prepare_new_inode() is called in filesystem's inode allocation
+  functions before inode->i_op is set. That means the offset isn't
+  available at the time when we would need it. To fix this we can set
+  dummy encrypted inode operations for the respective filesystem with an
+  initialized offset.
+
+* For both fscrypt & fsverity the biggest issue is that every codepath
+  that currently calls make_bad_inode() after having initialized fscrypt
+  or fsverity data will override inode->i_op with bad_inode_ops. At
+  which point we're back to the previous problem: The offset isn't
+  available anymore. So when inode->i_sb->s_op->evict_inode() is called
+  fscrypt_put_encryption_info() doesn't have the offset available
+  anymore and would corrupt the hell out of everything and also leak
+  memory.
+
+  Obviously we could use a flag to detect a bad inodes instead of i_op
+  and let the filesystem assign it's own bad inode operations including
+  the correct offset. Is it worth it?
+
+  The other way I see we can fix this if we require fixed offsets in the
+  filesystems inode so fscrypt and fsverity always now what offset to
+  calculate. We could use two consecutive pointers at the beginning of
+  the filesystem's inode. Does that always work and is it worth it?
+
+Thanks!
+Christian
+
+Test results:
+
++ sudo ./check -g encrypt,verity
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 localhost 6.16.0-rc1-g15c8eb9cdbd3 #267 SMP PREEMPT_DYNAMIC Fri Jun  5 15:58:00 CEST 2015
+MKFS_OPTIONS  -- -F /dev/nvme3n1p6
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/nvme3n1p6 /mnt/scratch
+
+ext4/024 3s ...  3s
+generic/395 4s ...  4s
+generic/396 3s ...  3s
+generic/397 4s ...  3s
+generic/398 4s ...  4s
+generic/399 39s ...  35s
+generic/419 3s ...  4s
+generic/421 4s ...  4s
+generic/429 14s ...  14s
+generic/435 23s ...  22s
+generic/440 3s ...  4s
+generic/548 10s ...  9s
+generic/549 9s ...  9s
+generic/550       [not run] encryption policy '-c 9 -n 9 -f 0' is unusable; probably missing kernel crypto API support
+generic/572        6s
+generic/573        4s
+generic/574        28s
+generic/575        9s
+generic/576 5s ...  4s
+generic/577        4s
+generic/579        24s
+generic/580 4s ...  4s
+generic/581 10s ...  11s
+generic/582 10s ...  9s
+generic/583 9s ...  9s
+generic/584       [not run] encryption policy '-c 9 -n 9 -v 2 -f 0' is unusable; probably missing kernel crypto API support
+generic/592 10s ...  10s
+generic/593 4s ...  4s
+generic/595 7s ...  7s
+generic/602 9s ...  10s
+generic/613 20s ...  20s
+generic/621 9s ...  9s
+generic/624        3s
+generic/625        3s
+generic/692        5s
+generic/693       [not run] encryption policy '-c 1 -n 10 -v 2 -f 0' is unusable; probably missing kernel crypto API support
+generic/739 17s ...  18s
+Ran: ext4/024 generic/395 generic/396 generic/397 generic/398 generic/399 generic/419 generic/421 generic/429 generic/435 generic/440 generic/548 generic/549 generic/550 generic/572 generic/573 generic/574 generic/575 generic/576 generic/577 generic/579 generic/580 generic/581 generic/582 generic/583 generic/584 generic/592 generic/593 generic/595 generic/602 generic/613 generic/621 generic/624 generic/625 generic/692 generic/693 generic/739
+Not run: generic/550 generic/584 generic/693
+Passed all 37 tests
+
+---
+Changes in v2:
+- First full implementation.
+- Link to v1: https://lore.kernel.org/20250715-work-inode-fscrypt-v1-1-aa3ef6f44b6b@kernel.org
+
+---
+Christian Brauner (13):
+      fs: add fscrypt offset
+      fs/crypto: use accessors
+      ext4: move fscrypt to filesystem inode
+      ubifs: move fscrypt to filesystem inode
+      f2fs: move fscrypt to filesystem inode
+      ceph: move fscrypt to filesystem inode
+      fs: drop i_crypt_info from struct inode
+      fs: add fsverity offset
+      fs/verity: use accessors
+      btrfs: move fsverity to filesystem inode
+      ext4: move fsverity to filesystem inode
+      f2fs: move fsverity to filesystem inode
+      fs: drop i_verity_info from struct inode
+
+ fs/btrfs/btrfs_inode.h       |  3 +++
+ fs/btrfs/inode.c             | 20 ++++++++++++++++-
+ fs/ceph/dir.c                |  8 +++++++
+ fs/ceph/inode.c              | 21 ++++++++++++++++++
+ fs/crypto/bio.c              |  2 +-
+ fs/crypto/crypto.c           |  8 +++----
+ fs/crypto/fname.c            |  8 +++----
+ fs/crypto/fscrypt_private.h  |  2 +-
+ fs/crypto/hooks.c            |  2 +-
+ fs/crypto/inline_crypt.c     | 10 ++++-----
+ fs/crypto/keysetup.c         | 27 +++++++++++++----------
+ fs/crypto/policy.c           |  6 ++---
+ fs/ext4/ext4.h               |  9 ++++++++
+ fs/ext4/file.c               |  8 +++++++
+ fs/ext4/ialloc.c             |  2 ++
+ fs/ext4/inode.c              |  1 +
+ fs/ext4/mballoc.c            |  3 +++
+ fs/ext4/namei.c              | 23 ++++++++++++++++++++
+ fs/ext4/super.c              |  6 +++++
+ fs/ext4/symlink.c            | 24 ++++++++++++++++++++
+ fs/f2fs/f2fs.h               |  7 ++++++
+ fs/f2fs/file.c               |  8 +++++++
+ fs/f2fs/inode.c              |  1 +
+ fs/f2fs/namei.c              | 41 ++++++++++++++++++++++++++++++++++
+ fs/f2fs/super.c              |  6 +++++
+ fs/ubifs/dir.c               | 52 ++++++++++++++++++++++++--------------------
+ fs/ubifs/file.c              |  8 +++++++
+ fs/ubifs/super.c             |  8 +++++++
+ fs/ubifs/ubifs.h             |  3 +++
+ fs/verity/enable.c           |  2 +-
+ fs/verity/fsverity_private.h |  2 +-
+ fs/verity/open.c             | 18 +++++++++------
+ fs/verity/verify.c           |  2 +-
+ include/linux/fs.h           | 10 ++-------
+ include/linux/fscrypt.h      | 31 ++++++++++++++++++++++++--
+ include/linux/fsverity.h     | 21 ++++++++++++------
+ include/linux/netfs.h        |  6 +++++
+ 37 files changed, 337 insertions(+), 82 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250715-work-inode-fscrypt-2b63b276e793
+
 
