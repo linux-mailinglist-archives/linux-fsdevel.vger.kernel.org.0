@@ -1,57 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-55767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F760B0E717
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 01:20:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11353B0E71C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 01:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202901CC1126
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 23:20:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58C31CC1351
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 23:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70F228D840;
-	Tue, 22 Jul 2025 23:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264BF28C01D;
+	Tue, 22 Jul 2025 23:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="X1Gjg01a"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="pSsmAH0b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A08228A1C9;
-	Tue, 22 Jul 2025 23:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3127C28B7D3;
+	Tue, 22 Jul 2025 23:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753226382; cv=none; b=Pfj2Ur1kPvyIVnqbA3oocFNIu0aCRGHP8IV7m9ZcuAVn15D5nDeKt1plQdDlLO4ML3xQl4kso4UAO6a4iCdhJK4PvhXkN78zIXm3wSpC8vFRtRpYr262M5e2TDaKjI1xNNQ+8e9dCJnZPKW43M4Rtce7/AX5amhUtZCit8VFg0Q=
+	t=1753226390; cv=none; b=ZkvCta/drOzxilm5KdsA5SCTl+yqC7WHPWnM6nGwiNwmtwyScu9sV+IKJLPisJftOqcmGX/Jm2cLOGFR3hBrVTb21VWOEacnrICGXxeIzi1s8yX0HJ8ClU30ZNuXHcQyUzw863FDYsR42iSMp50GYaiy0Coxne6t1Shqb0i45QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753226382; c=relaxed/simple;
-	bh=UmPMDauKqZHT2KGHGZlGLyTzSUO3Tof/oDKXZ1ByKLY=;
+	s=arc-20240116; t=1753226390; c=relaxed/simple;
+	bh=iERN6Xzk9sHzsB4pLCPzg+cd0rkOPiJ6NJagUizg4D0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GqMJexLc4Feg9fHECdYihtogJclfIuWvnv625xoS5plDFBNf6safyKxPaDNz11JThDJeBddlRE5/MuzBNmbUXYolVoWEXrO3wYJUd4PUOvqa+lbmFmgZwyqbClEeVDuj0pN4ZQQN5AqJdkXJw+kkMlsQwMiY5/TooAW0vq3I/KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=X1Gjg01a; arc=none smtp.client-ip=80.241.56.152
+	 In-Reply-To:To:Cc; b=HbY6IudQxf9WN+Upb8aPap46HWU7UgkOXFiPLLE6F/owTRbSH5BQzyotGJa2OEILyhrlAkbx04f/AUEvDvZuVhi5fdOu2z428ZIrI74X7PXKjMQxviPBxHiIoeUXrnmDA42s+bn7B7zRc7+2qyJbNw1iv6R/ZrWEH7u13RfXX6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=pSsmAH0b; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bmtWr6CR2z9v23;
-	Wed, 23 Jul 2025 01:19:36 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bmtWx40bRz9tKY;
+	Wed, 23 Jul 2025 01:19:41 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1753226376;
+	t=1753226381;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=B/Z2GV+fudpYe8e8bFuab6/Kln8z/eUc8/jutrOYdpI=;
-	b=X1Gjg01ad4Y91Kw6MHnHRO3k6m2v/9cn3sxuLFEfXDY/XmVab9n3TzkW3htPnPdXUpp8Vn
-	6Khx+rLiL6W0AxvKrFi+HUJHFxSj5vliglUnMOfJGHcDMMjjkWbp1rZhUGe4kaUvwPDrJF
-	1fg3F5fhyO12UFqqxeCfk27v13+Z/lkzY3V6PvvGAXh2A5l06qjUtIn0JBWpq6TyKLw8tn
-	gG9Sxe48XW8Mza+ItuitHbdUHzcwSeBvZAIe9LvOtVbZmxGhqZlHgiYZK1DJrF5f0ELYqr
-	DjFin5xi/8CDWxhLSxaH0IYU6cU3fLrrX4c4MybvFtbvbikztgT7iqyX3t2nBg==
+	bh=Ga146VfUnbYMyYkmA+aailWJBUlJlGizk/gmO5Hyyfg=;
+	b=pSsmAH0b+jJYacyGxS8hatPE1X+DUMc0aN6RwPvJHabw0eaoUjNSBE0DgLeLaZLdlYhpZ9
+	rL+lBDcBr3JmrukxwtCLTaQSavAVzi76K6IgN9LC1o3XiWRP9QW6w4wR92jI3o1LGin1k2
+	V7RZz+VE7FZAJd+Rt0Zdc9L0mqVNE94Pg8tiZZyRm+wgG4fEfTP+AlXVq96BNIzkKDSZz7
+	Xj8k/d+8aWFejT+KBgXOsvjmcv5rS87UbIqaLu0z+iSFoIv0K7pqxo2AlzSrdnbJkRcF70
+	BIr1sSzA/8XSa6vyCO+W+Y6xynOifI4nIUZgF2iYJGeyAGZiF0waq+PNIhCP8A==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
 From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Wed, 23 Jul 2025 09:18:53 +1000
-Subject: [PATCH RFC v2 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+Date: Wed, 23 Jul 2025 09:18:54 +1000
+Subject: [PATCH RFC v2 4/4] selftests/proc: add tests for new pidns APIs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,7 +63,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-procfs-pidns-api-v2-3-621e7edd8e40@cyphar.com>
+Message-Id: <20250723-procfs-pidns-api-v2-4-621e7edd8e40@cyphar.com>
 References: <20250723-procfs-pidns-api-v2-0-621e7edd8e40@cyphar.com>
 In-Reply-To: <20250723-procfs-pidns-api-v2-0-621e7edd8e40@cyphar.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -69,161 +72,338 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
  linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5677; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=UmPMDauKqZHT2KGHGZlGLyTzSUO3Tof/oDKXZ1ByKLY=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWQ0yOTn7lj3qNve/vRDw39yYWmbjiXv4vDbzbTj9ErLg
- 3ePO3Yf6ShlYRDjYpAVU2TZ5ucZumn+4ivJn1aywcxhZQIZwsDFKQATmbmD4Q/v30zWTVm7mjY6
- 7tmUwzBpa1eXrdUDDnN9R0/t6q+Vj08x/FONDm+KUo5yLgio37L25a6s39umeN5vrGmsO9Sg8+l
- nKBMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9962; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=iERN6Xzk9sHzsB4pLCPzg+cd0rkOPiJ6NJagUizg4D0=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWQ0yBTsauX+3WS7hd/t/3ljl529dbIJNY7NRn85D0oxM
+ GssDfndUcrCIMbFICumyLLNzzN00/zFV5I/rWSDmcPKBDKEgYtTACbys43hf+IP/Qqbb129cgJM
+ Z47zhQec6EjY/kQxqCbkcOwpTkebLwz/o39nrnshbDFr4wH+o7sdlmuw/o7PfHR5ocFst6d5h0+
+ a8QAA
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-
-/proc has historically had very opaque semantics about PID namespaces,
-which is a little unfortunate for container runtimes and other programs
-that deal with switching namespaces very often. One common issue is that
-of converting between PIDs in the process's namespace and PIDs in the
-namespace of /proc.
-
-In principle, it is possible to do this today by opening a pidfd with
-pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
-contain a PID value translated to the pid namespace associated with that
-procfs superblock). However, allocating a new file for each PID to be
-converted is less than ideal for programs that may need to scan procfs,
-and it is generally useful for userspace to be able to finally get this
-information from procfs.
-
-So, add a new API for this in the form of an ioctl(2) you can call on
-the root directory of procfs. The returned file descriptor will have
-O_CLOEXEC set. This acts as a sister feature to the new "pidns" mount
-option, finally allowing userspace full control of the pid namespaces
-associated with procfs instances.
-
-The permission model for this is a bit looser than that of the "pidns"
-mount option, but this is mainly because /proc/1/ns/pid provides the
-same information, so as long as you have access to that magic-link (or
-something equivalently reasonable such as privileges with CAP_SYS_ADMIN
-or being in an ancestor pid namespace) it makes sense to allow userspace
-to grab a handle. setns(2) will still have their own permission checks,
-so being able to open a pidns handle doesn't really provide too many
-other capabilities.
+X-Rspamd-Queue-Id: 4bmtWx40bRz9tKY
 
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- Documentation/filesystems/proc.rst |  4 +++
- fs/proc/root.c                     | 54 ++++++++++++++++++++++++++++++++++++--
- include/uapi/linux/fs.h            |  3 +++
- 3 files changed, 59 insertions(+), 2 deletions(-)
+ tools/testing/selftests/proc/.gitignore   |   1 +
+ tools/testing/selftests/proc/Makefile     |   1 +
+ tools/testing/selftests/proc/proc-pidns.c | 286 ++++++++++++++++++++++++++++++
+ 3 files changed, 288 insertions(+)
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index c520b9f8a3fd..506383273c9d 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -2398,6 +2398,10 @@ pidns= specifies a pid namespace (either as a string path to something like
- will be used by the procfs instance when translating pids. By default, procfs
- will use the calling process's active pid namespace.
+diff --git a/tools/testing/selftests/proc/.gitignore b/tools/testing/selftests/proc/.gitignore
+index 973968f45bba..2dced03e9e0e 100644
+--- a/tools/testing/selftests/proc/.gitignore
++++ b/tools/testing/selftests/proc/.gitignore
+@@ -17,6 +17,7 @@
+ /proc-tid0
+ /proc-uptime-001
+ /proc-uptime-002
++/proc-pidns
+ /read
+ /self
+ /setns-dcache
+diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
+index b12921b9794b..c6f7046b9860 100644
+--- a/tools/testing/selftests/proc/Makefile
++++ b/tools/testing/selftests/proc/Makefile
+@@ -27,5 +27,6 @@ TEST_GEN_PROGS += setns-sysvipc
+ TEST_GEN_PROGS += thread-self
+ TEST_GEN_PROGS += proc-multiple-procfs
+ TEST_GEN_PROGS += proc-fsconfig-hidepid
++TEST_GEN_PROGS += proc-pidns
  
-+Processes can check which pid namespace is used by a procfs instance by using
-+the `PROCFS_GET_PID_NAMESPACE` ioctl() on the root directory of the procfs
-+instance.
+ include ../lib.mk
+diff --git a/tools/testing/selftests/proc/proc-pidns.c b/tools/testing/selftests/proc/proc-pidns.c
+new file mode 100644
+index 000000000000..e7e34c78d383
+--- /dev/null
++++ b/tools/testing/selftests/proc/proc-pidns.c
+@@ -0,0 +1,286 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Author: Aleksa Sarai <cyphar@cyphar.com>
++ * Copyright (C) 2025 SUSE LLC.
++ */
 +
- Chapter 5: Filesystem behavior
- ==============================
- 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 057c8a125c6e..548a57ec2152 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -23,8 +23,10 @@
- #include <linux/cred.h>
- #include <linux/magic.h>
- #include <linux/slab.h>
-+#include <linux/ptrace.h>
- 
- #include "internal.h"
-+#include "../internal.h"
- 
- struct proc_fs_context {
- 	struct pid_namespace	*pid_ns;
-@@ -418,15 +420,63 @@ static int proc_root_readdir(struct file *file, struct dir_context *ctx)
- 	return proc_pid_readdir(file, ctx);
- }
- 
-+static long int proc_root_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++#include <assert.h>
++#include <errno.h>
++#include <sched.h>
++#include <stdbool.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <stdio.h>
++#include <sys/mount.h>
++#include <sys/stat.h>
++#include <sys/ioctl.h>
++#include <sys/prctl.h>
++
++#include "../kselftest_harness.h"
++
++#define bail(fmt, ...)							\
++	do {								\
++		fprintf(stderr, fmt ": %m", __VA_ARGS__);		\
++		exit(1);						\
++	} while (0)
++
++#define ASSERT_SUCCESS	ASSERT_FALSE
++#define ASSERT_FAIL	ASSERT_TRUE
++
++int touch(char *path)
 +{
-+	switch (cmd) {
-+#ifdef CONFIG_PID_NS
-+	case PROCFS_GET_PID_NAMESPACE: {
-+		struct pid_namespace *active = task_active_pid_ns(current);
-+		struct pid_namespace *ns = proc_pid_ns(file_inode(filp)->i_sb);
-+		bool can_access_pidns = false;
-+
-+		/*
-+		 * If we are in an ancestors of the pidns, or have join
-+		 * privileges (CAP_SYS_ADMIN), then it makes sense that we
-+		 * would be able to grab a handle to the pidns.
-+		 *
-+		 * Otherwise, if there is a root process, then being able to
-+		 * access /proc/$pid/ns/pid is equivalent to this ioctl and so
-+		 * we should probably match the permission model. For empty
-+		 * namespaces it seems unlikely for there to be a downside to
-+		 * allowing unprivileged users to open a handle to it (setns
-+		 * will fail for unprivileged users anyway).
-+		 */
-+		can_access_pidns = pidns_is_ancestor(ns, active) ||
-+				   ns_capable(ns->user_ns, CAP_SYS_ADMIN);
-+		if (!can_access_pidns) {
-+			bool cannot_ptrace_pid1 = false;
-+
-+			read_lock(&tasklist_lock);
-+			if (ns->child_reaper)
-+				cannot_ptrace_pid1 = ptrace_may_access(ns->child_reaper,
-+								       PTRACE_MODE_READ_FSCREDS);
-+			read_unlock(&tasklist_lock);
-+			can_access_pidns = !cannot_ptrace_pid1;
-+		}
-+		if (!can_access_pidns)
-+			return -EPERM;
-+
-+		/* open_namespace() unconditionally consumes the reference. */
-+		get_pid_ns(ns);
-+		return open_namespace(to_ns_common(ns));
-+	}
-+#endif /* CONFIG_PID_NS */
-+	default:
-+		return -ENOIOCTLCMD;
-+	}
++	int fd = open(path, O_WRONLY|O_CREAT|O_CLOEXEC, 0644);
++	if (fd < 0 || close(fd) < 0)
++		return -errno;
++	return 0;
 +}
 +
- /*
-  * The root /proc directory is special, as it has the
-  * <pid> directories. Thus we don't use the generic
-  * directory handling functions for that..
-  */
- static const struct file_operations proc_root_operations = {
--	.read		 = generic_read_dir,
--	.iterate_shared	 = proc_root_readdir,
-+	.read		= generic_read_dir,
-+	.iterate_shared	= proc_root_readdir,
- 	.llseek		= generic_file_llseek,
-+	.unlocked_ioctl = proc_root_ioctl,
-+	.compat_ioctl   = compat_ptr_ioctl,
- };
- 
- /*
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 0bd678a4a10e..aa642cb48feb 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -437,6 +437,9 @@ typedef int __bitwise __kernel_rwf_t;
- 
- #define PROCFS_IOCTL_MAGIC 'f'
- 
-+/* procfs root ioctls */
++FIXTURE(ns)
++{
++	int host_mntns, host_pidns;
++	int dummy_pidns;
++};
++
++FIXTURE_SETUP(ns)
++{
++	/* Stash the old mntns. */
++	self->host_mntns = open("/proc/self/ns/mnt", O_RDONLY|O_CLOEXEC);
++	ASSERT_GE(self->host_mntns, 0);
++
++	/* Create a new mount namespace and make it private. */
++	ASSERT_SUCCESS(unshare(CLONE_NEWNS));
++	ASSERT_SUCCESS(mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL));
++
++	/*
++	 * Create a proper tmpfs that we can use and will disappear once we
++	 * leave this mntns.
++	 */
++	ASSERT_SUCCESS(mount("tmpfs", "/tmp", "tmpfs", 0, NULL));
++
++	/*
++	 * Create a pidns we can use for later tests. We need to fork off a
++	 * child so that we get a usable nsfd that we can bind-mount and open.
++	 */
++	ASSERT_SUCCESS(touch("/tmp/dummy-pidns"));
++
++	self->host_pidns = open("/proc/self/ns/pid", O_RDONLY|O_CLOEXEC);
++	ASSERT_GE(self->host_pidns, 0);
++	ASSERT_SUCCESS(unshare(CLONE_NEWPID));
++
++	pid_t pid = fork();
++	ASSERT_GE(pid, 0);
++	if (!pid) {
++		prctl(PR_SET_PDEATHSIG, SIGKILL);
++		ASSERT_SUCCESS(mount("/proc/self/ns/pid", "/tmp/dummy-pidns", NULL, MS_BIND, 0));
++		exit(0);
++	}
++
++	int wstatus;
++	ASSERT_EQ(waitpid(pid, &wstatus, 0), pid);
++	ASSERT_TRUE(WIFEXITED(wstatus));
++	ASSERT_EQ(WEXITSTATUS(wstatus), 0);
++
++	ASSERT_SUCCESS(setns(self->host_pidns, CLONE_NEWPID));
++
++	self->dummy_pidns = open("/tmp/dummy-pidns", O_RDONLY|O_CLOEXEC);
++	ASSERT_GE(self->dummy_pidns, 0);
++}
++
++FIXTURE_TEARDOWN(ns)
++{
++	ASSERT_SUCCESS(setns(self->host_mntns, CLONE_NEWNS));
++	ASSERT_SUCCESS(close(self->host_mntns));
++
++	ASSERT_SUCCESS(close(self->host_pidns));
++	ASSERT_SUCCESS(close(self->dummy_pidns));
++}
++
++TEST_F(ns, pidns_mount_string_path)
++{
++	ASSERT_SUCCESS(mkdir("/tmp/proc-host", 0755));
++	ASSERT_SUCCESS(mount("proc", "/tmp/proc-host", "proc", 0, "pidns=/proc/self/ns/pid"));
++	ASSERT_SUCCESS(access("/tmp/proc-host/self/", X_OK));
++
++	ASSERT_SUCCESS(mkdir("/tmp/proc-dummy", 0755));
++	ASSERT_SUCCESS(mount("proc", "/tmp/proc-dummy", "proc", 0, "pidns=/tmp/dummy-pidns"));
++	ASSERT_FAIL(access("/tmp/proc-dummy/1/", X_OK));
++	ASSERT_FAIL(access("/tmp/proc-dummy/self/", X_OK));
++}
++
++TEST_F(ns, pidns_fsconfig_string_path)
++{
++	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
++	ASSERT_GE(fsfd, 0);
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy-pidns", 0));
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
++
++	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
++	ASSERT_GE(mountfd, 0);
++
++	ASSERT_FAIL(faccessat(mountfd, "1/", X_OK, 0));
++	ASSERT_FAIL(faccessat(mountfd, "self/", X_OK, 0));
++
++	ASSERT_SUCCESS(close(fsfd));
++	ASSERT_SUCCESS(close(mountfd));
++}
++
++TEST_F(ns, pidns_fsconfig_fd)
++{
++	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
++	ASSERT_GE(fsfd, 0);
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
++
++	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
++	ASSERT_GE(mountfd, 0);
++
++	ASSERT_FAIL(faccessat(mountfd, "1/", X_OK, 0));
++	ASSERT_FAIL(faccessat(mountfd, "self/", X_OK, 0));
++
++	ASSERT_SUCCESS(close(fsfd));
++	ASSERT_SUCCESS(close(mountfd));
++}
++
++TEST_F(ns, pidns_reconfigure_remount)
++{
++	ASSERT_SUCCESS(mkdir("/tmp/proc", 0755));
++	ASSERT_SUCCESS(mount("proc", "/tmp/proc", "proc", 0, ""));
++	ASSERT_SUCCESS(access("/tmp/proc/self/", X_OK));
++
++	ASSERT_SUCCESS(mount(NULL, "/tmp/proc", NULL, MS_REMOUNT, "pidns=/tmp/dummy-pidns"));
++	ASSERT_FAIL(access("/tmp/proc/self/", X_OK));
++}
++
++TEST_F(ns, pidns_reconfigure_fsconfig_string_path)
++{
++	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
++	ASSERT_GE(fsfd, 0);
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
++
++	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
++	ASSERT_GE(mountfd, 0);
++
++	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
++	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy-pidns", 0));
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0));
++
++	ASSERT_FAIL(faccessat(mountfd, "1/", X_OK, 0));
++	ASSERT_FAIL(faccessat(mountfd, "self/", X_OK, 0));
++
++	ASSERT_SUCCESS(close(fsfd));
++	ASSERT_SUCCESS(close(mountfd));
++}
++
++TEST_F(ns, pidns_reconfigure_fsconfig_fd)
++{
++	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
++	ASSERT_GE(fsfd, 0);
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
++
++	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
++	ASSERT_GE(mountfd, 0);
++
++	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
++	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0));
++
++	ASSERT_FAIL(faccessat(mountfd, "1/", X_OK, 0));
++	ASSERT_FAIL(faccessat(mountfd, "self/", X_OK, 0));
++
++	ASSERT_SUCCESS(close(fsfd));
++	ASSERT_SUCCESS(close(mountfd));
++}
++
++int is_same_inode(int fd1, int fd2)
++{
++	struct stat stat1, stat2;
++
++	assert(fstat(fd1, &stat1) == 0);
++	assert(fstat(fd2, &stat2) == 0);
++
++	return stat1.st_ino == stat2.st_ino && stat1.st_dev == stat2.st_dev;
++}
++
++#define PROCFS_IOCTL_MAGIC 'f'
 +#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 1)
 +
- /* Pagemap ioctl */
- #define PAGEMAP_SCAN	_IOWR(PROCFS_IOCTL_MAGIC, 16, struct pm_scan_arg)
- 
++TEST_F(ns, get_pidns_ioctl)
++{
++	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
++	ASSERT_GE(fsfd, 0);
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
++
++	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
++	ASSERT_GE(mountfd, 0);
++
++	/* fsmount returns an O_PATH, which ioctl(2) doesn't accept. */
++	int new_mountfd = openat(mountfd, ".", O_RDONLY|O_DIRECTORY|O_CLOEXEC);
++	ASSERT_GE(new_mountfd, 0);
++
++	ASSERT_SUCCESS(close(mountfd));
++	mountfd = -EBADF;
++
++	int procfs_pidns = ioctl(new_mountfd, PROCFS_GET_PID_NAMESPACE);
++	ASSERT_GE(procfs_pidns, 0);
++
++	ASSERT_NE(self->dummy_pidns, procfs_pidns);
++	ASSERT_FALSE(is_same_inode(self->host_pidns, procfs_pidns));
++	ASSERT_TRUE(is_same_inode(self->dummy_pidns, procfs_pidns));
++
++	ASSERT_SUCCESS(close(fsfd));
++	ASSERT_SUCCESS(close(new_mountfd));
++	ASSERT_SUCCESS(close(procfs_pidns));
++}
++
++TEST_F(ns, reconfigure_get_pidns_ioctl)
++{
++	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
++	ASSERT_GE(fsfd, 0);
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
++
++	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
++	ASSERT_GE(mountfd, 0);
++
++	/* fsmount returns an O_PATH, which ioctl(2) doesn't accept. */
++	int new_mountfd = openat(mountfd, ".", O_RDONLY|O_DIRECTORY|O_CLOEXEC);
++	ASSERT_GE(new_mountfd, 0);
++
++	ASSERT_SUCCESS(close(mountfd));
++	mountfd = -EBADF;
++
++	int procfs_pidns1 = ioctl(new_mountfd, PROCFS_GET_PID_NAMESPACE);
++	ASSERT_GE(procfs_pidns1, 0);
++
++	ASSERT_NE(self->dummy_pidns, procfs_pidns1);
++	ASSERT_TRUE(is_same_inode(self->host_pidns, procfs_pidns1));
++	ASSERT_FALSE(is_same_inode(self->dummy_pidns, procfs_pidns1));
++
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy-pidns", 0));
++	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0));
++
++	int procfs_pidns2 = ioctl(new_mountfd, PROCFS_GET_PID_NAMESPACE);
++	ASSERT_GE(procfs_pidns2, 0);
++
++	ASSERT_NE(self->dummy_pidns, procfs_pidns2);
++	ASSERT_FALSE(is_same_inode(self->host_pidns, procfs_pidns2));
++	ASSERT_TRUE(is_same_inode(self->dummy_pidns, procfs_pidns2));
++
++	ASSERT_SUCCESS(close(fsfd));
++	ASSERT_SUCCESS(close(new_mountfd));
++	ASSERT_SUCCESS(close(procfs_pidns1));
++	ASSERT_SUCCESS(close(procfs_pidns2));
++}
++
++TEST_HARNESS_MAIN
 
 -- 
 2.50.0
