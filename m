@@ -1,113 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-55685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74676B0DA8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 15:09:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C40B0DAD8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 15:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C5C1886DFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 13:09:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F2C3B537A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 13:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4C72E9EC1;
-	Tue, 22 Jul 2025 13:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDA019E967;
+	Tue, 22 Jul 2025 13:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QadgiOYk"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="npAITqdG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E047D22CBE9;
-	Tue, 22 Jul 2025 13:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02CA288CA7;
+	Tue, 22 Jul 2025 13:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753189749; cv=none; b=WBbsJzEr2tiUINMKPxjV/3KrjNDUJJfgf6Y3ld4FQZDxt4GNlxsxLBacECAjjhOWihz9s1zAbvWIDKxg2kx63X1SC4c2I2y/y0Iu9tAB7xvmpqkL5B1z1Lu3Dg4mRmE1XEMaNH630vKztnRY637pFg4/osGhECtYtUKCHR/cpU0=
+	t=1753191035; cv=none; b=q3gzqakeqvS7WEnDIHRnkz05HSQzJ86xzi5DznWxEStwZBnzc3QovMuWoXFYubcrMkaAtD2qfdeHCs4+Qkfe7OjF/6mivM/9uUNh+q50Xnzzc2hGjz5lR3UXe32MOoAytQHhwGm+c2D8yBOlChiyKpPKlq6ZLs3HxjwYHyKAVfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753189749; c=relaxed/simple;
-	bh=bzVAmmGZf3VMk2q+JXLm5CtNP4ixsVqkIHH1goyOATw=;
+	s=arc-20240116; t=1753191035; c=relaxed/simple;
+	bh=Z0WKhsn/dBmJkM1aGYYF7IagVVskZ5lMSNndaqsXydo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jO2Q4wSHT9GgaYfq+Z7MFp20cz0oeHZTs28gdiEnGr9V2kzUu1b1Fa/aIg1wehFUq84HxGtBL/kqQirzwopT1lgKf8dtMfmMJgcZme6nCAC04T3Kk2AzN14m0xWpctzGwE1xqDgWWQNz+5tUaK2/JIYycITi4GyQP1My3lxS5u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QadgiOYk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126B2C4CEF6;
-	Tue, 22 Jul 2025 13:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753189748;
-	bh=bzVAmmGZf3VMk2q+JXLm5CtNP4ixsVqkIHH1goyOATw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QadgiOYkyd6HlyPL5ThhevexeuXUudGNCIwScnnf9G6lIiVaHLs1qRYuT4MEOGcxm
-	 xlYdTbnC0Daz/x0wWWWa6Ekpa0KH2FY0ckZhkJucYldNvgRYicVNRNrcOK079TskMU
-	 3MAOpT41IW7XHrN7ETQaQtk1kz7dbE27XXAU4/nj9R4wr4wcZErh4+gF6my4d7gXX/
-	 WWk9QfCYzznwlDJ7xsjJ8BiK46XBG3UQY2lIkRaxukgfAcgvFR1lZ+ykNqMyOtCHN5
-	 oVz/uMjopA4KkuxmBBmkFVAcIHn93wuQ9bNnsYFehx93qF3Nt3C0lKq5UelJ/Iw35V
-	 emMmJxay2lDqA==
-Date: Tue, 22 Jul 2025 15:09:03 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>, 
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
-	linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH RFC DRAFT v2 00/13] Move fscrypt and fsverity out of
- struct inode
-Message-ID: <20250722-telefon-chloren-648e8850e6bb@brauner>
-References: <fhppu2rnsykr5obrib3btw7wemislq36wufnbl67salvoguaof@kkxaosrv3oho>
- <20250722-work-inode-fscrypt-v2-0-782f1fdeaeba@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rv2DxhSEyvnyBEvQXmFTRxSkPQG48FkpnIV6evMjX2T1JrGz8+CNqYu0m4BNC9jXFWaUgMu/PVsHw1oAny+K6uK7Vs7TUfENlBySDaPjJWWK56TzNrNvKtu2Y4oGblJOHSNhO8a1zcMb72CF47GVp5PcaxiS1WEbJqSK5yJgxqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=npAITqdG; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y+vocGkDX75pUYduv+8lBAlBf5hV2X3Gj5TE7w+NhGY=; b=npAITqdGIWbDIcPkRexfOCQwZE
+	dgxXDEFR0o7k143FhNVmvEQ9O8oKNLeX4inrmqnhuwOcehv3HWWFujxjombDgRvOw36zZ3WLIAWnc
+	C9L8YJqbgLvqjPKU02/ZX/cT3+NYgRk1Jytn3Ru9F+s8mBxqZQPUH8RkKFvTvC90m1Eg1zbUldsCk
+	FC2SE9+QHOgOi1CovwWbIiwdUL5uQr3Z5diOk7V0iPAMDwh6XNaTb6QLMzoOr7dmIldUnpD/BmKQG
+	rcV+Om3TRXdL+2vzDXA25zsPVLsZcBXcZDFV2cRBHjstu0NX6t38VAU2XuWxd1OMZ1cDIsGDh+qoK
+	6MJmJWEw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ueD4X-0000000AkB9-3WTO;
+	Tue, 22 Jul 2025 13:30:21 +0000
+Date: Tue, 22 Jul 2025 14:30:21 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3] hfs: remove BUG() from
+ hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
+Message-ID: <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
+References: <24e72990-2c48-4084-b229-21161cc27851@I-love.SAKURA.ne.jp>
+ <db6a106e-e048-49a8-8945-b10b3bf46c47@I-love.SAKURA.ne.jp>
+ <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
+ <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
+ <aHlQkTHYxnZ1wrhF@casper.infradead.org>
+ <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
+ <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
+ <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
+ <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250722-work-inode-fscrypt-v2-0-782f1fdeaeba@kernel.org>
+In-Reply-To: <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
 
-On Tue, Jul 22, 2025 at 02:57:06PM +0200, Christian Brauner wrote:
-> Hey,
-> 
-> This is a POC. We're still discussing alternatives and I want to provide
-> some useful data on what I learned about using offsets to drop fscrypt
-> and fsverity from struct inode.
-> 
-> As discussed, this moves the fscrypt and fsverity pointers out of struct
-> inode shrinking it by 16 bytes. The pointers move into the individual
-> filesystems that actually do make use of them.
-> 
-> In order to find the fscrypt and fsverity data pointers offsets from the
-> embedded struct inode in the filesystem's private inode data are
-> stored in struct inode_operations. This means we get fast access to the
-> data pointers without having to rely on indirect calls.
-> 
-> Bugs & Issues
-> =============
-> 
-> * For fscrypt specifically the biggest issue is
->   fscrypt_prepare_new_inode() is called in filesystem's inode allocation
->   functions before inode->i_op is set. That means the offset isn't
->   available at the time when we would need it. To fix this we can set
->   dummy encrypted inode operations for the respective filesystem with an
->   initialized offset.
-> 
-> * For both fscrypt & fsverity the biggest issue is that every codepath
->   that currently calls make_bad_inode() after having initialized fscrypt
->   or fsverity data will override inode->i_op with bad_inode_ops. At
->   which point we're back to the previous problem: The offset isn't
->   available anymore. So when inode->i_sb->s_op->evict_inode() is called
->   fscrypt_put_encryption_info() doesn't have the offset available
->   anymore and would corrupt the hell out of everything and also leak
->   memory.
-> 
->   Obviously we could use a flag to detect a bad inodes instead of i_op
->   and let the filesystem assign it's own bad inode operations including
->   the correct offset. Is it worth it?
-> 
->   The other way I see we can fix this if we require fixed offsets in the
->   filesystems inode so fscrypt and fsverity always now what offset to
->   calculate. We could use two consecutive pointers at the beginning of
->   the filesystem's inode. Does that always work and is it worth it?
+On Tue, Jul 22, 2025 at 07:42:35PM +0900, Tetsuo Handa wrote:
+> I can update patch description if you have one, but I don't plan to try something like below.
 
-Another, way less idiotic but way more obvious solution is to move the
-offsets to struct super_operations. That will mean one additional
-pointer deref but it will have the big advantage that the patch will
-become really really simple. Thoughts? Otherwise I'd implement that.
+Why not?  Papering over the underlying problem is what I rejected in v1,
+and here we are months later with you trying a v4.
+
+> @@ -393,20 +393,30 @@ struct inode *hfs_iget(struct super_block *sb, struct hfs_cat_key *key, hfs_cat_
+>         switch (rec->type) {
+>         case HFS_CDR_DIR:
+>                 cnid = be32_to_cpu(rec->dir.DirID);
+>                 break;
+>         case HFS_CDR_FIL:
+>                 cnid = be32_to_cpu(rec->file.FlNum);
+>                 break;
+>         default:
+>                 return NULL;
+>         }
+> +       if (cnid < HFS_FIRSTUSER_CNID) {
+> +               switch (cnid) {
+> +               case HFS_ROOT_CNID:
+> +               case HFS_EXT_CNID:
+> +               case HFS_CAT_CNID:
+> +                       break;
+> +               default:
+> +                       return NULL;
+> +               }
+> +       }
+>         inode = iget5_locked(sb, cnid, hfs_test_inode, hfs_read_inode, &data);
+>         if (inode && (inode->i_state & I_NEW))
+>                 unlock_new_inode(inode);
+>         return inode;
+>  }
+> 
 
