@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-55675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7807B0DA3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:58:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B29B0DA41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 613B41C2234E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 12:58:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321ECAA05F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 12:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6F92E9EDA;
-	Tue, 22 Jul 2025 12:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06EA2EA15C;
+	Tue, 22 Jul 2025 12:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSVWm+JV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9nn/bWT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286072E9756;
-	Tue, 22 Jul 2025 12:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6EA2E9EB6;
+	Tue, 22 Jul 2025 12:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753189082; cv=none; b=iL1F1Pvbb0bgBQMgKYiUkr7AQHbxufGBKNDa/OBejjuUw8tWq2kENCfzB8YrgCeRV5K8WFQSoXRIxjWqBaM/6VO1P093W3OmzNBXDzcJup/3b8qnsxPz9xN6oPNjH8LXe5fnAAz8Xz16hEb1Pk0VLebUeerXrAbylW+8CK8licg=
+	t=1753189085; cv=none; b=fbJB4DAG5EQrFnL5ViRsE+JYguVSyskWT60DxzXUHBG6xhyp/YWRc40yxyA4gudVZJoAQ+mBel93bDHkN9xXA03AtD0LWQCC/PCiGOt9jLbg6vnKS58g8npYxptveTAQFvdDRNiKwUf0VY+t1SBmzJ/iHL0+yAy0LUaQc9X8THo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753189082; c=relaxed/simple;
-	bh=xYzF4p6W7DNhkVGHh4PL2OzcqGIvaM5JGBNQel9SWnQ=;
+	s=arc-20240116; t=1753189085; c=relaxed/simple;
+	bh=ipcSAl2p7UNMrGTsCUH7w6ERABiAEJElRNJbsHfYPrI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KJAhvbf95vycpdTIdh8uxQGOOhWy+S7RiBbqHyVfvGewe5p/QohicRuduBeLG36Poom6ON10FeDhrwHWWE2Clu2NuumTgrtgAup0bXpZcmwgbeRm3PuQJIzYav0wruJFShbbZwq/A0EX6y0+U6bbbIc4y1Z3ETINnlLyImLpAAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSVWm+JV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D6BAC4CEF1;
-	Tue, 22 Jul 2025 12:57:58 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CjkYX9I+GXM7alW+Y3sAd4xr4RAyKmN54aRFxz1g0+8XfWR97P7Nqg4TJR0wFc6WJixDqd/7zrEDlLtz1HnGrXCRzEKxokWHyj70HW9wBYwlOwPj1ux9xq7FYKXmnPUEL7lYLGmVb9kA3eINN8txvrndIotpf+82FC7zrZIYKSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9nn/bWT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35624C4CEF9;
+	Tue, 22 Jul 2025 12:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753189081;
-	bh=xYzF4p6W7DNhkVGHh4PL2OzcqGIvaM5JGBNQel9SWnQ=;
+	s=k20201202; t=1753189084;
+	bh=ipcSAl2p7UNMrGTsCUH7w6ERABiAEJElRNJbsHfYPrI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gSVWm+JVt5jt+rn2CD99Hh4GXLI18xZXfNCrkHFipWEVruNc5Qy7WXhCh+ljodI2b
-	 zBff2rYt2zl/81wJPzFX4vXE3nNuao5+UeGecO1DGxvC8FqMbJWgBuxYgYPneE/S4r
-	 wsFuwGeILDoGDscks9DkYH3wt8/THu5dy4o5mzajKPrvFpP/jn2storEeNLXCGGIB5
-	 7ndj/fhrfQQJFdVbOQy2XdDX12TJGxjfwF5j2OUmzDEdRYhuQkqsPSKcl0//V/TtVq
-	 9b4Gmp0mTNEoe55g3WSHyUHuDVTa/t8TQOSgorcJ4+LcjgStR245JLffn3wqJIxB+I
-	 PC8Ee9KBcgiEg==
+	b=j9nn/bWTe1yw++iKM2rvj5tjQ1zUqHF6Y9Fx93zeXL95IbxUhZwVY0DKtGppeSb2w
+	 k80qLOSIHmVcpv54m6/9gbvecy5RPq/oMEZ0Sj6iDXkLDvQNUtfjfMYE4ZZTjKrW+O
+	 39ntGfuTCW33qAInR9fRSUjjEUBFZYQSiiRe39JdAmeQWlD4oGeBIRQNH7c89i13Oh
+	 u7ZaUN5wkDttp5uonGTFrc3m/8YgPfmDVQmcp2hpEGORmjlJ21vR5GkzxTCCERJy/n
+	 iYO+Ff+Gp1EZQck9cCDL/pQfF1J/WvAhBBy23wkUyIlbEJEf2i3ACeLCFibltYhxsm
+	 D9immRI/mGISg==
 From: Christian Brauner <brauner@kernel.org>
 To: Jeff Layton <jlayton@kernel.org>,
 	Jan Kara <jack@suse.com>,
@@ -53,9 +53,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-fscrypt@vger.kernel.org,
 	fsverity@lists.linux.dev
-Subject: [PATCH RFC DRAFT v2 05/13] f2fs: move fscrypt to filesystem inode
-Date: Tue, 22 Jul 2025 14:57:11 +0200
-Message-ID: <20250722-work-inode-fscrypt-v2-5-782f1fdeaeba@kernel.org>
+Subject: [PATCH RFC DRAFT v2 06/13] ceph: move fscrypt to filesystem inode
+Date: Tue, 22 Jul 2025 14:57:12 +0200
+Message-ID: <20250722-work-inode-fscrypt-v2-6-782f1fdeaeba@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250722-work-inode-fscrypt-v2-0-782f1fdeaeba@kernel.org>
 References: <20250722-work-inode-fscrypt-v2-0-782f1fdeaeba@kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5326; i=brauner@kernel.org; h=from:subject:message-id; bh=xYzF4p6W7DNhkVGHh4PL2OzcqGIvaM5JGBNQel9SWnQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTUd22SYnm8+b3e7vZ3yXPUdjWFpXi5rC/4nXO8SuR9j fointLjHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpf8jI0DxRoODtwyDj0pzN K1mYfNZelLgvyqF4+vlHq6cT9iotXsbwV9R0nnHmiudWjqmpcgf3Jtr9sn7RuGuJfNu3MkG7z7V 3WAE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4616; i=brauner@kernel.org; h=from:subject:message-id; bh=ipcSAl2p7UNMrGTsCUH7w6ERABiAEJElRNJbsHfYPrI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTUd216/cZuiYZ4UIp8W8wuuepbQdM+rm+5+abX2Yv3+ 48w3Yf2HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM5VMrI0BretfrFddfwp4l6 +l2RR29xl8/8vu6UVrHgFc+mOXGP4xgZvm05d/ndYR7Dpmu/32f7LLG7wM28JKpit0aXoo+5D+M iDgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -79,147 +79,128 @@ itself and move it into the filesystem's inode.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/f2fs/f2fs.h  |  4 ++++
- fs/f2fs/file.c  |  4 ++++
- fs/f2fs/inode.c |  1 +
- fs/f2fs/namei.c | 25 +++++++++++++++++++++++++
- fs/f2fs/super.c |  3 +++
- 5 files changed, 37 insertions(+)
+ fs/ceph/dir.c         |  8 ++++++++
+ fs/ceph/inode.c       | 21 +++++++++++++++++++++
+ include/linux/netfs.h |  6 ++++++
+ 3 files changed, 35 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9333a22b9a01..152990273c68 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -905,6 +905,9 @@ struct f2fs_inode_info {
- 
- 	unsigned int atomic_write_cnt;
- 	loff_t original_i_size;		/* original i_size before atomic write */
-+#ifdef CONFIG_FS_ENCRYPTION
-+	struct fscrypt_inode_info *i_fscrypt_info; /* filesystem encryption info */
-+#endif
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index a321aa6d0ed2..2db146fadddb 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -2229,6 +2229,10 @@ const struct file_operations ceph_snapdir_fops = {
  };
  
- static inline void get_read_extent_info(struct extent_info *ext,
-@@ -4297,6 +4300,7 @@ extern const struct inode_operations f2fs_dir_inode_operations;
- extern const struct inode_operations f2fs_symlink_inode_operations;
- extern const struct inode_operations f2fs_encrypted_symlink_inode_operations;
- extern const struct inode_operations f2fs_special_inode_operations;
-+extern const struct inode_operations f2fs_encrypted_nop_inode_operations;
- extern struct kmem_cache *f2fs_inode_entry_slab;
- 
- /*
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6bd3de64f2a8..f0003672a42c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1150,6 +1150,10 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- }
- 
- const struct inode_operations f2fs_file_inode_operations = {
+ const struct inode_operations ceph_dir_iops = {
 +#ifdef CONFIG_FS_ENCRYPTION
-+	.i_fscrypt	= offsetof(struct f2fs_inode_info, i_fscrypt_info) -
-+			  offsetof(struct f2fs_inode_info, vfs_inode),
++	.i_fscrypt = offsetof(struct ceph_inode_info, netfs.i_fscrypt_info) -
++		     offsetof(struct ceph_inode_info, netfs.inode),
 +#endif
- 	.getattr	= f2fs_getattr,
- 	.setattr	= f2fs_setattr,
- 	.get_inode_acl	= f2fs_get_acl,
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 083d52a42bfb..73bfb9853c25 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -583,6 +583,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 		return inode;
- 	}
+ 	.lookup = ceph_lookup,
+ 	.permission = ceph_permission,
+ 	.getattr = ceph_getattr,
+@@ -2248,6 +2252,10 @@ const struct inode_operations ceph_dir_iops = {
+ };
  
-+	inode->i_op = &f2fs_encrypted_nop_inode_operations;
- 	if (is_meta_ino(sbi, ino))
- 		goto make_now;
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 07e333ee21b7..998b0c31f728 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -216,6 +216,13 @@ static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
- 		file_set_hot(inode);
- }
- 
-+const struct inode_operations f2fs_encrypted_nop_inode_operations = {
+ const struct inode_operations ceph_snapdir_iops = {
 +#ifdef CONFIG_FS_ENCRYPTION
-+	.i_fscrypt = offsetof(struct f2fs_inode_info, i_fscrypt_info) -
-+		     offsetof(struct f2fs_inode_info, vfs_inode),
++	.i_fscrypt = offsetof(struct ceph_inode_info, netfs.i_fscrypt_info) -
++		     offsetof(struct ceph_inode_info, netfs.inode),
++#endif
+ 	.lookup = ceph_lookup,
+ 	.permission = ceph_permission,
+ 	.getattr = ceph_getattr,
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 06cd2963e41e..3f8f779f3dcd 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -36,6 +36,12 @@
+ 
+ static const struct inode_operations ceph_symlink_iops;
+ static const struct inode_operations ceph_encrypted_symlink_iops;
++static const struct inode_operations ceph_encrypted_nop_iops = {
++#ifdef CONFIG_FS_ENCRYPTION
++	.i_fscrypt = offsetof(struct ceph_inode_info, netfs.i_fscrypt_info) -
++		     offsetof(struct ceph_inode_info, netfs.inode),
 +#endif
 +};
-+
- static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
- 						struct inode *dir, umode_t mode,
- 						const char *name)
-@@ -249,6 +256,8 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
- 	fi->i_crtime = inode_get_mtime(inode);
- 	inode->i_generation = get_random_u32();
  
-+	inode->i_op = &f2fs_encrypted_nop_inode_operations;
-+
- 	if (S_ISDIR(inode->i_mode))
- 		fi->i_current_depth = 1;
+ static void ceph_inode_work(struct work_struct *work);
  
-@@ -1325,6 +1334,10 @@ static int f2fs_encrypted_symlink_getattr(struct mnt_idmap *idmap,
+@@ -49,6 +55,7 @@ static int ceph_set_ino_cb(struct inode *inode, void *data)
+ 
+ 	ci->i_vino = *(struct ceph_vino *)data;
+ 	inode->i_ino = ceph_vino_to_ino_t(ci->i_vino);
++	inode->i_op = &ceph_encrypted_nop_iops;
+ 	inode_set_iversion_raw(inode, 0);
+ 	percpu_counter_inc(&mdsc->metric.total_inodes);
+ 
+@@ -89,6 +96,8 @@ struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
+ 	inode->i_state = 0;
+ 	inode->i_mode = *mode;
+ 
++	inode->i_op = &ceph_encrypted_nop_iops;
++
+ 	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
+ 	if (err < 0)
+ 		goto out_err;
+@@ -232,6 +241,10 @@ struct inode *ceph_get_snapdir(struct inode *parent)
  }
  
- const struct inode_operations f2fs_encrypted_symlink_inode_operations = {
+ const struct inode_operations ceph_file_iops = {
 +#ifdef CONFIG_FS_ENCRYPTION
-+	.i_fscrypt	= offsetof(struct f2fs_inode_info, i_fscrypt_info) -
-+			  offsetof(struct f2fs_inode_info, vfs_inode),
++	.i_fscrypt = offsetof(struct ceph_inode_info, netfs.i_fscrypt_info) -
++		     offsetof(struct ceph_inode_info, netfs.inode),
 +#endif
- 	.get_link	= f2fs_encrypted_get_link,
- 	.getattr	= f2fs_encrypted_symlink_getattr,
- 	.setattr	= f2fs_setattr,
-@@ -1332,6 +1345,10 @@ const struct inode_operations f2fs_encrypted_symlink_inode_operations = {
+ 	.permission = ceph_permission,
+ 	.setattr = ceph_setattr,
+ 	.getattr = ceph_getattr,
+@@ -2314,6 +2327,10 @@ static int ceph_encrypted_symlink_getattr(struct mnt_idmap *idmap,
+  * symlinks
+  */
+ static const struct inode_operations ceph_symlink_iops = {
++#ifdef CONFIG_FS_ENCRYPTION
++	.i_fscrypt = offsetof(struct ceph_inode_info, netfs.i_fscrypt_info) -
++		     offsetof(struct ceph_inode_info, netfs.inode),
++#endif
+ 	.get_link = simple_get_link,
+ 	.setattr = ceph_setattr,
+ 	.getattr = ceph_getattr,
+@@ -2321,6 +2338,10 @@ static const struct inode_operations ceph_symlink_iops = {
  };
  
- const struct inode_operations f2fs_dir_inode_operations = {
+ static const struct inode_operations ceph_encrypted_symlink_iops = {
 +#ifdef CONFIG_FS_ENCRYPTION
-+	.i_fscrypt	= offsetof(struct f2fs_inode_info, i_fscrypt_info) -
-+			  offsetof(struct f2fs_inode_info, vfs_inode),
++	.i_fscrypt = offsetof(struct ceph_inode_info, netfs.i_fscrypt_info) -
++		     offsetof(struct ceph_inode_info, netfs.inode),
 +#endif
- 	.create		= f2fs_create,
- 	.lookup		= f2fs_lookup,
- 	.link		= f2fs_link,
-@@ -1353,6 +1370,10 @@ const struct inode_operations f2fs_dir_inode_operations = {
- };
- 
- const struct inode_operations f2fs_symlink_inode_operations = {
+ 	.get_link = ceph_encrypted_get_link,
+ 	.setattr = ceph_setattr,
+ 	.getattr = ceph_encrypted_symlink_getattr,
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 065c17385e53..fda1321da861 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -57,6 +57,9 @@ typedef void (*netfs_io_terminated_t)(void *priv, ssize_t transferred_or_error);
+  */
+ struct netfs_inode {
+ 	struct inode		inode;		/* The VFS inode */
 +#ifdef CONFIG_FS_ENCRYPTION
-+	.i_fscrypt	= offsetof(struct f2fs_inode_info, i_fscrypt_info) -
-+			  offsetof(struct f2fs_inode_info, vfs_inode),
++	struct fscrypt_inode_info *i_fscrypt_info;
 +#endif
- 	.get_link	= f2fs_get_link,
- 	.getattr	= f2fs_getattr,
- 	.setattr	= f2fs_setattr,
-@@ -1360,6 +1381,10 @@ const struct inode_operations f2fs_symlink_inode_operations = {
- };
- 
- const struct inode_operations f2fs_special_inode_operations = {
+ 	const struct netfs_request_ops *ops;
+ #if IS_ENABLED(CONFIG_FSCACHE)
+ 	struct fscache_cookie	*cache;
+@@ -503,6 +506,9 @@ static inline void netfs_inode_init(struct netfs_inode *ctx,
+ 		ctx->zero_point = ctx->remote_i_size;
+ 		mapping_set_release_always(ctx->inode.i_mapping);
+ 	}
 +#ifdef CONFIG_FS_ENCRYPTION
-+	.i_fscrypt	= offsetof(struct f2fs_inode_info, i_fscrypt_info) -
-+			  offsetof(struct f2fs_inode_info, vfs_inode),
++	ctx->i_fscrypt_info = NULL;
 +#endif
- 	.getattr	= f2fs_getattr,
- 	.setattr	= f2fs_setattr,
- 	.get_inode_acl	= f2fs_get_acl,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index bbf1dad6843f..9f8e5ae13dc9 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1453,6 +1453,9 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 
- 	/* Will be used by directory only */
- 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
-+#ifdef CONFIG_FS_ENCRYPTION
-+	fi->i_fscrypt_info = NULL;
-+#endif
- 
- 	return &fi->vfs_inode;
  }
+ 
+ /**
 
 -- 
 2.47.2
