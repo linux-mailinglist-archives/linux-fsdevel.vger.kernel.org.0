@@ -1,90 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-55717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AF2B0E39D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 20:43:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F39B0E3B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 20:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626FE1C85CCD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 18:43:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEFD11896C93
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 18:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD2E28137E;
-	Tue, 22 Jul 2025 18:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348FA283C90;
+	Tue, 22 Jul 2025 18:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="xEDmKcud"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="aY1pLO3f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D7A1B808
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 18:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B7121516E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 18:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753209811; cv=none; b=J6UlU0dxi93Y6WIFTSg0bwPcHtVda2veQyQvnmFOpm+p1O9wqY0uoYeUhIM1Z2qJMuq+VfeJKJn6/SEcXZZojnQqIxjputS88C9SoDnlgT+bpOvKDjBXWq4l0zaWRenhB4pu0615ZhbyHKLiwo5JxHvbPMCnkUpdxStifDCK0xg=
+	t=1753210284; cv=none; b=aQNnqM5W+qPc7zJOBjWb03UrZj0loc6ymCXMM8Cka2Anv1zSnFiezZyRICFBAJVJ2j8ZhN2UY74wzH/bRqrww++d7goRrk1GFMhuUF/T2+oepcoSyy3yWA3d0vD+iz6Romxxs2YCxxXq3do46qtwqWXocVcu21Vr5kKi6kCjLx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753209811; c=relaxed/simple;
-	bh=1K1NDIGHxWM68nwv6FKBkBqGY56OcTOxIgt5OLhCvW8=;
+	s=arc-20240116; t=1753210284; c=relaxed/simple;
+	bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rqIlHaboAwz/3OPNgHumrPLznUfsyblJonKX5o3ZLYrHE1zucjX5751GhAkcz5UIaoo8m2RPSIEbhR9F8Fq3h6zN1c7nFpTDZBIVCLqxLXcCSjLov5pKG077ZMnFl9QbNfz8szThjNzbuTN76UnLz31UO1E47PD4XgUje7iTWv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=xEDmKcud; arc=none smtp.client-ip=209.85.219.172
+	 Content-Type:MIME-Version; b=biqccoeKMMvoxkLVdaIZHnvpD6/q7emSn+Nz9XT22CHGtc9B//xY1MwNYliQoOrFKGIAndwcpxEl15cWUjHI+ld5XkO9vuhHHq2rBXCleNe0fb5bkI7MKc8gCDCBPEH55awGwUM2rhPJRkmoTAStCC9Lo6mSjq1JFfje9rIUIco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=aY1pLO3f; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8d707b9bc2so4499900276.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 11:43:28 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e8dbdb68923so691792276.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 11:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753209808; x=1753814608; darn=vger.kernel.org;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753210281; x=1753815081; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:autocrypt
          :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=wTMgD9Ssjgi1hDIAisXZjqLNpii0HoyiutxO0egoRQE=;
-        b=xEDmKcudK7UOC/N3qaDY202VDK6120rMMIwNfIoUnl8VhLx4I+OqvFxaPbqNh4b6XX
-         I5CIpfjlJJL7eBl7g2VXK7fHj8OoPPhxvqBvS7c7/PKSJdmKUPsnm8whUkhLR8DYdqQS
-         EO3upF5NUyu6Qsb/RjyKd+VGGLBUCgY+eB+dXR5Ys1H6wtTNvc2gTyzruaCKCuJybbcd
-         pnMa6hb3tAMZCioonrs1Z7b9GYJ1cAWYwkuKDaz8Es8dweDc0KrOpZ9GX9RUA5hxqehP
-         9sRi6phRZlH2QpkFvl6EjWW1Hua+KWimFKQzMppQqOqZb+//7cx4eHVjLhZ8mW2mNLp2
-         +anw==
+        bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
+        b=aY1pLO3f0yIPzNJUCAyoM8QreVvTR1QXy+hiD834uLe79hc971OW6QCi/y7/nlezdF
+         wQpQVgYOpFMcAk07FU6gr9Hb9dw4q94UmSI4/bwxZxfUS1I3Hm+TMffyH+tXqxyFpM4w
+         GpUBT99jt9pPBhHzPm+FxPQjFdoQLph2lCITFTIbA9XoAi+PenHZ3V2We38eeoJQxCdm
+         GXtYwHO+eBmdni0830E4Fn82Qs2zcCWLx2pzmVC8U8gBLFt8/13ExomcX5Qzu+fA0PNz
+         EfRWFfZMMGcVeGOfGFn6DdvNHkG7aDZQXd/C0gJ6m3Z0lGEb8aMKX5FpQI8Lio7iTJmE
+         NGCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753209808; x=1753814608;
+        d=1e100.net; s=20230601; t=1753210281; x=1753815081;
         h=mime-version:user-agent:content-transfer-encoding:autocrypt
          :references:in-reply-to:date:cc:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wTMgD9Ssjgi1hDIAisXZjqLNpii0HoyiutxO0egoRQE=;
-        b=sjGU56/5EOO7SFMk1Y6eQ3xAisyJAf59tQo49YBKEFLdX+Ara5Ebrl+aryJxwltIl3
-         Hciu6rzD5G2Obc1hN9tDmBjYDylwJtsImIwLexm6XbS0TTldAZkty7oqwpvAM9tu+g0l
-         NcF2mquVvrTJlb1ou6JN0vJ36AVoVgsfFTJtwgG53P4ZkXL0FIst1/UseECjW7ngEdf0
-         iO20nMbX/7NBz6nH/PnI7WcTz8nU+UMJKAclOPa78xc+7dDs8UWiTQGgYYKQsrk1Fo5+
-         LyXg6jVGi02d3mAmyEtXWhVbSfSYWKhsbrjyY4yW4he01Zxx6sr0+eZoXtV0IJlCtoq/
-         yR9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXeStKYrmDDtbDKomzCKn1/w6/O3DqU/DbBdDkQHJqKr+zM5JoGiaUalY/JQ6TtJPPPL084CdfP+jNuiijR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrMa1J2FMgjL0YhKecjTPP2VxEk+N492FfcVu4E2sPFTrqeGTd
-	oPCmvZrz05f7MvZIetIGVDAIMR8b5FbD+KGPAe4EhI3Z5GPnE52mRluZhk8kO3caDIo=
-X-Gm-Gg: ASbGncuL1/ZvMotBDpYK0kyEqMck8rBkcpfJUHie8aup+qmsutSnCrMQ5rqHyoAG0Mf
-	GWon8H3SL3Fb4I8ZVR3EGedbWkc+4dQhqWAC+aO+mG0TbaVCW7uZEa0yPMe+wXrJQIBrExWYRJa
-	ofJJPcnggpsoSi5znXOPS8i0JjLGY+4HdpJDw9GBDPAlC/tO24zVN2MVRcZIIO9WtGjAP8a+Qn4
-	OMH6HGgLBEQKgGwl2W42A+xE6GCPVkAwFqMNvg+KSZ6NhtEesiptsI24bmxGQKjzGVqfyIahwOB
-	E2QWr+3/fXb1u7KxF7PZhfSSxNOGu9uTsY6AOTAm30eXHtbPmJjzoaEKiwFAD6au7LsV9bGiXOx
-	i4Jn7Q7+uyrjK2e4Gg1Fb5DR3A7RlS5lWtjA5FPWS96JFPGFDI4bnwUXVL6LsXVlYeMrh5A==
-X-Google-Smtp-Source: AGHT+IEIvANQyOFFhibGZKN9f00/b3Jqmo6r/ZQ+Vle9Z+V7vyd2yc5p75dnDDqCIOOZ8Jkb09DGgQ==
-X-Received: by 2002:a05:6902:18c6:b0:e8b:8010:5540 with SMTP id 3f1490d57ef6-e8dc57cc7bcmr476955276.10.1753209807353;
-        Tue, 22 Jul 2025 11:43:27 -0700 (PDT)
+        bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
+        b=Y9CQWAVpi0kXb5kqOz5LV3BPE5PfV0OZlRzfdziLMetlFwsJrakORkROuJJkPzfYIM
+         2aIPdoqABaJacxPVXbm4vCOIpDoPaqKgVltjnKgncuagjVxawQzsPQl/SAb7xwrb055v
+         ZtEm+v64lwyTSxNAmZwFkg3rx+1hEs4PpHATCHAj4nj07v8JgqOv1s3ZXivTtKXGCyAA
+         JgjDtHOFtzwFAVrHpkwAS2YZVamhgb6aDm+x9HhlevFJf+dpc4XABEW1MQnffFPAVYdz
+         nexTXWEKExE73LnFhfhv44jl+TpLbTpPEVI7zS/RlcbvOI9D2roOlU8iF0OyNVvDDmaX
+         +bSg==
+X-Gm-Message-State: AOJu0YxuMqlZdpqdCrz0FHTqdgNVw34SgFbqKzJxJbQsCZMbtlscqANe
+	NfWBcvV77xu5r2nBIfKRQ01jS9/76Fgl4gejoM8ke28r2sm8UOsz4xgSALR5OfzC3UIUcQxqvbM
+	+H1mP
+X-Gm-Gg: ASbGncuudzAaEYk2RUSk2bGKKqF2oItsBBPBVWpDYOcs4q3BPjvWT8JD7exaCMj55Bn
+	8hQx5Gl4rguST4ZspRm63n4EYPLlRHcsD26AOy3EecVQUNIqGKi0oImdW1Sf1w1bgQcszQ4z4GO
+	OC3iDANMQwwV7P3N3C5O7KEtMjh9dTh9qrqqS2kvrC7wYxWFD8r0AKP5axIiC14sHN7jLYcgpDX
+	LcU4txAgx4PCPqdrVELcHKhVNa2T8cpZX7qkHX5/Fx1AhyLf5CykcvNsMJD6nvy7WsBSszIF0+X
+	WEsb0olXKmqzHZfVWKlRLNBEXc0K9ip2oofux3VbTrn6cS5LDKpucJOlCh0CeVNTqyezjuj2AY9
+	pMYkCcYGTR4qGzMfdR80FS8qX37q+DDFJQ6SUYYLDmv5XLwkNj/aZslyShqrGHEjCwVZuog==
+X-Google-Smtp-Source: AGHT+IFratboz2BjZXyZLG+NvQJuMYJbryhm/xSoaYQ94OrdhP0SHzFyHmacfQC/3iA06ofvst830w==
+X-Received: by 2002:a05:6902:620a:b0:e8d:7b84:cb46 with SMTP id 3f1490d57ef6-e8dc59c5239mr406470276.32.1753210280679;
+        Tue, 22 Jul 2025 11:51:20 -0700 (PDT)
 Received: from ?IPv6:2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83? ([2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7cc0b1cesm3342828276.3.2025.07.22.11.43.26
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7cc0eb6dsm3455584276.6.2025.07.22.11.51.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 11:43:26 -0700 (PDT)
-Message-ID: <a7e1e30c99d753de3af1d373041a9527d61d746e.camel@dubeyko.com>
-Subject: Re: [PATCH v2] hfs/hfsplus: rework debug output subsystem
+        Tue, 22 Jul 2025 11:51:19 -0700 (PDT)
+Message-ID: <efd70965b87382c7172495b161bfef7cfdffb431.camel@dubeyko.com>
+Subject: Re: [PATCH v4 1/3] hfsplus: fix to update ctime after rename
 From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, Johannes.Thumshirn@wdc.com
-Cc: Slava.Dubeyko@ibm.com
-Date: Tue, 22 Jul 2025 11:43:24 -0700
-In-Reply-To: <4c8bc1e6-7f40-43c0-941a-87c7e9f86730@vivo.com>
-References: <20250710221600.109153-1-slava@dubeyko.com>
-	 <a52e690c-ba13-40c5-b2c5-4f871e737f72@vivo.com>
-	 <9f9489e0577f7162cfe4f44670114cec357be873.camel@dubeyko.com>
-	 <4c8bc1e6-7f40-43c0-941a-87c7e9f86730@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 22 Jul 2025 11:51:18 -0700
+In-Reply-To: <20250722071347.1076367-1-frank.li@vivo.com>
+References: <20250722071347.1076367-1-frank.li@vivo.com>
 Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
  keydata=mQINBGgaTLYBEADaJc/WqWTeunGetXyyGJ5Za7b23M/ozuDCWCp+yWUa2GqQKH40dxRIR
  zshgOmAue7t9RQJU9lxZ4ZHWbi1Hzz85+0omefEdAKFmxTO6+CYV0g/sapU0wPJws3sC2Pbda9/eJ
@@ -139,162 +135,53 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2025-07-22 at 15:50 +0800, Yangtao Li wrote:
-> Hi Slava,
+On Tue, 2025-07-22 at 01:13 -0600, Yangtao Li wrote:
+> [BUG]
+> $ sudo ./check generic/003
+> FSTYP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- hfsplus
+> PLATFORM=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- Linux/x86_64 graphic 6.8.0-58-g=
+eneric #60~22.04.1-
+> Ubuntu
+> MKFS_OPTIONS=C2=A0 -- /dev/loop29
+> MOUNT_OPTIONS -- /dev/loop29 /mnt/scratch
 >=20
-> =E5=9C=A8 2025/7/12 01:24, Viacheslav Dubeyko =E5=86=99=E9=81=93:
-> > On Fri, 2025-07-11 at 10:41 +0800, Yangtao Li wrote:
-> > > Hi Slava,
-> > >=20
-> > > =E5=9C=A8 2025/7/11 06:16, Viacheslav Dubeyko =E5=86=99=E9=81=93:
-> > > > Currently, HFS/HFS+ has very obsolete and inconvenient
-> > > > debug output subsystem. Also, the code is duplicated
-> > > > in HFS and HFS+ driver. This patch introduces
-> > > > linux/hfs_common.h for gathering common declarations,
-> > > > inline functions, and common short methods. Currently,
-> > > > this file contains only hfs_dbg() function that
-> > > > employs pr_debug() with the goal to print a debug-level
-> > > > messages conditionally.
-> > > >=20
-> > > > So, now, it is possible to enable the debug output
-> > > > by means of:
-> > > >=20
-> > > > echo 'file extent.c +p' > /proc/dynamic_debug/control
-> > > > echo 'func hfsplus_evict_inode +p' >
-> > > > /proc/dynamic_debug/control
-> > > >=20
-> > > > And debug output looks like this:
-> > > >=20
-> > > > hfs: pid 5831:fs/hfs/catalog.c:228 hfs_cat_delete():
-> > > > delete_cat:
-> > > > m00,48
-> > > > hfs: pid 5831:fs/hfs/extent.c:484 hfs_file_truncate():
-> > > > truncate:
-> > > > 48, 409600 -> 0
-> > > > hfs: pid 5831:fs/hfs/extent.c:212 hfs_dump_extent():
-> > > > hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():=C2=A0 78:4
-> > > > hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():=C2=A0 0:0
-> > > > hfs: pid 5831:fs/hfs/extent.c:214 hfs_dump_extent():=C2=A0 0:0
-> > > >=20
-> > > > Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-> > > > cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> > > > cc: Yangtao Li <frank.li@vivo.com>
-> > > > cc: linux-fsdevel@vger.kernel.org
-> > > > cc: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-> > > > ---
-> > > > =C2=A0=C2=A0 fs/hfs/bfind.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > > > =C2=A0=C2=A0 fs/hfs/bitmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > > > =C2=A0=C2=A0 fs/hfs/bnode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 28 ++++++++++++++--------------
-> > > > =C2=A0=C2=A0 fs/hfs/brec.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++++----
-> > > > =C2=A0=C2=A0 fs/hfs/btree.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > > > =C2=A0=C2=A0 fs/hfs/catalog.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 +++---
-> > > > =C2=A0=C2=A0 fs/hfs/extent.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 18 +++++++++---------
-> > > > =C2=A0=C2=A0 fs/hfs/hfs_fs.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 33 +---------------------------
-> > > > -----
-> > > > =C2=A0=C2=A0 fs/hfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > > > =C2=A0=C2=A0 fs/hfsplus/attributes.c=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++=
-++----
-> > > > =C2=A0=C2=A0 fs/hfsplus/bfind.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > > > =C2=A0=C2=A0 fs/hfsplus/bitmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 10 +++++-----
-> > > > =C2=A0=C2=A0 fs/hfsplus/bnode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 28 ++++++++++++++--------------
-> > > > =C2=A0=C2=A0 fs/hfsplus/brec.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 10 +++++-----
-> > > > =C2=A0=C2=A0 fs/hfsplus/btree.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > > > =C2=A0=C2=A0 fs/hfsplus/catalog.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 6 +++---
-> > > > =C2=A0=C2=A0 fs/hfsplus/extents.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 24 ++++++++++++------------
-> > > > =C2=A0=C2=A0 fs/hfsplus/hfsplus_fs.h=C2=A0=C2=A0=C2=A0 | 35 +------=
----------------------
-> > > > -----
-> > > > --
-> > > > =C2=A0=C2=A0 fs/hfsplus/super.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0 8 ++++----
-> > > > =C2=A0=C2=A0 fs/hfsplus/xattr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0 4 ++--
-> > > > =C2=A0=C2=A0 include/linux/hfs_common.h | 20 ++++++++++++++++++++
-> > >=20
-> > > For include/linux/hfs_common.h, it seems like to be a good start
-> > > to
-> > > seperate common stuff for hfs&hfsplus.
-> > >=20
-> > > Colud we rework msg to add value description?
-> > > There're too much values to identify what it is.
-> > >=20
-> >=20
-> > What do you mean by value description?
+> generic/003=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - output mismatch
+> =C2=A0=C2=A0=C2=A0 --- tests/generic/003.out=C2=A0=C2=A0 2025-04-27 08:49=
+:39.876945323 -0600
+> =C2=A0=C2=A0=C2=A0 +++ /home/graphic/fs/xfstests-dev/results//generic/003=
+.out.bad
 >=20
-> For example:
+> =C2=A0=C2=A0=C2=A0=C2=A0 QA output created by 003
+> =C2=A0=C2=A0=C2=A0 +ERROR: change time has not been updated after changin=
+g file1
+> =C2=A0=C2=A0=C2=A0=C2=A0 Silence is golden
+> =C2=A0=C2=A0=C2=A0 ...
 >=20
-> 	hfs_dbg(BNODE_MOD, "%d, %d, %d, %d, %d\n",
-> =C2=A0=C2=A0		be32_to_cpu(desc.next), be32_to_cpu(desc.prev),
-> =C2=A0=C2=A0		desc.type, desc.height, be16_to_cpu(desc.num_recs));
+> Ran: generic/003
+> Failures: generic/003
+> Failed 1 of 1 tests
 >=20
-> There are 5 %d. It's hard to recognize what it is. Changing it to=20
-> following style w/ description might be a bit more clear?
+> [CAUSE]
+> change time has not been updated after changing file1
 >=20
-> 	hfs_dbg(BNODE_MOD, "next:%d prev:%d, type:%s,
-> height:%d=C2=A0	=20
-> num_recs:%d\n", be32_to_cpu(desc.next), be32_to_cpu(desc.prev),
-> hfs_node_type(desc.type), desc.height, be16_to_cpu(desc.num_recs));
+> [FIX]
+> Update file ctime after rename in hfsplus_rename().
+>=20
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Tested-by: Viacheslav Dubeyko <slava@dubeyko.com>
+> Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+> ---
+> =C2=A0fs/hfsplus/dir.c | 11 ++++++++---
+> =C2=A01 file changed, 8 insertions(+), 3 deletions(-)
 >=20
 
-We can rework it step by step. First of all, the reworking of all debug
-messages at once is too much for one patch. Secondly, the style of
-messages is history of HFS implementation. I suggest to make this first
-step and, then, we can rework the debugging messages in the background
-of bug fix. Does it make sense to you?
+Probably, it was not very good idea to combine the HFS+ patch with HFS
+patches, because I cannot take this one without others. :)
 
-> >=20
-> > > You ignore those msg type, maybe we don't need it?
-> >=20
-> > Could you please explain what do you mean here? :)
->=20
-> -#define DBG_BNODE_REFS	0x00000001
-> -#define DBG_BNODE_MOD	0x00000002
-> -#define DBG_CAT_MOD	0x00000004
-> -#define DBG_INODE	0x00000008
-> -#define DBG_SUPER	0x00000010
-> -#define DBG_EXTENT	0x00000020
-> -#define DBG_BITMAP	0x00000040
->=20
-> I'm not sure whether we should keep those dbg type.
->=20
->=20
-
-I have removed all these types because with dynamic debug this stuff
-doesn't make sense. If you would like to enable the debug output from
-different parts of driver, then you can use commands [1]:
-(1) enable all the messages in HFS module:
-echo -n 'module hfs +p' > <debugfs>/dynamic_debug/control
-(2) enable all the messages in file:
-echo -n 'file inode.c +p' > <debugfs>/dynamic_debug/control
-(3) enable all messages in the function hfs_dump_extent:
-echo -n 'func hfs_dump_extent +p' > <debugfs>/dynamic_debug/control
-(4) disable debug output:
-echo -n 'module hfs -p' > <debugfs>/dynamic_debug/control
-echo -n 'file inode.c -p' > <debugfs>/dynamic_debug/control
-echo -n 'func hfs_dump_extent -p' > <debugfs>/dynamic_debug/control
-
-So, the dynamic debug is flexible enough and you don't need to
-recompile the kernel. So, why do we need to keep these dbg types?
+Also, from my point of view, the patchset requires a cover letter.
+Otherwise, it looks slightly unusual. :)
 
 Thanks,
-Slava.=20
+Slava.
 
-[1]
-https://www.kernel.org/doc/html/v4.14/admin-guide/dynamic-debug-howto.html
 
