@@ -1,86 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-55747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A420FB0E4F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 22:25:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462BAB0E52F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 23:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C710C3A2E82
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 20:25:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FCE87B4A6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 21:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0500228540F;
-	Tue, 22 Jul 2025 20:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191D428000D;
+	Tue, 22 Jul 2025 21:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J07hDbA0"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="TF7WortR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2121F1302;
-	Tue, 22 Jul 2025 20:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B4614F9D6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 21:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753215934; cv=none; b=MwkIZfJAfV93CkfJSdJYqfi/CoZP2DHxaEq/uedkjqcdHlPmBEcO/SDMfcfVfSN/xDlEahEuUEikihnyjO/vtDkM7YtZER16jWBIbOtrijp+S/ltxU8Yu9FqoJIJLYEfDBk4skqUPB3OyHGdMMIZD0MQV+7znd/pb9sfJZ+v0B4=
+	t=1753218162; cv=none; b=dTB5Bw8p68JfY0OGOmUJpFgEvd95qGkBFlO2OHbwpfOux5bmfI5D+lKYpDg3gZE4urhoN35Y+x0O6QXFm7zkx7EsHy7ACsXrtshNAf73KqaAF7BnxOQMYa7gglfQjsfF9dPOlWvKVhti+Xm1/a+YrwYDVtt3UsK/pRFr2AdMXps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753215934; c=relaxed/simple;
-	bh=TIf3NsdmEk/yrK4CMZgSPuLtTPbuV8WEvW9XXtuvd2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2ioNAlH8Gr0z8flAXqbKY4PqsfPo0izfN148xb2txUobqQhmQkKs664psi4NbzY0XWEgjtYiKobrdHGw3rErhKQAJHQi5+hmb6DWpOTZvDAnMGxLbnk1NWbC8atwX8fHrCzEghFBmBfIc36QtbbSMPRX/efIJEB1PPCn0fZeNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J07hDbA0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A05C4CEEB;
-	Tue, 22 Jul 2025 20:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753215934;
-	bh=TIf3NsdmEk/yrK4CMZgSPuLtTPbuV8WEvW9XXtuvd2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J07hDbA0mJhMgihS7BNUeZANNqUufoft2y/uQjLxb5qWwYrp/W4K0Y4ZBkrmVT4Hl
-	 yX3HrnPOKvVj0LXN/zIX1CJyQ1YDHegm5h+PL1tzYVofhD4VoY5+RRCsceiRnBOqtc
-	 WG9xr6qJdXbaAuF6VJVJ79cZIPE44T6DKNBa7FE90fwj+remAhqADqJ0CPhfcCIxXJ
-	 rPZFkkhTWOSafYOEnGHn/Awi22WPTvTSZCKFRfUGvkTc642+7yOoNXrQIH0DYrHXaZ
-	 AoOLoKc2Cn3SVq2PpL11c0FEdObx4VhwW3T0N9LkXeMCmVbUSrN51i+CivgmcrqyXE
-	 EcEIA8t/RiXLA==
-Date: Tue, 22 Jul 2025 13:25:31 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Josef Bacik <josef@toxicpanda.com>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org, fsverity@lists.linux.dev
-Subject: Re: [PATCH v3 09/13] fs/verity: use accessors
-Message-ID: <20250722202531.GE111676@quark>
-References: <20250722-work-inode-fscrypt-v3-0-bdc1033420a0@kernel.org>
- <20250722-work-inode-fscrypt-v3-9-bdc1033420a0@kernel.org>
+	s=arc-20240116; t=1753218162; c=relaxed/simple;
+	bh=oJ14SxopOmKgXV1WnOZDRi0hAHfsAncOA5XWZnK3cY8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oo0zU7ei68fT6F1aNffsezik261C96YSXKsyEkBzaLf/Dq05dlt0YyaF90DFum+M41tKUjvYGRRO79aoPbJaS0m8MywDub1ni9TN3tT/ifo/JVI5XijPDWrQdnTwRfcu9YO1lfZVbjgFSBrW1+r6Czt0nqQPRObez+LiONxaJLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=TF7WortR; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8d96ff2dfaso2831558276.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 14:02:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753218159; x=1753822959; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mnnUeEWJjJYm6dM0VvFtHAMQTPxaCUhgB+88rTCXILY=;
+        b=TF7WortRBwY3HtfeZNLMRShd9tlSC0D3SDd+GAYNa6CoVMV2zAOKGzgHFUtkFBe5uX
+         wqxPou2lLG7nDVH2O7CMQwLNLLfC3FWHTCkGjtTqy3Wz9tlar4GL1kys6sZyo9gMcihm
+         u1y98pcUhQHZj7xkW8SWTOLHZUHJhH6IT0I4H4YjNv5ivYuXzIFZ2VZRAYourYkqZCRD
+         Bf1+UU40D7PisF2AMVl1x4+G5CVhZcGxMxCvHJQvrFJwgxxBsVV/NOAMZKN7CJ2VvyM2
+         VdmkEpCrSR6s7tmrvDwdX6i9mNwxsZ65H8VRqKFVLuWOqlVgZboI2JxgVnQ+DQBzZ94J
+         LkrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753218159; x=1753822959;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mnnUeEWJjJYm6dM0VvFtHAMQTPxaCUhgB+88rTCXILY=;
+        b=Bu1NX1I+I+zSngDQQYKsKFjs60O50HUp7nLu9nPfI5+YXO51Tkh5N1BpLFCvh1zirl
+         tKmN2B/exDxTyOl0YCeCow6qOn2KDn6UnALumf0s2qYuO29Ciu0Alb2zNEHRP9g1FxyN
+         Qr3/dz4edqBugWFxSRSrp1jDxS7nPii57Fxf2wwFLillVGn8sl2/KArGm6KxgQSnnGGI
+         vv+Qk7HuWSViOpmA10Pb39Ry73L1ElCDo4hgalEESvyTN8X1Ov6wvW4ti3inzpaxmOkr
+         A7DqeWDN75JN9RRBVz1h2G0g2WK9C4aT5SGeL5jFaz3yXU9zntnt6J/kehp2GLKMRDNm
+         mFxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZKcAHB88wf6hGYGnr1l77Rq9BvLfVGiCjsfFmUbG7wabOljgLBjyggBe03EZdwxCemaSa0Pdw3C9TrkTQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzGj9Q0Pbg1rBAhTsCN7fcY2B0NFhklmWqCoEXgh95WhrZrWqz
+	FJVmer4naXIMSrrSZew/gjN+Vi2pu0UKQnVZlMZSQNW9L8vC1E9JRWw2XJnIzR3A1YI=
+X-Gm-Gg: ASbGncu6cnOepU9BLnm1QSj/ob8JSWRpHxf5f+MnghJVelplNHRNW3dKHDIXmxHGFaI
+	FM9kRcfuwGzPBObvQQl0L4sExJYnbyIgN84oBhxp0Kdn+61TOtZeWW3bpGZKFp3TooPUGTw5rRH
+	Ci/nhfMRRjE7dJ/V3vCZ3YQJ+TIp+lNPEE/hpYk6zG9xMqCVyoNJ45EEYcV5WaQZ5UCGXpQ4aIa
+	Uhg1pju/4/UelQBOtxGbOeqDE7I5uDvppAEWDFdfIvCHjZHPpbY++X0E7KOIBcOvKKYfTLh0WK6
+	90xHLJRsaZmfTk4aXjfBCKHtRqKVieBuIkeVCDEzrbZkDcf25BKGU+O2siZ+ShKiMqqvLV0c5vk
+	J82a1njfK9c82dg4e6LJNMHZnCIFvz/c18LmypNEXh/T7p9Wg1wzTHjDgWua6uiXHiJV/q4PR+J
+	z4QU6A
+X-Google-Smtp-Source: AGHT+IGDux0xOxVmdx5baLBj/mQXF5eZMLvllyzofAS853/Dgoci2AG56aSWl0wk3DwNM5XQYD0KUg==
+X-Received: by 2002:a05:6902:2312:b0:e8d:c440:2f18 with SMTP id 3f1490d57ef6-e8dc584b941mr913096276.11.1753218159156;
+        Tue, 22 Jul 2025 14:02:39 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83? ([2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7ce8bba3sm3494656276.47.2025.07.22.14.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 14:02:37 -0700 (PDT)
+Message-ID: <22375a3540a550a63e12c5140f6ee29c16b8f5c9.camel@dubeyko.com>
+Subject: Re: [PATCH v2] hfs/hfsplus: rework debug output subsystem
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de, 
+	linux-fsdevel@vger.kernel.org, Johannes.Thumshirn@wdc.com
+Cc: Slava.Dubeyko@ibm.com
+Date: Tue, 22 Jul 2025 14:02:36 -0700
+In-Reply-To: <a7e1e30c99d753de3af1d373041a9527d61d746e.camel@dubeyko.com>
+References: <20250710221600.109153-1-slava@dubeyko.com>
+		 <a52e690c-ba13-40c5-b2c5-4f871e737f72@vivo.com>
+		 <9f9489e0577f7162cfe4f44670114cec357be873.camel@dubeyko.com>
+		 <4c8bc1e6-7f40-43c0-941a-87c7e9f86730@vivo.com>
+	 <a7e1e30c99d753de3af1d373041a9527d61d746e.camel@dubeyko.com>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722-work-inode-fscrypt-v3-9-bdc1033420a0@kernel.org>
 
-On Tue, Jul 22, 2025 at 09:27:27PM +0200, Christian Brauner wrote:
->  static inline void fsverity_cleanup_inode(struct inode *inode)
->  {
-> -	if (inode->i_verity_info)
-> +	if (inode->i_verity_info || inode->i_sb->s_op->i_fsverity)
->  		__fsverity_cleanup_inode(inode);
+On Tue, 2025-07-22 at 11:43 -0700, Viacheslav Dubeyko wrote:
+> On Tue, 2025-07-22 at 15:50 +0800, Yangtao Li wrote:
+> > Hi Slava,
+> >=20
+> >=20
 
-Similarly to fscrypt_put_encryption_info(): I think this should look
-like:
+<skipped>
 
-    if (IS_VERITY(inode))
-            __fsverity_cleanup_inode(inode);
+> > > >=20
+> > > > Colud we rework msg to add value description?
+> > > > There're too much values to identify what it is.
+> > > >=20
+> > >=20
+> > > What do you mean by value description?
+> >=20
+> > For example:
+> >=20
+> > 	hfs_dbg(BNODE_MOD, "%d, %d, %d, %d, %d\n",
+> > =C2=A0=C2=A0		be32_to_cpu(desc.next), be32_to_cpu(desc.prev),
+> > =C2=A0=C2=A0		desc.type, desc.height,
+> > be16_to_cpu(desc.num_recs));
+> >=20
+> > There are 5 %d. It's hard to recognize what it is. Changing it to=20
+> > following style w/ description might be a bit more clear?
+> >=20
+> > 	hfs_dbg(BNODE_MOD, "next:%d prev:%d, type:%s,
+> > height:%d=C2=A0	=20
+> > num_recs:%d\n", be32_to_cpu(desc.next), be32_to_cpu(desc.prev),
+> > hfs_node_type(desc.type), desc.height, be16_to_cpu(desc.num_recs));
+> >=20
+>=20
+> We can rework it step by step. First of all, the reworking of all
+> debug
+> messages at once is too much for one patch. Secondly, the style of
+> messages is history of HFS implementation. I suggest to make this
+> first
+> step and, then, we can rework the debugging messages in the
+> background
+> of bug fix. Does it make sense to you?
+>=20
+> >=20
 
-i_verity_info != NULL implies IS_VERITY(), so that would work and avoid
-adding extra dereferences to non-verity files.
+However, maybe, you are right here. I can rework debug messages in more
+reasonable and understandable way. It will make debugging and bug fix
+much easier.
 
-The converse isn't necessarily true, but that's okay as long as
-__fsverity_cleanup_inode() handles i_verity_info == NULL.
-
-- Eric
+Thanks,
+Slava.
 
