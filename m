@@ -1,172 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-55706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7DEB0E266
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 19:08:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBA3B0E29E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 19:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9501D1C83610
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 17:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A331567F29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 17:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2E46AA7;
-	Tue, 22 Jul 2025 17:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CA627E056;
+	Tue, 22 Jul 2025 17:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="BpTzgyIv"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BShZqh2i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC424264626
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 17:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC595234
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 17:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753204105; cv=none; b=Lu1uU3ZmAhKePik7GlNctcWHBxyaxLaAu3ChBXJaFL0c4Dvo+C5bx9JvvCfVexayzi591Tcq/UhkrVA/dJ8CATXPSAEMH+skb4X7qY/SU8jxoLQ2nC+44Og68j0fuSlo7nfP6snCN7ONkLAPkpA4SZdPJ8KJrvFB9BprKfHP5UQ=
+	t=1753205485; cv=none; b=uHLuzKGDYXfyVDTeMay4W8f3mklayKHFvURbooBp5o1KdK1N0e38NgIbt5LGA6btR/AOPPSREOTEJbBvr70FKnN884/6jrth1i3JTPFAhKdK80Fth3tWUJcphiWYP6PKZyGz3y4+obnF4M/URxSHibOJiiMOkLjDRMYjobfffFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753204105; c=relaxed/simple;
-	bh=978GbEPG+xXIx1MSYHSlwMCgP2YjVw9X66Q7T0J611c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=C2amae6rFG63wo/LhB/FZ1JSSPUCZNSLtxUAHJNagP+/bUot2iYJG74p2GvIhcMtF5uNrSFmRs/To56SQ+bc1sBS9kblEMoaFgTZasqgYxPntNNILxd1w9Is9lOBZujzLiUCAvqmqGmImIN4Espc8a4t29O4QPpOx4HwyK8GygA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=BpTzgyIv; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-710fd2d0372so993517b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 10:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753204103; x=1753808903; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=978GbEPG+xXIx1MSYHSlwMCgP2YjVw9X66Q7T0J611c=;
-        b=BpTzgyIvJ8UwX9DkRMd1Hg6FA8FCpYhBvaglYNUKPuS3ccQJaAhott9sOrHUVXUpqe
-         aTsIAHDTaop+bIM2LbHf78psU7c5QQN2jodU2C1/03xULZCf4VJIxCD6oiKC3X6sGrnO
-         As2CvLpbh51ahhVS6vrCGoYm9AK/Jk5SuLBbkC5Ig2R1k5xfwiiycumAduoJdjF75jKD
-         FbEVL/yZnq+gMpWcsheC5SVOKi6kk8wt+3Coehqb5Cp6jBoeYufkadWZL5Dy9Phx1Poh
-         k4euKKW2R+fyBMBL0MVdAWu4/lKYClFiv5WkthF7oOwrxgH2MlX9+sMmTCNeRn9eK6rA
-         L20A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753204103; x=1753808903;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=978GbEPG+xXIx1MSYHSlwMCgP2YjVw9X66Q7T0J611c=;
-        b=kMoNkorBtztezET+rmBJS1WQEjwLZk7PCVzXXfUweiO9YC8tSX43YzEFpsprkFasyt
-         yvqfd3SRpQAL5nWXU1C9Z0JeUv9mkQL1qlBN6Ke3Rfxi8DNuhFfozSvkUBetJlj5FSMv
-         02+yzfW17vjFLCxf+ag9f4MhQLFdTiDk/5+1lOKfDsfQzWb8BZ+EsH/JPimksZLgtpIA
-         u8T6OtrorULwIjk2SGcM/GdRBYuIp1lhGBxXEmndFznhWzEJPBIhcRPyapHfCl+abJEz
-         xG3iWFBj7eBhhyXp2uGtE9f1y+YzFw+YDSjfLa3rp0dORD9Fx31YM8EslLKm13F9wWa3
-         XllQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOFeCxdi3GLspV8V1HNhgYEfT4po9z4rTcJ2XKWL7tiPL0XlTHU4a3wGuLufI9Kky+m8XCV/ZcaOW9xoig@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEYGjD4VAFGzPVBJ5wUGYS/T3fS2ayaBVm8Rw67VzSvU0d+H7F
-	llgKqudMoWmqMUATlf+MqN7DKPBRARtvPZU7k/Shcs37VWKF+yK5v+tDGRC0rZB1Klw=
-X-Gm-Gg: ASbGncvxzArFB2rGQsLkst9fwzVkiHQRt4eRGS3XP0YuAzt6tLRUxNLsl/Nyck7YWib
-	7RvKT+MRAolRNy0EaOW524wut3soTeWQUjKKwz45LpAyRG3GzrTsG8ZIUhsUAgqkYGSJltHzsPd
-	gpBKmzeT9EM0W3iI9FZ77u3VBNW6Rwrh3zZyOLB8QmbKh7NU6jvaSYj9XjNBG/4yiyRj8QHkscJ
-	bfDfXYdCxJYKgvX/DL8DrK/eIUvWeJy6rKS8hE61IZszDNlxZ5k4oI99vAxBP6qDWFoHEvhHqav
-	Sx/4MMtVR2awH/9uCjEAvdaE32rhseUkehXqfdOdw6mDnCS8Y2nOzYx8GnNgTHtuOxYQDiDDIhe
-	BmWhNL/6eJy45IR8oNd47+d/Clpk+gYVqL/EJQJkJ1tP/303eIWSv8rb4jQl0o9TWj8l4ATCq4Q
-	yX4Pkc
-X-Google-Smtp-Source: AGHT+IGY1G3HrbiCpbrrdm7GLTE6gZs8zkI6sqGbC9NdngVg16dzHUoZ9jfWZuCOMN4WWlWR5iaFuw==
-X-Received: by 2002:a05:690c:660e:b0:712:c55c:4e54 with SMTP id 00721157ae682-719a0a32c31mr66496677b3.4.1753204102464;
-        Tue, 22 Jul 2025 10:08:22 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83? ([2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7195310b038sm24813607b3.16.2025.07.22.10.08.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 10:08:21 -0700 (PDT)
-Message-ID: <cdeca96e29969fbac462acca4e6e2b60e103b4c4.camel@dubeyko.com>
-Subject: Re: [PATCH] ceph: cleanup of processing ci->i_ceph_flags bits in
- caps.c
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Date: Tue, 22 Jul 2025 10:08:20 -0700
-In-Reply-To: <CAO8a2ShpORYPW6XewdgaBCvc8qW=FJ_AwJj--foGJcx2UG9LtA@mail.gmail.com>
-References: <20250721221606.1011604-1-slava@dubeyko.com>
-	 <CAO8a2ShpORYPW6XewdgaBCvc8qW=FJ_AwJj--foGJcx2UG9LtA@mail.gmail.com>
-Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+	s=arc-20240116; t=1753205485; c=relaxed/simple;
+	bh=PrQAZTg14IOAm+DRtwIuL1ZvBzxMtVGxSxhr7HUmZVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AmmQZ27dvxvemNLtyZdtHUUbOk6fq8MRB71ymqNhfEeLpdhARBPbMHE3pqz86NedJpMuESG0HQ+dPGlXddNcsTyuAU/zJT2Bh3oXd48xIvHRREe23LygxR2brxbPt8/WfDlJ6Dow5JIzM1Cj/Lj9pCjwz4bYSSHjssxRZMMcrLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BShZqh2i; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Jul 2025 13:31:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753205470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XpnmGx8Qe1HEPsT1JE8ns7neS7sOfpbPECAjbCeJMzg=;
+	b=BShZqh2iCTxQIRMFWJ5QzeiI9riLGBk5t7ICvYSx3yCv/eu1n+iaCEAb8EC7JQf/zGcJ02
+	nXKXIZoosXwz1sLODbgtr1YwwF6v3r6yspD0ZysAqjeMJ0IgOMt+Fj/Germb3C4mrKnNIO
+	2zwQgN0tSdLyQ1Dk3sDXVX/oe8lNKE8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	tj@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [kernfs?] INFO: task hung in fdget_pos
+Message-ID: <cu7oc32pbuz42gsd3bsmwjns54bqhtlpdi5xlimnjx4rebp3yz@fps6oycum3rf>
+References: <670658e6.050a0220.22840d.0012.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670658e6.050a0220.22840d.0012.GAE@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 2025-07-22 at 16:19 +0400, Alex Markuze wrote:
-> Hi Slava,
->=20
-> Thanks for the patch.
->=20
-> The fix for the race condition in ceph_check_delayed_caps() is
-> correct
-> and necessary. The systematic change to use atomic bit operations
-> like
-> set_bit() and clear_bit() with the proper memory barriers is a
-> significant improvement for safety and readability.
->=20
-> One minor critique for a follow-up patch:
->=20
-> The refactoring in fs/ceph/super.h to use named _BIT definitions is a
-> great idea, but the cleanup is incomplete. Several definitions were
-> not converted and still use hardcoded bit-shift numbers . For
-> example,
->=20
-> CEPH_I_POOL_RD, CEPH_I_POOL_WR, and CEPH_I_ODIRECT still use (1 <<
-> 4),
-> (1 << 5), and (1 << 11) respectively. It would be good to finish this
-> refactoring for consistency.
->=20
->=20
+On Wed, Oct 09, 2024 at 03:20:22AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=110fb307980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9775e9a1af839423
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d0a79f980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/64ef5d6cfda3/disk-fc20a3e5.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/42c0ee676795/vmlinux-fc20a3e5.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a3072d6383ea/bzImage-fc20a3e5.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/a8f928c45431/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com
+> 
+> INFO: task syz.2.17:5434 blocked for more than 159 seconds.
+>       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.2.17        state:D stack:27424 pid:5434  tgid:5432  ppid:5316   flags:0x00000004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5315 [inline]
+>  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+>  __schedule_loop kernel/sched/core.c:6752 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6767
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>  fdget_pos+0x24e/0x320 fs/file.c:1160
+>  ksys_read+0x7e/0x2b0 fs/read_write.c:703
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f993c77dff9
+> RSP: 002b:00007f993d54e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> RAX: ffffffffffffffda RBX: 00007f993c936058 RCX: 00007f993c77dff9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 00007f993c7f0296 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000001 R14: 00007f993c936058 R15: 00007fffb8436518
+>  </TASK>
+> INFO: task syz.3.18:5439 blocked for more than 167 seconds.
+>       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.3.18        state:D stack:27424 pid:5439  tgid:5436  ppid:5317   flags:0x00000004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5315 [inline]
+>  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+>  __schedule_loop kernel/sched/core.c:6752 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6767
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>  fdget_pos+0x24e/0x320 fs/file.c:1160
+>  ksys_read+0x7e/0x2b0 fs/read_write.c:703
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f1134d7dff9
+> RSP: 002b:00007f1135adc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> RAX: ffffffffffffffda RBX: 00007f1134f36058 RCX: 00007f1134d7dff9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 00007f1134df0296 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000001 R14: 00007f1134f36058 R15: 00007ffe6e122188
+>  </TASK>
+> INFO: task syz.4.19:5441 blocked for more than 168 seconds.
+>       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.4.19        state:D stack:27424 pid:5441  tgid:5438  ppid:5327   flags:0x00000004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5315 [inline]
+>  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+>  __schedule_loop kernel/sched/core.c:6752 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6767
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>  fdget_pos+0x24e/0x320 fs/file.c:1160
+>  ksys_read+0x7e/0x2b0 fs/read_write.c:703
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f4c9ad7dff9
+> RSP: 002b:00007f4c9bc43038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
 
-Makes sense. Let me rework the patch.
+Someone assigned this to bcachefs, and it's clearly not:
 
-Thanks,
-Slava.
+#syz set subsystems: fs kernfs
 
