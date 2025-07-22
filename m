@@ -1,54 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-55660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EE2B0D634
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 11:43:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF84B0D638
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 11:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9501542D8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 09:43:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D8267A2043
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 09:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4C62E06EA;
-	Tue, 22 Jul 2025 09:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891592E0917;
+	Tue, 22 Jul 2025 09:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Y0wFAmYk"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Efis9zG2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421102DF3FB;
-	Tue, 22 Jul 2025 09:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D912DEA8E;
+	Tue, 22 Jul 2025 09:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753177385; cv=none; b=mtu2OoVk68ol9S0II9TBuB+t4ruIAZL28FjqHTTC58bTjTov1h9kCP4aUvmLlxuQdP52G18BEFUpODmBabDoF8LaIO2uj6JA1MgKUmwB2rHIfuy6Gh/X/U0j3fhm0qoh3iX8ds/LVRADl9VZbSNf91Wi5ob7vnPvWgmvmv4Ks3Q=
+	t=1753177393; cv=none; b=g37Zaugm1ey3nYZbWEI7KBDhWIaHyPHIU9DNv33VuCMvl+KeK0guikwTpMR6M0sPNzLXcOxnB736RGPfrnUqF7vbLcnLs4mTdIshcoDXdbMq6nbwy4aEylkWtmV8h6OMDuZdky/moV6FnO//t9UwmmcmTPhpTL6STfdf5fVRp3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753177385; c=relaxed/simple;
-	bh=i5HFrd2FWxUjBFgFoSGQG6fmJuhhxdcl7IH/c6djXWs=;
+	s=arc-20240116; t=1753177393; c=relaxed/simple;
+	bh=cE5HF3Q/pCpPUC8URCS1OOHU8K26yfnjKDLE9CXvFJg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SDeuUKMMSxFuy/Rrw66myHBRfNIgA+CMnSWztAwkYCpgnmoY/2CYrAF5k35t19MgFtATyxP4UiRnfkUxzuKd786cuL3Yp+xaU+a0VNpaoKDMc+is1hdzcFKFkeXrLXisC31l3naikZFaEK0ywtFJhZr5hYvpHSv4vUcCpSa2PRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Y0wFAmYk; arc=none smtp.client-ip=80.241.56.161
+	 MIME-Version; b=fQfNmKod+Sqcg7ympbwO51523gdnGB9i9jpyj8pn+6kX1/g/24Px1+qFJx/4wJ7U6gn541rQZwmvnWW363q8M6fhe6m/EL+p4RA6hOYM9qJuM20BsQeo0mdQHhvIvyqId34hZbMtmoDlbfXYgdG5ofKO68OwnRmV2i3m3enXR1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Efis9zG2; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bmXPZ286Kz9t5M;
-	Tue, 22 Jul 2025 11:42:58 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bmXPl4jqbz9tVG;
+	Tue, 22 Jul 2025 11:43:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1753177378;
+	s=MBO0001; t=1753177387;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OYyp+w22l9XbkRdarGqCeCGaqwERoFSGzuOGfuq7M5s=;
-	b=Y0wFAmYkHydK48RI/Nd8fQWSF3YLrfZXysTNb0HP46ej3v42HL7K1rEDJDXtfe5dfRIcbk
-	A/rSON4SAyXNA0dp8muPL1J6PzEGBPCfOcOaO510oBuVXNfYVQlm6cYq4awQHv9s6J/twP
-	RE5msPFF4rnlpEVMdPKLw6kZxv8p/3DMgzw0KAfGPzhTrH8fRUHFld8xQtNgwd3v69Z7g2
-	0RYfYJuok6e4SS1R6fZbtz+HiSPJgT0o/017lUhkhWMPVAKSXGrCi4Z1gOp3IFixS28WC8
-	NvH4TJJhBGLbUF8Jf/UjucWIrhfZGjDeNg6EFBV079IlPsUWHZawqH9bPpmBdQ==
+	bh=aUm65lZP53PD6UFdCNM0FQrwo2MXNsuP3026Ad+nKaE=;
+	b=Efis9zG2AFhnDaKHNu6VLJAZa0s+JO7PCW+HAmskd6sYfgHM8uOGelqq4Dmm859tfEBNnI
+	7yiHwQA8BCj42OzKWdsvsIUJWjHw7hKsaSr/7YntG04NsVUXJtdgLqEE7/ht1jBTi3oRnP
+	gyv/lAtAEzBsIfkpvABsXRqTtdkI9IHzeDPvXlZtsIZMzxUBVxbS0R4hoKn3UhSs01s+ui
+	lso0abjlhe8Uaek8g8R3/u/umP82veCbh1j60PXUD5QIiEf+i/6zX3BHQwmvl+TGPNi8BA
+	MtoxgdNCFH4NcyrKPOj+vxyjAG09+SlEbAT7NfxFQu8xpNyGmLdfHppSn7eT4Q==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: Suren Baghdasaryan <surenb@google.com>,
 	Ryan Roberts <ryan.roberts@arm.com>,
@@ -81,9 +84,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel@pankajraghav.com,
 	hch@lst.de,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [RFC 3/4]  mm: add largest_zero_folio() routine
-Date: Tue, 22 Jul 2025 11:42:14 +0200
-Message-ID: <20250722094215.448132-4-kernel@pankajraghav.com>
+Subject: [RFC 4/4] block: use largest_zero_folio in __blkdev_issue_zero_pages()
+Date: Tue, 22 Jul 2025 11:42:15 +0200
+Message-ID: <20250722094215.448132-5-kernel@pankajraghav.com>
 In-Reply-To: <20250722094215.448132-1-kernel@pankajraghav.com>
 References: <20250722094215.448132-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -93,37 +96,58 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4bmXPl4jqbz9tVG
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-Add largest_zero_folio() routine so that huge_zero_folio can be
-used directly when CONFIG_STATIC_HUGE_ZERO_FOLIO is enabled. This will
-return ZERO_PAGE folio if CONFIG_STATIC_HUGE_ZERO_FOLIO is disabled or
-if we failed to allocate a huge_zero_folio.
+Use largest_zero_folio() in __blkdev_issue_zero_pages().
+On systems with CONFIG_STATIC_HUGE_ZERO_FOLIO enabled, we will end up
+sending larger bvecs instead of multiple small ones.
 
-Co-Developed-by: David Hildenbrand <david@redhat.com>
+Noticed a 4% increase in performance on a commercial NVMe SSD which does
+not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
+gains might be bigger if the device supports bigger MDTS.
+
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- include/linux/huge_mm.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ block/blk-lib.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 0ddd9c78f9f4..a34c5427aaf6 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -714,4 +714,12 @@ static inline int split_folio_to_order(struct folio *folio, int new_order)
- 	return split_folio_to_list_to_order(folio, NULL, new_order);
- }
- 
-+static inline struct folio *largest_zero_folio(void)
-+{
-+       struct folio *folio = get_static_huge_zero_folio();
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 4c9f20a689f7..3030a772d3aa 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -196,6 +196,8 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
+ 		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
+ 		struct bio **biop, unsigned int flags)
+ {
++	struct folio *zero_folio = largest_zero_folio();
 +
-+       if (folio)
-+               return folio;
-+       return page_folio(ZERO_PAGE(0));
-+}
- #endif /* _LINUX_HUGE_MM_H */
+ 	while (nr_sects) {
+ 		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
+ 		struct bio *bio;
+@@ -208,15 +210,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
+ 			break;
+ 
+ 		do {
+-			unsigned int len, added;
++			unsigned int len;
+ 
+-			len = min_t(sector_t,
+-				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
+-			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
+-			if (added < len)
++			len = min_t(sector_t, folio_size(zero_folio),
++				    nr_sects << SECTOR_SHIFT);
++			if (!bio_add_folio(bio, zero_folio, len, 0))
+ 				break;
+-			nr_sects -= added >> SECTOR_SHIFT;
+-			sector += added >> SECTOR_SHIFT;
++			nr_sects -= len >> SECTOR_SHIFT;
++			sector += len >> SECTOR_SHIFT;
+ 		} while (nr_sects);
+ 
+ 		*biop = bio_chain_and_submit(*biop, bio);
 -- 
 2.49.0
 
