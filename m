@@ -1,127 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-55665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0988EB0D839
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 13:29:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC06B0D840
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 13:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1AA718956DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 11:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747A616FFC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 11:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24F72E3380;
-	Tue, 22 Jul 2025 11:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD082E4248;
+	Tue, 22 Jul 2025 11:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="Ws1wdTgN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF9127456;
-	Tue, 22 Jul 2025 11:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638092E3B00;
+	Tue, 22 Jul 2025 11:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183755; cv=none; b=N3dnhh4Bi0hN5g9v5O1G+Zgw0Yx66XPy2cqtL0wwkFKvTgaIBPM3uG/fhOgWSBQea4VEShBwAMRzBYPoFyGakh5+WXDt+4Ox9CkH8JaJmZcnftiUsQez4WceonSGWA7ITeeX0DCMibKzz2LQSI/WJLTd5QaVlTIE2yqF7fD8WjU=
+	t=1753183854; cv=none; b=swdIx7v8vEYES1OMC89h0Jtb8YWxP+9FsF0h74B/Ed52IUYEPsOlqWPN/mBsTqY1h4u4sSA3he1+1MLi+Mv2JDiefqTihUcSL67SZH2XTgIY4hUxWs+L772+44BgqYgvRL1Clz19XAmI3wRiVdLDNM5R+GgqyVryDAgNlpha1Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183755; c=relaxed/simple;
-	bh=tDMXmkuXWFEiObLEX0JEu1AbKcmcq54Z8EFGI7S6Iy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EImySs/nb/B2h9zMeN4XfVgu2EI2FZzpiI9PXB+ultbTTXW1U9TOz9I9X9blaYb53wDQxjTPrdRQCfY2sExatX6sBiDAz1BchrJfCrMqBQm97RG1j1zTNYG2+pRhUNpUWFLAl8JqTmqJhXgK1t52QW+WzdUwEe6L17jUeot05DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56MAgdQo090700;
-	Tue, 22 Jul 2025 19:42:39 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56MAgdPt090697
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 22 Jul 2025 19:42:39 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
-Date: Tue, 22 Jul 2025 19:42:35 +0900
+	s=arc-20240116; t=1753183854; c=relaxed/simple;
+	bh=MITJCE1IlF6HT+V9//MbpyHBWeYN/SUaK1bNE4b6PVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UQuavpKtiIvdrOStQZmVkBrEhe+LzVeCd3lArftH6Ip7cEfvhFMN0ydA5TblWAeEoekZ/ACYzygQJ8f/lnDjDvgzl8RMai1d+8Q2tpm5Jrg0cA1nm7ynWnJT27akopGOIYf4VIQ0ew8KzJzX1UtftfW0Gc+ArucA85LMIJQJtR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=Ws1wdTgN; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TLBwGdInAMAznILJMgBOsr3ecDdxzL5Zq1ZKt71+DkU=; b=Ws1wdTgNMeHozBhz8Yd5hE14Rt
+	qnTCwNo0mWGpq82BU91+vg+mha9MDmgdf1gEi+fQyCdrlG+futLG3vUGkDYctPPF4xN02TFpDTZ3j
+	nNXn6wyLcpvDY5n6mo1gLnW7MU6/ALWH9ZTRY/DnxAgDhEuLloYMGFeWhqoAkHj/TYbi5IwgNvL5F
+	vDRytTbBJ31yA/aE42Lxb6qxgJlhzB9/CtKxp6JNr2IvmuK/wwtKRAhUL7/EGbuWQA/MDl7XxAPZl
+	PVpCLrbCDYsLstiSbxxXCXnlRLj/ssZw01b6RbcUONFarWf1Wwq+vQ4fGxLsmKuXSEl8aXlxKwTxo
+	TMBFZtkA==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:39555 helo=archlinux)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1ueBCs-0000000GpCM-23ll;
+	Tue, 22 Jul 2025 13:30:50 +0200
+Date: Tue, 22 Jul 2025 13:30:45 +0200
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+To: Jann Horn <jannh@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Subject: Re: [PATCH] fs: hidepid: Fixes hidepid non dumpable behavior
+Message-ID: <ksm3jnswlqb7wqc3ea3uxdrqqnoqcle7bfndg6d2c3vmgt62ay@ctpei66gjh5b>
+References: <20250718-hidepid_fix-v1-1-3fd5566980bc@ssi.gouv.fr>
+ <CAG48ez3u09TK=Ju3xdEKzKuM_-sO_y9150NBx3Drs8T1G-V9AQ@mail.gmail.com>
+ <s7no7daeq6nmkwrf5w63srpmxzzqk5uor2kxdvrvrskoahh7un@h6kubn7qxli2>
+ <CAG48ez1ERkkwd+cJPmLmVj4JKpj5Uq=LaUEpb6_TgC4PRXosUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hfs: remove BUG() from
- hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "willy@infradead.org" <willy@infradead.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <ddee2787-dcd9-489d-928b-55a4a95eed6c@I-love.SAKURA.ne.jp>
- <b6e39a3e-f7ce-4f7e-aa77-f6b146bd7c92@I-love.SAKURA.ne.jp>
- <Z1GxzKmR-oA3Fmmv@casper.infradead.org>
- <b992789a-84f5-4f57-88f6-76efedd7d00e@I-love.SAKURA.ne.jp>
- <24e72990-2c48-4084-b229-21161cc27851@I-love.SAKURA.ne.jp>
- <db6a106e-e048-49a8-8945-b10b3bf46c47@I-love.SAKURA.ne.jp>
- <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
- <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
- <aHlQkTHYxnZ1wrhF@casper.infradead.org>
- <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
- <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
- <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav402.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez1ERkkwd+cJPmLmVj4JKpj5Uq=LaUEpb6_TgC4PRXosUw@mail.gmail.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 2025/07/22 2:04, Viacheslav Dubeyko wrote:
-> On Fri, 2025-07-18 at 07:08 +0900, Tetsuo Handa wrote:
->> On 2025/07/18 4:49, Viacheslav Dubeyko wrote:
->>> I assume if we created the inode as normal with i_ino == 0, then we can make it
->>> as a dirty. Because, inode will be made as bad inode here [2] only if rec->type
->>> is invalid. But if it is valid, then we can create the normal inode even with
->>> i_ino == 0.
->>
->> You are right. The crafted filesystem image in the reproducer is hitting HFS_CDR_DIR with
->> inode->i_ino = 0 ( https://elixir.bootlin.com/linux/v6.16-rc6/source/fs/hfs/inode.c#L363   ).
+On Fri, Jul 18, 2025 at 06:48:54PM +0200, Jann Horn wrote:
+> On Fri, Jul 18, 2025 at 5:47 PM Nicolas Bouchinet
+> <nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
+> > Hi Jann, thanks for your review !
+> >
+> > On Fri, Jul 18, 2025 at 04:45:15PM +0200, Jann Horn wrote:
+> > > On Fri, Jul 18, 2025 at 10:47 AM <nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
+> > > > The hidepid mount option documentation defines the following modes:
+> > > >
+> > > > - "noaccess": user may not access any `/proc/<pid>/ directories but
+> > > >   their own.
+> > > > - "invisible": all `/proc/<pid>/` will be fully invisible to other users.
+> > > > - "ptraceable": means that procfs should only contain `/proc/<pid>/`
+> > > >   directories that the caller can ptrace.
+> > > >
+> > > > We thus expect that with "noaccess" and "invisible" users would be able to
+> > > > see their own processes in `/proc/<pid>/`.
+> > >
+> > > "their own" is very fuzzy and could be interpreted many ways.
+> > >
+> > > > The implementation of hidepid however control accesses using the
+> > > > `ptrace_may_access()` function in any cases. Thus, if a process set
+> > > > itself as non-dumpable using the `prctl(PR_SET_DUMPABLE,
+> > > > SUID_DUMP_DISABLE)` it becomes invisible to the user.
+> > >
+> > > As Aleksa said, a non-dumpable processes is essentially like a setuid
+> > > process (even if its UIDs match yours, it may have some remaining
+> > > special privileges you don't have), so it's not really "your own".
+> > >
+> >
+> > Also replying to  :
+> >
+> > > What's the background here - do you have a specific usecase that
+> > > motivated this patch?
+> >
+> > The case I encountered is using the zathura-sandbox pdf viewer which
+> > sandboxes itself with Landlock and set itself as non-dumpable.
 > 
-> So, any plans to rework the patch?
+> It kind of sounds like an issue with your PDF viewer if that just sets
+> the non-dumpable flag for no reason...
 > 
+> > If my PDF viewer freezes and I want to kill it as an unprivileged user,
+> > I'm not able to get its PID from `/proc` since its fully invisible to my
+> > user.
+> >
+> > > > This patch fixes the `has_pid_permissions()` function in order to make
+> > > > its behavior to match the documentation.
+> > >
+> > > I don't think "it doesn't match the documentation" is good enough
+> > > reason to change how the kernel works.
+> > >
+> > > > Note that since `ptrace_may_access()` is not called anymore with
+> > > > "noaccess" and "invisible", the `security_ptrace_access_check()` will no
+> > > > longer be called either.
+> > > >
+> > > > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > > > ---
+> > > >  fs/proc/base.c | 27 ++++++++++++++++++++++++---
+> > > >  1 file changed, 24 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > > > index c667702dc69b8ca2531e88e12ed7a18533f294dd..fb128cb5f95fe65016fce96c75aee18c762a30f2 100644
+> > > > --- a/fs/proc/base.c
+> > > > +++ b/fs/proc/base.c
+> > > > @@ -746,9 +746,12 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
+> > > >                                  struct task_struct *task,
+> > > >                                  enum proc_hidepid hide_pid_min)
+> > > >  {
+> > > > +       const struct cred *cred = current_cred(), *tcred;
+> > > > +       kuid_t caller_uid;
+> > > > +       kgid_t caller_gid;
+> > > >         /*
+> > > > -        * If 'hidpid' mount option is set force a ptrace check,
+> > > > -        * we indicate that we are using a filesystem syscall
+> > > > +        * If 'hidepid=ptraceable' mount option is set, force a ptrace check.
+> > > > +        * We indicate that we are using a filesystem syscall
+> > > >          * by passing PTRACE_MODE_READ_FSCREDS
+> > > >          */
+> > > >         if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE)
+> > > > @@ -758,7 +761,25 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
+> > > >                 return true;
+> > > >         if (in_group_p(fs_info->pid_gid))
+> > > >                 return true;
+> > > > -       return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
+> > > > +
+> > > > +       task_lock(task);
+> > > > +       rcu_read_lock();
+> > > > +       caller_uid = cred->fsuid;
+> > > > +       caller_gid = cred->fsgid;
+> > > > +       tcred = __task_cred(task);
+> > > > +       if (uid_eq(caller_uid, tcred->euid) &&
+> > > > +           uid_eq(caller_uid, tcred->suid) &&
+> > > > +           uid_eq(caller_uid, tcred->uid)  &&
+> > > > +           gid_eq(caller_gid, tcred->egid) &&
+> > > > +           gid_eq(caller_gid, tcred->sgid) &&
+> > > > +           gid_eq(caller_gid, tcred->gid)) {
+> > > > +               rcu_read_unlock();
+> > > > +               task_unlock(task);
+> > > > +               return true;
+> > > > +       }
+> > > > +       rcu_read_unlock();
+> > > > +       task_unlock(task);
+> > > > +       return false;
+> > > >  }
+> > >
+> > > I think this is a bad idea for several reasons:
+> > >
+> > > 1. It duplicates existing logic.
+> > I open to work on that.
+> >
+> > > 2. I think it prevents a process with euid!=ruid from introspecting
+> > > itself through procfs.
+> > Great question, I'll test that and write some hidepid tests to check that.
+> >
+> > > 3. I think it prevents root from viewing all processes through procfs.
+> > Yes only if combined with yama="no attach", and IMHO, that would make sense.
+> 
+> Why only if combined with yama? Doesn't your code always "return
+> false" on a UID/GID mismatch?
+> 
+Ah yes indeed, if the gid=1000 mount option is used, processes become
+invisible to root since the cap_sys_ptrace check is not called anymore.
 
-What do you mean by "rework"?
+I understand now it would need almost all of `ptrace_may_access()`
+checks and thus will lead to the same exact behavior. So useless patch.
 
-I can update patch description if you have one, but I don't plan to try something like below.
+> > > 4. It allows processes to view metadata about each other when that was
+> > > previously blocked by the combination of hidepid and an LSM such as
+> > > Landlock or SELinux.
+> > Arf, you're absolutely right about this, my bad.
+> >
+> > > 5. It ignores capabilities held by the introspected process but not
+> > > the process doing the introspection (which is currently checked by
+> > > cap_ptrace_access_check()).
+> > As suggested by Aleksa, I can add some capabilities checks here.
+> >
+> > >
+> > > What's the background here - do you have a specific usecase that
+> > > motivated this patch?
+> >
+> > The second motivation is that the "ptraceable" mode didn't worked with
+> > the yama LSM, which doesn't care about `PTRACE_MODE_READ_FSCREDS` trace
+> > mode. Thus, using hidepid "ptraceable" mode with yama "restricted",
+> > "admin-only" or "no attach" modes doesn't do much.
+> >
+> > As you have seen, I also have submited a fix to yama in order to make it
+> > take into account `PTRACE_MODE_READ_FSCREDS` traces.
+> 
+> I don't think that's really a fix - that's more of a new feature
+> you're proposing. Yama currently explicitly only restricts ATTACH-mode
+> ptrace access (which can read all process memory or modify the state
+> of a process), and it doesn't restrict less invasive introspection
+> that uses READ-mode ptrace checks.
+> 
+Forget the patch sorry for that, I'll update hidepid documentation in
+order to describe the exact behavior it have. Will send a V2.
 
-@@ -393,20 +393,30 @@ struct inode *hfs_iget(struct super_block *sb, struct hfs_cat_key *key, hfs_cat_
-        switch (rec->type) {
-        case HFS_CDR_DIR:
-                cnid = be32_to_cpu(rec->dir.DirID);
-                break;
-        case HFS_CDR_FIL:
-                cnid = be32_to_cpu(rec->file.FlNum);
-                break;
-        default:
-                return NULL;
-        }
-+       if (cnid < HFS_FIRSTUSER_CNID) {
-+               switch (cnid) {
-+               case HFS_ROOT_CNID:
-+               case HFS_EXT_CNID:
-+               case HFS_CAT_CNID:
-+                       break;
-+               default:
-+                       return NULL;
-+               }
-+       }
-        inode = iget5_locked(sb, cnid, hfs_test_inode, hfs_read_inode, &data);
-        if (inode && (inode->i_state & I_NEW))
-                unlock_new_inode(inode);
-        return inode;
- }
-
+> > I have to admit I'm not really found of the fact that those two patch
+> > are so tightly linked.
+> >
+> > Thanks again for your review,
+> >
+> > Nicolas
 
