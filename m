@@ -1,63 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-55692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B615B0DD8A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 16:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8475B0DE26
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 16:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B607B2F08
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:14:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C865D7B72B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDB62ED86F;
-	Tue, 22 Jul 2025 14:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811142BF012;
+	Tue, 22 Jul 2025 14:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tnBhUf0z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1073D2ED873
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 14:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CC0176AC5;
+	Tue, 22 Jul 2025 14:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753193469; cv=none; b=jkQQNfL4gC68McXjoOzfebhHU07ee1/7xqYAFRHmNyZlT00qi4gDCm6SPU54W7OoN5MoxOw0ux9Pd2tSMWaL5Rvc70I/gVWVBEma3E+2pIvebWmxMo7WJDlgiGJtl3l0G0+seNyfeW/uZOji1CuZ7CErDtSdrgoFi2FoqTmu4ZE=
+	t=1753194150; cv=none; b=Am2KVoB8s69+4HAKn2feWSLy0Do5aMKrAD9Mmtwiqk+SQIXWe9zlqt89CvWe43ySWqkSRRhWThFJgF/QNtrxs0JIjqw+SR9HQigY6JXk4EKRj4OwYAWD+7+xosNDPnQecvO9gt/rvJL5falwLVkhHMVNw+51kR8W3ZpNK4z+9Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753193469; c=relaxed/simple;
-	bh=VB0GTDPOnYLB9L9qzHXgQJSz13IwEW6z3IsWG9ccK68=;
+	s=arc-20240116; t=1753194150; c=relaxed/simple;
+	bh=sgOD/G9e6sAkJSDLY7bbLHHkVxGsSaAU85Cwyqt1/Wk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CS/7VMOM2LG5keEHJPbkGJZsY9gxk0NWn5dcAv/nNIQAqJ6YfsYZ5wOfVagrtfAhBzSNMne02jiC3okkLYv9c8uGMoG1+ez0cyjz/cNN00yoLx/wq9BRmpKtiJ6+QiGwa7CXa/MYCqXLB187ivqUQqgcE+OPi7thx9XyV4qDYUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5C4952116B;
-	Tue, 22 Jul 2025 14:11:06 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2BC27132EA;
-	Tue, 22 Jul 2025 14:11:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Or97Cfqbf2gsIgAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 22 Jul 2025 14:11:06 +0000
-Date: Tue, 22 Jul 2025 16:11:04 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Andrea Cervesato <andrea.cervesato@suse.de>
-Cc: ltp@lists.linux.it, Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Paul Eggert <eggert@cs.ucla.edu>, linux-fsdevel@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: Re: [LTP] [PATCH v4 2/2] Add listxattr04 reproducer
-Message-ID: <20250722141104.GC84869@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20250722-xattr_bug_repr-v4-0-4be1e52e97c6@suse.com>
- <20250722-xattr_bug_repr-v4-2-4be1e52e97c6@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxeq99G4n8wO55BwTZ414874+b/zmLrDCtmQ62O2GG3MGTZ2ChofW4Dwrt3ZSX5QD8R3NdwqxUVwmMmi6L7nIgXxh8NB4jeqA2JOrxo3cXQBSgG4qiLjfz6ETnhpTmB/bLmT6rzSHFhQNSiPrxm8t0lbkmWMjzTirm4my0gzzsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tnBhUf0z; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pxn4/Gktw1UVxYCnmMHxZiZ9oPqC1b4PgCug8zFDoYg=; b=tnBhUf0zpeHM9OrWGJ+Zy0hxQP
+	XvAi49KngmJbTeocjxFjxtlMbduApJ2Xyj92Oflm7BCUXFIJDkaVzQHt7Ih2bOhST0fhMCZGM1XjH
+	v7zpome4QE9I0CmQKdsnmNYRUmd574Mx0lgQQopSGK4rt2LygWS7usYGr3vqPouuUUryD3P3Qhdvx
+	TUg8k3vAWDWKdj8t8J6mzL2QEB5JpZcAc2cP1dc0lZBl/Wm+Tj11RFPW7SebaT4Ey6ayHk3jpyLno
+	BfnsCJgTMoGoGsKv7Ljvhr+suSeyW6GpPe2pAk6c7JkzacHJuwCEgZZzCSqrgwccaXlB7D4xHQOmZ
+	0wsb9eBQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ueDsq-0000000BJVm-2v5f;
+	Tue, 22 Jul 2025 14:22:20 +0000
+Date: Tue, 22 Jul 2025 15:22:20 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3] hfs: remove BUG() from
+ hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
+Message-ID: <aH-enGSS7zWq0jFf@casper.infradead.org>
+References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
+ <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
+ <aHlQkTHYxnZ1wrhF@casper.infradead.org>
+ <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
+ <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
+ <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
+ <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
+ <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
+ <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,200 +75,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250722-xattr_bug_repr-v4-2-4be1e52e97c6@suse.com>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	TAGGED_RCPT(0.00)[]
-X-Rspamd-Queue-Id: 5C4952116B
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Score: -4.00
+In-Reply-To: <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
 
-Hi Andrea,
+On Tue, Jul 22, 2025 at 11:04:30PM +0900, Tetsuo Handa wrote:
+> On 2025/07/22 22:30, Matthew Wilcox wrote:
+> > On Tue, Jul 22, 2025 at 07:42:35PM +0900, Tetsuo Handa wrote:
+> >> I can update patch description if you have one, but I don't plan to try something like below.
+> > 
+> > Why not?  Papering over the underlying problem is what I rejected in v1,
+> > and here we are months later with you trying a v4.
+> 
+> Because I don't know how HFS/HFS+ filesystems work.
+> I just want to close these nearly 1000 days old bugs.
+> 
+> You can write your patches.
 
-FYI Andrea's LTP reproducer for a bug introduced in
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8b0ba61df5a1
-and fixed in
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=800d0b9b6a8b
-
-> From: Andrea Cervesato <andrea.cervesato@suse.com>
-
-> Test reproducer for a bug introduced in 8b0ba61df5a1 ("fs/xattr.c: fix
-> simple_xattr_list to always include security.* xattrs").
-
-> Bug can be reproduced when SELinux and ACL are activated on inodes as
-> following:
-
->     $ touch testfile
->     $ setfacl -m u:myuser:rwx testfile
->     $ getfattr -dm. /tmp/testfile
->     Segmentation fault (core dumped)
-
-> The reason why this happens is that simple_xattr_list() always includes
-> security.* xattrs without resetting error flag after
-> security_inode_listsecurity(). This results into an incorrect length of the
-> returned xattr name if POSIX ACL is also applied on the inode.
-
-> Signed-off-by: Andrea Cervesato <andrea.cervesato@suse.com>
-> ---
->  testcases/kernel/syscalls/listxattr/.gitignore    |   1 +
->  testcases/kernel/syscalls/listxattr/Makefile      |   2 +
->  testcases/kernel/syscalls/listxattr/listxattr04.c | 108 ++++++++++++++++++++++
->  3 files changed, 111 insertions(+)
-
-> diff --git a/testcases/kernel/syscalls/listxattr/.gitignore b/testcases/kernel/syscalls/listxattr/.gitignore
-> index be0675a6df0080d176d53d70194442bbc9ed376c..0d672b6ea5eec03aab37ee89316c56e24356c1d9 100644
-> --- a/testcases/kernel/syscalls/listxattr/.gitignore
-> +++ b/testcases/kernel/syscalls/listxattr/.gitignore
-> @@ -1,3 +1,4 @@
->  /listxattr01
->  /listxattr02
->  /listxattr03
-> +/listxattr04
-> diff --git a/testcases/kernel/syscalls/listxattr/Makefile b/testcases/kernel/syscalls/listxattr/Makefile
-> index c2f84b1590fc24a7a98f890ea7706771d944aa79..e96bb3fa4c2c6b14b8d2bc8fd4c475e4789d72fe 100644
-> --- a/testcases/kernel/syscalls/listxattr/Makefile
-> +++ b/testcases/kernel/syscalls/listxattr/Makefile
-> @@ -6,4 +6,6 @@ top_srcdir		?= ../../../..
-
->  include $(top_srcdir)/include/mk/testcases.mk
-
-> +listxattr04: LDLIBS	+= $(ACL_LIBS)
-> +
->  include $(top_srcdir)/include/mk/generic_leaf_target.mk
-> diff --git a/testcases/kernel/syscalls/listxattr/listxattr04.c b/testcases/kernel/syscalls/listxattr/listxattr04.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..473ed45b5c2da8ff8e49c513eeb82158ec2dc066
-> --- /dev/null
-> +++ b/testcases/kernel/syscalls/listxattr/listxattr04.c
-> @@ -0,0 +1,108 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (c) 2025 Andrea Cervesato <andrea.cervesato@suse.com>
-> + */
-> +
-> +/*\
-> + * Test reproducer for a bug introduced in 8b0ba61df5a1 ("fs/xattr.c: fix
-> + * simple_xattr_list to always include security.* xattrs").
-> + *
-> + * Bug can be reproduced when SELinux and ACL are activated on inodes as
-> + * following:
-> + *
-> + *     $ touch testfile
-> + *     $ setfacl -m u:myuser:rwx testfile
-> + *     $ getfattr -dm. /tmp/testfile
-> + *     Segmentation fault (core dumped)
-> + *
-> + * The reason why this happens is that simple_xattr_list() always includes
-> + * security.* xattrs without resetting error flag after
-> + * security_inode_listsecurity(). This results into an incorrect length of the
-> + * returned xattr name if POSIX ACL is also applied on the inode.
-> + */
-> +
-> +#include "config.h"
-> +#include "tst_test.h"
-> +
-> +#if defined(HAVE_SYS_XATTR_H) && defined(HAVE_LIBACL)
-> +
-> +#include <pwd.h>
-> +#include <sys/acl.h>
-> +#include <sys/xattr.h>
-> +
-> +#define ACL_PERM        "u::rw-,u:root:rwx,g::r--,o::r--,m::rwx"
-> +#define TEST_FILE       "test.bin"
-> +
-> +static acl_t acl;
-> +
-> +static void verify_xattr(const int size)
-> +{
-> +	char buf[size];
-> +
-> +	memset(buf, 0, sizeof(buf));
-> +
-> +	if (listxattr(TEST_FILE, buf, size) == -1) {
-> +		if (errno != ERANGE)
-> +			tst_brk(TBROK | TERRNO, "listxattr() error");
-
-The original verifier from RH bugreport check sizes and also works if size > -1
-is returned, but I guess it's not necessary, because Andrea's reproducer works
-as expected (fails on affected 6.16-rc1 based openSUSE kernel, works on 6.15.x).
-
-LGTM.
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
-Tested-by: Petr Vorel <pvorel@suse.cz>
-
-Kind regards,
-Petr
-
-[1] https://bugzilla.redhat.com/show_bug.cgi?id=2369561
-> +
-> +		tst_res(TFAIL, "listxattr() failed to read attributes length: ERANGE");
-> +		return;
-> +	}
-> +
-> +	tst_res(TPASS, "listxattr() correctly read attributes length");
-> +}
-> +
-> +static void run(void)
-> +{
-> +	int size;
-> +
-> +	size = listxattr(TEST_FILE, NULL, 0);
-> +	if (size == -1)
-> +		tst_brk(TBROK | TERRNO, "listxattr() error");
-> +
-> +	verify_xattr(size);
-> +}
-> +
-> +static void setup(void)
-> +{
-> +	int res;
-> +
-> +	if (!tst_selinux_enabled())
-> +		tst_brk(TCONF, "SELinux is not enabled");
-> +
-> +	SAFE_TOUCH(TEST_FILE, 0644, NULL);
-> +
-> +	acl = acl_from_text(ACL_PERM);
-> +	if (!acl)
-> +		tst_brk(TBROK | TERRNO, "acl_from_text() failed");
-> +
-> +	res = acl_set_file(TEST_FILE, ACL_TYPE_ACCESS, acl);
-> +	if (res == -1) {
-> +		if (errno == EOPNOTSUPP)
-> +			tst_brk(TCONF | TERRNO, "acl_set_file()");
-> +
-> +		tst_brk(TBROK | TERRNO, "acl_set_file(%s) failed", TEST_FILE);
-> +	}
-> +}
-> +
-> +static void cleanup(void)
-> +{
-> +	if (acl)
-> +		acl_free(acl);
-> +}
-> +
-> +static struct tst_test test = {
-> +	.test_all = run,
-> +	.setup = setup,
-> +	.cleanup = cleanup,
-> +	.needs_root = 1,
-> +	.needs_tmpdir = 1,
-> +	.tags = (const struct tst_tag[]) {
-> +		{"linux-git", "800d0b9b6a8b"},
-> +		{}
-> +	}
-> +};
-> +
-> +#else /* HAVE_SYS_XATTR_H && HAVE_LIBACL */
-> +	TST_TEST_TCONF("<sys/xattr.h> or <sys/acl.h> does not exist.");
-> +#endif
+I don't understand this attitude at all.  Are you in QA and being paid
+by "number of bugs closed per week"?
 
