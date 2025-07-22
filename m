@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-55701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0573DB0E05F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 17:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C535B0E06C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 17:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A39EAA2EC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 15:23:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3175641E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 15:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E6E268FF1;
-	Tue, 22 Jul 2025 15:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2BB264A74;
+	Tue, 22 Jul 2025 15:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AnVz8bC3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P46XosSh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B0F267AF2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 15:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E0B26B096
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 15:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753197722; cv=none; b=LJVjQu06e35LvI9gnRGXsTn9bm5ZWKDpafj7THajjpPtu/26G6WFNkhClXiLMPbynoa4QVdkVVMqpKN6M7Y8lIsEHe1+t9xvk4+UM/SHR+fSRJi100wiBl4ijsYlPcB7SHqsbKOxFXpSA5lrCb+XN4SfFSboiQjWits7xAdjn+U=
+	t=1753197855; cv=none; b=oKyJnNT0wGjLtX0hrFNghhU5/5x2mEQmXqIs7nNsEtijTXfWsqjz48MP4utlEYOudZocyKWbgrqGpll+yfg1hom3r7Whb9Dj3jT2Oss6y6CKZc9ZHSBdssryb1xArn1OF8Y1ianU6HtYPz3QuGbWxtblvyFngTdGc/sWG4LkEoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753197722; c=relaxed/simple;
-	bh=Bz0qVqHYmaFGLr0K3Aste3DeRRvF4uZB3IkjMQ1SJXE=;
+	s=arc-20240116; t=1753197855; c=relaxed/simple;
+	bh=D45gInbYMkQwYJSHRIjviRcfD6CR5ao7rIPrwVwFcLc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SDY0BqBat5Lwv9Ix96L9LyLWWSwHwR+UQHJLKXtH4RqGwrAwtQ8E8vt5Y1t3hGPFCZYObXs3OyzYaPtR3rNdQntzt5D08YqR6gIsdJteeuScpDxjPzKcC9ybkwxDnuCjdeFA5HqjKtJiPXUiCQbHofVHrNNks2MlnnB6lq8tcO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AnVz8bC3; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=e2PeE7Bin2ktqtm/n+wbe3zq8wBCgbMHtWJteuCEbV9D9cKuAEeSdko7rT7NO6s+TwigkFABgvCybu6sTknVTzttlcQSSZzgFL5tumW4AMizvdECOBBwJHm+0tx2pmC8SVQsuxL4co9+3fnYZE+T+Hqy1I6+gLztTjd6GMyxji4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P46XosSh; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753197719;
+	s=mimecast20190719; t=1753197853;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3lGVCvSvU+dwTTyQ/1aMBu54ELfXmjnvHtRzgY3JvgA=;
-	b=AnVz8bC3INVyTTk2pc545NpCFBfbEOi2OGDfv2YH2l+KKRezV4llgHQShfxnl206IV6V50
-	cYcyyWQDsYXCfC+MZZR4IrJ6j7uW2fX6rKzVIa0dB2izA78dZ1AYk561REv4a8ulZF6NVt
-	1zLl2LwUNv4z1CqSav04O310CBVZjA0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Rx5E9H0SC0/ybWC8xu2y/OKAH1d8PpGj5fdVT0GTL0Q=;
+	b=P46XosShVB93g9ndIIW2YLp9ybx1yiPI8DAnYgFEfr46WFwFihYUX2viHqqVG8fxyuAZhf
+	LNdcZeoxMBs/+4mZtdUyEMNjCT63RqdU7FPIvc6eMybMOpQUhDWPmyCya+aqVl3aGFU1UL
+	Hmr6fUbbl039GOXTFG1JxMiDyojuJqs=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-41-2-XOykp7PGWcwUjYM2wvBA-1; Tue, 22 Jul 2025 11:21:58 -0400
-X-MC-Unique: 2-XOykp7PGWcwUjYM2wvBA-1
-X-Mimecast-MFC-AGG-ID: 2-XOykp7PGWcwUjYM2wvBA_1753197717
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-451ac1b43c4so35282735e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 08:21:58 -0700 (PDT)
+ us-mta-477-BssY5E40NCqotu6JMmd2Ig-1; Tue, 22 Jul 2025 11:24:11 -0400
+X-MC-Unique: BssY5E40NCqotu6JMmd2Ig-1
+X-Mimecast-MFC-AGG-ID: BssY5E40NCqotu6JMmd2Ig_1753197850
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45611579300so42107935e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 08:24:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753197717; x=1753802517;
+        d=1e100.net; s=20230601; t=1753197850; x=1753802650;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=3lGVCvSvU+dwTTyQ/1aMBu54ELfXmjnvHtRzgY3JvgA=;
-        b=ewHkW6iDfvgDYQcu968VtHP1SDCBg1X9eMcYlG34zXPbnMcf5AFnKxp/rPD7QXfErG
-         7pGnED14ptRrDNmrV1ZLfRjFBHzjE/5yT2128Ex5j3xoRDMdolhoIPkO92LqP2i3/K5T
-         RUhLApRc3CEAl7zKz1YK7fg/eSzI2IZpyqMTE9RSY/Utg6Clx7eKOQSHQzt1pJpr4aqO
-         BvbT7Ri3yR7Qqh9PDoqbx+0f1+5afrDs1hTkMDye3hdw1PXtEfY98G7DY6Cl1KCBr+zj
-         Ck8AjGZcYLlV5A3+DcNNrfxu3QsBzHP+IbXMFZHPG739m1Ezx9UvyegnOB/IJirQRRZX
-         hETQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUevtZ5Nwu6ejs3NK6OGEQwHVQo7LnuYUBTufvTlPgAeB7klQnc036mNPrdCd2JcXvDBInwh8XXP5IjyS15@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvqGzdCUETu7eOq7LT8mnnryV9md2+l3X0o9kl++L+zel75K9l
-	Q8XRrVbjKcNmNVVMOxS+SPEhOI6gocEQFoxowuugRAj7OWoCCEszg/kI4f+oc6nqaCR8r+33aDj
-	aErx2dh/yyiWBCu4K8GJdVv434ouH67CyO/Z7ZiLF86EhoM1IwWnOewLlLqXmKjDY7dQ=
-X-Gm-Gg: ASbGncvOTbfld1+hYC7nMBqhO3qUuzs4mWCBheOiU9dx09B5AqJw6FvYgucsx7aXMTB
-	70LbZSFr9erPspYgUVvNq3XwAe33CpMgl2vzO8cNJFUjrcjBNEiTYkq3rIxlJyF96EdoNhNrk9P
-	AhhIs6oFi3+usaMWSJVvhIhBKHIE6V00xs2KyaTdtz8rBOq7W68Y9wTMknUZOcRYkvwZxaIVHLa
-	ng1/0f+XH7rGqfvHLVSRBPqej4CCCpYaeF2N/lvUw7wA2YJzuaArYe+Mb14PDoJyBItKN2pm/Gg
-	FsjwoLZ9Nhoe72e6+eeaZEnrlnZu4OzgiE9MIYRWLojt2d89v7O/KCW0jq3ZwaLAlL9A+I2Vrf5
-	mAYdh6cjRdBXjlESSrNrxqinNDohZqXR4t5Z1/iFmOi8acd2fImqN+GQkdik/oKRQm1U=
-X-Received: by 2002:a05:600c:1389:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-456437a59efmr137996775e9.17.1753197716926;
-        Tue, 22 Jul 2025 08:21:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF5enLdCYgzjySAx4ybbYU0jMVafZgCttcr6BLFjBoC3XlTsR3XaXP1SUNWMbt7hDHDm6g3EA==
-X-Received: by 2002:a05:600c:1389:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-456437a59efmr137995965e9.17.1753197716277;
-        Tue, 22 Jul 2025 08:21:56 -0700 (PDT)
+        bh=Rx5E9H0SC0/ybWC8xu2y/OKAH1d8PpGj5fdVT0GTL0Q=;
+        b=MM+eixnz+7C2GuyKuIhfj9J9h/7mCcDoy7i07RtCpco6G0uhfYevN87vWofjtLbhzh
+         kayAJEZq5UzmBsL/dzmX1x6V5HkDcBv4z5Jvq2GUPRb9RbiYAxStWkU2OQqtsp7HF9mv
+         6wjXxTbTm7LQwFqzpLLRyw1oJ9c0N4lauwC0snb+KexSwfRbJ1pKWj3pHDkIItV1O7RE
+         y2LOjv65N0VxAvIkz1K8srFk06hVaAdZ098fyCk6P/XJYzJFjz0VD/bbjr1SC0Q/tBhF
+         yml9JE5hAs5omYhXQXRFp6DyHtVAqIe5QafPqf/SZGIhBhO1VyugF8z+xpAsADp+c17S
+         Df7w==
+X-Forwarded-Encrypted: i=1; AJvYcCW4hzbNZgbANnekzhYxFsuRfcM0eMp6jGTc/k8kC6IAlDx5W6O0ktA8Z8PalXNjA4vlIkv6984+jzKsRf1k@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJleZVmkR3GfFSNi4OJOT9N9ZI/n03Vh2gt2dnzqv3NGkYapPQ
+	CrvXypObN6dKb3r1KzaTN8+W7OSsL3Z0Ke1jsvTTh0TuJBBX8B5SrHnpDipCwlEcs1waIhXldqz
+	PPG7NC8AtZkX3Ob3N4AcjmKRbMAJH6Wzo7EEeG0N6AcuA+gTCXQuEq9GjRP2tDGbfcyU=
+X-Gm-Gg: ASbGnctRZsYpJ7YFss+7+eHQ4Uzr939JQfglt9HIee37oqTZqDZ0bPcoqv5huBvpIrM
+	qsV8goStGUL+KrQuEL//Ql9FzyhAYzD8O3oSfaf9oAYrODSH/X/TqbNtwNNbF013o9qRMpXxi17
+	KUg/CdgM6+oLAXtwaYW7SMGbMshREpwKbQxMQhXc8AO+zd0bjYF9LmET6Xc7p3yUCiN/EaQmYix
+	QhXXehXUtlGqq1ozY15DoBZubx+J3mXXOmSfRsIHbp2dHN8cr8MjSRzcoU4LcXx9FVLMwfhSEKN
+	6iCIXOEA+N323KDQp3lLUWYORWDX7C4oBNudc0rffajbjHZRDO2jNh4FDAm44rkCnSK418k4h9k
+	9bEI/uesP7Z2Bu6eOjKW5/7STH1ts0XHxR1PJscs9P+S65BzQ4py+9OEtF9u1ASQwiQg=
+X-Received: by 2002:a05:600c:468b:b0:456:2419:dc05 with SMTP id 5b1f17b1804b1-4562e33db7fmr263466315e9.12.1753197850350;
+        Tue, 22 Jul 2025 08:24:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOsjO7fjOeuKEDb3sg67N0CFru6e9rNRczL4vElOqdWtp9KxYPog3BjoVMTfLEZMaSXLXdOA==
+X-Received: by 2002:a05:600c:468b:b0:456:2419:dc05 with SMTP id 5b1f17b1804b1-4562e33db7fmr263465705e9.12.1753197849746;
+        Tue, 22 Jul 2025 08:24:09 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f28:de00:1efe:3ea4:63ba:1713? (p200300d82f28de001efe3ea463ba1713.dip0.t-ipconnect.de. [2003:d8:2f28:de00:1efe:3ea4:63ba:1713])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e802ae4sm192273375e9.13.2025.07.22.08.21.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b73f76esm131398455e9.18.2025.07.22.08.24.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 08:21:55 -0700 (PDT)
-Message-ID: <33da1127-f00e-446f-891f-01ccbd53efd6@redhat.com>
-Date: Tue, 22 Jul 2025 17:21:52 +0200
+        Tue, 22 Jul 2025 08:24:09 -0700 (PDT)
+Message-ID: <e7573f7d-971e-491a-930d-fccb16274224@redhat.com>
+Date: Tue, 22 Jul 2025 17:24:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,8 +90,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V9 3/7] mm/filemap: Extend __filemap_get_folio() to
- support NUMA memory policies
+Subject: Re: [PATCH V9 6/7] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy
 To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, vbabka@suse.cz,
  willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
  pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
@@ -115,7 +115,7 @@ Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
  linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
  linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
 References: <20250713174339.13981-2-shivankg@amd.com>
- <20250713174339.13981-6-shivankg@amd.com>
+ <20250713174339.13981-9-shivankg@amd.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -163,28 +163,38 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <20250713174339.13981-6-shivankg@amd.com>
+In-Reply-To: <20250713174339.13981-9-shivankg@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 13.07.25 19:43, Shivank Garg wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Previously, guest-memfd allocations followed local NUMA node id in absence
+> of process mempolicy, resulting in arbitrary memory allocation.
+> Moreover, mbind() couldn't be used  by the VMM as guest memory wasn't
+> mapped into userspace when allocation occurred.
 > 
-> Extend __filemap_get_folio() to support NUMA memory policies by
-> renaming the implementation to __filemap_get_folio_mpol() and adding
-> a mempolicy parameter. The original function becomes a static inline
-> wrapper that passes NULL for the mempolicy.
+> Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
+> operation. This allows the VMM to map the memory and use mbind() to set the
+> desired NUMA policy. The policy is stored in the inode structure via
+> kvm_gmem_inode_info, as memory policy is a property of the memory (struct
+> inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
+> and passed to filemap_grab_folio_mpol() to ensure that allocations follow
+> the specified memory policy.
 > 
-> This infrastructure will enable future support for NUMA-aware page cache
-> allocations in guest_memfd memory backend KVM guests.
+> This enables the VMM to control guest memory NUMA placement by calling
+> mbind() on the mapped memory regions, providing fine-grained control over
+> guest memory allocation across NUMA nodes.
 > 
-> Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> The policy change only affect future allocations and does not migrate
+> existing memory. This matches mbind(2)'s default behavior which affects
+> only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
+> flags, which are not supported for guest_memfd as it is unmovable.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
 > Signed-off-by: Shivank Garg <shivankg@amd.com>
 > ---
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
