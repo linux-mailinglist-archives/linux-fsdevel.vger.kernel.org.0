@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-55719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C14B0E3B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 20:52:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A8AB0E3B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 20:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A1B14E54A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 18:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B7C4E59BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 18:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C478B283CB0;
-	Tue, 22 Jul 2025 18:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D295928467B;
+	Tue, 22 Jul 2025 18:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mell/UAH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFNmf1z9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284B0280CD5;
-	Tue, 22 Jul 2025 18:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324C7283FDD;
+	Tue, 22 Jul 2025 18:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753210361; cv=none; b=XpESH9lTMabKgbam4ZOKQGLh0xAyIDuOFL5t1tlJ19hh+dY1OvZpKhBEWtqyjlpXFADtdV3mELcfq2muv3Wu08thEgA4K8ZHaMiqAxirHAm9bUcNT/aDuBud19cDiqoP+hBp9EwxqQEjMiCG0pXJjxVfeEEI1tabXVhwoYbWmEQ=
+	t=1753210362; cv=none; b=OK5+Q2Mv1Pvixr9D0n8a30iFhY8YY1F0XL0tQCKQfijwDRDNhwIudLoYVCCGXEOJPpskNUn4M5THTA8V+Hx1Ar1d5Y1Kds8cGpxWNuJkiBvNihMMIiZRlawS0/QsKVCyfz7QMIT7uJ53d2SEP0B9ldH7oc0Y3nJKEG0qSNBchls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753210361; c=relaxed/simple;
-	bh=0bqNmtkfCsYAScjWaHpJG8KA1tQSPtNgsYNa1N1PLBc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tFmH9pVrX5rLfmcVlf2aFFxMVj+6bLycVvlFvc/zgAEnbsfHEZPS6hn1S1aRGAiOfLfDGxVk8bhdDCpGxmtAn+RH2O0nWe/QPUleLsG0uyKpjJY+Cjpce8KgFKqQYHjgnW6BNTya2gtQh6B6LQPFjhitkyj5QTF+f9NyqLlEYNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mell/UAH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68FD2C4CEEB;
-	Tue, 22 Jul 2025 18:52:39 +0000 (UTC)
+	s=arc-20240116; t=1753210362; c=relaxed/simple;
+	bh=apbJUn2GYMxwEvdL9T8Odi+1K6I7qN6CC7cmy3Kd4do=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FtZwpafGPCDDTxqOgW2mkEADZ/se4eTEZQA2mUpXajpqURQ8IHEfHuUhUdVImAYJvuV2MAsxoovy/pGtycJ4h8X3ACID+cbgUluuzSSujrvn53eyc6nvnzT2TGBwbW5aNtVG4i7UtcnvCgSIxRThG4LBVbx0dwVGHy+fKYOvNMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFNmf1z9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4A7AC4CEF8;
+	Tue, 22 Jul 2025 18:52:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753210360;
-	bh=0bqNmtkfCsYAScjWaHpJG8KA1tQSPtNgsYNa1N1PLBc=;
-	h=From:Subject:Date:To:Cc:From;
-	b=mell/UAHhEupqN1ihr8wD2p+a66P894U7xosZGiCFUFhI/gqe6gCdspjjfLESve+4
-	 K7aJUAF9YrfIr6sFDtwVljCtWvDk9VyrWRIR7BshauRwqBnq14DrlMw8cittZW6aDQ
-	 8ZevBhSkkfxnqgEoN0UpNLEM7mkGjhMnQ5vAYXnIMb0aqseKmdAUyhfjoFZLmJDts+
-	 fJfvBytXGLRFX+ei+gFfHrKd72p9xKhjF0EfrAKeL+kXkmlXNsS9rbzO6R+YphDh/n
-	 vVhf/SUJfAeInkxNgsMWWdEUV1Jt+/D8jB4XwGlIDayDAw0tiBUgXQ5L0VJJbps28w
-	 6JAk2CHVkAFHQ==
+	s=k20201202; t=1753210362;
+	bh=apbJUn2GYMxwEvdL9T8Odi+1K6I7qN6CC7cmy3Kd4do=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=eFNmf1z9FLotZKIyolB5buZFoQiezsQYrah/gCseMWrMkfevaDt6gBsplLbHYbzUF
+	 yTgW00AeM1P5OPilZdow5W5NCJUqi98zszkOFXKs2VVAoCHUy0sbZ93EjyqHfnHhSu
+	 tw2qGg6De/81mlPI0LW2GE0eNhTz6qRmq6KEnJ79TdNKVEXT/9P0bTYtyHG1yHGL4Q
+	 oqgFZxDGDoKKscYb38sT3xtirXdaYKJ+xRSj3qultOkmBnSSXKDRg8JiUJDacCSUP+
+	 ylAg1sRxCAtlkY7iUaRKGIgM69QKpOphpSRwGvtikC9wmJgPxeP/CipORK6S5UaL88
+	 idXUQZ5Iner0g==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH 0/2] vfs: fix delegated timestamp updates
-Date: Tue, 22 Jul 2025 14:52:26 -0400
-Message-Id: <20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org>
+Date: Tue, 22 Jul 2025 14:52:27 -0400
+Subject: [PATCH 1/2] vfs: add tracepoints in inode_set_ctime_deleg
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +52,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOrdf2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDcyMj3by04hTdktTiksy8dF3TVAszw0Tj5DTjRAMloJaCotS0zAqwcdG
- xtbUARkr6rV4AAAA=
-X-Change-ID: 20250722-nfsd-testing-5e861a3cf3a0
+Message-Id: <20250722-nfsd-testing-v1-1-31321c7fc97f@kernel.org>
+References: <20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org>
+In-Reply-To: <20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
  Steven Rostedt <rostedt@goodmis.org>, 
@@ -68,50 +67,104 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1178; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=0bqNmtkfCsYAScjWaHpJG8KA1tQSPtNgsYNa1N1PLBc=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBof93wGhlWpmqTHkzCVVjiwNm1iAoAltacYDp32
- Vm/gjLcF9SJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaH/d8AAKCRAADmhBGVaC
- FT5AD/0Rx12McPNE4b5aGc9AGUIGbtrY77+YpbumA/EcSrCy80NEeLNvwJfKTNuxCmbIeloOOSa
- vjPnB8bc90nWQ60oDLHuEBMpVEKt6lApjbvUQLjlrbdFpm5oTCqlxeby2oWAunG7evpBzYpaEM6
- 5kIw58XIUBWqWkjtNdhaHt8oSvLomvV/rNoa2tkdAUekuOyU6P+93SKt3E3lekA2p9YYeJndRXN
- JVlqGvnwYbyWfSBmikTy516CbtGEUxaT9oIdzMqZT2FYsM+VvJnhBUHN1taUMn8f4ThYqZRU0DS
- VxbRicmMgB1o3PEftEmqLMSYaL/8mCz60trN339kBdzTk/BIJRzhpYVjzM4ccFJQqHsDJUIzWrz
- SODxO6oLVPw/qcXVyimeuO/z/k5+RnoSAKraCH8Fhjf3UIQpRB1uzdG6PtlBw2gFQzkZL94atXN
- BuBqDt/CEtfi2vpCJAYhhak3U97v3b7lZ4MX/kHfcROSU/isjoFoOE4lNsL8zNCDYgfR6XHspNV
- qg1kTpG0VdmLGn+A2HQk5qZ9p6QSwCNKmE27xKuIaBlJu5TeqmHqVhd1blgLQgUvd90RwRU4R0R
- jVq6g8nNI2unchG4r8Ne93S7oUngDJBwZ8bmUZu5dJ8afk44kRS59uB2Mp0IVZDafujcBLHLsaO
- 7cyCjK9XTVKApLA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2709; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=apbJUn2GYMxwEvdL9T8Odi+1K6I7qN6CC7cmy3Kd4do=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBof932FhldSMvrXMgAlZ3u1/gC/mWBZwP96O8px
+ IYCFg9B/2WJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaH/d9gAKCRAADmhBGVaC
+ FYuWEADGdCj2uZb5ghm1gPxpM7hPE3nblhWkDKZxoiD5M1Q0oc5GWZaQIWLeu63hfPGJO4EWHu0
+ KoEpXdehUL5GKGHy+b2ZqDV1LIDIAr5j44g4xuh3n7N5tJXxZDF3nH4Z+TsgT/cC5NeVQlgRNfU
+ /OTC1elXvx6RzNHRtYYxaBHA34gyRwIMxUIhVe5qGn7ZGw/H7r+SFOH2JEoSeNVZwfiKMcE4bzJ
+ klxlMTCHvwPMJBDv7NR8QzFW1fTt6PN1PjTcEB29QobW8vtx00T38FXtOp2qkfvgFaDR1hhJQcl
+ ubAaMwCuwDrzzn56OkMdKdycXINnS99IjsGzKungrTfQ3xTdhcz9ThWUSe/6JNj+o6KjxMc8cwb
+ 6Bnnfo2751PlQB2SrHp3ogSFgAZf5O+iMLCU/X0Itkfd4FYdUUDlvxLDtGdF/RoJzfikozITySz
+ FqfHPkKjxEKK5KueIs8i/MYxrOTIHZJjAupIjfBQES8PVhJg5wS0bRpgqYGveGBjNHA4LaIF+Ej
+ DkHNKjldzYuk876a7rkg8RhXfS+89deek5QHukfEmVW899rcMHLXPs30yiCc5kr2uS5kHsIYQgP
+ K6K2qjFAqz17nQC8ohlzyLGnc6yGxPYb4WbhZhe6QGQfNTiIv/UTHzGzDojSfzleReacAX/OA47
+ u/H2bXK++gRGbdA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-We had been seeing some failures in the git regression testsuite when
-run on NFS with delegated timestamps enabled. The first patch adds a
-tracepoint that was helpful for tracking down the problem. The second
-patch _mostly_ fixes the actual issue. With this, the git regression
-testsuite is passing a lot more often for me, even when run in the
-"stress" configuration under kdevops.
-
-That said, I'm still seeing an occasional failure that I think may be a
-problem on the client. I'll send email about that separately.
+Add tracepoints in inode_set_ctime_deleg() that show the existing ctime,
+the requested ctime and the current_time().
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Jeff Layton (2):
-      vfs: add tracepoints in inode_set_ctime_deleg
-      vfs: fix delegated timestamp handling in setattr_copy()
+ fs/inode.c                       |  5 ++++-
+ include/trace/events/timestamp.h | 40 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
- fs/attr.c                        | 52 +++++++++++++++++++++++++++++-----------
- fs/inode.c                       |  5 +++-
- fs/nfsd/nfs4xdr.c                |  4 +---
- include/trace/events/timestamp.h | 40 +++++++++++++++++++++++++++++++
- 4 files changed, 83 insertions(+), 18 deletions(-)
----
-base-commit: bab771b8eba6f3b13446ced52751be122af0d3b7
-change-id: 20250722-nfsd-testing-5e861a3cf3a0
+diff --git a/fs/inode.c b/fs/inode.c
+index 99318b157a9a13b3dd8dad0f5f90951f08ef64de..6a8bf57d649aa0909b85f09e3b5b0fbc81efe303 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2811,10 +2811,13 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
+ 	cur_ts.tv_sec = inode->i_ctime_sec;
+ 
+ 	/* If the update is older than the existing value, skip it. */
+-	if (timespec64_compare(&update, &cur_ts) <= 0)
++	if (timespec64_compare(&update, &cur_ts) <= 0) {
++		trace_inode_set_ctime_deleg(inode, &cur_ts, &update, NULL);
+ 		return cur_ts;
++	}
+ 
+ 	ktime_get_coarse_real_ts64_mg(&now);
++	trace_inode_set_ctime_deleg(inode, &cur_ts, &update, &now);
+ 
+ 	/* Clamp the update to "now" if it's in the future */
+ 	if (timespec64_compare(&update, &now) > 0)
+diff --git a/include/trace/events/timestamp.h b/include/trace/events/timestamp.h
+index c9e5ec930054887a6a7bae8e487611b5ded33d71..e66161d8e14d9b74b0c875f0b324d24895403c18 100644
+--- a/include/trace/events/timestamp.h
++++ b/include/trace/events/timestamp.h
+@@ -118,6 +118,46 @@ TRACE_EVENT(fill_mg_cmtime,
+ 		__entry->mtime_s, __entry->mtime_ns
+ 	)
+ );
++
++TRACE_EVENT(inode_set_ctime_deleg,
++	TP_PROTO(struct inode *inode,
++		 struct timespec64 *old,
++		 struct timespec64 *req,
++		 struct timespec64 *now),
++
++	TP_ARGS(inode, old, req, now),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		dev)
++		__field(ino_t,		ino)
++		__field(time64_t,	old_s)
++		__field(time64_t,	req_s)
++		__field(time64_t,	now_s)
++		__field(u32,		old_ns)
++		__field(u32,		req_ns)
++		__field(u32,		now_ns)
++		__field(u32,		gen)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->ino		= inode->i_ino;
++		__entry->gen		= inode->i_generation;
++		__entry->old_s		= old->tv_sec;
++		__entry->req_s		= req->tv_sec;
++		__entry->now_s		= now ? now->tv_sec : 0;
++		__entry->old_ns		= old->tv_nsec;
++		__entry->req_ns		= req->tv_nsec;
++		__entry->now_ns		= now ? now->tv_nsec : 0;
++	),
++
++	TP_printk("ino=%d:%d:%ld:%u old=%lld.%u req=%lld.%u now=%lld.%u",
++		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
++		__entry->old_s, __entry->old_ns,
++		__entry->req_s, __entry->req_ns,
++		__entry->now_s, __entry->now_ns
++	)
++);
+ #endif /* _TRACE_TIMESTAMP_H */
+ 
+ /* This part must be outside protection */
 
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.50.1
 
 
