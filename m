@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-55668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A943B0D9A5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:30:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D7BB0D9CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433EE6C5F02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 12:29:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54B52161A55
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 12:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8767C2E9EAE;
-	Tue, 22 Jul 2025 12:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243532BF012;
+	Tue, 22 Jul 2025 12:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOVhJwHb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAMvyCFG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13D12E9EA4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 12:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85209288518
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 12:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753187407; cv=none; b=oZTeRAYewhfq4lvpbUz4MqHtS4DtEpucW3z0D/I/SNiCxQ9xbJnLBhq8q8qtsgpkpGTQp70N9mk5Puc1XlHKgVkWTIsa4K51i3mFCVEq7bOYLm6iF0gkJAtO4RaHrGC6MbNxIDL2yHqRMxFBCCTqfx9aU68ZRidTTINwehYmxaM=
+	t=1753187891; cv=none; b=Rv5zA/NZiYWZUsU0PiHsAsepIzr7+mM//hGw2wJicHVD/uHoEoWhLvOBoaKctzfjaAL7hZHtTk2ZQEfe9OtFI8XNMYvcApAhEZ++dxJWHklmdJ6kFAE7UaSnu2m4DB7A/ruPnIfkFQbWZgoohQ6wQVHIzC39aSEZvJLwYMAf2h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753187407; c=relaxed/simple;
-	bh=ThPdobpXZDk8xbJkD4PgxgGnVOrJcc1dAdBmzB+kdkc=;
+	s=arc-20240116; t=1753187891; c=relaxed/simple;
+	bh=F3ClWSNNLynQ0Cd80K3FU4mpETHrc7w6orCD9fHLppA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GIQsnisNZecfwfu9GG5cgELLkB9lvigYhh9bh8hZQV+uesdcGL+TOHax6HEKs2JS8X4j7ptjfhEXLvhcYAfgwGd6v/x0/I+peTv0NnSB83zNddkqQnHLFMztnDQJCkyqj/pfONvY7jYuiaPLz4+NRW9BKg63D0VfI1NDWfAkzQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOVhJwHb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B8C7C4CEEB;
-	Tue, 22 Jul 2025 12:30:06 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Yaq+7P/xvPUoV5fT1SliqiPNwRNQros9XgG4gn5fIxtazIhZ8u9E94WiT7DkB3Xro0N9yGg3uvLJxmDx88OnG1hIHRELCDxEokQX2nGoOWNWuqRxmD1GnwLkzQN9CX6idq7gsvQIh/KfOhWH56AEm3fwwifZvSk7kMM17C53tjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAMvyCFG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74551C4CEEB;
+	Tue, 22 Jul 2025 12:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753187406;
-	bh=ThPdobpXZDk8xbJkD4PgxgGnVOrJcc1dAdBmzB+kdkc=;
+	s=k20201202; t=1753187890;
+	bh=F3ClWSNNLynQ0Cd80K3FU4mpETHrc7w6orCD9fHLppA=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=WOVhJwHb9zxsuG3rlgTphf9zkycxnQxbhg+fwieekycildJ1hs3NWxwy9R9gYKt0d
-	 AnqLQ+AeBE1ou8uAFoJpwKEsOmRqbmxrtrWEg9amIXz8OveG9yKWBZiYRjEReji8/M
-	 RZIhHf2FO5vA/gErHKqJpFHSZf6T+0hZEMAv3lNzZ9ZvNKe0UCxZOhchYecoUfYv9A
-	 b6AyQEwhkjuu5i4wJWncZ3wyxN/Osxv5vxU/rgrOecw6FN9fuhqpddlTkkwLOxbq7w
-	 jXMNlFofQz/pNGFamj597QucKCAiWEQPUvZ/jlSvFfjUSj/jjgd33jzckSb+5eB9/B
-	 GX3J+jrhgQxcQ==
-Message-ID: <5ba49b0ff30f4e4f44440d393359a06a2515ab20.camel@kernel.org>
+	b=EAMvyCFGVWBPpISgNZSviZDIIE13bQX4H4NqT5yHr9CJjJ1Y9h79JjwysHO6yh2gB
+	 TJNH4oL0up0qisYx9LncJV6MLpoPuzWlwpwg1Yx2dIy7kFgPhgpW1AmiSDVIoVvCim
+	 oST6RPWJdrQUVm5f4aA7p6C8e8Je68AQC8CkBc3hPnzq4wFypSRWbQGfIn+lhN1t1L
+	 14W8R051zSGszUc2lmIurT+F666mzSAXy7E3f//COTZYGRh+eF43rjtOeDMd3Q7ooj
+	 WFcH+Vmz4Vbi9TR2gnGJAw5rigdkhgQCxbru36dKvNU5l9iCSbSrmjJ6V6kRkfYCu+
+	 PVeLSWGYfgmyw==
+Message-ID: <fda653661ea160cc65bd217c450c5291a7d3f3b1.camel@kernel.org>
 Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the
  connection
 From: Jeff Layton <jlayton@kernel.org>
@@ -49,12 +49,13 @@ To: "Darrick J. Wong" <djwong@kernel.org>, Joanne Koong
  <joannelkoong@gmail.com>
 Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net, 
 	miklos@szeredi.hu, bernd@bsbernd.com
-Date: Tue, 22 Jul 2025 08:30:04 -0400
-In-Reply-To: <20250719003215.GG2672029@frogsfrogsfrogs>
+Date: Tue, 22 Jul 2025 08:38:08 -0400
+In-Reply-To: <5ba49b0ff30f4e4f44440d393359a06a2515ab20.camel@kernel.org>
 References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
-	 <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
-	 <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com>
-	 <20250719003215.GG2672029@frogsfrogsfrogs>
+		 <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
+		 <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com>
+		 <20250719003215.GG2672029@frogsfrogsfrogs>
+	 <5ba49b0ff30f4e4f44440d393359a06a2515ab20.camel@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -139,173 +140,195 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2025-07-18 at 17:32 -0700, Darrick J. Wong wrote:
-> On Fri, Jul 18, 2025 at 03:23:30PM -0700, Joanne Koong wrote:
-> > On Thu, Jul 17, 2025 at 4:26=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
-org> wrote:
+On Tue, 2025-07-22 at 08:30 -0400, Jeff Layton wrote:
+> On Fri, 2025-07-18 at 17:32 -0700, Darrick J. Wong wrote:
+> > On Fri, Jul 18, 2025 at 03:23:30PM -0700, Joanne Koong wrote:
+> > > On Thu, Jul 17, 2025 at 4:26=E2=80=AFPM Darrick J. Wong <djwong@kerne=
+l.org> wrote:
+> > > >=20
+> > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > >=20
+> > > > generic/488 fails with fuse2fs in the following fashion:
+> > > >=20
+> > > > generic/488       _check_generic_filesystem: filesystem on /dev/sdf=
+ is inconsistent
+> > > > (see /var/tmp/fstests/generic/488.full for details)
+> > > >=20
+> > > > This test opens a large number of files, unlinks them (which really=
+ just
+> > > > renames them to fuse hidden files), closes the program, unmounts th=
+e
+> > > > filesystem, and runs fsck to check that there aren't any inconsiste=
+ncies
+> > > > in the filesystem.
+> > > >=20
+> > > > Unfortunately, the 488.full file shows that there are a lot of hidd=
+en
+> > > > files left over in the filesystem, with incorrect link counts.  Tra=
+cing
+> > > > fuse_request_* shows that there are a large number of FUSE_RELEASE
+> > > > commands that are queued up on behalf of the unlinked files at the =
+time
+> > > > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection n=
+ot
+> > > > aborted, the fuse server would have responded to the RELEASE comman=
+ds by
+> > > > removing the hidden files; instead they stick around.
 > > >=20
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > >=20
-> > > generic/488 fails with fuse2fs in the following fashion:
-> > >=20
-> > > generic/488       _check_generic_filesystem: filesystem on /dev/sdf i=
-s inconsistent
-> > > (see /var/tmp/fstests/generic/488.full for details)
-> > >=20
-> > > This test opens a large number of files, unlinks them (which really j=
-ust
-> > > renames them to fuse hidden files), closes the program, unmounts the
-> > > filesystem, and runs fsck to check that there aren't any inconsistenc=
-ies
-> > > in the filesystem.
-> > >=20
-> > > Unfortunately, the 488.full file shows that there are a lot of hidden
-> > > files left over in the filesystem, with incorrect link counts.  Traci=
-ng
-> > > fuse_request_* shows that there are a large number of FUSE_RELEASE
-> > > commands that are queued up on behalf of the unlinked files at the ti=
-me
-> > > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
-> > > aborted, the fuse server would have responded to the RELEASE commands=
- by
-> > > removing the hidden files; instead they stick around.
-> >=20
-> > Tbh it's still weird to me that FUSE_RELEASE is asynchronous instead
-> > of synchronous. For example for fuse servers that cache their data and
-> > only write the buffer out to some remote filesystem when the file gets
-> > closed, it seems useful for them to (like nfs) be able to return an
-> > error to the client for close() if there's a failure committing that
->=20
-> I don't think supplying a return value for close() is as helpful as it
-> seems -- the manage says that there is no guarantee that data has been
-> flushed to disk; and if the file is removed from the process' fd table
-> then the operation succeeded no matter the return value. :P
->=20
-> (Also C programmers tend to be sloppy and not check the return value.)
->=20
-
-The POSIX spec and manpage for close(2) make no mention of writeback
-errors, so it's not 100% clear that returning them there is at all OK.
-Everyone sort of assumes that it makes sense to do so, but it can be
-actively harmful. Suppose we do this:
-
-open() =3D 1
-write(1)
-close(1)=C2=A0
-open() =3D 2
-fsync(2) =3D ???
-
-Now, assume there was a writeback error that happens either before or
-after the close.
-
-With the way this works today, you will get back an error on that final
-fsync() even if fd 2 was opened _after_ the writeback error occurred,
-because nothing will have scraped it yet.
-
-If you scrape the error to return it on the close though, then the
-result of that fsync() would be inconclusive. If the error happens
-before the close(), then fsync() will return 0. If it fails after the
-close(), then the fsync() will see an error.
-
-> > data; that also has clearer API semantics imo, eg users are guaranteed
-> > that when close() returns, all the processing/cleanup for that file
-> > has been completed.  Async FUSE_RELEASE also seems kind of racy, eg if
-> > the server holds local locks that get released in FUSE_RELEASE, if a
->=20
-> Yes.  I think it's only useful for the case outined in that patch, which
-> is that a program started an asyncio operation and then closed the fd.
-> In that particular case the program unambiguously doesn't care about the
-> return value of close so it's ok to perform the release asynchronously.
->=20
-> > subsequent FUSE_OPEN happens before FUSE_RELEASE then depends on
-> > grabbing that lock, then we end up deadlocked if the server is
-> > single-threaded.
->=20
-> Hrm.  I suppose if you had a script that ran two programs one after the
-> other, each of which expected to be able to open and lock the same file,
-> then you could run into problems if the lock isn't released by the time
-> the second program is ready to open the file.
->=20
-> But having said that, some other program could very well open and lock
-> the file as soon as the lock drops.
->=20
-> > I saw in your first patch that sending FUSE_RELEASE synchronously
-> > leads to a deadlock under AIO but AFAICT, that happens because we
-> > execute req->args->end() in fuse_request_end() synchronously; I think
-> > if we execute that release asynchronously on a worker thread then that
-> > gets rid of the deadlock.
->=20
-> <nod> Last time I think someone replied that maybe they should all be
-> asynchronous.
->=20
-> > If FUSE_RELEASE must be asynchronous though, then your approach makes
-> > sense to me.
->=20
-> I think it only has to be asynchronous for the weird case outlined in
-> that patch (fuse server gets stuck closing its own client's fds).
-> Personally I think release ought to be synchronous at least as far as
-> the kernel doing all the stuff that close() says it has to do (removal
-> of record locks, deleting the fd table entry).
->=20
-> Note that doesn't necessarily mean that the kernel has to be completely
-> done with all the work that entails.  XFS defers freeing of unlinked
-> files until a background garbage collector gets around to doing that.
-> Other filesystems will actually make you wait while they free all the
-> data blocks and the inode.  But the kernel has no idea what the fuse
-> server actually does.
->=20
-> > > Create a function to push all the background requests to the queue an=
+> > > Tbh it's still weird to me that FUSE_RELEASE is asynchronous instead
+> > > of synchronous. For example for fuse servers that cache their data an=
 d
-> > > then wait for the number of pending events to hit zero, and call this
-> > > before fuse_abort_conn.  That way, all the pending events are process=
-ed
-> > > by the fuse server and we don't end up with a corrupt filesystem.
-> > >=20
-> > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > > ---
-> > >  fs/fuse/fuse_i.h |    6 ++++++
-> > >  fs/fuse/dev.c    |   38 ++++++++++++++++++++++++++++++++++++++
-> > >  fs/fuse/inode.c  |    1 +
-> > >  3 files changed, 45 insertions(+)
-> > >=20
-> > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > > +/*
-> > > + * Flush all pending requests and wait for them.  Only call this fun=
-ction when
-> > > + * it is no longer possible for other threads to add requests.
-> > > + */
-> > > +void fuse_flush_requests(struct fuse_conn *fc, unsigned long timeout=
-)
+> > > only write the buffer out to some remote filesystem when the file get=
+s
+> > > closed, it seems useful for them to (like nfs) be able to return an
+> > > error to the client for close() if there's a failure committing that
 > >=20
-> > It might be worth renaming this to something like
-> > 'fuse_flush_bg_requests' to make it more clear that this only flushes
-> > background requests
+> > I don't think supplying a return value for close() is as helpful as it
+> > seems -- the manage says that there is no guarantee that data has been
+> > flushed to disk; and if the file is removed from the process' fd table
+> > then the operation succeeded no matter the return value. :P
+> >=20
+> > (Also C programmers tend to be sloppy and not check the return value.)
+> >=20
 >=20
-> Hum.  Did I not understand the code correctly?  I thought that
-> flush_bg_queue puts all the background requests onto the active queue
-> and issues them to the fuse server; and the wait_event_timeout sits
-> around waiting for all the requests to receive their replies?
+> The POSIX spec and manpage for close(2) make no mention of writeback
+> errors, so it's not 100% clear that returning them there is at all OK.
+> Everyone sort of assumes that it makes sense to do so, but it can be
+> actively harmful.
 >=20
-> I could be mistaken though.  This is my rough understanding of what
-> happens to background requests:
+
+Actually, they do mention this, but I still argue that it's not a good
+idea to do so. If you want writeback errors use fsync() (or maybe the
+new ioctl() that someone was plumbing in that scrapes errors without
+doing writeback).
+
+> Suppose we do this:
 >=20
-> 1. Request created
-> 2. Put request on bg_queue
-> 3. <wait>
-> 4. Request removed from bg_queue
-> 5. Request sent
-> 6. <wait>
-> 7. Reply received
-> 8. Request ends and is _put.
+> open() =3D 1
+> write(1)
+> close(1)=C2=A0
+> open() =3D 2
+> fsync(2) =3D ???
 >=20
-> Non-background (foreground?) requests skip steps 2-4.  Meanwhile,
-> fc->waiting tracks the number of requests that are anywhere between the
-> end of step 1 and the start of step 8.
+> Now, assume there was a writeback error that happens either before or
+> after the close.
 >=20
-> In any case, I want to push all the bg requests and wait until there are
-> no more requests in the system.
+> With the way this works today, you will get back an error on that final
+> fsync() even if fd 2 was opened _after_ the writeback error occurred,
+> because nothing will have scraped it yet.
 >=20
-> --D
+> If you scrape the error to return it on the close though, then the
+> result of that fsync() would be inconclusive. If the error happens
+> before the close(), then fsync() will return 0. If it fails after the
+> close(), then the fsync() will see an error.
+>=20
+> > > data; that also has clearer API semantics imo, eg users are guarantee=
+d
+> > > that when close() returns, all the processing/cleanup for that file
+> > > has been completed.  Async FUSE_RELEASE also seems kind of racy, eg i=
+f
+> > > the server holds local locks that get released in FUSE_RELEASE, if a
+> >=20
+> > Yes.  I think it's only useful for the case outined in that patch, whic=
+h
+> > is that a program started an asyncio operation and then closed the fd.
+> > In that particular case the program unambiguously doesn't care about th=
+e
+> > return value of close so it's ok to perform the release asynchronously.
+> >=20
+> > > subsequent FUSE_OPEN happens before FUSE_RELEASE then depends on
+> > > grabbing that lock, then we end up deadlocked if the server is
+> > > single-threaded.
+> >=20
+> > Hrm.  I suppose if you had a script that ran two programs one after the
+> > other, each of which expected to be able to open and lock the same file=
+,
+> > then you could run into problems if the lock isn't released by the time
+> > the second program is ready to open the file.
+> >=20
+> > But having said that, some other program could very well open and lock
+> > the file as soon as the lock drops.
+> >=20
+> > > I saw in your first patch that sending FUSE_RELEASE synchronously
+> > > leads to a deadlock under AIO but AFAICT, that happens because we
+> > > execute req->args->end() in fuse_request_end() synchronously; I think
+> > > if we execute that release asynchronously on a worker thread then tha=
+t
+> > > gets rid of the deadlock.
+> >=20
+> > <nod> Last time I think someone replied that maybe they should all be
+> > asynchronous.
+> >=20
+> > > If FUSE_RELEASE must be asynchronous though, then your approach makes
+> > > sense to me.
+> >=20
+> > I think it only has to be asynchronous for the weird case outlined in
+> > that patch (fuse server gets stuck closing its own client's fds).
+> > Personally I think release ought to be synchronous at least as far as
+> > the kernel doing all the stuff that close() says it has to do (removal
+> > of record locks, deleting the fd table entry).
+> >=20
+> > Note that doesn't necessarily mean that the kernel has to be completely
+> > done with all the work that entails.  XFS defers freeing of unlinked
+> > files until a background garbage collector gets around to doing that.
+> > Other filesystems will actually make you wait while they free all the
+> > data blocks and the inode.  But the kernel has no idea what the fuse
+> > server actually does.
+> >=20
+> > > > Create a function to push all the background requests to the queue =
+and
+> > > > then wait for the number of pending events to hit zero, and call th=
+is
+> > > > before fuse_abort_conn.  That way, all the pending events are proce=
+ssed
+> > > > by the fuse server and we don't end up with a corrupt filesystem.
+> > > >=20
+> > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > > ---
+> > > >  fs/fuse/fuse_i.h |    6 ++++++
+> > > >  fs/fuse/dev.c    |   38 ++++++++++++++++++++++++++++++++++++++
+> > > >  fs/fuse/inode.c  |    1 +
+> > > >  3 files changed, 45 insertions(+)
+> > > >=20
+> > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > > +/*
+> > > > + * Flush all pending requests and wait for them.  Only call this f=
+unction when
+> > > > + * it is no longer possible for other threads to add requests.
+> > > > + */
+> > > > +void fuse_flush_requests(struct fuse_conn *fc, unsigned long timeo=
+ut)
+> > >=20
+> > > It might be worth renaming this to something like
+> > > 'fuse_flush_bg_requests' to make it more clear that this only flushes
+> > > background requests
+> >=20
+> > Hum.  Did I not understand the code correctly?  I thought that
+> > flush_bg_queue puts all the background requests onto the active queue
+> > and issues them to the fuse server; and the wait_event_timeout sits
+> > around waiting for all the requests to receive their replies?
+> >=20
+> > I could be mistaken though.  This is my rough understanding of what
+> > happens to background requests:
+> >=20
+> > 1. Request created
+> > 2. Put request on bg_queue
+> > 3. <wait>
+> > 4. Request removed from bg_queue
+> > 5. Request sent
+> > 6. <wait>
+> > 7. Reply received
+> > 8. Request ends and is _put.
+> >=20
+> > Non-background (foreground?) requests skip steps 2-4.  Meanwhile,
+> > fc->waiting tracks the number of requests that are anywhere between the
+> > end of step 1 and the start of step 8.
+> >=20
+> > In any case, I want to push all the bg requests and wait until there ar=
+e
+> > no more requests in the system.
+> >=20
+> > --D
 
 --=20
 Jeff Layton <jlayton@kernel.org>
