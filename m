@@ -1,169 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-55649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BC1B0D3F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 09:54:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0FF1B0D41B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 10:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C4F3AC342
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 07:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07AB0189A10F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 08:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F1E28A716;
-	Tue, 22 Jul 2025 07:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825C42C08B2;
+	Tue, 22 Jul 2025 08:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Orj0930B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hh+fW+uU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Orj0930B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hh+fW+uU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WndJokWB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ADD15442A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 07:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339402D1901
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 08:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753170767; cv=none; b=MwbzOVNA3ADenbtLzZCJASFrTOm+HfMbLOKgZtvrsQ6P7q8Wb24tJ/RX7av89/9oooOey0u/eBLMLIAiphjTA1vqVvoG/GW0EX0CLcCynJFmVpje7dEkJ9uBlW4c46TOb87RkvDLQr7DUeW9PXQmZgdRmXiRGES/2Kta6IHzwdg=
+	t=1753171550; cv=none; b=IGGGkK7ehSKgtVOx4htVe0B5CEA4HpUWySRX1iAdUGTLzD/DUhMIQgcn89ZKUKrQMyY1pg9vNood9V9xFE0OOmp6hoyavlQ61VGTfrD4i+/VH+m3AiVdaOybwt35/1YjMnCftglwMP0iQzeTZ7cuII3qrSPd2/o+kSpJMbQ2mE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753170767; c=relaxed/simple;
-	bh=1T/lmmjBJt+PQAc1sNQ1vBL7XQsJRV1RtsPazTXylGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhKLkOYZjnbz/THu69X1pcwJG0td7fPudjpSs1QJYoM3Xl7N6ZDx/gvIhUboC7jpTqDFfKHsPQRM3kRJ/0XNXmTKBzK53qt8AV3/LMj3/YXMDn3Eznqpr/OBti/t52cWkviMEyOroudEeqxpEz0vJhoRMYeJx6IHUDg00scXRnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Orj0930B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hh+fW+uU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Orj0930B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hh+fW+uU; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9620D21896;
-	Tue, 22 Jul 2025 07:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753170763; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3QAYfuWhONPnnck5jobquUqn8oJ3+6Ym89WXeJq3V6A=;
-	b=Orj0930Bw65KfwIWds65tun2sb2LzzggIt14qtRzSTNFLx3xhhm5iRXBx3d3/aRSk7Yisk
-	bNkI716ugp3ks+JeURmY8y/gIGtCBmg0zaTLbDcP25Ir27Ejd5t2FmPWGdRBiWONngH9BO
-	CkGeoaj0Ulnv+cRxfj4dJacZsupF1hU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753170763;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3QAYfuWhONPnnck5jobquUqn8oJ3+6Ym89WXeJq3V6A=;
-	b=hh+fW+uUzJX3LiVWD8jCmONnok3vVO7nh/oLFdOw+GQepxhhyKko9c7saNWhs+T5mItaaa
-	V/3+SwBI1fiIg0Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753170763; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3QAYfuWhONPnnck5jobquUqn8oJ3+6Ym89WXeJq3V6A=;
-	b=Orj0930Bw65KfwIWds65tun2sb2LzzggIt14qtRzSTNFLx3xhhm5iRXBx3d3/aRSk7Yisk
-	bNkI716ugp3ks+JeURmY8y/gIGtCBmg0zaTLbDcP25Ir27Ejd5t2FmPWGdRBiWONngH9BO
-	CkGeoaj0Ulnv+cRxfj4dJacZsupF1hU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753170763;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3QAYfuWhONPnnck5jobquUqn8oJ3+6Ym89WXeJq3V6A=;
-	b=hh+fW+uUzJX3LiVWD8jCmONnok3vVO7nh/oLFdOw+GQepxhhyKko9c7saNWhs+T5mItaaa
-	V/3+SwBI1fiIg0Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 88E7013A32;
-	Tue, 22 Jul 2025 07:52:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id syRmIUtDf2gdAwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 22 Jul 2025 07:52:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0045AA0884; Tue, 22 Jul 2025 09:52:42 +0200 (CEST)
-Date: Tue, 22 Jul 2025 09:52:42 +0200
-From: Jan Kara <jack@suse.cz>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>, Jens Axboe <axboe@kernel.dk>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC DRAFT DOESNOTBUILD] inode: free up more space
-Message-ID: <fhppu2rnsykr5obrib3btw7wemislq36wufnbl67salvoguaof@kkxaosrv3oho>
-References: <20250715-work-inode-fscrypt-v1-1-aa3ef6f44b6b@kernel.org>
- <20250718160414.GC1574@quark>
- <20250721061411.GA28632@lst.de>
- <20250721235552.GB85006@quark>
+	s=arc-20240116; t=1753171550; c=relaxed/simple;
+	bh=CnMJw8qgm8jE4iaGeacCGl+54rCiaQEFHAWsMGaI+Gs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWs4jyhIMoYzDr9t0a1qBQiu3sVxd+3citFGZPHg3EANEeqiSlmXKqSToNcC3q8+l/Cy+9dJkAYWXMmnPtWiD2sh33H7wZykAMWtI8OOiAOdBwRunzjw6ksw/8vkhVLa5cJucB56lB0No4pWEHwPuRlA55v5aGeuXyUOtxwGFHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WndJokWB; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4555f89b236so51318165e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 01:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753171546; x=1753776346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pfjnB0RzVX1onEBaivwGgg3zlp9uwBQhMC1tQmetXyk=;
+        b=WndJokWBT28u2yETPfCC7YrlyEJifav+jIGw/xBSJPHTnDNFZ+aeuTIfpXvlb5/pHO
+         jZkxU6nbu5UI8HiS5qYqWMrWIqHFMrI6JKw++CChmJHqqg3QocwhEBb9NtXHkqEH7VD6
+         DJEsogX32aKuVuOCk5GjLNmIc2FclSsojwP/WjXAtv1tDu51NZcH0DCWcb5VA/+jZJpJ
+         LOF0HZGpnnWpFFJJ6zMnqvVsBBNd3l5lCExs6amkDLw7mYhJfqTUpBaFYpo0gYZtUaxD
+         pNw+1FOFG3NycC+KotITYl/WjqY9kh9MKMwpYn0cPCrwfEJKbrSTVnoJJlvQvaalP8KW
+         oKBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753171546; x=1753776346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pfjnB0RzVX1onEBaivwGgg3zlp9uwBQhMC1tQmetXyk=;
+        b=H213zR+ZN5euWSTNng+bU3CnSJG6/8UbUgH3ArIggdiANpc3D3ibcqroFretHSOgiM
+         Mr/Wun9ByPdZUNUIU4gUB50bTj7HTNKDSDXVjrStueuZT0HuQ/dhvHOy0Zx7X5hbVpYt
+         mim7LQTNqcrSTB7b0LiA8TC+2Y1d68pi3qbDcMuxWofs06AkgCWmIHx0kIvIc27ybZg3
+         QuZL05THrpOJeDxjFDcmQ74ZsFCX42ZisGqxtmseeKUtnRZ9y2XjgFMJPN0W7w8cGLn5
+         gMsVd4JD9+E3rcT3sjB/IrlKkrDIUgipgyFhluNgw2nL1d60w8+ZA66CUY1lsTACJmz4
+         7GEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpzEmB2zQjCmIwxycWegG+/0cenfjLqWCtqhBQaHsoAvKECyymCENztgwm7XEUsjUCbeUvAZ81kJwVcGPX@vger.kernel.org
+X-Gm-Message-State: AOJu0YySZNZn8cOhHCF9wFcRo/3KgKjqin9BuXycS54vXyUfzhlEdVKV
+	URPdylRekuhM/0I7etN0nkmFmJD0X/om0gOaKaR3d3pZ8erviVxc3s9kNfFFStrm+JS57+3NLyn
+	rx7ZCQtQV6oC6lPJDzttjac9C8bnpIrnrWnvzhtjT
+X-Gm-Gg: ASbGncvNPb4mogVn17uqNVvCe61i4TeGKPBjUARNZIdH+FROyMexcXNdi2iIpucr/4c
+	8XpHZUPT5DhuAsZznZdUSedObljWkD/2WM3pP+H/c4LPdWHrMRf0zRLZNqp+1pFgHX9S8WWOydk
+	s21QAgVWZOhzhF6obMDlSf1IMyxYznQdPAyoaCRcYWhZcZThAGgo9Es/mDYtnhF8+Js6Jz6+zp8
+	H1ImKtAawQl2y0UTLkiVkapEvEdDx6yr7sK
+X-Google-Smtp-Source: AGHT+IEw84d53XcRHbzMwCvvvMTy56CE5J7Uzvc/tFQgaHNn6AVGRHDi9rYuYRwr5tK4BOrSh62WYx6dB29oES2mpvk=
+X-Received: by 2002:a05:600c:3589:b0:456:1d34:97a with SMTP id
+ 5b1f17b1804b1-456357faf96mr180725475e9.9.1753171546498; Tue, 22 Jul 2025
+ 01:05:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721235552.GB85006@quark>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+References: <20250715075140.3174832-1-aliceryhl@google.com> <20250715-glotz-ungefiltert-70f4214f1dbd@brauner>
+In-Reply-To: <20250715-glotz-ungefiltert-70f4214f1dbd@brauner>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 22 Jul 2025 10:05:34 +0200
+X-Gm-Features: Ac12FXzK4ugn78BVvJfIdwke3mdfyD7-O9XOG5GpvkZVg6h4YYAhyi_ttzdDW6U
+Message-ID: <CAH5fLgg-yZ3C3r7psMJ7_rAC8Ep+OUMk6Kmek6u0VAB0RFnG+Q@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: add Rust files to MAINTAINERS
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 21-07-25 16:55:52, Eric Biggers wrote:
-> On Mon, Jul 21, 2025 at 08:14:11AM +0200, Christoph Hellwig wrote:
-> > On Fri, Jul 18, 2025 at 09:04:14AM -0700, Eric Biggers wrote:
-> > > If done properly, fixing this would be great.  I've tried to minimize
-> > > the overhead of CONFIG_FS_ENCRYPTION and CONFIG_FS_VERITY when those
-> > > features are not actually being used at runtime.  The struct inode
-> > > fields are the main case where we still don't do a good job at that.
-> > 
-> > Can you take a look if my idea of not allocating the verity data for
-> > all inodes but just those where verity is enabled and then looking that
-> > up using a rhashtable makes any sense?
-> > 
-> 
-> I wrote a prototype that puts the fsverity_info structs in an
-> rhashtable, keyed by the ownening 'struct inode *'.  It passes the
-> 'verity' group of xfstests on ext4.  However, I'm working on checking
-> how bad the performance and code size overhead is, and whether my
-> implementation is actually correct in all cases.  Unfortunately, the
-> rhashtable API and implementation is kind of a mess, and it seems it's
-> often not as efficient as it should be.
-> 
-> I suppose an XArray would be the main alternative.  But XArray needs
-> 'unsigned long' indices, and it doesn't work efficiently when they are
-> pointers.  (And i_ino won't do, since i_ino isn't unique.)
+On Tue, Jul 15, 2025 at 11:50=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Tue, 15 Jul 2025 07:51:40 +0000, Alice Ryhl wrote:
+> > These files are maintained by the VFS subsystem, thus add them to the
+> > relevant MAINTAINERS entry to ensure that the maintainers are ccd on
+> > relevant changes.
+> >
+> >
+>
+> Applied to the vfs-6.17.rust branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.17.rust branch should appear in linux-next soon.
+>
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs-6.17.rust
+>
+> [1/1] vfs: add Rust files to MAINTAINERS
+>       https://git.kernel.org/vfs/vfs/c/3ccc82e31d6a
 
-As Christoph wrote I don't think XArray is a good alternative. The memory
-overhead is big for sparsely populated key space and that also increases the
-lookup overhead which is O(log N) to start with. Rhashtable should have
-O(1) lookup which is what we are most interested in. So if xarray is faster
-than rhashtable, rhashtable is doing something seriously wrong.
+Thanks! Just a quick follow-up on this. I also sent a patch for the
+pid namespace file:
+https://lore.kernel.org/rust-for-linux/20250714124637.1905722-2-aliceryhl@g=
+oogle.com/
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Also, I forgot to pick up Miguel's Acked-by, but I believe it applies
+to v2 too, so you are welcome to include it in the commit.
+
+Alice
 
