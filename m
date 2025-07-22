@@ -1,247 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-55666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC06B0D840
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 13:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C6FB0DA55
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 14:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747A616FFC7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 11:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572DF3B8E90
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 12:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD082E4248;
-	Tue, 22 Jul 2025 11:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF6C2E425C;
+	Tue, 22 Jul 2025 12:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="Ws1wdTgN"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eSociMXI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638092E3B00;
-	Tue, 22 Jul 2025 11:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E371A0712
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 12:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183854; cv=none; b=swdIx7v8vEYES1OMC89h0Jtb8YWxP+9FsF0h74B/Ed52IUYEPsOlqWPN/mBsTqY1h4u4sSA3he1+1MLi+Mv2JDiefqTihUcSL67SZH2XTgIY4hUxWs+L772+44BgqYgvRL1Clz19XAmI3wRiVdLDNM5R+GgqyVryDAgNlpha1Es=
+	t=1753189170; cv=none; b=a1wXXuSgLI1v/MGrG0/vnEVVXmJtuu7mIq/18TlN6udHruTJIDuS0+oeAqPzTQ6c3BS1Tz/fqL/5QJNPELYXw4ALLvR4EvTkLVQfmlSk8NVT/s8TFepUemMJ7tLxdvv9QXiyPTqmkOq9YPEk+UTgv4PyKcs8DeYXrhdryhp2/yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183854; c=relaxed/simple;
-	bh=MITJCE1IlF6HT+V9//MbpyHBWeYN/SUaK1bNE4b6PVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQuavpKtiIvdrOStQZmVkBrEhe+LzVeCd3lArftH6Ip7cEfvhFMN0ydA5TblWAeEoekZ/ACYzygQJ8f/lnDjDvgzl8RMai1d+8Q2tpm5Jrg0cA1nm7ynWnJT27akopGOIYf4VIQ0ew8KzJzX1UtftfW0Gc+ArucA85LMIJQJtR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=Ws1wdTgN; arc=none smtp.client-ip=51.159.173.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TLBwGdInAMAznILJMgBOsr3ecDdxzL5Zq1ZKt71+DkU=; b=Ws1wdTgNMeHozBhz8Yd5hE14Rt
-	qnTCwNo0mWGpq82BU91+vg+mha9MDmgdf1gEi+fQyCdrlG+futLG3vUGkDYctPPF4xN02TFpDTZ3j
-	nNXn6wyLcpvDY5n6mo1gLnW7MU6/ALWH9ZTRY/DnxAgDhEuLloYMGFeWhqoAkHj/TYbi5IwgNvL5F
-	vDRytTbBJ31yA/aE42Lxb6qxgJlhzB9/CtKxp6JNr2IvmuK/wwtKRAhUL7/EGbuWQA/MDl7XxAPZl
-	PVpCLrbCDYsLstiSbxxXCXnlRLj/ssZw01b6RbcUONFarWf1Wwq+vQ4fGxLsmKuXSEl8aXlxKwTxo
-	TMBFZtkA==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:39555 helo=archlinux)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1ueBCs-0000000GpCM-23ll;
-	Tue, 22 Jul 2025 13:30:50 +0200
-Date: Tue, 22 Jul 2025 13:30:45 +0200
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-To: Jann Horn <jannh@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Subject: Re: [PATCH] fs: hidepid: Fixes hidepid non dumpable behavior
-Message-ID: <ksm3jnswlqb7wqc3ea3uxdrqqnoqcle7bfndg6d2c3vmgt62ay@ctpei66gjh5b>
-References: <20250718-hidepid_fix-v1-1-3fd5566980bc@ssi.gouv.fr>
- <CAG48ez3u09TK=Ju3xdEKzKuM_-sO_y9150NBx3Drs8T1G-V9AQ@mail.gmail.com>
- <s7no7daeq6nmkwrf5w63srpmxzzqk5uor2kxdvrvrskoahh7un@h6kubn7qxli2>
- <CAG48ez1ERkkwd+cJPmLmVj4JKpj5Uq=LaUEpb6_TgC4PRXosUw@mail.gmail.com>
+	s=arc-20240116; t=1753189170; c=relaxed/simple;
+	bh=dNboiCYnvOQ/i/dAAniiFz8Cxzdg0xu2uLo3rxvmf0A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=uRKFJrv3LxoRUWrmY6G9fg6S8cN8Npy7pfm/X2C0TRRN8ngIuhI4IIWhssqq5sqQ5ANUXhTTCfyvHm9lJSO+z5HqMr8HoV+A/qIP5uNdgVwOLOwX4kNiQHYlE22rRI2swGOasiodPHNtjkEjbBqVzrofVwOuZutWzTk/iVI0Z44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eSociMXI; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250722125926epoutp0472e1c5257c694e02908cc2a18bb6b459~UlEIMK0cH1317813178epoutp04h
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 12:59:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250722125926epoutp0472e1c5257c694e02908cc2a18bb6b459~UlEIMK0cH1317813178epoutp04h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753189166;
+	bh=t2N2RdsmomzGRnLA5OCrx1H5380TMeiOrBLlyLmumAI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=eSociMXI/r3TMoFBO2he9W2Zp5hX0PXsB+s1y49jAxDfu/QX3AyOvcYsjFf8fOb2l
+	 VcVv96O891LAbiKJkAtc6C2pHnD6TkmaaAvFfsEpA+gMI++/kZsajEQM3dZhL8ceh/
+	 StlGvY9FsxTcdheQ47s9mXa/P0XINVc7Meq08aiE=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250722125925epcas5p4448e922074292bb7621d1ccae707c08d~UlEHv-pu70936109361epcas5p4a;
+	Tue, 22 Jul 2025 12:59:25 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bmcmD6hQrz6B9m6; Tue, 22 Jul
+	2025 12:59:24 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250722120822epcas5p100667bdb8c199361a66dcef2ae09fdd1~UkXivYGzL0066500665epcas5p12;
+	Tue, 22 Jul 2025 12:08:22 +0000 (GMT)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250722120820epsmtip2b3cbbcaab6ae301751f037453e0a26ee~UkXhFrVyo0221102211epsmtip2j;
+	Tue, 22 Jul 2025 12:08:20 +0000 (GMT)
+From: Anuj Gupta <anuj20.g@samsung.com>
+To: vincent.fu@samsung.com, anuj1072538@gmail.com, axboe@kernel.dk,
+	hch@infradead.org, martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	joshi.k@samsung.com, Anuj Gupta <anuj20.g@samsung.com>, Christoph Hellwig
+	<hch@lst.de>
+Subject: [PATCH v3] block: fix lbmd_guard_tag_type assignment in
+ FS_IOC_GETLBMD_CAP
+Date: Tue, 22 Jul 2025 17:37:55 +0530
+Message-Id: <20250722120755.87501-1-anuj20.g@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1ERkkwd+cJPmLmVj4JKpj5Uq=LaUEpb6_TgC4PRXosUw@mail.gmail.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-CMS-MailID: 20250722120822epcas5p100667bdb8c199361a66dcef2ae09fdd1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250722120822epcas5p100667bdb8c199361a66dcef2ae09fdd1
+References: <CGME20250722120822epcas5p100667bdb8c199361a66dcef2ae09fdd1@epcas5p1.samsung.com>
 
-On Fri, Jul 18, 2025 at 06:48:54PM +0200, Jann Horn wrote:
-> On Fri, Jul 18, 2025 at 5:47 PM Nicolas Bouchinet
-> <nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
-> > Hi Jann, thanks for your review !
-> >
-> > On Fri, Jul 18, 2025 at 04:45:15PM +0200, Jann Horn wrote:
-> > > On Fri, Jul 18, 2025 at 10:47 AM <nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
-> > > > The hidepid mount option documentation defines the following modes:
-> > > >
-> > > > - "noaccess": user may not access any `/proc/<pid>/ directories but
-> > > >   their own.
-> > > > - "invisible": all `/proc/<pid>/` will be fully invisible to other users.
-> > > > - "ptraceable": means that procfs should only contain `/proc/<pid>/`
-> > > >   directories that the caller can ptrace.
-> > > >
-> > > > We thus expect that with "noaccess" and "invisible" users would be able to
-> > > > see their own processes in `/proc/<pid>/`.
-> > >
-> > > "their own" is very fuzzy and could be interpreted many ways.
-> > >
-> > > > The implementation of hidepid however control accesses using the
-> > > > `ptrace_may_access()` function in any cases. Thus, if a process set
-> > > > itself as non-dumpable using the `prctl(PR_SET_DUMPABLE,
-> > > > SUID_DUMP_DISABLE)` it becomes invisible to the user.
-> > >
-> > > As Aleksa said, a non-dumpable processes is essentially like a setuid
-> > > process (even if its UIDs match yours, it may have some remaining
-> > > special privileges you don't have), so it's not really "your own".
-> > >
-> >
-> > Also replying to  :
-> >
-> > > What's the background here - do you have a specific usecase that
-> > > motivated this patch?
-> >
-> > The case I encountered is using the zathura-sandbox pdf viewer which
-> > sandboxes itself with Landlock and set itself as non-dumpable.
-> 
-> It kind of sounds like an issue with your PDF viewer if that just sets
-> the non-dumpable flag for no reason...
-> 
-> > If my PDF viewer freezes and I want to kill it as an unprivileged user,
-> > I'm not able to get its PID from `/proc` since its fully invisible to my
-> > user.
-> >
-> > > > This patch fixes the `has_pid_permissions()` function in order to make
-> > > > its behavior to match the documentation.
-> > >
-> > > I don't think "it doesn't match the documentation" is good enough
-> > > reason to change how the kernel works.
-> > >
-> > > > Note that since `ptrace_may_access()` is not called anymore with
-> > > > "noaccess" and "invisible", the `security_ptrace_access_check()` will no
-> > > > longer be called either.
-> > > >
-> > > > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> > > > ---
-> > > >  fs/proc/base.c | 27 ++++++++++++++++++++++++---
-> > > >  1 file changed, 24 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > > > index c667702dc69b8ca2531e88e12ed7a18533f294dd..fb128cb5f95fe65016fce96c75aee18c762a30f2 100644
-> > > > --- a/fs/proc/base.c
-> > > > +++ b/fs/proc/base.c
-> > > > @@ -746,9 +746,12 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
-> > > >                                  struct task_struct *task,
-> > > >                                  enum proc_hidepid hide_pid_min)
-> > > >  {
-> > > > +       const struct cred *cred = current_cred(), *tcred;
-> > > > +       kuid_t caller_uid;
-> > > > +       kgid_t caller_gid;
-> > > >         /*
-> > > > -        * If 'hidpid' mount option is set force a ptrace check,
-> > > > -        * we indicate that we are using a filesystem syscall
-> > > > +        * If 'hidepid=ptraceable' mount option is set, force a ptrace check.
-> > > > +        * We indicate that we are using a filesystem syscall
-> > > >          * by passing PTRACE_MODE_READ_FSCREDS
-> > > >          */
-> > > >         if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE)
-> > > > @@ -758,7 +761,25 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
-> > > >                 return true;
-> > > >         if (in_group_p(fs_info->pid_gid))
-> > > >                 return true;
-> > > > -       return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
-> > > > +
-> > > > +       task_lock(task);
-> > > > +       rcu_read_lock();
-> > > > +       caller_uid = cred->fsuid;
-> > > > +       caller_gid = cred->fsgid;
-> > > > +       tcred = __task_cred(task);
-> > > > +       if (uid_eq(caller_uid, tcred->euid) &&
-> > > > +           uid_eq(caller_uid, tcred->suid) &&
-> > > > +           uid_eq(caller_uid, tcred->uid)  &&
-> > > > +           gid_eq(caller_gid, tcred->egid) &&
-> > > > +           gid_eq(caller_gid, tcred->sgid) &&
-> > > > +           gid_eq(caller_gid, tcred->gid)) {
-> > > > +               rcu_read_unlock();
-> > > > +               task_unlock(task);
-> > > > +               return true;
-> > > > +       }
-> > > > +       rcu_read_unlock();
-> > > > +       task_unlock(task);
-> > > > +       return false;
-> > > >  }
-> > >
-> > > I think this is a bad idea for several reasons:
-> > >
-> > > 1. It duplicates existing logic.
-> > I open to work on that.
-> >
-> > > 2. I think it prevents a process with euid!=ruid from introspecting
-> > > itself through procfs.
-> > Great question, I'll test that and write some hidepid tests to check that.
-> >
-> > > 3. I think it prevents root from viewing all processes through procfs.
-> > Yes only if combined with yama="no attach", and IMHO, that would make sense.
-> 
-> Why only if combined with yama? Doesn't your code always "return
-> false" on a UID/GID mismatch?
-> 
-Ah yes indeed, if the gid=1000 mount option is used, processes become
-invisible to root since the cap_sys_ptrace check is not called anymore.
+The blk_get_meta_cap() implementation directly assigns bi->csum_type to
+the UAPI field lbmd_guard_tag_type. This is not right as the kernel enum
+blk_integrity_checksum values are not guaranteed to match the UAPI
+defined values.
 
-I understand now it would need almost all of `ptrace_may_access()`
-checks and thus will lead to the same exact behavior. So useless patch.
+Fix this by explicitly mapping internal checksum types to UAPI-defined
+constants to ensure compatibility and correctness, especially for the
+devices using CRC64 PI.
 
-> > > 4. It allows processes to view metadata about each other when that was
-> > > previously blocked by the combination of hidepid and an LSM such as
-> > > Landlock or SELinux.
-> > Arf, you're absolutely right about this, my bad.
-> >
-> > > 5. It ignores capabilities held by the introspected process but not
-> > > the process doing the introspection (which is currently checked by
-> > > cap_ptrace_access_check()).
-> > As suggested by Aleksa, I can add some capabilities checks here.
-> >
-> > >
-> > > What's the background here - do you have a specific usecase that
-> > > motivated this patch?
-> >
-> > The second motivation is that the "ptraceable" mode didn't worked with
-> > the yama LSM, which doesn't care about `PTRACE_MODE_READ_FSCREDS` trace
-> > mode. Thus, using hidepid "ptraceable" mode with yama "restricted",
-> > "admin-only" or "no attach" modes doesn't do much.
-> >
-> > As you have seen, I also have submited a fix to yama in order to make it
-> > take into account `PTRACE_MODE_READ_FSCREDS` traces.
-> 
-> I don't think that's really a fix - that's more of a new feature
-> you're proposing. Yama currently explicitly only restricts ATTACH-mode
-> ptrace access (which can read all process memory or modify the state
-> of a process), and it doesn't restrict less invasive introspection
-> that uses READ-mode ptrace checks.
-> 
-Forget the patch sorry for that, I'll update hidepid documentation in
-order to describe the exact behavior it have. Will send a V2.
+Fixes: 9eb22f7fedfc ("fs: add ioctl to query metadata and protection info capabilities")
+Reported-by: Vincent Fu <vincent.fu@samsung.com>
+Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+---
+ block/blk-integrity.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-> > I have to admit I'm not really found of the fact that those two patch
-> > are so tightly linked.
-> >
-> > Thanks again for your review,
-> >
-> > Nicolas
+diff --git a/block/blk-integrity.c b/block/blk-integrity.c
+index 61a79e19c78f..056b8948369d 100644
+--- a/block/blk-integrity.c
++++ b/block/blk-integrity.c
+@@ -83,7 +83,21 @@ int blk_get_meta_cap(struct block_device *bdev, unsigned int cmd,
+ 	if (meta_cap.lbmd_opaque_size && !bi->pi_offset)
+ 		meta_cap.lbmd_opaque_offset = bi->pi_tuple_size;
+ 
+-	meta_cap.lbmd_guard_tag_type = bi->csum_type;
++	switch (bi->csum_type) {
++	case BLK_INTEGRITY_CSUM_NONE:
++		meta_cap.lbmd_guard_tag_type = LBMD_PI_CSUM_NONE;
++		break;
++	case BLK_INTEGRITY_CSUM_IP:
++		meta_cap.lbmd_guard_tag_type = LBMD_PI_CSUM_IP;
++		break;
++	case BLK_INTEGRITY_CSUM_CRC:
++		meta_cap.lbmd_guard_tag_type = LBMD_PI_CSUM_CRC16_T10DIF;
++		break;
++	case BLK_INTEGRITY_CSUM_CRC64:
++		meta_cap.lbmd_guard_tag_type = LBMD_PI_CSUM_CRC64_NVME;
++		break;
++	}
++
+ 	if (bi->csum_type != BLK_INTEGRITY_CSUM_NONE)
+ 		meta_cap.lbmd_app_tag_size = 2;
+ 
+-- 
+2.25.1
+
 
