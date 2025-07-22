@@ -1,46 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-55637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC387B0D162
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 07:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004E5B0D18F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 07:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFE757A45F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 05:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F04168752
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Jul 2025 05:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88D128C2BE;
-	Tue, 22 Jul 2025 05:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA0828D8C9;
+	Tue, 22 Jul 2025 05:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P3kDcJ1c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9166621CC43
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Jul 2025 05:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5D928CF6B;
+	Tue, 22 Jul 2025 05:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753163356; cv=none; b=MfjP0H5ELxUEz+xwMoe/Mvf4WXwKT8pT0qV71dXlvn4puXgfr8y7YajHFnOV/LfKTrlYzmlLfKOt3uaj/gU5M19GH+YR/dZkP6IkhWzStxI4L1g35MhOyIntytAsdGtWwookfifKWhiEvSozQkHk8DaPXoyYZT07TIDJr6WPs/U=
+	t=1753163955; cv=none; b=OPLD2Kc3xM0BNy4GJXw03fV2AWxHKySw40PLZwZU7Q3YKCZkvzCqKGoNz1CwkvW812xTpmvV4fDtyGxZRBJCcNLhITovMPHxz8J0QFYL7I4yUkTu/wf5O8mx5eu87UO2XN++dFKyiQyZ1TOXfr1FgPsAufEvrsitVdWM3/T5AG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753163356; c=relaxed/simple;
-	bh=TlFvxEHUaDgoa4uFDHKS5AK21R3eTd5ZTflsouUrQdo=;
+	s=arc-20240116; t=1753163955; c=relaxed/simple;
+	bh=dinlk1QJwMX/+sI/SBiMKZoOUaM/VmxQzR0V0OiFN4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLaysRsxhZVKRE1grZTSOLs8w10Eq9HS0VLjSc58zqxSBVyfTy6vV+cJ4uZ8rlqJudblC6hc4uUdilU6OKh9IWqxx79M2SHQdBoHAxiMEM+2AJ8y8K41uSo9V+qTkYj5IWg/5McekBT56GKRFNuvXCAtW3tspxK6tBScOqi7FJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 7CA2068AA6; Tue, 22 Jul 2025 07:49:08 +0200 (CEST)
-Date: Tue, 22 Jul 2025 07:49:08 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
-	Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKUvR7rUWgrfjUJFHvAO60rbSZTzYmpqcPN3oopCPijyv9k4QHgsJBHkgsysDXeKPy9H3LfeqRsbFeOvhx0cEDszk4jdl3C3HXmPj/HYunK4Gq858ykTfmSFRtGG2YgXdYLRHbbAhH/UUoucr2ZgMgaCmV53M7thQfYpPnjBe60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P3kDcJ1c; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dinlk1QJwMX/+sI/SBiMKZoOUaM/VmxQzR0V0OiFN4E=; b=P3kDcJ1cLjlA778aEHPIId4xkO
+	GxsWuvToia4Ks95bIa7pLdq4Acyf2auvafrCcuUlkYTTBqCW95+KF4/4rtiaZm3oe4MwoZ8s0upjP
+	5hiRLEnh55Doc367UoyTJsC7Jhayk0R9BSfLLkrN3ClYGWLpCcAt2bK2w0LDYTTWyB2/C3XBUjwSA
+	vgQQfpsDuSrIxvOKrIH+lgU/536FjD5tRv32M+5+9o5RxMVvXzQPKE5uc9m5PBXKAx5kD47lmRCb7
+	i3SSQ9s1vXLzpkAGs20tLhdWeb6PjH/irCdFxpipNs8aFmUROLmoeCnClBdNF90t7c9vaq7y6QQKe
+	vAYyy4Ug==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ue61x-00000001Nkf-1F3m;
+	Tue, 22 Jul 2025 05:59:13 +0000
+Date: Mon, 21 Jul 2025 22:59:13 -0700
+From: 'Christoph Hellwig' <hch@infradead.org>
+To: hoyoung seo <hy50.seo@samsung.com>
+Cc: 'Christoph Hellwig' <hch@infradead.org>, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
+	beanhuo@micron.com, bvanassche@acm.org, kwangwon.min@samsung.com,
+	kwmad.kim@samsung.com, cpgs@samsung.com, h10.kim@samsung.com,
+	willdeacon@google.com, jaegeuk@google.com, chao@kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC DRAFT DOESNOTBUILD] inode: free up more space
-Message-ID: <20250722054908.GA13599@lst.de>
-References: <20250715-work-inode-fscrypt-v1-1-aa3ef6f44b6b@kernel.org> <20250718160414.GC1574@quark> <20250721061411.GA28632@lst.de> <20250721235552.GB85006@quark>
+Subject: Re: [PATCH v1] writback: remove WQ_MEM_RECLAIM flag in bdi_wq
+Message-ID: <aH8osRbuecxTLur4@infradead.org>
+References: <CGME20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3@epcas2p2.samsung.com>
+ <20250721064024.113841-1-hy50.seo@samsung.com>
+ <aH3on5GBd6AfgJuw@infradead.org>
+ <000001dbfa1a$a2a1ad80$e7e50880$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,29 +68,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721235552.GB85006@quark>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <000001dbfa1a$a2a1ad80$e7e50880$@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Jul 21, 2025 at 04:55:52PM -0700, Eric Biggers wrote:
-> I wrote a prototype that puts the fsverity_info structs in an
-> rhashtable, keyed by the ownening 'struct inode *'.  It passes the
-> 'verity' group of xfstests on ext4.  However, I'm working on checking
-> how bad the performance and code size overhead is, and whether my
-> implementation is actually correct in all cases.  Unfortunately, the
-> rhashtable API and implementation is kind of a mess, and it seems it's
-> often not as efficient as it should be.
+On Mon, Jul 21, 2025 at 05:37:03PM +0900, hoyoung seo wrote:
+> No way..
+> It's because i just don't know much about this part.
+> And WQ_MEM_RECLAIM flag is absolutely necessary.
 
-While not exactly the prettiest API I think it isn't too bad if you
-stick to the simple parts.  Having spent some time with it I'd be
-happy to look over your code.
-
-> I suppose an XArray would be the main alternative.  But XArray needs
-> 'unsigned long' indices, and it doesn't work efficiently when they are
-> pointers.  (And i_ino won't do, since i_ino isn't unique.)
-
-I'm not sure an xarray is a good fit, as the xarray works best when
-the indices are clustered, which they probably won't be here.
-But the unsigned long should not be a problem, just hash the inode
-pointer instead of i_ino.
+As a rule of thumb try to write an explanation why a change is safe.
+That usually kicks of a process to think about the implications.
 
 
