@@ -1,169 +1,238 @@
-Return-Path: <linux-fsdevel+bounces-55913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B589B0FDC6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 01:52:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1190B0FDCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 01:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBA5F7A71EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 23:50:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29CE548422
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 23:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2BA272E48;
-	Wed, 23 Jul 2025 23:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A9627380A;
+	Wed, 23 Jul 2025 23:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKLSPZEw"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="xs3esqA+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27A61EF0A6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 23:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD0E215055;
+	Wed, 23 Jul 2025 23:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753314733; cv=none; b=SnIp7kA1nlLHzewweb2ZN7WzV3g0DX8JJKwX80x4UaG+QpZv6Bt7xfCedmTfGr9IRFvi7O2zidivmc1otPpJ7/bLth/sBMDwEM0akJPbUadWQux1XQDaVazt+l5AgPOVM0hhuyJt5b8kufMARDnIC3VXqrLfX04HXIvlL2r5Kn8=
+	t=1753314932; cv=none; b=XX8+a/WXI/dm/Waj+FS0Bw6Zzs8y0YMUlLqiHRfr95Xqu7Taaqes9QnNqhEd8Pfrngbma+gUqdfdELwXzJsA2OVwEWYnG73wTG0QcONJZNlRP7GVyJzdtPasrSo2d/OhVbYJ/wKS9v2dDdgeP7+HgpQEPuRBKhZV1+PtLBZkmdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753314733; c=relaxed/simple;
-	bh=S/um9K8fQEZCv73qr1RUHfDMeTJfg8S212yGgFnFaMw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KNz5UZF8vjCU7X4qbm3PjWik4FrrlcH+qB2nRADbsjKEaBtaMwXuawaZQlS5sZUihYSvAbmmekdxmOsNizOjzPYCOTgPWiTEtwe67pvM9ekPhskjmHZMufxmEUoollyvD/pVQKDDq/+OjF38PyFHa/VatstmbfnV1TNVc+g/dDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKLSPZEw; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ab6b3e8386so4785571cf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 16:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753314731; x=1753919531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ee54U/m2gdfqXxDyk4rZd/GHFKfrJgszqDwb2Rmzk3Y=;
-        b=WKLSPZEwGkznvbkGaeIka3d0vbXToyogr7l1z8QMKpoGDC2JHNI0pnJ9jVEblvWzJA
-         bi2eeIiebPRLlDhYvalVwFOKkRl2rnK6cNwzi9TRybMpH7Xn+DbFUC9ZM+x9tt/IcgJs
-         3/n2VlKDR3ltT2KUfaDFbL3VxI5SoTE5DXlTX5nvYWrJlDcIXECQaKJs4m3yyvfZDqTk
-         edGOWcfgOpSwf2JOiymq9MGcxsuoy3pjRB8MPneE5Ic2PdysGZx9egyZzNz2Aux455g8
-         ZwaB7jMpXlN0pkweQl2dT1Qppswi+MSh8oVJelOyNpHeBGzDJi6w29ITUoqZkg/9d9bO
-         mMXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753314731; x=1753919531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ee54U/m2gdfqXxDyk4rZd/GHFKfrJgszqDwb2Rmzk3Y=;
-        b=LUpQz88Df72xXTbT5F8dB8IdoIhPaRA34onxQhcRA7GQsXou17ia26mXkIhwkUlyZb
-         q5b172ECiCZIiKG5TDtfYaRK0swKQ91FhPTXyNkQa4Jo3pvM+jXcX65oKKvuwltrFkWG
-         GUr7eqnwYLF8aOd5huVAUZdrWIVeGA88OausXLjvdYo/1kFcuTWFOWvSVdg90h0aRNxa
-         d9kXTreQ1ttFH+/2u8ypMD2JFnGpk6Pt8rNrjKHicuPNjOP/24gYf2zZYOnCKb7LYIUy
-         5Y0OfJoEL2xyGEWxnlcyi4rDJ1XyJPTkda60O3Lu2Fump3cNIhL+ZgUkJzMdHrdO1VYK
-         03LA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBrZ1NGSANxU4DThBqjhqquDJO+FovszmTNHXU7kopPE+e06MlZndZodjt3JBrxXnAPkbKOYZpSbp3TR7z@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH3kBDv/r930yh8xk1Uki0gBkigOBMi/ru2GduDTYRD8D5eY3u
-	TSwuKNwcvSru9c73IvuENqm0Y/wsZxS1GfuuOlLfBXkyWmNeYm9UZS5GIBj2uAZMZJZ14vAfCTb
-	rxY8VZSiU3Ls6PKBzrwX5lpvOTZZQpESLQDPv0Q8=
-X-Gm-Gg: ASbGncuIaUQQeemfAX6v1k+l0AgqKgcoVWDiS7Tyvkr4D7DaXLfWhIWPm9nDuDUOWEa
-	b2pGljp9D+QuQxPyalGhIIedKu4tA9T5h4T/Z2SB592gELbTS5oLfWNLPtfOy5mp4lHjOc+AfA9
-	UAPOsLN0jpM9U04XpDMSTiKZgFbN6Ov+G0XuAO2r8vRp0OEJ5wVv0Lfssy5E41BX/RLAarjqgU8
-	ZblWlk=
-X-Google-Smtp-Source: AGHT+IEMRnbgAKZOxyuUQQiruj3steQESdzwy7vNKBKjHqVthCYNDmtR44+IIXkos0BuHE11p2CQVcXizXOpjf4iy6k=
-X-Received: by 2002:ac8:59cc:0:b0:472:1d98:c6df with SMTP id
- d75a77b69052e-4ae6dfb8872mr78046391cf.52.1753314730629; Wed, 23 Jul 2025
- 16:52:10 -0700 (PDT)
+	s=arc-20240116; t=1753314932; c=relaxed/simple;
+	bh=5Rkl6QkujiSWyv84mlJ0xwNtng60dAwf1DJAIOq9JbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4kuGg0cqSm3bmR5xYI+coSvNd8ENj7ClrLuegZTO6F+r4Bq1/vWwwwTpvqklRtGigspjVLV3ctj4DZm6N6hiM4DWAIRJtsI8MO41XhiXOL5emwbyeVhzUikK+ycGealUnDIFhMuayL9noJrEn2H/O7XTeiZTDdiI7dayPsGmKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=xs3esqA+; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bnWGc3P5sz9ssw;
+	Thu, 24 Jul 2025 01:55:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1753314920;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=adkKVU2xcTSCol5IeKbXbR2OHCXr05cLR6HT03bl1E8=;
+	b=xs3esqA+LbZikdpw0S1ONQQsAJpNNRItL+NhgVpCCBvSmDJvo/Cghe6Ldn7FVrH4QfegqY
+	WVs4QBukb5HrYTE+wN+kxmukZtaZZ/2sW8qkJ3WdRZdNYrfev7vK0U++E/MBdqhihbm6Im
+	+MVV2PH24WP0dXnROYRAEKP3BZh9kyrNSLHr0bxovByxKvi6VQhEvLT9SY2/n3ZmSwP0ga
+	g4D1mwDAJmqPPsseQTW0y4HRbBOPAib55PK33Vlhti+otkyCg+AIKt5McnHdSKYYYybwQ8
+	uAStCNBzUXyziMmWl4KfxBv3Ca6PEsdz6zEfjMZt41XtaG/B+gs4QJpzQvU6FQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 24 Jul 2025 09:55:05 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC 0/4] procfs: make reference pidns more user-visible
+Message-ID: <2025-07-23.1753314869-silly-creamer-crushed-cabana-proper-jury-FaB28g@cyphar.com>
+References: <20250721-procfs-pidns-api-v1-0-5cd9007e512d@cyphar.com>
+ <CALCETrVo+Mdj7as2R0R+FqTBbjqwTkXu5Zkj=dg8EVM9xRhBPw@mail.gmail.com>
+ <20250721.150803-lavish.ninja.rigid.racism-OCjeOw80sO9@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723-bg-flush-v1-0-cd7b089f3b23@ddn.com> <20250723-bg-flush-v1-2-cd7b089f3b23@ddn.com>
-In-Reply-To: <20250723-bg-flush-v1-2-cd7b089f3b23@ddn.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 23 Jul 2025 16:51:59 -0700
-X-Gm-Features: Ac12FXz8Cq5kWY-bdfaoNt1PSPk3VsqHeEkMKwG7ZoX09s3y38FIT9niJ06JcGU
-Message-ID: <CAJnrk1bbT7QnEfY-Kp_NOmrS-EZW92qwddKTgruMKe-WGMneiA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fuse: Flush the io-uring bg queue from fuse_uring_flush_bg
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	"Darrick J. Wong" <djwong@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i6lgalhwjitwn6se"
+Content-Disposition: inline
+In-Reply-To: <20250721.150803-lavish.ninja.rigid.racism-OCjeOw80sO9@cyphar.com>
+X-Rspamd-Queue-Id: 4bnWGc3P5sz9ssw
+
+
+--i6lgalhwjitwn6se
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC 0/4] procfs: make reference pidns more user-visible
+MIME-Version: 1.0
 
-On Tue, Jul 22, 2025 at 3:42=E2=80=AFPM Bernd Schubert <bschubert@ddn.com> =
-wrote:
->
-> This is useful to have a unique API to flush background requests.
-> For example when the bg queue gets flushed before
-> the remaining of fuse_conn_destroy().
->
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> ---
->  fs/fuse/dev.c         | 2 ++
->  fs/fuse/dev_uring.c   | 3 +++
->  fs/fuse/dev_uring_i.h | 4 ++++
->  3 files changed, 9 insertions(+)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 5387e4239d6aa6f7a9780deaf581483cc28a5e68..d5f2fb82c04bf1ee7a35cb1d6=
-d43e639270945af 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -2408,6 +2408,8 @@ void fuse_flush_requests(struct fuse_conn *fc, unsi=
-gned long timeout)
->         spin_unlock(&fc->bg_lock);
->         spin_unlock(&fc->lock);
->
-> +       fuse_uring_flush_bg(fc);
+On 2025-07-22, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On 2025-07-21, Andy Lutomirski <luto@amacapital.net> wrote:
+> > On Mon, Jul 21, 2025 at 1:44=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com=
+> wrote:
+> > >
+> > > Ever since the introduction of pid namespaces, procfs has had very
+> > > implicit behaviour surrounding them (the pidns used by a procfs mount=
+ is
+> > > auto-selected based on the mounting process's active pidns, and the
+> > > pidns itself is basically hidden once the mount has been constructed).
+> > > This has historically meant that userspace was required to do some
+> > > special dances in order to configure the pidns of a procfs mount as
+> > > desired. Examples include:
+> > >
+> > >  * In order to bypass the mnt_too_revealing() check, Kubernetes creat=
+es
+> > >    a procfs mount from an empty pidns so that user namespaced contain=
+ers
+> > >    can be nested (without this, the nested containers would fail to
+> > >    mount procfs). But this requires forking off a helper process beca=
+use
+> > >    you cannot just one-shot this using mount(2).
+> > >
+> > >  * Container runtimes in general need to fork into a container before
+> > >    configuring its mounts, which can lead to security issues in the c=
+ase
+> > >    of shared-pidns containers (a privileged process in the pidns can
+> > >    interact with your container runtime process). While
+> > >    SUID_DUMP_DISABLE and user namespaces make this less of an issue, =
+the
+> > >    strict need for this due to a minor uAPI wart is kind of unfortuna=
+te.
+> > >
+> > > Things would be much easier if there was a way for userspace to just
+> > > specify the pidns they want. Patch 1 implements a new "pidns" argument
+> > > which can be set using fsconfig(2):
+> > >
+> > >     fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+> > >     fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid=
+", 0);
+> > >
+> > > or classic mount(2) / mount(8):
+> > >
+> > >     // mount -t proc -o pidns=3D/proc/self/ns/pid proc /tmp/proc
+> > >     mount("proc", "/tmp/proc", "proc", MS_..., "pidns=3D/proc/self/ns=
+/pid");
+> > >
+> > > The initial security model I have in this RFC is to be as conservative
+> > > as possible and just mirror the security model for setns(2) -- which
+> > > means that you can only set pidns=3D... to pid namespaces that your
+> > > current pid namespace is a direct ancestor of. This fulfils the
+> > > requirements of container runtimes, but I suspect that this may be too
+> > > strict for some usecases.
+> > >
+> > > The pidns argument is not displayed in mountinfo -- it's not clear to=
+ me
+> > > what value it would make sense to show (maybe we could just use ns_dn=
+ame
+> > > to provide an identifier for the namespace, but this number would be
+> > > fairly useless to userspace). I'm open to suggestions.
+> > >
+> > > In addition, being able to figure out what pid namespace is being used
+> > > by a procfs mount is quite useful when you have an administrative
+> > > process (such as a container runtime) which wants to figure out the
+> > > correct way of mapping PIDs between its own namespace and the namespa=
+ce
+> > > for procfs (using NS_GET_{PID,TGID}_{IN,FROM}_PIDNS). There are
+> > > alternative ways to do this, but they all rely on ancillary informati=
+on
+> > > that third-party libraries and tools do not necessarily have access t=
+o.
+> > >
+> > > To make this easier, add a new ioctl (PROCFS_GET_PID_NAMESPACE) which
+> > > can be used to get a reference to the pidns that a procfs is using.
+> > >
+> > > It's not quite clear what is the correct security model for this API,
+> > > but the current approach I've taken is to:
+> > >
+> > >  * Make the ioctl only valid on the root (meaning that a process with=
+out
+> > >    access to the procfs root -- such as only having an fd to a procfs
+> > >    file or some open_tree(2)-like subset -- cannot use this API).
+> > >
+> > >  * Require that the process requesting either has access to
+> > >    /proc/1/ns/pid anyway (i.e. has ptrace-read access to the pidns
+> > >    pid1), has CAP_SYS_ADMIN access to the pidns (i.e. has administrat=
+ive
+> > >    access to it and can join it if they had a handle), or is in a pid=
+ns
+> > >    that is a direct ancestor of the target pidns (i.e. all of the pids
+> > >    are already visible in the procfs for the current process's pidns).
+> >=20
+> > What's the motivation for the ptrace-read option?  While I don't see
+> > an attack off the top of my head, it seems like creating a procfs
+> > mount may give write-ish access to things in the pidns (because the
+> > creator is likely to have CAP_DAC_OVERRIDE, etc) and possibly even
+> > access to namespace-wide things that aren't inherently visible to
+> > PID1.
+>=20
+> This latter section is about the privilege model for
+> ioctl(PROCFS_GET_PID_NAMESPACE), not the pidns=3D mount flag. pidns=3D
+> requires CAP_SYS_ADMIN for pidns->user_ns, in addition to the same
+> restrictions as pidns_install() (must be a direct ancestor). Maybe I
+> should add some headers in this cover letter for v2...
+>=20
+> For the ioctl -- if the user can ptrace-read pid1 in the pidns, they can
+> open a handle to /proc/1/ns/pid which is exactly the same thing they'd
+> get from PROCFS_GET_PID_NAMESPACE.
+>=20
+> > Even the ancestor check seems dicey.  Imagine that uid 1000 makes an
+> > unprivileged container complete with a userns.  Then uid 1001 (outside
+> > the container) makes its own userns and mountns but stays in the init
+> > pidns and then mounts (and owns, with all filesystem-related
+> > capabilities) that mount.  Is this really safe?
+>=20
+> As for the ancestor check (for the ioctl), the logic I had was that
+> being in an ancestor pidns means that you already can see all of the
+> subprocesses in your own pidns, so it seems strange to not be able to
+> get a handle to their pidns. Maybe this isn't quite right, idk.
+>=20
+> Ultimately there isn't too much you can do with a pidns fd if you don't
+> have privileges to join it (the only thing I can think of is that you
+> could bind-mount it, which could maybe be used to trick an
+> administrative process if they trusted your mountns for some reason).
+>=20
+> > CAP_SYS_ADMIN seems about right.
+>=20
+> For pidns=3D, sure. For the ioctl, I think this is overkill.
 
-I think we'll need to get rid of the
-"WARN_ON_ONCE(ring->fc->max_background !=3D UINT_MAX);" in
-fuse_uring_flush_bg() since fuse_flush_requests() sets
-fc->max_background to UINT_MAX a few lines above before making this
-call.
+My bad, I forgot to add you to Cc for v2 Andy. PTAL:
 
+ <https://lore.kernel.org/all/20250723-procfs-pidns-api-v2-0-621e7edd8e40@c=
+yphar.com/>
 
-Thanks,
-Joanne
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
 
-> +
->         /*
->          * Wait 30s for all the events to complete or abort.  Touch the
->          * watchdog once per second so that we don't trip the hangcheck t=
-imer
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index eca457d1005e7ecb9d220d5092d00cf60961afea..acf11eadbf3b6d999b310b5d8=
-a4a6018e83cb2a9 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -123,6 +123,9 @@ void fuse_uring_flush_bg(struct fuse_conn *fc)
->         struct fuse_ring_queue *queue;
->         struct fuse_ring *ring =3D fc->ring;
->
-> +       if (!ring)
-> +               return;
-> +
->         for (qid =3D 0; qid < ring->nr_queues; qid++) {
->                 queue =3D READ_ONCE(ring->queues[qid]);
->                 if (!queue)
-> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> index 55f52508de3ced624ac17fba6da1b637b1697dff..ae806dd578f26fbeac12f880c=
-d7b6031a56aec00 100644
-> --- a/fs/fuse/dev_uring_i.h
-> +++ b/fs/fuse/dev_uring_i.h
-> @@ -206,6 +206,10 @@ static inline bool fuse_uring_request_expired(struct=
- fuse_conn *fc)
->         return false;
->  }
->
-> +static inline void fuse_uring_flush_bg(struct fuse_conn *fc)
-> +{
-> +}
-> +
->  #endif /* CONFIG_FUSE_IO_URING */
->
->  #endif /* _FS_FUSE_DEV_URING_I_H */
->
-> --
-> 2.43.0
->
->
+--i6lgalhwjitwn6se
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaIF2WQAKCRAol/rSt+lE
+byrQAQDSb5GrHSNEL0F882yj0V9aT+2idljnDmsMGNvtV4Yb8QD+PnGyDg9rgG4f
+NMqT6s5tlpun08MU8faoFumIO4Nhrw4=
+=ZeKP
+-----END PGP SIGNATURE-----
+
+--i6lgalhwjitwn6se--
 
