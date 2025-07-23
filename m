@@ -1,57 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-55775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B62B0E8AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 04:32:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04C7B0E955
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 05:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B94911C87D63
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 02:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38713A705D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 03:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F1B1DDC0B;
-	Wed, 23 Jul 2025 02:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A443A1E04AD;
+	Wed, 23 Jul 2025 03:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lWvfWsS1"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kX7Rwi8+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F692111BF;
-	Wed, 23 Jul 2025 02:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C00E2AE72;
+	Wed, 23 Jul 2025 03:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753237959; cv=none; b=ayqz/lhRjfiLUfWBSg/KhGJSyY+Ad7UOxge3LFLRd2EvOIudRBg2vKKNaW0+YuHk2ur9QN3l27I1WgpMli8tlmCUJotfm8Z/0Hor0y+ry5Uelwy8zPPPcOeZ4m0VyndrNrO73oNJ1bcvjwZMg3aQXRBJBM8oPR1JZ1Qfr7EzhDs=
+	t=1753242551; cv=none; b=sSaYGIu1hz64cqGLl/SB7F4gdbLBaYsLLssdkSph5uNnE/uQMdLHHIxAq6OVOqnGKsOXTUwbdNrWqu9mGmpavq7h++9E8xh/NXWR465mgmDHGEVijWOdfIdAS8TQb5IQNb7aDnQfE4VvkE6+Qwqp5scFK6S+EV2B6ls0AM/3NZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753237959; c=relaxed/simple;
-	bh=w4kZKJvPwi76U1MKCa3gr6+XmhuntU3PT+X7+AO7CQs=;
+	s=arc-20240116; t=1753242551; c=relaxed/simple;
+	bh=uP8pg53IOW1x+mnBF9LVUJmo/Px1+Dd9C0NDn8AHZ68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9vG9Xwhbdd6koFPPzddP3Q0NG2iP7NGgRGVuGDomVpxAKySu7ExHlywBddNSJcwGFF8b008xvWP7xQaHecYxQDtvxiDqzFuMkY7uLw2Dh4brqzUeFdslVpjbeI5JAsdhKOHbnH3VxsHKRULOuAjzkmg6WK9BaDGpBeuK2t7P9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lWvfWsS1; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=nA4n+qrhCtuYbNMWJ7fvLbTg8mG7wn+ml9svBevANd8PRPKcfqxYLxrhnrkFf3P/En3gTOw/ySNT23VjAysKSzjWImATag5RLOi2pBvMJMeT2oo9037ixhpVCPKlHMI3j+Cd+wuCymbeQ3/l32I8vfqLsBCIUnX5koMExsVckeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kX7Rwi8+; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DLPxMt6bqkIRsK3lPc2ugQPcGXoJwyKCqfZJo4el2hE=; b=lWvfWsS1j8xIHx/DJyKkkMxNMn
-	R2bbOvx59Vr6irEpcjlM9CFmSqm8qH7pGaIVSDMHqkU9H9SA/+cMpCg0TlIDEpKggX3KQe+mPLyj8
-	0TRVF/Wej7EB7QmA6asseRPm3f7Kjqb4WoPGLCMG0cAJ2TG6j9+9d+zFATLvF089TMHlpc4xGExKC
-	kQIwoV3iv3JY4bojJZg1bBjeB0u5RYkJvR+6ULxJOKHCynYmKMcEQHA6lcQl22Fkvx/8hqZqzRWR3
-	AtRVNPkrK8MFV6DZL57Vvdidg3zcabcU19exYREuBIlX0EQ32vvSwPZH8TToCccHWZBk1zloCj6OW
-	dtog/CPw==;
+	bh=Q5RU45U8nmhOn3JoGvW7gjfJN0+I6bGK6xzj0rg2pJ0=; b=kX7Rwi8+cQFEyz9f+GGinQ4tZ5
+	S3+nzms96Xhf+Rj5eyPkV/AB0/sWrurrZBvB88KSFRWmrySGuaCtobAVkoLQbFz5rC9sZO11BqpQd
+	eN8/gjN1xkKvRLWu2Sg8A1urBbdtQcIZcPOkAPsrS8vOZAjIxqV2Vb510f37JJ/wXRiUUWFz/eSC+
+	DRG2WfYwRk+il38T5HUW7vZQ11rkjHpwnq2Lg0esX7NYhs90x8pFP336pI6WhkqvGXtYHPt065wfO
+	iIyJb2KbuskmNX679BdLbjUzpDmpQlHVihmIcV6FMV3L+Tv0EFfGj14GSVwhBcfPd7+yAcVFgzkak
+	AtdjFKuw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uePHV-000000053uX-2BJU;
-	Wed, 23 Jul 2025 02:32:33 +0000
-Date: Wed, 23 Jul 2025 03:32:33 +0100
+	id 1ueQTW-00000005d95-1zeb;
+	Wed, 23 Jul 2025 03:49:02 +0000
+Date: Wed, 23 Jul 2025 04:49:02 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: slava@dubeyko.com, glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] hfsplus: fix to update ctime after rename
-Message-ID: <20250723023233.GL2580412@ZenIV>
-References: <20250722071347.1076367-1-frank.li@vivo.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org, fsverity@lists.linux.dev
+Subject: Re: [PATCH v3 01/13] fs: add fscrypt offset
+Message-ID: <20250723034902.GN2580412@ZenIV>
+References: <20250722-work-inode-fscrypt-v3-0-bdc1033420a0@kernel.org>
+ <20250722-work-inode-fscrypt-v3-1-bdc1033420a0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,29 +65,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250722071347.1076367-1-frank.li@vivo.com>
+In-Reply-To: <20250722-work-inode-fscrypt-v3-1-bdc1033420a0@kernel.org>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Jul 22, 2025 at 01:13:45AM -0600, Yangtao Li wrote:
+On Tue, Jul 22, 2025 at 09:27:19PM +0200, Christian Brauner wrote:
+> Store the offset of the fscrypt data pointer from struct inode in struct
+> super_operations. Both are embedded in the filesystem's private inode.
+> 
+> This will allow us to drop the fscrypt data pointer from struct inode
+> itself and move it into the filesystem's inode.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  include/linux/fs.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 96c7925a6551..991089969e71 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2332,6 +2332,7 @@ enum freeze_holder {
+>  };
+>  
+>  struct super_operations {
+> +	ptrdiff_t i_fscrypt;
 
-> @@ -552,9 +553,13 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
->  	res = hfsplus_rename_cat((u32)(unsigned long)old_dentry->d_fsdata,
->  				 old_dir, &old_dentry->d_name,
->  				 new_dir, &new_dentry->d_name);
-> -	if (!res)
-> -		new_dentry->d_fsdata = old_dentry->d_fsdata;
-> -	return res;
-> +	if (res)
-> +		return res;
-> +
-> +	new_dentry->d_fsdata = old_dentry->d_fsdata;
-
-	Umm...  Is that assignment (either before or after that patch)
-actually correct?
-
-	Note that new_dentry essentially got unlinked here; old_dentry
-is about to have its parent/name changed by the caller of ->rename(),
-so...  that looks very odd.
-
-	What is that line about?
+Umm...  Why not put that into super_block itself?
 
