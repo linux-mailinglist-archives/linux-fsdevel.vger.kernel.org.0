@@ -1,219 +1,308 @@
-Return-Path: <linux-fsdevel+bounces-55902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFA7B0FB6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 22:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA196B0FBED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 23:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE2B7B6BB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 20:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADC0AA1BC3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 21:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E34C235BE1;
-	Wed, 23 Jul 2025 20:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4712D20E31C;
+	Wed, 23 Jul 2025 21:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fqjs5itc"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mbCGSZTn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5083C1F4190
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 20:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7480D80C02
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 21:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753302480; cv=none; b=DLdbdbGvfRKRUFl1HFaKxzIhermfCF1sv6mGBKuW5FocjWNTsVf+iWXK0eTe+YXzXyS+rTbu/KceD7aLGJT8hraNcmU4jY4nb3B14/c9cj8UgTwZuanzs1/2F25jkI2cfmzkMmQfpvXD2Xh+sV4P3TaSLbCL6Fdg8xxzaI3Oa2o=
+	t=1753304517; cv=none; b=NENpxGCG9krYyZpnVWZsV1AOffrE56JotloJVXgMEyGD85LwAX75TRYgFCvn3qmvjpMqwxqUkieJP8/pD8zR4SAQEOV2vXmBjq1zBH9Gcmsfpb7zV5DZ/q0sYdvcUfqxPwo1JapbskYSVGQYNoUz0F9f25nPmxSjuknLDbo5B0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753302480; c=relaxed/simple;
-	bh=6sHH4y6pbmtlPuK4o/3Q6KiyP8xoESQjIMosnrRGVT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nF2/gbmRtCLwSUM2SMMCdAL91duHg+xK5wrhUJmbvCj6ny8QkyZ64yOEOJntwPcbJf13yrV/K1oItRZginZZuWMlszafAk3JNGeBnfYFNgsHu6++wV5QFileVcy5QzvqGBjDTEqbZ7UJCm//I7GRz9tD6WSfs3KvkD53Wz03DO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fqjs5itc; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ab814c4f2dso6976041cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 13:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753302476; x=1753907276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zup4llA5suzNHXA5nWbYBpl9Do+jaAKdKpt+Fi/54xA=;
-        b=Fqjs5itc5kWxGKTVEcsNewlRUUaUmxwoKp6znZo5DhqUOVh8gxmN7MUuy/H8vVPcfg
-         Yl6qb0lxRUfGWU37ASgBIxPbxuMUHO9iC+MpZzLJKTTyz1mq5/2O0HHD2n/3zS++Z7h2
-         gz5x+W8ykWhYXoeDuxXPZZJa3s/jsEFfiO1H5TfAzMdiYTDEv2/P5KfejACV2rZSpIuL
-         fE/2en0nE3dycMlq7H5rAiVnNL5RutBp3cgcscnvDtOiclDgIRMTJ3d2ehU0V9i1L2+D
-         uaRoMLbgT8DUjCWVuy7DTvtLZwN2S0Bk6zEm8YG/gZG6fJjl57Twdjd5s5iQ8RiHfvdG
-         +nZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753302476; x=1753907276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zup4llA5suzNHXA5nWbYBpl9Do+jaAKdKpt+Fi/54xA=;
-        b=DLoP7WIqN2sOg1t09K3QAOStMxMfVBdXhv5THap5+2I4L+pEG5Gt62ASa97M0iwjZX
-         C4wa5ofnf1BtrNjIhrflD5LzIX9wyEQTPwIVkLns7wivnKuRnD0ckXdy4MqgWn+N45PX
-         B/MNKzp5LjN1uUosy3saAvKlRkAaeNcZefC1ciJoCWnWQSGDQtdjfLZRoFIZo9Lu+jvX
-         JekW0TgBHVX64RIUNzVah/xg+pb2zUNKvXd+NJLYELEAXeZc56oyLLAxg4G5K1TUCPPM
-         CbkJGKOhpZhWK+qiXKQEDsPCo5XvZVMS8KMXYFZ8Y5W4oEhfVLHI114VRfIqESpx1+Y8
-         BI7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjVFUoHuLAh1ZSMZJUlOE7VgrStMw7bCzLTMxXvf2RxW5116KH+tU0rSb19jKA/pTk/eETgLtsujOvktQa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrR2T4KssHv7lgsi9tVzFl0AgfyBuleuFuyRlnsrnb6w7JEYdT
-	pF/cICbta8w+Lf9CmkDN73JHa3OP/G9AA14pIvQlIprbDqybTqXWS5fLuxbNhY6JRbz9SuvF8+/
-	fS40zQm1BS3j7omroSAgCh+Bu7hHy8m0=
-X-Gm-Gg: ASbGncvrXmzCklvEShoLXqG/8sxiruADRlwLCVu8Ttsoex5N6oSnhvHXH7WpGR2Penn
-	IbsYkDPuzesTcBpnXNdUqu9z0UGRRPLXy+3iBxDimkjdAraMNvnn5HMLlt2ENOo3IeQJ3XDcRSN
-	weMhwvACVwZgscWu4nBXL3E48WZlZAM7DOl3wZTMMwvxnkO29zBqFp13zCliou17I460M2Uay3O
-	cQz6nQ=
-X-Google-Smtp-Source: AGHT+IGEg5yw9hKmi3sUbcwcxfUZnuxF+yZKvcI/UbDaLV7bBzYNfde2uLrhbj0tA37pYp9s8ECzVSfy//UYXbhH7+A=
-X-Received: by 2002:a05:622a:5c10:b0:4ab:8f1b:c033 with SMTP id
- d75a77b69052e-4ae6df55cbbmr70077681cf.30.1753302476052; Wed, 23 Jul 2025
- 13:27:56 -0700 (PDT)
+	s=arc-20240116; t=1753304517; c=relaxed/simple;
+	bh=n+0HSs87fesXbREkl+dtrCopS3LC+zQD7e1RCVVR3QQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shRI/ldyQQcrh7NBO3II2XGTGReJrzUDLM3KLJ9SjU07tGAKe7mTba3Y4tENLSzjlSdqtxpAN/cDvUN2GLM1/zKuyjnkwB1jHNrTMg99Thnw0WEQOdZ3/Dk9XThVhMbBLSu4wFeMF7mSZPKdan5/FtWxeSFYExeXdEpYZfJQJFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mbCGSZTn; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bnRQH5dB9zH39;
+	Wed, 23 Jul 2025 23:01:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1753304503;
+	bh=YMBV64h4usnoU4LNYkOsA6ceCQPl0nWBOgtg+p6IAS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mbCGSZTncRc+BI2sYHaiBkv/zmtwpKLe0TASKjh9X2cVkzjCG9OnOpu57igaudzzV
+	 LJXSRzU14qLT8nI+4XxXybRv141mmV1jmMoxZkNq2POt+YDF5MKuIXsj3vKx4xBhFj
+	 WGLL3L9FUcY/PcfGsHsfKSPrqePb7CTtxLPIWn4I=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bnRQG5mwmz3hd;
+	Wed, 23 Jul 2025 23:01:42 +0200 (CEST)
+Date: Wed, 23 Jul 2025 23:01:42 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jann Horn <jannh@google.com>, 
+	John Johansen <john.johansen@canonical.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Jeff Xu <jeffxu@google.com>, NeilBrown <neil@brown.name>, Paul Moore <paul@paul-moore.com>, 
+	Ryan Sullivan <rysulliv@redhat.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] landlock: Fix handling of disconnected directories
+Message-ID: <20250723.vouso1Kievao@digikod.net>
+References: <20250719104204.545188-1-mic@digikod.net>
+ <20250719104204.545188-3-mic@digikod.net>
+ <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
- <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
- <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com>
- <CAOQ4uxj1GB_ZneEeRqUT=fc2nNL8qF6AyLmU4QCfYqoxuZauPw@mail.gmail.com>
- <CAJnrk1bE2ZHPNf-Pu+DBnOyqQWU=GZjvB+V-wvguszSwZTF0cQ@mail.gmail.com> <20250723170657.GI2672029@frogsfrogsfrogs>
-In-Reply-To: <20250723170657.GI2672029@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 23 Jul 2025 13:27:44 -0700
-X-Gm-Features: Ac12FXykdmA669Bm40nviUADgA2hKr0Wj7_g_b42XV2MOkl8PplRiydETPJ3B7A
-Message-ID: <CAJnrk1ac=m9udDX5Jq+scbD6ktqL5icGkoAPJO9d0AmMoMRyzg@mail.gmail.com>
-Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the connection
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, neal@gompa.dev, 
-	John@groves.net, miklos@szeredi.hu, bernd@bsbernd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jul 23, 2025 at 10:06=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> On Mon, Jul 21, 2025 at 01:05:02PM -0700, Joanne Koong wrote:
-> > On Sat, Jul 19, 2025 at 12:18=E2=80=AFAM Amir Goldstein <amir73il@gmail=
-.com> wrote:
-> > >
-> > > On Sat, Jul 19, 2025 at 12:23=E2=80=AFAM Joanne Koong <joannelkoong@g=
-mail.com> wrote:
-> > > >
-> > > > On Thu, Jul 17, 2025 at 4:26=E2=80=AFPM Darrick J. Wong <djwong@ker=
-nel.org> wrote:
-> > > > >
-> > > > > From: Darrick J. Wong <djwong@kernel.org>
-> > > > >
-> > > > > generic/488 fails with fuse2fs in the following fashion:
-> > > > >
-> > > > > Unfortunately, the 488.full file shows that there are a lot of hi=
-dden
-> > > > > files left over in the filesystem, with incorrect link counts.  T=
-racing
-> > > > > fuse_request_* shows that there are a large number of FUSE_RELEAS=
-E
-> > > > > commands that are queued up on behalf of the unlinked files at th=
-e time
-> > > > > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection=
- not
-> > > > > aborted, the fuse server would have responded to the RELEASE comm=
-ands by
-> > > > > removing the hidden files; instead they stick around.
-> > > >
-> > > > Tbh it's still weird to me that FUSE_RELEASE is asynchronous instea=
-d
-> > > > of synchronous. For example for fuse servers that cache their data =
-and
-> > > > only write the buffer out to some remote filesystem when the file g=
-ets
-> > > > closed, it seems useful for them to (like nfs) be able to return an
-> > > > error to the client for close() if there's a failure committing tha=
-t
-> > > > data; that also has clearer API semantics imo, eg users are guarant=
-eed
-> > > > that when close() returns, all the processing/cleanup for that file
-> > > > has been completed.  Async FUSE_RELEASE also seems kind of racy, eg=
- if
-> > > > the server holds local locks that get released in FUSE_RELEASE, if =
-a
-> > > > subsequent FUSE_OPEN happens before FUSE_RELEASE then depends on
-> > > > grabbing that lock, then we end up deadlocked if the server is
-> > > > single-threaded.
-> > > >
-> > >
-> > > There is a very good reason for keeping FUSE_FLUSH and FUSE_RELEASE
-> > > (as well as those vfs ops) separate.
-> >
-> > Oh interesting, I didn't realize FUSE_FLUSH gets also sent on the
-> > release path. I had assumed FUSE_FLUSH was for the sync()/fsync()
->
-> (That's FUSE_FSYNC)
->
-> > case. But I see now that you're right, close() makes a call to
-> > filp_flush() in the vfs layer. (and I now see there's FUSE_FSYNC for
-> > the fsync() case)
->
-> Yeah, flush-on-close (FUSE_FLUSH) is generally a good idea for
-> "unreliable" filesystems -- either because they're remote, or because
-> the local storage they're on could get yanked at any time.  It's slow,
-> but it papers over a lot of bugs and "bad" usage.
->
-> > > A filesystem can decide if it needs synchronous close() (not release)=
-.
-> > > And with FOPEN_NOFLUSH, the filesystem can decide that per open file,
-> > > (unless it conflicts with a config like writeback cache).
-> > >
-> > > I have a filesystem which can do very slow io and some clients
-> > > can get stuck doing open;fstat;close if close is always synchronous.
-> > > I actually found the libfuse feature of async flush (FUSE_RELEASE_FLU=
-SH)
-> > > quite useful for my filesystem, so I carry a kernel patch to support =
-it.
-> > >
-> > > The issue of racing that you mentioned sounds odd.
-> > > First of all, who runs a single threaded fuse server?
-> > > Second, what does it matter if release is sync or async,
-> > > FUSE_RELEASE will not be triggered by the same
-> > > task calling FUSE_OPEN, so if there is a deadlock, it will happen
-> > > with sync release as well.
-> >
-> > If the server is single-threaded, I think the FUSE_RELEASE would have
-> > to happen on the same task as FUSE_OPEN, so if the release is
-> > synchronous, this would avoid the deadlock because that guarantees the
-> > FUSE_RELEASE happens before the next FUSE_OPEN.
->
-> On a single-threaded server(!) I would hope that the release would be
-> issued to the fuse server before the open.  (I'm not sure I understand
+On Tue, Jul 22, 2025 at 07:04:02PM +0100, Tingmao Wang wrote:
+> On 7/19/25 11:42, Mickaël Salaün wrote:
+> > [...]
+> > @@ -784,12 +787,18 @@ static bool is_access_to_paths_allowed(
+> >  	if (WARN_ON_ONCE(!layer_masks_parent1))
+> >  		return false;
+> >  
+> > -	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
+> > -
+> >  	if (unlikely(layer_masks_parent2)) {
+> >  		if (WARN_ON_ONCE(!dentry_child1))
+> >  			return false;
+> >  
+> > +		/*
+> > +		 * Creates a backup of the initial layer masks to be able to restore
+> > +		 * them if we find out that we were walking a disconnected directory,
+> > +		 * which would make the collected access rights inconsistent (cf.
+> > +		 * reset_to_mount_root).
+> > +		 */
+> 
+> This comment is duplicate with the one below, is this intentional?
+> 
+> > [...]
+> 
+> On the other hand, I'm still a bit uncertain about the domain check
+> semantics.  While it would not cause a rename to be allowed if it is
+> otherwise not allowed by any rules on or above the mountpoint, this gets a
+> bit weird if we have a situation where renames are allowed on the
+> mountpoint or everywhere, but not read/writes, however read/writes are
+> allowed directly on a file, but the dir containing that file gets
+> disconnected so the sandboxed application can't read or write to it.
+> (Maybe someone would set up such a policy where renames are allowed,
+> expecting Landlock to always prevent renames where additional permissions
+> would be exposed?)
+> 
+> In the above situation, if the file is then moved to a connected
+> directory, it will become readable/writable again.
 
-I don't think this is 100% guaranteed if fuse sends the release
-request asynchronously rather than synchronously (eg the request gets
-stalled on the bg queue if active_background >=3D max_background)
+We can generalize this issue to not only the end file but any component
+of the path: disconnected directories.  In fact, the main issue is the
+potential inconsistency of access checks over time (e.g. between two
+renames).  This could be exploited to bypass the security checks done
+for FS_REFER.
 
-> where this part of the thread went, because why would that happen?  And
-> why would the fuse server hold a lock across requests?)
+I see two solutions:
 
-The fuse server holding a lock across requests example was a contrived
-one to illustrate that an async release could be racy if a fuse server
-implementation has the (standard?) expectation that release and opens
-are always received in order.
+1. *Always* walk down to the IS_ROOT directory, and then jump to the
+   mount point.  This makes it possible to have consistent access checks
+   for renames and open/use.  The first downside is that that would
+   change the current behavior for bind mounts that could get more
+   access rights (if the policy explicitly sets rights for the hidden
+   directories).  The second downside is that we'll do more walk.
 
->
-> > However now that you pointed out FUSE_FLUSH gets sent on the release
-> > path, that addresses my worry about async FUSE_RELEASE returning
-> > before the server has gotten a chance to write out their local buffer
-> > cache.
->
-> <nod>
->
-> --D
->
-> > Thanks,
-> > Joanne
-> > >
-> > > Thanks,
-> > > Amir.
-> >
+2. Return -EACCES (or -ENOENT) for actions involving disconnected
+   directories, or renames of disconnected opened files.  This second
+   solution is simpler and safer but completely disables the use of
+   disconnected directories and the rename of disconnected files for
+   sandboxed processes.
+
+It would be much better to be able to handle opened directories as
+(object) capabilities, but that is not currently possible because of the
+way paths are handled by the VFS and LSM hooks.
+
+Tingmao, Günther, Jann, what do you think?
+
+It looks like AppArmor also denies access to disconnected path in some
+cases, but it tries to reconstruct the path for known internal
+filesystems, and it seems to specifically handle the case of chroot.  I
+don't know when PATH_CONNECT_PATH is set though.
+
+John, could you please clarify how disconnected directories and files
+are handled by AppArmor?
+
+> 
+> Here is an example test, using the layout1_bind fixture for flexibility
+> for now (and also because I needed to just go to bed yesterday lol) (but
+> this would probably be better written as an additional
+> layout5_disconnected_branch variant).
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 21dd95aaf5e4..2274f165d933 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -5100,6 +5100,118 @@ TEST_F_FORK(layout1_bind, path_disconnected_rename)
+>  	EXPECT_EQ(0, test_open(file1_s1d3, O_RDONLY));
+>  }
+>  
+> +static void
+> +path_disconnected_gain_back_rights_via_rename(struct __test_metadata *_metadata,
+> +					      bool has_read_rule_on_other_d)
+> +{
+> +	/*
+> +	 * This is a ruleset where rename/create/delete rights are allowed
+> +	 * anywhere under the mount, and so still applies after path gets
+> +	 * disconnected.  However the only read right is given to the file
+> +	 * directly, and therefore the file is no longer readable after the
+> +	 * path to it being disconnected.
+> +	 */
+> +	// clang-format off
+> +	struct rule layer1[] = {
+> +		{
+> +			.path = dir_s2d2,
+> +			.access = LANDLOCK_ACCESS_FS_REFER |
+> +					LANDLOCK_ACCESS_FS_MAKE_DIR |
+> +					LANDLOCK_ACCESS_FS_REMOVE_DIR |
+> +					LANDLOCK_ACCESS_FS_MAKE_REG |
+> +					LANDLOCK_ACCESS_FS_REMOVE_FILE
+> +		},
+> +		{
+> +			.path = file1_s1d3,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +		},
+> +		{
+> +			.path = TMP_DIR "/s1d1/s1d2/s1d3_2",
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +		},
+> +		{}
+> +	};
+> +	// clang-format on
+> +
+> +	int ruleset_fd, bind_s1d3_fd, res;
+> +
+> +	if (!has_read_rule_on_other_d) {
+> +		layer1[2].path = NULL;
+> +		layer1[2].access = 0;
+> +	}
+> +
+> +	ASSERT_EQ(0, mkdir(dir_s4d1, 0755))
+> +	{
+> +		TH_LOG("Failed to create %s: %s", dir_s4d1, strerror(errno));
+> +	}
+> +
+> +	/* Directory used to move the file into, in order to try to regain read */
+> +	ASSERT_EQ(0, mkdir(TMP_DIR "/s1d1/s1d2/s1d3_2", 0755))
+> +	{
+> +		TH_LOG("Failed to create %s: %s", TMP_DIR "/s1d1/s1d2/s1d3_2",
+> +		       strerror(errno));
+> +	}
+> +
+> +	ruleset_fd = create_ruleset(_metadata, ACCESS_ALL, layer1);
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
+> +	ASSERT_LE(0, bind_s1d3_fd);
+> +	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
+> +
+> +	/* Make disconnected */
+> +	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
+> +	{
+> +		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
+> +		       strerror(errno));
+> +	}
+> +
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	EXPECT_EQ(0, close(ruleset_fd));
+> +
+> +	/* We shouldn't be able to read file1 under disconnected path now */
+> +	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
+> +
+> +	/*
+> +	 * But can we circumvent it by moving file1 to a connected path when
+> +	 * either we're allowed to read that move destination, or if we have
+> +	 * allow rules on the original file, then the move target doesn't even
+> +	 * need read rules on itself.
+> +	 *
+> +	 * This is possible even though the domain check should semantically
+> +	 * ensure that any path (?) we can't read can't become readable
+> +	 * (through that path) again by a rename?
+> +	 */
+> +	res = renameat(bind_s1d3_fd, file1_name, AT_FDCWD,
+> +		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
+> +	if (res == 0) {
+> +		TH_LOG("Renamed file1 to %s, which should not have been allowed.",
+> +		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
+> +		/* At this point the test has failed, but let's try reading it */
+> +		res = test_open(TMP_DIR "/s2d1/s2d2/s1d3_2/f1", O_RDONLY);
+> +		if (res != 0) {
+> +			TH_LOG("Failed to read file1 after rename: %s",
+> +			       strerror(res));
+> +		} else {
+> +			TH_LOG("file1 is readable after rename!");
+> +			ASSERT_TRUE(false);
+> +		}
+> +		ASSERT_TRUE(false);
+> +	}
+> +	ASSERT_EQ(-1, res);
+> +	EXPECT_EQ(EXDEV, errno);
+> +}
+> +
+> +TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_1)
+> +{
+> +	path_disconnected_gain_back_rights_via_rename(_metadata, false);
+> +}
+> +
+> +TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_2)
+> +{
+> +	path_disconnected_gain_back_rights_via_rename(_metadata, true);
+> +}
+> +
+>  /*
+>   * Test that linkat(2) with disconnected paths works under Landlock. This
+>   * test moves s1d3 to s4d1.
+> 
+> The behavior is as hypothesized above:
+> 
+> 	root@b8f2ef644787 /t/landlock# ./fs_test -t path_disconnected_gain_back_rights_1 -t path_disconnected_gain_back_rights_2
+> 	TAP version 13
+> 	1..2
+> 	# Starting 2 tests from 1 test cases.
+> 	#  RUN           layout1_bind.path_disconnected_gain_back_rights_1 ...
+> 	# fs_test.c:5188:path_disconnected_gain_back_rights_1:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
+> 	# fs_test.c:5196:path_disconnected_gain_back_rights_1:file1 is readable after rename!
+> 	# fs_test.c:5197:path_disconnected_gain_back_rights_1:Expected 0 (0) != false (0)
+> 	# path_disconnected_gain_back_rights_1: Test terminated by assertion
+> 	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_1
+> 	not ok 1 layout1_bind.path_disconnected_gain_back_rights_1
+> 	#  RUN           layout1_bind.path_disconnected_gain_back_rights_2 ...
+> 	# fs_test.c:5188:path_disconnected_gain_back_rights_2:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
+> 	# fs_test.c:5196:path_disconnected_gain_back_rights_2:file1 is readable after rename!
+> 	# fs_test.c:5197:path_disconnected_gain_back_rights_2:Expected 0 (0) != false (0)
+> 	# path_disconnected_gain_back_rights_2: Test terminated by assertion
+> 	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_2
+> 	not ok 2 layout1_bind.path_disconnected_gain_back_rights_2
+> 	# FAILED: 0 / 2 tests passed.
+> 	# Totals: pass:0 fail:2 xfail:0 xpass:0 skip:0 error:0
+> 
+> Would it be worth it to have the domain check take into account this edge
+> case?  (But on the other hand, one could argue that if rights are granted
+> directly to a file, then the policy author intended for access to be
+> allowed, but in which case shouldn't access, even if through disconnected
+> path, be allowed?)
+> 
+> Best,
+> Tingmao
+> 
 
