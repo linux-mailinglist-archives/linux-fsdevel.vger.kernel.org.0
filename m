@@ -1,136 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-55800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A6BB0EFB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 12:25:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1207FB0F085
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 12:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538D31C26447
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA9E3BBDD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D19828C2A8;
-	Wed, 23 Jul 2025 10:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E444F2D879C;
+	Wed, 23 Jul 2025 10:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2zRS/3c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4FcudMJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D0928B4FE
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 10:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1992D3A89;
+	Wed, 23 Jul 2025 10:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753266307; cv=none; b=MVOgkCvKfdCjHshjv2bFYlXHmjLULGEi5hXFBFm6OQNpWaB0veqnWpoLUIxa3qfXdiYHGx3c0AXnjQBJOLSAwvJkn43yTSksPrvbJ2GOh3Ydo9TrKhLt5Rwj3PCjnNq3lO75ckqJFnsW+FgBeCagRUaTs6HXykOqe1ulUVvoees=
+	t=1753268283; cv=none; b=qZ8jNR1k456GoyVKwCnBbmVDrzTyHSK+TLendlp+B5j8R5YYRA2yNqBgQA64sWAcvpwTTSQxRabQ7e15MGS6eqU4R3PIf5GQVY/Y+53alZcXQoQHTMubliFxlLqBuw3LRlQeBuNHGKVSRA0Kzz9TsHHsaKq9qug9cpENZ8rKDMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753266307; c=relaxed/simple;
-	bh=iCj8P4WJGimc9JwGjHjjSmoPwXi5E4NeeswVuTGnIWw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QPP9ZvNrac0uHpvTpjgKTw23s6+Ea7jAuvpmlSp12IMJdOYAXwZ2Xm3yB18o20xw0xKTio429P8HWsj3iZTcSCKw5mGn7O9TAhUu68Gai2Q0JNq1iQ7XpF7WR04vpNUPEn1TgIiFP18hz9iATjdDfOZCe4l3wUTZ6jPCVhOaILA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2zRS/3c; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae401ebcbc4so1089744866b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 03:25:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753266303; x=1753871103; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iCj8P4WJGimc9JwGjHjjSmoPwXi5E4NeeswVuTGnIWw=;
-        b=O2zRS/3cSrkHmniKA08eLHb/dT75usE776cfGoBySwGSwijEiTDmbf87HrJepY5pOV
-         8pvSGjyG//T8CD9odB+T9nKzO9JuQ2AdsMldBe52/nB8nn+iCMYMqEB/64Tt0Mi+Bi7I
-         nfzRv8cy+Y1r2sMKCK6qf0PqNx+YZCE8b3VFfBYf81Xx7DpKj8ZtpFVlZQDv1bDv42lq
-         Z7uc1w6v4uIvsmKU1cxITXwiUfuw8iETNXrWEfK/X+ya0KMJEEbOleFxNsdw32qFVQN0
-         mLzkmFrEzm7cqAEra+XEJqvXWK6YLrmo7ww6LOd/L6+KZHC1vZFI7w2KFBjpA1hXljJi
-         AmgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753266303; x=1753871103;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iCj8P4WJGimc9JwGjHjjSmoPwXi5E4NeeswVuTGnIWw=;
-        b=gpHtsJKg5MlxZ/drF4KuoNVhKgAUFedo6qaKrh8jQ8ygzs4GPW992ee9y5RjZU5vsm
-         Jzo8oFPSH8bZMsXfNbFZUxa85dJ+tgcKOdhjgpAzeb9fblAkwHdaXUB+K/90gSfujZ1X
-         RGlsivON2Voz/cEN1psJaFwOoy1Spyyfyn1AUtdxeRNGG4IMsg9HB0ln3TBx86UWtfPR
-         1EaAT3ZVoVvbJTbLkR1iefW/IN3ZKyelokpND6peO4HyG0yeUTWBx3BHqfjTx9xbMxrZ
-         lBso+BkOxwJYwX1qWuEqdO/hxYXrCeX5Mjj9btqycdOF/TaumDMkI1rYA1W0vOKGkzx0
-         aDAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsCvrCFFMtw0E3mmjbU+8FwyyovrD7ieaZ7xACeVX7TMQIqiLNx7olDwjFlFlotOHLfO1fI8y1nuVu2cyw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwivIv9O2ShmK6V8JBGaK932zUVCOnbfXApw7UKTcbxJkIrzgZS
-	jCXhOuLi7Ge2gd7iWBI5ggRe784kNFipPVVwLUw6BltPNyaZvq2GRBoCLspxLrxREuYfMwa09sC
-	oWPnpko5HHF2URQf+kY7UOcpsNJsVu8vaIDsHbcw=
-X-Gm-Gg: ASbGncufBwW7W7f91S3HFfTypWMxs3JX51uqvSttMfLcEbCe4LK7dZGX140Mq9+k4TO
-	eS/QnYOyOKItkWIdujrKHGUXdIPqqxJKfaE8FFjP3Y40Ks3tLPBjIkGJ0NVJSEfQxrpk0yllAnw
-	NgrTkVman0qezaFAxIWkMXg6VQejhPljhRc2BEmBvKu0IGrxkSisVMZmsRqyAAUz6P7fNNxA7sl
-	m4vZ6LJr47bzFjAuA==
-X-Google-Smtp-Source: AGHT+IHD7TqtUzJjYPznziwyWtEyEqCqYa0irCyiCGGDOojBE5zsnm1cyK+oTYtic3ljchi1ZpQfAIQkR4UEKVP7NKU=
-X-Received: by 2002:a17:907:6d0e:b0:ae3:69a8:8da4 with SMTP id
- a640c23a62f3a-af2f66d4f13mr196704966b.9.1753266303004; Wed, 23 Jul 2025
- 03:25:03 -0700 (PDT)
+	s=arc-20240116; t=1753268283; c=relaxed/simple;
+	bh=48vooci2gQplmaGBQLVtUPqrxJSQUsE2mQ1c95KeKJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iqCwKOozr/uC2IzuLN6AILlMLrTbZNkE3kSyOf2JQv+TWR/LNT8bivf4XeuEmYa7UBlorWl1k5BCLayN2/VMf6nCS8MJkN9rZt+kMMICpoQx9pb5f+NgAke+5e7d6Bvbi8uGuhRjLj7KWLmgCNnrpZWxO6Wg5KQY2ZXQo8qq5qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4FcudMJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4598BC4CEE7;
+	Wed, 23 Jul 2025 10:57:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753268282;
+	bh=48vooci2gQplmaGBQLVtUPqrxJSQUsE2mQ1c95KeKJ4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=r4FcudMJ1fiKMY8ytty5UYpE2uaauyalHp43Ph0iupLPvYvMF4HvAcFv6m3m+LAAE
+	 S7ekFFwNgtH0eFg2waTT5udvUE318uw9dn5GGzlibM1Um+fvpasjkOz9Qrk2j8k5XU
+	 Yh9qaYSFBdOvKFo47GvJXaXvBx6QTiV5tkProuSkaHt3VFvLZS6wWxKrkus6yu+a3E
+	 6Q+WQrAJONFJ1WzVlD4Bm8PjUZJ0po93dFJeDbKE/4HrL92GYZK+vyLk/iK/1XANln
+	 a9nODc1SKgbX0ZWTOFywUOx9HNunp1dfrPQKp/EQE7AmdXBIhj8xoLTm4u6Ec5l9MM
+	 SuQ+M9YbcyshQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Josef Bacik <josef@toxicpanda.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	linux-fsdevel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	fsverity@lists.linux.dev
+Subject: [PATCH v4 00/15] Move fscrypt and fsverity out of struct inode
+Date: Wed, 23 Jul 2025 12:57:38 +0200
+Message-ID: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250722-work-inode-fscrypt-v3-0-bdc1033420a0@kernel.org>
+References: <20250722-work-inode-fscrypt-v3-0-bdc1033420a0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711183101.4074140-1-ibrahimjirdeh@meta.com>
- <20250711183101.4074140-2-ibrahimjirdeh@meta.com> <zliib52glfaw3vaook5xvv6h5opvnnrdo2mfh6wg26mqfouslm@etramyyx6tjb>
- <CAOQ4uxg66RuFpeVZoK8bp5S9LbcYHQxVW+uQ8LMJQzgNRu2KOA@mail.gmail.com> <kxsaemqmcvwrhk3f63kdzda7uef7bvuo5mqu4qy2duud4m44vb@oy2cfejdccqu>
-In-Reply-To: <kxsaemqmcvwrhk3f63kdzda7uef7bvuo5mqu4qy2duud4m44vb@oy2cfejdccqu>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 23 Jul 2025 12:24:51 +0200
-X-Gm-Features: Ac12FXw-8dqG3bYh7l7OQm892tJLWbVq82Bm77gxmeEP7zrXqXqWdFREgshp_f4
-Message-ID: <CAOQ4uxiJU3PjM3fcUgJMSb0AU+ekXUMbUwyns08Q08zhwej9KQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] fanotify: add support for a variable length
- permission event
-To: Jan Kara <jack@suse.cz>
-Cc: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, josef@toxicpanda.com, lesha@meta.com, 
-	linux-fsdevel@vger.kernel.org, sargun@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20250715-work-inode-fscrypt-2b63b276e793
+X-Mailer: b4 0.15-dev-a9b2a
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10922; i=brauner@kernel.org; h=from:subject:message-id; bh=48vooci2gQplmaGBQLVtUPqrxJSQUsE2mQ1c95KeKJ4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0HNCcse3sfoao4JQbLxvNHc8eKE2b4uJSZ5H83LVgh vch/lsrOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACai0sfw32vhKkH33FkftL5m frVdkfaKce/aX73zWeI/TH5/YJ4k2xuGvzJB2fn5Wv0rHq3LEFmk4ejMtH32lWlNQqlFcW/X7w+ u5gQA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 23, 2025 at 9:43=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 22-07-25 17:13:07, Amir Goldstein wrote:
-> > On Tue, Jul 22, 2025 at 4:01=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > Sorry for a bit delayed reply I was busy with other work...
-> > >
-> > > On Fri 11-07-25 11:30:59, Ibrahim Jirdeh wrote:
-> > > > From: Amir Goldstein <amir73il@gmail.com>
-> > > >
-> > > > In preparation for pre-content events that report fid info + name,
-> > > > we need a new event type that is both variable length and can be
-> > > > put on a user response wait list.
-> > > >
-> > > > Create an event type FANOTIFY_EVENT_TYPE_FID_NAME_PERM with is a
-> > > > combination of the variable length fanotify_name_event prefixed
-> > > > with a fix length fanotify_perm_event and they share the common
-> > > > fanotify_event memeber.
-> > > >
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > >
-> > > As a procedural note, this patch should have your Signed-off-by as we=
-ll
-> > > Ibrahim, when you resend it as part of your patch set.
-> >
-> > Right, but I don't think Ibrahim needs those patches anymore,
-> > because as you said FAN_RESTARTABLE_EVENTS do not require
-> > a response id.
->
-> Right, I've lost track a bit of who needs what :). So nobody is currently
-> striving to get the response ID changes merged? Just that I don't waste
-> time reviewing changes nobody is interested in at this point...
+Hey,
 
-Yeh, it's hard to keep track, but IIUC, no need for respose_id patch
-or my prep patch for FAN_CLASS_PRE_CONTENT_FID for now.
-If you have time, it would be great if you could take a high-level peek at
-https://github.com/amir73il/linux/commits/fan_pre_dir_access/
-but as I wrote, I won't be getting back to that before end of August and
-when I do, it is likely that I will pick up Ibrahim's response_id patch
-and make those events fd-less.
+As discussed, this moves the fscrypt and fsverity pointers out of struct
+inode shrinking it by 16 bytes. The pointers move into the individual
+filesystems that actually do make use of them.
 
-Thanks,
-Amir.
+In order to find the fscrypt and fsverity data pointers offsets from the
+embedded struct inode in the filesystem's private inode data are stored
+in struct fscrypt_operations and struct fsverity_operations
+respectively. This means we get fast access to the data pointers without
+having to rely on indirect calls.
+
+Thanks to everyone for the very helpful reviews! The two obvious
+suggestions other than moving it into struct super_operations were
+moving it directly into struct super_block and moving it into struct
+fscrypt_operations and struct fsverity_operations. I chose the latter as
+I think that's just cleaner.
+
+Thanks!
+Christian
+
+Test results:
+
++ sudo ./check -g encrypt,verity
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 localhost 6.16.0-rc1-gaa8ca50672ad #275 SMP PREEMPT_DYNAMIC Fri Jun  5 15:58:00 CEST 2015
+MKFS_OPTIONS  -- -F /dev/nvme0n1p6
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/nvme0n1p6 /mnt/scratch
+
+ext4/024        3s
+generic/395        4s
+generic/396        3s
+generic/397        4s
+generic/398        4s
+generic/399        35s
+generic/419        4s
+generic/421        4s
+generic/429        14s
+generic/435        23s
+generic/440        4s
+generic/548        9s
+generic/549        9s
+generic/550       [not run] encryption policy '-c 9 -n 9 -f 0' is unusable; probably missing kernel crypto API support
+generic/572        6s
+generic/573        3s
+generic/574        38s
+generic/575        10s
+generic/576        5s
+generic/577        4s
+generic/579        25s
+generic/580        4s
+generic/581        11s
+generic/582        10s
+generic/583        10s
+generic/584       [not run] encryption policy '-c 9 -n 9 -v 2 -f 0' is unusable; probably missing kernel crypto API support
+generic/592        10s
+generic/593        4s
+generic/595        8s
+generic/602        11s
+generic/613        21s
+generic/621        9s
+generic/624        4s
+generic/625        4s
+generic/692        5s
+generic/693       [not run] encryption policy '-c 1 -n 10 -v 2 -f 0' is unusable; probably missing kernel crypto API support
+generic/739        18s
+Ran: ext4/024 generic/395 generic/396 generic/397 generic/398 generic/399 generic/419 generic/421 generic/429 generic/435 generic/440 generic/548 generic/549 generic/550 generic/572 generic/573 generic/574 generic/575 generic/576 generic/577 generic/579 generic/580 generic/581 generic/582 generic/583 generic/584 generic/592 generic/593 generic/595 generic/602 generic/613 generic/621 generic/624 generic/625 generic/692 generic/693 generic/739
+Not run: generic/550 generic/584 generic/693
+Passed all 37 tests
+
++ sudo ./check -g encrypt,verity
+FSTYP         -- btrfs
+PLATFORM      -- Linux/x86_64 localhost 6.16.0-rc1-gaa8ca50672ad #275 SMP PREEMPT_DYNAMIC Fri Jun  5 15:58:00 CEST 2015
+MKFS_OPTIONS  -- /dev/nvme0n1p6
+MOUNT_OPTIONS -- /dev/nvme0n1p6 /mnt/scratch
+
+btrfs/277       [not run] kernel does not support send stream 3
+btrfs/290       [not run] btrfs-corrupt-block utility required, skipped this test
+btrfs/291       [not run] This test requires a valid $LOGWRITES_DEV
+generic/395 4s ... [not run] No encryption support for btrfs
+generic/396 3s ... [not run] No encryption support for btrfs
+generic/397 4s ... [not run] No encryption support for btrfs
+generic/398 5s ... [not run] No encryption support for btrfs
+generic/399 35s ... [not run] No encryption support for btrfs
+generic/419 4s ... [not run] No encryption support for btrfs
+generic/421 4s ... [not run] No encryption support for btrfs
+generic/429 14s ... [not run] No encryption support for btrfs
+generic/435 23s ... [not run] No encryption support for btrfs
+generic/440 4s ... [not run] No encryption support for btrfs
+generic/548 9s ... [not run] No encryption support for btrfs
+generic/549 9s ... [not run] No encryption support for btrfs
+generic/550       [not run] No encryption support for btrfs
+generic/572 6s ...  7s
+generic/573 3s ...  3s
+generic/574 38s ... [not run] btrfs-corrupt-block utility required, skipped this test
+generic/575 10s ...  9s
+generic/576 5s ... [not run] No encryption support for btrfs
+generic/577 4s ...  4s
+generic/579 25s ...  24s
+generic/580 4s ... [not run] No encryption support for btrfs
+generic/581 11s ... [not run] No encryption support for btrfs
+generic/582 10s ... [not run] No encryption support for btrfs
+generic/583 10s ... [not run] No encryption support for btrfs
+generic/584       [not run] No encryption support for btrfs
+generic/592 10s ... [not run] No encryption support for btrfs
+generic/593 4s ... [not run] No encryption support for btrfs
+generic/595 8s ... [not run] No encryption support for btrfs
+generic/602 11s ... [not run] No encryption support for btrfs
+generic/613 21s ... [not run] No encryption support for btrfs
+generic/621 9s ... [not run] No encryption support for btrfs
+generic/624 4s ...  4s
+generic/625 4s ...  3s
+generic/692 5s ...  5s
+generic/693       [not run] No encryption support for btrfs
+generic/739 18s ... [not run] No encryption support for btrfs
+Ran: btrfs/277 btrfs/290 btrfs/291 generic/395 generic/396 generic/397 generic/398 generic/399 generic/419 generic/421 generic/429 generic/435 generic/440 generic/548 generic/549 generic/550 generic/572 generic/573 generic/574 generic/575 generic/576 generic/577 generic/579 generic/580 generic/581 generic/582 generic/583 generic/584 generic/592 generic/593 generic/595 generic/602 generic/613 generic/621 generic/624 generic/625 generic/692 generic/693 generic/739
+Not run: btrfs/277 btrfs/290 btrfs/291 generic/395 generic/396 generic/397 generic/398 generic/399 generic/419 generic/421 generic/429 generic/435 generic/440 generic/548 generic/549 generic/550 generic/574 generic/576 generic/580 generic/581 generic/582 generic/583 generic/584 generic/592 generic/593 generic/595 generic/602 generic/613 generic/621 generic/693 generic/739
+Passed all 39 tests
+
++ sudo ./check -g encrypt,verity
+FSTYP         -- f2fs
+PLATFORM      -- Linux/x86_64 localhost 6.16.0-rc1-gaa8ca50672ad #275 SMP PREEMPT_DYNAMIC Fri Jun  5 15:58:00 CEST 2015
+MKFS_OPTIONS  -- /dev/nvme0n1p6
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/nvme0n1p6 /mnt/scratch
+
+f2fs/002        22s
+generic/395 4s ...  4s
+generic/396 3s ...  3s
+generic/397 4s ...  4s
+generic/398 5s ...  5s
+generic/399 35s ...  19s
+generic/419 4s ...  4s
+generic/421 4s ...  5s
+generic/429 14s ...  14s
+generic/435 23s ...  34s
+generic/440 4s ...  5s
+generic/548 9s ...  12s
+generic/549 9s ...  12s
+generic/550       [not run] encryption policy '-c 9 -n 9 -f 0' is unusable; probably missing kernel crypto API support
+generic/572 7s ...  7s
+generic/573 3s ...  4s
+generic/574 38s ...  29s
+generic/575 9s ...  10s
+generic/576 5s ...  5s
+generic/577 4s ...  4s
+generic/579 24s ...  25s
+generic/580 4s ...  3s
+generic/581 11s ...  8s
+generic/582 10s ...  9s
+generic/583 10s ...  9s
+generic/584       [not run] encryption policy '-c 9 -n 9 -v 2 -f 0' is unusable; probably missing kernel crypto API support
+generic/592 10s ...  9s
+generic/593 4s ...  3s
+generic/595 8s ...  7s
+generic/602 11s ...  9s
+generic/613 21s ...  18s
+generic/621 9s ...  8s
+generic/624 4s ...  2s
+generic/625 3s ...  3s
+generic/692 5s ...  3s
+generic/693       [not run] encryption policy '-c 1 -n 10 -v 2 -f 0' is unusable; probably missing kernel crypto API support
+generic/739 18s ...  17s
+Ran: f2fs/002 generic/395 generic/396 generic/397 generic/398 generic/399 generic/419 generic/421 generic/429 generic/435 generic/440 generic/548 generic/549 generic/550 generic/572 generic/573 generic/574 generic/575 generic/576 generic/577 generic/579 generic/580 generic/581 generic/582 generic/583 generic/584 generic/592 generic/593 generic/595 generic/602 generic/613 generic/621 generic/624 generic/625 generic/692 generic/693 generic/739
+Not run: generic/550 generic/584 generic/693
+Passed all 37 tests
+
+---
+Changes in v4:
+- Stash offsets in struct fscrypt_operations and struct
+  fsverity_operations.
+- Link to v3: https://lore.kernel.org/20250722-work-inode-fscrypt-v3-0-bdc1033420a0@kernel.org
+
+Changes in v3:
+- Stash offsets in struct super_operations.
+- Link to v2: https://lore.kernel.org/20250722-work-inode-fscrypt-v2-0-782f1fdeaeba@kernel.org
+
+Changes in v2:
+- First full implementation.
+- Link to v1: https://lore.kernel.org/20250715-work-inode-fscrypt-v1-1-aa3ef6f44b6b@kernel.org
+
+---
+Christian Brauner (15):
+      fs: add fscrypt offset
+      fs/crypto: use accessors
+      ext4: move fscrypt to filesystem inode
+      ubifs: move fscrypt to filesystem inode
+      f2fs: move fscrypt to filesystem inode
+      ceph: move fscrypt to filesystem inode
+      fs: drop i_crypt_info from struct inode
+      fscrypt: rephrase documentation and comments
+      fs: add fsverity offset
+      fs/verity: use accessors
+      btrfs: move fsverity to filesystem inode
+      ext4: move fsverity to filesystem inode
+      f2fs: move fsverity to filesystem inode
+      fs: drop i_verity_info from struct inode
+      fsverity: rephrase documentation and comments
+
+ fs/btrfs/btrfs_inode.h       |  3 +++
+ fs/btrfs/inode.c             |  3 +++
+ fs/btrfs/verity.c            |  4 ++++
+ fs/ceph/crypto.c             |  4 ++++
+ fs/ceph/inode.c              |  1 +
+ fs/ceph/super.h              |  1 +
+ fs/crypto/bio.c              |  2 +-
+ fs/crypto/crypto.c           |  8 ++++----
+ fs/crypto/fname.c            |  8 ++++----
+ fs/crypto/fscrypt_private.h  |  4 ++--
+ fs/crypto/hooks.c            |  2 +-
+ fs/crypto/inline_crypt.c     | 10 +++++-----
+ fs/crypto/keysetup.c         | 44 +++++++++++++++++++++++++++-----------------
+ fs/crypto/policy.c           |  6 +++---
+ fs/ext4/crypto.c             |  4 ++++
+ fs/ext4/ext4.h               |  8 ++++++++
+ fs/ext4/super.c              |  6 ++++++
+ fs/ext4/verity.c             |  4 ++++
+ fs/f2fs/f2fs.h               |  6 ++++++
+ fs/f2fs/super.c              | 10 ++++++++++
+ fs/f2fs/verity.c             |  4 ++++
+ fs/ubifs/crypto.c            |  4 ++++
+ fs/ubifs/ubifs.h             |  3 +++
+ fs/verity/enable.c           |  6 +++---
+ fs/verity/fsverity_private.h |  9 +++++----
+ fs/verity/open.c             | 25 ++++++++++++++++---------
+ fs/verity/verify.c           |  2 +-
+ include/linux/fs.h           | 10 ----------
+ include/linux/fscrypt.h      | 42 ++++++++++++++++++++++++++++++++++++++----
+ include/linux/fsverity.h     | 34 +++++++++++++++++++++++++++-------
+ include/linux/netfs.h        |  7 +++++++
+ 31 files changed, 209 insertions(+), 75 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250715-work-inode-fscrypt-2b63b276e793
+
 
