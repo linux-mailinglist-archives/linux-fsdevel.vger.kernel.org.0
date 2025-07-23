@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-55811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8C4B0F099
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 12:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A65B0F09C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 12:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD81562FD2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:58:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9375640EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E1228EA5A;
-	Wed, 23 Jul 2025 10:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF67293B48;
+	Wed, 23 Jul 2025 10:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxSb4XAA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqUCrzX1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941E8253358;
-	Wed, 23 Jul 2025 10:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E2229293D;
+	Wed, 23 Jul 2025 10:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268314; cv=none; b=LaIXO2m8Vd42lfAumZ2PY2IsroIyWX07RfwUluc/APhxK0PrSXpFGbtU6Zi1Z8tt+XcmxVYR6PhiNa09xkrupbXiJQhX4ovmLbbkCOV8Shfv2ysfVDYLC2DfuemlLtzgF1X+/9tBmLVpZt72o58GRhZ6wN72pQearXLuPSpR1ug=
+	t=1753268317; cv=none; b=grkUSzqBVlnG+b3Lb+CzQBSc90RbEnNYECUKNd9Paya7yXQk4icMRB6lXu9PYcHX3m0/Eeefysb6jA3imP5PjgboNWWSgEoeCdqvLOD91+LndQLHejc8czAiQypHm/1h84o6zCNwTE3ni7XUpEO71dY7vWVm8aQnCPHXUMXqCFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268314; c=relaxed/simple;
-	bh=AqBbyAWIcycwKsjuhdlFuJqCrZWLSeaq5fAlXrm7sb8=;
+	s=arc-20240116; t=1753268317; c=relaxed/simple;
+	bh=RMw2dBnDO1Ap9e7MdYubJ8PTn2HYnD6F0Hm0zF4NauQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YG33AcO/x4rVd49reOmiPSHrNL9lUfIfgIsIWfBmyJzsf78BM4Bt1Sia12wbCAZ7T7g50a0c+0PgejNN6C1CHsQA5E/bOKDS9iIXbl39qPvgS5pyd+9wwK+iWzQlC+gO53uWatJhEkhtiia4uJLd4+u1Flqksc4iM6/hwW74UO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxSb4XAA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1EE6C4CEE7;
-	Wed, 23 Jul 2025 10:58:31 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qZKf7A3pp0v8JaLvF0F+/IRQLM7kw/CnVrd9vAplaLA7ZUhBe/B/gUWyK4bZt9qDthUkUWumZGmc2MS7EMIVJjr7B0/j5SVsiUxOEjM5RXQUHcWwUWiSIL4MdzbIlBYcnw+TwYAuWyHRHSO0xq/J7K0qj9ZIWY1ie1FRdhyBaBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqUCrzX1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C6FC4CEF5;
+	Wed, 23 Jul 2025 10:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753268314;
-	bh=AqBbyAWIcycwKsjuhdlFuJqCrZWLSeaq5fAlXrm7sb8=;
+	s=k20201202; t=1753268317;
+	bh=RMw2dBnDO1Ap9e7MdYubJ8PTn2HYnD6F0Hm0zF4NauQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rxSb4XAAzsDjjWMbmoOrD/sDMuKe3BCT/P1faV9+0PCO8wa7H7/M48e+nTg6GCnX7
-	 503vWPAoCXfVUCMYcmu4hbGPVb1JMdKzgRYPVDRlHbQLvBShzBaJsqOfqktEq2v2G8
-	 q7Hx3QQISIhhUso1Lc1lK+QJJsBowY7rn5mWmsMgbAdCsADvCLarj3Q7hEfXeSk+6n
-	 w8RpH4PJlLqs0yvD9JfQlXsoztz9Y4E6JTz+5QMEUoCggDr/MSbXgwp3U5TOUPOhCc
-	 6Rl6AmLWoCDV09Z4F7unv72Ren00eG40zihRvTVqk/1gMuNJkPx7b9L4GHB+yjGmuV
-	 MhR8VpxkWKYiw==
+	b=eqUCrzX1EFN7hLcka0re6ov2UcK3ikpLh8bYD0bS2xTQWTTSjfH6GfzbRKZ5ck6Yz
+	 da7ByB0jANKHQyJPP2gH6UfFaJy9OC4SMbICsBXDRGeBdSKgXN2H0/o5FaJ12iQGAA
+	 2vxe4cBB7Llvh/KifmIJhrvVEwRGr4I3uwadTxERFiwqyR5eGK0avKDe4iDU0zN08m
+	 gj3Dnn5CWd8QwOd05EjdvMrvWSexuEHas12JKae88OH8vzUxM9F7VjBsnaocFCiFyQ
+	 GJ9+8Cd7Ai/3OYNrPe2Decfabgh1XWBIWQfteuG3AtaUkySkWQD6yMAxOelXm3YcH+
+	 Z4YPswG4v8iew==
 From: Christian Brauner <brauner@kernel.org>
 To: Jeff Layton <jlayton@kernel.org>,
 	Jan Kara <jack@suse.com>,
@@ -53,9 +53,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-fscrypt@vger.kernel.org,
 	fsverity@lists.linux.dev
-Subject: [PATCH v4 10/15] fs/verity: use accessors
-Date: Wed, 23 Jul 2025 12:57:48 +0200
-Message-ID: <20250723-work-inode-fscrypt-v4-10-c8e11488a0e6@kernel.org>
+Subject: [PATCH v4 11/15] btrfs: move fsverity to filesystem inode
+Date: Wed, 23 Jul 2025 12:57:49 +0200
+Message-ID: <20250723-work-inode-fscrypt-v4-11-c8e11488a0e6@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
 References: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
@@ -67,115 +67,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3629; i=brauner@kernel.org; h=from:subject:message-id; bh=AqBbyAWIcycwKsjuhdlFuJqCrZWLSeaq5fAlXrm7sb8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0HND24bH8zOAvZbhV/hgnj9RNdiGGmZ123qlf/u44/ pMxzPJMRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwES8ohkZPgiFnVRKbhZgdQ+x EzG5PP/F9aeqx4s+/zvLbzbj/sv6XYwMm9gZ0l0d9U7zr2rPMvirt6pfNTnupuH7HaWCO+w15ji yAwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1944; i=brauner@kernel.org; h=from:subject:message-id; bh=RMw2dBnDO1Ap9e7MdYubJ8PTn2HYnD6F0Hm0zF4NauQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0HNBubvAXsM9+n7M32/JC9rZbqnHzLb0ZHpUzvzt/b It6X5F3RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwET8HBn+aQp3Sq36VB0vEb5E bfU25q2G0dmLfr5fc2YPh4VpfJTXbIZ/NlO99v/yEZMxYmmImcsfuseD/YCoBUPG/rjC2JjLb54 yAQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Use accessor to get and set the verity info from the filesystem.
-They can be removed once all filesystems have been converted to make
-room for verity info in their own inodes.
+Move fsverity data pointer into the filesystem's private inode and
+record the offset from the embedded struct inode.
+
+This will allow us to drop the fsverity data pointer from struct inode
+itself and move it into the filesystem's inode.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/verity/open.c         | 19 ++++++++++++++++---
- fs/verity/verify.c       |  2 +-
- include/linux/fsverity.h | 12 +++++++++++-
- 3 files changed, 28 insertions(+), 5 deletions(-)
+ fs/btrfs/btrfs_inode.h | 3 +++
+ fs/btrfs/inode.c       | 3 +++
+ fs/btrfs/verity.c      | 4 ++++
+ 3 files changed, 10 insertions(+)
 
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index fdeb95eca3af..a4d7388e2f71 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -250,13 +250,20 @@ struct fsverity_info *fsverity_create_info(const struct inode *inode,
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index a79fa0726f1d..45a9221cf6cc 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -339,6 +339,9 @@ struct btrfs_inode {
  
- void fsverity_set_info(struct inode *inode, struct fsverity_info *vi)
- {
-+	void *p;
-+
- 	/*
- 	 * Multiple tasks may race to set ->i_verity_info, so use
- 	 * cmpxchg_release().  This pairs with the smp_load_acquire() in
- 	 * fsverity_get_info().  I.e., here we publish ->i_verity_info with a
- 	 * RELEASE barrier so that other tasks can ACQUIRE it.
- 	 */
--	if (cmpxchg_release(&inode->i_verity_info, NULL, vi) != NULL) {
-+
-+	if (inode->i_sb->s_vop->inode_info_offs)
-+		p = cmpxchg_release(fsverity_addr(inode), NULL, vi);
-+	else
-+		p = cmpxchg_release(&inode->i_verity_info, NULL, vi);
-+	if (p != NULL) {
- 		/* Lost the race, so free the fsverity_info we allocated. */
- 		fsverity_free_info(vi);
- 		/*
-@@ -402,8 +409,14 @@ EXPORT_SYMBOL_GPL(__fsverity_prepare_setattr);
+ 	struct rw_semaphore i_mmap_lock;
+ 	struct inode vfs_inode;
++#ifdef CONFIG_FS_VERITY
++	struct fsverity_info *i_verity_info;
++#endif
+ };
  
- void __fsverity_cleanup_inode(struct inode *inode)
- {
--	fsverity_free_info(inode->i_verity_info);
--	inode->i_verity_info = NULL;
-+	struct fsverity_info **vi;
-+
-+	if (inode->i_sb->s_vop->inode_info_offs)
-+		vi = fsverity_addr(inode);
-+	else
-+		vi = &inode->i_verity_info;
-+	fsverity_free_info(*vi);
-+	*vi = NULL;
+ static inline u64 btrfs_get_first_dir_index_to_log(const struct btrfs_inode *inode)
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index c0c778243bf1..a5c39e93a6cd 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -7873,6 +7873,9 @@ struct inode *btrfs_alloc_inode(struct super_block *sb)
+ 	INIT_LIST_HEAD(&ei->delalloc_inodes);
+ 	INIT_LIST_HEAD(&ei->delayed_iput);
+ 	init_rwsem(&ei->i_mmap_lock);
++#ifdef CONFIG_FS_VERITY
++	ei->i_verity_info = NULL;
++#endif
+ 
+ 	return inode;
  }
- EXPORT_SYMBOL_GPL(__fsverity_cleanup_inode);
- 
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 4fcad0825a12..a9c2f5c86991 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -247,7 +247,7 @@ verify_data_blocks(struct folio *data_folio, size_t len, size_t offset,
- 		   unsigned long max_ra_pages)
- {
- 	struct inode *inode = data_folio->mapping->host;
--	struct fsverity_info *vi = inode->i_verity_info;
-+	struct fsverity_info *vi = fsverity_get_info(inode);
- 	const unsigned int block_size = vi->tree_params.block_size;
- 	u64 pos = (u64)data_folio->index << PAGE_SHIFT;
- 
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 85831f36e2f8..75ff6c9c50ef 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -129,14 +129,24 @@ struct fsverity_operations {
- 
- #ifdef CONFIG_FS_VERITY
- 
-+static inline struct fsverity_info **fsverity_addr(const struct inode *inode)
-+{
-+	return ((void *)inode + inode->i_sb->s_vop->inode_info_offs);
-+}
-+
- static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- {
-+	if (!inode->i_sb->s_vop)
-+		return NULL;
-+
- 	/*
- 	 * Pairs with the cmpxchg_release() in fsverity_set_info().
- 	 * I.e., another task may publish ->i_verity_info concurrently,
- 	 * executing a RELEASE barrier.  We need to use smp_load_acquire() here
- 	 * to safely ACQUIRE the memory the other task published.
- 	 */
-+	if (inode->i_sb->s_vop->inode_info_offs)
-+		return smp_load_acquire(fsverity_addr(inode));
- 	return smp_load_acquire(&inode->i_verity_info);
+diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
+index b7a96a005487..487d6d00eff3 100644
+--- a/fs/btrfs/verity.c
++++ b/fs/btrfs/verity.c
+@@ -802,6 +802,10 @@ static int btrfs_write_merkle_tree_block(struct inode *inode, const void *buf,
  }
  
-@@ -165,7 +175,7 @@ void __fsverity_cleanup_inode(struct inode *inode);
-  */
- static inline void fsverity_cleanup_inode(struct inode *inode)
- {
--	if (inode->i_verity_info)
-+	if (IS_VERITY(inode))
- 		__fsverity_cleanup_inode(inode);
- }
- 
+ const struct fsverity_operations btrfs_verityops = {
++#ifdef CONFIG_FS_VERITY
++	.inode_info_offs	= offsetof(struct btrfs_inode, i_verity_info) -
++				  offsetof(struct btrfs_inode, vfs_inode),
++#endif
+ 	.begin_enable_verity     = btrfs_begin_enable_verity,
+ 	.end_enable_verity       = btrfs_end_enable_verity,
+ 	.get_verity_descriptor   = btrfs_get_verity_descriptor,
 
 -- 
 2.47.2
