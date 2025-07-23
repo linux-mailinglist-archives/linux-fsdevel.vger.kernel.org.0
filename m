@@ -1,253 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-55899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E0AB0FA4A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 20:30:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFA3B0FA6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 20:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9126B566C4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 18:30:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92E8E7ABBDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 18:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802F61F3B98;
-	Wed, 23 Jul 2025 18:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8841221F2F;
+	Wed, 23 Jul 2025 18:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZLuCmQB1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8W0I84w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB631798F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 18:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B70A82C60;
+	Wed, 23 Jul 2025 18:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753295423; cv=none; b=D+onq32fo3Zq16lABixNPWjnZ+eyoYS5V54DH/NskQ5LtmwlxkKFvwuBkHmqfstu6MgjMjv6gPAjzev9+pjYo1OV2QvquNoGpI1gMbMrBVr5fgCwV2z1aac2nMucBkODz8hz1XiSKUnO5EOTgbKoVMa7rnHacyEMeiUCDHRu+os=
+	t=1753296177; cv=none; b=jjnwSLhFpQqKP9ngP7FQNEsLsUK+i2YnT+zZFAxfxheBQiFV8bmOUoF+Y8eXL9pgQtMHtKjiWn29ypbH6ev+X0PCNazrZfqv/H0MBXCA8KfoPLrTJdDpbmIHsfvMJuVKpLKOW/u+ih8Zmgzykd3yLz+sDePdJWCVuBXq+O1HApU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753295423; c=relaxed/simple;
-	bh=DNGv1NUhHSqeqTYnjdCtu5IurHWEnfDWC1lRxQO/t+o=;
+	s=arc-20240116; t=1753296177; c=relaxed/simple;
+	bh=+hrrbBh05niutr+3Uk0OIvszFhylUlqI1X7BO7FoodU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bPLldKWJ4FeUWizoKHFQB7TJmTIGcxvOLg6H0aI/NClgHRW9RcTTxy5ETtkKxe889RTQxdbGIqL+v9Z57h/O5UKXWtPNg1jj0OdZJG7QodqBGwxN8Dmes11UT1mIY6d8m33gm8Pwpbd+HgiAT4tJmXq8na2HNQ7qE80ksphjNyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZLuCmQB1; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e29616cc4fso21380885a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 11:30:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZmN2oKgXORsH9xEaibSPxH78d3X9TU4z14ALuD1OvP9ktfOwAccKtg9cMOEjA83UEZPMj8I4tVdlzom+JEwPePyyg50FNDgUxqgXea1MHfRIGqfXeFrTTOKFeeMkAGrG7rzRAR9bnfBqLe8W586WXXFJMT7nYpwdg6+DKjnYCXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j8W0I84w; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ab63f8fb91so2079061cf.0;
+        Wed, 23 Jul 2025 11:42:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753295420; x=1753900220; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753296174; x=1753900974; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DNGv1NUhHSqeqTYnjdCtu5IurHWEnfDWC1lRxQO/t+o=;
-        b=ZLuCmQB19hGj4JJZ2UwXLInfB0NVyLE+agEvDlpylshKIDYybSQrpcgHopkLzxjNsH
-         qqomlg9ZtCw1MZ6S8xkuoxWu2l3xsor0jhtIDUetQVfu0T7YWuPU1JcCVmg+8RCQfyZT
-         l74iPsz3I2O0Y1yYq0bHjpq3Yfza1TRL0JrH9Q0cuW5Ez6DkZkoChj8EOGSIKLghaHqm
-         hPmRYHlA2GNSWVytpqlQt/z/YkZ2YqG315Hv5SlEdWMZmExeL54ddqDw0g+4ydbOZbtg
-         e3uBe+2JpekKjMkjU1t2mxoHw02XofIWXHET5uWwi2lVwoywMUbi16/CSfoca0SENDu1
-         L7uA==
+        bh=+ZEkdvyrNvf3uivlL8jNNyzaPuqLEPXHJb9U3qGdJAE=;
+        b=j8W0I84w2Q17/3OiATOYRHXw3LQtkjCM4k24pFRRO730s0af7Wd5xalm/BVfzo/thD
+         NOrgAklxdM/8DevYg5pll23cOyaNpMMApGhLCOjEUTmFpIx2YD7c74S8ghnu+hbsZYZ5
+         JBbxkjhzyD8uB/e1xksrqJByQrBlohuFaVbPoXEr2Jwq50411C/YwY8HM6wMMujXNEyW
+         GtDcxKPLNLKp+w9Z/m7rBeRVwzLVbYXXALteUxtUyN6FC77J111oDkNx/Zn2bQ1r8Jnb
+         xeEJ+675kKe5O7ZQMOhV/DLUSGSJhLDYbQFk8VX/0GC6PMcRl6cGLNI6HZnFlRSQgHch
+         fM1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753295420; x=1753900220;
+        d=1e100.net; s=20230601; t=1753296174; x=1753900974;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DNGv1NUhHSqeqTYnjdCtu5IurHWEnfDWC1lRxQO/t+o=;
-        b=kZ9p0iMah5gHkJdlT8Ao0tZY8276k69pgF+opvPEptnbqHF5dtxUf01Y0yTQ2Rwl4b
-         Ob7XNVk8k1REB1Qbp3nQMpEfYxt3e6n95OcPd0vvupbMq2D5oQJbcJNLV8N35VmiASxH
-         Z+DKv7amCQ+52z7pst/5Vm9l7rfy6wS4sgzs1gL15T93bh/+a+tsQjF+5wmHrpce8cax
-         PNTin1O9sk61WbTY0QpZ0/2ZCIAEF3vDALzlkDDSuZ1eEfcIAsWs+KXodvgSUYlCPlU7
-         w4L0QWrqqa3fO+jDqnuOUFQXmrxcAG40WXwFpHUSKVCnVu3YY2Zintai7NQ/0Qp5XJtd
-         IZxg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5KO/4AGh2bS+8sNpQ3At+MpSzBUyVSvFfuTFhxuRdZ0oZbsNWKjPa0Dix4FdT3odrH118ynOaUdM19dZj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPcaRaPhtzMAY25Ax+hsLKCs1f8z36AvCn3ST1I+05ma/V4LpN
-	hf1IGNcSj2Qaibh7cYBVikn+6KQy48P/va1ZIoG+yGKUVrFhnYYQ8UWJmHHJo0R2mL7uMos0JG8
-	vH2NFTyJGvkzTNMxM3w/E9Ec+Q/wa12520qwMgBaH
-X-Gm-Gg: ASbGncuhCZC51V4obc0XFCHFKDcQN69VRm2uGgdPgfrNMZjUQV76SWmWnq31y7UMPBg
-	w9hRcwMjWSWwbAS9hrhsWe2GDPblNLjdyEOukxXj3oOaLAX2GUxi3xhb4kSAcx8MQQFLYIcECBs
-	fZDUAS+/rm/W8TJYs8rjv3UyShhyMQsrqaQeXd4DNhcwmj+Z3xof3j807eUZlWBnhfUmj15emWc
-	hQo0Hgrw/VfnRdJzvnxkR5DFRrH7/mlXazAKmdUX+tfnm0b
-X-Google-Smtp-Source: AGHT+IGkRdRkpdEunsYJ7/IdP5ziZrypUcmnd05U9PTEKhQXN0MFm1DsgkwZNIJPtXhyaRiAX9kIMkeY2zzfAfckpQ0=
-X-Received: by 2002:a05:6214:cc8:b0:6f4:c824:9d4a with SMTP id
- 6a1803df08f44-7070055b8d5mr66184986d6.13.1753295419272; Wed, 23 Jul 2025
- 11:30:19 -0700 (PDT)
+        bh=+ZEkdvyrNvf3uivlL8jNNyzaPuqLEPXHJb9U3qGdJAE=;
+        b=tJl/rwM/q6X9qqnORwxiCtWgbg+gBv8m1lLpWPS1SP6GXbDDcJqv/xvAxViwYewovN
+         ixG+Ux58Q1Bav7DnPDN86DToieJIN0PZ8tJ79zBL0aQFOWMgnX8EvTptzvKuLtsYap0r
+         2Og/3uTKP8shmLcqvACI5LvybSKAFNnSmjDiZBCZ8avluHuUy8m+9cpQlBmoH48VTt4/
+         XGzr+XvDbTEAHaqpIpaMQooqd3a4r4yp18FiL/wlfbJQX8u8ss2EbtzvmCHCqhNQgde5
+         uquOtN3Xh5WTp+8J6DovWPOsNyYDUfLSzb4DxLVSWI99Ti9vUJHckp6eU7HX7xY+5odt
+         DCkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5QMtqSAqldNEaHZmUI/Y4vvUU9Myjpx3EyLd+1wEX6dhhzTTXAdu2INUNGbfoO8VgBbvZFogo50a05Mis@vger.kernel.org, AJvYcCVxtWvwzOfKdIgbrCntyRYHAMfOdc7TFWiIGEd7AV8scxIAdmtYrmn/fbBzymG8h/oMBOpZ0aoiThxQ@vger.kernel.org, AJvYcCXcmc+5ho+gbq4m3NEHLgJXJipwfwYLZZCtiAa7yES1jprVTpIZFBgqSQh1Yll/8OumQvzxd8XjWu48UeEE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLaNO+QMciWieQsDSuloZyy1SfIcszvJHtkcVkMAlNCxO1ovd5
+	A8QYnyfhn2H9ZAOrjofMpCqG3u/TI5MZZYYe+6q1wx/8PgXOwP/fRDMtCzbtz1Y2q8g0HKNbdjP
+	RJhLKHok8h866Kzap0i4UfzTAIsXlWPYNzcI2zgY=
+X-Gm-Gg: ASbGnctIq44wzcxAwEwXyr2Bi2sNZODVp+PCosxYABcbZo6rT3pJqdGDvkAeVfPmdCX
+	qaPAKAIQdToWqAr5auE1MfhuIUtENNNDLnin+3+yz9xjwqOrBqo3MX/ahWjanlemmHr1uBUS0Xg
+	klDjX0oK3TBnfk+thky5Ab3n64zaf8ub3ldkL/DKPEOqZwWTzCac8X05CoAydUE6hXbxQ4NjJPf
+	hFzv/I=
+X-Google-Smtp-Source: AGHT+IGO7cbVDS21n3Qk88Ct5kAOPIiuVqMX2UidUg7DAriYwXvNqbv8HJfRWnbNGiz7dV8bE3thfN4BQRzFDUCNIPY=
+X-Received: by 2002:a05:622a:1485:b0:4ab:37bd:5aa5 with SMTP id
+ d75a77b69052e-4ae6df89ae3mr55794021cf.44.1753296174267; Wed, 23 Jul 2025
+ 11:42:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617221456.888231-1-paullawrence@google.com>
- <CAOQ4uxgaxkJexvUFOFDEAbm+vW4A1qkmvqZJEYkZGR5Mp=gtrg@mail.gmail.com>
- <CAL=UVf707OokQUuhzbvrweFziLVmiDD3TFs_WG2hRY0-snw7Wg@mail.gmail.com>
- <CAOQ4uxhUK6EeCUZ36+LhT7hVt7pH9BKYLpxF4bhU4MM0kT=mKg@mail.gmail.com>
- <CAOQ4uxjX1Cs-UYEKZfNtCz_31JiH74KaC_EdU07oxX-nCcirFQ@mail.gmail.com>
- <CAL=UVf5W9eJF4FL6aRG4e1VoFWg8jj4X4af=j-OGdU=QxmPuwA@mail.gmail.com> <CAOQ4uxgqS0cK6ovwjMjSFndiFBUP1Z9ZXdAoCJayeo4W00nGLg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgqS0cK6ovwjMjSFndiFBUP1Z9ZXdAoCJayeo4W00nGLg@mail.gmail.com>
-From: Paul Lawrence <paullawrence@google.com>
-Date: Wed, 23 Jul 2025 11:30:07 -0700
-X-Gm-Features: Ac12FXx2uENxO25mA23t3MuAVfRUU_3mFVzO2DUQHlXIG1eTKA8C4Sx712SRLaI
-Message-ID: <CAL=UVf7zTcmd32jgQStXFWKGpUGXLPqX19uPx_Xzqm_k7QGj0Q@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] RFC: Extend fuse-passthrough to directories
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Bernd Schubert <bernd.schubert@fastmail.fm>
+References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
+ <20250723144637.GW2672070@frogsfrogsfrogs>
+In-Reply-To: <20250723144637.GW2672070@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 23 Jul 2025 11:42:42 -0700
+X-Gm-Features: Ac12FXznZ36tjQP__ZBzdOw_HvGQVb_DpY-StSaXMQ3PPkk_2TUI2pMhk5gnmcs
+Message-ID: <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
+Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
+ at fuse_iomap_writeback_range
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, linux-xfs@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> FUSE_CREATE already returns two out args.
-> How were you planning to extend it?
-
-Excellent point. However, FUSE_CREATE (and FUSE_TMPFILE) already has
-fuse_open_out as the second argument, so the backing_id can be passed
-in there. Does that sound acceptable? I'll admit that at first this
-seemed clunky to me, but the more I think about it, the more natural
-it seems - create is really an open, so it follows that paradigm, and
-the new paradigm is used only for FUSE_LOOKUP.
-
-FUSE_READDIRPLUS is harder, it seems to me. We would need to break ABI
-compatibility - I can't see any sane alternative. A clean way would be
-to have a FUSE_READDIR_PASSTHROUGH opcode. This implies that there's a
-flag FUSE_PASSTHROUGH_MASK covering all of this new functionality
-which would also enable this new opcode. (It could, alternatively,
-change the behavior of FUSE_READDIRPLUS but I suspect no one is going
-to like that idea.)
-
-Does this seem reasonable?
-
-Thanks,
-Paul
-
-
-
-
-On Wed, Jul 23, 2025 at 9:53=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
+On Wed, Jul 23, 2025 at 7:46=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
  wrote:
 >
-> On Tue, Jul 22, 2025 at 11:13=E2=80=AFPM Paul Lawrence <paullawrence@goog=
-le.com> wrote:
-> >
-> > I spent a little time with these patches. I wrote my own to set the
-> > backing file at lookup time by adding an optional second out struct.
+> [cc Joanne]
 >
-> FUSE_CREATE already returns two out args.
-> How were you planning to extend it?
+> On Wed, Jul 23, 2025 at 05:14:28PM +0530, Naresh Kamboju wrote:
+> > Regressions found while running LTP msync04 tests on qemu-arm64 running
+> > Linux next-20250721, next-20250722 and next-20250723 with 16K and 64K
+> > page size enabled builds.
+> >
+> > CONFIG_ARM64_64K_PAGES=3Dy ( kernel warning as below )
+> > CONFIG_ARM64_16K_PAGES=3Dy ( kernel warning as below )
+> >
+> > No warning noticed with 4K page size.
+> > CONFIG_ARM64_4K_PAGES=3Dy works as expected
 >
-> > Is there a reason we should not do this? It seems the most natural
-> > solution.
-> >
-> > After a while, I began to wonder if what I was planning was actually
-> > the same as your vision. I decided to jot down my thoughts to see if
-> > you agree with them. Also I was confused as to why you were adding the
-> > ability to set backing files to GETATTR.
+> You might want to cc Joanne since she's been working on large folio
+> support in fuse.
 >
-> It is a demo. It demonstrates that passthrough can be set up sooner than
-> open time. It was not my intention to keep it this way.
+> > First seen on the tag next-20250721.
+> > Good: next-20250718
+> > Bad:  next-20250721 to next-20250723
+
+Thanks for the report. Is there a link to the script that mounts the
+fuse server for these tests? I'm curious whether this was mounted as a
+fuseblk filesystem.
+
+> >
+> > Regression Analysis:
+> > - New regression? Yes
+> > - Reproducibility? Yes
+> >
+> > Test regression: next-20250721 arm64 16K and 64K page size WARNING fs
+> > fuse file.c at fuse_iomap_writeback_range
+> >
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >
+> > ## Test log
+> > ------------[ cut here ]------------
+> > [  343.828105] WARNING: fs/fuse/file.c:2146 at
+> > fuse_iomap_writeback_range+0x478/0x558 [fuse], CPU#0: msync04/4190
 >
-> > So here are my notes.
-> >
-> > Design of fuse passthrough for all operations
-> >
-> > Goal:
-> >
-> > When a fuse filesystem implements a stacking filesystem over an
-> > underlying file system, and a significant fraction of the calls will
-> > simply be passed to the underlying file system, provide a mechanism to
-> > pass those calls through without going to user space. This is
-> > primarily to enhance performance, though it might simplify the daemon
-> > somewhat too.
-> >
-> > Current state:
-> >
-> > Currently passthrough allows a backing file to be set at file open
-> > time. If a backing file is set, all read/write operations will be
-> > forwarded to the backing file.
-> >
-> > Design:
-> >
-> > Add ability to set backing file on the found inode in response to a
-> > positive lookup. This file might be opened with O_PATH for performance
-> > reasons. The lookup api would be modified to have an optional second
-> > out struct that contains the backing file id. Note that we will use
-> > the backing file ioctl to create this id to remove any security
-> > concerns.
-> >
-> > The ioctl will also take a 64-bit integer to define which operations
-> > will be passed through, the operations mask. This will have one bit
-> > for each of the existing FUSE_OPERATIONS, at least the ones that act
-> > on inodes/files.
-> >
-> > Then when fuse fs is considering calling out to the daemon with an
-> > opcode, fuse fs will check if the inode has a backing file and mask.
-> > If it does, and the specific opcode bit is set, fuse fs will instead
-> > call out to a kernel function in backing.c that can perform that
-> > operation on the backing file correctly.
-> >
-> > Details:
-> >
-> > Question: Will it be possible to change the mask/backing file after
-> > the initial setting? My feeling is that it might well be useful to be
-> > able to set the mask, the file not so much. Situations would be (for
-> > example) a caching file system that turns off read forwarding once the
-> > whole file is downloaded.
-> >
+>         WARN_ON_ONCE(len & (PAGE_SIZE - 1));
 >
-> Generally, enabling passthrough from a point in time until the end of
-> inode lifetime is easier than turning it off, but also there are many
-> dependencies between passthrough ops and inode state so it will
-> require a lot of care to enable *some* operations mid inode lifetime.
+> /me speculates that this might be triggered by an attempt to write back
+> some 4k fsblock within a 16/64k base page?
 >
-> > FUSE_OPEN will, if the backing file has been set, reopen it as a file
-> > (not a path) if needed. This is whether or not FUSE_OPEN is passed
-> > through.
+
+I think this can happen on 4k base pages as well actually. On the
+iomap side, the length passed is always block-aligned and in fuse, we
+set blkbits to be PAGE_SHIFT so theoretically block-aligned is always
+page-aligned, but I missed that if it's a "fuseblk" filesystem, that
+isn't true and the blocksize is initialized to a default size of 512
+or whatever block size is passed in when it's mounted.
+
+I'll send out a patch to remove this line. It doesn't make any
+difference for fuse_iomap_writeback_range() logic whether len is
+page-aligned or not; I had added it as a sanity-check against sketchy
+ranges.
+
+Also, I just noticed that apparently the blocksize can change
+dynamically for an inode in fuse through getattr replies from the
+server (see fuse_change_attributes_common()). This is a problem since
+the iomap uses inode->i_blkbits for reading/writing to the bitmap. I
+think we will have to cache the inode blkbits in the iomap_folio_state
+struct unfortunately :( I'll think about this some more and send out a
+patch for this.
+
+
+Thanks,
+Joanne
+
+> --D
+>
+> > [  343.830969] Modules linked in: btrfs blake2b_generic xor xor_neon
+> > raid6_pq zstd_compress sm3_ce sha3_ce drm fuse backlight ip_tables
+> > x_tables
+> > [  343.833830] CPU: 0 UID: 0 PID: 4190 Comm: msync04 Not tainted
+> > 6.16.0-rc7-next-20250723 #1 PREEMPT
+> > [  343.834736] Hardware name: linux,dummy-virt (DT)
+> > [  343.835788] pstate: 03402009 (nzcv daif +PAN -UAO +TCO +DIT -SSBS BT=
+YPE=3D--)
+> > [  343.836455] pc : fuse_iomap_writeback_range+0x478/0x558 fuse
+> > [  343.837294] lr : iomap_writeback_folio (fs/iomap/buffered-io.c:1586
+> > fs/iomap/buffered-io.c:1710)
+> > [  343.838178] sp : ffff80008b26f8d0
+> > [  343.838668] x29: ffff80008b26f8d0 x28: fff00000e7f8c800 x27: 0000000=
+000000000
+> > [  343.839391] x26: fff00000d4b30000 x25: 0000000000000000 x24: 0000000=
+000000000
+> > [  343.840305] x23: 0000000000000000 x22: fffffc1fc0334200 x21: 0000000=
+000001000
+> > [  343.840928] x20: ffff80008b26fa00 x19: 0000000000000000 x18: 0000000=
+000000000
+> > [  343.841782] x17: 0000000000000000 x16: ffffb8d3b90c67c8 x15: 0000000=
+000000000
+> > [  343.842565] x14: ffffb8d3ba91e340 x13: 0000ffff8ff3ffff x12: 0000000=
+000000000
+> > [  343.843002] x11: 1ffe000004b74a21 x10: fff0000025ba510c x9 : ffffb8d=
+3b90c6308
+> > [  343.843962] x8 : ffff80008b26f788 x7 : ffffb8d365830b90 x6 : ffffb8d=
+3bb6c9000
+> > [  343.844718] x5 : 0000000000000000 x4 : 000000000000000a x3 : 0000000=
+000001000
+> > [  343.845333] x2 : fff00000c0b5ecc0 x1 : 000000000000ffff x0 : 0bfffe0=
+00000400b
+> > [  343.846323] Call trace:
+> > [  343.846767] fuse_iomap_writeback_range+0x478/0x558 fuse (P)
+> > [  343.847288] iomap_writeback_folio (fs/iomap/buffered-io.c:1586
+> > fs/iomap/buffered-io.c:1710)
+> > [  343.847930] iomap_writepages (fs/iomap/buffered-io.c:1762)
+> > [  343.848494] fuse_writepages+0xa0/0xe8 fuse
+> > [  343.849112] do_writepages (mm/page-writeback.c:2634)
+> > [  343.849614] filemap_fdatawrite_wbc (mm/filemap.c:386 mm/filemap.c:37=
+6)
+> > [  343.850202] __filemap_fdatawrite_range (mm/filemap.c:420)
+> > [  343.850791] file_write_and_wait_range (mm/filemap.c:794)
+> > [  343.851108] fuse_fsync+0x6c/0x138 fuse
+> > [  343.851688] vfs_fsync_range (fs/sync.c:188)
+> > [  343.852002] __arm64_sys_msync (mm/msync.c:96 mm/msync.c:32 mm/msync.=
+c:32)
+> > [  343.852197] invoke_syscall.constprop.0
+> > (arch/arm64/include/asm/syscall.h:61 arch/arm64/kernel/syscall.c:54)
+> > [  343.852914] do_el0_svc (include/linux/thread_info.h:135
+> > (discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2)
+> > arch/arm64/kernel/syscall.c:151 (discriminator 2))
+> > [  343.853389] el0_svc (arch/arm64/include/asm/irqflags.h:82
+> > (discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
+> > 1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
+> > arch/arm64/kernel/entry-common.c:169 (discriminator 1)
+> > arch/arm64/kernel/entry-common.c:182 (discriminator 1)
+> > arch/arm64/kernel/entry-common.c:880 (discriminator 1))
+> > [  343.853829] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:8=
+99)
+> > [  343.854350] el0t_64_sync (arch/arm64/kernel/entry.S:596)
+> > [  343.854652] ---[ end trace 0000000000000000 ]---
 > >
-> > If FUSE_OPEN is passed through, user space will not get the chance to
-> > assign a file handle ID to the opened file. It will still be possible
-> > to pass FUSE_READ etc to the daemon - the daemon will still have the
-> > node id and be able to read data based on that.
 > >
->
-> Not sure I understand what you mean, but we do support per file opt-out o=
-f
-> passthrough with FOPEN_DIRECT_IO even when the inode is already
-> set up for passthrough.
->
-> > FUSE_LOOKUP can return a 0 node id, but only if *all* operations on
-> > that node as marked as passthrough.
->
-> Not sure why this is but I will be open to understanding.
-> Will need an elaborate design of the inode lifetime in this case.
->
 > >
-> > Suggestion: During FUSE_LOOKUP, if FUSE_GETATTR is set in the mask,
-> > ignore the passed in attributes and read them from the backing file.
->
-> My patches already implement that when GETATTR is in the mask.
->
+> > ## Source
+> > * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/ne=
+xt/linux-next.git
+> > * Project: https://qa-reports.linaro.org/lkft/linux-next-master/build/n=
+ext-20250723/
+> > * Git sha: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
+> > * Git describe: 6.16.0-rc7-next-20250723
+> > * kernel version: next-20250723
+> > * Architectures: arm64
+> > * Toolchains: gcc-13
+> > * Kconfigs: defconfig + CONFIG_ARM64_64K_PAGES=3Dy
+> > * Kconfigs: defconfig + CONFIG_ARM64_16K_PAGES=3Dy
 > >
-> > Random, non-exhastive list of considerations:
+> > ## Test
+> > * Test log 1: https://qa-reports.linaro.org/api/testruns/29227309/log_f=
+ile/
+> > * Test log 2: https://qa-reports.linaro.org/api/testruns/29227074/log_f=
+ile/
+> > * Test run: https://regressions.linaro.org/lkft/linux-next-master/next-=
+20250723/testruns/1713367/
+> > * Test history:
+> > https://qa-reports.linaro.org/lkft/linux-next-master/build/next-2025072=
+3/testrun/29227309/suite/log-parser-test/test/exception-warning-fsfusefile-=
+at-fuse_iomap_writeback_range/history/
+> > * Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft=
+/tests/30G3hpJVVdXkZKnB15v1qoQOL03
+> > * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/30=
+G3dvSFyHHQ3E8CvKH7tjU98I6/
+> > * Kernel config:
+> > https://storage.tuxsuite.com/public/linaro/lkft/builds/30G3dvSFyHHQ3E8C=
+vKH7tjU98I6/config
 > >
-> > FUSE_FORGET can only be marked passthrough if the node id is 0.
-> >
-> > FUSE_CREATE returns a new node id and file handle. It would need the
-> > ability to set backing files.
-> >
-> > If FUSE_LOOKUP is marked for passthrough, then looked up inodes will
-> > be prepopulated with a backing O_PATH file and a mask will all bits
-> > set.
-> >
-> > FUSE_RENAME takes two nodes and names, and moves one to the other. If
-> > one is passthrough and one is not, there is no obvious way of
-> > performing a rename. Either fall back to copy/delete or return EXDEV
->
-> Good question.
->
-> My patches were meant to provide you the basic infrastructure to enter
-> this playground and show that you do not need backing dentry/inode
-> beyond what is already available.
->
-> I hope this is enough for you to start experimenting and sending RFC patc=
-hes
-> with design doc!
->
-> Thanks,
-> Amir.
+> > --
+> > Linaro LKFT
+> > https://lkft.linaro.org
 
