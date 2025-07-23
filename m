@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-55804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30094B0F0AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 13:01:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8159B0F08D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 12:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55B017BADF3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC13C3BF8B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BB72DCBE2;
-	Wed, 23 Jul 2025 10:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87F028F935;
+	Wed, 23 Jul 2025 10:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BuuCSZ4N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efTob5KU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3288B28CF6D;
-	Wed, 23 Jul 2025 10:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CE128CF6D;
+	Wed, 23 Jul 2025 10:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268292; cv=none; b=RfLGtgmhsc/sRmTrpZPwDUT6hMHd2ZLenqyQ8qdsLdD088o2Xl1feXrlXOmD/uT8/fNw82ObnekP1ITx5O4dSJ205jEGm4SH07LHXYllW6ieWdmDefE3qWrWRuyy11D8SJbt/M2B2Woo21l5xp6sa6VUKmt1j8Mlqh/VdrKl/WQ=
+	t=1753268295; cv=none; b=SzxuswrGq7Q3MIFWslWBfKlvZ8rvccZvXEPcCHOCu7ZVI7yRR9wMwZ+82Kn0DNk9cDjhHLbQCD6cknNB3iYO+0sEdI+kZCiEVVj5RR247zEgz8D0r/9yTcnzK4U6/CFDSFuMyD8na4smEdU8tPewCU1JGV5RLHjjoJh6czrpUgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268292; c=relaxed/simple;
-	bh=NhtNkYuXwHStDWdtuie9A4k+kGKIDhnpql4SKQqfQCw=;
+	s=arc-20240116; t=1753268295; c=relaxed/simple;
+	bh=iLq6PHTeFehVWrujKMoWKU++/D6uijzWL6Oxj45QdPM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qwj90vi4LDyVkl+ousQCCoqXJhvq0gnluF2XSQ8XcCQpXtNKiccm80x2jJu1pfVgp4f5sKJhrWqJlS3N0u3VRcNH2UkRmEtH0YIb1dj2Vf/BY1iTgZEiH0o47+ics47T1p1vmVuJ8nNx8qa3oRfhuXF/WMpPpOY8iN0KKi4J6vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BuuCSZ4N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11991C4CEF7;
-	Wed, 23 Jul 2025 10:58:08 +0000 (UTC)
+	 MIME-Version:Content-Type; b=KmSxxy+OUlFR2qcWkXeKpJBetBMwB+OSs6WKU6OK7hDYZWCAiFKn1xnFkDQsRSlj16LoeSO7MnugskmEs5H8ZIY4WtV++YaT8VJUM8Si8aeaDr34AXObkNWYR9yuH0FO3ZHJc3VitacYcBsX+FmAs+qjTZwTNDC8/IPUeA7H138=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efTob5KU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA57C4CEE7;
+	Wed, 23 Jul 2025 10:58:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753268291;
-	bh=NhtNkYuXwHStDWdtuie9A4k+kGKIDhnpql4SKQqfQCw=;
+	s=k20201202; t=1753268294;
+	bh=iLq6PHTeFehVWrujKMoWKU++/D6uijzWL6Oxj45QdPM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BuuCSZ4Nop347Onr8/80NaJNjf5lHy6V4wzVOgGKQabIqTZalatc4H30q1mtMxCQV
-	 rBAbb6RVVIFmueZfjvhGORrcnfXjXZ53QG0of396AXN4uupfq9oii/BaaA3PI3Ntoh
-	 kLljDZtVd82UPVo32uV1Yl6amI0QXl2I+1AxCB46+qKHI8s/zVcuZt9OqEauJZTJOh
-	 TtckaKBC2IFk4c29zbBI26Ba8ZbjakRM2jZjQ1sMV+oQcs1sa9VUz2cMlFaOE6Msfr
-	 HPRHJYdVsreDTVlQ1Y9yiDXvQaSvLzfi1oJtrJnDFNDBDzYFLoXmRz+P3KuijgzW9n
-	 zMhN3pJJKs52Q==
+	b=efTob5KUX6YfghEKOUdObFIp3nEa4faT1MdAuKqoZysw5KzXU5D1GfNdk3Zo2tT7G
+	 os3vGhrs/j4+ae23KHQ9ocLJvLfNciHLGF3ARh+M9wFPWQrduzBiizVcHbnfV+vOTJ
+	 Y6J78GtJ/gEoTNekxB7OQdfLEpTNh1cTkAnCIDBvVd/ep9HbyLc9mZVQD1UBH4q/1n
+	 YVSHkQ1lN97gixy1Xu1OMHJ5hB2k8ljllhnOq8scsuG+5KQmfntGL/NjfwQB76ypU3
+	 HGUNTk8flOzky8cD3uBa2kl00iQ2bysFy+p9+kn2jBbdmQtv0wKjyLVqwurD30+VQX
+	 6Lq5uHryuH+bw==
 From: Christian Brauner <brauner@kernel.org>
 To: Jeff Layton <jlayton@kernel.org>,
 	Jan Kara <jack@suse.com>,
@@ -53,9 +53,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-fscrypt@vger.kernel.org,
 	fsverity@lists.linux.dev
-Subject: [PATCH v4 03/15] ext4: move fscrypt to filesystem inode
-Date: Wed, 23 Jul 2025 12:57:41 +0200
-Message-ID: <20250723-work-inode-fscrypt-v4-3-c8e11488a0e6@kernel.org>
+Subject: [PATCH v4 04/15] ubifs: move fscrypt to filesystem inode
+Date: Wed, 23 Jul 2025 12:57:42 +0200
+Message-ID: <20250723-work-inode-fscrypt-v4-4-c8e11488a0e6@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
 References: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1757; i=brauner@kernel.org; h=from:subject:message-id; bh=NhtNkYuXwHStDWdtuie9A4k+kGKIDhnpql4SKQqfQCw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0HNA0FJmtseTRDqNLR06b5bhqXgqViL45e5HE/Zc3D hZUG65W6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIoSLDH87MBJEVR97yGVmW 8dl9uMfU8SWky/Cy0y3Vn50vL27teMvIsLNk3uMbOs4TFWW/nuP/K3NejuNP6nNV108fXzExL3M LYwAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1328; i=brauner@kernel.org; h=from:subject:message-id; bh=iLq6PHTeFehVWrujKMoWKU++/D6uijzWL6Oxj45QdPM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0HNC89HnO+38HEl061qtyt8/pEy7/umQqb/jS+8LPW Ge/P+D8vqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiqY0Mf7j0jjZ+mffK19T0 XHuKhsPyCVotJ3VtJ/wR51ttPnfiCnlGhluH/zoENrdZZa0/d/SLs8BdX7klnXcuSodM3+fJIL3 JgwEA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
@@ -79,55 +79,39 @@ itself and move it into the filesystem's inode.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/ext4/crypto.c | 4 ++++
- fs/ext4/ext4.h   | 4 ++++
- fs/ext4/super.c  | 3 +++
- 3 files changed, 11 insertions(+)
+ fs/ubifs/crypto.c | 4 ++++
+ fs/ubifs/ubifs.h  | 3 +++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
-index 0a056d97e640..9837cbfa9159 100644
---- a/fs/ext4/crypto.c
-+++ b/fs/ext4/crypto.c
-@@ -227,6 +227,10 @@ static bool ext4_has_stable_inodes(struct super_block *sb)
+diff --git a/fs/ubifs/crypto.c b/fs/ubifs/crypto.c
+index 921f9033d0d2..9f34ed9d5356 100644
+--- a/fs/ubifs/crypto.c
++++ b/fs/ubifs/crypto.c
+@@ -88,6 +88,10 @@ int ubifs_decrypt(const struct inode *inode, struct ubifs_data_node *dn,
  }
  
- const struct fscrypt_operations ext4_cryptops = {
+ const struct fscrypt_operations ubifs_crypt_operations = {
 +#ifdef CONFIG_FS_ENCRYPTION
-+	.inode_info_offs	= offsetof(struct ext4_inode_info, i_crypt_info) -
-+				  offsetof(struct ext4_inode_info, vfs_inode),
++	.inode_info_offs	= offsetof(struct ubifs_inode, i_crypt_info) -
++				  offsetof(struct ubifs_inode, vfs_inode),
 +#endif
- 	.needs_bounce_pages	= 1,
- 	.has_32bit_inodes	= 1,
- 	.supports_subblock_data_units = 1,
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 18373de980f2..75209a09b19f 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1197,6 +1197,10 @@ struct ext4_inode_info {
- 	__u32 i_csum_seed;
- 
- 	kprojid_t i_projid;
-+
+ 	.legacy_key_prefix	= "ubifs:",
+ 	.get_context		= ubifs_crypt_get_context,
+ 	.set_context		= ubifs_crypt_set_context,
+diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
+index 256dbaeeb0de..6c1baa11e073 100644
+--- a/fs/ubifs/ubifs.h
++++ b/fs/ubifs/ubifs.h
+@@ -416,6 +416,9 @@ struct ubifs_inode {
+ 	pgoff_t read_in_a_row;
+ 	int data_len;
+ 	void *data;
 +#ifdef CONFIG_FS_ENCRYPTION
 +	struct fscrypt_inode_info *i_crypt_info;
 +#endif
  };
  
- /*
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c7d39da7e733..47c450c68a3b 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1412,6 +1412,9 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
- 	INIT_WORK(&ei->i_rsv_conversion_work, ext4_end_io_rsv_work);
- 	ext4_fc_init_inode(&ei->vfs_inode);
- 	spin_lock_init(&ei->i_fc_lock);
-+#ifdef CONFIG_FS_ENCRYPTION
-+	ei->i_crypt_info = NULL;
-+#endif
- 	return &ei->vfs_inode;
- }
- 
+ /**
 
 -- 
 2.47.2
