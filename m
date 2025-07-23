@@ -1,270 +1,298 @@
-Return-Path: <linux-fsdevel+bounces-55896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76003B0F9F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 20:04:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF527B0F9F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 20:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FC2D3AB17E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 18:02:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3BE1892BCF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 18:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C16C21FF58;
-	Wed, 23 Jul 2025 18:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39641F8AD3;
+	Wed, 23 Jul 2025 18:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRwYrmWT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="reRJeESi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D00204F9B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 18:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B141149C41;
+	Wed, 23 Jul 2025 18:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753293784; cv=none; b=h3FCiJqTb4ScK2kP2xa/b2j9AdwF+a6BPtK8pc3ukkil2O5UIyuX8VVWoy1yHEBtBq/x/woz5cF2u705/7WjuNB/uYTvOGFN3GFvojX9CARsMfL62DrPxKY8iRxb5QwqddKmHYS2+BjKQoOJiKKWhBco0REU3xWaYouurVu/YaM=
+	t=1753293884; cv=none; b=Id4K7pTVWe+TCrUjB1I/01L29xB/J7tUUSmFbrzL6yr6Np9H4CP+nCLRWxgZzEDGQ75t5aHMpW5J5zZq+q+OwPvCTY1bAwm8QjylJN1moMyTqt5vPYICtLE50N8rCeeCeNEV9t8hIJr9VIV9A65NF0BPmQDYeVYpK2hwkfl4gqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753293784; c=relaxed/simple;
-	bh=2iebzDMl31aYqICEJCQtJeRntCkcwu/khnNK/tJyxxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=di8yGP1FfAFdEPu8R+R8w78SbHpEHLkTvO99aGYUYrnOcFMJG28fWJ9H50imEo+iwxic5YuHodbdUdlTfs0DvrYyi+l1Wk4nSgfQy3THR7aKZeBIUfMSVyoV3AdEikdORrZ95kNPzJCUPOBVu2y0Y3o+Qyt/KcugsKD3El3DtWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRwYrmWT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753293781;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=G3whOxkstbMxt2nhGLk1bQZXFsEZXlxQlt2XWZxhuog=;
-	b=eRwYrmWTGJwJeh6DbFvEoe0l+0hd2VofQwKBpQL8KYjYBye8Mso1KpStkcHIczxVEUTKh6
-	nX4Tbcm92tZesss3+sooQ+G+Getp7KQdR3rxr2BuqLUdpm2t4ldH7t46Q8QXTRFXNWIGS/
-	kVRqKm3LrCnhuhINj7mv13/jMjaN9Ks=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-jT-6ild_N0iXhbPstuSpTw-1; Wed, 23 Jul 2025 14:02:59 -0400
-X-MC-Unique: jT-6ild_N0iXhbPstuSpTw-1
-X-Mimecast-MFC-AGG-ID: jT-6ild_N0iXhbPstuSpTw_1753293776
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4561611dc2aso820365e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 11:02:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753293776; x=1753898576;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=G3whOxkstbMxt2nhGLk1bQZXFsEZXlxQlt2XWZxhuog=;
-        b=XIDAxppthML6i9BTy1l//ahOBW7VoFd7W/jh/iUurZeop5Ux2MfRAsXgBOwxxCUae7
-         oFrfzn2EUWQ8EyQ7wV1l8F5TYrp2IQ0Bmpu2/HRKUF43j+oEiDMpBhLwXcXz3rtXzmhX
-         adl10ZXSzQlg/c0wklSOEcaI8KUJeYYLGUv0VjUqtw6u2HUCWJywXVSyv++in1aihdR5
-         5WB9ER+REjnddqwKp9bT2Q/U98OdUszttPtdzEctOT5faUppQhjaWN6ev0Uo6cehiY2k
-         aqsMYw4iD3BPmGucextmR0KSv959nhju4MroXGwWy99VtkVR+lf50lK9y0DV7mmufDiR
-         w6Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5sLACsWTnwM+xhCpNwYsYP5nbPfNIDKELijkOIe0nKuYMJ7/UjfqWPL7x6xwY6MoMUPIEAUeebYAnrDn0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpM7X2/13aiP946BV6GZTAi+7btzMQcfXntAtjtgyVpRaS4Dj7
-	IdqM+I6gXD2jOQzqxvC3drkjYU73bowpBPaRJbJEegvBZcjOgWJGPmV7jho+fG3nbmlqhIMCx1H
-	w0quDV/gb9tJg62o2Z0KWutQ5IzUrIThUBQrC9Sqk0Gr+n+PuSGtcNgKJo9U3qO/N0WA=
-X-Gm-Gg: ASbGncs1bBEH2TzY2uq3qUFivPyXWSvuWe+ycrpjDANChFCqRGBoWxV/G8uQqcWu10R
-	ShzS4iVsd+ihiEh+NGQ8mkIh+te2ek1e5G9N2WEzqJX4zM86n6GSopZ+615/FSITMUhgCKnPhoj
-	l7MlzXP8esf69P8x+I1NtpeDMiHifTI+3TYoloDtmat8hRvlRGCMxycFhaFhYdjTpH/bxalFrrQ
-	DrDxvmrgktO2kG2mL0sFYpS4OJFcygjOwOafVr8g/9xGFr3/8c8m9jHnO6OX0gkU1RiI2EAUQLa
-	RRt5JML3Mof57jK2Bb9a3kIplXoa/Q6w7UvxKjWGJkFwmyjdokkoSxQl+3jZP+toPTOcvQ==
-X-Received: by 2002:a05:6000:2013:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b768ea011bmr3550361f8f.17.1753293775536;
-        Wed, 23 Jul 2025 11:02:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEZg16J4+gnyGIzNr4yWSx/6st9lfF2anNLh6lxP/xRh+IjVjl07vljj/vUaQGCZ849yfF1A==
-X-Received: by 2002:a05:6000:2013:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b768ea011bmr3550304f8f.17.1753293774863;
-        Wed, 23 Jul 2025 11:02:54 -0700 (PDT)
-Received: from [192.168.3.141] (p57a1af43.dip0.t-ipconnect.de. [87.161.175.67])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458691b2adesm29652445e9.32.2025.07.23.11.02.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 11:02:54 -0700 (PDT)
-Message-ID: <383a957e-badb-49fc-9913-30bea3a1c5a8@redhat.com>
-Date: Wed, 23 Jul 2025 20:02:52 +0200
+	s=arc-20240116; t=1753293884; c=relaxed/simple;
+	bh=3s2WbiNCRNNPWWDGs/4RKyVXfpwP1NFU8tlpStmnKr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=liAF1teS9Lhquw2m+qY941dyXTy9Pq5X4Kn0r4VvXhWylXg2ifjhmSQm/UBBne7lekwPirSXbNoRQVLDdmE9K/Fok/QcfK5p0tfCAKAH478F41OYP+ba2Q3BZi2KZgKthI7Dfqq0JMwD8OLg1PCNCsY3+PAME7dyK191DYww9wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=reRJeESi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB61DC4CEE7;
+	Wed, 23 Jul 2025 18:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753293883;
+	bh=3s2WbiNCRNNPWWDGs/4RKyVXfpwP1NFU8tlpStmnKr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=reRJeESinpZ3trP05oMgF+FP8wlLRfdSGHni3uL5HTaveiOzP9wHRNwLrmA5mTcBF
+	 fxOd8p5o7oRLsZqBK9lZin4Ty5vLcpm5EpJxidAxSZhYjfhq+HAOuv9iResvS1uMp+
+	 A+1Wt3VHVwqFtVgRaSDDje99n6elhZvnGJ2V2zdJjSFzVpTkbUnfBqeo0XBIulR3Y4
+	 8h/ekKd91GUSLvyOerCJqsWqNaga/C8lonTwf36moK2fAAQioFJgyum/xYUzTFrcqc
+	 cfClrXVkAerdA3ZbiborqpmIS3Zx5IyY1z+6CJ86fHmSO8LZjft0GQMrn9QlSkJMXI
+	 HAH+aTSfRIaow==
+Date: Wed, 23 Jul 2025 11:04:43 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net,
+	bernd@bsbernd.com, miklos@szeredi.hu, joannelkoong@gmail.com,
+	Josef Bacik <josef@toxicpanda.com>,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, Neal Gompa <neal@gompa.dev>
+Subject: Re: [RFC v3] fuse: use fs-iomap for better performance so we can
+ containerize ext4
+Message-ID: <20250723180443.GK2672029@frogsfrogsfrogs>
+References: <20250717231038.GQ2672029@frogsfrogsfrogs>
+ <20250718-flitzen-imker-4874d797877e@brauner>
+ <CAOQ4uxgV_nJZBh4BNE+LEjCsMToHv7vSj8Ci4yJqtR-vrxb=yA@mail.gmail.com>
+ <20250718193116.GC2672029@frogsfrogsfrogs>
+ <20250723-situiert-lenkrad-c17d23a177bd@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
- Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-References: <20250721090942.274650-1-david@redhat.com>
- <4a8b70b1-7ba0-4d60-a3a0-04ac896a672d@gmail.com>
- <5968efc3-50ac-465a-a51b-df91fc1a930a@redhat.com>
- <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250723-situiert-lenkrad-c17d23a177bd@brauner>
 
-On 23.07.25 19:07, Usama Arif wrote:
->>> Thanks for the patch David!
->>>
->>> As discussed in the other thread, with the below diff
->>>
->>> diff --git a/kernel/sys.c b/kernel/sys.c
->>> index 2a34b2f70890..3912f5b6a02d 100644
->>> --- a/kernel/sys.c
->>> +++ b/kernel/sys.c
->>> @@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
->>>                   return -EINVAL;
->>>             /* Flags are only allowed when disabling. */
->>> -       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
->>> +       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
->>>                   return -EINVAL;
->>>           if (mmap_write_lock_killable(current->mm))
->>>                   return -EINTR;
->>>
->>>
->>> I tested with the below selftest, and it works. It hopefully covers
->>> majority of the cases including fork and re-enabling THPs.
->>> Let me know if it looks ok and please feel free to add this in the
->>> next revision you send.
->>>
->>>
->>> Once the above diff is included, please feel free to add
->>>
->>> Acked-by: Usama Arif <usamaarif642@gmail.com>
->>> Tested-by: Usama Arif <usamaarif642@gmail.com>
->>
->> Thanks!
->>
->> The latest version lives at
->>
->>    https://github.com/davidhildenbrand/linux/tree/PR_SET_THP_DISABLE
->>
->> With all current review feedback addressed (primarily around description+comments) + that one fix.
->>
->>
+On Wed, Jul 23, 2025 at 03:05:12PM +0200, Christian Brauner wrote:
+> On Fri, Jul 18, 2025 at 12:31:16PM -0700, Darrick J. Wong wrote:
+> > On Fri, Jul 18, 2025 at 01:55:48PM +0200, Amir Goldstein wrote:
+> > > On Fri, Jul 18, 2025 at 10:54 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > On Thu, Jul 17, 2025 at 04:10:38PM -0700, Darrick J. Wong wrote:
+> > > > > Hi everyone,
+> > > > >
+> > > > > DO NOT MERGE THIS, STILL!
+> > > > >
+> > > > > This is the third request for comments of a prototype to connect the
+> > > > > Linux fuse driver to fs-iomap for regular file IO operations to and from
+> > > > > files whose contents persist to locally attached storage devices.
+> > > > >
+> > > > > Why would you want to do that?  Most filesystem drivers are seriously
+> > > > > vulnerable to metadata parsing attacks, as syzbot has shown repeatedly
+> > > > > over almost a decade of its existence.  Faulty code can lead to total
+> > > > > kernel compromise, and I think there's a very strong incentive to move
+> > > > > all that parsing out to userspace where we can containerize the fuse
+> > > > > server process.
+> > > > >
+> > > > > willy's folios conversion project (and to a certain degree RH's new
+> > > > > mount API) have also demonstrated that treewide changes to the core
+> > > > > mm/pagecache/fs code are very very difficult to pull off and take years
+> > > > > because you have to understand every filesystem's bespoke use of that
+> > > > > core code.  Eeeugh.
+> > > > >
+> > > > > The fuse command plumbing is very simple -- the ->iomap_begin,
+> > > > > ->iomap_end, and iomap ->ioend calls within iomap are turned into
+> > > > > upcalls to the fuse server via a trio of new fuse commands.  Pagecache
+> > > > > writeback is now a directio write.  The fuse server is now able to
+> > > > > upsert mappings into the kernel for cached access (== zero upcalls for
+> > > > > rereads and pure overwrites!) and the iomap cache revalidation code
+> > > > > works.
+> > > > >
+> > > > > With this RFC, I am able to show that it's possible to build a fuse
+> > > > > server for a real filesystem (ext4) that runs entirely in userspace yet
+> > > > > maintains most of its performance.  At this stage I still get about 95%
+> > > > > of the kernel ext4 driver's streaming directio performance on streaming
+> > > > > IO, and 110% of its streaming buffered IO performance.  Random buffered
+> > > > > IO is about 85% as fast as the kernel.  Random direct IO is about 80% as
+> > > > > fast as the kernel; see the cover letter for the fuse2fs iomap changes
+> > > > > for more details.  Unwritten extent conversions on random direct writes
+> > > > > are especially painful for fuse+iomap (~90% more overhead) due to upcall
+> > > > > overhead.  And that's with debugging turned on!
+> > > > >
+> > > > > These items have been addressed since the first RFC:
+> > > > >
+> > > > > 1. The iomap cookie validation is now present, which avoids subtle races
+> > > > > between pagecache zeroing and writeback on filesystems that support
+> > > > > unwritten and delalloc mappings.
+> > > > >
+> > > > > 2. Mappings can be cached in the kernel for more speed.
+> > > > >
+> > > > > 3. iomap supports inline data.
+> > > > >
+> > > > > 4. I can now turn on fuse+iomap on a per-inode basis, which turned out
+> > > > > to be as easy as creating a new ->getattr_iflags callback so that the
+> > > > > fuse server can set fuse_attr::flags.
+> > > > >
+> > > > > 5. statx and syncfs work on iomap filesystems.
+> > > > >
+> > > > > 6. Timestamps and ACLs work the same way they do in ext4/xfs when iomap
+> > > > > is enabled.
+> > > > >
+> > > > > 7. The ext4 shutdown ioctl is now supported.
+> > > > >
+> > > > > There are some major warts remaining:
+> > > > >
+> > > > > a. ext4 doesn't support out of place writes so I don't know if that
+> > > > > actually works correctly.
+> > > > >
+> > > > > b. iomap is an inode-based service, not a file-based service.  This
+> > > > > means that we /must/ push ext2's inode numbers into the kernel via
+> > > > > FUSE_GETATTR so that it can report those same numbers back out through
+> > > > > the FUSE_IOMAP_* calls.  However, the fuse kernel uses a separate nodeid
+> > > > > to index its incore inode, so we have to pass those too so that
+> > > > > notifications work properly.  This is related to #3 below:
+> > > > >
+> > > > > c. Hardlinks and iomap are not possible for upper-level libfuse clients
+> > > > > because the upper level libfuse likes to abstract kernel nodeids with
+> > > > > its own homebrew dirent/inode cache, which doesn't understand hardlinks.
+> > > > > As a result, a hardlinked file results in two distinct struct inodes in
+> > > > > the kernel, which completely breaks iomap's locking model.  I will have
+> > > > > to rewrite fuse2fs for the lowlevel libfuse library to make this work,
+> > > > > but on the plus side there will be far less path lookup overhead.
+> > > > >
+> > > > > d. There are too many changes to the IO manager in libext2fs because I
+> > > > > built things needed to stage the direct/buffered IO paths separately.
+> > > > > These are now unnecessary but I haven't pulled them out yet because
+> > > > > they're sort of useful to verify that iomap file IO never goes through
+> > > > > libext2fs except for inline data.
+> > > > >
+> > > > > e. If we're going to use fuse servers as "safe" replacements for kernel
+> > > > > filesystem drivers, we need to be able to set PF_MEMALLOC_NOFS so that
+> > > > > fuse2fs memory allocations (in the kernel) don't push pagecache reclaim.
+> > > > > We also need to disable the OOM killer(s) for fuse servers because you
+> > > > > don't want filesystems to unmount abruptly.
+> > > > >
+> > > > > f. How do we maximally contain the fuse server to have safe filesystem
+> > > > > mounts?  It's very convenient to use systemd services to configure
+> > > > > isolation declaratively, but fuse2fs still needs to be able to open
+> > > > > /dev/fuse, the ext4 block device, and call mount() in the shared
+> > > > > namespace.  This prevents us from using most of the stronger systemd
+> > > >
+> > > > I'm happy to help you here.
+> > > >
+> > > > First, I think using a character device for namespaced drivers is always
+> > > > a mistake. FUSE predates all that ofc. They're incredibly terrible for
+> > > > delegation because of devtmpfs not being namespaced as well as devices
+> > > > in general. And having device nodes on anything other than tmpfs is just
+> > > > wrong (TM).
+> > > >
+> > > > In systemd I ultimately want a bpf LSM program that prevents the
+> > > > creation of device nodes outside of tmpfs. They don't belong on
+> > > > persistent storage imho. But anyway, that's besides the point.
+> > > >
+> > > > Opening the block device should be done by systemd-mountfsd but I think
+> > > > /dev/fuse should really be openable by the service itself.
+> > 
+> > /me slaps his head and remembers that fsopen/fsconfig/fsmount exist.
+> > Can you pass an fsopen fd to an unprivileged process and have that
+> > second process call fsmount?
 > 
-> Hi David,
+> Yes, but remember that at some point you must call
+> fsconfig(FSCONFIG_CMD_CREATE) to create the superblock. On block based
+> fses that requires CAP_SYS_ADMIN so that has to be done by the
+> privielged process. All the rest can be done by the unprivileged process
+> though. That's exactly how bpf tokens work.
+
+Hrm.  Assuming the fsopen mount sequence is still:
+
+	sfd = fsopen("ext4", FSOPEN_CLOEXEC);
+	fsconfig(sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+	...
+	fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+	mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
+	move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+Then I guess whoever calls fsconfig(FSCONFIG_CMD_CREATE) needs
+CAP_SYS_ADMIN; and they have to be running in the desired fs namespace
+for move_mount() to have the intended effect.
+
+Can two processes share the same fsopen fd?  If so then systemd-mountfsd
+could pass the fsopen fd to the fuse server (whilst retaining its own
+copy).  The fuse server could do its own mount option parsing, call
+FSCONFIG_SET_* on the fd, and then signal back to systemd-mountfsd to do
+the create/fsmount/move_mount part.
+
+The systemd-mountfsd would have to be running in desired fs namespace
+and with sufficient privileges to open block devices, but I'm guessing
+that's already a requirement?
+
+> > If so, then it would be more convenient if mount.safe/systemd-mountfsd
+> > could pass open fds for /dev/fuse fsopen then the fuse server wouldn't
 > 
-> Just wanted to check if the above branch is up to date?
+> Yes, that would work.
+
+Oh goody :)
+
+> > need any special /dev access at all.  I think then the fuse server's
+> > service could have:
+> > 
+> > DynamicUser=true
+> > ProtectSystem=true
+> > ProtectHome=true
+> > PrivateTmp=true
+> > PrivateDevices=true
+> > DevicePolicy=strict
+> > 
+> > (I think most of those are redundant with DynamicUser=true but a lot of
+> > my systemd-fu is paged out ATM.)
+> > 
+> > My goal here is extreme containment -- the code doing the fs metadata
+> > parsing has no privileges, no write access except to the fds it was
+> > given, no network access, and no ability to read anything outside the
+> > root filesystem.  Then I can get back to writing buffer
+> > overflows^W^Whigh quality filesystem code in peace.
 > 
+> Yeah, sounds about right.
+> 
+> > 
+> > > > So we can try and allowlist /dev/fuse in vfs_mknod() similar to
+> > > > whiteouts. That means you can do mknod() in the container to create
+> > > > /dev/fuse (Personally, I would even restrict this to tmpfs right off the
+> > > > bat so that containers can only do this on their private tmpfs mount at
+> > > > /dev.)
+> > > >
+> > > > The downside of this would be to give unprivileged containers access to
+> > > > FUSE by default. I don't think that's a problem per se but it is a uapi
+> > > > change.
+> > 
+> > Yeah, that is a new risk.  It's still better than metadata parsing
+> > within the kernel address space ... though who knows how thoroughly fuse
+> > has been fuzzed by syzbot :P
+> > 
+> > > > Let me think a bit about alternatives. I have one crazy idea but I'm not
+> > > > sure enough about it to spill it.
+> > 
+> > Please do share, #f is my crazy unbaked idea. :)
+> > 
+> > > I don't think there is a hard requirement for the fuse fd to be opened from
+> > > a device driver.
+> > > With fuse io_uring communication, the open fd doesn't even need to do io.
+> > > 
+> > > > > protections because they tend to run in a private mount namespace with
+> > > > > various parts of the filesystem either hidden or readonly.
+> > > > >
+> > > > > In theory one could design a socket protocol to pass mount options,
+> > > > > block device paths, fds, and responsibility for the mount() call between
+> > > > > a mount helper and a service:
+> > > >
+> > > > This isn't a problem really. This should just be an extension to
+> > > > systemd-mountfsd.
+> > 
+> > I suppose mount.safe could very well call systemd-mount to go do all the
+> > systemd-related service setup, and that would take care of udisks as
+> > well.
+> 
+> The ultimate goal is to teach mount(8)/libmount to use that daemon when
+> it's available. Because that would just make unprivileged mounting work
+> without userspace noticing anything.
 
-No, I forgot to push. Now pushed.
+That sounds really neat. :)
 
-This is the diff (excluding description changes):
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index c4127104d9bc3..527aa4c9645fd 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -324,8 +324,8 @@ struct thpsize {
-          (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
-  
-  /*
-- * Check whether THPs are explicitly disabled through madvise or prctl, or some
-- * architectures may disable THP for some mappings, for example, s390 kvm.
-+ * Check whether THPs are explicitly disabled for this VMA, for example,
-+ * through madvise or prctl.
-   */
-  static inline bool vma_thp_disabled(struct vm_area_struct *vma,
-                 vm_flags_t vm_flags)
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 1949bb9270d48..60e496ecabe04 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -179,8 +179,8 @@ struct prctl_mm_map {
-  
-  /*
-   * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
-- * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
-- * specified for PR_SET_THP_DISABLE.
-+ * is reserved, so PR_GET_THP_DISABLE can return "1 | flags", to effectively
-+ * return "1" when no flags were specified for PR_SET_THP_DISABLE.
-   */
-  #define PR_SET_THP_DISABLE     41
-  /* Don't disable THPs when explicitly advised (MADV_HUGEPAGE / VM_HUGEPAGE). */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 2a34b2f708900..b87d0acaab0be 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2438,7 +2438,7 @@ static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
-         return 0;
-  }
-  
--static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
-+static int prctl_set_thp_disable(bool thp_disable, unsigned long flags,
-                                  unsigned long arg4, unsigned long arg5)
-  {
-         unsigned long *mm_flags = &current->mm->flags;
-@@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
-                 return -EINVAL;
-  
-         /* Flags are only allowed when disabling. */
--       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
-+       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
-                 return -EINVAL;
-         if (mmap_write_lock_killable(current->mm))
-                 return -EINTR;
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+--D
 
