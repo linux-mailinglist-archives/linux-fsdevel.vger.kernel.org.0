@@ -1,89 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-55907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C42B0FC1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 23:25:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E894B0FCFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 00:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C2D3AC94B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 21:24:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95AFC173393
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 22:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E781126CE39;
-	Wed, 23 Jul 2025 21:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49069272E42;
+	Wed, 23 Jul 2025 22:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="An42eBv0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdAq5s+X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE17314A4F9;
-	Wed, 23 Jul 2025 21:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E3C2AD25;
+	Wed, 23 Jul 2025 22:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753305918; cv=none; b=cE1YT5LZCZjZ85bhFHMwlF0B9rbT8Tcs3pbqFxhC2pNsIYi+LsxPXzTLirxRzgcsRIJt7if5NTMdlW+3obbcEb579HeR5t4D4ePy3+WA68pPiYk5SaqBhIl1HMQGutxuSNh+uPxgFH2QZfZBR1Q9VmkaXNN7EHX3Ol48gcKGcEs=
+	t=1753310236; cv=none; b=Cfia7TwYknWhf0j8z2srl6AiJrZloCRVaJ52ZewnTSotX1Ji7A0s4+w7wt5K3cBobaOmOwOjnIqqlqEsHhd6u8ad/rsShw+V8joifxIvrColeiaAsFzeaa2jX6mWqUQQ9xXVNeOybk/c3MrY7q+bkEPsNligXgs2/+A+cDvV0tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753305918; c=relaxed/simple;
-	bh=zVctxYoLHPv6JSk7LEg3jS/TARaw/a7N58sj1SnGTeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxTukSqFsDyYTtyc+KqCh64HVCS9DmABrOEDKE4h4DHcYsVJn5qaTbpgQ7zUQTD7LhLv5LIJmha3q4ei+dEvU9I8HKj/WQpqQKcApfLYXM8//W5hkUsnAT4wplLBD7h+Fv+Rdg59rR+h1XrJjPAJrziOpUIkuG0mM5Kj2AZcWos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=An42eBv0; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YcKa9zxhHHkTSiqRaxtCtu00HFAere42O4zaabyjgto=; b=An42eBv0WoFbA+MdRU+JZRbvsN
-	fZClMN9xJ/2ODcnXUgTV97uEZSSORlNfFVPnjrrCze3xTtUTf7Q9o5aW8olgaAbceoZCgiGwJQJJp
-	jqHZr94UKf8piBg6s9vaqsXjzFcmqTBukV+tPwx3VCz2D4QVBO4jISAMRvXp/br8M6CsLWRuhAaHV
-	qUclRL93XM/JA4c1fnx8E1jLw7GhNsGgyu/ihfrJqWCEACXhPGvZoDAXBWTFmhAYGNXlEhBMmEIY0
-	ADxjhl1He0FM4Eyyw2UWUjMUUHPAcgx0FJO+Eo4sTLSy9j5etAH+sQAg/wn/VEnVFI5ho2aFkb9ly
-	FmIQmEzQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uegxb-0000000EjGr-1wMy;
-	Wed, 23 Jul 2025 21:25:11 +0000
-Date: Wed, 23 Jul 2025 22:25:11 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "frank.li@vivo.com" <frank.li@vivo.com>,
-	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] hfsplus: fix to update ctime after rename
-Message-ID: <20250723212511.GQ2580412@ZenIV>
-References: <20250722071347.1076367-1-frank.li@vivo.com>
- <20250723023233.GL2580412@ZenIV>
- <cce1a29f2f55baf679c3fe83269d9bceb3c4fd6c.camel@ibm.com>
+	s=arc-20240116; t=1753310236; c=relaxed/simple;
+	bh=WLpZVFL6i45G9hsEsT96Tgw98VbKC0ZlhUqwjUtaJEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O/giLVBaTNYp3IWUWVxjU/fvJ34MevuY+tDgFoPxFrLNdGIQupn3Fgll33t5kfMHD3egiRu97FwepchrzEBQ9yPjHSqBhD/s40s2AtVQ6KtBa0Pq+eQZBf6Q8fEVjD2rq7kqCnurqcUXEMvlrPTE4tnDiLedNJ7IA19kUmzbFcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdAq5s+X; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4abc006bcadso6037111cf.0;
+        Wed, 23 Jul 2025 15:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753310234; x=1753915034; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XT3gZgJcKjgQhhv2BAHSv1vm9Q9R1YzcsGLhzAhjs4M=;
+        b=YdAq5s+XWsHw/Gyb2iWzs+s7Ms0p3qntRun+0MjKdT2zRTStqjoPxgffLTnbyTwQCU
+         0PxVsBcqDM4zzbBWIKH5z+TC3zWVAc3l/J3RQP9kIjgcA07frPVmr51pHk2oyjuHhDFi
+         K7xlCOI/D3lyRUkcwvQnfrB+FGnwOXhGO6koON3lWRUO/JtaDaY98FxycPnFPde4l/aH
+         5YK3g7wxL6WcURDAWT/+wRf6vIJtUMp3WtGWG2C1C/WETdennqkt1l50OPQ7m8Q/gbaC
+         tUsHbClNyDOu/TydAHTLWt+G8iwXpb0eqe2iIlTaEN8KA1ibxoCtbAZjB3KZ+jDw8wxA
+         dC9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753310234; x=1753915034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XT3gZgJcKjgQhhv2BAHSv1vm9Q9R1YzcsGLhzAhjs4M=;
+        b=YRMEMbklkgwKbzGfWdG4iDAMQJ5LSJwHUkiWEfGRqD+2v8879mgh8HjAhtKPj5fjMq
+         Qxlm0oZSFfPiZfMV2WHEaSUKQhnMzHWIuglC9iW1OnlinaNb1cGRKmwKB4eM14CZ8ks1
+         tFCpYU+BljpYqUjIoSAdFEzVxgzCBZ1gQpYnYFszb4FgnYI/B/83caVowA0rNq3SHxlg
+         fN5erJ+/UIuqs3jvpHF70yBVeJDK06RsBI3lF92rmWY6ElfAoK+hUrDL4U9oofZFLrRE
+         hZBLuWDtXx12JDcA80dyn2p/ZhOMDAxkrN2UuwB5gPyumysZidSFkJOABipzSbnzvfNZ
+         crwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/9Hs0sZ+p6d/BZnkbkEHtNmkApYCl7ZchFUlUdp9Eg9DA3zvBYaTAOmO338bH+n31Uivd4IijAcFP@vger.kernel.org, AJvYcCU3EawI2BkLFSXaFdxjeprnt8U/SXd+iYcwUd7mTrrW5Xux/qewaekSQDkF3RPnNKe+c62jfElnQLsyibjn@vger.kernel.org, AJvYcCVTmmwGAujdT0TR9pB+262Y/trtqhPxIR+N9OMs+y768g5tKVa+z2FxAXEjEkrhGjGjBgC4vjMQxo97fjdF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAeMud94dw2dOxxjo/Zbe/wOR9TGQlo3TdPDF2Ah2rMf8AAkae
+	7CSTL+hy/YaM2urXn8hL+yiyfHakRYjHilTvKWxKU9Oguz3BO9I8pk46/fr+vXDMpYo8DyjRCn9
+	753BLwPN4YVs7lZssjWkJy8lHYVxJWsQ=
+X-Gm-Gg: ASbGnctlanuhxgAeZxWDr4inFL6NO7CYlSNDwixy/hsKJNcX4elqaQ9So9g7evz1TaT
+	Pawv7UUA1peZ4GdTpMzxMtWNA/FEha79anbQD9o2WvO3suwv6GGeuFQOIyAU9WfBwxUnCTiCYle
+	UCqwS8rgljGuYYtUHZ9weacHu2uxFhs7E2N0mxNXNSyukJ218QbEvyOJXXx4DsbdSLpQvxMordB
+	ORZ84Q=
+X-Google-Smtp-Source: AGHT+IGOOacVYve6Wp+wqewcosy47JZTFuo3iGif5RJJGfqv8oqYJZjY5NKLG8Zii4YSxCooRAydaaLV3uIN+qEser8=
+X-Received: by 2002:a05:622a:591:b0:4a9:c8e3:a38 with SMTP id
+ d75a77b69052e-4ae6df7f8a5mr66874731cf.30.1753310233670; Wed, 23 Jul 2025
+ 15:37:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cce1a29f2f55baf679c3fe83269d9bceb3c4fd6c.camel@ibm.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
+ <20250723144637.GW2672070@frogsfrogsfrogs> <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
+ <20250723212020.GY2672070@frogsfrogsfrogs>
+In-Reply-To: <20250723212020.GY2672070@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 23 Jul 2025 15:37:02 -0700
+X-Gm-Features: Ac12FXxB2nVp9FqI1vea6XZQcEtWGsAFL1VZb8QhxAb5VxOs6Ul814N4-7dsOH4
+Message-ID: <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
+Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
+ at fuse_iomap_writeback_range
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, linux-xfs@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 05:58:01PM +0000, Viacheslav Dubeyko wrote:
+On Wed, Jul 23, 2025 at 2:20=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Wed, Jul 23, 2025 at 11:42:42AM -0700, Joanne Koong wrote:
+> > On Wed, Jul 23, 2025 at 7:46=E2=80=AFAM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> > >
+> > > [cc Joanne]
+> > >
+> > > On Wed, Jul 23, 2025 at 05:14:28PM +0530, Naresh Kamboju wrote:
+> > > > Regressions found while running LTP msync04 tests on qemu-arm64 run=
+ning
+> > > > Linux next-20250721, next-20250722 and next-20250723 with 16K and 6=
+4K
+> > > > page size enabled builds.
+> > > >
+> > > > CONFIG_ARM64_64K_PAGES=3Dy ( kernel warning as below )
+> > > > CONFIG_ARM64_16K_PAGES=3Dy ( kernel warning as below )
+> > > >
+> > > > No warning noticed with 4K page size.
+> > > > CONFIG_ARM64_4K_PAGES=3Dy works as expected
+> > >
+> > > You might want to cc Joanne since she's been working on large folio
+> > > support in fuse.
+> > >
+> > > > First seen on the tag next-20250721.
+> > > > Good: next-20250718
+> > > > Bad:  next-20250721 to next-20250723
+> >
+> > Thanks for the report. Is there a link to the script that mounts the
+> > fuse server for these tests? I'm curious whether this was mounted as a
+> > fuseblk filesystem.
+> >
+> > > >
+> > > > Regression Analysis:
+> > > > - New regression? Yes
+> > > > - Reproducibility? Yes
+> > > >
+> > > > Test regression: next-20250721 arm64 16K and 64K page size WARNING =
+fs
+> > > > fuse file.c at fuse_iomap_writeback_range
+> > > >
+> > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > >
+> > > > ## Test log
+> > > > ------------[ cut here ]------------
+> > > > [  343.828105] WARNING: fs/fuse/file.c:2146 at
+> > > > fuse_iomap_writeback_range+0x478/0x558 [fuse], CPU#0: msync04/4190
+> > >
+> > >         WARN_ON_ONCE(len & (PAGE_SIZE - 1));
+> > >
+> > > /me speculates that this might be triggered by an attempt to write ba=
+ck
+> > > some 4k fsblock within a 16/64k base page?
+> > >
+> >
+> > I think this can happen on 4k base pages as well actually. On the
+> > iomap side, the length passed is always block-aligned and in fuse, we
+> > set blkbits to be PAGE_SHIFT so theoretically block-aligned is always
+> > page-aligned, but I missed that if it's a "fuseblk" filesystem, that
+> > isn't true and the blocksize is initialized to a default size of 512
+> > or whatever block size is passed in when it's mounted.
+>
+> <nod> I think you're correct.
+>
+> > I'll send out a patch to remove this line. It doesn't make any
+> > difference for fuse_iomap_writeback_range() logic whether len is
+> > page-aligned or not; I had added it as a sanity-check against sketchy
+> > ranges.
+> >
+> > Also, I just noticed that apparently the blocksize can change
+> > dynamically for an inode in fuse through getattr replies from the
+> > server (see fuse_change_attributes_common()). This is a problem since
+> > the iomap uses inode->i_blkbits for reading/writing to the bitmap. I
+> > think we will have to cache the inode blkbits in the iomap_folio_state
+> > struct unfortunately :( I'll think about this some more and send out a
+> > patch for this.
+>
+> From my understanding of the iomap code, it's possible to do that if you
+> flush and unmap the entire pagecache (whilst holding i_rwsem and
+> mmap_invalidate_lock) before you change i_blkbits.  Nobody *does* this
+> so I have no idea if it actually works, however.  Note that even I don't
+> implement the flush and unmap bit; I just scream loudly and do nothing:
 
-> So, this line simply copies CNID from old_dentry->d_fsdata to
-> new_dentry->d_fsdata during the rename operation. I assume that
-> ->fs_data should be untouched by generic logic of dentries processing.
+lol! i wish I could scream loudly and do nothing too for my case.
 
-Yes, I understand that; what I do not understand is why.  Why would
-the CNID of renamed object be slapped on dentry of removed target?
-I'm trying to understand the logics with link(2) and unlink-of-opened
-in that code...
+AFAICT, I think I just need to flush and unmap that file and can leave
+the rest of the files/folios in the pagecache as is? But then if the
+file has active refcounts on it or has been pinned into memory, can I
+still unmap and remove it from the page cache? I see the
+invalidate_inode_pages2() function but my understanding is that the
+page still stays in the cache if it has has active references, and if
+the page gets mmaped and there's a page fault on it, it'll end up
+using the preexisting old page in the page cache.
 
-Incidentally, what happens if you
-	fd = creat("foo", 0666);
-	write(fd, "foo", 3);
-	link("foo", "bar");
-	unlink("bar");
-	close(fd);
-The games with S_DEAD in there look odd...
+I don't think I really need to have it removed from the page cache so
+much as just have the ifs state for all the folios in the file freed
+(after flushing the file) so that it can start over with a new ifs.
+Ideally we could just flush the file, then iterate through all the
+folios in the mapping in order of ascending index, and kfree their
+->private, but I'm not seeing how we can prevent the case of new
+writes / a new ifs getting allocated for folios at previous indexes
+while we're trying to do the iteration/kfreeing.
+
+>
+> void fuse_iomap_set_i_blkbits(struct inode *inode, u8 new_blkbits)
+> {
+>         trace_fuse_iomap_set_i_blkbits(inode, new_blkbits);
+>
+>         if (inode->i_blkbits =3D=3D new_blkbits)
+>                 return;
+>
+>         if (!S_ISREG(inode->i_mode))
+>                 goto set_it;
+>
+>         /*
+>          * iomap attaches per-block state to each folio, so we cannot all=
+ow
+>          * the file block size to change if there's anything in the page =
+cache.
+>          * In theory, fuse servers should never be doing this.
+>          */
+>         if (inode->i_mapping->nrpages > 0) {
+>                 WARN_ON(inode->i_blkbits !=3D new_blkbits &&
+>                         inode->i_mapping->nrpages > 0);
+>                 return;
+>         }
+>
+> set_it:
+>         inode->i_blkbits =3D new_blkbits;
+> }
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/comm=
+it/?h=3Dfuse-iomap-attrs&id=3Dda9b25d994c1140aae2f5ebf10e54d0872f5c884
+>
+> --D
+>
+> >
+> > Thanks,
+> > Joanne
+> >
 
