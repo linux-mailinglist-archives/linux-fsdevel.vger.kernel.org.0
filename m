@@ -1,97 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-55829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79428B0F386
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 15:15:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497E2B0F3DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 15:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5E6580BAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 13:11:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9572F3B54BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 13:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8362EAB69;
-	Wed, 23 Jul 2025 13:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778772E7BCA;
+	Wed, 23 Jul 2025 13:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyhBhbEc"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i6SA9LjT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZpvuUxIh";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i6SA9LjT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZpvuUxIh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0460B2EA494;
-	Wed, 23 Jul 2025 13:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393C32D29C7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 13:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753276182; cv=none; b=sczLw3cVmYQvYmfTE+cWoq4LF6XcznzlFtSa38KbTHBAnU3meLm90Pq1MnZ0Q277CpYXrZmUyc7gabxfTIrni95ioRnNuwtgkmpV0yuGeFMgNr4fl9rDLcEQvw1Tt7wrQ2YY6XAQTayHwBnsZfhZHXLDT2DRb399u43SdTR7l5A=
+	t=1753276924; cv=none; b=OH9eStCpMUYKgzjDSlBa7+aDnRtEn/SynZzYAWRJPvtMuCoWREdfIfdk13oCyZJ5gHuc45x1V3uazK1hDi5yj9+la2nmHD1WoP6P6iDoc/P3PhJf0wErvoKlQXZX8tMcmjNMw0sxf0fK7+QlC0zEGy9r4dtnvDXriUNQSddvIMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753276182; c=relaxed/simple;
-	bh=kQr0L3MtwaWm+H8lvaxCeljFh4mQXtQXo0lPIFY8gUI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y0J5CkIguB0bI4PXLo9VIofEQfUTEHxh0vh8xxTjEdAC3zO3Krl0jYeMtvW70AJIOV1dJA12a+9RB+569Q1MDY46UGodJjllvq8qmPwslzI52Xdtv9Ow34PsGFsRHLhl03892qrnEBYS+ku0TSW6sQFNq9oEVKz639nB/AvAXUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyhBhbEc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76671C4CEE7;
-	Wed, 23 Jul 2025 13:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753276181;
-	bh=kQr0L3MtwaWm+H8lvaxCeljFh4mQXtQXo0lPIFY8gUI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZyhBhbEcjEzDgWoBWybf0Ek2hF9Lq+/12qnqmLj3A+DqdDMdX0SMzkmCzC1eJ87YT
-	 aIiURxFeKMe1oPnfBoVqAnSl7q0lvcGiQyeVYdOz3Px4GkHlDa3fJkCWSqwNz0piwq
-	 4HYeG2HBGLw6ObuhFiXbQxRjZhGTHlWOY27ZlbfIUs5tb6cxUm5klyWI7HG6dlIiVg
-	 FVskX+DsbmOO1tWMa6ONnNATzggde4zI7JEW1LiLqV4A7Zvq4ATwJxaorWQolHMOTZ
-	 WV0jPEV3PaJof3oOWO9bBPRHDP/U4CXNol+fS6EifEs4FxI9ZzGR/zhZn1pQ1FkKHr
-	 z1+tpM1LAjwQg==
-From: Christian Brauner <brauner@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Matthew Wilcox <willy@infradead.org>,
+	s=arc-20240116; t=1753276924; c=relaxed/simple;
+	bh=9QQmdfIEgUyM9n5x1fkoF40Zf2zzO4CHkfit4KIbmWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QzKe5LMly7qVVygPxMP+UCOO/Vval9/EpOnXlaScWVUm5NsdLzK+SG/7/cwFFCSA/7284iM/k0l9XXYLVu5T6vXTGqt5Ur5H3LYL6UkgiMZZ0iwrcxGZb4AmIEE8tssHFpyhZF43q6OAV2Om0ffH9e6tOq6U/+HsljUrWPBiWVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i6SA9LjT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZpvuUxIh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i6SA9LjT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZpvuUxIh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 704491F78C;
+	Wed, 23 Jul 2025 13:22:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753276920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=i4NYr0kbK/ZVzHo53a7+hXGqtRRJAslzBId6sdThN7k=;
+	b=i6SA9LjTJI5ePEOV72TyDb4JhYdrFL9L2QJoaJtJ8Ku5mkN5RomcpBXDkDdplvkRG3PXfa
+	qRf7nCiLh3C7L7pR0eLgXxh0bH1IXLptLgWWt/PhQnFELjGrNjPtcSX91gel1+/BDHTr4s
+	bwrGGrLEvNs6ieHrlqUyHCGOjuxj/WE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753276920;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=i4NYr0kbK/ZVzHo53a7+hXGqtRRJAslzBId6sdThN7k=;
+	b=ZpvuUxIhHCYiIeeLJxxODYBV6cJFDdhoCs6M4BsqXLsoBs4Rpvowrggj18cLycQ24oc+G+
+	rzDtCvKHmno9qiCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753276920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=i4NYr0kbK/ZVzHo53a7+hXGqtRRJAslzBId6sdThN7k=;
+	b=i6SA9LjTJI5ePEOV72TyDb4JhYdrFL9L2QJoaJtJ8Ku5mkN5RomcpBXDkDdplvkRG3PXfa
+	qRf7nCiLh3C7L7pR0eLgXxh0bH1IXLptLgWWt/PhQnFELjGrNjPtcSX91gel1+/BDHTr4s
+	bwrGGrLEvNs6ieHrlqUyHCGOjuxj/WE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753276920;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=i4NYr0kbK/ZVzHo53a7+hXGqtRRJAslzBId6sdThN7k=;
+	b=ZpvuUxIhHCYiIeeLJxxODYBV6cJFDdhoCs6M4BsqXLsoBs4Rpvowrggj18cLycQ24oc+G+
+	rzDtCvKHmno9qiCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C88F913302;
+	Wed, 23 Jul 2025 13:21:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9ojnLPfhgGhnHwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 23 Jul 2025 13:21:59 +0000
+From: Pedro Falcato <pfalcato@suse.de>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mmc@vger.kernel.org
-Subject: Re: [PATCH RESEND] doc: update porting, vfs documentation to describe mmap_prepare()
-Date: Wed, 23 Jul 2025 15:09:26 +0200
-Message-ID: <20250723-formfrage-brokkoli-62228a77f3cb@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250723123036.35472-1-lorenzo.stoakes@oracle.com>
-References: <20250723123036.35472-1-lorenzo.stoakes@oracle.com>
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Pedro Falcato <pfalcato@suse.de>
+Subject: [PATCH 0/3] fs: Remove old mount API helpers
+Date: Wed, 23 Jul 2025 14:21:53 +0100
+Message-ID: <20250723132156.225410-1-pfalcato@suse.de>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1228; i=brauner@kernel.org; h=from:subject:message-id; bh=kQr0L3MtwaWm+H8lvaxCeljFh4mQXtQXo0lPIFY8gUI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ03BdY2rX6nNJ9m1sZ02SSzf27kiYYlnJE1GXbxDiYS T2d9C+io5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIx5xl+swW9edZ5Xk4pe2dd 3fNHqiWfNkkmvfQ5eUP2UtrMxamzZjAyrDrBtUxlkZJDkucny3ld59lfHa1/v8/pBJcPv0a2vGE eFwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-On Wed, 23 Jul 2025 13:30:36 +0100, Lorenzo Stoakes wrote:
-> Now that we have established .mmap_prepare() as the preferred means by
-> which filesystems establish state upon memory mapping of a file, update the
-> VFS and porting documentation to reflect this.
-> 
-> As part of this change, additionally update the VFS documentation to
-> contain the current state of the file_operations struct.
-> 
-> [...]
+Based on linux-next as of 23 July 2025.
 
-Applied to the vfs-6.17.mmap_prepare branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.mmap_prepare branch should appear in linux-next soon.
+This patchset contains a very small cleanup, where we remove mount_nodev
+(unused since 6.15) and mount_bdev (unused since f2fs converted their
+mount API usage, still in -next). Obviously depends on the f2fs patches
+(maybe should be merged through their tree? I don't know.).
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+While we're at it, we also get to removing some stale mount API docs.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+I did look into removing ->mount() altogether, but sadly 9pfs is still
+using it.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Pedro Falcato (3):
+  fs: Remove mount_nodev
+  fs: Remove mount_bdev
+  docs/vfs: Remove mentions to the old mount API helpers
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.mmap_prepare
+ Documentation/filesystems/vfs.rst | 27 +------------
+ fs/super.c                        | 63 -------------------------------
+ include/linux/fs.h                |  6 ---
+ 3 files changed, 2 insertions(+), 94 deletions(-)
 
-[1/1] doc: update porting, vfs documentation to describe mmap_prepare()
-      https://git.kernel.org/vfs/vfs/c/425c8bb39b03
+-- 
+2.50.1
+
 
