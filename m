@@ -1,308 +1,397 @@
-Return-Path: <linux-fsdevel+bounces-55903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA196B0FBED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 23:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAC3B0FBEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 23:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADC0AA1BC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 21:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D669AA1A76
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 21:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4712D20E31C;
-	Wed, 23 Jul 2025 21:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160A120E31C;
+	Wed, 23 Jul 2025 21:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mbCGSZTn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHq2quM6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7480D80C02
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 21:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E14F17C91
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 21:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753304517; cv=none; b=NENpxGCG9krYyZpnVWZsV1AOffrE56JotloJVXgMEyGD85LwAX75TRYgFCvn3qmvjpMqwxqUkieJP8/pD8zR4SAQEOV2vXmBjq1zBH9Gcmsfpb7zV5DZ/q0sYdvcUfqxPwo1JapbskYSVGQYNoUz0F9f25nPmxSjuknLDbo5B0M=
+	t=1753304553; cv=none; b=XRYjV8EziGAMj0DhFfYwGe2GMtMBMAkpCFSvYSwYZLJlQNhqhp6POoaL3dupshT0b/yPvK5y9EBg2juK1gNjfJwkIuGXO9ZQ485mpqvkQJzs+4ay6HbTXGzd0g5tqO5pjZoKr+6w+Xdq6f5eaGROBrQ80GeyYGz7ECkSwIEAau0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753304517; c=relaxed/simple;
-	bh=n+0HSs87fesXbREkl+dtrCopS3LC+zQD7e1RCVVR3QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shRI/ldyQQcrh7NBO3II2XGTGReJrzUDLM3KLJ9SjU07tGAKe7mTba3Y4tENLSzjlSdqtxpAN/cDvUN2GLM1/zKuyjnkwB1jHNrTMg99Thnw0WEQOdZ3/Dk9XThVhMbBLSu4wFeMF7mSZPKdan5/FtWxeSFYExeXdEpYZfJQJFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mbCGSZTn; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bnRQH5dB9zH39;
-	Wed, 23 Jul 2025 23:01:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1753304503;
-	bh=YMBV64h4usnoU4LNYkOsA6ceCQPl0nWBOgtg+p6IAS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mbCGSZTncRc+BI2sYHaiBkv/zmtwpKLe0TASKjh9X2cVkzjCG9OnOpu57igaudzzV
-	 LJXSRzU14qLT8nI+4XxXybRv141mmV1jmMoxZkNq2POt+YDF5MKuIXsj3vKx4xBhFj
-	 WGLL3L9FUcY/PcfGsHsfKSPrqePb7CTtxLPIWn4I=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bnRQG5mwmz3hd;
-	Wed, 23 Jul 2025 23:01:42 +0200 (CEST)
-Date: Wed, 23 Jul 2025 23:01:42 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jann Horn <jannh@google.com>, 
-	John Johansen <john.johansen@canonical.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Jeff Xu <jeffxu@google.com>, NeilBrown <neil@brown.name>, Paul Moore <paul@paul-moore.com>, 
-	Ryan Sullivan <rysulliv@redhat.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] landlock: Fix handling of disconnected directories
-Message-ID: <20250723.vouso1Kievao@digikod.net>
-References: <20250719104204.545188-1-mic@digikod.net>
- <20250719104204.545188-3-mic@digikod.net>
- <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
+	s=arc-20240116; t=1753304553; c=relaxed/simple;
+	bh=aGOGNIkUw5pCEPbQ61HJsYL3aYT1mqC7yWZ0ceX4IYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EkDudvw09XMvV+796JIxbGzQl5rCZ+tyrEBY49mSzr9ScdJ2Vmk7Up9pbAZHj1OQyJ88Cfkg7N//wQsFGxpeUOYQu0LQDYjq+GkNjtGtIMKszgp9HaxTdAqheQHu4xKc4E/A1WKQivvh0+gvQyJ7tplfZLmRh0M7EWSVfcYoEys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHq2quM6; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab81d0169cso4847811cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 14:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753304550; x=1753909350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4RbxiciJuxQ+pMz4plUNC3K7psBCIxoOvwOE6t3pIac=;
+        b=AHq2quM6VO68MbquudCC/6XNOgK1VlAAeykpFT4ebWsZsOyWV2Zy+8XoXJ7zpz5lm1
+         GBTGxbRGZX+hnHMd02g7gthoWi25SLbmalE15bPh/sZ9xU3r+iXy+27aCgEGEdlUIpvf
+         mhrf/LzE1NJgsqdxcg+X8uoxVIp8wpASgqIdTyGZSGwtFewQI/K3UZIpY24i7oybIh2D
+         NyESeiCA2wyWqZ7Y8RQG9jBLIuU4RSoGNZGPOqpNHnlWM7hzzb4E0s/lU1vdJpTXi7VJ
+         NfmUIE3TatxEsJJYnoma+U7RJGnUeeKN/g+dN/yu9vIyziPLQpoz+nAULGohsMiSsqcj
+         FWSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753304550; x=1753909350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4RbxiciJuxQ+pMz4plUNC3K7psBCIxoOvwOE6t3pIac=;
+        b=DZ03thxtP6ZbdtXY2Ut/4RjJzTX+89PJrwbro2BcxJXu6aKorN30z6lM9sbhXWlEnw
+         lQbCycNi55qf/j92qfvpqyn4yfALZmSYMhE4Epch96R2LOnHAam0sPFb2G5z5aWAGWio
+         jAH0cFsu2WXZ6xePkRbXsJb741cBTe+5XGzFhb/QkLcTUtMDAgHQEv/3xUICgRro8O4M
+         LwjohEavzSossV+FZXXGXuSeDbnxD7q2zx5GnBpThzWmdn86ORnaFOjQcB1colxwoSC0
+         0hvAz0Zvgq0wE+5goBbux1Q7K0jQecDyiFr/rPzXkpqMRLKYl60pW/QaHaSTPuyB1pgW
+         NjwA==
+X-Gm-Message-State: AOJu0YxZ9YS0m5K3ekcvZXa8RGZJPHW/NZTSVuK11aJsl80auClkSLiG
+	cWrtcD+VAizvJlFAcEO9ItQYdt6H9bdieZmo4Hpe5Ah36N/nM+RxZy4I48AjaLPgQdozozTP+n5
+	AN42S3Vm6yjPQkp5eqOea1u3pqn/MSBk=
+X-Gm-Gg: ASbGncs8YXLJfhLBTVWT2B+n6N7megX2MafKV1PGAwofFKMsyMeTcTYbCOUIi5mFm4s
+	9kwTPvXAyYnORh23fo1NMq7p4Nc7vBNMYP0EwmEWBHMBNpvxNReqyxfv+7ABaXnyBp8JNVqmT+F
+	V8qg9msR17ODR90vsGDro1WaabMl7I5mk7urE+HMoX4GVInGifpXkNyGmtCD/NE4aeSF3fpKJwA
+	mai6vooaKNcPwjSMg==
+X-Google-Smtp-Source: AGHT+IEZKi0805XE2dSE6i/BpgMYTCCG7iutA9Pa8YvW74dFyjc2u4OWjofKXLOzwVgI0EzE9jJcGF8nUvEGA3viLxs=
+X-Received: by 2002:a05:622a:181c:b0:4a9:93f0:e228 with SMTP id
+ d75a77b69052e-4ae6de219demr59254071cf.1.1753304550014; Wed, 23 Jul 2025
+ 14:02:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
-X-Infomaniak-Routing: alpha
+References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
+ <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
+ <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com>
+ <20250719003215.GG2672029@frogsfrogsfrogs> <CAJnrk1YvGrgJK6qd0UPMzNUxyJ6QwY2b-HRhsj5QVrHsLxuQmQ@mail.gmail.com>
+ <20250723173425.GX2672070@frogsfrogsfrogs>
+In-Reply-To: <20250723173425.GX2672070@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 23 Jul 2025 14:02:19 -0700
+X-Gm-Features: Ac12FXxYbMW_FQ_OSXcqqpDGRoBXs-qK96nz_f1ag8vHNk0uQlR9PFSFazocqb4
+Message-ID: <CAJnrk1ad0O5ghB_m2=D4zQyYE0rcG3M_m09_qESGiQyFB4_Vsw@mail.gmail.com>
+Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the connection
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net, 
+	miklos@szeredi.hu, bernd@bsbernd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 07:04:02PM +0100, Tingmao Wang wrote:
-> On 7/19/25 11:42, Mickaël Salaün wrote:
-> > [...]
-> > @@ -784,12 +787,18 @@ static bool is_access_to_paths_allowed(
-> >  	if (WARN_ON_ONCE(!layer_masks_parent1))
-> >  		return false;
-> >  
-> > -	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
-> > -
-> >  	if (unlikely(layer_masks_parent2)) {
-> >  		if (WARN_ON_ONCE(!dentry_child1))
-> >  			return false;
-> >  
-> > +		/*
-> > +		 * Creates a backup of the initial layer masks to be able to restore
-> > +		 * them if we find out that we were walking a disconnected directory,
-> > +		 * which would make the collected access rights inconsistent (cf.
-> > +		 * reset_to_mount_root).
-> > +		 */
-> 
-> This comment is duplicate with the one below, is this intentional?
-> 
-> > [...]
-> 
-> On the other hand, I'm still a bit uncertain about the domain check
-> semantics.  While it would not cause a rename to be allowed if it is
-> otherwise not allowed by any rules on or above the mountpoint, this gets a
-> bit weird if we have a situation where renames are allowed on the
-> mountpoint or everywhere, but not read/writes, however read/writes are
-> allowed directly on a file, but the dir containing that file gets
-> disconnected so the sandboxed application can't read or write to it.
-> (Maybe someone would set up such a policy where renames are allowed,
-> expecting Landlock to always prevent renames where additional permissions
-> would be exposed?)
-> 
-> In the above situation, if the file is then moved to a connected
-> directory, it will become readable/writable again.
+On Wed, Jul 23, 2025 at 10:34=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
+> wrote:
+>
+> On Mon, Jul 21, 2025 at 01:32:43PM -0700, Joanne Koong wrote:
+> > On Fri, Jul 18, 2025 at 5:32=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> > >
+> > > On Fri, Jul 18, 2025 at 03:23:30PM -0700, Joanne Koong wrote:
+> > > > On Thu, Jul 17, 2025 at 4:26=E2=80=AFPM Darrick J. Wong <djwong@ker=
+nel.org> wrote:
+> > > > >
+> > > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > >
+> > > > > generic/488 fails with fuse2fs in the following fashion:
+> > > > >
+> > > > > generic/488       _check_generic_filesystem: filesystem on /dev/s=
+df is inconsistent
+> > > > > (see /var/tmp/fstests/generic/488.full for details)
+> > > > >
+> > > > > This test opens a large number of files, unlinks them (which real=
+ly just
+> > > > > renames them to fuse hidden files), closes the program, unmounts =
+the
+> > > > > filesystem, and runs fsck to check that there aren't any inconsis=
+tencies
+> > > > > in the filesystem.
+> > > > >
+> > > > > Unfortunately, the 488.full file shows that there are a lot of hi=
+dden
+> > > > > files left over in the filesystem, with incorrect link counts.  T=
+racing
+> > > > > fuse_request_* shows that there are a large number of FUSE_RELEAS=
+E
+> > > > > commands that are queued up on behalf of the unlinked files at th=
+e time
+> > > > > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection=
+ not
+> > > > > aborted, the fuse server would have responded to the RELEASE comm=
+ands by
+> > > > > removing the hidden files; instead they stick around.
+> > > >
+> > > > Tbh it's still weird to me that FUSE_RELEASE is asynchronous instea=
+d
+> > > > of synchronous. For example for fuse servers that cache their data =
+and
+> > > > only write the buffer out to some remote filesystem when the file g=
+ets
+> > > > closed, it seems useful for them to (like nfs) be able to return an
+> > > > error to the client for close() if there's a failure committing tha=
+t
+> > >
+> > > I don't think supplying a return value for close() is as helpful as i=
+t
+> > > seems -- the manage says that there is no guarantee that data has bee=
+n
+> > > flushed to disk; and if the file is removed from the process' fd tabl=
+e
+> > > then the operation succeeded no matter the return value. :P
+> > >
+> > > (Also C programmers tend to be sloppy and not check the return value.=
+)
+> >
+> > Amir pointed out FUSE_FLUSH gets sent on the FUSE_RELEASE path so that
+> > addresses my worry. FUSE_FLUSH is sent synchronously (and close() will
+> > propagate any flush errors too), so now if there's an abort or
+> > something right after close() returns, the client is guaranteed that
+> > any data they wrote into a local cache has been flushed by the server.
+>
+> <nod>
+>
+> > >
+> > > > data; that also has clearer API semantics imo, eg users are guarant=
+eed
+> > > > that when close() returns, all the processing/cleanup for that file
+> > > > has been completed.  Async FUSE_RELEASE also seems kind of racy, eg=
+ if
+> > > > the server holds local locks that get released in FUSE_RELEASE, if =
+a
+> > >
+> > > Yes.  I think it's only useful for the case outined in that patch, wh=
+ich
+> > > is that a program started an asyncio operation and then closed the fd=
+.
+> > > In that particular case the program unambiguously doesn't care about =
+the
+> > > return value of close so it's ok to perform the release asynchronousl=
+y.
+> >
+> > I wonder why fuseblk devices need to be synchronously released. The
+> > comment says " Make the release synchronous if this is a fuseblk
+> > mount, synchronous RELEASE is allowed (and desirable)". Why is it
+> > desirable?
+>
+> Err, which are you asking about?
+>
+> Are you asking why it is that fuseblk mounts call FUSE_DESTROY from
+> unmount instead of letting libfuse synthesize it once the event loop
+> terminates?  I think that's because in the fuseblk case, the kernel has
+> the block device open for itself, so the fuse server must write and
+> flush all dirty data before the unmount() returns to the caller.
+>
+> Or were you asking why synchronous RELEASE is done on fuseblk
+> filesystems?  Here is my speculation:
+>
+> Synchronous RELEASE was added back in commit 5a18ec176c934c ("fuse: fix
+> hang of single threaded fuseblk filesystem").  I /think/ the idea behind
+> that patch was that for fuseblk servers, we're ok with issuing a
+> FUSE_DESTROY request from the kernel and waiting on it.
+>
+> However, for that to work correctly, all previous pending requests
+> anywhere in the fuse mount have to be flushed to and completed by the
+> fuse server before we can send DESTROY, because destroy closes the
+> filesystem.
+>
+> So I think the idea behind 5a18ec176c934c is that we make FUSE_RELEASE
+> synchronous so it's not possible to umount(8) until all the releases
+> requests are finished.
 
-We can generalize this issue to not only the end file but any component
-of the path: disconnected directories.  In fact, the main issue is the
-potential inconsistency of access checks over time (e.g. between two
-renames).  This could be exploited to bypass the security checks done
-for FS_REFER.
+Thanks for the explanation. With the fix you added in this patch then,
+it seems there's no reason fuseblk requests shouldn't now also be
+asynchronous since your fix ensures that all pending requests have
+been flushed and completed before issuing the DESTROY
 
-I see two solutions:
+>
+> > > > subsequent FUSE_OPEN happens before FUSE_RELEASE then depends on
+> > > > grabbing that lock, then we end up deadlocked if the server is
+> > > > single-threaded.
+> > >
+> > > Hrm.  I suppose if you had a script that ran two programs one after t=
+he
+> > > other, each of which expected to be able to open and lock the same fi=
+le,
+> > > then you could run into problems if the lock isn't released by the ti=
+me
+> > > the second program is ready to open the file.
+> >
+> > I think in your scenario with the two programs, the worst outcome is
+> > that the open/lock acquiring can take a while but in the (contrived
+> > and probably far-fetched) scenario where it's single threaded, it
+> > would result in a complete deadlock.
+>
+> <nod> I concede it's a minor point. :)
+>
+> > > But having said that, some other program could very well open and loc=
+k
+> > > the file as soon as the lock drops.
+> > >
+> > > > I saw in your first patch that sending FUSE_RELEASE synchronously
+> > > > leads to a deadlock under AIO but AFAICT, that happens because we
+> > > > execute req->args->end() in fuse_request_end() synchronously; I thi=
+nk
+> > > > if we execute that release asynchronously on a worker thread then t=
+hat
+> > > > gets rid of the deadlock.
+> > >
+> > > <nod> Last time I think someone replied that maybe they should all be
+> > > asynchronous.
+> > >
+> > > > If FUSE_RELEASE must be asynchronous though, then your approach mak=
+es
+> > > > sense to me.
+> > >
+> > > I think it only has to be asynchronous for the weird case outlined in
+> > > that patch (fuse server gets stuck closing its own client's fds).
+> > > Personally I think release ought to be synchronous at least as far as
+> > > the kernel doing all the stuff that close() says it has to do (remova=
+l
+> > > of record locks, deleting the fd table entry).
+> > >
+> > > Note that doesn't necessarily mean that the kernel has to be complete=
+ly
+> > > done with all the work that entails.  XFS defers freeing of unlinked
+> > > files until a background garbage collector gets around to doing that.
+> > > Other filesystems will actually make you wait while they free all the
+> > > data blocks and the inode.  But the kernel has no idea what the fuse
+> > > server actually does.
+> >
+> > I guess if that's important enough to the server, we could add
+> > something an FOPEN flag for that that servers could set on the file
+> > handle if they want synchronous release?
+>
+> If a fuse server /did/ have background garbage collection, there are a
+> few things it could do -- every time it sees a FUSE_RELEASE of an
+> unlinked file, it could set a timer (say 50ms) after which it would kick
+> the gc thread to do its thing.  Or it could do wake up the background
+> thread in response to a FUSE_SYNCFS command and hope it finishes by the
+> time FUSE_DESTROY comes around.
+>
+> (Speaking of which, can we enable syncfs for all fuse servers?)
 
-1. *Always* walk down to the IS_ROOT directory, and then jump to the
-   mount point.  This makes it possible to have consistent access checks
-   for renames and open/use.  The first downside is that that would
-   change the current behavior for bind mounts that could get more
-   access rights (if the policy explicitly sets rights for the hidden
-   directories).  The second downside is that we'll do more walk.
+I'm not sure what you mean by this - i thought the implementation of
+FUSE_SYNCFS is dependent on each server's logic depending on if
+they've set a callback for it or not? Speaking of which, it doesn't
+look like FUSE_SYNCFS support has been added to libfuse yet.
 
-2. Return -EACCES (or -ENOENT) for actions involving disconnected
-   directories, or renames of disconnected opened files.  This second
-   solution is simpler and safer but completely disables the use of
-   disconnected directories and the rename of disconnected files for
-   sandboxed processes.
+>
+> But that said, not everyone wants the fancy background gc stuff that XFS
+> does.  FUSE_RELEASE would then be doing a lot of work.
+>
+> > after Amir's point about FUSE_FLUSH, I'm in favor now of FUSE_RELEASE
+> > being asynchronous.
+> > >
+> > > > > Create a function to push all the background requests to the queu=
+e and
+> > > > > then wait for the number of pending events to hit zero, and call =
+this
+> > > > > before fuse_abort_conn.  That way, all the pending events are pro=
+cessed
+> > > > > by the fuse server and we don't end up with a corrupt filesystem.
+> > > > >
+> > > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > > > ---
+> > > > >  fs/fuse/fuse_i.h |    6 ++++++
+> > > > >  fs/fuse/dev.c    |   38 ++++++++++++++++++++++++++++++++++++++
+> > > > >  fs/fuse/inode.c  |    1 +
+> > > > >  3 files changed, 45 insertions(+)
+> > > > >
+> > > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > > > +/*
+> > > > > + * Flush all pending requests and wait for them.  Only call this=
+ function when
+> > > > > + * it is no longer possible for other threads to add requests.
+> > > > > + */
+> > > > > +void fuse_flush_requests(struct fuse_conn *fc, unsigned long tim=
+eout)
+> > > >
+> > > > It might be worth renaming this to something like
+> > > > 'fuse_flush_bg_requests' to make it more clear that this only flush=
+es
+> > > > background requests
+> > >
+> > > Hum.  Did I not understand the code correctly?  I thought that
+> > > flush_bg_queue puts all the background requests onto the active queue
+> > > and issues them to the fuse server; and the wait_event_timeout sits
+> > > around waiting for all the requests to receive their replies?
+> >
+> > Sorry, didn't mean to be confusing with my previous comment. What I
+> > was trying to say is that "fuse_flush_requests" implies that all
+> > requests get flushed to userspace but here only the background
+> > requests get flushed.
+>
+> Oh, I see now, I /was/ mistaken.  Synchronous requests are ...
+>
+> Wait, no, still confused :(
+>
+> fuse_flush_requests waits until fuse_conn::num_waiting is zero.
+>
+> Synchronous requests (aka the ones sent through fuse_simple_request)
+> bump num_waiting either directly in the args->force case or indirectly
+> via fuse_get_req.  num_waiting is decremented in fuse_put_request.
+> Therefore waiting for num_waiting to hit zero implements waiting for all
+> the requests that were in flight before fuse_flush_requests was called.
+>
+> Background requests (aka the ones sent via fuse_simple_background) have
+> num_waiting set in the !args->force case or indirectly in
+> fuse_request_queue_background.  num_waiting is decremented in
+> fuse_put_request the same as is done for synchronous requests.
+>
+> Therefore, it's correct to say that waiting for num_requests to become 0
+> is sufficient to wait for all pending requests anywhere in the
+> fuse_mount to complete.
 
-It would be much better to be able to handle opened directories as
-(object) capabilities, but that is not currently possible because of the
-way paths are handled by the VFS and LSM hooks.
+You're right, good point, waiting on fc->num_waiting =3D=3D 0 also ensures
+foreground requests have been completed. sorry for the confusion!
 
-Tingmao, Günther, Jann, what do you think?
+Connections can also be aborted through the
+/sys/fs/fuse/connections/*/abort interface or through request timeouts
+(eg fuse_check_timeout()) - should those places too flush pending
+requests and wait for them before aborting the connection?
 
-It looks like AppArmor also denies access to disconnected path in some
-cases, but it tries to reconstruct the path for known internal
-filesystems, and it seems to specifically handle the case of chroot.  I
-don't know when PATH_CONNECT_PATH is set though.
-
-John, could you please clarify how disconnected directories and files
-are handled by AppArmor?
-
-> 
-> Here is an example test, using the layout1_bind fixture for flexibility
-> for now (and also because I needed to just go to bed yesterday lol) (but
-> this would probably be better written as an additional
-> layout5_disconnected_branch variant).
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index 21dd95aaf5e4..2274f165d933 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -5100,6 +5100,118 @@ TEST_F_FORK(layout1_bind, path_disconnected_rename)
->  	EXPECT_EQ(0, test_open(file1_s1d3, O_RDONLY));
->  }
->  
-> +static void
-> +path_disconnected_gain_back_rights_via_rename(struct __test_metadata *_metadata,
-> +					      bool has_read_rule_on_other_d)
-> +{
-> +	/*
-> +	 * This is a ruleset where rename/create/delete rights are allowed
-> +	 * anywhere under the mount, and so still applies after path gets
-> +	 * disconnected.  However the only read right is given to the file
-> +	 * directly, and therefore the file is no longer readable after the
-> +	 * path to it being disconnected.
-> +	 */
-> +	// clang-format off
-> +	struct rule layer1[] = {
-> +		{
-> +			.path = dir_s2d2,
-> +			.access = LANDLOCK_ACCESS_FS_REFER |
-> +					LANDLOCK_ACCESS_FS_MAKE_DIR |
-> +					LANDLOCK_ACCESS_FS_REMOVE_DIR |
-> +					LANDLOCK_ACCESS_FS_MAKE_REG |
-> +					LANDLOCK_ACCESS_FS_REMOVE_FILE
-> +		},
-> +		{
-> +			.path = file1_s1d3,
-> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-> +		},
-> +		{
-> +			.path = TMP_DIR "/s1d1/s1d2/s1d3_2",
-> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-> +		},
-> +		{}
-> +	};
-> +	// clang-format on
-> +
-> +	int ruleset_fd, bind_s1d3_fd, res;
-> +
-> +	if (!has_read_rule_on_other_d) {
-> +		layer1[2].path = NULL;
-> +		layer1[2].access = 0;
-> +	}
-> +
-> +	ASSERT_EQ(0, mkdir(dir_s4d1, 0755))
-> +	{
-> +		TH_LOG("Failed to create %s: %s", dir_s4d1, strerror(errno));
-> +	}
-> +
-> +	/* Directory used to move the file into, in order to try to regain read */
-> +	ASSERT_EQ(0, mkdir(TMP_DIR "/s1d1/s1d2/s1d3_2", 0755))
-> +	{
-> +		TH_LOG("Failed to create %s: %s", TMP_DIR "/s1d1/s1d2/s1d3_2",
-> +		       strerror(errno));
-> +	}
-> +
-> +	ruleset_fd = create_ruleset(_metadata, ACCESS_ALL, layer1);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
-> +	ASSERT_LE(0, bind_s1d3_fd);
-> +	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-> +
-> +	/* Make disconnected */
-> +	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
-> +	{
-> +		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
-> +		       strerror(errno));
-> +	}
-> +
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	EXPECT_EQ(0, close(ruleset_fd));
-> +
-> +	/* We shouldn't be able to read file1 under disconnected path now */
-> +	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-> +
-> +	/*
-> +	 * But can we circumvent it by moving file1 to a connected path when
-> +	 * either we're allowed to read that move destination, or if we have
-> +	 * allow rules on the original file, then the move target doesn't even
-> +	 * need read rules on itself.
-> +	 *
-> +	 * This is possible even though the domain check should semantically
-> +	 * ensure that any path (?) we can't read can't become readable
-> +	 * (through that path) again by a rename?
-> +	 */
-> +	res = renameat(bind_s1d3_fd, file1_name, AT_FDCWD,
-> +		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
-> +	if (res == 0) {
-> +		TH_LOG("Renamed file1 to %s, which should not have been allowed.",
-> +		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
-> +		/* At this point the test has failed, but let's try reading it */
-> +		res = test_open(TMP_DIR "/s2d1/s2d2/s1d3_2/f1", O_RDONLY);
-> +		if (res != 0) {
-> +			TH_LOG("Failed to read file1 after rename: %s",
-> +			       strerror(res));
-> +		} else {
-> +			TH_LOG("file1 is readable after rename!");
-> +			ASSERT_TRUE(false);
-> +		}
-> +		ASSERT_TRUE(false);
-> +	}
-> +	ASSERT_EQ(-1, res);
-> +	EXPECT_EQ(EXDEV, errno);
-> +}
-> +
-> +TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_1)
-> +{
-> +	path_disconnected_gain_back_rights_via_rename(_metadata, false);
-> +}
-> +
-> +TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_2)
-> +{
-> +	path_disconnected_gain_back_rights_via_rename(_metadata, true);
-> +}
-> +
->  /*
->   * Test that linkat(2) with disconnected paths works under Landlock. This
->   * test moves s1d3 to s4d1.
-> 
-> The behavior is as hypothesized above:
-> 
-> 	root@b8f2ef644787 /t/landlock# ./fs_test -t path_disconnected_gain_back_rights_1 -t path_disconnected_gain_back_rights_2
-> 	TAP version 13
-> 	1..2
-> 	# Starting 2 tests from 1 test cases.
-> 	#  RUN           layout1_bind.path_disconnected_gain_back_rights_1 ...
-> 	# fs_test.c:5188:path_disconnected_gain_back_rights_1:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
-> 	# fs_test.c:5196:path_disconnected_gain_back_rights_1:file1 is readable after rename!
-> 	# fs_test.c:5197:path_disconnected_gain_back_rights_1:Expected 0 (0) != false (0)
-> 	# path_disconnected_gain_back_rights_1: Test terminated by assertion
-> 	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_1
-> 	not ok 1 layout1_bind.path_disconnected_gain_back_rights_1
-> 	#  RUN           layout1_bind.path_disconnected_gain_back_rights_2 ...
-> 	# fs_test.c:5188:path_disconnected_gain_back_rights_2:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
-> 	# fs_test.c:5196:path_disconnected_gain_back_rights_2:file1 is readable after rename!
-> 	# fs_test.c:5197:path_disconnected_gain_back_rights_2:Expected 0 (0) != false (0)
-> 	# path_disconnected_gain_back_rights_2: Test terminated by assertion
-> 	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_2
-> 	not ok 2 layout1_bind.path_disconnected_gain_back_rights_2
-> 	# FAILED: 0 / 2 tests passed.
-> 	# Totals: pass:0 fail:2 xfail:0 xpass:0 skip:0 error:0
-> 
-> Would it be worth it to have the domain check take into account this edge
-> case?  (But on the other hand, one could argue that if rights are granted
-> directly to a file, then the policy author intended for access to be
-> allowed, but in which case shouldn't access, even if through disconnected
-> path, be allowed?)
-> 
-> Best,
-> Tingmao
-> 
+>
+> Right?
+>
+> Maybe this should be called fuse_flush_requests_and_wait. :)
+>
+> --D
+>
+> > Thanks,
+> > Joanne
+> > >
+> > > I could be mistaken though.  This is my rough understanding of what
+> > > happens to background requests:
+> > >
+> > > 1. Request created
+> > > 2. Put request on bg_queue
+> > > 3. <wait>
+> > > 4. Request removed from bg_queue
+> > > 5. Request sent
+> > > 6. <wait>
+> > > 7. Reply received
+> > > 8. Request ends and is _put.
+> > >
+> > > Non-background (foreground?) requests skip steps 2-4.  Meanwhile,
+> > > fc->waiting tracks the number of requests that are anywhere between t=
+he
+> > > end of step 1 and the start of step 8.
+> > >
+> > > In any case, I want to push all the bg requests and wait until there =
+are
+> > > no more requests in the system.
+> > >
+> > > --D
+> >
 
