@@ -1,212 +1,600 @@
-Return-Path: <linux-fsdevel+bounces-55816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CEB5B0F0A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 12:59:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A77B0F11B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 13:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE9018928A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:59:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD29AAC6B6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 11:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D458C2DAFCF;
-	Wed, 23 Jul 2025 10:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C09E2DFA4D;
+	Wed, 23 Jul 2025 11:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rluPevrI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xxsx9QmX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A65928E604;
-	Wed, 23 Jul 2025 10:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35841279DDF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 11:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268330; cv=none; b=PSTdLmY56NPUp/iFz5DxLE2uGbxcsWAScMDcBnpTyTz8NIZCJeOI+JtnOwVJFYVsf/FsZTJDzgYskNgd2dtStMLsMlmh2NFrEpumo09ylWZWc2XDla9LGa17XRmCpORHOUSv+vrDf6UKwxI05yR0cVz09K4Kz61SPzJxw/mOkL0=
+	t=1753269912; cv=none; b=lxliT9OJr4Lwg9xCdE01TzuaDETVmghsK4qfe5DIz1RHzgcXWCPD9aPj+KFuj//xy4/azI2wZZFAMCRuB+Jwh/IZmDsrpOXmVvVBBKYKxqLUrk6xcmKzoamSHO+1Yu7cVokcjxpks9meHR8zC76coOzMN7GpdOAVFJMVJuZRAhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268330; c=relaxed/simple;
-	bh=pHPHczG1H3lLu6dsysbI2Wm2loEr+NyRXNQXn75/4tQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qso23ODKUFYrYQ0GuEnBDdyVC5hFHl+zR9zKEvlLie253+9Y8zVGijit/MHmt30iJOh32bwI1rohA25Xa0zzXGR8hx4wbNVnVCrlG0IiyU5o9OttowL/FCRnTZH9ThxroOW+eZZLCcoaeyVpkdR3NrEGASghRq39MzVHqKwBtxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rluPevrI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C48C4CEF5;
-	Wed, 23 Jul 2025 10:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753268330;
-	bh=pHPHczG1H3lLu6dsysbI2Wm2loEr+NyRXNQXn75/4tQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rluPevrIRf4SiI9xNR2+yev+fdhIcpRZGkoVuh/1mjP+KM85CcIVcFiXi570UHy5E
-	 xrdwRur4+JJyOHWk3WstmWmGBouvG5bCBPzxJJWbe00Onje5efmZ3s5BVJEHr8vDCR
-	 PqAeiTZtRjOGd3HxgBjF+o6omDf/sPc+CA2rGOJqJuZx0MWIEX143HlxVLp6xoxGXW
-	 R91FWPRuCSZhfqcyTY+8r6QDa1C/OEBx2jVrLfAMeCLMnaNgv76KgHM4XkPL8JMbyD
-	 7S9wz8xIkDy08S9rmldInhiD60nDT8UHT3rDqx0vspQI0Fxe2A0nBSq/EMXFGakPkN
-	 timU8w7KjSVVg==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	linux-fsdevel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	fsverity@lists.linux.dev
-Subject: [PATCH v4 15/15] fsverity: rephrase documentation and comments
-Date: Wed, 23 Jul 2025 12:57:53 +0200
-Message-ID: <20250723-work-inode-fscrypt-v4-15-c8e11488a0e6@kernel.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
-References: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
+	s=arc-20240116; t=1753269912; c=relaxed/simple;
+	bh=/WYjdeAMNex/rjcw4C15gBlmFMHmKIi0lUV1Rn0pfIU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RiSTQOKTMTRHHYKgDsgRwEb5hwyHSEjlkno1ag6y2DcClemeePBQD2Oq7WfXVyrUy13dtzKmmWHBLMQoFZ7CdZPgyVFxTXaAAdZOSHQy1Si6CC1ZbZXOphWCNhlZQro8eSejLvt90ddULr5f6q6rgqFd+ppKwBNret6M0652riE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xxsx9QmX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753269909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=we6WhsSe4YZaVeNUlUwNUJhn/lCIv7mg61XizdqucOQ=;
+	b=Xxsx9QmXfgicG8nhimDIy28OmK05KeBrp7c7navgXDf3x+bLbixJ3/jUEfU65eBRhSNfO4
+	6EsLG0y093X9YRzc2n5D8ISurNl1ICiYX3VpUt8NsL9YNjSQhhdkQqIJGl8WbQj9IBBcG1
+	500UAhme1uI6hzx2xlf0STPnGL2J/kw=
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
+ [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-86-1w1dzVSgM7Sfm-FSCyUKDA-1; Wed, 23 Jul 2025 07:25:07 -0400
+X-MC-Unique: 1w1dzVSgM7Sfm-FSCyUKDA-1
+X-Mimecast-MFC-AGG-ID: 1w1dzVSgM7Sfm-FSCyUKDA_1753269907
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-4e9ba1b4712so466370137.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 04:25:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753269907; x=1753874707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=we6WhsSe4YZaVeNUlUwNUJhn/lCIv7mg61XizdqucOQ=;
+        b=h0HiChYEm7uf5IDiJfjEmt10DRYK4rtNeftmPZqjiLJsN2xJKqKiitT+mQv+IlDJrl
+         3oZy9r9pUhdOcmVdlBt9WrTulxqApzAn56mlTbgA1qwcZ1WIAVeF65af3prftGCWoqr4
+         V6DlMAwfEfIe9plqIJfPSs6vI3AsE6jMItPEpAajwOFc9UeKhO10/eVF3GsA67syskpB
+         xg9l8WboxJ51mu/YcEvntyF2wT+0WikCASnfv/qzJ8nzUIbmlT5RkUXGzLYKb3ZhPu8r
+         92xPI2hHSWj9t7itXNg8HvN2bEqalvJS+vnX+jOY3gK/9OOEvl0vP2HqZfxoOHI0fGme
+         1RLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOlylw6WCNjGaSNvbhAekvOc5v572D6L+R+x8ij9J/Dm0iGwFzHScF/31+jy0rxH1pBwCnYVbD+0Wm9Vky@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6Wom3FDjSk7NrAcC25+nZjA73BU/Gy3p8rt61L+r2QEgC3fX4
+	jIFaE6aUnM+f3KHXC5hrqoedwkbwdccvXRNauZhQBZ1hogu1IPEUfxJyHFifWPKu0NZnPID4/4B
+	tJ7kwwbUU1QiaiXsjPPe4Q7uVT95JIMMD15KA4bvcQfs3QRdkEH1QLkRoFwQ1Y/A7pEN/MpSNaW
+	ooZuN0axi8Xwz01pHzqPZEOiqerh8LOV+g4av1RBumCQ==
+X-Gm-Gg: ASbGnctdwwp4ljW8naMvWURmF9i3BrupYUsQjY3XEV1H9kRwaRvGuBISvwYHAyMLoBt
+	WNbGM4eejmNYyIseo1UV8nBxxnHKl6HSQtyjut5N/8GnRXsTBrLGCy8x32yaPHaGIe6+8UUej/q
+	VMjaXS0w25RuZ6XrNab/QY
+X-Received: by 2002:a05:6102:4424:b0:4ec:c4f8:c4d3 with SMTP id ada2fe7eead31-4fa14ff1c38mr852229137.5.1753269906909;
+        Wed, 23 Jul 2025 04:25:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFEIiYK12+5V3viWPfMl0ARxCWz0JBLyUejwnCSIKRSQoZgKo78QY6Ic4v/laET/0Mj0TKNc4ZF6GbW8OOrX/Q=
+X-Received: by 2002:a05:6102:4424:b0:4ec:c4f8:c4d3 with SMTP id
+ ada2fe7eead31-4fa14ff1c38mr852224137.5.1753269906509; Wed, 23 Jul 2025
+ 04:25:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6277; i=brauner@kernel.org; h=from:subject:message-id; bh=pHPHczG1H3lLu6dsysbI2Wm2loEr+NyRXNQXn75/4tQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0HNDRXnGmLGLZp2qvS6wTlzernbK3aZlTK81/zLA7k SF2W8TijlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlYzmdkOFihav02Yu+hTadd rG3XbDqyRK14esayvLdHQyQSw+6u/s7IcMC3P88z6s7c1kN6h/dH3f22rLa3Vb951te66dwd29/ 95gEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250722200412.1019621-1-slava@dubeyko.com>
+In-Reply-To: <20250722200412.1019621-1-slava@dubeyko.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Wed, 23 Jul 2025 15:24:55 +0400
+X-Gm-Features: Ac12FXyKWnA0ScyWjqyT9-mx0ntvjAbRYm3aiisJgvia9U2ydfhFc9VcnroorSw
+Message-ID: <CAO8a2SivJMHW8Ttn-vJX6NSV3NExLs7aYxjF3CCmQ3hsr9p5XA@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: cleanup of processing ci->i_ceph_flags bits in caps.c
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that we moved fsverity out of struct inode update the comments to
-not imply that it's still located in there.
+Reviewed-by: Alex Markuze <amarkuze@redhat.com>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/verity/enable.c           |  6 +++---
- fs/verity/fsverity_private.h |  9 +++++----
- fs/verity/open.c             | 12 ++++++------
- include/linux/fsverity.h     | 12 +++++++-----
- 4 files changed, 21 insertions(+), 18 deletions(-)
-
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index c284f46d1b53..760824611abc 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -287,9 +287,9 @@ static int enable_verity(struct file *filp,
- 		/* Successfully enabled verity */
- 
- 		/*
--		 * Readers can start using ->i_verity_info immediately, so it
--		 * can't be rolled back once set.  So don't set it until just
--		 * after the filesystem has successfully enabled verity.
-+		 * Readers can start using the inode's verity info immediately,
-+		 * so it can't be rolled back once set.  So don't set it until
-+		 * just after the filesystem has successfully enabled verity.
- 		 */
- 		fsverity_set_info(inode, vi);
- 	}
-diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index b3506f56e180..1b45dc5f52cc 100644
---- a/fs/verity/fsverity_private.h
-+++ b/fs/verity/fsverity_private.h
-@@ -58,10 +58,11 @@ struct merkle_tree_params {
-  * fsverity_info - cached verity metadata for an inode
-  *
-  * When a verity file is first opened, an instance of this struct is allocated
-- * and stored in ->i_verity_info; it remains until the inode is evicted.  It
-- * caches information about the Merkle tree that's needed to efficiently verify
-- * data read from the file.  It also caches the file digest.  The Merkle tree
-- * pages themselves are not cached here, but the filesystem may cache them.
-+ * and stored in inode's verity pointer; it remains until the inode is evicted.
-+ * It caches information about the Merkle tree that's needed to efficiently
-+ * verify data read from the file.  It also caches the file digest.  The Merkle
-+ * tree pages themselves are not cached here, but the filesystem may cache
-+ * them.
-  */
- struct fsverity_info {
- 	struct merkle_tree_params tree_params;
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 0dcd33f00361..c4a0c94dde2c 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -251,10 +251,10 @@ struct fsverity_info *fsverity_create_info(const struct inode *inode,
- void fsverity_set_info(struct inode *inode, struct fsverity_info *vi)
- {
- 	/*
--	 * Multiple tasks may race to set ->i_verity_info, so use
-+	 * Multiple tasks may race to set the inode's verity info, so use
- 	 * cmpxchg_release().  This pairs with the smp_load_acquire() in
--	 * fsverity_get_info().  I.e., here we publish ->i_verity_info with a
--	 * RELEASE barrier so that other tasks can ACQUIRE it.
-+	 * fsverity_get_info().  I.e., here we publish the inode's verity info
-+	 * with a RELEASE barrier so that other tasks can ACQUIRE it.
- 	 */
- 	VFS_WARN_ON_ONCE(!inode->i_sb->s_vop);
- 	VFS_WARN_ON_ONCE(!inode->i_sb->s_vop->inode_info_offs);
-@@ -262,8 +262,8 @@ void fsverity_set_info(struct inode *inode, struct fsverity_info *vi)
- 		/* Lost the race, so free the fsverity_info we allocated. */
- 		fsverity_free_info(vi);
- 		/*
--		 * Afterwards, the caller may access ->i_verity_info directly,
--		 * so make sure to ACQUIRE the winning fsverity_info.
-+		 * Afterwards, the caller may access the inode's verity info
-+		 * directly, so make sure to ACQUIRE the winning fsverity_info.
- 		 */
- 		(void)fsverity_get_info(inode);
- 	}
-@@ -359,7 +359,7 @@ int fsverity_get_descriptor(struct inode *inode,
- 	return 0;
- }
- 
--/* Ensure the inode has an ->i_verity_info */
-+/* Ensure the inode has fsverity info set */
- static int ensure_verity_info(struct inode *inode)
- {
- 	struct fsverity_info *vi = fsverity_get_info(inode);
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 0ee5b2fea389..9e204d5c5691 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -145,7 +145,7 @@ static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- 
- 	/*
- 	 * Pairs with the cmpxchg_release() in fsverity_set_info().
--	 * I.e., another task may publish ->i_verity_info concurrently,
-+	 * I.e., another task may publish the inode's verity info concurrently,
- 	 * executing a RELEASE barrier.  We need to use smp_load_acquire() here
- 	 * to safely ACQUIRE the memory the other task published.
- 	 */
-@@ -174,7 +174,8 @@ void __fsverity_cleanup_inode(struct inode *inode);
-  * fsverity_cleanup_inode() - free the inode's verity info, if present
-  * @inode: an inode being evicted
-  *
-- * Filesystems must call this on inode eviction to free ->i_verity_info.
-+ * Filesystems must call this on inode eviction to free -the inode's
-+ * verity info.
-  */
- static inline void fsverity_cleanup_inode(struct inode *inode)
- {
-@@ -285,12 +286,13 @@ static inline bool fsverity_verify_page(struct page *page)
-  * fsverity_active() - do reads from the inode need to go through fs-verity?
-  * @inode: inode to check
-  *
-- * This checks whether ->i_verity_info has been set.
-+ * This checks whether the inode's verity info has been set.
-  *
-  * Filesystems call this from ->readahead() to check whether the pages need to
-  * be verified or not.  Don't use IS_VERITY() for this purpose; it's subject to
-  * a race condition where the file is being read concurrently with
-- * FS_IOC_ENABLE_VERITY completing.  (S_VERITY is set before ->i_verity_info.)
-+ * FS_IOC_ENABLE_VERITY completing.  (S_VERITY is set before the inode's
-+ * verity info.)
-  *
-  * Return: true if reads need to go through fs-verity, otherwise false
-  */
-@@ -305,7 +307,7 @@ static inline bool fsverity_active(const struct inode *inode)
-  * @filp: the struct file being set up
-  *
-  * When opening a verity file, deny the open if it is for writing.  Otherwise,
-- * set up the inode's ->i_verity_info if not already done.
-+ * set up the inode's verity info if not already done.
-  *
-  * When combined with fscrypt, this must be called after fscrypt_file_open().
-  * Otherwise, we won't have the key set up to decrypt the verity metadata.
-
--- 
-2.47.2
+On Wed, Jul 23, 2025 at 12:04=E2=80=AFAM Viacheslav Dubeyko <slava@dubeyko.=
+com> wrote:
+>
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> The Coverity Scan service has detected potential
+> race condition in ceph_check_delayed_caps() [1].
+>
+> The CID 1590633 contains explanation: "Accessing
+> ci->i_ceph_flags without holding lock
+> ceph_inode_info.i_ceph_lock. The value of the shared data
+> will be determined by the interleaving of thread execution.
+> Thread shared data is accessed without holding an appropriate
+> lock, possibly causing a race condition (CWE-366)".
+>
+> The patch reworks the logic of accessing ci->i_ceph_flags.
+> At first, it removes ci item from a mdsc->cap_delay_list.
+> Then it unlocks mdsc->cap_delay_lock and it locks
+> ci->i_ceph_lock. Then, it calls smp_mb__before_atomic()
+> to be sure that ci->i_ceph_flags has consistent state of
+> the bits. The is_metadata_under_flush variable stores
+> the state of CEPH_I_FLUSH_BIT. Finally, it unlocks
+> the ci->i_ceph_lock and it locks the mdsc->cap_delay_lock.
+> The is_metadata_under_flush is used to check the condition
+> that ci needs to be removed from mdsc->cap_delay_list.
+> If it is not the case, then ci will be added into the head of
+> mdsc->cap_delay_list.
+>
+> This patch reworks the logic of checking the CEPH_I_FLUSH_BIT,
+> CEPH_I_FLUSH_SNAPS_BIT, CEPH_I_KICK_FLUSH_BIT,
+> CEPH_ASYNC_CREATE_BIT, CEPH_I_ERROR_FILELOCK_BIT by test_bit()
+> method and calling smp_mb__before_atomic() to ensure that
+> bit state is consistent. It switches on calling the set_bit(),
+> clear_bit() for these bits, and calling smp_mb__after_atomic()
+> after these methods to ensure that modified bit is visible.
+>
+> Additionally, __must_hold() has been added for
+> __cap_delay_requeue(), __cap_delay_requeue_front(), and
+> __prep_cap() to help the sparse with lock checking and
+> it was commented that caller of __cap_delay_requeue_front()
+> and __prep_cap() must lock the ci->i_ceph_lock.
+>
+> v.2
+> Alex Markuze suggested to rework all Ceph inode's flags.
+> Now, every declaration has CEPH_I_<*> and CEPH_I_<*>_BIT pair.
+>
+> [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
+sue=3D1590633
+>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> cc: Alex Markuze <amarkuze@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Ceph Development <ceph-devel@vger.kernel.org>
+> ---
+>  fs/ceph/caps.c  | 132 +++++++++++++++++++++++++++++++++++++-----------
+>  fs/ceph/super.h |  45 +++++++++++------
+>  2 files changed, 132 insertions(+), 45 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index a8d8b56cf9d2..9c82cda33ee5 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -516,6 +516,7 @@ static void __cap_set_timeouts(struct ceph_mds_client=
+ *mdsc,
+>   */
+>  static void __cap_delay_requeue(struct ceph_mds_client *mdsc,
+>                                 struct ceph_inode_info *ci)
+> +               __must_hold(ci->i_ceph_lock)
+>  {
+>         struct inode *inode =3D &ci->netfs.inode;
+>
+> @@ -525,7 +526,9 @@ static void __cap_delay_requeue(struct ceph_mds_clien=
+t *mdsc,
+>         if (!mdsc->stopping) {
+>                 spin_lock(&mdsc->cap_delay_lock);
+>                 if (!list_empty(&ci->i_cap_delay_list)) {
+> -                       if (ci->i_ceph_flags & CEPH_I_FLUSH)
+> +                       /* ensure that bit state is consistent */
+> +                       smp_mb__before_atomic();
+> +                       if (test_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags)=
+)
+>                                 goto no_change;
+>                         list_del_init(&ci->i_cap_delay_list);
+>                 }
+> @@ -540,15 +543,20 @@ static void __cap_delay_requeue(struct ceph_mds_cli=
+ent *mdsc,
+>   * Queue an inode for immediate writeback.  Mark inode with I_FLUSH,
+>   * indicating we should send a cap message to flush dirty metadata
+>   * asap, and move to the front of the delayed cap list.
+> + *
+> + * Caller must hold i_ceph_lock.
+>   */
+>  static void __cap_delay_requeue_front(struct ceph_mds_client *mdsc,
+>                                       struct ceph_inode_info *ci)
+> +               __must_hold(ci->i_ceph_lock)
+>  {
+>         struct inode *inode =3D &ci->netfs.inode;
+>
+>         doutc(mdsc->fsc->client, "%p %llx.%llx\n", inode, ceph_vinop(inod=
+e));
+>         spin_lock(&mdsc->cap_delay_lock);
+> -       ci->i_ceph_flags |=3D CEPH_I_FLUSH;
+> +       set_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags);
+> +       /* ensure modified bit is visible */
+> +       smp_mb__after_atomic();
+>         if (!list_empty(&ci->i_cap_delay_list))
+>                 list_del_init(&ci->i_cap_delay_list);
+>         list_add(&ci->i_cap_delay_list, &mdsc->cap_delay_list);
+> @@ -1386,10 +1394,13 @@ void __ceph_remove_caps(struct ceph_inode_info *c=
+i)
+>   *
+>   * Make note of max_size reported/requested from mds, revoked caps
+>   * that have now been implemented.
+> + *
+> + * Caller must hold i_ceph_lock.
+>   */
+>  static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+>                        int op, int flags, int used, int want, int retain,
+>                        int flushing, u64 flush_tid, u64 oldest_flush_tid)
+> +               __must_hold(ci->i_ceph_lock)
+>  {
+>         struct ceph_inode_info *ci =3D cap->ci;
+>         struct inode *inode =3D &ci->netfs.inode;
+> @@ -1408,7 +1419,9 @@ static void __prep_cap(struct cap_msg_args *arg, st=
+ruct ceph_cap *cap,
+>               ceph_cap_string(revoking));
+>         BUG_ON((retain & CEPH_CAP_PIN) =3D=3D 0);
+>
+> -       ci->i_ceph_flags &=3D ~CEPH_I_FLUSH;
+> +       clear_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags);
+> +       /* ensure modified bit is visible */
+> +       smp_mb__after_atomic();
+>
+>         cap->issued &=3D retain;  /* drop bits we don't want */
+>         /*
+> @@ -1665,7 +1678,9 @@ static void __ceph_flush_snaps(struct ceph_inode_in=
+fo *ci,
+>                 last_tid =3D capsnap->cap_flush.tid;
+>         }
+>
+> -       ci->i_ceph_flags &=3D ~CEPH_I_FLUSH_SNAPS;
+> +       clear_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_flags);
+> +       /* ensure modified bit is visible */
+> +       smp_mb__after_atomic();
+>
+>         while (first_tid <=3D last_tid) {
+>                 struct ceph_cap *cap =3D ci->i_auth_cap;
+> @@ -1728,7 +1743,9 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+>                 session =3D *psession;
+>  retry:
+>         spin_lock(&ci->i_ceph_lock);
+> -       if (!(ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS)) {
+> +       /* ensure that bit state is consistent */
+> +       smp_mb__before_atomic();
+> +       if (!test_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_flags)) {
+>                 doutc(cl, " no capsnap needs flush, doing nothing\n");
+>                 goto out;
+>         }
+> @@ -1752,7 +1769,9 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+>         }
+>
+>         // make sure flushsnap messages are sent in proper order.
+> -       if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH)
+> +       /* ensure that bit state is consistent */
+> +       smp_mb__before_atomic();
+> +       if (test_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_flags))
+>                 __kick_flushing_caps(mdsc, session, ci, 0);
+>
+>         __ceph_flush_snaps(ci, session);
+> @@ -2024,15 +2043,21 @@ void ceph_check_caps(struct ceph_inode_info *ci, =
+int flags)
+>         struct ceph_mds_session *session =3D NULL;
+>
+>         spin_lock(&ci->i_ceph_lock);
+> -       if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
+> -               ci->i_ceph_flags |=3D CEPH_I_ASYNC_CHECK_CAPS;
+> +       /* ensure that bit state is consistent */
+> +       smp_mb__before_atomic();
+> +       if (test_bit(CEPH_ASYNC_CREATE_BIT, &ci->i_ceph_flags)) {
+> +               set_bit(CEPH_I_ASYNC_CHECK_CAPS_BIT, &ci->i_ceph_flags);
+> +               /* ensure modified bit is visible */
+> +               smp_mb__after_atomic();
+>
+>                 /* Don't send messages until we get async create reply */
+>                 spin_unlock(&ci->i_ceph_lock);
+>                 return;
+>         }
+>
+> -       if (ci->i_ceph_flags & CEPH_I_FLUSH)
+> +       /* ensure that bit state is consistent */
+> +       smp_mb__before_atomic();
+> +       if (test_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags))
+>                 flags |=3D CHECK_CAPS_FLUSH;
+>  retry:
+>         /* Caps wanted by virtue of active open files. */
+> @@ -2196,7 +2221,10 @@ void ceph_check_caps(struct ceph_inode_info *ci, i=
+nt flags)
+>                                 doutc(cl, "flushing dirty caps\n");
+>                                 goto ack;
+>                         }
+> -                       if (ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS) {
+> +
+> +                       /* ensure that bit state is consistent */
+> +                       smp_mb__before_atomic();
+> +                       if (test_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_=
+flags)) {
+>                                 doutc(cl, "flushing snap caps\n");
+>                                 goto ack;
+>                         }
+> @@ -2220,12 +2248,14 @@ void ceph_check_caps(struct ceph_inode_info *ci, =
+int flags)
+>
+>                 /* kick flushing and flush snaps before sending normal
+>                  * cap message */
+> +               /* ensure that bit state is consistent */
+> +               smp_mb__before_atomic();
+>                 if (cap =3D=3D ci->i_auth_cap &&
+>                     (ci->i_ceph_flags &
+>                      (CEPH_I_KICK_FLUSH | CEPH_I_FLUSH_SNAPS))) {
+> -                       if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH)
+> +                       if (test_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_f=
+lags))
+>                                 __kick_flushing_caps(mdsc, session, ci, 0=
+);
+> -                       if (ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS)
+> +                       if (test_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_=
+flags))
+>                                 __ceph_flush_snaps(ci, session);
+>
+>                         goto retry;
+> @@ -2297,11 +2327,17 @@ static int try_flush_caps(struct inode *inode, u6=
+4 *ptid)
+>                         goto out;
+>                 }
+>
+> +               /* ensure that bit state is consistent */
+> +               smp_mb__before_atomic();
+>                 if (ci->i_ceph_flags &
+>                     (CEPH_I_KICK_FLUSH | CEPH_I_FLUSH_SNAPS)) {
+> -                       if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH)
+> +                       /* ensure that bit state is consistent */
+> +                       smp_mb__before_atomic();
+> +                       if (test_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_f=
+lags))
+>                                 __kick_flushing_caps(mdsc, session, ci, 0=
+);
+> -                       if (ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS)
+> +                       /* ensure that bit state is consistent */
+> +                       smp_mb__before_atomic();
+> +                       if (test_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_=
+flags))
+>                                 __ceph_flush_snaps(ci, session);
+>                         goto retry_locked;
+>                 }
+> @@ -2573,10 +2609,14 @@ static void __kick_flushing_caps(struct ceph_mds_=
+client *mdsc,
+>         u64 last_snap_flush =3D 0;
+>
+>         /* Don't do anything until create reply comes in */
+> -       if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE)
+> +       /* ensure that bit state is consistent */
+> +       smp_mb__before_atomic();
+> +       if (test_bit(CEPH_ASYNC_CREATE_BIT, &ci->i_ceph_flags))
+>                 return;
+>
+> -       ci->i_ceph_flags &=3D ~CEPH_I_KICK_FLUSH;
+> +       clear_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_flags);
+> +       /* ensure modified bit is visible */
+> +       smp_mb__after_atomic();
+>
+>         list_for_each_entry_reverse(cf, &ci->i_cap_flush_list, i_list) {
+>                 if (cf->is_capsnap) {
+> @@ -2685,7 +2725,9 @@ void ceph_early_kick_flushing_caps(struct ceph_mds_=
+client *mdsc,
+>                         __kick_flushing_caps(mdsc, session, ci,
+>                                              oldest_flush_tid);
+>                 } else {
+> -                       ci->i_ceph_flags |=3D CEPH_I_KICK_FLUSH;
+> +                       set_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_flags)=
+;
+> +                       /* ensure modified bit is visible */
+> +                       smp_mb__after_atomic();
+>                 }
+>
+>                 spin_unlock(&ci->i_ceph_lock);
+> @@ -2720,7 +2762,10 @@ void ceph_kick_flushing_caps(struct ceph_mds_clien=
+t *mdsc,
+>                         spin_unlock(&ci->i_ceph_lock);
+>                         continue;
+>                 }
+> -               if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH) {
+> +
+> +               /* ensure that bit state is consistent */
+> +               smp_mb__before_atomic();
+> +               if (test_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_flags)) {
+>                         __kick_flushing_caps(mdsc, session, ci,
+>                                              oldest_flush_tid);
+>                 }
+> @@ -2827,8 +2872,10 @@ static int try_get_cap_refs(struct inode *inode, i=
+nt need, int want,
+>  again:
+>         spin_lock(&ci->i_ceph_lock);
+>
+> +       /* ensure that bit state is consistent */
+> +       smp_mb__before_atomic();
+>         if ((flags & CHECK_FILELOCK) &&
+> -           (ci->i_ceph_flags & CEPH_I_ERROR_FILELOCK)) {
+> +           test_bit(CEPH_I_ERROR_FILELOCK_BIT, &ci->i_ceph_flags)) {
+>                 doutc(cl, "%p %llx.%llx error filelock\n", inode,
+>                       ceph_vinop(inode));
+>                 ret =3D -EIO;
+> @@ -3205,8 +3252,11 @@ static int ceph_try_drop_cap_snap(struct ceph_inod=
+e_info *ci,
+>                 doutc(cl, "%p follows %llu\n", capsnap, capsnap->follows)=
+;
+>                 BUG_ON(capsnap->cap_flush.tid > 0);
+>                 ceph_put_snap_context(capsnap->context);
+> -               if (!list_is_last(&capsnap->ci_item, &ci->i_cap_snaps))
+> -                       ci->i_ceph_flags |=3D CEPH_I_FLUSH_SNAPS;
+> +               if (!list_is_last(&capsnap->ci_item, &ci->i_cap_snaps)) {
+> +                       set_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_flags=
+);
+> +                       /* ensure modified bit is visible */
+> +                       smp_mb__after_atomic();
+> +               }
+>
+>                 list_del(&capsnap->ci_item);
+>                 ceph_put_cap_snap(capsnap);
+> @@ -3395,7 +3445,10 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_=
+info *ci, int nr,
+>                                 if (ceph_try_drop_cap_snap(ci, capsnap)) =
+{
+>                                         put++;
+>                                 } else {
+> -                                       ci->i_ceph_flags |=3D CEPH_I_FLUS=
+H_SNAPS;
+> +                                       set_bit(CEPH_I_FLUSH_SNAPS_BIT,
+> +                                               &ci->i_ceph_flags);
+> +                                       /* ensure modified bit is visible=
+ */
+> +                                       smp_mb__after_atomic();
+>                                         flush_snaps =3D true;
+>                                 }
+>                         }
+> @@ -3646,8 +3699,11 @@ static void handle_cap_grant(struct inode *inode,
+>                 rcu_assign_pointer(ci->i_layout.pool_ns, extra_info->pool=
+_ns);
+>
+>                 if (ci->i_layout.pool_id !=3D old_pool ||
+> -                   extra_info->pool_ns !=3D old_ns)
+> -                       ci->i_ceph_flags &=3D ~CEPH_I_POOL_PERM;
+> +                   extra_info->pool_ns !=3D old_ns) {
+> +                       clear_bit(CEPH_I_POOL_PERM_BIT, &ci->i_ceph_flags=
+);
+> +                       /* ensure modified bit is visible */
+> +                       smp_mb__after_atomic();
+> +               }
+>
+>                 extra_info->pool_ns =3D old_ns;
+>
+> @@ -4613,6 +4669,7 @@ unsigned long ceph_check_delayed_caps(struct ceph_m=
+ds_client *mdsc)
+>         unsigned long delay_max =3D opt->caps_wanted_delay_max * HZ;
+>         unsigned long loop_start =3D jiffies;
+>         unsigned long delay =3D 0;
+> +       bool is_metadata_under_flush;
+>
+>         doutc(cl, "begin\n");
+>         spin_lock(&mdsc->cap_delay_lock);
+> @@ -4625,11 +4682,24 @@ unsigned long ceph_check_delayed_caps(struct ceph=
+_mds_client *mdsc)
+>                         delay =3D ci->i_hold_caps_max;
+>                         break;
+>                 }
+> -               if ((ci->i_ceph_flags & CEPH_I_FLUSH) =3D=3D 0 &&
+> -                   time_before(jiffies, ci->i_hold_caps_max))
+> -                       break;
+> +
+>                 list_del_init(&ci->i_cap_delay_list);
+>
+> +               spin_unlock(&mdsc->cap_delay_lock);
+> +               spin_lock(&ci->i_ceph_lock);
+> +               /* ensure that bit state is consistent */
+> +               smp_mb__before_atomic();
+> +               is_metadata_under_flush =3D
+> +                       test_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags);
+> +               spin_unlock(&ci->i_ceph_lock);
+> +               spin_lock(&mdsc->cap_delay_lock);
+> +
+> +               if (!is_metadata_under_flush &&
+> +                   time_before(jiffies, ci->i_hold_caps_max)) {
+> +                       list_add(&ci->i_cap_delay_list, &mdsc->cap_delay_=
+list);
+> +                       break;
+> +               }
+> +
+>                 inode =3D igrab(&ci->netfs.inode);
+>                 if (inode) {
+>                         spin_unlock(&mdsc->cap_delay_lock);
+> @@ -4811,7 +4881,9 @@ int ceph_drop_caps_for_unlink(struct inode *inode)
+>                         doutc(mdsc->fsc->client, "%p %llx.%llx\n", inode,
+>                               ceph_vinop(inode));
+>                         spin_lock(&mdsc->cap_delay_lock);
+> -                       ci->i_ceph_flags |=3D CEPH_I_FLUSH;
+> +                       set_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags);
+> +                       /* ensure modified bit is visible */
+> +                       smp_mb__after_atomic();
+>                         if (!list_empty(&ci->i_cap_delay_list))
+>                                 list_del_init(&ci->i_cap_delay_list);
+>                         list_add_tail(&ci->i_cap_delay_list,
+> @@ -5080,7 +5152,9 @@ int ceph_purge_inode_cap(struct inode *inode, struc=
+t ceph_cap *cap, bool *invali
+>
+>                 if (atomic_read(&ci->i_filelock_ref) > 0) {
+>                         /* make further file lock syscall return -EIO */
+> -                       ci->i_ceph_flags |=3D CEPH_I_ERROR_FILELOCK;
+> +                       set_bit(CEPH_I_ERROR_FILELOCK_BIT, &ci->i_ceph_fl=
+ags);
+> +                       /* ensure modified bit is visible */
+> +                       smp_mb__after_atomic();
+>                         pr_warn_ratelimited_client(cl,
+>                                 " dropping file locks for %p %llx.%llx\n"=
+,
+>                                 inode, ceph_vinop(inode));
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index bb0db0cc8003..7e40dff6ebe7 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -628,22 +628,35 @@ static inline struct inode *ceph_find_inode(struct =
+super_block *sb,
+>  /*
+>   * Ceph inode.
+>   */
+> -#define CEPH_I_DIR_ORDERED     (1 << 0)  /* dentries in dir are ordered =
+*/
+> -#define CEPH_I_FLUSH           (1 << 2)  /* do not delay flush of dirty =
+metadata */
+> -#define CEPH_I_POOL_PERM       (1 << 3)  /* pool rd/wr bits are valid */
+> -#define CEPH_I_POOL_RD         (1 << 4)  /* can read from pool */
+> -#define CEPH_I_POOL_WR         (1 << 5)  /* can write to pool */
+> -#define CEPH_I_SEC_INITED      (1 << 6)  /* security initialized */
+> -#define CEPH_I_KICK_FLUSH      (1 << 7)  /* kick flushing caps */
+> -#define CEPH_I_FLUSH_SNAPS     (1 << 8)  /* need flush snapss */
+> -#define CEPH_I_ERROR_WRITE     (1 << 9) /* have seen write errors */
+> -#define CEPH_I_ERROR_FILELOCK  (1 << 10) /* have seen file lock errors *=
+/
+> -#define CEPH_I_ODIRECT         (1 << 11) /* inode in direct I/O mode */
+> -#define CEPH_ASYNC_CREATE_BIT  (12)      /* async create in flight for t=
+his */
+> -#define CEPH_I_ASYNC_CREATE    (1 << CEPH_ASYNC_CREATE_BIT)
+> -#define CEPH_I_SHUTDOWN                (1 << 13) /* inode is no longer u=
+sable */
+> -#define CEPH_I_ASYNC_CHECK_CAPS        (1 << 14) /* check caps immediate=
+ly after async
+> -                                            creating finishes */
+> +#define CEPH_I_DIR_ORDERED_BIT         (0)  /* dentries in dir are order=
+ed */
+> +#define CEPH_I_FLUSH_BIT               (2)  /* do not delay flush of dir=
+ty metadata */
+> +#define CEPH_I_POOL_PERM_BIT           (3)  /* pool rd/wr bits are valid=
+ */
+> +#define CEPH_I_POOL_RD_BIT             (4)  /* can read from pool */
+> +#define CEPH_I_POOL_WR_BIT             (5)  /* can write to pool */
+> +#define CEPH_I_SEC_INITED_BIT          (6)  /* security initialized */
+> +#define CEPH_I_KICK_FLUSH_BIT          (7)  /* kick flushing caps */
+> +#define CEPH_I_FLUSH_SNAPS_BIT         (8)  /* need flush snapss */
+> +#define CEPH_I_ERROR_WRITE_BIT         (9)  /* have seen write errors */
+> +#define CEPH_I_ERROR_FILELOCK_BIT      (10) /* have seen file lock error=
+s */
+> +#define CEPH_I_ODIRECT_BIT             (11) /* inode in direct I/O mode =
+*/
+> +#define CEPH_ASYNC_CREATE_BIT          (12) /* async create in flight fo=
+r this */
+> +#define CEPH_I_SHUTDOWN_BIT            (13) /* inode is no longer usable=
+ */
+> +#define CEPH_I_ASYNC_CHECK_CAPS_BIT    (14) /* check caps immediately af=
+ter async creating finishes */
+> +
+> +#define CEPH_I_DIR_ORDERED             (1 << CEPH_I_DIR_ORDERED_BIT)
+> +#define CEPH_I_FLUSH                   (1 << CEPH_I_FLUSH_BIT)
+> +#define CEPH_I_POOL_PERM               (1 << CEPH_I_POOL_PERM_BIT)
+> +#define CEPH_I_POOL_RD                 (1 << CEPH_I_POOL_RD_BIT)
+> +#define CEPH_I_POOL_WR                 (1 << CEPH_I_POOL_WR_BIT)
+> +#define CEPH_I_SEC_INITED              (1 << CEPH_I_SEC_INITED_BIT)
+> +#define CEPH_I_KICK_FLUSH              (1 << CEPH_I_KICK_FLUSH_BIT)
+> +#define CEPH_I_FLUSH_SNAPS             (1 << CEPH_I_FLUSH_SNAPS_BIT)
+> +#define CEPH_I_ERROR_WRITE             (1 << CEPH_I_ERROR_WRITE_BIT)
+> +#define CEPH_I_ERROR_FILELOCK          (1 << CEPH_I_ERROR_FILELOCK_BIT)
+> +#define CEPH_I_ODIRECT                 (1 << CEPH_I_ODIRECT_BIT)
+> +#define CEPH_I_ASYNC_CREATE            (1 << CEPH_ASYNC_CREATE_BIT)
+> +#define CEPH_I_SHUTDOWN                        (1 << CEPH_I_SHUTDOWN_BIT=
+)
+> +#define CEPH_I_ASYNC_CHECK_CAPS                (1 << CEPH_I_ASYNC_CHECK_=
+CAPS_BIT)
+>
+>  /*
+>   * Masks of ceph inode work.
+> --
+> 2.50.1
+>
 
 
