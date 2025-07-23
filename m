@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-55807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B19B0F090
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 12:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F5DB0F093
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 12:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09121C84AD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D151C84D64
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 10:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C4828003A;
-	Wed, 23 Jul 2025 10:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337592DECBB;
+	Wed, 23 Jul 2025 10:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6eFs8uR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcZ3BUcz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8D42BE02F;
-	Wed, 23 Jul 2025 10:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9F32DA749;
+	Wed, 23 Jul 2025 10:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268302; cv=none; b=i7jmHZnFDiihIYLz0g/2Kel6xmBCIvremxRciDiefIbZsLMXgFdrR4OPU+tQAEv72mVHEuMC51+fCv84WZB+yqtThubQ6sU0EeDS2HRXkmw/K1U6ccuPmObWxpkxeLCQEXcqUFb50g8+tQbglYEM/Ik+HLezL1c/r/2VZsMNz3E=
+	t=1753268305; cv=none; b=LimzRsFNHe3itsYTWOJ+nFp2mAb5PqJGMjA0Uam6XuIoU9KJoJtyxKW/YI0fZcqhUII36A6foy1oMQXHsSRPe8DGddfCh2TFEF5eDxBs8FeqBKIjpbck3f5NAA2tc9/9Z56v2QBvKhosfd3Lf672Q30YnL6n1Qh1A4IFKVXHxWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268302; c=relaxed/simple;
-	bh=VFpnLxTNG09VO56kHcLceJGwGQblOlophWm0LlFia4c=;
+	s=arc-20240116; t=1753268305; c=relaxed/simple;
+	bh=hjTxLTjeyfv1cmY9AM9rNrj/psDt2Jl7S1EiMR+M7Hk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tDmNwX/sK1l7Xh96omkAEudKXgFcb9dG7nHvpXD+6RcrIvcRyhcZXclAx9t9RzGt5HquYmKwaT1HBg4rK/h4WD0cVOM+n1oX+zukoJMLtaDkKLopVMIR4bvIhmcVof5DRBAFbdPblHB/MYEO+X3sJwDQf1zX2sx0azUhxmHGSAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6eFs8uR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2DE3C4CEE7;
-	Wed, 23 Jul 2025 10:58:18 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YlvRz4xLYJeBZVZAcMQlNsOHh6MXQKq0n1X9H5Ub5ujJ6Q6tiK1Yh67jQAgvoNMYGyRDg3azEO7MJM+aqd6mJZQTDtB1rF+ndrIr7iC0diOy78iIGrvIHzW9HIga1yC1x48ZRuwtSs2SPtw9gi3+DTph7hGfqiPtXRkYmXnbxdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcZ3BUcz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BEFC4CEF5;
+	Wed, 23 Jul 2025 10:58:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753268301;
-	bh=VFpnLxTNG09VO56kHcLceJGwGQblOlophWm0LlFia4c=;
+	s=k20201202; t=1753268305;
+	bh=hjTxLTjeyfv1cmY9AM9rNrj/psDt2Jl7S1EiMR+M7Hk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=g6eFs8uRD3AKDDmE/aouPV05V/XuePBRiv6vx0xqPhUl+Q/+Rhtr0D+XLTO8ipngh
-	 2V7SFl5e28TubWZbnlejtDOUOv8UMjmpskRcEVIoP57am15PAjKlKRkgyshSVTU3aV
-	 PcA2TR3tArBxa/DmNIygP14Py2D3LREXsJf2fT5bADeGwMH3rHn10wDROh+fkxylan
-	 7fNhYNox+qoc6reX7pfuGsxOsB2WyNfCwfVxYrZoKFwaAByvisel5QKK/s5O9+x9Xg
-	 5WRUy0v+JwdiDuu+pAOGS6MyQ+MQg++qDwt8Ek2JyBVqejagEZelJ9yqD2Jw0/bwtt
-	 Hj+0BNrBjftZg==
+	b=bcZ3BUcz2//co0w+VUYRX1MidwmLQVzCtw4mIFLU/aqJ02zRNJlD/8+7HA6YpwuAv
+	 q3cJ6gwi1BWwlwDieusQKOTDf6bxpiIumuafU4/9Az0fippnf0a/D1NqXJRvLTbHqH
+	 PnJPkruo84412/X87V4SQEpEQ1v0S9xr3bI1fyZr61SQS0Q+ttC9/4J5zUKcjIoqP0
+	 nNjsMPf5jQDNFDuT+IUBeIXyOFiWQUaiqhUVOcXMcM4p3rGglTcoVjGp4CBGCj3khN
+	 Q4KuapxRcW2HC3Sv1DzC/DoRnZWuXwFTw2qpLTWgPfRgN4BkVJIutcBc27/cz5+EAv
+	 do22yaPlAkKOw==
 From: Christian Brauner <brauner@kernel.org>
 To: Jeff Layton <jlayton@kernel.org>,
 	Jan Kara <jack@suse.com>,
@@ -53,9 +53,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-fscrypt@vger.kernel.org,
 	fsverity@lists.linux.dev
-Subject: [PATCH v4 06/15] ceph: move fscrypt to filesystem inode
-Date: Wed, 23 Jul 2025 12:57:44 +0200
-Message-ID: <20250723-work-inode-fscrypt-v4-6-c8e11488a0e6@kernel.org>
+Subject: [PATCH v4 07/15] fs: drop i_crypt_info from struct inode
+Date: Wed, 23 Jul 2025 12:57:45 +0200
+Message-ID: <20250723-work-inode-fscrypt-v4-7-c8e11488a0e6@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
 References: <20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org>
@@ -67,81 +67,116 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2607; i=brauner@kernel.org; h=from:subject:message-id; bh=VFpnLxTNG09VO56kHcLceJGwGQblOlophWm0LlFia4c=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0HNCqm2WoMuGkak3MLS/zEw7LEvVrLcOu+b5iDed3v SaXesu6o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCJlVgz/MwSzNuU8rk2Qszde O+fxZ4a48oCT6ibvxXhrk/ZV6OkVMDLsSF4wacFHQ+fNu9ZpZITHC0Xz9b/6M7fxmcnK1O7QB++ 4AA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3601; i=brauner@kernel.org; h=from:subject:message-id; bh=hjTxLTjeyfv1cmY9AM9rNrj/psDt2Jl7S1EiMR+M7Hk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0HNCy3vrqXZeLrImSwP1M557MbUG2CdZz5r4tSivbk Svg6z+/o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCJ69xgZppp0FPKsEDTccSxv 9xF9feMv0jt83u0ry541zXHtFW39TIb/tRXe/3808Old4d8j7Ki98sJ8fcVg26flu1RSFyrmckl xAQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Move fscrypt data pointer into the filesystem's private inode and record
-the offset from the embedded struct inode.
-
-This will allow us to drop the fscrypt data pointer from struct inode
-itself and move it into the filesystem's inode.
+Now that all filesystems store the fscrypt data pointer in their private
+inode, drop the data pointer from struct inode itself freeing up 8
+bytes.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/ceph/crypto.c      | 4 ++++
- fs/ceph/inode.c       | 1 +
- fs/ceph/super.h       | 1 +
- include/linux/netfs.h | 7 +++++++
- 4 files changed, 13 insertions(+)
+ fs/crypto/keysetup.c    |  9 +++++----
+ include/linux/fs.h      |  5 -----
+ include/linux/fscrypt.h | 23 +++++++----------------
+ 3 files changed, 12 insertions(+), 25 deletions(-)
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 3b3c4d8d401e..9be1fb3f7b35 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -133,6 +133,10 @@ static const union fscrypt_policy *ceph_get_dummy_policy(struct super_block *sb)
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index 8fd89ce0b614..352d0cfda17d 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -799,10 +799,11 @@ void fscrypt_put_encryption_info(struct inode *inode)
+ {
+ 	struct fscrypt_inode_info **crypt_info;
+ 
+-	if (inode->i_sb->s_cop->inode_info_offs)
+-		crypt_info = fscrypt_addr(inode);
+-	else
+-		crypt_info = &inode->i_crypt_info;
++	if (!IS_ENCRYPTED(inode))
++		return;
++	VFS_WARN_ON_ONCE(!inode->i_sb->s_cop);
++	VFS_WARN_ON_ONCE(!inode->i_sb->s_cop->inode_info_offs);
++	crypt_info = fscrypt_addr(inode);
+ 	put_crypt_info(*crypt_info);
+ 	*crypt_info = NULL;
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 96c7925a6551..b76a10fc765b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -72,7 +72,6 @@ struct swap_info_struct;
+ struct seq_file;
+ struct workqueue_struct;
+ struct iov_iter;
+-struct fscrypt_inode_info;
+ struct fscrypt_operations;
+ struct fsverity_info;
+ struct fsverity_operations;
+@@ -778,10 +777,6 @@ struct inode {
+ 	struct fsnotify_mark_connector __rcu	*i_fsnotify_marks;
+ #endif
+ 
+-#ifdef CONFIG_FS_ENCRYPTION
+-	struct fscrypt_inode_info	*i_crypt_info;
+-#endif
+-
+ #ifdef CONFIG_FS_VERITY
+ 	struct fsverity_info	*i_verity_info;
+ #endif
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 123871dd394c..a62879456873 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -208,28 +208,21 @@ static inline struct fscrypt_inode_info **fscrypt_addr(const struct inode *inode
+ static inline bool fscrypt_set_inode_info(struct inode *inode,
+ 					  struct fscrypt_inode_info *crypt_info)
+ {
+-	void *p;
+-
+ 	/*
+ 	 * For existing inodes, multiple tasks may race to set ->i_crypt_info.
+ 	 * So use cmpxchg_release().  This pairs with the smp_load_acquire() in
+ 	 * fscrypt_get_inode_info().  I.e., here we publish ->i_crypt_info with
+ 	 * a RELEASE barrier so that other tasks can ACQUIRE it.
+ 	 */
+-
+-	if (inode->i_sb->s_cop->inode_info_offs)
+-		p = cmpxchg_release(fscrypt_addr(inode), NULL, crypt_info);
+-	else
+-		p = cmpxchg_release(&inode->i_crypt_info, NULL, crypt_info);
+-	return p == NULL;
++	return cmpxchg_release(fscrypt_addr(inode), NULL, crypt_info) == NULL;
  }
  
- static struct fscrypt_operations ceph_fscrypt_ops = {
-+#ifdef CONFIG_FS_ENCRYPTION
-+	.inode_info_offs	= offsetof(struct ceph_inode_info, i_crypt_info) -
-+				  offsetof(struct ceph_inode_info, netfs),
-+#endif
- 	.needs_bounce_pages	= 1,
- 	.get_context		= ceph_crypt_get_context,
- 	.set_context		= ceph_crypt_set_context,
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 06cd2963e41e..73dd882ad018 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -665,6 +665,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
- 	ci->i_work_mask = 0;
- 	memset(&ci->i_btime, '\0', sizeof(ci->i_btime));
- #ifdef CONFIG_FS_ENCRYPTION
-+	ci->i_crypt_info = NULL;
- 	ci->fscrypt_auth = NULL;
- 	ci->fscrypt_auth_len = 0;
- #endif
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index bb0db0cc8003..d55e20d61e22 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -463,6 +463,7 @@ struct ceph_inode_info {
- 	unsigned long  i_work_mask;
+ static inline struct fscrypt_inode_info *
+ fscrypt_get_inode_info_raw(const struct inode *inode)
+ {
+-	if (inode->i_sb->s_cop->inode_info_offs)
+-		return *fscrypt_addr(inode);
+-	return inode->i_crypt_info;
++	VFS_WARN_ON_ONCE(!inode->i_sb->s_cop);
++	VFS_WARN_ON_ONCE(!inode->i_sb->s_cop->inode_info_offs);
++	return *fscrypt_addr(inode);
+ }
  
- #ifdef CONFIG_FS_ENCRYPTION
-+	struct fscrypt_inode_info *i_crypt_info;
- 	u32 fscrypt_auth_len;
- 	u32 fscrypt_file_len;
- 	u8 *fscrypt_auth;
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 065c17385e53..66f9ae1995e4 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -73,6 +73,13 @@ struct netfs_inode {
- #define NETFS_ICTX_SINGLE_NO_UPLOAD 4		/* Monolithic payload, cache but no upload */
- };
+ static inline struct fscrypt_inode_info *
+@@ -241,11 +234,9 @@ fscrypt_get_inode_info(const struct inode *inode)
+ 	 * a RELEASE barrier.  We need to use smp_load_acquire() here to safely
+ 	 * ACQUIRE the memory the other task published.
+ 	 */
+-
+-	if (inode->i_sb->s_cop->inode_info_offs)
+-		return smp_load_acquire(fscrypt_addr(inode));
+-
+-	return smp_load_acquire(&inode->i_crypt_info);
++	VFS_WARN_ON_ONCE(!inode->i_sb->s_cop);
++	VFS_WARN_ON_ONCE(!inode->i_sb->s_cop->inode_info_offs);
++	return smp_load_acquire(fscrypt_addr(inode));
+ }
  
-+/*
-+ * struct inode must be the first member so we can easily calculate offsets for
-+ * e.g., fscrypt or fsverity when embedded in filesystem specific inodes.
-+ */
-+static_assert(__same_type(((struct netfs_inode *)NULL)->inode, struct inode));
-+static_assert(offsetof(struct netfs_inode, inode) == 0);
-+
- /*
-  * A netfs group - for instance a ceph snap.  This is marked on dirty pages and
-  * pages marked with a group must be flushed before they can be written under
+ /**
 
 -- 
 2.47.2
