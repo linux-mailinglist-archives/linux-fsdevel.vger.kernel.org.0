@@ -1,248 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-55895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007BBB0F9EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 20:03:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76003B0F9F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 20:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26BF13A5D6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 18:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FC2D3AB17E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 18:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0802236F7;
-	Wed, 23 Jul 2025 17:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C16C21FF58;
+	Wed, 23 Jul 2025 18:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A+AvZ61t"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRwYrmWT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A12212FB6;
-	Wed, 23 Jul 2025 17:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753293490; cv=fail; b=lnNDpu9k5cZOpx5hcAn9FGVrwatpEQgwPPAp0XWjjU0GLzqEUFxrZvUhh8bi/UlZ+3P5AXQOAbkF2uWZ67NWDTNSveFmQ24mBGgBPnzZPGM8yNr8OBfOOV1etQQlEpH5hn5B3BcEZBKoKm6unZ8NUTQs3qId2ds+0k0SRG1nDNI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753293490; c=relaxed/simple;
-	bh=rDT7VsKpHO581oeS4R3PM1iv6zTiEIKsM4Un5WCaMjA=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=NOC1dsym9Afhv6mLSAIpZKx5534lpXZW/55To/KJFOC1rf6T/XO1SEI0fijmm05Vsrvsu8D7QPoxfwSsuHKwln6jtNjC6OrI/7/ZYHC60coD8PMDwh8fC2tneHRD+ugeTD6Waeir7TkPgq/7B9bxAhrKqHdBwkN0MiMxayO/b8k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A+AvZ61t; arc=fail smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NDq7AW027659;
-	Wed, 23 Jul 2025 17:58:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=rDT7VsKpHO581oeS4R3PM1iv6zTiEIKsM4Un5WCaMjA=; b=A+AvZ61t
-	jfohAanQ3VVYl9TDJvM+j9qD6lZk6AAChS7HlFKxdnzLTV+X3GpjjQrsZMVKeP6+
-	TYcqNJiTKzQKadCdbwmdPLbf1poLhsRa6U0Cv2t5b8jBCrj/QPyBOs3SyuguHVwz
-	yf4QZGZJx0HgXDrlYd5fbJ+Kv4ToudQ8chNlZYBjhQ29HqCo7sKqqJ55FKjc1msN
-	87YBGda3bEDJkSIN4+6588GD1+oYBnR2GwG3qIKhV7GmBGkSf7L0CCKTcS2TY/y/
-	+EaKUwE1j+d2X0caGKUmOn8h8Nh+u+1RSMYnONRPPD7ScfvrCgN5kY8YoxtaTeKt
-	ZqTMBiSfiVNbkw==
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02on2045.outbound.protection.outlook.com [40.107.95.45])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ff5pa6n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 17:58:04 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OAIBWAlnz/qnZNsjJKFM6lqdpl0jxOVw/Dt/NtYjPSwlBBM9LAJTUgPazZ3qZmufypcHS017F0WcdCoo+86igjlUzwG14iLnPipky6I8dozFYLvrfBcwehvbaTV9/4gp6/HK81gwPBJ6IEsypiKf6Jaxj2dSjZJCx9ay37AfzxlbST/nAXa0kcRI+Qj16cSSBpSnXxXM94enZikccPNh/Ijys+iyB5qaf0T/CfP18sgYOsxFJq1EwI8UIPreBCK8MllPvi0ogInP53jGwQaldd6VoIvlat+CLNGiL2+UyLxXAZ7JrY6cHwYnr9ubN/Kf5DcHYoJJdRlYrCCtc1Oqdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rDT7VsKpHO581oeS4R3PM1iv6zTiEIKsM4Un5WCaMjA=;
- b=OWX6pOzEv1IJsc3qDeFK1GOLTj7/g3e3XQgnVaFwYOPYTg/B2IkyyhPBpMVfAgX2lDs9W1XfPbiaBcpLeKDRfW0WYfEQRg+odJnfZCWZ0SqRXJ5pOGJ+rfBEzVApjrEkBqLi1WXHq8oVO+vYqqROChDCI8W3QBdcxUM/gI8ORH5RzN2fNzp1J5vMhyFOGji52IbGqG90/isIj12ksmt85SG/aSksTB2FfS0K/Y/hkKj5mdvFWxfa5D3wPWoY6BPUBl2aVviVxFHTEbXuxgLdjgN6n7YmzTrn1/09Oa9V8dO3i/dx5AxiKcEHAZbBR9lvA0L2fAu7fkWD858+Wvl5Nw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by DM6PR15MB3928.namprd15.prod.outlook.com (2603:10b6:5:2bd::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
- 2025 17:58:01 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%7]) with mapi id 15.20.8880.026; Wed, 23 Jul 2025
- 17:58:01 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "frank.li@vivo.com" <frank.li@vivo.com>,
-        "viro@zeniv.linux.org.uk"
-	<viro@zeniv.linux.org.uk>
-CC: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Thread-Topic: [EXTERNAL] Re: [PATCH v4 1/3] hfsplus: fix to update ctime after
- rename
-Thread-Index: AQHb+3oV9Rb3lJ0HqkigH70nQmJRlLQ//7SA
-Date: Wed, 23 Jul 2025 17:58:01 +0000
-Message-ID: <cce1a29f2f55baf679c3fe83269d9bceb3c4fd6c.camel@ibm.com>
-References: <20250722071347.1076367-1-frank.li@vivo.com>
-	 <20250723023233.GL2580412@ZenIV>
-In-Reply-To: <20250723023233.GL2580412@ZenIV>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|DM6PR15MB3928:EE_
-x-ms-office365-filtering-correlation-id: 08c6bee3-eb86-44a3-bc58-08ddca127761
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|10070799003|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Umc1TnFHZkErU2JhUXhnbFQySjV2RUhoVmwwZkk3LzRtWGM4T1kwMEliZVpD?=
- =?utf-8?B?RkF0M3Jqb3RwNitha3VPcmpXV2ZaaFo2TmVrd0pKY0xwNFN0UnM1cHRZRllj?=
- =?utf-8?B?VDVEeml6d3dOMVpSSGI3a0trRTZIUHNtVnJvd3BKSzJMOWFqWlNmcXRwdEhn?=
- =?utf-8?B?VmVvSTdBa01NRmhpQ2pHMU5ZcjluWW5DSE5rWXQwT3NPVnF3VmRQNENlTzVF?=
- =?utf-8?B?M1F0bGtlbzFtWHlFN21EdTRmU3gvYmZjRk9OTGJnU3NFd2pVRENaY1Bhb3lJ?=
- =?utf-8?B?NXRpaEZBQkNPWk5qUG14R2ErbmZVUWJ2TUNLc0MzRytqb2pGRWROaDAySHR3?=
- =?utf-8?B?U1lMbjdXRzdzN0t3bE1KTERyc1VHd2tOU3FyYnIwZy9Xd3dGU2Z0UEJMNDkv?=
- =?utf-8?B?MVhaRnZXK2tKaC9aVWFHbk9KOG91L0hLdTFWTUwvMzU4dHJ2ZS9iVExrUUQr?=
- =?utf-8?B?TVZqcStBTUdFaTVlcmdpUENiSERicEZZSnp4QldRb2JsaEs5czdvK2ZDaUdD?=
- =?utf-8?B?NzVpVE5KRDM5RHIvbXJYTi9yb0lFaUF5V0xUZU9Rd0p4bmhDK2pFOHU3MFBM?=
- =?utf-8?B?UlBGUVowellKWnNJWWxaOU1pemp3cHdnWjNLeWl3YmhpOGtiSm91U3pyRUVU?=
- =?utf-8?B?cG5yY3J0UEZDUkxkaWZWeHVsTlNVcUQvemVDTVY0MExUbHlETEllOU1LUmNs?=
- =?utf-8?B?cUtEbzFhSElMVWt2VUM3a0ovU25iU1FBNXZocWJWYTBiUU50NTBtdm1uYWhn?=
- =?utf-8?B?OWYvWnJ0T2JLMVNnWVNkWTdKODNpOTdsUUJyeVYxd3BPdUdVWjExbVlkWEJD?=
- =?utf-8?B?dW1WaFQ2YSthaVlxOFV6bmlEWFJ4V1hkdlFWUllEOFU2NjJkRFpiN2xUNXJZ?=
- =?utf-8?B?WkhhNWJMVnNzblNSbU5scldGb1dsNDZCTnFKN0hZZmthNFFENEZpSWY5WWlE?=
- =?utf-8?B?UlRmUExNajJZekpYRVBaM05NQk80Wlc5ZDRNdFduNk9qSy95blFOSVBLSUtQ?=
- =?utf-8?B?L3FYaTJBdHB1SnYzRWZZT1lYYzR1V2pSb3ZoVTdXYURHL1l6S3ppQytHVzM2?=
- =?utf-8?B?N1BTcVQycXhsZEpHaWpFcGhrRnNYM3BGR2lJM09rMEhBNkJBQjRJZ210Wk9W?=
- =?utf-8?B?ZkFWZEt2YWYvSEVUR3pZZ3RnVXZnOTYzbWpocDdNWnlaK2thenpZMTlublMv?=
- =?utf-8?B?d1g3RXRJeVhQTlVlTHV5a2ppQlk2bmVrZTM4TXhjMG9yeDY1SlNYcTd4ZDFO?=
- =?utf-8?B?M21qVE11bDg4TWIyVmQwdkFKQVRlL2VhWVA1c2dVc3hZbzBRYWl2WGZtSHgz?=
- =?utf-8?B?aHBVVDd1T3NhTTcvb3pFaWt1OWVJMlA5eEVoNE5SdU1YS290THlOamdGMVN0?=
- =?utf-8?B?UE5tUXJaZU1OblRleUFiZGp5Q2RuUmZuUGw3Qy9ENEx2YitLTHdWZWl5cWo0?=
- =?utf-8?B?MVlJM2Q4Lytid0NKa1NsdnJiMys3TmlkMDF2bDJtUjQyVEo5QTd3ZnlsbTdE?=
- =?utf-8?B?UUdzcklvUStiYzdEYzVrcVpHN2pkUnU1MDIyTW1aTHVEZGFuYmNUQmliUjhI?=
- =?utf-8?B?TlNZdU1FeVhXOW42Q0xkVkF2ODRpWDJjL3NzVk5YWG1HdmpTQTRXakJhd0hu?=
- =?utf-8?B?NU1uMlp0YnhhUHJzbG1QVTJOTk5NRWIybTc1bG15aHhmcG9Jbmx5ZEhwQWYw?=
- =?utf-8?B?aktLTEcyVHpudHJhODRLM1Q4NGVoTkxWRzFaNGRTMXJIMWN2TjcrdStRb0Nk?=
- =?utf-8?B?WHRhUU5zQjNhVXdlUHJGMDlsa29WdjZHN3g4a0FHVkJwQWNhVkxLYnRmSVNZ?=
- =?utf-8?B?Wnp0UWd2M3hsMk0yamNpUWxFQjdHYVYrZzV3d0dYNE5ZeU9pMFpxVXdZYUNT?=
- =?utf-8?B?bUJIcklVVTRYSU5aM093a3dQcmQwbmYybWUydEk4dWRTMkVocXBXc2VBb2Fa?=
- =?utf-8?Q?KdooMk3zOO4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Snh4WmszMFVvVFkzeTRGWTU2Q3c0RUR2VThaWFVtdzdoaHd4K2xsS3lOVkF5?=
- =?utf-8?B?MlltTU5wdGMyVURIWEoxR2hOZzFxWUliSCsxVFowd2F6STFzcjJsTnpSK3lz?=
- =?utf-8?B?SUIwV0liTDRxc3l5czJadjB2OFE4SXpJdFBtcEh3R09zanRhMWgxVW1qR1RU?=
- =?utf-8?B?UE9YQ2k4Yll1Zk9IZFcyZnpRMDMwalVuOWttNkV5V1FpY1JWNGNYcnkwaklx?=
- =?utf-8?B?QThrUVVCZUxQUk9yOUJ6VW1uWHpMQUVuV2J6NWtORUxxWjlzTG9CdHgrK2VW?=
- =?utf-8?B?Sk5NUlI3amUzK2dKdXUwUi9OUTR2SGRpQ2VYNWx1dzNOSFRscVBZV0NSWjhi?=
- =?utf-8?B?RmNKSUdYT1V6VnlEaDdHcFVobUFYWmlUMVQ0RGVsSEVnQ2dUY0g1bGpobjBv?=
- =?utf-8?B?OHVKaEl3T2ViT3Q3LytISzg5NGgyRHRWMERMbXFPb2p3QkNNTWFZc2dicmow?=
- =?utf-8?B?MmxhMGFtTnQzRVg5RmxVTFJZU2trYnJ4NDBOa2JtZmliM201bHYyMHdjVzJq?=
- =?utf-8?B?eit1NkwzT1lQM25oWi9LN1Rza3YzSStUUXBkTFZIcmdCMTdRODNRcUV6QzZu?=
- =?utf-8?B?V2VsSVR5UXlkZjBzTnhKVC9oOHc5SHBGUnArZlpqR0x3bjl3RXUyeksrWjVL?=
- =?utf-8?B?eU1BWTJrbVdpSC9iYnkra24veVBWUGdLRDlkaE1ldGRPSE1mSnF2eDYvRWdh?=
- =?utf-8?B?WEFXcWdrdk9DMXBMbFlYYUxIY2RkSG1TZmY5ZnlVQ0NmMHZJVENhcTh2MTZR?=
- =?utf-8?B?V3BrdjVUZ0N1RDh3K2JmYUNxbi9ZWTJsWDlPM1k5cW11WjZqSFZyaEFCYksw?=
- =?utf-8?B?S1h6cGxLZVZONHFVanZpZzMxQXlJU0FiYUhBekd5bEQ4UVNaQlU4RERONDlM?=
- =?utf-8?B?T2NhdWxhTWhXc2ZrMTkwYzNwQko1Umx0dkxGN1VpWnIrcFNlV1RtbTdxTU9X?=
- =?utf-8?B?ZFBqVithQTZoTFUrdEFPMnE4cnp6aWprMUZuYWRZZ3lURHJGeUdVVXlyWTlh?=
- =?utf-8?B?VEJRc2U5WHBXdllINzZJRjY3UWdxVGJ4UFVpRkIzZ3pWaDhkNlA2Y2c4VnRZ?=
- =?utf-8?B?Rjd6UGkxWkQySWoxWEZrOU90TlVVY0U5M0RFRzNjUWl1eHVKdGdqQ3hpdEZi?=
- =?utf-8?B?clYxWjhJOTZTZkpiUHYvd0dpUVhhSVhSUm9QMFFuR2cvSXZjUk1UbFlacEF6?=
- =?utf-8?B?VE02L3pJZWZsdHZPalVnYkRMVTZOMDJpLzZnc2cxNEtSZ1o4Y21paGphZ01s?=
- =?utf-8?B?Ykhxa0lEWVh1UythbTJpVk53QVd3cG5wR0YyMGo5SEtMYkZVRUFrL2RJeit4?=
- =?utf-8?B?d3V2NURBYTZvSGRVdm44UVdtN1pBcVN0SDRnSzVReTZJZnA4Q0ZUQmRvY3dk?=
- =?utf-8?B?QkpyM2JtcGRQZ04xRVFqSlRTczBIT0tRRlFMakNHWE9FZ00wUDNiVGE2a3VU?=
- =?utf-8?B?UWFOQ3F0Y3V3VEFLek9lc0xJSVR3UHhBWkxCaGpOdnJkaXI5cVBveHpFRERG?=
- =?utf-8?B?RXNQNWZ1cFI4WmZyYmNGeUdlaWRwUHFJQThDTW1KWkszMXNva1l6aEZqcGMx?=
- =?utf-8?B?V3hDcGw4NE5CQ1d2RDVQTTJibmNwWDdwUEtuaFlpdGJWNEFnWm1OeFhwVEtZ?=
- =?utf-8?B?OGJaNmNqWUo4UTB5anBRR3A2RkI4MHN0TmE0S3BnOVYvMFRTeEJlYnM5QUxi?=
- =?utf-8?B?QzcwZ1lOTGw3ODNHc2hma1JLbjVoa2FIUnZzcjZCVHR6ZUJrckVvdk1LSTY5?=
- =?utf-8?B?cHhrVEc5aUUvQ0RndkJuWHpvRE5ERUM4M2M0SFdlN3RqUUY1dGNRdEFFS3Rx?=
- =?utf-8?B?aDhmS29tR2FWSExGNzJtZVJ6Y3dJb2hqbXJvZ3J0TzlVUDBzSFBGNmorRHl4?=
- =?utf-8?B?d1phaDMyYzJhVWxKZEYzd3N5LzFYZmlHQUlEczR0bmorVW8vUTRSOTZQS0o2?=
- =?utf-8?B?akZNTDhwOWNIZE9FUDRyUUZKTVhKaHNWbnlJeTh3QTJvVE90QXc3MUVuNTNq?=
- =?utf-8?B?SmRITXN4aEZ0VUlyZlMwcU50K2R0WUFqM2R0Z2lIbTEwem9TMFIralJXNUpV?=
- =?utf-8?B?aVFqamFxeEM5U3IxbzA4bW5Za3F1cjhxNWlCamdVWHcvc01QS2M2L2xPSzg1?=
- =?utf-8?B?dmZIRk5OVTVvVlhscGJoeTJKNzBuVDU4N2p2UVkybFU0enUxbWhJYVYxNHR3?=
- =?utf-8?Q?UPmPxV4T4ZP5rW+596WX8nE=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1348224F60CA4D4D8B96A834F27F8CEF@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D00204F9B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 18:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753293784; cv=none; b=h3FCiJqTb4ScK2kP2xa/b2j9AdwF+a6BPtK8pc3ukkil2O5UIyuX8VVWoy1yHEBtBq/x/woz5cF2u705/7WjuNB/uYTvOGFN3GFvojX9CARsMfL62DrPxKY8iRxb5QwqddKmHYS2+BjKQoOJiKKWhBco0REU3xWaYouurVu/YaM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753293784; c=relaxed/simple;
+	bh=2iebzDMl31aYqICEJCQtJeRntCkcwu/khnNK/tJyxxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=di8yGP1FfAFdEPu8R+R8w78SbHpEHLkTvO99aGYUYrnOcFMJG28fWJ9H50imEo+iwxic5YuHodbdUdlTfs0DvrYyi+l1Wk4nSgfQy3THR7aKZeBIUfMSVyoV3AdEikdORrZ95kNPzJCUPOBVu2y0Y3o+Qyt/KcugsKD3El3DtWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRwYrmWT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753293781;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G3whOxkstbMxt2nhGLk1bQZXFsEZXlxQlt2XWZxhuog=;
+	b=eRwYrmWTGJwJeh6DbFvEoe0l+0hd2VofQwKBpQL8KYjYBye8Mso1KpStkcHIczxVEUTKh6
+	nX4Tbcm92tZesss3+sooQ+G+Getp7KQdR3rxr2BuqLUdpm2t4ldH7t46Q8QXTRFXNWIGS/
+	kVRqKm3LrCnhuhINj7mv13/jMjaN9Ks=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-553-jT-6ild_N0iXhbPstuSpTw-1; Wed, 23 Jul 2025 14:02:59 -0400
+X-MC-Unique: jT-6ild_N0iXhbPstuSpTw-1
+X-Mimecast-MFC-AGG-ID: jT-6ild_N0iXhbPstuSpTw_1753293776
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4561611dc2aso820365e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 11:02:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753293776; x=1753898576;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=G3whOxkstbMxt2nhGLk1bQZXFsEZXlxQlt2XWZxhuog=;
+        b=XIDAxppthML6i9BTy1l//ahOBW7VoFd7W/jh/iUurZeop5Ux2MfRAsXgBOwxxCUae7
+         oFrfzn2EUWQ8EyQ7wV1l8F5TYrp2IQ0Bmpu2/HRKUF43j+oEiDMpBhLwXcXz3rtXzmhX
+         adl10ZXSzQlg/c0wklSOEcaI8KUJeYYLGUv0VjUqtw6u2HUCWJywXVSyv++in1aihdR5
+         5WB9ER+REjnddqwKp9bT2Q/U98OdUszttPtdzEctOT5faUppQhjaWN6ev0Uo6cehiY2k
+         aqsMYw4iD3BPmGucextmR0KSv959nhju4MroXGwWy99VtkVR+lf50lK9y0DV7mmufDiR
+         w6Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5sLACsWTnwM+xhCpNwYsYP5nbPfNIDKELijkOIe0nKuYMJ7/UjfqWPL7x6xwY6MoMUPIEAUeebYAnrDn0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpM7X2/13aiP946BV6GZTAi+7btzMQcfXntAtjtgyVpRaS4Dj7
+	IdqM+I6gXD2jOQzqxvC3drkjYU73bowpBPaRJbJEegvBZcjOgWJGPmV7jho+fG3nbmlqhIMCx1H
+	w0quDV/gb9tJg62o2Z0KWutQ5IzUrIThUBQrC9Sqk0Gr+n+PuSGtcNgKJo9U3qO/N0WA=
+X-Gm-Gg: ASbGncs1bBEH2TzY2uq3qUFivPyXWSvuWe+ycrpjDANChFCqRGBoWxV/G8uQqcWu10R
+	ShzS4iVsd+ihiEh+NGQ8mkIh+te2ek1e5G9N2WEzqJX4zM86n6GSopZ+615/FSITMUhgCKnPhoj
+	l7MlzXP8esf69P8x+I1NtpeDMiHifTI+3TYoloDtmat8hRvlRGCMxycFhaFhYdjTpH/bxalFrrQ
+	DrDxvmrgktO2kG2mL0sFYpS4OJFcygjOwOafVr8g/9xGFr3/8c8m9jHnO6OX0gkU1RiI2EAUQLa
+	RRt5JML3Mof57jK2Bb9a3kIplXoa/Q6w7UvxKjWGJkFwmyjdokkoSxQl+3jZP+toPTOcvQ==
+X-Received: by 2002:a05:6000:2013:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b768ea011bmr3550361f8f.17.1753293775536;
+        Wed, 23 Jul 2025 11:02:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEZg16J4+gnyGIzNr4yWSx/6st9lfF2anNLh6lxP/xRh+IjVjl07vljj/vUaQGCZ849yfF1A==
+X-Received: by 2002:a05:6000:2013:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b768ea011bmr3550304f8f.17.1753293774863;
+        Wed, 23 Jul 2025 11:02:54 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1af43.dip0.t-ipconnect.de. [87.161.175.67])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458691b2adesm29652445e9.32.2025.07.23.11.02.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 11:02:54 -0700 (PDT)
+Message-ID: <383a957e-badb-49fc-9913-30bea3a1c5a8@redhat.com>
+Date: Wed, 23 Jul 2025 20:02:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08c6bee3-eb86-44a3-bc58-08ddca127761
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 17:58:01.7350
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FofD+aFC+1BcS2NFd5bludKQURjKmmyP3gvqqhGzxPiyo3o0r1dX7rOQXPFk/XTrGWUqgdAnS84jzigbQYYKiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB3928
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE1MyBTYWx0ZWRfX3umS5abnGxkU
- xwYOMkAY9yS0xudolGLZaTJj86Wy7MzcH92S0DSLJ6skqp1ieTFlUN7ZgYqqJM8f/1lnk+2sLKH
- qffeIaPKh/gdtWv1HeUGae7+EUkPHLsYtaXViTcqo2GE6NLdvRS47c0u/k3+Q1Dd3MVG9OV2aJQ
- 9Q/fGK0KxzReBdpmcXjGA+Q5SxwboytVWwT4NyjzC2x2Rxxn+wnshhnxzJoMa1YTNOTFwPRg+vL
- 9emPyAvXMtr5Zo4P0qYH+r4XNgjv9I/lRcMPHyVnan+2sQDmtlKCWEpxFC1FT5Y7gje1wPfNudl
- YHlEG97R0cPpFogolMfHQXPqOmuExrtujDKL3NwLzNPsaudnyzbS8HOr4Cgwyhgj6CnQ7u4iE9D
- W2fFJX3I+sgUJ4JfTSdesIOTS3DKfn8n41/YbKgTkDL8sggSrs4EN/qIT5beqj7LK06a2TJR
-X-Authority-Analysis: v=2.4 cv=evLfzppX c=1 sm=1 tr=0 ts=688122ac cx=c_pps
- a=B4bUw2QgNwGTCAXqIx8Ikg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=P-IC7800AAAA:8
- a=-0mzata3yMjZ4mvSgx8A:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-GUID: _z9Di603lnUXXEcU8SJ_d9NW816QdF91
-X-Proofpoint-ORIG-GUID: _z9Di603lnUXXEcU8SJ_d9NW816QdF91
-Subject: RE: [PATCH v4 1/3] hfsplus: fix to update ctime after rename
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 malwarescore=0 spamscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 mlxscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230153
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
+ exclude VM_HUGEPAGE
+To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
+ Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>
+References: <20250721090942.274650-1-david@redhat.com>
+ <4a8b70b1-7ba0-4d60-a3a0-04ac896a672d@gmail.com>
+ <5968efc3-50ac-465a-a51b-df91fc1a930a@redhat.com>
+ <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-T24gV2VkLCAyMDI1LTA3LTIzIGF0IDAzOjMyICswMTAwLCBBbCBWaXJvIHdyb3RlOg0KPiBPbiBU
-dWUsIEp1bCAyMiwgMjAyNSBhdCAwMToxMzo0NUFNIC0wNjAwLCBZYW5ndGFvIExpIHdyb3RlOg0K
-PiANCj4gPiBAQCAtNTUyLDkgKzU1MywxMyBAQCBzdGF0aWMgaW50IGhmc3BsdXNfcmVuYW1lKHN0
-cnVjdCBtbnRfaWRtYXAgKmlkbWFwLA0KPiA+ICAJcmVzID0gaGZzcGx1c19yZW5hbWVfY2F0KCh1
-MzIpKHVuc2lnbmVkIGxvbmcpb2xkX2RlbnRyeS0+ZF9mc2RhdGEsDQo+ID4gIAkJCQkgb2xkX2Rp
-ciwgJm9sZF9kZW50cnktPmRfbmFtZSwNCj4gPiAgCQkJCSBuZXdfZGlyLCAmbmV3X2RlbnRyeS0+
-ZF9uYW1lKTsNCj4gPiAtCWlmICghcmVzKQ0KPiA+IC0JCW5ld19kZW50cnktPmRfZnNkYXRhID0g
-b2xkX2RlbnRyeS0+ZF9mc2RhdGE7DQo+ID4gLQlyZXR1cm4gcmVzOw0KPiA+ICsJaWYgKHJlcykN
-Cj4gPiArCQlyZXR1cm4gcmVzOw0KPiA+ICsNCj4gPiArCW5ld19kZW50cnktPmRfZnNkYXRhID0g
-b2xkX2RlbnRyeS0+ZF9mc2RhdGE7DQo+IA0KPiAJVW1tLi4uICBJcyB0aGF0IGFzc2lnbm1lbnQg
-KGVpdGhlciBiZWZvcmUgb3IgYWZ0ZXIgdGhhdCBwYXRjaCkNCj4gYWN0dWFsbHkgY29ycmVjdD8N
-Cj4gDQo+IAlOb3RlIHRoYXQgbmV3X2RlbnRyeSBlc3NlbnRpYWxseSBnb3QgdW5saW5rZWQgaGVy
-ZTsgb2xkX2RlbnRyeQ0KPiBpcyBhYm91dCB0byBoYXZlIGl0cyBwYXJlbnQvbmFtZSBjaGFuZ2Vk
-IGJ5IHRoZSBjYWxsZXIgb2YgLT5yZW5hbWUoKSwNCj4gc28uLi4gIHRoYXQgbG9va3MgdmVyeSBv
-ZGQuDQo+IA0KPiAJV2hhdCBpcyB0aGF0IGxpbmUgYWJvdXQ/DQoNClNvLCBhcyBmYXIgYXMgSSBj
-YW4gc2VlLCB0aGUgZGVudHJ5IHN0cnVjdHVyZSBbMV0gaGFzOg0KDQp2b2lkICpkX2ZzZGF0YTsJ
-CQkvKiBmcy1zcGVjaWZpYyBkYXRhICovDQoNCkFuZCBIRlMrIGlzIHVzaW5nIHRoaXMgZmllbGQg
-dG8gc3RvcmUgQ2F0YWxvZyBGaWxlJ3MgSUQgKENOSUQpIG9mDQp0aGUgZmlsZSBvciBmb2xkZXIs
-IGZvciBleGFtcGxlIFsyXToNCg0Kc3RhdGljIGlubGluZSB2b2lkIGhmc3BsdXNfaW5zdGFudGlh
-dGUoc3RydWN0IGRlbnRyeSAqZGVudHJ5LA0KCQkJCSAgICAgICBzdHJ1Y3QgaW5vZGUgKmlub2Rl
-LCB1MzIgY25pZCkNCnsNCglkZW50cnktPmRfZnNkYXRhID0gKHZvaWQgKikodW5zaWduZWQgbG9u
-ZyljbmlkOw0KCWRfaW5zdGFudGlhdGUoZGVudHJ5LCBpbm9kZSk7DQp9DQoNClNvLCB0aGlzIGxp
-bmUgc2ltcGx5IGNvcGllcyBDTklEIGZyb20gb2xkX2RlbnRyeS0+ZF9mc2RhdGEgdG8NCm5ld19k
-ZW50cnktPmRfZnNkYXRhIGR1cmluZyB0aGUgcmVuYW1lIG9wZXJhdGlvbi4gSSBhc3N1bWUgdGhh
-dA0KLT5mc19kYXRhIHNob3VsZCBiZSB1bnRvdWNoZWQgYnkgZ2VuZXJpYyBsb2dpYyBvZiBkZW50
-cmllcyBwcm9jZXNzaW5nLg0KDQpUaGFua3MsDQpTbGF2YS4NCg0KWzFdDQpodHRwczovL2VsaXhp
-ci5ib290bGluLmNvbS9saW51eC92Ni4xNi1yYzYvc291cmNlL2luY2x1ZGUvbGludXgvZGNhY2hl
-LmgjTDEwOA0KWzJdIA0KaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjYuMTYtcmM3
-L3NvdXJjZS9mcy9oZnNwbHVzL2Rpci5jI0wyNQ0K
+On 23.07.25 19:07, Usama Arif wrote:
+>>> Thanks for the patch David!
+>>>
+>>> As discussed in the other thread, with the below diff
+>>>
+>>> diff --git a/kernel/sys.c b/kernel/sys.c
+>>> index 2a34b2f70890..3912f5b6a02d 100644
+>>> --- a/kernel/sys.c
+>>> +++ b/kernel/sys.c
+>>> @@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
+>>>                   return -EINVAL;
+>>>             /* Flags are only allowed when disabling. */
+>>> -       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+>>> +       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+>>>                   return -EINVAL;
+>>>           if (mmap_write_lock_killable(current->mm))
+>>>                   return -EINTR;
+>>>
+>>>
+>>> I tested with the below selftest, and it works. It hopefully covers
+>>> majority of the cases including fork and re-enabling THPs.
+>>> Let me know if it looks ok and please feel free to add this in the
+>>> next revision you send.
+>>>
+>>>
+>>> Once the above diff is included, please feel free to add
+>>>
+>>> Acked-by: Usama Arif <usamaarif642@gmail.com>
+>>> Tested-by: Usama Arif <usamaarif642@gmail.com>
+>>
+>> Thanks!
+>>
+>> The latest version lives at
+>>
+>>    https://github.com/davidhildenbrand/linux/tree/PR_SET_THP_DISABLE
+>>
+>> With all current review feedback addressed (primarily around description+comments) + that one fix.
+>>
+>>
+> 
+> Hi David,
+> 
+> Just wanted to check if the above branch is up to date?
+> 
+
+No, I forgot to push. Now pushed.
+
+This is the diff (excluding description changes):
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index c4127104d9bc3..527aa4c9645fd 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -324,8 +324,8 @@ struct thpsize {
+          (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
+  
+  /*
+- * Check whether THPs are explicitly disabled through madvise or prctl, or some
+- * architectures may disable THP for some mappings, for example, s390 kvm.
++ * Check whether THPs are explicitly disabled for this VMA, for example,
++ * through madvise or prctl.
+   */
+  static inline bool vma_thp_disabled(struct vm_area_struct *vma,
+                 vm_flags_t vm_flags)
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 1949bb9270d48..60e496ecabe04 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -179,8 +179,8 @@ struct prctl_mm_map {
+  
+  /*
+   * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
+- * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
+- * specified for PR_SET_THP_DISABLE.
++ * is reserved, so PR_GET_THP_DISABLE can return "1 | flags", to effectively
++ * return "1" when no flags were specified for PR_SET_THP_DISABLE.
+   */
+  #define PR_SET_THP_DISABLE     41
+  /* Don't disable THPs when explicitly advised (MADV_HUGEPAGE / VM_HUGEPAGE). */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 2a34b2f708900..b87d0acaab0be 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2438,7 +2438,7 @@ static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
+         return 0;
+  }
+  
+-static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
++static int prctl_set_thp_disable(bool thp_disable, unsigned long flags,
+                                  unsigned long arg4, unsigned long arg5)
+  {
+         unsigned long *mm_flags = &current->mm->flags;
+@@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
+                 return -EINVAL;
+  
+         /* Flags are only allowed when disabling. */
+-       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
++       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+                 return -EINVAL;
+         if (mmap_write_lock_killable(current->mm))
+                 return -EINTR;
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
