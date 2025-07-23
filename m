@@ -1,108 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-55773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F9CB0E834
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 03:38:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF83B0E885
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 04:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7812B1C286B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 01:39:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 387C97AED43
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 02:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C3E199237;
-	Wed, 23 Jul 2025 01:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="fuKVzimE"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7744E19D88F;
+	Wed, 23 Jul 2025 02:16:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4912F43;
-	Wed, 23 Jul 2025 01:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753234726; cv=pass; b=dwJPa9FLiNStOc2JblMrd69krFaW+u1jKNBfKrYgEiAt9hq0N96Rjlw4BLSs0ywuczoo8z9/nY4ApIFsQGajWtiyuAZ2Gj1COxGOXeIWVoSGKqB9hiHKiNeXZmovUk2laGVUiFYxVwNrxMrHYviGr3J9Mm1CP0J03lR5A/NTerM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753234726; c=relaxed/simple;
-	bh=kQtBD4u/2DWbddKH9xYLkSt3qDB8X4SffSwuW+eoKug=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=OWQOwNYBiKJF1ryfOf0Y5UOFCZ4mxH/y0wLj4OJ8UrQyPWGHbE8ZzIC+uJy2reEsYBOnR3gYssLf+oaCZKcHX3PQcvT46spiIA0kenumNMmNZOiG37ZPuHZHuxSe95jsM9FNmheMsGMq9oSeEzlk+5IZ1UVepzo35sGA89Npkh0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=fuKVzimE; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753234699; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dcs/Bw9mxtzJgk7Y5Kk1J2gUOdVUAjSVAGOg/+Yf0e/9Wmj1g/i2y0Bv7E20emP4bZdIinpgEnbICecqExezPikJsckqYIGAcuruusYjhumH6+EdmYGaNdqY12sbkKnqw/asxSUb1VkP1Af9z4er+Jg7bN/7MMou4b2elaOrs1g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753234699; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kQtBD4u/2DWbddKH9xYLkSt3qDB8X4SffSwuW+eoKug=; 
-	b=kxjK2/NvQmyPXolw9abSvXe34vFq06jWNRD4QWogwkG7HDLnNzVrzpCJCatp0jmotGc1jYSgXdeiCA0zhcCc1YkU59RvFZTQC9vRXEM2i8KCENO5ZSYwQq4zJkCmpffMCq8NRDHPP77fJi9bZXOt7Zca5Ydu9E4M9OTZPBImJuQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753234699;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=kQtBD4u/2DWbddKH9xYLkSt3qDB8X4SffSwuW+eoKug=;
-	b=fuKVzimEnUAiXPzrss/iJfEzZBdyx7qDmgkTKcIIUKG3flg5hyeJGbjhMioC6FTZ
-	MLJ9H6a/lhm/CcrgXhfQV7q2EIaKLoxs5H6dxAnRKwF7gAiRJBDtQTuZ8TGCI4rDxq5
-	HaGXV4YqPWw/2MzmhP7bxBHTJcGpWMKM9846HjQo=
-Received: by mx.zohomail.com with SMTPS id 1753234696386671.5480253480471;
-	Tue, 22 Jul 2025 18:38:16 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BF2F43;
+	Wed, 23 Jul 2025 02:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753237011; cv=none; b=UZ2PuM7Dotfv9XYPdkDgj1m4UY/eCaZZMmjivNu1izZftfPYr9XNUqptdNbBWRJaUWcg0EEH6iI7eIYwV5fwxAMQImJke1gXbo3dZVPPwd6WfL/ZuGeu5glzLUd79xXqIA3xC5rn7/hDpi73Xc21a4ZM0u4OY9PUef2cGnv0ziU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753237011; c=relaxed/simple;
+	bh=pvxWFil2B7sifCFp7k+cVtk0exx8QZ8fKoaj5BURZ6k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=oqh720SNmNtgG6lqyMmnJV6eni7PciYO7NIuFxPL5Rq5hbs/sVknEcHp7N/6j4w3fnfWVjCws+MS7g008eLWvJt5/FLNatbRmfejABgK2/CZWnQbq0MDPWL2B9HpAufTn/49cGYg+RbbR7WfEB9pgydPFXWWxD/dqoXedI5UKH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56N2GRY0001481;
+	Wed, 23 Jul 2025 11:16:27 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56N2GRAG001477
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 23 Jul 2025 11:16:27 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
+Date: Wed, 23 Jul 2025 11:16:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v2 0/3] rust: xarray: add `insert` and `reserve`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
-Date: Tue, 22 Jul 2025 22:38:00 -0300
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org,
- Janne Grunau <j@jannau.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7C5ED010-C61D-4748-B399-C6D052170224@collabora.com>
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] hfs: remove BUG() from
+ hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "willy@infradead.org" <willy@infradead.org>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
+ <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
+ <aHlQkTHYxnZ1wrhF@casper.infradead.org>
+ <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
+ <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
+ <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
+ <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
+ <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
+ <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
+ <aH-enGSS7zWq0jFf@casper.infradead.org>
+ <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
+ <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Hi Tamir,
+With below change, legitimate HFS filesystem images can be mounted.
+
+But is crafted HFS filesystem images can not be mounted expected result?
+
+  # losetup -a
+  /dev/loop0: [0001]:7185 (/memfd:syzkaller (deleted))
+  # mount -t hfs /dev/loop0 /mnt/
+  mount: /mnt: filesystem was mounted, but any subsequent operation failed: Operation not permitted.
+  # fsck.hfs /dev/loop0
+  ** /dev/loop0
+     Executing fsck_hfs (version 540.1-Linux).
+  ** Checking HFS volume.
+     Invalid extent entry
+  (3, 0)
+  ** The volume   could not be verified completely.
+  # mount -t hfs /dev/loop0 /mnt/
+  mount: /mnt: filesystem was mounted, but any subsequent operation failed: Operation not permitted.
+
+Also, are IDs which should be excluded from make_bad_inode() conditions
+same for HFS_CDR_FIL and HFS_CDR_DIR ?
 
 
-> On 13 Jul 2025, at 09:05, Tamir Duberstein <tamird@gmail.com> wrote:
->=20
-> The reservation API is used by asahi; currently they use their own
-> abstractions but intend to use these when available.
->=20
-> Rust Binder intends to use the reservation API as well.
->=20
-> Daniel Almeida mentions a use case for `insert_limit`, but didn't name
-> it specifically.
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -358,6 +358,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+                inode->i_op = &hfs_file_inode_operations;
+                inode->i_fop = &hfs_file_operations;
+                inode->i_mapping->a_ops = &hfs_aops;
++               if (inode->i_ino < HFS_FIRSTUSER_CNID)
++                       goto check_reserved_ino;
+                break;
+        case HFS_CDR_DIR:
+                inode->i_ino = be32_to_cpu(rec->dir.DirID);
+@@ -368,6 +370,24 @@ static int hfs_read_inode(struct inode *inode, void *data)
+                                      inode_set_atime_to_ts(inode, inode_set_ctime_to_ts(inode, hfs_m_to_utime(rec->dir.MdDat))));
+                inode->i_op = &hfs_dir_inode_operations;
+                inode->i_fop = &hfs_dir_operations;
++               if (inode->i_ino < HFS_FIRSTUSER_CNID)
++                       goto check_reserved_ino;
++               break;
++       default:
++               make_bad_inode(inode);
++       }
++       return 0;
++check_reserved_ino:
++       switch (inode->i_ino) {
++       case HFS_POR_CNID:
++       case HFS_ROOT_CNID:
++       case HFS_EXT_CNID:
++       case HFS_CAT_CNID:
++       case HFS_BAD_CNID:
++       case HFS_ALLOC_CNID:
++       case HFS_START_CNID:
++       case HFS_ATTR_CNID:
++       case HFS_EXCH_CNID:
+                break;
+        default:
+                make_bad_inode(inode);
 
-Sorry, this fell out of my radar for a bit. Will have a look in the next =
-couple of days.
-
-
-=E2=80=94 Daniel=
 
