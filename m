@@ -1,144 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-55836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE9AB0F4EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 16:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B31CB0F562
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 16:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A8B1AA507C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 14:08:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2972E542E7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 14:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90AE2F49E1;
-	Wed, 23 Jul 2025 14:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2242F5080;
+	Wed, 23 Jul 2025 14:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="tXelu70y"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sBf234vd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF5E29B8C6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 14:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6322D9EDC;
+	Wed, 23 Jul 2025 14:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753279722; cv=none; b=joObefdQUHEA24lsWDjiCCHcGq/ZUly7xXhK6U5pBbio1pk0JGEOqJbat8KiOJVwOybG7efYwxfww8PoYaG011NHLDr5v3qubxb8iS+7azAlncsXpQ1xGOQrx3YhM7e3ZTCfm4Cn6N8uwHyqYR+GUa2IgrRfynZhXa7lMdS/3jE=
+	t=1753281251; cv=none; b=G5FQqQJ/2+Mt4wQobrNIPoi4+xgwdxzctBFOGFFOz5nVYfrnUOdkMFMdd+VC6oHWjzg0Tqo5V+U8Ymo01VWrA7qcWWZMxAUVntLb/nAOc9M4V3MMvXeZuRZpxqlenNsc6Uv3NQtHzNsYod32WkjohEzrNecz0eZRvbAl5N18MO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753279722; c=relaxed/simple;
-	bh=EYCQ+Y4SGloI9batOxe6eah89jgSfjrOwxOFu5iP0Ok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m789fcvsB5wt2iI3iuPzFi06z/fj2smrlJgLU0BU1+a+PzNqdU8rYdH18dJ8LsnJy3/BxKTl6lQdXWZ1L5qXRSnkarWzGrOUSuII3NwqaeGuE5y2ulEK/5yLJG+IwddOFp3lP+biEf41D0TgLoLbDX4eSbylbIX4PbDEl4Vt9J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=tXelu70y; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab3d08dd53so60005551cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 07:08:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1753279720; x=1753884520; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EYCQ+Y4SGloI9batOxe6eah89jgSfjrOwxOFu5iP0Ok=;
-        b=tXelu70yiW8vPdSXtL0JJ+i1ZNy3aPSqCYiOhiNagT42dpVrKJxDU2ZahCr2FMzmzR
-         vmPko7FUGeBFLqFFC+wxHP553EdHMJ6jUIFtgLBDFWGo5MKZ694C/FCwNyORqxrPMQ6Q
-         qyGXYfVmcQtHPc3H6bXw0KOIQncmgajKxvBl/5/G6Mzs4DaP7LFCZ7kCvevEVry4b5EG
-         KsqjcIsRd4HODUcWN2YpihyOI4X/yIxkOV3CRNhdIj7yvEpfI+2l8z8C6zf89/akdLq/
-         wxzcH7T+6JaB0vnnGMkK4yBx7iIfd/1XwEjsRJHxcYKJnwQ7cEPkGQ8LM49Ng+HkKJzT
-         hXqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753279720; x=1753884520;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EYCQ+Y4SGloI9batOxe6eah89jgSfjrOwxOFu5iP0Ok=;
-        b=p2JS9b1gVjNYkULxRMhCOnfj72su7wP5y1QE+r6tr0I9GuxZ9yfiwCwyX7F9N3k8A8
-         Ybi1GtsmuItHqE7QUZHegONVao3wVOz3x2iLpUsBUBFlh3jRiNVtc9qEhaK7MIAdkI9a
-         V98lox4XnYo8E7xrtXHzkDGs9fhB7rgkgoxetaWHucNAa7D2z68c/bbno3/zBt0ctUSr
-         4bw7DG9koDLeq17a98oeeUHKmDOOEfJ6DdOWmde/29DzPijvldeZ5JOKb3mvt0A2Wv0Z
-         wqukbwuEpJ1cfoXgRIvUtZcA7f3wluBaQddgVi2V39CFV2hJXdbIe/9a24IMUjJxo0HN
-         e2cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHQfRxM6fj2TGdrEcdCNXl/UszFQPxsdBKnv/NWVfLl2QZeqwKUqPFqTxe+Mwc2HR0bMkWG82uFRxNixtw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyprsegV+yGBgCjxqPxzcawA7ySmSrz0eoGlOEXrd9wja2QZCyd
-	M41bQyXoBbR/RGJR/Kvh3QaZoNGs6lCPxZ5/fTsUw6xjGq9tHq0u/eZF5SY7FD58QuY/48VCKJJ
-	9lCLvcAUExVijOFLlyffZrD5m/7wUxbiAHMAKFhHM9Q==
-X-Gm-Gg: ASbGnctuiIH0nUJFCs1NUUk0/Bg3aWRXeHUEpP5zPvjGLi9TD7uphqnBr4NcH98G9hX
-	8YVEfM6uxVEoyPYwt1RBO33RCzCnCr7uUiZUy2KlVCBtMIDBLyoBGx3J05RWyHsHUEjcShojyVt
-	NaVlxFWfUTr/KN5MkQs+FVYrnKCZbX9xP1Evcknmwvia89WH3H1wxRiSDkhJX7cvJr1QK4rqXTe
-	t13
-X-Google-Smtp-Source: AGHT+IEZg9+tOdoBN5pipaSz8l0JIXA4kWu5teWmH4MdPQcTJ4hEm9+p/VjHT1EFMtU++w0i7sf5NEh4l/b4T/vp+IU=
-X-Received: by 2002:a05:622a:299b:b0:4aa:d487:594b with SMTP id
- d75a77b69052e-4ae6df3479fmr44745741cf.35.1753279719903; Wed, 23 Jul 2025
- 07:08:39 -0700 (PDT)
+	s=arc-20240116; t=1753281251; c=relaxed/simple;
+	bh=wWuI3uT5wjoTOeZPP7CPLLKesy5RfF2/nPgncQZdttY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qOj+yQz1icCcEqT2+aofIDioe/2FGojLW2Ww0pFeB609ZLLHTCWsCGWgiydSaF6FHCgA54wvpIczNH+k/Yunu6BU1J/4Xqz7NLob1D6AxOcblv86KlAXXrEPAKc1PBZh3h8ltFVWmhRRtiOSGjh+d2EvO9IkAx1nIYOEO8OGQe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sBf234vd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2B1Vo0/j3crJLhvogIai1rlzti+SXL6KBl2BvGLFRhs=; b=sBf234vd9tTmtB4mGJO2IwKMol
+	7fb0Xmtgn+nj1hGNM5uxxxgM48aPT4lP6jh+BzTUNLl/GHIKRIoIlO4q2O9aDNEYWk9dYxq6eW43i
+	ul3hjgcdF3aCz+McqDWehRRBtz0f1nR/TklA6RR+RXyGZcwEsFx+d1Lgl+ei2GPnJE+3T+QRD7G6V
+	hYxgjHWh0QO+m6xkekEmgQ4hSV7qxarvVS5nc73ZnLWkKyJnY+ZQlRQWoGXPSlarLeL2r2J7pAJE7
+	N2JqSp+uY+ln2juW+KcTsBjngH55i3LZByWQHqRcn/BQoAiM2ViGbEd3fbmXYD8H38FrMpubaBwtw
+	s34NQXuQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ueaXc-0000000DLA2-0fWm;
+	Wed, 23 Jul 2025 14:33:56 +0000
+Date: Wed, 23 Jul 2025 15:33:55 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Chi Zhiling <chizhiling@163.com>
+Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: Re: [RFC PATCH 2/3] mm/filemap: Avoid modifying iocb->ki_flags for
+ AIO in filemap_get_pages()
+Message-ID: <aIDy076Sxt544qja@casper.infradead.org>
+References: <20250723101825.607184-1-chizhiling@163.com>
+ <20250723101825.607184-3-chizhiling@163.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625231838.1897085-1-pasha.tatashin@soleen.com>
- <20250625231838.1897085-26-pasha.tatashin@soleen.com> <mafs01pr6u06u.fsf@kernel.org>
-In-Reply-To: <mafs01pr6u06u.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 23 Jul 2025 14:08:02 +0000
-X-Gm-Features: Ac12FXwWi_rhmMIkdkRxwkl_fKGePVCICDRFX_LJg-BXvjlQMX0IOJ0Ennnr9xw
-Message-ID: <CA+CK2bCHFW35oudOUTykzV4zH6Hv4ChmUq=-BZAtDP_mtOwBjA@mail.gmail.com>
-Subject: Re: [PATCH v1 25/32] mm: shmem: use SHMEM_F_* flags instead of VM_* flags
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
-	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723101825.607184-3-chizhiling@163.com>
 
-On Thu, Jun 26, 2025 at 1:01=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org=
-> wrote:
->
-> Hi all,
->
-> On Wed, Jun 25 2025, Pasha Tatashin wrote:
->
-> > From: Pratyush Yadav <ptyadav@amazon.de>
-> >
-> > shmem_inode_info::flags can have the VM flags VM_NORESERVE and
-> > VM_LOCKED. These are used to suppress pre-accounting or to lock the
-> > pages in the inode respectively. Using the VM flags directly makes it
-> > difficult to add shmem-specific flags that are unrelated to VM behavior
-> > since one would need to find a VM flag not used by shmem and re-purpose
-> > it.
-> >
-> > Introduce SHMEM_F_NORESERVE and SHMEM_F_LOCKED which represent the same
-> > information, but their bits are independent of the VM flags. Callers ca=
-n
-> > still pass VM_NORESERVE to shmem_get_inode(), but it gets transformed t=
-o
-> > the shmem-specific flag internally.
-> >
-> > No functional changes intended.
->
-> I was reading through this patch again and just realized that I missed a
-> spot. __shmem_file_setup() passes VM flags to shmem_{un,}acct_size(),
-> even though it now expects SHMEM_F flag. Below fixup patch should fix
-> that.
+On Wed, Jul 23, 2025 at 06:18:24PM +0800, Chi Zhiling wrote:
+> From: Chi Zhiling <chizhiling@kylinos.cn>
+> 
+> Setting IOCB_NOWAIT in filemap_get_pages() for AIO is only used to
+> indicate not to block in the filemap_update_page(), with no other purpose.
+> Moreover, in filemap_read(), IOCB_NOWAIT will be set again for AIO.
+> 
+> Therefore, adding a parameter to the filemap_update_page function to
+> explicitly indicate not to block serves the same purpose as indicating
+> through iocb->ki_flags, thus avoiding modifications to iocb->ki_flags.
+> 
+> This patch does not change the original logic and is preparation for the
+> next patch.
 
-Added for v2.
+Passing multiple booleans to a function is an antipattern.
+Particularly in this case, since we could just pass iocb->ki_flags
+to the function.
 
-Pasha
+But I think there's a less complicated way to do what you want.
+Just don't call filemap_update_page() if there are uptodate folios
+in the batch:
+
++++ b/mm/filemap.c
+@@ -2616,9 +2616,10 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+                        goto err;
+        }
+        if (!folio_test_uptodate(folio)) {
+-               if ((iocb->ki_flags & IOCB_WAITQ) &&
+-                   folio_batch_count(fbatch) > 1)
+-                       iocb->ki_flags |= IOCB_NOWAIT;
++               if (folio_batch_count(fbatch) > 1) {
++                       err = -EAGAIN;
++                       goto err;
++               }
+                err = filemap_update_page(iocb, mapping, count, folio,
+                                          need_uptodate);
+                if (err)
+
 
