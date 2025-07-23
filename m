@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-55842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BA7B0F5CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 16:48:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10581B0F5DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 16:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B089586126
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD4F965380
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 14:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B35B2F5C5F;
-	Wed, 23 Jul 2025 14:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDBC2F85D6;
+	Wed, 23 Jul 2025 14:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="lLeh4OIW"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="KL4Num2E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2BB2F548C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 14:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A492F5C2A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 14:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282022; cv=none; b=sRRSu5PZ0+XAz3Bvh8gaVmINLol0BM5BTbO7lvYq1Tj9zOrI+3XaFXzta/+t0zKz4AfAOZ0Bn7gAMlARx77PNWCRXOX6HbbVJf/PM3W+wIKNY/XSJwL7v52R6bXC5ULZCFxh9uQinfpLk0kMEY+fWEvwV4u8AO8CcYt9LWUVSNg=
+	t=1753282024; cv=none; b=B6U0yRV6yqSQJXcDXuqjEaqu1PAL3e3yLPrMWg07gPCVzidrPv4hinfVJnos3fgiT6Q7ZHLqlECla4JP5hg1gYK+3noNs/9/+9Z8L8DcpG/QRXXVbblv8mjWp5M65RFmzo3oz/+HGpYWztaM26XeVt+C/f43IITJ+6/uq1KYShg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282022; c=relaxed/simple;
-	bh=sJLDn8ryoW/ov6UjZZGTTudXv5WHl8/v2Z5ZbPyJ1x4=;
+	s=arc-20240116; t=1753282024; c=relaxed/simple;
+	bh=kan5N6v9h+6HDmaXzRrpPnNHjduBvdwtdSKyvQ1qoHI=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CF1x9J5qQ6zUljD+DP4ZF3qNVX5tAiuj26C+rHEK+3CrhEiHmCr8u04HVSNzDXNqOuhIiCpgtehcqm72LmNLIa3PNxYO/XlRmXHQV4tNA+SPrceeYCn3mlAd73yDgLVp7cui6EwPzlAR1YRKZkzNxi1wkEjBlwSuirt4gdo3120=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=lLeh4OIW; arc=none smtp.client-ip=209.85.128.178
+	 MIME-Version; b=NOWo9Wtjm8pDqDBFDEXzKURKOnzq5/nY0Vv9OX2Fmy3eeEtSOewLXMa9fbolTXixJTzLUuKX8qASKkf16S7BjQK3TQXT4mW9mExA4t4iyszJHYMuO8dR84yHp7M/98Ptpxeqzcmd0EQbs0vEIOjEiTGa4R2hrEsKsZHF+Tv2nU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=KL4Num2E; arc=none smtp.client-ip=209.85.128.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7180bb37846so54184607b3.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 07:46:59 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70e4043c5b7so57109927b3.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 07:47:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1753282019; x=1753886819; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1753282020; x=1753886820; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=n7cl1P/nffEHtPrwqwqBj2n/TmbnAXjnzD/OU22eOOo=;
-        b=lLeh4OIWCBKjqs1N2TriFDuB+ubYYiseni13/mb49rqAEhv2jLPKXb3Q/Mt4rf8D+Z
-         7yJwP/iH0iEperDTE1UJelAthrHwmUaZj5cFcEBvnG0IGsmcnsZ4WAvZv7geAbLGv4vE
-         fmMj/N8K1oy3jNEltDSq/BUyPW75NEC+xgiUamE4ezJO2QZFp/l1vZOkUu96jPBefpci
-         x/ghPi6RS0ioS+uuVxBn1m0yOsq9yXXNmipUz9VUSxh1x2ahltuhH9zXtrxah945fb6q
-         9soOx0N9pwYeBRyFHMoAuRsRWpIIyt7NidN7JD7l97y2oc7p4deeBVm17WMsi+ciOXrt
-         8etg==
+        bh=gy3J9QeC6eXj3cGR0pgjxNs/6APC+1lztNiCJckBgPA=;
+        b=KL4Num2ErMDjSve2Ap/UeK84q8BVWlgZScO0wXfZKdHj0BoY/3vpaaEdSO67uTDl0N
+         EK+9w26CgCTEG3g4ZZovf6HJlIZvbRroRps3D+HI5DUKgFzXZM9v8Eq4dHlaGBr5iN+q
+         uWUiQdMER9jsseUMjfid2gZ61FAjv3HbuJrTeAXbXe9RqB+4DPKuTl9FOQpdXXDx4W/M
+         iIJmCFgAbbCNbxiRDbC8sa1dbiUHM6u9TQTOQZgm94jDXnK9D5YifpVCN2jSO+HJbVfA
+         DdZuLjPg7krOtEVrVPmqLqlPSeSdzNj7RhlMtOIBTI02bBIkS6pcDsfAl+4TgsDl0iHM
+         To5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753282019; x=1753886819;
+        d=1e100.net; s=20230601; t=1753282020; x=1753886820;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n7cl1P/nffEHtPrwqwqBj2n/TmbnAXjnzD/OU22eOOo=;
-        b=g/XkgH/1J7tFywKoMjgZsogE6ci+LJn1FqpCpiXbIbf63dvOndYQAF00IKTkvIfPm7
-         +qm7XevZDzPxuUuZhF4GpIyr+Xep4RwwfTG+nVUxpQ7PemZX7+kphVi7o5k8IVcWmAym
-         0tvyJCE6xXp7rgZcig4FfOAGQBZ6LpeEQf1BGa3+d9t/oeMpAqyYCoOYoIx2B3Kg5JPT
-         2H21KP7EAUwT6kPVRCExE6AvFOjveucEaNJc8HbSvx/lNJzTXlLeoeIsn1o+2OjXWOQB
-         LJdG0q/D+7HF9nCmaQEx8ueq6/IuRDeipfGEc89eYPxuU2YDdhLJQoPBPSxPf52yZ6WK
-         1qfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXx7OgvDxNdwT6iBeyJzrPOcJ4d36IhD5/4jpn0i0VP/dy0bR8JKTCUN0lcRwFrm3/WemRIIVMkdobpy2z+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdwoB3as41MJ2UiYwNj6Pzzx729Bn+IdBLrfvpsQQZlZqdR1OP
-	K3PNq09FUWRveJyFXmNo+SSLs0zpogu6ffWlCiLYUFpGLD1Fuw5s83LaUleSrqLrzeM=
-X-Gm-Gg: ASbGnctH5NZyFQGFmanmy+W0oIzZj7ws2dIVGCgqEXUbiA+4rt6jmbKAHxfJFgFae7i
-	2msO3x2nDBEkj5z5gjHlvZSs3GxQSVSRAO2gNU9vkRdHT/zticfZBhi1u6fmnlGW/bl25oPfsYn
-	DXKPFlef6b89LAqloC57BrHlFwN4vVstpGEhOUty9e+vIBm00nUyDhEtAgZd9trDg3OwajV0epZ
-	DqYj4l2/v+mNSgqpPvWe6tNwZUEVgNHFG8YoCCtiDzkBlahp73JI06Cv7VvvTlySAdsr+d1tj2E
-	iqsgWVmKJ0WTv3rwwayx4pgpZKTa5POkld7tEZV662seoTvVQCGtUyXCfqmRsOfadO8KHxnfVBE
-	jg1TQ+viDbNteD9MZbIJJj4heXqROcbmTS4qp/WM/hKEbHRGVpjHoWOMyFzceJUlnVAJzuTkjbJ
-	0e3GJRayonq3kwLQ==
-X-Google-Smtp-Source: AGHT+IE6ehQOayyo1lb2cZBdo6W6rK2fNueePB1JRBmEV6kcBUnmTmWNn0MIzxo8F5fZ2uNGvf14yw==
-X-Received: by 2002:a05:690c:490b:b0:719:4c68:a6f8 with SMTP id 00721157ae682-719b4258512mr43723377b3.32.1753282018494;
-        Wed, 23 Jul 2025 07:46:58 -0700 (PDT)
+        bh=gy3J9QeC6eXj3cGR0pgjxNs/6APC+1lztNiCJckBgPA=;
+        b=ksR5g0nQ0T4NQJhub6UgIrlcdsCResgK70Dm2SzH5THIByNyOeGa4SzOP5Mdd6Add3
+         r8wTtJ98b5C48uHGHICLtgTYFFEyX/T8sEwiFWVfCbPZksLqEN+YbwRSVYKYU+eEoRds
+         gsHYL3BmoejoDyAQTng/PekLLelIV/craWJfqSVelkeDm+Fwrv340Xj/ow4MbukH3SZ+
+         jyg2VehZwFAs+Wf5N8Y4UyAp8pZOUsAvNbKWQnhY/MdnqR2mpcJl7J5MeuryNq7Yu1BA
+         5hBSfaBJMeUjLnXrYvfG+NXtlvtHIF/KIH316WSi8SQ0AMPdQgWxe6lmsPz87c1dNBKx
+         AUqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvhNEVus2qc/WvOQS7QkCUrea8ck35hiC5tXWRt8XQDqiLW82nwmDtRf/UdkJM1fN4ejMeN2mizAEklQ9O@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbnMKKC0sm2sPRi16qNFV6/rVP4LDA79SNvHjpxa855jKb1PxL
+	/Zdsy7RuVS0ik6haMKAz+8/NXSjDRthaeitc702ab12eyt8dc81d82b0JLmxpJLwkXw=
+X-Gm-Gg: ASbGncsbnyqgfCfO8dJseIyQWKB341g2Ty5vD0oeL7tW5N/SzSIAPfdemrw5r80jTAu
+	HRP/JMDVfdDCWA59ztJNtGun3C3Ax2Z2v8Q4/4IoSxsyGCm0tCugfC+m7xKcoarcuFiqijm8Tz5
+	tRPzNEC5Rjux018T9PhBJm/q/euo2FTapw/A7mCf+kXFo1ubmMttWT6i2tuziO7uUKDAGzhU8bj
+	/WhhPvbI30mnnAOlVvQ/28ZyF0+khY53XN4E8mUeE6Mlyg+waqtKoXtx0FOo3HNqo1SonGY+6WG
+	rd7d4KKe3YWG/ZNtd1lzovjI/Z0TmrlN8mIvnFlTbfVsig+Z1nbYPe6NhpgdnaUnAjIc3m+V5a8
+	fpyWYYKYOXKFjJ0HVxbS5PFkZr/W3Ligt+yvZtAuUaDvT3EyHEvm+kkTuybHc5aD2EVXBzRXe1j
+	bXcFh3awtMUI+wyg==
+X-Google-Smtp-Source: AGHT+IE8V9tRE54MK48zflOS7PSA4HAhDqRjtC0UhDc7I1+H3UGz76R3OVDEkrrQ9nCRF167WfSdiw==
+X-Received: by 2002:a05:690c:74c3:b0:710:f1da:1b5f with SMTP id 00721157ae682-719b424d284mr43181487b3.34.1753282020293;
+        Wed, 23 Jul 2025 07:47:00 -0700 (PDT)
 Received: from soleen.c.googlers.com.com (235.247.85.34.bc.googleusercontent.com. [34.85.247.235])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-719532c7e4fsm30482117b3.72.2025.07.23.07.46.56
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-719532c7e4fsm30482117b3.72.2025.07.23.07.46.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 07:46:57 -0700 (PDT)
+        Wed, 23 Jul 2025 07:46:59 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: pratyush@kernel.org,
 	jasonmiu@google.com,
@@ -147,9 +147,9 @@ To: pratyush@kernel.org,
 	parav@nvidia.com,
 	leonro@nvidia.com,
 	witu@nvidia.com
-Subject: [PATCH v2 02/32] kho: mm: Don't allow deferred struct page with KHO
-Date: Wed, 23 Jul 2025 14:46:15 +0000
-Message-ID: <20250723144649.1696299-3-pasha.tatashin@soleen.com>
+Subject: [PATCH v2 03/32] kho: warn if KHO is disabled due to an error
+Date: Wed, 23 Jul 2025 14:46:16 +0000
+Message-ID: <20250723144649.1696299-4-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 In-Reply-To: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
 References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
@@ -161,36 +161,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-KHO uses struct pages for the preserved memory early in boot, however,
-with deferred struct page initialization, only a small portion of
-memory has properly initialized struct pages.
-
-This problem was detected where vmemmap is poisoned, and illegal flag
-combinations are detected.
-
-Don't allow them to be enabled together, and later we will have to
-teach KHO to work properly with deferred struct page init kernel
-feature.
-
-Fixes: 990a950fe8fd ("kexec: add config option for KHO")
+During boot scratch area is allocated based on command line
+parameters or auto calculated. However, scratch area may fail
+to allocate, and in that case KHO is disabled. Currently,
+no warning is printed that KHO is disabled, which makes it
+confusing for the end user to figure out why KHO is not
+available. Add the missing warning message.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- kernel/Kconfig.kexec | 1 +
+ kernel/kexec_handover.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-index 2ee603a98813..1224dd937df0 100644
---- a/kernel/Kconfig.kexec
-+++ b/kernel/Kconfig.kexec
-@@ -97,6 +97,7 @@ config KEXEC_JUMP
- config KEXEC_HANDOVER
- 	bool "kexec handover"
- 	depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FILE
-+	depends on !DEFERRED_STRUCT_PAGE_INIT
- 	select MEMBLOCK_KHO_SCRATCH
- 	select KEXEC_FILE
- 	select DEBUG_FS
+diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+index 1ff6b242f98c..368e23db0a17 100644
+--- a/kernel/kexec_handover.c
++++ b/kernel/kexec_handover.c
+@@ -565,6 +565,7 @@ static void __init kho_reserve_scratch(void)
+ err_free_scratch_desc:
+ 	memblock_free(kho_scratch, kho_scratch_cnt * sizeof(*kho_scratch));
+ err_disable_kho:
++	pr_warn("Failed to reserve scratch area, disabling kexec handover\n");
+ 	kho_enable = false;
+ }
+ 
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
