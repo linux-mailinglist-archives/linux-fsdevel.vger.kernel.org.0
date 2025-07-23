@@ -1,141 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-55774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF83B0E885
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 04:17:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B62B0E8AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 04:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 387C97AED43
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 02:15:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B94911C87D63
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Jul 2025 02:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7744E19D88F;
-	Wed, 23 Jul 2025 02:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F1B1DDC0B;
+	Wed, 23 Jul 2025 02:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lWvfWsS1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BF2F43;
-	Wed, 23 Jul 2025 02:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F692111BF;
+	Wed, 23 Jul 2025 02:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753237011; cv=none; b=UZ2PuM7Dotfv9XYPdkDgj1m4UY/eCaZZMmjivNu1izZftfPYr9XNUqptdNbBWRJaUWcg0EEH6iI7eIYwV5fwxAMQImJke1gXbo3dZVPPwd6WfL/ZuGeu5glzLUd79xXqIA3xC5rn7/hDpi73Xc21a4ZM0u4OY9PUef2cGnv0ziU=
+	t=1753237959; cv=none; b=ayqz/lhRjfiLUfWBSg/KhGJSyY+Ad7UOxge3LFLRd2EvOIudRBg2vKKNaW0+YuHk2ur9QN3l27I1WgpMli8tlmCUJotfm8Z/0Hor0y+ry5Uelwy8zPPPcOeZ4m0VyndrNrO73oNJ1bcvjwZMg3aQXRBJBM8oPR1JZ1Qfr7EzhDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753237011; c=relaxed/simple;
-	bh=pvxWFil2B7sifCFp7k+cVtk0exx8QZ8fKoaj5BURZ6k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oqh720SNmNtgG6lqyMmnJV6eni7PciYO7NIuFxPL5Rq5hbs/sVknEcHp7N/6j4w3fnfWVjCws+MS7g008eLWvJt5/FLNatbRmfejABgK2/CZWnQbq0MDPWL2B9HpAufTn/49cGYg+RbbR7WfEB9pgydPFXWWxD/dqoXedI5UKH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56N2GRY0001481;
-	Wed, 23 Jul 2025 11:16:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56N2GRAG001477
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 23 Jul 2025 11:16:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
-Date: Wed, 23 Jul 2025 11:16:28 +0900
+	s=arc-20240116; t=1753237959; c=relaxed/simple;
+	bh=w4kZKJvPwi76U1MKCa3gr6+XmhuntU3PT+X7+AO7CQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9vG9Xwhbdd6koFPPzddP3Q0NG2iP7NGgRGVuGDomVpxAKySu7ExHlywBddNSJcwGFF8b008xvWP7xQaHecYxQDtvxiDqzFuMkY7uLw2Dh4brqzUeFdslVpjbeI5JAsdhKOHbnH3VxsHKRULOuAjzkmg6WK9BaDGpBeuK2t7P9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lWvfWsS1; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DLPxMt6bqkIRsK3lPc2ugQPcGXoJwyKCqfZJo4el2hE=; b=lWvfWsS1j8xIHx/DJyKkkMxNMn
+	R2bbOvx59Vr6irEpcjlM9CFmSqm8qH7pGaIVSDMHqkU9H9SA/+cMpCg0TlIDEpKggX3KQe+mPLyj8
+	0TRVF/Wej7EB7QmA6asseRPm3f7Kjqb4WoPGLCMG0cAJ2TG6j9+9d+zFATLvF089TMHlpc4xGExKC
+	kQIwoV3iv3JY4bojJZg1bBjeB0u5RYkJvR+6ULxJOKHCynYmKMcEQHA6lcQl22Fkvx/8hqZqzRWR3
+	AtRVNPkrK8MFV6DZL57Vvdidg3zcabcU19exYREuBIlX0EQ32vvSwPZH8TToCccHWZBk1zloCj6OW
+	dtog/CPw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uePHV-000000053uX-2BJU;
+	Wed, 23 Jul 2025 02:32:33 +0000
+Date: Wed, 23 Jul 2025 03:32:33 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yangtao Li <frank.li@vivo.com>
+Cc: slava@dubeyko.com, glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] hfsplus: fix to update ctime after rename
+Message-ID: <20250723023233.GL2580412@ZenIV>
+References: <20250722071347.1076367-1-frank.li@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hfs: remove BUG() from
- hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "willy@infradead.org" <willy@infradead.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
- <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
- <aHlQkTHYxnZ1wrhF@casper.infradead.org>
- <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
- <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
- <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
- <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
- <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
- <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
- <aH-enGSS7zWq0jFf@casper.infradead.org>
- <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
- <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722071347.1076367-1-frank.li@vivo.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-With below change, legitimate HFS filesystem images can be mounted.
+On Tue, Jul 22, 2025 at 01:13:45AM -0600, Yangtao Li wrote:
 
-But is crafted HFS filesystem images can not be mounted expected result?
+> @@ -552,9 +553,13 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+>  	res = hfsplus_rename_cat((u32)(unsigned long)old_dentry->d_fsdata,
+>  				 old_dir, &old_dentry->d_name,
+>  				 new_dir, &new_dentry->d_name);
+> -	if (!res)
+> -		new_dentry->d_fsdata = old_dentry->d_fsdata;
+> -	return res;
+> +	if (res)
+> +		return res;
+> +
+> +	new_dentry->d_fsdata = old_dentry->d_fsdata;
 
-  # losetup -a
-  /dev/loop0: [0001]:7185 (/memfd:syzkaller (deleted))
-  # mount -t hfs /dev/loop0 /mnt/
-  mount: /mnt: filesystem was mounted, but any subsequent operation failed: Operation not permitted.
-  # fsck.hfs /dev/loop0
-  ** /dev/loop0
-     Executing fsck_hfs (version 540.1-Linux).
-  ** Checking HFS volume.
-     Invalid extent entry
-  (3, 0)
-  ** The volume   could not be verified completely.
-  # mount -t hfs /dev/loop0 /mnt/
-  mount: /mnt: filesystem was mounted, but any subsequent operation failed: Operation not permitted.
+	Umm...  Is that assignment (either before or after that patch)
+actually correct?
 
-Also, are IDs which should be excluded from make_bad_inode() conditions
-same for HFS_CDR_FIL and HFS_CDR_DIR ?
+	Note that new_dentry essentially got unlinked here; old_dentry
+is about to have its parent/name changed by the caller of ->rename(),
+so...  that looks very odd.
 
-
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -358,6 +358,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
-                inode->i_op = &hfs_file_inode_operations;
-                inode->i_fop = &hfs_file_operations;
-                inode->i_mapping->a_ops = &hfs_aops;
-+               if (inode->i_ino < HFS_FIRSTUSER_CNID)
-+                       goto check_reserved_ino;
-                break;
-        case HFS_CDR_DIR:
-                inode->i_ino = be32_to_cpu(rec->dir.DirID);
-@@ -368,6 +370,24 @@ static int hfs_read_inode(struct inode *inode, void *data)
-                                      inode_set_atime_to_ts(inode, inode_set_ctime_to_ts(inode, hfs_m_to_utime(rec->dir.MdDat))));
-                inode->i_op = &hfs_dir_inode_operations;
-                inode->i_fop = &hfs_dir_operations;
-+               if (inode->i_ino < HFS_FIRSTUSER_CNID)
-+                       goto check_reserved_ino;
-+               break;
-+       default:
-+               make_bad_inode(inode);
-+       }
-+       return 0;
-+check_reserved_ino:
-+       switch (inode->i_ino) {
-+       case HFS_POR_CNID:
-+       case HFS_ROOT_CNID:
-+       case HFS_EXT_CNID:
-+       case HFS_CAT_CNID:
-+       case HFS_BAD_CNID:
-+       case HFS_ALLOC_CNID:
-+       case HFS_START_CNID:
-+       case HFS_ATTR_CNID:
-+       case HFS_EXCH_CNID:
-                break;
-        default:
-                make_bad_inode(inode);
-
+	What is that line about?
 
