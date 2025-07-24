@@ -1,407 +1,371 @@
-Return-Path: <linux-fsdevel+bounces-55980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABD6B113DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 00:28:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3D5B113E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 00:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C535F7B74DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 22:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886DE1CE4566
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 22:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FDB23CEF9;
-	Thu, 24 Jul 2025 22:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BA423BD05;
+	Thu, 24 Jul 2025 22:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQEw3K2Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKazLTu1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E979314A4F9;
-	Thu, 24 Jul 2025 22:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4205823AB88
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 22:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753396055; cv=none; b=khkJghqUiPpxtSRi6ghQgCPspSuDdd8jCwbAseUfdKrQaPYddHYvmAi+JkoVb6hIED8E9LNAwEqWlMEE2JucbBsK0rXnsFo1W9u367Y2akoLY+tBW4T0mnWoaVu2+HyVkoghmiCZxEqph9vQygkOK75yNKrQ4w+fP/vCxEh32ng=
+	t=1753396096; cv=none; b=Mjx/6bmknWPsqpA0pzH1aMNzTbc5D4D5478sZDCl5bh8n5MaQlEFWtkaAGtuyCHA+IKAgjSETohHShwIyR2mXBmlkklTruuVxOgfm+ExyuxYfZFKEcJsEA9I8DVR9Dja/R7uNUqyEOLm0K9v4QWWO+D4NnB9eEPpWdVN6YjEmcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753396055; c=relaxed/simple;
-	bh=dUgLK7f26TmOglvv3lWp1gcUZCQsO1PmzUBt+2c2A1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ig833xN4RjcUOALPIDfECVRPNpJpmos9V2pAWY/3aNJyZXoyitFkU14ZR16xGVeqiJVrpCasGtzZPYagv7ElPNEB3tqqJVRZdOadmwIbqt11RTS4N36BfoMHR6dadMZgXiXjbbGGMYmc7lpjhUUG5ez9bmAP0FZeddIZkL5CgJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQEw3K2Y; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so1016631f8f.0;
-        Thu, 24 Jul 2025 15:27:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753396051; x=1754000851; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kdkxvXYV1D1MezZXWXKeg8AUG+QiWG5386VJ0uuWpn4=;
-        b=CQEw3K2YxUrqGU2V8Ak0HErlZA1y1fvHS1GQc5PaY1hcjcyTXMgKCSQduXaiMDQdMd
-         6NCXEYuIcW93hwVKRgMyaiWHjurrRwyUcfWiyFKJJTZCDgDJe5j7kluStblqqrTuIHZT
-         24+6malFWaW0WllLx/xfwqEU9bjc/4CWgtx22sRPeB7LVYPemgIIvq0oDvHjSVG4zILW
-         rdartKFaHAki892L+N1AqrVXezmkEk5kFE16Ien/L7H3NcP9Yd4NjUEwGRr/ggaVed3u
-         pS8UrzIk9RKyUiWRhEKkdV4C1iK67aLwy/XJfOrOGOiUjJiJFd4eqEZWLyvkjeB3t5Q2
-         oMkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753396051; x=1754000851;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kdkxvXYV1D1MezZXWXKeg8AUG+QiWG5386VJ0uuWpn4=;
-        b=h3WHH2zwDURImyOw2KQrD/eqA22Zf21kSQxeP40Gp3ixlCeRZhv51DNP7Mt1ZBDjIg
-         kgSluLOvMEF85hnGMBLbJQYgBJzIVdcy6LIgkkTAxngXDBl7K8frk4mtWEXIFWUX3ERB
-         biVmfgZdWoIzsH8pFBq8McaUB9hyhrQx5Dn7d0t/LQJ4o/0JNe8gmEfYMjV0IgjolC/o
-         OCF13e1U4EynGp32etJcewKAgeANFiGdR22OXtQhNjhOT8woJq7dZ5CdQNqLuhIcEOsl
-         nIaxLjKQAMUGRREv7s4e6CsTasWNQDHd+G3HdVcWXX3PK2caXOOfcz8rBrCKLEJeikQW
-         VbdA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7rYxtMCCQHOQM8SjBhsAgES628vn3Bm0Sz1m//eG8C1tyaXH2yzpc4+5KbIt1KYpN1rTCpEtf6bFpa2wyRA==@vger.kernel.org, AJvYcCVwNYfyAuH7YKtXz4Wm04F2ghPuTprQOhZN+lTy+z/fzYLOVG0TxZWK12nSTfgH807WMTmILJYcDLp5IjsE@vger.kernel.org, AJvYcCXesdybhY9ISMpAhpuSgpycUk+ck/poGYkRGtSi7Ihit1eHW9h1AezMOl2r2zKPbMT1/BxBv9dpBRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDWE+Ch2S1/RJwjN7zzguFHsnwzrBc9yeOjQNC3dgl3XuQOe5a
-	PKL/KgdxZbYqkkikejuPv7gP64v+aCm6MU3cwBDZybsDGZr6kZaXgGTr
-X-Gm-Gg: ASbGncvLtEulGKV6177JmkZtxp8OZk9xEHCCEJBIl3+ySoXDImXU1uJYe6zqmJLWmpN
-	Wd8R1GH2J8YBKDOXLfPrdxiRv8Q3vw+cK/wm1n9tbqTg6FjP4MKmcNkIvMC0y36foxjMrCt50PH
-	7dNhs7lbs4y04PSfY5bdo86YHhCRISS88YrDR6iYPx18b05/VEmaimP+bbDf5B8wV4ElVpE/jlV
-	KVFPJehs24xooIJUf01a2uu9cckbyjlbBkFJ6r/7RwAUhVbZTNIs60XgXL9a2qJ6pODP9523S78
-	8NOF6sOvGN6kDXqQHKukAsvucTFhtm1vfwQJ1U7wU92EpXEkGCWovFxMUYLEQ8dGOWOttecGe2e
-	H6HPBJI3Ac4CJ7KEOkQEuJoHLk6o30E0ZaoZ1Pp7q7w0EWt++TBaBc4nqQp4Ay1PGzaKr8gKlJ1
-	RClXjX4RjPBTFkotIateB6
-X-Google-Smtp-Source: AGHT+IFyHNIR9eZnX6927KLgXv8HWbQyVdZCWFZ8/hlhXiyIO1E9ae/3HuNltJ/DO2eKAukxzmYnPg==
-X-Received: by 2002:adf:a2c7:0:b0:3a4:e231:8632 with SMTP id ffacd0b85a97d-3b771355208mr2526117f8f.12.1753396050739;
-        Thu, 24 Jul 2025 15:27:30 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e759:7e00:8b4:7c1f:c64:2a4? ([2a02:6b6f:e759:7e00:8b4:7c1f:c64:2a4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc605a4sm3285674f8f.14.2025.07.24.15.27.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 15:27:29 -0700 (PDT)
-Message-ID: <99e25828-641b-490b-baab-35df860760b4@gmail.com>
-Date: Thu, 24 Jul 2025 23:27:29 +0100
+	s=arc-20240116; t=1753396096; c=relaxed/simple;
+	bh=8KYS+RiI+O8ZnjZp9aR9iymO+yKXbQFxj0fMlA4Y98M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwsmbXWtbdBp7x4ZEPuT8xTcs8y6o0/cyLQmSjxe1ai4dflxYsZcElcHrKkRQ7NEKSGGXffrhVHWnZCnR1uKuyNu8ecc2uLilxANWlHQOTBsGflYeBeY3GjPFEBaKuJzCSOn7DiH99ooFrkUhBsc4wV9biL6mwgIJcBG3TRSamc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKazLTu1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC619C4CEED;
+	Thu, 24 Jul 2025 22:28:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753396095;
+	bh=8KYS+RiI+O8ZnjZp9aR9iymO+yKXbQFxj0fMlA4Y98M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vKazLTu1ibKYUhj2AMKOMDtkybKrk/5fPEPDk1NMUyd79FD3NiD0AZ8fKX2Sh05jp
+	 /W6o43YKgZ6W6vaHknVNrUcbFMD34kid54I4TcWbu3C/gQDvBvp/IjSI2AHsOnU+1T
+	 UiY5wzz6HBslQNUUYEwnnO3NMwQHHuDPHMdmq77CWdzApZOcJ+Yghr2WLg8A9uCG4Q
+	 tOQVuEYSLx/32tcZRlDUg7H6fV4nufn6R26Ri2znQuOqVV/PkWrbrbpXLKFeQq8shs
+	 45RYCc3l1CovRt0Z4oKkroGF71b5vWbNyrdLk08kfxiyNQQitzfK3LgkVnJm9xHTL1
+	 W3/em/ghL66zA==
+Date: Thu, 24 Jul 2025 15:28:15 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, neal@gompa.dev, John@groves.net,
+	miklos@szeredi.hu, bernd@bsbernd.com
+Subject: Re: [PATCH 2/7] fuse: flush pending fuse events before aborting the
+ connection
+Message-ID: <20250724222815.GO2672029@frogsfrogsfrogs>
+References: <175279449418.710975.17923641852675480305.stgit@frogsfrogsfrogs>
+ <175279449501.710975.16858401145201411486.stgit@frogsfrogsfrogs>
+ <CAJnrk1YeJPdtHMDatQvg8mDPYx4fgkeUCrBgBR=8zFMpOn3q0A@mail.gmail.com>
+ <20250719003215.GG2672029@frogsfrogsfrogs>
+ <CAJnrk1YvGrgJK6qd0UPMzNUxyJ6QwY2b-HRhsj5QVrHsLxuQmQ@mail.gmail.com>
+ <20250723173425.GX2672070@frogsfrogsfrogs>
+ <CAJnrk1ad0O5ghB_m2=D4zQyYE0rcG3M_m09_qESGiQyFB4_Vsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
- Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>
-References: <20250721090942.274650-1-david@redhat.com>
- <3ec01250-0ff3-4d04-9009-7b85b6058e41@gmail.com>
- <601e015b-1f61-45e8-9db8-4e0d2bc1505e@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <601e015b-1f61-45e8-9db8-4e0d2bc1505e@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ad0O5ghB_m2=D4zQyYE0rcG3M_m09_qESGiQyFB4_Vsw@mail.gmail.com>
 
-
-> Hi!
+On Wed, Jul 23, 2025 at 02:02:19PM -0700, Joanne Koong wrote:
+> On Wed, Jul 23, 2025 at 10:34 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Mon, Jul 21, 2025 at 01:32:43PM -0700, Joanne Koong wrote:
+> > > On Fri, Jul 18, 2025 at 5:32 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > >
+> > > > On Fri, Jul 18, 2025 at 03:23:30PM -0700, Joanne Koong wrote:
+> > > > > On Thu, Jul 17, 2025 at 4:26 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > > >
+> > > > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > > >
+> > > > > > generic/488 fails with fuse2fs in the following fashion:
+> > > > > >
+> > > > > > generic/488       _check_generic_filesystem: filesystem on /dev/sdf is inconsistent
+> > > > > > (see /var/tmp/fstests/generic/488.full for details)
+> > > > > >
+> > > > > > This test opens a large number of files, unlinks them (which really just
+> > > > > > renames them to fuse hidden files), closes the program, unmounts the
+> > > > > > filesystem, and runs fsck to check that there aren't any inconsistencies
+> > > > > > in the filesystem.
+> > > > > >
+> > > > > > Unfortunately, the 488.full file shows that there are a lot of hidden
+> > > > > > files left over in the filesystem, with incorrect link counts.  Tracing
+> > > > > > fuse_request_* shows that there are a large number of FUSE_RELEASE
+> > > > > > commands that are queued up on behalf of the unlinked files at the time
+> > > > > > that fuse_conn_destroy calls fuse_abort_conn.  Had the connection not
+> > > > > > aborted, the fuse server would have responded to the RELEASE commands by
+> > > > > > removing the hidden files; instead they stick around.
+> > > > >
+> > > > > Tbh it's still weird to me that FUSE_RELEASE is asynchronous instead
+> > > > > of synchronous. For example for fuse servers that cache their data and
+> > > > > only write the buffer out to some remote filesystem when the file gets
+> > > > > closed, it seems useful for them to (like nfs) be able to return an
+> > > > > error to the client for close() if there's a failure committing that
+> > > >
+> > > > I don't think supplying a return value for close() is as helpful as it
+> > > > seems -- the manage says that there is no guarantee that data has been
+> > > > flushed to disk; and if the file is removed from the process' fd table
+> > > > then the operation succeeded no matter the return value. :P
+> > > >
+> > > > (Also C programmers tend to be sloppy and not check the return value.)
+> > >
+> > > Amir pointed out FUSE_FLUSH gets sent on the FUSE_RELEASE path so that
+> > > addresses my worry. FUSE_FLUSH is sent synchronously (and close() will
+> > > propagate any flush errors too), so now if there's an abort or
+> > > something right after close() returns, the client is guaranteed that
+> > > any data they wrote into a local cache has been flushed by the server.
+> >
+> > <nod>
+> >
+> > > >
+> > > > > data; that also has clearer API semantics imo, eg users are guaranteed
+> > > > > that when close() returns, all the processing/cleanup for that file
+> > > > > has been completed.  Async FUSE_RELEASE also seems kind of racy, eg if
+> > > > > the server holds local locks that get released in FUSE_RELEASE, if a
+> > > >
+> > > > Yes.  I think it's only useful for the case outined in that patch, which
+> > > > is that a program started an asyncio operation and then closed the fd.
+> > > > In that particular case the program unambiguously doesn't care about the
+> > > > return value of close so it's ok to perform the release asynchronously.
+> > >
+> > > I wonder why fuseblk devices need to be synchronously released. The
+> > > comment says " Make the release synchronous if this is a fuseblk
+> > > mount, synchronous RELEASE is allowed (and desirable)". Why is it
+> > > desirable?
+> >
+> > Err, which are you asking about?
+> >
+> > Are you asking why it is that fuseblk mounts call FUSE_DESTROY from
+> > unmount instead of letting libfuse synthesize it once the event loop
+> > terminates?  I think that's because in the fuseblk case, the kernel has
+> > the block device open for itself, so the fuse server must write and
+> > flush all dirty data before the unmount() returns to the caller.
+> >
+> > Or were you asking why synchronous RELEASE is done on fuseblk
+> > filesystems?  Here is my speculation:
+> >
+> > Synchronous RELEASE was added back in commit 5a18ec176c934c ("fuse: fix
+> > hang of single threaded fuseblk filesystem").  I /think/ the idea behind
+> > that patch was that for fuseblk servers, we're ok with issuing a
+> > FUSE_DESTROY request from the kernel and waiting on it.
+> >
+> > However, for that to work correctly, all previous pending requests
+> > anywhere in the fuse mount have to be flushed to and completed by the
+> > fuse server before we can send DESTROY, because destroy closes the
+> > filesystem.
+> >
+> > So I think the idea behind 5a18ec176c934c is that we make FUSE_RELEASE
+> > synchronous so it's not possible to umount(8) until all the releases
+> > requests are finished.
 > 
->>
->> Over here, with MMF_DISABLE_THP_EXCEPT_ADVISED, MADV_HUGEPAGE will succeed as vm_flags has
->> VM_HUGEPAGE set, but MADV_COLLAPSE will fail to give a hugepage (as VM_HUGEPAGE is not set
->> and MMF_DISABLE_THP_EXCEPT_ADVISED is set) which I feel might not be the right behaviour
->> as MADV_COLLAPSE is "advise" and the prctl flag is PR_THP_DISABLE_EXCEPT_ADVISED?
+> Thanks for the explanation. With the fix you added in this patch then,
+> it seems there's no reason fuseblk requests shouldn't now also be
+> asynchronous since your fix ensures that all pending requests have
+> been flushed and completed before issuing the DESTROY
+
+<nod>
+
+> >
+> > > > > subsequent FUSE_OPEN happens before FUSE_RELEASE then depends on
+> > > > > grabbing that lock, then we end up deadlocked if the server is
+> > > > > single-threaded.
+> > > >
+> > > > Hrm.  I suppose if you had a script that ran two programs one after the
+> > > > other, each of which expected to be able to open and lock the same file,
+> > > > then you could run into problems if the lock isn't released by the time
+> > > > the second program is ready to open the file.
+> > >
+> > > I think in your scenario with the two programs, the worst outcome is
+> > > that the open/lock acquiring can take a while but in the (contrived
+> > > and probably far-fetched) scenario where it's single threaded, it
+> > > would result in a complete deadlock.
+> >
+> > <nod> I concede it's a minor point. :)
+> >
+> > > > But having said that, some other program could very well open and lock
+> > > > the file as soon as the lock drops.
+> > > >
+> > > > > I saw in your first patch that sending FUSE_RELEASE synchronously
+> > > > > leads to a deadlock under AIO but AFAICT, that happens because we
+> > > > > execute req->args->end() in fuse_request_end() synchronously; I think
+> > > > > if we execute that release asynchronously on a worker thread then that
+> > > > > gets rid of the deadlock.
+> > > >
+> > > > <nod> Last time I think someone replied that maybe they should all be
+> > > > asynchronous.
+> > > >
+> > > > > If FUSE_RELEASE must be asynchronous though, then your approach makes
+> > > > > sense to me.
+> > > >
+> > > > I think it only has to be asynchronous for the weird case outlined in
+> > > > that patch (fuse server gets stuck closing its own client's fds).
+> > > > Personally I think release ought to be synchronous at least as far as
+> > > > the kernel doing all the stuff that close() says it has to do (removal
+> > > > of record locks, deleting the fd table entry).
+> > > >
+> > > > Note that doesn't necessarily mean that the kernel has to be completely
+> > > > done with all the work that entails.  XFS defers freeing of unlinked
+> > > > files until a background garbage collector gets around to doing that.
+> > > > Other filesystems will actually make you wait while they free all the
+> > > > data blocks and the inode.  But the kernel has no idea what the fuse
+> > > > server actually does.
+> > >
+> > > I guess if that's important enough to the server, we could add
+> > > something an FOPEN flag for that that servers could set on the file
+> > > handle if they want synchronous release?
+> >
+> > If a fuse server /did/ have background garbage collection, there are a
+> > few things it could do -- every time it sees a FUSE_RELEASE of an
+> > unlinked file, it could set a timer (say 50ms) after which it would kick
+> > the gc thread to do its thing.  Or it could do wake up the background
+> > thread in response to a FUSE_SYNCFS command and hope it finishes by the
+> > time FUSE_DESTROY comes around.
+> >
+> > (Speaking of which, can we enable syncfs for all fuse servers?)
 > 
-> THPs are disabled for these regions, so it's at least consistent with the "disable all", but ...
+> I'm not sure what you mean by this - i thought the implementation of
+> FUSE_SYNCFS is dependent on each server's logic depending on if
+> they've set a callback for it or not? Speaking of which, it doesn't
+> look like FUSE_SYNCFS support has been added to libfuse yet.
+
+Curiously, it's only enabled for virtiofs:
+
+$ grep -w sync_fs fs/fuse/
+fs/fuse/virtio_fs.c:1702:       fc->sync_fs = true;
+fs/fuse/file.c:2022:    if (!fc->sync_fs)
+fs/fuse/fuse_i.h:920:   unsigned int sync_fs:1;
+fs/fuse/inode.c:770:    if (!fc->sync_fs)
+fs/fuse/inode.c:785:            fc->sync_fs = 0;
+fs/fuse/inode.c:1243:   .sync_fs        = fuse_sync_fs,
+
+In contrast the the usual mechanism where fuse turns it on by default
+and turns it off if ever the server returns ENOSYS.  You're correct that
+it hasn't been wired up to libfuse yet.
+
+One other thing I noticed after rebasing libfuse -- why are the ->statx
+definitions in fuse.h/fuse_lowlevel.h protected by "#ifdef HAVE_STATX"?
+AFAICT that symbol is defined by the build system for libfuse if the
+system headers have a struct statx, right?  So I guess idea is that
+you're building new libfuse on an old userspace, the stubs will return
+ENOSYS to the fuse client?
+
+Unfortunately, fuse{,_lowlevel}.h are public header files, and not all
+downstreams are expected to have defined a HAVE_STATX field, right?
+
+I would've thought they'd be protected by a
+FUSE_USE_VERSION >= FUSE_MAKE_VERSION(3, 18)
+but evidently that doesn't happen for the ops structures?
+
+<confused>
+
+> > But that said, not everyone wants the fancy background gc stuff that XFS
+> > does.  FUSE_RELEASE would then be doing a lot of work.
+> >
+> > > after Amir's point about FUSE_FLUSH, I'm in favor now of FUSE_RELEASE
+> > > being asynchronous.
+> > > >
+> > > > > > Create a function to push all the background requests to the queue and
+> > > > > > then wait for the number of pending events to hit zero, and call this
+> > > > > > before fuse_abort_conn.  That way, all the pending events are processed
+> > > > > > by the fuse server and we don't end up with a corrupt filesystem.
+> > > > > >
+> > > > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > > > > ---
+> > > > > >  fs/fuse/fuse_i.h |    6 ++++++
+> > > > > >  fs/fuse/dev.c    |   38 ++++++++++++++++++++++++++++++++++++++
+> > > > > >  fs/fuse/inode.c  |    1 +
+> > > > > >  3 files changed, 45 insertions(+)
+> > > > > >
+> > > > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > > > > +/*
+> > > > > > + * Flush all pending requests and wait for them.  Only call this function when
+> > > > > > + * it is no longer possible for other threads to add requests.
+> > > > > > + */
+> > > > > > +void fuse_flush_requests(struct fuse_conn *fc, unsigned long timeout)
+> > > > >
+> > > > > It might be worth renaming this to something like
+> > > > > 'fuse_flush_bg_requests' to make it more clear that this only flushes
+> > > > > background requests
+> > > >
+> > > > Hum.  Did I not understand the code correctly?  I thought that
+> > > > flush_bg_queue puts all the background requests onto the active queue
+> > > > and issues them to the fuse server; and the wait_event_timeout sits
+> > > > around waiting for all the requests to receive their replies?
+> > >
+> > > Sorry, didn't mean to be confusing with my previous comment. What I
+> > > was trying to say is that "fuse_flush_requests" implies that all
+> > > requests get flushed to userspace but here only the background
+> > > requests get flushed.
+> >
+> > Oh, I see now, I /was/ mistaken.  Synchronous requests are ...
+> >
+> > Wait, no, still confused :(
+> >
+> > fuse_flush_requests waits until fuse_conn::num_waiting is zero.
+> >
+> > Synchronous requests (aka the ones sent through fuse_simple_request)
+> > bump num_waiting either directly in the args->force case or indirectly
+> > via fuse_get_req.  num_waiting is decremented in fuse_put_request.
+> > Therefore waiting for num_waiting to hit zero implements waiting for all
+> > the requests that were in flight before fuse_flush_requests was called.
+> >
+> > Background requests (aka the ones sent via fuse_simple_background) have
+> > num_waiting set in the !args->force case or indirectly in
+> > fuse_request_queue_background.  num_waiting is decremented in
+> > fuse_put_request the same as is done for synchronous requests.
+> >
+> > Therefore, it's correct to say that waiting for num_requests to become 0
+> > is sufficient to wait for all pending requests anywhere in the
+> > fuse_mount to complete.
 > 
->>
->> This will be checked in multiple places in madvise_collapse: thp_vma_allowable_order,
->> hugepage_vma_revalidate which calls thp_vma_allowable_order and hpage_collapse_scan_pmd
->> which also ends up calling hugepage_vma_revalidate.
->> > A hacky way would be to save and overwrite vma->vm_flags with VM_HUGEPAGE at the start of madvise_collapse
->> if VM_NOHUGEPAGE is not set, and reset vma->vm_flags to its original value at the end of madvise_collapse
->> (Not something I am recommending, just throwing it out there).
+> You're right, good point, waiting on fc->num_waiting == 0 also ensures
+> foreground requests have been completed. sorry for the confusion!
+
+Ah, no worries.  I'm glad this pushed me to figure out why this really
+worked. :)
+
+> Connections can also be aborted through the
+> /sys/fs/fuse/connections/*/abort interface or through request timeouts
+> (eg fuse_check_timeout()) - should those places too flush pending
+> requests and wait for them before aborting the connection?
+
+I'm not sure since I wasn't around when they added that, but I imagine
+if things get to the point where a sysadmin or whoever needs to kill a
+fuse mount via **sysfs** then they probably want to pull down the
+connection ASAP.
+
+--D
+
+> >
+> > Right?
+> >
+> > Maybe this should be called fuse_flush_requests_and_wait. :)
+> >
+> > --D
+> >
+> > > Thanks,
+> > > Joanne
+> > > >
+> > > > I could be mistaken though.  This is my rough understanding of what
+> > > > happens to background requests:
+> > > >
+> > > > 1. Request created
+> > > > 2. Put request on bg_queue
+> > > > 3. <wait>
+> > > > 4. Request removed from bg_queue
+> > > > 5. Request sent
+> > > > 6. <wait>
+> > > > 7. Reply received
+> > > > 8. Request ends and is _put.
+> > > >
+> > > > Non-background (foreground?) requests skip steps 2-4.  Meanwhile,
+> > > > fc->waiting tracks the number of requests that are anywhere between the
+> > > > end of step 1 and the start of step 8.
+> > > >
+> > > > In any case, I want to push all the bg requests and wait until there are
+> > > > no more requests in the system.
+> > > >
+> > > > --D
+> > >
 > 
-> Gah.
-> 
->>
->> Another possibility is to pass the fact that you are in madvise_collapse to these functions
->> as an argument, this might look ugly, although maybe not as ugly as hugepage_vma_revalidate
->> already has collapse control arg, so just need to take care of thp_vma_allowable_orders.
-> 
-> Likely this.
-> 
->>
->> Any preference or better suggestions?
-> 
-> What you are asking for is not MMF_DISABLE_THP_EXCEPT_ADVISED as I planned it, but MMF_DISABLE_THP_EXCEPT_ADVISED_OR_MADV_COLLAPSE.
-> 
-> Now, one could consider MADV_COLLAPSE an "advise". (I am not opposed to that change)
-> 
-
-lol yeah I always think of MADV_COLLAPSE as an extreme version of MADV_HUGE (more of a demand
-than an advice :)), eventhough its not persistant.
-Which is why I think might be unexpected if MADV_HUGE gives hugepages but MADV_COLLAPSE doesn't
-(But could just be my opinion).
-
-> Indeed, the right way might be telling vma_thp_disabled() whether we are in collapse.
-> 
-> Can you try implementing that on top of my patch to see how it looks?
-> 
-
-My reasoning is that a process that is running with system policy always but with
-PR_THP_DISABLE_EXCEPT_ADVISED gets THPs in exactly the same behaviour as a process that is running
-with system policy madvise. This will help us achieve (3) that you mentioned in the
-commit message:
-(3) Switch from THP=madvise to THP=always, but keep the old behavior
-     (THP only when advised) for selected workloads.
-
-
-I have written quite a few selftests now for prctl SET_THP_DISABLE, both with and without
-PR_THP_DISABLE_EXCEPT_ADVISED set incorporating your feedback on it. I have all of them passing
-with the below diff. The diff is slightly ugly, but very simple and hopefully acceptable. If it
-looks good, I can send a series with everything. Probably make the below diff as a separate patch
-on top of this patch as its mostly adding an extra arg to functions and would keep the review easier?
-I can squash it with this patch as well if thats better.
-
-Thanks!
-
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 3d6d8a9f13fc..bb5f1dedbd2c 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1294,7 +1294,7 @@ static int show_smap(struct seq_file *m, void *v)
- 
- 	seq_printf(m, "THPeligible:    %8u\n",
- 		   !!thp_vma_allowable_orders(vma, vma->vm_flags,
--			   TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
-+			   TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL, 0));
- 
- 	if (arch_pkeys_enabled())
- 		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 71db243a002e..82066721b161 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -98,8 +98,8 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- #define TVA_IN_PF		(1 << 1)	/* Page fault handler */
- #define TVA_ENFORCE_SYSFS	(1 << 2)	/* Obey sysfs configuration */
- 
--#define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
--	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
-+#define thp_vma_allowable_order(vma, vm_flags, tva_flags, order, in_collapse) \
-+	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order), in_collapse))
- 
- #define split_folio(f) split_folio_to_list(f, NULL)
- 
-@@ -265,7 +265,8 @@ static inline unsigned long thp_vma_suitable_orders(struct vm_area_struct *vma,
- unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 					 vm_flags_t vm_flags,
- 					 unsigned long tva_flags,
--					 unsigned long orders);
-+					 unsigned long orders,
-+					 bool in_collapse);
- 
- /**
-  * thp_vma_allowable_orders - determine hugepage orders that are allowed for vma
-@@ -273,6 +274,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
-  * @vm_flags: use these vm_flags instead of vma->vm_flags
-  * @tva_flags: Which TVA flags to honour
-  * @orders: bitfield of all orders to consider
-+ * @in_collapse: whether we are being called from MADV_COLLAPSE
-  *
-  * Calculates the intersection of the requested hugepage orders and the allowed
-  * hugepage orders for the provided vma. Permitted orders are encoded as a set
-@@ -286,7 +288,8 @@ static inline
- unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
- 				       vm_flags_t vm_flags,
- 				       unsigned long tva_flags,
--				       unsigned long orders)
-+				       unsigned long orders,
-+				       bool in_collapse)
- {
- 	/* Optimization to check if required orders are enabled early. */
- 	if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
-@@ -303,7 +306,7 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
- 			return 0;
- 	}
- 
--	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
-+	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders, in_collapse);
- }
- 
- struct thpsize {
-@@ -323,7 +326,7 @@ struct thpsize {
-  * through madvise or prctl.
-  */
- static inline bool vma_thp_disabled(struct vm_area_struct *vma,
--		vm_flags_t vm_flags)
-+		vm_flags_t vm_flags, bool in_collapse)
- {
- 	/* Are THPs disabled for this VMA? */
- 	if (vm_flags & VM_NOHUGEPAGE)
-@@ -331,6 +334,9 @@ static inline bool vma_thp_disabled(struct vm_area_struct *vma,
- 	/* Are THPs disabled for all VMAs in the whole process? */
- 	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
- 		return true;
-+	/* Are we being called from madvise_collapse? */
-+	if (in_collapse)
-+		return false;
- 	/*
- 	 * Are THPs disabled only for VMAs where we didn't get an explicit
- 	 * advise to use them?
-@@ -537,7 +543,8 @@ static inline unsigned long thp_vma_suitable_orders(struct vm_area_struct *vma,
- static inline unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
- 					vm_flags_t vm_flags,
- 					unsigned long tva_flags,
--					unsigned long orders)
-+					unsigned long orders,
-+					bool in_collapse)
- {
- 	return 0;
- }
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2b4ea5a2ce7d..ecf48a922530 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -100,7 +100,8 @@ static inline bool file_thp_enabled(struct vm_area_struct *vma)
- unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 					 vm_flags_t vm_flags,
- 					 unsigned long tva_flags,
--					 unsigned long orders)
-+					 unsigned long orders,
-+					 bool in_collapse)
- {
- 	bool smaps = tva_flags & TVA_SMAPS;
- 	bool in_pf = tva_flags & TVA_IN_PF;
-@@ -122,7 +123,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 	if (!vma->vm_mm)		/* vdso */
- 		return 0;
- 
--	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vm_flags))
-+	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vm_flags, in_collapse))
- 		return 0;
- 
- 	/* khugepaged doesn't collapse DAX vma, but page fault is fine. */
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 2c9008246785..ba707ce5a00a 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -475,7 +475,7 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
- 	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
- 	    hugepage_pmd_enabled()) {
- 		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
--					    PMD_ORDER))
-+					    PMD_ORDER, 0))
- 			__khugepaged_enter(vma->vm_mm);
- 	}
- }
-@@ -932,7 +932,7 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
- 
- 	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
- 		return SCAN_ADDRESS_RANGE;
--	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, PMD_ORDER))
-+	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, PMD_ORDER, 1))
- 		return SCAN_VMA_CHECK;
- 	/*
- 	 * Anon VMA expected, the address may be unmapped then
-@@ -1534,7 +1534,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
- 	 * and map it by a PMD, regardless of sysfs THP settings. As such, let's
- 	 * analogously elide sysfs THP settings here.
- 	 */
--	if (!thp_vma_allowable_order(vma, vma->vm_flags, 0, PMD_ORDER))
-+	if (!thp_vma_allowable_order(vma, vma->vm_flags, 0, PMD_ORDER, 1))
- 		return SCAN_VMA_CHECK;
- 
- 	/* Keep pmd pgtable for uffd-wp; see comment in retract_page_tables() */
-@@ -2432,7 +2432,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
- 			break;
- 		}
- 		if (!thp_vma_allowable_order(vma, vma->vm_flags,
--					TVA_ENFORCE_SYSFS, PMD_ORDER)) {
-+					TVA_ENFORCE_SYSFS, PMD_ORDER, 0)) {
- skip:
- 			progress++;
- 			continue;
-@@ -2766,7 +2766,7 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
- 	BUG_ON(vma->vm_start > start);
- 	BUG_ON(vma->vm_end < end);
- 
--	if (!thp_vma_allowable_order(vma, vma->vm_flags, 0, PMD_ORDER))
-+	if (!thp_vma_allowable_order(vma, vma->vm_flags, 0, PMD_ORDER, 1))
- 		return -EINVAL;
- 
- 	cc = kmalloc(sizeof(*cc), GFP_KERNEL);
-diff --git a/mm/memory.c b/mm/memory.c
-index 92fd18a5d8d1..da5ab2dc1797 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4370,7 +4370,7 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
- 	 * and suitable for swapping THP.
- 	 */
- 	orders = thp_vma_allowable_orders(vma, vma->vm_flags,
--			TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
-+			TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1, 0);
- 	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
- 	orders = thp_swap_suitable_orders(swp_offset(entry),
- 					  vmf->address, orders);
-@@ -4918,7 +4918,7 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
- 	 * the faulting address and still be fully contained in the vma.
- 	 */
- 	orders = thp_vma_allowable_orders(vma, vma->vm_flags,
--			TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
-+			TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1, 0);
- 	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
- 
- 	if (!orders)
-@@ -5188,7 +5188,7 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *pa
- 	 * PMD mappings, but PTE-mapped THP are fine. So let's simply refuse any
- 	 * PMD mappings if THPs are disabled.
- 	 */
--	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags))
-+	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags, 0))
- 		return ret;
- 
- 	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
-@@ -6109,7 +6109,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- retry_pud:
- 	if (pud_none(*vmf.pud) &&
- 	    thp_vma_allowable_order(vma, vm_flags,
--				TVA_IN_PF | TVA_ENFORCE_SYSFS, PUD_ORDER)) {
-+				TVA_IN_PF | TVA_ENFORCE_SYSFS, PUD_ORDER, 0)) {
- 		ret = create_huge_pud(&vmf);
- 		if (!(ret & VM_FAULT_FALLBACK))
- 			return ret;
-@@ -6144,7 +6144,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 
- 	if (pmd_none(*vmf.pmd) &&
- 	    thp_vma_allowable_order(vma, vm_flags,
--				TVA_IN_PF | TVA_ENFORCE_SYSFS, PMD_ORDER)) {
-+				TVA_IN_PF | TVA_ENFORCE_SYSFS, PMD_ORDER, 0)) {
- 		ret = create_huge_pmd(&vmf);
- 		if (!(ret & VM_FAULT_FALLBACK))
- 			return ret;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index e6cdfda08aed..1960cf87b077 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1816,7 +1816,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 	vm_flags_t vm_flags = vma ? vma->vm_flags : 0;
- 	unsigned int global_orders;
- 
--	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags)))
-+	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags, 0)))
- 		return 0;
- 
- 	global_orders = shmem_huge_global_enabled(inode, index, write_end,
-
-
-
-
-
 
