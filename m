@@ -1,121 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-55937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87949B103B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 10:38:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E9CB1058F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 11:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D62E1CC11F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 08:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D532F165C76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 09:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6649274B58;
-	Thu, 24 Jul 2025 08:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340402594B4;
+	Thu, 24 Jul 2025 09:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1K017Ay4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c7lH1Gvx"
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="W/4r17Ej"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCAC274B37;
-	Thu, 24 Jul 2025 08:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346303; cv=none; b=E4pm8co1P9JMvjH0B1SmTeQ9Hrx7EikCj3iudMhvK+tdYQNjkwQPx86/YRIM1sylpsf778e/S0FwTY2DNRHdNqbKh6cxSXhP3VTZfX6PuvQiKVtr2mJn9Nf7a5GKOYzJxf7zlSkfqXSRjZLmdXkofHIXS7F2j2Qkw4Vjanq59os=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346303; c=relaxed/simple;
-	bh=xkmAuchO85PXJX6a5YJj/SsULjLX5eE61/0pFhqyTbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D3iFGkKet3pkQlEn7qJRmDUiw/wYKCGPFgvU2LkMn7tVswfATypENf9VU9y7/gR4uzjqpvNVqDaPOuBLjj64q0naw0poHRtv2zZQApxS4yZ7xKrCLXMz7GEmEymorgtrHBepY1bDpFuT6yb3U3mZttjhmDw8gwbbhwcOjaI1Xyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1K017Ay4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c7lH1Gvx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 24 Jul 2025 10:38:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753346299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gjP9VTQcQv8SUZ/OchZ93SeeJHdOv3bj7hY4mJLpZUY=;
-	b=1K017Ay4LjE/Tiz3tzMHvqQ6/w6geRLJA3i+jcUyOBS8HcXbY8ry9Hywk3fjnfcgJzYhjE
-	xDEEiqM7fjkX1bIERVXGXe9wajuRrG1qyrYUK6GqKEbzr61pRAsGh7+sc3v5MgtEar1T8v
-	Bo2MAw9G34Va8xx/xS/4zsjN6DlVTbE1PZd0EQ/5MLoTsalTc+KxODzavJHaghDNvlwfDy
-	/bDba1tMpLGLrJK4PEIl/4arkdILj90VDMAAAxOzaLvmpMqYcAq1+jH7EgfDEEJOxJ0pJH
-	nsc9fNTLSvbyuvSO+Nn8sZEhRFLl/oGcJd+H9Jxuer8xs+AQsSSErutShgVxFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753346299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gjP9VTQcQv8SUZ/OchZ93SeeJHdOv3bj7hY4mJLpZUY=;
-	b=c7lH1GvxJpP+TlVwmmbf6h7ApUcZFBC3nBNiLkDtqWFXw+auY1gCrjQ9igrjn0N9iHD81c
-	ON9bImb9aXUqmtCw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 2/2] umd: Remove usermode driver framework
-Message-ID: <20250724103305-c034585a-d090-4998-a40e-af3b5cca5ef6@linutronix.de>
-References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
- <20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
- <20250722063411.GC15403@lst.de>
- <20250723090039-b619abd2-ecd2-4e40-aef9-d0bbb1e5875e@linutronix.de>
- <20250724072918.GA29512@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04CF23C4E9;
+	Thu, 24 Jul 2025 09:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753348667; cv=pass; b=BHTgyPWJ8ahZE4IWa17mmlbE1qI0zFinOalyTsHZSUr1FMSk67eqc/37zWy/Au2BVfmHzx9e3IUqruIkawTP/tNwzFhWGGnkg/2ZGwo9la3c2GINNQwM/iPCJBm3/2mhYYftE2wVh+qZTA1AlHfeTCCAIGRCKLI8vysUS7lHRpg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753348667; c=relaxed/simple;
+	bh=r4U4AlYanf8+Mm94ORgEbcJcvUtT1nMxCJY2bUMWIp4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sma4Wf4OQuoWYpOJYKfojBea+Kje9I3J34HQPdhp+bvlbTxMjiEdpoZ4Ap1brUj+Z4Qz3gmz1nehSJ6bBBeqceoH9wfysT++gujNOSi6GIP3oawk8IhAWNv4Y+B7jxEZ2ufVbZFeFqLQ9YgLk2Pmi+6BpNyFkWrWw95MGf5HlPU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=W/4r17Ej; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753348578; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=c59k7OVc6GnzDLuO9f0SYKYKk/ERB/FbkKZ2QN6i8vKWQBq3ToRGQefdKm8z7I8BLAw9ExSwDRqcBQr8ZiuqcB/8Wjqjvk8cohPjySstEP1jRnULr4rGgOw3+znjq/SuUybg0BRGD6jyNFRjvKrKWgFKz8E1yvJcXansaapSwKA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753348578; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=r4U4AlYanf8+Mm94ORgEbcJcvUtT1nMxCJY2bUMWIp4=; 
+	b=eQ3bTifzakzOYvsdfM68sZVfZnObTipoKh7PiIcPRUNoIJe+V7E+jBZUMQ1/OjwayIbbsUcoBlO7Xm+oQYjD/6blKNCXh2zc6ytGF3LO5Z04HK/Q2S2xXB3ISduge4W8MDKqFyB1i3K9wVoX6jvGlkhrQTUSV67KzmOi3v0zNS4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753348578;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=r4U4AlYanf8+Mm94ORgEbcJcvUtT1nMxCJY2bUMWIp4=;
+	b=W/4r17EjUz7tKHd+Dty3fw+oquEqIMNatmXI2xbx9oovhQ9FcH+JYdYr6SXW3UZr
+	44Hab9SNgc+Vyu5V/UwxKePkzp7AtuEF9Ns2E8cc7MW+54gCsY+ZLw3n05ChAnb9Grs
+	ZJffpQ33guGJ6BEVSZFZ9UsqOeIkAcpJJZaFp2Nc=
+Received: by mx.zohomail.com with SMTPS id 1753348576467207.84736617123485;
+	Thu, 24 Jul 2025 02:16:16 -0700 (PDT)
+From: Askar Safin <safinaskar@zohomail.com>
+To: bhupesh@igalia.com
+Cc: akpm@linux-foundation.org,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	arnaldo.melo@gmail.com,
+	bpf@vger.kernel.org,
+	brauner@kernel.org,
+	bsegall@google.com,
+	david@redhat.com,
+	ebiederm@xmission.com,
+	jack@suse.cz,
+	juri.lelli@redhat.com,
+	kees@kernel.org,
+	keescook@chromium.org,
+	kernel-dev@igalia.com,
+	laoar.shao@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-perf-users@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	lkp@intel.com,
+	mathieu.desnoyers@efficios.com,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	mirq-linux@rere.qmqm.pl,
+	oliver.sang@intel.com,
+	peterz@infradead.org,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	vschneid@redhat.com,
+	willy@infradead.org
+Subject: Re: [PATCH v5 3/3] treewide: Switch from tsk->comm to tsk->comm_str which is 64 bytes long
+Date: Thu, 24 Jul 2025 12:16:04 +0300
+Message-ID: <20250724091604.2336532-1-safinaskar@zohomail.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250716123916.511889-4-bhupesh@igalia.com>
+References: <20250716123916.511889-4-bhupesh@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250724072918.GA29512@lst.de>
+Feedback-ID: rr080112277386df9982d4a0a50fd484250000d6cf96b2b2dd89700b60bbfae778d9f00cbe3c5cd847bf7583:zu08011227d3545089dbbe7029f132e8e000006a667f2294f193b7a928dd1a40d92bdd2c006e7a20faa6ebe9:rf0801122cad691eaec5235a908425c52200009ab00d1523b423f07b85d4c3bb9302abf9c739cc073320d82c0c0bbc6e4a:ZohoMail
+X-ZohoMailClient: External
 
-On Thu, Jul 24, 2025 at 09:29:18AM +0200, Christoph Hellwig wrote:
-> On Wed, Jul 23, 2025 at 09:01:16AM +0200, Thomas Weißschuh wrote:
-> > On Tue, Jul 22, 2025 at 08:34:11AM +0200, Christoph Hellwig wrote:
-> > > On Mon, Jul 21, 2025 at 11:04:42AM +0200, Thomas Weißschuh wrote:
-> > > > The code is unused since commit 98e20e5e13d2 ("bpfilter: remove bpfilter"),
-> > > 
-> > > Overly long commit message here.
-> > 
-> > 75 characters are allowed, no?
-> 
-> 73.
+> where TASK_COMM_EXT_LEN is 64-bytes.
 
-Documentation/process/submitting-patches.rst:
+Why 64? As well as I understand, comm is initialized from executable file name by default. And it is usually limited by 256 (or 255?) bytes. So, please, make limit 256 bytes.
 
-	The canonical patch message body contains the following:
-
-	  (...)
-
-	  - The body of the explanation, line wrapped at 75 columns, which will
-	    be copied to the permanent changelog to describe this patch.
-
-
-scripts/checkpatch.pl:
-
-	# Check for line lengths > 75 in commit log, warn once
-			if ($in_commit_log && !$commit_log_long_line &&
-			    length($line) > 75 &&
-			      (...)) {
-				WARN("COMMIT_LOG_LONG_LINE",
-				     "Prefer a maximum 75 chars per line (possible unwrapped commit description?)\n" . $herecurr);
-				$commit_log_long_line = 1;
-			}
-
-
-What am I missing?
+--
+Askar Safin
 
