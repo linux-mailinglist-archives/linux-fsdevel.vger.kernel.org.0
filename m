@@ -1,117 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-55971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E639AB111EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 21:56:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7BFB111F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 22:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70661CE623B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 19:56:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1491D7B19C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 20:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71CF211A11;
-	Thu, 24 Jul 2025 19:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E104B239E64;
+	Thu, 24 Jul 2025 20:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLbTHi/m"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNQKAcu5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32CE2E370F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 19:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C922D4DE;
+	Thu, 24 Jul 2025 20:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753386992; cv=none; b=uTsG7xPw91DN/afXLGj1ER3cjDVfZcsnz7WsoYVTGHu1dQ2qE4JvuQcQRB0lL72pfflNKQvN1KjHgbsacvNUQLLp0VdIvV5sepg7miPQiD6XFFxCP9SPwspNIzWaB23e6RXrImeZZUijKBf6mqDBS6SuMcpXRU/jx9TvEMWaczc=
+	t=1753387382; cv=none; b=HFxUh7G18Cn0g0fHpOrqD0lCGSOdp29kPQpGm3RYzNzI/bBFiL7Ns1yBpZfiii+8p9b9QldjN6mGQX8BfPbSqixvhyLxxDTD8usnE2QQkAVc1z0IXTubb7IMvnqvCubRvk1o0tWOolgbXy87C2w9pkT8PbxmhA+ULKptDSgx8R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753386992; c=relaxed/simple;
-	bh=VnbyZ9xXHh2Ns0vbe4JgsPCroB1YcgjBVnn/7n4zEKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lmtM2MtvtX8Y9EbunAuFl/j9dlXk/kycyNIwfSsVe1EcbdK9s9BI/l/PLyZ7Aofh+FV/Tmvg+0FGTNHtPqcA2xXFpQjsk92ZuaLgfIvqgG+YBqnsvyYjB27f7oa7fXE3ImKx966q6f0iW8bClwf3/ybYgMr+g1O3c00AZtQVLSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLbTHi/m; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1753387382; c=relaxed/simple;
+	bh=SNV2ZucN+Q1Y8ewyvUY7RD5mmK5kS0ErsQsL+X/B/Qc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fUiDuV4yGu4ZsTNMbFECVZ+h+JdWkHddb+Xin15xUDNFANxwoW0a4RYXnp28hhCqpkI696+oWKI3uIBkmj7HjsUERQWoid4sDWMp1zmdrHHBlbJ3r2cGZdpIMJRzcfiTA+UFlvZxKCsJDHD9U0PYmbw8tK3yOIM4n74KfoZdMWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNQKAcu5; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae6fa02d8feso208381366b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 12:56:30 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-73e5e3c6a37so880938a34.0;
+        Thu, 24 Jul 2025 13:03:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753386989; x=1753991789; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnxLi/A4WGhLJ8nJsa11ry05ir4Bo+rIsRkvpigVtBY=;
-        b=ZLbTHi/mqvROTSN/bil5R28LDP/lloYIZUJn+qxiXcfMEixbch6/3V75Udvmo6b3xh
-         2HYaZdWu6WUH8rGUjl9N1V0mweJi9SPnnIvOdg2fxz9IukRGweWoju7pin7W6yrjcx6a
-         UFauJUDINVb9AJegD9fcu/8uJ/bqnLqANMMQyyHxfDx5bNQYUUy6jo8nSPtk4c+RvB4p
-         rZ9COad7ELY8NleNzSesccg9fZgfrq1FU5W9WFnLGM/sbcc1rseFREo9I4s5pQWenHv+
-         doIxAacYeTZCzDIQWka67A+zVwX8ux6CjH9x3Jl9RCdOF3+4A9IIrJzqnv2/9Mo+BcWq
-         TQgA==
+        d=gmail.com; s=20230601; t=1753387380; x=1753992180; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SNV2ZucN+Q1Y8ewyvUY7RD5mmK5kS0ErsQsL+X/B/Qc=;
+        b=jNQKAcu57gNkBjFBvSKWuCu8LNVJ7/SAY10u3Ps90JmgeMJDy7tVvXXD+qtG//nl/C
+         ixuLBhVs3iww93l8LvsQArJPfsjWd0cvF7K8vPIwCJu6yK00zYoB61CIIYFZISD2+Hyx
+         WT7Ifj8FLBiKlpdfOVbocGn2zO/cBV7nlMsU03J0EzO7qoXy49nhkBxZ6pUubbChDESX
+         VW8Gxwv8d08/RZAKczuhCjxQjK0BNJE8rNOqTxZPZXnhlukTG2MaW1mn8x+g5A6bUqHW
+         ksETnEdf2PC/F5Z3VAnJ+Zrh2KsKEHyFTrb6xo/Uo4FjC7fiudBzOdTX5AeekDE0Y/oU
+         fNiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753386989; x=1753991789;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tnxLi/A4WGhLJ8nJsa11ry05ir4Bo+rIsRkvpigVtBY=;
-        b=lgUQa8b/tmEj1hXVfW78XmPqir1ggK7xNeoyOTOMhirTLzNz6tltaRP3UPYyMyZEZ+
-         AChUjGTZ2C+eLylI5yilRo6XWdb3ZFLb3KkX545GEtZE1u+JDpqkHv12TydfiwbAovR1
-         0JEXVPZZohxyOluCduiWeOFF5lmCwN2O5nBlRdU8kOZaf/omDqxpx1cJvlf/C0l2CbVj
-         bnlV/wXQzm666eDVPMqCYXjS52qUne0AxLEirrHFyaDENpq4TcuxQQNCHuXYSdjuZ2O4
-         wmzaLnxWbwQviQMmF8kEhMmPji4VatnTqJkMM4YR8fh76BKht42FXVoYTd15I+xVolzI
-         GhgA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8+JGxE0O5OJmxdrBrgoj1ecifD3bj2pLeQNPAEWzaAHzpCYucZ73NXeBvOrV72n1+LOIlciJkQ2DdMbkE@vger.kernel.org
-X-Gm-Message-State: AOJu0YySYs1wFfEe9bo+yTZWL4bqS+QuzwLg98zfn2gffLvDhq+lxG7i
-	pEfKhj8iv/AjGKv6MSCrNW3SQvzl0Ij6db9RyB3qGKlIdJcaoZq+BUJLduuRltpsRL835j4kHIe
-	heUGN4bjHcpdEEaRrH/XY8jIbtJolCto=
-X-Gm-Gg: ASbGnctTx9vQAIuNt6zF0t/lCPbEj18CCGqCkk4omh2D4oNn6gSh/ewsRkhc7uDl8V0
-	79EuIIZ3p6S5p40PkRwrqRwmkDMpE1uUXDWFyNCilxbqf5+TGgBLSqn5atxMP0S2aJyc7uo2tv5
-	oRdyRzQZahnd76BZdyJiGM/u3uhvFKsxUAgjx3uVy3KnUrlApSQGge+g4CVc9+tWFFsFCQOGDYM
-	cu6U1A=
-X-Google-Smtp-Source: AGHT+IGngRsdsV64vfAh+LUJKPA17hKG+2SEHSdjbbdMhZr6qi5a/a7r1x5EQFaScT3P4dORCPOMF0m9ImomgNdNQIc=
-X-Received: by 2002:a17:907:da0:b0:af2:b9b5:1c06 with SMTP id
- a640c23a62f3a-af2f6c09406mr873988366b.14.1753386988663; Thu, 24 Jul 2025
- 12:56:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753387380; x=1753992180;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SNV2ZucN+Q1Y8ewyvUY7RD5mmK5kS0ErsQsL+X/B/Qc=;
+        b=HRJyrBNWG3ScCwTBzhHxo0WnuFN2SW1tj/pkfRip93nRdyRU9dkCx01js3ktYx8hcv
+         cNZzUzsZMVNZP00IZhEaG/wk81FQubmXg5Fy3pQsgw/tQkNfCWsowvu1znRr7pdIPQys
+         vetpng52yEjDaNXsdBdhgTavuPerS+4oJ6ONU93zY75z6w4OYwDGjQVN0ql/E/H5dQJs
+         EUa4hy/HkRFT7XL9LWm0iDGC20uelhEnhSmdGNH6TB6q+nl8+Mx9WZDAQjBqyBv25m2w
+         WcQzVHmB3+JBUeT1CARLwAd/bX3hLbDd1qKrVbHlnN3/i07T51wArLDwMqqQGcXrs9p5
+         rE+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXKCUq31/+BBqSfutapPySJqQNHZpck1skWLfH5k+9HKnqh+ETJHZIHWh/gnddmQDV/DIJ+gTeggLqWEsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkftYkUatw52k00NjI0GdkuHlCODCi5jrVyihFxK2/9jGxP5ON
+	uGYyECQAbTeq3STSx/ocwkilrwnxbNbfp8PAgO8L9R6S5fqxk5gNFIx6AJq5g7TIjH5Z+hnwsym
+	zYG3XD1DiUBpjP5zYBfXMAy+YVhG7URg=
+X-Gm-Gg: ASbGncu+jkS8mD8F3/+Uda078x5bEbW2BOTGpPGAdjWZokhMQevBJdUbMQAt2+M9lGE
+	yb6N3HfS6VmdgxyHYAn/ktHZ59/PqGrJRlVxdsl0OFoSXrsGSYkxydhe9gzhCCWXcHcbIp4HYNL
+	BrLJhpSW70qa51GQyLGy4cg+wsD/8pH5GqeaCWdKwaGw7CdrM8f/lXbEXBsJiKiuoNN5yXZh6Sp
+	z1Q1Ydz
+X-Google-Smtp-Source: AGHT+IE+z4+xt5cvZ+sXihIbp5iDRwg5tQkdFEtlsrZEuapErCdlSkVx46rbdIIvCbU8DY+6UACyfyOSk8YZvE56+Rg=
+X-Received: by 2002:a05:6871:b1f:b0:2ff:9c45:4f51 with SMTP id
+ 586e51a60fabf-306c6f9537amr6140736fac.15.1753387379904; Thu, 24 Jul 2025
+ 13:02:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175279459673.714161.10658209239262310420.stgit@frogsfrogsfrogs>
- <175279459875.714161.9108157061004962886.stgit@frogsfrogsfrogs>
- <CAOQ4uxjRjssQr4M0JQShQHkDh_kh7Risj4BhkfTdfQuBVKY8LQ@mail.gmail.com>
- <20250718155514.GS2672029@frogsfrogsfrogs> <fa6b51a1-f2d9-4bf6-b20e-6ab4fd4fb3f0@ddn.com>
- <20250723175031.GJ2672029@frogsfrogsfrogs>
-In-Reply-To: <20250723175031.GJ2672029@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 24 Jul 2025 21:56:16 +0200
-X-Gm-Features: Ac12FXyv5OMzD0z7gTfbSsrBYgDOUzyRfGU38Vdgbbd1IBr3CMbPEqn95DGu_U4
-Message-ID: <CAOQ4uxi8hTbhAB4a1z-Wsnp0px3HG4rM0j-Q7LTt_-zd1UsqeQ@mail.gmail.com>
-Subject: Re: [PATCH 08/14] libfuse: connect high level fuse library to fuse_reply_attr_iflags
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Bernd Schubert <bschubert@ddn.com>, "John@groves.net" <John@groves.net>, 
-	"joannelkoong@gmail.com" <joannelkoong@gmail.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "bernd@bsbernd.com" <bernd@bsbernd.com>, 
-	"neal@gompa.dev" <neal@gompa.dev>, "miklos@szeredi.hu" <miklos@szeredi.hu>
+From: Andrei Vagin <avagin@gmail.com>
+Date: Thu, 24 Jul 2025 13:02:48 -0700
+X-Gm-Features: Ac12FXyw8K1x7qoG1tqDHURxg0BFnQUWWS9fJjqqa70xX6WKuXP5HZvWasYYtZM
+Message-ID: <CANaxB-xXgW1FEj6ydBT2=cudTbP=fX6x8S53zNkWcw1poL=L2A@mail.gmail.com>
+Subject: Re: do_change_type(): refuse to operate on unmounted/not ours mounts
+To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	criu@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-> > Also a bit surprising to see all your lowlevel work and then fuse high
-> > level coming ;)
->
-> Right now fuse2fs is a high level fuse server, so I hacked whatever I
-> needed into fuse.c to make it sort of work, awkwardly.  That stuff
-> doesn't need to live forever.
->
-> In the long run, the lowlevel server will probably have better
-> performance because fuse2fs++ can pass ext2 inode numbers to the kernel
-> as the nodeids, and libext2fs can look up inodes via nodeid.  No more
-> path construction overhead!
->
+Hi Al and Christian,
 
-I was wondering how well an LLM would be in the mechanical task of
-converting fuse2fs to a low level fuse fs, so I was tempted to try.
-
-Feel free to use it or lose it or use as a reference, because at least
-for basic testing it seems to works:
-https://github.com/amir73il/e2fsprogs/commits/fuse4fs/
+The commit 12f147ddd6de ("do_change_type(): refuse to operate on
+unmounted/not ours mounts") introduced an ABI backward compatibility
+break. CRIU depends on the previous behavior, and users are now
+reporting criu restore failures following the kernel update. This change
+has been propagated to stable kernels. Is this check strictly required?
+Would it be possible to check only if the current process has
+CAP_SYS_ADMIN within the mount user namespace?
 
 Thanks,
-Amir.
+Andrei
 
