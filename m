@@ -1,374 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-55936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACB5B103A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 10:33:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87949B103B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 10:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB78917F7E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 08:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D62E1CC11F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 08:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF89274B29;
-	Thu, 24 Jul 2025 08:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6649274B58;
+	Thu, 24 Jul 2025 08:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="pZBaZxko"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1K017Ay4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c7lH1Gvx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836C2276038;
-	Thu, 24 Jul 2025 08:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCAC274B37;
+	Thu, 24 Jul 2025 08:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753345968; cv=none; b=QI9+ho+VCHcCSCq/2uAcIW5WVT5/LFNh44Xmn8KiMMiWI5Z/6kIFYBXsdU74vddrX6O/Lic2U1qREsv+DCKoA/cSOrvd2SJhb2jN3c38ryNd58PRaJbGy5dQ4pDHykp9vGgByAbZYOrXyQ6YYPLKB60z0N2zJFJr26/eGHafKSw=
+	t=1753346303; cv=none; b=E4pm8co1P9JMvjH0B1SmTeQ9Hrx7EikCj3iudMhvK+tdYQNjkwQPx86/YRIM1sylpsf778e/S0FwTY2DNRHdNqbKh6cxSXhP3VTZfX6PuvQiKVtr2mJn9Nf7a5GKOYzJxf7zlSkfqXSRjZLmdXkofHIXS7F2j2Qkw4Vjanq59os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753345968; c=relaxed/simple;
-	bh=qnzDffrtOhieCifIQALbR9Yq8NuI1rDh8ygAqZ4PCnw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aKZqMFzZnoZiKRrubfj4BdF8dZ29oPWiQmPnbuO3rtFWOGYxhUC9YWLLMN4XfXfw5vNnUurGBEWZudywAUfawiB2fn2IRIUlAU8uuh2FmBgaoj/HmDAs6IuOBjRHclqMP6Tft/YucpVOQPlq824op2AMIFhYe/gC+vl/gpqqMgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=pZBaZxko; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bnklZ6y3Jz9svR;
-	Thu, 24 Jul 2025 10:32:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1753345963;
+	s=arc-20240116; t=1753346303; c=relaxed/simple;
+	bh=xkmAuchO85PXJX6a5YJj/SsULjLX5eE61/0pFhqyTbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D3iFGkKet3pkQlEn7qJRmDUiw/wYKCGPFgvU2LkMn7tVswfATypENf9VU9y7/gR4uzjqpvNVqDaPOuBLjj64q0naw0poHRtv2zZQApxS4yZ7xKrCLXMz7GEmEymorgtrHBepY1bDpFuT6yb3U3mZttjhmDw8gwbbhwcOjaI1Xyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1K017Ay4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c7lH1Gvx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 24 Jul 2025 10:38:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753346299;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GTi/FGmUyVjfXcqveVu9fsI9YOLQ9+kwvijsaczxosQ=;
-	b=pZBaZxkorZi22C+ucatZAoKGZxcF2LWH23PGp4pyYVFRlEenmH897gnq0eTz9IFvk/cCYE
-	2H7ZbqGdabt/s1PJurOqX9y0Lm9RuYRGV2RysHmGczm3CyGfYbIMkr3hQsfTB/Y9rhpJNK
-	/hzPznfO2yGPX1JKKWmoTAaJVIGjPHOWHUgZzsjW5MyrOPq7FL/V0+M+myzyFdG1uVTDgC
-	Cs2fYafIgQfBq6uQDaw/MdM39mZiicO2NWLqOfTAU3By+iWPj9ZngkXGeFTP0d/0i1abf3
-	Y6UrHuz9IVB3om5RKZmSO6cPuFjm2+tEa9mbX2P6NWqVMqlo9M6f0rEhX6FTIA==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Thu, 24 Jul 2025 18:32:06 +1000
-Subject: [PATCH v3 4/4] selftests/proc: add tests for new pidns APIs
+	bh=gjP9VTQcQv8SUZ/OchZ93SeeJHdOv3bj7hY4mJLpZUY=;
+	b=1K017Ay4LjE/Tiz3tzMHvqQ6/w6geRLJA3i+jcUyOBS8HcXbY8ry9Hywk3fjnfcgJzYhjE
+	xDEEiqM7fjkX1bIERVXGXe9wajuRrG1qyrYUK6GqKEbzr61pRAsGh7+sc3v5MgtEar1T8v
+	Bo2MAw9G34Va8xx/xS/4zsjN6DlVTbE1PZd0EQ/5MLoTsalTc+KxODzavJHaghDNvlwfDy
+	/bDba1tMpLGLrJK4PEIl/4arkdILj90VDMAAAxOzaLvmpMqYcAq1+jH7EgfDEEJOxJ0pJH
+	nsc9fNTLSvbyuvSO+Nn8sZEhRFLl/oGcJd+H9Jxuer8xs+AQsSSErutShgVxFA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753346299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gjP9VTQcQv8SUZ/OchZ93SeeJHdOv3bj7hY4mJLpZUY=;
+	b=c7lH1GvxJpP+TlVwmmbf6h7ApUcZFBC3nBNiLkDtqWFXw+auY1gCrjQ9igrjn0N9iHD81c
+	ON9bImb9aXUqmtCw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 2/2] umd: Remove usermode driver framework
+Message-ID: <20250724103305-c034585a-d090-4998-a40e-af3b5cca5ef6@linutronix.de>
+References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
+ <20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
+ <20250722063411.GC15403@lst.de>
+ <20250723090039-b619abd2-ecd2-4e40-aef9-d0bbb1e5875e@linutronix.de>
+ <20250724072918.GA29512@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250724-procfs-pidns-api-v3-4-4c685c910923@cyphar.com>
-References: <20250724-procfs-pidns-api-v3-0-4c685c910923@cyphar.com>
-In-Reply-To: <20250724-procfs-pidns-api-v3-0-4c685c910923@cyphar.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8964; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=qnzDffrtOhieCifIQALbR9Yq8NuI1rDh8ygAqZ4PCnw=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWQ0vu8y1VD3UBJN+GUQGOl3xDHuwXXbN40TPlUcubBrG
- 2vFqd8RHaUsDGJcDLJiiizb/DxDN81ffCX500o2mDmsTCBDGLg4BWAiCyYy/DP9GzXd53xb3tHg
- EP44aVeHZVtz9k3MNboqtrkuc/mlb7UMf/he3X/H75K618my5kv6y2WT4zNCfyasrbe7db/pZ+u
- +WDYA
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250724072918.GA29512@lst.de>
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- tools/testing/selftests/proc/.gitignore   |   1 +
- tools/testing/selftests/proc/Makefile     |   1 +
- tools/testing/selftests/proc/proc-pidns.c | 252 ++++++++++++++++++++++++++++++
- 3 files changed, 254 insertions(+)
+On Thu, Jul 24, 2025 at 09:29:18AM +0200, Christoph Hellwig wrote:
+> On Wed, Jul 23, 2025 at 09:01:16AM +0200, Thomas Weißschuh wrote:
+> > On Tue, Jul 22, 2025 at 08:34:11AM +0200, Christoph Hellwig wrote:
+> > > On Mon, Jul 21, 2025 at 11:04:42AM +0200, Thomas Weißschuh wrote:
+> > > > The code is unused since commit 98e20e5e13d2 ("bpfilter: remove bpfilter"),
+> > > 
+> > > Overly long commit message here.
+> > 
+> > 75 characters are allowed, no?
+> 
+> 73.
 
-diff --git a/tools/testing/selftests/proc/.gitignore b/tools/testing/selftests/proc/.gitignore
-index 973968f45bba..2dced03e9e0e 100644
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -17,6 +17,7 @@
- /proc-tid0
- /proc-uptime-001
- /proc-uptime-002
-+/proc-pidns
- /read
- /self
- /setns-dcache
-diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
-index b12921b9794b..c6f7046b9860 100644
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -27,5 +27,6 @@ TEST_GEN_PROGS += setns-sysvipc
- TEST_GEN_PROGS += thread-self
- TEST_GEN_PROGS += proc-multiple-procfs
- TEST_GEN_PROGS += proc-fsconfig-hidepid
-+TEST_GEN_PROGS += proc-pidns
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/proc/proc-pidns.c b/tools/testing/selftests/proc/proc-pidns.c
-new file mode 100644
-index 000000000000..5994375e2377
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-pidns.c
-@@ -0,0 +1,252 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Author: Aleksa Sarai <cyphar@cyphar.com>
-+ * Copyright (C) 2025 SUSE LLC.
-+ */
-+
-+#include <assert.h>
-+#include <errno.h>
-+#include <sched.h>
-+#include <stdbool.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <stdio.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+#include <sys/ioctl.h>
-+#include <sys/prctl.h>
-+
-+#include "../kselftest_harness.h"
-+
-+#define ASSERT_ERRNO(expected, _t, seen)				\
-+	__EXPECT(expected, #expected,					\
-+		({__typeof__(seen) _tmp_seen = (seen);			\
-+		  _tmp_seen >= 0 ? _tmp_seen : -errno; }), #seen, _t, 1)
-+
-+#define ASSERT_ERRNO_EQ(expected, seen) \
-+	ASSERT_ERRNO(expected, ==, seen)
-+
-+#define ASSERT_SUCCESS(seen) \
-+	ASSERT_ERRNO(0, <=, seen)
-+
-+static int touch(char *path)
-+{
-+	int fd = open(path, O_WRONLY|O_CREAT|O_CLOEXEC, 0644);
-+	if (fd < 0)
-+		return -1;
-+	return close(fd);
-+}
-+
-+FIXTURE(ns)
-+{
-+	int host_mntns, host_pidns;
-+	int dummy_pidns;
-+};
-+
-+FIXTURE_SETUP(ns)
-+{
-+	/* Stash the old mntns. */
-+	self->host_mntns = open("/proc/self/ns/mnt", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(self->host_mntns);
-+
-+	/* Create a new mount namespace and make it private. */
-+	ASSERT_SUCCESS(unshare(CLONE_NEWNS));
-+	ASSERT_SUCCESS(mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL));
-+
-+	/*
-+	 * Create a proper tmpfs that we can use and will disappear once we
-+	 * leave this mntns.
-+	 */
-+	ASSERT_SUCCESS(mount("tmpfs", "/tmp", "tmpfs", 0, NULL));
-+
-+	/*
-+	 * Create a pidns we can use for later tests. We need to fork off a
-+	 * child so that we get a usable nsfd that we can bind-mount and open.
-+	 */
-+	ASSERT_SUCCESS(touch("/tmp/dummy-pidns"));
-+
-+	self->host_pidns = open("/proc/self/ns/pid", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(self->host_pidns);
-+	ASSERT_SUCCESS(unshare(CLONE_NEWPID));
-+
-+	pid_t pid = fork();
-+	ASSERT_SUCCESS(pid);
-+	if (!pid) {
-+		prctl(PR_SET_PDEATHSIG, SIGKILL);
-+		ASSERT_SUCCESS(mount("/proc/self/ns/pid", "/tmp/dummy-pidns", NULL, MS_BIND, 0));
-+		exit(0);
-+	}
-+
-+	int wstatus;
-+	ASSERT_EQ(waitpid(pid, &wstatus, 0), pid);
-+	ASSERT_TRUE(WIFEXITED(wstatus));
-+	ASSERT_EQ(WEXITSTATUS(wstatus), 0);
-+
-+	ASSERT_SUCCESS(setns(self->host_pidns, CLONE_NEWPID));
-+
-+	self->dummy_pidns = open("/tmp/dummy-pidns", O_RDONLY|O_CLOEXEC);
-+	ASSERT_SUCCESS(self->dummy_pidns);
-+}
-+
-+FIXTURE_TEARDOWN(ns)
-+{
-+	ASSERT_SUCCESS(setns(self->host_mntns, CLONE_NEWNS));
-+	ASSERT_SUCCESS(close(self->host_mntns));
-+
-+	ASSERT_SUCCESS(close(self->host_pidns));
-+	ASSERT_SUCCESS(close(self->dummy_pidns));
-+}
-+
-+TEST_F(ns, pidns_mount_string_path)
-+{
-+	ASSERT_SUCCESS(mkdir("/tmp/proc-host", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc-host", "proc", 0, "pidns=/proc/self/ns/pid"));
-+	ASSERT_SUCCESS(access("/tmp/proc-host/self/", X_OK));
-+
-+	ASSERT_SUCCESS(mkdir("/tmp/proc-dummy", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc-dummy", "proc", 0, "pidns=/tmp/dummy-pidns"));
-+	ASSERT_ERRNO_EQ(-ENOENT, access("/tmp/proc-dummy/1/", X_OK));
-+	ASSERT_ERRNO_EQ(-ENOENT, access("/tmp/proc-dummy/self/", X_OK));
-+}
-+
-+TEST_F(ns, pidns_fsconfig_string_path)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy-pidns", 0));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	ASSERT_ERRNO_EQ(-ENOENT, faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_ERRNO_EQ(-ENOENT, faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_fsconfig_fd)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	ASSERT_ERRNO_EQ(-ENOENT, faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_ERRNO_EQ(-ENOENT, faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_remount)
-+{
-+	ASSERT_SUCCESS(mkdir("/tmp/proc", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc", "proc", 0, ""));
-+
-+	ASSERT_SUCCESS(access("/tmp/proc/1/", X_OK));
-+	ASSERT_SUCCESS(access("/tmp/proc/self/", X_OK));
-+
-+	ASSERT_ERRNO_EQ(-EBUSY, mount(NULL, "/tmp/proc", NULL, MS_REMOUNT, "pidns=/tmp/dummy-pidns"));
-+
-+	ASSERT_SUCCESS(access("/tmp/proc/1/", X_OK));
-+	ASSERT_SUCCESS(access("/tmp/proc/self/", X_OK));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_fsconfig_string_path)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_ERRNO_EQ(-EBUSY, fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy-pidns", 0));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0)); /* noop */
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_fsconfig_fd)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_ERRNO_EQ(-EBUSY, fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0)); /* noop */
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+int is_same_inode(int fd1, int fd2)
-+{
-+	struct stat stat1, stat2;
-+
-+	assert(fstat(fd1, &stat1) == 0);
-+	assert(fstat(fd2, &stat2) == 0);
-+
-+	return stat1.st_ino == stat2.st_ino && stat1.st_dev == stat2.st_dev;
-+}
-+
-+#define PROCFS_IOCTL_MAGIC 'f'
-+#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 1)
-+
-+TEST_F(ns, get_pidns_ioctl)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_SUCCESS(fsfd);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_SUCCESS(mountfd);
-+
-+	/* fsmount returns an O_PATH, which ioctl(2) doesn't accept. */
-+	int new_mountfd = openat(mountfd, ".", O_RDONLY|O_DIRECTORY|O_CLOEXEC);
-+	ASSERT_SUCCESS(new_mountfd);
-+
-+	ASSERT_SUCCESS(close(mountfd));
-+	mountfd = -EBADF;
-+
-+	int procfs_pidns = ioctl(new_mountfd, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_SUCCESS(procfs_pidns);
-+
-+	ASSERT_NE(self->dummy_pidns, procfs_pidns);
-+	ASSERT_FALSE(is_same_inode(self->host_pidns, procfs_pidns));
-+	ASSERT_TRUE(is_same_inode(self->dummy_pidns, procfs_pidns));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(new_mountfd));
-+	ASSERT_SUCCESS(close(procfs_pidns));
-+}
-+
-+TEST_HARNESS_MAIN
+Documentation/process/submitting-patches.rst:
 
--- 
-2.50.0
+	The canonical patch message body contains the following:
 
+	  (...)
+
+	  - The body of the explanation, line wrapped at 75 columns, which will
+	    be copied to the permanent changelog to describe this patch.
+
+
+scripts/checkpatch.pl:
+
+	# Check for line lengths > 75 in commit log, warn once
+			if ($in_commit_log && !$commit_log_long_line &&
+			    length($line) > 75 &&
+			      (...)) {
+				WARN("COMMIT_LOG_LONG_LINE",
+				     "Prefer a maximum 75 chars per line (possible unwrapped commit description?)\n" . $herecurr);
+				$commit_log_long_line = 1;
+			}
+
+
+What am I missing?
 
