@@ -1,111 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-55939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E9CB1058F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 11:17:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB193B1058C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 11:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D532F165C76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 09:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288ED1CC7C5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 09:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340402594B4;
-	Thu, 24 Jul 2025 09:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBA924DCEB;
+	Thu, 24 Jul 2025 09:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="W/4r17Ej"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjelGoNt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04CF23C4E9;
-	Thu, 24 Jul 2025 09:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753348667; cv=pass; b=BHTgyPWJ8ahZE4IWa17mmlbE1qI0zFinOalyTsHZSUr1FMSk67eqc/37zWy/Au2BVfmHzx9e3IUqruIkawTP/tNwzFhWGGnkg/2ZGwo9la3c2GINNQwM/iPCJBm3/2mhYYftE2wVh+qZTA1AlHfeTCCAIGRCKLI8vysUS7lHRpg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753348667; c=relaxed/simple;
-	bh=r4U4AlYanf8+Mm94ORgEbcJcvUtT1nMxCJY2bUMWIp4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sma4Wf4OQuoWYpOJYKfojBea+Kje9I3J34HQPdhp+bvlbTxMjiEdpoZ4Ap1brUj+Z4Qz3gmz1nehSJ6bBBeqceoH9wfysT++gujNOSi6GIP3oawk8IhAWNv4Y+B7jxEZ2ufVbZFeFqLQ9YgLk2Pmi+6BpNyFkWrWw95MGf5HlPU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=W/4r17Ej; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753348578; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=c59k7OVc6GnzDLuO9f0SYKYKk/ERB/FbkKZ2QN6i8vKWQBq3ToRGQefdKm8z7I8BLAw9ExSwDRqcBQr8ZiuqcB/8Wjqjvk8cohPjySstEP1jRnULr4rGgOw3+znjq/SuUybg0BRGD6jyNFRjvKrKWgFKz8E1yvJcXansaapSwKA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753348578; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=r4U4AlYanf8+Mm94ORgEbcJcvUtT1nMxCJY2bUMWIp4=; 
-	b=eQ3bTifzakzOYvsdfM68sZVfZnObTipoKh7PiIcPRUNoIJe+V7E+jBZUMQ1/OjwayIbbsUcoBlO7Xm+oQYjD/6blKNCXh2zc6ytGF3LO5Z04HK/Q2S2xXB3ISduge4W8MDKqFyB1i3K9wVoX6jvGlkhrQTUSV67KzmOi3v0zNS4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753348578;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=r4U4AlYanf8+Mm94ORgEbcJcvUtT1nMxCJY2bUMWIp4=;
-	b=W/4r17EjUz7tKHd+Dty3fw+oquEqIMNatmXI2xbx9oovhQ9FcH+JYdYr6SXW3UZr
-	44Hab9SNgc+Vyu5V/UwxKePkzp7AtuEF9Ns2E8cc7MW+54gCsY+ZLw3n05ChAnb9Grs
-	ZJffpQ33guGJ6BEVSZFZ9UsqOeIkAcpJJZaFp2Nc=
-Received: by mx.zohomail.com with SMTPS id 1753348576467207.84736617123485;
-	Thu, 24 Jul 2025 02:16:16 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: bhupesh@igalia.com
-Cc: akpm@linux-foundation.org,
-	alexei.starovoitov@gmail.com,
-	andrii.nakryiko@gmail.com,
-	arnaldo.melo@gmail.com,
-	bpf@vger.kernel.org,
-	brauner@kernel.org,
-	bsegall@google.com,
-	david@redhat.com,
-	ebiederm@xmission.com,
-	jack@suse.cz,
-	juri.lelli@redhat.com,
-	kees@kernel.org,
-	keescook@chromium.org,
-	kernel-dev@igalia.com,
-	laoar.shao@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-perf-users@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	lkp@intel.com,
-	mathieu.desnoyers@efficios.com,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	mirq-linux@rere.qmqm.pl,
-	oliver.sang@intel.com,
-	peterz@infradead.org,
-	pmladek@suse.com,
-	rostedt@goodmis.org,
-	torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	vschneid@redhat.com,
-	willy@infradead.org
-Subject: Re: [PATCH v5 3/3] treewide: Switch from tsk->comm to tsk->comm_str which is 64 bytes long
-Date: Thu, 24 Jul 2025 12:16:04 +0300
-Message-ID: <20250724091604.2336532-1-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250716123916.511889-4-bhupesh@igalia.com>
-References: <20250716123916.511889-4-bhupesh@igalia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6024824BC01
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 09:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753348650; cv=none; b=vBXETIPuVdNwjeC62oAmb0bvJnNXoVqSDnxZY6/YLmpN5QOuBVaGYA/o/uzgP17Xh4vUGgmixAacSdEq6iWZXt/ix+K/K895ZyWbA+Yxg+OSkTF05cTt7sA9VrfUzJNagZs+ti/m7+ZlW2Q5/dFHK7pQZI6829nxxDI4CiUh2Ts=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753348650; c=relaxed/simple;
+	bh=UXDu3pWBfSF2IsqAu8LZMSLDVSnlFzYsRRF+ohnfa8A=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=m7ChYWB75aXpWv0jz4V/KiDy41f6cOLl8n35QZn5FdQYZjOBNnahlXxunBL9e0Qjxn2P7bXqI6V8Z9CmO4KRDE3LxWyLT/oc4YM44H1HQzl8XxXf5TBxgiipD0qb4RSOilGyV6rBc0bywfZMmuMnY7/QCcv7ni9HdJ8FIExLg/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjelGoNt; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c4f796446so1334910a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 02:17:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753348646; x=1753953446; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NU2pNlupjMxMrzWIDA4T47dZfIwKflAaYjNOxIZYknQ=;
+        b=BjelGoNtQQwvYbRWimQaXxjkoWho7X8rtwd/o/RxeHHw9UT72PEmuzdbO2Lq94f6zl
+         sWm1XCFszAmqaIju3PfQCbsecCZJA90435jSlZX3jTfG5T2WSnXE+RCdZ5G5/RqBT3YE
+         OtvkL7aYok8L4OdRdfqUt7X709mCbpcW46vZ2fVG7f26i8tGrm+3E2qmM+hWsFmeSAYj
+         Uf+Uv3I0Zzc5+dr/Tv7v9pixtHKpFTaHmMNRmz+r0uVslF0QhHYtgQJFvPNOSRS7jVz7
+         NWtk5fN7d4doQqtTOuVFAhphzv1jI1z/8qkIY3QLDsVM17zzFB1z6qcij9tHXMTJ1KZ9
+         49DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753348646; x=1753953446;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NU2pNlupjMxMrzWIDA4T47dZfIwKflAaYjNOxIZYknQ=;
+        b=UWPTjxN0TpzS45DwhJztgW5DUB90iFO1bLOv8+zcwNvVGB0uXg5psO8qj3qPv+3QDR
+         JzPuYWTlAMEhj8ggGW5rNUDymSKECQLwkiN/fCso+D8pdWKlj8ag+fZ9pf3TxvzOntgU
+         xp3bEcq+dcK0s67DGlm74WFiaZPvTDaHn6/IIGlc9BQyybmXyZrAGTqRj6NwPwtzGNGk
+         wtcDnzJJPsbt/VI64bfOmmhtHItvjCr7QDpZfNQXlsow7xVMT/iHTJ6q2zQCSSOcDTrN
+         SmAFH04WONnO8CJ7X3llMDwel0rkHD32hFxy9deAYGajZfip9pi8hoQtx2R2KwV18wEl
+         /kvQ==
+X-Gm-Message-State: AOJu0YwEQrXRjpBEZXk2kZOWca4Hvs7PeZvCYqdcFnosZU1LaKY657jP
+	6QigfbH1WcG2Ti32PvotW9QI5tQ/In/SmWy9Zyhgx4cEwC3LUH4+EB1Sw0tbosdKJGK8SDPbnbL
+	kqzCQTsU70dPIF8z78cSGdJ0WAqVFpy9/NENzaBs=
+X-Gm-Gg: ASbGncvktE530xbrVybHsDQLC7FjNoaBvQLPUhw3DawJgx2tO44j4DsCKO4df2nlw4J
+	xaR0xjC0p0jghOyQ0/DkjkUEBVlJq8IakOOQ4NORl5C+Bvv9vD67DkIVCt1rv/6FjBB+DHLfX+F
+	WbXdJWEceqZS+pHZwxdN06bZn1Tbl8ehG6GA21hqj/lr1/ANUlybPX/T+7cTyrtJTIBW68seEKS
+	11k2UmH3A==
+X-Google-Smtp-Source: AGHT+IF9l9hif+8olB9jdInvUPrecdwAoQtWQw6uBbubO7TK3pkR3oM4bxAjJLnHyHXcB/nBk0pcyW0CJmaPl0kEApU=
+X-Received: by 2002:a17:907:db03:b0:ae0:d7c7:97ee with SMTP id
+ a640c23a62f3a-af2f8b59137mr765523266b.41.1753348646082; Thu, 24 Jul 2025
+ 02:17:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112277386df9982d4a0a50fd484250000d6cf96b2b2dd89700b60bbfae778d9f00cbe3c5cd847bf7583:zu08011227d3545089dbbe7029f132e8e000006a667f2294f193b7a928dd1a40d92bdd2c006e7a20faa6ebe9:rf0801122cad691eaec5235a908425c52200009ab00d1523b423f07b85d4c3bb9302abf9c739cc073320d82c0c0bbc6e4a:ZohoMail
-X-ZohoMailClient: External
+From: Gang He <dchg2000@gmail.com>
+Date: Thu, 24 Jul 2025 17:17:13 +0800
+X-Gm-Features: Ac12FXx7_l31Ut7y0l2eOjkS0rRk30hah6vAEOb-JdsIxvgl_a7nhGhUH--YMNE
+Message-ID: <CAGmFzSc1bVUg9-6Y_kDb4OXNLH+-9jb+O3iCAA+sKyNRSnrFWQ@mail.gmail.com>
+Subject: fuse io_uring test performance is not good when fio iodepth > 1
+To: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> where TASK_COMM_EXT_LEN is 64-bytes.
+Hello Guys,
 
-Why 64? As well as I understand, comm is initialized from executable file name by default. And it is usually limited by 256 (or 255?) bytes. So, please, make limit 256 bytes.
+Sorry for the interruption.
+I integrated fuse over io_uring patches in v6.14, but I found a
+strange problem when I tested the libfuse null-fs test case.
+the fio commands as below,
+1) fio -direct=1 --filename=/mnt/singfile --rw=read  -iodepth=1
+--ioengine=libaio --bs=4k --size=4G --runtime=60 --numjobs=1
+-name=test_fuse2
+the performance result:
+enable fuse > default fuse
+2) fio -direct=1 --filename=/mnt/singfile --rw=read  -iodepth=16
+--ioengine=libaio --bs=4k --size=4G --runtime=60 --numjobs=1
+-name=test_fuse2
+the performance result:
+enable fuse < default fuse
+3) fio -direct=1 --filename=/mnt/singfile --rw=read  -iodepth=1
+--ioengine=libaio --bs=4k --size=4G --runtime=60 --numjobs=16
+-name=test_fuse2
+ the performance result:
+enable fuse > default fuse
 
---
-Askar Safin
+Why is fio test performance worse when enable io_uring with fio
+-iodepth option > 1?  it looks fuse over io_uring feature does not
+handle this case like the default fuse configuration.
+
+Thanks
+Gang
 
