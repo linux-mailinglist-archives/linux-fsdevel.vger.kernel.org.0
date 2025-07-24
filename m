@@ -1,121 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-55917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4B4B0FE81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 03:54:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E8BB0FEAD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 04:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E54DC5412DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 01:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C77541C28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 02:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA437261B;
-	Thu, 24 Jul 2025 01:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAC71B041A;
+	Thu, 24 Jul 2025 02:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EnAfWo6y"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JTcDKuI/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3020614286;
-	Thu, 24 Jul 2025 01:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7599919CC3E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 02:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753322088; cv=none; b=AUQJ82FI/7VEkPlr9RpBePnOqHqi28LYzjmJFyW2bG+PFOofNwN16osW0XKnrjhtbLwnO30ZPyHA3QIn1hrA1h7/dkwppAYjptoth4XPPLX5KgF2QdGzId6llcZyovmHXYhwcvuQl+lKo8OuybsGrEiYLqsdaG8va3ZU+ifsul4=
+	t=1753323012; cv=none; b=MJ2djOPx5akFi+7fDJY49gyZogKv9UIVDhb+OR1CUzYSn40gYNVgsmyznzUOp/PsabDaEzkoNTR4UZxAqfEhz3hDD0CBCpaAQ4XjMTw3PT1+B8IeiHHK+nllRuIk6q3CsS0hohJWkUjJvZuqmz8/uBAuRQbgFIxz6SJ/bM6dipg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753322088; c=relaxed/simple;
-	bh=TL2oFXIDdFEaQTeHY749EzPbR4yInffmqFMXyr9J8h4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BW90IuiDmN+qR+3gwgfUDUEYl7mOU8XzHd0PHGFk0EzOIkyPLY1CyXWxofcs88NlbjuqwDoiFdmuU8tQBBVwjEdl+d45hezsRmZ6cM1YpusJFfFN60CUXRMmZZMRotr7saDFQuMURUAl8+w1JwjkXqUCrpkt7O4eTeLAqjdP0Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EnAfWo6y; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=gt99ZL11NftF0tgwHS5Fp8cvOJq8ExHVRAMy6E/IxNA=;
-	b=EnAfWo6y+d1amiyQamzEYsuwyveMSeXEAx8zntSG+JnIbzl+ZXyMhrSpocSKP7
-	JsY2X6gIgA/CLH1GMKc4OjlcnyMN6rn6nTPYbMYSSoZZy6nUeKHmozktFG5t+VmD
-	XXj4I9CaS4Ehr7OpCwLQxYtLnAYklmdjJ7QNhUX9IL2QE=
-Received: from [10.42.12.6] (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3NWpQkoFodDt5Gw--.23202S2;
-	Thu, 24 Jul 2025 09:54:26 +0800 (CST)
-Message-ID: <07dd7e42-b2c4-4fbb-87f3-ab888d11256d@163.com>
-Date: Thu, 24 Jul 2025 09:54:24 +0800
+	s=arc-20240116; t=1753323012; c=relaxed/simple;
+	bh=ffvh4rw69doyRsmJ7u3cRO1OWqVlFCUnRhvVhvHpZTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M00KTdMMVIDhJzahRIutsFVGV6GVhY0qs9lCXK57QoXFeI53eLa9qQxZwwfeCc3WR/dZkN6MfeMWJOZ43KKxBgBeKPNQfaulrCE9G6Var3gNjqa0UmiZWujlUIHg9kcK4DYtlYlWmyWm6+j7EIsYZjd/Sq+ltSayiL+CooQqSdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JTcDKuI/; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e8d713e64c5so389510276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 19:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1753323008; x=1753927808; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ezOsh3Rw02sTHRTVL0D2zAjlIafvsBxPOvx6XqZve/E=;
+        b=JTcDKuI/5CUQCswz04ZlBKuJ9nt1HfEgvhgr0nGsG9qp4BfN+m+hvEEEj2n1KSB5t5
+         Hxia7vyFpvdiDnvE2X9hHOj8zKmSDAdrbDLE8CmWjesvRLDha7n4X9vXlfjpu6i1lIf5
+         s5YmjwyTrKz7KDqG9G6wjRcjlDiB3ySIBdQCj4Hqgp7gwybEXQ+EFIBWRTkS+JUKxC3Z
+         HE3YVrql5NXTPsdBwztgQAj6ZHafhnWx7Y1aZAd8pUBm+jAxolMA9D12Coe2nmSmnqrW
+         a/b1qZmN1v9C/VqBmE7cu88zdzjd2+GScqCoLSusEJMLpxas41Qu/5Vr8kdEsDllqlXI
+         JsBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753323008; x=1753927808;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ezOsh3Rw02sTHRTVL0D2zAjlIafvsBxPOvx6XqZve/E=;
+        b=Ic5fbxsfy+n02PakuIQWXvIpAPm1qsEPGebU2HaV2a6BL9TyQfun6r0oEXrWO4mjAH
+         cd2LFL6Lzuh082pkdnVLAdIeCbkpMcmkdZshMQ/oMUKv9hgYRdlGnpDWQ3APklQALz0n
+         BkSKm+rLq33wq6Hp7XsF2WHe6KVZBPifTTfnIUFcGcf/yuye6aobOnr5OYMtrvzse80i
+         p5/US0HbvjZxj/1CBW9bbUc5hjWOUfZehocwoxdFgbPpz4LeLEfQQxmhlwr9HjWW33bV
+         W0NsIIFh3jSECWNEBpvrvRB7uXLfKBW/t19Kar40HX5rL8gQtoOH3q2czQHo0Kk8r1NK
+         o+PA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwcD7Abi0PENP/4ZFZpTQFx++997eR+O4pg2UNQm57BvJbLW2rk89JIOrAZhdbVLWBi3m3+EvuFzf3qx72@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXX5RsBUYA38Sjghg2/7Go0YJ58teab//pWxtgMhwVpKsRWbVp
+	/6aebHmzeEUZo5HRLGC3OVRLVJghwBzwtKu2HHZmtDoVzTQmSydQ7RkkAuEm/m2uT7nVok1q2jL
+	3Bn1J0D69z12OJWi9ZhiJHMNx8JJDmn/nQc4Nwi7V
+X-Gm-Gg: ASbGncvJDPahZq1oNIFW8dpdCs3ASaiUxv442GB6lEIgkhB/LAdUWzUKpwPniwa1Sru
+	5dHG0wf5BzLb115kni+KSLnG7VOnP4fbuc5SJc0Ks7BzFRafZAcNExO3Z2OwDhGYrBwG+y17JyN
+	1yYGicur+4U6EZ/9f3v+bzR3XbWitAXqvZO0UDVvSSLYNSWYC9W3FnZ3jN37tvUCJ1GfL7LtUEK
+	9kwKoE=
+X-Google-Smtp-Source: AGHT+IEjtM0YH/uIkH5EC6RHdxIYSOEo9s7z9JMeuLNs93fJxU9BkwVAtv1fRHAPFv5MIBRtQfg1omYHVhyQIQh0vnM=
+X-Received: by 2002:a05:6902:1288:b0:e82:17a1:5c15 with SMTP id
+ 3f1490d57ef6-e8dc57e75dcmr6464733276.10.1753323006953; Wed, 23 Jul 2025
+ 19:10:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] mm/filemap: Avoid modifying iocb->ki_flags for
- AIO in filemap_get_pages()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Chi Zhiling <chizhiling@kylinos.cn>
-References: <20250723101825.607184-1-chizhiling@163.com>
- <20250723101825.607184-3-chizhiling@163.com>
- <aIDy076Sxt544qja@casper.infradead.org>
-Content-Language: en-US
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <aIDy076Sxt544qja@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3NWpQkoFodDt5Gw--.23202S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJryUGF4fWw43Jr4xCFWxJFb_yoW8WrWUpr
-	WrAa4vka1xXa1UZrWfAw12qa1jg34DJayrA3W7Ka1DAr98t3sakF4ftFyjkay7Jrn8XF4I
-	va10yFykAFW0yrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRSD7-UUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiFASUnWiBj9Y5sAAAsg
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
+ <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
+ <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
+ <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com> <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 23 Jul 2025 22:09:56 -0400
+X-Gm-Features: Ac12FXzwcvMXRcY-HOujXriwLTi0J58g3gNTBeLJ4hgKLEq2xrVmA3w4Jght3uY
+Message-ID: <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Anna Schumaker <anna.schumaker@oracle.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/7/23 22:33, Matthew Wilcox wrote:
-> On Wed, Jul 23, 2025 at 06:18:24PM +0800, Chi Zhiling wrote:
->> From: Chi Zhiling <chizhiling@kylinos.cn>
->>
->> Setting IOCB_NOWAIT in filemap_get_pages() for AIO is only used to
->> indicate not to block in the filemap_update_page(), with no other purpose.
->> Moreover, in filemap_read(), IOCB_NOWAIT will be set again for AIO.
->>
->> Therefore, adding a parameter to the filemap_update_page function to
->> explicitly indicate not to block serves the same purpose as indicating
->> through iocb->ki_flags, thus avoiding modifications to iocb->ki_flags.
->>
->> This patch does not change the original logic and is preparation for the
->> next patch.
-> 
-> Passing multiple booleans to a function is an antipattern.
-> Particularly in this case, since we could just pass iocb->ki_flags
-> to the function.
-> 
-> But I think there's a less complicated way to do what you want.
-> Just don't call filemap_update_page() if there are uptodate folios
-> in the batch:
-> 
-> +++ b/mm/filemap.c
-> @@ -2616,9 +2616,10 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
->                          goto err;
->          }
->          if (!folio_test_uptodate(folio)) {
-> -               if ((iocb->ki_flags & IOCB_WAITQ) &&
-> -                   folio_batch_count(fbatch) > 1)
-> -                       iocb->ki_flags |= IOCB_NOWAIT;
-> +               if (folio_batch_count(fbatch) > 1) {
-> +                       err = -EAGAIN;
-> +                       goto err;
-> +               }
+On Thu, Jun 19, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
+> <anna.schumaker@oracle.com> wrote:
+> > On 5/20/25 5:31 PM, Paul Moore wrote:
+> > > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
+> > >> <stephen.smalley.work@gmail.com> wrote:
+> > >>>
+> > >>> Update the security_inode_listsecurity() interface to allow
+> > >>> use of the xattr_list_one() helper and update the hook
+> > >>> implementations.
+> > >>>
+> > >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen=
+.smalley.work@gmail.com/
+> > >>>
+> > >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > >>> ---
+> > >>> This patch is relative to the one linked above, which in theory is =
+on
+> > >>> vfs.fixes but doesn't appear to have been pushed when I looked.
+> > >>>
+> > >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
+> > >>>  fs/xattr.c                    | 19 +++++++------------
+> > >>>  include/linux/lsm_hook_defs.h |  4 ++--
+> > >>>  include/linux/security.h      |  5 +++--
+> > >>>  net/socket.c                  | 17 +++++++----------
+> > >>>  security/security.c           | 16 ++++++++--------
+> > >>>  security/selinux/hooks.c      | 10 +++-------
+> > >>>  security/smack/smack_lsm.c    | 13 ++++---------
+> > >>>  8 files changed, 40 insertions(+), 54 deletions(-)
+> > >>
+> > >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
+> > >> folks I can pull this into the LSM tree.
+> > >
+> > > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some ACKs
+> > > on this patch?  It's a little late for the upcoming merge window, but
+> > > I'd like to merge this via the LSM tree after the merge window closes=
+.
+> >
+> > For the NFS change:
+> >     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
+>
+> Hi Anna,
+>
+> Thanks for reviewing the patch.  Unfortunately when merging the patch
+> today and fixing up some merge conflicts I bumped into an odd case in
+> the NFS space and I wanted to check with you on how you would like to
+> resolve it.
+>
+> Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
+> security label")[1] adds a direct call to
+> security_inode_listsecurity() in nfs4_listxattr(), despite the
+> existing nfs4_listxattr_nfs4_label() call which calls into the same
+> LSM hook, although that call is conditional on the server supporting
+> NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
+> caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
+> wondering if there isn't some room for improvement here.
+>
+> I think there are two obvious options, and I'm curious about your
+> thoughts on which of these you would prefer, or if there is another
+> third option that you would like to see merged.
+>
+> Option #1:
+> Essentially back out commit 243fea134633, removing the direct LSM call
+> in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() for
+> the LSM/SELinux xattrs.  I think we would want to remove the
+> NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
+> regardless of CONFIG_NFS_V4_SECURITY_LABEL.
+>
+> Option #2:
+> Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
+> call in nfs4_listxattr(), with the required changes for this patch.
+>
+> Thoughts?
+>
+> [1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redhat.co=
+m/
 
+A gentle ping on the question above for the NFS folks.  If I don't
+hear anything I'll hack up something and send it out for review, but I
+thought it would nice if we could sort out the proper fix first.
 
-Yes, this is a completely better way.
-
-
-Would you mind if I add
-"Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>"
-in the next version?
-
->                  err = filemap_update_page(iocb, mapping, count, folio,
->                                            need_uptodate);
->                  if (err)
-
-Thanks,
-
+--=20
+paul-moore.com
 
