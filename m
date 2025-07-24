@@ -1,189 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-55918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E8BB0FEAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 04:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6014B10127
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 08:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C77541C28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 02:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1BB1C26149
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 06:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAC71B041A;
-	Thu, 24 Jul 2025 02:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JTcDKuI/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF94C226D0C;
+	Thu, 24 Jul 2025 06:56:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7599919CC3E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 02:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699F7224891;
+	Thu, 24 Jul 2025 06:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753323012; cv=none; b=MJ2djOPx5akFi+7fDJY49gyZogKv9UIVDhb+OR1CUzYSn40gYNVgsmyznzUOp/PsabDaEzkoNTR4UZxAqfEhz3hDD0CBCpaAQ4XjMTw3PT1+B8IeiHHK+nllRuIk6q3CsS0hohJWkUjJvZuqmz8/uBAuRQbgFIxz6SJ/bM6dipg=
+	t=1753340180; cv=none; b=YPDcn+IHlLpzHFY4utmvr34aNGOjP25cO/kAv/AMUwqDQasmrPXLctKurHbnld2ckuyyuW92mL/7qjMmHuw1s2eAF+vJyUHCyB03eTepgPiSO5NJsKzFTxUDnTsiWMr/jG98tiHA4co4F81klDHH6I98Jhcobkc7mImH5seMaWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753323012; c=relaxed/simple;
-	bh=ffvh4rw69doyRsmJ7u3cRO1OWqVlFCUnRhvVhvHpZTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M00KTdMMVIDhJzahRIutsFVGV6GVhY0qs9lCXK57QoXFeI53eLa9qQxZwwfeCc3WR/dZkN6MfeMWJOZ43KKxBgBeKPNQfaulrCE9G6Var3gNjqa0UmiZWujlUIHg9kcK4DYtlYlWmyWm6+j7EIsYZjd/Sq+ltSayiL+CooQqSdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JTcDKuI/; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e8d713e64c5so389510276.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Jul 2025 19:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1753323008; x=1753927808; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ezOsh3Rw02sTHRTVL0D2zAjlIafvsBxPOvx6XqZve/E=;
-        b=JTcDKuI/5CUQCswz04ZlBKuJ9nt1HfEgvhgr0nGsG9qp4BfN+m+hvEEEj2n1KSB5t5
-         Hxia7vyFpvdiDnvE2X9hHOj8zKmSDAdrbDLE8CmWjesvRLDha7n4X9vXlfjpu6i1lIf5
-         s5YmjwyTrKz7KDqG9G6wjRcjlDiB3ySIBdQCj4Hqgp7gwybEXQ+EFIBWRTkS+JUKxC3Z
-         HE3YVrql5NXTPsdBwztgQAj6ZHafhnWx7Y1aZAd8pUBm+jAxolMA9D12Coe2nmSmnqrW
-         a/b1qZmN1v9C/VqBmE7cu88zdzjd2+GScqCoLSusEJMLpxas41Qu/5Vr8kdEsDllqlXI
-         JsBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753323008; x=1753927808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ezOsh3Rw02sTHRTVL0D2zAjlIafvsBxPOvx6XqZve/E=;
-        b=Ic5fbxsfy+n02PakuIQWXvIpAPm1qsEPGebU2HaV2a6BL9TyQfun6r0oEXrWO4mjAH
-         cd2LFL6Lzuh082pkdnVLAdIeCbkpMcmkdZshMQ/oMUKv9hgYRdlGnpDWQ3APklQALz0n
-         BkSKm+rLq33wq6Hp7XsF2WHe6KVZBPifTTfnIUFcGcf/yuye6aobOnr5OYMtrvzse80i
-         p5/US0HbvjZxj/1CBW9bbUc5hjWOUfZehocwoxdFgbPpz4LeLEfQQxmhlwr9HjWW33bV
-         W0NsIIFh3jSECWNEBpvrvRB7uXLfKBW/t19Kar40HX5rL8gQtoOH3q2czQHo0Kk8r1NK
-         o+PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwcD7Abi0PENP/4ZFZpTQFx++997eR+O4pg2UNQm57BvJbLW2rk89JIOrAZhdbVLWBi3m3+EvuFzf3qx72@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXX5RsBUYA38Sjghg2/7Go0YJ58teab//pWxtgMhwVpKsRWbVp
-	/6aebHmzeEUZo5HRLGC3OVRLVJghwBzwtKu2HHZmtDoVzTQmSydQ7RkkAuEm/m2uT7nVok1q2jL
-	3Bn1J0D69z12OJWi9ZhiJHMNx8JJDmn/nQc4Nwi7V
-X-Gm-Gg: ASbGncvJDPahZq1oNIFW8dpdCs3ASaiUxv442GB6lEIgkhB/LAdUWzUKpwPniwa1Sru
-	5dHG0wf5BzLb115kni+KSLnG7VOnP4fbuc5SJc0Ks7BzFRafZAcNExO3Z2OwDhGYrBwG+y17JyN
-	1yYGicur+4U6EZ/9f3v+bzR3XbWitAXqvZO0UDVvSSLYNSWYC9W3FnZ3jN37tvUCJ1GfL7LtUEK
-	9kwKoE=
-X-Google-Smtp-Source: AGHT+IEjtM0YH/uIkH5EC6RHdxIYSOEo9s7z9JMeuLNs93fJxU9BkwVAtv1fRHAPFv5MIBRtQfg1omYHVhyQIQh0vnM=
-X-Received: by 2002:a05:6902:1288:b0:e82:17a1:5c15 with SMTP id
- 3f1490d57ef6-e8dc57e75dcmr6464733276.10.1753323006953; Wed, 23 Jul 2025
- 19:10:06 -0700 (PDT)
+	s=arc-20240116; t=1753340180; c=relaxed/simple;
+	bh=d6EwIeVxZxsVQFHkH3jUKld652EUW7QYzuDNa7bok58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g/u4XXkIQ14+ykiaSJNWumdjFaiBNysopzc8GlC6dph7m89MJRIzNyEfF6WP5xIhe9vEmYbh31eCEO0EsuiRv2uw9HhV3eu8xbIXg/rw7t2c3vWjpw6HiaYX/MC3JPI+8OmtNO7CyZ8Mi/NW/iSBofDGggOUTDLYMY/S48Wx6u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56O6thO3025564;
+	Thu, 24 Jul 2025 15:55:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56O6thHW025561
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 24 Jul 2025 15:55:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
+Date: Thu, 24 Jul 2025 15:55:42 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
- <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
- <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
- <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com> <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 23 Jul 2025 22:09:56 -0400
-X-Gm-Features: Ac12FXzwcvMXRcY-HOujXriwLTi0J58g3gNTBeLJ4hgKLEq2xrVmA3w4Jght3uY
-Message-ID: <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
-Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
- interface
-To: Anna Schumaker <anna.schumaker@oracle.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] hfs: remove BUG() from
+ hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "willy@infradead.org" <willy@infradead.org>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
+ <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
+ <aHlQkTHYxnZ1wrhF@casper.infradead.org>
+ <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
+ <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
+ <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
+ <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
+ <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
+ <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
+ <aH-enGSS7zWq0jFf@casper.infradead.org>
+ <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
+ <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
+ <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
+ <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
+ <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
 
-On Thu, Jun 19, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
-> <anna.schumaker@oracle.com> wrote:
-> > On 5/20/25 5:31 PM, Paul Moore wrote:
-> > > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
-> > >> <stephen.smalley.work@gmail.com> wrote:
-> > >>>
-> > >>> Update the security_inode_listsecurity() interface to allow
-> > >>> use of the xattr_list_one() helper and update the hook
-> > >>> implementations.
-> > >>>
-> > >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen=
-.smalley.work@gmail.com/
-> > >>>
-> > >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > >>> ---
-> > >>> This patch is relative to the one linked above, which in theory is =
-on
-> > >>> vfs.fixes but doesn't appear to have been pushed when I looked.
-> > >>>
-> > >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
-> > >>>  fs/xattr.c                    | 19 +++++++------------
-> > >>>  include/linux/lsm_hook_defs.h |  4 ++--
-> > >>>  include/linux/security.h      |  5 +++--
-> > >>>  net/socket.c                  | 17 +++++++----------
-> > >>>  security/security.c           | 16 ++++++++--------
-> > >>>  security/selinux/hooks.c      | 10 +++-------
-> > >>>  security/smack/smack_lsm.c    | 13 ++++---------
-> > >>>  8 files changed, 40 insertions(+), 54 deletions(-)
-> > >>
-> > >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
-> > >> folks I can pull this into the LSM tree.
-> > >
-> > > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some ACKs
-> > > on this patch?  It's a little late for the upcoming merge window, but
-> > > I'd like to merge this via the LSM tree after the merge window closes=
-.
-> >
-> > For the NFS change:
-> >     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
->
-> Hi Anna,
->
-> Thanks for reviewing the patch.  Unfortunately when merging the patch
-> today and fixing up some merge conflicts I bumped into an odd case in
-> the NFS space and I wanted to check with you on how you would like to
-> resolve it.
->
-> Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
-> security label")[1] adds a direct call to
-> security_inode_listsecurity() in nfs4_listxattr(), despite the
-> existing nfs4_listxattr_nfs4_label() call which calls into the same
-> LSM hook, although that call is conditional on the server supporting
-> NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
-> caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
-> wondering if there isn't some room for improvement here.
->
-> I think there are two obvious options, and I'm curious about your
-> thoughts on which of these you would prefer, or if there is another
-> third option that you would like to see merged.
->
-> Option #1:
-> Essentially back out commit 243fea134633, removing the direct LSM call
-> in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() for
-> the LSM/SELinux xattrs.  I think we would want to remove the
-> NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
-> regardless of CONFIG_NFS_V4_SECURITY_LABEL.
->
-> Option #2:
-> Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
-> call in nfs4_listxattr(), with the required changes for this patch.
->
-> Thoughts?
->
-> [1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redhat.co=
-m/
+Then, something like below change?
 
-A gentle ping on the question above for the NFS folks.  If I don't
-hear anything I'll hack up something and send it out for review, but I
-thought it would nice if we could sort out the proper fix first.
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -318,6 +318,9 @@ static int hfs_read_inode(struct inode *inode, void *data)
+        struct hfs_iget_data *idata = data;
+        struct hfs_sb_info *hsb = HFS_SB(inode->i_sb);
+        hfs_cat_rec *rec;
++       /* https://developer.apple.com/library/archive/technotes/tn/tn1150.html#CNID */
++       static const u16 bad_cnid_list = (1 << 0) | (1 << 6) | (1 << 7) | (1 << 8) |
++               (1 << 9) | (1 << 10) | (1 << 11) | (1 << 12) | (1 << 13);
 
---=20
-paul-moore.com
+        HFS_I(inode)->flags = 0;
+        HFS_I(inode)->rsrc_inode = NULL;
+@@ -358,6 +361,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+                inode->i_op = &hfs_file_inode_operations;
+                inode->i_fop = &hfs_file_operations;
+                inode->i_mapping->a_ops = &hfs_aops;
++               if (inode->i_ino < HFS_FIRSTUSER_CNID && ((1U << inode->i_ino) & bad_cnid_list))
++                       make_bad_inode(inode);
+                break;
+        case HFS_CDR_DIR:
+                inode->i_ino = be32_to_cpu(rec->dir.DirID);
+@@ -368,6 +373,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+                                      inode_set_atime_to_ts(inode, inode_set_ctime_to_ts(inode, hfs_m_to_utime(rec->dir.MdDat))));
+                inode->i_op = &hfs_dir_inode_operations;
+                inode->i_fop = &hfs_dir_operations;
++               if (inode->i_ino < HFS_FIRSTUSER_CNID && ((1U << inode->i_ino) & bad_cnid_list))
++                       make_bad_inode(inode);
+                break;
+        default:
+                make_bad_inode(inode);
+
+
+
+But I can't be convinced that above change is sufficient, for if I do
+
++		static u8 serial;
++               if (inode->i_ino < HFS_FIRSTUSER_CNID && ((1U << inode->i_ino) & bad_cnid_list))
++                       inode->i_ino = (serial++) % 16;
+
+instead of
+
++               if (inode->i_ino < HFS_FIRSTUSER_CNID && ((1U << inode->i_ino) & bad_cnid_list))
++                       make_bad_inode(inode);
+
+, the reproducer still hits BUG() for 0, 1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 and 15
+because hfs_write_inode() handles only 2, 3 and 4.
+
+        if (inode->i_ino < HFS_FIRSTUSER_CNID) {
+                switch (inode->i_ino) {
+                case HFS_ROOT_CNID:
+                        break;
+                case HFS_EXT_CNID:
+                        hfs_btree_write(HFS_SB(inode->i_sb)->ext_tree);
+                        return 0;
+                case HFS_CAT_CNID:
+                        hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
+                        return 0;
+                default:
+                        BUG();
+                        return -EIO;
+                }
+        }
+
+Unless this is because I'm modifying in-kernel memory than filesystem image,
+we will have to remove BUG() line.
+
+On 2025/07/24 3:43, Viacheslav Dubeyko wrote:
+> This could be defined in Catalog File (maybe not). I didn't find anything
+> related to this in HFS specification.
+
+https://developer.apple.com/library/archive/technotes/tn/tn1150.html#CNID
+says "the CNID of zero is never used and serves as a nil value." That is,
+I think we can reject inode->i_ino == 0 case.
+
+But I'm not sure for other values up to 15, expect values noted as "introduced
+with HFS Plus". We could filter values in bad_cnid_list bitmap, but filtering
+undefined values might not be sufficient for preserving BUG() line.
+
 
