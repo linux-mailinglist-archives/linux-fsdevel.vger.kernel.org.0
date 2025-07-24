@@ -1,110 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-55938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-55940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB193B1058C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 11:17:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C5DB10927
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 13:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288ED1CC7C5D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 09:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ACFC584C39
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Jul 2025 11:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBA924DCEB;
-	Thu, 24 Jul 2025 09:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjelGoNt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0C02749D8;
+	Thu, 24 Jul 2025 11:27:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6024824BC01
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 09:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4DF2727E2;
+	Thu, 24 Jul 2025 11:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753348650; cv=none; b=vBXETIPuVdNwjeC62oAmb0bvJnNXoVqSDnxZY6/YLmpN5QOuBVaGYA/o/uzgP17Xh4vUGgmixAacSdEq6iWZXt/ix+K/K895ZyWbA+Yxg+OSkTF05cTt7sA9VrfUzJNagZs+ti/m7+ZlW2Q5/dFHK7pQZI6829nxxDI4CiUh2Ts=
+	t=1753356425; cv=none; b=Lq2VJ2vylQu2tJ4pDfCE/PloqfWchWKUKMFFhyTptztjvKTf4p+XeUTuTAqL+ExdvcLAcBBoaFZ9etOMPdCZWTtKKZ/Giuoyii4/mNwqYELKJogXTYEXoA9HJkk2Z7UkhZq/U+m4xkRg+K+KxJ95VBqAu06Xi83MSDxWpCzUyaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753348650; c=relaxed/simple;
-	bh=UXDu3pWBfSF2IsqAu8LZMSLDVSnlFzYsRRF+ohnfa8A=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=m7ChYWB75aXpWv0jz4V/KiDy41f6cOLl8n35QZn5FdQYZjOBNnahlXxunBL9e0Qjxn2P7bXqI6V8Z9CmO4KRDE3LxWyLT/oc4YM44H1HQzl8XxXf5TBxgiipD0qb4RSOilGyV6rBc0bywfZMmuMnY7/QCcv7ni9HdJ8FIExLg/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjelGoNt; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c4f796446so1334910a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Jul 2025 02:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753348646; x=1753953446; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NU2pNlupjMxMrzWIDA4T47dZfIwKflAaYjNOxIZYknQ=;
-        b=BjelGoNtQQwvYbRWimQaXxjkoWho7X8rtwd/o/RxeHHw9UT72PEmuzdbO2Lq94f6zl
-         sWm1XCFszAmqaIju3PfQCbsecCZJA90435jSlZX3jTfG5T2WSnXE+RCdZ5G5/RqBT3YE
-         OtvkL7aYok8L4OdRdfqUt7X709mCbpcW46vZ2fVG7f26i8tGrm+3E2qmM+hWsFmeSAYj
-         Uf+Uv3I0Zzc5+dr/Tv7v9pixtHKpFTaHmMNRmz+r0uVslF0QhHYtgQJFvPNOSRS7jVz7
-         NWtk5fN7d4doQqtTOuVFAhphzv1jI1z/8qkIY3QLDsVM17zzFB1z6qcij9tHXMTJ1KZ9
-         49DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753348646; x=1753953446;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NU2pNlupjMxMrzWIDA4T47dZfIwKflAaYjNOxIZYknQ=;
-        b=UWPTjxN0TpzS45DwhJztgW5DUB90iFO1bLOv8+zcwNvVGB0uXg5psO8qj3qPv+3QDR
-         JzPuYWTlAMEhj8ggGW5rNUDymSKECQLwkiN/fCso+D8pdWKlj8ag+fZ9pf3TxvzOntgU
-         xp3bEcq+dcK0s67DGlm74WFiaZPvTDaHn6/IIGlc9BQyybmXyZrAGTqRj6NwPwtzGNGk
-         wtcDnzJJPsbt/VI64bfOmmhtHItvjCr7QDpZfNQXlsow7xVMT/iHTJ6q2zQCSSOcDTrN
-         SmAFH04WONnO8CJ7X3llMDwel0rkHD32hFxy9deAYGajZfip9pi8hoQtx2R2KwV18wEl
-         /kvQ==
-X-Gm-Message-State: AOJu0YwEQrXRjpBEZXk2kZOWca4Hvs7PeZvCYqdcFnosZU1LaKY657jP
-	6QigfbH1WcG2Ti32PvotW9QI5tQ/In/SmWy9Zyhgx4cEwC3LUH4+EB1Sw0tbosdKJGK8SDPbnbL
-	kqzCQTsU70dPIF8z78cSGdJ0WAqVFpy9/NENzaBs=
-X-Gm-Gg: ASbGncvktE530xbrVybHsDQLC7FjNoaBvQLPUhw3DawJgx2tO44j4DsCKO4df2nlw4J
-	xaR0xjC0p0jghOyQ0/DkjkUEBVlJq8IakOOQ4NORl5C+Bvv9vD67DkIVCt1rv/6FjBB+DHLfX+F
-	WbXdJWEceqZS+pHZwxdN06bZn1Tbl8ehG6GA21hqj/lr1/ANUlybPX/T+7cTyrtJTIBW68seEKS
-	11k2UmH3A==
-X-Google-Smtp-Source: AGHT+IF9l9hif+8olB9jdInvUPrecdwAoQtWQw6uBbubO7TK3pkR3oM4bxAjJLnHyHXcB/nBk0pcyW0CJmaPl0kEApU=
-X-Received: by 2002:a17:907:db03:b0:ae0:d7c7:97ee with SMTP id
- a640c23a62f3a-af2f8b59137mr765523266b.41.1753348646082; Thu, 24 Jul 2025
- 02:17:26 -0700 (PDT)
+	s=arc-20240116; t=1753356425; c=relaxed/simple;
+	bh=P9VfqiWvA20V9ELBXliXvbis8H7A5q9eHZ2f+y+EoFc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qXzuc8GxYsoNo8ogfJ+X9ahGOKSSmWnPpbhnjvLXwA+GUz8l2KSCypH43aYfKffnLhfEhZM82Lj/k5ikV3gbjY7SdiRy8B4GLCn2+mhS+ESoTntYEMvzvaTXMpeV6O9G0a8azHlWe04SZUk1yl6IDjoSTqYPCTmsSTV9X5FzY50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bnpWQ2ZGDzSjZB;
+	Thu, 24 Jul 2025 19:22:26 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id E1D741402CF;
+	Thu, 24 Jul 2025 19:26:58 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 24 Jul 2025 19:26:58 +0800
+Message-ID: <dcb71be5-18af-4ca0-b5c1-ef4850e1e670@huawei.com>
+Date: Thu, 24 Jul 2025 19:26:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Gang He <dchg2000@gmail.com>
-Date: Thu, 24 Jul 2025 17:17:13 +0800
-X-Gm-Features: Ac12FXx7_l31Ut7y0l2eOjkS0rRk30hah6vAEOb-JdsIxvgl_a7nhGhUH--YMNE
-Message-ID: <CAGmFzSc1bVUg9-6Y_kDb4OXNLH+-9jb+O3iCAA+sKyNRSnrFWQ@mail.gmail.com>
-Subject: fuse io_uring test performance is not good when fio iodepth > 1
-To: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
+To: <viro@zeniv.linux.org.uk>, <jack@suse.com>, <brauner@kernel.org>,
+	<axboe@kernel.dk>, <hch@lst.de>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yukuai3@huawei.com>, <yangerkun@huawei.com>
+References: <20250719024403.3452285-1-wozizhi@huawei.com>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <20250719024403.3452285-1-wozizhi@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-Hello Guys,
 
-Sorry for the interruption.
-I integrated fuse over io_uring patches in v6.14, but I found a
-strange problem when I tested the libfuse null-fs test case.
-the fio commands as below,
-1) fio -direct=1 --filename=/mnt/singfile --rw=read  -iodepth=1
---ioengine=libaio --bs=4k --size=4G --runtime=60 --numjobs=1
--name=test_fuse2
-the performance result:
-enable fuse > default fuse
-2) fio -direct=1 --filename=/mnt/singfile --rw=read  -iodepth=16
---ioengine=libaio --bs=4k --size=4G --runtime=60 --numjobs=1
--name=test_fuse2
-the performance result:
-enable fuse < default fuse
-3) fio -direct=1 --filename=/mnt/singfile --rw=read  -iodepth=1
---ioengine=libaio --bs=4k --size=4G --runtime=60 --numjobs=16
--name=test_fuse2
- the performance result:
-enable fuse > default fuse
 
-Why is fio test performance worse when enable io_uring with fio
--iodepth option > 1?  it looks fuse over io_uring feature does not
-handle this case like the default fuse configuration.
+在 2025/7/19 10:44, Zizhi Wo 写道:
+> A filesystem abnormal mount issue was found during current testing:
+> 
+> disk_container=$(...kata-runtime...io.kubernets.docker.type=container...)
+> docker_id=$(...kata-runtime...io.katacontainers.disk_share=
+>              "{"src":"/dev/sdb","dest":"/dev/test"}"...)
+> ${docker} stop "$disk_container"
+> ${docker} exec "$docker_id" mount /dev/test /tmp -->success!!
+> 
+> When the "disk_container" is stopped, the created sda/sdb/sdc disks are
+> already deleted, but inside the "docker_id", /dev/test can still be mounted
+> successfully. The reason is that runc calls unshare, which triggers
+> clone_mnt(), increasing the "sb->s_active" reference count. As long as the
+> "docker_id" does not exit, the superblock still has a reference count.
+> 
+> So when mounting, the old superblock is reused in sget_fc(), and the mount
+> succeeds, even if the actual device no longer exists. The whole process can
+> be simplified as follows:
+> 
+> mkfs.ext4 -F /dev/sdb
+> mount /dev/sdb /mnt
+> mknod /dev/test b 8 16    # [sdb 8:16]
+> echo 1 > /sys/block/sdb/device/delete
+> mount /dev/test /mnt1    # -> mount success
+> 
+> Therefore, it is necessary to add an extra check. Solve this problem by
+> checking disk_live() in super_s_dev_test().
+> 
+> Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
+> Link: https://lore.kernel.org/all/20250717091150.2156842-1-wozizhi@huawei.com/
+> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+> ---
+>   fs/super.c | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 80418ca8e215..8030fb519eb5 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1376,8 +1376,16 @@ static int super_s_dev_set(struct super_block *s, struct fs_context *fc)
+>   
+>   static int super_s_dev_test(struct super_block *s, struct fs_context *fc)
+>   {
+> -	return !(s->s_iflags & SB_I_RETIRED) &&
+> -		s->s_dev == *(dev_t *)fc->sget_key;
+> +	if (s->s_iflags & SB_I_RETIRED)
+> +		return false;
+> +
+> +	if (s->s_dev != *(dev_t *)fc->sget_key)
+> +		return false;
+> +
+> +	if (s->s_bdev && !disk_live(s->s_bdev->bd_disk))
+> +		return false;
+> +
+> +	return true;
+>   }
+>   
+>   /**
 
-Thanks
-Gang
+Thanks for all the feedback. I will take some time to prepare a v2
+version of the fix.
+
+Thanks,
+Zizhi Wo
+
+
 
