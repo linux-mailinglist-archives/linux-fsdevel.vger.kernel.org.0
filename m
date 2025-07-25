@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-56056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE53EB12644
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 23:53:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF5BB126D2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Jul 2025 00:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB8D1CC319D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 21:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B623AEACC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 22:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C40252903;
-	Fri, 25 Jul 2025 21:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF20A255E2F;
+	Fri, 25 Jul 2025 22:22:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBA57DA6C;
-	Fri, 25 Jul 2025 21:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1541827470;
+	Fri, 25 Jul 2025 22:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753480376; cv=none; b=SJajlavi3o0o9VWVodgwlhpqlotOZWkU22Wq5vSRvRqCO0Ie6U+IOMEioSf1CQXyJV0JFAjP1inVsWTj/aOyW9wFkUlCmCb2/MGbJSpJG6OFOb5APkmfeUl2ChfqcFggg7g1mL1cUkQ8bVyTFMkFaERGW07g6sFdtVS8V9F7mb0=
+	t=1753482144; cv=none; b=j/+xr/+JBYQVs/tmX4YWXiaOvSNwQG79B11QoiFLm6zTh6PqdneA+4iFrUeYyTqibyDBTueG1cv0lHaSOa+j5uxHMuk6D06xXeBMAOQKbjLWKY8OCG1zfq0CvJSnOg10FtbNHUt1JT8reIsipPK5lJS9Db51FempvkwTw7YNc78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753480376; c=relaxed/simple;
-	bh=DbnWyxYjv1mpp0jU0z4R93m+cj8fGJpyLneUXGiR4cM=;
+	s=arc-20240116; t=1753482144; c=relaxed/simple;
+	bh=lFFLlRkX+9KJb+HAAy1ydEvV3EqdGHy+GY0S2G+536c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IEgzb1TXpPEUXUhGISPHBl9jGkpldbgsYBEX6xe8oFZO/tTy0SKjzQSVrSEwnmO+kdVlX0HKG3JZprPCOJD7N1N6yYB5Kig8g7EzJYLbg27z5WTw5Ii3BI7fswi436BXrUpkQYYFQAHuYch+uW2P2nCf8JmoQd+7b91kdYvjXX4=
+	 In-Reply-To:Content-Type; b=dc16Awn2z5sZHK6Qy3rZlNUdbRlrSX5639P8Jh7W0zHyPm3VC1Ve4Ldv/ECL0AK55Jt/ZJ/2Wwhl7xpC9d+nSpB9tQZadat3b1GnsjSj67FOkn0Utd4S0IwJi9dCjBmtrtSsmC1sf9jxYy1Iu2wcGoQGP33QILN9K4vOVrdexC0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
 Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56PLqMGf046548;
-	Sat, 26 Jul 2025 06:52:22 +0900 (JST)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56PMM4ir051778;
+	Sat, 26 Jul 2025 07:22:04 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
 	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56PLqL49046545
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56PMM4YX051775
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 26 Jul 2025 06:52:22 +0900 (JST)
+	Sat, 26 Jul 2025 07:22:04 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <1779f2ad-77da-40e3-9ee0-ef6c4cd468fa@I-love.SAKURA.ne.jp>
-Date: Sat, 26 Jul 2025 06:52:21 +0900
+Message-ID: <e6f71dcc-80e0-4cfe-91cf-8adb4d4effb7@I-love.SAKURA.ne.jp>
+Date: Sat, 26 Jul 2025 07:22:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,6 +59,8 @@ Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "akpm@linux-foundation.org" <akpm@linux-foundation.org>
 References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
+ <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
  <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
  <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
  <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
@@ -72,74 +74,74 @@ References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
  <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
  <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
  <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
- <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
- <650d29da-4f3a-4cfe-b633-ea3b1f27de96@I-love.SAKURA.ne.jp>
- <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
+ <2103722d0e10bbd71ad6f93550668cea717381bc.camel@ibm.com>
 Content-Language: en-US
 From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
+In-Reply-To: <2103722d0e10bbd71ad6f93550668cea717381bc.camel@ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav301.rs.sakura.ne.jp
 X-Virus-Status: clean
-X-Anti-Virus-Server: fsav203.rs.sakura.ne.jp
 
-On 2025/07/26 2:47, Viacheslav Dubeyko wrote:
->> I managed to find the offset of rec->dir.DirID in the filesystem image used by
->> the reproducer, and confirmed that any 0...15 values except 2..4 shall hit BUG()
->> in hfs_write_inode().
+On 2025/07/26 2:42, Viacheslav Dubeyko wrote:
+>>>
+>>> I don't see any sense to introduce flags here. First of all, please, don't use
+>>> hardcoded values but you should use declared constants from hfs.h (for example,
+>>> HFS_EXT_CNID instead of 3). Secondly, you can simply compare the i_ino with
+>>> constants, for example:
 >>
->> Also, a legitimate filesystem image seems to have rec->dir.DirID == 2.
+>> This will save a lot of computational power compared to switch().
 >>
->> That is, the only approach that can avoid hitting BUG() without removing BUG()
->> would be to verify that rec.type is HFS_CDR_DIR and rec.dir.DirID is HFS_ROOT_CNID.
->>
->> --- a/fs/hfs/super.c
->> +++ b/fs/hfs/super.c
->> @@ -354,7 +354,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
->>                         goto bail_hfs_find;
->>                 }
->>                 hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
->> -               if (rec.type != HFS_CDR_DIR)
->> +               if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
->>                         res = -EIO;
->>         }
->>         if (res)
->>
->> Is this condition correct?
-
-Please explicitly answer this question.
-
-Is this validation correct that rec.dir.DirID has to be HFS_ROOT_CNID ?
-
- 	res = hfs_cat_find_brec(sb, HFS_ROOT_CNID, &fd);
- 	if (!res) {
- 		if (fd.entrylength != sizeof(rec.dir)) {
- 			res =  -EIO;
- 			goto bail_hfs_find;
- 		}
- 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
--		if (rec.type != HFS_CDR_DIR)
-+		if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
- 			res = -EIO;
- 	}
-
-I hope that this validation is correct because the "rec" which hfs_bnode_read()
-reads is controlled by the result of hfs_cat_find_brec(HFS_ROOT_CNID).
-
->>
->> Discussion on what values should be filtered by hfs_read_inode() is
->> out of scope for this syzbot report.
 > 
-> I already shared in previous emails which particular inode IDs are valid or not
-> for [0-16] group of values in the environment of hfs_read_inode().
+> Even if you would like to use flags, then the logic must to be simple and
+> understandable. You still can use special inline function and do not create a
+> mess in hfs_read_inode(). Especially, you can declare the mask one time in
+> header, for example, but not to prepare the bad_cnid_list for every function
+> call. Currently, the code looks really messy.
+
+No, since this is "static const u16", the compiler will prepare it at build time
+than every function call. Also since it is a simple u16, the compiler would
+generate simple code like
+
+  test ax, an_imm16_constant_value_determined_at_build_time
+  jnz somewhere
+
+which is much faster than
+
+  cmp eax, HFS_EXT_CNID
+  je somewhere
+  cmp eax, other_cnid_1
+  je somewhere
+  cmp eax, other_cnid_2
+  je somewhere
+  cmp eax, other_cnid_3
+  je somewhere
+  cmp eax, other_cnid_4
+  je somewhere
+
+based on switch() in is_inode_id_invalid() shown below.
+
+We can replace "static const u16" with "#define" if you prefer.
+
 > 
+>>>
+>>> bool is_inode_id_invalid(u64 ino) {
+>>>       switch (inode->i_ino) {
+>>>       case HFS_EXT_CNID:
+>>>       ...
+>>>           return true;
+>>>
+>>>       }
+>>>
+>>>       return false;
+>>> }
 
-Checking which particular inode IDs hfs_read_inode() should accept is fine.
-But such check cannot fix the bug reported at
-https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b .
 
-Checking the inode ID retrieved by hfs_cat_find_brec(HFS_ROOT_CNID) is indeed
-HFS_ROOT_CNID can fix the bug reported at
-https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b .
+
+> So, 1, 2, 5, 15, etc can be accepted by hfs_read_inode().
+> 0, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14 is invalid values for hfs_read_inode().
+
+OK. This list will be useful for hardening, but we can't use this list for fixing
+the bug reported at https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b .
 
 
