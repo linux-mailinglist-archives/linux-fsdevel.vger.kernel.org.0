@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-56044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF18B121F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 18:24:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8CBB121F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 18:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53F2156074B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 16:24:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7608217BD28
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 16:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5832EFD95;
-	Fri, 25 Jul 2025 16:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26C42F0021;
+	Fri, 25 Jul 2025 16:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQTXq0SX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HH4sfpqZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125972EF9B2;
-	Fri, 25 Jul 2025 16:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C712EFD99;
+	Fri, 25 Jul 2025 16:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753460587; cv=none; b=T8YIqjSYT0cA7Yx7r3pFZxxW+Hck579sT8WOd2oONNt1jeLeX0URoK12bV9bIHTBUGojSsKlkTsTt4ClR+xpCHriqad7nRbZw/TOhidwSYoT39872vhB51rE5y+iTZ/SNdFy3Hjby5KD56v3p1A1yYOzWZxrr8zWDxsZ01e2b4Q=
+	t=1753460590; cv=none; b=ltYG6WW2Y2XBPGNcNbymWWVl0g56919Oi0IOdrwfFoVXQu7o45jwBc62/gbNru8rRKFT61Fq56AbJH3B2kGuyzeOqjhLZzshzmWWGPnfnSfXKRixWNhil5JAc00/9zTHDOJD0q9Ypzh7VCV1/bCHNkYESGGf21go6RoB3vGN9e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753460587; c=relaxed/simple;
-	bh=lmwS2ogqw4bPnaA/NfmN2fdPCVXyC/N6/6t61sTZVlU=;
+	s=arc-20240116; t=1753460590; c=relaxed/simple;
+	bh=LkB88lWIbkM8o0a2fZPfu3489tAdfyFV07pwUyZ9Z0E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uMspOcD6A2AXG2oP9cqwCne4Ia7rbI/Mm/AZ6cAzUy8DCKVeQ8LoIzHK0AmypMdWDrPdWb86pkp3PZQO5oYF6RUZNRNmWJL9W8SGaBXgfIfJiluA6Pvbbv2PFrsog1spiz9uv+QdTuXzANs+UTsWu0LT3apxn5LvJIVqJJxbgy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WQTXq0SX; arc=none smtp.client-ip=209.85.219.45
+	 MIME-Version; b=lFOkBDrV5nnNkPbAWDwUpnVzgN5OSEj73LeZx6EcnADL2Bqf6/9zh5ab6rWMyIbbrlptS49DmExmTngb9SponnBTjasO+vP8hcu2GK3Co2ZRktiLhLlIGW9lbEek4GHop6qKM05b+7DySrV7YaMwg821MUvyzSaWmiEftb1Uawc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HH4sfpqZ; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6fd1b2a57a0so23596746d6.1;
-        Fri, 25 Jul 2025 09:23:05 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ab81d0169cso29277111cf.2;
+        Fri, 25 Jul 2025 09:23:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753460585; x=1754065385; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753460586; x=1754065386; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JREE5x0ARz2QqEVTan/K1w654MwTZ7Hc0OH3aFNqbBE=;
-        b=WQTXq0SXSooxrx8kN39IbwOTb8kAoeAbT6ti7g34UM+4EmqOoVM8Emc6B1spIP5E6P
-         Hhi/ZBKjqBn2Lxr1MTXe/fPbWptgdaJi4FfVlqg5ggordKxZ/jXAeiKfDjruy8qEDF7j
-         Jnl27+ZCxT/uPiQNxFxHJGJfBvY5ypBm1h/OztB4Imofjm/sGaxVufIU5hY1cUgkhlgW
-         4dQw9hy/V0CFcW8ycRVZ30hKvIVI3kuEjcF+yOSGFHgPPLByUC+n3d0hRsQ7y5KXEAmI
-         rRp0C6kBJVsTR6IkRPs8kYEh1sfNwkMuZdm5qRqN7YmzWLjPbJt238Hh0LuwxQvEkaTt
-         OJAQ==
+        bh=c2nMfW+8EG0yHdd/y9pp9Ykp4/bgoGWX5aUFmAoHq2k=;
+        b=HH4sfpqZl54F0KoL0ccU32DeF235n+JQF607FyDRzumLVnGKopXawOVrsncpUbq0vi
+         dDyQjJEzic9dQHM9UK6iJbqzSpfdIyA4dNxCLJ2e4oldOQsPvOzq7ysGgxMo4Z+wuHCN
+         BgJOA49fmefS3zrj20BsZKVTjopEtznwrn/drAKucmE02XKWqYNzTwiuRTTOydm9ZdAZ
+         kfSAxm9oCpZIkIA+Mou7fhABPo6h1yqZ1JVIi+XmE988mS+g6Rw2b2N68JypwnwwXKZ7
+         5jdlMODs3sPExBUEOX6KzU1w+Lfhmxiva6oPZOjDMpPvoa2dzUaGyJQRrt6UvdSMMBmJ
+         N+9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753460585; x=1754065385;
+        d=1e100.net; s=20230601; t=1753460586; x=1754065386;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JREE5x0ARz2QqEVTan/K1w654MwTZ7Hc0OH3aFNqbBE=;
-        b=NdOPMFrKgZfIC0ctxRNoh9766GDD9a4YTwC2uY82gPFGxIENX00aI7uc3Iz7H+eE16
-         1zKWVv9xX8vxZcm+talUtGVXbzia6lSvmfDLSaIIvhwtHhwRjPn7MjYkpfOxJ9xmMwoA
-         r8gSbhsPp2MIuvEYafxej5UIZ66DilgApLgIlgI24F2vSpATEoAteS5d+j+Lv5tuql9k
-         AZSElXvVJ8Ef7VT3gnnizKR68wTrjamxSNskeJ2sO6iu9Y/O09lFhmBUKjDkekB9yP0Q
-         T5M7zAjzSA9vskN43ps3YVFruXJ5A6K8XHbL+opf+DYY4GUkKKjwxEeCwhHi7Yokvou/
-         C1gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuEpgGDmhxtYupgwtvp1gQniyTPEGn28frllXMjmDM7JRFmVJP81Du8H/ql0e/xqJjvYQNob8zgGgJdy3I@vger.kernel.org, AJvYcCWnO/nJl8qb+IDcGF18NDBdJBiKCjjhrGFZtc9gdpdRcIm38/UgeQWOxUloQKhlNG+1k3xJyJmr9uM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRyVH2P8o1a3qVCd0qJWmR1Hmhl87lZErQ8OW++yD09gAD4ISl
-	ltjq3qot4q0RO5b/YNo+ZNRgeWp/3PI6GsMNpB+nFYJWhzKQtq8yDGRM
-X-Gm-Gg: ASbGncvpHH1JLb3Qi3GzYlX/bXHjupYouKyC0YPcgjlBhK4zwlysErRqMJtPvBh275S
-	Ny5kCcgHPhu83gHkKO6XJ+P5i4GvKo1ccv7SXxOm8IR81D/Klz8w9e5YgshN65jcCk9EORivdF7
-	CJ3gaeNOJUNPDiLy5fqfSMjMwKnSgdgVUggKxS1mCtEfiD/ZUuIx2GLBbM7yRgSfy4tMcOPRml2
-	7HPfXDYreBVWYJtLYUc+yDtTzjdLcoEChiDON+mHRWBdGEojATDVV9zX1LZa+48k9RVdczUjwNl
-	DV5J7Hl/gVySs8tlHx1bBUXpWH1Zt6K1b0W5REDruN8MUN1APJop0BJbGwkRufGHf2Xf+SK1Kom
-	zrxRns1NUYrBpLTuge4Q=
-X-Google-Smtp-Source: AGHT+IEN5w1m+WG8vUhOdUow2NKovnyWHknbSVQl8xiAB4hL6Q385HGbdTJbSA2QKHuAKvjV5mQMkw==
-X-Received: by 2002:a05:6214:29c6:b0:704:a583:d98 with SMTP id 6a1803df08f44-707205304f3mr36859976d6.18.1753460584541;
-        Fri, 25 Jul 2025 09:23:04 -0700 (PDT)
-Received: from localhost ([2a03:2880:20ff:5::])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70729c6f5d9sm1807706d6.83.2025.07.25.09.23.03
+        bh=c2nMfW+8EG0yHdd/y9pp9Ykp4/bgoGWX5aUFmAoHq2k=;
+        b=csD+f2E6LVjun+Gz+aCNnWMnlul/C2m7XDHhPKeRelWML+zG7NW69TAKTj3kCojqWQ
+         aaLJOcbkENwuqUIQkFvO20TniODXZNedC+wAwIQ1PmrHPB0obuy9gWDQzXZKTFoQHO3f
+         ov7ztPF0mmhYrx47TYCNuehw+Cjsvmk5+MX5jHnDTFXjc6tTDHkhGHDD3TpiaAeHrzxZ
+         oAnhGJlySD4r35MACpAcdDhFe7SUGnAZu/wfLxlwc+NsYL9MCHcMd+e5cLKoqk9MRHZt
+         LNGnFFe+YRgjGQ2ZvCboFyyJShEe8AKqkScsMIfmjpqDPIpfcY1OIxWuhqkrCsNOwuDA
+         htgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWa9gDy5pwLfg6YuseLHweYtlKSN8kjyvSx52seHd/QNSf/xQLwAiq03WiigTJwc7zdaZwJAEYCq3W595go@vger.kernel.org, AJvYcCX0pwnnRBJuRWA3A7V/rF9Qm2tQcAsAXqHb62Eqbm9gpDkE2jWhpcE3zMy6efZD/Kl15MbjvZWDOYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHx3kXHA/IjFhQ2KoKWl6eJ8U0G6kbLk9BXZfuNhwJA2cQ6eDN
+	NCo3CSB4qWTeRl7INvXIZ2qHRp6m3BDSl4PJbttaijzGKmzKZFrx3GRv+SRsCaS1
+X-Gm-Gg: ASbGncsuBT8qtwOSOpsuiCdgML/7dDODivRiaLkg0O6cJC8XW8HSTu76HAUSwjFHZrk
+	duz6KZk+5XEth7TzzOch5EMOzHbFk10Jt36jTkhoh8s5WrQCKk2Z5tYgi4hGpuhO9tA9ML018ae
+	vlyc3CLgYWSWAgbvycPEZBXOTj9q9kYK85j0YSBl45U7V/g2Y8rKhMpa9gO65irrPhlH2wkfQQY
+	tTRdUVszxf10+SUbYzOQzfnaFIlBpPOkqytpMJqm9eg4nPvGvXh5S1OIdnUtc16Vqdm5opoaDYB
+	kmDI2zL+tBafl+5RtoXaS0c8XAFXdar1gQskT0+8lI8wBOl1ZmpaSvhog3YvGmsq+ArpOjPqmzm
+	1kjgHSYg2hfWIZjTgQusWYmFhIli5Ww==
+X-Google-Smtp-Source: AGHT+IGhB0ODduWZoA0stvQcbydiYz6AaKK3E3SHNDplUWRJe9PTwU9UCJc3fawE6uOksSdsUztLVA==
+X-Received: by 2002:a05:622a:1348:b0:4ab:6a1e:ea51 with SMTP id d75a77b69052e-4ae8edcdf0bmr33885121cf.11.1753460586010;
+        Fri, 25 Jul 2025 09:23:06 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:6::])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae99516fcesm1906231cf.9.2025.07.25.09.23.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 09:23:04 -0700 (PDT)
+        Fri, 25 Jul 2025 09:23:05 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	david@redhat.com,
@@ -102,9 +102,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-team@meta.com,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH 3/5] mm/huge_memory: treat MADV_COLLAPSE as an advise with PR_THP_DISABLE_EXCEPT_ADVISED
-Date: Fri, 25 Jul 2025 17:22:42 +0100
-Message-ID: <20250725162258.1043176-4-usamaarif642@gmail.com>
+Subject: [PATCH 4/5] selftests: prctl: introduce tests for disabling THPs completely
+Date: Fri, 25 Jul 2025 17:22:43 +0100
+Message-ID: <20250725162258.1043176-5-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250725162258.1043176-1-usamaarif642@gmail.com>
 References: <20250725162258.1043176-1-usamaarif642@gmail.com>
@@ -116,122 +116,216 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: David Hildenbrand <david@redhat.com>
+The test will set the global system THP setting to madvise and
+the 2M setting to inherit before it starts (and reset to original
+at teardown)
 
-Let's allow for making MADV_COLLAPSE succeed on areas that neither have
-VM_HUGEPAGE nor VM_NOHUGEPAGE when we have THP disabled
-unless explicitly advised (PR_THP_DISABLE_EXCEPT_ADVISED).
+This tests if the process can:
+- successfully set and get the policy to disable THPs completely.
+- never get a hugepage when the THPs are completely disabled,
+  including with MADV_HUGE and MADV_COLLAPSE.
+- successfully reset the policy of the process.
+- get hugepages only on MADV_HUGE and MADV_COLLAPSE after reset.
+- repeat the above tests in a forked process to make sure
+  the policy is carried across forks.
 
-MADV_COLLAPSE is a clear advise that we want to collapse.
-
-Note that we still respect the VM_NOHUGEPAGE flag, just like
-MADV_COLLAPSE always does. So consequently, MADV_COLLAPSE is now only
-refused on VM_NOHUGEPAGE with PR_THP_DISABLE_EXCEPT_ADVISED.
-
-Co-developed-by: Usama Arif <usamaarif642@gmail.com>
 Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/huge_mm.h    | 8 +++++++-
- include/uapi/linux/prctl.h | 2 +-
- mm/huge_memory.c           | 5 +++--
- mm/memory.c                | 6 ++++--
- mm/shmem.c                 | 2 +-
- 5 files changed, 16 insertions(+), 7 deletions(-)
+ tools/testing/selftests/mm/.gitignore         |   1 +
+ tools/testing/selftests/mm/Makefile           |   1 +
+ .../testing/selftests/mm/prctl_thp_disable.c  | 162 ++++++++++++++++++
+ 3 files changed, 164 insertions(+)
+ create mode 100644 tools/testing/selftests/mm/prctl_thp_disable.c
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index b0ff54eee81c..aeaf93f8ac2e 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -329,7 +329,7 @@ struct thpsize {
-  * through madvise or prctl.
-  */
- static inline bool vma_thp_disabled(struct vm_area_struct *vma,
--		vm_flags_t vm_flags)
-+		vm_flags_t vm_flags, bool forced_collapse)
- {
- 	/* Are THPs disabled for this VMA? */
- 	if (vm_flags & VM_NOHUGEPAGE)
-@@ -343,6 +343,12 @@ static inline bool vma_thp_disabled(struct vm_area_struct *vma,
- 	 */
- 	if (vm_flags & VM_HUGEPAGE)
- 		return false;
-+	/*
-+	 * Forcing a collapse (e.g., madv_collapse), is a clear advise to
-+	 * use THPs.
-+	 */
-+	if (forced_collapse)
-+		return false;
- 	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
- }
- 
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 9c1d6e49b8a9..ee4165738779 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -185,7 +185,7 @@ struct prctl_mm_map {
- #define PR_SET_THP_DISABLE	41
- /*
-  * Don't disable THPs when explicitly advised (e.g., MADV_HUGEPAGE /
-- * VM_HUGEPAGE).
-+ * VM_HUGEPAGE / MADV_COLLAPSE).
-  */
- # define PR_THP_DISABLE_EXCEPT_ADVISED	(1 << 1)
- #define PR_GET_THP_DISABLE	42
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 85252b468f80..ef5ccb0ec5d5 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -104,7 +104,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- {
- 	const bool smaps = type == TVA_SMAPS;
- 	const bool in_pf = type == TVA_PAGEFAULT;
--	const bool enforce_sysfs = type != TVA_FORCED_COLLAPSE;
-+	const bool forced_collapse = type == TVA_FORCED_COLLAPSE;
-+	const bool enforce_sysfs = !forced_collapse;
- 	unsigned long supported_orders;
- 
- 	/* Check the intersection of requested and supported orders. */
-@@ -122,7 +123,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 	if (!vma->vm_mm)		/* vdso */
- 		return 0;
- 
--	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vm_flags))
-+	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vm_flags, forced_collapse))
- 		return 0;
- 
- 	/* khugepaged doesn't collapse DAX vma, but page fault is fine. */
-diff --git a/mm/memory.c b/mm/memory.c
-index be761753f240..bd04212d6f79 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5186,9 +5186,11 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *pa
- 	 * It is too late to allocate a small folio, we already have a large
- 	 * folio in the pagecache: especially s390 KVM cannot tolerate any
- 	 * PMD mappings, but PTE-mapped THP are fine. So let's simply refuse any
--	 * PMD mappings if THPs are disabled.
-+	 * PMD mappings if THPs are disabled. As we already have a THP ...
-+	 * behave as if we are forcing a collapse.
- 	 */
--	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags))
-+	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags,
-+						     /* forced_collapse=*/ true))
- 		return ret;
- 
- 	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
-diff --git a/mm/shmem.c b/mm/shmem.c
-index e6cdfda08aed..30609197a266 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1816,7 +1816,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 	vm_flags_t vm_flags = vma ? vma->vm_flags : 0;
- 	unsigned int global_orders;
- 
--	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags)))
-+	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags, shmem_huge_force)))
- 		return 0;
- 
- 	global_orders = shmem_huge_global_enabled(inode, index, write_end,
+diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
+index e7b23a8a05fe..eb023ea857b3 100644
+--- a/tools/testing/selftests/mm/.gitignore
++++ b/tools/testing/selftests/mm/.gitignore
+@@ -58,3 +58,4 @@ pkey_sighandler_tests_32
+ pkey_sighandler_tests_64
+ guard-regions
+ merge
++prctl_thp_disable
+diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+index d13b3cef2a2b..2bb8d3ebc17c 100644
+--- a/tools/testing/selftests/mm/Makefile
++++ b/tools/testing/selftests/mm/Makefile
+@@ -86,6 +86,7 @@ TEST_GEN_FILES += on-fault-limit
+ TEST_GEN_FILES += pagemap_ioctl
+ TEST_GEN_FILES += pfnmap
+ TEST_GEN_FILES += process_madv
++TEST_GEN_FILES += prctl_thp_disable
+ TEST_GEN_FILES += thuge-gen
+ TEST_GEN_FILES += transhuge-stress
+ TEST_GEN_FILES += uffd-stress
+diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
+new file mode 100644
+index 000000000000..52f7e6659b1f
+--- /dev/null
++++ b/tools/testing/selftests/mm/prctl_thp_disable.c
+@@ -0,0 +1,162 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Basic tests for PR_GET/SET_THP_DISABLE prctl calls
++ *
++ * Author(s): Usama Arif <usamaarif642@gmail.com>
++ */
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <sys/mman.h>
++#include <sys/prctl.h>
++#include <sys/wait.h>
++
++#include "../kselftest_harness.h"
++#include "thp_settings.h"
++#include "vm_util.h"
++
++#ifndef PR_THP_DISABLE_EXCEPT_ADVISED
++#define PR_THP_DISABLE_EXCEPT_ADVISED (1 << 1)
++#endif
++
++#define NR_HUGEPAGES 6
++
++static int sz2ord(size_t size, size_t pagesize)
++{
++	return __builtin_ctzll(size / pagesize);
++}
++
++enum madvise_buffer {
++	NONE,
++	HUGE,
++	COLLAPSE
++};
++
++/*
++ * Function to mmap a buffer, fault it in, madvise it appropriately (before
++ * page fault for MADV_HUGE, and after for MADV_COLLAPSE), and check if the
++ * mmap region is huge.
++ * returns:
++ * 0 if test doesn't give hugepage
++ * 1 if test gives a hugepage
++ * -1 if mmap fails
++ */
++static int test_mmap_thp(enum madvise_buffer madvise_buf, size_t pmdsize)
++{
++	int ret;
++	int buf_size = NR_HUGEPAGES * pmdsize;
++
++	char *buffer = (char *)mmap(NULL, buf_size, PROT_READ | PROT_WRITE,
++				    MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++	if (buffer == MAP_FAILED)
++		return -1;
++
++	if (madvise_buf == HUGE)
++		madvise(buffer, buf_size, MADV_HUGEPAGE);
++
++	/* Ensure memory is allocated */
++	memset(buffer, 1, buf_size);
++
++	if (madvise_buf == COLLAPSE)
++		madvise(buffer, buf_size, MADV_COLLAPSE);
++
++	ret = check_huge_anon(buffer, NR_HUGEPAGES, pmdsize);
++	munmap(buffer, buf_size);
++	return ret;
++}
++FIXTURE(prctl_thp_disable_completely)
++{
++	struct thp_settings settings;
++	size_t pmdsize;
++};
++
++FIXTURE_SETUP(prctl_thp_disable_completely)
++{
++	if (!thp_is_enabled())
++		SKIP(return, "Transparent Hugepages not available\n");
++
++	self->pmdsize = read_pmd_pagesize();
++	if (!self->pmdsize)
++		SKIP(return, "Unable to read PMD size\n");
++
++	thp_read_settings(&self->settings);
++	self->settings.thp_enabled = THP_MADVISE;
++	self->settings.hugepages[sz2ord(self->pmdsize, getpagesize())].enabled = THP_INHERIT;
++	thp_save_settings();
++	thp_push_settings(&self->settings);
++}
++
++FIXTURE_TEARDOWN(prctl_thp_disable_completely)
++{
++	thp_restore_settings();
++}
++
++/* prctl_thp_disable_except_madvise fixture sets system THP setting to madvise */
++static void prctl_thp_disable_completely(struct __test_metadata *const _metadata,
++					 size_t pmdsize)
++{
++	int res = 0;
++
++	res = prctl(PR_GET_THP_DISABLE, NULL, NULL, NULL, NULL);
++	ASSERT_EQ(res, 1);
++
++	/* global = madvise, process = never, we shouldn't get HPs even with madvise */
++	res = test_mmap_thp(NONE, pmdsize);
++	ASSERT_EQ(res, 0);
++
++	res = test_mmap_thp(HUGE, pmdsize);
++	ASSERT_EQ(res, 0);
++
++	res = test_mmap_thp(COLLAPSE, pmdsize);
++	ASSERT_EQ(res, 0);
++
++	/* Reset to system policy */
++	res =  prctl(PR_SET_THP_DISABLE, 0, NULL, NULL, NULL);
++	ASSERT_EQ(res, 0);
++
++	/* global = madvise */
++	res = test_mmap_thp(NONE, pmdsize);
++	ASSERT_EQ(res, 0);
++
++	res = test_mmap_thp(HUGE, pmdsize);
++	ASSERT_EQ(res, 1);
++
++	res = test_mmap_thp(COLLAPSE, pmdsize);
++	ASSERT_EQ(res, 1);
++}
++
++TEST_F(prctl_thp_disable_completely, nofork)
++{
++	int res = 0;
++
++	res = prctl(PR_SET_THP_DISABLE, 1, NULL, NULL, NULL);
++	ASSERT_EQ(res, 0);
++
++	prctl_thp_disable_completely(_metadata, self->pmdsize);
++}
++
++TEST_F(prctl_thp_disable_completely, fork)
++{
++	int res = 0, ret = 0;
++	pid_t pid;
++
++	res = prctl(PR_SET_THP_DISABLE, 1, NULL, NULL, NULL);
++	ASSERT_EQ(res, 0);
++
++	/* Make sure prctl changes are carried across fork */
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (!pid)
++		prctl_thp_disable_completely(_metadata, self->pmdsize);
++
++	wait(&ret);
++	if (WIFEXITED(ret))
++		ret = WEXITSTATUS(ret);
++	else
++		ret = -EINVAL;
++	ASSERT_EQ(ret, 0);
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.47.3
 
