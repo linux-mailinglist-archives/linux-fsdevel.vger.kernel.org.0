@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-56021-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-56022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37E4B11D83
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 13:28:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FDAB11D86
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 13:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70B0AE2492
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 11:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDAC561FA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Jul 2025 11:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA7C2E92DB;
-	Fri, 25 Jul 2025 11:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F206C2E6103;
+	Fri, 25 Jul 2025 11:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2whp472"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJ4eIs1q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBFF2E8E1B;
-	Fri, 25 Jul 2025 11:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549272E8E0F;
+	Fri, 25 Jul 2025 11:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753442853; cv=none; b=f4Xd01R3Rs+ABaTmiK/2J86Ozyq8nREKWDk5si2GdaXBasqFhdqJmO9joZCCEz3IGQ2KF1QBFTaKKQKLrJgqo2MZ6hv7A2ODA0kKFqT9K9RN2cXel5FDSd4YnpyM1sTX3p7wyzB6RTxkExt38NuFV/Mx6OnCW02345gd0kpW/jY=
+	t=1753442855; cv=none; b=d+7nKCMg2IL/dcCp15oqaDq60KLLDKszaDNvTTBuZMc5kdJ+gjYfeBNldZHvvUZlIjf3nSo5o9QivyIC5kaX5OIuTNPU23f/ntAcZVvTL4MeT/XsQYCEdJ1BwmegHyTIG9nPNNGzsYGTwvMyDHQMFnBhKN3fJXMomMazhdNhh8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753442853; c=relaxed/simple;
-	bh=OyRpips3GPTn7W0xfBDWpml/Nfc4p6TCMaJh1ZonQyI=;
+	s=arc-20240116; t=1753442855; c=relaxed/simple;
+	bh=qyWq+hKzuIa8hMAydBNZAckNnUT5ZdxfWE+A5AtbJSs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LAWepCvMneH1SfsNVXXey3mrvOmJMdjg1Cf3nYVthVKu//omVY6HdgvDICYQg3J6eYwWIsEJDk8R7PNaQf9Jx/1yUSXHAFJ2xJLL184YqlVgLXBCQh4XdEIRQ9vBDCrupWLZHjJUOrlEqOgGnqf2k3uWfWMp70wlvmyM+pM6aVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2whp472; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D9F7C4CEE7;
-	Fri, 25 Jul 2025 11:27:31 +0000 (UTC)
+	 MIME-Version; b=TQIr7hUSWdD32HO5xjp8FSiLDVl+wDuCk2ikbi8oTjRwiudoVGEIeYeRQMsLMdgsNNcj1lk7i3t6msL7LiX1iS39o3E8372swPzqovuUedb4UcvPcDEiGX/diuXSOwcvnJzFY5cZG1nXOn8e5s8bKWkx5jsIl5aCMmCd/nQ5G7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJ4eIs1q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56B1C4CEEF;
+	Fri, 25 Jul 2025 11:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753442853;
-	bh=OyRpips3GPTn7W0xfBDWpml/Nfc4p6TCMaJh1ZonQyI=;
+	s=k20201202; t=1753442854;
+	bh=qyWq+hKzuIa8hMAydBNZAckNnUT5ZdxfWE+A5AtbJSs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n2whp472IHjfN7aytCQCTfiQl5aZBSdEzhSGmHZGoGpk1yB5iOv5hnXyrQiNiFBQY
-	 VRMpRPLFAkMaCCmB+Ip/vOS8dPAUZSI2Bic3AzXSFv4U6N8w7QZvAxipjYKRLRLZz6
-	 94jzNX8mkWG/ckMOoguKAcfEEE1Y5P03wPZrwU7xafTcuyNrDhh8C15oTy/Lk1KLYj
-	 /wxzs07TXn+tB4H05BBsbtz4DhE7o3SZ9wlQxYuLr70kB6CrIUF6nDC4JF8HbQ/JS2
-	 MUrgCq13niRjQBEvzUjQKuLjZ+Ujc1jpJ5KuhBz6MBIloaAgvRNzLISt4HVfyZWMe3
-	 TRLvsJaELua1g==
+	b=HJ4eIs1qoFbYjFckr9Qfaa4QN730MxjYqKwWAtDMRz7ocaOAb4SkrGxKQiK2Unlyp
+	 oZjoUoNv4MjhHF1vGVw7gAwPL/7O46I6pJyQ4LfeLJPjVqXOis1RDkohzCyT6Tt/u5
+	 tlMtoDPS/KGK4QQKULU7B0MiYhLuQ8xBjZPsRwsFlVXIRcU55tQiOa2ni+CMwvAYIp
+	 GFMUgdV0UYXAI5FWAT+VbfISMEihwCiVquxQqae73mPElVWr8lTmnxq8KwJZdE/6ST
+	 wew+/gwxgEKZ8zJEoYsZHba14C2o8sQ8rmjyXP27EZe9FfnY1vedBLXbH0SM6GrwQm
+	 ByYUd9aFgfsWg==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 02/14 for v6.17] vfs coredump
-Date: Fri, 25 Jul 2025 13:27:16 +0200
-Message-ID: <20250725-vfs-coredump-6c7c0c4edd03@brauner>
+Subject: [GIT PULL 06/14 for v6.17] vfs fallocate
+Date: Fri, 25 Jul 2025 13:27:17 +0200
+Message-ID: <20250725-vfs-fallocate-91b9067277e8@brauner>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
 References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
@@ -58,46 +58,47 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8931; i=brauner@kernel.org; h=from:subject:message-id; bh=OyRpips3GPTn7W0xfBDWpml/Nfc4p6TCMaJh1ZonQyI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0Z4n+/no5KOm7oeqULb2fObg0FxWzz1jquXS2sN7dT 31FDpYvO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby9SAjw4NkEauT4SpHW6z/ 3c7YKOcs9Sn1aOW+jMXXm4ozXkr7TWVkuKMcL8cl/ouz+KOt75G6MoXqUB+2x4x6O5YukL/GKri fCwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4503; i=brauner@kernel.org; h=from:subject:message-id; bh=qyWq+hKzuIa8hMAydBNZAckNnUT5ZdxfWE+A5AtbJSs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0Z4n+r25ienjhm/TWJrn7lT6Lwo7pfkxNLrA513Bs5 pa2O9MXdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyEj4uRoYN32xXmwB/7HK1N io2/9hnWFE6R4lNcF1y5tmSf44PMbkaGlT9DGzl3a4dI7exxZ0vhaV++xscn70B1gO5dIZWSViM +AA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
 /* Summary */
-This contains an extension to the coredump socket and a proper rework
-of the coredump code.
+fallocate() currently supports creating preallocated files efficiently.
+However, on most filesystems fallocate() will preallocate blocks in an
+unwriten state even if FALLOC_FL_ZERO_RANGE is specified.
 
-- This extends the coredump socket to allow the coredump server to tell
-  the kernel how to process individual coredumps. This allows for
-  fine-grained coredump management. Userspace can decide to just let the
-  kernel write out the coredump, or generate the coredump itself, or
-  just reject it.
+The extent state must later be converted to a written state when the
+user writes data into this range, which can trigger numerous metadata
+changes and journal I/O. This may leads to significant write
+amplification and performance degradation in synchronous write mode.
 
-  * COREDUMP_KERNEL
-    The kernel will write the coredump data to the socket.
+At the moment, the only method to avoid this is to create an empty file
+and write zero data into it (for example, using 'dd' with a large block
+size). However, this method is slow and consumes a considerable amount
+of disk bandwidth.
 
-  * COREDUMP_USERSPACE
-    The kernel will not write coredump data but will indicate to the
-    parent that a coredump has been generated. This is used when
-    userspace generates its own coredumps.
+Now that more and more flash-based storage devices are available it is
+possible to efficiently write zeros to SSDs using the unmap write zeroes
+command if the devices do not write physical zeroes to the media.
 
-  * COREDUMP_REJECT
-    The kernel will skip generating a coredump for this task.
+For example, if SCSI SSDs support the UMMAP bit or NVMe SSDs support the
+DEAC bit[1], the write zeroes command does not write actual data to the
+device, instead, NVMe converts the zeroed range to a deallocated state,
+which works fast and consumes almost no disk write bandwidth.
 
-  * COREDUMP_WAIT
-    The kernel will prevent the task from exiting until the coredump
-    server has shutdown the socket connection.
+This series implements the BLK_FEAT_WRITE_ZEROES_UNMAP feature and
+BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED flag for SCSI, NVMe and
+device-mapper drivers, and add the FALLOC_FL_WRITE_ZEROES and
+STATX_ATTR_WRITE_ZEROES_UNMAP support for ext4 and raw bdev devices.
 
-  The flexible coredump socket can be enabled by using the "@@" prefix
-  instead of the single "@" prefix for the regular coredump socket:
-
-    @@/run/systemd/coredump.socket
-
-- Cleanup the coredump code properly while we have to touch it anyway.
-  Split out each coredump mode in a separate helper so it's easy to
-  grasp what is going on and make the code easier to follow. The core
-  coredump function should now be very trivial to follow.
+fallocate() is subsequently extended with the FALLOC_FL_WRITE_ZEROES
+flag. FALLOC_FL_WRITE_ZEROES zeroes a specified file range in such a way
+that subsequent writes to that range do not require further changes to
+the file mapping metadata. This flag is beneficial for subsequent pure
+overwriting within this range, as it can save on block allocation and,
+consequently, significant metadata changes.
 
 /* Testing */
 
@@ -111,169 +112,61 @@ No build failures or warnings were observed.
 Merge conflicts with mainline
 =============================
 
-This will have a merge conflict with mainline that can be resolved as follows:
-
-diff --cc tools/testing/selftests/coredump/stackdump_test.c
-index 68f8e479ac36,a4ac80bb1003..000000000000
---- a/tools/testing/selftests/coredump/stackdump_test.c
-+++ b/tools/testing/selftests/coredump/stackdump_test.c
-@@@ -418,59 -430,31 +430,35 @@@ TEST_F(coredump, socket_detect_userspac
-                close(ipc_sockets[1]);
-
-                fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
--               if (fd_coredump < 0) {
--                       fprintf(stderr, "Failed to accept coredump socket connection\n");
--                       close(fd_server);
--                       _exit(EXIT_FAILURE);
--               }
-+               if (fd_coredump < 0)
-+                       goto out;
-
--               fd_peer_pidfd_len = sizeof(fd_peer_pidfd);
--               ret = getsockopt(fd_coredump, SOL_SOCKET, SO_PEERPIDFD,
--                                &fd_peer_pidfd, &fd_peer_pidfd_len);
--               if (ret < 0) {
--                       fprintf(stderr, "%m - Failed to retrieve peer pidfd for coredump socket connection\n");
--                       close(fd_coredump);
--                       close(fd_server);
--                       _exit(EXIT_FAILURE);
--               }
-+               fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-+               if (fd_peer_pidfd < 0)
-+                       goto out;
-
--               memset(&info, 0, sizeof(info));
--               info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP;
--               ret = ioctl(fd_peer_pidfd, PIDFD_GET_INFO, &info);
--               if (ret < 0) {
--                       fprintf(stderr, "Failed to retrieve pidfd info from peer pidfd for coredump socket connection\n");
--                       close(fd_coredump);
--                       close(fd_server);
--                       close(fd_peer_pidfd);
--                       _exit(EXIT_FAILURE);
--               }
-+               if (!get_pidfd_info(fd_peer_pidfd, &info))
-+                       goto out;
-
--               if (!(info.mask & PIDFD_INFO_COREDUMP)) {
--                       fprintf(stderr, "Missing coredump information from coredumping task\n");
--                       close(fd_coredump);
--                       close(fd_server);
--                       close(fd_peer_pidfd);
--                       _exit(EXIT_FAILURE);
--               }
-+               if (!(info.mask & PIDFD_INFO_COREDUMP))
-+                       goto out;
-
--               if (info.coredump_mask & PIDFD_COREDUMPED) {
--                       fprintf(stderr, "Received unexpected connection from coredumping task\n");
--                       close(fd_coredump);
--                       close(fd_server);
--                       close(fd_peer_pidfd);
--                       _exit(EXIT_FAILURE);
--               }
-+               if (info.coredump_mask & PIDFD_COREDUMPED)
-+                       goto out;
-
- +              ret = read(fd_coredump, &c, 1);
- +
--               close(fd_coredump);
--               close(fd_server);
--               close(fd_peer_pidfd);
--               close(fd_core_file);
--
-+               exit_code = EXIT_SUCCESS;
-+ out:
-+               if (fd_peer_pidfd >= 0)
-+                       close(fd_peer_pidfd);
-+               if (fd_coredump >= 0)
-+                       close(fd_coredump);
-+               if (fd_server >= 0)
-+                       close(fd_server);
- +              if (ret < 1)
- +                      _exit(EXIT_FAILURE);
--               _exit(EXIT_SUCCESS);
-+               _exit(exit_code);
-        }
-        self->pid_coredump_server = pid_coredump_server;
+No known conflicts.
 
 Merge conflicts with other trees
 ================================
 
 No known conflicts.
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc1.coredump
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc1.fallocate
 
-for you to fetch changes up to 5c21c5f22d0701ac6c1cafc0e8de4bf42e5c53e5:
+for you to fetch changes up to 4f984fe7b4d9aea332c7ff59827a4e168f0e4e1b:
 
-  cleanup: add a scoped version of CLASS() (2025-07-11 16:01:07 +0200)
+  Merge patch series "fallocate: introduce FALLOC_FL_WRITE_ZEROES flag" (2025-06-23 12:45:32 +0200)
 
-Please consider pulling these changes from the signed vfs-6.17-rc1.coredump tag.
+Please consider pulling these changes from the signed vfs-6.17-rc1.fallocate tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.17-rc1.coredump
+vfs-6.17-rc1.fallocate
 
 ----------------------------------------------------------------
-Christian Brauner (33):
-      coredump: allow for flexible coredump handling
-      selftests/coredump: fix build
-      selftests/coredump: cleanup coredump tests
-      tools: add coredump.h header
-      selftests/coredump: add coredump server selftests
-      Merge patch series "coredump: allow for flexible coredump handling"
-      coredump: cleanup coredump socket functions
-      coredump: rename format_corename()
-      coredump: make coredump_parse() return bool
-      coredump: fix socket path validation
-      coredump: validate that path doesn't exceed UNIX_PATH_MAX
-      fs: move name_contains_dotdot() to header
-      coredump: don't allow ".." in coredump socket path
-      coredump: validate socket path in coredump_parse()
-      selftests/coredump: make sure invalid paths are rejected
-      coredump: rename do_coredump() to vfs_coredump()
-      coredump: split file coredumping into coredump_file()
-      coredump: prepare to simplify exit paths
-      coredump: move core_pipe_count to global variable
-      coredump: split pipe coredumping into coredump_pipe()
-      coredump: move pipe specific file check into coredump_pipe()
-      coredump: use a single helper for the socket
-      coredump: add coredump_write()
-      coredump: auto cleanup argv
-      coredump: directly return
-      cred: add auto cleanup method
-      coredump: auto cleanup prepare_creds()
-      coredump: add coredump_cleanup()
-      coredump: order auto cleanup variables at the top
-      coredump: avoid pointless variable
-      coredump: add coredump_skip() helper
-      Merge patch series "coredump: further cleanups"
-      cleanup: add a scoped version of CLASS()
+Christian Brauner (1):
+      Merge patch series "fallocate: introduce FALLOC_FL_WRITE_ZEROES flag"
 
- Documentation/security/credentials.rst             |    2 +-
- .../translations/zh_CN/security/credentials.rst    |    2 +-
- drivers/base/firmware_loader/main.c                |   31 +-
- fs/coredump.c                                      |  868 ++++++----
- include/linux/cleanup.h                            |    8 +
- include/linux/coredump.h                           |    4 +-
- include/linux/cred.h                               |    2 +
- include/linux/fs.h                                 |   16 +
- include/uapi/linux/coredump.h                      |  104 ++
- kernel/signal.c                                    |    2 +-
- tools/include/uapi/linux/coredump.h                |  104 ++
- tools/testing/selftests/coredump/Makefile          |    2 +-
- tools/testing/selftests/coredump/config            |    3 +
- tools/testing/selftests/coredump/stackdump_test.c  | 1689 +++++++++++++++++---
- 14 files changed, 2239 insertions(+), 598 deletions(-)
- create mode 100644 include/uapi/linux/coredump.h
- create mode 100644 tools/include/uapi/linux/coredump.h
- create mode 100644 tools/testing/selftests/coredump/config
+Zhang Yi (9):
+      block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits
+      nvme: set max_hw_wzeroes_unmap_sectors if device supports DEAC bit
+      nvmet: set WZDS and DRB if device enables unmap write zeroes operation
+      scsi: sd: set max_hw_wzeroes_unmap_sectors if device supports SD_ZERO_*_UNMAP
+      dm: clear unmap write zeroes limits when disabling write zeroes
+      fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
+      block: factor out common part in blkdev_fallocate()
+      block: add FALLOC_FL_WRITE_ZEROES support
+      ext4: add FALLOC_FL_WRITE_ZEROES support
+
+ Documentation/ABI/stable/sysfs-block | 33 ++++++++++++++++++
+ block/blk-settings.c                 | 20 +++++++++--
+ block/blk-sysfs.c                    | 26 ++++++++++++++
+ block/fops.c                         | 44 +++++++++++++-----------
+ drivers/md/dm-table.c                |  4 ++-
+ drivers/nvme/host/core.c             | 20 ++++++-----
+ drivers/nvme/target/io-cmd-bdev.c    |  4 +++
+ drivers/scsi/sd.c                    |  5 +++
+ fs/ext4/extents.c                    | 66 ++++++++++++++++++++++++++++++------
+ fs/open.c                            |  1 +
+ include/linux/blkdev.h               | 10 ++++++
+ include/linux/falloc.h               |  3 +-
+ include/trace/events/ext4.h          |  3 +-
+ include/uapi/linux/falloc.h          | 17 ++++++++++
+ 14 files changed, 212 insertions(+), 44 deletions(-)
 
